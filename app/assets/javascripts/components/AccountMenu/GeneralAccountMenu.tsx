@@ -8,7 +8,6 @@ import { STRING_GENERIC_SYNC_ERROR } from '@/strings';
 import { useState } from 'preact/hooks';
 import { AccountMenuPane } from '.';
 import { FunctionComponent } from 'preact';
-import { AppVersion } from '@/version';
 import { Menu } from '../menu/Menu';
 import { MenuItem, MenuItemSeparator, MenuItemType } from '../menu/MenuItem';
 
@@ -156,7 +155,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
               <Icon type="help" className={iconClassName} />
               Help &amp; feedback
             </div>
-            <span className="color-neutral">v{AppVersion}</span>
+            <span className="color-neutral">v{appState.version}</span>
           </MenuItem>
           {user ? (
             <>

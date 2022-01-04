@@ -1,0 +1,278 @@
+body, html {
+  font-family: sans-serif;
+  font-size: var(--sn-stylekit-base-font-size);
+  background-color: transparent;
+}
+
+* {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.mobile .editor-toolbar, .mobile .editor-toolbar.fullscreen, .mac-web .editor-toolbar, .mac-web .editor-toolbar.fullscreen, .mac-desktop .editor-toolbar, .mac-desktop .editor-toolbar.fullscreen {
+  overflow-x: auto;
+}
+
+.editor-toolbar.fullscreen, .CodeMirror-fullscreen {
+  position: absolute !important;
+}
+
+.CodeMirror {
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+  background-color: transparent;
+  border: none;
+  font-size: var(--sn-stylekit-font-size-editor);
+  -webkit-overflow-scrolling: touch;
+}
+
+.editor-toolbar, .editor-toolbar.fullscreen {
+  background-color: var(--sn-stylekit-contrast-background-color);
+  border-bottom: 1px solid var(--sn-stylekit-border-color);
+  overflow: visible;
+}
+.editor-toolbar::before, .editor-toolbar::after, .editor-toolbar.fullscreen::before, .editor-toolbar.fullscreen::after {
+  background: none !important;
+}
+
+.editor-toolbar i.separator {
+  border-left-color: var(--sn-stylekit-contrast-border-color);
+  border-right-color: var(--sn-stylekit-contrast-background-color);
+}
+
+.editor-toolbar button {
+  color: var(--sn-stylekit-info-color) !important;
+  outline: none;
+  border-radius: 0;
+  font-size: var(--sn-stylekit-base-font-size);
+}
+
+.editor-toolbar button.active, .editor-toolbar button:hover {
+  border-color: transparent;
+  background: var(--sn-stylekit-background-color);
+}
+
+.editor-toolbar.disabled-for-preview button:not(.no-disable) {
+  background: inherit;
+}
+
+.editor-preview-active, .editor-preview-active-side {
+  background-color: var(--sn-stylekit-contrast-background-color);
+  border: 0;
+  border-left: 1px solid var(--sn-stylekit-border-color);
+  color: var(--sn-stylekit-contrast-foreground-color);
+  font-size: var(--sn-stylekit-font-size-editor);
+  padding: 10px 15px;
+}
+.editor-preview-active a, .editor-preview-active-side a {
+  color: var(--sn-stylekit-info-color);
+}
+.editor-preview-active img, .editor-preview-active-side img {
+  max-width: 100%;
+}
+.editor-preview-active pre, .editor-preview-active-side pre {
+  background: var(--sn-stylekit-background-color);
+  color: var(--sn-stylekit-foreground-color);
+  border: 1px solid var(--sn-stylekit-border-color);
+  padding: 20px;
+  border-radius: 3px;
+  overflow-x: auto;
+}
+.editor-preview-active table, .editor-preview-active-side table {
+  display: block;
+  margin-bottom: 12px;
+  width: 100%;
+  overflow: auto;
+  border-collapse: collapse;
+  border-spacing: 0px;
+  border-color: var(--sn-stylekit-border-color);
+}
+.editor-preview-active table th, .editor-preview-active table td, .editor-preview-active-side table th, .editor-preview-active-side table td {
+  padding: 6px 13px;
+  border: 1px solid var(--sn-stylekit-border-color);
+}
+.editor-preview-active table tr:nth-child(2n), .editor-preview-active-side table tr:nth-child(2n) {
+  background-color: var(--sn-stylekit-background-color);
+}
+.editor-preview-active p code, .editor-preview-active-side p code {
+  padding: 3px 6px;
+  background-color: var(--sn-stylekit-background-color);
+  color: var(--sn-stylekit-info-color);
+  border: 1px solid var(--sn-stylekit-border-color);
+  border-radius: 3px;
+}
+.editor-preview-active code, .editor-preview-active-side code {
+  font-family: var(--sn-stylekit-monospace-font);
+}
+.editor-preview-active blockquote, .editor-preview-active-side blockquote {
+  padding: 0 0.5rem;
+  margin-left: 0;
+  color: var(--sn-stylekit-neutral-color);
+  border-left: 0.3rem solid var(--sn-stylekit-background-color);
+}
+.editor-preview-active blockquote > :first-child, .editor-preview-active-side blockquote > :first-child {
+  margin-top: 0;
+}
+.editor-preview-active blockquote > :last-child, .editor-preview-active-side blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+.editor-preview-active {
+  border: 0;
+}
+
+.CodeMirror {
+  background-color: var(--sn-stylekit-editor-background-color) !important;
+  color: var(--sn-stylekit-editor-foreground-color) !important;
+  border: 0 !important;
+}
+.CodeMirror .CodeMirror-code .cm-comment {
+  background: var(--sn-stylekit-contrast-background-color);
+  color: var(--sn-stylekit-info-color);
+  font-family: Consolas, monaco, "Ubuntu Mono", courier, monospace !important;
+  font-size: 90%;
+}
+.CodeMirror .CodeMirror-code .cm-comment.CodeMirror-selectedtext {
+  color: var(--sn-stylekit-info-contrast-color) !important;
+  background: var(--sn-stylekit-info-color) !important;
+}
+.CodeMirror .cm-header {
+  color: var(--sn-stylekit-editor-foreground-color);
+}
+.CodeMirror .cm-header.CodeMirror-selectedtext {
+  color: var(--sn-stylekit-info-contrast-color) !important;
+  background: var(--sn-stylekit-info-color) !important;
+}
+.CodeMirror .cm-formatting-header, .CodeMirror .cm-formatting-strong, .CodeMirror .cm-formatting-em {
+  opacity: 0.2;
+}
+.CodeMirror .cm-link.cm-variable-2, .CodeMirror .cm-url.cm-variable-2 {
+  color: var(--sn-stylekit-info-color) !important;
+}
+.CodeMirror .cm-link.cm-variable-2.CodeMirror-selectedtext, .CodeMirror .cm-url.cm-variable-2.CodeMirror-selectedtext {
+  color: var(--sn-stylekit-info-contrast-color) !important;
+  background: var(--sn-stylekit-info-color) !important;
+}
+.CodeMirror .cm-formatting-list-ol {
+  font-weight: bold;
+}
+.CodeMirror .cm-link, .CodeMirror .cm-string {
+  color: var(--sn-stylekit-info-color) !important;
+}
+.CodeMirror .cm-link.CodeMirror-selectedtext, .CodeMirror .cm-string.CodeMirror-selectedtext {
+  color: var(--sn-stylekit-info-contrast-color) !important;
+  background: var(--sn-stylekit-info-color) !important;
+}
+.CodeMirror .CodeMirror-linenumber {
+  color: gray !important;
+}
+
+.CodeMirror-cursor {
+  border-color: var(--sn-stylekit-editor-foreground-color);
+}
+
+.CodeMirror-selected {
+  background: var(--sn-stylekit-info-color) !important;
+}
+
+.CodeMirror-selectedtext {
+  color: var(--sn-stylekit-info-contrast-color);
+  background: var(--sn-stylekit-info-color) !important;
+}
+
+.CodeMirror-gutters {
+  background-color: var(--sn-stylekit-background-color) !important;
+  color: var(--sn-stylekit-editor-foreground-color) !important;
+  border-color: var(--sn-stylekit-border-color) !important;
+}
+
+@media only screen and (max-width: 700px) {
+  .editor-toolbar a.no-mobile {
+    display: inline-block;
+  }
+}
+/*
+  Highlight JS theming
+*/
+.hljs-comment,
+.hljs-quote {
+  font-style: italic;
+  color: var(--sn-stylekit-neutral-color);
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-subst {
+  font-weight: bold;
+}
+
+.hljs-attribute {
+  color: var(--sn-stylekit-warning-color);
+}
+
+.hljs-number,
+.hljs-literal {
+  color: var(--sn-stylekit-info-color);
+}
+
+.hljs-string,
+.hljs-doctag,
+.hljs-formula {
+  color: var(--sn-stylekit-success-color);
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-selector-id {
+  font-weight: bold;
+}
+
+.hljs-subst {
+  font-weight: normal;
+}
+
+.hljs-class .hljs-title,
+.hljs-type,
+.hljs-name {
+  color: var(--sn-stylekit-danger-color);
+  font-weight: bold;
+}
+
+.hljs-tag {
+  color: var(--sn-stylekit-neutral-color);
+}
+
+.hljs-regexp {
+  color: var(--sn-stylekit-success-color);
+}
+
+.hljs-symbol,
+.hljs-bullet,
+.hljs-link {
+  color: var(--sn-stylekit-info-color);
+}
+
+.hljs-built_in,
+.hljs-builtin-name {
+  text-decoration: underline;
+}
+
+.hljs-meta {
+  font-weight: bold;
+}
+
+.hljs-deletion {
+  color: var(--sn-stylekit-danger-color);
+}
+
+.hljs-addition {
+  color: var(--sn-stylekit-success-color);
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}

@@ -1,0 +1,50 @@
+:root {
+  --background-1: #EDE4DA;
+  --background-2: #e8d9c8;
+  --foreground-color: #5C3F27;
+  --border-color: #d9c6b1;
+  --highlight-color: #D68420;
+  --highlight-contrast: #e3ae74;
+  --sn-stylekit-info-color: #a37337;
+  --sn-stylekit-info-contrast-color: #ebcdaa;
+  --sn-stylekit-neutral-color: #a47c5b;
+  --sn-stylekit-neutral-contrast-color: #e7ddd2;
+  --sn-stylekit-success-color: #9f4e03;
+  --sn-stylekit-success-contrast-color: #ebcdaa;
+  --sn-stylekit-warning-color: #b87a02;
+  --sn-stylekit-warning-contrast-color: #ebcdaa;
+  --sn-stylekit-danger-color: #a71428;
+  --sn-stylekit-danger-contrast-color: #ebcdaa;
+  --sn-stylekit-shadow-color: var(--background-2);
+  --sn-stylekit-background-color: var(--background-1);
+  --sn-stylekit-foreground-color: var(--foreground-color);
+  --sn-stylekit-border-color: var(--border-color);
+  --sn-stylekit-paragraph-text-color: var(--foreground-color);
+  --sn-stylekit-contrast-background-color: var(--background-2);
+  --sn-stylekit-contrast-foreground-color: var(--foreground-color);
+  --sn-stylekit-contrast-border-color: var(--border-color);
+  --sn-stylekit-secondary-background-color: var(--background-1);
+  --sn-stylekit-secondary-foreground-color: var(--foreground-color);
+  --sn-stylekit-secondary-border-color: var(--border-color);
+  --sn-stylekit-secondary-contrast-background-color: var(--background-2);
+  --sn-stylekit-secondary-contrast-foreground-color: var(--foreground-color);
+  --sn-stylekit-secondary-contrast-border-color: var(--border-color);
+  --sn-stylekit-editor-background-color: var(--sn-stylekit-background-color);
+  --sn-stylekit-editor-foreground-color: var(--sn-stylekit-foreground-color);
+  --sn-stylekit-scrollbar-track-border-color: var(--border-color);
+  --sn-stylekit-scrollbar-thumb-color: var(--sn-stylekit-info-color);
+  --sn-desktop-titlebar-bg-color: var(--background-1);
+  --sn-desktop-titlebar-border-color: var(--border-color);
+  --sn-desktop-titlebar-ui-color: var(--foreground-color);
+  --sn-desktop-titlebar-ui-hover-color: var(--highlight-color);
+  --sn-stylekit-grey-1: #a37337;
+  --sn-stylekit-grey-4-opacity-variant: #c9995e3d;
+  --sn-stylekit-grey-5: #e9d9c7;
+}
+
+#notes-column .note.selected, .notes .note.selected {
+  background-color: #e9d9c7;
+  color: var(--sn-stylekit-contrast-foreground-color);
+}
+
+/*# sourceMappingURL=dist.css.map */

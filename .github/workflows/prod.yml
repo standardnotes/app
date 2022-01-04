@@ -1,5 +1,9 @@
 name: Prod
 
+concurrency:
+  group: prod_environment
+  cancel-in-progress: true
+
 on:
   push:
     branches: [ main ]

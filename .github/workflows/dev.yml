@@ -1,5 +1,9 @@
 name: Dev
 
+concurrency:
+  group: dev_environment
+  cancel-in-progress: true
+
 on:
   push:
     branches: [ develop ]

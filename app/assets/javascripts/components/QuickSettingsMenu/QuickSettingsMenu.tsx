@@ -89,8 +89,8 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
           } else if (!aIsLayerable && bIsLayerable) {
             return -1;
           } else {
-            return a.package_info.name.toLowerCase() <
-              b.package_info.name.toLowerCase()
+            return a.name.toLowerCase() <
+              b.name.toLowerCase()
               ? -1
               : 1;
           }
