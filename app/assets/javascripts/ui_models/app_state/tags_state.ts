@@ -291,6 +291,7 @@ export class TagsState {
         });
       } else {
         // Legacy code, remove me after we enableNativeSmartTagsFeature for everyone.
+        // See https://app.asana.com/0/0/1201612665552831/f
         const insertedTag = await this.application.insertItem(tag);
         const changedTag = await this.application.changeItem<TagMutator>(
           insertedTag.uuid,
