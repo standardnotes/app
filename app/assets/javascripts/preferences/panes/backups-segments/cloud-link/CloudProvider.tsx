@@ -88,13 +88,11 @@ export const CloudProvider: FunctionComponent<Props> = ({
   const getSettingName = useCallback(() => {
     switch (name) {
       case ProviderType.Dropbox:
-        // TODO: once this task is done, put correct value of `SettingName` in the below `return` statements
-        //  https://app.asana.com/0/1200980603427038/1201605800875423
-        return SettingName.DropboxBackupUrl;
+        return SettingName.DropboxBackupToken;
       case ProviderType.Google:
-        return SettingName.GoogleDriveBackupUrl;
+        return SettingName.GoogleDriveBackupToken;
       case ProviderType.OneDrive:
-        return SettingName.OneDriveBackupUrl;
+        return SettingName.OneDriveBackupToken;
       default:
         throw new Error('Invalid Cloud Provider name');
     }
