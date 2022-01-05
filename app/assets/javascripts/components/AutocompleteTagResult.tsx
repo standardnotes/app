@@ -21,9 +21,6 @@ export const AutocompleteTagResult = observer(
 
     const tagResultRef = useRef<HTMLButtonElement>(null);
 
-    const title = tagResult.title;
-    const prefixTitle = appState.noteTags.getPrefixTitle(tagResult);
-
     const onTagOptionClick = async (tag: SNTag) => {
       await appState.noteTags.addTagToActiveNote(tag);
       appState.noteTags.clearAutocompleteSearch();
@@ -89,10 +86,9 @@ export const AutocompleteTagResult = observer(
       >
         <Icon type="hashtag" className="color-neutral mr-2 min-h-5 min-w-5" />
         <span className="whitespace-nowrap overflow-hidden overflow-ellipsis">
-          {prefixTitle && <span className="grey-2">{prefixTitle}</span>}
           {autocompleteSearchQuery === ''
-            ? title
-            : title
+            ? tagResult.title
+            : tagResult.title
                 .split(new RegExp(`(${autocompleteSearchQuery})`, 'gi'))
                 .map((substring, index) => (
                   <span
