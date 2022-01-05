@@ -1,28 +1,26 @@
 import React from 'react';
-import { CloudProvider, ProviderType } from './CloudProvider';
+import { CloudBackupProvider } from './CloudBackupProvider';
 import { useEffect, useState } from 'preact/hooks';
 import { WebApplication } from '@/ui_models/application';
 import {
   PreferencesGroup,
   PreferencesSegment,
   Text,
-  Title,
+  Title
 } from '@/preferences/components';
 import { HorizontalSeparator } from '@/components/shared/HorizontalSeparator';
 import { FeatureIdentifier } from '@standardnotes/features';
 import { FeatureStatus } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
+import { CloudProvider } from '@standardnotes/settings';
 
-const providerData = [
-  {
-    name: ProviderType.Dropbox,
-  },
-  {
-    name: ProviderType.Google,
-  },
-  {
-    name: ProviderType.OneDrive,
-  },
+const providerData = [{
+  name: CloudProvider.Dropbox
+}, {
+  name: CloudProvider.Google
+}, {
+  name: CloudProvider.OneDrive
+}
 ];
 
 type Props = {
@@ -52,12 +50,12 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
               A <span className={'font-bold'}>Plus</span> or{' '}
               <span className={'font-bold'}>Pro</span> subscription plan is
               required to enable Cloud Backups.{' '}
-              <a target="_blank" href="https://standardnotes.com/features">
+              <a target='_blank' href='https://standardnotes.com/features'>
                 Learn more
               </a>
               .
             </Text>
-            <HorizontalSeparator classes="mt-3 mb-3" />
+            <HorizontalSeparator classes='mt-3 mb-3' />
           </>
         )}
         <div
@@ -76,7 +74,7 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
             <div>
               {providerData.map(({ name }) => (
                 <>
-                  <CloudProvider application={application} name={name} />
+                  <CloudBackupProvider application={application} providerName={name} />
                   <HorizontalSeparator classes={'mt-3 mb-3'} />
                 </>
               ))}

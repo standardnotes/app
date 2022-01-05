@@ -1,3 +1,3 @@
 export * from './DataBackups';
 export * from './EmailBackups';
-export * from './cloud-link';
+export * from './cloud-backups';
