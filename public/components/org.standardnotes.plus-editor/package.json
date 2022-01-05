@@ -1,0 +1,39 @@
+{
+  "name": "sn-plus-editor",
+  "version": "1.5.0",
+  "description": "A rich text editor for Standard Notes",
+  "main": "dist/dist.js",
+  "author": "Standard Notes <hello@standardnotes.org>",
+  "scripts": {
+    "lint": "eslint --ext .js .",
+    "build": "webpack --config webpack.prod.js",
+    "start": "webpack serve --config webpack.dev.js --progress --hot"
+  },
+  "sn": {
+    "main": "dist/index.html"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.13.0",
+    "@babel/core": "^7.13.8",
+    "@babel/eslint-parser": "^7.13.8",
+    "@babel/preset-env": "^7.13.8",
+    "@standardnotes/component-relay": "2.1.0",
+    "@standardnotes/eslint-config-extensions": "1.0.1",
+    "bootstrap": "3.4.1",
+    "css-loader": "^5.1.0",
+    "eslint": "^7.20.0",
+    "html-webpack-plugin": "^5.2.0",
+    "jquery": "^3.5.1",
+    "mini-css-extract-plugin": "^1.3.9",
+    "node-sass": "^5.0.0",
+    "sass-loader": "^11.0.1",
+    "sn-stylekit": "^2.1.1",
+    "style-loader": "^2.0.0",
+    "summernote": "^0.8.18",
+    "webpack": "^5.24.2",
+    "webpack-cli": "^4.5.0",
+    "webpack-dev-server": "^3.11.2",
+    "webpack-merge": "^5.7.3",
+    "webpack-merge-and-include-globally": "^2.3.3"
+  }
+}
