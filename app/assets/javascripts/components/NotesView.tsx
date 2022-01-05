@@ -230,7 +230,6 @@ const NotesView: FunctionComponent<Props> = observer(
             <NotesList
               notes={renderedNotes}
               selectedNotes={selectedNotes}
-              application={application}
               appState={appState}
               displayOptions={displayOptions}
               paginate={paginate}
