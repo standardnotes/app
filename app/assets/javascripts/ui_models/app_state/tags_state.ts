@@ -86,6 +86,8 @@ export class TagsState {
     this.previouslySelected_ = undefined;
     this.editing_ = undefined;
 
+    this.smartTags = this.application.getSmartTags();
+
     makeObservable(this, {
       tags: observable.ref,
       smartTags: observable.ref,
