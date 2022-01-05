@@ -89,10 +89,8 @@ export const Navigation: FunctionComponent<Props> = observer(
                 </div>
               </div>
               <div className="scrollable">
-                <div className="infinite-scroll">
-                  <SmartTagsSection appState={appState} />
-                  <TagsSection appState={appState} />
-                </div>
+                <SmartTagsSection appState={appState} />
+                <TagsSection appState={appState} />
               </div>
             </div>
           )}
