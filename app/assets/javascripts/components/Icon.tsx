@@ -23,7 +23,6 @@ import AuthenticatorIcon from '../../icons/ic-authenticator.svg';
 import SpreadsheetsIcon from '../../icons/ic-spreadsheets.svg';
 import TasksIcon from '../../icons/ic-tasks.svg';
 import MarkdownIcon from '../../icons/ic-markdown.svg';
-import NotesIcon from '../../icons/ic-notes.svg';
 import CodeIcon from '../../icons/ic-code.svg';
 
 import AccessibilityIcon from '../../icons/ic-accessibility.svg';
@@ -70,7 +69,6 @@ import { FunctionalComponent } from 'preact';
 const ICONS = {
   'menu-arrow-down-alt': MenuArrowDownAlt,
   'menu-arrow-right': MenuArrowRight,
-  notes: NotesIcon,
   'arrows-sort-up': ArrowsSortUpIcon,
   'arrows-sort-down': ArrowsSortDownIcon,
   lock: LockIcon,

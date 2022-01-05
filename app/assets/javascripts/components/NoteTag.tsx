@@ -32,7 +32,7 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
   const onTagClick = (event: MouseEvent) => {
     if (tagClicked && event.target !== deleteTagRef.current) {
       setTagClicked(false);
-      appState.selectedTag = tag;
+      appState.setSelectedTag(tag);
     } else {
       setTagClicked(true);
     }
