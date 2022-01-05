@@ -1,3 +1,5 @@
+import { Icon } from '@/components/Icon';
+import { usePremiumModal } from '@/components/Premium';
 import {
   FeaturesState,
   TAG_FOLDERS_FEATURE_NAME,
@@ -5,56 +7,36 @@ import {
 import { TagsState } from '@/ui_models/app_state/tags_state';
 import '@reach/tooltip/styles.css';
 import { SNTag } from '@standardnotes/snjs';
-import { computed, runInAction } from 'mobx';
+import { computed } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent, JSX } from 'preact';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { useDrag, useDrop } from 'react-dnd';
-import { Icon } from './Icon';
-import { usePremiumModal } from './Premium';
-
-export enum ItemTypes {
-  TAG = 'TAG',
-}
-
-export type DropItemTag = { uuid: string };
-
-export type DropItem = DropItemTag;
-
-export type DropProps = { isOver: boolean; canDrop: boolean };
+import { DropItem, DropProps, ItemTypes } from './dragndrop';
 
 type Props = {
   tag: SNTag;
   tagsState: TagsState;
-  selectTag: (tag: SNTag) => void;
-  removeTag: (tag: SNTag) => void;
-  saveTag: (tag: SNTag, newTitle: string) => void;
-  appState: TagsListState;
+  features: FeaturesState;
   level: number;
 };
 
-export type TagsListState = {
-  readonly selectedTag: SNTag | undefined;
-  tags: TagsState;
-  editingTag: SNTag | undefined;
-  features: FeaturesState;
-};
-
 export const TagsListItem: FunctionComponent<Props> = observer(
-  ({ tag, selectTag, saveTag, removeTag, appState, tagsState, level }) => {
+  ({ tag, features, tagsState, level }) => {
     const [title, setTitle] = useState(tag.title || '');
     const inputRef = useRef<HTMLInputElement>(null);
 
-    const isSelected = appState.selectedTag === tag;
-    const isEditing = appState.editingTag === tag;
-    const noteCounts = computed(() => appState.tags.getNotesCount(tag));
+    const isSelected = tagsState.selected === tag;
+    const isEditing = tagsState.editingTag === tag;
+    const noteCounts = computed(() => tagsState.getNotesCount(tag));
 
     const childrenTags = computed(() => tagsState.getChildren(tag)).get();
     const hasChildren = childrenTags.length > 0;
 
-    const hasFolders = tagsState.hasFolders;
-    const isNativeFoldersEnabled = appState.features.enableNativeFoldersFeature;
+    const hasFolders = features.hasFolders;
+    const isNativeFoldersEnabled = features.enableNativeFoldersFeature;
     const hasAtLeastOneFolder = tagsState.hasAtLeastOneFolder;
+
     const premiumModal = usePremiumModal();
 
     const [showChildren, setShowChildren] = useState(hasChildren);
@@ -80,16 +62,13 @@ export const TagsListItem: FunctionComponent<Props> = observer(
     );
 
     const selectCurrentTag = useCallback(() => {
-      if (isEditing || isSelected) {
-        return;
-      }
-      selectTag(tag);
-    }, [isSelected, isEditing, selectTag, tag]);
+      tagsState.selected = tag;
+    }, [tagsState, tag]);
 
     const onBlur = useCallback(() => {
-      saveTag(tag, title);
+      tagsState.save(tag, title);
       setTitle(tag.title);
-    }, [tag, saveTag, title, setTitle]);
+    }, [tagsState, tag, title, setTitle]);
 
     const onInput = useCallback(
       (e: JSX.TargetedEvent<HTMLInputElement>) => {
@@ -116,18 +95,16 @@ export const TagsListItem: FunctionComponent<Props> = observer(
     }, [inputRef, isEditing]);
 
     const onClickRename = useCallback(() => {
-      runInAction(() => {
-        appState.editingTag = tag;
-      });
-    }, [appState, tag]);
+      tagsState.editingTag = tag;
+    }, [tagsState, tag]);
 
     const onClickSave = useCallback(() => {
       inputRef.current?.blur();
     }, [inputRef]);
 
     const onClickDelete = useCallback(() => {
-      removeTag(tag);
-    }, [removeTag, tag]);
+      tagsState.remove(tag);
+    }, [tagsState, tag]);
 
     const [, dragRef] = useDrag(
       () => ({
@@ -255,10 +232,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
                   key={tag.uuid}
                   tag={tag}
                   tagsState={tagsState}
-                  selectTag={selectTag}
-                  saveTag={saveTag}
-                  removeTag={removeTag}
-                  appState={appState}
+                  features={features}
                 />
               );
             })}

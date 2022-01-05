@@ -9264,10 +9264,10 @@ slice-ansi@^5.0.0:
     ansi-styles "^6.0.0"
     is-fullwidth-code-point "^4.0.0"
 
-sn-stylekit@5.2.20:
-  version "5.2.20"
-  resolved "https://registry.yarnpkg.com/sn-stylekit/-/sn-stylekit-5.2.20.tgz#c18f40ff3aaf4c59af89152439a8efbdde35f2dd"
-  integrity sha512-JymHBiZOzQPfCqHYgnVPSA2PwJqiKR268qqQoEMqI85MMAWSG3WYzuKEbd0LgfIQAKLElCxJjeZkrhejyRg+2A==
+sn-stylekit@5.2.21:
+  version "5.2.21"
+  resolved "https://registry.yarnpkg.com/sn-stylekit/-/sn-stylekit-5.2.21.tgz#5aec6c329949bda64a1e3c563ee594b141295d27"
+  integrity sha512-rjlgo42A/kx+M4iY7HYRpnQyp4dLb2HQpEMHz+CYumOzTf/lsRy0Up5HI1haNK4/JMmpq36Eb/7BMDmvLpdXnQ==
   dependencies:
     "@reach/listbox" "^0.15.0"
     "@reach/menu-button" "^0.15.1"

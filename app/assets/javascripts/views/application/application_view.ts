@@ -8,7 +8,7 @@ import {
   Challenge,
   removeFromArray,
 } from '@standardnotes/snjs';
-import { PANEL_NAME_NOTES, PANEL_NAME_TAGS } from '@/views/constants';
+import { PANEL_NAME_NOTES, PANEL_NAME_NAVIGATION } from '@/views/constants';
 import { STRING_DEFAULT_FILE_ERROR } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { alertDialog } from '@/services/alertService';
@@ -24,7 +24,7 @@ class ApplicationViewCtrl extends PureViewCtrl<
 > {
   public platformString: string;
   private notesCollapsed = false;
-  private tagsCollapsed = false;
+  private navigationCollapsed = false;
 
   /**
    * To prevent stale state reads (setState is async),
@@ -136,15 +136,15 @@ class ApplicationViewCtrl extends PureViewCtrl<
       if (panel === PANEL_NAME_NOTES) {
         this.notesCollapsed = collapsed;
       }
-      if (panel === PANEL_NAME_TAGS) {
-        this.tagsCollapsed = collapsed;
+      if (panel === PANEL_NAME_NAVIGATION) {
+        this.navigationCollapsed = collapsed;
       }
       let appClass = '';
       if (this.notesCollapsed) {
         appClass += 'collapsed-notes';
       }
-      if (this.tagsCollapsed) {
-        appClass += ' collapsed-tags';
+      if (this.navigationCollapsed) {
+        appClass += ' collapsed-navigation';
       }
       this.setState({ appClass });
     } else if (eventName === AppStateEvent.WindowDidFocus) {

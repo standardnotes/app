@@ -1,4 +1,4 @@
-import { SNNote, ContentType, SNTag, UuidString } from '@standardnotes/snjs';
+import { ContentType, SNNote, SNTag, UuidString } from '@standardnotes/snjs';
 import { action, computed, makeObservable, observable } from 'mobx';
 import { WebApplication } from '../application';
 import { AppState } from './app_state';
@@ -193,5 +193,42 @@ export class NoteTagsState {
       this.application.sync();
       this.reloadTags();
     }
+  }
+
+  getSortedTagsForNote(note: SNNote): SNTag[] {
+    const tags = this.application.getSortedTagsForNote(note);
+
+    const sortFunction = (tagA: SNTag, tagB: SNTag): number => {
+      const a = this.getLongTitle(tagA);
+      const b = this.getLongTitle(tagB);
+
+      if (a < b) {
+        return -1;
+      }
+      if (b > a) {
+        return 1;
+      }
+      return 0;
+    };
+
+    return tags.sort(sortFunction);
+  }
+
+  getPrefixTitle(tag: SNTag): string | undefined {
+    const hierarchy = this.application.getTagParentChain(tag);
+
+    if (hierarchy.length === 0) {
+      return undefined;
+    }
+
+    const prefixTitle = hierarchy.map((tag) => tag.title).join('/');
+    return `${prefixTitle}/`;
+  }
+
+  getLongTitle(tag: SNTag): string {
+    const hierarchy = this.application.getTagParentChain(tag);
+    const tags = [...hierarchy, tag];
+    const longTitle = tags.map((tag) => tag.title).join('/');
+    return longTitle;
   }
 }

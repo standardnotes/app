@@ -1,3 +1,5 @@
+import { Icon } from '@/components/Icon';
+import { usePremiumModal } from '@/components/Premium';
 import {
   FeaturesState,
   TAG_FOLDERS_FEATURE_NAME,
@@ -5,9 +7,7 @@ import {
 import { TagsState } from '@/ui_models/app_state/tags_state';
 import { observer } from 'mobx-react-lite';
 import { useDrop } from 'react-dnd';
-import { Icon } from './Icon';
-import { usePremiumModal } from './Premium';
-import { DropItem, DropProps, ItemTypes } from './TagsListItem';
+import { DropItem, DropProps, ItemTypes } from './dragndrop';
 
 type Props = {
   tagsState: TagsState;
@@ -18,7 +18,7 @@ export const RootTagDropZone: React.FC<Props> = observer(
   ({ tagsState, featuresState }) => {
     const premiumModal = usePremiumModal();
     const isNativeFoldersEnabled = featuresState.enableNativeFoldersFeature;
-    const hasFolders = tagsState.hasFolders;
+    const hasFolders = featuresState.hasFolders;
 
     const [{ isOver, canDrop }, dropRef] = useDrop<DropItem, void, DropProps>(
       () => ({
