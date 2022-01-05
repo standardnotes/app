@@ -21,33 +21,32 @@ type Props = {
   application: WebApplication;
 };
 
-type EditorOption = DropdownItem & {
+type EditorOption = {
+  icon?: IconType;
+  label: string;
   value: FeatureIdentifier | 'plain-editor';
 };
 
-export const getIconAndTintForEditor = (
-  identifier: FeatureIdentifier | undefined
-): [IconType, number] => {
+const getEditorIconType = (identifier: string): IconType | null => {
   switch (identifier) {
     case FeatureIdentifier.BoldEditor:
     case FeatureIdentifier.PlusEditor:
-      return ['rich-text', 1];
+      return 'rich-text';
     case FeatureIdentifier.MarkdownBasicEditor:
     case FeatureIdentifier.MarkdownMathEditor:
     case FeatureIdentifier.MarkdownMinimistEditor:
     case FeatureIdentifier.MarkdownProEditor:
-      return ['markdown', 2];
+      return 'markdown';
     case FeatureIdentifier.TokenVaultEditor:
-      return ['authenticator', 6];
+      return 'authenticator';
     case FeatureIdentifier.SheetsEditor:
-      return ['spreadsheets', 5];
+      return 'spreadsheets';
     case FeatureIdentifier.TaskEditor:
-      return ['tasks', 3];
+      return 'tasks';
     case FeatureIdentifier.CodeEditor:
-      return ['code', 4];
-    default:
-      return ['plain-text', 1];
+      return 'code';
   }
+  return null;
 };
 
 const makeEditorDefault = (
@@ -92,19 +91,17 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
       .componentsForArea(ComponentArea.Editor)
       .map((editor): EditorOption => {
         const identifier = editor.package_info.identifier;
-        const [iconType, tint] = getIconAndTintForEditor(identifier);
+        const iconType = getEditorIconType(identifier);
 
         return {
           label: editor.name,
           value: identifier,
           ...(iconType ? { icon: iconType } : null),
-          ...(tint ? { iconClassName: `color-accessory-tint-${tint}` } : null),
         };
       })
       .concat([
         {
           icon: 'plain-text',
-          iconClassName: `color-accessory-tint-1`,
           label: 'Plain Editor',
           value: 'plain-editor',
         },

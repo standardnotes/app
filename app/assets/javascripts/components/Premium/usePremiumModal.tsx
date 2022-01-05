@@ -1,5 +1,3 @@
-import { FeaturesState } from '@/ui_models/app_state/features_state';
-import { observer } from 'mobx-react-lite';
 import { FunctionalComponent } from 'preact';
 import { useCallback, useContext, useState } from 'preact/hooks';
 import { createContext } from 'react';
@@ -23,31 +21,29 @@ export const usePremiumModal = (): PremiumModalContextData => {
   return value;
 };
 
-interface Props {
-  state: FeaturesState;
-}
+export const PremiumModalProvider: FunctionalComponent = ({ children }) => {
+  const [featureName, setFeatureName] = useState<null | string>(null);
 
-export const PremiumModalProvider: FunctionalComponent<Props> = observer(
-  ({ state, children }) => {
-    const featureName = state._premiumAlertFeatureName;
-    const activate = state.showPremiumAlert;
-    const close = state.closePremiumAlert;
+  const activate = setFeatureName;
 
-    const showModal = !!featureName;
+  const closeModal = useCallback(() => {
+    setFeatureName(null);
+  }, [setFeatureName]);
 
-    return (
-      <>
-        {showModal && (
-          <PremiumFeaturesModal
-            showModal={!!featureName}
-            featureName={featureName}
-            onClose={close}
-          />
-        )}
-        <PremiumModalProvider_ value={{ activate }}>
-          {children}
-        </PremiumModalProvider_>
-      </>
-    );
-  }
-);
+  const showModal = !!featureName;
+
+  return (
+    <>
+      {showModal && (
+        <PremiumFeaturesModal
+          showModal={!!featureName}
+          featureName={featureName}
+          onClose={closeModal}
+        />
+      )}
+      <PremiumModalProvider_ value={{ activate }}>
+        {children}
+      </PremiumModalProvider_>
+    </>
+  );
+};

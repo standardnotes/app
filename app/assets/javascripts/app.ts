@@ -20,32 +20,23 @@ declare global {
   }
 }
 
-import { ComponentViewDirective } from '@/components/ComponentView';
-import { NavigationDirective } from '@/components/Navigation';
-import { PinNoteButtonDirective } from '@/components/PinNoteButton';
-import { IsWebPlatform, WebAppVersion } from '@/version';
-import {
-  ApplicationGroupView,
-  ApplicationView, ChallengeModal,
-  FooterView, NoteGroupViewDirective,
-  NoteViewDirective
-} from '@/views';
 import { SNLog } from '@standardnotes/snjs';
 import angular from 'angular';
-import { AccountMenuDirective } from './components/AccountMenu';
-import { ConfirmSignoutDirective } from './components/ConfirmSignoutModal';
-import { IconDirective } from './components/Icon';
-import { MultipleSelectedNotesDirective } from './components/MultipleSelectedNotes';
-import { NoAccountWarningDirective } from './components/NoAccountWarning';
-import { NotesContextMenuDirective } from './components/NotesContextMenu';
-import { NotesListOptionsDirective } from './components/NotesListOptionsMenu';
-import { NotesOptionsPanelDirective } from './components/NotesOptionsPanel';
-import { NotesViewDirective } from './components/NotesView';
-import { NoteTagsContainerDirective } from './components/NoteTagsContainer';
-import { ProtectedNoteOverlayDirective } from './components/ProtectedNoteOverlay';
-import { QuickSettingsMenuDirective } from './components/QuickSettingsMenu/QuickSettingsMenu';
-import { SearchOptionsDirective } from './components/SearchOptions';
-import { SessionsModalDirective } from './components/SessionsModal';
+import { configRoutes } from './routes';
+
+import { ApplicationGroup } from './ui_models/application_group';
+import { AccountSwitcher } from './views/account_switcher/account_switcher';
+
+import {
+  ApplicationGroupView,
+  ApplicationView,
+  NoteGroupViewDirective,
+  NoteViewDirective,
+  TagsView,
+  FooterView,
+  ChallengeModal,
+} from '@/views';
+
 import {
   autofocus,
   clickOutside,
@@ -55,31 +46,49 @@ import {
   infiniteScroll,
   lowercase,
   selectOnFocus,
-  snEnter
+  snEnter,
 } from './directives/functional';
+
 import {
   ActionsMenu,
   EditorMenu,
-  HistoryMenu,
   InputModal,
   MenuRow,
   PanelResizer,
   PasswordWizard,
   PermissionsModal,
   RevisionPreviewModal,
-  SyncResolutionMenu
+  HistoryMenu,
+  SyncResolutionMenu,
 } from './directives/views';
+
 import { trusted } from './filters';
-import { PreferencesDirective } from './preferences';
-import { PurchaseFlowDirective } from './purchaseFlow';
-import { configRoutes } from './routes';
-import { Bridge } from './services/bridge';
+import { isDev } from './utils';
 import { BrowserBridge } from './services/browserBridge';
 import { startErrorReporting } from './services/errorReporting';
 import { StartApplication } from './startApplication';
-import { ApplicationGroup } from './ui_models/application_group';
-import { isDev } from './utils';
-import { AccountSwitcher } from './views/account_switcher/account_switcher';
+import { Bridge } from './services/bridge';
+import { SessionsModalDirective } from './components/SessionsModal';
+import { NoAccountWarningDirective } from './components/NoAccountWarning';
+import { ProtectedNoteOverlayDirective } from './components/ProtectedNoteOverlay';
+import { SearchOptionsDirective } from './components/SearchOptions';
+import { AccountMenuDirective } from './components/AccountMenu';
+import { ConfirmSignoutDirective } from './components/ConfirmSignoutModal';
+import { MultipleSelectedNotesDirective } from './components/MultipleSelectedNotes';
+import { NotesContextMenuDirective } from './components/NotesContextMenu';
+import { NotesOptionsPanelDirective } from './components/NotesOptionsPanel';
+import { IconDirective } from './components/Icon';
+import { NoteTagsContainerDirective } from './components/NoteTagsContainer';
+import { PreferencesDirective } from './preferences';
+import { WebAppVersion, IsWebPlatform } from '@/version';
+import { NotesListOptionsDirective } from './components/NotesListOptionsMenu';
+import { PurchaseFlowDirective } from './purchaseFlow';
+import { QuickSettingsMenuDirective } from './components/QuickSettingsMenu/QuickSettingsMenu';
+import { ComponentViewDirective } from '@/components/ComponentView';
+import { TagsListDirective } from '@/components/TagsList';
+import { NotesViewDirective } from './components/NotesView';
+import { PinNoteButtonDirective } from '@/components/PinNoteButton';
+import { TagsSectionDirective } from './components/Tags/TagsSection';
 
 function reloadHiddenFirefoxTab(): boolean {
   /**
@@ -134,6 +143,7 @@ const startApplication: StartApplication = async function startApplication(
     .directive('applicationView', () => new ApplicationView())
     .directive('noteGroupView', () => new NoteGroupViewDirective())
     .directive('noteView', () => new NoteViewDirective())
+    .directive('tagsView', () => new TagsView())
     .directive('footerView', () => new FooterView());
 
   // Directives - Functional
@@ -178,7 +188,8 @@ const startApplication: StartApplication = async function startApplication(
     .directive('notesListOptionsMenu', NotesListOptionsDirective)
     .directive('icon', IconDirective)
     .directive('noteTagsContainer', NoteTagsContainerDirective)
-    .directive('navigation', NavigationDirective)
+    .directive('tagsList', TagsListDirective)
+    .directive('tagsSection', TagsSectionDirective)
     .directive('preferences', PreferencesDirective)
     .directive('purchaseFlow', PurchaseFlowDirective)
     .directive('notesView', NotesViewDirective)

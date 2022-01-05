@@ -495,9 +495,7 @@ export class NotesViewState {
     this.reloadNotesDisplayOptions();
     this.reloadNotes();
 
-    const hasSomeNotes = this.notes.length > 0;
-
-    if (hasSomeNotes) {
+    if (this.notes.length > 0) {
       this.selectFirstNote();
     } else if (dbLoaded) {
       if (
