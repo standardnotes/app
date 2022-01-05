@@ -151,7 +151,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
           }`}
           onClick={selectCurrentTag}
           ref={dragRef}
-          style={{ paddingLeft: `${level * 21 + 10}px` }}
+          style={{ paddingLeft: `${level * 21 + 14}px` }}
         >
           {!tag.errorDecrypting ? (
             <div className="tag-info" title={title} ref={dropRef}>

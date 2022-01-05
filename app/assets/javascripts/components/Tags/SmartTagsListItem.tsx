@@ -95,7 +95,7 @@ export const SmartTagsListItem: FunctionComponent<Props> = observer(
             isFaded ? 'faded' : ''
           }`}
           onClick={selectCurrentTag}
-          style={{ paddingLeft: `${level + 0.5}rem` }}
+          style={{ paddingLeft: `${level * 21 + 14}px` }}
         >
           {!tag.errorDecrypting ? (
             <div className="tag-info">

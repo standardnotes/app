@@ -13,7 +13,7 @@ export const TagsSection: FunctionComponent<Props> = observer(
   ({ appState }) => {
     return (
       <section>
-        <div className="tags-title-section section-title-bar">
+        <div className="section-title-bar">
           <div className="section-title-bar-header">
             <TagsSectionTitle features={appState.features} />
             <TagsSectionAddButton

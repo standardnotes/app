@@ -1,10 +1,6 @@
 @import './scrollbar';
 
-#tags-column {
-  width: 100%;
-}
-
-.tags .scrollable {
+#navigation .scrollable {
   @include scrollbars(0.4rem, var(--sn-stylekit-info-color), rgba(0, 0, 0, 0));
 
   height: 100%;
@@ -24,8 +20,8 @@
   // }
 }
 
-.tags {
-  width: 180px;
+#navigation {
+  width: 100%;
   flex-grow: 0;
 
   user-select: none;
@@ -34,18 +30,18 @@
   -webkit-user-select: none;
 
   &,
-  #tags-content {
-    background-color: var(--sn-stylekit-secondary-background-color);
+  #navigation-content {
     display: flex;
     flex-direction: column;
+    background-color: var(--sn-stylekit-secondary-background-color);
   }
 
-  .tags-title-section {
+  .section-title-bar {
     color: var(--sn-stylekit-secondary-foreground-color);
     padding-top: 15px;
     padding-bottom: 8px;
-    padding-left: 12px;
-    padding-right: 12px;
+    padding-left: 14px;
+    padding-right: 14px;
     font-size: 12px;
   }
 
@@ -87,7 +83,7 @@
     line-height: 18px;
 
     min-height: 30px;
-    padding: 5px 12px;
+    padding: 5px 14px;
     cursor: pointer;
     transition: height 0.1s ease-in-out;
     position: relative;
