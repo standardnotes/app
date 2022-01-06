@@ -138,7 +138,7 @@ notes-view {
       flex-flow: column;
       align-items: center;
       justify-content: space-between;
-      padding: 0.9rem;
+      padding: 1rem;
       padding-right: 0.75rem;
       margin-right: 0;
     }
@@ -146,9 +146,13 @@ notes-view {
     .meta {
       flex-grow: 1;
       min-width: 0;
-      padding: 0.9rem;
+      padding: 1rem;
       padding-left: 0;
       border-bottom: 1px solid var(--sn-stylekit-border-color);
+
+      &.icon-hidden {
+        padding-left: 1rem;
+      }
 
       .name {
         display: flex;
