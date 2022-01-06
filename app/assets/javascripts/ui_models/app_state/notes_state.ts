@@ -8,6 +8,7 @@ import {
   ContentType,
   SNTag,
   ChallengeReason,
+  NoteViewController,
 } from '@standardnotes/snjs';
 import {
   makeObservable,
@@ -17,7 +18,6 @@ import {
   runInAction,
 } from 'mobx';
 import { WebApplication } from '../application';
-import { NoteViewController } from '@/views/note_view/note_view_controller';
 import { AppState } from './app_state';
 
 export class NotesState {
