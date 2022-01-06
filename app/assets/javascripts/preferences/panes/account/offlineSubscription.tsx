@@ -18,7 +18,7 @@ interface IProps {
 }
 
 export const OfflineSubscription: FunctionalComponent<IProps> = observer(
-  ({ application, appState }) => {
+  ({ application }) => {
     const [activationCode, setActivationCode] = useState('');
     const [isSuccessfullyActivated, setIsSuccessfullyActivated] =
       useState(false);
@@ -33,7 +33,9 @@ export const OfflineSubscription: FunctionalComponent<IProps> = observer(
     }, [application]);
 
     const shouldShowOfflineSubscription = () => {
-      return !application.hasAccount() || application.isThirdPartyHostUsed();
+      return !application.hasAccount() ||
+        application.isThirdPartyHostUsed() ||
+        hasUserPreviouslyStoredCode;
     };
 
     const handleSubscriptionCodeSubmit = async (
