@@ -2628,7 +2628,7 @@
   dependencies:
     "@standardnotes/auth" "^3.8.1"
 
-"@standardnotes/features@1.20.4", "@standardnotes/features@^1.20.4":
+"@standardnotes/features@1.20.4":
   version "1.20.4"
   resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.20.4.tgz#85510217adfa703db59e73132f50348184276e62"
   integrity sha512-HVl4dRlcDYGkLWY0Gl9z6kM1Gpria9UM3+8oeXyMsEe4T9Uye3s/SOKVWA++1ES7j2mkxcXXuW4wmmMuFYsRxA==
@@ -2636,10 +2636,18 @@
     "@standardnotes/auth" "3.8.3"
     "@standardnotes/common" "1.2.1"
 
-"@standardnotes/settings@^1.8.0", "@standardnotes/settings@^1.8.1":
-  version "1.8.1"
-  resolved "https://registry.yarnpkg.com/@standardnotes/settings/-/settings-1.8.1.tgz#a448f2b48a994dab2a84dc93255cd2f9ea0df6af"
-  integrity sha512-hQFg4xYkvI7WWRCxYjbyiNW7EjaUlmASGXsd/AoYlHGrlYhTnOEajBEh3sSMMV0b7UUps0wGZcGjQMpq5fabuw==
+"@standardnotes/features@^1.20.5":
+  version "1.20.5"
+  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.20.5.tgz#443e3ae84d13f0aaa35708c5c237dac8041cb50d"
+  integrity sha512-4QQeWLk2frEF9UYOfnuQoulkUJ3PooVLasPUA+zva+KIokBiyPmVPsi3HAYXlHqowu+lDhKU2pUklLhm1ePvJw==
+  dependencies:
+    "@standardnotes/auth" "3.8.3"
+    "@standardnotes/common" "1.2.1"
+
+"@standardnotes/settings@^1.9.0":
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/settings/-/settings-1.9.0.tgz#0f01da5f6782363e4d77ee584b40f8614c555626"
+  integrity sha512-y+Mh7NuXtekEDr4PAvzg9KcRaCdd+0zlTXWO2D5MG28lLv/uhZmSsyWxZCVZqW3Rx6vz3c9IJdi7SoXN51gzSQ==
 
 "@standardnotes/sncrypto-common@1.5.2", "@standardnotes/sncrypto-common@^1.5.2":
   version "1.5.2"
@@ -2655,16 +2663,16 @@
     buffer "^6.0.3"
     libsodium-wrappers "^0.7.9"
 
-"@standardnotes/snjs@2.31.22":
-  version "2.31.22"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.31.22.tgz#0e22f4dc8e91121a60d9a90cd1cc2d2305e3173c"
-  integrity sha512-DFM1c+H9HYk392SXB8eQqiwloGfALRoyfgGJ8I1/JZDk5z7AO46s4+FfIaCfkfLSawpo1nLxd7m28yOQN1QZdg==
+"@standardnotes/snjs@2.32.0":
+  version "2.32.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.32.0.tgz#f621dbae812ff098a47619a13576cdae0a899eab"
+  integrity sha512-qzJoazY7l8AO5FHJX9YRiDeBGvlfGHulmPreO/HzfmafXJWtKi82c+hGPy+LvB0RsFiGEpA8OZ1EMtVREcCkvg==
   dependencies:
     "@standardnotes/auth" "3.8.1"
     "@standardnotes/common" "1.2.1"
     "@standardnotes/domain-events" "2.5.1"
-    "@standardnotes/features" "^1.20.4"
-    "@standardnotes/settings" "^1.8.1"
+    "@standardnotes/features" "^1.20.5"
+    "@standardnotes/settings" "^1.9.0"
     "@standardnotes/sncrypto-common" "1.5.2"
 
 "@svgr/babel-plugin-add-jsx-attribute@^5.4.0":
