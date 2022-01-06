@@ -46,6 +46,9 @@ flex flex-col py-2 bottom-0 left-2 absolute';
     const [hideProtected, setHideProtected] = useState(() =>
       application.getPreference(PrefKey.NotesHideProtected, false)
     );
+    const [hideEditorIcon, setHideEditorIcon] = useState(() =>
+      application.getPreference(PrefKey.NotesHideEditorIcon, false)
+    );
 
     const toggleSortReverse = () => {
       application.setPreference(PrefKey.SortNotesReverse, !sortReverse);
@@ -108,9 +111,14 @@ flex flex-col py-2 bottom-0 left-2 absolute';
       application.setPreference(PrefKey.NotesHideProtected, !hideProtected);
     };
 
+    const toggleEditorIcon = () => {
+      setHideEditorIcon(!hideEditorIcon);
+      application.setPreference(PrefKey.NotesHideEditorIcon, !hideEditorIcon);
+    };
+
     const menuRef = useRef<HTMLDivElement>(null);
 
-    useCloseOnClickOutside(menuRef as any, (open: boolean) => {
+    useCloseOnClickOutside(menuRef, (open: boolean) => {
       if (!open) {
         closeDisplayOptionsMenu();
       }
@@ -200,6 +208,14 @@ flex flex-col py-2 bottom-0 left-2 absolute';
             onChange={toggleHideTags}
           >
             Show tags
+          </MenuItem>
+          <MenuItem
+            type={MenuItemType.SwitchButton}
+            className="py-1 hover:bg-contrast focus:bg-info-backdrop"
+            checked={!hideEditorIcon}
+            onChange={toggleEditorIcon}
+          >
+            Show editor icon
           </MenuItem>
           <div className="h-1px my-2 bg-border"></div>
           <div className="px-3 py-1 text-xs font-semibold color-text uppercase">

@@ -15,6 +15,7 @@ type Props = {
   hideDate: boolean;
   hidePreview: boolean;
   hideTags: boolean;
+  hideEditorIcon: boolean;
   onClick: () => void;
   onContextMenu: (e: MouseEvent) => void;
   selected: boolean;
@@ -61,6 +62,7 @@ export const NotesListItem: FunctionComponent<Props> = ({
   hideDate,
   hidePreview,
   hideTags,
+  hideEditorIcon,
   note,
   onClick,
   onContextMenu,
@@ -81,14 +83,16 @@ export const NotesListItem: FunctionComponent<Props> = ({
       onClick={onClick}
       onContextMenu={onContextMenu}
     >
-      <div className="icon">
-        <Icon
-          ariaLabel={`Icon for ${editorName}`}
-          type={icon}
-          className={`color-accessory-tint-${tint}`}
-        />
-      </div>
-      <div className="meta">
+      {!hideEditorIcon && (
+        <div className="icon">
+          <Icon
+            ariaLabel={`Icon for ${editorName}`}
+            type={icon}
+            className={`color-accessory-tint-${tint}`}
+          />
+        </div>
+      )}
+      <div className={`meta ${hideEditorIcon ? 'icon-hidden' : ''}`}>
         <div className="name">
           <div>{note.title}</div>
           <div className="flag-icons">
