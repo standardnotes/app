@@ -2,7 +2,6 @@ import { Bridge } from '@/services/bridge';
 import { storage, StorageKey } from '@/services/localStorage';
 import { WebApplication } from '@/ui_models/application';
 import { AccountMenuState } from '@/ui_models/app_state/account_menu_state';
-import { NoteViewController } from '@/views/note_view/note_view_controller';
 import { isDesktopApplication } from '@/utils';
 import {
   ApplicationEvent,
@@ -17,6 +16,7 @@ import {
   SNSmartTag,
   ComponentViewer,
   SNTag,
+  NoteViewController,
 } from '@standardnotes/snjs';
 import pull from 'lodash/pull';
 import {

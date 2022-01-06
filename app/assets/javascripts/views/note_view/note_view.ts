@@ -1,5 +1,4 @@
 import { STRING_SAVING_WHILE_DOCUMENT_HIDDEN } from './../../strings';
-import { NoteViewController } from '@/views/note_view/note_view_controller';
 import { WebApplication } from '@/ui_models/application';
 import { PanelPuppet, WebDirective } from '@/types';
 import angular from 'angular';
@@ -20,6 +19,7 @@ import {
   TransactionalMutation,
   ItemMutator,
   ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
+  NoteViewController,
 } from '@standardnotes/snjs';
 import { debounce, isDesktopApplication } from '@/utils';
 import { KeyboardModifier, KeyboardKey } from '@/services/ioService';
@@ -108,6 +108,7 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
   private removeTabObserver?: () => void;
   private removeComponentStreamObserver?: () => void;
   private removeComponentManagerObserver?: () => void;
+  private removeInnerNoteObserver?: () => void;
 
   private protectionTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
@@ -139,6 +140,8 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
   deinit() {
     this.removeComponentStreamObserver?.();
     (this.removeComponentStreamObserver as unknown) = undefined;
+    this.removeInnerNoteObserver?.();
+    (this.removeInnerNoteObserver as unknown) = undefined;
     this.removeComponentManagerObserver?.();
     (this.removeComponentManagerObserver as unknown) = undefined;
     this.removeTrashKeyObserver?.();
@@ -167,9 +170,10 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
   $onInit() {
     super.$onInit();
     this.registerKeyboardShortcuts();
-    this.controller.setOnNoteInnerValueChange((note, source) => {
-      this.onNoteInnerChange(note, source);
-    });
+    this.removeInnerNoteObserver =
+      this.controller.addNoteInnerValueChangeObserver((note, source) => {
+        this.onNoteInnerChange(note, source);
+      });
     this.autorun(() => {
       this.setState({
         showProtectedWarning: this.appState.notes.showProtectedWarning,

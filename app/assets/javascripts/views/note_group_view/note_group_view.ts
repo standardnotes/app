@@ -1,7 +1,7 @@
 import { WebDirective } from './../../types';
 import template from './note-group-view.pug';
-import { NoteViewController } from '@/views/note_view/note_view_controller';
 import { PureViewCtrl } from '../abstract/pure_view_ctrl';
+import { NoteViewController } from '@standardnotes/snjs';
 
 class NoteGroupView extends PureViewCtrl<
   unknown,
@@ -20,9 +20,11 @@ class NoteGroupView extends PureViewCtrl<
   }
 
   $onInit() {
-    this.application.noteControllerGroup.addChangeObserver(() => {
-      this.controllers = this.application.noteControllerGroup.noteControllers;
-    });
+    this.application.noteControllerGroup.addActiveControllerChangeObserver(
+      () => {
+        this.controllers = this.application.noteControllerGroup.noteControllers;
+      }
+    );
     this.autorun(() => {
       this.setState({
         showMultipleSelectedNotes: this.appState.notes.selectedNotesCount > 1,
