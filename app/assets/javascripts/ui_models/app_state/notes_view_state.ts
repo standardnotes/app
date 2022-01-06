@@ -7,7 +7,7 @@ import {
   PrefKey,
   SNNote,
   SNTag,
-  UuidString,
+  UuidString
 } from '@standardnotes/snjs';
 import {
   action,
@@ -15,7 +15,7 @@ import {
   computed,
   makeObservable,
   observable,
-  reaction,
+  reaction
 } from 'mobx';
 import { AppState, AppStateEvent } from '.';
 import { WebApplication } from '../application';
@@ -49,6 +49,7 @@ export class NotesViewState {
   searchSubmitted = false;
   selectedNotes: Record<UuidString, SNNote> = {};
   showDisplayOptionsMenu = false;
+<<<<<<< HEAD
   displayOptions = {
     sortBy: CollectionSort.CreatedAt,
     sortReverse: false,
@@ -61,6 +62,9 @@ export class NotesViewState {
     hideNotePreview: false,
     hideEditorIcon: false,
   };
+=======
+  displayOptions = this.applicationPreferences;
+>>>>>>> 0ca15f9e (refactor: simplify note state management)
 
   constructor(
     private application: WebApplication,
@@ -144,7 +148,17 @@ export class NotesViewState {
         } else if (eventName === AppStateEvent.EditorFocused) {
           this.toggleDisplayOptionsMenu(false);
         }
-      })
+      }),
+      reaction(
+        () => this.displayOptions,
+        (value, prevValue) => {
+          this.reloadNotesDisplayOptions();
+          this.reloadNotes();
+          if (value.sortBy !== prevValue.sortBy) {
+            this.selectFirstNote();
+          }
+        }
+      )
     );
 
     makeObservable(this, {
@@ -235,8 +249,8 @@ export class NotesViewState {
       includeArchived = this.appState.searchOptions.includeArchived;
       includeTrashed = this.appState.searchOptions.includeTrashed;
     } else {
-      includeArchived = this.displayOptions.showArchived ?? false;
-      includeTrashed = this.displayOptions.showTrashed ?? false;
+      includeArchived = this.displayOptions.showArchived;
+      includeTrashed = this.displayOptions.showTrashed;
     }
 
     const criteria = NotesDisplayCriteria.Create({
@@ -256,9 +270,7 @@ export class NotesViewState {
     this.application.setNotesDisplayCriteria(criteria);
   };
 
-  reloadPreferences = () => {
-    const freshDisplayOptions = {} as DisplayOptions;
-    const currentSortBy = this.displayOptions.sortBy;
+  get applicationPreferences(): DisplayOptions {
     let sortBy = this.application.getPreference(
       PrefKey.SortNotesBy,
       CollectionSort.CreatedAt
@@ -270,61 +282,32 @@ export class NotesViewState {
       /** Use UserUpdatedAt instead */
       sortBy = CollectionSort.UpdatedAt;
     }
-    freshDisplayOptions.sortBy = sortBy;
-    freshDisplayOptions.sortReverse = this.application.getPreference(
-      PrefKey.SortNotesReverse,
-      false
-    );
-    freshDisplayOptions.showArchived = this.application.getPreference(
-      PrefKey.NotesShowArchived,
-      false
-    );
-    freshDisplayOptions.showTrashed = this.application.getPreference(
-      PrefKey.NotesShowTrashed,
-      false
-    ) as boolean;
-    freshDisplayOptions.hidePinned = this.application.getPreference(
-      PrefKey.NotesHidePinned,
-      false
-    );
-    freshDisplayOptions.hideProtected = this.application.getPreference(
-      PrefKey.NotesHideProtected,
-      false
-    );
-    freshDisplayOptions.hideNotePreview = this.application.getPreference(
-      PrefKey.NotesHideNotePreview,
-      false
-    );
-    freshDisplayOptions.hideDate = this.application.getPreference(
-      PrefKey.NotesHideDate,
-      false
-    );
-    freshDisplayOptions.hideTags = this.application.getPreference(
-      PrefKey.NotesHideTags,
-      true
-    );
-    freshDisplayOptions.hideEditorIcon = this.application.getPreference(
-      PrefKey.NotesHideEditorIcon,
-      false
-    );
-    const displayOptionsChanged =
-      freshDisplayOptions.sortBy !== this.displayOptions.sortBy ||
-      freshDisplayOptions.sortReverse !== this.displayOptions.sortReverse ||
-      freshDisplayOptions.hidePinned !== this.displayOptions.hidePinned ||
-      freshDisplayOptions.showArchived !== this.displayOptions.showArchived ||
-      freshDisplayOptions.showTrashed !== this.displayOptions.showTrashed ||
-      freshDisplayOptions.hideProtected !== this.displayOptions.hideProtected ||
-      freshDisplayOptions.hideEditorIcon !==
-        this.displayOptions.hideEditorIcon ||
-      freshDisplayOptions.hideTags !== this.displayOptions.hideTags;
-    this.displayOptions = freshDisplayOptions;
-    if (displayOptionsChanged) {
-      this.reloadNotesDisplayOptions();
-    }
-    this.reloadNotes();
-    if (freshDisplayOptions.sortBy !== currentSortBy) {
-      this.selectFirstNote();
-    }
+
+    const getPref = (key: PrefKey, defaultValue = false): boolean => {
+      return this.application.getPreference(
+        key,
+        defaultValue
+      ) as unknown as boolean;
+    };
+
+    const displayOptions: DisplayOptions = {
+      sortBy,
+      sortReverse: getPref(PrefKey.SortNotesReverse),
+      showArchived: getPref(PrefKey.NotesShowArchived),
+      showTrashed: getPref(PrefKey.NotesShowTrashed),
+      hideEditorIcon: getPref(PrefKey.NotesHideEditorIcon),
+      hidePinned: getPref(PrefKey.NotesHidePinned),
+      hideProtected: getPref(PrefKey.NotesHideProtected),
+      hideNotePreview: getPref(PrefKey.NotesHideNotePreview),
+      hideDate: getPref(PrefKey.NotesHideDate),
+      hideTags: getPref(PrefKey.NotesHideTags, true),
+    };
+
+    return displayOptions;
+  }
+
+  reloadPreferences = () => {
+    this.displayOptions = this.applicationPreferences;
   };
 
   createNewNote = async () => {
