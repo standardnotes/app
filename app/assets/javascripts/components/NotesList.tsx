@@ -29,7 +29,8 @@ export const NotesList: FunctionComponent<Props> = observer(
     paginate,
   }) => {
     const { selectPreviousNote, selectNextNote } = appState.notesView;
-    const { hideTags, hideDate, hideNotePreview, sortBy } = displayOptions;
+    const { hideTags, hideDate, hideNotePreview, hideEditorIcon, sortBy } =
+      displayOptions;
 
     const tagsForNote = (note: SNNote): string[] => {
       if (hideTags) {
@@ -99,6 +100,7 @@ export const NotesList: FunctionComponent<Props> = observer(
             hideDate={hideDate}
             hidePreview={hideNotePreview}
             hideTags={hideTags}
+            hideEditorIcon={hideEditorIcon}
             sortedBy={sortBy}
             onClick={() => {
               appState.notes.selectNote(note.uuid, true);

@@ -32,7 +32,7 @@ export function useCloseOnBlur(
 }
 
 export function useCloseOnClickOutside(
-  container: { current: HTMLDivElement },
+  container: { current: HTMLDivElement | null },
   setOpen: (open: boolean) => void
 ): void {
   const closeOnClickOutside = useCallback(
