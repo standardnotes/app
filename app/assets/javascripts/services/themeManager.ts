@@ -106,8 +106,9 @@ export class ThemeManager extends ApplicationService {
   }
 
   private deactivateAllThemes() {
-    this.clearAppThemeState();
-    this.activeThemes = [];
+    while (this.activeThemes.length > 0) {
+      this.clearAppThemeState();
+    }
     this.decacheThemes();
   }
 
@@ -137,7 +138,7 @@ export class ThemeManager extends ApplicationService {
     const element = document.getElementById(uuid) as HTMLLinkElement;
     if (element) {
       element.disabled = true;
-      element.parentNode!.removeChild(element);
+      element.parentNode?.removeChild(element);
     }
     removeFromArray(this.activeThemes, uuid);
     if (recache) {
