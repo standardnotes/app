@@ -116,6 +116,8 @@ export class TagsState {
       remove: action,
     });
 
+    // TODO: figure out a way in snjs to sub to changes to the display criteria.
+    
     appEventListeners.push(
       this.application.streamItems(
         [ContentType.Tag, ContentType.SmartTag],
@@ -398,6 +400,8 @@ export class TagsState {
       return -1;
     }
 
+    // TODO: this count will be wrong too,
+    // we have to figure out a better way to implement it in snjs.
     const notes = this.application
       .notesMatchingSmartTag(allTag)
       .filter((note) => {
@@ -456,10 +460,9 @@ class TagsCountsState {
     const newCounts: { [uuid: string]: number } = {};
 
     tags.forEach((tag) => {
-      newCounts[tag.uuid] = this.application.referencesForItem(
-        tag,
-        ContentType.Note
-      ).length;
+      newCounts[tag.uuid] = this.application.countDisplayableNotesInTag(
+        tag.uuid
+      );
     });
 
     this.counts = newCounts;
