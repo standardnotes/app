@@ -17,6 +17,10 @@ declare global {
     // eslint-disable-next-line camelcase
     _websocket_url: string;
     startApplication?: StartApplication;
+
+    _devAccountEmail?: string;
+    _devAccountPassword?: string;
+    _devAccountServer?: string;
   }
 }
 
@@ -26,9 +30,11 @@ import { PinNoteButtonDirective } from '@/components/PinNoteButton';
 import { IsWebPlatform, WebAppVersion } from '@/version';
 import {
   ApplicationGroupView,
-  ApplicationView, ChallengeModal,
-  FooterView, NoteGroupViewDirective,
-  NoteViewDirective
+  ApplicationView,
+  ChallengeModal,
+  FooterView,
+  NoteGroupViewDirective,
+  NoteViewDirective,
 } from '@/views';
 import { SNLog } from '@standardnotes/snjs';
 import angular from 'angular';
@@ -55,7 +61,7 @@ import {
   infiniteScroll,
   lowercase,
   selectOnFocus,
-  snEnter
+  snEnter,
 } from './directives/functional';
 import {
   ActionsMenu,
@@ -67,7 +73,7 @@ import {
   PasswordWizard,
   PermissionsModal,
   RevisionPreviewModal,
-  SyncResolutionMenu
+  SyncResolutionMenu,
 } from './directives/views';
 import { trusted } from './filters';
 import { PreferencesDirective } from './preferences';

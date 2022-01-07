@@ -36,7 +36,10 @@
   data-purchase-url="<%= env.PURCHASE_URL %>"
   data-plans-url="<%= env.PLANS_URL %>"
   data-dashboard-url="<%= env.DASHBOARD_URL %>"
->
+  data-dev-account-email="<%= env.DEV_ACCOUNT_EMAIL %>"
+  data-dev-account-password="<%= env.DEV_ACCOUNT_PASSWORD %>"
+  data-dev-account-server="<%= env.DEV_ACCOUNT_SERVER %>"
+  >
   <script>
     window._default_sync_server = document.body.dataset.defaultSyncServer || "https://api.standardnotes.com";
     window._bugsnag_api_key = document.body.dataset.bugsnagApiKey;
@@ -45,6 +48,9 @@
     window._purchase_url = document.body.dataset.purchaseUrl;
     window._plans_url = document.body.dataset.plansUrl;
     window._dashboard_url = document.body.dataset.dashboardUrl;
+    window._devAccountEmail = document.body.dataset.devAccountEmail;
+    window._devAccountPassword = document.body.dataset.devAccountPassword;
+    window._devAccountServer = document.body.dataset.devAccountServer;
   </script>
   <application-group-view />
 </body>
