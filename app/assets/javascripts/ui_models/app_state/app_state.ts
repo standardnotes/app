@@ -42,6 +42,7 @@ import { TagsState } from './tags_state';
 
 export enum AppStateEvent {
   TagChanged,
+  AppDisplayOptionChanged,
   ActiveEditorChanged,
   PanelResized,
   EditorFocused,
@@ -129,6 +130,7 @@ export class AppState {
     this.features = new FeaturesState(application);
     this.tags = new TagsState(
       application,
+      this,
       this.appEventObserverRemovers,
       this.features
     );

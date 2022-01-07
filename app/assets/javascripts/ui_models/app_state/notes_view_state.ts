@@ -7,7 +7,7 @@ import {
   PrefKey,
   SNNote,
   SNTag,
-  UuidString
+  UuidString,
 } from '@standardnotes/snjs';
 import {
   action,
@@ -15,7 +15,7 @@ import {
   computed,
   makeObservable,
   observable,
-  reaction
+  reaction,
 } from 'mobx';
 import { AppState, AppStateEvent } from '.';
 import { WebApplication } from '../application';
@@ -49,28 +49,38 @@ export class NotesViewState {
   searchSubmitted = false;
   selectedNotes: Record<UuidString, SNNote> = {};
   showDisplayOptionsMenu = false;
-<<<<<<< HEAD
-  displayOptions = {
-    sortBy: CollectionSort.CreatedAt,
-    sortReverse: false,
-    hidePinned: false,
-    showArchived: false,
-    showTrashed: false,
-    hideProtected: false,
-    hideTags: true,
-    hideDate: false,
-    hideNotePreview: false,
-    hideEditorIcon: false,
-  };
-=======
-  displayOptions = this.applicationPreferences;
->>>>>>> 0ca15f9e (refactor: simplify note state management)
+  displayOptions = this.getApplicationPreferences();
 
   constructor(
     private application: WebApplication,
     private appState: AppState,
     appObservers: (() => void)[]
   ) {
+    makeObservable(this, {
+      completedFullSync: observable,
+      displayOptions: observable.struct,
+      noteFilterText: observable,
+      notes: observable,
+      notesToDisplay: observable,
+      panelTitle: observable,
+      renderedNotes: observable,
+      selectedNotes: observable,
+      showDisplayOptionsMenu: observable,
+
+      reloadNotes: action,
+      reloadPanelTitle: action,
+      reloadPreferences: action,
+      resetPagination: action,
+      setCompletedFullSync: action,
+      setNoteFilterText: action,
+      syncSelectedNotes: action,
+      toggleDisplayOptionsMenu: action,
+      onFilterEnter: action,
+      handleFilterTextChanged: action,
+
+      optionsSubtitle: computed,
+    });
+
     this.resetPagination();
 
     appObservers.push(
@@ -154,37 +164,14 @@ export class NotesViewState {
         (value, prevValue) => {
           this.reloadNotesDisplayOptions();
           this.reloadNotes();
-          if (value.sortBy !== prevValue.sortBy) {
+          this.appState.notifyEvent(AppStateEvent.AppDisplayOptionChanged);
+          if (prevValue && value.sortBy !== prevValue.sortBy) {
             this.selectFirstNote();
           }
-        }
+        },
+        { fireImmediately: true }
       )
     );
-
-    makeObservable(this, {
-      completedFullSync: observable,
-      displayOptions: observable.struct,
-      noteFilterText: observable,
-      notes: observable,
-      notesToDisplay: observable,
-      panelTitle: observable,
-      renderedNotes: observable,
-      selectedNotes: observable,
-      showDisplayOptionsMenu: observable,
-
-      reloadNotes: action,
-      reloadPanelTitle: action,
-      reloadPreferences: action,
-      resetPagination: action,
-      setCompletedFullSync: action,
-      setNoteFilterText: action,
-      syncSelectedNotes: action,
-      toggleDisplayOptionsMenu: action,
-      onFilterEnter: action,
-      handleFilterTextChanged: action,
-
-      optionsSubtitle: computed,
-    });
 
     window.onresize = () => {
       this.resetPagination(true);
@@ -270,7 +257,7 @@ export class NotesViewState {
     this.application.setNotesDisplayCriteria(criteria);
   };
 
-  get applicationPreferences(): DisplayOptions {
+  getApplicationPreferences(): DisplayOptions {
     let sortBy = this.application.getPreference(
       PrefKey.SortNotesBy,
       CollectionSort.CreatedAt
@@ -307,7 +294,7 @@ export class NotesViewState {
   }
 
   reloadPreferences = () => {
-    this.displayOptions = this.applicationPreferences;
+    this.displayOptions = this.getApplicationPreferences();
   };
 
   createNewNote = async () => {

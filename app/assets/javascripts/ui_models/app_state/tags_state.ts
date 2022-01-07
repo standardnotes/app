@@ -19,6 +19,7 @@ import {
   observable,
   runInAction,
 } from 'mobx';
+import { AppState, AppStateEvent } from '.';
 import { WebApplication } from '../application';
 import { FeaturesState, SMART_TAGS_FEATURE_NAME } from './features_state';
 
@@ -78,6 +79,7 @@ export class TagsState {
 
   constructor(
     private application: WebApplication,
+    appState: AppState,
     appEventListeners: (() => void)[],
     private features: FeaturesState
   ) {
@@ -114,22 +116,15 @@ export class TagsState {
       undoCreateNewTag: action,
       save: action,
       remove: action,
+      updateTagsDisplay: action,
     });
 
-    // TODO: figure out a way in snjs to sub to changes to the display criteria.
-    
     appEventListeners.push(
       this.application.streamItems(
         [ContentType.Tag, ContentType.SmartTag],
         (items) => {
           runInAction(() => {
-            this.tags = this.application.getDisplayableItems(
-              ContentType.Tag
-            ) as SNTag[];
-            this.smartTags = this.application.getSmartTags();
-
-            this.tagsCountsState.update(this.tags);
-            this.allNotesCount_ = this.countAllNotes();
+            this.updateTagsDisplay();
 
             const selectedTag = this.selected_;
             if (selectedTag) {
@@ -162,6 +157,25 @@ export class TagsState {
         }
       })
     );
+
+    appEventListeners.push(
+      appState.addObserver(async (eventName) => {
+        switch (eventName) {
+          case AppStateEvent.AppDisplayOptionChanged:
+            this.updateTagsDisplay();
+        }
+      })
+    );
+  }
+
+  public updateTagsDisplay() {
+    this.tags = this.application.getDisplayableItems(
+      ContentType.Tag
+    ) as SNTag[];
+    this.smartTags = this.application.getSmartTags();
+
+    this.tagsCountsState.update(this.tags);
+    this.allNotesCount_ = this.countAllNotes();
   }
 
   public get allLocalRootTags(): SNTag[] {
