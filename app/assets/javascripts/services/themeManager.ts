@@ -9,6 +9,7 @@ import {
   ContentType,
   UuidString,
   FeatureStatus,
+  PayloadSource,
 } from '@standardnotes/snjs';
 
 const CACHED_THEMES_KEY = 'cachedThemes';
@@ -49,6 +50,7 @@ export class ThemeManager extends ApplicationService {
   }
 
   private reloadThemeStatus(): void {
+    let hasChange = false;
     for (const themeUuid of this.activeThemes) {
       const theme = this.application.findItem(themeUuid) as SNTheme;
       if (
@@ -57,10 +59,13 @@ export class ThemeManager extends ApplicationService {
           FeatureStatus.Entitled
       ) {
         this.deactivateTheme(themeUuid);
+        hasChange = true;
       }
     }
 
-    this.cacheThemeState();
+    if (hasChange) {
+      this.cacheThemeState();
+    }
   }
 
   /** @override */
@@ -91,7 +96,7 @@ export class ThemeManager extends ApplicationService {
 
     this.unregisterStream = this.application.streamItems(
       ContentType.Theme,
-      (items) => {
+      (items, source) => {
         const themes = items as SNTheme[];
         for (const theme of themes) {
           if (theme.active) {
@@ -100,7 +105,9 @@ export class ThemeManager extends ApplicationService {
             this.deactivateTheme(theme.uuid);
           }
         }
-        this.cacheThemeState();
+        if (source !== PayloadSource.LocalRetrieved) {
+          this.cacheThemeState();
+        }
       }
     );
   }
