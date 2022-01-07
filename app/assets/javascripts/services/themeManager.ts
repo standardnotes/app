@@ -22,6 +22,11 @@ export class ThemeManager extends ApplicationService {
     super.onAppEvent(event);
     if (event === ApplicationEvent.SignedOut) {
       this.deactivateAllThemes();
+      this.activeThemes = [];
+      this.application?.removeValue(
+        CACHED_THEMES_KEY,
+        StorageValueModes.Nonwrapped
+      );
     } else if (event === ApplicationEvent.StorageReady) {
       await this.activateCachedThemes();
     } else if (event === ApplicationEvent.FeaturesUpdated) {
@@ -34,7 +39,7 @@ export class ThemeManager extends ApplicationService {
   }
 
   deinit() {
-    this.clearAppThemeState();
+    this.deactivateAllThemes();
     this.activeThemes.length = 0;
     this.unregisterDesktop();
     this.unregisterStream();
@@ -43,7 +48,7 @@ export class ThemeManager extends ApplicationService {
     super.deinit();
   }
 
-  reloadThemeStatus(): void {
+  private reloadThemeStatus(): void {
     for (const themeUuid of this.activeThemes) {
       const theme = this.application.findItem(themeUuid) as SNTheme;
       if (
@@ -54,6 +59,8 @@ export class ThemeManager extends ApplicationService {
         this.deactivateTheme(themeUuid);
       }
     }
+
+    this.cacheThemeState();
   }
 
   /** @override */
@@ -64,9 +71,8 @@ export class ThemeManager extends ApplicationService {
 
   private async activateCachedThemes() {
     const cachedThemes = await this.getCachedThemes();
-    const writeToCache = false;
     for (const theme of cachedThemes) {
-      this.activateTheme(theme, writeToCache);
+      this.activateTheme(theme);
     }
   }
 
@@ -78,16 +84,15 @@ export class ThemeManager extends ApplicationService {
           this.deactivateTheme(component.uuid);
           setTimeout(() => {
             this.activateTheme(component as SNTheme);
+            this.cacheThemeState();
           }, 10);
         }
       });
 
     this.unregisterStream = this.application.streamItems(
       ContentType.Theme,
-      () => {
-        const themes = this.application.getDisplayableItems(
-          ContentType.Theme
-        ) as SNTheme[];
+      (items) => {
+        const themes = items as SNTheme[];
         for (const theme of themes) {
           if (theme.active) {
             this.activateTheme(theme);
@@ -95,23 +100,19 @@ export class ThemeManager extends ApplicationService {
             this.deactivateTheme(theme.uuid);
           }
         }
+        this.cacheThemeState();
       }
     );
   }
 
-  private clearAppThemeState() {
-    for (const uuid of this.activeThemes) {
-      this.deactivateTheme(uuid, false);
+  private deactivateAllThemes() {
+    const activeThemes = this.activeThemes.slice();
+    for (const uuid of activeThemes) {
+      this.deactivateTheme(uuid);
     }
   }
 
-  private deactivateAllThemes() {
-    this.clearAppThemeState();
-    this.activeThemes = [];
-    this.decacheThemes();
-  }
-
-  private activateTheme(theme: SNTheme, writeToCache = true) {
+  private activateTheme(theme: SNTheme) {
     if (this.activeThemes.find((uuid) => uuid === theme.uuid)) {
       return;
     }
@@ -128,24 +129,19 @@ export class ThemeManager extends ApplicationService {
     link.media = 'screen,print';
     link.id = theme.uuid;
     document.getElementsByTagName('head')[0].appendChild(link);
-    if (writeToCache) {
-      this.cacheThemes();
-    }
   }
 
-  private deactivateTheme(uuid: string, recache = true) {
+  private deactivateTheme(uuid: string) {
     const element = document.getElementById(uuid) as HTMLLinkElement;
     if (element) {
       element.disabled = true;
-      element.parentNode!.removeChild(element);
+      element.parentNode?.removeChild(element);
     }
+
     removeFromArray(this.activeThemes, uuid);
-    if (recache) {
-      this.cacheThemes();
-    }
   }
 
-  private async cacheThemes() {
+  private async cacheThemeState() {
     const themes = this.application.getAll(this.activeThemes) as SNTheme[];
     const mapped = await Promise.all(
       themes.map(async (theme) => {
@@ -163,15 +159,6 @@ export class ThemeManager extends ApplicationService {
       mapped,
       StorageValueModes.Nonwrapped
     );
-  }
-
-  private async decacheThemes() {
-    if (this.application) {
-      return this.application.removeValue(
-        CACHED_THEMES_KEY,
-        StorageValueModes.Nonwrapped
-      );
-    }
   }
 
   private async getCachedThemes() {
