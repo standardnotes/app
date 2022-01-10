@@ -1,5 +1,6 @@
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
+import { isDev } from '@/utils';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useState } from 'preact/hooks';
@@ -18,6 +19,12 @@ export const AdvancedOptions: FunctionComponent<Props> = observer(
     const { server, setServer, enableServerOption, setEnableServerOption } =
       appState.accountMenu;
     const [showAdvanced, setShowAdvanced] = useState(false);
+
+    if (isDev && window._devAccountServer) {
+      setEnableServerOption(true);
+      setServer(window._devAccountServer);
+      application.setCustomHost(window._devAccountServer);
+    }
 
     const handleServerOptionChange = (e: Event) => {
       if (e.target instanceof HTMLInputElement) {

@@ -1,6 +1,5 @@
 import { FunctionComponent } from "preact";
 import { SNComponent } from "@standardnotes/snjs";
-import { ComponentArea } from "@standardnotes/features";
 import { PreferencesSegment, SubtitleLight, Title } from "@/preferences/components";
 import { Switch } from "@/components/Switch";
 import { WebApplication } from "@/ui_models/application";
@@ -27,27 +26,9 @@ export interface ExtensionItemProps {
 }
 
 export const ExtensionItem: FunctionComponent<ExtensionItemProps> =
-  ({ application, extension, first, uninstall, toggleActivate, latestVersion }) => {
-    const [autoupdateDisabled, setAutoupdateDisabled] = useState(extension.autoupdateDisabled ?? false);
+  ({ application, extension, first, uninstall}) => {
     const [offlineOnly, setOfflineOnly] = useState(extension.offlineOnly ?? false);
     const [extensionName, setExtensionName] = useState(extension.name);
-
-    const toggleAutoupdate = () => {
-      const newAutoupdateValue = !autoupdateDisabled;
-      setAutoupdateDisabled(newAutoupdateValue);
-      application
-        .changeAndSaveItem(extension.uuid, (m: any) => {
-          if (m.content == undefined) m.content = {};
-          m.content.autoupdateDisabled = newAutoupdateValue;
-        })
-        .then((item) => {
-          const component = (item as SNComponent);
-          setAutoupdateDisabled(component.autoupdateDisabled);
-        })
-        .catch(e => {
-          console.error(e);
-        });
-    };
 
     const toggleOffllineOnly = () => {
       const newOfflineOnly = !offlineOnly;
@@ -80,6 +61,7 @@ export const ExtensionItem: FunctionComponent<ExtensionItemProps> =
     };
 
     const localInstallable = extension.package_info.download_url;
+    const isThirParty = application.isThirdPartyFeature(extension.identifier);
 
     return (
       <PreferencesSegment classes={'mb-5'}>
@@ -91,7 +73,7 @@ export const ExtensionItem: FunctionComponent<ExtensionItemProps> =
         <RenameExtension extensionName={extensionName} changeName={changeExtensionName} />
         <div className="min-h-2" />
 
-        {localInstallable && <UseHosted offlineOnly={offlineOnly} toggleOfllineOnly={toggleOffllineOnly} />}
+        {isThirParty && localInstallable && <UseHosted offlineOnly={offlineOnly} toggleOfllineOnly={toggleOffllineOnly} />}
 
         <>
           <div className="min-h-2" />
