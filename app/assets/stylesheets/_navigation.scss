@@ -1,23 +1,8 @@
 @import './scrollbar';
 
 #navigation .scrollable {
-  @include scrollbars(0.4rem, var(--sn-stylekit-info-color), rgba(0, 0, 0, 0));
-
+  @include minimal_scrollbar();
   height: 100%;
-  overflow-x: hidden;
-  overflow-y: overlay;
-
-  // // Autohide scrollbar on Windows.
-  // @at-root {
-  //   .windows-web &,
-  //   .windows-desktop & {
-  //     overflow-y: hidden;
-  //     &:hover {
-  //       overflow-y: auto;
-  //       overflow-y: overlay; // overlay is not supported on ff, so keep previous statement up
-  //     }
-  //   }
-  // }
 }
 
 #navigation {
