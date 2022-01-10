@@ -325,6 +325,7 @@ export class NotesState {
       if (permanently) {
         for (const note of Object.values(this.selectedNotes)) {
           await this.application.deleteItem(note);
+          delete this.selectedNotes[note.uuid];
         }
       } else {
         await this.changeSelectedNotes((mutator) => {
