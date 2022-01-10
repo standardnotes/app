@@ -1,3 +1,5 @@
+@import './scrollbar';
+
 notes-view {
   width: 350px;
 }
@@ -102,20 +104,9 @@ notes-view {
   }
 
   .infinite-scroll {
-    overflow-x: hidden;
+    @include minimal_scrollbar();
     height: inherit;
-
-    // Autohide scrollbar on Windows.
-    @at-root {
-      .windows-web &,
-      .windows-desktop & {
-        overflow-y: hidden;
-        &:hover {
-          overflow-y: auto;
-          overflow-y: overlay; // overlay is not supported on ff, so keep previous statement up
-        }
-      }
-    }
+    background-color: var(--sn-stylekit-background-color);
   }
 
   .note {
