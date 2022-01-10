@@ -19,20 +19,28 @@ type Props = {
   application: WebApplication;
 };
 
+const NAVIGATION_SELECTOR = 'navigation';
+
+const useNavigationPanelRef = (): [HTMLDivElement | null, () => void] => {
+  const [panelRef, setPanelRefInternal] = useState<HTMLDivElement | null>(null);
+
+  const setPanelRefPublic = useCallback(() => {
+    const elem = document.querySelector(
+      NAVIGATION_SELECTOR
+    ) as HTMLDivElement | null;
+    setPanelRefInternal(elem);
+  }, [setPanelRefInternal]);
+
+  return [panelRef, setPanelRefPublic];
+};
+
 export const Navigation: FunctionComponent<Props> = observer(
   ({ application }) => {
     const appState = useMemo(() => application.getAppState(), [application]);
     const componentViewer = appState.foldersComponentViewer;
     const enableNativeSmartTagsFeature =
       appState.features.enableNativeSmartTagsFeature;
-    const [panelRef, setPanelRef_] = useState<HTMLDivElement | null>(null);
-
-    const setPanelRef = useCallback(() => {
-      const elem = document.querySelector(
-        'navigation'
-      ) as HTMLDivElement | null;
-      setPanelRef_(elem);
-    }, [setPanelRef_]);
+    const [panelRef, setPanelRef] = useNavigationPanelRef();
 
     const onCreateNewTag = useCallback(() => {
       appState.tags.createNewTemplate();
