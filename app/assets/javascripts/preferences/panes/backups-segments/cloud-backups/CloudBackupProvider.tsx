@@ -43,7 +43,8 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
       if (shouldDisable) {
         await application.deleteSetting(backupFrequencySettingName);
         await application.deleteSetting(backupTokenSettingName);
-        await getIntegrationStatus();
+
+        setBackupFrequency(null);
       }
     } catch (error) {
       application.alertService.alert(error as string);
@@ -125,10 +126,11 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
         await application.updateSetting(backupTokenSettingName, cloudProviderToken);
         await application.updateSetting(backupFrequencySettingName, defaultBackupFrequency);
 
-        await getIntegrationStatus();
+        setBackupFrequency(defaultBackupFrequency);
 
         setAuthBegan(false);
         setSuccessfullyInstalled(true);
+        setConfirmation('');
 
         await application.alertService.alert(
           `${providerName} has been successfully installed. Your first backup has also been queued and should be reflected in your external cloud's folder within the next few minutes.`
