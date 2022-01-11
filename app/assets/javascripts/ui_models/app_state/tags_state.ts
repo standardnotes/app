@@ -70,7 +70,6 @@ const isValidFutureSiblings = (
 export class TagsState {
   tags: SNTag[] = [];
   smartTags: SNSmartTag[] = [];
-  allNotesCount_ = 0;
   selected_: AnyTag | undefined;
   previouslySelected_: AnyTag | undefined;
   editing_: SNTag | undefined;
@@ -96,7 +95,6 @@ export class TagsState {
       tags: observable.ref,
       smartTags: observable.ref,
       hasAtLeastOneFolder: computed,
-      allNotesCount_: observable,
       allNotesCount: computed,
 
       selected_: observable.ref,
@@ -150,9 +148,7 @@ export class TagsState {
       this.application.addEventObserver(async (eventName) => {
         switch (eventName) {
           case ApplicationEvent.CompletedIncrementalSync:
-            runInAction(() => {
-              this.allNotesCount_ = this.countAllNotes();
-            });
+            this.updateTagsDisplay();
             break;
         }
       })
@@ -175,7 +171,6 @@ export class TagsState {
     this.smartTags = this.application.getSmartTags();
 
     this.tagsCountsState.update(this.tags);
-    this.allNotesCount_ = this.countAllNotes();
   }
 
   public get allLocalRootTags(): SNTag[] {
@@ -259,7 +254,7 @@ export class TagsState {
   }
 
   public get allNotesCount(): number {
-    return this.allNotesCount_;
+    return this.tagsCount.allNotesCount;
   }
 
   public get previouslySelected(): AnyTag | undefined {
@@ -406,25 +401,6 @@ export class TagsState {
     }
   }
 
-  private countAllNotes(): number {
-    const allTag = this.application.getSmartTags().find((tag) => tag.isAllTag);
-
-    if (!allTag) {
-      console.error(STRING_MISSING_SYSTEM_TAG);
-      return -1;
-    }
-
-    // TODO: this count will be wrong too,
-    // we have to figure out a better way to implement it in snjs.
-    const notes = this.application
-      .notesMatchingSmartTag(allTag)
-      .filter((note) => {
-        return !note.archived && !note.trashed;
-      });
-
-    return notes.length;
-  }
-
   public onFoldersComponentMessage(
     action: ComponentAction,
     data: MessageData
@@ -466,6 +442,7 @@ class TagsCountsState {
   public constructor(private application: WebApplication) {
     makeAutoObservable(this, {
       counts: observable.ref,
+      allNotesCount: computed,
       update: action,
     });
   }
@@ -479,6 +456,37 @@ class TagsCountsState {
       );
     });
 
+    newCounts[this.getAllTags().uuid] = this.countAllTags();
     this.counts = newCounts;
+  }
+
+  public get allNotesCount(): number {
+    return this.counts[this.getAllTags().uuid];
+  }
+
+  private getAllTags(): SNSmartTag {
+    // TODO: test and maybe refactor snjs so we don't need this call.
+    const allTag = this.application.getSmartTags().find((tag) => tag.isAllTag);
+
+    if (!allTag) {
+      throw new Error(STRING_MISSING_SYSTEM_TAG);
+    }
+
+    return allTag;
+  }
+
+  private countAllTags(): number {
+    // TODO: Test and maybe refactor snjs so we can just countDisplayableNotesInTag with the smart tag allTags!
+    const allTag = this.getAllTags();
+
+    // TODO: this count will be wrong too,
+    // we have to figure out a better way to implement it in snjs.
+    const notes = this.application
+      .notesMatchingSmartTag(allTag)
+      .filter((note) => {
+        return !note.archived && !note.trashed;
+      });
+
+    return notes.length;
   }
 }
