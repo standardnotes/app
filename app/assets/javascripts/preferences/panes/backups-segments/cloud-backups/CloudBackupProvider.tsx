@@ -1,7 +1,12 @@
 import React from 'react';
 import { useCallback, useEffect, useState } from 'preact/hooks';
 import { ButtonType, SettingName } from '@standardnotes/snjs';
-import { CloudProvider } from '@standardnotes/settings';
+import {
+  CloudProvider,
+  DropboxBackupFrequency,
+  GoogleDriveBackupFrequency,
+  OneDriveBackupFrequency
+} from '@standardnotes/settings';
 import { WebApplication } from '@/ui_models/application';
 import { Button } from '@/components/Button';
 import { openInNewTab } from '@/utils';
@@ -15,12 +20,12 @@ type Props = {
 };
 
 export const CloudBackupProvider: FunctionComponent<Props> = ({
-  application,
-  providerName,
-}) => {
+                                                                application,
+                                                                providerName
+                                                              }) => {
   const [authBegan, setAuthBegan] = useState(false);
   const [successfullyInstalled, setSuccessfullyInstalled] = useState(false);
-  const [integrationToken, setIntegrationToken] = useState<string | null>(null);
+  const [backupFrequency, setBackupFrequency] = useState<string | null>(null);
   const [confirmation, setConfirmation] = useState('');
 
   const disable = async (event: Event) => {
@@ -36,8 +41,9 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
           'Cancel'
         );
       if (shouldDisable) {
-        await application.deleteSetting(getSettingName());
-        await updateIntegrationStatus();
+        await application.deleteSetting(backupFrequencySettingName);
+        await application.deleteSetting(backupTokenSettingName);
+        await getIntegrationStatus();
       }
     } catch (error) {
       application.alertService.alert(error as string);
@@ -55,7 +61,7 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
   const performBackupNow = async () => {
     // A backup is performed anytime the setting is updated with the integration token, so just update it here
     try {
-      await application.updateSetting(getSettingName(), integrationToken || '');
+      await application.updateSetting(backupFrequencySettingName, backupFrequency as string);
       application.alertService.alert(
         'A backup has been triggered for this provider. Please allow a couple minutes for your backup to be processed.'
       );
@@ -66,18 +72,24 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
     }
   };
 
-  const getSettingName = useCallback(() => {
-    switch (providerName) {
-      case CloudProvider.Dropbox:
-        return SettingName.DropboxBackupToken;
-      case CloudProvider.Google:
-        return SettingName.GoogleDriveBackupToken;
-      case CloudProvider.OneDrive:
-        return SettingName.OneDriveBackupToken;
-      default:
-        throw new Error('Invalid Cloud Provider name');
+  const backupSettingsData = {
+    [CloudProvider.Dropbox]: {
+      backupTokenSettingName: SettingName.DropboxBackupToken,
+      backupFrequencySettingName: SettingName.DropboxBackupFrequency,
+      defaultBackupFrequency: DropboxBackupFrequency.Daily
+    },
+    [CloudProvider.Google]: {
+      backupTokenSettingName: SettingName.GoogleDriveBackupToken,
+      backupFrequencySettingName: SettingName.GoogleDriveBackupFrequency,
+      defaultBackupFrequency: GoogleDriveBackupFrequency.Daily
+    },
+    [CloudProvider.OneDrive]: {
+      backupTokenSettingName: SettingName.OneDriveBackupToken,
+      backupFrequencySettingName: SettingName.OneDriveBackupFrequency,
+      defaultBackupFrequency: OneDriveBackupFrequency.Daily
     }
-  }, [providerName]);
+  };
+  const { backupTokenSettingName, backupFrequencySettingName, defaultBackupFrequency } = backupSettingsData[providerName];
 
   const getCloudProviderIntegrationTokenFromUrl = (url: URL) => {
     const urlSearchParams = new URLSearchParams(url.search);
@@ -110,9 +122,10 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
         if (!cloudProviderToken) {
           throw new Error();
         }
-        await application.updateSetting(getSettingName(), cloudProviderToken);
+        await application.updateSetting(backupTokenSettingName, cloudProviderToken);
+        await application.updateSetting(backupFrequencySettingName, defaultBackupFrequency);
 
-        await updateIntegrationStatus();
+        await getIntegrationStatus();
 
         setAuthBegan(false);
         setSuccessfullyInstalled(true);
@@ -130,22 +143,22 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
     setConfirmation((event.target as HTMLInputElement).value);
   };
 
-  const updateIntegrationStatus = useCallback(async () => {
-    const token = await application.getSetting(getSettingName());
-    setIntegrationToken(token);
-  }, [application, getSettingName]);
+  const getIntegrationStatus = useCallback(async () => {
+    const frequency = await application.getSetting(backupFrequencySettingName);
+    setBackupFrequency(frequency);
+  }, [application, backupFrequencySettingName]);
 
   useEffect(() => {
-    updateIntegrationStatus();
-  }, [updateIntegrationStatus]);
+    getIntegrationStatus();
+  }, [getIntegrationStatus]);
 
   const isExpanded = authBegan || successfullyInstalled;
-  const shouldShowEnableButton = !integrationToken && !authBegan;
+  const shouldShowEnableButton = !backupFrequency && !authBegan;
 
   return (
     <div
       className={`mr-1 ${isExpanded ? 'expanded' : ' '} ${
-        shouldShowEnableButton || integrationToken
+        shouldShowEnableButton || backupFrequency
           ? 'flex justify-between items-center'
           : ''
       }`}
@@ -159,15 +172,15 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
       </div>
       {authBegan && (
         <div>
-          <p className="sk-panel-row">
+          <p className='sk-panel-row'>
             Complete authentication from the newly opened window. Upon
             completion, a confirmation code will be displayed. Enter this code
             below:
           </p>
           <div className={`mt-1`}>
             <input
-              className="sk-input sk-base center-text"
-              placeholder="Enter confirmation code"
+              className='sk-input sk-base center-text'
+              placeholder='Enter confirmation code'
               value={confirmation}
               onKeyPress={handleKeyPress}
               onChange={handleChange}
@@ -178,26 +191,26 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
       {shouldShowEnableButton && (
         <div>
           <Button
-            type="normal"
-            label="Enable"
+            type='normal'
+            label='Enable'
             className={'px-1 text-xs min-w-40'}
             onClick={installIntegration}
           />
         </div>
       )}
 
-      {integrationToken && (
+      {backupFrequency && (
         <div className={'flex flex-col items-end'}>
           <Button
-            className="min-w-40 mb-2"
-            type="normal"
-            label="Perform Backup"
+            className='min-w-40 mb-2'
+            type='normal'
+            label='Perform Backup'
             onClick={performBackupNow}
           />
           <Button
-            className="min-w-40"
-            type="normal"
-            label="Disable"
+            className='min-w-40'
+            type='normal'
+            label='Disable'
             onClick={disable}
           />
         </div>
