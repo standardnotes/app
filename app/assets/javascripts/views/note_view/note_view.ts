@@ -1,4 +1,3 @@
-import { STRING_SAVING_WHILE_DOCUMENT_HIDDEN } from './../../strings';
 import { WebApplication } from '@/ui_models/application';
 import { PanelPuppet, WebDirective } from '@/types';
 import angular from 'angular';
@@ -27,9 +26,6 @@ import template from './note-view.pug';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { EventSource } from '@/ui_models/app_state';
 import {
-  STRING_DELETED_NOTE,
-  STRING_INVALID_NOTE,
-  STRING_ELLIPSES,
   STRING_DELETE_PLACEHOLDER_ATTEMPT,
   STRING_DELETE_LOCKED_ATTEMPT,
   STRING_EDIT_LOCKED_ATTEMPT,
@@ -37,10 +33,7 @@ import {
 } from '@/strings';
 import { confirmDialog } from '@/services/alertService';
 
-const NOTE_PREVIEW_CHAR_LIMIT = 80;
 const MINIMUM_STATUS_DURATION = 400;
-const SAVE_TIMEOUT_DEBOUNCE = 350;
-const SAVE_TIMEOUT_NO_DEBOUNCE = 100;
 const EDITOR_DEBOUNCE = 100;
 
 const ElementIds = {
@@ -97,7 +90,6 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
 
   private leftPanelPuppet?: PanelPuppet;
   private rightPanelPuppet?: PanelPuppet;
-  private saveTimeout?: ng.IPromise<void>;
   private statusTimeout?: ng.IPromise<void>;
   private lastEditorFocusEventSource?: EventSource;
   public editorValues: EditorValues = { title: '', text: '' };
@@ -152,7 +144,6 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
     this.leftPanelPuppet = undefined;
     this.rightPanelPuppet = undefined;
     this.onEditorComponentLoad = undefined;
-    this.saveTimeout = undefined;
     this.statusTimeout = undefined;
     (this.onPanelResizeFinish as unknown) = undefined;
     (this.editorMenuOnSelect as unknown) = undefined;
@@ -483,13 +474,16 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
     const transactions: TransactionalMutation[] = [];
 
     this.setMenuState('showEditorMenu', false);
+
     if (this.appState.getActiveNoteController()?.isTemplateNote) {
       await this.appState.getActiveNoteController().insertTemplatedNote();
     }
+
     if (this.note.locked) {
       this.application.alertService.alert(STRING_EDIT_LOCKED_ATTEMPT);
       return;
     }
+
     if (!component) {
       if (!this.note.prefersPlainEditor) {
         transactions.push({
@@ -546,83 +540,6 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
     );
   }
 
-  /**
-   * @param bypassDebouncer Calling save will debounce by default. You can pass true to save
-   * immediately.
-   * @param isUserModified This field determines if the item will be saved as a user
-   * modification, thus updating the user modified date displayed in the UI
-   * @param dontUpdatePreviews Whether this change should update the note's plain and HTML
-   * preview.
-   * @param customMutate A custom mutator function.
-   * @param closeAfterSync Whether this editor should be closed after the sync starts.
-   * This allows us to make a destructive change, wait for sync to be triggered, then
-   * close the editor (if we closed the editor before sync began, we'd get an exception,
-   * since the debouncer will be triggered on a non-existent editor)
-   */
-  async save(
-    note: SNNote,
-    editorValues: EditorValues,
-    bypassDebouncer = false,
-    isUserModified = false,
-    dontUpdatePreviews = false,
-    customMutate?: (mutator: NoteMutator) => void,
-    closeAfterSync = false
-  ) {
-    const title = editorValues.title;
-    const text = editorValues.text;
-    const isTemplate = this.controller.isTemplateNote;
-    if (document.hidden) {
-      this.application.alertService.alert(STRING_SAVING_WHILE_DOCUMENT_HIDDEN);
-      return;
-    }
-    if (note.deleted) {
-      this.application.alertService.alert(STRING_DELETED_NOTE);
-      return;
-    }
-    if (isTemplate) {
-      await this.controller.insertTemplatedNote();
-    }
-    if (!this.application.findItem(note.uuid)) {
-      this.application.alertService.alert(STRING_INVALID_NOTE);
-      return;
-    }
-    await this.application.changeItem(
-      note.uuid,
-      (mutator) => {
-        const noteMutator = mutator as NoteMutator;
-        if (customMutate) {
-          customMutate(noteMutator);
-        }
-        noteMutator.title = title;
-        noteMutator.text = text;
-        if (!dontUpdatePreviews) {
-          const noteText = text || '';
-          const truncate = noteText.length > NOTE_PREVIEW_CHAR_LIMIT;
-          const substring = noteText.substring(0, NOTE_PREVIEW_CHAR_LIMIT);
-          const previewPlain = substring + (truncate ? STRING_ELLIPSES : '');
-          // eslint-disable-next-line camelcase
-          noteMutator.preview_plain = previewPlain;
-          // eslint-disable-next-line camelcase
-          noteMutator.preview_html = undefined;
-        }
-      },
-      isUserModified
-    );
-    if (this.saveTimeout) {
-      this.$timeout.cancel(this.saveTimeout);
-    }
-    const noDebounce = bypassDebouncer || this.application.noAccount();
-    const syncDebouceMs = noDebounce
-      ? SAVE_TIMEOUT_NO_DEBOUNCE
-      : SAVE_TIMEOUT_DEBOUNCE;
-    this.saveTimeout = this.$timeout(() => {
-      this.application.sync();
-      if (closeAfterSync) {
-        this.appState.closeNoteController(this.controller);
-      }
-    }, syncDebouceMs);
-  }
-
   showSavingStatus() {
     this.setStatus({ message: 'Saving…' }, false);
   }
@@ -676,7 +593,10 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
   }
 
   contentChanged() {
-    this.save(this.note, copyEditorValues(this.editorValues), false, true);
+    this.controller.save({
+      editorValues: copyEditorValues(this.editorValues),
+      isUserModified: true,
+    });
   }
 
   onTitleEnter($event: Event) {
@@ -686,13 +606,11 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
   }
 
   onTitleChange() {
-    this.save(
-      this.note,
-      copyEditorValues(this.editorValues),
-      false,
-      true,
-      true
-    );
+    this.controller.save({
+      editorValues: copyEditorValues(this.editorValues),
+      isUserModified: true,
+      dontUpdatePreviews: true,
+    });
   }
 
   focusEditor() {
@@ -744,16 +662,14 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
       if (permanently) {
         this.performNoteDeletion(this.note);
       } else {
-        this.save(
-          this.note,
-          copyEditorValues(this.editorValues),
-          true,
-          false,
-          true,
-          (mutator) => {
+        this.controller.save({
+          editorValues: copyEditorValues(this.editorValues),
+          bypassDebouncer: true,
+          dontUpdatePreviews: true,
+          customMutate: (mutator) => {
             mutator.trashed = true;
-          }
-        );
+          },
+        });
       }
     }
   }
@@ -1022,7 +938,11 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
           editor.selectionStart = editor.selectionEnd = start + 4;
         }
         this.editorValues.text = editor.value;
-        this.save(this.note, copyEditorValues(this.editorValues), true);
+
+        this.controller.save({
+          editorValues: copyEditorValues(this.editorValues),
+          bypassDebouncer: true,
+        });
       },
     });
 
