@@ -1,3 +1,4 @@
+import { WebApplication } from '@/ui_models/application';
 import { KeyboardKey } from '@/services/ioService';
 import { AppState } from '@/ui_models/app_state';
 import { DisplayOptions } from '@/ui_models/app_state/notes_view_state';
@@ -7,6 +8,7 @@ import { FunctionComponent } from 'preact';
 import { NotesListItem } from './NotesListItem';
 
 type Props = {
+  application: WebApplication;
   appState: AppState;
   notes: SNNote[];
   selectedNotes: Record<string, SNNote>;
@@ -18,23 +20,31 @@ const FOCUSABLE_BUT_NOT_TABBABLE = -1;
 const NOTES_LIST_SCROLL_THRESHOLD = 200;
 
 export const NotesList: FunctionComponent<Props> = observer(
-  ({ appState, notes, selectedNotes, displayOptions, paginate }) => {
+  ({
+    application,
+    appState,
+    notes,
+    selectedNotes,
+    displayOptions,
+    paginate,
+  }) => {
     const { selectPreviousNote, selectNextNote } = appState.notesView;
-    const { hideTags, hideDate, hideNotePreview, sortBy } = displayOptions;
+    const { hideTags, hideDate, hideNotePreview, hideEditorIcon, sortBy } =
+      displayOptions;
 
-    const tagsStringForNote = (note: SNNote): string => {
+    const tagsForNote = (note: SNNote): string[] => {
       if (hideTags) {
-        return '';
+        return [];
       }
       const selectedTag = appState.selectedTag;
       if (!selectedTag) {
-        return '';
+        return [];
       }
       const tags = appState.getNoteTags(note);
       if (!selectedTag.isSmartTag && tags.length === 1) {
-        return '';
+        return [];
       }
-      return tags.map((tag) => `#${tag.title}`).join(' ');
+      return tags.map((tag) => tag.title);
     };
 
     const openNoteContextMenu = (posX: number, posY: number) => {
@@ -46,11 +56,9 @@ export const NotesList: FunctionComponent<Props> = observer(
       appState.notes.setContextMenuOpen(true);
     };
 
-    const onContextMenu = async (note: SNNote, posX: number, posY: number) => {
-      await appState.notes.selectNote(note.uuid, true);
-      if (selectedNotes[note.uuid]) {
-        openNoteContextMenu(posX, posY);
-      }
+    const onContextMenu = (note: SNNote, posX: number, posY: number) => {
+      appState.notes.selectNote(note.uuid, true);
+      openNoteContextMenu(posX, posY);
     };
 
     const onScroll = (e: Event) => {
@@ -84,13 +92,15 @@ export const NotesList: FunctionComponent<Props> = observer(
       >
         {notes.map((note) => (
           <NotesListItem
+            application={application}
             key={note.uuid}
             note={note}
-            tags={tagsStringForNote(note)}
+            tags={tagsForNote(note)}
             selected={!!selectedNotes[note.uuid]}
             hideDate={hideDate}
             hidePreview={hideNotePreview}
             hideTags={hideTags}
+            hideEditorIcon={hideEditorIcon}
             sortedBy={sortBy}
             onClick={() => {
               appState.notes.selectNote(note.uuid, true);

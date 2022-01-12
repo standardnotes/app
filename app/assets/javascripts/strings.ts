@@ -22,14 +22,9 @@ export const STRING_NEW_UPDATE_READY =
 export const STRING_DELETE_TAG =
   'Are you sure you want to delete this tag? Note: deleting a tag will not delete its notes.';
 
+export const STRING_MISSING_SYSTEM_TAG = 'We are missing a System Tag.';
+
 /** @editor */
-export const STRING_SAVING_WHILE_DOCUMENT_HIDDEN =
-  'Attempting to save an item while the application is hidden. To protect data integrity, please refresh the application window and try again.';
-export const STRING_DELETED_NOTE =
-  'The note you are attempting to edit has been deleted, and is awaiting sync. Changes you make will be disregarded.';
-export const STRING_INVALID_NOTE =
-  "The note you are attempting to save can not be found or has been deleted. Changes you make will not be synced. Please copy this note's text and start a new note.";
-export const STRING_ELLIPSES = '...';
 export const STRING_GENERIC_SAVE_ERROR =
   'There was an error saving your note. Please try again.';
 export const STRING_DELETE_PLACEHOLDER_ATTEMPT =
@@ -115,6 +110,9 @@ export const STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON = 'Upgrade';
 
 export const STRING_REMOVE_OFFLINE_KEY_CONFIRMATION =
   'This will delete the previously saved offline key.';
+
+export const STRING_FAILED_TO_UPDATE_USER_SETTING =
+  'There was an error while trying to update your settings. Please try again.';
 
 export const Strings = {
   protectingNoteWithoutProtectionSources:

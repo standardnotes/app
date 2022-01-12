@@ -35,6 +35,7 @@ export type DisplayOptions = {
   hideTags: boolean;
   hideNotePreview: boolean;
   hideDate: boolean;
+  hideEditorIcon: boolean;
 };
 
 export class NotesViewState {
@@ -58,6 +59,7 @@ export class NotesViewState {
     hideTags: true,
     hideDate: false,
     hideNotePreview: false,
+    hideEditorIcon: false,
   };
 
   constructor(
@@ -301,6 +303,10 @@ export class NotesViewState {
       PrefKey.NotesHideTags,
       true
     );
+    freshDisplayOptions.hideEditorIcon = this.application.getPreference(
+      PrefKey.NotesHideEditorIcon,
+      false
+    );
     const displayOptionsChanged =
       freshDisplayOptions.sortBy !== this.displayOptions.sortBy ||
       freshDisplayOptions.sortReverse !== this.displayOptions.sortReverse ||
@@ -308,6 +314,8 @@ export class NotesViewState {
       freshDisplayOptions.showArchived !== this.displayOptions.showArchived ||
       freshDisplayOptions.showTrashed !== this.displayOptions.showTrashed ||
       freshDisplayOptions.hideProtected !== this.displayOptions.hideProtected ||
+      freshDisplayOptions.hideEditorIcon !==
+        this.displayOptions.hideEditorIcon ||
       freshDisplayOptions.hideTags !== this.displayOptions.hideTags;
     this.displayOptions = freshDisplayOptions;
     if (displayOptionsChanged) {
@@ -495,7 +503,9 @@ export class NotesViewState {
     this.reloadNotesDisplayOptions();
     this.reloadNotes();
 
-    if (this.notes.length > 0) {
+    const hasSomeNotes = this.notes.length > 0;
+
+    if (hasSomeNotes) {
       this.selectFirstNote();
     } else if (dbLoaded) {
       if (

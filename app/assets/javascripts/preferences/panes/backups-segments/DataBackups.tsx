@@ -5,32 +5,68 @@ import {
   STRING_INVALID_IMPORT_FILE,
   STRING_IMPORTING_ZIP_FILE,
   STRING_UNSUPPORTED_BACKUP_FILE_VERSION,
-  StringImportError
+  StringImportError,
+  STRING_E2E_ENABLED,
+  STRING_LOCAL_ENC_ENABLED,
+  STRING_ENC_NOT_ENABLED,
 } from '@/strings';
 import { BackupFile } from '@standardnotes/snjs';
-import { useRef, useState } from 'preact/hooks';
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { WebApplication } from '@/ui_models/application';
 import { JSXInternal } from 'preact/src/jsx';
 import TargetedEvent = JSXInternal.TargetedEvent;
 import { AppState } from '@/ui_models/app_state';
 import { observer } from 'mobx-react-lite';
-import { PreferencesGroup, PreferencesSegment, Title, Text, Subtitle } from '../../components';
+import {
+  PreferencesGroup,
+  PreferencesSegment,
+  Title,
+  Text,
+  Subtitle,
+} from '../../components';
 import { Button } from '@/components/Button';
 
 type Props = {
   application: WebApplication;
   appState: AppState;
-}
+};
 
-export const DataBackups = observer(({
-  application,
-  appState
-}: Props) => {
-
+export const DataBackups = observer(({ application, appState }: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isImportDataLoading, setIsImportDataLoading] = useState(false);
+  const {
+    isBackupEncrypted,
+    isEncryptionEnabled,
+    setIsBackupEncrypted,
+    setIsEncryptionEnabled,
+    setEncryptionStatusString,
+  } = appState.accountMenu;
 
-  const { isBackupEncrypted, isEncryptionEnabled, setIsBackupEncrypted } = appState.accountMenu;
+  const refreshEncryptionStatus = useCallback(() => {
+    const hasUser = application.hasAccount();
+    const hasPasscode = application.hasPasscode();
+
+    const encryptionEnabled = hasUser || hasPasscode;
+
+    const encryptionStatusString = hasUser
+      ? STRING_E2E_ENABLED
+      : hasPasscode
+      ? STRING_LOCAL_ENC_ENABLED
+      : STRING_ENC_NOT_ENABLED;
+
+    setEncryptionStatusString(encryptionStatusString);
+    setIsEncryptionEnabled(encryptionEnabled);
+    setIsBackupEncrypted(encryptionEnabled);
+  }, [
+    application,
+    setEncryptionStatusString,
+    setIsBackupEncrypted,
+    setIsEncryptionEnabled,
+  ]);
+
+  useEffect(() => {
+    refreshEncryptionStatus();
+  }, [refreshEncryptionStatus]);
 
   const downloadDataArchive = () => {
     application.getArchiveService().downloadBackup(isBackupEncrypted);
@@ -74,12 +110,14 @@ export const DataBackups = observer(({
       statusText = StringImportError(result.errorCount);
     }
     void alertDialog({
-      text: statusText
+      text: statusText,
     });
   };
 
-  const importFileSelected = async (event: TargetedEvent<HTMLInputElement, Event>) => {
-    const { files } = (event.target as HTMLInputElement);
+  const importFileSelected = async (
+    event: TargetedEvent<HTMLInputElement, Event>
+  ) => {
+    const { files } = event.target as HTMLInputElement;
 
     if (!files) {
       return;
@@ -90,15 +128,14 @@ export const DataBackups = observer(({
       return;
     }
 
-    const version = data.version || data.keyParams?.version || data.auth_params?.version;
+    const version =
+      data.version || data.keyParams?.version || data.auth_params?.version;
     if (!version) {
       await performImport(data);
       return;
     }
 
-    if (
-      application.protocolService.supportedVersions().includes(version)
-    ) {
+    if (application.protocolService.supportedVersions().includes(version)) {
       await performImport(data);
     } else {
       setIsImportDataLoading(false);
@@ -107,7 +144,9 @@ export const DataBackups = observer(({
   };
 
   // Whenever "Import Backup" is either clicked or key-pressed, proceed the import
-  const handleImportFile = (event: TargetedEvent<HTMLSpanElement, Event> | KeyboardEvent) => {
+  const handleImportFile = (
+    event: TargetedEvent<HTMLSpanElement, Event> | KeyboardEvent
+  ) => {
     if (event instanceof KeyboardEvent) {
       const { code } = event;
 
@@ -161,26 +200,33 @@ export const DataBackups = observer(({
             </form>
           )}
 
-          <Button type="normal" onClick={downloadDataArchive} label="Download backup" className="mt-2" />
-
+          <Button
+            type="normal"
+            onClick={downloadDataArchive}
+            label="Download backup"
+            className="mt-2"
+          />
         </PreferencesSegment>
         <PreferencesSegment>
-
           <Subtitle>Import a previously saved backup file</Subtitle>
 
-          <div class="flex flex-row items-center mt-3" >
-            <Button type="normal" label="Import Backup" onClick={handleImportFile} />
+          <div class="flex flex-row items-center mt-3">
+            <Button
+              type="normal"
+              label="Import Backup"
+              onClick={handleImportFile}
+            />
             <input
               type="file"
               ref={fileInputRef}
               onChange={importFileSelected}
               className="hidden"
             />
-            {isImportDataLoading && <div className="sk-spinner normal info ml-4" />}
+            {isImportDataLoading && (
+              <div className="sk-spinner normal info ml-4" />
+            )}
           </div>
-
         </PreferencesSegment>
-
       </PreferencesGroup>
     </>
   );

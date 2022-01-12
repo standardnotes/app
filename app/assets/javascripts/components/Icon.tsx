@@ -3,7 +3,9 @@ import PencilOffIcon from '../../icons/ic-pencil-off.svg';
 import PlainTextIcon from '../../icons/ic-text-paragraph.svg';
 import RichTextIcon from '../../icons/ic-text-rich.svg';
 import TrashIcon from '../../icons/ic-trash.svg';
+import TrashFilledIcon from '../../icons/ic-trash-filled.svg';
 import PinIcon from '../../icons/ic-pin.svg';
+import PinFilledIcon from '../../icons/ic-pin-filled.svg';
 import UnpinIcon from '../../icons/ic-pin-off.svg';
 import ArchiveIcon from '../../icons/ic-archive.svg';
 import UnarchiveIcon from '../../icons/ic-unarchive.svg';
@@ -21,6 +23,7 @@ import AuthenticatorIcon from '../../icons/ic-authenticator.svg';
 import SpreadsheetsIcon from '../../icons/ic-spreadsheets.svg';
 import TasksIcon from '../../icons/ic-tasks.svg';
 import MarkdownIcon from '../../icons/ic-markdown.svg';
+import NotesIcon from '../../icons/ic-notes.svg';
 import CodeIcon from '../../icons/ic-code.svg';
 
 import AccessibilityIcon from '../../icons/ic-accessibility.svg';
@@ -52,6 +55,7 @@ import ServerIcon from '../../icons/ic-server.svg';
 import EyeIcon from '../../icons/ic-eye.svg';
 import EyeOffIcon from '../../icons/ic-eye-off.svg';
 import LockIcon from '../../icons/ic-lock.svg';
+import LockFilledIcon from '../../icons/ic-lock-filled.svg';
 import ArrowsSortUpIcon from '../../icons/ic-arrows-sort-up.svg';
 import ArrowsSortDownIcon from '../../icons/ic-arrows-sort-down.svg';
 import WindowIcon from '../../icons/ic-window.svg';
@@ -66,9 +70,11 @@ import { FunctionalComponent } from 'preact';
 const ICONS = {
   'menu-arrow-down-alt': MenuArrowDownAlt,
   'menu-arrow-right': MenuArrowRight,
+  notes: NotesIcon,
   'arrows-sort-up': ArrowsSortUpIcon,
   'arrows-sort-down': ArrowsSortDownIcon,
   lock: LockIcon,
+  'lock-filled': LockFilledIcon,
   eye: EyeIcon,
   'eye-off': EyeOffIcon,
   server: ServerIcon,
@@ -89,7 +95,9 @@ const ICONS = {
   spreadsheets: SpreadsheetsIcon,
   tasks: TasksIcon,
   trash: TrashIcon,
+  'trash-filled': TrashFilledIcon,
   pin: PinIcon,
+  'pin-filled': PinFilledIcon,
   unpin: UnpinIcon,
   archive: ArchiveIcon,
   unarchive: UnarchiveIcon,
@@ -130,11 +138,22 @@ export type IconType = keyof typeof ICONS;
 type Props = {
   type: IconType;
   className?: string;
+  ariaLabel?: string;
 };
 
-export const Icon: FunctionalComponent<Props> = ({ type, className = '' }) => {
+export const Icon: FunctionalComponent<Props> = ({
+  type,
+  className = '',
+  ariaLabel,
+}) => {
   const IconComponent = ICONS[type];
-  return <IconComponent className={`sn-icon ${className}`} />;
+  return (
+    <IconComponent
+      className={`sn-icon ${className}`}
+      role="img"
+      {...(ariaLabel ? { 'aria-label': ariaLabel } : {})}
+    />
+  );
 };
 
 export const IconDirective = toDirective<Props>(Icon, {

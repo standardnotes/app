@@ -1,10 +1,12 @@
-.section.tags {
+.section.tags,
+navigation {
   flex: none !important;
   width: 120px !important;
   transition: width 0.25s;
 }
 
-.section.tags:hover {
+.section.tags:hover,
+navigation:hover {
   flex: initial;
   width: 180px !important;
   transition: width 0.25s;

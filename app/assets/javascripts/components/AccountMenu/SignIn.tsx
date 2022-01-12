@@ -1,5 +1,6 @@
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
+import { isDev } from '@/utils';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
@@ -31,6 +32,11 @@ export const SignInPane: FunctionComponent<Props> = observer(
 
     const emailInputRef = useRef<HTMLInputElement>(null);
     const passwordInputRef = useRef<HTMLInputElement>(null);
+
+    if (isDev && window._devAccountEmail) {
+      setEmail(window._devAccountEmail);
+      setPassword(window._devAccountPassword as string);
+    }
 
     useEffect(() => {
       if (emailInputRef?.current) {

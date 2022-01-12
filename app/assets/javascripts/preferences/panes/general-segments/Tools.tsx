@@ -72,8 +72,8 @@ export const Tools: FunctionalComponent<Props> = observer(
               <div className="flex flex-col">
                 <Subtitle>Spellcheck</Subtitle>
                 <Text>
-                  May degrade performance, especially with long notes. Available
-                  in the Plain Text editor and most specialty editors.
+                  May degrade performance, especially with long notes. This option only controls
+                  spellcheck in the Plain Editor.
                 </Text>
               </div>
               <Switch onChange={toggleSpellcheck} checked={spellcheck} />
