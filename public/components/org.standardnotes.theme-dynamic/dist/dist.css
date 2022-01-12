@@ -1,3 +1,4 @@
+#navigation.section,
 .section.tags,
 navigation {
   flex: none !important;
@@ -5,6 +6,7 @@ navigation {
   transition: width 0.25s;
 }
 
+#navigation.section:hover,
 .section.tags:hover,
 navigation:hover {
   flex: initial;
