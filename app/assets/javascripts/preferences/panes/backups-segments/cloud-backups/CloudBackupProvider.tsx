@@ -9,7 +9,7 @@ import {
 } from '@standardnotes/settings';
 import { WebApplication } from '@/ui_models/application';
 import { Button } from '@/components/Button';
-import { openInNewTab } from '@/utils';
+import { isDev, openInNewTab } from '@/utils';
 import { Subtitle } from '@/preferences/components';
 import { KeyboardKey } from '@Services/ioService';
 import { FunctionComponent } from 'preact';
@@ -54,7 +54,7 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
   const installIntegration = (event: Event) => {
     event.stopPropagation();
 
-    const authUrl = application.getCloudProviderIntegrationUrl(providerName);
+    const authUrl = application.getCloudProviderIntegrationUrl(providerName, isDev);
     openInNewTab(authUrl);
     setAuthBegan(true);
   };
