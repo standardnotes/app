@@ -44,6 +44,7 @@
         div.flex.items-center
           #save-status
             .message(
+              title="{{self.state.noteStatus.message}}"
               ng-class="{'warning sk-bold': self.state.syncTakingTooLong, 'danger sk-bold': self.state.saveError}"
               ) {{self.state.noteStatus.message}}
             .desc(ng-show='self.state.noteStatus.desc') {{self.state.noteStatus.desc}}

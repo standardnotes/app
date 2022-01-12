@@ -74,6 +74,13 @@ $heading-height: 75px;
     text-align: right;
     white-space: nowrap;
 
+    .message,
+    .desc {
+      max-width: 100px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
     .desc,
     .message:not(.warning):not(.danger) {
       // color: var(--sn-stylekit-editor-foreground-color);
