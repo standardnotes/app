@@ -114,42 +114,43 @@ export class NotesState {
 
   async selectNote(uuid: UuidString, userTriggered?: boolean): Promise<void> {
     const note = this.application.findItem(uuid) as SNNote;
+    if (!note) {
+      return;
+    }
 
     const hasMeta = this.io.activeModifiers.has(KeyboardModifier.Meta);
     const hasCtrl = this.io.activeModifiers.has(KeyboardModifier.Ctrl);
     const hasShift = this.io.activeModifiers.has(KeyboardModifier.Shift);
 
-    if (note) {
-      if (userTriggered && (hasMeta || hasCtrl)) {
-        if (this.selectedNotes[uuid]) {
-          delete this.selectedNotes[uuid];
-        } else if (await this.application.authorizeNoteAccess(note)) {
-          runInAction(() => {
-            this.selectedNotes[uuid] = note;
-            this.lastSelectedNote = note;
-          });
-        }
-      } else if (userTriggered && hasShift) {
-        await this.selectNotesRange(note);
-      } else {
-        const shouldSelectNote =
-          this.selectedNotesCount > 1 || !this.selectedNotes[uuid];
-        if (
-          shouldSelectNote &&
-          (await this.application.authorizeNoteAccess(note))
-        ) {
-          runInAction(() => {
-            this.selectedNotes = {
-              [note.uuid]: note,
-            };
-            this.lastSelectedNote = note;
-          });
-        }
+    if (userTriggered && (hasMeta || hasCtrl)) {
+      if (this.selectedNotes[uuid]) {
+        delete this.selectedNotes[uuid];
+      } else if (await this.application.authorizeNoteAccess(note)) {
+        runInAction(() => {
+          this.selectedNotes[uuid] = note;
+          this.lastSelectedNote = note;
+        });
       }
+    } else if (userTriggered && hasShift) {
+      await this.selectNotesRange(note);
+    } else {
+      const shouldSelectNote =
+        this.selectedNotesCount > 1 || !this.selectedNotes[uuid];
+      if (
+        shouldSelectNote &&
+        (await this.application.authorizeNoteAccess(note))
+      ) {
+        runInAction(() => {
+          this.selectedNotes = {
+            [note.uuid]: note,
+          };
+          this.lastSelectedNote = note;
+        });
+      }
+    }
 
-      if (this.selectedNotesCount === 1) {
-        await this.openNote(Object.keys(this.selectedNotes)[0]);
-      }
+    if (this.selectedNotesCount === 1) {
+      await this.openNote(Object.keys(this.selectedNotes)[0]);
     }
   }
 
