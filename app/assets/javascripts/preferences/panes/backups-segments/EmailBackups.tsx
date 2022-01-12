@@ -143,7 +143,7 @@ export const EmailBackups = observer(({ application }: Props) => {
         >
           {!isDesktopApplication() && (
             <Text className="mb-3">
-              Daily encrypted email backups of your entire dataset delivered
+              Daily encrypted email backups of your entire data set delivered
               directly to your inbox.
             </Text>
           )}
