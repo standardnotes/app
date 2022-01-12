@@ -3,7 +3,6 @@
 #navigation .scrollable {
   @include minimal_scrollbar();
   height: 100%;
-  background-color: var(--sn-stylekit-background-color);
 }
 
 #navigation {
