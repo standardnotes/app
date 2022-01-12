@@ -58,7 +58,6 @@ import {
   delayHide,
   elemReady,
   fileChange,
-  infiniteScroll,
   lowercase,
   selectOnFocus,
   snEnter,
@@ -150,7 +149,6 @@ const startApplication: StartApplication = async function startApplication(
     .directive('delayHide', delayHide)
     .directive('elemReady', elemReady)
     .directive('fileChange', fileChange)
-    .directive('infiniteScroll', [infiniteScroll])
     .directive('lowercase', lowercase)
     .directive('selectOnFocus', ['$window', selectOnFocus])
     .directive('snEnter', snEnter);

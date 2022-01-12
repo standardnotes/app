@@ -203,11 +203,6 @@ $footer-height: 2rem;
     position: relative;
     overflow: hidden;
 
-    .scrollable {
-      overflow-y: auto;
-      overflow-x: hidden;
-    }
-
     > .content {
       height: 100%;
       max-height: 100%;
@@ -249,4 +244,22 @@ $footer-height: 2rem;
 
 .z-index-purchase-flow {
   z-index: $z-index-purchase-flow;
+}
+
+textarea {
+  &.non-interactive {
+    user-select: text !important;
+    resize: none;
+    background-color: transparent;
+    border-color: var(--sn-stylekit-border-color);
+    font-family: monospace;
+    outline: 0;
+
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+  }
 }
