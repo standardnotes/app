@@ -1,4 +1,4 @@
-import { isDesktopApplication } from '@/utils';
+import { convertStringifiedBooleanToBoolean, isDesktopApplication } from '@/utils';
 import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/strings';
 import { useCallback, useEffect, useState } from 'preact/hooks';
 import { WebApplication } from '@/ui_models/application';
@@ -31,14 +31,8 @@ export const EmailBackups = observer(({ application }: Props) => {
   >([]);
   const [isFailedBackupEmailMuted, setIsFailedBackupEmailMuted] =
     useState(true);
-  const [isFailedCloudBackupEmailMuted, setIsFailedCloudBackupEmailMuted] =
-    useState(true);
   const [isEntitledForEmailBackups, setIsEntitledForEmailBackups] =
     useState(false);
-
-  const convertBooleanStringToBoolean = (value: string) => {
-    return value !== 'false';
-  };
 
   const loadEmailFrequencySetting = useCallback(async () => {
     setIsLoading(true);
@@ -50,13 +44,8 @@ export const EmailBackups = observer(({ application }: Props) => {
           EmailBackupFrequency.Disabled) as EmailBackupFrequency
       );
       setIsFailedBackupEmailMuted(
-        convertBooleanStringToBoolean(
+        convertStringifiedBooleanToBoolean(
           userSettings[SettingName.MuteFailedBackupsEmails] as string
-        )
-      );
-      setIsFailedCloudBackupEmailMuted(
-        convertBooleanStringToBoolean(
-          userSettings[SettingName.MuteFailedCloudBackupsEmails] as string
         )
       );
     } catch (error) {
@@ -88,7 +77,7 @@ export const EmailBackups = observer(({ application }: Props) => {
     loadEmailFrequencySetting();
   }, [application, loadEmailFrequencySetting]);
 
-  const updateUserSetting = async (
+  const updateSetting = async (
     settingName: SettingName,
     payload: string
   ): Promise<boolean> => {
@@ -105,7 +94,7 @@ export const EmailBackups = observer(({ application }: Props) => {
     const previousFrequency = emailFrequency;
     setEmailFrequency(frequency);
 
-    const updateResult = await updateUserSetting(
+    const updateResult = await updateSetting(
       SettingName.EmailBackupFrequency,
       frequency
     );
@@ -118,25 +107,12 @@ export const EmailBackups = observer(({ application }: Props) => {
     const previousValue = isFailedBackupEmailMuted;
     setIsFailedBackupEmailMuted(!isFailedBackupEmailMuted);
 
-    const updateResult = await updateUserSetting(
+    const updateResult = await updateSetting(
       SettingName.MuteFailedBackupsEmails,
       `${!isFailedBackupEmailMuted}`
     );
     if (!updateResult) {
       setIsFailedBackupEmailMuted(previousValue);
-    }
-  };
-
-  const toggleMuteFailedCloudBackupEmails = async () => {
-    const previousValue = isFailedCloudBackupEmailMuted;
-    setIsFailedCloudBackupEmailMuted(!isFailedCloudBackupEmailMuted);
-
-    const updateResult = await updateUserSetting(
-      SettingName.MuteFailedCloudBackupsEmails,
-      `${!isFailedCloudBackupEmailMuted}`
-    );
-    if (!updateResult) {
-      setIsFailedCloudBackupEmailMuted(previousValue);
     }
   };
 
@@ -202,19 +178,6 @@ export const EmailBackups = observer(({ application }: Props) => {
               <Switch
                 onChange={toggleMuteFailedBackupEmails}
                 checked={!isFailedBackupEmailMuted}
-              />
-            )}
-          </div>
-          <div className="flex items-center justify-between mt-1">
-            <div className="flex flex-col">
-              <Text>Receive a notification email if a cloud backup fails.</Text>
-            </div>
-            {isLoading ? (
-              <div className={'sk-spinner info small'} />
-            ) : (
-              <Switch
-                onChange={toggleMuteFailedCloudBackupEmails}
-                checked={!isFailedCloudBackupEmailMuted}
               />
             )}
           </div>
