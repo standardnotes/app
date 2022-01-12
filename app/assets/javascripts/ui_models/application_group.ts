@@ -61,6 +61,7 @@ export class ApplicationGroup extends SNApplicationGroup {
       platform,
       descriptor.identifier,
       this.$compile,
+      this.$timeout,
       scope,
       this.defaultSyncServerHost,
       this.bridge,

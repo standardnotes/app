@@ -87,27 +87,37 @@ export class IOService {
     this.activeModifiers.delete(modifier);
   };
 
-  handleKeyDown = (event: KeyboardEvent): void => {
-    for (const modifier of this.modifiersForEvent(event)) {
-      this.addActiveModifier(modifier);
-    }
-    this.notifyObserver(event, KeyboardKeyEvent.Down);
-  };
-
-  handleComponentKeyDown = (modifier: KeyboardModifier | undefined): void => {
+  public handleComponentKeyDown = (
+    modifier: KeyboardModifier | undefined
+  ): void => {
     this.addActiveModifier(modifier);
   };
 
-  handleKeyUp = (event: KeyboardEvent): void => {
-    for (const modifier of this.modifiersForEvent(event)) {
-      this.removeActiveModifier(modifier);
-    }
+  public handleComponentKeyUp = (
+    modifier: KeyboardModifier | undefined
+  ): void => {
+    this.removeActiveModifier(modifier);
+  };
+
+  private handleKeyDown = (event: KeyboardEvent): void => {
+    this.updateAllModifiersFromEvent(event);
+    this.notifyObserver(event, KeyboardKeyEvent.Down);
+  };
+
+  private handleKeyUp = (event: KeyboardEvent): void => {
+    this.updateAllModifiersFromEvent(event);
     this.notifyObserver(event, KeyboardKeyEvent.Up);
   };
 
-  handleComponentKeyUp = (modifier: KeyboardModifier | undefined): void => {
-    this.removeActiveModifier(modifier);
-  };
+  private updateAllModifiersFromEvent(event: KeyboardEvent): void {
+    for (const modifier of Object.values(KeyboardModifier)) {
+      if (event.getModifierState(modifier)) {
+        this.addActiveModifier(modifier);
+      } else {
+        this.removeActiveModifier(modifier);
+      }
+    }
+  }
 
   handleWindowBlur = (): void => {
     for (const modifier of this.activeModifiers) {
@@ -136,7 +146,7 @@ export class IOService {
     return eventModifiers;
   }
 
-  eventMatchesKeyAndModifiers(
+  private eventMatchesKeyAndModifiers(
     event: KeyboardEvent,
     key: KeyboardKey | string,
     modifiers: KeyboardModifier[] = []
