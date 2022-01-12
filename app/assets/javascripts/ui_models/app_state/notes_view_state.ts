@@ -333,9 +333,14 @@ export class NotesViewState {
     if (this.isFiltering) {
       title = this.noteFilterText;
     }
+
     await this.appState.openNewNote(title);
-    this.reloadNotes();
-    this.appState.noteTags.reloadTags();
+    this.application.performFunctionWithAngularDigestCycleAfterAsyncChange(
+      () => {
+        this.reloadNotes();
+        this.appState.noteTags.reloadTags();
+      }
+    );
   };
 
   createPlaceholderNote = () => {
