@@ -52,7 +52,7 @@ export function StringEmptyTrash(count: number) {
 export const STRING_ACCOUNT_MENU_UNCHECK_MERGE =
   'Unchecking this option means any of the notes you have written while you were signed out will be deleted. Are you sure you want to discard these notes?';
 export const STRING_SIGN_OUT_CONFIRMATION =
-  'This will delete all local items and extensions.';
+  'This will remove all notes, tags, and other data from this device.';
 export const STRING_ERROR_DECRYPTING_IMPORT =
   'There was an error decrypting your items. Make sure the password you entered is correct and try again.';
 export const STRING_E2E_ENABLED =
