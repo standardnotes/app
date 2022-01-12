@@ -43,6 +43,7 @@ export class WebApplication extends SNApplication {
     platform: Platform,
     identifier: string,
     private $compile: angular.ICompileService,
+    private $timeout: angular.ITimeoutService,
     scope: angular.IScope,
     defaultSyncServerHost: string,
     public bridge: Bridge,
@@ -102,6 +103,16 @@ export class WebApplication extends SNApplication {
 
   setWebServices(services: WebServices): void {
     this.webServices = services;
+  }
+
+  /**
+   * If a UI change is made in an async function, Angular might not re-render the change.
+   * Use this function to force re-render the UI after an async function has made UI changes.
+   */
+  public performFunctionWithAngularDigestCycleAfterAsyncChange(
+    func: () => void
+  ) {
+    this.$timeout(func);
   }
 
   public getAppState(): AppState {
