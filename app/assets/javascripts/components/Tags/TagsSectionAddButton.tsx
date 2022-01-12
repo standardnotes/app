@@ -1,5 +1,4 @@
 import { IconButton } from '@/components/IconButton';
-import { AppState } from '@/ui_models/app_state';
 import { FeaturesState } from '@/ui_models/app_state/features_state';
 import { TagsState } from '@/ui_models/app_state/tags_state';
 import { observer } from 'mobx-react-lite';
@@ -23,6 +22,7 @@ export const TagsSectionAddButton: FunctionComponent<Props> = observer(
         focusable={true}
         icon="add"
         title="Create a new tag"
+        className="color-neutral"
         onClick={() => tags.createNewTemplate()}
       />
     );
