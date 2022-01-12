@@ -199,32 +199,33 @@ export class TagsState {
 
   public async assignParent(
     tagUuid: string,
-    parentUuid: string | undefined
+    futureParentUuid: string | undefined
   ): Promise<void> {
     const tag = this.application.findItem(tagUuid) as SNTag;
 
     const currentParent = this.application.getTagParent(tag);
-    const currentParentUuid = currentParent?.parentId;
+    const currentParentUuid = currentParent?.uuid;
 
-    if (currentParentUuid === parentUuid) {
+    if (currentParentUuid === futureParentUuid) {
       return;
     }
 
-    const parent =
-      parentUuid && (this.application.findItem(parentUuid) as SNTag);
+    const futureParent =
+      futureParentUuid &&
+      (this.application.findItem(futureParentUuid) as SNTag);
 
-    if (!parent) {
+    if (!futureParent) {
       const futureSiblings = rootTags(this.application);
       if (!isValidFutureSiblings(this.application, futureSiblings, tag)) {
         return;
       }
       await this.application.unsetTagParent(tag);
     } else {
-      const futureSiblings = this.application.getTagChildren(parent);
+      const futureSiblings = this.application.getTagChildren(futureParent);
       if (!isValidFutureSiblings(this.application, futureSiblings, tag)) {
         return;
       }
-      await this.application.setTagParent(parent, tag);
+      await this.application.setTagParent(futureParent, tag);
     }
 
     await this.application.sync();
