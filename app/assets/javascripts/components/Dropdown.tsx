@@ -9,7 +9,7 @@ import {
 import VisuallyHidden from '@reach/visually-hidden';
 import { FunctionComponent } from 'preact';
 import { IconType, Icon } from './Icon';
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 
 export type DropdownItem = {
   icon?: IconType;
@@ -63,6 +63,10 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({
   onChange,
 }) => {
   const [value, setValue] = useState(defaultValue);
+
+  useEffect(() => {
+    setValue(defaultValue);
+  }, [defaultValue]);
 
   const labelId = `${id}-label`;
 
