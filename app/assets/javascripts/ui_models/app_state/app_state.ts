@@ -304,7 +304,7 @@ export class AppState {
     );
   }
 
-  async setFoldersComponent(component?: SNComponent) {
+  setFoldersComponent(component?: SNComponent) {
     const foldersComponentViewer = this.foldersComponentViewer;
 
     if (foldersComponentViewer) {
@@ -343,7 +343,11 @@ export class AppState {
             .componentsForArea(ComponentArea.TagsList)
             .find((component) => component.active);
 
-          this.setFoldersComponent(componentViewer);
+          this.application.performFunctionWithAngularDigestCycleAfterAsyncChange(
+            () => {
+              this.setFoldersComponent(componentViewer);
+            }
+          );
         }
       }
     );
