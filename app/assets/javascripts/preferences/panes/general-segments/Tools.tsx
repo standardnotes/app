@@ -41,7 +41,7 @@ export const Tools: FunctionalComponent<Props> = observer(
 
     const toggleSpellcheck = () => {
       setSpellcheck(!spellcheck);
-      application.setPreference(PrefKey.EditorSpellcheck, !spellcheck);
+      application.getAppState().toggleGlobalSpellcheck();
     };
 
     return (

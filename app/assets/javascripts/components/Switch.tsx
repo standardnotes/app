@@ -30,6 +30,7 @@ export const Switch: FunctionalComponent<SwitchProps> = (
   return (
     <label
       className={`sn-component flex justify-between items-center cursor-pointer px-3 ${className}`}
+      style={{opacity: isDisabled ? 0.5 : 1.0}}
       {...(props.role ? { role: props.role } : {})}
     >
       {props.children}
