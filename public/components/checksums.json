@@ -45,9 +45,9 @@
     "binary": "bac85952fbe8af1eac49701da69b811de531fd15b1cfd6bbc90d61d9c785f5d1"
   },
   "org.standardnotes.plus-editor": {
-    "version": "1.5.0",
-    "base64": "f8923ab4a464ee113d47fa164ee7efbc6337e9e538105ae473b00492fb4ec46e",
-    "binary": "d4645ee7a38eeb1046239ea337333dcb64dc01c81f05e20307696099364b485b"
+    "version": "1.6.0",
+    "base64": "ae94bf9621a3863167bead0ea2f3d1bb137c5e1dc65bfd73745113a18d0edb9b",
+    "binary": "509ba3f2d5d167b05ae9258ac27c48e9ff16820b3beca5600ceab6af8b206a94"
   },
   "org.standardnotes.simple-markdown-editor": {
     "version": "1.4.0",

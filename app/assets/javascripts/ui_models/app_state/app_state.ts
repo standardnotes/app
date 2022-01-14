@@ -281,6 +281,18 @@ export class AppState {
     }
   }
 
+  isGlobalSpellcheckEnabled(): boolean {
+    return this.application.getPreference(PrefKey.EditorSpellcheck, true);
+  }
+
+  async toggleGlobalSpellcheck() {
+    const currentValue = this.isGlobalSpellcheckEnabled();
+    return this.application.setPreference(
+      PrefKey.EditorSpellcheck,
+      !currentValue
+    );
+  }
+
   private tagChangedNotifier(): IReactionDisposer {
     return reaction(
       () => this.tags.selectedUuid,
