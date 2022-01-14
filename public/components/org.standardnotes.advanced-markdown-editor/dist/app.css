@@ -94,7 +94,7 @@ body, html {
 .editor-preview-active table tr:nth-child(2n), .editor-preview-active-side table tr:nth-child(2n) {
   background-color: var(--sn-stylekit-background-color);
 }
-.editor-preview-active p code, .editor-preview-active-side p code {
+.editor-preview-active p code, .editor-preview-active ul li code, .editor-preview-active-side p code, .editor-preview-active-side ul li code {
   padding: 3px 6px;
   background-color: var(--sn-stylekit-background-color);
   color: var(--sn-stylekit-info-color);
