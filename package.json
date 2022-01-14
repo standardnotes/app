@@ -27,7 +27,7 @@
     "@babel/preset-typescript": "^7.15.0",
     "@reach/disclosure": "^0.16.2",
     "@reach/visually-hidden": "^0.16.0",
-    "@standardnotes/components": "^1.2.7",
+    "@standardnotes/components": "1.2.8",
     "@svgr/webpack": "^5.5.0",
     "@types/angular": "^1.8.3",
     "@types/jest": "^27.0.3",
