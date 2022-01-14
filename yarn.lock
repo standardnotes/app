@@ -2616,10 +2616,10 @@
   resolved "https://registry.yarnpkg.com/@standardnotes/common/-/common-1.2.1.tgz#9db212db86ccbf08b347da02549b3dbe4bedbb02"
   integrity sha512-HilBxS50CBlC6TJvy1mrnhGVDzOH63M/Jf+hyMxQ0Vt1nYzpd0iyxVEUrgMh7ZiyO1b9CLnCDED99Jy9rnZWVQ==
 
-"@standardnotes/components@^1.2.7":
-  version "1.2.7"
-  resolved "https://registry.yarnpkg.com/@standardnotes/components/-/components-1.2.7.tgz#99e4d90088589cef038fa3b1ced36acbe364ed21"
-  integrity sha512-vojXzml3c5ZWRvTVFS+iVy6YUX1J5lKD9JXz4EWoKck08zlIyF7C+jdZYdT0wFKb0Kgen8nXXW8jIS0kRk6wzA==
+"@standardnotes/components@1.2.8":
+  version "1.2.8"
+  resolved "https://registry.yarnpkg.com/@standardnotes/components/-/components-1.2.8.tgz#fc104f520edcc6c80e958167758d844094297554"
+  integrity sha512-M6pBV0ZULNZr+Q5d+xq1i5ZahZtwy6Daf+XGRQOBbWjrme/ECAW+2VXBRk3YkK4+DbRTziFDoiod9wJ011mQiw==
 
 "@standardnotes/domain-events@2.5.1":
   version "2.5.1"
