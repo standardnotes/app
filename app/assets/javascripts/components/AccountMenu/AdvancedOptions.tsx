@@ -3,7 +3,7 @@ import { AppState } from '@/ui_models/app_state';
 import { isDev } from '@/utils';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 import { Checkbox } from '../Checkbox';
 import { Icon } from '../Icon';
 import { InputWithIcon } from '../InputWithIcon';
@@ -20,11 +20,15 @@ export const AdvancedOptions: FunctionComponent<Props> = observer(
       appState.accountMenu;
     const [showAdvanced, setShowAdvanced] = useState(false);
 
-    if (isDev && window._devAccountServer) {
-      setEnableServerOption(true);
-      setServer(window._devAccountServer);
-      application.setCustomHost(window._devAccountServer);
-    }
+    useEffect(() => {
+      if (isDev && window._devAccountServer) {
+        setEnableServerOption(true);
+        setServer(window._devAccountServer);
+        application.setCustomHost(window._devAccountServer);
+      }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
 
     const handleServerOptionChange = (e: Event) => {
       if (e.target instanceof HTMLInputElement) {

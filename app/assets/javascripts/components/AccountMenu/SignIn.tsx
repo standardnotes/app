@@ -33,14 +33,13 @@ export const SignInPane: FunctionComponent<Props> = observer(
     const emailInputRef = useRef<HTMLInputElement>(null);
     const passwordInputRef = useRef<HTMLInputElement>(null);
 
-    if (isDev && window._devAccountEmail) {
-      setEmail(window._devAccountEmail);
-      setPassword(window._devAccountPassword as string);
-    }
-
     useEffect(() => {
       if (emailInputRef?.current) {
         emailInputRef.current?.focus();
+      }
+      if (isDev && window._devAccountEmail) {
+        setEmail(window._devAccountEmail);
+        setPassword(window._devAccountPassword as string);
       }
     }, []);
 
