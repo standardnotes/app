@@ -20,16 +20,6 @@ export const AdvancedOptions: FunctionComponent<Props> = observer(
       appState.accountMenu;
     const [showAdvanced, setShowAdvanced] = useState(false);
 
-    useEffect(() => {
-      if (isDev && window._devAccountServer) {
-        setEnableServerOption(true);
-        setServer(window._devAccountServer);
-        application.setCustomHost(window._devAccountServer);
-      }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-
     const handleServerOptionChange = (e: Event) => {
       if (e.target instanceof HTMLInputElement) {
         setEnableServerOption(e.target.checked);
