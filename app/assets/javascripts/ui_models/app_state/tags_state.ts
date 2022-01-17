@@ -1,7 +1,6 @@
 import { confirmDialog } from '@/services/alertService';
-import { STRING_DELETE_TAG, STRING_MISSING_SYSTEM_TAG } from '@/strings';
+import { STRING_DELETE_TAG } from '@/strings';
 import {
-  ApplicationEvent,
   ComponentAction,
   ContentType,
   MessageData,
@@ -9,7 +8,7 @@ import {
   SNSmartTag,
   SNTag,
   TagMutator,
-  UuidString,
+  UuidString
 } from '@standardnotes/snjs';
 import {
   action,
@@ -17,7 +16,7 @@ import {
   makeAutoObservable,
   makeObservable,
   observable,
-  runInAction,
+  runInAction
 } from 'mobx';
 import { WebApplication } from '../application';
 import { FeaturesState, SMART_TAGS_FEATURE_NAME } from './features_state';
