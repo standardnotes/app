@@ -413,48 +413,6 @@ export class AppState {
   }
 
   addAppEventObserver() {
-    const setThemeAsPerColorScheme = (prefersDarkColorScheme: boolean) => {
-      const useDeviceThemeSettings = this.application.getPreference(
-        PrefKey.UseSystemColorScheme,
-        false
-      );
-
-      if (useDeviceThemeSettings) {
-        const preference = prefersDarkColorScheme
-          ? PrefKey.AutoDarkThemeIdentifier
-          : PrefKey.AutoLightThemeIdentifier;
-        const themes = this.application.getDisplayableItems(
-          ContentType.Theme
-        ) as SNTheme[];
-
-        const enableDefaultTheme = () => {
-          const activeTheme = themes.find(
-            (theme) => theme.active && !theme.isLayerable()
-          );
-          if (activeTheme) this.application.toggleTheme(activeTheme);
-        };
-
-        const themeIdentifier = this.application.getPreference(
-          preference,
-          'None'
-        ) as string;
-        if (themeIdentifier === 'Default') {
-          enableDefaultTheme();
-        } else {
-          const theme = themes.find(
-            (theme) => theme.package_info.identifier === themeIdentifier
-          );
-          if (theme && !theme.active) {
-            this.application.toggleTheme(theme);
-          }
-        }
-      }
-    };
-
-    const colorSchemeEventHandler = (event: MediaQueryListEvent) => {
-      setThemeAsPerColorScheme(event.matches);
-    };
-
     this.unsubApp = this.application.addEventObserver(async (eventName) => {
       switch (eventName) {
         case ApplicationEvent.Started:
@@ -465,17 +423,7 @@ export class AppState {
           if (window.location.search.includes('purchase=true')) {
             this.purchaseFlow.openPurchaseFlow();
           }
-          window
-            .matchMedia('(prefers-color-scheme: dark)')
-            .addEventListener('change', colorSchemeEventHandler);
           break;
-        case ApplicationEvent.PreferencesChanged: {
-          const prefersDarkColorScheme = window.matchMedia(
-            '(prefers-color-scheme: dark)'
-          );
-          setThemeAsPerColorScheme(prefersDarkColorScheme.matches);
-          break;
-        }
         case ApplicationEvent.SyncStatusChanged:
           this.sync.update(this.application.getSyncStatus());
           break;

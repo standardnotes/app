@@ -10,6 +10,7 @@ import {
   UuidString,
   FeatureStatus,
   PayloadSource,
+  PrefKey,
 } from '@standardnotes/snjs';
 
 const CACHED_THEMES_KEY = 'cachedThemes';
@@ -18,6 +19,48 @@ export class ThemeManager extends ApplicationService {
   private activeThemes: UuidString[] = [];
   private unregisterDesktop!: () => void;
   private unregisterStream!: () => void;
+
+  private colorSchemeEventHandler(event: MediaQueryListEvent) {
+    this.setThemeAsPerColorScheme(event.matches);
+  }
+
+  private setThemeAsPerColorScheme(prefersDarkColorScheme: boolean) {
+    const useDeviceThemeSettings = this.application.getPreference(
+      PrefKey.UseSystemColorScheme,
+      false
+    );
+
+    if (useDeviceThemeSettings) {
+      const preference = prefersDarkColorScheme
+        ? PrefKey.AutoDarkThemeIdentifier
+        : PrefKey.AutoLightThemeIdentifier;
+      const themes = this.application.getDisplayableItems(
+        ContentType.Theme
+      ) as SNTheme[];
+
+      const enableDefaultTheme = () => {
+        const activeTheme = themes.find(
+          (theme) => theme.active && !theme.isLayerable()
+        );
+        if (activeTheme) this.application.toggleTheme(activeTheme);
+      };
+
+      const themeIdentifier = this.application.getPreference(
+        preference,
+        'None'
+      ) as string;
+      if (themeIdentifier === 'Default') {
+        enableDefaultTheme();
+      } else {
+        const theme = themes.find(
+          (theme) => theme.package_info.identifier === themeIdentifier
+        );
+        if (theme && !theme.active) {
+          this.application.toggleTheme(theme);
+        }
+      }
+    }
+  }
 
   async onAppEvent(event: ApplicationEvent) {
     super.onAppEvent(event);
@@ -32,6 +75,15 @@ export class ThemeManager extends ApplicationService {
       await this.activateCachedThemes();
     } else if (event === ApplicationEvent.FeaturesUpdated) {
       this.reloadThemeStatus();
+    } else if (event === ApplicationEvent.Launched) {
+      window
+        .matchMedia('(prefers-color-scheme: dark)')
+        .addEventListener('change', this.colorSchemeEventHandler.bind(this));
+    } else if (event === ApplicationEvent.PreferencesChanged) {
+      const prefersDarkColorScheme = window.matchMedia(
+        '(prefers-color-scheme: dark)'
+      );
+      this.setThemeAsPerColorScheme(prefersDarkColorScheme.matches);
     }
   }
 
@@ -46,6 +98,9 @@ export class ThemeManager extends ApplicationService {
     this.unregisterStream();
     (this.unregisterDesktop as unknown) = undefined;
     (this.unregisterStream as unknown) = undefined;
+    window
+      .matchMedia('(prefers-color-scheme: dark)')
+      .removeEventListener('change', this.colorSchemeEventHandler.bind(this));
     super.deinit();
   }
 
