@@ -148,8 +148,7 @@ const AppearancePane: FunctionComponent<Props> = observer(({ application }) => {
               <div className="flex flex-col">
                 <Subtitle>Use device settings</Subtitle>
                 <Text>
-                  Automatically set the selected light / dark theme based on
-                  your device’s settings.
+                  Automatically change active theme based on your system settings.
                 </Text>
               </div>
               <Switch
