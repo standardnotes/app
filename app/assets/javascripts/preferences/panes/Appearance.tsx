@@ -63,7 +63,7 @@ const _Appearance: FunctionComponent<Props> = observer(({ application }) => {
       .map((theme) => {
         return {
           label: theme.name,
-          value: theme.package_info.identifier as string,
+          value: theme.identifier as string,
         };
       });
 
