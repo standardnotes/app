@@ -82,7 +82,7 @@ const getDefaultEditor = (application: WebApplication) => {
 
 export const Defaults: FunctionComponent<Props> = ({ application }) => {
   const [editorItems, setEditorItems] = useState<DropdownItem[]>([]);
-  const [defaultEditorValue] = useState(
+  const [defaultEditorValue, setDefaultEditorValue] = useState(
     () =>
       getDefaultEditor(application)?.package_info?.identifier || 'plain-editor'
   );
@@ -117,6 +117,7 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
   }, [application]);
 
   const setDefaultEditor = (value: string) => {
+    setDefaultEditorValue(value as FeatureIdentifier);
     const editors = application.componentManager.componentsForArea(
       ComponentArea.Editor
     );
@@ -144,7 +145,7 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
               id="def-editor-dropdown"
               label="Select the default editor"
               items={editorItems}
-              defaultValue={defaultEditorValue}
+              value={defaultEditorValue}
               onChange={setDefaultEditor}
             />
           </div>

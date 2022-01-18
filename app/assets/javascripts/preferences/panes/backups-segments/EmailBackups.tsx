@@ -157,7 +157,7 @@ export const EmailBackups = observer(({ application }: Props) => {
                 id="def-editor-dropdown"
                 label="Select email frequency"
                 items={emailFrequencyOptions}
-                defaultValue={emailFrequency}
+                value={emailFrequency}
                 onChange={(item) => {
                   updateEmailFrequency(item as EmailBackupFrequency);
                 }}
