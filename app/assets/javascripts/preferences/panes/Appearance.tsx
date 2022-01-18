@@ -39,14 +39,14 @@ const AppearancePane: FunctionComponent<Props> = observer(({ application }) => {
     () =>
       application.getPreference(
         PrefKey.AutoLightThemeIdentifier,
-        'None'
+        'Default'
       ) as string
   );
   const [autoDarkTheme, setAutoDarkTheme] = useState<string>(
     () =>
       application.getPreference(
         PrefKey.AutoDarkThemeIdentifier,
-        isEntitledToMidnightTheme ? FeatureIdentifier.MidnightTheme : 'None'
+        isEntitledToMidnightTheme ? FeatureIdentifier.MidnightTheme : 'Default'
       ) as string
   );
   const [useDeviceSettings, setUseDeviceSettings] = useState(
@@ -83,16 +83,10 @@ const AppearancePane: FunctionComponent<Props> = observer(({ application }) => {
       }
     });
 
-    themesAsItems.unshift(
-      {
-        label: 'None',
-        value: 'None',
-      },
-      {
-        label: 'Default',
-        value: 'Default',
-      }
-    );
+    themesAsItems.unshift({
+      label: 'Default',
+      value: 'Default',
+    });
 
     setThemeItems(themesAsItems);
   }, [application]);

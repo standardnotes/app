@@ -47,7 +47,7 @@ export class ThemeManager extends ApplicationService {
 
       const themeIdentifier = this.application.getPreference(
         preference,
-        'None'
+        'Default'
       ) as string;
       if (themeIdentifier === 'Default') {
         enableDefaultTheme();
