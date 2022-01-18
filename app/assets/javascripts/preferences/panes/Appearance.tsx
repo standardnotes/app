@@ -28,7 +28,7 @@ type Props = {
   application: WebApplication;
 };
 
-const _Appearance: FunctionComponent<Props> = observer(({ application }) => {
+const AppearancePane: FunctionComponent<Props> = observer(({ application }) => {
   const premiumModal = usePremiumModal();
   const isEntitledToMidnightTheme =
     application.getFeatureStatus(FeatureIdentifier.MidnightTheme) ===
@@ -197,7 +197,7 @@ const _Appearance: FunctionComponent<Props> = observer(({ application }) => {
 export const Appearance: FunctionComponent<Props> = observer(
   ({ application }) => (
     <PremiumModalProvider state={application.getAppState().features}>
-      <_Appearance application={application} />
+      <AppearancePane application={application} />
     </PremiumModalProvider>
   )
 );
