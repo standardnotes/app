@@ -9,21 +9,22 @@ import {
 import VisuallyHidden from '@reach/visually-hidden';
 import { FunctionComponent } from 'preact';
 import { IconType, Icon } from './Icon';
-import { useEffect, useState } from 'preact/hooks';
 
 export type DropdownItem = {
   icon?: IconType;
   iconClassName?: string;
   label: string;
   value: string;
+  disabled?: boolean;
 };
 
 type DropdownProps = {
   id: string;
   label: string;
   items: DropdownItem[];
-  defaultValue: string;
-  onChange: (value: string) => void;
+  value: string;
+  onChange: (value: string, item: DropdownItem) => void;
+  disabled?: boolean;
 };
 
 type ListboxButtonProps = DropdownItem & {
@@ -59,20 +60,18 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({
   id,
   label,
   items,
-  defaultValue,
+  value,
   onChange,
+  disabled,
 }) => {
-  const [value, setValue] = useState(defaultValue);
-
-  useEffect(() => {
-    setValue(defaultValue);
-  }, [defaultValue]);
-
   const labelId = `${id}-label`;
 
   const handleChange = (value: string) => {
-    setValue(value);
-    onChange(value);
+    const selectedItem = items.find(
+      (item) => item.value === value
+    ) as DropdownItem;
+
+    onChange(value, selectedItem);
   };
 
   return (
@@ -82,6 +81,7 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({
         value={value}
         onChange={handleChange}
         aria-labelledby={labelId}
+        disabled={disabled}
       >
         <ListboxButton
           className="sn-dropdown-button"
@@ -106,6 +106,7 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({
                   className="sn-dropdown-item"
                   value={item.value}
                   label={item.label}
+                  disabled={item.disabled}
                 >
                   {item.icon ? (
                     <div className="flex mr-3">
