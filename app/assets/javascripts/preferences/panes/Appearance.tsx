@@ -146,7 +146,7 @@ const AppearancePane: FunctionComponent<Props> = observer(({ application }) => {
           <div className="mt-2">
             <div className="flex items-center justify-between">
               <div className="flex flex-col">
-                <Subtitle>Use device settings</Subtitle>
+                <Subtitle>Use system color scheme</Subtitle>
                 <Text>
                   Automatically change active theme based on your system settings.
                 </Text>
