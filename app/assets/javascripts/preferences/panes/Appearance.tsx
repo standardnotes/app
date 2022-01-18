@@ -102,6 +102,18 @@ const _Appearance: FunctionComponent<Props> = observer(({ application }) => {
 
   const toggleUseDeviceSettings = () => {
     application.setPreference(PrefKey.UseSystemColorScheme, !useDeviceSettings);
+    if (!application.getPreference(PrefKey.AutoLightThemeIdentifier)) {
+      application.setPreference(
+        PrefKey.AutoLightThemeIdentifier,
+        autoLightTheme as FeatureIdentifier
+      );
+    }
+    if (!application.getPreference(PrefKey.AutoDarkThemeIdentifier)) {
+      application.setPreference(
+        PrefKey.AutoDarkThemeIdentifier,
+        autoDarkTheme as FeatureIdentifier
+      );
+    }
     setUseDeviceSettings(!useDeviceSettings);
   };
 
