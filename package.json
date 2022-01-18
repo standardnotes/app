@@ -89,7 +89,7 @@
     "@standardnotes/features": "1.20.7",
     "@standardnotes/settings": "^1.9.0",
     "@standardnotes/sncrypto-web": "1.5.3",
-    "@standardnotes/snjs": "2.35.5",
+    "@standardnotes/snjs": "2.40.0",
     "mobx": "^6.3.5",
     "mobx-react-lite": "^3.2.2",
     "preact": "^10.5.15",
