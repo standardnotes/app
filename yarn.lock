@@ -2597,13 +2597,6 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@standardnotes/auth@3.8.3":
-  version "3.8.3"
-  resolved "https://registry.yarnpkg.com/@standardnotes/auth/-/auth-3.8.3.tgz#6e627c1a1a9ebf91d97f52950d099bf7704382e3"
-  integrity sha512-wz056b3pv8IIX74lYaqjCUvnw3NSow+ex5pn/VlGxg8r7gq19WsmgyXP2BoE7nqKddO1JMlFok+4gdnutYF0Cw==
-  dependencies:
-    "@standardnotes/common" "^1.2.1"
-
 "@standardnotes/auth@^3.15.2":
   version "3.15.2"
   resolved "https://registry.yarnpkg.com/@standardnotes/auth/-/auth-3.15.2.tgz#63a47785191e2a9f6761320375c76d9b3a0caf64"
@@ -2612,20 +2605,15 @@
     "@standardnotes/common" "^1.8.0"
     jsonwebtoken "^8.5.1"
 
-"@standardnotes/common@1.2.1", "@standardnotes/common@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@standardnotes/common/-/common-1.2.1.tgz#9db212db86ccbf08b347da02549b3dbe4bedbb02"
-  integrity sha512-HilBxS50CBlC6TJvy1mrnhGVDzOH63M/Jf+hyMxQ0Vt1nYzpd0iyxVEUrgMh7ZiyO1b9CLnCDED99Jy9rnZWVQ==
-
 "@standardnotes/common@^1.8.0":
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/@standardnotes/common/-/common-1.8.0.tgz#af72ad85f0d410ae31c0c110137911e2595634de"
   integrity sha512-R3nfAvhaXp5ufMB0M0fmV9yizE/Of2PGNJKnxtdxwowAq/ZakHu8Rh/v485PXrCaCFREVOZQO8kg0RQM8YngSw==
 
-"@standardnotes/components@^1.2.7":
-  version "1.2.7"
-  resolved "https://registry.yarnpkg.com/@standardnotes/components/-/components-1.2.7.tgz#99e4d90088589cef038fa3b1ced36acbe364ed21"
-  integrity sha512-vojXzml3c5ZWRvTVFS+iVy6YUX1J5lKD9JXz4EWoKck08zlIyF7C+jdZYdT0wFKb0Kgen8nXXW8jIS0kRk6wzA==
+"@standardnotes/components@1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/components/-/components-1.4.0.tgz#0bb790965683b3fa56e3231b95cad9871e1db271"
+  integrity sha512-8Zo2WV7Q+pWdmAf+rG3NCNtVM4N1P52T1sDijapz8xqtArT28wxWZkJ+qfBJ0lT5GmXxYZl8rY/tAkx4hQ5zSA==
 
 "@standardnotes/domain-events@^2.16.8":
   version "2.16.8"
@@ -2634,13 +2622,13 @@
   dependencies:
     "@standardnotes/auth" "^3.15.2"
 
-"@standardnotes/features@1.20.7":
-  version "1.20.7"
-  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.20.7.tgz#d666569492e942eaecc05e40a79d50d33df4fbe9"
-  integrity sha512-eaZu/+PvHYXWaq6r3ET87t52lZqFknZVUEjspAL34Fdr+5cDma5ZRoylx6hPCVDO9VpHd6fjGWlS+5kZ+qJ+bA==
+"@standardnotes/features@1.24.3", "@standardnotes/features@^1.24.3":
+  version "1.24.3"
+  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.24.3.tgz#f59616b1de7dba30a05e983ac53e6d86e6e2a503"
+  integrity sha512-WgI+aUcPZgJexir1ceAR5aumsnXUiLL3VtFHPlIOoSKsnfbcTYgizMkdhxI+CeBV+kKCOUGqTGEjXdaXZajO7g==
   dependencies:
-    "@standardnotes/auth" "3.8.3"
-    "@standardnotes/common" "1.2.1"
+    "@standardnotes/auth" "^3.15.2"
+    "@standardnotes/common" "^1.8.0"
 
 "@standardnotes/features@^1.24.3":
   version "1.24.3"
@@ -2655,22 +2643,17 @@
   resolved "https://registry.yarnpkg.com/@standardnotes/settings/-/settings-1.9.0.tgz#0f01da5f6782363e4d77ee584b40f8614c555626"
   integrity sha512-y+Mh7NuXtekEDr4PAvzg9KcRaCdd+0zlTXWO2D5MG28lLv/uhZmSsyWxZCVZqW3Rx6vz3c9IJdi7SoXN51gzSQ==
 
-"@standardnotes/sncrypto-common@^1.5.2":
-  version "1.5.2"
-  resolved "https://registry.yarnpkg.com/@standardnotes/sncrypto-common/-/sncrypto-common-1.5.2.tgz#be9404689d94f953c68302609a4f76751eaa82cd"
-  integrity sha512-+OQ6gajTcVSHruw33T52MHyBDKL1vRCfQBXQn4tt4+bCfBAe+PFLkEQMHp35bg5twCfg9+wUf2KhmNNSNyBBZw==
-
 "@standardnotes/sncrypto-common@^1.6.0":
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/@standardnotes/sncrypto-common/-/sncrypto-common-1.6.0.tgz#c6174adf65c778c8d53e45ea4c68087786f86b67"
   integrity sha512-3gTTokb+DWxtBH72auVtoB76V9pCZWyQ7hmClgBuQF3i5j6HvuuBZGiicHmwAv1zJxMi/op3haE8lwzQc8NJ9g==
 
-"@standardnotes/sncrypto-web@1.5.3":
-  version "1.5.3"
-  resolved "https://registry.yarnpkg.com/@standardnotes/sncrypto-web/-/sncrypto-web-1.5.3.tgz#b055bcac553914cbeebfa10e45f46fff817116c3"
-  integrity sha512-thyFc71cTJTfmLNPgT1hDMiMefZ1bgN0eTa22GEJSp4T41J/X9MldyP2dTmc7sHNM95TJlwzlIJ0iQtxFUE50w==
+"@standardnotes/sncrypto-web@1.6.0":
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/sncrypto-web/-/sncrypto-web-1.6.0.tgz#eb09aad9b617fbb1e1dcac13dd049a473bcc4feb"
+  integrity sha512-FhehxNCcqjiA8aNRApdswVIZ3IydzXPoKG8K4AKsThUlIGlFra7qeyyVVxmEj0dTW7tXpP3SXH01n0LiYgM8vw==
   dependencies:
-    "@standardnotes/sncrypto-common" "^1.5.2"
+    "@standardnotes/sncrypto-common" "^1.6.0"
     buffer "^6.0.3"
     libsodium-wrappers "^0.7.9"
 

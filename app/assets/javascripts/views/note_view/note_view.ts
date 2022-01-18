@@ -201,6 +201,8 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
       this.editorValues.text = note.text;
     }
 
+    this.reloadSpellcheck();
+
     const isTemplateNoteInsertedToBeInteractableWithEditor =
       source === PayloadSource.Constructor && note.dirty;
     if (isTemplateNoteInsertedToBeInteractableWithEditor) {
@@ -694,29 +696,35 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
     this.application.sync();
   }
 
-  async reloadPreferences() {
-    const monospaceFont = this.application.getPreference(
-      PrefKey.EditorMonospaceEnabled,
-      true
-    );
-    const spellcheck = this.application.getPreference(
-      PrefKey.EditorSpellcheck,
-      true
-    );
-    const marginResizersEnabled = this.application.getPreference(
-      PrefKey.EditorResizersEnabled,
-      true
-    );
+  async reloadSpellcheck() {
+    const spellcheck = this.appState.notes.getSpellcheckStateForNote(this.note);
 
     if (spellcheck !== this.state.spellcheck) {
       await this.setState({ textareaUnloading: true });
       await this.setState({ textareaUnloading: false });
       this.reloadFont();
+
+      await this.setState({
+        spellcheck,
+      });
     }
+  }
+
+  async reloadPreferences() {
+    const monospaceFont = this.application.getPreference(
+      PrefKey.EditorMonospaceEnabled,
+      true
+    );
+
+    const marginResizersEnabled = this.application.getPreference(
+      PrefKey.EditorResizersEnabled,
+      true
+    );
+
+    await this.reloadSpellcheck();
 
     await this.setState({
       monospaceFont,
-      spellcheck,
       marginResizersEnabled,
     });
 

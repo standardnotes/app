@@ -40,14 +40,14 @@
     "binary": "8c6fbc89151e11b0ba39475f3180f08ed38f75098f600befa5875eb993435404"
   },
   "org.standardnotes.bold-editor": {
-    "version": "1.2.10",
-    "base64": "0de1df66cc3ae7774a3c0cedb2454e3465cadabf41ba5060ab9e543a2bea5dea",
-    "binary": "bac85952fbe8af1eac49701da69b811de531fd15b1cfd6bbc90d61d9c785f5d1"
+    "version": "1.3.0",
+    "base64": "0c4dd9c2c94ef889140142219cfcd9a914bc96252ddedd5999ac5d5df7156d6a",
+    "binary": "bb4cab40f8b4f1e1328b63cc76e8153ae78764dab7c64363a39ffa3ae1fdcac3"
   },
   "org.standardnotes.plus-editor": {
-    "version": "1.5.0",
-    "base64": "f8923ab4a464ee113d47fa164ee7efbc6337e9e538105ae473b00492fb4ec46e",
-    "binary": "d4645ee7a38eeb1046239ea337333dcb64dc01c81f05e20307696099364b485b"
+    "version": "1.6.0",
+    "base64": "ae94bf9621a3863167bead0ea2f3d1bb137c5e1dc65bfd73745113a18d0edb9b",
+    "binary": "509ba3f2d5d167b05ae9258ac27c48e9ff16820b3beca5600ceab6af8b206a94"
   },
   "org.standardnotes.simple-markdown-editor": {
     "version": "1.4.0",
@@ -55,9 +55,9 @@
     "binary": "3ac9e1133a109d91dcefbdc344855f82bbbd5f0409c60d9c1f040ee811bd14ae"
   },
   "org.standardnotes.advanced-markdown-editor": {
-    "version": "1.3.14",
-    "base64": "2e2db371fb028bb1c1785102a01d39673d56f72d50ed8ea3c558cce690f23060",
-    "binary": "657eb02b34978b9d2412a0fc9525ec0b3bd6080d01069a11659b289d2c9eafa0"
+    "version": "1.4.0",
+    "base64": "33cd00076bf4892acbb6e4f4c3da04e27e3ddfe53a7dd22d51fc76927f2da723",
+    "binary": "bb3f7cb4e0c584938b02e1ff67172a26fda1c60c5e4a72cc11b56c9ec92ed315"
   },
   "org.standardnotes.minimal-markdown-editor": {
     "version": "1.3.7",

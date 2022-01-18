@@ -25,9 +25,6 @@ export const Tools: FunctionalComponent<Props> = observer(
     const [marginResizers, setMarginResizers] = useState(() =>
       application.getPreference(PrefKey.EditorResizersEnabled, true)
     );
-    const [spellcheck, setSpellcheck] = useState(() =>
-      application.getPreference(PrefKey.EditorSpellcheck, true)
-    );
 
     const toggleMonospaceFont = () => {
       setMonospaceFont(!monospaceFont);
@@ -37,11 +34,6 @@ export const Tools: FunctionalComponent<Props> = observer(
     const toggleMarginResizers = () => {
       setMarginResizers(!marginResizers);
       application.setPreference(PrefKey.EditorResizersEnabled, !marginResizers);
-    };
-
-    const toggleSpellcheck = () => {
-      setSpellcheck(!spellcheck);
-      application.setPreference(PrefKey.EditorSpellcheck, !spellcheck);
     };
 
     return (
@@ -66,17 +58,6 @@ export const Tools: FunctionalComponent<Props> = observer(
                 onChange={toggleMarginResizers}
                 checked={marginResizers}
               />
-            </div>
-            <HorizontalSeparator classes="mt-5 mb-3" />
-            <div className="flex items-center justify-between">
-              <div className="flex flex-col">
-                <Subtitle>Spellcheck</Subtitle>
-                <Text>
-                  May degrade performance, especially with long notes. This option only controls
-                  spellcheck in the Plain Editor.
-                </Text>
-              </div>
-              <Switch onChange={toggleSpellcheck} checked={spellcheck} />
             </div>
           </div>
         </PreferencesSegment>

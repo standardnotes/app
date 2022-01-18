@@ -1,6 +1,6 @@
 {
   "name": "sn-bold-editor",
-  "version": "1.2.10",
+  "version": "1.3.0",
   "main": "dist/dist.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

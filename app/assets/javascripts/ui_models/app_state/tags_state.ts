@@ -1,7 +1,6 @@
 import { confirmDialog } from '@/services/alertService';
-import { STRING_DELETE_TAG, STRING_MISSING_SYSTEM_TAG } from '@/strings';
+import { STRING_DELETE_TAG } from '@/strings';
 import {
-  ApplicationEvent,
   ComponentAction,
   ContentType,
   MessageData,
@@ -9,7 +8,7 @@ import {
   SNSmartTag,
   SNTag,
   TagMutator,
-  UuidString,
+  UuidString
 } from '@standardnotes/snjs';
 import {
   action,
@@ -17,7 +16,7 @@ import {
   makeAutoObservable,
   makeObservable,
   observable,
-  runInAction,
+  runInAction
 } from 'mobx';
 import { WebApplication } from '../application';
 import { FeaturesState, SMART_TAGS_FEATURE_NAME } from './features_state';
@@ -126,9 +125,6 @@ export class TagsState {
             ) as SNTag[];
             this.smartTags = this.application.getSmartTags();
 
-            this.tagsCountsState.update(this.tags);
-            this.allNotesCount_ = this.countAllNotes();
-
             const selectedTag = this.selected_;
             if (selectedTag) {
               const matchingTag = items.find(
@@ -150,13 +146,13 @@ export class TagsState {
     );
 
     appEventListeners.push(
-      this.application.addEventObserver(async (eventName) => {
-        switch (eventName) {
-          case ApplicationEvent.CompletedIncrementalSync:
-            runInAction(() => {
-              this.allNotesCount_ = this.countAllNotes();
-            });
-            break;
+      this.application.addNoteCountChangeObserver((tagUuid) => {
+        if (!tagUuid) {
+          this.allNotesCount_ = this.application.allCountableNotesCount();
+        } else {
+          this.tagsCountsState.update([
+            this.application.findItem(tagUuid) as SNTag,
+          ]);
         }
       })
     );
@@ -199,32 +195,33 @@ export class TagsState {
 
   public async assignParent(
     tagUuid: string,
-    parentUuid: string | undefined
+    futureParentUuid: string | undefined
   ): Promise<void> {
     const tag = this.application.findItem(tagUuid) as SNTag;
 
     const currentParent = this.application.getTagParent(tag);
-    const currentParentUuid = currentParent?.parentId;
+    const currentParentUuid = currentParent?.uuid;
 
-    if (currentParentUuid === parentUuid) {
+    if (currentParentUuid === futureParentUuid) {
       return;
     }
 
-    const parent =
-      parentUuid && (this.application.findItem(parentUuid) as SNTag);
+    const futureParent =
+      futureParentUuid &&
+      (this.application.findItem(futureParentUuid) as SNTag);
 
-    if (!parent) {
+    if (!futureParent) {
       const futureSiblings = rootTags(this.application);
       if (!isValidFutureSiblings(this.application, futureSiblings, tag)) {
         return;
       }
       await this.application.unsetTagParent(tag);
     } else {
-      const futureSiblings = this.application.getTagChildren(parent);
+      const futureSiblings = this.application.getTagChildren(futureParent);
       if (!isValidFutureSiblings(this.application, futureSiblings, tag)) {
         return;
       }
-      await this.application.setTagParent(parent, tag);
+      await this.application.setTagParent(futureParent, tag);
     }
 
     await this.application.sync();
@@ -390,23 +387,6 @@ export class TagsState {
     }
   }
 
-  private countAllNotes(): number {
-    const allTag = this.application.getSmartTags().find((tag) => tag.isAllTag);
-
-    if (!allTag) {
-      console.error(STRING_MISSING_SYSTEM_TAG);
-      return -1;
-    }
-
-    const notes = this.application
-      .notesMatchingSmartTag(allTag)
-      .filter((note) => {
-        return !note.archived && !note.trashed;
-      });
-
-    return notes.length;
-  }
-
   public onFoldersComponentMessage(
     action: ComponentAction,
     data: MessageData
@@ -439,9 +419,6 @@ export class TagsState {
   }
 }
 
-/**
- * Bug fix for issue 1201550111577311,
- */
 class TagsCountsState {
   public counts: { [uuid: string]: number } = {};
 
@@ -453,13 +430,13 @@ class TagsCountsState {
   }
 
   public update(tags: SNTag[]) {
-    const newCounts: { [uuid: string]: number } = {};
+    const newCounts: { [uuid: string]: number } = Object.assign(
+      {},
+      this.counts
+    );
 
     tags.forEach((tag) => {
-      newCounts[tag.uuid] = this.application.referencesForItem(
-        tag,
-        ContentType.Note
-      ).length;
+      newCounts[tag.uuid] = this.application.countableNotesForTag(tag);
     });
 
     this.counts = newCounts;

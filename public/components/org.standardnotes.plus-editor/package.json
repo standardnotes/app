@@ -1,9 +1,9 @@
 {
   "name": "sn-plus-editor",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "A rich text editor for Standard Notes",
   "main": "dist/dist.js",
-  "author": "Standard Notes <hello@standardnotes.org>",
+  "author": "Standard Notes <hello@standardnotes.com>",
   "scripts": {
     "lint": "eslint --ext .js .",
     "build": "webpack --config webpack.prod.js",
