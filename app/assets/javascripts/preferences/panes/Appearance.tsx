@@ -24,9 +24,6 @@ import {
   Text,
 } from '../components';
 
-export const MIDNIGHT_THEME_IDENTIFIER =
-  'org.standardnotes.theme-midnight' as FeatureIdentifier;
-
 type Props = {
   application: WebApplication;
 };
@@ -34,7 +31,7 @@ type Props = {
 const _Appearance: FunctionComponent<Props> = observer(({ application }) => {
   const premiumModal = usePremiumModal();
   const isEntitledToMidnightTheme =
-    application.getFeatureStatus(MIDNIGHT_THEME_IDENTIFIER) ===
+    application.getFeatureStatus(FeatureIdentifier.MidnightTheme) ===
     FeatureStatus.Entitled;
 
   const [themeItems, setThemeItems] = useState<DropdownItem[]>([]);
@@ -49,7 +46,7 @@ const _Appearance: FunctionComponent<Props> = observer(({ application }) => {
     () =>
       application.getPreference(
         PrefKey.AutoDarkThemeIdentifier,
-        isEntitledToMidnightTheme ? MIDNIGHT_THEME_IDENTIFIER : 'None'
+        isEntitledToMidnightTheme ? FeatureIdentifier.MidnightTheme : 'None'
       ) as string
   );
   const [useDeviceSettings, setUseDeviceSettings] = useState(
