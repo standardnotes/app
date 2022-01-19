@@ -1,6 +1,6 @@
 {
   "name": "sn-advanced-markdown-editor",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "A Standard Notes derived editor that offers full support for Markdown editing.",
   "main": "dist/dist.js",
   "author": "Standard Notes <hello@standardnotes.com>",
@@ -20,7 +20,7 @@
     "@babel/cli": "^7.13.10",
     "@babel/core": "^7.13.13",
     "@babel/preset-env": "^7.13.12",
-    "@standardnotes/component-relay": "2.1.0",
+    "@standardnotes/component-relay": "2.2.0",
     "@standardnotes/eslint-config-extensions": "^1.0.2",
     "copy-webpack-plugin": "^8.1.0",
     "css-loader": "^5.2.0",

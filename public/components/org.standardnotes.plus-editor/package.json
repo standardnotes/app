@@ -1,6 +1,6 @@
 {
   "name": "sn-plus-editor",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "A rich text editor for Standard Notes",
   "main": "dist/dist.js",
   "author": "Standard Notes <hello@standardnotes.com>",
@@ -17,7 +17,7 @@
     "@babel/core": "^7.13.8",
     "@babel/eslint-parser": "^7.13.8",
     "@babel/preset-env": "^7.13.8",
-    "@standardnotes/component-relay": "2.1.0",
+    "@standardnotes/component-relay": "2.2.0",
     "@standardnotes/eslint-config-extensions": "1.0.1",
     "bootstrap": "3.4.1",
     "css-loader": "^5.1.0",
