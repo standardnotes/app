@@ -2615,10 +2615,10 @@
   resolved "https://registry.yarnpkg.com/@standardnotes/components/-/components-1.4.0.tgz#0bb790965683b3fa56e3231b95cad9871e1db271"
   integrity sha512-8Zo2WV7Q+pWdmAf+rG3NCNtVM4N1P52T1sDijapz8xqtArT28wxWZkJ+qfBJ0lT5GmXxYZl8rY/tAkx4hQ5zSA==
 
-"@standardnotes/domain-events@^2.16.8":
-  version "2.16.8"
-  resolved "https://registry.yarnpkg.com/@standardnotes/domain-events/-/domain-events-2.16.8.tgz#74e6a9879c9b4476d92a16253ae9d75cab4b8162"
-  integrity sha512-VHXEtXSNb01ensASq0d1iB4yMUdgBVlfeHp2LQNwK8fwtvdQOyPCfnOFdMaUjW+Y/nBFRz6swDtrLFLeknzlcw==
+"@standardnotes/domain-events@^2.17.0":
+  version "2.17.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/domain-events/-/domain-events-2.17.0.tgz#e44f7927ccae9440d5ecc3d947ad0c47f4255cab"
+  integrity sha512-N7KCp4QplDdDVu8icnKQEYH2T0dHJJOMyanw4aSsQdK3FIqVnZE/oP3+kcNoPRwbX0m+HSiGkZYGRKQgOvNdiQ==
   dependencies:
     "@standardnotes/auth" "^3.15.2"
 
@@ -2629,6 +2629,11 @@
   dependencies:
     "@standardnotes/auth" "^3.15.2"
     "@standardnotes/common" "^1.8.0"
+
+"@standardnotes/settings@^1.10.0":
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/settings/-/settings-1.10.0.tgz#b46d4805c9a1cfb3fa3d9b3915daae9dd5661789"
+  integrity sha512-FUy4RDI7nFnbOGAaX5wMvBz+6Yto5tXGXDAi7bnWALZByTIlN8bkFZ2CNk2skjpzeOxBjqhCRi+GRCcuMqZ70A==
 
 "@standardnotes/settings@^1.9.0":
   version "1.9.0"
@@ -2649,16 +2654,16 @@
     buffer "^6.0.3"
     libsodium-wrappers "^0.7.9"
 
-"@standardnotes/snjs@2.40.0":
-  version "2.40.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.40.0.tgz#8b4e96bd11bdf4ea7f5c9d1cff869ad1a309245a"
-  integrity sha512-UBlMFp8Dj88snSKmi9vUVn97/EM5aidIWhZXQcFa1/OZHg7HVUbIPrLSVy8ftY6WNCPDXjNSE0cy2fozN9W2rQ==
+"@standardnotes/snjs@2.40.3":
+  version "2.40.3"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.40.3.tgz#976dc1cce5f1633432331247bd5251bdde8d916d"
+  integrity sha512-esIAk2ymDTcABwnBoDA2n0tgZ5sOM0P/Wc4gCasjiR+9aVKoOhmY0lNF9u5E7ix+deuKs9DgE0fxKonSoYrHxA==
   dependencies:
     "@standardnotes/auth" "^3.15.2"
     "@standardnotes/common" "^1.8.0"
-    "@standardnotes/domain-events" "^2.16.8"
+    "@standardnotes/domain-events" "^2.17.0"
     "@standardnotes/features" "^1.24.3"
-    "@standardnotes/settings" "^1.9.0"
+    "@standardnotes/settings" "^1.10.0"
     "@standardnotes/sncrypto-common" "^1.6.0"
 
 "@svgr/babel-plugin-add-jsx-attribute@^5.4.0":

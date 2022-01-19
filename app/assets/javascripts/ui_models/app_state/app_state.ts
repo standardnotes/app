@@ -17,6 +17,7 @@ import {
   ComponentViewer,
   SNTag,
   NoteViewController,
+  SNTheme,
 } from '@standardnotes/snjs';
 import pull from 'lodash/pull';
 import {
