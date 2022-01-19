@@ -20,6 +20,11 @@ export class ThemeManager extends ApplicationService {
   private unregisterDesktop!: () => void;
   private unregisterStream!: () => void;
 
+  constructor(application: WebApplication) {
+    super(application);
+    this.colorSchemeEventHandler = this.colorSchemeEventHandler.bind(this);
+  }
+
   private colorSchemeEventHandler(event: MediaQueryListEvent) {
     this.setThemeAsPerColorScheme(event.matches);
   }
@@ -78,7 +83,7 @@ export class ThemeManager extends ApplicationService {
     } else if (event === ApplicationEvent.Launched) {
       window
         .matchMedia('(prefers-color-scheme: dark)')
-        .addEventListener('change', this.colorSchemeEventHandler.bind(this));
+        .addEventListener('change', this.colorSchemeEventHandler);
     } else if (event === ApplicationEvent.PreferencesChanged) {
       const prefersDarkColorScheme = window.matchMedia(
         '(prefers-color-scheme: dark)'
@@ -100,7 +105,7 @@ export class ThemeManager extends ApplicationService {
     (this.unregisterStream as unknown) = undefined;
     window
       .matchMedia('(prefers-color-scheme: dark)')
-      .removeEventListener('change', this.colorSchemeEventHandler.bind(this));
+      .removeEventListener('change', this.colorSchemeEventHandler);
     super.deinit();
   }
 
