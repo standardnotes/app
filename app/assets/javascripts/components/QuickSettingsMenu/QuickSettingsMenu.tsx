@@ -49,6 +49,19 @@ const toggleFocusMode = (enabled: boolean) => {
   }
 };
 
+export const sortThemes = (a: SNTheme, b: SNTheme) => {
+  const aIsLayerable = a.isLayerable();
+  const bIsLayerable = b.isLayerable();
+
+  if (aIsLayerable && !bIsLayerable) {
+    return 1;
+  } else if (!aIsLayerable && bIsLayerable) {
+    return -1;
+  } else {
+    return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
+  }
+};
+
 const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
   ({ application, appState }) => {
     const {
@@ -79,23 +92,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
       const themes = application.getDisplayableItems(
         ContentType.Theme
       ) as SNTheme[];
-      setThemes(
-        themes.sort((a, b) => {
-          const aIsLayerable = a.isLayerable();
-          const bIsLayerable = b.isLayerable();
-
-          if (aIsLayerable && !bIsLayerable) {
-            return 1;
-          } else if (!aIsLayerable && bIsLayerable) {
-            return -1;
-          } else {
-            return a.name.toLowerCase() <
-              b.name.toLowerCase()
-              ? -1
-              : 1;
-          }
-        })
-      );
+      setThemes(themes.sort(sortThemes));
       setDefaultThemeOn(
         !themes.find((theme) => theme.active && !theme.isLayerable())
       );

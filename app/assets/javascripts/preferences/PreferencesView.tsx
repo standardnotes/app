@@ -18,6 +18,7 @@ import { AppState } from '@/ui_models/app_state';
 import { useEffect, useMemo } from 'preact/hooks';
 import { ExtensionPane } from './panes/ExtensionPane';
 import { Backups } from '@/preferences/panes/Backups';
+import { Appearance } from './panes/Appearance';
 
 interface PreferencesProps extends MfaProps {
   application: WebApplication;
@@ -42,7 +43,7 @@ const PaneSelector: FunctionComponent<
         <AccountPreferences application={application} appState={appState} />
       );
     case 'appearance':
-      return null;
+      return <Appearance application={application} />;
     case 'security':
       return (
         <Security

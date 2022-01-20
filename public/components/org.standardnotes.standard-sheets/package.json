@@ -1,6 +1,6 @@
 {
   "name": "sn-spreadsheets",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "main": "dist/dist.js",
   "scripts": {
     "lint": "eslint app/ --ext .js",
@@ -20,6 +20,7 @@
     "@babel/plugin-transform-runtime": "^7.10.1",
     "@babel/preset-env": "^7.14.7",
     "@babel/preset-react": "^7.10.1",
+    "@standardnotes/component-relay": "2.2.0",
     "@standardnotes/eslint-config-extensions": "^1.0.4",
     "babel-loader": "^8.2.2",
     "copy-webpack-plugin": "^9.0.1",
@@ -31,7 +32,6 @@
     "react": "16.x",
     "react-dom": "16.x",
     "sass-loader": "^11.0.1",
-    "sn-components-api": "1.2.8",
     "sn-stylekit": "2.0.22",
     "style-loader": "^3.0.0",
     "terser-webpack-plugin": "^5.1.4",

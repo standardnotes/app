@@ -17,6 +17,7 @@ import {
   ComponentViewer,
   SNTag,
   NoteViewController,
+  SNTheme,
 } from '@standardnotes/snjs';
 import pull from 'lodash/pull';
 import {
@@ -279,6 +280,18 @@ export class AppState {
         return controller;
       }
     }
+  }
+
+  isGlobalSpellcheckEnabled(): boolean {
+    return this.application.getPreference(PrefKey.EditorSpellcheck, true);
+  }
+
+  async toggleGlobalSpellcheck() {
+    const currentValue = this.isGlobalSpellcheckEnabled();
+    return this.application.setPreference(
+      PrefKey.EditorSpellcheck,
+      !currentValue
+    );
   }
 
   private tagChangedNotifier(): IReactionDisposer {

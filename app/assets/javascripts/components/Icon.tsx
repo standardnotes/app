@@ -113,6 +113,7 @@ const ICONS = {
   add: AddIcon,
   help: HelpIcon,
   keyboard: KeyboardIcon,
+  spellcheck: NotesIcon,
   'list-bulleted': ListBulleted,
   'link-off': LinkOffIcon,
   listed: ListedIcon,

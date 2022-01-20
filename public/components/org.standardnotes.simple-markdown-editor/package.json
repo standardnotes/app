@@ -1,6 +1,6 @@
 {
   "name": "sn-simple-markdown-editor",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "main": "dist/dist.js",
   "scripts": {
     "lint": "eslint --cache --ext .jsx,.js --format=node_modules/eslint-formatter-pretty .",
@@ -23,7 +23,7 @@
     "@babel/preset-stage-0": "^7.8.3",
     "@babel/register": "^7.10.5",
     "@babel/runtime": "^7.11.2",
-    "@standardnotes/component-relay": "2.1.0",
+    "@standardnotes/component-relay": "2.2.0",
     "@standardnotes/eslint-config-extensions": "^1.0.0",
     "babel-loader": "^8.1.0",
     "copy-webpack-plugin": "6.0.3",

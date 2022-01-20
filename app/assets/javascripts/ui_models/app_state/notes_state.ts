@@ -378,6 +378,23 @@ export class NotesState {
     this.selectedNotes = {};
   }
 
+  getSpellcheckStateForNote(note: SNNote) {
+    return note.spellcheck != undefined
+      ? note.spellcheck
+      : this.appState.isGlobalSpellcheckEnabled();
+  }
+
+  async toggleGlobalSpellcheckForNote(note: SNNote) {
+    await this.application.changeItem<NoteMutator>(
+      note.uuid,
+      (mutator) => {
+        mutator.toggleSpellcheck();
+      },
+      false
+    );
+    this.application.sync();
+  }
+
   async addTagToSelectedNotes(tag: SNTag): Promise<void> {
     const selectedNotes = Object.values(this.selectedNotes);
     const parentChainTags = this.application.getTagParentChain(tag);

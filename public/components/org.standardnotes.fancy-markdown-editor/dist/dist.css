@@ -229,12 +229,12 @@ h3 {
 }
 
 h1 {
-  margin: .5em 0 .25em;
+  margin: 0.5em 0 0.25em;
   font-size: 225%;
 }
 
 h2 {
-  margin: 1em 0 .25em;
+  margin: 1em 0 0.25em;
   font-size: 175%;
 }
 
@@ -425,9 +425,9 @@ textarea {
 
 .result-html .svg-preview {
   overflow: visible;
-  -webkit-transition: opacity .4s ease-in-out;
-  -moz-transition: opacity .4s ease-in-out;
-  transition: opacity .4s ease-in-out;
+  -webkit-transition: opacity 0.4s ease-in-out;
+  -moz-transition: opacity 0.4s ease-in-out;
+  transition: opacity 0.4s ease-in-out;
   fill: var(--sn-stylekit-info-color);
 }
 
@@ -520,3 +520,5 @@ textarea {
     -webkit-text-fill-color: initial;
   }
 }
+
+/*# sourceMappingURL=app.css.map */
