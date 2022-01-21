@@ -8,7 +8,7 @@ import {
   SNSmartTag,
   SNTag,
   TagMutator,
-  UuidString
+  UuidString,
 } from '@standardnotes/snjs';
 import {
   action,
@@ -16,7 +16,7 @@ import {
   makeAutoObservable,
   makeObservable,
   observable,
-  runInAction
+  runInAction,
 } from 'mobx';
 import { WebApplication } from '../application';
 import { FeaturesState, SMART_TAGS_FEATURE_NAME } from './features_state';
@@ -148,7 +148,9 @@ export class TagsState {
     appEventListeners.push(
       this.application.addNoteCountChangeObserver((tagUuid) => {
         if (!tagUuid) {
-          this.allNotesCount_ = this.application.allCountableNotesCount();
+          runInAction(() => {
+            this.allNotesCount_ = this.application.allCountableNotesCount();
+          });
         } else {
           this.tagsCountsState.update([
             this.application.findItem(tagUuid) as SNTag,
