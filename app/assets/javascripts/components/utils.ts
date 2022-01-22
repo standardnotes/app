@@ -8,7 +8,7 @@ import { StateUpdater, useCallback, useState, useEffect } from 'preact/hooks';
  * monitored.
  */
 export function useCloseOnBlur(
-  container: { current?: HTMLDivElement },
+  container: { current?: HTMLDivElement | null },
   setOpen: (open: boolean) => void
 ): [
   (event: { relatedTarget: EventTarget | null }) => void,
