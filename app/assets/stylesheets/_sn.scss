@@ -819,3 +819,7 @@
   cursor: default;
   pointer-events: none;
 }
+
+.hide-if-last-child:last-child {
+  display: none;
+}
