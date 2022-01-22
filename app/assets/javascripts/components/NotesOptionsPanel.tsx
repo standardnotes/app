@@ -9,7 +9,7 @@ import {
 } from '@reach/disclosure';
 import { useRef, useState } from 'preact/hooks';
 import { observer } from 'mobx-react-lite';
-import { NotesOptions } from './NotesOptions';
+import { NotesOptions } from './NotesOptions/NotesOptions';
 import { WebApplication } from '@/ui_models/application';
 
 type Props = {
