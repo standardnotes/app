@@ -64,20 +64,6 @@
       #editor-menu-bar.sk-app-bar.no-edges
         .left
           .sk-app-bar-item(
-            click-outside=`self.setMenuState('showEditorMenu', false)`
-            is-open='self.state.showEditorMenu',
-            ng-class="{'selected' : self.state.showEditorMenu}",
-            ng-click="self.toggleMenu('showEditorMenu')"
-            )
-            .sk-label Editor
-            editor-menu(
-              callback='self.editorMenuOnSelect',
-              current-item='self.note',
-              ng-if='self.state.showEditorMenu',
-              selected-editor-uuid='self.state.editorComponentViewer && self.state.editorComponentViewer.component.uuid',
-              application='self.application'
-              )
-          .sk-app-bar-item(
             click-outside=`self.setMenuState('showActionsMenu', false)`,
             is-open='self.state.showActionsMenu',
             ng-class="{'selected' : self.state.showActionsMenu}",
