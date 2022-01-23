@@ -2,10 +2,12 @@ import { NoteType } from '@standardnotes/features';
 import { SNComponent } from '@standardnotes/snjs';
 import { EditorLike, EditorMenuGroup } from '../ChangeEditorOption';
 
+export const PLAIN_EDITOR_NAME = 'Plain Editor';
+
 export const createEditorMenuGroups = (editors: SNComponent[]) => {
   const plainTextEditors: EditorLike[] = [
     {
-      name: 'Plain Editor',
+      name: PLAIN_EDITOR_NAME,
     },
   ];
   const richTextEditors: SNComponent[] = [];
