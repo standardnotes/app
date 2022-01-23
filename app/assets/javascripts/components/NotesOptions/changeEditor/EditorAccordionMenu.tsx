@@ -61,7 +61,7 @@ export const EditorAccordionMenu: FunctionComponent<
               <button
                 aria-controls={contentId}
                 aria-expanded={activeGroupId === groupId}
-                className="sn-dropdown-item justify-between"
+                className="sn-dropdown-item justify-between py-2"
                 id={buttonId}
                 type="button"
                 onClick={() => {
@@ -99,7 +99,7 @@ export const EditorAccordionMenu: FunctionComponent<
                   return (
                     <button
                       role="radio"
-                      className={`sn-dropdown-item focus:bg-info-backdrop focus:shadow-none`}
+                      className={`sn-dropdown-item text-input focus:bg-info-backdrop focus:shadow-none`}
                       aria-checked={false}
                     >
                       <div
@@ -107,7 +107,7 @@ export const EditorAccordionMenu: FunctionComponent<
                           isSelectedEditor(item)
                             ? 'pseudo-radio-btn--checked'
                             : ''
-                        } mr-2`}
+                        } ml-0.5 mr-2`}
                       ></div>
                       {item.name}
                     </button>
