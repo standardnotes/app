@@ -249,6 +249,10 @@
   margin-left: 0rem !important;
 }
 
+.ml-0\.5 {
+  margin-left: 0.125rem;
+}
+
 .ml-3 {
   margin-left: 0.75rem;
 }
@@ -687,9 +691,13 @@
   @extend .h-4;
   @extend .border-2;
   @extend .border-solid;
-  @extend .border-info;
   @extend .rounded-full;
   @extend .relative;
+  border-color: var(--sn-stylekit-grey-1);
+
+  &--checked {
+    @extend .border-info;
+  }
 }
 
 .pseudo-radio-btn--checked::after {
