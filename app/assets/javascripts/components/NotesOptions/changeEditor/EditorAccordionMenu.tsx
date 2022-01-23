@@ -1,8 +1,9 @@
 import { Icon } from '@/components/Icon';
+import { usePremiumModal } from '@/components/Premium';
 import { SNComponent } from '@standardnotes/snjs';
 import { Fragment, FunctionComponent } from 'preact';
 import { useCallback, useEffect, useState } from 'preact/hooks';
-import { EditorLike, EditorMenuGroup } from '../ChangeEditorOption';
+import { EditorMenuItem, EditorMenuGroup } from '../ChangeEditorOption';
 import { PLAIN_EDITOR_NAME } from './createEditorMenuGroups';
 
 type EditorAccordionMenuProps = {
@@ -18,11 +19,12 @@ export const EditorAccordionMenu: FunctionComponent<
   EditorAccordionMenuProps
 > = ({ groups, selectedEditor, selectComponent }) => {
   const [activeGroupId, setActiveGroupId] = useState('');
+  const premiumModal = usePremiumModal();
 
   const isSelectedEditor = useCallback(
-    (item: EditorLike) => {
+    (item: EditorMenuItem) => {
       if (selectedEditor) {
-        if (item.identifier === selectedEditor.identifier) {
+        if (item?.component?.identifier === selectedEditor.identifier) {
           return true;
         }
       } else if (item.name === PLAIN_EDITOR_NAME) {
@@ -102,23 +104,30 @@ export const EditorAccordionMenu: FunctionComponent<
                     <button
                       role="radio"
                       onClick={() => {
-                        if ((item as SNComponent).uuid) {
-                          selectComponent(item as SNComponent);
-                        } else {
+                        if (item.component) {
+                          selectComponent(item.component);
+                        } else if (item.name === PLAIN_EDITOR_NAME) {
                           selectComponent(null);
+                        } else {
+                          premiumModal.activate(item.name);
                         }
                       }}
-                      className={`sn-dropdown-item text-input focus:bg-info-backdrop focus:shadow-none`}
+                      className={`sn-dropdown-item text-input focus:bg-info-backdrop focus:shadow-none ${
+                        item.isPremiumFeature && 'justify-between'
+                      }`}
                       aria-checked={false}
                     >
-                      <div
-                        className={`pseudo-radio-btn ${
-                          isSelectedEditor(item)
-                            ? 'pseudo-radio-btn--checked'
-                            : ''
-                        } ml-0.5 mr-2`}
-                      ></div>
-                      {item.name}
+                      <div className="flex items-center">
+                        <div
+                          className={`pseudo-radio-btn ${
+                            isSelectedEditor(item)
+                              ? 'pseudo-radio-btn--checked'
+                              : ''
+                          } ml-0.5 mr-2`}
+                        ></div>
+                        {item.name}
+                      </div>
+                      {item.isPremiumFeature && <Icon type="premium-feature" />}
                     </button>
                   );
                 })}

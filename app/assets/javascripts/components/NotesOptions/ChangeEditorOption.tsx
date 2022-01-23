@@ -12,7 +12,6 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from '@reach/disclosure';
-import { FeatureIdentifier } from '@standardnotes/features';
 import {
   ComponentArea,
   ItemMutator,
@@ -25,6 +24,7 @@ import {
 import { FunctionComponent } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { Icon, IconType } from '../Icon';
+import { PremiumModalProvider } from '../Premium';
 import { useCloseOnBlur } from '../utils';
 import { createEditorMenuGroups } from './changeEditor/createEditorMenuGroups';
 import { EditorAccordionMenu } from './changeEditor/EditorAccordionMenu';
@@ -42,14 +42,13 @@ type AccordionMenuGroup<T> = {
   items: Array<T>;
 };
 
-export type EditorLike =
-  | SNComponent
-  | {
-      name: string;
-      identifier?: FeatureIdentifier;
-    };
+export type EditorMenuItem = {
+  name: string;
+  component?: SNComponent;
+  isPremiumFeature?: boolean;
+};
 
-export type EditorMenuGroup = AccordionMenuGroup<EditorLike>;
+export type EditorMenuGroup = AccordionMenuGroup<EditorMenuItem>;
 
 export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
   application,
@@ -250,11 +249,13 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
         }}
         className="sn-dropdown min-w-80 flex flex-col py-2 max-h-120 max-w-xs fixed overflow-y-auto"
       >
-        <EditorAccordionMenu
-          groups={editorMenuGroups}
-          selectedEditor={selectedEditor}
-          selectComponent={selectComponent}
-        />
+        <PremiumModalProvider state={appState.features}>
+          <EditorAccordionMenu
+            groups={editorMenuGroups}
+            selectedEditor={selectedEditor}
+            selectComponent={selectComponent}
+          />
+        </PremiumModalProvider>
       </DisclosurePanel>
     </Disclosure>
   );
