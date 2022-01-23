@@ -8,7 +8,6 @@ import {
   ContentType,
   SNComponent,
   SNNote,
-  NoteMutator,
   ComponentArea,
   PrefKey,
   ComponentMutator,
@@ -28,7 +27,6 @@ import { EventSource } from '@/ui_models/app_state';
 import {
   STRING_DELETE_PLACEHOLDER_ATTEMPT,
   STRING_DELETE_LOCKED_ATTEMPT,
-  STRING_EDIT_LOCKED_ATTEMPT,
   StringDeleteNote,
 } from '@/strings';
 import { confirmDialog } from '@/services/alertService';
@@ -59,7 +57,6 @@ type EditorState = {
   isDesktop?: boolean;
   syncTakingTooLong: boolean;
   showActionsMenu: boolean;
-  showEditorMenu: boolean;
   showHistoryMenu: boolean;
   spellcheck: boolean;
   /** Setting to true then false will allow the main content textarea to be destroyed
@@ -82,6 +79,46 @@ function sortAlphabetically(array: SNComponent[]): SNComponent[] {
     a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1
   );
 }
+
+export const transactionForAssociateComponentWithCurrentNote = (
+  component: SNComponent,
+  note: SNNote
+) => {
+  const transaction: TransactionalMutation = {
+    itemUuid: component.uuid,
+    mutate: (m: ItemMutator) => {
+      const mutator = m as ComponentMutator;
+      mutator.removeDisassociatedItemId(note.uuid);
+      mutator.associateWithItem(note.uuid);
+    },
+  };
+  return transaction;
+};
+
+export const transactionForDisassociateComponentWithCurrentNote = (
+  component: SNComponent,
+  note: SNNote
+) => {
+  const transaction: TransactionalMutation = {
+    itemUuid: component.uuid,
+    mutate: (m: ItemMutator) => {
+      const mutator = m as ComponentMutator;
+      mutator.removeAssociatedItemId(note.uuid);
+      mutator.disassociateWithItem(note.uuid);
+    },
+  };
+  return transaction;
+};
+
+export const reloadFont = (monospaceFont?: boolean) => {
+  const root = document.querySelector(':root') as HTMLElement;
+  const propertyName = '--sn-stylekit-editor-font-family';
+  if (monospaceFont) {
+    root.style.setProperty(propertyName, 'var(--sn-stylekit-monospace-font)');
+  } else {
+    root.style.setProperty(propertyName, 'var(--sn-stylekit-sans-serif-font)');
+  }
+};
 
 export class NoteView extends PureViewCtrl<unknown, EditorState> {
   /** Passed through template */
@@ -114,7 +151,6 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
       onReady: () => this.reloadPreferences(),
     };
 
-    this.editorMenuOnSelect = this.editorMenuOnSelect.bind(this);
     this.onPanelResizeFinish = this.onPanelResizeFinish.bind(this);
     this.setScrollPosition = this.setScrollPosition.bind(this);
     this.resetScrollPosition = this.resetScrollPosition.bind(this);
@@ -146,7 +182,6 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
     this.onEditorComponentLoad = undefined;
     this.statusTimeout = undefined;
     (this.onPanelResizeFinish as unknown) = undefined;
-    (this.editorMenuOnSelect as unknown) = undefined;
     super.deinit();
   }
 
@@ -248,7 +283,6 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
       spellcheck: true,
       syncTakingTooLong: false,
       showActionsMenu: false,
-      showEditorMenu: false,
       showHistoryMenu: false,
       noteStatus: undefined,
       textareaUnloading: false,
@@ -441,7 +475,7 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
           editorStateDidLoad: true,
         });
       }
-      this.reloadFont();
+      reloadFont(this.state.monospaceFont);
     } else {
       await this.setState({
         editorStateDidLoad: true,
@@ -462,7 +496,7 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
   }
 
   closeAllMenus(exclude?: string) {
-    const allMenus = ['showEditorMenu', 'showActionsMenu', 'showHistoryMenu'];
+    const allMenus = ['showActionsMenu', 'showHistoryMenu'];
     const menuState: any = {};
     for (const candidate of allMenus) {
       if (candidate !== exclude) {
@@ -470,69 +504,6 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
       }
     }
     this.setState(menuState);
-  }
-
-  async editorMenuOnSelect(component?: SNComponent) {
-    const transactions: TransactionalMutation[] = [];
-
-    this.setMenuState('showEditorMenu', false);
-
-    if (this.appState.getActiveNoteController()?.isTemplateNote) {
-      await this.appState.getActiveNoteController().insertTemplatedNote();
-    }
-
-    if (this.note.locked) {
-      this.application.alertService.alert(STRING_EDIT_LOCKED_ATTEMPT);
-      return;
-    }
-
-    if (!component) {
-      if (!this.note.prefersPlainEditor) {
-        transactions.push({
-          itemUuid: this.note.uuid,
-          mutate: (m: ItemMutator) => {
-            const noteMutator = m as NoteMutator;
-            noteMutator.prefersPlainEditor = true;
-          },
-        });
-      }
-      if (
-        this.state.editorComponentViewer?.component.isExplicitlyEnabledForItem(
-          this.note.uuid
-        )
-      ) {
-        transactions.push(
-          this.transactionForDisassociateComponentWithCurrentNote(
-            this.state.editorComponentViewer.component
-          )
-        );
-      }
-      this.reloadFont();
-    } else if (component.area === ComponentArea.Editor) {
-      const currentEditor = this.state.editorComponentViewer?.component;
-      if (currentEditor && component.uuid !== currentEditor.uuid) {
-        transactions.push(
-          this.transactionForDisassociateComponentWithCurrentNote(currentEditor)
-        );
-      }
-      const prefersPlain = this.note.prefersPlainEditor;
-      if (prefersPlain) {
-        transactions.push({
-          itemUuid: this.note.uuid,
-          mutate: (m: ItemMutator) => {
-            const noteMutator = m as NoteMutator;
-            noteMutator.prefersPlainEditor = false;
-          },
-        });
-      }
-      transactions.push(
-        this.transactionForAssociateComponentWithCurrentNote(component)
-      );
-    }
-
-    await this.application.runTransactionalMutations(transactions);
-    /** Dirtying can happen above */
-    this.application.sync();
   }
 
   hasAvailableExtensions() {
@@ -702,7 +673,7 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
     if (spellcheck !== this.state.spellcheck) {
       await this.setState({ textareaUnloading: true });
       await this.setState({ textareaUnloading: false });
-      this.reloadFont();
+      reloadFont(this.state.monospaceFont);
 
       await this.setState({
         spellcheck,
@@ -733,7 +704,7 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
       return;
     }
 
-    this.reloadFont();
+    reloadFont(this.state.monospaceFont);
 
     if (
       this.state.marginResizersEnabled &&
@@ -750,19 +721,6 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
         this.leftPanelPuppet!.setLeft!(left);
         this.rightPanelPuppet!.setLeft!(left);
       }
-    }
-  }
-
-  reloadFont() {
-    const root = document.querySelector(':root') as HTMLElement;
-    const propertyName = '--sn-stylekit-editor-font-family';
-    if (this.state.monospaceFont) {
-      root.style.setProperty(propertyName, 'var(--sn-stylekit-monospace-font)');
-    } else {
-      root.style.setProperty(
-        propertyName,
-        'var(--sn-stylekit-sans-serif-font)'
-      );
     }
   }
 
@@ -844,40 +802,14 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
 
   async disassociateComponentWithCurrentNote(component: SNComponent) {
     return this.application.runTransactionalMutation(
-      this.transactionForDisassociateComponentWithCurrentNote(component)
+      transactionForDisassociateComponentWithCurrentNote(component, this.note)
     );
-  }
-
-  transactionForDisassociateComponentWithCurrentNote(component: SNComponent) {
-    const note = this.note;
-    const transaction: TransactionalMutation = {
-      itemUuid: component.uuid,
-      mutate: (m: ItemMutator) => {
-        const mutator = m as ComponentMutator;
-        mutator.removeAssociatedItemId(note.uuid);
-        mutator.disassociateWithItem(note.uuid);
-      },
-    };
-    return transaction;
   }
 
   async associateComponentWithCurrentNote(component: SNComponent) {
     return this.application.runTransactionalMutation(
-      this.transactionForAssociateComponentWithCurrentNote(component)
+      transactionForAssociateComponentWithCurrentNote(component, this.note)
     );
-  }
-
-  transactionForAssociateComponentWithCurrentNote(component: SNComponent) {
-    const note = this.note;
-    const transaction: TransactionalMutation = {
-      itemUuid: component.uuid,
-      mutate: (m: ItemMutator) => {
-        const mutator = m as ComponentMutator;
-        mutator.removeDisassociatedItemId(note.uuid);
-        mutator.associateWithItem(note.uuid);
-      },
-    };
-    return transaction;
   }
 
   registerKeyboardShortcuts() {

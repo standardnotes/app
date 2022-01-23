@@ -1,11 +1,27 @@
+import { KeyboardKey } from '@/services/ioService';
+import { STRING_EDIT_LOCKED_ATTEMPT } from '@/strings';
 import { WebApplication } from '@/ui_models/application';
+import { AppState } from '@/ui_models/app_state';
+import {
+  reloadFont,
+  transactionForAssociateComponentWithCurrentNote,
+  transactionForDisassociateComponentWithCurrentNote,
+} from '@/views/note_view/note_view';
 import {
   Disclosure,
   DisclosureButton,
   DisclosurePanel,
 } from '@reach/disclosure';
 import { FeatureIdentifier } from '@standardnotes/features';
-import { ComponentArea, SNComponent, SNNote } from '@standardnotes/snjs';
+import {
+  ComponentArea,
+  ItemMutator,
+  NoteMutator,
+  PrefKey,
+  SNComponent,
+  SNNote,
+  TransactionalMutation,
+} from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { Icon, IconType } from '../Icon';
@@ -14,6 +30,7 @@ import { createEditorMenuGroups } from './changeEditor/createEditorMenuGroups';
 import { EditorAccordionMenu } from './changeEditor/EditorAccordionMenu';
 
 type ChangeEditorOptionProps = {
+  appState: AppState;
   application: WebApplication;
   note: SNNote;
 };
@@ -36,6 +53,7 @@ export type EditorMenuGroup = AccordionMenuGroup<EditorLike>;
 
 export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
   application,
+  appState,
   note,
 }) => {
   const [changeEditorMenuOpen, setChangeEditorMenuOpen] = useState(false);
@@ -64,11 +82,17 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
   const [editorMenuGroups, setEditorMenuGroups] = useState<EditorMenuGroup[]>(
     []
   );
-  const selectedEditor = application.componentManager.editorForNote(note);
+  const [selectedEditor, setSelectedEditor] = useState(() =>
+    application.componentManager.editorForNote(note)
+  );
 
   useEffect(() => {
     setEditorMenuGroups(createEditorMenuGroups(editors));
   }, [editors]);
+
+  useEffect(() => {
+    setSelectedEditor(application.componentManager.editorForNote(note));
+  }, [application, note]);
 
   const toggleChangeEditorMenu = () => {
     const defaultFontSize = window.getComputedStyle(
@@ -122,11 +146,83 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
     }
   }, [changeEditorMenuOpen, changeEditorMenuPosition]);
 
+  const selectComponent = async (component: SNComponent | null) => {
+    if (component) {
+      if (component.conflictOf) {
+        application.changeAndSaveItem(component.uuid, (mutator) => {
+          mutator.conflictOf = undefined;
+        });
+      }
+    }
+
+    const transactions: TransactionalMutation[] = [];
+
+    if (appState.getActiveNoteController()?.isTemplateNote) {
+      await appState.getActiveNoteController().insertTemplatedNote();
+    }
+
+    if (note.locked) {
+      application.alertService.alert(STRING_EDIT_LOCKED_ATTEMPT);
+      return;
+    }
+
+    if (!component) {
+      if (!note.prefersPlainEditor) {
+        transactions.push({
+          itemUuid: note.uuid,
+          mutate: (m: ItemMutator) => {
+            const noteMutator = m as NoteMutator;
+            noteMutator.prefersPlainEditor = true;
+          },
+        });
+      }
+      const currentEditor = application.componentManager.editorForNote(note);
+      if (currentEditor?.isExplicitlyEnabledForItem(note.uuid)) {
+        transactions.push(
+          transactionForDisassociateComponentWithCurrentNote(
+            currentEditor,
+            note
+          )
+        );
+      }
+      reloadFont(application.getPreference(PrefKey.EditorMonospaceEnabled));
+    } else if (component.area === ComponentArea.Editor) {
+      const currentEditor = application.componentManager.editorForNote(note);
+      if (currentEditor && component.uuid !== currentEditor.uuid) {
+        transactions.push(
+          transactionForDisassociateComponentWithCurrentNote(
+            currentEditor,
+            note
+          )
+        );
+      }
+      const prefersPlain = note.prefersPlainEditor;
+      if (prefersPlain) {
+        transactions.push({
+          itemUuid: note.uuid,
+          mutate: (m: ItemMutator) => {
+            const noteMutator = m as NoteMutator;
+            noteMutator.prefersPlainEditor = false;
+          },
+        });
+      }
+      transactions.push(
+        transactionForAssociateComponentWithCurrentNote(component, note)
+      );
+    }
+
+    await application.runTransactionalMutations(transactions);
+    /** Dirtying can happen above */
+    application.sync();
+
+    setSelectedEditor(application.componentManager.editorForNote(note));
+  };
+
   return (
     <Disclosure open={changeEditorMenuOpen} onChange={toggleChangeEditorMenu}>
       <DisclosureButton
         onKeyDown={(event) => {
-          if (event.key === 'Escape') {
+          if (event.key === KeyboardKey.Escape) {
             setChangeEditorMenuOpen(false);
           }
         }}
@@ -157,6 +253,7 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
         <EditorAccordionMenu
           groups={editorMenuGroups}
           selectedEditor={selectedEditor}
+          selectComponent={selectComponent}
         />
       </DisclosurePanel>
     </Disclosure>

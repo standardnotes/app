@@ -538,6 +538,7 @@ export const NotesOptions = observer(
           <>
             <div className="min-h-1px my-2 bg-border"></div>
             <ChangeEditorOption
+              appState={appState}
               application={application}
               note={notes[0]}
             />

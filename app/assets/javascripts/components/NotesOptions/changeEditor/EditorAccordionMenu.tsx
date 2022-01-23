@@ -3,10 +3,12 @@ import { SNComponent } from '@standardnotes/snjs';
 import { Fragment, FunctionComponent } from 'preact';
 import { useCallback, useEffect, useState } from 'preact/hooks';
 import { EditorLike, EditorMenuGroup } from '../ChangeEditorOption';
+import { PLAIN_EDITOR_NAME } from './createEditorMenuGroups';
 
 type EditorAccordionMenuProps = {
   groups: EditorMenuGroup[];
   selectedEditor: SNComponent | undefined;
+  selectComponent: (component: SNComponent | null) => Promise<void>;
 };
 
 const idForGroup = (group: EditorMenuGroup) =>
@@ -14,7 +16,7 @@ const idForGroup = (group: EditorMenuGroup) =>
 
 export const EditorAccordionMenu: FunctionComponent<
   EditorAccordionMenuProps
-> = ({ groups, selectedEditor }) => {
+> = ({ groups, selectedEditor, selectComponent }) => {
   const [activeGroupId, setActiveGroupId] = useState('');
 
   const isSelectedEditor = useCallback(
@@ -23,7 +25,7 @@ export const EditorAccordionMenu: FunctionComponent<
         if (item.identifier === selectedEditor.identifier) {
           return true;
         }
-      } else if (item.name === 'Plain Editor') {
+      } else if (item.name === PLAIN_EDITOR_NAME) {
         return true;
       }
       return false;
@@ -99,6 +101,13 @@ export const EditorAccordionMenu: FunctionComponent<
                   return (
                     <button
                       role="radio"
+                      onClick={() => {
+                        if ((item as SNComponent).uuid) {
+                          selectComponent(item as SNComponent);
+                        } else {
+                          selectComponent(null);
+                        }
+                      }}
                       className={`sn-dropdown-item text-input focus:bg-info-backdrop focus:shadow-none`}
                       aria-checked={false}
                     >
