@@ -252,7 +252,7 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
       <DisclosurePanel
         ref={changeEditorMenuRef}
         onKeyDown={(event) => {
-          if (event.key === 'Escape') {
+          if (event.key === KeyboardKey.Escape) {
             setChangeEditorMenuOpen(false);
             changeEditorButtonRef.current?.focus();
           }
@@ -268,6 +268,7 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
             application={application}
             closeOnBlur={closeOnBlur}
             groups={editorMenuGroups}
+            isOpen={changeEditorMenuOpen}
             selectComponent={selectComponent}
             selectedEditor={selectedEditor}
           />

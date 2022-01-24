@@ -29,9 +29,8 @@ const getEditorGroup = (
       default:
         return 'others';
     }
-  } else {
-    return 'others';
   }
+  return 'others';
 };
 
 export const createEditorMenuGroups = (editors: SNComponent[]) => {
