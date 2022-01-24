@@ -114,8 +114,9 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
 
       if (buttonRect.right + maxChangeEditorMenuSize > clientWidth) {
         setChangeEditorMenuPosition({
-          bottom: positionBottom,
+          top: positionBottom - buttonParentRect.height / 2,
           right: clientWidth - buttonRect.left,
+          bottom: 'auto',
         });
       } else {
         setChangeEditorMenuPosition({
@@ -130,16 +131,32 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
 
   useEffect(() => {
     if (changeEditorMenuOpen) {
+      const defaultFontSize = window.getComputedStyle(
+        document.documentElement
+      ).fontSize;
+      const maxChangeEditorMenuSize = parseFloat(defaultFontSize) * 30;
       const changeEditorMenuBoundingRect =
         changeEditorMenuRef.current?.getBoundingClientRect();
+      const buttonRect = changeEditorButtonRef.current?.getBoundingClientRect();
 
-      if (changeEditorMenuBoundingRect) {
+      if (changeEditorMenuBoundingRect && buttonRect) {
         if (changeEditorMenuBoundingRect.y < 5) {
-          setChangeEditorMenuPosition({
-            ...changeEditorMenuPosition,
-            top: 5,
-            bottom: 'auto',
-          });
+          if (
+            buttonRect.right + maxChangeEditorMenuSize >
+            document.documentElement.clientWidth
+          ) {
+            setChangeEditorMenuPosition({
+              ...changeEditorMenuPosition,
+              top: 5 + buttonRect.height,
+              bottom: 'auto',
+            });
+          } else {
+            setChangeEditorMenuPosition({
+              ...changeEditorMenuPosition,
+              top: 5,
+              bottom: 'auto',
+            });
+          }
         }
       }
     }
@@ -254,6 +271,7 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
             groups={editorMenuGroups}
             selectedEditor={selectedEditor}
             selectComponent={selectComponent}
+            application={application}
           />
         </PremiumModalProvider>
       </DisclosurePanel>
