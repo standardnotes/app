@@ -12,6 +12,7 @@ type EditorAccordionMenuProps = {
   groups: EditorMenuGroup[];
   selectedEditor: SNComponent | undefined;
   selectComponent: (component: SNComponent | null) => Promise<void>;
+  closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void;
 };
 
 const idForGroup = (group: EditorMenuGroup) =>
@@ -19,7 +20,7 @@ const idForGroup = (group: EditorMenuGroup) =>
 
 export const EditorAccordionMenu: FunctionComponent<
   EditorAccordionMenuProps
-> = ({ application, groups, selectedEditor, selectComponent }) => {
+> = ({ application, closeOnBlur, groups, selectedEditor, selectComponent }) => {
   const [activeGroupId, setActiveGroupId] = useState('');
   const premiumModal = usePremiumModal();
 
@@ -77,6 +78,7 @@ export const EditorAccordionMenu: FunctionComponent<
                     setActiveGroupId('');
                   }
                 }}
+                onBlur={closeOnBlur}
               >
                 <div className="flex items-center">
                   {group.icon && (
@@ -135,6 +137,7 @@ export const EditorAccordionMenu: FunctionComponent<
                         item.isPremiumFeature && 'justify-between'
                       }`}
                       aria-checked={false}
+                      onBlur={closeOnBlur}
                     >
                       <div className="flex items-center">
                         <div

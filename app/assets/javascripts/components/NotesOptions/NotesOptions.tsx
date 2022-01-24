@@ -8,10 +8,7 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from '@reach/disclosure';
-import {
-  SNApplication,
-  SNNote,
-} from '@standardnotes/snjs';
+import { SNApplication, SNNote } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { KeyboardModifier } from '@/services/ioService';
 import { FunctionComponent } from 'preact';
@@ -182,7 +179,12 @@ const SpellcheckOptions: FunctionComponent<{
 };
 
 export const NotesOptions = observer(
-  ({ application, appState, closeOnBlur, onSubmenuChange }: NotesOptionsProps) => {
+  ({
+    application,
+    appState,
+    closeOnBlur,
+    onSubmenuChange,
+  }: NotesOptionsProps) => {
     const [tagsMenuOpen, setTagsMenuOpen] = useState(false);
     const [tagsMenuPosition, setTagsMenuPosition] = useState<{
       top: number;
@@ -540,6 +542,7 @@ export const NotesOptions = observer(
             <ChangeEditorOption
               appState={appState}
               application={application}
+              closeOnBlur={closeOnBlur}
               note={notes[0]}
             />
             <div className="min-h-1px my-2 bg-border"></div>

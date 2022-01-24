@@ -25,7 +25,6 @@ import { FunctionComponent } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { Icon, IconType } from '../Icon';
 import { PremiumModalProvider } from '../Premium';
-import { useCloseOnBlur } from '../utils';
 import { createEditorMenuGroups } from './changeEditor/createEditorMenuGroups';
 import { EditorAccordionMenu } from './changeEditor/EditorAccordionMenu';
 
@@ -33,6 +32,7 @@ type ChangeEditorOptionProps = {
   appState: AppState;
   application: WebApplication;
   note: SNNote;
+  closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void;
 };
 
 type AccordionMenuGroup<T> = {
@@ -53,6 +53,7 @@ export type EditorMenuGroup = AccordionMenuGroup<EditorMenuItem>;
 export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
   application,
   appState,
+  closeOnBlur,
   note,
 }) => {
   const [changeEditorMenuOpen, setChangeEditorMenuOpen] = useState(false);
@@ -67,10 +68,6 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
   });
   const changeEditorMenuRef = useRef<HTMLDivElement>(null);
   const changeEditorButtonRef = useRef<HTMLButtonElement>(null);
-  const [closeEditorMenuOnBlur] = useCloseOnBlur(
-    changeEditorMenuRef,
-    setChangeEditorMenuOpen
-  );
   const [editors] = useState<SNComponent[]>(() =>
     application.componentManager
       .componentsForArea(ComponentArea.Editor)
@@ -242,7 +239,7 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
             setChangeEditorMenuOpen(false);
           }
         }}
-        onBlur={closeEditorMenuOnBlur}
+        onBlur={closeOnBlur}
         ref={changeEditorButtonRef}
         className="sn-dropdown-item justify-between"
       >
@@ -268,10 +265,11 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
       >
         <PremiumModalProvider state={appState.features}>
           <EditorAccordionMenu
-            groups={editorMenuGroups}
-            selectedEditor={selectedEditor}
-            selectComponent={selectComponent}
             application={application}
+            closeOnBlur={closeOnBlur}
+            groups={editorMenuGroups}
+            selectComponent={selectComponent}
+            selectedEditor={selectedEditor}
           />
         </PremiumModalProvider>
       </DisclosurePanel>
