@@ -1,5 +1,6 @@
 import { Icon } from '@/components/Icon';
 import { usePremiumModal } from '@/components/Premium';
+import { WebApplication } from '@/ui_models/application';
 import { SNComponent } from '@standardnotes/snjs';
 import { Fragment, FunctionComponent } from 'preact';
 import { useCallback, useEffect, useState } from 'preact/hooks';
@@ -7,6 +8,7 @@ import { EditorMenuItem, EditorMenuGroup } from '../ChangeEditorOption';
 import { PLAIN_EDITOR_NAME } from './createEditorMenuGroups';
 
 type EditorAccordionMenuProps = {
+  application: WebApplication;
   groups: EditorMenuGroup[];
   selectedEditor: SNComponent | undefined;
   selectComponent: (component: SNComponent | null) => Promise<void>;
@@ -17,7 +19,7 @@ const idForGroup = (group: EditorMenuGroup) =>
 
 export const EditorAccordionMenu: FunctionComponent<
   EditorAccordionMenuProps
-> = ({ groups, selectedEditor, selectComponent }) => {
+> = ({ application, groups, selectedEditor, selectComponent }) => {
   const [activeGroupId, setActiveGroupId] = useState('');
   const premiumModal = usePremiumModal();
 
@@ -105,11 +107,28 @@ export const EditorAccordionMenu: FunctionComponent<
                       role="radio"
                       onClick={() => {
                         if (item.component) {
-                          selectComponent(item.component);
-                        } else if (item.name === PLAIN_EDITOR_NAME) {
-                          selectComponent(null);
-                        } else {
+                          if (
+                            selectedEditor?.package_info.note_type !==
+                            item.component.package_info.note_type
+                          ) {
+                            application.alertService
+                              .confirm(
+                                'Doing so might result in minor formatting changes.',
+                                'Are you sure you want to change the editor?',
+                                'Yes, change it'
+                              )
+                              .then((shouldChange) => {
+                                if (shouldChange && item.component) {
+                                  selectComponent(item.component);
+                                }
+                              });
+                          } else {
+                            selectComponent(item.component);
+                          }
+                        } else if (item.isPremiumFeature) {
                           premiumModal.activate(item.name);
+                        } else {
+                          selectComponent(null);
                         }
                       }}
                       className={`sn-dropdown-item text-input focus:bg-info-backdrop focus:shadow-none ${
