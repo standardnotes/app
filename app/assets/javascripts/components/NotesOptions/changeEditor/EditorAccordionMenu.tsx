@@ -67,7 +67,7 @@ export const EditorAccordionMenu: FunctionComponent<
               <button
                 aria-controls={contentId}
                 aria-expanded={activeGroupId === groupId}
-                className="sn-dropdown-item justify-between py-2"
+                className="sn-dropdown-item justify-between py-3"
                 id={buttonId}
                 type="button"
                 onClick={() => {
@@ -131,7 +131,7 @@ export const EditorAccordionMenu: FunctionComponent<
                           selectComponent(null);
                         }
                       }}
-                      className={`sn-dropdown-item text-input focus:bg-info-backdrop focus:shadow-none ${
+                      className={`sn-dropdown-item py-2 text-input focus:bg-info-backdrop focus:shadow-none ${
                         item.isPremiumFeature && 'justify-between'
                       }`}
                       aria-checked={false}
