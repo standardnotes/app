@@ -3,7 +3,7 @@ import { usePremiumModal } from '@/components/Premium';
 import { KeyboardKey } from '@/services/ioService';
 import { WebApplication } from '@/ui_models/application';
 import { SNComponent } from '@standardnotes/snjs';
-import { FunctionComponent } from 'preact';
+import { Fragment, FunctionComponent } from 'preact';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { EditorMenuItem, EditorMenuGroup } from '../ChangeEditorOption';
 import { PLAIN_EDITOR_NAME } from './createEditorMenuGroups';
@@ -149,110 +149,119 @@ export const EditorAccordionMenu: FunctionComponent<
         }
 
         return (
-          <div key={groupId} id={groupId} data-accordion-group>
-            <h3 className="m-0">
-              <button
-                aria-controls={contentId}
-                aria-expanded={activeGroupId === groupId}
-                className="sn-dropdown-item focus:bg-info-backdrop justify-between py-3"
-                id={buttonId}
-                type="button"
-                onClick={() => {
-                  if (activeGroupId !== groupId) {
-                    setActiveGroupId(groupId);
-                  } else {
-                    setActiveGroupId('');
-                  }
-                }}
-                onBlur={closeOnBlur}
-                ref={(button) => {
-                  if (!menuItemRefs.current?.includes(button) && button) {
-                    menuItemRefs.current.push(button);
-                  }
-                }}
+          <Fragment key={groupId}>
+            <div id={groupId} data-accordion-group>
+              <h3 className="m-0">
+                <button
+                  aria-controls={contentId}
+                  aria-expanded={activeGroupId === groupId}
+                  className="sn-dropdown-item focus:bg-info-backdrop justify-between py-3"
+                  id={buttonId}
+                  type="button"
+                  onClick={() => {
+                    if (activeGroupId !== groupId) {
+                      setActiveGroupId(groupId);
+                    } else {
+                      setActiveGroupId('');
+                    }
+                  }}
+                  onBlur={closeOnBlur}
+                  ref={(button) => {
+                    if (!menuItemRefs.current?.includes(button) && button) {
+                      menuItemRefs.current.push(button);
+                    }
+                  }}
+                >
+                  <div className="flex items-center">
+                    {group.icon && (
+                      <Icon
+                        type={group.icon}
+                        className={`mr-2 ${group.iconClassName}`}
+                      />
+                    )}
+                    <div className="font-semibold text-input">
+                      {group.title}
+                    </div>
+                  </div>
+                  <Icon
+                    type="chevron-down"
+                    className={`sn-dropdown-arrow color-grey-1 ${
+                      activeGroupId === groupId && 'sn-dropdown-arrow-flipped'
+                    }`}
+                  />
+                </button>
+              </h3>
+              <div
+                id={contentId}
+                aria-labelledby={buttonId}
+                className={activeGroupId !== groupId ? 'hidden' : ''}
               >
-                <div className="flex items-center">
-                  {group.icon && (
-                    <Icon
-                      type={group.icon}
-                      className={`mr-2 ${group.iconClassName}`}
-                    />
-                  )}
-                  <div className="font-semibold text-input">{group.title}</div>
-                </div>
-                <Icon
-                  type="chevron-down"
-                  className={`sn-dropdown-arrow color-grey-1 ${
-                    activeGroupId === groupId && 'sn-dropdown-arrow-flipped'
-                  }`}
-                />
-              </button>
-            </h3>
-            <div
-              id={contentId}
-              aria-labelledby={buttonId}
-              className={activeGroupId !== groupId ? 'hidden' : ''}
-            >
-              <div role="radiogroup">
-                {group.items.map((item) => {
-                  return (
-                    <button
-                      role="radio"
-                      onClick={() => {
-                        if (item.component) {
-                          if (
-                            selectedEditor?.package_info.note_type !==
-                            item.component.package_info.note_type
-                          ) {
-                            application.alertService
-                              .confirm(
-                                'Doing so might result in minor formatting changes.',
-                                'Are you sure you want to change the editor?',
-                                'Yes, change it'
-                              )
-                              .then((shouldChange) => {
-                                if (shouldChange && item.component) {
-                                  selectComponent(item.component);
-                                }
-                              });
+                <div role="radiogroup">
+                  {group.items.map((item) => {
+                    return (
+                      <button
+                        role="radio"
+                        onClick={() => {
+                          if (item.component) {
+                            if (
+                              selectedEditor?.package_info.note_type !==
+                              item.component.package_info.note_type
+                            ) {
+                              application.alertService
+                                .confirm(
+                                  'Doing so might result in minor formatting changes.',
+                                  'Are you sure you want to change the editor?',
+                                  'Yes, change it'
+                                )
+                                .then((shouldChange) => {
+                                  if (shouldChange && item.component) {
+                                    selectComponent(item.component);
+                                  }
+                                });
+                            } else {
+                              selectComponent(item.component);
+                            }
+                          } else if (item.isPremiumFeature) {
+                            premiumModal.activate(item.name);
                           } else {
-                            selectComponent(item.component);
+                            selectComponent(null);
                           }
-                        } else if (item.isPremiumFeature) {
-                          premiumModal.activate(item.name);
-                        } else {
-                          selectComponent(null);
-                        }
-                      }}
-                      className={`sn-dropdown-item py-2 text-input focus:bg-info-backdrop focus:shadow-none ${
-                        item.isPremiumFeature && 'justify-between'
-                      }`}
-                      aria-checked={false}
-                      onBlur={closeOnBlur}
-                      ref={(button) => {
-                        if (!menuItemRefs.current?.includes(button) && button) {
-                          menuItemRefs.current.push(button);
-                        }
-                      }}
-                    >
-                      <div className="flex items-center">
-                        <div
-                          className={`pseudo-radio-btn ${
-                            isSelectedEditor(item)
-                              ? 'pseudo-radio-btn--checked'
-                              : ''
-                          } ml-0.5 mr-2`}
-                        ></div>
-                        {item.name}
-                      </div>
-                      {item.isPremiumFeature && <Icon type="premium-feature" />}
-                    </button>
-                  );
-                })}
+                        }}
+                        className={`sn-dropdown-item py-2 text-input focus:bg-info-backdrop focus:shadow-none ${
+                          item.isPremiumFeature && 'justify-between'
+                        }`}
+                        aria-checked={false}
+                        onBlur={closeOnBlur}
+                        ref={(button) => {
+                          if (
+                            !menuItemRefs.current?.includes(button) &&
+                            button
+                          ) {
+                            menuItemRefs.current.push(button);
+                          }
+                        }}
+                      >
+                        <div className="flex items-center">
+                          <div
+                            className={`pseudo-radio-btn ${
+                              isSelectedEditor(item)
+                                ? 'pseudo-radio-btn--checked'
+                                : ''
+                            } ml-0.5 mr-2`}
+                          ></div>
+                          {item.name}
+                        </div>
+                        {item.isPremiumFeature && (
+                          <Icon type="premium-feature" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
             <div className="min-h-1px my-1 bg-border hide-if-last-child"></div>
-          </div>
+          </Fragment>
         );
       })}
     </>
