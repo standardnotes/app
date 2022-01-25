@@ -155,7 +155,7 @@ export const EditorAccordionMenu: FunctionComponent<
                 <button
                   aria-controls={contentId}
                   aria-expanded={activeGroupId === groupId}
-                  className="sn-dropdown-item focus:bg-info-backdrop justify-between py-3"
+                  className="sn-dropdown-item focus:bg-info-backdrop justify-between py-2.5"
                   id={buttonId}
                   type="button"
                   onClick={() => {
