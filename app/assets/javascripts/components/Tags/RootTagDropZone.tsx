@@ -18,7 +18,6 @@ export const RootTagDropZone: React.FC<Props> = observer(
   ({ tagsState, featuresState }) => {
     const premiumModal = usePremiumModal();
     const isNativeFoldersEnabled = featuresState.enableNativeFoldersFeature;
-    const hasFolders = featuresState.hasFolders;
 
     const [{ isOver, canDrop }, dropRef] = useDrop<DropItem, void, DropProps>(
       () => ({
@@ -27,11 +26,6 @@ export const RootTagDropZone: React.FC<Props> = observer(
           return true;
         },
         drop: (item) => {
-          if (!hasFolders) {
-            premiumModal.activate(TAG_FOLDERS_FEATURE_NAME);
-            return;
-          }
-
           tagsState.assignParent(item.uuid, undefined);
         },
         collect: (monitor) => ({
@@ -39,10 +33,10 @@ export const RootTagDropZone: React.FC<Props> = observer(
           canDrop: !!monitor.canDrop(),
         }),
       }),
-      [tagsState, hasFolders, premiumModal]
+      [tagsState, premiumModal]
     );
 
-    if (!isNativeFoldersEnabled || !hasFolders) {
+    if (!isNativeFoldersEnabled) {
       return null;
     }
 
