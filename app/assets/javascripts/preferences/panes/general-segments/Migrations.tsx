@@ -6,7 +6,6 @@ import { FunctionComponent } from 'preact';
 import { useCallback, useState } from 'preact/hooks';
 import {
   PreferencesGroup,
-  PreferencesPane,
   PreferencesSegment,
   Subtitle,
   Text,
