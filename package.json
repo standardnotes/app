@@ -99,7 +99,7 @@
     "react-dnd-touch-backend": "^14.1.1"
   },
   "lint-staged": {
-    "app/*.{js,ts,jsx,tsx}": "eslint --cache --fix",
-    "app/*.{js,ts,jsx,tsx,css,md}": "prettier --write"
+    "app/**/*.{js,ts,jsx,tsx}": "eslint --cache --fix",
+    "app/**/*.{js,ts,jsx,tsx,css,md}": "prettier --write"
   }
 }
