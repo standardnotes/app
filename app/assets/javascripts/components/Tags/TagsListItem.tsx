@@ -120,7 +120,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
           isDragging: !!monitor.isDragging(),
         }),
       }),
-      [tag, hasFolders]
+      [tag, isNativeFoldersEnabled]
     );
 
     const [{ isOver, canDrop }, dropRef] = useDrop<DropItem, void, DropProps>(
@@ -160,7 +160,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
         >
           {!tag.errorDecrypting ? (
             <div className="tag-info" title={title} ref={dropRef}>
-              {hasFolders && isNativeFoldersEnabled && hasAtLeastOneFolder && (
+              {isNativeFoldersEnabled && hasAtLeastOneFolder && (
                 <div
                   className={`tag-fold ${showChildren ? 'opened' : 'closed'}`}
                   onClick={hasChildren ? toggleChildren : undefined}

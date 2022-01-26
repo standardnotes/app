@@ -172,7 +172,7 @@ export class TagsState {
   }
 
   getChildren(tag: SNTag): SNTag[] {
-    if (!this.features.hasFolders) {
+    if (!this.features.enableNativeFoldersFeature) {
       return [];
     }
 
@@ -230,7 +230,7 @@ export class TagsState {
   }
 
   get rootTags(): SNTag[] {
-    if (!this.features.hasFolders) {
+    if (!this.features.enableNativeFoldersFeature) {
       return this.tags;
     }
 
