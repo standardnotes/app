@@ -84,7 +84,7 @@ export const NotesList: FunctionComponent<Props> = observer(
 
     return (
       <div
-        className="infinite-scroll"
+        className="infinite-scroll focus:shadow-none"
         id="notes-scrollable"
         onScroll={onScroll}
         onKeyDown={onKeyDown}
