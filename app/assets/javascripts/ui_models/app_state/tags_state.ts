@@ -195,6 +195,11 @@ export class TagsState {
     return this.application.isValidTagParent(parentUuid, tagUuid);
   }
 
+  public hasParent(tagUuid: UuidString): boolean {
+    const item = this.application.findItem(tagUuid);
+    return !!item && !!(item as SNTag).parentId;
+  }
+
   public async assignParent(
     tagUuid: string,
     futureParentUuid: string | undefined
