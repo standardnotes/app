@@ -8,20 +8,20 @@
         ) Options
     div(ng-if='ctrl.showSessionOptions')
       menu-row(
-        action='ctrl.clearItemSessionHistory()'
+        action='ctrl.clearItemSessionHistory'
         label="'Clear note local history'"
         )
       menu-row(
-        action='ctrl.clearAllSessionHistory()'
+        action='ctrl.clearAllSessionHistory'
         label="'Clear all local history'"
         )
       menu-row(
-        action='ctrl.toggleSessionHistoryAutoOptimize()'
+        action='ctrl.toggleSessionHistoryAutoOptimize'
         label="(ctrl.state.autoOptimize ? 'Disable' : 'Enable') + ' auto cleanup'")
         .sk-sublabel
           | Automatically cleans up small revisions to conserve space.
       menu-row(
-        action='ctrl.toggleSessionHistoryDiskSaving()'
+        action='ctrl.toggleSessionHistoryDiskSaving'
         label="(ctrl.state.diskEnabled ? 'Disable' : 'Enable') + ' saving history to disk'"
         )
         .sk-sublabel
@@ -29,7 +29,8 @@
           | loading time and memory footprint.
     menu-row(
       ng-repeat='revision in ctrl.state.sessionHistory track by $index'
-      action='ctrl.openSessionRevision(revision);'
+      action='ctrl.openSessionRevision'
+      action-args='[revision]'
       label='revision.previewTitle()'
       )
       .sk-sublabel.opaque(ng-class='ctrl.classForSessionRevision(revision)')
@@ -42,7 +43,7 @@
         ) Options
     div(ng-if='ctrl.showRemoteOptions')
       menu-row(
-        action='ctrl.fetchRemoteHistory()'
+        action='ctrl.fetchRemoteHistory'
         label="'Refresh'"
         disabled="ctrl.isfetchingRemoteHistory"
         spinner-class="ctrl.isfetchingRemoteHistory ? 'info' : null")
@@ -50,6 +51,7 @@
           | Fetch history from server.
     menu-row(
       ng-repeat='revision in ctrl.state.remoteHistory track by $index'
-      action='ctrl.openRemoteRevision(revision);'
+      action='ctrl.openRemoteRevision'
+      action-args='[revision]'
       label='ctrl.previewRemoteHistoryTitle(revision);'
       )

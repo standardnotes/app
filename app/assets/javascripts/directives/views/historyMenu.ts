@@ -49,37 +49,38 @@ class HistoryMenuCtrl extends PureViewCtrl<unknown, HistoryState> {
     this.fetchRemoteHistory();
   }
 
-  async fetchRemoteHistory() {
+  fetchRemoteHistory = async () => {
     this.setState({ fetchingRemoteHistory: true });
     try {
-      const remoteHistory = await this.application.historyManager.remoteHistoryForItem(
-        this.item
-      );
+      const remoteHistory =
+        await this.application.historyManager.remoteHistoryForItem(this.item);
       this.setState({ remoteHistory });
     } finally {
       this.setState({ fetchingRemoteHistory: false });
     }
-  }
+  };
 
-  async openSessionRevision(revision: HistoryEntry & { previewTitle: () => string }) {
+  openSessionRevision = async (
+    revision: HistoryEntry & { previewTitle: () => string }
+  ) => {
     this.application.presentRevisionPreviewModal(
       revision.payload.uuid,
       revision.payload.content,
       revision.previewTitle()
     );
-  }
+  };
 
-  async openRemoteRevision(revision: RevisionListEntry) {
+  openRemoteRevision = async (revision: RevisionListEntry) => {
     this.setState({ fetchingRemoteHistory: true });
-    const remoteRevision = await this.application.historyManager.fetchRemoteRevision(
-      this.item.uuid,
-      revision
-    );
+    const remoteRevision =
+      await this.application.historyManager.fetchRemoteRevision(
+        this.item.uuid,
+        revision
+      );
     this.setState({ fetchingRemoteHistory: false });
     if (!remoteRevision) {
       alertDialog({
-        text:
-          'The remote revision could not be loaded. Please try again later.',
+        text: 'The remote revision could not be loaded. Please try again later.',
       });
       return;
     }
@@ -88,9 +89,9 @@ class HistoryMenuCtrl extends PureViewCtrl<unknown, HistoryState> {
       remoteRevision.payload.content,
       this.previewRemoteHistoryTitle(revision)
     );
-  }
+  };
 
-  classForSessionRevision(revision: HistoryEntry) {
+  classForSessionRevision = (revision: HistoryEntry) => {
     const vector = revision.operationVector();
     if (vector === 0) {
       return 'default';
@@ -99,40 +100,38 @@ class HistoryMenuCtrl extends PureViewCtrl<unknown, HistoryState> {
     } else if (vector === -1) {
       return 'danger';
     }
-  }
+  };
 
-  async clearItemSessionHistory() {
+  clearItemSessionHistory = async () => {
     if (
       await confirmDialog({
-        text:
-          'Are you sure you want to delete the local session history for this note?',
+        text: 'Are you sure you want to delete the local session history for this note?',
         confirmButtonStyle: 'danger',
       })
     ) {
       this.application.historyManager.clearHistoryForItem(this.item);
       this.reloadState();
     }
-  }
+  };
 
-  async clearAllSessionHistory() {
+  clearAllSessionHistory = async () => {
     if (
       await confirmDialog({
-        text:
-          'Are you sure you want to delete the local session history for all notes?',
+        text: 'Are you sure you want to delete the local session history for all notes?',
         confirmButtonStyle: 'danger',
       })
     ) {
       await this.application.historyManager.clearAllHistory();
       this.reloadState();
     }
-  }
+  };
 
   /** @entries */
   get sessionHistoryEntries() {
     return this.state.sessionHistory;
   }
 
-  async toggleSessionHistoryDiskSaving() {
+  toggleSessionHistoryDiskSaving = async () => {
     if (!this.state.diskEnabled) {
       if (
         await confirmDialog({
@@ -149,12 +148,12 @@ class HistoryMenuCtrl extends PureViewCtrl<unknown, HistoryState> {
       this.application.historyManager.toggleDiskSaving();
     }
     this.reloadState();
-  }
+  };
 
-  toggleSessionHistoryAutoOptimize() {
+  toggleSessionHistoryAutoOptimize = () => {
     this.application.historyManager.toggleAutoOptimize();
     this.reloadState();
-  }
+  };
 
   previewRemoteHistoryTitle(revision: RevisionListEntry) {
     return new Date(revision.created_at).toLocaleString();

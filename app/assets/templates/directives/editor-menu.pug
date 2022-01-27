@@ -4,13 +4,15 @@
       .sk-menu-panel-header
         .sk-menu-panel-header-title Note Editor
       menu-row(
-        action='self.selectComponent(null)',
+        action='self.selectComponent',
+        action-args='[null]'
         circle="!self.selectedEditorUuid && 'success'",
         label="'Plain Editor'"
         )
       menu-row(
         ng-repeat='editor in self.state.editors track by editor.uuid'
-        action='self.selectComponent(editor)',
+        action='self.selectComponent',
+        action-args='[editor]'
         circle="self.isEditorSelected(editor) && 'success'",
         label='editor.name',
         subtitle="self.isEditorSelected(editor) && 'Version ' + editor.package_info.version",

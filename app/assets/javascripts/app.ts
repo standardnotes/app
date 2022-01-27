@@ -67,7 +67,6 @@ import {
   EditorMenu,
   HistoryMenu,
   InputModal,
-  MenuRow,
   PanelResizer,
   PasswordWizard,
   PermissionsModal,
@@ -85,6 +84,8 @@ import { StartApplication } from './startApplication';
 import { ApplicationGroup } from './ui_models/application_group';
 import { isDev } from './utils';
 import { AccountSwitcher } from './views/account_switcher/account_switcher';
+import { react2angular } from 'react2angular';
+import { MenuRow, React2AngularMenuRowPropsArray } from './components/MenuRow';
 
 function reloadHiddenFirefoxTab(): boolean {
   /**
@@ -162,7 +163,10 @@ const startApplication: StartApplication = async function startApplication(
     .directive('componentView', ComponentViewDirective)
     .directive('editorMenu', () => new EditorMenu())
     .directive('inputModal', () => new InputModal())
-    .directive('menuRow', () => new MenuRow())
+    .component(
+      'menuRow',
+      react2angular(MenuRow as never, React2AngularMenuRowPropsArray)
+    )
     .directive('panelResizer', () => new PanelResizer())
     .directive('passwordWizard', () => new PasswordWizard())
     .directive('permissionsModal', () => new PermissionsModal())

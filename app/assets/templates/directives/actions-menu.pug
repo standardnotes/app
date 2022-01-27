@@ -19,7 +19,8 @@
         div(ng-if='extension.loading')
           .sk-spinner.small.loading
       menu-row(
-        action='self.executeAction(action, extension.uuid)',
+        action='self.executeAction',
+        action-args='[action, extension.uuid]'
         label='action.label',
         ng-if='!extension.hidden && !extension.loading && !extension.error',
         ng-repeat='action in extension.actions track by $index',

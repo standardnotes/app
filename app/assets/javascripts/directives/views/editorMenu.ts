@@ -45,7 +45,7 @@ class EditorMenuCtrl extends PureViewCtrl implements EditorMenuScope {
     });
   }
 
-  selectComponent(component: SNComponent) {
+  selectComponent = (component: SNComponent) => {
     if (component) {
       if (component.conflictOf) {
         this.application.changeAndSaveItem(component.uuid, (mutator) => {
@@ -56,7 +56,7 @@ class EditorMenuCtrl extends PureViewCtrl implements EditorMenuScope {
     this.$timeout(() => {
       this.callback()(component);
     });
-  }
+  };
 
   offlineAvailableForComponent(component: SNComponent) {
     return component.local_url && this.state.isDesktop;
