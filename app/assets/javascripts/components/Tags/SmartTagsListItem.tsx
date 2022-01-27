@@ -1,8 +1,8 @@
-import { Icon, IconType } from '@/components/Icon';
+import { Icon } from '@/components/Icon';
 import { FeaturesState } from '@/ui_models/app_state/features_state';
 import { TagsState } from '@/ui_models/app_state/tags_state';
 import '@reach/tooltip/styles.css';
-import { SNSmartTag } from '@standardnotes/snjs';
+import { SNSmartTag, IconType } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';

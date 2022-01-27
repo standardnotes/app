@@ -66,6 +66,7 @@ import MenuArrowRight from '../../icons/ic-menu-arrow-right.svg';
 
 import { toDirective } from './utils';
 import { FunctionalComponent } from 'preact';
+import { IconType } from '@standardnotes/snjs';
 
 const ICONS = {
   'menu-arrow-down-alt': MenuArrowDownAlt,
@@ -132,8 +133,6 @@ const ICONS = {
   window: WindowIcon,
   'premium-feature': PremiumFeatureIcon,
 };
-
-export type IconType = keyof typeof ICONS;
 
 type Props = {
   type: IconType;

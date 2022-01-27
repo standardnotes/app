@@ -1,10 +1,9 @@
-import { IconType } from '@/components/Icon';
 import { action, makeAutoObservable, observable } from 'mobx';
 import { ExtensionsLatestVersions } from '@/preferences/panes/extensions-segments';
 import { ContentType, SNComponent } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { FeatureIdentifier } from '@standardnotes/features';
-import { ComponentArea } from '@standardnotes/snjs';
+import { ComponentArea, IconType } from '@standardnotes/snjs';
 
 const PREFERENCE_IDS = [
   'general',

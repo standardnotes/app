@@ -8,8 +8,9 @@ import {
 } from '@reach/listbox';
 import VisuallyHidden from '@reach/visually-hidden';
 import { FunctionComponent } from 'preact';
-import { IconType, Icon } from './Icon';
+import { Icon } from './Icon';
 import { useState } from 'preact/hooks';
+import { IconType } from '@standardnotes/snjs';
 
 export type DropdownItem = {
   icon?: IconType;
