@@ -95,7 +95,10 @@ export class NotesViewState {
         /** A tag could have changed its relationships, so we need to reload the filter */
         this.reloadNotesDisplayOptions();
         this.reloadNotes();
-        if (findInArray(tags, 'uuid', this.appState.selectedTag?.uuid)) {
+        if (
+          this.appState.selectedTag &&
+          findInArray(tags, 'uuid', this.appState.selectedTag.uuid)
+        ) {
           /** Tag title could have changed */
           this.reloadPanelTitle();
         }
@@ -333,9 +336,14 @@ export class NotesViewState {
     if (this.isFiltering) {
       title = this.noteFilterText;
     }
+
     await this.appState.openNewNote(title);
-    this.reloadNotes();
-    this.appState.noteTags.reloadTags();
+    this.application.performFunctionWithAngularDigestCycleAfterAsyncChange(
+      () => {
+        this.reloadNotes();
+        this.appState.noteTags.reloadTags();
+      }
+    );
   };
 
   createPlaceholderNote = () => {

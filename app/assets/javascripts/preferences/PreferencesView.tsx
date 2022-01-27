@@ -17,6 +17,8 @@ import { MfaProps } from './panes/two-factor-auth/MfaProps';
 import { AppState } from '@/ui_models/app_state';
 import { useEffect, useMemo } from 'preact/hooks';
 import { ExtensionPane } from './panes/ExtensionPane';
+import { Backups } from '@/preferences/panes/Backups';
+import { Appearance } from './panes/Appearance';
 
 interface PreferencesProps extends MfaProps {
   application: WebApplication;
@@ -26,16 +28,54 @@ interface PreferencesProps extends MfaProps {
 
 const PaneSelector: FunctionComponent<
   PreferencesProps & { menu: PreferencesMenu }
-> = observer(
-  ({
-     menu,
-     appState,
-     application,
-     mfaProvider,
-     userProvider
-   }) => {
-    switch (menu.selectedPaneId) {
-      case 'general':
+> = observer(({ menu, appState, application, mfaProvider, userProvider }) => {
+  switch (menu.selectedPaneId) {
+    case 'general':
+      return (
+        <General
+          appState={appState}
+          application={application}
+          extensionsLatestVersions={menu.extensionsLatestVersions}
+        />
+      );
+    case 'account':
+      return (
+        <AccountPreferences application={application} appState={appState} />
+      );
+    case 'appearance':
+      return <Appearance application={application} />;
+    case 'security':
+      return (
+        <Security
+          mfaProvider={mfaProvider}
+          userProvider={userProvider}
+          appState={appState}
+          application={application}
+        />
+      );
+    case 'backups':
+      return <Backups application={application} appState={appState} />;
+    case 'listed':
+      return <Listed application={application} />;
+    case 'shortcuts':
+      return null;
+    case 'accessibility':
+      return null;
+    case 'get-free-month':
+      return null;
+    case 'help-feedback':
+      return <HelpAndFeedback />;
+    default:
+      if (menu.selectedExtension != undefined) {
+        return (
+          <ExtensionPane
+            application={application}
+            appState={appState}
+            extension={menu.selectedExtension}
+            preferencesMenu={menu}
+          />
+        );
+      } else {
         return (
           <General
             appState={appState}
@@ -43,55 +83,9 @@ const PaneSelector: FunctionComponent<
             extensionsLatestVersions={menu.extensionsLatestVersions}
           />
         );
-      case 'account':
-        return (
-          <AccountPreferences
-            application={application}
-            appState={appState}
-          />
-        );
-      case 'appearance':
-        return null;
-      case 'security':
-        return (
-          <Security
-            mfaProvider={mfaProvider}
-            userProvider={userProvider}
-            appState={appState}
-            application={application}
-          />
-        );
-      case 'listed':
-        return <Listed application={application} />;
-      case 'shortcuts':
-        return null;
-      case 'accessibility':
-        return null;
-      case 'get-free-month':
-        return null;
-      case 'help-feedback':
-        return <HelpAndFeedback />;
-      default:
-        if (menu.selectedExtension != undefined) {
-          return (
-            <ExtensionPane
-              application={application}
-              appState={appState}
-              extension={menu.selectedExtension}
-              preferencesMenu={menu}
-            />
-          );
-        } else {
-          return (
-            <General
-              appState={appState}
-              application={application}
-              extensionsLatestVersions={menu.extensionsLatestVersions}
-            />
-          );
-        }
-    }
-  });
+      }
+  }
+});
 
 const PreferencesCanvas: FunctionComponent<
   PreferencesProps & { menu: PreferencesMenu }
@@ -105,8 +99,13 @@ const PreferencesCanvas: FunctionComponent<
 export const PreferencesView: FunctionComponent<PreferencesProps> = observer(
   (props) => {
     const menu = useMemo(
-      () => new PreferencesMenu(props.application, props.appState.enableUnfinishedFeatures),
-      [props.appState.enableUnfinishedFeatures, props.application]);
+      () =>
+        new PreferencesMenu(
+          props.application,
+          props.appState.enableUnfinishedFeatures
+        ),
+      [props.appState.enableUnfinishedFeatures, props.application]
+    );
 
     useEffect(() => {
       menu.selectPane(props.appState.preferences.currentPane);

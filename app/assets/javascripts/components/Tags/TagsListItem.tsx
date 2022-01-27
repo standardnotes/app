@@ -21,6 +21,9 @@ type Props = {
   level: number;
 };
 
+const PADDING_BASE_PX = 14;
+const PADDING_PER_LEVEL_PX = 21;
+
 export const TagsListItem: FunctionComponent<Props> = observer(
   ({ tag, features, tagsState, level }) => {
     const [title, setTitle] = useState(tag.title || '');
@@ -117,7 +120,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
           isDragging: !!monitor.isDragging(),
         }),
       }),
-      [tag, hasFolders]
+      [tag, isNativeFoldersEnabled]
     );
 
     const [{ isOver, canDrop }, dropRef] = useDrop<DropItem, void, DropProps>(
@@ -151,11 +154,13 @@ export const TagsListItem: FunctionComponent<Props> = observer(
           }`}
           onClick={selectCurrentTag}
           ref={dragRef}
-          style={{ paddingLeft: `${level * 21 + 10}px` }}
+          style={{
+            paddingLeft: `${level * PADDING_PER_LEVEL_PX + PADDING_BASE_PX}px`,
+          }}
         >
           {!tag.errorDecrypting ? (
             <div className="tag-info" title={title} ref={dropRef}>
-              {hasFolders && isNativeFoldersEnabled && hasAtLeastOneFolder && (
+              {isNativeFoldersEnabled && hasAtLeastOneFolder && (
                 <div
                   className={`tag-fold ${showChildren ? 'opened' : 'closed'}`}
                   onClick={hasChildren ? toggleChildren : undefined}

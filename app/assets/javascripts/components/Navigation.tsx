@@ -12,11 +12,26 @@ import { PANEL_NAME_NAVIGATION } from '@/views/constants';
 import { PrefKey } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { useCallback, useEffect, useMemo, useState } from 'preact/hooks';
+import { useCallback, useMemo, useState } from 'preact/hooks';
 import { PremiumModalProvider } from './Premium';
 
 type Props = {
   application: WebApplication;
+};
+
+const NAVIGATION_SELECTOR = 'navigation';
+
+const useNavigationPanelRef = (): [HTMLDivElement | null, () => void] => {
+  const [panelRef, setPanelRefInternal] = useState<HTMLDivElement | null>(null);
+
+  const setPanelRefPublic = useCallback(() => {
+    const elem = document.querySelector(
+      NAVIGATION_SELECTOR
+    ) as HTMLDivElement | null;
+    setPanelRefInternal(elem);
+  }, [setPanelRefInternal]);
+
+  return [panelRef, setPanelRefPublic];
 };
 
 export const Navigation: FunctionComponent<Props> = observer(
@@ -25,14 +40,7 @@ export const Navigation: FunctionComponent<Props> = observer(
     const componentViewer = appState.foldersComponentViewer;
     const enableNativeSmartTagsFeature =
       appState.features.enableNativeSmartTagsFeature;
-    const [panelRef, setPanelRef] = useState<HTMLDivElement | null>(null);
-
-    useEffect(() => {
-      const elem = document.querySelector(
-        'navigation'
-      ) as HTMLDivElement | null;
-      setPanelRef(elem);
-    }, [setPanelRef]);
+    const [panelRef, setPanelRef] = useNavigationPanelRef();
 
     const onCreateNewTag = useCallback(() => {
       appState.tags.createNewTemplate();
@@ -53,10 +61,10 @@ export const Navigation: FunctionComponent<Props> = observer(
     return (
       <PremiumModalProvider state={appState.features}>
         <div
-          id="tags-column"
+          id="navigation"
+          className="sn-component section"
+          data-aria-label="Navigation"
           ref={setPanelRef}
-          className="sn-component section tags"
-          data-aria-label="Tags"
         >
           {componentViewer ? (
             <div className="component-view-container">
@@ -69,8 +77,8 @@ export const Navigation: FunctionComponent<Props> = observer(
               </div>
             </div>
           ) : (
-            <div id="tags-content" className="content">
-              <div className="tags-title-section section-title-bar">
+            <div id="navigation-content" className="content">
+              <div className="section-title-bar">
                 <div className="section-title-bar-header">
                   <div className="sk-h3 title">
                     <span className="sk-bold">Views</span>
@@ -89,10 +97,8 @@ export const Navigation: FunctionComponent<Props> = observer(
                 </div>
               </div>
               <div className="scrollable">
-                <div className="infinite-scroll">
-                  <SmartTagsSection appState={appState} />
-                  <TagsSection appState={appState} />
-                </div>
+                <SmartTagsSection appState={appState} />
+                <TagsSection appState={appState} />
               </div>
             </div>
           )}

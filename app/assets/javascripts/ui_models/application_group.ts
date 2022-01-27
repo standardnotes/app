@@ -29,7 +29,7 @@ export class ApplicationGroup extends SNApplicationGroup {
     private defaultSyncServerHost: string,
     private bridge: Bridge,
     private enableUnfinishedFeatures: boolean,
-    private webSocketUrl: string,
+    private webSocketUrl: string
   ) {
     super(new WebDeviceInterface($timeout, bridge));
     this.$compile = $compile;
@@ -61,11 +61,12 @@ export class ApplicationGroup extends SNApplicationGroup {
       platform,
       descriptor.identifier,
       this.$compile,
+      this.$timeout,
       scope,
       this.defaultSyncServerHost,
       this.bridge,
       this.enableUnfinishedFeatures,
-      this.webSocketUrl,
+      this.webSocketUrl
     );
     const appState = new AppState(
       this.$rootScope,

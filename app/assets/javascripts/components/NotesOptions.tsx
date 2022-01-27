@@ -35,6 +35,8 @@ const DeletePermanentlyButton = ({
   </button>
 );
 
+const iconClass = 'color-neutral mr-2';
+
 const getWordCount = (text: string) => {
   if (text.trim().length === 0) {
     return 0;
@@ -84,7 +86,10 @@ const formatDate = (date: Date | undefined) => {
   return `${date.toDateString()} ${date.toLocaleTimeString()}`;
 };
 
-const NoteAttributes: FunctionComponent<{ application: SNApplication, note: SNNote }> = ({ application, note }) => {
+const NoteAttributes: FunctionComponent<{
+  application: SNApplication;
+  note: SNNote;
+}> = ({ application, note }) => {
   const { words, characters, paragraphs } = useMemo(
     () => countNoteAttributes(note.text),
     [note.text]
@@ -133,6 +138,45 @@ const NoteAttributes: FunctionComponent<{ application: SNApplication, note: SNNo
   );
 };
 
+const SpellcheckOptions: FunctionComponent<{
+  appState: AppState;
+  note: SNNote;
+}> = ({ appState, note }) => {
+  const editor = appState.application.componentManager.editorForNote(note);
+  const spellcheckControllable = Boolean(
+    !editor ||
+      appState.application.getFeature(editor.identifier)?.spellcheckControl
+  );
+  const noteSpellcheck = !spellcheckControllable
+    ? true
+    : note
+    ? appState.notes.getSpellcheckStateForNote(note)
+    : undefined;
+
+  return (
+    <div className="flex flex-col px-3 py-1.5">
+      <Switch
+        className="px-0 py-0"
+        checked={noteSpellcheck}
+        disabled={!spellcheckControllable}
+        onChange={() => {
+          appState.notes.toggleGlobalSpellcheckForNote(note);
+        }}
+      >
+        <span className="flex items-center">
+          <Icon type="spellcheck" className={iconClass} />
+          Spellcheck
+        </span>
+      </Switch>
+      {!spellcheckControllable && (
+        <p className="text-xs pt-1.5">
+          Spellcheck cannot be controlled for this editor.
+        </p>
+      )}
+    </div>
+  );
+};
+
 export const NotesOptions = observer(
   ({ application, appState, closeOnBlur, onSubmenuChange }: Props) => {
     const [tagsMenuOpen, setTagsMenuOpen] = useState(false);
@@ -170,8 +214,6 @@ export const NotesOptions = observer(
     const errored = notes.some((note) => note.errorDecrypting);
 
     const tagsButtonRef = useRef<HTMLButtonElement>(null);
-
-    const iconClass = 'color-neutral mr-2';
 
     useEffect(() => {
       if (onSubmenuChange) {
@@ -484,9 +526,15 @@ export const NotesOptions = observer(
             </button>
           </>
         )}
+
         {notes.length === 1 ? (
           <>
             <div className="min-h-1px my-2 bg-border"></div>
+
+            <SpellcheckOptions appState={appState} note={notes[0]} />
+
+            <div className="min-h-1px my-2 bg-border"></div>
+
             <NoteAttributes application={application} note={notes[0]} />
           </>
         ) : null}

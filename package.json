@@ -1,20 +1,19 @@
 {
   "name": "standard-notes-web",
-  "version": "3.9.13",
+  "version": "3.9.20",
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
     "url": "https://github.com/standardnotes/web"
   },
   "scripts": {
-    "setup": "yarn install",
     "start": "webpack-dev-server --config webpack.dev.js",
     "watch": "webpack -w --config webpack.dev.js",
     "watch:desktop": "webpack -w --config webpack.dev.js --env platform='desktop'",
     "bundle": "webpack --config webpack.prod.js && cp -r node_modules/@standardnotes/components/dist/ public/components && yarn tsc",
     "bundle:desktop": "webpack --config webpack.prod.js --env platform='desktop'",
     "bundle:desktop:beta": "webpack --config webpack.prod.js --env platform='desktop' --env public_beta='true'",
-    "build": "bundle install && yarn install --frozen-lockfile && bundle exec rails assets:precompile && yarn bundle",
+    "setup": "bundle install && yarn install --frozen-lockfile && bundle exec rails assets:precompile && yarn bundle",
     "lint": "eslint --fix app/assets/javascripts",
     "tsc": "tsc --project app/assets/javascripts/tsconfig.json",
     "test": "jest --config app/assets/javascripts/jest.config.js",
@@ -28,7 +27,6 @@
     "@babel/preset-typescript": "^7.15.0",
     "@reach/disclosure": "^0.16.2",
     "@reach/visually-hidden": "^0.16.0",
-    "@standardnotes/components": "^1.2.4",
     "@svgr/webpack": "^5.5.0",
     "@types/angular": "^1.8.3",
     "@types/jest": "^27.0.3",
@@ -87,9 +85,11 @@
     "@reach/dialog": "^0.16.2",
     "@reach/listbox": "^0.16.2",
     "@reach/tooltip": "^0.16.2",
-    "@standardnotes/features": "1.20.5",
-    "@standardnotes/sncrypto-web": "1.5.3",
-    "@standardnotes/snjs": "2.34.2",
+    "@standardnotes/components": "1.4.3",
+    "@standardnotes/features": "1.25.0",
+    "@standardnotes/snjs": "2.41.0",
+    "@standardnotes/settings": "^1.10.0",
+    "@standardnotes/sncrypto-web": "1.6.0",
     "mobx": "^6.3.5",
     "mobx-react-lite": "^3.2.2",
     "preact": "^10.5.15",
@@ -99,7 +99,7 @@
     "react-dnd-touch-backend": "^14.1.1"
   },
   "lint-staged": {
-    "app/*.{js,ts,jsx,tsx}": "eslint --cache --fix",
-    "app/*.{js,ts,jsx,tsx,css,md}": "prettier --write"
+    "app/**/*.{js,ts,jsx,tsx}": "eslint --cache --fix",
+    "app/**/*.{js,ts,jsx,tsx,css,md}": "prettier --write"
   }
 }

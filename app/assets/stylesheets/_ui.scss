@@ -206,6 +206,10 @@ $screen-md-max:              ($screen-lg-min - 1) !default;
   cursor: default;
 }
 
+.pointer-events-none {
+  pointer-events: none;
+}
+
 .fill-current {
   fill: currentColor;
 }

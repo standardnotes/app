@@ -1,3 +1,4 @@
+import { isDev } from '@/utils';
 import {
   action,
   computed,
@@ -74,7 +75,11 @@ export class AccountMenuState {
     this.appEventListeners.push(
       this.application.addEventObserver(async () => {
         runInAction(() => {
-          this.setServer(this.application.getHost());
+          if (isDev && window._devAccountServer) {
+            this.setServer(window._devAccountServer);
+          } else {
+            this.setServer(this.application.getHost());
+          }
         });
       }, ApplicationEvent.Launched)
     );

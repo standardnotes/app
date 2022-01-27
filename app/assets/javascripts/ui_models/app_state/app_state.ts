@@ -17,6 +17,7 @@ import {
   ComponentViewer,
   SNTag,
   NoteViewController,
+  SNTheme,
 } from '@standardnotes/snjs';
 import pull from 'lodash/pull';
 import {
@@ -281,6 +282,18 @@ export class AppState {
     }
   }
 
+  isGlobalSpellcheckEnabled(): boolean {
+    return this.application.getPreference(PrefKey.EditorSpellcheck, true);
+  }
+
+  async toggleGlobalSpellcheck() {
+    const currentValue = this.isGlobalSpellcheckEnabled();
+    return this.application.setPreference(
+      PrefKey.EditorSpellcheck,
+      !currentValue
+    );
+  }
+
   private tagChangedNotifier(): IReactionDisposer {
     return reaction(
       () => this.tags.selectedUuid,
@@ -304,7 +317,7 @@ export class AppState {
     );
   }
 
-  async setFoldersComponent(component?: SNComponent) {
+  setFoldersComponent(component?: SNComponent) {
     const foldersComponentViewer = this.foldersComponentViewer;
 
     if (foldersComponentViewer) {
@@ -343,7 +356,11 @@ export class AppState {
             .componentsForArea(ComponentArea.TagsList)
             .find((component) => component.active);
 
-          this.setFoldersComponent(componentViewer);
+          this.application.performFunctionWithAngularDigestCycleAfterAsyncChange(
+            () => {
+              this.setFoldersComponent(componentViewer);
+            }
+          );
         }
       }
     );

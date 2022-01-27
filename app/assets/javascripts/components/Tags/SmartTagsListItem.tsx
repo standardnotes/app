@@ -13,6 +13,9 @@ type Props = {
   features: FeaturesState;
 };
 
+const PADDING_BASE_PX = 14;
+const PADDING_PER_LEVEL_PX = 21;
+
 const smartTagIconType = (tag: SNSmartTag): IconType => {
   if (tag.isAllTag) {
     return 'notes';
@@ -95,7 +98,9 @@ export const SmartTagsListItem: FunctionComponent<Props> = observer(
             isFaded ? 'faded' : ''
           }`}
           onClick={selectCurrentTag}
-          style={{ paddingLeft: `${level + 0.5}rem` }}
+          style={{
+            paddingLeft: `${level * PADDING_PER_LEVEL_PX + PADDING_BASE_PX}px`,
+          }}
         >
           {!tag.errorDecrypting ? (
             <div className="tag-info">

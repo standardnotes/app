@@ -1,15 +1,20 @@
 import { action, makeAutoObservable, observable } from 'mobx';
 import { ExtensionsLatestVersions } from '@/preferences/panes/extensions-segments';
-import { ContentType, SNComponent } from '@standardnotes/snjs';
+import {
+  ComponentArea,
+  ContentType,
+  FeatureIdentifier,
+  SNComponent,
+  IconType,
+} from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
-import { FeatureIdentifier } from '@standardnotes/features';
-import { ComponentArea, IconType } from '@standardnotes/snjs';
 
 const PREFERENCE_IDS = [
   'general',
   'account',
   'appearance',
   'security',
+  'backups',
   'listed',
   'shortcuts',
   'accessibility',
@@ -36,6 +41,7 @@ const PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
   { id: 'general', label: 'General', icon: 'settings' },
   { id: 'appearance', label: 'Appearance', icon: 'themes' },
   { id: 'security', label: 'Security', icon: 'security' },
+  { id: 'backups', label: 'Backups', icon: 'restore' },
   { id: 'listed', label: 'Listed', icon: 'listed' },
   { id: 'shortcuts', label: 'Shortcuts', icon: 'keyboard' },
   { id: 'accessibility', label: 'Accessibility', icon: 'accessibility' },
@@ -46,7 +52,9 @@ const PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
 const READY_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
   { id: 'account', label: 'Account', icon: 'user' },
   { id: 'general', label: 'General', icon: 'settings' },
+  { id: 'appearance', label: 'Appearance', icon: 'themes' },
   { id: 'security', label: 'Security', icon: 'security' },
+  { id: 'backups', label: 'Backups', icon: 'restore' },
   { id: 'listed', label: 'Listed', icon: 'listed' },
   { id: 'help-feedback', label: 'Help & feedback', icon: 'help' },
 ];
@@ -100,6 +108,7 @@ export class PreferencesMenu {
       FeatureIdentifier.TwoFactorAuthManager,
       'org.standardnotes.batch-manager',
       'org.standardnotes.extensions-manager',
+      FeatureIdentifier.CloudLink,
     ];
     this._extensionPanes = (
       this.application.getItems([
