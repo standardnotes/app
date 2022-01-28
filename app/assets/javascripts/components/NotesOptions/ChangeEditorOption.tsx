@@ -139,7 +139,8 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
       const defaultFontSize = window.getComputedStyle(
         document.documentElement
       ).fontSize;
-      const maxChangeEditorMenuSize = parseFloat(defaultFontSize) * 30;
+      const maxChangeEditorMenuSize =
+        parseFloat(defaultFontSize) * MAX_MENU_SIZE_MULTIPLIER;
       const changeEditorMenuBoundingRect =
         changeEditorMenuRef.current?.getBoundingClientRect();
       const buttonRect = changeEditorButtonRef.current?.getBoundingClientRect();
