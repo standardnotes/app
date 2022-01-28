@@ -63,7 +63,6 @@ import {
 } from './directives/functional';
 import {
   ActionsMenu,
-  EditorMenu,
   HistoryMenu,
   InputModal,
   PanelResizer,
@@ -159,7 +158,6 @@ const startApplication: StartApplication = async function startApplication(
     .directive('actionsMenu', () => new ActionsMenu())
     .directive('challengeModal', () => new ChallengeModal())
     .directive('componentView', ComponentViewDirective)
-    .directive('editorMenu', () => new EditorMenu())
     .directive('inputModal', () => new InputModal())
     .component(
       'menuRow',

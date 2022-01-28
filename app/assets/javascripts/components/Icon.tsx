@@ -1,3 +1,4 @@
+import EditorIcon from '../../icons/ic-editor.svg';
 import PremiumFeatureIcon from '../../icons/ic-premium-feature.svg';
 import PencilOffIcon from '../../icons/ic-pencil-off.svg';
 import PlainTextIcon from '../../icons/ic-text-paragraph.svg';
@@ -68,6 +69,7 @@ import { toDirective } from './utils';
 import { FunctionalComponent } from 'preact';
 
 const ICONS = {
+  editor: EditorIcon,
   'menu-arrow-down-alt': MenuArrowDownAlt,
   'menu-arrow-right': MenuArrowRight,
   notes: NotesIcon,

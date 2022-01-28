@@ -1,5 +1,4 @@
 export { ActionsMenu } from './actionsMenu';
-export { EditorMenu } from './editorMenu';
 export { InputModal } from './inputModal';
 export { PanelResizer } from './panelResizer';
 export { PasswordWizard } from './passwordWizard';

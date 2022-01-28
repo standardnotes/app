@@ -1,6 +1,6 @@
 import { AppState } from '@/ui_models/app_state';
-import { Icon } from './Icon';
-import { Switch } from './Switch';
+import { Icon } from '../Icon';
+import { Switch } from '../Switch';
 import { observer } from 'mobx-react-lite';
 import { useRef, useState, useEffect, useMemo } from 'preact/hooks';
 import {
@@ -8,12 +8,17 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from '@reach/disclosure';
-import { SNApplication, SNNote } from '@standardnotes/snjs/dist/@types';
+import { SNApplication, SNNote } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { KeyboardModifier } from '@/services/ioService';
 import { FunctionComponent } from 'preact';
+import { ChangeEditorOption } from './ChangeEditorOption';
+import {
+  MENU_MARGIN_FROM_APP_BORDER,
+  MAX_MENU_SIZE_MULTIPLIER,
+} from '@/views/constants';
 
-type Props = {
+export type NotesOptionsProps = {
   application: WebApplication;
   appState: AppState;
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void;
@@ -21,7 +26,7 @@ type Props = {
 };
 
 type DeletePermanentlyButtonProps = {
-  closeOnBlur: Props['closeOnBlur'];
+  closeOnBlur: NotesOptionsProps['closeOnBlur'];
   onClick: () => void;
 };
 
@@ -86,7 +91,10 @@ const formatDate = (date: Date | undefined) => {
   return `${date.toDateString()} ${date.toLocaleTimeString()}`;
 };
 
-const NoteAttributes: FunctionComponent<{ application: SNApplication, note: SNNote }> = ({ application, note }) => {
+const NoteAttributes: FunctionComponent<{
+  application: SNApplication;
+  note: SNNote;
+}> = ({ application, note }) => {
   const { words, characters, paragraphs } = useMemo(
     () => countNoteAttributes(note.text),
     [note.text]
@@ -136,15 +144,19 @@ const NoteAttributes: FunctionComponent<{ application: SNApplication, note: SNNo
 };
 
 const SpellcheckOptions: FunctionComponent<{
-  appState: AppState, note: SNNote
+  appState: AppState;
+  note: SNNote;
 }> = ({ appState, note }) => {
-
   const editor = appState.application.componentManager.editorForNote(note);
   const spellcheckControllable = Boolean(
     !editor ||
-    appState.application.getFeature(editor.identifier)?.spellcheckControl
+      appState.application.getFeature(editor.identifier)?.spellcheckControl
   );
-  const noteSpellcheck = !spellcheckControllable ? true : note ? appState.notes.getSpellcheckStateForNote(note) : undefined;
+  const noteSpellcheck = !spellcheckControllable
+    ? true
+    : note
+    ? appState.notes.getSpellcheckStateForNote(note)
+    : undefined;
 
   return (
     <div className="flex flex-col px-3 py-1.5">
@@ -157,19 +169,26 @@ const SpellcheckOptions: FunctionComponent<{
         }}
       >
         <span className="flex items-center">
-          <Icon type='spellcheck' className={iconClass} />
+          <Icon type="spellcheck" className={iconClass} />
           Spellcheck
         </span>
       </Switch>
       {!spellcheckControllable && (
-        <p className="text-xs pt-1.5">Spellcheck cannot be controlled for this editor.</p>
+        <p className="text-xs pt-1.5">
+          Spellcheck cannot be controlled for this editor.
+        </p>
       )}
     </div>
   );
 };
 
 export const NotesOptions = observer(
-  ({ application, appState, closeOnBlur, onSubmenuChange }: Props) => {
+  ({
+    application,
+    appState,
+    closeOnBlur,
+    onSubmenuChange,
+  }: NotesOptionsProps) => {
     const [tagsMenuOpen, setTagsMenuOpen] = useState(false);
     const [tagsMenuPosition, setTagsMenuPosition] = useState<{
       top: number;
@@ -232,25 +251,39 @@ export const NotesOptions = observer(
       const defaultFontSize = window.getComputedStyle(
         document.documentElement
       ).fontSize;
-      const maxTagsMenuSize = parseFloat(defaultFontSize) * 30;
+      const maxTagsMenuSize =
+        parseFloat(defaultFontSize) * MAX_MENU_SIZE_MULTIPLIER;
       const { clientWidth, clientHeight } = document.documentElement;
-      const buttonRect = tagsButtonRef.current!.getBoundingClientRect();
-      const footerHeight = 32;
+      const buttonRect = tagsButtonRef.current?.getBoundingClientRect();
+      const footerElementRect = document
+        .getElementById('footer-bar')
+        ?.getBoundingClientRect();
+      const footerHeightInPx = footerElementRect?.height;
 
-      if (buttonRect.top + maxTagsMenuSize > clientHeight - footerHeight) {
-        setTagsMenuMaxHeight(clientHeight - buttonRect.top - footerHeight - 2);
-      }
+      if (buttonRect && footerHeightInPx) {
+        if (
+          buttonRect.top + maxTagsMenuSize >
+          clientHeight - footerHeightInPx
+        ) {
+          setTagsMenuMaxHeight(
+            clientHeight -
+              buttonRect.top -
+              footerHeightInPx -
+              MENU_MARGIN_FROM_APP_BORDER
+          );
+        }
 
-      if (buttonRect.right + maxTagsMenuSize > clientWidth) {
-        setTagsMenuPosition({
-          top: buttonRect.top,
-          right: clientWidth - buttonRect.left,
-        });
-      } else {
-        setTagsMenuPosition({
-          top: buttonRect.top,
-          left: buttonRect.right,
-        });
+        if (buttonRect.right + maxTagsMenuSize > clientWidth) {
+          setTagsMenuPosition({
+            top: buttonRect.top,
+            right: clientWidth - buttonRect.left,
+          });
+        } else {
+          setTagsMenuPosition({
+            top: buttonRect.top,
+            left: buttonRect.right,
+          });
+        }
       }
 
       setTagsMenuOpen(!tagsMenuOpen);
@@ -360,7 +393,7 @@ export const NotesOptions = observer(
               onKeyDown={(event) => {
                 if (event.key === 'Escape') {
                   setTagsMenuOpen(false);
-                  tagsButtonRef.current!.focus();
+                  tagsButtonRef.current?.focus();
                 }
               }}
               style={{
@@ -383,9 +416,10 @@ export const NotesOptions = observer(
                 >
                   <span
                     className={`whitespace-nowrap overflow-hidden overflow-ellipsis
-                      ${appState.notes.isTagInSelectedNotes(tag)
-                        ? 'font-bold'
-                        : ''
+                      ${
+                        appState.notes.isTagInSelectedNotes(tag)
+                          ? 'font-bold'
+                          : ''
                       }`}
                   >
                     {tag.title}
@@ -516,16 +550,18 @@ export const NotesOptions = observer(
             </button>
           </>
         )}
-
-
         {notes.length === 1 ? (
           <>
             <div className="min-h-1px my-2 bg-border"></div>
-
-            <SpellcheckOptions appState={appState} note={notes[0]} />
-
+            <ChangeEditorOption
+              appState={appState}
+              application={application}
+              closeOnBlur={closeOnBlur}
+              note={notes[0]}
+            />
             <div className="min-h-1px my-2 bg-border"></div>
-
+            <SpellcheckOptions appState={appState} note={notes[0]} />
+            <div className="min-h-1px my-2 bg-border"></div>
             <NoteAttributes application={application} note={notes[0]} />
           </>
         ) : null}
