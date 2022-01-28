@@ -79,7 +79,15 @@ export const Migrations: FunctionComponent<Props> = ({
   application,
   appState,
 }) => {
-  if (!appState.features.enableNativeFoldersFeature) {
+  const hasNativeFoldersEnabled = appState.features.enableNativeFoldersFeature;
+
+  if (!hasNativeFoldersEnabled) {
+    return null;
+  }
+
+  const hasFoldersFeature = appState.features.hasFolders;
+
+  if (!hasFoldersFeature) {
     return null;
   }
 
