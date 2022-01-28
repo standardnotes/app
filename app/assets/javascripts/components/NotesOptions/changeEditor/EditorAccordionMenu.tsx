@@ -139,25 +139,7 @@ export const EditorAccordionMenu: FunctionComponent<
 
   const selectEditor = (item: EditorMenuItem) => {
     if (item.component) {
-      if (
-        selectedEditor &&
-        (!item.component.package_info.interchangeable ||
-          !selectedEditor?.package_info.interchangeable)
-      ) {
-        application.alertService
-          .confirm(
-            'Doing so might result in minor formatting changes.',
-            'Are you sure you want to change the editor?',
-            'Yes, change it'
-          )
-          .then((shouldChange) => {
-            if (shouldChange && item.component) {
-              selectComponent(item.component);
-            }
-          });
-      } else {
-        selectComponent(item.component);
-      }
+      selectComponent(item.component);
     } else if (item.isPremiumFeature) {
       premiumModal.activate(item.name);
     } else {
