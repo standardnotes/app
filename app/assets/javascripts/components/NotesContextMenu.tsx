@@ -1,7 +1,7 @@
 import { AppState } from '@/ui_models/app_state';
 import { toDirective, useCloseOnBlur, useCloseOnClickOutside } from './utils';
 import { observer } from 'mobx-react-lite';
-import { NotesOptions } from './NotesOptions';
+import { NotesOptions } from './NotesOptions/NotesOptions';
 import { useCallback, useEffect, useRef } from 'preact/hooks';
 import { WebApplication } from '@/ui_models/application';
 
@@ -11,21 +11,16 @@ type Props = {
 };
 
 const NotesContextMenu = observer(({ application, appState }: Props) => {
-  const {
-    contextMenuOpen,
-    contextMenuPosition,
-    contextMenuMaxHeight,
-  } = appState.notes;
+  const { contextMenuOpen, contextMenuPosition, contextMenuMaxHeight } =
+    appState.notes;
 
   const contextMenuRef = useRef<HTMLDivElement>(null);
-  const [closeOnBlur] = useCloseOnBlur(
-    contextMenuRef as any,
-    (open: boolean) => appState.notes.setContextMenuOpen(open)
+  const [closeOnBlur] = useCloseOnBlur(contextMenuRef, (open: boolean) =>
+    appState.notes.setContextMenuOpen(open)
   );
 
-  useCloseOnClickOutside(
-    contextMenuRef as any,
-    (open: boolean) => appState.notes.setContextMenuOpen(open)
+  useCloseOnClickOutside(contextMenuRef, (open: boolean) =>
+    appState.notes.setContextMenuOpen(open)
   );
 
   const reloadContextMenuLayout = useCallback(() => {
