@@ -62,7 +62,6 @@ import {
   snEnter,
 } from './directives/functional';
 import {
-  ActionsMenu,
   HistoryMenu,
   InputModal,
   PanelResizer,
@@ -84,6 +83,10 @@ import { AccountSwitcher } from './views/account_switcher/account_switcher';
 import { react2angular } from 'react2angular';
 import { MenuRow, React2AngularMenuRowPropsArray } from './components/MenuRow';
 import { Footer, React2AngularFooterPropsArray } from './components/Footer';
+import {
+  ActionsMenu,
+  React2AngularActionsMenuPropsArray,
+} from './components/ActionsMenu';
 
 function reloadHiddenFirefoxTab(): boolean {
   /**
@@ -155,10 +158,13 @@ const startApplication: StartApplication = async function startApplication(
   angular
     .module('app')
     .directive('accountSwitcher', () => new AccountSwitcher())
-    .directive('actionsMenu', () => new ActionsMenu())
     .directive('challengeModal', () => new ChallengeModal())
     .directive('componentView', ComponentViewDirective)
     .directive('inputModal', () => new InputModal())
+    .component(
+      'actionsMenu',
+      react2angular(ActionsMenu as never, React2AngularActionsMenuPropsArray)
+    )
     .component(
       'menuRow',
       react2angular(MenuRow as never, React2AngularMenuRowPropsArray)

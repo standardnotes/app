@@ -1,4 +1,3 @@
-export { ActionsMenu } from './actionsMenu';
 export { InputModal } from './inputModal';
 export { PanelResizer } from './panelResizer';
 export { PasswordWizard } from './passwordWizard';

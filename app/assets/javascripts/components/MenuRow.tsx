@@ -1,7 +1,7 @@
 import { Component } from 'preact';
 
 type RowProps = {
-  action: (...args: unknown[]) => void;
+  action?: (...args: unknown[]) => void;
   actionArgs?: unknown[];
   buttonAction?: () => void;
   buttonClass?: string;
@@ -42,7 +42,7 @@ type Props = RowProps;
 
 export class MenuRow extends Component<Props> {
   onClick = ($event: Event) => {
-    if (this.props.disabled) {
+    if (this.props.disabled || !this.props.action) {
       return;
     }
     $event.stopPropagation();
