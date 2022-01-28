@@ -5,19 +5,14 @@ import { AccountMenuState } from '@/ui_models/app_state/account_menu_state';
 import { isDesktopApplication } from '@/utils';
 import {
   ApplicationEvent,
-  ComponentArea,
   ContentType,
   DeinitSource,
-  isPayloadSourceInternalChange,
+  NoteViewController,
   PayloadSource,
   PrefKey,
-  SNComponent,
   SNNote,
   SNSmartTag,
-  ComponentViewer,
   SNTag,
-  NoteViewController,
-  SNTheme,
 } from '@standardnotes/snjs';
 import pull from 'lodash/pull';
 import {
@@ -95,14 +90,11 @@ export class AppState {
   readonly tags: TagsState;
   readonly notesView: NotesViewState;
 
-  public foldersComponentViewer?: ComponentViewer;
-
   isSessionsModalVisible = false;
 
   private appEventObserverRemovers: (() => void)[] = [];
 
   private readonly tagChangedDisposer: IReactionDisposer;
-  private readonly foldersComponentViewerDisposer: () => void;
 
   /* @ngInject */
   constructor(
@@ -168,8 +160,6 @@ export class AppState {
       this.showBetaWarning = false;
     }
 
-    this.foldersComponentViewer = undefined;
-
     makeObservable(this, {
       selectedTag: computed,
 
@@ -181,14 +171,9 @@ export class AppState {
       disableBetaWarning: action,
       openSessionsModal: action,
       closeSessionsModal: action,
-
-      foldersComponentViewer: observable.ref,
-      setFoldersComponent: action,
     });
 
     this.tagChangedDisposer = this.tagChangedNotifier();
-    this.foldersComponentViewerDisposer =
-      this.subscribeToFoldersComponentChanges();
   }
 
   deinit(source: DeinitSource): void {
@@ -212,7 +197,6 @@ export class AppState {
     document.removeEventListener('visibilitychange', this.onVisibilityChange);
     this.onVisibilityChange = undefined;
     this.tagChangedDisposer();
-    this.foldersComponentViewerDisposer();
   }
 
   openSessionsModal(): void {
@@ -313,55 +297,6 @@ export class AppState {
           tag,
           previousTag,
         });
-      }
-    );
-  }
-
-  setFoldersComponent(component?: SNComponent) {
-    const foldersComponentViewer = this.foldersComponentViewer;
-
-    if (foldersComponentViewer) {
-      this.application.componentManager.destroyComponentViewer(
-        foldersComponentViewer
-      );
-      this.foldersComponentViewer = undefined;
-    }
-
-    if (component) {
-      this.foldersComponentViewer =
-        this.application.componentManager.createComponentViewer(
-          component,
-          undefined,
-          this.tags.onFoldersComponentMessage.bind(this.tags)
-        );
-    }
-  }
-
-  private subscribeToFoldersComponentChanges() {
-    return this.application.streamItems(
-      [ContentType.Component],
-      async (items, source) => {
-        if (
-          isPayloadSourceInternalChange(source) ||
-          source === PayloadSource.InitialObserverRegistrationPush
-        ) {
-          return;
-        }
-        const components = items as SNComponent[];
-        const hasFoldersChange = !!components.find(
-          (component) => component.area === ComponentArea.TagsList
-        );
-        if (hasFoldersChange) {
-          const componentViewer = this.application.componentManager
-            .componentsForArea(ComponentArea.TagsList)
-            .find((component) => component.active);
-
-          this.application.performFunctionWithAngularDigestCycleAfterAsyncChange(
-            () => {
-              this.setFoldersComponent(componentViewer);
-            }
-          );
-        }
       }
     );
   }

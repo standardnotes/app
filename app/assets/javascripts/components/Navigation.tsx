@@ -37,7 +37,6 @@ const useNavigationPanelRef = (): [HTMLDivElement | null, () => void] => {
 export const Navigation: FunctionComponent<Props> = observer(
   ({ application }) => {
     const appState = useMemo(() => application.getAppState(), [application]);
-    const componentViewer = appState.foldersComponentViewer;
     const enableNativeSmartTagsFeature =
       appState.features.enableNativeSmartTagsFeature;
     const [panelRef, setPanelRef] = useNavigationPanelRef();
@@ -66,42 +65,30 @@ export const Navigation: FunctionComponent<Props> = observer(
           data-aria-label="Navigation"
           ref={setPanelRef}
         >
-          {componentViewer ? (
-            <div className="component-view-container">
-              <div className="component-view">
-                <ComponentView
-                  componentViewer={componentViewer}
-                  application={application}
-                  appState={appState}
-                />
-              </div>
-            </div>
-          ) : (
-            <div id="navigation-content" className="content">
-              <div className="section-title-bar">
-                <div className="section-title-bar-header">
-                  <div className="sk-h3 title">
-                    <span className="sk-bold">Views</span>
-                  </div>
-                  {!enableNativeSmartTagsFeature && (
-                    <div
-                      className="sk-button sk-secondary-contrast wide"
-                      onClick={onCreateNewTag}
-                      title="Create a new tag"
-                    >
-                      <div className="sk-label">
-                        <i className="icon ion-plus add-button" />
-                      </div>
-                    </div>
-                  )}
+          <div id="navigation-content" className="content">
+            <div className="section-title-bar">
+              <div className="section-title-bar-header">
+                <div className="sk-h3 title">
+                  <span className="sk-bold">Views</span>
                 </div>
-              </div>
-              <div className="scrollable">
-                <SmartTagsSection appState={appState} />
-                <TagsSection appState={appState} />
+                {!enableNativeSmartTagsFeature && (
+                  <div
+                    className="sk-button sk-secondary-contrast wide"
+                    onClick={onCreateNewTag}
+                    title="Create a new tag"
+                  >
+                    <div className="sk-label">
+                      <i className="icon ion-plus add-button" />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
-          )}
+            <div className="scrollable">
+              <SmartTagsSection appState={appState} />
+              <TagsSection appState={appState} />
+            </div>
+          </div>
           {panelRef && (
             <PanelResizer
               application={application}
