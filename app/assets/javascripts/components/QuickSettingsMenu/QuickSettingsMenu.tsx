@@ -17,7 +17,7 @@ import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { JSXInternal } from 'preact/src/jsx';
 import { Icon } from '../Icon';
 import { Switch } from '../Switch';
-import { toDirective, useCloseOnBlur } from '../utils';
+import { toDirective, useCloseOnBlur, useCloseOnClickOutside } from '../utils';
 import {
   quickSettingsKeyDownHandler,
   themesMenuKeyDownHandler,
@@ -33,6 +33,7 @@ const MENU_CLASSNAME =
 type MenuProps = {
   appState: AppState;
   application: WebApplication;
+  onClickOutside: () => void;
 };
 
 const toggleFocusMode = (enabled: boolean) => {
@@ -62,8 +63,8 @@ export const sortThemes = (a: SNTheme, b: SNTheme) => {
   }
 };
 
-const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
-  ({ application, appState }) => {
+export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
+  ({ application, appState, onClickOutside }) => {
     const {
       closeQuickSettingsMenu,
       shouldAnimateCloseMenu,
@@ -83,6 +84,13 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     const prefsButtonRef = useRef<HTMLButtonElement>(null);
     const quickSettingsMenuRef = useRef<HTMLDivElement>(null);
     const defaultThemeButtonRef = useRef<HTMLButtonElement>(null);
+
+    const mainRef = useRef<HTMLDivElement>(null);
+    useCloseOnClickOutside(mainRef, (open: boolean) => {
+      if (!open) {
+        onClickOutside();
+      }
+    });
 
     useEffect(() => {
       toggleFocusMode(focusModeEnabled);
@@ -223,7 +231,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     };
 
     return (
-      <div className="sn-component">
+      <div ref={mainRef} className="sn-component">
         <div
           className={`sn-quick-settings-menu absolute ${MENU_CLASSNAME} ${
             shouldAnimateCloseMenu

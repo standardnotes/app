@@ -17,6 +17,7 @@ import {
   Platform,
   SNApplication,
   NoteGroupController,
+  removeFromArray,
 } from '@standardnotes/snjs';
 import angular from 'angular';
 import { AccountSwitcherScope, PermissionsModalScope } from './../types';
@@ -31,11 +32,18 @@ type WebServices = {
   io: IOService;
 };
 
+export enum WebAppEvent {
+  NewUpdateAvailable = 'NewUpdateAvailable',
+}
+
+export type WebEventObserver = (event: WebAppEvent) => void;
+
 export class WebApplication extends SNApplication {
   private scope?: angular.IScope;
   private webServices!: WebServices;
   private currentAuthenticationElement?: angular.IRootElementService;
   public noteControllerGroup: NoteGroupController;
+  private webEventObservers: WebEventObserver[] = [];
 
   /* @ngInject */
   constructor(
@@ -84,6 +92,7 @@ export class WebApplication extends SNApplication {
     (this.scope as any).application = undefined;
     this.scope!.$destroy();
     this.scope = undefined;
+    this.webEventObservers.length = 0;
     (this.presentPermissionsDialog as unknown) = undefined;
     /** Allow our Angular directives to be destroyed and any pending digest cycles
      * to complete before destroying the global application instance and all its services */
@@ -103,6 +112,19 @@ export class WebApplication extends SNApplication {
 
   setWebServices(services: WebServices): void {
     this.webServices = services;
+  }
+
+  public addWebEventObserver(observer: WebEventObserver): () => void {
+    this.webEventObservers.push(observer);
+    return () => {
+      removeFromArray(this.webEventObservers, observer);
+    };
+  }
+
+  public notifyWebEvent(event: WebAppEvent): void {
+    for (const observer of this.webEventObservers) {
+      observer(event);
+    }
   }
 
   /**

@@ -6,4 +6,3 @@ export { PasswordWizard } from './passwordWizard';
 export { PermissionsModal } from './permissionsModal';
 export { RevisionPreviewModal } from './revisionPreviewModal';
 export { HistoryMenu } from './historyMenu';
-export { SyncResolutionMenu } from './syncResolutionMenu';

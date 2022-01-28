@@ -1,8 +1,8 @@
 import { Component } from 'preact';
 
 type RowProps = {
-  action: (...args: any[]) => void;
-  actionArgs?: any[];
+  action: (...args: unknown[]) => void;
+  actionArgs?: unknown[];
   buttonAction?: () => void;
   buttonClass?: string;
   buttonText?: string;
@@ -80,9 +80,8 @@ export class MenuRow extends Component<Props> {
 
             <div
               className={
-                this.props.faded || this.props.disabled
-                  ? 'faded'
-                  : '' + ' sk-menu-panel-column'
+                (this.props.faded || this.props.disabled ? 'faded' : '') +
+                ' sk-menu-panel-column'
               }
             >
               <div className={this.props.stylekitClass + ' sk-label'}>

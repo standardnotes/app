@@ -32,7 +32,6 @@ import {
   ApplicationGroupView,
   ApplicationView,
   ChallengeModal,
-  FooterView,
   NoteGroupViewDirective,
   NoteViewDirective,
 } from '@/views';
@@ -71,7 +70,6 @@ import {
   PasswordWizard,
   PermissionsModal,
   RevisionPreviewModal,
-  SyncResolutionMenu,
 } from './directives/views';
 import { trusted } from './filters';
 import { PreferencesDirective } from './preferences';
@@ -86,6 +84,7 @@ import { isDev } from './utils';
 import { AccountSwitcher } from './views/account_switcher/account_switcher';
 import { react2angular } from 'react2angular';
 import { MenuRow, React2AngularMenuRowPropsArray } from './components/MenuRow';
+import { Footer, React2AngularFooterPropsArray } from './components/Footer';
 
 function reloadHiddenFirefoxTab(): boolean {
   /**
@@ -139,8 +138,7 @@ const startApplication: StartApplication = async function startApplication(
     .directive('applicationGroupView', () => new ApplicationGroupView())
     .directive('applicationView', () => new ApplicationView())
     .directive('noteGroupView', () => new NoteGroupViewDirective())
-    .directive('noteView', () => new NoteViewDirective())
-    .directive('footerView', () => new FooterView());
+    .directive('noteView', () => new NoteViewDirective());
 
   // Directives - Functional
   angular
@@ -167,12 +165,15 @@ const startApplication: StartApplication = async function startApplication(
       'menuRow',
       react2angular(MenuRow as never, React2AngularMenuRowPropsArray)
     )
+    .component(
+      'footer',
+      react2angular(Footer as never, React2AngularFooterPropsArray)
+    )
     .directive('panelResizer', () => new PanelResizer())
     .directive('passwordWizard', () => new PasswordWizard())
     .directive('permissionsModal', () => new PermissionsModal())
     .directive('revisionPreviewModal', () => new RevisionPreviewModal())
     .directive('historyMenu', () => new HistoryMenu())
-    .directive('syncResolutionMenu', () => new SyncResolutionMenu())
     .directive('sessionsModal', SessionsModalDirective)
     .directive('accountMenu', AccountMenuDirective)
     .directive('quickSettingsMenu', QuickSettingsMenuDirective)

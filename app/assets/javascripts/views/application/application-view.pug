@@ -12,9 +12,10 @@
     )
     note-group-view.flex-grow(application='self.application')
 
-  footer-view(
+  footer(
     ng-if='!self.state.needsUnlock && self.state.launched'
     application='self.application'
+    application-group='self.mainApplicationGroup'
     )
 
   svg(data-ionicons="5.1.2", style="display: none")

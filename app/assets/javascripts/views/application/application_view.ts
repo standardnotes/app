@@ -1,4 +1,4 @@
-import { RootScopeMessages } from './../../messages';
+import { ApplicationGroup } from '@/ui_models/application_group';
 import { WebDirective } from '@/types';
 import { getPlatformString } from '@/utils';
 import template from './application-view.pug';
@@ -12,6 +12,7 @@ import { PANEL_NAME_NOTES, PANEL_NAME_NAVIGATION } from '@/views/constants';
 import { STRING_DEFAULT_FILE_ERROR } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { alertDialog } from '@/services/alertService';
+import { WebAppEvent } from '@/ui_models/application';
 
 class ApplicationViewCtrl extends PureViewCtrl<
   unknown,
@@ -35,12 +36,11 @@ class ApplicationViewCtrl extends PureViewCtrl<
   /* @ngInject */
   constructor(
     private $location: ng.ILocationService,
-    private $rootScope: ng.IRootScopeService,
-    $timeout: ng.ITimeoutService
+    $timeout: ng.ITimeoutService,
+    public mainApplicationGroup: ApplicationGroup
   ) {
     super($timeout);
     this.$location = $location;
-    this.$rootScope = $rootScope;
     this.platformString = getPlatformString();
     this.state = this.getInitialState();
     this.onDragDrop = this.onDragDrop.bind(this);
@@ -50,7 +50,6 @@ class ApplicationViewCtrl extends PureViewCtrl<
 
   deinit() {
     (this.$location as unknown) = undefined;
-    (this.$rootScope as unknown) = undefined;
     (this.application as unknown) = undefined;
     window.removeEventListener('dragover', this.onDragOver, true);
     window.removeEventListener('drop', this.onDragDrop, true);
@@ -109,7 +108,7 @@ class ApplicationViewCtrl extends PureViewCtrl<
   }
 
   onUpdateAvailable() {
-    this.$rootScope.$broadcast(RootScopeMessages.NewUpdateAvailable);
+    this.application.notifyWebEvent(WebAppEvent.NewUpdateAvailable);
   }
 
   /** @override */
