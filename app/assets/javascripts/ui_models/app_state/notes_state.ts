@@ -205,32 +205,37 @@ export class NotesState {
       document.documentElement
     ).fontSize;
     const maxContextMenuHeight = parseFloat(defaultFontSize) * 30;
-    const footerHeight = 32;
+    const footerElementRect = document
+      .getElementById('footer-bar')
+      ?.getBoundingClientRect();
+    const footerHeightInPx = footerElementRect?.height;
 
     // Open up-bottom is default behavior
     let openUpBottom = true;
 
-    const bottomSpace =
-      clientHeight - footerHeight - this.contextMenuClickLocation.y;
-    const upSpace = this.contextMenuClickLocation.y;
+    if (footerHeightInPx) {
+      const bottomSpace =
+        clientHeight - footerHeightInPx - this.contextMenuClickLocation.y;
+      const upSpace = this.contextMenuClickLocation.y;
 
-    // If not enough space to open up-bottom
-    if (maxContextMenuHeight > bottomSpace) {
-      // If there's enough space, open bottom-up
-      if (upSpace > maxContextMenuHeight) {
-        openUpBottom = false;
-        this.setContextMenuMaxHeight('auto');
-        // Else, reduce max height (menu will be scrollable) and open in whichever direction there's more space
-      } else {
-        if (upSpace > bottomSpace) {
-          this.setContextMenuMaxHeight(upSpace - 2);
+      // If not enough space to open up-bottom
+      if (maxContextMenuHeight > bottomSpace) {
+        // If there's enough space, open bottom-up
+        if (upSpace > maxContextMenuHeight) {
           openUpBottom = false;
+          this.setContextMenuMaxHeight('auto');
+          // Else, reduce max height (menu will be scrollable) and open in whichever direction there's more space
         } else {
-          this.setContextMenuMaxHeight(bottomSpace - 2);
+          if (upSpace > bottomSpace) {
+            this.setContextMenuMaxHeight(upSpace - 2);
+            openUpBottom = false;
+          } else {
+            this.setContextMenuMaxHeight(bottomSpace - 2);
+          }
         }
+      } else {
+        this.setContextMenuMaxHeight('auto');
       }
-    } else {
-      this.setContextMenuMaxHeight('auto');
     }
 
     if (openUpBottom) {

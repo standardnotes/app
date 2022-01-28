@@ -250,12 +250,18 @@ export const NotesOptions = observer(
       const maxTagsMenuSize = parseFloat(defaultFontSize) * 30;
       const { clientWidth, clientHeight } = document.documentElement;
       const buttonRect = tagsButtonRef.current?.getBoundingClientRect();
-      const footerHeight = 32;
+      const footerElementRect = document
+        .getElementById('footer-bar')
+        ?.getBoundingClientRect();
+      const footerHeightInPx = footerElementRect?.height;
 
-      if (buttonRect) {
-        if (buttonRect.top + maxTagsMenuSize > clientHeight - footerHeight) {
+      if (buttonRect && footerHeightInPx) {
+        if (
+          buttonRect.top + maxTagsMenuSize >
+          clientHeight - footerHeightInPx
+        ) {
           setTagsMenuMaxHeight(
-            clientHeight - buttonRect.top - footerHeight - 2
+            clientHeight - buttonRect.top - footerHeightInPx - 2
           );
         }
 

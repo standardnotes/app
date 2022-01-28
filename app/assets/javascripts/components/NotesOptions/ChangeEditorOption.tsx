@@ -99,9 +99,12 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
     const buttonRect = changeEditorButtonRef.current?.getBoundingClientRect();
     const buttonParentRect =
       changeEditorButtonRef.current?.parentElement?.getBoundingClientRect();
-    const footerHeightInPx = 32;
+    const footerElementRect = document
+      .getElementById('footer-bar')
+      ?.getBoundingClientRect();
+    const footerHeightInPx = footerElementRect?.height;
 
-    if (buttonRect && buttonParentRect) {
+    if (buttonRect && buttonParentRect && footerHeightInPx) {
       let positionBottom =
         clientHeight - buttonRect.bottom - buttonRect.height / 2;
 
