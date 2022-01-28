@@ -7,6 +7,7 @@ notes-view {
 #notes-column,
 .notes {
   width: 100%;
+  overflow: visible;
 
   border-left: 1px solid var(--sn-stylekit-border-color);
   border-right: 1px solid var(--sn-stylekit-border-color);
