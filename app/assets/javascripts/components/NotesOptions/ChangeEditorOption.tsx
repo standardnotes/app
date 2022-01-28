@@ -50,6 +50,8 @@ export type EditorMenuItem = {
 
 export type EditorMenuGroup = AccordionMenuGroup<EditorMenuItem>;
 
+const MARGIN_FROM_APP_BORDER = 5;
+
 export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
   application,
   appState,
@@ -109,7 +111,7 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
         clientHeight - buttonRect.bottom - buttonRect.height / 2;
 
       if (positionBottom < footerHeightInPx) {
-        positionBottom = footerHeightInPx + 5;
+        positionBottom = footerHeightInPx + MARGIN_FROM_APP_BORDER;
       }
 
       if (buttonRect.right + maxChangeEditorMenuSize > clientWidth) {
@@ -140,20 +142,20 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
       const buttonRect = changeEditorButtonRef.current?.getBoundingClientRect();
 
       if (changeEditorMenuBoundingRect && buttonRect) {
-        if (changeEditorMenuBoundingRect.y < 5) {
+        if (changeEditorMenuBoundingRect.y < MARGIN_FROM_APP_BORDER) {
           if (
             buttonRect.right + maxChangeEditorMenuSize >
             document.documentElement.clientWidth
           ) {
             setChangeEditorMenuPosition({
               ...changeEditorMenuPosition,
-              top: 5 + buttonRect.height,
+              top: MARGIN_FROM_APP_BORDER + buttonRect.height,
               bottom: 'auto',
             });
           } else {
             setChangeEditorMenuPosition({
               ...changeEditorMenuPosition,
-              top: 5,
+              top: MARGIN_FROM_APP_BORDER,
               bottom: 'auto',
             });
           }
