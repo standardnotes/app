@@ -3,6 +3,10 @@ import { STRING_EDIT_LOCKED_ATTEMPT } from '@/strings';
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import {
+  MENU_MARGIN_FROM_APP_BORDER,
+  MAX_MENU_SIZE_MULTIPLIER,
+} from '@/views/constants';
+import {
   reloadFont,
   transactionForAssociateComponentWithCurrentNote,
   transactionForDisassociateComponentWithCurrentNote,
@@ -50,8 +54,6 @@ export type EditorMenuItem = {
 
 export type EditorMenuGroup = AccordionMenuGroup<EditorMenuItem>;
 
-const MARGIN_FROM_APP_BORDER = 5;
-
 export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
   application,
   appState,
@@ -96,7 +98,8 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
     const defaultFontSize = window.getComputedStyle(
       document.documentElement
     ).fontSize;
-    const maxChangeEditorMenuSize = parseFloat(defaultFontSize) * 30;
+    const maxChangeEditorMenuSize =
+      parseFloat(defaultFontSize) * MAX_MENU_SIZE_MULTIPLIER;
     const { clientWidth, clientHeight } = document.documentElement;
     const buttonRect = changeEditorButtonRef.current?.getBoundingClientRect();
     const buttonParentRect =
@@ -111,7 +114,7 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
         clientHeight - buttonRect.bottom - buttonRect.height / 2;
 
       if (positionBottom < footerHeightInPx) {
-        positionBottom = footerHeightInPx + MARGIN_FROM_APP_BORDER;
+        positionBottom = footerHeightInPx + MENU_MARGIN_FROM_APP_BORDER;
       }
 
       if (buttonRect.right + maxChangeEditorMenuSize > clientWidth) {
@@ -142,20 +145,20 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
       const buttonRect = changeEditorButtonRef.current?.getBoundingClientRect();
 
       if (changeEditorMenuBoundingRect && buttonRect) {
-        if (changeEditorMenuBoundingRect.y < MARGIN_FROM_APP_BORDER) {
+        if (changeEditorMenuBoundingRect.y < MENU_MARGIN_FROM_APP_BORDER) {
           if (
             buttonRect.right + maxChangeEditorMenuSize >
             document.documentElement.clientWidth
           ) {
             setChangeEditorMenuPosition({
               ...changeEditorMenuPosition,
-              top: MARGIN_FROM_APP_BORDER + buttonRect.height,
+              top: MENU_MARGIN_FROM_APP_BORDER + buttonRect.height,
               bottom: 'auto',
             });
           } else {
             setChangeEditorMenuPosition({
               ...changeEditorMenuPosition,
-              top: MARGIN_FROM_APP_BORDER,
+              top: MENU_MARGIN_FROM_APP_BORDER,
               bottom: 'auto',
             });
           }

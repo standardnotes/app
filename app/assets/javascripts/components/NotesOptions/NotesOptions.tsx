@@ -13,6 +13,10 @@ import { WebApplication } from '@/ui_models/application';
 import { KeyboardModifier } from '@/services/ioService';
 import { FunctionComponent } from 'preact';
 import { ChangeEditorOption } from './ChangeEditorOption';
+import {
+  MENU_MARGIN_FROM_APP_BORDER,
+  MAX_MENU_SIZE_MULTIPLIER,
+} from '@/views/constants';
 
 export type NotesOptionsProps = {
   application: WebApplication;
@@ -247,7 +251,8 @@ export const NotesOptions = observer(
       const defaultFontSize = window.getComputedStyle(
         document.documentElement
       ).fontSize;
-      const maxTagsMenuSize = parseFloat(defaultFontSize) * 30;
+      const maxTagsMenuSize =
+        parseFloat(defaultFontSize) * MAX_MENU_SIZE_MULTIPLIER;
       const { clientWidth, clientHeight } = document.documentElement;
       const buttonRect = tagsButtonRef.current?.getBoundingClientRect();
       const footerElementRect = document
@@ -261,7 +266,10 @@ export const NotesOptions = observer(
           clientHeight - footerHeightInPx
         ) {
           setTagsMenuMaxHeight(
-            clientHeight - buttonRect.top - footerHeightInPx - 2
+            clientHeight -
+              buttonRect.top -
+              footerHeightInPx -
+              MENU_MARGIN_FROM_APP_BORDER
           );
         }
 

@@ -1,6 +1,7 @@
 import { confirmDialog } from '@/services/alertService';
 import { KeyboardModifier } from '@/services/ioService';
 import { StringEmptyTrash, Strings, StringUtils } from '@/strings';
+import { MENU_MARGIN_FROM_APP_BORDER } from '@/views/constants';
 import {
   UuidString,
   SNNote,
@@ -227,10 +228,12 @@ export class NotesState {
           // Else, reduce max height (menu will be scrollable) and open in whichever direction there's more space
         } else {
           if (upSpace > bottomSpace) {
-            this.setContextMenuMaxHeight(upSpace - 2);
+            this.setContextMenuMaxHeight(upSpace - MENU_MARGIN_FROM_APP_BORDER);
             openUpBottom = false;
           } else {
-            this.setContextMenuMaxHeight(bottomSpace - 2);
+            this.setContextMenuMaxHeight(
+              bottomSpace - MENU_MARGIN_FROM_APP_BORDER
+            );
           }
         }
       } else {
