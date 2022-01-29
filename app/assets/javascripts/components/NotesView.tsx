@@ -1,7 +1,7 @@
 import {
   PanelSide,
   ResizeFinishCallback,
-} from '@/directives/views/panelResizer';
+} from '@/ui_models/panel_resizer_state';
 import { KeyboardKey, KeyboardModifier } from '@/services/ioService';
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';

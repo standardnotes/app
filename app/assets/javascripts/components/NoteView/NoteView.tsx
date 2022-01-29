@@ -1,6 +1,6 @@
 import { WebApplication } from '@/ui_models/application';
-import { PanelPuppet, WebDirective } from '@/types';
-import angular from 'angular';
+import { PanelPuppet } from '@/types';
+import { JSX } from 'preact';
 import {
   ApplicationEvent,
   isPayloadSourceRetrieved,
@@ -21,8 +21,6 @@ import {
 } from '@standardnotes/snjs';
 import { debounce, isDesktopApplication } from '@/utils';
 import { KeyboardModifier, KeyboardKey } from '@/services/ioService';
-import template from './note-view.pug';
-import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { EventSource } from '@/ui_models/app_state';
 import {
   STRING_DELETE_PLACEHOLDER_ATTEMPT,
@@ -30,9 +28,20 @@ import {
   StringDeleteNote,
 } from '@/strings';
 import { confirmDialog } from '@/services/alertService';
+import { PureComponent } from '../Abstract/PureComponent';
+import { ProtectedNoteOverlay } from '../ProtectedNoteOverlay';
+import { Icon } from '../Icon';
+import { PinNoteButton } from '../PinNoteButton';
+import { NotesOptionsPanel } from '../NotesOptionsPanel';
+import { NoteTagsContainer } from '../NoteTagsContainer';
+import { ActionsMenu } from '../ActionsMenu';
+import { HistoryMenu } from '../HistoryMenu';
+import { PanelResizer } from '../PanelResizer';
+import { ComponentView } from '../ComponentView';
+import { PanelSide } from '@/ui_models/panel_resizer_state';
 
 const MINIMUM_STATUS_DURATION = 400;
-const EDITOR_DEBOUNCE = 100;
+const TEXTAREA_DEBOUNCE = 100;
 
 const ElementIds = {
   NoteTextEditor: 'note-text-editor',
@@ -44,35 +53,6 @@ type NoteStatus = {
   message?: string;
   desc?: string;
 };
-
-type EditorState = {
-  availableStackComponents: SNComponent[];
-  stackComponentViewers: ComponentViewer[];
-  editorComponentViewer?: ComponentViewer;
-  editorStateDidLoad: boolean;
-  saveError?: any;
-  noteStatus?: NoteStatus;
-  marginResizersEnabled?: boolean;
-  monospaceFont?: boolean;
-  isDesktop?: boolean;
-  syncTakingTooLong: boolean;
-  showActionsMenu: boolean;
-  showHistoryMenu: boolean;
-  spellcheck: boolean;
-  /** Setting to true then false will allow the main content textarea to be destroyed
-   * then re-initialized. Used when reloading spellcheck status. */
-  textareaUnloading: boolean;
-  showProtectedWarning: boolean;
-};
-
-type EditorValues = {
-  title: string;
-  text: string;
-};
-
-function copyEditorValues(values: EditorValues) {
-  return Object.assign({}, values);
-}
 
 function sortAlphabetically(array: SNComponent[]): SNComponent[] {
   return array.sort((a, b) =>
@@ -120,16 +100,45 @@ export const reloadFont = (monospaceFont?: boolean) => {
   }
 };
 
-export class NoteView extends PureViewCtrl<unknown, EditorState> {
-  /** Passed through template */
-  readonly application!: WebApplication;
+type State = {
+  availableStackComponents: SNComponent[];
+  editorComponentViewer?: ComponentViewer;
+  editorStateDidLoad: boolean;
+  editorTitle: string;
+  editorText: string;
+  isDesktop?: boolean;
+  lockText: string;
+  marginResizersEnabled?: boolean;
+  monospaceFont?: boolean;
+  noteLocked: boolean;
+  noteStatus?: NoteStatus;
+  saveError?: any;
+  showActionsMenu: boolean;
+  showHistoryMenu: boolean;
+  showLockedIcon: boolean;
+  showProtectedWarning: boolean;
+  spellcheck: boolean;
+  stackComponentViewers: ComponentViewer[];
+  syncTakingTooLong: boolean;
+  /** Setting to true then false will allow the main content textarea to be destroyed
+   * then re-initialized. Used when reloading spellcheck status. */
+  textareaUnloading: boolean;
+};
+
+interface Props {
+  application: WebApplication;
+  controller: NoteViewController;
+}
+
+export const React2AngularNoteViewPropsArray = ['application', 'controller'];
+
+export class NoteView extends PureComponent<Props, State> {
   readonly controller!: NoteViewController;
 
   private leftPanelPuppet?: PanelPuppet;
   private rightPanelPuppet?: PanelPuppet;
-  private statusTimeout?: ng.IPromise<void>;
+  private statusTimeout?: NodeJS.Timeout;
   private lastEditorFocusEventSource?: EventSource;
-  public editorValues: EditorValues = { title: '', text: '' };
   onEditorComponentLoad?: () => void;
 
   private scrollPosition = 0;
@@ -141,9 +150,10 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
 
   private protectionTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
-  /* @ngInject */
-  constructor($timeout: ng.ITimeoutService) {
-    super($timeout);
+  constructor(props: Props) {
+    super(props, props.application);
+    this.controller = props.controller;
+
     this.leftPanelPuppet = {
       onReady: () => this.reloadPreferences(),
     };
@@ -154,15 +164,42 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
     this.onPanelResizeFinish = this.onPanelResizeFinish.bind(this);
     this.setScrollPosition = this.setScrollPosition.bind(this);
     this.resetScrollPosition = this.resetScrollPosition.bind(this);
+
     this.editorComponentViewerRequestsReload =
       this.editorComponentViewerRequestsReload.bind(this);
+
     this.onEditorComponentLoad = () => {
       this.application.getDesktopService().redoSearch();
     };
+
     this.debounceReloadEditorComponent = debounce(
       this.debounceReloadEditorComponent.bind(this),
       25
     );
+
+    this.textAreaChangeDebounceSave = debounce(
+      this.textAreaChangeDebounceSave,
+      TEXTAREA_DEBOUNCE
+    );
+
+    this.state = {
+      availableStackComponents: [],
+      editorStateDidLoad: false,
+      editorText: '',
+      editorTitle: '',
+      isDesktop: isDesktopApplication(),
+      lockText: 'Note Editing Disabled',
+      noteStatus: undefined,
+      noteLocked: this.controller.note.locked,
+      showActionsMenu: false,
+      showHistoryMenu: false,
+      showLockedIcon: true,
+      showProtectedWarning: false,
+      spellcheck: true,
+      stackComponentViewers: [],
+      syncTakingTooLong: false,
+      textareaUnloading: false,
+    };
   }
 
   deinit() {
@@ -186,25 +223,29 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
   }
 
   getState() {
-    return this.state as EditorState;
+    return this.state as State;
   }
 
   get note() {
     return this.controller.note;
   }
 
-  $onInit() {
-    super.$onInit();
+  componentDidMount(): void {
+    super.componentDidMount();
+
     this.registerKeyboardShortcuts();
+
     this.removeInnerNoteObserver =
       this.controller.addNoteInnerValueChangeObserver((note, source) => {
         this.onNoteInnerChange(note, source);
       });
+
     this.autorun(() => {
       this.setState({
         showProtectedWarning: this.appState.notes.showProtectedWarning,
       });
     });
+
     this.reloadEditorComponent();
     this.reloadStackComponents();
 
@@ -215,7 +256,7 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
     this.reloadPreferences();
 
     if (this.controller.isTemplateNote) {
-      this.$timeout(() => {
+      setTimeout(() => {
         this.focusTitle();
       });
     }
@@ -225,15 +266,34 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
     if (note.uuid !== this.note.uuid) {
       throw Error('Editor received changes for non-current note');
     }
+
+    let title = this.state.editorTitle,
+      text = this.state.editorText;
     if (isPayloadSourceRetrieved(source)) {
-      this.editorValues.title = note.title;
-      this.editorValues.text = note.text;
+      title = note.title;
+      text = note.text;
     }
-    if (!this.editorValues.title) {
-      this.editorValues.title = note.title;
+    if (!this.state.editorTitle) {
+      title = note.title;
     }
-    if (!this.editorValues.text) {
-      this.editorValues.text = note.text;
+    if (!this.state.editorText) {
+      text = note.text;
+    }
+    if (title !== this.state.editorTitle) {
+      this.setState({
+        editorTitle: title,
+      });
+    }
+    if (text !== this.state.editorText) {
+      this.setState({
+        editorText: text,
+      });
+    }
+
+    if (!note.deleted && note.locked !== this.state.noteLocked) {
+      this.setState({
+        noteLocked: note.locked,
+      });
     }
 
     this.reloadSpellcheck();
@@ -263,33 +323,14 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
     }
   }
 
-  $onDestroy(): void {
+  componentWillUnmount(): void {
     if (this.state.editorComponentViewer) {
       this.application.componentManager?.destroyComponentViewer(
         this.state.editorComponentViewer
       );
     }
-    super.$onDestroy();
+    super.componentWillUnmount();
   }
-
-  /** @override */
-  getInitialState() {
-    return {
-      availableStackComponents: [],
-      stackComponentViewers: [],
-      editorStateDidLoad: false,
-      editorDebounce: EDITOR_DEBOUNCE,
-      isDesktop: isDesktopApplication(),
-      spellcheck: true,
-      syncTakingTooLong: false,
-      showActionsMenu: false,
-      showHistoryMenu: false,
-      noteStatus: undefined,
-      textareaUnloading: false,
-      showProtectedWarning: false,
-    } as EditorState;
-  }
-
   async onAppLaunch() {
     await super.onAppLaunch();
     this.streamItems();
@@ -387,21 +428,6 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
     this.focusTitle();
   }
 
-  /**
-   * Because note.locked accesses note.content.appData,
-   * we do not want to expose the template to direct access to note.locked,
-   * otherwise an exception will occur when trying to access note.locked if the note
-   * is deleted. There is potential for race conditions to occur with setState, where a
-   * previous setState call may have queued a digest cycle, and the digest cycle triggers
-   * on a deleted note.
-   */
-  get noteLocked() {
-    if (!this.note || this.note.deleted) {
-      return false;
-    }
-    return this.note.locked;
-  }
-
   streamItems() {
     this.removeComponentStreamObserver = this.application.streamItems(
       ContentType.Component,
@@ -432,10 +458,10 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
   ): Promise<void> {
     const component = viewer.component;
     this.application.componentManager.destroyComponentViewer(viewer);
-    await this.setState({
+    this.setState({
       editorComponentViewer: undefined,
     });
-    await this.setState({
+    this.setState({
       editorComponentViewer: this.createComponentViewer(component),
       editorStateDidLoad: true,
     });
@@ -466,18 +492,18 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
           currentComponentViewer
         );
       }
-      await this.setState({
+      this.setState({
         editorComponentViewer: undefined,
       });
       if (newEditor) {
-        await this.setState({
+        this.setState({
           editorComponentViewer: this.createComponentViewer(newEditor),
           editorStateDidLoad: true,
         });
       }
       reloadFont(this.state.monospaceFont);
     } else {
-      await this.setState({
+      this.setState({
         editorStateDidLoad: true,
       });
     }
@@ -490,12 +516,12 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
     this.closeAllMenus(menu);
   }
 
-  toggleMenu(menu: keyof EditorState) {
+  toggleMenu = (menu: keyof State) => {
     this.setMenuState(menu, !this.state[menu]);
     this.application.getAppState().notes.setContextMenuOpen(false);
-  }
+  };
 
-  closeAllMenus(exclude?: string) {
+  closeAllMenus = (exclude?: string) => {
     const allMenus = ['showActionsMenu', 'showHistoryMenu'];
     const menuState: any = {};
     for (const candidate of allMenus) {
@@ -504,7 +530,7 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
       }
     }
     this.setState(menuState);
-  }
+  };
 
   hasAvailableExtensions() {
     return (
@@ -544,10 +570,10 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
 
   setStatus(status: NoteStatus, wait = true) {
     if (this.statusTimeout) {
-      this.$timeout.cancel(this.statusTimeout);
+      clearTimeout(this.statusTimeout);
     }
     if (wait) {
-      this.statusTimeout = this.$timeout(() => {
+      this.statusTimeout = setTimeout(() => {
         this.setState({
           noteStatus: status,
         });
@@ -561,30 +587,53 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
 
   cancelPendingSetStatus() {
     if (this.statusTimeout) {
-      this.$timeout.cancel(this.statusTimeout);
+      clearTimeout(this.statusTimeout);
     }
   }
 
-  contentChanged() {
+  onTextAreaChange = ({
+    currentTarget,
+  }: JSX.TargetedEvent<HTMLTextAreaElement, Event>) => {
+    const text = currentTarget.value;
+    this.setState({
+      editorText: text,
+    });
+    this.textAreaChangeDebounceSave();
+  };
+
+  textAreaChangeDebounceSave = () => {
     this.controller.save({
-      editorValues: copyEditorValues(this.editorValues),
+      editorValues: {
+        title: this.state.editorTitle,
+        text: this.state.editorText,
+      },
       isUserModified: true,
     });
-  }
+  };
 
-  onTitleEnter($event: Event) {
-    ($event.target as HTMLInputElement).blur();
-    this.onTitleChange();
+  onTitleEnter = ({
+    currentTarget,
+  }: JSX.TargetedEvent<HTMLInputElement, Event>) => {
+    currentTarget.blur();
     this.focusEditor();
-  }
+  };
 
-  onTitleChange() {
+  onTitleChange = ({
+    currentTarget,
+  }: JSX.TargetedEvent<HTMLInputElement, Event>) => {
+    const title = currentTarget.value;
+    this.setState({
+      editorTitle: title,
+    });
     this.controller.save({
-      editorValues: copyEditorValues(this.editorValues),
+      editorValues: {
+        title: title,
+        text: this.state.editorText,
+      },
       isUserModified: true,
       dontUpdatePreviews: true,
     });
-  }
+  };
 
   focusEditor() {
     const element = document.getElementById(ElementIds.NoteTextEditor);
@@ -598,16 +647,16 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
     document.getElementById(ElementIds.NoteTitleEditor)?.focus();
   }
 
-  clickedTextArea() {
+  clickedTextArea = () => {
     this.closeAllMenus();
-  }
+  };
 
-  onContentFocus() {
+  onContentFocus = () => {
     this.application
       .getAppState()
       .editorDidFocus(this.lastEditorFocusEventSource!);
     this.lastEditorFocusEventSource = undefined;
-  }
+  };
 
   setShowProtectedOverlay(show: boolean) {
     this.appState.notes.setShowProtectedWarning(show);
@@ -636,7 +685,10 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
         this.performNoteDeletion(this.note);
       } else {
         this.controller.save({
-          editorValues: copyEditorValues(this.editorValues),
+          editorValues: {
+            title: this.state.editorTitle,
+            text: this.state.editorText,
+          },
           bypassDebouncer: true,
           dontUpdatePreviews: true,
           customMutate: (mutator) => {
@@ -651,7 +703,11 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
     this.application.deleteItem(note);
   }
 
-  async onPanelResizeFinish(width: number, left: number, isMaxWidth: boolean) {
+  onPanelResizeFinish = async (
+    width: number,
+    left: number,
+    isMaxWidth: boolean
+  ) => {
     if (isMaxWidth) {
       await this.application.setPreference(PrefKey.EditorWidth, null);
     } else {
@@ -665,17 +721,17 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
       this.rightPanelPuppet!.setLeft!(left);
     }
     this.application.sync();
-  }
+  };
 
   async reloadSpellcheck() {
     const spellcheck = this.appState.notes.getSpellcheckStateForNote(this.note);
 
     if (spellcheck !== this.state.spellcheck) {
-      await this.setState({ textareaUnloading: true });
-      await this.setState({ textareaUnloading: false });
+      this.setState({ textareaUnloading: true });
+      this.setState({ textareaUnloading: false });
       reloadFont(this.state.monospaceFont);
 
-      await this.setState({
+      this.setState({
         spellcheck,
       });
     }
@@ -694,9 +750,9 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
 
     await this.reloadSpellcheck();
 
-    await this.setState({
+    this.setState({
       monospaceFont,
-      marginResizersEnabled,
+      marginResizersEnabled: false,
     });
 
     if (!document.getElementById(ElementIds.EditorContent)) {
@@ -704,10 +760,10 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
       return;
     }
 
-    reloadFont(this.state.monospaceFont);
+    reloadFont(monospaceFont);
 
     if (
-      this.state.marginResizersEnabled &&
+      marginResizersEnabled &&
       this.leftPanelPuppet?.ready &&
       this.rightPanelPuppet?.ready
     ) {
@@ -779,7 +835,7 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
     for (const viewer of needsDestroyViewer) {
       this.application.componentManager.destroyComponentViewer(viewer);
     }
-    await this.setState({
+    this.setState({
       availableStackComponents: stackComponents,
       stackComponentViewers: newViewers,
     });
@@ -791,14 +847,14 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
     );
   }
 
-  async toggleStackComponent(component: SNComponent) {
+  toggleStackComponent = async (component: SNComponent) => {
     if (!component.isExplicitlyEnabledForItem(this.note.uuid)) {
       await this.associateComponentWithCurrentNote(component);
     } else {
       await this.disassociateComponentWithCurrentNote(component);
     }
     this.application.sync();
-  }
+  };
 
   async disassociateComponentWithCurrentNote(component: SNComponent) {
     return this.application.runTransactionalMutation(
@@ -838,8 +894,10 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
   }
 
   onSystemEditorLoad() {
+    return;
+
     if (this.removeTabObserver) {
-      return;
+      return <></>;
     }
     /**
      * Insert 4 spaces when a tab key is pressed,
@@ -877,10 +935,15 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
           /** Place cursor 4 spaces away from where the tab key was pressed */
           editor.selectionStart = editor.selectionEnd = start + 4;
         }
-        this.editorValues.text = editor.value;
+        this.setState({
+          editorText: editor.value,
+        });
 
         this.controller.save({
-          editorValues: copyEditorValues(this.editorValues),
+          editorValues: {
+            title: this.state.editorTitle,
+            text: this.state.editorText,
+          },
           bypassDebouncer: true,
         });
       },
@@ -893,28 +956,343 @@ export class NoteView extends PureViewCtrl<unknown, EditorState> {
      * Handles when the editor is destroyed,
      * (and not when our controller is destroyed.)
      */
-    angular.element(editor).one('$destroy', () => {
-      this.removeTabObserver?.();
-      this.removeTabObserver = undefined;
-      editor.removeEventListener('scroll', this.setScrollPosition);
-      editor.removeEventListener('scroll', this.resetScrollPosition);
-      this.scrollPosition = 0;
-    });
-  }
-}
+    // angular.element(editor).one('$destroy', () => {
+    //   this.removeTabObserver?.();
+    //   this.removeTabObserver = undefined;
+    //   editor.removeEventListener('scroll', this.setScrollPosition);
+    //   editor.removeEventListener('scroll', this.resetScrollPosition);
+    //   this.scrollPosition = 0;
+    // });
 
-export class NoteViewDirective extends WebDirective {
-  constructor() {
-    super();
-    this.restrict = 'E';
-    this.scope = {
-      controller: '=',
-      application: '=',
-    };
-    this.template = template;
-    this.replace = true;
-    this.controller = NoteView;
-    this.controllerAs = 'self';
-    this.bindToController = true;
+    return <></>;
+  }
+
+  render() {
+    if (this.state.showProtectedWarning) {
+      return (
+        <div
+          id="editor-column"
+          aria-label="Note"
+          className="section editor sn-component"
+        >
+          {this.state.showProtectedWarning && (
+            <div className="h-full flex justify-center items-center">
+              <ProtectedNoteOverlay
+                appState={this.appState}
+                hasProtectionSources={this.application.hasProtectionSources()}
+                onViewNote={this.dismissProtectedWarning}
+              />
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <div
+        id="editor-column"
+        aria-label="Note"
+        className="section editor sn-component"
+      >
+        <div className="flex-grow flex flex-col">
+          <div className="sn-component">
+            {this.state.noteLocked && (
+              <div
+                className="sk-app-bar no-edges"
+                onMouseLeave={() => {
+                  this.setState({
+                    lockText: 'Note Editing Disabled',
+                    showLockedIcon: true,
+                  });
+                }}
+                onMouseOver={() => {
+                  this.setState({
+                    lockText: 'Enable editing',
+                    showLockedIcon: false,
+                  });
+                }}
+              >
+                <div
+                  onClick={() =>
+                    this.appState.notes.setLockSelectedNotes(
+                      !this.state.noteLocked
+                    )
+                  }
+                  className="sk-app-bar-item"
+                >
+                  <div className="sk-label warning flex items-center">
+                    {this.state.showLockedIcon && (
+                      <Icon
+                        type="pencil-off"
+                        className="flex fill-current mr-2"
+                      />
+                    )}
+                    {this.state.lockText}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {this.note && !this.note.errorDecrypting && (
+            <div id="editor-title-bar" className="section-title-bar w-full">
+              <div className="flex items-center justify-between h-8">
+                <div
+                  className={
+                    (this.state.noteLocked ? 'locked' : '') + ' flex-grow'
+                  }
+                >
+                  <div className="title overflow-auto">
+                    <input
+                      className="input"
+                      disabled={this.state.noteLocked}
+                      id="note-title-editor"
+                      onChange={this.onTitleChange}
+                      onFocus={(event) => {
+                        (event.target as HTMLTextAreaElement).select();
+                      }}
+                      onKeyUp={(event) =>
+                        event.keyCode == 13 && this.onTitleEnter(event)
+                      }
+                      spellcheck={false}
+                      value={this.state.editorTitle}
+                    />
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <div id="save-status">
+                    <div
+                      className={
+                        (this.state.syncTakingTooLong
+                          ? 'warning sk-bold '
+                          : '') +
+                        (this.state.saveError ? 'danger sk-bold ' : '') +
+                        ' message'
+                      }
+                    >
+                      {this.state.noteStatus?.message}
+                    </div>
+                    {this.state.noteStatus?.desc && (
+                      <div className="desc">{this.state.noteStatus.desc}</div>
+                    )}
+                  </div>
+                  {this.appState.notes.selectedNotesCount > 0 && (
+                    <>
+                      <div className="mr-3">
+                        <PinNoteButton appState={this.appState} />
+                      </div>
+                      <NotesOptionsPanel
+                        application={this.application}
+                        appState={this.appState}
+                      />
+                    </>
+                  )}
+                </div>
+              </div>
+              <NoteTagsContainer appState={this.appState} />
+            </div>
+          )}
+
+          {this.note && (
+            <div className="sn-component">
+              <div id="editor-menu-bar" className="sk-app-bar no-edges">
+                <div className="left">
+                  <div
+                    className={
+                      (this.state.showActionsMenu ? 'selected' : '') +
+                      ' sk-app-bar-item'
+                    }
+                    onClick={() => this.toggleMenu('showActionsMenu')}
+                  >
+                    <div className="sk-label">Actions</div>
+                    {this.state.showActionsMenu && (
+                      <ActionsMenu
+                        item={this.note}
+                        application={this.application}
+                      />
+                    )}
+                  </div>
+                  <div
+                    className={
+                      (this.state.showHistoryMenu ? 'selected' : '') +
+                      ' sk-app-bar-item'
+                    }
+                    onClick={() => this.toggleMenu('showHistoryMenu')}
+                  >
+                    <div className="sk-label">History</div>
+                    {this.state.showHistoryMenu && (
+                      <HistoryMenu
+                        item={this.note}
+                        application={this.application}
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {!this.note.errorDecrypting && (
+            <div id="editor-content" className="editor-content">
+              {this.state.marginResizersEnabled && (
+                <div className="left">
+                  <PanelResizer
+                    application={this.application}
+                    minWidth={300}
+                    hoverable={true}
+                    collapsable={false}
+                    panel={
+                      document.querySelector('editor-content') as HTMLDivElement
+                    }
+                    prefKey={PrefKey.EditorLeft}
+                    side={PanelSide.Left}
+                    resizeFinishCallback={this.onPanelResizeFinish}
+                  />
+                </div>
+              )}
+
+              {this.state.editorComponentViewer && (
+                <div className="component-view">
+                  <ComponentView
+                    componentViewer={this.state.editorComponentViewer}
+                    onLoad={this.onEditorComponentLoad}
+                    requestReload={this.editorComponentViewerRequestsReload}
+                    application={this.application}
+                    appState={this.appState}
+                  />
+                </div>
+              )}
+
+              {this.state.editorStateDidLoad &&
+                !this.state.editorComponentViewer &&
+                !this.state.textareaUnloading && (
+                  <textarea
+                    autocomplete="off"
+                    className="editable font-editor"
+                    dir="auto"
+                    id="note-text-editor"
+                    onChange={this.onTextAreaChange}
+                    value={this.state.editorText}
+                    readonly={this.state.noteLocked}
+                    onClick={this.clickedTextArea}
+                    onFocus={this.onContentFocus}
+                    spellcheck={this.state.spellcheck}
+                  >
+                    {this.onSystemEditorLoad()}
+                  </textarea>
+                )}
+
+              {this.state.marginResizersEnabled && (
+                <PanelResizer
+                  application={this.application}
+                  minWidth={300}
+                  hoverable={true}
+                  collapsable={false}
+                  panel={
+                    document.querySelector('editor-content') as HTMLDivElement
+                  }
+                  prefKey={PrefKey.EditorWidth}
+                  side={PanelSide.Right}
+                  resizeFinishCallback={this.onPanelResizeFinish}
+                />
+              )}
+            </div>
+          )}
+
+          {this.note.errorDecrypting && (
+            <div className="section">
+              <div id="error-decrypting-container" className="sn-component">
+                <div id="error-decrypting-panel" className="sk-panel">
+                  <div className="sk-panel-header">
+                    <div className="sk-panel-header-title">
+                      {this.note.waitingForKey
+                        ? 'Waiting for Key'
+                        : 'Unable to Decrypt'}
+                    </div>
+                  </div>
+                  <div className="sk-panel-content">
+                    <div className="sk-panel-section">
+                      {this.note.waitingForKey && (
+                        <p className="sk-p">
+                          This note is awaiting its encryption key to be ready.
+                          Please wait for syncing to complete for this note to
+                          be decrypted.
+                        </p>
+                      )}
+                      {!this.note.waitingForKey && (
+                        <p className="sk-p">
+                          There was an error decrypting this item. Ensure you
+                          are running the latest version of this app, then sign
+                          out and sign back in to try again.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {!this.note.errorDecrypting && (
+            <div id="editor-pane-component-stack">
+              {this.state.availableStackComponents.length > 0 && (
+                <div
+                  id="component-stack-menu-bar"
+                  className="sk-app-bar no-edges"
+                >
+                  <div className="left">
+                    {this.state.availableStackComponents.map((component) => {
+                      return (
+                        <div
+                          key={component.uuid}
+                          onClick={() => {
+                            this.toggleStackComponent(component);
+                          }}
+                          className="sk-app-bar-item"
+                        >
+                          <div className="sk-app-bar-item-column">
+                            <div
+                              className={
+                                (this.stackComponentExpanded(component) &&
+                                component.active
+                                  ? 'info '
+                                  : '') +
+                                (!this.stackComponentExpanded(component)
+                                  ? 'neutral '
+                                  : '') +
+                                ' sk-circle small'
+                              }
+                            />
+                          </div>
+                          <div className="sk-app-bar-item-column">
+                            <div className="sk-label">{component.name}</div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              <div className="sn-component">
+                {this.state.stackComponentViewers.map((viewer) => {
+                  return (
+                    <div className="component-view component-stack-item">
+                      <ComponentView
+                        key={viewer.componentUuid}
+                        componentViewer={viewer}
+                        manualDealloc={true}
+                        application={this.application}
+                        appState={this.appState}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
   }
 }

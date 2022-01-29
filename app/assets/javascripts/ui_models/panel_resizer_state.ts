@@ -1,11 +1,19 @@
-import {
-  PanelSide,
-  ResizeFinishCallback,
-} from '@/directives/views/panelResizer';
 import { debounce } from '@/utils';
 import { ApplicationEvent, PrefKey } from '@standardnotes/snjs';
 import { action, computed, makeObservable, observable } from 'mobx';
 import { WebApplication } from './application';
+
+export type ResizeFinishCallback = (
+  lastWidth: number,
+  lastLeft: number,
+  isMaxWidth: boolean,
+  isCollapsed: boolean
+) => void;
+
+export enum PanelSide {
+  Right = 'right',
+  Left = 'left',
+}
 
 export type PanelResizerProps = {
   alwaysVisible?: boolean;

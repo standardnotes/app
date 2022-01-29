@@ -3,7 +3,7 @@ import angular from 'angular';
 import template from '%/directives/panel-resizer.pug';
 import { debounce } from '@/utils';
 
-export enum PanelSide {
+enum PanelSide {
   Right = 'right',
   Left = 'left',
 }
@@ -22,7 +22,7 @@ enum CssClass {
 }
 const WINDOW_EVENT_RESIZE = 'resize';
 
-export type ResizeFinishCallback = (
+type ResizeFinishCallback = (
   lastWidth: number,
   lastLeft: number,
   isMaxWidth: boolean,

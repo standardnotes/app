@@ -10,7 +10,7 @@ import {
   reloadFont,
   transactionForAssociateComponentWithCurrentNote,
   transactionForDisassociateComponentWithCurrentNote,
-} from '@/views/note_view/note_view';
+} from '@/components/NoteView/NoteView';
 import {
   Disclosure,
   DisclosureButton,

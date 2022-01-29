@@ -3,11 +3,11 @@ import { PanelResizer } from '@/components/PanelResizer';
 import { SmartTagsSection } from '@/components/Tags/SmartTagsSection';
 import { TagsSection } from '@/components/Tags/TagsSection';
 import { toDirective } from '@/components/utils';
+import { WebApplication } from '@/ui_models/application';
 import {
   PanelSide,
   ResizeFinishCallback,
-} from '@/directives/views/panelResizer';
-import { WebApplication } from '@/ui_models/application';
+} from '@/ui_models/panel_resizer_state';
 import { PANEL_NAME_NAVIGATION } from '@/views/constants';
 import { PrefKey } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';

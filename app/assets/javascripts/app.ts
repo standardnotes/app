@@ -33,7 +33,6 @@ import {
   ApplicationView,
   ChallengeModal,
   NoteGroupViewDirective,
-  NoteViewDirective,
 } from '@/views';
 import { SNLog } from '@standardnotes/snjs';
 import angular from 'angular';
@@ -46,8 +45,6 @@ import { NotesContextMenuDirective } from './components/NotesContextMenu';
 import { NotesListOptionsDirective } from './components/NotesListOptionsMenu';
 import { NotesOptionsPanelDirective } from './components/NotesOptionsPanel';
 import { NotesViewDirective } from './components/NotesView';
-import { NoteTagsContainerDirective } from './components/NoteTagsContainer';
-import { ProtectedNoteOverlayDirective } from './components/ProtectedNoteOverlay';
 import { QuickSettingsMenuDirective } from './components/QuickSettingsMenu/QuickSettingsMenu';
 import { SearchOptionsDirective } from './components/SearchOptions';
 import { SessionsModalDirective } from './components/SessionsModal';
@@ -87,6 +84,10 @@ import {
   PasswordWizard,
   React2AngularPasswordWizardPropsArray,
 } from './components/PasswordWizard';
+import {
+  NoteView,
+  React2AngularNoteViewPropsArray,
+} from './components/NoteView/NoteView';
 
 function reloadHiddenFirefoxTab(): boolean {
   /**
@@ -139,8 +140,7 @@ const startApplication: StartApplication = async function startApplication(
     .module('app')
     .directive('applicationGroupView', () => new ApplicationGroupView())
     .directive('applicationView', () => new ApplicationView())
-    .directive('noteGroupView', () => new NoteGroupViewDirective())
-    .directive('noteView', () => new NoteViewDirective());
+    .directive('noteGroupView', () => new NoteGroupViewDirective());
 
   // Directives - Functional
   angular
@@ -154,6 +154,10 @@ const startApplication: StartApplication = async function startApplication(
     .directive('accountSwitcher', () => new AccountSwitcher())
     .directive('challengeModal', () => new ChallengeModal())
     .directive('componentView', ComponentViewDirective)
+    .component(
+      'noteView',
+      react2angular(NoteView as never, React2AngularNoteViewPropsArray)
+    )
     .component(
       'actionsMenu',
       react2angular(ActionsMenu as never, React2AngularActionsMenuPropsArray)
@@ -196,7 +200,6 @@ const startApplication: StartApplication = async function startApplication(
     .directive('accountMenu', AccountMenuDirective)
     .directive('quickSettingsMenu', QuickSettingsMenuDirective)
     .directive('noAccountWarning', NoAccountWarningDirective)
-    .directive('protectedNotePanel', ProtectedNoteOverlayDirective)
     .directive('searchOptions', SearchOptionsDirective)
     .directive('confirmSignout', ConfirmSignoutDirective)
     .directive('multipleSelectedNotesPanel', MultipleSelectedNotesDirective)
@@ -204,7 +207,6 @@ const startApplication: StartApplication = async function startApplication(
     .directive('notesOptionsPanel', NotesOptionsPanelDirective)
     .directive('notesListOptionsMenu', NotesListOptionsDirective)
     .directive('icon', IconDirective)
-    .directive('noteTagsContainer', NoteTagsContainerDirective)
     .directive('navigation', NavigationDirective)
     .directive('preferences', PreferencesDirective)
     .directive('purchaseFlow', PurchaseFlowDirective)

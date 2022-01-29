@@ -1,7 +1,7 @@
 import {
   PanelResizerProps,
   PanelResizerState,
-} from '@/ui_models/panel_resizer';
+} from '@/ui_models/panel_resizer_state';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
