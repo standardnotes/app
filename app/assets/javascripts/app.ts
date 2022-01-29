@@ -54,7 +54,6 @@ import { SessionsModalDirective } from './components/SessionsModal';
 import {
   autofocus,
   clickOutside,
-  delayHide,
   elemReady,
   fileChange,
   lowercase,
@@ -156,7 +155,6 @@ const startApplication: StartApplication = async function startApplication(
     .module('app')
     .directive('snAutofocus', ['$timeout', autofocus])
     .directive('clickOutside', ['$document', clickOutside])
-    .directive('delayHide', delayHide)
     .directive('elemReady', elemReady)
     .directive('fileChange', fileChange)
     .directive('lowercase', lowercase)
