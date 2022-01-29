@@ -28,17 +28,12 @@ import { ComponentViewDirective } from '@/components/ComponentView';
 import { NavigationDirective } from '@/components/Navigation';
 import { PinNoteButtonDirective } from '@/components/PinNoteButton';
 import { IsWebPlatform, WebAppVersion } from '@/version';
-import {
-  ApplicationGroupView,
-  ApplicationView,
-  NoteGroupViewDirective,
-} from '@/views';
+import { ApplicationGroupView, ApplicationView } from '@/views';
 import { SNLog } from '@standardnotes/snjs';
 import angular from 'angular';
 import { AccountMenuDirective } from './components/AccountMenu';
 import { ConfirmSignoutDirective } from './components/ConfirmSignoutModal';
 import { IconDirective } from './components/Icon';
-import { MultipleSelectedNotesDirective } from './components/MultipleSelectedNotes';
 import { NoAccountWarningDirective } from './components/NoAccountWarning';
 import { NotesContextMenuDirective } from './components/NotesContextMenu';
 import { NotesListOptionsDirective } from './components/NotesListOptionsMenu';
@@ -91,6 +86,10 @@ import {
   ChallengeModal,
   React2AngularChallengeModalPropsArray,
 } from './components/ChallengeModal';
+import {
+  NoteGroupView,
+  React2AngularNoteGroupViewPropsArray,
+} from './components/NoteGroupView';
 
 function reloadHiddenFirefoxTab(): boolean {
   /**
@@ -142,8 +141,7 @@ const startApplication: StartApplication = async function startApplication(
   angular
     .module('app')
     .directive('applicationGroupView', () => new ApplicationGroupView())
-    .directive('applicationView', () => new ApplicationView())
-    .directive('noteGroupView', () => new NoteGroupViewDirective());
+    .directive('applicationView', () => new ApplicationView());
 
   // Directives - Functional
   angular
@@ -156,6 +154,13 @@ const startApplication: StartApplication = async function startApplication(
     .module('app')
     .directive('accountSwitcher', () => new AccountSwitcher())
     .directive('componentView', ComponentViewDirective)
+    .component(
+      'noteGroupView',
+      react2angular(
+        NoteGroupView as never,
+        React2AngularNoteGroupViewPropsArray
+      )
+    )
     .component(
       'challengeModal',
       react2angular(
@@ -211,7 +216,6 @@ const startApplication: StartApplication = async function startApplication(
     .directive('noAccountWarning', NoAccountWarningDirective)
     .directive('searchOptions', SearchOptionsDirective)
     .directive('confirmSignout', ConfirmSignoutDirective)
-    .directive('multipleSelectedNotesPanel', MultipleSelectedNotesDirective)
     .directive('notesContextMenu', NotesContextMenuDirective)
     .directive('notesOptionsPanel', NotesOptionsPanelDirective)
     .directive('notesListOptionsMenu', NotesListOptionsDirective)
