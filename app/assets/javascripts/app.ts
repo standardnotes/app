@@ -61,7 +61,7 @@ import {
   selectOnFocus,
   snEnter,
 } from './directives/functional';
-import { InputModal, PanelResizer, PasswordWizard } from './directives/views';
+import { InputModal, PanelResizer } from './directives/views';
 import { trusted } from './filters';
 import { PreferencesDirective } from './preferences';
 import { PurchaseFlowDirective } from './purchaseFlow';
@@ -92,6 +92,10 @@ import {
   PermissionsModal,
   React2AngularPermissionsModalPropsArray,
 } from './components/PermissionsModal';
+import {
+  PasswordWizard,
+  React2AngularPasswordWizardPropsArray,
+} from './components/PasswordWizard';
 
 function reloadHiddenFirefoxTab(): boolean {
   /**
@@ -196,8 +200,14 @@ const startApplication: StartApplication = async function startApplication(
         React2AngularPermissionsModalPropsArray
       )
     )
+    .component(
+      'passwordWizard',
+      react2angular(
+        PasswordWizard as never,
+        React2AngularPasswordWizardPropsArray
+      )
+    )
     .directive('panelResizer', () => new PanelResizer())
-    .directive('passwordWizard', () => new PasswordWizard())
     .directive('sessionsModal', SessionsModalDirective)
     .directive('accountMenu', AccountMenuDirective)
     .directive('quickSettingsMenu', QuickSettingsMenuDirective)
