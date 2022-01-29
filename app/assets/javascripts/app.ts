@@ -56,7 +56,6 @@ import {
   clickOutside,
   lowercase,
   selectOnFocus,
-  snEnter,
 } from './directives/functional';
 import { PanelResizer } from './directives/views';
 import { trusted } from './filters';
@@ -154,8 +153,7 @@ const startApplication: StartApplication = async function startApplication(
     .directive('snAutofocus', ['$timeout', autofocus])
     .directive('clickOutside', ['$document', clickOutside])
     .directive('lowercase', lowercase)
-    .directive('selectOnFocus', ['$window', selectOnFocus])
-    .directive('snEnter', snEnter);
+    .directive('selectOnFocus', ['$window', selectOnFocus]);
 
   // Directives - Views
   angular
