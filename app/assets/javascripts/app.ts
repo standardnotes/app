@@ -62,7 +62,6 @@ import {
   snEnter,
 } from './directives/functional';
 import {
-  HistoryMenu,
   InputModal,
   PanelResizer,
   PasswordWizard,
@@ -87,6 +86,10 @@ import {
   ActionsMenu,
   React2AngularActionsMenuPropsArray,
 } from './components/ActionsMenu';
+import {
+  HistoryMenu,
+  React2AngularHistoryMenuPropsArray,
+} from './components/HistoryMenu';
 
 function reloadHiddenFirefoxTab(): boolean {
   /**
@@ -173,11 +176,14 @@ const startApplication: StartApplication = async function startApplication(
       'footer',
       react2angular(Footer as never, React2AngularFooterPropsArray)
     )
+    .component(
+      'historyMenu',
+      react2angular(HistoryMenu as never, React2AngularHistoryMenuPropsArray)
+    )
     .directive('panelResizer', () => new PanelResizer())
     .directive('passwordWizard', () => new PasswordWizard())
     .directive('permissionsModal', () => new PermissionsModal())
     .directive('revisionPreviewModal', () => new RevisionPreviewModal())
-    .directive('historyMenu', () => new HistoryMenu())
     .directive('sessionsModal', SessionsModalDirective)
     .directive('accountMenu', AccountMenuDirective)
     .directive('quickSettingsMenu', QuickSettingsMenuDirective)
