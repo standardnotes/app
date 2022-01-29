@@ -51,11 +51,7 @@ import { ProtectedNoteOverlayDirective } from './components/ProtectedNoteOverlay
 import { QuickSettingsMenuDirective } from './components/QuickSettingsMenu/QuickSettingsMenu';
 import { SearchOptionsDirective } from './components/SearchOptions';
 import { SessionsModalDirective } from './components/SessionsModal';
-import {
-  autofocus,
-  clickOutside,
-  selectOnFocus,
-} from './directives/functional';
+import { clickOutside, selectOnFocus } from './directives/functional';
 import { PanelResizer } from './directives/views';
 import { trusted } from './filters';
 import { PreferencesDirective } from './preferences';
@@ -149,7 +145,6 @@ const startApplication: StartApplication = async function startApplication(
   // Directives - Functional
   angular
     .module('app')
-    .directive('snAutofocus', ['$timeout', autofocus])
     .directive('clickOutside', ['$document', clickOutside])
     .directive('selectOnFocus', ['$window', selectOnFocus]);
 
