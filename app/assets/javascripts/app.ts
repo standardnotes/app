@@ -55,7 +55,6 @@ import {
   autofocus,
   clickOutside,
   elemReady,
-  fileChange,
   lowercase,
   selectOnFocus,
   snEnter,
@@ -156,7 +155,6 @@ const startApplication: StartApplication = async function startApplication(
     .directive('snAutofocus', ['$timeout', autofocus])
     .directive('clickOutside', ['$document', clickOutside])
     .directive('elemReady', elemReady)
-    .directive('fileChange', fileChange)
     .directive('lowercase', lowercase)
     .directive('selectOnFocus', ['$window', selectOnFocus])
     .directive('snEnter', snEnter);
