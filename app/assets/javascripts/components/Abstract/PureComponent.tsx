@@ -3,6 +3,7 @@ import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import { autorun, IReactionDisposer, IReactionPublic } from 'mobx';
 import { Component } from 'preact';
+import { findDOMNode, unmountComponentAtNode } from 'preact/compat';
 
 export type PureComponentState = Partial<Record<string, any>>;
 export type PureComponentProps = Partial<Record<string, any>>;
@@ -35,6 +36,20 @@ export abstract class PureComponent<
     (this.unsubState as unknown) = undefined;
   }
 
+  protected dismissModal(): void {
+    const elem = this.getElement();
+    if (!elem) {
+      return;
+    }
+
+    const parent = elem.parentElement;
+    if (!parent) {
+      return;
+    }
+    parent.remove();
+    unmountComponentAtNode(parent);
+  }
+
   componentWillUnmount(): void {
     this.deinit();
   }
@@ -45,6 +60,10 @@ export abstract class PureComponent<
 
   public get appState(): AppState {
     return this.application.getAppState();
+  }
+
+  protected getElement(): Element | null {
+    return findDOMNode(this);
   }
 
   autorun(view: (r: IReactionPublic) => void): void {
