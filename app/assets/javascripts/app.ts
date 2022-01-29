@@ -31,7 +31,6 @@ import { IsWebPlatform, WebAppVersion } from '@/version';
 import {
   ApplicationGroupView,
   ApplicationView,
-  ChallengeModal,
   NoteGroupViewDirective,
 } from '@/views';
 import { SNLog } from '@standardnotes/snjs';
@@ -88,6 +87,10 @@ import {
   NoteView,
   React2AngularNoteViewPropsArray,
 } from './components/NoteView/NoteView';
+import {
+  ChallengeModal,
+  React2AngularChallengeModalPropsArray,
+} from './components/ChallengeModal';
 
 function reloadHiddenFirefoxTab(): boolean {
   /**
@@ -152,8 +155,14 @@ const startApplication: StartApplication = async function startApplication(
   angular
     .module('app')
     .directive('accountSwitcher', () => new AccountSwitcher())
-    .directive('challengeModal', () => new ChallengeModal())
     .directive('componentView', ComponentViewDirective)
+    .component(
+      'challengeModal',
+      react2angular(
+        ChallengeModal as never,
+        React2AngularChallengeModalPropsArray
+      )
+    )
     .component(
       'noteView',
       react2angular(NoteView as never, React2AngularNoteViewPropsArray)

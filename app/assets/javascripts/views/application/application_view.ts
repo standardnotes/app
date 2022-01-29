@@ -84,11 +84,11 @@ class ApplicationViewCtrl extends PureViewCtrl<
     await this.application.launch();
   }
 
-  public async removeChallenge(challenge: Challenge) {
+  public removeChallenge = async (challenge: Challenge) => {
     this.$timeout(() => {
       removeFromArray(this.challenges, challenge);
     });
-  }
+  };
 
   async onAppStart() {
     super.onAppStart();
