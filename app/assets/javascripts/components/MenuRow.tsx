@@ -1,8 +1,8 @@
 import { Component } from 'preact';
 
 type RowProps = {
-  action?: (...args: never[]) => void;
-  actionArgs?: unknown[];
+  action?: (...args: any[]) => void;
+  actionArgs?: any[];
   buttonAction?: () => void;
   buttonClass?: string;
   buttonText?: string;

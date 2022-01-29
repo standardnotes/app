@@ -1,5 +1,5 @@
 import { WebApplication } from '@/ui_models/application';
-import { NoteHistoryEntry, SNItem, SNNote } from '@standardnotes/snjs';
+import { NoteHistoryEntry, SNNote } from '@standardnotes/snjs';
 import { RevisionListEntry } from '@standardnotes/snjs';
 import { alertDialog, confirmDialog } from '@/services/alertService';
 import { PureComponent } from './Abstract/PureComponent';

@@ -33,21 +33,27 @@ export function useCloseOnBlur(
 
 export function useCloseOnClickOutside(
   container: { current: HTMLDivElement | null },
-  setOpen: (open: boolean) => void
+  callback: () => void
 ): void {
   const closeOnClickOutside = useCallback(
     (event: { target: EventTarget | null }) => {
-      if (!container.current?.contains(event.target as Node)) {
-        setOpen(false);
+      if (!container.current) {
+        return;
+      }
+      const isDescendant = container.current.contains(event.target as Node);
+      if (!isDescendant) {
+        callback();
       }
     },
-    [container, setOpen]
+    [container, callback]
   );
 
   useEffect(() => {
-    document.addEventListener('click', closeOnClickOutside);
+    document.addEventListener('click', closeOnClickOutside, { capture: true });
     return () => {
-      document.removeEventListener('click', closeOnClickOutside);
+      document.removeEventListener('click', closeOnClickOutside, {
+        capture: true,
+      });
     };
   }, [closeOnClickOutside]);
 }

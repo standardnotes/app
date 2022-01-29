@@ -86,10 +86,8 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     const defaultThemeButtonRef = useRef<HTMLButtonElement>(null);
 
     const mainRef = useRef<HTMLDivElement>(null);
-    useCloseOnClickOutside(mainRef, (open: boolean) => {
-      if (!open) {
-        onClickOutside();
-      }
+    useCloseOnClickOutside(mainRef, () => {
+      onClickOutside();
     });
 
     useEffect(() => {

@@ -19,8 +19,8 @@ const NotesContextMenu = observer(({ application, appState }: Props) => {
     appState.notes.setContextMenuOpen(open)
   );
 
-  useCloseOnClickOutside(contextMenuRef, (open: boolean) =>
-    appState.notes.setContextMenuOpen(open)
+  useCloseOnClickOutside(contextMenuRef, () =>
+    appState.notes.setContextMenuOpen(false)
   );
 
   const reloadContextMenuLayout = useCallback(() => {

@@ -118,10 +118,8 @@ flex flex-col py-2 bottom-0 left-2 absolute';
 
     const menuRef = useRef<HTMLDivElement>(null);
 
-    useCloseOnClickOutside(menuRef, (open: boolean) => {
-      if (!open) {
-        closeDisplayOptionsMenu();
-      }
+    useCloseOnClickOutside(menuRef, () => {
+      closeDisplayOptionsMenu();
     });
 
     return (

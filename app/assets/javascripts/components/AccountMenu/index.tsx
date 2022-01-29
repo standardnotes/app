@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite';
 import { toDirective, useCloseOnClickOutside } from '@/components/utils';
 import { AppState } from '@/ui_models/app_state';
 import { WebApplication } from '@/ui_models/application';
-import { useRef, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { GeneralAccountMenu } from './GeneralAccountMenu';
 import { FunctionComponent } from 'preact';
 import { SignInPane } from './SignIn';
@@ -92,10 +92,8 @@ export const AccountMenu: FunctionComponent<Props> = observer(
     } = appState.accountMenu;
 
     const ref = useRef<HTMLDivElement>(null);
-    useCloseOnClickOutside(ref, (open: boolean) => {
-      if (!open) {
-        onClickOutside();
-      }
+    useCloseOnClickOutside(ref, () => {
+      onClickOutside();
     });
 
     const handleKeyDown: JSXInternal.KeyboardEventHandler<HTMLDivElement> = (
@@ -115,7 +113,7 @@ export const AccountMenu: FunctionComponent<Props> = observer(
     };
 
     return (
-      <div ref={ref} className="sn-component">
+      <div ref={ref} id="account-menu" className="sn-component">
         <div
           className={`sn-menu-border sn-account-menu sn-dropdown ${
             shouldAnimateCloseMenu

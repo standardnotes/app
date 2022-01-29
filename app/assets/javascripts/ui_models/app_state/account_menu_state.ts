@@ -77,6 +77,7 @@ export class AccountMenuState {
         runInAction(() => {
           if (isDev && window._devAccountServer) {
             this.setServer(window._devAccountServer);
+            this.application.setCustomHost(window._devAccountServer);
           } else {
             this.setServer(this.application.getHost());
           }
