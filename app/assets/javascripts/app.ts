@@ -54,7 +54,6 @@ import { SessionsModalDirective } from './components/SessionsModal';
 import {
   autofocus,
   clickOutside,
-  lowercase,
   selectOnFocus,
 } from './directives/functional';
 import { PanelResizer } from './directives/views';
@@ -152,7 +151,6 @@ const startApplication: StartApplication = async function startApplication(
     .module('app')
     .directive('snAutofocus', ['$timeout', autofocus])
     .directive('clickOutside', ['$document', clickOutside])
-    .directive('lowercase', lowercase)
     .directive('selectOnFocus', ['$window', selectOnFocus]);
 
   // Directives - Views
