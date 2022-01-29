@@ -522,6 +522,9 @@ export class NoteView extends PureComponent<Props, State> {
   };
 
   closeAllMenus = (exclude?: string) => {
+    if (!(this.state.showActionsMenu || this.state.showHistoryMenu)) {
+      return;
+    }
     const allMenus = ['showActionsMenu', 'showHistoryMenu'];
     const menuState: any = {};
     for (const candidate of allMenus) {
@@ -894,10 +897,8 @@ export class NoteView extends PureComponent<Props, State> {
   }
 
   onSystemEditorLoad() {
-    return;
-
     if (this.removeTabObserver) {
-      return <></>;
+      return;
     }
     /**
      * Insert 4 spaces when a tab key is pressed,
@@ -907,7 +908,8 @@ export class NoteView extends PureComponent<Props, State> {
      */
     const editor = document.getElementById(
       ElementIds.NoteTextEditor
-    )! as HTMLInputElement;
+    ) as HTMLInputElement;
+
     this.removeTabObserver = this.application.io.addKeyObserver({
       element: editor,
       key: KeyboardKey.Tab,
@@ -924,8 +926,8 @@ export class NoteView extends PureComponent<Props, State> {
         );
         if (!insertSuccessful) {
           /** document.execCommand works great on Chrome/Safari but not Firefox */
-          const start = editor.selectionStart!;
-          const end = editor.selectionEnd!;
+          const start = editor.selectionStart || 0;
+          const end = editor.selectionEnd || 0;
           const spaces = '    ';
           /** Insert 4 spaces */
           editor.value =
@@ -952,19 +954,22 @@ export class NoteView extends PureComponent<Props, State> {
     editor.addEventListener('scroll', this.setScrollPosition);
     editor.addEventListener('input', this.resetScrollPosition);
 
-    /**
-     * Handles when the editor is destroyed,
-     * (and not when our controller is destroyed.)
-     */
-    // angular.element(editor).one('$destroy', () => {
-    //   this.removeTabObserver?.();
-    //   this.removeTabObserver = undefined;
-    //   editor.removeEventListener('scroll', this.setScrollPosition);
-    //   editor.removeEventListener('scroll', this.resetScrollPosition);
-    //   this.scrollPosition = 0;
-    // });
+    const observer = new MutationObserver((records) => {
+      for (const record of records) {
+        const removedNodes = record.removedNodes.values();
+        for (const node of removedNodes) {
+          if (node === editor) {
+            this.removeTabObserver?.();
+            this.removeTabObserver = undefined;
+            editor.removeEventListener('scroll', this.setScrollPosition);
+            editor.removeEventListener('scroll', this.resetScrollPosition);
+            this.scrollPosition = 0;
+          }
+        }
+      }
+    });
 
-    return <></>;
+    observer.observe(editor.parentElement as HTMLElement, { childList: true });
   }
 
   render() {
@@ -1046,7 +1051,7 @@ export class NoteView extends PureComponent<Props, State> {
                     <input
                       className="input"
                       disabled={this.state.noteLocked}
-                      id="note-title-editor"
+                      id={ElementIds.NoteTitleEditor}
                       onChange={this.onTitleChange}
                       onFocus={(event) => {
                         (event.target as HTMLTextAreaElement).select();
@@ -1133,7 +1138,10 @@ export class NoteView extends PureComponent<Props, State> {
           )}
 
           {!this.note.errorDecrypting && (
-            <div id="editor-content" className="editor-content">
+            <div
+              id={ElementIds.EditorContent}
+              className={ElementIds.EditorContent}
+            >
               {this.state.marginResizersEnabled && (
                 <div className="left">
                   <PanelResizer
@@ -1142,7 +1150,9 @@ export class NoteView extends PureComponent<Props, State> {
                     hoverable={true}
                     collapsable={false}
                     panel={
-                      document.querySelector('editor-content') as HTMLDivElement
+                      document.querySelector(
+                        ElementIds.EditorContent
+                      ) as HTMLDivElement
                     }
                     prefKey={PrefKey.EditorLeft}
                     side={PanelSide.Left}
@@ -1170,16 +1180,15 @@ export class NoteView extends PureComponent<Props, State> {
                     autocomplete="off"
                     className="editable font-editor"
                     dir="auto"
-                    id="note-text-editor"
+                    id={ElementIds.NoteTextEditor}
                     onChange={this.onTextAreaChange}
                     value={this.state.editorText}
                     readonly={this.state.noteLocked}
                     onClick={this.clickedTextArea}
                     onFocus={this.onContentFocus}
                     spellcheck={this.state.spellcheck}
-                  >
-                    {this.onSystemEditorLoad()}
-                  </textarea>
+                    ref={() => this.onSystemEditorLoad()}
+                  ></textarea>
                 )}
 
               {this.state.marginResizersEnabled && (
@@ -1189,7 +1198,9 @@ export class NoteView extends PureComponent<Props, State> {
                   hoverable={true}
                   collapsable={false}
                   panel={
-                    document.querySelector('editor-content') as HTMLDivElement
+                    document.querySelector(
+                      ElementIds.EditorContent
+                    ) as HTMLDivElement
                   }
                   prefKey={PrefKey.EditorWidth}
                   side={PanelSide.Right}
