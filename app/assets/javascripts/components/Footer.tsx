@@ -396,9 +396,6 @@ export class Footer extends PureComponent<Props, State> {
   };
 
   clickOutsideAccountMenu = () => {
-    if (this.application && this.application.authenticationInProgress()) {
-      return;
-    }
     this.appState.accountMenu.closeAccountMenu();
   };
 

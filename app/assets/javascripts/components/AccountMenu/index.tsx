@@ -1,8 +1,8 @@
 import { observer } from 'mobx-react-lite';
-import { toDirective, useCloseOnClickOutside } from '@/components/utils';
+import { useCloseOnClickOutside } from '@/components/utils';
 import { AppState } from '@/ui_models/app_state';
 import { WebApplication } from '@/ui_models/application';
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { useRef, useState } from 'preact/hooks';
 import { GeneralAccountMenu } from './GeneralAccountMenu';
 import { FunctionComponent } from 'preact';
 import { SignInPane } from './SignIn';
@@ -138,5 +138,3 @@ export const AccountMenu: FunctionComponent<Props> = observer(
     );
   }
 );
-
-export const AccountMenuDirective = toDirective<Props>(AccountMenu);

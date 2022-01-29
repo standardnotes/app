@@ -338,12 +338,9 @@ export class NotesViewState {
     }
 
     await this.appState.openNewNote(title);
-    this.application.performFunctionWithAngularDigestCycleAfterAsyncChange(
-      () => {
-        this.reloadNotes();
-        this.appState.noteTags.reloadTags();
-      }
-    );
+
+    this.reloadNotes();
+    this.appState.noteTags.reloadTags();
   };
 
   createPlaceholderNote = () => {

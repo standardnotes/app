@@ -9,7 +9,6 @@ import {
 } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { FunctionalComponent } from 'preact';
-import { toDirective } from '@/components/utils';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { observer } from 'mobx-react-lite';
 import { OfflineRestricted } from '@/components/ComponentView/OfflineRestricted';
@@ -249,10 +248,3 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
     );
   }
 );
-
-export const ComponentViewDirective = toDirective<IProps>(ComponentView, {
-  onLoad: '=',
-  componentViewer: '=',
-  requestReload: '=',
-  manualDealloc: '=',
-});

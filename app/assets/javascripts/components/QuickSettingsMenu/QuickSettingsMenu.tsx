@@ -17,7 +17,7 @@ import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { JSXInternal } from 'preact/src/jsx';
 import { Icon } from '../Icon';
 import { Switch } from '../Switch';
-import { toDirective, useCloseOnBlur, useCloseOnClickOutside } from '../utils';
+import { useCloseOnBlur, useCloseOnClickOutside } from '../utils';
 import {
   quickSettingsKeyDownHandler,
   themesMenuKeyDownHandler,
@@ -326,6 +326,3 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     );
   }
 );
-
-export const QuickSettingsMenuDirective =
-  toDirective<MenuProps>(QuickSettingsMenu);

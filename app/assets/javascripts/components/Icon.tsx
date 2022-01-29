@@ -65,7 +65,6 @@ import LinkOffIcon from '../../icons/ic-link-off.svg';
 import MenuArrowDownAlt from '../../icons/ic-menu-arrow-down-alt.svg';
 import MenuArrowRight from '../../icons/ic-menu-arrow-right.svg';
 
-import { toDirective } from './utils';
 import { FunctionalComponent } from 'preact';
 
 const ICONS = {
@@ -158,8 +157,3 @@ export const Icon: FunctionalComponent<Props> = ({
     />
   );
 };
-
-export const IconDirective = toDirective<Props>(Icon, {
-  type: '@',
-  className: '@',
-});

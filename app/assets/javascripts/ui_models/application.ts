@@ -19,7 +19,6 @@ import {
   removeFromArray,
 } from '@standardnotes/snjs';
 import angular from 'angular';
-import { AccountSwitcherScope, PermissionsModalScope } from './../types';
 
 type WebServices = {
   appState: AppState;
@@ -33,25 +32,21 @@ type WebServices = {
 
 export enum WebAppEvent {
   NewUpdateAvailable = 'NewUpdateAvailable',
+  DesktopWindowGainedFocus = 'DesktopWindowGainedFocus',
+  DesktopWindowLostFocus = 'DesktopWindowLostFocus',
 }
 
 export type WebEventObserver = (event: WebAppEvent) => void;
 
 export class WebApplication extends SNApplication {
-  private scope?: angular.IScope;
   private webServices!: WebServices;
-  private currentAuthenticationElement?: angular.IRootElementService;
   public noteControllerGroup: NoteGroupController;
   private webEventObservers: WebEventObserver[] = [];
 
-  /* @ngInject */
   constructor(
     deviceInterface: WebDeviceInterface,
     platform: Platform,
     identifier: string,
-    private $compile: angular.ICompileService,
-    private $timeout: angular.ITimeoutService,
-    scope: angular.IScope,
     defaultSyncServerHost: string,
     public bridge: Bridge,
     enableUnfinishedFeatures: boolean,
@@ -70,8 +65,6 @@ export class WebApplication extends SNApplication {
       enableUnfinishedFeatures,
       webSocketUrl
     );
-    this.$compile = $compile;
-    this.scope = scope;
     deviceInterface.setApplication(this);
     this.noteControllerGroup = new NoteGroupController(this);
     this.presentPermissionsDialog = this.presentPermissionsDialog.bind(this);
@@ -86,11 +79,7 @@ export class WebApplication extends SNApplication {
       (service as any).application = undefined;
     }
     this.webServices = {} as WebServices;
-    (this.$compile as unknown) = undefined;
     this.noteControllerGroup.deinit();
-    (this.scope as any).application = undefined;
-    this.scope!.$destroy();
-    this.scope = undefined;
     this.webEventObservers.length = 0;
     (this.presentPermissionsDialog as unknown) = undefined;
     /** Allow our Angular directives to be destroyed and any pending digest cycles
@@ -126,16 +115,6 @@ export class WebApplication extends SNApplication {
     }
   }
 
-  /**
-   * If a UI change is made in an async function, Angular might not re-render the change.
-   * Use this function to force re-render the UI after an async function has made UI changes.
-   */
-  public performFunctionWithAngularDigestCycleAfterAsyncChange(
-    func: () => void
-  ) {
-    this.$timeout(func);
-  }
-
   public getAppState(): AppState {
     return this.webServices.appState;
   }
@@ -169,21 +148,17 @@ export class WebApplication extends SNApplication {
   }
 
   presentPasswordWizard(type: PasswordWizardType) {
-    const scope = this.scope!.$new(true) as PasswordWizardScope;
-    scope.type = type;
-    scope.application = this;
-    const el = this.$compile!(
-      "<password-wizard application='application' type='type'></password-wizard>"
-    )(scope as any);
-    this.applicationElement.append(el);
+    // const scope = this.scope!.$new(true) as PasswordWizardScope;
+    // scope.type = type;
+    // scope.application = this;
+    // const el = this.$compile!(
+    //   "<password-wizard application='application' type='type'></password-wizard>"
+    // )(scope as any);
+    // this.applicationElement.append(el);
   }
 
   downloadBackup(): void | Promise<void> {
     return this.bridge.downloadBackup();
-  }
-
-  authenticationInProgress() {
-    return this.currentAuthenticationElement != null;
   }
 
   get applicationElement() {
@@ -196,37 +171,37 @@ export class WebApplication extends SNApplication {
   }
 
   presentRevisionPreviewModal(uuid: string, content: any, title?: string) {
-    const scope: any = this.scope!.$new(true);
-    scope.uuid = uuid;
-    scope.content = content;
-    scope.title = title;
-    scope.application = this;
-    const el = this.$compile!(
-      `<revision-preview-modal application='application' uuid='uuid' content='content' title='title'
-      class='sk-modal'></revision-preview-modal>`
-    )(scope);
-    this.applicationElement.append(el);
+    // const scope: any = this.scope!.$new(true);
+    // scope.uuid = uuid;
+    // scope.content = content;
+    // scope.title = title;
+    // scope.application = this;
+    // const el = this.$compile!(
+    //   `<revision-preview-modal application='application' uuid='uuid' content='content' title='title'
+    //   class='sk-modal'></revision-preview-modal>`
+    // )(scope);
+    // this.applicationElement.append(el);
   }
 
   public openAccountSwitcher() {
-    const scope = this.scope!.$new(true) as Partial<AccountSwitcherScope>;
-    scope.application = this;
-    const el = this.$compile!(
-      "<account-switcher application='application' " +
-        "class='sk-modal'></account-switcher>"
-    )(scope as any);
-    this.applicationElement.append(el);
+    // const scope = this.scope!.$new(true) as Partial<AccountSwitcherScope>;
+    // scope.application = this;
+    // const el = this.$compile!(
+    //   "<account-switcher application='application' " +
+    //     "class='sk-modal'></account-switcher>"
+    // )(scope as any);
+    // this.applicationElement.append(el);
   }
 
   presentPermissionsDialog(dialog: PermissionDialog) {
-    const scope = this.scope!.$new(true) as PermissionsModalScope;
-    scope.permissionsString = dialog.permissionsString;
-    scope.component = dialog.component;
-    scope.callback = dialog.callback;
-    const el = this.$compile!(
-      "<permissions-modal component='component' permissions-string='permissionsString'" +
-        " callback='callback' class='sk-modal'></permissions-modal>"
-    )(scope as any);
-    this.applicationElement.append(el);
+    // const scope = this.scope!.$new(true) as PermissionsModalScope;
+    // scope.permissionsString = dialog.permissionsString;
+    // scope.component = dialog.component;
+    // scope.callback = dialog.callback;
+    // const el = this.$compile!(
+    //   "<permissions-modal component='component' permissions-string='permissionsString'" +
+    //     " callback='callback' class='sk-modal'></permissions-modal>"
+    // )(scope as any);
+    // this.applicationElement.append(el);
   }
 }

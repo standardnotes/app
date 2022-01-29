@@ -1,5 +1,5 @@
 import { AppState } from '@/ui_models/app_state';
-import { toDirective, useCloseOnBlur, useCloseOnClickOutside } from './utils';
+import { useCloseOnBlur, useCloseOnClickOutside } from './utils';
 import { observer } from 'mobx-react-lite';
 import { NotesOptions } from './NotesOptions/NotesOptions';
 import { useCallback, useEffect, useRef } from 'preact/hooks';
@@ -10,7 +10,7 @@ type Props = {
   appState: AppState;
 };
 
-const NotesContextMenu = observer(({ application, appState }: Props) => {
+export const NotesContextMenu = observer(({ application, appState }: Props) => {
   const { contextMenuOpen, contextMenuPosition, contextMenuMaxHeight } =
     appState.notes;
 
@@ -51,5 +51,3 @@ const NotesContextMenu = observer(({ application, appState }: Props) => {
     </div>
   ) : null;
 });
-
-export const NotesContextMenuDirective = toDirective<Props>(NotesContextMenu);

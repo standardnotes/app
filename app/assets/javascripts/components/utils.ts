@@ -57,37 +57,3 @@ export function useCloseOnClickOutside(
     };
   }, [closeOnClickOutside]);
 }
-
-export function toDirective<Props>(
-  component: FunctionComponent<Props>,
-  scope: Record<string, '=' | '&' | '@'> = {}
-) {
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  return function () {
-    return {
-      controller: [
-        '$element',
-        '$scope',
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ($element: JQLite, $scope: any) => {
-          if ($scope.class) {
-            $element.addClass($scope.class);
-          }
-          return {
-            $onChanges() {
-              render(h(component, $scope), $element[0]);
-            },
-            $onDestroy() {
-              unmountComponentAtNode($element[0]);
-            },
-          };
-        },
-      ],
-      scope: {
-        application: '=',
-        appState: '=',
-        ...scope,
-      },
-    };
-  };
-}

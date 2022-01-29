@@ -2,7 +2,6 @@ import { ComponentView } from '@/components/ComponentView';
 import { PanelResizer } from '@/components/PanelResizer';
 import { SmartTagsSection } from '@/components/Tags/SmartTagsSection';
 import { TagsSection } from '@/components/Tags/TagsSection';
-import { toDirective } from '@/components/utils';
 import { WebApplication } from '@/ui_models/application';
 import {
   PanelSide,
@@ -19,7 +18,7 @@ type Props = {
   application: WebApplication;
 };
 
-const NAVIGATION_SELECTOR = 'navigation';
+const NAVIGATION_SELECTOR = '#navigation-container';
 
 const useNavigationPanelRef = (): [HTMLDivElement | null, () => void] => {
   const [panelRef, setPanelRefInternal] = useState<HTMLDivElement | null>(null);
@@ -119,5 +118,3 @@ export const Navigation: FunctionComponent<Props> = observer(
     );
   }
 );
-
-export const NavigationDirective = toDirective<Props>(Navigation);

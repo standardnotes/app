@@ -15,14 +15,13 @@ import { NotesList } from './NotesList';
 import { NotesListOptionsMenu } from './NotesListOptionsMenu';
 import { PanelResizer } from './PanelResizer';
 import { SearchOptions } from './SearchOptions';
-import { toDirective } from './utils';
 
 type Props = {
   application: WebApplication;
   appState: AppState;
 };
 
-const NotesView: FunctionComponent<Props> = observer(
+export const NotesView: FunctionComponent<Props> = observer(
   ({ application, appState }) => {
     const notesViewPanelRef = useRef<HTMLDivElement>(null);
 
@@ -242,7 +241,7 @@ const NotesView: FunctionComponent<Props> = observer(
             application={application}
             collapsable={true}
             defaultWidth={300}
-            panel={document.querySelector('notes-view') as HTMLDivElement}
+            panel={document.querySelector('#notes-view') as HTMLDivElement}
             prefKey={PrefKey.NotesPanelWidth}
             side={PanelSide.Right}
             resizeFinishCallback={panelResizeFinishCallback}
@@ -253,5 +252,3 @@ const NotesView: FunctionComponent<Props> = observer(
     );
   }
 );
-
-export const NotesViewDirective = toDirective<Props>(NotesView);
