@@ -61,7 +61,7 @@ import {
   selectOnFocus,
   snEnter,
 } from './directives/functional';
-import { InputModal, PanelResizer } from './directives/views';
+import { PanelResizer } from './directives/views';
 import { trusted } from './filters';
 import { PreferencesDirective } from './preferences';
 import { PurchaseFlowDirective } from './purchaseFlow';
@@ -169,7 +169,6 @@ const startApplication: StartApplication = async function startApplication(
     .directive('accountSwitcher', () => new AccountSwitcher())
     .directive('challengeModal', () => new ChallengeModal())
     .directive('componentView', ComponentViewDirective)
-    .directive('inputModal', () => new InputModal())
     .component(
       'actionsMenu',
       react2angular(ActionsMenu as never, React2AngularActionsMenuPropsArray)

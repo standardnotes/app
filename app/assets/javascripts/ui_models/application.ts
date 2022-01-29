@@ -1,5 +1,4 @@
 import { WebCrypto } from '@/crypto';
-import { InputModalScope } from '@/directives/views/inputModal';
 import { AlertService } from '@/services/alertService';
 import { ArchiveManager } from '@/services/archiveManager';
 import { AutolockService } from '@/services/autolock_service';
@@ -194,20 +193,6 @@ export class WebApplication extends SNApplication {
   async signOutAndDeleteLocalBackups(): Promise<void> {
     await this.bridge.deleteLocalBackups();
     return this.signOut();
-  }
-
-  presentPasswordModal(callback: () => void) {
-    const scope = this.scope!.$new(true) as InputModalScope;
-    scope.type = 'password';
-    scope.title = 'Decryption Assistance';
-    scope.message = `Unable to decrypt this item with your current keys.
-                     Please enter your account password at the time of this revision.`;
-    scope.callback = callback;
-    const el = this.$compile!(
-      `<input-modal type='type' message='message'
-     title='title' callback='callback()'></input-modal>`
-    )(scope as any);
-    this.applicationElement.append(el);
   }
 
   presentRevisionPreviewModal(uuid: string, content: any, title?: string) {
