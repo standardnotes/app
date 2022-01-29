@@ -59,8 +59,8 @@ export class SyncResolutionMenu extends PureComponent<Props> {
           <div className="sk-panel-content">
             <div className="sk-panel-section">
               <div className="sk-panel-row sk-p">
-                We've detected that the data on the server may not match{'\n'}
-                the data in the current application session.
+                We've detected that the data on the server may not match the
+                data in the current application session.
               </div>
               <div className="sk-p sk-panel-row">
                 <div className="sk-panel-column">
@@ -68,8 +68,8 @@ export class SyncResolutionMenu extends PureComponent<Props> {
                     Option 1 — Restart App:
                   </strong>
                   <div className="sk-p">
-                    Quit the application and re-open it.{'\n'}Sometimes, this
-                    may resolve the issue.
+                    Quit the application and re-open it. Sometimes, this may
+                    resolve the issue.
                   </div>
                 </div>
               </div>
@@ -79,7 +79,7 @@ export class SyncResolutionMenu extends PureComponent<Props> {
                     Option 2 (recommended) — Sign Out:
                   </strong>
                   <div className="sk-p">
-                    Sign out of your account, then sign back in.{'\n'}This will
+                    Sign out of your account, then sign back in. This will
                     ensure your data is consistent with the server.
                   </div>
                   Be sure to download a backup of your data before doing so.
@@ -92,17 +92,17 @@ export class SyncResolutionMenu extends PureComponent<Props> {
                   </strong>
                   <div className="sk-p">
                     We can attempt to reconcile changes by downloading all data
-                    from the{'\n'}server. No existing data will be overwritten.
-                    If the local contents of{'\n'}an item differ from what the
-                    server has, a conflicted copy will be created.
+                    from the server. No existing data will be overwritten. If
+                    the local contents of an item differ from what the server
+                    has, a conflicted copy will be created.
                   </div>
                 </div>
               </div>
               {!this.status.backupFinished && (
                 <Fragment>
                   <div className="sk-p sk-panel-row">
-                    Please download a backup before we attempt to{'\n'}perform a
-                    full account sync resolution.
+                    Please download a backup before we attempt to perform a full
+                    account sync resolution.
                   </div>
                   <div className="sk-panel-row">
                     <div className="flex gap-2">
@@ -158,10 +158,10 @@ export class SyncResolutionMenu extends PureComponent<Props> {
                       </div>
                       <div className="sk-p sk-panel-row">
                         We attempted to reconcile local content and server
-                        content, but were{'\n'}unable to do so. At this point,
-                        we recommend signing out of your account{'\n'}and
-                        signing back in. You may wish to download a data backup
-                        before doing so.
+                        content, but were unable to do so. At this point, we
+                        recommend signing out of your account and signing back
+                        in. You may wish to download a data backup before doing
+                        so.
                       </div>
                     </div>
                   )}

@@ -223,7 +223,7 @@ export class HistoryMenu extends PureComponent<Props, HistoryState> {
               >
                 <div className="sk-sublabel">
                   Saving to disk is not recommended. Decreases performance and
-                  increases app{'\n'}loading time and memory footprint.
+                  increases app loading time and memory footprint.
                 </div>
               </MenuRow>
             </div>
