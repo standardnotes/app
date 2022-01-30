@@ -32,7 +32,7 @@ type State = {
   pressed: boolean;
 };
 
-export class SimplePanelResizer extends Component<Props, State> {
+export class PanelResizer extends Component<Props, State> {
   private overlay?: HTMLDivElement;
   private resizerElementRef = createRef<HTMLDivElement>();
   private debouncedResizeHandler: () => void;

@@ -36,7 +36,7 @@ import { NoteTagsContainer } from '../NoteTagsContainer';
 import { ActionsMenu } from '../ActionsMenu';
 import { HistoryMenu } from '../HistoryMenu';
 import { ComponentView } from '../ComponentView';
-import { PanelSide, SimplePanelResizer } from '../SimplePanelResizer';
+import { PanelSide, PanelResizer } from '../PanelResizer';
 
 const MINIMUM_STATUS_DURATION = 400;
 const TEXTAREA_DEBOUNCE = 100;
@@ -1130,7 +1130,7 @@ export class NoteView extends PureComponent<Props, State> {
               {this.state.marginResizersEnabled &&
               this.editorContentRef.current ? (
                 <div className="left">
-                  <SimplePanelResizer
+                  <PanelResizer
                     minWidth={300}
                     hoverable={true}
                     collapsable={false}
@@ -1175,7 +1175,7 @@ export class NoteView extends PureComponent<Props, State> {
 
               {this.state.marginResizersEnabled &&
               this.editorContentRef.current ? (
-                <SimplePanelResizer
+                <PanelResizer
                   minWidth={300}
                   hoverable={true}
                   collapsable={false}

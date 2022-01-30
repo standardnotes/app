@@ -10,11 +10,7 @@ import { NoAccountWarning } from './NoAccountWarning';
 import { NotesList } from './NotesList';
 import { NotesListOptionsMenu } from './NotesListOptionsMenu';
 import { SearchOptions } from './SearchOptions';
-import {
-  PanelSide,
-  ResizeFinishCallback,
-  SimplePanelResizer,
-} from './SimplePanelResizer';
+import { PanelSide, ResizeFinishCallback, PanelResizer } from './PanelResizer';
 
 type Props = {
   application: WebApplication;
@@ -239,7 +235,7 @@ export const NotesView: FunctionComponent<Props> = observer(
           ) : null}
         </div>
         {notesViewPanelRef.current && (
-          <SimplePanelResizer
+          <PanelResizer
             collapsable={true}
             hoverable={true}
             defaultWidth={300}

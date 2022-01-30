@@ -14,11 +14,7 @@ import {
   useState,
 } from 'preact/hooks';
 import { PremiumModalProvider } from './Premium';
-import {
-  PanelSide,
-  ResizeFinishCallback,
-  SimplePanelResizer,
-} from './SimplePanelResizer';
+import { PanelSide, ResizeFinishCallback, PanelResizer } from './PanelResizer';
 
 type Props = {
   application: WebApplication;
@@ -108,7 +104,7 @@ export const Navigation: FunctionComponent<Props> = observer(
             </div>
           )}
           {ref.current && (
-            <SimplePanelResizer
+            <PanelResizer
               collapsable={true}
               defaultWidth={150}
               panel={ref.current}
