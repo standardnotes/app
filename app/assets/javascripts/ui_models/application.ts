@@ -1,3 +1,4 @@
+import { AccountSwitcher } from '@/components/AccountSwitcher';
 import { WebCrypto } from '@/crypto';
 import { AlertService } from '@/services/alertService';
 import { ArchiveManager } from '@/services/archiveManager';
@@ -179,16 +180,6 @@ export class WebApplication extends SNApplication {
     //   `<revision-preview-modal application='application' uuid='uuid' content='content' title='title'
     //   class='sk-modal'></revision-preview-modal>`
     // )(scope);
-    // this.applicationElement.append(el);
-  }
-
-  public openAccountSwitcher() {
-    // const scope = this.scope!.$new(true) as Partial<AccountSwitcherScope>;
-    // scope.application = this;
-    // const el = this.$compile!(
-    //   "<account-switcher application='application' " +
-    //     "class='sk-modal'></account-switcher>"
-    // )(scope as any);
     // this.applicationElement.append(el);
   }
 

@@ -896,8 +896,8 @@ export class NoteView extends PureComponent<Props, State> {
     editor.scrollTop = this.scrollPosition;
   }
 
-  onSystemEditorLoad() {
-    if (this.removeTabObserver) {
+  onSystemEditorLoad(ref: HTMLTextAreaElement | null) {
+    if (this.removeTabObserver || !ref) {
       return;
     }
     /**
@@ -1187,7 +1187,7 @@ export class NoteView extends PureComponent<Props, State> {
                     onClick={this.clickedTextArea}
                     onFocus={this.onContentFocus}
                     spellcheck={this.state.spellcheck}
-                    ref={() => this.onSystemEditorLoad()}
+                    ref={(ref) => this.onSystemEditorLoad(ref)}
                   ></textarea>
                 )}
 

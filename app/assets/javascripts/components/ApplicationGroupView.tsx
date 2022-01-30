@@ -4,7 +4,6 @@ import { Component } from 'preact';
 import { ApplicationView } from './ApplicationView';
 
 type State = {
-  applicationGroup: ApplicationGroup;
   applications: WebApplication[];
   activeApplication?: WebApplication;
 };
@@ -17,15 +16,14 @@ export class ApplicationGroupView extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      applicationGroup: props.mainApplicationGroup,
       applications: [],
     };
     props.mainApplicationGroup.addApplicationChangeObserver(() => {
       this.setState({
-        activeApplication: this.state.applicationGroup
+        activeApplication: props.mainApplicationGroup
           .primaryApplication as WebApplication,
         applications:
-          this.state.applicationGroup.getApplications() as WebApplication[],
+          props.mainApplicationGroup.getApplications() as WebApplication[],
       });
     });
     props.mainApplicationGroup.initialize();
@@ -39,6 +37,7 @@ export class ApplicationGroupView extends Component<Props, State> {
             return (
               <div id={application.identifier}>
                 <ApplicationView
+                  key={application.identifier}
                   mainApplicationGroup={this.props.mainApplicationGroup}
                   application={application}
                 />

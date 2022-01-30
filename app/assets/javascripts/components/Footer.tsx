@@ -22,7 +22,8 @@ import { AppStateEvent, EventSource } from '@/ui_models/app_state';
 import { Icon } from './Icon';
 import { QuickSettingsMenu } from './QuickSettingsMenu/QuickSettingsMenu';
 import { SyncResolutionMenu } from './SyncResolutionMenu';
-import { Fragment } from 'preact';
+import { Fragment, render } from 'preact';
+import { AccountSwitcher } from './AccountSwitcher';
 
 /**
  * Disable before production release.
@@ -344,7 +345,13 @@ export class Footer extends PureComponent<Props, State> {
   };
 
   accountSwitcherClickHandler = () => {
-    this.application.openAccountSwitcher();
+    render(
+      <AccountSwitcher
+        application={this.application}
+        mainApplicationGroup={this.props.applicationGroup}
+      />,
+      document.body.appendChild(document.createElement('div'))
+    );
   };
 
   accountMenuClickHandler = () => {
@@ -541,9 +548,7 @@ export class Footer extends PureComponent<Props, State> {
                       ' flex items-center'
                     }
                   >
-                    <svg className="info ionicon w-5 h-5">
-                      <use href="#layers-sharp" />
-                    </svg>
+                    <Icon type="user-switch" />
                   </div>
                 </div>
               </Fragment>

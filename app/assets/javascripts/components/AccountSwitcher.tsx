@@ -2,6 +2,7 @@ import { ApplicationGroup } from '@/ui_models/application_group';
 import { WebApplication } from '@/ui_models/application';
 import { ApplicationDescriptor } from '@standardnotes/snjs';
 import { PureComponent } from '@/components/Abstract/PureComponent';
+import { JSX } from 'preact';
 
 type Props = {
   application: WebApplication;
@@ -47,11 +48,14 @@ export class AccountSwitcher extends PureComponent<Props, State> {
     return document.getElementById(`input-${descriptor.identifier}`);
   }
 
-  renameDescriptor = ($event: Event, descriptor: ApplicationDescriptor) => {
-    $event.stopPropagation();
+  renameDescriptor = (event: Event, descriptor: ApplicationDescriptor) => {
+    event.stopPropagation();
+
     this.setState({ editingDescriptor: descriptor });
-    const input = this.inputForDescriptor(descriptor);
-    input?.focus();
+
+    setTimeout(() => {
+      this.inputForDescriptor(descriptor)?.focus();
+    });
   };
 
   submitRename = () => {
@@ -68,13 +72,20 @@ export class AccountSwitcher extends PureComponent<Props, State> {
     this.removeAppGroupObserver = undefined;
   }
 
+  onDescriptorInputChange = (
+    descriptor: ApplicationDescriptor,
+    { currentTarget }: JSX.TargetedEvent<HTMLInputElement, Event>
+  ) => {
+    descriptor.label = currentTarget.value;
+  };
+
   dismiss = () => {
     this.dismissModal();
   };
 
   render() {
     return (
-      <>
+      <div className="sk-modal">
         <div onClick={this.dismiss} className="sk-modal-background" />
         <div id="account-switcher" className="sk-modal-content">
           <div className="sn-component">
@@ -111,6 +122,9 @@ export class AccountSwitcher extends PureComponent<Props, State> {
                             value={descriptor.label}
                             disabled={
                               descriptor !== this.state.editingDescriptor
+                            }
+                            onChange={(event) =>
+                              this.onDescriptorInputChange(descriptor, event)
                             }
                             onKeyUp={(event) =>
                               event.keyCode == 13 && this.submitRename()
@@ -149,7 +163,7 @@ export class AccountSwitcher extends PureComponent<Props, State> {
             </div>
           </div>
         </div>
-      </>
+      </div>
     );
   }
 }
