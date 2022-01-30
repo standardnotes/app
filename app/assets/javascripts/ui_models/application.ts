@@ -18,7 +18,6 @@ import {
   NoteGroupController,
   removeFromArray,
 } from '@standardnotes/snjs';
-import angular from 'angular';
 
 type WebServices = {
   appState: AppState;
@@ -162,7 +161,7 @@ export class WebApplication extends SNApplication {
   }
 
   get applicationElement() {
-    return angular.element(document.getElementById(this.identifier)!);
+    return document.getElementById(this.identifier)!;
   }
 
   async signOutAndDeleteLocalBackups(): Promise<void> {

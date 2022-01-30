@@ -4,7 +4,6 @@
     "@babel/preset-env"
   ],
   "plugins": [
-    "angularjs-annotate",
     ["@babel/plugin-transform-react-jsx", {
       "pragma": "h",
       "pragmaFrag": "Fragment"
