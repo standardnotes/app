@@ -143,7 +143,7 @@ export const NotesView: FunctionComponent<Props> = observer(
         id="notes-column"
         className="sn-component section notes"
         aria-label="Notes"
-        // ref={notesViewPanelRef}
+        ref={notesViewPanelRef}
       >
         <div className="content">
           <div id="notes-title-bar" className="section-title-bar">
