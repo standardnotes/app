@@ -1,20 +1,11 @@
 @import './scrollbar';
 
-#notes-column {
-  width: 350px;
-}
-
 #notes-column,
 .notes {
-
-  overflow: visible;
-
   border-left: 1px solid var(--sn-stylekit-border-color);
   border-right: 1px solid var(--sn-stylekit-border-color);
-
   font-size: var(--sn-stylekit-font-size-h2);
-
-  flex-grow: 0;
+  overflow: visible;
   user-select: none;
 
   -moz-user-select: none;
@@ -37,7 +28,7 @@
 
   #notes-title-bar {
     font-weight: normal;
-    overflow: hidden;
+    overflow: visible;
 
     .section-title-bar-header .title {
       width: calc(90% - 45px);

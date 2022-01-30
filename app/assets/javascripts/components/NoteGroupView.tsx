@@ -40,7 +40,7 @@ export class NoteGroupView extends PureComponent<Props, State> {
 
   render() {
     return (
-      <div id="note-group-view" className="h-full flex-grow">
+      <div id="note-group-view" className="h-full app-column app-column-third">
         {this.state.showMultipleSelectedNotes && (
           <MultipleSelectedNotes
             application={this.application}

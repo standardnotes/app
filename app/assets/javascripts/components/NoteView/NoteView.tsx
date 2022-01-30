@@ -36,7 +36,7 @@ import { NoteTagsContainer } from '../NoteTagsContainer';
 import { ActionsMenu } from '../ActionsMenu';
 import { HistoryMenu } from '../HistoryMenu';
 import { ComponentView } from '../ComponentView';
-import { PanelSide, PanelResizer } from '../PanelResizer';
+import { PanelSide, PanelResizer, PanelResizeType } from '../PanelResizer';
 
 const MINIMUM_STATUS_DURATION = 400;
 const TEXTAREA_DEBOUNCE = 100;
@@ -1136,6 +1136,7 @@ export class NoteView extends PureComponent<Props, State> {
                     collapsable={false}
                     panel={this.editorContentRef.current}
                     side={PanelSide.Left}
+                    type={PanelResizeType.OffsetAndWidth}
                     left={this.state.leftResizerOffset}
                     width={this.state.leftResizerWidth}
                     resizeFinishCallback={this.onPanelResizeFinish}
@@ -1181,6 +1182,7 @@ export class NoteView extends PureComponent<Props, State> {
                   collapsable={false}
                   panel={this.editorContentRef.current}
                   side={PanelSide.Right}
+                  type={PanelResizeType.OffsetAndWidth}
                   left={this.state.rightResizerOffset}
                   width={this.state.rightResizerWidth}
                   resizeFinishCallback={this.onPanelResizeFinish}

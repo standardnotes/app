@@ -14,7 +14,12 @@ import {
   useState,
 } from 'preact/hooks';
 import { PremiumModalProvider } from './Premium';
-import { PanelSide, ResizeFinishCallback, PanelResizer } from './PanelResizer';
+import {
+  PanelSide,
+  ResizeFinishCallback,
+  PanelResizer,
+  PanelResizeType,
+} from './PanelResizer';
 
 type Props = {
   application: WebApplication;
@@ -26,7 +31,7 @@ export const Navigation: FunctionComponent<Props> = observer(
     const componentViewer = appState.foldersComponentViewer;
     const enableNativeSmartTagsFeature =
       appState.features.enableNativeSmartTagsFeature;
-    const ref = useRef<HTMLDivElement>(null);
+    const [ref, setRef] = useState<HTMLDivElement | null>();
     const [panelWidth, setPanelWidth] = useState<number>(0);
 
     useEffect(() => {
@@ -63,9 +68,9 @@ export const Navigation: FunctionComponent<Props> = observer(
       <PremiumModalProvider state={appState.features}>
         <div
           id="navigation"
-          className="sn-component section"
+          className="sn-component section app-column app-column-first"
           data-aria-label="Navigation"
-          ref={ref}
+          ref={setRef}
         >
           {componentViewer ? (
             <div className="component-view-container">
@@ -103,13 +108,14 @@ export const Navigation: FunctionComponent<Props> = observer(
               </div>
             </div>
           )}
-          {ref.current && (
+          {ref && (
             <PanelResizer
               collapsable={true}
               defaultWidth={150}
-              panel={ref.current}
+              panel={ref}
               hoverable={true}
               side={PanelSide.Right}
+              type={PanelResizeType.WidthOnly}
               resizeFinishCallback={panelResizeFinishCallback}
               widthEventCallback={panelWidthEventCallback}
               width={panelWidth}

@@ -198,7 +198,10 @@ export class ApplicationView extends PureComponent<Props, State> {
     return (
       <div className={this.platformString + ' main-ui-view sn-component'}>
         {!this.state.needsUnlock && this.state.launched && (
-          <div id="app" className={this.state.appClass + ' app flex-grow'}>
+          <div
+            id="app"
+            className={this.state.appClass + ' app app-column-container'}
+          >
             <Navigation application={this.application} />
 
             <NotesView

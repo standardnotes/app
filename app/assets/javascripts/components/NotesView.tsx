@@ -10,7 +10,12 @@ import { NoAccountWarning } from './NoAccountWarning';
 import { NotesList } from './NotesList';
 import { NotesListOptionsMenu } from './NotesListOptionsMenu';
 import { SearchOptions } from './SearchOptions';
-import { PanelSide, ResizeFinishCallback, PanelResizer } from './PanelResizer';
+import {
+  PanelSide,
+  ResizeFinishCallback,
+  PanelResizer,
+  PanelResizeType,
+} from './PanelResizer';
 
 type Props = {
   application: WebApplication;
@@ -137,7 +142,7 @@ export const NotesView: FunctionComponent<Props> = observer(
     return (
       <div
         id="notes-column"
-        className="sn-component section notes"
+        className="sn-component section notes app-column app-column-second"
         aria-label="Notes"
         ref={notesViewPanelRef}
       >
@@ -241,6 +246,7 @@ export const NotesView: FunctionComponent<Props> = observer(
             defaultWidth={300}
             panel={notesViewPanelRef.current}
             side={PanelSide.Right}
+            type={PanelResizeType.WidthOnly}
             resizeFinishCallback={panelResizeFinishCallback}
             widthEventCallback={panelWidthEventCallback}
             width={panelWidth}

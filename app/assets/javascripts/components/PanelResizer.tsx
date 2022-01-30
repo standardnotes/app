@@ -13,6 +13,11 @@ export enum PanelSide {
   Left = 'left',
 }
 
+export enum PanelResizeType {
+  WidthOnly = 'WidthOnly',
+  OffsetAndWidth = 'OffsetAndWidth',
+}
+
 type Props = {
   width: number;
   left: number;
@@ -23,6 +28,7 @@ type Props = {
   minWidth?: number;
   panel: HTMLDivElement;
   side: PanelSide;
+  type: PanelResizeType;
   resizeFinishCallback?: ResizeFinishCallback;
   widthEventCallback?: () => void;
 };
@@ -141,8 +147,14 @@ export class PanelResizer extends Component<Props, State> {
       width = maxWidth;
     }
 
-    if (Math.round(width + this.lastLeft) === Math.round(parentRect.width)) {
-      this.props.panel.style.width = `calc(100% - ${this.lastLeft}px)`;
+    const isFullWidth =
+      Math.round(width + this.lastLeft) === Math.round(parentRect.width);
+    if (isFullWidth) {
+      if (this.props.type === PanelResizeType.WidthOnly) {
+        this.props.panel.style.removeProperty('width');
+      } else {
+        this.props.panel.style.width = `calc(100% - ${this.lastLeft}px)`;
+      }
     } else {
       this.props.panel.style.width = width + 'px';
     }

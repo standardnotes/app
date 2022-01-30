@@ -131,7 +131,6 @@ $footer-height: 2rem;
 .app {
   height: calc(100% - #{$footer-height});
   width: 100%;
-  display: flex;
   vertical-align: top;
   overflow: hidden;
   position: relative;
