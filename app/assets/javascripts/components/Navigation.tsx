@@ -18,28 +18,24 @@ type Props = {
   application: WebApplication;
 };
 
-const NAVIGATION_SELECTOR = '#navigation-container';
-
-const useNavigationPanelRef = (): [HTMLDivElement | null, () => void] => {
-  const [panelRef, setPanelRefInternal] = useState<HTMLDivElement | null>(null);
-
-  const setPanelRefPublic = useCallback(() => {
-    const elem = document.querySelector(
-      NAVIGATION_SELECTOR
-    ) as HTMLDivElement | null;
-    setPanelRefInternal(elem);
-  }, [setPanelRefInternal]);
-
-  return [panelRef, setPanelRefPublic];
-};
-
 export const Navigation: FunctionComponent<Props> = observer(
   ({ application }) => {
     const appState = useMemo(() => application.getAppState(), [application]);
     const componentViewer = appState.foldersComponentViewer;
     const enableNativeSmartTagsFeature =
       appState.features.enableNativeSmartTagsFeature;
-    const [panelRef, setPanelRef] = useNavigationPanelRef();
+    const [, setRef] = useState<HTMLDivElement | null>(null);
+    const [parentRef, setParentRef] = useState<HTMLDivElement | null>(null);
+
+    const handleRefChange = useCallback(
+      (ref: HTMLDivElement) => {
+        if (ref) {
+          setRef(ref);
+          setParentRef(ref.parentElement as HTMLDivElement);
+        }
+      },
+      [setRef]
+    );
 
     const onCreateNewTag = useCallback(() => {
       appState.tags.createNewTemplate();
@@ -63,7 +59,7 @@ export const Navigation: FunctionComponent<Props> = observer(
           id="navigation"
           className="sn-component section"
           data-aria-label="Navigation"
-          ref={setPanelRef}
+          ref={(ref) => handleRefChange(ref!)}
         >
           {componentViewer ? (
             <div className="component-view-container">
@@ -101,12 +97,12 @@ export const Navigation: FunctionComponent<Props> = observer(
               </div>
             </div>
           )}
-          {panelRef && (
+          {parentRef && (
             <PanelResizer
               application={application}
               collapsable={true}
               defaultWidth={150}
-              panel={panelRef}
+              panel={parentRef}
               prefKey={PrefKey.TagsPanelWidth}
               side={PanelSide.Right}
               resizeFinishCallback={panelResizeFinishCallback}
