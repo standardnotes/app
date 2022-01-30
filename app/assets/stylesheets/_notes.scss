@@ -1,12 +1,12 @@
 @import './scrollbar';
 
-#notes-view {
+#notes-column {
   width: 350px;
 }
 
 #notes-column,
 .notes {
-  width: 100%;
+
   overflow: visible;
 
   border-left: 1px solid var(--sn-stylekit-border-color);
@@ -37,6 +37,7 @@
 
   #notes-title-bar {
     font-weight: normal;
+    overflow: hidden;
 
     .section-title-bar-header .title {
       width: calc(90% - 45px);

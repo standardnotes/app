@@ -176,7 +176,7 @@ $footer-height: 2rem;
     &.collapsed {
       opacity: 1;
       // so it blends in with editor a bit more
-      background-color: var(--sn-stylekit-editor-background-color);
+      // background-color: var(--sn-stylekit-editor-background-color);
     }
 
     &.dragging {

@@ -1,7 +1,3 @@
-import {
-  PanelSide,
-  ResizeFinishCallback,
-} from '@/ui_models/panel_resizer_state';
 import { KeyboardKey, KeyboardModifier } from '@/services/ioService';
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
@@ -14,7 +10,11 @@ import { NoAccountWarning } from './NoAccountWarning';
 import { NotesList } from './NotesList';
 import { NotesListOptionsMenu } from './NotesListOptionsMenu';
 import { SearchOptions } from './SearchOptions';
-import { SimplePanelResizer } from './SimplePanelResizer';
+import {
+  PanelSide,
+  ResizeFinishCallback,
+  SimplePanelResizer,
+} from './SimplePanelResizer';
 
 type Props = {
   application: WebApplication;
@@ -143,7 +143,7 @@ export const NotesView: FunctionComponent<Props> = observer(
         id="notes-column"
         className="sn-component section notes"
         aria-label="Notes"
-        ref={notesViewPanelRef}
+        // ref={notesViewPanelRef}
       >
         <div className="content">
           <div id="notes-title-bar" className="section-title-bar">
@@ -243,7 +243,7 @@ export const NotesView: FunctionComponent<Props> = observer(
             collapsable={true}
             hoverable={true}
             defaultWidth={300}
-            panel={document.querySelector('#notes-view') as HTMLDivElement}
+            panel={notesViewPanelRef.current}
             side={PanelSide.Right}
             resizeFinishCallback={panelResizeFinishCallback}
             widthEventCallback={panelWidthEventCallback}

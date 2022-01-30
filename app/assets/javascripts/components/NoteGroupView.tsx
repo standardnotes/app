@@ -40,26 +40,22 @@ export class NoteGroupView extends PureComponent<Props, State> {
 
   render() {
     return (
-      <div className="h-full">
+      <div id="note-group-view" className="h-full flex-grow">
         {this.state.showMultipleSelectedNotes && (
-          <div className="h-full">
-            <MultipleSelectedNotes
-              application={this.application}
-              appState={this.appState}
-            />
-          </div>
+          <MultipleSelectedNotes
+            application={this.application}
+            appState={this.appState}
+          />
         )}
 
         {!this.state.showMultipleSelectedNotes && (
           <>
             {this.state.controllers.map((controller) => {
               return (
-                <div className="flex-grow h-full">
-                  <NoteView
-                    application={this.application}
-                    controller={controller}
-                  />
-                </div>
+                <NoteView
+                  application={this.application}
+                  controller={controller}
+                />
               );
             })}
           </>

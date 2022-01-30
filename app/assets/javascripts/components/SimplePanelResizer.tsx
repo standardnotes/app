@@ -32,11 +32,11 @@ type State = {
   pressed: boolean;
   startLeft: number;
   startWidth: number;
-  currentMinWidth: number;
   lastDownX: number;
   lastLeft: number;
   lastWidth: number;
   widthBeforeLastDblClick: number;
+  minWidth: number;
 };
 
 export class SimplePanelResizer extends Component<Props, State> {
@@ -49,9 +49,9 @@ export class SimplePanelResizer extends Component<Props, State> {
     this.state = {
       collapsed: false,
       pressed: false,
+      minWidth: props.minWidth || 5,
       startLeft: props.panel.offsetLeft,
       startWidth: props.panel.scrollWidth,
-      currentMinWidth: props.minWidth ?? 0,
       lastDownX: 0,
       lastLeft: props.panel.offsetLeft,
       lastWidth: props.panel.scrollWidth,
@@ -63,7 +63,7 @@ export class SimplePanelResizer extends Component<Props, State> {
 
     document.addEventListener('mouseup', this.onMouseUp);
     document.addEventListener('mousemove', this.onMouseMove);
-    this.debouncedResizeHandler = debounce(this.handleResize.bind(this), 250);
+    this.debouncedResizeHandler = debounce(this.handleResize, 250);
     if (this.props.side === PanelSide.Right) {
       window.addEventListener('resize', this.debouncedResizeHandler);
     }
@@ -75,6 +75,12 @@ export class SimplePanelResizer extends Component<Props, State> {
     }
     if (this.props.left !== prevProps.left) {
       this.setLeft(this.props.left);
+      this.setWidth(this.props.width);
+    }
+
+    const isCollapsed = this.isCollapsed();
+    if (isCollapsed !== this.state.collapsed) {
+      this.setState({ collapsed: isCollapsed });
     }
   }
 
@@ -93,25 +99,17 @@ export class SimplePanelResizer extends Component<Props, State> {
   }
 
   isAtMaxWidth = () => {
-    return (
-      Math.round(this.state.lastWidth + this.state.lastLeft) ===
-      Math.round(this.getParentRect().width)
+    const marginOfError = 5;
+    const difference = Math.abs(
+      Math.round(this.state.lastWidth + this.state.lastLeft) -
+        Math.round(this.getParentRect().width)
     );
+    return difference < marginOfError;
   };
 
   isCollapsed() {
-    return this.state.lastWidth <= this.state.currentMinWidth;
+    return this.state.lastWidth <= this.state.minWidth;
   }
-
-  reloadDefaultValues = () => {
-    const startWidth = this.isAtMaxWidth()
-      ? this.getParentRect().width
-      : this.props.panel.scrollWidth;
-    this.setState({
-      startWidth,
-      lastWidth: startWidth,
-    });
-  };
 
   finishSettingWidth = () => {
     if (!this.props.collapsable) {
@@ -124,9 +122,13 @@ export class SimplePanelResizer extends Component<Props, State> {
   };
 
   setWidth = async (width: number, finish = false): Promise<void> => {
-    if (width < this.state.currentMinWidth) {
-      width = this.state.currentMinWidth;
+    if (width === 0) {
+      width = this.computeMaxWidth();
     }
+    if (width < this.state.minWidth) {
+      width = this.state.minWidth;
+    }
+
     const parentRect = this.getParentRect();
     if (width > parentRect.width) {
       width = parentRect.width;
@@ -184,7 +186,7 @@ export class SimplePanelResizer extends Component<Props, State> {
       this.setState({
         widthBeforeLastDblClick: this.state.lastWidth,
       });
-      await this.setWidth(this.state.currentMinWidth);
+      await this.setWidth(this.state.minWidth);
     }
     this.finishSettingWidth();
 
@@ -226,8 +228,8 @@ export class SimplePanelResizer extends Component<Props, State> {
     }
     const parentRect = this.getParentRect();
     let newWidth = this.state.startWidth - deltaX;
-    if (newWidth < this.state.currentMinWidth) {
-      newWidth = this.state.currentMinWidth;
+    if (newWidth < this.state.minWidth) {
+      newWidth = this.state.minWidth;
     }
     if (newWidth > parentRect.width) {
       newWidth = parentRect.width;
@@ -239,10 +241,29 @@ export class SimplePanelResizer extends Component<Props, State> {
     this.setWidth(newWidth, false);
   }
 
+  computeMaxWidth(): number {
+    const parentRect = this.getParentRect();
+    let width = parentRect.width - this.props.left;
+    if (width < this.state.minWidth) {
+      width = this.state.minWidth;
+    }
+    return width;
+  }
+
   handleResize = () => {
-    this.reloadDefaultValues();
-    this.handleWidthEvent();
-    this.finishSettingWidth();
+    const startWidth = this.isAtMaxWidth()
+      ? this.computeMaxWidth()
+      : this.props.panel.scrollWidth;
+    this.setState(
+      {
+        startWidth,
+        lastWidth: startWidth,
+      },
+      () => {
+        this.handleWidthEvent();
+        this.finishSettingWidth();
+      }
+    );
   };
 
   onMouseDown = (event: MouseEvent) => {
@@ -283,12 +304,6 @@ export class SimplePanelResizer extends Component<Props, State> {
     } else {
       this.handleWidthEvent(event);
     }
-  };
-
-  setMinWidth = (minWidth?: number) => {
-    this.setState({
-      currentMinWidth: minWidth ?? this.state.currentMinWidth,
-    });
   };
 
   /**

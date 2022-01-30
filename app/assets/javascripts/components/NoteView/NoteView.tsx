@@ -35,10 +35,8 @@ import { NotesOptionsPanel } from '../NotesOptionsPanel';
 import { NoteTagsContainer } from '../NoteTagsContainer';
 import { ActionsMenu } from '../ActionsMenu';
 import { HistoryMenu } from '../HistoryMenu';
-import { PanelResizer } from '../PanelResizer';
 import { ComponentView } from '../ComponentView';
-import { PanelSide } from '@/ui_models/panel_resizer_state';
-import { SimplePanelResizer } from '../SimplePanelResizer';
+import { PanelSide, SimplePanelResizer } from '../SimplePanelResizer';
 
 const MINIMUM_STATUS_DURATION = 400;
 const TEXTAREA_DEBOUNCE = 100;
