@@ -894,6 +894,11 @@ export class NoteView extends PureComponent<Props, State> {
       ElementIds.NoteTextEditor
     ) as HTMLInputElement;
 
+    if (!editor) {
+      console.error('Editor is not yet mounted; unable to add tab observer.');
+      return;
+    }
+
     this.removeTabObserver = this.application.io.addKeyObserver({
       element: editor,
       key: KeyboardKey.Tab,
