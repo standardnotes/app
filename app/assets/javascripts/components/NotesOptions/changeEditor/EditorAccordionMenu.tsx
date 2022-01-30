@@ -2,6 +2,7 @@ import { Icon } from '@/components/Icon';
 import { usePremiumModal } from '@/components/Premium';
 import { KeyboardKey } from '@/services/ioService';
 import { WebApplication } from '@/ui_models/application';
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/views/constants';
 import { SNComponent } from '@standardnotes/snjs';
 import { Fragment, FunctionComponent } from 'preact';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
@@ -22,6 +23,8 @@ const getGroupId = (group: EditorMenuGroup) =>
 
 const getGroupBtnId = (groupId: string) => groupId + '-button';
 
+const isElementHidden = (element: Element) => !element.clientHeight;
+
 export const EditorAccordionMenu: FunctionComponent<
   EditorAccordionMenuProps
 > = ({
@@ -34,7 +37,6 @@ export const EditorAccordionMenu: FunctionComponent<
 }) => {
   const [activeGroupId, setActiveGroupId] = useState('');
   const menuItemRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const [focusedItemIndex, setFocusedItemIndex] = useState<number>();
   const premiumModal = usePremiumModal();
 
   const isSelectedEditor = useCallback(
@@ -64,78 +66,85 @@ export const EditorAccordionMenu: FunctionComponent<
 
   useEffect(() => {
     if (
-      typeof focusedItemIndex === 'undefined' &&
-      activeGroupId.length &&
-      menuItemRefs.current.length
+      isOpen &&
+      !menuItemRefs.current.some((btn) => btn === document.activeElement)
     ) {
-      const activeGroupIndex = menuItemRefs.current.findIndex(
-        (item) => item?.id === getGroupBtnId(activeGroupId)
-      );
-      setFocusedItemIndex(activeGroupIndex);
-    }
-  }, [activeGroupId, focusedItemIndex]);
+      const selectedEditor = groups
+        .map((group) => group.items)
+        .flat()
+        .find((item) => isSelectedEditor(item));
 
-  useEffect(() => {
-    if (
-      typeof focusedItemIndex === 'number' &&
-      focusedItemIndex > -1 &&
-      isOpen
-    ) {
-      const focusedItem = menuItemRefs.current[focusedItemIndex];
-      const containingGroupId = focusedItem?.closest(
-        '[data-accordion-group]'
-      )?.id;
-      if (
-        !focusedItem?.id &&
-        containingGroupId &&
-        containingGroupId !== activeGroupId
-      ) {
-        setActiveGroupId(containingGroupId);
+      if (selectedEditor) {
+        const editorButton = menuItemRefs.current.find(
+          (btn) => btn?.dataset.itemName === selectedEditor.name
+        );
+        editorButton?.focus();
       }
-      focusedItem?.focus();
     }
-  }, [activeGroupId, focusedItemIndex, isOpen]);
+  }, [groups, isOpen, isSelectedEditor]);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      switch (e.key) {
-        case KeyboardKey.Up: {
-          if (
-            typeof focusedItemIndex === 'number' &&
-            menuItemRefs.current.length
-          ) {
-            let previousItemIndex = focusedItemIndex - 1;
-            if (previousItemIndex < 0) {
-              previousItemIndex = menuItemRefs.current.length - 1;
-            }
-            setFocusedItemIndex(previousItemIndex);
-          }
-          e.preventDefault();
-          break;
-        }
-        case KeyboardKey.Down: {
-          if (
-            typeof focusedItemIndex === 'number' &&
-            menuItemRefs.current.length
-          ) {
-            let nextItemIndex = focusedItemIndex + 1;
-            if (nextItemIndex > menuItemRefs.current.length - 1) {
-              nextItemIndex = 0;
-            }
-            setFocusedItemIndex(nextItemIndex);
-          }
-          e.preventDefault();
-          break;
-        }
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === KeyboardKey.Down || e.key === KeyboardKey.Up) {
+      e.preventDefault();
+    } else {
+      return;
+    }
+
+    let items = menuItemRefs.current;
+
+    if (!activeGroupId) {
+      items = items.filter((btn) => btn?.id);
+    }
+
+    const currentItemIndex =
+      items.findIndex((btn) => btn === document.activeElement) ?? 0;
+
+    if (e.key === KeyboardKey.Up) {
+      let previousItemIndex = currentItemIndex - 1;
+      if (previousItemIndex < 0) {
+        previousItemIndex = items.length - 1;
       }
-    };
+      const previousItem = items[previousItemIndex];
+      if (previousItem) {
+        if (isElementHidden(previousItem)) {
+          const previousItemGroupId = previousItem.closest(
+            '[data-accordion-group]'
+          )?.id;
+          if (previousItemGroupId) {
+            setActiveGroupId(previousItemGroupId);
+          }
+          setTimeout(() => {
+            previousItem.focus();
+          }, 10);
+        }
 
-    document.addEventListener('keydown', handleKeyDown);
+        previousItem.focus();
+      }
+    }
 
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [focusedItemIndex, groups]);
+    if (e.key === KeyboardKey.Down) {
+      let nextItemIndex = currentItemIndex + 1;
+      if (nextItemIndex > items.length - 1) {
+        nextItemIndex = 0;
+      }
+      const nextItem = items[nextItemIndex];
+      if (nextItem) {
+        if (isElementHidden(nextItem)) {
+          const nextItemGroupId = nextItem.closest(
+            '[data-accordion-group]'
+          )?.id;
+          if (nextItemGroupId) {
+            setActiveGroupId(nextItemGroupId);
+          }
+          setTimeout(() => {
+            nextItem.focus();
+          }, 10);
+        }
+
+        nextItem?.focus();
+      }
+    }
+  };
 
   const selectEditor = (item: EditorMenuItem) => {
     if (item.component) {
@@ -160,12 +169,17 @@ export const EditorAccordionMenu: FunctionComponent<
 
         return (
           <Fragment key={groupId}>
-            <div id={groupId} data-accordion-group>
+            <div
+              id={groupId}
+              data-accordion-group
+              tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
+              onKeyDown={handleKeyDown}
+            >
               <h3 className="m-0">
                 <button
                   aria-controls={contentId}
                   aria-expanded={activeGroupId === groupId}
-                  className="sn-dropdown-item focus:bg-info-backdrop justify-between py-2.5"
+                  className="sn-dropdown-item focus:bg-info-backdrop justify-between py-3"
                   id={buttonId}
                   type="button"
                   onClick={() => {
@@ -211,6 +225,7 @@ export const EditorAccordionMenu: FunctionComponent<
                     return (
                       <button
                         role="radio"
+                        data-item-name={item.name}
                         onClick={() => {
                           selectEditor(item);
                         }}
@@ -247,7 +262,7 @@ export const EditorAccordionMenu: FunctionComponent<
                 </div>
               </div>
             </div>
-            <div className="min-h-1px my-1 bg-border hide-if-last-child"></div>
+            <div className="min-h-1px bg-border hide-if-last-child"></div>
           </Fragment>
         );
       })}
