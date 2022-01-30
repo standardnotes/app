@@ -77,8 +77,10 @@ export class WebApplication extends SNApplication {
     this.webServices = {} as WebServices;
     this.noteControllerGroup.deinit();
     this.webEventObservers.length = 0;
-    /** Allow our Angular directives to be destroyed and any pending digest cycles
-     * to complete before destroying the global application instance and all its services */
+    /**
+     * Allow any pending renders to complete before destroying the global
+     * application instance and all its services
+     */
     setTimeout(() => {
       super.deinit(source);
       if (source === DeinitSource.SignOut) {
