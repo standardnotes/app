@@ -58,8 +58,6 @@ type Props = {
   item: SNNote;
 };
 
-export const React2AngularActionsMenuPropsArray = ['application', 'item'];
-
 export class ActionsMenu
   extends PureComponent<Props, ActionsMenuState>
   implements ActionsMenuScope

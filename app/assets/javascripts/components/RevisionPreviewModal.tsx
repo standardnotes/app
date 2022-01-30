@@ -18,13 +18,6 @@ type State = {
   componentViewer?: ComponentViewer;
 };
 
-export const React2AngularRevisionsPreviewPropsArray = [
-  'application',
-  'content',
-  'title',
-  'uuid',
-];
-
 export class RevisionPreviewModal extends PureComponent<Props, State> {
   private originalNote!: SNNote;
 

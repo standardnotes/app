@@ -130,8 +130,6 @@ interface Props {
   controller: NoteViewController;
 }
 
-export const React2AngularNoteViewPropsArray = ['application', 'controller'];
-
 export class NoteView extends PureComponent<Props, State> {
   readonly controller!: NoteViewController;
 

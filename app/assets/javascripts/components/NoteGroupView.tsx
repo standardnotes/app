@@ -13,8 +13,6 @@ type Props = {
   application: WebApplication;
 };
 
-export const React2AngularNoteGroupViewPropsArray = ['application'];
-
 export class NoteGroupView extends PureComponent<Props, State> {
   constructor(props: Props) {
     super(props, props.application);

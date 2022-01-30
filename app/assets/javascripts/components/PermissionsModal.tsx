@@ -10,13 +10,6 @@ interface Props {
   permissionsString: string;
 }
 
-export const React2AngularPermissionsModalPropsArray = [
-  'application',
-  'callback',
-  'component',
-  'permissionsString',
-];
-
 export class PermissionsModal extends Component<Props> {
   getElement(): Element | null {
     return findDOMNode(this);

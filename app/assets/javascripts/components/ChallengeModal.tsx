@@ -39,12 +39,6 @@ type Props = {
   onDismiss: (challenge: Challenge) => void;
 };
 
-export const React2AngularChallengeModalPropsArray = [
-  'challenge',
-  'application',
-  'onDismiss',
-];
-
 export class ChallengeModal extends PureComponent<Props, State> {
   submitting = false;
   protectionsSessionDurations = ProtectionSessionDurations;

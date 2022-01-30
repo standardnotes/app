@@ -38,11 +38,6 @@ type Props = {
   applicationGroup: ApplicationGroup;
 };
 
-export const React2AngularFooterPropsArray = [
-  'application',
-  'applicationGroup',
-];
-
 type State = {
   outOfSync: boolean;
   dataUpgradeAvailable: boolean;

@@ -20,8 +20,6 @@ type Props = {
   item: SNNote;
 };
 
-export const React2AngularHistoryMenuPropsArray = ['application', 'item'];
-
 export class HistoryMenu extends PureComponent<Props, HistoryState> {
   constructor(props: Props) {
     super(props, props.application);

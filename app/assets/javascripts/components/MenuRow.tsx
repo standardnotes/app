@@ -19,25 +19,6 @@ type RowProps = {
   subtitle?: string;
 };
 
-export const React2AngularMenuRowPropsArray = [
-  'action',
-  'actionArgs',
-  'buttonAction',
-  'buttonClass',
-  'buttonText',
-  'desc',
-  'disabled',
-  'circle',
-  'circleAlign',
-  'faded',
-  'hasButton',
-  'label',
-  'spinnerClass',
-  'stylekitClass',
-  'subRows',
-  'subtitle',
-];
-
 type Props = RowProps;
 
 export class MenuRow extends Component<Props> {

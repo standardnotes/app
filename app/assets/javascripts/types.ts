@@ -1,8 +1,3 @@
-export enum PasswordWizardType {
-  ChangePassword = 1,
-  AccountUpgrade = 2,
-}
-
 export type PanelPuppet = {
   onReady?: () => void;
   ready?: boolean;

@@ -148,7 +148,7 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Defaults</Title>
-        <div className="mt-2">
+        <div>
           <Subtitle>Default Editor</Subtitle>
           <Text>New notes will be created using this editor.</Text>
           <div className="mt-2">
@@ -166,8 +166,9 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
           <div className="flex flex-col">
             <Subtitle>Spellcheck</Subtitle>
             <Text>
-              The default spellcheck value for new notes. Spellcheck can be configured per note from the note context menu.
-              Spellcheck may degrade overall typing performance with long notes.
+              The default spellcheck value for new notes. Spellcheck can be
+              configured per note from the note context menu. Spellcheck may
+              degrade overall typing performance with long notes.
             </Text>
           </div>
           <Switch onChange={toggleSpellcheck} checked={spellcheck} />
