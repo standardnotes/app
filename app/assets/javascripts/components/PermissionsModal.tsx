@@ -41,7 +41,7 @@ export class PermissionsModal extends Component<Props> {
 
   render() {
     return (
-      <>
+      <div className="sk-modal">
         <div onClick={this.deny} className="sk-modal-background" />
         <div id="permissions-modal" className="sk-modal-content">
           <div className="sn-component">
@@ -64,7 +64,7 @@ export class PermissionsModal extends Component<Props> {
                   <div className="sk-panel-row">
                     <p className="sk-p">
                       Components use an offline messaging system to communicate.
-                      Learn more at
+                      Learn more at{' '}
                       <a
                         href="https://standardnotes.com/permissions"
                         rel="noopener"
@@ -88,7 +88,7 @@ export class PermissionsModal extends Component<Props> {
             </div>
           </div>
         </div>
-      </>
+      </div>
     );
   }
 }

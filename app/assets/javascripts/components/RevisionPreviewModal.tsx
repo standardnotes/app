@@ -10,7 +10,7 @@ import { ComponentView } from './ComponentView';
 interface Props {
   application: WebApplication;
   content: PayloadContent;
-  title: string;
+  title?: string;
   uuid: string;
 }
 

@@ -8,8 +8,10 @@ import {
   SNNote,
 } from '@standardnotes/snjs';
 import { ActionResponse } from '@standardnotes/snjs';
+import { render } from 'preact';
 import { PureComponent } from './Abstract/PureComponent';
 import { MenuRow } from './MenuRow';
+import { RevisionPreviewModal } from './RevisionPreviewModal';
 type ActionsMenuScope = {
   application: WebApplication;
   item: SNItem;
@@ -202,9 +204,13 @@ export class ActionsMenu
     switch (action.verb) {
       case 'render': {
         const item = result.item;
-        this.props.application.presentRevisionPreviewModal(
-          item.uuid,
-          item.content
+        render(
+          <RevisionPreviewModal
+            application={this.application}
+            uuid={item.uuid}
+            content={item.content}
+          />,
+          document.body.appendChild(document.createElement('div'))
         );
       }
     }

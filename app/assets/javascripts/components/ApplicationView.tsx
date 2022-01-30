@@ -4,6 +4,7 @@ import { AppStateEvent, PanelResizedData } from '@/ui_models/app_state';
 import {
   ApplicationEvent,
   Challenge,
+  PermissionDialog,
   removeFromArray,
 } from '@standardnotes/snjs';
 import { PANEL_NAME_NOTES, PANEL_NAME_NAVIGATION } from '@/views/constants';
@@ -20,6 +21,8 @@ import { PreferencesViewWrapper } from '@/preferences/PreferencesViewWrapper';
 import { ChallengeModal } from '@/components/ChallengeModal';
 import { NotesContextMenu } from '@/components/NotesContextMenu';
 import { PurchaseFlowWrapper } from '@/purchaseFlow/PurchaseFlowWrapper';
+import { render } from 'preact';
+import { PermissionsModal } from './PermissionsModal';
 
 type Props = {
   application: WebApplication;
@@ -88,6 +91,9 @@ export class ApplicationView extends PureComponent<Props, State> {
       started: true,
       needsUnlock: this.application.hasPasscode(),
     });
+
+    this.application.componentManager.presentPermissionsDialog =
+      this.presentPermissionsDialog;
   }
 
   async onAppLaunch() {
@@ -175,6 +181,18 @@ export class ApplicationView extends PureComponent<Props, State> {
       this.application.signIn('demo@standardnotes.org', 'password');
     }
   }
+
+  presentPermissionsDialog = (dialog: PermissionDialog) => {
+    render(
+      <PermissionsModal
+        application={this.application}
+        callback={dialog.callback}
+        component={dialog.component}
+        permissionsString={dialog.permissionsString}
+      />,
+      document.body.appendChild(document.createElement('div'))
+    );
+  };
 
   render() {
     return (

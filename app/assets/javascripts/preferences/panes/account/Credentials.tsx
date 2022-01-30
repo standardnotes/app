@@ -12,7 +12,6 @@ import { HorizontalSeparator } from '@/components/shared/HorizontalSeparator';
 import { dateToLocalizedString } from '@standardnotes/snjs';
 import { useCallback, useState } from 'preact/hooks';
 import { ChangeEmail } from '@/preferences/panes/account/changeEmail';
-import { PasswordWizardType } from '@/types';
 import { FunctionComponent, render } from 'preact';
 import { AppState } from '@/ui_models/app_state';
 import { PasswordWizard } from '@/components/PasswordWizard';
@@ -23,7 +22,7 @@ type Props = {
 };
 
 export const Credentials: FunctionComponent<Props> = observer(
-  ({ application, appState }: Props) => {
+  ({ application }: Props) => {
     const [isChangeEmailDialogOpen, setIsChangeEmailDialogOpen] =
       useState(false);
 

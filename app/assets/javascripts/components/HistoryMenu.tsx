@@ -1,9 +1,11 @@
 import { WebApplication } from '@/ui_models/application';
-import { NoteHistoryEntry, SNNote } from '@standardnotes/snjs';
+import { NoteHistoryEntry, PayloadContent, SNNote } from '@standardnotes/snjs';
 import { RevisionListEntry } from '@standardnotes/snjs';
 import { alertDialog, confirmDialog } from '@/services/alertService';
 import { PureComponent } from './Abstract/PureComponent';
 import { MenuRow } from './MenuRow';
+import { render } from 'preact';
+import { RevisionPreviewModal } from './RevisionPreviewModal';
 
 type HistoryState = {
   sessionHistory?: NoteHistoryEntry[];
@@ -65,8 +67,24 @@ export class HistoryMenu extends PureComponent<Props, HistoryState> {
     }
   };
 
+  private presentRevisionPreviewModal = (
+    uuid: string,
+    content: PayloadContent,
+    title: string
+  ) => {
+    render(
+      <RevisionPreviewModal
+        application={this.application}
+        uuid={uuid}
+        content={content}
+        title={title}
+      />,
+      document.body.appendChild(document.createElement('div'))
+    );
+  };
+
   openSessionRevision = (revision: NoteHistoryEntry) => {
-    this.props.application.presentRevisionPreviewModal(
+    this.presentRevisionPreviewModal(
       revision.payload.uuid,
       revision.payload.content,
       revision.previewTitle()
@@ -75,19 +93,23 @@ export class HistoryMenu extends PureComponent<Props, HistoryState> {
 
   openRemoteRevision = async (revision: RevisionListEntry) => {
     this.setState({ fetchingRemoteHistory: true });
+
     const remoteRevision =
       await this.props.application.historyManager.fetchRemoteRevision(
         this.props.item.uuid,
         revision
       );
+
     this.setState({ fetchingRemoteHistory: false });
+
     if (!remoteRevision) {
       alertDialog({
         text: 'The remote revision could not be loaded. Please try again later.',
       });
       return;
     }
-    this.props.application.presentRevisionPreviewModal(
+
+    this.presentRevisionPreviewModal(
       remoteRevision.payload.uuid,
       remoteRevision.payload.content,
       this.previewRemoteHistoryTitle(revision)
