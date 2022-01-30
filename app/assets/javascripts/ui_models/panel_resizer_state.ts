@@ -18,7 +18,7 @@ export enum PanelSide {
 export type PanelResizerProps = {
   alwaysVisible?: boolean;
   application: WebApplication;
-  collapsable: boolean;
+  collapsable?: boolean;
   defaultWidth?: number;
   hoverable?: boolean;
   minWidth?: number;

@@ -1,6 +1,5 @@
 import { WebApplication } from '@/ui_models/application';
-import { PanelPuppet } from '@/types';
-import { JSX } from 'preact';
+import { createRef, JSX, RefObject } from 'preact';
 import {
   ApplicationEvent,
   isPayloadSourceRetrieved,
@@ -133,8 +132,6 @@ interface Props {
 export class NoteView extends PureComponent<Props, State> {
   readonly controller!: NoteViewController;
 
-  private leftPanelPuppet?: PanelPuppet;
-  private rightPanelPuppet?: PanelPuppet;
   private statusTimeout?: NodeJS.Timeout;
   private lastEditorFocusEventSource?: EventSource;
   onEditorComponentLoad?: () => void;
@@ -148,16 +145,11 @@ export class NoteView extends PureComponent<Props, State> {
 
   private protectionTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
+  private editorContentRef: RefObject<HTMLDivElement>;
+
   constructor(props: Props) {
     super(props, props.application);
     this.controller = props.controller;
-
-    this.leftPanelPuppet = {
-      onReady: () => this.reloadPreferences(),
-    };
-    this.rightPanelPuppet = {
-      onReady: () => this.reloadPreferences(),
-    };
 
     this.onPanelResizeFinish = this.onPanelResizeFinish.bind(this);
     this.setScrollPosition = this.setScrollPosition.bind(this);
@@ -198,6 +190,8 @@ export class NoteView extends PureComponent<Props, State> {
       syncTakingTooLong: false,
       textareaUnloading: false,
     };
+
+    this.editorContentRef = createRef<HTMLDivElement>();
   }
 
   deinit() {
@@ -212,8 +206,6 @@ export class NoteView extends PureComponent<Props, State> {
     this.clearNoteProtectionInactivityTimer();
     this.removeTabObserver?.();
     this.removeTabObserver = undefined;
-    this.leftPanelPuppet = undefined;
-    this.rightPanelPuppet = undefined;
     this.onEditorComponentLoad = undefined;
     this.statusTimeout = undefined;
     (this.onPanelResizeFinish as unknown) = undefined;
@@ -714,12 +706,10 @@ export class NoteView extends PureComponent<Props, State> {
     } else {
       if (width !== undefined && width !== null) {
         await this.application.setPreference(PrefKey.EditorWidth, width);
-        this.leftPanelPuppet!.setWidth!(width);
       }
     }
     if (left !== undefined && left !== null) {
       await this.application.setPreference(PrefKey.EditorLeft, left);
-      this.rightPanelPuppet!.setLeft!(left);
     }
     this.application.sync();
   };
@@ -753,7 +743,7 @@ export class NoteView extends PureComponent<Props, State> {
 
     this.setState({
       monospaceFont,
-      marginResizersEnabled: false,
+      marginResizersEnabled,
     });
 
     if (!document.getElementById(ElementIds.EditorContent)) {
@@ -762,23 +752,6 @@ export class NoteView extends PureComponent<Props, State> {
     }
 
     reloadFont(monospaceFont);
-
-    if (
-      marginResizersEnabled &&
-      this.leftPanelPuppet?.ready &&
-      this.rightPanelPuppet?.ready
-    ) {
-      const width = this.application.getPreference(PrefKey.EditorWidth, null);
-      if (width != null) {
-        this.leftPanelPuppet!.setWidth!(width);
-        this.rightPanelPuppet!.setWidth!(width);
-      }
-      const left = this.application.getPreference(PrefKey.EditorLeft, null);
-      if (left != null) {
-        this.leftPanelPuppet!.setLeft!(left);
-        this.rightPanelPuppet!.setLeft!(left);
-      }
-    }
   }
 
   /** @components */
@@ -1139,25 +1112,22 @@ export class NoteView extends PureComponent<Props, State> {
             <div
               id={ElementIds.EditorContent}
               className={ElementIds.EditorContent}
+              ref={this.editorContentRef}
             >
-              {this.state.marginResizersEnabled && (
+              {this.state.marginResizersEnabled &&
+              this.editorContentRef.current ? (
                 <div className="left">
                   <PanelResizer
                     application={this.application}
                     minWidth={300}
                     hoverable={true}
                     collapsable={false}
-                    panel={
-                      document.querySelector(
-                        ElementIds.EditorContent
-                      ) as HTMLDivElement
-                    }
+                    panel={this.editorContentRef.current}
                     prefKey={PrefKey.EditorLeft}
                     side={PanelSide.Left}
-                    resizeFinishCallback={this.onPanelResizeFinish}
                   />
                 </div>
-              )}
+              ) : null}
 
               {this.state.editorComponentViewer && (
                 <div className="component-view">
@@ -1189,22 +1159,18 @@ export class NoteView extends PureComponent<Props, State> {
                   ></textarea>
                 )}
 
-              {this.state.marginResizersEnabled && (
+              {this.state.marginResizersEnabled &&
+              this.editorContentRef.current ? (
                 <PanelResizer
                   application={this.application}
                   minWidth={300}
                   hoverable={true}
                   collapsable={false}
-                  panel={
-                    document.querySelector(
-                      ElementIds.EditorContent
-                    ) as HTMLDivElement
-                  }
+                  panel={this.editorContentRef.current}
                   prefKey={PrefKey.EditorWidth}
                   side={PanelSide.Right}
-                  resizeFinishCallback={this.onPanelResizeFinish}
                 />
-              )}
+              ) : null}
             </div>
           )}
 
