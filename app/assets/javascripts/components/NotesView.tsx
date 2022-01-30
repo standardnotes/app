@@ -13,8 +13,8 @@ import { useEffect, useRef } from 'preact/hooks';
 import { NoAccountWarning } from './NoAccountWarning';
 import { NotesList } from './NotesList';
 import { NotesListOptionsMenu } from './NotesListOptionsMenu';
-import { PanelResizer } from './PanelResizer';
 import { SearchOptions } from './SearchOptions';
+import { SimplePanelResizer } from './SimplePanelResizer';
 
 type Props = {
   application: WebApplication;
@@ -45,6 +45,7 @@ export const NotesView: FunctionComponent<Props> = observer(
       onSearchInputBlur,
       clearFilterText,
       paginate,
+      panelWidth,
     } = appState.notesView;
 
     useEffect(() => {
@@ -123,11 +124,12 @@ export const NotesView: FunctionComponent<Props> = observer(
     };
 
     const panelResizeFinishCallback: ResizeFinishCallback = (
-      _lastWidth,
+      width,
       _lastLeft,
       _isMaxWidth,
       isCollapsed
     ) => {
+      application.setPreference(PrefKey.NotesPanelWidth, width);
       appState.noteTags.reloadTagsContainerMaxWidth();
       appState.panelDidResize(PANEL_NAME_NOTES, isCollapsed);
     };
@@ -237,15 +239,16 @@ export const NotesView: FunctionComponent<Props> = observer(
           ) : null}
         </div>
         {notesViewPanelRef.current && (
-          <PanelResizer
-            application={application}
+          <SimplePanelResizer
             collapsable={true}
+            hoverable={true}
             defaultWidth={300}
             panel={document.querySelector('#notes-view') as HTMLDivElement}
-            prefKey={PrefKey.NotesPanelWidth}
             side={PanelSide.Right}
             resizeFinishCallback={panelResizeFinishCallback}
             widthEventCallback={panelWidthEventCallback}
+            width={panelWidth}
+            left={0}
           />
         )}
       </div>

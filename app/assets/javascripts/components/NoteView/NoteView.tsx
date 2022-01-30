@@ -38,6 +38,7 @@ import { HistoryMenu } from '../HistoryMenu';
 import { PanelResizer } from '../PanelResizer';
 import { ComponentView } from '../ComponentView';
 import { PanelSide } from '@/ui_models/panel_resizer_state';
+import { SimplePanelResizer } from '../SimplePanelResizer';
 
 const MINIMUM_STATUS_DURATION = 400;
 const TEXTAREA_DEBOUNCE = 100;
@@ -122,6 +123,11 @@ type State = {
   /** Setting to true then false will allow the main content textarea to be destroyed
    * then re-initialized. Used when reloading spellcheck status. */
   textareaUnloading: boolean;
+
+  leftResizerWidth: number;
+  leftResizerOffset: number;
+  rightResizerWidth: number;
+  rightResizerOffset: number;
 };
 
 interface Props {
@@ -150,13 +156,6 @@ export class NoteView extends PureComponent<Props, State> {
   constructor(props: Props) {
     super(props, props.application);
     this.controller = props.controller;
-
-    this.onPanelResizeFinish = this.onPanelResizeFinish.bind(this);
-    this.setScrollPosition = this.setScrollPosition.bind(this);
-    this.resetScrollPosition = this.resetScrollPosition.bind(this);
-
-    this.editorComponentViewerRequestsReload =
-      this.editorComponentViewerRequestsReload.bind(this);
 
     this.onEditorComponentLoad = () => {
       this.application.getDesktopService().redoSearch();
@@ -189,6 +188,10 @@ export class NoteView extends PureComponent<Props, State> {
       stackComponentViewers: [],
       syncTakingTooLong: false,
       textareaUnloading: false,
+      leftResizerWidth: 0,
+      leftResizerOffset: 0,
+      rightResizerWidth: 0,
+      rightResizerOffset: 0,
     };
 
     this.editorContentRef = createRef<HTMLDivElement>();
@@ -443,9 +446,9 @@ export class NoteView extends PureComponent<Props, State> {
     return viewer;
   }
 
-  public async editorComponentViewerRequestsReload(
+  public editorComponentViewerRequestsReload = async (
     viewer: ComponentViewer
-  ): Promise<void> {
+  ): Promise<void> => {
     const component = viewer.component;
     this.application.componentManager.destroyComponentViewer(viewer);
     this.setState({
@@ -455,7 +458,7 @@ export class NoteView extends PureComponent<Props, State> {
       editorComponentViewer: this.createComponentViewer(component),
       editorStateDidLoad: true,
     });
-  }
+  };
 
   /**
    * Calling reloadEditorComponent successively without waiting for state to settle
@@ -746,12 +749,24 @@ export class NoteView extends PureComponent<Props, State> {
       marginResizersEnabled,
     });
 
-    if (!document.getElementById(ElementIds.EditorContent)) {
-      /** Elements have not yet loaded due to ng-if around wrapper */
-      return;
-    }
-
     reloadFont(monospaceFont);
+
+    if (marginResizersEnabled) {
+      const width = this.application.getPreference(PrefKey.EditorWidth, null);
+      if (width != null) {
+        this.setState({
+          leftResizerWidth: width,
+          rightResizerWidth: width,
+        });
+      }
+      const left = this.application.getPreference(PrefKey.EditorLeft, null);
+      if (left != null) {
+        this.setState({
+          leftResizerOffset: left,
+          rightResizerOffset: left,
+        });
+      }
+    }
   }
 
   /** @components */
@@ -853,19 +868,19 @@ export class NoteView extends PureComponent<Props, State> {
     });
   }
 
-  setScrollPosition() {
+  setScrollPosition = () => {
     const editor = document.getElementById(
       ElementIds.NoteTextEditor
     ) as HTMLInputElement;
     this.scrollPosition = editor.scrollTop;
-  }
+  };
 
-  resetScrollPosition() {
+  resetScrollPosition = () => {
     const editor = document.getElementById(
       ElementIds.NoteTextEditor
     ) as HTMLInputElement;
     editor.scrollTop = this.scrollPosition;
-  }
+  };
 
   onSystemEditorLoad(ref: HTMLTextAreaElement | null) {
     if (this.removeTabObserver || !ref) {
@@ -1117,14 +1132,15 @@ export class NoteView extends PureComponent<Props, State> {
               {this.state.marginResizersEnabled &&
               this.editorContentRef.current ? (
                 <div className="left">
-                  <PanelResizer
-                    application={this.application}
+                  <SimplePanelResizer
                     minWidth={300}
                     hoverable={true}
                     collapsable={false}
                     panel={this.editorContentRef.current}
-                    prefKey={PrefKey.EditorLeft}
                     side={PanelSide.Left}
+                    left={this.state.leftResizerOffset}
+                    width={this.state.leftResizerWidth}
+                    resizeFinishCallback={this.onPanelResizeFinish}
                   />
                 </div>
               ) : null}
@@ -1161,14 +1177,15 @@ export class NoteView extends PureComponent<Props, State> {
 
               {this.state.marginResizersEnabled &&
               this.editorContentRef.current ? (
-                <PanelResizer
-                  application={this.application}
+                <SimplePanelResizer
                   minWidth={300}
                   hoverable={true}
                   collapsable={false}
                   panel={this.editorContentRef.current}
-                  prefKey={PrefKey.EditorWidth}
                   side={PanelSide.Right}
+                  left={this.state.rightResizerOffset}
+                  width={this.state.rightResizerWidth}
+                  resizeFinishCallback={this.onPanelResizeFinish}
                 />
               ) : null}
             </div>
