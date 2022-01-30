@@ -31,25 +31,18 @@ type State = {
   launched?: boolean;
   needsUnlock?: boolean;
   appClass: string;
+  challenges: Challenge[];
 };
 
 export class ApplicationView extends PureComponent<Props, State> {
-  public platformString: string;
-  private notesCollapsed = false;
-  private navigationCollapsed = false;
-
-  /**
-   * To prevent stale state reads (setState is async),
-   * challenges is a mutable array
-   */
-  private challenges: Challenge[] = [];
+  public readonly platformString = getPlatformString();
 
   constructor(props: Props) {
     super(props, props.application);
     this.state = {
       appClass: '',
+      challenges: [],
     };
-    this.platformString = getPlatformString();
     this.onDragDrop = this.onDragDrop.bind(this);
     this.onDragOver = this.onDragOver.bind(this);
     this.addDragDropHandlers();
@@ -75,14 +68,18 @@ export class ApplicationView extends PureComponent<Props, State> {
     );
     await this.application.prepareForLaunch({
       receiveChallenge: async (challenge) => {
-        this.challenges.push(challenge);
+        const challenges = this.state.challenges.slice();
+        challenges.push(challenge);
+        this.setState({ challenges: challenges });
       },
     });
     await this.application.launch();
   }
 
   public removeChallenge = async (challenge: Challenge) => {
-    removeFromArray(this.challenges, challenge);
+    const challenges = this.state.challenges.slice();
+    removeFromArray(challenges, challenge);
+    this.setState({ challenges: challenges });
   };
 
   async onAppStart() {
@@ -127,17 +124,11 @@ export class ApplicationView extends PureComponent<Props, State> {
   async onAppStateEvent(eventName: AppStateEvent, data?: unknown) {
     if (eventName === AppStateEvent.PanelResized) {
       const { panel, collapsed } = data as PanelResizedData;
-      if (panel === PANEL_NAME_NOTES) {
-        this.notesCollapsed = collapsed;
-      }
-      if (panel === PANEL_NAME_NAVIGATION) {
-        this.navigationCollapsed = collapsed;
-      }
       let appClass = '';
-      if (this.notesCollapsed) {
+      if (panel === PANEL_NAME_NOTES && collapsed) {
         appClass += 'collapsed-notes';
       }
-      if (this.navigationCollapsed) {
+      if (panel === PANEL_NAME_NAVIGATION && collapsed) {
         appClass += ' collapsed-navigation';
       }
       this.setState({ appClass });
@@ -235,7 +226,7 @@ export class ApplicationView extends PureComponent<Props, State> {
           application={this.application}
         />
 
-        {this.challenges.map((challenge) => {
+        {this.state.challenges.map((challenge) => {
           return (
             <div className="sk-modal">
               <ChallengeModal
