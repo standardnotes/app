@@ -67,6 +67,7 @@ import MenuArrowDownAlt from '../../icons/ic-menu-arrow-down-alt.svg';
 import MenuArrowRight from '../../icons/ic-menu-arrow-right.svg';
 
 import { FunctionalComponent } from 'preact';
+import { IconType } from '@standardnotes/snjs';
 
 const ICONS = {
   editor: EditorIcon,
@@ -136,8 +137,6 @@ const ICONS = {
   window: WindowIcon,
   'premium-feature': PremiumFeatureIcon,
 };
-
-export type IconType = keyof typeof ICONS;
 
 type Props = {
   type: IconType;

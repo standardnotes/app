@@ -15,6 +15,7 @@ import {
   SNApplication,
   NoteGroupController,
   removeFromArray,
+  IconsController,
 } from '@standardnotes/snjs';
 
 type WebServices = {
@@ -39,6 +40,7 @@ export class WebApplication extends SNApplication {
   private webServices!: WebServices;
   public noteControllerGroup: NoteGroupController;
   private webEventObservers: WebEventObserver[] = [];
+  public iconsController: IconsController;
 
   constructor(
     deviceInterface: WebDeviceInterface,
@@ -64,6 +66,7 @@ export class WebApplication extends SNApplication {
     );
     deviceInterface.setApplication(this);
     this.noteControllerGroup = new NoteGroupController(this);
+    this.iconsController = new IconsController();
   }
 
   /** @override */
@@ -76,6 +79,7 @@ export class WebApplication extends SNApplication {
     }
     this.webServices = {} as WebServices;
     this.noteControllerGroup.deinit();
+    this.iconsController.deinit();
     this.webEventObservers.length = 0;
     /**
      * Allow any pending renders to complete before destroying the global

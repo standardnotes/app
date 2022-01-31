@@ -6,8 +6,9 @@ import {
 } from 'preact';
 import { forwardRef, Ref } from 'preact/compat';
 import { JSXInternal } from 'preact/src/jsx';
-import { Icon, IconType } from '../Icon';
+import { Icon } from '../Icon';
 import { Switch, SwitchProps } from '../Switch';
+import { IconType } from '@standardnotes/snjs';
 
 export enum MenuItemType {
   IconButton,

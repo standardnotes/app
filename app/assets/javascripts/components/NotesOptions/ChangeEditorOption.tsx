@@ -18,6 +18,7 @@ import {
 } from '@reach/disclosure';
 import {
   ComponentArea,
+  IconType,
   ItemMutator,
   NoteMutator,
   PrefKey,
@@ -27,7 +28,7 @@ import {
 } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { Icon, IconType } from '../Icon';
+import { Icon } from '../Icon';
 import { PremiumModalProvider } from '../Premium';
 import { createEditorMenuGroups } from './changeEditor/createEditorMenuGroups';
 import { EditorAccordionMenu } from './changeEditor/EditorAccordionMenu';
