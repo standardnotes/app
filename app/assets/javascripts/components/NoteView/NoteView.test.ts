@@ -161,7 +161,7 @@ describe('editor-view', () => {
     describe('the note has protection sources', () => {
       it('should reveal note contents if the authorization has been passed', async () => {
         jest
-          .spyOn(ctrl.application, 'authorizeNoteAccess')
+          .spyOn(ctrl['application'], 'authorizeNoteAccess')
           .mockImplementation(async () => Promise.resolve(true));
 
         await ctrl.dismissProtectedWarning();
@@ -171,7 +171,7 @@ describe('editor-view', () => {
 
       it('should not reveal note contents if the authorization has not been passed', async () => {
         jest
-          .spyOn(ctrl.application, 'authorizeNoteAccess')
+          .spyOn(ctrl['application'], 'authorizeNoteAccess')
           .mockImplementation(async () => Promise.resolve(false));
 
         await ctrl.dismissProtectedWarning();
@@ -183,7 +183,7 @@ describe('editor-view', () => {
     describe('the note does not have protection sources', () => {
       it('should reveal note contents', async () => {
         jest
-          .spyOn(ctrl.application, 'hasProtectionSources')
+          .spyOn(ctrl['application'], 'hasProtectionSources')
           .mockImplementation(() => false);
 
         await ctrl.dismissProtectedWarning();
