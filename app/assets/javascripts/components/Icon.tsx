@@ -1,3 +1,4 @@
+import EditorIcon from '../../icons/ic-editor.svg';
 import PremiumFeatureIcon from '../../icons/ic-premium-feature.svg';
 import PencilOffIcon from '../../icons/ic-pencil-off.svg';
 import PlainTextIcon from '../../icons/ic-text-paragraph.svg';
@@ -17,6 +18,7 @@ import PasswordIcon from '../../icons/ic-textbox-password.svg';
 import TrashSweepIcon from '../../icons/ic-trash-sweep.svg';
 import MoreIcon from '../../icons/ic-more.svg';
 import TuneIcon from '../../icons/ic-tune.svg';
+import UserSwitch from '../../icons/ic-user-switch.svg';
 import MenuArrowDownIcon from '../../icons/ic-menu-arrow-down.svg';
 import MenuCloseIcon from '../../icons/ic-menu-close.svg';
 import AuthenticatorIcon from '../../icons/ic-authenticator.svg';
@@ -64,10 +66,11 @@ import LinkOffIcon from '../../icons/ic-link-off.svg';
 import MenuArrowDownAlt from '../../icons/ic-menu-arrow-down-alt.svg';
 import MenuArrowRight from '../../icons/ic-menu-arrow-right.svg';
 
-import { toDirective } from './utils';
 import { FunctionalComponent } from 'preact';
+import { IconType } from '@standardnotes/snjs';
 
 const ICONS = {
+  editor: EditorIcon,
   'menu-arrow-down-alt': MenuArrowDownAlt,
   'menu-arrow-right': MenuArrowRight,
   notes: NotesIcon,
@@ -91,6 +94,7 @@ const ICONS = {
   'rich-text': RichTextIcon,
   code: CodeIcon,
   markdown: MarkdownIcon,
+  'user-switch': UserSwitch,
   authenticator: AuthenticatorIcon,
   spreadsheets: SpreadsheetsIcon,
   tasks: TasksIcon,
@@ -134,8 +138,6 @@ const ICONS = {
   'premium-feature': PremiumFeatureIcon,
 };
 
-export type IconType = keyof typeof ICONS;
-
 type Props = {
   type: IconType;
   className?: string;
@@ -156,8 +158,3 @@ export const Icon: FunctionalComponent<Props> = ({
     />
   );
 };
-
-export const IconDirective = toDirective<Props>(Icon, {
-  type: '@',
-  className: '@',
-});

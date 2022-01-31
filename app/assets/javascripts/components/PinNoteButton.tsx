@@ -3,19 +3,22 @@ import VisuallyHidden from '@reach/visually-hidden';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { Icon } from './Icon';
-import { toDirective } from './utils';
 
 type Props = {
   appState: AppState;
   className?: string;
+  onClickPreprocessing?: () => Promise<void>;
 };
 
 export const PinNoteButton: FunctionComponent<Props> = observer(
-  ({ appState, className = '' }) => {
+  ({ appState, className = '', onClickPreprocessing }) => {
     const notes = Object.values(appState.notes.selectedNotes);
     const pinned = notes.some((note) => note.pinned);
 
-    const togglePinned = () => {
+    const togglePinned = async () => {
+      if (onClickPreprocessing) {
+        await onClickPreprocessing();
+      }
       if (!pinned) {
         appState.notes.setPinSelectedNotes(true);
       } else {
@@ -34,5 +37,3 @@ export const PinNoteButton: FunctionComponent<Props> = observer(
     );
   }
 );
-
-export const PinNoteButtonDirective = toDirective<Props>(PinNoteButton);

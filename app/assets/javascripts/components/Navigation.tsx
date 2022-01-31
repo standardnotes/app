@@ -1,37 +1,21 @@
-import { ComponentView } from '@/components/ComponentView';
-import { PanelResizer } from '@/components/PanelResizer';
 import { SmartTagsSection } from '@/components/Tags/SmartTagsSection';
 import { TagsSection } from '@/components/Tags/TagsSection';
-import { toDirective } from '@/components/utils';
+import { WebApplication } from '@/ui_models/application';
+import { PANEL_NAME_NAVIGATION } from '@/views/constants';
+import { ApplicationEvent, PrefKey } from '@standardnotes/snjs';
+import { observer } from 'mobx-react-lite';
+import { FunctionComponent } from 'preact';
+import { useCallback, useEffect, useMemo, useState } from 'preact/hooks';
+import { PremiumModalProvider } from './Premium';
 import {
   PanelSide,
   ResizeFinishCallback,
-} from '@/directives/views/panelResizer';
-import { WebApplication } from '@/ui_models/application';
-import { PANEL_NAME_NAVIGATION } from '@/views/constants';
-import { PrefKey } from '@standardnotes/snjs';
-import { observer } from 'mobx-react-lite';
-import { FunctionComponent } from 'preact';
-import { useCallback, useMemo, useState } from 'preact/hooks';
-import { PremiumModalProvider } from './Premium';
+  PanelResizer,
+  PanelResizeType,
+} from './PanelResizer';
 
 type Props = {
   application: WebApplication;
-};
-
-const NAVIGATION_SELECTOR = 'navigation';
-
-const useNavigationPanelRef = (): [HTMLDivElement | null, () => void] => {
-  const [panelRef, setPanelRefInternal] = useState<HTMLDivElement | null>(null);
-
-  const setPanelRefPublic = useCallback(() => {
-    const elem = document.querySelector(
-      NAVIGATION_SELECTOR
-    ) as HTMLDivElement | null;
-    setPanelRefInternal(elem);
-  }, [setPanelRefInternal]);
-
-  return [panelRef, setPanelRefPublic];
 };
 
 export const Navigation: FunctionComponent<Props> = observer(
@@ -39,18 +23,33 @@ export const Navigation: FunctionComponent<Props> = observer(
     const appState = useMemo(() => application.getAppState(), [application]);
     const enableNativeSmartTagsFeature =
       appState.features.enableNativeSmartTagsFeature;
-    const [panelRef, setPanelRef] = useNavigationPanelRef();
+    const [ref, setRef] = useState<HTMLDivElement | null>();
+    const [panelWidth, setPanelWidth] = useState<number>(0);
+
+    useEffect(() => {
+      const removeObserver = application.addEventObserver(async () => {
+        const width = application.getPreference(PrefKey.TagsPanelWidth);
+        if (width) {
+          setPanelWidth(width);
+        }
+      }, ApplicationEvent.PreferencesChanged);
+
+      return () => {
+        removeObserver();
+      };
+    }, [application]);
 
     const onCreateNewTag = useCallback(() => {
       appState.tags.createNewTemplate();
     }, [appState]);
 
     const panelResizeFinishCallback: ResizeFinishCallback = useCallback(
-      (_lastWidth, _lastLeft, _isMaxWidth, isCollapsed) => {
+      (width, _lastLeft, _isMaxWidth, isCollapsed) => {
+        application.setPreference(PrefKey.TagsPanelWidth, width);
         appState.noteTags.reloadTagsContainerMaxWidth();
         appState.panelDidResize(PANEL_NAME_NAVIGATION, isCollapsed);
       },
-      [appState]
+      [application, appState]
     );
 
     const panelWidthEventCallback = useCallback(() => {
@@ -61,9 +60,9 @@ export const Navigation: FunctionComponent<Props> = observer(
       <PremiumModalProvider state={appState.features}>
         <div
           id="navigation"
-          className="sn-component section"
+          className="sn-component section app-column app-column-first"
           data-aria-label="Navigation"
-          ref={setPanelRef}
+          ref={setRef}
         >
           <div id="navigation-content" className="content">
             <div className="section-title-bar">
@@ -89,16 +88,18 @@ export const Navigation: FunctionComponent<Props> = observer(
               <TagsSection appState={appState} />
             </div>
           </div>
-          {panelRef && (
+          {ref && (
             <PanelResizer
-              application={application}
               collapsable={true}
               defaultWidth={150}
-              panel={panelRef}
-              prefKey={PrefKey.TagsPanelWidth}
+              panel={ref}
+              hoverable={true}
               side={PanelSide.Right}
+              type={PanelResizeType.WidthOnly}
               resizeFinishCallback={panelResizeFinishCallback}
               widthEventCallback={panelWidthEventCallback}
+              width={panelWidth}
+              left={0}
             />
           )}
         </div>
@@ -106,5 +107,3 @@ export const Navigation: FunctionComponent<Props> = observer(
     );
   }
 );
-
-export const NavigationDirective = toDirective<Props>(Navigation);

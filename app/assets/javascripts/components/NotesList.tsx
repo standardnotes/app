@@ -6,6 +6,10 @@ import { SNNote } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { NotesListItem } from './NotesListItem';
+import {
+  FOCUSABLE_BUT_NOT_TABBABLE,
+  NOTES_LIST_SCROLL_THRESHOLD,
+} from '@/views/constants';
 
 type Props = {
   application: WebApplication;
@@ -15,9 +19,6 @@ type Props = {
   displayOptions: DisplayOptions;
   paginate: () => void;
 };
-
-const FOCUSABLE_BUT_NOT_TABBABLE = -1;
-const NOTES_LIST_SCROLL_THRESHOLD = 200;
 
 export const NotesList: FunctionComponent<Props> = observer(
   ({

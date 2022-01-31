@@ -131,9 +131,9 @@ $footer-height: 2rem;
 .app {
   height: calc(100% - #{$footer-height});
   width: 100%;
-  display: flex;
   vertical-align: top;
-  overflow: hidden;
+  overflow-x: scroll;
+  overflow-y: hidden;
   position: relative;
 
   panel-resizer, .panel-resizer {
@@ -176,7 +176,7 @@ $footer-height: 2rem;
     &.collapsed {
       opacity: 1;
       // so it blends in with editor a bit more
-      background-color: var(--sn-stylekit-editor-background-color);
+      // background-color: var(--sn-stylekit-editor-background-color);
     }
 
     &.dragging {

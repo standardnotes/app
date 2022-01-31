@@ -1,7 +1,3 @@
-import {
-  PanelSide,
-  ResizeFinishCallback,
-} from '@/directives/views/panelResizer';
 import { KeyboardKey, KeyboardModifier } from '@/services/ioService';
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
@@ -13,16 +9,20 @@ import { useEffect, useRef } from 'preact/hooks';
 import { NoAccountWarning } from './NoAccountWarning';
 import { NotesList } from './NotesList';
 import { NotesListOptionsMenu } from './NotesListOptionsMenu';
-import { PanelResizer } from './PanelResizer';
 import { SearchOptions } from './SearchOptions';
-import { toDirective } from './utils';
+import {
+  PanelSide,
+  ResizeFinishCallback,
+  PanelResizer,
+  PanelResizeType,
+} from './PanelResizer';
 
 type Props = {
   application: WebApplication;
   appState: AppState;
 };
 
-const NotesView: FunctionComponent<Props> = observer(
+export const NotesView: FunctionComponent<Props> = observer(
   ({ application, appState }) => {
     const notesViewPanelRef = useRef<HTMLDivElement>(null);
 
@@ -46,6 +46,7 @@ const NotesView: FunctionComponent<Props> = observer(
       onSearchInputBlur,
       clearFilterText,
       paginate,
+      panelWidth,
     } = appState.notesView;
 
     useEffect(() => {
@@ -124,11 +125,12 @@ const NotesView: FunctionComponent<Props> = observer(
     };
 
     const panelResizeFinishCallback: ResizeFinishCallback = (
-      _lastWidth,
+      width,
       _lastLeft,
       _isMaxWidth,
       isCollapsed
     ) => {
+      application.setPreference(PrefKey.NotesPanelWidth, width);
       appState.noteTags.reloadTagsContainerMaxWidth();
       appState.panelDidResize(PANEL_NAME_NOTES, isCollapsed);
     };
@@ -140,7 +142,7 @@ const NotesView: FunctionComponent<Props> = observer(
     return (
       <div
         id="notes-column"
-        className="sn-component section notes"
+        className="sn-component section notes app-column app-column-second"
         aria-label="Notes"
         ref={notesViewPanelRef}
       >
@@ -239,19 +241,19 @@ const NotesView: FunctionComponent<Props> = observer(
         </div>
         {notesViewPanelRef.current && (
           <PanelResizer
-            application={application}
             collapsable={true}
+            hoverable={true}
             defaultWidth={300}
-            panel={document.querySelector('notes-view') as HTMLDivElement}
-            prefKey={PrefKey.NotesPanelWidth}
+            panel={notesViewPanelRef.current}
             side={PanelSide.Right}
+            type={PanelResizeType.WidthOnly}
             resizeFinishCallback={panelResizeFinishCallback}
             widthEventCallback={panelWidthEventCallback}
+            width={panelWidth}
+            left={0}
           />
         )}
       </div>
     );
   }
 );
-
-export const NotesViewDirective = toDirective<Props>(NotesView);

@@ -8,7 +8,7 @@ import { StateUpdater, useCallback, useState, useEffect } from 'preact/hooks';
  * monitored.
  */
 export function useCloseOnBlur(
-  container: { current?: HTMLDivElement },
+  container: { current?: HTMLDivElement | null },
   setOpen: (open: boolean) => void
 ): [
   (event: { relatedTarget: EventTarget | null }) => void,
@@ -33,55 +33,27 @@ export function useCloseOnBlur(
 
 export function useCloseOnClickOutside(
   container: { current: HTMLDivElement | null },
-  setOpen: (open: boolean) => void
+  callback: () => void
 ): void {
   const closeOnClickOutside = useCallback(
     (event: { target: EventTarget | null }) => {
-      if (!container.current?.contains(event.target as Node)) {
-        setOpen(false);
+      if (!container.current) {
+        return;
+      }
+      const isDescendant = container.current.contains(event.target as Node);
+      if (!isDescendant) {
+        callback();
       }
     },
-    [container, setOpen]
+    [container, callback]
   );
 
   useEffect(() => {
-    document.addEventListener('click', closeOnClickOutside);
+    document.addEventListener('click', closeOnClickOutside, { capture: true });
     return () => {
-      document.removeEventListener('click', closeOnClickOutside);
+      document.removeEventListener('click', closeOnClickOutside, {
+        capture: true,
+      });
     };
   }, [closeOnClickOutside]);
-}
-
-export function toDirective<Props>(
-  component: FunctionComponent<Props>,
-  scope: Record<string, '=' | '&' | '@'> = {}
-) {
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  return function () {
-    return {
-      controller: [
-        '$element',
-        '$scope',
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ($element: JQLite, $scope: any) => {
-          if ($scope.class) {
-            $element.addClass($scope.class);
-          }
-          return {
-            $onChanges() {
-              render(h(component, $scope), $element[0]);
-            },
-            $onDestroy() {
-              unmountComponentAtNode($element[0]);
-            },
-          };
-        },
-      ],
-      scope: {
-        application: '=',
-        appState: '=',
-        ...scope,
-      },
-    };
-  };
 }

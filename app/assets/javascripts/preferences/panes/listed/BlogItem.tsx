@@ -6,14 +6,13 @@ import {
   Action,
   ButtonType,
   SNActionsExtension,
-  SNComponent,
   SNItem,
 } from '@standardnotes/snjs';
 import { FunctionalComponent } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 
 type Props = {
-  item: SNComponent;
+  item: SNActionsExtension;
   showSeparator: boolean;
   disabled: boolean;
   disconnect: (item: SNItem) => Promise<unknown>;
@@ -35,7 +34,7 @@ export const BlogItem: FunctionalComponent<Props> = ({
     const loadActions = async () => {
       setIsLoadingActions(true);
       application.actionsManager
-        .loadExtensionInContextOfItem(item as SNActionsExtension, item)
+        .loadExtensionInContextOfItem(item, item)
         .then((extension) => {
           setActions(extension?.actions);
         })

@@ -1,0 +1,23 @@
+.app-column-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.app-column-first {
+  width: 180px;
+  flex-shrink: 0.2;
+}
+
+.app-column-second {
+  width: 350px;
+  flex-shrink: 0.5;
+}
+
+.app-column-third {
+  flex-grow: 1;
+  flex-shrink: 0.3;
+}
+
+.app-column {
+  overflow: hidden;
+}

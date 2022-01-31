@@ -22,7 +22,6 @@ const SignOutView: FunctionComponent<{
       <PreferencesGroup>
         <PreferencesSegment>
           <Title>Sign out</Title>
-          <div className="min-h-2" />
           <Subtitle>Other devices</Subtitle>
           <Text>Want to sign out on all devices except this one?</Text>
           <div className="min-h-3" />
@@ -74,7 +73,6 @@ const ClearSessionDataView: FunctionComponent<{
       <PreferencesGroup>
         <PreferencesSegment>
           <Title>Clear session data</Title>
-          <div className="min-h-2" />
           <Text>This will delete all local items and preferences.</Text>
           <div className="min-h-3" />
           <Button

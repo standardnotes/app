@@ -1,8 +1,9 @@
 import { FunctionComponent, Ref } from 'preact';
 import { JSXInternal } from 'preact/src/jsx';
 import { forwardRef } from 'preact/compat';
-import { Icon, IconType } from './Icon';
+import { Icon } from './Icon';
 import { IconButton } from './IconButton';
+import { IconType } from '@standardnotes/snjs';
 
 type ToggleProps = {
   toggleOnIcon: IconType;

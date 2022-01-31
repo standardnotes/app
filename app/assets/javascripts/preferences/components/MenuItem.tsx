@@ -1,5 +1,6 @@
-import { Icon, IconType } from '@/components/Icon';
+import { Icon } from '@/components/Icon';
 import { FunctionComponent } from 'preact';
+import { IconType } from '@standardnotes/snjs';
 
 interface Props {
   iconType: IconType;
@@ -15,7 +16,9 @@ export const MenuItem: FunctionComponent<Props> = ({
   onClick,
 }) => (
   <div
-    className={`preferences-menu-item select-none ${selected ? 'selected' : ''}`}
+    className={`preferences-menu-item select-none ${
+      selected ? 'selected' : ''
+    }`}
     onClick={(e) => {
       e.preventDefault();
       onClick();
