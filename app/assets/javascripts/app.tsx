@@ -59,10 +59,12 @@ const startApplication: StartApplication = async function startApplication(
     });
   }
 
-  render(
-    <ApplicationGroupView mainApplicationGroup={mainApplicationGroup} />,
-    document.body.appendChild(document.createElement('div'))
-  );
+  window.addEventListener('DOMContentLoaded', () => {
+    render(
+      <ApplicationGroupView mainApplicationGroup={mainApplicationGroup} />,
+      document.body.appendChild(document.createElement('div'))
+    );
+  });
 };
 
 if (IsWebPlatform) {
