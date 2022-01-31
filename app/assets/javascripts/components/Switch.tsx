@@ -29,7 +29,9 @@ export const Switch: FunctionalComponent<SwitchProps> = (
 
   return (
     <label
-      className={`sn-component flex justify-between items-center cursor-pointer px-3 ${className} ${isDisabled ? 'faded' : ''}`}
+      className={`sn-component flex justify-between items-center cursor-pointer px-3 ${className} ${
+        isDisabled ? 'faded' : ''
+      }`}
       {...(props.role ? { role: props.role } : {})}
     >
       {props.children}
@@ -51,8 +53,9 @@ export const Switch: FunctionalComponent<SwitchProps> = (
         />
         <span
           aria-hidden
-          className={`sn-switch-handle ${checked ? 'sn-switch-handle--right' : ''
-            }`}
+          className={`sn-switch-handle ${
+            checked ? 'sn-switch-handle--right' : ''
+          }`}
         />
       </CustomCheckboxContainer>
     </label>

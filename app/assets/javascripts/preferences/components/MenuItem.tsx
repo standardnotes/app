@@ -1,5 +1,6 @@
-import { Icon, IconType } from '@/components/Icon';
+import { Icon } from '@/components/Icon';
 import { FunctionComponent } from 'preact';
+import { IconType } from '@standardnotes/snjs';
 
 interface Props {
   iconType: IconType;

@@ -1,4 +1,4 @@
-import { Icon, IconType } from '@/components/Icon';
+import { Icon } from '@/components/Icon';
 import {
   Disclosure,
   DisclosureButton,
@@ -7,6 +7,7 @@ import {
 import { FunctionComponent } from 'preact';
 import { MouseEventHandler } from 'react';
 import { useState, useRef, useEffect } from 'preact/hooks';
+import { IconType } from '@standardnotes/snjs';
 
 const DisclosureIconButton: FunctionComponent<{
   className?: string;

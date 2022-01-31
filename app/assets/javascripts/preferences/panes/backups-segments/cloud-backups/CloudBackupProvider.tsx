@@ -5,7 +5,7 @@ import {
   CloudProvider,
   DropboxBackupFrequency,
   GoogleDriveBackupFrequency,
-  OneDriveBackupFrequency
+  OneDriveBackupFrequency,
 } from '@standardnotes/settings';
 import { WebApplication } from '@/ui_models/application';
 import { Button } from '@/components/Button';
@@ -20,9 +20,9 @@ type Props = {
 };
 
 export const CloudBackupProvider: FunctionComponent<Props> = ({
-                                                                application,
-                                                                providerName
-                                                              }) => {
+  application,
+  providerName,
+}) => {
   const [authBegan, setAuthBegan] = useState(false);
   const [successfullyInstalled, setSuccessfullyInstalled] = useState(false);
   const [backupFrequency, setBackupFrequency] = useState<string | null>(null);
@@ -32,14 +32,13 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
     event.stopPropagation();
 
     try {
-      const shouldDisable = await application.alertService
-        .confirm(
-          'Are you sure you want to disable this integration?',
-          'Disable?',
-          'Disable',
-          ButtonType.Danger,
-          'Cancel'
-        );
+      const shouldDisable = await application.alertService.confirm(
+        'Are you sure you want to disable this integration?',
+        'Disable?',
+        'Disable',
+        ButtonType.Danger,
+        'Cancel'
+      );
       if (shouldDisable) {
         await application.deleteSetting(backupFrequencySettingName);
         await application.deleteSetting(backupTokenSettingName);
@@ -54,7 +53,10 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
   const installIntegration = (event: Event) => {
     event.stopPropagation();
 
-    const authUrl = application.getCloudProviderIntegrationUrl(providerName, isDev);
+    const authUrl = application.getCloudProviderIntegrationUrl(
+      providerName,
+      isDev
+    );
     openInNewTab(authUrl);
     setAuthBegan(true);
   };
@@ -62,7 +64,10 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
   const performBackupNow = async () => {
     // A backup is performed anytime the setting is updated with the integration token, so just update it here
     try {
-      await application.updateSetting(backupFrequencySettingName, backupFrequency as string);
+      await application.updateSetting(
+        backupFrequencySettingName,
+        backupFrequency as string
+      );
       application.alertService.alert(
         'A backup has been triggered for this provider. Please allow a couple minutes for your backup to be processed.'
       );
@@ -77,20 +82,24 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
     [CloudProvider.Dropbox]: {
       backupTokenSettingName: SettingName.DropboxBackupToken,
       backupFrequencySettingName: SettingName.DropboxBackupFrequency,
-      defaultBackupFrequency: DropboxBackupFrequency.Daily
+      defaultBackupFrequency: DropboxBackupFrequency.Daily,
     },
     [CloudProvider.Google]: {
       backupTokenSettingName: SettingName.GoogleDriveBackupToken,
       backupFrequencySettingName: SettingName.GoogleDriveBackupFrequency,
-      defaultBackupFrequency: GoogleDriveBackupFrequency.Daily
+      defaultBackupFrequency: GoogleDriveBackupFrequency.Daily,
     },
     [CloudProvider.OneDrive]: {
       backupTokenSettingName: SettingName.OneDriveBackupToken,
       backupFrequencySettingName: SettingName.OneDriveBackupFrequency,
-      defaultBackupFrequency: OneDriveBackupFrequency.Daily
-    }
+      defaultBackupFrequency: OneDriveBackupFrequency.Daily,
+    },
   };
-  const { backupTokenSettingName, backupFrequencySettingName, defaultBackupFrequency } = backupSettingsData[providerName];
+  const {
+    backupTokenSettingName,
+    backupFrequencySettingName,
+    defaultBackupFrequency,
+  } = backupSettingsData[providerName];
 
   const getCloudProviderIntegrationTokenFromUrl = (url: URL) => {
     const urlSearchParams = new URLSearchParams(url.search);
@@ -123,8 +132,14 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
         if (!cloudProviderToken) {
           throw new Error();
         }
-        await application.updateSetting(backupTokenSettingName, cloudProviderToken);
-        await application.updateSetting(backupFrequencySettingName, defaultBackupFrequency);
+        await application.updateSetting(
+          backupTokenSettingName,
+          cloudProviderToken
+        );
+        await application.updateSetting(
+          backupFrequencySettingName,
+          defaultBackupFrequency
+        );
 
         setBackupFrequency(defaultBackupFrequency);
 
@@ -174,15 +189,15 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
       </div>
       {authBegan && (
         <div>
-          <p className='sk-panel-row'>
+          <p className="sk-panel-row">
             Complete authentication from the newly opened window. Upon
             completion, a confirmation code will be displayed. Enter this code
             below:
           </p>
           <div className={`mt-1`}>
             <input
-              className='sk-input sk-base center-text'
-              placeholder='Enter confirmation code'
+              className="sk-input sk-base center-text"
+              placeholder="Enter confirmation code"
               value={confirmation}
               onKeyPress={handleKeyPress}
               onChange={handleChange}
@@ -193,8 +208,8 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
       {shouldShowEnableButton && (
         <div>
           <Button
-            type='normal'
-            label='Enable'
+            type="normal"
+            label="Enable"
             className={'px-1 text-xs min-w-40'}
             onClick={installIntegration}
           />
@@ -204,15 +219,15 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
       {backupFrequency && (
         <div className={'flex flex-col items-end'}>
           <Button
-            className='min-w-40 mb-2'
-            type='normal'
-            label='Perform Backup'
+            className="min-w-40 mb-2"
+            type="normal"
+            label="Perform Backup"
             onClick={performBackupNow}
           />
           <Button
-            className='min-w-40'
-            type='normal'
-            label='Disable'
+            className="min-w-40"
+            type="normal"
+            label="Disable"
             onClick={disable}
           />
         </div>
