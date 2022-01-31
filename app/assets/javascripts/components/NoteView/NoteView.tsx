@@ -483,9 +483,11 @@ export class NoteView extends PureComponent<Props, State> {
           currentComponentViewer
         );
       }
-      this.setState({
-        editorComponentViewer: undefined,
-      });
+      if (currentComponentViewer) {
+        this.setState({
+          editorComponentViewer: undefined,
+        });
+      }
       if (newEditor) {
         this.setState({
           editorComponentViewer: this.createComponentViewer(newEditor),

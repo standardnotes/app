@@ -9,7 +9,13 @@ import {
 } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { FunctionalComponent } from 'preact';
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'preact/hooks';
 import { observer } from 'mobx-react-lite';
 import { OfflineRestricted } from '@/components/ComponentView/OfflineRestricted';
 import { UrlMissing } from '@/components/ComponentView/UrlMissing';
@@ -65,20 +71,6 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
       openSubscriptionDashboard(application);
     }, [application]);
 
-    useEffect(() => {
-      const loadTimeout = setTimeout(() => {
-        handleIframeTakingTooLongToLoad();
-      }, MaxLoadThreshold);
-
-      excessiveLoadingTimeout.current = loadTimeout;
-
-      return () => {
-        excessiveLoadingTimeout.current &&
-          clearTimeout(excessiveLoadingTimeout.current);
-      };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
     const reloadValidityStatus = useCallback(() => {
       setFeatureStatus(componentViewer.getFeatureStatus());
       if (!componentViewer.lockReadonly) {
@@ -127,28 +119,35 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
       } else {
         document.addEventListener(VisibilityChangeKey, onVisibilityChange);
       }
-    }, [componentViewer, didAttemptReload, onVisibilityChange, requestReload]);
+    }, [didAttemptReload, onVisibilityChange, componentViewer, requestReload]);
 
-    useEffect(() => {
-      if (!iframeRef.current) {
-        return;
-      }
+    useMemo(() => {
+      const loadTimeout = setTimeout(() => {
+        handleIframeTakingTooLongToLoad();
+      }, MaxLoadThreshold);
 
-      const iframe = iframeRef.current as HTMLIFrameElement;
-      iframe.onload = () => {
-        const contentWindow = iframe.contentWindow as Window;
+      excessiveLoadingTimeout.current = loadTimeout;
+
+      return () => {
         excessiveLoadingTimeout.current &&
           clearTimeout(excessiveLoadingTimeout.current);
-
-        componentViewer.setWindow(contentWindow);
-
-        setTimeout(() => {
-          setIsLoading(false);
-          setHasIssueLoading(false);
-          onLoad?.(component);
-        }, MSToWaitAfterIframeLoadToAvoidFlicker);
       };
-    }, [onLoad, component, componentViewer]);
+    }, [handleIframeTakingTooLongToLoad]);
+
+    const onIframeLoad = useCallback(() => {
+      const iframe = iframeRef.current as HTMLIFrameElement;
+      const contentWindow = iframe.contentWindow as Window;
+      excessiveLoadingTimeout.current &&
+        clearTimeout(excessiveLoadingTimeout.current);
+
+      componentViewer.setWindow(contentWindow);
+
+      setTimeout(() => {
+        setIsLoading(false);
+        setHasIssueLoading(false);
+        onLoad?.(component);
+      }, MSToWaitAfterIframeLoadToAvoidFlicker);
+    }, [componentViewer, onLoad, component, excessiveLoadingTimeout]);
 
     useEffect(() => {
       const removeFeaturesChangedObserver = componentViewer.addEventObserver(
@@ -235,6 +234,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
         {component.uuid && isComponentValid && (
           <iframe
             ref={iframeRef}
+            onLoad={onIframeLoad}
             data-component-viewer-id={componentViewer.identifier}
             frameBorder={0}
             src={componentViewer.url || ''}
