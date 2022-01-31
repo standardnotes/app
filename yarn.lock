@@ -2615,10 +2615,10 @@
   resolved "https://registry.yarnpkg.com/@standardnotes/components/-/components-1.4.4.tgz#2db82b5f35d34be8c766e22d8559e2b80a6aa996"
   integrity sha512-sxG5iIETpZUYVt6zQBTRxUC1qCZRmKyOuERyDLADju2gnGddDiLWU/TpgE7k8C/pLkw4OXprAmEVxbOagDrIxw==
 
-"@standardnotes/domain-events@^2.19.0":
-  version "2.19.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/domain-events/-/domain-events-2.19.0.tgz#f60c66fc8f22328893c4f1101e259d6453e4eecd"
-  integrity sha512-w+QXP2LK1CLfGEmsa7i4A6SogCanDmrPSgsByKdy5vimngsePDbb2tVNwEAroMDCv55iChpX8/3/GMvOsnyUIQ==
+"@standardnotes/domain-events@^2.20.1":
+  version "2.20.1"
+  resolved "https://registry.yarnpkg.com/@standardnotes/domain-events/-/domain-events-2.20.1.tgz#3d6af041d20029b791877dc4d99a815ffa149474"
+  integrity sha512-UmkeF2nS2mFnR5OntT3d8My8CYaVth631B3hSGh7C8wVa3MSs2A9y+Ko2/JL92QxQa7/V5vt/rvPQKnLjT3YBg==
   dependencies:
     "@standardnotes/auth" "^3.15.3"
     "@standardnotes/features" "^1.26.1"
@@ -2655,14 +2655,14 @@
     buffer "^6.0.3"
     libsodium-wrappers "^0.7.9"
 
-"@standardnotes/snjs@2.43.6":
-  version "2.43.6"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.43.6.tgz#cdab6d4124c9106f52868eefbf845a44b38b308a"
-  integrity sha512-dprBsycVE5O2ci8bHDBa4nEjoiZT+QPVokDXWndh+AHEUPyK56/Zo/S83qoyzw2bm0DrTJ1Nver+thUWNq+hXg==
+"@standardnotes/snjs@2.44.3":
+  version "2.44.3"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.44.3.tgz#bb16aca691d24f2a7fea6f94a929f0a241ebcfc0"
+  integrity sha512-54rjz1s+pDdB4fRS69QE3DLNbebC+1DCw/+j5/2EOqdelj+/Ce7bQyiNxwYj4cqE0Z0zYEeJl7oAxVecOBCQZw==
   dependencies:
     "@standardnotes/auth" "^3.15.3"
     "@standardnotes/common" "^1.8.0"
-    "@standardnotes/domain-events" "^2.19.0"
+    "@standardnotes/domain-events" "^2.20.1"
     "@standardnotes/features" "^1.26.1"
     "@standardnotes/settings" "^1.11.0"
     "@standardnotes/sncrypto-common" "^1.6.0"

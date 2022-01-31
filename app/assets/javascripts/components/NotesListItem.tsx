@@ -93,8 +93,8 @@ export const NotesListItem: FunctionComponent<Props> = ({
         </div>
       )}
       <div className={`meta ${hideEditorIcon ? 'icon-hidden' : ''}`}>
-        <div className="name">
-          <div>{note.title}</div>
+        <div className="name-container">
+          <div className="name">{note.title}</div>
           <div className="flag-icons">
             {note.locked && (
               <span title="Editing Disabled">
