@@ -1148,19 +1148,17 @@ export class NoteView extends PureComponent<Props, State> {
             >
               {this.state.marginResizersEnabled &&
               this.editorContentRef.current ? (
-                <div className="left">
-                  <PanelResizer
-                    minWidth={300}
-                    hoverable={true}
-                    collapsable={false}
-                    panel={this.editorContentRef.current}
-                    side={PanelSide.Left}
-                    type={PanelResizeType.OffsetAndWidth}
-                    left={this.state.leftResizerOffset}
-                    width={this.state.leftResizerWidth}
-                    resizeFinishCallback={this.onPanelResizeFinish}
-                  />
-                </div>
+                <PanelResizer
+                  minWidth={300}
+                  hoverable={true}
+                  collapsable={false}
+                  panel={this.editorContentRef.current}
+                  side={PanelSide.Left}
+                  type={PanelResizeType.OffsetAndWidth}
+                  left={this.state.leftResizerOffset}
+                  width={this.state.leftResizerWidth}
+                  resizeFinishCallback={this.onPanelResizeFinish}
+                />
               ) : null}
 
               {this.state.editorComponentViewer && (

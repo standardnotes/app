@@ -7,7 +7,6 @@ $heading-height: 75px;
 }
 
 .section.editor {
-  flex: 1 50%;
   display: flex;
   flex-direction: column;
   overflow-y: hidden;
@@ -39,7 +38,6 @@ $heading-height: 75px;
   z-index: $z-index-editor-title-bar;
 
   height: auto;
-  overflow: visible;
 
   .title {
     font-size: var(--sn-stylekit-font-size-h1);

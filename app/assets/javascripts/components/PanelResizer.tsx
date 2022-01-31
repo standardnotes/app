@@ -71,7 +71,7 @@ export class PanelResizer extends Component<Props, State> {
     document.addEventListener('mouseup', this.onMouseUp);
     document.addEventListener('mousemove', this.onMouseMove);
     this.debouncedResizeHandler = debounce(this.handleResize, 250);
-    if (this.props.side === PanelSide.Right) {
+    if (this.props.type === PanelResizeType.OffsetAndWidth) {
       window.addEventListener('resize', this.debouncedResizeHandler);
     }
   }
