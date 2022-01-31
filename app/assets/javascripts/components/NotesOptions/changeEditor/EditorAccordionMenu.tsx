@@ -15,7 +15,7 @@ type EditorAccordionMenuProps = {
   groups: EditorMenuGroup[];
   isOpen: boolean;
   selectComponent: (component: SNComponent | null) => Promise<void>;
-  selectedEditor: SNComponent | undefined;
+  currentEditor: SNComponent | undefined;
 };
 
 const getGroupId = (group: EditorMenuGroup) =>
@@ -25,6 +25,9 @@ const getGroupBtnId = (groupId: string) => groupId + '-button';
 
 const isElementHidden = (element: Element) => !element.clientHeight;
 
+const isElementFocused = (element: Element | null) =>
+  element === document.activeElement;
+
 export const EditorAccordionMenu: FunctionComponent<
   EditorAccordionMenuProps
 > = ({
@@ -33,16 +36,22 @@ export const EditorAccordionMenu: FunctionComponent<
   groups,
   isOpen,
   selectComponent,
-  selectedEditor,
+  currentEditor,
 }) => {
   const [activeGroupId, setActiveGroupId] = useState('');
   const menuItemRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const premiumModal = usePremiumModal();
 
+  const addRefToMenuItems = (button: HTMLButtonElement | null) => {
+    if (!menuItemRefs.current?.includes(button) && button) {
+      menuItemRefs.current.push(button);
+    }
+  };
+
   const isSelectedEditor = useCallback(
     (item: EditorMenuItem) => {
-      if (selectedEditor) {
-        if (item?.component?.identifier === selectedEditor.identifier) {
+      if (currentEditor) {
+        if (item?.component?.identifier === currentEditor.identifier) {
           return true;
         }
       } else if (item.name === PLAIN_EDITOR_NAME) {
@@ -50,7 +59,7 @@ export const EditorAccordionMenu: FunctionComponent<
       }
       return false;
     },
-    [selectedEditor]
+    [currentEditor]
   );
 
   useEffect(() => {
@@ -62,13 +71,10 @@ export const EditorAccordionMenu: FunctionComponent<
       const newActiveGroupId = getGroupId(activeGroup);
       setActiveGroupId(newActiveGroupId);
     }
-  }, [groups, selectedEditor, isSelectedEditor]);
+  }, [groups, currentEditor, isSelectedEditor]);
 
   useEffect(() => {
-    if (
-      isOpen &&
-      !menuItemRefs.current.some((btn) => btn === document.activeElement)
-    ) {
+    if (isOpen && !menuItemRefs.current.some(isElementFocused)) {
       const selectedEditor = groups
         .map((group) => group.items)
         .flat()
@@ -96,8 +102,7 @@ export const EditorAccordionMenu: FunctionComponent<
       items = items.filter((btn) => btn?.id);
     }
 
-    const currentItemIndex =
-      items.findIndex((btn) => btn === document.activeElement) ?? 0;
+    const currentItemIndex = items.findIndex(isElementFocused) ?? 0;
 
     if (e.key === KeyboardKey.Up) {
       let previousItemIndex = currentItemIndex - 1;
@@ -146,26 +151,53 @@ export const EditorAccordionMenu: FunctionComponent<
     }
   };
 
-  const selectEditor = (item: EditorMenuItem) => {
-    if (item.component) {
-      selectComponent(item.component);
-    } else if (item.isPremiumFeature) {
-      premiumModal.activate(item.name);
-    } else {
-      selectComponent(null);
+  const selectEditor = async (itemToBeSelected: EditorMenuItem) => {
+    let shouldSelectEditor = true;
+
+    if (itemToBeSelected.component) {
+      if (itemToBeSelected.component.package_info.file_type !== 'md') {
+        if (currentEditor && currentEditor.package_info.file_type !== 'md') {
+          await application.alertService
+            .confirm(
+              'Doing so might result in minor formatting changes.',
+              'Are you sure you want to change the editor?',
+              'Yes, change it'
+            )
+            .then((shouldChange) => {
+              if (!shouldChange) {
+                shouldSelectEditor = false;
+              }
+            });
+        }
+      }
+    } else if (itemToBeSelected.isPremiumFeature) {
+      premiumModal.activate(itemToBeSelected.name);
+      shouldSelectEditor = false;
+    }
+
+    if (shouldSelectEditor) {
+      selectComponent(itemToBeSelected.component ?? null);
     }
   };
 
   return (
     <>
       {groups.map((group) => {
+        if (!group.items || !group.items.length) {
+          return null;
+        }
+
         const groupId = getGroupId(group);
         const buttonId = getGroupBtnId(groupId);
         const contentId = `${groupId}-content`;
 
-        if (!group.items || !group.items.length) {
-          return null;
-        }
+        const toggleGroup = () => {
+          if (activeGroupId !== groupId) {
+            setActiveGroupId(groupId);
+          } else {
+            setActiveGroupId('');
+          }
+        };
 
         return (
           <Fragment key={groupId}>
@@ -182,19 +214,9 @@ export const EditorAccordionMenu: FunctionComponent<
                   className="sn-dropdown-item focus:bg-info-backdrop justify-between py-3"
                   id={buttonId}
                   type="button"
-                  onClick={() => {
-                    if (activeGroupId !== groupId) {
-                      setActiveGroupId(groupId);
-                    } else {
-                      setActiveGroupId('');
-                    }
-                  }}
+                  onClick={toggleGroup}
                   onBlur={closeOnBlur}
-                  ref={(button) => {
-                    if (!menuItemRefs.current?.includes(button) && button) {
-                      menuItemRefs.current.push(button);
-                    }
-                  }}
+                  ref={addRefToMenuItems}
                 >
                   <div className="flex items-center">
                     {group.icon && (
@@ -222,26 +244,21 @@ export const EditorAccordionMenu: FunctionComponent<
               >
                 <div role="radiogroup">
                   {group.items.map((item) => {
+                    const onClickEditorItem = () => {
+                      selectEditor(item);
+                    };
+
                     return (
                       <button
                         role="radio"
                         data-item-name={item.name}
-                        onClick={() => {
-                          selectEditor(item);
-                        }}
+                        onClick={onClickEditorItem}
                         className={`sn-dropdown-item py-2 text-input focus:bg-info-backdrop focus:shadow-none ${
                           item.isPremiumFeature && 'justify-between'
                         }`}
                         aria-checked={false}
                         onBlur={closeOnBlur}
-                        ref={(button) => {
-                          if (
-                            !menuItemRefs.current?.includes(button) &&
-                            button
-                          ) {
-                            menuItemRefs.current.push(button);
-                          }
-                        }}
+                        ref={addRefToMenuItems}
                       >
                         <div className="flex items-center">
                           <div

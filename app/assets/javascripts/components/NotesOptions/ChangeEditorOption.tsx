@@ -276,10 +276,10 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
           <EditorAccordionMenu
             application={application}
             closeOnBlur={closeOnBlur}
+            currentEditor={selectedEditor}
             groups={editorMenuGroups}
             isOpen={changeEditorMenuOpen}
             selectComponent={selectComponent}
-            selectedEditor={selectedEditor}
           />
         </PremiumModalProvider>
       </DisclosurePanel>
