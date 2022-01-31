@@ -1,7 +1,7 @@
 import { AppState } from '@/ui_models/app_state';
 import { Icon } from './Icon';
 import VisuallyHidden from '@reach/visually-hidden';
-import { toDirective, useCloseOnBlur } from './utils';
+import { useCloseOnBlur } from './utils';
 import {
   Disclosure,
   DisclosureButton,
@@ -97,5 +97,3 @@ export const NotesOptionsPanel = observer(
     );
   }
 );
-
-export const NotesOptionsPanelDirective = toDirective<Props>(NotesOptionsPanel);

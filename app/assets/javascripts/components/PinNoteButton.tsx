@@ -3,7 +3,6 @@ import VisuallyHidden from '@reach/visually-hidden';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { Icon } from './Icon';
-import { toDirective } from './utils';
 
 type Props = {
   appState: AppState;
@@ -34,5 +33,3 @@ export const PinNoteButton: FunctionComponent<Props> = observer(
     );
   }
 );
-
-export const PinNoteButtonDirective = toDirective<Props>(PinNoteButton);

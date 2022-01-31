@@ -1,4 +1,3 @@
-import { toDirective } from './utils';
 import { Icon } from './Icon';
 import { AppState } from '@/ui_models/app_state';
 import { observer } from 'mobx-react-lite';
@@ -39,5 +38,3 @@ export const NoAccountWarning = observer(({ appState }: Props) => {
     </div>
   );
 });
-
-export const NoAccountWarningDirective = toDirective<Props>(NoAccountWarning);

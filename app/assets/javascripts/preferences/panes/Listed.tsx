@@ -9,7 +9,7 @@ import {
 } from '../components';
 import { observer } from 'mobx-react-lite';
 import { WebApplication } from '@/ui_models/application';
-import { ContentType, SNComponent } from '@standardnotes/snjs';
+import { ContentType, SNActionsExtension } from '@standardnotes/snjs';
 import { SNItem } from '@standardnotes/snjs/dist/@types/models/core/item';
 import { useCallback, useEffect, useState } from 'preact/hooks';
 import { BlogItem } from './listed/BlogItem';
@@ -19,15 +19,15 @@ type Props = {
 };
 
 export const Listed = observer(({ application }: Props) => {
-  const [items, setItems] = useState<SNComponent[]>([]);
+  const [items, setItems] = useState<SNActionsExtension[]>([]);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const reloadItems = useCallback(() => {
     const components = application
       .getItems(ContentType.ActionsExtension)
-      .filter(
-        (item) => (item as SNComponent).package_info?.name === 'Listed'
-      ) as SNComponent[];
+      .filter((item) =>
+        (item as SNActionsExtension).url.includes('listed')
+      ) as SNActionsExtension[];
     setItems(components);
   }, [application]);
 

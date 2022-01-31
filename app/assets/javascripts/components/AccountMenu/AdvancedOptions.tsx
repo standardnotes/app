@@ -1,9 +1,8 @@
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
-import { isDev } from '@/utils';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { useEffect, useState } from 'preact/hooks';
+import { useState } from 'preact/hooks';
 import { Checkbox } from '../Checkbox';
 import { Icon } from '../Icon';
 import { InputWithIcon } from '../InputWithIcon';
