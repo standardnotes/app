@@ -134,18 +134,24 @@
         padding-left: 1rem;
       }
 
-      .name {
+      .name-container {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: space-between;
         font-weight: 600;
         font-size: 1rem;
         line-height: 1.3;
         overflow: hidden;
-        text-overflow: ellipsis;
+      }
+
+      .name {
+        word-break: break-all;
+        margin-right: 0.5rem;
       }
 
       .flag-icons {
+        padding: .135rem 0;
+
         &,
         & > * {
           display: flex;
