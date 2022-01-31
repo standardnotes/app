@@ -270,7 +270,7 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
           ...changeEditorMenuPosition,
           position: 'fixed',
         }}
-        className="sn-dropdown flex flex-col py-0.5 max-h-120 min-w-68 fixed overflow-y-auto"
+        className="sn-dropdown flex flex-col max-h-120 min-w-68 fixed overflow-y-auto"
       >
         <PremiumModalProvider state={appState.features}>
           <EditorAccordionMenu
