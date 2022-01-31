@@ -407,7 +407,7 @@ export class NoteView extends PureComponent<Props, State> {
     }
   }
 
-  async dismissProtectedWarning() {
+  dismissProtectedWarning = async () => {
     let showNoteContents = true;
     if (this.application.hasProtectionSources()) {
       showNoteContents = await this.application.authorizeNoteAccess(this.note);
@@ -417,7 +417,7 @@ export class NoteView extends PureComponent<Props, State> {
     }
     this.setShowProtectedOverlay(false);
     this.focusTitle();
-  }
+  };
 
   streamItems() {
     this.removeComponentStreamObserver = this.application.streamItems(
@@ -830,11 +830,11 @@ export class NoteView extends PureComponent<Props, State> {
     });
   }
 
-  stackComponentExpanded(component: SNComponent): boolean {
+  stackComponentExpanded = (component: SNComponent): boolean => {
     return !!this.state.stackComponentViewers.find(
       (viewer) => viewer.componentUuid === component.uuid
     );
-  }
+  };
 
   toggleStackComponent = async (component: SNComponent) => {
     if (!component.isExplicitlyEnabledForItem(this.note.uuid)) {
@@ -882,7 +882,7 @@ export class NoteView extends PureComponent<Props, State> {
     editor.scrollTop = this.scrollPosition;
   };
 
-  onSystemEditorLoad(ref: HTMLTextAreaElement | null) {
+  onSystemEditorLoad = (ref: HTMLTextAreaElement | null) => {
     if (this.removeTabObserver || !ref) {
       return;
     }
@@ -961,7 +961,7 @@ export class NoteView extends PureComponent<Props, State> {
     });
 
     observer.observe(editor.parentElement as HTMLElement, { childList: true });
-  }
+  };
 
   render() {
     if (this.state.showProtectedWarning) {
