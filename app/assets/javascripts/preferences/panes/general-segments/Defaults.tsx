@@ -123,7 +123,7 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Defaults</Title>
-        <div className="mt-2">
+        <div>
           <Subtitle>Default Editor</Subtitle>
           <Text>New notes will be created using this editor.</Text>
           <div className="mt-2">

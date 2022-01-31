@@ -249,6 +249,10 @@
   margin-left: 0rem !important;
 }
 
+.ml-0\.5 {
+  margin-left: 0.125rem;
+}
+
 .ml-3 {
   margin-left: 0.75rem;
 }
@@ -374,6 +378,10 @@
   min-width: 7.5rem;
 }
 
+.min-w-68 {
+  min-width: 17rem;
+}
+
 .min-w-90 {
   min-width: 22.5rem;
 }
@@ -494,6 +502,11 @@
 .px-12 {
   padding-left: 3rem;
   padding-right: 3rem;
+}
+
+.py-0\.5 {
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
 }
 
 .sn-component .py-2\.5 {
@@ -687,9 +700,13 @@
   @extend .h-4;
   @extend .border-2;
   @extend .border-solid;
-  @extend .border-info;
   @extend .rounded-full;
   @extend .relative;
+  border-color: var(--sn-stylekit-grey-1);
+
+  &--checked {
+    @extend .border-info;
+  }
 }
 
 .pseudo-radio-btn--checked::after {
@@ -818,4 +835,8 @@
   opacity: .5;
   cursor: default;
   pointer-events: none;
+}
+
+.hide-if-last-child:last-child {
+  display: none;
 }

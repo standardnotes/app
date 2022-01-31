@@ -45,6 +45,7 @@ export class NotesViewState {
   notesToDisplay = 0;
   pageSize = 0;
   panelTitle = 'All Notes';
+  panelWidth = 0;
   renderedNotes: SNNote[] = [];
   searchSubmitted = false;
   selectedNotes: Record<UuidString, SNNote> = {};
@@ -324,7 +325,14 @@ export class NotesViewState {
     if (displayOptionsChanged) {
       this.reloadNotesDisplayOptions();
     }
+
     this.reloadNotes();
+
+    const width = this.application.getPreference(PrefKey.NotesPanelWidth);
+    if (width) {
+      this.panelWidth = width;
+    }
+
     if (freshDisplayOptions.sortBy !== currentSortBy) {
       this.selectFirstNote();
     }
@@ -338,12 +346,9 @@ export class NotesViewState {
     }
 
     await this.appState.openNewNote(title);
-    this.application.performFunctionWithAngularDigestCycleAfterAsyncChange(
-      () => {
-        this.reloadNotes();
-        this.appState.noteTags.reloadTags();
-      }
-    );
+
+    this.reloadNotes();
+    this.appState.noteTags.reloadTags();
   };
 
   createPlaceholderNote = () => {

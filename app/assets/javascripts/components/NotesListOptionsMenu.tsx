@@ -6,7 +6,7 @@ import { useRef, useState } from 'preact/hooks';
 import { Icon } from './Icon';
 import { Menu } from './menu/Menu';
 import { MenuItem, MenuItemSeparator, MenuItemType } from './menu/MenuItem';
-import { toDirective, useCloseOnClickOutside } from './utils';
+import { useCloseOnClickOutside } from './utils';
 
 type Props = {
   application: WebApplication;
@@ -118,10 +118,8 @@ flex flex-col py-2 bottom-0 left-2 absolute';
 
     const menuRef = useRef<HTMLDivElement>(null);
 
-    useCloseOnClickOutside(menuRef, (open: boolean) => {
-      if (!open) {
-        closeDisplayOptionsMenu();
-      }
+    useCloseOnClickOutside(menuRef, () => {
+      closeDisplayOptionsMenu();
     });
 
     return (
@@ -256,13 +254,5 @@ flex flex-col py-2 bottom-0 left-2 absolute';
         </Menu>
       </div>
     );
-  }
-);
-
-export const NotesListOptionsDirective = toDirective<Props>(
-  NotesListOptionsMenu,
-  {
-    closeDisplayOptionsMenu: '=',
-    state: '&',
   }
 );
