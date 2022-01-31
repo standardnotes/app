@@ -2631,6 +2631,14 @@
     "@standardnotes/auth" "^3.15.3"
     "@standardnotes/common" "^1.8.0"
 
+"@standardnotes/features@^1.26.1":
+  version "1.26.1"
+  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.26.1.tgz#d4e4aed2ba91e40c407484e569a96c339477bba2"
+  integrity sha512-zxoeH9fjQtcTUbc5qaYD7AZETKDniM+tIvmLrWqwSC9B6/IL0R39G51BEkOzen+KhR/WgH3itHDVM+zrSMg53Q==
+  dependencies:
+    "@standardnotes/auth" "^3.15.3"
+    "@standardnotes/common" "^1.8.0"
+
 "@standardnotes/settings@^1.10.0":
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/@standardnotes/settings/-/settings-1.10.0.tgz#b46d4805c9a1cfb3fa3d9b3915daae9dd5661789"
@@ -2655,10 +2663,10 @@
     buffer "^6.0.3"
     libsodium-wrappers "^0.7.9"
 
-"@standardnotes/snjs@2.43.6":
-  version "2.43.6"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.43.6.tgz#cdab6d4124c9106f52868eefbf845a44b38b308a"
-  integrity sha512-dprBsycVE5O2ci8bHDBa4nEjoiZT+QPVokDXWndh+AHEUPyK56/Zo/S83qoyzw2bm0DrTJ1Nver+thUWNq+hXg==
+"@standardnotes/snjs@2.44.0":
+  version "2.44.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.44.0.tgz#3f83ec37e1829e83639d141dcb27a6fa940d4084"
+  integrity sha512-T37dm5ajPyZRGUCKynuRwvrNqGVpc6Ta1BtWVepkiAafmcS1+PBppzYwoKI5saBvty2oNFq6/UORAKXKW5iPbQ==
   dependencies:
     "@standardnotes/auth" "^3.15.3"
     "@standardnotes/common" "^1.8.0"
