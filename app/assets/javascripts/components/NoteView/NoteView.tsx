@@ -963,6 +963,12 @@ export class NoteView extends PureComponent<Props, State> {
     observer.observe(editor.parentElement as HTMLElement, { childList: true });
   };
 
+  ensureNoteIsInsertedBeforeUIAction = async () => {
+    if (this.controller.isTemplateNote) {
+      await this.controller.insertTemplatedNote();
+    }
+  };
+
   render() {
     if (this.state.showProtectedWarning) {
       return (
@@ -1072,17 +1078,23 @@ export class NoteView extends PureComponent<Props, State> {
                       <div className="desc">{this.state.noteStatus.desc}</div>
                     )}
                   </div>
-                  {this.appState.notes.selectedNotesCount > 0 && (
-                    <>
-                      <div className="mr-3">
-                        <PinNoteButton appState={this.appState} />
-                      </div>
-                      <NotesOptionsPanel
-                        application={this.application}
+                  <>
+                    <div className="mr-3">
+                      <PinNoteButton
                         appState={this.appState}
+                        onClickPreprocessing={
+                          this.ensureNoteIsInsertedBeforeUIAction
+                        }
                       />
-                    </>
-                  )}
+                    </div>
+                    <NotesOptionsPanel
+                      application={this.application}
+                      appState={this.appState}
+                      onClickPreprocessing={
+                        this.ensureNoteIsInsertedBeforeUIAction
+                      }
+                    />
+                  </>
                 </div>
               </div>
               <NoteTagsContainer appState={this.appState} />
