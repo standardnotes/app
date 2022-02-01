@@ -5,7 +5,7 @@ import { PANEL_NAME_NOTES } from '@/views/constants';
 import { PrefKey } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { useEffect, useRef } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { NoAccountWarning } from './NoAccountWarning';
 import { NotesList } from './NotesList';
 import { NotesListOptionsMenu } from './NotesListOptionsMenu';
@@ -16,6 +16,12 @@ import {
   PanelResizer,
   PanelResizeType,
 } from './PanelResizer';
+import {
+  Disclosure,
+  DisclosureButton,
+  DisclosurePanel,
+} from '@reach/disclosure';
+import { useCloseOnBlur } from './utils';
 
 type Props = {
   application: WebApplication;
@@ -25,6 +31,7 @@ type Props = {
 export const NotesView: FunctionComponent<Props> = observer(
   ({ application, appState }) => {
     const notesViewPanelRef = useRef<HTMLDivElement>(null);
+    const displayOptionsMenuRef = useRef<HTMLDivElement>(null);
 
     const {
       completedFullSync,
@@ -36,8 +43,8 @@ export const NotesView: FunctionComponent<Props> = observer(
       renderedNotes,
       selectedNotes,
       setNoteFilterText,
-      showDisplayOptionsMenu,
-      toggleDisplayOptionsMenu,
+      /* showDisplayOptionsMenu,
+      setShowDisplayOptionsMenu, */
       searchBarElement,
       selectNextNote,
       selectPreviousNote,
@@ -48,6 +55,13 @@ export const NotesView: FunctionComponent<Props> = observer(
       paginate,
       panelWidth,
     } = appState.notesView;
+
+    const [showDisplayOptionsMenu, setShowDisplayOptionsMenu] = useState(false);
+
+    const [closeDisplayOptMenuOnBlur] = useCloseOnBlur(
+      displayOptionsMenuRef,
+      setShowDisplayOptionsMenu
+    );
 
     useEffect(() => {
       handleFilterTextChanged();
@@ -139,6 +153,10 @@ export const NotesView: FunctionComponent<Props> = observer(
       appState.noteTags.reloadTagsContainerMaxWidth();
     };
 
+    const toggleDisplayOptionsMenu = () => {
+      setShowDisplayOptionsMenu(!showDisplayOptionsMenu);
+    };
+
     return (
       <div
         id="notes-column"
@@ -192,34 +210,42 @@ export const NotesView: FunctionComponent<Props> = observer(
               </div>
               <NoAccountWarning appState={appState} />
             </div>
-            <div id="notes-menu-bar" className="sn-component">
+            <div
+              id="notes-menu-bar"
+              className="sn-component"
+              ref={displayOptionsMenuRef}
+            >
               <div className="sk-app-bar no-edges">
                 <div className="left">
-                  <div
-                    className={`sk-app-bar-item ${
-                      showDisplayOptionsMenu ? 'selected' : ''
-                    }`}
-                    onClick={() =>
-                      toggleDisplayOptionsMenu(!showDisplayOptionsMenu)
-                    }
+                  <Disclosure
+                    open={showDisplayOptionsMenu}
+                    onChange={toggleDisplayOptionsMenu}
                   >
-                    <div className="sk-app-bar-item-column">
-                      <div className="sk-label">Options</div>
-                    </div>
-                    <div className="sk-app-bar-item-column">
-                      <div className="sk-sublabel">{optionsSubtitle}</div>
-                    </div>
-                  </div>
+                    <DisclosureButton
+                      className={`sk-app-bar-item bg-contrast border-0 focus:shadow-none ${
+                        showDisplayOptionsMenu ? 'selected' : ''
+                      }`}
+                      onBlur={closeDisplayOptMenuOnBlur}
+                    >
+                      <div className="sk-app-bar-item-column">
+                        <div className="sk-label">Options</div>
+                      </div>
+                      <div className="sk-app-bar-item-column">
+                        <div className="sk-sublabel">{optionsSubtitle}</div>
+                      </div>
+                    </DisclosureButton>
+                    <DisclosurePanel onBlur={closeDisplayOptMenuOnBlur}>
+                      {showDisplayOptionsMenu && (
+                        <NotesListOptionsMenu
+                          application={application}
+                          closeDisplayOptionsMenu={toggleDisplayOptionsMenu}
+                          closeOnBlur={closeDisplayOptMenuOnBlur}
+                        />
+                      )}
+                    </DisclosurePanel>
+                  </Disclosure>
                 </div>
               </div>
-              {showDisplayOptionsMenu && (
-                <NotesListOptionsMenu
-                  application={application}
-                  closeDisplayOptionsMenu={() =>
-                    toggleDisplayOptionsMenu(false)
-                  }
-                />
-              )}
             </div>
           </div>
           {completedFullSync && !renderedNotes.length ? (
