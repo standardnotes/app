@@ -37,15 +37,10 @@ import { ActionsMenu } from '../ActionsMenu';
 import { HistoryMenu } from '../HistoryMenu';
 import { ComponentView } from '../ComponentView';
 import { PanelSide, PanelResizer, PanelResizeType } from '../PanelResizer';
+import { ElementIds } from '@/element_ids';
 
 const MINIMUM_STATUS_DURATION = 400;
 const TEXTAREA_DEBOUNCE = 100;
-
-const ElementIds = {
-  NoteTextEditor: 'note-text-editor',
-  NoteTitleEditor: 'note-title-editor',
-  EditorContent: 'editor-content',
-};
 
 type NoteStatus = {
   message?: string;
@@ -982,11 +977,7 @@ export class NoteView extends PureComponent<Props, State> {
   render() {
     if (this.state.showProtectedWarning) {
       return (
-        <div
-          id="editor-column"
-          aria-label="Note"
-          className="section editor sn-component"
-        >
+        <div aria-label="Note" className="section editor sn-component">
           {this.state.showProtectedWarning && (
             <div className="h-full flex justify-center items-center">
               <ProtectedNoteOverlay
@@ -1001,11 +992,7 @@ export class NoteView extends PureComponent<Props, State> {
     }
 
     return (
-      <div
-        id="editor-column"
-        aria-label="Note"
-        className="section editor sn-component"
-      >
+      <div aria-label="Note" className="section editor sn-component">
         <div className="flex-grow flex flex-col">
           <div className="sn-component">
             {this.state.noteLocked && (
