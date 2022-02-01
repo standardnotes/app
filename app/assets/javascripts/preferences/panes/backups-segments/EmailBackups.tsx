@@ -1,4 +1,7 @@
-import { convertStringifiedBooleanToBoolean, isDesktopApplication } from '@/utils';
+import {
+  convertStringifiedBooleanToBoolean,
+  isDesktopApplication,
+} from '@/utils';
 import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/strings';
 import { useCallback, useEffect, useState } from 'preact/hooks';
 import { WebApplication } from '@/ui_models/application';
@@ -157,7 +160,7 @@ export const EmailBackups = observer(({ application }: Props) => {
                 id="def-editor-dropdown"
                 label="Select email frequency"
                 items={emailFrequencyOptions}
-                defaultValue={emailFrequency}
+                value={emailFrequency}
                 onChange={(item) => {
                   updateEmailFrequency(item as EmailBackupFrequency);
                 }}

@@ -1,6 +1,5 @@
 import { Dropdown, DropdownItem } from '@/components/Dropdown';
-import { IconType } from '@/components/Icon';
-import { FeatureIdentifier } from '@standardnotes/snjs';
+import { FeatureIdentifier, PrefKey } from '@standardnotes/snjs';
 import {
   PreferencesGroup,
   PreferencesSegment,
@@ -16,6 +15,8 @@ import {
 } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
+import { HorizontalSeparator } from '@/components/shared/HorizontalSeparator';
+import { Switch } from '@/components/Switch';
 
 type Props = {
   application: WebApplication;
@@ -23,31 +24,6 @@ type Props = {
 
 type EditorOption = DropdownItem & {
   value: FeatureIdentifier | 'plain-editor';
-};
-
-export const getIconAndTintForEditor = (
-  identifier: FeatureIdentifier | undefined
-): [IconType, number] => {
-  switch (identifier) {
-    case FeatureIdentifier.BoldEditor:
-    case FeatureIdentifier.PlusEditor:
-      return ['rich-text', 1];
-    case FeatureIdentifier.MarkdownBasicEditor:
-    case FeatureIdentifier.MarkdownMathEditor:
-    case FeatureIdentifier.MarkdownMinimistEditor:
-    case FeatureIdentifier.MarkdownProEditor:
-      return ['markdown', 2];
-    case FeatureIdentifier.TokenVaultEditor:
-      return ['authenticator', 6];
-    case FeatureIdentifier.SheetsEditor:
-      return ['spreadsheets', 5];
-    case FeatureIdentifier.TaskEditor:
-      return ['tasks', 3];
-    case FeatureIdentifier.CodeEditor:
-      return ['code', 4];
-    default:
-      return ['plain-text', 1];
-  }
 };
 
 const makeEditorDefault = (
@@ -82,17 +58,27 @@ const getDefaultEditor = (application: WebApplication) => {
 
 export const Defaults: FunctionComponent<Props> = ({ application }) => {
   const [editorItems, setEditorItems] = useState<DropdownItem[]>([]);
-  const [defaultEditorValue] = useState(
+  const [defaultEditorValue, setDefaultEditorValue] = useState(
     () =>
       getDefaultEditor(application)?.package_info?.identifier || 'plain-editor'
   );
+
+  const [spellcheck, setSpellcheck] = useState(() =>
+    application.getPreference(PrefKey.EditorSpellcheck, true)
+  );
+
+  const toggleSpellcheck = () => {
+    setSpellcheck(!spellcheck);
+    application.getAppState().toggleGlobalSpellcheck();
+  };
 
   useEffect(() => {
     const editors = application.componentManager
       .componentsForArea(ComponentArea.Editor)
       .map((editor): EditorOption => {
         const identifier = editor.package_info.identifier;
-        const [iconType, tint] = getIconAndTintForEditor(identifier);
+        const [iconType, tint] =
+          application.iconsController.getIconAndTintForEditor(identifier);
 
         return {
           label: editor.name,
@@ -117,6 +103,7 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
   }, [application]);
 
   const setDefaultEditor = (value: string) => {
+    setDefaultEditorValue(value as FeatureIdentifier);
     const editors = application.componentManager.componentsForArea(
       ComponentArea.Editor
     );
@@ -136,7 +123,7 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Defaults</Title>
-        <div className="mt-2">
+        <div>
           <Subtitle>Default Editor</Subtitle>
           <Text>New notes will be created using this editor.</Text>
           <div className="mt-2">
@@ -144,10 +131,22 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
               id="def-editor-dropdown"
               label="Select the default editor"
               items={editorItems}
-              defaultValue={defaultEditorValue}
+              value={defaultEditorValue}
               onChange={setDefaultEditor}
             />
           </div>
+        </div>
+        <HorizontalSeparator classes="mt-5 mb-3" />
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col">
+            <Subtitle>Spellcheck</Subtitle>
+            <Text>
+              The default spellcheck value for new notes. Spellcheck can be
+              configured per note from the note context menu. Spellcheck may
+              degrade overall typing performance with long notes.
+            </Text>
+          </div>
+          <Switch onChange={toggleSpellcheck} checked={spellcheck} />
         </div>
       </PreferencesSegment>
     </PreferencesGroup>

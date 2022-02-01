@@ -8,6 +8,7 @@ import {
 import {
   ComponentArea,
   ContentType,
+  FeatureIdentifier,
   SNComponent,
   SNTheme,
 } from '@standardnotes/snjs';
@@ -17,7 +18,7 @@ import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { JSXInternal } from 'preact/src/jsx';
 import { Icon } from '../Icon';
 import { Switch } from '../Switch';
-import { toDirective, useCloseOnBlur } from '../utils';
+import { useCloseOnBlur, useCloseOnClickOutside } from '../utils';
 import {
   quickSettingsKeyDownHandler,
   themesMenuKeyDownHandler,
@@ -33,6 +34,7 @@ const MENU_CLASSNAME =
 type MenuProps = {
   appState: AppState;
   application: WebApplication;
+  onClickOutside: () => void;
 };
 
 const toggleFocusMode = (enabled: boolean) => {
@@ -49,8 +51,21 @@ const toggleFocusMode = (enabled: boolean) => {
   }
 };
 
-const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
-  ({ application, appState }) => {
+export const sortThemes = (a: SNTheme, b: SNTheme) => {
+  const aIsLayerable = a.isLayerable();
+  const bIsLayerable = b.isLayerable();
+
+  if (aIsLayerable && !bIsLayerable) {
+    return 1;
+  } else if (!aIsLayerable && bIsLayerable) {
+    return -1;
+  } else {
+    return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
+  }
+};
+
+export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
+  ({ application, appState, onClickOutside }) => {
     const {
       closeQuickSettingsMenu,
       shouldAnimateCloseMenu,
@@ -71,6 +86,11 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     const quickSettingsMenuRef = useRef<HTMLDivElement>(null);
     const defaultThemeButtonRef = useRef<HTMLButtonElement>(null);
 
+    const mainRef = useRef<HTMLDivElement>(null);
+    useCloseOnClickOutside(mainRef, () => {
+      onClickOutside();
+    });
+
     useEffect(() => {
       toggleFocusMode(focusModeEnabled);
     }, [focusModeEnabled]);
@@ -79,23 +99,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
       const themes = application.getDisplayableItems(
         ContentType.Theme
       ) as SNTheme[];
-      setThemes(
-        themes.sort((a, b) => {
-          const aIsLayerable = a.isLayerable();
-          const bIsLayerable = b.isLayerable();
-
-          if (aIsLayerable && !bIsLayerable) {
-            return 1;
-          } else if (!aIsLayerable && bIsLayerable) {
-            return -1;
-          } else {
-            return a.name.toLowerCase() <
-              b.name.toLowerCase()
-              ? -1
-              : 1;
-          }
-        })
-      );
+      setThemes(themes.sort(sortThemes));
       setDefaultThemeOn(
         !themes.find((theme) => theme.active && !theme.isLayerable())
       );
@@ -104,10 +108,11 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     const reloadToggleableComponents = useCallback(() => {
       const toggleableComponents = (
         application.getDisplayableItems(ContentType.Component) as SNComponent[]
-      ).filter((component) =>
-        [ComponentArea.EditorStack, ComponentArea.TagsList].includes(
-          component.area
-        )
+      ).filter(
+        (component) =>
+          [ComponentArea.EditorStack, ComponentArea.TagsList].includes(
+            component.area
+          ) && component.identifier !== FeatureIdentifier.FoldersComponent
       );
       setToggleableComponents(toggleableComponents);
     }, [application]);
@@ -226,7 +231,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     };
 
     return (
-      <div className="sn-component">
+      <div ref={mainRef} className="sn-component">
         <div
           className={`sn-quick-settings-menu absolute ${MENU_CLASSNAME} ${
             shouldAnimateCloseMenu
@@ -323,6 +328,3 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     );
   }
 );
-
-export const QuickSettingsMenuDirective =
-  toDirective<MenuProps>(QuickSettingsMenu);

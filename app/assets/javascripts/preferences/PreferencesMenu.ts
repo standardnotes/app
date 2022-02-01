@@ -1,4 +1,3 @@
-import { IconType } from '@/components/Icon';
 import { action, makeAutoObservable, observable } from 'mobx';
 import { ExtensionsLatestVersions } from '@/preferences/panes/extensions-segments';
 import {
@@ -6,6 +5,7 @@ import {
   ContentType,
   FeatureIdentifier,
   SNComponent,
+  IconType,
 } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 
@@ -52,6 +52,7 @@ const PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
 const READY_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
   { id: 'account', label: 'Account', icon: 'user' },
   { id: 'general', label: 'General', icon: 'settings' },
+  { id: 'appearance', label: 'Appearance', icon: 'themes' },
   { id: 'security', label: 'Security', icon: 'security' },
   { id: 'backups', label: 'Backups', icon: 'restore' },
   { id: 'listed', label: 'Listed', icon: 'listed' },

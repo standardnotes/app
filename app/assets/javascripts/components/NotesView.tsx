@@ -1,7 +1,3 @@
-import {
-  PanelSide,
-  ResizeFinishCallback,
-} from '@/directives/views/panelResizer';
 import { KeyboardKey, KeyboardModifier } from '@/services/ioService';
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
@@ -9,22 +5,33 @@ import { PANEL_NAME_NOTES } from '@/views/constants';
 import { PrefKey } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { useEffect, useRef } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { NoAccountWarning } from './NoAccountWarning';
 import { NotesList } from './NotesList';
 import { NotesListOptionsMenu } from './NotesListOptionsMenu';
-import { PanelResizer } from './PanelResizer';
 import { SearchOptions } from './SearchOptions';
-import { toDirective } from './utils';
+import {
+  PanelSide,
+  ResizeFinishCallback,
+  PanelResizer,
+  PanelResizeType,
+} from './PanelResizer';
+import {
+  Disclosure,
+  DisclosureButton,
+  DisclosurePanel,
+} from '@reach/disclosure';
+import { useCloseOnBlur } from './utils';
 
 type Props = {
   application: WebApplication;
   appState: AppState;
 };
 
-const NotesView: FunctionComponent<Props> = observer(
+export const NotesView: FunctionComponent<Props> = observer(
   ({ application, appState }) => {
     const notesViewPanelRef = useRef<HTMLDivElement>(null);
+    const displayOptionsMenuRef = useRef<HTMLDivElement>(null);
 
     const {
       completedFullSync,
@@ -36,8 +43,6 @@ const NotesView: FunctionComponent<Props> = observer(
       renderedNotes,
       selectedNotes,
       setNoteFilterText,
-      showDisplayOptionsMenu,
-      toggleDisplayOptionsMenu,
       searchBarElement,
       selectNextNote,
       selectPreviousNote,
@@ -46,7 +51,15 @@ const NotesView: FunctionComponent<Props> = observer(
       onSearchInputBlur,
       clearFilterText,
       paginate,
+      panelWidth,
     } = appState.notesView;
+
+    const [showDisplayOptionsMenu, setShowDisplayOptionsMenu] = useState(false);
+
+    const [closeDisplayOptMenuOnBlur] = useCloseOnBlur(
+      displayOptionsMenuRef,
+      setShowDisplayOptionsMenu
+    );
 
     useEffect(() => {
       handleFilterTextChanged();
@@ -124,11 +137,12 @@ const NotesView: FunctionComponent<Props> = observer(
     };
 
     const panelResizeFinishCallback: ResizeFinishCallback = (
-      _lastWidth,
+      width,
       _lastLeft,
       _isMaxWidth,
       isCollapsed
     ) => {
+      application.setPreference(PrefKey.NotesPanelWidth, width);
       appState.noteTags.reloadTagsContainerMaxWidth();
       appState.panelDidResize(PANEL_NAME_NOTES, isCollapsed);
     };
@@ -137,10 +151,14 @@ const NotesView: FunctionComponent<Props> = observer(
       appState.noteTags.reloadTagsContainerMaxWidth();
     };
 
+    const toggleDisplayOptionsMenu = () => {
+      setShowDisplayOptionsMenu(!showDisplayOptionsMenu);
+    };
+
     return (
       <div
         id="notes-column"
-        className="sn-component section notes"
+        className="sn-component section notes app-column app-column-second"
         aria-label="Notes"
         ref={notesViewPanelRef}
       >
@@ -190,34 +208,42 @@ const NotesView: FunctionComponent<Props> = observer(
               </div>
               <NoAccountWarning appState={appState} />
             </div>
-            <div id="notes-menu-bar" className="sn-component">
+            <div
+              id="notes-menu-bar"
+              className="sn-component"
+              ref={displayOptionsMenuRef}
+            >
               <div className="sk-app-bar no-edges">
                 <div className="left">
-                  <div
-                    className={`sk-app-bar-item ${
-                      showDisplayOptionsMenu ? 'selected' : ''
-                    }`}
-                    onClick={() =>
-                      toggleDisplayOptionsMenu(!showDisplayOptionsMenu)
-                    }
+                  <Disclosure
+                    open={showDisplayOptionsMenu}
+                    onChange={toggleDisplayOptionsMenu}
                   >
-                    <div className="sk-app-bar-item-column">
-                      <div className="sk-label">Options</div>
-                    </div>
-                    <div className="sk-app-bar-item-column">
-                      <div className="sk-sublabel">{optionsSubtitle}</div>
-                    </div>
-                  </div>
+                    <DisclosureButton
+                      className={`sk-app-bar-item bg-contrast border-0 focus:shadow-none ${
+                        showDisplayOptionsMenu ? 'selected' : ''
+                      }`}
+                      onBlur={closeDisplayOptMenuOnBlur}
+                    >
+                      <div className="sk-app-bar-item-column">
+                        <div className="sk-label">Options</div>
+                      </div>
+                      <div className="sk-app-bar-item-column">
+                        <div className="sk-sublabel">{optionsSubtitle}</div>
+                      </div>
+                    </DisclosureButton>
+                    <DisclosurePanel onBlur={closeDisplayOptMenuOnBlur}>
+                      {showDisplayOptionsMenu && (
+                        <NotesListOptionsMenu
+                          application={application}
+                          closeDisplayOptionsMenu={toggleDisplayOptionsMenu}
+                          closeOnBlur={closeDisplayOptMenuOnBlur}
+                        />
+                      )}
+                    </DisclosurePanel>
+                  </Disclosure>
                 </div>
               </div>
-              {showDisplayOptionsMenu && (
-                <NotesListOptionsMenu
-                  application={application}
-                  closeDisplayOptionsMenu={() =>
-                    toggleDisplayOptionsMenu(false)
-                  }
-                />
-              )}
             </div>
           </div>
           {completedFullSync && !renderedNotes.length ? (
@@ -239,19 +265,19 @@ const NotesView: FunctionComponent<Props> = observer(
         </div>
         {notesViewPanelRef.current && (
           <PanelResizer
-            application={application}
             collapsable={true}
+            hoverable={true}
             defaultWidth={300}
-            panel={document.querySelector('notes-view') as HTMLDivElement}
-            prefKey={PrefKey.NotesPanelWidth}
+            panel={notesViewPanelRef.current}
             side={PanelSide.Right}
+            type={PanelResizeType.WidthOnly}
             resizeFinishCallback={panelResizeFinishCallback}
             widthEventCallback={panelWidthEventCallback}
+            width={panelWidth}
+            left={0}
           />
         )}
       </div>
     );
   }
 );
-
-export const NotesViewDirective = toDirective<Props>(NotesView);

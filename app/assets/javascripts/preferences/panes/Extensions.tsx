@@ -74,6 +74,7 @@ export const Extensions: FunctionComponent<{
 
   const confirmExtension = async () => {
     await application.insertItem(confirmableExtension as SNComponent);
+    application.sync();
     setExtensions(loadExtensions(application));
   };
 
@@ -109,7 +110,6 @@ export const Extensions: FunctionComponent<{
         {!confirmableExtension && (
           <PreferencesSegment>
             <Title>Install Custom Extension</Title>
-            <div className="min-h-2" />
             <DecoratedInput
               placeholder={'Enter Extension URL'}
               text={customUrl}

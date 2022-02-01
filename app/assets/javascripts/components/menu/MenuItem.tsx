@@ -1,13 +1,10 @@
-import {
-  ComponentChild,
-  ComponentChildren,
-  FunctionComponent,
-  VNode,
-} from 'preact';
+import { ComponentChildren, FunctionComponent, VNode } from 'preact';
 import { forwardRef, Ref } from 'preact/compat';
 import { JSXInternal } from 'preact/src/jsx';
-import { Icon, IconType } from '../Icon';
+import { Icon } from '../Icon';
 import { Switch, SwitchProps } from '../Switch';
+import { IconType } from '@standardnotes/snjs';
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/views/constants';
 
 export enum MenuItemType {
   IconButton,
@@ -20,6 +17,7 @@ type MenuItemProps = {
   children: ComponentChildren;
   onClick?: JSXInternal.MouseEventHandler<HTMLButtonElement>;
   onChange?: SwitchProps['onChange'];
+  onBlur?: (event: { relatedTarget: EventTarget | null }) => void;
   className?: string;
   checked?: boolean;
   icon?: IconType;
@@ -33,6 +31,7 @@ export const MenuItem: FunctionComponent<MenuItemProps> = forwardRef(
       children,
       onClick,
       onChange,
+      onBlur,
       className = '',
       type,
       checked,
@@ -44,22 +43,31 @@ export const MenuItem: FunctionComponent<MenuItemProps> = forwardRef(
   ) => {
     return type === MenuItemType.SwitchButton &&
       typeof onChange === 'function' ? (
-      <Switch
-        className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-        checked={checked}
-        onChange={onChange}
+      <button
+        className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none justify-between"
+        onClick={() => {
+          onChange(!checked);
+        }}
+        onBlur={onBlur}
+        tabIndex={
+          typeof tabIndex === 'number' ? tabIndex : FOCUSABLE_BUT_NOT_TABBABLE
+        }
         role="menuitemcheckbox"
-        tabIndex={typeof tabIndex === 'number' ? tabIndex : -1}
+        aria-checked={checked}
       >
-        {children}
-      </Switch>
+        <span className="flex flex-grow items-center">{children}</span>
+        <Switch className="px-0" checked={checked} />
+      </button>
     ) : (
       <button
         ref={ref}
         role={type === MenuItemType.RadioButton ? 'menuitemradio' : 'menuitem'}
-        tabIndex={typeof tabIndex === 'number' ? tabIndex : -1}
+        tabIndex={
+          typeof tabIndex === 'number' ? tabIndex : FOCUSABLE_BUT_NOT_TABBABLE
+        }
         className={`sn-dropdown-item focus:bg-info-backdrop focus:shadow-none ${className}`}
         onClick={onClick}
+        onBlur={onBlur}
         {...(type === MenuItemType.RadioButton
           ? { 'aria-checked': checked }
           : {})}
@@ -90,22 +98,27 @@ type ListElementProps = {
 };
 
 export const MenuItemListElement: FunctionComponent<ListElementProps> =
-  forwardRef(({ children, isFirstMenuItem }: ListElementProps, ref: Ref<HTMLLIElement>) => {
-    const child = children as VNode<unknown>;
+  forwardRef(
+    (
+      { children, isFirstMenuItem }: ListElementProps,
+      ref: Ref<HTMLLIElement>
+    ) => {
+      const child = children as VNode<unknown>;
 
-    return (
-      <li className="list-style-none" role="none" ref={ref}>
-        {{
-          ...child,
-          props: {
-            ...(child.props ? { ...child.props } : {}),
-            ...(child.type === MenuItem
-              ? {
-                  tabIndex: isFirstMenuItem ? 0 : -1,
-                }
-              : {}),
-          },
-        }}
-      </li>
-    );
-  });
+      return (
+        <li className="list-style-none" role="none" ref={ref}>
+          {{
+            ...child,
+            props: {
+              ...(child.props ? { ...child.props } : {}),
+              ...(child.type === MenuItem
+                ? {
+                    tabIndex: isFirstMenuItem ? 0 : -1,
+                  }
+                : {}),
+            },
+          }}
+        </li>
+      );
+    }
+  );

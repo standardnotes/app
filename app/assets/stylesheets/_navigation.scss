@@ -6,9 +6,6 @@
 }
 
 #navigation {
-  width: 100%;
-  flex-grow: 0;
-
   user-select: none;
   -moz-user-select: none;
   -khtml-user-select: none;
@@ -31,7 +28,7 @@
   }
 
   .no-tags-placeholder {
-    padding: 0px 12px;
+    padding: 0px 14px;
     font-size: 12px;
     opacity: 0.4;
     margin-top: -5px;

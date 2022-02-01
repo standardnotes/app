@@ -1,5 +1,4 @@
 import { AppState } from '@/ui_models/app_state';
-import { toDirective } from './utils';
 
 type Props = {
   appState: AppState;
@@ -7,7 +6,7 @@ type Props = {
   hasProtectionSources: boolean;
 };
 
-function ProtectedNoteOverlay({
+export function ProtectedNoteOverlay({
   appState,
   onViewNote,
   hasProtectionSources,
@@ -41,11 +40,3 @@ function ProtectedNoteOverlay({
     </div>
   );
 }
-
-export const ProtectedNoteOverlayDirective = toDirective<Props>(
-  ProtectedNoteOverlay,
-  {
-    onViewNote: '&',
-    hasProtectionSources: '=',
-  }
-);

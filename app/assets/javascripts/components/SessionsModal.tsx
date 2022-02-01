@@ -15,7 +15,6 @@ import {
   AlertDialogDescription,
   AlertDialogLabel,
 } from '@reach/alert-dialog';
-import { toDirective } from './utils';
 import { WebApplication } from '@/ui_models/application';
 import { observer } from 'mobx-react-lite';
 
@@ -26,12 +25,12 @@ type Session = RemoteSession & {
 function useSessions(
   application: SNApplication
 ): [
-    Session[],
-    () => void,
-    boolean,
-    (uuid: UuidString) => Promise<void>,
-    string
-  ] {
+  Session[],
+  () => void,
+  boolean,
+  (uuid: UuidString) => Promise<void>,
+  string
+] {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [lastRefreshDate, setLastRefreshDate] = useState(Date.now());
   const [refreshing, setRefreshing] = useState(true);
@@ -93,19 +92,14 @@ function useSessions(
   return [sessions, refresh, refreshing, revokeSession, errorMessage];
 }
 
-const SessionsModal: FunctionComponent<{
+const SessionsModalContent: FunctionComponent<{
   appState: AppState;
   application: SNApplication;
 }> = ({ appState, application }) => {
   const close = () => appState.closeSessionsModal();
 
-  const [
-    sessions,
-    refresh,
-    refreshing,
-    revokeSession,
-    errorMessage,
-  ] = useSessions(application);
+  const [sessions, refresh, refreshing, revokeSession, errorMessage] =
+    useSessions(application);
 
   const [confirmRevokingSessionUuid, setRevokingSessionUuid] = useState('');
   const closeRevokeSessionAlert = () => setRevokingSessionUuid('');
@@ -240,15 +234,15 @@ const SessionsModal: FunctionComponent<{
   );
 };
 
-export const Sessions: FunctionComponent<{
+export const SessionsModal: FunctionComponent<{
   appState: AppState;
   application: WebApplication;
 }> = observer(({ appState, application }) => {
   if (appState.isSessionsModalVisible) {
-    return <SessionsModal application={application} appState={appState} />;
+    return (
+      <SessionsModalContent application={application} appState={appState} />
+    );
   } else {
     return null;
   }
 });
-
-export const SessionsModalDirective = toDirective(Sessions);

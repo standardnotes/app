@@ -1,4 +1,3 @@
-import { getIconAndTintForEditor } from '@/preferences/panes/general-segments';
 import { WebApplication } from '@/ui_models/application';
 import {
   CollectionSort,
@@ -74,7 +73,9 @@ export const NotesListItem: FunctionComponent<Props> = ({
   const showModifiedDate = sortedBy === CollectionSort.UpdatedAt;
   const editorForNote = application.componentManager.editorForNote(note);
   const editorName = editorForNote?.name ?? 'Plain editor';
-  const [icon, tint] = getIconAndTintForEditor(editorForNote?.identifier);
+  const [icon, tint] = application.iconsController.getIconAndTintForEditor(
+    editorForNote?.identifier
+  );
 
   return (
     <div
@@ -93,8 +94,8 @@ export const NotesListItem: FunctionComponent<Props> = ({
         </div>
       )}
       <div className={`meta ${hideEditorIcon ? 'icon-hidden' : ''}`}>
-        <div className="name">
-          <div>{note.title}</div>
+        <div className="name-container">
+          <div className="name">{note.title}</div>
           <div className="flag-icons">
             {note.locked && (
               <span title="Editing Disabled">

@@ -45,6 +45,7 @@ export class NotesViewState {
   notesToDisplay = 0;
   pageSize = 0;
   panelTitle = 'All Notes';
+  panelWidth = 0;
   renderedNotes: SNNote[] = [];
   searchSubmitted = false;
   selectedNotes: Record<UuidString, SNNote> = {};
@@ -95,7 +96,10 @@ export class NotesViewState {
         /** A tag could have changed its relationships, so we need to reload the filter */
         this.reloadNotesDisplayOptions();
         this.reloadNotes();
-        if (findInArray(tags, 'uuid', this.appState.selectedTag?.uuid)) {
+        if (
+          this.appState.selectedTag &&
+          findInArray(tags, 'uuid', this.appState.selectedTag.uuid)
+        ) {
           /** Tag title could have changed */
           this.reloadPanelTitle();
         }
@@ -142,7 +146,7 @@ export class NotesViewState {
         } else if (eventName === AppStateEvent.ActiveEditorChanged) {
           this.handleEditorChange();
         } else if (eventName === AppStateEvent.EditorFocused) {
-          this.toggleDisplayOptionsMenu(false);
+          this.setShowDisplayOptionsMenu(false);
         }
       })
     );
@@ -165,7 +169,7 @@ export class NotesViewState {
       setCompletedFullSync: action,
       setNoteFilterText: action,
       syncSelectedNotes: action,
-      toggleDisplayOptionsMenu: action,
+      setShowDisplayOptionsMenu: action,
       onFilterEnter: action,
       handleFilterTextChanged: action,
 
@@ -181,7 +185,7 @@ export class NotesViewState {
     this.completedFullSync = completed;
   };
 
-  toggleDisplayOptionsMenu = (enabled: boolean) => {
+  setShowDisplayOptionsMenu = (enabled: boolean) => {
     this.showDisplayOptionsMenu = enabled;
   };
 
@@ -321,7 +325,14 @@ export class NotesViewState {
     if (displayOptionsChanged) {
       this.reloadNotesDisplayOptions();
     }
+
     this.reloadNotes();
+
+    const width = this.application.getPreference(PrefKey.NotesPanelWidth);
+    if (width) {
+      this.panelWidth = width;
+    }
+
     if (freshDisplayOptions.sortBy !== currentSortBy) {
       this.selectFirstNote();
     }
@@ -335,12 +346,9 @@ export class NotesViewState {
     }
 
     await this.appState.openNewNote(title);
-    this.application.performFunctionWithAngularDigestCycleAfterAsyncChange(
-      () => {
-        this.reloadNotes();
-        this.appState.noteTags.reloadTags();
-      }
-    );
+
+    this.reloadNotes();
+    this.appState.noteTags.reloadTags();
   };
 
   createPlaceholderNote = () => {
@@ -497,7 +505,7 @@ export class NotesViewState {
 
   handleTagChange = () => {
     this.resetScrollPosition();
-    this.toggleDisplayOptionsMenu(false);
+    this.setShowDisplayOptionsMenu(false);
     this.setNoteFilterText('');
     this.application.getDesktopService().searchText();
     this.resetPagination();
