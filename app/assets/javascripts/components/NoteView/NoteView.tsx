@@ -101,6 +101,7 @@ export const reloadFont = (monospaceFont?: boolean) => {
 type State = {
   availableStackComponents: SNComponent[];
   editorComponentViewer?: ComponentViewer;
+  editorComponentViewerDidAlreadyReload?: boolean;
   editorStateDidLoad: boolean;
   editorTitle: string;
   editorText: string;
@@ -445,17 +446,26 @@ export class NoteView extends PureComponent<Props, State> {
   }
 
   public editorComponentViewerRequestsReload = async (
-    viewer: ComponentViewer
+    viewer: ComponentViewer,
+    force?: boolean
   ): Promise<void> => {
+    if (this.state.editorComponentViewerDidAlreadyReload && !force) {
+      return;
+    }
     const component = viewer.component;
     this.application.componentManager.destroyComponentViewer(viewer);
-    this.setState({
-      editorComponentViewer: undefined,
-    });
-    this.setState({
-      editorComponentViewer: this.createComponentViewer(component),
-      editorStateDidLoad: true,
-    });
+    this.setState(
+      {
+        editorComponentViewer: undefined,
+        editorComponentViewerDidAlreadyReload: true,
+      },
+      () => {
+        this.setState({
+          editorComponentViewer: this.createComponentViewer(component),
+          editorStateDidLoad: true,
+        });
+      }
+    );
   };
 
   /**
@@ -1288,7 +1298,7 @@ export class NoteView extends PureComponent<Props, State> {
                   return (
                     <div className="component-view component-stack-item">
                       <ComponentView
-                        key={viewer.componentUuid}
+                        key={viewer.identifier}
                         componentViewer={viewer}
                         manualDealloc={true}
                         application={this.application}
