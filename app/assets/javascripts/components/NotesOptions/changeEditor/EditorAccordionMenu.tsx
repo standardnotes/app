@@ -155,22 +155,19 @@ export const EditorAccordionMenu: FunctionComponent<
     let shouldSelectEditor = true;
 
     if (itemToBeSelected.component) {
-      if (itemToBeSelected.component.package_info.file_type !== 'md') {
-        if (currentEditor && currentEditor.package_info.file_type !== 'md') {
-          await application.alertService
-            .confirm(
-              'Doing so might result in minor formatting changes.',
-              'Are you sure you want to change the editor?',
-              'Yes, change it'
-            )
-            .then((shouldChange) => {
-              if (!shouldChange) {
-                shouldSelectEditor = false;
-              }
-            });
-        }
+      const changeRequiresAlert =
+        application.componentManager.doesEditorChangeRequireAlert(
+          currentEditor,
+          itemToBeSelected.component
+        );
+
+      if (changeRequiresAlert) {
+        shouldSelectEditor =
+          await application.componentManager.showEditorChangeAlert();
       }
-    } else if (itemToBeSelected.isPremiumFeature) {
+    }
+
+    if (itemToBeSelected.isPremiumFeature) {
       premiumModal.activate(itemToBeSelected.name);
       shouldSelectEditor = false;
     }
