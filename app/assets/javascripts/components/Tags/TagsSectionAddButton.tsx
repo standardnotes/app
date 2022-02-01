@@ -10,13 +10,7 @@ type Props = {
 };
 
 export const TagsSectionAddButton: FunctionComponent<Props> = observer(
-  ({ tags, features }) => {
-    const isNativeFoldersEnabled = features.enableNativeFoldersFeature;
-
-    if (!isNativeFoldersEnabled) {
-      return null;
-    }
-
+  ({ tags }) => {
     return (
       <IconButton
         focusable={true}

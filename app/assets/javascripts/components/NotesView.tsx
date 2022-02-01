@@ -164,7 +164,7 @@ export const NotesView: FunctionComponent<Props> = observer(
       >
         <div className="content">
           <div id="notes-title-bar" className="section-title-bar">
-            <div className="p-4">
+            <div id="notes-title-bar-container">
               <div className="section-title-bar-header">
                 <div className="sk-h2 font-semibold title">{panelTitle}</div>
                 <button

@@ -51,7 +51,7 @@ export const PremiumFeaturesModal: FunctionalComponent<Props> = ({
               <PremiumIllustration className="mb-2" />
             </div>
             <div className="text-lg text-center font-bold mb-1">
-              Enable premium features
+              Enable Premium Features
             </div>
           </AlertDialogLabel>
           <AlertDialogDescription className="text-sm text-center color-grey-1 px-4.5 mb-2">
@@ -65,7 +65,7 @@ export const PremiumFeaturesModal: FunctionalComponent<Props> = ({
               className="w-full rounded no-border py-2 font-bold bg-info color-info-contrast hover:brightness-130 focus:brightness-130 cursor-pointer"
               ref={plansButtonRef}
             >
-              See our plans
+              See Plans
             </button>
           </div>
         </div>
