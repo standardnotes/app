@@ -148,11 +148,15 @@ const SpellcheckOptions: FunctionComponent<{
   note: SNNote;
 }> = ({ appState, note }) => {
   const editor = appState.application.componentManager.editorForNote(note);
-  const spellcheckControllable = Boolean(
+
+  const firstPartySpellcheckControl =
     editor &&
-      (appState.application.getFeature(editor.identifier)?.spellcheckControl ||
-        // Fallback to package_info in case it's a third-party editor
-        editor.package_info.spellcheckControl)
+    appState.application.getFeature(editor.identifier)?.spellcheckControl;
+  const thirdPartySpellcheckControl =
+    editor && editor.package_info.spellcheckControl;
+
+  const spellcheckControllable = Boolean(
+    !editor || firstPartySpellcheckControl || thirdPartySpellcheckControl
   );
   const noteSpellcheck = !spellcheckControllable
     ? true
