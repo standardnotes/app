@@ -43,8 +43,6 @@ export const NotesView: FunctionComponent<Props> = observer(
       renderedNotes,
       selectedNotes,
       setNoteFilterText,
-      /* showDisplayOptionsMenu,
-      setShowDisplayOptionsMenu, */
       searchBarElement,
       selectNextNote,
       selectPreviousNote,
