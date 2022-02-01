@@ -72,14 +72,11 @@ $heading-height: 75px;
     text-transform: none;
     font-weight: normal;
     text-align: right;
-    white-space: nowrap;
-
-    .message,
-    .desc {
-      max-width: 100px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+    
+    min-width: 15ch;
+    max-width: 15ch;
+    word-break: break-word;
+    overflow: hidden;
 
     .desc,
     .message:not(.warning):not(.danger) {
