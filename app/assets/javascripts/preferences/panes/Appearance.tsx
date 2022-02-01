@@ -142,7 +142,8 @@ const AppearancePane: FunctionComponent<Props> = observer(({ application }) => {
               <div className="flex flex-col">
                 <Subtitle>Use system color scheme</Subtitle>
                 <Text>
-                  Automatically change active theme based on your system settings.
+                  Automatically change active theme based on your system
+                  settings.
                 </Text>
               </div>
               <Switch

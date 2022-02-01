@@ -7,14 +7,18 @@ import { Icon } from './Icon';
 type Props = {
   appState: AppState;
   className?: string;
+  onClickPreprocessing?: () => Promise<void>;
 };
 
 export const PinNoteButton: FunctionComponent<Props> = observer(
-  ({ appState, className = '' }) => {
+  ({ appState, className = '', onClickPreprocessing }) => {
     const notes = Object.values(appState.notes.selectedNotes);
     const pinned = notes.some((note) => note.pinned);
 
-    const togglePinned = () => {
+    const togglePinned = async () => {
+      if (onClickPreprocessing) {
+        await onClickPreprocessing();
+      }
       if (!pinned) {
         appState.notes.setPinSelectedNotes(true);
       } else {

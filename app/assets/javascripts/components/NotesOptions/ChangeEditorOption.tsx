@@ -18,6 +18,7 @@ import {
 } from '@reach/disclosure';
 import {
   ComponentArea,
+  IconType,
   ItemMutator,
   NoteMutator,
   PrefKey,
@@ -27,7 +28,7 @@ import {
 } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { Icon, IconType } from '../Icon';
+import { Icon } from '../Icon';
 import { PremiumModalProvider } from '../Premium';
 import { createEditorMenuGroups } from './changeEditor/createEditorMenuGroups';
 import { EditorAccordionMenu } from './changeEditor/EditorAccordionMenu';
@@ -270,7 +271,7 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
           ...changeEditorMenuPosition,
           position: 'fixed',
         }}
-        className="sn-dropdown flex flex-col py-0.5 max-h-120 min-w-68 fixed overflow-y-auto"
+        className="sn-dropdown flex flex-col max-h-120 min-w-68 fixed overflow-y-auto"
       >
         <PremiumModalProvider state={appState.features}>
           <EditorAccordionMenu

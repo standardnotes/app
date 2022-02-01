@@ -5,16 +5,19 @@
 
 .app-column-first {
   width: 180px;
-  flex-grow: 0;
+  flex-shrink: 0.2;
 }
 
 .app-column-second {
   width: 350px;
-  flex-grow: 0;
+  flex-shrink: 0.5;
 }
 
 .app-column-third {
-  flex: 1 50%;
+  flex-grow: 1;
+  flex-shrink: 0.3;
 }
 
-.app-column {}
+.app-column {
+  overflow: hidden;
+}

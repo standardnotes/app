@@ -407,7 +407,7 @@ export class NoteView extends PureComponent<Props, State> {
     }
   }
 
-  async dismissProtectedWarning() {
+  dismissProtectedWarning = async () => {
     let showNoteContents = true;
     if (this.application.hasProtectionSources()) {
       showNoteContents = await this.application.authorizeNoteAccess(this.note);
@@ -417,7 +417,7 @@ export class NoteView extends PureComponent<Props, State> {
     }
     this.setShowProtectedOverlay(false);
     this.focusTitle();
-  }
+  };
 
   streamItems() {
     this.removeComponentStreamObserver = this.application.streamItems(
@@ -830,11 +830,11 @@ export class NoteView extends PureComponent<Props, State> {
     });
   }
 
-  stackComponentExpanded(component: SNComponent): boolean {
+  stackComponentExpanded = (component: SNComponent): boolean => {
     return !!this.state.stackComponentViewers.find(
       (viewer) => viewer.componentUuid === component.uuid
     );
-  }
+  };
 
   toggleStackComponent = async (component: SNComponent) => {
     if (!component.isExplicitlyEnabledForItem(this.note.uuid)) {
@@ -882,7 +882,7 @@ export class NoteView extends PureComponent<Props, State> {
     editor.scrollTop = this.scrollPosition;
   };
 
-  onSystemEditorLoad(ref: HTMLTextAreaElement | null) {
+  onSystemEditorLoad = (ref: HTMLTextAreaElement | null) => {
     if (this.removeTabObserver || !ref) {
       return;
     }
@@ -961,7 +961,13 @@ export class NoteView extends PureComponent<Props, State> {
     });
 
     observer.observe(editor.parentElement as HTMLElement, { childList: true });
-  }
+  };
+
+  ensureNoteIsInsertedBeforeUIAction = async () => {
+    if (this.controller.isTemplateNote) {
+      await this.controller.insertTemplatedNote();
+    }
+  };
 
   render() {
     if (this.state.showProtectedWarning) {
@@ -1072,17 +1078,23 @@ export class NoteView extends PureComponent<Props, State> {
                       <div className="desc">{this.state.noteStatus.desc}</div>
                     )}
                   </div>
-                  {this.appState.notes.selectedNotesCount > 0 && (
-                    <>
-                      <div className="mr-3">
-                        <PinNoteButton appState={this.appState} />
-                      </div>
-                      <NotesOptionsPanel
-                        application={this.application}
+                  <>
+                    <div className="mr-3">
+                      <PinNoteButton
                         appState={this.appState}
+                        onClickPreprocessing={
+                          this.ensureNoteIsInsertedBeforeUIAction
+                        }
                       />
-                    </>
-                  )}
+                    </div>
+                    <NotesOptionsPanel
+                      application={this.application}
+                      appState={this.appState}
+                      onClickPreprocessing={
+                        this.ensureNoteIsInsertedBeforeUIAction
+                      }
+                    />
+                  </>
                 </div>
               </div>
               <NoteTagsContainer appState={this.appState} />
@@ -1136,19 +1148,17 @@ export class NoteView extends PureComponent<Props, State> {
             >
               {this.state.marginResizersEnabled &&
               this.editorContentRef.current ? (
-                <div className="left">
-                  <PanelResizer
-                    minWidth={300}
-                    hoverable={true}
-                    collapsable={false}
-                    panel={this.editorContentRef.current}
-                    side={PanelSide.Left}
-                    type={PanelResizeType.OffsetAndWidth}
-                    left={this.state.leftResizerOffset}
-                    width={this.state.leftResizerWidth}
-                    resizeFinishCallback={this.onPanelResizeFinish}
-                  />
-                </div>
+                <PanelResizer
+                  minWidth={300}
+                  hoverable={true}
+                  collapsable={false}
+                  panel={this.editorContentRef.current}
+                  side={PanelSide.Left}
+                  type={PanelResizeType.OffsetAndWidth}
+                  left={this.state.leftResizerOffset}
+                  width={this.state.leftResizerWidth}
+                  resizeFinishCallback={this.onPanelResizeFinish}
+                />
               ) : null}
 
               {this.state.editorComponentViewer && (

@@ -1,4 +1,3 @@
-import { IconType } from '@/components/Icon';
 import { action, makeAutoObservable, observable } from 'mobx';
 import { ExtensionsLatestVersions } from '@/preferences/panes/extensions-segments';
 import {
@@ -6,6 +5,7 @@ import {
   ContentType,
   FeatureIdentifier,
   SNComponent,
+  IconType,
 } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 

@@ -1,9 +1,6 @@
 import { Icon } from '@/components/Icon';
 import { usePremiumModal } from '@/components/Premium';
-import {
-  FeaturesState,
-  TAG_FOLDERS_FEATURE_NAME,
-} from '@/ui_models/app_state/features_state';
+import { FeaturesState } from '@/ui_models/app_state/features_state';
 import { TagsState } from '@/ui_models/app_state/tags_state';
 import { observer } from 'mobx-react-lite';
 import { useDrop } from 'react-dnd';
@@ -22,8 +19,8 @@ export const RootTagDropZone: React.FC<Props> = observer(
     const [{ isOver, canDrop }, dropRef] = useDrop<DropItem, void, DropProps>(
       () => ({
         accept: ItemTypes.TAG,
-        canDrop: () => {
-          return true;
+        canDrop: (item) => {
+          return tagsState.hasParent(item.uuid);
         },
         drop: (item) => {
           tagsState.assignParent(item.uuid, undefined);

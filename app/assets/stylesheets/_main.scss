@@ -132,7 +132,8 @@ $footer-height: 2rem;
   height: calc(100% - #{$footer-height});
   width: 100%;
   vertical-align: top;
-  overflow: hidden;
+  overflow-x: scroll;
+  overflow-y: hidden;
   position: relative;
 
   panel-resizer, .panel-resizer {

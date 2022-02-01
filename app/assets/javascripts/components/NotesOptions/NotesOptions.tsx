@@ -159,22 +159,26 @@ const SpellcheckOptions: FunctionComponent<{
     : undefined;
 
   return (
-    <div className="flex flex-col px-3 py-1.5">
-      <Switch
-        className="px-0 py-0"
-        checked={noteSpellcheck}
-        disabled={!spellcheckControllable}
-        onChange={() => {
+    <div className="flex flex-col">
+      <button
+        className="sn-dropdown-item justify-between px-3 py-1"
+        onClick={() => {
           appState.notes.toggleGlobalSpellcheckForNote(note);
         }}
+        disabled={!spellcheckControllable}
       >
         <span className="flex items-center">
           <Icon type="spellcheck" className={iconClass} />
           Spellcheck
         </span>
-      </Switch>
+        <Switch
+          className="px-0"
+          checked={noteSpellcheck}
+          disabled={!spellcheckControllable}
+        />
+      </button>
       {!spellcheckControllable && (
-        <p className="text-xs pt-1.5">
+        <p className="text-xs px-3 py-1.5">
           Spellcheck cannot be controlled for this editor.
         </p>
       )}
@@ -331,45 +335,45 @@ export const NotesOptions = observer(
 
     return (
       <>
-        <Switch
-          onBlur={closeOnBlur}
-          className="px-3 py-1.5"
-          checked={locked}
-          onChange={() => {
+        <button
+          className="sn-dropdown-item justify-between"
+          onClick={() => {
             appState.notes.setLockSelectedNotes(!locked);
           }}
+          onBlur={closeOnBlur}
         >
           <span className="flex items-center">
             <Icon type="pencil-off" className={iconClass} />
             Prevent editing
           </span>
-        </Switch>
-        <Switch
-          onBlur={closeOnBlur}
-          className="px-3 py-1.5"
-          checked={!hidePreviews}
-          onChange={() => {
+          <Switch className="px-0" checked={locked} />
+        </button>
+        <button
+          className="sn-dropdown-item justify-between"
+          onClick={() => {
             appState.notes.setHideSelectedNotePreviews(!hidePreviews);
           }}
+          onBlur={closeOnBlur}
         >
           <span className="flex items-center">
             <Icon type="rich-text" className={iconClass} />
             Show preview
           </span>
-        </Switch>
-        <Switch
-          onBlur={closeOnBlur}
-          className="px-3 py-1.5"
-          checked={protect}
-          onChange={() => {
+          <Switch className="px-0" checked={!hidePreviews} />
+        </button>
+        <button
+          className="sn-dropdown-item justify-between"
+          onClick={() => {
             appState.notes.setProtectSelectedNotes(!protect);
           }}
+          onBlur={closeOnBlur}
         >
           <span className="flex items-center">
             <Icon type="password" className={iconClass} />
             Protect
           </span>
-        </Switch>
+          <Switch className="px-0" checked={protect} />
+        </button>
         <div className="min-h-1px my-2 bg-border"></div>
         {appState.tags.tagsCount > 0 && (
           <Disclosure open={tagsMenuOpen} onChange={openTagsMenu}>

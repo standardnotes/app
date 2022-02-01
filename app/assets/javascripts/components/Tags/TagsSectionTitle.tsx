@@ -52,7 +52,7 @@ export const TagsSectionTitle: FunctionComponent<Props> = observer(
               className="ml-1 sk-bold color-grey-2 cursor-pointer"
               onClick={showPremiumAlert}
             >
-              Folders
+              &middot; Folders
             </label>
           </Tooltip>
         </div>

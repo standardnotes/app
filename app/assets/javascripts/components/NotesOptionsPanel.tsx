@@ -15,10 +15,11 @@ import { WebApplication } from '@/ui_models/application';
 type Props = {
   application: WebApplication;
   appState: AppState;
+  onClickPreprocessing?: () => Promise<void>;
 };
 
 export const NotesOptionsPanel = observer(
-  ({ application, appState }: Props) => {
+  ({ application, appState, onClickPreprocessing }: Props) => {
     const [open, setOpen] = useState(false);
     const [position, setPosition] = useState({
       top: 0,
@@ -37,7 +38,7 @@ export const NotesOptionsPanel = observer(
     return (
       <Disclosure
         open={open}
-        onChange={() => {
+        onChange={async () => {
           const rect = buttonRef.current?.getBoundingClientRect();
           if (rect) {
             const { clientHeight } = document.documentElement;
@@ -52,7 +53,11 @@ export const NotesOptionsPanel = observer(
               top: rect.bottom,
               right: document.body.clientWidth - rect.right,
             });
-            setOpen(!open);
+            const newOpenState = !open;
+            if (newOpenState && onClickPreprocessing) {
+              await onClickPreprocessing();
+            }
+            setOpen(newOpenState);
           }
         }}
       >
