@@ -91,22 +91,27 @@ type ListElementProps = {
 };
 
 export const MenuItemListElement: FunctionComponent<ListElementProps> =
-  forwardRef(({ children, isFirstMenuItem }: ListElementProps, ref: Ref<HTMLLIElement>) => {
-    const child = children as VNode<unknown>;
+  forwardRef(
+    (
+      { children, isFirstMenuItem }: ListElementProps,
+      ref: Ref<HTMLLIElement>
+    ) => {
+      const child = children as VNode<unknown>;
 
-    return (
-      <li className="list-style-none" role="none" ref={ref}>
-        {{
-          ...child,
-          props: {
-            ...(child.props ? { ...child.props } : {}),
-            ...(child.type === MenuItem
-              ? {
-                  tabIndex: isFirstMenuItem ? 0 : -1,
-                }
-              : {}),
-          },
-        }}
-      </li>
-    );
-  });
+      return (
+        <li className="list-style-none" role="none" ref={ref}>
+          {{
+            ...child,
+            props: {
+              ...(child.props ? { ...child.props } : {}),
+              ...(child.type === MenuItem
+                ? {
+                    tabIndex: isFirstMenuItem ? 0 : -1,
+                  }
+                : {}),
+            },
+          }}
+        </li>
+      );
+    }
+  );
