@@ -16,7 +16,9 @@ export const MenuItem: FunctionComponent<Props> = ({
   onClick,
 }) => (
   <div
-    className={`preferences-menu-item select-none ${selected ? 'selected' : ''}`}
+    className={`preferences-menu-item select-none ${
+      selected ? 'selected' : ''
+    }`}
     onClick={(e) => {
       e.preventDefault();
       onClick();

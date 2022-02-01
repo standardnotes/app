@@ -172,10 +172,6 @@ export class TagsState {
   }
 
   getChildren(tag: SNTag): SNTag[] {
-    if (!this.features.enableNativeFoldersFeature) {
-      return [];
-    }
-
     if (this.application.isTemplateItem(tag)) {
       return [];
     }
@@ -193,6 +189,11 @@ export class TagsState {
 
   isValidTagParent(parentUuid: UuidString, tagUuid: UuidString): boolean {
     return this.application.isValidTagParent(parentUuid, tagUuid);
+  }
+
+  public hasParent(tagUuid: UuidString): boolean {
+    const item = this.application.findItem(tagUuid);
+    return !!item && !!(item as SNTag).parentId;
   }
 
   public async assignParent(
@@ -230,10 +231,6 @@ export class TagsState {
   }
 
   get rootTags(): SNTag[] {
-    if (!this.features.enableNativeFoldersFeature) {
-      return this.tags;
-    }
-
     return this.tags.filter((tag) => !this.application.getTagParent(tag));
   }
 
@@ -350,35 +347,20 @@ export class TagsState {
     }
 
     if (isTemplateChange) {
-      if (this.features.enableNativeSmartTagsFeature) {
-        const isSmartTagTitle = this.application.isSmartTagTitle(newTitle);
+      const isSmartTagTitle = this.application.isSmartTagTitle(newTitle);
 
-        if (isSmartTagTitle) {
-          if (!this.features.hasSmartTags) {
-            await this.features.showPremiumAlert(SMART_TAGS_FEATURE_NAME);
-            return;
-          }
+      if (isSmartTagTitle) {
+        if (!this.features.hasSmartTags) {
+          await this.features.showPremiumAlert(SMART_TAGS_FEATURE_NAME);
+          return;
         }
-
-        const insertedTag = await this.application.createTagOrSmartTag(
-          newTitle
-        );
-        runInAction(() => {
-          this.selected = insertedTag as SNTag;
-        });
-      } else {
-        // Legacy code, remove me after we enableNativeSmartTagsFeature for everyone.
-        // See https://app.asana.com/0/0/1201612665552831/f
-        const insertedTag = await this.application.insertItem(tag);
-        const changedTag = await this.application.changeItem<TagMutator>(
-          insertedTag.uuid,
-          (m) => {
-            m.title = newTitle;
-          }
-        );
-        this.selected = changedTag as SNTag;
-        await this.application.saveItem(insertedTag.uuid);
       }
+
+      const insertedTag = await this.application.createTagOrSmartTag(newTitle);
+      this.application.sync();
+      runInAction(() => {
+        this.selected = insertedTag as SNTag;
+      });
     } else {
       await this.application.changeAndSaveItem<TagMutator>(
         tag.uuid,

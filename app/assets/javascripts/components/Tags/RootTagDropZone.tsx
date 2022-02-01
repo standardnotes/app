@@ -1,9 +1,6 @@
 import { Icon } from '@/components/Icon';
 import { usePremiumModal } from '@/components/Premium';
-import {
-  FeaturesState,
-  TAG_FOLDERS_FEATURE_NAME,
-} from '@/ui_models/app_state/features_state';
+import { FeaturesState } from '@/ui_models/app_state/features_state';
 import { TagsState } from '@/ui_models/app_state/tags_state';
 import { observer } from 'mobx-react-lite';
 import { useDrop } from 'react-dnd';
@@ -14,45 +11,38 @@ type Props = {
   featuresState: FeaturesState;
 };
 
-export const RootTagDropZone: React.FC<Props> = observer(
-  ({ tagsState, featuresState }) => {
-    const premiumModal = usePremiumModal();
-    const isNativeFoldersEnabled = featuresState.enableNativeFoldersFeature;
+export const RootTagDropZone: React.FC<Props> = observer(({ tagsState }) => {
+  const premiumModal = usePremiumModal();
 
-    const [{ isOver, canDrop }, dropRef] = useDrop<DropItem, void, DropProps>(
-      () => ({
-        accept: ItemTypes.TAG,
-        canDrop: () => {
-          return true;
-        },
-        drop: (item) => {
-          tagsState.assignParent(item.uuid, undefined);
-        },
-        collect: (monitor) => ({
-          isOver: !!monitor.isOver(),
-          canDrop: !!monitor.canDrop(),
-        }),
+  const [{ isOver, canDrop }, dropRef] = useDrop<DropItem, void, DropProps>(
+    () => ({
+      accept: ItemTypes.TAG,
+      canDrop: (item) => {
+        return tagsState.hasParent(item.uuid);
+      },
+      drop: (item) => {
+        tagsState.assignParent(item.uuid, undefined);
+      },
+      collect: (monitor) => ({
+        isOver: !!monitor.isOver(),
+        canDrop: !!monitor.canDrop(),
       }),
-      [tagsState, premiumModal]
-    );
+    }),
+    [tagsState, premiumModal]
+  );
 
-    if (!isNativeFoldersEnabled) {
-      return null;
-    }
-
-    return (
-      <div
-        ref={dropRef}
-        className={`root-drop ${canDrop ? 'active' : ''} ${
-          isOver ? 'is-drag-over' : ''
-        }`}
-      >
-        <Icon className="color-neutral" type="link-off" />
-        <p className="content">
-          Move the tag here to <br />
-          remove it from its folder.
-        </p>
-      </div>
-    );
-  }
-);
+  return (
+    <div
+      ref={dropRef}
+      className={`root-drop ${canDrop ? 'active' : ''} ${
+        isOver ? 'is-drag-over' : ''
+      }`}
+    >
+      <Icon className="color-neutral" type="link-off" />
+      <p className="content">
+        Move the tag here to <br />
+        remove it from its folder.
+      </p>
+    </div>
+  );
+});

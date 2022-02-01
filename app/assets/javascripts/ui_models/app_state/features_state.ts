@@ -42,8 +42,6 @@ export class FeaturesState {
       _hasFolders: observable,
       _hasSmartTags: observable,
       hasFolders: computed,
-      enableNativeFoldersFeature: computed,
-      enableNativeSmartTagsFeature: computed,
       _premiumAlertFeatureName: observable,
       showPremiumAlert: action,
       closePremiumAlert: action,
@@ -71,14 +69,6 @@ export class FeaturesState {
     this.unsub();
   }
 
-  public get enableNativeFoldersFeature(): boolean {
-    return this.enableUnfinishedFeatures;
-  }
-
-  public get enableNativeSmartTagsFeature(): boolean {
-    return this.enableUnfinishedFeatures;
-  }
-
   public get hasFolders(): boolean {
     return this._hasFolders;
   }
@@ -97,10 +87,6 @@ export class FeaturesState {
   }
 
   private hasNativeFolders(): boolean {
-    if (!this.enableNativeFoldersFeature) {
-      return false;
-    }
-
     const status = this.application.getFeatureStatus(
       FeatureIdentifier.TagNesting
     );
@@ -109,10 +95,6 @@ export class FeaturesState {
   }
 
   private hasNativeSmartTags(): boolean {
-    if (!this.enableNativeSmartTagsFeature) {
-      return false;
-    }
-
     const status = this.application.getFeatureStatus(
       FeatureIdentifier.SmartFilters
     );

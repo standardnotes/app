@@ -37,7 +37,6 @@ export const TagsListItem: FunctionComponent<Props> = observer(
     const hasChildren = childrenTags.length > 0;
 
     const hasFolders = features.hasFolders;
-    const isNativeFoldersEnabled = features.enableNativeFoldersFeature;
     const hasAtLeastOneFolder = tagsState.hasAtLeastOneFolder;
 
     const premiumModal = usePremiumModal();
@@ -114,13 +113,13 @@ export const TagsListItem: FunctionComponent<Props> = observer(
         type: ItemTypes.TAG,
         item: { uuid: tag.uuid },
         canDrag: () => {
-          return isNativeFoldersEnabled;
+          return true;
         },
         collect: (monitor) => ({
           isDragging: !!monitor.isDragging(),
         }),
       }),
-      [tag, isNativeFoldersEnabled]
+      [tag]
     );
 
     const [{ isOver, canDrop }, dropRef] = useDrop<DropItem, void, DropProps>(
@@ -160,7 +159,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
         >
           {!tag.errorDecrypting ? (
             <div className="tag-info" title={title} ref={dropRef}>
-              {isNativeFoldersEnabled && hasAtLeastOneFolder && (
+              {hasAtLeastOneFolder && (
                 <div
                   className={`tag-fold ${showChildren ? 'opened' : 'closed'}`}
                   onClick={hasChildren ? toggleChildren : undefined}
@@ -173,12 +172,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
                   />
                 </div>
               )}
-              <div
-                className={`tag-icon ${
-                  isNativeFoldersEnabled ? 'draggable' : ''
-                } mr-1`}
-                ref={dragRef}
-              >
+              <div className={`tag-icon ${'draggable'} mr-1`} ref={dragRef}>
                 <Icon
                   type="hashtag"
                   className={`${isSelected ? 'color-info' : 'color-neutral'}`}

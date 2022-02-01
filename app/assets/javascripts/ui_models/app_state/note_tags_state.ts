@@ -1,3 +1,4 @@
+import { ElementIds } from '@/element_ids';
 import { ContentType, SNNote, SNTag, UuidString } from '@standardnotes/snjs';
 import { action, computed, makeObservable, observable } from 'mobx';
 import { WebApplication } from '../application';
@@ -167,8 +168,9 @@ export class NoteTagsState {
   }
 
   reloadTagsContainerMaxWidth(): void {
-    const EDITOR_ELEMENT_ID = 'editor-column';
-    const editorWidth = document.getElementById(EDITOR_ELEMENT_ID)?.clientWidth;
+    const editorWidth = document.getElementById(
+      ElementIds.EditorColumn
+    )?.clientWidth;
     if (editorWidth) {
       this.setTagsContainerMaxWidth(editorWidth);
     }

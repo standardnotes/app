@@ -6,19 +6,19 @@ import { useRef, useState } from 'preact/hooks';
 import { Icon } from './Icon';
 import { Menu } from './menu/Menu';
 import { MenuItem, MenuItemSeparator, MenuItemType } from './menu/MenuItem';
-import { useCloseOnClickOutside } from './utils';
 
 type Props = {
   application: WebApplication;
+  closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void;
   closeDisplayOptionsMenu: () => void;
 };
 
 export const NotesListOptionsMenu: FunctionComponent<Props> = observer(
-  ({ closeDisplayOptionsMenu, application }) => {
+  ({ closeDisplayOptionsMenu, closeOnBlur, application }) => {
     const menuClassName =
       'sn-dropdown sn-dropdown--animated min-w-70 overflow-y-auto \
 border-1 border-solid border-main text-sm z-index-dropdown-menu \
-flex flex-col py-2 bottom-0 left-2 absolute';
+flex flex-col py-2 top-full bottom-0 left-2 absolute';
     const [sortBy, setSortBy] = useState(() =>
       application.getPreference(PrefKey.SortNotesBy, CollectionSort.CreatedAt)
     );
@@ -118,10 +118,6 @@ flex flex-col py-2 bottom-0 left-2 absolute';
 
     const menuRef = useRef<HTMLDivElement>(null);
 
-    useCloseOnClickOutside(menuRef, () => {
-      closeDisplayOptionsMenu();
-    });
-
     return (
       <div ref={menuRef} className={menuClassName}>
         <Menu a11yLabel="Sort by" closeMenu={closeDisplayOptionsMenu}>
@@ -133,6 +129,7 @@ flex flex-col py-2 bottom-0 left-2 absolute';
             type={MenuItemType.RadioButton}
             onClick={toggleSortByDateModified}
             checked={sortBy === CollectionSort.UpdatedAt}
+            onBlur={closeOnBlur}
           >
             <div className="flex flex-grow items-center justify-between">
               <span>Date modified</span>
@@ -150,6 +147,7 @@ flex flex-col py-2 bottom-0 left-2 absolute';
             type={MenuItemType.RadioButton}
             onClick={toggleSortByCreationDate}
             checked={sortBy === CollectionSort.CreatedAt}
+            onBlur={closeOnBlur}
           >
             <div className="flex flex-grow items-center justify-between">
               <span>Creation date</span>
@@ -167,6 +165,7 @@ flex flex-col py-2 bottom-0 left-2 absolute';
             type={MenuItemType.RadioButton}
             onClick={toggleSortByTitle}
             checked={sortBy === CollectionSort.Title}
+            onBlur={closeOnBlur}
           >
             <div className="flex flex-grow items-center justify-between">
               <span>Title</span>
@@ -188,6 +187,7 @@ flex flex-col py-2 bottom-0 left-2 absolute';
             className="py-1 hover:bg-contrast focus:bg-info-backdrop"
             checked={!hidePreview}
             onChange={toggleHidePreview}
+            onBlur={closeOnBlur}
           >
             <div className="flex flex-col max-w-3/4">Show note preview</div>
           </MenuItem>
@@ -196,6 +196,7 @@ flex flex-col py-2 bottom-0 left-2 absolute';
             className="py-1 hover:bg-contrast focus:bg-info-backdrop"
             checked={!hideDate}
             onChange={toggleHideDate}
+            onBlur={closeOnBlur}
           >
             Show date
           </MenuItem>
@@ -204,6 +205,7 @@ flex flex-col py-2 bottom-0 left-2 absolute';
             className="py-1 hover:bg-contrast focus:bg-info-backdrop"
             checked={!hideTags}
             onChange={toggleHideTags}
+            onBlur={closeOnBlur}
           >
             Show tags
           </MenuItem>
@@ -212,6 +214,7 @@ flex flex-col py-2 bottom-0 left-2 absolute';
             className="py-1 hover:bg-contrast focus:bg-info-backdrop"
             checked={!hideEditorIcon}
             onChange={toggleEditorIcon}
+            onBlur={closeOnBlur}
           >
             Show editor icon
           </MenuItem>
@@ -224,6 +227,7 @@ flex flex-col py-2 bottom-0 left-2 absolute';
             className="py-1 hover:bg-contrast focus:bg-info-backdrop"
             checked={!hidePinned}
             onChange={toggleHidePinned}
+            onBlur={closeOnBlur}
           >
             Show pinned notes
           </MenuItem>
@@ -232,6 +236,7 @@ flex flex-col py-2 bottom-0 left-2 absolute';
             className="py-1 hover:bg-contrast focus:bg-info-backdrop"
             checked={!hideProtected}
             onChange={toggleHideProtected}
+            onBlur={closeOnBlur}
           >
             Show protected notes
           </MenuItem>
@@ -240,6 +245,7 @@ flex flex-col py-2 bottom-0 left-2 absolute';
             className="py-1 hover:bg-contrast focus:bg-info-backdrop"
             checked={showArchived}
             onChange={toggleShowArchived}
+            onBlur={closeOnBlur}
           >
             Show archived notes
           </MenuItem>
@@ -248,6 +254,7 @@ flex flex-col py-2 bottom-0 left-2 absolute';
             className="py-1 hover:bg-contrast focus:bg-info-backdrop"
             checked={showTrashed}
             onChange={toggleShowTrashed}
+            onBlur={closeOnBlur}
           >
             Show trashed notes
           </MenuItem>

@@ -8,6 +8,7 @@ import {
 import {
   ComponentArea,
   ContentType,
+  FeatureIdentifier,
   SNComponent,
   SNTheme,
 } from '@standardnotes/snjs';
@@ -107,10 +108,11 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     const reloadToggleableComponents = useCallback(() => {
       const toggleableComponents = (
         application.getDisplayableItems(ContentType.Component) as SNComponent[]
-      ).filter((component) =>
-        [ComponentArea.EditorStack, ComponentArea.TagsList].includes(
-          component.area
-        )
+      ).filter(
+        (component) =>
+          [ComponentArea.EditorStack, ComponentArea.TagsList].includes(
+            component.area
+          ) && component.identifier !== FeatureIdentifier.FoldersComponent
       );
       setToggleableComponents(toggleableComponents);
     }, [application]);

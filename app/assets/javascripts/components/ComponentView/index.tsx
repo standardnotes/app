@@ -29,7 +29,7 @@ interface IProps {
   application: WebApplication;
   appState: AppState;
   componentViewer: ComponentViewer;
-  requestReload?: (viewer: ComponentViewer) => void;
+  requestReload?: (viewer: ComponentViewer, force?: boolean) => void;
   onLoad?: (component: SNComponent) => void;
   manualDealloc?: boolean;
 }
@@ -206,7 +206,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
           <IssueOnLoading
             componentName={component.name}
             reloadIframe={() => {
-              reloadValidityStatus(), requestReload?.(componentViewer);
+              reloadValidityStatus(), requestReload?.(componentViewer, true);
             }}
           />
         )}
