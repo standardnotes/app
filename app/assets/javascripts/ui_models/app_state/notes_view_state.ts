@@ -146,7 +146,7 @@ export class NotesViewState {
         } else if (eventName === AppStateEvent.ActiveEditorChanged) {
           this.handleEditorChange();
         } else if (eventName === AppStateEvent.EditorFocused) {
-          this.toggleDisplayOptionsMenu(false);
+          this.setShowDisplayOptionsMenu(false);
         }
       })
     );
@@ -169,7 +169,7 @@ export class NotesViewState {
       setCompletedFullSync: action,
       setNoteFilterText: action,
       syncSelectedNotes: action,
-      toggleDisplayOptionsMenu: action,
+      setShowDisplayOptionsMenu: action,
       onFilterEnter: action,
       handleFilterTextChanged: action,
 
@@ -185,7 +185,7 @@ export class NotesViewState {
     this.completedFullSync = completed;
   };
 
-  toggleDisplayOptionsMenu = (enabled: boolean) => {
+  setShowDisplayOptionsMenu = (enabled: boolean) => {
     this.showDisplayOptionsMenu = enabled;
   };
 
@@ -505,7 +505,7 @@ export class NotesViewState {
 
   handleTagChange = () => {
     this.resetScrollPosition();
-    this.toggleDisplayOptionsMenu(false);
+    this.setShowDisplayOptionsMenu(false);
     this.setNoteFilterText('');
     this.application.getDesktopService().searchText();
     this.resetPagination();
