@@ -260,6 +260,10 @@
   margin-left: 1rem;
 }
 
+.mr-2\.5 {
+  margin-right: 0.625rem;
+}
+
 .mr-3 {
   margin-right: 0.75rem;
 }
@@ -422,6 +426,10 @@
   border-color: var(--sn-stylekit-neutral-contrast-color);
 }
 
+.sn-component .border-r-1px {
+  border-right-width: 1px;
+}
+
 .border-2 {
   border-width: 0.5rem;
 }
@@ -483,6 +491,11 @@
   padding-right: 0;
 }
 
+.px-2\.5 {
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
+}
+
 .px-4 {
   padding-left: 1rem;
   padding-right: 1rem;
@@ -507,6 +520,11 @@
 .py-0\.5 {
   padding-top: 0.125rem;
   padding-bottom: 0.125rem;
+}
+
+.sn-component .py-1\.35 {
+  padding-top: 0.3375rem;
+  padding-bottom: 0.3375rem;
 }
 
 .sn-component .py-2\.5 {
