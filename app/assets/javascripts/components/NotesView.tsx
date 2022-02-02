@@ -220,7 +220,7 @@ export const NotesView: FunctionComponent<Props> = observer(
                     onChange={toggleDisplayOptionsMenu}
                   >
                     <DisclosureButton
-                      className={`sk-app-bar-item bg-contrast border-0 focus:shadow-none ${
+                      className={`sk-app-bar-item bg-contrast color-text border-0 focus:shadow-none ${
                         showDisplayOptionsMenu ? 'selected' : ''
                       }`}
                       onBlur={closeDisplayOptMenuOnBlur}
