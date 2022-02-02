@@ -147,7 +147,10 @@ export const Icon: FunctionalComponent<Props> = ({
   className = '',
   ariaLabel,
 }) => {
-  const IconComponent = ICONS[type];
+  const IconComponent = ICONS[type as keyof typeof ICONS];
+  if (!IconComponent) {
+    return null;
+  }
   return (
     <IconComponent
       className={`sn-icon ${className}`}
