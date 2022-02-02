@@ -1,21 +1,18 @@
 import { WebApplication } from '@/ui_models/application';
 import {
-  SNItem,
   Action,
   SNActionsExtension,
   UuidString,
   CopyPayload,
   SNNote,
+  ListedAccountInfoToActionExtension,
+  ListedAccountInfo,
 } from '@standardnotes/snjs';
 import { ActionResponse } from '@standardnotes/snjs';
 import { render } from 'preact';
 import { PureComponent } from './Abstract/PureComponent';
 import { MenuRow } from './MenuRow';
 import { RevisionPreviewModal } from './RevisionPreviewModal';
-type ActionsMenuScope = {
-  application: WebApplication;
-  item: SNItem;
-};
 
 type ActionSubRow = {
   onClick: () => void;
@@ -36,6 +33,7 @@ type MenuItem = {
   error: boolean;
   hidden: boolean;
   deprecation?: string;
+  extension: SNActionsExtension;
   actions: (Action & {
     subrows?: ActionSubRow[];
   })[];
@@ -60,50 +58,100 @@ type Props = {
   item: SNNote;
 };
 
-export class ActionsMenu
-  extends PureComponent<Props, ActionsMenuState>
-  implements ActionsMenuScope
-{
-  application!: WebApplication;
-  item!: SNItem;
-
+export class ActionsMenu extends PureComponent<Props, ActionsMenuState> {
   constructor(props: Props) {
     super(props, props.application);
 
-    const extensions = props.application.actionsManager
+    this.state = {
+      extensions: [],
+      extensionsState: {},
+      hiddenExtensions: {},
+      menuItems: [],
+      actionState: {},
+    };
+
+    this.loadExtensions();
+  }
+
+  private async loadExtensions(): Promise<void> {
+    const resolvedExtensions = await Promise.all([
+      ...(await this.getResolvedNonListedExtensions()),
+      ...(await this.getResolvedListedExtensions()),
+    ]);
+
+    const extensionsState: Record<UuidString, ExtensionState> = {};
+    resolvedExtensions.map((extension) => {
+      extensionsState[extension.uuid] = {
+        loading: false,
+        error: false,
+      };
+    });
+
+    this.setState({
+      extensions: resolvedExtensions,
+      extensionsState: extensionsState,
+    });
+
+    this.rebuildMenuState({
+      extensions: resolvedExtensions,
+      extensionsState: extensionsState,
+    });
+  }
+
+  private extensionsByRemovingActions(
+    extension: SNActionsExtension
+  ): SNActionsExtension {
+    return new SNActionsExtension(
+      CopyPayload(extension.payload, {
+        content: {
+          ...extension.payload.safeContent,
+          actions: [],
+        },
+      })
+    );
+  }
+
+  private async getResolvedNonListedExtensions(): Promise<
+    SNActionsExtension[]
+  > {
+    const nonListedExtensions = this.props.application.actionsManager
       .getExtensions()
       .sort((a, b) => {
         return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
       })
       .map((extension) => {
-        return new SNActionsExtension(
-          CopyPayload(extension.payload, {
-            content: {
-              ...extension.payload.safeContent,
-              actions: [],
-            },
-          })
-        );
+        return this.extensionsByRemovingActions(extension);
       });
-    const extensionsState: Record<UuidString, ExtensionState> = {};
-    extensions.map((extension) => {
-      extensionsState[extension.uuid] = {
-        loading: true,
-        error: false,
-      };
-    });
 
-    this.state = {
-      extensions,
-      extensionsState,
-      hiddenExtensions: {},
-      menuItems: [],
-      actionState: {},
-    };
+    const resolved = await Promise.all(
+      nonListedExtensions.map((ext) => {
+        return this.props.application.actionsManager.loadExtensionInContextOfItem(
+          ext,
+          this.props.item
+        );
+      })
+    );
+    return resolved.filter((ext) => ext != undefined) as SNActionsExtension[];
+  }
+
+  private async getResolvedListedExtensions(): Promise<SNActionsExtension[]> {
+    const listedAccountEntries =
+      await this.props.application.getListedAccounts();
+    const accountInfos = await Promise.all(
+      listedAccountEntries.map((account) => {
+        return this.props.application.getListedAccountInfo(
+          account,
+          this.props.item.uuid
+        );
+      })
+    );
+    const listedExtensions = (
+      accountInfos.filter((info) => info != undefined) as ListedAccountInfo[]
+    ).map((accountInfo) => ListedAccountInfoToActionExtension(accountInfo));
+    return listedExtensions;
   }
 
   componentDidMount() {
-    this.loadExtensions();
     this.autorun(() => {
       this.rebuildMenuState({
         hiddenExtensions: this.appState.actionsMenu.hiddenExtensions,
@@ -130,6 +178,7 @@ export class ActionsMenu
           loading: state?.loading ?? false,
           error: state?.error ?? false,
           hidden: hidden ?? false,
+          extension,
           deprecation: extension.deprecation!,
           actions: extension
             .actionsWithContextForItem(this.props.item)
@@ -149,37 +198,13 @@ export class ActionsMenu
     });
   }
 
-  async loadExtensions() {
-    await Promise.all(
-      this.state.extensions.map(async (extension: SNActionsExtension) => {
-        this.setLoadingExtension(extension.uuid, true);
-        const updatedExtension =
-          await this.props.application.actionsManager.loadExtensionInContextOfItem(
-            extension,
-            this.props.item
-          );
-        if (updatedExtension) {
-          await this.updateExtension(updatedExtension!);
-        } else {
-          this.setErrorExtension(extension.uuid, true);
-        }
-        this.setLoadingExtension(extension.uuid, false);
-      })
-    );
-  }
-
-  executeAction = async (action: Action, extensionUuid: UuidString) => {
+  executeAction = async (action: Action, extension: SNActionsExtension) => {
     if (action.verb === 'nested') {
       this.rebuildMenuState({
         selectedActionId: action.id,
       });
       return;
     }
-
-    const extension = this.props.application.findItem(
-      extensionUuid
-    ) as SNActionsExtension;
-
     this.updateActionState(action, { running: true, error: false });
 
     const response = await this.props.application.actionsManager.runAction(
@@ -218,7 +243,7 @@ export class ActionsMenu
 
   private subRowsForAction(
     parentAction: Action,
-    extension: Pick<SNActionsExtension, 'uuid'>
+    extension: SNActionsExtension
   ): ActionSubRow[] | undefined {
     if (!parentAction.subactions) {
       return undefined;
@@ -227,7 +252,7 @@ export class ActionsMenu
       return {
         id: subaction.id,
         onClick: () => {
-          this.executeAction(subaction, extension.uuid);
+          this.executeAction(subaction, extension);
         },
         label: subaction.label,
         subtitle: subaction.desc,
@@ -255,7 +280,7 @@ export class ActionsMenu
       }
       return ext;
     });
-    await this.rebuildMenuState({
+    this.rebuildMenuState({
       extensions,
     });
   }
@@ -297,32 +322,32 @@ export class ActionsMenu
     });
   }
 
-  renderMenuItem(item: MenuItem) {
+  renderMenuItem(menuItem: MenuItem) {
     return (
       <div>
         <div
-          key={item.uuid}
+          key={menuItem.uuid}
           className="sk-menu-panel-header"
           onClick={($event) => {
-            this.toggleExtensionVisibility(item.uuid);
+            this.toggleExtensionVisibility(menuItem.uuid);
             $event.stopPropagation();
           }}
         >
           <div className="sk-menu-panel-column">
-            <div className="sk-menu-panel-header-title">{item.name}</div>
-            {item.hidden && <div>…</div>}
-            {item.deprecation && !item.hidden && (
+            <div className="sk-menu-panel-header-title">{menuItem.name}</div>
+            {menuItem.hidden && <div>…</div>}
+            {menuItem.deprecation && !menuItem.hidden && (
               <div className="sk-menu-panel-header-subtitle">
-                {item.deprecation}
+                {menuItem.deprecation}
               </div>
             )}
           </div>
 
-          {item.loading && <div className="sk-spinner small loading" />}
+          {menuItem.loading && <div className="sk-spinner small loading" />}
         </div>
 
         <div>
-          {item.error && !item.hidden && (
+          {menuItem.error && !menuItem.hidden && (
             <MenuRow
               faded={true}
               label="Error loading actions"
@@ -330,19 +355,20 @@ export class ActionsMenu
             />
           )}
 
-          {!item.actions.length && !item.hidden && (
+          {!menuItem.actions.length && !menuItem.hidden && (
             <MenuRow faded={true} label="No Actions Available" />
           )}
 
-          {!item.hidden &&
-            !item.loading &&
-            !item.error &&
-            item.actions.map((action, index) => {
+          {!menuItem.hidden &&
+            !menuItem.loading &&
+            !menuItem.error &&
+            menuItem.actions.map((action, index) => {
               return (
                 <MenuRow
                   key={index}
-                  action={this.executeAction as never}
-                  actionArgs={[action, item.uuid]}
+                  action={() => {
+                    this.executeAction(action, menuItem.extension);
+                  }}
                   label={action.label}
                   disabled={this.getActionState(action).running}
                   spinnerClass={
@@ -370,16 +396,7 @@ export class ActionsMenu
     return (
       <div className="sn-component">
         <div className="sk-menu-panel dropdown-menu">
-          {this.state.extensions.length == 0 && (
-            <a
-              href="https://standardnotes.com/plans"
-              rel="noopener"
-              target="blank"
-              className="no-decoration"
-            >
-              <MenuRow label="Download Actions" />
-            </a>
-          )}
+          {this.state.extensions.length == 0 && <MenuRow label="No Actions" />}
           {this.state.menuItems.map((extension) =>
             this.renderMenuItem(extension)
           )}
