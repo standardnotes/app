@@ -3,7 +3,6 @@ import {
   Action,
   SNActionsExtension,
   UuidString,
-  CopyPayload,
   SNNote,
   ListedAccount,
 } from '@standardnotes/snjs';
@@ -13,16 +12,10 @@ import { PureComponent } from './Abstract/PureComponent';
 import { MenuRow } from './MenuRow';
 import { RevisionPreviewModal } from './RevisionPreviewModal';
 
-type ActionSubRow = {
-  onClick: () => void;
-  label: string;
-  subtitle: string;
-  spinnerClass?: string;
-};
-
-type ActionItem = Action & {
+type ActionRow = Action & {
   running?: boolean;
-  subrows?: ActionSubRow[];
+  spinnerClass?: string;
+  subtitle?: string;
 };
 
 type MenuSection = {
@@ -33,7 +26,7 @@ type MenuSection = {
   hidden?: boolean;
   deprecation?: string;
   extension?: SNActionsExtension;
-  actions?: ActionItem[];
+  rows?: ActionRow[];
   listedAccount?: ListedAccount;
 };
 
@@ -131,7 +124,7 @@ export class ActionsMenu extends PureComponent<Props, State> {
             loading: false,
             error: false,
             name: accountInfo.display_name,
-            actions: accountInfo?.actions,
+            rows: accountInfo?.actions,
           };
           this.promoteMenuSection(resolvedMenuSection);
         });
@@ -147,22 +140,13 @@ export class ActionsMenu extends PureComponent<Props, State> {
             return;
           }
 
-          const actions = resolvedExtension
-            .actionsWithContextForItem(this.props.note)
-            .map((action) => {
-              return {
-                ...action,
-                subrows:
-                  this.idForAction(action) ===
-                  this.state.selectedActionIdentifier
-                    ? this.subRowsForAction(action, resolvedExtension)
-                    : [],
-              };
-            });
+          const actions = resolvedExtension.actionsWithContextForItem(
+            this.props.note
+          );
 
           const resolvedMenuSection: MenuSection = {
             ...menuSection,
-            actions: actions,
+            rows: actions,
             deprecation: resolvedExtension.deprecation,
             loading: false,
             error: false,
@@ -186,7 +170,7 @@ export class ActionsMenu extends PureComponent<Props, State> {
   private promoteAction(newAction: Action, section: MenuSection): void {
     const newSection: MenuSection = {
       ...section,
-      actions: section.actions?.map((action) => {
+      rows: section.rows?.map((action) => {
         if (action.url === newAction.url) {
           return newAction;
         } else {
@@ -202,16 +186,10 @@ export class ActionsMenu extends PureComponent<Props, State> {
   }
 
   executeAction = async (action: Action, section: MenuSection) => {
-    if (action.verb === 'nested') {
-      this.setState(
-        {
-          selectedActionIdentifier: this.idForAction(action),
-        },
-        () => {
-          this.resolveMenuSection(section);
-        }
-      );
-      return;
+    const isLegacyNoteHistoryExt = action.verb === 'nested';
+    if (isLegacyNoteHistoryExt) {
+      const showRevisionAction = action.subactions![0];
+      action = showRevisionAction;
     }
 
     this.promoteAction(
@@ -224,10 +202,7 @@ export class ActionsMenu extends PureComponent<Props, State> {
 
     const response = await this.props.application.actionsManager.runAction(
       action,
-      this.props.note,
-      async () => {
-        return '';
-      }
+      this.props.note
     );
 
     this.promoteAction(
@@ -238,7 +213,7 @@ export class ActionsMenu extends PureComponent<Props, State> {
       section
     );
 
-    if (response.error) {
+    if (!response || response.error) {
       return;
     }
 
@@ -260,24 +235,6 @@ export class ActionsMenu extends PureComponent<Props, State> {
         );
       }
     }
-  }
-
-  private subRowsForAction(
-    parentAction: Action,
-    extension: SNActionsExtension
-  ): ActionSubRow[] | undefined {
-    if (!parentAction.subactions) {
-      return undefined;
-    }
-    return parentAction.subactions.map((subaction) => {
-      return {
-        onClick: () => {
-          this.executeAction(subaction, extension);
-        },
-        label: subaction.label,
-        subtitle: subaction.desc,
-      };
-    });
   }
 
   public toggleSectionVisibility(menuSection: MenuSection) {
@@ -321,14 +278,14 @@ export class ActionsMenu extends PureComponent<Props, State> {
             />
           )}
 
-          {!section.actions?.length && !section.hidden && (
+          {!section.rows?.length && !section.hidden && (
             <MenuRow faded={true} label="No Actions Available" />
           )}
 
           {!section.hidden &&
             !section.loading &&
             !section.error &&
-            section.actions?.map((action, index) => {
+            section.rows?.map((action, index) => {
               return (
                 <MenuRow
                   key={index}
@@ -338,7 +295,6 @@ export class ActionsMenu extends PureComponent<Props, State> {
                   label={action.label}
                   disabled={action.running}
                   spinnerClass={action.running ? 'info' : undefined}
-                  subRows={action.subrows}
                   subtitle={action.desc}
                 >
                   {action.access_type && (

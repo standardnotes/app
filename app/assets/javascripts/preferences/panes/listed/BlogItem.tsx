@@ -31,7 +31,8 @@ export const ListedAccountItem: FunctionalComponent<Props> = ({
 
   return (
     <>
-      <Subtitle>{accountInfo?.display_name}</Subtitle>
+      <Subtitle className="em">{accountInfo?.display_name}</Subtitle>
+      <div className="mb-2" />
       <div className="flex">
         {isLoading ? <div className="sk-spinner small info"></div> : null}
         {accountInfo && (
