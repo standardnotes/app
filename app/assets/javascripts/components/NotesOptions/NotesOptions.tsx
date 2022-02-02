@@ -332,8 +332,25 @@ export const NotesOptions = observer(
       );
     }
 
+    const openRevisionHistoryModal = () => {
+      appState.notes.setShowRevisionHistoryModal(true);
+    };
+
     return (
       <>
+        {notes.length === 1 && (
+          <>
+            <button
+              onBlur={closeOnBlur}
+              className="sn-dropdown-item"
+              onClick={openRevisionHistoryModal}
+            >
+              <Icon type="history" className={iconClass} />
+              Note history
+            </button>
+            <div className="min-h-1px my-2 bg-border"></div>
+          </>
+        )}
         <button
           className="sn-dropdown-item justify-between"
           onClick={() => {
