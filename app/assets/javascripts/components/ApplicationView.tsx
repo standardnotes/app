@@ -23,6 +23,7 @@ import { NotesContextMenu } from '@/components/NotesContextMenu';
 import { PurchaseFlowWrapper } from '@/purchaseFlow/PurchaseFlowWrapper';
 import { render } from 'preact';
 import { PermissionsModal } from './PermissionsModal';
+import { RevisionHistoryModalWrapper } from './RevisionHistoryModal/RevisionHistoryModalWrapper';
 
 type Props = {
   application: WebApplication;
@@ -249,6 +250,11 @@ export class ApplicationView extends PureComponent<Props, State> {
         />
 
         <PurchaseFlowWrapper
+          application={this.application}
+          appState={this.appState}
+        />
+
+        <RevisionHistoryModalWrapper
           application={this.application}
           appState={this.appState}
         />
