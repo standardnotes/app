@@ -21,6 +21,7 @@ import EmailIcon from '../../icons/ic-email.svg';
 import EyeIcon from '../../icons/ic-eye.svg';
 import EyeOffIcon from '../../icons/ic-eye-off.svg';
 import HashtagIcon from '../../icons/ic-hashtag.svg';
+import HistoryIcon from '../../icons/ic-history.svg';
 import HelpIcon from '../../icons/ic-help.svg';
 import InfoIcon from '../../icons/ic-info.svg';
 import KeyboardIcon from '../../icons/ic-keyboard.svg';
@@ -107,6 +108,7 @@ const ICONS = {
   eye: EyeIcon,
   hashtag: HashtagIcon,
   help: HelpIcon,
+  history: HistoryIcon,
   info: InfoIcon,
   keyboard: KeyboardIcon,
   listed: ListedIcon,
