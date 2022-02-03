@@ -1,5 +1,4 @@
-import { FunctionComponent, h, render } from 'preact';
-import { unmountComponentAtNode } from 'preact/compat';
+import { MILLISECONDS_IN_A_DAY } from '@/views/constants';
 import { StateUpdater, useCallback, useState, useEffect } from 'preact/hooks';
 
 /**
@@ -57,3 +56,25 @@ export function useCloseOnClickOutside(
     };
   }, [closeOnClickOutside]);
 }
+
+export const calculateDifferenceBetweenDatesInDays = (
+  firstDate: Date,
+  secondDate: Date
+) => {
+  const firstDateAsUTCMilliseconds = Date.UTC(
+    firstDate.getFullYear(),
+    firstDate.getMonth(),
+    firstDate.getDate()
+  );
+
+  const secondDateAsUTCMilliseconds = Date.UTC(
+    secondDate.getFullYear(),
+    secondDate.getMonth(),
+    secondDate.getDate()
+  );
+
+  return Math.round(
+    (firstDateAsUTCMilliseconds - secondDateAsUTCMilliseconds) /
+      MILLISECONDS_IN_A_DAY
+  );
+};
