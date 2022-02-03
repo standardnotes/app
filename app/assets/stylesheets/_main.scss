@@ -130,11 +130,10 @@ $footer-height: 2rem;
 
 .app {
   height: calc(100% - #{$footer-height});
-  width: 100%;
-  vertical-align: top;
-  overflow-x: scroll;
-  overflow-y: hidden;
+  overflow: hidden;
   position: relative;
+  vertical-align: top;
+  width: 100%;
 
   panel-resizer, .panel-resizer {
     top: 0;

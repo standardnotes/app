@@ -3,6 +3,7 @@ import { PureComponent } from '@/components/Abstract/PureComponent';
 import { WebApplication } from '@/ui_models/application';
 import { MultipleSelectedNotes } from '@/components/MultipleSelectedNotes';
 import { NoteView } from '@/components/NoteView/NoteView';
+import { ElementIds } from '@/element_ids';
 
 type State = {
   showMultipleSelectedNotes: boolean;
@@ -40,7 +41,10 @@ export class NoteGroupView extends PureComponent<Props, State> {
 
   render() {
     return (
-      <div id="editor-column" className="h-full app-column app-column-third">
+      <div
+        id={ElementIds.EditorColumn}
+        className="h-full app-column app-column-third"
+      >
         {this.state.showMultipleSelectedNotes && (
           <MultipleSelectedNotes
             application={this.application}

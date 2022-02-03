@@ -22,7 +22,7 @@ export const TagsList: FunctionComponent<Props> = observer(({ appState }) => {
     <DndProvider backend={backend}>
       {allTags.length === 0 ? (
         <div className="no-tags-placeholder">
-          No tags. Create one using the add button above.
+          No tags or folders. Create one using the add button above.
         </div>
       ) : (
         <>

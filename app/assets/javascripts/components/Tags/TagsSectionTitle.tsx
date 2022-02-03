@@ -11,33 +11,32 @@ import { useCallback } from 'preact/hooks';
 
 type Props = {
   features: FeaturesState;
+  hasMigration: boolean;
+  onClickMigration: () => void;
 };
 
 export const TagsSectionTitle: FunctionComponent<Props> = observer(
-  ({ features }) => {
-    const isNativeFoldersEnabled = features.enableNativeFoldersFeature;
-    const hasFolders = features.hasFolders;
+  ({ features, hasMigration, onClickMigration }) => {
+    const entitledToFolders = features.hasFolders;
     const modal = usePremiumModal();
 
     const showPremiumAlert = useCallback(() => {
       modal.activate(TAG_FOLDERS_FEATURE_NAME);
     }, [modal]);
 
-    if (!isNativeFoldersEnabled) {
-      return (
-        <>
-          <div className="sk-h3 title">
-            <span className="sk-bold">Tags</span>
-          </div>
-        </>
-      );
-    }
-
-    if (hasFolders) {
+    if (entitledToFolders) {
       return (
         <>
           <div className="sk-h3 title">
             <span className="sk-bold">Folders</span>
+            {hasMigration && (
+              <label
+                className="ml-1 sk-bold color-info cursor-pointer"
+                onClick={onClickMigration}
+              >
+                Migration Available
+              </label>
+            )}
           </div>
         </>
       );
@@ -52,7 +51,7 @@ export const TagsSectionTitle: FunctionComponent<Props> = observer(
               className="ml-1 sk-bold color-grey-2 cursor-pointer"
               onClick={showPremiumAlert}
             >
-              &middot; Folders
+              Folders
             </label>
           </Tooltip>
         </div>

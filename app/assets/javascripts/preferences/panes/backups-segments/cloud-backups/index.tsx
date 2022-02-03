@@ -13,11 +13,7 @@ import { HorizontalSeparator } from '@/components/shared/HorizontalSeparator';
 import { FeatureIdentifier } from '@standardnotes/features';
 import { FeatureStatus } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
-import {
-  CloudProvider,
-  EmailBackupFrequency,
-  SettingName,
-} from '@standardnotes/settings';
+import { CloudProvider, SettingName } from '@standardnotes/settings';
 import { Switch } from '@/components/Switch';
 import { convertStringifiedBooleanToBoolean } from '@/utils';
 import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/strings';
@@ -46,6 +42,9 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const loadIsFailedCloudBackupEmailMutedSetting = useCallback(async () => {
+    if (!application.getUser()) {
+      return;
+    }
     setIsLoading(true);
 
     try {

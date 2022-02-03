@@ -5,6 +5,8 @@
   height: 100%;
 }
 
+$content-horizontal-padding: 16px;
+
 #navigation {
   user-select: none;
   -moz-user-select: none;
@@ -20,15 +22,15 @@
 
   .section-title-bar {
     color: var(--sn-stylekit-secondary-foreground-color);
-    padding-top: 15px;
+    padding-top: 0.8125rem;
     padding-bottom: 8px;
-    padding-left: 14px;
-    padding-right: 14px;
+    padding-left: $content-horizontal-padding;
+    padding-right: $content-horizontal-padding;
     font-size: 12px;
   }
 
   .no-tags-placeholder {
-    padding: 0px 14px;
+    padding: 0px $content-horizontal-padding;
     font-size: 12px;
     opacity: 0.4;
     margin-top: -5px;
@@ -167,7 +169,7 @@
         font-size: 11px;
 
         > .item {
-          margin-right: 2px;
+          margin-right: 4px;
         }
 
         opacity: 0.5;
