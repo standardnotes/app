@@ -252,8 +252,7 @@ export class HistoryMenu extends PureComponent<Props, HistoryState> {
             return (
               <MenuRow
                 key={index}
-                action={this.openSessionRevision}
-                actionArgs={[revision]}
+                action={() => this.openSessionRevision(revision)}
                 label={revision.previewTitle()}
               >
                 <div
@@ -298,8 +297,7 @@ export class HistoryMenu extends PureComponent<Props, HistoryState> {
             return (
               <MenuRow
                 key={index}
-                action={this.openRemoteRevision}
-                actionArgs={[revision]}
+                action={() => this.openRemoteRevision(revision)}
                 label={this.previewRemoteHistoryTitle(revision)}
               />
             );
