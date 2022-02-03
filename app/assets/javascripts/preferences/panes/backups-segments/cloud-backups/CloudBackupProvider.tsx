@@ -161,6 +161,9 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
   };
 
   const getIntegrationStatus = useCallback(async () => {
+    if (!application.getUser()) {
+      return;
+    }
     const frequency = await application.getSetting(backupFrequencySettingName);
     setBackupFrequency(frequency);
   }, [application, backupFrequencySettingName]);

@@ -34,7 +34,7 @@ export const TagsSection: FunctionComponent<Props> = observer(
     const runMigration = useCallback(async () => {
       if (
         await appState.application.alertService.confirm(
-          '<i>Introducing native, built-in nested tags without requiring the legacy Folders component.</i><br/></br> ' +
+          '<i>Introducing native, built-in nested tags without requiring the legacy Folders extension.</i><br/></br> ' +
             " To get started, we'll need to migrate any tags containing a dot character to the new system.<br/></br> " +
             ' This migration will convert any tags with dots appearing in their name into a natural' +
             ' hierarchy that is compatible with the new nested tags feature.' +

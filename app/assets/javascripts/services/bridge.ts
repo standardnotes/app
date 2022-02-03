@@ -4,6 +4,19 @@
  */
 import { Environment } from '@standardnotes/snjs';
 
+export interface ElectronDesktopCallbacks {
+  desktop_updateAvailable(): void;
+  desktop_windowGainedFocus(): void;
+  desktop_windowLostFocus(): void;
+  desktop_onComponentInstallationComplete(
+    componentData: any,
+    error: any
+  ): Promise<void>;
+  desktop_requestBackupFile(): Promise<string | undefined>;
+  desktop_didBeginBackup(): void;
+  desktop_didFinishBackup(success: boolean): void;
+}
+
 /** Platform-specific (i-e Electron/browser) behavior is handled by a Bridge object. */
 export interface Bridge {
   readonly appVersion: string;
