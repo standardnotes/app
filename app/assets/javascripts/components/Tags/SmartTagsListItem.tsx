@@ -37,7 +37,6 @@ export const SmartTagsListItem: FunctionComponent<Props> = observer(
     const level = 0;
     const isSelected = tagsState.selected === tag;
     const isEditing = tagsState.editingTag === tag;
-    const isSmartTagsEnabled = features.enableNativeSmartTagsFeature;
 
     useEffect(() => {
       setTitle(tag.title || '');
@@ -88,7 +87,7 @@ export const SmartTagsListItem: FunctionComponent<Props> = observer(
       tagsState.remove(tag);
     }, [tagsState, tag]);
 
-    const isFaded = !isSmartTagsEnabled && !tag.isAllTag;
+    const isFaded = !tag.isAllTag;
     const iconType = smartTagIconType(tag);
 
     return (
@@ -104,14 +103,12 @@ export const SmartTagsListItem: FunctionComponent<Props> = observer(
         >
           {!tag.errorDecrypting ? (
             <div className="tag-info">
-              {isSmartTagsEnabled && (
-                <div className={`tag-icon mr-1`}>
-                  <Icon
-                    type={iconType}
-                    className={`${isSelected ? 'color-info' : 'color-neutral'}`}
-                  />
-                </div>
-              )}
+              <div className={`tag-icon mr-1`}>
+                <Icon
+                  type={iconType}
+                  className={`${isSelected ? 'color-info' : 'color-neutral'}`}
+                />
+              </div>
               <input
                 className={`title ${isEditing ? 'editing' : ''}`}
                 id={`react-tag-${tag.uuid}`}

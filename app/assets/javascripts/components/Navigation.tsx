@@ -21,8 +21,6 @@ type Props = {
 export const Navigation: FunctionComponent<Props> = observer(
   ({ application }) => {
     const appState = useMemo(() => application.getAppState(), [application]);
-    const enableNativeSmartTagsFeature =
-      appState.features.enableNativeSmartTagsFeature;
     const [ref, setRef] = useState<HTMLDivElement | null>();
     const [panelWidth, setPanelWidth] = useState<number>(0);
 
@@ -38,10 +36,6 @@ export const Navigation: FunctionComponent<Props> = observer(
         removeObserver();
       };
     }, [application]);
-
-    const onCreateNewTag = useCallback(() => {
-      appState.tags.createNewTemplate();
-    }, [appState]);
 
     const panelResizeFinishCallback: ResizeFinishCallback = useCallback(
       (width, _lastLeft, _isMaxWidth, isCollapsed) => {
@@ -70,17 +64,6 @@ export const Navigation: FunctionComponent<Props> = observer(
                 <div className="sk-h3 title">
                   <span className="sk-bold">Views</span>
                 </div>
-                {!enableNativeSmartTagsFeature && (
-                  <div
-                    className="sk-button sk-secondary-contrast wide"
-                    onClick={onCreateNewTag}
-                    title="Create a new tag"
-                  >
-                    <div className="sk-label">
-                      <i className="icon ion-plus add-button" />
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
             <div className="scrollable">

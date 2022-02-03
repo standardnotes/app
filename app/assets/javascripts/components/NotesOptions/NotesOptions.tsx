@@ -149,8 +149,7 @@ const SpellcheckOptions: FunctionComponent<{
 }> = ({ appState, note }) => {
   const editor = appState.application.componentManager.editorForNote(note);
   const spellcheckControllable = Boolean(
-    !editor ||
-      appState.application.getFeature(editor.identifier)?.spellcheckControl
+    !editor || editor.package_info.spellcheckControl
   );
   const noteSpellcheck = !spellcheckControllable
     ? true

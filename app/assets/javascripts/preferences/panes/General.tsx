@@ -6,7 +6,6 @@ import { ErrorReporting, Tools, Defaults } from './general-segments';
 import { ExtensionsLatestVersions } from '@/preferences/panes/extensions-segments';
 import { Advanced } from '@/preferences/panes/account';
 import { observer } from 'mobx-react-lite';
-import { Migrations } from './general-segments/Migrations';
 
 interface GeneralProps {
   appState: AppState;
@@ -20,7 +19,6 @@ export const General: FunctionComponent<GeneralProps> = observer(
       <Tools application={application} />
       <Defaults application={application} />
       <ErrorReporting appState={appState} />
-      <Migrations application={application} appState={appState} />
       <Advanced
         application={application}
         appState={appState}

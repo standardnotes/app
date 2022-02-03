@@ -38,6 +38,9 @@ export const EmailBackups = observer(({ application }: Props) => {
     useState(false);
 
   const loadEmailFrequencySetting = useCallback(async () => {
+    if (!application.getUser()) {
+      return;
+    }
     setIsLoading(true);
 
     try {
