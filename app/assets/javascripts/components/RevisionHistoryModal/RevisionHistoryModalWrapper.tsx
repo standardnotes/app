@@ -3,6 +3,7 @@ import { STRING_RESTORE_LOCKED_ATTEMPT } from '@/strings';
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import { getPlatformString } from '@/utils';
+import { DAYS_IN_A_WEEK, DAYS_IN_A_YEAR } from '@/views/constants';
 import {
   AlertDialogContent,
   AlertDialogDescription,
@@ -20,15 +21,101 @@ import {
   SNNote,
 } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
-import { FunctionComponent } from 'preact';
+import { Fragment, FunctionComponent } from 'preact';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { Button } from '../Button';
 import { ComponentView } from '../ComponentView';
 import { NoteTagsContainer } from '../NoteTagsContainer';
+import { calculateDifferenceBetweenDatesInDays } from '../utils';
 
 type Props = {
   application: WebApplication;
   appState: AppState;
+};
+
+type RevisionListGroup = {
+  title: string;
+  entries: RevisionListEntry[] | undefined;
+};
+
+const GROUP_TITLE_TODAY = 'Today';
+const GROUP_TITLE_WEEK = 'This Week';
+const GROUP_TITLE_YEAR = 'More Than A Year Ago';
+
+const sortRevisionListIntoGroups = (
+  revisionList: RevisionListEntry[] | undefined
+) => {
+  const initialGroups: RevisionListGroup[] = [
+    {
+      title: GROUP_TITLE_TODAY,
+      entries: [],
+    },
+    {
+      title: GROUP_TITLE_WEEK,
+      entries: [],
+    },
+    {
+      title: GROUP_TITLE_YEAR,
+      entries: [],
+    },
+  ];
+
+  revisionList?.forEach((entry) => {
+    const todayAsDate = new Date();
+    const entryDate = new Date(entry.created_at);
+
+    const differenceBetweenDatesInDays = calculateDifferenceBetweenDatesInDays(
+      todayAsDate,
+      entryDate
+    );
+
+    if (differenceBetweenDatesInDays === 0) {
+      const todayGroupIndex = initialGroups.findIndex(
+        (group) => group.title === GROUP_TITLE_TODAY
+      );
+      initialGroups[todayGroupIndex]?.entries?.push(entry);
+      return;
+    }
+
+    if (
+      differenceBetweenDatesInDays > 0 &&
+      differenceBetweenDatesInDays < DAYS_IN_A_WEEK
+    ) {
+      const weekGroupIndex = initialGroups.findIndex(
+        (group) => group.title === GROUP_TITLE_WEEK
+      );
+      initialGroups[weekGroupIndex]?.entries?.push(entry);
+      return;
+    }
+
+    if (differenceBetweenDatesInDays > DAYS_IN_A_YEAR) {
+      const yearGroupIndex = initialGroups.findIndex(
+        (group) => group.title === GROUP_TITLE_YEAR
+      );
+      initialGroups[yearGroupIndex]?.entries?.push(entry);
+      return;
+    }
+
+    const formattedEntryMonthYear = entryDate.toLocaleDateString(undefined, {
+      month: 'long',
+      year: 'numeric',
+    });
+
+    const monthGroupIndex = initialGroups.findIndex(
+      (group) => group.title === formattedEntryMonthYear
+    );
+
+    if (monthGroupIndex > -1) {
+      initialGroups[monthGroupIndex]?.entries?.push(entry);
+    } else {
+      initialGroups.push({
+        title: formattedEntryMonthYear,
+        entries: [entry],
+      });
+    }
+  });
+
+  return initialGroups;
 };
 
 export const RevisionHistoryModal: FunctionComponent<Props> = observer(
@@ -42,7 +129,7 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
     const note = Object.values(appState.notes.selectedNotes)[0];
     const [isFetchingRemoteHistory, setIsFetchingRemoteHistory] =
       useState(false);
-    const [remoteHistory, setRemoteHistory] = useState<RevisionListEntry[]>();
+    const [remoteHistory, setRemoteHistory] = useState<RevisionListGroup[]>();
     const [selectedEntryUuid, setSelectedEntryUuid] = useState('');
     const [isFetchingSelectedRevision, setIsFetchingSelectedRevision] =
       useState(false);
@@ -73,12 +160,17 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
         if (note) {
           setIsFetchingRemoteHistory(true);
           try {
-            const remoteHistory =
+            const initialRemoteHistory =
               await application.historyManager.remoteHistoryForItem(note);
-            setRemoteHistory(remoteHistory);
-            if (remoteHistory?.length) {
-              setSelectedEntryUuid(remoteHistory[0].uuid);
-              fetchAndSetRemoteRevision(remoteHistory[0]);
+
+            const remoteHistoryAsGroups =
+              sortRevisionListIntoGroups(initialRemoteHistory);
+
+            setRemoteHistory(remoteHistoryAsGroups);
+
+            if (initialRemoteHistory?.length) {
+              setSelectedEntryUuid(initialRemoteHistory[0].uuid);
+              fetchAndSetRemoteRevision(initialRemoteHistory[0]);
             }
           } catch (err) {
             console.error(err);
@@ -211,25 +303,34 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
                 {isFetchingRemoteHistory && (
                   <div className="sk-spinner w-5 h-5 mr-2 spinner-info"></div>
                 )}
-                {remoteHistory?.map((entry) => (
-                  <button
-                    key={entry.uuid}
-                    className="sn-dropdown-item py-2 focus:bg-info-backdrop focus:shadow-none"
-                    onClick={() => {
-                      setSelectedEntryUuid(entry.uuid);
-                      fetchAndSetRemoteRevision(entry);
-                    }}
-                  >
-                    <div
-                      className={`pseudo-radio-btn ${
-                        selectedEntryUuid === entry.uuid
-                          ? 'pseudo-radio-btn--checked'
-                          : ''
-                      } mr-2`}
-                    ></div>
-                    {previewRemoteHistoryTitle(entry)}
-                  </button>
-                ))}
+                {remoteHistory?.map((group) =>
+                  group.entries && group.entries.length ? (
+                    <Fragment key={group.title}>
+                      <div className="px-3 my-1 font-semibold color-text uppercase">
+                        {group.title}
+                      </div>
+                      {group.entries.map((entry) => (
+                        <button
+                          key={entry.uuid}
+                          className="sn-dropdown-item py-2 focus:bg-info-backdrop focus:shadow-none"
+                          onClick={() => {
+                            setSelectedEntryUuid(entry.uuid);
+                            fetchAndSetRemoteRevision(entry);
+                          }}
+                        >
+                          <div
+                            className={`pseudo-radio-btn ${
+                              selectedEntryUuid === entry.uuid
+                                ? 'pseudo-radio-btn--checked'
+                                : ''
+                            } mr-2`}
+                          ></div>
+                          {previewRemoteHistoryTitle(entry)}
+                        </button>
+                      ))}
+                    </Fragment>
+                  ) : null
+                )}
               </div>
               <div
                 className={`flex flex-col flex-grow ${
