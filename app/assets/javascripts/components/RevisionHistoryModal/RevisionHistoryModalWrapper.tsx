@@ -1,5 +1,8 @@
+import { confirmDialog } from '@/services/alertService';
+import { STRING_RESTORE_LOCKED_ATTEMPT } from '@/strings';
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
+import { getPlatformString } from '@/utils';
 import {
   AlertDialogContent,
   AlertDialogDescription,
@@ -11,6 +14,8 @@ import {
   ComponentViewer,
   ContentType,
   HistoryEntry,
+  PayloadContent,
+  PayloadSource,
   RevisionListEntry,
   SNNote,
 } from '@standardnotes/snjs';
@@ -30,7 +35,7 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
   ({ application, appState }) => {
     const cancelButtonRef = useRef<HTMLButtonElement>(null);
 
-    const onModalDismiss = () => {
+    const dismissModal = () => {
       appState.notes.setShowRevisionHistoryModal(false);
     };
 
@@ -44,7 +49,6 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
     const [selectedRevision, setSelectedRevision] = useState<HistoryEntry>();
     const [componentViewer, setComponentViewer] = useState<ComponentViewer>();
 
-    /** @TODO Add loading spinners */
     const fetchAndSetRemoteRevision = useCallback(
       async (revisionListEntry: RevisionListEntry) => {
         setIsFetchingSelectedRevision(true);
@@ -126,14 +130,63 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
       };
     }, [application, componentViewer, selectedRevision]);
 
+    const restore = () => {
+      if (selectedRevision) {
+        const originalNote = application.findItem(
+          selectedRevision.payload.uuid
+        ) as SNNote;
+
+        if (originalNote.locked) {
+          application.alertService.alert(STRING_RESTORE_LOCKED_ATTEMPT);
+          return;
+        }
+
+        confirmDialog({
+          text: "Are you sure you want to replace the current note's contents with what you see in this preview?",
+          confirmButtonStyle: 'danger',
+        }).then((confirmed) => {
+          if (confirmed) {
+            application.changeAndSaveItem(
+              selectedRevision.payload.uuid,
+              (mutator) => {
+                mutator.unsafe_setCustomContent(
+                  selectedRevision.payload.content
+                );
+              },
+              true,
+              PayloadSource.RemoteActionRetrieved
+            );
+            dismissModal();
+          }
+        });
+      }
+    };
+
+    const restoreAsCopy = async () => {
+      if (selectedRevision) {
+        const originalNote = application.findItem(
+          selectedRevision.payload.uuid
+        ) as SNNote;
+
+        await application.duplicateItem(originalNote, {
+          ...(selectedRevision.payload.content as PayloadContent),
+          title: selectedRevision.payload.content.title
+            ? selectedRevision.payload.content.title + ' (copy)'
+            : undefined,
+        });
+
+        dismissModal();
+      }
+    };
+
     const previewRemoteHistoryTitle = (revision: RevisionListEntry) => {
       return new Date(revision.created_at).toLocaleString();
     };
 
     return (
       <AlertDialogOverlay
-        className="sn-component"
-        onDismiss={onModalDismiss}
+        className={`sn-component ${getPlatformString()}`}
+        onDismiss={dismissModal}
         leastDestructiveRef={cancelButtonRef}
       >
         <AlertDialogContent
@@ -225,7 +278,7 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
                 <Button
                   className="py-1.35"
                   label="Cancel"
-                  onClick={onModalDismiss}
+                  onClick={dismissModal}
                   ref={cancelButtonRef}
                   type="normal"
                 />
@@ -243,17 +296,13 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
                   <Button
                     className="py-1.35 mr-2.5"
                     label="Restore as a copy"
-                    onClick={() => {
-                      /** @TODO */
-                    }}
+                    onClick={restoreAsCopy}
                     type="normal"
                   />
                   <Button
                     className="py-1.35"
                     label="Restore version"
-                    onClick={() => {
-                      /** @TODO */
-                    }}
+                    onClick={restore}
                     type="primary"
                   />
                 </div>
