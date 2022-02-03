@@ -15,12 +15,25 @@ import { WebAppEvent, WebApplication } from '@/ui_models/application';
 import { isDesktopApplication } from '@/utils';
 import { Bridge } from './bridge';
 
+export interface ElectronDesktopCallbacks {
+  desktop_updateAvailable(): void;
+  desktop_windowGainedFocus(): void;
+  desktop_windowLostFocus(): void;
+  desktop_onComponentInstallationComplete(
+    componentData: any,
+    error: any
+  ): Promise<void>;
+  desktop_requestBackupFile(): Promise<string | undefined>;
+  desktop_didBeginBackup(): void;
+  desktop_didFinishBackup(success: boolean): void;
+}
+
 /**
  * An interface used by the Desktop application to interact with SN
  */
 export class DesktopManager
   extends ApplicationService
-  implements DesktopManagerInterface
+  implements DesktopManagerInterface, ElectronDesktopCallbacks
 {
   updateObservers: {
     callback: (component: SNComponent) => void;
@@ -115,6 +128,10 @@ export class DesktopManager
     }
   }
 
+  desktop_updateAvailable(): void {
+    this.webApplication.notifyWebEvent(WebAppEvent.NewUpdateAvailable);
+  }
+
   desktop_windowGainedFocus(): void {
     this.webApplication.notifyWebEvent(WebAppEvent.DesktopWindowGainedFocus);
   }
@@ -152,7 +169,7 @@ export class DesktopManager
     }
   }
 
-  async desktop_requestBackupFile() {
+  async desktop_requestBackupFile(): Promise<string | undefined> {
     const data = await this.application.createBackupFile(
       this.application.hasProtectionSources()
         ? EncryptionIntent.FileEncrypted
