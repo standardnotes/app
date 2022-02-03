@@ -8,7 +8,7 @@ import {
 } from '../components';
 import { observer } from 'mobx-react-lite';
 import { WebApplication } from '@/ui_models/application';
-import { ListedAccount } from '@standardnotes/snjs';
+import { ButtonType, ListedAccount } from '@standardnotes/snjs';
 import { useCallback, useEffect, useState } from 'preact/hooks';
 import { ListedAccountItem } from './listed/BlogItem';
 import { Button } from '@/components/Button';
@@ -19,6 +19,7 @@ type Props = {
 
 export const Listed = observer(({ application }: Props) => {
   const [accounts, setAccounts] = useState<ListedAccount[]>([]);
+  const [requestingAccount, setRequestingAccount] = useState<boolean>();
 
   const reloadAccounts = useCallback(async () => {
     setAccounts(await application.getListedAccounts());
@@ -29,9 +30,32 @@ export const Listed = observer(({ application }: Props) => {
   }, [reloadAccounts]);
 
   const registerNewAccount = useCallback(() => {
-    application.registerForNewListedAccount().then(() => {
-      reloadAccounts();
-    });
+    setRequestingAccount(true);
+
+    const requestAccount = async () => {
+      const account = await application.requestNewListedAccount();
+      if (account) {
+        const openSettings = await application.alertService.confirm(
+          `Your new Listed blog has been successfully created!` +
+            ` You can publish a new post to your blog from Standard Notes via the` +
+            ` <i>Actions</i> menu in the editor pane. Open your blog settings to begin setting it up.`,
+          undefined,
+          'Open Settings',
+          ButtonType.Info,
+          'Later'
+        );
+        reloadAccounts();
+        if (openSettings) {
+          const info = await application.getListedAccountInfo(account);
+          if (info) {
+            application.deviceInterface.openUrl(info?.settings_url);
+          }
+        }
+      }
+      setRequestingAccount(false);
+    };
+
+    requestAccount();
   }, [application, reloadAccounts]);
 
   return (
@@ -79,7 +103,10 @@ export const Listed = observer(({ application }: Props) => {
           <Button
             className="mt-3"
             type="normal"
-            label={'Create New Author'}
+            disabled={requestingAccount}
+            label={
+              requestingAccount ? 'Creating account...' : 'Create New Author'
+            }
             onClick={registerNewAccount}
           />
         </PreferencesSegment>
