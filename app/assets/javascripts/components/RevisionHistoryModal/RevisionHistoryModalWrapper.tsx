@@ -148,10 +148,10 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
           <AlertDialogLabel>
             <VisuallyHidden>Note revision history</VisuallyHidden>
           </AlertDialogLabel>
-          <AlertDialogDescription className="bg-default flex flex-col h-full">
-            <div className="flex flex-grow">
+          <AlertDialogDescription className="bg-default flex flex-col h-full overflow-hidden">
+            <div className="flex flex-grow min-h-0">
               <div
-                className={`flex flex-col min-w-68 border-0 border-r-1px border-solid border-main ${
+                className={`flex flex-col min-w-60 py-1 border-0 border-r-1px border-solid border-main overflow-auto ${
                   isFetchingRemoteHistory ? 'items-center justify-center' : ''
                 }`}
               >
@@ -161,7 +161,7 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
                 {remoteHistory?.map((entry) => (
                   <button
                     key={entry.uuid}
-                    className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
+                    className="sn-dropdown-item py-2 focus:bg-info-backdrop focus:shadow-none"
                     onClick={() => {
                       setSelectedEntryUuid(entry.uuid);
                       fetchAndSetRemoteRevision(entry);
@@ -178,48 +178,47 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
                   </button>
                 ))}
               </div>
-              <div className="flex flex-col flex-grow">
-                <div id="editor-title-bar" className="section-title-bar w-full">
-                  <div className="title">{note.title}</div>
-                  <NoteTagsContainer appState={appState} readOnly={true} />
-                </div>
-                <div
-                  className={
-                    isFetchingSelectedRevision
-                      ? 'flex flex-grow items-center justify-center'
-                      : ''
-                  }
-                >
-                  {isFetchingSelectedRevision ? (
-                    <div className="sk-spinner w-5 h-5 mr-2 spinner-info"></div>
-                  ) : (
-                    <>
-                      {!componentViewer && selectedRevision && (
-                        <p
-                          style="white-space: pre-wrap; font-size: 16px;"
-                          className="normal sk-p"
-                        >
-                          {selectedRevision.payload.content.text}
-                        </p>
-                      )}
-                      {componentViewer && selectedRevision && (
-                        <>
-                          <div className="component-view">
-                            <ComponentView
-                              componentViewer={componentViewer}
-                              application={application}
-                              appState={appState}
-                            />
-                          </div>
-                        </>
-                      )}
-                    </>
-                  )}
-                </div>
+              <div
+                className={`flex flex-col flex-grow ${
+                  isFetchingSelectedRevision
+                    ? 'items-center justify-center'
+                    : ''
+                }`}
+              >
+                {isFetchingSelectedRevision ? (
+                  <div className="sk-spinner w-5 h-5 mr-2 spinner-info"></div>
+                ) : (
+                  <>
+                    <div
+                      id="editor-title-bar"
+                      className="section-title-bar w-full"
+                    >
+                      <div className="title">
+                        {selectedRevision?.payload.content.title}
+                      </div>
+                      <NoteTagsContainer appState={appState} readOnly={true} />
+                    </div>
+                    {!componentViewer && selectedRevision && (
+                      <p className="p-4">
+                        {selectedRevision.payload.content.text}
+                      </p>
+                    )}
+                    {componentViewer && selectedRevision && (
+                      <>
+                        <div className="component-view">
+                          <ComponentView
+                            componentViewer={componentViewer}
+                            application={application}
+                            appState={appState}
+                          />
+                        </div>
+                      </>
+                    )}
+                  </>
+                )}
               </div>
             </div>
-            <div className="min-h-1px bg-border"></div>
-            <div className="flex justify-between items-center px-2.5 py-2">
+            <div className="flex flex-shrink-0 justify-between items-center min-h-6 px-2.5 py-2 border-0 border-t-1px border-solid border-main">
               <div>
                 <Button
                   className="py-1.35"
@@ -229,32 +228,34 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
                   type="normal"
                 />
               </div>
-              <div>
-                <Button
-                  className="py-1.35 mr-2.5"
-                  label="Delete this version"
-                  onClick={() => {
-                    /** @TODO */
-                  }}
-                  type="normal"
-                />
-                <Button
-                  className="py-1.35 mr-2.5"
-                  label="Restore as a copy"
-                  onClick={() => {
-                    /** @TODO */
-                  }}
-                  type="normal"
-                />
-                <Button
-                  className="py-1.35"
-                  label="Restore version"
-                  onClick={() => {
-                    /** @TODO */
-                  }}
-                  type="primary"
-                />
-              </div>
+              {selectedRevision && (
+                <div>
+                  <Button
+                    className="py-1.35 mr-2.5"
+                    label="Delete this version"
+                    onClick={() => {
+                      /** @TODO */
+                    }}
+                    type="normal"
+                  />
+                  <Button
+                    className="py-1.35 mr-2.5"
+                    label="Restore as a copy"
+                    onClick={() => {
+                      /** @TODO */
+                    }}
+                    type="normal"
+                  />
+                  <Button
+                    className="py-1.35"
+                    label="Restore version"
+                    onClick={() => {
+                      /** @TODO */
+                    }}
+                    type="primary"
+                  />
+                </div>
+              )}
             </div>
           </AlertDialogDescription>
         </AlertDialogContent>
