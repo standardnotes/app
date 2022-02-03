@@ -188,33 +188,35 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
                 {isFetchingSelectedRevision ? (
                   <div className="sk-spinner w-5 h-5 mr-2 spinner-info"></div>
                 ) : (
-                  <>
-                    <div
-                      id="editor-title-bar"
-                      className="section-title-bar w-full"
-                    >
-                      <div className="title">
-                        {selectedRevision?.payload.content.title}
-                      </div>
-                      <NoteTagsContainer appState={appState} readOnly={true} />
-                    </div>
-                    {!componentViewer && selectedRevision && (
-                      <p className="p-4">
-                        {selectedRevision.payload.content.text}
-                      </p>
-                    )}
-                    {componentViewer && selectedRevision && (
-                      <>
-                        <div className="component-view">
-                          <ComponentView
-                            componentViewer={componentViewer}
-                            application={application}
-                            appState={appState}
-                          />
+                  selectedRevision && (
+                    <>
+                      <div className="p-4 pb-0 text-base font-bold w-full">
+                        <div className="title">
+                          {selectedRevision.payload.content.title}
                         </div>
-                      </>
-                    )}
-                  </>
+                        <NoteTagsContainer
+                          appState={appState}
+                          readOnly={true}
+                        />
+                      </div>
+                      {!componentViewer && (
+                        <p className="p-4">
+                          {selectedRevision.payload.content.text}
+                        </p>
+                      )}
+                      {componentViewer && (
+                        <>
+                          <div className="component-view">
+                            <ComponentView
+                              componentViewer={componentViewer}
+                              application={application}
+                              appState={appState}
+                            />
+                          </div>
+                        </>
+                      )}
+                    </>
+                  )
                 )}
               </div>
             </div>
