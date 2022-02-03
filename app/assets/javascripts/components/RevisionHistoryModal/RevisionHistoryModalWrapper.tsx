@@ -35,20 +35,31 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
     };
 
     const note = Object.values(appState.notes.selectedNotes)[0];
+    const [isFetchingRemoteHistory, setIsFetchingRemoteHistory] =
+      useState(false);
     const [remoteHistory, setRemoteHistory] = useState<RevisionListEntry[]>();
     const [selectedEntryUuid, setSelectedEntryUuid] = useState('');
+    const [isFetchingSelectedRevision, setIsFetchingSelectedRevision] =
+      useState(false);
     const [selectedRevision, setSelectedRevision] = useState<HistoryEntry>();
     const [componentViewer, setComponentViewer] = useState<ComponentViewer>();
 
     /** @TODO Add loading spinners */
     const fetchAndSetRemoteRevision = useCallback(
       async (revisionListEntry: RevisionListEntry) => {
-        const remoteRevision =
-          await application.historyManager.fetchRemoteRevision(
-            note.uuid,
-            revisionListEntry
-          );
-        setSelectedRevision(remoteRevision);
+        setIsFetchingSelectedRevision(true);
+        try {
+          const remoteRevision =
+            await application.historyManager.fetchRemoteRevision(
+              note.uuid,
+              revisionListEntry
+            );
+          setSelectedRevision(remoteRevision);
+        } catch (err) {
+          console.error(err);
+        } finally {
+          setIsFetchingSelectedRevision(false);
+        }
       },
       [application.historyManager, note.uuid]
     );
@@ -56,12 +67,19 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
     useEffect(() => {
       const fetchRemoteHistory = async () => {
         if (note) {
-          const remoteHistory =
-            await application.historyManager.remoteHistoryForItem(note);
-          setRemoteHistory(remoteHistory);
-          if (remoteHistory?.length) {
-            setSelectedEntryUuid(remoteHistory[0].uuid);
-            fetchAndSetRemoteRevision(remoteHistory[0]);
+          setIsFetchingRemoteHistory(true);
+          try {
+            const remoteHistory =
+              await application.historyManager.remoteHistoryForItem(note);
+            setRemoteHistory(remoteHistory);
+            if (remoteHistory?.length) {
+              setSelectedEntryUuid(remoteHistory[0].uuid);
+              fetchAndSetRemoteRevision(remoteHistory[0]);
+            }
+          } catch (err) {
+            console.error(err);
+          } finally {
+            setIsFetchingRemoteHistory(false);
           }
         }
       };
@@ -119,7 +137,7 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
         leastDestructiveRef={cancelButtonRef}
       >
         <AlertDialogContent
-          className="bg-default rounded shadow-overlay"
+          className="rounded shadow-overlay"
           style={{
             width: '90%',
             maxWidth: '90%',
@@ -130,9 +148,16 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
           <AlertDialogLabel>
             <VisuallyHidden>Note revision history</VisuallyHidden>
           </AlertDialogLabel>
-          <AlertDialogDescription className="flex flex-col h-full">
+          <AlertDialogDescription className="bg-default flex flex-col h-full">
             <div className="flex flex-grow">
-              <div className="min-w-68 border-0 border-r-1px border-solid border-main">
+              <div
+                className={`flex flex-col min-w-68 border-0 border-r-1px border-solid border-main ${
+                  isFetchingRemoteHistory ? 'items-center justify-center' : ''
+                }`}
+              >
+                {isFetchingRemoteHistory && (
+                  <div className="sk-spinner w-5 h-5 mr-2 spinner-info"></div>
+                )}
                 {remoteHistory?.map((entry) => (
                   <button
                     key={entry.uuid}
@@ -153,27 +178,41 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
                   </button>
                 ))}
               </div>
-              <div className="flex-grow">
+              <div className="flex flex-col flex-grow">
                 <div id="editor-title-bar" className="section-title-bar w-full">
                   <div className="title">{note.title}</div>
                   <NoteTagsContainer appState={appState} readOnly={true} />
-                  {!componentViewer && selectedRevision && (
-                    <p
-                      style="white-space: pre-wrap; font-size: 16px;"
-                      className="normal sk-p"
-                    >
-                      {selectedRevision.payload.content.text}
-                    </p>
-                  )}
-                  {componentViewer && selectedRevision && (
+                </div>
+                <div
+                  className={
+                    isFetchingSelectedRevision
+                      ? 'flex flex-grow items-center justify-center'
+                      : ''
+                  }
+                >
+                  {isFetchingSelectedRevision ? (
+                    <div className="sk-spinner w-5 h-5 mr-2 spinner-info"></div>
+                  ) : (
                     <>
-                      <div className="component-view">
-                        <ComponentView
-                          componentViewer={componentViewer}
-                          application={application}
-                          appState={appState}
-                        />
-                      </div>
+                      {!componentViewer && selectedRevision && (
+                        <p
+                          style="white-space: pre-wrap; font-size: 16px;"
+                          className="normal sk-p"
+                        >
+                          {selectedRevision.payload.content.text}
+                        </p>
+                      )}
+                      {componentViewer && selectedRevision && (
+                        <>
+                          <div className="component-view">
+                            <ComponentView
+                              componentViewer={componentViewer}
+                              application={application}
+                              appState={appState}
+                            />
+                          </div>
+                        </>
+                      )}
                     </>
                   )}
                 </div>
