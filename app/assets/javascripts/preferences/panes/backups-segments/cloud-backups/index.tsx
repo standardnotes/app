@@ -62,12 +62,22 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
   }, [application]);
 
   useEffect(() => {
-    const cloudBackupsFeatureStatus = application.getFeatureStatus(
-      FeatureIdentifier.CloudLink
+    const dailyDropboxBackupStatus = application.getFeatureStatus(
+      FeatureIdentifier.DailyDropboxBackup
     );
-    setIsEntitledForCloudBackups(
-      cloudBackupsFeatureStatus === FeatureStatus.Entitled
+    const dailyGdriveBackupStatus = application.getFeatureStatus(
+      FeatureIdentifier.DailyGDriveBackup
     );
+    const dailyOneDriveBackupStatus = application.getFeatureStatus(
+      FeatureIdentifier.DailyOneDriveBackup
+    );
+    const isCloudBackupsAllowed = [
+      dailyDropboxBackupStatus,
+      dailyGdriveBackupStatus,
+      dailyOneDriveBackupStatus,
+    ].every((status) => status === FeatureStatus.Entitled);
+
+    setIsEntitledForCloudBackups(isCloudBackupsAllowed);
     loadIsFailedCloudBackupEmailMutedSetting();
   }, [application, loadIsFailedCloudBackupEmailMutedSetting]);
 
