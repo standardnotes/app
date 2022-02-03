@@ -382,6 +382,10 @@
   min-width: 7.5rem;
 }
 
+.min-w-60 {
+  min-width: 15rem;
+}
+
 .min-w-68 {
   min-width: 17rem;
 }
@@ -428,6 +432,10 @@
 
 .sn-component .border-r-1px {
   border-right-width: 1px;
+}
+
+.sn-component .border-t-1px {
+  border-top-width: 1px;
 }
 
 .border-2 {
@@ -861,4 +869,8 @@
 
 .hide-if-last-child:last-child {
   display: none;
+}
+
+.flex-shrink-0 {
+  flex-shrink: 0;
 }
