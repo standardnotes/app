@@ -13,20 +13,7 @@ import {
 
 import { WebAppEvent, WebApplication } from '@/ui_models/application';
 import { isDesktopApplication } from '@/utils';
-import { Bridge } from './bridge';
-
-export interface ElectronDesktopCallbacks {
-  desktop_updateAvailable(): void;
-  desktop_windowGainedFocus(): void;
-  desktop_windowLostFocus(): void;
-  desktop_onComponentInstallationComplete(
-    componentData: any,
-    error: any
-  ): Promise<void>;
-  desktop_requestBackupFile(): Promise<string | undefined>;
-  desktop_didBeginBackup(): void;
-  desktop_didFinishBackup(success: boolean): void;
-}
+import { Bridge, ElectronDesktopCallbacks } from './bridge';
 
 /**
  * An interface used by the Desktop application to interact with SN
