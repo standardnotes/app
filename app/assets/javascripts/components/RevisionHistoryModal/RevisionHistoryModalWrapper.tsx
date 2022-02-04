@@ -22,7 +22,13 @@ import {
 } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { Fragment, FunctionComponent } from 'preact';
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
+import {
+  StateUpdater,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'preact/hooks';
 import { Button } from '../Button';
 import { ComponentView } from '../ComponentView';
 import { NoteTagsContainer } from '../NoteTagsContainer';
@@ -41,6 +47,9 @@ type RevisionListGroup = {
 const GROUP_TITLE_TODAY = 'Today';
 const GROUP_TITLE_WEEK = 'This Week';
 const GROUP_TITLE_YEAR = 'More Than A Year Ago';
+
+const ABSOLUTE_CENTER_CLASSNAME =
+  'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2';
 
 const sortRevisionListIntoGroups = (
   revisionList: RevisionListEntry[] | undefined
@@ -118,6 +127,138 @@ const sortRevisionListIntoGroups = (
   return initialGroups;
 };
 
+const previewRemoteHistoryTitle = (revision: RevisionListEntry) => {
+  return new Date(revision.created_at).toLocaleString();
+};
+
+type RemoteHistoryListProps = {
+  isFetchingRemoteHistory: boolean;
+  remoteHistory: RevisionListGroup[] | undefined;
+  selectedEntryUuid: string;
+  setSelectedEntryUuid: StateUpdater<string>;
+  fetchAndSetRemoteRevision: (
+    revisionListEntry: RevisionListEntry
+  ) => Promise<void>;
+};
+
+const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({
+  isFetchingRemoteHistory,
+  remoteHistory,
+  selectedEntryUuid,
+  setSelectedEntryUuid,
+  fetchAndSetRemoteRevision,
+}) => {
+  return (
+    <div
+      className={`flex flex-col w-full h-full ${
+        isFetchingRemoteHistory && 'items-center justify-center'
+      }`}
+    >
+      {isFetchingRemoteHistory && (
+        <div className="sk-spinner w-5 h-5 spinner-info"></div>
+      )}
+      {remoteHistory?.map((group) =>
+        group.entries && group.entries.length ? (
+          <Fragment key={group.title}>
+            <div className="px-3 my-1 font-semibold color-text uppercase">
+              {group.title}
+            </div>
+            {group.entries.map((entry) => (
+              <button
+                key={entry.uuid}
+                className={`sn-dropdown-item py-2 focus:bg-info-backdrop focus:shadow-none ${
+                  selectedEntryUuid === entry.uuid ? 'bg-info-backdrop' : ''
+                }`}
+                onClick={() => {
+                  setSelectedEntryUuid(entry.uuid);
+                  fetchAndSetRemoteRevision(entry);
+                }}
+              >
+                <div
+                  className={`pseudo-radio-btn ${
+                    selectedEntryUuid === entry.uuid
+                      ? 'pseudo-radio-btn--checked'
+                      : ''
+                  } mr-2`}
+                ></div>
+                {previewRemoteHistoryTitle(entry)}
+              </button>
+            ))}
+          </Fragment>
+        ) : null
+      )}
+    </div>
+  );
+};
+
+type SelectedRevisionContentProps = {
+  application: WebApplication;
+  appState: AppState;
+  isFetchingSelectedRevision: boolean;
+  selectedRevision: HistoryEntry | undefined;
+  componentViewer: ComponentViewer | undefined;
+};
+
+const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentProps> =
+  observer(
+    ({
+      application,
+      appState,
+      isFetchingSelectedRevision,
+      selectedRevision,
+      componentViewer,
+    }) => {
+      if (!isFetchingSelectedRevision && !selectedRevision) {
+        return (
+          <div className={ABSOLUTE_CENTER_CLASSNAME}>No revision selected.</div>
+        );
+      }
+
+      if (isFetchingSelectedRevision) {
+        return (
+          <div
+            className={`sk-spinner w-5 h-5 mr-2 spinner-info ${ABSOLUTE_CENTER_CLASSNAME}`}
+          ></div>
+        );
+      }
+
+      if (selectedRevision) {
+        return (
+          <div className="flex flex-col h-full">
+            <div className="p-4 pb-0 text-base font-bold w-full">
+              <div className="title">
+                {selectedRevision.payload.content.title}
+              </div>
+              <NoteTagsContainer appState={appState} readOnly={true} />
+            </div>
+            {!componentViewer && (
+              <div className="relative flex-grow">
+                {selectedRevision.payload.content.text.length ? (
+                  <p className="p-4">{selectedRevision.payload.content.text}</p>
+                ) : (
+                  <div className={ABSOLUTE_CENTER_CLASSNAME}>Empty note.</div>
+                )}
+              </div>
+            )}
+            {componentViewer && (
+              <>
+                <div className="component-view">
+                  <ComponentView
+                    componentViewer={componentViewer}
+                    application={application}
+                    appState={appState}
+                  />
+                </div>
+              </>
+            )}
+          </div>
+        );
+      }
+
+      return null;
+    }
+  );
+
 export const RevisionHistoryModal: FunctionComponent<Props> = observer(
   ({ application, appState }) => {
     const cancelButtonRef = useRef<HTMLButtonElement>(null);
@@ -127,13 +268,17 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
     };
 
     const note = Object.values(appState.notes.selectedNotes)[0];
+
     const [isFetchingRemoteHistory, setIsFetchingRemoteHistory] =
       useState(false);
     const [remoteHistory, setRemoteHistory] = useState<RevisionListGroup[]>();
+
     const [selectedEntryUuid, setSelectedEntryUuid] = useState('');
+
     const [isFetchingSelectedRevision, setIsFetchingSelectedRevision] =
       useState(false);
     const [selectedRevision, setSelectedRevision] = useState<HistoryEntry>();
+
     const [componentViewer, setComponentViewer] = useState<ComponentViewer>();
 
     const fetchAndSetRemoteRevision = useCallback(
@@ -271,10 +416,6 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
       }
     };
 
-    const previewRemoteHistoryTitle = (revision: RevisionListEntry) => {
-      return new Date(revision.created_at).toLocaleString();
-    };
-
     return (
       <AlertDialogOverlay
         className={`sn-component ${getPlatformString()}`}
@@ -296,82 +437,24 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
           <AlertDialogDescription className="bg-default flex flex-col h-full overflow-hidden">
             <div className="flex flex-grow min-h-0">
               <div
-                className={`flex flex-col min-w-60 py-1 border-0 border-r-1px border-solid border-main overflow-auto ${
-                  isFetchingRemoteHistory ? 'items-center justify-center' : ''
-                }`}
+                className={`flex flex-col min-w-60 py-1 border-0 border-r-1px border-solid border-main overflow-auto`}
               >
-                {isFetchingRemoteHistory && (
-                  <div className="sk-spinner w-5 h-5 mr-2 spinner-info"></div>
-                )}
-                {remoteHistory?.map((group) =>
-                  group.entries && group.entries.length ? (
-                    <Fragment key={group.title}>
-                      <div className="px-3 my-1 font-semibold color-text uppercase">
-                        {group.title}
-                      </div>
-                      {group.entries.map((entry) => (
-                        <button
-                          key={entry.uuid}
-                          className="sn-dropdown-item py-2 focus:bg-info-backdrop focus:shadow-none"
-                          onClick={() => {
-                            setSelectedEntryUuid(entry.uuid);
-                            fetchAndSetRemoteRevision(entry);
-                          }}
-                        >
-                          <div
-                            className={`pseudo-radio-btn ${
-                              selectedEntryUuid === entry.uuid
-                                ? 'pseudo-radio-btn--checked'
-                                : ''
-                            } mr-2`}
-                          ></div>
-                          {previewRemoteHistoryTitle(entry)}
-                        </button>
-                      ))}
-                    </Fragment>
-                  ) : null
-                )}
+                <RemoteHistoryList
+                  remoteHistory={remoteHistory}
+                  isFetchingRemoteHistory={isFetchingRemoteHistory}
+                  fetchAndSetRemoteRevision={fetchAndSetRemoteRevision}
+                  selectedEntryUuid={selectedEntryUuid}
+                  setSelectedEntryUuid={setSelectedEntryUuid}
+                />
               </div>
-              <div
-                className={`flex flex-col flex-grow ${
-                  isFetchingSelectedRevision
-                    ? 'items-center justify-center'
-                    : ''
-                }`}
-              >
-                {isFetchingSelectedRevision ? (
-                  <div className="sk-spinner w-5 h-5 mr-2 spinner-info"></div>
-                ) : (
-                  selectedRevision && (
-                    <>
-                      <div className="p-4 pb-0 text-base font-bold w-full">
-                        <div className="title">
-                          {selectedRevision.payload.content.title}
-                        </div>
-                        <NoteTagsContainer
-                          appState={appState}
-                          readOnly={true}
-                        />
-                      </div>
-                      {!componentViewer && (
-                        <p className="p-4">
-                          {selectedRevision.payload.content.text}
-                        </p>
-                      )}
-                      {componentViewer && (
-                        <>
-                          <div className="component-view">
-                            <ComponentView
-                              componentViewer={componentViewer}
-                              application={application}
-                              appState={appState}
-                            />
-                          </div>
-                        </>
-                      )}
-                    </>
-                  )
-                )}
+              <div className={`flex-grow relative`}>
+                <SelectedRevisionContent
+                  application={application}
+                  appState={appState}
+                  isFetchingSelectedRevision={isFetchingSelectedRevision}
+                  selectedRevision={selectedRevision}
+                  componentViewer={componentViewer}
+                />
               </div>
             </div>
             <div className="flex flex-shrink-0 justify-between items-center min-h-6 px-2.5 py-2 border-0 border-t-1px border-solid border-main">
