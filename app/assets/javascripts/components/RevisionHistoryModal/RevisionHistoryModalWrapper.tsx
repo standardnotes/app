@@ -277,14 +277,6 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
       initializeComponentViewer();
     }, [application, selectedRevision]);
 
-    useEffect(() => {
-      return () => {
-        if (componentViewer) {
-          application.componentManager.destroyComponentViewer(componentViewer);
-        }
-      };
-    }, [application.componentManager, componentViewer]);
-
     const restore = () => {
       if (selectedRevision) {
         const originalNote = application.findItem(
