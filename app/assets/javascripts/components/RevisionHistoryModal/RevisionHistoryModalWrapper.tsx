@@ -268,23 +268,22 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
             componentViewer.lockReadonly = true;
             componentViewer.overrideContextItem = templateNote;
             setComponentViewer(componentViewer);
-          } else if (componentViewer) {
-            application.componentManager.destroyComponentViewer(
-              componentViewer
-            );
+          } else {
             setComponentViewer(undefined);
           }
         }
       };
 
       initializeComponentViewer();
+    }, [application, selectedRevision]);
 
+    useEffect(() => {
       return () => {
         if (componentViewer) {
           application.componentManager.destroyComponentViewer(componentViewer);
         }
       };
-    }, [application, componentViewer, selectedRevision]);
+    }, [application.componentManager, componentViewer]);
 
     const restore = () => {
       if (selectedRevision) {
