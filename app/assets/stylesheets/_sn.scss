@@ -767,6 +767,10 @@
   color: var(--sn-stylekit-foreground-color) !important;
 }
 
+.sn-component .bg-info-backdrop {
+  background-color: var(--sn-stylekit-info-backdrop-color);
+}
+
 .focus\:bg-info-backdrop:focus {
   background-color: var(--sn-stylekit-info-backdrop-color);
 }
