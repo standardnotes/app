@@ -1112,7 +1112,7 @@ export class NoteView extends PureComponent<Props, State> {
                     <div className="sk-label">Actions</div>
                     {this.state.showActionsMenu && (
                       <ActionsMenu
-                        item={this.note}
+                        note={this.note}
                         application={this.application}
                       />
                     )}

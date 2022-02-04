@@ -59,12 +59,22 @@ const startApplication: StartApplication = async function startApplication(
     });
   }
 
-  window.addEventListener('DOMContentLoaded', () => {
+  const renderApp = () => {
     render(
       <ApplicationGroupView mainApplicationGroup={mainApplicationGroup} />,
       document.body.appendChild(document.createElement('div'))
     );
-  });
+  };
+
+  const domReady =
+    document.readyState === 'complete' || document.readyState === 'interactive';
+  if (domReady) {
+    renderApp();
+  } else {
+    window.addEventListener('DOMContentLoaded', () => {
+      renderApp();
+    });
+  }
 };
 
 if (IsWebPlatform) {

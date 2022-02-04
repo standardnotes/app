@@ -1,203 +1,224 @@
 import { WebApplication } from '@/ui_models/application';
 import {
-  SNItem,
   Action,
   SNActionsExtension,
   UuidString,
-  CopyPayload,
   SNNote,
+  ListedAccount,
 } from '@standardnotes/snjs';
 import { ActionResponse } from '@standardnotes/snjs';
 import { render } from 'preact';
 import { PureComponent } from './Abstract/PureComponent';
 import { MenuRow } from './MenuRow';
 import { RevisionPreviewModal } from './RevisionPreviewModal';
-type ActionsMenuScope = {
-  application: WebApplication;
-  item: SNItem;
-};
 
-type ActionSubRow = {
-  onClick: () => void;
-  label: string;
-  subtitle: string;
+type ActionRow = Action & {
+  running?: boolean;
   spinnerClass?: string;
+  subtitle?: string;
 };
 
-type ExtensionState = {
-  loading: boolean;
-  error: boolean;
-};
-
-type MenuItem = {
+type MenuSection = {
   uuid: UuidString;
   name: string;
-  loading: boolean;
-  error: boolean;
-  hidden: boolean;
+  loading?: boolean;
+  error?: boolean;
+  hidden?: boolean;
   deprecation?: string;
-  actions: (Action & {
-    subrows?: ActionSubRow[];
-  })[];
+  extension?: SNActionsExtension;
+  rows?: ActionRow[];
+  listedAccount?: ListedAccount;
 };
 
-type ActionState = {
-  error: boolean;
-  running: boolean;
-};
-
-type ActionsMenuState = {
-  extensions: SNActionsExtension[];
-  extensionsState: Record<UuidString, ExtensionState>;
-  hiddenExtensions: Record<UuidString, boolean>;
-  selectedActionId?: number;
-  menuItems: MenuItem[];
-  actionState: Record<number, ActionState>;
+type State = {
+  menuSections: MenuSection[];
+  selectedActionIdentifier?: string;
 };
 
 type Props = {
   application: WebApplication;
-  item: SNNote;
+  note: SNNote;
 };
 
-export class ActionsMenu
-  extends PureComponent<Props, ActionsMenuState>
-  implements ActionsMenuScope
-{
-  application!: WebApplication;
-  item!: SNItem;
-
+export class ActionsMenu extends PureComponent<Props, State> {
   constructor(props: Props) {
     super(props, props.application);
 
-    const extensions = props.application.actionsManager
+    this.state = {
+      menuSections: [],
+    };
+
+    this.loadExtensions();
+  }
+
+  private async loadExtensions(): Promise<void> {
+    const unresolvedListedSections =
+      await this.getNonresolvedListedMenuSections();
+    const unresolvedGenericSections =
+      await this.getNonresolvedGenericMenuSections();
+    this.setState(
+      {
+        menuSections: unresolvedListedSections.concat(
+          unresolvedGenericSections
+        ),
+      },
+      () => {
+        this.state.menuSections.forEach((menuSection) => {
+          this.resolveMenuSection(menuSection);
+        });
+      }
+    );
+  }
+
+  private async getNonresolvedGenericMenuSections(): Promise<MenuSection[]> {
+    const genericExtensions = this.props.application.actionsManager
       .getExtensions()
       .sort((a, b) => {
         return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
-      })
-      .map((extension) => {
-        return new SNActionsExtension(
-          CopyPayload(extension.payload, {
-            content: {
-              ...extension.payload.safeContent,
-              actions: [],
-            },
-          })
-        );
       });
-    const extensionsState: Record<UuidString, ExtensionState> = {};
-    extensions.map((extension) => {
-      extensionsState[extension.uuid] = {
+
+    return genericExtensions.map((extension) => {
+      const menuSection: MenuSection = {
+        uuid: extension.uuid,
+        name: extension.name,
+        extension: extension,
         loading: true,
-        error: false,
+        hidden: this.appState.actionsMenu.hiddenSections[extension.uuid],
       };
-    });
-
-    this.state = {
-      extensions,
-      extensionsState,
-      hiddenExtensions: {},
-      menuItems: [],
-      actionState: {},
-    };
-  }
-
-  componentDidMount() {
-    this.loadExtensions();
-    this.autorun(() => {
-      this.rebuildMenuState({
-        hiddenExtensions: this.appState.actionsMenu.hiddenExtensions,
-      });
+      return menuSection;
     });
   }
 
-  rebuildMenuState({
-    extensions = this.state.extensions,
-    extensionsState = this.state.extensionsState,
-    selectedActionId = this.state.selectedActionId,
-    hiddenExtensions = this.appState.actionsMenu.hiddenExtensions,
-  } = {}) {
-    return this.setState({
-      extensions,
-      extensionsState,
-      selectedActionId,
-      menuItems: extensions.map((extension) => {
-        const state = extensionsState[extension.uuid];
-        const hidden = hiddenExtensions[extension.uuid];
-        const item: MenuItem = {
-          uuid: extension.uuid,
-          name: extension.name,
-          loading: state?.loading ?? false,
-          error: state?.error ?? false,
-          hidden: hidden ?? false,
-          deprecation: extension.deprecation!,
-          actions: extension
-            .actionsWithContextForItem(this.props.item)
-            .map((action) => {
-              if (action.id === selectedActionId) {
-                return {
-                  ...action,
-                  subrows: this.subRowsForAction(action, extension),
-                };
-              } else {
-                return action;
-              }
-            }),
-        };
-        return item;
-      }),
+  private async getNonresolvedListedMenuSections(): Promise<MenuSection[]> {
+    const listedAccountEntries =
+      await this.props.application.getListedAccounts();
+    return listedAccountEntries.map((entry) => {
+      const menuSection: MenuSection = {
+        uuid: entry.authorId,
+        name: `Listed ${entry.authorId}`,
+        loading: true,
+        listedAccount: entry,
+        hidden: this.appState.actionsMenu.hiddenSections[entry.authorId],
+      };
+      return menuSection;
     });
   }
 
-  async loadExtensions() {
-    await Promise.all(
-      this.state.extensions.map(async (extension: SNActionsExtension) => {
-        this.setLoadingExtension(extension.uuid, true);
-        const updatedExtension =
-          await this.props.application.actionsManager.loadExtensionInContextOfItem(
-            extension,
-            this.props.item
+  private resolveMenuSection(menuSection: MenuSection): void {
+    if (menuSection.listedAccount) {
+      this.props.application
+        .getListedAccountInfo(menuSection.listedAccount, this.props.note.uuid)
+        .then((accountInfo) => {
+          if (!accountInfo) {
+            this.promoteMenuSection({
+              ...menuSection,
+              loading: false,
+            });
+            return;
+          }
+          const existingMenuSection = this.state.menuSections.find(
+            (item) => item.uuid === menuSection.listedAccount?.authorId
+          ) as MenuSection;
+          const resolvedMenuSection: MenuSection = {
+            ...existingMenuSection,
+            loading: false,
+            error: false,
+            name: accountInfo.display_name,
+            rows: accountInfo?.actions,
+          };
+          this.promoteMenuSection(resolvedMenuSection);
+        });
+    } else if (menuSection.extension) {
+      this.props.application.actionsManager
+        .loadExtensionInContextOfItem(menuSection.extension, this.props.note)
+        .then((resolvedExtension) => {
+          if (!resolvedExtension) {
+            this.promoteMenuSection({
+              ...menuSection,
+              loading: false,
+            });
+            return;
+          }
+
+          const actions = resolvedExtension.actionsWithContextForItem(
+            this.props.note
           );
-        if (updatedExtension) {
-          await this.updateExtension(updatedExtension!);
-        } else {
-          this.setErrorExtension(extension.uuid, true);
-        }
-        this.setLoadingExtension(extension.uuid, false);
-      })
-    );
+
+          const resolvedMenuSection: MenuSection = {
+            ...menuSection,
+            rows: actions,
+            deprecation: resolvedExtension.deprecation,
+            loading: false,
+            error: false,
+          };
+          this.promoteMenuSection(resolvedMenuSection);
+        });
+    }
   }
 
-  executeAction = async (action: Action, extensionUuid: UuidString) => {
-    if (action.verb === 'nested') {
-      this.rebuildMenuState({
-        selectedActionId: action.id,
-      });
-      return;
+  private promoteMenuSection(newItem: MenuSection): void {
+    const menuSections = this.state.menuSections.map((menuSection) => {
+      if (menuSection.uuid === newItem.uuid) {
+        return newItem;
+      } else {
+        return menuSection;
+      }
+    });
+    this.setState({ menuSections });
+  }
+
+  private promoteAction(newAction: Action, section: MenuSection): void {
+    const newSection: MenuSection = {
+      ...section,
+      rows: section.rows?.map((action) => {
+        if (action.url === newAction.url) {
+          return newAction;
+        } else {
+          return action;
+        }
+      }),
+    };
+    this.promoteMenuSection(newSection);
+  }
+
+  private idForAction(action: Action) {
+    return `${action.label}:${action.verb}:${action.desc}`;
+  }
+
+  executeAction = async (action: Action, section: MenuSection) => {
+    const isLegacyNoteHistoryExt = action.verb === 'nested';
+    if (isLegacyNoteHistoryExt) {
+      const showRevisionAction = action.subactions![0];
+      action = showRevisionAction;
     }
 
-    const extension = this.props.application.findItem(
-      extensionUuid
-    ) as SNActionsExtension;
-
-    this.updateActionState(action, { running: true, error: false });
+    this.promoteAction(
+      {
+        ...action,
+        running: true,
+      },
+      section
+    );
 
     const response = await this.props.application.actionsManager.runAction(
       action,
-      this.props.item,
-      async () => {
-        /** @todo */
-        return '';
-      }
+      this.props.note
     );
-    if (response.error) {
-      this.updateActionState(action, { error: true, running: false });
+
+    this.promoteAction(
+      {
+        ...action,
+        running: false,
+      },
+      section
+    );
+
+    if (!response || response.error) {
       return;
     }
 
-    this.updateActionState(action, { running: false, error: false });
     this.handleActionResponse(action, response);
-    await this.reloadExtension(extension);
+    this.resolveMenuSection(section);
   };
 
   handleActionResponse(action: Action, result: ActionResponse) {
@@ -216,113 +237,40 @@ export class ActionsMenu
     }
   }
 
-  private subRowsForAction(
-    parentAction: Action,
-    extension: Pick<SNActionsExtension, 'uuid'>
-  ): ActionSubRow[] | undefined {
-    if (!parentAction.subactions) {
-      return undefined;
-    }
-    return parentAction.subactions.map((subaction) => {
-      return {
-        id: subaction.id,
-        onClick: () => {
-          this.executeAction(subaction, extension.uuid);
-        },
-        label: subaction.label,
-        subtitle: subaction.desc,
-        spinnerClass: this.getActionState(subaction).running
-          ? 'info'
-          : undefined,
-      };
+  public toggleSectionVisibility(menuSection: MenuSection) {
+    this.appState.actionsMenu.toggleSectionVisibility(menuSection.uuid);
+    this.promoteMenuSection({
+      ...menuSection,
+      hidden: !menuSection.hidden,
     });
   }
 
-  private updateActionState(action: Action, actionState: ActionState): void {
-    const state = this.state.actionState;
-    state[action.id] = actionState;
-    this.setState({ actionState: state });
-  }
-
-  private getActionState(action: Action): ActionState {
-    return this.state.actionState[action.id] || {};
-  }
-
-  private async updateExtension(extension: SNActionsExtension) {
-    const extensions = this.state.extensions.map((ext: SNActionsExtension) => {
-      if (extension.uuid === ext.uuid) {
-        return extension;
-      }
-      return ext;
-    });
-    await this.rebuildMenuState({
-      extensions,
-    });
-  }
-
-  private async reloadExtension(extension: SNActionsExtension) {
-    const extensionInContext =
-      await this.props.application.actionsManager.loadExtensionInContextOfItem(
-        extension,
-        this.props.item
-      );
-    const extensions = this.state.extensions.map((ext: SNActionsExtension) => {
-      if (extension.uuid === ext.uuid) {
-        return extensionInContext!;
-      }
-      return ext;
-    });
-    this.rebuildMenuState({
-      extensions,
-    });
-  }
-
-  public toggleExtensionVisibility(extensionUuid: UuidString) {
-    this.appState.actionsMenu.toggleExtensionVisibility(extensionUuid);
-  }
-
-  private setLoadingExtension(extensionUuid: UuidString, value = false) {
-    const { extensionsState } = this.state;
-    extensionsState[extensionUuid].loading = value;
-    this.rebuildMenuState({
-      extensionsState,
-    });
-  }
-
-  private setErrorExtension(extensionUuid: UuidString, value = false) {
-    const { extensionsState } = this.state;
-    extensionsState[extensionUuid].error = value;
-    this.rebuildMenuState({
-      extensionsState,
-    });
-  }
-
-  renderMenuItem(item: MenuItem) {
+  renderMenuSection(section: MenuSection) {
     return (
       <div>
         <div
-          key={item.uuid}
+          key={section.uuid}
           className="sk-menu-panel-header"
           onClick={($event) => {
-            this.toggleExtensionVisibility(item.uuid);
+            this.toggleSectionVisibility(section);
             $event.stopPropagation();
           }}
         >
           <div className="sk-menu-panel-column">
-            <div className="sk-menu-panel-header-title">{item.name}</div>
-            {item.hidden && <div>…</div>}
-            {item.deprecation && !item.hidden && (
+            <div className="sk-menu-panel-header-title">{section.name}</div>
+            {section.hidden && <div>…</div>}
+            {section.deprecation && !section.hidden && (
               <div className="sk-menu-panel-header-subtitle">
-                {item.deprecation}
+                {section.deprecation}
               </div>
             )}
           </div>
 
-          {item.loading && <div className="sk-spinner small loading" />}
+          {section.loading && <div className="sk-spinner small loading" />}
         </div>
 
         <div>
-          {item.error && !item.hidden && (
+          {section.error && !section.hidden && (
             <MenuRow
               faded={true}
               label="Error loading actions"
@@ -330,25 +278,23 @@ export class ActionsMenu
             />
           )}
 
-          {!item.actions.length && !item.hidden && (
+          {!section.rows?.length && !section.hidden && (
             <MenuRow faded={true} label="No Actions Available" />
           )}
 
-          {!item.hidden &&
-            !item.loading &&
-            !item.error &&
-            item.actions.map((action, index) => {
+          {!section.hidden &&
+            !section.loading &&
+            !section.error &&
+            section.rows?.map((action, index) => {
               return (
                 <MenuRow
                   key={index}
-                  action={this.executeAction as never}
-                  actionArgs={[action, item.uuid]}
+                  action={() => {
+                    this.executeAction(action, section);
+                  }}
                   label={action.label}
-                  disabled={this.getActionState(action).running}
-                  spinnerClass={
-                    this.getActionState(action).running ? 'info' : undefined
-                  }
-                  subRows={action.subrows}
+                  disabled={action.running}
+                  spinnerClass={action.running ? 'info' : undefined}
                   subtitle={action.desc}
                 >
                   {action.access_type && (
@@ -370,18 +316,11 @@ export class ActionsMenu
     return (
       <div className="sn-component">
         <div className="sk-menu-panel dropdown-menu">
-          {this.state.extensions.length == 0 && (
-            <a
-              href="https://standardnotes.com/plans"
-              rel="noopener"
-              target="blank"
-              className="no-decoration"
-            >
-              <MenuRow label="Download Actions" />
-            </a>
+          {this.state.menuSections.length == 0 && (
+            <MenuRow label="No Actions" />
           )}
-          {this.state.menuItems.map((extension) =>
-            this.renderMenuItem(extension)
+          {this.state.menuSections.map((extension) =>
+            this.renderMenuSection(extension)
           )}
         </div>
       </div>

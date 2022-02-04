@@ -5,72 +5,74 @@ import {
   Title,
   Subtitle,
   Text,
-  LinkButton,
 } from '../components';
 import { observer } from 'mobx-react-lite';
 import { WebApplication } from '@/ui_models/application';
-import { ContentType, SNActionsExtension } from '@standardnotes/snjs';
-import { SNItem } from '@standardnotes/snjs/dist/@types/models/core/item';
+import { ButtonType, ListedAccount } from '@standardnotes/snjs';
 import { useCallback, useEffect, useState } from 'preact/hooks';
-import { BlogItem } from './listed/BlogItem';
+import { ListedAccountItem } from './listed/BlogItem';
+import { Button } from '@/components/Button';
 
 type Props = {
   application: WebApplication;
 };
 
 export const Listed = observer(({ application }: Props) => {
-  const [items, setItems] = useState<SNActionsExtension[]>([]);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [accounts, setAccounts] = useState<ListedAccount[]>([]);
+  const [requestingAccount, setRequestingAccount] = useState<boolean>();
 
-  const reloadItems = useCallback(() => {
-    const components = application
-      .getItems(ContentType.ActionsExtension)
-      .filter((item) =>
-        (item as SNActionsExtension).url.includes('listed')
-      ) as SNActionsExtension[];
-    setItems(components);
+  const reloadAccounts = useCallback(async () => {
+    setAccounts(await application.getListedAccounts());
   }, [application]);
 
   useEffect(() => {
-    reloadItems();
-  }, [reloadItems]);
+    reloadAccounts();
+  }, [reloadAccounts]);
 
-  const disconnectListedBlog = (item: SNItem) => {
-    return new Promise((resolve, reject) => {
-      setIsDeleting(true);
-      application
-        .deleteItem(item)
-        .then(() => {
-          reloadItems();
-          setIsDeleting(false);
-          resolve(true);
-        })
-        .catch((err) => {
-          application.alertService.alert(err);
-          setIsDeleting(false);
-          console.error(err);
-          reject(err);
-        });
-    });
-  };
+  const registerNewAccount = useCallback(() => {
+    setRequestingAccount(true);
+
+    const requestAccount = async () => {
+      const account = await application.requestNewListedAccount();
+      if (account) {
+        const openSettings = await application.alertService.confirm(
+          `Your new Listed blog has been successfully created!` +
+            ` You can publish a new post to your blog from Standard Notes via the` +
+            ` <i>Actions</i> menu in the editor pane. Open your blog settings to begin setting it up.`,
+          undefined,
+          'Open Settings',
+          ButtonType.Info,
+          'Later'
+        );
+        reloadAccounts();
+        if (openSettings) {
+          const info = await application.getListedAccountInfo(account);
+          if (info) {
+            application.deviceInterface.openUrl(info?.settings_url);
+          }
+        }
+      }
+      setRequestingAccount(false);
+    };
+
+    requestAccount();
+  }, [application, reloadAccounts]);
 
   return (
     <PreferencesPane>
-      {items.length > 0 && (
+      {accounts.length > 0 && (
         <PreferencesGroup>
           <PreferencesSegment>
             <Title>
-              Your {items.length === 1 ? 'Blog' : 'Blogs'} on Listed
+              Your {accounts.length === 1 ? 'Blog' : 'Blogs'} on Listed
             </Title>
             <div className="h-2 w-full" />
-            {items.map((item, index, array) => {
+            {accounts.map((item, index, array) => {
               return (
-                <BlogItem
-                  item={item}
+                <ListedAccountItem
+                  account={item}
                   showSeparator={index !== array.length - 1}
-                  disabled={isDeleting}
-                  disconnect={disconnectListedBlog}
-                  key={item.uuid}
+                  key={item.authorId}
                   application={application}
                 />
               );
@@ -95,21 +97,19 @@ export const Listed = observer(({ application }: Props) => {
             </a>
           </Text>
         </PreferencesSegment>
-        {items.length === 0 ? (
-          <PreferencesSegment>
-            <Subtitle>How to get started?</Subtitle>
-            <Text>
-              First, you’ll need to sign up for Listed. Once you have your
-              Listed account, follow the instructions to connect it with your
-              Standard Notes account.
-            </Text>
-            <LinkButton
-              className="min-w-20 mt-3"
-              link="https://listed.to"
-              label="Get started"
-            />
-          </PreferencesSegment>
-        ) : null}
+        <PreferencesSegment>
+          <Subtitle>Get Started</Subtitle>
+          <Text>Create a free Listed author account to get started.</Text>
+          <Button
+            className="mt-3"
+            type="normal"
+            disabled={requestingAccount}
+            label={
+              requestingAccount ? 'Creating account...' : 'Create New Author'
+            }
+            onClick={registerNewAccount}
+          />
+        </PreferencesSegment>
       </PreferencesGroup>
     </PreferencesPane>
   );
