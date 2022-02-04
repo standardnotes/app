@@ -4,7 +4,6 @@ import { ComponentViewer, HistoryEntry } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { ComponentView } from '../ComponentView';
-import { NoteTagsContainer } from '../NoteTagsContainer';
 
 const ABSOLUTE_CENTER_CLASSNAME =
   'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2';
@@ -47,7 +46,6 @@ export const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentP
               <div className="title">
                 {selectedRevision.payload.content.title}
               </div>
-              <NoteTagsContainer appState={appState} readOnly={true} />
             </div>
             {!componentViewer && (
               <div className="relative flex-grow">
