@@ -84,7 +84,7 @@
     "@reach/tooltip": "^0.16.2",
     "@standardnotes/components": "1.4.4",
     "@standardnotes/features": "1.26.1",
-    "@standardnotes/snjs": "2.49.4",
+    "@standardnotes/snjs": "2.50.0",
     "@standardnotes/settings": "^1.11.2",
     "@standardnotes/sncrypto-web": "1.6.2",
     "mobx": "^6.3.5",
