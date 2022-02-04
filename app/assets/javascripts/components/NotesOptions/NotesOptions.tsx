@@ -390,6 +390,17 @@ export const NotesOptions = observer(
           </span>
           <Switch className="px-0" checked={protect} />
         </button>
+        {notes.length === 1 && (
+          <>
+            <div className="min-h-1px my-2 bg-border"></div>
+            <ChangeEditorOption
+              appState={appState}
+              application={application}
+              closeOnBlur={closeOnBlur}
+              note={notes[0]}
+            />
+          </>
+        )}
         <div className="min-h-1px my-2 bg-border"></div>
         {appState.tags.tagsCount > 0 && (
           <Disclosure open={tagsMenuOpen} onChange={openTagsMenu}>
@@ -572,13 +583,6 @@ export const NotesOptions = observer(
         )}
         {notes.length === 1 ? (
           <>
-            <div className="min-h-1px my-2 bg-border"></div>
-            <ChangeEditorOption
-              appState={appState}
-              application={application}
-              closeOnBlur={closeOnBlur}
-              note={notes[0]}
-            />
             <div className="min-h-1px my-2 bg-border"></div>
             <SpellcheckOptions appState={appState} note={notes[0]} />
             <div className="min-h-1px my-2 bg-border"></div>

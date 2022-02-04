@@ -5,6 +5,7 @@ import {
   SNApplicationGroup,
   DeviceInterface,
   Platform,
+  Runtime,
 } from '@standardnotes/snjs';
 import { AppState } from '@/ui_models/app_state';
 import { Bridge } from '@/services/bridge';
@@ -20,7 +21,7 @@ export class ApplicationGroup extends SNApplicationGroup {
   constructor(
     private defaultSyncServerHost: string,
     private bridge: Bridge,
-    private enableUnfinishedFeatures: boolean,
+    private runtime: Runtime,
     private webSocketUrl: string
   ) {
     super(new WebDeviceInterface(bridge));
@@ -50,8 +51,8 @@ export class ApplicationGroup extends SNApplicationGroup {
       descriptor.identifier,
       this.defaultSyncServerHost,
       this.bridge,
-      this.enableUnfinishedFeatures,
-      this.webSocketUrl
+      this.webSocketUrl,
+      this.runtime
     );
     const appState = new AppState(application, this.bridge);
     const archiveService = new ArchiveManager(application);

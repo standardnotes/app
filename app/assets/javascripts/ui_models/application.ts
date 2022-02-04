@@ -16,6 +16,7 @@ import {
   NoteGroupController,
   removeFromArray,
   IconsController,
+  Runtime,
 } from '@standardnotes/snjs';
 
 type WebServices = {
@@ -48,8 +49,8 @@ export class WebApplication extends SNApplication {
     identifier: string,
     defaultSyncServerHost: string,
     public bridge: Bridge,
-    enableUnfinishedFeatures: boolean,
-    webSocketUrl: string
+    webSocketUrl: string,
+    runtime: Runtime
   ) {
     super(
       bridge.environment,
@@ -61,8 +62,8 @@ export class WebApplication extends SNApplication {
       [],
       defaultSyncServerHost,
       bridge.appVersion,
-      enableUnfinishedFeatures,
-      webSocketUrl
+      webSocketUrl,
+      runtime
     );
     deviceInterface.setApplication(this);
     this.noteControllerGroup = new NoteGroupController(this);

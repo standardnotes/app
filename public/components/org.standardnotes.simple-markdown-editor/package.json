@@ -1,12 +1,12 @@
 {
   "name": "sn-simple-markdown-editor",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "main": "dist/dist.js",
   "scripts": {
     "lint": "eslint --cache --ext .jsx,.js --format=node_modules/eslint-formatter-pretty .",
     "test": "npm run lint",
     "build": "webpack",
-    "start": "webpack-dev-server --devtool eval --progress --hot --content-base app",
+    "start": "webpack-dev-server --devtool eval --progress --port 8001 --hot --content-base app",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 1"
   },
   "sn": {
