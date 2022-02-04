@@ -25,7 +25,7 @@ declare global {
 }
 
 import { IsWebPlatform, WebAppVersion } from '@/version';
-import { SNLog } from '@standardnotes/snjs';
+import { Runtime, SNLog } from '@standardnotes/snjs';
 import { render } from 'preact';
 import { ApplicationGroupView } from './components/ApplicationGroupView';
 import { Bridge } from './services/bridge';
@@ -47,7 +47,7 @@ const startApplication: StartApplication = async function startApplication(
   const mainApplicationGroup = new ApplicationGroup(
     defaultSyncServerHost,
     bridge,
-    enableUnfinishedFeatures,
+    enableUnfinishedFeatures ? Runtime.Dev : Runtime.Prod,
     webSocketUrl
   );
 

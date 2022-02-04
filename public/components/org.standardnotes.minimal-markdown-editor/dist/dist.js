@@ -11059,16 +11059,18 @@ document.addEventListener("DOMContentLoaded", function (event) {
         if (platform) {
           document.body.classList.add(platform);
         }
-      }
-    }); // only use CodeMirror selection color if we're not on mobile.
 
-    editor.setOption("styleSelectedText", !componentRelay.isMobile);
+        loadEditor(); // only use CodeMirror selection color if we're not on mobile.
+
+        editor.setOption("styleSelectedText", !componentRelay.isMobile);
+      }
+    });
     componentRelay.streamContextItem(function (note) {
       onReceivedNote(note);
     });
   }
 
-  function save() {
+  function saveNote() {
     if (workingNote) {
       // Be sure to capture this object as a variable, as this.note may be reassigned in `streamContextItem`, so by the time
       // you modify it in the presave block, it may not be the same object anymore, so the presave values will not be applied to
@@ -11112,6 +11114,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
         initialLoad = false;
         editor.getDoc().clearHistory();
       }
+
+      editor.setOption("spellcheck", workingNote.content.spellcheck);
     }
   }
 
@@ -11121,7 +11125,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
       lineWrapping: true,
       extraKeys: {
         "Alt-F": "findPersistent"
-      }
+      },
+      inputStyle: getInputStyleForEnvironment()
     });
     editor.setSize(undefined, "100%");
     editor.on("change", function () {
@@ -11129,11 +11134,17 @@ document.addEventListener("DOMContentLoaded", function (event) {
         return;
       }
 
-      save();
+      saveNote();
     });
   }
 
-  loadEditor();
+  function getInputStyleForEnvironment() {
+    var _componentRelay$envir;
+
+    var environment = (_componentRelay$envir = componentRelay.environment) !== null && _componentRelay$envir !== void 0 ? _componentRelay$envir : 'web';
+    return environment === 'mobile' ? 'textarea' : 'contenteditable';
+  }
+
   loadComponentRelay();
 });
 
