@@ -30,9 +30,9 @@ import {
   useState,
 } from 'preact/hooks';
 import { Button } from '../Button';
-import { ComponentView } from '../ComponentView';
-import { NoteTagsContainer } from '../NoteTagsContainer';
 import { calculateDifferenceBetweenDatesInDays } from '../utils';
+import { HistoryListItem } from './HistoryListItem';
+import { SelectedRevisionContent } from './SelectedRevisionContent';
 
 type Props = {
   application: WebApplication;
@@ -47,9 +47,6 @@ type RevisionListGroup = {
 const GROUP_TITLE_TODAY = 'Today';
 const GROUP_TITLE_WEEK = 'This Week';
 const GROUP_TITLE_YEAR = 'More Than A Year Ago';
-
-const ABSOLUTE_CENTER_CLASSNAME =
-  'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2';
 
 const sortRevisionListIntoGroups = (
   revisionList: RevisionListEntry[] | undefined
@@ -164,25 +161,15 @@ const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({
               {group.title}
             </div>
             {group.entries.map((entry) => (
-              <button
+              <HistoryListItem
                 key={entry.uuid}
-                className={`sn-dropdown-item py-2 focus:bg-info-backdrop focus:shadow-none ${
-                  selectedEntryUuid === entry.uuid ? 'bg-info-backdrop' : ''
-                }`}
+                isSelected={selectedEntryUuid === entry.uuid}
+                label={previewRemoteHistoryTitle(entry)}
                 onClick={() => {
                   setSelectedEntryUuid(entry.uuid);
                   fetchAndSetRemoteRevision(entry);
                 }}
-              >
-                <div
-                  className={`pseudo-radio-btn ${
-                    selectedEntryUuid === entry.uuid
-                      ? 'pseudo-radio-btn--checked'
-                      : ''
-                  } mr-2`}
-                ></div>
-                {previewRemoteHistoryTitle(entry)}
-              </button>
+              />
             ))}
           </Fragment>
         ) : null
@@ -190,74 +177,6 @@ const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({
     </div>
   );
 };
-
-type SelectedRevisionContentProps = {
-  application: WebApplication;
-  appState: AppState;
-  isFetchingSelectedRevision: boolean;
-  selectedRevision: HistoryEntry | undefined;
-  componentViewer: ComponentViewer | undefined;
-};
-
-const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentProps> =
-  observer(
-    ({
-      application,
-      appState,
-      isFetchingSelectedRevision,
-      selectedRevision,
-      componentViewer,
-    }) => {
-      if (!isFetchingSelectedRevision && !selectedRevision) {
-        return (
-          <div className={ABSOLUTE_CENTER_CLASSNAME}>No revision selected.</div>
-        );
-      }
-
-      if (isFetchingSelectedRevision) {
-        return (
-          <div
-            className={`sk-spinner w-5 h-5 mr-2 spinner-info ${ABSOLUTE_CENTER_CLASSNAME}`}
-          ></div>
-        );
-      }
-
-      if (selectedRevision) {
-        return (
-          <div className="flex flex-col h-full">
-            <div className="p-4 pb-0 text-base font-bold w-full">
-              <div className="title">
-                {selectedRevision.payload.content.title}
-              </div>
-              <NoteTagsContainer appState={appState} readOnly={true} />
-            </div>
-            {!componentViewer && (
-              <div className="relative flex-grow">
-                {selectedRevision.payload.content.text.length ? (
-                  <p className="p-4">{selectedRevision.payload.content.text}</p>
-                ) : (
-                  <div className={ABSOLUTE_CENTER_CLASSNAME}>Empty note.</div>
-                )}
-              </div>
-            )}
-            {componentViewer && (
-              <>
-                <div className="component-view">
-                  <ComponentView
-                    componentViewer={componentViewer}
-                    application={application}
-                    appState={appState}
-                  />
-                </div>
-              </>
-            )}
-          </div>
-        );
-      }
-
-      return null;
-    }
-  );
 
 export const RevisionHistoryModal: FunctionComponent<Props> = observer(
   ({ application, appState }) => {
