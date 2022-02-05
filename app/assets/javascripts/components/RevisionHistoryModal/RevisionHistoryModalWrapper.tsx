@@ -15,22 +15,14 @@ import {
   HistoryEntry,
   PayloadContent,
   PayloadSource,
-  RevisionListEntry,
   SNNote,
 } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'preact/hooks';
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { Button } from '../Button';
-import { RemoteHistoryList } from './RemoteHistoryList';
+import { HistoryListContainer } from './HistoryListContainer';
 import { SelectedRevisionContent } from './SelectedRevisionContent';
-import { RemoteRevisionListGroup, sortRevisionListIntoGroups } from './utils';
 
 type Props = {
   application: WebApplication;
@@ -50,67 +42,11 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
       return application.componentManager.editorForNote(note);
     }, [application.componentManager, note]);
 
-    const [isFetchingRemoteHistory, setIsFetchingRemoteHistory] =
-      useState(false);
-    const [remoteHistory, setRemoteHistory] =
-      useState<RemoteRevisionListGroup[]>();
-
-    const [selectedEntryUuid, setSelectedEntryUuid] = useState('');
-
     const [isFetchingSelectedRevision, setIsFetchingSelectedRevision] =
       useState(false);
     const [selectedRevision, setSelectedRevision] = useState<HistoryEntry>();
     const [templateNoteForRevision, setTemplateNoteForRevision] =
       useState<SNNote>();
-
-    const fetchAndSetRemoteRevision = useCallback(
-      async (revisionListEntry: RevisionListEntry) => {
-        setIsFetchingSelectedRevision(true);
-        try {
-          const remoteRevision =
-            await application.historyManager.fetchRemoteRevision(
-              note.uuid,
-              revisionListEntry
-            );
-          setSelectedRevision(remoteRevision);
-        } catch (err) {
-          console.error(err);
-        } finally {
-          setIsFetchingSelectedRevision(false);
-        }
-      },
-      [application.historyManager, note.uuid]
-    );
-
-    useEffect(() => {
-      const fetchRemoteHistory = async () => {
-        if (note) {
-          setIsFetchingRemoteHistory(true);
-          try {
-            const initialRemoteHistory =
-              await application.historyManager.remoteHistoryForItem(note);
-
-            const remoteHistoryAsGroups =
-              sortRevisionListIntoGroups<RevisionListEntry>(
-                initialRemoteHistory
-              );
-
-            setRemoteHistory(remoteHistoryAsGroups);
-
-            if (initialRemoteHistory?.length) {
-              setSelectedEntryUuid(initialRemoteHistory[0].uuid);
-              fetchAndSetRemoteRevision(initialRemoteHistory[0]);
-            }
-          } catch (err) {
-            console.error(err);
-          } finally {
-            setIsFetchingRemoteHistory(false);
-          }
-        }
-      };
-
-      fetchRemoteHistory();
-    }, [application.historyManager, fetchAndSetRemoteRevision, note]);
 
     const restore = () => {
       if (selectedRevision) {
@@ -196,17 +132,12 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
           </AlertDialogLabel>
           <AlertDialogDescription className="bg-default flex flex-col h-full overflow-hidden">
             <div className="flex flex-grow min-h-0">
-              <div
-                className={`flex flex-col min-w-60 py-1 border-0 border-r-1px border-solid border-main overflow-auto`}
-              >
-                <RemoteHistoryList
-                  remoteHistory={remoteHistory}
-                  isFetchingRemoteHistory={isFetchingRemoteHistory}
-                  fetchAndSetRemoteRevision={fetchAndSetRemoteRevision}
-                  selectedEntryUuid={selectedEntryUuid}
-                  setSelectedEntryUuid={setSelectedEntryUuid}
-                />
-              </div>
+              <HistoryListContainer
+                application={application}
+                note={note}
+                setSelectedRevision={setSelectedRevision}
+                setIsFetchingSelectedRevision={setIsFetchingSelectedRevision}
+              />
               <div className={`flex-grow relative`}>
                 {selectedRevision && templateNoteForRevision && (
                   <SelectedRevisionContent
@@ -232,14 +163,6 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
               </div>
               {selectedRevision && (
                 <div>
-                  <Button
-                    className="py-1.35 mr-2.5"
-                    label="Delete this version"
-                    onClick={() => {
-                      /** @TODO */
-                    }}
-                    type="normal"
-                  />
                   <Button
                     className="py-1.35 mr-2.5"
                     label="Restore as a copy"

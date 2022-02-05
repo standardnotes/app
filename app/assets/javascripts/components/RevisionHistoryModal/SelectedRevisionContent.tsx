@@ -90,6 +90,7 @@ export const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentP
             {componentViewer && (
               <div className="component-view">
                 <ComponentView
+                  key={componentViewer.identifier}
                   componentViewer={componentViewer}
                   application={application}
                   appState={appState}
