@@ -3,7 +3,6 @@ import { STRING_RESTORE_LOCKED_ATTEMPT } from '@/strings';
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import { getPlatformString } from '@/utils';
-import { DAYS_IN_A_WEEK, DAYS_IN_A_YEAR } from '@/views/constants';
 import {
   AlertDialogContent,
   AlertDialogDescription,
@@ -20,9 +19,8 @@ import {
   SNNote,
 } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
-import { Fragment, FunctionComponent } from 'preact';
+import { FunctionComponent } from 'preact';
 import {
-  StateUpdater,
   useCallback,
   useEffect,
   useMemo,
@@ -30,151 +28,27 @@ import {
   useState,
 } from 'preact/hooks';
 import { Button } from '../Button';
-import { calculateDifferenceBetweenDatesInDays } from '../utils';
-import { HistoryListItem } from './HistoryListItem';
+import { RemoteHistoryList } from './RemoteHistoryList';
 import { SelectedRevisionContent } from './SelectedRevisionContent';
+import {
+  getInitialGroups,
+  RemoteRevisionListGroup,
+  sortRevisionListIntoGroups,
+} from './utils';
 
 type Props = {
   application: WebApplication;
   appState: AppState;
 };
 
-type RevisionListGroup = {
-  title: string;
-  entries: RevisionListEntry[] | undefined;
-};
-
-const GROUP_TITLE_TODAY = 'Today';
-const GROUP_TITLE_WEEK = 'This Week';
-const GROUP_TITLE_YEAR = 'More Than A Year Ago';
-
-const sortRevisionListIntoGroups = (
+const sortRemoteRevisionListIntoGroups = (
   revisionList: RevisionListEntry[] | undefined
 ) => {
-  const initialGroups: RevisionListGroup[] = [
-    {
-      title: GROUP_TITLE_TODAY,
-      entries: [],
-    },
-    {
-      title: GROUP_TITLE_WEEK,
-      entries: [],
-    },
-    {
-      title: GROUP_TITLE_YEAR,
-      entries: [],
-    },
-  ];
+  const initialGroups = getInitialGroups<RevisionListEntry>();
 
-  revisionList?.forEach((entry) => {
-    const todayAsDate = new Date();
-    const entryDate = new Date(entry.created_at);
-
-    const differenceBetweenDatesInDays = calculateDifferenceBetweenDatesInDays(
-      todayAsDate,
-      entryDate
-    );
-
-    if (differenceBetweenDatesInDays === 0) {
-      const todayGroupIndex = initialGroups.findIndex(
-        (group) => group.title === GROUP_TITLE_TODAY
-      );
-      initialGroups[todayGroupIndex]?.entries?.push(entry);
-      return;
-    }
-
-    if (
-      differenceBetweenDatesInDays > 0 &&
-      differenceBetweenDatesInDays < DAYS_IN_A_WEEK
-    ) {
-      const weekGroupIndex = initialGroups.findIndex(
-        (group) => group.title === GROUP_TITLE_WEEK
-      );
-      initialGroups[weekGroupIndex]?.entries?.push(entry);
-      return;
-    }
-
-    if (differenceBetweenDatesInDays > DAYS_IN_A_YEAR) {
-      const yearGroupIndex = initialGroups.findIndex(
-        (group) => group.title === GROUP_TITLE_YEAR
-      );
-      initialGroups[yearGroupIndex]?.entries?.push(entry);
-      return;
-    }
-
-    const formattedEntryMonthYear = entryDate.toLocaleDateString(undefined, {
-      month: 'long',
-      year: 'numeric',
-    });
-
-    const monthGroupIndex = initialGroups.findIndex(
-      (group) => group.title === formattedEntryMonthYear
-    );
-
-    if (monthGroupIndex > -1) {
-      initialGroups[monthGroupIndex]?.entries?.push(entry);
-    } else {
-      initialGroups.push({
-        title: formattedEntryMonthYear,
-        entries: [entry],
-      });
-    }
-  });
-
-  return initialGroups;
-};
-
-const previewRemoteHistoryTitle = (revision: RevisionListEntry) => {
-  return new Date(revision.created_at).toLocaleString();
-};
-
-type RemoteHistoryListProps = {
-  isFetchingRemoteHistory: boolean;
-  remoteHistory: RevisionListGroup[] | undefined;
-  selectedEntryUuid: string;
-  setSelectedEntryUuid: StateUpdater<string>;
-  fetchAndSetRemoteRevision: (
-    revisionListEntry: RevisionListEntry
-  ) => Promise<void>;
-};
-
-const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({
-  isFetchingRemoteHistory,
-  remoteHistory,
-  selectedEntryUuid,
-  setSelectedEntryUuid,
-  fetchAndSetRemoteRevision,
-}) => {
-  return (
-    <div
-      className={`flex flex-col w-full h-full ${
-        isFetchingRemoteHistory && 'items-center justify-center'
-      }`}
-    >
-      {isFetchingRemoteHistory && (
-        <div className="sk-spinner w-5 h-5 spinner-info"></div>
-      )}
-      {remoteHistory?.map((group) =>
-        group.entries && group.entries.length ? (
-          <Fragment key={group.title}>
-            <div className="px-3 my-1 font-semibold color-text uppercase">
-              {group.title}
-            </div>
-            {group.entries.map((entry) => (
-              <HistoryListItem
-                key={entry.uuid}
-                isSelected={selectedEntryUuid === entry.uuid}
-                label={previewRemoteHistoryTitle(entry)}
-                onClick={() => {
-                  setSelectedEntryUuid(entry.uuid);
-                  fetchAndSetRemoteRevision(entry);
-                }}
-              />
-            ))}
-          </Fragment>
-        ) : null
-      )}
-    </div>
+  return sortRevisionListIntoGroups<RevisionListEntry>(
+    revisionList,
+    initialGroups
   );
 };
 
@@ -193,7 +67,8 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
 
     const [isFetchingRemoteHistory, setIsFetchingRemoteHistory] =
       useState(false);
-    const [remoteHistory, setRemoteHistory] = useState<RevisionListGroup[]>();
+    const [remoteHistory, setRemoteHistory] =
+      useState<RemoteRevisionListGroup[]>();
 
     const [selectedEntryUuid, setSelectedEntryUuid] = useState('');
 
@@ -231,7 +106,7 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
               await application.historyManager.remoteHistoryForItem(note);
 
             const remoteHistoryAsGroups =
-              sortRevisionListIntoGroups(initialRemoteHistory);
+              sortRemoteRevisionListIntoGroups(initialRemoteHistory);
 
             setRemoteHistory(remoteHistoryAsGroups);
 
