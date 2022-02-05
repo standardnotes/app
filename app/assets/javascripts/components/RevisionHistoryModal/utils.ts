@@ -60,34 +60,31 @@ const GROUP_TITLE_TODAY = 'Today';
 const GROUP_TITLE_WEEK = 'This Week';
 const GROUP_TITLE_YEAR = 'More Than A Year Ago';
 
-export const getInitialGroups = <T extends RevisionEntry>(): ListGroup<T>[] => [
-  {
-    title: GROUP_TITLE_TODAY,
-    entries: [],
-  },
-  {
-    title: GROUP_TITLE_WEEK,
-    entries: [],
-  },
-  {
-    title: GROUP_TITLE_YEAR,
-    entries: [],
-  },
-];
-
 export const sortRevisionListIntoGroups = <EntryType extends RevisionEntry>(
-  revisionList: EntryType[] | undefined,
-  initialGroups: ListGroup<EntryType>[]
+  revisionList: EntryType[] | undefined
 ) => {
-  const sortedGroups = [...initialGroups];
+  const sortedGroups: ListGroup<EntryType>[] = [
+    {
+      title: GROUP_TITLE_TODAY,
+      entries: [],
+    },
+    {
+      title: GROUP_TITLE_WEEK,
+      entries: [],
+    },
+    {
+      title: GROUP_TITLE_YEAR,
+      entries: [],
+    },
+  ];
 
   revisionList?.forEach((entry) => {
-    const groupIndex = getGroupIndexForEntry(entry, initialGroups);
+    const groupIndex = getGroupIndexForEntry(entry, sortedGroups);
 
     if (groupIndex > -1) {
-      initialGroups[groupIndex]?.entries?.push(entry);
+      sortedGroups[groupIndex]?.entries?.push(entry);
     } else {
-      initialGroups.push({
+      sortedGroups.push({
         title: formatDateAsMonthYearString(
           new Date(
             (entry as RevisionListEntry).created_at ??

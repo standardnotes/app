@@ -30,26 +30,11 @@ import {
 import { Button } from '../Button';
 import { RemoteHistoryList } from './RemoteHistoryList';
 import { SelectedRevisionContent } from './SelectedRevisionContent';
-import {
-  getInitialGroups,
-  RemoteRevisionListGroup,
-  sortRevisionListIntoGroups,
-} from './utils';
+import { RemoteRevisionListGroup, sortRevisionListIntoGroups } from './utils';
 
 type Props = {
   application: WebApplication;
   appState: AppState;
-};
-
-const sortRemoteRevisionListIntoGroups = (
-  revisionList: RevisionListEntry[] | undefined
-) => {
-  const initialGroups = getInitialGroups<RevisionListEntry>();
-
-  return sortRevisionListIntoGroups<RevisionListEntry>(
-    revisionList,
-    initialGroups
-  );
 };
 
 export const RevisionHistoryModal: FunctionComponent<Props> = observer(
@@ -106,7 +91,9 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
               await application.historyManager.remoteHistoryForItem(note);
 
             const remoteHistoryAsGroups =
-              sortRemoteRevisionListIntoGroups(initialRemoteHistory);
+              sortRevisionListIntoGroups<RevisionListEntry>(
+                initialRemoteHistory
+              );
 
             setRemoteHistory(remoteHistoryAsGroups);
 
