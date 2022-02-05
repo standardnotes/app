@@ -54,6 +54,16 @@ export const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentP
         templateNoteForRevision,
       ]);
 
+      useEffect(() => {
+        return () => {
+          if (componentViewer) {
+            application.componentManager.destroyComponentViewer(
+              componentViewer
+            );
+          }
+        };
+      }, [application.componentManager, componentViewer]);
+
       if (!isFetchingSelectedRevision && !selectedRevision) {
         return (
           <div className={ABSOLUTE_CENTER_CLASSNAME}>No revision selected.</div>
