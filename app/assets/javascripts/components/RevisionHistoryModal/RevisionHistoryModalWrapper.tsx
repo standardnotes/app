@@ -12,7 +12,6 @@ import {
 } from '@reach/alert-dialog';
 import VisuallyHidden from '@reach/visually-hidden';
 import {
-  ComponentViewer,
   ContentType,
   HistoryEntry,
   PayloadContent,
@@ -26,6 +25,7 @@ import {
   StateUpdater,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'preact/hooks';
@@ -187,6 +187,9 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
     };
 
     const note = Object.values(appState.notes.selectedNotes)[0];
+    const editorForCurrentNote = useMemo(() => {
+      return application.componentManager.editorForNote(note);
+    }, [application.componentManager, note]);
 
     const [isFetchingRemoteHistory, setIsFetchingRemoteHistory] =
       useState(false);
@@ -197,8 +200,8 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
     const [isFetchingSelectedRevision, setIsFetchingSelectedRevision] =
       useState(false);
     const [selectedRevision, setSelectedRevision] = useState<HistoryEntry>();
-
-    const [componentViewer, setComponentViewer] = useState<ComponentViewer>();
+    const [templateNoteForRevision, setTemplateNoteForRevision] =
+      useState<SNNote>();
 
     const fetchAndSetRemoteRevision = useCallback(
       async (revisionListEntry: RevisionListEntry) => {
@@ -246,36 +249,6 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
 
       fetchRemoteHistory();
     }, [application.historyManager, fetchAndSetRemoteRevision, note]);
-
-    useEffect(() => {
-      const initializeComponentViewer = async () => {
-        if (selectedRevision) {
-          const templateNote = (await application.createTemplateItem(
-            ContentType.Note,
-            selectedRevision.payload.content
-          )) as SNNote;
-
-          const originalNote = application.findItem(
-            selectedRevision.payload.uuid
-          ) as SNNote;
-
-          const component =
-            application.componentManager.editorForNote(originalNote);
-          if (component) {
-            const componentViewer =
-              application.componentManager.createComponentViewer(component);
-            componentViewer.setReadonly(true);
-            componentViewer.lockReadonly = true;
-            componentViewer.overrideContextItem = templateNote;
-            setComponentViewer(componentViewer);
-          } else {
-            setComponentViewer(undefined);
-          }
-        }
-      };
-
-      initializeComponentViewer();
-    }, [application, selectedRevision]);
 
     const restore = () => {
       if (selectedRevision) {
@@ -326,6 +299,21 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
       }
     };
 
+    useEffect(() => {
+      const fetchTemplateNote = async () => {
+        if (selectedRevision) {
+          const newTemplateNote = (await application.createTemplateItem(
+            ContentType.Note,
+            selectedRevision.payload.content
+          )) as SNNote;
+
+          setTemplateNoteForRevision(newTemplateNote);
+        }
+      };
+
+      fetchTemplateNote();
+    }, [application, selectedRevision]);
+
     return (
       <AlertDialogOverlay
         className={`sn-component ${getPlatformString()}`}
@@ -358,13 +346,16 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
                 />
               </div>
               <div className={`flex-grow relative`}>
-                <SelectedRevisionContent
-                  application={application}
-                  appState={appState}
-                  isFetchingSelectedRevision={isFetchingSelectedRevision}
-                  selectedRevision={selectedRevision}
-                  componentViewer={componentViewer}
-                />
+                {selectedRevision && templateNoteForRevision && (
+                  <SelectedRevisionContent
+                    application={application}
+                    appState={appState}
+                    isFetchingSelectedRevision={isFetchingSelectedRevision}
+                    selectedRevision={selectedRevision}
+                    editorForCurrentNote={editorForCurrentNote}
+                    templateNoteForRevision={templateNoteForRevision}
+                  />
+                )}
               </div>
             </div>
             <div className="flex flex-shrink-0 justify-between items-center min-h-6 px-2.5 py-2 border-0 border-t-1px border-solid border-main">
