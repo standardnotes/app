@@ -276,7 +276,7 @@ export const EditorAccordionMenu: FunctionComponent<
                 </div>
               </div>
             </div>
-            <div className="min-h-1px bg-border hide-if-last-child"></div>
+            <div className="min-h-1px bg-border last:hidden"></div>
           </Fragment>
         );
       })}
