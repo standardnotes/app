@@ -514,6 +514,11 @@
   padding-bottom: 0.625rem;
 }
 
+.py-3\.5 {
+  padding-top: 0.875rem;
+  padding-bottom: 0.875rem;
+}
+
 .py-9 {
   padding-top: 2.25rem;
   padding-bottom: 2.25rem;
@@ -835,6 +840,10 @@
   }
 }
 
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+
 .dimmed {
   opacity: .5;
   cursor: default;
@@ -843,4 +852,8 @@
 
 .hide-if-last-child:last-child {
   display: none;
+}
+
+.bg-note-size-warning {
+  background-color: rgba(235, 173, 0, 0.08);
 }

@@ -9,3 +9,5 @@ export const MAX_MENU_SIZE_MULTIPLIER = 30;
 
 export const FOCUSABLE_BUT_NOT_TABBABLE = -1;
 export const NOTES_LIST_SCROLL_THRESHOLD = 200;
+
+export const BYTES_IN_ONE_MEGABYTE = 1000000;
