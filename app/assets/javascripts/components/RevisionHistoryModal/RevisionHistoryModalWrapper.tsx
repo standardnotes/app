@@ -29,9 +29,12 @@ type Props = {
   appState: AppState;
 };
 
+const ABSOLUTE_CENTER_CLASSNAME =
+  'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2';
+
 export const RevisionHistoryModal: FunctionComponent<Props> = observer(
   ({ application, appState }) => {
-    const cancelButtonRef = useRef<HTMLButtonElement>(null);
+    const closeButtonRef = useRef<HTMLButtonElement>(null);
 
     const dismissModal = () => {
       appState.notes.setShowRevisionHistoryModal(false);
@@ -116,7 +119,7 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
       <AlertDialogOverlay
         className={`sn-component ${getPlatformString()}`}
         onDismiss={dismissModal}
-        leastDestructiveRef={cancelButtonRef}
+        leastDestructiveRef={closeButtonRef}
       >
         <AlertDialogContent
           className="rounded shadow-overlay"
@@ -138,12 +141,31 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
                 setSelectedRevision={setSelectedRevision}
                 setIsFetchingSelectedRevision={setIsFetchingSelectedRevision}
               />
-              <div className={`flex-grow relative`}>
+              <div className={`flex flex-col flex-grow relative`}>
+                <div
+                  className={`absolute w-full h-full top-0 left-0 ${
+                    isFetchingSelectedRevision || !selectedRevision
+                      ? 'z-index-1 bg-default'
+                      : ''
+                  }`}
+                >
+                  {isFetchingSelectedRevision && (
+                    <div
+                      className={`sk-spinner w-5 h-5 spinner-info ${ABSOLUTE_CENTER_CLASSNAME}`}
+                    />
+                  )}
+                  {!isFetchingSelectedRevision && !selectedRevision ? (
+                    <div
+                      className={`color-grey-0 select-none ${ABSOLUTE_CENTER_CLASSNAME}`}
+                    >
+                      No revision selected
+                    </div>
+                  ) : null}
+                </div>
                 {selectedRevision && templateNoteForRevision && (
                   <SelectedRevisionContent
                     application={application}
                     appState={appState}
-                    isFetchingSelectedRevision={isFetchingSelectedRevision}
                     selectedRevision={selectedRevision}
                     editorForCurrentNote={editorForCurrentNote}
                     templateNoteForRevision={templateNoteForRevision}
@@ -155,9 +177,9 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
               <div>
                 <Button
                   className="py-1.35"
-                  label="Cancel"
+                  label="Close"
                   onClick={dismissModal}
-                  ref={cancelButtonRef}
+                  ref={closeButtonRef}
                   type="normal"
                 />
               </div>
