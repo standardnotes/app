@@ -1,8 +1,5 @@
 /* Components and utilities that are good candidates for extraction to StyleKit. */
 
-:root {
-}
-
 .bg-grey-super-light {
   background-color: var(--sn-stylekit-grey-super-light);
 }
@@ -665,6 +662,10 @@
   bottom: -1.25rem;
 }
 
+.z-index-1 {
+  z-index: 1;
+}
+
 .-z-index-1 {
   z-index: -1;
 }
@@ -870,15 +871,24 @@
 }
 
 .dimmed {
-  opacity: .5;
+  opacity: 0.5;
   cursor: default;
   pointer-events: none;
 }
 
-.hide-if-last-child:last-child {
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+
+.last\:hidden:last-child {
   display: none;
 }
 
-.flex-shrink-0 {
-  flex-shrink: 0;
+.shadow-bottom {
+  box-shadow: currentcolor 0px -1px 0px 0px inset, currentcolor 0px 1px 0px 0px;
+}
+
+.focus\:shadow-inner:focus {
+  box-shadow: var(--sn-stylekit-info-color) 1px 1px 0px 0px inset,
+    var(--sn-stylekit-info-color) -1px -1px 0px 0px inset;
 }
