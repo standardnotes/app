@@ -13,7 +13,7 @@ export const HistoryListItem: FunctionComponent<HistoryListItemProps> = ({
 }) => {
   return (
     <button
-      className={`sn-dropdown-item py-2 focus:bg-info-backdrop focus:shadow-none ${
+      className={`sn-dropdown-item py-2.5 focus:bg-info-backdrop focus:shadow-none ${
         isSelected ? 'bg-info-backdrop' : ''
       }`}
       onClick={onClick}
