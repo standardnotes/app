@@ -314,7 +314,7 @@ export class NotesState {
     let noteTitle = undefined;
     if (this.selectedNotesCount === 1) {
       const selectedNote = Object.values(this.selectedNotes)[0];
-      noteTitle = selectedNote.safeTitle().length
+      noteTitle = selectedNote.title.length
         ? `'${selectedNote.title}'`
         : 'this note';
     }
