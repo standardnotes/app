@@ -16,6 +16,7 @@ import { ChangeEditorOption } from './ChangeEditorOption';
 import {
   MENU_MARGIN_FROM_APP_BORDER,
   MAX_MENU_SIZE_MULTIPLIER,
+  BYTES_IN_ONE_MEGABYTE,
 } from '@/views/constants';
 
 export type NotesOptionsProps = {
@@ -119,7 +120,7 @@ const NoteAttributes: FunctionComponent<{
   const format = editor?.package_info?.file_type || 'txt';
 
   return (
-    <div className="px-3 pt-1.5 pb-1 text-xs color-neutral font-medium">
+    <div className="px-3 pt-1.5 pb-2.5 text-xs color-neutral font-medium">
       {typeof words === 'number' && (format === 'txt' || format === 'md') ? (
         <>
           <div className="mb-1">
@@ -184,6 +185,24 @@ const SpellcheckOptions: FunctionComponent<{
     </div>
   );
 };
+
+const NOTE_SIZE_WARNING_THRESHOLD = 0.5 * BYTES_IN_ONE_MEGABYTE;
+
+const NoteSizeWarning: FunctionComponent<{
+  note: SNNote;
+}> = ({ note }) =>
+  new Blob([note.safeText()]).size > NOTE_SIZE_WARNING_THRESHOLD ? (
+    <div className="flex items-center px-3 py-3.5 relative bg-note-size-warning">
+      <Icon
+        type="warning"
+        className="color-accessory-tint-3 flex-shrink-0 mr-3"
+      />
+      <div className="color-grey-0 select-none">
+        This note may have trouble syncing to the mobile application due to its
+        size.
+      </div>
+    </div>
+  ) : null;
 
 export const NotesOptions = observer(
   ({
@@ -570,6 +589,7 @@ export const NotesOptions = observer(
             <SpellcheckOptions appState={appState} note={notes[0]} />
             <div className="min-h-1px my-2 bg-border"></div>
             <NoteAttributes application={application} note={notes[0]} />
+            <NoteSizeWarning note={notes[0]} />
           </>
         ) : null}
       </>
