@@ -197,7 +197,7 @@ const NoteSizeWarning: FunctionComponent<{
         type="warning"
         className="color-accessory-tint-3 flex-shrink-0 mr-3"
       />
-      <div className="color-grey-0 select-none">
+      <div className="color-grey-0 select-none leading-140% max-w-80%">
         This note may have trouble syncing to the mobile application due to its
         size.
       </div>
