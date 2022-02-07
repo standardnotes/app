@@ -1,1 +1,1 @@
-declare module "sn-stylekit";
+declare module '@standardnotes/stylekit';
