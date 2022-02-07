@@ -7,13 +7,7 @@ import {
 } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import {
-  StateUpdater,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'preact/hooks';
+import { StateUpdater, useCallback, useEffect, useState } from 'preact/hooks';
 import { RemoteHistoryList } from './RemoteHistoryList';
 import { SessionHistoryList } from './SessionHistoryList';
 import { RemoteRevisionListGroup, sortRevisionListIntoGroups } from './utils';
@@ -47,42 +41,21 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
     const [remoteHistory, setRemoteHistory] =
       useState<RemoteRevisionListGroup[]>();
 
-    const sessionHistoryLength = useMemo(
-      () => sessionHistory.map((group) => group.entries).flat().length,
-      [sessionHistory]
-    );
-
-    const remoteHistoryLength = useMemo(
-      () => remoteHistory?.map((group) => group.entries).flat().length,
-      [remoteHistory]
-    );
-
     const [selectedTab, setSelectedTab] = useState<RevisionListTabType>(
       RevisionListTabType.Session
     );
 
-    useEffect(() => {
-      if (
-        !sessionHistoryLength &&
-        selectedTab === RevisionListTabType.Session
-      ) {
-        setSelectedTab(RevisionListTabType.Remote);
-      }
-    }, [selectedTab, sessionHistoryLength]);
-
     const TabButton: FunctionComponent<{
       type: RevisionListTabType;
-      disabled: boolean;
-    }> = ({ type, disabled }) => {
+    }> = ({ type }) => {
       const isSelected = selectedTab === type;
 
       return (
         <button
-          className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative ${
-            isSelected ? 'color-info font-medium' : ''
+          className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:shadow-inner ${
+            isSelected ? 'color-info font-medium shadow-bottom' : 'color-text'
           }`}
           onClick={() => setSelectedTab(type)}
-          disabled={disabled}
         >
           {type}
         </button>
@@ -90,13 +63,7 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
     };
 
     const fetchAndSetRemoteRevision = useCallback(
-      async (
-        revisionListEntry: RevisionListEntry,
-        isInitialSetting = false
-      ) => {
-        if (isInitialSetting && selectedTab === RevisionListTabType.Session) {
-          return;
-        }
+      async (revisionListEntry: RevisionListEntry) => {
         setIsFetchingSelectedRevision(true);
         try {
           const remoteRevision =
@@ -114,7 +81,6 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
       [
         application.historyManager,
         note.uuid,
-        selectedTab,
         setIsFetchingSelectedRevision,
         setSelectedRevision,
       ]
@@ -155,39 +121,25 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
         className={`flex flex-col min-w-60 border-0 border-r-1px border-solid border-main overflow-auto h-full`}
       >
         <div className="flex border-0 border-b-1 border-solid border-main">
-          <TabButton
-            disabled={!sessionHistoryLength}
-            type={RevisionListTabType.Session}
-          />
-          <TabButton
-            disabled={!remoteHistoryLength}
-            type={RevisionListTabType.Remote}
-          />
+          <TabButton type={RevisionListTabType.Session} />
+          <TabButton type={RevisionListTabType.Remote} />
         </div>
         <div className={`min-h-0 overflow-auto py-1.5 h-full`}>
-          <div
-            className={
-              selectedTab !== RevisionListTabType.Session ? 'hidden' : ''
-            }
-          >
+          {selectedTab === RevisionListTabType.Session && (
             <SessionHistoryList
               sessionHistory={sessionHistory}
               setSelectedRevision={setSelectedRevision}
               selectedTab={selectedTab}
             />
-          </div>
-          <div
-            className={
-              selectedTab !== RevisionListTabType.Remote ? 'hidden' : 'h-full'
-            }
-          >
+          )}
+          {selectedTab === RevisionListTabType.Remote && (
             <RemoteHistoryList
               remoteHistory={remoteHistory}
               isFetchingRemoteHistory={isFetchingRemoteHistory}
               fetchAndSetRemoteRevision={fetchAndSetRemoteRevision}
               selectedTab={selectedTab}
             />
-          </div>
+          )}
         </div>
       </div>
     );
