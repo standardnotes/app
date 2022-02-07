@@ -191,7 +191,7 @@ const NOTE_SIZE_WARNING_THRESHOLD = 0.5 * BYTES_IN_ONE_MEGABYTE;
 const NoteSizeWarning: FunctionComponent<{
   note: SNNote;
 }> = ({ note }) =>
-  new Blob([note.safeText()]).size > NOTE_SIZE_WARNING_THRESHOLD ? (
+  new Blob([note.text]).size > NOTE_SIZE_WARNING_THRESHOLD ? (
     <div className="flex items-center px-3 py-3.5 relative bg-note-size-warning">
       <Icon
         type="warning"
