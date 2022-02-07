@@ -2662,6 +2662,15 @@
     "@standardnotes/settings" "^1.11.3"
     "@standardnotes/sncrypto-common" "^1.6.0"
 
+"@standardnotes/stylekit@5.4.0":
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/stylekit/-/stylekit-5.4.0.tgz#205697a3f5265a5214e192b89b1a9847e766dba4"
+  integrity sha512-Q7uAoaCYjLD3pcY0QGfh8vyLZT6JQYZYWpyuXOC+lSU4TvS+/fKbZ3aEGMjLn1d/SD7tlj0k3MwuqwCGkEcogw==
+  dependencies:
+    "@reach/listbox" "^0.15.0"
+    "@reach/menu-button" "^0.15.1"
+    prop-types "^15.7.2"
+
 "@svgr/babel-plugin-add-jsx-attribute@^5.4.0":
   version "5.4.0"
   resolved "https://registry.yarnpkg.com/@svgr/babel-plugin-add-jsx-attribute/-/babel-plugin-add-jsx-attribute-5.4.0.tgz#81ef61947bb268eb9d50523446f9c638fb355906"
@@ -9314,15 +9323,6 @@ slice-ansi@^5.0.0:
   dependencies:
     ansi-styles "^6.0.0"
     is-fullwidth-code-point "^4.0.0"
-
-sn-stylekit@5.2.21:
-  version "5.2.21"
-  resolved "https://registry.yarnpkg.com/sn-stylekit/-/sn-stylekit-5.2.21.tgz#5aec6c329949bda64a1e3c563ee594b141295d27"
-  integrity sha512-rjlgo42A/kx+M4iY7HYRpnQyp4dLb2HQpEMHz+CYumOzTf/lsRy0Up5HI1haNK4/JMmpq36Eb/7BMDmvLpdXnQ==
-  dependencies:
-    "@reach/listbox" "^0.15.0"
-    "@reach/menu-button" "^0.15.1"
-    prop-types "^15.7.2"
 
 sockjs@^0.3.21:
   version "0.3.21"
