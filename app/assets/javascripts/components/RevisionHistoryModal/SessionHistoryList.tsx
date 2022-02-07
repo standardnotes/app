@@ -1,6 +1,12 @@
 import { HistoryEntry, NoteHistoryEntry } from '@standardnotes/snjs';
 import { Fragment, FunctionComponent } from 'preact';
-import { StateUpdater, useCallback, useEffect, useState } from 'preact/hooks';
+import {
+  StateUpdater,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'preact/hooks';
 import { RevisionListTabType } from './HistoryListContainer';
 import { HistoryListItem } from './HistoryListItem';
 import { ListGroup } from './utils';
@@ -16,21 +22,32 @@ export const SessionHistoryList: FunctionComponent<Props> = ({
   setSelectedRevision,
   selectedTab,
 }) => {
+  const sessionHistoryLength = useMemo(
+    () => sessionHistory.map((group) => group.entries).flat().length,
+    [sessionHistory]
+  );
+
   const [selectedItemCreatedAt, setSelectedItemCreatedAt] = useState<Date>();
 
+  const firstEntry = useMemo(() => {
+    return sessionHistory?.find((group) => group.entries?.length)?.entries?.[0];
+  }, [sessionHistory]);
+
   const selectFirstEntry = useCallback(() => {
-    const firstEntry = sessionHistory?.[0].entries?.[0];
     if (firstEntry) {
       setSelectedItemCreatedAt(firstEntry.payload.created_at);
       setSelectedRevision(firstEntry);
     }
-  }, [sessionHistory, setSelectedRevision]);
+  }, [firstEntry, setSelectedRevision]);
 
   useEffect(() => {
-    if (sessionHistory?.[0].entries?.[0] && !selectedItemCreatedAt) {
+    if (firstEntry && !selectedItemCreatedAt) {
       selectFirstEntry();
+    } else if (!firstEntry) {
+      setSelectedRevision(undefined);
     }
   }, [
+    firstEntry,
     selectFirstEntry,
     selectedItemCreatedAt,
     sessionHistory,
@@ -44,11 +61,15 @@ export const SessionHistoryList: FunctionComponent<Props> = ({
   }, [selectFirstEntry, selectedTab]);
 
   return (
-    <div className={`flex flex-col w-full h-full`}>
+    <div
+      className={`flex flex-col w-full h-full ${
+        !sessionHistoryLength ? 'items-center justify-center' : ''
+      }`}
+    >
       {sessionHistory?.map((group) =>
         group.entries && group.entries.length ? (
           <Fragment key={group.title}>
-            <div className="px-3 my-1 font-semibold color-text uppercase">
+            <div className="px-3 my-1 font-semibold color-text uppercase color-grey-0">
               {group.title}
             </div>
             {group.entries.map((entry, index) => (
@@ -64,6 +85,9 @@ export const SessionHistoryList: FunctionComponent<Props> = ({
             ))}
           </Fragment>
         ) : null
+      )}
+      {!sessionHistoryLength && (
+        <div className="color-grey-0 select-none">No session history found</div>
       )}
     </div>
   );

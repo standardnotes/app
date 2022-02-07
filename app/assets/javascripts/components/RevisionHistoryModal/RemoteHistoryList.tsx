@@ -1,7 +1,7 @@
 import { RevisionListEntry } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { Fragment, FunctionComponent } from 'preact';
-import { useCallback, useEffect, useState } from 'preact/hooks';
+import { useCallback, useEffect, useMemo, useState } from 'preact/hooks';
 import { RevisionListTabType } from './HistoryListContainer';
 import { HistoryListItem } from './HistoryListItem';
 import { RemoteRevisionListGroup } from './utils';
@@ -14,8 +14,7 @@ type RemoteHistoryListProps = {
   remoteHistory: RemoteRevisionListGroup[] | undefined;
   isFetchingRemoteHistory: boolean;
   fetchAndSetRemoteRevision: (
-    revisionListEntry: RevisionListEntry,
-    isInitialSetting?: boolean
+    revisionListEntry: RevisionListEntry
   ) => Promise<void>;
   selectedTab: RevisionListTabType;
 };
@@ -28,25 +27,32 @@ export const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> =
       fetchAndSetRemoteRevision,
       selectedTab,
     }) => {
-      const [selectedEntryUuid, setSelectedEntryUuid] = useState('');
-
-      const selectFirstEntry = useCallback(
-        (isInitialSetting = false) => {
-          const firstEntry = remoteHistory?.[0].entries?.[0];
-          if (firstEntry) {
-            setSelectedEntryUuid(firstEntry.uuid);
-            fetchAndSetRemoteRevision(firstEntry, isInitialSetting);
-          }
-        },
-        [fetchAndSetRemoteRevision, remoteHistory]
+      const remoteHistoryLength = useMemo(
+        () => remoteHistory?.map((group) => group.entries).flat().length,
+        [remoteHistory]
       );
 
+      const [selectedEntryUuid, setSelectedEntryUuid] = useState('');
+
+      const firstEntry = useMemo(() => {
+        return remoteHistory?.find((group) => group.entries?.length)
+          ?.entries?.[0];
+      }, [remoteHistory]);
+
+      const selectFirstEntry = useCallback(() => {
+        if (firstEntry) {
+          setSelectedEntryUuid(firstEntry.uuid);
+          fetchAndSetRemoteRevision(firstEntry);
+        }
+      }, [fetchAndSetRemoteRevision, firstEntry]);
+
       useEffect(() => {
-        if (remoteHistory?.[0].entries?.[0] && !selectedEntryUuid.length) {
-          selectFirstEntry(true);
+        if (firstEntry && !selectedEntryUuid.length) {
+          selectFirstEntry();
         }
       }, [
         fetchAndSetRemoteRevision,
+        firstEntry,
         remoteHistory,
         selectFirstEntry,
         selectedEntryUuid.length,
@@ -61,7 +67,9 @@ export const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> =
       return (
         <div
           className={`flex flex-col w-full h-full ${
-            isFetchingRemoteHistory && 'items-center justify-center'
+            isFetchingRemoteHistory || !remoteHistoryLength
+              ? 'items-center justify-center'
+              : ''
           }`}
         >
           {isFetchingRemoteHistory && (
@@ -70,7 +78,7 @@ export const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> =
           {remoteHistory?.map((group) =>
             group.entries && group.entries.length ? (
               <Fragment key={group.title}>
-                <div className="px-3 my-1 font-semibold color-text uppercase">
+                <div className="px-3 my-1 font-semibold color-text uppercase color-grey-0">
                   {group.title}
                 </div>
                 {group.entries.map((entry) => (
@@ -86,6 +94,11 @@ export const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> =
                 ))}
               </Fragment>
             ) : null
+          )}
+          {!remoteHistoryLength && !isFetchingRemoteHistory && (
+            <div className="color-grey-0 select-none">
+              No remote history found
+            </div>
           )}
         </div>
       );
