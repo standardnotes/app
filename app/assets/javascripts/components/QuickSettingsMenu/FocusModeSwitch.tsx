@@ -1,10 +1,10 @@
 import { WebApplication } from '@/ui_models/application';
 import { FeatureStatus, FeatureIdentifier } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
-import { useCallback, useState } from 'preact/hooks';
+import { useCallback } from 'preact/hooks';
 import { JSXInternal } from 'preact/src/jsx';
 import { Icon } from '../Icon';
-import { PremiumFeaturesModal } from '../PremiumFeaturesModal';
+import { usePremiumModal } from '../Premium';
 import { Switch } from '../Switch';
 
 type Props = {
@@ -20,7 +20,7 @@ export const FocusModeSwitch: FunctionComponent<Props> = ({
   onClose,
   isEnabled,
 }) => {
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const premiumModal = usePremiumModal();
   const isEntitled =
     application.getFeatureStatus(FeatureIdentifier.FocusMode) ===
     FeatureStatus.Entitled;
@@ -33,10 +33,10 @@ export const FocusModeSwitch: FunctionComponent<Props> = ({
         onToggle(!isEnabled);
         onClose();
       } else {
-        setShowUpgradeModal(true);
+        premiumModal.activate('Focused Writing');
       }
     },
-    [isEntitled, isEnabled, onToggle, setShowUpgradeModal, onClose]
+    [isEntitled, onToggle, isEnabled, onClose, premiumModal]
   );
 
   return (
@@ -57,11 +57,6 @@ export const FocusModeSwitch: FunctionComponent<Props> = ({
           </div>
         )}
       </button>
-      <PremiumFeaturesModal
-        showModal={showUpgradeModal}
-        featureName="Focus Mode"
-        onClose={() => setShowUpgradeModal(false)}
-      />
     </>
   );
 };

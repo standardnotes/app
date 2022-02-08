@@ -23,6 +23,7 @@ import { NotesContextMenu } from '@/components/NotesContextMenu';
 import { PurchaseFlowWrapper } from '@/purchaseFlow/PurchaseFlowWrapper';
 import { render } from 'preact';
 import { PermissionsModal } from './PermissionsModal';
+import { PremiumModalProvider } from './Premium';
 
 type Props = {
   application: WebApplication;
@@ -196,63 +197,65 @@ export class ApplicationView extends PureComponent<Props, State> {
 
   render() {
     return (
-      <div className={this.platformString + ' main-ui-view sn-component'}>
-        {!this.state.needsUnlock && this.state.launched && (
-          <div
-            id="app"
-            className={this.state.appClass + ' app app-column-container'}
-          >
-            <Navigation application={this.application} />
+      <PremiumModalProvider state={this.appState.features}>
+        <div className={this.platformString + ' main-ui-view sn-component'}>
+          {!this.state.needsUnlock && this.state.launched && (
+            <div
+              id="app"
+              className={this.state.appClass + ' app app-column-container'}
+            >
+              <Navigation application={this.application} />
 
-            <NotesView
-              application={this.application}
-              appState={this.appState}
-            />
-
-            <NoteGroupView application={this.application} />
-          </div>
-        )}
-
-        {!this.state.needsUnlock && this.state.launched && (
-          <Footer
-            application={this.application}
-            applicationGroup={this.props.mainApplicationGroup}
-          />
-        )}
-
-        <SessionsModal
-          application={this.application}
-          appState={this.appState}
-        />
-
-        <PreferencesViewWrapper
-          appState={this.appState}
-          application={this.application}
-        />
-
-        {this.state.challenges.map((challenge) => {
-          return (
-            <div className="sk-modal">
-              <ChallengeModal
-                key={challenge.id}
+              <NotesView
                 application={this.application}
-                challenge={challenge}
-                onDismiss={this.removeChallenge}
+                appState={this.appState}
               />
+
+              <NoteGroupView application={this.application} />
             </div>
-          );
-        })}
+          )}
 
-        <NotesContextMenu
-          application={this.application}
-          appState={this.appState}
-        />
+          {!this.state.needsUnlock && this.state.launched && (
+            <Footer
+              application={this.application}
+              applicationGroup={this.props.mainApplicationGroup}
+            />
+          )}
 
-        <PurchaseFlowWrapper
-          application={this.application}
-          appState={this.appState}
-        />
-      </div>
+          <SessionsModal
+            application={this.application}
+            appState={this.appState}
+          />
+
+          <PreferencesViewWrapper
+            appState={this.appState}
+            application={this.application}
+          />
+
+          {this.state.challenges.map((challenge) => {
+            return (
+              <div className="sk-modal">
+                <ChallengeModal
+                  key={challenge.id}
+                  application={this.application}
+                  challenge={challenge}
+                  onDismiss={this.removeChallenge}
+                />
+              </div>
+            );
+          })}
+
+          <NotesContextMenu
+            application={this.application}
+            appState={this.appState}
+          />
+
+          <PurchaseFlowWrapper
+            application={this.application}
+            appState={this.appState}
+          />
+        </div>
+      </PremiumModalProvider>
     );
   }
 }
