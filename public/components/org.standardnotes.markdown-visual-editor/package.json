@@ -1,0 +1,121 @@
+{
+  "name": "@standardnotes/markdown-visual",
+  "version": "1.0.1",
+  "author": "Johnny Almonte <johnny@standardnotes.com>",
+  "description": "A lightweight WYSIWYG markdown editor, derivated from Milkdown editor",
+  "keywords": [
+    "Standard Notes",
+    "Standard Notes Extensions"
+  ],
+  "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/standardnotes/markdown-visual.git"
+  },
+  "bugs": {
+    "url": "https://github.com/standardnotes/markdown-visual/issues"
+  },
+  "sn": {
+    "main": "build/index.html"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "homepage": ".",
+  "scripts": {
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
+    "start": "PORT=8001 react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "pretty": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md"
+  },
+  "devDependencies": {
+    "@codemirror/basic-setup": "^0.19.1",
+    "@codemirror/lang-markdown": "^0.19.2",
+    "@fontsource/roboto": "^4.5.1",
+    "@milkdown/core": "^5.5.0",
+    "@milkdown/plugin-clipboard": "^5.5.0",
+    "@milkdown/plugin-cursor": "^5.5.0",
+    "@milkdown/plugin-diagram": "^5.5.0",
+    "@milkdown/plugin-emoji": "^5.5.0",
+    "@milkdown/plugin-history": "^5.5.0",
+    "@milkdown/plugin-indent": "^5.5.0",
+    "@milkdown/plugin-listener": "^5.5.0",
+    "@milkdown/plugin-math": "^5.5.0",
+    "@milkdown/plugin-menu": "^5.5.0",
+    "@milkdown/plugin-prism": "^5.5.0",
+    "@milkdown/plugin-slash": "^5.5.0",
+    "@milkdown/plugin-tooltip": "^5.5.0",
+    "@milkdown/preset-commonmark": "^5.5.0",
+    "@milkdown/preset-gfm": "^5.5.0",
+    "@milkdown/prose": "^5.5.0",
+    "@milkdown/react": "^5.5.0",
+    "@milkdown/theme-nord": "^5.5.0",
+    "@standardnotes/editor-kit": "2.2.2",
+    "@testing-library/dom": "^7.29.0",
+    "@testing-library/jest-dom": "^5.11.6",
+    "@testing-library/react": "^11.2.2",
+    "@testing-library/user-event": "^12.6.0",
+    "@types/jest": "^26.0.19",
+    "@types/lodash": "^4.14.165",
+    "@types/marked": "^4.0.2",
+    "@types/node": "^14.14.14",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "@uiw/react-codemirror": "^4.1.0",
+    "filesafe-embed": "^1.0.10",
+    "filesafe-js": "^1.0.4",
+    "gh-pages": "^3.1.0",
+    "husky": "^4.3.6",
+    "katex": "^0.13.18",
+    "lint-staged": "^10.5.3",
+    "marked": "^4.0.12",
+    "material-icons": "^1.9.0",
+    "node-sass": "4.14.1",
+    "prettier": "^2.2.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-icons": "^4.3.1",
+    "react-scripts": "4.0.3",
+    "sn-stylekit": "5.2.8",
+    "source-map-explorer": "^2.5.1",
+    "typescript": "4.1.2",
+    "web-vitals": "^1.0.1"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "README.md": [
+      "prettier --write"
+    ],
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --write"
+    ]
+  },
+  "resolutions": {
+    "react-error-overlay": "6.0.9"
+  }
+}
