@@ -66,6 +66,7 @@ import {
   UnpinIcon,
   UserIcon,
   UserSwitch,
+  WarningIcon,
   WindowIcon,
 } from '@standardnotes/stylekit';
 
