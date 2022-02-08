@@ -135,6 +135,7 @@ const ICONS = {
   unarchive: UnarchiveIcon,
   unpin: UnpinIcon,
   user: UserIcon,
+  warning: WarningIcon,
   window: WindowIcon,
 };
 

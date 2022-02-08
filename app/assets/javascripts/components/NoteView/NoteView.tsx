@@ -672,9 +672,7 @@ export class NoteView extends PureComponent<Props, State> {
       this.application.alertService.alert(STRING_DELETE_LOCKED_ATTEMPT);
       return;
     }
-    const title = this.note.safeTitle().length
-      ? `'${this.note.title}'`
-      : 'this note';
+    const title = this.note.title.length ? `'${this.note.title}'` : 'this note';
     const text = StringDeleteNote(title, permanently);
     if (
       await confirmDialog({
@@ -1112,7 +1110,7 @@ export class NoteView extends PureComponent<Props, State> {
                     <div className="sk-label">Actions</div>
                     {this.state.showActionsMenu && (
                       <ActionsMenu
-                        item={this.note}
+                        note={this.note}
                         application={this.application}
                       />
                     )}

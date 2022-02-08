@@ -392,8 +392,7 @@ export class Footer extends PureComponent<Props, State> {
       title: 'You are using a beta version of the app',
       text:
         'If you wish to go back to a stable version, make sure to sign out ' +
-        'of this beta app first.<br>You can silence this warning from the ' +
-        '<em>Account</em> menu.',
+        'of this beta app first.',
     });
   };
 

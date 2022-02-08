@@ -2835,10 +2835,10 @@
   resolved "https://registry.yarnpkg.com/@standardnotes/common/-/common-1.8.0.tgz#af72ad85f0d410ae31c0c110137911e2595634de"
   integrity sha512-R3nfAvhaXp5ufMB0M0fmV9yizE/Of2PGNJKnxtdxwowAq/ZakHu8Rh/v485PXrCaCFREVOZQO8kg0RQM8YngSw==
 
-"@standardnotes/components@1.4.4":
-  version "1.4.4"
-  resolved "https://registry.yarnpkg.com/@standardnotes/components/-/components-1.4.4.tgz#2db82b5f35d34be8c766e22d8559e2b80a6aa996"
-  integrity sha512-sxG5iIETpZUYVt6zQBTRxUC1qCZRmKyOuERyDLADju2gnGddDiLWU/TpgE7k8C/pLkw4OXprAmEVxbOagDrIxw==
+"@standardnotes/components@1.5.0":
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/components/-/components-1.5.0.tgz#29f46734ac8837b74cd15c8ba78358205a56d4bc"
+  integrity sha512-Xz8JsGxDuBClIu+US0UM1tqCbuSFJ5xHCmRWXBPEXQpkCFCENQ6avheIXp3oJKR2iYxwwgZuHAfnZClyIEMxSg==
 
 "@standardnotes/domain-events@^2.21.2":
   version "2.21.2"
@@ -2848,26 +2848,13 @@
     "@standardnotes/auth" "^3.15.3"
     "@standardnotes/features" "^1.27.0"
 
-"@standardnotes/features@1.26.1":
-  version "1.26.1"
-  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.26.1.tgz#d4e4aed2ba91e40c407484e569a96c339477bba2"
-  integrity sha512-zxoeH9fjQtcTUbc5qaYD7AZETKDniM+tIvmLrWqwSC9B6/IL0R39G51BEkOzen+KhR/WgH3itHDVM+zrSMg53Q==
-  dependencies:
-    "@standardnotes/auth" "^3.15.3"
-    "@standardnotes/common" "^1.8.0"
-
-"@standardnotes/features@^1.27.0":
+"@standardnotes/features@1.27.0", "@standardnotes/features@^1.27.0":
   version "1.27.0"
   resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.27.0.tgz#eac735cafaa90f2d174fea65757034bfd841b056"
   integrity sha512-RJXtBw5PCGNXuvUZDn1UJHQuF9+V0kZcGI4leWZJNRFDCQeuESOopVXvVIPCske/vUTHy8BGJttc2m9OatTlPw==
   dependencies:
     "@standardnotes/auth" "^3.15.3"
     "@standardnotes/common" "^1.8.0"
-
-"@standardnotes/settings@^1.11.2":
-  version "1.11.2"
-  resolved "https://registry.yarnpkg.com/@standardnotes/settings/-/settings-1.11.2.tgz#cb59d5bd9c7bb34c9d75381c51a438328faf5905"
-  integrity sha512-yTNd7eTmo3KIeaZpAu8sh0xD/4JaVei1viJVW+is7yCAPX0bTxGnZm/qFVByW8jcox4YA7cIzixp3KMJf61COw==
 
 "@standardnotes/settings@^1.11.3":
   version "1.11.3"
@@ -2888,10 +2875,10 @@
     buffer "^6.0.3"
     libsodium-wrappers "^0.7.9"
 
-"@standardnotes/snjs@2.49.4":
-  version "2.49.4"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.49.4.tgz#ae443f0f3d8f72a4f7e65fe47e2030bcc6df9fab"
-  integrity sha512-RXyUNVvcT2TtGSYC32fDXgGUZdSiUvOFosLDWWGeY5kwOTnj1ZHrqmKaUlKCGPi1xiYANay42+EwLCLyyqOkzQ==
+"@standardnotes/snjs@2.51.2":
+  version "2.51.2"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.51.2.tgz#9804e27071a8d139bf72095d94231a1e29a61593"
+  integrity sha512-sxS/QnDnOqUx88Mv8BVR2sd4UAvrBQj0Daa9rH5+INryY5qkLdlTod6MqDfxy+MRkyioVpDAE+yYuBJbcPyqQw==
   dependencies:
     "@standardnotes/auth" "^3.15.3"
     "@standardnotes/common" "^1.8.0"
@@ -2900,14 +2887,19 @@
     "@standardnotes/settings" "^1.11.3"
     "@standardnotes/sncrypto-common" "^1.6.0"
 
-"@standardnotes/stylekit@5.3.5":
-  version "5.3.5"
-  resolved "https://registry.yarnpkg.com/@standardnotes/stylekit/-/stylekit-5.3.5.tgz#be13ad13f1527e251e5a950a715aa1a4b9911f7f"
-  integrity sha512-ALLdOlHZTI91LwEpM1Ap6BhlbNV6Qaz6HXHebcdqDvYZw8rjrT/RxnkCNzdXELoxVjtvKDYQkUmqzMTbCFhcxQ==
+"@standardnotes/stylekit@5.4.0":
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/stylekit/-/stylekit-5.4.0.tgz#205697a3f5265a5214e192b89b1a9847e766dba4"
+  integrity sha512-Q7uAoaCYjLD3pcY0QGfh8vyLZT6JQYZYWpyuXOC+lSU4TvS+/fKbZ3aEGMjLn1d/SD7tlj0k3MwuqwCGkEcogw==
   dependencies:
     "@reach/listbox" "^0.15.0"
     "@reach/menu-button" "^0.15.1"
     prop-types "^15.7.2"
+
+"@svgr/babel-plugin-add-jsx-attribute@^5.4.0":
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/@svgr/babel-plugin-add-jsx-attribute/-/babel-plugin-add-jsx-attribute-5.4.0.tgz#81ef61947bb268eb9d50523446f9c638fb355906"
+  integrity sha512-ZFf2gs/8/6B8PnSofI0inYXr2SDNTDScPXhN7k5EqD4aZ3gi6u+rbmZHVB8IM3wDyx8ntKACZbtXSm7oZGRqVg==
 
 "@svgr/babel-plugin-add-jsx-attribute@^6.0.0":
   version "6.0.0"

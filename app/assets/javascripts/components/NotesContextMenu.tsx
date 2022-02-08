@@ -37,7 +37,7 @@ export const NotesContextMenu = observer(({ application, appState }: Props) => {
   return contextMenuOpen ? (
     <div
       ref={contextMenuRef}
-      className="sn-dropdown min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto fixed"
+      className="sn-dropdown min-w-80 max-h-120 max-w-xs flex flex-col pt-2 overflow-y-auto fixed"
       style={{
         ...contextMenuPosition,
         maxHeight: contextMenuMaxHeight,

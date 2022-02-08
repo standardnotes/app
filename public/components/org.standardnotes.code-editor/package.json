@@ -1,13 +1,13 @@
 {
   "name": "sn-code-editor",
-  "version": "1.3.9",
+  "version": "1.3.10",
   "description": "A code editor for Standard Notes",
   "main": "dist/main.js",
   "author": "Standard Notes <hello@standardnotes.org>",
   "license": "AGPL-3.0",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "http-server . --cors & webpack --progress --config webpack.dev.js",
+    "start": "http-server . --cors -p8001 & webpack --progress --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
     "lint": "eslint src --ext .js",
     "lint:fix": "yarn lint --fix"
