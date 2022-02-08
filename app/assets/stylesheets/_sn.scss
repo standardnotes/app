@@ -304,6 +304,10 @@
   max-width: 75%;
 }
 
+.max-w-80\% {
+  max-width: 80%;
+}
+
 .max-w-72 {
   max-width: 18rem;
 }
@@ -539,6 +543,11 @@
 .sn-component .py-2\.5 {
   padding-top: 0.625rem;
   padding-bottom: 0.625rem;
+}
+
+.py-3\.5 {
+  padding-top: 0.875rem;
+  padding-bottom: 0.875rem;
 }
 
 .py-9 {
@@ -870,6 +879,14 @@
   }
 }
 
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+
+.leading-140\% {
+  line-height: 140%;
+}
+
 .dimmed {
   opacity: 0.5;
   cursor: default;
@@ -891,4 +908,8 @@
 .focus\:shadow-inner:focus {
   box-shadow: var(--sn-stylekit-info-color) 1px 1px 0px 0px inset,
     var(--sn-stylekit-info-color) -1px -1px 0px 0px inset;
+}
+
+.bg-note-size-warning {
+  background-color: rgba(235, 173, 0, 0.08);
 }

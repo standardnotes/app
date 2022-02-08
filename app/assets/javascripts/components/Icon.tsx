@@ -63,6 +63,7 @@ import UnarchiveIcon from '../../icons/ic-unarchive.svg';
 import UnpinIcon from '../../icons/ic-pin-off.svg';
 import UserIcon from '../../icons/ic-user.svg';
 import UserSwitch from '../../icons/ic-user-switch.svg';
+import WarningIcon from '../../icons/ic-warning.svg';
 import WindowIcon from '../../icons/ic-window.svg';
 
 import { FunctionalComponent } from 'preact';
@@ -135,6 +136,7 @@ const ICONS = {
   unarchive: UnarchiveIcon,
   unpin: UnpinIcon,
   user: UserIcon,
+  warning: WarningIcon,
   window: WindowIcon,
 };
 

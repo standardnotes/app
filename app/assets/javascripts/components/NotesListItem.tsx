@@ -95,45 +95,7 @@ export const NotesListItem: FunctionComponent<Props> = ({
       )}
       <div className={`meta ${hideEditorIcon ? 'icon-hidden' : ''}`}>
         <div className="name-container">
-          <div className="name">{note.title}</div>
-          <div className="flag-icons">
-            {note.locked && (
-              <span title="Editing Disabled">
-                <Icon
-                  ariaLabel="Editing Disabled"
-                  type="pencil-off"
-                  className="sn-icon--small color-info"
-                />
-              </span>
-            )}
-            {note.trashed && (
-              <span title="Trashed">
-                <Icon
-                  ariaLabel="Trashed"
-                  type="trash-filled"
-                  className="sn-icon--small color-danger"
-                />
-              </span>
-            )}
-            {note.archived && (
-              <span title="Archived">
-                <Icon
-                  ariaLabel="Archived"
-                  type="archive"
-                  className="sn-icon--mid color-accessory-tint-3"
-                />
-              </span>
-            )}
-            {note.pinned && (
-              <span title="Pinned">
-                <Icon
-                  ariaLabel="Pinned"
-                  type="pin-filled"
-                  className="sn-icon--small color-info"
-                />
-              </span>
-            )}
-          </div>
+          {note.title.length ? <div className="name">{note.title}</div> : null}
         </div>
         {!hidePreview && !note.hidePreview && !note.protected && (
           <div className="note-preview">
@@ -186,6 +148,44 @@ export const NotesListItem: FunctionComponent<Props> = ({
             ))}
           </div>
         ) : null}
+      </div>
+      <div className="flag-icons">
+        {note.locked && (
+          <span title="Editing Disabled">
+            <Icon
+              ariaLabel="Editing Disabled"
+              type="pencil-off"
+              className="sn-icon--small color-info"
+            />
+          </span>
+        )}
+        {note.trashed && (
+          <span title="Trashed">
+            <Icon
+              ariaLabel="Trashed"
+              type="trash-filled"
+              className="sn-icon--small color-danger"
+            />
+          </span>
+        )}
+        {note.archived && (
+          <span title="Archived">
+            <Icon
+              ariaLabel="Archived"
+              type="archive"
+              className="sn-icon--mid color-accessory-tint-3"
+            />
+          </span>
+        )}
+        {note.pinned && (
+          <span title="Pinned">
+            <Icon
+              ariaLabel="Pinned"
+              type="pin-filled"
+              className="sn-icon--small color-info"
+            />
+          </span>
+        )}
       </div>
     </div>
   );
