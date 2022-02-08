@@ -57,7 +57,6 @@ type State = {
 export class Footer extends PureComponent<Props, State> {
   public user?: unknown;
   private didCheckForOffline = false;
-  private observerRemovers: Array<() => void> = [];
   private completedInitialSync = false;
   private showingDownloadStatus = false;
   private webEventListenerDestroyer: () => void;
@@ -86,17 +85,9 @@ export class Footer extends PureComponent<Props, State> {
         }
       }
     );
-
-    this.syncResolutionClickHandler =
-      this.syncResolutionClickHandler.bind(this);
-    this.closeAccountMenu = this.closeAccountMenu.bind(this);
   }
 
   deinit() {
-    for (const remove of this.observerRemovers) remove();
-    this.observerRemovers.length = 0;
-    (this.closeAccountMenu as unknown) = undefined;
-    (this.syncResolutionClickHandler as unknown) = undefined;
     this.webEventListenerDestroyer();
     (this.webEventListenerDestroyer as unknown) = undefined;
     super.deinit();

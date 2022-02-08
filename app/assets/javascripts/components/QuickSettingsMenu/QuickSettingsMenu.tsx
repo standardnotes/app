@@ -9,7 +9,7 @@ import {
   ComponentArea,
   ContentType,
   FeatureIdentifier,
-  Features,
+  GetFeatures,
   SNComponent,
   SNTheme,
 } from '@standardnotes/snjs';
@@ -115,20 +115,22 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
           };
         }) as ThemeItem[];
 
-      Features.filter(
-        (feature) =>
-          feature.content_type === ContentType.Theme && !feature.layerable
-      ).forEach((theme) => {
-        if (
-          themes.findIndex((item) => item.identifier === theme.identifier) ===
-          -1
-        ) {
-          themes.push({
-            name: theme.name as string,
-            identifier: theme.identifier,
-          });
-        }
-      });
+      GetFeatures()
+        .filter(
+          (feature) =>
+            feature.content_type === ContentType.Theme && !feature.layerable
+        )
+        .forEach((theme) => {
+          if (
+            themes.findIndex((item) => item.identifier === theme.identifier) ===
+            -1
+          ) {
+            themes.push({
+              name: theme.name as string,
+              identifier: theme.identifier,
+            });
+          }
+        });
 
       setThemes(themes);
 

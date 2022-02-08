@@ -4,7 +4,7 @@ import { sortThemes } from '@/components/QuickSettingsMenu/QuickSettingsMenu';
 import { HorizontalSeparator } from '@/components/shared/HorizontalSeparator';
 import { Switch } from '@/components/Switch';
 import { WebApplication } from '@/ui_models/application';
-import { Features } from '@standardnotes/features';
+import { GetFeatures } from '@standardnotes/features';
 import {
   ContentType,
   FeatureIdentifier,
@@ -73,21 +73,24 @@ export const Appearance: FunctionComponent<Props> = observer(
           };
         });
 
-      Features.filter(
-        (feature) =>
-          feature.content_type === ContentType.Theme && !feature.layerable
-      ).forEach((theme) => {
-        if (
-          themesAsItems.findIndex((item) => item.value === theme.identifier) ===
-          -1
-        ) {
-          themesAsItems.push({
-            label: theme.name as string,
-            value: theme.identifier,
-            icon: 'premium-feature',
-          });
-        }
-      });
+      GetFeatures()
+        .filter(
+          (feature) =>
+            feature.content_type === ContentType.Theme && !feature.layerable
+        )
+        .forEach((theme) => {
+          if (
+            themesAsItems.findIndex(
+              (item) => item.value === theme.identifier
+            ) === -1
+          ) {
+            themesAsItems.push({
+              label: theme.name as string,
+              value: theme.identifier,
+              icon: 'premium-feature',
+            });
+          }
+        });
 
       themesAsItems.unshift({
         label: 'Default',
