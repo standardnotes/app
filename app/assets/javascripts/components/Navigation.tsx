@@ -6,7 +6,6 @@ import { ApplicationEvent, PrefKey } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useCallback, useEffect, useMemo, useState } from 'preact/hooks';
-import { PremiumModalProvider } from './Premium';
 import {
   PanelSide,
   ResizeFinishCallback,
@@ -51,42 +50,40 @@ export const Navigation: FunctionComponent<Props> = observer(
     }, [appState]);
 
     return (
-      <PremiumModalProvider state={appState.features}>
-        <div
-          id="navigation"
-          className="sn-component section app-column app-column-first"
-          data-aria-label="Navigation"
-          ref={setRef}
-        >
-          <div id="navigation-content" className="content">
-            <div className="section-title-bar">
-              <div className="section-title-bar-header">
-                <div className="sk-h3 title">
-                  <span className="sk-bold">Views</span>
-                </div>
+      <div
+        id="navigation"
+        className="sn-component section app-column app-column-first"
+        data-aria-label="Navigation"
+        ref={setRef}
+      >
+        <div id="navigation-content" className="content">
+          <div className="section-title-bar">
+            <div className="section-title-bar-header">
+              <div className="sk-h3 title">
+                <span className="sk-bold">Views</span>
               </div>
             </div>
-            <div className="scrollable">
-              <SmartTagsSection appState={appState} />
-              <TagsSection appState={appState} />
-            </div>
           </div>
-          {ref && (
-            <PanelResizer
-              collapsable={true}
-              defaultWidth={150}
-              panel={ref}
-              hoverable={true}
-              side={PanelSide.Right}
-              type={PanelResizeType.WidthOnly}
-              resizeFinishCallback={panelResizeFinishCallback}
-              widthEventCallback={panelWidthEventCallback}
-              width={panelWidth}
-              left={0}
-            />
-          )}
+          <div className="scrollable">
+            <SmartTagsSection appState={appState} />
+            <TagsSection appState={appState} />
+          </div>
         </div>
-      </PremiumModalProvider>
+        {ref && (
+          <PanelResizer
+            collapsable={true}
+            defaultWidth={150}
+            panel={ref}
+            hoverable={true}
+            side={PanelSide.Right}
+            type={PanelResizeType.WidthOnly}
+            resizeFinishCallback={panelResizeFinishCallback}
+            widthEventCallback={panelWidthEventCallback}
+            width={panelWidth}
+            left={0}
+          />
+        )}
+      </div>
     );
   }
 );
