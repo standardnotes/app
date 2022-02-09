@@ -10,6 +10,7 @@ import {
   AlertDialogOverlay,
 } from '@reach/alert-dialog';
 import VisuallyHidden from '@reach/visually-hidden';
+import { SubscriptionName } from '@standardnotes/auth';
 import {
   ContentType,
   HistoryEntry,
@@ -22,6 +23,7 @@ import { FunctionComponent } from 'preact';
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { Button } from '../Button';
 import { HistoryListContainer } from './HistoryListContainer';
+import { RevisionContentLocked } from './RevisionContentLocked';
 import { SelectedRevisionContent } from './SelectedRevisionContent';
 
 type Props = {
@@ -39,6 +41,18 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
     const dismissModal = () => {
       appState.notes.setShowRevisionHistoryModal(false);
     };
+
+    const [userPlanId, setUserPlanId] = useState<SubscriptionName>();
+
+    useEffect(() => {
+      const fetchPlanId = async () => {
+        const subscription = await application.getUserSubscription();
+        const planId = subscription?.planName;
+        setUserPlanId(planId);
+      };
+
+      fetchPlanId();
+    }, [application]);
 
     const note = Object.values(appState.notes.selectedNotes)[0];
     const editorForCurrentNote = useMemo(() => {
@@ -146,7 +160,7 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
                   className={`absolute w-full h-full top-0 left-0 ${
                     isFetchingSelectedRevision || !selectedRevision
                       ? 'z-index-1 bg-default'
-                      : ''
+                      : '-z-index-1'
                   }`}
                 >
                   {isFetchingSelectedRevision && (
@@ -185,6 +199,14 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
               </div>
               {selectedRevision && (
                 <div>
+                  <Button
+                    className="py-1.35 mr-2.5"
+                    label="Delete this version"
+                    onClick={() => {
+                      /** @TODO */
+                    }}
+                    type="normal"
+                  />
                   <Button
                     className="py-1.35 mr-2.5"
                     label="Restore as a copy"
