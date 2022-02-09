@@ -527,7 +527,6 @@ export class Footer extends PureComponent<Props, State> {
                   className="sk-app-bar-item"
                 >
                   <div
-                    id="account-switcher-icon"
                     className={
                       (this.state.hasPasscode ? 'alone' : '') +
                       ' flex items-center'

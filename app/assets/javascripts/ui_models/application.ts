@@ -73,6 +73,9 @@ export class WebApplication extends SNApplication {
   deinit(source: DeinitSource): void {
     super.deinit(source);
     try {
+      if (source === DeinitSource.AppGroupUnload) {
+        this.getThemeService().deactivateAllThemes();
+      }
       for (const service of Object.values(this.webServices)) {
         if ('deinit' in service) {
           service.deinit?.(source);
