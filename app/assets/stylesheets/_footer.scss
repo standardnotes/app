@@ -44,14 +44,6 @@
   }
 }
 
-#account-switcher-icon {
-  // When this icon is alone in the footer bar, it is displayed with too little
-  // padding on the right, possibly due to the fact it is a raw SVG.
-  &.alone {
-    margin-right: 4px;
-  }
-}
-
 #account-panel,
 #sync-resolution-menu {
   width: 400px;

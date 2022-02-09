@@ -170,7 +170,7 @@ export class ThemeManager extends ApplicationService {
     );
   }
 
-  private deactivateAllThemes() {
+  public deactivateAllThemes() {
     const activeThemes = this.activeThemes.slice();
     for (const uuid of activeThemes) {
       this.deactivateTheme(uuid);

@@ -41,7 +41,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
 
     const premiumModal = usePremiumModal();
 
-    const [showChildren, setShowChildren] = useState(hasChildren);
+    const [showChildren, setShowChildren] = useState(tag.expanded);
     const [hadChildren, setHadChildren] = useState(hasChildren);
 
     useEffect(() => {
@@ -58,9 +58,12 @@ export const TagsListItem: FunctionComponent<Props> = observer(
     const toggleChildren = useCallback(
       (e: MouseEvent) => {
         e.stopPropagation();
-        setShowChildren((x) => !x);
+        setShowChildren((x) => {
+          tagsState.setExpanded(tag, !x);
+          return !x;
+        });
       },
-      [setShowChildren]
+      [setShowChildren, tag, tagsState]
     );
 
     const selectCurrentTag = useCallback(() => {

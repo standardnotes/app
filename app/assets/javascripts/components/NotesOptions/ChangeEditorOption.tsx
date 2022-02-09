@@ -29,7 +29,6 @@ import {
 import { FunctionComponent } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { Icon } from '../Icon';
-import { PremiumModalProvider } from '../Premium';
 import { createEditorMenuGroups } from './changeEditor/createEditorMenuGroups';
 import { EditorAccordionMenu } from './changeEditor/EditorAccordionMenu';
 
@@ -273,16 +272,14 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
         }}
         className="sn-dropdown flex flex-col max-h-120 min-w-68 fixed overflow-y-auto"
       >
-        <PremiumModalProvider state={appState.features}>
-          <EditorAccordionMenu
-            application={application}
-            closeOnBlur={closeOnBlur}
-            currentEditor={selectedEditor}
-            groups={editorMenuGroups}
-            isOpen={changeEditorMenuOpen}
-            selectComponent={selectComponent}
-          />
-        </PremiumModalProvider>
+        <EditorAccordionMenu
+          application={application}
+          closeOnBlur={closeOnBlur}
+          currentEditor={selectedEditor}
+          groups={editorMenuGroups}
+          isOpen={changeEditorMenuOpen}
+          selectComponent={selectComponent}
+        />
       </DisclosurePanel>
     </Disclosure>
   );
