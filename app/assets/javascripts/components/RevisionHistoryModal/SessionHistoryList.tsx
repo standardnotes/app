@@ -5,8 +5,10 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'preact/hooks';
+import { useListKeyboardNavigation } from '../utils';
 import { RevisionListTabType } from './HistoryListContainer';
 import { HistoryListItem } from './HistoryListItem';
 import { ListGroup } from './utils';
@@ -22,6 +24,10 @@ export const SessionHistoryList: FunctionComponent<Props> = ({
   setSelectedRevision,
   selectedTab,
 }) => {
+  const sessionHistoryListRef = useRef<HTMLDivElement>(null);
+
+  useListKeyboardNavigation(sessionHistoryListRef);
+
   const sessionHistoryLength = useMemo(
     () => sessionHistory.map((group) => group.entries).flat().length,
     [sessionHistory]
@@ -57,14 +63,16 @@ export const SessionHistoryList: FunctionComponent<Props> = ({
   useEffect(() => {
     if (selectedTab === RevisionListTabType.Session) {
       selectFirstEntry();
+      sessionHistoryListRef.current?.focus();
     }
   }, [selectFirstEntry, selectedTab]);
 
   return (
     <div
-      className={`flex flex-col w-full h-full ${
+      className={`flex flex-col w-full h-full focus:shadow-none ${
         !sessionHistoryLength ? 'items-center justify-center' : ''
       }`}
+      ref={sessionHistoryListRef}
     >
       {sessionHistory?.map((group) =>
         group.entries && group.entries.length ? (

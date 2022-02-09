@@ -1,7 +1,14 @@
 import { RevisionListEntry } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { Fragment, FunctionComponent } from 'preact';
-import { useCallback, useEffect, useMemo, useState } from 'preact/hooks';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'preact/hooks';
+import { useListKeyboardNavigation } from '../utils';
 import { RevisionListTabType } from './HistoryListContainer';
 import { HistoryListItem } from './HistoryListItem';
 import { RemoteRevisionListGroup } from './utils';
@@ -27,6 +34,10 @@ export const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> =
       fetchAndSetRemoteRevision,
       selectedTab,
     }) => {
+      const remoteHistoryListRef = useRef<HTMLDivElement>(null);
+
+      useListKeyboardNavigation(remoteHistoryListRef);
+
       const remoteHistoryLength = useMemo(
         () => remoteHistory?.map((group) => group.entries).flat().length,
         [remoteHistory]
@@ -61,16 +72,18 @@ export const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> =
       useEffect(() => {
         if (selectedTab === RevisionListTabType.Remote) {
           selectFirstEntry();
+          remoteHistoryListRef.current?.focus();
         }
       }, [selectFirstEntry, selectedTab]);
 
       return (
         <div
-          className={`flex flex-col w-full h-full ${
+          className={`flex flex-col w-full h-full focus:shadow-none ${
             isFetchingRemoteHistory || !remoteHistoryLength
               ? 'items-center justify-center'
               : ''
           }`}
+          ref={remoteHistoryListRef}
         >
           {isFetchingRemoteHistory && (
             <div className="sk-spinner w-5 h-5 spinner-info"></div>

@@ -1,3 +1,4 @@
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/views/constants';
 import { FunctionComponent } from 'preact';
 
 type HistoryListItemProps = {
@@ -13,7 +14,8 @@ export const HistoryListItem: FunctionComponent<HistoryListItemProps> = ({
 }) => {
   return (
     <button
-      className={`sn-dropdown-item py-2.5 focus:bg-info-backdrop focus:shadow-none ${
+      tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
+      className={`sn-dropdown-item py-2.5 focus:bg-contrast focus:shadow-none ${
         isSelected ? 'bg-info-backdrop' : ''
       }`}
       onClick={onClick}
