@@ -1,7 +1,7 @@
 import { FeaturesState } from '@/ui_models/app_state/features_state';
 import { observer } from 'mobx-react-lite';
 import { FunctionalComponent } from 'preact';
-import { useCallback, useContext, useState } from 'preact/hooks';
+import { useContext } from 'preact/hooks';
 import { createContext } from 'react';
 import { PremiumFeaturesModal } from '../PremiumFeaturesModal';
 

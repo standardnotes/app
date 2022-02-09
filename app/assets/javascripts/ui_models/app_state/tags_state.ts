@@ -267,6 +267,12 @@ export class TagsState {
     this.selected_ = tag;
   }
 
+  public setExpanded(tag: SNTag, exapnded: boolean) {
+    this.application.changeAndSaveItem<TagMutator>(tag.uuid, (mutator) => {
+      mutator.expanded = exapnded;
+    });
+  }
+
   public get selectedUuid(): UuidString | undefined {
     return this.selected_?.uuid;
   }
