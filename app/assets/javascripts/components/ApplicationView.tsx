@@ -196,10 +196,17 @@ export class ApplicationView extends PureComponent<Props, State> {
   };
 
   render() {
+    if (this.application['dealloced'] === true) {
+      console.error('Attempting to render dealloced application');
+      return <div></div>;
+    }
+
+    const renderAppContents = !this.state.needsUnlock && this.state.launched;
+
     return (
-      <PremiumModalProvider state={this.appState.features}>
+      <PremiumModalProvider state={this.appState?.features}>
         <div className={this.platformString + ' main-ui-view sn-component'}>
-          {!this.state.needsUnlock && this.state.launched && (
+          {renderAppContents && (
             <div
               id="app"
               className={this.state.appClass + ' app app-column-container'}
@@ -215,22 +222,24 @@ export class ApplicationView extends PureComponent<Props, State> {
             </div>
           )}
 
-          {!this.state.needsUnlock && this.state.launched && (
-            <Footer
-              application={this.application}
-              applicationGroup={this.props.mainApplicationGroup}
-            />
+          {renderAppContents && (
+            <>
+              <Footer
+                application={this.application}
+                applicationGroup={this.props.mainApplicationGroup}
+              />
+
+              <SessionsModal
+                application={this.application}
+                appState={this.appState}
+              />
+
+              <PreferencesViewWrapper
+                appState={this.appState}
+                application={this.application}
+              />
+            </>
           )}
-
-          <SessionsModal
-            application={this.application}
-            appState={this.appState}
-          />
-
-          <PreferencesViewWrapper
-            appState={this.appState}
-            application={this.application}
-          />
 
           {this.state.challenges.map((challenge) => {
             return (
@@ -245,15 +254,19 @@ export class ApplicationView extends PureComponent<Props, State> {
             );
           })}
 
-          <NotesContextMenu
-            application={this.application}
-            appState={this.appState}
-          />
+          {renderAppContents && (
+            <>
+              <NotesContextMenu
+                application={this.application}
+                appState={this.appState}
+              />
 
-          <PurchaseFlowWrapper
-            application={this.application}
-            appState={this.appState}
-          />
+              <PurchaseFlowWrapper
+                application={this.application}
+                appState={this.appState}
+              />
+            </>
+          )}
         </div>
       </PremiumModalProvider>
     );
