@@ -1,6 +1,6 @@
 {
   "name": "standard-notes-web",
-  "version": "3.10.0-beta.2",
+  "version": "3.10.0-beta.3",
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
@@ -84,7 +84,7 @@
     "@reach/tooltip": "^0.16.2",
     "@standardnotes/components": "1.7.0",
     "@standardnotes/features": "1.29.0",
-    "@standardnotes/snjs": "2.52.2",
+    "@standardnotes/snjs": "2.53.0",
     "@standardnotes/settings": "^1.11.3",
     "@standardnotes/sncrypto-web": "1.6.2",
     "mobx": "^6.3.5",
