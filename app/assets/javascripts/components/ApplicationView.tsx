@@ -24,6 +24,7 @@ import { PurchaseFlowWrapper } from '@/purchaseFlow/PurchaseFlowWrapper';
 import { render } from 'preact';
 import { PermissionsModal } from './PermissionsModal';
 import { RevisionHistoryModalWrapper } from './RevisionHistoryModal/RevisionHistoryModalWrapper';
+import { PremiumModalProvider } from './Premium';
 
 type Props = {
   application: WebApplication;
@@ -196,69 +197,84 @@ export class ApplicationView extends PureComponent<Props, State> {
   };
 
   render() {
+    if (this.application['dealloced'] === true) {
+      console.error('Attempting to render dealloced application');
+      return <div></div>;
+    }
+
+    const renderAppContents = !this.state.needsUnlock && this.state.launched;
+
     return (
-      <div className={this.platformString + ' main-ui-view sn-component'}>
-        {!this.state.needsUnlock && this.state.launched && (
-          <div
-            id="app"
-            className={this.state.appClass + ' app app-column-container'}
-          >
-            <Navigation application={this.application} />
+      <PremiumModalProvider state={this.appState?.features}>
+        <div className={this.platformString + ' main-ui-view sn-component'}>
+          {renderAppContents && (
+            <div
+              id="app"
+              className={this.state.appClass + ' app app-column-container'}
+            >
+              <Navigation application={this.application} />
 
-            <NotesView
-              application={this.application}
-              appState={this.appState}
-            />
-
-            <NoteGroupView application={this.application} />
-          </div>
-        )}
-
-        {!this.state.needsUnlock && this.state.launched && (
-          <Footer
-            application={this.application}
-            applicationGroup={this.props.mainApplicationGroup}
-          />
-        )}
-
-        <SessionsModal
-          application={this.application}
-          appState={this.appState}
-        />
-
-        <PreferencesViewWrapper
-          appState={this.appState}
-          application={this.application}
-        />
-
-        {this.state.challenges.map((challenge) => {
-          return (
-            <div className="sk-modal">
-              <ChallengeModal
-                key={challenge.id}
+              <NotesView
                 application={this.application}
-                challenge={challenge}
-                onDismiss={this.removeChallenge}
+                appState={this.appState}
               />
+
+              <NoteGroupView application={this.application} />
             </div>
-          );
-        })}
+          )}
 
-        <NotesContextMenu
-          application={this.application}
-          appState={this.appState}
-        />
+          {renderAppContents && (
+            <>
+              <Footer
+                application={this.application}
+                applicationGroup={this.props.mainApplicationGroup}
+              />
 
-        <PurchaseFlowWrapper
-          application={this.application}
-          appState={this.appState}
-        />
+              <SessionsModal
+                application={this.application}
+                appState={this.appState}
+              />
 
-        <RevisionHistoryModalWrapper
-          application={this.application}
-          appState={this.appState}
-        />
-      </div>
+              <PreferencesViewWrapper
+                appState={this.appState}
+                application={this.application}
+              />
+
+              <RevisionHistoryModalWrapper
+                application={this.application}
+                appState={this.appState}
+              />
+            </>
+          )}
+
+          {this.state.challenges.map((challenge) => {
+            return (
+              <div className="sk-modal">
+                <ChallengeModal
+                  key={challenge.id}
+                  application={this.application}
+                  challenge={challenge}
+                  onDismiss={this.removeChallenge}
+                />
+              </div>
+            );
+          })}
+
+          {renderAppContents && (
+            <>
+              <NotesContextMenu
+                application={this.application}
+                appState={this.appState}
+              />
+
+              <PurchaseFlowWrapper
+                application={this.application}
+                appState={this.appState}
+              />
+            </>
+          )}
+        </div>
+      </PremiumModalProvider>
     );
   }
 }

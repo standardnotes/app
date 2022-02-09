@@ -472,7 +472,7 @@ export const NotesOptions = observer(
                           : ''
                       }`}
                   >
-                    {tag.title}
+                    {appState.noteTags.getLongTitle(tag)}
                   </span>
                 </button>
               ))}

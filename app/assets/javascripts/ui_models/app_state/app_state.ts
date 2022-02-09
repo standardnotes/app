@@ -93,7 +93,6 @@ export class AppState {
 
   private readonly tagChangedDisposer: IReactionDisposer;
 
-  /* @ngInject */
   constructor(application: WebApplication, private bridge: Bridge) {
     this.application = application;
     this.notes = new NotesState(
@@ -171,18 +170,39 @@ export class AppState {
       storage.remove(StorageKey.ShowBetaWarning);
       this.noAccountWarning.reset();
     }
+    (this.application as unknown) = undefined;
     this.actionsMenu.reset();
     this.unsubApp?.();
     this.unsubApp = undefined;
     this.observers.length = 0;
+
     this.appEventObserverRemovers.forEach((remover) => remover());
-    this.features.deinit();
     this.appEventObserverRemovers.length = 0;
+
+    this.features.deinit();
+    (this.features as unknown) = undefined;
+
     this.webAppEventDisposer?.();
     this.webAppEventDisposer = undefined;
+
+    (this.quickSettingsMenu as unknown) = undefined;
+    (this.accountMenu as unknown) = undefined;
+    (this.actionsMenu as unknown) = undefined;
+    (this.preferences as unknown) = undefined;
+    (this.purchaseFlow as unknown) = undefined;
+    (this.noteTags as unknown) = undefined;
+    (this.sync as unknown) = undefined;
+    (this.searchOptions as unknown) = undefined;
+    (this.notes as unknown) = undefined;
+    (this.features as unknown) = undefined;
+    (this.tags as unknown) = undefined;
+    (this.notesView as unknown) = undefined;
+
     document.removeEventListener('visibilitychange', this.onVisibilityChange);
     this.onVisibilityChange = undefined;
+
     this.tagChangedDisposer();
+    (this.tagChangedDisposer as unknown) = undefined;
   }
 
   openSessionsModal(): void {
