@@ -12,8 +12,8 @@ import { WebApplication } from '@/ui_models/application';
 const PREFERENCE_IDS = [
   'general',
   'account',
-  'appearance',
   'security',
+  'appearance',
   'backups',
   'listed',
   'shortcuts',
@@ -39,8 +39,8 @@ interface SelectableMenuItem extends PreferencesMenuItem {
 const PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
   { id: 'account', label: 'Account', icon: 'user' },
   { id: 'general', label: 'General', icon: 'settings' },
-  { id: 'appearance', label: 'Appearance', icon: 'themes' },
   { id: 'security', label: 'Security', icon: 'security' },
+  { id: 'appearance', label: 'Appearance', icon: 'themes' },
   { id: 'backups', label: 'Backups', icon: 'restore' },
   { id: 'listed', label: 'Listed', icon: 'listed' },
   { id: 'shortcuts', label: 'Shortcuts', icon: 'keyboard' },
@@ -52,8 +52,8 @@ const PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
 const READY_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
   { id: 'account', label: 'Account', icon: 'user' },
   { id: 'general', label: 'General', icon: 'settings' },
-  { id: 'appearance', label: 'Appearance', icon: 'themes' },
   { id: 'security', label: 'Security', icon: 'security' },
+  { id: 'appearance', label: 'Appearance', icon: 'themes' },
   { id: 'backups', label: 'Backups', icon: 'restore' },
   { id: 'listed', label: 'Listed', icon: 'listed' },
   { id: 'help-feedback', label: 'Help & feedback', icon: 'help' },
