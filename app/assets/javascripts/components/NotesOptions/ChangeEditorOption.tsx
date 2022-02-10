@@ -27,7 +27,7 @@ import {
   TransactionalMutation,
 } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
 import { Icon } from '../Icon';
 import { createEditorMenuGroups } from './changeEditor/createEditorMenuGroups';
 import { EditorAccordionMenu } from './changeEditor/EditorAccordionMenu';
@@ -144,15 +144,11 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
   note,
 }) => {
   const [changeEditorMenuOpen, setChangeEditorMenuOpen] = useState(false);
-  const [changeEditorMenuPosition, setChangeEditorMenuPosition] = useState<{
-    top?: number | 'auto';
-    right?: number | 'auto';
-    bottom: number | 'auto';
-    left?: number | 'auto';
-  }>({
-    right: 0,
-    bottom: 0,
-  });
+  const [changeEditorMenuPosition, setChangeEditorMenuPosition] =
+    useState<MenuPositionStyle>({
+      right: 0,
+      bottom: 0,
+    });
   const changeEditorMenuRef = useRef<HTMLDivElement>(null);
   const changeEditorButtonRef = useRef<HTMLButtonElement>(null);
   const [editors] = useState<SNComponent[]>(() =>
@@ -178,46 +174,17 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
   }, [application, note]);
 
   const toggleChangeEditorMenu = () => {
-    const defaultFontSize = window.getComputedStyle(
-      document.documentElement
-    ).fontSize;
-    const maxChangeEditorMenuSize =
-      parseFloat(defaultFontSize) * MAX_MENU_SIZE_MULTIPLIER;
-    const { clientWidth, clientHeight } = document.documentElement;
-    const buttonRect = changeEditorButtonRef.current?.getBoundingClientRect();
-    const buttonParentRect =
-      changeEditorButtonRef.current?.parentElement?.getBoundingClientRect();
-    const footerElementRect = document
-      .getElementById('footer-bar')
-      ?.getBoundingClientRect();
-    const footerHeightInPx = footerElementRect?.height;
-
-    if (buttonRect && buttonParentRect && footerHeightInPx) {
-      let positionBottom =
-        clientHeight - buttonRect.bottom - buttonRect.height / 2;
-
-      if (positionBottom < footerHeightInPx) {
-        positionBottom = footerHeightInPx + MENU_MARGIN_FROM_APP_BORDER;
-      }
-
-      if (buttonRect.right + maxChangeEditorMenuSize > clientWidth) {
-        setChangeEditorMenuPosition({
-          top: positionBottom - buttonParentRect.height / 2,
-          right: clientWidth - buttonRect.left,
-          bottom: 'auto',
-        });
-      } else {
-        setChangeEditorMenuPosition({
-          bottom: positionBottom,
-          left: buttonRect.right,
-        });
+    if (!changeEditorMenuOpen) {
+      const menuPosition = calculateMenuPosition(changeEditorButtonRef.current);
+      if (menuPosition) {
+        setChangeEditorMenuPosition(menuPosition);
       }
     }
 
     setChangeEditorMenuOpen(!changeEditorMenuOpen);
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (changeEditorMenuOpen) {
       setTimeout(() => {
         const newMenuPosition = calculateMenuPosition(
@@ -230,7 +197,7 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
         }
       }, TIME_IN_MS_TO_WAIT_BEFORE_REPAINT);
     }
-  }, [changeEditorMenuOpen, changeEditorMenuPosition]);
+  }, [changeEditorMenuOpen]);
 
   const selectComponent = async (component: SNComponent | null) => {
     if (component) {
