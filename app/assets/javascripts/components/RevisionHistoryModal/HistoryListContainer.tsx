@@ -17,6 +17,7 @@ type Props = {
   note: SNNote;
   setSelectedRevision: StateUpdater<HistoryEntry | undefined>;
   setIsFetchingSelectedRevision: StateUpdater<boolean>;
+  setShowContentLockedScreen: StateUpdater<boolean>;
 };
 
 export enum RevisionListTabType {
@@ -29,6 +30,7 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
     application,
     note,
     setSelectedRevision,
+    setShowContentLockedScreen,
     setIsFetchingSelectedRevision,
   }) => {
     const sessionHistory = sortRevisionListIntoGroups<NoteHistoryEntry>(
@@ -64,25 +66,33 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
 
     const fetchAndSetRemoteRevision = useCallback(
       async (revisionListEntry: RevisionListEntry) => {
-        setIsFetchingSelectedRevision(true);
-        try {
-          const remoteRevision =
-            await application.historyManager.fetchRemoteRevision(
-              note.uuid,
-              revisionListEntry
-            );
-          setSelectedRevision(remoteRevision);
-        } catch (err) {
-          console.error(err);
-        } finally {
-          setIsFetchingSelectedRevision(false);
+        setShowContentLockedScreen(false);
+
+        if (application.hasRole(revisionListEntry.required_role)) {
+          setIsFetchingSelectedRevision(true);
+          try {
+            const remoteRevision =
+              await application.historyManager.fetchRemoteRevision(
+                note.uuid,
+                revisionListEntry
+              );
+            setSelectedRevision(remoteRevision);
+          } catch (err) {
+            console.error(err);
+          } finally {
+            setIsFetchingSelectedRevision(false);
+          }
+        } else {
+          setShowContentLockedScreen(true);
+          setSelectedRevision(undefined);
         }
       },
       [
-        application.historyManager,
+        application,
         note.uuid,
         setIsFetchingSelectedRevision,
         setSelectedRevision,
+        setShowContentLockedScreen,
       ]
     );
 
@@ -134,6 +144,7 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
           )}
           {selectedTab === RevisionListTabType.Remote && (
             <RemoteHistoryList
+              application={application}
               remoteHistory={remoteHistory}
               isFetchingRemoteHistory={isFetchingRemoteHistory}
               fetchAndSetRemoteRevision={fetchAndSetRemoteRevision}

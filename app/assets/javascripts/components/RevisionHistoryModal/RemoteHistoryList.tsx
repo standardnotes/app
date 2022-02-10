@@ -1,3 +1,4 @@
+import { WebApplication } from '@/ui_models/application';
 import { RevisionListEntry } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { Fragment, FunctionComponent } from 'preact';
@@ -8,6 +9,7 @@ import {
   useRef,
   useState,
 } from 'preact/hooks';
+import { Icon } from '../Icon';
 import { useListKeyboardNavigation } from '../utils';
 import { RevisionListTabType } from './HistoryListContainer';
 import { HistoryListItem } from './HistoryListItem';
@@ -18,6 +20,7 @@ const previewRemoteHistoryTitle = (revision: RevisionListEntry) => {
 };
 
 type RemoteHistoryListProps = {
+  application: WebApplication;
   remoteHistory: RemoteRevisionListGroup[] | undefined;
   isFetchingRemoteHistory: boolean;
   fetchAndSetRemoteRevision: (
@@ -29,6 +32,7 @@ type RemoteHistoryListProps = {
 export const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> =
   observer(
     ({
+      application,
       remoteHistory,
       isFetchingRemoteHistory,
       fetchAndSetRemoteRevision,
@@ -98,12 +102,18 @@ export const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> =
                   <HistoryListItem
                     key={entry.uuid}
                     isSelected={selectedEntryUuid === entry.uuid}
-                    label={previewRemoteHistoryTitle(entry)}
                     onClick={() => {
                       setSelectedEntryUuid(entry.uuid);
                       fetchAndSetRemoteRevision(entry);
                     }}
-                  />
+                  >
+                    <div className="flex flex-grow items-center justify-between">
+                      <div>{previewRemoteHistoryTitle(entry)}</div>
+                      {!application.hasRole(entry.required_role) && (
+                        <Icon type="premium-feature" />
+                      )}
+                    </div>
+                  </HistoryListItem>
                 ))}
               </Fragment>
             ) : null

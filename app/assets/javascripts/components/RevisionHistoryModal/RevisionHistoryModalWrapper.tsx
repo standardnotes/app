@@ -10,7 +10,6 @@ import {
   AlertDialogOverlay,
 } from '@reach/alert-dialog';
 import VisuallyHidden from '@reach/visually-hidden';
-import { SubscriptionName } from '@standardnotes/auth';
 import {
   ContentType,
   HistoryEntry,
@@ -23,7 +22,10 @@ import { FunctionComponent } from 'preact';
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { Button } from '../Button';
 import { HistoryListContainer } from './HistoryListContainer';
-import { RevisionContentLocked } from './RevisionContentLocked';
+import {
+  RevisionContentLocked,
+  SubscriptionPlanId,
+} from './RevisionContentLocked';
 import { SelectedRevisionContent } from './SelectedRevisionContent';
 
 type Props = {
@@ -42,18 +44,6 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
       appState.notes.setShowRevisionHistoryModal(false);
     };
 
-    const [userPlanId, setUserPlanId] = useState<SubscriptionName>();
-
-    useEffect(() => {
-      const fetchPlanId = async () => {
-        const subscription = await application.getUserSubscription();
-        const planId = subscription?.planName;
-        setUserPlanId(planId);
-      };
-
-      fetchPlanId();
-    }, [application]);
-
     const note = Object.values(appState.notes.selectedNotes)[0];
     const editorForCurrentNote = useMemo(() => {
       return application.componentManager.editorForNote(note);
@@ -64,6 +54,19 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
     const [selectedRevision, setSelectedRevision] = useState<HistoryEntry>();
     const [templateNoteForRevision, setTemplateNoteForRevision] =
       useState<SNNote>();
+    const [showContentLockedScreen, setShowContentLockedScreen] =
+      useState(false);
+    const [userPlanId, setUserPlanId] = useState<SubscriptionPlanId>();
+
+    useEffect(() => {
+      const fetchPlanId = async () => {
+        const subscription = await application.getUserSubscription();
+        const planId = subscription?.planName;
+        setUserPlanId(planId);
+      };
+
+      fetchPlanId();
+    }, [application]);
 
     const restore = () => {
       if (selectedRevision) {
@@ -153,12 +156,14 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
                 application={application}
                 note={note}
                 setSelectedRevision={setSelectedRevision}
+                setShowContentLockedScreen={setShowContentLockedScreen}
                 setIsFetchingSelectedRevision={setIsFetchingSelectedRevision}
               />
               <div className={`flex flex-col flex-grow relative`}>
                 <div
                   className={`absolute w-full h-full top-0 left-0 ${
-                    isFetchingSelectedRevision || !selectedRevision
+                    isFetchingSelectedRevision ||
+                    (!selectedRevision && !showContentLockedScreen)
                       ? 'z-index-1 bg-default'
                       : '-z-index-1'
                   }`}
@@ -176,6 +181,9 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
                     </div>
                   ) : null}
                 </div>
+                {showContentLockedScreen && !selectedRevision && (
+                  <RevisionContentLocked planId={userPlanId} />
+                )}
                 {selectedRevision && templateNoteForRevision && (
                   <SelectedRevisionContent
                     application={application}

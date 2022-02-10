@@ -1,15 +1,16 @@
-import { SubscriptionName } from '@standardnotes/auth';
 import { FunctionComponent } from 'preact';
 import HistoryLockedIllustration from '../../../svg/il-history-locked.svg';
 import { Button } from '../Button';
 
-const PLAN_HISTORY_DURATION: { [key in SubscriptionName]: string } = {
+export type SubscriptionPlanId = 'CORE_PLAN' | 'PLUS_PLAN' | 'PRO_PLAN';
+
+const PLAN_HISTORY_DURATION: { [key in SubscriptionPlanId]: string } = {
   CORE_PLAN: '30 days',
   PLUS_PLAN: '365 days',
   PRO_PLAN: 'Unlimited',
 };
 
-const getPlanShortName = (planId: SubscriptionName | undefined) => {
+const getPlanShortName = (planId: SubscriptionPlanId | undefined) => {
   switch (planId) {
     case 'CORE_PLAN':
       return 'Core';
@@ -23,7 +24,7 @@ const getPlanShortName = (planId: SubscriptionName | undefined) => {
 };
 
 export const RevisionContentLocked: FunctionComponent<{
-  planId: SubscriptionName | undefined;
+  planId: SubscriptionPlanId | undefined;
 }> = ({ planId }) => (
   <div className="flex w-full h-full items-center justify-center">
     <div className="flex flex-col items-center text-center max-w-40%">
