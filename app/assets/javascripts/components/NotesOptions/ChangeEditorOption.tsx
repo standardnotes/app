@@ -54,6 +54,89 @@ export type EditorMenuItem = {
 
 export type EditorMenuGroup = AccordionMenuGroup<EditorMenuItem>;
 
+type MenuPositionStyle = {
+  top?: number | 'auto';
+  right?: number | 'auto';
+  bottom: number | 'auto';
+  left?: number | 'auto';
+};
+
+const calculateMenuPosition = (
+  button: HTMLButtonElement | null,
+  menu?: HTMLDivElement | null
+): MenuPositionStyle | undefined => {
+  const defaultFontSize = window.getComputedStyle(
+    document.documentElement
+  ).fontSize;
+
+  const maxChangeEditorMenuSize =
+    parseFloat(defaultFontSize) * MAX_MENU_SIZE_MULTIPLIER;
+
+  const { clientWidth, clientHeight } = document.documentElement;
+
+  const buttonRect = button?.getBoundingClientRect();
+
+  const buttonParentRect = button?.parentElement?.getBoundingClientRect();
+
+  const menuBoundingRect = menu?.getBoundingClientRect();
+
+  const footerElementRect = document
+    .getElementById('footer-bar')
+    ?.getBoundingClientRect();
+
+  const footerHeightInPx = footerElementRect?.height ?? 0;
+
+  let position: MenuPositionStyle = {
+    bottom: 'auto',
+  };
+
+  if (buttonRect && buttonParentRect) {
+    let positionBottom =
+      clientHeight - buttonRect.bottom - buttonRect.height / 2;
+
+    if (positionBottom < footerHeightInPx) {
+      positionBottom = footerHeightInPx + MENU_MARGIN_FROM_APP_BORDER;
+    }
+
+    if (buttonRect.right + maxChangeEditorMenuSize > clientWidth) {
+      position = {
+        bottom: positionBottom,
+        right: clientWidth - buttonRect.left,
+      };
+    } else {
+      position = {
+        bottom: positionBottom,
+        left: buttonRect.right,
+      };
+    }
+  }
+
+  if (menuBoundingRect && menuBoundingRect.height && buttonRect) {
+    if (menuBoundingRect.y < MENU_MARGIN_FROM_APP_BORDER) {
+      if (
+        buttonRect.right + maxChangeEditorMenuSize >
+        document.documentElement.clientWidth
+      ) {
+        return {
+          ...position,
+          top: MENU_MARGIN_FROM_APP_BORDER + buttonRect.top - buttonRect.height,
+          bottom: 'auto',
+        };
+      } else {
+        return {
+          ...position,
+          top: MENU_MARGIN_FROM_APP_BORDER,
+          bottom: 'auto',
+        };
+      }
+    }
+  }
+
+  return position;
+};
+
+const TIME_IN_MS_TO_WAIT_BEFORE_REPAINT = 1;
+
 export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
   application,
   appState,
@@ -136,35 +219,16 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
 
   useEffect(() => {
     if (changeEditorMenuOpen) {
-      const defaultFontSize = window.getComputedStyle(
-        document.documentElement
-      ).fontSize;
-      const maxChangeEditorMenuSize =
-        parseFloat(defaultFontSize) * MAX_MENU_SIZE_MULTIPLIER;
-      const changeEditorMenuBoundingRect =
-        changeEditorMenuRef.current?.getBoundingClientRect();
-      const buttonRect = changeEditorButtonRef.current?.getBoundingClientRect();
+      setTimeout(() => {
+        const newMenuPosition = calculateMenuPosition(
+          changeEditorButtonRef.current,
+          changeEditorMenuRef.current
+        );
 
-      if (changeEditorMenuBoundingRect && buttonRect) {
-        if (changeEditorMenuBoundingRect.y < MENU_MARGIN_FROM_APP_BORDER) {
-          if (
-            buttonRect.right + maxChangeEditorMenuSize >
-            document.documentElement.clientWidth
-          ) {
-            setChangeEditorMenuPosition({
-              ...changeEditorMenuPosition,
-              top: MENU_MARGIN_FROM_APP_BORDER + buttonRect.height,
-              bottom: 'auto',
-            });
-          } else {
-            setChangeEditorMenuPosition({
-              ...changeEditorMenuPosition,
-              top: MENU_MARGIN_FROM_APP_BORDER,
-              bottom: 'auto',
-            });
-          }
+        if (newMenuPosition) {
+          setChangeEditorMenuPosition(newMenuPosition);
         }
-      }
+      }, TIME_IN_MS_TO_WAIT_BEFORE_REPAINT);
     }
   }, [changeEditorMenuOpen, changeEditorMenuPosition]);
 
