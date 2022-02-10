@@ -84,12 +84,13 @@ export const SessionHistoryList: FunctionComponent<Props> = ({
               <HistoryListItem
                 key={index}
                 isSelected={selectedItemCreatedAt === entry.payload.created_at}
-                label={entry.previewTitle()}
                 onClick={() => {
                   setSelectedItemCreatedAt(entry.payload.created_at);
                   setSelectedRevision(entry);
                 }}
-              />
+              >
+                {entry.previewTitle()}
+              </HistoryListItem>
             ))}
           </Fragment>
         ) : null

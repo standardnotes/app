@@ -3,13 +3,12 @@ import { FunctionComponent } from 'preact';
 
 type HistoryListItemProps = {
   isSelected: boolean;
-  label: string;
   onClick: () => void;
 };
 
 export const HistoryListItem: FunctionComponent<HistoryListItemProps> = ({
+  children,
   isSelected,
-  label,
   onClick,
 }) => {
   return (
@@ -25,7 +24,7 @@ export const HistoryListItem: FunctionComponent<HistoryListItemProps> = ({
           isSelected ? 'pseudo-radio-btn--checked' : ''
         } mr-2`}
       ></div>
-      {label}
+      {children}
     </button>
   );
 };
