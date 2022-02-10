@@ -27,7 +27,7 @@ import {
   TransactionalMutation,
 } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
-import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { Icon } from '../Icon';
 import { createEditorMenuGroups } from './changeEditor/createEditorMenuGroups';
 import { EditorAccordionMenu } from './changeEditor/EditorAccordionMenu';
@@ -111,7 +111,7 @@ const calculateMenuPosition = (
     }
   }
 
-  if (menuBoundingRect && buttonRect) {
+  if (menuBoundingRect && menuBoundingRect.height && buttonRect) {
     if (menuBoundingRect.y < MENU_MARGIN_FROM_APP_BORDER) {
       if (
         buttonRect.right + maxChangeEditorMenuSize >
@@ -130,10 +130,12 @@ const calculateMenuPosition = (
         };
       }
     }
-  } else {
-    return position;
   }
+
+  return position;
 };
+
+const TIME_IN_MS_TO_WAIT_BEFORE_REPAINT = 1;
 
 export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
   application,
@@ -182,16 +184,18 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
     setChangeEditorMenuOpen(!changeEditorMenuOpen);
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (changeEditorMenuOpen) {
-      const newMenuPosition = calculateMenuPosition(
-        changeEditorButtonRef.current,
-        changeEditorMenuRef.current
-      );
+      setTimeout(() => {
+        const newMenuPosition = calculateMenuPosition(
+          changeEditorButtonRef.current,
+          changeEditorMenuRef.current
+        );
 
-      if (newMenuPosition) {
-        setChangeEditorMenuPosition(newMenuPosition);
-      }
+        if (newMenuPosition) {
+          setChangeEditorMenuPosition(newMenuPosition);
+        }
+      }, TIME_IN_MS_TO_WAIT_BEFORE_REPAINT);
     }
   }, [changeEditorMenuOpen]);
 
