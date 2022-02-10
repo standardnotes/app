@@ -217,20 +217,10 @@ export class NoteTagsState {
   }
 
   getPrefixTitle(tag: SNTag): string | undefined {
-    const hierarchy = this.application.getTagParentChain(tag);
-
-    if (hierarchy.length === 0) {
-      return undefined;
-    }
-
-    const prefixTitle = hierarchy.map((tag) => tag.title).join('/');
-    return `${prefixTitle}/`;
+    return this.application.getTagPrefixTitle(tag);
   }
 
   getLongTitle(tag: SNTag): string {
-    const hierarchy = this.application.getTagParentChain(tag);
-    const tags = [...hierarchy, tag];
-    const longTitle = tags.map((tag) => tag.title).join('/');
-    return longTitle;
+    return this.application.getTagLongTitle(tag);
   }
 }
