@@ -27,7 +27,7 @@ import {
   TransactionalMutation,
 } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
-import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { Icon } from '../Icon';
 import { createEditorMenuGroups } from './changeEditor/createEditorMenuGroups';
 import { EditorAccordionMenu } from './changeEditor/EditorAccordionMenu';
@@ -184,7 +184,7 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
     setChangeEditorMenuOpen(!changeEditorMenuOpen);
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (changeEditorMenuOpen) {
       setTimeout(() => {
         const newMenuPosition = calculateMenuPosition(
