@@ -93,5 +93,10 @@
     "version": "1.3.8",
     "base64": "e895b21645264f991cd212dbf3207731ecffab203f540f7145edad4601e6f6a2",
     "binary": "88d4b9a6ff94b1f6cba884787e051cda3cd8073022984b63f7d3b13157aa6e2a"
+  },
+  "org.standardnotes.markdown-visual-editor": {
+    "version": "1.0.1",
+    "base64": "b0984c4a35b45eb4035a2dcdc0ba71b7b68b5dffcdeea53d0c5fbcbc0ff85894",
+    "binary": "d8ac1028cf50d60f7a80010dd1c6047f57e01cd066ea163f169d514d1e7d2e71"
   }
 }

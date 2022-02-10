@@ -2597,39 +2597,39 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@standardnotes/auth@^3.15.4":
-  version "3.15.4"
-  resolved "https://registry.yarnpkg.com/@standardnotes/auth/-/auth-3.15.4.tgz#acb2e9497724e1ba290664f199f3cc165c0fce3e"
-  integrity sha512-QhOnM8yPL63RrS+0qQjT4PIlHT3a+Ht17BmTEoNeNw3hc0QSXb3wqkwHoqyMfxWZKcAVjOSPhl+aOO9O2JUC3w==
+"@standardnotes/auth@^3.16.0":
+  version "3.16.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/auth/-/auth-3.16.0.tgz#6a69c1dc4fdfb4e98920c777e6eff892087d2397"
+  integrity sha512-0JDM6u3SDb2EkDNf+HN04HvXvkVe9gCKmWIeak+2vyfyS6nsbNBQf/uxAu7Jz3Jugi3Q7j57dhHeOSU21bFR3A==
   dependencies:
-    "@standardnotes/common" "^1.9.0"
+    "@standardnotes/common" "^1.10.0"
     jsonwebtoken "^8.5.1"
 
-"@standardnotes/common@^1.9.0":
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/common/-/common-1.9.0.tgz#45c0a8da16cb6e3c56ee53e8abde73934c5cf91e"
-  integrity sha512-4c/7f/sFBykmiu/SqYn3OfmMSdJ6dNVsl6yDm4aPB37EAyNPhOfhOeY8kQ12606EZArtUJ8FYo5sKPbLV0PCug==
+"@standardnotes/common@^1.10.0":
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/common/-/common-1.10.0.tgz#526b40b473cfbd8bb7291eb895ae174879e21047"
+  integrity sha512-7k8UZbA5d6BODjQYqV/i6xbkO6qEJULFLuLYVAS+Ery5CPekmUoEoh+UuA+iEITj2RNW6BV6sa/13jmHG5ADtA==
 
 "@standardnotes/components@1.7.0":
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/@standardnotes/components/-/components-1.7.0.tgz#192f358ddffe275a9ab3709ef31b7b8bf3b58ec1"
   integrity sha512-4J9iuos5WZvl+/Z7dNvhgEY9SRTdSm6JiUHbo6rRtryjvlJB4EkvnARxexJvw17MBmTWjvHY8c3aLm/w1dzv0A==
 
-"@standardnotes/domain-events@^2.21.5":
-  version "2.21.5"
-  resolved "https://registry.yarnpkg.com/@standardnotes/domain-events/-/domain-events-2.21.5.tgz#10d52186500f541cead0d097f99cda4e6b0d3a21"
-  integrity sha512-1hKeaJNUn8BtlpaYXvW0JjHP/0JB96x168VZAGKQW4U9SqhEzskMq4M5Tt/sTEV4QBf2dJSHBa+FnK6fYZrqZQ==
+"@standardnotes/domain-events@^2.22.0":
+  version "2.22.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/domain-events/-/domain-events-2.22.0.tgz#43176964bc4b7334430a4d0baf3af57b4469c329"
+  integrity sha512-ZczUfR+gApcB6L5ySYJyngax/RZko7EQZgMyVXl0KdF9Wks33zgpRA2EsGRxrppcjUh8cTDDGfZue0X7HwGd5Q==
   dependencies:
-    "@standardnotes/auth" "^3.15.4"
-    "@standardnotes/features" "^1.30.0"
+    "@standardnotes/auth" "^3.16.0"
+    "@standardnotes/features" "^1.31.0"
 
-"@standardnotes/features@1.30.0", "@standardnotes/features@^1.30.0":
-  version "1.30.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.30.0.tgz#b7d7884d2f741d2c690b56947ea5f1233adfd6de"
-  integrity sha512-g01P1/HwPIjEbpIwyr0gFZWPacreTzPF5AT3Sqz4mVxl9+Fb9QY8ckPgdVuPkotQc2xzU1SwAhP7c7Zo+2tWcA==
+"@standardnotes/features@1.31.0", "@standardnotes/features@^1.31.0":
+  version "1.31.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.31.0.tgz#b1e99038cb6c7a8bdae6ff3389aca3572e5235c5"
+  integrity sha512-7GaUqWAcqjgofZt2YXSDcT6uKWtbYOY0QqTnxU0ox1PcoAtl7c34t1CmLzS2ve9v4aItOO/sMmFbS/WFjn6/gA==
   dependencies:
-    "@standardnotes/auth" "^3.15.4"
-    "@standardnotes/common" "^1.9.0"
+    "@standardnotes/auth" "^3.16.0"
+    "@standardnotes/common" "^1.10.0"
 
 "@standardnotes/settings@^1.11.3":
   version "1.11.3"
@@ -2650,15 +2650,15 @@
     buffer "^6.0.3"
     libsodium-wrappers "^0.7.9"
 
-"@standardnotes/snjs@2.54.0":
-  version "2.54.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.54.0.tgz#97fff8e09bd7bbda00f462f7a4ac796fe8ef7b0f"
-  integrity sha512-mfB/tyWnG+CyvxbQIh5PqU+fOboSf/F4uf0RcF/U/8urG2ncULM5P4FgWtgZdwWgDnKq2ar3Q1kK2EWz781udQ==
+"@standardnotes/snjs@2.56.1":
+  version "2.56.1"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.56.1.tgz#63a9be4b8e2842329dd5668192102db68b857e97"
+  integrity sha512-pfejQ2hBR+WHkZUhKjLbLiDtDoON9OJp2PNBdzGw3fmHJbmJeUI7sVNYVCp8TAD0I31+mPm2F5xaC4qYy6l1XQ==
   dependencies:
-    "@standardnotes/auth" "^3.15.4"
-    "@standardnotes/common" "^1.9.0"
-    "@standardnotes/domain-events" "^2.21.5"
-    "@standardnotes/features" "^1.30.0"
+    "@standardnotes/auth" "^3.16.0"
+    "@standardnotes/common" "^1.10.0"
+    "@standardnotes/domain-events" "^2.22.0"
+    "@standardnotes/features" "^1.31.0"
     "@standardnotes/settings" "^1.11.3"
     "@standardnotes/sncrypto-common" "^1.6.0"
 
