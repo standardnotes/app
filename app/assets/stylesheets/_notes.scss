@@ -163,6 +163,7 @@
       align-items: flex-start;
       padding: 1rem;
       padding-left: 0;
+      border-bottom: 1px solid var(--sn-stylekit-border-color);
 
       & > * {
         display: flex;
