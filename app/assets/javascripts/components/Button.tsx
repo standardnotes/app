@@ -2,7 +2,7 @@ import { JSXInternal } from 'preact/src/jsx';
 import TargetedEvent = JSXInternal.TargetedEvent;
 import TargetedMouseEvent = JSXInternal.TargetedMouseEvent;
 
-import { FunctionComponent, Ref } from 'preact';
+import { ComponentChildren, FunctionComponent, Ref } from 'preact';
 import { forwardRef } from 'preact/compat';
 
 const baseClass = `rounded px-4 py-1.75 font-bold text-sm fit-content`;
@@ -16,9 +16,10 @@ const buttonClasses: { [type in ButtonType]: string } = {
 };
 
 type ButtonProps = {
+  children?: ComponentChildren;
   className?: string;
   type: ButtonType;
-  label: string;
+  label?: string;
   onClick: (
     event:
       | TargetedEvent<HTMLFormElement>
@@ -29,7 +30,14 @@ type ButtonProps = {
 
 export const Button: FunctionComponent<ButtonProps> = forwardRef(
   (
-    { type, label, className = '', onClick, disabled = false }: ButtonProps,
+    {
+      type,
+      label,
+      className = '',
+      onClick,
+      disabled = false,
+      children,
+    }: ButtonProps,
     ref: Ref<HTMLButtonElement>
   ) => {
     const buttonClass = buttonClasses[type];
@@ -45,7 +53,7 @@ export const Button: FunctionComponent<ButtonProps> = forwardRef(
         disabled={disabled}
         ref={ref}
       >
-        {label}
+        {label ?? children}
       </button>
     );
   }
