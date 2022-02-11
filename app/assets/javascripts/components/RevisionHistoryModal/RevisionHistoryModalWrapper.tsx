@@ -16,11 +16,18 @@ import {
   HistoryEntry,
   PayloadContent,
   PayloadSource,
+  RevisionListEntry,
   SNNote,
 } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'preact/hooks';
 import { Button } from '../Button';
 import { HistoryListContainer } from './HistoryListContainer';
 import {
@@ -28,6 +35,7 @@ import {
   SubscriptionPlanId,
 } from './RevisionContentLocked';
 import { SelectedRevisionContent } from './SelectedRevisionContent';
+import { RemoteRevisionListGroup, sortRevisionListIntoGroups } from './utils';
 
 type RevisionHistoryModalProps = {
   application: WebApplication;
@@ -52,8 +60,8 @@ const RevisionContentPlaceholder: FunctionComponent<
 }) => (
   <div
     className={`absolute w-full h-full top-0 left-0 ${
-      isFetchingSelectedRevision ||
-      (!selectedRevision && !showContentLockedScreen)
+      (isFetchingSelectedRevision || !selectedRevision) &&
+      !showContentLockedScreen
         ? 'z-index-1 bg-default'
         : '-z-index-1'
     }`}
@@ -87,13 +95,45 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
     const [isFetchingSelectedRevision, setIsFetchingSelectedRevision] =
       useState(false);
     const [selectedRevision, setSelectedRevision] = useState<HistoryEntry>();
-    const [selectedRemoteEntryUuid, setSelectedRemoteEntryUuid] =
-      useState<string>();
+    const [selectedRemoteEntry, setSelectedRemoteEntry] =
+      useState<RevisionListEntry>();
+    const [isDeletingRevision, setIsDeletingRevision] = useState(false);
     const [templateNoteForRevision, setTemplateNoteForRevision] =
       useState<SNNote>();
     const [showContentLockedScreen, setShowContentLockedScreen] =
       useState(false);
     const [userPlanId, setUserPlanId] = useState<SubscriptionPlanId>();
+
+    const [remoteHistory, setRemoteHistory] =
+      useState<RemoteRevisionListGroup[]>();
+    const [isFetchingRemoteHistory, setIsFetchingRemoteHistory] =
+      useState(false);
+
+    const fetchRemoteHistory = useCallback(async () => {
+      if (note) {
+        setRemoteHistory(undefined);
+        setIsFetchingRemoteHistory(true);
+        try {
+          const initialRemoteHistory =
+            await application.historyManager.remoteHistoryForItem(note);
+
+          const remoteHistoryAsGroups =
+            sortRevisionListIntoGroups<RevisionListEntry>(initialRemoteHistory);
+
+          setRemoteHistory(remoteHistoryAsGroups);
+        } catch (err) {
+          console.error(err);
+        } finally {
+          setIsFetchingRemoteHistory(false);
+        }
+      }
+    }, [application.historyManager, note]);
+
+    useEffect(() => {
+      if (!remoteHistory?.length) {
+        fetchRemoteHistory();
+      }
+    }, [fetchRemoteHistory, remoteHistory?.length]);
 
     useEffect(() => {
       const fetchPlanId = async () => {
@@ -169,6 +209,39 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
       fetchTemplateNote();
     }, [application, selectedRevision]);
 
+    const deleteSelectedRevision = () => {
+      if (!selectedRemoteEntry) {
+        return;
+      }
+
+      application.alertService
+        .confirm(
+          'Are you sure you want to delete this revision?',
+          'Delete revision?',
+          'Delete revision',
+          ButtonType.Danger,
+          'Cancel'
+        )
+        .then((shouldDelete) => {
+          if (shouldDelete) {
+            setIsDeletingRevision(true);
+
+            application.historyManager
+              .deleteRemoteRevision(note.uuid, selectedRemoteEntry)
+              .then((res) => {
+                if (res.error?.message) {
+                  throw new Error(res.error.message);
+                }
+
+                fetchRemoteHistory();
+                setIsDeletingRevision(false);
+              })
+              .catch(console.error);
+          }
+        })
+        .catch(console.error);
+    };
+
     return (
       <AlertDialogOverlay
         className={`sn-component ${getPlatformString()}`}
@@ -187,13 +260,19 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
           <AlertDialogLabel>
             <VisuallyHidden>Note revision history</VisuallyHidden>
           </AlertDialogLabel>
-          <AlertDialogDescription className="bg-default flex flex-col h-full overflow-hidden">
+          <AlertDialogDescription
+            className={`bg-default flex flex-col h-full overflow-hidden ${
+              isDeletingRevision ? 'pointer-events-none cursor-not-allowed' : ''
+            }`}
+          >
             <div className="flex flex-grow min-h-0">
               <HistoryListContainer
                 application={application}
                 note={note}
+                remoteHistory={remoteHistory}
+                isFetchingRemoteHistory={isFetchingRemoteHistory}
                 setSelectedRevision={setSelectedRevision}
-                setSelectedRemoteEntryUuid={setSelectedRemoteEntryUuid}
+                setSelectedRemoteEntry={setSelectedRemoteEntry}
                 setShowContentLockedScreen={setShowContentLockedScreen}
                 setIsFetchingSelectedRevision={setIsFetchingSelectedRevision}
               />
@@ -228,33 +307,19 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
                 />
               </div>
               {selectedRevision && (
-                <div>
-                  {selectedRemoteEntryUuid && (
+                <div class="flex items-center">
+                  {selectedRemoteEntry && (
                     <Button
                       className="py-1.35 mr-2.5"
-                      label="Delete this version"
-                      onClick={() => {
-                        application.alertService
-                          .confirm(
-                            'Are you sure you want to delete this version?',
-                            'Delete version?',
-                            'Delete version',
-                            ButtonType.Danger,
-                            'Cancel'
-                          )
-                          .then((shouldDelete) => {
-                            if (shouldDelete) {
-                              /** @TODO */
-                              /** application.historyManager.deleteRemoteRevision(
-                               *    note.uuid,
-                               *    selectedRemoteEntryUuid
-                               *  ) */
-                            }
-                          })
-                          .catch(console.error);
-                      }}
+                      onClick={deleteSelectedRevision}
                       type="normal"
-                    />
+                    >
+                      {isDeletingRevision ? (
+                        <div className="sk-spinner my-1 w-3 h-3 spinner-info" />
+                      ) : (
+                        'Delete this version'
+                      )}
+                    </Button>
                   )}
                   <Button
                     className="py-1.35 mr-2.5"
