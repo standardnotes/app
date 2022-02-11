@@ -141,8 +141,12 @@ export const useListKeyboardNavigation = (
 
   const containerFocusHandler = useCallback(() => {
     if (listItems) {
+      const selectedItemIndex = Array.from(listItems).findIndex(
+        (item) => item.dataset.selected
+      );
+      const indexToFocus = selectedItemIndex > -1 ? selectedItemIndex : 0;
       setTimeout(() => {
-        focusItemWithIndex(0);
+        focusItemWithIndex(indexToFocus);
       }, FIRST_ITEM_FOCUS_TIMEOUT);
     }
   }, [focusItemWithIndex, listItems]);
