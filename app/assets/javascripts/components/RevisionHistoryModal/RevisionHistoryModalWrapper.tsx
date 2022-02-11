@@ -35,7 +35,11 @@ import {
   SubscriptionPlanId,
 } from './RevisionContentLocked';
 import { SelectedRevisionContent } from './SelectedRevisionContent';
-import { RemoteRevisionListGroup, sortRevisionListIntoGroups } from './utils';
+import {
+  LegacyHistoryEntry,
+  RemoteRevisionListGroup,
+  sortRevisionListIntoGroups,
+} from './utils';
 
 type RevisionHistoryModalProps = {
   application: WebApplication;
@@ -47,7 +51,7 @@ const ABSOLUTE_CENTER_CLASSNAME =
 
 type RevisionContentPlaceholderProps = {
   isFetchingSelectedRevision: boolean;
-  selectedRevision: HistoryEntry | undefined;
+  selectedRevision: HistoryEntry | LegacyHistoryEntry | undefined;
   showContentLockedScreen: boolean;
 };
 
@@ -94,7 +98,9 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
 
     const [isFetchingSelectedRevision, setIsFetchingSelectedRevision] =
       useState(false);
-    const [selectedRevision, setSelectedRevision] = useState<HistoryEntry>();
+    const [selectedRevision, setSelectedRevision] = useState<
+      HistoryEntry | LegacyHistoryEntry
+    >();
     const [selectedRemoteEntry, setSelectedRemoteEntry] =
       useState<RevisionListEntry>();
     const [isDeletingRevision, setIsDeletingRevision] = useState(false);

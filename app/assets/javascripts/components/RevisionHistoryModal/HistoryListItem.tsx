@@ -18,6 +18,7 @@ export const HistoryListItem: FunctionComponent<HistoryListItemProps> = ({
         isSelected ? 'bg-info-backdrop' : ''
       }`}
       onClick={onClick}
+      data-selected={isSelected}
     >
       <div
         className={`pseudo-radio-btn ${

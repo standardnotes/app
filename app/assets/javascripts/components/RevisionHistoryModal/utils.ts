@@ -1,11 +1,17 @@
 import { DAYS_IN_A_WEEK, DAYS_IN_A_YEAR } from '@/views/constants';
 import {
+  HistoryEntry,
   NoteHistoryEntry,
   RevisionListEntry,
 } from '@standardnotes/snjs/dist/@types';
 import { calculateDifferenceBetweenDatesInDays } from '../utils';
 
-type RevisionEntry = RevisionListEntry | NoteHistoryEntry;
+export type LegacyHistoryEntry = {
+  payload: HistoryEntry['payload'];
+  created_at: string;
+};
+
+type RevisionEntry = RevisionListEntry | NoteHistoryEntry | LegacyHistoryEntry;
 
 export type ListGroup<EntryType extends RevisionEntry> = {
   title: string;
@@ -97,4 +103,10 @@ export const sortRevisionListIntoGroups = <EntryType extends RevisionEntry>(
   });
 
   return sortedGroups;
+};
+
+export const previewHistoryEntryTitle = (
+  revision: RevisionListEntry | LegacyHistoryEntry
+) => {
+  return new Date(revision.created_at).toLocaleString();
 };

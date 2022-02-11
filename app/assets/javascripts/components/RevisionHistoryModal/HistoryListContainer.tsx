@@ -7,14 +7,22 @@ import {
 } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { StateUpdater, useCallback, useState } from 'preact/hooks';
+import { StateUpdater, useCallback, useMemo, useState } from 'preact/hooks';
+import { useEffect } from 'react';
+import { LegacyHistoryList } from './LegacyHistoryList';
 import { RemoteHistoryList } from './RemoteHistoryList';
 import { SessionHistoryList } from './SessionHistoryList';
-import { RemoteRevisionListGroup, sortRevisionListIntoGroups } from './utils';
+import {
+  LegacyHistoryEntry,
+  ListGroup,
+  RemoteRevisionListGroup,
+  sortRevisionListIntoGroups,
+} from './utils';
 
 export enum RevisionListTabType {
   Session = 'Session',
   Remote = 'Remote',
+  Legacy = 'Legacy',
 }
 
 type Props = {
@@ -24,7 +32,9 @@ type Props = {
   remoteHistory: RemoteRevisionListGroup[] | undefined;
   setIsFetchingSelectedRevision: StateUpdater<boolean>;
   setSelectedRemoteEntry: StateUpdater<RevisionListEntry | undefined>;
-  setSelectedRevision: StateUpdater<HistoryEntry | undefined>;
+  setSelectedRevision: StateUpdater<
+    HistoryEntry | LegacyHistoryEntry | undefined
+  >;
   setShowContentLockedScreen: StateUpdater<boolean>;
 };
 
@@ -44,10 +54,74 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
         note
       ) as NoteHistoryEntry[]
     );
+    const [isFetchingLegacyHistory, setIsFetchingLegacyHistory] =
+      useState(false);
+    const [legacyHistory, setLegacyHistory] =
+      useState<ListGroup<LegacyHistoryEntry>[]>();
+    const legacyHistoryLength = useMemo(
+      () => legacyHistory?.map((group) => group.entries).flat().length ?? 0,
+      [legacyHistory]
+    );
 
     const [selectedTab, setSelectedTab] = useState<RevisionListTabType>(
       RevisionListTabType.Session
     );
+
+    useEffect(() => {
+      const fetchLegacyHistory = async () => {
+        const actionExtensions = application.actionsManager.getExtensions();
+        actionExtensions.forEach(async (ext) => {
+          const actionExtension =
+            await application.actionsManager.loadExtensionInContextOfItem(
+              ext,
+              note
+            );
+
+          if (!actionExtension) {
+            return;
+          }
+
+          const isLegacyNoteHistoryExt = actionExtension?.actions.some(
+            (action) => action.verb === 'nested'
+          );
+
+          if (!isLegacyNoteHistoryExt) {
+            return;
+          }
+
+          const legacyHistory = [] as LegacyHistoryEntry[];
+
+          setIsFetchingLegacyHistory(true);
+
+          await Promise.all(
+            actionExtension?.actions.map(async (action) => {
+              if (!action.subactions?.[0]) {
+                return;
+              }
+
+              const response = await application.actionsManager.runAction(
+                action.subactions[0],
+                note
+              );
+
+              if (!response) {
+                return;
+              }
+
+              legacyHistory.push(response.item as LegacyHistoryEntry);
+            })
+          );
+
+          setIsFetchingLegacyHistory(false);
+
+          setLegacyHistory(
+            sortRevisionListIntoGroups<LegacyHistoryEntry>(legacyHistory)
+          );
+        });
+      };
+
+      fetchLegacyHistory();
+    }, [application.actionsManager, note]);
 
     const TabButton: FunctionComponent<{
       type: RevisionListTabType;
@@ -113,6 +187,14 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
         <div className="flex border-0 border-b-1 border-solid border-main">
           <TabButton type={RevisionListTabType.Session} />
           <TabButton type={RevisionListTabType.Remote} />
+          {isFetchingLegacyHistory && (
+            <div className="flex items-center justify-center px-3 py-2.5">
+              <div className="sk-spinner w-3 h-3 spinner-info" />
+            </div>
+          )}
+          {legacyHistory && legacyHistoryLength > 0 && (
+            <TabButton type={RevisionListTabType.Legacy} />
+          )}
         </div>
         <div className={`min-h-0 overflow-auto py-1.5 h-full`}>
           {selectedTab === RevisionListTabType.Session && (
@@ -130,6 +212,14 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
               isFetchingRemoteHistory={isFetchingRemoteHistory}
               fetchAndSetRemoteRevision={fetchAndSetRemoteRevision}
               selectedTab={selectedTab}
+            />
+          )}
+          {selectedTab === RevisionListTabType.Legacy && (
+            <LegacyHistoryList
+              selectedTab={selectedTab}
+              legacyHistory={legacyHistory}
+              setSelectedRevision={setSelectedRevision}
+              setSelectedRemoteEntry={setSelectedRemoteEntry}
             />
           )}
         </div>

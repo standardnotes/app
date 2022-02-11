@@ -5,6 +5,7 @@ import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useEffect, useMemo } from 'preact/hooks';
 import { ComponentView } from '../ComponentView';
+import { LegacyHistoryEntry } from './utils';
 
 const ABSOLUTE_CENTER_CLASSNAME =
   'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2';
@@ -12,7 +13,7 @@ const ABSOLUTE_CENTER_CLASSNAME =
 type SelectedRevisionContentProps = {
   application: WebApplication;
   appState: AppState;
-  selectedRevision: HistoryEntry;
+  selectedRevision: HistoryEntry | LegacyHistoryEntry;
   editorForCurrentNote: SNComponent | undefined;
   templateNoteForRevision: SNNote;
 };

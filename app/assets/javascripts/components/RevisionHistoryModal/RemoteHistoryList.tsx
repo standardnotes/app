@@ -13,11 +13,7 @@ import { Icon } from '../Icon';
 import { useListKeyboardNavigation } from '../utils';
 import { RevisionListTabType } from './HistoryListContainer';
 import { HistoryListItem } from './HistoryListItem';
-import { RemoteRevisionListGroup } from './utils';
-
-const previewRemoteHistoryTitle = (revision: RevisionListEntry) => {
-  return new Date(revision.created_at).toLocaleString();
-};
+import { previewHistoryEntryTitle, RemoteRevisionListGroup } from './utils';
 
 type RemoteHistoryListProps = {
   application: WebApplication;
@@ -108,7 +104,7 @@ export const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> =
                     }}
                   >
                     <div className="flex flex-grow items-center justify-between">
-                      <div>{previewRemoteHistoryTitle(entry)}</div>
+                      <div>{previewHistoryEntryTitle(entry)}</div>
                       {!application.hasRole(entry.required_role) && (
                         <Icon type="premium-feature" />
                       )}

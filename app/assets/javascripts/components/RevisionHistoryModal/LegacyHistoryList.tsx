@@ -1,8 +1,4 @@
-import {
-  HistoryEntry,
-  NoteHistoryEntry,
-  RevisionListEntry,
-} from '@standardnotes/snjs';
+import { HistoryEntry, RevisionListEntry } from '@standardnotes/snjs';
 import { Fragment, FunctionComponent } from 'preact';
 import {
   StateUpdater,
@@ -15,41 +11,45 @@ import {
 import { useListKeyboardNavigation } from '../utils';
 import { RevisionListTabType } from './HistoryListContainer';
 import { HistoryListItem } from './HistoryListItem';
-import { LegacyHistoryEntry, ListGroup } from './utils';
+import {
+  LegacyHistoryEntry,
+  ListGroup,
+  previewHistoryEntryTitle,
+} from './utils';
 
 type Props = {
   selectedTab: RevisionListTabType;
-  sessionHistory: ListGroup<NoteHistoryEntry>[];
+  legacyHistory: ListGroup<LegacyHistoryEntry>[] | undefined;
   setSelectedRevision: StateUpdater<
     HistoryEntry | LegacyHistoryEntry | undefined
   >;
   setSelectedRemoteEntry: StateUpdater<RevisionListEntry | undefined>;
 };
 
-export const SessionHistoryList: FunctionComponent<Props> = ({
-  sessionHistory,
+export const LegacyHistoryList: FunctionComponent<Props> = ({
+  legacyHistory,
   selectedTab,
   setSelectedRevision,
   setSelectedRemoteEntry,
 }) => {
-  const sessionHistoryListRef = useRef<HTMLDivElement>(null);
+  const legacyHistoryListRef = useRef<HTMLDivElement>(null);
 
-  useListKeyboardNavigation(sessionHistoryListRef);
+  useListKeyboardNavigation(legacyHistoryListRef);
 
-  const sessionHistoryLength = useMemo(
-    () => sessionHistory.map((group) => group.entries).flat().length,
-    [sessionHistory]
+  const legacyHistoryLength = useMemo(
+    () => legacyHistory?.map((group) => group.entries).flat().length,
+    [legacyHistory]
   );
 
   const [selectedItemCreatedAt, setSelectedItemCreatedAt] = useState<Date>();
 
   const firstEntry = useMemo(() => {
-    return sessionHistory?.find((group) => group.entries?.length)?.entries?.[0];
-  }, [sessionHistory]);
+    return legacyHistory?.find((group) => group.entries?.length)?.entries?.[0];
+  }, [legacyHistory]);
 
   const selectFirstEntry = useCallback(() => {
     if (firstEntry) {
-      setSelectedItemCreatedAt(firstEntry.payload.created_at);
+      setSelectedItemCreatedAt(firstEntry.payload?.created_at);
       setSelectedRevision(firstEntry);
     }
   }, [firstEntry, setSelectedRevision]);
@@ -64,25 +64,24 @@ export const SessionHistoryList: FunctionComponent<Props> = ({
     firstEntry,
     selectFirstEntry,
     selectedItemCreatedAt,
-    sessionHistory,
     setSelectedRevision,
   ]);
 
   useEffect(() => {
     if (selectedTab === RevisionListTabType.Session) {
       selectFirstEntry();
-      sessionHistoryListRef.current?.focus();
+      legacyHistoryListRef.current?.focus();
     }
   }, [selectFirstEntry, selectedTab]);
 
   return (
     <div
       className={`flex flex-col w-full h-full focus:shadow-none ${
-        !sessionHistoryLength ? 'items-center justify-center' : ''
+        !legacyHistoryLength ? 'items-center justify-center' : ''
       }`}
-      ref={sessionHistoryListRef}
+      ref={legacyHistoryListRef}
     >
-      {sessionHistory?.map((group) =>
+      {legacyHistory?.map((group) =>
         group.entries && group.entries.length ? (
           <Fragment key={group.title}>
             <div className="px-3 mt-2.5 mb-1 font-semibold color-text uppercase color-grey-0 select-none">
@@ -98,14 +97,14 @@ export const SessionHistoryList: FunctionComponent<Props> = ({
                   setSelectedRemoteEntry(undefined);
                 }}
               >
-                {entry.previewTitle()}
+                {previewHistoryEntryTitle(entry)}
               </HistoryListItem>
             ))}
           </Fragment>
         ) : null
       )}
-      {!sessionHistoryLength && (
-        <div className="color-grey-0 select-none">No session history found</div>
+      {!legacyHistoryLength && (
+        <div className="color-grey-0 select-none">No legacy history found</div>
       )}
     </div>
   );
