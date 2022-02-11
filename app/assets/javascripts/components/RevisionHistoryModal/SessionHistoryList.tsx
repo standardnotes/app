@@ -14,15 +14,17 @@ import { HistoryListItem } from './HistoryListItem';
 import { ListGroup } from './utils';
 
 type Props = {
+  selectedTab: RevisionListTabType;
   sessionHistory: ListGroup<NoteHistoryEntry>[];
   setSelectedRevision: StateUpdater<HistoryEntry | undefined>;
-  selectedTab: RevisionListTabType;
+  setSelectedRemoteEntryUuid: StateUpdater<string | undefined>;
 };
 
 export const SessionHistoryList: FunctionComponent<Props> = ({
   sessionHistory,
-  setSelectedRevision,
   selectedTab,
+  setSelectedRevision,
+  setSelectedRemoteEntryUuid,
 }) => {
   const sessionHistoryListRef = useRef<HTMLDivElement>(null);
 
@@ -87,6 +89,7 @@ export const SessionHistoryList: FunctionComponent<Props> = ({
                 onClick={() => {
                   setSelectedItemCreatedAt(entry.payload.created_at);
                   setSelectedRevision(entry);
+                  setSelectedRemoteEntryUuid(undefined);
                 }}
               >
                 {entry.previewTitle()}

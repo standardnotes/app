@@ -11,6 +11,7 @@ import {
 } from '@reach/alert-dialog';
 import VisuallyHidden from '@reach/visually-hidden';
 import {
+  ButtonType,
   ContentType,
   HistoryEntry,
   PayloadContent,
@@ -52,6 +53,8 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
     const [isFetchingSelectedRevision, setIsFetchingSelectedRevision] =
       useState(false);
     const [selectedRevision, setSelectedRevision] = useState<HistoryEntry>();
+    const [selectedRemoteEntryUuid, setSelectedRemoteEntryUuid] =
+      useState<string>();
     const [templateNoteForRevision, setTemplateNoteForRevision] =
       useState<SNNote>();
     const [showContentLockedScreen, setShowContentLockedScreen] =
@@ -156,6 +159,7 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
                 application={application}
                 note={note}
                 setSelectedRevision={setSelectedRevision}
+                setSelectedRemoteEntryUuid={setSelectedRemoteEntryUuid}
                 setShowContentLockedScreen={setShowContentLockedScreen}
                 setIsFetchingSelectedRevision={setIsFetchingSelectedRevision}
               />
@@ -207,14 +211,33 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
               </div>
               {selectedRevision && (
                 <div>
-                  <Button
-                    className="py-1.35 mr-2.5"
-                    label="Delete this version"
-                    onClick={() => {
-                      /** @TODO */
-                    }}
-                    type="normal"
-                  />
+                  {selectedRemoteEntryUuid && (
+                    <Button
+                      className="py-1.35 mr-2.5"
+                      label="Delete this version"
+                      onClick={() => {
+                        application.alertService
+                          .confirm(
+                            'Are you sure you want to delete this version?',
+                            'Delete version?',
+                            'Delete version',
+                            ButtonType.Danger,
+                            'Cancel'
+                          )
+                          .then((shouldDelete) => {
+                            if (shouldDelete) {
+                              /** @TODO */
+                              /** application.historyManager.deleteRemoteRevision(
+                               *    note.uuid,
+                               *    selectedRemoteEntryUuid
+                               *  ) */
+                            }
+                          })
+                          .catch(console.error);
+                      }}
+                      type="normal"
+                    />
+                  )}
                   <Button
                     className="py-1.35 mr-2.5"
                     label="Restore as a copy"

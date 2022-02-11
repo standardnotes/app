@@ -12,24 +12,26 @@ import { RemoteHistoryList } from './RemoteHistoryList';
 import { SessionHistoryList } from './SessionHistoryList';
 import { RemoteRevisionListGroup, sortRevisionListIntoGroups } from './utils';
 
-type Props = {
-  application: WebApplication;
-  note: SNNote;
-  setSelectedRevision: StateUpdater<HistoryEntry | undefined>;
-  setIsFetchingSelectedRevision: StateUpdater<boolean>;
-  setShowContentLockedScreen: StateUpdater<boolean>;
-};
-
 export enum RevisionListTabType {
   Session = 'Session',
   Remote = 'Remote',
 }
+
+type Props = {
+  application: WebApplication;
+  note: SNNote;
+  setSelectedRevision: StateUpdater<HistoryEntry | undefined>;
+  setSelectedRemoteEntryUuid: StateUpdater<string | undefined>;
+  setIsFetchingSelectedRevision: StateUpdater<boolean>;
+  setShowContentLockedScreen: StateUpdater<boolean>;
+};
 
 export const HistoryListContainer: FunctionComponent<Props> = observer(
   ({
     application,
     note,
     setSelectedRevision,
+    setSelectedRemoteEntryUuid,
     setShowContentLockedScreen,
     setIsFetchingSelectedRevision,
   }) => {
@@ -57,7 +59,10 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
           className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:shadow-inner ${
             isSelected ? 'color-info font-medium shadow-bottom' : 'color-text'
           }`}
-          onClick={() => setSelectedTab(type)}
+          onClick={() => {
+            setSelectedTab(type);
+            setSelectedRemoteEntryUuid(undefined);
+          }}
         >
           {type}
         </button>
@@ -70,6 +75,8 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
 
         if (application.hasRole(revisionListEntry.required_role)) {
           setIsFetchingSelectedRevision(true);
+          setSelectedRemoteEntryUuid(undefined);
+
           try {
             const remoteRevision =
               await application.historyManager.fetchRemoteRevision(
@@ -77,6 +84,7 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
                 revisionListEntry
               );
             setSelectedRevision(remoteRevision);
+            setSelectedRemoteEntryUuid(revisionListEntry.uuid);
           } catch (err) {
             console.error(err);
           } finally {
@@ -91,6 +99,7 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
         application,
         note.uuid,
         setIsFetchingSelectedRevision,
+        setSelectedRemoteEntryUuid,
         setSelectedRevision,
         setShowContentLockedScreen,
       ]
@@ -137,9 +146,10 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
         <div className={`min-h-0 overflow-auto py-1.5 h-full`}>
           {selectedTab === RevisionListTabType.Session && (
             <SessionHistoryList
+              selectedTab={selectedTab}
               sessionHistory={sessionHistory}
               setSelectedRevision={setSelectedRevision}
-              selectedTab={selectedTab}
+              setSelectedRemoteEntryUuid={setSelectedRemoteEntryUuid}
             />
           )}
           {selectedTab === RevisionListTabType.Remote && (
