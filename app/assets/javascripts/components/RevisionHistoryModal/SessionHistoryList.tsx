@@ -1,4 +1,8 @@
-import { HistoryEntry, NoteHistoryEntry } from '@standardnotes/snjs';
+import {
+  HistoryEntry,
+  NoteHistoryEntry,
+  RevisionListEntry,
+} from '@standardnotes/snjs';
 import { Fragment, FunctionComponent } from 'preact';
 import {
   StateUpdater,
@@ -17,14 +21,14 @@ type Props = {
   selectedTab: RevisionListTabType;
   sessionHistory: ListGroup<NoteHistoryEntry>[];
   setSelectedRevision: StateUpdater<HistoryEntry | undefined>;
-  setSelectedRemoteEntryUuid: StateUpdater<string | undefined>;
+  setSelectedRemoteEntry: StateUpdater<RevisionListEntry | undefined>;
 };
 
 export const SessionHistoryList: FunctionComponent<Props> = ({
   sessionHistory,
   selectedTab,
   setSelectedRevision,
-  setSelectedRemoteEntryUuid,
+  setSelectedRemoteEntry,
 }) => {
   const sessionHistoryListRef = useRef<HTMLDivElement>(null);
 
@@ -79,7 +83,7 @@ export const SessionHistoryList: FunctionComponent<Props> = ({
       {sessionHistory?.map((group) =>
         group.entries && group.entries.length ? (
           <Fragment key={group.title}>
-            <div className="px-3 mt-2.5 mb-1 font-semibold color-text uppercase color-grey-0">
+            <div className="px-3 mt-2.5 mb-1 font-semibold color-text uppercase color-grey-0 select-none">
               {group.title}
             </div>
             {group.entries.map((entry, index) => (
@@ -89,7 +93,7 @@ export const SessionHistoryList: FunctionComponent<Props> = ({
                 onClick={() => {
                   setSelectedItemCreatedAt(entry.payload.created_at);
                   setSelectedRevision(entry);
-                  setSelectedRemoteEntryUuid(undefined);
+                  setSelectedRemoteEntry(undefined);
                 }}
               >
                 {entry.previewTitle()}
