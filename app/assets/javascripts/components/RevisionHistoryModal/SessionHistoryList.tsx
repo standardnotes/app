@@ -79,7 +79,7 @@ export const SessionHistoryList: FunctionComponent<Props> = ({
       {sessionHistory?.map((group) =>
         group.entries && group.entries.length ? (
           <Fragment key={group.title}>
-            <div className="px-3 my-1 font-semibold color-text uppercase color-grey-0">
+            <div className="px-3 mt-2.5 mb-1 font-semibold color-text uppercase color-grey-0">
               {group.title}
             </div>
             {group.entries.map((entry, index) => (
