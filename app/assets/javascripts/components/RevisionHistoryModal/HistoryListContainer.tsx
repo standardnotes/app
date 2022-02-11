@@ -7,7 +7,7 @@ import {
 } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { StateUpdater, useCallback, useEffect, useState } from 'preact/hooks';
+import { StateUpdater, useCallback, useState } from 'preact/hooks';
 import { RemoteHistoryList } from './RemoteHistoryList';
 import { SessionHistoryList } from './SessionHistoryList';
 import { RemoteRevisionListGroup, sortRevisionListIntoGroups } from './utils';
@@ -19,31 +19,31 @@ export enum RevisionListTabType {
 
 type Props = {
   application: WebApplication;
+  isFetchingRemoteHistory: boolean;
   note: SNNote;
-  setSelectedRevision: StateUpdater<HistoryEntry | undefined>;
-  setSelectedRemoteEntryUuid: StateUpdater<string | undefined>;
+  remoteHistory: RemoteRevisionListGroup[] | undefined;
   setIsFetchingSelectedRevision: StateUpdater<boolean>;
+  setSelectedRemoteEntry: StateUpdater<RevisionListEntry | undefined>;
+  setSelectedRevision: StateUpdater<HistoryEntry | undefined>;
   setShowContentLockedScreen: StateUpdater<boolean>;
 };
 
 export const HistoryListContainer: FunctionComponent<Props> = observer(
   ({
     application,
+    isFetchingRemoteHistory,
     note,
-    setSelectedRevision,
-    setSelectedRemoteEntryUuid,
-    setShowContentLockedScreen,
+    remoteHistory,
     setIsFetchingSelectedRevision,
+    setSelectedRemoteEntry,
+    setSelectedRevision,
+    setShowContentLockedScreen,
   }) => {
     const sessionHistory = sortRevisionListIntoGroups<NoteHistoryEntry>(
       application.historyManager.sessionHistoryForItem(
         note
       ) as NoteHistoryEntry[]
     );
-    const [isFetchingRemoteHistory, setIsFetchingRemoteHistory] =
-      useState(false);
-    const [remoteHistory, setRemoteHistory] =
-      useState<RemoteRevisionListGroup[]>();
 
     const [selectedTab, setSelectedTab] = useState<RevisionListTabType>(
       RevisionListTabType.Session
@@ -61,7 +61,7 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
           }`}
           onClick={() => {
             setSelectedTab(type);
-            setSelectedRemoteEntryUuid(undefined);
+            setSelectedRemoteEntry(undefined);
           }}
         >
           {type}
@@ -76,7 +76,7 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
         if (application.hasRole(revisionListEntry.required_role)) {
           setIsFetchingSelectedRevision(true);
           setSelectedRevision(undefined);
-          setSelectedRemoteEntryUuid(undefined);
+          setSelectedRemoteEntry(undefined);
 
           try {
             const remoteRevision =
@@ -85,7 +85,7 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
                 revisionListEntry
               );
             setSelectedRevision(remoteRevision);
-            setSelectedRemoteEntryUuid(revisionListEntry.uuid);
+            setSelectedRemoteEntry(revisionListEntry);
           } catch (err) {
             console.error(err);
           } finally {
@@ -100,41 +100,11 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
         application,
         note.uuid,
         setIsFetchingSelectedRevision,
-        setSelectedRemoteEntryUuid,
+        setSelectedRemoteEntry,
         setSelectedRevision,
         setShowContentLockedScreen,
       ]
     );
-
-    useEffect(() => {
-      const fetchRemoteHistory = async () => {
-        if (note && !remoteHistory?.length) {
-          setIsFetchingRemoteHistory(true);
-          try {
-            const initialRemoteHistory =
-              await application.historyManager.remoteHistoryForItem(note);
-
-            const remoteHistoryAsGroups =
-              sortRevisionListIntoGroups<RevisionListEntry>(
-                initialRemoteHistory
-              );
-
-            setRemoteHistory(remoteHistoryAsGroups);
-          } catch (err) {
-            console.error(err);
-          } finally {
-            setIsFetchingRemoteHistory(false);
-          }
-        }
-      };
-
-      fetchRemoteHistory();
-    }, [
-      application.historyManager,
-      fetchAndSetRemoteRevision,
-      note,
-      remoteHistory?.length,
-    ]);
 
     return (
       <div
@@ -150,7 +120,7 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
               selectedTab={selectedTab}
               sessionHistory={sessionHistory}
               setSelectedRevision={setSelectedRevision}
-              setSelectedRemoteEntryUuid={setSelectedRemoteEntryUuid}
+              setSelectedRemoteEntry={setSelectedRemoteEntry}
             />
           )}
           {selectedTab === RevisionListTabType.Remote && (
