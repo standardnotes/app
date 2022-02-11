@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import {
   SNComponent,
   ComponentMutator,
@@ -10,19 +11,17 @@ import {
   PayloadSource,
 } from '@standardnotes/snjs';
 
-import { WebApplication } from '@/ui_models/application';
+import { WebAppEvent, WebApplication } from '@/ui_models/application';
 import { isDesktopApplication } from '@/utils';
-import { Bridge } from './bridge';
+import { Bridge, ElectronDesktopCallbacks } from './bridge';
 
 /**
  * An interface used by the Desktop application to interact with SN
  */
 export class DesktopManager
   extends ApplicationService
-  implements DesktopManagerInterface
+  implements DesktopManagerInterface, ElectronDesktopCallbacks
 {
-  $rootScope: ng.IRootScopeService;
-  $timeout: ng.ITimeoutService;
   updateObservers: {
     callback: (component: SNComponent) => void;
   }[] = [];
@@ -31,15 +30,8 @@ export class DesktopManager
   dataLoaded = false;
   lastSearchedText?: string;
 
-  constructor(
-    $rootScope: ng.IRootScopeService,
-    $timeout: ng.ITimeoutService,
-    application: WebApplication,
-    private bridge: Bridge
-  ) {
+  constructor(application: WebApplication, private bridge: Bridge) {
     super(application);
-    this.$rootScope = $rootScope;
-    this.$timeout = $timeout;
   }
 
   get webApplication() {
@@ -123,12 +115,16 @@ export class DesktopManager
     }
   }
 
-  desktop_windowGainedFocus(): void {
-    this.$rootScope.$broadcast('window-gained-focus');
+  desktop_updateAvailable(): void {
+    this.webApplication.notifyWebEvent(WebAppEvent.NewUpdateAvailable);
   }
 
-  desktop_windowLostFocus() {
-    this.$rootScope.$broadcast('window-lost-focus');
+  desktop_windowGainedFocus(): void {
+    this.webApplication.notifyWebEvent(WebAppEvent.DesktopWindowGainedFocus);
+  }
+
+  desktop_windowLostFocus(): void {
+    this.webApplication.notifyWebEvent(WebAppEvent.DesktopWindowLostFocus);
   }
 
   async desktop_onComponentInstallationComplete(
@@ -155,14 +151,12 @@ export class DesktopManager
       PayloadSource.DesktopInstalled
     );
 
-    this.$timeout(() => {
-      for (const observer of this.updateObservers) {
-        observer.callback(updatedComponent as SNComponent);
-      }
-    });
+    for (const observer of this.updateObservers) {
+      observer.callback(updatedComponent as SNComponent);
+    }
   }
 
-  async desktop_requestBackupFile() {
+  async desktop_requestBackupFile(): Promise<string | undefined> {
     const data = await this.application.createBackupFile(
       this.application.hasProtectionSources()
         ? EncryptionIntent.FileEncrypted

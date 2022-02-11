@@ -1,6 +1,10 @@
 /* eslint-disable prefer-promise-reject-errors */
-import { SNAlertService, ButtonType } from '@standardnotes/snjs';
-import { SKAlert } from 'sn-stylekit';
+import {
+  SNAlertService,
+  ButtonType,
+  sanitizeHtmlString,
+} from '@standardnotes/snjs';
+import { SKAlert } from '@standardnotes/stylekit';
 
 /** @returns a promise resolving to true if the user confirmed, false if they canceled */
 export function confirmDialog({
@@ -18,8 +22,8 @@ export function confirmDialog({
 }) {
   return new Promise<boolean>((resolve) => {
     const alert = new SKAlert({
-      title,
-      text,
+      title: title && sanitizeHtmlString(title),
+      text: sanitizeHtmlString(text),
       buttons: [
         {
           text: cancelButtonText,
@@ -52,8 +56,8 @@ export function alertDialog({
 }) {
   return new Promise<void>((resolve) => {
     const alert = new SKAlert({
-      title,
-      text,
+      title: title && sanitizeHtmlString(title),
+      text: sanitizeHtmlString(text),
       buttons: [
         {
           text: closeButtonText,
@@ -92,7 +96,10 @@ export class AlertService implements SNAlertService {
   }
 
   blockingDialog(text: string, title?: string) {
-    const alert = new SKAlert({ text, title });
+    const alert = new SKAlert({
+      title: title && sanitizeHtmlString(title),
+      text: sanitizeHtmlString(text),
+    });
     alert.present();
     return () => {
       alert.dismiss();

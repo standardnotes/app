@@ -97,7 +97,6 @@ export class ThemeManager extends ApplicationService {
   }
 
   deinit() {
-    this.deactivateAllThemes();
     this.activeThemes.length = 0;
     this.unregisterDesktop();
     this.unregisterStream();
@@ -128,7 +127,6 @@ export class ThemeManager extends ApplicationService {
     }
   }
 
-  /** @override */
   async onAppStart() {
     super.onAppStart();
     this.registerObservers();
@@ -172,7 +170,7 @@ export class ThemeManager extends ApplicationService {
     );
   }
 
-  private deactivateAllThemes() {
+  public deactivateAllThemes() {
     const activeThemes = this.activeThemes.slice();
     for (const uuid of activeThemes) {
       this.deactivateTheme(uuid);

@@ -1,9 +1,13 @@
 {
   "name": "sn-minimal-markdown-editor",
-  "version": "1.3.8",
+  "version": "1.3.9",
   "description": "A minimal Markdown editor for Standard Notes.",
   "main": "dist/dist.js",
   "author": "Standard Notes <hello@standardnotes.org>",
+  "scripts": {
+    "prepublish": "npm run build", 
+    "build": "grunt"
+  },
   "dependencies": {
     "sn-codemirror-search": "1.0.0"
   },

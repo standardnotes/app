@@ -4,26 +4,30 @@ import { useCallback, useEffect, useState } from 'preact/hooks';
 import { WebApplication } from '@/ui_models/application';
 import {
   PreferencesGroup,
-  PreferencesSegment, Subtitle,
+  PreferencesSegment,
+  Subtitle,
   Text,
-  Title
+  Title,
 } from '@/preferences/components';
 import { HorizontalSeparator } from '@/components/shared/HorizontalSeparator';
 import { FeatureIdentifier } from '@standardnotes/features';
 import { FeatureStatus } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
-import { CloudProvider, EmailBackupFrequency, SettingName } from '@standardnotes/settings';
+import { CloudProvider, SettingName } from '@standardnotes/settings';
 import { Switch } from '@/components/Switch';
 import { convertStringifiedBooleanToBoolean } from '@/utils';
 import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/strings';
 
-const providerData = [{
-  name: CloudProvider.Dropbox
-}, {
-  name: CloudProvider.Google
-}, {
-  name: CloudProvider.OneDrive
-}
+const providerData = [
+  {
+    name: CloudProvider.Dropbox,
+  },
+  {
+    name: CloudProvider.Google,
+  },
+  {
+    name: CloudProvider.OneDrive,
+  },
 ];
 
 type Props = {
@@ -31,11 +35,16 @@ type Props = {
 };
 
 export const CloudLink: FunctionComponent<Props> = ({ application }) => {
-  const [isEntitledForCloudBackups, setIsEntitledForCloudBackups] = useState(false);
-  const [isFailedCloudBackupEmailMuted, setIsFailedCloudBackupEmailMuted] = useState(true);
+  const [isEntitledForCloudBackups, setIsEntitledForCloudBackups] =
+    useState(false);
+  const [isFailedCloudBackupEmailMuted, setIsFailedCloudBackupEmailMuted] =
+    useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
   const loadIsFailedCloudBackupEmailMutedSetting = useCallback(async () => {
+    if (!application.getUser()) {
+      return;
+    }
     setIsLoading(true);
 
     try {
@@ -53,12 +62,22 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
   }, [application]);
 
   useEffect(() => {
-    const cloudBackupsFeatureStatus = application.getFeatureStatus(
-      FeatureIdentifier.CloudLink
+    const dailyDropboxBackupStatus = application.getFeatureStatus(
+      FeatureIdentifier.DailyDropboxBackup
     );
-    setIsEntitledForCloudBackups(
-      cloudBackupsFeatureStatus === FeatureStatus.Entitled
+    const dailyGdriveBackupStatus = application.getFeatureStatus(
+      FeatureIdentifier.DailyGDriveBackup
     );
+    const dailyOneDriveBackupStatus = application.getFeatureStatus(
+      FeatureIdentifier.DailyOneDriveBackup
+    );
+    const isCloudBackupsAllowed = [
+      dailyDropboxBackupStatus,
+      dailyGdriveBackupStatus,
+      dailyOneDriveBackupStatus,
+    ].every((status) => status === FeatureStatus.Entitled);
+
+    setIsEntitledForCloudBackups(isCloudBackupsAllowed);
     loadIsFailedCloudBackupEmailMutedSetting();
   }, [application, loadIsFailedCloudBackupEmailMutedSetting]);
 
@@ -98,12 +117,12 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
               A <span className={'font-bold'}>Plus</span> or{' '}
               <span className={'font-bold'}>Pro</span> subscription plan is
               required to enable Cloud Backups.{' '}
-              <a target='_blank' href='https://standardnotes.com/features'>
+              <a target="_blank" href="https://standardnotes.com/features">
                 Learn more
               </a>
               .
             </Text>
-            <HorizontalSeparator classes='mt-3 mb-3' />
+            <HorizontalSeparator classes="mt-3 mb-3" />
           </>
         )}
         <div
@@ -122,7 +141,10 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
             <div>
               {providerData.map(({ name }) => (
                 <>
-                  <CloudBackupProvider application={application} providerName={name} />
+                  <CloudBackupProvider
+                    application={application}
+                    providerName={name}
+                  />
                   <HorizontalSeparator classes={'mt-3 mb-3'} />
                 </>
               ))}

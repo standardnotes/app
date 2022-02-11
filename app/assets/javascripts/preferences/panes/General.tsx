@@ -10,20 +10,20 @@ import { observer } from 'mobx-react-lite';
 interface GeneralProps {
   appState: AppState;
   application: WebApplication;
-  extensionsLatestVersions: ExtensionsLatestVersions,
+  extensionsLatestVersions: ExtensionsLatestVersions;
 }
 
 export const General: FunctionComponent<GeneralProps> = observer(
-  ({
-     appState,
-     application,
-     extensionsLatestVersions
-   }) => (
+  ({ appState, application, extensionsLatestVersions }) => (
     <PreferencesPane>
       <Tools application={application} />
       <Defaults application={application} />
       <ErrorReporting appState={appState} />
-      <Advanced application={application} appState={appState} extensionsLatestVersions={extensionsLatestVersions} />
+      <Advanced
+        application={application}
+        appState={appState}
+        extensionsLatestVersions={extensionsLatestVersions}
+      />
     </PreferencesPane>
   )
 );

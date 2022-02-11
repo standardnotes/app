@@ -1,5 +1,4 @@
 import { Dropdown, DropdownItem } from '@/components/Dropdown';
-import { IconType } from '@/components/Icon';
 import { FeatureIdentifier, PrefKey } from '@standardnotes/snjs';
 import {
   PreferencesGroup,
@@ -25,31 +24,6 @@ type Props = {
 
 type EditorOption = DropdownItem & {
   value: FeatureIdentifier | 'plain-editor';
-};
-
-export const getIconAndTintForEditor = (
-  identifier: FeatureIdentifier | undefined
-): [IconType, number] => {
-  switch (identifier) {
-    case FeatureIdentifier.BoldEditor:
-    case FeatureIdentifier.PlusEditor:
-      return ['rich-text', 1];
-    case FeatureIdentifier.MarkdownBasicEditor:
-    case FeatureIdentifier.MarkdownMathEditor:
-    case FeatureIdentifier.MarkdownMinimistEditor:
-    case FeatureIdentifier.MarkdownProEditor:
-      return ['markdown', 2];
-    case FeatureIdentifier.TokenVaultEditor:
-      return ['authenticator', 6];
-    case FeatureIdentifier.SheetsEditor:
-      return ['spreadsheets', 5];
-    case FeatureIdentifier.TaskEditor:
-      return ['tasks', 3];
-    case FeatureIdentifier.CodeEditor:
-      return ['code', 4];
-    default:
-      return ['plain-text', 1];
-  }
 };
 
 const makeEditorDefault = (
@@ -103,7 +77,8 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
       .componentsForArea(ComponentArea.Editor)
       .map((editor): EditorOption => {
         const identifier = editor.package_info.identifier;
-        const [iconType, tint] = getIconAndTintForEditor(identifier);
+        const [iconType, tint] =
+          application.iconsController.getIconAndTintForEditor(identifier);
 
         return {
           label: editor.name,
@@ -148,7 +123,7 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Defaults</Title>
-        <div className="mt-2">
+        <div>
           <Subtitle>Default Editor</Subtitle>
           <Text>New notes will be created using this editor.</Text>
           <div className="mt-2">
@@ -166,8 +141,9 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
           <div className="flex flex-col">
             <Subtitle>Spellcheck</Subtitle>
             <Text>
-              The default spellcheck value for new notes. Spellcheck can be configured per note from the note context menu.
-              Spellcheck may degrade overall typing performance with long notes.
+              The default spellcheck value for new notes. Spellcheck can be
+              configured per note from the note context menu. Spellcheck may
+              degrade overall typing performance with long notes.
             </Text>
           </div>
           <Switch onChange={toggleSpellcheck} checked={spellcheck} />

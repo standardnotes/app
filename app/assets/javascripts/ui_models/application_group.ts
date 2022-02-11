@@ -5,6 +5,7 @@ import {
   SNApplicationGroup,
   DeviceInterface,
   Platform,
+  Runtime,
 } from '@standardnotes/snjs';
 import { AppState } from '@/ui_models/app_state';
 import { Bridge } from '@/services/bridge';
@@ -17,27 +18,16 @@ import { StatusManager } from '@/services/statusManager';
 import { ThemeManager } from '@/services/themeManager';
 
 export class ApplicationGroup extends SNApplicationGroup {
-  $compile: ng.ICompileService;
-  $rootScope: ng.IRootScopeService;
-  $timeout: ng.ITimeoutService;
-
-  /* @ngInject */
   constructor(
-    $compile: ng.ICompileService,
-    $rootScope: ng.IRootScopeService,
-    $timeout: ng.ITimeoutService,
     private defaultSyncServerHost: string,
     private bridge: Bridge,
-    private enableUnfinishedFeatures: boolean,
-    private webSocketUrl: string,
+    private runtime: Runtime,
+    private webSocketUrl: string
   ) {
-    super(new WebDeviceInterface($timeout, bridge));
-    this.$compile = $compile;
-    this.$timeout = $timeout;
-    this.$rootScope = $rootScope;
+    super(new WebDeviceInterface(bridge));
   }
 
-  async initialize(callback?: any): Promise<void> {
+  async initialize(): Promise<void> {
     await super.initialize({
       applicationCreator: this.createApplication,
     });
@@ -54,33 +44,19 @@ export class ApplicationGroup extends SNApplicationGroup {
     descriptor: ApplicationDescriptor,
     deviceInterface: DeviceInterface
   ) => {
-    const scope = this.$rootScope.$new(true);
     const platform = getPlatform();
     const application = new WebApplication(
       deviceInterface as WebDeviceInterface,
       platform,
       descriptor.identifier,
-      this.$compile,
-      this.$timeout,
-      scope,
       this.defaultSyncServerHost,
       this.bridge,
-      this.enableUnfinishedFeatures,
       this.webSocketUrl,
+      this.runtime
     );
-    const appState = new AppState(
-      this.$rootScope,
-      this.$timeout,
-      application,
-      this.bridge
-    );
+    const appState = new AppState(application, this.bridge);
     const archiveService = new ArchiveManager(application);
-    const desktopService = new DesktopManager(
-      this.$rootScope,
-      this.$timeout,
-      application,
-      this.bridge
-    );
+    const desktopService = new DesktopManager(application, this.bridge);
     const io = new IOService(
       platform === Platform.MacWeb || platform === Platform.MacDesktop
     );

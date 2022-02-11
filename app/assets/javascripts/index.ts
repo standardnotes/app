@@ -5,7 +5,6 @@ import '@reach/dialog/styles.css';
 import '../stylesheets/index.css.scss';
 
 // Vendor
-import 'angular';
 import '../../../vendor/assets/javascripts/zip/deflate';
 import '../../../vendor/assets/javascripts/zip/inflate';
 import '../../../vendor/assets/javascripts/zip/zip';

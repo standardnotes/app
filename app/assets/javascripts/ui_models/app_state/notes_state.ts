@@ -1,6 +1,7 @@
 import { confirmDialog } from '@/services/alertService';
 import { KeyboardModifier } from '@/services/ioService';
 import { StringEmptyTrash, Strings, StringUtils } from '@/strings';
+import { MENU_MARGIN_FROM_APP_BORDER } from '@/views/constants';
 import {
   UuidString,
   SNNote,
@@ -205,32 +206,39 @@ export class NotesState {
       document.documentElement
     ).fontSize;
     const maxContextMenuHeight = parseFloat(defaultFontSize) * 30;
-    const footerHeight = 32;
+    const footerElementRect = document
+      .getElementById('footer-bar')
+      ?.getBoundingClientRect();
+    const footerHeightInPx = footerElementRect?.height;
 
     // Open up-bottom is default behavior
     let openUpBottom = true;
 
-    const bottomSpace =
-      clientHeight - footerHeight - this.contextMenuClickLocation.y;
-    const upSpace = this.contextMenuClickLocation.y;
+    if (footerHeightInPx) {
+      const bottomSpace =
+        clientHeight - footerHeightInPx - this.contextMenuClickLocation.y;
+      const upSpace = this.contextMenuClickLocation.y;
 
-    // If not enough space to open up-bottom
-    if (maxContextMenuHeight > bottomSpace) {
-      // If there's enough space, open bottom-up
-      if (upSpace > maxContextMenuHeight) {
-        openUpBottom = false;
-        this.setContextMenuMaxHeight('auto');
-        // Else, reduce max height (menu will be scrollable) and open in whichever direction there's more space
-      } else {
-        if (upSpace > bottomSpace) {
-          this.setContextMenuMaxHeight(upSpace - 2);
+      // If not enough space to open up-bottom
+      if (maxContextMenuHeight > bottomSpace) {
+        // If there's enough space, open bottom-up
+        if (upSpace > maxContextMenuHeight) {
           openUpBottom = false;
+          this.setContextMenuMaxHeight('auto');
+          // Else, reduce max height (menu will be scrollable) and open in whichever direction there's more space
         } else {
-          this.setContextMenuMaxHeight(bottomSpace - 2);
+          if (upSpace > bottomSpace) {
+            this.setContextMenuMaxHeight(upSpace - MENU_MARGIN_FROM_APP_BORDER);
+            openUpBottom = false;
+          } else {
+            this.setContextMenuMaxHeight(
+              bottomSpace - MENU_MARGIN_FROM_APP_BORDER
+            );
+          }
         }
+      } else {
+        this.setContextMenuMaxHeight('auto');
       }
-    } else {
-      this.setContextMenuMaxHeight('auto');
     }
 
     if (openUpBottom) {
@@ -306,7 +314,7 @@ export class NotesState {
     let noteTitle = undefined;
     if (this.selectedNotesCount === 1) {
       const selectedNote = Object.values(this.selectedNotes)[0];
-      noteTitle = selectedNote.safeTitle().length
+      noteTitle = selectedNote.title.length
         ? `'${selectedNote.title}'`
         : 'this note';
     }

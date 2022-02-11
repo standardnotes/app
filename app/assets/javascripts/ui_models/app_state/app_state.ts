@@ -1,23 +1,18 @@
 import { Bridge } from '@/services/bridge';
 import { storage, StorageKey } from '@/services/localStorage';
-import { WebApplication } from '@/ui_models/application';
+import { WebApplication, WebAppEvent } from '@/ui_models/application';
 import { AccountMenuState } from '@/ui_models/app_state/account_menu_state';
 import { isDesktopApplication } from '@/utils';
 import {
   ApplicationEvent,
-  ComponentArea,
   ContentType,
   DeinitSource,
-  isPayloadSourceInternalChange,
+  NoteViewController,
   PayloadSource,
   PrefKey,
-  SNComponent,
   SNNote,
   SNSmartTag,
-  ComponentViewer,
   SNTag,
-  NoteViewController,
-  SNTheme,
 } from '@standardnotes/snjs';
 import pull from 'lodash/pull';
 import {
@@ -68,14 +63,11 @@ export class AppState {
   readonly enableUnfinishedFeatures: boolean =
     window?._enable_unfinished_features;
 
-  $rootScope: ng.IRootScopeService;
-  $timeout: ng.ITimeoutService;
   application: WebApplication;
   observers: ObserverCallback[] = [];
   locked = true;
   unsubApp: any;
-  rootScopeCleanup1: any;
-  rootScopeCleanup2: any;
+  webAppEventDisposer?: () => void;
   onVisibilityChange: any;
   showBetaWarning: boolean;
 
@@ -95,24 +87,13 @@ export class AppState {
   readonly tags: TagsState;
   readonly notesView: NotesViewState;
 
-  public foldersComponentViewer?: ComponentViewer;
-
   isSessionsModalVisible = false;
 
   private appEventObserverRemovers: (() => void)[] = [];
 
   private readonly tagChangedDisposer: IReactionDisposer;
-  private readonly foldersComponentViewerDisposer: () => void;
 
-  /* @ngInject */
-  constructor(
-    $rootScope: ng.IRootScopeService,
-    $timeout: ng.ITimeoutService,
-    application: WebApplication,
-    private bridge: Bridge
-  ) {
-    this.$timeout = $timeout;
-    this.$rootScope = $rootScope;
+  constructor(application: WebApplication, private bridge: Bridge) {
     this.application = application;
     this.notes = new NotesState(
       application,
@@ -168,8 +149,6 @@ export class AppState {
       this.showBetaWarning = false;
     }
 
-    this.foldersComponentViewer = undefined;
-
     makeObservable(this, {
       selectedTag: computed,
 
@@ -181,14 +160,9 @@ export class AppState {
       disableBetaWarning: action,
       openSessionsModal: action,
       closeSessionsModal: action,
-
-      foldersComponentViewer: observable.ref,
-      setFoldersComponent: action,
     });
 
     this.tagChangedDisposer = this.tagChangedNotifier();
-    this.foldersComponentViewerDisposer =
-      this.subscribeToFoldersComponentChanges();
   }
 
   deinit(source: DeinitSource): void {
@@ -196,23 +170,39 @@ export class AppState {
       storage.remove(StorageKey.ShowBetaWarning);
       this.noAccountWarning.reset();
     }
+    (this.application as unknown) = undefined;
     this.actionsMenu.reset();
     this.unsubApp?.();
     this.unsubApp = undefined;
     this.observers.length = 0;
+
     this.appEventObserverRemovers.forEach((remover) => remover());
-    this.features.deinit();
     this.appEventObserverRemovers.length = 0;
-    if (this.rootScopeCleanup1) {
-      this.rootScopeCleanup1();
-      this.rootScopeCleanup2();
-      this.rootScopeCleanup1 = undefined;
-      this.rootScopeCleanup2 = undefined;
-    }
+
+    this.features.deinit();
+    (this.features as unknown) = undefined;
+
+    this.webAppEventDisposer?.();
+    this.webAppEventDisposer = undefined;
+
+    (this.quickSettingsMenu as unknown) = undefined;
+    (this.accountMenu as unknown) = undefined;
+    (this.actionsMenu as unknown) = undefined;
+    (this.preferences as unknown) = undefined;
+    (this.purchaseFlow as unknown) = undefined;
+    (this.noteTags as unknown) = undefined;
+    (this.sync as unknown) = undefined;
+    (this.searchOptions as unknown) = undefined;
+    (this.notes as unknown) = undefined;
+    (this.features as unknown) = undefined;
+    (this.tags as unknown) = undefined;
+    (this.notesView as unknown) = undefined;
+
     document.removeEventListener('visibilitychange', this.onVisibilityChange);
     this.onVisibilityChange = undefined;
+
     this.tagChangedDisposer();
-    this.foldersComponentViewerDisposer();
+    (this.tagChangedDisposer as unknown) = undefined;
   }
 
   openSessionsModal(): void {
@@ -317,55 +307,6 @@ export class AppState {
     );
   }
 
-  setFoldersComponent(component?: SNComponent) {
-    const foldersComponentViewer = this.foldersComponentViewer;
-
-    if (foldersComponentViewer) {
-      this.application.componentManager.destroyComponentViewer(
-        foldersComponentViewer
-      );
-      this.foldersComponentViewer = undefined;
-    }
-
-    if (component) {
-      this.foldersComponentViewer =
-        this.application.componentManager.createComponentViewer(
-          component,
-          undefined,
-          this.tags.onFoldersComponentMessage.bind(this.tags)
-        );
-    }
-  }
-
-  private subscribeToFoldersComponentChanges() {
-    return this.application.streamItems(
-      [ContentType.Component],
-      async (items, source) => {
-        if (
-          isPayloadSourceInternalChange(source) ||
-          source === PayloadSource.InitialObserverRegistrationPush
-        ) {
-          return;
-        }
-        const components = items as SNComponent[];
-        const hasFoldersChange = !!components.find(
-          (component) => component.area === ComponentArea.TagsList
-        );
-        if (hasFoldersChange) {
-          const componentViewer = this.application.componentManager
-            .componentsForArea(ComponentArea.TagsList)
-            .find((component) => component.active);
-
-          this.application.performFunctionWithAngularDigestCycleAfterAsyncChange(
-            () => {
-              this.setFoldersComponent(componentViewer);
-            }
-          );
-        }
-      }
-    );
-  }
-
   public get selectedTag(): SNTag | SNSmartTag | undefined {
     return this.tags.selected;
   }
@@ -437,13 +378,13 @@ export class AppState {
 
   registerVisibilityObservers() {
     if (isDesktopApplication()) {
-      this.rootScopeCleanup1 = this.$rootScope.$on('window-lost-focus', () => {
-        this.notifyEvent(AppStateEvent.WindowDidBlur);
-      });
-      this.rootScopeCleanup2 = this.$rootScope.$on(
-        'window-gained-focus',
-        () => {
-          this.notifyEvent(AppStateEvent.WindowDidFocus);
+      this.webAppEventDisposer = this.application.addWebEventObserver(
+        (event) => {
+          if (event === WebAppEvent.DesktopWindowGainedFocus) {
+            this.notifyEvent(AppStateEvent.WindowDidFocus);
+          } else if (event === WebAppEvent.DesktopWindowLostFocus) {
+            this.notifyEvent(AppStateEvent.WindowDidBlur);
+          }
         }
       );
     } else {
@@ -462,11 +403,11 @@ export class AppState {
 
   async notifyEvent(eventName: AppStateEvent, data?: any) {
     /**
-     * Timeout is particullary important so we can give all initial
+     * Timeout is particularly important so we can give all initial
      * controllers a chance to construct before propogting any events *
      */
     return new Promise<void>((resolve) => {
-      this.$timeout(async () => {
+      setTimeout(async () => {
         for (const callback of this.observers) {
           await callback(eventName, data);
         }

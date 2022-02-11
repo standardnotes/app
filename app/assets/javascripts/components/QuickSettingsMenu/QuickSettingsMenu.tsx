@@ -8,6 +8,8 @@ import {
 import {
   ComponentArea,
   ContentType,
+  FeatureIdentifier,
+  GetFeatures,
   SNComponent,
   SNTheme,
 } from '@standardnotes/snjs';
@@ -17,7 +19,7 @@ import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { JSXInternal } from 'preact/src/jsx';
 import { Icon } from '../Icon';
 import { Switch } from '../Switch';
-import { toDirective, useCloseOnBlur } from '../utils';
+import { useCloseOnBlur, useCloseOnClickOutside } from '../utils';
 import {
   quickSettingsKeyDownHandler,
   themesMenuKeyDownHandler,
@@ -30,9 +32,16 @@ const focusModeAnimationDuration = 1255;
 const MENU_CLASSNAME =
   'sn-menu-border sn-dropdown min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto';
 
+export type ThemeItem = {
+  name: string;
+  identifier: FeatureIdentifier;
+  component?: SNTheme;
+};
+
 type MenuProps = {
   appState: AppState;
   application: WebApplication;
+  onClickOutside: () => void;
 };
 
 const toggleFocusMode = (enabled: boolean) => {
@@ -62,15 +71,15 @@ export const sortThemes = (a: SNTheme, b: SNTheme) => {
   }
 };
 
-const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
-  ({ application, appState }) => {
+export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
+  ({ application, appState, onClickOutside }) => {
     const {
       closeQuickSettingsMenu,
       shouldAnimateCloseMenu,
       focusModeEnabled,
       setFocusModeEnabled,
     } = appState.quickSettingsMenu;
-    const [themes, setThemes] = useState<SNTheme[]>([]);
+    const [themes, setThemes] = useState<ThemeItem[]>([]);
     const [toggleableComponents, setToggleableComponents] = useState<
       SNComponent[]
     >([]);
@@ -84,30 +93,71 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     const quickSettingsMenuRef = useRef<HTMLDivElement>(null);
     const defaultThemeButtonRef = useRef<HTMLButtonElement>(null);
 
+    const mainRef = useRef<HTMLDivElement>(null);
+    useCloseOnClickOutside(mainRef, () => {
+      onClickOutside();
+    });
+
     useEffect(() => {
       toggleFocusMode(focusModeEnabled);
     }, [focusModeEnabled]);
 
     const reloadThemes = useCallback(() => {
-      const themes = application.getDisplayableItems(
-        ContentType.Theme
-      ) as SNTheme[];
-      setThemes(themes.sort(sortThemes));
+      const themes = (
+        application.getDisplayableItems(ContentType.Theme) as SNTheme[]
+      )
+        .sort(sortThemes)
+        .map((item) => {
+          return {
+            name: item.name,
+            identifier: item.identifier,
+            component: item,
+          };
+        }) as ThemeItem[];
+
+      GetFeatures()
+        .filter(
+          (feature) =>
+            feature.content_type === ContentType.Theme && !feature.layerable
+        )
+        .forEach((theme) => {
+          if (
+            themes.findIndex((item) => item.identifier === theme.identifier) ===
+            -1
+          ) {
+            themes.push({
+              name: theme.name as string,
+              identifier: theme.identifier,
+            });
+          }
+        });
+
+      setThemes(themes);
+
       setDefaultThemeOn(
-        !themes.find((theme) => theme.active && !theme.isLayerable())
+        !themes
+          .map((item) => item?.component)
+          .find((theme) => theme?.active && !theme.isLayerable())
       );
     }, [application]);
 
     const reloadToggleableComponents = useCallback(() => {
       const toggleableComponents = (
         application.getDisplayableItems(ContentType.Component) as SNComponent[]
-      ).filter((component) =>
-        [ComponentArea.EditorStack, ComponentArea.TagsList].includes(
-          component.area
-        )
+      ).filter(
+        (component) =>
+          [ComponentArea.EditorStack, ComponentArea.TagsList].includes(
+            component.area
+          ) && component.identifier !== FeatureIdentifier.FoldersComponent
       );
       setToggleableComponents(toggleableComponents);
     }, [application]);
+
+    useEffect(() => {
+      if (!themes.length) {
+        reloadThemes();
+      }
+    }, [reloadThemes, themes.length]);
 
     useEffect(() => {
       const cleanupItemStream = application.streamItems(
@@ -145,10 +195,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
       prefsButtonRef.current?.focus();
     }, []);
 
-    const [closeOnBlur] = useCloseOnBlur(
-      themesMenuRef as any,
-      setThemesMenuOpen
-    );
+    const [closeOnBlur] = useCloseOnBlur(themesMenuRef, setThemesMenuOpen);
 
     const toggleThemesMenu = () => {
       if (!themesMenuOpen && themesButtonRef.current) {
@@ -216,14 +263,14 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     };
 
     const toggleDefaultTheme = () => {
-      const activeTheme = themes.find(
-        (theme) => theme.active && !theme.isLayerable()
-      );
+      const activeTheme = themes
+        .map((item) => item.component)
+        .find((theme) => theme?.active && !theme.isLayerable());
       if (activeTheme) application.toggleTheme(activeTheme);
     };
 
     return (
-      <div className="sn-component">
+      <div ref={mainRef} className="sn-component">
         <div
           className={`sn-quick-settings-menu absolute ${MENU_CLASSNAME} ${
             shouldAnimateCloseMenu
@@ -236,56 +283,54 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
           <div className="px-3 mt-1 mb-2 font-semibold color-text uppercase">
             Quick Settings
           </div>
-          {themes && themes.length ? (
-            <Disclosure open={themesMenuOpen} onChange={toggleThemesMenu}>
-              <DisclosureButton
-                onKeyDown={handleBtnKeyDown}
+          <Disclosure open={themesMenuOpen} onChange={toggleThemesMenu}>
+            <DisclosureButton
+              onKeyDown={handleBtnKeyDown}
+              onBlur={closeOnBlur}
+              ref={themesButtonRef}
+              className="sn-dropdown-item justify-between focus:bg-info-backdrop focus:shadow-none"
+            >
+              <div className="flex items-center">
+                <Icon type="themes" className="color-neutral mr-2" />
+                Themes
+              </div>
+              <Icon type="chevron-right" className="color-neutral" />
+            </DisclosureButton>
+            <DisclosurePanel
+              onBlur={closeOnBlur}
+              ref={themesMenuRef}
+              onKeyDown={handlePanelKeyDown}
+              style={{
+                ...themesMenuPosition,
+              }}
+              className={`${MENU_CLASSNAME} fixed sn-dropdown--animated`}
+            >
+              <div className="px-3 my-1 font-semibold color-text uppercase">
+                Themes
+              </div>
+              <button
+                className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
+                onClick={toggleDefaultTheme}
                 onBlur={closeOnBlur}
-                ref={themesButtonRef}
-                className="sn-dropdown-item justify-between focus:bg-info-backdrop focus:shadow-none"
+                ref={defaultThemeButtonRef}
               >
-                <div className="flex items-center">
-                  <Icon type="themes" className="color-neutral mr-2" />
-                  Themes
-                </div>
-                <Icon type="chevron-right" className="color-neutral" />
-              </DisclosureButton>
-              <DisclosurePanel
-                onBlur={closeOnBlur}
-                ref={themesMenuRef}
-                onKeyDown={handlePanelKeyDown}
-                style={{
-                  ...themesMenuPosition,
-                }}
-                className={`${MENU_CLASSNAME} fixed sn-dropdown--animated`}
-              >
-                <div className="px-3 my-1 font-semibold color-text uppercase">
-                  Themes
-                </div>
-                <button
-                  className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
-                  onClick={toggleDefaultTheme}
+                <div
+                  className={`pseudo-radio-btn ${
+                    defaultThemeOn ? 'pseudo-radio-btn--checked' : ''
+                  } mr-2`}
+                ></div>
+                Default
+              </button>
+              {themes.map((theme) => (
+                <ThemesMenuButton
+                  item={theme}
+                  application={application}
+                  key={theme.component?.uuid ?? theme.identifier}
                   onBlur={closeOnBlur}
-                  ref={defaultThemeButtonRef}
-                >
-                  <div
-                    className={`pseudo-radio-btn ${
-                      defaultThemeOn ? 'pseudo-radio-btn--checked' : ''
-                    } mr-2`}
-                  ></div>
-                  Default
-                </button>
-                {themes.map((theme) => (
-                  <ThemesMenuButton
-                    theme={theme}
-                    application={application}
-                    key={theme.uuid}
-                    onBlur={closeOnBlur}
-                  />
-                ))}
-              </DisclosurePanel>
-            </Disclosure>
-          ) : null}
+                />
+              ))}
+            </DisclosurePanel>
+          </Disclosure>
           {toggleableComponents.map((component) => (
             <button
               className="sn-dropdown-item justify-between focus:bg-info-backdrop focus:shadow-none"
@@ -320,6 +365,3 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     );
   }
 );
-
-export const QuickSettingsMenuDirective =
-  toDirective<MenuProps>(QuickSettingsMenu);

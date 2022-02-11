@@ -1,8 +1,8 @@
 import { observer } from 'mobx-react-lite';
-import { toDirective } from '@/components/utils';
+import { useCloseOnClickOutside } from '@/components/utils';
 import { AppState } from '@/ui_models/app_state';
 import { WebApplication } from '@/ui_models/application';
-import { useState } from 'preact/hooks';
+import { useRef, useState } from 'preact/hooks';
 import { GeneralAccountMenu } from './GeneralAccountMenu';
 import { FunctionComponent } from 'preact';
 import { SignInPane } from './SignIn';
@@ -21,9 +21,12 @@ export enum AccountMenuPane {
 type Props = {
   appState: AppState;
   application: WebApplication;
+  onClickOutside: () => void;
 };
 
-type PaneSelectorProps = Props & {
+type PaneSelectorProps = {
+  appState: AppState;
+  application: WebApplication;
   menuPane: AccountMenuPane;
   setMenuPane: (pane: AccountMenuPane) => void;
   closeMenu: () => void;
@@ -79,14 +82,19 @@ const MenuPaneSelector: FunctionComponent<PaneSelectorProps> = observer(
   }
 );
 
-const AccountMenu: FunctionComponent<Props> = observer(
-  ({ application, appState }) => {
+export const AccountMenu: FunctionComponent<Props> = observer(
+  ({ application, appState, onClickOutside }) => {
     const {
       currentPane,
       setCurrentPane,
       shouldAnimateCloseMenu,
       closeAccountMenu,
     } = appState.accountMenu;
+
+    const ref = useRef<HTMLDivElement>(null);
+    useCloseOnClickOutside(ref, () => {
+      onClickOutside();
+    });
 
     const handleKeyDown: JSXInternal.KeyboardEventHandler<HTMLDivElement> = (
       event
@@ -105,7 +113,7 @@ const AccountMenu: FunctionComponent<Props> = observer(
     };
 
     return (
-      <div className='sn-component'>
+      <div ref={ref} id="account-menu" className="sn-component">
         <div
           className={`sn-menu-border sn-account-menu sn-dropdown ${
             shouldAnimateCloseMenu
@@ -130,5 +138,3 @@ const AccountMenu: FunctionComponent<Props> = observer(
     );
   }
 );
-
-export const AccountMenuDirective = toDirective<Props>(AccountMenu);

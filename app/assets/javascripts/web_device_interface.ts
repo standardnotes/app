@@ -10,9 +10,9 @@ import { Bridge } from './services/bridge';
 export class WebDeviceInterface extends DeviceInterface {
   private databases: Database[] = [];
 
-  constructor(timeout: any, private bridge: Bridge) {
+  constructor(private bridge: Bridge) {
     super(
-      timeout || setTimeout.bind(getGlobalScope()),
+      setTimeout.bind(getGlobalScope()),
       setInterval.bind(getGlobalScope())
     );
   }

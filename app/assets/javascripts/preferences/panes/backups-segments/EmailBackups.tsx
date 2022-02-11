@@ -1,4 +1,7 @@
-import { convertStringifiedBooleanToBoolean, isDesktopApplication } from '@/utils';
+import {
+  convertStringifiedBooleanToBoolean,
+  isDesktopApplication,
+} from '@/utils';
 import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/strings';
 import { useCallback, useEffect, useState } from 'preact/hooks';
 import { WebApplication } from '@/ui_models/application';
@@ -35,6 +38,9 @@ export const EmailBackups = observer(({ application }: Props) => {
     useState(false);
 
   const loadEmailFrequencySetting = useCallback(async () => {
+    if (!application.getUser()) {
+      return;
+    }
     setIsLoading(true);
 
     try {

@@ -1,5 +1,6 @@
 import { FunctionComponent } from 'preact';
-import { Icon, IconType } from './Icon';
+import { Icon } from './Icon';
+import { IconType } from '@standardnotes/snjs';
 
 type ButtonType = 'normal' | 'primary';
 

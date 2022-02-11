@@ -1974,7 +1974,7 @@
     "@babel/helper-validator-identifier" "^7.15.7"
     to-fast-properties "^2.0.0"
 
-"@babel/types@^7.10.4", "@babel/types@^7.10.5", "@babel/types@^7.11.0", "@babel/types@^7.12.1", "@babel/types@^7.12.5", "@babel/types@^7.12.7", "@babel/types@^7.2.0", "@babel/types@^7.4.4", "@babel/types@^7.7.0":
+"@babel/types@^7.10.4", "@babel/types@^7.10.5", "@babel/types@^7.11.0", "@babel/types@^7.12.1", "@babel/types@^7.12.5", "@babel/types@^7.12.7", "@babel/types@^7.4.4", "@babel/types@^7.7.0":
   version "7.12.7"
   resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.12.7.tgz#6039ff1e242640a29452c9ae572162ec9a8f5d13"
   integrity sha512-MNyI92qZq6jrQkXvtIiykvl4WtoRrVV9MPn+ZfsoEENjiWcBQ3ZSHrkxnJWgWtLX3XXqX5hrSQ+X69wkmesXuQ==
@@ -2597,69 +2597,79 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@standardnotes/auth@^3.15.3":
-  version "3.15.3"
-  resolved "https://registry.yarnpkg.com/@standardnotes/auth/-/auth-3.15.3.tgz#bf77332e0ac3d846acc45f25083459e42f4a4374"
-  integrity sha512-16wgMl0qmq8w+HUktfQ7ODoprkngSs0vsSF5G9aHM1L+lFMwlGeVOztHH2zwG91pFkl7BaK6LcEimoYiml6VAw==
+"@standardnotes/auth@^3.16.0":
+  version "3.16.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/auth/-/auth-3.16.0.tgz#6a69c1dc4fdfb4e98920c777e6eff892087d2397"
+  integrity sha512-0JDM6u3SDb2EkDNf+HN04HvXvkVe9gCKmWIeak+2vyfyS6nsbNBQf/uxAu7Jz3Jugi3Q7j57dhHeOSU21bFR3A==
   dependencies:
-    "@standardnotes/common" "^1.8.0"
+    "@standardnotes/common" "^1.10.0"
     jsonwebtoken "^8.5.1"
 
-"@standardnotes/common@^1.8.0":
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/common/-/common-1.8.0.tgz#af72ad85f0d410ae31c0c110137911e2595634de"
-  integrity sha512-R3nfAvhaXp5ufMB0M0fmV9yizE/Of2PGNJKnxtdxwowAq/ZakHu8Rh/v485PXrCaCFREVOZQO8kg0RQM8YngSw==
-
-"@standardnotes/components@1.4.3":
-  version "1.4.3"
-  resolved "https://registry.yarnpkg.com/@standardnotes/components/-/components-1.4.3.tgz#e48205a00b2727a9d68c051785806f35985754b5"
-  integrity sha512-MUVPEQmRICLgQ3s+TPNP09w6GBbIO1B0WaqAoYJX3x21RAxyHwxIKzuz66g2VmlzrHevD92hepix3/ps0qwa4g==
-
-"@standardnotes/domain-events@^2.17.1":
-  version "2.17.1"
-  resolved "https://registry.yarnpkg.com/@standardnotes/domain-events/-/domain-events-2.17.1.tgz#fa10eac7b6072da5d8e06b5e0b41eee256ed3879"
-  integrity sha512-9B0WtXPwL4RhZtlJ5DAapXMV8rAxyJ9oYaktfe67xm5OXbO5rgqyfe05O7u2N1SVj31PlQbJinrnelXiWpQfrA==
-  dependencies:
-    "@standardnotes/auth" "^3.15.3"
-
-"@standardnotes/features@1.25.0", "@standardnotes/features@^1.25.0":
-  version "1.25.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.25.0.tgz#7ea32b547030ae82a60a2b30c458073072bd60c9"
-  integrity sha512-8mwP6/WC/5YSfjNw/uburRDpXltebXyKWVmTWlewNdwWEnXMaTm9FqmuYvs1EDPPBIlKYheLQfK6bu78eEjLMQ==
-  dependencies:
-    "@standardnotes/auth" "^3.15.3"
-    "@standardnotes/common" "^1.8.0"
-
-"@standardnotes/settings@^1.10.0":
+"@standardnotes/common@^1.10.0":
   version "1.10.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/settings/-/settings-1.10.0.tgz#b46d4805c9a1cfb3fa3d9b3915daae9dd5661789"
-  integrity sha512-FUy4RDI7nFnbOGAaX5wMvBz+6Yto5tXGXDAi7bnWALZByTIlN8bkFZ2CNk2skjpzeOxBjqhCRi+GRCcuMqZ70A==
+  resolved "https://registry.yarnpkg.com/@standardnotes/common/-/common-1.10.0.tgz#526b40b473cfbd8bb7291eb895ae174879e21047"
+  integrity sha512-7k8UZbA5d6BODjQYqV/i6xbkO6qEJULFLuLYVAS+Ery5CPekmUoEoh+UuA+iEITj2RNW6BV6sa/13jmHG5ADtA==
+
+"@standardnotes/components@1.7.0":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/components/-/components-1.7.0.tgz#192f358ddffe275a9ab3709ef31b7b8bf3b58ec1"
+  integrity sha512-4J9iuos5WZvl+/Z7dNvhgEY9SRTdSm6JiUHbo6rRtryjvlJB4EkvnARxexJvw17MBmTWjvHY8c3aLm/w1dzv0A==
+
+"@standardnotes/domain-events@^2.22.1":
+  version "2.22.1"
+  resolved "https://registry.yarnpkg.com/@standardnotes/domain-events/-/domain-events-2.22.1.tgz#52f142e8135227ff796473eb951c986d128e3bcb"
+  integrity sha512-crkIhJNEu/dXMb3rZWFfpm1afD0bYnplWR8ZbZdJecIikVA64mo8ymp6gYmglq2nOC/XkO+9foq4TPYVQm0zvw==
+  dependencies:
+    "@standardnotes/auth" "^3.16.0"
+    "@standardnotes/features" "^1.32.0"
+
+"@standardnotes/features@1.32.0", "@standardnotes/features@^1.32.0":
+  version "1.32.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.32.0.tgz#e4dfdd14123491472624dda49218c682df6f245b"
+  integrity sha512-O9Fb+7VbAOfDen2QTRaZxfofxWCTaPJkz7yUsaN2gZR5IJ1uDeLzTDTmhDpHAO2SNDeXkriurj4va/wTWZXiww==
+  dependencies:
+    "@standardnotes/auth" "^3.16.0"
+    "@standardnotes/common" "^1.10.0"
+
+"@standardnotes/settings@^1.11.3":
+  version "1.11.3"
+  resolved "https://registry.yarnpkg.com/@standardnotes/settings/-/settings-1.11.3.tgz#f7735da40807dab6eaf81cc82d8d30f5461d26d5"
+  integrity sha512-95nqPYIZt57HMrymf4FTMDHOibM13AmV/8JEj7mPbIqcNKvVD486BURsaqpoBgkqB4Q43LbT8dfTrBPDgmIdxg==
 
 "@standardnotes/sncrypto-common@^1.6.0":
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/@standardnotes/sncrypto-common/-/sncrypto-common-1.6.0.tgz#c6174adf65c778c8d53e45ea4c68087786f86b67"
   integrity sha512-3gTTokb+DWxtBH72auVtoB76V9pCZWyQ7hmClgBuQF3i5j6HvuuBZGiicHmwAv1zJxMi/op3haE8lwzQc8NJ9g==
 
-"@standardnotes/sncrypto-web@1.6.0":
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/sncrypto-web/-/sncrypto-web-1.6.0.tgz#eb09aad9b617fbb1e1dcac13dd049a473bcc4feb"
-  integrity sha512-FhehxNCcqjiA8aNRApdswVIZ3IydzXPoKG8K4AKsThUlIGlFra7qeyyVVxmEj0dTW7tXpP3SXH01n0LiYgM8vw==
+"@standardnotes/sncrypto-web@1.6.2":
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/@standardnotes/sncrypto-web/-/sncrypto-web-1.6.2.tgz#38bd2309a1c20eee95d97de90a4145c04e7d2e4f"
+  integrity sha512-+EWT7VoZkVErdGkBhihoDr0cMDAaA9VT1EG0h8Agg3pd52pO0A4yu0Cx4kjfLuDR7OP3neJdSEBMjlC0xoxawg==
   dependencies:
     "@standardnotes/sncrypto-common" "^1.6.0"
     buffer "^6.0.3"
     libsodium-wrappers "^0.7.9"
 
-"@standardnotes/snjs@2.41.0":
-  version "2.41.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.41.0.tgz#48d02e981780a9d7d823f6186497a1c6459bbd66"
-  integrity sha512-Rnl5wWbMKTQ+bQb7zGK/7HFt43bMBlP06G5zoEE0Vj/uxyneLxaEX+iPNXRUDqeHfxvedtTnIXsLGFEux/G1dg==
+"@standardnotes/snjs@2.57.0":
+  version "2.57.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.57.0.tgz#c27517ee6f57d159262763cb6e5987b5780e8e03"
+  integrity sha512-AiZaIat1Q/FjJ9Z93SOqGXTEYWdjTBPBbjV71vLLWDbjUVyunP1OYDSogqFf+dM4Kvh1d5j+KUiGzU4v/iyZsA==
   dependencies:
-    "@standardnotes/auth" "^3.15.3"
-    "@standardnotes/common" "^1.8.0"
-    "@standardnotes/domain-events" "^2.17.1"
-    "@standardnotes/features" "^1.25.0"
-    "@standardnotes/settings" "^1.10.0"
+    "@standardnotes/auth" "^3.16.0"
+    "@standardnotes/common" "^1.10.0"
+    "@standardnotes/domain-events" "^2.22.1"
+    "@standardnotes/features" "^1.32.0"
+    "@standardnotes/settings" "^1.11.3"
     "@standardnotes/sncrypto-common" "^1.6.0"
+
+"@standardnotes/stylekit@5.4.0":
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/stylekit/-/stylekit-5.4.0.tgz#205697a3f5265a5214e192b89b1a9847e766dba4"
+  integrity sha512-Q7uAoaCYjLD3pcY0QGfh8vyLZT6JQYZYWpyuXOC+lSU4TvS+/fKbZ3aEGMjLn1d/SD7tlj0k3MwuqwCGkEcogw==
+  dependencies:
+    "@reach/listbox" "^0.15.0"
+    "@reach/menu-button" "^0.15.1"
+    prop-types "^15.7.2"
 
 "@svgr/babel-plugin-add-jsx-attribute@^5.4.0":
   version "5.4.0"
@@ -2768,11 +2778,6 @@
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-1.1.2.tgz#ccb91445360179a04e7fe6aff78c00ffc1eeaf82"
   integrity sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==
-
-"@types/angular@^1.8.3":
-  version "1.8.3"
-  resolved "https://registry.yarnpkg.com/@types/angular/-/angular-1.8.3.tgz#97602244b685113ce9dc27823471b67d28f5ba3e"
-  integrity sha512-vgc5Z+TD07DT7NEUjFm6XMp0kEbGXIa95XmOL5IiHXR9LdrJpcdDh3jl1nCuZbWyzFn5/1OqtMfomcnA1sUFXQ==
 
 "@types/babel-types@*", "@types/babel-types@^7.0.0":
   version "7.0.11"
@@ -3365,11 +3370,6 @@ amdefine@>=0.0.4:
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
   integrity sha1-SlKCrBZHKek2Gbz9OtFR+BfOkfU=
 
-angular@^1.8.2:
-  version "1.8.2"
-  resolved "https://registry.yarnpkg.com/angular/-/angular-1.8.2.tgz#5983bbb5a9fa63e213cb7749199e0d352de3a2f1"
-  integrity sha512-IauMOej2xEe7/7Ennahkbb5qd/HFADiNuLSESz9Q27inmi32zB0lnAsFeLEWcox3Gd1F6YhNd1CP7/9IukJ0Gw==
-
 ansi-colors@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/ansi-colors/-/ansi-colors-4.1.1.tgz#cbb9ae256bf750af1eab344f229aa27fe94ba348"
@@ -3641,15 +3641,6 @@ babel-loader@^8.2.3:
     loader-utils "^1.4.0"
     make-dir "^3.1.0"
     schema-utils "^2.6.5"
-
-babel-plugin-angularjs-annotate@^0.10.0:
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/babel-plugin-angularjs-annotate/-/babel-plugin-angularjs-annotate-0.10.0.tgz#4213b3aaae494a087aad0b8237c5d0716d22ca76"
-  integrity sha512-NPE7FOAxcLPCUR/kNkrhHIjoScR3RyIlRH3yRn79j8EZWtpILVnCOdA9yKfsOmRh6BHnLHKl8ZAThc+YDd/QwQ==
-  dependencies:
-    "@babel/code-frame" "^7.0.0"
-    "@babel/types" "^7.2.0"
-    simple-is "~0.2.0"
 
 babel-plugin-dynamic-import-node@^2.3.3:
   version "2.3.3"
@@ -9292,11 +9283,6 @@ signal-exit@^3.0.3:
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.5.tgz#9e3e8cc0c75a99472b44321033a7702e7738252f"
   integrity sha512-KWcOiKeQj6ZyXx7zq4YxSMgHRlod4czeBQZrPb8OKcohcqAXShm7E20kEMle9WBt26hFcAf0qLOcp5zmY7kOqQ==
 
-simple-is@~0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/simple-is/-/simple-is-0.2.0.tgz#2abb75aade39deb5cc815ce10e6191164850baf0"
-  integrity sha1-Krt1qt453rXMgVzhDmGRFkhQuvA=
-
 sisteransi@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/sisteransi/-/sisteransi-1.0.5.tgz#134d681297756437cc05ca01370d3a7a571075ed"
@@ -9337,15 +9323,6 @@ slice-ansi@^5.0.0:
   dependencies:
     ansi-styles "^6.0.0"
     is-fullwidth-code-point "^4.0.0"
-
-sn-stylekit@5.2.21:
-  version "5.2.21"
-  resolved "https://registry.yarnpkg.com/sn-stylekit/-/sn-stylekit-5.2.21.tgz#5aec6c329949bda64a1e3c563ee594b141295d27"
-  integrity sha512-rjlgo42A/kx+M4iY7HYRpnQyp4dLb2HQpEMHz+CYumOzTf/lsRy0Up5HI1haNK4/JMmpq36Eb/7BMDmvLpdXnQ==
-  dependencies:
-    "@reach/listbox" "^0.15.0"
-    "@reach/menu-button" "^0.15.1"
-    prop-types "^15.7.2"
 
 sockjs@^0.3.21:
   version "0.3.21"

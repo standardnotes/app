@@ -249,6 +249,10 @@
   margin-left: 0rem !important;
 }
 
+.ml-0\.5 {
+  margin-left: 0.125rem;
+}
+
 .ml-3 {
   margin-left: 0.75rem;
 }
@@ -297,6 +301,10 @@
 
 .max-w-3\/4 {
   max-width: 75%;
+}
+
+.max-w-80\% {
+  max-width: 80%;
 }
 
 .max-w-72 {
@@ -372,6 +380,10 @@
 
 .min-w-30 {
   min-width: 7.5rem;
+}
+
+.min-w-68 {
+  min-width: 17rem;
 }
 
 .min-w-90 {
@@ -496,9 +508,19 @@
   padding-right: 3rem;
 }
 
+.py-0\.5 {
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+}
+
 .sn-component .py-2\.5 {
   padding-top: 0.625rem;
   padding-bottom: 0.625rem;
+}
+
+.py-3\.5 {
+  padding-top: 0.875rem;
+  padding-bottom: 0.875rem;
 }
 
 .py-9 {
@@ -630,7 +652,7 @@
   width: 100%;
 }
 
-.cursor-not-allowed {
+.sn-component .cursor-not-allowed {
   cursor: not-allowed;
 }
 
@@ -670,6 +692,10 @@
   top: 50%;
 }
 
+.top-full {
+  top: 100%;
+}
+
 .left-2 {
   left: 0.5rem;
 }
@@ -687,9 +713,13 @@
   @extend .h-4;
   @extend .border-2;
   @extend .border-solid;
-  @extend .border-info;
   @extend .rounded-full;
   @extend .relative;
+  border-color: var(--sn-stylekit-grey-1);
+
+  &--checked {
+    @extend .border-info;
+  }
 }
 
 .pseudo-radio-btn--checked::after {
@@ -814,8 +844,24 @@
   }
 }
 
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+
+.leading-140\% {
+  line-height: 140%;
+}
+
 .dimmed {
   opacity: .5;
   cursor: default;
   pointer-events: none;
+}
+
+.hide-if-last-child:last-child {
+  display: none;
+}
+
+.bg-note-size-warning {
+  background-color: rgba(235, 173, 0, 0.08);
 }
