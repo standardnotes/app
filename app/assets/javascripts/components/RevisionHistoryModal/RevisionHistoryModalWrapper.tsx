@@ -29,7 +29,7 @@ import {
 } from './RevisionContentLocked';
 import { SelectedRevisionContent } from './SelectedRevisionContent';
 
-type Props = {
+type RevisionHistoryModalProps = {
   application: WebApplication;
   appState: AppState;
 };
@@ -37,8 +37,42 @@ type Props = {
 const ABSOLUTE_CENTER_CLASSNAME =
   'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2';
 
-export const RevisionHistoryModal: FunctionComponent<Props> = observer(
-  ({ application, appState }) => {
+type RevisionContentPlaceholderProps = {
+  isFetchingSelectedRevision: boolean;
+  selectedRevision: HistoryEntry | undefined;
+  showContentLockedScreen: boolean;
+};
+
+const RevisionContentPlaceholder: FunctionComponent<
+  RevisionContentPlaceholderProps
+> = ({
+  isFetchingSelectedRevision,
+  selectedRevision,
+  showContentLockedScreen,
+}) => (
+  <div
+    className={`absolute w-full h-full top-0 left-0 ${
+      isFetchingSelectedRevision ||
+      (!selectedRevision && !showContentLockedScreen)
+        ? 'z-index-1 bg-default'
+        : '-z-index-1'
+    }`}
+  >
+    {isFetchingSelectedRevision && (
+      <div
+        className={`sk-spinner w-5 h-5 spinner-info ${ABSOLUTE_CENTER_CLASSNAME}`}
+      />
+    )}
+    {!isFetchingSelectedRevision && !selectedRevision ? (
+      <div className={`color-grey-0 select-none ${ABSOLUTE_CENTER_CLASSNAME}`}>
+        No revision selected
+      </div>
+    ) : null}
+  </div>
+);
+
+export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> =
+  observer(({ application, appState }) => {
     const closeButtonRef = useRef<HTMLButtonElement>(null);
 
     const dismissModal = () => {
@@ -164,27 +198,11 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
                 setIsFetchingSelectedRevision={setIsFetchingSelectedRevision}
               />
               <div className={`flex flex-col flex-grow relative`}>
-                <div
-                  className={`absolute w-full h-full top-0 left-0 ${
-                    isFetchingSelectedRevision ||
-                    (!selectedRevision && !showContentLockedScreen)
-                      ? 'z-index-1 bg-default'
-                      : '-z-index-1'
-                  }`}
-                >
-                  {isFetchingSelectedRevision && (
-                    <div
-                      className={`sk-spinner w-5 h-5 spinner-info ${ABSOLUTE_CENTER_CLASSNAME}`}
-                    />
-                  )}
-                  {!isFetchingSelectedRevision && !selectedRevision ? (
-                    <div
-                      className={`color-grey-0 select-none ${ABSOLUTE_CENTER_CLASSNAME}`}
-                    >
-                      No revision selected
-                    </div>
-                  ) : null}
-                </div>
+                <RevisionContentPlaceholder
+                  selectedRevision={selectedRevision}
+                  isFetchingSelectedRevision={isFetchingSelectedRevision}
+                  showContentLockedScreen={showContentLockedScreen}
+                />
                 {showContentLockedScreen && !selectedRevision && (
                   <RevisionContentLocked planId={userPlanId} />
                 )}
@@ -257,11 +275,10 @@ export const RevisionHistoryModal: FunctionComponent<Props> = observer(
         </AlertDialogContent>
       </AlertDialogOverlay>
     );
-  }
-);
+  });
 
-export const RevisionHistoryModalWrapper: FunctionComponent<Props> = observer(
-  ({ application, appState }) => {
+export const RevisionHistoryModalWrapper: FunctionComponent<RevisionHistoryModalProps> =
+  observer(({ application, appState }) => {
     if (!appState.notes.showRevisionHistoryModal) {
       return null;
     }
@@ -269,5 +286,4 @@ export const RevisionHistoryModalWrapper: FunctionComponent<Props> = observer(
     return (
       <RevisionHistoryModal application={application} appState={appState} />
     );
-  }
-);
+  });

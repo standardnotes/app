@@ -75,6 +75,7 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
 
         if (application.hasRole(revisionListEntry.required_role)) {
           setIsFetchingSelectedRevision(true);
+          setSelectedRevision(undefined);
           setSelectedRemoteEntryUuid(undefined);
 
           try {
