@@ -114,6 +114,12 @@ export const useListKeyboardNavigation = (
     (e: KeyboardEvent) => {
       if (e.key === KeyboardKey.Up || e.key === KeyboardKey.Down) {
         e.preventDefault();
+      } else {
+        return;
+      }
+
+      if (!listItems?.length) {
+        setListItems(container.current?.querySelectorAll('button'));
       }
 
       if (listItems) {
@@ -134,7 +140,7 @@ export const useListKeyboardNavigation = (
         }
       }
     },
-    [focusItemWithIndex, focusedItemIndex, listItems]
+    [container, focusItemWithIndex, focusedItemIndex, listItems]
   );
 
   const FIRST_ITEM_FOCUS_TIMEOUT = 20;
