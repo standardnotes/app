@@ -323,7 +323,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
                       {isDeletingRevision ? (
                         <div className="sk-spinner my-1 w-3 h-3 spinner-info" />
                       ) : (
-                        'Delete this version'
+                        'Delete this revision'
                       )}
                     </Button>
                   )}
