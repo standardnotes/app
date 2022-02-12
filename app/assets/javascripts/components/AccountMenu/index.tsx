@@ -7,7 +7,6 @@ import { GeneralAccountMenu } from './GeneralAccountMenu';
 import { FunctionComponent } from 'preact';
 import { SignInPane } from './SignIn';
 import { CreateAccount } from './CreateAccount';
-import { ConfirmSignoutContainer } from '../ConfirmSignoutModal';
 import { ConfirmPassword } from './ConfirmPassword';
 import { JSXInternal } from 'preact/src/jsx';
 
@@ -130,10 +129,6 @@ export const AccountMenu: FunctionComponent<Props> = observer(
             closeMenu={closeAccountMenu}
           />
         </div>
-        <ConfirmSignoutContainer
-          appState={appState}
-          application={application}
-        />
       </div>
     );
   }
