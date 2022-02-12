@@ -25,6 +25,7 @@ import { render } from 'preact';
 import { PermissionsModal } from './PermissionsModal';
 import { RevisionHistoryModalWrapper } from './RevisionHistoryModal/RevisionHistoryModalWrapper';
 import { PremiumModalProvider } from './Premium';
+import { ConfirmSignoutContainer } from './ConfirmSignoutModal';
 
 type Props = {
   application: WebApplication;
@@ -270,6 +271,11 @@ export class ApplicationView extends PureComponent<Props, State> {
               <PurchaseFlowWrapper
                 application={this.application}
                 appState={this.appState}
+              />
+
+              <ConfirmSignoutContainer
+                appState={this.appState}
+                application={this.application}
               />
             </>
           )}
