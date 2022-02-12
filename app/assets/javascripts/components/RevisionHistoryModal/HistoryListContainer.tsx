@@ -64,7 +64,7 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
     );
 
     const [selectedTab, setSelectedTab] = useState<RevisionListTabType>(
-      RevisionListTabType.Session
+      RevisionListTabType.Remote
     );
 
     useEffect(() => {
@@ -185,8 +185,8 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
         className={`flex flex-col min-w-60 border-0 border-r-1px border-solid border-main overflow-auto h-full`}
       >
         <div className="flex border-0 border-b-1 border-solid border-main">
-          <TabButton type={RevisionListTabType.Session} />
           <TabButton type={RevisionListTabType.Remote} />
+          <TabButton type={RevisionListTabType.Session} />
           {isFetchingLegacyHistory && (
             <div className="flex items-center justify-center px-3 py-2.5">
               <div className="sk-spinner w-3 h-3 spinner-info" />
