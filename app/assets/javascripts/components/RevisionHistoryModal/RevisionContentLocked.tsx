@@ -29,9 +29,7 @@ export const RevisionContentLocked: FunctionComponent<{
   <div className="flex w-full h-full items-center justify-center">
     <div className="flex flex-col items-center text-center max-w-40%">
       <HistoryLockedIllustration />
-      <div class="text-lg color-black font-bold mt-2 mb-1">
-        Can't access this version
-      </div>
+      <div class="text-lg font-bold mt-2 mb-1">Can't access this version</div>
       <div className="mb-4 color-grey-0 leading-140%">
         Version history is limited to{' '}
         {planId ? PLAN_HISTORY_DURATION[planId] : 'the current session'} in the{' '}

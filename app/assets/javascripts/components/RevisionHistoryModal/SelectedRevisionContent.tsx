@@ -57,20 +57,22 @@ export const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentP
       }, [application.componentManager, componentViewer]);
 
       return (
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full overflow-hidden">
           <div className="p-4 text-base font-bold w-full">
             <div className="title">
               {selectedRevision.payload.content.title}
             </div>
           </div>
           {!componentViewer && (
-            <div className="relative flex-grow">
+            <div className="relative flex-grow min-h-0 overflow-x-hidden overflow-y-auto">
               {selectedRevision.payload.content.text.length ? (
                 <p className="p-4 pt-0">
                   {selectedRevision.payload.content.text}
                 </p>
               ) : (
-                <div className={ABSOLUTE_CENTER_CLASSNAME}>Empty note.</div>
+                <div className={`color-grey-0 ${ABSOLUTE_CENTER_CLASSNAME}`}>
+                  Empty note.
+                </div>
               )}
             </div>
           )}
