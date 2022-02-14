@@ -1,5 +1,6 @@
 import { WebApplication } from '@/ui_models/application';
 import {
+  ActionVerb,
   HistoryEntry,
   NoteHistoryEntry,
   RevisionListEntry,
@@ -82,7 +83,7 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
           }
 
           const isLegacyNoteHistoryExt = actionExtension?.actions.some(
-            (action) => action.verb === 'nested'
+            (action) => action.verb === ActionVerb.Nested
           );
 
           if (!isLegacyNoteHistoryExt) {
