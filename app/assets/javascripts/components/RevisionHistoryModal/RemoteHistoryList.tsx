@@ -105,7 +105,7 @@ export const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> =
                   >
                     <div className="flex flex-grow items-center justify-between">
                       <div>{previewHistoryEntryTitle(entry)}</div>
-                      {!application.hasRole(entry.required_role) && (
+                      {!application.hasMinimumRole(entry.required_role) && (
                         <Icon type="premium-feature" />
                       )}
                     </div>

@@ -147,7 +147,7 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
       async (revisionListEntry: RevisionListEntry) => {
         setShowContentLockedScreen(false);
 
-        if (application.hasRole(revisionListEntry.required_role)) {
+        if (application.hasMinimumRole(revisionListEntry.required_role)) {
           setIsFetchingSelectedRevision(true);
           setSelectedRevision(undefined);
           setSelectedRemoteEntry(undefined);
