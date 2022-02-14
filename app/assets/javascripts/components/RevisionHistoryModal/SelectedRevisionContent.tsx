@@ -28,18 +28,18 @@ export const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentP
       templateNoteForRevision,
     }) => {
       const componentViewer = useMemo(() => {
-        if (editorForCurrentNote) {
-          const componentViewer =
-            application.componentManager.createComponentViewer(
-              editorForCurrentNote
-            );
-          componentViewer.setReadonly(true);
-          componentViewer.lockReadonly = true;
-          componentViewer.overrideContextItem = templateNoteForRevision;
-          return componentViewer;
-        } else {
+        if (!editorForCurrentNote) {
           return undefined;
         }
+
+        const componentViewer =
+          application.componentManager.createComponentViewer(
+            editorForCurrentNote
+          );
+        componentViewer.setReadonly(true);
+        componentViewer.lockReadonly = true;
+        componentViewer.overrideContextItem = templateNoteForRevision;
+        return componentViewer;
       }, [
         application.componentManager,
         editorForCurrentNote,
