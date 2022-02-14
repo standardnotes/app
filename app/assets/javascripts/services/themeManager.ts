@@ -185,7 +185,7 @@ export class ThemeManager extends ApplicationService {
       this.application.getFeatureStatus(theme.identifier) !==
       FeatureStatus.Entitled
     ) {
-      if (!theme.isLayerable() && theme.active) {
+      if (theme.active) {
         this.application.toggleTheme(theme);
       }
       return;
