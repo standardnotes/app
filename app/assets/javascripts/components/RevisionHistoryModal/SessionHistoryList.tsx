@@ -64,7 +64,6 @@ export const SessionHistoryList: FunctionComponent<Props> = ({
     firstEntry,
     selectFirstEntry,
     selectedItemCreatedAt,
-    sessionHistory,
     setSelectedRevision,
   ]);
 
