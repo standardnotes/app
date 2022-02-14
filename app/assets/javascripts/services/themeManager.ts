@@ -181,6 +181,15 @@ export class ThemeManager extends ApplicationService {
     if (this.activeThemes.find((uuid) => uuid === theme.uuid)) {
       return;
     }
+    if (
+      this.application.getFeatureStatus(theme.identifier) !==
+      FeatureStatus.Entitled
+    ) {
+      if (!theme.isLayerable() && theme.active) {
+        this.application.toggleTheme(theme);
+      }
+      return;
+    }
     this.activeThemes.push(theme.uuid);
     const url = this.application.componentManager.urlForComponent(theme);
     if (!url) {
