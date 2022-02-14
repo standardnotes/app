@@ -158,6 +158,14 @@ export class ThemeManager extends ApplicationService {
         const themes = items as SNTheme[];
         for (const theme of themes) {
           if (theme.active) {
+            if (
+              this.application.getFeatureStatus(theme.identifier) !==
+              FeatureStatus.Entitled
+            ) {
+              this.application.toggleTheme(theme);
+              return;
+            }
+
             this.activateTheme(theme);
           } else {
             this.deactivateTheme(theme.uuid);
@@ -185,9 +193,6 @@ export class ThemeManager extends ApplicationService {
       this.application.getFeatureStatus(theme.identifier) !==
       FeatureStatus.Entitled
     ) {
-      if (theme.active) {
-        this.application.toggleTheme(theme);
-      }
       return;
     }
     this.activeThemes.push(theme.uuid);
