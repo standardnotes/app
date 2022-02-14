@@ -189,12 +189,14 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
           selectedRevision.payload.uuid
         ) as SNNote;
 
-        await application.duplicateItem(originalNote, {
+        const duplicatedItem = await application.duplicateItem(originalNote, {
           ...(selectedRevision.payload.content as PayloadContent),
           title: selectedRevision.payload.content.title
             ? selectedRevision.payload.content.title + ' (copy)'
             : undefined,
         });
+
+        appState.notes.selectNote(duplicatedItem.uuid);
 
         dismissModal();
       }
