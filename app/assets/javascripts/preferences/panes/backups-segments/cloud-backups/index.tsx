@@ -36,12 +36,12 @@ type Props = {
 };
 
 export const CloudLink: FunctionComponent<Props> = ({ application }) => {
-  const [isEntitledForCloudBackups, setIsEntitledForCloudBackups] =
+  const [isEntitledToCloudBackups, setIsEntitledToCloudBackups] =
     useState(false);
   const [isFailedCloudBackupEmailMuted, setIsFailedCloudBackupEmailMuted] =
     useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const additionalClass = isEntitledForCloudBackups ? '' : FADED_CSS_CLASS;
+  const additionalClass = isEntitledToCloudBackups ? '' : FADED_CSS_CLASS;
 
   const loadIsFailedCloudBackupEmailMutedSetting = useCallback(async () => {
     if (!application.getUser()) {
@@ -79,7 +79,7 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
       dailyOneDriveBackupStatus,
     ].every((status) => status === FeatureStatus.Entitled);
 
-    setIsEntitledForCloudBackups(isCloudBackupsAllowed);
+    setIsEntitledToCloudBackups(isCloudBackupsAllowed);
     loadIsFailedCloudBackupEmailMutedSetting();
   }, [application, loadIsFailedCloudBackupEmailMutedSetting]);
 
@@ -113,7 +113,7 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Cloud Backups</Title>
-        {!isEntitledForCloudBackups && (
+        {!isEntitledToCloudBackups && (
           <>
             <Text>
               A <span className={'font-bold'}>Plus</span> or{' '}
@@ -140,7 +140,7 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
                   <CloudBackupProvider
                     application={application}
                     providerName={name}
-                    isEntitledForCloudBackups={isEntitledForCloudBackups}
+                    isEntitledToCloudBackups={isEntitledToCloudBackups}
                   />
                   <HorizontalSeparator
                     classes={`mt-3 mb-3 ${additionalClass}`}

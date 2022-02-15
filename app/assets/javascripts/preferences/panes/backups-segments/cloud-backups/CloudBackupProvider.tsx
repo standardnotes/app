@@ -18,13 +18,13 @@ import { FADED_CSS_CLASS } from '@Views/constants';
 type Props = {
   application: WebApplication;
   providerName: CloudProvider;
-  isEntitledForCloudBackups: boolean;
+  isEntitledToCloudBackups: boolean;
 };
 
 export const CloudBackupProvider: FunctionComponent<Props> = ({
   application,
   providerName,
-  isEntitledForCloudBackups,
+  isEntitledToCloudBackups,
 }) => {
   const [authBegan, setAuthBegan] = useState(false);
   const [successfullyInstalled, setSuccessfullyInstalled] = useState(false);
@@ -177,7 +177,7 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
 
   const isExpanded = authBegan || successfullyInstalled;
   const shouldShowEnableButton = !backupFrequency && !authBegan;
-  const additionalClass = isEntitledForCloudBackups ? '' : FADED_CSS_CLASS;
+  const additionalClass = isEntitledToCloudBackups ? '' : FADED_CSS_CLASS;
 
   return (
     <div

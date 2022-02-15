@@ -35,7 +35,7 @@ export const EmailBackups = observer(({ application }: Props) => {
   >([]);
   const [isFailedBackupEmailMuted, setIsFailedBackupEmailMuted] =
     useState(true);
-  const [isEntitledForEmailBackups, setIsEntitledForEmailBackups] =
+  const [isEntitledToEmailBackups, setIsEntitledToEmailBackups] =
     useState(false);
 
   const loadEmailFrequencySetting = useCallback(async () => {
@@ -66,7 +66,7 @@ export const EmailBackups = observer(({ application }: Props) => {
     const emailBackupsFeatureStatus = application.getFeatureStatus(
       FeatureIdentifier.DailyEmailBackup
     );
-    setIsEntitledForEmailBackups(
+    setIsEntitledToEmailBackups(
       emailBackupsFeatureStatus === FeatureStatus.Entitled
     );
 
@@ -127,7 +127,7 @@ export const EmailBackups = observer(({ application }: Props) => {
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Email Backups</Title>
-        {!isEntitledForEmailBackups && (
+        {!isEntitledToEmailBackups && (
           <>
             <Text>
               A <span className={'font-bold'}>Plus</span> or{' '}
@@ -141,7 +141,7 @@ export const EmailBackups = observer(({ application }: Props) => {
             <HorizontalSeparator classes="mt-3 mb-3" />
           </>
         )}
-        <div className={isEntitledForEmailBackups ? '' : FADED_CSS_CLASS}>
+        <div className={isEntitledToEmailBackups ? '' : FADED_CSS_CLASS}>
           {!isDesktopApplication() && (
             <Text className="mb-3">
               Daily encrypted email backups of your entire data set delivered
