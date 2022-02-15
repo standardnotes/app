@@ -19,6 +19,7 @@ import { Switch } from '@/components/Switch';
 import { HorizontalSeparator } from '@/components/shared/HorizontalSeparator';
 import { FeatureIdentifier } from '@standardnotes/features';
 import { FeatureStatus } from '@standardnotes/snjs';
+import { FADED_CSS_CLASS } from '@Views/constants';
 
 type Props = {
   application: WebApplication;
@@ -140,13 +141,7 @@ export const EmailBackups = observer(({ application }: Props) => {
             <HorizontalSeparator classes="mt-3 mb-3" />
           </>
         )}
-        <div
-          className={
-            isEntitledForEmailBackups
-              ? ''
-              : 'faded cursor-default pointer-events-none'
-          }
-        >
+        <div className={isEntitledForEmailBackups ? '' : FADED_CSS_CLASS}>
           {!isDesktopApplication() && (
             <Text className="mb-3">
               Daily encrypted email backups of your entire data set delivered

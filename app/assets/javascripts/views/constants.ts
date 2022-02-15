@@ -11,3 +11,5 @@ export const FOCUSABLE_BUT_NOT_TABBABLE = -1;
 export const NOTES_LIST_SCROLL_THRESHOLD = 200;
 
 export const BYTES_IN_ONE_MEGABYTE = 1000000;
+
+export const FADED_CSS_CLASS = 'faded cursor-default pointer-events-none';
