@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import { SubscriptionState } from './subscription_state';
+import { SubscriptionState } from '../../../../ui_models/app_state/subscription_state';
 import { Text } from '@/preferences/components';
 import { Button } from '@/components/Button';
 import { WebApplication } from '@/ui_models/application';
@@ -28,8 +28,7 @@ const StatusText = observer(({ subscriptionState }: Props) => {
           Standard Notes{userSubscriptionName ? ' ' : ''}
           {userSubscriptionName}
         </span>{' '}
-        subscription has been canceled
-        {' '}
+        subscription has been canceled{' '}
         {expired ? (
           <span className="font-bold">
             and expired on {expirationDateString}
@@ -52,11 +51,9 @@ const StatusText = observer(({ subscriptionState }: Props) => {
           Standard Notes{userSubscriptionName ? ' ' : ''}
           {userSubscriptionName}
         </span>{' '}
-        subscription {' '}
-        <span className="font-bold">
-          expired on {expirationDateString}
-        </span>
-        . You may resubscribe below if you wish.
+        subscription{' '}
+        <span className="font-bold">expired on {expirationDateString}</span>.
+        You may resubscribe below if you wish.
       </Text>
     );
   }
