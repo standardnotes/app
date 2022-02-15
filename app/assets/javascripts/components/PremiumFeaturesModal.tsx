@@ -5,7 +5,7 @@ import {
 } from '@reach/alert-dialog';
 import { FunctionalComponent } from 'preact';
 import { Icon } from './Icon';
-import PremiumIllustration from '../../svg/il-premium.svg';
+import { PremiumIllustration } from '@standardnotes/stylekit';
 import { useRef } from 'preact/hooks';
 
 type Props = {
