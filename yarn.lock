@@ -2887,10 +2887,10 @@
     "@standardnotes/settings" "^1.11.3"
     "@standardnotes/sncrypto-common" "^1.6.0"
 
-"@standardnotes/stylekit@5.5.0":
-  version "5.5.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/stylekit/-/stylekit-5.5.0.tgz#24d2aef1529bbb09406f95acdd55ba138cf14958"
-  integrity sha512-feAdjOu0tBfpRJh5pH+urji40Xu72tJ2VRWxzkxXX1SYHMbgXnjBNs5R4IWko2kMIQwNGuBOvEg87S5w2/fdhw==
+"@standardnotes/stylekit@5.6.0":
+  version "5.6.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/stylekit/-/stylekit-5.6.0.tgz#52ff63e9bfc823817832786d54e21e8522f061ac"
+  integrity sha512-F6PxkVSKJBZMTYkGT96hVPDvcmpvevAC36KwMnaMtnjMQGfOjMLYJRgef5bJunvOeqo2bvoPX5xcd4EwacTBBw==
   dependencies:
     "@reach/listbox" "^0.15.0"
     "@reach/menu-button" "^0.15.1"
