@@ -13,7 +13,7 @@ import { isDev, openInNewTab } from '@/utils';
 import { Subtitle } from '@/preferences/components';
 import { KeyboardKey } from '@Services/ioService';
 import { FunctionComponent } from 'preact';
-import { FADED_CSS_CLASS } from '@Views/constants';
+import { FADED_CSS_CLASS } from '@/preferences/panes/backups-segments/EmailBackups';
 
 type Props = {
   application: WebApplication;

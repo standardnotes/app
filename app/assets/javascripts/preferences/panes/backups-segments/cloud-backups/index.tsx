@@ -17,7 +17,7 @@ import { CloudProvider, SettingName } from '@standardnotes/settings';
 import { Switch } from '@/components/Switch';
 import { convertStringifiedBooleanToBoolean } from '@/utils';
 import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/strings';
-import { FADED_CSS_CLASS } from '@Views/constants';
+import { FADED_CSS_CLASS } from '@/preferences/panes/backups-segments/EmailBackups';
 
 const providerData = [
   {

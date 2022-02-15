@@ -19,7 +19,8 @@ import { Switch } from '@/components/Switch';
 import { HorizontalSeparator } from '@/components/shared/HorizontalSeparator';
 import { FeatureIdentifier } from '@standardnotes/features';
 import { FeatureStatus } from '@standardnotes/snjs';
-import { FADED_CSS_CLASS } from '@Views/constants';
+
+export const FADED_CSS_CLASS = 'faded cursor-default pointer-events-none';
 
 type Props = {
   application: WebApplication;
