@@ -17,7 +17,6 @@ import { CloudProvider, SettingName } from '@standardnotes/settings';
 import { Switch } from '@/components/Switch';
 import { convertStringifiedBooleanToBoolean } from '@/utils';
 import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/strings';
-import { FADED_CSS_CLASS } from '@/preferences/panes/backups-segments/EmailBackups';
 
 const providerData = [
   {
@@ -41,7 +40,9 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
   const [isFailedCloudBackupEmailMuted, setIsFailedCloudBackupEmailMuted] =
     useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const additionalClass = isEntitledToCloudBackups ? '' : FADED_CSS_CLASS;
+  const additionalClass = isEntitledToCloudBackups
+    ? ''
+    : 'faded cursor-default pointer-events-none';
 
   const loadIsFailedCloudBackupEmailMutedSetting = useCallback(async () => {
     if (!application.getUser()) {

@@ -13,7 +13,6 @@ import { isDev, openInNewTab } from '@/utils';
 import { Subtitle } from '@/preferences/components';
 import { KeyboardKey } from '@Services/ioService';
 import { FunctionComponent } from 'preact';
-import { FADED_CSS_CLASS } from '@/preferences/panes/backups-segments/EmailBackups';
 
 type Props = {
   application: WebApplication;
@@ -177,7 +176,9 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
 
   const isExpanded = authBegan || successfullyInstalled;
   const shouldShowEnableButton = !backupFrequency && !authBegan;
-  const additionalClass = isEntitledToCloudBackups ? '' : FADED_CSS_CLASS;
+  const additionalClass = isEntitledToCloudBackups
+    ? ''
+    : 'faded cursor-default pointer-events-none';
 
   return (
     <div
