@@ -1,5 +1,4 @@
 import { Button } from '@/components/Button';
-import { ConfirmSignoutContainer } from '@/components/ConfirmSignoutModal';
 import { OtherSessionsSignOutContainer } from '@/components/OtherSessionsSignOut';
 import {
   PreferencesGroup,
@@ -58,35 +57,28 @@ const SignOutView: FunctionComponent<{
         appState={appState}
         application={application}
       />
-
-      <ConfirmSignoutContainer appState={appState} application={application} />
     </>
   );
 });
 
 const ClearSessionDataView: FunctionComponent<{
-  application: WebApplication;
   appState: AppState;
-}> = observer(({ application, appState }) => {
+}> = observer(({ appState }) => {
   return (
-    <>
-      <PreferencesGroup>
-        <PreferencesSegment>
-          <Title>Clear session data</Title>
-          <Text>This will delete all local items and preferences.</Text>
-          <div className="min-h-3" />
-          <Button
-            type="danger"
-            label="Clear Session Data"
-            onClick={() => {
-              appState.accountMenu.setSigningOut(true);
-            }}
-          />
-        </PreferencesSegment>
-      </PreferencesGroup>
-
-      <ConfirmSignoutContainer appState={appState} application={application} />
-    </>
+    <PreferencesGroup>
+      <PreferencesSegment>
+        <Title>Clear session data</Title>
+        <Text>This will delete all local items and preferences.</Text>
+        <div className="min-h-3" />
+        <Button
+          type="danger"
+          label="Clear Session Data"
+          onClick={() => {
+            appState.accountMenu.setSigningOut(true);
+          }}
+        />
+      </PreferencesSegment>
+    </PreferencesGroup>
   );
 });
 
@@ -94,9 +86,8 @@ export const SignOutWrapper: FunctionComponent<{
   application: WebApplication;
   appState: AppState;
 }> = observer(({ application, appState }) => {
-  if (!application.hasAccount())
-    return (
-      <ClearSessionDataView appState={appState} application={application} />
-    );
+  if (!application.hasAccount()) {
+    return <ClearSessionDataView appState={appState} />;
+  }
   return <SignOutView appState={appState} application={application} />;
 });
