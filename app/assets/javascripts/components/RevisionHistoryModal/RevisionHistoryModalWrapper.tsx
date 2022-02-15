@@ -143,6 +143,10 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
 
     useEffect(() => {
       const fetchPlanId = async () => {
+        if (!application.hasAccount()) {
+          return;
+        }
+
         const subscription = await application.getUserSubscription();
         const planId = subscription?.planName;
         setUserPlanId(planId);
