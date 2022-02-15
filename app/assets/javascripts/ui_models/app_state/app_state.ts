@@ -33,6 +33,7 @@ import { PreferencesState } from './preferences_state';
 import { PurchaseFlowState } from './purchase_flow_state';
 import { QuickSettingsState } from './quick_settings_state';
 import { SearchOptionsState } from './search_options_state';
+import { SubscriptionState } from './subscription_state';
 import { SyncState } from './sync_state';
 import { TagsState } from './tags_state';
 
@@ -86,6 +87,7 @@ export class AppState {
   readonly features: FeaturesState;
   readonly tags: TagsState;
   readonly notesView: NotesViewState;
+  readonly subscription: SubscriptionState;
 
   isSessionsModalVisible = false;
 
@@ -123,6 +125,10 @@ export class AppState {
       this.appEventObserverRemovers
     );
     this.searchOptions = new SearchOptionsState(
+      application,
+      this.appEventObserverRemovers
+    );
+    this.subscription = new SubscriptionState(
       application,
       this.appEventObserverRemovers
     );
