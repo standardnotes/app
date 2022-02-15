@@ -1,4 +1,7 @@
-import { ApplicationEvent } from '@standardnotes/snjs';
+import {
+  ApplicationEvent,
+  convertTimestampToMilliseconds,
+} from '@standardnotes/snjs';
 import { action, computed, makeObservable, observable } from 'mobx';
 import { WebApplication } from '../application';
 
@@ -27,6 +30,9 @@ export class SubscriptionState {
       availableSubscriptions: observable,
 
       userSubscriptionName: computed,
+      userSubscriptionExpirationDate: computed,
+      isUserSubscriptionExpired: computed,
+      isUserSubscriptionCanceled: computed,
 
       setUserSubscription: action,
       setAvailableSubscriptions: action,
@@ -35,14 +41,14 @@ export class SubscriptionState {
     appObservers.push(
       application.addEventObserver(async () => {
         if (application.hasAccount()) {
-          await this.getSubscriptionInfo();
+          this.getSubscriptionInfo();
         }
       }, ApplicationEvent.Launched),
       application.addEventObserver(async () => {
-        await this.getSubscriptionInfo();
+        this.getSubscriptionInfo();
       }, ApplicationEvent.SignedIn),
       application.addEventObserver(async () => {
-        await this.getSubscriptionInfo();
+        this.getSubscriptionInfo();
       }, ApplicationEvent.UserRolesChanged)
     );
   }
@@ -56,6 +62,28 @@ export class SubscriptionState {
       return this.availableSubscriptions[this.userSubscription.planName].name;
     }
     return '';
+  }
+
+  get userSubscriptionExpirationDate(): Date | undefined {
+    if (!this.userSubscription) {
+      return undefined;
+    }
+
+    return new Date(
+      convertTimestampToMilliseconds(this.userSubscription.endsAt)
+    );
+  }
+
+  get isUserSubscriptionExpired(): boolean {
+    if (!this.userSubscriptionExpirationDate) {
+      return false;
+    }
+
+    return this.userSubscriptionExpirationDate.getTime() < new Date().getTime();
+  }
+
+  get isUserSubscriptionCanceled(): boolean {
+    return Boolean(this.userSubscription?.cancelled);
   }
 
   public setUserSubscription(subscription: Subscription): void {
