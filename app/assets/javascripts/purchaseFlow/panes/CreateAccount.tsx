@@ -5,13 +5,15 @@ import { PurchaseFlowPane } from '@/ui_models/app_state/purchase_flow_state';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
-import Illustration from '../../../svg/create-account-illustration.svg';
-import Circle from '../../../svg/circle-55.svg';
-import BlueDot from '../../../svg/blue-dot.svg';
-import Diamond from '../../../svg/diamond-with-horizontal-lines.svg';
 import { FloatingLabelInput } from '@/components/FloatingLabelInput';
 import { isEmailValid } from '@/utils';
 import { loadPurchaseFlowUrl } from '../PurchaseFlowWrapper';
+import {
+  BlueDotIcon,
+  CircleIcon,
+  DiamondIcon,
+  CreateAccountIllustration,
+} from '@standardnotes/stylekit';
 
 type Props = {
   appState: AppState;
@@ -120,13 +122,13 @@ export const CreateAccount: FunctionComponent<Props> = observer(
 
     return (
       <div className="flex items-center">
-        <Circle className="absolute w-8 h-8 top-40% -left-28" />
-        <BlueDot className="absolute w-4 h-4 top-35% -left-10" />
-        <Diamond className="absolute w-26 h-26 -bottom-5 left-0 -translate-x-1/2 -z-index-1" />
+        <CircleIcon className="absolute w-8 h-8 top-40% -left-28" />
+        <BlueDotIcon className="absolute w-4 h-4 top-35% -left-10" />
+        <DiamondIcon className="absolute w-26 h-26 -bottom-5 left-0 -translate-x-1/2 -z-index-1" />
 
-        <Circle className="absolute w-8 h-8 bottom-35% -right-20" />
-        <BlueDot className="absolute w-4 h-4 bottom-25% -right-10" />
-        <Diamond className="absolute w-18 h-18 top-0 -right-2 translate-x-1/2 -z-index-1" />
+        <CircleIcon className="absolute w-8 h-8 bottom-35% -right-20" />
+        <BlueDotIcon className="absolute w-4 h-4 bottom-25% -right-10" />
+        <DiamondIcon className="absolute w-18 h-18 top-0 -right-2 translate-x-1/2 -z-index-1" />
 
         <div className="mr-12 md:mr-0">
           <h1 className="mt-0 mb-2 text-2xl">Create your free account</h1>
@@ -211,7 +213,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
             />
           </div>
         </div>
-        <Illustration className="md:hidden" />
+        <CreateAccountIllustration className="md:hidden" />
       </div>
     );
   }
