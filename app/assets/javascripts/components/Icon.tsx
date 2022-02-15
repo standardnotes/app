@@ -26,6 +26,7 @@ import {
   EyeOffIcon,
   HashtagIcon,
   HelpIcon,
+  HistoryIcon,
   InfoIcon,
   KeyboardIcon,
   LinkOffIcon,
