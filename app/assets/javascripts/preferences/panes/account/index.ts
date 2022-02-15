@@ -1,4 +1,4 @@
-export { SubscriptionWrapper } from './subscription/SubscriptionWrapper';
+export { Subscription } from './subscription/Subscription';
 export { Sync } from './Sync';
 export { Credentials } from './Credentials';
 export { SignOutWrapper } from './SignOutView';
