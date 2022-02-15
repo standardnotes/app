@@ -35,11 +35,14 @@ type Props = {
 };
 
 export const CloudLink: FunctionComponent<Props> = ({ application }) => {
-  const [isEntitledForCloudBackups, setIsEntitledForCloudBackups] =
+  const [isEntitledToCloudBackups, setIsEntitledToCloudBackups] =
     useState(false);
   const [isFailedCloudBackupEmailMuted, setIsFailedCloudBackupEmailMuted] =
     useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const additionalClass = isEntitledToCloudBackups
+    ? ''
+    : 'faded cursor-default pointer-events-none';
 
   const loadIsFailedCloudBackupEmailMutedSetting = useCallback(async () => {
     if (!application.getUser()) {
@@ -77,7 +80,7 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
       dailyOneDriveBackupStatus,
     ].every((status) => status === FeatureStatus.Entitled);
 
-    setIsEntitledForCloudBackups(isCloudBackupsAllowed);
+    setIsEntitledToCloudBackups(isCloudBackupsAllowed);
     loadIsFailedCloudBackupEmailMutedSetting();
   }, [application, loadIsFailedCloudBackupEmailMutedSetting]);
 
@@ -111,7 +114,7 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Cloud Backups</Title>
-        {!isEntitledForCloudBackups && (
+        {!isEntitledToCloudBackups && (
           <>
             <Text>
               A <span className={'font-bold'}>Plus</span> or{' '}
@@ -125,45 +128,46 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
             <HorizontalSeparator classes="mt-3 mb-3" />
           </>
         )}
-        <div
-          className={
-            isEntitledForCloudBackups
-              ? ''
-              : 'faded cursor-default pointer-events-none'
-          }
-        >
-          <Text>
+        <div>
+          <Text className={additionalClass}>
             Configure the integrations below to enable automatic daily backups
             of your encrypted data set to your third-party cloud provider.
           </Text>
           <div>
-            <HorizontalSeparator classes={'mt-3 mb-3'} />
+            <HorizontalSeparator classes={`mt-3 mb-3 ${additionalClass}`} />
             <div>
               {providerData.map(({ name }) => (
                 <>
                   <CloudBackupProvider
                     application={application}
                     providerName={name}
+                    isEntitledToCloudBackups={isEntitledToCloudBackups}
                   />
-                  <HorizontalSeparator classes={'mt-3 mb-3'} />
+                  <HorizontalSeparator
+                    classes={`mt-3 mb-3 ${additionalClass}`}
+                  />
                 </>
               ))}
             </div>
           </div>
 
-          <Subtitle>Email preferences</Subtitle>
-          <div className="flex items-center justify-between mt-1">
-            <div className="flex flex-col">
-              <Text>Receive a notification email if a cloud backup fails.</Text>
+          <div className={additionalClass}>
+            <Subtitle>Email preferences</Subtitle>
+            <div className="flex items-center justify-between mt-1">
+              <div className="flex flex-col">
+                <Text>
+                  Receive a notification email if a cloud backup fails.
+                </Text>
+              </div>
+              {isLoading ? (
+                <div className={'sk-spinner info small'} />
+              ) : (
+                <Switch
+                  onChange={toggleMuteFailedCloudBackupEmails}
+                  checked={!isFailedCloudBackupEmailMuted}
+                />
+              )}
             </div>
-            {isLoading ? (
-              <div className={'sk-spinner info small'} />
-            ) : (
-              <Switch
-                onChange={toggleMuteFailedCloudBackupEmails}
-                checked={!isFailedCloudBackupEmailMuted}
-              />
-            )}
           </div>
         </div>
       </PreferencesSegment>
