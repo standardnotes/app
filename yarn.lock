@@ -2887,13 +2887,14 @@
     "@standardnotes/settings" "^1.11.3"
     "@standardnotes/sncrypto-common" "^1.6.0"
 
-"@standardnotes/stylekit@5.4.0":
-  version "5.4.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/stylekit/-/stylekit-5.4.0.tgz#205697a3f5265a5214e192b89b1a9847e766dba4"
-  integrity sha512-Q7uAoaCYjLD3pcY0QGfh8vyLZT6JQYZYWpyuXOC+lSU4TvS+/fKbZ3aEGMjLn1d/SD7tlj0k3MwuqwCGkEcogw==
+"@standardnotes/stylekit@5.5.0":
+  version "5.5.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/stylekit/-/stylekit-5.5.0.tgz#24d2aef1529bbb09406f95acdd55ba138cf14958"
+  integrity sha512-feAdjOu0tBfpRJh5pH+urji40Xu72tJ2VRWxzkxXX1SYHMbgXnjBNs5R4IWko2kMIQwNGuBOvEg87S5w2/fdhw==
   dependencies:
     "@reach/listbox" "^0.15.0"
     "@reach/menu-button" "^0.15.1"
+    "@svgr/webpack" "^6.2.1"
     prop-types "^15.7.2"
 
 "@svgr/babel-plugin-add-jsx-attribute@^6.0.0":
