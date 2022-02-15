@@ -30,10 +30,7 @@ import {
 } from 'preact/hooks';
 import { Button } from '../Button';
 import { HistoryListContainer } from './HistoryListContainer';
-import {
-  RevisionContentLocked,
-  SubscriptionPlanId,
-} from './RevisionContentLocked';
+import { RevisionContentLocked } from './RevisionContentLocked';
 import { SelectedRevisionContent } from './SelectedRevisionContent';
 import {
   LegacyHistoryEntry,
@@ -108,7 +105,6 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
       useState<SNNote>();
     const [showContentLockedScreen, setShowContentLockedScreen] =
       useState(false);
-    const [userPlanId, setUserPlanId] = useState<SubscriptionPlanId>();
 
     const [remoteHistory, setRemoteHistory] =
       useState<RemoteRevisionListGroup[]>();
@@ -140,20 +136,6 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
         fetchRemoteHistory();
       }
     }, [fetchRemoteHistory, remoteHistory?.length]);
-
-    useEffect(() => {
-      const fetchPlanId = async () => {
-        if (!application.hasAccount()) {
-          return;
-        }
-
-        const subscription = await application.getUserSubscription();
-        const planId = subscription?.planName;
-        setUserPlanId(planId);
-      };
-
-      fetchPlanId();
-    }, [application]);
 
     const restore = () => {
       if (selectedRevision) {
@@ -295,7 +277,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
                   showContentLockedScreen={showContentLockedScreen}
                 />
                 {showContentLockedScreen && !selectedRevision && (
-                  <RevisionContentLocked planId={userPlanId} />
+                  <RevisionContentLocked appState={appState} />
                 )}
                 {selectedRevision && templateNoteForRevision && (
                   <SelectedRevisionContent
