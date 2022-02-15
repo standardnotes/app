@@ -3,7 +3,7 @@ import { Menu } from '@/components/menu/Menu';
 import { MenuItem, MenuItemType } from '@/components/menu/MenuItem';
 import { usePremiumModal } from '@/components/Premium';
 import { WebApplication } from '@/ui_models/application';
-import { SNComponent } from '@standardnotes/snjs';
+import { FeatureStatus, SNComponent } from '@standardnotes/snjs';
 import { Fragment, FunctionComponent } from 'preact';
 import { useCallback } from 'preact/hooks';
 import { EditorMenuItem, EditorMenuGroup } from '../ChangeEditorOption';
@@ -32,6 +32,20 @@ export const EditorAccordionMenu: FunctionComponent<
   currentEditor,
 }) => {
   const premiumModal = usePremiumModal();
+
+  const isEntitledToEditor = useCallback(
+    (item: EditorMenuItem) => {
+      if (!item.component) {
+        return true;
+      }
+
+      return (
+        application.getFeatureStatus(item.component.identifier) ===
+        FeatureStatus.Entitled
+      );
+    },
+    [application]
+  );
 
   const isSelectedEditor = useCallback(
     (item: EditorMenuItem) => {
@@ -63,7 +77,10 @@ export const EditorAccordionMenu: FunctionComponent<
       }
     }
 
-    if (itemToBeSelected.isPremiumFeature) {
+    if (
+      itemToBeSelected.isPremiumFeature ||
+      !isEntitledToEditor(itemToBeSelected)
+    ) {
       premiumModal.activate(itemToBeSelected.name);
       shouldSelectEditor = false;
     }
@@ -100,22 +117,16 @@ export const EditorAccordionMenu: FunctionComponent<
                   <MenuItem
                     type={MenuItemType.RadioButton}
                     onClick={onClickEditorItem}
-                    className={`sn-dropdown-item py-2 text-input focus:bg-info-backdrop focus:shadow-none ${
-                      item.isPremiumFeature && 'justify-between'
-                    }`}
+                    className={`sn-dropdown-item py-2 text-input focus:bg-info-backdrop focus:shadow-none`}
                     onBlur={closeOnBlur}
+                    checked={isSelectedEditor(item)}
                   >
-                    <div className="flex items-center">
-                      <div
-                        className={`pseudo-radio-btn ${
-                          isSelectedEditor(item)
-                            ? 'pseudo-radio-btn--checked'
-                            : ''
-                        } ml-0.5 mr-2`}
-                      ></div>
+                    <div className="flex flex-grow items-center justify-between">
                       {item.name}
+                      {(item.isPremiumFeature || !isEntitledToEditor(item)) && (
+                        <Icon type="premium-feature" />
+                      )}
                     </div>
-                    {item.isPremiumFeature && <Icon type="premium-feature" />}
                   </MenuItem>
                 );
               })}
