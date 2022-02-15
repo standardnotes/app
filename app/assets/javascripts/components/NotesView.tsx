@@ -238,6 +238,7 @@ export const NotesView: FunctionComponent<Props> = observer(
                           application={application}
                           closeDisplayOptionsMenu={toggleDisplayOptionsMenu}
                           closeOnBlur={closeDisplayOptMenuOnBlur}
+                          isOpen={showDisplayOptionsMenu}
                         />
                       )}
                     </DisclosurePanel>
