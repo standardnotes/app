@@ -10,7 +10,7 @@ import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import AccountIllustration from '../../../../svg/il-account.svg';
+import { AccountIllustration } from '@standardnotes/stylekit';
 
 export const Authentication: FunctionComponent<{
   application: WebApplication;
