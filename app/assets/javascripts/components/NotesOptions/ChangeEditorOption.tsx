@@ -201,7 +201,10 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
             newMenuPosition.top !== 'auto'
           ) {
             setChangeEditorMenuMaxHeight(
-              clientHeight - newMenuPosition.top - footerHeightInPx - 2
+              clientHeight -
+                newMenuPosition.top -
+                footerHeightInPx -
+                MENU_MARGIN_FROM_APP_BORDER
             );
           }
 

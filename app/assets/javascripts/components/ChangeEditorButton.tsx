@@ -1,5 +1,6 @@
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
+import { MENU_MARGIN_FROM_APP_BORDER } from '@/views/constants';
 import {
   Disclosure,
   DisclosureButton,
@@ -33,7 +34,8 @@ export const ChangeEditorButton: FunctionComponent<Props> = observer(
     const [maxHeight, setMaxHeight] = useState<number | 'auto'>('auto');
     const buttonRef = useRef<HTMLButtonElement>(null);
     const panelRef = useRef<HTMLDivElement>(null);
-    const [closeOnBlur] = useCloseOnBlur(panelRef, setOpen);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [closeOnBlur] = useCloseOnBlur(containerRef, setOpen);
     const [editors] = useState<SNComponent[]>(() =>
       application.componentManager
         .componentsForArea(ComponentArea.Editor)
@@ -66,7 +68,12 @@ export const ChangeEditorButton: FunctionComponent<Props> = observer(
         const footerHeightInPx = footerElementRect?.height;
 
         if (footerHeightInPx) {
-          setMaxHeight(clientHeight - rect.bottom - footerHeightInPx - 2);
+          setMaxHeight(
+            clientHeight -
+              rect.bottom -
+              footerHeightInPx -
+              MENU_MARGIN_FROM_APP_BORDER
+          );
         }
 
         setPosition({
@@ -84,46 +91,48 @@ export const ChangeEditorButton: FunctionComponent<Props> = observer(
     };
 
     return (
-      <Disclosure open={open} onChange={toggleChangeEditorMenu}>
-        <DisclosureButton
-          onKeyDown={(event) => {
-            if (event.key === 'Escape') {
-              setOpen(false);
-            }
-          }}
-          onBlur={closeOnBlur}
-          ref={buttonRef}
-          className="sn-icon-button"
-        >
-          <VisuallyHidden>Change editor</VisuallyHidden>
-          <Icon type="editor" className="block" />
-        </DisclosureButton>
-        <DisclosurePanel
-          onKeyDown={(event) => {
-            if (event.key === 'Escape') {
-              setOpen(false);
-              buttonRef.current?.focus();
-            }
-          }}
-          ref={panelRef}
-          style={{
-            ...position,
-            maxHeight,
-          }}
-          className="sn-dropdown sn-dropdown--animated min-w-68 max-h-120 max-w-xs flex flex-col overflow-y-auto fixed"
-          onBlur={closeOnBlur}
-        >
-          <ChangeEditorMenu
-            closeOnBlur={closeOnBlur}
-            application={application}
-            isOpen={open}
-            currentEditor={currentEditor}
-            setSelectedEditor={setCurrentEditor}
-            note={note}
-            groups={editorMenuGroups}
-          />
-        </DisclosurePanel>
-      </Disclosure>
+      <div ref={containerRef}>
+        <Disclosure open={open} onChange={toggleChangeEditorMenu}>
+          <DisclosureButton
+            onKeyDown={(event) => {
+              if (event.key === 'Escape') {
+                setOpen(false);
+              }
+            }}
+            onBlur={closeOnBlur}
+            ref={buttonRef}
+            className="sn-icon-button"
+          >
+            <VisuallyHidden>Change editor</VisuallyHidden>
+            <Icon type="editor" className="block" />
+          </DisclosureButton>
+          <DisclosurePanel
+            onKeyDown={(event) => {
+              if (event.key === 'Escape') {
+                setOpen(false);
+                buttonRef.current?.focus();
+              }
+            }}
+            ref={panelRef}
+            style={{
+              ...position,
+              maxHeight,
+            }}
+            className="sn-dropdown sn-dropdown--animated min-w-68 max-h-120 max-w-xs flex flex-col overflow-y-auto fixed"
+            onBlur={closeOnBlur}
+          >
+            <ChangeEditorMenu
+              closeOnBlur={closeOnBlur}
+              application={application}
+              isOpen={open}
+              currentEditor={currentEditor}
+              setSelectedEditor={setCurrentEditor}
+              note={note}
+              groups={editorMenuGroups}
+            />
+          </DisclosurePanel>
+        </Disclosure>
+      </div>
     );
   }
 );
