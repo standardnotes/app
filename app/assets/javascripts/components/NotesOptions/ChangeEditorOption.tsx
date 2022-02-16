@@ -201,7 +201,10 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
             newMenuPosition.top !== 'auto'
           ) {
             setChangeEditorMenuMaxHeight(
-              clientHeight - newMenuPosition.top - footerHeightInPx - 2
+              clientHeight -
+                newMenuPosition.top -
+                footerHeightInPx -
+                MENU_MARGIN_FROM_APP_BORDER
             );
           }
 
@@ -225,7 +228,7 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
         className="sn-dropdown-item justify-between"
       >
         <div className="flex items-center">
-          <Icon type="editor" className="color-neutral mr-2" />
+          <Icon type="dashboard" className="color-neutral mr-2" />
           Change editor
         </div>
         <Icon type="chevron-right" className="color-neutral" />
