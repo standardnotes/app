@@ -487,6 +487,11 @@
   padding-right: 0;
 }
 
+.px-2\.5 {
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
+}
+
 .px-4 {
   padding-left: 1rem;
   padding-right: 1rem;
@@ -853,7 +858,7 @@
 }
 
 .dimmed {
-  opacity: .5;
+  opacity: 0.5;
   cursor: default;
   pointer-events: none;
 }
@@ -864,4 +869,13 @@
 
 .bg-note-size-warning {
   background-color: rgba(235, 173, 0, 0.08);
+}
+
+.sn-component .border-y-1px {
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+}
+
+.sn-component .border-t-0 {
+  border-top-width: 0;
 }
