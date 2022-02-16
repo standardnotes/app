@@ -106,12 +106,11 @@ export class ThemeManager extends ApplicationService {
         ) as SNTheme[];
         themes.forEach((theme) => {
           if (
+            theme.active &&
             this.application.getFeatureStatus(theme.identifier) !==
-              FeatureStatus.Entitled &&
-            theme.active
+              FeatureStatus.Entitled
           ) {
             this.application.toggleTheme(theme);
-            return;
           }
         });
       }
