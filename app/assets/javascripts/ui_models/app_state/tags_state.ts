@@ -95,6 +95,7 @@ export class TagsState {
       hasAtLeastOneFolder: computed,
       allNotesCount_: observable,
       allNotesCount: computed,
+      setAllNotesCount: action,
 
       selected_: observable.ref,
       previouslySelected_: observable.ref,
@@ -148,9 +149,7 @@ export class TagsState {
     appEventListeners.push(
       this.application.addNoteCountChangeObserver((tagUuid) => {
         if (!tagUuid) {
-          runInAction(() => {
-            this.allNotesCount_ = this.application.allCountableNotesCount();
-          });
+          this.setAllNotesCount(this.application.allCountableNotesCount());
         } else {
           this.tagsCountsState.update([
             this.application.findItem(tagUuid) as SNTag,
@@ -236,6 +235,10 @@ export class TagsState {
 
   get tagsCount(): number {
     return this.tags.length;
+  }
+
+  setAllNotesCount(allNotesCount: number) {
+    this.allNotesCount_ = allNotesCount;
   }
 
   public get allNotesCount(): number {
