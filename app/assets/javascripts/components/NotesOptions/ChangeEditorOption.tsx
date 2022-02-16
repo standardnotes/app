@@ -30,7 +30,7 @@ import { FunctionComponent } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { Icon } from '../Icon';
 import { createEditorMenuGroups } from './changeEditor/createEditorMenuGroups';
-import { EditorAccordionMenu } from './changeEditor/EditorAccordionMenu';
+import { ChangeEditorMenu } from './changeEditor/ChangeEditorMenu';
 
 type ChangeEditorOptionProps = {
   appState: AppState;
@@ -59,6 +59,7 @@ type MenuPositionStyle = {
   right?: number | 'auto';
   bottom: number | 'auto';
   left?: number | 'auto';
+  visibility?: 'hidden' | 'visible';
 };
 
 const calculateMenuPosition = (
@@ -102,11 +103,13 @@ const calculateMenuPosition = (
       position = {
         bottom: positionBottom,
         right: clientWidth - buttonRect.left,
+        visibility: 'hidden',
       };
     } else {
       position = {
         bottom: positionBottom,
         left: buttonRect.right,
+        visibility: 'hidden',
       };
     }
   }
@@ -121,12 +124,14 @@ const calculateMenuPosition = (
           ...position,
           top: MENU_MARGIN_FROM_APP_BORDER + buttonRect.top - buttonRect.height,
           bottom: 'auto',
+          visibility: 'visible',
         };
       } else {
         return {
           ...position,
           top: MENU_MARGIN_FROM_APP_BORDER,
           bottom: 'auto',
+          visibility: 'visible',
         };
       }
     }
@@ -135,8 +140,6 @@ const calculateMenuPosition = (
   return position;
 };
 
-const TIME_IN_MS_TO_WAIT_BEFORE_REPAINT = 1;
-
 export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
   application,
   appState,
@@ -144,6 +147,7 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
   note,
 }) => {
   const [changeEditorMenuOpen, setChangeEditorMenuOpen] = useState(false);
+  const [changeEditorMenuVisible, setChangeEditorMenuVisible] = useState(false);
   const [changeEditorMenuPosition, setChangeEditorMenuPosition] =
     useState<MenuPositionStyle>({
       right: 0,
@@ -194,8 +198,9 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
 
         if (newMenuPosition) {
           setChangeEditorMenuPosition(newMenuPosition);
+          setChangeEditorMenuVisible(true);
         }
-      }, TIME_IN_MS_TO_WAIT_BEFORE_REPAINT);
+      });
     }
   }, [changeEditorMenuOpen]);
 
@@ -303,12 +308,12 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
         }}
         className="sn-dropdown flex flex-col max-h-120 min-w-68 fixed overflow-y-auto"
       >
-        <EditorAccordionMenu
+        <ChangeEditorMenu
           application={application}
           closeOnBlur={closeOnBlur}
           currentEditor={selectedEditor}
           groups={editorMenuGroups}
-          isOpen={changeEditorMenuOpen}
+          isOpen={changeEditorMenuVisible}
           selectComponent={selectComponent}
         />
       </DisclosurePanel>
