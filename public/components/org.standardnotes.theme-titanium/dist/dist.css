@@ -36,6 +36,7 @@
   --sn-desktop-titlebar-ui-color: var(--foreground-color);
   --sn-desktop-titlebar-ui-hover-color: var(--background-color);
   --sn-stylekit-menu-border: 1px solid #b2b2b3;
+  --sn-stylekit-grey-0: #626166;
   --sn-stylekit-grey-4-opacity-variant: #e9e9e9;
 }
 

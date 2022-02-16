@@ -2,7 +2,8 @@ import { JSXInternal } from 'preact/src/jsx';
 import TargetedEvent = JSXInternal.TargetedEvent;
 import TargetedMouseEvent = JSXInternal.TargetedMouseEvent;
 
-import { FunctionComponent } from 'preact';
+import { ComponentChildren, FunctionComponent, Ref } from 'preact';
+import { forwardRef } from 'preact/compat';
 
 const baseClass = `rounded px-4 py-1.75 font-bold text-sm fit-content`;
 
@@ -14,30 +15,46 @@ const buttonClasses: { [type in ButtonType]: string } = {
   danger: `${baseClass} bg-default color-danger border-solid border-main border-1 focus:bg-contrast hover:bg-contrast`,
 };
 
-export const Button: FunctionComponent<{
+type ButtonProps = {
+  children?: ComponentChildren;
   className?: string;
   type: ButtonType;
-  label: string;
+  label?: string;
   onClick: (
     event:
       | TargetedEvent<HTMLFormElement>
       | TargetedMouseEvent<HTMLButtonElement>
   ) => void;
   disabled?: boolean;
-}> = ({ type, label, className = '', onClick, disabled = false }) => {
-  const buttonClass = buttonClasses[type];
-  const cursorClass = disabled ? 'cursor-default' : 'cursor-pointer';
-
-  return (
-    <button
-      className={`${buttonClass} ${cursorClass} ${className}`}
-      onClick={(e) => {
-        onClick(e);
-        e.preventDefault();
-      }}
-      disabled={disabled}
-    >
-      {label}
-    </button>
-  );
 };
+
+export const Button: FunctionComponent<ButtonProps> = forwardRef(
+  (
+    {
+      type,
+      label,
+      className = '',
+      onClick,
+      disabled = false,
+      children,
+    }: ButtonProps,
+    ref: Ref<HTMLButtonElement>
+  ) => {
+    const buttonClass = buttonClasses[type];
+    const cursorClass = disabled ? 'cursor-default' : 'cursor-pointer';
+
+    return (
+      <button
+        className={`${buttonClass} ${cursorClass} ${className}`}
+        onClick={(e) => {
+          onClick(e);
+          e.preventDefault();
+        }}
+        disabled={disabled}
+        ref={ref}
+      >
+        {label ?? children}
+      </button>
+    );
+  }
+);

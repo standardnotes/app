@@ -1,9 +1,8 @@
 import { observer } from 'mobx-react-lite';
-import { SubscriptionState } from './subscription_state';
+import { SubscriptionState } from '../../../../ui_models/app_state/subscription_state';
 import { Text } from '@/preferences/components';
 import { Button } from '@/components/Button';
 import { WebApplication } from '@/ui_models/application';
-import { convertTimestampToMilliseconds } from '@standardnotes/snjs';
 import { openSubscriptionDashboard } from '@/hooks/manageSubscription';
 
 type Props = {
@@ -12,15 +11,15 @@ type Props = {
 };
 
 const StatusText = observer(({ subscriptionState }: Props) => {
-  const { userSubscription, userSubscriptionName } = subscriptionState;
-  const expirationDate = new Date(
-    convertTimestampToMilliseconds(userSubscription!.endsAt)
-  );
-  const expirationDateString = expirationDate.toLocaleString();
-  const expired = expirationDate.getTime() < new Date().getTime();
-  const canceled = userSubscription!.cancelled;
+  const {
+    userSubscriptionName,
+    userSubscriptionExpirationDate,
+    isUserSubscriptionExpired,
+    isUserSubscriptionCanceled,
+  } = subscriptionState;
+  const expirationDateString = userSubscriptionExpirationDate?.toLocaleString();
 
-  if (canceled) {
+  if (isUserSubscriptionCanceled) {
     return (
       <Text className="mt-1">
         Your{' '}
@@ -28,9 +27,8 @@ const StatusText = observer(({ subscriptionState }: Props) => {
           Standard Notes{userSubscriptionName ? ' ' : ''}
           {userSubscriptionName}
         </span>{' '}
-        subscription has been canceled
-        {' '}
-        {expired ? (
+        subscription has been canceled{' '}
+        {isUserSubscriptionExpired ? (
           <span className="font-bold">
             and expired on {expirationDateString}
           </span>
@@ -44,7 +42,7 @@ const StatusText = observer(({ subscriptionState }: Props) => {
     );
   }
 
-  if (expired) {
+  if (isUserSubscriptionExpired) {
     return (
       <Text className="mt-1">
         Your{' '}
@@ -52,11 +50,9 @@ const StatusText = observer(({ subscriptionState }: Props) => {
           Standard Notes{userSubscriptionName ? ' ' : ''}
           {userSubscriptionName}
         </span>{' '}
-        subscription {' '}
-        <span className="font-bold">
-          expired on {expirationDateString}
-        </span>
-        . You may resubscribe below if you wish.
+        subscription{' '}
+        <span className="font-bold">expired on {expirationDateString}</span>.
+        You may resubscribe below if you wish.
       </Text>
     );
   }

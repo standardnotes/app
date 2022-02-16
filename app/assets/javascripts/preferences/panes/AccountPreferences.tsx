@@ -1,9 +1,9 @@
 import {
   Sync,
-  SubscriptionWrapper,
+  Subscription,
   Credentials,
   SignOutWrapper,
-  Authentication
+  Authentication,
 } from '@/preferences/panes/account';
 import { PreferencesPane } from '@/preferences/components';
 import { observer } from 'mobx-react-lite';
@@ -16,25 +16,18 @@ type Props = {
 };
 
 export const AccountPreferences = observer(
-  ({ application, appState }: Props) => {
-
-    if (!application.hasAccount()) {
-      return (
-        <PreferencesPane>
-          <Authentication application={application} appState={appState} />
-          <SubscriptionWrapper application={application} />
-          <SignOutWrapper application={application} appState={appState} />
-        </PreferencesPane>
-      );
-    }
-
-    return (
-      <PreferencesPane>
-        <Credentials application={application} appState={appState} />
-        <Sync application={application} />
-        <SubscriptionWrapper application={application} />
-        <SignOutWrapper application={application} appState={appState} />
-      </PreferencesPane>
-    );
-  }
+  ({ application, appState }: Props) => (
+    <PreferencesPane>
+      {!application.hasAccount() ? (
+        <Authentication application={application} appState={appState} />
+      ) : (
+        <>
+          <Credentials application={application} appState={appState} />
+          <Sync application={application} />
+        </>
+      )}
+      <Subscription application={application} appState={appState} />
+      <SignOutWrapper application={application} appState={appState} />
+    </PreferencesPane>
+  )
 );

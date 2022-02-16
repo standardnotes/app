@@ -34,7 +34,7 @@ export function startErrorReporting(): void {
     const storedUserId = storage.get(StorageKey.AnonymousUserId);
     let anonymousUserId: string;
     if (storedUserId === null) {
-      anonymousUserId = WebCrypto.generateUUIDSync();
+      anonymousUserId = WebCrypto.generateUUID();
       storage.set(StorageKey.AnonymousUserId, anonymousUserId);
     } else {
       anonymousUserId = storedUserId;

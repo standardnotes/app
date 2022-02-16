@@ -1,6 +1,6 @@
 {
   "name": "sn-token-vault",
-  "version": "2.0.9",
+  "version": "2.0.10",
   "main": "dist/dist.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

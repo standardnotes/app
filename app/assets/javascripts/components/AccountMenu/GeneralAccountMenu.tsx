@@ -107,7 +107,11 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
           </>
         )}
         <div className="h-1px my-2 bg-border"></div>
-        <Menu a11yLabel="General account menu" closeMenu={closeMenu}>
+        <Menu
+          isOpen={appState.accountMenu.show}
+          a11yLabel="General account menu"
+          closeMenu={closeMenu}
+        >
           {user ? (
             <MenuItem
               type={MenuItemType.IconButton}
