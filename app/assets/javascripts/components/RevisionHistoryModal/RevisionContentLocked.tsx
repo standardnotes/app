@@ -11,7 +11,7 @@ const getPlanHistoryDuration = (planName: string | undefined) => {
     case 'Plus':
       return '365 days';
     default:
-      return 'the current session';
+      return "the current session's changes";
   }
 };
 
