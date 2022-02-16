@@ -40,9 +40,9 @@
     "binary": "4e08fb2de17ab480787a1e042b2d43106e2798093e760fc507ed773401d27c71"
   },
   "org.standardnotes.bold-editor": {
-    "version": "1.3.2",
-    "base64": "7a4fec03c556d17aa2f14a9157a20754c429a54843504211017fc21ca6d8b10e",
-    "binary": "80ff2f747607b6668c5e9b439203d89740de21b822d01b6b4d2051bf232a80f3"
+    "version": "1.3.3",
+    "base64": "51a5d2e77aacbcfda21b4a3429e9fe3fb6b61175e5188b6ec26854432ac41fc2",
+    "binary": "a30533208fbc33f115786ff912b6d605052adda03a62b47513ce390931fe11d1"
   },
   "org.standardnotes.plus-editor": {
     "version": "1.6.1",

@@ -34,7 +34,6 @@ import { PinNoteButton } from '../PinNoteButton';
 import { NotesOptionsPanel } from '../NotesOptionsPanel';
 import { NoteTagsContainer } from '../NoteTagsContainer';
 import { ActionsMenu } from '../ActionsMenu';
-import { HistoryMenu } from '../HistoryMenu';
 import { ComponentView } from '../ComponentView';
 import { PanelSide, PanelResizer, PanelResizeType } from '../PanelResizer';
 import { ElementIds } from '@/element_ids';
@@ -109,7 +108,6 @@ type State = {
   noteStatus?: NoteStatus;
   saveError?: any;
   showActionsMenu: boolean;
-  showHistoryMenu: boolean;
   showLockedIcon: boolean;
   showProtectedWarning: boolean;
   spellcheck: boolean;
@@ -176,7 +174,6 @@ export class NoteView extends PureComponent<Props, State> {
       noteStatus: undefined,
       noteLocked: this.controller.note.locked,
       showActionsMenu: false,
-      showHistoryMenu: false,
       showLockedIcon: true,
       showProtectedWarning: false,
       spellcheck: true,
@@ -521,10 +518,10 @@ export class NoteView extends PureComponent<Props, State> {
   };
 
   closeAllMenus = (exclude?: string) => {
-    if (!(this.state.showActionsMenu || this.state.showHistoryMenu)) {
+    if (!this.state.showActionsMenu) {
       return;
     }
-    const allMenus = ['showActionsMenu', 'showHistoryMenu'];
+    const allMenus = ['showActionsMenu'];
     const menuState: any = {};
     for (const candidate of allMenus) {
       if (candidate !== exclude) {
@@ -1119,21 +1116,6 @@ export class NoteView extends PureComponent<Props, State> {
                     {this.state.showActionsMenu && (
                       <ActionsMenu
                         note={this.note}
-                        application={this.application}
-                      />
-                    )}
-                  </div>
-                  <div
-                    className={
-                      (this.state.showHistoryMenu ? 'selected' : '') +
-                      ' sk-app-bar-item'
-                    }
-                    onClick={() => this.toggleMenu('showHistoryMenu')}
-                  >
-                    <div className="sk-label">History</div>
-                    {this.state.showHistoryMenu && (
-                      <HistoryMenu
-                        item={this.note}
                         application={this.application}
                       />
                     )}
