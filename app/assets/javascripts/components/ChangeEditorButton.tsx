@@ -104,7 +104,7 @@ export const ChangeEditorButton: FunctionComponent<Props> = observer(
             className="sn-icon-button"
           >
             <VisuallyHidden>Change editor</VisuallyHidden>
-            <Icon type="editor" className="block" />
+            <Icon type="dashboard" className="block" />
           </DisclosureButton>
           <DisclosurePanel
             onKeyDown={(event) => {
