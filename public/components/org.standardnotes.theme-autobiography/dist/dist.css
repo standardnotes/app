@@ -37,6 +37,7 @@
   --sn-desktop-titlebar-border-color: var(--border-color);
   --sn-desktop-titlebar-ui-color: var(--foreground-color);
   --sn-desktop-titlebar-ui-hover-color: var(--highlight-color);
+  --sn-stylekit-grey-0: #7e582a;
   --sn-stylekit-grey-1: #a37337;
   --sn-stylekit-grey-4-opacity-variant: #c9995e3d;
   --sn-stylekit-grey-5: #e9d9c7;
