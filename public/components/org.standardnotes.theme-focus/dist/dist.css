@@ -41,6 +41,7 @@
   --sn-stylekit-scrollbar-track-border-color: var(--border-color);
   --sn-stylekit-scrollbar-thumb-color: var(--sn-stylekit-info-color);
   --sn-stylekit-menu-border: 1px solid #424242;
+  --sn-stylekit-grey-0: #999999;
   --sn-stylekit-grey-5: #1d1f20;
 }
 
