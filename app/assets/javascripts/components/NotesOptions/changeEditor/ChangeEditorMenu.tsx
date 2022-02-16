@@ -9,7 +9,7 @@ import { useCallback } from 'preact/hooks';
 import { EditorMenuItem, EditorMenuGroup } from '../ChangeEditorOption';
 import { PLAIN_EDITOR_NAME } from './createEditorMenuGroups';
 
-type EditorAccordionMenuProps = {
+type ChangeEditorMenuProps = {
   application: WebApplication;
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void;
   groups: EditorMenuGroup[];
@@ -21,9 +21,7 @@ type EditorAccordionMenuProps = {
 const getGroupId = (group: EditorMenuGroup) =>
   group.title.toLowerCase().replace(/\s/, '-');
 
-export const EditorAccordionMenu: FunctionComponent<
-  EditorAccordionMenuProps
-> = ({
+export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   application,
   closeOnBlur,
   groups,
@@ -35,14 +33,22 @@ export const EditorAccordionMenu: FunctionComponent<
 
   const isEntitledToEditor = useCallback(
     (item: EditorMenuItem) => {
-      if (!item.component) {
+      const isPlainEditor = !item.component;
+
+      if (item.isPremiumFeature) {
+        return false;
+      }
+
+      if (isPlainEditor) {
         return true;
       }
 
-      return (
-        application.getFeatureStatus(item.component.identifier) ===
-        FeatureStatus.Entitled
-      );
+      if (item.component) {
+        return (
+          application.getFeatureStatus(item.component.identifier) ===
+          FeatureStatus.Entitled
+        );
+      }
     },
     [application]
   );
@@ -94,12 +100,16 @@ export const EditorAccordionMenu: FunctionComponent<
     <Menu className="py-1" a11yLabel="Change editor menu" isOpen={isOpen}>
       {groups
         .filter((group) => group.items && group.items.length)
-        .map((group) => {
+        .map((group, index) => {
           const groupId = getGroupId(group);
 
           return (
             <Fragment key={groupId}>
-              <div className="flex items-center px-3 my-2 text-xs font-semibold color-text">
+              <div
+                className={`flex items-center px-2.5 py-2 text-xs font-semibold color-text border-0 border-y-1px border-solid border-main ${
+                  index === 0 ? 'border-t-0 mb-2' : 'my-2'
+                }`}
+              >
                 {group.icon && (
                   <Icon
                     type={group.icon}
