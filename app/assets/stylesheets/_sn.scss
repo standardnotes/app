@@ -450,6 +450,10 @@
   padding: 3rem;
 }
 
+.sn-component .pt-0\.5 {
+  padding-top: 0.125rem;
+}
+
 .pt-1 {
   padding-top: 0.25rem;
 }
@@ -470,7 +474,7 @@
   padding-top: 1.5rem;
 }
 
-.pb-1 {
+.sn-component .pb-1 {
   padding-bottom: 0.25rem;
 }
 
@@ -485,6 +489,11 @@
 .sn-component .px-0 {
   padding-left: 0;
   padding-right: 0;
+}
+
+.px-2\.5 {
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
 }
 
 .px-4 {
@@ -853,7 +862,7 @@
 }
 
 .dimmed {
-  opacity: .5;
+  opacity: 0.5;
   cursor: default;
   pointer-events: none;
 }
@@ -864,4 +873,13 @@
 
 .bg-note-size-warning {
   background-color: rgba(235, 173, 0, 0.08);
+}
+
+.sn-component .border-y-1px {
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+}
+
+.sn-component .border-t-0 {
+  border-top-width: 0;
 }

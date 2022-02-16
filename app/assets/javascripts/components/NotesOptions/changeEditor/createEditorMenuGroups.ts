@@ -7,8 +7,6 @@ import {
 import { ContentType, SNComponent } from '@standardnotes/snjs';
 import { EditorMenuItem, EditorMenuGroup } from '../ChangeEditorOption';
 
-/** @todo Implement interchangeable alert */
-
 export const PLAIN_EDITOR_NAME = 'Plain Editor';
 
 type EditorGroup = NoteType | 'plain' | 'others';
