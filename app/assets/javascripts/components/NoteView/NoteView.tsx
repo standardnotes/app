@@ -38,6 +38,7 @@ import { HistoryMenu } from '../HistoryMenu';
 import { ComponentView } from '../ComponentView';
 import { PanelSide, PanelResizer, PanelResizeType } from '../PanelResizer';
 import { ElementIds } from '@/element_ids';
+import { ChangeEditorButton } from '../ChangeEditorButton';
 
 const MINIMUM_STATUS_DURATION = 400;
 const TEXTAREA_DEBOUNCE = 100;
@@ -1073,23 +1074,30 @@ export class NoteView extends PureComponent<Props, State> {
                       <div className="desc">{this.state.noteStatus.desc}</div>
                     )}
                   </div>
-                  <>
-                    <div className="mr-3">
-                      <PinNoteButton
-                        appState={this.appState}
-                        onClickPreprocessing={
-                          this.ensureNoteIsInsertedBeforeUIAction
-                        }
-                      />
-                    </div>
-                    <NotesOptionsPanel
+                  <div className="mr-3">
+                    <ChangeEditorButton
                       application={this.application}
                       appState={this.appState}
                       onClickPreprocessing={
                         this.ensureNoteIsInsertedBeforeUIAction
                       }
                     />
-                  </>
+                  </div>
+                  <div className="mr-3">
+                    <PinNoteButton
+                      appState={this.appState}
+                      onClickPreprocessing={
+                        this.ensureNoteIsInsertedBeforeUIAction
+                      }
+                    />
+                  </div>
+                  <NotesOptionsPanel
+                    application={this.application}
+                    appState={this.appState}
+                    onClickPreprocessing={
+                      this.ensureNoteIsInsertedBeforeUIAction
+                    }
+                  />
                 </div>
               </div>
               <NoteTagsContainer appState={this.appState} />
