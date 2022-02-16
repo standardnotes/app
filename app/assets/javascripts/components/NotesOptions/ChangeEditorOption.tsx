@@ -1,16 +1,10 @@
 import { KeyboardKey } from '@/services/ioService';
-import { STRING_EDIT_LOCKED_ATTEMPT } from '@/strings';
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import {
   MENU_MARGIN_FROM_APP_BORDER,
   MAX_MENU_SIZE_MULTIPLIER,
 } from '@/views/constants';
-import {
-  reloadFont,
-  transactionForAssociateComponentWithCurrentNote,
-  transactionForDisassociateComponentWithCurrentNote,
-} from '@/components/NoteView/NoteView';
 import {
   Disclosure,
   DisclosureButton,
@@ -19,12 +13,8 @@ import {
 import {
   ComponentArea,
   IconType,
-  ItemMutator,
-  NoteMutator,
-  PrefKey,
   SNComponent,
   SNNote,
-  TransactionalMutation,
 } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
@@ -142,12 +132,14 @@ const calculateMenuPosition = (
 
 export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
   application,
-  appState,
   closeOnBlur,
   note,
 }) => {
   const [changeEditorMenuOpen, setChangeEditorMenuOpen] = useState(false);
   const [changeEditorMenuVisible, setChangeEditorMenuVisible] = useState(false);
+  const [changeEditorMenuMaxHeight, setChangeEditorMenuMaxHeight] = useState<
+    number | 'auto'
+  >('auto');
   const [changeEditorMenuPosition, setChangeEditorMenuPosition] =
     useState<MenuPositionStyle>({
       right: 0,
@@ -197,84 +189,28 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
         );
 
         if (newMenuPosition) {
+          const { clientHeight } = document.documentElement;
+          const footerElementRect = document
+            .getElementById('footer-bar')
+            ?.getBoundingClientRect();
+          const footerHeightInPx = footerElementRect?.height;
+
+          if (
+            footerHeightInPx &&
+            newMenuPosition.top &&
+            newMenuPosition.top !== 'auto'
+          ) {
+            setChangeEditorMenuMaxHeight(
+              clientHeight - newMenuPosition.top - footerHeightInPx - 2
+            );
+          }
+
           setChangeEditorMenuPosition(newMenuPosition);
           setChangeEditorMenuVisible(true);
         }
       });
     }
   }, [changeEditorMenuOpen]);
-
-  const selectComponent = async (component: SNComponent | null) => {
-    if (component) {
-      if (component.conflictOf) {
-        application.changeAndSaveItem(component.uuid, (mutator) => {
-          mutator.conflictOf = undefined;
-        });
-      }
-    }
-
-    const transactions: TransactionalMutation[] = [];
-
-    if (appState.getActiveNoteController()?.isTemplateNote) {
-      await appState.getActiveNoteController().insertTemplatedNote();
-    }
-
-    if (note.locked) {
-      application.alertService.alert(STRING_EDIT_LOCKED_ATTEMPT);
-      return;
-    }
-
-    if (!component) {
-      if (!note.prefersPlainEditor) {
-        transactions.push({
-          itemUuid: note.uuid,
-          mutate: (m: ItemMutator) => {
-            const noteMutator = m as NoteMutator;
-            noteMutator.prefersPlainEditor = true;
-          },
-        });
-      }
-      const currentEditor = application.componentManager.editorForNote(note);
-      if (currentEditor?.isExplicitlyEnabledForItem(note.uuid)) {
-        transactions.push(
-          transactionForDisassociateComponentWithCurrentNote(
-            currentEditor,
-            note
-          )
-        );
-      }
-      reloadFont(application.getPreference(PrefKey.EditorMonospaceEnabled));
-    } else if (component.area === ComponentArea.Editor) {
-      const currentEditor = application.componentManager.editorForNote(note);
-      if (currentEditor && component.uuid !== currentEditor.uuid) {
-        transactions.push(
-          transactionForDisassociateComponentWithCurrentNote(
-            currentEditor,
-            note
-          )
-        );
-      }
-      const prefersPlain = note.prefersPlainEditor;
-      if (prefersPlain) {
-        transactions.push({
-          itemUuid: note.uuid,
-          mutate: (m: ItemMutator) => {
-            const noteMutator = m as NoteMutator;
-            noteMutator.prefersPlainEditor = false;
-          },
-        });
-      }
-      transactions.push(
-        transactionForAssociateComponentWithCurrentNote(component, note)
-      );
-    }
-
-    await application.runTransactionalMutations(transactions);
-    /** Dirtying can happen above */
-    application.sync();
-
-    setSelectedEditor(application.componentManager.editorForNote(note));
-  };
 
   return (
     <Disclosure open={changeEditorMenuOpen} onChange={toggleChangeEditorMenu}>
@@ -304,6 +240,7 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
         }}
         style={{
           ...changeEditorMenuPosition,
+          maxHeight: changeEditorMenuMaxHeight,
           position: 'fixed',
         }}
         className="sn-dropdown flex flex-col max-h-120 min-w-68 fixed overflow-y-auto"
@@ -312,9 +249,10 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
           application={application}
           closeOnBlur={closeOnBlur}
           currentEditor={selectedEditor}
+          setSelectedEditor={setSelectedEditor}
+          note={note}
           groups={editorMenuGroups}
           isOpen={changeEditorMenuVisible}
-          selectComponent={selectComponent}
         />
       </DisclosurePanel>
     </Disclosure>

@@ -1,11 +1,26 @@
 import { Icon } from '@/components/Icon';
 import { Menu } from '@/components/menu/Menu';
 import { MenuItem, MenuItemType } from '@/components/menu/MenuItem';
+import {
+  reloadFont,
+  transactionForAssociateComponentWithCurrentNote,
+  transactionForDisassociateComponentWithCurrentNote,
+} from '@/components/NoteView/NoteView';
 import { usePremiumModal } from '@/components/Premium';
+import { STRING_EDIT_LOCKED_ATTEMPT } from '@/strings';
 import { WebApplication } from '@/ui_models/application';
-import { FeatureStatus, SNComponent } from '@standardnotes/snjs';
+import {
+  ComponentArea,
+  FeatureStatus,
+  ItemMutator,
+  NoteMutator,
+  PrefKey,
+  SNComponent,
+  SNNote,
+  TransactionalMutation,
+} from '@standardnotes/snjs';
 import { Fragment, FunctionComponent } from 'preact';
-import { useCallback } from 'preact/hooks';
+import { StateUpdater, useCallback } from 'preact/hooks';
 import { EditorMenuItem, EditorMenuGroup } from '../ChangeEditorOption';
 import { PLAIN_EDITOR_NAME } from './createEditorMenuGroups';
 
@@ -14,8 +29,9 @@ type ChangeEditorMenuProps = {
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void;
   groups: EditorMenuGroup[];
   isOpen: boolean;
-  selectComponent: (component: SNComponent | null) => Promise<void>;
   currentEditor: SNComponent | undefined;
+  note: SNNote;
+  setSelectedEditor: StateUpdater<SNComponent | undefined>;
 };
 
 const getGroupId = (group: EditorMenuGroup) =>
@@ -26,8 +42,9 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   closeOnBlur,
   groups,
   isOpen,
-  selectComponent,
   currentEditor,
+  setSelectedEditor,
+  note,
 }) => {
   const premiumModal = usePremiumModal();
 
@@ -67,6 +84,84 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
     [currentEditor]
   );
 
+  const selectComponent = async (
+    component: SNComponent | null,
+    note: SNNote
+  ) => {
+    if (component) {
+      if (component.conflictOf) {
+        application.changeAndSaveItem(component.uuid, (mutator) => {
+          mutator.conflictOf = undefined;
+        });
+      }
+    }
+
+    const transactions: TransactionalMutation[] = [];
+
+    if (application.getAppState().getActiveNoteController()?.isTemplateNote) {
+      await application
+        .getAppState()
+        .getActiveNoteController()
+        .insertTemplatedNote();
+    }
+
+    if (note.locked) {
+      application.alertService.alert(STRING_EDIT_LOCKED_ATTEMPT);
+      return;
+    }
+
+    if (!component) {
+      if (!note.prefersPlainEditor) {
+        transactions.push({
+          itemUuid: note.uuid,
+          mutate: (m: ItemMutator) => {
+            const noteMutator = m as NoteMutator;
+            noteMutator.prefersPlainEditor = true;
+          },
+        });
+      }
+      const currentEditor = application.componentManager.editorForNote(note);
+      if (currentEditor?.isExplicitlyEnabledForItem(note.uuid)) {
+        transactions.push(
+          transactionForDisassociateComponentWithCurrentNote(
+            currentEditor,
+            note
+          )
+        );
+      }
+      reloadFont(application.getPreference(PrefKey.EditorMonospaceEnabled));
+    } else if (component.area === ComponentArea.Editor) {
+      const currentEditor = application.componentManager.editorForNote(note);
+      if (currentEditor && component.uuid !== currentEditor.uuid) {
+        transactions.push(
+          transactionForDisassociateComponentWithCurrentNote(
+            currentEditor,
+            note
+          )
+        );
+      }
+      const prefersPlain = note.prefersPlainEditor;
+      if (prefersPlain) {
+        transactions.push({
+          itemUuid: note.uuid,
+          mutate: (m: ItemMutator) => {
+            const noteMutator = m as NoteMutator;
+            noteMutator.prefersPlainEditor = false;
+          },
+        });
+      }
+      transactions.push(
+        transactionForAssociateComponentWithCurrentNote(component, note)
+      );
+    }
+
+    await application.runTransactionalMutations(transactions);
+    /** Dirtying can happen above */
+    application.sync();
+
+    setSelectedEditor(application.componentManager.editorForNote(note));
+  };
+
   const selectEditor = async (itemToBeSelected: EditorMenuItem) => {
     let shouldSelectEditor = true;
 
@@ -92,12 +187,16 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
     }
 
     if (shouldSelectEditor) {
-      selectComponent(itemToBeSelected.component ?? null);
+      selectComponent(itemToBeSelected.component ?? null, note);
     }
   };
 
   return (
-    <Menu className="py-1" a11yLabel="Change editor menu" isOpen={isOpen}>
+    <Menu
+      className="pt-0.5 pb-1"
+      a11yLabel="Change editor menu"
+      isOpen={isOpen}
+    >
       {groups
         .filter((group) => group.items && group.items.length)
         .map((group, index) => {
