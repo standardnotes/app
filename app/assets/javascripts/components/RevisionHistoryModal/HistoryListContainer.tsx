@@ -68,62 +68,6 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
       RevisionListTabType.Remote
     );
 
-    useEffect(() => {
-      const fetchLegacyHistory = async () => {
-        const actionExtensions = application.actionsManager.getExtensions();
-        actionExtensions.forEach(async (ext) => {
-          const actionExtension =
-            await application.actionsManager.loadExtensionInContextOfItem(
-              ext,
-              note
-            );
-
-          if (!actionExtension) {
-            return;
-          }
-
-          const isLegacyNoteHistoryExt = actionExtension?.actions.some(
-            (action) => action.verb === ActionVerb.Nested
-          );
-
-          if (!isLegacyNoteHistoryExt) {
-            return;
-          }
-
-          const legacyHistory = [] as LegacyHistoryEntry[];
-
-          setIsFetchingLegacyHistory(true);
-
-          await Promise.all(
-            actionExtension?.actions.map(async (action) => {
-              if (!action.subactions?.[0]) {
-                return;
-              }
-
-              const response = await application.actionsManager.runAction(
-                action.subactions[0],
-                note
-              );
-
-              if (!response) {
-                return;
-              }
-
-              legacyHistory.push(response.item as LegacyHistoryEntry);
-            })
-          );
-
-          setIsFetchingLegacyHistory(false);
-
-          setLegacyHistory(
-            sortRevisionListIntoGroups<LegacyHistoryEntry>(legacyHistory)
-          );
-        });
-      };
-
-      fetchLegacyHistory();
-    }, [application.actionsManager, note]);
-
     const TabButton: FunctionComponent<{
       type: RevisionListTabType;
     }> = ({ type }) => {
