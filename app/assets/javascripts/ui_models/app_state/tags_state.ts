@@ -1,6 +1,10 @@
 import { confirmDialog } from '@/services/alertService';
 import { STRING_DELETE_TAG } from '@/strings';
 import {
+  MAX_MENU_SIZE_MULTIPLIER,
+  MENU_MARGIN_FROM_APP_BORDER,
+} from '@/views/constants';
+import {
   ComponentAction,
   ContentType,
   MessageData,
@@ -72,6 +76,13 @@ export class TagsState {
   selected_: AnyTag | undefined;
   previouslySelected_: AnyTag | undefined;
   editing_: SNTag | undefined;
+  contextMenuOpen = false;
+  contextMenuPosition: { top?: number; left: number; bottom?: number } = {
+    top: 0,
+    left: 0,
+  };
+  contextMenuClickLocation: { x: number; y: number } = { x: 0, y: 0 };
+  contextMenuMaxHeight: number | 'auto' = 'auto';
 
   private readonly tagsCountsState: TagsCountsState;
 
@@ -114,6 +125,15 @@ export class TagsState {
       undoCreateNewTag: action,
       save: action,
       remove: action,
+
+      contextMenuOpen: observable,
+      contextMenuPosition: observable,
+      contextMenuMaxHeight: observable,
+      contextMenuClickLocation: observable,
+      setContextMenuOpen: action,
+      setContextMenuClickLocation: action,
+      setContextMenuPosition: action,
+      setContextMenuMaxHeight: action,
     });
 
     appEventListeners.push(
@@ -157,6 +177,81 @@ export class TagsState {
         }
       })
     );
+  }
+
+  setContextMenuOpen(open: boolean): void {
+    this.contextMenuOpen = open;
+  }
+
+  setContextMenuClickLocation(location: { x: number; y: number }): void {
+    this.contextMenuClickLocation = location;
+  }
+
+  setContextMenuPosition(position: {
+    top?: number;
+    left: number;
+    bottom?: number;
+  }): void {
+    this.contextMenuPosition = position;
+  }
+
+  setContextMenuMaxHeight(maxHeight: number | 'auto'): void {
+    this.contextMenuMaxHeight = maxHeight;
+  }
+
+  reloadContextMenuLayout(): void {
+    const { clientHeight } = document.documentElement;
+    const defaultFontSize = window.getComputedStyle(
+      document.documentElement
+    ).fontSize;
+    const maxContextMenuHeight =
+      parseFloat(defaultFontSize) * MAX_MENU_SIZE_MULTIPLIER;
+    const footerElementRect = document
+      .getElementById('footer-bar')
+      ?.getBoundingClientRect();
+    const footerHeightInPx = footerElementRect?.height;
+
+    // Open up-bottom is default behavior
+    let openUpBottom = true;
+
+    if (footerHeightInPx) {
+      const bottomSpace =
+        clientHeight - footerHeightInPx - this.contextMenuClickLocation.y;
+      const upSpace = this.contextMenuClickLocation.y;
+
+      // If not enough space to open up-bottom
+      if (maxContextMenuHeight > bottomSpace) {
+        // If there's enough space, open bottom-up
+        if (upSpace > maxContextMenuHeight) {
+          openUpBottom = false;
+          this.setContextMenuMaxHeight('auto');
+          // Else, reduce max height (menu will be scrollable) and open in whichever direction there's more space
+        } else {
+          if (upSpace > bottomSpace) {
+            this.setContextMenuMaxHeight(upSpace - MENU_MARGIN_FROM_APP_BORDER);
+            openUpBottom = false;
+          } else {
+            this.setContextMenuMaxHeight(
+              bottomSpace - MENU_MARGIN_FROM_APP_BORDER
+            );
+          }
+        }
+      } else {
+        this.setContextMenuMaxHeight('auto');
+      }
+    }
+
+    if (openUpBottom) {
+      this.setContextMenuPosition({
+        top: this.contextMenuClickLocation.y,
+        left: this.contextMenuClickLocation.x,
+      });
+    } else {
+      this.setContextMenuPosition({
+        bottom: clientHeight - this.contextMenuClickLocation.y,
+        left: this.contextMenuClickLocation.x,
+      });
+    }
   }
 
   public get allLocalRootTags(): SNTag[] {

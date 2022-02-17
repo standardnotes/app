@@ -26,6 +26,7 @@ import { PermissionsModal } from './PermissionsModal';
 import { RevisionHistoryModalWrapper } from './RevisionHistoryModal/RevisionHistoryModalWrapper';
 import { PremiumModalProvider } from './Premium';
 import { ConfirmSignoutContainer } from './ConfirmSignoutModal';
+import { TagsContextMenu } from './Tags/TagsContextMenu';
 
 type Props = {
   application: WebApplication;
@@ -264,6 +265,11 @@ export class ApplicationView extends PureComponent<Props, State> {
           {renderAppContents && (
             <>
               <NotesContextMenu
+                application={this.application}
+                appState={this.appState}
+              />
+
+              <TagsContextMenu
                 application={this.application}
                 appState={this.appState}
               />

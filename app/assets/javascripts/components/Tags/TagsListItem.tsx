@@ -19,13 +19,14 @@ type Props = {
   tagsState: TagsState;
   features: FeaturesState;
   level: number;
+  onContextMenu: (tag: SNTag, posX: number, posY: number) => void;
 };
 
 const PADDING_BASE_PX = 14;
 const PADDING_PER_LEVEL_PX = 21;
 
 export const TagsListItem: FunctionComponent<Props> = observer(
-  ({ tag, features, tagsState, level }) => {
+  ({ tag, features, tagsState, level, onContextMenu }) => {
     const [title, setTitle] = useState(tag.title || '');
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -99,17 +100,9 @@ export const TagsListItem: FunctionComponent<Props> = observer(
       }
     }, [inputRef, isEditing]);
 
-    const onClickRename = useCallback(() => {
-      tagsState.editingTag = tag;
-    }, [tagsState, tag]);
-
     const onClickSave = useCallback(() => {
       inputRef.current?.blur();
     }, [inputRef]);
-
-    const onClickDelete = useCallback(() => {
-      tagsState.remove(tag);
-    }, [tagsState, tag]);
 
     const [, dragRef] = useDrag(
       () => ({
@@ -159,6 +152,10 @@ export const TagsListItem: FunctionComponent<Props> = observer(
           style={{
             paddingLeft: `${level * PADDING_PER_LEVEL_PX + PADDING_BASE_PX}px`,
           }}
+          onContextMenu={(e: MouseEvent) => {
+            e.preventDefault();
+            onContextMenu(tag, e.clientX, e.clientY);
+          }}
         >
           {!tag.errorDecrypting ? (
             <div className="tag-info" title={title} ref={dropRef}>
@@ -175,7 +172,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
                   />
                 </div>
               )}
-              <div className={`tag-icon ${'draggable'} mr-1`} ref={dragRef}>
+              <div className={`tag-icon draggable mr-1`} ref={dragRef}>
                 <Icon
                   type="hashtag"
                   className={`${isSelected ? 'color-info' : 'color-neutral'}`}
@@ -206,7 +203,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
             {tag.errorDecrypting && tag.waitingForKey && (
               <div className="info small-text font-bold">Waiting For Keys</div>
             )}
-            {isSelected && (
+            {/* isSelected && (
               <div className="menu">
                 {!isEditing && (
                   <a className="item" onClick={onClickRename}>
@@ -222,7 +219,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
                   Delete
                 </a>
               </div>
-            )}
+            ) */}
           </div>
         </div>
         {showChildren && (
@@ -235,6 +232,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
                   tag={tag}
                   tagsState={tagsState}
                   features={features}
+                  onContextMenu={onContextMenu}
                 />
               );
             })}
