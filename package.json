@@ -63,7 +63,7 @@
     "pug-loader": "^2.4.0",
     "sass-loader": "^12.2.0",
     "serve-static": "^1.14.1",
-    "@standardnotes/stylekit": "5.7.0",
+    "@standardnotes/stylekit": "5.8.0",
     "svg-jest": "^1.0.1",
     "ts-jest": "^27.0.7",
     "ts-loader": "^9.2.6",
