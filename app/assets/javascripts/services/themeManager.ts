@@ -69,26 +69,51 @@ export class ThemeManager extends ApplicationService {
 
   async onAppEvent(event: ApplicationEvent) {
     super.onAppEvent(event);
-    if (event === ApplicationEvent.SignedOut) {
-      this.deactivateAllThemes();
-      this.activeThemes = [];
-      this.application?.removeValue(
-        CACHED_THEMES_KEY,
-        StorageValueModes.Nonwrapped
-      );
-    } else if (event === ApplicationEvent.StorageReady) {
-      await this.activateCachedThemes();
-    } else if (event === ApplicationEvent.FeaturesUpdated) {
-      this.reloadThemeStatus();
-    } else if (event === ApplicationEvent.Launched) {
-      window
-        .matchMedia('(prefers-color-scheme: dark)')
-        .addEventListener('change', this.colorSchemeEventHandler);
-    } else if (event === ApplicationEvent.PreferencesChanged) {
-      const prefersDarkColorScheme = window.matchMedia(
-        '(prefers-color-scheme: dark)'
-      );
-      this.setThemeAsPerColorScheme(prefersDarkColorScheme.matches);
+    switch (event) {
+      case ApplicationEvent.SignedOut: {
+        this.deactivateAllThemes();
+        this.activeThemes = [];
+        this.application?.removeValue(
+          CACHED_THEMES_KEY,
+          StorageValueModes.Nonwrapped
+        );
+        break;
+      }
+      case ApplicationEvent.StorageReady: {
+        await this.activateCachedThemes();
+        break;
+      }
+      case ApplicationEvent.FeaturesUpdated: {
+        this.reloadThemeStatus();
+        break;
+      }
+      case ApplicationEvent.Launched: {
+        window
+          .matchMedia('(prefers-color-scheme: dark)')
+          .addEventListener('change', this.colorSchemeEventHandler);
+        break;
+      }
+      case ApplicationEvent.PreferencesChanged: {
+        const prefersDarkColorScheme = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        );
+        this.setThemeAsPerColorScheme(prefersDarkColorScheme.matches);
+        break;
+      }
+      case ApplicationEvent.LocalDataLoaded: {
+        const themes = this.application.getDisplayableItems(
+          ContentType.Theme
+        ) as SNTheme[];
+        themes.forEach((theme) => {
+          if (
+            theme.active &&
+            this.application.getFeatureStatus(theme.identifier) !==
+              FeatureStatus.Entitled
+          ) {
+            this.application.toggleTheme(theme);
+          }
+        });
+      }
     }
   }
 
@@ -179,6 +204,12 @@ export class ThemeManager extends ApplicationService {
 
   private activateTheme(theme: SNTheme) {
     if (this.activeThemes.find((uuid) => uuid === theme.uuid)) {
+      return;
+    }
+    if (
+      this.application.getFeatureStatus(theme.identifier) !==
+      FeatureStatus.Entitled
+    ) {
       return;
     }
     this.activeThemes.push(theme.uuid);

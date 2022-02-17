@@ -6,6 +6,8 @@ export enum KeyboardKey {
   Down = 'ArrowDown',
   Enter = 'Enter',
   Escape = 'Escape',
+  Home = 'Home',
+  End = 'End',
 }
 
 export enum KeyboardModifier {

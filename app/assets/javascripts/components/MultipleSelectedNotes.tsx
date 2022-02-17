@@ -1,5 +1,5 @@
 import { AppState } from '@/ui_models/app_state';
-import NotesIcon from '../../icons/il-notes.svg';
+import { IlNotesIcon } from '@standardnotes/stylekit';
 import { observer } from 'mobx-react-lite';
 import { NotesOptionsPanel } from './NotesOptionsPanel';
 import { WebApplication } from '@/ui_models/application';
@@ -26,7 +26,7 @@ export const MultipleSelectedNotes = observer(
           </div>
         </div>
         <div className="flex-grow flex flex-col justify-center items-center w-full max-w-md">
-          <NotesIcon className="block" />
+          <IlNotesIcon className="block" />
           <h2 className="text-lg m-0 text-center mt-4">
             {count} selected notes
           </h2>
