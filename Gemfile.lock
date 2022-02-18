@@ -111,7 +111,7 @@ GEM
       racc (~> 1.4)
     non-stupid-digest-assets (1.0.9)
       sprockets (>= 2.0)
-    puma (4.3.9)
+    puma (4.3.11)
       nio4r (~> 2.0)
     racc (1.5.2)
     rack (2.2.3)
