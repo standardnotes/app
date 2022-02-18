@@ -100,10 +100,6 @@ export const TagsListItem: FunctionComponent<Props> = observer(
       }
     }, [inputRef, isEditing]);
 
-    const onClickSave = useCallback(() => {
-      inputRef.current?.blur();
-    }, [inputRef]);
-
     const [, dragRef] = useDrag(
       () => ({
         type: ItemTypes.TAG,
@@ -203,23 +199,6 @@ export const TagsListItem: FunctionComponent<Props> = observer(
             {tag.errorDecrypting && tag.waitingForKey && (
               <div className="info small-text font-bold">Waiting For Keys</div>
             )}
-            {/* isSelected && (
-              <div className="menu">
-                {!isEditing && (
-                  <a className="item" onClick={onClickRename}>
-                    Rename
-                  </a>
-                )}
-                {isEditing && (
-                  <a className="item" onClick={onClickSave}>
-                    Save
-                  </a>
-                )}
-                <a className="item" onClick={onClickDelete}>
-                  Delete
-                </a>
-              </div>
-            ) */}
           </div>
         </div>
         {showChildren && (
