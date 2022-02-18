@@ -560,7 +560,7 @@ export const NotesOptions = observer(
               }}
             >
               <Icon type="trash" className={iconClass} />
-              Move to Trash
+              Move to trash
             </button>
           ))}
         {trashed && (

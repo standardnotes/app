@@ -84,13 +84,17 @@ export const sortRevisionListIntoGroups = <EntryType extends RevisionEntry>(
     },
   ];
 
+  const addBeforeLastGroup = (group: ListGroup<EntryType>) => {
+    sortedGroups.splice(sortedGroups.length - 1, 0, group);
+  };
+
   revisionList?.forEach((entry) => {
     const groupIndex = getGroupIndexForEntry(entry, sortedGroups);
 
     if (groupIndex > -1) {
       sortedGroups[groupIndex]?.entries?.push(entry);
     } else {
-      sortedGroups.push({
+      addBeforeLastGroup({
         title: formatDateAsMonthYearString(
           new Date(
             (entry as RevisionListEntry).created_at ??
