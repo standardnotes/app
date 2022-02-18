@@ -7,7 +7,7 @@ import {
   PermissionDialog,
   removeFromArray,
 } from '@standardnotes/snjs';
-import { PANEL_NAME_NOTES, PANEL_NAME_NAVIGATION } from '@/views/constants';
+import { PANEL_NAME_NOTES, PANEL_NAME_NAVIGATION } from '@/constants';
 import { STRING_DEFAULT_FILE_ERROR } from '@/strings';
 import { alertDialog } from '@/services/alertService';
 import { WebAppEvent, WebApplication } from '@/ui_models/application';

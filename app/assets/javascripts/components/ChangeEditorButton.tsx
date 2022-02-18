@@ -1,6 +1,6 @@
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
-import { MENU_MARGIN_FROM_APP_BORDER } from '@/views/constants';
+import { MENU_MARGIN_FROM_APP_BORDER } from '@/constants';
 import {
   Disclosure,
   DisclosureButton,

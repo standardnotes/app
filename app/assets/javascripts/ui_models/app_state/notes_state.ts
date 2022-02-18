@@ -1,7 +1,7 @@
 import { confirmDialog } from '@/services/alertService';
 import { KeyboardModifier } from '@/services/ioService';
 import { StringEmptyTrash, Strings, StringUtils } from '@/strings';
-import { MENU_MARGIN_FROM_APP_BORDER } from '@/views/constants';
+import { MENU_MARGIN_FROM_APP_BORDER } from '@/constants';
 import {
   UuidString,
   SNNote,

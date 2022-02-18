@@ -1,6 +1,6 @@
 import { Platform, platformFromString } from '@standardnotes/snjs';
 import { IsDesktopPlatform, IsWebPlatform } from '@/version';
-import { EMAIL_REGEX } from '@Views/constants';
+import { EMAIL_REGEX } from '../constants';
 export { isMobile } from './isMobile';
 
 declare const process: {
