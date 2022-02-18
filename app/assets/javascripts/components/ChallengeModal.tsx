@@ -122,8 +122,8 @@ export class ChallengeModal extends PureComponent<Props, State> {
         confirmButtonStyle: 'danger',
       })
     ) {
-      await this.application.signOut();
       this.dismiss();
+      this.application.signOut();
     }
   };
 
@@ -334,7 +334,7 @@ export class ChallengeModal extends PureComponent<Props, State> {
                 <div className="sk-panel-footer">
                   {this.state.forgotPasscode ? (
                     <>
-                      <p className="sk-panel-row sk-p">
+                      <p className="sk-panel-row sk-p text-center">
                         {this.state.hasAccount
                           ? 'If you forgot your application passcode, your ' +
                             'only option is to clear your local data from this ' +

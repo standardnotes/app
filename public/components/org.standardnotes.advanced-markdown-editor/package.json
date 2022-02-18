@@ -1,6 +1,6 @@
 {
   "name": "sn-advanced-markdown-editor",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "A Standard Notes derived editor that offers full support for Markdown editing.",
   "main": "dist/dist.js",
   "author": "Standard Notes <hello@standardnotes.com>",

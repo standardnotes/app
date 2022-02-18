@@ -16,6 +16,7 @@ import {
   NoteGroupController,
   removeFromArray,
   IconsController,
+  Runtime,
 } from '@standardnotes/snjs';
 
 type WebServices = {
@@ -38,8 +39,8 @@ export type WebEventObserver = (event: WebAppEvent) => void;
 
 export class WebApplication extends SNApplication {
   private webServices!: WebServices;
-  public noteControllerGroup: NoteGroupController;
   private webEventObservers: WebEventObserver[] = [];
+  public noteControllerGroup: NoteGroupController;
   public iconsController: IconsController;
 
   constructor(
@@ -48,8 +49,8 @@ export class WebApplication extends SNApplication {
     identifier: string,
     defaultSyncServerHost: string,
     public bridge: Bridge,
-    enableUnfinishedFeatures: boolean,
-    webSocketUrl: string
+    webSocketUrl: string,
+    runtime: Runtime
   ) {
     super(
       bridge.environment,
@@ -61,36 +62,37 @@ export class WebApplication extends SNApplication {
       [],
       defaultSyncServerHost,
       bridge.appVersion,
-      enableUnfinishedFeatures,
-      webSocketUrl
+      webSocketUrl,
+      runtime
     );
     deviceInterface.setApplication(this);
     this.noteControllerGroup = new NoteGroupController(this);
     this.iconsController = new IconsController();
   }
 
-  /** @override */
   deinit(source: DeinitSource): void {
-    for (const service of Object.values(this.webServices)) {
-      if ('deinit' in service) {
-        service.deinit?.(source);
+    super.deinit(source);
+    try {
+      if (source === DeinitSource.AppGroupUnload) {
+        this.getThemeService().deactivateAllThemes();
       }
-      (service as any).application = undefined;
-    }
-    this.webServices = {} as WebServices;
-    this.noteControllerGroup.deinit();
-    this.iconsController.deinit();
-    this.webEventObservers.length = 0;
-    /**
-     * Allow any pending renders to complete before destroying the global
-     * application instance and all its services
-     */
-    setTimeout(() => {
-      super.deinit(source);
+      for (const service of Object.values(this.webServices)) {
+        if ('deinit' in service) {
+          service.deinit?.(source);
+        }
+        (service as any).application = undefined;
+      }
+      this.webServices = {} as WebServices;
+      this.noteControllerGroup.deinit();
+      this.iconsController.deinit();
+      this.webEventObservers.length = 0;
+
       if (source === DeinitSource.SignOut) {
         this.bridge.onSignOut();
       }
-    }, 0);
+    } catch (error) {
+      console.error('Error while deiniting application', error);
+    }
   }
 
   setWebServices(services: WebServices): void {

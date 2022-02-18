@@ -9,7 +9,7 @@ import { NotesListItem } from './NotesListItem';
 import {
   FOCUSABLE_BUT_NOT_TABBABLE,
   NOTES_LIST_SCROLL_THRESHOLD,
-} from '@/views/constants';
+} from '@/constants';
 
 type Props = {
   application: WebApplication;
@@ -45,7 +45,7 @@ export const NotesList: FunctionComponent<Props> = observer(
       if (!selectedTag.isSmartTag && tags.length === 1) {
         return [];
       }
-      return tags.map((tag) => tag.title);
+      return tags.map((tag) => tag.title).sort();
     };
 
     const openNoteContextMenu = (posX: number, posY: number) => {

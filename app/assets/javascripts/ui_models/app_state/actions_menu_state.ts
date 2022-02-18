@@ -1,22 +1,22 @@
-import { UuidString } from "@standardnotes/snjs";
-import { action, makeObservable, observable } from "mobx";
+import { UuidString } from '@standardnotes/snjs';
+import { action, makeObservable, observable } from 'mobx';
 
 export class ActionsMenuState {
-  hiddenExtensions: Record<UuidString, boolean> = {};
+  hiddenSections: Record<UuidString, boolean> = {};
 
   constructor() {
     makeObservable(this, {
-      hiddenExtensions: observable,
-      toggleExtensionVisibility: action,
+      hiddenSections: observable,
+      toggleSectionVisibility: action,
       reset: action,
     });
   }
 
-  toggleExtensionVisibility = (uuid: UuidString): void => {
-    this.hiddenExtensions[uuid] = !this.hiddenExtensions[uuid];
-  }
+  toggleSectionVisibility = (uuid: UuidString): void => {
+    this.hiddenSections[uuid] = !this.hiddenSections[uuid];
+  };
 
   reset = (): void => {
-    this.hiddenExtensions = {};
-  }
+    this.hiddenSections = {};
+  };
 }

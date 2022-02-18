@@ -9,6 +9,7 @@ import {
   ComponentArea,
   ContentType,
   FeatureIdentifier,
+  GetFeatures,
   SNComponent,
   SNTheme,
 } from '@standardnotes/snjs';
@@ -31,6 +32,12 @@ const focusModeAnimationDuration = 1255;
 const MENU_CLASSNAME =
   'sn-menu-border sn-dropdown min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto';
 
+export type ThemeItem = {
+  name: string;
+  identifier: FeatureIdentifier;
+  component?: SNTheme;
+};
+
 type MenuProps = {
   appState: AppState;
   application: WebApplication;
@@ -51,9 +58,9 @@ const toggleFocusMode = (enabled: boolean) => {
   }
 };
 
-export const sortThemes = (a: SNTheme, b: SNTheme) => {
-  const aIsLayerable = a.isLayerable();
-  const bIsLayerable = b.isLayerable();
+export const sortThemes = (a: ThemeItem, b: ThemeItem) => {
+  const aIsLayerable = a.component?.isLayerable();
+  const bIsLayerable = b.component?.isLayerable();
 
   if (aIsLayerable && !bIsLayerable) {
     return 1;
@@ -72,7 +79,7 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
       focusModeEnabled,
       setFocusModeEnabled,
     } = appState.quickSettingsMenu;
-    const [themes, setThemes] = useState<SNTheme[]>([]);
+    const [themes, setThemes] = useState<ThemeItem[]>([]);
     const [toggleableComponents, setToggleableComponents] = useState<
       SNComponent[]
     >([]);
@@ -96,12 +103,39 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     }, [focusModeEnabled]);
 
     const reloadThemes = useCallback(() => {
-      const themes = application.getDisplayableItems(
-        ContentType.Theme
-      ) as SNTheme[];
+      const themes = (
+        application.getDisplayableItems(ContentType.Theme) as SNTheme[]
+      ).map((item) => {
+        return {
+          name: item.name,
+          identifier: item.identifier,
+          component: item,
+        };
+      }) as ThemeItem[];
+
+      GetFeatures()
+        .filter(
+          (feature) =>
+            feature.content_type === ContentType.Theme && !feature.layerable
+        )
+        .forEach((theme) => {
+          if (
+            themes.findIndex((item) => item.identifier === theme.identifier) ===
+            -1
+          ) {
+            themes.push({
+              name: theme.name as string,
+              identifier: theme.identifier,
+            });
+          }
+        });
+
       setThemes(themes.sort(sortThemes));
+
       setDefaultThemeOn(
-        !themes.find((theme) => theme.active && !theme.isLayerable())
+        !themes
+          .map((item) => item?.component)
+          .find((theme) => theme?.active && !theme.isLayerable())
       );
     }, [application]);
 
@@ -116,6 +150,12 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
       );
       setToggleableComponents(toggleableComponents);
     }, [application]);
+
+    useEffect(() => {
+      if (!themes.length) {
+        reloadThemes();
+      }
+    }, [reloadThemes, themes.length]);
 
     useEffect(() => {
       const cleanupItemStream = application.streamItems(
@@ -153,10 +193,7 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
       prefsButtonRef.current?.focus();
     }, []);
 
-    const [closeOnBlur] = useCloseOnBlur(
-      themesMenuRef as any,
-      setThemesMenuOpen
-    );
+    const [closeOnBlur] = useCloseOnBlur(themesMenuRef, setThemesMenuOpen);
 
     const toggleThemesMenu = () => {
       if (!themesMenuOpen && themesButtonRef.current) {
@@ -224,9 +261,9 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     };
 
     const toggleDefaultTheme = () => {
-      const activeTheme = themes.find(
-        (theme) => theme.active && !theme.isLayerable()
-      );
+      const activeTheme = themes
+        .map((item) => item.component)
+        .find((theme) => theme?.active && !theme.isLayerable());
       if (activeTheme) application.toggleTheme(activeTheme);
     };
 
@@ -244,56 +281,54 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
           <div className="px-3 mt-1 mb-2 font-semibold color-text uppercase">
             Quick Settings
           </div>
-          {themes && themes.length ? (
-            <Disclosure open={themesMenuOpen} onChange={toggleThemesMenu}>
-              <DisclosureButton
-                onKeyDown={handleBtnKeyDown}
+          <Disclosure open={themesMenuOpen} onChange={toggleThemesMenu}>
+            <DisclosureButton
+              onKeyDown={handleBtnKeyDown}
+              onBlur={closeOnBlur}
+              ref={themesButtonRef}
+              className="sn-dropdown-item justify-between focus:bg-info-backdrop focus:shadow-none"
+            >
+              <div className="flex items-center">
+                <Icon type="themes" className="color-neutral mr-2" />
+                Themes
+              </div>
+              <Icon type="chevron-right" className="color-neutral" />
+            </DisclosureButton>
+            <DisclosurePanel
+              onBlur={closeOnBlur}
+              ref={themesMenuRef}
+              onKeyDown={handlePanelKeyDown}
+              style={{
+                ...themesMenuPosition,
+              }}
+              className={`${MENU_CLASSNAME} fixed sn-dropdown--animated`}
+            >
+              <div className="px-3 my-1 font-semibold color-text uppercase">
+                Themes
+              </div>
+              <button
+                className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
+                onClick={toggleDefaultTheme}
                 onBlur={closeOnBlur}
-                ref={themesButtonRef}
-                className="sn-dropdown-item justify-between focus:bg-info-backdrop focus:shadow-none"
+                ref={defaultThemeButtonRef}
               >
-                <div className="flex items-center">
-                  <Icon type="themes" className="color-neutral mr-2" />
-                  Themes
-                </div>
-                <Icon type="chevron-right" className="color-neutral" />
-              </DisclosureButton>
-              <DisclosurePanel
-                onBlur={closeOnBlur}
-                ref={themesMenuRef}
-                onKeyDown={handlePanelKeyDown}
-                style={{
-                  ...themesMenuPosition,
-                }}
-                className={`${MENU_CLASSNAME} fixed sn-dropdown--animated`}
-              >
-                <div className="px-3 my-1 font-semibold color-text uppercase">
-                  Themes
-                </div>
-                <button
-                  className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
-                  onClick={toggleDefaultTheme}
+                <div
+                  className={`pseudo-radio-btn ${
+                    defaultThemeOn ? 'pseudo-radio-btn--checked' : ''
+                  } mr-2`}
+                ></div>
+                Default
+              </button>
+              {themes.map((theme) => (
+                <ThemesMenuButton
+                  item={theme}
+                  application={application}
+                  key={theme.component?.uuid ?? theme.identifier}
                   onBlur={closeOnBlur}
-                  ref={defaultThemeButtonRef}
-                >
-                  <div
-                    className={`pseudo-radio-btn ${
-                      defaultThemeOn ? 'pseudo-radio-btn--checked' : ''
-                    } mr-2`}
-                  ></div>
-                  Default
-                </button>
-                {themes.map((theme) => (
-                  <ThemesMenuButton
-                    theme={theme}
-                    application={application}
-                    key={theme.uuid}
-                    onBlur={closeOnBlur}
-                  />
-                ))}
-              </DisclosurePanel>
-            </Disclosure>
-          ) : null}
+                />
+              ))}
+            </DisclosurePanel>
+          </Disclosure>
           {toggleableComponents.map((component) => (
             <button
               className="sn-dropdown-item justify-between focus:bg-info-backdrop focus:shadow-none"

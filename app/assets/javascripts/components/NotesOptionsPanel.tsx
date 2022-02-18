@@ -69,7 +69,7 @@ export const NotesOptionsPanel = observer(
           }}
           onBlur={closeOnBlur}
           ref={buttonRef}
-          className="sn-icon-button"
+          className="sn-icon-button border-contrast"
         >
           <VisuallyHidden>Actions</VisuallyHidden>
           <Icon type="more" className="block" />
@@ -86,7 +86,7 @@ export const NotesOptionsPanel = observer(
             ...position,
             maxHeight,
           }}
-          className="sn-dropdown sn-dropdown--animated min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto fixed"
+          className="sn-dropdown sn-dropdown--animated min-w-80 max-h-120 max-w-xs flex flex-col pt-2 overflow-y-auto fixed"
           onBlur={closeOnBlur}
         >
           {open && (

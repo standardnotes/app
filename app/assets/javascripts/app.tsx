@@ -25,7 +25,7 @@ declare global {
 }
 
 import { IsWebPlatform, WebAppVersion } from '@/version';
-import { SNLog } from '@standardnotes/snjs';
+import { Runtime, SNLog } from '@standardnotes/snjs';
 import { render } from 'preact';
 import { ApplicationGroupView } from './components/ApplicationGroupView';
 import { Bridge } from './services/bridge';
@@ -47,7 +47,7 @@ const startApplication: StartApplication = async function startApplication(
   const mainApplicationGroup = new ApplicationGroup(
     defaultSyncServerHost,
     bridge,
-    enableUnfinishedFeatures,
+    enableUnfinishedFeatures ? Runtime.Dev : Runtime.Prod,
     webSocketUrl
   );
 
@@ -59,12 +59,22 @@ const startApplication: StartApplication = async function startApplication(
     });
   }
 
-  window.addEventListener('DOMContentLoaded', () => {
+  const renderApp = () => {
     render(
       <ApplicationGroupView mainApplicationGroup={mainApplicationGroup} />,
       document.body.appendChild(document.createElement('div'))
     );
-  });
+  };
+
+  const domReady =
+    document.readyState === 'complete' || document.readyState === 'interactive';
+  if (domReady) {
+    renderApp();
+  } else {
+    window.addEventListener('DOMContentLoaded', () => {
+      renderApp();
+    });
+  }
 };
 
 if (IsWebPlatform) {

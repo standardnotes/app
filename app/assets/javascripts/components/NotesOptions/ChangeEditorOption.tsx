@@ -1,16 +1,10 @@
 import { KeyboardKey } from '@/services/ioService';
-import { STRING_EDIT_LOCKED_ATTEMPT } from '@/strings';
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import {
   MENU_MARGIN_FROM_APP_BORDER,
   MAX_MENU_SIZE_MULTIPLIER,
-} from '@/views/constants';
-import {
-  reloadFont,
-  transactionForAssociateComponentWithCurrentNote,
-  transactionForDisassociateComponentWithCurrentNote,
-} from '@/components/NoteView/NoteView';
+} from '@/constants';
 import {
   Disclosure,
   DisclosureButton,
@@ -19,19 +13,14 @@ import {
 import {
   ComponentArea,
   IconType,
-  ItemMutator,
-  NoteMutator,
-  PrefKey,
   SNComponent,
   SNNote,
-  TransactionalMutation,
 } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { Icon } from '../Icon';
-import { PremiumModalProvider } from '../Premium';
 import { createEditorMenuGroups } from './changeEditor/createEditorMenuGroups';
-import { EditorAccordionMenu } from './changeEditor/EditorAccordionMenu';
+import { ChangeEditorMenu } from './changeEditor/ChangeEditorMenu';
 
 type ChangeEditorOptionProps = {
   appState: AppState;
@@ -55,22 +44,107 @@ export type EditorMenuItem = {
 
 export type EditorMenuGroup = AccordionMenuGroup<EditorMenuItem>;
 
+type MenuPositionStyle = {
+  top?: number | 'auto';
+  right?: number | 'auto';
+  bottom: number | 'auto';
+  left?: number | 'auto';
+  visibility?: 'hidden' | 'visible';
+};
+
+const calculateMenuPosition = (
+  button: HTMLButtonElement | null,
+  menu?: HTMLDivElement | null
+): MenuPositionStyle | undefined => {
+  const defaultFontSize = window.getComputedStyle(
+    document.documentElement
+  ).fontSize;
+
+  const maxChangeEditorMenuSize =
+    parseFloat(defaultFontSize) * MAX_MENU_SIZE_MULTIPLIER;
+
+  const { clientWidth, clientHeight } = document.documentElement;
+
+  const buttonRect = button?.getBoundingClientRect();
+
+  const buttonParentRect = button?.parentElement?.getBoundingClientRect();
+
+  const menuBoundingRect = menu?.getBoundingClientRect();
+
+  const footerElementRect = document
+    .getElementById('footer-bar')
+    ?.getBoundingClientRect();
+
+  const footerHeightInPx = footerElementRect?.height ?? 0;
+
+  let position: MenuPositionStyle = {
+    bottom: 'auto',
+  };
+
+  if (buttonRect && buttonParentRect) {
+    let positionBottom =
+      clientHeight - buttonRect.bottom - buttonRect.height / 2;
+
+    if (positionBottom < footerHeightInPx) {
+      positionBottom = footerHeightInPx + MENU_MARGIN_FROM_APP_BORDER;
+    }
+
+    if (buttonRect.right + maxChangeEditorMenuSize > clientWidth) {
+      position = {
+        bottom: positionBottom,
+        right: clientWidth - buttonRect.left,
+        visibility: 'hidden',
+      };
+    } else {
+      position = {
+        bottom: positionBottom,
+        left: buttonRect.right,
+        visibility: 'hidden',
+      };
+    }
+  }
+
+  if (menuBoundingRect && menuBoundingRect.height && buttonRect) {
+    if (menuBoundingRect.y < MENU_MARGIN_FROM_APP_BORDER) {
+      if (
+        buttonRect.right + maxChangeEditorMenuSize >
+        document.documentElement.clientWidth
+      ) {
+        return {
+          ...position,
+          top: MENU_MARGIN_FROM_APP_BORDER + buttonRect.top - buttonRect.height,
+          bottom: 'auto',
+          visibility: 'visible',
+        };
+      } else {
+        return {
+          ...position,
+          top: MENU_MARGIN_FROM_APP_BORDER,
+          bottom: 'auto',
+          visibility: 'visible',
+        };
+      }
+    }
+  }
+
+  return position;
+};
+
 export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
   application,
-  appState,
   closeOnBlur,
   note,
 }) => {
   const [changeEditorMenuOpen, setChangeEditorMenuOpen] = useState(false);
-  const [changeEditorMenuPosition, setChangeEditorMenuPosition] = useState<{
-    top?: number | 'auto';
-    right?: number | 'auto';
-    bottom: number | 'auto';
-    left?: number | 'auto';
-  }>({
-    right: 0,
-    bottom: 0,
-  });
+  const [changeEditorMenuVisible, setChangeEditorMenuVisible] = useState(false);
+  const [changeEditorMenuMaxHeight, setChangeEditorMenuMaxHeight] = useState<
+    number | 'auto'
+  >('auto');
+  const [changeEditorMenuPosition, setChangeEditorMenuPosition] =
+    useState<MenuPositionStyle>({
+      right: 0,
+      bottom: 0,
+    });
   const changeEditorMenuRef = useRef<HTMLDivElement>(null);
   const changeEditorButtonRef = useRef<HTMLButtonElement>(null);
   const [editors] = useState<SNComponent[]>(() =>
@@ -96,39 +170,10 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
   }, [application, note]);
 
   const toggleChangeEditorMenu = () => {
-    const defaultFontSize = window.getComputedStyle(
-      document.documentElement
-    ).fontSize;
-    const maxChangeEditorMenuSize =
-      parseFloat(defaultFontSize) * MAX_MENU_SIZE_MULTIPLIER;
-    const { clientWidth, clientHeight } = document.documentElement;
-    const buttonRect = changeEditorButtonRef.current?.getBoundingClientRect();
-    const buttonParentRect =
-      changeEditorButtonRef.current?.parentElement?.getBoundingClientRect();
-    const footerElementRect = document
-      .getElementById('footer-bar')
-      ?.getBoundingClientRect();
-    const footerHeightInPx = footerElementRect?.height;
-
-    if (buttonRect && buttonParentRect && footerHeightInPx) {
-      let positionBottom =
-        clientHeight - buttonRect.bottom - buttonRect.height / 2;
-
-      if (positionBottom < footerHeightInPx) {
-        positionBottom = footerHeightInPx + MENU_MARGIN_FROM_APP_BORDER;
-      }
-
-      if (buttonRect.right + maxChangeEditorMenuSize > clientWidth) {
-        setChangeEditorMenuPosition({
-          top: positionBottom - buttonParentRect.height / 2,
-          right: clientWidth - buttonRect.left,
-          bottom: 'auto',
-        });
-      } else {
-        setChangeEditorMenuPosition({
-          bottom: positionBottom,
-          left: buttonRect.right,
-        });
+    if (!changeEditorMenuOpen) {
+      const menuPosition = calculateMenuPosition(changeEditorButtonRef.current);
+      if (menuPosition) {
+        setChangeEditorMenuPosition(menuPosition);
       }
     }
 
@@ -137,109 +182,38 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
 
   useEffect(() => {
     if (changeEditorMenuOpen) {
-      const defaultFontSize = window.getComputedStyle(
-        document.documentElement
-      ).fontSize;
-      const maxChangeEditorMenuSize =
-        parseFloat(defaultFontSize) * MAX_MENU_SIZE_MULTIPLIER;
-      const changeEditorMenuBoundingRect =
-        changeEditorMenuRef.current?.getBoundingClientRect();
-      const buttonRect = changeEditorButtonRef.current?.getBoundingClientRect();
+      setTimeout(() => {
+        const newMenuPosition = calculateMenuPosition(
+          changeEditorButtonRef.current,
+          changeEditorMenuRef.current
+        );
 
-      if (changeEditorMenuBoundingRect && buttonRect) {
-        if (changeEditorMenuBoundingRect.y < MENU_MARGIN_FROM_APP_BORDER) {
+        if (newMenuPosition) {
+          const { clientHeight } = document.documentElement;
+          const footerElementRect = document
+            .getElementById('footer-bar')
+            ?.getBoundingClientRect();
+          const footerHeightInPx = footerElementRect?.height;
+
           if (
-            buttonRect.right + maxChangeEditorMenuSize >
-            document.documentElement.clientWidth
+            footerHeightInPx &&
+            newMenuPosition.top &&
+            newMenuPosition.top !== 'auto'
           ) {
-            setChangeEditorMenuPosition({
-              ...changeEditorMenuPosition,
-              top: MENU_MARGIN_FROM_APP_BORDER + buttonRect.height,
-              bottom: 'auto',
-            });
-          } else {
-            setChangeEditorMenuPosition({
-              ...changeEditorMenuPosition,
-              top: MENU_MARGIN_FROM_APP_BORDER,
-              bottom: 'auto',
-            });
+            setChangeEditorMenuMaxHeight(
+              clientHeight -
+                newMenuPosition.top -
+                footerHeightInPx -
+                MENU_MARGIN_FROM_APP_BORDER
+            );
           }
+
+          setChangeEditorMenuPosition(newMenuPosition);
+          setChangeEditorMenuVisible(true);
         }
-      }
+      });
     }
-  }, [changeEditorMenuOpen, changeEditorMenuPosition]);
-
-  const selectComponent = async (component: SNComponent | null) => {
-    if (component) {
-      if (component.conflictOf) {
-        application.changeAndSaveItem(component.uuid, (mutator) => {
-          mutator.conflictOf = undefined;
-        });
-      }
-    }
-
-    const transactions: TransactionalMutation[] = [];
-
-    if (appState.getActiveNoteController()?.isTemplateNote) {
-      await appState.getActiveNoteController().insertTemplatedNote();
-    }
-
-    if (note.locked) {
-      application.alertService.alert(STRING_EDIT_LOCKED_ATTEMPT);
-      return;
-    }
-
-    if (!component) {
-      if (!note.prefersPlainEditor) {
-        transactions.push({
-          itemUuid: note.uuid,
-          mutate: (m: ItemMutator) => {
-            const noteMutator = m as NoteMutator;
-            noteMutator.prefersPlainEditor = true;
-          },
-        });
-      }
-      const currentEditor = application.componentManager.editorForNote(note);
-      if (currentEditor?.isExplicitlyEnabledForItem(note.uuid)) {
-        transactions.push(
-          transactionForDisassociateComponentWithCurrentNote(
-            currentEditor,
-            note
-          )
-        );
-      }
-      reloadFont(application.getPreference(PrefKey.EditorMonospaceEnabled));
-    } else if (component.area === ComponentArea.Editor) {
-      const currentEditor = application.componentManager.editorForNote(note);
-      if (currentEditor && component.uuid !== currentEditor.uuid) {
-        transactions.push(
-          transactionForDisassociateComponentWithCurrentNote(
-            currentEditor,
-            note
-          )
-        );
-      }
-      const prefersPlain = note.prefersPlainEditor;
-      if (prefersPlain) {
-        transactions.push({
-          itemUuid: note.uuid,
-          mutate: (m: ItemMutator) => {
-            const noteMutator = m as NoteMutator;
-            noteMutator.prefersPlainEditor = false;
-          },
-        });
-      }
-      transactions.push(
-        transactionForAssociateComponentWithCurrentNote(component, note)
-      );
-    }
-
-    await application.runTransactionalMutations(transactions);
-    /** Dirtying can happen above */
-    application.sync();
-
-    setSelectedEditor(application.componentManager.editorForNote(note));
-  };
+  }, [changeEditorMenuOpen]);
 
   return (
     <Disclosure open={changeEditorMenuOpen} onChange={toggleChangeEditorMenu}>
@@ -254,7 +228,7 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
         className="sn-dropdown-item justify-between"
       >
         <div className="flex items-center">
-          <Icon type="editor" className="color-neutral mr-2" />
+          <Icon type="dashboard" className="color-neutral mr-2" />
           Change editor
         </div>
         <Icon type="chevron-right" className="color-neutral" />
@@ -269,20 +243,20 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
         }}
         style={{
           ...changeEditorMenuPosition,
+          maxHeight: changeEditorMenuMaxHeight,
           position: 'fixed',
         }}
         className="sn-dropdown flex flex-col max-h-120 min-w-68 fixed overflow-y-auto"
       >
-        <PremiumModalProvider state={appState.features}>
-          <EditorAccordionMenu
-            application={application}
-            closeOnBlur={closeOnBlur}
-            currentEditor={selectedEditor}
-            groups={editorMenuGroups}
-            isOpen={changeEditorMenuOpen}
-            selectComponent={selectComponent}
-          />
-        </PremiumModalProvider>
+        <ChangeEditorMenu
+          application={application}
+          closeOnBlur={closeOnBlur}
+          currentEditor={selectedEditor}
+          setSelectedEditor={setSelectedEditor}
+          note={note}
+          groups={editorMenuGroups}
+          isOpen={changeEditorMenuVisible}
+        />
       </DisclosurePanel>
     </Disclosure>
   );

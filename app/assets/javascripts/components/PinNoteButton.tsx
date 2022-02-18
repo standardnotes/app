@@ -28,7 +28,9 @@ export const PinNoteButton: FunctionComponent<Props> = observer(
 
     return (
       <button
-        className={`sn-icon-button ${pinned ? 'toggled' : ''} ${className}`}
+        className={`sn-icon-button border-contrast ${
+          pinned ? 'toggled' : ''
+        } ${className}`}
         onClick={togglePinned}
       >
         <VisuallyHidden>Pin selected notes</VisuallyHidden>

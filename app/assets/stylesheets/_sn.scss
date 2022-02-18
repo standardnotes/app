@@ -1,14 +1,15 @@
 /* Components and utilities that are good candidates for extraction to StyleKit. */
 
-:root {
-}
-
 .bg-grey-super-light {
   background-color: var(--sn-stylekit-grey-super-light);
 }
 
 .h-90vh {
   height: 90vh;
+}
+
+.h-3 {
+  height: 0.75rem;
 }
 
 .h-26 {
@@ -260,6 +261,10 @@
   margin-left: 1rem;
 }
 
+.mr-2\.5 {
+  margin-right: 0.625rem;
+}
+
 .mr-3 {
   margin-right: 0.75rem;
 }
@@ -291,8 +296,16 @@
   margin-top: 0;
 }
 
+.mt-2\.5 {
+  margin-top: 0.625rem;
+}
+
 .mb-2 {
   margin-bottom: 0.5rem;
+}
+
+.max-w-40\% {
+  max-width: 40%;
 }
 
 .max-w-1\/2 {
@@ -301,6 +314,10 @@
 
 .max-w-3\/4 {
   max-width: 75%;
+}
+
+.max-w-80\% {
+  max-width: 80%;
 }
 
 .max-w-72 {
@@ -320,6 +337,10 @@
 }
 .mb-8 {
   margin-bottom: 2rem;
+}
+
+.w-3 {
+  width: 0.75rem;
 }
 
 .w-26 {
@@ -378,6 +399,10 @@
   min-width: 7.5rem;
 }
 
+.min-w-60 {
+  min-width: 15rem;
+}
+
 .min-w-68 {
   min-width: 17rem;
 }
@@ -422,6 +447,14 @@
   border-color: var(--sn-stylekit-neutral-contrast-color);
 }
 
+.sn-component .border-r-1px {
+  border-right-width: 1px;
+}
+
+.sn-component .border-t-1px {
+  border-top-width: 1px;
+}
+
 .border-2 {
   border-width: 0.5rem;
 }
@@ -446,6 +479,10 @@
   padding: 3rem;
 }
 
+.sn-component .pt-0\.5 {
+  padding-top: 0.125rem;
+}
+
 .pt-1 {
   padding-top: 0.25rem;
 }
@@ -466,7 +503,11 @@
   padding-top: 1.5rem;
 }
 
-.pb-1 {
+.pb-0 {
+  padding-bottom: 0;
+}
+
+.sn-component .pb-1 {
   padding-bottom: 0.25rem;
 }
 
@@ -481,6 +522,11 @@
 .sn-component .px-0 {
   padding-left: 0;
   padding-right: 0;
+}
+
+.px-2\.5 {
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
 }
 
 .px-4 {
@@ -509,9 +555,19 @@
   padding-bottom: 0.125rem;
 }
 
+.sn-component .py-1\.35 {
+  padding-top: 0.3375rem;
+  padding-bottom: 0.3375rem;
+}
+
 .sn-component .py-2\.5 {
   padding-top: 0.625rem;
   padding-bottom: 0.625rem;
+}
+
+.py-3\.5 {
+  padding-top: 0.875rem;
+  padding-bottom: 0.875rem;
 }
 
 .py-9 {
@@ -635,6 +691,10 @@
   bottom: -1.25rem;
 }
 
+.z-index-1 {
+  z-index: 1;
+}
+
 .-z-index-1 {
   z-index: -1;
 }
@@ -737,6 +797,10 @@
   color: var(--sn-stylekit-foreground-color) !important;
 }
 
+.sn-component .bg-info-backdrop {
+  background-color: var(--sn-stylekit-info-backdrop-color);
+}
+
 .focus\:bg-info-backdrop:focus {
   background-color: var(--sn-stylekit-info-backdrop-color);
 }
@@ -835,12 +899,58 @@
   }
 }
 
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+
+.leading-140\% {
+  line-height: 140%;
+}
+
 .dimmed {
-  opacity: .5;
+  opacity: 0.5;
   cursor: default;
   pointer-events: none;
 }
 
-.hide-if-last-child:last-child {
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+
+.last\:hidden:last-child {
   display: none;
+}
+
+.shadow-bottom {
+  box-shadow: currentcolor 0px -1px 0px 0px inset, currentcolor 0px 1px 0px 0px;
+}
+
+.focus\:shadow-inner:focus {
+  box-shadow: var(--sn-stylekit-info-color) 1px 1px 0px 0px inset,
+    var(--sn-stylekit-info-color) -1px -1px 0px 0px inset;
+}
+
+.bg-note-size-warning {
+  background-color: rgba(235, 173, 0, 0.08);
+}
+
+.overflow-x-hidden {
+  overflow-x: hidden;
+}
+
+.sn-component .border-y-1px {
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+}
+
+.sn-component .border-t-0 {
+  border-top-width: 0;
+}
+
+.text-editor {
+  font-size: var(--sn-stylekit-font-size-editor);
+}
+
+.sn-component .border-contrast {
+  border-color: var(--sn-stylekit-contrast-border-color);
 }

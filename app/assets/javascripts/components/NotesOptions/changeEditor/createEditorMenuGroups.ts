@@ -1,13 +1,11 @@
 import {
   ComponentArea,
   FeatureDescription,
-  Features,
+  GetFeatures,
   NoteType,
 } from '@standardnotes/features';
 import { ContentType, SNComponent } from '@standardnotes/snjs';
 import { EditorMenuItem, EditorMenuGroup } from '../ChangeEditorOption';
-
-/** @todo Implement interchangeable alert */
 
 export const PLAIN_EDITOR_NAME = 'Plain Editor';
 
@@ -49,20 +47,24 @@ export const createEditorMenuGroups = (editors: SNComponent[]) => {
     others: [],
   };
 
-  Features.filter(
-    (feature) =>
-      feature.content_type === ContentType.Component &&
-      feature.area === ComponentArea.Editor
-  ).forEach((editorFeature) => {
-    if (
-      !editors.find((editor) => editor.identifier === editorFeature.identifier)
-    ) {
-      editorItems[getEditorGroup(editorFeature)].push({
-        name: editorFeature.name as string,
-        isPremiumFeature: true,
-      });
-    }
-  });
+  GetFeatures()
+    .filter(
+      (feature) =>
+        feature.content_type === ContentType.Component &&
+        feature.area === ComponentArea.Editor
+    )
+    .forEach((editorFeature) => {
+      if (
+        !editors.find(
+          (editor) => editor.identifier === editorFeature.identifier
+        )
+      ) {
+        editorItems[getEditorGroup(editorFeature)].push({
+          name: editorFeature.name as string,
+          isPremiumFeature: true,
+        });
+      }
+    });
 
   editors.forEach((editor) => {
     const editorItem: EditorMenuItem = {

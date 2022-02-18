@@ -66,14 +66,13 @@ $content-horizontal-padding: 16px;
     font-size: 14px;
     line-height: 18px;
 
-    min-height: 30px;
+    min-height: 29px;
     padding: 5px 14px;
     cursor: pointer;
     transition: height 0.1s ease-in-out;
     position: relative;
 
     > .tag-info {
-      height: 20px;
       display: flex;
       flex-direction: row;
       align-items: center;

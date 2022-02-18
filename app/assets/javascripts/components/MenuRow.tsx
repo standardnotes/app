@@ -1,8 +1,7 @@
 import { Component } from 'preact';
 
-type RowProps = {
-  action?: (...args: any[]) => void;
-  actionArgs?: any[];
+export type MenuRowProps = {
+  action?: () => void;
   buttonAction?: () => void;
   buttonClass?: string;
   buttonText?: string;
@@ -15,24 +14,21 @@ type RowProps = {
   label: string;
   spinnerClass?: string;
   stylekitClass?: string;
-  subRows?: RowProps[];
+  subRows?: MenuRowProps[];
   subtitle?: string;
 };
 
-type Props = RowProps;
+type Props = MenuRowProps;
 
 export class MenuRow extends Component<Props> {
   onClick = ($event: Event) => {
     if (this.props.disabled || !this.props.action) {
       return;
     }
+
     $event.stopPropagation();
 
-    if (this.props.actionArgs) {
-      this.props.action(...this.props.actionArgs);
-    } else {
-      this.props.action();
-    }
+    this.props.action();
   };
 
   clickAccessoryButton = ($event: Event) => {
@@ -81,7 +77,6 @@ export class MenuRow extends Component<Props> {
                 return (
                   <MenuRow
                     action={row.action}
-                    actionArgs={row.actionArgs}
                     label={row.label}
                     spinnerClass={row.spinnerClass}
                     subtitle={row.subtitle}

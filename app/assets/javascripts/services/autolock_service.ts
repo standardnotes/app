@@ -2,19 +2,21 @@ import { ApplicationService } from '@standardnotes/snjs';
 
 const MILLISECONDS_PER_SECOND = 1000;
 const POLL_INTERVAL = 50;
-const LOCK_INTERVAL_NONE = 0;
-const LOCK_INTERVAL_IMMEDIATE = 1;
-const LOCK_INTERVAL_ONE_MINUTE = 60 * MILLISECONDS_PER_SECOND;
-const LOCK_INTERVAL_FIVE_MINUTES = 300 * MILLISECONDS_PER_SECOND;
-const LOCK_INTERVAL_ONE_HOUR = 3600 * MILLISECONDS_PER_SECOND;
 
-const STORAGE_KEY_AUTOLOCK_INTERVAL = "AutoLockIntervalKey";
+const LockInterval = {
+  None: 0,
+  Immediate: 1,
+  OneMinute: 60 * MILLISECONDS_PER_SECOND,
+  FiveMinutes: 300 * MILLISECONDS_PER_SECOND,
+  OneHour: 3600 * MILLISECONDS_PER_SECOND,
+};
+
+const STORAGE_KEY_AUTOLOCK_INTERVAL = 'AutoLockIntervalKey';
 
 export class AutolockService extends ApplicationService {
-
-  private pollInterval: any
-  private lastFocusState?: 'hidden' | 'visible'
-  private lockAfterDate?: Date
+  private pollInterval: any;
+  private lastFocusState?: 'hidden' | 'visible';
+  private lockAfterDate?: Date;
 
   onAppLaunch() {
     this.beginPolling();
@@ -26,6 +28,7 @@ export class AutolockService extends ApplicationService {
     if (this.pollInterval) {
       clearInterval(this.pollInterval);
     }
+    super.deinit();
   }
 
   private lockApplication() {
@@ -36,27 +39,22 @@ export class AutolockService extends ApplicationService {
   }
 
   async setAutoLockInterval(interval: number) {
-    return this.application!.setValue(
-      STORAGE_KEY_AUTOLOCK_INTERVAL,
-      interval
-    );
+    return this.application.setValue(STORAGE_KEY_AUTOLOCK_INTERVAL, interval);
   }
 
   async getAutoLockInterval() {
-    const interval = await this.application!.getValue(
+    const interval = (await this.application.getValue(
       STORAGE_KEY_AUTOLOCK_INTERVAL
-    ) as number;
+    )) as number;
     if (interval) {
       return interval;
     } else {
-      return LOCK_INTERVAL_NONE;
+      return LockInterval.None;
     }
   }
 
   async deleteAutolockPreference() {
-    await this.application!.removeValue(
-      STORAGE_KEY_AUTOLOCK_INTERVAL
-    );
+    await this.application.removeValue(STORAGE_KEY_AUTOLOCK_INTERVAL);
     this.cancelAutoLockTimer();
   }
 
@@ -67,11 +65,7 @@ export class AutolockService extends ApplicationService {
   beginPolling() {
     this.pollInterval = setInterval(async () => {
       const locked = await this.application.isLocked();
-      if (
-        !locked &&
-        this.lockAfterDate &&
-        new Date() > this.lockAfterDate
-      ) {
+      if (!locked && this.lockAfterDate && new Date() > this.lockAfterDate) {
         this.lockApplication();
       }
       const hasFocus = document.hasFocus();
@@ -88,25 +82,25 @@ export class AutolockService extends ApplicationService {
   getAutoLockIntervalOptions() {
     return [
       {
-        value: LOCK_INTERVAL_NONE,
-        label: "Off"
+        value: LockInterval.None,
+        label: 'Off',
       },
       {
-        value: LOCK_INTERVAL_IMMEDIATE,
-        label: "Immediately"
+        value: LockInterval.Immediate,
+        label: 'Immediately',
       },
       {
-        value: LOCK_INTERVAL_ONE_MINUTE,
-        label: "1m"
+        value: LockInterval.OneMinute,
+        label: '1m',
       },
       {
-        value: LOCK_INTERVAL_FIVE_MINUTES,
-        label: "5m"
+        value: LockInterval.FiveMinutes,
+        label: '5m',
       },
       {
-        value: LOCK_INTERVAL_ONE_HOUR,
-        label: "1h"
-      }
+        value: LockInterval.OneHour,
+        label: '1h',
+      },
     ];
   }
 
@@ -120,7 +114,7 @@ export class AutolockService extends ApplicationService {
 
   async beginAutoLockTimer() {
     const interval = await this.getAutoLockInterval();
-    if (interval === LOCK_INTERVAL_NONE) {
+    if (interval === LockInterval.None) {
       return;
     }
     const addToNow = (seconds: number) => {

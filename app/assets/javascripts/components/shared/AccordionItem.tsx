@@ -1,18 +1,18 @@
 import { FunctionalComponent } from 'preact';
 import { useRef, useState } from 'preact/hooks';
-import ArrowDown from '../../../svg/arrow-down.svg';
+import { ArrowDownCheckmarkIcon } from '@standardnotes/stylekit';
 import { Title } from '@/preferences/components';
 
 type Props = {
   title: string | JSX.Element;
   className?: string;
-}
+};
 
 export const AccordionItem: FunctionalComponent<Props> = ({
-                                                            title,
-                                                            className = '',
-                                                            children
-                                                          }) => {
+  title,
+  className = '',
+  children,
+}) => {
   const elementRef = useRef<HTMLDivElement>(null);
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -25,7 +25,7 @@ export const AccordionItem: FunctionalComponent<Props> = ({
         }}
       >
         <Title>{title}</Title>
-        <ArrowDown
+        <ArrowDownCheckmarkIcon
           className={'sn-accordion-arrow-icon absolute right-0'}
           width={20}
           height={20}

@@ -34,10 +34,10 @@ import { PinNoteButton } from '../PinNoteButton';
 import { NotesOptionsPanel } from '../NotesOptionsPanel';
 import { NoteTagsContainer } from '../NoteTagsContainer';
 import { ActionsMenu } from '../ActionsMenu';
-import { HistoryMenu } from '../HistoryMenu';
 import { ComponentView } from '../ComponentView';
 import { PanelSide, PanelResizer, PanelResizeType } from '../PanelResizer';
 import { ElementIds } from '@/element_ids';
+import { ChangeEditorButton } from '../ChangeEditorButton';
 
 const MINIMUM_STATUS_DURATION = 400;
 const TEXTAREA_DEBOUNCE = 100;
@@ -108,7 +108,6 @@ type State = {
   noteStatus?: NoteStatus;
   saveError?: any;
   showActionsMenu: boolean;
-  showHistoryMenu: boolean;
   showLockedIcon: boolean;
   showProtectedWarning: boolean;
   spellcheck: boolean;
@@ -175,7 +174,6 @@ export class NoteView extends PureComponent<Props, State> {
       noteStatus: undefined,
       noteLocked: this.controller.note.locked,
       showActionsMenu: false,
-      showHistoryMenu: false,
       showLockedIcon: true,
       showProtectedWarning: false,
       spellcheck: true,
@@ -520,10 +518,10 @@ export class NoteView extends PureComponent<Props, State> {
   };
 
   closeAllMenus = (exclude?: string) => {
-    if (!(this.state.showActionsMenu || this.state.showHistoryMenu)) {
+    if (!this.state.showActionsMenu) {
       return;
     }
-    const allMenus = ['showActionsMenu', 'showHistoryMenu'];
+    const allMenus = ['showActionsMenu'];
     const menuState: any = {};
     for (const candidate of allMenus) {
       if (candidate !== exclude) {
@@ -672,9 +670,7 @@ export class NoteView extends PureComponent<Props, State> {
       this.application.alertService.alert(STRING_DELETE_LOCKED_ATTEMPT);
       return;
     }
-    const title = this.note.safeTitle().length
-      ? `'${this.note.title}'`
-      : 'this note';
+    const title = this.note.title.length ? `'${this.note.title}'` : 'this note';
     const text = StringDeleteNote(title, permanently);
     if (
       await confirmDialog({
@@ -1075,23 +1071,30 @@ export class NoteView extends PureComponent<Props, State> {
                       <div className="desc">{this.state.noteStatus.desc}</div>
                     )}
                   </div>
-                  <>
-                    <div className="mr-3">
-                      <PinNoteButton
-                        appState={this.appState}
-                        onClickPreprocessing={
-                          this.ensureNoteIsInsertedBeforeUIAction
-                        }
-                      />
-                    </div>
-                    <NotesOptionsPanel
+                  <div className="mr-3">
+                    <ChangeEditorButton
                       application={this.application}
                       appState={this.appState}
                       onClickPreprocessing={
                         this.ensureNoteIsInsertedBeforeUIAction
                       }
                     />
-                  </>
+                  </div>
+                  <div className="mr-3">
+                    <PinNoteButton
+                      appState={this.appState}
+                      onClickPreprocessing={
+                        this.ensureNoteIsInsertedBeforeUIAction
+                      }
+                    />
+                  </div>
+                  <NotesOptionsPanel
+                    application={this.application}
+                    appState={this.appState}
+                    onClickPreprocessing={
+                      this.ensureNoteIsInsertedBeforeUIAction
+                    }
+                  />
                 </div>
               </div>
               <NoteTagsContainer appState={this.appState} />
@@ -1112,22 +1115,7 @@ export class NoteView extends PureComponent<Props, State> {
                     <div className="sk-label">Actions</div>
                     {this.state.showActionsMenu && (
                       <ActionsMenu
-                        item={this.note}
-                        application={this.application}
-                      />
-                    )}
-                  </div>
-                  <div
-                    className={
-                      (this.state.showHistoryMenu ? 'selected' : '') +
-                      ' sk-app-bar-item'
-                    }
-                    onClick={() => this.toggleMenu('showHistoryMenu')}
-                  >
-                    <div className="sk-label">History</div>
-                    {this.state.showHistoryMenu && (
-                      <HistoryMenu
-                        item={this.note}
+                        note={this.note}
                         application={this.application}
                       />
                     )}

@@ -69,26 +69,37 @@ export class ThemeManager extends ApplicationService {
 
   async onAppEvent(event: ApplicationEvent) {
     super.onAppEvent(event);
-    if (event === ApplicationEvent.SignedOut) {
-      this.deactivateAllThemes();
-      this.activeThemes = [];
-      this.application?.removeValue(
-        CACHED_THEMES_KEY,
-        StorageValueModes.Nonwrapped
-      );
-    } else if (event === ApplicationEvent.StorageReady) {
-      await this.activateCachedThemes();
-    } else if (event === ApplicationEvent.FeaturesUpdated) {
-      this.reloadThemeStatus();
-    } else if (event === ApplicationEvent.Launched) {
-      window
-        .matchMedia('(prefers-color-scheme: dark)')
-        .addEventListener('change', this.colorSchemeEventHandler);
-    } else if (event === ApplicationEvent.PreferencesChanged) {
-      const prefersDarkColorScheme = window.matchMedia(
-        '(prefers-color-scheme: dark)'
-      );
-      this.setThemeAsPerColorScheme(prefersDarkColorScheme.matches);
+    switch (event) {
+      case ApplicationEvent.SignedOut: {
+        this.deactivateAllThemes();
+        this.activeThemes = [];
+        this.application?.removeValue(
+          CACHED_THEMES_KEY,
+          StorageValueModes.Nonwrapped
+        );
+        break;
+      }
+      case ApplicationEvent.StorageReady: {
+        await this.activateCachedThemes();
+        break;
+      }
+      case ApplicationEvent.FeaturesUpdated: {
+        this.reloadThemeStatus();
+        break;
+      }
+      case ApplicationEvent.Launched: {
+        window
+          .matchMedia('(prefers-color-scheme: dark)')
+          .addEventListener('change', this.colorSchemeEventHandler);
+        break;
+      }
+      case ApplicationEvent.PreferencesChanged: {
+        const prefersDarkColorScheme = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        );
+        this.setThemeAsPerColorScheme(prefersDarkColorScheme.matches);
+        break;
+      }
     }
   }
 
@@ -97,7 +108,6 @@ export class ThemeManager extends ApplicationService {
   }
 
   deinit() {
-    this.deactivateAllThemes();
     this.activeThemes.length = 0;
     this.unregisterDesktop();
     this.unregisterStream();
@@ -113,13 +123,19 @@ export class ThemeManager extends ApplicationService {
     let hasChange = false;
     for (const themeUuid of this.activeThemes) {
       const theme = this.application.findItem(themeUuid) as SNTheme;
-      if (
-        !theme ||
-        this.application.getFeatureStatus(theme.identifier) !==
-          FeatureStatus.Entitled
-      ) {
+      if (!theme) {
         this.deactivateTheme(themeUuid);
         hasChange = true;
+      } else {
+        const status = this.application.getFeatureStatus(theme.identifier);
+        if (status !== FeatureStatus.Entitled) {
+          if (theme.active) {
+            this.application.toggleTheme(theme);
+          } else {
+            this.deactivateTheme(theme.uuid);
+          }
+          hasChange = true;
+        }
       }
     }
 
@@ -128,7 +144,6 @@ export class ThemeManager extends ApplicationService {
     }
   }
 
-  /** @override */
   async onAppStart() {
     super.onAppStart();
     this.registerObservers();
@@ -137,7 +152,7 @@ export class ThemeManager extends ApplicationService {
   private async activateCachedThemes() {
     const cachedThemes = await this.getCachedThemes();
     for (const theme of cachedThemes) {
-      this.activateTheme(theme);
+      this.activateTheme(theme, true);
     }
   }
 
@@ -172,22 +187,32 @@ export class ThemeManager extends ApplicationService {
     );
   }
 
-  private deactivateAllThemes() {
+  public deactivateAllThemes() {
     const activeThemes = this.activeThemes.slice();
     for (const uuid of activeThemes) {
       this.deactivateTheme(uuid);
     }
   }
 
-  private activateTheme(theme: SNTheme) {
+  private activateTheme(theme: SNTheme, skipEntitlementCheck = false) {
     if (this.activeThemes.find((uuid) => uuid === theme.uuid)) {
       return;
     }
-    this.activeThemes.push(theme.uuid);
+
+    if (
+      !skipEntitlementCheck &&
+      this.application.getFeatureStatus(theme.identifier) !==
+        FeatureStatus.Entitled
+    ) {
+      return;
+    }
+
     const url = this.application.componentManager.urlForComponent(theme);
     if (!url) {
       return;
     }
+
+    this.activeThemes.push(theme.uuid);
 
     const link = document.createElement('link');
     link.href = url;
