@@ -1,4 +1,4 @@
-import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/views/constants';
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/constants';
 import { FunctionComponent } from 'preact';
 
 type HistoryListItemProps = {

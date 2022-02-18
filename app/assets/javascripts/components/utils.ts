@@ -1,8 +1,5 @@
 import { KeyboardKey } from '@/services/ioService';
-import {
-  FOCUSABLE_BUT_NOT_TABBABLE,
-  MILLISECONDS_IN_A_DAY,
-} from '@/views/constants';
+import { FOCUSABLE_BUT_NOT_TABBABLE, MILLISECONDS_IN_A_DAY } from '@/constants';
 import {
   StateUpdater,
   useCallback,

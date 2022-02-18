@@ -100,20 +100,6 @@ export class ThemeManager extends ApplicationService {
         this.setThemeAsPerColorScheme(prefersDarkColorScheme.matches);
         break;
       }
-      case ApplicationEvent.LocalDataLoaded: {
-        const themes = this.application.getDisplayableItems(
-          ContentType.Theme
-        ) as SNTheme[];
-        themes.forEach((theme) => {
-          if (
-            theme.active &&
-            this.application.getFeatureStatus(theme.identifier) !==
-              FeatureStatus.Entitled
-          ) {
-            this.application.toggleTheme(theme);
-          }
-        });
-      }
     }
   }
 
@@ -137,13 +123,19 @@ export class ThemeManager extends ApplicationService {
     let hasChange = false;
     for (const themeUuid of this.activeThemes) {
       const theme = this.application.findItem(themeUuid) as SNTheme;
-      if (
-        !theme ||
-        this.application.getFeatureStatus(theme.identifier) !==
-          FeatureStatus.Entitled
-      ) {
+      if (!theme) {
         this.deactivateTheme(themeUuid);
         hasChange = true;
+      } else {
+        const status = this.application.getFeatureStatus(theme.identifier);
+        if (status !== FeatureStatus.Entitled) {
+          if (theme.active) {
+            this.application.toggleTheme(theme);
+          } else {
+            this.deactivateTheme(theme.uuid);
+          }
+          hasChange = true;
+        }
       }
     }
 
