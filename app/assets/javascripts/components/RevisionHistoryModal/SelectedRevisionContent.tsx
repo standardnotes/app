@@ -66,7 +66,7 @@ export const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentP
           {!componentViewer && (
             <div className="relative flex-grow min-h-0 overflow-x-hidden overflow-y-auto">
               {selectedRevision.payload.content.text.length ? (
-                <p className="p-4 pt-0">
+                <p className="p-4 pt-0 color-text text-editor font-editor">
                   {selectedRevision.payload.content.text}
                 </p>
               ) : (
