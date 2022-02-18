@@ -365,9 +365,9 @@ export class TagsState {
     this.selected_ = tag;
   }
 
-  public setExpanded(tag: SNTag, exapnded: boolean) {
+  public setExpanded(tag: SNTag, expanded: boolean) {
     this.application.changeAndSaveItem<TagMutator>(tag.uuid, (mutator) => {
-      mutator.expanded = exapnded;
+      mutator.expanded = expanded;
     });
   }
 
