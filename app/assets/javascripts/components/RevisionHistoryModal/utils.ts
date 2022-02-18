@@ -1,4 +1,4 @@
-import { DAYS_IN_A_WEEK, DAYS_IN_A_YEAR } from '@/views/constants';
+import { DAYS_IN_A_WEEK, DAYS_IN_A_YEAR } from '@/constants';
 import {
   HistoryEntry,
   NoteHistoryEntry,
