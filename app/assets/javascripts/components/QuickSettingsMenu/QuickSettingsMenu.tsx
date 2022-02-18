@@ -58,9 +58,9 @@ const toggleFocusMode = (enabled: boolean) => {
   }
 };
 
-export const sortThemes = (a: SNTheme, b: SNTheme) => {
-  const aIsLayerable = a.isLayerable();
-  const bIsLayerable = b.isLayerable();
+export const sortThemes = (a: ThemeItem, b: ThemeItem) => {
+  const aIsLayerable = a.component?.isLayerable();
+  const bIsLayerable = b.component?.isLayerable();
 
   if (aIsLayerable && !bIsLayerable) {
     return 1;
@@ -105,15 +105,13 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     const reloadThemes = useCallback(() => {
       const themes = (
         application.getDisplayableItems(ContentType.Theme) as SNTheme[]
-      )
-        .sort(sortThemes)
-        .map((item) => {
-          return {
-            name: item.name,
-            identifier: item.identifier,
-            component: item,
-          };
-        }) as ThemeItem[];
+      ).map((item) => {
+        return {
+          name: item.name,
+          identifier: item.identifier,
+          component: item,
+        };
+      }) as ThemeItem[];
 
       GetFeatures()
         .filter(
@@ -132,7 +130,7 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
           }
         });
 
-      setThemes(themes);
+      setThemes(themes.sort(sortThemes));
 
       setDefaultThemeOn(
         !themes
