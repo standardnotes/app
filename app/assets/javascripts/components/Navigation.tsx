@@ -1,7 +1,7 @@
 import { SmartTagsSection } from '@/components/Tags/SmartTagsSection';
 import { TagsSection } from '@/components/Tags/TagsSection';
 import { WebApplication } from '@/ui_models/application';
-import { PANEL_NAME_NAVIGATION } from '@/views/constants';
+import { PANEL_NAME_NAVIGATION } from '@/constants';
 import { ApplicationEvent, PrefKey } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';

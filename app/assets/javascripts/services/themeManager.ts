@@ -100,20 +100,6 @@ export class ThemeManager extends ApplicationService {
         this.setThemeAsPerColorScheme(prefersDarkColorScheme.matches);
         break;
       }
-      case ApplicationEvent.LocalDataLoaded: {
-        const themes = this.application.getDisplayableItems(
-          ContentType.Theme
-        ) as SNTheme[];
-        themes.forEach((theme) => {
-          if (
-            theme.active &&
-            this.application.getFeatureStatus(theme.identifier) !==
-              FeatureStatus.Entitled
-          ) {
-            this.application.toggleTheme(theme);
-          }
-        });
-      }
     }
   }
 
@@ -137,13 +123,19 @@ export class ThemeManager extends ApplicationService {
     let hasChange = false;
     for (const themeUuid of this.activeThemes) {
       const theme = this.application.findItem(themeUuid) as SNTheme;
-      if (
-        !theme ||
-        this.application.getFeatureStatus(theme.identifier) !==
-          FeatureStatus.Entitled
-      ) {
+      if (!theme) {
         this.deactivateTheme(themeUuid);
         hasChange = true;
+      } else {
+        const status = this.application.getFeatureStatus(theme.identifier);
+        if (status !== FeatureStatus.Entitled) {
+          if (theme.active) {
+            this.application.toggleTheme(theme);
+          } else {
+            this.deactivateTheme(theme.uuid);
+          }
+          hasChange = true;
+        }
       }
     }
 
@@ -160,7 +152,7 @@ export class ThemeManager extends ApplicationService {
   private async activateCachedThemes() {
     const cachedThemes = await this.getCachedThemes();
     for (const theme of cachedThemes) {
-      this.activateTheme(theme);
+      this.activateTheme(theme, true);
     }
   }
 
@@ -202,21 +194,25 @@ export class ThemeManager extends ApplicationService {
     }
   }
 
-  private activateTheme(theme: SNTheme) {
+  private activateTheme(theme: SNTheme, skipEntitlementCheck = false) {
     if (this.activeThemes.find((uuid) => uuid === theme.uuid)) {
       return;
     }
+
     if (
+      !skipEntitlementCheck &&
       this.application.getFeatureStatus(theme.identifier) !==
-      FeatureStatus.Entitled
+        FeatureStatus.Entitled
     ) {
       return;
     }
-    this.activeThemes.push(theme.uuid);
+
     const url = this.application.componentManager.urlForComponent(theme);
     if (!url) {
       return;
     }
+
+    this.activeThemes.push(theme.uuid);
 
     const link = document.createElement('link');
     link.href = url;

@@ -9,7 +9,7 @@ import { NotesListItem } from './NotesListItem';
 import {
   FOCUSABLE_BUT_NOT_TABBABLE,
   NOTES_LIST_SCROLL_THRESHOLD,
-} from '@/views/constants';
+} from '@/constants';
 
 type Props = {
   application: WebApplication;

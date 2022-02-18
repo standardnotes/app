@@ -163,6 +163,12 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   };
 
   const selectEditor = async (itemToBeSelected: EditorMenuItem) => {
+    const areBothEditorsPlain = !currentEditor && !itemToBeSelected.component;
+
+    if (areBothEditorsPlain) {
+      return;
+    }
+
     let shouldSelectEditor = true;
 
     if (itemToBeSelected.component) {
