@@ -76,29 +76,6 @@ module.exports = (env) => {
           test: /\.svg$/i,
           use: ['@svgr/webpack'],
         },
-        {
-          test: /\.html$/,
-          exclude: [path.resolve(__dirname, 'index.html')],
-          use: [
-            {
-              loader: 'ng-cache-loader',
-              options: {
-                prefix: 'templates:**',
-              },
-            },
-          ],
-        },
-        {
-          test: /\.pug$/,
-          use: [
-            {
-              loader: 'apply-loader',
-            },
-            {
-              loader: 'pug-loader',
-            },
-          ],
-        },
       ],
     },
   };
