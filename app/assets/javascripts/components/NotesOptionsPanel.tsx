@@ -69,7 +69,7 @@ export const NotesOptionsPanel = observer(
           }}
           onBlur={closeOnBlur}
           ref={buttonRef}
-          className="sn-icon-button"
+          className="sn-icon-button border-contrast"
         >
           <VisuallyHidden>Actions</VisuallyHidden>
           <Icon type="more" className="block" />
