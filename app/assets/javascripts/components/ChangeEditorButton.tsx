@@ -101,7 +101,7 @@ export const ChangeEditorButton: FunctionComponent<Props> = observer(
             }}
             onBlur={closeOnBlur}
             ref={buttonRef}
-            className="sn-icon-button"
+            className="sn-icon-button border-contrast"
           >
             <VisuallyHidden>Change editor</VisuallyHidden>
             <Icon type="dashboard" className="block" />
