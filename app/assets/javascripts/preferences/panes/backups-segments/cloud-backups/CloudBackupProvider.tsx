@@ -17,11 +17,13 @@ import { FunctionComponent } from 'preact';
 type Props = {
   application: WebApplication;
   providerName: CloudProvider;
+  isEntitledToCloudBackups: boolean;
 };
 
 export const CloudBackupProvider: FunctionComponent<Props> = ({
   application,
   providerName,
+  isEntitledToCloudBackups,
 }) => {
   const [authBegan, setAuthBegan] = useState(false);
   const [successfullyInstalled, setSuccessfullyInstalled] = useState(false);
@@ -174,6 +176,9 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
 
   const isExpanded = authBegan || successfullyInstalled;
   const shouldShowEnableButton = !backupFrequency && !authBegan;
+  const additionalClass = isEntitledToCloudBackups
+    ? ''
+    : 'faded cursor-default pointer-events-none';
 
   return (
     <div
@@ -184,7 +189,7 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
       }`}
     >
       <div>
-        <Subtitle>{providerName}</Subtitle>
+        <Subtitle className={additionalClass}>{providerName}</Subtitle>
 
         {successfullyInstalled && (
           <p>{providerName} has been successfully enabled.</p>
@@ -213,7 +218,7 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
           <Button
             type="normal"
             label="Enable"
-            className={'px-1 text-xs min-w-40'}
+            className={`px-1 text-xs min-w-40 ${additionalClass}`}
             onClick={installIntegration}
           />
         </div>
@@ -222,7 +227,7 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
       {backupFrequency && (
         <div className={'flex flex-col items-end'}>
           <Button
-            className="min-w-40 mb-2"
+            className={`min-w-40 mb-2 ${additionalClass}`}
             type="normal"
             label="Perform Backup"
             onClick={performBackupNow}

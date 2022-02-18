@@ -11,10 +11,11 @@ type Props = {
   application: WebApplication;
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void;
   closeDisplayOptionsMenu: () => void;
+  isOpen: boolean;
 };
 
 export const NotesListOptionsMenu: FunctionComponent<Props> = observer(
-  ({ closeDisplayOptionsMenu, closeOnBlur, application }) => {
+  ({ closeDisplayOptionsMenu, closeOnBlur, application, isOpen }) => {
     const menuClassName =
       'sn-dropdown sn-dropdown--animated min-w-70 overflow-y-auto \
 border-1 border-solid border-main text-sm z-index-dropdown-menu \
@@ -120,7 +121,11 @@ flex flex-col py-2 top-full bottom-0 left-2 absolute';
 
     return (
       <div ref={menuRef} className={menuClassName}>
-        <Menu a11yLabel="Sort by" closeMenu={closeDisplayOptionsMenu}>
+        <Menu
+          a11yLabel="Notes list options menu"
+          closeMenu={closeDisplayOptionsMenu}
+          isOpen={isOpen}
+        >
           <div className="px-3 my-1 text-xs font-semibold color-text uppercase">
             Sort by
           </div>

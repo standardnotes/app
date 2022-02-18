@@ -147,7 +147,7 @@
       }
 
       .name {
-        word-break: break-all;
+        word-break: break-word;
         margin-right: 0.5rem;
       }
 
@@ -163,6 +163,7 @@
       align-items: flex-start;
       padding: 1rem;
       padding-left: 0;
+      border-bottom: 1px solid var(--sn-stylekit-border-color);
 
       & > * {
         display: flex;

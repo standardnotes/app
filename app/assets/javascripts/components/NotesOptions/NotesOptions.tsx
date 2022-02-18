@@ -17,7 +17,7 @@ import {
   MENU_MARGIN_FROM_APP_BORDER,
   MAX_MENU_SIZE_MULTIPLIER,
   BYTES_IN_ONE_MEGABYTE,
-} from '@/views/constants';
+} from '@/constants';
 
 export type NotesOptionsProps = {
   application: WebApplication;
@@ -351,8 +351,25 @@ export const NotesOptions = observer(
       );
     }
 
+    const openRevisionHistoryModal = () => {
+      appState.notes.setShowRevisionHistoryModal(true);
+    };
+
     return (
       <>
+        {notes.length === 1 && (
+          <>
+            <button
+              onBlur={closeOnBlur}
+              className="sn-dropdown-item"
+              onClick={openRevisionHistoryModal}
+            >
+              <Icon type="history" className={iconClass} />
+              Note history
+            </button>
+            <div className="min-h-1px my-2 bg-border"></div>
+          </>
+        )}
         <button
           className="sn-dropdown-item justify-between"
           onClick={() => {
@@ -543,7 +560,7 @@ export const NotesOptions = observer(
               }}
             >
               <Icon type="trash" className={iconClass} />
-              Move to Trash
+              Move to trash
             </button>
           ))}
         {trashed && (

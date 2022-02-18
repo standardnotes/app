@@ -5,12 +5,10 @@ import { PurchaseFlowPane } from '@/ui_models/app_state/purchase_flow_state';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
-import Circle from '../../../svg/circle-55.svg';
-import BlueDot from '../../../svg/blue-dot.svg';
-import Diamond from '../../../svg/diamond-with-horizontal-lines.svg';
 import { FloatingLabelInput } from '@/components/FloatingLabelInput';
 import { isEmailValid } from '@/utils';
 import { loadPurchaseFlowUrl } from '../PurchaseFlowWrapper';
+import { BlueDotIcon, CircleIcon, DiamondIcon } from '@standardnotes/stylekit';
 
 type Props = {
   appState: AppState;
@@ -101,13 +99,13 @@ export const SignIn: FunctionComponent<Props> = observer(
 
     return (
       <div className="flex items-center">
-        <Circle className="absolute w-8 h-8 top-35% -left-56" />
-        <BlueDot className="absolute w-4 h-4 top-30% -left-40" />
-        <Diamond className="absolute w-26 h-26 -bottom-5 left-0 -translate-x-1/2 -z-index-1" />
+        <CircleIcon className="absolute w-8 h-8 top-35% -left-56" />
+        <BlueDotIcon className="absolute w-4 h-4 top-30% -left-40" />
+        <DiamondIcon className="absolute w-26 h-26 -bottom-5 left-0 -translate-x-1/2 -z-index-1" />
 
-        <Circle className="absolute w-8 h-8 bottom-30% -right-56" />
-        <BlueDot className="absolute w-4 h-4 bottom-20% -right-44" />
-        <Diamond className="absolute w-18 h-18 top-0 -right-2 translate-x-1/2 -z-index-1" />
+        <CircleIcon className="absolute w-8 h-8 bottom-30% -right-56" />
+        <BlueDotIcon className="absolute w-4 h-4 bottom-20% -right-44" />
+        <DiamondIcon className="absolute w-18 h-18 top-0 -right-2 translate-x-1/2 -z-index-1" />
 
         <div>
           <h1 className="mt-0 mb-2 text-2xl">Sign in</h1>

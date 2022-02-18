@@ -7,7 +7,7 @@ import {
   PermissionDialog,
   removeFromArray,
 } from '@standardnotes/snjs';
-import { PANEL_NAME_NOTES, PANEL_NAME_NAVIGATION } from '@/views/constants';
+import { PANEL_NAME_NOTES, PANEL_NAME_NAVIGATION } from '@/constants';
 import { STRING_DEFAULT_FILE_ERROR } from '@/strings';
 import { alertDialog } from '@/services/alertService';
 import { WebAppEvent, WebApplication } from '@/ui_models/application';
@@ -23,7 +23,9 @@ import { NotesContextMenu } from '@/components/NotesContextMenu';
 import { PurchaseFlowWrapper } from '@/purchaseFlow/PurchaseFlowWrapper';
 import { render } from 'preact';
 import { PermissionsModal } from './PermissionsModal';
+import { RevisionHistoryModalWrapper } from './RevisionHistoryModal/RevisionHistoryModalWrapper';
 import { PremiumModalProvider } from './Premium';
+import { ConfirmSignoutContainer } from './ConfirmSignoutModal';
 
 type Props = {
   application: WebApplication;
@@ -238,6 +240,11 @@ export class ApplicationView extends PureComponent<Props, State> {
                 appState={this.appState}
                 application={this.application}
               />
+
+              <RevisionHistoryModalWrapper
+                application={this.application}
+                appState={this.appState}
+              />
             </>
           )}
 
@@ -264,6 +271,11 @@ export class ApplicationView extends PureComponent<Props, State> {
               <PurchaseFlowWrapper
                 application={this.application}
                 appState={this.appState}
+              />
+
+              <ConfirmSignoutContainer
+                appState={this.appState}
+                application={this.application}
               />
             </>
           )}

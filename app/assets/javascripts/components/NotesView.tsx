@@ -1,7 +1,7 @@
 import { KeyboardKey, KeyboardModifier } from '@/services/ioService';
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
-import { PANEL_NAME_NOTES } from '@/views/constants';
+import { PANEL_NAME_NOTES } from '@/constants';
 import { PrefKey } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
@@ -238,6 +238,7 @@ export const NotesView: FunctionComponent<Props> = observer(
                           application={application}
                           closeDisplayOptionsMenu={toggleDisplayOptionsMenu}
                           closeOnBlur={closeDisplayOptMenuOnBlur}
+                          isOpen={showDisplayOptionsMenu}
                         />
                       )}
                     </DisclosurePanel>

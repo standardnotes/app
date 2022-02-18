@@ -1,6 +1,12 @@
-import { FunctionComponent, h, render } from 'preact';
-import { unmountComponentAtNode } from 'preact/compat';
-import { StateUpdater, useCallback, useState, useEffect } from 'preact/hooks';
+import { KeyboardKey } from '@/services/ioService';
+import { FOCUSABLE_BUT_NOT_TABBABLE, MILLISECONDS_IN_A_DAY } from '@/constants';
+import {
+  StateUpdater,
+  useCallback,
+  useState,
+  useEffect,
+  Ref,
+} from 'preact/hooks';
 
 /**
  * @returns a callback that will close a dropdown if none of its children has
@@ -57,3 +63,105 @@ export function useCloseOnClickOutside(
     };
   }, [closeOnClickOutside]);
 }
+
+export const calculateDifferenceBetweenDatesInDays = (
+  firstDate: Date,
+  secondDate: Date
+) => {
+  const firstDateAsUTCMilliseconds = Date.UTC(
+    firstDate.getFullYear(),
+    firstDate.getMonth(),
+    firstDate.getDate()
+  );
+
+  const secondDateAsUTCMilliseconds = Date.UTC(
+    secondDate.getFullYear(),
+    secondDate.getMonth(),
+    secondDate.getDate()
+  );
+
+  return Math.round(
+    (firstDateAsUTCMilliseconds - secondDateAsUTCMilliseconds) /
+      MILLISECONDS_IN_A_DAY
+  );
+};
+
+export const useListKeyboardNavigation = (
+  container: Ref<HTMLElement | null>
+) => {
+  const [listItems, setListItems] = useState<NodeListOf<HTMLButtonElement>>();
+  const [focusedItemIndex, setFocusedItemIndex] = useState<number>(0);
+
+  const focusItemWithIndex = useCallback(
+    (index: number) => {
+      setFocusedItemIndex(index);
+      listItems?.[index]?.focus();
+    },
+    [listItems]
+  );
+
+  useEffect(() => {
+    if (container.current) {
+      container.current.tabIndex = FOCUSABLE_BUT_NOT_TABBABLE;
+      setListItems(container.current.querySelectorAll('button'));
+    }
+  }, [container]);
+
+  const keyDownHandler = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === KeyboardKey.Up || e.key === KeyboardKey.Down) {
+        e.preventDefault();
+      } else {
+        return;
+      }
+
+      if (!listItems?.length) {
+        setListItems(container.current?.querySelectorAll('button'));
+      }
+
+      if (listItems) {
+        if (e.key === KeyboardKey.Up) {
+          let previousIndex = focusedItemIndex - 1;
+          if (previousIndex < 0) {
+            previousIndex = listItems.length - 1;
+          }
+          focusItemWithIndex(previousIndex);
+        }
+
+        if (e.key === KeyboardKey.Down) {
+          let nextIndex = focusedItemIndex + 1;
+          if (nextIndex > listItems.length - 1) {
+            nextIndex = 0;
+          }
+          focusItemWithIndex(nextIndex);
+        }
+      }
+    },
+    [container, focusItemWithIndex, focusedItemIndex, listItems]
+  );
+
+  const FIRST_ITEM_FOCUS_TIMEOUT = 20;
+
+  const containerFocusHandler = useCallback(() => {
+    if (listItems) {
+      const selectedItemIndex = Array.from(listItems).findIndex(
+        (item) => item.dataset.selected
+      );
+      const indexToFocus = selectedItemIndex > -1 ? selectedItemIndex : 0;
+      setTimeout(() => {
+        focusItemWithIndex(indexToFocus);
+      }, FIRST_ITEM_FOCUS_TIMEOUT);
+    }
+  }, [focusItemWithIndex, listItems]);
+
+  useEffect(() => {
+    const containerElement = container.current;
+    containerElement?.addEventListener('focus', containerFocusHandler);
+    containerElement?.addEventListener('keydown', keyDownHandler);
+
+    return () => {
+      containerElement?.removeEventListener('focus', containerFocusHandler);
+      containerElement?.removeEventListener('keydown', keyDownHandler);
+    };
+  }, [container, containerFocusHandler, keyDownHandler]);
+};

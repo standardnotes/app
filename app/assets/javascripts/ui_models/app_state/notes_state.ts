@@ -1,7 +1,7 @@
 import { confirmDialog } from '@/services/alertService';
 import { KeyboardModifier } from '@/services/ioService';
 import { StringEmptyTrash, Strings, StringUtils } from '@/strings';
-import { MENU_MARGIN_FROM_APP_BORDER } from '@/views/constants';
+import { MENU_MARGIN_FROM_APP_BORDER } from '@/constants';
 import {
   UuidString,
   SNNote,
@@ -32,6 +32,7 @@ export class NotesState {
   contextMenuClickLocation: { x: number; y: number } = { x: 0, y: 0 };
   contextMenuMaxHeight: number | 'auto' = 'auto';
   showProtectedWarning = false;
+  showRevisionHistoryModal = false;
 
   constructor(
     private application: WebApplication,
@@ -44,6 +45,7 @@ export class NotesState {
       contextMenuOpen: observable,
       contextMenuPosition: observable,
       showProtectedWarning: observable,
+      showRevisionHistoryModal: observable,
 
       selectedNotesCount: computed,
       trashedNotesCount: computed,
@@ -53,6 +55,7 @@ export class NotesState {
       setContextMenuPosition: action,
       setContextMenuMaxHeight: action,
       setShowProtectedWarning: action,
+      setShowRevisionHistoryModal: action,
       unselectNotes: action,
     });
 
@@ -456,5 +459,9 @@ export class NotesState {
 
   private get io() {
     return this.application.io;
+  }
+
+  setShowRevisionHistoryModal(show: boolean): void {
+    this.showRevisionHistoryModal = show;
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "sn-theme-solarized-dark",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "main": "dist/dist.css",
   "devDependencies": {
     "grunt": "^1.0.1",
