@@ -26,7 +26,7 @@ import { PermissionsModal } from './PermissionsModal';
 import { RevisionHistoryModalWrapper } from './RevisionHistoryModal/RevisionHistoryModalWrapper';
 import { PremiumModalProvider } from './Premium';
 import { ConfirmSignoutContainer } from './ConfirmSignoutModal';
-import { TagsContextMenu } from './Tags/TagsContextMenu';
+import { TagsContextMenu } from './Tags/TagContextMenu';
 
 type Props = {
   application: WebApplication;
