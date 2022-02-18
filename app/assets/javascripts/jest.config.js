@@ -23,7 +23,6 @@ module.exports = {
     self: {}, // fixes error happening on `import { SKAlert } from 'sn-stylekit'`
   },
   transform: {
-    '\\.(pug)$': '../../../node_modules/jest-transform-pug',
     '^.+\\.(ts|tsx)?$': 'ts-jest',
     '\\.svg$': 'svg-jest',
   },
