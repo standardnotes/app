@@ -2835,10 +2835,10 @@
   resolved "https://registry.yarnpkg.com/@standardnotes/common/-/common-1.11.0.tgz#5ed4be817a1f448e6eeb700d141dbfd40193aabe"
   integrity sha512-8TKx7bCwIazhGD3wkWTV4rmwbERsyisPbVDn6UIm1lNktWjKDF5OL1D8omalpR5wdM5qmXX5njI1zll2cxlW7A==
 
-"@standardnotes/components@1.7.3":
-  version "1.7.3"
-  resolved "https://registry.yarnpkg.com/@standardnotes/components/-/components-1.7.3.tgz#544521a5f0c5955c384fa7878003f4fdfcda860c"
-  integrity sha512-2AcxDdSFMK0G7h6R+EdMR2muzmFyqm0Qtl9znjQ3Bec4wGo9gpLpxlvotbihh230H+PTq4DJybX586bEs6HUKg==
+"@standardnotes/components@1.7.4":
+  version "1.7.4"
+  resolved "https://registry.yarnpkg.com/@standardnotes/components/-/components-1.7.4.tgz#77b17a424d411288a12366c65b6931729b2d73de"
+  integrity sha512-yExiJw1lyClRpQlML0/FbCvULJe8c4mPp0WvXq1IRE5R3x3MZ6LsCJgoqZAylIXki8Zvw17mxvwA4ywbd/ug0A==
 
 "@standardnotes/domain-events@^2.23.7":
   version "2.23.7"
@@ -2848,7 +2848,15 @@
     "@standardnotes/auth" "^3.16.1"
     "@standardnotes/features" "^1.32.6"
 
-"@standardnotes/features@1.32.6", "@standardnotes/features@^1.32.6":
+"@standardnotes/features@1.32.7":
+  version "1.32.7"
+  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.32.7.tgz#a0bebac866959ad4e8536317eba360b0d93fefd4"
+  integrity sha512-i7eUZjfnnIxmi72dNdImdTGnASns0SKyyVSe2pcfKH4BcP5om7kM4MqYshpX4EjYFU/vJTw4f/VbbckN7jowdQ==
+  dependencies:
+    "@standardnotes/auth" "^3.16.1"
+    "@standardnotes/common" "^1.11.0"
+
+"@standardnotes/features@^1.32.6":
   version "1.32.6"
   resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.32.6.tgz#63856e4f4af1a56aa6533a5e214a43c4b2d8b510"
   integrity sha512-GQJfDzYAAlRSccPWgAAT95hmUqmo9Z/m52uhOvgOwdQgwxOkHnYh60cdM/lnYrTBk0wv9MYPTFd+3vbMXy9/YQ==
