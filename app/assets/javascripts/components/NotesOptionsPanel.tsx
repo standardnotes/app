@@ -11,6 +11,7 @@ import { useRef, useState } from 'preact/hooks';
 import { observer } from 'mobx-react-lite';
 import { NotesOptions } from './NotesOptions/NotesOptions';
 import { WebApplication } from '@/ui_models/application';
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/constants';
 
 type Props = {
   application: WebApplication;
@@ -88,6 +89,7 @@ export const NotesOptionsPanel = observer(
           }}
           className="sn-dropdown sn-dropdown--animated min-w-80 max-h-120 max-w-xs flex flex-col pt-2 overflow-y-auto fixed"
           onBlur={closeOnBlur}
+          tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
         >
           {open && (
             <NotesOptions
