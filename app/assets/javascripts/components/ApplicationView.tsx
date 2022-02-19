@@ -269,10 +269,7 @@ export class ApplicationView extends PureComponent<Props, State> {
                 appState={this.appState}
               />
 
-              <TagsContextMenu
-                application={this.application}
-                appState={this.appState}
-              />
+              <TagsContextMenu appState={this.appState} />
 
               <PurchaseFlowWrapper
                 application={this.application}

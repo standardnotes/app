@@ -1,5 +1,6 @@
 import { Icon } from '@/components/Icon';
 import { usePremiumModal } from '@/components/Premium';
+import { KeyboardKey } from '@/services/ioService';
 import {
   FeaturesState,
   TAG_FOLDERS_FEATURE_NAME,
@@ -28,10 +29,13 @@ const PADDING_PER_LEVEL_PX = 21;
 export const TagsListItem: FunctionComponent<Props> = observer(
   ({ tag, features, tagsState, level, onContextMenu }) => {
     const [title, setTitle] = useState(tag.title || '');
+    const [subtagTitle, setSubtagTitle] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
+    const subtagInputRef = useRef<HTMLInputElement>(null);
 
     const isSelected = tagsState.selected === tag;
     const isEditing = tagsState.editingTag === tag;
+    const isAddingSubtag = tagsState.addingSubtagTo === tag;
     const noteCounts = computed(() => tagsState.getNotesCount(tag));
 
     const childrenTags = computed(() => tagsState.getChildren(tag)).get();
@@ -84,9 +88,9 @@ export const TagsListItem: FunctionComponent<Props> = observer(
       [setTitle]
     );
 
-    const onKeyUp = useCallback(
+    const onKeyDown = useCallback(
       (e: KeyboardEvent) => {
-        if (e.code === 'Enter') {
+        if (e.key === KeyboardKey.Enter) {
           inputRef.current?.blur();
           e.preventDefault();
         }
@@ -99,6 +103,35 @@ export const TagsListItem: FunctionComponent<Props> = observer(
         inputRef.current?.focus();
       }
     }, [inputRef, isEditing]);
+
+    const onSubtagInput = useCallback(
+      (e: JSX.TargetedEvent<HTMLInputElement>) => {
+        const value = (e.target as HTMLInputElement).value;
+        setSubtagTitle(value);
+      },
+      []
+    );
+
+    const onSubtagInputBlur = useCallback(() => {
+      tagsState.createSubtagAndAssignParent(tag, subtagTitle);
+      setSubtagTitle('');
+    }, [subtagTitle, tag, tagsState]);
+
+    const onSubtagKeyDown = useCallback(
+      (e: KeyboardEvent) => {
+        if (e.key === KeyboardKey.Enter) {
+          e.preventDefault();
+          subtagInputRef.current?.blur();
+        }
+      },
+      [subtagInputRef]
+    );
+
+    useEffect(() => {
+      if (isAddingSubtag) {
+        subtagInputRef.current?.focus();
+      }
+    }, [subtagInputRef, isAddingSubtag]);
 
     const [, dragRef] = useDrag(
       () => ({
@@ -180,7 +213,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
                 onBlur={onBlur}
                 onInput={onInput}
                 value={title}
-                onKeyUp={onKeyUp}
+                onKeyDown={onKeyDown}
                 spellCheck={false}
                 ref={inputRef}
               />
@@ -201,6 +234,32 @@ export const TagsListItem: FunctionComponent<Props> = observer(
             )}
           </div>
         </div>
+        {isAddingSubtag && (
+          <div
+            className="tag overflow-hidden"
+            style={{
+              paddingLeft: `${
+                (level + 1) * PADDING_PER_LEVEL_PX + PADDING_BASE_PX
+              }px`,
+            }}
+          >
+            <div className="tag-info">
+              <div className="tag-fold" />
+              <div className="tag-icon mr-1">
+                <Icon type="hashtag" className="color-neutral mr-1" />
+              </div>
+              <input
+                className="title w-full focus:shadow-none"
+                type="text"
+                ref={subtagInputRef}
+                onBlur={onSubtagInputBlur}
+                onKeyDown={onSubtagKeyDown}
+                value={subtagTitle}
+                onInput={onSubtagInput}
+              />
+            </div>
+          </div>
+        )}
         {showChildren && (
           <>
             {childrenTags.map((tag) => {

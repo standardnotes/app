@@ -3,7 +3,7 @@ import { STRING_DELETE_TAG } from '@/strings';
 import {
   MAX_MENU_SIZE_MULTIPLIER,
   MENU_MARGIN_FROM_APP_BORDER,
-} from '@/views/constants';
+} from '@/constants';
 import {
   ComponentAction,
   ContentType,
@@ -76,6 +76,8 @@ export class TagsState {
   selected_: AnyTag | undefined;
   previouslySelected_: AnyTag | undefined;
   editing_: SNTag | undefined;
+  addingSubtagTo: SNTag | undefined;
+
   contextMenuOpen = false;
   contextMenuPosition: { top?: number; left: number; bottom?: number } = {
     top: 0,
@@ -96,6 +98,7 @@ export class TagsState {
     this.selected_ = undefined;
     this.previouslySelected_ = undefined;
     this.editing_ = undefined;
+    this.addingSubtagTo = undefined;
 
     this.smartTags = this.application.getSmartTags();
     this.selected_ = this.smartTags[0];
@@ -115,6 +118,9 @@ export class TagsState {
       selected: computed,
       selectedUuid: computed,
       editingTag: computed,
+
+      addingSubtagTo: observable,
+      setAddingSubtagTo: action,
 
       assignParent: action,
 
@@ -177,6 +183,39 @@ export class TagsState {
         }
       })
     );
+  }
+
+  async createSubtagAndAssignParent(parent: SNTag, title: string) {
+    const hasEmptyTitle = title.length === 0;
+
+    if (hasEmptyTitle) {
+      this.setAddingSubtagTo(undefined);
+      return;
+    }
+
+    const createdTag = await this.application.createTagOrSmartTag(title);
+
+    const futureSiblings = this.application.getTagChildren(parent);
+
+    if (!isValidFutureSiblings(this.application, futureSiblings, createdTag)) {
+      this.setAddingSubtagTo(undefined);
+      this.remove(createdTag, false);
+      return;
+    }
+
+    this.assignParent(createdTag.uuid, parent.uuid);
+
+    this.application.sync();
+
+    runInAction(() => {
+      this.selected = createdTag as SNTag;
+    });
+
+    this.setAddingSubtagTo(undefined);
+  }
+
+  setAddingSubtagTo(tag: SNTag | undefined): void {
+    this.addingSubtagTo = tag;
   }
 
   setContextMenuOpen(open: boolean): void {
@@ -407,13 +446,15 @@ export class TagsState {
     this.selected = previousTag;
   }
 
-  public async remove(tag: SNTag) {
-    if (
-      await confirmDialog({
+  public async remove(tag: SNTag, userTriggered: boolean) {
+    let shouldDelete = !userTriggered;
+    if (userTriggered) {
+      shouldDelete = await confirmDialog({
         text: STRING_DELETE_TAG,
         confirmButtonStyle: 'danger',
-      })
-    ) {
+      });
+    }
+    if (shouldDelete) {
       this.application.deleteItem(tag);
       this.selected = this.smartTags[0];
     }

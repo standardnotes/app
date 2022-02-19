@@ -88,7 +88,7 @@ $content-horizontal-padding: 16px;
       }
 
       > .tag-fold {
-        width: 22px;
+        min-width: 22px;
         display: flex;
         align-items: center;
         height: 100%;

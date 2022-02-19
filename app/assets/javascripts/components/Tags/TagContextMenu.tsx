@@ -1,4 +1,3 @@
-import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
@@ -9,12 +8,11 @@ import { MenuItem, MenuItemType } from '../menu/MenuItem';
 import { useCloseOnBlur } from '../utils';
 
 type Props = {
-  application: WebApplication;
   appState: AppState;
 };
 
 export const TagsContextMenu: FunctionComponent<Props> = observer(
-  ({ application, appState }) => {
+  ({ appState }) => {
     const selectedTag = appState.tags.selected;
 
     if (!selectedTag) {
@@ -40,12 +38,18 @@ export const TagsContextMenu: FunctionComponent<Props> = observer(
       };
     }, [reloadContextMenuLayout]);
 
+    const onClickAddSubtag = useCallback(() => {
+      appState.tags.setContextMenuOpen(false);
+      appState.tags.setAddingSubtagTo(selectedTag);
+    }, [appState.tags, selectedTag]);
+
     const onClickRename = useCallback(() => {
+      appState.tags.setContextMenuOpen(false);
       appState.tags.editingTag = selectedTag;
     }, [appState.tags, selectedTag]);
 
     const onClickDelete = useCallback(() => {
-      appState.tags.remove(selectedTag);
+      appState.tags.remove(selectedTag, true);
     }, [appState.tags, selectedTag]);
 
     return contextMenuOpen ? (
@@ -68,9 +72,7 @@ export const TagsContextMenu: FunctionComponent<Props> = observer(
             type={MenuItemType.IconButton}
             onBlur={closeOnBlur}
             className={`py-2 text-input`}
-            onClick={() => {
-              //
-            }}
+            onClick={onClickAddSubtag}
           >
             <Icon type="add" className="color-neutral mr-2" />
             Add subtag

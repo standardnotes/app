@@ -84,7 +84,7 @@ export const SmartTagsListItem: FunctionComponent<Props> = observer(
     }, [inputRef]);
 
     const onClickDelete = useCallback(() => {
-      tagsState.remove(tag);
+      tagsState.remove(tag, true);
     }, [tagsState, tag]);
 
     const isFaded = !tag.isAllTag;
