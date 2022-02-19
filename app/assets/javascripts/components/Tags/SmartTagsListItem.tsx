@@ -111,6 +111,7 @@ export const SmartTagsListItem: FunctionComponent<Props> = observer(
               </div>
               <input
                 className={`title ${isEditing ? 'editing' : ''}`}
+                disabled={!isEditing}
                 id={`react-tag-${tag.uuid}`}
                 onBlur={onBlur}
                 onInput={onInput}
