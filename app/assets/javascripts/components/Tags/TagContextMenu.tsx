@@ -71,7 +71,7 @@ export const TagsContextMenu: FunctionComponent<Props> = observer(
           <MenuItem
             type={MenuItemType.IconButton}
             onBlur={closeOnBlur}
-            className={`py-2 text-input`}
+            className={`py-1.5`}
             onClick={onClickAddSubtag}
           >
             <Icon type="add" className="color-neutral mr-2" />
@@ -80,7 +80,7 @@ export const TagsContextMenu: FunctionComponent<Props> = observer(
           <MenuItem
             type={MenuItemType.IconButton}
             onBlur={closeOnBlur}
-            className={`py-2 text-input`}
+            className={`py-1.5`}
             onClick={onClickRename}
           >
             <Icon type="pencil-filled" className="color-neutral mr-2" />
@@ -89,10 +89,10 @@ export const TagsContextMenu: FunctionComponent<Props> = observer(
           <MenuItem
             type={MenuItemType.IconButton}
             onBlur={closeOnBlur}
-            className={`py-2 text-input`}
+            className={`py-1.5 color-danger`}
             onClick={onClickDelete}
           >
-            <Icon type="trash" className="color-neutral mr-2" />
+            <Icon type="trash" className="mr-2" />
             Delete
           </MenuItem>
         </Menu>
