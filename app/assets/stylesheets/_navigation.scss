@@ -147,12 +147,12 @@ $content-horizontal-padding: 16px;
         }
       }
 
-      > .count {
+      .count {
         padding-right: 4px;
         padding-top: 1px;
         font-weight: bold;
         color: var(--sn-stylekit-neutral-color);
-        min-width: 35px;
+        min-width: 15px;
         text-align: right;
       }
     }

@@ -32,6 +32,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
     const [subtagTitle, setSubtagTitle] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
     const subtagInputRef = useRef<HTMLInputElement>(null);
+    const menuButtonRef = useRef<HTMLButtonElement>(null);
 
     const isSelected = tagsState.selected === tag;
     const isEditing = tagsState.editingTag === tag;
@@ -170,6 +171,21 @@ export const TagsListItem: FunctionComponent<Props> = observer(
 
     const readyToDrop = isOver && canDrop;
 
+    const toggleContextMenu = () => {
+      if (!menuButtonRef.current) {
+        return;
+      }
+
+      const contextMenuOpen = tagsState.contextMenuOpen;
+      const menuButtonRect = menuButtonRef.current?.getBoundingClientRect();
+
+      if (contextMenuOpen) {
+        tagsState.setContextMenuOpen(false);
+      } else {
+        onContextMenu(tag, menuButtonRect.right, menuButtonRect.top);
+      }
+    };
+
     return (
       <>
         <div
@@ -210,6 +226,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
               <input
                 className={`title ${isEditing ? 'editing' : ''}`}
                 id={`react-tag-${tag.uuid}`}
+                disabled={!isEditing}
                 onBlur={onBlur}
                 onInput={onInput}
                 value={title}
@@ -217,7 +234,16 @@ export const TagsListItem: FunctionComponent<Props> = observer(
                 spellCheck={false}
                 ref={inputRef}
               />
-              <div className="count">{noteCounts.get()}</div>
+              <div className="flex items-center">
+                <button
+                  className="p-0 border-0 mr-2 bg-transparent"
+                  onClick={toggleContextMenu}
+                  ref={menuButtonRef}
+                >
+                  <Icon type="more" className="color-neutral" />
+                </button>
+                <div className="count">{noteCounts.get()}</div>
+              </div>
             </div>
           ) : null}
           <div className={`meta ${hasAtLeastOneFolder ? 'with-folders' : ''}`}>
