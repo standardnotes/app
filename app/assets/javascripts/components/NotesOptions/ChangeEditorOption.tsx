@@ -4,7 +4,7 @@ import { AppState } from '@/ui_models/app_state';
 import {
   MENU_MARGIN_FROM_APP_BORDER,
   MAX_MENU_SIZE_MULTIPLIER,
-} from '@/views/constants';
+} from '@/constants';
 import {
   Disclosure,
   DisclosureButton,

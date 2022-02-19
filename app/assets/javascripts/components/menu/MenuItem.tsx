@@ -4,7 +4,7 @@ import { JSXInternal } from 'preact/src/jsx';
 import { Icon } from '../Icon';
 import { Switch, SwitchProps } from '../Switch';
 import { IconType } from '@standardnotes/snjs';
-import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/views/constants';
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/constants';
 
 export enum MenuItemType {
   IconButton,

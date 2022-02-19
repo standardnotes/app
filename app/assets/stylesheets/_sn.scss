@@ -946,3 +946,11 @@
 .sn-component .border-t-0 {
   border-top-width: 0;
 }
+
+.text-editor {
+  font-size: var(--sn-stylekit-font-size-editor);
+}
+
+.sn-component .border-contrast {
+  border-color: var(--sn-stylekit-contrast-border-color);
+}

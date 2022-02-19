@@ -1055,21 +1055,23 @@ export class NoteView extends PureComponent<Props, State> {
                   </div>
                 </div>
                 <div className="flex items-center">
-                  <div id="save-status">
-                    <div
-                      className={
-                        (this.state.syncTakingTooLong
-                          ? 'warning sk-bold '
-                          : '') +
-                        (this.state.saveError ? 'danger sk-bold ' : '') +
-                        ' message'
-                      }
-                    >
-                      {this.state.noteStatus?.message}
+                  <div id="save-status-container">
+                    <div id="save-status">
+                      <div
+                        className={
+                          (this.state.syncTakingTooLong
+                            ? 'warning sk-bold '
+                            : '') +
+                          (this.state.saveError ? 'danger sk-bold ' : '') +
+                          ' message'
+                        }
+                      >
+                        {this.state.noteStatus?.message}
+                      </div>
+                      {this.state.noteStatus?.desc && (
+                        <div className="desc">{this.state.noteStatus.desc}</div>
+                      )}
                     </div>
-                    {this.state.noteStatus?.desc && (
-                      <div className="desc">{this.state.noteStatus.desc}</div>
-                    )}
                   </div>
                   <div className="mr-3">
                     <ChangeEditorButton

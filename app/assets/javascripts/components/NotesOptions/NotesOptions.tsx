@@ -17,7 +17,7 @@ import {
   MENU_MARGIN_FROM_APP_BORDER,
   MAX_MENU_SIZE_MULTIPLIER,
   BYTES_IN_ONE_MEGABYTE,
-} from '@/views/constants';
+} from '@/constants';
 
 export type NotesOptionsProps = {
   application: WebApplication;
@@ -560,7 +560,7 @@ export const NotesOptions = observer(
               }}
             >
               <Icon type="trash" className={iconClass} />
-              Move to Trash
+              Move to trash
             </button>
           ))}
         {trashed && (
