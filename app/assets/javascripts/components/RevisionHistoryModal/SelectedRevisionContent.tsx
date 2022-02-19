@@ -64,11 +64,14 @@ export const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentP
             </div>
           </div>
           {!componentViewer && (
-            <div className="relative flex-grow min-h-0 overflow-x-hidden overflow-y-auto">
+            <div className="relative flex-grow min-h-0 overflow-hidden">
               {selectedRevision.payload.content.text.length ? (
-                <p className="p-4 pt-0 color-text text-editor font-editor">
+                <textarea
+                  readOnly={true}
+                  className="w-full h-full resize-none p-4 pt-0 border-0 color-text text-editor font-editor"
+                >
                   {selectedRevision.payload.content.text}
-                </p>
+                </textarea>
               ) : (
                 <div className={`color-grey-0 ${ABSOLUTE_CENTER_CLASSNAME}`}>
                   Empty note.
