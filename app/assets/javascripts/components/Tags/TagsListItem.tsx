@@ -188,8 +188,8 @@ export const TagsListItem: FunctionComponent<Props> = observer(
 
     return (
       <>
-        <div
-          className={`tag ${isSelected ? 'selected' : ''} ${
+        <button
+          className={`tag focus:shadow-inner ${isSelected ? 'selected' : ''} ${
             readyToDrop ? 'is-drag-over' : ''
           }`}
           onClick={selectCurrentTag}
@@ -205,16 +205,22 @@ export const TagsListItem: FunctionComponent<Props> = observer(
           {!tag.errorDecrypting ? (
             <div className="tag-info" title={title} ref={dropRef}>
               {hasAtLeastOneFolder && (
-                <div
-                  className={`tag-fold ${showChildren ? 'opened' : 'closed'}`}
-                  onClick={hasChildren ? toggleChildren : undefined}
-                >
-                  <Icon
-                    className={`color-neutral ${!hasChildren ? 'hidden' : ''}`}
-                    type={
-                      showChildren ? 'menu-arrow-down-alt' : 'menu-arrow-right'
-                    }
-                  />
+                <div className="tag-fold-container">
+                  <button
+                    className={`tag-fold focus:shadow-inner ${
+                      showChildren ? 'opened' : 'closed'
+                    } ${!hasChildren ? 'invisible' : ''}`}
+                    onClick={hasChildren ? toggleChildren : undefined}
+                  >
+                    <Icon
+                      className={`color-neutral`}
+                      type={
+                        showChildren
+                          ? 'menu-arrow-down-alt'
+                          : 'menu-arrow-right'
+                      }
+                    />
+                  </button>
                 </div>
               )}
               <div className={`tag-icon draggable mr-1`} ref={dragRef}>
@@ -236,7 +242,9 @@ export const TagsListItem: FunctionComponent<Props> = observer(
               />
               <div className="flex items-center">
                 <button
-                  className="p-0 border-0 mr-2 bg-transparent"
+                  className={`p-0 border-0 mr-2 bg-transparent focus:shadow-inner cursor-pointer ${
+                    isSelected ? 'visible' : 'invisible'
+                  }`}
                   onClick={toggleContextMenu}
                   ref={menuButtonRef}
                 >
@@ -259,7 +267,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
               <div className="info small-text font-bold">Waiting For Keys</div>
             )}
           </div>
-        </div>
+        </button>
         {isAddingSubtag && (
           <div
             className="tag overflow-hidden"
