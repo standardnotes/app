@@ -20,7 +20,7 @@ export const STRING_NEW_UPDATE_READY =
 
 /** @tags */
 export const STRING_DELETE_TAG =
-  'Are you sure you want to delete this tag? Note: deleting a tag will not delete its notes.';
+  'Are you sure you want to delete this tag? Deleting a tag will not delete its subtags or its notes.';
 
 export const STRING_MISSING_SYSTEM_TAG = 'We are missing a System Tag.';
 
