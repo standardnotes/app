@@ -89,11 +89,11 @@ export const TagsContextMenu: FunctionComponent<Props> = observer(
           <MenuItem
             type={MenuItemType.IconButton}
             onBlur={closeOnBlur}
-            className={`py-1.5 color-danger`}
+            className={`py-1.5`}
             onClick={onClickDelete}
           >
-            <Icon type="trash" className="mr-2" />
-            Delete
+            <Icon type="trash" className="mr-2 color-danger" />
+            <span className="color-danger">Delete</span>
           </MenuItem>
         </Menu>
       </div>
