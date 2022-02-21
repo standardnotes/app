@@ -18,6 +18,7 @@ import {
   MAX_MENU_SIZE_MULTIPLIER,
   BYTES_IN_ONE_MEGABYTE,
 } from '@/constants';
+import { ListedActionsOption } from './ListedActionsOption';
 
 export type NotesOptionsProps = {
   application: WebApplication;
@@ -415,6 +416,13 @@ export const NotesOptions = observer(
             <ChangeEditorOption
               appState={appState}
               application={application}
+              closeOnBlur={closeOnBlur}
+              note={notes[0]}
+            />
+            <div className="min-h-1px my-2 bg-border"></div>
+            <ListedActionsOption
+              application={application}
+              appState={appState}
               closeOnBlur={closeOnBlur}
               note={notes[0]}
             />
