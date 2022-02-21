@@ -8,6 +8,7 @@ import {
   SNTheme,
   CollectionSort,
   ApplicationDescriptor,
+  FeatureIdentifier,
 } from '@standardnotes/snjs';
 import {
   STRING_NEW_UPDATE_READY,
@@ -24,14 +25,6 @@ import { QuickSettingsMenu } from './QuickSettingsMenu/QuickSettingsMenu';
 import { SyncResolutionMenu } from './SyncResolutionMenu';
 import { Fragment, render } from 'preact';
 import { AccountSwitcher } from './AccountSwitcher';
-
-/**
- * Disable before production release.
- * Anyone who used the beta will still have access to
- * the account switcher in production via local storage flag
- */
-const ACCOUNT_SWITCHER_ENABLED = false;
-const ACCOUNT_SWITCHER_FEATURE_KEY = 'account_switcher';
 
 type Props = {
   application: WebApplication;
@@ -111,15 +104,20 @@ export class Footer extends PureComponent<Props, State> {
     });
   }
 
-  loadAccountSwitcherState() {
-    const stringValue = localStorage.getItem(ACCOUNT_SWITCHER_FEATURE_KEY);
-    if (!stringValue && ACCOUNT_SWITCHER_ENABLED) {
-      /** Enable permanently for this user so they don't lose the feature after its disabled */
-      localStorage.setItem(ACCOUNT_SWITCHER_FEATURE_KEY, JSON.stringify(true));
+  async loadAccountSwitcherState() {
+    const rawStorageValue =
+      await this.application.deviceInterface.getRawStorageValue(
+        'enabled_lab_features'
+      );
+    let enabledLabFeatures: FeatureIdentifier[] = [];
+    if (rawStorageValue) {
+      const parsedEnabledLabFeatures: FeatureIdentifier[] =
+        JSON.parse(rawStorageValue);
+      enabledLabFeatures = parsedEnabledLabFeatures;
     }
-    const hasAccountSwitcher = stringValue
-      ? JSON.parse(stringValue)
-      : ACCOUNT_SWITCHER_ENABLED;
+    const hasAccountSwitcher = enabledLabFeatures.length
+      ? enabledLabFeatures.includes(FeatureIdentifier.AccountSwitcher)
+      : false;
     this.setState({ hasAccountSwitcher });
   }
 
