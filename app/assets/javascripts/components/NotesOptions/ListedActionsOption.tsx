@@ -1,5 +1,4 @@
 import { WebApplication } from '@/ui_models/application';
-import { AppState } from '@/ui_models/app_state';
 import {
   calculateSubmenuStyle,
   SubmenuStyle,
@@ -9,64 +8,196 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from '@reach/disclosure';
-import { SNNote } from '@standardnotes/snjs';
-import { FunctionComponent } from 'preact';
+import { Action, ListedAccount, SNNote } from '@standardnotes/snjs';
+import { Fragment, FunctionComponent } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { Icon } from '../Icon';
 
 type Props = {
   application: WebApplication;
-  appState: AppState;
   note: SNNote;
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void;
 };
 
+type ListedMenuGroup = {
+  name: string;
+  account: ListedAccount;
+  actions: Action[];
+};
+
+type ListedMenuItemProps = {
+  action: Action;
+  note: SNNote;
+  group: ListedMenuGroup;
+  application: WebApplication;
+  reloadMenuGroup: (group: ListedMenuGroup) => Promise<void>;
+};
+
+const ListedMenuItem: FunctionComponent<ListedMenuItemProps> = ({
+  action,
+  note,
+  application,
+  group,
+  reloadMenuGroup,
+}) => {
+  const [isRunning, setIsRunning] = useState(false);
+
+  const handleClick = async () => {
+    if (isRunning) {
+      return;
+    }
+
+    setIsRunning(true);
+
+    await application.actionsManager.runAction(action, note);
+
+    setIsRunning(false);
+
+    reloadMenuGroup(group);
+  };
+
+  return (
+    <button
+      key={action.url}
+      onClick={handleClick}
+      className="sn-dropdown-item flex justify-between py-2 text-input focus:bg-info-backdrop focus:shadow-none"
+    >
+      <div className="flex flex-col">
+        <div className="font-semibold">{action.label}</div>
+        {action.access_type && (
+          <div className="text-xs mt-0.5">
+            {'Uses '}
+            <strong>{action.access_type}</strong>
+            {' access to this note.'}
+          </div>
+        )}
+      </div>
+      {isRunning && <div className="sk-spinner spinner-info w-3 h-3" />}
+    </button>
+  );
+};
+
 export const ListedActionsOption: FunctionComponent<Props> = ({
   application,
-  appState,
   note,
   closeOnBlur,
 }) => {
-  const listedMenuButtonRef = useRef<HTMLButtonElement>(null);
-  const listedMenuRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
-  const [listedMenuOpen, setListedMenuOpen] = useState(false);
-  const [listedMenuStyle, setListedMenuStyle] = useState<SubmenuStyle>({
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [menuStyle, setMenuStyle] = useState<SubmenuStyle>({
     right: 0,
     bottom: 0,
     maxHeight: 'auto',
   });
 
+  const [menuGroups, setMenuGroups] = useState<ListedMenuGroup[]>([]);
+  const [isFetchingAccounts, setIsFetchingAccounts] = useState(true);
+
+  useEffect(() => {
+    const fetchListedAccounts = async () => {
+      try {
+        const listedAccountEntries = await application.getListedAccounts();
+
+        if (!listedAccountEntries.length) {
+          throw new Error('No Listed accounts found');
+        }
+
+        const menuGroups: ListedMenuGroup[] = [];
+
+        await Promise.all(
+          listedAccountEntries.map(async (account) => {
+            const accountInfo = await application.getListedAccountInfo(
+              account,
+              note.uuid
+            );
+
+            if (accountInfo) {
+              menuGroups.push({
+                name: accountInfo.display_name,
+                account,
+                actions: accountInfo.actions,
+              });
+            }
+          })
+        );
+
+        setMenuGroups(menuGroups);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsFetchingAccounts(false);
+        setTimeout(() => {
+          recalculateMenuStyle();
+        });
+      }
+    };
+
+    fetchListedAccounts();
+  }, [application, note.uuid]);
+
   const toggleListedMenu = () => {
-    if (!listedMenuOpen) {
-      const menuPosition = calculateSubmenuStyle(listedMenuButtonRef.current);
+    if (!isMenuOpen) {
+      const menuPosition = calculateSubmenuStyle(menuButtonRef.current);
       if (menuPosition) {
-        setListedMenuStyle(menuPosition);
+        setMenuStyle(menuPosition);
       }
     }
 
-    setListedMenuOpen(!listedMenuOpen);
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const recalculateMenuStyle = () => {
+    const newMenuPosition = calculateSubmenuStyle(
+      menuButtonRef.current,
+      menuRef.current
+    );
+
+    if (newMenuPosition) {
+      setMenuStyle(newMenuPosition);
+    }
   };
 
   useEffect(() => {
-    if (listedMenuOpen) {
+    if (isMenuOpen) {
       setTimeout(() => {
-        const newMenuPosition = calculateSubmenuStyle(
-          listedMenuButtonRef.current,
-          listedMenuRef.current
-        );
-
-        if (newMenuPosition) {
-          setListedMenuStyle(newMenuPosition);
-        }
+        recalculateMenuStyle();
       });
     }
-  }, [listedMenuOpen]);
+  }, [isMenuOpen]);
+
+  const reloadMenuGroup = async (group: ListedMenuGroup) => {
+    const updatedAccountInfo = await application.getListedAccountInfo(
+      group.account,
+      note.uuid
+    );
+
+    if (!updatedAccountInfo) {
+      return;
+    }
+
+    const updatedGroup: ListedMenuGroup = {
+      name: updatedAccountInfo.display_name,
+      account: group.account,
+      actions: updatedAccountInfo.actions,
+    };
+
+    const updatedGroups = menuGroups.map((group) => {
+      if (updatedGroup.account.authorId === group.account.authorId) {
+        return updatedGroup;
+      } else {
+        return group;
+      }
+    });
+
+    setMenuGroups(updatedGroups);
+  };
 
   return (
-    <Disclosure open={listedMenuOpen} onChange={toggleListedMenu}>
+    <Disclosure open={isMenuOpen} onChange={toggleListedMenu}>
       <DisclosureButton
-        ref={listedMenuButtonRef}
+        ref={menuButtonRef}
         onBlur={closeOnBlur}
         className="sn-dropdown-item justify-between"
       >
@@ -77,14 +208,46 @@ export const ListedActionsOption: FunctionComponent<Props> = ({
         <Icon type="chevron-right" className="color-neutral" />
       </DisclosureButton>
       <DisclosurePanel
-        ref={listedMenuRef}
+        ref={menuRef}
         style={{
-          ...listedMenuStyle,
+          ...menuStyle,
           position: 'fixed',
         }}
         className="sn-dropdown flex flex-col items-center justify-center min-h-16 max-h-120 min-w-68 fixed overflow-y-auto"
       >
-        Listed action
+        {isFetchingAccounts && (
+          <div className="sk-spinner w-5 h-5 spinner-info" />
+        )}
+        {!isFetchingAccounts && menuGroups.length ? (
+          <>
+            {menuGroups.map((group, index) => (
+              <Fragment key={group.account.authorId}>
+                <div
+                  className={`w-full px-2.5 py-2 text-input font-semibold color-text border-0 border-y-1px border-solid border-main ${
+                    index === 0 ? 'border-t-0 mb-1' : 'my-1'
+                  }`}
+                >
+                  {group.name}
+                </div>
+                {group.actions.map((action) => (
+                  <ListedMenuItem
+                    action={action}
+                    note={note}
+                    key={action.url}
+                    group={group}
+                    application={application}
+                    reloadMenuGroup={reloadMenuGroup}
+                  />
+                ))}
+              </Fragment>
+            ))}
+          </>
+        ) : null}
+        {!isFetchingAccounts && !menuGroups.length ? (
+          <div className="color-grey-0 select-none">
+            No Listed accounts found
+          </div>
+        ) : null}
       </DisclosurePanel>
     </Disclosure>
   );
