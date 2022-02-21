@@ -242,7 +242,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
               />
               <div className="flex items-center">
                 <button
-                  className={`p-0 border-0 mr-2 bg-transparent focus:shadow-inner cursor-pointer ${
+                  className={`border-0 mr-2 bg-transparent hover:bg-contrast focus:shadow-inner cursor-pointer ${
                     isSelected ? 'visible' : 'invisible'
                   }`}
                   onClick={toggleContextMenu}
