@@ -2,7 +2,7 @@ import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import { FunctionComponent } from 'preact';
 import { PreferencesPane } from '../components';
-import { ErrorReporting, Tools, Defaults } from './general-segments';
+import { ErrorReporting, Tools, Defaults, LabsPane } from './general-segments';
 import { ExtensionsLatestVersions } from '@/preferences/panes/extensions-segments';
 import { Advanced } from '@/preferences/panes/account';
 import { observer } from 'mobx-react-lite';
@@ -19,6 +19,7 @@ export const General: FunctionComponent<GeneralProps> = observer(
       <Tools application={application} />
       <Defaults application={application} />
       <ErrorReporting appState={appState} />
+      <LabsPane application={application} />
       <Advanced
         application={application}
         appState={appState}
