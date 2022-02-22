@@ -84,7 +84,7 @@ export const SmartTagsListItem: FunctionComponent<Props> = observer(
     }, [inputRef]);
 
     const onClickDelete = useCallback(() => {
-      tagsState.remove(tag);
+      tagsState.remove(tag, true);
     }, [tagsState, tag]);
 
     const isFaded = !tag.isAllTag;
@@ -111,6 +111,7 @@ export const SmartTagsListItem: FunctionComponent<Props> = observer(
               </div>
               <input
                 className={`title ${isEditing ? 'editing' : ''}`}
+                disabled={!isEditing}
                 id={`react-tag-${tag.uuid}`}
                 onBlur={onBlur}
                 onInput={onInput}

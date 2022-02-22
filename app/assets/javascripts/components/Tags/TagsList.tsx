@@ -1,5 +1,6 @@
 import { AppState } from '@/ui_models/app_state';
 import { isMobile } from '@/utils';
+import { SNTag } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { DndProvider } from 'react-dnd';
@@ -18,6 +19,20 @@ export const TagsList: FunctionComponent<Props> = observer(({ appState }) => {
 
   const backend = isMobile({ tablet: true }) ? TouchBackend : HTML5Backend;
 
+  const openTagContextMenu = (posX: number, posY: number) => {
+    appState.tags.setContextMenuClickLocation({
+      x: posX,
+      y: posY,
+    });
+    appState.tags.reloadContextMenuLayout();
+    appState.tags.setContextMenuOpen(true);
+  };
+
+  const onContextMenu = (tag: SNTag, posX: number, posY: number) => {
+    appState.tags.selected = tag;
+    openTagContextMenu(posX, posY);
+  };
+
   return (
     <DndProvider backend={backend}>
       {allTags.length === 0 ? (
@@ -34,6 +49,7 @@ export const TagsList: FunctionComponent<Props> = observer(({ appState }) => {
                 tag={tag}
                 tagsState={tagsState}
                 features={appState.features}
+                onContextMenu={onContextMenu}
               />
             );
           })}

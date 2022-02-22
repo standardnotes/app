@@ -1,5 +1,6 @@
 import { Icon } from '@/components/Icon';
 import { usePremiumModal } from '@/components/Premium';
+import { KeyboardKey } from '@/services/ioService';
 import {
   FeaturesState,
   TAG_FOLDERS_FEATURE_NAME,
@@ -19,18 +20,23 @@ type Props = {
   tagsState: TagsState;
   features: FeaturesState;
   level: number;
+  onContextMenu: (tag: SNTag, posX: number, posY: number) => void;
 };
 
 const PADDING_BASE_PX = 14;
 const PADDING_PER_LEVEL_PX = 21;
 
 export const TagsListItem: FunctionComponent<Props> = observer(
-  ({ tag, features, tagsState, level }) => {
+  ({ tag, features, tagsState, level, onContextMenu }) => {
     const [title, setTitle] = useState(tag.title || '');
+    const [subtagTitle, setSubtagTitle] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
+    const subtagInputRef = useRef<HTMLInputElement>(null);
+    const menuButtonRef = useRef<HTMLButtonElement>(null);
 
     const isSelected = tagsState.selected === tag;
     const isEditing = tagsState.editingTag === tag;
+    const isAddingSubtag = tagsState.addingSubtagTo === tag;
     const noteCounts = computed(() => tagsState.getNotesCount(tag));
 
     const childrenTags = computed(() => tagsState.getChildren(tag)).get();
@@ -83,9 +89,9 @@ export const TagsListItem: FunctionComponent<Props> = observer(
       [setTitle]
     );
 
-    const onKeyUp = useCallback(
+    const onKeyDown = useCallback(
       (e: KeyboardEvent) => {
-        if (e.code === 'Enter') {
+        if (e.key === KeyboardKey.Enter) {
           inputRef.current?.blur();
           e.preventDefault();
         }
@@ -99,17 +105,34 @@ export const TagsListItem: FunctionComponent<Props> = observer(
       }
     }, [inputRef, isEditing]);
 
-    const onClickRename = useCallback(() => {
-      tagsState.editingTag = tag;
-    }, [tagsState, tag]);
+    const onSubtagInput = useCallback(
+      (e: JSX.TargetedEvent<HTMLInputElement>) => {
+        const value = (e.target as HTMLInputElement).value;
+        setSubtagTitle(value);
+      },
+      []
+    );
 
-    const onClickSave = useCallback(() => {
-      inputRef.current?.blur();
-    }, [inputRef]);
+    const onSubtagInputBlur = useCallback(() => {
+      tagsState.createSubtagAndAssignParent(tag, subtagTitle);
+      setSubtagTitle('');
+    }, [subtagTitle, tag, tagsState]);
 
-    const onClickDelete = useCallback(() => {
-      tagsState.remove(tag);
-    }, [tagsState, tag]);
+    const onSubtagKeyDown = useCallback(
+      (e: KeyboardEvent) => {
+        if (e.key === KeyboardKey.Enter) {
+          e.preventDefault();
+          subtagInputRef.current?.blur();
+        }
+      },
+      [subtagInputRef]
+    );
+
+    useEffect(() => {
+      if (isAddingSubtag) {
+        subtagInputRef.current?.focus();
+      }
+    }, [subtagInputRef, isAddingSubtag]);
 
     const [, dragRef] = useDrag(
       () => ({
@@ -148,10 +171,25 @@ export const TagsListItem: FunctionComponent<Props> = observer(
 
     const readyToDrop = isOver && canDrop;
 
+    const toggleContextMenu = () => {
+      if (!menuButtonRef.current) {
+        return;
+      }
+
+      const contextMenuOpen = tagsState.contextMenuOpen;
+      const menuButtonRect = menuButtonRef.current?.getBoundingClientRect();
+
+      if (contextMenuOpen) {
+        tagsState.setContextMenuOpen(false);
+      } else {
+        onContextMenu(tag, menuButtonRect.right, menuButtonRect.top);
+      }
+    };
+
     return (
       <>
-        <div
-          className={`tag ${isSelected ? 'selected' : ''} ${
+        <button
+          className={`tag focus:shadow-inner ${isSelected ? 'selected' : ''} ${
             readyToDrop ? 'is-drag-over' : ''
           }`}
           onClick={selectCurrentTag}
@@ -159,23 +197,33 @@ export const TagsListItem: FunctionComponent<Props> = observer(
           style={{
             paddingLeft: `${level * PADDING_PER_LEVEL_PX + PADDING_BASE_PX}px`,
           }}
+          onContextMenu={(e: MouseEvent) => {
+            e.preventDefault();
+            onContextMenu(tag, e.clientX, e.clientY);
+          }}
         >
           {!tag.errorDecrypting ? (
             <div className="tag-info" title={title} ref={dropRef}>
               {hasAtLeastOneFolder && (
-                <div
-                  className={`tag-fold ${showChildren ? 'opened' : 'closed'}`}
-                  onClick={hasChildren ? toggleChildren : undefined}
-                >
-                  <Icon
-                    className={`color-neutral ${!hasChildren ? 'hidden' : ''}`}
-                    type={
-                      showChildren ? 'menu-arrow-down-alt' : 'menu-arrow-right'
-                    }
-                  />
+                <div className="tag-fold-container">
+                  <button
+                    className={`tag-fold focus:shadow-inner ${
+                      showChildren ? 'opened' : 'closed'
+                    } ${!hasChildren ? 'invisible' : ''}`}
+                    onClick={hasChildren ? toggleChildren : undefined}
+                  >
+                    <Icon
+                      className={`color-neutral`}
+                      type={
+                        showChildren
+                          ? 'menu-arrow-down-alt'
+                          : 'menu-arrow-right'
+                      }
+                    />
+                  </button>
                 </div>
               )}
-              <div className={`tag-icon ${'draggable'} mr-1`} ref={dragRef}>
+              <div className={`tag-icon draggable mr-1`} ref={dragRef}>
                 <Icon
                   type="hashtag"
                   className={`${isSelected ? 'color-info' : 'color-neutral'}`}
@@ -184,14 +232,26 @@ export const TagsListItem: FunctionComponent<Props> = observer(
               <input
                 className={`title ${isEditing ? 'editing' : ''}`}
                 id={`react-tag-${tag.uuid}`}
+                disabled={!isEditing}
                 onBlur={onBlur}
                 onInput={onInput}
                 value={title}
-                onKeyUp={onKeyUp}
+                onKeyDown={onKeyDown}
                 spellCheck={false}
                 ref={inputRef}
               />
-              <div className="count">{noteCounts.get()}</div>
+              <div className="flex items-center">
+                <button
+                  className={`border-0 mr-2 bg-transparent hover:bg-contrast focus:shadow-inner cursor-pointer ${
+                    isSelected ? 'visible' : 'invisible'
+                  }`}
+                  onClick={toggleContextMenu}
+                  ref={menuButtonRef}
+                >
+                  <Icon type="more" className="color-neutral" />
+                </button>
+                <div className="count">{noteCounts.get()}</div>
+              </div>
             </div>
           ) : null}
           <div className={`meta ${hasAtLeastOneFolder ? 'with-folders' : ''}`}>
@@ -206,25 +266,34 @@ export const TagsListItem: FunctionComponent<Props> = observer(
             {tag.errorDecrypting && tag.waitingForKey && (
               <div className="info small-text font-bold">Waiting For Keys</div>
             )}
-            {isSelected && (
-              <div className="menu">
-                {!isEditing && (
-                  <a className="item" onClick={onClickRename}>
-                    Rename
-                  </a>
-                )}
-                {isEditing && (
-                  <a className="item" onClick={onClickSave}>
-                    Save
-                  </a>
-                )}
-                <a className="item" onClick={onClickDelete}>
-                  Delete
-                </a>
-              </div>
-            )}
           </div>
-        </div>
+        </button>
+        {isAddingSubtag && (
+          <div
+            className="tag overflow-hidden"
+            style={{
+              paddingLeft: `${
+                (level + 1) * PADDING_PER_LEVEL_PX + PADDING_BASE_PX
+              }px`,
+            }}
+          >
+            <div className="tag-info">
+              <div className="tag-fold" />
+              <div className="tag-icon mr-1">
+                <Icon type="hashtag" className="color-neutral mr-1" />
+              </div>
+              <input
+                className="title w-full focus:shadow-none"
+                type="text"
+                ref={subtagInputRef}
+                onBlur={onSubtagInputBlur}
+                onKeyDown={onSubtagKeyDown}
+                value={subtagTitle}
+                onInput={onSubtagInput}
+              />
+            </div>
+          </div>
+        )}
         {showChildren && (
           <>
             {childrenTags.map((tag) => {
@@ -235,6 +304,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
                   tag={tag}
                   tagsState={tagsState}
                   features={features}
+                  onContextMenu={onContextMenu}
                 />
               );
             })}
