@@ -84,7 +84,7 @@ export class ThemeManager extends ApplicationService {
         break;
       }
       case ApplicationEvent.FeaturesUpdated: {
-        this.reloadThemeStatus();
+        this.handleFeaturesUpdated();
         break;
       }
       case ApplicationEvent.Launched: {
@@ -119,7 +119,7 @@ export class ThemeManager extends ApplicationService {
     super.deinit();
   }
 
-  private reloadThemeStatus(): void {
+  private handleFeaturesUpdated(): void {
     let hasChange = false;
     for (const themeUuid of this.activeThemes) {
       const theme = this.application.findItem(themeUuid) as SNTheme;
@@ -136,6 +136,17 @@ export class ThemeManager extends ApplicationService {
           }
           hasChange = true;
         }
+      }
+    }
+
+    const activeThemes = (
+      this.application.getItems(ContentType.Theme) as SNTheme[]
+    ).filter((theme) => theme.active);
+
+    for (const theme of activeThemes) {
+      if (!this.activeThemes.includes(theme.uuid)) {
+        this.activateTheme(theme);
+        hasChange = true;
       }
     }
 
