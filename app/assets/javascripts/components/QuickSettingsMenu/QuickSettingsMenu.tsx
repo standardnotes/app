@@ -146,7 +146,8 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
         (component) =>
           [ComponentArea.EditorStack, ComponentArea.TagsList].includes(
             component.area
-          ) && component.identifier !== FeatureIdentifier.FoldersComponent
+          ) &&
+          component.identifier !== FeatureIdentifier.DeprecatedFoldersComponent
       );
       setToggleableComponents(toggleableComponents);
     }, [application]);
