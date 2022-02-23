@@ -1,13 +1,13 @@
 import {
-  DeviceInterface,
   getGlobalScope,
   SNApplication,
   ApplicationIdentifier,
+  AbstractDevice,
 } from '@standardnotes/snjs';
 import { Database } from '@/database';
 import { Bridge } from './services/bridge';
 
-export class WebDeviceInterface extends DeviceInterface {
+export class WebDeviceInterface extends AbstractDevice {
   private databases: Database[] = [];
 
   constructor(private bridge: Bridge) {
