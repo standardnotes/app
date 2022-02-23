@@ -10,7 +10,7 @@ import {
 } from '@reach/disclosure';
 import { Action, ListedAccount, SNNote } from '@standardnotes/snjs';
 import { Fragment, FunctionComponent } from 'preact';
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { Icon } from '../Icon';
 
 type Props = {
@@ -77,23 +77,46 @@ const ListedMenuItem: FunctionComponent<ListedMenuItemProps> = ({
   );
 };
 
-export const ListedActionsOption: FunctionComponent<Props> = ({
+type ListedActionsMenuProps = {
+  application: WebApplication;
+  note: SNNote;
+  recalculateMenuStyle: () => void;
+};
+
+const ListedActionsMenu: FunctionComponent<ListedActionsMenuProps> = ({
   application,
   note,
-  closeOnBlur,
+  recalculateMenuStyle,
 }) => {
-  const menuRef = useRef<HTMLDivElement>(null);
-  const menuButtonRef = useRef<HTMLButtonElement>(null);
-
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [menuStyle, setMenuStyle] = useState<SubmenuStyle>({
-    right: 0,
-    bottom: 0,
-    maxHeight: 'auto',
-  });
-
   const [menuGroups, setMenuGroups] = useState<ListedMenuGroup[]>([]);
   const [isFetchingAccounts, setIsFetchingAccounts] = useState(true);
+
+  const reloadMenuGroup = async (group: ListedMenuGroup) => {
+    const updatedAccountInfo = await application.getListedAccountInfo(
+      group.account,
+      note.uuid
+    );
+
+    if (!updatedAccountInfo) {
+      return;
+    }
+
+    const updatedGroup: ListedMenuGroup = {
+      name: updatedAccountInfo.display_name,
+      account: group.account,
+      actions: updatedAccountInfo.actions,
+    };
+
+    const updatedGroups = menuGroups.map((group) => {
+      if (updatedGroup.account.authorId === group.account.authorId) {
+        return updatedGroup;
+      } else {
+        return group;
+      }
+    });
+
+    setMenuGroups(updatedGroups);
+  };
 
   useEffect(() => {
     const fetchListedAccounts = async () => {
@@ -146,7 +169,71 @@ export const ListedActionsOption: FunctionComponent<Props> = ({
     };
 
     fetchListedAccounts();
-  }, [application, note.uuid]);
+  }, [application, note.uuid, recalculateMenuStyle]);
+
+  return (
+    <>
+      {isFetchingAccounts && (
+        <div className="w-full flex items-center justify-center p-4">
+          <div className="sk-spinner w-5 h-5 spinner-info" />
+        </div>
+      )}
+      {!isFetchingAccounts && menuGroups.length ? (
+        <>
+          {menuGroups.map((group, index) => (
+            <Fragment key={group.account.authorId}>
+              <div
+                className={`w-full px-2.5 py-2 text-input font-semibold color-text border-0 border-y-1px border-solid border-main ${
+                  index === 0 ? 'border-t-0 mb-1' : 'my-1'
+                }`}
+              >
+                {group.name}
+              </div>
+              {group.actions.length ? (
+                group.actions.map((action) => (
+                  <ListedMenuItem
+                    action={action}
+                    note={note}
+                    key={action.url}
+                    group={group}
+                    application={application}
+                    reloadMenuGroup={reloadMenuGroup}
+                  />
+                ))
+              ) : (
+                <div className="px-3 py-2 color-grey-0 select-none">
+                  No actions available
+                </div>
+              )}
+            </Fragment>
+          ))}
+        </>
+      ) : null}
+      {!isFetchingAccounts && !menuGroups.length ? (
+        <div className="w-full flex items-center justify-center px-4 py-6">
+          <div className="color-grey-0 select-none">
+            No Listed accounts found
+          </div>
+        </div>
+      ) : null}
+    </>
+  );
+};
+
+export const ListedActionsOption: FunctionComponent<Props> = ({
+  application,
+  note,
+  closeOnBlur,
+}) => {
+  const menuRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [menuStyle, setMenuStyle] = useState<SubmenuStyle>({
+    right: 0,
+    bottom: 0,
+    maxHeight: 'auto',
+  });
 
   const toggleListedMenu = () => {
     if (!isMenuOpen) {
@@ -159,7 +246,7 @@ export const ListedActionsOption: FunctionComponent<Props> = ({
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const recalculateMenuStyle = () => {
+  const recalculateMenuStyle = useCallback(() => {
     const newMenuPosition = calculateSubmenuStyle(
       menuButtonRef.current,
       menuRef.current
@@ -168,7 +255,7 @@ export const ListedActionsOption: FunctionComponent<Props> = ({
     if (newMenuPosition) {
       setMenuStyle(newMenuPosition);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (isMenuOpen) {
@@ -176,34 +263,7 @@ export const ListedActionsOption: FunctionComponent<Props> = ({
         recalculateMenuStyle();
       });
     }
-  }, [isMenuOpen]);
-
-  const reloadMenuGroup = async (group: ListedMenuGroup) => {
-    const updatedAccountInfo = await application.getListedAccountInfo(
-      group.account,
-      note.uuid
-    );
-
-    if (!updatedAccountInfo) {
-      return;
-    }
-
-    const updatedGroup: ListedMenuGroup = {
-      name: updatedAccountInfo.display_name,
-      account: group.account,
-      actions: updatedAccountInfo.actions,
-    };
-
-    const updatedGroups = menuGroups.map((group) => {
-      if (updatedGroup.account.authorId === group.account.authorId) {
-        return updatedGroup;
-      } else {
-        return group;
-      }
-    });
-
-    setMenuGroups(updatedGroups);
-  };
+  }, [isMenuOpen, recalculateMenuStyle]);
 
   return (
     <Disclosure open={isMenuOpen} onChange={toggleListedMenu}>
@@ -226,49 +286,13 @@ export const ListedActionsOption: FunctionComponent<Props> = ({
         }}
         className="sn-dropdown flex flex-col max-h-120 min-w-68 pb-1 fixed overflow-y-auto"
       >
-        {isFetchingAccounts && (
-          <div className="w-full flex items-center justify-center p-4">
-            <div className="sk-spinner w-5 h-5 spinner-info" />
-          </div>
+        {isMenuOpen && (
+          <ListedActionsMenu
+            application={application}
+            note={note}
+            recalculateMenuStyle={recalculateMenuStyle}
+          />
         )}
-        {!isFetchingAccounts && menuGroups.length ? (
-          <>
-            {menuGroups.map((group, index) => (
-              <Fragment key={group.account.authorId}>
-                <div
-                  className={`w-full px-2.5 py-2 text-input font-semibold color-text border-0 border-y-1px border-solid border-main ${
-                    index === 0 ? 'border-t-0 mb-1' : 'my-1'
-                  }`}
-                >
-                  {group.name}
-                </div>
-                {group.actions.length ? (
-                  group.actions.map((action) => (
-                    <ListedMenuItem
-                      action={action}
-                      note={note}
-                      key={action.url}
-                      group={group}
-                      application={application}
-                      reloadMenuGroup={reloadMenuGroup}
-                    />
-                  ))
-                ) : (
-                  <div className="px-3 py-2 color-grey-0 select-none">
-                    No actions available
-                  </div>
-                )}
-              </Fragment>
-            ))}
-          </>
-        ) : null}
-        {!isFetchingAccounts && !menuGroups.length ? (
-          <div className="w-full flex items-center justify-center px-4 py-6">
-            <div className="color-grey-0 select-none">
-              No Listed accounts found
-            </div>
-          </div>
-        ) : null}
       </DisclosurePanel>
     </Disclosure>
   );
