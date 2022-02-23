@@ -183,11 +183,11 @@ const ListedActionsMenu: FunctionComponent<ListedActionsMenuProps> = ({
           {menuGroups.map((group, index) => (
             <Fragment key={group.account.authorId}>
               <div
-                className={`w-full px-2.5 py-2 text-input font-semibold color-text border-0 border-y-1px border-solid border-main ${
+                className={`w-full flex items-center px-2.5 py-2 text-input font-semibold color-text border-0 border-y-1px border-solid border-main ${
                   index === 0 ? 'border-t-0 mb-1' : 'my-1'
                 }`}
               >
-                {group.name}
+                <Icon type="notes" className="mr-2 color-info" /> {group.name}
               </div>
               {group.actions.length ? (
                 group.actions.map((action) => (
