@@ -616,10 +616,6 @@ export class NoteView extends PureComponent<Props, State> {
     document.getElementById(ElementIds.NoteTitleEditor)?.focus();
   }
 
-  clickedTextArea = () => {
-    //
-  };
-
   onContentFocus = () => {
     this.application
       .getAppState()
@@ -1105,7 +1101,6 @@ export class NoteView extends PureComponent<Props, State> {
                     onChange={this.onTextAreaChange}
                     value={this.state.editorText}
                     readonly={this.state.noteLocked}
-                    onClick={this.clickedTextArea}
                     onFocus={this.onContentFocus}
                     spellcheck={this.state.spellcheck}
                     ref={(ref) => this.onSystemEditorLoad(ref)}
