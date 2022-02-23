@@ -11,7 +11,6 @@ import { STRING_EDIT_LOCKED_ATTEMPT } from '@/strings';
 import { WebApplication } from '@/ui_models/application';
 import {
   ComponentArea,
-  FeatureStatus,
   ItemMutator,
   NoteMutator,
   PrefKey,
@@ -47,28 +46,6 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   note,
 }) => {
   const premiumModal = usePremiumModal();
-
-  const isEntitledToEditor = useCallback(
-    (item: EditorMenuItem) => {
-      const isPlainEditor = !item.component;
-
-      if (item.isPremiumFeature) {
-        return false;
-      }
-
-      if (isPlainEditor) {
-        return true;
-      }
-
-      if (item.component) {
-        return (
-          application.getFeatureStatus(item.component.identifier) ===
-          FeatureStatus.Entitled
-        );
-      }
-    },
-    [application]
-  );
 
   const isSelectedEditor = useCallback(
     (item: EditorMenuItem) => {
@@ -163,6 +140,11 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   };
 
   const selectEditor = async (itemToBeSelected: EditorMenuItem) => {
+    if (!itemToBeSelected.isEntitled) {
+      premiumModal.activate(itemToBeSelected.name);
+      return;
+    }
+
     const areBothEditorsPlain = !currentEditor && !itemToBeSelected.component;
 
     if (areBothEditorsPlain) {
@@ -182,14 +164,6 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
         shouldSelectEditor =
           await application.componentManager.showEditorChangeAlert();
       }
-    }
-
-    if (
-      itemToBeSelected.isPremiumFeature ||
-      !isEntitledToEditor(itemToBeSelected)
-    ) {
-      premiumModal.activate(itemToBeSelected.name);
-      shouldSelectEditor = false;
     }
 
     if (shouldSelectEditor) {
@@ -238,9 +212,7 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
                   >
                     <div className="flex flex-grow items-center justify-between">
                       {item.name}
-                      {(item.isPremiumFeature || !isEntitledToEditor(item)) && (
-                        <Icon type="premium-feature" />
-                      )}
+                      {!item.isEntitled && <Icon type="premium-feature" />}
                     </div>
                   </MenuItem>
                 );
