@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef } from 'preact/hooks';
 import { Icon } from '../Icon';
 import { Menu } from '../menu/Menu';
 import { MenuItem, MenuItemType } from '../menu/MenuItem';
+import { usePremiumModal } from '../Premium';
 import { useCloseOnBlur } from '../utils';
 
 type Props = {
@@ -13,6 +14,7 @@ type Props = {
 
 export const TagsContextMenu: FunctionComponent<Props> = observer(
   ({ appState }) => {
+    const premiumModal = usePremiumModal();
     const selectedTag = appState.tags.selected;
 
     if (!selectedTag) {
@@ -39,9 +41,19 @@ export const TagsContextMenu: FunctionComponent<Props> = observer(
     }, [reloadContextMenuLayout]);
 
     const onClickAddSubtag = useCallback(() => {
+      if (!appState.features.hasFolders) {
+        premiumModal.activate('Folders');
+        return;
+      }
+
       appState.tags.setContextMenuOpen(false);
       appState.tags.setAddingSubtagTo(selectedTag);
-    }, [appState.tags, selectedTag]);
+    }, [
+      appState.features.hasFolders,
+      appState.tags,
+      premiumModal,
+      selectedTag,
+    ]);
 
     const onClickRename = useCallback(() => {
       appState.tags.setContextMenuOpen(false);
@@ -71,11 +83,14 @@ export const TagsContextMenu: FunctionComponent<Props> = observer(
           <MenuItem
             type={MenuItemType.IconButton}
             onBlur={closeOnBlur}
-            className={`py-1.5`}
+            className={`py-1.5 justify-between`}
             onClick={onClickAddSubtag}
           >
-            <Icon type="add" className="color-neutral mr-2" />
-            Add subtag
+            <div className="flex items-center">
+              <Icon type="add" className="color-neutral mr-2" />
+              Add subtag
+            </div>
+            {!appState.features.hasFolders && <Icon type="premium-feature" />}
           </MenuItem>
           <MenuItem
             type={MenuItemType.IconButton}
