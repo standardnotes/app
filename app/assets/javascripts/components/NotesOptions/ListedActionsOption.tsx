@@ -65,7 +65,7 @@ const ListedMenuItem: FunctionComponent<ListedMenuItemProps> = ({
       <div className="flex flex-col">
         <div className="font-semibold">{action.label}</div>
         {action.access_type && (
-          <div className="text-xs mt-0.5">
+          <div className="text-xs mt-0.5 color-grey-0">
             {'Uses '}
             <strong>{action.access_type}</strong>
             {' access to this note.'}
@@ -97,6 +97,11 @@ export const ListedActionsOption: FunctionComponent<Props> = ({
 
   useEffect(() => {
     const fetchListedAccounts = async () => {
+      if (!application.hasAccount()) {
+        setIsFetchingAccounts(false);
+        return;
+      }
+
       try {
         const listedAccountEntries = await application.getListedAccounts();
 
@@ -118,6 +123,12 @@ export const ListedActionsOption: FunctionComponent<Props> = ({
                 name: accountInfo.display_name,
                 account,
                 actions: accountInfo.actions,
+              });
+            } else {
+              menuGroups.push({
+                name: account.authorId,
+                account,
+                actions: [],
               });
             }
           })
@@ -213,10 +224,12 @@ export const ListedActionsOption: FunctionComponent<Props> = ({
           ...menuStyle,
           position: 'fixed',
         }}
-        className="sn-dropdown flex flex-col items-center justify-center min-h-16 max-h-120 min-w-68 fixed overflow-y-auto"
+        className="sn-dropdown flex flex-col max-h-120 min-w-68 pb-1 fixed overflow-y-auto"
       >
         {isFetchingAccounts && (
-          <div className="sk-spinner w-5 h-5 spinner-info" />
+          <div className="w-full flex items-center justify-center p-4">
+            <div className="sk-spinner w-5 h-5 spinner-info" />
+          </div>
         )}
         {!isFetchingAccounts && menuGroups.length ? (
           <>
@@ -229,23 +242,31 @@ export const ListedActionsOption: FunctionComponent<Props> = ({
                 >
                   {group.name}
                 </div>
-                {group.actions.map((action) => (
-                  <ListedMenuItem
-                    action={action}
-                    note={note}
-                    key={action.url}
-                    group={group}
-                    application={application}
-                    reloadMenuGroup={reloadMenuGroup}
-                  />
-                ))}
+                {group.actions.length ? (
+                  group.actions.map((action) => (
+                    <ListedMenuItem
+                      action={action}
+                      note={note}
+                      key={action.url}
+                      group={group}
+                      application={application}
+                      reloadMenuGroup={reloadMenuGroup}
+                    />
+                  ))
+                ) : (
+                  <div className="px-3 py-2 color-grey-0 select-none">
+                    No actions available
+                  </div>
+                )}
               </Fragment>
             ))}
           </>
         ) : null}
         {!isFetchingAccounts && !menuGroups.length ? (
-          <div className="color-grey-0 select-none">
-            No Listed accounts found
+          <div className="w-full flex items-center justify-center px-4 py-6">
+            <div className="color-grey-0 select-none">
+              No Listed accounts found
+            </div>
           </div>
         ) : null}
       </DisclosurePanel>

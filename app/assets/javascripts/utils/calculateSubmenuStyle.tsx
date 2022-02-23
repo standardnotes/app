@@ -43,50 +43,34 @@ export const calculateSubmenuStyle = (
       positionBottom = footerHeightInPx + MENU_MARGIN_FROM_APP_BORDER;
     }
 
+    position = {
+      bottom: positionBottom,
+      visibility: 'hidden',
+      maxHeight: 'auto',
+    };
+
     if (buttonRect.right + maxChangeEditorMenuSize > clientWidth) {
-      position = {
-        bottom: positionBottom,
-        right: clientWidth - buttonRect.left,
-        visibility: 'hidden',
-        maxHeight: 'auto',
-      };
+      position.right = clientWidth - buttonRect.left;
     } else {
-      position = {
-        bottom: positionBottom,
-        left: buttonRect.right,
-        visibility: 'hidden',
-        maxHeight: 'auto',
-      };
+      position.left = buttonRect.right;
     }
   }
 
-  if (menuBoundingRect && menuBoundingRect.height && buttonRect) {
-    if (
-      menuBoundingRect.y < MENU_MARGIN_FROM_APP_BORDER ||
-      menuBoundingRect.height > clientHeight / 2
-    ) {
-      position = {
-        ...position,
-        top: MENU_MARGIN_FROM_APP_BORDER,
-        bottom: 'auto',
-        visibility: 'visible',
-      };
-    } else {
-      position = {
-        ...position,
-        top: MENU_MARGIN_FROM_APP_BORDER + buttonRect.top - buttonRect.height,
-        bottom: 'auto',
-        visibility: 'visible',
-      };
-    }
-  }
+  if (menuBoundingRect?.height && buttonRect && position.bottom !== 'auto') {
+    position.visibility = 'visible';
 
-  if (position.top && position.top !== 'auto') {
-    position.maxHeight =
-      clientHeight -
-      position.top -
-      footerHeightInPx -
-      MENU_MARGIN_FROM_APP_BORDER;
+    if (menuBoundingRect.y < MENU_MARGIN_FROM_APP_BORDER) {
+      position.bottom =
+        position.bottom + menuBoundingRect.y - MENU_MARGIN_FROM_APP_BORDER * 2;
+    }
+
+    if (footerElementRect && menuBoundingRect.height > footerElementRect.y) {
+      position.bottom = footerElementRect.height + MENU_MARGIN_FROM_APP_BORDER;
+      position.maxHeight =
+        clientHeight -
+        footerElementRect.height -
+        MENU_MARGIN_FROM_APP_BORDER * 2;
+    }
   }
 
   return position;
