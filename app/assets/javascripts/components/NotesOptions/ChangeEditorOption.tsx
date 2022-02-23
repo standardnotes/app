@@ -39,7 +39,7 @@ type AccordionMenuGroup<T> = {
 export type EditorMenuItem = {
   name: string;
   component?: SNComponent;
-  isPremiumFeature?: boolean;
+  isEntitled: boolean;
 };
 
 export type EditorMenuGroup = AccordionMenuGroup<EditorMenuItem>;
@@ -162,8 +162,8 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
   );
 
   useEffect(() => {
-    setEditorMenuGroups(createEditorMenuGroups(editors));
-  }, [editors]);
+    setEditorMenuGroups(createEditorMenuGroups(application, editors));
+  }, [application, editors]);
 
   useEffect(() => {
     setSelectedEditor(application.componentManager.editorForNote(note));
@@ -248,15 +248,17 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
         }}
         className="sn-dropdown flex flex-col max-h-120 min-w-68 fixed overflow-y-auto"
       >
-        <ChangeEditorMenu
-          application={application}
-          closeOnBlur={closeOnBlur}
-          currentEditor={selectedEditor}
-          setSelectedEditor={setSelectedEditor}
-          note={note}
-          groups={editorMenuGroups}
-          isOpen={changeEditorMenuVisible}
-        />
+        {changeEditorMenuOpen && (
+          <ChangeEditorMenu
+            application={application}
+            closeOnBlur={closeOnBlur}
+            currentEditor={selectedEditor}
+            setSelectedEditor={setSelectedEditor}
+            note={note}
+            groups={editorMenuGroups}
+            isOpen={changeEditorMenuVisible}
+          />
+        )}
       </DisclosurePanel>
     </Disclosure>
   );
