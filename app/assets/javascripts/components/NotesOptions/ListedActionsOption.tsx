@@ -157,7 +157,11 @@ const ListedActionsMenu: FunctionComponent<ListedActionsMenuProps> = ({
           })
         );
 
-        setMenuGroups(menuGroups);
+        setMenuGroups(
+          menuGroups.sort((a, b) =>
+            a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1
+          )
+        );
       } catch (err) {
         console.error(err);
       } finally {
