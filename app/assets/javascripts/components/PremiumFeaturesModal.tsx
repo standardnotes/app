@@ -73,7 +73,7 @@ export const PremiumFeaturesModal: FunctionalComponent<Props> = ({
               className="w-full rounded no-border py-2 font-bold bg-info color-info-contrast hover:brightness-130 focus:brightness-130 cursor-pointer"
               ref={plansButtonRef}
             >
-              {hasSubscription ? 'Upgrade plan' : 'See Plans'}
+              {hasSubscription ? 'Upgrade Plan' : 'See Plans'}
             </button>
           </div>
         </div>
