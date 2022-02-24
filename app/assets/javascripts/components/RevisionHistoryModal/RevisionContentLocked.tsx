@@ -49,8 +49,8 @@ export const RevisionContentLocked: FunctionComponent<{
           type="primary"
           label="Discover plans"
           onClick={() => {
-            if (window._plans_url) {
-              window.location.assign(window._plans_url);
+            if (window.plansUrl) {
+              window.location.assign(window.plansUrl);
             }
           }}
         />

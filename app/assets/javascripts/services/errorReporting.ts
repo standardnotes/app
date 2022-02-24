@@ -25,7 +25,7 @@ export function startErrorReporting(): void {
      */
     isNullOrUndefined(disableErrorReporting) ||
     disableErrorReporting ||
-    !window._bugsnag_api_key
+    !window.bugsnagApiKey
   ) {
     SNLog.onError = console.error;
     return;
@@ -41,7 +41,7 @@ export function startErrorReporting(): void {
     }
 
     Bugsnag.start({
-      apiKey: window._bugsnag_api_key,
+      apiKey: window.bugsnagApiKey,
       appType: isDesktopApplication() ? 'desktop' : 'web',
       appVersion: getDesktopVersion() || WebAppVersion,
       collectUserIp: false,

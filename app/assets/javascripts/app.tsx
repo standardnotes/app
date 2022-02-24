@@ -2,25 +2,18 @@
 
 declare global {
   interface Window {
-    // eslint-disable-next-line camelcase
-    _bugsnag_api_key?: string;
-    // eslint-disable-next-line camelcase
-    _purchase_url?: string;
-    // eslint-disable-next-line camelcase
-    _plans_url?: string;
-    // eslint-disable-next-line camelcase
-    _dashboard_url?: string;
-    // eslint-disable-next-line camelcase
-    _default_sync_server: string;
-    // eslint-disable-next-line camelcase
-    _enable_unfinished_features: boolean;
-    // eslint-disable-next-line camelcase
-    _websocket_url: string;
+    bugsnagApiKey?: string;
+    dashboardUrl?: string;
+    defaultFilesHost: string;
+    defaultSyncServer: string;
+    devAccountEmail?: string;
+    devAccountPassword?: string;
+    devAccountServer?: string;
+    enabledUnfinishedFeatures: boolean;
+    plansUrl?: string;
+    purchaseUrl?: string;
     startApplication?: StartApplication;
-
-    _devAccountEmail?: string;
-    _devAccountPassword?: string;
-    _devAccountServer?: string;
+    websocketUrl: string;
   }
 }
 
@@ -37,6 +30,7 @@ import { isDev } from './utils';
 
 const startApplication: StartApplication = async function startApplication(
   defaultSyncServerHost: string,
+  defaultFilesHostHost: string,
   bridge: Bridge,
   enableUnfinishedFeatures: boolean,
   webSocketUrl: string
@@ -46,6 +40,7 @@ const startApplication: StartApplication = async function startApplication(
 
   const mainApplicationGroup = new ApplicationGroup(
     defaultSyncServerHost,
+    defaultFilesHostHost,
     bridge,
     enableUnfinishedFeatures ? Runtime.Dev : Runtime.Prod,
     webSocketUrl
@@ -79,10 +74,11 @@ const startApplication: StartApplication = async function startApplication(
 
 if (IsWebPlatform) {
   startApplication(
-    window._default_sync_server,
+    window.defaultSyncServer,
+    window.defaultFilesHost,
     new BrowserBridge(WebAppVersion),
-    window._enable_unfinished_features,
-    window._websocket_url
+    window.enabledUnfinishedFeatures,
+    window.websocketUrl
   );
 } else {
   window.startApplication = startApplication;

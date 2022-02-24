@@ -25,7 +25,7 @@ export const SMART_TAGS_FEATURE_NAME = 'Smart Tags';
  */
 export class FeaturesState {
   readonly enableUnfinishedFeatures: boolean =
-    window?._enable_unfinished_features;
+    window?.enabledUnfinishedFeatures;
 
   _hasFolders = false;
   _hasSmartTags = false;
