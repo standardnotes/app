@@ -37,9 +37,9 @@ export const SignInPane: FunctionComponent<Props> = observer(
       if (emailInputRef?.current) {
         emailInputRef.current?.focus();
       }
-      if (isDev && window._devAccountEmail) {
-        setEmail(window._devAccountEmail);
-        setPassword(window._devAccountPassword as string);
+      if (isDev && window.devAccountEmail) {
+        setEmail(window.devAccountEmail);
+        setPassword(window.devAccountPassword as string);
       }
     }, []);
 

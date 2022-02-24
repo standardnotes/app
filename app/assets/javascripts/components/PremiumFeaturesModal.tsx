@@ -30,8 +30,8 @@ export const PremiumFeaturesModal: FunctionalComponent<Props> = ({
   const handleClick = () => {
     if (hasSubscription) {
       openSubscriptionDashboard(application);
-    } else if (window._plans_url) {
-      window.location.assign(window._plans_url);
+    } else if (window.plansUrl) {
+      window.location.assign(window.plansUrl);
     }
   };
 

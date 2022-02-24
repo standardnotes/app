@@ -62,7 +62,7 @@ type ObserverCallback = (event: AppStateEvent, data?: any) => Promise<void>;
 
 export class AppState {
   readonly enableUnfinishedFeatures: boolean =
-    window?._enable_unfinished_features;
+    window?.enabledUnfinishedFeatures;
 
   application: WebApplication;
   observers: ObserverCallback[] = [];

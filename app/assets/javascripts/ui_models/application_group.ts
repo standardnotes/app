@@ -20,6 +20,7 @@ import { ThemeManager } from '@/services/themeManager';
 export class ApplicationGroup extends SNApplicationGroup {
   constructor(
     private defaultSyncServerHost: string,
+    private defaultFilesHostHost: string,
     private bridge: Bridge,
     private runtime: Runtime,
     private webSocketUrl: string
@@ -50,6 +51,7 @@ export class ApplicationGroup extends SNApplicationGroup {
       platform,
       descriptor.identifier,
       this.defaultSyncServerHost,
+      this.defaultFilesHostHost,
       this.bridge,
       this.webSocketUrl,
       this.runtime

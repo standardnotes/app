@@ -16,11 +16,11 @@ export const getPurchaseFlowUrl = async (
   const currentUrl = window.location.origin;
   const successUrl = isDesktopApplication() ? `standardnotes://` : currentUrl;
   if (application.noAccount()) {
-    return `${window._purchase_url}/offline?&success_url=${successUrl}`;
+    return `${window.purchaseUrl}/offline?&success_url=${successUrl}`;
   }
   const token = await application.getNewSubscriptionToken();
   if (token) {
-    return `${window._purchase_url}?subscription_token=${token}&success_url=${successUrl}`;
+    return `${window.purchaseUrl}?subscription_token=${token}&success_url=${successUrl}`;
   }
   return undefined;
 };
