@@ -1,4 +1,5 @@
-import { FeaturesState } from '@/ui_models/app_state/features_state';
+import { WebApplication } from '@/ui_models/application';
+import { AppState } from '@/ui_models/app_state';
 import { observer } from 'mobx-react-lite';
 import { FunctionalComponent } from 'preact';
 import { useContext } from 'preact/hooks';
@@ -24,24 +25,33 @@ export const usePremiumModal = (): PremiumModalContextData => {
 };
 
 interface Props {
-  state: FeaturesState;
+  application: WebApplication;
+  appState: AppState;
 }
 
 export const PremiumModalProvider: FunctionalComponent<Props> = observer(
-  ({ state, children }) => {
-    const featureName = state._premiumAlertFeatureName;
-    const activate = state.showPremiumAlert;
-    const close = state.closePremiumAlert;
+  ({ application, appState, children }) => {
+    const featureName = appState.features._premiumAlertFeatureName;
+    const activate = appState.features.showPremiumAlert;
+    const close = appState.features.closePremiumAlert;
 
     const showModal = !!featureName;
+
+    const hasSubscription = Boolean(
+      appState.subscription.userSubscription &&
+        !appState.subscription.isUserSubscriptionExpired &&
+        !appState.subscription.isUserSubscriptionCanceled
+    );
 
     return (
       <>
         {showModal && (
           <PremiumFeaturesModal
-            showModal={!!featureName}
+            application={application}
             featureName={featureName}
+            hasSubscription={hasSubscription}
             onClose={close}
+            showModal={!!featureName}
           />
         )}
         <PremiumModalProvider_ value={{ activate }}>
