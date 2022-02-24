@@ -207,7 +207,10 @@ export class ApplicationView extends PureComponent<Props, State> {
     const renderAppContents = !this.state.needsUnlock && this.state.launched;
 
     return (
-      <PremiumModalProvider state={this.appState?.features}>
+      <PremiumModalProvider
+        application={this.application}
+        appState={this.appState}
+      >
         <div className={this.platformString + ' main-ui-view sn-component'}>
           {renderAppContents && (
             <div
