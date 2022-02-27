@@ -7,6 +7,7 @@ import { Menu } from '../menu/Menu';
 import { MenuItem, MenuItemType } from '../menu/MenuItem';
 import { usePremiumModal } from '../Premium';
 import { useCloseOnBlur } from '../utils';
+import { SNTag } from '@standardnotes/snjs';
 
 type Props = {
   appState: AppState;
@@ -17,7 +18,7 @@ export const TagsContextMenu: FunctionComponent<Props> = observer(
     const premiumModal = usePremiumModal();
     const selectedTag = appState.tags.selected;
 
-    if (!selectedTag) {
+    if (!selectedTag || !(selectedTag instanceof SNTag)) {
       return null;
     }
 

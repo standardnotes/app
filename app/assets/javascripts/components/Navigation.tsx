@@ -1,4 +1,4 @@
-import { SmartTagsSection } from '@/components/Tags/SmartTagsSection';
+import { SmartViewsSection } from '@/components/Tags/SmartViewsSection';
 import { TagsSection } from '@/components/Tags/TagsSection';
 import { WebApplication } from '@/ui_models/application';
 import { PANEL_NAME_NAVIGATION } from '@/constants';
@@ -65,7 +65,7 @@ export const Navigation: FunctionComponent<Props> = observer(
             </div>
           </div>
           <div className="scrollable">
-            <SmartTagsSection appState={appState} />
+            <SmartViewsSection appState={appState} />
             <TagsSection appState={appState} />
           </div>
         </div>
