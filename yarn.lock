@@ -2445,10 +2445,10 @@
     buffer "^6.0.3"
     libsodium-wrappers "^0.7.9"
 
-"@standardnotes/snjs@2.65.3":
-  version "2.65.3"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.65.3.tgz#a5a769c3aabb80623cd62e3f861a865c1f376bf8"
-  integrity sha512-5kCJ53IKwhdZ9/hWpwmBnJlQ5kVSvAtrqfOf23Y/wHBhBmqSbaME3WtwUcvDS+MNZ1DH2ikv/iGkElAC+aClVw==
+"@standardnotes/snjs@2.66.0":
+  version "2.66.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.66.0.tgz#ae4dd3def15e6e093bf9f39a677f67b98ca9685a"
+  integrity sha512-/sJ/9+a/ADhA77/k11liW1NlVkWhiT833euo/uhFDv/lfiZB512w/8Y3pfUrYGBQewBOPV1IqsXk4FH/eiz/GQ==
   dependencies:
     "@standardnotes/applications" "^1.1.1"
     "@standardnotes/auth" "^3.17.1"
@@ -2461,10 +2461,10 @@
     "@standardnotes/sncrypto-common" "^1.7.1"
     "@standardnotes/utils" "^1.2.1"
 
-"@standardnotes/stylekit@5.9.0":
-  version "5.9.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/stylekit/-/stylekit-5.9.0.tgz#16d62623335091062238c850a930dedaa5ad6f1d"
-  integrity sha512-lIlEKwxKkQT+AttSmN40zvzWzfqpfI4VPTscZvRnWRqMQjYDEnSbcA1h0UDcT5tvnrna4RtsOiUL9o0KDx56sg==
+"@standardnotes/stylekit@5.10.0":
+  version "5.10.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/stylekit/-/stylekit-5.10.0.tgz#94bc1c6686663b2b89b004eb777a6792a0305f47"
+  integrity sha512-W0vuqjfN1GD254ZTdlroMgKIQSebuhkJkc5Lh0tWQ5cpQyXrZ3HsHXd3H98PPbP+wtLS34XS5G/PHc7OjD146g==
   dependencies:
     "@reach/listbox" "^0.15.0"
     "@reach/menu-button" "^0.15.1"

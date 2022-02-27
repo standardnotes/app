@@ -31,6 +31,10 @@ const smartViewIconType = (view: SmartView): IconType => {
   if (view.uuid === SystemViewId.TrashedNotes) {
     return 'trash';
   }
+  if (view.uuid === SystemViewId.UntaggedNotes) {
+    return 'hashtag-off';
+  }
+
   return 'hashtag';
 };
 
