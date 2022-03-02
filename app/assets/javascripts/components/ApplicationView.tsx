@@ -27,6 +27,7 @@ import { RevisionHistoryModalWrapper } from './RevisionHistoryModal/RevisionHist
 import { PremiumModalProvider } from './Premium';
 import { ConfirmSignoutContainer } from './ConfirmSignoutModal';
 import { TagsContextMenu } from './Tags/TagContextMenu';
+import { ToastContainer } from '@standardnotes/stylekit';
 
 type Props = {
   application: WebApplication;
@@ -283,6 +284,8 @@ export class ApplicationView extends PureComponent<Props, State> {
                 appState={this.appState}
                 application={this.application}
               />
+
+              <ToastContainer />
             </>
           )}
         </div>
