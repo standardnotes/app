@@ -2,13 +2,18 @@ import { Icon } from '@/components/Icon';
 import { FeaturesState } from '@/ui_models/app_state/features_state';
 import { TagsState } from '@/ui_models/app_state/tags_state';
 import '@reach/tooltip/styles.css';
-import { SNSmartTag, IconType } from '@standardnotes/snjs';
+import {
+  SmartView,
+  SystemViewId,
+  IconType,
+  isSystemView,
+} from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 
 type Props = {
-  tag: SNSmartTag;
+  view: SmartView;
   tagsState: TagsState;
   features: FeaturesState;
 };
@@ -16,40 +21,44 @@ type Props = {
 const PADDING_BASE_PX = 14;
 const PADDING_PER_LEVEL_PX = 21;
 
-const smartTagIconType = (tag: SNSmartTag): IconType => {
-  if (tag.isAllTag) {
+const smartViewIconType = (view: SmartView): IconType => {
+  if (view.uuid === SystemViewId.AllNotes) {
     return 'notes';
   }
-  if (tag.isArchiveTag) {
+  if (view.uuid === SystemViewId.ArchivedNotes) {
     return 'archive';
   }
-  if (tag.isTrashTag) {
+  if (view.uuid === SystemViewId.TrashedNotes) {
     return 'trash';
   }
+  if (view.uuid === SystemViewId.UntaggedNotes) {
+    return 'hashtag-off';
+  }
+
   return 'hashtag';
 };
 
-export const SmartTagsListItem: FunctionComponent<Props> = observer(
-  ({ tag, tagsState, features }) => {
-    const [title, setTitle] = useState(tag.title || '');
+export const SmartViewsListItem: FunctionComponent<Props> = observer(
+  ({ view, tagsState }) => {
+    const [title, setTitle] = useState(view.title || '');
     const inputRef = useRef<HTMLInputElement>(null);
 
     const level = 0;
-    const isSelected = tagsState.selected === tag;
-    const isEditing = tagsState.editingTag === tag;
+    const isSelected = tagsState.selected === view;
+    const isEditing = tagsState.editingTag === view;
 
     useEffect(() => {
-      setTitle(tag.title || '');
-    }, [setTitle, tag]);
+      setTitle(view.title || '');
+    }, [setTitle, view]);
 
     const selectCurrentTag = useCallback(() => {
-      tagsState.selected = tag;
-    }, [tagsState, tag]);
+      tagsState.selected = view;
+    }, [tagsState, view]);
 
     const onBlur = useCallback(() => {
-      tagsState.save(tag, title);
-      setTitle(tag.title);
-    }, [tagsState, tag, title, setTitle]);
+      tagsState.save(view, title);
+      setTitle(view.title);
+    }, [tagsState, view, title, setTitle]);
 
     const onInput = useCallback(
       (e: Event) => {
@@ -76,19 +85,19 @@ export const SmartTagsListItem: FunctionComponent<Props> = observer(
     }, [inputRef, isEditing]);
 
     const onClickRename = useCallback(() => {
-      tagsState.editingTag = tag;
-    }, [tagsState, tag]);
+      tagsState.editingTag = view;
+    }, [tagsState, view]);
 
     const onClickSave = useCallback(() => {
       inputRef.current?.blur();
     }, [inputRef]);
 
     const onClickDelete = useCallback(() => {
-      tagsState.remove(tag);
-    }, [tagsState, tag]);
+      tagsState.remove(view, true);
+    }, [tagsState, view]);
 
-    const isFaded = !tag.isAllTag;
-    const iconType = smartTagIconType(tag);
+    const isFaded = false;
+    const iconType = smartViewIconType(view);
 
     return (
       <>
@@ -101,7 +110,7 @@ export const SmartTagsListItem: FunctionComponent<Props> = observer(
             paddingLeft: `${level * PADDING_PER_LEVEL_PX + PADDING_BASE_PX}px`,
           }}
         >
-          {!tag.errorDecrypting ? (
+          {!view.errorDecrypting ? (
             <div className="tag-info">
               <div className={`tag-icon mr-1`}>
                 <Icon
@@ -111,7 +120,8 @@ export const SmartTagsListItem: FunctionComponent<Props> = observer(
               </div>
               <input
                 className={`title ${isEditing ? 'editing' : ''}`}
-                id={`react-tag-${tag.uuid}`}
+                disabled={!isEditing}
+                id={`react-tag-${view.uuid}`}
                 onBlur={onBlur}
                 onInput={onInput}
                 value={title}
@@ -120,21 +130,21 @@ export const SmartTagsListItem: FunctionComponent<Props> = observer(
                 ref={inputRef}
               />
               <div className="count">
-                {tag.isAllTag && tagsState.allNotesCount}
+                {view.uuid === SystemViewId.AllNotes && tagsState.allNotesCount}
               </div>
             </div>
           ) : null}
-          {!tag.isSystemSmartTag && (
+          {!isSystemView(view) && (
             <div className="meta">
-              {tag.conflictOf && (
+              {view.conflictOf && (
                 <div className="danger small-text font-bold">
-                  Conflicted Copy {tag.conflictOf}
+                  Conflicted Copy {view.conflictOf}
                 </div>
               )}
-              {tag.errorDecrypting && !tag.waitingForKey && (
+              {view.errorDecrypting && !view.waitingForKey && (
                 <div className="danger small-text font-bold">Missing Keys</div>
               )}
-              {tag.errorDecrypting && tag.waitingForKey && (
+              {view.errorDecrypting && view.waitingForKey && (
                 <div className="info small-text font-bold">
                   Waiting For Keys
                 </div>

@@ -7,23 +7,31 @@ import { FunctionalComponent } from 'preact';
 import { Icon } from './Icon';
 import { PremiumIllustration } from '@standardnotes/stylekit';
 import { useRef } from 'preact/hooks';
+import { WebApplication } from '@/ui_models/application';
+import { openSubscriptionDashboard } from '@/hooks/manageSubscription';
 
 type Props = {
+  application: WebApplication;
   featureName: string;
+  hasSubscription: boolean;
   onClose: () => void;
   showModal: boolean;
 };
 
 export const PremiumFeaturesModal: FunctionalComponent<Props> = ({
+  application,
   featureName,
+  hasSubscription,
   onClose,
   showModal,
 }) => {
   const plansButtonRef = useRef<HTMLButtonElement>(null);
 
-  const onClickPlans = () => {
-    if (window._plans_url) {
-      window.location.assign(window._plans_url);
+  const handleClick = () => {
+    if (hasSubscription) {
+      openSubscriptionDashboard(application);
+    } else if (window.plansUrl) {
+      window.location.assign(window.plansUrl);
     }
   };
 
@@ -61,11 +69,11 @@ export const PremiumFeaturesModal: FunctionalComponent<Props> = ({
           </AlertDialogDescription>
           <div className="p-4">
             <button
-              onClick={onClickPlans}
+              onClick={handleClick}
               className="w-full rounded no-border py-2 font-bold bg-info color-info-contrast hover:brightness-130 focus:brightness-130 cursor-pointer"
               ref={plansButtonRef}
             >
-              See Plans
+              {hasSubscription ? 'Upgrade Plan' : 'See Plans'}
             </button>
           </div>
         </div>

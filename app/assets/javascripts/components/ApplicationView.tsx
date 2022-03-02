@@ -26,6 +26,8 @@ import { PermissionsModal } from './PermissionsModal';
 import { RevisionHistoryModalWrapper } from './RevisionHistoryModal/RevisionHistoryModalWrapper';
 import { PremiumModalProvider } from './Premium';
 import { ConfirmSignoutContainer } from './ConfirmSignoutModal';
+import { TagsContextMenu } from './Tags/TagContextMenu';
+import { ToastContainer } from '@standardnotes/stylekit';
 
 type Props = {
   application: WebApplication;
@@ -206,7 +208,10 @@ export class ApplicationView extends PureComponent<Props, State> {
     const renderAppContents = !this.state.needsUnlock && this.state.launched;
 
     return (
-      <PremiumModalProvider state={this.appState?.features}>
+      <PremiumModalProvider
+        application={this.application}
+        appState={this.appState}
+      >
         <div className={this.platformString + ' main-ui-view sn-component'}>
           {renderAppContents && (
             <div
@@ -268,6 +273,8 @@ export class ApplicationView extends PureComponent<Props, State> {
                 appState={this.appState}
               />
 
+              <TagsContextMenu appState={this.appState} />
+
               <PurchaseFlowWrapper
                 application={this.application}
                 appState={this.appState}
@@ -277,6 +284,8 @@ export class ApplicationView extends PureComponent<Props, State> {
                 appState={this.appState}
                 application={this.application}
               />
+
+              <ToastContainer />
             </>
           )}
         </div>

@@ -49,8 +49,8 @@ export const ChangeEditorButton: FunctionComponent<Props> = observer(
     const [currentEditor, setCurrentEditor] = useState<SNComponent>();
 
     useEffect(() => {
-      setEditorMenuGroups(createEditorMenuGroups(editors));
-    }, [editors]);
+      setEditorMenuGroups(createEditorMenuGroups(application, editors));
+    }, [application, editors]);
 
     useEffect(() => {
       if (note) {
@@ -121,15 +121,17 @@ export const ChangeEditorButton: FunctionComponent<Props> = observer(
             className="sn-dropdown sn-dropdown--animated min-w-68 max-h-120 max-w-xs flex flex-col overflow-y-auto fixed"
             onBlur={closeOnBlur}
           >
-            <ChangeEditorMenu
-              closeOnBlur={closeOnBlur}
-              application={application}
-              isOpen={open}
-              currentEditor={currentEditor}
-              setSelectedEditor={setCurrentEditor}
-              note={note}
-              groups={editorMenuGroups}
-            />
+            {open && (
+              <ChangeEditorMenu
+                closeOnBlur={closeOnBlur}
+                application={application}
+                isOpen={open}
+                currentEditor={currentEditor}
+                setSelectedEditor={setCurrentEditor}
+                note={note}
+                groups={editorMenuGroups}
+              />
+            )}
           </DisclosurePanel>
         </Disclosure>
       </div>

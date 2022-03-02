@@ -61,6 +61,15 @@ $content-horizontal-padding: 16px;
     }
   }
 
+  .tag {
+    border: 0;
+    background-color: transparent;
+
+    &:focus {
+      background-color: var(--sn-stylekit-secondary-contrast-background-color);
+    }
+  }
+
   .tag,
   .root-drop {
     font-size: 14px;
@@ -81,17 +90,17 @@ $content-horizontal-padding: 16px;
       .sn-icon {
         display: block;
         margin: 0 auto;
-
-        &.hidden {
-          visibility: hidden;
-        }
       }
 
-      > .tag-fold {
-        width: 22px;
+      .tag-fold {
+        min-width: 22px;
         display: flex;
         align-items: center;
         height: 100%;
+
+        @extend .border-0;
+        @extend .bg-transparent;
+        @extend .p-0;
       }
 
       > .tag-icon {
@@ -147,12 +156,12 @@ $content-horizontal-padding: 16px;
         }
       }
 
-      > .count {
+      .count {
         padding-right: 4px;
         padding-top: 1px;
         font-weight: bold;
         color: var(--sn-stylekit-neutral-color);
-        min-width: 35px;
+        min-width: 15px;
         text-align: right;
       }
     }

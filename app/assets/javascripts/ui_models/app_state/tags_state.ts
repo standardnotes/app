@@ -1,14 +1,19 @@
 import { confirmDialog } from '@/services/alertService';
 import { STRING_DELETE_TAG } from '@/strings';
 import {
+  MAX_MENU_SIZE_MULTIPLIER,
+  MENU_MARGIN_FROM_APP_BORDER,
+} from '@/constants';
+import {
   ComponentAction,
   ContentType,
   MessageData,
   SNApplication,
-  SNSmartTag,
+  SmartView,
   SNTag,
   TagMutator,
   UuidString,
+  isSystemView,
 } from '@standardnotes/snjs';
 import {
   action,
@@ -21,7 +26,7 @@ import {
 import { WebApplication } from '../application';
 import { FeaturesState, SMART_TAGS_FEATURE_NAME } from './features_state';
 
-type AnyTag = SNTag | SNSmartTag;
+type AnyTag = SNTag | SmartView;
 
 const rootTags = (application: SNApplication): SNTag[] => {
   const hasNoParent = (tag: SNTag) => !application.getTagParent(tag);
@@ -67,11 +72,20 @@ const isValidFutureSiblings = (
 
 export class TagsState {
   tags: SNTag[] = [];
-  smartTags: SNSmartTag[] = [];
+  smartViews: SmartView[] = [];
   allNotesCount_ = 0;
   selected_: AnyTag | undefined;
   previouslySelected_: AnyTag | undefined;
-  editing_: SNTag | undefined;
+  editing_: SNTag | SmartView | undefined;
+  addingSubtagTo: SNTag | undefined;
+
+  contextMenuOpen = false;
+  contextMenuPosition: { top?: number; left: number; bottom?: number } = {
+    top: 0,
+    left: 0,
+  };
+  contextMenuClickLocation: { x: number; y: number } = { x: 0, y: 0 };
+  contextMenuMaxHeight: number | 'auto' = 'auto';
 
   private readonly tagsCountsState: TagsCountsState;
 
@@ -85,13 +99,14 @@ export class TagsState {
     this.selected_ = undefined;
     this.previouslySelected_ = undefined;
     this.editing_ = undefined;
+    this.addingSubtagTo = undefined;
 
-    this.smartTags = this.application.getSmartTags();
-    this.selected_ = this.smartTags[0];
+    this.smartViews = this.application.getSmartViews();
+    this.selected_ = this.smartViews[0];
 
     makeObservable(this, {
       tags: observable.ref,
-      smartTags: observable.ref,
+      smartViews: observable.ref,
       hasAtLeastOneFolder: computed,
       allNotesCount_: observable,
       allNotesCount: computed,
@@ -105,6 +120,9 @@ export class TagsState {
       selectedUuid: computed,
       editingTag: computed,
 
+      addingSubtagTo: observable,
+      setAddingSubtagTo: action,
+
       assignParent: action,
 
       rootTags: computed,
@@ -114,32 +132,41 @@ export class TagsState {
       undoCreateNewTag: action,
       save: action,
       remove: action,
+
+      contextMenuOpen: observable,
+      contextMenuPosition: observable,
+      contextMenuMaxHeight: observable,
+      contextMenuClickLocation: observable,
+      setContextMenuOpen: action,
+      setContextMenuClickLocation: action,
+      setContextMenuPosition: action,
+      setContextMenuMaxHeight: action,
     });
 
     appEventListeners.push(
       this.application.streamItems(
-        [ContentType.Tag, ContentType.SmartTag],
+        [ContentType.Tag, ContentType.SmartView],
         (items) => {
           runInAction(() => {
-            this.tags = this.application.getDisplayableItems(
+            this.tags = this.application.getDisplayableItems<SNTag>(
               ContentType.Tag
-            ) as SNTag[];
-            this.smartTags = this.application.getSmartTags();
+            );
+            this.smartViews = this.application.getSmartViews();
 
             const selectedTag = this.selected_;
-            if (selectedTag) {
+            if (selectedTag && !isSystemView(selectedTag as SmartView)) {
               const matchingTag = items.find(
                 (candidate) => candidate.uuid === selectedTag.uuid
-              );
+              ) as AnyTag;
               if (matchingTag) {
                 if (matchingTag.deleted) {
-                  this.selected_ = this.smartTags[0];
+                  this.selected_ = this.smartViews[0];
                 } else {
-                  this.selected_ = matchingTag as AnyTag;
+                  this.selected_ = matchingTag;
                 }
               }
             } else {
-              this.selected_ = this.smartTags[0];
+              this.selected_ = this.smartViews[0];
             }
           });
         }
@@ -159,8 +186,121 @@ export class TagsState {
     );
   }
 
+  async createSubtagAndAssignParent(parent: SNTag, title: string) {
+    const hasEmptyTitle = title.length === 0;
+
+    if (hasEmptyTitle) {
+      this.setAddingSubtagTo(undefined);
+      return;
+    }
+
+    const createdTag = (await this.application.createTagOrSmartView(
+      title
+    )) as SNTag;
+
+    const futureSiblings = this.application.getTagChildren(parent);
+
+    if (!isValidFutureSiblings(this.application, futureSiblings, createdTag)) {
+      this.setAddingSubtagTo(undefined);
+      this.remove(createdTag, false);
+      return;
+    }
+
+    this.assignParent(createdTag.uuid, parent.uuid);
+
+    this.application.sync();
+
+    runInAction(() => {
+      this.selected = createdTag as SNTag;
+    });
+
+    this.setAddingSubtagTo(undefined);
+  }
+
+  setAddingSubtagTo(tag: SNTag | undefined): void {
+    this.addingSubtagTo = tag;
+  }
+
+  setContextMenuOpen(open: boolean): void {
+    this.contextMenuOpen = open;
+  }
+
+  setContextMenuClickLocation(location: { x: number; y: number }): void {
+    this.contextMenuClickLocation = location;
+  }
+
+  setContextMenuPosition(position: {
+    top?: number;
+    left: number;
+    bottom?: number;
+  }): void {
+    this.contextMenuPosition = position;
+  }
+
+  setContextMenuMaxHeight(maxHeight: number | 'auto'): void {
+    this.contextMenuMaxHeight = maxHeight;
+  }
+
+  reloadContextMenuLayout(): void {
+    const { clientHeight } = document.documentElement;
+    const defaultFontSize = window.getComputedStyle(
+      document.documentElement
+    ).fontSize;
+    const maxContextMenuHeight =
+      parseFloat(defaultFontSize) * MAX_MENU_SIZE_MULTIPLIER;
+    const footerElementRect = document
+      .getElementById('footer-bar')
+      ?.getBoundingClientRect();
+    const footerHeightInPx = footerElementRect?.height;
+
+    // Open up-bottom is default behavior
+    let openUpBottom = true;
+
+    if (footerHeightInPx) {
+      const bottomSpace =
+        clientHeight - footerHeightInPx - this.contextMenuClickLocation.y;
+      const upSpace = this.contextMenuClickLocation.y;
+
+      // If not enough space to open up-bottom
+      if (maxContextMenuHeight > bottomSpace) {
+        // If there's enough space, open bottom-up
+        if (upSpace > maxContextMenuHeight) {
+          openUpBottom = false;
+          this.setContextMenuMaxHeight('auto');
+          // Else, reduce max height (menu will be scrollable) and open in whichever direction there's more space
+        } else {
+          if (upSpace > bottomSpace) {
+            this.setContextMenuMaxHeight(upSpace - MENU_MARGIN_FROM_APP_BORDER);
+            openUpBottom = false;
+          } else {
+            this.setContextMenuMaxHeight(
+              bottomSpace - MENU_MARGIN_FROM_APP_BORDER
+            );
+          }
+        }
+      } else {
+        this.setContextMenuMaxHeight('auto');
+      }
+    }
+
+    if (openUpBottom) {
+      this.setContextMenuPosition({
+        top: this.contextMenuClickLocation.y,
+        left: this.contextMenuClickLocation.x,
+      });
+    } else {
+      this.setContextMenuPosition({
+        bottom: clientHeight - this.contextMenuClickLocation.y,
+        left: this.contextMenuClickLocation.x,
+      });
+    }
+  }
+
   public get allLocalRootTags(): SNTag[] {
-    if (this.editing_ && this.application.isTemplateItem(this.editing_)) {
+    if (
+      this.editing_ instanceof SNTag &&
+      this.application.isTemplateItem(this.editing_)
+    ) {
       return [this.editing_, ...this.rootTags];
     }
     return this.rootTags;
@@ -175,9 +315,7 @@ export class TagsState {
       return [];
     }
 
-    const children = this.application
-      .getTagChildren(tag)
-      .filter((tag) => !tag.isSmartTag);
+    const children = this.application.getTagChildren(tag);
 
     const childrenUuids = children.map((childTag) => childTag.uuid);
     const childrenTags = this.tags.filter((tag) =>
@@ -270,9 +408,9 @@ export class TagsState {
     this.selected_ = tag;
   }
 
-  public setExpanded(tag: SNTag, exapnded: boolean) {
+  public setExpanded(tag: SNTag, expanded: boolean) {
     this.application.changeAndSaveItem<TagMutator>(tag.uuid, (mutator) => {
-      mutator.expanded = exapnded;
+      mutator.expanded = expanded;
     });
   }
 
@@ -280,11 +418,11 @@ export class TagsState {
     return this.selected_?.uuid;
   }
 
-  public get editingTag(): SNTag | undefined {
+  public get editingTag(): SNTag | SmartView | undefined {
     return this.editing_;
   }
 
-  public set editingTag(editingTag: SNTag | undefined) {
+  public set editingTag(editingTag: SNTag | SmartView | undefined) {
     this.editing_ = editingTag;
     this.selected = editingTag;
   }
@@ -308,28 +446,31 @@ export class TagsState {
 
   public undoCreateNewTag() {
     this.editing_ = undefined;
-    const previousTag = this.previouslySelected_ || this.smartTags[0];
+    const previousTag = this.previouslySelected_ || this.smartViews[0];
     this.selected = previousTag;
   }
 
-  public async remove(tag: SNTag) {
-    if (
-      await confirmDialog({
+  public async remove(tag: SNTag | SmartView, userTriggered: boolean) {
+    let shouldDelete = !userTriggered;
+    if (userTriggered) {
+      shouldDelete = await confirmDialog({
         text: STRING_DELETE_TAG,
         confirmButtonStyle: 'danger',
-      })
-    ) {
+      });
+    }
+    if (shouldDelete) {
       this.application.deleteItem(tag);
-      this.selected = this.smartTags[0];
+      this.selected = this.smartViews[0];
     }
   }
 
-  public async save(tag: SNTag, newTitle: string) {
+  public async save(tag: SNTag | SmartView, newTitle: string) {
     const hasEmptyTitle = newTitle.length === 0;
     const hasNotChangedTitle = newTitle === tag.title;
     const isTemplateChange = this.application.isTemplateItem(tag);
 
-    const siblings = tagSiblings(this.application, tag);
+    const siblings =
+      tag instanceof SNTag ? tagSiblings(this.application, tag) : [];
     const hasDuplicatedTitle = siblings.some(
       (other) => other.title.toLowerCase() === newTitle.toLowerCase()
     );
@@ -356,16 +497,16 @@ export class TagsState {
     }
 
     if (isTemplateChange) {
-      const isSmartTagTitle = this.application.isSmartTagTitle(newTitle);
+      const isSmartViewTitle = this.application.isSmartViewTitle(newTitle);
 
-      if (isSmartTagTitle) {
-        if (!this.features.hasSmartTags) {
+      if (isSmartViewTitle) {
+        if (!this.features.hasSmartViews) {
           await this.features.showPremiumAlert(SMART_TAGS_FEATURE_NAME);
           return;
         }
       }
 
-      const insertedTag = await this.application.createTagOrSmartTag(newTitle);
+      const insertedTag = await this.application.createTagOrSmartView(newTitle);
       this.application.sync();
       runInAction(() => {
         this.selected = insertedTag as SNTag;
@@ -393,7 +534,7 @@ export class TagsState {
 
       if (
         item.content_type === ContentType.Tag ||
-        item.content_type === ContentType.SmartTag
+        item.content_type === ContentType.SmartView
       ) {
         const matchingTag = this.application.findItem(item.uuid);
 
@@ -403,7 +544,7 @@ export class TagsState {
         }
       }
     } else if (action === ComponentAction.ClearSelection) {
-      this.selected = this.smartTags[0];
+      this.selected = this.smartViews[0];
     }
   }
 

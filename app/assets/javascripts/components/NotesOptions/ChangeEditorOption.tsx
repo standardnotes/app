@@ -2,10 +2,6 @@ import { KeyboardKey } from '@/services/ioService';
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import {
-  MENU_MARGIN_FROM_APP_BORDER,
-  MAX_MENU_SIZE_MULTIPLIER,
-} from '@/constants';
-import {
   Disclosure,
   DisclosureButton,
   DisclosurePanel,
@@ -21,6 +17,10 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import { Icon } from '../Icon';
 import { createEditorMenuGroups } from './changeEditor/createEditorMenuGroups';
 import { ChangeEditorMenu } from './changeEditor/ChangeEditorMenu';
+import {
+  calculateSubmenuStyle,
+  SubmenuStyle,
+} from '@/utils/calculateSubmenuStyle';
 
 type ChangeEditorOptionProps = {
   appState: AppState;
@@ -39,96 +39,10 @@ type AccordionMenuGroup<T> = {
 export type EditorMenuItem = {
   name: string;
   component?: SNComponent;
-  isPremiumFeature?: boolean;
+  isEntitled: boolean;
 };
 
 export type EditorMenuGroup = AccordionMenuGroup<EditorMenuItem>;
-
-type MenuPositionStyle = {
-  top?: number | 'auto';
-  right?: number | 'auto';
-  bottom: number | 'auto';
-  left?: number | 'auto';
-  visibility?: 'hidden' | 'visible';
-};
-
-const calculateMenuPosition = (
-  button: HTMLButtonElement | null,
-  menu?: HTMLDivElement | null
-): MenuPositionStyle | undefined => {
-  const defaultFontSize = window.getComputedStyle(
-    document.documentElement
-  ).fontSize;
-
-  const maxChangeEditorMenuSize =
-    parseFloat(defaultFontSize) * MAX_MENU_SIZE_MULTIPLIER;
-
-  const { clientWidth, clientHeight } = document.documentElement;
-
-  const buttonRect = button?.getBoundingClientRect();
-
-  const buttonParentRect = button?.parentElement?.getBoundingClientRect();
-
-  const menuBoundingRect = menu?.getBoundingClientRect();
-
-  const footerElementRect = document
-    .getElementById('footer-bar')
-    ?.getBoundingClientRect();
-
-  const footerHeightInPx = footerElementRect?.height ?? 0;
-
-  let position: MenuPositionStyle = {
-    bottom: 'auto',
-  };
-
-  if (buttonRect && buttonParentRect) {
-    let positionBottom =
-      clientHeight - buttonRect.bottom - buttonRect.height / 2;
-
-    if (positionBottom < footerHeightInPx) {
-      positionBottom = footerHeightInPx + MENU_MARGIN_FROM_APP_BORDER;
-    }
-
-    if (buttonRect.right + maxChangeEditorMenuSize > clientWidth) {
-      position = {
-        bottom: positionBottom,
-        right: clientWidth - buttonRect.left,
-        visibility: 'hidden',
-      };
-    } else {
-      position = {
-        bottom: positionBottom,
-        left: buttonRect.right,
-        visibility: 'hidden',
-      };
-    }
-  }
-
-  if (menuBoundingRect && menuBoundingRect.height && buttonRect) {
-    if (menuBoundingRect.y < MENU_MARGIN_FROM_APP_BORDER) {
-      if (
-        buttonRect.right + maxChangeEditorMenuSize >
-        document.documentElement.clientWidth
-      ) {
-        return {
-          ...position,
-          top: MENU_MARGIN_FROM_APP_BORDER + buttonRect.top - buttonRect.height,
-          bottom: 'auto',
-          visibility: 'visible',
-        };
-      } else {
-        return {
-          ...position,
-          top: MENU_MARGIN_FROM_APP_BORDER,
-          bottom: 'auto',
-          visibility: 'visible',
-        };
-      }
-    }
-  }
-
-  return position;
-};
 
 export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
   application,
@@ -137,14 +51,11 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
 }) => {
   const [changeEditorMenuOpen, setChangeEditorMenuOpen] = useState(false);
   const [changeEditorMenuVisible, setChangeEditorMenuVisible] = useState(false);
-  const [changeEditorMenuMaxHeight, setChangeEditorMenuMaxHeight] = useState<
-    number | 'auto'
-  >('auto');
-  const [changeEditorMenuPosition, setChangeEditorMenuPosition] =
-    useState<MenuPositionStyle>({
-      right: 0,
-      bottom: 0,
-    });
+  const [menuStyle, setMenuStyle] = useState<SubmenuStyle>({
+    right: 0,
+    bottom: 0,
+    maxHeight: 'auto',
+  });
   const changeEditorMenuRef = useRef<HTMLDivElement>(null);
   const changeEditorButtonRef = useRef<HTMLButtonElement>(null);
   const [editors] = useState<SNComponent[]>(() =>
@@ -162,8 +73,8 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
   );
 
   useEffect(() => {
-    setEditorMenuGroups(createEditorMenuGroups(editors));
-  }, [editors]);
+    setEditorMenuGroups(createEditorMenuGroups(application, editors));
+  }, [application, editors]);
 
   useEffect(() => {
     setSelectedEditor(application.componentManager.editorForNote(note));
@@ -171,9 +82,9 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
 
   const toggleChangeEditorMenu = () => {
     if (!changeEditorMenuOpen) {
-      const menuPosition = calculateMenuPosition(changeEditorButtonRef.current);
-      if (menuPosition) {
-        setChangeEditorMenuPosition(menuPosition);
+      const menuStyle = calculateSubmenuStyle(changeEditorButtonRef.current);
+      if (menuStyle) {
+        setMenuStyle(menuStyle);
       }
     }
 
@@ -183,32 +94,13 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
   useEffect(() => {
     if (changeEditorMenuOpen) {
       setTimeout(() => {
-        const newMenuPosition = calculateMenuPosition(
+        const newMenuStyle = calculateSubmenuStyle(
           changeEditorButtonRef.current,
           changeEditorMenuRef.current
         );
 
-        if (newMenuPosition) {
-          const { clientHeight } = document.documentElement;
-          const footerElementRect = document
-            .getElementById('footer-bar')
-            ?.getBoundingClientRect();
-          const footerHeightInPx = footerElementRect?.height;
-
-          if (
-            footerHeightInPx &&
-            newMenuPosition.top &&
-            newMenuPosition.top !== 'auto'
-          ) {
-            setChangeEditorMenuMaxHeight(
-              clientHeight -
-                newMenuPosition.top -
-                footerHeightInPx -
-                MENU_MARGIN_FROM_APP_BORDER
-            );
-          }
-
-          setChangeEditorMenuPosition(newMenuPosition);
+        if (newMenuStyle) {
+          setMenuStyle(newMenuStyle);
           setChangeEditorMenuVisible(true);
         }
       });
@@ -242,21 +134,22 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
           }
         }}
         style={{
-          ...changeEditorMenuPosition,
-          maxHeight: changeEditorMenuMaxHeight,
+          ...menuStyle,
           position: 'fixed',
         }}
         className="sn-dropdown flex flex-col max-h-120 min-w-68 fixed overflow-y-auto"
       >
-        <ChangeEditorMenu
-          application={application}
-          closeOnBlur={closeOnBlur}
-          currentEditor={selectedEditor}
-          setSelectedEditor={setSelectedEditor}
-          note={note}
-          groups={editorMenuGroups}
-          isOpen={changeEditorMenuVisible}
-        />
+        {changeEditorMenuOpen && (
+          <ChangeEditorMenu
+            application={application}
+            closeOnBlur={closeOnBlur}
+            currentEditor={selectedEditor}
+            setSelectedEditor={setSelectedEditor}
+            note={note}
+            groups={editorMenuGroups}
+            isOpen={changeEditorMenuVisible}
+          />
+        )}
       </DisclosurePanel>
     </Disclosure>
   );

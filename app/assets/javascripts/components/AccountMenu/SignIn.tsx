@@ -23,7 +23,7 @@ export const SignInPane: FunctionComponent<Props> = observer(
     const { notesAndTagsCount } = appState.accountMenu;
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [isInvalid, setIsInvalid] = useState(false);
+    const [error, setError] = useState('');
     const [isEphemeral, setIsEphemeral] = useState(false);
     const [isStrictSignin, setIsStrictSignin] = useState(false);
     const [isSigningIn, setIsSigningIn] = useState(false);
@@ -37,15 +37,15 @@ export const SignInPane: FunctionComponent<Props> = observer(
       if (emailInputRef?.current) {
         emailInputRef.current?.focus();
       }
-      if (isDev && window._devAccountEmail) {
-        setEmail(window._devAccountEmail);
-        setPassword(window._devAccountPassword as string);
+      if (isDev && window.devAccountEmail) {
+        setEmail(window.devAccountEmail);
+        setPassword(window.devAccountPassword as string);
       }
     }, []);
 
     const resetInvalid = () => {
-      if (isInvalid) {
-        setIsInvalid(false);
+      if (error.length) {
+        setError('');
       }
     };
 
@@ -56,8 +56,8 @@ export const SignInPane: FunctionComponent<Props> = observer(
     };
 
     const handlePasswordChange = (e: Event) => {
-      if (isInvalid) {
-        setIsInvalid(false);
+      if (error.length) {
+        setError('');
       }
       if (e.target instanceof HTMLInputElement) {
         setPassword(e.target.value);
@@ -91,11 +91,7 @@ export const SignInPane: FunctionComponent<Props> = observer(
         })
         .catch((err) => {
           console.error(err);
-          if (err.toString().includes('Invalid email or password')) {
-            setIsInvalid(true);
-          } else {
-            application.alertService.alert(err);
-          }
+          setError(err.message ?? err.toString());
           setPassword('');
           passwordInputRef?.current?.blur();
         })
@@ -141,7 +137,7 @@ export const SignInPane: FunctionComponent<Props> = observer(
         </div>
         <div className="px-3 mb-1">
           <InputWithIcon
-            className={`mb-2 ${isInvalid ? 'border-dark-red' : null}`}
+            className={`mb-2 ${error ? 'border-dark-red' : null}`}
             icon="email"
             inputType="email"
             placeholder="Email"
@@ -153,7 +149,7 @@ export const SignInPane: FunctionComponent<Props> = observer(
             ref={emailInputRef}
           />
           <InputWithIcon
-            className={`mb-2 ${isInvalid ? 'border-dark-red' : null}`}
+            className={`mb-2 ${error ? 'border-dark-red' : null}`}
             icon="password"
             inputType={showPassword ? 'text' : 'password'}
             placeholder="Password"
@@ -171,11 +167,7 @@ export const SignInPane: FunctionComponent<Props> = observer(
             }}
             ref={passwordInputRef}
           />
-          {isInvalid ? (
-            <div className="color-dark-red my-2">
-              Invalid email or password.
-            </div>
-          ) : null}
+          {error ? <div className="color-dark-red my-2">{error}</div> : null}
           <Button
             className="btn-w-full mt-1 mb-3"
             label={isSigningIn ? 'Signing in...' : 'Sign in'}

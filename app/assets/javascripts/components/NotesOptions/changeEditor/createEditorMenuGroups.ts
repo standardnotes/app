@@ -1,10 +1,11 @@
+import { WebApplication } from '@/ui_models/application';
 import {
   ComponentArea,
   FeatureDescription,
   GetFeatures,
   NoteType,
 } from '@standardnotes/features';
-import { ContentType, SNComponent } from '@standardnotes/snjs';
+import { ContentType, FeatureStatus, SNComponent } from '@standardnotes/snjs';
 import { EditorMenuItem, EditorMenuGroup } from '../ChangeEditorOption';
 
 export const PLAIN_EDITOR_NAME = 'Plain Editor';
@@ -31,11 +32,15 @@ const getEditorGroup = (
   return 'others';
 };
 
-export const createEditorMenuGroups = (editors: SNComponent[]) => {
+export const createEditorMenuGroups = (
+  application: WebApplication,
+  editors: SNComponent[]
+) => {
   const editorItems: Record<EditorGroup, EditorMenuItem[]> = {
     plain: [
       {
         name: PLAIN_EDITOR_NAME,
+        isEntitled: true,
       },
     ],
     'rich-text': [],
@@ -61,7 +66,7 @@ export const createEditorMenuGroups = (editors: SNComponent[]) => {
       ) {
         editorItems[getEditorGroup(editorFeature)].push({
           name: editorFeature.name as string,
-          isPremiumFeature: true,
+          isEntitled: false,
         });
       }
     });
@@ -70,6 +75,9 @@ export const createEditorMenuGroups = (editors: SNComponent[]) => {
     const editorItem: EditorMenuItem = {
       name: editor.name,
       component: editor,
+      isEntitled:
+        application.getFeatureStatus(editor.identifier) ===
+        FeatureStatus.Entitled,
     };
 
     editorItems[getEditorGroup(editor.package_info)].push(editorItem);

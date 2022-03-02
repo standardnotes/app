@@ -5,8 +5,6 @@ export function openSubscriptionDashboard(application: SNApplication): void {
     if (!token) {
       return;
     }
-    window.open(
-      `${window._dashboard_url}?subscription_token=${token}`
-    );
+    window.open(`${window.dashboardUrl}?subscription_token=${token}`);
   });
 }
