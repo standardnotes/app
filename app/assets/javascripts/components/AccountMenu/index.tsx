@@ -74,7 +74,6 @@ const MenuPaneSelector: FunctionComponent<PaneSelectorProps> = observer(
             setMenuPane={setMenuPane}
             email={email}
             password={password}
-            setPassword={setPassword}
           />
         );
     }

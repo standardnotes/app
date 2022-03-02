@@ -3,7 +3,7 @@ import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { StateUpdater, useEffect, useRef, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { AccountMenuPane } from '.';
 import { Button } from '../Button';
 import { Checkbox } from '../Checkbox';
@@ -17,22 +17,22 @@ type Props = {
   setMenuPane: (pane: AccountMenuPane) => void;
   email: string;
   password: string;
-  setPassword: StateUpdater<string>;
 };
 
 export const ConfirmPassword: FunctionComponent<Props> = observer(
-  ({ application, appState, setMenuPane, email, password, setPassword }) => {
+  ({ application, appState, setMenuPane, email, password }) => {
     const { notesAndTagsCount } = appState.accountMenu;
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [isRegistering, setIsRegistering] = useState(false);
     const [isEphemeral, setIsEphemeral] = useState(false);
     const [shouldMergeLocal, setShouldMergeLocal] = useState(true);
+    const [error, setError] = useState('');
 
     const passwordInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-      passwordInputRef?.current?.focus();
+      passwordInputRef.current?.focus();
     }, []);
 
     const handlePasswordChange = (e: Event) => {
@@ -50,6 +50,9 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (error.length) {
+        setError('');
+      }
       if (e.key === 'Enter') {
         handleConfirmFormSubmit(e);
       }
@@ -59,7 +62,7 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
       e.preventDefault();
 
       if (!password) {
-        passwordInputRef?.current!.focus();
+        passwordInputRef.current?.focus();
         return;
       }
 
@@ -76,21 +79,15 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
           })
           .catch((err) => {
             console.error(err);
-            application.alertService.alert(err).finally(() => {
-              setPassword('');
-              handleGoBack();
-            });
+            setError(err.message);
           })
           .finally(() => {
             setIsRegistering(false);
           });
       } else {
-        application.alertService
-          .alert(STRING_NON_MATCHING_PASSWORDS)
-          .finally(() => {
-            setConfirmPassword('');
-            passwordInputRef?.current!.focus();
-          });
+        setError(STRING_NON_MATCHING_PASSWORDS);
+        setConfirmPassword('');
+        passwordInputRef.current?.focus();
       }
     };
 
@@ -138,6 +135,7 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
             ref={passwordInputRef}
             disabled={isRegistering}
           />
+          {error ? <div className="color-dark-red my-2">{error}</div> : null}
           <Button
             className="btn-w-full mt-1 mb-3"
             label={

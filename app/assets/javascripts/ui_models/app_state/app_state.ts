@@ -11,8 +11,9 @@ import {
   PayloadSource,
   PrefKey,
   SNNote,
-  SNSmartTag,
+  SmartView,
   SNTag,
+  SystemViewId,
 } from '@standardnotes/snjs';
 import pull from 'lodash/pull';
 import {
@@ -241,7 +242,9 @@ export class AppState {
     const selectedTag = this.selectedTag;
 
     const activeRegularTagUuid =
-      selectedTag && !selectedTag.isSmartTag ? selectedTag.uuid : undefined;
+      selectedTag && selectedTag instanceof SNTag
+        ? selectedTag.uuid
+        : undefined;
 
     await this.application.noteControllerGroup.createNoteView(
       undefined,
@@ -313,11 +316,11 @@ export class AppState {
     );
   }
 
-  public get selectedTag(): SNTag | SNSmartTag | undefined {
+  public get selectedTag(): SNTag | SmartView | undefined {
     return this.tags.selected;
   }
 
-  public set selectedTag(tag: SNTag | SNSmartTag | undefined) {
+  public set selectedTag(tag: SNTag | SmartView | undefined) {
     this.tags.selected = tag;
   }
 
@@ -341,13 +344,19 @@ export class AppState {
               this.closeNoteController(noteController);
             } else if (
               note.trashed &&
-              !selectedTag?.isTrashTag &&
+              !(
+                selectedTag instanceof SmartView &&
+                selectedTag.uuid === SystemViewId.TrashedNotes
+              ) &&
               !this.searchOptions.includeTrashed
             ) {
               this.closeNoteController(noteController);
             } else if (
               note.archived &&
-              !selectedTag?.isArchiveTag &&
+              !(
+                selectedTag instanceof SmartView &&
+                selectedTag.uuid === SystemViewId.ArchivedNotes
+              ) &&
               !this.searchOptions.includeArchived &&
               !this.application.getPreference(PrefKey.NotesShowArchived, false)
             ) {
