@@ -11,7 +11,6 @@ import {
 } from 'preact/hooks';
 import { Icon } from '../Icon';
 import { useListKeyboardNavigation } from '../utils';
-import { RevisionListTabType } from './HistoryListContainer';
 import { HistoryListItem } from './HistoryListItem';
 import { previewHistoryEntryTitle, RemoteRevisionListGroup } from './utils';
 
@@ -22,7 +21,6 @@ type RemoteHistoryListProps = {
   fetchAndSetRemoteRevision: (
     revisionListEntry: RevisionListEntry
   ) => Promise<void>;
-  selectedTab: RevisionListTabType;
 };
 
 export const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> =
@@ -32,7 +30,6 @@ export const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> =
       remoteHistory,
       isFetchingRemoteHistory,
       fetchAndSetRemoteRevision,
-      selectedTab,
     }) => {
       const remoteHistoryListRef = useRef<HTMLDivElement>(null);
 
@@ -68,13 +65,6 @@ export const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> =
         selectFirstEntry,
         selectedEntryUuid.length,
       ]);
-
-      useEffect(() => {
-        if (selectedTab === RevisionListTabType.Remote) {
-          selectFirstEntry();
-          remoteHistoryListRef.current?.focus();
-        }
-      }, [selectFirstEntry, selectedTab]);
 
       return (
         <div
