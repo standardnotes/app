@@ -2401,10 +2401,10 @@
     "@standardnotes/sncrypto-common" "^1.7.1"
     "@standardnotes/utils" "^1.2.1"
 
-"@standardnotes/stylekit@5.11.1":
-  version "5.11.1"
-  resolved "https://registry.yarnpkg.com/@standardnotes/stylekit/-/stylekit-5.11.1.tgz#36d8480ad4c7cf240ec8356963258b7c5fadf82d"
-  integrity sha512-kqlYO/G3m2JIDP3LjG44LdDfZsaNBD0Vs18mAjL65pqqzh42zk4mAIAbLB+iYWgdr886Mp2ed/wA0+W1BUd4/A==
+"@standardnotes/stylekit@5.12.2":
+  version "5.12.2"
+  resolved "https://registry.yarnpkg.com/@standardnotes/stylekit/-/stylekit-5.12.2.tgz#8c2bea39aa696d27a3b88ef68c182638f9c72615"
+  integrity sha512-pa30xiil1ZQoXZetWdOhABIfOTkuhlSqdi2LAmJ7SkfiCclqsGGvOSf8z2R2V8DP5B7R2kYH6ko11CBGAhwjqA==
   dependencies:
     "@nanostores/preact" "^0.1.3"
     "@reach/listbox" "^0.16.2"
