@@ -210,10 +210,6 @@ $screen-md-max:              ($screen-lg-min - 1) !default;
   pointer-events: none;
 }
 
-.fill-current {
-  fill: currentColor;
-}
-
 .font-editor {
   font-family: var(--sn-stylekit-editor-font-family);
 }
