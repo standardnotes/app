@@ -79,7 +79,7 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
           })
           .catch((err) => {
             console.error(err);
-            setError(err);
+            setError(err.message);
           })
           .finally(() => {
             setIsRegistering(false);
