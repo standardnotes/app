@@ -28,19 +28,19 @@ export class FeaturesState {
     window?.enabledUnfinishedFeatures;
 
   _hasFolders = false;
-  _hasSmartTags = false;
+  _hasSmartViews = false;
   _premiumAlertFeatureName: string | undefined;
 
   private unsub: () => void;
 
   constructor(private application: WebApplication) {
     this._hasFolders = this.hasNativeFolders();
-    this._hasSmartTags = this.hasNativeSmartTags();
+    this._hasSmartViews = this.hasNativeSmartViews();
     this._premiumAlertFeatureName = undefined;
 
     makeObservable(this, {
       _hasFolders: observable,
-      _hasSmartTags: observable,
+      _hasSmartViews: observable,
       hasFolders: computed,
       _premiumAlertFeatureName: observable,
       showPremiumAlert: action,
@@ -56,7 +56,7 @@ export class FeaturesState {
         case ApplicationEvent.Launched:
           runInAction(() => {
             this._hasFolders = this.hasNativeFolders();
-            this._hasSmartTags = this.hasNativeSmartTags();
+            this._hasSmartViews = this.hasNativeSmartViews();
           });
           break;
         default:
@@ -73,8 +73,8 @@ export class FeaturesState {
     return this._hasFolders;
   }
 
-  public get hasSmartTags(): boolean {
-    return this._hasSmartTags;
+  public get hasSmartViews(): boolean {
+    return this._hasSmartViews;
   }
 
   public async showPremiumAlert(featureName: string): Promise<void> {
@@ -94,7 +94,7 @@ export class FeaturesState {
     return status === FeatureStatus.Entitled;
   }
 
-  private hasNativeSmartTags(): boolean {
+  private hasNativeSmartViews(): boolean {
     const status = this.application.getFeatureStatus(
       FeatureIdentifier.SmartFilters
     );

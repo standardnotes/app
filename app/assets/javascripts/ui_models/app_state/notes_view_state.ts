@@ -5,8 +5,10 @@ import {
   findInArray,
   NotesDisplayCriteria,
   PrefKey,
+  SmartView,
   SNNote,
   SNTag,
+  SystemViewId,
   UuidString,
 } from '@standardnotes/snjs';
 import {
@@ -79,7 +81,10 @@ export class NotesViewState {
             const discarded = activeNote.deleted || activeNote.trashed;
             if (
               discarded &&
-              !this.appState?.selectedTag?.isTrashTag &&
+              !(
+                this.appState.selectedTag instanceof SmartView &&
+                this.appState.selectedTag?.uuid === SystemViewId.TrashedNotes
+              ) &&
               !this.appState?.searchOptions.includeTrashed
             ) {
               this.selectNextOrCreateNew();
@@ -116,7 +121,8 @@ export class NotesViewState {
         this.reloadNotes();
         if (
           this.notes.length === 0 &&
-          this.appState.selectedTag?.isAllTag &&
+          this.appState.selectedTag instanceof SmartView &&
+          this.appState.selectedTag.uuid === SystemViewId.AllNotes &&
           this.noteFilterText === '' &&
           !this.appState.notes.activeNoteController
         ) {
@@ -246,7 +252,8 @@ export class NotesViewState {
     const criteria = NotesDisplayCriteria.Create({
       sortProperty: this.displayOptions.sortBy as CollectionSort,
       sortDirection: this.displayOptions.sortReverse ? 'asc' : 'dsc',
-      tags: tag ? [tag] : [],
+      tags: tag instanceof SNTag ? [tag] : [],
+      views: tag instanceof SmartView ? [tag] : [],
       includeArchived,
       includeTrashed,
       includePinned: !this.displayOptions.hidePinned,
@@ -353,7 +360,11 @@ export class NotesViewState {
 
   createPlaceholderNote = () => {
     const selectedTag = this.appState.selectedTag;
-    if (selectedTag && selectedTag.isSmartTag && !selectedTag.isAllTag) {
+    if (
+      selectedTag &&
+      selectedTag instanceof SmartView &&
+      selectedTag.uuid !== SystemViewId.AllNotes
+    ) {
       return;
     }
     return this.createNewNote();
