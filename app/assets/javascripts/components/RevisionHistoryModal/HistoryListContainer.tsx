@@ -202,7 +202,6 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
         <div className={`min-h-0 overflow-auto py-1.5 h-full`}>
           {selectedTab === RevisionListTabType.Session && (
             <SessionHistoryList
-              selectedTab={selectedTab}
               sessionHistory={sessionHistory}
               setSelectedRevision={setSelectedRevision}
               setSelectedRemoteEntry={setSelectedRemoteEntry}
@@ -214,12 +213,10 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
               remoteHistory={remoteHistory}
               isFetchingRemoteHistory={isFetchingRemoteHistory}
               fetchAndSetRemoteRevision={fetchAndSetRemoteRevision}
-              selectedTab={selectedTab}
             />
           )}
           {selectedTab === RevisionListTabType.Legacy && (
             <LegacyHistoryList
-              selectedTab={selectedTab}
               legacyHistory={legacyHistory}
               setSelectedRevision={setSelectedRevision}
               setSelectedRemoteEntry={setSelectedRemoteEntry}

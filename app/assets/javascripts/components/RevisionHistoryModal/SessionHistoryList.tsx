@@ -13,12 +13,10 @@ import {
   useState,
 } from 'preact/hooks';
 import { useListKeyboardNavigation } from '../utils';
-import { RevisionListTabType } from './HistoryListContainer';
 import { HistoryListItem } from './HistoryListItem';
 import { LegacyHistoryEntry, ListGroup } from './utils';
 
 type Props = {
-  selectedTab: RevisionListTabType;
   sessionHistory: ListGroup<NoteHistoryEntry>[];
   setSelectedRevision: StateUpdater<
     HistoryEntry | LegacyHistoryEntry | undefined
@@ -28,7 +26,6 @@ type Props = {
 
 export const SessionHistoryList: FunctionComponent<Props> = ({
   sessionHistory,
-  selectedTab,
   setSelectedRevision,
   setSelectedRemoteEntry,
 }) => {
@@ -66,13 +63,6 @@ export const SessionHistoryList: FunctionComponent<Props> = ({
     selectedItemCreatedAt,
     setSelectedRevision,
   ]);
-
-  useEffect(() => {
-    if (selectedTab === RevisionListTabType.Session) {
-      selectFirstEntry();
-      sessionHistoryListRef.current?.focus();
-    }
-  }, [selectFirstEntry, selectedTab]);
 
   return (
     <div
