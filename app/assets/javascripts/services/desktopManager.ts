@@ -14,6 +14,7 @@ import {
 import { WebAppEvent, WebApplication } from '@/ui_models/application';
 import { isDesktopApplication } from '@/utils';
 import { Bridge, ElectronDesktopCallbacks } from './bridge';
+import { InternalEventBus } from '@standardnotes/services';
 
 /**
  * An interface used by the Desktop application to interact with SN
@@ -31,7 +32,7 @@ export class DesktopManager
   lastSearchedText?: string;
 
   constructor(application: WebApplication, private bridge: Bridge) {
-    super(application);
+    super(application, new InternalEventBus());
   }
 
   get webApplication() {

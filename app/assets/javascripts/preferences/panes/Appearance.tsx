@@ -32,7 +32,7 @@ export const Appearance: FunctionComponent<Props> = observer(
   ({ application }) => {
     const premiumModal = usePremiumModal();
     const isEntitledToMidnightTheme =
-      application.getFeatureStatus(FeatureIdentifier.MidnightTheme) ===
+      application.features.getFeatureStatus(FeatureIdentifier.MidnightTheme) ===
       FeatureStatus.Entitled;
 
     const [themeItems, setThemeItems] = useState<DropdownItem[]>([]);

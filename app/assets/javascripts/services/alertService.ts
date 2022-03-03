@@ -99,6 +99,7 @@ export class AlertService implements SNAlertService {
     const alert = new SKAlert({
       title: title && sanitizeHtmlString(title),
       text: sanitizeHtmlString(text),
+      buttons: [],
     });
     alert.present();
     return () => {
