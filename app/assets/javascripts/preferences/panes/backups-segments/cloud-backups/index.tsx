@@ -65,13 +65,13 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
   }, [application]);
 
   useEffect(() => {
-    const dailyDropboxBackupStatus = application.getFeatureStatus(
+    const dailyDropboxBackupStatus = application.features.getFeatureStatus(
       FeatureIdentifier.DailyDropboxBackup
     );
-    const dailyGdriveBackupStatus = application.getFeatureStatus(
+    const dailyGdriveBackupStatus = application.features.getFeatureStatus(
       FeatureIdentifier.DailyGDriveBackup
     );
-    const dailyOneDriveBackupStatus = application.getFeatureStatus(
+    const dailyOneDriveBackupStatus = application.features.getFeatureStatus(
       FeatureIdentifier.DailyOneDriveBackup
     );
     const isCloudBackupsAllowed = [

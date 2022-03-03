@@ -22,7 +22,7 @@ export const FocusModeSwitch: FunctionComponent<Props> = ({
 }) => {
   const premiumModal = usePremiumModal();
   const isEntitled =
-    application.getFeatureStatus(FeatureIdentifier.FocusMode) ===
+    application.features.getFeatureStatus(FeatureIdentifier.FocusMode) ===
     FeatureStatus.Entitled;
 
   const toggle = useCallback(
