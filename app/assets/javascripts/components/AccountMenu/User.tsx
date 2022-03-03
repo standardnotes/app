@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import { AppState } from '@/ui_models/app_state';
 import { WebApplication } from '@/ui_models/application';
-import { User } from '@standardnotes/responses';
+import { User as UserType } from '@standardnotes/responses';
 
 type Props = {
   appState: AppState;
@@ -10,7 +10,7 @@ type Props = {
 
 const User = observer(({ appState, application }: Props) => {
   const { server } = appState.accountMenu;
-  const user = application.getUser();
+  const user = application.getUser() as UserType;
 
   return (
     <div className="sk-panel-section">
@@ -33,7 +33,7 @@ const User = observer(({ appState, application }: Props) => {
       )}
       <div className="sk-panel-row">
         <div className="sk-panel-column">
-          <div className="sk-h1 sk-bold wrap">{(user as User).email}</div>
+          <div className="sk-h1 sk-bold wrap">{user.email}</div>
           <div className="sk-subtitle neutral">{server}</div>
         </div>
       </div>
