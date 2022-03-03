@@ -62,7 +62,7 @@ export const EmailBackups = observer(({ application }: Props) => {
   }, [application]);
 
   useEffect(() => {
-    const emailBackupsFeatureStatus = application.getFeatureStatus(
+    const emailBackupsFeatureStatus = application.features.getFeatureStatus(
       FeatureIdentifier.DailyEmailBackup
     );
     setIsEntitledToEmailBackups(

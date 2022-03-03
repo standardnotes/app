@@ -87,7 +87,7 @@ export class FeaturesState {
   }
 
   private hasNativeFolders(): boolean {
-    const status = this.application.getFeatureStatus(
+    const status = this.application.features.getFeatureStatus(
       FeatureIdentifier.TagNesting
     );
 
@@ -95,7 +95,7 @@ export class FeaturesState {
   }
 
   private hasNativeSmartViews(): boolean {
-    const status = this.application.getFeatureStatus(
+    const status = this.application.features.getFeatureStatus(
       FeatureIdentifier.SmartFilters
     );
 
