@@ -2347,6 +2347,11 @@
     "@standardnotes/auth" "^3.17.1"
     "@standardnotes/common" "^1.15.1"
 
+"@standardnotes/filepicker@^1.1.3":
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/@standardnotes/filepicker/-/filepicker-1.1.3.tgz#0e76b68fbe17b1d99e5ad5d526aad2a64ddc40ae"
+  integrity sha512-VCRgesnhClh1/LNvyjZusb40nYpdgrlBoMW0ZOPRtQh/gHPq/XOjDro2ge5q5NKXAC8pmQBONl+QWiFLFNiQBQ==
+
 "@standardnotes/payloads@^1.1.2":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@standardnotes/payloads/-/payloads-1.1.2.tgz#6cb7819ab5fedc17d2e90a703015d0a46e350643"
@@ -2401,10 +2406,10 @@
     "@standardnotes/sncrypto-common" "^1.7.1"
     "@standardnotes/utils" "^1.2.1"
 
-"@standardnotes/stylekit@5.12.2":
-  version "5.12.2"
-  resolved "https://registry.yarnpkg.com/@standardnotes/stylekit/-/stylekit-5.12.2.tgz#8c2bea39aa696d27a3b88ef68c182638f9c72615"
-  integrity sha512-pa30xiil1ZQoXZetWdOhABIfOTkuhlSqdi2LAmJ7SkfiCclqsGGvOSf8z2R2V8DP5B7R2kYH6ko11CBGAhwjqA==
+"@standardnotes/stylekit@5.13.0":
+  version "5.13.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/stylekit/-/stylekit-5.13.0.tgz#c526e074056daf705956ef701eaea686fb4b8d62"
+  integrity sha512-Xnp8wT9+AYtS2naHOozCtWI3XXTaLrwAUF3wUg5QgMoLsRRWFm7NNdzWV3ocuTG2XFrJ0ule4yQjkUFQToLlrQ==
   dependencies:
     "@nanostores/preact" "^0.1.3"
     "@reach/listbox" "^0.16.2"
