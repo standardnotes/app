@@ -9,11 +9,53 @@ import {
 import VisuallyHidden from '@reach/visually-hidden';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { useEffect, useRef, useState } from 'preact/hooks';
-import { Icon } from './Icon';
+import { useRef, useState } from 'preact/hooks';
+import { Icon, ICONS } from './Icon';
 import { useCloseOnBlur } from './utils';
 import { FilesIllustration } from '@standardnotes/stylekit';
 import { Button } from './Button';
+import { ContentType, SNFile } from '@standardnotes/snjs';
+import { formatSizeToReadableString } from '@/utils';
+
+const getIconForFileType = (fileType: string) => {
+  let iconType = 'file-other';
+
+  if (fileType === 'pdf') {
+    iconType = 'file-pdf';
+  }
+
+  if (/^(docx?|odt)/.test(fileType)) {
+    iconType = 'file-doc';
+  }
+
+  if (/^pptx?/.test(fileType)) {
+    iconType = 'file-ppt';
+  }
+
+  if (/^(xlsx?|ods)/.test(fileType)) {
+    iconType = 'file-xls';
+  }
+
+  if (/^(jpe?g|a?png|webp|gif)/.test(fileType)) {
+    iconType = 'file-image';
+  }
+
+  if (/^(mov|mp4|mkv)/.test(fileType)) {
+    iconType = 'file-mov';
+  }
+
+  if (/^(wav|mp3|flac|ogg)/.test(fileType)) {
+    iconType = 'file-music';
+  }
+
+  if (/^(zip|rar|7z)/.test(fileType)) {
+    iconType = 'file-zip';
+  }
+
+  const IconComponent = ICONS[iconType as keyof typeof ICONS];
+
+  return <IconComponent />;
+};
 
 type Props = {
   application: WebApplication;
@@ -24,6 +66,9 @@ type Props = {
 export const AttachedFilesButton: FunctionComponent<Props> = observer(
   ({ application, appState, onClickPreprocessing }) => {
     const note = Object.values(appState.notes.selectedNotes)[0];
+    const [allFiles] = useState(
+      () => application.getItems(ContentType.File) as SNFile[]
+    );
     const [open, setOpen] = useState(false);
     const [position, setPosition] = useState({
       top: 0,
@@ -70,7 +115,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     };
 
     const handleAttachFilesClick = () => {
-      //
+      appState.files.uploadNewFile();
     };
 
     return (
@@ -105,23 +150,56 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
             onBlur={closeOnBlur}
           >
             {open && (
-              <div className="">
-                <div className="flex flex-col items-center justify-center w-full py-8">
-                  <div className="w-18 h-18 mb-2">
-                    <FilesIllustration
-                      style={{
-                        transform: 'scale(0.6)',
-                        transformOrigin: 'top left',
-                      }}
-                    />
+              <div>
+                {allFiles.length > 0 ? (
+                  <>
+                    {allFiles.map((file) => {
+                      return (
+                        <div className="flex items-center justify-between p-3">
+                          <div className="flex items-center">
+                            {getIconForFileType(file.ext)}
+                            <div className="flex flex-col ml-4">
+                              <div className="text-sm mb-1">
+                                {file.nameWithExt}
+                              </div>
+                              <div className="text-xs color-grey-0">
+                                {file.created_at.toLocaleString()} ·{' '}
+                                {formatSizeToReadableString(file.size)}
+                              </div>
+                            </div>
+                          </div>
+                          <button className="w-7 h-7 p-1 rounded-full border-0 bg-transparent hover:bg-contrast cursor-pointer">
+                            <Icon type="more" className="color-neutral" />
+                          </button>
+                        </div>
+                      );
+                    })}
+                    <button
+                      className="sn-dropdown-item py-3 border-0 border-t-1px border-solid border-main"
+                      onClick={handleAttachFilesClick}
+                    >
+                      <Icon type="add" className="mr-2 color-neutral" />
+                      Attach files
+                    </button>
+                  </>
+                ) : (
+                  <div className="flex flex-col items-center justify-center w-full py-8">
+                    <div className="w-18 h-18 mb-2">
+                      <FilesIllustration
+                        style={{
+                          transform: 'scale(0.6)',
+                          transformOrigin: 'top left',
+                        }}
+                      />
+                    </div>
+                    <div className="text-sm font-medium mb-3">
+                      No files attached to this note
+                    </div>
+                    <Button type="normal" onClick={handleAttachFilesClick}>
+                      Attach files
+                    </Button>
                   </div>
-                  <div className="text-sm font-medium mb-3">
-                    No files attached to this note
-                  </div>
-                  <Button type="normal" onClick={handleAttachFilesClick}>
-                    Attach files
-                  </Button>
-                </div>
+                )}
               </div>
             )}
           </DisclosurePanel>
