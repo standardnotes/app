@@ -80,6 +80,7 @@
     "@reach/tooltip": "^0.16.2",
     "@standardnotes/components": "1.7.8",
     "@standardnotes/features": "1.34.0",
+    "@standardnotes/filepicker": "1.1.3",
     "@standardnotes/settings": "^1.11.5",
     "@standardnotes/sncrypto-web": "1.7.3",
     "@standardnotes/snjs": "2.72.0",

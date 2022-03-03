@@ -2347,6 +2347,11 @@
     "@standardnotes/auth" "^3.17.3"
     "@standardnotes/common" "^1.15.3"
 
+"@standardnotes/filepicker@1.1.3":
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/@standardnotes/filepicker/-/filepicker-1.1.3.tgz#0e76b68fbe17b1d99e5ad5d526aad2a64ddc40ae"
+  integrity sha512-VCRgesnhClh1/LNvyjZusb40nYpdgrlBoMW0ZOPRtQh/gHPq/XOjDro2ge5q5NKXAC8pmQBONl+QWiFLFNiQBQ==
+
 "@standardnotes/payloads@^1.3.0":
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/@standardnotes/payloads/-/payloads-1.3.0.tgz#0db372b21069ae5168cfcd1d6dc55bcb3247fb6b"
