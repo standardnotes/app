@@ -2,6 +2,7 @@ import { FunctionalComponent } from 'preact';
 import { IconType } from '@standardnotes/snjs';
 
 import {
+  AttachmentFileIcon,
   AccessibilityIcon,
   AccountCircleIcon,
   AddIcon,
@@ -76,6 +77,7 @@ import {
 } from '@standardnotes/stylekit';
 
 const ICONS = {
+  'attachment-file': AttachmentFileIcon,
   'account-circle': AccountCircleIcon,
   'arrow-left': ArrowLeftIcon,
   'arrows-sort-down': ArrowsSortDownIcon,
