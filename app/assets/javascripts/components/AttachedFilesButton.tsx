@@ -7,12 +7,13 @@ import {
   DisclosurePanel,
 } from '@reach/disclosure';
 import VisuallyHidden from '@reach/visually-hidden';
-import { ComponentArea, SNComponent } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { Icon } from './Icon';
 import { useCloseOnBlur } from './utils';
+import { FilesIllustration } from '@standardnotes/stylekit';
+import { Button } from './Button';
 
 type Props = {
   application: WebApplication;
@@ -32,7 +33,9 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     const buttonRef = useRef<HTMLButtonElement>(null);
     const panelRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
-    const [closeOnBlur] = useCloseOnBlur(containerRef, setOpen);
+    const [closeOnBlur] = useCloseOnBlur(containerRef, () => {
+      //
+    });
 
     const toggleAttachedFilesMenu = async () => {
       const rect = buttonRef.current?.getBoundingClientRect();
@@ -66,6 +69,10 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
       }
     };
 
+    const handleAttachFilesClick = () => {
+      //
+    };
+
     return (
       <div ref={containerRef}>
         <Disclosure open={open} onChange={toggleAttachedFilesMenu}>
@@ -94,10 +101,29 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
               ...position,
               maxHeight,
             }}
-            className="sn-dropdown sn-dropdown--animated min-w-68 max-h-120 max-w-xs flex flex-col overflow-y-auto fixed"
+            className="sn-dropdown sn-dropdown--animated min-w-80 max-h-120 max-w-xs flex flex-col overflow-y-auto fixed"
             onBlur={closeOnBlur}
           >
-            {open && <div></div>}
+            {open && (
+              <div className="">
+                <div className="flex flex-col items-center justify-center w-full py-8">
+                  <div className="w-18 h-18 mb-2">
+                    <FilesIllustration
+                      style={{
+                        transform: 'scale(0.6)',
+                        transformOrigin: 'top left',
+                      }}
+                    />
+                  </div>
+                  <div className="text-sm font-medium mb-3">
+                    No files attached to this note
+                  </div>
+                  <Button type="normal" onClick={handleAttachFilesClick}>
+                    Attach files
+                  </Button>
+                </div>
+              </div>
+            )}
           </DisclosurePanel>
         </Disclosure>
       </div>
