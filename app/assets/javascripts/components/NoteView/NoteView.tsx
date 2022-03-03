@@ -167,7 +167,7 @@ export class NoteView extends PureComponent<Props, State> {
     );
 
     const isEntitledToFiles =
-      this.application.getFeatureStatus(FeatureIdentifier.Files) ===
+      this.application.features.getFeatureStatus(FeatureIdentifier.Files) ===
       FeatureStatus.Entitled;
 
     this.state = {
@@ -334,8 +334,9 @@ export class NoteView extends PureComponent<Props, State> {
       case ApplicationEvent.UserRolesChanged:
         this.setState({
           isEntitledToFiles:
-            this.application.getFeatureStatus(FeatureIdentifier.Files) ===
-            FeatureStatus.Entitled,
+            this.application.features.getFeatureStatus(
+              FeatureIdentifier.Files
+            ) === FeatureStatus.Entitled,
         });
         break;
       case ApplicationEvent.PreferencesChanged:
