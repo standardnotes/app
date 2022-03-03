@@ -27,7 +27,7 @@
     "@babel/preset-typescript": "^7.16.7",
     "@reach/disclosure": "^0.16.2",
     "@reach/visually-hidden": "^0.16.0",
-    "@standardnotes/stylekit": "5.13.0",
+    "@standardnotes/stylekit": "5.14.0",
     "@svgr/webpack": "^6.2.1",
     "@types/jest": "^27.4.1",
     "@types/lodash": "^4.14.179",
