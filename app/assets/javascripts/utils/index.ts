@@ -1,6 +1,10 @@
 import { Platform, platformFromString } from '@standardnotes/snjs';
 import { IsDesktopPlatform, IsWebPlatform } from '@/version';
-import { EMAIL_REGEX } from '../constants';
+import {
+  BYTES_IN_ONE_KILOBYTE,
+  BYTES_IN_ONE_MEGABYTE,
+  EMAIL_REGEX,
+} from '../constants';
 export { isMobile } from './isMobile';
 
 declare const process: {
@@ -163,4 +167,14 @@ export const openInNewTab = (url: string) => {
 
 export const convertStringifiedBooleanToBoolean = (value: string) => {
   return value !== 'false';
+};
+
+export const formatSizeToReadableString = (bytes: number): string => {
+  if (bytes > BYTES_IN_ONE_MEGABYTE) {
+    return `${bytes / BYTES_IN_ONE_MEGABYTE} MB`;
+  } else if (bytes > BYTES_IN_ONE_KILOBYTE) {
+    return `${bytes / BYTES_IN_ONE_KILOBYTE} KB`;
+  } else {
+    return `${bytes} B`;
+  }
 };
