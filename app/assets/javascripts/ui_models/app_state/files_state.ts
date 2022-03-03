@@ -47,12 +47,14 @@ export class FilesState {
       ? new StreamingFileReader(minimumChunkSize, onChunk)
       : new ClassicFileReader(minimumChunkSize, onChunk);
 
-    const fileResult = await picker.selectFileAndStream();
+    const selectedFile = await picker.selectFile();
 
     const uploadingToastId = addToast({
       type: ToastType.Loading,
-      message: `Uploading file ${fileResult.name}.${fileResult.ext}`,
+      message: `Uploading file ${selectedFile.name}`,
     });
+
+    const fileResult = await picker.beginReadingFile();
 
     this.application.files
       .finishUpload(operation, fileResult.name, fileResult.ext)
