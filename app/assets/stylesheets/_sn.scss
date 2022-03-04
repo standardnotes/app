@@ -32,22 +32,6 @@
   text-decoration: underline;
 }
 
-.sn-icon {
-  @extend .h-5;
-  @extend .w-5;
-  @extend .fill-current;
-
-  &.sn-icon--small {
-    @extend .h-3\.5;
-    @extend .w-3\.5;
-  }
-
-  &.sn-icon--mid {
-    @extend .w-4;
-    @extend .h-4;
-  }
-}
-
 .sn-dropdown {
   @extend .bg-default;
   @extend .rounded;
@@ -257,9 +241,6 @@
 .ml-3 {
   margin-left: 0.75rem;
 }
-.ml-4 {
-  margin-left: 1rem;
-}
 
 .mr-2\.5 {
   margin-right: 0.625rem;
@@ -294,6 +275,10 @@
 
 .mt-0 {
   margin-top: 0;
+}
+
+.mt-0\.5 {
+  margin-top: 0.125rem;
 }
 
 .mt-2\.5 {
@@ -433,6 +418,10 @@
 
 .min-h-6 {
   min-height: 1.5rem;
+}
+
+.min-h-16 {
+  min-height: 4rem;
 }
 
 .max-h-5 {
@@ -575,10 +564,6 @@
   padding-bottom: 2.25rem;
 }
 
-.select-none {
-  user-select: none;
-}
-
 .placeholder-dark-red::placeholder {
   @extend .color-dark-red;
 }
@@ -709,11 +694,6 @@
 
 .hover\:bg-grey-4:hover {
   background: var(--sn-stylekit-grey-4);
-}
-
-.sn-component .spinner-info {
-  border-color: var(--sn-stylekit-info-color);
-  border-right-color: transparent;
 }
 
 @keyframes slide-up {
@@ -899,10 +879,6 @@
   }
 }
 
-.flex-shrink-0 {
-  flex-shrink: 0;
-}
-
 .leading-140\% {
   line-height: 140%;
 }
@@ -911,10 +887,6 @@
   opacity: 0.5;
   cursor: default;
   pointer-events: none;
-}
-
-.flex-shrink-0 {
-  flex-shrink: 0;
 }
 
 .last\:hidden:last-child {

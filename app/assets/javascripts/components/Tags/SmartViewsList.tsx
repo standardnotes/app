@@ -1,23 +1,23 @@
 import { AppState } from '@/ui_models/app_state';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { SmartTagsListItem } from './SmartTagsListItem';
+import { SmartViewsListItem } from './SmartViewsListItem';
 
 type Props = {
   appState: AppState;
 };
 
-export const SmartTagsList: FunctionComponent<Props> = observer(
+export const SmartViewsList: FunctionComponent<Props> = observer(
   ({ appState }) => {
-    const allTags = appState.tags.smartTags;
+    const allViews = appState.tags.smartViews;
 
     return (
       <>
-        {allTags.map((tag) => {
+        {allViews.map((view) => {
           return (
-            <SmartTagsListItem
-              key={tag.uuid}
-              tag={tag}
+            <SmartViewsListItem
+              key={view.uuid}
+              view={view}
               tagsState={appState.tags}
               features={appState.features}
             />

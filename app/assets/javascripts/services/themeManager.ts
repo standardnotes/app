@@ -12,6 +12,7 @@ import {
   PayloadSource,
   PrefKey,
 } from '@standardnotes/snjs';
+import { InternalEventBus } from '@standardnotes/services';
 
 const CACHED_THEMES_KEY = 'cachedThemes';
 
@@ -21,7 +22,7 @@ export class ThemeManager extends ApplicationService {
   private unregisterStream!: () => void;
 
   constructor(application: WebApplication) {
-    super(application);
+    super(application, new InternalEventBus());
     this.colorSchemeEventHandler = this.colorSchemeEventHandler.bind(this);
   }
 
@@ -127,7 +128,9 @@ export class ThemeManager extends ApplicationService {
         this.deactivateTheme(themeUuid);
         hasChange = true;
       } else {
-        const status = this.application.getFeatureStatus(theme.identifier);
+        const status = this.application.features.getFeatureStatus(
+          theme.identifier
+        );
         if (status !== FeatureStatus.Entitled) {
           if (theme.active) {
             this.application.toggleTheme(theme);
@@ -212,7 +215,7 @@ export class ThemeManager extends ApplicationService {
 
     if (
       !skipEntitlementCheck &&
-      this.application.getFeatureStatus(theme.identifier) !==
+      this.application.features.getFeatureStatus(theme.identifier) !==
         FeatureStatus.Entitled
     ) {
       return;

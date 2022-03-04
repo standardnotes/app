@@ -58,7 +58,7 @@ export const Extensions: FunctionComponent<{
   };
 
   const submitExtensionUrl = async (url: string) => {
-    const component = await application.downloadExternalFeature(url);
+    const component = await application.features.downloadExternalFeature(url);
     if (component) {
       setConfirmableExtension(component);
     }

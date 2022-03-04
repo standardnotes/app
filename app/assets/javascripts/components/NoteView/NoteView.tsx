@@ -33,7 +33,6 @@ import { Icon } from '../Icon';
 import { PinNoteButton } from '../PinNoteButton';
 import { NotesOptionsPanel } from '../NotesOptionsPanel';
 import { NoteTagsContainer } from '../NoteTagsContainer';
-import { ActionsMenu } from '../ActionsMenu';
 import { ComponentView } from '../ComponentView';
 import { PanelSide, PanelResizer, PanelResizeType } from '../PanelResizer';
 import { ElementIds } from '@/element_ids';
@@ -107,7 +106,6 @@ type State = {
   noteLocked: boolean;
   noteStatus?: NoteStatus;
   saveError?: any;
-  showActionsMenu: boolean;
   showLockedIcon: boolean;
   showProtectedWarning: boolean;
   spellcheck: boolean;
@@ -173,7 +171,6 @@ export class NoteView extends PureComponent<Props, State> {
       lockText: 'Note Editing Disabled',
       noteStatus: undefined,
       noteLocked: this.controller.note.locked,
-      showActionsMenu: false,
       showLockedIcon: true,
       showProtectedWarning: false,
       spellcheck: true,
@@ -319,7 +316,6 @@ export class NoteView extends PureComponent<Props, State> {
   async onAppLaunch() {
     await super.onAppLaunch();
     this.streamItems();
-    this.registerComponentManagerEventObserver();
   }
 
   /** @override */
@@ -505,32 +501,6 @@ export class NoteView extends PureComponent<Props, State> {
     }
   }
 
-  setMenuState(menu: string, state: boolean) {
-    this.setState({
-      [menu]: state,
-    });
-    this.closeAllMenus(menu);
-  }
-
-  toggleMenu = (menu: keyof State) => {
-    this.setMenuState(menu, !this.state[menu]);
-    this.application.getAppState().notes.setContextMenuOpen(false);
-  };
-
-  closeAllMenus = (exclude?: string) => {
-    if (!this.state.showActionsMenu) {
-      return;
-    }
-    const allMenus = ['showActionsMenu'];
-    const menuState: any = {};
-    for (const candidate of allMenus) {
-      if (candidate !== exclude) {
-        menuState[candidate] = false;
-      }
-    }
-    this.setState(menuState);
-  };
-
   hasAvailableExtensions() {
     return (
       this.application.actionsManager.extensionsInContextOfItem(this.note)
@@ -645,10 +615,6 @@ export class NoteView extends PureComponent<Props, State> {
   focusTitle() {
     document.getElementById(ElementIds.NoteTitleEditor)?.focus();
   }
-
-  clickedTextArea = () => {
-    this.closeAllMenus();
-  };
 
   onContentFocus = () => {
     this.application
@@ -771,18 +737,6 @@ export class NoteView extends PureComponent<Props, State> {
   }
 
   /** @components */
-
-  registerComponentManagerEventObserver() {
-    this.removeComponentManagerObserver =
-      this.application.componentManager.addEventObserver((eventName, data) => {
-        if (eventName === ComponentManagerEvent.ViewerDidFocus) {
-          const viewer = data?.componentViewer;
-          if (viewer?.component.isEditor) {
-            this.closeAllMenus();
-          }
-        }
-      });
-  }
 
   async reloadStackComponents() {
     const stackComponents = sortAlphabetically(
@@ -1103,30 +1057,6 @@ export class NoteView extends PureComponent<Props, State> {
             </div>
           )}
 
-          {this.note && (
-            <div className="sn-component">
-              <div id="editor-menu-bar" className="sk-app-bar no-edges">
-                <div className="left">
-                  <div
-                    className={
-                      (this.state.showActionsMenu ? 'selected' : '') +
-                      ' sk-app-bar-item'
-                    }
-                    onClick={() => this.toggleMenu('showActionsMenu')}
-                  >
-                    <div className="sk-label">Actions</div>
-                    {this.state.showActionsMenu && (
-                      <ActionsMenu
-                        note={this.note}
-                        application={this.application}
-                      />
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
           {!this.note.errorDecrypting && (
             <div
               id={ElementIds.EditorContent}
@@ -1171,7 +1101,6 @@ export class NoteView extends PureComponent<Props, State> {
                     onChange={this.onTextAreaChange}
                     value={this.state.editorText}
                     readonly={this.state.noteLocked}
-                    onClick={this.clickedTextArea}
                     onFocus={this.onContentFocus}
                     spellcheck={this.state.spellcheck}
                     ref={(ref) => this.onSystemEditorLoad(ref)}

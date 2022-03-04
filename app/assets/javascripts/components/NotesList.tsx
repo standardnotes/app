@@ -2,7 +2,7 @@ import { WebApplication } from '@/ui_models/application';
 import { KeyboardKey } from '@/services/ioService';
 import { AppState } from '@/ui_models/app_state';
 import { DisplayOptions } from '@/ui_models/app_state/notes_view_state';
-import { SNNote } from '@standardnotes/snjs';
+import { SNNote, SNTag } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { NotesListItem } from './NotesListItem';
@@ -42,7 +42,7 @@ export const NotesList: FunctionComponent<Props> = observer(
         return [];
       }
       const tags = appState.getNoteTags(note);
-      if (!selectedTag.isSmartTag && tags.length === 1) {
+      if (selectedTag instanceof SNTag && tags.length === 1) {
         return [];
       }
       return tags.map((tag) => tag.title).sort();

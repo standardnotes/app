@@ -34,7 +34,7 @@ $heading-height: 75px;
   padding-bottom: 10px;
   padding-right: 14px;
 
-  border-bottom: none;
+  border-bottom: 1px solid var(--sn-stylekit-border-color);
   z-index: $z-index-editor-title-bar;
 
   height: auto;
@@ -66,8 +66,8 @@ $heading-height: 75px;
 
   #save-status-container {
     position: relative;
-    min-width: 15ch;
-    max-width: 15ch;
+    min-width: 16ch;
+    max-width: 16ch;
     overflow: visible;
     margin-right: 20px;
   }
@@ -118,7 +118,6 @@ $heading-height: 75px;
     border: none;
     outline: none;
     padding: 15px;
-    padding-top: 11px;
     font-size: var(--sn-stylekit-font-size-editor);
     resize: none;
   }

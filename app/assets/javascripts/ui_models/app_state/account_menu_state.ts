@@ -75,9 +75,9 @@ export class AccountMenuState {
     this.appEventListeners.push(
       this.application.addEventObserver(async () => {
         runInAction(() => {
-          if (isDev && window._devAccountServer) {
-            this.setServer(window._devAccountServer);
-            this.application.setCustomHost(window._devAccountServer);
+          if (isDev && window.devAccountServer) {
+            this.setServer(window.devAccountServer);
+            this.application.setCustomHost(window.devAccountServer);
           } else {
             this.setServer(this.application.getHost());
           }

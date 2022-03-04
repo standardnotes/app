@@ -26,6 +26,7 @@ import { PLAIN_EDITOR_NAME } from './createEditorMenuGroups';
 type ChangeEditorMenuProps = {
   application: WebApplication;
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void;
+  closeMenu: () => void;
   groups: EditorMenuGroup[];
   isOpen: boolean;
   currentEditor: SNComponent | undefined;
@@ -39,6 +40,7 @@ const getGroupId = (group: EditorMenuGroup) =>
 export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   application,
   closeOnBlur,
+  closeMenu,
   groups,
   isOpen,
   currentEditor,
@@ -169,6 +171,8 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
     if (shouldSelectEditor) {
       selectComponent(itemToBeSelected.component ?? null, note);
     }
+
+    closeMenu();
   };
 
   return (

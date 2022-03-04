@@ -31,13 +31,14 @@
     <meta name="og:description" content="Standard Notes is an easy-to-use encrypted note-taking app for digitalists and professionals. Capture your notes, documents, and life's work all in one place."/>
 
     <script>
-      window._default_sync_server = "<%= ENV['DEFAULT_SYNC_SERVER'] %>";
-      window._bugsnag_api_key = "<%= ENV['BUGSNAG_API_KEY'] %>";
-      window._enable_unfinished_features = "<%= ENV['ENABLE_UNFINISHED_FEATURES'] %>" === 'true';
-      window._websocket_url = "<%= ENV['WEBSOCKET_URL'] %>";
-      window._purchase_url = "<%= ENV['PURCHASE_URL'] %>";
-      window._plans_url = "<%= ENV['PLANS_URL'] %>";
-      window._dashboard_url = "<%= ENV['DASHBOARD_URL'] %>";
+      window.defaultSyncServer = "<%= ENV['DEFAULT_SYNC_SERVER'] %>";
+      window.defaultFilesHost = "<%= ENV['DEFAULT_FILES_HOST'] %>";
+      window.bugsnagApiKey = "<%= ENV['BUGSNAG_API_KEY'] %>";
+      window.enabledUnfinishedFeatures = "<%= ENV['ENABLE_UNFINISHED_FEATURES'] %>" === 'true';
+      window.websocketUrl = "<%= ENV['WEBSOCKET_URL'] %>";
+      window.purchaseUrl = "<%= ENV['PURCHASE_URL'] %>";
+      window.plansUrl = "<%= ENV['PLANS_URL'] %>";
+      window.dashboardUrl = "<%= ENV['DASHBOARD_URL'] %>";
     </script>
 
     <% if Rails.env.development? %>

@@ -48,23 +48,24 @@ export class WebApplication extends SNApplication {
     platform: Platform,
     identifier: string,
     defaultSyncServerHost: string,
+    defaultFilesHostHost: string,
     public bridge: Bridge,
     webSocketUrl: string,
     runtime: Runtime
   ) {
-    super(
-      bridge.environment,
-      platform,
-      deviceInterface,
-      WebCrypto,
-      new AlertService(),
+    super({
+      environment: bridge.environment,
+      platform: platform,
+      deviceInterface: deviceInterface,
+      crypto: WebCrypto,
+      alertService: new AlertService(),
       identifier,
-      [],
-      defaultSyncServerHost,
-      bridge.appVersion,
-      webSocketUrl,
-      runtime
-    );
+      defaultHost: defaultSyncServerHost,
+      defaultFilesHost: defaultFilesHostHost,
+      appVersion: bridge.appVersion,
+      webSocketUrl: webSocketUrl,
+      runtime,
+    });
     deviceInterface.setApplication(this);
     this.noteControllerGroup = new NoteGroupController(this);
     this.iconsController = new IconsController();

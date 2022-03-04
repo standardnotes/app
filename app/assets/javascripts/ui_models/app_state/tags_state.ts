@@ -9,10 +9,11 @@ import {
   ContentType,
   MessageData,
   SNApplication,
-  SNSmartTag,
+  SmartView,
   SNTag,
   TagMutator,
   UuidString,
+  isSystemView,
 } from '@standardnotes/snjs';
 import {
   action,
@@ -25,7 +26,7 @@ import {
 import { WebApplication } from '../application';
 import { FeaturesState, SMART_TAGS_FEATURE_NAME } from './features_state';
 
-type AnyTag = SNTag | SNSmartTag;
+type AnyTag = SNTag | SmartView;
 
 const rootTags = (application: SNApplication): SNTag[] => {
   const hasNoParent = (tag: SNTag) => !application.getTagParent(tag);
@@ -71,11 +72,11 @@ const isValidFutureSiblings = (
 
 export class TagsState {
   tags: SNTag[] = [];
-  smartTags: SNSmartTag[] = [];
+  smartViews: SmartView[] = [];
   allNotesCount_ = 0;
   selected_: AnyTag | undefined;
   previouslySelected_: AnyTag | undefined;
-  editing_: SNTag | undefined;
+  editing_: SNTag | SmartView | undefined;
   addingSubtagTo: SNTag | undefined;
 
   contextMenuOpen = false;
@@ -100,12 +101,12 @@ export class TagsState {
     this.editing_ = undefined;
     this.addingSubtagTo = undefined;
 
-    this.smartTags = this.application.getSmartTags();
-    this.selected_ = this.smartTags[0];
+    this.smartViews = this.application.getSmartViews();
+    this.selected_ = this.smartViews[0];
 
     makeObservable(this, {
       tags: observable.ref,
-      smartTags: observable.ref,
+      smartViews: observable.ref,
       hasAtLeastOneFolder: computed,
       allNotesCount_: observable,
       allNotesCount: computed,
@@ -144,28 +145,28 @@ export class TagsState {
 
     appEventListeners.push(
       this.application.streamItems(
-        [ContentType.Tag, ContentType.SmartTag],
+        [ContentType.Tag, ContentType.SmartView],
         (items) => {
           runInAction(() => {
-            this.tags = this.application.getDisplayableItems(
+            this.tags = this.application.getDisplayableItems<SNTag>(
               ContentType.Tag
-            ) as SNTag[];
-            this.smartTags = this.application.getSmartTags();
+            );
+            this.smartViews = this.application.getSmartViews();
 
             const selectedTag = this.selected_;
-            if (selectedTag) {
+            if (selectedTag && !isSystemView(selectedTag as SmartView)) {
               const matchingTag = items.find(
                 (candidate) => candidate.uuid === selectedTag.uuid
-              );
+              ) as AnyTag;
               if (matchingTag) {
                 if (matchingTag.deleted) {
-                  this.selected_ = this.smartTags[0];
+                  this.selected_ = this.smartViews[0];
                 } else {
-                  this.selected_ = matchingTag as AnyTag;
+                  this.selected_ = matchingTag;
                 }
               }
             } else {
-              this.selected_ = this.smartTags[0];
+              this.selected_ = this.smartViews[0];
             }
           });
         }
@@ -193,7 +194,9 @@ export class TagsState {
       return;
     }
 
-    const createdTag = await this.application.createTagOrSmartTag(title);
+    const createdTag = (await this.application.createTagOrSmartView(
+      title
+    )) as SNTag;
 
     const futureSiblings = this.application.getTagChildren(parent);
 
@@ -294,7 +297,10 @@ export class TagsState {
   }
 
   public get allLocalRootTags(): SNTag[] {
-    if (this.editing_ && this.application.isTemplateItem(this.editing_)) {
+    if (
+      this.editing_ instanceof SNTag &&
+      this.application.isTemplateItem(this.editing_)
+    ) {
       return [this.editing_, ...this.rootTags];
     }
     return this.rootTags;
@@ -309,9 +315,7 @@ export class TagsState {
       return [];
     }
 
-    const children = this.application
-      .getTagChildren(tag)
-      .filter((tag) => !tag.isSmartTag);
+    const children = this.application.getTagChildren(tag);
 
     const childrenUuids = children.map((childTag) => childTag.uuid);
     const childrenTags = this.tags.filter((tag) =>
@@ -414,11 +418,11 @@ export class TagsState {
     return this.selected_?.uuid;
   }
 
-  public get editingTag(): SNTag | undefined {
+  public get editingTag(): SNTag | SmartView | undefined {
     return this.editing_;
   }
 
-  public set editingTag(editingTag: SNTag | undefined) {
+  public set editingTag(editingTag: SNTag | SmartView | undefined) {
     this.editing_ = editingTag;
     this.selected = editingTag;
   }
@@ -442,11 +446,11 @@ export class TagsState {
 
   public undoCreateNewTag() {
     this.editing_ = undefined;
-    const previousTag = this.previouslySelected_ || this.smartTags[0];
+    const previousTag = this.previouslySelected_ || this.smartViews[0];
     this.selected = previousTag;
   }
 
-  public async remove(tag: SNTag, userTriggered: boolean) {
+  public async remove(tag: SNTag | SmartView, userTriggered: boolean) {
     let shouldDelete = !userTriggered;
     if (userTriggered) {
       shouldDelete = await confirmDialog({
@@ -456,16 +460,17 @@ export class TagsState {
     }
     if (shouldDelete) {
       this.application.deleteItem(tag);
-      this.selected = this.smartTags[0];
+      this.selected = this.smartViews[0];
     }
   }
 
-  public async save(tag: SNTag, newTitle: string) {
+  public async save(tag: SNTag | SmartView, newTitle: string) {
     const hasEmptyTitle = newTitle.length === 0;
     const hasNotChangedTitle = newTitle === tag.title;
     const isTemplateChange = this.application.isTemplateItem(tag);
 
-    const siblings = tagSiblings(this.application, tag);
+    const siblings =
+      tag instanceof SNTag ? tagSiblings(this.application, tag) : [];
     const hasDuplicatedTitle = siblings.some(
       (other) => other.title.toLowerCase() === newTitle.toLowerCase()
     );
@@ -492,16 +497,16 @@ export class TagsState {
     }
 
     if (isTemplateChange) {
-      const isSmartTagTitle = this.application.isSmartTagTitle(newTitle);
+      const isSmartViewTitle = this.application.isSmartViewTitle(newTitle);
 
-      if (isSmartTagTitle) {
-        if (!this.features.hasSmartTags) {
+      if (isSmartViewTitle) {
+        if (!this.features.hasSmartViews) {
           await this.features.showPremiumAlert(SMART_TAGS_FEATURE_NAME);
           return;
         }
       }
 
-      const insertedTag = await this.application.createTagOrSmartTag(newTitle);
+      const insertedTag = await this.application.createTagOrSmartView(newTitle);
       this.application.sync();
       runInAction(() => {
         this.selected = insertedTag as SNTag;
@@ -529,7 +534,7 @@ export class TagsState {
 
       if (
         item.content_type === ContentType.Tag ||
-        item.content_type === ContentType.SmartTag
+        item.content_type === ContentType.SmartView
       ) {
         const matchingTag = this.application.findItem(item.uuid);
 
@@ -539,7 +544,7 @@ export class TagsState {
         }
       }
     } else if (action === ComponentAction.ClearSelection) {
-      this.selected = this.smartTags[0];
+      this.selected = this.smartViews[0];
     }
   }
 

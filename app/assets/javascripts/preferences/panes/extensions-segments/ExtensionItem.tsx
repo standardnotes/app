@@ -74,7 +74,9 @@ export const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({
   };
 
   const localInstallable = extension.package_info.download_url;
-  const isThirParty = application.isThirdPartyFeature(extension.identifier);
+  const isThirParty = application.features.isThirdPartyFeature(
+    extension.identifier
+  );
 
   return (
     <PreferencesSegment classes={'mb-5'}>
