@@ -130,6 +130,9 @@ export const ChangeEditorButton: FunctionComponent<Props> = observer(
                 setSelectedEditor={setCurrentEditor}
                 note={note}
                 groups={editorMenuGroups}
+                closeMenu={() => {
+                  setOpen(false);
+                }}
               />
             )}
           </DisclosurePanel>
