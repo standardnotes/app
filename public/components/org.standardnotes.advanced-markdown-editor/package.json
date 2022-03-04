@@ -1,6 +1,6 @@
 {
   "name": "sn-advanced-markdown-editor",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "description": "A Standard Notes derived editor that offers full support for Markdown editing.",
   "main": "dist/dist.js",
   "author": "Standard Notes <hello@standardnotes.com>",
@@ -25,7 +25,7 @@
     "copy-webpack-plugin": "^8.1.0",
     "css-loader": "^5.2.0",
     "dompurify": "^2.2.9",
-    "easymde": "^2.15.0",
+    "easymde": "2.16.1",
     "eslint": "^7.23.0",
     "file-loader": "^6.2.0",
     "font-awesome": "^4.7.0",
