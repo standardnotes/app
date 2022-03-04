@@ -148,6 +148,9 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
             note={note}
             groups={editorMenuGroups}
             isOpen={changeEditorMenuVisible}
+            closeMenu={() => {
+              setChangeEditorMenuOpen(false);
+            }}
           />
         )}
       </DisclosurePanel>
