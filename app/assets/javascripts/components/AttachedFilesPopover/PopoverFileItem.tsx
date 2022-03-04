@@ -57,12 +57,18 @@ const getIconForFileType = (fileType: string) => {
 
 type Props = {
   file: SNFile;
-  downloadFile: (file: SNFile) => Promise<void>;
+  isAttachedToNote: boolean;
+  attachFileToNote: (file: SNFile) => Promise<void>;
+  detachFileFromNote: (file: SNFile) => Promise<void>;
   deleteFile: (file: SNFile) => Promise<void>;
+  downloadFile: (file: SNFile) => Promise<void>;
 };
 
 const PopoverFileSubmenu: FunctionComponent<Props> = ({
   file,
+  isAttachedToNote,
+  attachFileToNote,
+  detachFileFromNote,
   downloadFile,
   deleteFile,
 }) => {
@@ -136,29 +142,32 @@ const PopoverFileSubmenu: FunctionComponent<Props> = ({
         >
           {isMenuOpen && (
             <>
-              <button
-                onBlur={closeOnBlur}
-                className="sn-dropdown-item"
-                onClick={() => {
-                  //
-                }}
-              >
-                <Icon type="link" className="mr-2 color-neutral" />
-                Attach to note
-              </button>
-              <button
-                onBlur={closeOnBlur}
-                className="sn-dropdown-item"
-                onClick={() => {
-                  //
-                }}
-              >
-                <Icon type="link-off" className="mr-2 color-neutral" />
-                Detach from note
-              </button>
+              {isAttachedToNote ? (
+                <button
+                  onBlur={closeOnBlur}
+                  className="sn-dropdown-item focus:bg-info-backdrop"
+                  onClick={() => {
+                    detachFileFromNote(file);
+                  }}
+                >
+                  <Icon type="link-off" className="mr-2 color-neutral" />
+                  Detach from note
+                </button>
+              ) : (
+                <button
+                  onBlur={closeOnBlur}
+                  className="sn-dropdown-item focus:bg-info-backdrop"
+                  onClick={() => {
+                    attachFileToNote(file);
+                  }}
+                >
+                  <Icon type="link" className="mr-2 color-neutral" />
+                  Attach to note
+                </button>
+              )}
               <div className="min-h-1px my-1 bg-border"></div>
               <button
-                className="sn-dropdown-item justify-between"
+                className="sn-dropdown-item justify-between focus:bg-info-backdrop"
                 onClick={() => {
                   /** @TODO */
                 }}
@@ -173,7 +182,7 @@ const PopoverFileSubmenu: FunctionComponent<Props> = ({
               <div className="min-h-1px my-1 bg-border"></div>
               <button
                 onBlur={closeOnBlur}
-                className="sn-dropdown-item"
+                className="sn-dropdown-item focus:bg-info-backdrop"
                 onClick={() => {
                   downloadFile(file);
                   closeMenu();
@@ -184,7 +193,7 @@ const PopoverFileSubmenu: FunctionComponent<Props> = ({
               </button>
               <button
                 onBlur={closeOnBlur}
-                className="sn-dropdown-item"
+                className="sn-dropdown-item focus:bg-info-backdrop"
                 onClick={renameFile}
               >
                 <Icon type="pencil" className="mr-2 color-neutral" />
@@ -192,7 +201,7 @@ const PopoverFileSubmenu: FunctionComponent<Props> = ({
               </button>
               <button
                 onBlur={closeOnBlur}
-                className="sn-dropdown-item"
+                className="sn-dropdown-item focus:bg-info-backdrop"
                 onClick={() => {
                   deleteFile(file);
                   closeMenu();
@@ -211,8 +220,11 @@ const PopoverFileSubmenu: FunctionComponent<Props> = ({
 
 export const PopoverFileItem: FunctionComponent<Props> = ({
   file,
-  downloadFile,
+  isAttachedToNote,
+  attachFileToNote,
+  detachFileFromNote,
   deleteFile,
+  downloadFile,
 }) => {
   return (
     <div className="flex items-center justify-between p-3">
@@ -228,6 +240,9 @@ export const PopoverFileItem: FunctionComponent<Props> = ({
       </div>
       <PopoverFileSubmenu
         file={file}
+        isAttachedToNote={isAttachedToNote}
+        attachFileToNote={attachFileToNote}
+        detachFileFromNote={detachFileFromNote}
         deleteFile={deleteFile}
         downloadFile={downloadFile}
       />
