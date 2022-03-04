@@ -70,7 +70,7 @@ export class FilesState {
     }
   }
 
-  public async uploadNewFile(): Promise<void> {
+  public async uploadNewFile() {
     const operation = await this.application.files.beginNewFileUpload();
     const minimumChunkSize = this.application.files.minimumChunkSize();
 
@@ -107,19 +107,21 @@ export class FilesState {
         fileResult.ext
       );
 
+      dismissToast(uploadingToastId);
       addToast({
         type: ToastType.Success,
         message: `Uploaded file "${uploadedFile.nameWithExt}"`,
       });
+
+      return uploadedFile;
     } catch (error) {
       console.error(error);
 
+      dismissToast(uploadingToastId);
       addToast({
         type: ToastType.Error,
         message: (error as Error).message ?? (error as Error).toString(),
       });
     }
-
-    dismissToast(uploadingToastId);
   }
 }
