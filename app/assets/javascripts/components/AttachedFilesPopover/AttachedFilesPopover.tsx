@@ -36,7 +36,11 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
       currentTab === Tabs.AttachedFiles ? attachedFiles : allFiles;
 
     const reloadAttachedFiles = useCallback(() => {
-      setAttachedFiles(application.items.getFilesForNote(note));
+      setAttachedFiles(
+        application.items
+          .getFilesForNote(note)
+          .sort((a, b) => (a.created_at < b.created_at ? 1 : -1))
+      );
     }, [application.items, note]);
 
     useEffect(() => {
@@ -44,7 +48,11 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
     }, [reloadAttachedFiles]);
 
     const reloadAllFiles = useCallback(() => {
-      setAllFiles(application.getItems(ContentType.File) as SNFile[]);
+      setAllFiles(
+        application
+          .getItems(ContentType.File)
+          .sort((a, b) => (a.created_at < b.created_at ? 1 : -1)) as SNFile[]
+      );
     }, [application]);
 
     useEffect(() => {
