@@ -39,7 +39,7 @@ import { ComponentView } from '../ComponentView';
 import { PanelSide, PanelResizer, PanelResizeType } from '../PanelResizer';
 import { ElementIds } from '@/element_ids';
 import { ChangeEditorButton } from '../ChangeEditorButton';
-import { AttachedFilesButton } from '../AttachedFilesButton';
+import { AttachedFilesButton } from '../AttachedFilesPopover/AttachedFilesButton';
 
 const MINIMUM_STATUS_DURATION = 400;
 const TEXTAREA_DEBOUNCE = 100;
