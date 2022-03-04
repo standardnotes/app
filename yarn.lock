@@ -2347,10 +2347,10 @@
     "@standardnotes/auth" "^3.17.3"
     "@standardnotes/common" "^1.15.3"
 
-"@standardnotes/filepicker@1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/filepicker/-/filepicker-1.2.0.tgz#9b41cae057737a089b19049b38e68d873e6bf5f5"
-  integrity sha512-zvEtwfIZQM04ZJppWi7Cx6M0I/bn7BO6I2BIXZyNhI7vY+wOvOZzoBDza9SmLdaDBm/AgVoydU4QIgSPXQjadA==
+"@standardnotes/filepicker@1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@standardnotes/filepicker/-/filepicker-1.2.1.tgz#e1a1f76460c2fe4668878b1da1c5375f377f0115"
+  integrity sha512-66UNNwbY4X9qapl6ibGVOqY0XTzj1Lc4nbr7k0D3grq3xiQDJFdMNH1m2pC9bnHVA02g9mCf5HEKMIIs9k/ljg==
 
 "@standardnotes/payloads@^1.3.0":
   version "1.3.0"
