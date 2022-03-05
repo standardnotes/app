@@ -6,10 +6,11 @@ import {
   RefCallback,
   ComponentChild,
 } from 'preact';
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { useEffect, useRef } from 'preact/hooks';
 import { JSXInternal } from 'preact/src/jsx';
 import { MenuItem, MenuItemListElement } from './MenuItem';
 import { KeyboardKey } from '@/services/ioService';
+import { useListKeyboardNavigation } from '../utils';
 
 type MenuProps = {
   className?: string;
@@ -28,7 +29,6 @@ export const Menu: FunctionComponent<MenuProps> = ({
   closeMenu,
   isOpen,
 }: MenuProps) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
   const menuItemRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const menuElementRef = useRef<HTMLMenuElement>(null);
@@ -40,44 +40,21 @@ export const Menu: FunctionComponent<MenuProps> = ({
       return;
     }
 
-    switch (event.key) {
-      case KeyboardKey.Home:
-        setCurrentIndex(0);
-        break;
-      case KeyboardKey.End:
-        setCurrentIndex(
-          menuItemRefs.current.length ? menuItemRefs.current.length - 1 : 0
-        );
-        break;
-      case KeyboardKey.Down:
-        setCurrentIndex((index) => {
-          if (index + 1 < menuItemRefs.current.length) {
-            return index + 1;
-          } else {
-            return 0;
-          }
-        });
-        break;
-      case KeyboardKey.Up:
-        setCurrentIndex((index) => {
-          if (index - 1 > -1) {
-            return index - 1;
-          } else {
-            return menuItemRefs.current.length - 1;
-          }
-        });
-        break;
-      case KeyboardKey.Escape:
-        closeMenu?.();
-        break;
+    if (event.key === KeyboardKey.Escape) {
+      closeMenu?.();
+      return;
     }
   };
 
+  useListKeyboardNavigation(menuElementRef);
+
   useEffect(() => {
-    if (isOpen && menuItemRefs.current[currentIndex]) {
-      menuItemRefs.current[currentIndex]?.focus();
+    if (isOpen && menuItemRefs.current.length > 0) {
+      setTimeout(() => {
+        menuElementRef.current?.focus();
+      });
     }
-  }, [currentIndex, isOpen]);
+  }, [isOpen]);
 
   const pushRefToArray: RefCallback<HTMLLIElement> = (instance) => {
     if (instance && instance.children) {
@@ -128,7 +105,7 @@ export const Menu: FunctionComponent<MenuProps> = ({
 
   return (
     <menu
-      className={`m-0 p-0 list-style-none ${className}`}
+      className={`m-0 p-0 list-style-none focus:shadow-none ${className}`}
       onKeyDown={handleKeyDown}
       ref={menuElementRef}
       style={style}
