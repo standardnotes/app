@@ -6,16 +6,10 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from '@reach/disclosure';
-import {
-  ComponentArea,
-  IconType,
-  SNComponent,
-  SNNote,
-} from '@standardnotes/snjs';
+import { IconType, SNComponent, SNNote } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { Icon } from '../Icon';
-import { createEditorMenuGroups } from './changeEditor/createEditorMenuGroups';
 import { ChangeEditorMenu } from './changeEditor/ChangeEditorMenu';
 import {
   calculateSubmenuStyle,
@@ -49,74 +43,53 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
   closeOnBlur,
   note,
 }) => {
-  const [changeEditorMenuOpen, setChangeEditorMenuOpen] = useState(false);
-  const [changeEditorMenuVisible, setChangeEditorMenuVisible] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   const [menuStyle, setMenuStyle] = useState<SubmenuStyle>({
     right: 0,
     bottom: 0,
     maxHeight: 'auto',
   });
-  const changeEditorMenuRef = useRef<HTMLDivElement>(null);
-  const changeEditorButtonRef = useRef<HTMLButtonElement>(null);
-  const [editors] = useState<SNComponent[]>(() =>
-    application.componentManager
-      .componentsForArea(ComponentArea.Editor)
-      .sort((a, b) => {
-        return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
-      })
-  );
-  const [editorMenuGroups, setEditorMenuGroups] = useState<EditorMenuGroup[]>(
-    []
-  );
-  const [selectedEditor, setSelectedEditor] = useState(() =>
-    application.componentManager.editorForNote(note)
-  );
-
-  useEffect(() => {
-    setEditorMenuGroups(createEditorMenuGroups(application, editors));
-  }, [application, editors]);
-
-  useEffect(() => {
-    setSelectedEditor(application.componentManager.editorForNote(note));
-  }, [application, note]);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const toggleChangeEditorMenu = () => {
-    if (!changeEditorMenuOpen) {
-      const menuStyle = calculateSubmenuStyle(changeEditorButtonRef.current);
+    if (!isOpen) {
+      const menuStyle = calculateSubmenuStyle(buttonRef.current);
       if (menuStyle) {
         setMenuStyle(menuStyle);
       }
     }
 
-    setChangeEditorMenuOpen(!changeEditorMenuOpen);
+    setIsOpen(!isOpen);
   };
 
   useEffect(() => {
-    if (changeEditorMenuOpen) {
+    if (isOpen) {
       setTimeout(() => {
         const newMenuStyle = calculateSubmenuStyle(
-          changeEditorButtonRef.current,
-          changeEditorMenuRef.current
+          buttonRef.current,
+          menuRef.current
         );
 
         if (newMenuStyle) {
           setMenuStyle(newMenuStyle);
-          setChangeEditorMenuVisible(true);
+          setIsVisible(true);
         }
       });
     }
-  }, [changeEditorMenuOpen]);
+  }, [isOpen]);
 
   return (
-    <Disclosure open={changeEditorMenuOpen} onChange={toggleChangeEditorMenu}>
+    <Disclosure open={isOpen} onChange={toggleChangeEditorMenu}>
       <DisclosureButton
         onKeyDown={(event) => {
           if (event.key === KeyboardKey.Escape) {
-            setChangeEditorMenuOpen(false);
+            setIsOpen(false);
           }
         }}
         onBlur={closeOnBlur}
-        ref={changeEditorButtonRef}
+        ref={buttonRef}
         className="sn-dropdown-item justify-between"
       >
         <div className="flex items-center">
@@ -126,11 +99,11 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
         <Icon type="chevron-right" className="color-neutral" />
       </DisclosureButton>
       <DisclosurePanel
-        ref={changeEditorMenuRef}
+        ref={menuRef}
         onKeyDown={(event) => {
           if (event.key === KeyboardKey.Escape) {
-            setChangeEditorMenuOpen(false);
-            changeEditorButtonRef.current?.focus();
+            setIsOpen(false);
+            buttonRef.current?.focus();
           }
         }}
         style={{
@@ -139,17 +112,14 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
         }}
         className="sn-dropdown flex flex-col max-h-120 min-w-68 fixed overflow-y-auto"
       >
-        {changeEditorMenuOpen && (
+        {isOpen && (
           <ChangeEditorMenu
             application={application}
             closeOnBlur={closeOnBlur}
-            currentEditor={selectedEditor}
-            setSelectedEditor={setSelectedEditor}
             note={note}
-            groups={editorMenuGroups}
-            isOpen={changeEditorMenuVisible}
+            isVisible={isVisible}
             closeMenu={() => {
-              setChangeEditorMenuOpen(false);
+              setIsOpen(false);
             }}
           />
         )}
