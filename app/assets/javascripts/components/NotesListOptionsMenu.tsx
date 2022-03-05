@@ -116,9 +116,9 @@ export const NotesListOptionsMenu: FunctionComponent<Props> = observer(
     return (
       <Menu
         className={
-          'sn-dropdown sn-dropdown--animated min-w-70 min-h-min max-h-120 overflow-y-auto \
+          'sn-dropdown sn-dropdown--animated min-w-70 max-h-120 overflow-y-auto \
         border-1 border-solid border-main text-sm z-index-dropdown-menu \
-        flex flex-col py-2 top-full bottom-0 left-2 absolute'
+        flex flex-col py-2 top-full left-2 absolute'
         }
         a11yLabel="Notes list options menu"
         closeMenu={closeDisplayOptionsMenu}
