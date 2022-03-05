@@ -30,11 +30,6 @@ export const NotesOptionsPanel = observer(
     const buttonRef = useRef<HTMLButtonElement>(null);
     const panelRef = useRef<HTMLDivElement>(null);
     const [closeOnBlur] = useCloseOnBlur(panelRef, setOpen);
-    const [submenuOpen, setSubmenuOpen] = useState(false);
-
-    const onSubmenuChange = (open: boolean) => {
-      setSubmenuOpen(open);
-    };
 
     return (
       <Disclosure
@@ -64,7 +59,7 @@ export const NotesOptionsPanel = observer(
       >
         <DisclosureButton
           onKeyDown={(event) => {
-            if (event.key === 'Escape' && !submenuOpen) {
+            if (event.key === 'Escape') {
               setOpen(false);
             }
           }}
@@ -77,7 +72,7 @@ export const NotesOptionsPanel = observer(
         </DisclosureButton>
         <DisclosurePanel
           onKeyDown={(event) => {
-            if (event.key === 'Escape' && !submenuOpen) {
+            if (event.key === 'Escape') {
               setOpen(false);
               buttonRef.current?.focus();
             }
@@ -96,7 +91,6 @@ export const NotesOptionsPanel = observer(
               application={application}
               appState={appState}
               closeOnBlur={closeOnBlur}
-              onSubmenuChange={onSubmenuChange}
             />
           )}
         </DisclosurePanel>

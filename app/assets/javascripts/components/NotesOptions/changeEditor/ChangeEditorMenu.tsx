@@ -19,18 +19,19 @@ import {
   TransactionalMutation,
 } from '@standardnotes/snjs';
 import { Fragment, FunctionComponent } from 'preact';
-import { StateUpdater, useCallback } from 'preact/hooks';
+import { useCallback, useEffect, useState } from 'preact/hooks';
 import { EditorMenuItem, EditorMenuGroup } from '../ChangeEditorOption';
-import { PLAIN_EDITOR_NAME } from './createEditorMenuGroups';
+import {
+  createEditorMenuGroups,
+  PLAIN_EDITOR_NAME,
+} from './createEditorMenuGroups';
 
 type ChangeEditorMenuProps = {
   application: WebApplication;
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void;
-  groups: EditorMenuGroup[];
-  isOpen: boolean;
-  currentEditor: SNComponent | undefined;
+  closeMenu: () => void;
+  isVisible: boolean;
   note: SNNote;
-  setSelectedEditor: StateUpdater<SNComponent | undefined>;
 };
 
 const getGroupId = (group: EditorMenuGroup) =>
@@ -39,12 +40,30 @@ const getGroupId = (group: EditorMenuGroup) =>
 export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   application,
   closeOnBlur,
-  groups,
-  isOpen,
-  currentEditor,
-  setSelectedEditor,
+  closeMenu,
+  isVisible,
   note,
 }) => {
+  const [editors] = useState<SNComponent[]>(() =>
+    application.componentManager
+      .componentsForArea(ComponentArea.Editor)
+      .sort((a, b) => {
+        return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
+      })
+  );
+  const [groups, setGroups] = useState<EditorMenuGroup[]>([]);
+  const [currentEditor, setCurrentEditor] = useState<SNComponent>();
+
+  useEffect(() => {
+    setGroups(createEditorMenuGroups(application, editors));
+  }, [application, editors]);
+
+  useEffect(() => {
+    if (note) {
+      setCurrentEditor(application.componentManager.editorForNote(note));
+    }
+  }, [application, note]);
+
   const premiumModal = usePremiumModal();
 
   const isSelectedEditor = useCallback(
@@ -136,7 +155,7 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
     /** Dirtying can happen above */
     application.sync();
 
-    setSelectedEditor(application.componentManager.editorForNote(note));
+    setCurrentEditor(application.componentManager.editorForNote(note));
   };
 
   const selectEditor = async (itemToBeSelected: EditorMenuItem) => {
@@ -169,13 +188,15 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
     if (shouldSelectEditor) {
       selectComponent(itemToBeSelected.component ?? null, note);
     }
+
+    closeMenu();
   };
 
   return (
     <Menu
       className="pt-0.5 pb-1"
       a11yLabel="Change editor menu"
-      isOpen={isOpen}
+      isOpen={isVisible}
     >
       {groups
         .filter((group) => group.items && group.items.length)
