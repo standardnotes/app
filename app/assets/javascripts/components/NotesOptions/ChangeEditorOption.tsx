@@ -71,10 +71,10 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
   const [selectedEditor, setSelectedEditor] = useState(() =>
     application.componentManager.editorForNote(note)
   );
-  const [closeOnBlur] = useCloseOnBlur(
-    menuContainerRef,
-    setChangeEditorMenuOpen
-  );
+  const [closeOnBlur] = useCloseOnBlur(menuContainerRef, (open: boolean) => {
+    setChangeEditorMenuOpen(open);
+    setChangeEditorMenuVisible(open);
+  });
 
   useEffect(() => {
     setEditorMenuGroups(createEditorMenuGroups(application, editors));
