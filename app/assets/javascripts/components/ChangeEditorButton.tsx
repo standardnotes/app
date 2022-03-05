@@ -7,14 +7,11 @@ import {
   DisclosurePanel,
 } from '@reach/disclosure';
 import VisuallyHidden from '@reach/visually-hidden';
-import { ComponentArea, SNComponent } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { useRef, useState } from 'preact/hooks';
 import { Icon } from './Icon';
 import { ChangeEditorMenu } from './NotesOptions/changeEditor/ChangeEditorMenu';
-import { createEditorMenuGroups } from './NotesOptions/changeEditor/createEditorMenuGroups';
-import { EditorMenuGroup } from './NotesOptions/ChangeEditorOption';
 import { useCloseOnBlur } from './utils';
 
 type Props = {
@@ -26,7 +23,8 @@ type Props = {
 export const ChangeEditorButton: FunctionComponent<Props> = observer(
   ({ application, appState, onClickPreprocessing }) => {
     const note = Object.values(appState.notes.selectedNotes)[0];
-    const [open, setOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const [isVisible, setIsVisible] = useState(false);
     const [position, setPosition] = useState({
       top: 0,
       right: 0,
@@ -35,28 +33,7 @@ export const ChangeEditorButton: FunctionComponent<Props> = observer(
     const buttonRef = useRef<HTMLButtonElement>(null);
     const panelRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
-    const [closeOnBlur] = useCloseOnBlur(containerRef, setOpen);
-    const [editors] = useState<SNComponent[]>(() =>
-      application.componentManager
-        .componentsForArea(ComponentArea.Editor)
-        .sort((a, b) => {
-          return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
-        })
-    );
-    const [editorMenuGroups, setEditorMenuGroups] = useState<EditorMenuGroup[]>(
-      []
-    );
-    const [currentEditor, setCurrentEditor] = useState<SNComponent>();
-
-    useEffect(() => {
-      setEditorMenuGroups(createEditorMenuGroups(application, editors));
-    }, [application, editors]);
-
-    useEffect(() => {
-      if (note) {
-        setCurrentEditor(application.componentManager.editorForNote(note));
-      }
-    }, [application, note]);
+    const [closeOnBlur] = useCloseOnBlur(containerRef, setIsOpen);
 
     const toggleChangeEditorMenu = async () => {
       const rect = buttonRef.current?.getBoundingClientRect();
@@ -81,22 +58,25 @@ export const ChangeEditorButton: FunctionComponent<Props> = observer(
           right: document.body.clientWidth - rect.right,
         });
 
-        const newOpenState = !open;
+        const newOpenState = !isOpen;
         if (newOpenState && onClickPreprocessing) {
           await onClickPreprocessing();
         }
 
-        setOpen(newOpenState);
+        setIsOpen(newOpenState);
+        setTimeout(() => {
+          setIsVisible(newOpenState);
+        });
       }
     };
 
     return (
       <div ref={containerRef}>
-        <Disclosure open={open} onChange={toggleChangeEditorMenu}>
+        <Disclosure open={isOpen} onChange={toggleChangeEditorMenu}>
           <DisclosureButton
             onKeyDown={(event) => {
               if (event.key === 'Escape') {
-                setOpen(false);
+                setIsOpen(false);
               }
             }}
             onBlur={closeOnBlur}
@@ -109,7 +89,7 @@ export const ChangeEditorButton: FunctionComponent<Props> = observer(
           <DisclosurePanel
             onKeyDown={(event) => {
               if (event.key === 'Escape') {
-                setOpen(false);
+                setIsOpen(false);
                 buttonRef.current?.focus();
               }
             }}
@@ -121,17 +101,14 @@ export const ChangeEditorButton: FunctionComponent<Props> = observer(
             className="sn-dropdown sn-dropdown--animated min-w-68 max-h-120 max-w-xs flex flex-col overflow-y-auto fixed"
             onBlur={closeOnBlur}
           >
-            {open && (
+            {isOpen && (
               <ChangeEditorMenu
                 closeOnBlur={closeOnBlur}
                 application={application}
-                isOpen={open}
-                currentEditor={currentEditor}
-                setSelectedEditor={setCurrentEditor}
+                isVisible={isVisible}
                 note={note}
-                groups={editorMenuGroups}
                 closeMenu={() => {
-                  setOpen(false);
+                  setIsOpen(false);
                 }}
               />
             )}
