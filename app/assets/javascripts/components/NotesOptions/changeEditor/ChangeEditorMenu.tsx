@@ -30,7 +30,7 @@ type ChangeEditorMenuProps = {
   application: WebApplication;
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void;
   closeMenu: () => void;
-  isOpen: boolean;
+  isVisible: boolean;
   note: SNNote;
 };
 
@@ -41,7 +41,7 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   application,
   closeOnBlur,
   closeMenu,
-  isOpen,
+  isVisible,
   note,
 }) => {
   const [editors] = useState<SNComponent[]>(() =>
@@ -196,7 +196,7 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
     <Menu
       className="pt-0.5 pb-1"
       a11yLabel="Change editor menu"
-      isOpen={isOpen}
+      isOpen={isVisible}
     >
       {groups
         .filter((group) => group.items && group.items.length)

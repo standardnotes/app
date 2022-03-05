@@ -105,7 +105,7 @@ export const ChangeEditorButton: FunctionComponent<Props> = observer(
               <ChangeEditorMenu
                 closeOnBlur={closeOnBlur}
                 application={application}
-                isOpen={visible}
+                isVisible={visible}
                 note={note}
                 closeMenu={() => {
                   setOpen(false);

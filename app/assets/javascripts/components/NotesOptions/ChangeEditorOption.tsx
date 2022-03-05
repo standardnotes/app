@@ -117,7 +117,7 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
             application={application}
             closeOnBlur={closeOnBlur}
             note={note}
-            isOpen={changeEditorMenuVisible}
+            isVisible={changeEditorMenuVisible}
             closeMenu={() => {
               setChangeEditorMenuOpen(false);
             }}
