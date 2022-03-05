@@ -89,13 +89,17 @@ export const calculateDifferenceBetweenDatesInDays = (
 export const useListKeyboardNavigation = (
   container: Ref<HTMLElement | null>
 ) => {
-  const [listItems, setListItems] = useState<NodeListOf<HTMLButtonElement>>();
+  const [listItems, setListItems] = useState<HTMLButtonElement[]>();
   const [focusedItemIndex, setFocusedItemIndex] = useState<number>(0);
 
   const focusItemWithIndex = useCallback(
-    (index: number) => {
+    (index: number, items?: HTMLButtonElement[]) => {
       setFocusedItemIndex(index);
-      listItems?.[index]?.focus();
+      if (items && items.length > 0) {
+        items[index]?.focus();
+      } else {
+        listItems?.[index]?.focus();
+      }
     },
     [listItems]
   );
@@ -103,7 +107,7 @@ export const useListKeyboardNavigation = (
   useEffect(() => {
     if (container.current) {
       container.current.tabIndex = FOCUSABLE_BUT_NOT_TABBABLE;
-      setListItems(container.current.querySelectorAll('button'));
+      setListItems(Array.from(container.current.querySelectorAll('button')));
     }
   }, [container]);
 
@@ -116,7 +120,13 @@ export const useListKeyboardNavigation = (
       }
 
       if (!listItems?.length) {
-        setListItems(container.current?.querySelectorAll('button'));
+        setListItems(
+          Array.from(
+            container.current?.querySelectorAll(
+              'button'
+            ) as NodeListOf<HTMLButtonElement>
+          )
+        );
       }
 
       if (listItems) {
@@ -143,16 +153,25 @@ export const useListKeyboardNavigation = (
   const FIRST_ITEM_FOCUS_TIMEOUT = 20;
 
   const containerFocusHandler = useCallback(() => {
-    if (listItems) {
-      const selectedItemIndex = Array.from(listItems).findIndex(
+    let temporaryItems = listItems && listItems?.length > 0 ? listItems : [];
+    if (!temporaryItems.length) {
+      temporaryItems = Array.from(
+        container.current?.querySelectorAll(
+          'button'
+        ) as NodeListOf<HTMLButtonElement>
+      );
+      setListItems(temporaryItems);
+    }
+    if (temporaryItems.length > 0) {
+      const selectedItemIndex = Array.from(temporaryItems).findIndex(
         (item) => item.dataset.selected
       );
       const indexToFocus = selectedItemIndex > -1 ? selectedItemIndex : 0;
       setTimeout(() => {
-        focusItemWithIndex(indexToFocus);
+        focusItemWithIndex(indexToFocus, temporaryItems);
       }, FIRST_ITEM_FOCUS_TIMEOUT);
     }
-  }, [focusItemWithIndex, listItems]);
+  }, [container, focusItemWithIndex, listItems]);
 
   useEffect(() => {
     const containerElement = container.current;
