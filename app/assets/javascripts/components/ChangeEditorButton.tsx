@@ -23,8 +23,8 @@ type Props = {
 export const ChangeEditorButton: FunctionComponent<Props> = observer(
   ({ application, appState, onClickPreprocessing }) => {
     const note = Object.values(appState.notes.selectedNotes)[0];
-    const [open, setOpen] = useState(false);
-    const [visible, setVisible] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const [isVisible, setIsVisible] = useState(false);
     const [position, setPosition] = useState({
       top: 0,
       right: 0,
@@ -33,7 +33,7 @@ export const ChangeEditorButton: FunctionComponent<Props> = observer(
     const buttonRef = useRef<HTMLButtonElement>(null);
     const panelRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
-    const [closeOnBlur] = useCloseOnBlur(containerRef, setOpen);
+    const [closeOnBlur] = useCloseOnBlur(containerRef, setIsOpen);
 
     const toggleChangeEditorMenu = async () => {
       const rect = buttonRef.current?.getBoundingClientRect();
@@ -58,25 +58,25 @@ export const ChangeEditorButton: FunctionComponent<Props> = observer(
           right: document.body.clientWidth - rect.right,
         });
 
-        const newOpenState = !open;
+        const newOpenState = !isOpen;
         if (newOpenState && onClickPreprocessing) {
           await onClickPreprocessing();
         }
 
-        setOpen(newOpenState);
+        setIsOpen(newOpenState);
         setTimeout(() => {
-          setVisible(newOpenState);
+          setIsVisible(newOpenState);
         });
       }
     };
 
     return (
       <div ref={containerRef}>
-        <Disclosure open={open} onChange={toggleChangeEditorMenu}>
+        <Disclosure open={isOpen} onChange={toggleChangeEditorMenu}>
           <DisclosureButton
             onKeyDown={(event) => {
               if (event.key === 'Escape') {
-                setOpen(false);
+                setIsOpen(false);
               }
             }}
             onBlur={closeOnBlur}
@@ -89,7 +89,7 @@ export const ChangeEditorButton: FunctionComponent<Props> = observer(
           <DisclosurePanel
             onKeyDown={(event) => {
               if (event.key === 'Escape') {
-                setOpen(false);
+                setIsOpen(false);
                 buttonRef.current?.focus();
               }
             }}
@@ -101,14 +101,14 @@ export const ChangeEditorButton: FunctionComponent<Props> = observer(
             className="sn-dropdown sn-dropdown--animated min-w-68 max-h-120 max-w-xs flex flex-col overflow-y-auto fixed"
             onBlur={closeOnBlur}
           >
-            {open && (
+            {isOpen && (
               <ChangeEditorMenu
                 closeOnBlur={closeOnBlur}
                 application={application}
-                isVisible={visible}
+                isVisible={isVisible}
                 note={note}
                 closeMenu={() => {
-                  setOpen(false);
+                  setIsOpen(false);
                 }}
               />
             )}
