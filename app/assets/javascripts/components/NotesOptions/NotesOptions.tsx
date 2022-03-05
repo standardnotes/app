@@ -416,7 +416,6 @@ export const NotesOptions = observer(
             <ChangeEditorOption
               appState={appState}
               application={application}
-              closeOnBlur={closeOnBlur}
               note={notes[0]}
             />
           </>
@@ -604,11 +603,7 @@ export const NotesOptions = observer(
         {notes.length === 1 ? (
           <>
             <div className="min-h-1px my-2 bg-border"></div>
-            <ListedActionsOption
-              application={application}
-              closeOnBlur={closeOnBlur}
-              note={notes[0]}
-            />
+            <ListedActionsOption application={application} note={notes[0]} />
             <div className="min-h-1px my-2 bg-border"></div>
             <SpellcheckOptions appState={appState} note={notes[0]} />
             <div className="min-h-1px my-2 bg-border"></div>
