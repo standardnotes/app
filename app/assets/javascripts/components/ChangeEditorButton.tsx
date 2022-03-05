@@ -7,14 +7,11 @@ import {
   DisclosurePanel,
 } from '@reach/disclosure';
 import VisuallyHidden from '@reach/visually-hidden';
-import { ComponentArea, SNComponent } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { useRef, useState } from 'preact/hooks';
 import { Icon } from './Icon';
 import { ChangeEditorMenu } from './NotesOptions/changeEditor/ChangeEditorMenu';
-import { createEditorMenuGroups } from './NotesOptions/changeEditor/createEditorMenuGroups';
-import { EditorMenuGroup } from './NotesOptions/ChangeEditorOption';
 import { useCloseOnBlur } from './utils';
 
 type Props = {
@@ -27,6 +24,7 @@ export const ChangeEditorButton: FunctionComponent<Props> = observer(
   ({ application, appState, onClickPreprocessing }) => {
     const note = Object.values(appState.notes.selectedNotes)[0];
     const [open, setOpen] = useState(false);
+    const [visible, setVisible] = useState(false);
     const [position, setPosition] = useState({
       top: 0,
       right: 0,
@@ -36,27 +34,6 @@ export const ChangeEditorButton: FunctionComponent<Props> = observer(
     const panelRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const [closeOnBlur] = useCloseOnBlur(containerRef, setOpen);
-    const [editors] = useState<SNComponent[]>(() =>
-      application.componentManager
-        .componentsForArea(ComponentArea.Editor)
-        .sort((a, b) => {
-          return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
-        })
-    );
-    const [editorMenuGroups, setEditorMenuGroups] = useState<EditorMenuGroup[]>(
-      []
-    );
-    const [currentEditor, setCurrentEditor] = useState<SNComponent>();
-
-    useEffect(() => {
-      setEditorMenuGroups(createEditorMenuGroups(application, editors));
-    }, [application, editors]);
-
-    useEffect(() => {
-      if (note) {
-        setCurrentEditor(application.componentManager.editorForNote(note));
-      }
-    }, [application, note]);
 
     const toggleChangeEditorMenu = async () => {
       const rect = buttonRef.current?.getBoundingClientRect();
@@ -87,6 +64,9 @@ export const ChangeEditorButton: FunctionComponent<Props> = observer(
         }
 
         setOpen(newOpenState);
+        setTimeout(() => {
+          setVisible(newOpenState);
+        });
       }
     };
 
@@ -125,11 +105,8 @@ export const ChangeEditorButton: FunctionComponent<Props> = observer(
               <ChangeEditorMenu
                 closeOnBlur={closeOnBlur}
                 application={application}
-                isOpen={open}
-                currentEditor={currentEditor}
-                setSelectedEditor={setCurrentEditor}
+                isOpen={visible}
                 note={note}
-                groups={editorMenuGroups}
                 closeMenu={() => {
                   setOpen(false);
                 }}

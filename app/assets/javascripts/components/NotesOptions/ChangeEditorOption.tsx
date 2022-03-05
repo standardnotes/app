@@ -6,16 +6,10 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from '@reach/disclosure';
-import {
-  ComponentArea,
-  IconType,
-  SNComponent,
-  SNNote,
-} from '@standardnotes/snjs';
+import { IconType, SNComponent, SNNote } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { Icon } from '../Icon';
-import { createEditorMenuGroups } from './changeEditor/createEditorMenuGroups';
 import { ChangeEditorMenu } from './changeEditor/ChangeEditorMenu';
 import {
   calculateSubmenuStyle,
@@ -58,27 +52,6 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
   });
   const changeEditorMenuRef = useRef<HTMLDivElement>(null);
   const changeEditorButtonRef = useRef<HTMLButtonElement>(null);
-  const [editors] = useState<SNComponent[]>(() =>
-    application.componentManager
-      .componentsForArea(ComponentArea.Editor)
-      .sort((a, b) => {
-        return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
-      })
-  );
-  const [editorMenuGroups, setEditorMenuGroups] = useState<EditorMenuGroup[]>(
-    []
-  );
-  const [selectedEditor, setSelectedEditor] = useState(() =>
-    application.componentManager.editorForNote(note)
-  );
-
-  useEffect(() => {
-    setEditorMenuGroups(createEditorMenuGroups(application, editors));
-  }, [application, editors]);
-
-  useEffect(() => {
-    setSelectedEditor(application.componentManager.editorForNote(note));
-  }, [application, note]);
 
   const toggleChangeEditorMenu = () => {
     if (!changeEditorMenuOpen) {
@@ -143,10 +116,7 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
           <ChangeEditorMenu
             application={application}
             closeOnBlur={closeOnBlur}
-            currentEditor={selectedEditor}
-            setSelectedEditor={setSelectedEditor}
             note={note}
-            groups={editorMenuGroups}
             isOpen={changeEditorMenuVisible}
             closeMenu={() => {
               setChangeEditorMenuOpen(false);
