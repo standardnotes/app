@@ -48,13 +48,13 @@ export const NotesView: FunctionComponent<Props> = observer(
       selectPreviousNote,
       onFilterEnter,
       handleFilterTextChanged,
-      onSearchInputBlur,
       clearFilterText,
       paginate,
       panelWidth,
     } = appState.notesView;
 
     const [showDisplayOptionsMenu, setShowDisplayOptionsMenu] = useState(false);
+    const [focusedSearch, setFocusedSearch] = useState(false);
 
     const [closeDisplayOptMenuOnBlur] = useCloseOnBlur(
       displayOptionsMenuRef,
@@ -130,6 +130,9 @@ export const NotesView: FunctionComponent<Props> = observer(
       setNoteFilterText((e.target as HTMLInputElement).value);
     };
 
+    const onSearchFocused = () => setFocusedSearch(true);
+    const onSearchBlurred = () => setFocusedSearch(false);
+
     const onNoteFilterKeyUp = (e: KeyboardEvent) => {
       if (e.key === KeyboardKey.Enter) {
         onFilterEnter();
@@ -188,9 +191,10 @@ export const NotesView: FunctionComponent<Props> = observer(
                   value={noteFilterText}
                   onChange={onNoteFilterTextChange}
                   onKeyUp={onNoteFilterKeyUp}
-                  onBlur={() => onSearchInputBlur()}
+                  onFocus={onSearchFocused}
+                  onBlur={onSearchBlurred}
                 />
-                {noteFilterText ? (
+                { (focusedSearch || noteFilterText) &&
                   <button
                     onClick={clearFilterText}
                     aria-role="button"
@@ -198,13 +202,15 @@ export const NotesView: FunctionComponent<Props> = observer(
                   >
                     ✕
                   </button>
-                ) : null}
-                <div className="ml-2">
+                }
+
+                { (focusedSearch || noteFilterText) &&
                   <SearchOptions
                     application={application}
                     appState={appState}
                   />
-                </div>
+                }
+
               </div>
               <NoAccountWarning appState={appState} />
             </div>

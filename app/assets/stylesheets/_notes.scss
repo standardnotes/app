@@ -52,11 +52,12 @@
 
   .filter-section {
     clear: left;
-    height: 28px;
-    margin-top: 14px;
+    max-height: 80px;
+    margin-top: 10px;
     position: relative;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    overflow-x: auto;
 
     .filter-bar {
       background-color: var(--sn-stylekit-contrast-background-color);
@@ -71,6 +72,39 @@
       border-color: transparent;
       width: 100%;
       position: relative;
+      height: 28px;
+    }
+
+    .search-options {
+      margin-top: 10px;
+
+      align-self: center;
+      display: flex;
+      flex-direction: row;
+      align-items: baseline;
+      gap: 0.25rem;
+      font-size: var(--sn-stylekit-font-size-p);
+      white-space: nowrap;
+
+      .bubble {
+        cursor: pointer;
+        padding: 2px 5px;
+
+        transition-property: color, background-color, border-color, transform;
+        transition-timing-function: cubic-bezier(.4,0,.2,1);
+        transition-duration: 300ms;
+        
+        border-radius: 100px;
+        border: 1px solid var(--sn-stylekit-secondary-border-color);
+        color: var(--sn-stylekit-neutral-color);
+        background-color: var(--sn-stylekit-info-contrast-color);
+      }
+
+      .bubble.selected, .bubble:active {
+          color: var(--sn-stylekit-neutral-contrast-color);
+          border-color: var(--sn-stylekit-info-color);
+          background-color: var(--sn-stylekit-info-color);
+      }
     }
 
     #search-clear-button {
@@ -86,9 +120,9 @@
       line-height: 17px;
       text-align: center;
       position: absolute;
-      top: 50%;
+      top: 25%;
       transform: translateY(-50%);
-      right: 36px;
+      right: 10px;
       cursor: pointer;
 
       transition: background-color 0.15s linear;
