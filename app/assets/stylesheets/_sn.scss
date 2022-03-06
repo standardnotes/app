@@ -436,6 +436,14 @@
   border-color: var(--sn-stylekit-neutral-contrast-color);
 }
 
+.border-secondary {
+  border-color: var(--sn-stylekit-secondary-border-color);
+}
+
+.border-info {
+  border-color: var(--sn-stylekit-info-color);
+}
+
 .sn-component .border-r-1px {
   border-right-width: 1px;
 }

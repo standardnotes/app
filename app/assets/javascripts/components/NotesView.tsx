@@ -194,7 +194,7 @@ export const NotesView: FunctionComponent<Props> = observer(
                   onFocus={onSearchFocused}
                   onBlur={onSearchBlurred}
                 />
-                { (focusedSearch || noteFilterText) &&
+                {(focusedSearch || noteFilterText) && (
                   <button
                     onClick={clearFilterText}
                     aria-role="button"
@@ -202,15 +202,16 @@ export const NotesView: FunctionComponent<Props> = observer(
                   >
                     ✕
                   </button>
-                }
+                )}
 
-                { (focusedSearch || noteFilterText) &&
-                  <SearchOptions
-                    application={application}
-                    appState={appState}
-                  />
-                }
-
+                {(focusedSearch || noteFilterText) && (
+                  <div className="animate-slide-in-top">
+                    <SearchOptions
+                      application={application}
+                      appState={appState}
+                    />
+                  </div>
+                )}
               </div>
               <NoAccountWarning appState={appState} />
             </div>

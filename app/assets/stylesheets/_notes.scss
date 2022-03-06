@@ -57,7 +57,6 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    overflow-x: auto;
 
     .filter-bar {
       background-color: var(--sn-stylekit-contrast-background-color);
@@ -85,26 +84,6 @@
       gap: 0.25rem;
       font-size: var(--sn-stylekit-font-size-p);
       white-space: nowrap;
-
-      .bubble {
-        cursor: pointer;
-        padding: 2px 5px;
-
-        transition-property: color, background-color, border-color, transform;
-        transition-timing-function: cubic-bezier(.4,0,.2,1);
-        transition-duration: 300ms;
-        
-        border-radius: 100px;
-        border: 1px solid var(--sn-stylekit-secondary-border-color);
-        color: var(--sn-stylekit-neutral-color);
-        background-color: var(--sn-stylekit-info-contrast-color);
-      }
-
-      .bubble.selected, .bubble:active {
-          color: var(--sn-stylekit-neutral-contrast-color);
-          border-color: var(--sn-stylekit-info-color);
-          background-color: var(--sn-stylekit-info-color);
-      }
     }
 
     #search-clear-button {

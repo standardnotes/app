@@ -1,7 +1,7 @@
 import { AppState } from '@/ui_models/app_state';
 import { WebApplication } from '@/ui_models/application';
 import { observer } from 'mobx-react-lite';
-import Bubble from './Bubble/Bubble';
+import Bubble from './Bubble';
 
 type Props = {
   appState: AppState;
@@ -19,7 +19,7 @@ export const SearchOptions = observer(({ appState }: Props) => {
   }
 
   return (
-    <div className="search-options" role="tablist">
+    <div role="tablist" className="search-options justify-between">
       <Bubble
         label="Protected"
         selected={includeProtectedContents}
