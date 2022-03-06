@@ -248,10 +248,6 @@ $screen-md-max:              ($screen-lg-min - 1) !default;
   color: var(--sn-stylekit-info-contrast-color);
 }
 
-.text-neutral {
-  color: var(--sn-stylekit-neutral-color);
-}
-
 .wrap {
   word-wrap: break-word;
   word-break: break-all;
