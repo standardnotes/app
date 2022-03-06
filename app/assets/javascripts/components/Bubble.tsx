@@ -5,8 +5,8 @@ interface BubbleProperties {
 }
 
 const styles = {
-  base: 'px-2 py-1 rounded-full cursor-pointer transition border border-solid border-secondary text-neutral active:border-info active:bg-info active:text-neutral-contrast',
-  selected: 'border-info bg-info text-neutral-contrast',
+  base: 'px-2 py-1 rounded-full cursor-pointer transition border-1 border-solid border-secondary text-neutral active:border-info active:bg-info active:color-neutral-contrast',
+  selected: 'border-info bg-info color-neutral-contrast',
 };
 
 const Bubble = ({ label, selected, onSelect }: BubbleProperties) => (

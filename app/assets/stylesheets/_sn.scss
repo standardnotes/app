@@ -440,10 +440,6 @@
   border-color: var(--sn-stylekit-secondary-border-color);
 }
 
-.border-info {
-  border-color: var(--sn-stylekit-info-color);
-}
-
 .sn-component .border-r-1px {
   border-right-width: 1px;
 }
@@ -945,4 +941,26 @@
 
 .invisible {
   visibility: hidden;
+}
+
+.color-neutral-contrast {
+  color: var(--sn-stylekit-neutral-contrast-color);
+}
+
+.active\:bg-info:active {
+  background-color: var(--sn-stylekit-info-color);
+}
+
+.active\:border-info:active {
+  border-color: var(--sn-stylekit-info-color);
+}
+
+.active\:color-neutral-contrast:active {
+  color: var(--sn-stylekit-neutral-contrast-color);
+}
+
+.transition {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(.4,0,.2,1);
+  transition-duration: 100ms;
 }
