@@ -1,6 +1,7 @@
 import { confirmDialog } from '@/services/alertService';
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
+import { parseFileName } from '@standardnotes/filepicker';
 import {
   ChallengeReason,
   ContentType,
@@ -123,8 +124,9 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
       return isAuthorized;
     };
 
-    const renameFile = async (file: SNFile, name: string) => {
-      await application.items.renameFile(file, name);
+    const renameFile = async (file: SNFile, fileName: string) => {
+      const { name, ext } = parseFileName(fileName);
+      await application.items.renameFile(file, name, ext);
       application.sync();
     };
 
