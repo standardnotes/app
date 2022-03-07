@@ -1,7 +1,12 @@
 import { confirmDialog } from '@/services/alertService';
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
-import { ContentType, SNFile, SNNote } from '@standardnotes/snjs';
+import {
+  ChallengeReason,
+  ContentType,
+  SNFile,
+  SNNote,
+} from '@standardnotes/snjs';
 import {
   addToast,
   dismissToast,
@@ -13,7 +18,11 @@ import { FunctionComponent } from 'preact';
 import { useCallback, useEffect, useState } from 'preact/hooks';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
-import { PopoverFileItem } from './PopoverFileItem';
+import {
+  PopoverFileItem,
+  PopoverFileItemAction,
+  PopoverFileItemActionType,
+} from './PopoverFileItem';
 
 enum Tabs {
   AttachedFiles,
@@ -59,52 +68,109 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
       reloadAllFiles();
     }, [reloadAllFiles]);
 
-    const deleteFile = useCallback(
-      async (file: SNFile) => {
-        const shouldDelete = await confirmDialog({
-          text: `Do you really want to delete the file "${file.nameWithExt}"?`,
-          confirmButtonStyle: 'danger',
+    const deleteFile = async (file: SNFile) => {
+      const shouldDelete = await confirmDialog({
+        text: `Do you really want to delete the file "${file.nameWithExt}"?`,
+        confirmButtonStyle: 'danger',
+      });
+      if (shouldDelete) {
+        const deletingToastId = addToast({
+          type: ToastType.Loading,
+          message: `Deleting file "${file.nameWithExt}"...`,
         });
-        if (shouldDelete) {
-          const deletingToastId = addToast({
-            type: ToastType.Loading,
-            message: `Deleting file "${file.nameWithExt}"...`,
-          });
-          await application.deleteItem(file);
-          addToast({
-            type: ToastType.Success,
-            message: `Deleted file "${file.nameWithExt}"`,
-          });
-          dismissToast(deletingToastId);
-        }
-      },
-      [application]
-    );
+        await application.deleteItem(file);
+        addToast({
+          type: ToastType.Success,
+          message: `Deleted file "${file.nameWithExt}"`,
+        });
+        dismissToast(deletingToastId);
+      }
+    };
 
-    const downloadFile = useCallback(
-      async (file: SNFile) => {
-        appState.files.downloadFile(file);
-      },
-      [appState.files]
-    );
+    const downloadFile = async (file: SNFile) => {
+      appState.files.downloadFile(file);
+    };
 
-    const attachFileToNote = useCallback(
-      async (file: SNFile) => {
-        await application.items.associateFileWithNote(file, note);
-        reloadAttachedFiles();
-        reloadAllFiles();
-      },
-      [application.items, note, reloadAllFiles, reloadAttachedFiles]
-    );
+    const attachFileToNote = async (file: SNFile) => {
+      await application.items.associateFileWithNote(file, note);
+    };
 
-    const detachFileFromNote = useCallback(
-      async (file: SNFile) => {
-        await application.items.disassociateFileWithNote(file, note);
-        reloadAttachedFiles();
-        reloadAllFiles();
-      },
-      [application.items, note, reloadAllFiles, reloadAttachedFiles]
-    );
+    const detachFileFromNote = async (file: SNFile) => {
+      await application.items.disassociateFileWithNote(file, note);
+    };
+
+    const protectFile = async (file: SNFile) => {
+      await application.protections.protectFile(file);
+      application.sync();
+    };
+
+    const unprotectFile = async (file: SNFile) => {
+      await application.protections.unprotectFile(file);
+      application.sync();
+    };
+
+    const authorizeProtectedActionForFile = async (
+      file: SNFile,
+      challengeReason: ChallengeReason
+    ) => {
+      const authorizedFiles =
+        await application.protections.authorizeProtectedActionForFiles(
+          [file],
+          challengeReason
+        );
+      const isAuthorized =
+        authorizedFiles.length > 0 && authorizedFiles.includes(file);
+      return isAuthorized;
+    };
+
+    const renameFile = async (file: SNFile, name: string) => {
+      //
+    };
+
+    const handleFileAction = async (action: PopoverFileItemAction) => {
+      const file =
+        action.type !== PopoverFileItemActionType.RenameFile
+          ? action.payload
+          : action.payload.file;
+      let isAuthorizedForAction = true;
+
+      if (file.protected) {
+        isAuthorizedForAction = await authorizeProtectedActionForFile(
+          file,
+          ChallengeReason.AccessProtectedFile
+        );
+      }
+
+      if (!isAuthorizedForAction) {
+        return;
+      }
+
+      switch (action.type) {
+        case PopoverFileItemActionType.AttachFileToNote:
+          attachFileToNote(file);
+          break;
+        case PopoverFileItemActionType.DetachFileToNote:
+          detachFileFromNote(file);
+          break;
+        case PopoverFileItemActionType.DeleteFile:
+          deleteFile(file);
+          break;
+        case PopoverFileItemActionType.DownloadFile:
+          downloadFile(file);
+          break;
+        case PopoverFileItemActionType.ProtectFile:
+          protectFile(file);
+          break;
+        case PopoverFileItemActionType.UnprotectFile:
+          unprotectFile(file);
+          break;
+        case PopoverFileItemActionType.RenameFile:
+          renameFile(file, action.payload.name);
+          break;
+      }
+      reloadAttachedFiles();
+      reloadAllFiles();
+    };
 
     const handleAttachFilesClick = async () => {
       const uploadedFile = await appState.files.uploadNewFile();
@@ -154,12 +220,10 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
               {currentListOfFiles.map((file: SNFile) => {
                 return (
                   <PopoverFileItem
+                    key={file.uuid}
                     file={file}
                     isAttachedToNote={attachedFiles.includes(file)}
-                    attachFileToNote={attachFileToNote}
-                    detachFileFromNote={detachFileFromNote}
-                    deleteFile={deleteFile}
-                    downloadFile={downloadFile}
+                    handleFileAction={handleFileAction}
                   />
                 );
               })}
