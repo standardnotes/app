@@ -13,8 +13,6 @@ export class FilesState {
   constructor(private application: WebApplication) {}
 
   public async downloadFile(file: SNFile): Promise<void> {
-    console.log('Downloading file', file.nameWithExt);
-
     const saver = StreamingFileSaver.available()
       ? new StreamingFileSaver(file.nameWithExt)
       : new ClassicFileSaver();
@@ -41,10 +39,6 @@ export class FilesState {
       await this.application.files.downloadFile(
         file,
         async (decryptedBytes: Uint8Array) => {
-          console.log(
-            `Pushing ${decryptedBytes.length} decrypted bytes to disk`
-          );
-
           if (isUsingStreamingSaver) {
             await saver.pushBytes(decryptedBytes);
           } else {

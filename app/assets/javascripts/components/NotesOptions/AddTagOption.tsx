@@ -38,7 +38,6 @@ export const AddTagOption: FunctionComponent<Props> = observer(
         const menuPosition = calculateSubmenuStyle(menuButtonRef.current);
         if (menuPosition) {
           setMenuStyle(menuPosition);
-          console.log(menuPosition);
         }
       }
 
@@ -53,7 +52,6 @@ export const AddTagOption: FunctionComponent<Props> = observer(
 
       if (newMenuPosition) {
         setMenuStyle(newMenuPosition);
-        console.log(newMenuPosition);
       }
     }, []);
 
