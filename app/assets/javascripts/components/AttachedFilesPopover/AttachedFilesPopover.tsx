@@ -19,11 +19,11 @@ import { FunctionComponent } from 'preact';
 import { useCallback, useEffect, useState } from 'preact/hooks';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
+import { PopoverFileItem } from './PopoverFileItem';
 import {
-  PopoverFileItem,
   PopoverFileItemAction,
   PopoverFileItemActionType,
-} from './PopoverFileItem';
+} from './PopoverFileItemAction';
 
 enum Tabs {
   AttachedFiles,
@@ -100,14 +100,16 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
       await application.items.disassociateFileWithNote(file, note);
     };
 
-    const protectFile = async (file: SNFile) => {
-      await application.protections.protectFile(file);
+    const toggleFileProtection = async (file: SNFile) => {
+      let result: SNFile | undefined;
+      if (file.protected) {
+        result = await application.protections.unprotectFile(file);
+      } else {
+        result = await application.protections.protectFile(file);
+      }
       application.sync.sync();
-    };
-
-    const unprotectFile = async (file: SNFile) => {
-      await application.protections.unprotectFile(file);
-      application.sync.sync();
+      const isProtected = result ? result.protected : file.protected;
+      return isProtected;
     };
 
     const authorizeProtectedActionForFile = async (
@@ -137,7 +139,10 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
           : action.payload.file;
       let isAuthorizedForAction = true;
 
-      if (file.protected) {
+      if (
+        file.protected &&
+        action.type !== PopoverFileItemActionType.ToggleFileProtection
+      ) {
         isAuthorizedForAction = await authorizeProtectedActionForFile(
           file,
           ChallengeReason.AccessProtectedFile
@@ -161,12 +166,11 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
         case PopoverFileItemActionType.DownloadFile:
           downloadFile(file);
           break;
-        case PopoverFileItemActionType.ProtectFile:
-          protectFile(file);
+        case PopoverFileItemActionType.ToggleFileProtection: {
+          const isProtected = await toggleFileProtection(file);
+          action.callback(isProtected);
           break;
-        case PopoverFileItemActionType.UnprotectFile:
-          unprotectFile(file);
-          break;
+        }
         case PopoverFileItemActionType.RenameFile:
           renameFile(file, action.payload.name);
           break;

@@ -19,10 +19,8 @@ import {
 import { Icon } from '../Icon';
 import { Switch } from '../Switch';
 import { useCloseOnBlur } from '../utils';
-import {
-  PopoverFileItemActionType,
-  PopoverFileItemProps,
-} from './PopoverFileItem';
+import { PopoverFileItemProps } from './PopoverFileItem';
+import { PopoverFileItemActionType } from './PopoverFileItemAction';
 
 type Props = Omit<PopoverFileItemProps, 'renameFile'> & {
   setIsRenamingFile: StateUpdater<boolean>;
@@ -136,18 +134,13 @@ export const PopoverFileSubmenu: FunctionComponent<Props> = ({
               <button
                 className="sn-dropdown-item justify-between focus:bg-info-backdrop"
                 onClick={() => {
-                  if (isFileProtected) {
-                    handleFileAction({
-                      type: PopoverFileItemActionType.UnprotectFile,
-                      payload: file,
-                    });
-                  } else {
-                    handleFileAction({
-                      type: PopoverFileItemActionType.ProtectFile,
-                      payload: file,
-                    });
-                  }
-                  setIsFileProtected(!isFileProtected);
+                  handleFileAction({
+                    type: PopoverFileItemActionType.ToggleFileProtection,
+                    payload: file,
+                    callback: (isProtected: boolean) => {
+                      setIsFileProtected(isProtected);
+                    },
+                  });
                 }}
                 onBlur={closeOnBlur}
               >

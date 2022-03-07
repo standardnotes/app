@@ -4,33 +4,11 @@ import { SNFile } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { ICONS } from '../Icon';
+import {
+  PopoverFileItemAction,
+  PopoverFileItemActionType,
+} from './PopoverFileItemAction';
 import { PopoverFileSubmenu } from './PopoverFileSubmenu';
-
-export enum PopoverFileItemActionType {
-  AttachFileToNote,
-  DetachFileToNote,
-  DeleteFile,
-  DownloadFile,
-  RenameFile,
-  ProtectFile,
-  UnprotectFile,
-}
-
-export type PopoverFileItemAction =
-  | {
-      type: Exclude<
-        PopoverFileItemActionType,
-        PopoverFileItemActionType.RenameFile
-      >;
-      payload: SNFile;
-    }
-  | {
-      type: PopoverFileItemActionType.RenameFile;
-      payload: {
-        file: SNFile;
-        name: string;
-      };
-    };
 
 const getIconForFileType = (fileType: string) => {
   let iconType = 'file-other';
