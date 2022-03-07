@@ -24,22 +24,22 @@ export const Sync: FunctionComponent<Props> = observer(
   ({ application }: Props) => {
     const [isSyncingInProgress, setIsSyncingInProgress] = useState(false);
     const [lastSyncDate, setLastSyncDate] = useState(
-      formatLastSyncDate(application.getLastSyncDate() as Date)
+      formatLastSyncDate(application.sync.getLastSyncDate() as Date)
     );
 
     const doSynchronization = async () => {
       setIsSyncingInProgress(true);
 
-      const response = await application.sync({
+      const response = await application.sync.sync({
         queueStrategy: SyncQueueStrategy.ForceSpawnNew,
         checkIntegrity: true,
       });
       setIsSyncingInProgress(false);
-      if (response && response.error) {
-        application.alertService!.alert(STRING_GENERIC_SYNC_ERROR);
+      if (response && (response as any).error) {
+        application.alertService.alert(STRING_GENERIC_SYNC_ERROR);
       } else {
         setLastSyncDate(
-          formatLastSyncDate(application.getLastSyncDate() as Date)
+          formatLastSyncDate(application.sync.getLastSyncDate() as Date)
         );
       }
     };
