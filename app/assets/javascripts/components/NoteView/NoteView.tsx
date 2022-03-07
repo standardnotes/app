@@ -166,17 +166,15 @@ export class NoteView extends PureComponent<Props, State> {
       TEXTAREA_DEBOUNCE
     );
 
-    const isEntitledToFiles =
-      this.application.features.getFeatureStatus(FeatureIdentifier.Files) ===
-      FeatureStatus.Entitled;
-
     this.state = {
       availableStackComponents: [],
       editorStateDidLoad: false,
       editorText: '',
       editorTitle: '',
       isDesktop: isDesktopApplication(),
-      isEntitledToFiles,
+      isEntitledToFiles:
+        this.application.features.getFeatureStatus(FeatureIdentifier.Files) ===
+        FeatureStatus.Entitled,
       lockText: 'Note Editing Disabled',
       noteStatus: undefined,
       noteLocked: this.controller.note.locked,
