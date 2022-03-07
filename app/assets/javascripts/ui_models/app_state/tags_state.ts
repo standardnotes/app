@@ -208,7 +208,7 @@ export class TagsState {
 
     this.assignParent(createdTag.uuid, parent.uuid);
 
-    this.application.sync();
+    this.application.sync.sync();
 
     runInAction(() => {
       this.selected = createdTag as SNTag;
@@ -364,7 +364,7 @@ export class TagsState {
       await this.application.setTagParent(futureParent, tag);
     }
 
-    await this.application.sync();
+    await this.application.sync.sync();
   }
 
   get rootTags(): SNTag[] {
@@ -507,7 +507,7 @@ export class TagsState {
       }
 
       const insertedTag = await this.application.createTagOrSmartView(newTitle);
-      this.application.sync();
+      this.application.sync.sync();
       runInAction(() => {
         this.selected = insertedTag as SNTag;
       });

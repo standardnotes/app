@@ -699,7 +699,7 @@ export class NoteView extends PureComponent<Props, State> {
     if (left !== undefined && left !== null) {
       await this.application.setPreference(PrefKey.EditorLeft, left);
     }
-    this.application.sync();
+    this.application.sync.sync();
   };
 
   async reloadSpellcheck() {
@@ -815,7 +815,7 @@ export class NoteView extends PureComponent<Props, State> {
     } else {
       await this.disassociateComponentWithCurrentNote(component);
     }
-    this.application.sync();
+    this.application.sync.sync();
   };
 
   async disassociateComponentWithCurrentNote(component: SNComponent) {

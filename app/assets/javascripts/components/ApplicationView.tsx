@@ -145,7 +145,7 @@ export class ApplicationView extends PureComponent<Props, State> {
       this.setState({ appClass });
     } else if (eventName === AppStateEvent.WindowDidFocus) {
       if (!(await this.application.isLocked())) {
-        this.application.sync();
+        this.application.sync.sync();
       }
     }
   }

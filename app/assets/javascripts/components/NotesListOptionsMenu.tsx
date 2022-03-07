@@ -116,7 +116,7 @@ export const NotesListOptionsMenu: FunctionComponent<Props> = observer(
     return (
       <Menu
         className={
-          'sn-dropdown sn-dropdown--animated min-w-70 max-h-120 overflow-y-auto \
+          'sn-dropdown sn-dropdown--animated min-w-70 overflow-y-auto \
         border-1 border-solid border-main text-sm z-index-dropdown-menu \
         flex flex-col py-2 top-full left-2 absolute'
         }
