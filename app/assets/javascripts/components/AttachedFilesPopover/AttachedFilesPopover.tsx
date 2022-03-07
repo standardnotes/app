@@ -124,7 +124,8 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
     };
 
     const renameFile = async (file: SNFile, name: string) => {
-      //
+      await application.items.renameFile(file, name);
+      application.sync();
     };
 
     const handleFileAction = async (action: PopoverFileItemAction) => {

@@ -307,13 +307,15 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
     setIsRenamingFile(false);
   };
 
+  const handleFileNameInput = (event: Event) => {
+    setFileName((event.target as HTMLInputElement).value);
+  };
+
   const handleFileNameInputKeyDown = (event: KeyboardEvent) => {
     if (event.key === KeyboardKey.Enter) {
       renameFile(file, fileName);
       return;
     }
-
-    setFileName((event.target as HTMLInputElement).value);
   };
 
   const handleFileNameInputBlur = () => {
@@ -331,6 +333,7 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
               className="text-input p-0 mb-1 border-0 bg-transparent color-foreground"
               value={fileName}
               ref={fileNameInputRef}
+              onInput={handleFileNameInput}
               onKeyDown={handleFileNameInputKeyDown}
               onBlur={handleFileNameInputBlur}
             />
