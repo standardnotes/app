@@ -170,11 +170,14 @@ export const convertStringifiedBooleanToBoolean = (value: string) => {
 };
 
 export const formatSizeToReadableString = (bytes: number): string => {
+  let size = bytes;
+  let unit = 'B';
   if (bytes > BYTES_IN_ONE_MEGABYTE) {
-    return `${bytes / BYTES_IN_ONE_MEGABYTE} MB`;
+    size = bytes / BYTES_IN_ONE_MEGABYTE;
+    unit = 'MB';
   } else if (bytes > BYTES_IN_ONE_KILOBYTE) {
-    return `${bytes / BYTES_IN_ONE_KILOBYTE} KB`;
-  } else {
-    return `${bytes} B`;
+    size = bytes / BYTES_IN_ONE_KILOBYTE;
+    unit = 'KB';
   }
+  return `${size.toFixed(2)} ${unit}`;
 };
