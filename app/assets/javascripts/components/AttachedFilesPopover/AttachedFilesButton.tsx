@@ -72,6 +72,12 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
       }
     };
 
+    const attachedFilesLength = note
+      ? application.items
+          .getFilesForNote(note)
+          .sort((a, b) => (a.created_at < b.created_at ? 1 : -1)).length
+      : 0;
+
     return (
       <div ref={containerRef}>
         <Disclosure open={open} onChange={toggleAttachedFilesMenu}>
@@ -82,10 +88,15 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
               }
             }}
             ref={buttonRef}
-            className="sn-icon-button border-contrast"
+            className={`sn-icon-button border-contrast ${
+              attachedFilesLength > 0 ? 'py-1 px-3' : ''
+            }`}
           >
             <VisuallyHidden>Attached files</VisuallyHidden>
             <Icon type="attachment-file" className="block" />
+            {attachedFilesLength > 0 && (
+              <span className="ml-2">{attachedFilesLength}</span>
+            )}
           </DisclosureButton>
           <DisclosurePanel
             onKeyDown={(event) => {
