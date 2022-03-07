@@ -14,7 +14,7 @@ import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useRef, useState } from 'preact/hooks';
 import { Icon } from '../Icon';
-import { useCloseOnBlur } from '../utils';
+import { useCloseOnClickOutside } from '../utils';
 import { AttachedFilesPopover } from './AttachedFilesPopover';
 
 type Props = {
@@ -35,7 +35,10 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     const buttonRef = useRef<HTMLButtonElement>(null);
     const panelRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
-    const [closeOnBlur] = useCloseOnBlur(containerRef, setOpen);
+
+    useCloseOnClickOutside(containerRef, () => {
+      setOpen(false);
+    });
 
     const toggleAttachedFilesMenu = async () => {
       const rect = buttonRef.current?.getBoundingClientRect();
@@ -78,7 +81,6 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
                 setOpen(false);
               }
             }}
-            onBlur={closeOnBlur}
             ref={buttonRef}
             className="sn-icon-button border-contrast"
           >
@@ -98,7 +100,6 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
               maxHeight,
             }}
             className="sn-dropdown sn-dropdown--animated min-w-80 max-h-120 max-w-xs flex flex-col overflow-y-auto fixed"
-            onBlur={closeOnBlur}
           >
             {open && (
               <div
