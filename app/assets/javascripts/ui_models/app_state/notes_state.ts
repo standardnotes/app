@@ -265,7 +265,7 @@ export class NotesState {
       mutate,
       false
     );
-    this.application.sync();
+    this.application.sync.sync();
   }
 
   setHideSelectedNotePreviews(hide: boolean): void {
@@ -403,7 +403,7 @@ export class NotesState {
       },
       false
     );
-    this.application.sync();
+    this.application.sync.sync();
   }
 
   async addTagToSelectedNotes(tag: SNTag): Promise<void> {
@@ -419,7 +419,7 @@ export class NotesState {
         });
       })
     );
-    this.application.sync();
+    this.application.sync.sync();
   }
 
   async removeTagFromSelectedNotes(tag: SNTag): Promise<void> {
@@ -429,7 +429,7 @@ export class NotesState {
         mutator.removeItemAsRelationship(note);
       }
     });
-    this.application.sync();
+    this.application.sync.sync();
   }
 
   isTagInSelectedNotes(tag: SNTag): boolean {
@@ -453,7 +453,7 @@ export class NotesState {
       })
     ) {
       this.application.emptyTrash();
-      this.application.sync();
+      this.application.sync.sync();
     }
   }
 

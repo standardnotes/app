@@ -74,7 +74,7 @@ export const Extensions: FunctionComponent<{
 
   const confirmExtension = async () => {
     await application.insertItem(confirmableExtension as SNComponent);
-    application.sync();
+    application.sync.sync();
     setExtensions(loadExtensions(application));
   };
 

@@ -254,7 +254,7 @@ export class Footer extends PureComponent<Props, State> {
 
   updateSyncStatus() {
     const statusManager = this.application.getStatusManager();
-    const syncStatus = this.application.getSyncStatus();
+    const syncStatus = this.application.sync.getSyncStatus();
     const stats = syncStatus.getStats();
     if (syncStatus.hasError()) {
       statusManager.setMessage('Unable to Sync');
@@ -288,7 +288,7 @@ export class Footer extends PureComponent<Props, State> {
 
   updateLocalDataStatus() {
     const statusManager = this.application.getStatusManager();
-    const syncStatus = this.application.getSyncStatus();
+    const syncStatus = this.application.sync.getSyncStatus();
     const stats = syncStatus.getStats();
     const encryption = this.application.isEncryptionAvailable();
     if (stats.localDataDone) {
@@ -310,7 +310,7 @@ export class Footer extends PureComponent<Props, State> {
 
   findErrors() {
     this.setState({
-      hasError: this.application.getSyncStatus().hasError(),
+      hasError: this.application.sync.getSyncStatus().hasError(),
     });
   }
 

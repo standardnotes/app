@@ -381,7 +381,7 @@ export class AppState {
           }
           break;
         case ApplicationEvent.SyncStatusChanged:
-          this.sync.update(this.application.getSyncStatus());
+          this.sync.update(this.application.sync.getSyncStatus());
           break;
       }
     });
