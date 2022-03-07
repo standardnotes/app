@@ -24,23 +24,23 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
   ({ application, appState, setMenuPane, closeMenu }) => {
     const [isSyncingInProgress, setIsSyncingInProgress] = useState(false);
     const [lastSyncDate, setLastSyncDate] = useState(
-      formatLastSyncDate(application.getLastSyncDate() as Date)
+      formatLastSyncDate(application.sync.getLastSyncDate() as Date)
     );
 
     const doSynchronization = async () => {
       setIsSyncingInProgress(true);
 
-      application
+      application.sync
         .sync({
           queueStrategy: SyncQueueStrategy.ForceSpawnNew,
           checkIntegrity: true,
         })
         .then((res) => {
-          if (res && res.error) {
+          if (res && (res as any).error) {
             throw new Error();
           } else {
             setLastSyncDate(
-              formatLastSyncDate(application.getLastSyncDate() as Date)
+              formatLastSyncDate(application.sync.getLastSyncDate() as Date)
             );
           }
         })
