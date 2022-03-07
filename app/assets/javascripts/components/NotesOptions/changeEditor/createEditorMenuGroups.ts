@@ -76,7 +76,7 @@ export const createEditorMenuGroups = (
       name: editor.name,
       component: editor,
       isEntitled:
-        application.getFeatureStatus(editor.identifier) ===
+        application.features.getFeatureStatus(editor.identifier) ===
         FeatureStatus.Entitled,
     };
 

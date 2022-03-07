@@ -12,11 +12,11 @@ import { Action, ListedAccount, SNNote } from '@standardnotes/snjs';
 import { Fragment, FunctionComponent } from 'preact';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { Icon } from '../Icon';
+import { useCloseOnBlur } from '../utils';
 
 type Props = {
   application: WebApplication;
   note: SNNote;
-  closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void;
 };
 
 type ListedMenuGroup = {
@@ -230,8 +230,8 @@ const ListedActionsMenu: FunctionComponent<ListedActionsMenuProps> = ({
 export const ListedActionsOption: FunctionComponent<Props> = ({
   application,
   note,
-  closeOnBlur,
 }) => {
+  const menuContainerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -241,6 +241,8 @@ export const ListedActionsOption: FunctionComponent<Props> = ({
     bottom: 0,
     maxHeight: 'auto',
   });
+
+  const [closeOnBlur] = useCloseOnBlur(menuContainerRef, setIsMenuOpen);
 
   const toggleListedMenu = () => {
     if (!isMenuOpen) {
@@ -273,34 +275,36 @@ export const ListedActionsOption: FunctionComponent<Props> = ({
   }, [isMenuOpen, recalculateMenuStyle]);
 
   return (
-    <Disclosure open={isMenuOpen} onChange={toggleListedMenu}>
-      <DisclosureButton
-        ref={menuButtonRef}
-        onBlur={closeOnBlur}
-        className="sn-dropdown-item justify-between"
-      >
-        <div className="flex items-center">
-          <Icon type="listed" className="color-neutral mr-2" />
-          Listed actions
-        </div>
-        <Icon type="chevron-right" className="color-neutral" />
-      </DisclosureButton>
-      <DisclosurePanel
-        ref={menuRef}
-        style={{
-          ...menuStyle,
-          position: 'fixed',
-        }}
-        className="sn-dropdown flex flex-col max-h-120 min-w-68 pb-1 fixed overflow-y-auto"
-      >
-        {isMenuOpen && (
-          <ListedActionsMenu
-            application={application}
-            note={note}
-            recalculateMenuStyle={recalculateMenuStyle}
-          />
-        )}
-      </DisclosurePanel>
-    </Disclosure>
+    <div ref={menuContainerRef}>
+      <Disclosure open={isMenuOpen} onChange={toggleListedMenu}>
+        <DisclosureButton
+          ref={menuButtonRef}
+          onBlur={closeOnBlur}
+          className="sn-dropdown-item justify-between"
+        >
+          <div className="flex items-center">
+            <Icon type="listed" className="color-neutral mr-2" />
+            Listed actions
+          </div>
+          <Icon type="chevron-right" className="color-neutral" />
+        </DisclosureButton>
+        <DisclosurePanel
+          ref={menuRef}
+          style={{
+            ...menuStyle,
+            position: 'fixed',
+          }}
+          className="sn-dropdown flex flex-col max-h-120 min-w-68 pb-1 fixed overflow-y-auto"
+        >
+          {isMenuOpen && (
+            <ListedActionsMenu
+              application={application}
+              note={note}
+              recalculateMenuStyle={recalculateMenuStyle}
+            />
+          )}
+        </DisclosurePanel>
+      </Disclosure>
+    </div>
   );
 };

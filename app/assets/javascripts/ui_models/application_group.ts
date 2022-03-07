@@ -16,6 +16,7 @@ import { IOService } from '@/services/ioService';
 import { AutolockService } from '@/services/autolock_service';
 import { StatusManager } from '@/services/statusManager';
 import { ThemeManager } from '@/services/themeManager';
+import { InternalEventBus } from '@standardnotes/services';
 
 export class ApplicationGroup extends SNApplicationGroup {
   constructor(
@@ -62,7 +63,10 @@ export class ApplicationGroup extends SNApplicationGroup {
     const io = new IOService(
       platform === Platform.MacWeb || platform === Platform.MacDesktop
     );
-    const autolockService = new AutolockService(application);
+    const autolockService = new AutolockService(
+      application,
+      new InternalEventBus()
+    );
     const statusManager = new StatusManager();
     const themeService = new ThemeManager(application);
     application.setWebServices({

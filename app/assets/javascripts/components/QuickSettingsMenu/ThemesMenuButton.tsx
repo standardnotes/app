@@ -22,12 +22,13 @@ export const ThemesMenuButton: FunctionComponent<Props> = ({
   const premiumModal = usePremiumModal();
 
   const isThirdPartyTheme = useMemo(
-    () => application.isThirdPartyFeature(item.identifier),
+    () => application.features.isThirdPartyFeature(item.identifier),
     [application, item.identifier]
   );
   const isEntitledToTheme = useMemo(
     () =>
-      application.getFeatureStatus(item.identifier) === FeatureStatus.Entitled,
+      application.features.getFeatureStatus(item.identifier) ===
+      FeatureStatus.Entitled,
     [application, item.identifier]
   );
   const canActivateTheme = useMemo(

@@ -6,27 +6,21 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from '@reach/disclosure';
-import {
-  ComponentArea,
-  IconType,
-  SNComponent,
-  SNNote,
-} from '@standardnotes/snjs';
+import { IconType, SNComponent, SNNote } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { Icon } from '../Icon';
-import { createEditorMenuGroups } from './changeEditor/createEditorMenuGroups';
 import { ChangeEditorMenu } from './changeEditor/ChangeEditorMenu';
 import {
   calculateSubmenuStyle,
   SubmenuStyle,
 } from '@/utils/calculateSubmenuStyle';
+import { useCloseOnBlur } from '../utils';
 
 type ChangeEditorOptionProps = {
   appState: AppState;
   application: WebApplication;
   note: SNNote;
-  closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void;
 };
 
 type AccordionMenuGroup<T> = {
@@ -46,111 +40,97 @@ export type EditorMenuGroup = AccordionMenuGroup<EditorMenuItem>;
 
 export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
   application,
-  closeOnBlur,
   note,
 }) => {
-  const [changeEditorMenuOpen, setChangeEditorMenuOpen] = useState(false);
-  const [changeEditorMenuVisible, setChangeEditorMenuVisible] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   const [menuStyle, setMenuStyle] = useState<SubmenuStyle>({
     right: 0,
     bottom: 0,
     maxHeight: 'auto',
   });
-  const changeEditorMenuRef = useRef<HTMLDivElement>(null);
-  const changeEditorButtonRef = useRef<HTMLButtonElement>(null);
-  const [editors] = useState<SNComponent[]>(() =>
-    application.componentManager
-      .componentsForArea(ComponentArea.Editor)
-      .sort((a, b) => {
-        return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
-      })
-  );
-  const [editorMenuGroups, setEditorMenuGroups] = useState<EditorMenuGroup[]>(
-    []
-  );
-  const [selectedEditor, setSelectedEditor] = useState(() =>
-    application.componentManager.editorForNote(note)
-  );
+  const menuContainerRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
-    setEditorMenuGroups(createEditorMenuGroups(application, editors));
-  }, [application, editors]);
-
-  useEffect(() => {
-    setSelectedEditor(application.componentManager.editorForNote(note));
-  }, [application, note]);
+  const [closeOnBlur] = useCloseOnBlur(menuContainerRef, (open: boolean) => {
+    setIsOpen(open);
+    setIsVisible(open);
+  });
 
   const toggleChangeEditorMenu = () => {
-    if (!changeEditorMenuOpen) {
-      const menuStyle = calculateSubmenuStyle(changeEditorButtonRef.current);
+    if (!isOpen) {
+      const menuStyle = calculateSubmenuStyle(buttonRef.current);
       if (menuStyle) {
         setMenuStyle(menuStyle);
       }
     }
 
-    setChangeEditorMenuOpen(!changeEditorMenuOpen);
+    setIsOpen(!isOpen);
   };
 
   useEffect(() => {
-    if (changeEditorMenuOpen) {
+    if (isOpen) {
       setTimeout(() => {
         const newMenuStyle = calculateSubmenuStyle(
-          changeEditorButtonRef.current,
-          changeEditorMenuRef.current
+          buttonRef.current,
+          menuRef.current
         );
 
         if (newMenuStyle) {
           setMenuStyle(newMenuStyle);
-          setChangeEditorMenuVisible(true);
+          setIsVisible(true);
         }
       });
     }
-  }, [changeEditorMenuOpen]);
+  }, [isOpen]);
 
   return (
-    <Disclosure open={changeEditorMenuOpen} onChange={toggleChangeEditorMenu}>
-      <DisclosureButton
-        onKeyDown={(event) => {
-          if (event.key === KeyboardKey.Escape) {
-            setChangeEditorMenuOpen(false);
-          }
-        }}
-        onBlur={closeOnBlur}
-        ref={changeEditorButtonRef}
-        className="sn-dropdown-item justify-between"
-      >
-        <div className="flex items-center">
-          <Icon type="dashboard" className="color-neutral mr-2" />
-          Change editor
-        </div>
-        <Icon type="chevron-right" className="color-neutral" />
-      </DisclosureButton>
-      <DisclosurePanel
-        ref={changeEditorMenuRef}
-        onKeyDown={(event) => {
-          if (event.key === KeyboardKey.Escape) {
-            setChangeEditorMenuOpen(false);
-            changeEditorButtonRef.current?.focus();
-          }
-        }}
-        style={{
-          ...menuStyle,
-          position: 'fixed',
-        }}
-        className="sn-dropdown flex flex-col max-h-120 min-w-68 fixed overflow-y-auto"
-      >
-        {changeEditorMenuOpen && (
-          <ChangeEditorMenu
-            application={application}
-            closeOnBlur={closeOnBlur}
-            currentEditor={selectedEditor}
-            setSelectedEditor={setSelectedEditor}
-            note={note}
-            groups={editorMenuGroups}
-            isOpen={changeEditorMenuVisible}
-          />
-        )}
-      </DisclosurePanel>
-    </Disclosure>
+    <div ref={menuContainerRef}>
+      <Disclosure open={isOpen} onChange={toggleChangeEditorMenu}>
+        <DisclosureButton
+          onKeyDown={(event) => {
+            if (event.key === KeyboardKey.Escape) {
+              setIsOpen(false);
+            }
+          }}
+          onBlur={closeOnBlur}
+          ref={buttonRef}
+          className="sn-dropdown-item justify-between"
+        >
+          <div className="flex items-center">
+            <Icon type="dashboard" className="color-neutral mr-2" />
+            Change editor
+          </div>
+          <Icon type="chevron-right" className="color-neutral" />
+        </DisclosureButton>
+        <DisclosurePanel
+          ref={menuRef}
+          onKeyDown={(event) => {
+            if (event.key === KeyboardKey.Escape) {
+              setIsOpen(false);
+              buttonRef.current?.focus();
+            }
+          }}
+          style={{
+            ...menuStyle,
+            position: 'fixed',
+          }}
+          className="sn-dropdown flex flex-col max-h-120 min-w-68 fixed overflow-y-auto"
+        >
+          {isOpen && (
+            <ChangeEditorMenu
+              application={application}
+              closeOnBlur={closeOnBlur}
+              note={note}
+              isVisible={isVisible}
+              closeMenu={() => {
+                setIsOpen(false);
+              }}
+            />
+          )}
+        </DisclosurePanel>
+      </Disclosure>
+    </div>
   );
 };

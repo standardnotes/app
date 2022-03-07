@@ -2,29 +2,20 @@ import { AppState } from '@/ui_models/app_state';
 import { Icon } from '../Icon';
 import { Switch } from '../Switch';
 import { observer } from 'mobx-react-lite';
-import { useRef, useState, useEffect, useMemo } from 'preact/hooks';
-import {
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
-} from '@reach/disclosure';
+import { useState, useEffect, useMemo } from 'preact/hooks';
 import { SNApplication, SNNote } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { KeyboardModifier } from '@/services/ioService';
 import { FunctionComponent } from 'preact';
 import { ChangeEditorOption } from './ChangeEditorOption';
-import {
-  MENU_MARGIN_FROM_APP_BORDER,
-  MAX_MENU_SIZE_MULTIPLIER,
-  BYTES_IN_ONE_MEGABYTE,
-} from '@/constants';
+import { BYTES_IN_ONE_MEGABYTE } from '@/constants';
 import { ListedActionsOption } from './ListedActionsOption';
+import { AddTagOption } from './AddTagOption';
 
 export type NotesOptionsProps = {
   application: WebApplication;
   appState: AppState;
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void;
-  onSubmenuChange?: (submenuOpen: boolean) => void;
 };
 
 type DeletePermanentlyButtonProps = {
@@ -206,24 +197,7 @@ const NoteSizeWarning: FunctionComponent<{
   ) : null;
 
 export const NotesOptions = observer(
-  ({
-    application,
-    appState,
-    closeOnBlur,
-    onSubmenuChange,
-  }: NotesOptionsProps) => {
-    const [tagsMenuOpen, setTagsMenuOpen] = useState(false);
-    const [tagsMenuPosition, setTagsMenuPosition] = useState<{
-      top: number;
-      right?: number;
-      left?: number;
-    }>({
-      top: 0,
-      right: 0,
-    });
-    const [tagsMenuMaxHeight, setTagsMenuMaxHeight] = useState<number | 'auto'>(
-      'auto'
-    );
+  ({ application, appState, closeOnBlur }: NotesOptionsProps) => {
     const [altKeyDown, setAltKeyDown] = useState(false);
 
     const toggleOn = (condition: (note: SNNote) => boolean) => {
@@ -246,14 +220,6 @@ export const NotesOptions = observer(
     const unpinned = notes.some((note) => !note.pinned);
     const errored = notes.some((note) => note.errorDecrypting);
 
-    const tagsButtonRef = useRef<HTMLButtonElement>(null);
-
-    useEffect(() => {
-      if (onSubmenuChange) {
-        onSubmenuChange(tagsMenuOpen);
-      }
-    }, [tagsMenuOpen, onSubmenuChange]);
-
     useEffect(() => {
       const removeAltKeyObserver = application.io.addKeyObserver({
         modifiers: [KeyboardModifier.Alt],
@@ -269,48 +235,6 @@ export const NotesOptions = observer(
         removeAltKeyObserver();
       };
     }, [application]);
-
-    const openTagsMenu = () => {
-      const defaultFontSize = window.getComputedStyle(
-        document.documentElement
-      ).fontSize;
-      const maxTagsMenuSize =
-        parseFloat(defaultFontSize) * MAX_MENU_SIZE_MULTIPLIER;
-      const { clientWidth, clientHeight } = document.documentElement;
-      const buttonRect = tagsButtonRef.current?.getBoundingClientRect();
-      const footerElementRect = document
-        .getElementById('footer-bar')
-        ?.getBoundingClientRect();
-      const footerHeightInPx = footerElementRect?.height;
-
-      if (buttonRect && footerHeightInPx) {
-        if (
-          buttonRect.top + maxTagsMenuSize >
-          clientHeight - footerHeightInPx
-        ) {
-          setTagsMenuMaxHeight(
-            clientHeight -
-              buttonRect.top -
-              footerHeightInPx -
-              MENU_MARGIN_FROM_APP_BORDER
-          );
-        }
-
-        if (buttonRect.right + maxTagsMenuSize > clientWidth) {
-          setTagsMenuPosition({
-            top: buttonRect.top,
-            right: clientWidth - buttonRect.left,
-          });
-        } else {
-          setTagsMenuPosition({
-            top: buttonRect.top,
-            left: buttonRect.right,
-          });
-        }
-      }
-
-      setTagsMenuOpen(!tagsMenuOpen);
-    };
 
     const downloadSelectedItems = () => {
       notes.forEach((note) => {
@@ -416,70 +340,12 @@ export const NotesOptions = observer(
             <ChangeEditorOption
               appState={appState}
               application={application}
-              closeOnBlur={closeOnBlur}
               note={notes[0]}
             />
           </>
         )}
         <div className="min-h-1px my-2 bg-border"></div>
-        {appState.tags.tagsCount > 0 && (
-          <Disclosure open={tagsMenuOpen} onChange={openTagsMenu}>
-            <DisclosureButton
-              onKeyDown={(event) => {
-                if (event.key === 'Escape') {
-                  setTagsMenuOpen(false);
-                }
-              }}
-              onBlur={closeOnBlur}
-              ref={tagsButtonRef}
-              className="sn-dropdown-item justify-between"
-            >
-              <div className="flex items-center">
-                <Icon type="hashtag" className={iconClass} />
-                {'Add tag'}
-              </div>
-              <Icon type="chevron-right" className="color-neutral" />
-            </DisclosureButton>
-            <DisclosurePanel
-              onKeyDown={(event) => {
-                if (event.key === 'Escape') {
-                  setTagsMenuOpen(false);
-                  tagsButtonRef.current?.focus();
-                }
-              }}
-              style={{
-                ...tagsMenuPosition,
-                maxHeight: tagsMenuMaxHeight,
-                position: 'fixed',
-              }}
-              className="sn-dropdown min-w-80 flex flex-col py-2 max-h-120 max-w-xs fixed overflow-y-auto"
-            >
-              {appState.tags.tags.map((tag) => (
-                <button
-                  key={tag.title}
-                  className="sn-dropdown-item sn-dropdown-item--no-icon max-w-80"
-                  onBlur={closeOnBlur}
-                  onClick={() => {
-                    appState.notes.isTagInSelectedNotes(tag)
-                      ? appState.notes.removeTagFromSelectedNotes(tag)
-                      : appState.notes.addTagToSelectedNotes(tag);
-                  }}
-                >
-                  <span
-                    className={`whitespace-nowrap overflow-hidden overflow-ellipsis
-                      ${
-                        appState.notes.isTagInSelectedNotes(tag)
-                          ? 'font-bold'
-                          : ''
-                      }`}
-                  >
-                    {appState.noteTags.getLongTitle(tag)}
-                  </span>
-                </button>
-              ))}
-            </DisclosurePanel>
-          </Disclosure>
-        )}
+        {appState.tags.tagsCount > 0 && <AddTagOption appState={appState} />}
         {unpinned && (
           <button
             onBlur={closeOnBlur}
@@ -604,11 +470,7 @@ export const NotesOptions = observer(
         {notes.length === 1 ? (
           <>
             <div className="min-h-1px my-2 bg-border"></div>
-            <ListedActionsOption
-              application={application}
-              closeOnBlur={closeOnBlur}
-              note={notes[0]}
-            />
+            <ListedActionsOption application={application} note={notes[0]} />
             <div className="min-h-1px my-2 bg-border"></div>
             <SpellcheckOptions appState={appState} note={notes[0]} />
             <div className="min-h-1px my-2 bg-border"></div>
