@@ -107,7 +107,6 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
       } else {
         result = await application.protections.protectFile(file);
       }
-      application.sync.sync();
       const isProtected = result ? result.protected : file.protected;
       return isProtected;
     };
@@ -129,7 +128,6 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
     const renameFile = async (file: SNFile, fileName: string) => {
       const { name, ext } = parseFileName(fileName);
       await application.items.renameFile(file, name, ext);
-      application.sync.sync();
     };
 
     const handleFileAction = async (action: PopoverFileItemAction) => {
@@ -175,6 +173,8 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
           renameFile(file, action.payload.name);
           break;
       }
+
+      application.sync.sync();
       reloadAttachedFiles();
       reloadAllFiles();
     };
