@@ -223,6 +223,11 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
                   selectEditor(item);
                 };
 
+                /** Hide experimental editor if not enabled. */
+                if (item.isExperimental && !item.isExperimentalEnabled) {
+                  return;
+                }
+
                 return (
                   <MenuItem
                     type={MenuItemType.RadioButton}
