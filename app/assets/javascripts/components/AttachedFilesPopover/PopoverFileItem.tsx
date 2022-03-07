@@ -284,9 +284,7 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
   isAttachedToNote,
   handleFileAction,
 }) => {
-  const [fileName, setFileName] = useState(
-    `${file.name}${file.ext.length > 0 ? `.${file.ext}` : ''}`
-  );
+  const [fileName, setFileName] = useState(file.nameWithExt);
   const [isRenamingFile, setIsRenamingFile] = useState(false);
   const fileNameInputRef = useRef<HTMLInputElement>(null);
 
@@ -325,7 +323,7 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
   return (
     <div className="flex items-center justify-between p-3">
       <div className="flex items-center">
-        {getIconForFileType(file.ext)}
+        {getIconForFileType(file.ext ?? '')}
         <div className="flex flex-col mx-4">
           {isRenamingFile ? (
             <input
