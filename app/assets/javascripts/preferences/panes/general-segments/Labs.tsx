@@ -51,14 +51,7 @@ export const LabsPane: FunctionComponent<Props> = ({ application }) => {
             );
 
           const toggleFeature = () => {
-            /** TODO: move this into Features service -> toggleExperimentalFeature(identifier: FeatureIdentifier) */
-            if (isFeatureEnabled) {
-              application.features.disableExperimentalFeature(
-                featureIdentifier
-              );
-            } else {
-              application.features.enableExperimentalFeature(featureIdentifier);
-            }
+            application.features.toggleExperimentalFeature(featureIdentifier);
             reloadExperimentalFeatures();
           };
 
