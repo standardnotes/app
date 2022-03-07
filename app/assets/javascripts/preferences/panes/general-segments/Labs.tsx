@@ -1,3 +1,4 @@
+import { FindNativeFeature } from '@standardnotes/features';
 import { Switch } from '@/components/Switch';
 import {
   PreferencesGroup,
@@ -5,9 +6,10 @@ import {
   Title,
 } from '@/preferences/components';
 import { WebApplication } from '@/ui_models/application';
-import { FeatureIdentifier } from '@standardnotes/snjs';
+import { FeatureIdentifier, FeatureStatus } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
 import { useCallback, useEffect, useState } from 'preact/hooks';
+import { usePremiumModal } from '@/components/Premium';
 
 type Props = {
   application: WebApplication;
@@ -31,6 +33,8 @@ export const LabsPane: FunctionComponent<Props> = ({ application }) => {
     reloadExperimentalFeatures();
   }, [reloadExperimentalFeatures]);
 
+  const premiumModal = usePremiumModal();
+
   if (!experimentalFeatures) {
     return (
       <div className="flex items-center justify-between">
@@ -44,22 +48,29 @@ export const LabsPane: FunctionComponent<Props> = ({ application }) => {
       <PreferencesSegment>
         <Title>Labs</Title>
         {experimentalFeatures?.map((featureIdentifier: FeatureIdentifier) => {
-          const feature = application.features.getFeature(featureIdentifier);
+          const featureName =
+            FindNativeFeature(featureIdentifier)?.name ?? featureIdentifier;
           const isFeatureEnabled =
             application.features.isExperimentalFeatureEnabled(
               featureIdentifier
             );
 
           const toggleFeature = () => {
+            const isEntitled =
+              application.features.getFeatureStatus(featureIdentifier) ===
+              FeatureStatus.Entitled;
+            if (!isEntitled) {
+              premiumModal.activate(featureName);
+              return;
+            }
+
             application.features.toggleExperimentalFeature(featureIdentifier);
             reloadExperimentalFeatures();
           };
 
           return (
             <div className="flex items-center justify-between">
-              <div className="font-medium text-sm m-0">
-                {feature?.name ?? featureIdentifier}
-              </div>
+              <div className="font-medium text-sm m-0">{featureName}</div>
               <Switch onChange={toggleFeature} checked={isFeatureEnabled} />
             </div>
           );
