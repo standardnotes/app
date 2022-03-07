@@ -49,6 +49,10 @@ export class FilesState {
 
       if (isUsingStreamingSaver) {
         await saver.finish();
+        addToast({
+          type: ToastType.Success,
+          message: 'Successfully downloaded file',
+        });
       }
     } catch (error) {
       console.error(error);
