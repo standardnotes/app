@@ -71,7 +71,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
 
     const deleteFile = async (file: SNFile) => {
       const shouldDelete = await confirmDialog({
-        text: `Do you really want to delete the file "${file.nameWithExt}"?`,
+        text: `Are you sure you want to permanently delete "${file.nameWithExt}"?`,
         confirmButtonStyle: 'danger',
       });
       if (shouldDelete) {
