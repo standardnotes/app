@@ -7,70 +7,70 @@ import {
 import { WebApplication } from '@/ui_models/application';
 import { FeatureIdentifier } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
-import { useCallback, useEffect, useMemo, useState } from 'preact/hooks';
+import { useCallback, useEffect, useState } from 'preact/hooks';
 
 type Props = {
   application: WebApplication;
 };
 
-/** @TODO Remove after adding in snjs */
-const storageKey = 'enabled_lab_features';
-
 export const LabsPane: FunctionComponent<Props> = ({ application }) => {
-  const [enabledLabFeatures, setEnabledLabFeatures] =
+  const [experimentalFeatures, setExperimentalFeatures] =
     useState<FeatureIdentifier[]>();
 
-  const reloadEnabledFeatures = useCallback(async () => {
-    const rawStorageValue =
-      await application.deviceInterface.getRawStorageValue(storageKey);
-    if (rawStorageValue) {
-      const parsedEnabledLabFeatures: FeatureIdentifier[] =
-        JSON.parse(rawStorageValue);
-      setEnabledLabFeatures(parsedEnabledLabFeatures);
-    }
-  }, [application.deviceInterface]);
+  const reloadExperimentalFeatures = useCallback(() => {
+    const experimentalFeatures = application.features.getExperimentalFeatures();
+
+    setExperimentalFeatures(
+      experimentalFeatures.filter(
+        (feature) => feature !== FeatureIdentifier.AccountSwitcher
+      )
+    );
+  }, [application.features]);
 
   useEffect(() => {
-    reloadEnabledFeatures();
-  }, [reloadEnabledFeatures]);
+    reloadExperimentalFeatures();
+  }, [reloadExperimentalFeatures]);
 
-  const isAccountSwitcherEnabled = useMemo(() => {
-    return enabledLabFeatures?.includes(FeatureIdentifier.AccountSwitcher);
-  }, [enabledLabFeatures]);
-
-  const toggleAccountSwitcher = () => {
-    const currentFeatures = enabledLabFeatures ? enabledLabFeatures : [];
-
-    if (isAccountSwitcherEnabled) {
-      application.deviceInterface.setRawStorageValue(
-        storageKey,
-        JSON.stringify(
-          currentFeatures.filter(
-            (feature) => feature !== FeatureIdentifier.AccountSwitcher
-          )
-        )
-      );
-    } else {
-      application.deviceInterface.setRawStorageValue(
-        storageKey,
-        JSON.stringify([...currentFeatures, FeatureIdentifier.AccountSwitcher])
-      );
-    }
-
-    reloadEnabledFeatures();
-  };
+  if (!experimentalFeatures) {
+    return (
+      <div className="flex items-center justify-between">
+        No experimental features available.
+      </div>
+    );
+  }
 
   return (
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Labs</Title>
-        <div className="flex items-center justify-between">
-          <div className="font-medium text-sm m-0">Account Switcher</div>
-          <Switch
-            onChange={toggleAccountSwitcher}
-            checked={isAccountSwitcherEnabled}
-          />
-        </div>
+        {experimentalFeatures?.map((featureIdentifier: FeatureIdentifier) => {
+          const feature = application.features.getFeature(featureIdentifier);
+          const isFeatureEnabled =
+            application.features.isExperimentalFeatureEnabled(
+              featureIdentifier
+            );
+
+          const toggleFeature = () => {
+            /** TODO: move this into Features service -> toggleExperimentalFeature(identifier: FeatureIdentifier) */
+            if (isFeatureEnabled) {
+              application.features.disableExperimentalFeature(
+                featureIdentifier
+              );
+            } else {
+              application.features.enableExperimentalFeature(featureIdentifier);
+            }
+            reloadExperimentalFeatures();
+          };
+
+          return (
+            <div className="flex items-center justify-between">
+              <div className="font-medium text-sm m-0">
+                {feature?.name ?? featureIdentifier}
+              </div>
+              <Switch onChange={toggleFeature} checked={isFeatureEnabled} />
+            </div>
+          );
+        })}
       </PreferencesSegment>
     </PreferencesGroup>
   );
