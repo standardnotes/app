@@ -2347,6 +2347,11 @@
     "@standardnotes/auth" "^3.17.3"
     "@standardnotes/common" "^1.15.3"
 
+"@standardnotes/filepicker@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/filepicker/-/filepicker-1.4.0.tgz#4ea3f7ffde44b0be9f160ab3f9bdf4558172c80d"
+  integrity sha512-h8IwzzzSFT3oM3FZLQgA74+wkpTCn0gdfKA0eAPUeJTRXsXApE2A/6x2IMmu6Rln6o9M4CSYasR0PFWeZjqVqw==
+
 "@standardnotes/payloads@^1.4.1":
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/@standardnotes/payloads/-/payloads-1.4.1.tgz#5da68ecc55920080223518c5d5d186380d1a43ca"
@@ -2376,11 +2381,6 @@
     "@standardnotes/common" "^1.15.3"
     "@standardnotes/responses" "^1.3.0"
     "@standardnotes/utils" "^1.2.3"
-
-"@standardnotes/settings@^1.12.0":
-  version "1.12.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/settings/-/settings-1.12.0.tgz#43f3dd7f015f726b1ed88a48fcc3737899116cd5"
-  integrity sha512-w6S5TT7KRpvUb+JsXZ7ucWPjlWRtpKQdsyT7cLs66ynKRXxUn40hf4kA8T9FhuLAKbG+wIYDrAZl3FRk+HvDWQ==
 
 "@standardnotes/settings@^1.12.0":
   version "1.12.0"
