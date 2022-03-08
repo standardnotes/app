@@ -48,7 +48,6 @@ export class WebApplication extends SNApplication {
     platform: Platform,
     identifier: string,
     defaultSyncServerHost: string,
-    defaultFilesHostHost: string,
     public bridge: Bridge,
     webSocketUrl: string,
     runtime: Runtime
@@ -61,7 +60,6 @@ export class WebApplication extends SNApplication {
       alertService: new AlertService(),
       identifier,
       defaultHost: defaultSyncServerHost,
-      defaultFilesHost: defaultFilesHostHost,
       appVersion: bridge.appVersion,
       webSocketUrl: webSocketUrl,
       runtime,

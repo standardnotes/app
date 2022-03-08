@@ -4,7 +4,6 @@ declare global {
   interface Window {
     bugsnagApiKey?: string;
     dashboardUrl?: string;
-    defaultFilesHost: string;
     defaultSyncServer: string;
     devAccountEmail?: string;
     devAccountPassword?: string;
@@ -30,7 +29,6 @@ import { isDev } from './utils';
 
 const startApplication: StartApplication = async function startApplication(
   defaultSyncServerHost: string,
-  defaultFilesHostHost: string,
   bridge: Bridge,
   enableUnfinishedFeatures: boolean,
   webSocketUrl: string
@@ -40,7 +38,6 @@ const startApplication: StartApplication = async function startApplication(
 
   const mainApplicationGroup = new ApplicationGroup(
     defaultSyncServerHost,
-    defaultFilesHostHost,
     bridge,
     enableUnfinishedFeatures ? Runtime.Dev : Runtime.Prod,
     webSocketUrl
@@ -75,7 +72,6 @@ const startApplication: StartApplication = async function startApplication(
 if (IsWebPlatform) {
   startApplication(
     window.defaultSyncServer,
-    window.defaultFilesHost,
     new BrowserBridge(WebAppVersion),
     window.enabledUnfinishedFeatures,
     window.websocketUrl
