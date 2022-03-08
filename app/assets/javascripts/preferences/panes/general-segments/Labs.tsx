@@ -21,12 +21,7 @@ export const LabsPane: FunctionComponent<Props> = ({ application }) => {
 
   const reloadExperimentalFeatures = useCallback(() => {
     const experimentalFeatures = application.features.getExperimentalFeatures();
-
-    setExperimentalFeatures(
-      experimentalFeatures.filter(
-        (feature) => feature !== FeatureIdentifier.AccountSwitcher
-      )
-    );
+    setExperimentalFeatures(experimentalFeatures);
   }, [application.features]);
 
   useEffect(() => {
