@@ -181,7 +181,7 @@ export class NoteTagsState {
 
     if (activeNote) {
       await this.application.addTagHierarchyToNote(activeNote, tag);
-      this.application.sync();
+      this.application.sync.sync();
       this.reloadTags();
     }
   }
@@ -192,7 +192,7 @@ export class NoteTagsState {
       await this.application.changeItem(tag.uuid, (mutator) => {
         mutator.removeItemAsRelationship(activeNote);
       });
-      this.application.sync();
+      this.application.sync.sync();
       this.reloadTags();
     }
   }

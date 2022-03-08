@@ -41,6 +41,8 @@ export const createEditorMenuGroups = (
       {
         name: PLAIN_EDITOR_NAME,
         isEntitled: true,
+        isExperimental: false,
+        isExperimentalEnabled: false,
       },
     ],
     'rich-text': [],
@@ -67,6 +69,13 @@ export const createEditorMenuGroups = (
         editorItems[getEditorGroup(editorFeature)].push({
           name: editorFeature.name as string,
           isEntitled: false,
+          isExperimental: application.features.isExperimentalFeature(
+            editorFeature.identifier
+          ),
+          isExperimentalEnabled:
+            application.features.isExperimentalFeatureEnabled(
+              editorFeature.identifier
+            ),
         });
       }
     });
@@ -78,6 +87,12 @@ export const createEditorMenuGroups = (
       isEntitled:
         application.features.getFeatureStatus(editor.identifier) ===
         FeatureStatus.Entitled,
+      isExperimental: application.features.isExperimentalFeature(
+        editor.identifier
+      ),
+      isExperimentalEnabled: application.features.isExperimentalFeatureEnabled(
+        editor.identifier
+      ),
     };
 
     editorItems[getEditorGroup(editor.package_info)].push(editorItem);
