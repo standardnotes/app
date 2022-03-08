@@ -77,13 +77,14 @@
     .search-options {
       margin-top: 10px;
 
-      align-self: center;
-      display: flex;
-      flex-direction: row;
-      align-items: baseline;
-      gap: 0.5rem;
+      display: grid;
+      grid-template-columns: repeat( 3, 1fr );
+      gap: 0.875rem;
+
       font-size: var(--sn-stylekit-font-size-p);
       white-space: nowrap;
+
+      overflow-x: auto;
     }
 
     #search-clear-button {
