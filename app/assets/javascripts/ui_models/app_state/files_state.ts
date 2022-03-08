@@ -69,43 +69,45 @@ export class FilesState {
   }
 
   public async uploadNewFile() {
-    const operation = await this.application.files.beginNewFileUpload();
-    const minimumChunkSize = this.application.files.minimumChunkSize();
-
-    const onChunk = async (
-      chunk: Uint8Array,
-      index: number,
-      isLast: boolean
-    ) => {
-      await this.application.files.pushBytesForUpload(
-        operation,
-        chunk,
-        index,
-        isLast
-      );
-    };
-
-    const picker = StreamingFileReader.available()
-      ? new StreamingFileReader(minimumChunkSize, onChunk)
-      : new ClassicFileReader(minimumChunkSize, onChunk);
-
-    const selectedFile = await picker.selectFile();
-
-    const uploadingToastId = addToast({
-      type: ToastType.Loading,
-      message: `Uploading file "${selectedFile.name}"...`,
-    });
-
-    const fileResult = await picker.beginReadingFile();
+    let toastId = '';
 
     try {
+      const operation = await this.application.files.beginNewFileUpload();
+      const minimumChunkSize = this.application.files.minimumChunkSize();
+
+      const onChunk = async (
+        chunk: Uint8Array,
+        index: number,
+        isLast: boolean
+      ) => {
+        await this.application.files.pushBytesForUpload(
+          operation,
+          chunk,
+          index,
+          isLast
+        );
+      };
+
+      const picker = StreamingFileReader.available()
+        ? new StreamingFileReader(minimumChunkSize, onChunk)
+        : new ClassicFileReader(minimumChunkSize, onChunk);
+
+      const selectedFile = await picker.selectFile();
+
+      toastId = addToast({
+        type: ToastType.Loading,
+        message: `Uploading file "${selectedFile.name}"...`,
+      });
+
+      const fileResult = await picker.beginReadingFile();
+
       const uploadedFile = await this.application.files.finishUpload(
         operation,
         fileResult.name,
         fileResult.ext
       );
 
-      dismissToast(uploadingToastId);
+      dismissToast(toastId);
       addToast({
         type: ToastType.Success,
         message: `Uploaded file "${uploadedFile.nameWithExt}"`,
@@ -115,10 +117,12 @@ export class FilesState {
     } catch (error) {
       console.error(error);
 
-      dismissToast(uploadingToastId);
+      if (toastId.length > 0) {
+        dismissToast(toastId);
+      }
       addToast({
         type: ToastType.Error,
-        message: (error as Error).message ?? (error as Error).toString(),
+        message: 'There was an error uploading the file.',
       });
     }
   }
