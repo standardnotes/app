@@ -34,9 +34,17 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
     const [currentTab, setCurrentTab] = useState(Tabs.AttachedFiles);
     const [attachedFiles, setAttachedFiles] = useState<SNFile[]>([]);
     const [allFiles, setAllFiles] = useState<SNFile[]>([]);
+    const [searchQuery, setSearchQuery] = useState('');
 
-    const currentListOfFiles =
+    const filesList =
       currentTab === Tabs.AttachedFiles ? attachedFiles : allFiles;
+
+    const filteredList =
+      searchQuery.length > 0
+        ? filesList.filter(
+            (file) => file.nameWithExt.toLowerCase().indexOf(searchQuery) !== -1
+          )
+        : filesList;
 
     const reloadAttachedFiles = useCallback(() => {
       setAttachedFiles(
@@ -114,19 +122,45 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
           </button>
         </div>
         <div className="min-h-0 max-h-110 overflow-y-auto">
-          {currentListOfFiles.length > 0 ? (
-            <>
-              {currentListOfFiles.map((file: SNFile) => {
-                return (
-                  <PopoverFileItem
-                    key={file.uuid}
-                    file={file}
-                    isAttachedToNote={attachedFiles.includes(file)}
-                    handleFileAction={handleFileAction}
-                  />
-                );
-              })}
-            </>
+          {filteredList.length > 0 || searchQuery.length > 0 ? (
+            <div className="sticky top-0 left-0 p-3 bg-default border-0 border-b-1 border-solid border-main">
+              <div className="relative">
+                <input
+                  type="text"
+                  className="w-full rounded py-1.5 px-3 text-input bg-default border-solid border-1 border-main"
+                  placeholder="Search files..."
+                  value={searchQuery}
+                  onInput={(e) => {
+                    setSearchQuery((e.target as HTMLInputElement).value);
+                  }}
+                />
+                {searchQuery.length > 0 && (
+                  <button
+                    className="flex absolute right-2 p-0 bg-transparent border-0 top-1/2 -translate-y-1/2 cursor-pointer"
+                    onClick={() => {
+                      setSearchQuery('');
+                    }}
+                  >
+                    <Icon
+                      type="clear-circle-filled"
+                      className="color-neutral"
+                    />
+                  </button>
+                )}
+              </div>
+            </div>
+          ) : null}
+          {filteredList.length > 0 ? (
+            filteredList.map((file: SNFile) => {
+              return (
+                <PopoverFileItem
+                  key={file.uuid}
+                  file={file}
+                  isAttachedToNote={attachedFiles.includes(file)}
+                  handleFileAction={handleFileAction}
+                />
+              );
+            })
           ) : (
             <div className="flex flex-col items-center justify-center w-full py-8">
               <div className="w-18 h-18 mb-2">
@@ -138,7 +172,9 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
                 />
               </div>
               <div className="text-sm font-medium mb-3">
-                {currentTab === Tabs.AttachedFiles
+                {searchQuery.length > 0
+                  ? "Couldn't find the files you searched..."
+                  : currentTab === Tabs.AttachedFiles
                   ? 'No files attached to this note'
                   : 'No files found in this account'}
               </div>
@@ -148,9 +184,9 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
             </div>
           )}
         </div>
-        {currentListOfFiles.length > 0 && (
+        {filteredList.length > 0 && (
           <button
-            className="sn-dropdown-item py-3 border-0 border-t-1px border-solid border-main"
+            className="sn-dropdown-item py-3 border-0 border-t-1px border-solid border-main focus:bg-info-backdrop"
             onClick={handleAttachFilesClick}
           >
             <Icon type="add" className="mr-2 color-neutral" />
