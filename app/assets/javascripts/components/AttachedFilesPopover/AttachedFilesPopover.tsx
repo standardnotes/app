@@ -1,11 +1,7 @@
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import { ContentType, SNFile, SNNote } from '@standardnotes/snjs';
-import {
-  addToast,
-  FilesIllustration,
-  ToastType,
-} from '@standardnotes/stylekit';
+import { FilesIllustration } from '@standardnotes/stylekit';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useCallback, useEffect, useState } from 'preact/hooks';
@@ -54,10 +50,6 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
       );
     }, [application.items, note]);
 
-    useEffect(() => {
-      reloadAttachedFiles();
-    }, [reloadAttachedFiles]);
-
     const reloadAllFiles = useCallback(() => {
       setAllFiles(
         application
@@ -67,13 +59,21 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
     }, [application]);
 
     useEffect(() => {
-      reloadAllFiles();
-    }, [reloadAllFiles]);
+      const unregisterFileStream = application.streamItems(
+        ContentType.File,
+        () => {
+          reloadAttachedFiles();
+          reloadAllFiles();
+        }
+      );
+
+      return () => {
+        unregisterFileStream();
+      };
+    }, [application, reloadAllFiles, reloadAttachedFiles]);
 
     const handleFileAction = async (action: PopoverFileItemAction) => {
       await fileActionHandler(action);
-      reloadAttachedFiles();
-      reloadAllFiles();
     };
 
     const handleAttachFilesClick = async () => {
@@ -87,8 +87,6 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
           payload: uploadedFile,
         });
       }
-      reloadAttachedFiles();
-      reloadAllFiles();
     };
 
     return (
