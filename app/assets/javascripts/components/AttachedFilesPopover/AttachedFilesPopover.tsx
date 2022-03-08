@@ -79,10 +79,6 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
     const handleAttachFilesClick = async () => {
       const uploadedFile = await appState.files.uploadNewFile();
       if (!uploadedFile) {
-        addToast({
-          type: ToastType.Error,
-          message: 'Could not upload file',
-        });
         return;
       }
       if (currentTab === Tabs.AttachedFiles) {
@@ -91,6 +87,8 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
           payload: uploadedFile,
         });
       }
+      reloadAttachedFiles();
+      reloadAllFiles();
     };
 
     return (
