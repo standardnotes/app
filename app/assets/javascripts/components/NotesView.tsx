@@ -48,13 +48,13 @@ export const NotesView: FunctionComponent<Props> = observer(
       selectPreviousNote,
       onFilterEnter,
       handleFilterTextChanged,
-      onSearchInputBlur,
       clearFilterText,
       paginate,
       panelWidth,
     } = appState.notesView;
 
     const [showDisplayOptionsMenu, setShowDisplayOptionsMenu] = useState(false);
+    const [focusedSearch, setFocusedSearch] = useState(false);
 
     const [closeDisplayOptMenuOnBlur] = useCloseOnBlur(
       displayOptionsMenuRef,
@@ -130,6 +130,9 @@ export const NotesView: FunctionComponent<Props> = observer(
       setNoteFilterText((e.target as HTMLInputElement).value);
     };
 
+    const onSearchFocused = () => setFocusedSearch(true);
+    const onSearchBlurred = () => setFocusedSearch(false);
+
     const onNoteFilterKeyUp = (e: KeyboardEvent) => {
       if (e.key === KeyboardKey.Enter) {
         onFilterEnter();
@@ -179,32 +182,38 @@ export const NotesView: FunctionComponent<Props> = observer(
                 </button>
               </div>
               <div className="filter-section" role="search">
-                <input
-                  type="text"
-                  id="search-bar"
-                  className="filter-bar"
-                  placeholder="Search"
-                  title="Searches notes in the currently selected tag"
-                  value={noteFilterText}
-                  onChange={onNoteFilterTextChange}
-                  onKeyUp={onNoteFilterKeyUp}
-                  onBlur={() => onSearchInputBlur()}
-                />
-                {noteFilterText ? (
-                  <button
-                    onClick={clearFilterText}
-                    aria-role="button"
-                    id="search-clear-button"
-                  >
-                    ✕
-                  </button>
-                ) : null}
-                <div className="ml-2">
-                  <SearchOptions
-                    application={application}
-                    appState={appState}
+                <div>
+                  <input
+                    type="text"
+                    id="search-bar"
+                    className="filter-bar"
+                    placeholder="Search"
+                    title="Searches notes in the currently selected tag"
+                    value={noteFilterText}
+                    onChange={onNoteFilterTextChange}
+                    onKeyUp={onNoteFilterKeyUp}
+                    onFocus={onSearchFocused}
+                    onBlur={onSearchBlurred}
                   />
+                  {noteFilterText && (
+                    <button
+                      onClick={clearFilterText}
+                      aria-role="button"
+                      id="search-clear-button"
+                    >
+                      ✕
+                    </button>
+                  )}
                 </div>
+
+                {(focusedSearch || noteFilterText) && (
+                  <div className="animate-fade-from-top">
+                    <SearchOptions
+                      application={application}
+                      appState={appState}
+                    />
+                  </div>
+                )}
               </div>
               <NoAccountWarning appState={appState} />
             </div>
