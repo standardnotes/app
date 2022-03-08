@@ -52,11 +52,11 @@
 
   .filter-section {
     clear: left;
-    height: 28px;
-    margin-top: 14px;
+    max-height: 80px;
+    margin-top: 10px;
     position: relative;
     display: flex;
-    align-items: center;
+    flex-direction: column;
 
     .filter-bar {
       background-color: var(--sn-stylekit-contrast-background-color);
@@ -71,6 +71,20 @@
       border-color: transparent;
       width: 100%;
       position: relative;
+      height: 28px;
+    }
+
+    .search-options {
+      margin-top: 10px;
+
+      display: grid;
+      grid-template-columns: repeat( 3, 1fr );
+      gap: .5rem;
+
+      font-size: var(--sn-stylekit-font-size-p);
+      white-space: nowrap;
+
+      overflow-x: auto;
     }
 
     #search-clear-button {
@@ -86,9 +100,9 @@
       line-height: 17px;
       text-align: center;
       position: absolute;
-      top: 50%;
+      top: 20%;
       transform: translateY(-50%);
-      right: 36px;
+      right: 10px;
       cursor: pointer;
 
       transition: background-color 0.15s linear;
