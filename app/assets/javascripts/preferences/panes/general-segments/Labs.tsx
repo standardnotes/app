@@ -3,6 +3,8 @@ import { Switch } from '@/components/Switch';
 import {
   PreferencesGroup,
   PreferencesSegment,
+  Subtitle,
+  Text,
   Title,
 } from '@/preferences/components';
 import { WebApplication } from '@/ui_models/application';
@@ -10,6 +12,7 @@ import { FeatureIdentifier, FeatureStatus } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
 import { useCallback, useEffect, useState } from 'preact/hooks';
 import { usePremiumModal } from '@/components/Premium';
+import { HorizontalSeparator } from '@/components/shared/HorizontalSeparator';
 
 type Props = {
   application: WebApplication;
@@ -42,34 +45,57 @@ export const LabsPane: FunctionComponent<Props> = ({ application }) => {
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Labs</Title>
-        {experimentalFeatures?.map((featureIdentifier: FeatureIdentifier) => {
-          const featureName =
-            FindNativeFeature(featureIdentifier)?.name ?? featureIdentifier;
-          const isFeatureEnabled =
-            application.features.isExperimentalFeatureEnabled(
-              featureIdentifier
-            );
+        <div>
+          {experimentalFeatures?.map(
+            (featureIdentifier: FeatureIdentifier, index: number) => {
+              const feature = FindNativeFeature(featureIdentifier);
+              const featureName = feature?.name ?? featureIdentifier;
+              const featureDescription = feature?.description ?? '';
 
-          const toggleFeature = () => {
-            const isEntitled =
-              application.features.getFeatureStatus(featureIdentifier) ===
-              FeatureStatus.Entitled;
-            if (!isEntitled) {
-              premiumModal.activate(featureName);
-              return;
+              const isFeatureEnabled =
+                application.features.isExperimentalFeatureEnabled(
+                  featureIdentifier
+                );
+
+              const toggleFeature = () => {
+                const isEntitled =
+                  application.features.getFeatureStatus(featureIdentifier) ===
+                  FeatureStatus.Entitled;
+                if (!isEntitled) {
+                  premiumModal.activate(featureName);
+                  return;
+                }
+
+                application.features.toggleExperimentalFeature(
+                  featureIdentifier
+                );
+                reloadExperimentalFeatures();
+              };
+
+              const showHorizontalSeparator =
+                experimentalFeatures.length > 1 &&
+                index !== experimentalFeatures.length - 1;
+
+              return (
+                <>
+                  <div className="flex items-center justify-between">
+                    <div className="flex flex-col">
+                      <Subtitle>{featureName}</Subtitle>
+                      <Text>{featureDescription}</Text>
+                    </div>
+                    <Switch
+                      onChange={toggleFeature}
+                      checked={isFeatureEnabled}
+                    />
+                  </div>
+                  {showHorizontalSeparator && (
+                    <HorizontalSeparator classes="mt-5 mb-3" />
+                  )}
+                </>
+              );
             }
-
-            application.features.toggleExperimentalFeature(featureIdentifier);
-            reloadExperimentalFeatures();
-          };
-
-          return (
-            <div className="flex items-center justify-between">
-              <div className="font-medium text-sm m-0">{featureName}</div>
-              <Switch onChange={toggleFeature} checked={isFeatureEnabled} />
-            </div>
-          );
-        })}
+          )}
+        </div>
       </PreferencesSegment>
     </PreferencesGroup>
   );
