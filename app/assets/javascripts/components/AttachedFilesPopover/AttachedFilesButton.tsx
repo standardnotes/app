@@ -73,9 +73,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     };
 
     const attachedFilesLength = note
-      ? application.items
-          .getFilesForNote(note)
-          .sort((a, b) => (a.created_at < b.created_at ? 1 : -1)).length
+      ? application.items.getFilesForNote(note).length
       : 0;
 
     return (
