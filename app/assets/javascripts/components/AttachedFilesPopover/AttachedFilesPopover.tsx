@@ -1,16 +1,8 @@
-import { confirmDialog } from '@/services/alertService';
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
-import { parseFileName } from '@standardnotes/filepicker';
-import {
-  ChallengeReason,
-  ContentType,
-  SNFile,
-  SNNote,
-} from '@standardnotes/snjs';
+import { ContentType, SNFile, SNNote } from '@standardnotes/snjs';
 import {
   addToast,
-  dismissToast,
   FilesIllustration,
   ToastType,
 } from '@standardnotes/stylekit';
@@ -34,10 +26,11 @@ type Props = {
   application: WebApplication;
   appState: AppState;
   note: SNNote;
+  fileActionHandler: (action: PopoverFileItemAction) => Promise<void>;
 };
 
 export const AttachedFilesPopover: FunctionComponent<Props> = observer(
-  ({ application, appState, note }) => {
+  ({ application, appState, note, fileActionHandler }) => {
     const [currentTab, setCurrentTab] = useState(Tabs.AttachedFiles);
     const [attachedFiles, setAttachedFiles] = useState<SNFile[]>([]);
     const [allFiles, setAllFiles] = useState<SNFile[]>([]);
@@ -69,112 +62,8 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
       reloadAllFiles();
     }, [reloadAllFiles]);
 
-    const deleteFile = async (file: SNFile) => {
-      const shouldDelete = await confirmDialog({
-        text: `Are you sure you want to permanently delete "${file.nameWithExt}"?`,
-        confirmButtonStyle: 'danger',
-      });
-      if (shouldDelete) {
-        const deletingToastId = addToast({
-          type: ToastType.Loading,
-          message: `Deleting file "${file.nameWithExt}"...`,
-        });
-        await application.deleteItem(file);
-        addToast({
-          type: ToastType.Success,
-          message: `Deleted file "${file.nameWithExt}"`,
-        });
-        dismissToast(deletingToastId);
-      }
-    };
-
-    const downloadFile = async (file: SNFile) => {
-      appState.files.downloadFile(file);
-    };
-
-    const attachFileToNote = async (file: SNFile) => {
-      await application.items.associateFileWithNote(file, note);
-    };
-
-    const detachFileFromNote = async (file: SNFile) => {
-      await application.items.disassociateFileWithNote(file, note);
-    };
-
-    const toggleFileProtection = async (file: SNFile) => {
-      let result: SNFile | undefined;
-      if (file.protected) {
-        result = await application.protections.unprotectFile(file);
-      } else {
-        result = await application.protections.protectFile(file);
-      }
-      const isProtected = result ? result.protected : file.protected;
-      return isProtected;
-    };
-
-    const authorizeProtectedActionForFile = async (
-      file: SNFile,
-      challengeReason: ChallengeReason
-    ) => {
-      const authorizedFiles =
-        await application.protections.authorizeProtectedActionForFiles(
-          [file],
-          challengeReason
-        );
-      const isAuthorized =
-        authorizedFiles.length > 0 && authorizedFiles.includes(file);
-      return isAuthorized;
-    };
-
-    const renameFile = async (file: SNFile, fileName: string) => {
-      const { name, ext } = parseFileName(fileName);
-      await application.items.renameFile(file, name, ext);
-    };
-
     const handleFileAction = async (action: PopoverFileItemAction) => {
-      const file =
-        action.type !== PopoverFileItemActionType.RenameFile
-          ? action.payload
-          : action.payload.file;
-      let isAuthorizedForAction = true;
-
-      if (
-        file.protected &&
-        action.type !== PopoverFileItemActionType.ToggleFileProtection
-      ) {
-        isAuthorizedForAction = await authorizeProtectedActionForFile(
-          file,
-          ChallengeReason.AccessProtectedFile
-        );
-      }
-
-      if (!isAuthorizedForAction) {
-        return;
-      }
-
-      switch (action.type) {
-        case PopoverFileItemActionType.AttachFileToNote:
-          attachFileToNote(file);
-          break;
-        case PopoverFileItemActionType.DetachFileToNote:
-          detachFileFromNote(file);
-          break;
-        case PopoverFileItemActionType.DeleteFile:
-          deleteFile(file);
-          break;
-        case PopoverFileItemActionType.DownloadFile:
-          downloadFile(file);
-          break;
-        case PopoverFileItemActionType.ToggleFileProtection: {
-          const isProtected = await toggleFileProtection(file);
-          action.callback(isProtected);
-          break;
-        }
-        case PopoverFileItemActionType.RenameFile:
-          renameFile(file, action.payload.name);
-          break;
-      }
-
-      application.sync.sync();
+      await fileActionHandler(action);
       reloadAttachedFiles();
       reloadAllFiles();
     };
@@ -189,7 +78,10 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
         return;
       }
       if (currentTab === Tabs.AttachedFiles) {
-        attachFileToNote(uploadedFile);
+        handleFileAction({
+          type: PopoverFileItemActionType.AttachFileToNote,
+          payload: uploadedFile,
+        });
       }
     };
 

@@ -16,6 +16,14 @@ import { useRef, useState } from 'preact/hooks';
 import { Icon } from '../Icon';
 import { useCloseOnClickOutside } from '../utils';
 import { AttachedFilesPopover } from './AttachedFilesPopover';
+import { ChallengeReason, SNFile } from '@standardnotes/snjs';
+import { confirmDialog } from '@/services/alertService';
+import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit';
+import { parseFileName } from '@standardnotes/filepicker';
+import {
+  PopoverFileItemAction,
+  PopoverFileItemActionType,
+} from './PopoverFileItemAction';
 
 type Props = {
   application: WebApplication;
@@ -26,6 +34,7 @@ type Props = {
 export const AttachedFilesButton: FunctionComponent<Props> = observer(
   ({ application, appState, onClickPreprocessing }) => {
     const note = Object.values(appState.notes.selectedNotes)[0];
+
     const [open, setOpen] = useState(false);
     const [position, setPosition] = useState({
       top: 0,
@@ -35,10 +44,17 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     const buttonRef = useRef<HTMLButtonElement>(null);
     const panelRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
-
     useCloseOnClickOutside(containerRef, () => {
       setOpen(false);
     });
+
+    const [attachedFilesLength, setAttachedFilesLength] = useState(
+      note ? application.items.getFilesForNote(note).length : 0
+    );
+
+    const reloadAttachedFilesLength = () => {
+      setAttachedFilesLength(application.items.getFilesForNote(note).length);
+    };
 
     const toggleAttachedFilesMenu = async () => {
       const rect = buttonRef.current?.getBoundingClientRect();
@@ -72,9 +88,114 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
       }
     };
 
-    const attachedFilesLength = note
-      ? application.items.getFilesForNote(note).length
-      : 0;
+    const deleteFile = async (file: SNFile) => {
+      const shouldDelete = await confirmDialog({
+        text: `Are you sure you want to permanently delete "${file.nameWithExt}"?`,
+        confirmButtonStyle: 'danger',
+      });
+      if (shouldDelete) {
+        const deletingToastId = addToast({
+          type: ToastType.Loading,
+          message: `Deleting file "${file.nameWithExt}"...`,
+        });
+        await application.deleteItem(file);
+        addToast({
+          type: ToastType.Success,
+          message: `Deleted file "${file.nameWithExt}"`,
+        });
+        dismissToast(deletingToastId);
+      }
+    };
+
+    const downloadFile = async (file: SNFile) => {
+      appState.files.downloadFile(file);
+    };
+
+    const attachFileToNote = async (file: SNFile) => {
+      await application.items.associateFileWithNote(file, note);
+    };
+
+    const detachFileFromNote = async (file: SNFile) => {
+      await application.items.disassociateFileWithNote(file, note);
+    };
+
+    const toggleFileProtection = async (file: SNFile) => {
+      let result: SNFile | undefined;
+      if (file.protected) {
+        result = await application.protections.unprotectFile(file);
+      } else {
+        result = await application.protections.protectFile(file);
+      }
+      const isProtected = result ? result.protected : file.protected;
+      return isProtected;
+    };
+
+    const authorizeProtectedActionForFile = async (
+      file: SNFile,
+      challengeReason: ChallengeReason
+    ) => {
+      const authorizedFiles =
+        await application.protections.authorizeProtectedActionForFiles(
+          [file],
+          challengeReason
+        );
+      const isAuthorized =
+        authorizedFiles.length > 0 && authorizedFiles.includes(file);
+      return isAuthorized;
+    };
+
+    const renameFile = async (file: SNFile, fileName: string) => {
+      const { name, ext } = parseFileName(fileName);
+      await application.items.renameFile(file, name, ext);
+    };
+
+    const handleFileAction = async (action: PopoverFileItemAction) => {
+      const file =
+        action.type !== PopoverFileItemActionType.RenameFile
+          ? action.payload
+          : action.payload.file;
+      let isAuthorizedForAction = true;
+
+      if (
+        file.protected &&
+        action.type !== PopoverFileItemActionType.ToggleFileProtection
+      ) {
+        isAuthorizedForAction = await authorizeProtectedActionForFile(
+          file,
+          ChallengeReason.AccessProtectedFile
+        );
+      }
+
+      if (!isAuthorizedForAction) {
+        return;
+      }
+
+      switch (action.type) {
+        case PopoverFileItemActionType.AttachFileToNote:
+          await attachFileToNote(file);
+          break;
+        case PopoverFileItemActionType.DetachFileToNote:
+          await detachFileFromNote(file);
+          break;
+        case PopoverFileItemActionType.DeleteFile:
+          await deleteFile(file);
+          break;
+        case PopoverFileItemActionType.DownloadFile:
+          await downloadFile(file);
+          break;
+        case PopoverFileItemActionType.ToggleFileProtection: {
+          const isProtected = await toggleFileProtection(file);
+          action.callback(isProtected);
+          break;
+        }
+        case PopoverFileItemActionType.RenameFile:
+          await renameFile(file, action.payload.name);
+          break;
+      }
+
+      application.sync.sync();
+      reloadAttachedFilesLength();
+    };
 
     return (
       <div ref={containerRef}>
@@ -119,6 +240,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
                   application={application}
                   appState={appState}
                   note={note}
+                  fileActionHandler={handleFileAction}
                 />
               </div>
             )}
