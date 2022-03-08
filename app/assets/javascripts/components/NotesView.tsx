@@ -207,7 +207,7 @@ export const NotesView: FunctionComponent<Props> = observer(
                 </div>
 
                 {(focusedSearch || noteFilterText) && (
-                  <div className="animate-slide-in-top animation-duration-200">
+                  <div className="animate-fade-from-top">
                     <SearchOptions
                       application={application}
                       appState={appState}

@@ -25,7 +25,7 @@ export const SearchOptions = observer(({ appState }: Props) => {
       onMouseDown={(e) => e.preventDefault()}
     >
       <Bubble
-        label="Protected"
+        label="Protected Contents"
         selected={includeProtectedContents}
         onSelect={toggleIncludeProtectedContents}
       />

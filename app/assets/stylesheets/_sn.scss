@@ -965,6 +965,19 @@
   transition-duration: 100ms;
 }
 
-.animation-duration-200 {
-  animation-duration: 200ms;
+.animate-fade-from-top {
+  animation: fade-from-top .2s ease-out;
+}
+
+@keyframes fade-from-top {
+  0% {
+    opacity: 0;
+    transform: translateY(-20%);
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0%);
+  }
 }
