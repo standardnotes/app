@@ -34,6 +34,8 @@ export type EditorMenuItem = {
   name: string;
   component?: SNComponent;
   isEntitled: boolean;
+  isExperimental: boolean;
+  isExperimentalEnabled: boolean;
 };
 
 export type EditorMenuGroup = AccordionMenuGroup<EditorMenuItem>;
