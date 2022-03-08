@@ -19,7 +19,11 @@ export const SearchOptions = observer(({ appState }: Props) => {
   }
 
   return (
-    <div role="tablist" className="search-options justify-center">
+    <div
+      role="tablist"
+      className="search-options justify-center"
+      onMouseDown={(e) => e.preventDefault()}
+    >
       <Bubble
         label="Protected"
         selected={includeProtectedContents}

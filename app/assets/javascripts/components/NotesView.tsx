@@ -182,30 +182,32 @@ export const NotesView: FunctionComponent<Props> = observer(
                 </button>
               </div>
               <div className="filter-section" role="search">
-                <input
-                  type="text"
-                  id="search-bar"
-                  className="filter-bar"
-                  placeholder="Search"
-                  title="Searches notes in the currently selected tag"
-                  value={noteFilterText}
-                  onChange={onNoteFilterTextChange}
-                  onKeyUp={onNoteFilterKeyUp}
-                  onFocus={onSearchFocused}
-                  onBlur={onSearchBlurred}
-                />
-                {(focusedSearch || noteFilterText) && (
-                  <button
-                    onClick={clearFilterText}
-                    aria-role="button"
-                    id="search-clear-button"
-                  >
-                    ✕
-                  </button>
-                )}
+                <div>
+                  <input
+                    type="text"
+                    id="search-bar"
+                    className="filter-bar"
+                    placeholder="Search"
+                    title="Searches notes in the currently selected tag"
+                    value={noteFilterText}
+                    onChange={onNoteFilterTextChange}
+                    onKeyUp={onNoteFilterKeyUp}
+                    onFocus={onSearchFocused}
+                    onBlur={onSearchBlurred}
+                  />
+                  {noteFilterText && (
+                    <button
+                      onClick={clearFilterText}
+                      aria-role="button"
+                      id="search-clear-button"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
 
                 {(focusedSearch || noteFilterText) && (
-                  <div className="animate-slide-in-top">
+                  <div className="animate-slide-in-top animation-duration-200">
                     <SearchOptions
                       application={application}
                       appState={appState}
