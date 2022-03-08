@@ -13,28 +13,23 @@ export class FilesState {
   constructor(private application: WebApplication) {}
 
   public async downloadFile(file: SNFile): Promise<void> {
-    const saver = StreamingFileSaver.available()
-      ? new StreamingFileSaver(file.nameWithExt)
-      : new ClassicFileSaver();
-
-    const isUsingStreamingSaver = saver instanceof StreamingFileSaver;
-
     let downloadingToastId = '';
 
-    addToast({
-      type: ToastType.Regular,
-      message: `Starting download...`,
-    });
-
     try {
+      const saver = StreamingFileSaver.available()
+        ? new StreamingFileSaver(file.nameWithExt)
+        : new ClassicFileSaver();
+
+      const isUsingStreamingSaver = saver instanceof StreamingFileSaver;
+
       if (isUsingStreamingSaver) {
         await saver.selectFileToSaveTo();
-
-        downloadingToastId = addToast({
-          type: ToastType.Loading,
-          message: `Downloading file...`,
-        });
       }
+
+      downloadingToastId = addToast({
+        type: ToastType.Loading,
+        message: `Downloading file...`,
+      });
 
       await this.application.files.downloadFile(
         file,
@@ -49,17 +44,18 @@ export class FilesState {
 
       if (isUsingStreamingSaver) {
         await saver.finish();
-        addToast({
-          type: ToastType.Success,
-          message: 'Successfully downloaded file',
-        });
       }
+
+      addToast({
+        type: ToastType.Success,
+        message: 'Successfully downloaded file',
+      });
     } catch (error) {
       console.error(error);
 
       addToast({
         type: ToastType.Error,
-        message: (error as Error).message ?? (error as Error).toString(),
+        message: 'There was an error while downloading the file',
       });
     }
 
@@ -122,7 +118,7 @@ export class FilesState {
       }
       addToast({
         type: ToastType.Error,
-        message: 'There was an error uploading the file.',
+        message: 'There was an error while uploading the file',
       });
     }
   }
