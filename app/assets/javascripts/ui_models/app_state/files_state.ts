@@ -64,7 +64,7 @@ export class FilesState {
     }
   }
 
-  public async uploadNewFile() {
+  public async uploadNewFile(fileOrHandle?: File | FileSystemFileHandle) {
     let toastId = '';
 
     try {
@@ -88,7 +88,9 @@ export class FilesState {
         ? new StreamingFileReader(minimumChunkSize, onChunk)
         : new ClassicFileReader(minimumChunkSize, onChunk);
 
-      const selectedFile = await picker.selectFile();
+      const selectedFile = await picker.selectFile(
+        fileOrHandle as File & FileSystemFileHandle
+      );
 
       toastId = addToast({
         type: ToastType.Loading,

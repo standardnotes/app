@@ -1,39 +1,37 @@
-import { WebApplication } from '@/ui_models/application';
-import { AppState } from '@/ui_models/app_state';
-import { ContentType, SNFile, SNNote } from '@standardnotes/snjs';
+import { ContentType, SNFile } from '@standardnotes/snjs';
 import { FilesIllustration } from '@standardnotes/stylekit';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { useCallback, useEffect, useState } from 'preact/hooks';
+import { StateUpdater, useCallback, useEffect, useState } from 'preact/hooks';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
+import { PopoverTabs, PopoverWrapperProps } from './PopoverDragNDropWrapper';
 import { PopoverFileItem } from './PopoverFileItem';
 import {
   PopoverFileItemAction,
   PopoverFileItemActionType,
 } from './PopoverFileItemAction';
 
-enum Tabs {
-  AttachedFiles,
-  AllFiles,
-}
-
-export type AttachedFilesPopoverProps = {
-  application: WebApplication;
-  appState: AppState;
-  note: SNNote;
-  fileActionHandler: (action: PopoverFileItemAction) => Promise<void>;
+type Props = PopoverWrapperProps & {
+  currentTab: PopoverTabs;
+  setCurrentTab: StateUpdater<PopoverTabs>;
 };
 
-export const AttachedFilesPopover: FunctionComponent<AttachedFilesPopoverProps> =
-  observer(({ application, appState, note, fileActionHandler }) => {
-    const [currentTab, setCurrentTab] = useState(Tabs.AttachedFiles);
+export const AttachedFilesPopover: FunctionComponent<Props> = observer(
+  ({
+    application,
+    appState,
+    note,
+    fileActionHandler,
+    currentTab,
+    setCurrentTab,
+  }) => {
     const [attachedFiles, setAttachedFiles] = useState<SNFile[]>([]);
     const [allFiles, setAllFiles] = useState<SNFile[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
 
     const filesList =
-      currentTab === Tabs.AttachedFiles ? attachedFiles : allFiles;
+      currentTab === PopoverTabs.AttachedFiles ? attachedFiles : allFiles;
 
     const filteredList =
       searchQuery.length > 0
@@ -81,7 +79,7 @@ export const AttachedFilesPopover: FunctionComponent<AttachedFilesPopoverProps> 
       if (!uploadedFile) {
         return;
       }
-      if (currentTab === Tabs.AttachedFiles) {
+      if (currentTab === PopoverTabs.AttachedFiles) {
         handleFileAction({
           type: PopoverFileItemActionType.AttachFileToNote,
           payload: uploadedFile,
@@ -94,24 +92,24 @@ export const AttachedFilesPopover: FunctionComponent<AttachedFilesPopoverProps> 
         <div className="flex border-0 border-b-1 border-solid border-main">
           <button
             className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:shadow-inner ${
-              currentTab === Tabs.AttachedFiles
+              currentTab === PopoverTabs.AttachedFiles
                 ? 'color-info font-medium shadow-bottom'
                 : 'color-text'
             }`}
             onClick={() => {
-              setCurrentTab(Tabs.AttachedFiles);
+              setCurrentTab(PopoverTabs.AttachedFiles);
             }}
           >
             Attached
           </button>
           <button
             className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:shadow-inner ${
-              currentTab === Tabs.AllFiles
+              currentTab === PopoverTabs.AllFiles
                 ? 'color-info font-medium shadow-bottom'
                 : 'color-text'
             }`}
             onClick={() => {
-              setCurrentTab(Tabs.AllFiles);
+              setCurrentTab(PopoverTabs.AllFiles);
             }}
           >
             All files
@@ -170,12 +168,13 @@ export const AttachedFilesPopover: FunctionComponent<AttachedFilesPopoverProps> 
               <div className="text-sm font-medium mb-3">
                 {searchQuery.length > 0
                   ? "Couldn't find the files you searched..."
-                  : currentTab === Tabs.AttachedFiles
+                  : currentTab === PopoverTabs.AttachedFiles
                   ? 'No files attached to this note'
                   : 'No files found in this account'}
               </div>
               <Button type="normal" onClick={handleAttachFilesClick}>
-                {currentTab === Tabs.AttachedFiles ? 'Attach' : 'Upload'} files
+                {currentTab === PopoverTabs.AttachedFiles ? 'Attach' : 'Upload'}{' '}
+                files
               </Button>
               <div className="text-xs color-grey-0 mt-2">
                 Or drop your files here
@@ -189,9 +188,13 @@ export const AttachedFilesPopover: FunctionComponent<AttachedFilesPopoverProps> 
             onClick={handleAttachFilesClick}
           >
             <Icon type="add" className="mr-2 color-neutral" />
-            {currentTab === Tabs.AttachedFiles ? 'Attach' : 'Upload'} files
+            {currentTab === PopoverTabs.AttachedFiles
+              ? 'Attach'
+              : 'Upload'}{' '}
+            files
           </button>
         )}
       </div>
     );
-  });
+  }
+);

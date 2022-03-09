@@ -20,7 +20,7 @@ import {
   PopoverFileItemAction,
   PopoverFileItemActionType,
 } from './PopoverFileItemAction';
-import { PopoverDragNDropHandler } from './PopoverDragNDropHandler';
+import { PopoverDragNDropWrapper } from './PopoverDragNDropWrapper';
 
 type Props = {
   application: WebApplication;
@@ -229,7 +229,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
             className="sn-dropdown sn-dropdown--animated min-w-80 max-h-120 max-w-xs flex flex-col overflow-y-auto fixed"
           >
             {open && (
-              <PopoverDragNDropHandler
+              <PopoverDragNDropWrapper
                 application={application}
                 appState={appState}
                 note={note}
