@@ -1,5 +1,5 @@
 import { KeyboardKey } from '@/services/ioService';
-import { formatSizeToReadableString } from '@/utils';
+import { formatSizeToReadableString } from '@standardnotes/filepicker';
 import { SNFile } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
