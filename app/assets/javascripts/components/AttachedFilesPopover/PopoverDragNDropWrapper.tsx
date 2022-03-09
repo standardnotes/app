@@ -20,7 +20,7 @@ export type PopoverWrapperProps = {
   application: WebApplication;
   appState: AppState;
   note: SNNote;
-  fileActionHandler: (action: PopoverFileItemAction) => Promise<void>;
+  fileActionHandler: (action: PopoverFileItemAction) => Promise<boolean>;
 };
 
 export const PopoverDragNDropWrapper: FunctionComponent<

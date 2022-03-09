@@ -164,7 +164,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
       }
 
       if (!isAuthorizedForAction) {
-        return;
+        return false;
       }
 
       switch (action.type) {
@@ -192,6 +192,8 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
 
       application.sync.sync();
       reloadAttachedFilesLength();
+
+      return true;
     };
 
     return (

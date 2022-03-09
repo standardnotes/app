@@ -7,10 +7,7 @@ import { Button } from '../Button';
 import { Icon } from '../Icon';
 import { PopoverTabs, PopoverWrapperProps } from './PopoverDragNDropWrapper';
 import { PopoverFileItem } from './PopoverFileItem';
-import {
-  PopoverFileItemAction,
-  PopoverFileItemActionType,
-} from './PopoverFileItemAction';
+import { PopoverFileItemActionType } from './PopoverFileItemAction';
 
 type Props = PopoverWrapperProps & {
   currentTab: PopoverTabs;
@@ -70,17 +67,13 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
       };
     }, [application, reloadAllFiles, reloadAttachedFiles]);
 
-    const handleFileAction = async (action: PopoverFileItemAction) => {
-      await fileActionHandler(action);
-    };
-
     const handleAttachFilesClick = async () => {
       const uploadedFile = await appState.files.uploadNewFile();
       if (!uploadedFile) {
         return;
       }
       if (currentTab === PopoverTabs.AttachedFiles) {
-        handleFileAction({
+        fileActionHandler({
           type: PopoverFileItemActionType.AttachFileToNote,
           payload: uploadedFile,
         });
@@ -151,7 +144,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
                   key={file.uuid}
                   file={file}
                   isAttachedToNote={attachedFiles.includes(file)}
-                  handleFileAction={handleFileAction}
+                  handleFileAction={fileActionHandler}
                 />
               );
             })

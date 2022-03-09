@@ -53,7 +53,7 @@ const getIconForFileType = (fileType: string) => {
 export type PopoverFileItemProps = {
   file: SNFile;
   isAttachedToNote: boolean;
-  handleFileAction: (action: PopoverFileItemAction) => Promise<void>;
+  handleFileAction: (action: PopoverFileItemAction) => Promise<boolean>;
 };
 
 export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
@@ -72,14 +72,16 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
   }, [isRenamingFile]);
 
   const renameFile = async (file: SNFile, name: string) => {
-    await handleFileAction({
+    const didRename = await handleFileAction({
       type: PopoverFileItemActionType.RenameFile,
       payload: {
         file,
         name,
       },
     });
-    setIsRenamingFile(false);
+    if (didRename) {
+      setIsRenamingFile(false);
+    }
   };
 
   const handleFileNameInput = (event: Event) => {
@@ -93,10 +95,6 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
     }
   };
 
-  const handleFileNameInputBlur = () => {
-    renameFile(file, fileName);
-  };
-
   return (
     <div className="flex items-center justify-between p-3">
       <div className="flex items-center">
@@ -105,15 +103,14 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
           {isRenamingFile ? (
             <input
               type="text"
-              className="text-input p-0 mb-1 border-0 bg-transparent color-foreground"
+              className="text-input px-1.5 py-1 mb-1 border-1 border-solid border-main bg-transparent color-foreground"
               value={fileName}
               ref={fileNameInputRef}
               onInput={handleFileNameInput}
               onKeyDown={handleFileNameInputKeyDown}
-              onBlur={handleFileNameInputBlur}
             />
           ) : (
-            <div className="text-sm mb-1">{fileName}</div>
+            <div className="text-sm mb-1">{file.nameWithExt}</div>
           )}
           <div className="text-xs color-grey-0">
             {file.created_at.toLocaleString()} ·{' '}
