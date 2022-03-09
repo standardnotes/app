@@ -14,16 +14,41 @@ import { useCallback, useEffect, useState } from 'preact/hooks';
 import { usePremiumModal } from '@/components/Premium';
 import { HorizontalSeparator } from '@/components/shared/HorizontalSeparator';
 
+type ExperimentalFeatureItem = {
+  identifier: FeatureIdentifier;
+  name: string;
+  description: string;
+  isEnabled: boolean;
+  isEntitled: boolean;
+};
+
 type Props = {
   application: WebApplication;
 };
 
 export const LabsPane: FunctionComponent<Props> = ({ application }) => {
-  const [experimentalFeatures, setExperimentalFeatures] =
-    useState<FeatureIdentifier[]>();
+  const [experimentalFeatures, setExperimentalFeatures] = useState<
+    ExperimentalFeatureItem[]
+  >([]);
 
   const reloadExperimentalFeatures = useCallback(() => {
-    const experimentalFeatures = application.features.getExperimentalFeatures();
+    const experimentalFeatures = application.features
+      .getExperimentalFeatures()
+      .map((featureIdentifier) => {
+        const feature = FindNativeFeature(featureIdentifier);
+        return {
+          identifier: featureIdentifier,
+          name: feature?.name ?? featureIdentifier,
+          description: feature?.description ?? '',
+          isEnabled:
+            application.features.isExperimentalFeatureEnabled(
+              featureIdentifier
+            ),
+          isEntitled:
+            application.features.getFeatureStatus(featureIdentifier) ===
+            FeatureStatus.Entitled,
+        };
+      });
     setExperimentalFeatures(experimentalFeatures);
   }, [application.features]);
 
@@ -33,42 +58,23 @@ export const LabsPane: FunctionComponent<Props> = ({ application }) => {
 
   const premiumModal = usePremiumModal();
 
-  if (!experimentalFeatures) {
-    return (
-      <div className="flex items-center justify-between">
-        No experimental features available.
-      </div>
-    );
-  }
-
   return (
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Labs</Title>
         <div>
-          {experimentalFeatures?.map(
-            (featureIdentifier: FeatureIdentifier, index: number) => {
-              const feature = FindNativeFeature(featureIdentifier);
-              const featureName = feature?.name ?? featureIdentifier;
-              const featureDescription = feature?.description ?? '';
-
-              const isFeatureEnabled =
-                application.features.isExperimentalFeatureEnabled(
-                  featureIdentifier
-                );
-
+          {experimentalFeatures.map(
+            (
+              { identifier, name, description, isEnabled, isEntitled },
+              index: number
+            ) => {
               const toggleFeature = () => {
-                const isEntitled =
-                  application.features.getFeatureStatus(featureIdentifier) ===
-                  FeatureStatus.Entitled;
                 if (!isEntitled) {
-                  premiumModal.activate(featureName);
+                  premiumModal.activate(name);
                   return;
                 }
 
-                application.features.toggleExperimentalFeature(
-                  featureIdentifier
-                );
+                application.features.toggleExperimentalFeature(identifier);
                 reloadExperimentalFeatures();
               };
 
@@ -80,13 +86,10 @@ export const LabsPane: FunctionComponent<Props> = ({ application }) => {
                 <>
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col">
-                      <Subtitle>{featureName}</Subtitle>
-                      <Text>{featureDescription}</Text>
+                      <Subtitle>{name}</Subtitle>
+                      <Text>{description}</Text>
                     </div>
-                    <Switch
-                      onChange={toggleFeature}
-                      checked={isFeatureEnabled}
-                    />
+                    <Switch onChange={toggleFeature} checked={isEnabled} />
                   </div>
                   {showHorizontalSeparator && (
                     <HorizontalSeparator classes="mt-5 mb-3" />
@@ -94,6 +97,13 @@ export const LabsPane: FunctionComponent<Props> = ({ application }) => {
                 </>
               );
             }
+          )}
+          {experimentalFeatures.length === 0 && (
+            <div className="flex items-center justify-between">
+              <div className="flex flex-col">
+                <Text>No experimental features available.</Text>
+              </div>
+            </div>
           )}
         </div>
       </PreferencesSegment>
