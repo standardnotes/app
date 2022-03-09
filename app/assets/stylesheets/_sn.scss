@@ -927,6 +927,10 @@
     var(--sn-stylekit-info-color) -1px -1px 0px 0px inset;
 }
 
+.focus\:shadow-bottom:focus {
+  box-shadow: currentcolor 0px -1px 0px 0px inset, currentcolor 0px 1px 0px 0px;
+}
+
 .bg-note-size-warning {
   background-color: rgba(235, 173, 0, 0.08);
 }
@@ -981,13 +985,15 @@
 }
 
 .transition {
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
-  transition-timing-function: cubic-bezier(.4,0,.2,1);
+  transition-property: color, background-color, border-color,
+    text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter,
+    backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 100ms;
 }
 
 .animate-fade-from-top {
-  animation: fade-from-top .2s ease-out;
+  animation: fade-from-top 0.2s ease-out;
 }
 
 @keyframes fade-from-top {

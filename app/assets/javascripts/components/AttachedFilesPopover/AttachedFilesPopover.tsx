@@ -91,7 +91,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
       <div className="flex flex-col">
         <div className="flex border-0 border-b-1 border-solid border-main">
           <button
-            className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:shadow-inner ${
+            className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:bg-info-backdrop focus:shadow-bottom ${
               currentTab === PopoverTabs.AttachedFiles
                 ? 'color-info font-medium shadow-bottom'
                 : 'color-text'
@@ -103,7 +103,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
             Attached
           </button>
           <button
-            className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:shadow-inner ${
+            className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:bg-info-backdrop focus:shadow-bottom ${
               currentTab === PopoverTabs.AllFiles
                 ? 'color-info font-medium shadow-bottom'
                 : 'color-text'
@@ -167,7 +167,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
               </div>
               <div className="text-sm font-medium mb-3">
                 {searchQuery.length > 0
-                  ? "Couldn't find the files you searched..."
+                  ? 'No result found'
                   : currentTab === PopoverTabs.AttachedFiles
                   ? 'No files attached to this note'
                   : 'No files found in this account'}
