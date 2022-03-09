@@ -4,7 +4,7 @@ import {
   StreamingFileSaver,
   ClassicFileSaver,
 } from '@standardnotes/filepicker';
-import { SNFile } from '@standardnotes/snjs';
+import { EncryptAndUploadFileOperation, SNFile } from '@standardnotes/snjs';
 import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit';
 
 import { WebApplication } from '../application';
@@ -68,7 +68,8 @@ export class FilesState {
     let toastId = '';
 
     try {
-      const operation = await this.application.files.beginNewFileUpload();
+      // eslint-disable-next-line prefer-const
+      let operation: EncryptAndUploadFileOperation;
       const minimumChunkSize = this.application.files.minimumChunkSize();
 
       const onChunk = async (
@@ -91,6 +92,8 @@ export class FilesState {
       const selectedFile = await picker.selectFile(
         fileOrHandle as File & FileSystemFileHandle
       );
+
+      operation = await this.application.files.beginNewFileUpload();
 
       toastId = addToast({
         type: ToastType.Loading,
