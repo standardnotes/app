@@ -8,7 +8,6 @@ import {
   removeFromArray,
 } from '@standardnotes/snjs';
 import { PANEL_NAME_NOTES, PANEL_NAME_NAVIGATION } from '@/constants';
-import { STRING_DEFAULT_FILE_ERROR } from '@/strings';
 import { alertDialog } from '@/services/alertService';
 import { WebAppEvent, WebApplication } from '@/ui_models/application';
 import { PureComponent } from '@/components/Abstract/PureComponent';
@@ -51,17 +50,10 @@ export class ApplicationView extends PureComponent<Props, State> {
       appClass: '',
       challenges: [],
     };
-    this.onDragDrop = this.onDragDrop.bind(this);
-    this.onDragOver = this.onDragOver.bind(this);
-    this.addDragDropHandlers();
   }
 
   deinit() {
     (this.application as unknown) = undefined;
-    window.removeEventListener('dragover', this.onDragOver, true);
-    window.removeEventListener('drop', this.onDragDrop, true);
-    (this.onDragDrop as unknown) = undefined;
-    (this.onDragOver as unknown) = undefined;
     super.deinit();
   }
 
@@ -147,31 +139,6 @@ export class ApplicationView extends PureComponent<Props, State> {
       if (!(await this.application.isLocked())) {
         this.application.sync.sync();
       }
-    }
-  }
-
-  addDragDropHandlers() {
-    /**
-     * Disable dragging and dropping of files (but allow text) into main SN interface.
-     * both 'dragover' and 'drop' are required to prevent dropping of files.
-     * This will not prevent extensions from receiving drop events.
-     */
-    window.addEventListener('dragover', this.onDragOver, true);
-    window.addEventListener('drop', this.onDragDrop, true);
-  }
-
-  onDragOver(event: DragEvent) {
-    if (event.dataTransfer?.files.length) {
-      event.preventDefault();
-    }
-  }
-
-  onDragDrop(event: DragEvent) {
-    if (event.dataTransfer?.files.length) {
-      event.preventDefault();
-      void alertDialog({
-        text: STRING_DEFAULT_FILE_ERROR,
-      });
     }
   }
 

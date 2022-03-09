@@ -18,15 +18,15 @@ enum Tabs {
   AllFiles,
 }
 
-type Props = {
+export type AttachedFilesPopoverProps = {
   application: WebApplication;
   appState: AppState;
   note: SNNote;
   fileActionHandler: (action: PopoverFileItemAction) => Promise<void>;
 };
 
-export const AttachedFilesPopover: FunctionComponent<Props> = observer(
-  ({ application, appState, note, fileActionHandler }) => {
+export const AttachedFilesPopover: FunctionComponent<AttachedFilesPopoverProps> =
+  observer(({ application, appState, note, fileActionHandler }) => {
     const [currentTab, setCurrentTab] = useState(Tabs.AttachedFiles);
     const [attachedFiles, setAttachedFiles] = useState<SNFile[]>([]);
     const [allFiles, setAllFiles] = useState<SNFile[]>([]);
@@ -177,6 +177,9 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
               <Button type="normal" onClick={handleAttachFilesClick}>
                 {currentTab === Tabs.AttachedFiles ? 'Attach' : 'Upload'} files
               </Button>
+              <div className="text-xs color-grey-0 mt-2">
+                Or drop your files here
+              </div>
             </div>
           )}
         </div>
@@ -191,5 +194,4 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
         )}
       </div>
     );
-  }
-);
+  });

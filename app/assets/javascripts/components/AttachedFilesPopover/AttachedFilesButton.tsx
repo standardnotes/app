@@ -1,9 +1,6 @@
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
-import {
-  FOCUSABLE_BUT_NOT_TABBABLE,
-  MENU_MARGIN_FROM_APP_BORDER,
-} from '@/constants';
+import { MENU_MARGIN_FROM_APP_BORDER } from '@/constants';
 import {
   Disclosure,
   DisclosureButton,
@@ -15,7 +12,6 @@ import { FunctionComponent } from 'preact';
 import { useRef, useState } from 'preact/hooks';
 import { Icon } from '../Icon';
 import { useCloseOnClickOutside } from '../utils';
-import { AttachedFilesPopover } from './AttachedFilesPopover';
 import { ChallengeReason, SNFile } from '@standardnotes/snjs';
 import { confirmDialog } from '@/services/alertService';
 import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit';
@@ -24,6 +20,7 @@ import {
   PopoverFileItemAction,
   PopoverFileItemActionType,
 } from './PopoverFileItemAction';
+import { PopoverDragNDropHandler } from './PopoverDragNDropHandler';
 
 type Props = {
   application: WebApplication;
@@ -232,17 +229,12 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
             className="sn-dropdown sn-dropdown--animated min-w-80 max-h-120 max-w-xs flex flex-col overflow-y-auto fixed"
           >
             {open && (
-              <div
-                className="focus:shadow-none"
-                tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
-              >
-                <AttachedFilesPopover
-                  application={application}
-                  appState={appState}
-                  note={note}
-                  fileActionHandler={handleFileAction}
-                />
-              </div>
+              <PopoverDragNDropHandler
+                application={application}
+                appState={appState}
+                note={note}
+                fileActionHandler={handleFileAction}
+              />
             )}
           </DisclosurePanel>
         </Disclosure>
