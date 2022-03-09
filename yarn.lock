@@ -2347,6 +2347,11 @@
     "@standardnotes/auth" "^3.17.3"
     "@standardnotes/common" "^1.15.3"
 
+"@standardnotes/filepicker@^1.6.0":
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/filepicker/-/filepicker-1.6.0.tgz#e995dfcb273b0277a2f88d2f6681f4290469149e"
+  integrity sha512-zGmLNhXZ6yZ+cluMIwRZvKXN3loJJG2JBvUw1Gacn+EF7ZUNMIIFf+hAJsc5BLQD0R49w3bkRxl1Xd73KeaaVQ==
+
 "@standardnotes/payloads@^1.4.3":
   version "1.4.3"
   resolved "https://registry.yarnpkg.com/@standardnotes/payloads/-/payloads-1.4.3.tgz#8d146a61d8bf173835ee54a683d1e6cc95ca15ee"
@@ -2368,16 +2373,6 @@
     "@standardnotes/payloads" "^1.4.3"
 
 "@standardnotes/services@1.5.4", "@standardnotes/services@^1.5.4":
-  version "1.5.4"
-  resolved "https://registry.yarnpkg.com/@standardnotes/services/-/services-1.5.4.tgz#16067c9bd0d8a54e5ea2295e97cbbe4327e80811"
-  integrity sha512-qyq2KzvDWqUvBLXAdW8KQI1AqpdynSItn3iBzDM+h4U4rJMaAmkPoWtMxVcBAjz7cdHC5xku6t/iAvvKFKqUkA==
-  dependencies:
-    "@standardnotes/applications" "^1.1.3"
-    "@standardnotes/common" "^1.15.3"
-    "@standardnotes/responses" "^1.3.2"
-    "@standardnotes/utils" "^1.2.3"
-
-"@standardnotes/services@^1.5.4":
   version "1.5.4"
   resolved "https://registry.yarnpkg.com/@standardnotes/services/-/services-1.5.4.tgz#16067c9bd0d8a54e5ea2295e97cbbe4327e80811"
   integrity sha512-qyq2KzvDWqUvBLXAdW8KQI1AqpdynSItn3iBzDM+h4U4rJMaAmkPoWtMxVcBAjz7cdHC5xku6t/iAvvKFKqUkA==
