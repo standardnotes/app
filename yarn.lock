@@ -2355,10 +2355,10 @@
     "@standardnotes/auth" "^3.17.3"
     "@standardnotes/common" "^1.15.3"
 
-"@standardnotes/filepicker@1.5.0":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/filepicker/-/filepicker-1.5.0.tgz#bbf47984373e2a2c4e0f27b3a76dfa6b47bd0881"
-  integrity sha512-CkA7eHSq11Tu7D8TVavJ1loMT1ZkQxDCPD733r7Qs/i+KRCJgklf02VWh1K3YuulPd518cMNN3hwKUpJOKyy/g==
+"@standardnotes/filepicker@1.6.0":
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/filepicker/-/filepicker-1.6.0.tgz#e995dfcb273b0277a2f88d2f6681f4290469149e"
+  integrity sha512-zGmLNhXZ6yZ+cluMIwRZvKXN3loJJG2JBvUw1Gacn+EF7ZUNMIIFf+hAJsc5BLQD0R49w3bkRxl1Xd73KeaaVQ==
 
 "@standardnotes/payloads@^1.4.2":
   version "1.4.2"
@@ -2856,6 +2856,11 @@
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-2.0.1.tgz#20f18294f797f2209b5f65c8e3b5c8e8261d127c"
   integrity sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==
+
+"@types/wicg-file-system-access@^2020.9.5":
+  version "2020.9.5"
+  resolved "https://registry.yarnpkg.com/@types/wicg-file-system-access/-/wicg-file-system-access-2020.9.5.tgz#4a0c8f3d1ed101525f329e86c978f7735404474f"
+  integrity sha512-UYK244awtmcUYQfs7FR8710MJcefL2WvkyHMjA8yJzxd1mo0Gfn88sRZ1Bls7hiUhA2w7ne1gpJ9T5g3G0wOyA==
 
 "@types/ws@^8.2.2":
   version "8.2.2"
