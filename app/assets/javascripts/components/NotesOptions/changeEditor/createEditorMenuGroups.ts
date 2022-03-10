@@ -59,11 +59,13 @@ export const createEditorMenuGroups = (
         feature.area === ComponentArea.Editor
     )
     .forEach((editorFeature) => {
-      if (
-        !editors.find(
-          (editor) => editor.identifier === editorFeature.identifier
-        )
-      ) {
+      const notInstalled = !editors.find(
+        (editor) => editor.identifier === editorFeature.identifier
+      );
+      const isExperimental = application.features.isExperimentalFeature(
+        editorFeature.identifier
+      );
+      if (notInstalled && !isExperimental) {
         editorItems[getEditorGroup(editorFeature)].push({
           name: editorFeature.name as string,
           isEntitled: false,
