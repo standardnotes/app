@@ -45,26 +45,26 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
       setOpen(false);
     });
 
-    const [attachedFilesLength, setAttachedFilesLength] = useState(
+    const [attachedFilesCount, setAttachedFilesCount] = useState(
       note ? application.items.getFilesForNote(note).length : 0
     );
 
-    const reloadAttachedFilesLength = useCallback(() => {
-      setAttachedFilesLength(application.items.getFilesForNote(note).length);
+    const reloadAttachedFilesCount = useCallback(() => {
+      setAttachedFilesCount(application.items.getFilesForNote(note).length);
     }, [application.items, note]);
 
     useEffect(() => {
       const unregisterFileStream = application.streamItems(
         ContentType.File,
         () => {
-          reloadAttachedFilesLength();
+          reloadAttachedFilesCount();
         }
       );
 
       return () => {
         unregisterFileStream();
       };
-    }, [application, reloadAttachedFilesLength]);
+    }, [application, reloadAttachedFilesCount]);
 
     const toggleAttachedFilesMenu = async () => {
       const rect = buttonRef.current?.getBoundingClientRect();
@@ -219,13 +219,13 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
             }}
             ref={buttonRef}
             className={`sn-icon-button border-contrast ${
-              attachedFilesLength > 0 ? 'py-1 px-3' : ''
+              attachedFilesCount > 0 ? 'py-1 px-3' : ''
             }`}
           >
             <VisuallyHidden>Attached files</VisuallyHidden>
             <Icon type="attachment-file" className="block" />
-            {attachedFilesLength > 0 && (
-              <span className="ml-2">{attachedFilesLength}</span>
+            {attachedFilesCount > 0 && (
+              <span className="ml-2">{attachedFilesCount}</span>
             )}
           </DisclosureButton>
           <DisclosurePanel
