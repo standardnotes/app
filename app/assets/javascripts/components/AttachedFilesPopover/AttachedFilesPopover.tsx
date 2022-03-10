@@ -68,14 +68,14 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
     }, [application, reloadAllFiles, reloadAttachedFiles]);
 
     const handleAttachFilesClick = async () => {
-      const uploadedFile = await appState.files.uploadNewFile();
-      if (!uploadedFile) {
+      const uploadedFiles = await appState.files.uploadNewFile();
+      if (!uploadedFiles) {
         return;
       }
       if (currentTab === PopoverTabs.AttachedFiles) {
         fileActionHandler({
           type: PopoverFileItemActionType.AttachFileToNote,
-          payload: uploadedFile,
+          payload: uploadedFiles[0],
         });
       }
     };

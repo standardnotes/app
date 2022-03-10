@@ -78,16 +78,17 @@ export const PopoverDragNDropWrapper: FunctionComponent<
             fileOrHandle = item.getAsFile();
           }
           if (fileOrHandle) {
-            const uploadedFile = await appState.files.uploadNewFile(
+            const uploadedFiles = await appState.files.uploadNewFile(
               fileOrHandle
             );
-            if (!uploadedFile) {
+            if (!uploadedFiles) {
               return;
             }
+
             if (currentTab === PopoverTabs.AttachedFiles) {
               fileActionHandler({
                 type: PopoverFileItemActionType.AttachFileToNote,
-                payload: uploadedFile,
+                payload: uploadedFiles[0],
               });
             }
           }

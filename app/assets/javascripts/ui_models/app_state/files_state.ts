@@ -4,7 +4,7 @@ import {
   StreamingFileSaver,
   ClassicFileSaver,
 } from '@standardnotes/filepicker';
-import { EncryptAndUploadFileOperation, SNFile } from '@standardnotes/snjs';
+import { SNFile } from '@standardnotes/snjs';
 import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit';
 
 import { WebApplication } from '../application';
@@ -68,53 +68,65 @@ export class FilesState {
     let toastId = '';
 
     try {
-      // eslint-disable-next-line prefer-const
-      let operation: EncryptAndUploadFileOperation;
       const minimumChunkSize = this.application.files.minimumChunkSize();
 
-      const onChunk = async (
-        chunk: Uint8Array,
-        index: number,
-        isLast: boolean
-      ) => {
-        await this.application.files.pushBytesForUpload(
-          operation,
-          chunk,
-          index,
-          isLast
-        );
-      };
-
       const picker = StreamingFileReader.available()
-        ? new StreamingFileReader(minimumChunkSize, onChunk)
-        : new ClassicFileReader(minimumChunkSize, onChunk);
+        ? StreamingFileReader
+        : ClassicFileReader;
 
-      const selectedFile = await picker.selectFile(
-        fileOrHandle as File & FileSystemFileHandle
-      );
+      const selectedFiles =
+        fileOrHandle instanceof File
+          ? [fileOrHandle]
+          : StreamingFileReader.available() &&
+            fileOrHandle instanceof FileSystemFileHandle
+          ? await StreamingFileReader.getFilesFromHandles([fileOrHandle])
+          : await picker.selectFiles();
 
-      operation = await this.application.files.beginNewFileUpload();
+      const uploadedFiles: SNFile[] = [];
 
-      toastId = addToast({
-        type: ToastType.Loading,
-        message: `Uploading file "${selectedFile.name}"...`,
-      });
+      for (const file of selectedFiles) {
+        const operation = await this.application.files.beginNewFileUpload();
 
-      const fileResult = await picker.beginReadingFile();
+        const onChunk = async (
+          chunk: Uint8Array,
+          index: number,
+          isLast: boolean
+        ) => {
+          await this.application.files.pushBytesForUpload(
+            operation,
+            chunk,
+            index,
+            isLast
+          );
+        };
 
-      const uploadedFile = await this.application.files.finishUpload(
-        operation,
-        fileResult.name,
-        fileResult.ext
-      );
+        toastId = addToast({
+          type: ToastType.Loading,
+          message: `Uploading file "${file.name}"...`,
+        });
 
-      dismissToast(toastId);
-      addToast({
-        type: ToastType.Success,
-        message: `Uploaded file "${uploadedFile.nameWithExt}"`,
-      });
+        const fileResult = await picker.readFile(
+          file,
+          minimumChunkSize,
+          onChunk
+        );
 
-      return uploadedFile;
+        const uploadedFile = await this.application.files.finishUpload(
+          operation,
+          fileResult.name,
+          fileResult.ext
+        );
+
+        uploadedFiles.push(uploadedFile);
+
+        dismissToast(toastId);
+        addToast({
+          type: ToastType.Success,
+          message: `Uploaded file "${uploadedFile.nameWithExt}"`,
+        });
+      }
+
+      return uploadedFiles;
     } catch (error) {
       console.error(error);
 
