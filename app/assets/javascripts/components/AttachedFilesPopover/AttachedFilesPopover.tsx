@@ -73,9 +73,11 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
         return;
       }
       if (currentTab === PopoverTabs.AttachedFiles) {
-        fileActionHandler({
-          type: PopoverFileItemActionType.AttachFileToNote,
-          payload: uploadedFiles[0],
+        uploadedFiles.forEach((file) => {
+          fileActionHandler({
+            type: PopoverFileItemActionType.AttachFileToNote,
+            payload: file,
+          });
         });
       }
     };
