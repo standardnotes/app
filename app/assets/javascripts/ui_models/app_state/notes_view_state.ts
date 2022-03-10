@@ -559,10 +559,6 @@ export class NotesViewState {
     this.reloadNotes();
   };
 
-  onSearchInputBlur = () => {
-    this.appState.searchOptions.refreshIncludeProtectedContents();
-  };
-
   clearFilterText = () => {
     this.setNoteFilterText('');
     this.onFilterEnter();

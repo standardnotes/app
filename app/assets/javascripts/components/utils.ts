@@ -46,8 +46,13 @@ export function useCloseOnClickOutside(
       if (!container.current) {
         return;
       }
-      const isDescendant = container.current.contains(event.target as Node);
-      if (!isDescendant) {
+      const isDescendantOfContainer = container.current.contains(
+        event.target as Node
+      );
+      const isDescendantOfDialog = (event.target as HTMLElement).closest(
+        '[role="dialog"]'
+      );
+      if (!isDescendantOfContainer && !isDescendantOfDialog) {
         callback();
       }
     },

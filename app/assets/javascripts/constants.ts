@@ -13,4 +13,6 @@ export const NOTES_LIST_SCROLL_THRESHOLD = 200;
 export const MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24;
 export const DAYS_IN_A_WEEK = 7;
 export const DAYS_IN_A_YEAR = 365;
-export const BYTES_IN_ONE_MEGABYTE = 1000000;
+
+export const BYTES_IN_ONE_KILOBYTE = 1_000;
+export const BYTES_IN_ONE_MEGABYTE = 1_000_000;

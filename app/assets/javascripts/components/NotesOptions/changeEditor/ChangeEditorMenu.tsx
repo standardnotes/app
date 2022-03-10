@@ -153,7 +153,7 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 
     await application.runTransactionalMutations(transactions);
     /** Dirtying can happen above */
-    application.sync();
+    application.sync.sync();
 
     setCurrentEditor(application.componentManager.editorForNote(note));
   };

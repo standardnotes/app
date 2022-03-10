@@ -17,6 +17,8 @@ import {
   ItemMutator,
   ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
   NoteViewController,
+  FeatureIdentifier,
+  FeatureStatus,
 } from '@standardnotes/snjs';
 import { debounce, isDesktopApplication } from '@/utils';
 import { KeyboardModifier, KeyboardKey } from '@/services/ioService';
@@ -37,6 +39,7 @@ import { ComponentView } from '../ComponentView';
 import { PanelSide, PanelResizer, PanelResizeType } from '../PanelResizer';
 import { ElementIds } from '@/element_ids';
 import { ChangeEditorButton } from '../ChangeEditorButton';
+import { AttachedFilesButton } from '../AttachedFilesPopover/AttachedFilesButton';
 
 const MINIMUM_STATUS_DURATION = 400;
 const TEXTAREA_DEBOUNCE = 100;
@@ -100,6 +103,7 @@ type State = {
   editorTitle: string;
   editorText: string;
   isDesktop?: boolean;
+  isEntitledToFiles: boolean;
   lockText: string;
   marginResizersEnabled?: boolean;
   monospaceFont?: boolean;
@@ -168,6 +172,9 @@ export class NoteView extends PureComponent<Props, State> {
       editorText: '',
       editorTitle: '',
       isDesktop: isDesktopApplication(),
+      isEntitledToFiles:
+        this.application.features.getFeatureStatus(FeatureIdentifier.Files) ===
+        FeatureStatus.Entitled,
       lockText: 'Note Editing Disabled',
       noteStatus: undefined,
       noteLocked: this.controller.note.locked,
@@ -321,6 +328,15 @@ export class NoteView extends PureComponent<Props, State> {
   /** @override */
   async onAppEvent(eventName: ApplicationEvent) {
     switch (eventName) {
+      case ApplicationEvent.FeaturesUpdated:
+      case ApplicationEvent.UserRolesChanged:
+        this.setState({
+          isEntitledToFiles:
+            this.application.features.getFeatureStatus(
+              FeatureIdentifier.Files
+            ) === FeatureStatus.Entitled,
+        });
+        break;
       case ApplicationEvent.PreferencesChanged:
         this.reloadPreferences();
         break;
@@ -681,7 +697,7 @@ export class NoteView extends PureComponent<Props, State> {
     if (left !== undefined && left !== null) {
       await this.application.setPreference(PrefKey.EditorLeft, left);
     }
-    this.application.sync();
+    this.application.sync.sync();
   };
 
   async reloadSpellcheck() {
@@ -797,7 +813,7 @@ export class NoteView extends PureComponent<Props, State> {
     } else {
       await this.disassociateComponentWithCurrentNote(component);
     }
-    this.application.sync();
+    this.application.sync.sync();
   };
 
   async disassociateComponentWithCurrentNote(component: SNComponent) {
@@ -1027,6 +1043,18 @@ export class NoteView extends PureComponent<Props, State> {
                       )}
                     </div>
                   </div>
+                  {this.state.isEntitledToFiles &&
+                    window.enabledUnfinishedFeatures && (
+                      <div className="mr-3">
+                        <AttachedFilesButton
+                          application={this.application}
+                          appState={this.appState}
+                          onClickPreprocessing={
+                            this.ensureNoteIsInsertedBeforeUIAction
+                          }
+                        />
+                      </div>
+                    )}
                   <div className="mr-3">
                     <ChangeEditorButton
                       application={this.application}
