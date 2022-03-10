@@ -9,10 +9,10 @@ import {
 import VisuallyHidden from '@reach/visually-hidden';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { useRef, useState } from 'preact/hooks';
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { Icon } from '../Icon';
 import { useCloseOnClickOutside } from '../utils';
-import { ChallengeReason, SNFile } from '@standardnotes/snjs';
+import { ChallengeReason, ContentType, SNFile } from '@standardnotes/snjs';
 import { confirmDialog } from '@/services/alertService';
 import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit';
 import { parseFileName } from '@standardnotes/filepicker';
@@ -49,9 +49,22 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
       note ? application.items.getFilesForNote(note).length : 0
     );
 
-    const reloadAttachedFilesLength = () => {
+    const reloadAttachedFilesLength = useCallback(() => {
       setAttachedFilesLength(application.items.getFilesForNote(note).length);
-    };
+    }, [application.items, note]);
+
+    useEffect(() => {
+      const unregisterFileStream = application.streamItems(
+        ContentType.File,
+        () => {
+          reloadAttachedFilesLength();
+        }
+      );
+
+      return () => {
+        unregisterFileStream();
+      };
+    }, [application, reloadAttachedFilesLength]);
 
     const toggleAttachedFilesMenu = async () => {
       const rect = buttonRef.current?.getBoundingClientRect();
@@ -191,7 +204,6 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
       }
 
       application.sync.sync();
-      reloadAttachedFilesLength();
 
       return true;
     };
