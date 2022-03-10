@@ -171,7 +171,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
                 {currentTab === PopoverTabs.AttachedFiles ? 'Attach' : 'Upload'}{' '}
                 files
               </Button>
-              <div className="text-xs color-grey-0 mt-2">
+              <div className="text-xs color-grey-0 mt-3">
                 Or drop your files here
               </div>
             </div>

@@ -223,10 +223,6 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
                   selectEditor(item);
                 };
 
-                if (item.isExperimental && !item.isExperimentalEnabled) {
-                  return;
-                }
-
                 return (
                   <MenuItem
                     type={MenuItemType.RadioButton}
