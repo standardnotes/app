@@ -182,7 +182,7 @@ export const NotesView: FunctionComponent<Props> = observer(
                 </button>
               </div>
               <div className="filter-section" role="search">
-                <div>
+                <div className="relative">
                   <input
                     type="text"
                     id="search-bar"
