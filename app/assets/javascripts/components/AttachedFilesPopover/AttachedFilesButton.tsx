@@ -50,7 +50,9 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     );
 
     const reloadAttachedFilesCount = useCallback(() => {
-      setAttachedFilesCount(application.items.getFilesForNote(note).length);
+      setAttachedFilesCount(
+        note ? application.items.getFilesForNote(note).length : 0
+      );
     }, [application.items, note]);
 
     useEffect(() => {
