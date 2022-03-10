@@ -26,6 +26,7 @@ import {
 } from 'mobx';
 import { ActionsMenuState } from './actions_menu_state';
 import { FeaturesState } from './features_state';
+import { FilesState } from './files_state';
 import { NotesState } from './notes_state';
 import { NotesViewState } from './notes_view_state';
 import { NoteTagsState } from './note_tags_state';
@@ -89,6 +90,7 @@ export class AppState {
   readonly tags: TagsState;
   readonly notesView: NotesViewState;
   readonly subscription: SubscriptionState;
+  readonly files: FilesState;
 
   isSessionsModalVisible = false;
 
@@ -139,6 +141,7 @@ export class AppState {
       this,
       this.appEventObserverRemovers
     );
+    this.files = new FilesState(application);
     this.addAppEventObserver();
     this.streamNotesAndTags();
     this.onVisibilityChange = () => {

@@ -258,6 +258,11 @@
   margin-right: 3rem;
 }
 
+.mx-4 {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
 .my-0\.5 {
   margin-top: 0.125rem;
   margin-bottom: 0.125rem;
@@ -326,6 +331,10 @@
 
 .w-3 {
   width: 0.75rem;
+}
+
+.w-18 {
+  width: 4.5rem;
 }
 
 .w-26 {
@@ -428,6 +437,10 @@
   max-height: 1.25rem;
 }
 
+.max-h-110 {
+  max-height: 27.5rem;
+}
+
 .border-danger {
   border-color: var(--sn-stylekit-danger-color);
 }
@@ -517,6 +530,11 @@
   padding-right: 0;
 }
 
+.px-1\.5 {
+  padding-left: 0.375rem;
+  padding-right: 0.375rem;
+}
+
 .px-2\.5 {
   padding-left: 0.625rem;
   padding-right: 0.625rem;
@@ -574,6 +592,10 @@
 
 .placeholder-medium::placeholder {
   font-weight: 500;
+}
+
+.sticky {
+  position: sticky;
 }
 
 .top-30\% {
@@ -638,6 +660,10 @@
 
 .right-0 {
   right: 0;
+}
+
+.right-2 {
+  right: 0.5rem;
 }
 
 .-right-2 {
@@ -906,6 +932,10 @@
     var(--sn-stylekit-info-color) -1px -1px 0px 0px inset;
 }
 
+.focus\:shadow-bottom:focus {
+  box-shadow: currentcolor 0px -1px 0px 0px inset, currentcolor 0px 1px 0px 0px;
+}
+
 .bg-note-size-warning {
   background-color: rgba(235, 173, 0, 0.08);
 }
@@ -960,13 +990,15 @@
 }
 
 .transition {
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
-  transition-timing-function: cubic-bezier(.4,0,.2,1);
+  transition-property: color, background-color, border-color,
+    text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter,
+    backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 100ms;
 }
 
 .animate-fade-from-top {
-  animation: fade-from-top .2s ease-out;
+  animation: fade-from-top 0.2s ease-out;
 }
 
 @keyframes fade-from-top {
