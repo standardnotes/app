@@ -12,7 +12,8 @@ const styles = {
 
 const Bubble = ({ label, selected, onSelect }: BubbleProperties) => (
   <span
-    className={`${styles.base} ${
+    role="tab"
+    className={`bubble ${styles.base} ${
       selected ? styles.selected : styles.unselected
     }`}
     onClick={onSelect}
