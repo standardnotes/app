@@ -1,8 +1,8 @@
 {
   "name": "@standardnotes/markdown-visual",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "Johnny Almonte <johnny@standardnotes.com>",
-  "description": "A lightweight WYSIWYG markdown editor, derivated from Milkdown editor",
+  "description": "A lightweight WYSIWYG markdown editor for Standard Notes, derived from Milkdown.",
   "keywords": [
     "Standard Notes",
     "Standard Notes Extensions"
@@ -39,7 +39,6 @@
     "@milkdown/plugin-clipboard": "^5.5.0",
     "@milkdown/plugin-cursor": "^5.5.0",
     "@milkdown/plugin-diagram": "^5.5.0",
-    "@milkdown/plugin-emoji": "^5.5.0",
     "@milkdown/plugin-history": "^5.5.0",
     "@milkdown/plugin-indent": "^5.5.0",
     "@milkdown/plugin-listener": "^5.5.0",

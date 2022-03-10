@@ -19,9 +19,7 @@ export const General: FunctionComponent<GeneralProps> = observer(
       <Tools application={application} />
       <Defaults application={application} />
       <ErrorReporting appState={appState} />
-      {appState.enableUnfinishedFeatures && (
-        <LabsPane application={application} />
-      )}
+      <LabsPane application={application} />
       <Advanced
         application={application}
         appState={appState}
