@@ -194,6 +194,7 @@ export const NotesView: FunctionComponent<Props> = observer(
                     onKeyUp={onNoteFilterKeyUp}
                     onFocus={onSearchFocused}
                     onBlur={onSearchBlurred}
+                    autocomplete="off"
                   />
                   {noteFilterText && (
                     <button
