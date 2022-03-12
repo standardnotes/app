@@ -15,12 +15,12 @@ import { useCloseOnClickOutside } from '../utils';
 import { ChallengeReason, ContentType, SNFile } from '@standardnotes/snjs';
 import { confirmDialog } from '@/services/alertService';
 import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit';
-import { parseFileName } from '@standardnotes/filepicker';
+import { parseFileName, StreamingFileReader } from '@standardnotes/filepicker';
 import {
   PopoverFileItemAction,
   PopoverFileItemActionType,
 } from './PopoverFileItemAction';
-import { PopoverDragNDropWrapper } from './PopoverDragNDropWrapper';
+import { AttachedFilesPopover, PopoverTabs } from './AttachedFilesPopover';
 
 type Props = {
   application: WebApplication;
@@ -68,7 +68,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
       };
     }, [application, reloadAttachedFilesCount]);
 
-    const toggleAttachedFilesMenu = async () => {
+    const toggleAttachedFilesMenu = useCallback(async () => {
       const rect = buttonRef.current?.getBoundingClientRect();
       if (rect) {
         const { clientHeight } = document.documentElement;
@@ -98,7 +98,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
 
         setOpen(newOpenState);
       }
-    };
+    }, [onClickPreprocessing, open]);
 
     const deleteFile = async (file: SNFile) => {
       const shouldDelete = await confirmDialog({
@@ -123,9 +123,12 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
       appState.files.downloadFile(file);
     };
 
-    const attachFileToNote = async (file: SNFile) => {
-      await application.items.associateFileWithNote(file, note);
-    };
+    const attachFileToNote = useCallback(
+      async (file: SNFile) => {
+        await application.items.associateFileWithNote(file, note);
+      },
+      [application.items, note]
+    );
 
     const detachFileFromNote = async (file: SNFile) => {
       await application.items.disassociateFileWithNote(file, note);
@@ -210,6 +213,98 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
       return true;
     };
 
+    const [isDraggingFiles, setIsDraggingFiles] = useState(false);
+    const [currentTab, setCurrentTab] = useState(PopoverTabs.AttachedFiles);
+    const dragCounter = useRef(0);
+
+    const handleDrag = (event: DragEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+    };
+
+    const handleDragIn = useCallback(
+      (event: DragEvent) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        dragCounter.current = dragCounter.current + 1;
+
+        if (event.dataTransfer?.items.length) {
+          setIsDraggingFiles(true);
+          if (!open) {
+            toggleAttachedFilesMenu();
+          }
+        }
+      },
+      [open, toggleAttachedFilesMenu]
+    );
+
+    const handleDragOut = (event: DragEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      dragCounter.current = dragCounter.current - 1;
+
+      if (dragCounter.current > 0) {
+        return;
+      }
+
+      setIsDraggingFiles(false);
+    };
+
+    const handleDrop = useCallback(
+      (event: DragEvent) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        setIsDraggingFiles(false);
+
+        if (event.dataTransfer?.items.length) {
+          Array.from(event.dataTransfer.items).forEach(async (item) => {
+            const fileOrHandle = StreamingFileReader.available()
+              ? ((await item.getAsFileSystemHandle()) as FileSystemFileHandle)
+              : item.getAsFile();
+
+            if (!fileOrHandle) {
+              return;
+            }
+
+            const uploadedFiles = await appState.files.uploadNewFile(
+              fileOrHandle
+            );
+
+            if (!uploadedFiles) {
+              return;
+            }
+
+            if (currentTab === PopoverTabs.AttachedFiles) {
+              uploadedFiles.forEach((file) => {
+                attachFileToNote(file);
+              });
+            }
+          });
+
+          event.dataTransfer.clearData();
+          dragCounter.current = 0;
+        }
+      },
+      [appState.files, attachFileToNote, currentTab]
+    );
+
+    useEffect(() => {
+      window.addEventListener('dragenter', handleDragIn);
+      window.addEventListener('dragleave', handleDragOut);
+      window.addEventListener('dragover', handleDrag);
+      window.addEventListener('drop', handleDrop);
+
+      return () => {
+        window.removeEventListener('dragenter', handleDragIn);
+        window.removeEventListener('dragleave', handleDragOut);
+        window.removeEventListener('dragover', handleDrag);
+        window.removeEventListener('drop', handleDrop);
+      };
+    }, [handleDragIn, handleDrop]);
+
     return (
       <div ref={containerRef}>
         <Disclosure open={open} onChange={toggleAttachedFilesMenu}>
@@ -245,11 +340,14 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
             className="sn-dropdown sn-dropdown--animated min-w-80 max-h-120 max-w-xs flex flex-col overflow-y-auto fixed"
           >
             {open && (
-              <PopoverDragNDropWrapper
+              <AttachedFilesPopover
                 application={application}
                 appState={appState}
                 note={note}
-                fileActionHandler={handleFileAction}
+                handleFileAction={handleFileAction}
+                currentTab={currentTab}
+                setCurrentTab={setCurrentTab}
+                isDraggingFiles={isDraggingFiles}
               />
             )}
           </DisclosurePanel>
