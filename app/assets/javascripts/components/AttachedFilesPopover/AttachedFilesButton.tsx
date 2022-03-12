@@ -261,26 +261,26 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
 
         if (event.dataTransfer?.items.length) {
           Array.from(event.dataTransfer.items).forEach(async (item) => {
-            let fileOrHandle;
-            if (StreamingFileReader.available()) {
-              fileOrHandle =
-                (await item.getAsFileSystemHandle()) as FileSystemFileHandle;
-            } else {
-              fileOrHandle = item.getAsFile();
-            }
-            if (fileOrHandle) {
-              const uploadedFiles = await appState.files.uploadNewFile(
-                fileOrHandle
-              );
-              if (!uploadedFiles) {
-                return;
-              }
+            const fileOrHandle = StreamingFileReader.available()
+              ? ((await item.getAsFileSystemHandle()) as FileSystemFileHandle)
+              : item.getAsFile();
 
-              if (currentTab === PopoverTabs.AttachedFiles) {
-                uploadedFiles.forEach((file) => {
-                  attachFileToNote(file);
-                });
-              }
+            if (!fileOrHandle) {
+              return;
+            }
+
+            const uploadedFiles = await appState.files.uploadNewFile(
+              fileOrHandle
+            );
+
+            if (!uploadedFiles) {
+              return;
+            }
+
+            if (currentTab === PopoverTabs.AttachedFiles) {
+              uploadedFiles.forEach((file) => {
+                attachFileToNote(file);
+              });
             }
           });
 
