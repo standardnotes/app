@@ -1,16 +1,30 @@
-import { ContentType, SNFile } from '@standardnotes/snjs';
+import { WebApplication } from '@/ui_models/application';
+import { AppState } from '@/ui_models/app_state';
+import { ContentType, SNFile, SNNote } from '@standardnotes/snjs';
 import { FilesIllustration } from '@standardnotes/stylekit';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { StateUpdater, useCallback, useEffect, useState } from 'preact/hooks';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
-import { PopoverTabs, PopoverWrapperProps } from './PopoverDragNDropWrapper';
 import { PopoverFileItem } from './PopoverFileItem';
-import { PopoverFileItemActionType } from './PopoverFileItemAction';
+import {
+  PopoverFileItemAction,
+  PopoverFileItemActionType,
+} from './PopoverFileItemAction';
 
-type Props = PopoverWrapperProps & {
+export enum PopoverTabs {
+  AttachedFiles,
+  AllFiles,
+}
+
+type Props = {
+  application: WebApplication;
+  appState: AppState;
   currentTab: PopoverTabs;
+  handleFileAction: (action: PopoverFileItemAction) => Promise<boolean>;
+  isDraggingFiles: boolean;
+  note: SNNote;
   setCurrentTab: StateUpdater<PopoverTabs>;
 };
 
@@ -18,9 +32,10 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
   ({
     application,
     appState,
-    note,
-    fileActionHandler,
     currentTab,
+    handleFileAction,
+    isDraggingFiles,
+    note,
     setCurrentTab,
   }) => {
     const [attachedFiles, setAttachedFiles] = useState<SNFile[]>([]);
@@ -74,7 +89,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
       }
       if (currentTab === PopoverTabs.AttachedFiles) {
         uploadedFiles.forEach((file) => {
-          fileActionHandler({
+          handleFileAction({
             type: PopoverFileItemActionType.AttachFileToNote,
             payload: file,
           });
@@ -83,7 +98,14 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
     };
 
     return (
-      <div className="flex flex-col">
+      <div
+        className="flex flex-col"
+        style={{
+          border: isDraggingFiles
+            ? '2px dashed var(--sn-stylekit-info-color)'
+            : '',
+        }}
+      >
         <div className="flex border-0 border-b-1 border-solid border-main">
           <button
             className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:bg-info-backdrop focus:shadow-bottom ${
@@ -146,7 +168,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
                   key={file.uuid}
                   file={file}
                   isAttachedToNote={attachedFiles.includes(file)}
-                  handleFileAction={fileActionHandler}
+                  handleFileAction={handleFileAction}
                 />
               );
             })
