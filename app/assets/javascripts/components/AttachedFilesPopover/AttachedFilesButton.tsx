@@ -102,18 +102,18 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
 
     const deleteFile = async (file: SNFile) => {
       const shouldDelete = await confirmDialog({
-        text: `Are you sure you want to permanently delete "${file.nameWithExt}"?`,
+        text: `Are you sure you want to permanently delete "${file.name}"?`,
         confirmButtonStyle: 'danger',
       });
       if (shouldDelete) {
         const deletingToastId = addToast({
           type: ToastType.Loading,
-          message: `Deleting file "${file.nameWithExt}"...`,
+          message: `Deleting file "${file.name}"...`,
         });
         await application.deleteItem(file);
         addToast({
           type: ToastType.Success,
-          message: `Deleted file "${file.nameWithExt}"`,
+          message: `Deleted file "${file.name}"`,
         });
         dismissToast(deletingToastId);
       }
@@ -160,8 +160,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     };
 
     const renameFile = async (file: SNFile, fileName: string) => {
-      const { name, ext } = parseFileName(fileName);
-      await application.items.renameFile(file, name, ext);
+      await application.items.renameFile(file, fileName);
     };
 
     const handleFileAction = async (action: PopoverFileItemAction) => {

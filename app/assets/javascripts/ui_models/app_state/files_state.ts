@@ -17,7 +17,7 @@ export class FilesState {
 
     try {
       const saver = StreamingFileSaver.available()
-        ? new StreamingFileSaver(file.nameWithExt)
+        ? new StreamingFileSaver(file.name)
         : new ClassicFileSaver();
 
       const isUsingStreamingSaver = saver instanceof StreamingFileSaver;
@@ -37,7 +37,7 @@ export class FilesState {
           if (isUsingStreamingSaver) {
             await saver.pushBytes(decryptedBytes);
           } else {
-            saver.saveFile(file.nameWithExt, decryptedBytes);
+            saver.saveFile(file.name, decryptedBytes);
           }
         }
       );
@@ -113,8 +113,7 @@ export class FilesState {
 
         const uploadedFile = await this.application.files.finishUpload(
           operation,
-          fileResult.name,
-          fileResult.ext
+          { name: fileResult.name, mimeType: '' }
         );
 
         uploadedFiles.push(uploadedFile);
@@ -122,7 +121,7 @@ export class FilesState {
         dismissToast(toastId);
         addToast({
           type: ToastType.Success,
-          message: `Uploaded file "${uploadedFile.nameWithExt}"`,
+          message: `Uploaded file "${uploadedFile.name}"`,
         });
       }
 

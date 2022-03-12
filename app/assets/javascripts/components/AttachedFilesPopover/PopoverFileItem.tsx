@@ -61,7 +61,7 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
   isAttachedToNote,
   handleFileAction,
 }) => {
-  const [fileName, setFileName] = useState(file.nameWithExt);
+  const [fileName, setFileName] = useState(file.name);
   const [isRenamingFile, setIsRenamingFile] = useState(false);
   const fileNameInputRef = useRef<HTMLInputElement>(null);
 
@@ -99,7 +99,7 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
   return (
     <div className="flex items-center justify-between p-3">
       <div className="flex items-center">
-        {getIconForFileType(file.ext ?? '')}
+        {getIconForFileType(file.name ?? '')}
         <div className="flex flex-col mx-4">
           {isRenamingFile ? (
             <input
@@ -112,7 +112,7 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
               onBlur={handleFileNameInputBlur}
             />
           ) : (
-            <div className="text-sm mb-1">{file.nameWithExt}</div>
+            <div className="text-sm mb-1">{file.name}</div>
           )}
           <div className="text-xs color-grey-0">
             {file.created_at.toLocaleString()} ·{' '}

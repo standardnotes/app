@@ -48,7 +48,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
     const filteredList =
       searchQuery.length > 0
         ? filesList.filter(
-            (file) => file.nameWithExt.toLowerCase().indexOf(searchQuery) !== -1
+            (file) => file.name.toLowerCase().indexOf(searchQuery) !== -1
           )
         : filesList;
 
