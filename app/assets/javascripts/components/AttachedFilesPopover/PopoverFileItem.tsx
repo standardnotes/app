@@ -72,16 +72,14 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
   }, [isRenamingFile]);
 
   const renameFile = async (file: SNFile, name: string) => {
-    const didRename = await handleFileAction({
+    await handleFileAction({
       type: PopoverFileItemActionType.RenameFile,
       payload: {
         file,
         name,
       },
     });
-    if (didRename) {
-      setIsRenamingFile(false);
-    }
+    setIsRenamingFile(false);
   };
 
   const handleFileNameInput = (event: Event) => {
@@ -90,9 +88,12 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
 
   const handleFileNameInputKeyDown = (event: KeyboardEvent) => {
     if (event.key === KeyboardKey.Enter) {
-      renameFile(file, fileName);
-      return;
+      fileNameInputRef.current?.blur();
     }
+  };
+
+  const handleFileNameInputBlur = () => {
+    renameFile(file, fileName);
   };
 
   return (
@@ -108,6 +109,7 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
               ref={fileNameInputRef}
               onInput={handleFileNameInput}
               onKeyDown={handleFileNameInputKeyDown}
+              onBlur={handleFileNameInputBlur}
             />
           ) : (
             <div className="text-sm mb-1">{file.nameWithExt}</div>
