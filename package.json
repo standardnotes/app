@@ -84,7 +84,7 @@
     "@standardnotes/filepicker": "1.10.0",
     "@standardnotes/settings": "1.12.0",
     "@standardnotes/sncrypto-web": "1.7.3",
-    "@standardnotes/snjs": "2.81.1",
+    "@standardnotes/snjs": "2.82.0",
     "mobx": "^6.4.2",
     "mobx-react-lite": "^3.3.0",
     "preact": "^10.6.6",
