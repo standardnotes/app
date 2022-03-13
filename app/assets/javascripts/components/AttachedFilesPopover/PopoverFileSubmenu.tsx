@@ -22,7 +22,7 @@ import { useCloseOnBlur } from '../utils';
 import { PopoverFileItemProps } from './PopoverFileItem';
 import { PopoverFileItemActionType } from './PopoverFileItemAction';
 
-type Props = Omit<PopoverFileItemProps, 'renameFile'> & {
+type Props = Omit<PopoverFileItemProps, 'renameFile' | 'getIconType'> & {
   setIsRenamingFile: StateUpdater<boolean>;
 };
 
