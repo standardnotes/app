@@ -169,6 +169,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
                   file={file}
                   isAttachedToNote={attachedFiles.includes(file)}
                   handleFileAction={handleFileAction}
+                  getIconType={application.iconsController.getIconForFileType}
                 />
               );
             })
