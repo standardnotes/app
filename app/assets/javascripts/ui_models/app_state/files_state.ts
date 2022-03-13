@@ -113,7 +113,7 @@ export class FilesState {
 
         const uploadedFile = await this.application.files.finishUpload(
           operation,
-          { name: fileResult.name, mimeType: '' }
+          { name: fileResult.name, mimeType: fileResult.mimeType }
         );
 
         uploadedFiles.push(uploadedFile);

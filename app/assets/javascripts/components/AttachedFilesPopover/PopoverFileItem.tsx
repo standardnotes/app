@@ -13,41 +13,41 @@ import { PopoverFileSubmenu } from './PopoverFileSubmenu';
 const getIconForFileType = (fileType: string) => {
   let iconType = 'file-other';
 
-  if (fileType === 'pdf') {
+  if (fileType === 'application/pdf') {
     iconType = 'file-pdf';
   }
 
-  if (/^(docx?|odt)/.test(fileType)) {
+  if (/word/.test(fileType)) {
     iconType = 'file-doc';
   }
 
-  if (/^pptx?/.test(fileType)) {
+  if (/powerpoint|presentation/.test(fileType)) {
     iconType = 'file-ppt';
   }
 
-  if (/^(xlsx?|ods)/.test(fileType)) {
+  if (/excel|spreadsheet/.test(fileType)) {
     iconType = 'file-xls';
   }
 
-  if (/^(jpe?g|a?png|webp|gif)/.test(fileType)) {
+  if (/^image\//.test(fileType)) {
     iconType = 'file-image';
   }
 
-  if (/^(mov|mp4|mkv)/.test(fileType)) {
+  if (/^video\//.test(fileType)) {
     iconType = 'file-mov';
   }
 
-  if (/^(wav|mp3|flac|ogg)/.test(fileType)) {
+  if (/^audio\//.test(fileType)) {
     iconType = 'file-music';
   }
 
-  if (/^(zip|rar|7z)/.test(fileType)) {
+  if (/(zip)|([tr]ar)|(7z)/.test(fileType)) {
     iconType = 'file-zip';
   }
 
   const IconComponent = ICONS[iconType as keyof typeof ICONS];
 
-  return <IconComponent className="flex-shrink-0" />;
+  return <IconComponent className="w-8 h-8 flex-shrink-0" />;
 };
 
 export type PopoverFileItemProps = {
@@ -99,7 +99,7 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
   return (
     <div className="flex items-center justify-between p-3">
       <div className="flex items-center">
-        {getIconForFileType(file.name ?? '')}
+        {getIconForFileType(file.mimeType)}
         <div className="flex flex-col mx-4">
           {isRenamingFile ? (
             <input

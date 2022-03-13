@@ -15,7 +15,7 @@ import { useCloseOnClickOutside } from '../utils';
 import { ChallengeReason, ContentType, SNFile } from '@standardnotes/snjs';
 import { confirmDialog } from '@/services/alertService';
 import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit';
-import { parseFileName, StreamingFileReader } from '@standardnotes/filepicker';
+import { StreamingFileReader } from '@standardnotes/filepicker';
 import {
   PopoverFileItemAction,
   PopoverFileItemActionType,
