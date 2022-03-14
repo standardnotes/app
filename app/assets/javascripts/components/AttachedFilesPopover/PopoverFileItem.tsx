@@ -21,6 +21,7 @@ export type PopoverFileItemProps = {
   isAttachedToNote: boolean;
   handleFileAction: (action: PopoverFileItemAction) => Promise<boolean>;
   getIconType(type: string): IconType;
+  closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void;
 };
 
 export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
@@ -28,6 +29,7 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
   isAttachedToNote,
   handleFileAction,
   getIconType,
+  closeOnBlur,
 }) => {
   const [fileName, setFileName] = useState(file.name);
   const [isRenamingFile, setIsRenamingFile] = useState(false);
@@ -93,6 +95,7 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
         isAttachedToNote={isAttachedToNote}
         handleFileAction={handleFileAction}
         setIsRenamingFile={setIsRenamingFile}
+        closeOnBlur={closeOnBlur}
       />
     </div>
   );

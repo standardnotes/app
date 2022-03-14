@@ -11,7 +11,7 @@ import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { Icon } from '../Icon';
-import { useCloseOnClickOutside } from '../utils';
+import { useCloseOnBlur } from '../utils';
 import { ChallengeReason, ContentType, SNFile } from '@standardnotes/snjs';
 import { confirmDialog } from '@/services/alertService';
 import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit';
@@ -41,9 +41,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     const buttonRef = useRef<HTMLButtonElement>(null);
     const panelRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
-    useCloseOnClickOutside(containerRef, () => {
-      setOpen(false);
-    });
+    const [closeOnBlur, keepMenuOpen] = useCloseOnBlur(containerRef, setOpen);
 
     const [attachedFilesCount, setAttachedFilesCount] = useState(
       note ? application.items.getFilesForNote(note).length : 0
@@ -137,7 +135,10 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     const toggleFileProtection = async (file: SNFile) => {
       let result: SNFile | undefined;
       if (file.protected) {
+        keepMenuOpen(true);
         result = await application.protections.unprotectFile(file);
+        keepMenuOpen(false);
+        containerRef.current?.querySelector('button')?.focus();
       } else {
         result = await application.protections.protectFile(file);
       }
@@ -174,10 +175,13 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
         file.protected &&
         action.type !== PopoverFileItemActionType.ToggleFileProtection
       ) {
+        keepMenuOpen(true);
         isAuthorizedForAction = await authorizeProtectedActionForFile(
           file,
           ChallengeReason.AccessProtectedFile
         );
+        keepMenuOpen(false);
+        containerRef.current?.querySelector('button')?.focus();
       }
 
       if (!isAuthorizedForAction) {
@@ -317,6 +321,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
             className={`sn-icon-button border-contrast ${
               attachedFilesCount > 0 ? 'py-1 px-3' : ''
             }`}
+            onBlur={closeOnBlur}
           >
             <VisuallyHidden>Attached files</VisuallyHidden>
             <Icon type="attachment-file" className="block" />
@@ -337,6 +342,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
               maxHeight,
             }}
             className="sn-dropdown sn-dropdown--animated min-w-80 max-h-120 max-w-xs flex flex-col overflow-y-auto fixed"
+            onBlur={closeOnBlur}
           >
             {open && (
               <AttachedFilesPopover
@@ -345,6 +351,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
                 note={note}
                 handleFileAction={handleFileAction}
                 currentTab={currentTab}
+                closeOnBlur={closeOnBlur}
                 setCurrentTab={setCurrentTab}
                 isDraggingFiles={isDraggingFiles}
               />
