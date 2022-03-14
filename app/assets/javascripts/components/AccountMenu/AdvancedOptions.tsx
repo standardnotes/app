@@ -36,7 +36,6 @@ export const AdvancedOptions: FunctionComponent<Props> = observer(
 
     useEffect(() => {
       const recomputeVaultedEmail = async () => {
-        console.log('computing vaulted email');
         const vaultedEmail = await application.vaultToEmail(
           vaultName,
           vaultUserphrase
