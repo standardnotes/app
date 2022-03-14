@@ -12,7 +12,13 @@ import { FunctionComponent } from 'preact';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { Icon } from '../Icon';
 import { useCloseOnBlur } from '../utils';
-import { ChallengeReason, ContentType, SNFile } from '@standardnotes/snjs';
+import {
+  ChallengeReason,
+  ContentType,
+  FeatureIdentifier,
+  FeatureStatus,
+  SNFile,
+} from '@standardnotes/snjs';
 import { confirmDialog } from '@/services/alertService';
 import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit';
 import { StreamingFileReader } from '@standardnotes/filepicker';
@@ -21,6 +27,7 @@ import {
   PopoverFileItemActionType,
 } from './PopoverFileItemAction';
 import { AttachedFilesPopover, PopoverTabs } from './AttachedFilesPopover';
+import { usePremiumModal } from '../Premium/usePremiumModal';
 
 type Props = {
   application: WebApplication;
@@ -28,8 +35,26 @@ type Props = {
   onClickPreprocessing?: () => Promise<void>;
 };
 
+const createDragOverlay = () => {
+  if (document.getElementById('drag-overlay')) {
+    return;
+  }
+
+  const overlayElementTemplate =
+    '<div class="sn-component" id="drag-overlay"><div class="absolute top-0 left-0 w-full h-full z-index-1001"></div></div>';
+  const overlayFragment = document
+    .createRange()
+    .createContextualFragment(overlayElementTemplate);
+  document.body.appendChild(overlayFragment);
+};
+
+const removeDragOverlay = () => {
+  document.getElementById('drag-overlay')?.remove();
+};
+
 export const AttachedFilesButton: FunctionComponent<Props> = observer(
   ({ application, appState, onClickPreprocessing }) => {
+    const premiumModal = usePremiumModal();
     const note = Object.values(appState.notes.selectedNotes)[0];
 
     const [open, setOpen] = useState(false);
@@ -67,6 +92,14 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     }, [application, reloadAttachedFilesCount]);
 
     const toggleAttachedFilesMenu = useCallback(async () => {
+      if (
+        application.features.getFeatureStatus(FeatureIdentifier.Files) !==
+        FeatureStatus.Entitled
+      ) {
+        premiumModal.activate('Files');
+        return;
+      }
+
       const rect = buttonRef.current?.getBoundingClientRect();
       if (rect) {
         const { clientHeight } = document.documentElement;
@@ -96,7 +129,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
 
         setOpen(newOpenState);
       }
-    }, [onClickPreprocessing, open]);
+    }, [application.features, onClickPreprocessing, open, premiumModal]);
 
     const deleteFile = async (file: SNFile) => {
       const shouldDelete = await confirmDialog({
@@ -234,6 +267,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
 
         if (event.dataTransfer?.items.length) {
           setIsDraggingFiles(true);
+          createDragOverlay();
           if (!open) {
             toggleAttachedFilesMenu();
           }
@@ -252,6 +286,8 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
         return;
       }
 
+      removeDragOverlay();
+
       setIsDraggingFiles(false);
     };
 
@@ -261,6 +297,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
         event.stopPropagation();
 
         setIsDraggingFiles(false);
+        removeDragOverlay();
 
         if (event.dataTransfer?.items.length) {
           Array.from(event.dataTransfer.items).forEach(async (item) => {
