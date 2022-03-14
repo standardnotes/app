@@ -12,13 +12,10 @@ import {
   ComponentMutator,
   PayloadSource,
   ComponentViewer,
-  ComponentManagerEvent,
   TransactionalMutation,
   ItemMutator,
   ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
   NoteViewController,
-  FeatureIdentifier,
-  FeatureStatus,
 } from '@standardnotes/snjs';
 import { debounce, isDesktopApplication } from '@/utils';
 import { KeyboardModifier, KeyboardKey } from '@/services/ioService';
@@ -103,7 +100,6 @@ type State = {
   editorTitle: string;
   editorText: string;
   isDesktop?: boolean;
-  isEntitledToFiles: boolean;
   lockText: string;
   marginResizersEnabled?: boolean;
   monospaceFont?: boolean;
@@ -172,9 +168,6 @@ export class NoteView extends PureComponent<Props, State> {
       editorText: '',
       editorTitle: '',
       isDesktop: isDesktopApplication(),
-      isEntitledToFiles:
-        this.application.features.getFeatureStatus(FeatureIdentifier.Files) ===
-        FeatureStatus.Entitled,
       lockText: 'Note Editing Disabled',
       noteStatus: undefined,
       noteLocked: this.controller.note.locked,
@@ -328,15 +321,6 @@ export class NoteView extends PureComponent<Props, State> {
   /** @override */
   async onAppEvent(eventName: ApplicationEvent) {
     switch (eventName) {
-      case ApplicationEvent.FeaturesUpdated:
-      case ApplicationEvent.UserRolesChanged:
-        this.setState({
-          isEntitledToFiles:
-            this.application.features.getFeatureStatus(
-              FeatureIdentifier.Files
-            ) === FeatureStatus.Entitled,
-        });
-        break;
       case ApplicationEvent.PreferencesChanged:
         this.reloadPreferences();
         break;
@@ -1043,18 +1027,17 @@ export class NoteView extends PureComponent<Props, State> {
                       )}
                     </div>
                   </div>
-                  {this.state.isEntitledToFiles &&
-                    window.enabledUnfinishedFeatures && (
-                      <div className="mr-3">
-                        <AttachedFilesButton
-                          application={this.application}
-                          appState={this.appState}
-                          onClickPreprocessing={
-                            this.ensureNoteIsInsertedBeforeUIAction
-                          }
-                        />
-                      </div>
-                    )}
+                  {window.enabledUnfinishedFeatures && (
+                    <div className="mr-3">
+                      <AttachedFilesButton
+                        application={this.application}
+                        appState={this.appState}
+                        onClickPreprocessing={
+                          this.ensureNoteIsInsertedBeforeUIAction
+                        }
+                      />
+                    </div>
+                  )}
                   <div className="mr-3">
                     <ChangeEditorButton
                       application={this.application}

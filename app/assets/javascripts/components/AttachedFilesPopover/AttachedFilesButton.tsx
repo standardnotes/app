@@ -12,7 +12,13 @@ import { FunctionComponent } from 'preact';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { Icon } from '../Icon';
 import { useCloseOnClickOutside } from '../utils';
-import { ChallengeReason, ContentType, SNFile } from '@standardnotes/snjs';
+import {
+  ChallengeReason,
+  ContentType,
+  FeatureIdentifier,
+  FeatureStatus,
+  SNFile,
+} from '@standardnotes/snjs';
 import { confirmDialog } from '@/services/alertService';
 import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit';
 import { StreamingFileReader } from '@standardnotes/filepicker';
@@ -21,6 +27,7 @@ import {
   PopoverFileItemActionType,
 } from './PopoverFileItemAction';
 import { AttachedFilesPopover, PopoverTabs } from './AttachedFilesPopover';
+import { usePremiumModal } from '../Premium/usePremiumModal';
 
 type Props = {
   application: WebApplication;
@@ -47,6 +54,7 @@ const removeDragOverlay = () => {
 
 export const AttachedFilesButton: FunctionComponent<Props> = observer(
   ({ application, appState, onClickPreprocessing }) => {
+    const premiumModal = usePremiumModal();
     const note = Object.values(appState.notes.selectedNotes)[0];
 
     const [open, setOpen] = useState(false);
@@ -86,6 +94,14 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     }, [application, reloadAttachedFilesCount]);
 
     const toggleAttachedFilesMenu = useCallback(async () => {
+      if (
+        application.features.getFeatureStatus(FeatureIdentifier.Files) !==
+        FeatureStatus.Entitled
+      ) {
+        premiumModal.activate('Files');
+        return;
+      }
+
       const rect = buttonRef.current?.getBoundingClientRect();
       if (rect) {
         const { clientHeight } = document.documentElement;
@@ -115,7 +131,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
 
         setOpen(newOpenState);
       }
-    }, [onClickPreprocessing, open]);
+    }, [application.features, onClickPreprocessing, open, premiumModal]);
 
     const deleteFile = async (file: SNFile) => {
       const shouldDelete = await confirmDialog({
