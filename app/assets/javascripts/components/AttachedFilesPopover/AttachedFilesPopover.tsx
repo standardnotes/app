@@ -5,7 +5,13 @@ import { ContentType, SNFile, SNNote } from '@standardnotes/snjs';
 import { FilesIllustration } from '@standardnotes/stylekit';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { StateUpdater, useCallback, useEffect, useState } from 'preact/hooks';
+import {
+  StateUpdater,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'preact/hooks';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
 import { PopoverFileItem } from './PopoverFileItem';
@@ -44,6 +50,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
     const [attachedFiles, setAttachedFiles] = useState<SNFile[]>([]);
     const [allFiles, setAllFiles] = useState<SNFile[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
+    const searchInputRef = useRef<HTMLInputElement>(null);
 
     const filesList =
       currentTab === PopoverTabs.AttachedFiles ? attachedFiles : allFiles;
@@ -51,7 +58,8 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
     const filteredList =
       searchQuery.length > 0
         ? filesList.filter(
-            (file) => file.name.toLowerCase().indexOf(searchQuery) !== -1
+            (file) =>
+              file.name.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1
           )
         : filesList;
 
@@ -151,12 +159,14 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
                     setSearchQuery((e.target as HTMLInputElement).value);
                   }}
                   onBlur={closeOnBlur}
+                  ref={searchInputRef}
                 />
                 {searchQuery.length > 0 && (
                   <button
                     className="flex absolute right-2 p-0 bg-transparent border-0 top-1/2 -translate-y-1/2 cursor-pointer"
                     onClick={() => {
                       setSearchQuery('');
+                      searchInputRef.current?.focus();
                     }}
                     onBlur={closeOnBlur}
                   >
