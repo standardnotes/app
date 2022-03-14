@@ -28,6 +28,23 @@ type Props = {
   onClickPreprocessing?: () => Promise<void>;
 };
 
+const createDragOverlay = () => {
+  if (document.getElementById('drag-overlay')) {
+    return;
+  }
+
+  const overlayElementTemplate =
+    '<div class="sn-component" id="drag-overlay"><div class="absolute top-0 left-0 w-full h-full z-index-1001"></div></div>';
+  const overlayFragment = document
+    .createRange()
+    .createContextualFragment(overlayElementTemplate);
+  document.body.appendChild(overlayFragment);
+};
+
+const removeDragOverlay = () => {
+  document.getElementById('drag-overlay')?.remove();
+};
+
 export const AttachedFilesButton: FunctionComponent<Props> = observer(
   ({ application, appState, onClickPreprocessing }) => {
     const note = Object.values(appState.notes.selectedNotes)[0];
@@ -230,6 +247,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
 
         if (event.dataTransfer?.items.length) {
           setIsDraggingFiles(true);
+          createDragOverlay();
           if (!open) {
             toggleAttachedFilesMenu();
           }
@@ -248,6 +266,8 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
         return;
       }
 
+      removeDragOverlay();
+
       setIsDraggingFiles(false);
     };
 
@@ -257,6 +277,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
         event.stopPropagation();
 
         setIsDraggingFiles(false);
+        removeDragOverlay();
 
         if (event.dataTransfer?.items.length) {
           Array.from(event.dataTransfer.items).forEach(async (item) => {
