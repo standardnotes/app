@@ -25,7 +25,7 @@ type ButtonProps = {
       | TargetedEvent<HTMLFormElement>
       | TargetedMouseEvent<HTMLButtonElement>
   ) => void;
-  onBlur: (event: FocusEvent) => void;
+  onBlur?: (event: FocusEvent) => void;
   disabled?: boolean;
 };
 
