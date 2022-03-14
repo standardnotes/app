@@ -138,7 +138,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
         keepMenuOpen(true);
         result = await application.protections.unprotectFile(file);
         keepMenuOpen(false);
-        containerRef.current?.querySelector('button')?.focus();
+        buttonRef.current?.focus();
       } else {
         result = await application.protections.protectFile(file);
       }
@@ -181,7 +181,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
           ChallengeReason.AccessProtectedFile
         );
         keepMenuOpen(false);
-        containerRef.current?.querySelector('button')?.focus();
+        buttonRef.current?.focus();
       }
 
       if (!isAuthorizedForAction) {
