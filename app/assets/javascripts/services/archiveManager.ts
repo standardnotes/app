@@ -178,7 +178,6 @@ export class ArchiveManager {
   }
 
   downloadData(data: Blob, fileName: string) {
-    this.loadZip();
     const link = document.createElement('a');
     link.setAttribute('download', fileName);
     link.href = this.hrefForData(data);
