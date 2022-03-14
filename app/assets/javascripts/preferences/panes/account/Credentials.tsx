@@ -45,7 +45,8 @@ export const Credentials: FunctionComponent<Props> = observer(
           <Title>Credentials</Title>
           <Subtitle>Email</Subtitle>
           <Text>
-            You're signed in as <span className="font-bold">{user?.email}</span>
+            You're signed in as{' '}
+            <span className="font-bold wrap">{user?.email}</span>
           </Text>
           <Button
             className="min-w-20 mt-3"
