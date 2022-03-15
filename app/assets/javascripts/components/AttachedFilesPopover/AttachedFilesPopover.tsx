@@ -5,13 +5,7 @@ import { ContentType, SNFile, SNNote } from '@standardnotes/snjs';
 import { FilesIllustration } from '@standardnotes/stylekit';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import {
-  StateUpdater,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'preact/hooks';
+import { StateUpdater, useEffect, useRef, useState } from 'preact/hooks';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
 import { PopoverFileItem } from './PopoverFileItem';
@@ -63,35 +57,30 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
           )
         : filesList;
 
-    const reloadAttachedFiles = useCallback(() => {
-      setAttachedFiles(
-        application.items
-          .getFilesForNote(note)
-          .sort((a, b) => (a.created_at < b.created_at ? 1 : -1))
-      );
-    }, [application.items, note]);
-
-    const reloadAllFiles = useCallback(() => {
-      setAllFiles(
-        application
-          .getItems(ContentType.File)
-          .sort((a, b) => (a.created_at < b.created_at ? 1 : -1)) as SNFile[]
-      );
-    }, [application]);
-
     useEffect(() => {
       const unregisterFileStream = application.streamItems(
         ContentType.File,
         () => {
-          reloadAttachedFiles();
-          reloadAllFiles();
+          setAttachedFiles(
+            application.items
+              .getFilesForNote(note)
+              .sort((a, b) => (a.created_at < b.created_at ? 1 : -1))
+          );
+
+          setAllFiles(
+            application
+              .getItems(ContentType.File)
+              .sort((a, b) =>
+                a.created_at < b.created_at ? 1 : -1
+              ) as SNFile[]
+          );
         }
       );
 
       return () => {
         unregisterFileStream();
       };
-    }, [application, reloadAllFiles, reloadAttachedFiles]);
+    }, [application, note]);
 
     const handleAttachFilesClick = async () => {
       const uploadedFiles = await appState.files.uploadNewFile();
@@ -195,12 +184,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
           ) : (
             <div className="flex flex-col items-center justify-center w-full py-8">
               <div className="w-18 h-18 mb-2">
-                <FilesIllustration
-                  style={{
-                    transform: 'scale(0.6)',
-                    transformOrigin: 'top left',
-                  }}
-                />
+                <FilesIllustration />
               </div>
               <div className="text-sm font-medium mb-3">
                 {searchQuery.length > 0
