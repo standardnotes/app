@@ -79,6 +79,7 @@ export class ArchiveManager {
     const nextFile = async () => {
       const item = items[index];
       let name, contents;
+
       if (item.content_type === ContentType.Note) {
         const note = item as SNNote;
         name = (note.content as PayloadContent).title;
@@ -87,14 +88,17 @@ export class ArchiveManager {
         name = item.content_type;
         contents = JSON.stringify(item.content, null, 2);
       }
+
       if (!name) {
         name = '';
       }
+
       const blob = new Blob([contents], { type: 'text/plain' });
       const fileName =
         `Items/${sanitizeFileName(item.content_type)}/` +
         zippableFileName(name, `-${item.uuid.split('-')[0]}`);
       await zipWriter.add(fileName, new zip.BlobReader(blob));
+
       index++;
       if (index < items.length) {
         await nextFile();
