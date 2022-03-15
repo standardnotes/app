@@ -10,7 +10,7 @@ import {
 } from './PopoverFileItemAction';
 import { PopoverFileSubmenu } from './PopoverFileSubmenu';
 
-const getFileIconComponent = (iconType: string) => {
+export const getFileIconComponent = (iconType: string) => {
   const IconComponent = ICONS[iconType as keyof typeof ICONS];
 
   return <IconComponent className="w-8 h-8 flex-shrink-0" />;
