@@ -72,7 +72,6 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
-    "@bugsnag/js": "^7.16.2",
     "@reach/alert": "^0.16.0",
     "@reach/alert-dialog": "^0.16.2",
     "@reach/checkbox": "^0.16.0",
