@@ -12,8 +12,6 @@ WORKDIR /app/
 
 COPY package.json yarn.lock Gemfile Gemfile.lock /app/
 
-COPY vendor /app/vendor
-
 RUN yarn install --pure-lockfile
 
 RUN gem install bundler && bundle install
