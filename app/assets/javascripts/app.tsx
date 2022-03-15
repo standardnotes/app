@@ -2,7 +2,6 @@
 
 declare global {
   interface Window {
-    bugsnagApiKey?: string;
     dashboardUrl?: string;
     defaultSyncServer: string;
     devAccountEmail?: string;
@@ -22,7 +21,6 @@ import { render } from 'preact';
 import { ApplicationGroupView } from './components/ApplicationGroupView';
 import { Bridge } from './services/bridge';
 import { BrowserBridge } from './services/browserBridge';
-import { startErrorReporting } from './services/errorReporting';
 import { StartApplication } from './startApplication';
 import { ApplicationGroup } from './ui_models/application_group';
 import { isDev } from './utils';
@@ -34,7 +32,7 @@ const startApplication: StartApplication = async function startApplication(
   webSocketUrl: string
 ) {
   SNLog.onLog = console.log;
-  startErrorReporting();
+  SNLog.onError = console.error;
 
   const mainApplicationGroup = new ApplicationGroup(
     defaultSyncServerHost,
