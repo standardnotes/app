@@ -64,81 +64,54 @@ export class ArchiveManager {
     return string;
   }
 
-  private get zip() {
-    return (window as any).zip;
-  }
-
-  private async loadZip() {
-    if (this.zip) {
-      return;
-    }
-    const scriptTag = document.createElement('script');
-    scriptTag.src = '/assets/zip/zip.js';
-    scriptTag.async = false;
-    const headTag = document.getElementsByTagName('head')[0];
-    headTag.appendChild(scriptTag);
-    return new Promise<void>((resolve) => {
-      scriptTag.onload = () => {
-        this.zip.workerScriptsPath = 'assets/zip/';
-        resolve();
-      };
-    });
-  }
-
   private async downloadZippedDecryptedItems(data: BackupFile) {
-    await this.loadZip();
+    const zip = await import('@zip.js/zip.js');
+    const zipWriter = new zip.ZipWriter(new zip.BlobWriter('application/zip'));
     const items = data.items;
-    this.zip.createWriter(
-      new this.zip.BlobWriter('application/zip'),
-      async (zipWriter: any) => {
-        await new Promise((resolve) => {
-          const blob = new Blob([JSON.stringify(data, null, 2)], {
-            type: 'text/plain',
-          });
-          const fileName = zippableFileName(
-            'Standard Notes Backup and Import File'
-          );
-          zipWriter.add(fileName, new this.zip.BlobReader(blob), resolve);
-        });
 
-        let index = 0;
-        const nextFile = () => {
-          const item = items[index];
-          let name, contents;
-          if (item.content_type === ContentType.Note) {
-            const note = item as SNNote;
-            name = (note.content as PayloadContent).title;
-            contents = (note.content as PayloadContent).text;
-          } else {
-            name = item.content_type;
-            contents = JSON.stringify(item.content, null, 2);
-          }
-          if (!name) {
-            name = '';
-          }
-          const blob = new Blob([contents], { type: 'text/plain' });
-          const fileName =
-            `Items/${sanitizeFileName(item.content_type)}/` +
-            zippableFileName(name, `-${item.uuid.split('-')[0]}`);
-          zipWriter.add(fileName, new this.zip.BlobReader(blob), () => {
-            index++;
-            if (index < items.length) {
-              nextFile();
-            } else {
-              zipWriter.close((blob: any) => {
-                this.downloadData(
-                  blob,
-                  `Standard Notes Backup - ${this.formattedDate()}.zip`
-                );
-                zipWriter = null;
-              });
-            }
-          });
-        };
-        nextFile();
-      },
-      onerror
-    );
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: 'text/plain',
+    });
+    const fileName = zippableFileName('Standard Notes Backup and Import File');
+    await zipWriter.add(fileName, new zip.BlobReader(blob));
+
+    let index = 0;
+    const nextFile = async () => {
+      const item = items[index];
+      let name, contents;
+
+      if (item.content_type === ContentType.Note) {
+        const note = item as SNNote;
+        name = (note.content as PayloadContent).title;
+        contents = (note.content as PayloadContent).text;
+      } else {
+        name = item.content_type;
+        contents = JSON.stringify(item.content, null, 2);
+      }
+
+      if (!name) {
+        name = '';
+      }
+
+      const blob = new Blob([contents], { type: 'text/plain' });
+      const fileName =
+        `Items/${sanitizeFileName(item.content_type)}/` +
+        zippableFileName(name, `-${item.uuid.split('-')[0]}`);
+      await zipWriter.add(fileName, new zip.BlobReader(blob));
+
+      index++;
+      if (index < items.length) {
+        await nextFile();
+      } else {
+        const finalBlob = await zipWriter.close();
+        this.downloadData(
+          finalBlob,
+          `Standard Notes Backup - ${this.formattedDate()}.zip`
+        );
+      }
+    };
+
+    await nextFile();
   }
 
   async zipData(data: ZippableData): Promise<Blob> {

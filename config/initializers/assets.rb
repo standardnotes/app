@@ -2,7 +2,6 @@
 Rails.application.config.assets.version = '1.0'
 
 Rails.application.config.assets.paths << Rails.root.join('vendor', 'assets')
-Rails.application.config.assets.precompile += %w( zip/zip.js zip/z-worker.js zip/inflate.js zip/deflate.js )
 
 # Recursively add all files and folders in 'dist'.
 Rails.application.config.assets.paths << Rails.root.join('dist')
