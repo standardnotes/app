@@ -3,13 +3,7 @@ import { STRING_RESTORE_LOCKED_ATTEMPT } from '@/strings';
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import { getPlatformString } from '@/utils';
-import {
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogLabel,
-  AlertDialogOverlay,
-} from '@reach/alert-dialog';
-import VisuallyHidden from '@reach/visually-hidden';
+import { DialogContent, DialogOverlay } from '@reach/dialog';
 import {
   ButtonType,
   ContentType,
@@ -237,24 +231,22 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
     };
 
     return (
-      <AlertDialogOverlay
+      <DialogOverlay
         className={`sn-component ${getPlatformString()}`}
         onDismiss={dismissModal}
-        leastDestructiveRef={closeButtonRef}
+        initialFocusRef={closeButtonRef}
+        aria-label="Note revision history"
       >
-        <AlertDialogContent
+        <DialogContent
           className="rounded shadow-overlay"
           style={{
             width: '90%',
             maxWidth: '90%',
             minHeight: '90%',
-            background: '#fff',
+            background: 'var(--sn-stylekit-background-color)',
           }}
         >
-          <AlertDialogLabel>
-            <VisuallyHidden>Note revision history</VisuallyHidden>
-          </AlertDialogLabel>
-          <AlertDialogDescription
+          <div
             className={`bg-default flex flex-col h-full overflow-hidden ${
               isDeletingRevision ? 'pointer-events-none cursor-not-allowed' : ''
             }`}
@@ -330,9 +322,9 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
                 </div>
               )}
             </div>
-          </AlertDialogDescription>
-        </AlertDialogContent>
-      </AlertDialogOverlay>
+          </div>
+        </DialogContent>
+      </DialogOverlay>
     );
   });
 
