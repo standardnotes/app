@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/markdown-visual",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "author": "Johnny Almonte <johnny@standardnotes.com>",
   "description": "A lightweight WYSIWYG markdown editor for Standard Notes, derived from Milkdown.",
   "keywords": [
@@ -29,12 +29,12 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "pretty": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md"
+    "pretty": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md",
+    "prepare": "husky install",
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
-    "@codemirror/basic-setup": "^0.19.1",
-    "@codemirror/lang-markdown": "^0.19.2",
-    "@fontsource/roboto": "^4.5.1",
+    "@codemirror/lang-markdown": "^0.19.6",
     "@milkdown/core": "^5.5.0",
     "@milkdown/plugin-clipboard": "^5.5.0",
     "@milkdown/plugin-cursor": "^5.5.0",
@@ -52,36 +52,33 @@
     "@milkdown/prose": "^5.5.0",
     "@milkdown/react": "^5.5.0",
     "@milkdown/theme-nord": "^5.5.0",
-    "@standardnotes/editor-kit": "2.2.2",
-    "@testing-library/dom": "^7.29.0",
-    "@testing-library/jest-dom": "^5.11.6",
-    "@testing-library/react": "^11.2.2",
-    "@testing-library/user-event": "^12.6.0",
-    "@types/jest": "^26.0.19",
-    "@types/lodash": "^4.14.165",
+    "@standardnotes/editor-kit": "2.2.4",
+    "@testing-library/dom": "^8.11.3",
+    "@testing-library/jest-dom": "^5.16.2",
+    "@testing-library/react": "^12.1.4",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.4.1",
+    "@types/lodash": "^4.14.179",
     "@types/marked": "^4.0.2",
-    "@types/node": "^14.14.14",
-    "@types/react": "^17.0.0",
-    "@types/react-dom": "^17.0.0",
-    "@uiw/react-codemirror": "^4.1.0",
-    "filesafe-embed": "^1.0.10",
-    "filesafe-js": "^1.0.4",
-    "gh-pages": "^3.1.0",
-    "husky": "^4.3.6",
-    "katex": "^0.13.18",
-    "lint-staged": "^10.5.3",
+    "@types/node": "^17.0.21",
+    "@types/react": "^17.0.40",
+    "@types/react-dom": "^17.0.13",
+    "@uiw/react-codemirror": "^4.5.1",
+    "gh-pages": "^3.2.3",
+    "husky": "^7.0.4",
+    "katex": "^0.15.2",
+    "lint-staged": "^12.3.5",
     "marked": "^4.0.12",
-    "material-icons": "^1.9.0",
-    "node-sass": "4.14.1",
-    "prettier": "^2.2.1",
+    "material-icons": "^1.10.8",
+    "prettier": "^2.5.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-icons": "^4.3.1",
-    "react-scripts": "4.0.3",
-    "sn-stylekit": "5.2.8",
-    "source-map-explorer": "^2.5.1",
-    "typescript": "4.1.2",
-    "web-vitals": "^1.0.1"
+    "react-scripts": "^5.0.0",
+    "sass": "1.49.9",
+    "sn-stylekit": "5.2.21",
+    "source-map-explorer": "^2.5.2",
+    "typescript": "4.6.2"
   },
   "eslintConfig": {
     "extends": [
@@ -101,11 +98,6 @@
       "last 1 safari version"
     ]
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "lint-staged": {
     "README.md": [
       "prettier --write"
@@ -115,6 +107,6 @@
     ]
   },
   "resolutions": {
-    "react-error-overlay": "6.0.9"
+    "react-error-overlay": "^6.0.10"
   }
 }
