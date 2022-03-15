@@ -61,10 +61,12 @@ export const FilePreviewModal: FunctionComponent<Props> = ({
           <div className="flex items-center">
             <div className="w-6 h-6">
               {getFileIconComponent(
-                application.iconsController.getIconForFileType(file.mimeType)
+                application.iconsController.getIconForFileType(file.mimeType),
+                'w-6 h-6 flex-shrink-0'
               )}
             </div>
             <span className="ml-3 font-medium">{file.name}</span>
+            <span className="ml-3">{file.mimeType}</span>
           </div>
           <button
             ref={closeButtonRef}
