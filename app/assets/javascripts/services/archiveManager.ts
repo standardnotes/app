@@ -24,6 +24,8 @@ type ZippableData = {
   content: Blob;
 }[];
 
+type ObjectURL = string;
+
 export class ArchiveManager {
   private readonly application: WebApplication;
   private textFile?: string;
@@ -150,10 +152,10 @@ export class ArchiveManager {
     return this.textFile;
   }
 
-  downloadData(data: Blob, fileName: string) {
+  downloadData(data: Blob | ObjectURL, fileName: string) {
     const link = document.createElement('a');
     link.setAttribute('download', fileName);
-    link.href = this.hrefForData(data);
+    link.href = typeof data === 'string' ? data : this.hrefForData(data);
     document.body.appendChild(link);
     link.click();
     link.remove();
