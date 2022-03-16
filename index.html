@@ -31,7 +31,6 @@
 <body
   data-default-sync-server="<%= env.DEFAULT_SYNC_SERVER %>"
   data-default-files-host="<%= env.DEFAULT_FILES_HOST %>"
-  data-bugsnag-api-key="<%= env.BUGSNAG_API_KEY %>"
   data-enable-unfinished-features="<%= env.ENABLE_UNFINISHED_FEATURES %>"
   data-web-socket-url="<%= env.WEBSOCKET_URL %>"
   data-purchase-url="<%= env.PURCHASE_URL %>"
@@ -44,7 +43,6 @@
   <script>
     window.defaultSyncServer = document.body.dataset.defaultSyncServer || "https://api.standardnotes.com";
     window.defaultFilesHost = document.body.dataset.defaultFilesHost;
-    window.bugsnagApiKey = document.body.dataset.bugsnagApiKey;
     window.enabledUnfinishedFeatures = document.body.dataset.enableUnfinishedFeatures === 'true';
     window.websocketUrl = document.body.dataset.webSocketUrl;
     window.purchaseUrl = document.body.dataset.purchaseUrl;

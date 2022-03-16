@@ -14,8 +14,8 @@ import {
   SmartView,
   SNTag,
   SystemViewId,
+  removeFromArray,
 } from '@standardnotes/snjs';
-import pull from 'lodash/pull';
 import {
   action,
   computed,
@@ -415,7 +415,7 @@ export class AppState {
   addObserver(callback: ObserverCallback) {
     this.observers.push(callback);
     return () => {
-      pull(this.observers, callback);
+      removeFromArray(this.observers, callback);
     };
   }
 
