@@ -2450,10 +2450,10 @@
     "@standardnotes/sncrypto-common" "^1.7.3"
     "@standardnotes/utils" "^1.3.0"
 
-"@standardnotes/stylekit@5.16.0":
-  version "5.16.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/stylekit/-/stylekit-5.16.0.tgz#4403cd704d4f01b0cd3a844d7ff9ee8f21396afb"
-  integrity sha512-FnpK/3ExnfLoHnw7jKU34P2zjtpeQ1344ark/jJ5+E45gPZGEBtFk0TUvUCt/jSkrVw6OGCTZaF2wIChsP8o4Q==
+"@standardnotes/stylekit@5.17.0":
+  version "5.17.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/stylekit/-/stylekit-5.17.0.tgz#ef8093d036142a88780d9a39f2d33618fb017f09"
+  integrity sha512-C8a1WwbyaJn+Tf62INd62zhf7Zx0yEIMTDyr47dK4U1J0ppmlBTm/4JsSetPvht9djTJkBJGFUiwek4HNJDv0w==
   dependencies:
     "@nanostores/preact" "^0.1.3"
     "@reach/listbox" "^0.16.2"
