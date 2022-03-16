@@ -95,7 +95,9 @@ export class PreferencesMenu {
 
   private loadLatestVersions(): void {
     ExtensionsLatestVersions.load(this.application).then((versions) => {
-      this._extensionLatestVersions = versions;
+      if (versions) {
+        this._extensionLatestVersions = versions;
+      }
     });
   }
 

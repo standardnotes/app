@@ -9,7 +9,7 @@ import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import { observer } from 'mobx-react-lite';
 import { STRING_REMOVE_OFFLINE_KEY_CONFIRMATION } from '@/strings';
-import { ButtonType } from '@standardnotes/snjs';
+import { ButtonType, ClientDisplayableError } from '@standardnotes/snjs';
 import { HorizontalSeparator } from '@/components/shared/HorizontalSeparator';
 
 interface IProps {
@@ -49,8 +49,8 @@ export const OfflineSubscription: FunctionalComponent<IProps> = observer(
         activationCode
       );
 
-      if (result?.error) {
-        await application.alertService.alert(result.error);
+      if (result instanceof ClientDisplayableError) {
+        await application.alertService.alert(result.text);
       } else {
         setIsSuccessfullyActivated(true);
         setHasUserPreviouslyStoredCode(true);
