@@ -161,7 +161,6 @@ export const ICONS = {
   settings: SettingsIcon,
   signIn: SignInIcon,
   signOut: SignOutIcon,
-  spellcheck: NotesIcon,
   spreadsheets: SpreadsheetsIcon,
   star: StarIcon,
   sync: SyncIcon,

@@ -161,7 +161,7 @@ const SpellcheckOptions: FunctionComponent<{
         disabled={!spellcheckControllable}
       >
         <span className="flex items-center">
-          <Icon type="spellcheck" className={iconClass} />
+          <Icon type="notes" className={iconClass} />
           Spellcheck
         </span>
         <Switch
