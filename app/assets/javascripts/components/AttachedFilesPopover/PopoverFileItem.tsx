@@ -85,7 +85,7 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
               onBlur={handleFileNameInputBlur}
             />
           ) : (
-            <div className="text-sm mb-1">{file.name}</div>
+            <div className="text-sm mb-1 break-word">{file.name}</div>
           )}
           <div className="text-xs color-grey-0">
             {file.created_at.toLocaleString()} ·{' '}
