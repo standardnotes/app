@@ -149,6 +149,6 @@ export class WebApplication extends SNApplication {
 
   async signOutAndDeleteLocalBackups(): Promise<void> {
     await this.bridge.deleteLocalBackups();
-    return this.signOut();
+    return this.user.signOut();
   }
 }

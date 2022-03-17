@@ -1,4 +1,3 @@
-import React from 'react';
 import { useCallback, useEffect, useState } from 'preact/hooks';
 import { ButtonType, SettingName } from '@standardnotes/snjs';
 import {
@@ -27,7 +26,9 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
 }) => {
   const [authBegan, setAuthBegan] = useState(false);
   const [successfullyInstalled, setSuccessfullyInstalled] = useState(false);
-  const [backupFrequency, setBackupFrequency] = useState<string | null>(null);
+  const [backupFrequency, setBackupFrequency] = useState<string | undefined>(
+    undefined
+  );
   const [confirmation, setConfirmation] = useState('');
 
   const disable = async (event: Event) => {
@@ -42,10 +43,10 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
         'Cancel'
       );
       if (shouldDisable) {
-        await application.deleteSetting(backupFrequencySettingName);
-        await application.deleteSetting(backupTokenSettingName);
+        await application.settings.deleteSetting(backupFrequencySettingName);
+        await application.settings.deleteSetting(backupTokenSettingName);
 
-        setBackupFrequency(null);
+        setBackupFrequency(undefined);
       }
     } catch (error) {
       application.alertService.alert(error as string);
@@ -66,7 +67,7 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
   const performBackupNow = async () => {
     // A backup is performed anytime the setting is updated with the integration token, so just update it here
     try {
-      await application.updateSetting(
+      await application.settings.updateSetting(
         backupFrequencySettingName,
         backupFrequency as string
       );
@@ -134,11 +135,11 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
         if (!cloudProviderToken) {
           throw new Error();
         }
-        await application.updateSetting(
+        await application.settings.updateSetting(
           backupTokenSettingName,
           cloudProviderToken
         );
-        await application.updateSetting(
+        await application.settings.updateSetting(
           backupFrequencySettingName,
           defaultBackupFrequency
         );
@@ -166,7 +167,9 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
     if (!application.getUser()) {
       return;
     }
-    const frequency = await application.getSetting(backupFrequencySettingName);
+    const frequency = await application.settings.getSetting(
+      backupFrequencySettingName
+    );
     setBackupFrequency(frequency);
   }, [application, backupFrequencySettingName]);
 

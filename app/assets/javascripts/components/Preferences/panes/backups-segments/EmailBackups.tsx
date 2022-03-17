@@ -13,7 +13,11 @@ import {
   Text,
   Title,
 } from '../../components';
-import { EmailBackupFrequency, SettingName } from '@standardnotes/settings';
+import {
+  EmailBackupFrequency,
+  MuteFailedBackupsEmailsOption,
+  SettingName,
+} from '@standardnotes/settings';
 import { Dropdown, DropdownItem } from '@/components/Dropdown';
 import { Switch } from '@/components/Switch';
 import { HorizontalSeparator } from '@/components/Shared/HorizontalSeparator';
@@ -44,14 +48,19 @@ export const EmailBackups = observer(({ application }: Props) => {
     setIsLoading(true);
 
     try {
-      const userSettings = await application.listSettings();
+      const userSettings = await application.settings.listSettings();
       setEmailFrequency(
-        (userSettings.EMAIL_BACKUP_FREQUENCY ||
-          EmailBackupFrequency.Disabled) as EmailBackupFrequency
+        userSettings.getSettingValue<EmailBackupFrequency>(
+          SettingName.EmailBackupFrequency,
+          EmailBackupFrequency.Disabled
+        )
       );
       setIsFailedBackupEmailMuted(
         convertStringifiedBooleanToBoolean(
-          userSettings[SettingName.MuteFailedBackupsEmails] as string
+          userSettings.getSettingValue<MuteFailedBackupsEmailsOption>(
+            SettingName.MuteFailedBackupsEmails,
+            MuteFailedBackupsEmailsOption.NotMuted
+          )
         )
       );
     } catch (error) {
@@ -75,7 +84,10 @@ export const EmailBackups = observer(({ application }: Props) => {
         EmailBackupFrequency[frequency as keyof typeof EmailBackupFrequency];
       frequencyOptions.push({
         value: frequencyValue,
-        label: application.getEmailBackupFrequencyOptionLabel(frequencyValue),
+        label:
+          application.settings.getEmailBackupFrequencyOptionLabel(
+            frequencyValue
+          ),
       });
     }
     setEmailFrequencyOptions(frequencyOptions);
@@ -88,7 +100,7 @@ export const EmailBackups = observer(({ application }: Props) => {
     payload: string
   ): Promise<boolean> => {
     try {
-      await application.updateSetting(settingName, payload);
+      await application.settings.updateSetting(settingName, payload, false);
       return true;
     } catch (e) {
       application.alertService.alert(STRING_FAILED_TO_UPDATE_USER_SETTING);
