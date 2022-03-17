@@ -1,4 +1,4 @@
-import { PreferenceId } from '@/preferences/PreferencesMenu';
+import { PreferenceId } from '@/components/Preferences/PreferencesMenu';
 import { action, computed, makeObservable, observable } from 'mobx';
 
 const DEFAULT_PANE = 'account';
