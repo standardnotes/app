@@ -4,8 +4,8 @@ import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useRef, useState } from 'preact/hooks';
 import { Icon } from './Icon';
-import { Menu } from './menu/Menu';
-import { MenuItem, MenuItemSeparator, MenuItemType } from './menu/MenuItem';
+import { Menu } from './Menu/Menu';
+import { MenuItem, MenuItemSeparator, MenuItemType } from './Menu/MenuItem';
 
 type Props = {
   application: WebApplication;

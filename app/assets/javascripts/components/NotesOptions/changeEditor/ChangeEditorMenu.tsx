@@ -1,6 +1,6 @@
 import { Icon } from '@/components/Icon';
-import { Menu } from '@/components/menu/Menu';
-import { MenuItem, MenuItemType } from '@/components/menu/MenuItem';
+import { Menu } from '@/components/Menu/Menu';
+import { MenuItem, MenuItemType } from '@/components/Menu/MenuItem';
 import {
   reloadFont,
   transactionForAssociateComponentWithCurrentNote,
