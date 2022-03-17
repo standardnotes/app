@@ -3,6 +3,7 @@ import { AppState } from '@/ui_models/app_state';
 import { FunctionComponent } from 'preact';
 import { PreferencesPane } from '../components';
 import { Encryption, PasscodeLock, Protections } from './security-segments';
+import { Privacy } from './security-segments/Privacy';
 import { TwoFactorAuthWrapper } from './two-factor-auth';
 import { MfaProps } from './two-factor-auth/MfaProps';
 
@@ -20,5 +21,8 @@ export const Security: FunctionComponent<SecurityProps> = (props) => (
       userProvider={props.userProvider}
     />
     <PasscodeLock appState={props.appState} application={props.application} />
+    {props.appState.enableUnfinishedFeatures && (
+      <Privacy application={props.application} />
+    )}
   </PreferencesPane>
 );

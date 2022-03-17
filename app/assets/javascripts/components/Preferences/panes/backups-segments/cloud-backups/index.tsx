@@ -1,4 +1,3 @@
-import React from 'react';
 import { CloudBackupProvider } from './CloudBackupProvider';
 import { useCallback, useEffect, useState } from 'preact/hooks';
 import { WebApplication } from '@/ui_models/application';
@@ -13,21 +12,19 @@ import { HorizontalSeparator } from '@/components/Shared/HorizontalSeparator';
 import { FeatureIdentifier } from '@standardnotes/features';
 import { FeatureStatus } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
-import { CloudProvider, SettingName } from '@standardnotes/settings';
+import {
+  CloudProvider,
+  MuteFailedCloudBackupsEmailsOption,
+  SettingName,
+} from '@standardnotes/settings';
 import { Switch } from '@/components/Switch';
 import { convertStringifiedBooleanToBoolean } from '@/utils';
 import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/strings';
 
 const providerData = [
-  {
-    name: CloudProvider.Dropbox,
-  },
-  {
-    name: CloudProvider.Google,
-  },
-  {
-    name: CloudProvider.OneDrive,
-  },
+  { name: CloudProvider.Dropbox },
+  { name: CloudProvider.Google },
+  { name: CloudProvider.OneDrive },
 ];
 
 type Props = {
@@ -51,10 +48,13 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
     setIsLoading(true);
 
     try {
-      const userSettings = await application.listSettings();
+      const userSettings = await application.settings.listSettings();
       setIsFailedCloudBackupEmailMuted(
         convertStringifiedBooleanToBoolean(
-          userSettings[SettingName.MuteFailedCloudBackupsEmails] as string
+          userSettings.getSettingValue(
+            SettingName.MuteFailedCloudBackupsEmails,
+            MuteFailedCloudBackupsEmailsOption.NotMuted
+          )
         )
       );
     } catch (error) {
@@ -89,7 +89,7 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
     payload: string
   ): Promise<boolean> => {
     try {
-      await application.updateSetting(settingName, payload);
+      await application.settings.updateSetting(settingName, payload);
       return true;
     } catch (e) {
       application.alertService.alert(STRING_FAILED_TO_UPDATE_USER_SETTING);

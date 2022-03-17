@@ -123,13 +123,13 @@ export class ChallengeModal extends PureComponent<Props, State> {
       })
     ) {
       this.dismiss();
-      this.application.signOut();
+      this.application.user.signOut();
     }
   };
 
   cancel = () => {
     if (this.props.challenge.cancelable) {
-      this.application!.cancelChallenge(this.props.challenge);
+      this.application.cancelChallenge(this.props.challenge);
     }
   };
 
