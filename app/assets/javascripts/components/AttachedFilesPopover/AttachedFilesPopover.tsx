@@ -170,7 +170,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
           ) : null}
           {filteredList.length > 0 ? (
             filteredList
-              .filter((file) => file.name && file.size)
+              .filter((file) => !file.deleted)
               .map((file: SNFile) => {
                 return (
                   <PopoverFileItem
