@@ -160,7 +160,7 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
             </Subtitle>
             <Text>
               When enabled, adding a nested tag to a note will automatically add
-              all associated parents tags.
+              all associated parent tags.
             </Text>
           </div>
           <Switch
