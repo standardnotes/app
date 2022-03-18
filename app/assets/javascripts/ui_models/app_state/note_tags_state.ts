@@ -1,5 +1,5 @@
 import { ElementIds } from '@/element_ids';
-import { ApplicationEvent } from '@/__mocks__/@standardnotes/snjs';
+import { ApplicationEvent } from '@standardnotes/snjs';
 import {
   ContentType,
   PrefKey,
