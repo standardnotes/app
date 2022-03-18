@@ -10,6 +10,36 @@ type Props = {
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void;
 };
 
+const splitUsingRange = (string: string, start: number, end: number) => {
+  const result = [
+    string.slice(0, start),
+    string.slice(start, end),
+    string.slice(end),
+  ];
+
+  return result;
+};
+
+const getIndexOfQueryInTitle = (title: string, query: string) => {
+  const lowercasedTitle = title.toLowerCase();
+  const lowercasedQuery = query.toLowerCase();
+  return lowercasedTitle.indexOf(lowercasedQuery);
+};
+
+const splitQueryInTitle = (title: string, query: string) => {
+  const indexOfQueryInTitle = getIndexOfQueryInTitle(title, query);
+
+  if (indexOfQueryInTitle < 0) {
+    return [title];
+  }
+
+  return splitUsingRange(
+    title,
+    indexOfQueryInTitle,
+    indexOfQueryInTitle + query.length
+  );
+};
+
 export const AutocompleteTagResult = observer(
   ({ appState, tagResult, closeOnBlur }: Props) => {
     const {
@@ -92,9 +122,8 @@ export const AutocompleteTagResult = observer(
           {prefixTitle && <span className="grey-2">{prefixTitle}</span>}
           {autocompleteSearchQuery === ''
             ? title
-            : title
-                .split(new RegExp(`(${autocompleteSearchQuery})`, 'gi'))
-                .map((substring, index) => (
+            : splitQueryInTitle(title, autocompleteSearchQuery).map(
+                (substring, index) => (
                   <span
                     key={index}
                     className={`${
@@ -106,7 +135,8 @@ export const AutocompleteTagResult = observer(
                   >
                     {substring}
                   </span>
-                ))}
+                )
+              )}
         </span>
       </button>
     );
