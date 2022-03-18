@@ -5,7 +5,7 @@ export const splitRangeWithinString = (
 ) => {
   const isStartOutOfBounds = start > string.length || start < 0;
   const isEndOutOfBounds = end > string.length || end < 0;
-  const isInvalidRange = start < end || end > start;
+  const isInvalidRange = start > end;
 
   if (isStartOutOfBounds || isEndOutOfBounds || isInvalidRange) {
     return [string];
