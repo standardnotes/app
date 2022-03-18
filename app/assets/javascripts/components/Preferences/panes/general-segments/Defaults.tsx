@@ -155,10 +155,12 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
         <HorizontalSeparator classes="mt-5 mb-3" />
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
-            <Subtitle>Add note to all parent folders of a sub-folder</Subtitle>
+            <Subtitle>
+              Add all parent tags when adding a nested tag to a note
+            </Subtitle>
             <Text>
-              When a note is added to a sub-folder, it automatically gets added
-              to the parent folders.
+              When enabled, adding a nested tag to a note will automatically add
+              all associated parents tags.
             </Text>
           </div>
           <Switch
