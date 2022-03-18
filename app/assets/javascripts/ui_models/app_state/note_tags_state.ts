@@ -1,5 +1,12 @@
 import { ElementIds } from '@/element_ids';
-import { ContentType, SNNote, SNTag, UuidString } from '@standardnotes/snjs';
+import { ApplicationEvent } from '@/__mocks__/@standardnotes/snjs';
+import {
+  ContentType,
+  PrefKey,
+  SNNote,
+  SNTag,
+  UuidString,
+} from '@standardnotes/snjs';
 import { action, computed, makeObservable, observable } from 'mobx';
 import { WebApplication } from '../application';
 import { AppState } from './app_state';
@@ -13,6 +20,7 @@ export class NoteTagsState {
   focusedTagUuid: UuidString | undefined = undefined;
   tags: SNTag[] = [];
   tagsContainerMaxWidth: number | 'auto' = 0;
+  addNoteToParentFolders: boolean;
 
   constructor(
     private application: WebApplication,
@@ -41,10 +49,24 @@ export class NoteTagsState {
       setTagsContainerMaxWidth: action,
     });
 
+    this.addNoteToParentFolders = application.getPreference(
+      PrefKey.NoteAddToParentFolders,
+      true
+    );
+
     appEventListeners.push(
       application.streamItems(ContentType.Tag, () => {
         this.reloadTags();
-      })
+      }),
+      application.addSingleEventObserver(
+        ApplicationEvent.PreferencesChanged,
+        async () => {
+          this.addNoteToParentFolders = application.getPreference(
+            PrefKey.NoteAddToParentFolders,
+            true
+          );
+        }
+      )
     );
   }
 
@@ -180,7 +202,11 @@ export class NoteTagsState {
     const { activeNote } = this;
 
     if (activeNote) {
-      await this.application.addTagHierarchyToNote(activeNote, tag);
+      if (this.addNoteToParentFolders) {
+        await this.application.addTagHierarchyToNote(activeNote, tag);
+      } else {
+        await this.application.items.addTagToNote(activeNote, tag);
+      }
       this.application.sync.sync();
       this.reloadTags();
     }
