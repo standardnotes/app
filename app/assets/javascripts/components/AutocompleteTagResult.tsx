@@ -1,4 +1,5 @@
 import { AppState } from '@/ui_models/app_state';
+import { splitQueryInString } from '@/utils/stringUtils';
 import { SNTag } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { useEffect, useRef } from 'preact/hooks';
@@ -8,36 +9,6 @@ type Props = {
   appState: AppState;
   tagResult: SNTag;
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void;
-};
-
-const splitUsingRange = (string: string, start: number, end: number) => {
-  const result = [
-    string.slice(0, start),
-    string.slice(start, end),
-    string.slice(end),
-  ];
-
-  return result;
-};
-
-const getIndexOfQueryInTitle = (title: string, query: string) => {
-  const lowercasedTitle = title.toLowerCase();
-  const lowercasedQuery = query.toLowerCase();
-  return lowercasedTitle.indexOf(lowercasedQuery);
-};
-
-const splitQueryInTitle = (title: string, query: string) => {
-  const indexOfQueryInTitle = getIndexOfQueryInTitle(title, query);
-
-  if (indexOfQueryInTitle < 0) {
-    return [title];
-  }
-
-  return splitUsingRange(
-    title,
-    indexOfQueryInTitle,
-    indexOfQueryInTitle + query.length
-  );
 };
 
 export const AutocompleteTagResult = observer(
@@ -101,7 +72,7 @@ export const AutocompleteTagResult = observer(
 
     useEffect(() => {
       if (focusedTagResultUuid === tagResult.uuid) {
-        tagResultRef.current!.focus();
+        tagResultRef.current?.focus();
         appState.noteTags.setFocusedTagResultUuid(undefined);
       }
     }, [appState.noteTags, focusedTagResultUuid, tagResult]);
@@ -122,7 +93,7 @@ export const AutocompleteTagResult = observer(
           {prefixTitle && <span className="grey-2">{prefixTitle}</span>}
           {autocompleteSearchQuery === ''
             ? title
-            : splitQueryInTitle(title, autocompleteSearchQuery).map(
+            : splitQueryInString(title, autocompleteSearchQuery).map(
                 (substring, index) => (
                   <span
                     key={index}
