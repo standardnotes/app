@@ -71,7 +71,7 @@ export const AutocompleteTagResult = observer(
 
     useEffect(() => {
       if (focusedTagResultUuid === tagResult.uuid) {
-        tagResultRef.current!.focus();
+        tagResultRef.current?.focus();
         appState.noteTags.setFocusedTagResultUuid(undefined);
       }
     }, [appState.noteTags, focusedTagResultUuid, tagResult]);
