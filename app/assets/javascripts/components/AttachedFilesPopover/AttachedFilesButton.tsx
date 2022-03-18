@@ -141,7 +141,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
           type: ToastType.Loading,
           message: `Deleting file "${file.name}"...`,
         });
-        await application.deleteItem(file);
+        await application.files.deleteFile(file);
         addToast({
           type: ToastType.Success,
           message: `Deleted file "${file.name}"`,
