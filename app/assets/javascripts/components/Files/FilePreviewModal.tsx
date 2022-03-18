@@ -34,7 +34,7 @@ export const FilePreviewModal: FunctionComponent<Props> = ({
           setObjectUrl(
             URL.createObjectURL(
               new Blob([decryptedBytes], {
-                type: file.mimeType?.length ? file.mimeType : 'text/plain',
+                type: file.mimeType,
               })
             )
           );
@@ -88,7 +88,7 @@ export const FilePreviewModal: FunctionComponent<Props> = ({
             {objectUrl && (
               <Button
                 type="primary"
-                className="mr-2"
+                className="mr-4"
                 onClick={() => {
                   application
                     .getArchiveService()
