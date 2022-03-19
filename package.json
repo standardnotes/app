@@ -70,7 +70,7 @@
     "@reach/listbox": "^0.16.2",
     "@reach/tooltip": "^0.16.2",
     "@standardnotes/components": "1.7.12",
-    "@standardnotes/features": "1.35.0",
+    "@standardnotes/features": "1.35.1",
     "@standardnotes/filepicker": "1.10.0",
     "@standardnotes/settings": "1.13.1",
     "@standardnotes/sncrypto-web": "1.8.0",

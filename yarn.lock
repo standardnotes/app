@@ -2391,21 +2391,21 @@
     "@standardnotes/auth" "^3.17.8"
     "@standardnotes/features" "^1.35.1"
 
-"@standardnotes/features@1.35.0", "@standardnotes/features@^1.35.0":
-  version "1.35.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.35.0.tgz#2f3d1f1e7831ec86cf265227f4b61fbf5e245aa2"
-  integrity sha512-ysibgtv9KoxYsD7f77Vn4DmViDnWeLANGtGwn6uUBnQbKHzuClFmSqBfAB7rmpu+1IRc+dfL8TlkPIwY2xvWqw==
-  dependencies:
-    "@standardnotes/auth" "^3.17.7"
-    "@standardnotes/common" "^1.16.0"
-
-"@standardnotes/features@^1.35.1":
+"@standardnotes/features@1.35.1", "@standardnotes/features@^1.35.1":
   version "1.35.1"
   resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.35.1.tgz#1c641dc0c55cc0f90321101bb05066d008b89c92"
   integrity sha512-nNyo83k+9UPOKALqJSVtqTaDq0hWHSQYlRBBQ1Vx7snC9Rxrlsgq2EO2k16ZIsRZiJbUlI0eK8uWwMey4p+L4Q==
   dependencies:
     "@standardnotes/auth" "^3.17.8"
     "@standardnotes/common" "^1.16.1"
+
+"@standardnotes/features@^1.35.0":
+  version "1.35.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.35.0.tgz#2f3d1f1e7831ec86cf265227f4b61fbf5e245aa2"
+  integrity sha512-ysibgtv9KoxYsD7f77Vn4DmViDnWeLANGtGwn6uUBnQbKHzuClFmSqBfAB7rmpu+1IRc+dfL8TlkPIwY2xvWqw==
+  dependencies:
+    "@standardnotes/auth" "^3.17.7"
+    "@standardnotes/common" "^1.16.0"
 
 "@standardnotes/filepicker@1.10.0":
   version "1.10.0"
