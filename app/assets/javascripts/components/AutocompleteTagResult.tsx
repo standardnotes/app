@@ -1,4 +1,5 @@
 import { AppState } from '@/ui_models/app_state';
+import { splitQueryInString } from '@/utils/stringUtils';
 import { SNTag } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { useEffect, useRef } from 'preact/hooks';
@@ -92,9 +93,8 @@ export const AutocompleteTagResult = observer(
           {prefixTitle && <span className="grey-2">{prefixTitle}</span>}
           {autocompleteSearchQuery === ''
             ? title
-            : title
-                .split(new RegExp(`(${autocompleteSearchQuery})`, 'gi'))
-                .map((substring, index) => (
+            : splitQueryInString(title, autocompleteSearchQuery).map(
+                (substring, index) => (
                   <span
                     key={index}
                     className={`${
@@ -106,7 +106,8 @@ export const AutocompleteTagResult = observer(
                   >
                     {substring}
                   </span>
-                ))}
+                )
+              )}
         </span>
       </button>
     );
