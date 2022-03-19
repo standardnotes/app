@@ -202,11 +202,11 @@ export class NoteTagsState {
     const { activeNote } = this;
 
     if (activeNote) {
-      if (this.addNoteToParentFolders) {
-        await this.application.addTagHierarchyToNote(activeNote, tag);
-      } else {
-        await this.application.items.addTagToNote(activeNote, tag);
-      }
+      await this.application.items.addTagToNote(
+        activeNote,
+        tag,
+        this.addNoteToParentFolders
+      );
       this.application.sync.sync();
       this.reloadTags();
     }
