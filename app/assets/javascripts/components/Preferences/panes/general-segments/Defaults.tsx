@@ -67,6 +67,10 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
     application.getPreference(PrefKey.EditorSpellcheck, true)
   );
 
+  const [addNoteToParentFolders, setAddNoteToParentFolders] = useState(() =>
+    application.getPreference(PrefKey.NoteAddToParentFolders, true)
+  );
+
   const toggleSpellcheck = () => {
     setSpellcheck(!spellcheck);
     application.getAppState().toggleGlobalSpellcheck();
@@ -147,6 +151,28 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
             </Text>
           </div>
           <Switch onChange={toggleSpellcheck} checked={spellcheck} />
+        </div>
+        <HorizontalSeparator classes="mt-5 mb-3" />
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col">
+            <Subtitle>
+              Add all parent tags when adding a nested tag to a note
+            </Subtitle>
+            <Text>
+              When enabled, adding a nested tag to a note will automatically add
+              all associated parent tags.
+            </Text>
+          </div>
+          <Switch
+            onChange={() => {
+              application.setPreference(
+                PrefKey.NoteAddToParentFolders,
+                !addNoteToParentFolders
+              );
+              setAddNoteToParentFolders(!addNoteToParentFolders);
+            }}
+            checked={addNoteToParentFolders}
+          />
         </div>
       </PreferencesSegment>
     </PreferencesGroup>
