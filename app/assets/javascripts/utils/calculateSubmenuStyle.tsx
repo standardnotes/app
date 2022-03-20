@@ -14,7 +14,7 @@ export type SubmenuStyle = {
 
 export const calculateSubmenuStyle = (
   button: HTMLButtonElement | null,
-  menu?: HTMLDivElement | null
+  menu?: HTMLDivElement | HTMLMenuElement | null
 ): SubmenuStyle | undefined => {
   const defaultFontSize = window.getComputedStyle(
     document.documentElement
