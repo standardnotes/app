@@ -426,6 +426,7 @@ export class Footer extends PureComponent<Props, State> {
                   onClickOutside={this.clickOutsideAccountMenu}
                   appState={this.appState}
                   application={this.application}
+                  mainApplicationGroup={this.props.applicationGroup}
                 />
               )}
             </div>

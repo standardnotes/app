@@ -10,10 +10,13 @@ import { AccountMenuPane } from '.';
 import { FunctionComponent } from 'preact';
 import { Menu } from '../Menu/Menu';
 import { MenuItem, MenuItemSeparator, MenuItemType } from '../Menu/MenuItem';
+import { AccountSwitcherOption } from './AccountSwitcherOption';
+import { ApplicationGroup } from '@/ui_models/application_group';
 
 type Props = {
   appState: AppState;
   application: WebApplication;
+  mainApplicationGroup: ApplicationGroup;
   setMenuPane: (pane: AccountMenuPane) => void;
   closeMenu: () => void;
 };
@@ -21,7 +24,7 @@ type Props = {
 const iconClassName = 'color-neutral mr-2';
 
 export const GeneralAccountMenu: FunctionComponent<Props> = observer(
-  ({ application, appState, setMenuPane, closeMenu }) => {
+  ({ application, appState, setMenuPane, closeMenu, mainApplicationGroup }) => {
     const [isSyncingInProgress, setIsSyncingInProgress] = useState(false);
     const [lastSyncDate, setLastSyncDate] = useState(
       formatLastSyncDate(application.sync.getLastSyncDate() as Date)
@@ -55,7 +58,11 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
     const user = application.getUser();
 
     return (
-      <>
+      <Menu
+        isOpen={appState.accountMenu.show}
+        a11yLabel="General account menu"
+        closeMenu={closeMenu}
+      >
         <div className="flex items-center justify-between px-3 mt-1 mb-3">
           <div className="sn-account-menu-headline">Account</div>
           <div className="flex cursor-pointer" onClick={closeMenu}>
@@ -106,77 +113,72 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
             </div>
           </>
         )}
+        <AccountSwitcherOption mainApplicationGroup={mainApplicationGroup} />
         <div className="h-1px my-2 bg-border"></div>
-        <Menu
-          isOpen={appState.accountMenu.show}
-          a11yLabel="General account menu"
-          closeMenu={closeMenu}
-        >
-          {user ? (
-            <MenuItem
-              type={MenuItemType.IconButton}
-              onClick={() => {
-                appState.accountMenu.closeAccountMenu();
-                appState.preferences.setCurrentPane('account');
-                appState.preferences.openPreferences();
-              }}
-            >
-              <Icon type="user" className={iconClassName} />
-              Account settings
-            </MenuItem>
-          ) : (
-            <>
-              <MenuItem
-                type={MenuItemType.IconButton}
-                onClick={() => {
-                  setMenuPane(AccountMenuPane.Register);
-                }}
-              >
-                <Icon type="user" className={iconClassName} />
-                Create free account
-              </MenuItem>
-              <MenuItem
-                type={MenuItemType.IconButton}
-                onClick={() => {
-                  setMenuPane(AccountMenuPane.SignIn);
-                }}
-              >
-                <Icon type="signIn" className={iconClassName} />
-                Sign in
-              </MenuItem>
-            </>
-          )}
+        {user ? (
           <MenuItem
-            className="justify-between"
             type={MenuItemType.IconButton}
             onClick={() => {
               appState.accountMenu.closeAccountMenu();
-              appState.preferences.setCurrentPane('help-feedback');
+              appState.preferences.setCurrentPane('account');
               appState.preferences.openPreferences();
             }}
           >
-            <div className="flex items-center">
-              <Icon type="help" className={iconClassName} />
-              Help &amp; feedback
-            </div>
-            <span className="color-neutral">v{appState.version}</span>
+            <Icon type="user" className={iconClassName} />
+            Account settings
           </MenuItem>
-          {user ? (
-            <>
-              <MenuItemSeparator />
-              <MenuItem
-                type={MenuItemType.IconButton}
-                onClick={() => {
-                  appState.accountMenu.setSigningOut(true);
-                }}
-              >
-                <Icon type="signOut" className={iconClassName} />
-                Sign out and clear local data
-              </MenuItem>
-            </>
-          ) : null}
-        </Menu>
-      </>
+        ) : (
+          <>
+            <MenuItem
+              type={MenuItemType.IconButton}
+              onClick={() => {
+                setMenuPane(AccountMenuPane.Register);
+              }}
+            >
+              <Icon type="user" className={iconClassName} />
+              Create free account
+            </MenuItem>
+            <MenuItem
+              type={MenuItemType.IconButton}
+              onClick={() => {
+                setMenuPane(AccountMenuPane.SignIn);
+              }}
+            >
+              <Icon type="signIn" className={iconClassName} />
+              Sign in
+            </MenuItem>
+          </>
+        )}
+        <MenuItem
+          className="justify-between"
+          type={MenuItemType.IconButton}
+          onClick={() => {
+            appState.accountMenu.closeAccountMenu();
+            appState.preferences.setCurrentPane('help-feedback');
+            appState.preferences.openPreferences();
+          }}
+        >
+          <div className="flex items-center">
+            <Icon type="help" className={iconClassName} />
+            Help &amp; feedback
+          </div>
+          <span className="color-neutral">v{appState.version}</span>
+        </MenuItem>
+        {user ? (
+          <>
+            <MenuItemSeparator />
+            <MenuItem
+              type={MenuItemType.IconButton}
+              onClick={() => {
+                appState.accountMenu.setSigningOut(true);
+              }}
+            >
+              <Icon type="signOut" className={iconClassName} />
+              Sign out and clear local data
+            </MenuItem>
+          </>
+        ) : null}
+      </Menu>
     );
   }
 );
