@@ -1,59 +1,65 @@
-import { WebApplication } from '@/ui_models/application';
 import { ApplicationGroup } from '@/ui_models/application_group';
-import { ApplicationDescriptor } from '@standardnotes/snjs/dist/@types';
+import { ApplicationDescriptor, User } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
-import { useCallback, useEffect, useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 import { Icon } from '../Icon';
 
 type Props = {
   mainApplicationGroup: ApplicationGroup;
 };
 
+type AccountDescriptor = ApplicationDescriptor & {
+  user: User | undefined;
+};
+
 export const AccountSwitcherMenu: FunctionComponent<Props> = ({
   mainApplicationGroup,
 }) => {
-  const [descriptors, setDescriptors] = useState<ApplicationDescriptor[]>(() =>
-    mainApplicationGroup.getDescriptors()
-  );
-  const [activeApplication, setActiveApplication] = useState(
-    () => mainApplicationGroup.primaryApplication as WebApplication
-  );
-
-  const reloadDescriptors = useCallback(() => {
-    setDescriptors(mainApplicationGroup.getDescriptors());
-  }, [mainApplicationGroup]);
+  const [accountDescriptors, setAccountDescriptors] = useState<
+    AccountDescriptor[]
+  >([]);
 
   useEffect(() => {
     const removeAppGroupObserver =
       mainApplicationGroup.addApplicationChangeObserver(() => {
-        setActiveApplication(
-          mainApplicationGroup.primaryApplication as WebApplication
-        );
-        reloadDescriptors();
+        const applications = mainApplicationGroup.getApplications();
+        const applicationDescriptors = mainApplicationGroup.getDescriptors();
+        const accountDescriptors: AccountDescriptor[] =
+          applicationDescriptors.map((descriptor) => {
+            const user = applications
+              .find(
+                (application) =>
+                  descriptor.identifier === application.identifier
+              )
+              ?.getUser();
+            return {
+              ...descriptor,
+              user,
+            };
+          });
+        setAccountDescriptors(accountDescriptors);
       });
 
     return () => {
       removeAppGroupObserver();
     };
-  }, [mainApplicationGroup, reloadDescriptors]);
+  }, [mainApplicationGroup]);
 
   return (
     <>
-      {descriptors.map((descriptor) => (
+      {accountDescriptors.map((descriptor) => (
         <button
-          className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
+          className="sn-dropdown-item py-2 focus:bg-info-backdrop focus:shadow-none"
           onClick={() => {
             mainApplicationGroup.loadApplicationForDescriptor(descriptor);
           }}
         >
           <div
             className={`pseudo-radio-btn ${
-              descriptor.identifier === activeApplication.identifier
-                ? 'pseudo-radio-btn--checked'
-                : ''
+              descriptor.primary ? 'pseudo-radio-btn--checked' : ''
             } mr-2`}
           ></div>
-          {descriptor.label}
+          {descriptor.user?.email ? descriptor.user.email : descriptor.label}
         </button>
       ))}
       <div className="h-1px my-2 bg-border"></div>
