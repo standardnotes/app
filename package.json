@@ -19,7 +19,7 @@
     "test": "jest --config app/assets/javascripts/jest.config.js",
     "test:coverage": "yarn test --coverage",
     "prepare": "husky install",
-    "postinstall": "npx ncu"
+    "postinstall": "yarn run ncu"
   },
   "devDependencies": {
     "@babel/core": "^7.17.8",
@@ -51,6 +51,7 @@
     "lint-staged": ">=12",
     "mini-css-extract-plugin": "^2.6.0",
     "node-sass": "^7.0.1",
+    "npm-check-updates": "^12.5.4",
     "prettier": "^2.6.0",
     "sass-loader": "^12.6.0",
     "svg-jest": "^1.0.1",
