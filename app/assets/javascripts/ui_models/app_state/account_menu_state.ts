@@ -6,9 +6,8 @@ import {
   observable,
   runInAction,
 } from 'mobx';
-import { ApplicationEvent, ContentType } from '@standardnotes/snjs';
+import { ApplicationEvent, ContentType, SNItem } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
-import { SNItem } from '@standardnotes/snjs/dist/@types/models/core/item';
 import { AccountMenuPane } from '@/components/AccountMenu';
 
 type StructuredItemsCount = {
