@@ -13,7 +13,7 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import { observer } from 'mobx-react-lite';
 
 const loadExtensions = (application: WebApplication) =>
-  application.getItems(
+  application.items.getItems(
     [ContentType.ActionsExtension, ContentType.Component, ContentType.Theme],
     true
   ) as SNComponent[];

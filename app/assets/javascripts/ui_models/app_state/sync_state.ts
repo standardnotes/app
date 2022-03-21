@@ -1,5 +1,5 @@
-import { SyncOpStatus } from "@standardnotes/snjs";
-import { action, makeObservable, observable } from "mobx";
+import { SyncOpStatus } from '@standardnotes/snjs';
+import { action, makeObservable, observable } from 'mobx';
 
 export class SyncState {
   inProgress = false;
@@ -32,5 +32,5 @@ export class SyncState {
         { style: 'percent' }
       );
     }
-  }
+  };
 }

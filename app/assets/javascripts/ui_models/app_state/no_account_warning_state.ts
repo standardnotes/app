@@ -1,6 +1,6 @@
-import { storage, StorageKey } from "@/services/localStorage";
-import { SNApplication, ApplicationEvent } from "@standardnotes/snjs";
-import { runInAction, makeObservable, observable, action } from "mobx";
+import { storage, StorageKey } from '@/services/localStorage';
+import { SNApplication, ApplicationEvent } from '@standardnotes/snjs';
+import { runInAction, makeObservable, observable, action } from 'mobx';
 
 export class NoAccountWarningState {
   show: boolean;
@@ -33,9 +33,9 @@ export class NoAccountWarningState {
   hide = (): void => {
     this.show = false;
     storage.set(StorageKey.ShowNoAccountWarning, false);
-  }
+  };
 
   reset = (): void => {
     storage.remove(StorageKey.ShowNoAccountWarning);
-  }
+  };
 }

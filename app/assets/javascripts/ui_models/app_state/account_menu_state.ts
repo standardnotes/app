@@ -89,7 +89,7 @@ export class AccountMenuState {
     this.appEventListeners.push(
       this.application.streamItems([ContentType.Note, ContentType.Tag], () => {
         runInAction(() => {
-          this.notesAndTags = this.application.getItems([
+          this.notesAndTags = this.application.items.getItems([
             ContentType.Note,
             ContentType.Tag,
           ]);

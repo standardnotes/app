@@ -104,7 +104,7 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
 
     const reloadThemes = useCallback(() => {
       const themes = (
-        application.getDisplayableItems(ContentType.Theme) as SNTheme[]
+        application.items.getDisplayableItems(ContentType.Theme) as SNTheme[]
       ).map((item) => {
         return {
           name: item.name,
@@ -141,7 +141,9 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
 
     const reloadToggleableComponents = useCallback(() => {
       const toggleableComponents = (
-        application.getDisplayableItems(ContentType.Component) as SNComponent[]
+        application.items.getDisplayableItems(
+          ContentType.Component
+        ) as SNComponent[]
       ).filter(
         (component) =>
           [ComponentArea.EditorStack, ComponentArea.TagsList].includes(

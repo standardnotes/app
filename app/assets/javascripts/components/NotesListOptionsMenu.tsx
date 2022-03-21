@@ -2,7 +2,7 @@ import { WebApplication } from '@/ui_models/application';
 import { CollectionSort, PrefKey } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { useRef, useState } from 'preact/hooks';
+import { useState } from 'preact/hooks';
 import { Icon } from './Icon';
 import { Menu } from './Menu/Menu';
 import { MenuItem, MenuItemSeparator, MenuItemType } from './Menu/MenuItem';

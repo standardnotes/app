@@ -307,7 +307,7 @@ export class AppState {
           return;
         }
 
-        if (this.application.isTemplateItem(tag)) {
+        if (this.application.items.isTemplateItem(tag)) {
           return;
         }
 
@@ -436,9 +436,11 @@ export class AppState {
 
   /** Returns the tags that are referncing this note */
   public getNoteTags(note: SNNote) {
-    return this.application.referencingForItem(note).filter((ref) => {
-      return ref.content_type === ContentType.Tag;
-    }) as SNTag[];
+    return this.application.items
+      .itemsReferencingItem(note.uuid)
+      .filter((ref) => {
+        return ref.content_type === ContentType.Tag;
+      }) as SNTag[];
   }
 
   panelDidResize(name: string, collapsed: boolean) {

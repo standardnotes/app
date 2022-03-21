@@ -37,7 +37,9 @@ export class RevisionPreviewModal extends PureComponent<Props, State> {
       this.props.content
     )) as SNNote;
 
-    this.originalNote = this.application.findItem(this.props.uuid) as SNNote;
+    this.originalNote = this.application.items.findItem(
+      this.props.uuid
+    ) as SNNote;
 
     const component = this.application.componentManager.editorForNote(
       this.originalNote

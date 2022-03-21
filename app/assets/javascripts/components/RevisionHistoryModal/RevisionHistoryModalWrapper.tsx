@@ -139,7 +139,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
 
     const restore = () => {
       if (selectedRevision) {
-        const originalNote = application.findItem(
+        const originalNote = application.items.findItem(
           selectedRevision.payload.uuid
         ) as SNNote;
 
@@ -171,7 +171,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
 
     const restoreAsCopy = async () => {
       if (selectedRevision) {
-        const originalNote = application.findItem(
+        const originalNote = application.items.findItem(
           selectedRevision.payload.uuid
         ) as SNNote;
 
