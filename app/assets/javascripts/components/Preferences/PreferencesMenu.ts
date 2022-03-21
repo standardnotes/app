@@ -113,7 +113,7 @@ export class PreferencesMenu {
       FeatureIdentifier.CloudLink,
     ];
     this._extensionPanes = (
-      this.application.getItems([
+      this.application.items.getItems([
         ContentType.ActionsExtension,
         ContentType.Component,
         ContentType.Theme,

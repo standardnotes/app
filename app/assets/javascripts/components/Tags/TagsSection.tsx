@@ -16,7 +16,9 @@ export const TagsSection: FunctionComponent<Props> = observer(
     const [hasMigration, setHasMigration] = useState<boolean>(false);
 
     const checkIfMigrationNeeded = useCallback(() => {
-      setHasMigration(appState.application.hasTagsNeedingFoldersMigration());
+      setHasMigration(
+        appState.application.items.hasTagsNeedingFoldersMigration()
+      );
     }, [appState.application]);
 
     useEffect(() => {

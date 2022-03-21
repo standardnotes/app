@@ -81,11 +81,11 @@ export class NotesState {
   }
 
   get trashedNotesCount(): number {
-    return this.application.getTrashedItems().length;
+    return this.application.items.trashedItems.length;
   }
 
   private async selectNotesRange(selectedNote: SNNote): Promise<void> {
-    const notes = this.application.getDisplayableItems(
+    const notes = this.application.items.getDisplayableItems(
       ContentType.Note
     ) as SNNote[];
     const lastSelectedNoteIndex = notes.findIndex(
@@ -117,7 +117,7 @@ export class NotesState {
   }
 
   async selectNote(uuid: UuidString, userTriggered?: boolean): Promise<void> {
-    const note = this.application.findItem(uuid) as SNNote;
+    const note = this.application.items.findItem(uuid) as SNNote;
     if (!note) {
       return;
     }
@@ -163,7 +163,9 @@ export class NotesState {
       return;
     }
 
-    const note = this.application.findItem(noteUuid) as SNNote | undefined;
+    const note = this.application.items.findItem(noteUuid) as
+      | SNNote
+      | undefined;
     if (!note) {
       console.warn('Tried accessing a non-existant note of UUID ' + noteUuid);
       return;
@@ -408,7 +410,7 @@ export class NotesState {
 
   async addTagToSelectedNotes(tag: SNTag): Promise<void> {
     const selectedNotes = Object.values(this.selectedNotes);
-    const parentChainTags = this.application.getTagParentChain(tag);
+    const parentChainTags = this.application.items.getTagParentChain(tag.uuid);
     const tagsToAdd = [...parentChainTags, tag];
     await Promise.all(
       tagsToAdd.map(async (tag) => {

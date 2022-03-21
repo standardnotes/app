@@ -170,7 +170,7 @@ export class NoteTagsState {
   }
 
   searchActiveNoteAutocompleteTags(): void {
-    const newResults = this.application.searchTags(
+    const newResults = this.application.items.searchTags(
       this.autocompleteSearchQuery,
       this.activeNote
     );
@@ -184,7 +184,7 @@ export class NoteTagsState {
   reloadTags(): void {
     const { activeNote } = this;
     if (activeNote) {
-      const tags = this.application.getSortedTagsForNote(activeNote);
+      const tags = this.application.items.getSortedTagsForNote(activeNote);
       this.setTags(tags);
     }
   }
@@ -224,7 +224,7 @@ export class NoteTagsState {
   }
 
   getSortedTagsForNote(note: SNNote): SNTag[] {
-    const tags = this.application.getSortedTagsForNote(note);
+    const tags = this.application.items.getSortedTagsForNote(note);
 
     const sortFunction = (tagA: SNTag, tagB: SNTag): number => {
       const a = this.getLongTitle(tagA);
@@ -243,10 +243,10 @@ export class NoteTagsState {
   }
 
   getPrefixTitle(tag: SNTag): string | undefined {
-    return this.application.getTagPrefixTitle(tag);
+    return this.application.items.getTagPrefixTitle(tag);
   }
 
   getLongTitle(tag: SNTag): string {
-    return this.application.getTagLongTitle(tag);
+    return this.application.items.getTagLongTitle(tag);
   }
 }

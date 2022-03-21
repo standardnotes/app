@@ -68,6 +68,7 @@ export const InputWithIcon: FunctionComponent<Props> = forwardRef(
           className={`pr-2 w-full border-0 focus:shadow-none ${
             disabled ? DISABLED_CLASSNAME : ''
           }`}
+          spellcheck={false}
           disabled={disabled}
           placeholder={placeholder}
           ref={ref}

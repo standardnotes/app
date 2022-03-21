@@ -132,7 +132,7 @@ export class DesktopManager
     componentData: any,
     error: any
   ) {
-    const component = this.application.findItem(componentData.uuid);
+    const component = this.application.items.findItem(componentData.uuid);
     if (!component) {
       return;
     }

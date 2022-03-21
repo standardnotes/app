@@ -69,7 +69,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
           <>
             <div className="px-3 mb-3 color-foreground text-sm">
               <div>You're signed in as:</div>
-              <div className="my-0.5 font-bold">{user.email}</div>
+              <div className="my-0.5 font-bold wrap">{user.email}</div>
               <span className="color-neutral">{application.getHost()}</span>
             </div>
             <div className="flex items-start justify-between px-3 mb-3">

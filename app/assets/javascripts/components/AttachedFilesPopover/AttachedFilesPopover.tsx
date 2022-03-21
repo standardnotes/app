@@ -68,7 +68,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
           );
 
           setAllFiles(
-            application
+            application.items
               .getItems(ContentType.File)
               .sort((a, b) =>
                 a.created_at < b.created_at ? 1 : -1

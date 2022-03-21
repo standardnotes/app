@@ -1,4 +1,4 @@
-import { useRef, useState } from 'preact/hooks';
+import { useRef } from 'preact/hooks';
 import {
   AlertDialog,
   AlertDialogDescription,
@@ -7,7 +7,6 @@ import {
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import { observer } from 'mobx-react-lite';
-import { FunctionComponent } from 'preact';
 
 type Props = {
   application: WebApplication;

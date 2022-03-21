@@ -78,7 +78,7 @@ export abstract class PureComponent<
     );
   }
 
-  onAppStateEvent(eventName: any, data: any) {
+  onAppStateEvent(_eventName: any, _data: any) {
     /** Optional override */
   }
 

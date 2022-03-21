@@ -76,7 +76,7 @@
     "@standardnotes/filepicker": "1.10.1",
     "@standardnotes/settings": "1.13.1",
     "@standardnotes/sncrypto-web": "1.8.0",
-    "@standardnotes/snjs": "2.89.1",
+    "@standardnotes/snjs": "2.89.3",
     "@zip.js/zip.js": "^2.4.7",
     "mobx": "^6.5.0",
     "mobx-react-lite": "^3.3.0",
