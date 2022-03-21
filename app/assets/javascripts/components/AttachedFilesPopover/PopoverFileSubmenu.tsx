@@ -22,7 +22,7 @@ import { useCloseOnBlur } from '../utils';
 import { PopoverFileItemProps } from './PopoverFileItem';
 import { PopoverFileItemActionType } from './PopoverFileItemAction';
 
-type Props = Omit<PopoverFileItemProps, 'renameFile'> & {
+type Props = Omit<PopoverFileItemProps, 'renameFile' | 'getIconType'> & {
   setIsRenamingFile: StateUpdater<boolean>;
 };
 
@@ -178,6 +178,20 @@ export const PopoverFileSubmenu: FunctionComponent<Props> = ({
               >
                 <Icon type="pencil" className="mr-2 color-neutral" />
                 Rename
+              </button>
+              <button
+                onBlur={closeOnBlur}
+                className="sn-dropdown-item focus:bg-info-backdrop"
+                onClick={() => {
+                  handleFileAction({
+                    type: PopoverFileItemActionType.DeleteFile,
+                    payload: file,
+                  });
+                  closeMenu();
+                }}
+              >
+                <Icon type="trash" className="mr-2 color-danger" />
+                <span className="color-danger">Delete permanently</span>
               </button>
             </>
           )}

@@ -1,6 +1,6 @@
 import { Icon } from '@/components/Icon';
-import { Menu } from '@/components/menu/Menu';
-import { MenuItem, MenuItemType } from '@/components/menu/MenuItem';
+import { Menu } from '@/components/Menu/Menu';
+import { MenuItem, MenuItemType } from '@/components/Menu/MenuItem';
 import {
   reloadFont,
   transactionForAssociateComponentWithCurrentNote,
@@ -86,7 +86,7 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   ) => {
     if (component) {
       if (component.conflictOf) {
-        application.changeAndSaveItem(component.uuid, (mutator) => {
+        application.mutator.changeAndSaveItem(component.uuid, (mutator) => {
           mutator.conflictOf = undefined;
         });
       }
@@ -151,7 +151,7 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
       );
     }
 
-    await application.runTransactionalMutations(transactions);
+    await application.mutator.runTransactionalMutations(transactions);
     /** Dirtying can happen above */
     application.sync.sync();
 

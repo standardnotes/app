@@ -212,7 +212,10 @@ export class Footer extends PureComponent<Props, State> {
         }
         if (!this.didCheckForOffline) {
           this.didCheckForOffline = true;
-          if (this.state.offline && this.application.getNoteCount() === 0) {
+          if (
+            this.state.offline &&
+            this.application.items.getNoteCount() === 0
+          ) {
             this.appState.accountMenu.setShow(true);
           }
         }
@@ -244,7 +247,7 @@ export class Footer extends PureComponent<Props, State> {
   }
 
   streamItems() {
-    this.application.setDisplayOptions(
+    this.application.items.setDisplayOptions(
       ContentType.Theme,
       CollectionSort.Title,
       'asc',

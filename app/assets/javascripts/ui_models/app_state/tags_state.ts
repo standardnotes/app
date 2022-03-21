@@ -29,9 +29,11 @@ import { FeaturesState, SMART_TAGS_FEATURE_NAME } from './features_state';
 type AnyTag = SNTag | SmartView;
 
 const rootTags = (application: SNApplication): SNTag[] => {
-  const hasNoParent = (tag: SNTag) => !application.getTagParent(tag);
+  const hasNoParent = (tag: SNTag) => !application.items.getTagParent(tag.uuid);
 
-  const allTags = application.getDisplayableItems(ContentType.Tag) as SNTag[];
+  const allTags = application.items.getDisplayableItems(
+    ContentType.Tag
+  ) as SNTag[];
   const rootTags = allTags.filter(hasNoParent);
 
   return rootTags;
@@ -41,11 +43,11 @@ const tagSiblings = (application: SNApplication, tag: SNTag): SNTag[] => {
   const withoutCurrentTag = (tags: SNTag[]) =>
     tags.filter((other) => other.uuid !== tag.uuid);
 
-  const isTemplateTag = application.isTemplateItem(tag);
-  const parentTag = !isTemplateTag && application.getTagParent(tag);
+  const isTemplateTag = application.items.isTemplateItem(tag);
+  const parentTag = !isTemplateTag && application.items.getTagParent(tag.uuid);
 
   if (parentTag) {
-    const siblingsAndTag = application.getTagChildren(parentTag);
+    const siblingsAndTag = application.items.getTagChildren(parentTag.uuid);
     return withoutCurrentTag(siblingsAndTag);
   }
 
@@ -101,7 +103,7 @@ export class TagsState {
     this.editing_ = undefined;
     this.addingSubtagTo = undefined;
 
-    this.smartViews = this.application.getSmartViews();
+    this.smartViews = this.application.items.getSmartViews();
     this.selected_ = this.smartViews[0];
 
     makeObservable(this, {
@@ -148,10 +150,10 @@ export class TagsState {
         [ContentType.Tag, ContentType.SmartView],
         (items) => {
           runInAction(() => {
-            this.tags = this.application.getDisplayableItems<SNTag>(
+            this.tags = this.application.items.getDisplayableItems<SNTag>(
               ContentType.Tag
             );
-            this.smartViews = this.application.getSmartViews();
+            this.smartViews = this.application.items.getSmartViews();
 
             const selectedTag = this.selected_;
             if (selectedTag && !isSystemView(selectedTag as SmartView)) {
@@ -174,12 +176,14 @@ export class TagsState {
     );
 
     appEventListeners.push(
-      this.application.addNoteCountChangeObserver((tagUuid) => {
+      this.application.items.addNoteCountChangeObserver((tagUuid) => {
         if (!tagUuid) {
-          this.setAllNotesCount(this.application.allCountableNotesCount());
+          this.setAllNotesCount(
+            this.application.items.allCountableNotesCount()
+          );
         } else {
           this.tagsCountsState.update([
-            this.application.findItem(tagUuid) as SNTag,
+            this.application.items.findItem(tagUuid) as SNTag,
           ]);
         }
       })
@@ -194,11 +198,11 @@ export class TagsState {
       return;
     }
 
-    const createdTag = (await this.application.createTagOrSmartView(
+    const createdTag = (await this.application.mutator.createTagOrSmartView(
       title
     )) as SNTag;
 
-    const futureSiblings = this.application.getTagChildren(parent);
+    const futureSiblings = this.application.items.getTagChildren(parent.uuid);
 
     if (!isValidFutureSiblings(this.application, futureSiblings, createdTag)) {
       this.setAddingSubtagTo(undefined);
@@ -299,7 +303,7 @@ export class TagsState {
   public get allLocalRootTags(): SNTag[] {
     if (
       this.editing_ instanceof SNTag &&
-      this.application.isTemplateItem(this.editing_)
+      this.application.items.isTemplateItem(this.editing_)
     ) {
       return [this.editing_, ...this.rootTags];
     }
@@ -311,11 +315,11 @@ export class TagsState {
   }
 
   getChildren(tag: SNTag): SNTag[] {
-    if (this.application.isTemplateItem(tag)) {
+    if (this.application.items.isTemplateItem(tag)) {
       return [];
     }
 
-    const children = this.application.getTagChildren(tag);
+    const children = this.application.items.getTagChildren(tag.uuid);
 
     const childrenUuids = children.map((childTag) => childTag.uuid);
     const childrenTags = this.tags.filter((tag) =>
@@ -325,11 +329,11 @@ export class TagsState {
   }
 
   isValidTagParent(parentUuid: UuidString, tagUuid: UuidString): boolean {
-    return this.application.isValidTagParent(parentUuid, tagUuid);
+    return this.application.items.isValidTagParent(parentUuid, tagUuid);
   }
 
   public hasParent(tagUuid: UuidString): boolean {
-    const item = this.application.findItem(tagUuid);
+    const item = this.application.items.findItem(tagUuid);
     return !!item && !!(item as SNTag).parentId;
   }
 
@@ -337,9 +341,9 @@ export class TagsState {
     tagUuid: string,
     futureParentUuid: string | undefined
   ): Promise<void> {
-    const tag = this.application.findItem(tagUuid) as SNTag;
+    const tag = this.application.items.findItem(tagUuid) as SNTag;
 
-    const currentParent = this.application.getTagParent(tag);
+    const currentParent = this.application.items.getTagParent(tag.uuid);
     const currentParentUuid = currentParent?.uuid;
 
     if (currentParentUuid === futureParentUuid) {
@@ -348,27 +352,31 @@ export class TagsState {
 
     const futureParent =
       futureParentUuid &&
-      (this.application.findItem(futureParentUuid) as SNTag);
+      (this.application.items.findItem(futureParentUuid) as SNTag);
 
     if (!futureParent) {
       const futureSiblings = rootTags(this.application);
       if (!isValidFutureSiblings(this.application, futureSiblings, tag)) {
         return;
       }
-      await this.application.unsetTagParent(tag);
+      await this.application.mutator.unsetTagParent(tag);
     } else {
-      const futureSiblings = this.application.getTagChildren(futureParent);
+      const futureSiblings = this.application.items.getTagChildren(
+        futureParent.uuid
+      );
       if (!isValidFutureSiblings(this.application, futureSiblings, tag)) {
         return;
       }
-      await this.application.setTagParent(futureParent, tag);
+      await this.application.mutator.setTagParent(futureParent, tag);
     }
 
     await this.application.sync.sync();
   }
 
   get rootTags(): SNTag[] {
-    return this.tags.filter((tag) => !this.application.getTagParent(tag));
+    return this.tags.filter(
+      (tag) => !this.application.items.getTagParent(tag.uuid)
+    );
   }
 
   get tagsCount(): number {
@@ -393,7 +401,7 @@ export class TagsState {
 
   public set selected(tag: AnyTag | undefined) {
     if (tag && tag.conflictOf) {
-      this.application.changeAndSaveItem(tag.uuid, (mutator) => {
+      this.application.mutator.changeAndSaveItem(tag.uuid, (mutator) => {
         mutator.conflictOf = undefined;
       });
     }
@@ -409,9 +417,12 @@ export class TagsState {
   }
 
   public setExpanded(tag: SNTag, expanded: boolean) {
-    this.application.changeAndSaveItem<TagMutator>(tag.uuid, (mutator) => {
-      mutator.expanded = expanded;
-    });
+    this.application.mutator.changeAndSaveItem<TagMutator>(
+      tag.uuid,
+      (mutator) => {
+        mutator.expanded = expanded;
+      }
+    );
   }
 
   public get selectedUuid(): UuidString | undefined {
@@ -429,13 +440,13 @@ export class TagsState {
 
   public async createNewTemplate() {
     const isAlreadyEditingATemplate =
-      this.editing_ && this.application.isTemplateItem(this.editing_);
+      this.editing_ && this.application.items.isTemplateItem(this.editing_);
 
     if (isAlreadyEditingATemplate) {
       return;
     }
 
-    const newTag = (await this.application.createTemplateItem(
+    const newTag = (await this.application.mutator.createTemplateItem(
       ContentType.Tag
     )) as SNTag;
 
@@ -459,7 +470,7 @@ export class TagsState {
       });
     }
     if (shouldDelete) {
-      this.application.deleteItem(tag);
+      this.application.mutator.deleteItem(tag);
       this.selected = this.smartViews[0];
     }
   }
@@ -467,7 +478,7 @@ export class TagsState {
   public async save(tag: SNTag | SmartView, newTitle: string) {
     const hasEmptyTitle = newTitle.length === 0;
     const hasNotChangedTitle = newTitle === tag.title;
-    const isTemplateChange = this.application.isTemplateItem(tag);
+    const isTemplateChange = this.application.items.isTemplateItem(tag);
 
     const siblings =
       tag instanceof SNTag ? tagSiblings(this.application, tag) : [];
@@ -497,7 +508,8 @@ export class TagsState {
     }
 
     if (isTemplateChange) {
-      const isSmartViewTitle = this.application.isSmartViewTitle(newTitle);
+      const isSmartViewTitle =
+        this.application.items.isSmartViewTitle(newTitle);
 
       if (isSmartViewTitle) {
         if (!this.features.hasSmartViews) {
@@ -506,13 +518,15 @@ export class TagsState {
         }
       }
 
-      const insertedTag = await this.application.createTagOrSmartView(newTitle);
+      const insertedTag = await this.application.mutator.createTagOrSmartView(
+        newTitle
+      );
       this.application.sync.sync();
       runInAction(() => {
         this.selected = insertedTag as SNTag;
       });
     } else {
-      await this.application.changeAndSaveItem<TagMutator>(
+      await this.application.mutator.changeAndSaveItem<TagMutator>(
         tag.uuid,
         (mutator) => {
           mutator.title = newTitle;
@@ -536,7 +550,7 @@ export class TagsState {
         item.content_type === ContentType.Tag ||
         item.content_type === ContentType.SmartView
       ) {
-        const matchingTag = this.application.findItem(item.uuid);
+        const matchingTag = this.application.items.findItem(item.uuid);
 
         if (matchingTag) {
           this.selected = matchingTag as AnyTag;
@@ -549,7 +563,9 @@ export class TagsState {
   }
 
   public get hasAtLeastOneFolder(): boolean {
-    return this.tags.some((tag) => !!this.application.getTagParent(tag));
+    return this.tags.some(
+      (tag) => !!this.application.items.getTagParent(tag.uuid)
+    );
   }
 }
 
@@ -570,7 +586,7 @@ class TagsCountsState {
     );
 
     tags.forEach((tag) => {
-      newCounts[tag.uuid] = this.application.countableNotesForTag(tag);
+      newCounts[tag.uuid] = this.application.items.countableNotesForTag(tag);
     });
 
     this.counts = newCounts;

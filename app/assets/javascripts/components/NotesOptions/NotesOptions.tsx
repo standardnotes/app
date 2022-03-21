@@ -11,6 +11,7 @@ import { ChangeEditorOption } from './ChangeEditorOption';
 import { BYTES_IN_ONE_MEGABYTE } from '@/constants';
 import { ListedActionsOption } from './ListedActionsOption';
 import { AddTagOption } from './AddTagOption';
+import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit';
 
 export type NotesOptionsProps = {
   application: WebApplication;
@@ -236,23 +237,44 @@ export const NotesOptions = observer(
       };
     }, [application]);
 
-    const downloadSelectedItems = () => {
-      notes.forEach((note) => {
-        const editor = application.componentManager.editorForNote(note);
-        const format = editor?.package_info?.file_type || 'txt';
-        const downloadAnchor = document.createElement('a');
-        downloadAnchor.setAttribute(
-          'href',
-          'data:text/plain;charset=utf-8,' + encodeURIComponent(note.text)
+    const getNoteFileName = (note: SNNote): string => {
+      const editor = application.componentManager.editorForNote(note);
+      const format = editor?.package_info?.file_type || 'txt';
+      return `${note.title}.${format}`;
+    };
+
+    const downloadSelectedItems = async () => {
+      if (notes.length === 1) {
+        application
+          .getArchiveService()
+          .downloadData(new Blob([notes[0].text]), getNoteFileName(notes[0]));
+        return;
+      }
+
+      if (notes.length > 1) {
+        const loadingToastId = addToast({
+          type: ToastType.Loading,
+          message: `Exporting ${notes.length} notes...`,
+        });
+        await application.getArchiveService().downloadDataAsZip(
+          notes.map((note) => {
+            return {
+              filename: getNoteFileName(note),
+              content: new Blob([note.text]),
+            };
+          })
         );
-        downloadAnchor.setAttribute('download', `${note.title}.${format}`);
-        downloadAnchor.click();
-      });
+        dismissToast(loadingToastId);
+        addToast({
+          type: ToastType.Success,
+          message: `Exported ${notes.length} notes`,
+        });
+      }
     };
 
     const duplicateSelectedItems = () => {
       notes.forEach((note) => {
-        application.duplicateItem(note);
+        application.mutator.duplicateItem(note);
       });
     };
 

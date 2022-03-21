@@ -1,7 +1,7 @@
 import { Icon } from './Icon';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { AppState } from '@/ui_models/app_state';
-import { SNTag } from '@standardnotes/snjs/dist/@types';
+import { SNTag } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 
 type Props = {

@@ -1,7 +1,11 @@
-import { ComponentViewer } from '@standardnotes/snjs/dist/@types';
 import { WebApplication } from '@/ui_models/application';
-import { ContentType, PayloadSource, SNNote } from '@standardnotes/snjs';
-import { PayloadContent } from '@standardnotes/snjs';
+import {
+  ContentType,
+  PayloadSource,
+  SNNote,
+  ComponentViewer,
+  PayloadContent,
+} from '@standardnotes/snjs';
 import { confirmDialog } from '@/services/alertService';
 import { STRING_RESTORE_LOCKED_ATTEMPT } from '@/strings';
 import { PureComponent } from './Abstract/PureComponent';
@@ -28,12 +32,14 @@ export class RevisionPreviewModal extends PureComponent<Props, State> {
   async componentDidMount(): Promise<void> {
     super.componentDidMount();
 
-    const templateNote = (await this.application.createTemplateItem(
+    const templateNote = (await this.application.mutator.createTemplateItem(
       ContentType.Note,
       this.props.content
     )) as SNNote;
 
-    this.originalNote = this.application.findItem(this.props.uuid) as SNNote;
+    this.originalNote = this.application.items.findItem(
+      this.props.uuid
+    ) as SNNote;
 
     const component = this.application.componentManager.editorForNote(
       this.originalNote
@@ -60,14 +66,14 @@ export class RevisionPreviewModal extends PureComponent<Props, State> {
   restore = (asCopy: boolean) => {
     const run = async () => {
       if (asCopy) {
-        await this.application.duplicateItem(this.originalNote, {
+        await this.application.mutator.duplicateItem(this.originalNote, {
           ...this.props.content,
           title: this.props.content.title
             ? this.props.content.title + ' (copy)'
             : undefined,
         });
       } else {
-        this.application.changeAndSaveItem(
+        this.application.mutator.changeAndSaveItem(
           this.props.uuid,
           (mutator) => {
             mutator.unsafe_setCustomContent(this.props.content);

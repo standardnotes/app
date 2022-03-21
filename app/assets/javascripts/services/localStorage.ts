@@ -1,16 +1,14 @@
 export enum StorageKey {
-  DisableErrorReporting = 'DisableErrorReporting',
   AnonymousUserId = 'AnonymousUserId',
   ShowBetaWarning = 'ShowBetaWarning',
   ShowNoAccountWarning = 'ShowNoAccountWarning',
 }
 
 export type StorageValue = {
-  [StorageKey.DisableErrorReporting]: boolean;
   [StorageKey.AnonymousUserId]: string;
   [StorageKey.ShowBetaWarning]: boolean;
   [StorageKey.ShowNoAccountWarning]: boolean;
-}
+};
 
 export const storage = {
   get<K extends StorageKey>(key: K): StorageValue[K] | null {

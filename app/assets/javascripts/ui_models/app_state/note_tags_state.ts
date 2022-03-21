@@ -1,5 +1,12 @@
 import { ElementIds } from '@/element_ids';
-import { ContentType, SNNote, SNTag, UuidString } from '@standardnotes/snjs';
+import { ApplicationEvent } from '@standardnotes/snjs';
+import {
+  ContentType,
+  PrefKey,
+  SNNote,
+  SNTag,
+  UuidString,
+} from '@standardnotes/snjs';
 import { action, computed, makeObservable, observable } from 'mobx';
 import { WebApplication } from '../application';
 import { AppState } from './app_state';
@@ -13,6 +20,7 @@ export class NoteTagsState {
   focusedTagUuid: UuidString | undefined = undefined;
   tags: SNTag[] = [];
   tagsContainerMaxWidth: number | 'auto' = 0;
+  addNoteToParentFolders: boolean;
 
   constructor(
     private application: WebApplication,
@@ -41,10 +49,24 @@ export class NoteTagsState {
       setTagsContainerMaxWidth: action,
     });
 
+    this.addNoteToParentFolders = application.getPreference(
+      PrefKey.NoteAddToParentFolders,
+      true
+    );
+
     appEventListeners.push(
       application.streamItems(ContentType.Tag, () => {
         this.reloadTags();
-      })
+      }),
+      application.addSingleEventObserver(
+        ApplicationEvent.PreferencesChanged,
+        async () => {
+          this.addNoteToParentFolders = application.getPreference(
+            PrefKey.NoteAddToParentFolders,
+            true
+          );
+        }
+      )
     );
   }
 
@@ -99,7 +121,7 @@ export class NoteTagsState {
   }
 
   async createAndAddNewTag(): Promise<void> {
-    const newTag = await this.application.findOrCreateTag(
+    const newTag = await this.application.mutator.findOrCreateTag(
       this.autocompleteSearchQuery
     );
     await this.addTagToActiveNote(newTag);
@@ -148,7 +170,7 @@ export class NoteTagsState {
   }
 
   searchActiveNoteAutocompleteTags(): void {
-    const newResults = this.application.searchTags(
+    const newResults = this.application.items.searchTags(
       this.autocompleteSearchQuery,
       this.activeNote
     );
@@ -162,7 +184,7 @@ export class NoteTagsState {
   reloadTags(): void {
     const { activeNote } = this;
     if (activeNote) {
-      const tags = this.application.getSortedTagsForNote(activeNote);
+      const tags = this.application.items.getSortedTagsForNote(activeNote);
       this.setTags(tags);
     }
   }
@@ -180,7 +202,11 @@ export class NoteTagsState {
     const { activeNote } = this;
 
     if (activeNote) {
-      await this.application.addTagHierarchyToNote(activeNote, tag);
+      await this.application.items.addTagToNote(
+        activeNote,
+        tag,
+        this.addNoteToParentFolders
+      );
       this.application.sync.sync();
       this.reloadTags();
     }
@@ -189,7 +215,7 @@ export class NoteTagsState {
   async removeTagFromActiveNote(tag: SNTag): Promise<void> {
     const { activeNote } = this;
     if (activeNote) {
-      await this.application.changeItem(tag.uuid, (mutator) => {
+      await this.application.mutator.changeItem(tag.uuid, (mutator) => {
         mutator.removeItemAsRelationship(activeNote);
       });
       this.application.sync.sync();
@@ -198,7 +224,7 @@ export class NoteTagsState {
   }
 
   getSortedTagsForNote(note: SNNote): SNTag[] {
-    const tags = this.application.getSortedTagsForNote(note);
+    const tags = this.application.items.getSortedTagsForNote(note);
 
     const sortFunction = (tagA: SNTag, tagB: SNTag): number => {
       const a = this.getLongTitle(tagA);
@@ -217,10 +243,10 @@ export class NoteTagsState {
   }
 
   getPrefixTitle(tag: SNTag): string | undefined {
-    return this.application.getTagPrefixTitle(tag);
+    return this.application.items.getTagPrefixTitle(tag);
   }
 
   getLongTitle(tag: SNTag): string {
-    return this.application.getTagLongTitle(tag);
+    return this.application.items.getTagLongTitle(tag);
   }
 }

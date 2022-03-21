@@ -2,14 +2,14 @@ import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import { observer } from 'mobx-react-lite';
 import { Icon } from '../Icon';
-import { formatLastSyncDate } from '@/preferences/panes/account/Sync';
+import { formatLastSyncDate } from '@/components/Preferences/panes/account/Sync';
 import { SyncQueueStrategy } from '@standardnotes/snjs';
 import { STRING_GENERIC_SYNC_ERROR } from '@/strings';
 import { useState } from 'preact/hooks';
 import { AccountMenuPane } from '.';
 import { FunctionComponent } from 'preact';
-import { Menu } from '../menu/Menu';
-import { MenuItem, MenuItemSeparator, MenuItemType } from '../menu/MenuItem';
+import { Menu } from '../Menu/Menu';
+import { MenuItem, MenuItemSeparator, MenuItemType } from '../Menu/MenuItem';
 
 type Props = {
   appState: AppState;
