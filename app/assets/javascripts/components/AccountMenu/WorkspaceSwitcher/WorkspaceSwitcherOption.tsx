@@ -7,13 +7,13 @@ import {
 import { FunctionComponent } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { Icon } from '../../Icon';
-import { AccountSwitcherMenu } from './AccountSwitcherMenu';
+import { WorkspaceSwitcherMenu } from './WorkspaceSwitcherMenu';
 
 type Props = {
   mainApplicationGroup: ApplicationGroup;
 };
 
-export const AccountSwitcherOption: FunctionComponent<Props> = ({
+export const WorkspaceSwitcherOption: FunctionComponent<Props> = ({
   mainApplicationGroup,
 }) => {
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -58,7 +58,7 @@ export const AccountSwitcherOption: FunctionComponent<Props> = ({
       >
         <div className="flex items-center">
           <Icon type="user-switch" className="color-neutral mr-2" />
-          Switch accounts
+          Switch workspace
         </div>
         <Icon type="chevron-right" className="color-neutral" />
       </button>
@@ -68,7 +68,7 @@ export const AccountSwitcherOption: FunctionComponent<Props> = ({
           className="sn-dropdown max-h-120 min-w-68 py-2 fixed overflow-y-auto"
           style={menuStyle}
         >
-          <AccountSwitcherMenu
+          <WorkspaceSwitcherMenu
             mainApplicationGroup={mainApplicationGroup}
             isOpen={isOpen}
           />

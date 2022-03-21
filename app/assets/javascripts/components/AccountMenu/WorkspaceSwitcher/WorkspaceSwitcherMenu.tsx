@@ -5,13 +5,14 @@ import { useEffect, useState } from 'preact/hooks';
 import { Icon } from '../../Icon';
 import { Menu } from '../../Menu/Menu';
 import { MenuItem, MenuItemSeparator, MenuItemType } from '../../Menu/MenuItem';
+import { WorkspaceMenuItem } from './WorkspaceMenuItem';
 
 type Props = {
   mainApplicationGroup: ApplicationGroup;
   isOpen: boolean;
 };
 
-export const AccountSwitcherMenu: FunctionComponent<Props> = ({
+export const WorkspaceSwitcherMenu: FunctionComponent<Props> = ({
   mainApplicationGroup,
   isOpen,
 }) => {
@@ -33,21 +34,20 @@ export const AccountSwitcherMenu: FunctionComponent<Props> = ({
 
   return (
     <Menu
-      a11yLabel="Account switcher menu"
+      a11yLabel="Workspace switcher menu"
       className="px-0 focus:shadow-none"
       isOpen={isOpen}
     >
       {applicationDescriptors.map((descriptor) => (
-        <MenuItem
-          type={MenuItemType.RadioButton}
-          className="sn-dropdown-item py-2 focus:bg-info-backdrop focus:shadow-none"
+        <WorkspaceMenuItem
+          descriptor={descriptor}
           onClick={() => {
             mainApplicationGroup.loadApplicationForDescriptor(descriptor);
           }}
-          checked={descriptor.primary}
-        >
-          {descriptor.label}
-        </MenuItem>
+          renameDescriptor={(label: string) =>
+            mainApplicationGroup.renameDescriptor(descriptor, label)
+          }
+        />
       ))}
       <MenuItemSeparator />
       <MenuItem
@@ -57,7 +57,7 @@ export const AccountSwitcherMenu: FunctionComponent<Props> = ({
         }}
       >
         <Icon type="user-add" className="color-neutral mr-2" />
-        Add another account
+        Add another workspace
       </MenuItem>
     </Menu>
   );

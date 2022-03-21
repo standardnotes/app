@@ -79,7 +79,7 @@ export const MenuItem: FunctionComponent<MenuItemProps> = forwardRef(
           <div
             className={`pseudo-radio-btn ${
               checked ? 'pseudo-radio-btn--checked' : ''
-            } mr-2`}
+            } mr-2 flex-shrink-0`}
           ></div>
         ) : null}
         {children}

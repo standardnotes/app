@@ -10,7 +10,7 @@ import { AccountMenuPane } from '.';
 import { FunctionComponent } from 'preact';
 import { Menu } from '../Menu/Menu';
 import { MenuItem, MenuItemSeparator, MenuItemType } from '../Menu/MenuItem';
-import { AccountSwitcherOption } from './AccountSwitcher/AccountSwitcherOption';
+import { WorkspaceSwitcherOption } from './WorkspaceSwitcher/WorkspaceSwitcherOption';
 import { ApplicationGroup } from '@/ui_models/application_group';
 
 type Props = {
@@ -114,7 +114,9 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
           a11yLabel="General account menu"
           closeMenu={closeMenu}
         >
-          <AccountSwitcherOption mainApplicationGroup={mainApplicationGroup} />
+          <WorkspaceSwitcherOption
+            mainApplicationGroup={mainApplicationGroup}
+          />
           <div className="h-1px my-2 bg-border"></div>
           {user ? (
             <MenuItem
