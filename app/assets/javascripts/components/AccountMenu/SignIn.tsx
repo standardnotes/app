@@ -3,7 +3,7 @@ import { AppState } from '@/ui_models/app_state';
 import { isDev } from '@/utils';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { AccountMenuPane } from '.';
 import { Button } from '../Button';
 import { Checkbox } from '../Checkbox';
@@ -25,10 +25,12 @@ export const SignInPane: FunctionComponent<Props> = observer(
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [isEphemeral, setIsEphemeral] = useState(false);
+
     const [isStrictSignin, setIsStrictSignin] = useState(false);
     const [isSigningIn, setIsSigningIn] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [shouldMergeLocal, setShouldMergeLocal] = useState(true);
+    const [isVault, setIsVault] = useState(false);
 
     const emailInputRef = useRef<HTMLInputElement>(null);
     const passwordInputRef = useRef<HTMLInputElement>(null);
@@ -106,6 +108,16 @@ export const SignInPane: FunctionComponent<Props> = observer(
       }
     };
 
+    const onVaultChange = useCallback(
+      (newIsVault: boolean, vaultedEmail?: string) => {
+        setIsVault(newIsVault);
+        if (newIsVault && vaultedEmail) {
+          setEmail(vaultedEmail);
+        }
+      },
+      [setEmail]
+    );
+
     const handleSignInFormSubmit = (e: Event) => {
       e.preventDefault();
 
@@ -145,7 +157,7 @@ export const SignInPane: FunctionComponent<Props> = observer(
             onChange={handleEmailChange}
             onFocus={resetInvalid}
             onKeyDown={handleKeyDown}
-            disabled={isSigningIn}
+            disabled={isSigningIn || isVault}
             ref={emailInputRef}
           />
           <InputWithIcon
@@ -197,25 +209,9 @@ export const SignInPane: FunctionComponent<Props> = observer(
           appState={appState}
           application={application}
           disabled={isSigningIn}
-        >
-          <div className="flex justify-between items-center mb-1">
-            <Checkbox
-              name="use-strict-signin"
-              label="Use strict sign-in"
-              checked={isStrictSignin}
-              disabled={isSigningIn}
-              onChange={handleStrictSigninChange}
-            />
-            <a
-              href="https://standardnotes.com/help/security"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="Learn more"
-            >
-              <Icon type="info" className="color-neutral" />
-            </a>
-          </div>
-        </AdvancedOptions>
+          onVaultChange={onVaultChange}
+          onStrictSignInChange={handleStrictSigninChange}
+        />
       </>
     );
   }
