@@ -136,7 +136,7 @@ export class DesktopManager
     if (!component) {
       return;
     }
-    const updatedComponent = await this.application.changeAndSaveItem(
+    const updatedComponent = await this.application.mutator.changeAndSaveItem(
       component.uuid,
       (m) => {
         const mutator = m as ComponentMutator;

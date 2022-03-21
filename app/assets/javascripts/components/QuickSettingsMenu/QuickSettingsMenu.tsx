@@ -218,9 +218,9 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
 
     const toggleComponent = (component: SNComponent) => {
       if (component.isTheme()) {
-        application.toggleTheme(component);
+        application.mutator.toggleTheme(component);
       } else {
-        application.toggleComponent(component);
+        application.mutator.toggleComponent(component);
       }
     };
 
@@ -265,7 +265,7 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
       const activeTheme = themes
         .map((item) => item.component)
         .find((theme) => theme?.active && !theme.isLayerable());
-      if (activeTheme) application.toggleTheme(activeTheme);
+      if (activeTheme) application.mutator.toggleTheme(activeTheme);
     };
 
     return (

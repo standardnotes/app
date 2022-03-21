@@ -95,7 +95,7 @@ export const DataBackups = observer(({ application, appState }: Props) => {
   const performImport = async (data: BackupFile) => {
     setIsImportDataLoading(true);
 
-    const result = await application.importData(data);
+    const result = await application.mutator.importData(data);
 
     setIsImportDataLoading(false);
 

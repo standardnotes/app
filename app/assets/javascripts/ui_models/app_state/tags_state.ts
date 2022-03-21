@@ -194,7 +194,7 @@ export class TagsState {
       return;
     }
 
-    const createdTag = (await this.application.createTagOrSmartView(
+    const createdTag = (await this.application.mutator.createTagOrSmartView(
       title
     )) as SNTag;
 
@@ -355,13 +355,13 @@ export class TagsState {
       if (!isValidFutureSiblings(this.application, futureSiblings, tag)) {
         return;
       }
-      await this.application.unsetTagParent(tag);
+      await this.application.mutator.unsetTagParent(tag);
     } else {
       const futureSiblings = this.application.getTagChildren(futureParent);
       if (!isValidFutureSiblings(this.application, futureSiblings, tag)) {
         return;
       }
-      await this.application.setTagParent(futureParent, tag);
+      await this.application.mutator.setTagParent(futureParent, tag);
     }
 
     await this.application.sync.sync();
@@ -393,7 +393,7 @@ export class TagsState {
 
   public set selected(tag: AnyTag | undefined) {
     if (tag && tag.conflictOf) {
-      this.application.changeAndSaveItem(tag.uuid, (mutator) => {
+      this.application.mutator.changeAndSaveItem(tag.uuid, (mutator) => {
         mutator.conflictOf = undefined;
       });
     }
@@ -409,9 +409,12 @@ export class TagsState {
   }
 
   public setExpanded(tag: SNTag, expanded: boolean) {
-    this.application.changeAndSaveItem<TagMutator>(tag.uuid, (mutator) => {
-      mutator.expanded = expanded;
-    });
+    this.application.mutator.changeAndSaveItem<TagMutator>(
+      tag.uuid,
+      (mutator) => {
+        mutator.expanded = expanded;
+      }
+    );
   }
 
   public get selectedUuid(): UuidString | undefined {
@@ -435,7 +438,7 @@ export class TagsState {
       return;
     }
 
-    const newTag = (await this.application.createTemplateItem(
+    const newTag = (await this.application.mutator.createTemplateItem(
       ContentType.Tag
     )) as SNTag;
 
@@ -459,7 +462,7 @@ export class TagsState {
       });
     }
     if (shouldDelete) {
-      this.application.deleteItem(tag);
+      this.application.mutator.deleteItem(tag);
       this.selected = this.smartViews[0];
     }
   }
@@ -506,13 +509,15 @@ export class TagsState {
         }
       }
 
-      const insertedTag = await this.application.createTagOrSmartView(newTitle);
+      const insertedTag = await this.application.mutator.createTagOrSmartView(
+        newTitle
+      );
       this.application.sync.sync();
       runInAction(() => {
         this.selected = insertedTag as SNTag;
       });
     } else {
-      await this.application.changeAndSaveItem<TagMutator>(
+      await this.application.mutator.changeAndSaveItem<TagMutator>(
         tag.uuid,
         (mutator) => {
           mutator.title = newTitle;

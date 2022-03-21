@@ -48,7 +48,7 @@ export const Extensions: FunctionComponent<{
       )
       .then(async (shouldRemove: boolean) => {
         if (shouldRemove) {
-          await application.deleteItem(extension);
+          await application.mutator.deleteItem(extension);
           setExtensions(loadExtensions(application));
         }
       })
@@ -73,7 +73,7 @@ export const Extensions: FunctionComponent<{
   };
 
   const confirmExtension = async () => {
-    await application.insertItem(confirmableExtension as SNComponent);
+    await application.mutator.insertItem(confirmableExtension as SNComponent);
     application.sync.sync();
     setExtensions(loadExtensions(application));
   };

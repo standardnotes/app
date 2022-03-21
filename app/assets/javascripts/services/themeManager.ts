@@ -48,7 +48,7 @@ export class ThemeManager extends ApplicationService {
         const activeTheme = themes.find(
           (theme) => theme.active && !theme.isLayerable()
         );
-        if (activeTheme) this.application.toggleTheme(activeTheme);
+        if (activeTheme) this.application.mutator.toggleTheme(activeTheme);
       };
 
       const themeIdentifier = this.application.getPreference(
@@ -62,7 +62,7 @@ export class ThemeManager extends ApplicationService {
           (theme) => theme.package_info.identifier === themeIdentifier
         );
         if (theme && !theme.active) {
-          this.application.toggleTheme(theme);
+          this.application.mutator.toggleTheme(theme);
         }
       }
     }
@@ -133,7 +133,7 @@ export class ThemeManager extends ApplicationService {
         );
         if (status !== FeatureStatus.Entitled) {
           if (theme.active) {
-            this.application.toggleTheme(theme);
+            this.application.mutator.toggleTheme(theme);
           } else {
             this.deactivateTheme(theme.uuid);
           }
