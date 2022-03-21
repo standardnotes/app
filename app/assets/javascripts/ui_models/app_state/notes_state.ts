@@ -3,19 +3,20 @@ import { KeyboardModifier } from '@/services/ioService';
 import { StringEmptyTrash, Strings, StringUtils } from '@/strings';
 import { MENU_MARGIN_FROM_APP_BORDER } from '@/constants';
 import {
-  UuidString,
-  SNNote,
-  NoteMutator,
-  ContentType,
-  SNTag,
   ChallengeReason,
+  ContentType,
+  MutationType,
+  NoteMutator,
   NoteViewController,
+  SNNote,
+  SNTag,
+  UuidString,
 } from '@standardnotes/snjs';
 import {
-  makeObservable,
-  observable,
   action,
   computed,
+  makeObservable,
+  observable,
   runInAction,
 } from 'mobx';
 import { WebApplication } from '../application';
@@ -258,12 +259,13 @@ export class NotesState {
   }
 
   async changeSelectedNotes(
-    mutate: (mutator: NoteMutator) => void
+    mutate: (mutator: NoteMutator) => void,
+    makeNoteDirty = true
   ): Promise<void> {
     await this.application.changeItems(
       Object.keys(this.selectedNotes),
       mutate,
-      false
+      makeNoteDirty ? MutationType.UserInteraction : MutationType.NonDirtying
     );
     this.application.sync.sync();
   }
@@ -271,13 +273,13 @@ export class NotesState {
   setHideSelectedNotePreviews(hide: boolean): void {
     this.changeSelectedNotes((mutator) => {
       mutator.hidePreview = hide;
-    });
+    }, false);
   }
 
   setLockSelectedNotes(lock: boolean): void {
     this.changeSelectedNotes((mutator) => {
       mutator.locked = lock;
-    });
+    }, false);
   }
 
   async setTrashSelectedNotes(trashed: boolean): Promise<void> {
@@ -353,7 +355,7 @@ export class NotesState {
   setPinSelectedNotes(pinned: boolean): void {
     this.changeSelectedNotes((mutator) => {
       mutator.pinned = pinned;
-    });
+    }, false);
   }
 
   async setArchiveSelectedNotes(archived: boolean): Promise<void> {
@@ -366,7 +368,7 @@ export class NotesState {
 
     await this.changeSelectedNotes((mutator) => {
       mutator.archived = archived;
-    });
+    }, false);
 
     runInAction(() => {
       this.selectedNotes = {};
@@ -401,7 +403,7 @@ export class NotesState {
       (mutator) => {
         mutator.toggleSpellcheck();
       },
-      false
+      MutationType.NonDirtying
     );
     this.application.sync.sync();
   }
