@@ -1,7 +1,11 @@
-import { ComponentViewer } from '@standardnotes/snjs/dist/@types';
 import { WebApplication } from '@/ui_models/application';
-import { ContentType, PayloadSource, SNNote } from '@standardnotes/snjs';
-import { PayloadContent } from '@standardnotes/snjs';
+import {
+  ContentType,
+  PayloadSource,
+  SNNote,
+  ComponentViewer,
+  PayloadContent,
+} from '@standardnotes/snjs';
 import { confirmDialog } from '@/services/alertService';
 import { STRING_RESTORE_LOCKED_ATTEMPT } from '@/strings';
 import { PureComponent } from './Abstract/PureComponent';
