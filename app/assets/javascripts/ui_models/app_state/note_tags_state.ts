@@ -121,7 +121,7 @@ export class NoteTagsState {
   }
 
   async createAndAddNewTag(): Promise<void> {
-    const newTag = await this.application.findOrCreateTag(
+    const newTag = await this.application.mutator.findOrCreateTag(
       this.autocompleteSearchQuery
     );
     await this.addTagToActiveNote(newTag);
@@ -215,7 +215,7 @@ export class NoteTagsState {
   async removeTagFromActiveNote(tag: SNTag): Promise<void> {
     const { activeNote } = this;
     if (activeNote) {
-      await this.application.changeItem(tag.uuid, (mutator) => {
+      await this.application.mutator.changeItem(tag.uuid, (mutator) => {
         mutator.removeItemAsRelationship(activeNote);
       });
       this.application.sync.sync();

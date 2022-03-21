@@ -43,7 +43,7 @@ export const TagsSection: FunctionComponent<Props> = observer(
           'Run Migration'
         )
       ) {
-        appState.application.migrateTagsToFolders().then(() => {
+        appState.application.mutator.migrateTagsToFolders().then(() => {
           checkIfMigrationNeeded();
         });
       }

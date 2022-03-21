@@ -260,7 +260,7 @@ export class NotesState {
   async changeSelectedNotes(
     mutate: (mutator: NoteMutator) => void
   ): Promise<void> {
-    await this.application.changeItems(
+    await this.application.mutator.changeItems(
       Object.keys(this.selectedNotes),
       mutate,
       false
@@ -336,7 +336,7 @@ export class NotesState {
     ) {
       if (permanently) {
         for (const note of Object.values(this.selectedNotes)) {
-          await this.application.deleteItem(note);
+          await this.application.mutator.deleteItem(note);
           delete this.selectedNotes[note.uuid];
         }
       } else {
@@ -377,10 +377,10 @@ export class NotesState {
   async setProtectSelectedNotes(protect: boolean): Promise<void> {
     const selectedNotes = Object.values(this.selectedNotes);
     if (protect) {
-      await this.application.protectNotes(selectedNotes);
+      await this.application.mutator.protectNotes(selectedNotes);
       this.setShowProtectedWarning(true);
     } else {
-      await this.application.unprotectNotes(selectedNotes);
+      await this.application.mutator.unprotectNotes(selectedNotes);
       this.setShowProtectedWarning(false);
     }
   }
@@ -396,7 +396,7 @@ export class NotesState {
   }
 
   async toggleGlobalSpellcheckForNote(note: SNNote) {
-    await this.application.changeItem<NoteMutator>(
+    await this.application.mutator.changeItem<NoteMutator>(
       note.uuid,
       (mutator) => {
         mutator.toggleSpellcheck();
@@ -412,7 +412,7 @@ export class NotesState {
     const tagsToAdd = [...parentChainTags, tag];
     await Promise.all(
       tagsToAdd.map(async (tag) => {
-        await this.application.changeItem(tag.uuid, (mutator) => {
+        await this.application.mutator.changeItem(tag.uuid, (mutator) => {
           for (const note of selectedNotes) {
             mutator.addItemAsRelationship(note);
           }
@@ -424,7 +424,7 @@ export class NotesState {
 
   async removeTagFromSelectedNotes(tag: SNTag): Promise<void> {
     const selectedNotes = Object.values(this.selectedNotes);
-    await this.application.changeItem(tag.uuid, (mutator) => {
+    await this.application.mutator.changeItem(tag.uuid, (mutator) => {
       for (const note of selectedNotes) {
         mutator.removeItemAsRelationship(note);
       }
@@ -452,7 +452,7 @@ export class NotesState {
         confirmButtonStyle: 'danger',
       })
     ) {
-      this.application.emptyTrash();
+      this.application.mutator.emptyTrash();
       this.application.sync.sync();
     }
   }

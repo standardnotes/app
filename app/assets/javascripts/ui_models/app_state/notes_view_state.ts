@@ -498,7 +498,7 @@ export class NotesViewState {
   handleEditorChange = async () => {
     const activeNote = this.appState.getActiveNoteController()?.note;
     if (activeNote && activeNote.conflictOf) {
-      this.application.changeAndSaveItem(activeNote.uuid, (mutator) => {
+      this.application.mutator.changeAndSaveItem(activeNote.uuid, (mutator) => {
         mutator.conflictOf = undefined;
       });
     }

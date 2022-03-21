@@ -57,7 +57,7 @@ export const ExtensionPane: FunctionComponent<IProps> = observer(
                 extension={extension}
                 first={false}
                 uninstall={() =>
-                  application
+                  application.mutator
                     .deleteItem(extension)
                     .then(() => preferencesMenu.loadExtensionsPanes())
                 }

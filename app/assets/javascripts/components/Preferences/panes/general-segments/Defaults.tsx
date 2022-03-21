@@ -34,7 +34,7 @@ const makeEditorDefault = (
   if (currentDefault) {
     removeEditorDefault(application, currentDefault);
   }
-  application.changeAndSaveItem(component.uuid, (m) => {
+  application.mutator.changeAndSaveItem(component.uuid, (m) => {
     const mutator = m as ComponentMutator;
     mutator.defaultEditor = true;
   });
@@ -44,7 +44,7 @@ const removeEditorDefault = (
   application: WebApplication,
   component: SNComponent
 ) => {
-  application.changeAndSaveItem(component.uuid, (m) => {
+  application.mutator.changeAndSaveItem(component.uuid, (m) => {
     const mutator = m as ComponentMutator;
     mutator.defaultEditor = false;
   });

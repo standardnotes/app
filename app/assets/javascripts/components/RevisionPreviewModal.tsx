@@ -28,7 +28,7 @@ export class RevisionPreviewModal extends PureComponent<Props, State> {
   async componentDidMount(): Promise<void> {
     super.componentDidMount();
 
-    const templateNote = (await this.application.createTemplateItem(
+    const templateNote = (await this.application.mutator.createTemplateItem(
       ContentType.Note,
       this.props.content
     )) as SNNote;
@@ -60,14 +60,14 @@ export class RevisionPreviewModal extends PureComponent<Props, State> {
   restore = (asCopy: boolean) => {
     const run = async () => {
       if (asCopy) {
-        await this.application.duplicateItem(this.originalNote, {
+        await this.application.mutator.duplicateItem(this.originalNote, {
           ...this.props.content,
           title: this.props.content.title
             ? this.props.content.title + ' (copy)'
             : undefined,
         });
       } else {
-        this.application.changeAndSaveItem(
+        this.application.mutator.changeAndSaveItem(
           this.props.uuid,
           (mutator) => {
             mutator.unsafe_setCustomContent(this.props.content);
