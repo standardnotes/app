@@ -1,5 +1,5 @@
 import { ApplicationGroup } from '@/ui_models/application_group';
-import { ApplicationDescriptor, User } from '@standardnotes/snjs';
+import { ApplicationDescriptor } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 import { Icon } from '../Icon';
@@ -8,36 +8,18 @@ type Props = {
   mainApplicationGroup: ApplicationGroup;
 };
 
-type AccountDescriptor = ApplicationDescriptor & {
-  user: User | undefined;
-};
-
 export const AccountSwitcherMenu: FunctionComponent<Props> = ({
   mainApplicationGroup,
 }) => {
-  const [accountDescriptors, setAccountDescriptors] = useState<
-    AccountDescriptor[]
+  const [applicationDescriptors, setApplicationDescriptors] = useState<
+    ApplicationDescriptor[]
   >([]);
 
   useEffect(() => {
     const removeAppGroupObserver =
       mainApplicationGroup.addApplicationChangeObserver(() => {
-        const applications = mainApplicationGroup.getApplications();
         const applicationDescriptors = mainApplicationGroup.getDescriptors();
-        const accountDescriptors: AccountDescriptor[] =
-          applicationDescriptors.map((descriptor) => {
-            const user = applications
-              .find(
-                (application) =>
-                  descriptor.identifier === application.identifier
-              )
-              ?.getUser();
-            return {
-              ...descriptor,
-              user,
-            };
-          });
-        setAccountDescriptors(accountDescriptors);
+        setApplicationDescriptors(applicationDescriptors);
       });
 
     return () => {
@@ -46,8 +28,8 @@ export const AccountSwitcherMenu: FunctionComponent<Props> = ({
   }, [mainApplicationGroup]);
 
   return (
-    <>
-      {accountDescriptors.map((descriptor) => (
+    <menu aria-label="Account switcher menu" className="px-0 focus:shadow-none">
+      {applicationDescriptors.map((descriptor) => (
         <button
           className="sn-dropdown-item py-2 focus:bg-info-backdrop focus:shadow-none"
           onClick={() => {
@@ -59,7 +41,7 @@ export const AccountSwitcherMenu: FunctionComponent<Props> = ({
               descriptor.primary ? 'pseudo-radio-btn--checked' : ''
             } mr-2`}
           ></div>
-          {descriptor.user?.email ? descriptor.user.email : descriptor.label}
+          {descriptor.label}
         </button>
       ))}
       <div className="h-1px my-2 bg-border"></div>
@@ -72,6 +54,6 @@ export const AccountSwitcherMenu: FunctionComponent<Props> = ({
         <Icon type="user-add" className="color-neutral mr-2" />
         Add another account
       </button>
-    </>
+    </menu>
   );
 };

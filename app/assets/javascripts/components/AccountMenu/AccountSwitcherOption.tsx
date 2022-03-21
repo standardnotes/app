@@ -17,7 +17,7 @@ export const AccountSwitcherOption: FunctionComponent<Props> = ({
   mainApplicationGroup,
 }) => {
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const menuRef = useRef<HTMLMenuElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [menuStyle, setMenuStyle] = useState<SubmenuStyle>();
 
@@ -48,7 +48,7 @@ export const AccountSwitcherOption: FunctionComponent<Props> = ({
   }, [isOpen]);
 
   return (
-    <li className="list-style-none" role="none">
+    <>
       <button
         ref={buttonRef}
         className="sn-dropdown-item justify-between focus:bg-info-backdrop focus:shadow-none"
@@ -63,15 +63,14 @@ export const AccountSwitcherOption: FunctionComponent<Props> = ({
         <Icon type="chevron-right" className="color-neutral" />
       </button>
       {isOpen && (
-        <menu
+        <div
           ref={menuRef}
-          aria-label="Account switcher menu"
-          className="sn-dropdown max-h-120 min-w-68 px-0 py-2 fixed overflow-y-auto"
+          className="sn-dropdown max-h-120 min-w-68 py-2 fixed overflow-y-auto"
           style={menuStyle}
         >
           <AccountSwitcherMenu mainApplicationGroup={mainApplicationGroup} />
-        </menu>
+        </div>
       )}
-    </li>
+    </>
   );
 };
