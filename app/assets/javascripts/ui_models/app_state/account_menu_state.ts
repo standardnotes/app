@@ -8,7 +8,7 @@ import {
 } from 'mobx';
 import { ApplicationEvent, ContentType } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
-import { SNItem } from '@standardnotes/snjs/dist/@types/models/core/item';
+import { SNItem } from '@standardnotes/snjs';
 import { AccountMenuPane } from '@/components/AccountMenu';
 
 type StructuredItemsCount = {
