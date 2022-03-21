@@ -10,7 +10,7 @@ import { AccountMenuPane } from '.';
 import { FunctionComponent } from 'preact';
 import { Menu } from '../Menu/Menu';
 import { MenuItem, MenuItemSeparator, MenuItemType } from '../Menu/MenuItem';
-import { AccountSwitcherOption } from './AccountSwitcherOption';
+import { AccountSwitcherOption } from './AccountSwitcher/AccountSwitcherOption';
 import { ApplicationGroup } from '@/ui_models/application_group';
 
 type Props = {

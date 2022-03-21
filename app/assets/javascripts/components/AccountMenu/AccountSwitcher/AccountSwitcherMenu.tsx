@@ -2,9 +2,9 @@ import { ApplicationGroup } from '@/ui_models/application_group';
 import { ApplicationDescriptor } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
-import { Icon } from '../Icon';
-import { Menu } from '../Menu/Menu';
-import { MenuItem, MenuItemSeparator, MenuItemType } from '../Menu/MenuItem';
+import { Icon } from '../../Icon';
+import { Menu } from '../../Menu/Menu';
+import { MenuItem, MenuItemSeparator, MenuItemType } from '../../Menu/MenuItem';
 
 type Props = {
   mainApplicationGroup: ApplicationGroup;

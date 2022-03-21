@@ -6,7 +6,7 @@ import {
 } from '@/utils/calculateSubmenuStyle';
 import { FunctionComponent } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { Icon } from '../Icon';
+import { Icon } from '../../Icon';
 import { AccountSwitcherMenu } from './AccountSwitcherMenu';
 
 type Props = {
