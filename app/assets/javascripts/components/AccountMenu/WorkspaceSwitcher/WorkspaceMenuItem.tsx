@@ -8,12 +8,14 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 type Props = {
   descriptor: ApplicationDescriptor;
   onClick: () => void;
+  onDelete: () => void;
   renameDescriptor: (label: string) => void;
 };
 
 export const WorkspaceMenuItem: FunctionComponent<Props> = ({
   descriptor,
   onClick,
+  onDelete,
   renameDescriptor,
 }) => {
   const [isRenaming, setIsRenaming] = useState(false);
@@ -56,14 +58,24 @@ export const WorkspaceMenuItem: FunctionComponent<Props> = ({
         ) : (
           <div>{descriptor.label}</div>
         )}
-        <button
-          className="w-5 h-5 p-0 border-0 bg-transparent hover:bg-contrast cursor-pointer"
-          onClick={() => {
-            setIsRenaming((isRenaming) => !isRenaming);
-          }}
-        >
-          <Icon type="pencil" className="sn-icon--mid color-neutral" />
-        </button>
+        {descriptor.primary && (
+          <div>
+            <button
+              className="w-5 h-5 p-0 mr-3 border-0 bg-transparent hover:bg-contrast cursor-pointer"
+              onClick={() => {
+                setIsRenaming((isRenaming) => !isRenaming);
+              }}
+            >
+              <Icon type="pencil" className="sn-icon--mid color-neutral" />
+            </button>
+            <button
+              className="w-5 h-5 p-0 border-0 bg-transparent hover:bg-contrast cursor-pointer"
+              onClick={onDelete}
+            >
+              <Icon type="trash" className="sn-icon--mid color-danger" />
+            </button>
+          </div>
+        )}
       </div>
     </MenuItem>
   );

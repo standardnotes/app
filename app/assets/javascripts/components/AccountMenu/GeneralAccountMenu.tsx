@@ -116,6 +116,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
         >
           <WorkspaceSwitcherOption
             mainApplicationGroup={mainApplicationGroup}
+            appState={appState}
           />
           <div className="h-1px my-2 bg-border"></div>
           {user ? (
