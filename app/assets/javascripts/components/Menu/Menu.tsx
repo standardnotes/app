@@ -73,8 +73,12 @@ export const Menu: FunctionComponent<MenuProps> = ({
     child: ComponentChild,
     index: number,
     array: ComponentChild[]
-  ) => {
-    if (!child) return;
+  ): ComponentChild => {
+    if (!child || (Array.isArray(child) && child.length < 1)) return;
+
+    if (Array.isArray(child)) {
+      return child.map(mapMenuItems);
+    }
 
     const _child = child as VNode<unknown>;
     const isFirstMenuItem =

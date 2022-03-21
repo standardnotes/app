@@ -68,7 +68,10 @@ export const AccountSwitcherOption: FunctionComponent<Props> = ({
           className="sn-dropdown max-h-120 min-w-68 py-2 fixed overflow-y-auto"
           style={menuStyle}
         >
-          <AccountSwitcherMenu mainApplicationGroup={mainApplicationGroup} />
+          <AccountSwitcherMenu
+            mainApplicationGroup={mainApplicationGroup}
+            isOpen={isOpen}
+          />
         </div>
       )}
     </>

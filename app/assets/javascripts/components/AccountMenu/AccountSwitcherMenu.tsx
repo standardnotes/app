@@ -3,13 +3,17 @@ import { ApplicationDescriptor } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 import { Icon } from '../Icon';
+import { Menu } from '../Menu/Menu';
+import { MenuItem, MenuItemSeparator, MenuItemType } from '../Menu/MenuItem';
 
 type Props = {
   mainApplicationGroup: ApplicationGroup;
+  isOpen: boolean;
 };
 
 export const AccountSwitcherMenu: FunctionComponent<Props> = ({
   mainApplicationGroup,
+  isOpen,
 }) => {
   const [applicationDescriptors, setApplicationDescriptors] = useState<
     ApplicationDescriptor[]
@@ -28,32 +32,33 @@ export const AccountSwitcherMenu: FunctionComponent<Props> = ({
   }, [mainApplicationGroup]);
 
   return (
-    <menu aria-label="Account switcher menu" className="px-0 focus:shadow-none">
+    <Menu
+      a11yLabel="Account switcher menu"
+      className="px-0 focus:shadow-none"
+      isOpen={isOpen}
+    >
       {applicationDescriptors.map((descriptor) => (
-        <button
+        <MenuItem
+          type={MenuItemType.RadioButton}
           className="sn-dropdown-item py-2 focus:bg-info-backdrop focus:shadow-none"
           onClick={() => {
             mainApplicationGroup.loadApplicationForDescriptor(descriptor);
           }}
+          checked={descriptor.primary}
         >
-          <div
-            className={`pseudo-radio-btn ${
-              descriptor.primary ? 'pseudo-radio-btn--checked' : ''
-            } mr-2`}
-          ></div>
           {descriptor.label}
-        </button>
+        </MenuItem>
       ))}
-      <div className="h-1px my-2 bg-border"></div>
-      <button
-        className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
+      <MenuItemSeparator />
+      <MenuItem
+        type={MenuItemType.IconButton}
         onClick={() => {
           mainApplicationGroup.addNewApplication();
         }}
       >
         <Icon type="user-add" className="color-neutral mr-2" />
         Add another account
-      </button>
-    </menu>
+      </MenuItem>
+    </Menu>
   );
 };
