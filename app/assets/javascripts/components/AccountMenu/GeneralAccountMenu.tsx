@@ -97,7 +97,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
           </>
         ) : (
           <>
-            <div className="px-3 mb-2">
+            <div className="px-3 mb-1">
               <div className="mb-3 color-foreground">
                 You’re offline. Sign in to sync your notes and preferences
                 across all your devices and enable end-to-end encryption.
@@ -114,11 +114,12 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
           a11yLabel="General account menu"
           closeMenu={closeMenu}
         >
+          <MenuItemSeparator />
           <WorkspaceSwitcherOption
             mainApplicationGroup={mainApplicationGroup}
             appState={appState}
           />
-          <div className="h-1px my-2 bg-border"></div>
+          <MenuItemSeparator />
           {user ? (
             <MenuItem
               type={MenuItemType.IconButton}
