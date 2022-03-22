@@ -169,11 +169,11 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
       let result: SNFile | undefined;
       if (file.protected) {
         keepMenuOpen(true);
-        result = await application.protections.unprotectFile(file);
+        result = await application.mutator.unprotectFile(file);
         keepMenuOpen(false);
         buttonRef.current?.focus();
       } else {
-        result = await application.protections.protectFile(file);
+        result = await application.mutator.protectFile(file);
       }
       const isProtected = result ? result.protected : file.protected;
       return isProtected;

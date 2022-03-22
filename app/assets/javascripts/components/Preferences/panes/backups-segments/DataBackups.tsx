@@ -105,7 +105,7 @@ export const DataBackups = observer(({ application, appState }: Props) => {
 
     let statusText = STRING_IMPORT_SUCCESS;
     if ('error' in result) {
-      statusText = result.error;
+      statusText = result.error.text;
     } else if (result.errorCount) {
       statusText = StringImportError(result.errorCount);
     }
