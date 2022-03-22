@@ -23,7 +23,6 @@ import { Icon } from './Icon';
 import { QuickSettingsMenu } from './QuickSettingsMenu/QuickSettingsMenu';
 import { SyncResolutionMenu } from './SyncResolutionMenu';
 import { Fragment, render } from 'preact';
-import { AccountSwitcher } from './AccountSwitcher';
 
 /**
  * Disable before production release.
@@ -43,7 +42,6 @@ type State = {
   dataUpgradeAvailable: boolean;
   hasPasscode: boolean;
   descriptors: ApplicationDescriptor[];
-  hasAccountSwitcher: boolean;
   showBetaWarning: boolean;
   showSyncResolution: boolean;
   newUpdateAvailable: boolean;
@@ -70,7 +68,6 @@ export class Footer extends PureComponent<Props, State> {
       dataUpgradeAvailable: false,
       hasPasscode: false,
       descriptors: props.applicationGroup.getDescriptors(),
-      hasAccountSwitcher: false,
       showBetaWarning: false,
       showSyncResolution: false,
       newUpdateAvailable: false,
@@ -100,7 +97,6 @@ export class Footer extends PureComponent<Props, State> {
         arbitraryStatusMessage: message,
       });
     });
-    this.loadAccountSwitcherState();
     this.autorun(() => {
       const showBetaWarning = this.appState.showBetaWarning;
       this.setState({
@@ -109,18 +105,6 @@ export class Footer extends PureComponent<Props, State> {
         showQuickSettingsMenu: this.appState.quickSettingsMenu.open,
       });
     });
-  }
-
-  loadAccountSwitcherState() {
-    const stringValue = localStorage.getItem(ACCOUNT_SWITCHER_FEATURE_KEY);
-    if (!stringValue && ACCOUNT_SWITCHER_ENABLED) {
-      /** Enable permanently for this user so they don't lose the feature after its disabled */
-      localStorage.setItem(ACCOUNT_SWITCHER_FEATURE_KEY, JSON.stringify(true));
-    }
-    const hasAccountSwitcher = stringValue
-      ? JSON.parse(stringValue)
-      : ACCOUNT_SWITCHER_ENABLED;
-    this.setState({ hasAccountSwitcher });
   }
 
   reloadUpgradeStatus() {
@@ -333,16 +317,6 @@ export class Footer extends PureComponent<Props, State> {
     }
   };
 
-  accountSwitcherClickHandler = () => {
-    render(
-      <AccountSwitcher
-        application={this.application}
-        mainApplicationGroup={this.props.applicationGroup}
-      />,
-      document.body.appendChild(document.createElement('div'))
-    );
-  };
-
   accountMenuClickHandler = () => {
     this.appState.quickSettingsMenu.closeQuickSettingsMenu();
     this.appState.accountMenu.toggleShow();
@@ -429,6 +403,7 @@ export class Footer extends PureComponent<Props, State> {
                   onClickOutside={this.clickOutsideAccountMenu}
                   appState={this.appState}
                   application={this.application}
+                  mainApplicationGroup={this.props.applicationGroup}
                 />
               )}
             </div>
@@ -521,24 +496,6 @@ export class Footer extends PureComponent<Props, State> {
               <div className="sk-app-bar-item">
                 <div className="sk-label">Offline</div>
               </div>
-            )}
-            {this.state.hasAccountSwitcher && (
-              <Fragment>
-                <div className="sk-app-bar-item border" />
-                <div
-                  onClick={this.accountSwitcherClickHandler}
-                  className="sk-app-bar-item"
-                >
-                  <div
-                    className={
-                      (this.state.hasPasscode ? 'alone' : '') +
-                      ' flex items-center'
-                    }
-                  >
-                    <Icon type="user-switch" />
-                  </div>
-                </div>
-              </Fragment>
             )}
             {this.state.hasPasscode && (
               <Fragment>
