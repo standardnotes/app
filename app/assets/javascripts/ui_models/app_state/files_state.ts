@@ -98,8 +98,7 @@ export class FilesState {
             type: ToastType.Error,
             message: `Unable to start upload session`,
           });
-
-          return;
+          throw new Error(`Unable to start upload session`);
         }
 
         const onChunk = async (
@@ -138,8 +137,7 @@ export class FilesState {
             type: ToastType.Error,
             message: `Unable to close upload session`,
           });
-
-          return;
+          throw new Error(`Unable to close upload session`);
         }
 
         uploadedFiles.push(uploadedFile);
