@@ -70,6 +70,12 @@ export const FilePreviewModal: FunctionComponent<Props> = ({
     if (!objectUrl && isPreviewable) {
       getObjectUrl();
     }
+
+    return () => {
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+      }
+    };
   }, [file.mimeType, getObjectUrl, objectUrl]);
 
   return (
