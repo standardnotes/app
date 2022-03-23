@@ -2404,15 +2404,23 @@
     "@standardnotes/common" "^1.17.0"
     jsonwebtoken "^8.5.1"
 
+"@standardnotes/auth@^3.18.0":
+  version "3.18.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/auth/-/auth-3.18.0.tgz#682301abe8b15d297cd3d140682e8c85bc849953"
+  integrity sha512-7X11Uy9DtmTRgplvk9TkUjVqCxlv2gsgigM9rxtGPZQ++cb/iypD34RfhDVQ87tPtVL8LOlqtkZ/iC8eItS/JQ==
+  dependencies:
+    "@standardnotes/common" "^1.17.0"
+    jsonwebtoken "^8.5.1"
+
 "@standardnotes/common@^1.17.0":
   version "1.17.0"
   resolved "https://registry.yarnpkg.com/@standardnotes/common/-/common-1.17.0.tgz#4f862dae7599bc6541bc259f98f93cd399581175"
   integrity sha512-aINO14A8pHFb6tOP6Jmv9inPrT0rWvQE7J8RAVtd5bP9Vh7Po5AmwUxTsSrZIb9wBGzkYFMs3m+vA1ZNMMfLvQ==
 
-"@standardnotes/components@1.7.12":
-  version "1.7.12"
-  resolved "https://registry.yarnpkg.com/@standardnotes/components/-/components-1.7.12.tgz#c87c3c8d90c0030b711d4f59aae47e14c745ea2a"
-  integrity sha512-geE3xpBagZFJCucvFymUK4qIWT45nb8OXGW8Ck0EJothVSbz4rF3MJJ/W1pvI6+kYKbT12AaUoGecL6uKxi+1Q==
+"@standardnotes/components@1.7.13":
+  version "1.7.13"
+  resolved "https://registry.yarnpkg.com/@standardnotes/components/-/components-1.7.13.tgz#55c0bad3afd36788b45bf1e67950d84ee5358dd3"
+  integrity sha512-Gy1PsibeTjcNNLUvHtfgPFNvEf+BdaYF9QA/RimEsPd9NWZL/kDJSVqj7J33gGoxpdv7l8Y/lMOMt6Az+FqKKw==
 
 "@standardnotes/domain-events@^2.25.4":
   version "2.25.4"
@@ -2422,7 +2430,15 @@
     "@standardnotes/auth" "^3.17.11"
     "@standardnotes/features" "^1.35.4"
 
-"@standardnotes/features@1.35.4", "@standardnotes/features@^1.35.4":
+"@standardnotes/features@1.35.6":
+  version "1.35.6"
+  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.35.6.tgz#177b34cdb5dc71e13aba0a6b57e5d2ab0849d740"
+  integrity sha512-fiYZvlTpYyBcjnPSs1bN7pvIYWvQevZTEBTjNvOTo5ZqCtLoXu0p0hzU+17J2pYrjkh4vHZhYVxrRLXnyft3ZQ==
+  dependencies:
+    "@standardnotes/auth" "^3.18.0"
+    "@standardnotes/common" "^1.17.0"
+
+"@standardnotes/features@^1.35.4":
   version "1.35.4"
   resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.35.4.tgz#0f82a13a5bf283bea832e2984d3a7a321419fdad"
   integrity sha512-ir1XeJ7Q32OcqCH+iPmuFtT2curP1XdSMV+NkndvIthfsigZvE/e6IeUKX3eEG6gJVsNlUe06iyrFOjlxhQb5w==
