@@ -2396,10 +2396,10 @@
     "@standardnotes/common" "^1.17.0"
     "@standardnotes/sncrypto-common" "^1.7.3"
 
-"@standardnotes/auth@^3.17.11":
-  version "3.17.11"
-  resolved "https://registry.yarnpkg.com/@standardnotes/auth/-/auth-3.17.11.tgz#6f4272423385d91ea2cece340818c1f246f60923"
-  integrity sha512-Ai0ex1HRzxJda7okLUJMicWHmnSwUDui9EHc5xZPZBV2Yi5Cm+u03IRIabpnPqigpKk+JZwEIzPJfJ7eP4Qx3w==
+"@standardnotes/auth@^3.18.0":
+  version "3.18.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/auth/-/auth-3.18.0.tgz#682301abe8b15d297cd3d140682e8c85bc849953"
+  integrity sha512-7X11Uy9DtmTRgplvk9TkUjVqCxlv2gsgigM9rxtGPZQ++cb/iypD34RfhDVQ87tPtVL8LOlqtkZ/iC8eItS/JQ==
   dependencies:
     "@standardnotes/common" "^1.17.0"
     jsonwebtoken "^8.5.1"
@@ -2422,13 +2422,13 @@
   resolved "https://registry.yarnpkg.com/@standardnotes/components/-/components-1.7.13.tgz#55c0bad3afd36788b45bf1e67950d84ee5358dd3"
   integrity sha512-Gy1PsibeTjcNNLUvHtfgPFNvEf+BdaYF9QA/RimEsPd9NWZL/kDJSVqj7J33gGoxpdv7l8Y/lMOMt6Az+FqKKw==
 
-"@standardnotes/domain-events@^2.25.4":
-  version "2.25.4"
-  resolved "https://registry.yarnpkg.com/@standardnotes/domain-events/-/domain-events-2.25.4.tgz#09102ae18372270b1e1f87ccf6969090ecdd59c2"
-  integrity sha512-dh+SM4jcmOX25lF+slxrAdQzOsvz3BTAFT2zBERzeW1yJM5LiBJIBZSiuh9+OjInYv5LVvaoF1lwEbm9ODGiPw==
+"@standardnotes/domain-events@^2.25.6":
+  version "2.25.6"
+  resolved "https://registry.yarnpkg.com/@standardnotes/domain-events/-/domain-events-2.25.6.tgz#025f2377f7eada61e0d6f5e9c68d6a860f26dbd7"
+  integrity sha512-TAEzhtoyPdEep94jyb8PZxH2cmEY9gdEUsKnWLpQrxrUrXRZ7+fqc1M01PtX4f6/bEnkkonBaxrs8XIVoKKZzA==
   dependencies:
-    "@standardnotes/auth" "^3.17.11"
-    "@standardnotes/features" "^1.35.4"
+    "@standardnotes/auth" "^3.18.0"
+    "@standardnotes/features" "^1.35.6"
 
 "@standardnotes/features@1.35.6":
   version "1.35.6"
@@ -2443,7 +2443,7 @@
   resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.35.4.tgz#0f82a13a5bf283bea832e2984d3a7a321419fdad"
   integrity sha512-ir1XeJ7Q32OcqCH+iPmuFtT2curP1XdSMV+NkndvIthfsigZvE/e6IeUKX3eEG6gJVsNlUe06iyrFOjlxhQb5w==
   dependencies:
-    "@standardnotes/auth" "^3.17.11"
+    "@standardnotes/auth" "^3.18.0"
     "@standardnotes/common" "^1.17.0"
 
 "@standardnotes/filepicker@1.10.2":
@@ -2451,34 +2451,34 @@
   resolved "https://registry.yarnpkg.com/@standardnotes/filepicker/-/filepicker-1.10.2.tgz#4e2d76a327e61c5d864ce6e0597786caa83f2e20"
   integrity sha512-+3LCaU7CH5gzZJBd6mXajx4ztdIVax8fqk49poHXRQd/mMIc36cOfCwbLlJeT4X6GL7UMLktieZZQqtG7hmRdw==
 
-"@standardnotes/payloads@^1.4.18":
-  version "1.4.18"
-  resolved "https://registry.yarnpkg.com/@standardnotes/payloads/-/payloads-1.4.18.tgz#19435779a8531af854a28dfcac3fa96f241857e6"
-  integrity sha512-htwrn71jA5Uldb1iLuHF0R4/TiS/tgnsMdFxPim/YA5DzlBijV5GVp2YQ20xLQq3n3/RDrOjlz3zj1XgnQDsAg==
+"@standardnotes/payloads@^1.4.20":
+  version "1.4.20"
+  resolved "https://registry.yarnpkg.com/@standardnotes/payloads/-/payloads-1.4.20.tgz#d35544e144b556b5cc2b9cf1e3561462832964b2"
+  integrity sha512-Lj+D0scBjEkMWXdezXQs/6gm1wAh9KTosPfD912XHKhYoJfqHiDwwLFgHuB0fxrnvGNhiopM3+GtE/OeP5ZYOw==
   dependencies:
     "@standardnotes/applications" "^1.2.6"
     "@standardnotes/common" "^1.17.0"
-    "@standardnotes/features" "^1.35.4"
+    "@standardnotes/features" "^1.35.6"
     "@standardnotes/utils" "^1.4.3"
 
-"@standardnotes/responses@1.3.19", "@standardnotes/responses@^1.3.19":
-  version "1.3.19"
-  resolved "https://registry.yarnpkg.com/@standardnotes/responses/-/responses-1.3.19.tgz#454fbdf949dee587d03fca5c7e12150604c5838e"
-  integrity sha512-83YFiw8kZS4rmeNgZ2xFjiHOIL9nXLBkhyVTScAHcXBu6OT8g0vwUeOBcogyRa3pxHffUHLWW96vrgdtRVPjPw==
+"@standardnotes/responses@1.3.21", "@standardnotes/responses@^1.3.21":
+  version "1.3.21"
+  resolved "https://registry.yarnpkg.com/@standardnotes/responses/-/responses-1.3.21.tgz#41898e1b155d3b01f26e98b10f12d6b74d8f3f4b"
+  integrity sha512-ARnLty1NRhxbDNNcAAYpQKLXTCmF/gZlecY36SADpSzZdxz4SQk37Vltx69IfzszWr4q50HLOhkwwmOpXQ+BcA==
   dependencies:
-    "@standardnotes/auth" "^3.17.11"
+    "@standardnotes/auth" "^3.18.0"
     "@standardnotes/common" "^1.17.0"
-    "@standardnotes/features" "^1.35.4"
-    "@standardnotes/payloads" "^1.4.18"
+    "@standardnotes/features" "^1.35.6"
+    "@standardnotes/payloads" "^1.4.20"
 
-"@standardnotes/services@1.6.8", "@standardnotes/services@^1.6.8":
-  version "1.6.8"
-  resolved "https://registry.yarnpkg.com/@standardnotes/services/-/services-1.6.8.tgz#ad18391677ed8c4a80834cec44dd98c22c2a692c"
-  integrity sha512-Ft8HdtRkTZN/dQnMV6vi2jx7fcHA5o6JKMMmONiRHWbjaDZg4rQ3Qg/s/1n/RmfIff5to0EP7PyvIwKZ9bwWNw==
+"@standardnotes/services@1.6.10", "@standardnotes/services@^1.6.10":
+  version "1.6.10"
+  resolved "https://registry.yarnpkg.com/@standardnotes/services/-/services-1.6.10.tgz#171a07cdf6afb6b46c8142d0845bd07e0e2a8718"
+  integrity sha512-DqfaZ5PITimoo4SZdURaUAK2bJTNKNz5vIVlvtumLmtPAjBJYLue0nEIWaWPYRlkB4nFW1XImNEbsHjaHgfRfA==
   dependencies:
     "@standardnotes/applications" "^1.2.6"
     "@standardnotes/common" "^1.17.0"
-    "@standardnotes/responses" "^1.3.19"
+    "@standardnotes/responses" "^1.3.21"
     "@standardnotes/utils" "^1.4.3"
 
 "@standardnotes/settings@1.13.1", "@standardnotes/settings@^1.13.1":
@@ -2500,19 +2500,19 @@
     buffer "^6.0.3"
     libsodium-wrappers "^0.7.9"
 
-"@standardnotes/snjs@2.91.0":
-  version "2.91.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.91.0.tgz#53ab1100b6f4cacbdc4f3f779511ec0ed8cebe32"
-  integrity sha512-dt4K22eq1f/dNawto1hkiYrnTrV7wFu+QKlg18/TUAUnsdgpwMs+fznFB5UrKpW2BLzYPQPfjrVFKAsvkR91nQ==
+"@standardnotes/snjs@2.91.2":
+  version "2.91.2"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.91.2.tgz#782f70b6181813b9593143a93b5b1837811524eb"
+  integrity sha512-NupgizPiabyaA9xYlHShCqrLU2086khH2440FKfFXPVC/oVHSykzlq4HqwFX4/kj27SU+nKCluSEBBVQl0m73Q==
   dependencies:
     "@standardnotes/applications" "^1.2.6"
-    "@standardnotes/auth" "^3.17.11"
+    "@standardnotes/auth" "^3.18.0"
     "@standardnotes/common" "^1.17.0"
-    "@standardnotes/domain-events" "^2.25.4"
-    "@standardnotes/features" "^1.35.4"
-    "@standardnotes/payloads" "^1.4.18"
-    "@standardnotes/responses" "^1.3.19"
-    "@standardnotes/services" "^1.6.8"
+    "@standardnotes/domain-events" "^2.25.6"
+    "@standardnotes/features" "^1.35.6"
+    "@standardnotes/payloads" "^1.4.20"
+    "@standardnotes/responses" "^1.3.21"
+    "@standardnotes/services" "^1.6.10"
     "@standardnotes/settings" "^1.13.1"
     "@standardnotes/sncrypto-common" "^1.7.3"
     "@standardnotes/utils" "^1.4.3"

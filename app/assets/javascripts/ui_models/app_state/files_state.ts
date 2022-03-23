@@ -1,3 +1,4 @@
+import { BYTES_IN_ONE_MEGABYTE } from '@/constants';
 import { concatenateUint8Arrays } from '@/utils/concatenateUint8Arrays';
 import {
   ClassicFileReader,
@@ -77,9 +78,12 @@ export class FilesState {
     try {
       const minimumChunkSize = this.application.files.minimumChunkSize();
 
-      const picker = StreamingFileReader.available()
+      const shouldUseStreamingReader = StreamingFileReader.available();
+
+      const picker = shouldUseStreamingReader
         ? StreamingFileReader
         : ClassicFileReader;
+      const maxFileSize = picker.maximumFileSize();
 
       const selectedFiles =
         fileOrHandle instanceof File
@@ -92,6 +96,20 @@ export class FilesState {
       const uploadedFiles: SNFile[] = [];
 
       for (const file of selectedFiles) {
+        if (
+          !shouldUseStreamingReader &&
+          maxFileSize &&
+          file.size >= maxFileSize
+        ) {
+          this.application.alertService.alert(
+            `This file exceeds the limits supported in this browser. To upload files greater than ${
+              maxFileSize / BYTES_IN_ONE_MEGABYTE
+            }MB, please use the desktop application or the Chrome browser.`,
+            `Cannot upload file "${file.name}"`
+          );
+          continue;
+        }
+
         toastId = addToast({
           type: ToastType.Loading,
           message: `Uploading file "${file.name}"...`,

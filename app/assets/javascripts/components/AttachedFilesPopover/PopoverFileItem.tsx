@@ -3,7 +3,7 @@ import { formatSizeToReadableString } from '@standardnotes/filepicker';
 import { IconType, SNFile } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { ICONS } from '../Icon';
+import { Icon, ICONS } from '../Icon';
 import {
   PopoverFileItemAction,
   PopoverFileItemActionType,
@@ -85,7 +85,15 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
               onBlur={handleFileNameInputBlur}
             />
           ) : (
-            <div className="text-sm mb-1 break-word">{file.name}</div>
+            <div className="text-sm mb-1 break-word">
+              <span className="vertical-middle">{file.name}</span>
+              {file.protected && (
+                <Icon
+                  type="lock-filled"
+                  className="sn-icon--small ml-2 color-neutral vertical-middle"
+                />
+              )}
+            </div>
           )}
           <div className="text-xs color-grey-0">
             {file.created_at.toLocaleString()} ·{' '}
