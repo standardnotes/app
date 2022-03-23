@@ -10,10 +10,10 @@ import {
 } from './PopoverFileItemAction';
 import { PopoverFileSubmenu } from './PopoverFileSubmenu';
 
-const getFileIconComponent = (iconType: string) => {
+export const getFileIconComponent = (iconType: string, className: string) => {
   const IconComponent = ICONS[iconType as keyof typeof ICONS];
 
-  return <IconComponent className="w-8 h-8 flex-shrink-0" />;
+  return <IconComponent className={className} />;
 };
 
 export type PopoverFileItemProps = {
@@ -69,7 +69,10 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
   return (
     <div className="flex items-center justify-between p-3">
       <div className="flex items-center">
-        {getFileIconComponent(getIconType(file.mimeType))}
+        {getFileIconComponent(
+          getIconType(file.mimeType),
+          'w-8 h-8 flex-shrink-0'
+        )}
         <div className="flex flex-col mx-4">
           {isRenamingFile ? (
             <input
@@ -82,7 +85,7 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
               onBlur={handleFileNameInputBlur}
             />
           ) : (
-            <div className="text-sm mb-1">{file.name}</div>
+            <div className="text-sm mb-1 break-word">{file.name}</div>
           )}
           <div className="text-xs color-grey-0">
             {file.created_at.toLocaleString()} ·{' '}

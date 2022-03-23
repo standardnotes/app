@@ -1,8 +1,10 @@
+import { concatenateUint8Arrays } from '@/utils/concatenateUint8Arrays';
 import {
   ClassicFileReader,
   StreamingFileReader,
   StreamingFileSaver,
   ClassicFileSaver,
+  parseFileName,
 } from '@standardnotes/filepicker';
 import { ClientDisplayableError, SNFile } from '@standardnotes/snjs';
 import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit';
@@ -31,19 +33,24 @@ export class FilesState {
         message: `Downloading file...`,
       });
 
+      const decryptedBytesArray: Uint8Array[] = [];
+
       await this.application.files.downloadFile(
         file,
         async (decryptedBytes: Uint8Array) => {
           if (isUsingStreamingSaver) {
             await saver.pushBytes(decryptedBytes);
           } else {
-            saver.saveFile(file.name, decryptedBytes);
+            decryptedBytesArray.push(decryptedBytes);
           }
         }
       );
 
       if (isUsingStreamingSaver) {
         await saver.finish();
+      } else {
+        const finalBytes = concatenateUint8Arrays(decryptedBytesArray);
+        saver.saveFile(file.name, finalBytes);
       }
 
       addToast({
@@ -85,6 +92,11 @@ export class FilesState {
       const uploadedFiles: SNFile[] = [];
 
       for (const file of selectedFiles) {
+        toastId = addToast({
+          type: ToastType.Loading,
+          message: `Uploading file "${file.name}"...`,
+        });
+
         const operation = await this.application.files.beginNewFileUpload();
 
         if (operation instanceof ClientDisplayableError) {
@@ -92,8 +104,7 @@ export class FilesState {
             type: ToastType.Error,
             message: `Unable to start upload session`,
           });
-
-          return;
+          throw new Error(`Unable to start upload session`);
         }
 
         const onChunk = async (
@@ -109,20 +120,22 @@ export class FilesState {
           );
         };
 
-        toastId = addToast({
-          type: ToastType.Loading,
-          message: `Uploading file "${file.name}"...`,
-        });
-
         const fileResult = await picker.readFile(
           file,
           minimumChunkSize,
           onChunk
         );
 
+        if (!fileResult.mimeType) {
+          const { ext } = parseFileName(file.name);
+          fileResult.mimeType = await this.application
+            .getArchiveService()
+            .getMimeType(ext);
+        }
+
         const uploadedFile = await this.application.files.finishUpload(
           operation,
-          { name: fileResult.name, mimeType: fileResult.mimeType }
+          fileResult
         );
 
         if (uploadedFile instanceof ClientDisplayableError) {
@@ -130,8 +143,7 @@ export class FilesState {
             type: ToastType.Error,
             message: `Unable to close upload session`,
           });
-
-          return;
+          throw new Error(`Unable to close upload session`);
         }
 
         uploadedFiles.push(uploadedFile);
