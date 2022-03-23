@@ -97,8 +97,6 @@ export const FilePreviewModal: FunctionComponent<Props> = ({
               )}
             </div>
             <span className="ml-3 font-medium">{file.name}</span>
-            {/** @TODO Remove mimeType span once the feature is ready */}
-            <span className="ml-3">{file.mimeType}</span>
           </div>
           <div className="flex items-center">
             {objectUrl && (
