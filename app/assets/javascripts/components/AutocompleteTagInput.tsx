@@ -22,22 +22,25 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
   } = appState.noteTags;
 
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  const [dropdownMaxHeight, setDropdownMaxHeight] =
-    useState<number | 'auto'>('auto');
+  const [dropdownMaxHeight, setDropdownMaxHeight] = useState<number | 'auto'>(
+    'auto'
+  );
 
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const [closeOnBlur] = useCloseOnBlur(containerRef as any, (visible: boolean) => {
+  const [closeOnBlur] = useCloseOnBlur(containerRef, (visible: boolean) => {
     setDropdownVisible(visible);
     appState.noteTags.clearAutocompleteSearch();
   });
 
   const showDropdown = () => {
     const { clientHeight } = document.documentElement;
-    const inputRect = inputRef.current!.getBoundingClientRect();
-    setDropdownMaxHeight(clientHeight - inputRect.bottom - 32 * 2);
-    setDropdownVisible(true);
+    const inputRect = inputRef.current?.getBoundingClientRect();
+    if (inputRect) {
+      setDropdownMaxHeight(clientHeight - inputRect.bottom - 32 * 2);
+      setDropdownVisible(true);
+    }
   };
 
   const onSearchQueryChange = (event: Event) => {
@@ -93,7 +96,7 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
 
   useEffect(() => {
     if (autocompleteInputFocused) {
-      inputRef.current!.focus();
+      inputRef.current?.focus();
     }
   }, [appState.noteTags, autocompleteInputFocused]);
 

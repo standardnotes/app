@@ -132,11 +132,11 @@ export class DesktopManager
     componentData: any,
     error: any
   ) {
-    const component = this.application.findItem(componentData.uuid);
+    const component = this.application.items.findItem(componentData.uuid);
     if (!component) {
       return;
     }
-    const updatedComponent = await this.application.changeAndSaveItem(
+    const updatedComponent = await this.application.mutator.changeAndSaveItem(
       component.uuid,
       (m) => {
         const mutator = m as ComponentMutator;

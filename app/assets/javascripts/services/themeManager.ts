@@ -40,7 +40,7 @@ export class ThemeManager extends ApplicationService {
       const preference = prefersDarkColorScheme
         ? PrefKey.AutoDarkThemeIdentifier
         : PrefKey.AutoLightThemeIdentifier;
-      const themes = this.application.getDisplayableItems(
+      const themes = this.application.items.getDisplayableItems(
         ContentType.Theme
       ) as SNTheme[];
 
@@ -48,7 +48,7 @@ export class ThemeManager extends ApplicationService {
         const activeTheme = themes.find(
           (theme) => theme.active && !theme.isLayerable()
         );
-        if (activeTheme) this.application.toggleTheme(activeTheme);
+        if (activeTheme) this.application.mutator.toggleTheme(activeTheme);
       };
 
       const themeIdentifier = this.application.getPreference(
@@ -62,7 +62,7 @@ export class ThemeManager extends ApplicationService {
           (theme) => theme.package_info.identifier === themeIdentifier
         );
         if (theme && !theme.active) {
-          this.application.toggleTheme(theme);
+          this.application.mutator.toggleTheme(theme);
         }
       }
     }
@@ -123,7 +123,7 @@ export class ThemeManager extends ApplicationService {
   private handleFeaturesUpdated(): void {
     let hasChange = false;
     for (const themeUuid of this.activeThemes) {
-      const theme = this.application.findItem(themeUuid) as SNTheme;
+      const theme = this.application.items.findItem(themeUuid) as SNTheme;
       if (!theme) {
         this.deactivateTheme(themeUuid);
         hasChange = true;
@@ -133,7 +133,7 @@ export class ThemeManager extends ApplicationService {
         );
         if (status !== FeatureStatus.Entitled) {
           if (theme.active) {
-            this.application.toggleTheme(theme);
+            this.application.mutator.toggleTheme(theme);
           } else {
             this.deactivateTheme(theme.uuid);
           }
@@ -143,7 +143,7 @@ export class ThemeManager extends ApplicationService {
     }
 
     const activeThemes = (
-      this.application.getItems(ContentType.Theme) as SNTheme[]
+      this.application.items.getItems(ContentType.Theme) as SNTheme[]
     ).filter((theme) => theme.active);
 
     for (const theme of activeThemes) {
@@ -248,7 +248,9 @@ export class ThemeManager extends ApplicationService {
   }
 
   private async cacheThemeState() {
-    const themes = this.application.getAll(this.activeThemes) as SNTheme[];
+    const themes = this.application.items.findItems(
+      this.activeThemes
+    ) as SNTheme[];
     const mapped = await Promise.all(
       themes.map(async (theme) => {
         const payload = theme.payloadRepresentation();
@@ -275,8 +277,9 @@ export class ThemeManager extends ApplicationService {
     if (cachedThemes) {
       const themes = [];
       for (const cachedTheme of cachedThemes) {
-        const payload = this.application.createPayloadFromObject(cachedTheme);
-        const theme = this.application.createItemFromPayload(
+        const payload =
+          this.application.items.createPayloadFromObject(cachedTheme);
+        const theme = this.application.items.createItemFromPayload(
           payload
         ) as SNTheme;
         themes.push(theme);

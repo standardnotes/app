@@ -663,7 +663,7 @@ export class NoteView extends PureComponent<Props, State> {
   }
 
   performNoteDeletion(note: SNNote) {
-    this.application.deleteItem(note);
+    this.application.mutator.deleteItem(note);
   }
 
   onPanelResizeFinish = async (
@@ -801,13 +801,13 @@ export class NoteView extends PureComponent<Props, State> {
   };
 
   async disassociateComponentWithCurrentNote(component: SNComponent) {
-    return this.application.runTransactionalMutation(
+    return this.application.mutator.runTransactionalMutation(
       transactionForDisassociateComponentWithCurrentNote(component, this.note)
     );
   }
 
   async associateComponentWithCurrentNote(component: SNComponent) {
-    return this.application.runTransactionalMutation(
+    return this.application.mutator.runTransactionalMutation(
       transactionForAssociateComponentWithCurrentNote(component, this.note)
     );
   }

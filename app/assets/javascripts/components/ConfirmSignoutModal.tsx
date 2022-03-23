@@ -93,7 +93,7 @@ export const ConfirmSignoutModal = observer(
                         if (deleteLocalBackups) {
                           application.signOutAndDeleteLocalBackups();
                         } else {
-                          application.signOut();
+                          application.user.signOut();
                         }
                         closeDialog();
                       }}

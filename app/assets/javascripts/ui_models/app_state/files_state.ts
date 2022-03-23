@@ -4,7 +4,7 @@ import {
   StreamingFileSaver,
   ClassicFileSaver,
 } from '@standardnotes/filepicker';
-import { SNFile } from '@standardnotes/snjs';
+import { ClientDisplayableError, SNFile } from '@standardnotes/snjs';
 import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit';
 
 import { WebApplication } from '../application';
@@ -87,6 +87,15 @@ export class FilesState {
       for (const file of selectedFiles) {
         const operation = await this.application.files.beginNewFileUpload();
 
+        if (operation instanceof ClientDisplayableError) {
+          addToast({
+            type: ToastType.Error,
+            message: `Unable to start upload session`,
+          });
+
+          return;
+        }
+
         const onChunk = async (
           chunk: Uint8Array,
           index: number,
@@ -115,6 +124,15 @@ export class FilesState {
           operation,
           fileResult
         );
+
+        if (uploadedFile instanceof ClientDisplayableError) {
+          addToast({
+            type: ToastType.Error,
+            message: `Unable to close upload session`,
+          });
+
+          return;
+        }
 
         uploadedFiles.push(uploadedFile);
 

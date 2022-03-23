@@ -9,6 +9,7 @@ import { SignInPane } from './SignIn';
 import { CreateAccount } from './CreateAccount';
 import { ConfirmPassword } from './ConfirmPassword';
 import { JSXInternal } from 'preact/src/jsx';
+import { ApplicationGroup } from '@/ui_models/application_group';
 
 export enum AccountMenuPane {
   GeneralMenu,
@@ -21,18 +22,27 @@ type Props = {
   appState: AppState;
   application: WebApplication;
   onClickOutside: () => void;
+  mainApplicationGroup: ApplicationGroup;
 };
 
 type PaneSelectorProps = {
   appState: AppState;
   application: WebApplication;
+  mainApplicationGroup: ApplicationGroup;
   menuPane: AccountMenuPane;
   setMenuPane: (pane: AccountMenuPane) => void;
   closeMenu: () => void;
 };
 
 const MenuPaneSelector: FunctionComponent<PaneSelectorProps> = observer(
-  ({ application, appState, menuPane, setMenuPane, closeMenu }) => {
+  ({
+    application,
+    appState,
+    menuPane,
+    setMenuPane,
+    closeMenu,
+    mainApplicationGroup,
+  }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -42,6 +52,7 @@ const MenuPaneSelector: FunctionComponent<PaneSelectorProps> = observer(
           <GeneralAccountMenu
             appState={appState}
             application={application}
+            mainApplicationGroup={mainApplicationGroup}
             setMenuPane={setMenuPane}
             closeMenu={closeMenu}
           />
@@ -81,7 +92,7 @@ const MenuPaneSelector: FunctionComponent<PaneSelectorProps> = observer(
 );
 
 export const AccountMenu: FunctionComponent<Props> = observer(
-  ({ application, appState, onClickOutside }) => {
+  ({ application, appState, onClickOutside, mainApplicationGroup }) => {
     const {
       currentPane,
       setCurrentPane,
@@ -123,6 +134,7 @@ export const AccountMenu: FunctionComponent<Props> = observer(
           <MenuPaneSelector
             appState={appState}
             application={application}
+            mainApplicationGroup={mainApplicationGroup}
             menuPane={currentPane}
             setMenuPane={setCurrentPane}
             closeMenu={closeAccountMenu}

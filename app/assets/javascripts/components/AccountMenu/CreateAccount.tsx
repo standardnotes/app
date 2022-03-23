@@ -33,6 +33,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
 
     const emailInputRef = useRef<HTMLInputElement>(null);
     const passwordInputRef = useRef<HTMLInputElement>(null);
+    const [isVault, setIsVault] = useState(false);
 
     useEffect(() => {
       if (emailInputRef.current) {
@@ -82,6 +83,13 @@ export const CreateAccount: FunctionComponent<Props> = observer(
       setPassword('');
     };
 
+    const onVaultChange = (isVault: boolean, vaultedEmail?: string) => {
+      setIsVault(isVault);
+      if (isVault && vaultedEmail) {
+        setEmail(vaultedEmail);
+      }
+    };
+
     return (
       <>
         <div className="flex items-center px-3 mt-1 mb-3">
@@ -101,6 +109,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
             inputType="email"
             placeholder="Email"
             value={email}
+            disabled={isVault}
             onChange={handleEmailChange}
             onKeyDown={handleKeyDown}
             ref={emailInputRef}
@@ -130,7 +139,11 @@ export const CreateAccount: FunctionComponent<Props> = observer(
           />
         </form>
         <div className="h-1px my-2 bg-border"></div>
-        <AdvancedOptions application={application} appState={appState} />
+        <AdvancedOptions
+          application={application}
+          appState={appState}
+          onVaultChange={onVaultChange}
+        />
       </>
     );
   }

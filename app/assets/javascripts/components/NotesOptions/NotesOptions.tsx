@@ -274,7 +274,7 @@ export const NotesOptions = observer(
 
     const duplicateSelectedItems = () => {
       notes.forEach((note) => {
-        application.duplicateItem(note);
+        application.mutator.duplicateItem(note);
       });
     };
 

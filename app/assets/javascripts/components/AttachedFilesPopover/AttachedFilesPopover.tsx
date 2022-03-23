@@ -68,7 +68,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
           );
 
           setAllFiles(
-            application
+            application.items
               .getItems(ContentType.File)
               .sort((a, b) =>
                 a.created_at < b.created_at ? 1 : -1
@@ -169,18 +169,20 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
             </div>
           ) : null}
           {filteredList.length > 0 ? (
-            filteredList.map((file: SNFile) => {
-              return (
-                <PopoverFileItem
-                  key={file.uuid}
-                  file={file}
-                  isAttachedToNote={attachedFiles.includes(file)}
-                  handleFileAction={handleFileAction}
-                  getIconType={application.iconsController.getIconForFileType}
-                  closeOnBlur={closeOnBlur}
-                />
-              );
-            })
+            filteredList
+              .filter((file) => !file.deleted)
+              .map((file: SNFile) => {
+                return (
+                  <PopoverFileItem
+                    key={file.uuid}
+                    file={file}
+                    isAttachedToNote={attachedFiles.includes(file)}
+                    handleFileAction={handleFileAction}
+                    getIconType={application.iconsController.getIconForFileType}
+                    closeOnBlur={closeOnBlur}
+                  />
+                );
+              })
           ) : (
             <div className="flex flex-col items-center justify-center w-full py-8">
               <div className="w-18 h-18 mb-2">

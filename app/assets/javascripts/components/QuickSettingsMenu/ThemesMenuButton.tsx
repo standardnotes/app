@@ -44,7 +44,7 @@ export const ThemesMenuButton: FunctionComponent<Props> = ({
         item.component.isLayerable() || !item.component.active;
 
       if (themeIsLayerableOrNotActive) {
-        application.toggleTheme(item.component);
+        application.mutator.toggleTheme(item.component);
       }
     } else {
       premiumModal.activate(`${item.name} theme`);

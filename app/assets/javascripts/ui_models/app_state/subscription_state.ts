@@ -1,5 +1,6 @@
 import {
   ApplicationEvent,
+  ClientDisplayableError,
   convertTimestampToMilliseconds,
 } from '@standardnotes/snjs';
 import { action, computed, makeObservable, observable } from 'mobx';
@@ -99,7 +100,7 @@ export class SubscriptionState {
   private async getAvailableSubscriptions() {
     try {
       const subscriptions = await this.application.getAvailableSubscriptions();
-      if (subscriptions) {
+      if (!(subscriptions instanceof ClientDisplayableError)) {
         this.setAvailableSubscriptions(subscriptions);
       }
     } catch (error) {
@@ -110,7 +111,7 @@ export class SubscriptionState {
   private async getSubscription() {
     try {
       const subscription = await this.application.getUserSubscription();
-      if (subscription) {
+      if (!(subscription instanceof ClientDisplayableError)) {
         this.setUserSubscription(subscription);
       }
     } catch (error) {

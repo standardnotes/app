@@ -133,7 +133,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
 
     const restore = () => {
       if (selectedRevision) {
-        const originalNote = application.findItem(
+        const originalNote = application.items.findItem(
           selectedRevision.payload.uuid
         ) as SNNote;
 
@@ -147,7 +147,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
           confirmButtonStyle: 'danger',
         }).then((confirmed) => {
           if (confirmed) {
-            application.changeAndSaveItem(
+            application.mutator.changeAndSaveItem(
               selectedRevision.payload.uuid,
               (mutator) => {
                 mutator.unsafe_setCustomContent(
@@ -165,16 +165,19 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
 
     const restoreAsCopy = async () => {
       if (selectedRevision) {
-        const originalNote = application.findItem(
+        const originalNote = application.items.findItem(
           selectedRevision.payload.uuid
         ) as SNNote;
 
-        const duplicatedItem = await application.duplicateItem(originalNote, {
-          ...(selectedRevision.payload.content as PayloadContent),
-          title: selectedRevision.payload.content.title
-            ? selectedRevision.payload.content.title + ' (copy)'
-            : undefined,
-        });
+        const duplicatedItem = await application.mutator.duplicateItem(
+          originalNote,
+          {
+            ...(selectedRevision.payload.content as PayloadContent),
+            title: selectedRevision.payload.content.title
+              ? selectedRevision.payload.content.title + ' (copy)'
+              : undefined,
+          }
+        );
 
         appState.notes.selectNote(duplicatedItem.uuid);
 
@@ -185,7 +188,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
     useEffect(() => {
       const fetchTemplateNote = async () => {
         if (selectedRevision) {
-          const newTemplateNote = (await application.createTemplateItem(
+          const newTemplateNote = (await application.mutator.createTemplateItem(
             ContentType.Note,
             selectedRevision.payload.content
           )) as SNNote;

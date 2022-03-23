@@ -162,12 +162,6 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
             />
           ) : null}
         </form>
-        <div className="h-1px my-2 bg-border"></div>
-        <AdvancedOptions
-          appState={appState}
-          application={application}
-          disabled={isRegistering}
-        />
       </>
     );
   }
