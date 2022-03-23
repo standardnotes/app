@@ -34,6 +34,10 @@ export class ArchiveManager {
     this.application = application;
   }
 
+  public async getZipJs() {
+    return await import('@zip.js/zip.js');
+  }
+
   public async downloadBackup(encrypted: boolean): Promise<void> {
     const intent = encrypted
       ? EncryptionIntent.FileEncrypted
