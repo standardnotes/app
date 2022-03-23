@@ -1,4 +1,5 @@
 import { WebApplication } from '@/ui_models/application';
+import { concatenateUint8Arrays } from '@/utils/concatenateUint8Arrays';
 import { DialogContent, DialogOverlay } from '@reach/dialog';
 import { SNFile } from '@standardnotes/snjs';
 import { NoPreviewIllustration } from '@standardnotes/stylekit';
@@ -44,17 +45,20 @@ export const FilePreviewModal: FunctionComponent<Props> = ({
   const getObjectUrl = useCallback(async () => {
     setIsLoadingFile(true);
     try {
+      const chunks: Uint8Array[] = [];
       await application.files.downloadFile(
         file,
-        async (decryptedBytes: Uint8Array) => {
-          setObjectUrl(
-            URL.createObjectURL(
-              new Blob([decryptedBytes], {
-                type: file.mimeType,
-              })
-            )
-          );
+        async (decryptedChunk: Uint8Array) => {
+          chunks.push(decryptedChunk);
         }
+      );
+      const finalDecryptedBytes = concatenateUint8Arrays(chunks);
+      setObjectUrl(
+        URL.createObjectURL(
+          new Blob([finalDecryptedBytes], {
+            type: file.mimeType,
+          })
+        )
       );
     } catch (error) {
       console.error(error);

@@ -1,3 +1,4 @@
+import { concatenateUint8Arrays } from '@/utils/concatenateUint8Arrays';
 import {
   ClassicFileReader,
   StreamingFileReader,
@@ -32,19 +33,24 @@ export class FilesState {
         message: `Downloading file...`,
       });
 
+      const decryptedBytesArray: Uint8Array[] = [];
+
       await this.application.files.downloadFile(
         file,
         async (decryptedBytes: Uint8Array) => {
           if (isUsingStreamingSaver) {
             await saver.pushBytes(decryptedBytes);
           } else {
-            saver.saveFile(file.name, decryptedBytes);
+            decryptedBytesArray.push(decryptedBytes);
           }
         }
       );
 
       if (isUsingStreamingSaver) {
         await saver.finish();
+      } else {
+        const finalBytes = concatenateUint8Arrays(decryptedBytesArray);
+        saver.saveFile(file.name, finalBytes);
       }
 
       addToast({
