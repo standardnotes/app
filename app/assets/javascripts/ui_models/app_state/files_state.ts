@@ -12,10 +12,6 @@ import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit';
 
 import { WebApplication } from '../application';
 
-const ClassicReaderFileLimitAsMegaBytes = 50;
-const ClassicReaderFileLimitAsBytes =
-  ClassicReaderFileLimitAsMegaBytes * BYTES_IN_ONE_MEGABYTE;
-
 export class FilesState {
   constructor(private application: WebApplication) {}
 
@@ -87,6 +83,7 @@ export class FilesState {
       const picker = shouldUseStreamingReader
         ? StreamingFileReader
         : ClassicFileReader;
+      const maxFileSize = picker.maximumFileSize();
 
       const selectedFiles =
         fileOrHandle instanceof File
@@ -101,10 +98,13 @@ export class FilesState {
       for (const file of selectedFiles) {
         if (
           !shouldUseStreamingReader &&
-          file.size >= ClassicReaderFileLimitAsBytes
+          maxFileSize &&
+          file.size >= maxFileSize
         ) {
           this.application.alertService.alert(
-            `This file exceeds the limits supported in this browser. To upload files greater than ${ClassicReaderFileLimitAsMegaBytes}MB, please use the desktop application or the Chrome browser.`,
+            `This file exceeds the limits supported in this browser. To upload files greater than ${
+              maxFileSize / BYTES_IN_ONE_MEGABYTE
+            }MB, please use the desktop application or the Chrome browser.`,
             `Cannot upload file "${file.name}"`
           );
           continue;
