@@ -2430,10 +2430,10 @@
     "@standardnotes/auth" "^3.17.11"
     "@standardnotes/common" "^1.17.0"
 
-"@standardnotes/filepicker@1.10.1":
-  version "1.10.1"
-  resolved "https://registry.yarnpkg.com/@standardnotes/filepicker/-/filepicker-1.10.1.tgz#451e8b80a670c35f4de5a1a17535b26876d4b92b"
-  integrity sha512-7q535TdXT0vKaIPvFDRPgcACrPAEs6Rgbw4pi8jLGY/Rodfty0zCN3z4NeDb/IdOGPpM8QYhKMLpYoZcKDjIMQ==
+"@standardnotes/filepicker@1.10.2":
+  version "1.10.2"
+  resolved "https://registry.yarnpkg.com/@standardnotes/filepicker/-/filepicker-1.10.2.tgz#4e2d76a327e61c5d864ce6e0597786caa83f2e20"
+  integrity sha512-+3LCaU7CH5gzZJBd6mXajx4ztdIVax8fqk49poHXRQd/mMIc36cOfCwbLlJeT4X6GL7UMLktieZZQqtG7hmRdw==
 
 "@standardnotes/payloads@^1.4.18":
   version "1.4.18"
