@@ -128,8 +128,9 @@ export class FilesState {
 
         if (!fileResult.mimeType) {
           const { ext } = parseFileName(file.name);
-          const zipJs = await this.application.getArchiveService().getZipJs();
-          fileResult.mimeType = zipJs.getMimeType(ext);
+          fileResult.mimeType = await this.application
+            .getArchiveService()
+            .getMimeType(ext);
         }
 
         const uploadedFile = await this.application.files.finishUpload(

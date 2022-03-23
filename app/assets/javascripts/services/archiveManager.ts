@@ -34,8 +34,8 @@ export class ArchiveManager {
     this.application = application;
   }
 
-  public async getZipJs() {
-    return await import('@zip.js/zip.js');
+  public async getMimeType(ext: string) {
+    return (await import('@zip.js/zip.js')).getMimeType(ext);
   }
 
   public async downloadBackup(encrypted: boolean): Promise<void> {
