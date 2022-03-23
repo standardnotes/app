@@ -57,6 +57,9 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
 
     const user = application.getUser();
 
+    const CREATE_ACCOUNT_INDEX = 1;
+    const SWITCHER_INDEX = 0;
+
     return (
       <>
         <div className="flex items-center justify-between px-3 mt-1 mb-1">
@@ -113,6 +116,9 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
           isOpen={appState.accountMenu.show}
           a11yLabel="General account menu"
           closeMenu={closeMenu}
+          initialFocus={
+            !application.hasAccount() ? CREATE_ACCOUNT_INDEX : SWITCHER_INDEX
+          }
         >
           <MenuItemSeparator />
           <WorkspaceSwitcherOption
