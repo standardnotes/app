@@ -19,6 +19,7 @@ type MenuProps = {
   children: ComponentChildren;
   closeMenu?: () => void;
   isOpen: boolean;
+  initialFocus?: number;
 };
 
 export const Menu: FunctionComponent<MenuProps> = ({
@@ -28,6 +29,7 @@ export const Menu: FunctionComponent<MenuProps> = ({
   a11yLabel,
   closeMenu,
   isOpen,
+  initialFocus,
 }: MenuProps) => {
   const menuItemRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -46,7 +48,7 @@ export const Menu: FunctionComponent<MenuProps> = ({
     }
   };
 
-  useListKeyboardNavigation(menuElementRef);
+  useListKeyboardNavigation(menuElementRef, initialFocus);
 
   useEffect(() => {
     if (isOpen && menuItemRefs.current.length > 0) {
