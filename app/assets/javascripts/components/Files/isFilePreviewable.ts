@@ -1,4 +1,8 @@
 export const isFileTypePreviewable = (fileType: string) => {
+  if (!fileType) {
+    return false;
+  }
+
   const isImage = fileType.startsWith('image/');
   const isVideo = fileType.startsWith('video/');
   const isAudio = fileType.startsWith('audio/');
