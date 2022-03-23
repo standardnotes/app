@@ -92,10 +92,12 @@ export const calculateDifferenceBetweenDatesInDays = (
 };
 
 export const useListKeyboardNavigation = (
-  container: Ref<HTMLElement | null>
+  container: Ref<HTMLElement | null>,
+  initialFocus = 0
 ) => {
   const [listItems, setListItems] = useState<HTMLButtonElement[]>();
-  const [focusedItemIndex, setFocusedItemIndex] = useState<number>(0);
+  const [focusedItemIndex, setFocusedItemIndex] =
+    useState<number>(initialFocus);
 
   const focusItemWithIndex = useCallback(
     (index: number, items?: HTMLButtonElement[]) => {
@@ -171,12 +173,13 @@ export const useListKeyboardNavigation = (
       const selectedItemIndex = Array.from(temporaryItems).findIndex(
         (item) => item.dataset.selected
       );
-      const indexToFocus = selectedItemIndex > -1 ? selectedItemIndex : 0;
+      const indexToFocus =
+        selectedItemIndex > -1 ? selectedItemIndex : initialFocus;
       setTimeout(() => {
         focusItemWithIndex(indexToFocus, temporaryItems);
       }, FIRST_ITEM_FOCUS_TIMEOUT);
     }
-  }, [container, focusItemWithIndex, listItems]);
+  }, [container, focusItemWithIndex, initialFocus, listItems]);
 
   useEffect(() => {
     const containerElement = container.current;

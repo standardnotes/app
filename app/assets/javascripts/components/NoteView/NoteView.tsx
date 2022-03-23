@@ -244,6 +244,15 @@ export class NoteView extends PureComponent<Props, State> {
     }
   }
 
+  componentDidUpdate(_prevProps: Props, prevState: State): void {
+    if (
+      this.state.showProtectedWarning != undefined &&
+      prevState.showProtectedWarning !== this.state.showProtectedWarning
+    ) {
+      this.reloadEditorComponent();
+    }
+  }
+
   private onNoteInnerChange(note: SNNote, source: PayloadSource): void {
     if (note.uuid !== this.note.uuid) {
       throw Error('Editor received changes for non-current note');
@@ -465,7 +474,24 @@ export class NoteView extends PureComponent<Props, State> {
     this.reloadEditorComponent();
   }
 
+  private destroyCurrentEditorComponent() {
+    const currentComponentViewer = this.state.editorComponentViewer;
+    if (currentComponentViewer) {
+      this.application.componentManager.destroyComponentViewer(
+        currentComponentViewer
+      );
+      this.setState({
+        editorComponentViewer: undefined,
+      });
+    }
+  }
+
   private async reloadEditorComponent() {
+    if (this.state.showProtectedWarning) {
+      this.destroyCurrentEditorComponent();
+      return;
+    }
+
     const newEditor = this.application.componentManager.editorForNote(
       this.note
     );
@@ -478,15 +504,9 @@ export class NoteView extends PureComponent<Props, State> {
 
     if (currentComponentViewer?.componentUuid !== newEditor?.uuid) {
       if (currentComponentViewer) {
-        this.application.componentManager.destroyComponentViewer(
-          currentComponentViewer
-        );
+        this.destroyCurrentEditorComponent();
       }
-      if (currentComponentViewer) {
-        this.setState({
-          editorComponentViewer: undefined,
-        });
-      }
+
       if (newEditor) {
         this.setState({
           editorComponentViewer: this.createComponentViewer(newEditor),
