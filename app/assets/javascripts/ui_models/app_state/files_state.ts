@@ -3,6 +3,7 @@ import {
   StreamingFileReader,
   StreamingFileSaver,
   ClassicFileSaver,
+  parseFileName,
 } from '@standardnotes/filepicker';
 import { ClientDisplayableError, SNFile } from '@standardnotes/snjs';
 import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit';
@@ -85,6 +86,11 @@ export class FilesState {
       const uploadedFiles: SNFile[] = [];
 
       for (const file of selectedFiles) {
+        toastId = addToast({
+          type: ToastType.Loading,
+          message: `Uploading file "${file.name}"...`,
+        });
+
         const operation = await this.application.files.beginNewFileUpload();
 
         if (operation instanceof ClientDisplayableError) {
@@ -109,16 +115,18 @@ export class FilesState {
           );
         };
 
-        toastId = addToast({
-          type: ToastType.Loading,
-          message: `Uploading file "${file.name}"...`,
-        });
-
         const fileResult = await picker.readFile(
           file,
           minimumChunkSize,
           onChunk
         );
+
+        if (!fileResult.mimeType) {
+          const { ext } = parseFileName(file.name);
+          fileResult.mimeType = (await import('@zip.js/zip.js')).getMimeType(
+            ext
+          );
+        }
 
         const uploadedFile = await this.application.files.finishUpload(
           operation,
