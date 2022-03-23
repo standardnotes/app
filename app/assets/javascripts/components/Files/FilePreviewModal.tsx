@@ -15,6 +15,22 @@ type Props = {
   onDismiss: () => void;
 };
 
+const getPreviewComponentForFile = (file: SNFile, objectUrl: string) => {
+  if (file.mimeType.startsWith('image/')) {
+    return <img src={objectUrl} />;
+  }
+
+  if (file.mimeType.startsWith('video/')) {
+    return <video className="w-full h-full" src={objectUrl} controls />;
+  }
+
+  if (file.mimeType.startsWith('audio/')) {
+    return <audio src={objectUrl} controls />;
+  }
+
+  return <object className="w-full h-full" data={objectUrl} />;
+};
+
 export const FilePreviewModal: FunctionComponent<Props> = ({
   application,
   file,
@@ -30,7 +46,7 @@ export const FilePreviewModal: FunctionComponent<Props> = ({
     try {
       await application.files.downloadFile(
         file,
-        (decryptedBytes: Uint8Array) => {
+        async (decryptedBytes: Uint8Array) => {
           setObjectUrl(
             URL.createObjectURL(
               new Blob([decryptedBytes], {
@@ -108,9 +124,9 @@ export const FilePreviewModal: FunctionComponent<Props> = ({
             </button>
           </div>
         </div>
-        <div className="flex flex-grow items-center justify-center min-h-0">
+        <div className="flex flex-grow items-center justify-center min-h-0 overflow-auto">
           {objectUrl ? (
-            <object className="w-full h-full" data={objectUrl} />
+            getPreviewComponentForFile(file, objectUrl)
           ) : isLoadingFile ? (
             <div className="sk-spinner w-5 h-5 spinner-info"></div>
           ) : (
