@@ -38,13 +38,13 @@ export const FilePreviewModalProvider: FunctionComponent<{
 
   return (
     <>
-      {isOpen && file ? (
+      {isOpen && file && (
         <FilePreviewModal
           application={application}
           file={file}
           onDismiss={close}
         />
-      ) : null}
+      )}
       <FilePreviewModalContext.Provider value={{ activate }}>
         {children}
       </FilePreviewModalContext.Provider>
