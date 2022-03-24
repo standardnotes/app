@@ -1,3 +1,4 @@
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/constants';
 import { KeyboardKey } from '@/services/ioService';
 import { formatSizeToReadableString } from '@standardnotes/filepicker';
 import { IconType, SNFile } from '@standardnotes/snjs';
@@ -33,6 +34,7 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
 }) => {
   const [fileName, setFileName] = useState(file.name);
   const [isRenamingFile, setIsRenamingFile] = useState(false);
+  const itemRef = useRef<HTMLDivElement>(null);
   const fileNameInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -58,7 +60,7 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
 
   const handleFileNameInputKeyDown = (event: KeyboardEvent) => {
     if (event.key === KeyboardKey.Enter) {
-      fileNameInputRef.current?.blur();
+      itemRef.current?.focus();
     }
   };
 
@@ -67,7 +69,11 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
   };
 
   return (
-    <div className="flex items-center justify-between p-3">
+    <div
+      ref={itemRef}
+      className="flex items-center justify-between p-3 focus:shadow-none"
+      tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
+    >
       <div className="flex items-center">
         {getFileIconComponent(
           getIconType(file.mimeType),
