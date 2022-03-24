@@ -19,7 +19,7 @@
     "test": "jest --config app/assets/javascripts/jest.config.js",
     "test:coverage": "yarn test --coverage",
     "prepare": "husky install",
-    "postinstall": "yarn run ncu"
+    "postinstall": "yarn run ncu -loglevel verbose --packageFile package.json"
   },
   "devDependencies": {
     "@babel/core": "^7.17.8",

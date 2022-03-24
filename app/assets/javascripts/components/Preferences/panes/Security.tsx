@@ -21,8 +21,6 @@ export const Security: FunctionComponent<SecurityProps> = (props) => (
       userProvider={props.userProvider}
     />
     <PasscodeLock appState={props.appState} application={props.application} />
-    {props.appState.enableUnfinishedFeatures && (
-      <Privacy application={props.application} />
-    )}
+    <Privacy application={props.application} />
   </PreferencesPane>
 );
