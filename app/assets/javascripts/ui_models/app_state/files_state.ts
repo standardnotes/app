@@ -93,6 +93,10 @@ export class FilesState {
           ? await StreamingFileReader.getFilesFromHandles([fileOrHandle])
           : await picker.selectFiles();
 
+      if (!selectedFiles.length) {
+        return;
+      }
+
       const uploadedFiles: SNFile[] = [];
 
       for (const file of selectedFiles) {
