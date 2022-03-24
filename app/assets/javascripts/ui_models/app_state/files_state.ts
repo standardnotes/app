@@ -93,7 +93,7 @@ export class FilesState {
           ? await StreamingFileReader.getFilesFromHandles([fileOrHandle])
           : await picker.selectFiles();
 
-      if (!selectedFiles.length) {
+      if (selectedFiles.length === 0) {
         return;
       }
 
