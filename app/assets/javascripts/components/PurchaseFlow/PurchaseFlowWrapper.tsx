@@ -1,6 +1,6 @@
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
-import { isDesktopApplication } from '@/utils';
+import { getWindowUrlParams, isDesktopApplication } from '@/utils';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { PurchaseFlowView } from './PurchaseFlowView';
@@ -29,7 +29,7 @@ export const loadPurchaseFlowUrl = async (
   application: WebApplication
 ): Promise<boolean> => {
   const url = await getPurchaseFlowUrl(application);
-  const params = new URLSearchParams(window.location.search);
+  const params = getWindowUrlParams();
   const period = params.get('period') ? `&period=${params.get('period')}` : '';
   const plan = params.get('plan') ? `&plan=${params.get('plan')}` : '';
   if (url) {

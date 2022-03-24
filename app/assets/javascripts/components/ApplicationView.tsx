@@ -1,5 +1,5 @@
 import { ApplicationGroup } from '@/ui_models/application_group';
-import { getPlatformString } from '@/utils';
+import { getPlatformString, getWindowUrlParams } from '@/utils';
 import { AppStateEvent, PanelResizedData } from '@/ui_models/app_state';
 import {
   ApplicationEvent,
@@ -144,15 +144,12 @@ export class ApplicationView extends PureComponent<Props, State> {
   }
 
   async handleDemoSignInFromParams() {
-    if (
-      window.location.href.includes('demo') &&
-      !this.application.hasAccount()
-    ) {
-      await this.application.setCustomHost(
-        'https://syncing-server-demo.standardnotes.com'
-      );
-      this.application.signIn('demo@standardnotes.org', 'password');
+    const token = getWindowUrlParams().get('demo-token');
+    if (!token || this.application.hasAccount()) {
+      return;
     }
+
+    await this.application.sessions.populateSessionFromDemoShareToken(token);
   }
 
   presentPermissionsDialog = (dialog: PermissionDialog) => {
