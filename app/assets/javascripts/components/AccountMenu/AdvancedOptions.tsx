@@ -4,8 +4,8 @@ import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 import { Checkbox } from '../Checkbox';
+import { DecoratedInput } from '../DecoratedInput';
 import { Icon } from '../Icon';
-import { InputWithIcon } from '../InputWithIcon';
 
 type Props = {
   application: WebApplication;
@@ -63,16 +63,12 @@ export const AdvancedOptions: FunctionComponent<Props> = observer(
       setIsVault(!isVault);
     };
 
-    const handleVaultNameChange = (e: Event) => {
-      if (e.target instanceof HTMLInputElement) {
-        setVaultName(e.target.value);
-      }
+    const handleVaultNameChange = (name: string) => {
+      setVaultName(name);
     };
 
-    const handleVaultUserphraseChange = (e: Event) => {
-      if (e.target instanceof HTMLInputElement) {
-        setVaultUserphrase(e.target.value);
-      }
+    const handleVaultUserphraseChange = (userphrase: string) => {
+      setVaultUserphrase(userphrase);
     };
 
     const handleServerOptionChange = (e: Event) => {
@@ -81,11 +77,9 @@ export const AdvancedOptions: FunctionComponent<Props> = observer(
       }
     };
 
-    const handleSyncServerChange = (e: Event) => {
-      if (e.target instanceof HTMLInputElement) {
-        setServer(e.target.value);
-        application.setCustomHost(e.target.value);
-      }
+    const handleSyncServerChange = (server: string) => {
+      setServer(server);
+      application.setCustomHost(server);
     };
 
     const handleStrictSigninChange = () => {
@@ -135,19 +129,19 @@ export const AdvancedOptions: FunctionComponent<Props> = observer(
 
             {appState.enableUnfinishedFeatures && isVault && (
               <>
-                <InputWithIcon
+                <DecoratedInput
                   className={`mb-2`}
-                  icon="folder"
-                  inputType="text"
+                  left={[<Icon type="folder" className="color-neutral" />]}
+                  type="text"
                   placeholder="Vault name"
                   value={vaultName}
                   onChange={handleVaultNameChange}
                   disabled={disabled}
                 />
-                <InputWithIcon
-                  className={`mb-2 `}
-                  icon="server"
-                  inputType={'text'}
+                <DecoratedInput
+                  className={`mb-2`}
+                  left={[<Icon type="server" className="color-neutral" />]}
+                  type="text"
                   placeholder="Vault userphrase"
                   value={vaultUserphrase}
                   onChange={handleVaultUserphraseChange}
@@ -183,9 +177,9 @@ export const AdvancedOptions: FunctionComponent<Props> = observer(
               onChange={handleServerOptionChange}
               disabled={disabled}
             />
-            <InputWithIcon
-              inputType="text"
-              icon="server"
+            <DecoratedInput
+              type="text"
+              left={[<Icon type="server" className="color-neutral" />]}
               placeholder="https://api.standardnotes.com"
               value={server}
               onChange={handleSyncServerChange}
