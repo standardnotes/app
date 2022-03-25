@@ -38,14 +38,14 @@ const EncryptionEnabled: FunctionComponent<{ appState: AppState }> = observer(
         <div className="flex flex-row pb-1 pt-1.5">
           <DecoratedInput
             disabled={true}
-            text={notes}
+            value={notes}
             right={[checkIcon]}
             left={[noteIcon]}
           />
           <div className="min-w-3" />
           <DecoratedInput
             disabled={true}
-            text={tags}
+            value={tags}
             right={[checkIcon]}
             left={[tagIcon]}
           />
@@ -53,14 +53,14 @@ const EncryptionEnabled: FunctionComponent<{ appState: AppState }> = observer(
         <div className="flex flex-row">
           <DecoratedInput
             disabled={true}
-            text={archived}
+            value={archived}
             right={[checkIcon]}
             left={[archiveIcon]}
           />
           <div className="min-w-3" />
           <DecoratedInput
             disabled={true}
-            text={deleted}
+            value={deleted}
             right={[checkIcon]}
             left={[trashIcon]}
           />

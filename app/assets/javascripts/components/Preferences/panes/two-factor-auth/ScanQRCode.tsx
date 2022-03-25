@@ -55,7 +55,7 @@ export const ScanQRCode: FunctionComponent<{
           <DecoratedInput
             className="ml-4 w-92"
             disabled={true}
-            text={act.secretKey}
+            value={act.secretKey}
             right={[<CopyButton copyValue={act.secretKey} />]}
           />
         </div>

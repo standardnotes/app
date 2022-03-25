@@ -112,7 +112,7 @@ export const Extensions: FunctionComponent<{
             <Title>Install Custom Extension</Title>
             <DecoratedInput
               placeholder={'Enter Extension URL'}
-              text={customUrl}
+              value={customUrl}
               onChange={(value) => {
                 setCustomUrl(value);
               }}

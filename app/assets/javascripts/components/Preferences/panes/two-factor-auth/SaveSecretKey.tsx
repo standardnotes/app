@@ -55,7 +55,7 @@ export const SaveSecretKey: FunctionComponent<{
             <DecoratedInput
               disabled={true}
               right={[<CopyButton copyValue={act.secretKey} />, download]}
-              text={act.secretKey}
+              value={act.secretKey}
             />
           </div>
           <div className="h-2" />
