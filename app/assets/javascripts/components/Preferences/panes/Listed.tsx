@@ -105,7 +105,7 @@ export const Listed = observer(({ application }: Props) => {
             type="normal"
             disabled={requestingAccount}
             label={
-              requestingAccount ? 'Creating account...' : 'Create New Author'
+              requestingAccount ? 'Creating account...' : 'Create new author'
             }
             onClick={registerNewAccount}
           />

@@ -43,8 +43,8 @@ export const ConfirmSignoutModal = observer(
             <div className="sk-panel">
               <div className="sk-panel-content">
                 <div className="sk-panel-section">
-                  <AlertDialogLabel className="sk-h3 sk-panel-section-title capitalize">
-                    End your session?
+                  <AlertDialogLabel className="sk-h3 sk-panel-section-title">
+                    Sign out workspace?
                   </AlertDialogLabel>
                   <AlertDialogDescription className="sk-panel-row">
                     <p className="color-foreground">

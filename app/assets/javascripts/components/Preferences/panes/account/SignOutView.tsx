@@ -41,12 +41,15 @@ const SignOutView: FunctionComponent<{
           </div>
         </PreferencesSegment>
         <PreferencesSegment>
-          <Subtitle>This device</Subtitle>
-          <Text>This will delete all local items and preferences.</Text>
+          <Subtitle>This workspace</Subtitle>
+          <Text>
+            Remove all data related to the current workspace from the
+            application.
+          </Text>
           <div className="min-h-3" />
           <Button
             type="danger"
-            label="Sign out and clear local data"
+            label="Sign out workspace"
             onClick={() => {
               appState.accountMenu.setSigningOut(true);
             }}
@@ -67,12 +70,14 @@ const ClearSessionDataView: FunctionComponent<{
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <Title>Clear session data</Title>
-        <Text>This will delete all local items and preferences.</Text>
+        <Title>Clear workspace</Title>
+        <Text>
+          Remove all data related to the current workspace from the application.
+        </Text>
         <div className="min-h-3" />
         <Button
           type="danger"
-          label="Clear Session Data"
+          label="Clear workspace"
           onClick={() => {
             appState.accountMenu.setSigningOut(true);
           }}
