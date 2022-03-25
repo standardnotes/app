@@ -2,18 +2,21 @@ import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import { observer } from 'mobx-react-lite';
 import { Icon } from '../Icon';
-import { formatLastSyncDate } from '@/preferences/panes/account/Sync';
+import { formatLastSyncDate } from '@/components/Preferences/panes/account/Sync';
 import { SyncQueueStrategy } from '@standardnotes/snjs';
 import { STRING_GENERIC_SYNC_ERROR } from '@/strings';
 import { useState } from 'preact/hooks';
 import { AccountMenuPane } from '.';
 import { FunctionComponent } from 'preact';
-import { Menu } from '../menu/Menu';
-import { MenuItem, MenuItemSeparator, MenuItemType } from '../menu/MenuItem';
+import { Menu } from '../Menu/Menu';
+import { MenuItem, MenuItemSeparator, MenuItemType } from '../Menu/MenuItem';
+import { WorkspaceSwitcherOption } from './WorkspaceSwitcher/WorkspaceSwitcherOption';
+import { ApplicationGroup } from '@/ui_models/application_group';
 
 type Props = {
   appState: AppState;
   application: WebApplication;
+  mainApplicationGroup: ApplicationGroup;
   setMenuPane: (pane: AccountMenuPane) => void;
   closeMenu: () => void;
 };
@@ -21,7 +24,7 @@ type Props = {
 const iconClassName = 'color-neutral mr-2';
 
 export const GeneralAccountMenu: FunctionComponent<Props> = observer(
-  ({ application, appState, setMenuPane, closeMenu }) => {
+  ({ application, appState, setMenuPane, closeMenu, mainApplicationGroup }) => {
     const [isSyncingInProgress, setIsSyncingInProgress] = useState(false);
     const [lastSyncDate, setLastSyncDate] = useState(
       formatLastSyncDate(application.sync.getLastSyncDate() as Date)
@@ -54,9 +57,12 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
 
     const user = application.getUser();
 
+    const CREATE_ACCOUNT_INDEX = 1;
+    const SWITCHER_INDEX = 0;
+
     return (
       <>
-        <div className="flex items-center justify-between px-3 mt-1 mb-3">
+        <div className="flex items-center justify-between px-3 mt-1 mb-1">
           <div className="sn-account-menu-headline">Account</div>
           <div className="flex cursor-pointer" onClick={closeMenu}>
             <Icon type="close" className="color-neutral" />
@@ -66,10 +72,10 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
           <>
             <div className="px-3 mb-3 color-foreground text-sm">
               <div>You're signed in as:</div>
-              <div className="my-0.5 font-bold">{user.email}</div>
+              <div className="my-0.5 font-bold wrap">{user.email}</div>
               <span className="color-neutral">{application.getHost()}</span>
             </div>
-            <div className="flex items-start justify-between px-3 mb-2">
+            <div className="flex items-start justify-between px-3 mb-3">
               {isSyncingInProgress ? (
                 <div className="flex items-center color-info font-semibold">
                   <div className="sk-spinner w-5 h-5 mr-2 spinner-info"></div>
@@ -106,12 +112,20 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
             </div>
           </>
         )}
-        <div className="h-1px my-2 bg-border"></div>
         <Menu
           isOpen={appState.accountMenu.show}
           a11yLabel="General account menu"
           closeMenu={closeMenu}
+          initialFocus={
+            !application.hasAccount() ? CREATE_ACCOUNT_INDEX : SWITCHER_INDEX
+          }
         >
+          <MenuItemSeparator />
+          <WorkspaceSwitcherOption
+            mainApplicationGroup={mainApplicationGroup}
+            appState={appState}
+          />
+          <MenuItemSeparator />
           {user ? (
             <MenuItem
               type={MenuItemType.IconButton}
@@ -171,7 +185,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
                 }}
               >
                 <Icon type="signOut" className={iconClassName} />
-                Sign out and clear local data
+                Sign out workspace
               </MenuItem>
             </>
           ) : null}

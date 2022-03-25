@@ -1,4 +1,4 @@
-import { loadPurchaseFlowUrl } from '@/purchaseFlow/PurchaseFlowWrapper';
+import { loadPurchaseFlowUrl } from '@/components/PurchaseFlow/PurchaseFlowWrapper';
 import { action, makeObservable, observable } from 'mobx';
 import { WebApplication } from '../application';
 

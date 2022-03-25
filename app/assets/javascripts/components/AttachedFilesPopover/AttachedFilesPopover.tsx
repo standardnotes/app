@@ -1,16 +1,32 @@
-import { ContentType, SNFile } from '@standardnotes/snjs';
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/constants';
+import { WebApplication } from '@/ui_models/application';
+import { AppState } from '@/ui_models/app_state';
+import { ContentType, SNFile, SNNote } from '@standardnotes/snjs';
 import { FilesIllustration } from '@standardnotes/stylekit';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { StateUpdater, useCallback, useEffect, useState } from 'preact/hooks';
+import { StateUpdater, useEffect, useRef, useState } from 'preact/hooks';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
-import { PopoverTabs, PopoverWrapperProps } from './PopoverDragNDropWrapper';
 import { PopoverFileItem } from './PopoverFileItem';
-import { PopoverFileItemActionType } from './PopoverFileItemAction';
+import {
+  PopoverFileItemAction,
+  PopoverFileItemActionType,
+} from './PopoverFileItemAction';
 
-type Props = PopoverWrapperProps & {
+export enum PopoverTabs {
+  AttachedFiles,
+  AllFiles,
+}
+
+type Props = {
+  application: WebApplication;
+  appState: AppState;
   currentTab: PopoverTabs;
+  closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void;
+  handleFileAction: (action: PopoverFileItemAction) => Promise<boolean>;
+  isDraggingFiles: boolean;
+  note: SNNote;
   setCurrentTab: StateUpdater<PopoverTabs>;
 };
 
@@ -18,14 +34,17 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
   ({
     application,
     appState,
-    note,
-    fileActionHandler,
     currentTab,
+    closeOnBlur,
+    handleFileAction,
+    isDraggingFiles,
+    note,
     setCurrentTab,
   }) => {
     const [attachedFiles, setAttachedFiles] = useState<SNFile[]>([]);
     const [allFiles, setAllFiles] = useState<SNFile[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
+    const searchInputRef = useRef<HTMLInputElement>(null);
 
     const filesList =
       currentTab === PopoverTabs.AttachedFiles ? attachedFiles : allFiles;
@@ -33,39 +52,35 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
     const filteredList =
       searchQuery.length > 0
         ? filesList.filter(
-            (file) => file.nameWithExt.toLowerCase().indexOf(searchQuery) !== -1
+            (file) =>
+              file.name.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1
           )
         : filesList;
-
-    const reloadAttachedFiles = useCallback(() => {
-      setAttachedFiles(
-        application.items
-          .getFilesForNote(note)
-          .sort((a, b) => (a.created_at < b.created_at ? 1 : -1))
-      );
-    }, [application.items, note]);
-
-    const reloadAllFiles = useCallback(() => {
-      setAllFiles(
-        application
-          .getItems(ContentType.File)
-          .sort((a, b) => (a.created_at < b.created_at ? 1 : -1)) as SNFile[]
-      );
-    }, [application]);
 
     useEffect(() => {
       const unregisterFileStream = application.streamItems(
         ContentType.File,
         () => {
-          reloadAttachedFiles();
-          reloadAllFiles();
+          setAttachedFiles(
+            application.items
+              .getFilesForNote(note)
+              .sort((a, b) => (a.created_at < b.created_at ? 1 : -1))
+          );
+
+          setAllFiles(
+            application.items
+              .getItems(ContentType.File)
+              .sort((a, b) =>
+                a.created_at < b.created_at ? 1 : -1
+              ) as SNFile[]
+          );
         }
       );
 
       return () => {
         unregisterFileStream();
       };
-    }, [application, reloadAllFiles, reloadAttachedFiles]);
+    }, [application, note]);
 
     const handleAttachFilesClick = async () => {
       const uploadedFiles = await appState.files.uploadNewFile();
@@ -74,7 +89,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
       }
       if (currentTab === PopoverTabs.AttachedFiles) {
         uploadedFiles.forEach((file) => {
-          fileActionHandler({
+          handleFileAction({
             type: PopoverFileItemActionType.AttachFileToNote,
             payload: file,
           });
@@ -83,7 +98,15 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
     };
 
     return (
-      <div className="flex flex-col">
+      <div
+        className="flex flex-col"
+        tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
+        style={{
+          border: isDraggingFiles
+            ? '2px dashed var(--sn-stylekit-info-color)'
+            : '',
+        }}
+      >
         <div className="flex border-0 border-b-1 border-solid border-main">
           <button
             className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:bg-info-backdrop focus:shadow-bottom ${
@@ -94,6 +117,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
             onClick={() => {
               setCurrentTab(PopoverTabs.AttachedFiles);
             }}
+            onBlur={closeOnBlur}
           >
             Attached
           </button>
@@ -106,6 +130,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
             onClick={() => {
               setCurrentTab(PopoverTabs.AllFiles);
             }}
+            onBlur={closeOnBlur}
           >
             All files
           </button>
@@ -122,13 +147,17 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
                   onInput={(e) => {
                     setSearchQuery((e.target as HTMLInputElement).value);
                   }}
+                  onBlur={closeOnBlur}
+                  ref={searchInputRef}
                 />
                 {searchQuery.length > 0 && (
                   <button
                     className="flex absolute right-2 p-0 bg-transparent border-0 top-1/2 -translate-y-1/2 cursor-pointer"
                     onClick={() => {
                       setSearchQuery('');
+                      searchInputRef.current?.focus();
                     }}
+                    onBlur={closeOnBlur}
                   >
                     <Icon
                       type="clear-circle-filled"
@@ -140,25 +169,24 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
             </div>
           ) : null}
           {filteredList.length > 0 ? (
-            filteredList.map((file: SNFile) => {
-              return (
-                <PopoverFileItem
-                  key={file.uuid}
-                  file={file}
-                  isAttachedToNote={attachedFiles.includes(file)}
-                  handleFileAction={fileActionHandler}
-                />
-              );
-            })
+            filteredList
+              .filter((file) => !file.deleted)
+              .map((file: SNFile) => {
+                return (
+                  <PopoverFileItem
+                    key={file.uuid}
+                    file={file}
+                    isAttachedToNote={attachedFiles.includes(file)}
+                    handleFileAction={handleFileAction}
+                    getIconType={application.iconsController.getIconForFileType}
+                    closeOnBlur={closeOnBlur}
+                  />
+                );
+              })
           ) : (
             <div className="flex flex-col items-center justify-center w-full py-8">
               <div className="w-18 h-18 mb-2">
-                <FilesIllustration
-                  style={{
-                    transform: 'scale(0.6)',
-                    transformOrigin: 'top left',
-                  }}
-                />
+                <FilesIllustration />
               </div>
               <div className="text-sm font-medium mb-3">
                 {searchQuery.length > 0
@@ -167,7 +195,11 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
                   ? 'No files attached to this note'
                   : 'No files found in this account'}
               </div>
-              <Button type="normal" onClick={handleAttachFilesClick}>
+              <Button
+                type="normal"
+                onClick={handleAttachFilesClick}
+                onBlur={closeOnBlur}
+              >
                 {currentTab === PopoverTabs.AttachedFiles ? 'Attach' : 'Upload'}{' '}
                 files
               </Button>
@@ -181,6 +213,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
           <button
             className="sn-dropdown-item py-3 border-0 border-t-1px border-solid border-main focus:bg-info-backdrop"
             onClick={handleAttachFilesClick}
+            onBlur={closeOnBlur}
           >
             <Icon type="add" className="mr-2 color-neutral" />
             {currentTab === PopoverTabs.AttachedFiles

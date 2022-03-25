@@ -3,13 +3,7 @@ import { STRING_RESTORE_LOCKED_ATTEMPT } from '@/strings';
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import { getPlatformString } from '@/utils';
-import {
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogLabel,
-  AlertDialogOverlay,
-} from '@reach/alert-dialog';
-import VisuallyHidden from '@reach/visually-hidden';
+import { DialogContent, DialogOverlay } from '@reach/dialog';
 import {
   ButtonType,
   ContentType,
@@ -139,7 +133,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
 
     const restore = () => {
       if (selectedRevision) {
-        const originalNote = application.findItem(
+        const originalNote = application.items.findItem(
           selectedRevision.payload.uuid
         ) as SNNote;
 
@@ -153,7 +147,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
           confirmButtonStyle: 'danger',
         }).then((confirmed) => {
           if (confirmed) {
-            application.changeAndSaveItem(
+            application.mutator.changeAndSaveItem(
               selectedRevision.payload.uuid,
               (mutator) => {
                 mutator.unsafe_setCustomContent(
@@ -171,16 +165,19 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
 
     const restoreAsCopy = async () => {
       if (selectedRevision) {
-        const originalNote = application.findItem(
+        const originalNote = application.items.findItem(
           selectedRevision.payload.uuid
         ) as SNNote;
 
-        const duplicatedItem = await application.duplicateItem(originalNote, {
-          ...(selectedRevision.payload.content as PayloadContent),
-          title: selectedRevision.payload.content.title
-            ? selectedRevision.payload.content.title + ' (copy)'
-            : undefined,
-        });
+        const duplicatedItem = await application.mutator.duplicateItem(
+          originalNote,
+          {
+            ...(selectedRevision.payload.content as PayloadContent),
+            title: selectedRevision.payload.content.title
+              ? selectedRevision.payload.content.title + ' (copy)'
+              : undefined,
+          }
+        );
 
         appState.notes.selectNote(duplicatedItem.uuid);
 
@@ -191,7 +188,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
     useEffect(() => {
       const fetchTemplateNote = async () => {
         if (selectedRevision) {
-          const newTemplateNote = (await application.createTemplateItem(
+          const newTemplateNote = (await application.mutator.createTemplateItem(
             ContentType.Note,
             selectedRevision.payload.content
           )) as SNNote;
@@ -237,24 +234,22 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
     };
 
     return (
-      <AlertDialogOverlay
+      <DialogOverlay
         className={`sn-component ${getPlatformString()}`}
         onDismiss={dismissModal}
-        leastDestructiveRef={closeButtonRef}
+        initialFocusRef={closeButtonRef}
+        aria-label="Note revision history"
       >
-        <AlertDialogContent
+        <DialogContent
           className="rounded shadow-overlay"
           style={{
             width: '90%',
             maxWidth: '90%',
             minHeight: '90%',
-            background: '#fff',
+            background: 'var(--sn-stylekit-background-color)',
           }}
         >
-          <AlertDialogLabel>
-            <VisuallyHidden>Note revision history</VisuallyHidden>
-          </AlertDialogLabel>
-          <AlertDialogDescription
+          <div
             className={`bg-default flex flex-col h-full overflow-hidden ${
               isDeletingRevision ? 'pointer-events-none cursor-not-allowed' : ''
             }`}
@@ -330,9 +325,9 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
                 </div>
               )}
             </div>
-          </AlertDialogDescription>
-        </AlertDialogContent>
-      </AlertDialogOverlay>
+          </div>
+        </DialogContent>
+      </DialogOverlay>
     );
   });
 

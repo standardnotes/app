@@ -3,7 +3,7 @@ import {
   HistoryEntry,
   NoteHistoryEntry,
   RevisionListEntry,
-} from '@standardnotes/snjs/dist/@types';
+} from '@standardnotes/snjs';
 import { calculateDifferenceBetweenDatesInDays } from '../utils';
 
 export type LegacyHistoryEntry = {

@@ -1,4 +1,4 @@
-import { SNAlertService } from "@standardnotes/snjs";
+import { SNAlertService } from '@standardnotes/snjs';
 
 const STORE_NAME = 'items';
 const READ_WRITE = 'readwrite';
@@ -16,14 +16,13 @@ const DB_DELETION_BLOCKED =
 const QUOTE_EXCEEDED_ERROR = 'QuotaExceededError';
 
 export class Database {
-  private locked = true
-  private db?: IDBDatabase
+  private locked = true;
+  private db?: IDBDatabase;
 
   constructor(
     public databaseName: string,
-    private alertService: SNAlertService) {
-
-  }
+    private alertService: SNAlertService
+  ) {}
 
   public deinit() {
     (this.alertService as any) = undefined;
@@ -43,7 +42,9 @@ export class Database {
    * as part of the open process. This can happen on new application sessions, or if the
    * browser deleted the database without the user being aware.
    */
-  public async openDatabase(onNewDatabase?: () => void): Promise<IDBDatabase | undefined> {
+  public async openDatabase(
+    onNewDatabase?: () => void
+  ): Promise<IDBDatabase | undefined> {
     if (this.locked) {
       throw Error('Attempting to open locked database');
     }
@@ -84,15 +85,10 @@ export class Database {
           db.close();
         };
         /* Create an objectStore for this database */
-        const objectStore = db.createObjectStore(
-          STORE_NAME,
-          { keyPath: 'uuid' }
-        );
-        objectStore.createIndex(
-          'uuid',
-          'uuid',
-          { unique: true }
-        );
+        const objectStore = db.createObjectStore(STORE_NAME, {
+          keyPath: 'uuid',
+        });
+        objectStore.createIndex('uuid', 'uuid', { unique: true });
         objectStore.transaction.oncomplete = () => {
           /* Ready to store values in the newly created objectStore. */
           if (db.version === 1 && onNewDatabase) {
@@ -106,9 +102,7 @@ export class Database {
   public async getAllPayloads(): Promise<any[]> {
     const db = (await this.openDatabase())!;
     return new Promise((resolve) => {
-      const objectStore =
-        db.transaction(STORE_NAME).
-          objectStore(STORE_NAME);
+      const objectStore = db.transaction(STORE_NAME).objectStore(STORE_NAME);
       const payloads: any = [];
       const cursorRequest = objectStore.openCursor();
       cursorRequest.onsuccess = (event) => {
@@ -136,7 +130,7 @@ export class Database {
     const transaction = db.transaction(STORE_NAME, READ_WRITE);
     return new Promise((resolve, reject) => {
       // eslint-disable-next-line @typescript-eslint/no-empty-function
-      transaction.oncomplete = () => { };
+      transaction.oncomplete = () => {};
       transaction.onerror = (event) => {
         const target = event!.target! as any;
         this.showGenericError(target.error);
@@ -156,23 +150,28 @@ export class Database {
     });
   }
 
-  private async putItems(objectStore: IDBObjectStore, items: any[]): Promise<void> {
-    await Promise.all(items.map((item) => {
-      return new Promise((resolve) => {
-        const request = objectStore.put(item);
-        request.onerror = resolve;
-        request.onsuccess = resolve;
-      });
-    }));
+  private async putItems(
+    objectStore: IDBObjectStore,
+    items: any[]
+  ): Promise<void> {
+    await Promise.all(
+      items.map((item) => {
+        return new Promise((resolve) => {
+          const request = objectStore.put(item);
+          request.onerror = resolve;
+          request.onsuccess = resolve;
+        });
+      })
+    );
   }
 
   public async deletePayload(uuid: string): Promise<void> {
     const db = (await this.openDatabase())!;
     return new Promise((resolve, reject) => {
-      const request =
-        db.transaction(STORE_NAME, READ_WRITE)
-          .objectStore(STORE_NAME)
-          .delete(uuid);
+      const request = db
+        .transaction(STORE_NAME, READ_WRITE)
+        .objectStore(STORE_NAME)
+        .delete(uuid);
       request.onsuccess = () => {
         resolve();
       };
@@ -201,7 +200,7 @@ export class Database {
     this.alertService!.alert(message);
   }
 
-  private showGenericError(error: { code: number, name: string }) {
+  private showGenericError(error: { code: number; name: string }) {
     const message =
       `Unable to save changes locally due to an unknown system issue. ` +
       `Issue Code: ${error.code} Issue Name: ${error.name}.`;
@@ -210,11 +209,11 @@ export class Database {
 
   private displayOfflineAlert() {
     const message =
-      "There was an issue loading your offline database. This could happen for two reasons:" +
+      'There was an issue loading your offline database. This could happen for two reasons:' +
       "\n\n1. You're in a private window in your browser. We can't save your data without " +
-      "access to the local database. Please use a non-private window." +
-      "\n\n2. You have two windows of the app open at the same time. " +
-      "Please close any other app instances and reload the page.";
+      'access to the local database. Please use a non-private window.' +
+      '\n\n2. You have two windows of the app open at the same time. ' +
+      'Please close any other app instances and reload the page.';
     this.alertService!.alert(message);
   }
 }

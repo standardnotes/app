@@ -1,68 +1,40 @@
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/constants';
 import { KeyboardKey } from '@/services/ioService';
 import { formatSizeToReadableString } from '@standardnotes/filepicker';
-import { SNFile } from '@standardnotes/snjs';
+import { IconType, SNFile } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { ICONS } from '../Icon';
+import { Icon, ICONS } from '../Icon';
 import {
   PopoverFileItemAction,
   PopoverFileItemActionType,
 } from './PopoverFileItemAction';
 import { PopoverFileSubmenu } from './PopoverFileSubmenu';
 
-const getIconForFileType = (fileType: string) => {
-  let iconType = 'file-other';
-
-  if (fileType === 'pdf') {
-    iconType = 'file-pdf';
-  }
-
-  if (/^(docx?|odt)/.test(fileType)) {
-    iconType = 'file-doc';
-  }
-
-  if (/^pptx?/.test(fileType)) {
-    iconType = 'file-ppt';
-  }
-
-  if (/^(xlsx?|ods)/.test(fileType)) {
-    iconType = 'file-xls';
-  }
-
-  if (/^(jpe?g|a?png|webp|gif)/.test(fileType)) {
-    iconType = 'file-image';
-  }
-
-  if (/^(mov|mp4|mkv)/.test(fileType)) {
-    iconType = 'file-mov';
-  }
-
-  if (/^(wav|mp3|flac|ogg)/.test(fileType)) {
-    iconType = 'file-music';
-  }
-
-  if (/^(zip|rar|7z)/.test(fileType)) {
-    iconType = 'file-zip';
-  }
-
+export const getFileIconComponent = (iconType: string, className: string) => {
   const IconComponent = ICONS[iconType as keyof typeof ICONS];
 
-  return <IconComponent className="flex-shrink-0" />;
+  return <IconComponent className={className} />;
 };
 
 export type PopoverFileItemProps = {
   file: SNFile;
   isAttachedToNote: boolean;
   handleFileAction: (action: PopoverFileItemAction) => Promise<boolean>;
+  getIconType(type: string): IconType;
+  closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void;
 };
 
 export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
   file,
   isAttachedToNote,
   handleFileAction,
+  getIconType,
+  closeOnBlur,
 }) => {
-  const [fileName, setFileName] = useState(file.nameWithExt);
+  const [fileName, setFileName] = useState(file.name);
   const [isRenamingFile, setIsRenamingFile] = useState(false);
+  const itemRef = useRef<HTMLDivElement>(null);
   const fileNameInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -72,16 +44,14 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
   }, [isRenamingFile]);
 
   const renameFile = async (file: SNFile, name: string) => {
-    const didRename = await handleFileAction({
+    await handleFileAction({
       type: PopoverFileItemActionType.RenameFile,
       payload: {
         file,
         name,
       },
     });
-    if (didRename) {
-      setIsRenamingFile(false);
-    }
+    setIsRenamingFile(false);
   };
 
   const handleFileNameInput = (event: Event) => {
@@ -90,15 +60,25 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
 
   const handleFileNameInputKeyDown = (event: KeyboardEvent) => {
     if (event.key === KeyboardKey.Enter) {
-      renameFile(file, fileName);
-      return;
+      itemRef.current?.focus();
     }
   };
 
+  const handleFileNameInputBlur = () => {
+    renameFile(file, fileName);
+  };
+
   return (
-    <div className="flex items-center justify-between p-3">
+    <div
+      ref={itemRef}
+      className="flex items-center justify-between p-3 focus:shadow-none"
+      tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
+    >
       <div className="flex items-center">
-        {getIconForFileType(file.ext ?? '')}
+        {getFileIconComponent(
+          getIconType(file.mimeType),
+          'w-8 h-8 flex-shrink-0'
+        )}
         <div className="flex flex-col mx-4">
           {isRenamingFile ? (
             <input
@@ -108,9 +88,18 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
               ref={fileNameInputRef}
               onInput={handleFileNameInput}
               onKeyDown={handleFileNameInputKeyDown}
+              onBlur={handleFileNameInputBlur}
             />
           ) : (
-            <div className="text-sm mb-1">{file.nameWithExt}</div>
+            <div className="text-sm mb-1 break-word">
+              <span className="vertical-middle">{file.name}</span>
+              {file.protected && (
+                <Icon
+                  type="lock-filled"
+                  className="sn-icon--small ml-2 color-neutral vertical-middle"
+                />
+              )}
+            </div>
           )}
           <div className="text-xs color-grey-0">
             {file.created_at.toLocaleString()} ·{' '}
@@ -123,6 +112,7 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
         isAttachedToNote={isAttachedToNote}
         handleFileAction={handleFileAction}
         setIsRenamingFile={setIsRenamingFile}
+        closeOnBlur={closeOnBlur}
       />
     </div>
   );

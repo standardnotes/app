@@ -12,13 +12,10 @@ import {
   ComponentMutator,
   PayloadSource,
   ComponentViewer,
-  ComponentManagerEvent,
   TransactionalMutation,
   ItemMutator,
   ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
   NoteViewController,
-  FeatureIdentifier,
-  FeatureStatus,
 } from '@standardnotes/snjs';
 import { debounce, isDesktopApplication } from '@/utils';
 import { KeyboardModifier, KeyboardKey } from '@/services/ioService';
@@ -103,7 +100,6 @@ type State = {
   editorTitle: string;
   editorText: string;
   isDesktop?: boolean;
-  isEntitledToFiles: boolean;
   lockText: string;
   marginResizersEnabled?: boolean;
   monospaceFont?: boolean;
@@ -172,9 +168,6 @@ export class NoteView extends PureComponent<Props, State> {
       editorText: '',
       editorTitle: '',
       isDesktop: isDesktopApplication(),
-      isEntitledToFiles:
-        this.application.features.getFeatureStatus(FeatureIdentifier.Files) ===
-        FeatureStatus.Entitled,
       lockText: 'Note Editing Disabled',
       noteStatus: undefined,
       noteLocked: this.controller.note.locked,
@@ -248,6 +241,15 @@ export class NoteView extends PureComponent<Props, State> {
       setTimeout(() => {
         this.focusTitle();
       });
+    }
+  }
+
+  componentDidUpdate(_prevProps: Props, prevState: State): void {
+    if (
+      this.state.showProtectedWarning != undefined &&
+      prevState.showProtectedWarning !== this.state.showProtectedWarning
+    ) {
+      this.reloadEditorComponent();
     }
   }
 
@@ -328,15 +330,6 @@ export class NoteView extends PureComponent<Props, State> {
   /** @override */
   async onAppEvent(eventName: ApplicationEvent) {
     switch (eventName) {
-      case ApplicationEvent.FeaturesUpdated:
-      case ApplicationEvent.UserRolesChanged:
-        this.setState({
-          isEntitledToFiles:
-            this.application.features.getFeatureStatus(
-              FeatureIdentifier.Files
-            ) === FeatureStatus.Entitled,
-        });
-        break;
       case ApplicationEvent.PreferencesChanged:
         this.reloadPreferences();
         break;
@@ -481,7 +474,24 @@ export class NoteView extends PureComponent<Props, State> {
     this.reloadEditorComponent();
   }
 
+  private destroyCurrentEditorComponent() {
+    const currentComponentViewer = this.state.editorComponentViewer;
+    if (currentComponentViewer) {
+      this.application.componentManager.destroyComponentViewer(
+        currentComponentViewer
+      );
+      this.setState({
+        editorComponentViewer: undefined,
+      });
+    }
+  }
+
   private async reloadEditorComponent() {
+    if (this.state.showProtectedWarning) {
+      this.destroyCurrentEditorComponent();
+      return;
+    }
+
     const newEditor = this.application.componentManager.editorForNote(
       this.note
     );
@@ -494,15 +504,9 @@ export class NoteView extends PureComponent<Props, State> {
 
     if (currentComponentViewer?.componentUuid !== newEditor?.uuid) {
       if (currentComponentViewer) {
-        this.application.componentManager.destroyComponentViewer(
-          currentComponentViewer
-        );
+        this.destroyCurrentEditorComponent();
       }
-      if (currentComponentViewer) {
-        this.setState({
-          editorComponentViewer: undefined,
-        });
-      }
+
       if (newEditor) {
         this.setState({
           editorComponentViewer: this.createComponentViewer(newEditor),
@@ -679,7 +683,7 @@ export class NoteView extends PureComponent<Props, State> {
   }
 
   performNoteDeletion(note: SNNote) {
-    this.application.deleteItem(note);
+    this.application.mutator.deleteItem(note);
   }
 
   onPanelResizeFinish = async (
@@ -817,13 +821,13 @@ export class NoteView extends PureComponent<Props, State> {
   };
 
   async disassociateComponentWithCurrentNote(component: SNComponent) {
-    return this.application.runTransactionalMutation(
+    return this.application.mutator.runTransactionalMutation(
       transactionForDisassociateComponentWithCurrentNote(component, this.note)
     );
   }
 
   async associateComponentWithCurrentNote(component: SNComponent) {
-    return this.application.runTransactionalMutation(
+    return this.application.mutator.runTransactionalMutation(
       transactionForAssociateComponentWithCurrentNote(component, this.note)
     );
   }
@@ -1043,18 +1047,17 @@ export class NoteView extends PureComponent<Props, State> {
                       )}
                     </div>
                   </div>
-                  {this.state.isEntitledToFiles &&
-                    window.enabledUnfinishedFeatures && (
-                      <div className="mr-3">
-                        <AttachedFilesButton
-                          application={this.application}
-                          appState={this.appState}
-                          onClickPreprocessing={
-                            this.ensureNoteIsInsertedBeforeUIAction
-                          }
-                        />
-                      </div>
-                    )}
+                  {window.enabledUnfinishedFeatures && (
+                    <div className="mr-3">
+                      <AttachedFilesButton
+                        application={this.application}
+                        appState={this.appState}
+                        onClickPreprocessing={
+                          this.ensureNoteIsInsertedBeforeUIAction
+                        }
+                      />
+                    </div>
+                  )}
                   <div className="mr-3">
                     <ChangeEditorButton
                       application={this.application}

@@ -25,6 +25,7 @@ type ButtonProps = {
       | TargetedEvent<HTMLFormElement>
       | TargetedMouseEvent<HTMLButtonElement>
   ) => void;
+  onBlur?: (event: FocusEvent) => void;
   disabled?: boolean;
 };
 
@@ -34,6 +35,7 @@ export const Button: FunctionComponent<ButtonProps> = forwardRef(
       type,
       label,
       className = '',
+      onBlur,
       onClick,
       disabled = false,
       children,
@@ -46,6 +48,7 @@ export const Button: FunctionComponent<ButtonProps> = forwardRef(
     return (
       <button
         className={`${buttonClass} ${cursorClass} ${className}`}
+        onBlur={onBlur}
         onClick={(e) => {
           onClick(e);
           e.preventDefault();

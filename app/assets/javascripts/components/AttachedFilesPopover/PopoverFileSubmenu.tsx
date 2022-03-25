@@ -19,10 +19,11 @@ import {
 import { Icon } from '../Icon';
 import { Switch } from '../Switch';
 import { useCloseOnBlur } from '../utils';
+import { useFilePreviewModal } from '../Files/FilePreviewModalProvider';
 import { PopoverFileItemProps } from './PopoverFileItem';
 import { PopoverFileItemActionType } from './PopoverFileItemAction';
 
-type Props = Omit<PopoverFileItemProps, 'renameFile'> & {
+type Props = Omit<PopoverFileItemProps, 'renameFile' | 'getIconType'> & {
   setIsRenamingFile: StateUpdater<boolean>;
 };
 
@@ -32,6 +33,8 @@ export const PopoverFileSubmenu: FunctionComponent<Props> = ({
   handleFileAction,
   setIsRenamingFile,
 }) => {
+  const filePreviewModal = useFilePreviewModal();
+
   const menuContainerRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -99,6 +102,17 @@ export const PopoverFileSubmenu: FunctionComponent<Props> = ({
         >
           {isMenuOpen && (
             <>
+              <button
+                onBlur={closeOnBlur}
+                className="sn-dropdown-item focus:bg-info-backdrop"
+                onClick={() => {
+                  filePreviewModal.activate(file);
+                  closeMenu();
+                }}
+              >
+                <Icon type="file" className="mr-2 color-neutral" />
+                Preview file
+              </button>
               {isAttachedToNote ? (
                 <button
                   onBlur={closeOnBlur}
@@ -178,6 +192,20 @@ export const PopoverFileSubmenu: FunctionComponent<Props> = ({
               >
                 <Icon type="pencil" className="mr-2 color-neutral" />
                 Rename
+              </button>
+              <button
+                onBlur={closeOnBlur}
+                className="sn-dropdown-item focus:bg-info-backdrop"
+                onClick={() => {
+                  handleFileAction({
+                    type: PopoverFileItemActionType.DeleteFile,
+                    payload: file,
+                  });
+                  closeMenu();
+                }}
+              >
+                <Icon type="trash" className="mr-2 color-danger" />
+                <span className="color-danger">Delete permanently</span>
               </button>
             </>
           )}

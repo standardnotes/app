@@ -223,7 +223,7 @@ export class NotesViewState {
     if (!tag) {
       return;
     }
-    const notes = this.application.getDisplayableItems(
+    const notes = this.application.items.getDisplayableItems(
       ContentType.Note
     ) as SNNote[];
     const renderedNotes = notes.slice(0, this.notesToDisplay);
@@ -264,7 +264,7 @@ export class NotesViewState {
           this.appState.searchOptions.includeProtectedContents,
       },
     });
-    this.application.setNotesDisplayCriteria(criteria);
+    this.application.items.setNotesDisplayCriteria(criteria);
   };
 
   reloadPreferences = () => {
@@ -498,7 +498,7 @@ export class NotesViewState {
   handleEditorChange = async () => {
     const activeNote = this.appState.getActiveNoteController()?.note;
     if (activeNote && activeNote.conflictOf) {
-      this.application.changeAndSaveItem(activeNote.uuid, (mutator) => {
+      this.application.mutator.changeAndSaveItem(activeNote.uuid, (mutator) => {
         mutator.conflictOf = undefined;
       });
     }
