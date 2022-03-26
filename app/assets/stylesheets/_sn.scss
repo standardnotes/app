@@ -606,6 +606,11 @@
   padding-bottom: 2.25rem;
 }
 
+.py-12 {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
 .pl-2 {
   padding-left: 0.5rem;
 }
@@ -620,6 +625,10 @@
 
 .sticky {
   position: sticky;
+}
+
+.top-4 {
+  top: 1rem;
 }
 
 .top-30\% {
@@ -688,6 +697,10 @@
 
 .right-2 {
   right: 0.5rem;
+}
+
+.right-4 {
+  right: 1rem;
 }
 
 .-right-2 {
@@ -1048,4 +1061,8 @@
 
 .vertical-middle {
   vertical-align: middle;
+}
+
+.shadow-overlay-light {
+  box-shadow: 0px 4px 24px 0px rgba(0, 0, 0, 0.05);
 }
