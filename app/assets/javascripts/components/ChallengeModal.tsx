@@ -1,5 +1,5 @@
 import { WebApplication } from '@/ui_models/application';
-import { Dialog } from '@reach/dialog';
+import { DialogContent, DialogOverlay } from '@reach/dialog';
 import {
   ChallengeValue,
   removeFromArray,
@@ -13,6 +13,9 @@ import { confirmDialog } from '@/services/alertService';
 import { STRING_SIGN_OUT_CONFIRMATION } from '@/strings';
 import { createRef } from 'preact';
 import { PureComponent } from '@/components/Abstract/PureComponent';
+import { ProtectedIllustration } from '@standardnotes/stylekit';
+import { DecoratedPasswordInput } from './DecoratedPasswordInput';
+import { Button } from './Button';
 
 type InputValue = {
   prompt: ChallengePrompt;
@@ -275,7 +278,8 @@ export class ChallengeModal extends PureComponent<Props, State> {
       return <></>;
     }
     return (
-      <Dialog
+      <DialogOverlay
+        className="challenge-modal-overlay"
         initialFocusRef={this.initialFocusRef}
         onDismiss={() => {
           if (this.props.challenge.cancelable) {
@@ -283,89 +287,25 @@ export class ChallengeModal extends PureComponent<Props, State> {
           }
         }}
       >
-        <div className="challenge-modal sk-modal-content">
-          <div className="sn-component">
-            <div className="sk-panel">
-              <div className="sk-panel-header">
-                <div className="sk-panel-header-title">
-                  {this.props.challenge.modalTitle}
-                </div>
-              </div>
-              <div className="sk-panel-content">
-                <div className="sk-panel-section">
-                  <div className="sk-p sk-panel-row centered prompt">
-                    <strong>{this.props.challenge.heading}</strong>
-                  </div>
-                  {this.props.challenge.subheading && (
-                    <div className="sk-p sk-panel-row centered subprompt">
-                      {this.props.challenge.subheading}
-                    </div>
-                  )}
-                </div>
-
-                <div className="sk-panel-section">
-                  {this.renderChallengePrompts()}
-                </div>
-              </div>
-              <div className="sk-panel-footer extra-padding">
-                <button
-                  className={
-                    'sn-button w-full ' +
-                    (this.state.processing ? 'neutral' : 'info')
-                  }
-                  disabled={this.state.processing}
-                  onClick={() => this.submit()}
-                >
-                  {this.state.processing ? 'Generating Keys…' : 'Submit'}
-                </button>
-                {this.props.challenge.cancelable && (
-                  <>
-                    <div className="sk-panel-row"></div>
-                    <a
-                      className="sk-panel-row sk-a info centered text-sm"
-                      onClick={() => this.cancel()}
-                    >
-                      Cancel
-                    </a>
-                  </>
-                )}
-              </div>
-              {this.state.showForgotPasscodeLink && (
-                <div className="sk-panel-footer">
-                  {this.state.forgotPasscode ? (
-                    <>
-                      <p className="sk-panel-row sk-p text-center">
-                        {this.state.hasAccount
-                          ? 'If you forgot your application passcode, your ' +
-                            'only option is to clear your local data from this ' +
-                            'device and sign back in to your account.'
-                          : 'If you forgot your application passcode, your ' +
-                            'only option is to delete your data.'}
-                      </p>
-                      <a
-                        className="sk-panel-row sk-a danger centered"
-                        onClick={() => {
-                          this.destroyLocalData();
-                        }}
-                      >
-                        Delete Local Data
-                      </a>
-                    </>
-                  ) : (
-                    <a
-                      className="sk-panel-row sk-a info centered"
-                      onClick={() => this.onForgotPasscodeClick()}
-                    >
-                      Forgot your passcode?
-                    </a>
-                  )}
-                  <div className="sk-panel-row"></div>
-                </div>
-              )}
+        <DialogContent className="challenge-modal sk-modal-content sn-component focus:shadow-none">
+          <div className="flex flex-col items-center bg-default p-4">
+            <ProtectedIllustration className="w-30 h-30 mb-4" />
+            <div className="font-bold text-base mb-4">
+              {this.props.challenge.heading}
             </div>
+            <DecoratedPasswordInput className="min-w-68 mb-3.5" />
+            <Button
+              type="primary"
+              className="min-w-68"
+              onClick={() => {
+                //
+              }}
+            >
+              Unlock
+            </Button>
           </div>
-        </div>
-      </Dialog>
+        </DialogContent>
+      </DialogOverlay>
     );
   }
 }
