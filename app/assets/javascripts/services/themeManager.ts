@@ -20,52 +20,16 @@ export class ThemeManager extends ApplicationService {
   private activeThemes: UuidString[] = [];
   private unregisterDesktop!: () => void;
   private unregisterStream!: () => void;
+  private lastUseDeviceThemeSettings = false;
 
   constructor(application: WebApplication) {
     super(application, new InternalEventBus());
     this.colorSchemeEventHandler = this.colorSchemeEventHandler.bind(this);
   }
 
-  private colorSchemeEventHandler(event: MediaQueryListEvent) {
-    this.setThemeAsPerColorScheme(event.matches);
-  }
-
-  private setThemeAsPerColorScheme(prefersDarkColorScheme: boolean) {
-    const useDeviceThemeSettings = this.application.getPreference(
-      PrefKey.UseSystemColorScheme,
-      false
-    );
-
-    if (useDeviceThemeSettings) {
-      const preference = prefersDarkColorScheme
-        ? PrefKey.AutoDarkThemeIdentifier
-        : PrefKey.AutoLightThemeIdentifier;
-      const themes = this.application.items.getDisplayableItems(
-        ContentType.Theme
-      ) as SNTheme[];
-
-      const enableDefaultTheme = () => {
-        const activeTheme = themes.find(
-          (theme) => theme.active && !theme.isLayerable()
-        );
-        if (activeTheme) this.application.mutator.toggleTheme(activeTheme);
-      };
-
-      const themeIdentifier = this.application.getPreference(
-        preference,
-        'Default'
-      ) as string;
-      if (themeIdentifier === 'Default') {
-        enableDefaultTheme();
-      } else {
-        const theme = themes.find(
-          (theme) => theme.package_info.identifier === themeIdentifier
-        );
-        if (theme && !theme.active) {
-          this.application.mutator.toggleTheme(theme);
-        }
-      }
-    }
+  async onAppStart() {
+    super.onAppStart();
+    this.registerObservers();
   }
 
   async onAppEvent(event: ApplicationEvent) {
@@ -95,13 +59,31 @@ export class ThemeManager extends ApplicationService {
         break;
       }
       case ApplicationEvent.PreferencesChanged: {
-        const prefersDarkColorScheme = window.matchMedia(
-          '(prefers-color-scheme: dark)'
-        );
-        this.setThemeAsPerColorScheme(prefersDarkColorScheme.matches);
+        this.handlePreferencesChangeEvent();
         break;
       }
     }
+  }
+
+  private handlePreferencesChangeEvent(): void {
+    const useDeviceThemeSettings = this.application.getPreference(
+      PrefKey.UseSystemColorScheme,
+      false
+    );
+
+    if (useDeviceThemeSettings === this.lastUseDeviceThemeSettings) {
+      return;
+    }
+
+    this.lastUseDeviceThemeSettings = useDeviceThemeSettings;
+
+    const prefersDarkColorScheme = window.matchMedia(
+      '(prefers-color-scheme: dark)'
+    );
+    this.setThemeAsPerColorScheme(
+      useDeviceThemeSettings,
+      prefersDarkColorScheme.matches
+    );
   }
 
   get webApplication() {
@@ -158,9 +140,47 @@ export class ThemeManager extends ApplicationService {
     }
   }
 
-  async onAppStart() {
-    super.onAppStart();
-    this.registerObservers();
+  private colorSchemeEventHandler(event: MediaQueryListEvent) {
+    this.setThemeAsPerColorScheme(
+      this.lastUseDeviceThemeSettings,
+      event.matches
+    );
+  }
+
+  private setThemeAsPerColorScheme(
+    useDeviceThemeSettings: boolean,
+    prefersDarkColorScheme: boolean
+  ) {
+    if (useDeviceThemeSettings) {
+      const preference = prefersDarkColorScheme
+        ? PrefKey.AutoDarkThemeIdentifier
+        : PrefKey.AutoLightThemeIdentifier;
+      const themes = this.application.items.getDisplayableItems(
+        ContentType.Theme
+      ) as SNTheme[];
+
+      const enableDefaultTheme = () => {
+        const activeTheme = themes.find(
+          (theme) => theme.active && !theme.isLayerable()
+        );
+        if (activeTheme) this.application.mutator.toggleTheme(activeTheme);
+      };
+
+      const themeIdentifier = this.application.getPreference(
+        preference,
+        'Default'
+      ) as string;
+      if (themeIdentifier === 'Default') {
+        enableDefaultTheme();
+      } else {
+        const theme = themes.find(
+          (theme) => theme.package_info.identifier === themeIdentifier
+        );
+        if (theme && !theme.active) {
+          this.application.mutator.toggleTheme(theme);
+        }
+      }
+    }
   }
 
   private async activateCachedThemes() {

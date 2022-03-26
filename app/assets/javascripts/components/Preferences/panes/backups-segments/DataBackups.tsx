@@ -213,7 +213,7 @@ export const DataBackups = observer(({ application, appState }: Props) => {
           <div class="flex flex-row items-center mt-3">
             <Button
               type="normal"
-              label="Import Backup"
+              label="Import backup"
               onClick={handleImportFile}
             />
             <input

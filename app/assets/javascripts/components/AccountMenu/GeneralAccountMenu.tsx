@@ -185,7 +185,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
                 }}
               >
                 <Icon type="signOut" className={iconClassName} />
-                Sign out and clear local data
+                Sign out workspace
               </MenuItem>
             </>
           ) : null}

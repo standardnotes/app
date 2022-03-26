@@ -222,7 +222,7 @@ export const PasscodeLock = observer(({ application, appState }: Props) => {
 
               {!showPasscodeForm && (
                 <Button
-                  label="Add Passcode"
+                  label="Add passcode"
                   onClick={handleAddPassCode}
                   type="primary"
                 />
