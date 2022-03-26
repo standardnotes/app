@@ -17,7 +17,7 @@ import { NoteGroupView } from '@/components/NoteGroupView';
 import { Footer } from '@/components/Footer';
 import { SessionsModal } from '@/components/SessionsModal';
 import { PreferencesViewWrapper } from '@/components/Preferences/PreferencesViewWrapper';
-import { ChallengeModal } from '@/components/ChallengeModal';
+import { ChallengeModal } from '@/components/ChallengeModal/ChallengeModal';
 import { NotesContextMenu } from '@/components/NotesContextMenu';
 import { PurchaseFlowWrapper } from '@/components/PurchaseFlow/PurchaseFlowWrapper';
 import { render } from 'preact';
