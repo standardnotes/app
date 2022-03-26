@@ -25,7 +25,7 @@ export const Verification: FunctionComponent<{
       </ModalDialogLabel>
       <ModalDialogDescription className="h-33">
         <div className="flex-grow flex flex-col">
-          <div className="flex flex-row items-center">
+          <div className="flex flex-row items-center mb-4">
             <Bullet />
             <div className="min-w-1" />
             <div className="text-sm">
@@ -37,7 +37,6 @@ export const Verification: FunctionComponent<{
               onChange={act.setInputSecretKey}
             />
           </div>
-          <div className="min-h-1" />
           <div className="flex flex-row items-center">
             <Bullet />
             <div className="min-w-1" />

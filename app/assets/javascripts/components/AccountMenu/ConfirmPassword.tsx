@@ -7,9 +7,9 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import { AccountMenuPane } from '.';
 import { Button } from '../Button';
 import { Checkbox } from '../Checkbox';
+import { DecoratedPasswordInput } from '../DecoratedPasswordInput';
+import { Icon } from '../Icon';
 import { IconButton } from '../IconButton';
-import { InputWithIcon } from '../InputWithIcon';
-import { AdvancedOptions } from './AdvancedOptions';
 
 type Props = {
   appState: AppState;
@@ -23,7 +23,6 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
   ({ application, appState, setMenuPane, email, password }) => {
     const { notesAndTagsCount } = appState.accountMenu;
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
     const [isRegistering, setIsRegistering] = useState(false);
     const [isEphemeral, setIsEphemeral] = useState(false);
     const [shouldMergeLocal, setShouldMergeLocal] = useState(true);
@@ -35,10 +34,8 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
       passwordInputRef.current?.focus();
     }, []);
 
-    const handlePasswordChange = (e: Event) => {
-      if (e.target instanceof HTMLInputElement) {
-        setConfirmPassword(e.target.value);
-      }
+    const handlePasswordChange = (text: string) => {
+      setConfirmPassword(text);
     };
 
     const handleEphemeralChange = () => {
@@ -117,23 +114,15 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
           your data.
         </div>
         <form onSubmit={handleConfirmFormSubmit} className="px-3 mb-1">
-          <InputWithIcon
+          <DecoratedPasswordInput
             className="mb-2"
-            icon="password"
-            inputType={showPassword ? 'text' : 'password'}
-            placeholder="Confirm password"
-            value={confirmPassword}
+            disabled={isRegistering}
+            left={[<Icon type="password" className="color-neutral" />]}
             onChange={handlePasswordChange}
             onKeyDown={handleKeyDown}
-            toggle={{
-              toggleOnIcon: 'eye-off',
-              toggleOffIcon: 'eye',
-              title: 'Show password',
-              toggled: showPassword,
-              onClick: setShowPassword,
-            }}
+            placeholder="Confirm password"
             ref={passwordInputRef}
-            disabled={isRegistering}
+            value={confirmPassword}
           />
           {error ? <div className="color-dark-red my-2">{error}</div> : null}
           <Button

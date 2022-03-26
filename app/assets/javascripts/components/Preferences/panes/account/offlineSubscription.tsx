@@ -103,7 +103,7 @@ export const OfflineSubscription: FunctionalComponent<IProps> = observer(
                   <DecoratedInput
                     onChange={(code) => setActivationCode(code)}
                     placeholder={'Offline Subscription Code'}
-                    text={activationCode}
+                    value={activationCode}
                     disabled={isSuccessfullyActivated}
                     className={'mb-3'}
                   />

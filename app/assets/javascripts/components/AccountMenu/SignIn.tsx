@@ -7,9 +7,10 @@ import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { AccountMenuPane } from '.';
 import { Button } from '../Button';
 import { Checkbox } from '../Checkbox';
+import { DecoratedInput } from '../DecoratedInput';
+import { DecoratedPasswordInput } from '../DecoratedPasswordInput';
 import { Icon } from '../Icon';
 import { IconButton } from '../IconButton';
-import { InputWithIcon } from '../InputWithIcon';
 import { AdvancedOptions } from './AdvancedOptions';
 
 type Props = {
@@ -28,7 +29,6 @@ export const SignInPane: FunctionComponent<Props> = observer(
 
     const [isStrictSignin, setIsStrictSignin] = useState(false);
     const [isSigningIn, setIsSigningIn] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
     const [shouldMergeLocal, setShouldMergeLocal] = useState(true);
     const [isVault, setIsVault] = useState(false);
 
@@ -51,19 +51,15 @@ export const SignInPane: FunctionComponent<Props> = observer(
       }
     };
 
-    const handleEmailChange = (e: Event) => {
-      if (e.target instanceof HTMLInputElement) {
-        setEmail(e.target.value);
-      }
+    const handleEmailChange = (text: string) => {
+      setEmail(text);
     };
 
-    const handlePasswordChange = (e: Event) => {
+    const handlePasswordChange = (text: string) => {
       if (error.length) {
         setError('');
       }
-      if (e.target instanceof HTMLInputElement) {
-        setPassword(e.target.value);
-      }
+      setPassword(text);
     };
 
     const handleEphemeralChange = () => {
@@ -148,10 +144,10 @@ export const SignInPane: FunctionComponent<Props> = observer(
           <div className="sn-account-menu-headline">Sign in</div>
         </div>
         <div className="px-3 mb-1">
-          <InputWithIcon
+          <DecoratedInput
             className={`mb-2 ${error ? 'border-dark-red' : null}`}
-            icon="email"
-            inputType="email"
+            left={[<Icon type="email" className="color-neutral" />]}
+            type="email"
             placeholder="Email"
             value={email}
             onChange={handleEmailChange}
@@ -160,24 +156,16 @@ export const SignInPane: FunctionComponent<Props> = observer(
             disabled={isSigningIn || isVault}
             ref={emailInputRef}
           />
-          <InputWithIcon
+          <DecoratedPasswordInput
             className={`mb-2 ${error ? 'border-dark-red' : null}`}
-            icon="password"
-            inputType={showPassword ? 'text' : 'password'}
-            placeholder="Password"
-            value={password}
+            disabled={isSigningIn}
+            left={[<Icon type="password" className="color-neutral" />]}
             onChange={handlePasswordChange}
             onFocus={resetInvalid}
             onKeyDown={handleKeyDown}
-            disabled={isSigningIn}
-            toggle={{
-              toggleOnIcon: 'eye-off',
-              toggleOffIcon: 'eye',
-              title: 'Show password',
-              toggled: showPassword,
-              onClick: setShowPassword,
-            }}
+            placeholder="Password"
             ref={passwordInputRef}
+            value={password}
           />
           {error ? <div className="color-dark-red my-2">{error}</div> : null}
           <Button
