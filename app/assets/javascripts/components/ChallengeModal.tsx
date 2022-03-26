@@ -16,6 +16,7 @@ import { PureComponent } from '@/components/Abstract/PureComponent';
 import { ProtectedIllustration } from '@standardnotes/stylekit';
 import { DecoratedPasswordInput } from './DecoratedPasswordInput';
 import { Button } from './Button';
+import { DecoratedInput } from './DecoratedInput';
 
 type InputValue = {
   prompt: ChallengePrompt;
@@ -246,18 +247,29 @@ export class ChallengeModal extends PureComponent<Props, State> {
                 this.submit();
               }}
             >
-              <input
-                className="sk-input contrast"
-                value={this.state.values[prompt.id]!.value as string | number}
-                onChange={(event) => {
-                  const value = (event.target as HTMLInputElement).value;
-                  this.state.values[prompt.id]!.value = value;
-                  this.onTextValueChange(prompt);
-                }}
-                ref={index === 0 ? this.initialFocusRef : undefined}
-                placeholder={prompt.title}
-                type={prompt.secureTextEntry ? 'password' : 'text'}
-              />
+              {prompt.secureTextEntry ? (
+                <DecoratedPasswordInput
+                  ref={index === 0 ? this.initialFocusRef : undefined}
+                  className="min-w-68 mb-3.5"
+                  placeholder={prompt.title}
+                  value={this.state.values[prompt.id]?.value as string}
+                  onChange={(value: string) => {
+                    this.state.values[prompt.id]!.value = value;
+                    this.onTextValueChange(prompt);
+                  }}
+                />
+              ) : (
+                <DecoratedInput
+                  ref={index === 0 ? this.initialFocusRef : undefined}
+                  className="min-w-68 mb-3.5"
+                  placeholder={prompt.title}
+                  value={this.state.values[prompt.id]?.value as string}
+                  onChange={(value: string) => {
+                    this.state.values[prompt.id]!.value = value;
+                    this.onTextValueChange(prompt);
+                  }}
+                />
+              )}
             </form>
           </div>
         )}
@@ -293,15 +305,25 @@ export class ChallengeModal extends PureComponent<Props, State> {
             <div className="font-bold text-base mb-4">
               {this.props.challenge.heading}
             </div>
-            <DecoratedPasswordInput className="min-w-68 mb-3.5" />
+            {this.renderChallengePrompts()}
             <Button
               type="primary"
+              disabled={this.state.processing}
+              className="min-w-68 mb-3.5"
+              onClick={() => {
+                this.submit();
+              }}
+            >
+              {this.state.processing ? 'Generating Keys...' : 'Unlock'}
+            </Button>
+            <Button
+              type="normal"
               className="min-w-68"
               onClick={() => {
                 //
               }}
             >
-              Unlock
+              Other options
             </Button>
           </div>
         </DialogContent>
