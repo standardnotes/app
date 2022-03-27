@@ -318,6 +318,10 @@
   max-width: 80%;
 }
 
+.max-w-68 {
+  max-width: 17rem;
+}
+
 .max-w-72 {
   max-width: 18rem;
 }
@@ -461,7 +465,7 @@
   max-height: 27.5rem;
 }
 
-.border-danger {
+.sn-component .border-danger {
   border-color: var(--sn-stylekit-danger-color);
 }
 
@@ -1065,4 +1069,12 @@
 
 .shadow-overlay-light {
   box-shadow: 0px 4px 24px 0px rgba(0, 0, 0, 0.05);
+}
+
+.sn-component .focus\:brightness-default:focus {
+  filter: brightness(100%);
+}
+
+.sn-component .hover\:brightness-default:hover {
+  filter: brightness(100%);
 }
