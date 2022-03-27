@@ -44,26 +44,35 @@ export const ChallengeModalPrompt: FunctionComponent<Props> = ({
         <>
           <div className="sk-horizontal-group mt-3">
             <div className="sk-p sk-bold">Allow protected access for</div>
-            {ProtectionSessionDurations.map((option) => (
-              <label>
-                <input
-                  type="radio"
-                  name={`${prompt.id}-session-duration`}
-                  className={
-                    'sk-a info ' +
-                    (option.valueInSeconds === values[prompt.id].value
-                      ? 'boxed'
-                      : '')
-                  }
-                  checked={option.valueInSeconds === values[prompt.id].value}
-                  onClick={(event) => {
-                    event.preventDefault();
-                    onValueChange(option.valueInSeconds, prompt);
-                  }}
-                />
-                {option.label}
-              </label>
-            ))}
+            {ProtectionSessionDurations.map((option) => {
+              const selected =
+                option.valueInSeconds === values[prompt.id].value;
+
+              return (
+                <label
+                  className={`cursor-pointer ${
+                    selected
+                      ? 'bg-info color-info-contrast rounded px-2 py-1.5'
+                      : 'color-info hover:underline'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name={`session-duration-${prompt.id}`}
+                    className={'appearance-none m-0'}
+                    style={{
+                      marginRight: 0,
+                    }}
+                    checked={selected}
+                    onChange={(event) => {
+                      event.preventDefault();
+                      onValueChange(option.valueInSeconds, prompt);
+                    }}
+                  />
+                  {option.label}
+                </label>
+              );
+            })}
           </div>
         </>
       ) : (
