@@ -20,7 +20,7 @@ type InputValue = {
   invalid: boolean;
 };
 
-type Values = Record<ChallengePrompt['id'], InputValue>;
+export type ChallengeModalValues = Record<ChallengePrompt['id'], InputValue>;
 
 type Props = {
   application: WebApplication;
@@ -29,9 +29,9 @@ type Props = {
 };
 
 const validateValues = (
-  values: Values,
+  values: ChallengeModalValues,
   prompts: ChallengePrompt[]
-): Values | undefined => {
+): ChallengeModalValues | undefined => {
   let hasInvalidValues = false;
   const validatedValues = { ...values };
   for (const prompt of prompts) {
@@ -51,8 +51,8 @@ export const ChallengeModal: FunctionComponent<Props> = ({
   challenge,
   onDismiss,
 }) => {
-  const [values, setValues] = useState<Values>(() => {
-    const values = {} as Values;
+  const [values, setValues] = useState<ChallengeModalValues>(() => {
+    const values = {} as ChallengeModalValues;
     for (const prompt of challenge.prompts) {
       values[prompt.id] = {
         prompt,
@@ -183,7 +183,7 @@ export const ChallengeModal: FunctionComponent<Props> = ({
         className={`challenge-modal flex flex-col items-center bg-default px-9 py-12 rounded relative ${
           challenge.reason !== ChallengeReason.ApplicationUnlock
             ? 'shadow-overlay-light border-1 border-solid border-main'
-            : ''
+            : 'focus:shadow-none'
         }`}
       >
         {challenge.cancelable && (
@@ -196,18 +196,22 @@ export const ChallengeModal: FunctionComponent<Props> = ({
           </button>
         )}
         <ProtectedIllustration className="w-30 h-30 mb-4" />
-        <div className="font-bold text-base mb-4">{challenge.heading}</div>
+        <div className="font-bold text-base text-center mb-4">
+          {challenge.heading}
+        </div>
         <form
-          className="min-w-68 mb-4"
+          className="flex flex-col items-center min-w-68 mb-4"
           onSubmit={(e) => {
             e.preventDefault();
             submit();
           }}
         >
-          {challenge.prompts.map((prompt) => (
+          {challenge.prompts.map((prompt, index) => (
             <ChallengeModalPrompt
               key={prompt.id}
               prompt={prompt}
+              values={values}
+              index={index}
               onValueChange={onValueChange}
               isInvalid={values[prompt.id].invalid}
             />
