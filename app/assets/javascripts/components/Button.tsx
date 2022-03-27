@@ -15,6 +15,12 @@ const buttonClasses: { [type in ButtonType]: string } = {
   danger: `${baseClass} bg-default color-danger border-solid border-main border-1 focus:bg-contrast hover:bg-contrast`,
 };
 
+const disabledClasses: { [type in ButtonType]: string } = {
+  normal: 'color-grey-2',
+  primary: 'bg-grey-2 focus:brightness-default hover:brightness-default',
+  danger: 'color-grey-2',
+};
+
 type ButtonProps = {
   children?: ComponentChildren;
   className?: string;
@@ -43,11 +49,12 @@ export const Button: FunctionComponent<ButtonProps> = forwardRef(
     ref: Ref<HTMLButtonElement>
   ) => {
     const buttonClass = buttonClasses[type];
-    const cursorClass = disabled ? 'cursor-default' : 'cursor-pointer';
+    const cursorClass = disabled ? 'cursor-not-allowed' : 'cursor-pointer';
+    const disabledClass = disabled ? disabledClasses[type] : '';
 
     return (
       <button
-        className={`${buttonClass} ${cursorClass} ${className}`}
+        className={`${buttonClass} ${cursorClass} ${disabledClass} ${className}`}
         onBlur={onBlur}
         onClick={(e) => {
           onClick(e);
