@@ -246,6 +246,10 @@
   margin-left: 0.75rem;
 }
 
+.sn-component .mr-0 {
+  margin-right: 0;
+}
+
 .mr-2\.5 {
   margin-right: 0.625rem;
 }
@@ -1077,4 +1081,9 @@
 
 .sn-component .hover\:brightness-default:hover {
   filter: brightness(100%);
+}
+
+.appearance-none {
+  -webkit-appearance: none;
+  appearance: none;
 }
