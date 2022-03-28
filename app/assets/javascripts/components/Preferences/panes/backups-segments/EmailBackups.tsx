@@ -122,6 +122,9 @@ export const EmailBackups = observer(({ application }: Props) => {
   };
 
   const toggleMuteFailedBackupEmails = async () => {
+    if (!isEntitledToEmailBackups) {
+      return;
+    }
     const previousValue = isFailedBackupEmailMuted;
     setIsFailedBackupEmailMuted(!isFailedBackupEmailMuted);
 
@@ -132,6 +135,13 @@ export const EmailBackups = observer(({ application }: Props) => {
     if (!updateResult) {
       setIsFailedBackupEmailMuted(previousValue);
     }
+  };
+
+  const handleEmailFrequencyChange = (item: string) => {
+    if (!isEntitledToEmailBackups) {
+      return;
+    }
+    updateEmailFrequency(item as EmailBackupFrequency);
   };
 
   return (
@@ -176,9 +186,8 @@ export const EmailBackups = observer(({ application }: Props) => {
                 label="Select email frequency"
                 items={emailFrequencyOptions}
                 value={emailFrequency}
-                onChange={(item) => {
-                  updateEmailFrequency(item as EmailBackupFrequency);
-                }}
+                onChange={handleEmailFrequencyChange}
+                disabled={!isEntitledToEmailBackups}
               />
             )}
           </div>
@@ -196,6 +205,7 @@ export const EmailBackups = observer(({ application }: Props) => {
               <Switch
                 onChange={toggleMuteFailedBackupEmails}
                 checked={!isFailedBackupEmailMuted}
+                disabled={!isEntitledToEmailBackups}
               />
             )}
           </div>
