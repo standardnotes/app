@@ -292,7 +292,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
                   label="Close"
                   onClick={dismissModal}
                   ref={closeButtonRef}
-                  type="normal"
+                  variant="normal"
                 />
               </div>
               {selectedRevision && (
@@ -301,7 +301,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
                     <Button
                       className="py-1.35 mr-2.5"
                       onClick={deleteSelectedRevision}
-                      type="normal"
+                      variant="normal"
                     >
                       {isDeletingRevision ? (
                         <div className="sk-spinner my-1 w-3 h-3 spinner-info" />
@@ -314,13 +314,13 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
                     className="py-1.35 mr-2.5"
                     label="Restore as a copy"
                     onClick={restoreAsCopy}
-                    type="normal"
+                    variant="normal"
                   />
                   <Button
                     className="py-1.35"
                     label="Restore version"
                     onClick={restore}
-                    type="primary"
+                    variant="primary"
                   />
                 </div>
               )}

@@ -120,7 +120,7 @@ export const Extensions: FunctionComponent<{
             <div className="min-h-2" />
             <Button
               className="min-w-20"
-              type="normal"
+              variant="normal"
               label="Install"
               onClick={() => submitExtensionUrl(customUrl)}
             />

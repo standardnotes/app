@@ -111,7 +111,7 @@ export const FilePreviewModal: FunctionComponent<Props> = ({
           <div className="flex items-center">
             {objectUrl && (
               <Button
-                type="primary"
+                variant="primary"
                 className="mr-4"
                 onClick={() => {
                   application
@@ -151,7 +151,7 @@ export const FilePreviewModal: FunctionComponent<Props> = ({
                   </div>
                   <div className="flex items-center">
                     <Button
-                      type="primary"
+                      variant="primary"
                       className="mr-3"
                       onClick={() => {
                         getObjectUrl();
@@ -160,7 +160,7 @@ export const FilePreviewModal: FunctionComponent<Props> = ({
                       Try again
                     </Button>
                     <Button
-                      type="normal"
+                      variant="normal"
                       onClick={() => {
                         application.getAppState().files.downloadFile(file);
                       }}
@@ -176,7 +176,7 @@ export const FilePreviewModal: FunctionComponent<Props> = ({
                     application.
                   </div>
                   <Button
-                    type="primary"
+                    variant="primary"
                     onClick={() => {
                       application.getAppState().files.downloadFile(file);
                     }}

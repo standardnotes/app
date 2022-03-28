@@ -56,7 +56,7 @@ export const ConfirmCustomExtension: FunctionComponent<{
       <div className="flex flex-row">
         <Button
           className="min-w-20"
-          type="normal"
+          variant="normal"
           label="Cancel"
           onClick={() => callback(false)}
         />
@@ -65,7 +65,7 @@ export const ConfirmCustomExtension: FunctionComponent<{
 
         <Button
           className="min-w-20"
-          type="normal"
+          variant="normal"
           label="Install"
           onClick={() => callback(true)}
         />

@@ -63,13 +63,13 @@ export const ScanQRCode: FunctionComponent<{
       <ModalDialogButtons>
         <Button
           className="min-w-20"
-          type="normal"
+          variant="normal"
           label="Cancel"
           onClick={() => act.cancelActivation()}
         />
         <Button
           className="min-w-20"
-          type="primary"
+          variant="primary"
           label="Next"
           onClick={() => act.openSaveSecretKey()}
         />

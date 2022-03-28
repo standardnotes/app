@@ -201,7 +201,7 @@ export const DataBackups = observer(({ application, appState }: Props) => {
           )}
 
           <Button
-            type="normal"
+            variant="normal"
             onClick={downloadDataArchive}
             label="Download backup"
             className="mt-2"
@@ -212,7 +212,7 @@ export const DataBackups = observer(({ application, appState }: Props) => {
 
           <div class="flex flex-row items-center mt-3">
             <Button
-              type="normal"
+              variant="normal"
               label="Import backup"
               onClick={handleImportFile}
             />

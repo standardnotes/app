@@ -222,7 +222,7 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
       {shouldShowEnableButton && (
         <div>
           <Button
-            type="normal"
+            variant="normal"
             label="Enable"
             className={`px-1 text-xs min-w-40 ${additionalClass}`}
             onClick={installIntegration}
@@ -235,13 +235,13 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
         <div className={'flex flex-col items-end'}>
           <Button
             className={`min-w-40 mb-2 ${additionalClass}`}
-            type="normal"
+            variant="normal"
             label="Perform Backup"
             onClick={performBackupNow}
           />
           <Button
             className="min-w-40"
-            type="normal"
+            variant="normal"
             label="Disable"
             onClick={disable}
           />

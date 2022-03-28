@@ -130,7 +130,7 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
             label={
               isRegistering ? 'Creating account...' : 'Create account & sign in'
             }
-            type="primary"
+            variant="primary"
             onClick={handleConfirmFormSubmit}
             disabled={isRegistering}
           />

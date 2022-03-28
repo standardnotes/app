@@ -151,7 +151,7 @@ export const SignIn: FunctionComponent<Props> = observer(
             </div>
             <Button
               className={`${isSigningIn ? 'min-w-30' : 'min-w-24'} py-2.5 mb-5`}
-              type="primary"
+              variant="primary"
               label={isSigningIn ? 'Signing in...' : 'Sign in'}
               onClick={handleSignIn}
               disabled={isSigningIn}

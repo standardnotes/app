@@ -1045,3 +1045,19 @@
 .vertical-middle {
   vertical-align: middle;
 }
+
+.sn-component .focus\:brightness-default:focus {
+  filter: brightness(100%);
+}
+
+.sn-component .hover\:brightness-default:hover {
+  filter: brightness(100%);
+}
+
+.sn-component .focus\:bg-default:focus {
+  background-color: var(--sn-stylekit-background-color);
+}
+
+.sn-component .hover\:bg-default:hover {
+  background-color: var(--sn-stylekit-background-color);
+}

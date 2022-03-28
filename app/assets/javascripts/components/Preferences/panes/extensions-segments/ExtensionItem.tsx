@@ -104,7 +104,7 @@ export const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({
         <div className="flex flex-row">
           <Button
             className="min-w-20"
-            type="normal"
+            variant="normal"
             label="Uninstall"
             onClick={() => uninstall(extension)}
           />

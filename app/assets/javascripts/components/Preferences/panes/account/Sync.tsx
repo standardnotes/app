@@ -55,7 +55,7 @@ export const Sync: FunctionComponent<Props> = observer(
               </Text>
               <Button
                 className="min-w-20 mt-3"
-                type="normal"
+                variant="normal"
                 label="Sync now"
                 disabled={isSyncingInProgress}
                 onClick={doSynchronization}

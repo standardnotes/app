@@ -65,13 +65,13 @@ export const Verification: FunctionComponent<{
         )}
         <Button
           className="min-w-20"
-          type="normal"
+          variant="normal"
           label="Back"
           onClick={act.openSaveSecretKey}
         />
         <Button
           className="min-w-20"
-          type="primary"
+          variant="primary"
           label="Next"
           onClick={act.enable2FA}
         />

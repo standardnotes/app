@@ -102,7 +102,7 @@ export const Listed = observer(({ application }: Props) => {
           <Text>Create a free Listed author account to get started.</Text>
           <Button
             className="mt-3"
-            type="normal"
+            variant="normal"
             disabled={requestingAccount}
             label={
               requestingAccount ? 'Creating account...' : 'Create new author'
