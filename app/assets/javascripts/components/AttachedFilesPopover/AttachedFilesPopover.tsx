@@ -196,7 +196,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
                   : 'No files found in this account'}
               </div>
               <Button
-                type="normal"
+                variant="normal"
                 onClick={handleAttachFilesClick}
                 onBlur={closeOnBlur}
               >

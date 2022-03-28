@@ -46,7 +46,7 @@ export const NoSubscription: FunctionalComponent<{
         {application.hasAccount() && (
           <Button
             className="min-w-20 mt-3"
-            type="primary"
+            variant="primary"
             label="Subscribe"
             onClick={onPurchaseClick}
           />

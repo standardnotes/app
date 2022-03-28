@@ -204,7 +204,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
             </div>
             <Button
               className="py-2.5 xs:mb-4"
-              type="primary"
+              variant="primary"
               label={
                 isCreatingAccount ? 'Creating account...' : 'Create account'
               }

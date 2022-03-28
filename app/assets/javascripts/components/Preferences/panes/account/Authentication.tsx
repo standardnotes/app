@@ -39,7 +39,7 @@ export const Authentication: FunctionComponent<{
             and enable end-to-end encryption.
           </Text>
           <Button
-            type="primary"
+            variant="primary"
             label="Create free account"
             onClick={clickRegister}
             className="mb-3"

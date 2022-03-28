@@ -27,7 +27,7 @@ export const TwoFactorSuccess: FunctionComponent<{
     <ModalDialogButtons>
       <Button
         className="min-w-20"
-        type="primary"
+        variant="primary"
         label="Finish"
         onClick={act.finishActivation}
       />

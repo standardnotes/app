@@ -81,7 +81,7 @@ export const SubscriptionInformation = observer(
         <StatusText subscriptionState={subscriptionState} />
         <Button
           className="min-w-20 mt-3 mr-3"
-          type="normal"
+          variant="normal"
           label="Manage subscription"
           onClick={manageSubscription}
         />

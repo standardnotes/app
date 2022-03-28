@@ -169,7 +169,7 @@ export const ChangeEmail: FunctionalComponent<Props> = ({
         <ModalDialogButtons className="px-4.5">
           <Button
             className="min-w-20"
-            type="primary"
+            variant="primary"
             label={submitButtonTitle}
             onClick={handleSubmit}
           />

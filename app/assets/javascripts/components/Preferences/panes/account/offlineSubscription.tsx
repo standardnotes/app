@@ -2,8 +2,6 @@ import { FunctionalComponent } from 'preact';
 import { Subtitle } from '@/components/Preferences/components';
 import { DecoratedInput } from '@/components/DecoratedInput';
 import { Button } from '@/components/Button';
-import { JSXInternal } from '@node_modules/preact/src/jsx';
-import TargetedEvent = JSXInternal.TargetedEvent;
 import { useEffect, useState } from 'preact/hooks';
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
@@ -40,9 +38,7 @@ export const OfflineSubscription: FunctionalComponent<IProps> = observer(
       );
     };
 
-    const handleSubscriptionCodeSubmit = async (
-      event: TargetedEvent<HTMLFormElement, Event>
-    ) => {
+    const handleSubscriptionCodeSubmit = async (event: Event) => {
       event.preventDefault();
 
       const result = await application.features.setOfflineFeaturesCode(
@@ -117,7 +113,7 @@ export const OfflineSubscription: FunctionalComponent<IProps> = observer(
               )}
               {hasUserPreviouslyStoredCode && (
                 <Button
-                  type="danger"
+                  dangerStyle={true}
                   label="Remove offline key"
                   onClick={() => {
                     handleRemoveClick();
@@ -127,13 +123,9 @@ export const OfflineSubscription: FunctionalComponent<IProps> = observer(
               {!hasUserPreviouslyStoredCode && !isSuccessfullyActivated && (
                 <Button
                   label={'Submit'}
-                  type="primary"
+                  variant="primary"
                   disabled={activationCode === ''}
-                  onClick={(event) =>
-                    handleSubscriptionCodeSubmit(
-                      event as TargetedEvent<HTMLFormElement>
-                    )
-                  }
+                  onClick={(event) => handleSubscriptionCodeSubmit(event)}
                 />
               )}
             </form>

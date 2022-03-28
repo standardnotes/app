@@ -171,7 +171,7 @@ export const SignInPane: FunctionComponent<Props> = observer(
           <Button
             className="btn-w-full mt-1 mb-3"
             label={isSigningIn ? 'Signing in...' : 'Sign in'}
-            type="primary"
+            variant="primary"
             onClick={handleSignInFormSubmit}
             disabled={isSigningIn}
           />

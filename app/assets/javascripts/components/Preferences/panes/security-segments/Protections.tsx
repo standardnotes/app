@@ -107,7 +107,7 @@ export const Protections: FunctionalComponent<Props> = ({ application }) => {
         {protectionsDisabledUntil && (
           <Button
             className="mt-3"
-            type="primary"
+            variant="primary"
             label="End Unprotected Access"
             onClick={enableProtections}
           />

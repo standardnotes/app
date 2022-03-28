@@ -1087,3 +1087,11 @@
   -webkit-appearance: none;
   appearance: none;
 }
+
+.sn-component .focus\:bg-default:focus {
+  background-color: var(--sn-stylekit-background-color);
+}
+
+.sn-component .hover\:bg-default:hover {
+  background-color: var(--sn-stylekit-background-color);
+}
