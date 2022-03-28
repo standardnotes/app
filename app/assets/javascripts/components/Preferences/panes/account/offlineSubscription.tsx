@@ -113,7 +113,7 @@ export const OfflineSubscription: FunctionalComponent<IProps> = observer(
               )}
               {hasUserPreviouslyStoredCode && (
                 <Button
-                  variant="danger"
+                  dangerStyle={true}
                   label="Remove offline key"
                   onClick={() => {
                     handleRemoveClick();

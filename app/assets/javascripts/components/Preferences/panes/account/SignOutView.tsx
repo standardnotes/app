@@ -48,7 +48,7 @@ const SignOutView: FunctionComponent<{
           </Text>
           <div className="min-h-3" />
           <Button
-            variant="danger"
+            dangerStyle={true}
             label="Sign out workspace"
             onClick={() => {
               appState.accountMenu.setSigningOut(true);
@@ -76,7 +76,7 @@ const ClearSessionDataView: FunctionComponent<{
         </Text>
         <div className="min-h-3" />
         <Button
-          variant="danger"
+          dangerStyle={true}
           label="Clear workspace"
           onClick={() => {
             appState.accountMenu.setSigningOut(true);

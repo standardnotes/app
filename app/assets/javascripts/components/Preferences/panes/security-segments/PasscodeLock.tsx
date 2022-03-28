@@ -282,7 +282,7 @@ export const PasscodeLock = observer(({ application, appState }: Props) => {
                   className="mr-3"
                 />
                 <Button
-                  variant="danger"
+                  dangerStyle={true}
                   label="Remove Passcode"
                   onClick={removePasscodePressed}
                 />

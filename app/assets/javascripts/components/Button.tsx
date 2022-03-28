@@ -4,24 +4,53 @@ import { forwardRef } from 'preact/compat';
 
 const baseClass = `rounded px-4 py-1.75 font-bold text-sm fit-content`;
 
-type ButtonType = 'normal' | 'primary' | 'danger';
+type ButtonVariant = 'normal' | 'primary';
 
-const buttonClasses: { [type in ButtonType]: string } = {
-  normal: `${baseClass} bg-default color-text border-solid border-main border-1 focus:bg-contrast hover:bg-contrast`,
-  primary: `${baseClass} no-border bg-info color-info-contrast hover:brightness-130 focus:brightness-130`,
-  danger: `${baseClass} bg-default color-danger border-solid border-main border-1 focus:bg-contrast hover:bg-contrast`,
-};
+const getClassName = (
+  variant: ButtonVariant,
+  danger: boolean,
+  disabled: boolean
+) => {
+  const borders =
+    variant === 'normal' ? 'border-solid border-main border-1' : 'no-border';
+  const cursor = disabled ? 'cursor-not-allowed' : 'cursor-pointer';
 
-const disabledClasses: { [type in ButtonType]: string } = {
-  normal: 'color-grey-2 focus:bg-default hover:bg-default',
-  primary: 'bg-grey-2 focus:brightness-default hover:brightness-default',
-  danger: 'color-grey-2 focus:bg-default hover:bg-default',
+  let colors =
+    variant === 'normal'
+      ? 'bg-default color-text'
+      : 'bg-info color-info-contrast';
+
+  let focusHoverStates =
+    variant === 'normal'
+      ? 'focus:bg-contrast hover:bg-contrast'
+      : 'hover:brightness-130 focus:brightness-130';
+
+  if (danger) {
+    colors =
+      variant === 'normal'
+        ? 'bg-default color-danger'
+        : 'bg-danger color-info-contrast';
+  }
+
+  if (disabled) {
+    colors =
+      variant === 'normal'
+        ? 'bg-default color-grey-2'
+        : 'bg-grey-2 color-info-contrast';
+    focusHoverStates =
+      variant === 'normal'
+        ? 'focus:bg-default hover:bg-default'
+        : 'focus:brightness-default hover:brightness-default';
+  }
+
+  return `${baseClass} ${colors} ${borders} ${focusHoverStates} ${cursor}`;
 };
 
 type ButtonProps = JSXInternal.HTMLAttributes<HTMLButtonElement> & {
   children?: ComponentChildren;
   className?: string;
-  variant?: ButtonType;
+  variant?: ButtonVariant;
+  dangerStyle?: boolean;
   label?: string;
 };
 
@@ -31,20 +60,17 @@ export const Button: FunctionComponent<ButtonProps> = forwardRef(
       variant = 'normal',
       label,
       className = '',
+      dangerStyle: danger = false,
       disabled = false,
       children,
       ...props
     }: ButtonProps,
     ref: Ref<HTMLButtonElement>
   ) => {
-    const buttonClass = buttonClasses[variant];
-    const cursorClass = disabled ? 'cursor-not-allowed' : 'cursor-pointer';
-    const disabledClass = disabled ? disabledClasses[variant] : '';
-
     return (
       <button
         type="button"
-        className={`${buttonClass} ${disabledClass} ${cursorClass} ${className}`}
+        className={`${getClassName(variant, danger, disabled)} ${className}`}
         disabled={disabled}
         ref={ref}
         {...props}
