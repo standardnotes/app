@@ -98,6 +98,9 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
   };
 
   const toggleMuteFailedCloudBackupEmails = async () => {
+    if (!isEntitledToCloudBackups) {
+      return;
+    }
     const previousValue = isFailedCloudBackupEmailMuted;
     setIsFailedCloudBackupEmailMuted(!isFailedCloudBackupEmailMuted);
 
@@ -165,6 +168,7 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
                 <Switch
                   onChange={toggleMuteFailedCloudBackupEmails}
                   checked={!isFailedCloudBackupEmailMuted}
+                  disabled={!isEntitledToCloudBackups}
                 />
               )}
             </div>

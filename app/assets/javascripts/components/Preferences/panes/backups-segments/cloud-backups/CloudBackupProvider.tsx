@@ -54,6 +54,9 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
   };
 
   const installIntegration = (event: Event) => {
+    if (!isEntitledToCloudBackups) {
+      return;
+    }
     event.stopPropagation();
 
     const authUrl = application.getCloudProviderIntegrationUrl(
@@ -223,6 +226,7 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
             label="Enable"
             className={`px-1 text-xs min-w-40 ${additionalClass}`}
             onClick={installIntegration}
+            disabled={!isEntitledToCloudBackups}
           />
         </div>
       )}
