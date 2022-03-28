@@ -1,7 +1,4 @@
 import { JSXInternal } from 'preact/src/jsx';
-import TargetedEvent = JSXInternal.TargetedEvent;
-import TargetedMouseEvent = JSXInternal.TargetedMouseEvent;
-
 import { ComponentChildren, FunctionComponent, Ref } from 'preact';
 import { forwardRef } from 'preact/compat';
 
@@ -15,46 +12,35 @@ const buttonClasses: { [type in ButtonType]: string } = {
   danger: `${baseClass} bg-default color-danger border-solid border-main border-1 focus:bg-contrast hover:bg-contrast`,
 };
 
-type ButtonProps = {
+type ButtonProps = JSXInternal.HTMLAttributes<HTMLButtonElement> & {
   children?: ComponentChildren;
   className?: string;
-  type: ButtonType;
+  variant: ButtonType;
   label?: string;
-  onClick: (
-    event:
-      | TargetedEvent<HTMLFormElement>
-      | TargetedMouseEvent<HTMLButtonElement>
-  ) => void;
-  onBlur?: (event: FocusEvent) => void;
-  disabled?: boolean;
 };
 
 export const Button: FunctionComponent<ButtonProps> = forwardRef(
   (
     {
-      type,
+      variant,
       label,
       className = '',
-      onBlur,
-      onClick,
       disabled = false,
       children,
+      ...props
     }: ButtonProps,
     ref: Ref<HTMLButtonElement>
   ) => {
-    const buttonClass = buttonClasses[type];
-    const cursorClass = disabled ? 'cursor-default' : 'cursor-pointer';
+    const buttonClass = buttonClasses[variant];
+    const cursorClass = disabled ? 'cursor-not-allowed' : 'cursor-pointer';
 
     return (
       <button
+        type="button"
         className={`${buttonClass} ${cursorClass} ${className}`}
-        onBlur={onBlur}
-        onClick={(e) => {
-          onClick(e);
-          e.preventDefault();
-        }}
         disabled={disabled}
         ref={ref}
+        {...props}
       >
         {label ?? children}
       </button>

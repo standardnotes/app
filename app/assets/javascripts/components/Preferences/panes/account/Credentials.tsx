@@ -50,7 +50,7 @@ export const Credentials: FunctionComponent<Props> = observer(
           </Text>
           <Button
             className="min-w-20 mt-3"
-            type="normal"
+            variant="normal"
             label="Change email"
             onClick={() => {
               setIsChangeEmailDialogOpen(true);
@@ -64,7 +64,7 @@ export const Credentials: FunctionComponent<Props> = observer(
           </Text>
           <Button
             className="min-w-20 mt-3"
-            type="normal"
+            variant="normal"
             label="Change password"
             onClick={presentPasswordWizard}
           />

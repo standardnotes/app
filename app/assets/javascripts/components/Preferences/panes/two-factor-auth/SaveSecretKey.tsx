@@ -78,13 +78,13 @@ export const SaveSecretKey: FunctionComponent<{
       <ModalDialogButtons>
         <Button
           className="min-w-20"
-          type="normal"
+          variant="normal"
           label="Back"
           onClick={() => act.openScanQRCode()}
         />
         <Button
           className="min-w-20"
-          type="primary"
+          variant="primary"
           label="Next"
           onClick={() => act.openVerification()}
         />

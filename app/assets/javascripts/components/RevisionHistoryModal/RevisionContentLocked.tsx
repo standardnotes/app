@@ -46,7 +46,7 @@ export const RevisionContentLocked: FunctionComponent<{
           . Learn more about our other plans to upgrade your history capacity.
         </div>
         <Button
-          type="primary"
+          variant="primary"
           label="Discover plans"
           onClick={() => {
             if (window.plansUrl) {

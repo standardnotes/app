@@ -27,14 +27,14 @@ const SignOutView: FunctionComponent<{
           <div className="flex flex-row">
             <Button
               className="mr-3"
-              type="normal"
+              variant="normal"
               label="Sign out other sessions"
               onClick={() => {
                 appState.accountMenu.setOtherSessionsSignOut(true);
               }}
             />
             <Button
-              type="normal"
+              variant="normal"
               label="Manage sessions"
               onClick={() => appState.openSessionsModal()}
             />
@@ -48,7 +48,7 @@ const SignOutView: FunctionComponent<{
           </Text>
           <div className="min-h-3" />
           <Button
-            type="danger"
+            variant="danger"
             label="Sign out workspace"
             onClick={() => {
               appState.accountMenu.setSigningOut(true);
@@ -76,7 +76,7 @@ const ClearSessionDataView: FunctionComponent<{
         </Text>
         <div className="min-h-3" />
         <Button
-          type="danger"
+          variant="danger"
           label="Clear workspace"
           onClick={() => {
             appState.accountMenu.setSigningOut(true);

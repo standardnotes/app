@@ -122,7 +122,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
           <Button
             className="btn-w-full mt-1"
             label="Next"
-            type="primary"
+            variant="primary"
             onClick={handleRegisterFormSubmit}
           />
         </form>

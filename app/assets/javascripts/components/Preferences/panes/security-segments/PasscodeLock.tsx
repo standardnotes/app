@@ -224,7 +224,7 @@ export const PasscodeLock = observer(({ application, appState }: Props) => {
                 <Button
                   label="Add passcode"
                   onClick={handleAddPassCode}
-                  type="primary"
+                  variant="primary"
                 />
               )}
             </>
@@ -258,13 +258,13 @@ export const PasscodeLock = observer(({ application, appState }: Props) => {
               />
               <div className="min-h-2" />
               <Button
-                type="primary"
+                variant="primary"
                 onClick={submitPasscodeForm}
                 label="Set Passcode"
                 className="mr-3"
               />
               <Button
-                type="normal"
+                variant="normal"
                 onClick={() => setShowPasscodeForm(false)}
                 label="Cancel"
               />
@@ -276,13 +276,13 @@ export const PasscodeLock = observer(({ application, appState }: Props) => {
               <Text>Passcode lock is enabled.</Text>
               <div className="flex flex-row mt-3">
                 <Button
-                  type="normal"
+                  variant="normal"
                   label="Change Passcode"
                   onClick={changePasscodePressed}
                   className="mr-3"
                 />
                 <Button
-                  type="danger"
+                  variant="danger"
                   label="Remove Passcode"
                   onClick={removePasscodePressed}
                 />
