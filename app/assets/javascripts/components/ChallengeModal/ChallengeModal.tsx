@@ -13,6 +13,7 @@ import { useCallback, useEffect, useState } from 'preact/hooks';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
 import { ChallengeModalPrompt } from './ChallengePrompt';
+import { OtherOptionsMenu } from './OtherOptionsMenu';
 
 type InputValue = {
   prompt: ChallengePrompt;
@@ -65,6 +66,7 @@ export const ChallengeModal: FunctionComponent<Props> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [, setProcessingPrompts] = useState<ChallengePrompt[]>([]);
+  const [bypassModalFocusLock, setBypassModalFocusLock] = useState(false);
 
   const submit = async () => {
     const validatedValues = validateValues(values, challenge.prompts);
@@ -178,6 +180,7 @@ export const ChallengeModal: FunctionComponent<Props> = ({
           : ''
       }`}
       onDismiss={closeModal}
+      dangerouslyBypassFocusLock={bypassModalFocusLock}
     >
       <DialogContent
         className={`challenge-modal flex flex-col items-center bg-default px-9 py-12 rounded relative ${
@@ -218,7 +221,7 @@ export const ChallengeModal: FunctionComponent<Props> = ({
           ))}
         </form>
         <Button
-          type="primary"
+          variant="primary"
           disabled={isProcessing}
           className="min-w-68 mb-3.5"
           onClick={() => {
@@ -227,16 +230,12 @@ export const ChallengeModal: FunctionComponent<Props> = ({
         >
           {isProcessing ? 'Generating Keys...' : 'Unlock'}
         </Button>
-        <Button
-          type="normal"
+        <OtherOptionsMenu
+          application={application}
+          challenge={challenge}
           disabled={isProcessing}
-          className="min-w-68"
-          onClick={() => {
-            //
-          }}
-        >
-          Other options
-        </Button>
+          setBypassFocusLock={setBypassModalFocusLock}
+        />
       </DialogContent>
     </DialogOverlay>
   );
