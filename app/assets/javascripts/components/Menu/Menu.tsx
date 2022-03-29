@@ -5,6 +5,7 @@ import {
   VNode,
   RefCallback,
   ComponentChild,
+  toChildArray,
 } from 'preact';
 import { useEffect, useRef } from 'preact/hooks';
 import { JSXInternal } from 'preact/src/jsx';
@@ -117,7 +118,7 @@ export const Menu: FunctionComponent<MenuProps> = ({
       style={style}
       aria-label={a11yLabel}
     >
-      {Array.isArray(children) ? children.map(mapMenuItems) : null}
+      {toChildArray(children).map(mapMenuItems)}
     </menu>
   );
 };
