@@ -5,9 +5,9 @@ import { preventRefreshing } from '@/utils';
 import {
   ApplicationEvent,
   ContentType,
-  SNTheme,
   CollectionSort,
   ApplicationDescriptor,
+  ItemInterface,
 } from '@standardnotes/snjs';
 import {
   STRING_NEW_UPDATE_READY,
@@ -22,15 +22,7 @@ import { AppStateEvent, EventSource } from '@/ui_models/app_state';
 import { Icon } from './Icon';
 import { QuickSettingsMenu } from './QuickSettingsMenu/QuickSettingsMenu';
 import { SyncResolutionMenu } from './SyncResolutionMenu';
-import { Fragment, render } from 'preact';
-
-/**
- * Disable before production release.
- * Anyone who used the beta will still have access to
- * the account switcher in production via local storage flag
- */
-const ACCOUNT_SWITCHER_ENABLED = false;
-const ACCOUNT_SWITCHER_FEATURE_KEY = 'account_switcher';
+import { Fragment } from 'preact';
 
 type Props = {
   application: WebApplication;
@@ -235,7 +227,7 @@ export class Footer extends PureComponent<Props, State> {
       ContentType.Theme,
       CollectionSort.Title,
       'asc',
-      (theme: SNTheme) => {
+      (theme: ItemInterface) => {
         return !theme.errorDecrypting;
       }
     );
