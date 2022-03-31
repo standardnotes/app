@@ -11,6 +11,7 @@ import {
   FeatureStatus,
   PayloadSource,
   PrefKey,
+  CreateIntentPayloadFromObject,
 } from '@standardnotes/snjs';
 import { InternalEventBus } from '@standardnotes/services';
 
@@ -271,17 +272,15 @@ export class ThemeManager extends ApplicationService {
     const themes = this.application.items.findItems(
       this.activeThemes
     ) as SNTheme[];
-    const mapped = await Promise.all(
-      themes.map(async (theme) => {
-        const payload = theme.payloadRepresentation();
-        const processedPayload =
-          await this.application.protocolService.payloadByEncryptingPayload(
-            payload,
-            EncryptionIntent.LocalStorageDecrypted
-          );
-        return processedPayload;
-      })
-    );
+
+    const mapped = themes.map((theme) => {
+      const payload = theme.payloadRepresentation();
+      return CreateIntentPayloadFromObject(
+        payload,
+        EncryptionIntent.LocalStorageDecrypted
+      );
+    });
+
     return this.application.setValue(
       CACHED_THEMES_KEY,
       mapped,
