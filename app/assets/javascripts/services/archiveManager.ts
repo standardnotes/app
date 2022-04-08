@@ -39,17 +39,18 @@ export class ArchiveManager {
   }
 
   public async downloadBackup(encrypted: boolean): Promise<void> {
-    const intent = encrypted
-      ? EncryptionIntent.FileEncrypted
-      : EncryptionIntent.FileDecrypted;
+    const data = encrypted
+      ? await this.application.createEncryptedBackupFile(true)
+      : await this.application.createDecryptedBackupFile();
 
-    const data = await this.application.createBackupFile(intent, true);
     if (!data) {
       return;
     }
+
     const blobData = new Blob([JSON.stringify(data, null, 2)], {
       type: 'text/json',
     });
+
     if (encrypted) {
       this.downloadData(
         blobData,

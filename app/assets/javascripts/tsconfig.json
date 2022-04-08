@@ -15,8 +15,7 @@
     "baseUrl": ".",
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
-    "typeRoots": ["./@types"],
-    "types": ["@types/jest"],
+    "typeRoots": ["./@types", "../../../node_modules/@types"],
     "paths": {
       "%/*": ["../templates/*"],
       "@/*": ["./*"],

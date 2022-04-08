@@ -3,14 +3,14 @@ import {
   SNComponent,
   ComponentMutator,
   AppDataField,
-  EncryptionIntent,
   ApplicationService,
   ApplicationEvent,
   removeFromArray,
   DesktopManagerInterface,
   PayloadSource,
+  EncryptionIntent,
+  CreateIntentPayloadFromObject,
 } from '@standardnotes/snjs';
-
 import { WebAppEvent, WebApplication } from '@/ui_models/application';
 import { isDesktopApplication } from '@/utils';
 import { Bridge, ElectronDesktopCallbacks } from './bridge';
@@ -68,7 +68,7 @@ export class DesktopManager
    * Keys are not passed into ItemParams, so the result is not encrypted
    */
   convertComponentForTransmission(component: SNComponent) {
-    return this.application.protocolService.payloadByEncryptingPayload(
+    return CreateIntentPayloadFromObject(
       component.payloadRepresentation(),
       EncryptionIntent.FileDecrypted
     );
@@ -158,11 +158,11 @@ export class DesktopManager
   }
 
   async desktop_requestBackupFile(): Promise<string | undefined> {
-    const data = await this.application.createBackupFile(
-      this.application.hasProtectionSources()
-        ? EncryptionIntent.FileEncrypted
-        : EncryptionIntent.FileDecrypted
-    );
+    const encrypted = this.application.hasProtectionSources();
+    const data = encrypted
+      ? await this.application.createEncryptedBackupFile(false)
+      : await this.application.createDecryptedBackupFile();
+
     if (data) {
       return JSON.stringify(data, null, 2);
     }
