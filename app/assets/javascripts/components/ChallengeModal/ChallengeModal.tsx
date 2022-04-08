@@ -1,6 +1,7 @@
 import { WebApplication } from '@/ui_models/application';
 import { DialogContent, DialogOverlay } from '@reach/dialog';
 import {
+  ButtonType,
   Challenge,
   ChallengePrompt,
   ChallengeReason,
@@ -13,7 +14,6 @@ import { useCallback, useEffect, useState } from 'preact/hooks';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
 import { ChallengeModalPrompt } from './ChallengePrompt';
-import { OtherOptionsMenu } from './OtherOptionsMenu';
 
 type InputValue = {
   prompt: ChallengePrompt;
@@ -67,6 +67,10 @@ export const ChallengeModal: FunctionComponent<Props> = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [, setProcessingPrompts] = useState<ChallengePrompt[]>([]);
   const [bypassModalFocusLock, setBypassModalFocusLock] = useState(false);
+  const shouldShowForgotPasscode = [
+    ChallengeReason.ApplicationUnlock,
+    ChallengeReason.Migration,
+  ].includes(challenge.reason);
 
   const submit = async () => {
     const validatedValues = validateValues(values, challenge.prompts);
@@ -183,7 +187,7 @@ export const ChallengeModal: FunctionComponent<Props> = ({
       dangerouslyBypassFocusLock={bypassModalFocusLock}
     >
       <DialogContent
-        className={`challenge-modal flex flex-col items-center bg-default px-9 py-12 rounded relative ${
+        className={`challenge-modal flex flex-col items-center bg-default p-8 rounded relative ${
           challenge.reason !== ChallengeReason.ApplicationUnlock
             ? 'shadow-overlay-light border-1 border-solid border-main'
             : 'focus:shadow-none'
@@ -199,11 +203,12 @@ export const ChallengeModal: FunctionComponent<Props> = ({
           </button>
         )}
         <ProtectedIllustration className="w-30 h-30 mb-4" />
-        <div className="font-bold text-base text-center mb-4">
+        <div className="font-bold text-lg text-center max-w-76 mb-3">
           {challenge.heading}
         </div>
+        <div className="text-sm max-w-76 mb-4">{challenge.subheading}</div>
         <form
-          className="flex flex-col items-center min-w-68 mb-4"
+          className="flex flex-col items-center min-w-76 mb-4"
           onSubmit={(e) => {
             e.preventDefault();
             submit();
@@ -223,19 +228,40 @@ export const ChallengeModal: FunctionComponent<Props> = ({
         <Button
           variant="primary"
           disabled={isProcessing}
-          className="min-w-68 mb-3.5"
+          className="min-w-76 mb-3.5"
           onClick={() => {
             submit();
           }}
         >
           {isProcessing ? 'Generating Keys...' : 'Unlock'}
         </Button>
-        <OtherOptionsMenu
-          application={application}
-          challenge={challenge}
-          disabled={isProcessing}
-          setBypassFocusLock={setBypassModalFocusLock}
-        />
+        {shouldShowForgotPasscode && (
+          <Button
+            className="flex items-center justify-center min-w-76"
+            onClick={() => {
+              setBypassModalFocusLock(true);
+              application.alertService
+                .confirm(
+                  'If you forgot your local passcode, your only option is to clear your local data from this device and sign back in to your account.',
+                  'Forgot passcode?',
+                  'Delete local data',
+                  ButtonType.Danger
+                )
+                .then((shouldDeleteLocalData) => {
+                  if (shouldDeleteLocalData) {
+                    application.user.signOut();
+                  }
+                })
+                .catch(console.error)
+                .finally(() => {
+                  setBypassModalFocusLock(false);
+                });
+            }}
+          >
+            <Icon type="help" className="mr-2 color-neutral" />
+            Forgot passcode?
+          </Button>
+        )}
       </DialogContent>
     </DialogOverlay>
   );

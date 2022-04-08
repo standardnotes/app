@@ -41,49 +41,55 @@ export const ChallengeModalPrompt: FunctionComponent<Props> = ({
   return (
     <>
       {prompt.validation === ChallengeValidation.ProtectionSessionDuration ? (
-        <div className="sk-horizontal-group mt-3">
-          <div className="sk-p sk-bold">Allow protected access for</div>
-          {ProtectionSessionDurations.map((option) => {
-            const selected = option.valueInSeconds === values[prompt.id].value;
-
-            return (
-              <label
-                className={`cursor-pointer ${
-                  selected
-                    ? 'bg-info color-info-contrast rounded px-2 py-1.5'
-                    : 'color-info hover:underline'
-                }`}
-              >
-                <input
-                  type="radio"
-                  name={`session-duration-${prompt.id}`}
-                  className={'appearance-none m-0'}
-                  style={{
-                    marginRight: 0,
-                  }}
-                  checked={selected}
-                  onChange={(event) => {
-                    event.preventDefault();
-                    onValueChange(option.valueInSeconds, prompt);
-                  }}
-                />
-                {option.label}
-              </label>
-            );
-          })}
+        <div className="mt-3 min-w-76">
+          <div className="text-sm font-medium mb-2">
+            Allow protected access for
+          </div>
+          <div className="flex items-center justify-between bg-grey-4 rounded p-1">
+            {ProtectionSessionDurations.map((option) => {
+              const selected =
+                option.valueInSeconds === values[prompt.id].value;
+              return (
+                <label
+                  className={`cursor-pointer px-2 py-1.5 rounded ${
+                    selected
+                      ? 'bg-default color-foreground font-semibold'
+                      : 'color-grey-0 hover:bg-grey-3'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name={`session-duration-${prompt.id}`}
+                    className={
+                      'appearance-none m-0 focus:shadow-none focus:outline-none'
+                    }
+                    style={{
+                      marginRight: 0,
+                    }}
+                    checked={selected}
+                    onChange={(event) => {
+                      event.preventDefault();
+                      onValueChange(option.valueInSeconds, prompt);
+                    }}
+                  />
+                  {option.label}
+                </label>
+              );
+            })}
+          </div>
         </div>
       ) : prompt.secureTextEntry ? (
         <DecoratedPasswordInput
           ref={inputRef}
           placeholder={prompt.placeholder}
-          className={`w-full max-w-68 ${isInvalid ? 'border-danger' : ''}`}
+          className={`w-full max-w-76 ${isInvalid ? 'border-danger' : ''}`}
           onChange={(value) => onValueChange(value, prompt)}
         />
       ) : (
         <DecoratedInput
           ref={inputRef}
           placeholder={prompt.placeholder}
-          className={`w-full max-w-68 ${isInvalid ? 'border-danger' : ''}`}
+          className={`w-full max-w-76 ${isInvalid ? 'border-danger' : ''}`}
           onChange={(value) => onValueChange(value, prompt)}
         />
       )}
