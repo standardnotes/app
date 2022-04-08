@@ -22,8 +22,8 @@ const getClassName = (
 
   let focusHoverStates =
     variant === 'normal'
-      ? 'focus:bg-contrast hover:bg-contrast'
-      : 'hover:brightness-130 focus:brightness-130';
+      ? 'focus:bg-contrast focus:outline-none hover:bg-contrast'
+      : 'hover:brightness-130 focus:outline-none focus:brightness-130';
 
   if (danger) {
     colors =
@@ -39,8 +39,8 @@ const getClassName = (
         : 'bg-grey-2 color-info-contrast';
     focusHoverStates =
       variant === 'normal'
-        ? 'focus:bg-default hover:bg-default'
-        : 'focus:brightness-default hover:brightness-default';
+        ? 'focus:bg-default focus:outline-none hover:bg-default'
+        : 'focus:brightness-default focus:outline-none hover:brightness-default';
   }
 
   return `${baseClass} ${colors} ${borders} ${focusHoverStates} ${cursor}`;
