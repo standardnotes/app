@@ -12,8 +12,7 @@
 }
 
 .challenge-modal {
-  max-width: 480px;
-  min-width: 400px !important;
+  min-width: 0 !important;
 
   .prompt, .subprompt {
     text-align: center;
