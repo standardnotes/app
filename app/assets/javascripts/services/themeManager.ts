@@ -93,8 +93,22 @@ export class ThemeManager extends ApplicationService {
     );
 
     let timeBeforeApplyingColorScheme = 5;
-    // eslint-disable-next-line prefer-const
-    let intervalId: NodeJS.Timeout;
+    const intervalId = setInterval(() => {
+      if (timeBeforeApplyingColorScheme > 1) {
+        timeBeforeApplyingColorScheme--;
+        updateToast(toastId, {
+          message: toastMessage(),
+        });
+      } else {
+        dismissToast(toastId);
+        this.setThemeAsPerColorScheme(
+          useDeviceThemeSettings,
+          prefersDarkColorScheme.matches
+        );
+        clearInterval(intervalId);
+      }
+    }, 1000);
+
     const toastMessage = () =>
       `Applying system color scheme in ${timeBeforeApplyingColorScheme}s...`;
 
@@ -122,22 +136,6 @@ export class ThemeManager extends ApplicationService {
         },
       ],
     });
-
-    intervalId = setInterval(() => {
-      if (timeBeforeApplyingColorScheme > 0) {
-        updateToast(toastId, {
-          message: toastMessage(),
-        });
-        timeBeforeApplyingColorScheme--;
-      } else {
-        dismissToast(toastId);
-        this.setThemeAsPerColorScheme(
-          useDeviceThemeSettings,
-          prefersDarkColorScheme.matches
-        );
-        clearInterval(intervalId);
-      }
-    }, 1000);
   }
 
   get webApplication() {
