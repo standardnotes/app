@@ -84,6 +84,10 @@ export class ThemeManager extends ApplicationService {
 
     this.lastUseDeviceThemeSettings = useDeviceThemeSettings;
 
+    if (!useDeviceThemeSettings) {
+      return;
+    }
+
     const prefersDarkColorScheme = window.matchMedia(
       '(prefers-color-scheme: dark)'
     );
@@ -103,6 +107,17 @@ export class ThemeManager extends ApplicationService {
           handler: () => {
             dismissToast(toastId);
             clearInterval(intervalId);
+          },
+        },
+        {
+          label: 'Apply Now',
+          handler: () => {
+            dismissToast(toastId);
+            clearInterval(intervalId);
+            this.setThemeAsPerColorScheme(
+              useDeviceThemeSettings,
+              prefersDarkColorScheme.matches
+            );
           },
         },
       ],
