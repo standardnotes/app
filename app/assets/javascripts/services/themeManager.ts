@@ -14,6 +14,12 @@ import {
   CreateIntentPayloadFromObject,
 } from '@standardnotes/snjs';
 import { InternalEventBus } from '@standardnotes/services';
+import {
+  addToast,
+  dismissToast,
+  ToastType,
+  updateToast,
+} from '@standardnotes/stylekit';
 
 const CACHED_THEMES_KEY = 'cachedThemes';
 
@@ -81,10 +87,42 @@ export class ThemeManager extends ApplicationService {
     const prefersDarkColorScheme = window.matchMedia(
       '(prefers-color-scheme: dark)'
     );
-    this.setThemeAsPerColorScheme(
-      useDeviceThemeSettings,
-      prefersDarkColorScheme.matches
-    );
+
+    let timeBeforeApplyingColorScheme = 5;
+    // eslint-disable-next-line prefer-const
+    let intervalId: NodeJS.Timeout;
+    const toastMessage = () =>
+      `Applying system color scheme in ${timeBeforeApplyingColorScheme}s...`;
+
+    const toastId = addToast({
+      type: ToastType.Regular,
+      message: toastMessage(),
+      actions: [
+        {
+          label: 'Keep current theme',
+          handler: () => {
+            dismissToast(toastId);
+            clearInterval(intervalId);
+          },
+        },
+      ],
+    });
+
+    intervalId = setInterval(() => {
+      if (timeBeforeApplyingColorScheme > 0) {
+        updateToast(toastId, {
+          message: toastMessage(),
+        });
+        timeBeforeApplyingColorScheme--;
+      } else {
+        dismissToast(toastId);
+        this.setThemeAsPerColorScheme(
+          useDeviceThemeSettings,
+          prefersDarkColorScheme.matches
+        );
+        clearInterval(intervalId);
+      }
+    }, 1000);
   }
 
   get webApplication() {
