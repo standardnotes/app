@@ -1025,6 +1025,7 @@ export class NoteView extends PureComponent<Props, State> {
                       }
                       spellcheck={false}
                       value={this.state.editorTitle}
+                      autocomplete="off"
                     />
                   </div>
                 </div>
