@@ -21,6 +21,7 @@ import {
 } from '@standardnotes/stylekit';
 
 const CACHED_THEMES_KEY = 'cachedThemes';
+const TimeBeforeApplyingColorScheme = 5;
 
 export class ThemeManager extends ApplicationService {
   private activeThemes: UuidString[] = [];
@@ -122,7 +123,7 @@ export class ThemeManager extends ApplicationService {
           prefersDarkColorScheme.matches
         );
       },
-      5
+      TimeBeforeApplyingColorScheme
     );
   }
 
