@@ -44,6 +44,7 @@ export const IconButton: FunctionComponent<Props> = ({
   const focusableClass = focusable ? '' : 'focus:shadow-none';
   return (
     <button
+      type="button"
       title={title}
       className={`no-border cursor-pointer bg-transparent flex flex-row items-center hover:brightness-130 p-0 ${focusableClass} ${className}`}
       onClick={click}
