@@ -92,38 +92,10 @@ export class ThemeManager extends ApplicationService {
       '(prefers-color-scheme: dark)'
     );
 
-    const [toastId, intervalId] = addTimedToast(
-      {
-        type: ToastType.Regular,
-        message: (timeRemaining) =>
-          `Applying system color scheme in ${timeRemaining}s...`,
-        actions: [
-          {
-            label: 'Keep current theme',
-            handler: () => {
-              dismissToast(toastId);
-            },
-          },
-          {
-            label: 'Apply now',
-            handler: () => {
-              dismissToast(toastId);
-              clearInterval(intervalId);
-              this.setThemeAsPerColorScheme(
-                useDeviceThemeSettings,
-                prefersDarkColorScheme.matches
-              );
-            },
-          },
-        ],
-      },
-      () => {
-        this.setThemeAsPerColorScheme(
-          useDeviceThemeSettings,
-          prefersDarkColorScheme.matches
-        );
-      },
-      TimeBeforeApplyingColorScheme
+    this.setThemeAsPerColorScheme(
+      useDeviceThemeSettings,
+      prefersDarkColorScheme.matches,
+      true
     );
   }
 
@@ -184,13 +156,15 @@ export class ThemeManager extends ApplicationService {
   private colorSchemeEventHandler(event: MediaQueryListEvent) {
     this.setThemeAsPerColorScheme(
       this.lastUseDeviceThemeSettings,
-      event.matches
+      event.matches,
+      false
     );
   }
 
   private setThemeAsPerColorScheme(
     useDeviceThemeSettings: boolean,
-    prefersDarkColorScheme: boolean
+    prefersDarkColorScheme: boolean,
+    showTimedToast: boolean
   ) {
     if (useDeviceThemeSettings) {
       const preference = prefersDarkColorScheme
@@ -200,10 +174,11 @@ export class ThemeManager extends ApplicationService {
         ContentType.Theme
       ) as SNTheme[];
 
+      const activeTheme = themes.find(
+        (theme) => theme.active && !theme.isLayerable()
+      );
+
       const enableDefaultTheme = () => {
-        const activeTheme = themes.find(
-          (theme) => theme.active && !theme.isLayerable()
-        );
         if (activeTheme) this.application.mutator.toggleTheme(activeTheme);
       };
 
@@ -211,15 +186,63 @@ export class ThemeManager extends ApplicationService {
         preference,
         'Default'
       ) as string;
-      if (themeIdentifier === 'Default') {
-        enableDefaultTheme();
-      } else {
-        const theme = themes.find(
-          (theme) => theme.package_info.identifier === themeIdentifier
-        );
-        if (theme && !theme.active) {
-          this.application.mutator.toggleTheme(theme);
+
+      const setTheme = () => {
+        if (themeIdentifier === 'Default') {
+          enableDefaultTheme();
+        } else {
+          const theme = themes.find(
+            (theme) => theme.package_info.identifier === themeIdentifier
+          );
+          if (theme && !theme.active) {
+            this.application.mutator.toggleTheme(theme);
+          }
         }
+      };
+
+      if (
+        prefersDarkColorScheme &&
+        activeTheme?.identifier === themeIdentifier
+      ) {
+        return;
+      }
+
+      if (
+        !prefersDarkColorScheme &&
+        themeIdentifier === 'Default' &&
+        !activeTheme
+      ) {
+        return;
+      }
+
+      if (showTimedToast) {
+        const [toastId, intervalId] = addTimedToast(
+          {
+            type: ToastType.Regular,
+            message: (timeRemaining) =>
+              `Applying system color scheme in ${timeRemaining}s...`,
+            actions: [
+              {
+                label: 'Keep current theme',
+                handler: () => {
+                  dismissToast(toastId);
+                },
+              },
+              {
+                label: 'Apply now',
+                handler: () => {
+                  dismissToast(toastId);
+                  clearInterval(intervalId);
+                  setTheme();
+                },
+              },
+            ],
+          },
+          setTheme,
+          TimeBeforeApplyingColorScheme
+        );
+      } else {
+        setTheme();
       }
     }
   }
