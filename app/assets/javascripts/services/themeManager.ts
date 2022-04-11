@@ -15,10 +15,9 @@ import {
 } from '@standardnotes/snjs';
 import { InternalEventBus } from '@standardnotes/services';
 import {
-  addToast,
   dismissToast,
   ToastType,
-  updateToast,
+  addTimedToast,
 } from '@standardnotes/stylekit';
 
 const CACHED_THEMES_KEY = 'cachedThemes';
@@ -92,50 +91,39 @@ export class ThemeManager extends ApplicationService {
       '(prefers-color-scheme: dark)'
     );
 
-    let timeBeforeApplyingColorScheme = 5;
-    const intervalId = setInterval(() => {
-      if (timeBeforeApplyingColorScheme > 1) {
-        timeBeforeApplyingColorScheme--;
-        updateToast(toastId, {
-          message: toastMessage(),
-        });
-      } else {
-        dismissToast(toastId);
+    const [toastId, intervalId] = addTimedToast(
+      {
+        type: ToastType.Regular,
+        message: (timeRemaining) =>
+          `Applying system color scheme in ${timeRemaining}s...`,
+        actions: [
+          {
+            label: 'Keep current theme',
+            handler: () => {
+              dismissToast(toastId);
+            },
+          },
+          {
+            label: 'Apply Now',
+            handler: () => {
+              dismissToast(toastId);
+              clearInterval(intervalId);
+              this.setThemeAsPerColorScheme(
+                useDeviceThemeSettings,
+                prefersDarkColorScheme.matches
+              );
+            },
+          },
+        ],
+      },
+      () => {
         this.setThemeAsPerColorScheme(
           useDeviceThemeSettings,
           prefersDarkColorScheme.matches
         );
-        clearInterval(intervalId);
-      }
-    }, 1000);
-
-    const toastMessage = () =>
-      `Applying system color scheme in ${timeBeforeApplyingColorScheme}s...`;
-
-    const toastId = addToast({
-      type: ToastType.Regular,
-      message: toastMessage(),
-      actions: [
-        {
-          label: 'Keep current theme',
-          handler: () => {
-            dismissToast(toastId);
-            clearInterval(intervalId);
-          },
-        },
-        {
-          label: 'Apply Now',
-          handler: () => {
-            dismissToast(toastId);
-            clearInterval(intervalId);
-            this.setThemeAsPerColorScheme(
-              useDeviceThemeSettings,
-              prefersDarkColorScheme.matches
-            );
-          },
-        },
-      ],
-    });
+      },
+      5
+    );
   }
 
   get webApplication() {
