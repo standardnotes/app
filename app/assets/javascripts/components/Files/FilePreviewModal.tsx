@@ -72,7 +72,6 @@ export const FilePreviewModal: FunctionComponent<Props> = ({
   useEffect(() => {
     const isPreviewable = isFileTypePreviewable(file.mimeType);
     setIsFilePreviewable(isPreviewable);
-    return;
 
     if (!objectUrl && isPreviewable) {
       getObjectUrl();
