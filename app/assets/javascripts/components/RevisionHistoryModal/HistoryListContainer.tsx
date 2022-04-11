@@ -134,7 +134,7 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
             throw new Error('Could not fetch revision');
           }
 
-          setSelectedRevision(response.item as HistoryEntry);
+          setSelectedRevision(response.item as unknown as HistoryEntry);
         } catch (error) {
           console.error(error);
           setSelectedRevision(undefined);
@@ -165,7 +165,7 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
           try {
             const remoteRevision =
               await application.historyManager.fetchRemoteRevision(
-                note.uuid,
+                note,
                 revisionListEntry
               );
             setSelectedRevision(remoteRevision);
@@ -182,7 +182,7 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
       },
       [
         application,
-        note.uuid,
+        note,
         setIsFetchingSelectedRevision,
         setSelectedRemoteEntry,
         setSelectedRevision,

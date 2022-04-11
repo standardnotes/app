@@ -13,10 +13,11 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import { observer } from 'mobx-react-lite';
 
 const loadExtensions = (application: WebApplication) =>
-  application.items.getItems(
-    [ContentType.ActionsExtension, ContentType.Component, ContentType.Theme],
-    true
-  ) as SNComponent[];
+  application.items.getItems([
+    ContentType.ActionsExtension,
+    ContentType.Component,
+    ContentType.Theme,
+  ]) as SNComponent[];
 
 export const Extensions: FunctionComponent<{
   application: WebApplication;

@@ -8,7 +8,6 @@ import {
   ButtonType,
   ContentType,
   HistoryEntry,
-  PayloadContent,
   PayloadSource,
   RevisionListEntry,
   SNNote,
@@ -148,7 +147,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
         }).then((confirmed) => {
           if (confirmed) {
             application.mutator.changeAndSaveItem(
-              selectedRevision.payload.uuid,
+              originalNote,
               (mutator) => {
                 mutator.unsafe_setCustomContent(
                   selectedRevision.payload.content
@@ -165,14 +164,14 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
 
     const restoreAsCopy = async () => {
       if (selectedRevision) {
-        const originalNote = application.items.findItem(
+        const originalNote = application.items.findSureItem<SNNote>(
           selectedRevision.payload.uuid
-        ) as SNNote;
+        );
 
         const duplicatedItem = await application.mutator.duplicateItem(
           originalNote,
           {
-            ...(selectedRevision.payload.content as PayloadContent),
+            ...selectedRevision.payload.content,
             title: selectedRevision.payload.content.title
               ? selectedRevision.payload.content.title + ' (copy)'
               : undefined,
@@ -188,10 +187,10 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
     useEffect(() => {
       const fetchTemplateNote = async () => {
         if (selectedRevision) {
-          const newTemplateNote = (await application.mutator.createTemplateItem(
+          const newTemplateNote = application.mutator.createTemplateItem(
             ContentType.Note,
             selectedRevision.payload.content
-          )) as SNNote;
+          ) as SNNote;
 
           setTemplateNoteForRevision(newTemplateNote);
         }
@@ -218,7 +217,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
             setIsDeletingRevision(true);
 
             application.historyManager
-              .deleteRemoteRevision(note.uuid, selectedRemoteEntry)
+              .deleteRemoteRevision(note, selectedRemoteEntry)
               .then((res) => {
                 if (res.error?.message) {
                   throw new Error(res.error.message);

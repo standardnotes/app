@@ -1,5 +1,9 @@
 import { WebApplication } from '@/ui_models/application';
-import { CollectionSort, PrefKey } from '@standardnotes/snjs';
+import {
+  CollectionSort,
+  CollectionSortProperty,
+  PrefKey,
+} from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useState } from 'preact/hooks';
@@ -52,7 +56,7 @@ export const NotesListOptionsMenu: FunctionComponent<Props> = observer(
       setSortReverse(!sortReverse);
     };
 
-    const toggleSortBy = (sort: CollectionSort) => {
+    const toggleSortBy = (sort: CollectionSortProperty) => {
       if (sortBy === sort) {
         toggleSortReverse();
       } else {

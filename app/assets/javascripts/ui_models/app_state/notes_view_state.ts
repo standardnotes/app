@@ -1,6 +1,7 @@
 import {
   ApplicationEvent,
   CollectionSort,
+  CollectionSortProperty,
   ContentType,
   findInArray,
   NotesDisplayCriteria,
@@ -28,7 +29,7 @@ const ELEMENT_ID_SEARCH_BAR = 'search-bar';
 const ELEMENT_ID_SCROLL_CONTAINER = 'notes-scrollable';
 
 export type DisplayOptions = {
-  sortBy: CollectionSort;
+  sortBy: CollectionSortProperty;
   sortReverse: boolean;
   hidePinned: boolean;
   showArchived: boolean;
@@ -73,18 +74,20 @@ export class NotesViewState {
     this.resetPagination();
 
     appObservers.push(
-      application.streamItems(ContentType.Note, () => {
+      application.streamItems<SNNote>(ContentType.Note, () => {
         this.reloadNotes();
+
         const activeNote = this.appState.notes.activeNoteController?.note;
+
         if (this.application.getAppState().notes.selectedNotesCount < 2) {
           if (activeNote) {
-            const discarded = activeNote.deleted || activeNote.trashed;
+            const browsingTrashedNotes =
+              this.appState.selectedTag instanceof SmartView &&
+              this.appState.selectedTag?.uuid === SystemViewId.TrashedNotes;
+
             if (
-              discarded &&
-              !(
-                this.appState.selectedTag instanceof SmartView &&
-                this.appState.selectedTag?.uuid === SystemViewId.TrashedNotes
-              ) &&
+              activeNote.trashed &&
+              !browsingTrashedNotes &&
               !this.appState?.searchOptions.includeTrashed
             ) {
               this.selectNextOrCreateNew();
@@ -96,19 +99,24 @@ export class NotesViewState {
           }
         }
       }),
-      application.streamItems([ContentType.Tag], async (items) => {
-        const tags = items as SNTag[];
-        /** A tag could have changed its relationships, so we need to reload the filter */
-        this.reloadNotesDisplayOptions();
-        this.reloadNotes();
-        if (
-          this.appState.selectedTag &&
-          findInArray(tags, 'uuid', this.appState.selectedTag.uuid)
-        ) {
-          /** Tag title could have changed */
-          this.reloadPanelTitle();
+
+      application.streamItems<SNTag>(
+        [ContentType.Tag],
+        async ({ changed, inserted }) => {
+          const tags = [...changed, ...inserted];
+          /** A tag could have changed its relationships, so we need to reload the filter */
+          this.reloadNotesDisplayOptions();
+          this.reloadNotes();
+
+          if (
+            this.appState.selectedTag &&
+            findInArray(tags, 'uuid', this.appState.selectedTag.uuid)
+          ) {
+            /** Tag title could have changed */
+            this.reloadPanelTitle();
+          }
         }
-      }),
+      ),
       application.addEventObserver(async () => {
         this.reloadPreferences();
       }, ApplicationEvent.PreferencesChanged),
@@ -223,9 +231,7 @@ export class NotesViewState {
     if (!tag) {
       return;
     }
-    const notes = this.application.items.getDisplayableItems(
-      ContentType.Note
-    ) as SNNote[];
+    const notes = this.application.items.getDisplayableNotes();
     const renderedNotes = notes.slice(0, this.notesToDisplay);
 
     this.notes = notes;
@@ -250,7 +256,7 @@ export class NotesViewState {
     }
 
     const criteria = NotesDisplayCriteria.Create({
-      sortProperty: this.displayOptions.sortBy as CollectionSort,
+      sortProperty: this.displayOptions.sortBy,
       sortDirection: this.displayOptions.sortReverse ? 'asc' : 'dsc',
       tags: tag instanceof SNTag ? [tag] : [],
       views: tag instanceof SmartView ? [tag] : [],
@@ -498,7 +504,7 @@ export class NotesViewState {
   handleEditorChange = async () => {
     const activeNote = this.appState.getActiveNoteController()?.note;
     if (activeNote && activeNote.conflictOf) {
-      this.application.mutator.changeAndSaveItem(activeNote.uuid, (mutator) => {
+      this.application.mutator.changeAndSaveItem(activeNote, (mutator) => {
         mutator.conflictOf = undefined;
       });
     }

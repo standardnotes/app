@@ -473,6 +473,10 @@
   border-right-width: 1px;
 }
 
+.sn-component .border-l-1px {
+  border-left-width: 1px;
+}
+
 .sn-component .border-t-1px {
   border-top-width: 1px;
 }
@@ -491,6 +495,10 @@
 
 .p-1 {
   padding: 0.25rem;
+}
+
+.p-1\.5 {
+  padding: 0.375rem;
 }
 
 .p-8 {
