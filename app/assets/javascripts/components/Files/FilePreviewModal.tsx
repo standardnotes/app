@@ -156,7 +156,7 @@ export const FilePreviewModal: FunctionComponent<Props> = ({
                   <>
                     <div className="text-sm text-center color-grey-0 mb-4 max-w-35ch">
                       There was an error loading the file. Try again, or
-                      download it and open it using another application.
+                      download the file and open it using another application.
                     </div>
                     <div className="flex items-center">
                       <Button
