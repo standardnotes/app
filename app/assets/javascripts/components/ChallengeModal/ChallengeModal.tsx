@@ -206,7 +206,9 @@ export const ChallengeModal: FunctionComponent<Props> = ({
         <div className="font-bold text-lg text-center max-w-76 mb-3">
           {challenge.heading}
         </div>
-        <div className="text-sm max-w-76 mb-4">{challenge.subheading}</div>
+        <div className="text-center text-sm max-w-76 mb-4">
+          {challenge.subheading}
+        </div>
         <form
           className="flex flex-col items-center min-w-76 mb-4"
           onSubmit={(e) => {
