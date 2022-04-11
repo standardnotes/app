@@ -192,18 +192,14 @@ export class ThemeManager extends ApplicationService {
       (theme) => theme.active && !theme.isLayerable()
     );
 
-    const enableDefaultTheme = () => {
-      if (activeTheme) this.application.mutator.toggleTheme(activeTheme);
-    };
-
     const themeIdentifier = this.application.getPreference(
       preference,
       DefaultThemeIdentifier
     ) as string;
 
     const setTheme = () => {
-      if (themeIdentifier === DefaultThemeIdentifier) {
-        enableDefaultTheme();
+      if (themeIdentifier === DefaultThemeIdentifier && activeTheme) {
+        this.application.mutator.toggleTheme(activeTheme);
       } else {
         const theme = themes.find(
           (theme) => theme.package_info.identifier === themeIdentifier
@@ -214,16 +210,15 @@ export class ThemeManager extends ApplicationService {
       }
     };
 
-    const isPreferredThemeActive = activeTheme?.identifier === themeIdentifier;
+    const isPreferredThemeNotActive =
+      activeTheme?.identifier !== themeIdentifier;
 
-    const isPreferredThemeDefaultAndActive =
-      themeIdentifier === DefaultThemeIdentifier && !activeTheme;
+    const isDefaultThemePreferredAndNotActive =
+      themeIdentifier === DefaultThemeIdentifier && activeTheme;
 
-    if (isPreferredThemeActive || isPreferredThemeDefaultAndActive) {
-      return;
+    if (isPreferredThemeNotActive || isDefaultThemePreferredAndNotActive) {
+      this.showColorSchemeToast(setTheme);
     }
-
-    this.showColorSchemeToast(setTheme);
   }
 
   private async activateCachedThemes() {
