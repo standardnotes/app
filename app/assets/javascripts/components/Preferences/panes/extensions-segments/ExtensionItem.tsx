@@ -47,7 +47,7 @@ export const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({
     const newOfflineOnly = !offlineOnly;
     setOfflineOnly(newOfflineOnly);
     application.mutator
-      .changeAndSaveItem(extension.uuid, (m: any) => {
+      .changeAndSaveItem(extension, (m: any) => {
         if (m.content == undefined) m.content = {};
         m.content.offlineOnly = newOfflineOnly;
       })
@@ -63,7 +63,7 @@ export const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({
   const changeExtensionName = (newName: string) => {
     setExtensionName(newName);
     application.mutator
-      .changeAndSaveItem(extension.uuid, (m: any) => {
+      .changeAndSaveItem(extension, (m: any) => {
         if (m.content == undefined) m.content = {};
         m.content.name = newName;
       })

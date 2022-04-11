@@ -14,6 +14,7 @@ import {
   TagMutator,
   UuidString,
   isSystemView,
+  FindItem,
 } from '@standardnotes/snjs';
 import {
   action,
@@ -29,11 +30,9 @@ import { FeaturesState, SMART_TAGS_FEATURE_NAME } from './features_state';
 type AnyTag = SNTag | SmartView;
 
 const rootTags = (application: SNApplication): SNTag[] => {
-  const hasNoParent = (tag: SNTag) => !application.items.getTagParent(tag.uuid);
+  const hasNoParent = (tag: SNTag) => !application.items.getTagParent(tag);
 
-  const allTags = application.items.getDisplayableItems(
-    ContentType.Tag
-  ) as SNTag[];
+  const allTags = application.items.getDisplayableItems<SNTag>(ContentType.Tag);
   const rootTags = allTags.filter(hasNoParent);
 
   return rootTags;
@@ -44,10 +43,10 @@ const tagSiblings = (application: SNApplication, tag: SNTag): SNTag[] => {
     tags.filter((other) => other.uuid !== tag.uuid);
 
   const isTemplateTag = application.items.isTemplateItem(tag);
-  const parentTag = !isTemplateTag && application.items.getTagParent(tag.uuid);
+  const parentTag = !isTemplateTag && application.items.getTagParent(tag);
 
   if (parentTag) {
-    const siblingsAndTag = application.items.getTagChildren(parentTag.uuid);
+    const siblingsAndTag = application.items.getTagChildren(parentTag);
     return withoutCurrentTag(siblingsAndTag);
   }
 
@@ -148,24 +147,24 @@ export class TagsState {
     appEventListeners.push(
       this.application.streamItems(
         [ContentType.Tag, ContentType.SmartView],
-        (items) => {
+        ({ changed, removed }) => {
           runInAction(() => {
             this.tags = this.application.items.getDisplayableItems<SNTag>(
               ContentType.Tag
             );
+
             this.smartViews = this.application.items.getSmartViews();
 
             const selectedTag = this.selected_;
+
             if (selectedTag && !isSystemView(selectedTag as SmartView)) {
-              const matchingTag = items.find(
-                (candidate) => candidate.uuid === selectedTag.uuid
-              ) as AnyTag;
-              if (matchingTag) {
-                if (matchingTag.deleted) {
-                  this.selected_ = this.smartViews[0];
-                } else {
-                  this.selected_ = matchingTag;
-                }
+              if (FindItem(removed, selectedTag.uuid)) {
+                this.selected_ = this.smartViews[0];
+              }
+
+              const updated = FindItem(changed, selectedTag.uuid);
+              if (updated) {
+                this.selected_ = updated as AnyTag;
               }
             } else {
               this.selected_ = this.smartViews[0];
@@ -202,7 +201,7 @@ export class TagsState {
       title
     )) as SNTag;
 
-    const futureSiblings = this.application.items.getTagChildren(parent.uuid);
+    const futureSiblings = this.application.items.getTagChildren(parent);
 
     if (!isValidFutureSiblings(this.application, futureSiblings, createdTag)) {
       this.setAddingSubtagTo(undefined);
@@ -319,7 +318,7 @@ export class TagsState {
       return [];
     }
 
-    const children = this.application.items.getTagChildren(tag.uuid);
+    const children = this.application.items.getTagChildren(tag);
 
     const childrenUuids = children.map((childTag) => childTag.uuid);
     const childrenTags = this.tags.filter((tag) =>
@@ -328,8 +327,8 @@ export class TagsState {
     return childrenTags;
   }
 
-  isValidTagParent(parentUuid: UuidString, tagUuid: UuidString): boolean {
-    return this.application.items.isValidTagParent(parentUuid, tagUuid);
+  isValidTagParent(parent: SNTag, tag: SNTag): boolean {
+    return this.application.items.isValidTagParent(parent, tag);
   }
 
   public hasParent(tagUuid: UuidString): boolean {
@@ -343,7 +342,7 @@ export class TagsState {
   ): Promise<void> {
     const tag = this.application.items.findItem(tagUuid) as SNTag;
 
-    const currentParent = this.application.items.getTagParent(tag.uuid);
+    const currentParent = this.application.items.getTagParent(tag);
     const currentParentUuid = currentParent?.uuid;
 
     if (currentParentUuid === futureParentUuid) {
@@ -361,9 +360,8 @@ export class TagsState {
       }
       await this.application.mutator.unsetTagParent(tag);
     } else {
-      const futureSiblings = this.application.items.getTagChildren(
-        futureParent.uuid
-      );
+      const futureSiblings =
+        this.application.items.getTagChildren(futureParent);
       if (!isValidFutureSiblings(this.application, futureSiblings, tag)) {
         return;
       }
@@ -374,9 +372,7 @@ export class TagsState {
   }
 
   get rootTags(): SNTag[] {
-    return this.tags.filter(
-      (tag) => !this.application.items.getTagParent(tag.uuid)
-    );
+    return this.tags.filter((tag) => !this.application.items.getTagParent(tag));
   }
 
   get tagsCount(): number {
@@ -401,7 +397,7 @@ export class TagsState {
 
   public set selected(tag: AnyTag | undefined) {
     if (tag && tag.conflictOf) {
-      this.application.mutator.changeAndSaveItem(tag.uuid, (mutator) => {
+      this.application.mutator.changeAndSaveItem(tag, (mutator) => {
         mutator.conflictOf = undefined;
       });
     }
@@ -417,12 +413,9 @@ export class TagsState {
   }
 
   public setExpanded(tag: SNTag, expanded: boolean) {
-    this.application.mutator.changeAndSaveItem<TagMutator>(
-      tag.uuid,
-      (mutator) => {
-        mutator.expanded = expanded;
-      }
-    );
+    this.application.mutator.changeAndSaveItem<TagMutator>(tag, (mutator) => {
+      mutator.expanded = expanded;
+    });
   }
 
   public get selectedUuid(): UuidString | undefined {
@@ -527,7 +520,7 @@ export class TagsState {
       });
     } else {
       await this.application.mutator.changeAndSaveItem<TagMutator>(
-        tag.uuid,
+        tag,
         (mutator) => {
           mutator.title = newTitle;
         }
@@ -563,9 +556,7 @@ export class TagsState {
   }
 
   public get hasAtLeastOneFolder(): boolean {
-    return this.tags.some(
-      (tag) => !!this.application.items.getTagParent(tag.uuid)
-    );
+    return this.tags.some((tag) => !!this.application.items.getTagParent(tag));
   }
 }
 

@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from 'preact/hooks';
-import { ButtonType, SettingName } from '@standardnotes/snjs';
 import {
+  ButtonType,
+  SettingName,
   CloudProvider,
   DropboxBackupFrequency,
   GoogleDriveBackupFrequency,
   OneDriveBackupFrequency,
-} from '@standardnotes/settings';
+} from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { Button } from '@/components/Button';
 import { isDev, openInNewTab } from '@/utils';

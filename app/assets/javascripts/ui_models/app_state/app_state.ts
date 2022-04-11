@@ -8,13 +8,14 @@ import {
   ContentType,
   DeinitSource,
   NoteViewController,
-  PayloadSource,
   PrefKey,
   SNNote,
   SmartView,
   SNTag,
   SystemViewId,
   removeFromArray,
+  PayloadSource,
+  Uuid,
 } from '@standardnotes/snjs';
 import {
   action,
@@ -276,9 +277,9 @@ export class AppState {
     this.application.noteControllerGroup.closeAllNoteViews();
   }
 
-  noteControllerForNote(note: SNNote) {
+  noteControllerForNote(uuid: Uuid) {
     for (const controller of this.getNoteControllers()) {
-      if (controller.note.uuid === note.uuid) {
+      if (controller.note.uuid === uuid) {
         return controller;
       }
     }
@@ -328,43 +329,61 @@ export class AppState {
   }
 
   streamNotesAndTags() {
-    this.application.streamItems(
+    this.application.streamItems<SNNote | SNTag>(
       [ContentType.Note, ContentType.Tag],
-      async (items, source) => {
+      async ({ changed, inserted, removed, source }) => {
+        if (
+          ![PayloadSource.PreSyncSave, PayloadSource.RemoteRetrieved].includes(
+            source
+          )
+        ) {
+          return;
+        }
+
+        const removedNotes = removed.filter(
+          (i) => i.content_type === ContentType.Note
+        );
+
+        for (const removedNote of removedNotes) {
+          const noteController = this.noteControllerForNote(removedNote.uuid);
+          if (noteController) {
+            this.closeNoteController(noteController);
+          }
+        }
+
+        const changedOrInserted = [...changed, ...inserted].filter(
+          (i) => i.content_type === ContentType.Note
+        );
+
         const selectedTag = this.tags.selected;
 
-        /** Close any note controllers for deleted/trashed/archived notes */
-        if (source === PayloadSource.PreSyncSave) {
-          const notes = items.filter(
-            (candidate) => candidate.content_type === ContentType.Note
-          ) as SNNote[];
-          for (const note of notes) {
-            const noteController = this.noteControllerForNote(note);
-            if (!noteController) {
-              continue;
-            }
-            if (note.deleted) {
-              this.closeNoteController(noteController);
-            } else if (
-              note.trashed &&
-              !(
-                selectedTag instanceof SmartView &&
-                selectedTag.uuid === SystemViewId.TrashedNotes
-              ) &&
-              !this.searchOptions.includeTrashed
-            ) {
-              this.closeNoteController(noteController);
-            } else if (
-              note.archived &&
-              !(
-                selectedTag instanceof SmartView &&
-                selectedTag.uuid === SystemViewId.ArchivedNotes
-              ) &&
-              !this.searchOptions.includeArchived &&
-              !this.application.getPreference(PrefKey.NotesShowArchived, false)
-            ) {
-              this.closeNoteController(noteController);
-            }
+        for (const note of changedOrInserted) {
+          const noteController = this.noteControllerForNote(note.uuid);
+          if (!noteController) {
+            continue;
+          }
+
+          const isBrowswingTrashedNotes =
+            selectedTag instanceof SmartView &&
+            selectedTag.uuid === SystemViewId.TrashedNotes;
+
+          const isBrowsingArchivedNotes =
+            selectedTag instanceof SmartView &&
+            selectedTag.uuid === SystemViewId.ArchivedNotes;
+
+          if (
+            note.trashed &&
+            !isBrowswingTrashedNotes &&
+            !this.searchOptions.includeTrashed
+          ) {
+            this.closeNoteController(noteController);
+          } else if (
+            note.archived &&
+            !isBrowsingArchivedNotes &&
+            !this.searchOptions.includeArchived &&
+            !this.application.getPreference(PrefKey.NotesShowArchived, false)
+          ) {
+            this.closeNoteController(noteController);
           }
         }
       }
@@ -436,11 +455,9 @@ export class AppState {
 
   /** Returns the tags that are referncing this note */
   public getNoteTags(note: SNNote) {
-    return this.application.items
-      .itemsReferencingItem(note.uuid)
-      .filter((ref) => {
-        return ref.content_type === ContentType.Tag;
-      }) as SNTag[];
+    return this.application.items.itemsReferencingItem(note).filter((ref) => {
+      return ref.content_type === ContentType.Tag;
+    }) as SNTag[];
   }
 
   panelDidResize(name: string, collapsed: boolean) {

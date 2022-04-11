@@ -103,15 +103,15 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     }, [focusModeEnabled]);
 
     const reloadThemes = useCallback(() => {
-      const themes = (
-        application.items.getDisplayableItems(ContentType.Theme) as SNTheme[]
-      ).map((item) => {
-        return {
-          name: item.name,
-          identifier: item.identifier,
-          component: item,
-        };
-      }) as ThemeItem[];
+      const themes = application.items
+        .getDisplayableItems<SNTheme>(ContentType.Theme)
+        .map((item) => {
+          return {
+            name: item.name,
+            identifier: item.identifier,
+            component: item,
+          };
+        }) as ThemeItem[];
 
       GetFeatures()
         .filter(
@@ -140,17 +140,15 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     }, [application]);
 
     const reloadToggleableComponents = useCallback(() => {
-      const toggleableComponents = (
-        application.items.getDisplayableItems(
-          ContentType.Component
-        ) as SNComponent[]
-      ).filter(
-        (component) =>
-          [ComponentArea.EditorStack, ComponentArea.TagsList].includes(
-            component.area
-          ) &&
-          component.identifier !== FeatureIdentifier.DeprecatedFoldersComponent
-      );
+      const toggleableComponents = application.items
+        .getDisplayableItems<SNComponent>(ContentType.Component)
+        .filter(
+          (component) =>
+            [ComponentArea.EditorStack].includes(component.area) &&
+            component.identifier !==
+              FeatureIdentifier.DeprecatedFoldersComponent
+        );
+
       setToggleableComponents(toggleableComponents);
     }, [application]);
 

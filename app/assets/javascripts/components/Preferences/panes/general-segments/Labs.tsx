@@ -1,4 +1,3 @@
-import { FindNativeFeature } from '@standardnotes/features';
 import { Switch } from '@/components/Switch';
 import {
   PreferencesGroup,
@@ -8,7 +7,11 @@ import {
   Title,
 } from '@/components/Preferences/components';
 import { WebApplication } from '@/ui_models/application';
-import { FeatureIdentifier, FeatureStatus } from '@standardnotes/snjs';
+import {
+  FeatureIdentifier,
+  FeatureStatus,
+  FindNativeFeature,
+} from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
 import { useCallback, useEffect, useState } from 'preact/hooks';
 import { usePremiumModal } from '@/components/Premium';

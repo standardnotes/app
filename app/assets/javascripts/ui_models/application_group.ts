@@ -6,6 +6,7 @@ import {
   DeviceInterface,
   Platform,
   Runtime,
+  InternalEventBus,
 } from '@standardnotes/snjs';
 import { AppState } from '@/ui_models/app_state';
 import { Bridge } from '@/services/bridge';
@@ -16,7 +17,6 @@ import { IOService } from '@/services/ioService';
 import { AutolockService } from '@/services/autolock_service';
 import { StatusManager } from '@/services/statusManager';
 import { ThemeManager } from '@/services/themeManager';
-import { InternalEventBus } from '@standardnotes/services';
 
 export class ApplicationGroup extends SNApplicationGroup {
   constructor(

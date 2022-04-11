@@ -219,7 +219,6 @@ export const NotesOptions = observer(
     const notTrashed = notes.some((note) => !note.trashed);
     const pinned = notes.some((note) => note.pinned);
     const unpinned = notes.some((note) => !note.pinned);
-    const errored = notes.some((note) => note.errorDecrypting);
 
     useEffect(() => {
       const removeAltKeyObserver = application.io.addKeyObserver({
@@ -277,26 +276,6 @@ export const NotesOptions = observer(
         application.mutator.duplicateItem(note);
       });
     };
-
-    if (errored) {
-      return (
-        <>
-          {notes.length === 1 ? (
-            <div className="px-3 pt-1.5 pb-1 text-xs color-neutral font-medium">
-              <div>
-                <span className="font-semibold">Note ID:</span> {notes[0].uuid}
-              </div>
-            </div>
-          ) : null}
-          <DeletePermanentlyButton
-            closeOnBlur={closeOnBlur}
-            onClick={async () => {
-              await appState.notes.deleteNotesPermanently();
-            }}
-          />
-        </>
-      );
-    }
 
     const openRevisionHistoryModal = () => {
       appState.notes.setShowRevisionHistoryModal(true);

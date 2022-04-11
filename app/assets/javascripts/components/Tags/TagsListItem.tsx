@@ -152,7 +152,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
       () => ({
         accept: ItemTypes.TAG,
         canDrop: (item) => {
-          return tagsState.isValidTagParent(tag.uuid, item.uuid);
+          return tagsState.isValidTagParent(tag, item as SNTag);
         },
         drop: (item) => {
           if (!hasFolders) {
@@ -202,69 +202,60 @@ export const TagsListItem: FunctionComponent<Props> = observer(
             onContextMenu(tag, e.clientX, e.clientY);
           }}
         >
-          {!tag.errorDecrypting ? (
-            <div className="tag-info" title={title} ref={dropRef}>
-              {hasAtLeastOneFolder && (
-                <div className="tag-fold-container">
-                  <button
-                    className={`tag-fold focus:shadow-inner ${
-                      showChildren ? 'opened' : 'closed'
-                    } ${!hasChildren ? 'invisible' : ''}`}
-                    onClick={hasChildren ? toggleChildren : undefined}
-                  >
-                    <Icon
-                      className={`color-neutral`}
-                      type={
-                        showChildren
-                          ? 'menu-arrow-down-alt'
-                          : 'menu-arrow-right'
-                      }
-                    />
-                  </button>
-                </div>
-              )}
-              <div className={`tag-icon draggable mr-1`} ref={dragRef}>
-                <Icon
-                  type="hashtag"
-                  className={`${isSelected ? 'color-info' : 'color-neutral'}`}
-                />
-              </div>
-              <input
-                className={`title ${isEditing ? 'editing' : ''}`}
-                id={`react-tag-${tag.uuid}`}
-                disabled={!isEditing}
-                onBlur={onBlur}
-                onInput={onInput}
-                value={title}
-                onKeyDown={onKeyDown}
-                spellCheck={false}
-                ref={inputRef}
-              />
-              <div className="flex items-center">
+          <div className="tag-info" title={title} ref={dropRef}>
+            {hasAtLeastOneFolder && (
+              <div className="tag-fold-container">
                 <button
-                  className={`border-0 mr-2 bg-transparent hover:bg-contrast focus:shadow-inner cursor-pointer ${
-                    isSelected ? 'visible' : 'invisible'
-                  }`}
-                  onClick={toggleContextMenu}
-                  ref={menuButtonRef}
+                  className={`tag-fold focus:shadow-inner ${
+                    showChildren ? 'opened' : 'closed'
+                  } ${!hasChildren ? 'invisible' : ''}`}
+                  onClick={hasChildren ? toggleChildren : undefined}
                 >
-                  <Icon type="more" className="color-neutral" />
+                  <Icon
+                    className={`color-neutral`}
+                    type={
+                      showChildren ? 'menu-arrow-down-alt' : 'menu-arrow-right'
+                    }
+                  />
                 </button>
-                <div className="count">{noteCounts.get()}</div>
               </div>
+            )}
+            <div className={`tag-icon draggable mr-1`} ref={dragRef}>
+              <Icon
+                type="hashtag"
+                className={`${isSelected ? 'color-info' : 'color-neutral'}`}
+              />
             </div>
-          ) : null}
+            <input
+              className={`title ${isEditing ? 'editing' : ''}`}
+              id={`react-tag-${tag.uuid}`}
+              disabled={!isEditing}
+              onBlur={onBlur}
+              onInput={onInput}
+              value={title}
+              onKeyDown={onKeyDown}
+              spellCheck={false}
+              ref={inputRef}
+            />
+            <div className="flex items-center">
+              <button
+                className={`border-0 mr-2 bg-transparent hover:bg-contrast focus:shadow-inner cursor-pointer ${
+                  isSelected ? 'visible' : 'invisible'
+                }`}
+                onClick={toggleContextMenu}
+                ref={menuButtonRef}
+              >
+                <Icon type="more" className="color-neutral" />
+              </button>
+              <div className="count">{noteCounts.get()}</div>
+            </div>
+          </div>
+
           <div className={`meta ${hasAtLeastOneFolder ? 'with-folders' : ''}`}>
             {tag.conflictOf && (
               <div className="danger small-text font-bold">
                 Conflicted Copy {tag.conflictOf}
               </div>
-            )}
-            {tag.errorDecrypting && !tag.waitingForKey && (
-              <div className="danger small-text font-bold">Missing Keys</div>
-            )}
-            {tag.errorDecrypting && tag.waitingForKey && (
-              <div className="info small-text font-bold">Waiting For Keys</div>
             )}
           </div>
         </button>

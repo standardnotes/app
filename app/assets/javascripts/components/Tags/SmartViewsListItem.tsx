@@ -110,30 +110,29 @@ export const SmartViewsListItem: FunctionComponent<Props> = observer(
             paddingLeft: `${level * PADDING_PER_LEVEL_PX + PADDING_BASE_PX}px`,
           }}
         >
-          {!view.errorDecrypting ? (
-            <div className="tag-info">
-              <div className={`tag-icon mr-1`}>
-                <Icon
-                  type={iconType}
-                  className={`${isSelected ? 'color-info' : 'color-neutral'}`}
-                />
-              </div>
-              <input
-                className={`title ${isEditing ? 'editing' : ''}`}
-                disabled={!isEditing}
-                id={`react-tag-${view.uuid}`}
-                onBlur={onBlur}
-                onInput={onInput}
-                value={title}
-                onKeyUp={onKeyUp}
-                spellCheck={false}
-                ref={inputRef}
+          <div className="tag-info">
+            <div className={`tag-icon mr-1`}>
+              <Icon
+                type={iconType}
+                className={`${isSelected ? 'color-info' : 'color-neutral'}`}
               />
-              <div className="count">
-                {view.uuid === SystemViewId.AllNotes && tagsState.allNotesCount}
-              </div>
             </div>
-          ) : null}
+            <input
+              className={`title ${isEditing ? 'editing' : ''}`}
+              disabled={!isEditing}
+              id={`react-tag-${view.uuid}`}
+              onBlur={onBlur}
+              onInput={onInput}
+              value={title}
+              onKeyUp={onKeyUp}
+              spellCheck={false}
+              ref={inputRef}
+            />
+            <div className="count">
+              {view.uuid === SystemViewId.AllNotes && tagsState.allNotesCount}
+            </div>
+          </div>
+
           {!isSystemView(view) && (
             <div className="meta">
               {view.conflictOf && (
@@ -141,14 +140,7 @@ export const SmartViewsListItem: FunctionComponent<Props> = observer(
                   Conflicted Copy {view.conflictOf}
                 </div>
               )}
-              {view.errorDecrypting && !view.waitingForKey && (
-                <div className="danger small-text font-bold">Missing Keys</div>
-              )}
-              {view.errorDecrypting && view.waitingForKey && (
-                <div className="info small-text font-bold">
-                  Waiting For Keys
-                </div>
-              )}
+
               {isSelected && (
                 <div className="menu">
                   {!isEditing && (

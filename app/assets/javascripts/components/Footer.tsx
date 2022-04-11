@@ -226,10 +226,7 @@ export class Footer extends PureComponent<Props, State> {
     this.application.items.setDisplayOptions(
       ContentType.Theme,
       CollectionSort.Title,
-      'asc',
-      (theme: ItemInterface) => {
-        return !theme.errorDecrypting;
-      }
+      'asc'
     );
   }
 
