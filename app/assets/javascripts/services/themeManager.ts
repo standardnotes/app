@@ -200,18 +200,13 @@ export class ThemeManager extends ApplicationService {
         }
       };
 
-      if (
-        prefersDarkColorScheme &&
-        activeTheme?.identifier === themeIdentifier
-      ) {
-        return;
-      }
+      const isPreferredThemeActive =
+        activeTheme?.identifier === themeIdentifier;
 
-      if (
-        !prefersDarkColorScheme &&
-        themeIdentifier === 'Default' &&
-        !activeTheme
-      ) {
+      const isPreferredThemeDefaultAndActive =
+        themeIdentifier === 'Default' && !activeTheme;
+
+      if (isPreferredThemeActive || isPreferredThemeDefaultAndActive) {
         return;
       }
 
