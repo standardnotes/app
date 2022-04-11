@@ -104,7 +104,7 @@ const ListedActionsMenu: FunctionComponent<ListedActionsMenuProps> = ({
     const updatedGroup: ListedMenuGroup = {
       name: updatedAccountInfo.display_name,
       account: group.account,
-      actions: updatedAccountInfo.actions,
+      actions: updatedAccountInfo.actions as Action[],
     };
 
     const updatedGroups = menuGroups.map((group) => {
@@ -145,7 +145,7 @@ const ListedActionsMenu: FunctionComponent<ListedActionsMenuProps> = ({
               menuGroups.push({
                 name: accountInfo.display_name,
                 account,
-                actions: accountInfo.actions,
+                actions: accountInfo.actions as Action[],
               });
             } else {
               menuGroups.push({

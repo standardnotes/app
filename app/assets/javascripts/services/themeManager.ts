@@ -1,7 +1,6 @@
 import { WebApplication } from '@/ui_models/application';
 import {
   StorageValueModes,
-  EncryptionIntent,
   ApplicationService,
   SNTheme,
   removeFromArray,
@@ -11,7 +10,7 @@ import {
   FeatureStatus,
   PayloadSource,
   PrefKey,
-  CreateIntentPayloadFromObject,
+  CreateDecryptedLocalStorageContextPayload,
 } from '@standardnotes/snjs';
 import { InternalEventBus } from '@standardnotes/services';
 
@@ -206,7 +205,8 @@ export class ThemeManager extends ApplicationService {
 
     this.unregisterStream = this.application.streamItems(
       ContentType.Theme,
-      (items, source) => {
+      ({ changed, inserted, source }) => {
+        const items = changed.concat(inserted);
         const themes = items as SNTheme[];
         for (const theme of themes) {
           if (theme.active) {
@@ -275,10 +275,7 @@ export class ThemeManager extends ApplicationService {
 
     const mapped = themes.map((theme) => {
       const payload = theme.payloadRepresentation();
-      return CreateIntentPayloadFromObject(
-        payload,
-        EncryptionIntent.LocalStorageDecrypted
-      );
+      return CreateDecryptedLocalStorageContextPayload(payload);
     });
 
     return this.application.setValue(

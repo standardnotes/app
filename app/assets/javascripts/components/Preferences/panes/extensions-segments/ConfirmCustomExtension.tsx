@@ -1,4 +1,4 @@
-import { displayStringForContentType, SNComponent } from '@standardnotes/snjs';
+import { DisplayStringForContentType, SNComponent } from '@standardnotes/snjs';
 import { Button } from '@/components/Button';
 import { FunctionComponent } from 'preact';
 import { Title, Text, Subtitle, PreferencesSegment } from '../../components';
@@ -30,7 +30,7 @@ export const ConfirmCustomExtension: FunctionComponent<{
     },
     {
       label: 'Extension Type',
-      value: displayStringForContentType(component.content_type),
+      value: DisplayStringForContentType(component.content_type),
     },
   ];
 

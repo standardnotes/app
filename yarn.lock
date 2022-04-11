@@ -2396,10 +2396,23 @@
     "@standardnotes/common" "^1.19.1"
     jsonwebtoken "^8.5.1"
 
+"@standardnotes/auth@^3.18.4":
+  version "3.18.4"
+  resolved "https://registry.yarnpkg.com/@standardnotes/auth/-/auth-3.18.4.tgz#0ec0fa6939f8f07fa9dda86a2b27616894d11c40"
+  integrity sha512-A3QdW/ESIugZ6Sf9JS9nrn2rs8BroG5eGpSUllDnFH/NV1+wqZSbWHvElDWQ7bdvqPe2+o2+ORz6RNrdgIsfhA==
+  dependencies:
+    "@standardnotes/common" "^1.19.2"
+    jsonwebtoken "^8.5.1"
+
 "@standardnotes/common@^1.19.1":
   version "1.19.1"
   resolved "https://registry.yarnpkg.com/@standardnotes/common/-/common-1.19.1.tgz#45f0837b40bc1c583c22552a53429fe26c5ef498"
   integrity sha512-O114ZdOvur6U1mmiPfvEo/TZjKRxHWBsAAAn+XTtS70E+2VqgvCwgiYT6bG1oUcoyrIiCdRPPyiTC/UPF4gkXg==
+
+"@standardnotes/common@^1.19.2":
+  version "1.19.2"
+  resolved "https://registry.yarnpkg.com/@standardnotes/common/-/common-1.19.2.tgz#edbd92a02f81906506cda82fb732a4810c2ee799"
+  integrity sha512-Kerv0y91QsXDaVC4QxW2CDvpjogC0go/Cb6eyKPpcSEF6uRD1xNOycklYcwOIIzyoDbsZR3XeoL9Z+65VDrqlw==
 
 "@standardnotes/components@1.7.14":
   version "1.7.14"
@@ -2432,6 +2445,14 @@
     "@standardnotes/auth" "^3.18.3"
     "@standardnotes/common" "^1.19.1"
 
+"@standardnotes/features@^1.37.1":
+  version "1.37.1"
+  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.37.1.tgz#e6032158638ed660193f886214ca4a937742ed47"
+  integrity sha512-fUGvdqAkjrd3KJ48dUB3PJJBJHN5NsAVZpoia2fLFpfAvPdswBClB6LrosVs4uFu7gLNpdf/BT3BKZeoZvoDVQ==
+  dependencies:
+    "@standardnotes/auth" "^3.18.4"
+    "@standardnotes/common" "^1.19.2"
+
 "@standardnotes/filepicker@1.10.4":
   version "1.10.4"
   resolved "https://registry.yarnpkg.com/@standardnotes/filepicker/-/filepicker-1.10.4.tgz#a69822381dcb7910ce7ce9040bb0466b3b950985"
@@ -2443,6 +2464,13 @@
   integrity sha512-tl6Yjv/hlPd1xARF4o8vHNPyfoV0d5V/IkdlPA0I2GQh7pLPxHirwD5E2+rRnv59HPiV4ws+XwLtnnPZaZ38bg==
   dependencies:
     "@standardnotes/payloads" "^1.5.1"
+
+"@standardnotes/models@^1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@standardnotes/models/-/models-1.2.1.tgz#e2191889bf0d49b9111de208c798309c360490e1"
+  integrity sha512-cuiUxmj/jvgmJOCElzdlG1d80FNu4wt91MsG0oX18alSG5PBEocR1EJCsdx3jNpSnpm660tr5eZtV/4aCjH3Yg==
+  dependencies:
+    "@standardnotes/features" "^1.37.1"
 
 "@standardnotes/payloads@^1.5.1":
   version "1.5.1"

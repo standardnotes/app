@@ -1,12 +1,6 @@
 import { action, makeAutoObservable, observable } from 'mobx';
 import { ExtensionsLatestVersions } from '@/components/Preferences/panes/extensions-segments';
-import {
-  ComponentArea,
-  ContentType,
-  FeatureIdentifier,
-  SNComponent,
-  IconType,
-} from '@standardnotes/snjs';
+import { FeatureIdentifier, IconType } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 
 const PREFERENCE_IDS = [
@@ -61,7 +55,6 @@ const READY_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
 
 export class PreferencesMenu {
   private _selectedPane: PreferenceId | FeatureIdentifier = 'account';
-  private _extensionPanes: SNComponent[] = [];
   private _menu: PreferencesMenuItem[];
   private _extensionLatestVersions: ExtensionsLatestVersions =
     new ExtensionsLatestVersions(new Map());
@@ -74,7 +67,6 @@ export class PreferencesMenu {
       ? PREFERENCES_MENU_ITEMS
       : READY_PREFERENCES_MENU_ITEMS;
 
-    this.loadExtensionsPanes();
     this.loadLatestVersions();
 
     makeAutoObservable<
@@ -105,62 +97,22 @@ export class PreferencesMenu {
     return this._extensionLatestVersions;
   }
 
-  loadExtensionsPanes(): void {
-    const excludedComponents = [
-      FeatureIdentifier.TwoFactorAuthManager,
-      'org.standardnotes.batch-manager',
-      'org.standardnotes.extensions-manager',
-      FeatureIdentifier.CloudLink,
-    ];
-    this._extensionPanes = (
-      this.application.items.getItems([
-        ContentType.ActionsExtension,
-        ContentType.Component,
-        ContentType.Theme,
-      ]) as SNComponent[]
-    ).filter(
-      (extension) =>
-        extension.area === ComponentArea.Modal &&
-        !excludedComponents.includes(extension.package_info.identifier)
-    );
-  }
-
   get menuItems(): SelectableMenuItem[] {
     const menuItems = this._menu.map((preference) => ({
       ...preference,
       selected: preference.id === this._selectedPane,
     }));
-    const extensionsMenuItems: SelectableMenuItem[] = this._extensionPanes.map(
-      (extension) => {
-        return {
-          icon: 'window',
-          id: extension.package_info.identifier,
-          label: extension.name,
-          selected: extension.package_info.identifier === this._selectedPane,
-        };
-      }
-    );
 
-    return menuItems.concat(extensionsMenuItems);
+    return menuItems;
   }
 
   get selectedMenuItem(): PreferencesMenuItem | undefined {
     return this._menu.find((item) => item.id === this._selectedPane);
   }
 
-  get selectedExtension(): SNComponent | undefined {
-    return this._extensionPanes.find(
-      (extension) => extension.package_info.identifier === this._selectedPane
-    );
-  }
-
   get selectedPaneId(): PreferenceId | FeatureIdentifier {
     if (this.selectedMenuItem != undefined) {
       return this.selectedMenuItem.id;
-    }
-
-    if (this.selectedExtension != undefined) {
-      return this.selectedExtension.package_info.identifier;
     }
 
     return 'account';

@@ -8,8 +8,6 @@ import {
   removeFromArray,
   DesktopManagerInterface,
   PayloadSource,
-  EncryptionIntent,
-  CreateIntentPayloadFromObject,
 } from '@standardnotes/snjs';
 import { WebAppEvent, WebApplication } from '@/ui_models/application';
 import { isDesktopApplication } from '@/utils';
@@ -68,10 +66,7 @@ export class DesktopManager
    * Keys are not passed into ItemParams, so the result is not encrypted
    */
   convertComponentForTransmission(component: SNComponent) {
-    return CreateIntentPayloadFromObject(
-      component.payloadRepresentation(),
-      EncryptionIntent.FileDecrypted
-    );
+    return component.payloadRepresentation().ejected();
   }
 
   // All `components` should be installed
@@ -84,11 +79,7 @@ export class DesktopManager
         return this.convertComponentForTransmission(component);
       })
     ).then((payloads) => {
-      this.bridge.syncComponents(
-        payloads.filter(
-          (payload) => !payload.errorDecrypting && !payload.waitingForKey
-        )
-      );
+      this.bridge.syncComponents(payloads);
     });
   }
 
@@ -137,7 +128,7 @@ export class DesktopManager
       return;
     }
     const updatedComponent = await this.application.mutator.changeAndSaveItem(
-      component.uuid,
+      component,
       (m) => {
         const mutator = m as ComponentMutator;
         if (error) {

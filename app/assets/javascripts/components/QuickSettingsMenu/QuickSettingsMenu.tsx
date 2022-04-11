@@ -146,11 +146,10 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
         ) as SNComponent[]
       ).filter(
         (component) =>
-          [ComponentArea.EditorStack, ComponentArea.TagsList].includes(
-            component.area
-          ) &&
+          [ComponentArea.EditorStack].includes(component.area) &&
           component.identifier !== FeatureIdentifier.DeprecatedFoldersComponent
       );
+
       setToggleableComponents(toggleableComponents);
     }, [application]);
 

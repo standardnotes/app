@@ -28,6 +28,7 @@
     "@babel/preset-typescript": "^7.16.7",
     "@reach/disclosure": "^0.16.2",
     "@reach/visually-hidden": "^0.16.0",
+    "@standardnotes/models": "^1.2.1",
     "@standardnotes/responses": "1.5.1",
     "@standardnotes/services": "1.7.1",
     "@standardnotes/stylekit": "5.20.0",

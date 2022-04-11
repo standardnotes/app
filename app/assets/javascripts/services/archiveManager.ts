@@ -1,11 +1,10 @@
 import { WebApplication } from '@/ui_models/application';
 import { parseFileName } from '@standardnotes/filepicker';
 import {
-  EncryptionIntent,
   ContentType,
-  SNNote,
   BackupFile,
-  PayloadContent,
+  BackupFileDecryptedContextualPayload,
+  NoteContent,
 } from '@standardnotes/snjs';
 
 function sanitizeFileName(name: string): string {
@@ -79,6 +78,7 @@ export class ArchiveManager {
     const blob = new Blob([JSON.stringify(data, null, 2)], {
       type: 'text/plain',
     });
+
     const fileName = zippableFileName('Standard Notes Backup and Import File');
     await zipWriter.add(fileName, new zip.BlobReader(blob));
 
@@ -88,9 +88,9 @@ export class ArchiveManager {
       let name, contents;
 
       if (item.content_type === ContentType.Note) {
-        const note = item as SNNote;
-        name = (note.content as PayloadContent).title;
-        contents = (note.content as PayloadContent).text;
+        const note = item as BackupFileDecryptedContextualPayload<NoteContent>;
+        name = note.content.title;
+        contents = note.content.text;
       } else {
         name = item.content_type;
         contents = JSON.stringify(item.content, null, 2);

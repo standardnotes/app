@@ -148,7 +148,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
         }).then((confirmed) => {
           if (confirmed) {
             application.mutator.changeAndSaveItem(
-              selectedRevision.payload.uuid,
+              originalNote,
               (mutator) => {
                 mutator.unsafe_setCustomContent(
                   selectedRevision.payload.content
@@ -218,7 +218,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
             setIsDeletingRevision(true);
 
             application.historyManager
-              .deleteRemoteRevision(note.uuid, selectedRemoteEntry)
+              .deleteRemoteRevision(note, selectedRemoteEntry)
               .then((res) => {
                 if (res.error?.message) {
                   throw new Error(res.error.message);

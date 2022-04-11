@@ -330,19 +330,23 @@ export class AppState {
   streamNotesAndTags() {
     this.application.streamItems(
       [ContentType.Note, ContentType.Tag],
-      async (items, source) => {
+      async ({ changed, inserted, removed, source }) => {
+        const items = [...changed, ...inserted, ...removed];
         const selectedTag = this.tags.selected;
 
         /** Close any note controllers for deleted/trashed/archived notes */
         if (source === PayloadSource.PreSyncSave) {
           const notes = items.filter(
             (candidate) => candidate.content_type === ContentType.Note
-          ) as SNNote[];
+          );
+
           for (const note of notes) {
             const noteController = this.noteControllerForNote(note);
+
             if (!noteController) {
               continue;
             }
+
             if (note.deleted) {
               this.closeNoteController(noteController);
             } else if (
