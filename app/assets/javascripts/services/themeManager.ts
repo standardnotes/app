@@ -20,8 +20,9 @@ import {
   addTimedToast,
 } from '@standardnotes/stylekit';
 
-const CACHED_THEMES_KEY = 'cachedThemes';
+const CachedThemesKey = 'cachedThemes';
 const TimeBeforeApplyingColorScheme = 5;
+const DefaultThemeIdentifier = 'Default';
 
 export class ThemeManager extends ApplicationService {
   private activeThemes: UuidString[] = [];
@@ -46,7 +47,7 @@ export class ThemeManager extends ApplicationService {
         this.deactivateAllThemes();
         this.activeThemes = [];
         this.application?.removeValue(
-          CACHED_THEMES_KEY,
+          CachedThemesKey,
           StorageValueModes.Nonwrapped
         );
         break;
@@ -78,24 +79,17 @@ export class ThemeManager extends ApplicationService {
       false
     );
 
-    if (useDeviceThemeSettings === this.lastUseDeviceThemeSettings) {
-      return;
+    if (useDeviceThemeSettings !== this.lastUseDeviceThemeSettings) {
+      this.lastUseDeviceThemeSettings = useDeviceThemeSettings;
     }
 
-    this.lastUseDeviceThemeSettings = useDeviceThemeSettings;
+    if (useDeviceThemeSettings) {
+      const prefersDarkColorScheme = window.matchMedia(
+        '(prefers-color-scheme: dark)'
+      );
 
-    if (!useDeviceThemeSettings) {
-      return;
+      this.setThemeAsPerColorScheme(prefersDarkColorScheme.matches);
     }
-
-    const prefersDarkColorScheme = window.matchMedia(
-      '(prefers-color-scheme: dark)'
-    );
-
-    this.setThemeAsPerColorScheme(
-      useDeviceThemeSettings,
-      prefersDarkColorScheme.matches
-    );
   }
 
   get webApplication() {
@@ -153,10 +147,7 @@ export class ThemeManager extends ApplicationService {
   }
 
   private colorSchemeEventHandler(event: MediaQueryListEvent) {
-    this.setThemeAsPerColorScheme(
-      this.lastUseDeviceThemeSettings,
-      event.matches
-    );
+    this.setThemeAsPerColorScheme(event.matches);
   }
 
   private showColorSchemeToast(setThemeCallback: () => void) {
@@ -188,56 +179,51 @@ export class ThemeManager extends ApplicationService {
     );
   }
 
-  private setThemeAsPerColorScheme(
-    useDeviceThemeSettings: boolean,
-    prefersDarkColorScheme: boolean
-  ) {
-    if (useDeviceThemeSettings) {
-      const preference = prefersDarkColorScheme
-        ? PrefKey.AutoDarkThemeIdentifier
-        : PrefKey.AutoLightThemeIdentifier;
-      const themes = this.application.items.getDisplayableItems(
-        ContentType.Theme
-      ) as SNTheme[];
+  private setThemeAsPerColorScheme(prefersDarkColorScheme: boolean) {
+    const preference = prefersDarkColorScheme
+      ? PrefKey.AutoDarkThemeIdentifier
+      : PrefKey.AutoLightThemeIdentifier;
 
-      const activeTheme = themes.find(
-        (theme) => theme.active && !theme.isLayerable()
-      );
+    const themes = this.application.items.getDisplayableItems(
+      ContentType.Theme
+    ) as SNTheme[];
 
-      const enableDefaultTheme = () => {
-        if (activeTheme) this.application.mutator.toggleTheme(activeTheme);
-      };
+    const activeTheme = themes.find(
+      (theme) => theme.active && !theme.isLayerable()
+    );
 
-      const themeIdentifier = this.application.getPreference(
-        preference,
-        'Default'
-      ) as string;
+    const enableDefaultTheme = () => {
+      if (activeTheme) this.application.mutator.toggleTheme(activeTheme);
+    };
 
-      const setTheme = () => {
-        if (themeIdentifier === 'Default') {
-          enableDefaultTheme();
-        } else {
-          const theme = themes.find(
-            (theme) => theme.package_info.identifier === themeIdentifier
-          );
-          if (theme && !theme.active) {
-            this.application.mutator.toggleTheme(theme);
-          }
+    const themeIdentifier = this.application.getPreference(
+      preference,
+      DefaultThemeIdentifier
+    ) as string;
+
+    const setTheme = () => {
+      if (themeIdentifier === DefaultThemeIdentifier) {
+        enableDefaultTheme();
+      } else {
+        const theme = themes.find(
+          (theme) => theme.package_info.identifier === themeIdentifier
+        );
+        if (theme && !theme.active) {
+          this.application.mutator.toggleTheme(theme);
         }
-      };
-
-      const isPreferredThemeActive =
-        activeTheme?.identifier === themeIdentifier;
-
-      const isPreferredThemeDefaultAndActive =
-        themeIdentifier === 'Default' && !activeTheme;
-
-      if (isPreferredThemeActive || isPreferredThemeDefaultAndActive) {
-        return;
       }
+    };
 
-      this.showColorSchemeToast(setTheme);
+    const isPreferredThemeActive = activeTheme?.identifier === themeIdentifier;
+
+    const isPreferredThemeDefaultAndActive =
+      themeIdentifier === DefaultThemeIdentifier && !activeTheme;
+
+    if (isPreferredThemeActive || isPreferredThemeDefaultAndActive) {
+      return;
     }
+
+    this.showColorSchemeToast(setTheme);
   }
 
   private async activateCachedThemes() {
@@ -338,7 +324,7 @@ export class ThemeManager extends ApplicationService {
     });
 
     return this.application.setValue(
-      CACHED_THEMES_KEY,
+      CachedThemesKey,
       mapped,
       StorageValueModes.Nonwrapped
     );
@@ -346,7 +332,7 @@ export class ThemeManager extends ApplicationService {
 
   private async getCachedThemes() {
     const cachedThemes = (await this.application.getValue(
-      CACHED_THEMES_KEY,
+      CachedThemesKey,
       StorageValueModes.Nonwrapped
     )) as SNTheme[];
     if (cachedThemes) {
