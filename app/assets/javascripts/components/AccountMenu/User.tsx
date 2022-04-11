@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import { AppState } from '@/ui_models/app_state';
 import { WebApplication } from '@/ui_models/application';
-import { User as UserType } from '@standardnotes/responses';
+import { User as UserType } from '@standardnotes/snjs';
 
 type Props = {
   appState: AppState;

@@ -9,14 +9,15 @@ import {
   Title,
 } from '@/components/Preferences/components';
 import { HorizontalSeparator } from '@/components/Shared/HorizontalSeparator';
-import { FeatureIdentifier } from '@standardnotes/features';
-import { FeatureStatus } from '@standardnotes/snjs';
-import { FunctionComponent } from 'preact';
 import {
+  FeatureStatus,
+  FeatureIdentifier,
   CloudProvider,
   MuteFailedCloudBackupsEmailsOption,
   SettingName,
-} from '@standardnotes/settings';
+} from '@standardnotes/snjs';
+import { FunctionComponent } from 'preact';
+
 import { Switch } from '@/components/Switch';
 import { convertStringifiedBooleanToBoolean } from '@/utils';
 import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/strings';

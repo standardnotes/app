@@ -4,12 +4,12 @@ import { sortThemes } from '@/components/QuickSettingsMenu/QuickSettingsMenu';
 import { HorizontalSeparator } from '@/components/Shared/HorizontalSeparator';
 import { Switch } from '@/components/Switch';
 import { WebApplication } from '@/ui_models/application';
-import { GetFeatures } from '@standardnotes/features';
 import {
   ContentType,
   FeatureIdentifier,
   FeatureStatus,
   PrefKey,
+  GetFeatures,
   SNTheme,
 } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
@@ -61,9 +61,8 @@ export const Appearance: FunctionComponent<Props> = observer(
     );
 
     useEffect(() => {
-      const themesAsItems: DropdownItem[] = (
-        application.items.getDisplayableItems(ContentType.Theme) as SNTheme[]
-      )
+      const themesAsItems: DropdownItem[] = application.items
+        .getDisplayableItems<SNTheme>(ContentType.Theme)
         .filter((theme) => !theme.isLayerable())
         .sort(sortThemes)
         .map((theme) => {

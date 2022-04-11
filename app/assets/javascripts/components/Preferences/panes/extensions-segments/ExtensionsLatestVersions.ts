@@ -1,6 +1,9 @@
 import { WebApplication } from '@/ui_models/application';
-import { FeatureDescription } from '@standardnotes/features';
-import { SNComponent, ClientDisplayableError } from '@standardnotes/snjs';
+import {
+  SNComponent,
+  ClientDisplayableError,
+  FeatureDescription,
+} from '@standardnotes/snjs';
 import { makeAutoObservable, observable } from 'mobx';
 
 export class ExtensionsLatestVersions {

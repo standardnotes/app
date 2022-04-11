@@ -8,11 +8,11 @@ import {
   removeFromArray,
   DesktopManagerInterface,
   PayloadSource,
+  InternalEventBus,
 } from '@standardnotes/snjs';
 import { WebAppEvent, WebApplication } from '@/ui_models/application';
 import { isDesktopApplication } from '@/utils';
 import { Bridge, ElectronDesktopCallbacks } from './bridge';
-import { InternalEventBus } from '@standardnotes/services';
 
 /**
  * An interface used by the Desktop application to interact with SN

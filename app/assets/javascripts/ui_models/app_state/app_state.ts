@@ -3,8 +3,6 @@ import { storage, StorageKey } from '@/services/localStorage';
 import { WebApplication, WebAppEvent } from '@/ui_models/application';
 import { AccountMenuState } from '@/ui_models/app_state/account_menu_state';
 import { isDesktopApplication } from '@/utils';
-import { Uuid } from '@standardnotes/common';
-import { PayloadSource } from '@standardnotes/models';
 import {
   ApplicationEvent,
   ContentType,
@@ -16,6 +14,8 @@ import {
   SNTag,
   SystemViewId,
   removeFromArray,
+  PayloadSource,
+  Uuid,
 } from '@standardnotes/snjs';
 import {
   action,
@@ -329,10 +329,14 @@ export class AppState {
   }
 
   streamNotesAndTags() {
-    this.application.streamItems(
+    this.application.streamItems<SNNote | SNTag>(
       [ContentType.Note, ContentType.Tag],
       async ({ changed, inserted, removed, source }) => {
-        if (source !== PayloadSource.PreSyncSave) {
+        if (
+          ![PayloadSource.PreSyncSave, PayloadSource.RemoteRetrieved].includes(
+            source
+          )
+        ) {
           return;
         }
 

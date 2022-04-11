@@ -11,8 +11,8 @@ import {
   PayloadSource,
   PrefKey,
   CreateDecryptedLocalStorageContextPayload,
+  InternalEventBus,
 } from '@standardnotes/snjs';
-import { InternalEventBus } from '@standardnotes/services';
 
 const CACHED_THEMES_KEY = 'cachedThemes';
 
@@ -155,9 +155,9 @@ export class ThemeManager extends ApplicationService {
       const preference = prefersDarkColorScheme
         ? PrefKey.AutoDarkThemeIdentifier
         : PrefKey.AutoLightThemeIdentifier;
-      const themes = this.application.items.getDisplayableItems(
+      const themes = this.application.items.getDisplayableItems<SNTheme>(
         ContentType.Theme
-      ) as SNTheme[];
+      );
 
       const enableDefaultTheme = () => {
         const activeTheme = themes.find(

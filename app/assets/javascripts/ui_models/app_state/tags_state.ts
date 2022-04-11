@@ -14,6 +14,7 @@ import {
   TagMutator,
   UuidString,
   isSystemView,
+  FindItem,
 } from '@standardnotes/snjs';
 import {
   action,
@@ -23,7 +24,6 @@ import {
   observable,
   runInAction,
 } from 'mobx';
-import { FindItem } from '@standardnotes/models';
 import { WebApplication } from '../application';
 import { FeaturesState, SMART_TAGS_FEATURE_NAME } from './features_state';
 
@@ -32,9 +32,7 @@ type AnyTag = SNTag | SmartView;
 const rootTags = (application: SNApplication): SNTag[] => {
   const hasNoParent = (tag: SNTag) => !application.items.getTagParent(tag);
 
-  const allTags = application.items.getDisplayableItems(
-    ContentType.Tag
-  ) as SNTag[];
+  const allTags = application.items.getDisplayableItems<SNTag>(ContentType.Tag);
   const rootTags = allTags.filter(hasNoParent);
 
   return rootTags;

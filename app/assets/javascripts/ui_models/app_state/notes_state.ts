@@ -92,9 +92,8 @@ export class NotesState {
   }
 
   private async selectNotesRange(selectedNote: SNNote): Promise<void> {
-    const notes = this.application.items.getDisplayableItems(
-      ContentType.Note
-    ) as SNNote[];
+    const notes = this.application.items.getDisplayableNotes();
+
     const lastSelectedNoteIndex = notes.findIndex(
       (note) => note.uuid == this.lastSelectedNote?.uuid
     );

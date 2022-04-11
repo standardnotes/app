@@ -231,9 +231,7 @@ export class NotesViewState {
     if (!tag) {
       return;
     }
-    const notes = this.application.items.getDisplayableItems(
-      ContentType.Note
-    ) as SNNote[];
+    const notes = this.application.items.getDisplayableNotes();
     const renderedNotes = notes.slice(0, this.notesToDisplay);
 
     this.notes = notes;
