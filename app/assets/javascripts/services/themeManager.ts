@@ -94,8 +94,7 @@ export class ThemeManager extends ApplicationService {
 
     this.setThemeAsPerColorScheme(
       useDeviceThemeSettings,
-      prefersDarkColorScheme.matches,
-      true
+      prefersDarkColorScheme.matches
     );
   }
 
@@ -156,12 +155,11 @@ export class ThemeManager extends ApplicationService {
   private colorSchemeEventHandler(event: MediaQueryListEvent) {
     this.setThemeAsPerColorScheme(
       this.lastUseDeviceThemeSettings,
-      event.matches,
-      false
+      event.matches
     );
   }
 
-  private showTimedToast(setThemeCallback: () => void) {
+  private showColorSchemeToast(setThemeCallback: () => void) {
     const [toastId, intervalId] = addTimedToast(
       {
         type: ToastType.Regular,
@@ -192,8 +190,7 @@ export class ThemeManager extends ApplicationService {
 
   private setThemeAsPerColorScheme(
     useDeviceThemeSettings: boolean,
-    prefersDarkColorScheme: boolean,
-    shouldShowTimedToast: boolean
+    prefersDarkColorScheme: boolean
   ) {
     if (useDeviceThemeSettings) {
       const preference = prefersDarkColorScheme
@@ -239,11 +236,7 @@ export class ThemeManager extends ApplicationService {
         return;
       }
 
-      if (shouldShowTimedToast) {
-        this.showTimedToast(setTheme);
-      } else {
-        setTheme();
-      }
+      this.showColorSchemeToast(setTheme);
     }
   }
 
