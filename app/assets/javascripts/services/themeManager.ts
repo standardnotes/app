@@ -104,7 +104,7 @@ export class ThemeManager extends ApplicationService {
             },
           },
           {
-            label: 'Apply Now',
+            label: 'Apply now',
             handler: () => {
               dismissToast(toastId);
               clearInterval(intervalId);
