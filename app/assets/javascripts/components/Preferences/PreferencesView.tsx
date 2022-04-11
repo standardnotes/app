@@ -1,6 +1,8 @@
 import { RoundIconButton } from '@/components/RoundIconButton';
 import { TitleBar, Title } from '@/components/TitleBar';
 import { FunctionComponent } from 'preact';
+import { observer } from 'mobx-react-lite';
+
 import {
   AccountPreferences,
   HelpAndFeedback,
@@ -8,15 +10,12 @@ import {
   General,
   Security,
 } from './panes';
-import { observer } from 'mobx-react-lite';
-
 import { PreferencesMenu } from './PreferencesMenu';
 import { PreferencesMenuView } from './PreferencesMenuView';
 import { WebApplication } from '@/ui_models/application';
 import { MfaProps } from './panes/two-factor-auth/MfaProps';
 import { AppState } from '@/ui_models/app_state';
 import { useEffect, useMemo } from 'preact/hooks';
-import { ExtensionPane } from './panes/ExtensionPane';
 import { Backups } from '@/components/Preferences/panes/Backups';
 import { Appearance } from './panes/Appearance';
 
@@ -66,24 +65,13 @@ const PaneSelector: FunctionComponent<
     case 'help-feedback':
       return <HelpAndFeedback />;
     default:
-      if (menu.selectedExtension != undefined) {
-        return (
-          <ExtensionPane
-            application={application}
-            appState={appState}
-            extension={menu.selectedExtension}
-            preferencesMenu={menu}
-          />
-        );
-      } else {
-        return (
-          <General
-            appState={appState}
-            application={application}
-            extensionsLatestVersions={menu.extensionsLatestVersions}
-          />
-        );
-      }
+      return (
+        <General
+          appState={appState}
+          application={application}
+          extensionsLatestVersions={menu.extensionsLatestVersions}
+        />
+      );
   }
 });
 

@@ -13,16 +13,16 @@ import {
   Text,
   Title,
 } from '../../components';
-import {
-  EmailBackupFrequency,
-  MuteFailedBackupsEmailsOption,
-  SettingName,
-} from '@standardnotes/settings';
 import { Dropdown, DropdownItem } from '@/components/Dropdown';
 import { Switch } from '@/components/Switch';
 import { HorizontalSeparator } from '@/components/Shared/HorizontalSeparator';
-import { FeatureIdentifier } from '@standardnotes/features';
-import { FeatureStatus } from '@standardnotes/snjs';
+import {
+  FeatureStatus,
+  FeatureIdentifier,
+  EmailBackupFrequency,
+  MuteFailedBackupsEmailsOption,
+  SettingName,
+} from '@standardnotes/snjs';
 
 type Props = {
   application: WebApplication;

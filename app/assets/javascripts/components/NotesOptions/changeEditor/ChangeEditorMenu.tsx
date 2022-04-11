@@ -86,7 +86,7 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   ) => {
     if (component) {
       if (component.conflictOf) {
-        application.mutator.changeAndSaveItem(component.uuid, (mutator) => {
+        application.mutator.changeAndSaveItem(component, (mutator) => {
           mutator.conflictOf = undefined;
         });
       }

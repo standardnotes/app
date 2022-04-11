@@ -6,7 +6,12 @@ import {
   observable,
   runInAction,
 } from 'mobx';
-import { ApplicationEvent, ContentType, SNItem } from '@standardnotes/snjs';
+import {
+  ApplicationEvent,
+  ContentType,
+  SNNote,
+  SNTag,
+} from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { AccountMenuPane } from '@/components/AccountMenu';
 
@@ -23,7 +28,7 @@ export class AccountMenuState {
   otherSessionsSignOut = false;
   server: string | undefined = undefined;
   enableServerOption = false;
-  notesAndTags: SNItem[] = [];
+  notesAndTags: (SNNote | SNTag)[] = [];
   isEncryptionEnabled = false;
   encryptionStatusString = '';
   isBackupEncrypted = false;

@@ -12,7 +12,7 @@ import {
   MuteSignInEmailsOption,
   LogSessionUserAgentOption,
   SettingName,
-} from '@standardnotes/settings';
+} from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionalComponent } from 'preact';
 import { useCallback, useEffect, useState } from 'preact/hooks';

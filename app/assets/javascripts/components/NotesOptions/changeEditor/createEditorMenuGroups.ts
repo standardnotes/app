@@ -1,11 +1,13 @@
 import { WebApplication } from '@/ui_models/application';
 import {
+  ContentType,
+  FeatureStatus,
+  SNComponent,
   ComponentArea,
   FeatureDescription,
   GetFeatures,
   NoteType,
-} from '@standardnotes/features';
-import { ContentType, FeatureStatus, SNComponent } from '@standardnotes/snjs';
+} from '@standardnotes/snjs';
 import { EditorMenuItem, EditorMenuGroup } from '../ChangeEditorOption';
 
 export const PLAIN_EDITOR_NAME = 'Plain Editor';

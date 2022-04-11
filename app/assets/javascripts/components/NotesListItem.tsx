@@ -1,6 +1,7 @@
 import { WebApplication } from '@/ui_models/application';
 import {
   CollectionSort,
+  CollectionSortProperty,
   sanitizeHtmlString,
   SNNote,
 } from '@standardnotes/snjs';
@@ -18,7 +19,7 @@ type Props = {
   onClick: () => void;
   onContextMenu: (e: MouseEvent) => void;
   selected: boolean;
-  sortedBy?: CollectionSort;
+  sortedBy?: CollectionSortProperty;
 };
 
 type NoteFlag = {
@@ -34,25 +35,7 @@ const flagsForNote = (note: SNNote) => {
       class: 'danger',
     });
   }
-  if (note.errorDecrypting) {
-    if (note.waitingForKey) {
-      flags.push({
-        text: 'Waiting For Keys',
-        class: 'info',
-      });
-    } else {
-      flags.push({
-        text: 'Missing Keys',
-        class: 'danger',
-      });
-    }
-  }
-  if (note.deleted) {
-    flags.push({
-      text: 'Deletion Pending Sync',
-      class: 'danger',
-    });
-  }
+
   return flags;
 };
 

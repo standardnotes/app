@@ -281,7 +281,7 @@ export class NoteView extends PureComponent<Props, State> {
       });
     }
 
-    if (!note.deleted && note.locked !== this.state.noteLocked) {
+    if (note.locked !== this.state.noteLocked) {
       this.setState({
         noteLocked: note.locked,
       });
@@ -421,7 +421,7 @@ export class NoteView extends PureComponent<Props, State> {
   streamItems() {
     this.removeComponentStreamObserver = this.application.streamItems(
       ContentType.Component,
-      async (_items, source) => {
+      async ({ source }) => {
         if (
           isPayloadSourceInternalChange(source) ||
           source === PayloadSource.InitialObserverRegistrationPush
@@ -1003,7 +1003,7 @@ export class NoteView extends PureComponent<Props, State> {
             )}
           </div>
 
-          {this.note && !this.note.errorDecrypting && (
+          {this.note && (
             <div id="editor-title-bar" className="section-title-bar w-full">
               <div className="flex items-center justify-between h-8">
                 <div
@@ -1025,6 +1025,7 @@ export class NoteView extends PureComponent<Props, State> {
                       }
                       spellcheck={false}
                       value={this.state.editorTitle}
+                      autocomplete="off"
                     />
                   </div>
                 </div>
@@ -1088,165 +1089,127 @@ export class NoteView extends PureComponent<Props, State> {
             </div>
           )}
 
-          {!this.note.errorDecrypting && (
-            <div
-              id={ElementIds.EditorContent}
-              className={ElementIds.EditorContent}
-              ref={this.editorContentRef}
-            >
-              {this.state.marginResizersEnabled &&
-              this.editorContentRef.current ? (
-                <PanelResizer
-                  minWidth={300}
-                  hoverable={true}
-                  collapsable={false}
-                  panel={this.editorContentRef.current}
-                  side={PanelSide.Left}
-                  type={PanelResizeType.OffsetAndWidth}
-                  left={this.state.leftResizerOffset}
-                  width={this.state.leftResizerWidth}
-                  resizeFinishCallback={this.onPanelResizeFinish}
-                />
-              ) : null}
+          <div
+            id={ElementIds.EditorContent}
+            className={ElementIds.EditorContent}
+            ref={this.editorContentRef}
+          >
+            {this.state.marginResizersEnabled &&
+            this.editorContentRef.current ? (
+              <PanelResizer
+                minWidth={300}
+                hoverable={true}
+                collapsable={false}
+                panel={this.editorContentRef.current}
+                side={PanelSide.Left}
+                type={PanelResizeType.OffsetAndWidth}
+                left={this.state.leftResizerOffset}
+                width={this.state.leftResizerWidth}
+                resizeFinishCallback={this.onPanelResizeFinish}
+              />
+            ) : null}
 
-              {this.state.editorComponentViewer && (
-                <div className="component-view">
-                  <ComponentView
-                    componentViewer={this.state.editorComponentViewer}
-                    onLoad={this.onEditorComponentLoad}
-                    requestReload={this.editorComponentViewerRequestsReload}
-                    application={this.application}
-                    appState={this.appState}
-                  />
-                </div>
+            {this.state.editorComponentViewer && (
+              <div className="component-view">
+                <ComponentView
+                  componentViewer={this.state.editorComponentViewer}
+                  onLoad={this.onEditorComponentLoad}
+                  requestReload={this.editorComponentViewerRequestsReload}
+                  application={this.application}
+                  appState={this.appState}
+                />
+              </div>
+            )}
+
+            {this.state.editorStateDidLoad &&
+              !this.state.editorComponentViewer &&
+              !this.state.textareaUnloading && (
+                <textarea
+                  autocomplete="off"
+                  className="editable font-editor"
+                  dir="auto"
+                  id={ElementIds.NoteTextEditor}
+                  onChange={this.onTextAreaChange}
+                  value={this.state.editorText}
+                  readonly={this.state.noteLocked}
+                  onFocus={this.onContentFocus}
+                  spellcheck={this.state.spellcheck}
+                  ref={(ref) => this.onSystemEditorLoad(ref)}
+                ></textarea>
               )}
 
-              {this.state.editorStateDidLoad &&
-                !this.state.editorComponentViewer &&
-                !this.state.textareaUnloading && (
-                  <textarea
-                    autocomplete="off"
-                    className="editable font-editor"
-                    dir="auto"
-                    id={ElementIds.NoteTextEditor}
-                    onChange={this.onTextAreaChange}
-                    value={this.state.editorText}
-                    readonly={this.state.noteLocked}
-                    onFocus={this.onContentFocus}
-                    spellcheck={this.state.spellcheck}
-                    ref={(ref) => this.onSystemEditorLoad(ref)}
-                  ></textarea>
-                )}
+            {this.state.marginResizersEnabled &&
+            this.editorContentRef.current ? (
+              <PanelResizer
+                minWidth={300}
+                hoverable={true}
+                collapsable={false}
+                panel={this.editorContentRef.current}
+                side={PanelSide.Right}
+                type={PanelResizeType.OffsetAndWidth}
+                left={this.state.rightResizerOffset}
+                width={this.state.rightResizerWidth}
+                resizeFinishCallback={this.onPanelResizeFinish}
+              />
+            ) : null}
+          </div>
 
-              {this.state.marginResizersEnabled &&
-              this.editorContentRef.current ? (
-                <PanelResizer
-                  minWidth={300}
-                  hoverable={true}
-                  collapsable={false}
-                  panel={this.editorContentRef.current}
-                  side={PanelSide.Right}
-                  type={PanelResizeType.OffsetAndWidth}
-                  left={this.state.rightResizerOffset}
-                  width={this.state.rightResizerWidth}
-                  resizeFinishCallback={this.onPanelResizeFinish}
-                />
-              ) : null}
-            </div>
-          )}
-
-          {this.note.errorDecrypting && (
-            <div className="section">
-              <div id="error-decrypting-container" className="sn-component">
-                <div id="error-decrypting-panel" className="sk-panel">
-                  <div className="sk-panel-header">
-                    <div className="sk-panel-header-title">
-                      {this.note.waitingForKey
-                        ? 'Waiting for Key'
-                        : 'Unable to Decrypt'}
-                    </div>
-                  </div>
-                  <div className="sk-panel-content">
-                    <div className="sk-panel-section">
-                      {this.note.waitingForKey && (
-                        <p className="sk-p">
-                          This note is awaiting its encryption key to be ready.
-                          Please wait for syncing to complete for this note to
-                          be decrypted.
-                        </p>
-                      )}
-                      {!this.note.waitingForKey && (
-                        <p className="sk-p">
-                          There was an error decrypting this item. Ensure you
-                          are running the latest version of this app, then sign
-                          out and sign back in to try again.
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {!this.note.errorDecrypting && (
-            <div id="editor-pane-component-stack">
-              {this.state.availableStackComponents.length > 0 && (
-                <div
-                  id="component-stack-menu-bar"
-                  className="sk-app-bar no-edges"
-                >
-                  <div className="left">
-                    {this.state.availableStackComponents.map((component) => {
-                      return (
-                        <div
-                          key={component.uuid}
-                          onClick={() => {
-                            this.toggleStackComponent(component);
-                          }}
-                          className="sk-app-bar-item"
-                        >
-                          <div className="sk-app-bar-item-column">
-                            <div
-                              className={
-                                (this.stackComponentExpanded(component) &&
-                                component.active
-                                  ? 'info '
-                                  : '') +
-                                (!this.stackComponentExpanded(component)
-                                  ? 'neutral '
-                                  : '') +
-                                ' sk-circle small'
-                              }
-                            />
-                          </div>
-                          <div className="sk-app-bar-item-column">
-                            <div className="sk-label">{component.name}</div>
-                          </div>
+          <div id="editor-pane-component-stack">
+            {this.state.availableStackComponents.length > 0 && (
+              <div
+                id="component-stack-menu-bar"
+                className="sk-app-bar no-edges"
+              >
+                <div className="left">
+                  {this.state.availableStackComponents.map((component) => {
+                    return (
+                      <div
+                        key={component.uuid}
+                        onClick={() => {
+                          this.toggleStackComponent(component);
+                        }}
+                        className="sk-app-bar-item"
+                      >
+                        <div className="sk-app-bar-item-column">
+                          <div
+                            className={
+                              (this.stackComponentExpanded(component) &&
+                              component.active
+                                ? 'info '
+                                : '') +
+                              (!this.stackComponentExpanded(component)
+                                ? 'neutral '
+                                : '') +
+                              ' sk-circle small'
+                            }
+                          />
                         </div>
-                      );
-                    })}
-                  </div>
+                        <div className="sk-app-bar-item-column">
+                          <div className="sk-label">{component.name}</div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              )}
-
-              <div className="sn-component">
-                {this.state.stackComponentViewers.map((viewer) => {
-                  return (
-                    <div className="component-view component-stack-item">
-                      <ComponentView
-                        key={viewer.identifier}
-                        componentViewer={viewer}
-                        manualDealloc={true}
-                        application={this.application}
-                        appState={this.appState}
-                      />
-                    </div>
-                  );
-                })}
               </div>
+            )}
+
+            <div className="sn-component">
+              {this.state.stackComponentViewers.map((viewer) => {
+                return (
+                  <div className="component-view component-stack-item">
+                    <ComponentView
+                      key={viewer.identifier}
+                      componentViewer={viewer}
+                      manualDealloc={true}
+                      application={this.application}
+                      appState={this.appState}
+                    />
+                  </div>
+                );
+              })}
             </div>
-          )}
+          </div>
         </div>
       </div>
     );

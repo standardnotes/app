@@ -4,7 +4,7 @@ import {
   PayloadSource,
   SNNote,
   ComponentViewer,
-  PayloadContent,
+  NoteContent,
 } from '@standardnotes/snjs';
 import { confirmDialog } from '@/services/alertService';
 import { STRING_RESTORE_LOCKED_ATTEMPT } from '@/strings';
@@ -13,7 +13,7 @@ import { ComponentView } from './ComponentView';
 
 interface Props {
   application: WebApplication;
-  content: PayloadContent;
+  content: NoteContent;
   title?: string;
   uuid: string;
 }
@@ -74,7 +74,7 @@ export class RevisionPreviewModal extends PureComponent<Props, State> {
         });
       } else {
         this.application.mutator.changeAndSaveItem(
-          this.props.uuid,
+          this.originalNote,
           (mutator) => {
             mutator.unsafe_setCustomContent(this.props.content);
           },
