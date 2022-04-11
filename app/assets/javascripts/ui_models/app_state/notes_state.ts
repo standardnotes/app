@@ -60,15 +60,22 @@ export class NotesState {
     });
 
     appEventListeners.push(
-      application.streamItems(ContentType.Note, (notes) => {
-        runInAction(() => {
-          for (const note of notes) {
-            if (this.selectedNotes[note.uuid]) {
-              this.selectedNotes[note.uuid] = note as SNNote;
+      application.streamItems<SNNote>(
+        ContentType.Note,
+        ({ changed, inserted, removed }) => {
+          runInAction(() => {
+            for (const removedNote of removed) {
+              delete this.selectedNotes[removedNote.uuid];
             }
-          }
-        });
-      })
+
+            for (const note of [...changed, ...inserted]) {
+              if (this.selectedNotes[note.uuid]) {
+                this.selectedNotes[note.uuid] = note;
+              }
+            }
+          });
+        }
+      )
     );
   }
 
@@ -179,10 +186,6 @@ export class NotesState {
 
     this.appState.noteTags.reloadTags();
     await this.onActiveEditorChanged();
-
-    if (note.waitingForKey) {
-      this.application.presentKeyRecoveryWizard();
-    }
   }
 
   setContextMenuOpen(open: boolean): void {
@@ -263,7 +266,7 @@ export class NotesState {
     mutate: (mutator: NoteMutator) => void
   ): Promise<void> {
     await this.application.mutator.changeItems(
-      Object.keys(this.selectedNotes),
+      Object.values(this.selectedNotes),
       mutate,
       false
     );
@@ -399,7 +402,7 @@ export class NotesState {
 
   async toggleGlobalSpellcheckForNote(note: SNNote) {
     await this.application.mutator.changeItem<NoteMutator>(
-      note.uuid,
+      note,
       (mutator) => {
         mutator.toggleSpellcheck();
       },
@@ -410,11 +413,11 @@ export class NotesState {
 
   async addTagToSelectedNotes(tag: SNTag): Promise<void> {
     const selectedNotes = Object.values(this.selectedNotes);
-    const parentChainTags = this.application.items.getTagParentChain(tag.uuid);
+    const parentChainTags = this.application.items.getTagParentChain(tag);
     const tagsToAdd = [...parentChainTags, tag];
     await Promise.all(
       tagsToAdd.map(async (tag) => {
-        await this.application.mutator.changeItem(tag.uuid, (mutator) => {
+        await this.application.mutator.changeItem(tag, (mutator) => {
           for (const note of selectedNotes) {
             mutator.addItemAsRelationship(note);
           }
@@ -426,7 +429,7 @@ export class NotesState {
 
   async removeTagFromSelectedNotes(tag: SNTag): Promise<void> {
     const selectedNotes = Object.values(this.selectedNotes);
-    await this.application.mutator.changeItem(tag.uuid, (mutator) => {
+    await this.application.mutator.changeItem(tag, (mutator) => {
       for (const note of selectedNotes) {
         mutator.removeItemAsRelationship(note);
       }

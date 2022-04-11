@@ -8,7 +8,6 @@ import {
   ButtonType,
   ContentType,
   HistoryEntry,
-  PayloadContent,
   PayloadSource,
   RevisionListEntry,
   SNNote,
@@ -165,14 +164,14 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
 
     const restoreAsCopy = async () => {
       if (selectedRevision) {
-        const originalNote = application.items.findItem(
+        const originalNote = application.items.findSureItem<SNNote>(
           selectedRevision.payload.uuid
-        ) as SNNote;
+        );
 
         const duplicatedItem = await application.mutator.duplicateItem(
           originalNote,
           {
-            ...(selectedRevision.payload.content as PayloadContent),
+            ...selectedRevision.payload.content,
             title: selectedRevision.payload.content.title
               ? selectedRevision.payload.content.title + ' (copy)'
               : undefined,
@@ -188,10 +187,10 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
     useEffect(() => {
       const fetchTemplateNote = async () => {
         if (selectedRevision) {
-          const newTemplateNote = (await application.mutator.createTemplateItem(
+          const newTemplateNote = application.mutator.createTemplateItem(
             ContentType.Note,
             selectedRevision.payload.content
-          )) as SNNote;
+          ) as SNNote;
 
           setTemplateNoteForRevision(newTemplateNote);
         }

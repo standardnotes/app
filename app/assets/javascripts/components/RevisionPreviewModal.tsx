@@ -66,15 +66,12 @@ export class RevisionPreviewModal extends PureComponent<Props, State> {
   restore = (asCopy: boolean) => {
     const run = async () => {
       if (asCopy) {
-        await this.application.mutator.duplicateItem<SNNote, NoteContent>(
-          this.originalNote,
-          {
-            ...this.props.content,
-            title: this.props.content.title
-              ? this.props.content.title + ' (copy)'
-              : undefined,
-          }
-        );
+        await this.application.mutator.duplicateItem(this.originalNote, {
+          ...this.props.content,
+          title: this.props.content.title
+            ? this.props.content.title + ' (copy)'
+            : undefined,
+        });
       } else {
         this.application.mutator.changeAndSaveItem(
           this.originalNote,

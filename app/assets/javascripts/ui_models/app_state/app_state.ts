@@ -3,12 +3,13 @@ import { storage, StorageKey } from '@/services/localStorage';
 import { WebApplication, WebAppEvent } from '@/ui_models/application';
 import { AccountMenuState } from '@/ui_models/app_state/account_menu_state';
 import { isDesktopApplication } from '@/utils';
+import { Uuid } from '@standardnotes/common';
+import { PayloadSource } from '@standardnotes/models';
 import {
   ApplicationEvent,
   ContentType,
   DeinitSource,
   NoteViewController,
-  PayloadSource,
   PrefKey,
   SNNote,
   SmartView,
@@ -276,9 +277,9 @@ export class AppState {
     this.application.noteControllerGroup.closeAllNoteViews();
   }
 
-  noteControllerForNote(note: SNNote) {
+  noteControllerForNote(uuid: Uuid) {
     for (const controller of this.getNoteControllers()) {
-      if (controller.note.uuid === note.uuid) {
+      if (controller.note.uuid === uuid) {
         return controller;
       }
     }
@@ -331,44 +332,54 @@ export class AppState {
     this.application.streamItems(
       [ContentType.Note, ContentType.Tag],
       async ({ changed, inserted, removed, source }) => {
-        const items = [...changed, ...inserted, ...removed];
+        if (source !== PayloadSource.PreSyncSave) {
+          return;
+        }
+
+        const removedNotes = removed.filter(
+          (i) => i.content_type === ContentType.Note
+        );
+
+        for (const removedNote of removedNotes) {
+          const noteController = this.noteControllerForNote(removedNote.uuid);
+          if (noteController) {
+            this.closeNoteController(noteController);
+          }
+        }
+
+        const changedOrInserted = [...changed, ...inserted].filter(
+          (i) => i.content_type === ContentType.Note
+        );
+
         const selectedTag = this.tags.selected;
 
-        /** Close any note controllers for deleted/trashed/archived notes */
-        if (source === PayloadSource.PreSyncSave) {
-          const notes = items.filter(
-            (candidate) => candidate.content_type === ContentType.Note
-          );
+        for (const note of changedOrInserted) {
+          const noteController = this.noteControllerForNote(note.uuid);
+          if (!noteController) {
+            continue;
+          }
 
-          for (const note of notes) {
-            const noteController = this.noteControllerForNote(note);
+          const isBrowswingTrashedNotes =
+            selectedTag instanceof SmartView &&
+            selectedTag.uuid === SystemViewId.TrashedNotes;
 
-            if (!noteController) {
-              continue;
-            }
+          const isBrowsingArchivedNotes =
+            selectedTag instanceof SmartView &&
+            selectedTag.uuid === SystemViewId.ArchivedNotes;
 
-            if (note.deleted) {
-              this.closeNoteController(noteController);
-            } else if (
-              note.trashed &&
-              !(
-                selectedTag instanceof SmartView &&
-                selectedTag.uuid === SystemViewId.TrashedNotes
-              ) &&
-              !this.searchOptions.includeTrashed
-            ) {
-              this.closeNoteController(noteController);
-            } else if (
-              note.archived &&
-              !(
-                selectedTag instanceof SmartView &&
-                selectedTag.uuid === SystemViewId.ArchivedNotes
-              ) &&
-              !this.searchOptions.includeArchived &&
-              !this.application.getPreference(PrefKey.NotesShowArchived, false)
-            ) {
-              this.closeNoteController(noteController);
-            }
+          if (
+            note.trashed &&
+            !isBrowswingTrashedNotes &&
+            !this.searchOptions.includeTrashed
+          ) {
+            this.closeNoteController(noteController);
+          } else if (
+            note.archived &&
+            !isBrowsingArchivedNotes &&
+            !this.searchOptions.includeArchived &&
+            !this.application.getPreference(PrefKey.NotesShowArchived, false)
+          ) {
+            this.closeNoteController(noteController);
           }
         }
       }
@@ -440,11 +451,9 @@ export class AppState {
 
   /** Returns the tags that are referncing this note */
   public getNoteTags(note: SNNote) {
-    return this.application.items
-      .itemsReferencingItem(note.uuid)
-      .filter((ref) => {
-        return ref.content_type === ContentType.Tag;
-      }) as SNTag[];
+    return this.application.items.itemsReferencingItem(note).filter((ref) => {
+      return ref.content_type === ContentType.Tag;
+    }) as SNTag[];
   }
 
   panelDidResize(name: string, collapsed: boolean) {
