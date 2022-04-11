@@ -68,7 +68,7 @@ export const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentP
               {selectedRevision.payload.content.text.length ? (
                 <textarea
                   readOnly={true}
-                  className="w-full h-full resize-none p-4 pt-0 border-0 color-text text-editor font-editor"
+                  className="w-full h-full resize-none p-4 pt-0 border-0 bg-default color-text text-editor font-editor"
                 >
                   {selectedRevision.payload.content.text}
                 </textarea>
