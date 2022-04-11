@@ -1,4 +1,6 @@
 import { WebApplication } from '@/ui_models/application';
+import { ApplicationGroup } from '@/ui_models/application_group';
+import { AppState } from '@/ui_models/app_state';
 import { DialogContent, DialogOverlay } from '@reach/dialog';
 import {
   ButtonType,
@@ -14,6 +16,7 @@ import { useCallback, useEffect, useState } from 'preact/hooks';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
 import { ChallengeModalPrompt } from './ChallengePrompt';
+import { LockscreenWorkspaceSwitcher } from './LockscreenWorkspaceSwitcher';
 
 type InputValue = {
   prompt: ChallengePrompt;
@@ -25,6 +28,8 @@ export type ChallengeModalValues = Record<ChallengePrompt['id'], InputValue>;
 
 type Props = {
   application: WebApplication;
+  mainApplicationGroup: ApplicationGroup;
+  appState: AppState;
   challenge: Challenge;
   onDismiss: (challenge: Challenge) => Promise<void>;
 };
@@ -49,6 +54,8 @@ const validateValues = (
 
 export const ChallengeModal: FunctionComponent<Props> = ({
   application,
+  mainApplicationGroup,
+  appState,
   challenge,
   onDismiss,
 }) => {
@@ -71,13 +78,13 @@ export const ChallengeModal: FunctionComponent<Props> = ({
     ChallengeReason.ApplicationUnlock,
     ChallengeReason.Migration,
   ].includes(challenge.reason);
+  const shouldShowWorkspaceSwitcher =
+    challenge.reason === ChallengeReason.ApplicationUnlock;
 
   const submit = async () => {
     const validatedValues = validateValues(values, challenge.prompts);
-    if (!validatedValues) {
-      return;
-    }
-    if (isSubmitting || isProcessing) {
+    console.log(validatedValues);
+    if (!validatedValues || isSubmitting || isProcessing) {
       return;
     }
     setIsSubmitting(true);
@@ -91,19 +98,12 @@ export const ChallengeModal: FunctionComponent<Props> = ({
     const processingPrompts = valuesToProcess.map((v) => v.prompt);
     setIsProcessing(processingPrompts.length > 0);
     setProcessingPrompts(processingPrompts);
-    /**
-     * Unfortunately neccessary to wait 50ms so that the above setState call completely
-     * updates the UI to change processing state, before we enter into UI blocking operation
-     * (crypto key generation)
-     */
-    setTimeout(() => {
-      if (valuesToProcess.length > 0) {
-        application.submitValuesForChallenge(challenge, valuesToProcess);
-      } else {
-        setIsProcessing(false);
-      }
-      setIsSubmitting(false);
-    }, 50);
+    if (valuesToProcess.length > 0) {
+      application.submitValuesForChallenge(challenge, valuesToProcess);
+    } else {
+      setIsProcessing(false);
+    }
+    setIsSubmitting(false);
   };
 
   const onValueChange = useCallback(
@@ -263,6 +263,12 @@ export const ChallengeModal: FunctionComponent<Props> = ({
             <Icon type="help" className="mr-2 color-neutral" />
             Forgot passcode?
           </Button>
+        )}
+        {shouldShowWorkspaceSwitcher && (
+          <LockscreenWorkspaceSwitcher
+            mainApplicationGroup={mainApplicationGroup}
+            appState={appState}
+          />
         )}
       </DialogContent>
     </DialogOverlay>
