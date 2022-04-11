@@ -161,10 +161,39 @@ export class ThemeManager extends ApplicationService {
     );
   }
 
+  private showTimedToast(setThemeCallback: () => void) {
+    const [toastId, intervalId] = addTimedToast(
+      {
+        type: ToastType.Regular,
+        message: (timeRemaining) =>
+          `Applying system color scheme in ${timeRemaining}s...`,
+        actions: [
+          {
+            label: 'Keep current theme',
+            handler: () => {
+              dismissToast(toastId);
+              clearInterval(intervalId);
+            },
+          },
+          {
+            label: 'Apply now',
+            handler: () => {
+              dismissToast(toastId);
+              clearInterval(intervalId);
+              setThemeCallback();
+            },
+          },
+        ],
+      },
+      setThemeCallback,
+      TimeBeforeApplyingColorScheme
+    );
+  }
+
   private setThemeAsPerColorScheme(
     useDeviceThemeSettings: boolean,
     prefersDarkColorScheme: boolean,
-    showTimedToast: boolean
+    shouldShowTimedToast: boolean
   ) {
     if (useDeviceThemeSettings) {
       const preference = prefersDarkColorScheme
@@ -210,32 +239,8 @@ export class ThemeManager extends ApplicationService {
         return;
       }
 
-      if (showTimedToast) {
-        const [toastId, intervalId] = addTimedToast(
-          {
-            type: ToastType.Regular,
-            message: (timeRemaining) =>
-              `Applying system color scheme in ${timeRemaining}s...`,
-            actions: [
-              {
-                label: 'Keep current theme',
-                handler: () => {
-                  dismissToast(toastId);
-                },
-              },
-              {
-                label: 'Apply now',
-                handler: () => {
-                  dismissToast(toastId);
-                  clearInterval(intervalId);
-                  setTheme();
-                },
-              },
-            ],
-          },
-          setTheme,
-          TimeBeforeApplyingColorScheme
-        );
+      if (shouldShowTimedToast) {
+        this.showTimedToast(setTheme);
       } else {
         setTheme();
       }
