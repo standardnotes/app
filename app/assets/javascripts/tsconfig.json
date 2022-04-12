@@ -1,4 +1,5 @@
 {
+  "extends": "../../../node_modules/@standardnotes/config/src/tsconfig.json",
   "compilerOptions": {
     "target": "ES2019",
     "module": "commonjs",
