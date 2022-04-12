@@ -57,7 +57,7 @@ export class Database {
         }
         reject(new Error('Unable to open db'))
       }
-      request.onblocked = (event) => {
+      request.onblocked = (_event) => {
         reject(Error('IndexedDB open request blocked'))
       }
       request.onsuccess = (event) => {
@@ -178,7 +178,7 @@ export class Database {
         this.db = undefined
         resolve()
       }
-      deleteRequest.onblocked = (event) => {
+      deleteRequest.onblocked = (_event) => {
         this.showAlert(DB_DELETION_BLOCKED)
         reject(Error('Delete request blocked'))
       }
