@@ -5,7 +5,8 @@
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "prettier",
-    "plugin:react-hooks/recommended"
+    "plugin:react-hooks/recommended",
+    "./node_modules/@standardnotes/config/src/.eslintrc"
   ],
   "plugins": ["@typescript-eslint", "react", "react-hooks"],
   "parserOptions": {
