@@ -20,7 +20,7 @@ export abstract class PureComponent<
     super(props)
   }
 
-  componentDidMount() {
+  override componentDidMount() {
     this.addAppEventObserver()
     this.addAppStateObserver()
   }
@@ -50,7 +50,7 @@ export abstract class PureComponent<
     unmountComponentAtNode(parent)
   }
 
-  componentWillUnmount(): void {
+  override componentWillUnmount(): void {
     this.deinit()
   }
 

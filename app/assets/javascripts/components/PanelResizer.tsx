@@ -76,7 +76,7 @@ export class PanelResizer extends Component<Props, State> {
     }
   }
 
-  componentDidUpdate(prevProps: Props) {
+  override componentDidUpdate(prevProps: Props) {
     if (this.props.width != prevProps.width) {
       this.setWidth(this.props.width)
     }
@@ -91,7 +91,7 @@ export class PanelResizer extends Component<Props, State> {
     }
   }
 
-  componentWillUnmount() {
+  override componentWillUnmount() {
     document.removeEventListener('mouseup', this.onMouseUp)
     document.removeEventListener('mousemove', this.onMouseMove)
     window.removeEventListener('resize', this.debouncedResizeHandler)

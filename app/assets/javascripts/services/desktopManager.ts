@@ -37,12 +37,12 @@ export class DesktopManager
     return this.application as WebApplication
   }
 
-  deinit() {
+  override deinit() {
     this.updateObservers.length = 0
     super.deinit()
   }
 
-  async onAppEvent(eventName: ApplicationEvent) {
+  override async onAppEvent(eventName: ApplicationEvent) {
     super.onAppEvent(eventName).catch(console.error)
     if (eventName === ApplicationEvent.LocalDataLoaded) {
       this.dataLoaded = true

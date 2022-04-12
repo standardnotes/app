@@ -45,12 +45,12 @@ export class PasswordWizard extends PureComponent<Props, State> {
     }
   }
 
-  componentDidMount(): void {
+  override componentDidMount(): void {
     super.componentDidMount()
     this.currentPasswordInput.current?.focus()
   }
 
-  componentWillUnmount(): void {
+  override componentWillUnmount(): void {
     super.componentWillUnmount()
     window.onbeforeunload = null
   }
@@ -235,7 +235,7 @@ export class PasswordWizard extends PureComponent<Props, State> {
     }).catch(console.error)
   }
 
-  render() {
+  override render() {
     return (
       <div className="sn-component">
         <div id="password-wizard" className="sk-modal small auto-height">

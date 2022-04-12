@@ -18,12 +18,12 @@ export class AutolockService extends ApplicationService {
   private lastFocusState?: 'hidden' | 'visible'
   private lockAfterDate?: Date
 
-  onAppLaunch() {
+  override onAppLaunch() {
     this.beginPolling()
     return super.onAppLaunch()
   }
 
-  deinit() {
+  override deinit() {
     this.cancelAutoLockTimer()
     if (this.pollInterval) {
       clearInterval(this.pollInterval)

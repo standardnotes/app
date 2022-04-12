@@ -15,7 +15,7 @@ export class SyncResolutionMenu extends PureComponent<Props> {
     this.props.close()
   }
 
-  render() {
+  override render() {
     return (
       <div className="sn-component">
         <div id="sync-resolution-menu" className="sk-panel sk-panel-right">

@@ -28,7 +28,7 @@ export class ApplicationGroup extends SNApplicationGroup {
     super(new WebDeviceInterface(bridge))
   }
 
-  async initialize(): Promise<void> {
+  override async initialize(): Promise<void> {
     await super.initialize({
       applicationCreator: this.createApplication,
     })

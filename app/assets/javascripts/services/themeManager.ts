@@ -30,12 +30,12 @@ export class ThemeManager extends ApplicationService {
     this.colorSchemeEventHandler = this.colorSchemeEventHandler.bind(this)
   }
 
-  async onAppStart() {
+  override async onAppStart() {
     super.onAppStart().catch(console.error)
     this.registerObservers()
   }
 
-  async onAppEvent(event: ApplicationEvent) {
+  override async onAppEvent(event: ApplicationEvent) {
     super.onAppEvent(event).catch(console.error)
     switch (event) {
       case ApplicationEvent.SignedOut: {
@@ -88,7 +88,7 @@ export class ThemeManager extends ApplicationService {
     return this.application as WebApplication
   }
 
-  deinit() {
+  override deinit() {
     this.activeThemes.length = 0
     this.unregisterDesktop()
     this.unregisterStream()

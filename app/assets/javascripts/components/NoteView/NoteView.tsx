@@ -178,7 +178,7 @@ export class NoteView extends PureComponent<Props, State> {
     this.editorContentRef = createRef<HTMLDivElement>()
   }
 
-  deinit() {
+  override deinit() {
     this.removeComponentStreamObserver?.()
     ;(this.removeComponentStreamObserver as unknown) = undefined
     this.removeInnerNoteObserver?.()
@@ -204,7 +204,7 @@ export class NoteView extends PureComponent<Props, State> {
     return this.controller.note
   }
 
-  componentDidMount(): void {
+  override componentDidMount(): void {
     super.componentDidMount()
 
     this.registerKeyboardShortcuts()
@@ -236,7 +236,7 @@ export class NoteView extends PureComponent<Props, State> {
     }
   }
 
-  componentDidUpdate(_prevProps: Props, prevState: State): void {
+  override componentDidUpdate(_prevProps: Props, prevState: State): void {
     if (
       this.state.showProtectedWarning != undefined &&
       prevState.showProtectedWarning !== this.state.showProtectedWarning
@@ -304,19 +304,19 @@ export class NoteView extends PureComponent<Props, State> {
     }
   }
 
-  componentWillUnmount(): void {
+  override componentWillUnmount(): void {
     if (this.state.editorComponentViewer) {
       this.application.componentManager?.destroyComponentViewer(this.state.editorComponentViewer)
     }
     super.componentWillUnmount()
   }
-  async onAppLaunch() {
+  override async onAppLaunch() {
     await super.onAppLaunch()
     this.streamItems()
   }
 
   /** @override */
-  async onAppEvent(eventName: ApplicationEvent) {
+  override async onAppEvent(eventName: ApplicationEvent) {
     switch (eventName) {
       case ApplicationEvent.PreferencesChanged:
         this.reloadPreferences().catch(console.error)
@@ -901,7 +901,7 @@ export class NoteView extends PureComponent<Props, State> {
     }
   }
 
-  render() {
+  override render() {
     if (this.state.showProtectedWarning) {
       return (
         <div aria-label="Note" className="section editor sn-component">

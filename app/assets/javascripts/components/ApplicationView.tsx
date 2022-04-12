@@ -48,12 +48,12 @@ export class ApplicationView extends PureComponent<Props, State> {
     }
   }
 
-  deinit() {
+  override deinit() {
     ;(this.application as unknown) = undefined
     super.deinit()
   }
 
-  componentDidMount(): void {
+  override componentDidMount(): void {
     super.componentDidMount()
     this.loadApplication().catch(console.error)
   }
@@ -76,7 +76,7 @@ export class ApplicationView extends PureComponent<Props, State> {
     this.setState({ challenges: challenges })
   }
 
-  async onAppStart() {
+  override async onAppStart() {
     super.onAppStart().catch(console.error)
     this.setState({
       started: true,
@@ -86,7 +86,7 @@ export class ApplicationView extends PureComponent<Props, State> {
     this.application.componentManager.presentPermissionsDialog = this.presentPermissionsDialog
   }
 
-  async onAppLaunch() {
+  override async onAppLaunch() {
     super.onAppLaunch().catch(console.error)
     this.setState({
       launched: true,
@@ -100,7 +100,7 @@ export class ApplicationView extends PureComponent<Props, State> {
   }
 
   /** @override */
-  async onAppEvent(eventName: ApplicationEvent) {
+  override async onAppEvent(eventName: ApplicationEvent) {
     super.onAppEvent(eventName)
     switch (eventName) {
       case ApplicationEvent.LocalDatabaseReadError:
@@ -117,7 +117,7 @@ export class ApplicationView extends PureComponent<Props, State> {
   }
 
   /** @override */
-  async onAppStateEvent(eventName: AppStateEvent, data?: unknown) {
+  override async onAppStateEvent(eventName: AppStateEvent, data?: unknown) {
     if (eventName === AppStateEvent.PanelResized) {
       const { panel, collapsed } = data as PanelResizedData
       let appClass = ''
@@ -156,7 +156,7 @@ export class ApplicationView extends PureComponent<Props, State> {
     )
   }
 
-  render() {
+  override render() {
     if (this.application['dealloced'] === true) {
       console.error('Attempting to render dealloced application')
       return <div></div>

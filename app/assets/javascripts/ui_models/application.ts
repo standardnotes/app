@@ -69,7 +69,7 @@ export class WebApplication extends SNApplication {
     this.iconsController = new IconsController()
   }
 
-  deinit(source: DeinitSource): void {
+  override deinit(source: DeinitSource): void {
     super.deinit(source)
     try {
       if (source === DeinitSource.AppGroupUnload) {

@@ -23,7 +23,7 @@ export class NoteGroupView extends PureComponent<Props, State> {
     }
   }
 
-  componentDidMount(): void {
+  override componentDidMount(): void {
     super.componentDidMount()
     this.application.noteControllerGroup.addActiveControllerChangeObserver(() => {
       this.setState({
@@ -37,7 +37,7 @@ export class NoteGroupView extends PureComponent<Props, State> {
     })
   }
 
-  render() {
+  override render() {
     return (
       <div id={ElementIds.EditorColumn} className="h-full app-column app-column-third">
         {this.state.showMultipleSelectedNotes && (

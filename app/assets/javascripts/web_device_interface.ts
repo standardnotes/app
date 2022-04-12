@@ -23,7 +23,7 @@ export class WebDeviceInterface extends AbstractDevice {
     return this.databases.find((database) => database.databaseName === identifier) as Database
   }
 
-  deinit() {
+  override deinit() {
     super.deinit()
     for (const database of this.databases) {
       database.deinit()

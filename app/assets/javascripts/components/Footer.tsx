@@ -73,13 +73,13 @@ export class Footer extends PureComponent<Props, State> {
     })
   }
 
-  deinit() {
+  override deinit() {
     this.webEventListenerDestroyer()
     ;(this.webEventListenerDestroyer as unknown) = undefined
     super.deinit()
   }
 
-  componentDidMount(): void {
+  override componentDidMount(): void {
     super.componentDidMount()
     this.application.getStatusManager().onStatusChange((message) => {
       this.setState({
@@ -107,7 +107,7 @@ export class Footer extends PureComponent<Props, State> {
       .catch(console.error)
   }
 
-  async onAppLaunch() {
+  override async onAppLaunch() {
     super.onAppLaunch().catch(console.error)
     this.reloadPasscodeStatus().catch(console.error)
     this.reloadUser()
@@ -129,7 +129,7 @@ export class Footer extends PureComponent<Props, State> {
   }
 
   /** @override */
-  onAppStateEvent(eventName: AppStateEvent, data: any) {
+  override onAppStateEvent(eventName: AppStateEvent, data: any) {
     const statusService = this.application.getStatusManager()
     switch (eventName) {
       case AppStateEvent.EditorFocused:
@@ -157,13 +157,13 @@ export class Footer extends PureComponent<Props, State> {
   }
 
   /** @override */
-  async onAppKeyChange() {
+  override async onAppKeyChange() {
     super.onAppKeyChange().catch(console.error)
     this.reloadPasscodeStatus().catch(console.error)
   }
 
   /** @override */
-  onAppEvent(eventName: ApplicationEvent) {
+  override onAppEvent(eventName: ApplicationEvent) {
     switch (eventName) {
       case ApplicationEvent.KeyStatusChanged:
         this.reloadUpgradeStatus()
@@ -347,7 +347,7 @@ export class Footer extends PureComponent<Props, State> {
     this.appState.quickSettingsMenu.closeQuickSettingsMenu()
   }
 
-  render() {
+  override render() {
     return (
       <div className="sn-component">
         <div id="footer-bar" className="sk-app-bar no-edges no-bottom-edge">
