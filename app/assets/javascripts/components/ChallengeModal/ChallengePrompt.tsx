@@ -5,8 +5,8 @@ import {
 } from '@standardnotes/snjs'
 import { FunctionComponent } from 'preact'
 import { useEffect, useRef } from 'preact/hooks'
-import { DecoratedInput } from '../DecoratedInput'
-import { DecoratedPasswordInput } from '../DecoratedPasswordInput'
+import { DecoratedInput } from '../DecoratedInput/DecoratedInput'
+import { DecoratedPasswordInput } from '../DecoratedInput/DecoratedPasswordInput'
 import { ChallengeModalValues } from './ChallengeModal'
 
 type Props = {

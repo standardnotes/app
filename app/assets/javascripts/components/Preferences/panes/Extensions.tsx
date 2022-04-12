@@ -1,6 +1,6 @@
 import { ButtonType, ContentType, SNComponent } from '@standardnotes/snjs'
 import { Button } from '@/components/Button'
-import { DecoratedInput } from '@/components/DecoratedInput'
+import { DecoratedInput } from '@/components/DecoratedInput/DecoratedInput'
 import { WebApplication } from '@/ui_models/application'
 import { FunctionComponent } from 'preact'
 import { Title, PreferencesSegment } from '../components'

@@ -1,8 +1,9 @@
 import { FunctionComponent, Ref } from 'preact'
 import { forwardRef } from 'preact/compat'
 import { StateUpdater, useState } from 'preact/hooks'
-import { DecoratedInput, DecoratedInputProps } from './DecoratedInput'
-import { IconButton } from './IconButton'
+import { DecoratedInput } from './DecoratedInput'
+import { IconButton } from '../IconButton'
+import { DecoratedInputProps } from './DecoratedInputProps'
 
 const Toggle: FunctionComponent<{
   isToggled: boolean

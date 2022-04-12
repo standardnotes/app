@@ -1,6 +1,6 @@
 import { FunctionalComponent } from 'preact'
 import { Subtitle } from '@/components/Preferences/components'
-import { DecoratedInput } from '@/components/DecoratedInput'
+import { DecoratedInput } from '@/components/DecoratedInput/DecoratedInput'
 import { Button } from '@/components/Button'
 import { useEffect, useState } from 'preact/hooks'
 import { WebApplication } from '@/ui_models/application'

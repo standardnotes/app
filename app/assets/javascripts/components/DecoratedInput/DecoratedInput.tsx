@@ -1,19 +1,6 @@
-import { FunctionalComponent, ComponentChild, Ref } from 'preact'
+import { FunctionalComponent, Ref } from 'preact'
 import { forwardRef } from 'preact/compat'
-
-export type DecoratedInputProps = {
-  type?: 'text' | 'email' | 'password'
-  className?: string
-  disabled?: boolean
-  left?: ComponentChild[]
-  right?: ComponentChild[]
-  value?: string
-  placeholder?: string
-  onChange?: (text: string) => void
-  onFocus?: (event: FocusEvent) => void
-  onKeyDown?: (event: KeyboardEvent) => void
-  autocomplete?: boolean
-}
+import { DecoratedInputProps } from './DecoratedInputProps'
 
 const getClassNames = (hasLeftDecorations: boolean, hasRightDecorations: boolean) => {
   return {

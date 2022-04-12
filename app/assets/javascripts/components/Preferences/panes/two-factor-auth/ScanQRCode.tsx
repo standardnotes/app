@@ -1,9 +1,7 @@
 import { FunctionComponent } from 'preact'
 import { observer } from 'mobx-react-lite'
-
 import QRCode from 'qrcode.react'
-
-import { DecoratedInput } from '@/components/DecoratedInput'
+import { DecoratedInput } from '@/components/DecoratedInput/DecoratedInput'
 import { Button } from '@/components/Button'
 import { TwoFactorActivation } from './TwoFactorActivation'
 import { AuthAppInfoTooltip } from './AuthAppInfoPopup'

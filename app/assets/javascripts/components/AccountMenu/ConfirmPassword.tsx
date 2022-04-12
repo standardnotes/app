@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from 'preact/hooks'
 import { AccountMenuPane } from '.'
 import { Button } from '../Button'
 import { Checkbox } from '../Checkbox'
-import { DecoratedPasswordInput } from '../DecoratedPasswordInput'
+import { DecoratedPasswordInput } from '../DecoratedInput/DecoratedPasswordInput'
 import { Icon } from '../Icon'
 import { IconButton } from '../IconButton'
 
