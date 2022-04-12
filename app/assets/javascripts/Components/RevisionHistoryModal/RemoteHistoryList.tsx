@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { Fragment, FunctionComponent } from 'preact'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks'
 import { Icon } from '../Icon'
-import { useListKeyboardNavigation } from "../../Hooks/useListKeyboardNavigation"
+import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import { HistoryListItem } from './HistoryListItem'
 import { previewHistoryEntryTitle, RemoteRevisionListGroup } from './utils'
 

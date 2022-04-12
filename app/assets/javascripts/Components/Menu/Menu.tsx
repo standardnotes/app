@@ -11,7 +11,7 @@ import { useEffect, useRef } from 'preact/hooks'
 import { JSXInternal } from 'preact/src/jsx'
 import { MenuItem, MenuItemListElement } from './MenuItem'
 import { KeyboardKey } from '@/Services/IOService'
-import { useListKeyboardNavigation } from "../../Hooks/useListKeyboardNavigation"
+import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 
 type MenuProps = {
   className?: string

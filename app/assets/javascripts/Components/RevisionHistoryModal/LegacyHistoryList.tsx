@@ -1,7 +1,7 @@
 import { Action, HistoryEntry, RevisionListEntry } from '@standardnotes/snjs'
 import { FunctionComponent } from 'preact'
 import { StateUpdater, useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks'
-import { useListKeyboardNavigation } from "../../Hooks/useListKeyboardNavigation"
+import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import { HistoryListItem } from './HistoryListItem'
 import { LegacyHistoryEntry } from './utils'
 
