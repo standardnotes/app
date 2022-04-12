@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'preact/hooks'
 import { Disclosure, DisclosurePanel } from '@reach/disclosure'
-import { useCloseOnBlur } from './utils'
+import { useCloseOnBlur } from '../utils'
 import { AppState } from '@/ui_models/app_state'
 import { AutocompleteTagResult } from './AutocompleteTagResult'
 import { AutocompleteTagHint } from './AutocompleteTagHint'

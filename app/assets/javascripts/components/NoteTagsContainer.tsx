@@ -1,6 +1,6 @@
 import { AppState } from '@/ui_models/app_state'
 import { observer } from 'mobx-react-lite'
-import { AutocompleteTagInput } from './AutocompleteTagInput'
+import { AutocompleteTagInput } from './TagAutocomplete/AutocompleteTagInput'
 import { NoteTag } from './NoteTag'
 import { useEffect } from 'preact/hooks'
 
