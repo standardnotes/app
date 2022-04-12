@@ -26,6 +26,7 @@
     "@babel/plugin-transform-react-jsx": "^7.17.3",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-typescript": "^7.16.7",
+    "@standardnotes/config": "^2.3.1",
     "@svgr/webpack": "^6.2.1",
     "@types/jest": "^27.4.1",
     "@types/react": "^17.0.42",
@@ -60,8 +61,8 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
-    "@reach/alert-dialog": "^0.16.2",
     "@reach/alert": "^0.16.0",
+    "@reach/alert-dialog": "^0.16.2",
     "@reach/checkbox": "^0.16.0",
     "@reach/dialog": "^0.16.2",
     "@reach/disclosure": "^0.16.2",
@@ -74,13 +75,13 @@
     "@standardnotes/snjs": "2.94.3",
     "@standardnotes/stylekit": "5.21.3",
     "@zip.js/zip.js": "^2.4.7",
-    "mobx-react-lite": "^3.3.0",
     "mobx": "^6.5.0",
+    "mobx-react-lite": "^3.3.0",
     "preact": "^10.6.6",
     "qrcode.react": "^2.0.0",
+    "react-dnd": "^15.1.1",
     "react-dnd-html5-backend": "^15.1.2",
-    "react-dnd-touch-backend": "^15.1.1",
-    "react-dnd": "^15.1.1"
+    "react-dnd-touch-backend": "^15.1.1"
   },
   "lint-staged": {
     "app/**/*.{js,ts,jsx,tsx}": "eslint --cache --fix",
