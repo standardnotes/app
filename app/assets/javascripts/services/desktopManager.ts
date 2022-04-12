@@ -44,6 +44,7 @@ export class DesktopManager
 
   async onAppEvent(eventName: ApplicationEvent) {
     super.onAppEvent(eventName);
+
     if (eventName === ApplicationEvent.LocalDataLoaded) {
       this.dataLoaded = true;
       this.bridge.onInitialDataLoad();
@@ -74,6 +75,7 @@ export class DesktopManager
     if (!this.isDesktop) {
       return;
     }
+
     Promise.all(
       components.map((component) => {
         return this.convertComponentForTransmission(component);
