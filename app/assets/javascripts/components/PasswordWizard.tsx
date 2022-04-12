@@ -143,7 +143,7 @@ export class PasswordWizard extends PureComponent<Props, State> {
 
     /** Validate current password */
     const success = await this.application.validateAccountPassword(
-      this.state.formData.currentPassword!,
+      this.state.formData.currentPassword as string,
     )
     if (!success) {
       this.application.alertService
@@ -167,8 +167,8 @@ export class PasswordWizard extends PureComponent<Props, State> {
 
     const newPassword = this.state.formData.newPassword
     const response = await this.application.changePassword(
-      this.state.formData.currentPassword!,
-      newPassword!,
+      this.state.formData.currentPassword as string,
+      newPassword as string,
     )
 
     const success = !response.error

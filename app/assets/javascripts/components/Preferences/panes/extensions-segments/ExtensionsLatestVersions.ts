@@ -37,6 +37,6 @@ function collectFeatures(
     return
   }
   for (const feature of features) {
-    versionMap.set(feature.identifier, feature.version!)
+    versionMap.set(feature.identifier, feature.version as string)
   }
 }

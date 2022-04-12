@@ -50,7 +50,7 @@ export class TwoFactorAuth {
         action((secret) => {
           this._status = new TwoFactorActivation(
             this.mfaProvider,
-            this.userProvider.getUser()!.email,
+            this.userProvider.getUser()?.email as string,
             secret,
             setDisabled,
             setEnabled,
