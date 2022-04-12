@@ -163,5 +163,7 @@ export class FilesState {
         message: 'There was an error while uploading the file',
       })
     }
+
+    return undefined
   }
 }

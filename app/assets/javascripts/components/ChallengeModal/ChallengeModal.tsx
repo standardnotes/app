@@ -45,6 +45,7 @@ const validateValues = (
   if (!hasInvalidValues) {
     return validatedValues
   }
+  return undefined
 }
 
 export const ChallengeModal: FunctionComponent<Props> = ({ application, challenge, onDismiss }) => {

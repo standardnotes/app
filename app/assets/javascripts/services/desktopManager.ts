@@ -156,6 +156,8 @@ export class DesktopManager
     if (data) {
       return JSON.stringify(data, null, 2)
     }
+
+    return undefined
   }
 
   desktop_didBeginBackup() {

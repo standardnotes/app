@@ -462,6 +462,7 @@ export class NotesViewState {
         return false
       }
     }
+    return undefined
   }
 
   setNoteFilterText = (text: string) => {

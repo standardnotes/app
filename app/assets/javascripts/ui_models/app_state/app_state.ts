@@ -246,6 +246,7 @@ export class AppState {
         return controller
       }
     }
+    return undefined
   }
 
   isGlobalSpellcheckEnabled(): boolean {

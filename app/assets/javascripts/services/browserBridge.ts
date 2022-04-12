@@ -12,6 +12,7 @@ export class BrowserBridge implements Bridge {
     if (value) {
       return JSON.parse(value)
     }
+    return undefined
   }
 
   async setKeychainValue(value: unknown): Promise<void> {
