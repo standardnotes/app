@@ -5,4 +5,4 @@ import '@reach/dialog/styles.css'
 import '../stylesheets/index.css.scss'
 
 // entry point
-import './app'
+import './App'
