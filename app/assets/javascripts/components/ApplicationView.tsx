@@ -99,7 +99,6 @@ export class ApplicationView extends PureComponent<Props, State> {
     this.application.notifyWebEvent(WebAppEvent.NewUpdateAvailable)
   }
 
-  /** @override */
   override async onAppEvent(eventName: ApplicationEvent) {
     super.onAppEvent(eventName)
     switch (eventName) {
@@ -116,7 +115,6 @@ export class ApplicationView extends PureComponent<Props, State> {
     }
   }
 
-  /** @override */
   override async onAppStateEvent(eventName: AppStateEvent, data?: unknown) {
     if (eventName === AppStateEvent.PanelResized) {
       const { panel, collapsed } = data as PanelResizedData

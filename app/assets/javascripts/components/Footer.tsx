@@ -128,7 +128,6 @@ export class Footer extends PureComponent<Props, State> {
     })
   }
 
-  /** @override */
   override onAppStateEvent(eventName: AppStateEvent, data: any) {
     const statusService = this.application.getStatusManager()
     switch (eventName) {
@@ -156,13 +155,11 @@ export class Footer extends PureComponent<Props, State> {
     }
   }
 
-  /** @override */
   override async onAppKeyChange() {
     super.onAppKeyChange().catch(console.error)
     this.reloadPasscodeStatus().catch(console.error)
   }
 
-  /** @override */
   override onAppEvent(eventName: ApplicationEvent) {
     switch (eventName) {
       case ApplicationEvent.KeyStatusChanged:

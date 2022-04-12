@@ -315,7 +315,6 @@ export class NoteView extends PureComponent<Props, State> {
     this.streamItems()
   }
 
-  /** @override */
   override async onAppEvent(eventName: ApplicationEvent) {
     switch (eventName) {
       case ApplicationEvent.PreferencesChanged:

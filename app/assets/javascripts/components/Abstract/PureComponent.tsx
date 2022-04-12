@@ -109,7 +109,6 @@ export abstract class PureComponent<
     /** Optional override */
   }
 
-  /** @override */
   async onAppStart() {
     /** Optional override */
   }
