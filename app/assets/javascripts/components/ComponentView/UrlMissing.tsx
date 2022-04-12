@@ -1,7 +1,7 @@
-import { FunctionalComponent } from 'preact';
+import { FunctionalComponent } from 'preact'
 
 interface IProps {
-  componentName: string;
+  componentName: string
 }
 
 export const UrlMissing: FunctionalComponent<IProps> = ({ componentName }) => {
@@ -14,16 +14,14 @@ export const UrlMissing: FunctionalComponent<IProps> = ({ componentName }) => {
               This extension is missing its URL property.
             </div>
             <p>
-              In order to access your note immediately,
-              please switch from {componentName} to the Plain Editor.
+              In order to access your note immediately, please switch from {componentName} to the
+              Plain Editor.
             </p>
-            <br/>
-            <p>
-              Please contact help@standardnotes.com to remedy this issue.
-            </p>
+            <br />
+            <p>Please contact help@standardnotes.com to remedy this issue.</p>
           </div>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

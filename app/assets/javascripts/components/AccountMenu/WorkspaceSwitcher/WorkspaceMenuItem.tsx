@@ -1,16 +1,16 @@
-import { Icon } from '@/components/Icon';
-import { MenuItem, MenuItemType } from '@/components/Menu/MenuItem';
-import { KeyboardKey } from '@/services/ioService';
-import { ApplicationDescriptor } from '@standardnotes/snjs/dist/@types';
-import { FunctionComponent } from 'preact';
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { Icon } from '@/components/Icon'
+import { MenuItem, MenuItemType } from '@/components/Menu/MenuItem'
+import { KeyboardKey } from '@/services/ioService'
+import { ApplicationDescriptor } from '@standardnotes/snjs/dist/@types'
+import { FunctionComponent } from 'preact'
+import { useEffect, useRef, useState } from 'preact/hooks'
 
 type Props = {
-  descriptor: ApplicationDescriptor;
-  onClick: () => void;
-  onDelete: () => void;
-  renameDescriptor: (label: string) => void;
-};
+  descriptor: ApplicationDescriptor
+  onClick: () => void
+  onDelete: () => void
+  renameDescriptor: (label: string) => void
+}
 
 export const WorkspaceMenuItem: FunctionComponent<Props> = ({
   descriptor,
@@ -18,26 +18,26 @@ export const WorkspaceMenuItem: FunctionComponent<Props> = ({
   onDelete,
   renameDescriptor,
 }) => {
-  const [isRenaming, setIsRenaming] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [isRenaming, setIsRenaming] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (isRenaming) {
-      inputRef.current?.focus();
+      inputRef.current?.focus()
     }
-  }, [isRenaming]);
+  }, [isRenaming])
 
   const handleInputKeyDown = (event: KeyboardEvent) => {
     if (event.key === KeyboardKey.Enter) {
-      inputRef.current?.blur();
+      inputRef.current?.blur()
     }
-  };
+  }
 
   const handleInputBlur = (event: FocusEvent) => {
-    const name = (event.target as HTMLInputElement).value;
-    renameDescriptor(name);
-    setIsRenaming(false);
-  };
+    const name = (event.target as HTMLInputElement).value
+    renameDescriptor(name)
+    setIsRenaming(false)
+  }
 
   return (
     <MenuItem
@@ -63,7 +63,7 @@ export const WorkspaceMenuItem: FunctionComponent<Props> = ({
             <button
               className="w-5 h-5 p-0 mr-3 border-0 bg-transparent hover:bg-contrast cursor-pointer"
               onClick={() => {
-                setIsRenaming((isRenaming) => !isRenaming);
+                setIsRenaming((isRenaming) => !isRenaming)
               }}
             >
               <Icon type="pencil" className="sn-icon--mid color-neutral" />
@@ -78,5 +78,5 @@ export const WorkspaceMenuItem: FunctionComponent<Props> = ({
         )}
       </div>
     </MenuItem>
-  );
-};
+  )
+}

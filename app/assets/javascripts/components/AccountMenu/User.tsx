@@ -1,16 +1,16 @@
-import { observer } from 'mobx-react-lite';
-import { AppState } from '@/ui_models/app_state';
-import { WebApplication } from '@/ui_models/application';
-import { User as UserType } from '@standardnotes/snjs';
+import { observer } from 'mobx-react-lite'
+import { AppState } from '@/ui_models/app_state'
+import { WebApplication } from '@/ui_models/application'
+import { User as UserType } from '@standardnotes/snjs'
 
 type Props = {
-  appState: AppState;
-  application: WebApplication;
-};
+  appState: AppState
+  application: WebApplication
+}
 
 const User = observer(({ appState, application }: Props) => {
-  const { server } = appState.accountMenu;
-  const user = application.getUser() as UserType;
+  const { server } = appState.accountMenu
+  const user = application.getUser() as UserType
 
   return (
     <div className="sk-panel-section">
@@ -18,8 +18,7 @@ const User = observer(({ appState, application }: Props) => {
         <div className="sk-notification danger">
           <div className="sk-notification-title">Sync Unreachable</div>
           <div className="sk-notification-text">
-            Hmm...we can't seem to sync your account. The reason:{' '}
-            {appState.sync.errorMessage}
+            Hmm...we can't seem to sync your account. The reason: {appState.sync.errorMessage}
           </div>
           <a
             className="sk-a info-contrast sk-bold sk-panel-row"
@@ -39,7 +38,7 @@ const User = observer(({ appState, application }: Props) => {
       </div>
       <div className="sk-panel-row" />
     </div>
-  );
-});
+  )
+})
 
-export default User;
+export default User

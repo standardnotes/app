@@ -1,27 +1,26 @@
-import { ApplicationGroup } from '@/ui_models/application_group';
-import { WebApplication } from '@/ui_models/application';
-import { Component } from 'preact';
-import { ApplicationView } from './ApplicationView';
+import { ApplicationGroup } from '@/ui_models/application_group'
+import { WebApplication } from '@/ui_models/application'
+import { Component } from 'preact'
+import { ApplicationView } from './ApplicationView'
 
 type State = {
-  activeApplication?: WebApplication;
-};
+  activeApplication?: WebApplication
+}
 
 type Props = {
-  mainApplicationGroup: ApplicationGroup;
-};
+  mainApplicationGroup: ApplicationGroup
+}
 
 export class ApplicationGroupView extends Component<Props, State> {
   constructor(props: Props) {
-    super(props);
+    super(props)
 
     props.mainApplicationGroup.addApplicationChangeObserver(() => {
-      const activeApplication = props.mainApplicationGroup
-        .primaryApplication as WebApplication;
-      this.setState({ activeApplication });
-    });
+      const activeApplication = props.mainApplicationGroup.primaryApplication as WebApplication
+      this.setState({ activeApplication })
+    })
 
-    props.mainApplicationGroup.initialize();
+    props.mainApplicationGroup.initialize().catch(console.error)
   }
 
   render() {
@@ -37,6 +36,6 @@ export class ApplicationGroupView extends Component<Props, State> {
           </div>
         )}
       </>
-    );
+    )
   }
 }

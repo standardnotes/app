@@ -1,10 +1,6 @@
 /* eslint-disable prefer-promise-reject-errors */
-import {
-  SNAlertService,
-  ButtonType,
-  sanitizeHtmlString,
-} from '@standardnotes/snjs';
-import { SKAlert } from '@standardnotes/stylekit';
+import { SNAlertService, ButtonType, sanitizeHtmlString } from '@standardnotes/snjs'
+import { SKAlert } from '@standardnotes/stylekit'
 
 /** @returns a promise resolving to true if the user confirmed, false if they canceled */
 export function confirmDialog({
@@ -14,11 +10,11 @@ export function confirmDialog({
   cancelButtonText = 'Cancel',
   confirmButtonStyle = 'info',
 }: {
-  text: string;
-  title?: string;
-  confirmButtonText?: string;
-  cancelButtonText?: string;
-  confirmButtonStyle?: 'danger' | 'info';
+  text: string
+  title?: string
+  confirmButtonText?: string
+  cancelButtonText?: string
+  confirmButtonStyle?: 'danger' | 'info'
 }) {
   return new Promise<boolean>((resolve) => {
     const alert = new SKAlert({
@@ -29,20 +25,20 @@ export function confirmDialog({
           text: cancelButtonText,
           style: 'neutral',
           action() {
-            resolve(false);
+            resolve(false)
           },
         },
         {
           text: confirmButtonText,
           style: confirmButtonStyle,
           action() {
-            resolve(true);
+            resolve(true)
           },
         },
       ],
-    });
-    alert.present();
-  });
+    })
+    alert.present()
+  })
 }
 
 export function alertDialog({
@@ -50,9 +46,9 @@ export function alertDialog({
   text,
   closeButtonText = 'OK',
 }: {
-  title?: string;
-  text: string;
-  closeButtonText?: string;
+  title?: string
+  text: string
+  closeButtonText?: string
 }) {
   return new Promise<void>((resolve) => {
     const alert = new SKAlert({
@@ -65,9 +61,9 @@ export function alertDialog({
           action: resolve,
         },
       ],
-    });
-    alert.present();
-  });
+    })
+    alert.present()
+  })
 }
 
 export class AlertService implements SNAlertService {
@@ -75,7 +71,7 @@ export class AlertService implements SNAlertService {
    * @deprecated use the standalone `alertDialog` function instead
    */
   alert(text: string, title?: string, closeButtonText?: string) {
-    return alertDialog({ text, title, closeButtonText });
+    return alertDialog({ text, title, closeButtonText })
   }
 
   confirm(
@@ -83,16 +79,15 @@ export class AlertService implements SNAlertService {
     title?: string,
     confirmButtonText?: string,
     confirmButtonType?: ButtonType,
-    cancelButtonText?: string
+    cancelButtonText?: string,
   ): Promise<boolean> {
     return confirmDialog({
       text,
       title,
       confirmButtonText,
       cancelButtonText,
-      confirmButtonStyle:
-        confirmButtonType === ButtonType.Danger ? 'danger' : 'info',
-    });
+      confirmButtonStyle: confirmButtonType === ButtonType.Danger ? 'danger' : 'info',
+    })
   }
 
   blockingDialog(text: string, title?: string) {
@@ -100,10 +95,10 @@ export class AlertService implements SNAlertService {
       title: title && sanitizeHtmlString(title),
       text: sanitizeHtmlString(text),
       buttons: [],
-    });
-    alert.present();
+    })
+    alert.present()
     return () => {
-      alert.dismiss();
-    };
+      alert.dismiss()
+    }
   }
 }

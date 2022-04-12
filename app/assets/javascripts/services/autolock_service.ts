@@ -1,7 +1,7 @@
-import { ApplicationService } from '@standardnotes/snjs';
+import { ApplicationService } from '@standardnotes/snjs'
 
-const MILLISECONDS_PER_SECOND = 1000;
-const POLL_INTERVAL = 50;
+const MILLISECONDS_PER_SECOND = 1000
+const POLL_INTERVAL = 50
 
 const LockInterval = {
   None: 0,
@@ -9,53 +9,51 @@ const LockInterval = {
   OneMinute: 60 * MILLISECONDS_PER_SECOND,
   FiveMinutes: 300 * MILLISECONDS_PER_SECOND,
   OneHour: 3600 * MILLISECONDS_PER_SECOND,
-};
+}
 
-const STORAGE_KEY_AUTOLOCK_INTERVAL = 'AutoLockIntervalKey';
+const STORAGE_KEY_AUTOLOCK_INTERVAL = 'AutoLockIntervalKey'
 
 export class AutolockService extends ApplicationService {
-  private pollInterval: any;
-  private lastFocusState?: 'hidden' | 'visible';
-  private lockAfterDate?: Date;
+  private pollInterval: any
+  private lastFocusState?: 'hidden' | 'visible'
+  private lockAfterDate?: Date
 
   onAppLaunch() {
-    this.beginPolling();
-    return super.onAppLaunch();
+    this.beginPolling()
+    return super.onAppLaunch()
   }
 
   deinit() {
-    this.cancelAutoLockTimer();
+    this.cancelAutoLockTimer()
     if (this.pollInterval) {
-      clearInterval(this.pollInterval);
+      clearInterval(this.pollInterval)
     }
-    super.deinit();
+    super.deinit()
   }
 
   private lockApplication() {
     if (!this.application.hasPasscode()) {
-      throw Error('Attempting to lock application with no passcode');
+      throw Error('Attempting to lock application with no passcode')
     }
-    this.application.lock();
+    this.application.lock().catch(console.error)
   }
 
   async setAutoLockInterval(interval: number) {
-    return this.application.setValue(STORAGE_KEY_AUTOLOCK_INTERVAL, interval);
+    return this.application.setValue(STORAGE_KEY_AUTOLOCK_INTERVAL, interval)
   }
 
   async getAutoLockInterval() {
-    const interval = (await this.application.getValue(
-      STORAGE_KEY_AUTOLOCK_INTERVAL
-    )) as number;
+    const interval = (await this.application.getValue(STORAGE_KEY_AUTOLOCK_INTERVAL)) as number
     if (interval) {
-      return interval;
+      return interval
     } else {
-      return LockInterval.None;
+      return LockInterval.None
     }
   }
 
   async deleteAutolockPreference() {
-    await this.application.removeValue(STORAGE_KEY_AUTOLOCK_INTERVAL);
-    this.cancelAutoLockTimer();
+    await this.application.removeValue(STORAGE_KEY_AUTOLOCK_INTERVAL)
+    this.cancelAutoLockTimer()
   }
 
   /**
@@ -64,19 +62,19 @@ export class AutolockService extends ApplicationService {
    */
   beginPolling() {
     this.pollInterval = setInterval(async () => {
-      const locked = await this.application.isLocked();
+      const locked = await this.application.isLocked()
       if (!locked && this.lockAfterDate && new Date() > this.lockAfterDate) {
-        this.lockApplication();
+        this.lockApplication()
       }
-      const hasFocus = document.hasFocus();
+      const hasFocus = document.hasFocus()
       if (hasFocus && this.lastFocusState === 'hidden') {
-        this.documentVisibilityChanged(true);
+        this.documentVisibilityChanged(true).catch(console.error)
       } else if (!hasFocus && this.lastFocusState === 'visible') {
-        this.documentVisibilityChanged(false);
+        this.documentVisibilityChanged(false).catch(console.error)
       }
       /* Save this to compare against next time around */
-      this.lastFocusState = hasFocus ? 'visible' : 'hidden';
-    }, POLL_INTERVAL);
+      this.lastFocusState = hasFocus ? 'visible' : 'hidden'
+    }, POLL_INTERVAL)
   }
 
   getAutoLockIntervalOptions() {
@@ -101,31 +99,31 @@ export class AutolockService extends ApplicationService {
         value: LockInterval.OneHour,
         label: '1h',
       },
-    ];
+    ]
   }
 
   async documentVisibilityChanged(visible: boolean) {
     if (visible) {
-      this.cancelAutoLockTimer();
+      this.cancelAutoLockTimer()
     } else {
-      this.beginAutoLockTimer();
+      this.beginAutoLockTimer().catch(console.error)
     }
   }
 
   async beginAutoLockTimer() {
-    const interval = await this.getAutoLockInterval();
+    const interval = await this.getAutoLockInterval()
     if (interval === LockInterval.None) {
-      return;
+      return
     }
     const addToNow = (seconds: number) => {
-      const date = new Date();
-      date.setSeconds(date.getSeconds() + seconds);
-      return date;
-    };
-    this.lockAfterDate = addToNow(interval / MILLISECONDS_PER_SECOND);
+      const date = new Date()
+      date.setSeconds(date.getSeconds() + seconds)
+      return date
+    }
+    this.lockAfterDate = addToNow(interval / MILLISECONDS_PER_SECOND)
   }
 
   cancelAutoLockTimer() {
-    this.lockAfterDate = undefined;
+    this.lockAfterDate = undefined
   }
 }

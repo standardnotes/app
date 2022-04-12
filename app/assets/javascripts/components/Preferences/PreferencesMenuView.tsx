@@ -1,10 +1,10 @@
-import { observer } from 'mobx-react-lite';
-import { FunctionComponent } from 'preact';
-import { MenuItem } from './components';
-import { PreferencesMenu } from './PreferencesMenu';
+import { observer } from 'mobx-react-lite'
+import { FunctionComponent } from 'preact'
+import { MenuItem } from './components'
+import { PreferencesMenu } from './PreferencesMenu'
 
 export const PreferencesMenuView: FunctionComponent<{
-  menu: PreferencesMenu;
+  menu: PreferencesMenu
 }> = observer(({ menu }) => (
   <div className="min-w-55 overflow-y-auto flex flex-col px-3 py-6">
     {menu.menuItems.map((pref) => (
@@ -17,4 +17,4 @@ export const PreferencesMenuView: FunctionComponent<{
       />
     ))}
   </div>
-));
+))

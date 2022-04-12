@@ -1,53 +1,47 @@
-import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/constants';
-import { ApplicationGroup } from '@/ui_models/application_group';
-import { AppState } from '@/ui_models/app_state';
-import {
-  calculateSubmenuStyle,
-  SubmenuStyle,
-} from '@/utils/calculateSubmenuStyle';
-import { observer } from 'mobx-react-lite';
-import { FunctionComponent } from 'preact';
-import { useEffect, useRef, useState } from 'preact/hooks';
-import { Icon } from '../../Icon';
-import { WorkspaceSwitcherMenu } from './WorkspaceSwitcherMenu';
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/constants'
+import { ApplicationGroup } from '@/ui_models/application_group'
+import { AppState } from '@/ui_models/app_state'
+import { calculateSubmenuStyle, SubmenuStyle } from '@/utils/calculateSubmenuStyle'
+import { observer } from 'mobx-react-lite'
+import { FunctionComponent } from 'preact'
+import { useEffect, useRef, useState } from 'preact/hooks'
+import { Icon } from '../../Icon'
+import { WorkspaceSwitcherMenu } from './WorkspaceSwitcherMenu'
 
 type Props = {
-  mainApplicationGroup: ApplicationGroup;
-  appState: AppState;
-};
+  mainApplicationGroup: ApplicationGroup
+  appState: AppState
+}
 
 export const WorkspaceSwitcherOption: FunctionComponent<Props> = observer(
   ({ mainApplicationGroup, appState }) => {
-    const buttonRef = useRef<HTMLButtonElement>(null);
-    const menuRef = useRef<HTMLDivElement>(null);
-    const [isOpen, setIsOpen] = useState(false);
-    const [menuStyle, setMenuStyle] = useState<SubmenuStyle>();
+    const buttonRef = useRef<HTMLButtonElement>(null)
+    const menuRef = useRef<HTMLDivElement>(null)
+    const [isOpen, setIsOpen] = useState(false)
+    const [menuStyle, setMenuStyle] = useState<SubmenuStyle>()
 
     const toggleMenu = () => {
       if (!isOpen) {
-        const menuPosition = calculateSubmenuStyle(buttonRef.current);
+        const menuPosition = calculateSubmenuStyle(buttonRef.current)
         if (menuPosition) {
-          setMenuStyle(menuPosition);
+          setMenuStyle(menuPosition)
         }
       }
 
-      setIsOpen(!isOpen);
-    };
+      setIsOpen(!isOpen)
+    }
 
     useEffect(() => {
       if (isOpen) {
         setTimeout(() => {
-          const newMenuPosition = calculateSubmenuStyle(
-            buttonRef.current,
-            menuRef.current
-          );
+          const newMenuPosition = calculateSubmenuStyle(buttonRef.current, menuRef.current)
 
           if (newMenuPosition) {
-            setMenuStyle(newMenuPosition);
+            setMenuStyle(newMenuPosition)
           }
-        });
+        })
       }
-    }, [isOpen]);
+    }, [isOpen])
 
     return (
       <>
@@ -78,6 +72,6 @@ export const WorkspaceSwitcherOption: FunctionComponent<Props> = observer(
           </div>
         )}
       </>
-    );
-  }
-);
+    )
+  },
+)

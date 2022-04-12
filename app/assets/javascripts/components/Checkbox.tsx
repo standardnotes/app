@@ -1,12 +1,12 @@
-import { FunctionComponent } from 'preact';
+import { FunctionComponent } from 'preact'
 
 type CheckboxProps = {
-  name: string;
-  checked: boolean;
-  onChange: (e: Event) => void;
-  disabled?: boolean;
-  label: string;
-};
+  name: string
+  checked: boolean
+  onChange: (e: Event) => void
+  disabled?: boolean
+  label: string
+}
 
 export const Checkbox: FunctionComponent<CheckboxProps> = ({
   name,
@@ -28,5 +28,5 @@ export const Checkbox: FunctionComponent<CheckboxProps> = ({
       />
       {label}
     </label>
-  );
-};
+  )
+}

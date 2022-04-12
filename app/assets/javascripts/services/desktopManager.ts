@@ -9,10 +9,10 @@ import {
   DesktopManagerInterface,
   PayloadSource,
   InternalEventBus,
-} from '@standardnotes/snjs';
-import { WebAppEvent, WebApplication } from '@/ui_models/application';
-import { isDesktopApplication } from '@/utils';
-import { Bridge, ElectronDesktopCallbacks } from './bridge';
+} from '@standardnotes/snjs'
+import { WebAppEvent, WebApplication } from '@/ui_models/application'
+import { isDesktopApplication } from '@/utils'
+import { Bridge, ElectronDesktopCallbacks } from './bridge'
 
 /**
  * An interface used by the Desktop application to interact with SN
@@ -22,43 +22,43 @@ export class DesktopManager
   implements DesktopManagerInterface, ElectronDesktopCallbacks
 {
   updateObservers: {
-    callback: (component: SNComponent) => void;
-  }[] = [];
+    callback: (component: SNComponent) => void
+  }[] = []
 
-  isDesktop = isDesktopApplication();
-  dataLoaded = false;
-  lastSearchedText?: string;
+  isDesktop = isDesktopApplication()
+  dataLoaded = false
+  lastSearchedText?: string
 
   constructor(application: WebApplication, private bridge: Bridge) {
-    super(application, new InternalEventBus());
+    super(application, new InternalEventBus())
   }
 
   get webApplication() {
-    return this.application as WebApplication;
+    return this.application as WebApplication
   }
 
   deinit() {
-    this.updateObservers.length = 0;
-    super.deinit();
+    this.updateObservers.length = 0
+    super.deinit()
   }
 
   async onAppEvent(eventName: ApplicationEvent) {
-    super.onAppEvent(eventName);
+    super.onAppEvent(eventName).catch(console.error)
     if (eventName === ApplicationEvent.LocalDataLoaded) {
-      this.dataLoaded = true;
-      this.bridge.onInitialDataLoad();
+      this.dataLoaded = true
+      this.bridge.onInitialDataLoad()
     } else if (eventName === ApplicationEvent.MajorDataChange) {
-      this.bridge.onMajorDataChange();
+      this.bridge.onMajorDataChange()
     }
   }
 
   saveBackup() {
-    this.bridge.onMajorDataChange();
+    this.bridge.onMajorDataChange()
   }
 
   getExtServerHost(): string {
-    console.assert(!!this.bridge.extensionsServerHost, 'extServerHost is null');
-    return this.bridge.extensionsServerHost!;
+    console.assert(!!this.bridge.extensionsServerHost, 'extServerHost is null')
+    return this.bridge.extensionsServerHost as string
   }
 
   /**
@@ -66,104 +66,103 @@ export class DesktopManager
    * Keys are not passed into ItemParams, so the result is not encrypted
    */
   convertComponentForTransmission(component: SNComponent) {
-    return component.payloadRepresentation().ejected();
+    return component.payloadRepresentation().ejected()
   }
 
   // All `components` should be installed
   syncComponentsInstallation(components: SNComponent[]) {
     if (!this.isDesktop) {
-      return;
+      return
     }
     Promise.all(
       components.map((component) => {
-        return this.convertComponentForTransmission(component);
+        return this.convertComponentForTransmission(component)
+      }),
+    )
+      .then((payloads) => {
+        this.bridge.syncComponents(payloads)
       })
-    ).then((payloads) => {
-      this.bridge.syncComponents(payloads);
-    });
+      .catch(console.error)
   }
 
   registerUpdateObserver(callback: (component: SNComponent) => void) {
     const observer = {
       callback: callback,
-    };
-    this.updateObservers.push(observer);
+    }
+    this.updateObservers.push(observer)
     return () => {
-      removeFromArray(this.updateObservers, observer);
-    };
+      removeFromArray(this.updateObservers, observer)
+    }
   }
 
   searchText(text?: string) {
     if (!this.isDesktop) {
-      return;
+      return
     }
-    this.lastSearchedText = text;
-    this.bridge.onSearch(text);
+    this.lastSearchedText = text
+    this.bridge.onSearch(text)
   }
 
   redoSearch() {
     if (this.lastSearchedText) {
-      this.searchText(this.lastSearchedText);
+      this.searchText(this.lastSearchedText)
     }
   }
 
   desktop_updateAvailable(): void {
-    this.webApplication.notifyWebEvent(WebAppEvent.NewUpdateAvailable);
+    this.webApplication.notifyWebEvent(WebAppEvent.NewUpdateAvailable)
   }
 
   desktop_windowGainedFocus(): void {
-    this.webApplication.notifyWebEvent(WebAppEvent.DesktopWindowGainedFocus);
+    this.webApplication.notifyWebEvent(WebAppEvent.DesktopWindowGainedFocus)
   }
 
   desktop_windowLostFocus(): void {
-    this.webApplication.notifyWebEvent(WebAppEvent.DesktopWindowLostFocus);
+    this.webApplication.notifyWebEvent(WebAppEvent.DesktopWindowLostFocus)
   }
 
-  async desktop_onComponentInstallationComplete(
-    componentData: any,
-    error: any
-  ) {
-    const component = this.application.items.findItem(componentData.uuid);
+  async desktop_onComponentInstallationComplete(componentData: any, error: any) {
+    const component = this.application.items.findItem(componentData.uuid)
     if (!component) {
-      return;
+      return
     }
     const updatedComponent = await this.application.mutator.changeAndSaveItem(
       component,
       (m) => {
-        const mutator = m as ComponentMutator;
+        const mutator = m as ComponentMutator
         if (error) {
-          mutator.setAppDataItem(AppDataField.ComponentInstallError, error);
+          mutator.setAppDataItem(AppDataField.ComponentInstallError, error)
         } else {
-          mutator.local_url = componentData.content.local_url;
-          mutator.package_info = componentData.content.package_info;
-          mutator.setAppDataItem(AppDataField.ComponentInstallError, undefined);
+          mutator.local_url = componentData.content.local_url
+          mutator.package_info = componentData.content.package_info
+          mutator.setAppDataItem(AppDataField.ComponentInstallError, undefined)
         }
       },
       undefined,
-      PayloadSource.DesktopInstalled
-    );
+      PayloadSource.DesktopInstalled,
+    )
 
     for (const observer of this.updateObservers) {
-      observer.callback(updatedComponent as SNComponent);
+      observer.callback(updatedComponent as SNComponent)
     }
   }
 
   async desktop_requestBackupFile(): Promise<string | undefined> {
-    const encrypted = this.application.hasProtectionSources();
+    const encrypted = this.application.hasProtectionSources()
     const data = encrypted
       ? await this.application.createEncryptedBackupFile(false)
-      : await this.application.createDecryptedBackupFile();
+      : await this.application.createDecryptedBackupFile()
 
     if (data) {
-      return JSON.stringify(data, null, 2);
+      return JSON.stringify(data, null, 2)
     }
   }
 
   desktop_didBeginBackup() {
-    this.webApplication.getAppState().beganBackupDownload();
+    this.webApplication.getAppState().beganBackupDownload()
   }
 
   desktop_didFinishBackup(success: boolean) {
-    this.webApplication.getAppState().endedBackupDownload(success);
+    this.webApplication.getAppState().endedBackupDownload(success)
   }
 }

@@ -1,96 +1,96 @@
-import { STRING_NON_MATCHING_PASSWORDS } from '@/strings';
-import { WebApplication } from '@/ui_models/application';
-import { AppState } from '@/ui_models/app_state';
-import { observer } from 'mobx-react-lite';
-import { FunctionComponent } from 'preact';
-import { useEffect, useRef, useState } from 'preact/hooks';
-import { AccountMenuPane } from '.';
-import { Button } from '../Button';
-import { Checkbox } from '../Checkbox';
-import { DecoratedPasswordInput } from '../DecoratedPasswordInput';
-import { Icon } from '../Icon';
-import { IconButton } from '../IconButton';
+import { STRING_NON_MATCHING_PASSWORDS } from '@/strings'
+import { WebApplication } from '@/ui_models/application'
+import { AppState } from '@/ui_models/app_state'
+import { observer } from 'mobx-react-lite'
+import { FunctionComponent } from 'preact'
+import { useEffect, useRef, useState } from 'preact/hooks'
+import { AccountMenuPane } from '.'
+import { Button } from '../Button'
+import { Checkbox } from '../Checkbox'
+import { DecoratedPasswordInput } from '../DecoratedPasswordInput'
+import { Icon } from '../Icon'
+import { IconButton } from '../IconButton'
 
 type Props = {
-  appState: AppState;
-  application: WebApplication;
-  setMenuPane: (pane: AccountMenuPane) => void;
-  email: string;
-  password: string;
-};
+  appState: AppState
+  application: WebApplication
+  setMenuPane: (pane: AccountMenuPane) => void
+  email: string
+  password: string
+}
 
 export const ConfirmPassword: FunctionComponent<Props> = observer(
   ({ application, appState, setMenuPane, email, password }) => {
-    const { notesAndTagsCount } = appState.accountMenu;
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [isRegistering, setIsRegistering] = useState(false);
-    const [isEphemeral, setIsEphemeral] = useState(false);
-    const [shouldMergeLocal, setShouldMergeLocal] = useState(true);
-    const [error, setError] = useState('');
+    const { notesAndTagsCount } = appState.accountMenu
+    const [confirmPassword, setConfirmPassword] = useState('')
+    const [isRegistering, setIsRegistering] = useState(false)
+    const [isEphemeral, setIsEphemeral] = useState(false)
+    const [shouldMergeLocal, setShouldMergeLocal] = useState(true)
+    const [error, setError] = useState('')
 
-    const passwordInputRef = useRef<HTMLInputElement>(null);
+    const passwordInputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
-      passwordInputRef.current?.focus();
-    }, []);
+      passwordInputRef.current?.focus()
+    }, [])
 
     const handlePasswordChange = (text: string) => {
-      setConfirmPassword(text);
-    };
+      setConfirmPassword(text)
+    }
 
     const handleEphemeralChange = () => {
-      setIsEphemeral(!isEphemeral);
-    };
+      setIsEphemeral(!isEphemeral)
+    }
 
     const handleShouldMergeChange = () => {
-      setShouldMergeLocal(!shouldMergeLocal);
-    };
+      setShouldMergeLocal(!shouldMergeLocal)
+    }
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (error.length) {
-        setError('');
+        setError('')
       }
       if (e.key === 'Enter') {
-        handleConfirmFormSubmit(e);
+        handleConfirmFormSubmit(e)
       }
-    };
+    }
 
     const handleConfirmFormSubmit = (e: Event) => {
-      e.preventDefault();
+      e.preventDefault()
 
       if (!password) {
-        passwordInputRef.current?.focus();
-        return;
+        passwordInputRef.current?.focus()
+        return
       }
 
       if (password === confirmPassword) {
-        setIsRegistering(true);
+        setIsRegistering(true)
         application
           .register(email, password, isEphemeral, shouldMergeLocal)
           .then((res) => {
             if (res.error) {
-              throw new Error(res.error.message);
+              throw new Error(res.error.message)
             }
-            appState.accountMenu.closeAccountMenu();
-            appState.accountMenu.setCurrentPane(AccountMenuPane.GeneralMenu);
+            appState.accountMenu.closeAccountMenu()
+            appState.accountMenu.setCurrentPane(AccountMenuPane.GeneralMenu)
           })
           .catch((err) => {
-            console.error(err);
-            setError(err.message);
+            console.error(err)
+            setError(err.message)
           })
           .finally(() => {
-            setIsRegistering(false);
-          });
+            setIsRegistering(false)
+          })
       } else {
-        setError(STRING_NON_MATCHING_PASSWORDS);
-        setConfirmPassword('');
-        passwordInputRef.current?.focus();
+        setError(STRING_NON_MATCHING_PASSWORDS)
+        setConfirmPassword('')
+        passwordInputRef.current?.focus()
       }
-    };
+    }
 
     const handleGoBack = () => {
-      setMenuPane(AccountMenuPane.Register);
-    };
+      setMenuPane(AccountMenuPane.Register)
+    }
 
     return (
       <>
@@ -110,8 +110,7 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
           <span className="color-dark-red">
             Standard Notes does not have a password reset option
           </span>
-          . If you forget your password, you will permanently lose access to
-          your data.
+          . If you forget your password, you will permanently lose access to your data.
         </div>
         <form onSubmit={handleConfirmFormSubmit} className="px-3 mb-1">
           <DecoratedPasswordInput
@@ -127,9 +126,7 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
           {error ? <div className="color-dark-red my-2">{error}</div> : null}
           <Button
             className="btn-w-full mt-1 mb-3"
-            label={
-              isRegistering ? 'Creating account...' : 'Create account & sign in'
-            }
+            label={isRegistering ? 'Creating account...' : 'Create account & sign in'}
             variant="primary"
             onClick={handleConfirmFormSubmit}
             disabled={isRegistering}
@@ -152,6 +149,6 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
           ) : null}
         </form>
       </>
-    );
-  }
-);
+    )
+  },
+)

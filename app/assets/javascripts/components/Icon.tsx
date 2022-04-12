@@ -1,5 +1,5 @@
-import { FunctionalComponent } from 'preact';
-import { IconType } from '@standardnotes/snjs';
+import { FunctionalComponent } from 'preact'
+import { IconType } from '@standardnotes/snjs'
 
 import {
   AccessibilityIcon,
@@ -88,7 +88,7 @@ import {
   UserSwitch,
   WarningIcon,
   WindowIcon,
-} from '@standardnotes/stylekit';
+} from '@standardnotes/stylekit'
 
 export const ICONS = {
   'account-circle': AccountCircleIcon,
@@ -177,22 +177,18 @@ export const ICONS = {
   user: UserIcon,
   warning: WarningIcon,
   window: WindowIcon,
-};
+}
 
 type Props = {
-  type: IconType;
-  className?: string;
-  ariaLabel?: string;
-};
+  type: IconType
+  className?: string
+  ariaLabel?: string
+}
 
-export const Icon: FunctionalComponent<Props> = ({
-  type,
-  className = '',
-  ariaLabel,
-}) => {
-  const IconComponent = ICONS[type as keyof typeof ICONS];
+export const Icon: FunctionalComponent<Props> = ({ type, className = '', ariaLabel }) => {
+  const IconComponent = ICONS[type as keyof typeof ICONS]
   if (!IconComponent) {
-    return null;
+    return null
   }
   return (
     <IconComponent
@@ -200,5 +196,5 @@ export const Icon: FunctionalComponent<Props> = ({
       role="img"
       {...(ariaLabel ? { 'aria-label': ariaLabel } : {})}
     />
-  );
-};
+  )
+}

@@ -1,20 +1,20 @@
-import { FunctionComponent, Ref } from 'preact';
-import { JSXInternal } from 'preact/src/jsx';
-import { forwardRef } from 'preact/compat';
-import { useState } from 'preact/hooks';
+import { FunctionComponent, Ref } from 'preact'
+import { JSXInternal } from 'preact/src/jsx'
+import { forwardRef } from 'preact/compat'
+import { useState } from 'preact/hooks'
 
 type Props = {
-  id: string;
-  type: 'text' | 'email' | 'password'; // Have no use cases for other types so far
-  label: string;
-  value: string;
-  onChange: JSXInternal.GenericEventHandler<HTMLInputElement>;
-  disabled?: boolean;
-  className?: string;
-  labelClassName?: string;
-  inputClassName?: string;
-  isInvalid?: boolean;
-};
+  id: string
+  type: 'text' | 'email' | 'password'
+  label: string
+  value: string
+  onChange: JSXInternal.GenericEventHandler<HTMLInputElement>
+  disabled?: boolean
+  className?: string
+  labelClassName?: string
+  inputClassName?: string
+  isInvalid?: boolean
+}
 
 export const FloatingLabelInput: FunctionComponent<Props> = forwardRef(
   (
@@ -30,27 +30,25 @@ export const FloatingLabelInput: FunctionComponent<Props> = forwardRef(
       labelClassName = '',
       inputClassName = '',
     }: Props,
-    ref: Ref<HTMLInputElement>
+    ref: Ref<HTMLInputElement>,
   ) => {
-    const [focused, setFocused] = useState(false);
+    const [focused, setFocused] = useState(false)
 
-    const BASE_CLASSNAME = `relative bg-default`;
+    const BASE_CLASSNAME = 'relative bg-default'
 
-    const LABEL_CLASSNAME = `hidden absolute ${
-      !focused ? 'color-neutral' : 'color-info'
-    } ${focused || value ? 'flex top-0 left-2 pt-1.5 px-1' : ''} ${
-      isInvalid ? 'color-dark-red' : ''
-    } ${labelClassName}`;
+    const LABEL_CLASSNAME = `hidden absolute ${!focused ? 'color-neutral' : 'color-info'} ${
+      focused || value ? 'flex top-0 left-2 pt-1.5 px-1' : ''
+    } ${isInvalid ? 'color-dark-red' : ''} ${labelClassName}`
 
     const INPUT_CLASSNAME = `w-full h-full ${
       focused || value ? 'pt-6 pb-2' : 'py-2.5'
     } px-3 text-input border-1 border-solid border-main rounded placeholder-medium text-input focus:ring-info ${
       isInvalid ? 'border-dark-red placeholder-dark-red' : ''
-    } ${inputClassName}`;
+    } ${inputClassName}`
 
-    const handleFocus = () => setFocused(true);
+    const handleFocus = () => setFocused(true)
 
-    const handleBlur = () => setFocused(false);
+    const handleBlur = () => setFocused(false)
 
     return (
       <div className={`${BASE_CLASSNAME} ${className}`}>
@@ -70,6 +68,6 @@ export const FloatingLabelInput: FunctionComponent<Props> = forwardRef(
           disabled={disabled}
         />
       </div>
-    );
-  }
-);
+    )
+  },
+)

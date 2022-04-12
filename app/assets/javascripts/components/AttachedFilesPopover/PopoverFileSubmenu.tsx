@@ -1,31 +1,18 @@
-import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/constants';
-import {
-  calculateSubmenuStyle,
-  SubmenuStyle,
-} from '@/utils/calculateSubmenuStyle';
-import {
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
-} from '@reach/disclosure';
-import { FunctionComponent } from 'preact';
-import {
-  StateUpdater,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'preact/hooks';
-import { Icon } from '../Icon';
-import { Switch } from '../Switch';
-import { useCloseOnBlur } from '../utils';
-import { useFilePreviewModal } from '../Files/FilePreviewModalProvider';
-import { PopoverFileItemProps } from './PopoverFileItem';
-import { PopoverFileItemActionType } from './PopoverFileItemAction';
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/constants'
+import { calculateSubmenuStyle, SubmenuStyle } from '@/utils/calculateSubmenuStyle'
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
+import { FunctionComponent } from 'preact'
+import { StateUpdater, useCallback, useEffect, useRef, useState } from 'preact/hooks'
+import { Icon } from '../Icon'
+import { Switch } from '../Switch'
+import { useCloseOnBlur } from '../utils'
+import { useFilePreviewModal } from '../Files/FilePreviewModalProvider'
+import { PopoverFileItemProps } from './PopoverFileItem'
+import { PopoverFileItemActionType } from './PopoverFileItemAction'
 
 type Props = Omit<PopoverFileItemProps, 'renameFile' | 'getIconType'> & {
-  setIsRenamingFile: StateUpdater<boolean>;
-};
+  setIsRenamingFile: StateUpdater<boolean>
+}
 
 export const PopoverFileSubmenu: FunctionComponent<Props> = ({
   file,
@@ -33,54 +20,51 @@ export const PopoverFileSubmenu: FunctionComponent<Props> = ({
   handleFileAction,
   setIsRenamingFile,
 }) => {
-  const filePreviewModal = useFilePreviewModal();
+  const filePreviewModal = useFilePreviewModal()
 
-  const menuContainerRef = useRef<HTMLDivElement>(null);
-  const menuButtonRef = useRef<HTMLButtonElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const menuContainerRef = useRef<HTMLDivElement>(null)
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
 
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isFileProtected, setIsFileProtected] = useState(file.protected);
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isFileProtected, setIsFileProtected] = useState(file.protected)
   const [menuStyle, setMenuStyle] = useState<SubmenuStyle>({
     right: 0,
     bottom: 0,
     maxHeight: 'auto',
-  });
-  const [closeOnBlur] = useCloseOnBlur(menuContainerRef, setIsMenuOpen);
+  })
+  const [closeOnBlur] = useCloseOnBlur(menuContainerRef, setIsMenuOpen)
 
   const closeMenu = () => {
-    setIsMenuOpen(false);
-  };
+    setIsMenuOpen(false)
+  }
 
   const toggleMenu = () => {
     if (!isMenuOpen) {
-      const menuPosition = calculateSubmenuStyle(menuButtonRef.current);
+      const menuPosition = calculateSubmenuStyle(menuButtonRef.current)
       if (menuPosition) {
-        setMenuStyle(menuPosition);
+        setMenuStyle(menuPosition)
       }
     }
 
-    setIsMenuOpen(!isMenuOpen);
-  };
+    setIsMenuOpen(!isMenuOpen)
+  }
 
   const recalculateMenuStyle = useCallback(() => {
-    const newMenuPosition = calculateSubmenuStyle(
-      menuButtonRef.current,
-      menuRef.current
-    );
+    const newMenuPosition = calculateSubmenuStyle(menuButtonRef.current, menuRef.current)
 
     if (newMenuPosition) {
-      setMenuStyle(newMenuPosition);
+      setMenuStyle(newMenuPosition)
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
     if (isMenuOpen) {
       setTimeout(() => {
-        recalculateMenuStyle();
-      });
+        recalculateMenuStyle()
+      })
     }
-  }, [isMenuOpen, recalculateMenuStyle]);
+  }, [isMenuOpen, recalculateMenuStyle])
 
   return (
     <div ref={menuContainerRef}>
@@ -106,8 +90,8 @@ export const PopoverFileSubmenu: FunctionComponent<Props> = ({
                 onBlur={closeOnBlur}
                 className="sn-dropdown-item focus:bg-info-backdrop"
                 onClick={() => {
-                  filePreviewModal.activate(file);
-                  closeMenu();
+                  filePreviewModal.activate(file)
+                  closeMenu()
                 }}
               >
                 <Icon type="file" className="mr-2 color-neutral" />
@@ -121,8 +105,8 @@ export const PopoverFileSubmenu: FunctionComponent<Props> = ({
                     handleFileAction({
                       type: PopoverFileItemActionType.DetachFileToNote,
                       payload: file,
-                    });
-                    closeMenu();
+                    }).catch(console.error)
+                    closeMenu()
                   }}
                 >
                   <Icon type="link-off" className="mr-2 color-neutral" />
@@ -136,8 +120,8 @@ export const PopoverFileSubmenu: FunctionComponent<Props> = ({
                     handleFileAction({
                       type: PopoverFileItemActionType.AttachFileToNote,
                       payload: file,
-                    });
-                    closeMenu();
+                    }).catch(console.error)
+                    closeMenu()
                   }}
                 >
                   <Icon type="link" className="mr-2 color-neutral" />
@@ -152,9 +136,9 @@ export const PopoverFileSubmenu: FunctionComponent<Props> = ({
                     type: PopoverFileItemActionType.ToggleFileProtection,
                     payload: file,
                     callback: (isProtected: boolean) => {
-                      setIsFileProtected(isProtected);
+                      setIsFileProtected(isProtected)
                     },
-                  });
+                  }).catch(console.error)
                 }}
                 onBlur={closeOnBlur}
               >
@@ -176,8 +160,8 @@ export const PopoverFileSubmenu: FunctionComponent<Props> = ({
                   handleFileAction({
                     type: PopoverFileItemActionType.DownloadFile,
                     payload: file,
-                  });
-                  closeMenu();
+                  }).catch(console.error)
+                  closeMenu()
                 }}
               >
                 <Icon type="download" className="mr-2 color-neutral" />
@@ -187,7 +171,7 @@ export const PopoverFileSubmenu: FunctionComponent<Props> = ({
                 onBlur={closeOnBlur}
                 className="sn-dropdown-item focus:bg-info-backdrop"
                 onClick={() => {
-                  setIsRenamingFile(true);
+                  setIsRenamingFile(true)
                 }}
               >
                 <Icon type="pencil" className="mr-2 color-neutral" />
@@ -200,8 +184,8 @@ export const PopoverFileSubmenu: FunctionComponent<Props> = ({
                   handleFileAction({
                     type: PopoverFileItemActionType.DeleteFile,
                     payload: file,
-                  });
-                  closeMenu();
+                  }).catch(console.error)
+                  closeMenu()
                 }}
               >
                 <Icon type="trash" className="mr-2 color-danger" />
@@ -212,5 +196,5 @@ export const PopoverFileSubmenu: FunctionComponent<Props> = ({
         </DisclosurePanel>
       </Disclosure>
     </div>
-  );
-};
+  )
+}

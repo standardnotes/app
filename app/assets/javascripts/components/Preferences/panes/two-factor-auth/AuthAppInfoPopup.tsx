@@ -1,19 +1,15 @@
-import { Icon } from '@/components/Icon';
-import {
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
-} from '@reach/disclosure';
-import { FunctionComponent } from 'preact';
-import { MouseEventHandler } from 'react';
-import { useState, useRef, useEffect } from 'preact/hooks';
-import { IconType } from '@standardnotes/snjs';
+import { Icon } from '@/components/Icon'
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
+import { FunctionComponent } from 'preact'
+import { MouseEventHandler } from 'react'
+import { useState, useRef, useEffect } from 'preact/hooks'
+import { IconType } from '@standardnotes/snjs'
 
 const DisclosureIconButton: FunctionComponent<{
-  className?: string;
-  icon: IconType;
-  onMouseEnter?: MouseEventHandler;
-  onMouseLeave?: MouseEventHandler;
+  className?: string
+  icon: IconType
+  onMouseEnter?: MouseEventHandler
+  onMouseLeave?: MouseEventHandler
 }> = ({ className = '', icon, onMouseEnter, onMouseLeave }) => (
   <DisclosureButton
     onMouseEnter={onMouseEnter}
@@ -24,7 +20,7 @@ const DisclosureIconButton: FunctionComponent<{
   >
     <Icon type={icon} />
   </DisclosureButton>
-);
+)
 
 /**
  * AuthAppInfoPopup is an info icon that shows a tooltip when clicked
@@ -34,23 +30,20 @@ const DisclosureIconButton: FunctionComponent<{
  * @returns
  */
 export const AuthAppInfoTooltip: FunctionComponent = () => {
-  const [isClicked, setClicked] = useState(false);
-  const [isHover, setHover] = useState(false);
-  const ref = useRef(null);
+  const [isClicked, setClicked] = useState(false)
+  const [isHover, setHover] = useState(false)
+  const ref = useRef(null)
 
   useEffect(() => {
-    const dismiss = () => setClicked(false);
-    document.addEventListener('mousedown', dismiss);
+    const dismiss = () => setClicked(false)
+    document.addEventListener('mousedown', dismiss)
     return () => {
-      document.removeEventListener('mousedown', dismiss);
-    };
-  }, [ref]);
+      document.removeEventListener('mousedown', dismiss)
+    }
+  }, [ref])
 
   return (
-    <Disclosure
-      open={isClicked || isHover}
-      onChange={() => setClicked(!isClicked)}
-    >
+    <Disclosure open={isClicked || isHover} onChange={() => setClicked(!isClicked)}>
       <div className="relative">
         <DisclosureIconButton
           icon="info"
@@ -63,11 +56,11 @@ export const AuthAppInfoTooltip: FunctionComponent = () => {
             className={`bg-inverted-default color-inverted-default text-center rounded shadow-overlay 
 py-1.5 px-2 absolute w-103 -top-10 -left-51`}
           >
-            Some apps, like Google Authenticator, do not back up and restore
-            your secret keys if you lose your device or get a new one.
+            Some apps, like Google Authenticator, do not back up and restore your secret keys if you
+            lose your device or get a new one.
           </div>
         </DisclosurePanel>
       </div>
     </Disclosure>
-  );
-};
+  )
+}

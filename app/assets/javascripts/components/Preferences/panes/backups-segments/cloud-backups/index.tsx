@@ -1,118 +1,111 @@
-import { CloudBackupProvider } from './CloudBackupProvider';
-import { useCallback, useEffect, useState } from 'preact/hooks';
-import { WebApplication } from '@/ui_models/application';
+import { CloudBackupProvider } from './CloudBackupProvider'
+import { useCallback, useEffect, useState } from 'preact/hooks'
+import { WebApplication } from '@/ui_models/application'
 import {
   PreferencesGroup,
   PreferencesSegment,
   Subtitle,
   Text,
   Title,
-} from '@/components/Preferences/components';
-import { HorizontalSeparator } from '@/components/Shared/HorizontalSeparator';
+} from '@/components/Preferences/components'
+import { HorizontalSeparator } from '@/components/Shared/HorizontalSeparator'
 import {
   FeatureStatus,
   FeatureIdentifier,
   CloudProvider,
   MuteFailedCloudBackupsEmailsOption,
   SettingName,
-} from '@standardnotes/snjs';
-import { FunctionComponent } from 'preact';
+} from '@standardnotes/snjs'
+import { FunctionComponent } from 'preact'
 
-import { Switch } from '@/components/Switch';
-import { convertStringifiedBooleanToBoolean } from '@/utils';
-import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/strings';
+import { Switch } from '@/components/Switch'
+import { convertStringifiedBooleanToBoolean } from '@/utils'
+import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/strings'
 
 const providerData = [
   { name: CloudProvider.Dropbox },
   { name: CloudProvider.Google },
   { name: CloudProvider.OneDrive },
-];
+]
 
 type Props = {
-  application: WebApplication;
-};
+  application: WebApplication
+}
 
 export const CloudLink: FunctionComponent<Props> = ({ application }) => {
-  const [isEntitledToCloudBackups, setIsEntitledToCloudBackups] =
-    useState(false);
-  const [isFailedCloudBackupEmailMuted, setIsFailedCloudBackupEmailMuted] =
-    useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const additionalClass = isEntitledToCloudBackups
-    ? ''
-    : 'faded cursor-default pointer-events-none';
+  const [isEntitledToCloudBackups, setIsEntitledToCloudBackups] = useState(false)
+  const [isFailedCloudBackupEmailMuted, setIsFailedCloudBackupEmailMuted] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
+  const additionalClass = isEntitledToCloudBackups ? '' : 'faded cursor-default pointer-events-none'
 
   const loadIsFailedCloudBackupEmailMutedSetting = useCallback(async () => {
     if (!application.getUser()) {
-      return;
+      return
     }
-    setIsLoading(true);
+    setIsLoading(true)
 
     try {
-      const userSettings = await application.settings.listSettings();
+      const userSettings = await application.settings.listSettings()
       setIsFailedCloudBackupEmailMuted(
         convertStringifiedBooleanToBoolean(
           userSettings.getSettingValue(
             SettingName.MuteFailedCloudBackupsEmails,
-            MuteFailedCloudBackupsEmailsOption.NotMuted
-          )
-        )
-      );
+            MuteFailedCloudBackupsEmailsOption.NotMuted,
+          ),
+        ),
+      )
     } catch (error) {
-      console.error(error);
+      console.error(error)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  }, [application]);
+  }, [application])
 
   useEffect(() => {
     const dailyDropboxBackupStatus = application.features.getFeatureStatus(
-      FeatureIdentifier.DailyDropboxBackup
-    );
+      FeatureIdentifier.DailyDropboxBackup,
+    )
     const dailyGdriveBackupStatus = application.features.getFeatureStatus(
-      FeatureIdentifier.DailyGDriveBackup
-    );
+      FeatureIdentifier.DailyGDriveBackup,
+    )
     const dailyOneDriveBackupStatus = application.features.getFeatureStatus(
-      FeatureIdentifier.DailyOneDriveBackup
-    );
+      FeatureIdentifier.DailyOneDriveBackup,
+    )
     const isCloudBackupsAllowed = [
       dailyDropboxBackupStatus,
       dailyGdriveBackupStatus,
       dailyOneDriveBackupStatus,
-    ].every((status) => status === FeatureStatus.Entitled);
+    ].every((status) => status === FeatureStatus.Entitled)
 
-    setIsEntitledToCloudBackups(isCloudBackupsAllowed);
-    loadIsFailedCloudBackupEmailMutedSetting();
-  }, [application, loadIsFailedCloudBackupEmailMutedSetting]);
+    setIsEntitledToCloudBackups(isCloudBackupsAllowed)
+    loadIsFailedCloudBackupEmailMutedSetting().catch(console.error)
+  }, [application, loadIsFailedCloudBackupEmailMutedSetting])
 
-  const updateSetting = async (
-    settingName: SettingName,
-    payload: string
-  ): Promise<boolean> => {
+  const updateSetting = async (settingName: SettingName, payload: string): Promise<boolean> => {
     try {
-      await application.settings.updateSetting(settingName, payload);
-      return true;
+      await application.settings.updateSetting(settingName, payload)
+      return true
     } catch (e) {
-      application.alertService.alert(STRING_FAILED_TO_UPDATE_USER_SETTING);
-      return false;
+      application.alertService.alert(STRING_FAILED_TO_UPDATE_USER_SETTING).catch(console.error)
+      return false
     }
-  };
+  }
 
   const toggleMuteFailedCloudBackupEmails = async () => {
     if (!isEntitledToCloudBackups) {
-      return;
+      return
     }
-    const previousValue = isFailedCloudBackupEmailMuted;
-    setIsFailedCloudBackupEmailMuted(!isFailedCloudBackupEmailMuted);
+    const previousValue = isFailedCloudBackupEmailMuted
+    setIsFailedCloudBackupEmailMuted(!isFailedCloudBackupEmailMuted)
 
     const updateResult = await updateSetting(
       SettingName.MuteFailedCloudBackupsEmails,
-      `${!isFailedCloudBackupEmailMuted}`
-    );
+      `${!isFailedCloudBackupEmailMuted}`,
+    )
     if (!updateResult) {
-      setIsFailedCloudBackupEmailMuted(previousValue);
+      setIsFailedCloudBackupEmailMuted(previousValue)
     }
-  };
+  }
 
   return (
     <PreferencesGroup>
@@ -122,8 +115,8 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
           <>
             <Text>
               A <span className={'font-bold'}>Plus</span> or{' '}
-              <span className={'font-bold'}>Pro</span> subscription plan is
-              required to enable Cloud Backups.{' '}
+              <span className={'font-bold'}>Pro</span> subscription plan is required to enable Cloud
+              Backups.{' '}
               <a target="_blank" href="https://standardnotes.com/features">
                 Learn more
               </a>
@@ -134,8 +127,8 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
         )}
         <div>
           <Text className={additionalClass}>
-            Configure the integrations below to enable automatic daily backups
-            of your encrypted data set to your third-party cloud provider.
+            Configure the integrations below to enable automatic daily backups of your encrypted
+            data set to your third-party cloud provider.
           </Text>
           <div>
             <HorizontalSeparator classes={`mt-3 mb-3 ${additionalClass}`} />
@@ -147,9 +140,7 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
                     providerName={name}
                     isEntitledToCloudBackups={isEntitledToCloudBackups}
                   />
-                  <HorizontalSeparator
-                    classes={`mt-3 mb-3 ${additionalClass}`}
-                  />
+                  <HorizontalSeparator classes={`mt-3 mb-3 ${additionalClass}`} />
                 </>
               ))}
             </div>
@@ -159,9 +150,7 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
             <Subtitle>Email preferences</Subtitle>
             <div className="flex items-center justify-between mt-1">
               <div className="flex flex-col">
-                <Text>
-                  Receive a notification email if a cloud backup fails.
-                </Text>
+                <Text>Receive a notification email if a cloud backup fails.</Text>
               </div>
               {isLoading ? (
                 <div className={'sk-spinner info small'} />
@@ -177,5 +166,5 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
         </div>
       </PreferencesSegment>
     </PreferencesGroup>
-  );
-};
+  )
+}

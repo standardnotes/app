@@ -1,43 +1,43 @@
-import { WebApplication } from '@/ui_models/application';
-import { SNComponent } from '@standardnotes/snjs';
-import { Component } from 'preact';
-import { findDOMNode, unmountComponentAtNode } from 'preact/compat';
+import { WebApplication } from '@/ui_models/application'
+import { SNComponent } from '@standardnotes/snjs'
+import { Component } from 'preact'
+import { findDOMNode, unmountComponentAtNode } from 'preact/compat'
 
 interface Props {
-  application: WebApplication;
-  callback: (approved: boolean) => void;
-  component: SNComponent;
-  permissionsString: string;
+  application: WebApplication
+  callback: (approved: boolean) => void
+  component: SNComponent
+  permissionsString: string
 }
 
 export class PermissionsModal extends Component<Props> {
   getElement(): Element | null {
-    return findDOMNode(this);
+    return findDOMNode(this)
   }
 
   dismiss = () => {
-    const elem = this.getElement();
+    const elem = this.getElement()
     if (!elem) {
-      return;
+      return
     }
 
-    const parent = elem.parentElement;
+    const parent = elem.parentElement
     if (!parent) {
-      return;
+      return
     }
-    parent.remove();
-    unmountComponentAtNode(parent);
-  };
+    parent.remove()
+    unmountComponentAtNode(parent)
+  }
 
   accept = () => {
-    this.props.callback(true);
-    this.dismiss();
-  };
+    this.props.callback(true)
+    this.dismiss()
+  }
 
   deny = () => {
-    this.props.callback(false);
-    this.dismiss();
-  };
+    this.props.callback(false)
+    this.dismiss()
+  }
 
   render() {
     return (
@@ -63,8 +63,7 @@ export class PermissionsModal extends Component<Props> {
                   </div>
                   <div className="sk-panel-row">
                     <p className="sk-p">
-                      Components use an offline messaging system to communicate.
-                      Learn more at{' '}
+                      Components use an offline messaging system to communicate. Learn more at{' '}
                       <a
                         href="https://standardnotes.com/permissions"
                         rel="noopener"
@@ -89,6 +88,6 @@ export class PermissionsModal extends Component<Props> {
           </div>
         </div>
       </div>
-    );
+    )
   }
 }

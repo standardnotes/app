@@ -2,20 +2,20 @@ import {
   ChallengePrompt,
   ChallengeValidation,
   ProtectionSessionDurations,
-} from '@standardnotes/snjs';
-import { FunctionComponent } from 'preact';
-import { useEffect, useRef } from 'preact/hooks';
-import { DecoratedInput } from '../DecoratedInput';
-import { DecoratedPasswordInput } from '../DecoratedPasswordInput';
-import { ChallengeModalValues } from './ChallengeModal';
+} from '@standardnotes/snjs'
+import { FunctionComponent } from 'preact'
+import { useEffect, useRef } from 'preact/hooks'
+import { DecoratedInput } from '../DecoratedInput'
+import { DecoratedPasswordInput } from '../DecoratedPasswordInput'
+import { ChallengeModalValues } from './ChallengeModal'
 
 type Props = {
-  prompt: ChallengePrompt;
-  values: ChallengeModalValues;
-  index: number;
-  onValueChange: (value: string | number, prompt: ChallengePrompt) => void;
-  isInvalid: boolean;
-};
+  prompt: ChallengePrompt
+  values: ChallengeModalValues
+  index: number
+  onValueChange: (value: string | number, prompt: ChallengePrompt) => void
+  isInvalid: boolean
+}
 
 export const ChallengeModalPrompt: FunctionComponent<Props> = ({
   prompt,
@@ -24,31 +24,28 @@ export const ChallengeModalPrompt: FunctionComponent<Props> = ({
   onValueChange,
   isInvalid,
 }) => {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (index === 0) {
-      inputRef.current?.focus();
+      inputRef.current?.focus()
     }
-  }, [index]);
+  }, [index])
 
   useEffect(() => {
     if (isInvalid) {
-      inputRef.current?.focus();
+      inputRef.current?.focus()
     }
-  }, [isInvalid]);
+  }, [isInvalid])
 
   return (
     <>
       {prompt.validation === ChallengeValidation.ProtectionSessionDuration ? (
         <div className="mt-3 min-w-76">
-          <div className="text-sm font-medium mb-2">
-            Allow protected access for
-          </div>
+          <div className="text-sm font-medium mb-2">Allow protected access for</div>
           <div className="flex items-center justify-between bg-grey-4 rounded p-1">
             {ProtectionSessionDurations.map((option) => {
-              const selected =
-                option.valueInSeconds === values[prompt.id].value;
+              const selected = option.valueInSeconds === values[prompt.id].value
               return (
                 <label
                   className={`cursor-pointer px-2 py-1.5 rounded ${
@@ -60,21 +57,19 @@ export const ChallengeModalPrompt: FunctionComponent<Props> = ({
                   <input
                     type="radio"
                     name={`session-duration-${prompt.id}`}
-                    className={
-                      'appearance-none m-0 focus:shadow-none focus:outline-none'
-                    }
+                    className={'appearance-none m-0 focus:shadow-none focus:outline-none'}
                     style={{
                       marginRight: 0,
                     }}
                     checked={selected}
                     onChange={(event) => {
-                      event.preventDefault();
-                      onValueChange(option.valueInSeconds, prompt);
+                      event.preventDefault()
+                      onValueChange(option.valueInSeconds, prompt)
                     }}
                   />
                   {option.label}
                 </label>
-              );
+              )
             })}
           </div>
         </div>
@@ -94,10 +89,8 @@ export const ChallengeModalPrompt: FunctionComponent<Props> = ({
         />
       )}
       {isInvalid && (
-        <div className="text-sm color-danger mt-2">
-          Invalid authentication, please try again.
-        </div>
+        <div className="text-sm color-danger mt-2">Invalid authentication, please try again.</div>
       )}
     </>
-  );
-};
+  )
+}

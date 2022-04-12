@@ -1,72 +1,62 @@
-import { Component } from 'preact';
+import { Component } from 'preact'
 
 export type MenuRowProps = {
-  action?: () => void;
-  buttonAction?: () => void;
-  buttonClass?: string;
-  buttonText?: string;
-  desc?: string;
-  disabled?: boolean;
-  circle?: string;
-  circleAlign?: string;
-  faded?: boolean;
-  hasButton?: boolean;
-  label: string;
-  spinnerClass?: string;
-  stylekitClass?: string;
-  subRows?: MenuRowProps[];
-  subtitle?: string;
-};
+  action?: () => void
+  buttonAction?: () => void
+  buttonClass?: string
+  buttonText?: string
+  desc?: string
+  disabled?: boolean
+  circle?: string
+  circleAlign?: string
+  faded?: boolean
+  hasButton?: boolean
+  label: string
+  spinnerClass?: string
+  stylekitClass?: string
+  subRows?: MenuRowProps[]
+  subtitle?: string
+}
 
-type Props = MenuRowProps;
+type Props = MenuRowProps
 
 export class MenuRow extends Component<Props> {
   onClick = ($event: Event) => {
     if (this.props.disabled || !this.props.action) {
-      return;
+      return
     }
 
-    $event.stopPropagation();
+    $event.stopPropagation()
 
-    this.props.action();
-  };
+    this.props.action()
+  }
 
   clickAccessoryButton = ($event: Event) => {
     if (this.props.disabled) {
-      return;
+      return
     }
-    $event.stopPropagation();
-    this.props.buttonAction?.();
-  };
+    $event.stopPropagation()
+    this.props.buttonAction?.()
+  }
 
   render() {
     return (
-      <div
-        title={this.props.desc}
-        onClick={this.onClick}
-        className="sk-menu-panel-row row"
-      >
+      <div title={this.props.desc} onClick={this.onClick} className="sk-menu-panel-row row">
         <div className="sk-menu-panel-column">
           <div className="left">
-            {this.props.circle &&
-              (!this.props.circleAlign || this.props.circleAlign == 'left') && (
-                <div className="sk-menu-panel-column">
-                  <div className={this.props.circle + ' sk-circle small'} />
-                </div>
-              )}
+            {this.props.circle && (!this.props.circleAlign || this.props.circleAlign == 'left') && (
+              <div className="sk-menu-panel-column">
+                <div className={this.props.circle + ' sk-circle small'} />
+              </div>
+            )}
 
             <div
               className={
-                (this.props.faded || this.props.disabled ? 'faded' : '') +
-                ' sk-menu-panel-column'
+                (this.props.faded || this.props.disabled ? 'faded' : '') + ' sk-menu-panel-column'
               }
             >
-              <div className={this.props.stylekitClass + ' sk-label'}>
-                {this.props.label}
-              </div>
-              {this.props.subtitle && (
-                <div className="sk-sublabel">{this.props.subtitle}</div>
-              )}
+              <div className={this.props.stylekitClass + ' sk-label'}>{this.props.label}</div>
+              {this.props.subtitle && <div className="sk-sublabel">{this.props.subtitle}</div>}
               {this.props.children}
             </div>
           </div>
@@ -81,7 +71,7 @@ export class MenuRow extends Component<Props> {
                     spinnerClass={row.spinnerClass}
                     subtitle={row.subtitle}
                   />
-                );
+                )
               })}
             </div>
           )}
@@ -97,7 +87,7 @@ export class MenuRow extends Component<Props> {
           <div className="sk-menu-panel-column">
             <button
               className={this.props.buttonClass + ' sn-button small'}
-              onClick={this.props.buttonAction!}
+              onClick={this.props.buttonAction}
             >
               {this.props.buttonText}
             </button>
@@ -110,6 +100,6 @@ export class MenuRow extends Component<Props> {
           </div>
         )}
       </div>
-    );
+    )
   }
 }

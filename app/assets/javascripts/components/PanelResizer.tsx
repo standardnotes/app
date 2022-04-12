@@ -1,12 +1,12 @@
-import { Component, createRef } from 'preact';
-import { debounce } from '@/utils';
+import { Component, createRef } from 'preact'
+import { debounce } from '@/utils'
 
 export type ResizeFinishCallback = (
   lastWidth: number,
   lastLeft: number,
   isMaxWidth: boolean,
-  isCollapsed: boolean
-) => void;
+  isCollapsed: boolean,
+) => void
 
 export enum PanelSide {
   Right = 'right',
@@ -19,286 +19,274 @@ export enum PanelResizeType {
 }
 
 type Props = {
-  width: number;
-  left: number;
-  alwaysVisible?: boolean;
-  collapsable?: boolean;
-  defaultWidth?: number;
-  hoverable?: boolean;
-  minWidth?: number;
-  panel: HTMLDivElement;
-  side: PanelSide;
-  type: PanelResizeType;
-  resizeFinishCallback?: ResizeFinishCallback;
-  widthEventCallback?: () => void;
-};
+  width: number
+  left: number
+  alwaysVisible?: boolean
+  collapsable?: boolean
+  defaultWidth?: number
+  hoverable?: boolean
+  minWidth?: number
+  panel: HTMLDivElement
+  side: PanelSide
+  type: PanelResizeType
+  resizeFinishCallback?: ResizeFinishCallback
+  widthEventCallback?: () => void
+}
 
 type State = {
-  collapsed: boolean;
-  pressed: boolean;
-};
+  collapsed: boolean
+  pressed: boolean
+}
 
 export class PanelResizer extends Component<Props, State> {
-  private overlay?: HTMLDivElement;
-  private resizerElementRef = createRef<HTMLDivElement>();
-  private debouncedResizeHandler: () => void;
-  private startLeft: number;
-  private startWidth: number;
-  private lastDownX: number;
-  private lastLeft: number;
-  private lastWidth: number;
-  private widthBeforeLastDblClick: number;
-  private minWidth: number;
+  private overlay?: HTMLDivElement
+  private resizerElementRef = createRef<HTMLDivElement>()
+  private debouncedResizeHandler: () => void
+  private startLeft: number
+  private startWidth: number
+  private lastDownX: number
+  private lastLeft: number
+  private lastWidth: number
+  private widthBeforeLastDblClick: number
+  private minWidth: number
 
   constructor(props: Props) {
-    super(props);
+    super(props)
     this.state = {
       collapsed: false,
       pressed: false,
-    };
+    }
 
-    this.minWidth = props.minWidth || 5;
-    this.startLeft = props.panel.offsetLeft;
-    this.startWidth = props.panel.scrollWidth;
-    this.lastDownX = 0;
-    this.lastLeft = props.panel.offsetLeft;
-    this.lastWidth = props.panel.scrollWidth;
-    this.widthBeforeLastDblClick = 0;
+    this.minWidth = props.minWidth || 5
+    this.startLeft = props.panel.offsetLeft
+    this.startWidth = props.panel.scrollWidth
+    this.lastDownX = 0
+    this.lastLeft = props.panel.offsetLeft
+    this.lastWidth = props.panel.scrollWidth
+    this.widthBeforeLastDblClick = 0
 
-    this.setWidth(this.props.width);
-    this.setLeft(this.props.left);
+    this.setWidth(this.props.width)
+    this.setLeft(this.props.left)
 
-    document.addEventListener('mouseup', this.onMouseUp);
-    document.addEventListener('mousemove', this.onMouseMove);
-    this.debouncedResizeHandler = debounce(this.handleResize, 250);
+    document.addEventListener('mouseup', this.onMouseUp)
+    document.addEventListener('mousemove', this.onMouseMove)
+    this.debouncedResizeHandler = debounce(this.handleResize, 250)
     if (this.props.type === PanelResizeType.OffsetAndWidth) {
-      window.addEventListener('resize', this.debouncedResizeHandler);
+      window.addEventListener('resize', this.debouncedResizeHandler)
     }
   }
 
   componentDidUpdate(prevProps: Props) {
     if (this.props.width != prevProps.width) {
-      this.setWidth(this.props.width);
+      this.setWidth(this.props.width)
     }
     if (this.props.left !== prevProps.left) {
-      this.setLeft(this.props.left);
-      this.setWidth(this.props.width);
+      this.setLeft(this.props.left)
+      this.setWidth(this.props.width)
     }
 
-    const isCollapsed = this.isCollapsed();
+    const isCollapsed = this.isCollapsed()
     if (isCollapsed !== this.state.collapsed) {
-      this.setState({ collapsed: isCollapsed });
+      this.setState({ collapsed: isCollapsed })
     }
   }
 
   componentWillUnmount() {
-    document.removeEventListener('mouseup', this.onMouseUp);
-    document.removeEventListener('mousemove', this.onMouseMove);
-    window.removeEventListener('resize', this.debouncedResizeHandler);
+    document.removeEventListener('mouseup', this.onMouseUp)
+    document.removeEventListener('mousemove', this.onMouseMove)
+    window.removeEventListener('resize', this.debouncedResizeHandler)
   }
 
   get appFrame() {
-    return document.getElementById('app')?.getBoundingClientRect() as DOMRect;
+    return document.getElementById('app')?.getBoundingClientRect() as DOMRect
   }
 
   getParentRect() {
-    return (this.props.panel.parentNode as HTMLElement).getBoundingClientRect();
+    return (this.props.panel.parentNode as HTMLElement).getBoundingClientRect()
   }
 
   isAtMaxWidth = () => {
-    const marginOfError = 5;
+    const marginOfError = 5
     const difference = Math.abs(
-      Math.round(this.lastWidth + this.lastLeft) -
-        Math.round(this.getParentRect().width)
-    );
-    return difference < marginOfError;
-  };
+      Math.round(this.lastWidth + this.lastLeft) - Math.round(this.getParentRect().width),
+    )
+    return difference < marginOfError
+  }
 
   isCollapsed() {
-    return this.lastWidth <= this.minWidth;
+    return this.lastWidth <= this.minWidth
   }
 
   finishSettingWidth = () => {
     if (!this.props.collapsable) {
-      return;
+      return
     }
 
     this.setState({
       collapsed: this.isCollapsed(),
-    });
-  };
+    })
+  }
 
   setWidth = (width: number, finish = false): void => {
     if (width === 0) {
-      width = this.computeMaxWidth();
+      width = this.computeMaxWidth()
     }
     if (width < this.minWidth) {
-      width = this.minWidth;
+      width = this.minWidth
     }
 
-    const parentRect = this.getParentRect();
+    const parentRect = this.getParentRect()
     if (width > parentRect.width) {
-      width = parentRect.width;
+      width = parentRect.width
     }
 
-    const maxWidth =
-      this.appFrame.width - this.props.panel.getBoundingClientRect().x;
+    const maxWidth = this.appFrame.width - this.props.panel.getBoundingClientRect().x
     if (width > maxWidth) {
-      width = maxWidth;
+      width = maxWidth
     }
 
-    const isFullWidth =
-      Math.round(width + this.lastLeft) === Math.round(parentRect.width);
+    const isFullWidth = Math.round(width + this.lastLeft) === Math.round(parentRect.width)
     if (isFullWidth) {
       if (this.props.type === PanelResizeType.WidthOnly) {
-        this.props.panel.style.removeProperty('width');
+        this.props.panel.style.removeProperty('width')
       } else {
-        this.props.panel.style.width = `calc(100% - ${this.lastLeft}px)`;
+        this.props.panel.style.width = `calc(100% - ${this.lastLeft}px)`
       }
     } else {
-      this.props.panel.style.width = width + 'px';
+      this.props.panel.style.width = width + 'px'
     }
-    this.lastWidth = width;
+    this.lastWidth = width
     if (finish) {
-      this.finishSettingWidth();
+      this.finishSettingWidth()
       if (this.props.resizeFinishCallback) {
         this.props.resizeFinishCallback(
           this.lastWidth,
           this.lastLeft,
           this.isAtMaxWidth(),
-          this.isCollapsed()
-        );
+          this.isCollapsed(),
+        )
       }
     }
-  };
+  }
 
   setLeft = (left: number) => {
-    this.props.panel.style.left = left + 'px';
-    this.lastLeft = left;
-  };
+    this.props.panel.style.left = left + 'px'
+    this.lastLeft = left
+  }
 
   onDblClick = () => {
-    const collapsed = this.isCollapsed();
+    const collapsed = this.isCollapsed()
     if (collapsed) {
-      this.setWidth(
-        this.widthBeforeLastDblClick || this.props.defaultWidth || 0
-      );
+      this.setWidth(this.widthBeforeLastDblClick || this.props.defaultWidth || 0)
     } else {
-      this.widthBeforeLastDblClick = this.lastWidth;
-      this.setWidth(this.minWidth);
+      this.widthBeforeLastDblClick = this.lastWidth
+      this.setWidth(this.minWidth)
     }
-    this.finishSettingWidth();
+    this.finishSettingWidth()
 
     this.props.resizeFinishCallback?.(
       this.lastWidth,
       this.lastLeft,
       this.isAtMaxWidth(),
-      this.isCollapsed()
-    );
-  };
+      this.isCollapsed(),
+    )
+  }
 
   handleWidthEvent(event?: MouseEvent) {
     if (this.props.widthEventCallback) {
-      this.props.widthEventCallback();
+      this.props.widthEventCallback()
     }
 
-    let x;
+    let x
     if (event) {
-      x = event.clientX;
+      x = event.clientX
     } else {
       /** Coming from resize event */
-      x = 0;
-      this.lastDownX = 0;
+      x = 0
+      this.lastDownX = 0
     }
-    const deltaX = x - this.lastDownX;
-    const newWidth = this.startWidth + deltaX;
-    this.setWidth(newWidth, false);
+    const deltaX = x - this.lastDownX
+    const newWidth = this.startWidth + deltaX
+    this.setWidth(newWidth, false)
   }
 
   handleLeftEvent(event: MouseEvent) {
-    const panelRect = this.props.panel.getBoundingClientRect();
-    const x = event.clientX || panelRect.x;
-    let deltaX = x - this.lastDownX;
-    let newLeft = this.startLeft + deltaX;
+    const panelRect = this.props.panel.getBoundingClientRect()
+    const x = event.clientX || panelRect.x
+    let deltaX = x - this.lastDownX
+    let newLeft = this.startLeft + deltaX
     if (newLeft < 0) {
-      newLeft = 0;
-      deltaX = -this.startLeft;
+      newLeft = 0
+      deltaX = -this.startLeft
     }
-    const parentRect = this.getParentRect();
-    let newWidth = this.startWidth - deltaX;
+    const parentRect = this.getParentRect()
+    let newWidth = this.startWidth - deltaX
     if (newWidth < this.minWidth) {
-      newWidth = this.minWidth;
+      newWidth = this.minWidth
     }
     if (newWidth > parentRect.width) {
-      newWidth = parentRect.width;
+      newWidth = parentRect.width
     }
     if (newLeft + newWidth > parentRect.width) {
-      newLeft = parentRect.width - newWidth;
+      newLeft = parentRect.width - newWidth
     }
-    this.setLeft(newLeft);
-    this.setWidth(newWidth, false);
+    this.setLeft(newLeft)
+    this.setWidth(newWidth, false)
   }
 
   computeMaxWidth(): number {
-    const parentRect = this.getParentRect();
-    let width = parentRect.width - this.props.left;
+    const parentRect = this.getParentRect()
+    let width = parentRect.width - this.props.left
     if (width < this.minWidth) {
-      width = this.minWidth;
+      width = this.minWidth
     }
-    return width;
+    return width
   }
 
   handleResize = () => {
-    const startWidth = this.isAtMaxWidth()
-      ? this.computeMaxWidth()
-      : this.props.panel.scrollWidth;
+    const startWidth = this.isAtMaxWidth() ? this.computeMaxWidth() : this.props.panel.scrollWidth
 
-    this.startWidth = startWidth;
-    this.lastWidth = startWidth;
+    this.startWidth = startWidth
+    this.lastWidth = startWidth
 
-    this.handleWidthEvent();
-    this.finishSettingWidth();
-  };
+    this.handleWidthEvent()
+    this.finishSettingWidth()
+  }
 
   onMouseDown = (event: MouseEvent) => {
-    this.addInvisibleOverlay();
-    this.lastDownX = event.clientX;
-    this.startWidth = this.props.panel.scrollWidth;
-    this.startLeft = this.props.panel.offsetLeft;
+    this.addInvisibleOverlay()
+    this.lastDownX = event.clientX
+    this.startWidth = this.props.panel.scrollWidth
+    this.startLeft = this.props.panel.offsetLeft
     this.setState({
       pressed: true,
-    });
-  };
+    })
+  }
 
   onMouseUp = () => {
-    this.removeInvisibleOverlay();
+    this.removeInvisibleOverlay()
     if (!this.state.pressed) {
-      return;
+      return
     }
-    this.setState({ pressed: false });
-    const isMaxWidth = this.isAtMaxWidth();
+    this.setState({ pressed: false })
+    const isMaxWidth = this.isAtMaxWidth()
     if (this.props.resizeFinishCallback) {
-      this.props.resizeFinishCallback(
-        this.lastWidth,
-        this.lastLeft,
-        isMaxWidth,
-        this.isCollapsed()
-      );
+      this.props.resizeFinishCallback(this.lastWidth, this.lastLeft, isMaxWidth, this.isCollapsed())
     }
-    this.finishSettingWidth();
-  };
+    this.finishSettingWidth()
+  }
 
   onMouseMove = (event: MouseEvent) => {
     if (!this.state.pressed) {
-      return;
+      return
     }
-    event.preventDefault();
+    event.preventDefault()
     if (this.props.side === PanelSide.Left) {
-      this.handleLeftEvent(event);
+      this.handleLeftEvent(event)
     } else {
-      this.handleWidthEvent(event);
+      this.handleWidthEvent(event)
     }
-  };
+  }
 
   /**
    * If an iframe is displayed adjacent to our panel, and the mouse exits over the iframe,
@@ -308,33 +296,31 @@ export class PanelResizer extends Component<Props, State> {
    */
   addInvisibleOverlay = () => {
     if (this.overlay) {
-      return;
+      return
     }
-    const overlayElement = document.createElement('div');
-    overlayElement.id = 'resizer-overlay';
-    this.overlay = overlayElement;
-    document.body.prepend(this.overlay);
-  };
+    const overlayElement = document.createElement('div')
+    overlayElement.id = 'resizer-overlay'
+    this.overlay = overlayElement
+    document.body.prepend(this.overlay)
+  }
 
   removeInvisibleOverlay = () => {
     if (this.overlay) {
-      this.overlay.remove();
-      this.overlay = undefined;
+      this.overlay.remove()
+      this.overlay = undefined
     }
-  };
+  }
 
   render() {
     return (
       <div
-        className={`panel-resizer ${this.props.side} ${
-          this.props.hoverable ? 'hoverable' : ''
-        } ${this.props.alwaysVisible ? 'alwaysVisible' : ''} ${
-          this.state.pressed ? 'dragging' : ''
-        } ${this.state.collapsed ? 'collapsed' : ''}`}
+        className={`panel-resizer ${this.props.side} ${this.props.hoverable ? 'hoverable' : ''} ${
+          this.props.alwaysVisible ? 'alwaysVisible' : ''
+        } ${this.state.pressed ? 'dragging' : ''} ${this.state.collapsed ? 'collapsed' : ''}`}
         onMouseDown={this.onMouseDown}
         onDblClick={this.onDblClick}
         ref={this.resizerElementRef}
       ></div>
-    );
+    )
   }
 }

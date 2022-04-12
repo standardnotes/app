@@ -1,29 +1,26 @@
-import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/constants';
-import { KeyboardKey } from '@/services/ioService';
-import { formatSizeToReadableString } from '@standardnotes/filepicker';
-import { IconType, SNFile } from '@standardnotes/snjs';
-import { FunctionComponent } from 'preact';
-import { useEffect, useRef, useState } from 'preact/hooks';
-import { Icon, ICONS } from '../Icon';
-import {
-  PopoverFileItemAction,
-  PopoverFileItemActionType,
-} from './PopoverFileItemAction';
-import { PopoverFileSubmenu } from './PopoverFileSubmenu';
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/constants'
+import { KeyboardKey } from '@/services/ioService'
+import { formatSizeToReadableString } from '@standardnotes/filepicker'
+import { IconType, SNFile } from '@standardnotes/snjs'
+import { FunctionComponent } from 'preact'
+import { useEffect, useRef, useState } from 'preact/hooks'
+import { Icon, ICONS } from '../Icon'
+import { PopoverFileItemAction, PopoverFileItemActionType } from './PopoverFileItemAction'
+import { PopoverFileSubmenu } from './PopoverFileSubmenu'
 
 export const getFileIconComponent = (iconType: string, className: string) => {
-  const IconComponent = ICONS[iconType as keyof typeof ICONS];
+  const IconComponent = ICONS[iconType as keyof typeof ICONS]
 
-  return <IconComponent className={className} />;
-};
+  return <IconComponent className={className} />
+}
 
 export type PopoverFileItemProps = {
-  file: SNFile;
-  isAttachedToNote: boolean;
-  handleFileAction: (action: PopoverFileItemAction) => Promise<boolean>;
-  getIconType(type: string): IconType;
-  closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void;
-};
+  file: SNFile
+  isAttachedToNote: boolean
+  handleFileAction: (action: PopoverFileItemAction) => Promise<boolean>
+  getIconType(type: string): IconType
+  closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
+}
 
 export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
   file,
@@ -32,16 +29,16 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
   getIconType,
   closeOnBlur,
 }) => {
-  const [fileName, setFileName] = useState(file.name);
-  const [isRenamingFile, setIsRenamingFile] = useState(false);
-  const itemRef = useRef<HTMLDivElement>(null);
-  const fileNameInputRef = useRef<HTMLInputElement>(null);
+  const [fileName, setFileName] = useState(file.name)
+  const [isRenamingFile, setIsRenamingFile] = useState(false)
+  const itemRef = useRef<HTMLDivElement>(null)
+  const fileNameInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (isRenamingFile) {
-      fileNameInputRef.current?.focus();
+      fileNameInputRef.current?.focus()
     }
-  }, [isRenamingFile]);
+  }, [isRenamingFile])
 
   const renameFile = async (file: SNFile, name: string) => {
     await handleFileAction({
@@ -50,23 +47,23 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
         file,
         name,
       },
-    });
-    setIsRenamingFile(false);
-  };
+    })
+    setIsRenamingFile(false)
+  }
 
   const handleFileNameInput = (event: Event) => {
-    setFileName((event.target as HTMLInputElement).value);
-  };
+    setFileName((event.target as HTMLInputElement).value)
+  }
 
   const handleFileNameInputKeyDown = (event: KeyboardEvent) => {
     if (event.key === KeyboardKey.Enter) {
-      itemRef.current?.focus();
+      itemRef.current?.focus()
     }
-  };
+  }
 
   const handleFileNameInputBlur = () => {
-    renameFile(file, fileName);
-  };
+    renameFile(file, fileName).catch(console.error)
+  }
 
   return (
     <div
@@ -75,10 +72,7 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
       tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
     >
       <div className="flex items-center">
-        {getFileIconComponent(
-          getIconType(file.mimeType),
-          'w-8 h-8 flex-shrink-0'
-        )}
+        {getFileIconComponent(getIconType(file.mimeType), 'w-8 h-8 flex-shrink-0')}
         <div className="flex flex-col mx-4">
           {isRenamingFile ? (
             <input
@@ -102,8 +96,7 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
             </div>
           )}
           <div className="text-xs color-grey-0">
-            {file.created_at.toLocaleString()} ·{' '}
-            {formatSizeToReadableString(file.size)}
+            {file.created_at.toLocaleString()} · {formatSizeToReadableString(file.size)}
           </div>
         </div>
       </div>
@@ -115,5 +108,5 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
         closeOnBlur={closeOnBlur}
       />
     </div>
-  );
-};
+  )
+}

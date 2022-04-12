@@ -1,5 +1,5 @@
-import { WebDeviceInterface } from '@/web_device_interface';
-import { WebApplication } from './application';
+import { WebDeviceInterface } from '@/web_device_interface'
+import { WebApplication } from './application'
 import {
   ApplicationDescriptor,
   SNApplicationGroup,
@@ -7,45 +7,44 @@ import {
   Platform,
   Runtime,
   InternalEventBus,
-} from '@standardnotes/snjs';
-import { AppState } from '@/ui_models/app_state';
-import { Bridge } from '@/services/bridge';
-import { getPlatform, isDesktopApplication } from '@/utils';
-import { ArchiveManager } from '@/services/archiveManager';
-import { DesktopManager } from '@/services/desktopManager';
-import { IOService } from '@/services/ioService';
-import { AutolockService } from '@/services/autolock_service';
-import { StatusManager } from '@/services/statusManager';
-import { ThemeManager } from '@/services/themeManager';
+} from '@standardnotes/snjs'
+import { AppState } from '@/ui_models/app_state'
+import { Bridge } from '@/services/bridge'
+import { getPlatform, isDesktopApplication } from '@/utils'
+import { ArchiveManager } from '@/services/archiveManager'
+import { DesktopManager } from '@/services/desktopManager'
+import { IOService } from '@/services/ioService'
+import { AutolockService } from '@/services/autolock_service'
+import { StatusManager } from '@/services/statusManager'
+import { ThemeManager } from '@/services/themeManager'
 
 export class ApplicationGroup extends SNApplicationGroup {
   constructor(
     private defaultSyncServerHost: string,
     private bridge: Bridge,
     private runtime: Runtime,
-    private webSocketUrl: string
+    private webSocketUrl: string,
   ) {
-    super(new WebDeviceInterface(bridge));
+    super(new WebDeviceInterface(bridge))
   }
 
   async initialize(): Promise<void> {
     await super.initialize({
       applicationCreator: this.createApplication,
-    });
+    })
 
     if (isDesktopApplication()) {
       Object.defineProperty(window, 'desktopManager', {
-        get: () =>
-          (this.primaryApplication as WebApplication).getDesktopService(),
-      });
+        get: () => (this.primaryApplication as WebApplication).getDesktopService(),
+      })
     }
   }
 
   private createApplication = (
     descriptor: ApplicationDescriptor,
-    deviceInterface: DeviceInterface
+    deviceInterface: DeviceInterface,
   ) => {
-    const platform = getPlatform();
+    const platform = getPlatform()
     const application = new WebApplication(
       deviceInterface as WebDeviceInterface,
       platform,
@@ -53,20 +52,15 @@ export class ApplicationGroup extends SNApplicationGroup {
       this.defaultSyncServerHost,
       this.bridge,
       this.webSocketUrl,
-      this.runtime
-    );
-    const appState = new AppState(application, this.bridge);
-    const archiveService = new ArchiveManager(application);
-    const desktopService = new DesktopManager(application, this.bridge);
-    const io = new IOService(
-      platform === Platform.MacWeb || platform === Platform.MacDesktop
-    );
-    const autolockService = new AutolockService(
-      application,
-      new InternalEventBus()
-    );
-    const statusManager = new StatusManager();
-    const themeService = new ThemeManager(application);
+      this.runtime,
+    )
+    const appState = new AppState(application, this.bridge)
+    const archiveService = new ArchiveManager(application)
+    const desktopService = new DesktopManager(application, this.bridge)
+    const io = new IOService(platform === Platform.MacWeb || platform === Platform.MacDesktop)
+    const autolockService = new AutolockService(application, new InternalEventBus())
+    const statusManager = new StatusManager()
+    const themeService = new ThemeManager(application)
     application.setWebServices({
       appState,
       archiveService,
@@ -75,7 +69,7 @@ export class ApplicationGroup extends SNApplicationGroup {
       autolockService,
       statusManager,
       themeService,
-    });
-    return application;
-  };
+    })
+    return application
+  }
 }

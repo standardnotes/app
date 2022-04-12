@@ -7,203 +7,173 @@ import {
   STRING_NON_MATCHING_PASSCODES,
   StringUtils,
   Strings,
-} from '@/strings';
-import { WebApplication } from '@/ui_models/application';
-import { preventRefreshing } from '@/utils';
-import { JSXInternal } from 'preact/src/jsx';
-import TargetedEvent = JSXInternal.TargetedEvent;
-import TargetedMouseEvent = JSXInternal.TargetedMouseEvent;
-import { alertDialog } from '@Services/alertService';
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
-import { ApplicationEvent } from '@standardnotes/snjs';
-import { observer } from 'mobx-react-lite';
-import { AppState } from '@/ui_models/app_state';
+} from '@/strings'
+import { WebApplication } from '@/ui_models/application'
+import { preventRefreshing } from '@/utils'
+import { JSXInternal } from 'preact/src/jsx'
+import TargetedEvent = JSXInternal.TargetedEvent
+import TargetedMouseEvent = JSXInternal.TargetedMouseEvent
+import { alertDialog } from '@Services/alertService'
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
+import { ApplicationEvent } from '@standardnotes/snjs'
+import { observer } from 'mobx-react-lite'
+import { AppState } from '@/ui_models/app_state'
 import {
   PreferencesSegment,
   Title,
   Text,
   PreferencesGroup,
-} from '@/components/Preferences/components';
-import { Button } from '@/components/Button';
+} from '@/components/Preferences/components'
+import { Button } from '@/components/Button'
 
 type Props = {
-  application: WebApplication;
-  appState: AppState;
-};
+  application: WebApplication
+  appState: AppState
+}
 
 export const PasscodeLock = observer(({ application, appState }: Props) => {
-  const keyStorageInfo = StringUtils.keyStorageInfo(application);
-  const passcodeAutoLockOptions = application
-    .getAutolockService()
-    .getAutoLockIntervalOptions();
+  const keyStorageInfo = StringUtils.keyStorageInfo(application)
+  const passcodeAutoLockOptions = application.getAutolockService().getAutoLockIntervalOptions()
 
-  const {
-    setIsEncryptionEnabled,
-    setIsBackupEncrypted,
-    setEncryptionStatusString,
-  } = appState.accountMenu;
+  const { setIsEncryptionEnabled, setIsBackupEncrypted, setEncryptionStatusString } =
+    appState.accountMenu
 
-  const passcodeInputRef = useRef<HTMLInputElement>(null);
+  const passcodeInputRef = useRef<HTMLInputElement>(null)
 
-  const [passcode, setPasscode] = useState<string | undefined>(undefined);
-  const [passcodeConfirmation, setPasscodeConfirmation] = useState<
-    string | undefined
-  >(undefined);
-  const [selectedAutoLockInterval, setSelectedAutoLockInterval] =
-    useState<unknown>(null);
-  const [isPasscodeFocused, setIsPasscodeFocused] = useState(false);
-  const [showPasscodeForm, setShowPasscodeForm] = useState(false);
-  const [canAddPasscode, setCanAddPasscode] = useState(
-    !application.isEphemeralSession()
-  );
-  const [hasPasscode, setHasPasscode] = useState(application.hasPasscode());
+  const [passcode, setPasscode] = useState<string | undefined>(undefined)
+  const [passcodeConfirmation, setPasscodeConfirmation] = useState<string | undefined>(undefined)
+  const [selectedAutoLockInterval, setSelectedAutoLockInterval] = useState<unknown>(null)
+  const [isPasscodeFocused, setIsPasscodeFocused] = useState(false)
+  const [showPasscodeForm, setShowPasscodeForm] = useState(false)
+  const [canAddPasscode, setCanAddPasscode] = useState(!application.isEphemeralSession())
+  const [hasPasscode, setHasPasscode] = useState(application.hasPasscode())
 
   const handleAddPassCode = () => {
-    setShowPasscodeForm(true);
-    setIsPasscodeFocused(true);
-  };
+    setShowPasscodeForm(true)
+    setIsPasscodeFocused(true)
+  }
 
   const changePasscodePressed = () => {
-    handleAddPassCode();
-  };
+    handleAddPassCode()
+  }
 
   const reloadAutoLockInterval = useCallback(async () => {
-    const interval = await application
-      .getAutolockService()
-      .getAutoLockInterval();
-    setSelectedAutoLockInterval(interval);
-  }, [application]);
+    const interval = await application.getAutolockService().getAutoLockInterval()
+    setSelectedAutoLockInterval(interval)
+  }, [application])
 
   const refreshEncryptionStatus = useCallback(() => {
-    const hasUser = application.hasAccount();
-    const hasPasscode = application.hasPasscode();
+    const hasUser = application.hasAccount()
+    const hasPasscode = application.hasPasscode()
 
-    setHasPasscode(hasPasscode);
+    setHasPasscode(hasPasscode)
 
-    const encryptionEnabled = hasUser || hasPasscode;
+    const encryptionEnabled = hasUser || hasPasscode
 
     const encryptionStatusString = hasUser
       ? STRING_E2E_ENABLED
       : hasPasscode
       ? STRING_LOCAL_ENC_ENABLED
-      : STRING_ENC_NOT_ENABLED;
+      : STRING_ENC_NOT_ENABLED
 
-    setEncryptionStatusString(encryptionStatusString);
-    setIsEncryptionEnabled(encryptionEnabled);
-    setIsBackupEncrypted(encryptionEnabled);
-  }, [
-    application,
-    setEncryptionStatusString,
-    setIsBackupEncrypted,
-    setIsEncryptionEnabled,
-  ]);
+    setEncryptionStatusString(encryptionStatusString)
+    setIsEncryptionEnabled(encryptionEnabled)
+    setIsBackupEncrypted(encryptionEnabled)
+  }, [application, setEncryptionStatusString, setIsBackupEncrypted, setIsEncryptionEnabled])
 
   const selectAutoLockInterval = async (interval: number) => {
     if (!(await application.authorizeAutolockIntervalChange())) {
-      return;
+      return
     }
-    await application.getAutolockService().setAutoLockInterval(interval);
-    reloadAutoLockInterval();
-  };
+    await application.getAutolockService().setAutoLockInterval(interval)
+    reloadAutoLockInterval().catch(console.error)
+  }
 
   const removePasscodePressed = async () => {
-    await preventRefreshing(
-      STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL,
-      async () => {
-        if (await application.removePasscode()) {
-          await application.getAutolockService().deleteAutolockPreference();
-          await reloadAutoLockInterval();
-          refreshEncryptionStatus();
-        }
+    await preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL, async () => {
+      if (await application.removePasscode()) {
+        await application.getAutolockService().deleteAutolockPreference()
+        await reloadAutoLockInterval()
+        refreshEncryptionStatus()
       }
-    );
-  };
+    })
+  }
 
   const handlePasscodeChange = (event: TargetedEvent<HTMLInputElement>) => {
-    const { value } = event.target as HTMLInputElement;
-    setPasscode(value);
-  };
+    const { value } = event.target as HTMLInputElement
+    setPasscode(value)
+  }
 
-  const handleConfirmPasscodeChange = (
-    event: TargetedEvent<HTMLInputElement>
-  ) => {
-    const { value } = event.target as HTMLInputElement;
-    setPasscodeConfirmation(value);
-  };
+  const handleConfirmPasscodeChange = (event: TargetedEvent<HTMLInputElement>) => {
+    const { value } = event.target as HTMLInputElement
+    setPasscodeConfirmation(value)
+  }
 
   const submitPasscodeForm = async (
-    event:
-      | TargetedEvent<HTMLFormElement>
-      | TargetedMouseEvent<HTMLButtonElement>
+    event: TargetedEvent<HTMLFormElement> | TargetedMouseEvent<HTMLButtonElement>,
   ) => {
-    event.preventDefault();
+    event.preventDefault()
 
     if (!passcode || passcode.length === 0) {
       await alertDialog({
         text: Strings.enterPasscode,
-      });
+      })
     }
 
     if (passcode !== passcodeConfirmation) {
       await alertDialog({
         text: STRING_NON_MATCHING_PASSCODES,
-      });
-      setIsPasscodeFocused(true);
-      return;
+      })
+      setIsPasscodeFocused(true)
+      return
     }
 
-    await preventRefreshing(
-      STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE,
-      async () => {
-        const successful = application.hasPasscode()
-          ? await application.changePasscode(passcode as string)
-          : await application.addPasscode(passcode as string);
+    await preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE, async () => {
+      const successful = application.hasPasscode()
+        ? await application.changePasscode(passcode as string)
+        : await application.addPasscode(passcode as string)
 
-        if (!successful) {
-          setIsPasscodeFocused(true);
-        }
+      if (!successful) {
+        setIsPasscodeFocused(true)
       }
-    );
+    })
 
-    setPasscode(undefined);
-    setPasscodeConfirmation(undefined);
-    setShowPasscodeForm(false);
+    setPasscode(undefined)
+    setPasscodeConfirmation(undefined)
+    setShowPasscodeForm(false)
 
-    refreshEncryptionStatus();
-  };
+    refreshEncryptionStatus()
+  }
 
   useEffect(() => {
-    refreshEncryptionStatus();
-  }, [refreshEncryptionStatus]);
+    refreshEncryptionStatus()
+  }, [refreshEncryptionStatus])
 
   // `reloadAutoLockInterval` gets interval asynchronously, therefore we call `useEffect` to set initial
   // value of `selectedAutoLockInterval`
   useEffect(() => {
-    reloadAutoLockInterval();
-  }, [reloadAutoLockInterval]);
+    reloadAutoLockInterval().catch(console.error)
+  }, [reloadAutoLockInterval])
 
   useEffect(() => {
     if (isPasscodeFocused) {
-      passcodeInputRef.current!.focus();
-      setIsPasscodeFocused(false);
+      passcodeInputRef.current?.focus()
+      setIsPasscodeFocused(false)
     }
-  }, [isPasscodeFocused]);
+  }, [isPasscodeFocused])
 
   // Add the required event observers
   useEffect(() => {
-    const removeKeyStatusChangedObserver = application.addEventObserver(
-      async () => {
-        setCanAddPasscode(!application.isEphemeralSession());
-        setHasPasscode(application.hasPasscode());
-        setShowPasscodeForm(false);
-      },
-      ApplicationEvent.KeyStatusChanged
-    );
+    const removeKeyStatusChangedObserver = application.addEventObserver(async () => {
+      setCanAddPasscode(!application.isEphemeralSession())
+      setHasPasscode(application.hasPasscode())
+      setShowPasscodeForm(false)
+    }, ApplicationEvent.KeyStatusChanged)
 
     return () => {
-      removeKeyStatusChangedObserver();
-    };
-  }, [application]);
+      removeKeyStatusChangedObserver()
+    }
+  }, [application])
 
   return (
     <>
@@ -214,27 +184,21 @@ export const PasscodeLock = observer(({ application, appState }: Props) => {
           {!hasPasscode && canAddPasscode && (
             <>
               <Text className="mb-3">
-                Add a passcode to lock the application and encrypt on-device key
-                storage.
+                Add a passcode to lock the application and encrypt on-device key storage.
               </Text>
 
               {keyStorageInfo && <Text className="mb-3">{keyStorageInfo}</Text>}
 
               {!showPasscodeForm && (
-                <Button
-                  label="Add passcode"
-                  onClick={handleAddPassCode}
-                  variant="primary"
-                />
+                <Button label="Add passcode" onClick={handleAddPassCode} variant="primary" />
               )}
             </>
           )}
 
           {!hasPasscode && !canAddPasscode && (
             <Text>
-              Adding a passcode is not supported in temporary sessions. Please
-              sign out, then sign back in with the "Stay signed in" option
-              checked.
+              Adding a passcode is not supported in temporary sessions. Please sign out, then sign
+              back in with the "Stay signed in" option checked.
             </Text>
           )}
 
@@ -263,11 +227,7 @@ export const PasscodeLock = observer(({ application, appState }: Props) => {
                 label="Set Passcode"
                 className="mr-3"
               />
-              <Button
-                variant="normal"
-                onClick={() => setShowPasscodeForm(false)}
-                label="Cancel"
-              />
+              <Button variant="normal" onClick={() => setShowPasscodeForm(false)} label="Cancel" />
             </form>
           )}
 
@@ -312,7 +272,7 @@ export const PasscodeLock = observer(({ application, appState }: Props) => {
                     >
                       {option.label}
                     </a>
-                  );
+                  )
                 })}
               </div>
             </PreferencesSegment>
@@ -320,5 +280,5 @@ export const PasscodeLock = observer(({ application, appState }: Props) => {
         </>
       )}
     </>
-  );
-});
+  )
+})

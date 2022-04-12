@@ -1,1 +1,1 @@
-export { usePremiumModal, PremiumModalProvider } from './usePremiumModal';
+export { usePremiumModal, PremiumModalProvider } from './usePremiumModal'

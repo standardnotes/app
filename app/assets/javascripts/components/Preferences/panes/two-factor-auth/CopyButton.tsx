@@ -1,13 +1,11 @@
-import { FunctionComponent } from 'preact';
+import { FunctionComponent } from 'preact'
 
-import { IconButton } from '../../../IconButton';
+import { IconButton } from '../../../IconButton'
 
-import { useState } from 'preact/hooks';
+import { useState } from 'preact/hooks'
 
-export const CopyButton: FunctionComponent<{ copyValue: string }> = ({
-  copyValue: secretKey,
-}) => {
-  const [isCopied, setCopied] = useState(false);
+export const CopyButton: FunctionComponent<{ copyValue: string }> = ({ copyValue: secretKey }) => {
+  const [isCopied, setCopied] = useState(false)
   return (
     <IconButton
       focusable={false}
@@ -15,9 +13,9 @@ export const CopyButton: FunctionComponent<{ copyValue: string }> = ({
       icon={isCopied ? 'check' : 'copy'}
       className={isCopied ? 'success' : undefined}
       onClick={() => {
-        navigator?.clipboard?.writeText(secretKey);
-        setCopied(() => true);
+        navigator?.clipboard?.writeText(secretKey).catch(console.error)
+        setCopied(() => true)
       }}
     />
-  );
-};
+  )
+}

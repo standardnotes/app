@@ -1,4 +1,4 @@
-import { WebApplication } from '@/ui_models/application';
+import { WebApplication } from '@/ui_models/application'
 import {
   Action,
   ActionVerb,
@@ -6,19 +6,15 @@ import {
   NoteHistoryEntry,
   RevisionListEntry,
   SNNote,
-} from '@standardnotes/snjs';
-import { observer } from 'mobx-react-lite';
-import { FunctionComponent } from 'preact';
-import { StateUpdater, useCallback, useState } from 'preact/hooks';
-import { useEffect } from 'react';
-import { LegacyHistoryList } from './LegacyHistoryList';
-import { RemoteHistoryList } from './RemoteHistoryList';
-import { SessionHistoryList } from './SessionHistoryList';
-import {
-  LegacyHistoryEntry,
-  RemoteRevisionListGroup,
-  sortRevisionListIntoGroups,
-} from './utils';
+} from '@standardnotes/snjs'
+import { observer } from 'mobx-react-lite'
+import { FunctionComponent } from 'preact'
+import { StateUpdater, useCallback, useState } from 'preact/hooks'
+import { useEffect } from 'react'
+import { LegacyHistoryList } from './LegacyHistoryList'
+import { RemoteHistoryList } from './RemoteHistoryList'
+import { SessionHistoryList } from './SessionHistoryList'
+import { LegacyHistoryEntry, RemoteRevisionListGroup, sortRevisionListIntoGroups } from './utils'
 
 export enum RevisionListTabType {
   Session = 'Session',
@@ -27,17 +23,15 @@ export enum RevisionListTabType {
 }
 
 type Props = {
-  application: WebApplication;
-  isFetchingRemoteHistory: boolean;
-  note: SNNote;
-  remoteHistory: RemoteRevisionListGroup[] | undefined;
-  setIsFetchingSelectedRevision: StateUpdater<boolean>;
-  setSelectedRemoteEntry: StateUpdater<RevisionListEntry | undefined>;
-  setSelectedRevision: StateUpdater<
-    HistoryEntry | LegacyHistoryEntry | undefined
-  >;
-  setShowContentLockedScreen: StateUpdater<boolean>;
-};
+  application: WebApplication
+  isFetchingRemoteHistory: boolean
+  note: SNNote
+  remoteHistory: RemoteRevisionListGroup[] | undefined
+  setIsFetchingSelectedRevision: StateUpdater<boolean>
+  setSelectedRemoteEntry: StateUpdater<RevisionListEntry | undefined>
+  setSelectedRevision: StateUpdater<HistoryEntry | LegacyHistoryEntry | undefined>
+  setShowContentLockedScreen: StateUpdater<boolean>
+}
 
 export const HistoryListContainer: FunctionComponent<Props> = observer(
   ({
@@ -51,53 +45,48 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
     setShowContentLockedScreen,
   }) => {
     const sessionHistory = sortRevisionListIntoGroups<NoteHistoryEntry>(
-      application.historyManager.sessionHistoryForItem(
-        note
-      ) as NoteHistoryEntry[]
-    );
-    const [legacyHistory, setLegacyHistory] = useState<Action[]>();
+      application.historyManager.sessionHistoryForItem(note) as NoteHistoryEntry[],
+    )
+    const [legacyHistory, setLegacyHistory] = useState<Action[]>()
 
-    const [selectedTab, setSelectedTab] = useState<RevisionListTabType>(
-      RevisionListTabType.Remote
-    );
+    const [selectedTab, setSelectedTab] = useState<RevisionListTabType>(RevisionListTabType.Remote)
 
     useEffect(() => {
       const fetchLegacyHistory = async () => {
-        const actionExtensions = application.actionsManager.getExtensions();
+        const actionExtensions = application.actionsManager.getExtensions()
         actionExtensions.forEach(async (ext) => {
-          const actionExtension =
-            await application.actionsManager.loadExtensionInContextOfItem(
-              ext,
-              note
-            );
+          const actionExtension = await application.actionsManager.loadExtensionInContextOfItem(
+            ext,
+            note,
+          )
 
           if (!actionExtension) {
-            return;
+            return
           }
 
           const isLegacyNoteHistoryExt = actionExtension?.actions.some(
-            (action) => action.verb === ActionVerb.Nested
-          );
+            (action) => action.verb === ActionVerb.Nested,
+          )
 
           if (!isLegacyNoteHistoryExt) {
-            return;
+            return
           }
 
           const legacyHistoryEntries = actionExtension.actions.filter(
-            (action) => action.subactions?.[0]
-          );
+            (action) => action.subactions?.[0],
+          )
 
-          setLegacyHistory(legacyHistoryEntries);
-        });
-      };
+          setLegacyHistory(legacyHistoryEntries)
+        })
+      }
 
-      fetchLegacyHistory();
-    }, [application.actionsManager, note]);
+      fetchLegacyHistory().catch(console.error)
+    }, [application.actionsManager, note])
 
     const TabButton: FunctionComponent<{
-      type: RevisionListTabType;
+      type: RevisionListTabType
     }> = ({ type }) => {
-      const isSelected = selectedTab === type;
+      const isSelected = selectedTab === type
 
       return (
         <button
@@ -105,41 +94,41 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
             isSelected ? 'color-info font-medium shadow-bottom' : 'color-text'
           }`}
           onClick={() => {
-            setSelectedTab(type);
-            setSelectedRemoteEntry(undefined);
+            setSelectedTab(type)
+            setSelectedRemoteEntry(undefined)
           }}
         >
           {type}
         </button>
-      );
-    };
+      )
+    }
 
     const fetchAndSetLegacyRevision = useCallback(
       async (revisionListEntry: Action) => {
-        setSelectedRemoteEntry(undefined);
-        setSelectedRevision(undefined);
-        setIsFetchingSelectedRevision(true);
+        setSelectedRemoteEntry(undefined)
+        setSelectedRevision(undefined)
+        setIsFetchingSelectedRevision(true)
 
         try {
           if (!revisionListEntry.subactions?.[0]) {
-            throw new Error('Could not find revision action url');
+            throw new Error('Could not find revision action url')
           }
 
           const response = await application.actionsManager.runAction(
             revisionListEntry.subactions[0],
-            note
-          );
+            note,
+          )
 
           if (!response) {
-            throw new Error('Could not fetch revision');
+            throw new Error('Could not fetch revision')
           }
 
-          setSelectedRevision(response.item as unknown as HistoryEntry);
+          setSelectedRevision(response.item as unknown as HistoryEntry)
         } catch (error) {
-          console.error(error);
-          setSelectedRevision(undefined);
+          console.error(error)
+          setSelectedRevision(undefined)
         } finally {
-          setIsFetchingSelectedRevision(false);
+          setIsFetchingSelectedRevision(false)
         }
       },
       [
@@ -148,36 +137,33 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
         setIsFetchingSelectedRevision,
         setSelectedRemoteEntry,
         setSelectedRevision,
-      ]
-    );
+      ],
+    )
 
     const fetchAndSetRemoteRevision = useCallback(
       async (revisionListEntry: RevisionListEntry) => {
-        setShowContentLockedScreen(false);
+        setShowContentLockedScreen(false)
 
-        if (
-          application.features.hasMinimumRole(revisionListEntry.required_role)
-        ) {
-          setIsFetchingSelectedRevision(true);
-          setSelectedRevision(undefined);
-          setSelectedRemoteEntry(undefined);
+        if (application.features.hasMinimumRole(revisionListEntry.required_role)) {
+          setIsFetchingSelectedRevision(true)
+          setSelectedRevision(undefined)
+          setSelectedRemoteEntry(undefined)
 
           try {
-            const remoteRevision =
-              await application.historyManager.fetchRemoteRevision(
-                note,
-                revisionListEntry
-              );
-            setSelectedRevision(remoteRevision);
-            setSelectedRemoteEntry(revisionListEntry);
+            const remoteRevision = await application.historyManager.fetchRemoteRevision(
+              note,
+              revisionListEntry,
+            )
+            setSelectedRevision(remoteRevision)
+            setSelectedRemoteEntry(revisionListEntry)
           } catch (err) {
-            console.error(err);
+            console.error(err)
           } finally {
-            setIsFetchingSelectedRevision(false);
+            setIsFetchingSelectedRevision(false)
           }
         } else {
-          setShowContentLockedScreen(true);
-          setSelectedRevision(undefined);
+          setShowContentLockedScreen(true)
+          setSelectedRevision(undefined)
         }
       },
       [
@@ -187,12 +173,14 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
         setSelectedRemoteEntry,
         setSelectedRevision,
         setShowContentLockedScreen,
-      ]
-    );
+      ],
+    )
 
     return (
       <div
-        className={`flex flex-col min-w-60 border-0 border-r-1px border-solid border-main overflow-auto h-full`}
+        className={
+          'flex flex-col min-w-60 border-0 border-r-1px border-solid border-main overflow-auto h-full'
+        }
       >
         <div className="flex border-0 border-b-1 border-solid border-main">
           <TabButton type={RevisionListTabType.Remote} />
@@ -201,7 +189,7 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
             <TabButton type={RevisionListTabType.Legacy} />
           )}
         </div>
-        <div className={`min-h-0 overflow-auto py-1.5 h-full`}>
+        <div className={'min-h-0 overflow-auto py-1.5 h-full'}>
           {selectedTab === RevisionListTabType.Session && (
             <SessionHistoryList
               sessionHistory={sessionHistory}
@@ -227,6 +215,6 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
           )}
         </div>
       </div>
-    );
-  }
-);
+    )
+  },
+)

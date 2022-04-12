@@ -1,38 +1,35 @@
-import { AppState } from '@/ui_models/app_state';
-import { useCloseOnBlur, useCloseOnClickOutside } from './utils';
-import { observer } from 'mobx-react-lite';
-import { NotesOptions } from './NotesOptions/NotesOptions';
-import { useCallback, useEffect, useRef } from 'preact/hooks';
-import { WebApplication } from '@/ui_models/application';
+import { AppState } from '@/ui_models/app_state'
+import { useCloseOnBlur, useCloseOnClickOutside } from './utils'
+import { observer } from 'mobx-react-lite'
+import { NotesOptions } from './NotesOptions/NotesOptions'
+import { useCallback, useEffect, useRef } from 'preact/hooks'
+import { WebApplication } from '@/ui_models/application'
 
 type Props = {
-  application: WebApplication;
-  appState: AppState;
-};
+  application: WebApplication
+  appState: AppState
+}
 
 export const NotesContextMenu = observer(({ application, appState }: Props) => {
-  const { contextMenuOpen, contextMenuPosition, contextMenuMaxHeight } =
-    appState.notes;
+  const { contextMenuOpen, contextMenuPosition, contextMenuMaxHeight } = appState.notes
 
-  const contextMenuRef = useRef<HTMLDivElement>(null);
+  const contextMenuRef = useRef<HTMLDivElement>(null)
   const [closeOnBlur] = useCloseOnBlur(contextMenuRef, (open: boolean) =>
-    appState.notes.setContextMenuOpen(open)
-  );
+    appState.notes.setContextMenuOpen(open),
+  )
 
-  useCloseOnClickOutside(contextMenuRef, () =>
-    appState.notes.setContextMenuOpen(false)
-  );
+  useCloseOnClickOutside(contextMenuRef, () => appState.notes.setContextMenuOpen(false))
 
   const reloadContextMenuLayout = useCallback(() => {
-    appState.notes.reloadContextMenuLayout();
-  }, [appState.notes]);
+    appState.notes.reloadContextMenuLayout()
+  }, [appState.notes])
 
   useEffect(() => {
-    window.addEventListener('resize', reloadContextMenuLayout);
+    window.addEventListener('resize', reloadContextMenuLayout)
     return () => {
-      window.removeEventListener('resize', reloadContextMenuLayout);
-    };
-  }, [reloadContextMenuLayout]);
+      window.removeEventListener('resize', reloadContextMenuLayout)
+    }
+  }, [reloadContextMenuLayout])
 
   return contextMenuOpen ? (
     <div
@@ -43,11 +40,7 @@ export const NotesContextMenu = observer(({ application, appState }: Props) => {
         maxHeight: contextMenuMaxHeight,
       }}
     >
-      <NotesOptions
-        application={application}
-        appState={appState}
-        closeOnBlur={closeOnBlur}
-      />
+      <NotesOptions application={application} appState={appState} closeOnBlur={closeOnBlur} />
     </div>
-  ) : null;
-});
+  ) : null
+})

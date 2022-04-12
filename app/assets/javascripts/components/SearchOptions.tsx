@@ -1,21 +1,20 @@
-import { AppState } from '@/ui_models/app_state';
-import { WebApplication } from '@/ui_models/application';
-import { observer } from 'mobx-react-lite';
-import Bubble from './Bubble';
+import { AppState } from '@/ui_models/app_state'
+import { WebApplication } from '@/ui_models/application'
+import { observer } from 'mobx-react-lite'
+import Bubble from './Bubble'
 
 type Props = {
-  appState: AppState;
-  application: WebApplication;
-};
+  appState: AppState
+  application: WebApplication
+}
 
 export const SearchOptions = observer(({ appState }: Props) => {
-  const { searchOptions } = appState;
+  const { searchOptions } = appState
 
-  const { includeProtectedContents, includeArchived, includeTrashed } =
-    searchOptions;
+  const { includeProtectedContents, includeArchived, includeTrashed } = searchOptions
 
   async function toggleIncludeProtectedContents() {
-    await searchOptions.toggleIncludeProtectedContents();
+    await searchOptions.toggleIncludeProtectedContents()
   }
 
   return (
@@ -42,5 +41,5 @@ export const SearchOptions = observer(({ appState }: Props) => {
         onSelect={searchOptions.toggleIncludeTrashed}
       />
     </div>
-  );
-});
+  )
+})

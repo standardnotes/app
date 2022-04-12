@@ -1,18 +1,18 @@
-import { WebApplication } from '@/ui_models/application';
-import { FeatureStatus, FeatureIdentifier } from '@standardnotes/snjs';
-import { FunctionComponent } from 'preact';
-import { useCallback } from 'preact/hooks';
-import { JSXInternal } from 'preact/src/jsx';
-import { Icon } from '../Icon';
-import { usePremiumModal } from '../Premium';
-import { Switch } from '../Switch';
+import { WebApplication } from '@/ui_models/application'
+import { FeatureStatus, FeatureIdentifier } from '@standardnotes/snjs'
+import { FunctionComponent } from 'preact'
+import { useCallback } from 'preact/hooks'
+import { JSXInternal } from 'preact/src/jsx'
+import { Icon } from '../Icon'
+import { usePremiumModal } from '../Premium'
+import { Switch } from '../Switch'
 
 type Props = {
-  application: WebApplication;
-  onToggle: (value: boolean) => void;
-  onClose: () => void;
-  isEnabled: boolean;
-};
+  application: WebApplication
+  onToggle: (value: boolean) => void
+  onClose: () => void
+  isEnabled: boolean
+}
 
 export const FocusModeSwitch: FunctionComponent<Props> = ({
   application,
@@ -20,24 +20,23 @@ export const FocusModeSwitch: FunctionComponent<Props> = ({
   onClose,
   isEnabled,
 }) => {
-  const premiumModal = usePremiumModal();
+  const premiumModal = usePremiumModal()
   const isEntitled =
-    application.features.getFeatureStatus(FeatureIdentifier.FocusMode) ===
-    FeatureStatus.Entitled;
+    application.features.getFeatureStatus(FeatureIdentifier.FocusMode) === FeatureStatus.Entitled
 
   const toggle = useCallback(
     (e: JSXInternal.TargetedMouseEvent<HTMLButtonElement>) => {
-      e.preventDefault();
+      e.preventDefault()
 
       if (isEntitled) {
-        onToggle(!isEnabled);
-        onClose();
+        onToggle(!isEnabled)
+        onClose()
       } else {
-        premiumModal.activate('Focused Writing');
+        premiumModal.activate('Focused Writing')
       }
     },
-    [isEntitled, onToggle, isEnabled, onClose, premiumModal]
-  );
+    [isEntitled, onToggle, isEnabled, onClose, premiumModal],
+  )
 
   return (
     <>
@@ -58,5 +57,5 @@ export const FocusModeSwitch: FunctionComponent<Props> = ({
         )}
       </button>
     </>
-  );
-};
+  )
+}

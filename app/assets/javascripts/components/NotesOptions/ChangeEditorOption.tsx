@@ -1,89 +1,79 @@
-import { KeyboardKey } from '@/services/ioService';
-import { WebApplication } from '@/ui_models/application';
-import { AppState } from '@/ui_models/app_state';
-import {
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
-} from '@reach/disclosure';
-import { IconType, SNComponent, SNNote } from '@standardnotes/snjs';
-import { FunctionComponent } from 'preact';
-import { useEffect, useRef, useState } from 'preact/hooks';
-import { Icon } from '../Icon';
-import { ChangeEditorMenu } from './changeEditor/ChangeEditorMenu';
-import {
-  calculateSubmenuStyle,
-  SubmenuStyle,
-} from '@/utils/calculateSubmenuStyle';
-import { useCloseOnBlur } from '../utils';
+import { KeyboardKey } from '@/services/ioService'
+import { WebApplication } from '@/ui_models/application'
+import { AppState } from '@/ui_models/app_state'
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
+import { IconType, SNComponent, SNNote } from '@standardnotes/snjs'
+import { FunctionComponent } from 'preact'
+import { useEffect, useRef, useState } from 'preact/hooks'
+import { Icon } from '../Icon'
+import { ChangeEditorMenu } from './changeEditor/ChangeEditorMenu'
+import { calculateSubmenuStyle, SubmenuStyle } from '@/utils/calculateSubmenuStyle'
+import { useCloseOnBlur } from '../utils'
 
 type ChangeEditorOptionProps = {
-  appState: AppState;
-  application: WebApplication;
-  note: SNNote;
-};
+  appState: AppState
+  application: WebApplication
+  note: SNNote
+}
 
 type AccordionMenuGroup<T> = {
-  icon?: IconType;
-  iconClassName?: string;
-  title: string;
-  items: Array<T>;
-};
+  icon?: IconType
+  iconClassName?: string
+  title: string
+  items: Array<T>
+}
 
 export type EditorMenuItem = {
-  name: string;
-  component?: SNComponent;
-  isEntitled: boolean;
-};
+  name: string
+  component?: SNComponent
+  isEntitled: boolean
+}
 
-export type EditorMenuGroup = AccordionMenuGroup<EditorMenuItem>;
+export type EditorMenuGroup = AccordionMenuGroup<EditorMenuItem>
 
 export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
   application,
   note,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
+  const [isVisible, setIsVisible] = useState(false)
   const [menuStyle, setMenuStyle] = useState<SubmenuStyle>({
     right: 0,
     bottom: 0,
     maxHeight: 'auto',
-  });
-  const menuContainerRef = useRef<HTMLDivElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  })
+  const menuContainerRef = useRef<HTMLDivElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
 
   const [closeOnBlur] = useCloseOnBlur(menuContainerRef, (open: boolean) => {
-    setIsOpen(open);
-    setIsVisible(open);
-  });
+    setIsOpen(open)
+    setIsVisible(open)
+  })
 
   const toggleChangeEditorMenu = () => {
     if (!isOpen) {
-      const menuStyle = calculateSubmenuStyle(buttonRef.current);
+      const menuStyle = calculateSubmenuStyle(buttonRef.current)
       if (menuStyle) {
-        setMenuStyle(menuStyle);
+        setMenuStyle(menuStyle)
       }
     }
 
-    setIsOpen(!isOpen);
-  };
+    setIsOpen(!isOpen)
+  }
 
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => {
-        const newMenuStyle = calculateSubmenuStyle(
-          buttonRef.current,
-          menuRef.current
-        );
+        const newMenuStyle = calculateSubmenuStyle(buttonRef.current, menuRef.current)
 
         if (newMenuStyle) {
-          setMenuStyle(newMenuStyle);
-          setIsVisible(true);
+          setMenuStyle(newMenuStyle)
+          setIsVisible(true)
         }
-      });
+      })
     }
-  }, [isOpen]);
+  }, [isOpen])
 
   return (
     <div ref={menuContainerRef}>
@@ -91,7 +81,7 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
         <DisclosureButton
           onKeyDown={(event) => {
             if (event.key === KeyboardKey.Escape) {
-              setIsOpen(false);
+              setIsOpen(false)
             }
           }}
           onBlur={closeOnBlur}
@@ -108,8 +98,8 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
           ref={menuRef}
           onKeyDown={(event) => {
             if (event.key === KeyboardKey.Escape) {
-              setIsOpen(false);
-              buttonRef.current?.focus();
+              setIsOpen(false)
+              buttonRef.current?.focus()
             }
           }}
           style={{
@@ -125,12 +115,12 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
               note={note}
               isVisible={isVisible}
               closeMenu={() => {
-                setIsOpen(false);
+                setIsOpen(false)
               }}
             />
           )}
         </DisclosurePanel>
       </Disclosure>
     </div>
-  );
-};
+  )
+}

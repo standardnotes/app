@@ -1,79 +1,79 @@
-'use strict';
+'use strict'
 
 declare global {
   interface Window {
-    dashboardUrl?: string;
-    defaultSyncServer: string;
-    devAccountEmail?: string;
-    devAccountPassword?: string;
-    devAccountServer?: string;
-    enabledUnfinishedFeatures: boolean;
-    plansUrl?: string;
-    purchaseUrl?: string;
-    startApplication?: StartApplication;
-    websocketUrl: string;
+    dashboardUrl?: string
+    defaultSyncServer: string
+    devAccountEmail?: string
+    devAccountPassword?: string
+    devAccountServer?: string
+    enabledUnfinishedFeatures: boolean
+    plansUrl?: string
+    purchaseUrl?: string
+    startApplication?: StartApplication
+    websocketUrl: string
+    electronAppVersion?: string
   }
 }
 
-import { IsWebPlatform, WebAppVersion } from '@/version';
-import { Runtime, SNLog } from '@standardnotes/snjs';
-import { render } from 'preact';
-import { ApplicationGroupView } from './components/ApplicationGroupView';
-import { Bridge } from './services/bridge';
-import { BrowserBridge } from './services/browserBridge';
-import { StartApplication } from './startApplication';
-import { ApplicationGroup } from './ui_models/application_group';
-import { isDev } from './utils';
+import { IsWebPlatform, WebAppVersion } from '@/version'
+import { Runtime, SNLog } from '@standardnotes/snjs'
+import { render } from 'preact'
+import { ApplicationGroupView } from './components/ApplicationGroupView'
+import { Bridge } from './services/bridge'
+import { BrowserBridge } from './services/browserBridge'
+import { StartApplication } from './startApplication'
+import { ApplicationGroup } from './ui_models/application_group'
+import { isDev } from './utils'
 
 const startApplication: StartApplication = async function startApplication(
   defaultSyncServerHost: string,
   bridge: Bridge,
   enableUnfinishedFeatures: boolean,
-  webSocketUrl: string
+  webSocketUrl: string,
 ) {
-  SNLog.onLog = console.log;
-  SNLog.onError = console.error;
+  SNLog.onLog = console.log
+  SNLog.onError = console.error
 
   const mainApplicationGroup = new ApplicationGroup(
     defaultSyncServerHost,
     bridge,
     enableUnfinishedFeatures ? Runtime.Dev : Runtime.Prod,
-    webSocketUrl
-  );
+    webSocketUrl,
+  )
 
   if (isDev) {
     Object.defineProperties(window, {
       application: {
         get: () => mainApplicationGroup.primaryApplication,
       },
-    });
+    })
   }
 
   const renderApp = () => {
     render(
       <ApplicationGroupView mainApplicationGroup={mainApplicationGroup} />,
-      document.body.appendChild(document.createElement('div'))
-    );
-  };
+      document.body.appendChild(document.createElement('div')),
+    )
+  }
 
-  const domReady =
-    document.readyState === 'complete' || document.readyState === 'interactive';
+  const domReady = document.readyState === 'complete' || document.readyState === 'interactive'
   if (domReady) {
-    renderApp();
+    renderApp()
   } else {
     window.addEventListener('DOMContentLoaded', () => {
-      renderApp();
-    });
+      renderApp()
+    })
   }
-};
+}
 
 if (IsWebPlatform) {
   startApplication(
     window.defaultSyncServer,
     new BrowserBridge(WebAppVersion),
     window.enabledUnfinishedFeatures,
-    window.websocketUrl
-  );
+    window.websocketUrl,
+  ).catch(console.error)
 } else {
-  window.startApplication = startApplication;
+  window.startApplication = startApplication
 }

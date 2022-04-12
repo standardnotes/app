@@ -1,134 +1,134 @@
-import { WebApplication } from '@/ui_models/application';
-import { AppState } from '@/ui_models/app_state';
-import { isDev } from '@/utils';
-import { observer } from 'mobx-react-lite';
-import { FunctionComponent } from 'preact';
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
-import { AccountMenuPane } from '.';
-import { Button } from '../Button';
-import { Checkbox } from '../Checkbox';
-import { DecoratedInput } from '../DecoratedInput';
-import { DecoratedPasswordInput } from '../DecoratedPasswordInput';
-import { Icon } from '../Icon';
-import { IconButton } from '../IconButton';
-import { AdvancedOptions } from './AdvancedOptions';
+import { WebApplication } from '@/ui_models/application'
+import { AppState } from '@/ui_models/app_state'
+import { isDev } from '@/utils'
+import { observer } from 'mobx-react-lite'
+import { FunctionComponent } from 'preact'
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
+import { AccountMenuPane } from '.'
+import { Button } from '../Button'
+import { Checkbox } from '../Checkbox'
+import { DecoratedInput } from '../DecoratedInput'
+import { DecoratedPasswordInput } from '../DecoratedPasswordInput'
+import { Icon } from '../Icon'
+import { IconButton } from '../IconButton'
+import { AdvancedOptions } from './AdvancedOptions'
 
 type Props = {
-  appState: AppState;
-  application: WebApplication;
-  setMenuPane: (pane: AccountMenuPane) => void;
-};
+  appState: AppState
+  application: WebApplication
+  setMenuPane: (pane: AccountMenuPane) => void
+}
 
 export const SignInPane: FunctionComponent<Props> = observer(
   ({ application, appState, setMenuPane }) => {
-    const { notesAndTagsCount } = appState.accountMenu;
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const [isEphemeral, setIsEphemeral] = useState(false);
+    const { notesAndTagsCount } = appState.accountMenu
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [error, setError] = useState('')
+    const [isEphemeral, setIsEphemeral] = useState(false)
 
-    const [isStrictSignin, setIsStrictSignin] = useState(false);
-    const [isSigningIn, setIsSigningIn] = useState(false);
-    const [shouldMergeLocal, setShouldMergeLocal] = useState(true);
-    const [isVault, setIsVault] = useState(false);
+    const [isStrictSignin, setIsStrictSignin] = useState(false)
+    const [isSigningIn, setIsSigningIn] = useState(false)
+    const [shouldMergeLocal, setShouldMergeLocal] = useState(true)
+    const [isVault, setIsVault] = useState(false)
 
-    const emailInputRef = useRef<HTMLInputElement>(null);
-    const passwordInputRef = useRef<HTMLInputElement>(null);
+    const emailInputRef = useRef<HTMLInputElement>(null)
+    const passwordInputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
       if (emailInputRef?.current) {
-        emailInputRef.current?.focus();
+        emailInputRef.current?.focus()
       }
       if (isDev && window.devAccountEmail) {
-        setEmail(window.devAccountEmail);
-        setPassword(window.devAccountPassword as string);
+        setEmail(window.devAccountEmail)
+        setPassword(window.devAccountPassword as string)
       }
-    }, []);
+    }, [])
 
     const resetInvalid = () => {
       if (error.length) {
-        setError('');
+        setError('')
       }
-    };
+    }
 
     const handleEmailChange = (text: string) => {
-      setEmail(text);
-    };
+      setEmail(text)
+    }
 
     const handlePasswordChange = (text: string) => {
       if (error.length) {
-        setError('');
+        setError('')
       }
-      setPassword(text);
-    };
+      setPassword(text)
+    }
 
     const handleEphemeralChange = () => {
-      setIsEphemeral(!isEphemeral);
-    };
+      setIsEphemeral(!isEphemeral)
+    }
 
     const handleStrictSigninChange = () => {
-      setIsStrictSignin(!isStrictSignin);
-    };
+      setIsStrictSignin(!isStrictSignin)
+    }
 
     const handleShouldMergeChange = () => {
-      setShouldMergeLocal(!shouldMergeLocal);
-    };
+      setShouldMergeLocal(!shouldMergeLocal)
+    }
 
     const signIn = () => {
-      setIsSigningIn(true);
-      emailInputRef?.current?.blur();
-      passwordInputRef?.current?.blur();
+      setIsSigningIn(true)
+      emailInputRef?.current?.blur()
+      passwordInputRef?.current?.blur()
 
       application
         .signIn(email, password, isStrictSignin, isEphemeral, shouldMergeLocal)
         .then((res) => {
           if (res.error) {
-            throw new Error(res.error.message);
+            throw new Error(res.error.message)
           }
-          appState.accountMenu.closeAccountMenu();
+          appState.accountMenu.closeAccountMenu()
         })
         .catch((err) => {
-          console.error(err);
-          setError(err.message ?? err.toString());
-          setPassword('');
-          passwordInputRef?.current?.blur();
+          console.error(err)
+          setError(err.message ?? err.toString())
+          setPassword('')
+          passwordInputRef?.current?.blur()
         })
         .finally(() => {
-          setIsSigningIn(false);
-        });
-    };
+          setIsSigningIn(false)
+        })
+    }
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Enter') {
-        handleSignInFormSubmit(e);
+        handleSignInFormSubmit(e)
       }
-    };
+    }
 
     const onVaultChange = useCallback(
       (newIsVault: boolean, vaultedEmail?: string) => {
-        setIsVault(newIsVault);
+        setIsVault(newIsVault)
         if (newIsVault && vaultedEmail) {
-          setEmail(vaultedEmail);
+          setEmail(vaultedEmail)
         }
       },
-      [setEmail]
-    );
+      [setEmail],
+    )
 
     const handleSignInFormSubmit = (e: Event) => {
-      e.preventDefault();
+      e.preventDefault()
 
       if (!email || email.length === 0) {
-        emailInputRef?.current?.focus();
-        return;
+        emailInputRef?.current?.focus()
+        return
       }
 
       if (!password || password.length === 0) {
-        passwordInputRef?.current?.focus();
-        return;
+        passwordInputRef?.current?.focus()
+        return
       }
 
-      signIn();
-    };
+      signIn()
+    }
 
     return (
       <>
@@ -201,6 +201,6 @@ export const SignInPane: FunctionComponent<Props> = observer(
           onStrictSignInChange={handleStrictSigninChange}
         />
       </>
-    );
-  }
-);
+    )
+  },
+)

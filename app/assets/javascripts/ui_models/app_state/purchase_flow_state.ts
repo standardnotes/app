@@ -1,6 +1,6 @@
-import { loadPurchaseFlowUrl } from '@/components/PurchaseFlow/PurchaseFlowWrapper';
-import { action, makeObservable, observable } from 'mobx';
-import { WebApplication } from '../application';
+import { loadPurchaseFlowUrl } from '@/components/PurchaseFlow/PurchaseFlowWrapper'
+import { action, makeObservable, observable } from 'mobx'
+import { WebApplication } from '../application'
 
 export enum PurchaseFlowPane {
   SignIn,
@@ -8,8 +8,8 @@ export enum PurchaseFlowPane {
 }
 
 export class PurchaseFlowState {
-  isOpen = false;
-  currentPane = PurchaseFlowPane.CreateAccount;
+  isOpen = false
+  currentPane = PurchaseFlowPane.CreateAccount
 
   constructor(private application: WebApplication) {
     makeObservable(this, {
@@ -19,23 +19,23 @@ export class PurchaseFlowState {
       setCurrentPane: action,
       openPurchaseFlow: action,
       closePurchaseFlow: action,
-    });
+    })
   }
 
   setCurrentPane = (currentPane: PurchaseFlowPane): void => {
-    this.currentPane = currentPane;
-  };
+    this.currentPane = currentPane
+  }
 
   openPurchaseFlow = (): void => {
-    const user = this.application.getUser();
+    const user = this.application.getUser()
     if (!user) {
-      this.isOpen = true;
+      this.isOpen = true
     } else {
-      loadPurchaseFlowUrl(this.application);
+      loadPurchaseFlowUrl(this.application).catch(console.error)
     }
-  };
+  }
 
   closePurchaseFlow = (): void => {
-    this.isOpen = false;
-  };
+    this.isOpen = false
+  }
 }

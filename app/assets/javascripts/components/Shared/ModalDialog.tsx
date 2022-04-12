@@ -1,13 +1,13 @@
-import { FunctionComponent } from 'preact';
+import { FunctionComponent } from 'preact'
 import {
   AlertDialog,
   AlertDialogDescription,
   AlertDialogLabel,
-} from '@node_modules/@reach/alert-dialog';
-import { useRef } from '@node_modules/preact/hooks';
+} from '@node_modules/@reach/alert-dialog'
+import { useRef } from '@node_modules/preact/hooks'
 
 export const ModalDialog: FunctionComponent = ({ children }) => {
-  const ldRef = useRef<HTMLButtonElement>(null);
+  const ldRef = useRef<HTMLButtonElement>(null)
 
   return (
     <AlertDialog leastDestructiveRef={ldRef}>
@@ -24,39 +24,31 @@ export const ModalDialog: FunctionComponent = ({ children }) => {
         </div>
       </div>
     </AlertDialog>
-  );
-};
+  )
+}
 
 export const ModalDialogLabel: FunctionComponent<{
-  closeDialog: () => void;
-  className?: string;
+  closeDialog: () => void
+  className?: string
 }> = ({ children, closeDialog, className }) => (
   <AlertDialogLabel className={`sk-panel-header px-4.5 ${className}`}>
     <div className="w-full flex flex-row justify-between items-center">
-      <div className="flex-grow color-text text-base font-medium">
-        {children}
-      </div>
-      <div
-        tabIndex={0}
-        className="font-bold color-info cursor-pointer"
-        onClick={closeDialog}
-      >
+      <div className="flex-grow color-text text-base font-medium">{children}</div>
+      <div tabIndex={0} className="font-bold color-info cursor-pointer" onClick={closeDialog}>
         Close
       </div>
     </div>
     <hr className="h-1px bg-border no-border m-0" />
   </AlertDialogLabel>
-);
+)
 
 export const ModalDialogDescription: FunctionComponent<{
-  className?: string;
+  className?: string
 }> = ({ children, className = '' }) => (
-  <AlertDialogDescription
-    className={`px-4 py-4 flex flex-row items-center ${className}`}
-  >
+  <AlertDialogDescription className={`px-4 py-4 flex flex-row items-center ${className}`}>
     {children}
   </AlertDialogDescription>
-);
+)
 
 export const ModalDialogButtons: FunctionComponent<{ className?: string }> = ({
   children,
@@ -75,6 +67,6 @@ export const ModalDialogButtons: FunctionComponent<{ className?: string }> = ({
         : children}
     </div>
   </>
-);
+)
 
-export default ModalDialog;
+export default ModalDialog

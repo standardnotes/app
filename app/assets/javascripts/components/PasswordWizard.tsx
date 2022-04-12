@@ -1,23 +1,23 @@
-import { WebApplication } from '@/ui_models/application';
-import { createRef, JSX } from 'preact';
-import { PureComponent } from './Abstract/PureComponent';
+import { WebApplication } from '@/ui_models/application'
+import { createRef, JSX } from 'preact'
+import { PureComponent } from './Abstract/PureComponent'
 
 interface Props {
-  application: WebApplication;
+  application: WebApplication
 }
 
 type State = {
-  continueTitle: string;
-  formData: FormData;
-  isContinuing?: boolean;
-  lockContinue?: boolean;
-  processing?: boolean;
-  showSpinner?: boolean;
-  step: Steps;
-  title: string;
-};
+  continueTitle: string
+  formData: FormData
+  isContinuing?: boolean
+  lockContinue?: boolean
+  processing?: boolean
+  showSpinner?: boolean
+  step: Steps
+  title: string
+}
 
-const DEFAULT_CONTINUE_TITLE = 'Continue';
+const DEFAULT_CONTINUE_TITLE = 'Continue'
 
 enum Steps {
   PasswordStep = 1,
@@ -25,40 +25,40 @@ enum Steps {
 }
 
 type FormData = {
-  currentPassword?: string;
-  newPassword?: string;
-  newPasswordConfirmation?: string;
-  status?: string;
-};
+  currentPassword?: string
+  newPassword?: string
+  newPasswordConfirmation?: string
+  status?: string
+}
 
 export class PasswordWizard extends PureComponent<Props, State> {
-  private currentPasswordInput = createRef<HTMLInputElement>();
+  private currentPasswordInput = createRef<HTMLInputElement>()
 
   constructor(props: Props) {
-    super(props, props.application);
-    this.registerWindowUnloadStopper();
+    super(props, props.application)
+    this.registerWindowUnloadStopper()
     this.state = {
       formData: {},
       continueTitle: DEFAULT_CONTINUE_TITLE,
       step: Steps.PasswordStep,
       title: 'Change Password',
-    };
+    }
   }
 
   componentDidMount(): void {
-    super.componentDidMount();
-    this.currentPasswordInput.current?.focus();
+    super.componentDidMount()
+    this.currentPasswordInput.current?.focus()
   }
 
   componentWillUnmount(): void {
-    super.componentWillUnmount();
-    window.onbeforeunload = null;
+    super.componentWillUnmount()
+    window.onbeforeunload = null
   }
 
   registerWindowUnloadStopper() {
     window.onbeforeunload = () => {
-      return true;
-    };
+      return true
+    }
   }
 
   resetContinueState() {
@@ -66,35 +66,35 @@ export class PasswordWizard extends PureComponent<Props, State> {
       showSpinner: false,
       continueTitle: DEFAULT_CONTINUE_TITLE,
       isContinuing: false,
-    });
+    })
   }
 
   nextStep = async () => {
     if (this.state.lockContinue || this.state.isContinuing) {
-      return;
+      return
     }
 
     if (this.state.step === Steps.FinishStep) {
-      this.dismiss();
-      return;
+      this.dismiss()
+      return
     }
 
     this.setState({
       isContinuing: true,
       showSpinner: true,
       continueTitle: 'Generating Keys...',
-    });
+    })
 
-    const valid = await this.validateCurrentPassword();
+    const valid = await this.validateCurrentPassword()
     if (!valid) {
-      this.resetContinueState();
-      return;
+      this.resetContinueState()
+      return
     }
 
-    const success = await this.processPasswordChange();
+    const success = await this.processPasswordChange()
     if (!success) {
-      this.resetContinueState();
-      return;
+      this.resetContinueState()
+      return
     }
 
     this.setState({
@@ -102,103 +102,105 @@ export class PasswordWizard extends PureComponent<Props, State> {
       showSpinner: false,
       continueTitle: 'Finish',
       step: Steps.FinishStep,
-    });
-  };
+    })
+  }
 
   async validateCurrentPassword() {
-    const currentPassword = this.state.formData.currentPassword;
-    const newPass = this.state.formData.newPassword;
+    const currentPassword = this.state.formData.currentPassword
+    const newPass = this.state.formData.newPassword
     if (!currentPassword || currentPassword.length === 0) {
-      this.application.alertService.alert(
-        'Please enter your current password.'
-      );
-      return false;
+      this.application.alertService
+        .alert('Please enter your current password.')
+        .catch(console.error)
+      return false
     }
 
     if (!newPass || newPass.length === 0) {
-      this.application.alertService.alert('Please enter a new password.');
-      return false;
+      this.application.alertService.alert('Please enter a new password.').catch(console.error)
+      return false
     }
     if (newPass !== this.state.formData.newPasswordConfirmation) {
-      this.application.alertService.alert(
-        'Your new password does not match its confirmation.'
-      );
+      this.application.alertService
+        .alert('Your new password does not match its confirmation.')
+        .catch(console.error)
       this.setFormDataState({
         status: undefined,
-      });
-      return false;
+      }).catch(console.error)
+      return false
     }
 
     if (!this.application.getUser()?.email) {
-      this.application.alertService.alert(
-        "We don't have your email stored. Please sign out then log back in to fix this issue."
-      );
+      this.application.alertService
+        .alert(
+          "We don't have your email stored. Please sign out then log back in to fix this issue.",
+        )
+        .catch(console.error)
       this.setFormDataState({
         status: undefined,
-      });
-      return false;
+      }).catch(console.error)
+      return false
     }
 
     /** Validate current password */
     const success = await this.application.validateAccountPassword(
-      this.state.formData.currentPassword!
-    );
+      this.state.formData.currentPassword!,
+    )
     if (!success) {
-      this.application.alertService.alert(
-        'The current password you entered is not correct. Please try again.'
-      );
+      this.application.alertService
+        .alert('The current password you entered is not correct. Please try again.')
+        .catch(console.error)
     }
-    return success;
+    return success
   }
 
   async processPasswordChange() {
-    await this.application.downloadBackup();
+    await this.application.downloadBackup()
 
     this.setState({
       lockContinue: true,
       processing: true,
-    });
+    })
 
     await this.setFormDataState({
       status: 'Processing encryption keys…',
-    });
+    })
 
-    const newPassword = this.state.formData.newPassword;
+    const newPassword = this.state.formData.newPassword
     const response = await this.application.changePassword(
       this.state.formData.currentPassword!,
-      newPassword!
-    );
+      newPassword!,
+    )
 
-    const success = !response.error;
+    const success = !response.error
     this.setState({
       processing: false,
       lockContinue: false,
-    });
+    })
 
     if (!success) {
       this.setFormDataState({
         status: 'Unable to process your password. Please try again.',
-      });
+      }).catch(console.error)
     } else {
       this.setState({
         formData: {
           ...this.state.formData,
           status: 'Successfully changed password.',
         },
-      });
+      })
     }
-    return success;
+    return success
   }
 
   dismiss = () => {
     if (this.state.lockContinue) {
-      this.application.alertService.alert(
-        'Cannot close window until pending tasks are complete.'
-      );
+      this.application.alertService
+        .alert('Cannot close window until pending tasks are complete.')
+        .catch(console.error)
     } else {
-      this.dismissModal();
+      this.dismissModal()
     }
-  };
+  }
 
   async setFormDataState(formData: Partial<FormData>) {
     return this.setState({
@@ -206,7 +208,7 @@ export class PasswordWizard extends PureComponent<Props, State> {
         ...this.state.formData,
         ...formData,
       },
-    });
+    })
   }
 
   handleCurrentPasswordInputChange = ({
@@ -214,24 +216,24 @@ export class PasswordWizard extends PureComponent<Props, State> {
   }: JSX.TargetedEvent<HTMLInputElement, Event>) => {
     this.setFormDataState({
       currentPassword: currentTarget.value,
-    });
-  };
+    }).catch(console.error)
+  }
 
   handleNewPasswordInputChange = ({
     currentTarget,
   }: JSX.TargetedEvent<HTMLInputElement, Event>) => {
     this.setFormDataState({
       newPassword: currentTarget.value,
-    });
-  };
+    }).catch(console.error)
+  }
 
   handleNewPasswordConfirmationInputChange = ({
     currentTarget,
   }: JSX.TargetedEvent<HTMLInputElement, Event>) => {
     this.setFormDataState({
       newPasswordConfirmation: currentTarget.value,
-    });
-  };
+    }).catch(console.error)
+  }
 
   render() {
     return (
@@ -242,9 +244,7 @@ export class PasswordWizard extends PureComponent<Props, State> {
             <div className="sn-component">
               <div className="sk-panel">
                 <div className="sk-panel-header">
-                  <div className="sk-panel-header-title">
-                    {this.state.title}
-                  </div>
+                  <div className="sk-panel-header-title">{this.state.title}</div>
                   <a onClick={this.dismiss} className="sk-a info close-button">
                     Close
                   </a>
@@ -255,10 +255,7 @@ export class PasswordWizard extends PureComponent<Props, State> {
                       <div className="sk-panel-row">
                         <div className="sk-panel-column stretch">
                           <form className="sk-panel-form">
-                            <label
-                              htmlFor="password-wiz-current-password"
-                              className="block mb-1"
-                            >
+                            <label htmlFor="password-wiz-current-password" className="block mb-1">
                               Current Password
                             </label>
 
@@ -273,10 +270,7 @@ export class PasswordWizard extends PureComponent<Props, State> {
 
                             <div className="sk-panel-row" />
 
-                            <label
-                              htmlFor="password-wiz-new-password"
-                              className="block mb-1"
-                            >
+                            <label htmlFor="password-wiz-new-password" className="block mb-1">
                               New Password
                             </label>
 
@@ -298,12 +292,8 @@ export class PasswordWizard extends PureComponent<Props, State> {
 
                             <input
                               id="password-wiz-confirm-new-password"
-                              value={
-                                this.state.formData.newPasswordConfirmation
-                              }
-                              onChange={
-                                this.handleNewPasswordConfirmationInputChange
-                              }
+                              value={this.state.formData.newPasswordConfirmation}
+                              onChange={this.handleNewPasswordConfirmationInputChange}
                               type="password"
                               className="sk-input contrast"
                             />
@@ -318,9 +308,8 @@ export class PasswordWizard extends PureComponent<Props, State> {
                         Your password has been successfully changed.
                       </div>
                       <p className="sk-p">
-                        Please ensure you are running the latest version of
-                        Standard Notes on all platforms to ensure maximum
-                        compatibility.
+                        Please ensure you are running the latest version of Standard Notes on all
+                        platforms to ensure maximum compatibility.
                       </p>
                     </div>
                   )}
@@ -339,6 +328,6 @@ export class PasswordWizard extends PureComponent<Props, State> {
           </div>
         </div>
       </div>
-    );
+    )
   }
 }

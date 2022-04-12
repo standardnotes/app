@@ -1,43 +1,43 @@
-import { WebApplication } from '@/ui_models/application';
+import { WebApplication } from '@/ui_models/application'
 import {
   CollectionSort,
   CollectionSortProperty,
   sanitizeHtmlString,
   SNNote,
-} from '@standardnotes/snjs';
-import { FunctionComponent } from 'preact';
-import { Icon } from './Icon';
+} from '@standardnotes/snjs'
+import { FunctionComponent } from 'preact'
+import { Icon } from './Icon'
 
 type Props = {
-  application: WebApplication;
-  note: SNNote;
-  tags: string[];
-  hideDate: boolean;
-  hidePreview: boolean;
-  hideTags: boolean;
-  hideEditorIcon: boolean;
-  onClick: () => void;
-  onContextMenu: (e: MouseEvent) => void;
-  selected: boolean;
-  sortedBy?: CollectionSortProperty;
-};
+  application: WebApplication
+  note: SNNote
+  tags: string[]
+  hideDate: boolean
+  hidePreview: boolean
+  hideTags: boolean
+  hideEditorIcon: boolean
+  onClick: () => void
+  onContextMenu: (e: MouseEvent) => void
+  selected: boolean
+  sortedBy?: CollectionSortProperty
+}
 
 type NoteFlag = {
-  text: string;
-  class: 'info' | 'neutral' | 'warning' | 'success' | 'danger';
-};
+  text: string
+  class: 'info' | 'neutral' | 'warning' | 'success' | 'danger'
+}
 
 const flagsForNote = (note: SNNote) => {
-  const flags = [] as NoteFlag[];
+  const flags = [] as NoteFlag[]
   if (note.conflictOf) {
     flags.push({
       text: 'Conflicted Copy',
       class: 'danger',
-    });
+    })
   }
 
-  return flags;
-};
+  return flags
+}
 
 export const NotesListItem: FunctionComponent<Props> = ({
   application,
@@ -52,13 +52,13 @@ export const NotesListItem: FunctionComponent<Props> = ({
   sortedBy,
   tags,
 }) => {
-  const flags = flagsForNote(note);
-  const showModifiedDate = sortedBy === CollectionSort.UpdatedAt;
-  const editorForNote = application.componentManager.editorForNote(note);
-  const editorName = editorForNote?.name ?? 'Plain editor';
+  const flags = flagsForNote(note)
+  const showModifiedDate = sortedBy === CollectionSort.UpdatedAt
+  const editorForNote = application.componentManager.editorForNote(note)
+  const editorName = editorForNote?.name ?? 'Plain editor'
   const [icon, tint] = application.iconsController.getIconAndTintForEditor(
-    editorForNote?.identifier
-  );
+    editorForNote?.identifier,
+  )
 
   return (
     <div
@@ -101,22 +101,15 @@ export const NotesListItem: FunctionComponent<Props> = ({
         {!hideDate || note.protected ? (
           <div className="bottom-info faded">
             {note.protected && <span>Protected {hideDate ? '' : ' • '}</span>}
-            {!hideDate && showModifiedDate && (
-              <span>Modified {note.updatedAtString || 'Now'}</span>
-            )}
-            {!hideDate && !showModifiedDate && (
-              <span>{note.createdAtString || 'Now'}</span>
-            )}
+            {!hideDate && showModifiedDate && <span>Modified {note.updatedAtString || 'Now'}</span>}
+            {!hideDate && !showModifiedDate && <span>{note.createdAtString || 'Now'}</span>}
           </div>
         ) : null}
         {!hideTags && tags.length ? (
           <div className="tags-string">
             {tags.map((tag) => (
               <span className="tag color-foreground">
-                <Icon
-                  type="hashtag"
-                  className="sn-icon--small color-grey-1 mr-1"
-                />
+                <Icon type="hashtag" className="sn-icon--small color-grey-1 mr-1" />
                 <span>{tag}</span>
               </span>
             ))}
@@ -144,11 +137,7 @@ export const NotesListItem: FunctionComponent<Props> = ({
         )}
         {note.trashed && (
           <span title="Trashed">
-            <Icon
-              ariaLabel="Trashed"
-              type="trash-filled"
-              className="sn-icon--small color-danger"
-            />
+            <Icon ariaLabel="Trashed" type="trash-filled" className="sn-icon--small color-danger" />
           </span>
         )}
         {note.archived && (
@@ -162,14 +151,10 @@ export const NotesListItem: FunctionComponent<Props> = ({
         )}
         {note.pinned && (
           <span title="Pinned">
-            <Icon
-              ariaLabel="Pinned"
-              type="pin-filled"
-              className="sn-icon--small color-info"
-            />
+            <Icon ariaLabel="Pinned" type="pin-filled" className="sn-icon--small color-info" />
           </span>
         )}
       </div>
     </div>
-  );
-};
+  )
+}

@@ -3,161 +3,141 @@ import {
   SNApplication,
   ApplicationIdentifier,
   AbstractDevice,
-} from '@standardnotes/snjs';
-import { Database } from '@/database';
-import { Bridge } from './services/bridge';
+} from '@standardnotes/snjs'
+import { Database } from '@/database'
+import { Bridge } from './services/bridge'
 
 export class WebDeviceInterface extends AbstractDevice {
-  private databases: Database[] = [];
+  private databases: Database[] = []
 
   constructor(private bridge: Bridge) {
-    super(
-      setTimeout.bind(getGlobalScope()),
-      setInterval.bind(getGlobalScope())
-    );
+    super(setTimeout.bind(getGlobalScope()), setInterval.bind(getGlobalScope()))
   }
 
   setApplication(application: SNApplication) {
-    const database = new Database(
-      application.identifier,
-      application.alertService
-    );
-    this.databases.push(database);
+    const database = new Database(application.identifier, application.alertService)
+    this.databases.push(database)
   }
 
   private databaseForIdentifier(identifier: ApplicationIdentifier) {
-    return this.databases.find(
-      (database) => database.databaseName === identifier
-    )!;
+    return this.databases.find((database) => database.databaseName === identifier) as Database
   }
 
   deinit() {
-    super.deinit();
+    super.deinit()
     for (const database of this.databases) {
-      database.deinit();
+      database.deinit()
     }
-    this.databases = [];
+    this.databases = []
   }
 
   async getRawStorageValue(key: string) {
-    return localStorage.getItem(key) as any;
+    return localStorage.getItem(key) as any
   }
 
   async getAllRawStorageKeyValues() {
-    const results = [];
+    const results = []
     for (const key of Object.keys(localStorage)) {
       results.push({
         key: key,
         value: localStorage[key],
-      });
+      })
     }
-    return results;
+    return results
   }
 
   async setRawStorageValue(key: string, value: any) {
-    localStorage.setItem(key, value);
+    localStorage.setItem(key, value)
   }
 
   async removeRawStorageValue(key: string) {
-    localStorage.removeItem(key);
+    localStorage.removeItem(key)
   }
 
   async removeAllRawStorageValues() {
-    localStorage.clear();
+    localStorage.clear()
   }
 
   async openDatabase(identifier: ApplicationIdentifier) {
-    this.databaseForIdentifier(identifier).unlock();
+    this.databaseForIdentifier(identifier).unlock()
     return new Promise((resolve, reject) => {
       this.databaseForIdentifier(identifier)
         .openDatabase(() => {
-          resolve({ isNewDatabase: true });
+          resolve({ isNewDatabase: true })
         })
         .then(() => {
-          resolve({ isNewDatabase: false });
+          resolve({ isNewDatabase: false })
         })
         .catch((error) => {
-          reject(error);
-        });
-    }) as Promise<{ isNewDatabase?: boolean } | undefined>;
+          reject(error)
+        })
+    }) as Promise<{ isNewDatabase?: boolean } | undefined>
   }
 
   async getAllRawDatabasePayloads(identifier: ApplicationIdentifier) {
-    return this.databaseForIdentifier(identifier).getAllPayloads();
+    return this.databaseForIdentifier(identifier).getAllPayloads()
   }
 
-  async saveRawDatabasePayload(
-    payload: any,
-    identifier: ApplicationIdentifier
-  ) {
-    return this.databaseForIdentifier(identifier).savePayload(payload);
+  async saveRawDatabasePayload(payload: any, identifier: ApplicationIdentifier) {
+    return this.databaseForIdentifier(identifier).savePayload(payload)
   }
 
-  async saveRawDatabasePayloads(
-    payloads: any[],
-    identifier: ApplicationIdentifier
-  ) {
-    return this.databaseForIdentifier(identifier).savePayloads(payloads);
+  async saveRawDatabasePayloads(payloads: any[], identifier: ApplicationIdentifier) {
+    return this.databaseForIdentifier(identifier).savePayloads(payloads)
   }
 
-  async removeRawDatabasePayloadWithId(
-    id: string,
-    identifier: ApplicationIdentifier
-  ) {
-    return this.databaseForIdentifier(identifier).deletePayload(id);
+  async removeRawDatabasePayloadWithId(id: string, identifier: ApplicationIdentifier) {
+    return this.databaseForIdentifier(identifier).deletePayload(id)
   }
 
   async removeAllRawDatabasePayloads(identifier: ApplicationIdentifier) {
-    return this.databaseForIdentifier(identifier).clearAllPayloads();
+    return this.databaseForIdentifier(identifier).clearAllPayloads()
   }
 
   async getNamespacedKeychainValue(identifier: ApplicationIdentifier) {
-    const keychain = await this.getRawKeychainValue();
+    const keychain = await this.getRawKeychainValue()
     if (!keychain) {
-      return;
+      return
     }
-    return keychain[identifier];
+    return keychain[identifier]
   }
 
-  async setNamespacedKeychainValue(
-    value: any,
-    identifier: ApplicationIdentifier
-  ) {
-    let keychain = await this.getRawKeychainValue();
+  async setNamespacedKeychainValue(value: any, identifier: ApplicationIdentifier) {
+    let keychain = await this.getRawKeychainValue()
     if (!keychain) {
-      keychain = {};
+      keychain = {}
     }
     return this.bridge.setKeychainValue({
       ...keychain,
       [identifier]: value,
-    });
+    })
   }
 
   async clearNamespacedKeychainValue(identifier: ApplicationIdentifier) {
-    const keychain = await this.getRawKeychainValue();
+    const keychain = await this.getRawKeychainValue()
     if (!keychain) {
-      return;
+      return
     }
-    delete keychain[identifier];
-    return this.bridge.setKeychainValue(keychain);
+    delete keychain[identifier]
+    return this.bridge.setKeychainValue(keychain)
   }
 
   getRawKeychainValue(): Promise<any> {
-    return this.bridge.getKeychainValue();
+    return this.bridge.getKeychainValue()
   }
 
   legacy_setRawKeychainValue(value: unknown): Promise<any> {
-    return this.bridge.setKeychainValue(value);
+    return this.bridge.setKeychainValue(value)
   }
 
   clearRawKeychainValue() {
-    return this.bridge.clearKeychainValue();
+    return this.bridge.clearKeychainValue()
   }
 
   openUrl(url: string) {
-    const win = window.open(url, '_blank');
+    const win = window.open(url, '_blank')
     if (win) {
-      win.focus();
+      win.focus()
     }
   }
 }

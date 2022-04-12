@@ -1,8 +1,8 @@
-import { Bridge } from '@/services/bridge';
-import { storage, StorageKey } from '@/services/localStorage';
-import { WebApplication, WebAppEvent } from '@/ui_models/application';
-import { AccountMenuState } from '@/ui_models/app_state/account_menu_state';
-import { isDesktopApplication } from '@/utils';
+import { Bridge } from '@/services/bridge'
+import { storage, StorageKey } from '@/services/localStorage'
+import { WebApplication, WebAppEvent } from '@/ui_models/application'
+import { AccountMenuState } from '@/ui_models/app_state/account_menu_state'
+import { isDesktopApplication } from '@/utils'
 import {
   ApplicationEvent,
   ContentType,
@@ -16,29 +16,22 @@ import {
   removeFromArray,
   PayloadSource,
   Uuid,
-} from '@standardnotes/snjs';
-import {
-  action,
-  computed,
-  IReactionDisposer,
-  makeObservable,
-  observable,
-  reaction,
-} from 'mobx';
-import { ActionsMenuState } from './actions_menu_state';
-import { FeaturesState } from './features_state';
-import { FilesState } from './files_state';
-import { NotesState } from './notes_state';
-import { NotesViewState } from './notes_view_state';
-import { NoteTagsState } from './note_tags_state';
-import { NoAccountWarningState } from './no_account_warning_state';
-import { PreferencesState } from './preferences_state';
-import { PurchaseFlowState } from './purchase_flow_state';
-import { QuickSettingsState } from './quick_settings_state';
-import { SearchOptionsState } from './search_options_state';
-import { SubscriptionState } from './subscription_state';
-import { SyncState } from './sync_state';
-import { TagsState } from './tags_state';
+} from '@standardnotes/snjs'
+import { action, computed, IReactionDisposer, makeObservable, observable, reaction } from 'mobx'
+import { ActionsMenuState } from './actions_menu_state'
+import { FeaturesState } from './features_state'
+import { FilesState } from './files_state'
+import { NotesState } from './notes_state'
+import { NotesViewState } from './notes_view_state'
+import { NoteTagsState } from './note_tags_state'
+import { NoAccountWarningState } from './no_account_warning_state'
+import { PreferencesState } from './preferences_state'
+import { PurchaseFlowState } from './purchase_flow_state'
+import { QuickSettingsState } from './quick_settings_state'
+import { SearchOptionsState } from './search_options_state'
+import { SubscriptionState } from './subscription_state'
+import { SyncState } from './sync_state'
+import { TagsState } from './tags_state'
 
 export enum AppStateEvent {
   TagChanged,
@@ -52,112 +45,85 @@ export enum AppStateEvent {
 }
 
 export type PanelResizedData = {
-  panel: string;
-  collapsed: boolean;
-};
+  panel: string
+  collapsed: boolean
+}
 
 export enum EventSource {
   UserInteraction,
   Script,
 }
 
-type ObserverCallback = (event: AppStateEvent, data?: any) => Promise<void>;
+type ObserverCallback = (event: AppStateEvent, data?: any) => Promise<void>
 
 export class AppState {
-  readonly enableUnfinishedFeatures: boolean =
-    window?.enabledUnfinishedFeatures;
+  readonly enableUnfinishedFeatures: boolean = window?.enabledUnfinishedFeatures
 
-  application: WebApplication;
-  observers: ObserverCallback[] = [];
-  locked = true;
-  unsubApp: any;
-  webAppEventDisposer?: () => void;
-  onVisibilityChange: any;
-  showBetaWarning: boolean;
+  application: WebApplication
+  observers: ObserverCallback[] = []
+  locked = true
+  unsubApp: any
+  webAppEventDisposer?: () => void
+  onVisibilityChange: any
+  showBetaWarning: boolean
 
-  private multiEditorSupport = false;
+  private multiEditorSupport = false
 
-  readonly quickSettingsMenu = new QuickSettingsState();
-  readonly accountMenu: AccountMenuState;
-  readonly actionsMenu = new ActionsMenuState();
-  readonly preferences = new PreferencesState();
-  readonly purchaseFlow: PurchaseFlowState;
-  readonly noAccountWarning: NoAccountWarningState;
-  readonly noteTags: NoteTagsState;
-  readonly sync = new SyncState();
-  readonly searchOptions: SearchOptionsState;
-  readonly notes: NotesState;
-  readonly features: FeaturesState;
-  readonly tags: TagsState;
-  readonly notesView: NotesViewState;
-  readonly subscription: SubscriptionState;
-  readonly files: FilesState;
+  readonly quickSettingsMenu = new QuickSettingsState()
+  readonly accountMenu: AccountMenuState
+  readonly actionsMenu = new ActionsMenuState()
+  readonly preferences = new PreferencesState()
+  readonly purchaseFlow: PurchaseFlowState
+  readonly noAccountWarning: NoAccountWarningState
+  readonly noteTags: NoteTagsState
+  readonly sync = new SyncState()
+  readonly searchOptions: SearchOptionsState
+  readonly notes: NotesState
+  readonly features: FeaturesState
+  readonly tags: TagsState
+  readonly notesView: NotesViewState
+  readonly subscription: SubscriptionState
+  readonly files: FilesState
 
-  isSessionsModalVisible = false;
+  isSessionsModalVisible = false
 
-  private appEventObserverRemovers: (() => void)[] = [];
+  private appEventObserverRemovers: (() => void)[] = []
 
-  private readonly tagChangedDisposer: IReactionDisposer;
+  private readonly tagChangedDisposer: IReactionDisposer
 
   constructor(application: WebApplication, private bridge: Bridge) {
-    this.application = application;
+    this.application = application
     this.notes = new NotesState(
       application,
       this,
       async () => {
-        await this.notifyEvent(AppStateEvent.ActiveEditorChanged);
+        await this.notifyEvent(AppStateEvent.ActiveEditorChanged)
       },
-      this.appEventObserverRemovers
-    );
-    this.noteTags = new NoteTagsState(
-      application,
-      this,
-      this.appEventObserverRemovers
-    );
-    this.features = new FeaturesState(application);
-    this.tags = new TagsState(
-      application,
       this.appEventObserverRemovers,
-      this.features
-    );
-    this.noAccountWarning = new NoAccountWarningState(
-      application,
-      this.appEventObserverRemovers
-    );
-    this.accountMenu = new AccountMenuState(
-      application,
-      this.appEventObserverRemovers
-    );
-    this.searchOptions = new SearchOptionsState(
-      application,
-      this.appEventObserverRemovers
-    );
-    this.subscription = new SubscriptionState(
-      application,
-      this.appEventObserverRemovers
-    );
-    this.purchaseFlow = new PurchaseFlowState(application);
-    this.notesView = new NotesViewState(
-      application,
-      this,
-      this.appEventObserverRemovers
-    );
-    this.files = new FilesState(application);
-    this.addAppEventObserver();
-    this.streamNotesAndTags();
+    )
+    this.noteTags = new NoteTagsState(application, this, this.appEventObserverRemovers)
+    this.features = new FeaturesState(application)
+    this.tags = new TagsState(application, this.appEventObserverRemovers, this.features)
+    this.noAccountWarning = new NoAccountWarningState(application, this.appEventObserverRemovers)
+    this.accountMenu = new AccountMenuState(application, this.appEventObserverRemovers)
+    this.searchOptions = new SearchOptionsState(application, this.appEventObserverRemovers)
+    this.subscription = new SubscriptionState(application, this.appEventObserverRemovers)
+    this.purchaseFlow = new PurchaseFlowState(application)
+    this.notesView = new NotesViewState(application, this, this.appEventObserverRemovers)
+    this.files = new FilesState(application)
+    this.addAppEventObserver()
+    this.streamNotesAndTags()
     this.onVisibilityChange = () => {
-      const visible = document.visibilityState === 'visible';
-      const event = visible
-        ? AppStateEvent.WindowDidFocus
-        : AppStateEvent.WindowDidBlur;
-      this.notifyEvent(event);
-    };
-    this.registerVisibilityObservers();
+      const visible = document.visibilityState === 'visible'
+      const event = visible ? AppStateEvent.WindowDidFocus : AppStateEvent.WindowDidBlur
+      this.notifyEvent(event).catch(console.error)
+    }
+    this.registerVisibilityObservers()
 
     if (this.bridge.appVersion.includes('-beta')) {
-      this.showBetaWarning = storage.get(StorageKey.ShowBetaWarning) ?? true;
+      this.showBetaWarning = storage.get(StorageKey.ShowBetaWarning) ?? true
     } else {
-      this.showBetaWarning = false;
+      this.showBetaWarning = false
     }
 
     makeObservable(this, {
@@ -171,271 +137,251 @@ export class AppState {
       disableBetaWarning: action,
       openSessionsModal: action,
       closeSessionsModal: action,
-    });
+    })
 
-    this.tagChangedDisposer = this.tagChangedNotifier();
+    this.tagChangedDisposer = this.tagChangedNotifier()
   }
 
   deinit(source: DeinitSource): void {
     if (source === DeinitSource.SignOut) {
-      storage.remove(StorageKey.ShowBetaWarning);
-      this.noAccountWarning.reset();
+      storage.remove(StorageKey.ShowBetaWarning)
+      this.noAccountWarning.reset()
     }
-    (this.application as unknown) = undefined;
-    this.actionsMenu.reset();
-    this.unsubApp?.();
-    this.unsubApp = undefined;
-    this.observers.length = 0;
+    ;(this.application as unknown) = undefined
+    this.actionsMenu.reset()
+    this.unsubApp?.()
+    this.unsubApp = undefined
+    this.observers.length = 0
 
-    this.appEventObserverRemovers.forEach((remover) => remover());
-    this.appEventObserverRemovers.length = 0;
+    this.appEventObserverRemovers.forEach((remover) => remover())
+    this.appEventObserverRemovers.length = 0
 
-    this.features.deinit();
-    (this.features as unknown) = undefined;
+    this.features.deinit()
+    ;(this.features as unknown) = undefined
 
-    this.webAppEventDisposer?.();
-    this.webAppEventDisposer = undefined;
+    this.webAppEventDisposer?.()
+    this.webAppEventDisposer = undefined
+    ;(this.quickSettingsMenu as unknown) = undefined
+    ;(this.accountMenu as unknown) = undefined
+    ;(this.actionsMenu as unknown) = undefined
+    ;(this.preferences as unknown) = undefined
+    ;(this.purchaseFlow as unknown) = undefined
+    ;(this.noteTags as unknown) = undefined
+    ;(this.sync as unknown) = undefined
+    ;(this.searchOptions as unknown) = undefined
+    ;(this.notes as unknown) = undefined
+    ;(this.features as unknown) = undefined
+    ;(this.tags as unknown) = undefined
+    ;(this.notesView as unknown) = undefined
 
-    (this.quickSettingsMenu as unknown) = undefined;
-    (this.accountMenu as unknown) = undefined;
-    (this.actionsMenu as unknown) = undefined;
-    (this.preferences as unknown) = undefined;
-    (this.purchaseFlow as unknown) = undefined;
-    (this.noteTags as unknown) = undefined;
-    (this.sync as unknown) = undefined;
-    (this.searchOptions as unknown) = undefined;
-    (this.notes as unknown) = undefined;
-    (this.features as unknown) = undefined;
-    (this.tags as unknown) = undefined;
-    (this.notesView as unknown) = undefined;
+    document.removeEventListener('visibilitychange', this.onVisibilityChange)
+    this.onVisibilityChange = undefined
 
-    document.removeEventListener('visibilitychange', this.onVisibilityChange);
-    this.onVisibilityChange = undefined;
-
-    this.tagChangedDisposer();
-    (this.tagChangedDisposer as unknown) = undefined;
+    this.tagChangedDisposer()
+    ;(this.tagChangedDisposer as unknown) = undefined
   }
 
   openSessionsModal(): void {
-    this.isSessionsModalVisible = true;
+    this.isSessionsModalVisible = true
   }
 
   closeSessionsModal(): void {
-    this.isSessionsModalVisible = false;
+    this.isSessionsModalVisible = false
   }
 
   disableBetaWarning() {
-    this.showBetaWarning = false;
-    storage.set(StorageKey.ShowBetaWarning, false);
+    this.showBetaWarning = false
+    storage.set(StorageKey.ShowBetaWarning, false)
   }
 
   enableBetaWarning() {
-    this.showBetaWarning = true;
-    storage.set(StorageKey.ShowBetaWarning, true);
+    this.showBetaWarning = true
+    storage.set(StorageKey.ShowBetaWarning, true)
   }
 
   public get version(): string {
-    return this.bridge.appVersion;
+    return this.bridge.appVersion
   }
 
   async openNewNote(title?: string) {
     if (!this.multiEditorSupport) {
-      this.closeActiveNoteController();
+      this.closeActiveNoteController()
     }
 
-    const selectedTag = this.selectedTag;
+    const selectedTag = this.selectedTag
 
     const activeRegularTagUuid =
-      selectedTag && selectedTag instanceof SNTag
-        ? selectedTag.uuid
-        : undefined;
+      selectedTag && selectedTag instanceof SNTag ? selectedTag.uuid : undefined
 
     await this.application.noteControllerGroup.createNoteView(
       undefined,
       title,
-      activeRegularTagUuid
-    );
+      activeRegularTagUuid,
+    )
   }
 
   getActiveNoteController() {
-    return this.application.noteControllerGroup.noteControllers[0];
+    return this.application.noteControllerGroup.noteControllers[0]
   }
 
   getNoteControllers() {
-    return this.application.noteControllerGroup.noteControllers;
+    return this.application.noteControllerGroup.noteControllers
   }
 
   closeNoteController(controller: NoteViewController) {
-    this.application.noteControllerGroup.closeNoteView(controller);
+    this.application.noteControllerGroup.closeNoteView(controller)
   }
 
   closeActiveNoteController() {
-    this.application.noteControllerGroup.closeActiveNoteView();
+    this.application.noteControllerGroup.closeActiveNoteView()
   }
 
   closeAllNoteControllers() {
-    this.application.noteControllerGroup.closeAllNoteViews();
+    this.application.noteControllerGroup.closeAllNoteViews()
   }
 
   noteControllerForNote(uuid: Uuid) {
     for (const controller of this.getNoteControllers()) {
       if (controller.note.uuid === uuid) {
-        return controller;
+        return controller
       }
     }
   }
 
   isGlobalSpellcheckEnabled(): boolean {
-    return this.application.getPreference(PrefKey.EditorSpellcheck, true);
+    return this.application.getPreference(PrefKey.EditorSpellcheck, true)
   }
 
   async toggleGlobalSpellcheck() {
-    const currentValue = this.isGlobalSpellcheckEnabled();
-    return this.application.setPreference(
-      PrefKey.EditorSpellcheck,
-      !currentValue
-    );
+    const currentValue = this.isGlobalSpellcheckEnabled()
+    return this.application.setPreference(PrefKey.EditorSpellcheck, !currentValue)
   }
 
   private tagChangedNotifier(): IReactionDisposer {
     return reaction(
       () => this.tags.selectedUuid,
       () => {
-        const tag = this.tags.selected;
-        const previousTag = this.tags.previouslySelected;
+        const tag = this.tags.selected
+        const previousTag = this.tags.previouslySelected
 
         if (!tag) {
-          return;
+          return
         }
 
         if (this.application.items.isTemplateItem(tag)) {
-          return;
+          return
         }
 
         this.notifyEvent(AppStateEvent.TagChanged, {
           tag,
           previousTag,
-        });
-      }
-    );
+        }).catch(console.error)
+      },
+    )
   }
 
   public get selectedTag(): SNTag | SmartView | undefined {
-    return this.tags.selected;
+    return this.tags.selected
   }
 
   public set selectedTag(tag: SNTag | SmartView | undefined) {
-    this.tags.selected = tag;
+    this.tags.selected = tag
   }
 
   streamNotesAndTags() {
     this.application.streamItems<SNNote | SNTag>(
       [ContentType.Note, ContentType.Tag],
       async ({ changed, inserted, removed, source }) => {
-        if (
-          ![PayloadSource.PreSyncSave, PayloadSource.RemoteRetrieved].includes(
-            source
-          )
-        ) {
-          return;
+        if (![PayloadSource.PreSyncSave, PayloadSource.RemoteRetrieved].includes(source)) {
+          return
         }
 
-        const removedNotes = removed.filter(
-          (i) => i.content_type === ContentType.Note
-        );
+        const removedNotes = removed.filter((i) => i.content_type === ContentType.Note)
 
         for (const removedNote of removedNotes) {
-          const noteController = this.noteControllerForNote(removedNote.uuid);
+          const noteController = this.noteControllerForNote(removedNote.uuid)
           if (noteController) {
-            this.closeNoteController(noteController);
+            this.closeNoteController(noteController)
           }
         }
 
         const changedOrInserted = [...changed, ...inserted].filter(
-          (i) => i.content_type === ContentType.Note
-        );
+          (i) => i.content_type === ContentType.Note,
+        )
 
-        const selectedTag = this.tags.selected;
+        const selectedTag = this.tags.selected
 
         for (const note of changedOrInserted) {
-          const noteController = this.noteControllerForNote(note.uuid);
+          const noteController = this.noteControllerForNote(note.uuid)
           if (!noteController) {
-            continue;
+            continue
           }
 
           const isBrowswingTrashedNotes =
-            selectedTag instanceof SmartView &&
-            selectedTag.uuid === SystemViewId.TrashedNotes;
+            selectedTag instanceof SmartView && selectedTag.uuid === SystemViewId.TrashedNotes
 
           const isBrowsingArchivedNotes =
-            selectedTag instanceof SmartView &&
-            selectedTag.uuid === SystemViewId.ArchivedNotes;
+            selectedTag instanceof SmartView && selectedTag.uuid === SystemViewId.ArchivedNotes
 
-          if (
-            note.trashed &&
-            !isBrowswingTrashedNotes &&
-            !this.searchOptions.includeTrashed
-          ) {
-            this.closeNoteController(noteController);
+          if (note.trashed && !isBrowswingTrashedNotes && !this.searchOptions.includeTrashed) {
+            this.closeNoteController(noteController)
           } else if (
             note.archived &&
             !isBrowsingArchivedNotes &&
             !this.searchOptions.includeArchived &&
             !this.application.getPreference(PrefKey.NotesShowArchived, false)
           ) {
-            this.closeNoteController(noteController);
+            this.closeNoteController(noteController)
           }
         }
-      }
-    );
+      },
+    )
   }
 
   addAppEventObserver() {
     this.unsubApp = this.application.addEventObserver(async (eventName) => {
       switch (eventName) {
         case ApplicationEvent.Started:
-          this.locked = true;
-          break;
+          this.locked = true
+          break
         case ApplicationEvent.Launched:
-          this.locked = false;
+          this.locked = false
           if (window.location.search.includes('purchase=true')) {
-            this.purchaseFlow.openPurchaseFlow();
+            this.purchaseFlow.openPurchaseFlow()
           }
-          break;
+          break
         case ApplicationEvent.SyncStatusChanged:
-          this.sync.update(this.application.sync.getSyncStatus());
-          break;
+          this.sync.update(this.application.sync.getSyncStatus())
+          break
       }
-    });
+    })
   }
 
   isLocked() {
-    return this.locked;
+    return this.locked
   }
 
   registerVisibilityObservers() {
     if (isDesktopApplication()) {
-      this.webAppEventDisposer = this.application.addWebEventObserver(
-        (event) => {
-          if (event === WebAppEvent.DesktopWindowGainedFocus) {
-            this.notifyEvent(AppStateEvent.WindowDidFocus);
-          } else if (event === WebAppEvent.DesktopWindowLostFocus) {
-            this.notifyEvent(AppStateEvent.WindowDidBlur);
-          }
+      this.webAppEventDisposer = this.application.addWebEventObserver((event) => {
+        if (event === WebAppEvent.DesktopWindowGainedFocus) {
+          this.notifyEvent(AppStateEvent.WindowDidFocus).catch(console.error)
+        } else if (event === WebAppEvent.DesktopWindowLostFocus) {
+          this.notifyEvent(AppStateEvent.WindowDidBlur).catch(console.error)
         }
-      );
+      })
     } else {
       /* Tab visibility listener, web only */
-      document.addEventListener('visibilitychange', this.onVisibilityChange);
+      document.addEventListener('visibilitychange', this.onVisibilityChange)
     }
   }
 
   /** @returns  A function that unregisters this observer */
   addObserver(callback: ObserverCallback) {
-    this.observers.push(callback);
+    this.observers.push(callback)
     return () => {
-      removeFromArray(this.observers, callback);
-    };
+      removeFromArray(this.observers, callback)
+    }
   }
 
   async notifyEvent(eventName: AppStateEvent, data?: any) {
@@ -446,37 +392,37 @@ export class AppState {
     return new Promise<void>((resolve) => {
       setTimeout(async () => {
         for (const callback of this.observers) {
-          await callback(eventName, data);
+          await callback(eventName, data)
         }
-        resolve();
-      });
-    });
+        resolve()
+      })
+    })
   }
 
   /** Returns the tags that are referncing this note */
   public getNoteTags(note: SNNote) {
     return this.application.items.itemsReferencingItem(note).filter((ref) => {
-      return ref.content_type === ContentType.Tag;
-    }) as SNTag[];
+      return ref.content_type === ContentType.Tag
+    }) as SNTag[]
   }
 
   panelDidResize(name: string, collapsed: boolean) {
     const data: PanelResizedData = {
       panel: name,
       collapsed: collapsed,
-    };
-    this.notifyEvent(AppStateEvent.PanelResized, data);
+    }
+    this.notifyEvent(AppStateEvent.PanelResized, data).catch(console.error)
   }
 
   editorDidFocus(eventSource: EventSource) {
-    this.notifyEvent(AppStateEvent.EditorFocused, { eventSource: eventSource });
+    this.notifyEvent(AppStateEvent.EditorFocused, { eventSource: eventSource }).catch(console.error)
   }
 
   beganBackupDownload() {
-    this.notifyEvent(AppStateEvent.BeganBackupDownload);
+    this.notifyEvent(AppStateEvent.BeganBackupDownload).catch(console.error)
   }
 
   endedBackupDownload(success: boolean) {
-    this.notifyEvent(AppStateEvent.EndedBackupDownload, { success: success });
+    this.notifyEvent(AppStateEvent.EndedBackupDownload, { success: success }).catch(console.error)
   }
 }

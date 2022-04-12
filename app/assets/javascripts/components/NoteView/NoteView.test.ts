@@ -2,20 +2,20 @@
  * @jest-environment jsdom
  */
 
-import { NoteView } from './NoteView';
+import { NoteView } from './NoteView'
 import {
   ApplicationEvent,
   ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
-} from '@standardnotes/snjs/';
+} from '@standardnotes/snjs/'
 
 describe('editor-view', () => {
-  let ctrl: NoteView;
-  let setShowProtectedWarningSpy: jest.SpyInstance;
+  let ctrl: NoteView
+  let setShowProtectedWarningSpy: jest.SpyInstance
 
   beforeEach(() => {
-    ctrl = new NoteView({} as any);
+    ctrl = new NoteView({} as any)
 
-    setShowProtectedWarningSpy = jest.spyOn(ctrl, 'setShowProtectedOverlay');
+    setShowProtectedWarningSpy = jest.spyOn(ctrl, 'setShowProtectedOverlay')
 
     Object.defineProperties(ctrl, {
       application: {
@@ -25,7 +25,7 @@ describe('editor-view', () => {
               notes: {
                 setShowProtectedWarning: jest.fn(),
               },
-            };
+            }
           },
           hasProtectionSources: () => true,
           authorizeNoteAccess: jest.fn(),
@@ -48,19 +48,19 @@ describe('editor-view', () => {
           clearNoteChangeListener: jest.fn(),
         },
       },
-    });
-  });
+    })
+  })
   beforeEach(() => {
-    jest.useFakeTimers();
-  });
+    jest.useFakeTimers()
+  })
 
   afterEach(() => {
-    jest.useRealTimers();
-  });
+    jest.useRealTimers()
+  })
 
   afterEach(() => {
-    ctrl.deinit();
-  });
+    ctrl.deinit()
+  })
 
   describe('note is protected', () => {
     beforeEach(() => {
@@ -68,76 +68,71 @@ describe('editor-view', () => {
         value: {
           protected: true,
         },
-      });
-    });
+      })
+    })
 
     it("should hide the note if at the time of the session expiration the note wasn't edited for longer than the allowed idle time", async () => {
       jest
         .spyOn(ctrl, 'getSecondsElapsedSinceLastEdit')
         .mockImplementation(
-          () =>
-            ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction +
-            5
-        );
+          () => ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction + 5,
+        )
 
-      await ctrl.onAppEvent(ApplicationEvent.UnprotectedSessionExpired);
+      await ctrl.onAppEvent(ApplicationEvent.UnprotectedSessionExpired)
 
-      expect(setShowProtectedWarningSpy).toHaveBeenCalledWith(true);
-    });
+      expect(setShowProtectedWarningSpy).toHaveBeenCalledWith(true)
+    })
 
     it('should postpone the note hiding by correct time if the time passed after its last modification is less than the allowed idle time', async () => {
       const secondsElapsedSinceLastEdit =
-        ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction -
-        3;
+        ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction - 3
 
       Object.defineProperty(ctrl.note, 'userModifiedDate', {
         value: new Date(Date.now() - secondsElapsedSinceLastEdit * 1000),
         configurable: true,
-      });
+      })
 
-      await ctrl.onAppEvent(ApplicationEvent.UnprotectedSessionExpired);
+      await ctrl.onAppEvent(ApplicationEvent.UnprotectedSessionExpired)
 
       const secondsAfterWhichTheNoteShouldHide =
         ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction -
-        secondsElapsedSinceLastEdit;
-      jest.advanceTimersByTime((secondsAfterWhichTheNoteShouldHide - 1) * 1000);
-      expect(setShowProtectedWarningSpy).not.toHaveBeenCalled();
+        secondsElapsedSinceLastEdit
+      jest.advanceTimersByTime((secondsAfterWhichTheNoteShouldHide - 1) * 1000)
+      expect(setShowProtectedWarningSpy).not.toHaveBeenCalled()
 
-      jest.advanceTimersByTime(1 * 1000);
-      expect(setShowProtectedWarningSpy).toHaveBeenCalledWith(true);
-    });
+      jest.advanceTimersByTime(1 * 1000)
+      expect(setShowProtectedWarningSpy).toHaveBeenCalledWith(true)
+    })
 
     it('should postpone the note hiding by correct time if the user continued editing it even after the protection session has expired', async () => {
-      const secondsElapsedSinceLastModification = 3;
+      const secondsElapsedSinceLastModification = 3
       Object.defineProperty(ctrl.note, 'userModifiedDate', {
-        value: new Date(
-          Date.now() - secondsElapsedSinceLastModification * 1000
-        ),
+        value: new Date(Date.now() - secondsElapsedSinceLastModification * 1000),
         configurable: true,
-      });
+      })
 
-      await ctrl.onAppEvent(ApplicationEvent.UnprotectedSessionExpired);
+      await ctrl.onAppEvent(ApplicationEvent.UnprotectedSessionExpired)
 
       let secondsAfterWhichTheNoteShouldHide =
         ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction -
-        secondsElapsedSinceLastModification;
-      jest.advanceTimersByTime((secondsAfterWhichTheNoteShouldHide - 1) * 1000);
+        secondsElapsedSinceLastModification
+      jest.advanceTimersByTime((secondsAfterWhichTheNoteShouldHide - 1) * 1000)
 
       // A new modification has just happened
       Object.defineProperty(ctrl.note, 'userModifiedDate', {
         value: new Date(),
         configurable: true,
-      });
+      })
 
       secondsAfterWhichTheNoteShouldHide =
-        ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction;
-      jest.advanceTimersByTime((secondsAfterWhichTheNoteShouldHide - 1) * 1000);
-      expect(setShowProtectedWarningSpy).not.toHaveBeenCalled();
+        ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction
+      jest.advanceTimersByTime((secondsAfterWhichTheNoteShouldHide - 1) * 1000)
+      expect(setShowProtectedWarningSpy).not.toHaveBeenCalled()
 
-      jest.advanceTimersByTime(1 * 1000);
-      expect(setShowProtectedWarningSpy).toHaveBeenCalledWith(true);
-    });
-  });
+      jest.advanceTimersByTime(1 * 1000)
+      expect(setShowProtectedWarningSpy).toHaveBeenCalledWith(true)
+    })
+  })
 
   describe('note is unprotected', () => {
     it('should not call any hiding logic', async () => {
@@ -145,51 +140,46 @@ describe('editor-view', () => {
         value: {
           protected: false,
         },
-      });
-      const hideProtectedNoteIfInactiveSpy = jest.spyOn(
-        ctrl,
-        'hideProtectedNoteIfInactive'
-      );
+      })
+      const hideProtectedNoteIfInactiveSpy = jest.spyOn(ctrl, 'hideProtectedNoteIfInactive')
 
-      await ctrl.onAppEvent(ApplicationEvent.UnprotectedSessionExpired);
+      await ctrl.onAppEvent(ApplicationEvent.UnprotectedSessionExpired)
 
-      expect(hideProtectedNoteIfInactiveSpy).not.toHaveBeenCalled();
-    });
-  });
+      expect(hideProtectedNoteIfInactiveSpy).not.toHaveBeenCalled()
+    })
+  })
 
   describe('dismissProtectedWarning', () => {
     describe('the note has protection sources', () => {
       it('should reveal note contents if the authorization has been passed', async () => {
         jest
           .spyOn(ctrl['application'], 'authorizeNoteAccess')
-          .mockImplementation(async () => Promise.resolve(true));
+          .mockImplementation(async () => Promise.resolve(true))
 
-        await ctrl.dismissProtectedWarning();
+        await ctrl.dismissProtectedWarning()
 
-        expect(setShowProtectedWarningSpy).toHaveBeenCalledWith(false);
-      });
+        expect(setShowProtectedWarningSpy).toHaveBeenCalledWith(false)
+      })
 
       it('should not reveal note contents if the authorization has not been passed', async () => {
         jest
           .spyOn(ctrl['application'], 'authorizeNoteAccess')
-          .mockImplementation(async () => Promise.resolve(false));
+          .mockImplementation(async () => Promise.resolve(false))
 
-        await ctrl.dismissProtectedWarning();
+        await ctrl.dismissProtectedWarning()
 
-        expect(setShowProtectedWarningSpy).not.toHaveBeenCalled();
-      });
-    });
+        expect(setShowProtectedWarningSpy).not.toHaveBeenCalled()
+      })
+    })
 
     describe('the note does not have protection sources', () => {
       it('should reveal note contents', async () => {
-        jest
-          .spyOn(ctrl['application'], 'hasProtectionSources')
-          .mockImplementation(() => false);
+        jest.spyOn(ctrl['application'], 'hasProtectionSources').mockImplementation(() => false)
 
-        await ctrl.dismissProtectedWarning();
+        await ctrl.dismissProtectedWarning()
 
-        expect(setShowProtectedWarningSpy).toHaveBeenCalledWith(false);
-      });
-    });
-  });
-});
+        expect(setShowProtectedWarningSpy).toHaveBeenCalledWith(false)
+      })
+    })
+  })
+})

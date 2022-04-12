@@ -1,30 +1,30 @@
-import { Bridge } from './bridge';
-import { Environment } from '@standardnotes/snjs';
+import { Bridge } from './bridge'
+import { Environment } from '@standardnotes/snjs'
 
-const KEYCHAIN_STORAGE_KEY = 'keychain';
+const KEYCHAIN_STORAGE_KEY = 'keychain'
 
 export class BrowserBridge implements Bridge {
   constructor(public appVersion: string) {}
-  environment = Environment.Web;
+  environment = Environment.Web
 
   async getKeychainValue(): Promise<unknown> {
-    const value = localStorage.getItem(KEYCHAIN_STORAGE_KEY);
+    const value = localStorage.getItem(KEYCHAIN_STORAGE_KEY)
     if (value) {
-      return JSON.parse(value);
+      return JSON.parse(value)
     }
   }
 
   async setKeychainValue(value: unknown): Promise<void> {
-    localStorage.setItem(KEYCHAIN_STORAGE_KEY, JSON.stringify(value));
+    localStorage.setItem(KEYCHAIN_STORAGE_KEY, JSON.stringify(value))
   }
 
   async clearKeychainValue(): Promise<void> {
-    localStorage.removeItem(KEYCHAIN_STORAGE_KEY);
+    localStorage.removeItem(KEYCHAIN_STORAGE_KEY)
   }
 
   async localBackupsCount(): Promise<number> {
     /** Browsers cannot save backups, only let you download one */
-    return 0;
+    return 0
   }
 
   /** No-ops */

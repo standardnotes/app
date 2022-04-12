@@ -1,39 +1,38 @@
-import { FunctionComponent } from 'preact';
-import { useState, useRef, useEffect } from 'preact/hooks';
+import { FunctionComponent } from 'preact'
+import { useState, useRef, useEffect } from 'preact/hooks'
 
 export const RenameExtension: FunctionComponent<{
-  extensionName: string;
-  changeName: (newName: string) => void;
+  extensionName: string
+  changeName: (newName: string) => void
 }> = ({ extensionName, changeName }) => {
-  const [isRenaming, setIsRenaming] = useState(false);
-  const [newExtensionName, setNewExtensionName] =
-    useState<string>(extensionName);
+  const [isRenaming, setIsRenaming] = useState(false)
+  const [newExtensionName, setNewExtensionName] = useState<string>(extensionName)
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (isRenaming) {
-      inputRef.current!.focus();
+      inputRef.current?.focus()
     }
-  }, [inputRef, isRenaming]);
+  }, [inputRef, isRenaming])
 
   const startRenaming = () => {
-    setNewExtensionName(extensionName);
-    setIsRenaming(true);
-  };
+    setNewExtensionName(extensionName)
+    setIsRenaming(true)
+  }
 
   const cancelRename = () => {
-    setNewExtensionName(extensionName);
-    setIsRenaming(false);
-  };
+    setNewExtensionName(extensionName)
+    setIsRenaming(false)
+  }
 
   const confirmRename = () => {
     if (!newExtensionName) {
-      return;
+      return
     }
-    changeName(newExtensionName);
-    setIsRenaming(false);
-  };
+    changeName(newExtensionName)
+    setIsRenaming(false)
+  }
 
   return (
     <div className="flex flex-row mr-3 items-center">
@@ -44,9 +43,7 @@ export const RenameExtension: FunctionComponent<{
         className="flex-grow text-base font-bold no-border bg-default px-0 color-text"
         type="text"
         value={newExtensionName}
-        onChange={({ target: input }) =>
-          setNewExtensionName((input as HTMLInputElement)?.value)
-        }
+        onChange={({ target: input }) => setNewExtensionName((input as HTMLInputElement)?.value)}
       />
       <div className="min-w-3" />
       {isRenaming ? (
@@ -65,5 +62,5 @@ export const RenameExtension: FunctionComponent<{
         </a>
       )}
     </div>
-  );
-};
+  )
+}

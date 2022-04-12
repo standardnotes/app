@@ -1,19 +1,15 @@
-import { AppState } from '@/ui_models/app_state';
+import { AppState } from '@/ui_models/app_state'
 
 type Props = {
-  appState: AppState;
-  onViewNote: () => void;
-  hasProtectionSources: boolean;
-};
+  appState: AppState
+  onViewNote: () => void
+  hasProtectionSources: boolean
+}
 
-export function ProtectedNoteOverlay({
-  appState,
-  onViewNote,
-  hasProtectionSources,
-}: Props) {
+export function ProtectedNoteOverlay({ appState, onViewNote, hasProtectionSources }: Props) {
   const instructionText = hasProtectionSources
     ? 'Authenticate to view this note.'
-    : 'Add a passcode or create an account to require authentication to view this note.';
+    : 'Add a passcode or create an account to require authentication to view this note.'
 
   return (
     <div className="flex flex-col items-center justify-center text-center max-w-md">
@@ -24,19 +20,16 @@ export function ProtectedNoteOverlay({
           <button
             className="sn-button small info"
             onClick={() => {
-              appState.accountMenu.setShow(true);
+              appState.accountMenu.setShow(true)
             }}
           >
             Open account menu
           </button>
         )}
-        <button
-          className="sn-button small outlined normal-focus-brightness"
-          onClick={onViewNote}
-        >
+        <button className="sn-button small outlined normal-focus-brightness" onClick={onViewNote}>
           {hasProtectionSources ? 'Authenticate' : 'View Note'}
         </button>
       </div>
     </div>
-  );
+  )
 }

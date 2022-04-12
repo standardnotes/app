@@ -1,16 +1,13 @@
-import { ApplicationEvent } from '@standardnotes/snjs';
-import { makeObservable, observable, action, runInAction } from 'mobx';
-import { WebApplication } from '../application';
+import { ApplicationEvent } from '@standardnotes/snjs'
+import { makeObservable, observable, action, runInAction } from 'mobx'
+import { WebApplication } from '../application'
 
 export class SearchOptionsState {
-  includeProtectedContents = false;
-  includeArchived = false;
-  includeTrashed = false;
+  includeProtectedContents = false
+  includeArchived = false
+  includeTrashed = false
 
-  constructor(
-    private application: WebApplication,
-    appObservers: (() => void)[]
-  ) {
+  constructor(private application: WebApplication, appObservers: (() => void)[]) {
     makeObservable(this, {
       includeProtectedContents: observable,
       includeTrashed: observable,
@@ -20,39 +17,38 @@ export class SearchOptionsState {
       toggleIncludeTrashed: action,
       toggleIncludeProtectedContents: action,
       refreshIncludeProtectedContents: action,
-    });
+    })
 
     appObservers.push(
       this.application.addEventObserver(async () => {
-        this.refreshIncludeProtectedContents();
+        this.refreshIncludeProtectedContents()
       }, ApplicationEvent.UnprotectedSessionBegan),
       this.application.addEventObserver(async () => {
-        this.refreshIncludeProtectedContents();
-      }, ApplicationEvent.UnprotectedSessionExpired)
-    );
+        this.refreshIncludeProtectedContents()
+      }, ApplicationEvent.UnprotectedSessionExpired),
+    )
   }
 
   toggleIncludeArchived = (): void => {
-    this.includeArchived = !this.includeArchived;
-  };
+    this.includeArchived = !this.includeArchived
+  }
 
   toggleIncludeTrashed = (): void => {
-    this.includeTrashed = !this.includeTrashed;
-  };
+    this.includeTrashed = !this.includeTrashed
+  }
 
   refreshIncludeProtectedContents = (): void => {
-    this.includeProtectedContents =
-      this.application.hasUnprotectedAccessSession();
-  };
+    this.includeProtectedContents = this.application.hasUnprotectedAccessSession()
+  }
 
   toggleIncludeProtectedContents = async (): Promise<void> => {
     if (this.includeProtectedContents) {
-      this.includeProtectedContents = false;
+      this.includeProtectedContents = false
     } else {
-      await this.application.authorizeSearchingProtectedNotesText();
+      await this.application.authorizeSearchingProtectedNotesText()
       runInAction(() => {
-        this.refreshIncludeProtectedContents();
-      });
+        this.refreshIncludeProtectedContents()
+      })
     }
-  };
+  }
 }

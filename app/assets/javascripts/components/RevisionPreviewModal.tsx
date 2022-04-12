@@ -1,66 +1,59 @@
-import { WebApplication } from '@/ui_models/application';
+import { WebApplication } from '@/ui_models/application'
 import {
   ContentType,
   PayloadSource,
   SNNote,
   ComponentViewer,
   NoteContent,
-} from '@standardnotes/snjs';
-import { confirmDialog } from '@/services/alertService';
-import { STRING_RESTORE_LOCKED_ATTEMPT } from '@/strings';
-import { PureComponent } from './Abstract/PureComponent';
-import { ComponentView } from './ComponentView';
+} from '@standardnotes/snjs'
+import { confirmDialog } from '@/services/alertService'
+import { STRING_RESTORE_LOCKED_ATTEMPT } from '@/strings'
+import { PureComponent } from './Abstract/PureComponent'
+import { ComponentView } from './ComponentView'
 
 interface Props {
-  application: WebApplication;
-  content: NoteContent;
-  title?: string;
-  uuid: string;
+  application: WebApplication
+  content: NoteContent
+  title?: string
+  uuid: string
 }
 
 type State = {
-  componentViewer?: ComponentViewer;
-};
+  componentViewer?: ComponentViewer
+}
 
 export class RevisionPreviewModal extends PureComponent<Props, State> {
-  private originalNote!: SNNote;
+  private originalNote!: SNNote
 
   constructor(props: Props) {
-    super(props, props.application);
+    super(props, props.application)
   }
 
   async componentDidMount(): Promise<void> {
-    super.componentDidMount();
+    super.componentDidMount()
 
     const templateNote = (await this.application.mutator.createTemplateItem(
       ContentType.Note,
-      this.props.content
-    )) as SNNote;
+      this.props.content,
+    )) as SNNote
 
-    this.originalNote = this.application.items.findItem(
-      this.props.uuid
-    ) as SNNote;
+    this.originalNote = this.application.items.findItem(this.props.uuid) as SNNote
 
-    const component = this.application.componentManager.editorForNote(
-      this.originalNote
-    );
+    const component = this.application.componentManager.editorForNote(this.originalNote)
     if (component) {
-      const componentViewer =
-        this.application.componentManager.createComponentViewer(component);
-      componentViewer.setReadonly(true);
-      componentViewer.lockReadonly = true;
-      componentViewer.overrideContextItem = templateNote;
-      this.setState({ componentViewer });
+      const componentViewer = this.application.componentManager.createComponentViewer(component)
+      componentViewer.setReadonly(true)
+      componentViewer.lockReadonly = true
+      componentViewer.overrideContextItem = templateNote
+      this.setState({ componentViewer })
     }
   }
 
   componentWillUnmount(): void {
     if (this.state.componentViewer) {
-      this.application.componentManager.destroyComponentViewer(
-        this.state.componentViewer
-      );
+      this.application.componentManager.destroyComponentViewer(this.state.componentViewer)
     }
-    super.componentWillUnmount();
+    super.componentWillUnmount()
   }
 
   restore = (asCopy: boolean) => {
@@ -68,45 +61,47 @@ export class RevisionPreviewModal extends PureComponent<Props, State> {
       if (asCopy) {
         await this.application.mutator.duplicateItem(this.originalNote, {
           ...this.props.content,
-          title: this.props.content.title
-            ? this.props.content.title + ' (copy)'
-            : undefined,
-        });
+          title: this.props.content.title ? this.props.content.title + ' (copy)' : undefined,
+        })
       } else {
-        this.application.mutator.changeAndSaveItem(
-          this.originalNote,
-          (mutator) => {
-            mutator.unsafe_setCustomContent(this.props.content);
-          },
-          true,
-          PayloadSource.RemoteActionRetrieved
-        );
+        this.application.mutator
+          .changeAndSaveItem(
+            this.originalNote,
+            (mutator) => {
+              mutator.unsafe_setCustomContent(this.props.content)
+            },
+            true,
+            PayloadSource.RemoteActionRetrieved,
+          )
+          .catch(console.error)
       }
-      this.dismiss();
-    };
+      this.dismiss()
+    }
 
     if (!asCopy) {
       if (this.originalNote.locked) {
-        this.application.alertService.alert(STRING_RESTORE_LOCKED_ATTEMPT);
-        return;
+        this.application.alertService.alert(STRING_RESTORE_LOCKED_ATTEMPT).catch(console.error)
+        return
       }
       confirmDialog({
         text: "Are you sure you want to replace the current note's contents with what you see in this preview?",
         confirmButtonStyle: 'danger',
-      }).then((confirmed) => {
-        if (confirmed) {
-          run();
-        }
-      });
+      })
+        .then((confirmed) => {
+          if (confirmed) {
+            run().catch(console.error)
+          }
+        })
+        .catch(console.error)
     } else {
-      run();
+      run().catch(console.error)
     }
-  };
+  }
 
   dismiss = ($event?: Event) => {
-    $event?.stopPropagation();
-    this.dismissModal();
-  };
+    $event?.stopPropagation()
+    this.dismissModal()
+  }
 
   render() {
     return (
@@ -120,29 +115,18 @@ export class RevisionPreviewModal extends PureComponent<Props, State> {
                   <div>
                     <div className="sk-panel-header-title">Preview</div>
                     {this.props.title && (
-                      <div className="sk-subtitle neutral mt-1">
-                        {this.props.title}
-                      </div>
+                      <div className="sk-subtitle neutral mt-1">{this.props.title}</div>
                     )}
                   </div>
 
                   <div className="sk-horizontal-group">
-                    <a
-                      onClick={() => this.restore(false)}
-                      className="sk-a info close-button"
-                    >
+                    <a onClick={() => this.restore(false)} className="sk-a info close-button">
                       Restore
                     </a>
-                    <a
-                      onClick={() => this.restore(true)}
-                      className="sk-a info close-button"
-                    >
+                    <a onClick={() => this.restore(true)} className="sk-a info close-button">
                       Restore as copy
                     </a>
-                    <a
-                      onClick={this.dismiss}
-                      className="sk-a info close-button"
-                    >
+                    <a onClick={this.dismiss} className="sk-a info close-button">
                       Close
                     </a>
                   </div>
@@ -151,10 +135,7 @@ export class RevisionPreviewModal extends PureComponent<Props, State> {
                 {!this.state.componentViewer && (
                   <div className="sk-panel-content selectable">
                     <div className="sk-h2">{this.props.content.title}</div>
-                    <p
-                      style="white-space: pre-wrap; font-size: 16px;"
-                      className="normal sk-p"
-                    >
+                    <p style="white-space: pre-wrap; font-size: 16px;" className="normal sk-p">
                       {this.props.content.text}
                     </p>
                   </div>
@@ -162,10 +143,7 @@ export class RevisionPreviewModal extends PureComponent<Props, State> {
 
                 {this.state.componentViewer && (
                   <>
-                    <div
-                      style="height: auto; flex-grow: 0"
-                      className="sk-panel-content sk-h2"
-                    >
+                    <div style="height: auto; flex-grow: 0" className="sk-panel-content sk-h2">
                       {this.props.content.title}
                     </div>
                     <div className="component-view">
@@ -182,6 +160,6 @@ export class RevisionPreviewModal extends PureComponent<Props, State> {
           </div>
         </div>
       </div>
-    );
+    )
   }
 }

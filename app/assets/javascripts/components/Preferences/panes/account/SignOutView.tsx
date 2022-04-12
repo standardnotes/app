@@ -1,20 +1,20 @@
-import { Button } from '@/components/Button';
-import { OtherSessionsSignOutContainer } from '@/components/OtherSessionsSignOut';
+import { Button } from '@/components/Button'
+import { OtherSessionsSignOutContainer } from '@/components/OtherSessionsSignOut'
 import {
   PreferencesGroup,
   PreferencesSegment,
   Subtitle,
   Text,
   Title,
-} from '@/components/Preferences/components';
-import { WebApplication } from '@/ui_models/application';
-import { AppState } from '@/ui_models/app_state';
-import { observer } from 'mobx-react-lite';
-import { FunctionComponent } from 'preact';
+} from '@/components/Preferences/components'
+import { WebApplication } from '@/ui_models/application'
+import { AppState } from '@/ui_models/app_state'
+import { observer } from 'mobx-react-lite'
+import { FunctionComponent } from 'preact'
 
 const SignOutView: FunctionComponent<{
-  application: WebApplication;
-  appState: AppState;
+  application: WebApplication
+  appState: AppState
 }> = observer(({ application, appState }) => {
   return (
     <>
@@ -30,7 +30,7 @@ const SignOutView: FunctionComponent<{
               variant="normal"
               label="Sign out other sessions"
               onClick={() => {
-                appState.accountMenu.setOtherSessionsSignOut(true);
+                appState.accountMenu.setOtherSessionsSignOut(true)
               }}
             />
             <Button
@@ -42,57 +42,49 @@ const SignOutView: FunctionComponent<{
         </PreferencesSegment>
         <PreferencesSegment>
           <Subtitle>This workspace</Subtitle>
-          <Text>
-            Remove all data related to the current workspace from the
-            application.
-          </Text>
+          <Text>Remove all data related to the current workspace from the application.</Text>
           <div className="min-h-3" />
           <Button
             dangerStyle={true}
             label="Sign out workspace"
             onClick={() => {
-              appState.accountMenu.setSigningOut(true);
+              appState.accountMenu.setSigningOut(true)
             }}
           />
         </PreferencesSegment>
       </PreferencesGroup>
-      <OtherSessionsSignOutContainer
-        appState={appState}
-        application={application}
-      />
+      <OtherSessionsSignOutContainer appState={appState} application={application} />
     </>
-  );
-});
+  )
+})
 
 const ClearSessionDataView: FunctionComponent<{
-  appState: AppState;
+  appState: AppState
 }> = observer(({ appState }) => {
   return (
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Clear workspace</Title>
-        <Text>
-          Remove all data related to the current workspace from the application.
-        </Text>
+        <Text>Remove all data related to the current workspace from the application.</Text>
         <div className="min-h-3" />
         <Button
           dangerStyle={true}
           label="Clear workspace"
           onClick={() => {
-            appState.accountMenu.setSigningOut(true);
+            appState.accountMenu.setSigningOut(true)
           }}
         />
       </PreferencesSegment>
     </PreferencesGroup>
-  );
-});
+  )
+})
 
 export const SignOutWrapper: FunctionComponent<{
-  application: WebApplication;
-  appState: AppState;
+  application: WebApplication
+  appState: AppState
 }> = observer(({ application, appState }) => {
   if (!application.hasAccount()) {
-    return <ClearSessionDataView appState={appState} />;
+    return <ClearSessionDataView appState={appState} />
   }
-  return <SignOutView appState={appState} application={application} />;
-});
+  return <SignOutView appState={appState} application={application} />
+})

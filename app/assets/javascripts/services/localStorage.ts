@@ -5,20 +5,20 @@ export enum StorageKey {
 }
 
 export type StorageValue = {
-  [StorageKey.AnonymousUserId]: string;
-  [StorageKey.ShowBetaWarning]: boolean;
-  [StorageKey.ShowNoAccountWarning]: boolean;
-};
+  [StorageKey.AnonymousUserId]: string
+  [StorageKey.ShowBetaWarning]: boolean
+  [StorageKey.ShowNoAccountWarning]: boolean
+}
 
 export const storage = {
   get<K extends StorageKey>(key: K): StorageValue[K] | null {
-    const value = localStorage.getItem(key);
-    return value ? JSON.parse(value) : null;
+    const value = localStorage.getItem(key)
+    return value ? JSON.parse(value) : null
   },
   set<K extends StorageKey>(key: K, value: StorageValue[K]): void {
-    localStorage.setItem(key, JSON.stringify(value));
+    localStorage.setItem(key, JSON.stringify(value))
   },
   remove(key: StorageKey): void {
-    localStorage.removeItem(key);
+    localStorage.removeItem(key)
   },
-};
+}

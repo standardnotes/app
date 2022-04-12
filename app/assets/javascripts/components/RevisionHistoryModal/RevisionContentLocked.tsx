@@ -1,34 +1,29 @@
-import { AppState } from '@/ui_models/app_state';
-import { observer } from 'mobx-react-lite';
-import { FunctionComponent } from 'preact';
-import HistoryLockedIllustration from '../../../svg/il-history-locked.svg';
-import { Button } from '../Button';
+import { AppState } from '@/ui_models/app_state'
+import { observer } from 'mobx-react-lite'
+import { FunctionComponent } from 'preact'
+import HistoryLockedIllustration from '../../../svg/il-history-locked.svg'
+import { Button } from '../Button'
 
 const getPlanHistoryDuration = (planName: string | undefined) => {
   switch (planName) {
     case 'Core':
-      return '30 days';
+      return '30 days'
     case 'Plus':
-      return '365 days';
+      return '365 days'
     default:
-      return "the current session's changes";
+      return "the current session's changes"
   }
-};
+}
 
 const getPremiumContentCopy = (planName: string | undefined) => {
-  return `Version history is limited to ${getPlanHistoryDuration(
-    planName
-  )} in the ${planName} plan`;
-};
+  return `Version history is limited to ${getPlanHistoryDuration(planName)} in the ${planName} plan`
+}
 
 export const RevisionContentLocked: FunctionComponent<{
-  appState: AppState;
+  appState: AppState
 }> = observer(({ appState }) => {
-  const {
-    userSubscriptionName,
-    isUserSubscriptionExpired,
-    isUserSubscriptionCanceled,
-  } = appState.subscription;
+  const { userSubscriptionName, isUserSubscriptionExpired, isUserSubscriptionCanceled } =
+    appState.subscription
 
   return (
     <div className="flex w-full h-full items-center justify-center">
@@ -37,11 +32,9 @@ export const RevisionContentLocked: FunctionComponent<{
         <div class="text-lg font-bold mt-2 mb-1">Can't access this version</div>
         <div className="mb-4 color-grey-0 leading-140%">
           {getPremiumContentCopy(
-            !isUserSubscriptionCanceled &&
-              !isUserSubscriptionExpired &&
-              userSubscriptionName
+            !isUserSubscriptionCanceled && !isUserSubscriptionExpired && userSubscriptionName
               ? userSubscriptionName
-              : 'free'
+              : 'free',
           )}
           . Learn more about our other plans to upgrade your history capacity.
         </div>
@@ -50,11 +43,11 @@ export const RevisionContentLocked: FunctionComponent<{
           label="Discover plans"
           onClick={() => {
             if (window.plansUrl) {
-              window.location.assign(window.plansUrl);
+              window.location.assign(window.plansUrl)
             }
           }}
         />
       </div>
     </div>
-  );
-});
+  )
+})

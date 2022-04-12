@@ -1,23 +1,23 @@
-import { FunctionComponent } from 'preact';
-import { observer } from 'mobx-react-lite';
+import { FunctionComponent } from 'preact'
+import { observer } from 'mobx-react-lite'
 
-import QRCode from 'qrcode.react';
+import QRCode from 'qrcode.react'
 
-import { DecoratedInput } from '@/components/DecoratedInput';
-import { Button } from '@/components/Button';
-import { TwoFactorActivation } from './TwoFactorActivation';
-import { AuthAppInfoTooltip } from './AuthAppInfoPopup';
+import { DecoratedInput } from '@/components/DecoratedInput'
+import { Button } from '@/components/Button'
+import { TwoFactorActivation } from './TwoFactorActivation'
+import { AuthAppInfoTooltip } from './AuthAppInfoPopup'
 import {
   ModalDialog,
   ModalDialogButtons,
   ModalDialogDescription,
   ModalDialogLabel,
-} from '@/components/Shared/ModalDialog';
-import { CopyButton } from './CopyButton';
-import { Bullet } from './Bullet';
+} from '@/components/Shared/ModalDialog'
+import { CopyButton } from './CopyButton'
+import { Bullet } from './Bullet'
 
 export const ScanQRCode: FunctionComponent<{
-  activation: TwoFactorActivation;
+  activation: TwoFactorActivation
 }> = observer(({ activation: act }) => {
   return (
     <ModalDialog>
@@ -75,5 +75,5 @@ export const ScanQRCode: FunctionComponent<{
         />
       </ModalDialogButtons>
     </ModalDialog>
-  );
-});
+  )
+})

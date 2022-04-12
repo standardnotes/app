@@ -5,32 +5,32 @@ import {
   ListboxList,
   ListboxOption,
   ListboxPopover,
-} from '@reach/listbox';
-import VisuallyHidden from '@reach/visually-hidden';
-import { FunctionComponent } from 'preact';
-import { Icon } from './Icon';
-import { IconType } from '@standardnotes/snjs';
+} from '@reach/listbox'
+import VisuallyHidden from '@reach/visually-hidden'
+import { FunctionComponent } from 'preact'
+import { Icon } from './Icon'
+import { IconType } from '@standardnotes/snjs'
 
 export type DropdownItem = {
-  icon?: IconType;
-  iconClassName?: string;
-  label: string;
-  value: string;
-  disabled?: boolean;
-};
+  icon?: IconType
+  iconClassName?: string
+  label: string
+  value: string
+  disabled?: boolean
+}
 
 type DropdownProps = {
-  id: string;
-  label: string;
-  items: DropdownItem[];
-  value: string;
-  onChange: (value: string, item: DropdownItem) => void;
-  disabled?: boolean;
-};
+  id: string
+  label: string
+  items: DropdownItem[]
+  value: string
+  onChange: (value: string, item: DropdownItem) => void
+  disabled?: boolean
+}
 
 type ListboxButtonProps = DropdownItem & {
-  isExpanded: boolean;
-};
+  isExpanded: boolean
+}
 
 const CustomDropdownButton: FunctionComponent<ListboxButtonProps> = ({
   label,
@@ -47,15 +47,11 @@ const CustomDropdownButton: FunctionComponent<ListboxButtonProps> = ({
       ) : null}
       <div className="dropdown-selected-label">{label}</div>
     </div>
-    <ListboxArrow
-      className={`sn-dropdown-arrow ${
-        isExpanded ? 'sn-dropdown-arrow-flipped' : ''
-      }`}
-    >
+    <ListboxArrow className={`sn-dropdown-arrow ${isExpanded ? 'sn-dropdown-arrow-flipped' : ''}`}>
       <Icon type="menu-arrow-down" className="sn-icon--small color-grey-1" />
     </ListboxArrow>
   </>
-);
+)
 
 export const Dropdown: FunctionComponent<DropdownProps> = ({
   id,
@@ -65,15 +61,13 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({
   onChange,
   disabled,
 }) => {
-  const labelId = `${id}-label`;
+  const labelId = `${id}-label`
 
   const handleChange = (value: string) => {
-    const selectedItem = items.find(
-      (item) => item.value === value
-    ) as DropdownItem;
+    const selectedItem = items.find((item) => item.value === value) as DropdownItem
 
-    onChange(value, selectedItem);
-  };
+    onChange(value, selectedItem)
+  }
 
   return (
     <>
@@ -87,16 +81,16 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({
         <ListboxButton
           className="sn-dropdown-button"
           children={({ value, label, isExpanded }) => {
-            const current = items.find((item) => item.value === value);
-            const icon = current ? current?.icon : null;
-            const iconClassName = current ? current?.iconClassName : null;
+            const current = items.find((item) => item.value === value)
+            const icon = current ? current?.icon : null
+            const iconClassName = current ? current?.iconClassName : null
             return CustomDropdownButton({
               value: value ? value : label.toLowerCase(),
               label,
               isExpanded,
               ...(icon ? { icon } : null),
               ...(iconClassName ? { iconClassName } : null),
-            });
+            })
           }}
         />
         <ListboxPopover className="sn-dropdown sn-dropdown-popover">
@@ -125,5 +119,5 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({
         </ListboxPopover>
       </ListboxInput>
     </>
-  );
-};
+  )
+}

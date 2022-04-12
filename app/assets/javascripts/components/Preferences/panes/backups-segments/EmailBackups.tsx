@@ -1,148 +1,123 @@
-import {
-  convertStringifiedBooleanToBoolean,
-  isDesktopApplication,
-} from '@/utils';
-import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/strings';
-import { useCallback, useEffect, useState } from 'preact/hooks';
-import { WebApplication } from '@/ui_models/application';
-import { observer } from 'mobx-react-lite';
-import {
-  PreferencesGroup,
-  PreferencesSegment,
-  Subtitle,
-  Text,
-  Title,
-} from '../../components';
-import { Dropdown, DropdownItem } from '@/components/Dropdown';
-import { Switch } from '@/components/Switch';
-import { HorizontalSeparator } from '@/components/Shared/HorizontalSeparator';
+import { convertStringifiedBooleanToBoolean, isDesktopApplication } from '@/utils'
+import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/strings'
+import { useCallback, useEffect, useState } from 'preact/hooks'
+import { WebApplication } from '@/ui_models/application'
+import { observer } from 'mobx-react-lite'
+import { PreferencesGroup, PreferencesSegment, Subtitle, Text, Title } from '../../components'
+import { Dropdown, DropdownItem } from '@/components/Dropdown'
+import { Switch } from '@/components/Switch'
+import { HorizontalSeparator } from '@/components/Shared/HorizontalSeparator'
 import {
   FeatureStatus,
   FeatureIdentifier,
   EmailBackupFrequency,
   MuteFailedBackupsEmailsOption,
   SettingName,
-} from '@standardnotes/snjs';
+} from '@standardnotes/snjs'
 
 type Props = {
-  application: WebApplication;
-};
+  application: WebApplication
+}
 
 export const EmailBackups = observer(({ application }: Props) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
   const [emailFrequency, setEmailFrequency] = useState<EmailBackupFrequency>(
-    EmailBackupFrequency.Disabled
-  );
-  const [emailFrequencyOptions, setEmailFrequencyOptions] = useState<
-    DropdownItem[]
-  >([]);
-  const [isFailedBackupEmailMuted, setIsFailedBackupEmailMuted] =
-    useState(true);
-  const [isEntitledToEmailBackups, setIsEntitledToEmailBackups] =
-    useState(false);
+    EmailBackupFrequency.Disabled,
+  )
+  const [emailFrequencyOptions, setEmailFrequencyOptions] = useState<DropdownItem[]>([])
+  const [isFailedBackupEmailMuted, setIsFailedBackupEmailMuted] = useState(true)
+  const [isEntitledToEmailBackups, setIsEntitledToEmailBackups] = useState(false)
 
   const loadEmailFrequencySetting = useCallback(async () => {
     if (!application.getUser()) {
-      return;
+      return
     }
-    setIsLoading(true);
+    setIsLoading(true)
 
     try {
-      const userSettings = await application.settings.listSettings();
+      const userSettings = await application.settings.listSettings()
       setEmailFrequency(
         userSettings.getSettingValue<EmailBackupFrequency>(
           SettingName.EmailBackupFrequency,
-          EmailBackupFrequency.Disabled
-        )
-      );
+          EmailBackupFrequency.Disabled,
+        ),
+      )
       setIsFailedBackupEmailMuted(
         convertStringifiedBooleanToBoolean(
           userSettings.getSettingValue<MuteFailedBackupsEmailsOption>(
             SettingName.MuteFailedBackupsEmails,
-            MuteFailedBackupsEmailsOption.NotMuted
-          )
-        )
-      );
+            MuteFailedBackupsEmailsOption.NotMuted,
+          ),
+        ),
+      )
     } catch (error) {
-      console.error(error);
+      console.error(error)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  }, [application]);
+  }, [application])
 
   useEffect(() => {
     const emailBackupsFeatureStatus = application.features.getFeatureStatus(
-      FeatureIdentifier.DailyEmailBackup
-    );
-    setIsEntitledToEmailBackups(
-      emailBackupsFeatureStatus === FeatureStatus.Entitled
-    );
+      FeatureIdentifier.DailyEmailBackup,
+    )
+    setIsEntitledToEmailBackups(emailBackupsFeatureStatus === FeatureStatus.Entitled)
 
-    const frequencyOptions = [];
+    const frequencyOptions = []
     for (const frequency in EmailBackupFrequency) {
-      const frequencyValue =
-        EmailBackupFrequency[frequency as keyof typeof EmailBackupFrequency];
+      const frequencyValue = EmailBackupFrequency[frequency as keyof typeof EmailBackupFrequency]
       frequencyOptions.push({
         value: frequencyValue,
-        label:
-          application.settings.getEmailBackupFrequencyOptionLabel(
-            frequencyValue
-          ),
-      });
+        label: application.settings.getEmailBackupFrequencyOptionLabel(frequencyValue),
+      })
     }
-    setEmailFrequencyOptions(frequencyOptions);
+    setEmailFrequencyOptions(frequencyOptions)
 
-    loadEmailFrequencySetting();
-  }, [application, loadEmailFrequencySetting]);
+    loadEmailFrequencySetting().catch(console.error)
+  }, [application, loadEmailFrequencySetting])
 
-  const updateSetting = async (
-    settingName: SettingName,
-    payload: string
-  ): Promise<boolean> => {
+  const updateSetting = async (settingName: SettingName, payload: string): Promise<boolean> => {
     try {
-      await application.settings.updateSetting(settingName, payload, false);
-      return true;
+      await application.settings.updateSetting(settingName, payload, false)
+      return true
     } catch (e) {
-      application.alertService.alert(STRING_FAILED_TO_UPDATE_USER_SETTING);
-      return false;
+      application.alertService.alert(STRING_FAILED_TO_UPDATE_USER_SETTING).catch(console.error)
+      return false
     }
-  };
+  }
 
   const updateEmailFrequency = async (frequency: EmailBackupFrequency) => {
-    const previousFrequency = emailFrequency;
-    setEmailFrequency(frequency);
+    const previousFrequency = emailFrequency
+    setEmailFrequency(frequency)
 
-    const updateResult = await updateSetting(
-      SettingName.EmailBackupFrequency,
-      frequency
-    );
+    const updateResult = await updateSetting(SettingName.EmailBackupFrequency, frequency)
     if (!updateResult) {
-      setEmailFrequency(previousFrequency);
+      setEmailFrequency(previousFrequency)
     }
-  };
+  }
 
   const toggleMuteFailedBackupEmails = async () => {
     if (!isEntitledToEmailBackups) {
-      return;
+      return
     }
-    const previousValue = isFailedBackupEmailMuted;
-    setIsFailedBackupEmailMuted(!isFailedBackupEmailMuted);
+    const previousValue = isFailedBackupEmailMuted
+    setIsFailedBackupEmailMuted(!isFailedBackupEmailMuted)
 
     const updateResult = await updateSetting(
       SettingName.MuteFailedBackupsEmails,
-      `${!isFailedBackupEmailMuted}`
-    );
+      `${!isFailedBackupEmailMuted}`,
+    )
     if (!updateResult) {
-      setIsFailedBackupEmailMuted(previousValue);
+      setIsFailedBackupEmailMuted(previousValue)
     }
-  };
+  }
 
   const handleEmailFrequencyChange = (item: string) => {
     if (!isEntitledToEmailBackups) {
-      return;
+      return
     }
-    updateEmailFrequency(item as EmailBackupFrequency);
-  };
+    updateEmailFrequency(item as EmailBackupFrequency).catch(console.error)
+  }
 
   return (
     <PreferencesGroup>
@@ -152,8 +127,8 @@ export const EmailBackups = observer(({ application }: Props) => {
           <>
             <Text>
               A <span className={'font-bold'}>Plus</span> or{' '}
-              <span className={'font-bold'}>Pro</span> subscription plan is
-              required to enable Email Backups.{' '}
+              <span className={'font-bold'}>Pro</span> subscription plan is required to enable Email
+              Backups.{' '}
               <a target="_blank" href="https://standardnotes.com/features">
                 Learn more
               </a>
@@ -162,17 +137,11 @@ export const EmailBackups = observer(({ application }: Props) => {
             <HorizontalSeparator classes="mt-3 mb-3" />
           </>
         )}
-        <div
-          className={
-            isEntitledToEmailBackups
-              ? ''
-              : 'faded cursor-default pointer-events-none'
-          }
-        >
+        <div className={isEntitledToEmailBackups ? '' : 'faded cursor-default pointer-events-none'}>
           {!isDesktopApplication() && (
             <Text className="mb-3">
-              Daily encrypted email backups of your entire data set delivered
-              directly to your inbox.
+              Daily encrypted email backups of your entire data set delivered directly to your
+              inbox.
             </Text>
           )}
           <Subtitle>Email frequency</Subtitle>
@@ -195,9 +164,7 @@ export const EmailBackups = observer(({ application }: Props) => {
           <Subtitle>Email preferences</Subtitle>
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
-              <Text>
-                Receive a notification email if an email backup fails.
-              </Text>
+              <Text>Receive a notification email if an email backup fails.</Text>
             </div>
             {isLoading ? (
               <div className={'sk-spinner info small'} />
@@ -212,5 +179,5 @@ export const EmailBackups = observer(({ application }: Props) => {
         </div>
       </PreferencesSegment>
     </PreferencesGroup>
-  );
-});
+  )
+})

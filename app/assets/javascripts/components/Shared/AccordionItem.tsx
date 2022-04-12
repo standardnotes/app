@@ -1,27 +1,23 @@
-import { FunctionalComponent } from 'preact';
-import { useRef, useState } from 'preact/hooks';
-import { ArrowDownCheckmarkIcon } from '@standardnotes/stylekit';
-import { Title } from '@/components/Preferences/components';
+import { FunctionalComponent } from 'preact'
+import { useRef, useState } from 'preact/hooks'
+import { ArrowDownCheckmarkIcon } from '@standardnotes/stylekit'
+import { Title } from '@/components/Preferences/components'
 
 type Props = {
-  title: string | JSX.Element;
-  className?: string;
-};
+  title: string | JSX.Element
+  className?: string
+}
 
-export const AccordionItem: FunctionalComponent<Props> = ({
-  title,
-  className = '',
-  children,
-}) => {
-  const elementRef = useRef<HTMLDivElement>(null);
-  const [isExpanded, setIsExpanded] = useState(false);
+export const AccordionItem: FunctionalComponent<Props> = ({ title, className = '', children }) => {
+  const elementRef = useRef<HTMLDivElement>(null)
+  const [isExpanded, setIsExpanded] = useState(false)
 
   return (
     <div className={className}>
       <div
         className={'relative flex cursor-pointer hover:underline'}
         onClick={() => {
-          setIsExpanded(!isExpanded);
+          setIsExpanded(!isExpanded)
         }}
       >
         <Title>{title}</Title>
@@ -40,5 +36,5 @@ export const AccordionItem: FunctionalComponent<Props> = ({
         {children}
       </div>
     </div>
-  );
-};
+  )
+}

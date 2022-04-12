@@ -1,32 +1,32 @@
-import { AccountMenuPane } from '@/components/AccountMenu';
-import { Button } from '@/components/Button';
+import { AccountMenuPane } from '@/components/AccountMenu'
+import { Button } from '@/components/Button'
 import {
   PreferencesGroup,
   PreferencesSegment,
   Text,
   Title,
-} from '@/components/Preferences/components';
-import { WebApplication } from '@/ui_models/application';
-import { AppState } from '@/ui_models/app_state';
-import { observer } from 'mobx-react-lite';
-import { FunctionComponent } from 'preact';
-import { AccountIllustration } from '@standardnotes/stylekit';
+} from '@/components/Preferences/components'
+import { WebApplication } from '@/ui_models/application'
+import { AppState } from '@/ui_models/app_state'
+import { observer } from 'mobx-react-lite'
+import { FunctionComponent } from 'preact'
+import { AccountIllustration } from '@standardnotes/stylekit'
 
 export const Authentication: FunctionComponent<{
-  application: WebApplication;
-  appState: AppState;
+  application: WebApplication
+  appState: AppState
 }> = observer(({ appState }) => {
   const clickSignIn = () => {
-    appState.preferences.closePreferences();
-    appState.accountMenu.setCurrentPane(AccountMenuPane.SignIn);
-    appState.accountMenu.setShow(true);
-  };
+    appState.preferences.closePreferences()
+    appState.accountMenu.setCurrentPane(AccountMenuPane.SignIn)
+    appState.accountMenu.setShow(true)
+  }
 
   const clickRegister = () => {
-    appState.preferences.closePreferences();
-    appState.accountMenu.setCurrentPane(AccountMenuPane.Register);
-    appState.accountMenu.setShow(true);
-  };
+    appState.preferences.closePreferences()
+    appState.accountMenu.setCurrentPane(AccountMenuPane.Register)
+    appState.accountMenu.setShow(true)
+  }
 
   return (
     <PreferencesGroup>
@@ -35,8 +35,8 @@ export const Authentication: FunctionComponent<{
           <AccountIllustration className="mb-3" />
           <Title>You're not signed in</Title>
           <Text className="text-center mb-3">
-            Sign in to sync your notes and preferences across all your devices
-            and enable end-to-end encryption.
+            Sign in to sync your notes and preferences across all your devices and enable end-to-end
+            encryption.
           </Text>
           <Button
             variant="primary"
@@ -56,5 +56,5 @@ export const Authentication: FunctionComponent<{
         </div>
       </PreferencesSegment>
     </PreferencesGroup>
-  );
-});
+  )
+})

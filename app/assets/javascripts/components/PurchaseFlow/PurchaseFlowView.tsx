@@ -1,20 +1,20 @@
-import { WebApplication } from '@/ui_models/application';
-import { AppState } from '@/ui_models/app_state';
-import { PurchaseFlowPane } from '@/ui_models/app_state/purchase_flow_state';
-import { observer } from 'mobx-react-lite';
-import { FunctionComponent } from 'preact';
-import { CreateAccount } from './panes/CreateAccount';
-import { SignIn } from './panes/SignIn';
-import { SNLogoFull } from '@standardnotes/stylekit';
+import { WebApplication } from '@/ui_models/application'
+import { AppState } from '@/ui_models/app_state'
+import { PurchaseFlowPane } from '@/ui_models/app_state/purchase_flow_state'
+import { observer } from 'mobx-react-lite'
+import { FunctionComponent } from 'preact'
+import { CreateAccount } from './panes/CreateAccount'
+import { SignIn } from './panes/SignIn'
+import { SNLogoFull } from '@standardnotes/stylekit'
 
 type PaneSelectorProps = {
-  currentPane: PurchaseFlowPane;
-} & PurchaseFlowViewProps;
+  currentPane: PurchaseFlowPane
+} & PurchaseFlowViewProps
 
 type PurchaseFlowViewProps = {
-  appState: AppState;
-  application: WebApplication;
-};
+  appState: AppState
+  application: WebApplication
+}
 
 const PurchaseFlowPaneSelector: FunctionComponent<PaneSelectorProps> = ({
   currentPane,
@@ -23,15 +23,15 @@ const PurchaseFlowPaneSelector: FunctionComponent<PaneSelectorProps> = ({
 }) => {
   switch (currentPane) {
     case PurchaseFlowPane.CreateAccount:
-      return <CreateAccount appState={appState} application={application} />;
+      return <CreateAccount appState={appState} application={application} />
     case PurchaseFlowPane.SignIn:
-      return <SignIn appState={appState} application={application} />;
+      return <SignIn appState={appState} application={application} />
   }
-};
+}
 
-export const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> =
-  observer(({ appState, application }) => {
-    const { currentPane } = appState.purchaseFlow;
+export const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> = observer(
+  ({ appState, application }) => {
+    const { currentPane } = appState.purchaseFlow
 
     return (
       <div className="flex items-center justify-center overflow-hidden h-full w-full absolute top-left-0 z-index-purchase-flow bg-grey-super-light">
@@ -64,5 +64,6 @@ export const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> =
           </div>
         </div>
       </div>
-    );
-  });
+    )
+  },
+)

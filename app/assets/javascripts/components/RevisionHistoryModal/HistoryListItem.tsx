@@ -1,10 +1,10 @@
-import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/constants';
-import { FunctionComponent } from 'preact';
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/constants'
+import { FunctionComponent } from 'preact'
 
 type HistoryListItemProps = {
-  isSelected: boolean;
-  onClick: () => void;
-};
+  isSelected: boolean
+  onClick: () => void
+}
 
 export const HistoryListItem: FunctionComponent<HistoryListItemProps> = ({
   children,
@@ -21,11 +21,9 @@ export const HistoryListItem: FunctionComponent<HistoryListItemProps> = ({
       data-selected={isSelected}
     >
       <div
-        className={`pseudo-radio-btn ${
-          isSelected ? 'pseudo-radio-btn--checked' : ''
-        } mr-2`}
+        className={`pseudo-radio-btn ${isSelected ? 'pseudo-radio-btn--checked' : ''} mr-2`}
       ></div>
       {children}
     </button>
-  );
-};
+  )
+}

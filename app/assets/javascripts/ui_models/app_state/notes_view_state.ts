@@ -11,48 +11,41 @@ import {
   SNTag,
   SystemViewId,
   UuidString,
-} from '@standardnotes/snjs';
-import {
-  action,
-  autorun,
-  computed,
-  makeObservable,
-  observable,
-  reaction,
-} from 'mobx';
-import { AppState, AppStateEvent } from '.';
-import { WebApplication } from '../application';
+} from '@standardnotes/snjs'
+import { action, autorun, computed, makeObservable, observable, reaction } from 'mobx'
+import { AppState, AppStateEvent } from '.'
+import { WebApplication } from '../application'
 
-const MIN_NOTE_CELL_HEIGHT = 51.0;
-const DEFAULT_LIST_NUM_NOTES = 20;
-const ELEMENT_ID_SEARCH_BAR = 'search-bar';
-const ELEMENT_ID_SCROLL_CONTAINER = 'notes-scrollable';
+const MIN_NOTE_CELL_HEIGHT = 51.0
+const DEFAULT_LIST_NUM_NOTES = 20
+const ELEMENT_ID_SEARCH_BAR = 'search-bar'
+const ELEMENT_ID_SCROLL_CONTAINER = 'notes-scrollable'
 
 export type DisplayOptions = {
-  sortBy: CollectionSortProperty;
-  sortReverse: boolean;
-  hidePinned: boolean;
-  showArchived: boolean;
-  showTrashed: boolean;
-  hideProtected: boolean;
-  hideTags: boolean;
-  hideNotePreview: boolean;
-  hideDate: boolean;
-  hideEditorIcon: boolean;
-};
+  sortBy: CollectionSortProperty
+  sortReverse: boolean
+  hidePinned: boolean
+  showArchived: boolean
+  showTrashed: boolean
+  hideProtected: boolean
+  hideTags: boolean
+  hideNotePreview: boolean
+  hideDate: boolean
+  hideEditorIcon: boolean
+}
 
 export class NotesViewState {
-  completedFullSync = false;
-  noteFilterText = '';
-  notes: SNNote[] = [];
-  notesToDisplay = 0;
-  pageSize = 0;
-  panelTitle = 'All Notes';
-  panelWidth = 0;
-  renderedNotes: SNNote[] = [];
-  searchSubmitted = false;
-  selectedNotes: Record<UuidString, SNNote> = {};
-  showDisplayOptionsMenu = false;
+  completedFullSync = false
+  noteFilterText = ''
+  notes: SNNote[] = []
+  notesToDisplay = 0
+  pageSize = 0
+  panelTitle = 'All Notes'
+  panelWidth = 0
+  renderedNotes: SNNote[] = []
+  searchSubmitted = false
+  selectedNotes: Record<UuidString, SNNote> = {}
+  showDisplayOptionsMenu = false
   displayOptions = {
     sortBy: CollectionSort.CreatedAt,
     sortReverse: false,
@@ -64,69 +57,66 @@ export class NotesViewState {
     hideDate: false,
     hideNotePreview: false,
     hideEditorIcon: false,
-  };
+  }
 
   constructor(
     private application: WebApplication,
     private appState: AppState,
-    appObservers: (() => void)[]
+    appObservers: (() => void)[],
   ) {
-    this.resetPagination();
+    this.resetPagination()
 
     appObservers.push(
       application.streamItems<SNNote>(ContentType.Note, () => {
-        this.reloadNotes();
+        this.reloadNotes()
 
-        const activeNote = this.appState.notes.activeNoteController?.note;
+        const activeNote = this.appState.notes.activeNoteController?.note
 
         if (this.application.getAppState().notes.selectedNotesCount < 2) {
           if (activeNote) {
             const browsingTrashedNotes =
               this.appState.selectedTag instanceof SmartView &&
-              this.appState.selectedTag?.uuid === SystemViewId.TrashedNotes;
+              this.appState.selectedTag?.uuid === SystemViewId.TrashedNotes
 
             if (
               activeNote.trashed &&
               !browsingTrashedNotes &&
               !this.appState?.searchOptions.includeTrashed
             ) {
-              this.selectNextOrCreateNew();
+              this.selectNextOrCreateNew()
             } else if (!this.selectedNotes[activeNote.uuid]) {
-              this.selectNote(activeNote);
+              this.selectNote(activeNote).catch(console.error)
             }
           } else {
-            this.selectFirstNote();
+            this.selectFirstNote()
           }
         }
       }),
 
-      application.streamItems<SNTag>(
-        [ContentType.Tag],
-        async ({ changed, inserted }) => {
-          const tags = [...changed, ...inserted];
-          /** A tag could have changed its relationships, so we need to reload the filter */
-          this.reloadNotesDisplayOptions();
-          this.reloadNotes();
+      application.streamItems<SNTag>([ContentType.Tag], async ({ changed, inserted }) => {
+        const tags = [...changed, ...inserted]
+        /** A tag could have changed its relationships, so we need to reload the filter */
+        this.reloadNotesDisplayOptions()
+        this.reloadNotes()
 
-          if (
-            this.appState.selectedTag &&
-            findInArray(tags, 'uuid', this.appState.selectedTag.uuid)
-          ) {
-            /** Tag title could have changed */
-            this.reloadPanelTitle();
-          }
+        if (
+          this.appState.selectedTag &&
+          findInArray(tags, 'uuid', this.appState.selectedTag.uuid)
+        ) {
+          /** Tag title could have changed */
+          this.reloadPanelTitle()
         }
-      ),
+      }),
       application.addEventObserver(async () => {
-        this.reloadPreferences();
+        this.reloadPreferences()
       }, ApplicationEvent.PreferencesChanged),
       application.addEventObserver(async () => {
-        this.appState.closeAllNoteControllers();
-        this.selectFirstNote();
-        this.setCompletedFullSync(false);
+        this.appState.closeAllNoteControllers()
+        this.selectFirstNote()
+        this.setCompletedFullSync(false)
       }, ApplicationEvent.SignedIn),
       application.addEventObserver(async () => {
-        this.reloadNotes();
+        this.reloadNotes()
         if (
           this.notes.length === 0 &&
           this.appState.selectedTag instanceof SmartView &&
@@ -134,13 +124,13 @@ export class NotesViewState {
           this.noteFilterText === '' &&
           !this.appState.notes.activeNoteController
         ) {
-          this.createPlaceholderNote();
+          this.createPlaceholderNote()?.catch(console.error)
         }
-        this.setCompletedFullSync(true);
+        this.setCompletedFullSync(true)
       }, ApplicationEvent.CompletedFullSync),
       autorun(() => {
         if (appState.notes.selectedNotes) {
-          this.syncSelectedNotes();
+          this.syncSelectedNotes()
         }
       }),
       reaction(
@@ -150,20 +140,20 @@ export class NotesViewState {
           appState.searchOptions.includeTrashed,
         ],
         () => {
-          this.reloadNotesDisplayOptions();
-          this.reloadNotes();
-        }
+          this.reloadNotesDisplayOptions()
+          this.reloadNotes()
+        },
       ),
       appState.addObserver(async (eventName) => {
         if (eventName === AppStateEvent.TagChanged) {
-          this.handleTagChange();
+          this.handleTagChange()
         } else if (eventName === AppStateEvent.ActiveEditorChanged) {
-          this.handleEditorChange();
+          this.handleEditorChange().catch(console.error)
         } else if (eventName === AppStateEvent.EditorFocused) {
-          this.setShowDisplayOptionsMenu(false);
+          this.setShowDisplayOptionsMenu(false)
         }
-      })
-    );
+      }),
+    )
 
     makeObservable(this, {
       completedFullSync: observable,
@@ -188,71 +178,71 @@ export class NotesViewState {
       handleFilterTextChanged: action,
 
       optionsSubtitle: computed,
-    });
+    })
 
     window.onresize = () => {
-      this.resetPagination(true);
-    };
+      this.resetPagination(true)
+    }
   }
 
   setCompletedFullSync = (completed: boolean) => {
-    this.completedFullSync = completed;
-  };
+    this.completedFullSync = completed
+  }
 
   setShowDisplayOptionsMenu = (enabled: boolean) => {
-    this.showDisplayOptionsMenu = enabled;
-  };
+    this.showDisplayOptionsMenu = enabled
+  }
 
   get searchBarElement() {
-    return document.getElementById(ELEMENT_ID_SEARCH_BAR);
+    return document.getElementById(ELEMENT_ID_SEARCH_BAR)
   }
 
   get isFiltering(): boolean {
-    return !!this.noteFilterText && this.noteFilterText.length > 0;
+    return !!this.noteFilterText && this.noteFilterText.length > 0
   }
 
   get activeEditorNote() {
-    return this.appState.notes.activeNoteController?.note;
+    return this.appState.notes.activeNoteController?.note
   }
 
   reloadPanelTitle = () => {
-    let title = this.panelTitle;
+    let title = this.panelTitle
     if (this.isFiltering) {
-      const resultCount = this.notes.length;
-      title = `${resultCount} search results`;
+      const resultCount = this.notes.length
+      title = `${resultCount} search results`
     } else if (this.appState.selectedTag) {
-      title = `${this.appState.selectedTag.title}`;
+      title = `${this.appState.selectedTag.title}`
     }
-    this.panelTitle = title;
-  };
+    this.panelTitle = title
+  }
 
   reloadNotes = () => {
-    const tag = this.appState.selectedTag;
+    const tag = this.appState.selectedTag
     if (!tag) {
-      return;
+      return
     }
-    const notes = this.application.items.getDisplayableNotes();
-    const renderedNotes = notes.slice(0, this.notesToDisplay);
+    const notes = this.application.items.getDisplayableNotes()
+    const renderedNotes = notes.slice(0, this.notesToDisplay)
 
-    this.notes = notes;
-    this.renderedNotes = renderedNotes;
-    this.reloadPanelTitle();
-  };
+    this.notes = notes
+    this.renderedNotes = renderedNotes
+    this.reloadPanelTitle()
+  }
 
   reloadNotesDisplayOptions = () => {
-    const tag = this.appState.selectedTag;
+    const tag = this.appState.selectedTag
 
-    const searchText = this.noteFilterText.toLowerCase();
-    const isSearching = searchText.length;
-    let includeArchived: boolean;
-    let includeTrashed: boolean;
+    const searchText = this.noteFilterText.toLowerCase()
+    const isSearching = searchText.length
+    let includeArchived: boolean
+    let includeTrashed: boolean
 
     if (isSearching) {
-      includeArchived = this.appState.searchOptions.includeArchived;
-      includeTrashed = this.appState.searchOptions.includeTrashed;
+      includeArchived = this.appState.searchOptions.includeArchived
+      includeTrashed = this.appState.searchOptions.includeTrashed
     } else {
-      includeArchived = this.displayOptions.showArchived ?? false;
-      includeTrashed = this.displayOptions.showTrashed ?? false;
+      includeArchived = this.displayOptions.showArchived ?? false
+      includeTrashed = this.displayOptions.showTrashed ?? false
     }
 
     const criteria = NotesDisplayCriteria.Create({
@@ -266,64 +256,48 @@ export class NotesViewState {
       includeProtected: !this.displayOptions.hideProtected,
       searchQuery: {
         query: searchText,
-        includeProtectedNoteText:
-          this.appState.searchOptions.includeProtectedContents,
+        includeProtectedNoteText: this.appState.searchOptions.includeProtectedContents,
       },
-    });
-    this.application.items.setNotesDisplayCriteria(criteria);
-  };
+    })
+    this.application.items.setNotesDisplayCriteria(criteria)
+  }
 
   reloadPreferences = () => {
-    const freshDisplayOptions = {} as DisplayOptions;
-    const currentSortBy = this.displayOptions.sortBy;
-    let sortBy = this.application.getPreference(
-      PrefKey.SortNotesBy,
-      CollectionSort.CreatedAt
-    );
-    if (
-      sortBy === CollectionSort.UpdatedAt ||
-      (sortBy as string) === 'client_updated_at'
-    ) {
+    const freshDisplayOptions = {} as DisplayOptions
+    const currentSortBy = this.displayOptions.sortBy
+    let sortBy = this.application.getPreference(PrefKey.SortNotesBy, CollectionSort.CreatedAt)
+    if (sortBy === CollectionSort.UpdatedAt || (sortBy as string) === 'client_updated_at') {
       /** Use UserUpdatedAt instead */
-      sortBy = CollectionSort.UpdatedAt;
+      sortBy = CollectionSort.UpdatedAt
     }
-    freshDisplayOptions.sortBy = sortBy;
+    freshDisplayOptions.sortBy = sortBy
     freshDisplayOptions.sortReverse = this.application.getPreference(
       PrefKey.SortNotesReverse,
-      false
-    );
+      false,
+    )
     freshDisplayOptions.showArchived = this.application.getPreference(
       PrefKey.NotesShowArchived,
-      false
-    );
+      false,
+    )
     freshDisplayOptions.showTrashed = this.application.getPreference(
       PrefKey.NotesShowTrashed,
-      false
-    ) as boolean;
-    freshDisplayOptions.hidePinned = this.application.getPreference(
-      PrefKey.NotesHidePinned,
-      false
-    );
+      false,
+    ) as boolean
+    freshDisplayOptions.hidePinned = this.application.getPreference(PrefKey.NotesHidePinned, false)
     freshDisplayOptions.hideProtected = this.application.getPreference(
       PrefKey.NotesHideProtected,
-      false
-    );
+      false,
+    )
     freshDisplayOptions.hideNotePreview = this.application.getPreference(
       PrefKey.NotesHideNotePreview,
-      false
-    );
-    freshDisplayOptions.hideDate = this.application.getPreference(
-      PrefKey.NotesHideDate,
-      false
-    );
-    freshDisplayOptions.hideTags = this.application.getPreference(
-      PrefKey.NotesHideTags,
-      true
-    );
+      false,
+    )
+    freshDisplayOptions.hideDate = this.application.getPreference(PrefKey.NotesHideDate, false)
+    freshDisplayOptions.hideTags = this.application.getPreference(PrefKey.NotesHideTags, true)
     freshDisplayOptions.hideEditorIcon = this.application.getPreference(
       PrefKey.NotesHideEditorIcon,
-      false
-    );
+      false,
+    )
     const displayOptionsChanged =
       freshDisplayOptions.sortBy !== this.displayOptions.sortBy ||
       freshDisplayOptions.sortReverse !== this.displayOptions.sortReverse ||
@@ -331,221 +305,217 @@ export class NotesViewState {
       freshDisplayOptions.showArchived !== this.displayOptions.showArchived ||
       freshDisplayOptions.showTrashed !== this.displayOptions.showTrashed ||
       freshDisplayOptions.hideProtected !== this.displayOptions.hideProtected ||
-      freshDisplayOptions.hideEditorIcon !==
-        this.displayOptions.hideEditorIcon ||
-      freshDisplayOptions.hideTags !== this.displayOptions.hideTags;
-    this.displayOptions = freshDisplayOptions;
+      freshDisplayOptions.hideEditorIcon !== this.displayOptions.hideEditorIcon ||
+      freshDisplayOptions.hideTags !== this.displayOptions.hideTags
+    this.displayOptions = freshDisplayOptions
     if (displayOptionsChanged) {
-      this.reloadNotesDisplayOptions();
+      this.reloadNotesDisplayOptions()
     }
 
-    this.reloadNotes();
+    this.reloadNotes()
 
-    const width = this.application.getPreference(PrefKey.NotesPanelWidth);
+    const width = this.application.getPreference(PrefKey.NotesPanelWidth)
     if (width) {
-      this.panelWidth = width;
+      this.panelWidth = width
     }
 
     if (freshDisplayOptions.sortBy !== currentSortBy) {
-      this.selectFirstNote();
+      this.selectFirstNote()
     }
-  };
+  }
 
   createNewNote = async () => {
-    this.appState.notes.unselectNotes();
-    let title = `Note ${this.notes.length + 1}`;
+    this.appState.notes.unselectNotes()
+    let title = `Note ${this.notes.length + 1}`
     if (this.isFiltering) {
-      title = this.noteFilterText;
+      title = this.noteFilterText
     }
 
-    await this.appState.openNewNote(title);
+    await this.appState.openNewNote(title)
 
-    this.reloadNotes();
-    this.appState.noteTags.reloadTags();
-  };
+    this.reloadNotes()
+    this.appState.noteTags.reloadTags()
+  }
 
   createPlaceholderNote = () => {
-    const selectedTag = this.appState.selectedTag;
+    const selectedTag = this.appState.selectedTag
     if (
       selectedTag &&
       selectedTag instanceof SmartView &&
       selectedTag.uuid !== SystemViewId.AllNotes
     ) {
-      return;
+      return
     }
-    return this.createNewNote();
-  };
+    return this.createNewNote()
+  }
 
   get optionsSubtitle(): string {
-    let base = '';
+    let base = ''
     if (this.displayOptions.sortBy === CollectionSort.CreatedAt) {
-      base += ' Date Added';
+      base += ' Date Added'
     } else if (this.displayOptions.sortBy === CollectionSort.UpdatedAt) {
-      base += ' Date Modified';
+      base += ' Date Modified'
     } else if (this.displayOptions.sortBy === CollectionSort.Title) {
-      base += ' Title';
+      base += ' Title'
     }
     if (this.displayOptions.showArchived) {
-      base += ' | + Archived';
+      base += ' | + Archived'
     }
     if (this.displayOptions.showTrashed) {
-      base += ' | + Trashed';
+      base += ' | + Trashed'
     }
     if (this.displayOptions.hidePinned) {
-      base += ' | – Pinned';
+      base += ' | – Pinned'
     }
     if (this.displayOptions.hideProtected) {
-      base += ' | – Protected';
+      base += ' | – Protected'
     }
     if (this.displayOptions.sortReverse) {
-      base += ' | Reversed';
+      base += ' | Reversed'
     }
-    return base;
+    return base
   }
 
   paginate = () => {
-    this.notesToDisplay += this.pageSize;
-    this.reloadNotes();
+    this.notesToDisplay += this.pageSize
+    this.reloadNotes()
     if (this.searchSubmitted) {
-      this.application.getDesktopService().searchText(this.noteFilterText);
+      this.application.getDesktopService().searchText(this.noteFilterText)
     }
-  };
+  }
 
   resetPagination = (keepCurrentIfLarger = false) => {
-    const clientHeight = document.documentElement.clientHeight;
-    this.pageSize = Math.ceil(clientHeight / MIN_NOTE_CELL_HEIGHT);
+    const clientHeight = document.documentElement.clientHeight
+    this.pageSize = Math.ceil(clientHeight / MIN_NOTE_CELL_HEIGHT)
     if (this.pageSize === 0) {
-      this.pageSize = DEFAULT_LIST_NUM_NOTES;
+      this.pageSize = DEFAULT_LIST_NUM_NOTES
     }
     if (keepCurrentIfLarger && this.notesToDisplay > this.pageSize) {
-      return;
+      return
     }
-    this.notesToDisplay = this.pageSize;
-  };
+    this.notesToDisplay = this.pageSize
+  }
 
   getFirstNonProtectedNote = () => {
-    return this.notes.find((note) => !note.protected);
-  };
+    return this.notes.find((note) => !note.protected)
+  }
 
   get notesListScrollContainer() {
-    return document.getElementById(ELEMENT_ID_SCROLL_CONTAINER);
+    return document.getElementById(ELEMENT_ID_SCROLL_CONTAINER)
   }
 
   selectNote = async (
     note: SNNote,
     userTriggered?: boolean,
-    scrollIntoView = true
+    scrollIntoView = true,
   ): Promise<void> => {
-    await this.appState.notes.selectNote(note.uuid, userTriggered);
+    await this.appState.notes.selectNote(note.uuid, userTriggered)
     if (scrollIntoView) {
-      const noteElement = document.getElementById(`note-${note.uuid}`);
+      const noteElement = document.getElementById(`note-${note.uuid}`)
       noteElement?.scrollIntoView({
         behavior: 'smooth',
-      });
+      })
     }
-  };
+  }
 
   selectFirstNote = () => {
-    const note = this.getFirstNonProtectedNote();
+    const note = this.getFirstNonProtectedNote()
     if (note) {
-      this.selectNote(note, false, false);
-      this.resetScrollPosition();
+      this.selectNote(note, false, false).catch(console.error)
+      this.resetScrollPosition()
     }
-  };
+  }
 
   selectNextNote = () => {
-    const displayableNotes = this.notes;
+    const displayableNotes = this.notes
     const currentIndex = displayableNotes.findIndex((candidate) => {
-      return candidate.uuid === this.activeEditorNote?.uuid;
-    });
+      return candidate.uuid === this.activeEditorNote?.uuid
+    })
     if (currentIndex + 1 < displayableNotes.length) {
-      const nextNote = displayableNotes[currentIndex + 1];
-      this.selectNote(nextNote);
-      const nextNoteElement = document.getElementById(`note-${nextNote.uuid}`);
-      nextNoteElement?.focus();
+      const nextNote = displayableNotes[currentIndex + 1]
+      this.selectNote(nextNote).catch(console.error)
+      const nextNoteElement = document.getElementById(`note-${nextNote.uuid}`)
+      nextNoteElement?.focus()
     }
-  };
+  }
 
   selectNextOrCreateNew = () => {
-    const note = this.getFirstNonProtectedNote();
+    const note = this.getFirstNonProtectedNote()
     if (note) {
-      this.selectNote(note, false, false);
+      this.selectNote(note, false, false).catch(console.error)
     } else {
-      this.appState.closeActiveNoteController();
+      this.appState.closeActiveNoteController()
     }
-  };
+  }
 
   selectPreviousNote = () => {
-    const displayableNotes = this.notes;
+    const displayableNotes = this.notes
     if (this.activeEditorNote) {
-      const currentIndex = displayableNotes.indexOf(this.activeEditorNote);
+      const currentIndex = displayableNotes.indexOf(this.activeEditorNote)
       if (currentIndex - 1 >= 0) {
-        const previousNote = displayableNotes[currentIndex - 1];
-        this.selectNote(previousNote);
-        const previousNoteElement = document.getElementById(
-          `note-${previousNote.uuid}`
-        );
-        previousNoteElement?.focus();
-        return true;
+        const previousNote = displayableNotes[currentIndex - 1]
+        this.selectNote(previousNote).catch(console.error)
+        const previousNoteElement = document.getElementById(`note-${previousNote.uuid}`)
+        previousNoteElement?.focus()
+        return true
       } else {
-        return false;
+        return false
       }
     }
-  };
+  }
 
   setNoteFilterText = (text: string) => {
-    this.noteFilterText = text;
-  };
+    this.noteFilterText = text
+  }
 
   syncSelectedNotes = () => {
-    this.selectedNotes = this.appState.notes.selectedNotes;
-  };
+    this.selectedNotes = this.appState.notes.selectedNotes
+  }
 
   handleEditorChange = async () => {
-    const activeNote = this.appState.getActiveNoteController()?.note;
+    const activeNote = this.appState.getActiveNoteController()?.note
     if (activeNote && activeNote.conflictOf) {
-      this.application.mutator.changeAndSaveItem(activeNote, (mutator) => {
-        mutator.conflictOf = undefined;
-      });
+      this.application.mutator
+        .changeAndSaveItem(activeNote, (mutator) => {
+          mutator.conflictOf = undefined
+        })
+        .catch(console.error)
     }
     if (this.isFiltering) {
-      this.application.getDesktopService().searchText(this.noteFilterText);
+      this.application.getDesktopService().searchText(this.noteFilterText)
     }
-  };
+  }
 
   resetScrollPosition = () => {
     if (this.notesListScrollContainer) {
-      this.notesListScrollContainer.scrollTop = 0;
-      this.notesListScrollContainer.scrollLeft = 0;
+      this.notesListScrollContainer.scrollTop = 0
+      this.notesListScrollContainer.scrollLeft = 0
     }
-  };
+  }
 
   handleTagChange = () => {
-    this.resetScrollPosition();
-    this.setShowDisplayOptionsMenu(false);
-    this.setNoteFilterText('');
-    this.application.getDesktopService().searchText();
-    this.resetPagination();
+    this.resetScrollPosition()
+    this.setShowDisplayOptionsMenu(false)
+    this.setNoteFilterText('')
+    this.application.getDesktopService().searchText()
+    this.resetPagination()
 
     /* Capture db load state before beginning reloadNotes,
       since this status may change during reload */
-    const dbLoaded = this.application.isDatabaseLoaded();
-    this.reloadNotesDisplayOptions();
-    this.reloadNotes();
+    const dbLoaded = this.application.isDatabaseLoaded()
+    this.reloadNotesDisplayOptions()
+    this.reloadNotes()
 
-    const hasSomeNotes = this.notes.length > 0;
+    const hasSomeNotes = this.notes.length > 0
 
     if (hasSomeNotes) {
-      this.selectFirstNote();
+      this.selectFirstNote()
     } else if (dbLoaded) {
-      if (
-        this.activeEditorNote &&
-        !this.notes.includes(this.activeEditorNote)
-      ) {
-        this.appState.closeActiveNoteController();
+      if (this.activeEditorNote && !this.notes.includes(this.activeEditorNote)) {
+        this.appState.closeActiveNoteController()
       }
     }
-  };
+  }
 
   onFilterEnter = () => {
     /**
@@ -553,22 +523,22 @@ export class NotesViewState {
      * input to lose focus. We wait until user explicity hits
      * enter before highlighting desktop search results.
      */
-    this.searchSubmitted = true;
-    this.application.getDesktopService().searchText(this.noteFilterText);
-  };
+    this.searchSubmitted = true
+    this.application.getDesktopService().searchText(this.noteFilterText)
+  }
 
   handleFilterTextChanged = () => {
     if (this.searchSubmitted) {
-      this.searchSubmitted = false;
+      this.searchSubmitted = false
     }
-    this.reloadNotesDisplayOptions();
-    this.reloadNotes();
-  };
+    this.reloadNotesDisplayOptions()
+    this.reloadNotes()
+  }
 
   clearFilterText = () => {
-    this.setNoteFilterText('');
-    this.onFilterEnter();
-    this.handleFilterTextChanged();
-    this.resetPagination();
-  };
+    this.setNoteFilterText('')
+    this.onFilterEnter()
+    this.handleFilterTextChanged()
+    this.resetPagination()
+  }
 }

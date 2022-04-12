@@ -1,109 +1,96 @@
-import { AppState } from '@/ui_models/app_state';
+import { AppState } from '@/ui_models/app_state'
 import {
   SNApplication,
   SessionStrings,
   UuidString,
   isNullOrUndefined,
   RemoteSession,
-} from '@standardnotes/snjs';
-import { FunctionComponent } from 'preact';
-import { useState, useEffect, useRef, useMemo } from 'preact/hooks';
-import { Dialog } from '@reach/dialog';
-import { Alert } from '@reach/alert';
-import {
-  AlertDialog,
-  AlertDialogDescription,
-  AlertDialogLabel,
-} from '@reach/alert-dialog';
-import { WebApplication } from '@/ui_models/application';
-import { observer } from 'mobx-react-lite';
+} from '@standardnotes/snjs'
+import { FunctionComponent } from 'preact'
+import { useState, useEffect, useRef, useMemo } from 'preact/hooks'
+import { Dialog } from '@reach/dialog'
+import { Alert } from '@reach/alert'
+import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
+import { WebApplication } from '@/ui_models/application'
+import { observer } from 'mobx-react-lite'
 
 type Session = RemoteSession & {
-  revoking?: true;
-};
+  revoking?: true
+}
 
 function useSessions(
-  application: SNApplication
-): [
-  Session[],
-  () => void,
-  boolean,
-  (uuid: UuidString) => Promise<void>,
-  string
-] {
-  const [sessions, setSessions] = useState<Session[]>([]);
-  const [lastRefreshDate, setLastRefreshDate] = useState(Date.now());
-  const [refreshing, setRefreshing] = useState(true);
-  const [errorMessage, setErrorMessage] = useState('');
+  application: SNApplication,
+): [Session[], () => void, boolean, (uuid: UuidString) => Promise<void>, string] {
+  const [sessions, setSessions] = useState<Session[]>([])
+  const [lastRefreshDate, setLastRefreshDate] = useState(Date.now())
+  const [refreshing, setRefreshing] = useState(true)
+  const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
-    (async () => {
-      setRefreshing(true);
-      const response = await application.getSessions();
+    ;(async () => {
+      setRefreshing(true)
+      const response = await application.getSessions()
       if ('error' in response || isNullOrUndefined(response.data)) {
         if (response.error?.message) {
-          setErrorMessage(response.error.message);
+          setErrorMessage(response.error.message)
         } else {
-          setErrorMessage('An unknown error occured while loading sessions.');
+          setErrorMessage('An unknown error occured while loading sessions.')
         }
       } else {
-        const sessions = response.data as RemoteSession[];
-        setSessions(sessions);
-        setErrorMessage('');
+        const sessions = response.data as RemoteSession[]
+        setSessions(sessions)
+        setErrorMessage('')
       }
-      setRefreshing(false);
-    })();
-  }, [application, lastRefreshDate]);
+      setRefreshing(false)
+    })().catch(console.error)
+  }, [application, lastRefreshDate])
 
   function refresh() {
-    setLastRefreshDate(Date.now());
+    setLastRefreshDate(Date.now())
   }
 
   async function revokeSession(uuid: UuidString) {
-    const sessionsBeforeRevoke = sessions;
+    const sessionsBeforeRevoke = sessions
 
-    const responsePromise = application.revokeSession(uuid);
+    const responsePromise = application.revokeSession(uuid)
 
-    const sessionsDuringRevoke = sessions.slice();
-    const toRemoveIndex = sessions.findIndex(
-      (session) => session.uuid === uuid
-    );
+    const sessionsDuringRevoke = sessions.slice()
+    const toRemoveIndex = sessions.findIndex((session) => session.uuid === uuid)
     sessionsDuringRevoke[toRemoveIndex] = {
       ...sessionsDuringRevoke[toRemoveIndex],
       revoking: true,
-    };
-    setSessions(sessionsDuringRevoke);
+    }
+    setSessions(sessionsDuringRevoke)
 
-    const response = await responsePromise;
+    const response = await responsePromise
     if (isNullOrUndefined(response)) {
-      setSessions(sessionsBeforeRevoke);
+      setSessions(sessionsBeforeRevoke)
     } else if ('error' in response) {
       if (response.error?.message) {
-        setErrorMessage(response.error?.message);
+        setErrorMessage(response.error?.message)
       } else {
-        setErrorMessage('An unknown error occured while revoking the session.');
+        setErrorMessage('An unknown error occured while revoking the session.')
       }
-      setSessions(sessionsBeforeRevoke);
+      setSessions(sessionsBeforeRevoke)
     } else {
-      setSessions(sessions.filter((session) => session.uuid !== uuid));
+      setSessions(sessions.filter((session) => session.uuid !== uuid))
     }
   }
 
-  return [sessions, refresh, refreshing, revokeSession, errorMessage];
+  return [sessions, refresh, refreshing, revokeSession, errorMessage]
 }
 
 const SessionsModalContent: FunctionComponent<{
-  appState: AppState;
-  application: SNApplication;
+  appState: AppState
+  application: SNApplication
 }> = ({ appState, application }) => {
-  const close = () => appState.closeSessionsModal();
+  const close = () => appState.closeSessionsModal()
 
-  const [sessions, refresh, refreshing, revokeSession, errorMessage] =
-    useSessions(application);
+  const [sessions, refresh, refreshing, revokeSession, errorMessage] = useSessions(application)
 
-  const [confirmRevokingSessionUuid, setRevokingSessionUuid] = useState('');
-  const closeRevokeSessionAlert = () => setRevokingSessionUuid('');
-  const cancelRevokeRef = useRef<HTMLButtonElement>(null);
+  const [confirmRevokingSessionUuid, setRevokingSessionUuid] = useState('')
+  const closeRevokeSessionAlert = () => setRevokingSessionUuid('')
+  const cancelRevokeRef = useRef<HTMLButtonElement>(null)
 
   const formatter = useMemo(
     () =>
@@ -115,8 +102,8 @@ const SessionsModalContent: FunctionComponent<{
         hour: 'numeric',
         minute: 'numeric',
       }),
-    []
-  );
+    [],
+  )
 
   return (
     <>
@@ -127,11 +114,7 @@ const SessionsModalContent: FunctionComponent<{
               <div class="sk-panel-header">
                 <div class="sk-panel-header-title">Active Sessions</div>
                 <div className="buttons">
-                  <button
-                    class="sk-a close-button info"
-                    disabled={refreshing}
-                    onClick={refresh}
-                  >
+                  <button class="sk-a close-button info" disabled={refreshing} onClick={refresh}>
                     Refresh
                   </button>
                   <button class="sk-a close-button info" onClick={close}>
@@ -143,15 +126,11 @@ const SessionsModalContent: FunctionComponent<{
                 {refreshing ? (
                   <>
                     <div class="sk-spinner small info"></div>
-                    <h2 className="sk-p sessions-modal-refreshing">
-                      Loading sessions
-                    </h2>
+                    <h2 className="sk-p sessions-modal-refreshing">Loading sessions</h2>
                   </>
                 ) : (
                   <>
-                    {errorMessage && (
-                      <Alert className="sk-p bold">{errorMessage}</Alert>
-                    )}
+                    {errorMessage && <Alert className="sk-p bold">{errorMessage}</Alert>}
                     {sessions.length > 0 && (
                       <ul>
                         {sessions.map((session) => (
@@ -161,16 +140,11 @@ const SessionsModalContent: FunctionComponent<{
                               <span className="info bold">Current session</span>
                             ) : (
                               <>
-                                <p>
-                                  Signed in on{' '}
-                                  {formatter.format(session.updated_at)}
-                                </p>
+                                <p>Signed in on {formatter.format(session.updated_at)}</p>
                                 <button
                                   className="sn-button small danger sk-label"
                                   disabled={session.revoking}
-                                  onClick={() =>
-                                    setRevokingSessionUuid(session.uuid)
-                                  }
+                                  onClick={() => setRevokingSessionUuid(session.uuid)}
                                 >
                                   <span>Revoke</span>
                                 </button>
@@ -190,7 +164,7 @@ const SessionsModalContent: FunctionComponent<{
       {confirmRevokingSessionUuid && (
         <AlertDialog
           onDismiss={() => {
-            setRevokingSessionUuid('');
+            setRevokingSessionUuid('')
           }}
           leastDestructiveRef={cancelRevokeRef}
         >
@@ -216,8 +190,8 @@ const SessionsModalContent: FunctionComponent<{
                       <button
                         className="sn-button small danger sk-label"
                         onClick={() => {
-                          closeRevokeSessionAlert();
-                          revokeSession(confirmRevokingSessionUuid);
+                          closeRevokeSessionAlert()
+                          revokeSession(confirmRevokingSessionUuid).catch(console.error)
                         }}
                       >
                         <span>{SessionStrings.RevokeConfirmButton}</span>
@@ -231,18 +205,16 @@ const SessionsModalContent: FunctionComponent<{
         </AlertDialog>
       )}
     </>
-  );
-};
+  )
+}
 
 export const SessionsModal: FunctionComponent<{
-  appState: AppState;
-  application: WebApplication;
+  appState: AppState
+  application: WebApplication
 }> = observer(({ appState, application }) => {
   if (appState.isSessionsModalVisible) {
-    return (
-      <SessionsModalContent application={application} appState={appState} />
-    );
+    return <SessionsModalContent application={application} appState={appState} />
   } else {
-    return null;
+    return null
   }
-});
+})

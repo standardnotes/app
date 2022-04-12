@@ -1,96 +1,85 @@
-import { WebApplication } from '@/ui_models/application';
-import { AppState } from '@/ui_models/app_state';
-import { observer } from 'mobx-react-lite';
-import { FunctionComponent } from 'preact';
-import { useEffect, useState } from 'preact/hooks';
-import { Checkbox } from '../Checkbox';
-import { DecoratedInput } from '../DecoratedInput';
-import { Icon } from '../Icon';
+import { WebApplication } from '@/ui_models/application'
+import { AppState } from '@/ui_models/app_state'
+import { observer } from 'mobx-react-lite'
+import { FunctionComponent } from 'preact'
+import { useEffect, useState } from 'preact/hooks'
+import { Checkbox } from '../Checkbox'
+import { DecoratedInput } from '../DecoratedInput'
+import { Icon } from '../Icon'
 
 type Props = {
-  application: WebApplication;
-  appState: AppState;
-  disabled?: boolean;
-  onVaultChange?: (isVault: boolean, vaultedEmail?: string) => void;
-  onStrictSignInChange?: (isStrictSignIn: boolean) => void;
-};
+  application: WebApplication
+  appState: AppState
+  disabled?: boolean
+  onVaultChange?: (isVault: boolean, vaultedEmail?: string) => void
+  onStrictSignInChange?: (isStrictSignIn: boolean) => void
+}
 
 export const AdvancedOptions: FunctionComponent<Props> = observer(
-  ({
-    appState,
-    application,
-    disabled = false,
-    onVaultChange,
-    onStrictSignInChange,
-    children,
-  }) => {
-    const { server, setServer, enableServerOption, setEnableServerOption } =
-      appState.accountMenu;
-    const [showAdvanced, setShowAdvanced] = useState(false);
+  ({ appState, application, disabled = false, onVaultChange, onStrictSignInChange, children }) => {
+    const { server, setServer, enableServerOption, setEnableServerOption } = appState.accountMenu
+    const [showAdvanced, setShowAdvanced] = useState(false)
 
-    const [isVault, setIsVault] = useState(false);
-    const [vaultName, setVaultName] = useState('');
-    const [vaultUserphrase, setVaultUserphrase] = useState('');
+    const [isVault, setIsVault] = useState(false)
+    const [vaultName, setVaultName] = useState('')
+    const [vaultUserphrase, setVaultUserphrase] = useState('')
 
-    const [isStrictSignin, setIsStrictSignin] = useState(false);
+    const [isStrictSignin, setIsStrictSignin] = useState(false)
 
     useEffect(() => {
       const recomputeVaultedEmail = async () => {
-        const vaultedEmail = await application.vaultToEmail(
-          vaultName,
-          vaultUserphrase
-        );
+        const vaultedEmail = await application.vaultToEmail(vaultName, vaultUserphrase)
 
         if (!vaultedEmail) {
           if (vaultName?.length > 0 && vaultUserphrase?.length > 0) {
-            application.alertService.alert('Unable to compute vault name.');
+            application.alertService.alert('Unable to compute vault name.').catch(console.error)
           }
-          return;
+          return
         }
-        onVaultChange?.(true, vaultedEmail);
-      };
+        onVaultChange?.(true, vaultedEmail)
+      }
 
       if (vaultName && vaultUserphrase) {
-        recomputeVaultedEmail();
+        recomputeVaultedEmail().catch(console.error)
       }
-    }, [vaultName, vaultUserphrase, application, onVaultChange]);
+    }, [vaultName, vaultUserphrase, application, onVaultChange])
 
     useEffect(() => {
-      onVaultChange?.(isVault);
-    }, [isVault, onVaultChange]);
+      onVaultChange?.(isVault)
+    }, [isVault, onVaultChange])
 
     const handleIsVaultChange = () => {
-      setIsVault(!isVault);
-    };
+      setIsVault(!isVault)
+    }
 
     const handleVaultNameChange = (name: string) => {
-      setVaultName(name);
-    };
+      setVaultName(name)
+    }
 
     const handleVaultUserphraseChange = (userphrase: string) => {
-      setVaultUserphrase(userphrase);
-    };
+      setVaultUserphrase(userphrase)
+    }
 
     const handleServerOptionChange = (e: Event) => {
       if (e.target instanceof HTMLInputElement) {
-        setEnableServerOption(e.target.checked);
+        setEnableServerOption(e.target.checked)
       }
-    };
+    }
 
     const handleSyncServerChange = (server: string) => {
-      setServer(server);
-      application.setCustomHost(server);
-    };
+      setServer(server)
+      application.setCustomHost(server).catch(console.error)
+    }
 
     const handleStrictSigninChange = () => {
-      const newValue = !isStrictSignin;
-      setIsStrictSignin(newValue);
-      onStrictSignInChange?.(newValue);
-    };
+      const newValue = !isStrictSignin
+      setIsStrictSignin(newValue)
+      onStrictSignInChange?.(newValue)
+    }
 
     const toggleShowAdvanced = () => {
-      setShowAdvanced(!showAdvanced);
-    };
+      setShowAdvanced(!showAdvanced)
+    }
 
     return (
       <>
@@ -130,7 +119,7 @@ export const AdvancedOptions: FunctionComponent<Props> = observer(
             {appState.enableUnfinishedFeatures && isVault && (
               <>
                 <DecoratedInput
-                  className={`mb-2`}
+                  className={'mb-2'}
                   left={[<Icon type="folder" className="color-neutral" />]}
                   type="text"
                   placeholder="Vault name"
@@ -139,7 +128,7 @@ export const AdvancedOptions: FunctionComponent<Props> = observer(
                   disabled={disabled}
                 />
                 <DecoratedInput
-                  className={`mb-2`}
+                  className={'mb-2'}
                   left={[<Icon type="server" className="color-neutral" />]}
                   type="text"
                   placeholder="Vault userphrase"
@@ -188,6 +177,6 @@ export const AdvancedOptions: FunctionComponent<Props> = observer(
           </div>
         ) : null}
       </>
-    );
-  }
-);
+    )
+  },
+)

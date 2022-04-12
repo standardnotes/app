@@ -1,30 +1,30 @@
-import { removeFromArray } from '@standardnotes/snjs';
+import { removeFromArray } from '@standardnotes/snjs'
 
-type StatusCallback = (string: string) => void;
+type StatusCallback = (string: string) => void
 
 export class StatusManager {
-  private _message = '';
-  private observers: StatusCallback[] = [];
+  private _message = ''
+  private observers: StatusCallback[] = []
 
   get message(): string {
-    return this._message;
+    return this._message
   }
 
   setMessage(message: string) {
-    this._message = message;
-    this.notifyObservers();
+    this._message = message
+    this.notifyObservers()
   }
 
   onStatusChange(callback: StatusCallback) {
-    this.observers.push(callback);
+    this.observers.push(callback)
     return () => {
-      removeFromArray(this.observers, callback);
-    };
+      removeFromArray(this.observers, callback)
+    }
   }
 
   private notifyObservers() {
     for (const observer of this.observers) {
-      observer(this._message);
+      observer(this._message)
     }
   }
 }

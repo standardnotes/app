@@ -1,6 +1,6 @@
-import { MfaProvider, UserProvider } from '../../providers';
+import { MfaProvider, UserProvider } from '../../providers'
 
 export interface MfaProps {
-  userProvider: UserProvider;
-  mfaProvider: MfaProvider;
+  userProvider: UserProvider
+  mfaProvider: MfaProvider
 }

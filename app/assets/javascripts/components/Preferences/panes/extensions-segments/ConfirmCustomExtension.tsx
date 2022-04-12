@@ -1,11 +1,11 @@
-import { DisplayStringForContentType, SNComponent } from '@standardnotes/snjs';
-import { Button } from '@/components/Button';
-import { FunctionComponent } from 'preact';
-import { Title, Text, Subtitle, PreferencesSegment } from '../../components';
+import { DisplayStringForContentType, SNComponent } from '@standardnotes/snjs'
+import { Button } from '@/components/Button'
+import { FunctionComponent } from 'preact'
+import { Title, Text, Subtitle, PreferencesSegment } from '../../components'
 
 export const ConfirmCustomExtension: FunctionComponent<{
-  component: SNComponent;
-  callback: (confirmed: boolean) => void;
+  component: SNComponent
+  callback: (confirmed: boolean) => void
 }> = ({ component, callback }) => {
   const fields = [
     {
@@ -32,7 +32,7 @@ export const ConfirmCustomExtension: FunctionComponent<{
       label: 'Extension Type',
       value: DisplayStringForContentType(component.content_type),
     },
-  ];
+  ]
 
   return (
     <PreferencesSegment>
@@ -40,7 +40,7 @@ export const ConfirmCustomExtension: FunctionComponent<{
 
       {fields.map((field) => {
         if (!field.value) {
-          return undefined;
+          return undefined
         }
         return (
           <>
@@ -48,7 +48,7 @@ export const ConfirmCustomExtension: FunctionComponent<{
             <Text className={'wrap'}>{field.value}</Text>
             <div className="min-h-2" />
           </>
-        );
+        )
       })}
 
       <div className="min-h-3" />
@@ -71,5 +71,5 @@ export const ConfirmCustomExtension: FunctionComponent<{
         />
       </div>
     </PreferencesSegment>
-  );
-};
+  )
+}

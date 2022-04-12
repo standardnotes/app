@@ -1,90 +1,82 @@
-import { WebApplication } from '@/ui_models/application';
-import { AppState } from '@/ui_models/app_state';
-import { observer } from 'mobx-react-lite';
-import { FunctionComponent } from 'preact';
-import { StateUpdater, useEffect, useRef, useState } from 'preact/hooks';
-import { AccountMenuPane } from '.';
-import { Button } from '../Button';
-import { DecoratedInput } from '../DecoratedInput';
-import { DecoratedPasswordInput } from '../DecoratedPasswordInput';
-import { Icon } from '../Icon';
-import { IconButton } from '../IconButton';
-import { AdvancedOptions } from './AdvancedOptions';
+import { WebApplication } from '@/ui_models/application'
+import { AppState } from '@/ui_models/app_state'
+import { observer } from 'mobx-react-lite'
+import { FunctionComponent } from 'preact'
+import { StateUpdater, useEffect, useRef, useState } from 'preact/hooks'
+import { AccountMenuPane } from '.'
+import { Button } from '../Button'
+import { DecoratedInput } from '../DecoratedInput'
+import { DecoratedPasswordInput } from '../DecoratedPasswordInput'
+import { Icon } from '../Icon'
+import { IconButton } from '../IconButton'
+import { AdvancedOptions } from './AdvancedOptions'
 
 type Props = {
-  appState: AppState;
-  application: WebApplication;
-  setMenuPane: (pane: AccountMenuPane) => void;
-  email: string;
-  setEmail: StateUpdater<string>;
-  password: string;
-  setPassword: StateUpdater<string>;
-};
+  appState: AppState
+  application: WebApplication
+  setMenuPane: (pane: AccountMenuPane) => void
+  email: string
+  setEmail: StateUpdater<string>
+  password: string
+  setPassword: StateUpdater<string>
+}
 
 export const CreateAccount: FunctionComponent<Props> = observer(
-  ({
-    appState,
-    application,
-    setMenuPane,
-    email,
-    setEmail,
-    password,
-    setPassword,
-  }) => {
-    const emailInputRef = useRef<HTMLInputElement>(null);
-    const passwordInputRef = useRef<HTMLInputElement>(null);
-    const [isVault, setIsVault] = useState(false);
+  ({ appState, application, setMenuPane, email, setEmail, password, setPassword }) => {
+    const emailInputRef = useRef<HTMLInputElement>(null)
+    const passwordInputRef = useRef<HTMLInputElement>(null)
+    const [isVault, setIsVault] = useState(false)
 
     useEffect(() => {
       if (emailInputRef.current) {
-        emailInputRef.current?.focus();
+        emailInputRef.current?.focus()
       }
-    }, []);
+    }, [])
 
     const handleEmailChange = (text: string) => {
-      setEmail(text);
-    };
+      setEmail(text)
+    }
 
     const handlePasswordChange = (text: string) => {
-      setPassword(text);
-    };
+      setPassword(text)
+    }
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Enter') {
-        handleRegisterFormSubmit(e);
+        handleRegisterFormSubmit(e)
       }
-    };
+    }
 
     const handleRegisterFormSubmit = (e: Event) => {
-      e.preventDefault();
+      e.preventDefault()
 
       if (!email || email.length === 0) {
-        emailInputRef.current?.focus();
-        return;
+        emailInputRef.current?.focus()
+        return
       }
 
       if (!password || password.length === 0) {
-        passwordInputRef.current?.focus();
-        return;
+        passwordInputRef.current?.focus()
+        return
       }
 
-      setEmail(email);
-      setPassword(password);
-      setMenuPane(AccountMenuPane.ConfirmPassword);
-    };
+      setEmail(email)
+      setPassword(password)
+      setMenuPane(AccountMenuPane.ConfirmPassword)
+    }
 
     const handleClose = () => {
-      setMenuPane(AccountMenuPane.GeneralMenu);
-      setEmail('');
-      setPassword('');
-    };
+      setMenuPane(AccountMenuPane.GeneralMenu)
+      setEmail('')
+      setPassword('')
+    }
 
     const onVaultChange = (isVault: boolean, vaultedEmail?: string) => {
-      setIsVault(isVault);
+      setIsVault(isVault)
       if (isVault && vaultedEmail) {
-        setEmail(vaultedEmail);
+        setEmail(vaultedEmail)
       }
-    };
+    }
 
     return (
       <>
@@ -133,6 +125,6 @@ export const CreateAccount: FunctionComponent<Props> = observer(
           onVaultChange={onVaultChange}
         />
       </>
-    );
-  }
-);
+    )
+  },
+)

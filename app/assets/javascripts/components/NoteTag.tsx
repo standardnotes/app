@@ -1,98 +1,98 @@
-import { Icon } from './Icon';
-import { useEffect, useRef, useState } from 'preact/hooks';
-import { AppState } from '@/ui_models/app_state';
-import { SNTag } from '@standardnotes/snjs';
-import { observer } from 'mobx-react-lite';
+import { Icon } from './Icon'
+import { useEffect, useRef, useState } from 'preact/hooks'
+import { AppState } from '@/ui_models/app_state'
+import { SNTag } from '@standardnotes/snjs'
+import { observer } from 'mobx-react-lite'
 
 type Props = {
-  appState: AppState;
-  tag: SNTag;
-};
+  appState: AppState
+  tag: SNTag
+}
 
 export const NoteTag = observer(({ appState, tag }: Props) => {
-  const noteTags = appState.noteTags;
+  const noteTags = appState.noteTags
 
-  const { autocompleteInputFocused, focusedTagUuid, tags } = noteTags;
+  const { autocompleteInputFocused, focusedTagUuid, tags } = noteTags
 
-  const [showDeleteButton, setShowDeleteButton] = useState(false);
-  const [tagClicked, setTagClicked] = useState(false);
-  const deleteTagRef = useRef<HTMLButtonElement>(null);
+  const [showDeleteButton, setShowDeleteButton] = useState(false)
+  const [tagClicked, setTagClicked] = useState(false)
+  const deleteTagRef = useRef<HTMLButtonElement>(null)
 
-  const tagRef = useRef<HTMLButtonElement>(null);
+  const tagRef = useRef<HTMLButtonElement>(null)
 
-  const title = tag.title;
-  const prefixTitle = noteTags.getPrefixTitle(tag);
-  const longTitle = noteTags.getLongTitle(tag);
+  const title = tag.title
+  const prefixTitle = noteTags.getPrefixTitle(tag)
+  const longTitle = noteTags.getLongTitle(tag)
 
   const deleteTag = () => {
-    appState.noteTags.focusPreviousTag(tag);
-    appState.noteTags.removeTagFromActiveNote(tag);
-  };
+    appState.noteTags.focusPreviousTag(tag)
+    appState.noteTags.removeTagFromActiveNote(tag).catch(console.error)
+  }
 
   const onDeleteTagClick = (event: MouseEvent) => {
-    event.stopImmediatePropagation();
-    event.stopPropagation();
-    deleteTag();
-  };
+    event.stopImmediatePropagation()
+    event.stopPropagation()
+    deleteTag()
+  }
 
   const onTagClick = (event: MouseEvent) => {
     if (tagClicked && event.target !== deleteTagRef.current) {
-      setTagClicked(false);
-      appState.selectedTag = tag;
+      setTagClicked(false)
+      appState.selectedTag = tag
     } else {
-      setTagClicked(true);
+      setTagClicked(true)
     }
-  };
+  }
 
   const onFocus = () => {
-    appState.noteTags.setFocusedTagUuid(tag.uuid);
-    setShowDeleteButton(true);
-  };
+    appState.noteTags.setFocusedTagUuid(tag.uuid)
+    setShowDeleteButton(true)
+  }
 
   const onBlur = (event: FocusEvent) => {
-    const relatedTarget = event.relatedTarget as Node;
+    const relatedTarget = event.relatedTarget as Node
     if (relatedTarget !== deleteTagRef.current) {
-      appState.noteTags.setFocusedTagUuid(undefined);
-      setShowDeleteButton(false);
+      appState.noteTags.setFocusedTagUuid(undefined)
+      setShowDeleteButton(false)
     }
-  };
+  }
 
   const getTabIndex = () => {
     if (focusedTagUuid) {
-      return focusedTagUuid === tag.uuid ? 0 : -1;
+      return focusedTagUuid === tag.uuid ? 0 : -1
     }
     if (autocompleteInputFocused) {
-      return -1;
+      return -1
     }
-    return tags[0].uuid === tag.uuid ? 0 : -1;
-  };
+    return tags[0].uuid === tag.uuid ? 0 : -1
+  }
 
   const onKeyDown = (event: KeyboardEvent) => {
-    const tagIndex = appState.noteTags.getTagIndex(tag, tags);
+    const tagIndex = appState.noteTags.getTagIndex(tag, tags)
     switch (event.key) {
       case 'Backspace':
-        deleteTag();
-        break;
+        deleteTag()
+        break
       case 'ArrowLeft':
-        appState.noteTags.focusPreviousTag(tag);
-        break;
+        appState.noteTags.focusPreviousTag(tag)
+        break
       case 'ArrowRight':
         if (tagIndex === tags.length - 1) {
-          appState.noteTags.setAutocompleteInputFocused(true);
+          appState.noteTags.setAutocompleteInputFocused(true)
         } else {
-          appState.noteTags.focusNextTag(tag);
+          appState.noteTags.focusNextTag(tag)
         }
-        break;
+        break
       default:
-        return;
+        return
     }
-  };
+  }
 
   useEffect(() => {
     if (focusedTagUuid === tag.uuid) {
-      tagRef.current!.focus();
+      tagRef.current?.focus()
     }
-  }, [appState.noteTags, focusedTagUuid, tag]);
+  }, [appState.noteTags, focusedTagUuid, tag])
 
   return (
     <button
@@ -119,12 +119,9 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
           onClick={onDeleteTagClick}
           tabIndex={-1}
         >
-          <Icon
-            type="close"
-            className="sn-icon--small color-neutral hover:color-info"
-          />
+          <Icon type="close" className="sn-icon--small color-neutral hover:color-info" />
         </button>
       )}
     </button>
-  );
-});
+  )
+})

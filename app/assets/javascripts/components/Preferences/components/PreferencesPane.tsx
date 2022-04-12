@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'preact';
+import { FunctionComponent } from 'preact'
 
 export const PreferencesPane: FunctionComponent = ({ children }) => (
   <div className="color-foreground flex-grow flex flex-row overflow-y-auto min-h-0">
@@ -11,4 +11,4 @@ export const PreferencesPane: FunctionComponent = ({ children }) => (
     </div>
     <div className="flex-basis-55 flex-shrink" />
   </div>
-);
+)

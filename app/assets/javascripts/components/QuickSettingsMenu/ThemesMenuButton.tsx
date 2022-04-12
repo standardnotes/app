@@ -1,59 +1,52 @@
-import { WebApplication } from '@/ui_models/application';
-import { FeatureStatus } from '@standardnotes/snjs';
-import { FunctionComponent } from 'preact';
-import { useMemo } from 'preact/hooks';
-import { JSXInternal } from 'preact/src/jsx';
-import { Icon } from '../Icon';
-import { usePremiumModal } from '../Premium';
-import { Switch } from '../Switch';
-import { ThemeItem } from './QuickSettingsMenu';
+import { WebApplication } from '@/ui_models/application'
+import { FeatureStatus } from '@standardnotes/snjs'
+import { FunctionComponent } from 'preact'
+import { useMemo } from 'preact/hooks'
+import { JSXInternal } from 'preact/src/jsx'
+import { Icon } from '../Icon'
+import { usePremiumModal } from '../Premium'
+import { Switch } from '../Switch'
+import { ThemeItem } from './QuickSettingsMenu'
 
 type Props = {
-  item: ThemeItem;
-  application: WebApplication;
-  onBlur: (event: { relatedTarget: EventTarget | null }) => void;
-};
+  item: ThemeItem
+  application: WebApplication
+  onBlur: (event: { relatedTarget: EventTarget | null }) => void
+}
 
-export const ThemesMenuButton: FunctionComponent<Props> = ({
-  application,
-  item,
-  onBlur,
-}) => {
-  const premiumModal = usePremiumModal();
+export const ThemesMenuButton: FunctionComponent<Props> = ({ application, item, onBlur }) => {
+  const premiumModal = usePremiumModal()
 
   const isThirdPartyTheme = useMemo(
     () => application.features.isThirdPartyFeature(item.identifier),
-    [application, item.identifier]
-  );
+    [application, item.identifier],
+  )
   const isEntitledToTheme = useMemo(
-    () =>
-      application.features.getFeatureStatus(item.identifier) ===
-      FeatureStatus.Entitled,
-    [application, item.identifier]
-  );
+    () => application.features.getFeatureStatus(item.identifier) === FeatureStatus.Entitled,
+    [application, item.identifier],
+  )
   const canActivateTheme = useMemo(
     () => isEntitledToTheme || isThirdPartyTheme,
-    [isEntitledToTheme, isThirdPartyTheme]
-  );
+    [isEntitledToTheme, isThirdPartyTheme],
+  )
 
   const toggleTheme: JSXInternal.MouseEventHandler<HTMLButtonElement> = (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
     if (item.component && canActivateTheme) {
-      const themeIsLayerableOrNotActive =
-        item.component.isLayerable() || !item.component.active;
+      const themeIsLayerableOrNotActive = item.component.isLayerable() || !item.component.active
 
       if (themeIsLayerableOrNotActive) {
-        application.mutator.toggleTheme(item.component);
+        application.mutator.toggleTheme(item.component).catch(console.error)
       }
     } else {
-      premiumModal.activate(`${item.name} theme`);
+      premiumModal.activate(`${item.name} theme`)
     }
-  };
+  }
 
   return (
     <button
-      className={`sn-dropdown-item focus:bg-info-backdrop focus:shadow-none justify-between`}
+      className={'sn-dropdown-item focus:bg-info-backdrop focus:shadow-none justify-between'}
       onClick={toggleTheme}
       onBlur={onBlur}
     >
@@ -73,9 +66,7 @@ export const ThemesMenuButton: FunctionComponent<Props> = ({
                 item.component?.active ? 'pseudo-radio-btn--checked' : ''
               } mr-2`}
             ></div>
-            <span
-              className={item.component?.active ? 'font-semibold' : undefined}
-            >
+            <span className={item.component?.active ? 'font-semibold' : undefined}>
               {item.name}
             </span>
           </div>
@@ -83,8 +74,7 @@ export const ThemesMenuButton: FunctionComponent<Props> = ({
             <div
               className="w-5 h-5 rounded-full"
               style={{
-                backgroundColor:
-                  item.component.package_info?.dock_icon?.background_color,
+                backgroundColor: item.component.package_info?.dock_icon?.background_color,
               }}
             ></div>
           ) : (
@@ -93,5 +83,5 @@ export const ThemesMenuButton: FunctionComponent<Props> = ({
         </>
       )}
     </button>
-  );
-};
+  )
+}

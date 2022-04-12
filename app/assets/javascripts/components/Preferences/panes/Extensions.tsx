@@ -1,42 +1,42 @@
-import { ButtonType, ContentType, SNComponent } from '@standardnotes/snjs';
-import { Button } from '@/components/Button';
-import { DecoratedInput } from '@/components/DecoratedInput';
-import { WebApplication } from '@/ui_models/application';
-import { FunctionComponent } from 'preact';
-import { Title, PreferencesSegment } from '../components';
+import { ButtonType, ContentType, SNComponent } from '@standardnotes/snjs'
+import { Button } from '@/components/Button'
+import { DecoratedInput } from '@/components/DecoratedInput'
+import { WebApplication } from '@/ui_models/application'
+import { FunctionComponent } from 'preact'
+import { Title, PreferencesSegment } from '../components'
 import {
   ConfirmCustomExtension,
   ExtensionItem,
   ExtensionsLatestVersions,
-} from './extensions-segments';
-import { useEffect, useRef, useState } from 'preact/hooks';
-import { observer } from 'mobx-react-lite';
+} from './extensions-segments'
+import { useEffect, useRef, useState } from 'preact/hooks'
+import { observer } from 'mobx-react-lite'
 
 const loadExtensions = (application: WebApplication) =>
   application.items.getItems([
     ContentType.ActionsExtension,
     ContentType.Component,
     ContentType.Theme,
-  ]) as SNComponent[];
+  ]) as SNComponent[]
 
 export const Extensions: FunctionComponent<{
-  application: WebApplication;
-  extensionsLatestVersions: ExtensionsLatestVersions;
-  className?: string;
+  application: WebApplication
+  extensionsLatestVersions: ExtensionsLatestVersions
+  className?: string
 }> = observer(({ application, extensionsLatestVersions, className = '' }) => {
-  const [customUrl, setCustomUrl] = useState('');
-  const [confirmableExtension, setConfirmableExtension] = useState<
-    SNComponent | undefined
-  >(undefined);
-  const [extensions, setExtensions] = useState(loadExtensions(application));
+  const [customUrl, setCustomUrl] = useState('')
+  const [confirmableExtension, setConfirmableExtension] = useState<SNComponent | undefined>(
+    undefined,
+  )
+  const [extensions, setExtensions] = useState(loadExtensions(application))
 
-  const confirmableEnd = useRef<HTMLDivElement>(null);
+  const confirmableEnd = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (confirmableExtension) {
-      confirmableEnd.current!.scrollIntoView({ behavior: 'smooth' });
+      confirmableEnd.current?.scrollIntoView({ behavior: 'smooth' })
     }
-  }, [confirmableExtension, confirmableEnd]);
+  }, [confirmableExtension, confirmableEnd])
 
   const uninstallExtension = async (extension: SNComponent) => {
     application.alertService
@@ -45,55 +45,50 @@ export const Extensions: FunctionComponent<{
         'Uninstall Extension?',
         'Uninstall',
         ButtonType.Danger,
-        'Cancel'
+        'Cancel',
       )
       .then(async (shouldRemove: boolean) => {
         if (shouldRemove) {
-          await application.mutator.deleteItem(extension);
-          setExtensions(loadExtensions(application));
+          await application.mutator.deleteItem(extension)
+          setExtensions(loadExtensions(application))
         }
       })
       .catch((err: string) => {
-        application.alertService.alert(err);
-      });
-  };
+        application.alertService.alert(err).catch(console.error)
+      })
+  }
 
   const submitExtensionUrl = async (url: string) => {
-    const component = await application.features.downloadExternalFeature(url);
+    const component = await application.features.downloadExternalFeature(url)
     if (component) {
-      setConfirmableExtension(component);
+      setConfirmableExtension(component)
     }
-  };
+  }
 
   const handleConfirmExtensionSubmit = async (confirm: boolean) => {
     if (confirm) {
-      confirmExtension();
+      confirmExtension().catch(console.error)
     }
-    setConfirmableExtension(undefined);
-    setCustomUrl('');
-  };
+    setConfirmableExtension(undefined)
+    setCustomUrl('')
+  }
 
   const confirmExtension = async () => {
-    await application.mutator.insertItem(confirmableExtension as SNComponent);
-    application.sync.sync();
-    setExtensions(loadExtensions(application));
-  };
+    await application.mutator.insertItem(confirmableExtension as SNComponent)
+    application.sync.sync().catch(console.error)
+    setExtensions(loadExtensions(application))
+  }
 
   const visibleExtensions = extensions.filter((extension) => {
-    return (
-      extension.package_info != undefined &&
-      !['modal', 'rooms'].includes(extension.area)
-    );
-  });
+    return extension.package_info != undefined && !['modal', 'rooms'].includes(extension.area)
+  })
 
   return (
     <div className={className}>
       {visibleExtensions.length > 0 && (
         <div>
           {visibleExtensions
-            .sort((e1, e2) =>
-              e1.name?.toLowerCase().localeCompare(e2.name?.toLowerCase())
-            )
+            .sort((e1, e2) => e1.name?.toLowerCase().localeCompare(e2.name?.toLowerCase()))
             .map((extension, i) => (
               <ExtensionItem
                 key={extension.uuid}
@@ -115,7 +110,7 @@ export const Extensions: FunctionComponent<{
               placeholder={'Enter Extension URL'}
               value={customUrl}
               onChange={(value) => {
-                setCustomUrl(value);
+                setCustomUrl(value)
               }}
             />
             <div className="min-h-2" />
@@ -138,5 +133,5 @@ export const Extensions: FunctionComponent<{
         )}
       </div>
     </div>
-  );
-});
+  )
+})

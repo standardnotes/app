@@ -1,21 +1,21 @@
-import { Button } from '@/components/Button';
-import { DecoratedInput } from '@/components/DecoratedInput';
-import { IconButton } from '@/components/IconButton';
-import { observer } from 'mobx-react-lite';
-import { FunctionComponent } from 'preact';
-import { CopyButton } from './CopyButton';
-import { Bullet } from './Bullet';
-import { downloadSecretKey } from './download-secret-key';
-import { TwoFactorActivation } from './TwoFactorActivation';
+import { Button } from '@/components/Button'
+import { DecoratedInput } from '@/components/DecoratedInput'
+import { IconButton } from '@/components/IconButton'
+import { observer } from 'mobx-react-lite'
+import { FunctionComponent } from 'preact'
+import { CopyButton } from './CopyButton'
+import { Bullet } from './Bullet'
+import { downloadSecretKey } from './download-secret-key'
+import { TwoFactorActivation } from './TwoFactorActivation'
 import {
   ModalDialog,
   ModalDialogButtons,
   ModalDialogDescription,
   ModalDialogLabel,
-} from '@/components/Shared/ModalDialog';
+} from '@/components/Shared/ModalDialog'
 
 export const SaveSecretKey: FunctionComponent<{
-  activation: TwoFactorActivation;
+  activation: TwoFactorActivation
 }> = observer(({ activation: act }) => {
   const download = (
     <IconButton
@@ -23,15 +23,15 @@ export const SaveSecretKey: FunctionComponent<{
       title="Download"
       icon="download"
       onClick={() => {
-        downloadSecretKey(act.secretKey);
+        downloadSecretKey(act.secretKey)
       }}
     />
-  );
+  )
   return (
     <ModalDialog>
       <ModalDialogLabel
         closeDialog={() => {
-          act.cancelActivation();
+          act.cancelActivation()
         }}
       >
         Step 2 of 3 - Save secret key
@@ -63,8 +63,7 @@ export const SaveSecretKey: FunctionComponent<{
             <Bullet />
             <div className="min-w-1" />
             <div className="text-sm">
-              You can use this key to generate codes if you lose access to your
-              authenticator app.{' '}
+              You can use this key to generate codes if you lose access to your authenticator app.{' '}
               <a
                 target="_blank"
                 href="https://standardnotes.com/help/22/what-happens-if-i-lose-my-2fa-device-and-my-secret-key"
@@ -90,5 +89,5 @@ export const SaveSecretKey: FunctionComponent<{
         />
       </ModalDialogButtons>
     </ModalDialog>
-  );
-});
+  )
+})

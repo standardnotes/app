@@ -1,4 +1,4 @@
-import { SNFile } from '@standardnotes/snjs';
+import { SNFile } from '@standardnotes/snjs'
 
 export enum PopoverFileItemActionType {
   AttachFileToNote,
@@ -13,20 +13,19 @@ export type PopoverFileItemAction =
   | {
       type: Exclude<
         PopoverFileItemActionType,
-        | PopoverFileItemActionType.RenameFile
-        | PopoverFileItemActionType.ToggleFileProtection
-      >;
-      payload: SNFile;
+        PopoverFileItemActionType.RenameFile | PopoverFileItemActionType.ToggleFileProtection
+      >
+      payload: SNFile
     }
   | {
-      type: PopoverFileItemActionType.ToggleFileProtection;
-      payload: SNFile;
-      callback: (isProtected: boolean) => void;
+      type: PopoverFileItemActionType.ToggleFileProtection
+      payload: SNFile
+      callback: (isProtected: boolean) => void
     }
   | {
-      type: PopoverFileItemActionType.RenameFile;
+      type: PopoverFileItemActionType.RenameFile
       payload: {
-        file: SNFile;
-        name: string;
-      };
-    };
+        file: SNFile
+        name: string
+      }
+    }

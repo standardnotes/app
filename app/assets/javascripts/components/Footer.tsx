@@ -1,58 +1,57 @@
-import { WebAppEvent, WebApplication } from '@/ui_models/application';
-import { ApplicationGroup } from '@/ui_models/application_group';
-import { PureComponent } from './Abstract/PureComponent';
-import { preventRefreshing } from '@/utils';
+import { WebAppEvent, WebApplication } from '@/ui_models/application'
+import { ApplicationGroup } from '@/ui_models/application_group'
+import { PureComponent } from './Abstract/PureComponent'
+import { preventRefreshing } from '@/utils'
 import {
   ApplicationEvent,
   ContentType,
   CollectionSort,
   ApplicationDescriptor,
-  ItemInterface,
-} from '@standardnotes/snjs';
+} from '@standardnotes/snjs'
 import {
   STRING_NEW_UPDATE_READY,
   STRING_CONFIRM_APP_QUIT_DURING_UPGRADE,
   STRING_UPGRADE_ACCOUNT_CONFIRM_TEXT,
   STRING_UPGRADE_ACCOUNT_CONFIRM_TITLE,
   STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON,
-} from '@/strings';
-import { alertDialog, confirmDialog } from '@/services/alertService';
-import { AccountMenu, AccountMenuPane } from '@/components/AccountMenu';
-import { AppStateEvent, EventSource } from '@/ui_models/app_state';
-import { Icon } from './Icon';
-import { QuickSettingsMenu } from './QuickSettingsMenu/QuickSettingsMenu';
-import { SyncResolutionMenu } from './SyncResolutionMenu';
-import { Fragment } from 'preact';
+} from '@/strings'
+import { alertDialog, confirmDialog } from '@/services/alertService'
+import { AccountMenu, AccountMenuPane } from '@/components/AccountMenu'
+import { AppStateEvent, EventSource } from '@/ui_models/app_state'
+import { Icon } from './Icon'
+import { QuickSettingsMenu } from './QuickSettingsMenu/QuickSettingsMenu'
+import { SyncResolutionMenu } from './SyncResolutionMenu'
+import { Fragment } from 'preact'
 
 type Props = {
-  application: WebApplication;
-  applicationGroup: ApplicationGroup;
-};
+  application: WebApplication
+  applicationGroup: ApplicationGroup
+}
 
 type State = {
-  outOfSync: boolean;
-  dataUpgradeAvailable: boolean;
-  hasPasscode: boolean;
-  descriptors: ApplicationDescriptor[];
-  showBetaWarning: boolean;
-  showSyncResolution: boolean;
-  newUpdateAvailable: boolean;
-  showAccountMenu: boolean;
-  showQuickSettingsMenu: boolean;
-  offline: boolean;
-  hasError: boolean;
-  arbitraryStatusMessage?: string;
-};
+  outOfSync: boolean
+  dataUpgradeAvailable: boolean
+  hasPasscode: boolean
+  descriptors: ApplicationDescriptor[]
+  showBetaWarning: boolean
+  showSyncResolution: boolean
+  newUpdateAvailable: boolean
+  showAccountMenu: boolean
+  showQuickSettingsMenu: boolean
+  offline: boolean
+  hasError: boolean
+  arbitraryStatusMessage?: string
+}
 
 export class Footer extends PureComponent<Props, State> {
-  public user?: unknown;
-  private didCheckForOffline = false;
-  private completedInitialSync = false;
-  private showingDownloadStatus = false;
-  private webEventListenerDestroyer: () => void;
+  public user?: unknown
+  private didCheckForOffline = false
+  private completedInitialSync = false
+  private showingDownloadStatus = false
+  private webEventListenerDestroyer: () => void
 
   constructor(props: Props) {
-    super(props, props.application);
+    super(props, props.application)
     this.state = {
       hasError: false,
       offline: true,
@@ -65,231 +64,218 @@ export class Footer extends PureComponent<Props, State> {
       newUpdateAvailable: false,
       showAccountMenu: false,
       showQuickSettingsMenu: false,
-    };
+    }
 
-    this.webEventListenerDestroyer = props.application.addWebEventObserver(
-      (event) => {
-        if (event === WebAppEvent.NewUpdateAvailable) {
-          this.onNewUpdateAvailable();
-        }
+    this.webEventListenerDestroyer = props.application.addWebEventObserver((event) => {
+      if (event === WebAppEvent.NewUpdateAvailable) {
+        this.onNewUpdateAvailable()
       }
-    );
+    })
   }
 
   deinit() {
-    this.webEventListenerDestroyer();
-    (this.webEventListenerDestroyer as unknown) = undefined;
-    super.deinit();
+    this.webEventListenerDestroyer()
+    ;(this.webEventListenerDestroyer as unknown) = undefined
+    super.deinit()
   }
 
   componentDidMount(): void {
-    super.componentDidMount();
+    super.componentDidMount()
     this.application.getStatusManager().onStatusChange((message) => {
       this.setState({
         arbitraryStatusMessage: message,
-      });
-    });
+      })
+    })
     this.autorun(() => {
-      const showBetaWarning = this.appState.showBetaWarning;
+      const showBetaWarning = this.appState.showBetaWarning
       this.setState({
         showBetaWarning: showBetaWarning,
         showAccountMenu: this.appState.accountMenu.show,
         showQuickSettingsMenu: this.appState.quickSettingsMenu.open,
-      });
-    });
+      })
+    })
   }
 
   reloadUpgradeStatus() {
-    this.application.checkForSecurityUpdate().then((available) => {
-      this.setState({
-        dataUpgradeAvailable: available,
-      });
-    });
+    this.application
+      .checkForSecurityUpdate()
+      .then((available) => {
+        this.setState({
+          dataUpgradeAvailable: available,
+        })
+      })
+      .catch(console.error)
   }
 
   async onAppLaunch() {
-    super.onAppLaunch();
-    this.reloadPasscodeStatus();
-    this.reloadUser();
-    this.reloadUpgradeStatus();
-    this.updateOfflineStatus();
-    this.findErrors();
-    this.streamItems();
+    super.onAppLaunch().catch(console.error)
+    this.reloadPasscodeStatus().catch(console.error)
+    this.reloadUser()
+    this.reloadUpgradeStatus()
+    this.updateOfflineStatus()
+    this.findErrors()
+    this.streamItems()
   }
 
   reloadUser() {
-    this.user = this.application.getUser();
+    this.user = this.application.getUser()
   }
 
   async reloadPasscodeStatus() {
-    const hasPasscode = this.application.hasPasscode();
+    const hasPasscode = this.application.hasPasscode()
     this.setState({
       hasPasscode: hasPasscode,
-    });
+    })
   }
 
   /** @override */
   onAppStateEvent(eventName: AppStateEvent, data: any) {
-    const statusService = this.application.getStatusManager();
+    const statusService = this.application.getStatusManager()
     switch (eventName) {
       case AppStateEvent.EditorFocused:
         if (data.eventSource === EventSource.UserInteraction) {
-          this.closeAccountMenu();
+          this.closeAccountMenu()
         }
-        break;
+        break
       case AppStateEvent.BeganBackupDownload:
-        statusService.setMessage('Saving local backup…');
-        break;
+        statusService.setMessage('Saving local backup…')
+        break
       case AppStateEvent.EndedBackupDownload: {
-        const successMessage = 'Successfully saved backup.';
-        const errorMessage = 'Unable to save local backup.';
-        statusService.setMessage(data.success ? successMessage : errorMessage);
+        const successMessage = 'Successfully saved backup.'
+        const errorMessage = 'Unable to save local backup.'
+        statusService.setMessage(data.success ? successMessage : errorMessage)
 
-        const twoSeconds = 2000;
+        const twoSeconds = 2000
         setTimeout(() => {
-          if (
-            statusService.message === successMessage ||
-            statusService.message === errorMessage
-          ) {
-            statusService.setMessage('');
+          if (statusService.message === successMessage || statusService.message === errorMessage) {
+            statusService.setMessage('')
           }
-        }, twoSeconds);
-        break;
+        }, twoSeconds)
+        break
       }
     }
   }
 
   /** @override */
   async onAppKeyChange() {
-    super.onAppKeyChange();
-    this.reloadPasscodeStatus();
+    super.onAppKeyChange().catch(console.error)
+    this.reloadPasscodeStatus().catch(console.error)
   }
 
   /** @override */
   onAppEvent(eventName: ApplicationEvent) {
     switch (eventName) {
       case ApplicationEvent.KeyStatusChanged:
-        this.reloadUpgradeStatus();
-        break;
+        this.reloadUpgradeStatus()
+        break
       case ApplicationEvent.EnteredOutOfSync:
         this.setState({
           outOfSync: true,
-        });
-        break;
+        })
+        break
       case ApplicationEvent.ExitedOutOfSync:
         this.setState({
           outOfSync: false,
-        });
-        break;
+        })
+        break
       case ApplicationEvent.CompletedFullSync:
         if (!this.completedInitialSync) {
-          this.application.getStatusManager().setMessage('');
-          this.completedInitialSync = true;
+          this.application.getStatusManager().setMessage('')
+          this.completedInitialSync = true
         }
         if (!this.didCheckForOffline) {
-          this.didCheckForOffline = true;
-          if (
-            this.state.offline &&
-            this.application.items.getNoteCount() === 0
-          ) {
-            this.appState.accountMenu.setShow(true);
+          this.didCheckForOffline = true
+          if (this.state.offline && this.application.items.getNoteCount() === 0) {
+            this.appState.accountMenu.setShow(true)
           }
         }
-        this.findErrors();
-        this.updateOfflineStatus();
-        break;
+        this.findErrors()
+        this.updateOfflineStatus()
+        break
       case ApplicationEvent.SyncStatusChanged:
-        this.updateSyncStatus();
-        break;
+        this.updateSyncStatus()
+        break
       case ApplicationEvent.FailedSync:
-        this.updateSyncStatus();
-        this.findErrors();
-        this.updateOfflineStatus();
-        break;
+        this.updateSyncStatus()
+        this.findErrors()
+        this.updateOfflineStatus()
+        break
       case ApplicationEvent.LocalDataIncrementalLoad:
       case ApplicationEvent.LocalDataLoaded:
-        this.updateLocalDataStatus();
-        break;
+        this.updateLocalDataStatus()
+        break
       case ApplicationEvent.SignedIn:
       case ApplicationEvent.SignedOut:
-        this.reloadUser();
-        break;
+        this.reloadUser()
+        break
       case ApplicationEvent.WillSync:
         if (!this.completedInitialSync) {
-          this.application.getStatusManager().setMessage('Syncing…');
+          this.application.getStatusManager().setMessage('Syncing…')
         }
-        break;
+        break
     }
   }
 
   streamItems() {
-    this.application.items.setDisplayOptions(
-      ContentType.Theme,
-      CollectionSort.Title,
-      'asc'
-    );
+    this.application.items.setDisplayOptions(ContentType.Theme, CollectionSort.Title, 'asc')
   }
 
   updateSyncStatus() {
-    const statusManager = this.application.getStatusManager();
-    const syncStatus = this.application.sync.getSyncStatus();
-    const stats = syncStatus.getStats();
+    const statusManager = this.application.getStatusManager()
+    const syncStatus = this.application.sync.getSyncStatus()
+    const stats = syncStatus.getStats()
     if (syncStatus.hasError()) {
-      statusManager.setMessage('Unable to Sync');
+      statusManager.setMessage('Unable to Sync')
     } else if (stats.downloadCount > 20) {
-      const text = `Downloading ${stats.downloadCount} items. Keep app open.`;
-      statusManager.setMessage(text);
-      this.showingDownloadStatus = true;
+      const text = `Downloading ${stats.downloadCount} items. Keep app open.`
+      statusManager.setMessage(text)
+      this.showingDownloadStatus = true
     } else if (this.showingDownloadStatus) {
-      this.showingDownloadStatus = false;
-      statusManager.setMessage('Download Complete.');
+      this.showingDownloadStatus = false
+      statusManager.setMessage('Download Complete.')
       setTimeout(() => {
-        statusManager.setMessage('');
-      }, 2000);
+        statusManager.setMessage('')
+      }, 2000)
     } else if (stats.uploadTotalCount > 20) {
       const completionPercentage =
-        stats.uploadCompletionCount === 0
-          ? 0
-          : stats.uploadCompletionCount / stats.uploadTotalCount;
+        stats.uploadCompletionCount === 0 ? 0 : stats.uploadCompletionCount / stats.uploadTotalCount
 
       const stringPercentage = completionPercentage.toLocaleString(undefined, {
         style: 'percent',
-      });
+      })
 
       statusManager.setMessage(
-        `Syncing ${stats.uploadTotalCount} items (${stringPercentage} complete)`
-      );
+        `Syncing ${stats.uploadTotalCount} items (${stringPercentage} complete)`,
+      )
     } else {
-      statusManager.setMessage('');
+      statusManager.setMessage('')
     }
   }
 
   updateLocalDataStatus() {
-    const statusManager = this.application.getStatusManager();
-    const syncStatus = this.application.sync.getSyncStatus();
-    const stats = syncStatus.getStats();
-    const encryption = this.application.isEncryptionAvailable();
+    const statusManager = this.application.getStatusManager()
+    const syncStatus = this.application.sync.getSyncStatus()
+    const stats = syncStatus.getStats()
+    const encryption = this.application.isEncryptionAvailable()
     if (stats.localDataDone) {
-      statusManager.setMessage('');
-      return;
+      statusManager.setMessage('')
+      return
     }
-    const notesString = `${stats.localDataCurrent}/${stats.localDataTotal} items...`;
-    const loadingStatus = encryption
-      ? `Decrypting ${notesString}`
-      : `Loading ${notesString}`;
-    statusManager.setMessage(loadingStatus);
+    const notesString = `${stats.localDataCurrent}/${stats.localDataTotal} items...`
+    const loadingStatus = encryption ? `Decrypting ${notesString}` : `Loading ${notesString}`
+    statusManager.setMessage(loadingStatus)
   }
 
   updateOfflineStatus() {
     this.setState({
       offline: this.application.noAccount(),
-    });
+    })
   }
 
   findErrors() {
     this.setState({
       hasError: this.application.sync.getSyncStatus().hasError(),
-    });
+    })
   }
 
   securityUpdateClickHandler = async () => {
@@ -301,48 +287,48 @@ export class Footer extends PureComponent<Props, State> {
       })
     ) {
       preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_UPGRADE, async () => {
-        await this.application.upgradeProtocolVersion();
-      });
+        await this.application.upgradeProtocolVersion()
+      }).catch(console.error)
     }
-  };
+  }
 
   accountMenuClickHandler = () => {
-    this.appState.quickSettingsMenu.closeQuickSettingsMenu();
-    this.appState.accountMenu.toggleShow();
-  };
+    this.appState.quickSettingsMenu.closeQuickSettingsMenu()
+    this.appState.accountMenu.toggleShow()
+  }
 
   quickSettingsClickHandler = () => {
-    this.appState.accountMenu.closeAccountMenu();
-    this.appState.quickSettingsMenu.toggle();
-  };
+    this.appState.accountMenu.closeAccountMenu()
+    this.appState.quickSettingsMenu.toggle()
+  }
 
   syncResolutionClickHandler = () => {
     this.setState({
       showSyncResolution: !this.state.showSyncResolution,
-    });
-  };
+    })
+  }
 
   closeAccountMenu = () => {
-    this.appState.accountMenu.setShow(false);
-    this.appState.accountMenu.setCurrentPane(AccountMenuPane.GeneralMenu);
-  };
+    this.appState.accountMenu.setShow(false)
+    this.appState.accountMenu.setCurrentPane(AccountMenuPane.GeneralMenu)
+  }
 
   lockClickHandler = () => {
-    this.application.lock();
-  };
+    this.application.lock().catch(console.error)
+  }
 
   onNewUpdateAvailable = () => {
     this.setState({
       newUpdateAvailable: true,
-    });
-  };
+    })
+  }
 
   newUpdateClickHandler = () => {
     this.setState({
       newUpdateAvailable: false,
-    });
-    this.application.alertService.alert(STRING_NEW_UPDATE_READY);
-  };
+    })
+    this.application.alertService.alert(STRING_NEW_UPDATE_READY).catch(console.error)
+  }
 
   betaMessageClickHandler = () => {
     alertDialog({
@@ -350,16 +336,16 @@ export class Footer extends PureComponent<Props, State> {
       text:
         'If you wish to go back to a stable version, make sure to sign out ' +
         'of this beta app first.',
-    });
-  };
+    }).catch(console.error)
+  }
 
   clickOutsideAccountMenu = () => {
-    this.appState.accountMenu.closeAccountMenu();
-  };
+    this.appState.accountMenu.closeAccountMenu()
+  }
 
   clickOutsideQuickSettingsMenu = () => {
-    this.appState.quickSettingsMenu.closeQuickSettingsMenu();
-  };
+    this.appState.quickSettingsMenu.closeQuickSettingsMenu()
+  }
 
   render() {
     return (
@@ -376,15 +362,10 @@ export class Footer extends PureComponent<Props, State> {
               >
                 <div
                   className={
-                    this.state.hasError
-                      ? 'danger'
-                      : (this.user ? 'info' : 'neutral') + ' w-5 h-5'
+                    this.state.hasError ? 'danger' : (this.user ? 'info' : 'neutral') + ' w-5 h-5'
                   }
                 >
-                  <Icon
-                    type="account-circle"
-                    className="hover:color-info w-5 h-5 max-h-5"
-                  />
+                  <Icon type="account-circle" className="hover:color-info w-5 h-5 max-h-5" />
                 </div>
               </div>
               {this.state.showAccountMenu && (
@@ -437,39 +418,26 @@ export class Footer extends PureComponent<Props, State> {
             {this.state.arbitraryStatusMessage && (
               <div className="sk-app-bar-item">
                 <div className="sk-app-bar-item-column">
-                  <span className="neutral sk-label">
-                    {this.state.arbitraryStatusMessage}
-                  </span>
+                  <span className="neutral sk-label">{this.state.arbitraryStatusMessage}</span>
                 </div>
               </div>
             )}
           </div>
           <div className="right">
             {this.state.dataUpgradeAvailable && (
-              <div
-                onClick={this.securityUpdateClickHandler}
-                className="sk-app-bar-item"
-              >
-                <span className="success sk-label">
-                  Encryption upgrade available.
-                </span>
+              <div onClick={this.securityUpdateClickHandler} className="sk-app-bar-item">
+                <span className="success sk-label">Encryption upgrade available.</span>
               </div>
             )}
             {this.state.newUpdateAvailable && (
-              <div
-                onClick={this.newUpdateClickHandler}
-                className="sk-app-bar-item"
-              >
+              <div onClick={this.newUpdateClickHandler} className="sk-app-bar-item">
                 <span className="info sk-label">New update available.</span>
               </div>
             )}
             {(this.state.outOfSync || this.state.showSyncResolution) && (
               <div className="sk-app-bar-item">
                 {this.state.outOfSync && (
-                  <div
-                    onClick={this.syncResolutionClickHandler}
-                    className="sk-label warning"
-                  >
+                  <div onClick={this.syncResolutionClickHandler} className="sk-label warning">
                     Potentially Out of Sync
                   </div>
                 )}
@@ -504,6 +472,6 @@ export class Footer extends PureComponent<Props, State> {
           </div>
         </div>
       </div>
-    );
+    )
   }
 }

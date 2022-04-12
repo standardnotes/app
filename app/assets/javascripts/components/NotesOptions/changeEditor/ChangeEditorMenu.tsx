@@ -1,14 +1,14 @@
-import { Icon } from '@/components/Icon';
-import { Menu } from '@/components/Menu/Menu';
-import { MenuItem, MenuItemType } from '@/components/Menu/MenuItem';
+import { Icon } from '@/components/Icon'
+import { Menu } from '@/components/Menu/Menu'
+import { MenuItem, MenuItemType } from '@/components/Menu/MenuItem'
 import {
   reloadFont,
   transactionForAssociateComponentWithCurrentNote,
   transactionForDisassociateComponentWithCurrentNote,
-} from '@/components/NoteView/NoteView';
-import { usePremiumModal } from '@/components/Premium';
-import { STRING_EDIT_LOCKED_ATTEMPT } from '@/strings';
-import { WebApplication } from '@/ui_models/application';
+} from '@/components/NoteView/NoteView'
+import { usePremiumModal } from '@/components/Premium'
+import { STRING_EDIT_LOCKED_ATTEMPT } from '@/strings'
+import { WebApplication } from '@/ui_models/application'
 import {
   ComponentArea,
   ItemMutator,
@@ -17,25 +17,21 @@ import {
   SNComponent,
   SNNote,
   TransactionalMutation,
-} from '@standardnotes/snjs';
-import { Fragment, FunctionComponent } from 'preact';
-import { useCallback, useEffect, useState } from 'preact/hooks';
-import { EditorMenuItem, EditorMenuGroup } from '../ChangeEditorOption';
-import {
-  createEditorMenuGroups,
-  PLAIN_EDITOR_NAME,
-} from './createEditorMenuGroups';
+} from '@standardnotes/snjs'
+import { Fragment, FunctionComponent } from 'preact'
+import { useCallback, useEffect, useState } from 'preact/hooks'
+import { EditorMenuItem, EditorMenuGroup } from '../ChangeEditorOption'
+import { createEditorMenuGroups, PLAIN_EDITOR_NAME } from './createEditorMenuGroups'
 
 type ChangeEditorMenuProps = {
-  application: WebApplication;
-  closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void;
-  closeMenu: () => void;
-  isVisible: boolean;
-  note: SNNote;
-};
+  application: WebApplication
+  closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
+  closeMenu: () => void
+  isVisible: boolean
+  note: SNNote
+}
 
-const getGroupId = (group: EditorMenuGroup) =>
-  group.title.toLowerCase().replace(/\s/, '-');
+const getGroupId = (group: EditorMenuGroup) => group.title.toLowerCase().replace(/\s/, '-')
 
 export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   application,
@@ -45,65 +41,59 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   note,
 }) => {
   const [editors] = useState<SNComponent[]>(() =>
-    application.componentManager
-      .componentsForArea(ComponentArea.Editor)
-      .sort((a, b) => {
-        return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
-      })
-  );
-  const [groups, setGroups] = useState<EditorMenuGroup[]>([]);
-  const [currentEditor, setCurrentEditor] = useState<SNComponent>();
+    application.componentManager.componentsForArea(ComponentArea.Editor).sort((a, b) => {
+      return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1
+    }),
+  )
+  const [groups, setGroups] = useState<EditorMenuGroup[]>([])
+  const [currentEditor, setCurrentEditor] = useState<SNComponent>()
 
   useEffect(() => {
-    setGroups(createEditorMenuGroups(application, editors));
-  }, [application, editors]);
+    setGroups(createEditorMenuGroups(application, editors))
+  }, [application, editors])
 
   useEffect(() => {
     if (note) {
-      setCurrentEditor(application.componentManager.editorForNote(note));
+      setCurrentEditor(application.componentManager.editorForNote(note))
     }
-  }, [application, note]);
+  }, [application, note])
 
-  const premiumModal = usePremiumModal();
+  const premiumModal = usePremiumModal()
 
   const isSelectedEditor = useCallback(
     (item: EditorMenuItem) => {
       if (currentEditor) {
         if (item?.component?.identifier === currentEditor.identifier) {
-          return true;
+          return true
         }
       } else if (item.name === PLAIN_EDITOR_NAME) {
-        return true;
+        return true
       }
-      return false;
+      return false
     },
-    [currentEditor]
-  );
+    [currentEditor],
+  )
 
-  const selectComponent = async (
-    component: SNComponent | null,
-    note: SNNote
-  ) => {
+  const selectComponent = async (component: SNComponent | null, note: SNNote) => {
     if (component) {
       if (component.conflictOf) {
-        application.mutator.changeAndSaveItem(component, (mutator) => {
-          mutator.conflictOf = undefined;
-        });
+        application.mutator
+          .changeAndSaveItem(component, (mutator) => {
+            mutator.conflictOf = undefined
+          })
+          .catch(console.error)
       }
     }
 
-    const transactions: TransactionalMutation[] = [];
+    const transactions: TransactionalMutation[] = []
 
     if (application.getAppState().getActiveNoteController()?.isTemplateNote) {
-      await application
-        .getAppState()
-        .getActiveNoteController()
-        .insertTemplatedNote();
+      await application.getAppState().getActiveNoteController().insertTemplatedNote()
     }
 
     if (note.locked) {
-      application.alertService.alert(STRING_EDIT_LOCKED_ATTEMPT);
-      return;
+      application.alertService.alert(STRING_EDIT_LOCKED_ATTEMPT).catch(console.error)
+      return
     }
 
     if (!component) {
@@ -111,97 +101,79 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
         transactions.push({
           itemUuid: note.uuid,
           mutate: (m: ItemMutator) => {
-            const noteMutator = m as NoteMutator;
-            noteMutator.prefersPlainEditor = true;
+            const noteMutator = m as NoteMutator
+            noteMutator.prefersPlainEditor = true
           },
-        });
+        })
       }
-      const currentEditor = application.componentManager.editorForNote(note);
+      const currentEditor = application.componentManager.editorForNote(note)
       if (currentEditor?.isExplicitlyEnabledForItem(note.uuid)) {
-        transactions.push(
-          transactionForDisassociateComponentWithCurrentNote(
-            currentEditor,
-            note
-          )
-        );
+        transactions.push(transactionForDisassociateComponentWithCurrentNote(currentEditor, note))
       }
-      reloadFont(application.getPreference(PrefKey.EditorMonospaceEnabled));
+      reloadFont(application.getPreference(PrefKey.EditorMonospaceEnabled))
     } else if (component.area === ComponentArea.Editor) {
-      const currentEditor = application.componentManager.editorForNote(note);
+      const currentEditor = application.componentManager.editorForNote(note)
       if (currentEditor && component.uuid !== currentEditor.uuid) {
-        transactions.push(
-          transactionForDisassociateComponentWithCurrentNote(
-            currentEditor,
-            note
-          )
-        );
+        transactions.push(transactionForDisassociateComponentWithCurrentNote(currentEditor, note))
       }
-      const prefersPlain = note.prefersPlainEditor;
+      const prefersPlain = note.prefersPlainEditor
       if (prefersPlain) {
         transactions.push({
           itemUuid: note.uuid,
           mutate: (m: ItemMutator) => {
-            const noteMutator = m as NoteMutator;
-            noteMutator.prefersPlainEditor = false;
+            const noteMutator = m as NoteMutator
+            noteMutator.prefersPlainEditor = false
           },
-        });
+        })
       }
-      transactions.push(
-        transactionForAssociateComponentWithCurrentNote(component, note)
-      );
+      transactions.push(transactionForAssociateComponentWithCurrentNote(component, note))
     }
 
-    await application.mutator.runTransactionalMutations(transactions);
+    await application.mutator.runTransactionalMutations(transactions)
     /** Dirtying can happen above */
-    application.sync.sync();
+    application.sync.sync().catch(console.error)
 
-    setCurrentEditor(application.componentManager.editorForNote(note));
-  };
+    setCurrentEditor(application.componentManager.editorForNote(note))
+  }
 
   const selectEditor = async (itemToBeSelected: EditorMenuItem) => {
     if (!itemToBeSelected.isEntitled) {
-      premiumModal.activate(itemToBeSelected.name);
-      return;
+      premiumModal.activate(itemToBeSelected.name)
+      return
     }
 
-    const areBothEditorsPlain = !currentEditor && !itemToBeSelected.component;
+    const areBothEditorsPlain = !currentEditor && !itemToBeSelected.component
 
     if (areBothEditorsPlain) {
-      return;
+      return
     }
 
-    let shouldSelectEditor = true;
+    let shouldSelectEditor = true
 
     if (itemToBeSelected.component) {
-      const changeRequiresAlert =
-        application.componentManager.doesEditorChangeRequireAlert(
-          currentEditor,
-          itemToBeSelected.component
-        );
+      const changeRequiresAlert = application.componentManager.doesEditorChangeRequireAlert(
+        currentEditor,
+        itemToBeSelected.component,
+      )
 
       if (changeRequiresAlert) {
-        shouldSelectEditor =
-          await application.componentManager.showEditorChangeAlert();
+        shouldSelectEditor = await application.componentManager.showEditorChangeAlert()
       }
     }
 
     if (shouldSelectEditor) {
-      selectComponent(itemToBeSelected.component ?? null, note);
+      selectComponent(itemToBeSelected.component ?? null, note).catch(console.error)
     }
 
-    closeMenu();
-  };
+    closeMenu()
+  }
 
   return (
-    <Menu
-      className="pt-0.5 pb-1"
-      a11yLabel="Change editor menu"
-      isOpen={isVisible}
-    >
+    <Menu className="pt-0.5 pb-1" a11yLabel="Change editor menu" isOpen={isVisible}>
       {groups
         .filter((group) => group.items && group.items.length)
         .map((group, index) => {
-          const groupId = getGroupId(group);
+          const groupId = getGroupId(group)
 
           return (
             <Fragment key={groupId}>
@@ -210,24 +182,21 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
                   index === 0 ? 'border-t-0 mb-2' : 'my-2'
                 }`}
               >
-                {group.icon && (
-                  <Icon
-                    type={group.icon}
-                    className={`mr-2 ${group.iconClassName}`}
-                  />
-                )}
+                {group.icon && <Icon type={group.icon} className={`mr-2 ${group.iconClassName}`} />}
                 <div className="font-semibold text-input">{group.title}</div>
               </div>
               {group.items.map((item) => {
                 const onClickEditorItem = () => {
-                  selectEditor(item);
-                };
+                  selectEditor(item).catch(console.error)
+                }
 
                 return (
                   <MenuItem
                     type={MenuItemType.RadioButton}
                     onClick={onClickEditorItem}
-                    className={`sn-dropdown-item py-2 text-input focus:bg-info-backdrop focus:shadow-none`}
+                    className={
+                      'sn-dropdown-item py-2 text-input focus:bg-info-backdrop focus:shadow-none'
+                    }
                     onBlur={closeOnBlur}
                     checked={isSelectedEditor(item)}
                   >
@@ -236,11 +205,11 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
                       {!item.isEntitled && <Icon type="premium-feature" />}
                     </div>
                   </MenuItem>
-                );
+                )
               })}
             </Fragment>
-          );
+          )
         })}
     </Menu>
-  );
-};
+  )
+}

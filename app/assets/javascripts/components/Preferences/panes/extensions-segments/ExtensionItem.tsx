@@ -1,35 +1,29 @@
-import { FunctionComponent } from 'preact';
-import { SNComponent } from '@standardnotes/snjs';
-import {
-  PreferencesSegment,
-  SubtitleLight,
-  Title,
-} from '@/components/Preferences/components';
-import { Switch } from '@/components/Switch';
-import { WebApplication } from '@/ui_models/application';
-import { useState } from 'preact/hooks';
-import { Button } from '@/components/Button';
-import { RenameExtension } from './RenameExtension';
+import { FunctionComponent } from 'preact'
+import { SNComponent } from '@standardnotes/snjs'
+import { PreferencesSegment, SubtitleLight, Title } from '@/components/Preferences/components'
+import { Switch } from '@/components/Switch'
+import { WebApplication } from '@/ui_models/application'
+import { useState } from 'preact/hooks'
+import { Button } from '@/components/Button'
+import { RenameExtension } from './RenameExtension'
 
 const UseHosted: FunctionComponent<{
-  offlineOnly: boolean;
-  toggleOfllineOnly: () => void;
+  offlineOnly: boolean
+  toggleOfllineOnly: () => void
 }> = ({ offlineOnly, toggleOfllineOnly }) => (
   <div className="flex flex-row">
-    <SubtitleLight className="flex-grow">
-      Use hosted when local is unavailable
-    </SubtitleLight>
+    <SubtitleLight className="flex-grow">Use hosted when local is unavailable</SubtitleLight>
     <Switch onChange={toggleOfllineOnly} checked={!offlineOnly} />
   </div>
-);
+)
 
 export interface ExtensionItemProps {
-  application: WebApplication;
-  extension: SNComponent;
-  first: boolean;
-  latestVersion: string | undefined;
-  uninstall: (extension: SNComponent) => void;
-  toggleActivate?: (extension: SNComponent) => void;
+  application: WebApplication
+  extension: SNComponent
+  first: boolean
+  latestVersion: string | undefined
+  uninstall: (extension: SNComponent) => void
+  toggleActivate?: (extension: SNComponent) => void
 }
 
 export const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({
@@ -38,45 +32,46 @@ export const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({
   first,
   uninstall,
 }) => {
-  const [offlineOnly, setOfflineOnly] = useState(
-    extension.offlineOnly ?? false
-  );
-  const [extensionName, setExtensionName] = useState(extension.name);
+  const [offlineOnly, setOfflineOnly] = useState(extension.offlineOnly ?? false)
+  const [extensionName, setExtensionName] = useState(extension.name)
 
   const toggleOffllineOnly = () => {
-    const newOfflineOnly = !offlineOnly;
-    setOfflineOnly(newOfflineOnly);
+    const newOfflineOnly = !offlineOnly
+    setOfflineOnly(newOfflineOnly)
     application.mutator
       .changeAndSaveItem(extension, (m: any) => {
-        if (m.content == undefined) m.content = {};
-        m.content.offlineOnly = newOfflineOnly;
+        if (m.content == undefined) {
+          m.content = {}
+        }
+        m.content.offlineOnly = newOfflineOnly
       })
       .then((item) => {
-        const component = item as SNComponent;
-        setOfflineOnly(component.offlineOnly);
+        const component = item as SNComponent
+        setOfflineOnly(component.offlineOnly)
       })
       .catch((e) => {
-        console.error(e);
-      });
-  };
+        console.error(e)
+      })
+  }
 
   const changeExtensionName = (newName: string) => {
-    setExtensionName(newName);
+    setExtensionName(newName)
     application.mutator
       .changeAndSaveItem(extension, (m: any) => {
-        if (m.content == undefined) m.content = {};
-        m.content.name = newName;
+        if (m.content == undefined) {
+          m.content = {}
+        }
+        m.content.name = newName
       })
       .then((item) => {
-        const component = item as SNComponent;
-        setExtensionName(component.name);
-      });
-  };
+        const component = item as SNComponent
+        setExtensionName(component.name)
+      })
+      .catch(console.error)
+  }
 
-  const localInstallable = extension.package_info.download_url;
-  const isThirParty = application.features.isThirdPartyFeature(
-    extension.identifier
-  );
+  const localInstallable = extension.package_info.download_url
+  const isThirParty = application.features.isThirdPartyFeature(extension.identifier)
 
   return (
     <PreferencesSegment classes={'mb-5'}>
@@ -86,17 +81,11 @@ export const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({
         </>
       )}
 
-      <RenameExtension
-        extensionName={extensionName}
-        changeName={changeExtensionName}
-      />
+      <RenameExtension extensionName={extensionName} changeName={changeExtensionName} />
       <div className="min-h-2" />
 
       {isThirParty && localInstallable && (
-        <UseHosted
-          offlineOnly={offlineOnly}
-          toggleOfllineOnly={toggleOffllineOnly}
-        />
+        <UseHosted offlineOnly={offlineOnly} toggleOfllineOnly={toggleOffllineOnly} />
       )}
 
       <>
@@ -111,5 +100,5 @@ export const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({
         </div>
       </>
     </PreferencesSegment>
-  );
-};
+  )
+}

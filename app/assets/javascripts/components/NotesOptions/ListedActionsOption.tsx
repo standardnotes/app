@@ -1,37 +1,30 @@
-import { WebApplication } from '@/ui_models/application';
-import {
-  calculateSubmenuStyle,
-  SubmenuStyle,
-} from '@/utils/calculateSubmenuStyle';
-import {
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
-} from '@reach/disclosure';
-import { Action, ListedAccount, SNNote } from '@standardnotes/snjs';
-import { Fragment, FunctionComponent } from 'preact';
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
-import { Icon } from '../Icon';
-import { useCloseOnBlur } from '../utils';
+import { WebApplication } from '@/ui_models/application'
+import { calculateSubmenuStyle, SubmenuStyle } from '@/utils/calculateSubmenuStyle'
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
+import { Action, ListedAccount, SNNote } from '@standardnotes/snjs'
+import { Fragment, FunctionComponent } from 'preact'
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
+import { Icon } from '../Icon'
+import { useCloseOnBlur } from '../utils'
 
 type Props = {
-  application: WebApplication;
-  note: SNNote;
-};
+  application: WebApplication
+  note: SNNote
+}
 
 type ListedMenuGroup = {
-  name: string;
-  account: ListedAccount;
-  actions: Action[];
-};
+  name: string
+  account: ListedAccount
+  actions: Action[]
+}
 
 type ListedMenuItemProps = {
-  action: Action;
-  note: SNNote;
-  group: ListedMenuGroup;
-  application: WebApplication;
-  reloadMenuGroup: (group: ListedMenuGroup) => Promise<void>;
-};
+  action: Action
+  note: SNNote
+  group: ListedMenuGroup
+  application: WebApplication
+  reloadMenuGroup: (group: ListedMenuGroup) => Promise<void>
+}
 
 const ListedMenuItem: FunctionComponent<ListedMenuItemProps> = ({
   action,
@@ -40,21 +33,21 @@ const ListedMenuItem: FunctionComponent<ListedMenuItemProps> = ({
   group,
   reloadMenuGroup,
 }) => {
-  const [isRunning, setIsRunning] = useState(false);
+  const [isRunning, setIsRunning] = useState(false)
 
   const handleClick = async () => {
     if (isRunning) {
-      return;
+      return
     }
 
-    setIsRunning(true);
+    setIsRunning(true)
 
-    await application.actionsManager.runAction(action, note);
+    await application.actionsManager.runAction(action, note)
 
-    setIsRunning(false);
+    setIsRunning(false)
 
-    reloadMenuGroup(group);
-  };
+    reloadMenuGroup(group).catch(console.error)
+  }
 
   return (
     <button
@@ -74,109 +67,100 @@ const ListedMenuItem: FunctionComponent<ListedMenuItemProps> = ({
       </div>
       {isRunning && <div className="sk-spinner spinner-info w-3 h-3" />}
     </button>
-  );
-};
+  )
+}
 
 type ListedActionsMenuProps = {
-  application: WebApplication;
-  note: SNNote;
-  recalculateMenuStyle: () => void;
-};
+  application: WebApplication
+  note: SNNote
+  recalculateMenuStyle: () => void
+}
 
 const ListedActionsMenu: FunctionComponent<ListedActionsMenuProps> = ({
   application,
   note,
   recalculateMenuStyle,
 }) => {
-  const [menuGroups, setMenuGroups] = useState<ListedMenuGroup[]>([]);
-  const [isFetchingAccounts, setIsFetchingAccounts] = useState(true);
+  const [menuGroups, setMenuGroups] = useState<ListedMenuGroup[]>([])
+  const [isFetchingAccounts, setIsFetchingAccounts] = useState(true)
 
   const reloadMenuGroup = async (group: ListedMenuGroup) => {
-    const updatedAccountInfo = await application.getListedAccountInfo(
-      group.account,
-      note.uuid
-    );
+    const updatedAccountInfo = await application.getListedAccountInfo(group.account, note.uuid)
 
     if (!updatedAccountInfo) {
-      return;
+      return
     }
 
     const updatedGroup: ListedMenuGroup = {
       name: updatedAccountInfo.display_name,
       account: group.account,
       actions: updatedAccountInfo.actions as Action[],
-    };
+    }
 
     const updatedGroups = menuGroups.map((group) => {
       if (updatedGroup.account.authorId === group.account.authorId) {
-        return updatedGroup;
+        return updatedGroup
       } else {
-        return group;
+        return group
       }
-    });
+    })
 
-    setMenuGroups(updatedGroups);
-  };
+    setMenuGroups(updatedGroups)
+  }
 
   useEffect(() => {
     const fetchListedAccounts = async () => {
       if (!application.hasAccount()) {
-        setIsFetchingAccounts(false);
-        return;
+        setIsFetchingAccounts(false)
+        return
       }
 
       try {
-        const listedAccountEntries = await application.getListedAccounts();
+        const listedAccountEntries = await application.getListedAccounts()
 
         if (!listedAccountEntries.length) {
-          throw new Error('No Listed accounts found');
+          throw new Error('No Listed accounts found')
         }
 
-        const menuGroups: ListedMenuGroup[] = [];
+        const menuGroups: ListedMenuGroup[] = []
 
         await Promise.all(
           listedAccountEntries.map(async (account) => {
-            const accountInfo = await application.getListedAccountInfo(
-              account,
-              note.uuid
-            );
+            const accountInfo = await application.getListedAccountInfo(account, note.uuid)
 
             if (accountInfo) {
               menuGroups.push({
                 name: accountInfo.display_name,
                 account,
                 actions: accountInfo.actions as Action[],
-              });
+              })
             } else {
               menuGroups.push({
                 name: account.authorId,
                 account,
                 actions: [],
-              });
+              })
             }
-          })
-        );
+          }),
+        )
 
         setMenuGroups(
           menuGroups.sort((a, b) => {
-            return a.name.toString().toLowerCase() <
-              b.name.toString().toLowerCase()
-              ? -1
-              : 1;
-          })
-        );
+            return a.name.toString().toLowerCase() < b.name.toString().toLowerCase() ? -1 : 1
+          }),
+        )
       } catch (err) {
-        console.error(err);
+        console.error(err)
       } finally {
-        setIsFetchingAccounts(false);
+        setIsFetchingAccounts(false)
         setTimeout(() => {
-          recalculateMenuStyle();
-        });
+          recalculateMenuStyle()
+        })
       }
-    };
+    }
 
-    fetchListedAccounts();
-  }, [application, note.uuid, recalculateMenuStyle]);
+    void fetchListedAccounts()
+  }, [application, note.uuid, recalculateMenuStyle])
 
   return (
     <>
@@ -208,9 +192,7 @@ const ListedActionsMenu: FunctionComponent<ListedActionsMenuProps> = ({
                   />
                 ))
               ) : (
-                <div className="px-3 py-2 color-grey-0 select-none">
-                  No actions available
-                </div>
+                <div className="px-3 py-2 color-grey-0 select-none">No actions available</div>
               )}
             </Fragment>
           ))}
@@ -218,61 +200,53 @@ const ListedActionsMenu: FunctionComponent<ListedActionsMenuProps> = ({
       ) : null}
       {!isFetchingAccounts && !menuGroups.length ? (
         <div className="w-full flex items-center justify-center px-4 py-6">
-          <div className="color-grey-0 select-none">
-            No Listed accounts found
-          </div>
+          <div className="color-grey-0 select-none">No Listed accounts found</div>
         </div>
       ) : null}
     </>
-  );
-};
+  )
+}
 
-export const ListedActionsOption: FunctionComponent<Props> = ({
-  application,
-  note,
-}) => {
-  const menuContainerRef = useRef<HTMLDivElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const menuButtonRef = useRef<HTMLButtonElement>(null);
+export const ListedActionsOption: FunctionComponent<Props> = ({ application, note }) => {
+  const menuContainerRef = useRef<HTMLDivElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
 
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [menuStyle, setMenuStyle] = useState<SubmenuStyle>({
     right: 0,
     bottom: 0,
     maxHeight: 'auto',
-  });
+  })
 
-  const [closeOnBlur] = useCloseOnBlur(menuContainerRef, setIsMenuOpen);
+  const [closeOnBlur] = useCloseOnBlur(menuContainerRef, setIsMenuOpen)
 
   const toggleListedMenu = () => {
     if (!isMenuOpen) {
-      const menuPosition = calculateSubmenuStyle(menuButtonRef.current);
+      const menuPosition = calculateSubmenuStyle(menuButtonRef.current)
       if (menuPosition) {
-        setMenuStyle(menuPosition);
+        setMenuStyle(menuPosition)
       }
     }
 
-    setIsMenuOpen(!isMenuOpen);
-  };
+    setIsMenuOpen(!isMenuOpen)
+  }
 
   const recalculateMenuStyle = useCallback(() => {
-    const newMenuPosition = calculateSubmenuStyle(
-      menuButtonRef.current,
-      menuRef.current
-    );
+    const newMenuPosition = calculateSubmenuStyle(menuButtonRef.current, menuRef.current)
 
     if (newMenuPosition) {
-      setMenuStyle(newMenuPosition);
+      setMenuStyle(newMenuPosition)
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
     if (isMenuOpen) {
       setTimeout(() => {
-        recalculateMenuStyle();
-      });
+        recalculateMenuStyle()
+      })
     }
-  }, [isMenuOpen, recalculateMenuStyle]);
+  }, [isMenuOpen, recalculateMenuStyle])
 
   return (
     <div ref={menuContainerRef}>
@@ -306,5 +280,5 @@ export const ListedActionsOption: FunctionComponent<Props> = ({
         </DisclosurePanel>
       </Disclosure>
     </div>
-  );
-};
+  )
+}

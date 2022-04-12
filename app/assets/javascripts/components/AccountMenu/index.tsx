@@ -1,15 +1,15 @@
-import { observer } from 'mobx-react-lite';
-import { useCloseOnClickOutside } from '@/components/utils';
-import { AppState } from '@/ui_models/app_state';
-import { WebApplication } from '@/ui_models/application';
-import { useRef, useState } from 'preact/hooks';
-import { GeneralAccountMenu } from './GeneralAccountMenu';
-import { FunctionComponent } from 'preact';
-import { SignInPane } from './SignIn';
-import { CreateAccount } from './CreateAccount';
-import { ConfirmPassword } from './ConfirmPassword';
-import { JSXInternal } from 'preact/src/jsx';
-import { ApplicationGroup } from '@/ui_models/application_group';
+import { observer } from 'mobx-react-lite'
+import { useCloseOnClickOutside } from '@/components/utils'
+import { AppState } from '@/ui_models/app_state'
+import { WebApplication } from '@/ui_models/application'
+import { useRef, useState } from 'preact/hooks'
+import { GeneralAccountMenu } from './GeneralAccountMenu'
+import { FunctionComponent } from 'preact'
+import { SignInPane } from './SignIn'
+import { CreateAccount } from './CreateAccount'
+import { ConfirmPassword } from './ConfirmPassword'
+import { JSXInternal } from 'preact/src/jsx'
+import { ApplicationGroup } from '@/ui_models/application_group'
 
 export enum AccountMenuPane {
   GeneralMenu,
@@ -19,32 +19,25 @@ export enum AccountMenuPane {
 }
 
 type Props = {
-  appState: AppState;
-  application: WebApplication;
-  onClickOutside: () => void;
-  mainApplicationGroup: ApplicationGroup;
-};
+  appState: AppState
+  application: WebApplication
+  onClickOutside: () => void
+  mainApplicationGroup: ApplicationGroup
+}
 
 type PaneSelectorProps = {
-  appState: AppState;
-  application: WebApplication;
-  mainApplicationGroup: ApplicationGroup;
-  menuPane: AccountMenuPane;
-  setMenuPane: (pane: AccountMenuPane) => void;
-  closeMenu: () => void;
-};
+  appState: AppState
+  application: WebApplication
+  mainApplicationGroup: ApplicationGroup
+  menuPane: AccountMenuPane
+  setMenuPane: (pane: AccountMenuPane) => void
+  closeMenu: () => void
+}
 
 const MenuPaneSelector: FunctionComponent<PaneSelectorProps> = observer(
-  ({
-    application,
-    appState,
-    menuPane,
-    setMenuPane,
-    closeMenu,
-    mainApplicationGroup,
-  }) => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+  ({ application, appState, menuPane, setMenuPane, closeMenu, mainApplicationGroup }) => {
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
 
     switch (menuPane) {
       case AccountMenuPane.GeneralMenu:
@@ -56,15 +49,11 @@ const MenuPaneSelector: FunctionComponent<PaneSelectorProps> = observer(
             setMenuPane={setMenuPane}
             closeMenu={closeMenu}
           />
-        );
+        )
       case AccountMenuPane.SignIn:
         return (
-          <SignInPane
-            appState={appState}
-            application={application}
-            setMenuPane={setMenuPane}
-          />
-        );
+          <SignInPane appState={appState} application={application} setMenuPane={setMenuPane} />
+        )
       case AccountMenuPane.Register:
         return (
           <CreateAccount
@@ -76,7 +65,7 @@ const MenuPaneSelector: FunctionComponent<PaneSelectorProps> = observer(
             password={password}
             setPassword={setPassword}
           />
-        );
+        )
       case AccountMenuPane.ConfirmPassword:
         return (
           <ConfirmPassword
@@ -86,48 +75,40 @@ const MenuPaneSelector: FunctionComponent<PaneSelectorProps> = observer(
             email={email}
             password={password}
           />
-        );
+        )
     }
-  }
-);
+  },
+)
 
 export const AccountMenu: FunctionComponent<Props> = observer(
   ({ application, appState, onClickOutside, mainApplicationGroup }) => {
-    const {
-      currentPane,
-      setCurrentPane,
-      shouldAnimateCloseMenu,
-      closeAccountMenu,
-    } = appState.accountMenu;
+    const { currentPane, setCurrentPane, shouldAnimateCloseMenu, closeAccountMenu } =
+      appState.accountMenu
 
-    const ref = useRef<HTMLDivElement>(null);
+    const ref = useRef<HTMLDivElement>(null)
     useCloseOnClickOutside(ref, () => {
-      onClickOutside();
-    });
+      onClickOutside()
+    })
 
-    const handleKeyDown: JSXInternal.KeyboardEventHandler<HTMLDivElement> = (
-      event
-    ) => {
+    const handleKeyDown: JSXInternal.KeyboardEventHandler<HTMLDivElement> = (event) => {
       switch (event.key) {
         case 'Escape':
           if (currentPane === AccountMenuPane.GeneralMenu) {
-            closeAccountMenu();
+            closeAccountMenu()
           } else if (currentPane === AccountMenuPane.ConfirmPassword) {
-            setCurrentPane(AccountMenuPane.Register);
+            setCurrentPane(AccountMenuPane.Register)
           } else {
-            setCurrentPane(AccountMenuPane.GeneralMenu);
+            setCurrentPane(AccountMenuPane.GeneralMenu)
           }
-          break;
+          break
       }
-    };
+    }
 
     return (
       <div ref={ref} id="account-menu" className="sn-component">
         <div
           className={`sn-menu-border sn-account-menu sn-dropdown ${
-            shouldAnimateCloseMenu
-              ? 'slide-up-animation'
-              : 'sn-dropdown--animated'
+            shouldAnimateCloseMenu ? 'slide-up-animation' : 'sn-dropdown--animated'
           } min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto absolute`}
           onKeyDown={handleKeyDown}
         >
@@ -141,6 +122,6 @@ export const AccountMenu: FunctionComponent<Props> = observer(
           />
         </div>
       </div>
-    );
-  }
-);
+    )
+  },
+)

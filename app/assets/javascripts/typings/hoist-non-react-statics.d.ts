@@ -9,51 +9,51 @@
 
 declare module 'hoist-non-react-statics' {
   interface REACT_STATICS {
-    childContextTypes: true;
-    contextType: true;
-    contextTypes: true;
-    defaultProps: true;
-    displayName: true;
-    getDefaultProps: true;
-    getDerivedStateFromError: true;
-    getDerivedStateFromProps: true;
-    mixins: true;
-    propTypes: true;
-    type: true;
+    childContextTypes: true
+    contextType: true
+    contextTypes: true
+    defaultProps: true
+    displayName: true
+    getDefaultProps: true
+    getDerivedStateFromError: true
+    getDerivedStateFromProps: true
+    mixins: true
+    propTypes: true
+    type: true
   }
 
   interface KNOWN_STATICS {
-    name: true;
-    length: true;
-    prototype: true;
-    caller: true;
-    callee: true;
-    arguments: true;
-    arity: true;
+    name: true
+    length: true
+    prototype: true
+    caller: true
+    callee: true
+    arguments: true
+    arity: true
   }
 
   interface MEMO_STATICS {
-    $$typeof: true;
-    compare: true;
-    defaultProps: true;
-    displayName: true;
-    propTypes: true;
-    type: true;
+    $$typeof: true
+    compare: true
+    defaultProps: true
+    displayName: true
+    propTypes: true
+    type: true
   }
 
   interface FORWARD_REF_STATICS {
-    $$typeof: true;
-    render: true;
-    defaultProps: true;
-    displayName: true;
-    propTypes: true;
+    $$typeof: true
+    render: true
+    defaultProps: true
+    displayName: true
+    propTypes: true
   }
 
   export type NonReactStatics<
     S extends React.ComponentType<any>,
     C extends {
-      [key: string]: true;
-    } = {}
+      [key: string]: true
+    } = {},
   > = {
     [key in Exclude<
       keyof S,
@@ -62,6 +62,6 @@ declare module 'hoist-non-react-statics' {
         : S extends React.ForwardRefExoticComponent<any>
         ? keyof FORWARD_REF_STATICS | keyof C
         : keyof REACT_STATICS | keyof KNOWN_STATICS | keyof C
-    >]: S[key];
-  };
+    >]: S[key]
+  }
 }

@@ -1,155 +1,147 @@
-import { ApplicationGroup } from '@/ui_models/application_group';
-import { getPlatformString, getWindowUrlParams } from '@/utils';
-import { AppStateEvent, PanelResizedData } from '@/ui_models/app_state';
-import {
-  ApplicationEvent,
-  Challenge,
-  PermissionDialog,
-  removeFromArray,
-} from '@standardnotes/snjs';
-import { PANEL_NAME_NOTES, PANEL_NAME_NAVIGATION } from '@/constants';
-import { alertDialog } from '@/services/alertService';
-import { WebAppEvent, WebApplication } from '@/ui_models/application';
-import { PureComponent } from '@/components/Abstract/PureComponent';
-import { Navigation } from '@/components/Navigation';
-import { NotesView } from '@/components/NotesView';
-import { NoteGroupView } from '@/components/NoteGroupView';
-import { Footer } from '@/components/Footer';
-import { SessionsModal } from '@/components/SessionsModal';
-import { PreferencesViewWrapper } from '@/components/Preferences/PreferencesViewWrapper';
-import { ChallengeModal } from '@/components/ChallengeModal/ChallengeModal';
-import { NotesContextMenu } from '@/components/NotesContextMenu';
-import { PurchaseFlowWrapper } from '@/components/PurchaseFlow/PurchaseFlowWrapper';
-import { render } from 'preact';
-import { PermissionsModal } from './PermissionsModal';
-import { RevisionHistoryModalWrapper } from './RevisionHistoryModal/RevisionHistoryModalWrapper';
-import { PremiumModalProvider } from './Premium';
-import { ConfirmSignoutContainer } from './ConfirmSignoutModal';
-import { TagsContextMenu } from './Tags/TagContextMenu';
-import { ToastContainer } from '@standardnotes/stylekit';
-import { FilePreviewModalProvider } from './Files/FilePreviewModalProvider';
+import { ApplicationGroup } from '@/ui_models/application_group'
+import { getPlatformString, getWindowUrlParams } from '@/utils'
+import { AppStateEvent, PanelResizedData } from '@/ui_models/app_state'
+import { ApplicationEvent, Challenge, PermissionDialog, removeFromArray } from '@standardnotes/snjs'
+import { PANEL_NAME_NOTES, PANEL_NAME_NAVIGATION } from '@/constants'
+import { alertDialog } from '@/services/alertService'
+import { WebAppEvent, WebApplication } from '@/ui_models/application'
+import { PureComponent } from '@/components/Abstract/PureComponent'
+import { Navigation } from '@/components/Navigation'
+import { NotesView } from '@/components/NotesView'
+import { NoteGroupView } from '@/components/NoteGroupView'
+import { Footer } from '@/components/Footer'
+import { SessionsModal } from '@/components/SessionsModal'
+import { PreferencesViewWrapper } from '@/components/Preferences/PreferencesViewWrapper'
+import { ChallengeModal } from '@/components/ChallengeModal/ChallengeModal'
+import { NotesContextMenu } from '@/components/NotesContextMenu'
+import { PurchaseFlowWrapper } from '@/components/PurchaseFlow/PurchaseFlowWrapper'
+import { render } from 'preact'
+import { PermissionsModal } from './PermissionsModal'
+import { RevisionHistoryModalWrapper } from './RevisionHistoryModal/RevisionHistoryModalWrapper'
+import { PremiumModalProvider } from './Premium'
+import { ConfirmSignoutContainer } from './ConfirmSignoutModal'
+import { TagsContextMenu } from './Tags/TagContextMenu'
+import { ToastContainer } from '@standardnotes/stylekit'
+import { FilePreviewModalProvider } from './Files/FilePreviewModalProvider'
 
 type Props = {
-  application: WebApplication;
-  mainApplicationGroup: ApplicationGroup;
-};
+  application: WebApplication
+  mainApplicationGroup: ApplicationGroup
+}
 
 type State = {
-  started?: boolean;
-  launched?: boolean;
-  needsUnlock?: boolean;
-  appClass: string;
-  challenges: Challenge[];
-};
+  started?: boolean
+  launched?: boolean
+  needsUnlock?: boolean
+  appClass: string
+  challenges: Challenge[]
+}
 
 export class ApplicationView extends PureComponent<Props, State> {
-  public readonly platformString = getPlatformString();
+  public readonly platformString = getPlatformString()
 
   constructor(props: Props) {
-    super(props, props.application);
+    super(props, props.application)
     this.state = {
       appClass: '',
       challenges: [],
-    };
+    }
   }
 
   deinit() {
-    (this.application as unknown) = undefined;
-    super.deinit();
+    ;(this.application as unknown) = undefined
+    super.deinit()
   }
 
   componentDidMount(): void {
-    super.componentDidMount();
-    this.loadApplication();
+    super.componentDidMount()
+    this.loadApplication().catch(console.error)
   }
 
   async loadApplication() {
-    this.application.componentManager.setDesktopManager(
-      this.application.getDesktopService()
-    );
+    this.application.componentManager.setDesktopManager(this.application.getDesktopService())
     await this.application.prepareForLaunch({
       receiveChallenge: async (challenge) => {
-        const challenges = this.state.challenges.slice();
-        challenges.push(challenge);
-        this.setState({ challenges: challenges });
+        const challenges = this.state.challenges.slice()
+        challenges.push(challenge)
+        this.setState({ challenges: challenges })
       },
-    });
-    await this.application.launch();
+    })
+    await this.application.launch()
   }
 
   public removeChallenge = async (challenge: Challenge) => {
-    const challenges = this.state.challenges.slice();
-    removeFromArray(challenges, challenge);
-    this.setState({ challenges: challenges });
-  };
+    const challenges = this.state.challenges.slice()
+    removeFromArray(challenges, challenge)
+    this.setState({ challenges: challenges })
+  }
 
   async onAppStart() {
-    super.onAppStart();
+    super.onAppStart().catch(console.error)
     this.setState({
       started: true,
       needsUnlock: this.application.hasPasscode(),
-    });
+    })
 
-    this.application.componentManager.presentPermissionsDialog =
-      this.presentPermissionsDialog;
+    this.application.componentManager.presentPermissionsDialog = this.presentPermissionsDialog
   }
 
   async onAppLaunch() {
-    super.onAppLaunch();
+    super.onAppLaunch().catch(console.error)
     this.setState({
       launched: true,
       needsUnlock: false,
-    });
-    this.handleDemoSignInFromParams();
+    })
+    this.handleDemoSignInFromParams().catch(console.error)
   }
 
   onUpdateAvailable() {
-    this.application.notifyWebEvent(WebAppEvent.NewUpdateAvailable);
+    this.application.notifyWebEvent(WebAppEvent.NewUpdateAvailable)
   }
 
   /** @override */
   async onAppEvent(eventName: ApplicationEvent) {
-    super.onAppEvent(eventName);
+    super.onAppEvent(eventName)
     switch (eventName) {
       case ApplicationEvent.LocalDatabaseReadError:
         alertDialog({
           text: 'Unable to load local database. Please restart the app and try again.',
-        });
-        break;
+        }).catch(console.error)
+        break
       case ApplicationEvent.LocalDatabaseWriteError:
         alertDialog({
           text: 'Unable to write to local database. Please restart the app and try again.',
-        });
-        break;
+        }).catch(console.error)
+        break
     }
   }
 
   /** @override */
   async onAppStateEvent(eventName: AppStateEvent, data?: unknown) {
     if (eventName === AppStateEvent.PanelResized) {
-      const { panel, collapsed } = data as PanelResizedData;
-      let appClass = '';
+      const { panel, collapsed } = data as PanelResizedData
+      let appClass = ''
       if (panel === PANEL_NAME_NOTES && collapsed) {
-        appClass += 'collapsed-notes';
+        appClass += 'collapsed-notes'
       }
       if (panel === PANEL_NAME_NAVIGATION && collapsed) {
-        appClass += ' collapsed-navigation';
+        appClass += ' collapsed-navigation'
       }
-      this.setState({ appClass });
+      this.setState({ appClass })
     } else if (eventName === AppStateEvent.WindowDidFocus) {
       if (!(await this.application.isLocked())) {
-        this.application.sync.sync();
+        this.application.sync.sync().catch(console.error)
       }
     }
   }
 
   async handleDemoSignInFromParams() {
-    const token = getWindowUrlParams().get('demo-token');
+    const token = getWindowUrlParams().get('demo-token')
     if (!token || this.application.hasAccount()) {
-      return;
+      return
     }
 
-    await this.application.sessions.populateSessionFromDemoShareToken(token);
+    await this.application.sessions.populateSessionFromDemoShareToken(token)
   }
 
   presentPermissionsDialog = (dialog: PermissionDialog) => {
@@ -160,35 +152,26 @@ export class ApplicationView extends PureComponent<Props, State> {
         component={dialog.component}
         permissionsString={dialog.permissionsString}
       />,
-      document.body.appendChild(document.createElement('div'))
-    );
-  };
+      document.body.appendChild(document.createElement('div')),
+    )
+  }
 
   render() {
     if (this.application['dealloced'] === true) {
-      console.error('Attempting to render dealloced application');
-      return <div></div>;
+      console.error('Attempting to render dealloced application')
+      return <div></div>
     }
 
-    const renderAppContents = !this.state.needsUnlock && this.state.launched;
+    const renderAppContents = !this.state.needsUnlock && this.state.launched
 
     return (
       <FilePreviewModalProvider application={this.application}>
-        <PremiumModalProvider
-          application={this.application}
-          appState={this.appState}
-        >
+        <PremiumModalProvider application={this.application} appState={this.appState}>
           <div className={this.platformString + ' main-ui-view sn-component'}>
             {renderAppContents && (
-              <div
-                id="app"
-                className={this.state.appClass + ' app app-column-container'}
-              >
+              <div id="app" className={this.state.appClass + ' app app-column-container'}>
                 <Navigation application={this.application} />
-                <NotesView
-                  application={this.application}
-                  appState={this.appState}
-                />
+                <NotesView application={this.application} appState={this.appState} />
                 <NoteGroupView application={this.application} />
               </div>
             )}
@@ -198,14 +181,8 @@ export class ApplicationView extends PureComponent<Props, State> {
                   application={this.application}
                   applicationGroup={this.props.mainApplicationGroup}
                 />
-                <SessionsModal
-                  application={this.application}
-                  appState={this.appState}
-                />
-                <PreferencesViewWrapper
-                  appState={this.appState}
-                  application={this.application}
-                />
+                <SessionsModal application={this.application} appState={this.appState} />
+                <PreferencesViewWrapper appState={this.appState} application={this.application} />
                 <RevisionHistoryModalWrapper
                   application={this.application}
                   appState={this.appState}
@@ -222,29 +199,20 @@ export class ApplicationView extends PureComponent<Props, State> {
                     onDismiss={this.removeChallenge}
                   />
                 </div>
-              );
+              )
             })}
             {renderAppContents && (
               <>
-                <NotesContextMenu
-                  application={this.application}
-                  appState={this.appState}
-                />
+                <NotesContextMenu application={this.application} appState={this.appState} />
                 <TagsContextMenu appState={this.appState} />
-                <PurchaseFlowWrapper
-                  application={this.application}
-                  appState={this.appState}
-                />
-                <ConfirmSignoutContainer
-                  appState={this.appState}
-                  application={this.application}
-                />
+                <PurchaseFlowWrapper application={this.application} appState={this.appState} />
+                <ConfirmSignoutContainer appState={this.appState} application={this.application} />
                 <ToastContainer />
               </>
             )}
           </div>
         </PremiumModalProvider>
       </FilePreviewModalProvider>
-    );
+    )
   }
 }

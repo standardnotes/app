@@ -1,3 +1,3 @@
-import { SNWebCrypto } from "@standardnotes/sncrypto-web";
+import { SNWebCrypto } from '@standardnotes/sncrypto-web'
 
-export const WebCrypto = new SNWebCrypto();
+export const WebCrypto = new SNWebCrypto()

@@ -1,10 +1,10 @@
-import { SyncOpStatus } from '@standardnotes/snjs';
-import { action, makeObservable, observable } from 'mobx';
+import { SyncOpStatus } from '@standardnotes/snjs'
+import { action, makeObservable, observable } from 'mobx'
 
 export class SyncState {
-  inProgress = false;
-  errorMessage?: string = undefined;
-  humanReadablePercentage?: string = undefined;
+  inProgress = false
+  errorMessage?: string = undefined
+  humanReadablePercentage?: string = undefined
 
   constructor() {
     makeObservable(this, {
@@ -12,25 +12,22 @@ export class SyncState {
       errorMessage: observable,
       humanReadablePercentage: observable,
       update: action,
-    });
+    })
   }
 
   update = (status: SyncOpStatus): void => {
-    this.errorMessage = status.error?.message;
-    this.inProgress = status.syncInProgress;
-    const stats = status.getStats();
+    this.errorMessage = status.error?.message
+    this.inProgress = status.syncInProgress
+    const stats = status.getStats()
     const completionPercentage =
-      stats.uploadCompletionCount === 0
-        ? 0
-        : stats.uploadCompletionCount / stats.uploadTotalCount;
+      stats.uploadCompletionCount === 0 ? 0 : stats.uploadCompletionCount / stats.uploadTotalCount
 
     if (completionPercentage === 0) {
-      this.humanReadablePercentage = undefined;
+      this.humanReadablePercentage = undefined
     } else {
-      this.humanReadablePercentage = completionPercentage.toLocaleString(
-        undefined,
-        { style: 'percent' }
-      );
+      this.humanReadablePercentage = completionPercentage.toLocaleString(undefined, {
+        style: 'percent',
+      })
     }
-  };
+  }
 }

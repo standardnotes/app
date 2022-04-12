@@ -1,349 +1,318 @@
-import { WebApplication } from '@/ui_models/application';
-import { AppState } from '@/ui_models/app_state';
-import { MENU_MARGIN_FROM_APP_BORDER } from '@/constants';
-import {
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
-} from '@reach/disclosure';
-import VisuallyHidden from '@reach/visually-hidden';
-import { observer } from 'mobx-react-lite';
-import { FunctionComponent } from 'preact';
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
-import { Icon } from '../Icon';
-import { useCloseOnBlur } from '../utils';
+import { WebApplication } from '@/ui_models/application'
+import { AppState } from '@/ui_models/app_state'
+import { MENU_MARGIN_FROM_APP_BORDER } from '@/constants'
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
+import VisuallyHidden from '@reach/visually-hidden'
+import { observer } from 'mobx-react-lite'
+import { FunctionComponent } from 'preact'
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
+import { Icon } from '../Icon'
+import { useCloseOnBlur } from '../utils'
 import {
   ChallengeReason,
   ContentType,
   FeatureIdentifier,
   FeatureStatus,
   SNFile,
-} from '@standardnotes/snjs';
-import { confirmDialog } from '@/services/alertService';
-import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit';
-import { StreamingFileReader } from '@standardnotes/filepicker';
-import {
-  PopoverFileItemAction,
-  PopoverFileItemActionType,
-} from './PopoverFileItemAction';
-import { AttachedFilesPopover, PopoverTabs } from './AttachedFilesPopover';
-import { usePremiumModal } from '../Premium/usePremiumModal';
+} from '@standardnotes/snjs'
+import { confirmDialog } from '@/services/alertService'
+import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit'
+import { StreamingFileReader } from '@standardnotes/filepicker'
+import { PopoverFileItemAction, PopoverFileItemActionType } from './PopoverFileItemAction'
+import { AttachedFilesPopover, PopoverTabs } from './AttachedFilesPopover'
+import { usePremiumModal } from '../Premium/usePremiumModal'
 
 type Props = {
-  application: WebApplication;
-  appState: AppState;
-  onClickPreprocessing?: () => Promise<void>;
-};
+  application: WebApplication
+  appState: AppState
+  onClickPreprocessing?: () => Promise<void>
+}
 
 const createDragOverlay = () => {
   if (document.getElementById('drag-overlay')) {
-    return;
+    return
   }
 
   const overlayElementTemplate =
-    '<div class="sn-component" id="drag-overlay"><div class="absolute top-0 left-0 w-full h-full z-index-1001"></div></div>';
-  const overlayFragment = document
-    .createRange()
-    .createContextualFragment(overlayElementTemplate);
-  document.body.appendChild(overlayFragment);
-};
+    '<div class="sn-component" id="drag-overlay"><div class="absolute top-0 left-0 w-full h-full z-index-1001"></div></div>'
+  const overlayFragment = document.createRange().createContextualFragment(overlayElementTemplate)
+  document.body.appendChild(overlayFragment)
+}
 
 const removeDragOverlay = () => {
-  document.getElementById('drag-overlay')?.remove();
-};
+  document.getElementById('drag-overlay')?.remove()
+}
 
 export const AttachedFilesButton: FunctionComponent<Props> = observer(
   ({ application, appState, onClickPreprocessing }) => {
-    const premiumModal = usePremiumModal();
-    const note = Object.values(appState.notes.selectedNotes)[0];
+    const premiumModal = usePremiumModal()
+    const note = Object.values(appState.notes.selectedNotes)[0]
 
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(false)
     const [position, setPosition] = useState({
       top: 0,
       right: 0,
-    });
-    const [maxHeight, setMaxHeight] = useState<number | 'auto'>('auto');
-    const buttonRef = useRef<HTMLButtonElement>(null);
-    const panelRef = useRef<HTMLDivElement>(null);
-    const containerRef = useRef<HTMLDivElement>(null);
-    const [closeOnBlur, keepMenuOpen] = useCloseOnBlur(containerRef, setOpen);
+    })
+    const [maxHeight, setMaxHeight] = useState<number | 'auto'>('auto')
+    const buttonRef = useRef<HTMLButtonElement>(null)
+    const panelRef = useRef<HTMLDivElement>(null)
+    const containerRef = useRef<HTMLDivElement>(null)
+    const [closeOnBlur, keepMenuOpen] = useCloseOnBlur(containerRef, setOpen)
 
     const [attachedFilesCount, setAttachedFilesCount] = useState(
-      note ? application.items.getFilesForNote(note).length : 0
-    );
+      note ? application.items.getFilesForNote(note).length : 0,
+    )
 
     const reloadAttachedFilesCount = useCallback(() => {
-      setAttachedFilesCount(
-        note ? application.items.getFilesForNote(note).length : 0
-      );
-    }, [application.items, note]);
+      setAttachedFilesCount(note ? application.items.getFilesForNote(note).length : 0)
+    }, [application.items, note])
 
     useEffect(() => {
-      const unregisterFileStream = application.streamItems(
-        ContentType.File,
-        () => {
-          reloadAttachedFilesCount();
-        }
-      );
+      const unregisterFileStream = application.streamItems(ContentType.File, () => {
+        reloadAttachedFilesCount()
+      })
 
       return () => {
-        unregisterFileStream();
-      };
-    }, [application, reloadAttachedFilesCount]);
+        unregisterFileStream()
+      }
+    }, [application, reloadAttachedFilesCount])
 
     const toggleAttachedFilesMenu = useCallback(async () => {
       if (
-        application.features.getFeatureStatus(FeatureIdentifier.Files) !==
-        FeatureStatus.Entitled
+        application.features.getFeatureStatus(FeatureIdentifier.Files) !== FeatureStatus.Entitled
       ) {
-        premiumModal.activate('Files');
-        return;
+        premiumModal.activate('Files')
+        return
       }
 
-      const rect = buttonRef.current?.getBoundingClientRect();
+      const rect = buttonRef.current?.getBoundingClientRect()
       if (rect) {
-        const { clientHeight } = document.documentElement;
-        const footerElementRect = document
-          .getElementById('footer-bar')
-          ?.getBoundingClientRect();
-        const footerHeightInPx = footerElementRect?.height;
+        const { clientHeight } = document.documentElement
+        const footerElementRect = document.getElementById('footer-bar')?.getBoundingClientRect()
+        const footerHeightInPx = footerElementRect?.height
 
         if (footerHeightInPx) {
-          setMaxHeight(
-            clientHeight -
-              rect.bottom -
-              footerHeightInPx -
-              MENU_MARGIN_FROM_APP_BORDER
-          );
+          setMaxHeight(clientHeight - rect.bottom - footerHeightInPx - MENU_MARGIN_FROM_APP_BORDER)
         }
 
         setPosition({
           top: rect.bottom,
           right: document.body.clientWidth - rect.right,
-        });
+        })
 
-        const newOpenState = !open;
+        const newOpenState = !open
         if (newOpenState && onClickPreprocessing) {
-          await onClickPreprocessing();
+          await onClickPreprocessing()
         }
 
-        setOpen(newOpenState);
+        setOpen(newOpenState)
       }
-    }, [application.features, onClickPreprocessing, open, premiumModal]);
+    }, [application.features, onClickPreprocessing, open, premiumModal])
 
     const deleteFile = async (file: SNFile) => {
       const shouldDelete = await confirmDialog({
         text: `Are you sure you want to permanently delete "${file.name}"?`,
         confirmButtonStyle: 'danger',
-      });
+      })
       if (shouldDelete) {
         const deletingToastId = addToast({
           type: ToastType.Loading,
           message: `Deleting file "${file.name}"...`,
-        });
-        await application.files.deleteFile(file);
+        })
+        await application.files.deleteFile(file)
         addToast({
           type: ToastType.Success,
           message: `Deleted file "${file.name}"`,
-        });
-        dismissToast(deletingToastId);
+        })
+        dismissToast(deletingToastId)
       }
-    };
+    }
 
     const downloadFile = async (file: SNFile) => {
-      appState.files.downloadFile(file);
-    };
+      appState.files.downloadFile(file).catch(console.error)
+    }
 
     const attachFileToNote = useCallback(
       async (file: SNFile) => {
-        await application.items.associateFileWithNote(file, note);
+        await application.items.associateFileWithNote(file, note)
       },
-      [application.items, note]
-    );
+      [application.items, note],
+    )
 
     const detachFileFromNote = async (file: SNFile) => {
-      await application.items.disassociateFileWithNote(file, note);
-    };
+      await application.items.disassociateFileWithNote(file, note)
+    }
 
     const toggleFileProtection = async (file: SNFile) => {
-      let result: SNFile | undefined;
+      let result: SNFile | undefined
       if (file.protected) {
-        keepMenuOpen(true);
-        result = await application.mutator.unprotectFile(file);
-        keepMenuOpen(false);
-        buttonRef.current?.focus();
+        keepMenuOpen(true)
+        result = await application.mutator.unprotectFile(file)
+        keepMenuOpen(false)
+        buttonRef.current?.focus()
       } else {
-        result = await application.mutator.protectFile(file);
+        result = await application.mutator.protectFile(file)
       }
-      const isProtected = result ? result.protected : file.protected;
-      return isProtected;
-    };
+      const isProtected = result ? result.protected : file.protected
+      return isProtected
+    }
 
     const authorizeProtectedActionForFile = async (
       file: SNFile,
-      challengeReason: ChallengeReason
+      challengeReason: ChallengeReason,
     ) => {
-      const authorizedFiles =
-        await application.protections.authorizeProtectedActionForFiles(
-          [file],
-          challengeReason
-        );
-      const isAuthorized =
-        authorizedFiles.length > 0 && authorizedFiles.includes(file);
-      return isAuthorized;
-    };
+      const authorizedFiles = await application.protections.authorizeProtectedActionForFiles(
+        [file],
+        challengeReason,
+      )
+      const isAuthorized = authorizedFiles.length > 0 && authorizedFiles.includes(file)
+      return isAuthorized
+    }
 
     const renameFile = async (file: SNFile, fileName: string) => {
-      await application.items.renameFile(file, fileName);
-    };
+      await application.items.renameFile(file, fileName)
+    }
 
     const handleFileAction = async (action: PopoverFileItemAction) => {
       const file =
-        action.type !== PopoverFileItemActionType.RenameFile
-          ? action.payload
-          : action.payload.file;
-      let isAuthorizedForAction = true;
+        action.type !== PopoverFileItemActionType.RenameFile ? action.payload : action.payload.file
+      let isAuthorizedForAction = true
 
-      if (
-        file.protected &&
-        action.type !== PopoverFileItemActionType.ToggleFileProtection
-      ) {
-        keepMenuOpen(true);
+      if (file.protected && action.type !== PopoverFileItemActionType.ToggleFileProtection) {
+        keepMenuOpen(true)
         isAuthorizedForAction = await authorizeProtectedActionForFile(
           file,
-          ChallengeReason.AccessProtectedFile
-        );
-        keepMenuOpen(false);
-        buttonRef.current?.focus();
+          ChallengeReason.AccessProtectedFile,
+        )
+        keepMenuOpen(false)
+        buttonRef.current?.focus()
       }
 
       if (!isAuthorizedForAction) {
-        return false;
+        return false
       }
 
       switch (action.type) {
         case PopoverFileItemActionType.AttachFileToNote:
-          await attachFileToNote(file);
-          break;
+          await attachFileToNote(file)
+          break
         case PopoverFileItemActionType.DetachFileToNote:
-          await detachFileFromNote(file);
-          break;
+          await detachFileFromNote(file)
+          break
         case PopoverFileItemActionType.DeleteFile:
-          await deleteFile(file);
-          break;
+          await deleteFile(file)
+          break
         case PopoverFileItemActionType.DownloadFile:
-          await downloadFile(file);
-          break;
+          await downloadFile(file)
+          break
         case PopoverFileItemActionType.ToggleFileProtection: {
-          const isProtected = await toggleFileProtection(file);
-          action.callback(isProtected);
-          break;
+          const isProtected = await toggleFileProtection(file)
+          action.callback(isProtected)
+          break
         }
         case PopoverFileItemActionType.RenameFile:
-          await renameFile(file, action.payload.name);
-          break;
+          await renameFile(file, action.payload.name)
+          break
       }
 
-      application.sync.sync();
+      application.sync.sync().catch(console.error)
 
-      return true;
-    };
+      return true
+    }
 
-    const [isDraggingFiles, setIsDraggingFiles] = useState(false);
-    const [currentTab, setCurrentTab] = useState(PopoverTabs.AttachedFiles);
-    const dragCounter = useRef(0);
+    const [isDraggingFiles, setIsDraggingFiles] = useState(false)
+    const [currentTab, setCurrentTab] = useState(PopoverTabs.AttachedFiles)
+    const dragCounter = useRef(0)
 
     const handleDrag = (event: DragEvent) => {
-      event.preventDefault();
-      event.stopPropagation();
-    };
+      event.preventDefault()
+      event.stopPropagation()
+    }
 
     const handleDragIn = useCallback(
       (event: DragEvent) => {
-        event.preventDefault();
-        event.stopPropagation();
+        event.preventDefault()
+        event.stopPropagation()
 
-        dragCounter.current = dragCounter.current + 1;
+        dragCounter.current = dragCounter.current + 1
 
         if (event.dataTransfer?.items.length) {
-          setIsDraggingFiles(true);
-          createDragOverlay();
+          setIsDraggingFiles(true)
+          createDragOverlay()
           if (!open) {
-            toggleAttachedFilesMenu();
+            toggleAttachedFilesMenu().catch(console.error)
           }
         }
       },
-      [open, toggleAttachedFilesMenu]
-    );
+      [open, toggleAttachedFilesMenu],
+    )
 
     const handleDragOut = (event: DragEvent) => {
-      event.preventDefault();
-      event.stopPropagation();
+      event.preventDefault()
+      event.stopPropagation()
 
-      dragCounter.current = dragCounter.current - 1;
+      dragCounter.current = dragCounter.current - 1
 
       if (dragCounter.current > 0) {
-        return;
+        return
       }
 
-      removeDragOverlay();
+      removeDragOverlay()
 
-      setIsDraggingFiles(false);
-    };
+      setIsDraggingFiles(false)
+    }
 
     const handleDrop = useCallback(
       (event: DragEvent) => {
-        event.preventDefault();
-        event.stopPropagation();
+        event.preventDefault()
+        event.stopPropagation()
 
-        setIsDraggingFiles(false);
-        removeDragOverlay();
+        setIsDraggingFiles(false)
+        removeDragOverlay()
 
         if (event.dataTransfer?.items.length) {
           Array.from(event.dataTransfer.items).forEach(async (item) => {
             const fileOrHandle = StreamingFileReader.available()
               ? ((await item.getAsFileSystemHandle()) as FileSystemFileHandle)
-              : item.getAsFile();
+              : item.getAsFile()
 
             if (!fileOrHandle) {
-              return;
+              return
             }
 
-            const uploadedFiles = await appState.files.uploadNewFile(
-              fileOrHandle
-            );
+            const uploadedFiles = await appState.files.uploadNewFile(fileOrHandle)
 
             if (!uploadedFiles) {
-              return;
+              return
             }
 
             if (currentTab === PopoverTabs.AttachedFiles) {
               uploadedFiles.forEach((file) => {
-                attachFileToNote(file);
-              });
+                attachFileToNote(file).catch(console.error)
+              })
             }
-          });
+          })
 
-          event.dataTransfer.clearData();
-          dragCounter.current = 0;
+          event.dataTransfer.clearData()
+          dragCounter.current = 0
         }
       },
-      [appState.files, attachFileToNote, currentTab]
-    );
+      [appState.files, attachFileToNote, currentTab],
+    )
 
     useEffect(() => {
-      window.addEventListener('dragenter', handleDragIn);
-      window.addEventListener('dragleave', handleDragOut);
-      window.addEventListener('dragover', handleDrag);
-      window.addEventListener('drop', handleDrop);
+      window.addEventListener('dragenter', handleDragIn)
+      window.addEventListener('dragleave', handleDragOut)
+      window.addEventListener('dragover', handleDrag)
+      window.addEventListener('drop', handleDrop)
 
       return () => {
-        window.removeEventListener('dragenter', handleDragIn);
-        window.removeEventListener('dragleave', handleDragOut);
-        window.removeEventListener('dragover', handleDrag);
-        window.removeEventListener('drop', handleDrop);
-      };
-    }, [handleDragIn, handleDrop]);
+        window.removeEventListener('dragenter', handleDragIn)
+        window.removeEventListener('dragleave', handleDragOut)
+        window.removeEventListener('dragover', handleDrag)
+        window.removeEventListener('drop', handleDrop)
+      }
+    }, [handleDragIn, handleDrop])
 
     return (
       <div ref={containerRef}>
@@ -351,7 +320,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
           <DisclosureButton
             onKeyDown={(event) => {
               if (event.key === 'Escape') {
-                setOpen(false);
+                setOpen(false)
               }
             }}
             ref={buttonRef}
@@ -362,15 +331,13 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
           >
             <VisuallyHidden>Attached files</VisuallyHidden>
             <Icon type="attachment-file" className="block" />
-            {attachedFilesCount > 0 && (
-              <span className="ml-2">{attachedFilesCount}</span>
-            )}
+            {attachedFilesCount > 0 && <span className="ml-2">{attachedFilesCount}</span>}
           </DisclosureButton>
           <DisclosurePanel
             onKeyDown={(event) => {
               if (event.key === 'Escape') {
-                setOpen(false);
-                buttonRef.current?.focus();
+                setOpen(false)
+                buttonRef.current?.focus()
               }
             }}
             ref={panelRef}
@@ -396,6 +363,6 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
           </DisclosurePanel>
         </Disclosure>
       </div>
-    );
-  }
-);
+    )
+  },
+)

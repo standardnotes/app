@@ -1,34 +1,27 @@
-import { MfaProvider, UserProvider } from '@/components/Preferences/providers';
-import { action, makeAutoObservable, observable } from 'mobx';
-import { TwoFactorActivation } from './TwoFactorActivation';
+import { MfaProvider, UserProvider } from '@/components/Preferences/providers'
+import { action, makeAutoObservable, observable } from 'mobx'
+import { TwoFactorActivation } from './TwoFactorActivation'
 
-type TwoFactorStatus =
-  | 'two-factor-enabled'
-  | TwoFactorActivation
-  | 'two-factor-disabled';
+type TwoFactorStatus = 'two-factor-enabled' | TwoFactorActivation | 'two-factor-disabled'
 
-export const is2FADisabled = (
-  status: TwoFactorStatus
-): status is 'two-factor-disabled' => status === 'two-factor-disabled';
+export const is2FADisabled = (status: TwoFactorStatus): status is 'two-factor-disabled' =>
+  status === 'two-factor-disabled'
 
-export const is2FAActivation = (
-  status: TwoFactorStatus
-): status is TwoFactorActivation =>
-  (status as TwoFactorActivation)?.type === 'two-factor-activation';
+export const is2FAActivation = (status: TwoFactorStatus): status is TwoFactorActivation =>
+  (status as TwoFactorActivation)?.type === 'two-factor-activation'
 
-export const is2FAEnabled = (
-  status: TwoFactorStatus
-): status is 'two-factor-enabled' => status === 'two-factor-enabled';
+export const is2FAEnabled = (status: TwoFactorStatus): status is 'two-factor-enabled' =>
+  status === 'two-factor-enabled'
 
 export class TwoFactorAuth {
-  private _status: TwoFactorStatus | 'fetching' = 'fetching';
-  private _errorMessage: string | null;
+  private _status: TwoFactorStatus | 'fetching' = 'fetching'
+  private _errorMessage: string | null
 
   constructor(
     private readonly mfaProvider: MfaProvider,
-    private readonly userProvider: UserProvider
+    private readonly userProvider: UserProvider,
   ) {
-    this._errorMessage = null;
+    this._errorMessage = null
 
     makeAutoObservable<
       TwoFactorAuth,
@@ -41,16 +34,16 @@ export class TwoFactorAuth {
         deactivateMfa: action,
         startActivation: action,
       },
-      { autoBind: true }
-    );
+      { autoBind: true },
+    )
   }
 
   private startActivation(): void {
-    const setDisabled = action(() => (this._status = 'two-factor-disabled'));
+    const setDisabled = action(() => (this._status = 'two-factor-disabled'))
     const setEnabled = action(() => {
-      this._status = 'two-factor-enabled';
-      this.fetchStatus();
-    });
+      this._status = 'two-factor-enabled'
+      this.fetchStatus()
+    })
     this.mfaProvider
       .generateMfaSecret()
       .then(
@@ -60,15 +53,15 @@ export class TwoFactorAuth {
             this.userProvider.getUser()!.email,
             secret,
             setDisabled,
-            setEnabled
-          );
-        })
+            setEnabled,
+          )
+        }),
       )
       .catch(
         action((e) => {
-          this.setError(e.message);
-        })
-      );
+          this.setError(e.message)
+        }),
+      )
   }
 
   private deactivate2FA(): void {
@@ -76,76 +69,76 @@ export class TwoFactorAuth {
       .disableMfa()
       .then(
         action(() => {
-          this.fetchStatus();
-        })
+          this.fetchStatus()
+        }),
       )
       .catch(
         action((e) => {
-          this.setError(e.message);
-        })
-      );
+          this.setError(e.message)
+        }),
+      )
   }
 
   isLoggedIn(): boolean {
-    return this.userProvider.getUser() != undefined;
+    return this.userProvider.getUser() != undefined
   }
 
   fetchStatus(): void {
     if (!this.isLoggedIn()) {
-      return;
+      return
     }
 
     if (!this.isMfaFeatureAvailable()) {
-      return;
+      return
     }
 
     this.mfaProvider
       .isMfaActivated()
       .then(
         action((active) => {
-          this._status = active ? 'two-factor-enabled' : 'two-factor-disabled';
-          this.setError(null);
-        })
+          this._status = active ? 'two-factor-enabled' : 'two-factor-disabled'
+          this.setError(null)
+        }),
       )
       .catch(
         action((e) => {
-          this._status = 'two-factor-disabled';
-          this.setError(e.message);
-        })
-      );
+          this._status = 'two-factor-disabled'
+          this.setError(e.message)
+        }),
+      )
   }
 
   private setError(errorMessage: string | null): void {
-    this._errorMessage = errorMessage;
+    this._errorMessage = errorMessage
   }
 
   toggle2FA(): void {
     if (!this.isLoggedIn()) {
-      return;
+      return
     }
 
     if (!this.isMfaFeatureAvailable()) {
-      return;
+      return
     }
 
     if (this._status === 'two-factor-disabled') {
-      return this.startActivation();
+      return this.startActivation()
     }
 
     if (this._status === 'two-factor-enabled') {
-      return this.deactivate2FA();
+      return this.deactivate2FA()
     }
   }
 
   get errorMessage(): string | null {
-    return this._errorMessage;
+    return this._errorMessage
   }
 
   get status(): TwoFactorStatus | 'fetching' {
-    return this._status;
+    return this._status
   }
 
   isMfaFeatureAvailable(): boolean {
-    return this.mfaProvider.isMfaFeatureAvailable();
+    return this.mfaProvider.isMfaFeatureAvailable()
   }
 }

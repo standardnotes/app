@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'preact/hooks';
+import { useCallback, useEffect, useState } from 'preact/hooks'
 import {
   ButtonType,
   SettingName,
@@ -6,34 +6,32 @@ import {
   DropboxBackupFrequency,
   GoogleDriveBackupFrequency,
   OneDriveBackupFrequency,
-} from '@standardnotes/snjs';
-import { WebApplication } from '@/ui_models/application';
-import { Button } from '@/components/Button';
-import { isDev, openInNewTab } from '@/utils';
-import { Subtitle } from '@/components/Preferences/components';
-import { KeyboardKey } from '@Services/ioService';
-import { FunctionComponent } from 'preact';
+} from '@standardnotes/snjs'
+import { WebApplication } from '@/ui_models/application'
+import { Button } from '@/components/Button'
+import { isDev, openInNewTab } from '@/utils'
+import { Subtitle } from '@/components/Preferences/components'
+import { KeyboardKey } from '@Services/ioService'
+import { FunctionComponent } from 'preact'
 
 type Props = {
-  application: WebApplication;
-  providerName: CloudProvider;
-  isEntitledToCloudBackups: boolean;
-};
+  application: WebApplication
+  providerName: CloudProvider
+  isEntitledToCloudBackups: boolean
+}
 
 export const CloudBackupProvider: FunctionComponent<Props> = ({
   application,
   providerName,
   isEntitledToCloudBackups,
 }) => {
-  const [authBegan, setAuthBegan] = useState(false);
-  const [successfullyInstalled, setSuccessfullyInstalled] = useState(false);
-  const [backupFrequency, setBackupFrequency] = useState<string | undefined>(
-    undefined
-  );
-  const [confirmation, setConfirmation] = useState('');
+  const [authBegan, setAuthBegan] = useState(false)
+  const [successfullyInstalled, setSuccessfullyInstalled] = useState(false)
+  const [backupFrequency, setBackupFrequency] = useState<string | undefined>(undefined)
+  const [confirmation, setConfirmation] = useState('')
 
   const disable = async (event: Event) => {
-    event.stopPropagation();
+    event.stopPropagation()
 
     try {
       const shouldDisable = await application.alertService.confirm(
@@ -41,49 +39,48 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
         'Disable?',
         'Disable',
         ButtonType.Danger,
-        'Cancel'
-      );
+        'Cancel',
+      )
       if (shouldDisable) {
-        await application.settings.deleteSetting(backupFrequencySettingName);
-        await application.settings.deleteSetting(backupTokenSettingName);
+        await application.settings.deleteSetting(backupFrequencySettingName)
+        await application.settings.deleteSetting(backupTokenSettingName)
 
-        setBackupFrequency(undefined);
+        setBackupFrequency(undefined)
       }
     } catch (error) {
-      application.alertService.alert(error as string);
+      application.alertService.alert(error as string).catch(console.error)
     }
-  };
+  }
 
   const installIntegration = (event: Event) => {
     if (!isEntitledToCloudBackups) {
-      return;
+      return
     }
-    event.stopPropagation();
+    event.stopPropagation()
 
-    const authUrl = application.getCloudProviderIntegrationUrl(
-      providerName,
-      isDev
-    );
-    openInNewTab(authUrl);
-    setAuthBegan(true);
-  };
+    const authUrl = application.getCloudProviderIntegrationUrl(providerName, isDev)
+    openInNewTab(authUrl)
+    setAuthBegan(true)
+  }
 
   const performBackupNow = async () => {
     // A backup is performed anytime the setting is updated with the integration token, so just update it here
     try {
       await application.settings.updateSetting(
         backupFrequencySettingName,
-        backupFrequency as string
-      );
-      application.alertService.alert(
-        'A backup has been triggered for this provider. Please allow a couple minutes for your backup to be processed.'
-      );
+        backupFrequency as string,
+      )
+      void application.alertService.alert(
+        'A backup has been triggered for this provider. Please allow a couple minutes for your backup to be processed.',
+      )
     } catch (err) {
-      application.alertService.alert(
-        'There was an error while trying to trigger a backup for this provider. Please try again.'
-      );
+      application.alertService
+        .alert(
+          'There was an error while trying to trigger a backup for this provider. Please try again.',
+        )
+        .catch(console.error)
     }
-  };
+  }
 
   const backupSettingsData = {
     [CloudProvider.Dropbox]: {
@@ -101,115 +98,96 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
       backupFrequencySettingName: SettingName.OneDriveBackupFrequency,
       defaultBackupFrequency: OneDriveBackupFrequency.Daily,
     },
-  };
-  const {
-    backupTokenSettingName,
-    backupFrequencySettingName,
-    defaultBackupFrequency,
-  } = backupSettingsData[providerName];
+  }
+  const { backupTokenSettingName, backupFrequencySettingName, defaultBackupFrequency } =
+    backupSettingsData[providerName]
 
   const getCloudProviderIntegrationTokenFromUrl = (url: URL) => {
-    const urlSearchParams = new URLSearchParams(url.search);
-    let integrationTokenKeyInUrl = '';
+    const urlSearchParams = new URLSearchParams(url.search)
+    let integrationTokenKeyInUrl = ''
 
     switch (providerName) {
       case CloudProvider.Dropbox:
-        integrationTokenKeyInUrl = 'dbt';
-        break;
+        integrationTokenKeyInUrl = 'dbt'
+        break
       case CloudProvider.Google:
-        integrationTokenKeyInUrl = 'key';
-        break;
+        integrationTokenKeyInUrl = 'key'
+        break
       case CloudProvider.OneDrive:
-        integrationTokenKeyInUrl = 'key';
-        break;
+        integrationTokenKeyInUrl = 'key'
+        break
       default:
-        throw new Error('Invalid Cloud Provider name');
+        throw new Error('Invalid Cloud Provider name')
     }
-    return urlSearchParams.get(integrationTokenKeyInUrl);
-  };
+    return urlSearchParams.get(integrationTokenKeyInUrl)
+  }
 
   const handleKeyPress = async (event: KeyboardEvent) => {
     if (event.key === KeyboardKey.Enter) {
       try {
-        const decryptedCode = atob(confirmation);
-        const urlFromDecryptedCode = new URL(decryptedCode);
-        const cloudProviderToken =
-          getCloudProviderIntegrationTokenFromUrl(urlFromDecryptedCode);
+        const decryptedCode = atob(confirmation)
+        const urlFromDecryptedCode = new URL(decryptedCode)
+        const cloudProviderToken = getCloudProviderIntegrationTokenFromUrl(urlFromDecryptedCode)
 
         if (!cloudProviderToken) {
-          throw new Error();
+          throw new Error()
         }
-        await application.settings.updateSetting(
-          backupTokenSettingName,
-          cloudProviderToken
-        );
-        await application.settings.updateSetting(
-          backupFrequencySettingName,
-          defaultBackupFrequency
-        );
+        await application.settings.updateSetting(backupTokenSettingName, cloudProviderToken)
+        await application.settings.updateSetting(backupFrequencySettingName, defaultBackupFrequency)
 
-        setBackupFrequency(defaultBackupFrequency);
+        setBackupFrequency(defaultBackupFrequency)
 
-        setAuthBegan(false);
-        setSuccessfullyInstalled(true);
-        setConfirmation('');
+        setAuthBegan(false)
+        setSuccessfullyInstalled(true)
+        setConfirmation('')
 
         await application.alertService.alert(
-          `${providerName} has been successfully installed. Your first backup has also been queued and should be reflected in your external cloud's folder within the next few minutes.`
-        );
+          `${providerName} has been successfully installed. Your first backup has also been queued and should be reflected in your external cloud's folder within the next few minutes.`,
+        )
       } catch (e) {
-        await application.alertService.alert('Invalid code. Please try again.');
+        await application.alertService.alert('Invalid code. Please try again.')
       }
     }
-  };
+  }
 
   const handleChange = (event: Event) => {
-    setConfirmation((event.target as HTMLInputElement).value);
-  };
+    setConfirmation((event.target as HTMLInputElement).value)
+  }
 
   const getIntegrationStatus = useCallback(async () => {
     if (!application.getUser()) {
-      return;
+      return
     }
-    const frequency = await application.settings.getSetting(
-      backupFrequencySettingName
-    );
-    setBackupFrequency(frequency);
-  }, [application, backupFrequencySettingName]);
+    const frequency = await application.settings.getSetting(backupFrequencySettingName)
+    setBackupFrequency(frequency)
+  }, [application, backupFrequencySettingName])
 
   useEffect(() => {
-    getIntegrationStatus();
-  }, [getIntegrationStatus]);
+    getIntegrationStatus().catch(console.error)
+  }, [getIntegrationStatus])
 
-  const isExpanded = authBegan || successfullyInstalled;
-  const shouldShowEnableButton = !backupFrequency && !authBegan;
-  const additionalClass = isEntitledToCloudBackups
-    ? ''
-    : 'faded cursor-default pointer-events-none';
+  const isExpanded = authBegan || successfullyInstalled
+  const shouldShowEnableButton = !backupFrequency && !authBegan
+  const additionalClass = isEntitledToCloudBackups ? '' : 'faded cursor-default pointer-events-none'
 
   return (
     <div
       className={`mr-1 ${isExpanded ? 'expanded' : ' '} ${
-        shouldShowEnableButton || backupFrequency
-          ? 'flex justify-between items-center'
-          : ''
+        shouldShowEnableButton || backupFrequency ? 'flex justify-between items-center' : ''
       }`}
     >
       <div>
         <Subtitle className={additionalClass}>{providerName}</Subtitle>
 
-        {successfullyInstalled && (
-          <p>{providerName} has been successfully enabled.</p>
-        )}
+        {successfullyInstalled && <p>{providerName} has been successfully enabled.</p>}
       </div>
       {authBegan && (
         <div>
           <p className="sk-panel-row">
-            Complete authentication from the newly opened window. Upon
-            completion, a confirmation code will be displayed. Enter this code
-            below:
+            Complete authentication from the newly opened window. Upon completion, a confirmation
+            code will be displayed. Enter this code below:
           </p>
-          <div className={`mt-1`}>
+          <div className={'mt-1'}>
             <input
               className="sk-input sk-base center-text"
               placeholder="Enter confirmation code"
@@ -240,14 +218,9 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
             label="Perform Backup"
             onClick={performBackupNow}
           />
-          <Button
-            className="min-w-40"
-            variant="normal"
-            label="Disable"
-            onClick={disable}
-          />
+          <Button className="min-w-40" variant="normal" label="Disable" onClick={disable} />
         </div>
       )}
     </div>
-  );
-};
+  )
+}

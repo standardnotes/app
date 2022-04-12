@@ -1,15 +1,11 @@
-import { ComponentChildren, FunctionComponent } from 'preact';
-import {
-  AlertDialog,
-  AlertDialogDescription,
-  AlertDialogLabel,
-} from '@reach/alert-dialog';
-import { useRef } from 'preact/hooks';
+import { ComponentChildren, FunctionComponent } from 'preact'
+import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
+import { useRef } from 'preact/hooks'
 
 export const ConfirmationDialog: FunctionComponent<{
-  title: string | ComponentChildren;
+  title: string | ComponentChildren
 }> = ({ title, children }) => {
-  const ldRef = useRef<HTMLButtonElement>(null);
+  const ldRef = useRef<HTMLButtonElement>(null)
 
   return (
     <AlertDialog leastDestructiveRef={ldRef}>
@@ -31,5 +27,5 @@ export const ConfirmationDialog: FunctionComponent<{
         </div>
       </div>
     </AlertDialog>
-  );
-};
+  )
+}

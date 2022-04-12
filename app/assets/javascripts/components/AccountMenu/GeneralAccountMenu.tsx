@@ -1,37 +1,37 @@
-import { WebApplication } from '@/ui_models/application';
-import { AppState } from '@/ui_models/app_state';
-import { observer } from 'mobx-react-lite';
-import { Icon } from '../Icon';
-import { formatLastSyncDate } from '@/components/Preferences/panes/account/Sync';
-import { SyncQueueStrategy } from '@standardnotes/snjs';
-import { STRING_GENERIC_SYNC_ERROR } from '@/strings';
-import { useState } from 'preact/hooks';
-import { AccountMenuPane } from '.';
-import { FunctionComponent } from 'preact';
-import { Menu } from '../Menu/Menu';
-import { MenuItem, MenuItemSeparator, MenuItemType } from '../Menu/MenuItem';
-import { WorkspaceSwitcherOption } from './WorkspaceSwitcher/WorkspaceSwitcherOption';
-import { ApplicationGroup } from '@/ui_models/application_group';
+import { WebApplication } from '@/ui_models/application'
+import { AppState } from '@/ui_models/app_state'
+import { observer } from 'mobx-react-lite'
+import { Icon } from '../Icon'
+import { formatLastSyncDate } from '@/components/Preferences/panes/account/Sync'
+import { SyncQueueStrategy } from '@standardnotes/snjs'
+import { STRING_GENERIC_SYNC_ERROR } from '@/strings'
+import { useState } from 'preact/hooks'
+import { AccountMenuPane } from '.'
+import { FunctionComponent } from 'preact'
+import { Menu } from '../Menu/Menu'
+import { MenuItem, MenuItemSeparator, MenuItemType } from '../Menu/MenuItem'
+import { WorkspaceSwitcherOption } from './WorkspaceSwitcher/WorkspaceSwitcherOption'
+import { ApplicationGroup } from '@/ui_models/application_group'
 
 type Props = {
-  appState: AppState;
-  application: WebApplication;
-  mainApplicationGroup: ApplicationGroup;
-  setMenuPane: (pane: AccountMenuPane) => void;
-  closeMenu: () => void;
-};
+  appState: AppState
+  application: WebApplication
+  mainApplicationGroup: ApplicationGroup
+  setMenuPane: (pane: AccountMenuPane) => void
+  closeMenu: () => void
+}
 
-const iconClassName = 'color-neutral mr-2';
+const iconClassName = 'color-neutral mr-2'
 
 export const GeneralAccountMenu: FunctionComponent<Props> = observer(
   ({ application, appState, setMenuPane, closeMenu, mainApplicationGroup }) => {
-    const [isSyncingInProgress, setIsSyncingInProgress] = useState(false);
+    const [isSyncingInProgress, setIsSyncingInProgress] = useState(false)
     const [lastSyncDate, setLastSyncDate] = useState(
-      formatLastSyncDate(application.sync.getLastSyncDate() as Date)
-    );
+      formatLastSyncDate(application.sync.getLastSyncDate() as Date),
+    )
 
     const doSynchronization = async () => {
-      setIsSyncingInProgress(true);
+      setIsSyncingInProgress(true)
 
       application.sync
         .sync({
@@ -40,25 +40,23 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
         })
         .then((res) => {
           if (res && (res as any).error) {
-            throw new Error();
+            throw new Error()
           } else {
-            setLastSyncDate(
-              formatLastSyncDate(application.sync.getLastSyncDate() as Date)
-            );
+            setLastSyncDate(formatLastSyncDate(application.sync.getLastSyncDate() as Date))
           }
         })
         .catch(() => {
-          application.alertService.alert(STRING_GENERIC_SYNC_ERROR);
+          application.alertService.alert(STRING_GENERIC_SYNC_ERROR).catch(console.error)
         })
         .finally(() => {
-          setIsSyncingInProgress(false);
-        });
-    };
+          setIsSyncingInProgress(false)
+        })
+    }
 
-    const user = application.getUser();
+    const user = application.getUser()
 
-    const CREATE_ACCOUNT_INDEX = 1;
-    const SWITCHER_INDEX = 0;
+    const CREATE_ACCOUNT_INDEX = 1
+    const SWITCHER_INDEX = 0
 
     return (
       <>
@@ -90,10 +88,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
                   </div>
                 </div>
               )}
-              <div
-                className="flex cursor-pointer color-grey-1"
-                onClick={doSynchronization}
-              >
+              <div className="flex cursor-pointer color-grey-1" onClick={doSynchronization}>
                 <Icon type="sync" />
               </div>
             </div>
@@ -102,8 +97,8 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
           <>
             <div className="px-3 mb-1">
               <div className="mb-3 color-foreground">
-                You’re offline. Sign in to sync your notes and preferences
-                across all your devices and enable end-to-end encryption.
+                You’re offline. Sign in to sync your notes and preferences across all your devices
+                and enable end-to-end encryption.
               </div>
               <div className="flex items-center color-grey-1">
                 <Icon type="cloud-off" className="mr-2" />
@@ -116,9 +111,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
           isOpen={appState.accountMenu.show}
           a11yLabel="General account menu"
           closeMenu={closeMenu}
-          initialFocus={
-            !application.hasAccount() ? CREATE_ACCOUNT_INDEX : SWITCHER_INDEX
-          }
+          initialFocus={!application.hasAccount() ? CREATE_ACCOUNT_INDEX : SWITCHER_INDEX}
         >
           <MenuItemSeparator />
           <WorkspaceSwitcherOption
@@ -130,9 +123,9 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
             <MenuItem
               type={MenuItemType.IconButton}
               onClick={() => {
-                appState.accountMenu.closeAccountMenu();
-                appState.preferences.setCurrentPane('account');
-                appState.preferences.openPreferences();
+                appState.accountMenu.closeAccountMenu()
+                appState.preferences.setCurrentPane('account')
+                appState.preferences.openPreferences()
               }}
             >
               <Icon type="user" className={iconClassName} />
@@ -143,7 +136,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
               <MenuItem
                 type={MenuItemType.IconButton}
                 onClick={() => {
-                  setMenuPane(AccountMenuPane.Register);
+                  setMenuPane(AccountMenuPane.Register)
                 }}
               >
                 <Icon type="user" className={iconClassName} />
@@ -152,7 +145,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
               <MenuItem
                 type={MenuItemType.IconButton}
                 onClick={() => {
-                  setMenuPane(AccountMenuPane.SignIn);
+                  setMenuPane(AccountMenuPane.SignIn)
                 }}
               >
                 <Icon type="signIn" className={iconClassName} />
@@ -164,9 +157,9 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
             className="justify-between"
             type={MenuItemType.IconButton}
             onClick={() => {
-              appState.accountMenu.closeAccountMenu();
-              appState.preferences.setCurrentPane('help-feedback');
-              appState.preferences.openPreferences();
+              appState.accountMenu.closeAccountMenu()
+              appState.preferences.setCurrentPane('help-feedback')
+              appState.preferences.openPreferences()
             }}
           >
             <div className="flex items-center">
@@ -181,7 +174,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
               <MenuItem
                 type={MenuItemType.IconButton}
                 onClick={() => {
-                  appState.accountMenu.setSigningOut(true);
+                  appState.accountMenu.setSigningOut(true)
                 }}
               >
                 <Icon type="signOut" className={iconClassName} />
@@ -191,6 +184,6 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
           ) : null}
         </Menu>
       </>
-    );
-  }
-);
+    )
+  },
+)

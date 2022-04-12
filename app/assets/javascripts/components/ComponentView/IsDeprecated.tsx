@@ -1,14 +1,14 @@
-import { FunctionalComponent } from 'preact';
+import { FunctionalComponent } from 'preact'
 
 interface IProps {
-  deprecationMessage: string | undefined;
-  dismissDeprecationMessage: () => void;
+  deprecationMessage: string | undefined
+  dismissDeprecationMessage: () => void
 }
 
 export const IsDeprecated: FunctionalComponent<IProps> = ({
-                                                            deprecationMessage,
-                                                            dismissDeprecationMessage
-                                                          }) => {
+  deprecationMessage,
+  dismissDeprecationMessage,
+}) => {
   return (
     <div className={'sn-component'}>
       <div className={'sk-app-bar no-edges no-top-edge dynamic-height'}>
@@ -21,12 +21,10 @@ export const IsDeprecated: FunctionalComponent<IProps> = ({
         </div>
         <div className={'right'}>
           <div className={'sk-app-bar-item'} onClick={dismissDeprecationMessage}>
-            <button className={'sn-button small info'}>
-              Dismiss
-            </button>
+            <button className={'sn-button small info'}>Dismiss</button>
           </div>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

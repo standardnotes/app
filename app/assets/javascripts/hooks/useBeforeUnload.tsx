@@ -1,11 +1,11 @@
-import { useEffect } from '@node_modules/preact/hooks';
+import { useEffect } from '@node_modules/preact/hooks'
 
 export const useBeforeUnload = (): void => {
   useEffect(() => {
-    window.onbeforeunload = () => true;
+    window.onbeforeunload = () => true
 
     return () => {
-      window.onbeforeunload = null;
-    };
-  }, []);
-};
+      window.onbeforeunload = null
+    }
+  }, [])
+}

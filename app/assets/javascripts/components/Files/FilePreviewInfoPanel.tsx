@@ -1,11 +1,11 @@
-import { formatSizeToReadableString } from '@standardnotes/filepicker';
-import { SNFile } from '@standardnotes/snjs';
-import { FunctionComponent } from 'preact';
-import { Icon } from '../Icon';
+import { formatSizeToReadableString } from '@standardnotes/filepicker'
+import { SNFile } from '@standardnotes/snjs'
+import { FunctionComponent } from 'preact'
+import { Icon } from '../Icon'
 
 type Props = {
-  file: SNFile;
-};
+  file: SNFile
+}
 
 export const FilePreviewInfoPanel: FunctionComponent<Props> = ({ file }) => {
   return (
@@ -18,12 +18,10 @@ export const FilePreviewInfoPanel: FunctionComponent<Props> = ({ file }) => {
         <span className="font-semibold">Type:</span> {file.mimeType}
       </div>
       <div className="mb-3">
-        <span className="font-semibold">Size:</span>{' '}
-        {formatSizeToReadableString(file.size)}
+        <span className="font-semibold">Size:</span> {formatSizeToReadableString(file.size)}
       </div>
       <div className="mb-3">
-        <span className="font-semibold">Created:</span>{' '}
-        {file.created_at.toLocaleString()}
+        <span className="font-semibold">Created:</span> {file.created_at.toLocaleString()}
       </div>
       <div className="mb-3">
         <span className="font-semibold">Last Modified:</span>{' '}
@@ -33,5 +31,5 @@ export const FilePreviewInfoPanel: FunctionComponent<Props> = ({ file }) => {
         <span className="font-semibold">File ID:</span> {file.uuid}
       </div>
     </div>
-  );
-};
+  )
+}

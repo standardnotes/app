@@ -1,20 +1,20 @@
-import { FunctionComponent } from 'preact';
-import { Icon } from './Icon';
-import { IconType } from '@standardnotes/snjs';
+import { FunctionComponent } from 'preact'
+import { Icon } from './Icon'
+import { IconType } from '@standardnotes/snjs'
 
-type ButtonType = 'normal' | 'primary';
+type ButtonType = 'normal' | 'primary'
 
 interface Props {
   /**
    * onClick - preventDefault is handled within the component
    */
-  onClick: () => void;
+  onClick: () => void
 
-  type: ButtonType;
+  type: ButtonType
 
-  className?: string;
+  className?: string
 
-  icon: IconType;
+  icon: IconType
 }
 
 /**
@@ -28,16 +28,13 @@ export const RoundIconButton: FunctionComponent<Props> = ({
   icon: iconType,
 }) => {
   const click = (e: MouseEvent) => {
-    e.preventDefault();
-    onClick();
-  };
-  const classes = type === 'primary' ? 'info ' : '';
+    e.preventDefault()
+    onClick()
+  }
+  const classes = type === 'primary' ? 'info ' : ''
   return (
-    <button
-      className={`sn-icon-button ${classes} ${className ?? ''}`}
-      onClick={click}
-    >
+    <button className={`sn-icon-button ${classes} ${className ?? ''}`} onClick={click}>
       <Icon type={iconType} />
     </button>
-  );
-};
+  )
+}

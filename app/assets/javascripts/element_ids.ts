@@ -3,4 +3,4 @@ export const ElementIds = {
   NoteTitleEditor: 'note-title-editor',
   EditorContent: 'editor-content',
   EditorColumn: 'editor-column',
-};
+}

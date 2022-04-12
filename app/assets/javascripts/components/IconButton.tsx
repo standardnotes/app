@@ -1,27 +1,27 @@
-import { FunctionComponent } from 'preact';
-import { Icon } from './Icon';
-import { IconType } from '@standardnotes/snjs';
+import { FunctionComponent } from 'preact'
+import { Icon } from './Icon'
+import { IconType } from '@standardnotes/snjs'
 
 interface Props {
   /**
    * onClick - preventDefault is handled within the component
    */
-  onClick: () => void;
+  onClick: () => void
 
-  className?: string;
+  className?: string
 
-  icon: IconType;
+  icon: IconType
 
-  iconClassName?: string;
+  iconClassName?: string
 
   /**
    * Button tooltip
    */
-  title: string;
+  title: string
 
-  focusable: boolean;
+  focusable: boolean
 
-  disabled?: boolean;
+  disabled?: boolean
 }
 
 /**
@@ -38,10 +38,10 @@ export const IconButton: FunctionComponent<Props> = ({
   disabled = false,
 }) => {
   const click = (e: MouseEvent) => {
-    e.preventDefault();
-    onClick();
-  };
-  const focusableClass = focusable ? '' : 'focus:shadow-none';
+    e.preventDefault()
+    onClick()
+  }
+  const focusableClass = focusable ? '' : 'focus:shadow-none'
   return (
     <button
       type="button"
@@ -52,5 +52,5 @@ export const IconButton: FunctionComponent<Props> = ({
     >
       <Icon type={icon} className={iconClassName} />
     </button>
-  );
-};
+  )
+}

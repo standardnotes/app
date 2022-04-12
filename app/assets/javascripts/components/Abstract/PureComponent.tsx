@@ -1,81 +1,79 @@
-import { ApplicationEvent } from '@standardnotes/snjs';
-import { WebApplication } from '@/ui_models/application';
-import { AppState } from '@/ui_models/app_state';
-import { autorun, IReactionDisposer, IReactionPublic } from 'mobx';
-import { Component } from 'preact';
-import { findDOMNode, unmountComponentAtNode } from 'preact/compat';
+import { ApplicationEvent } from '@standardnotes/snjs'
+import { WebApplication } from '@/ui_models/application'
+import { AppState } from '@/ui_models/app_state'
+import { autorun, IReactionDisposer, IReactionPublic } from 'mobx'
+import { Component } from 'preact'
+import { findDOMNode, unmountComponentAtNode } from 'preact/compat'
 
-export type PureComponentState = Partial<Record<string, any>>;
-export type PureComponentProps = Partial<Record<string, any>>;
+export type PureComponentState = Partial<Record<string, any>>
+export type PureComponentProps = Partial<Record<string, any>>
 
 export abstract class PureComponent<
   P = PureComponentProps,
-  S = PureComponentState
+  S = PureComponentState,
 > extends Component<P, S> {
-  private unsubApp!: () => void;
-  private unsubState!: () => void;
-  private reactionDisposers: IReactionDisposer[] = [];
+  private unsubApp!: () => void
+  private unsubState!: () => void
+  private reactionDisposers: IReactionDisposer[] = []
 
   constructor(props: P, protected application: WebApplication) {
-    super(props);
+    super(props)
   }
 
   componentDidMount() {
-    this.addAppEventObserver();
-    this.addAppStateObserver();
+    this.addAppEventObserver()
+    this.addAppStateObserver()
   }
 
   deinit(): void {
-    this.unsubApp?.();
-    this.unsubState?.();
+    this.unsubApp?.()
+    this.unsubState?.()
     for (const disposer of this.reactionDisposers) {
-      disposer();
+      disposer()
     }
-    this.reactionDisposers.length = 0;
-    (this.unsubApp as unknown) = undefined;
-    (this.unsubState as unknown) = undefined;
+    this.reactionDisposers.length = 0
+    ;(this.unsubApp as unknown) = undefined
+    ;(this.unsubState as unknown) = undefined
   }
 
   protected dismissModal(): void {
-    const elem = this.getElement();
+    const elem = this.getElement()
     if (!elem) {
-      return;
+      return
     }
 
-    const parent = elem.parentElement;
+    const parent = elem.parentElement
     if (!parent) {
-      return;
+      return
     }
-    parent.remove();
-    unmountComponentAtNode(parent);
+    parent.remove()
+    unmountComponentAtNode(parent)
   }
 
   componentWillUnmount(): void {
-    this.deinit();
+    this.deinit()
   }
 
   render() {
-    return <div>Must override</div>;
+    return <div>Must override</div>
   }
 
   public get appState(): AppState {
-    return this.application.getAppState();
+    return this.application.getAppState()
   }
 
   protected getElement(): Element | null {
-    return findDOMNode(this);
+    return findDOMNode(this)
   }
 
   autorun(view: (r: IReactionPublic) => void): void {
-    this.reactionDisposers.push(autorun(view));
+    this.reactionDisposers.push(autorun(view))
   }
 
   addAppStateObserver() {
-    this.unsubState = this.application!.getAppState().addObserver(
-      async (eventName, data) => {
-        this.onAppStateEvent(eventName, data);
-      }
-    );
+    this.unsubState = this.application.getAppState().addObserver(async (eventName, data) => {
+      this.onAppStateEvent(eventName, data)
+    })
   }
 
   onAppStateEvent(_eventName: any, _data: any) {
@@ -83,30 +81,28 @@ export abstract class PureComponent<
   }
 
   addAppEventObserver() {
-    if (this.application!.isStarted()) {
-      this.onAppStart();
+    if (this.application.isStarted()) {
+      this.onAppStart().catch(console.error)
     }
-    if (this.application!.isLaunched()) {
-      this.onAppLaunch();
+    if (this.application.isLaunched()) {
+      this.onAppLaunch().catch(console.error)
     }
-    this.unsubApp = this.application!.addEventObserver(
-      async (eventName, data: any) => {
-        this.onAppEvent(eventName, data);
-        if (eventName === ApplicationEvent.Started) {
-          await this.onAppStart();
-        } else if (eventName === ApplicationEvent.Launched) {
-          await this.onAppLaunch();
-        } else if (eventName === ApplicationEvent.CompletedIncrementalSync) {
-          this.onAppIncrementalSync();
-        } else if (eventName === ApplicationEvent.CompletedFullSync) {
-          this.onAppFullSync();
-        } else if (eventName === ApplicationEvent.KeyStatusChanged) {
-          this.onAppKeyChange();
-        } else if (eventName === ApplicationEvent.LocalDataLoaded) {
-          this.onLocalDataLoaded();
-        }
+    this.unsubApp = this.application.addEventObserver(async (eventName, data: any) => {
+      this.onAppEvent(eventName, data)
+      if (eventName === ApplicationEvent.Started) {
+        await this.onAppStart()
+      } else if (eventName === ApplicationEvent.Launched) {
+        await this.onAppLaunch()
+      } else if (eventName === ApplicationEvent.CompletedIncrementalSync) {
+        this.onAppIncrementalSync()
+      } else if (eventName === ApplicationEvent.CompletedFullSync) {
+        this.onAppFullSync()
+      } else if (eventName === ApplicationEvent.KeyStatusChanged) {
+        this.onAppKeyChange().catch(console.error)
+      } else if (eventName === ApplicationEvent.LocalDataLoaded) {
+        this.onLocalDataLoaded()
       }
-    );
+    })
   }
 
   onAppEvent(eventName: ApplicationEvent, data?: any) {

@@ -1,19 +1,19 @@
-import { AppState } from '@/ui_models/app_state';
-import { observer } from 'mobx-react-lite';
-import { AutocompleteTagInput } from './AutocompleteTagInput';
-import { NoteTag } from './NoteTag';
-import { useEffect } from 'preact/hooks';
+import { AppState } from '@/ui_models/app_state'
+import { observer } from 'mobx-react-lite'
+import { AutocompleteTagInput } from './AutocompleteTagInput'
+import { NoteTag } from './NoteTag'
+import { useEffect } from 'preact/hooks'
 
 type Props = {
-  appState: AppState;
-};
+  appState: AppState
+}
 
 export const NoteTagsContainer = observer(({ appState }: Props) => {
-  const { tags, tagsContainerMaxWidth } = appState.noteTags;
+  const { tags, tagsContainerMaxWidth } = appState.noteTags
 
   useEffect(() => {
-    appState.noteTags.reloadTagsContainerMaxWidth();
-  }, [appState.noteTags]);
+    appState.noteTags.reloadTagsContainerMaxWidth()
+  }, [appState.noteTags])
 
   return (
     <div
@@ -27,5 +27,5 @@ export const NoteTagsContainer = observer(({ appState }: Props) => {
       ))}
       <AutocompleteTagInput appState={appState} />
     </div>
-  );
-});
+  )
+})

@@ -1,14 +1,14 @@
-import { StateUpdater } from 'preact/hooks';
-import { FunctionalComponent } from 'preact';
+import { StateUpdater } from 'preact/hooks'
+import { FunctionalComponent } from 'preact'
 
 type Props = {
-  setNewEmail: StateUpdater<string>;
-  setCurrentPassword: StateUpdater<string>;
-};
+  setNewEmail: StateUpdater<string>
+  setCurrentPassword: StateUpdater<string>
+}
 
-const labelClassName = `block mb-1`;
+const labelClassName = 'block mb-1'
 
-const inputClassName = 'sk-input contrast';
+const inputClassName = 'sk-input contrast'
 
 export const ChangeEmailForm: FunctionalComponent<Props> = ({
   setNewEmail,
@@ -25,7 +25,7 @@ export const ChangeEmailForm: FunctionalComponent<Props> = ({
           className={inputClassName}
           type="email"
           onChange={({ target }) => {
-            setNewEmail((target as HTMLInputElement).value);
+            setNewEmail((target as HTMLInputElement).value)
           }}
         />
       </div>
@@ -38,10 +38,10 @@ export const ChangeEmailForm: FunctionalComponent<Props> = ({
           className={inputClassName}
           type="password"
           onChange={({ target }) => {
-            setCurrentPassword((target as HTMLInputElement).value);
+            setCurrentPassword((target as HTMLInputElement).value)
           }}
         />
       </div>
     </div>
-  );
-};
+  )
+}
