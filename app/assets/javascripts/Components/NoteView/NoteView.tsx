@@ -103,7 +103,7 @@ type State = {
   monospaceFont?: boolean
   noteLocked: boolean
   noteStatus?: NoteStatus
-  saveError?: any
+  saveError?: boolean
   showLockedIcon: boolean
   showProtectedWarning: boolean
   spellcheck: boolean

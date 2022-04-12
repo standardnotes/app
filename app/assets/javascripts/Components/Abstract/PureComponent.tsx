@@ -1,6 +1,6 @@
 import { ApplicationEvent } from '@standardnotes/snjs'
 import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
+import { AppState, AppStateEvent } from '@/UIModels/AppState'
 import { autorun, IReactionDisposer, IReactionPublic } from 'mobx'
 import { Component } from 'preact'
 import { findDOMNode, unmountComponentAtNode } from 'preact/compat'
@@ -76,7 +76,7 @@ export abstract class PureComponent<
     })
   }
 
-  onAppStateEvent(_eventName: any, _data: any) {
+  onAppStateEvent(_eventName: AppStateEvent, _data: any) {
     /** Optional override */
   }
 
