@@ -60,7 +60,7 @@ export const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = obse
       >
         {isFetchingRemoteHistory && <div className="sk-spinner w-5 h-5 spinner-info"></div>}
         {remoteHistory?.map((group) =>
-          group.entries && group.entries.length ? (
+          (group.entries && group.entries.length ? (
             <Fragment key={group.title}>
               <div className="px-3 mt-2.5 mb-1 font-semibold color-text uppercase color-grey-0 select-none">
                 {group.title}
@@ -83,7 +83,7 @@ export const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = obse
                 </HistoryListItem>
               ))}
             </Fragment>
-          ) : null,
+          ) : null),
         )}
         {!remoteHistoryLength && !isFetchingRemoteHistory && (
           <div className="color-grey-0 select-none">No remote history found</div>

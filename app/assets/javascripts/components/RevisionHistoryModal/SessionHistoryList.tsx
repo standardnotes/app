@@ -54,7 +54,7 @@ export const SessionHistoryList: FunctionComponent<Props> = ({
       ref={sessionHistoryListRef}
     >
       {sessionHistory?.map((group) =>
-        group.entries && group.entries.length ? (
+        (group.entries && group.entries.length ? (
           <Fragment key={group.title}>
             <div className="px-3 mt-2.5 mb-1 font-semibold color-text uppercase color-grey-0 select-none">
               {group.title}
@@ -73,7 +73,7 @@ export const SessionHistoryList: FunctionComponent<Props> = ({
               </HistoryListItem>
             ))}
           </Fragment>
-        ) : null,
+        ) : null),
       )}
       {!sessionHistoryLength && (
         <div className="color-grey-0 select-none">No session history found</div>
