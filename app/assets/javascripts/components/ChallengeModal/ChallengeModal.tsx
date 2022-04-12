@@ -83,7 +83,6 @@ export const ChallengeModal: FunctionComponent<Props> = ({
 
   const submit = async () => {
     const validatedValues = validateValues(values, challenge.prompts);
-    console.log(validatedValues);
     if (!validatedValues || isSubmitting || isProcessing) {
       return;
     }
