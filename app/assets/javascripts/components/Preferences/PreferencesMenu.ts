@@ -1,7 +1,7 @@
 import { action, makeAutoObservable, observable } from 'mobx'
-import { ExtensionsLatestVersions } from '@/components/Preferences/panes/extensions-segments'
 import { FeatureIdentifier, IconType } from '@standardnotes/snjs'
 import { WebApplication } from '@/ui_models/application'
+import { ExtensionsLatestVersions } from './Panes/Extensions/ExtensionsLatestVersions'
 
 const PREFERENCE_IDS = [
   'general',

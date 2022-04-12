@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
-import { MenuItem } from './components'
+import { MenuItem } from './Components'
 import { PreferencesMenu } from './PreferencesMenu'
 
 export const PreferencesMenuView: FunctionComponent<{

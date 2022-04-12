@@ -1,7 +1,7 @@
 import { FunctionalComponent } from 'preact'
 import { useRef, useState } from 'preact/hooks'
 import { ArrowDownCheckmarkIcon } from '@standardnotes/stylekit'
-import { Title } from '@/components/Preferences/components'
+import { Title } from '@/components/Preferences/Components'
 
 type Props = {
   title: string | JSX.Element

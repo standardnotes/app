@@ -3,15 +3,15 @@ import { TitleBar, Title } from '@/components/TitleBar'
 import { FunctionComponent } from 'preact'
 import { observer } from 'mobx-react-lite'
 
-import { AccountPreferences, HelpAndFeedback, Listed, General, Security } from './panes'
+import { AccountPreferences, HelpAndFeedback, Listed, General, Security } from './Panes'
 import { PreferencesMenu } from './PreferencesMenu'
 import { PreferencesMenuView } from './PreferencesMenuView'
 import { WebApplication } from '@/ui_models/application'
-import { MfaProps } from './panes/two-factor-auth/MfaProps'
+import { MfaProps } from './Panes/TwoFactorAuth/MfaProps'
 import { AppState } from '@/ui_models/app_state'
 import { useEffect, useMemo } from 'preact/hooks'
-import { Backups } from '@/components/Preferences/panes/Backups'
-import { Appearance } from './panes/Appearance'
+import { Backups } from '@/components/Preferences/Panes/Backups'
+import { Appearance } from './Panes/Appearance'
 
 interface PreferencesProps extends MfaProps {
   application: WebApplication
