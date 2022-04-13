@@ -1,4 +1,8 @@
-import { PreferencesGroup, PreferencesSegment, Title } from '@/Components/Preferences/PreferencesComponents'
+import {
+  PreferencesGroup,
+  PreferencesSegment,
+  Title,
+} from '@/Components/Preferences/PreferencesComponents'
 import { WebApplication } from '@/UIModels/Application'
 import { SubscriptionInformation } from './SubscriptionInformation'
 import { NoSubscription } from './NoSubscription'

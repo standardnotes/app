@@ -1,5 +1,10 @@
 import { FunctionComponent } from 'preact'
-import { Title, Text, PreferencesGroup, PreferencesSegment } from '@/Components/Preferences/PreferencesComponents'
+import {
+  Title,
+  Text,
+  PreferencesGroup,
+  PreferencesSegment,
+} from '@/Components/Preferences/PreferencesComponents'
 import { Switch } from '@/Components/Switch'
 import { observer } from 'mobx-react-lite'
 import { is2FAActivation, is2FADisabled, TwoFactorAuth } from './TwoFactorAuth'

@@ -13,10 +13,11 @@ type Props = {
   mainApplicationGroup: ApplicationGroup
   appState: AppState
   isOpen: boolean
+  hideWorkspaceOptions?: boolean
 }
 
 export const WorkspaceSwitcherMenu: FunctionComponent<Props> = observer(
-  ({ mainApplicationGroup, appState, isOpen }) => {
+  ({ mainApplicationGroup, appState, isOpen, hideWorkspaceOptions = false }) => {
     const [applicationDescriptors, setApplicationDescriptors] = useState<ApplicationDescriptor[]>(
       [],
     )
@@ -37,6 +38,7 @@ export const WorkspaceSwitcherMenu: FunctionComponent<Props> = observer(
         {applicationDescriptors.map((descriptor) => (
           <WorkspaceMenuItem
             descriptor={descriptor}
+            hideOptions={hideWorkspaceOptions}
             onDelete={() => {
               appState.accountMenu.setSigningOut(true)
             }}

@@ -3,7 +3,13 @@ import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/Strings'
 import { useCallback, useEffect, useState } from 'preact/hooks'
 import { WebApplication } from '@/UIModels/Application'
 import { observer } from 'mobx-react-lite'
-import { PreferencesGroup, PreferencesSegment, Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents'
+import {
+  PreferencesGroup,
+  PreferencesSegment,
+  Subtitle,
+  Text,
+  Title,
+} from '@/Components/Preferences/PreferencesComponents'
 import { Dropdown, DropdownItem } from '@/Components/Dropdown'
 import { Switch } from '@/Components/Switch'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'

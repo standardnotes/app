@@ -10,7 +10,12 @@ import { NoAccountWarning } from '@/Components/NoAccountWarning'
 import { NotesList } from '@/Components/NotesList'
 import { NotesListOptionsMenu } from '@/Components/NotesList/NotesListOptionsMenu'
 import { SearchOptions } from '@/Components/SearchOptions'
-import { PanelSide, ResizeFinishCallback, PanelResizer, PanelResizeType } from '@/Components/PanelResizer'
+import {
+  PanelSide,
+  ResizeFinishCallback,
+  PanelResizer,
+  PanelResizeType,
+} from '@/Components/PanelResizer'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 

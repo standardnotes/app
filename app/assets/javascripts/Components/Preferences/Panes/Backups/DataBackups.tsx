@@ -17,7 +17,13 @@ import { JSXInternal } from 'preact/src/jsx'
 import TargetedEvent = JSXInternal.TargetedEvent
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
-import { PreferencesGroup, PreferencesSegment, Title, Text, Subtitle } from '@/Components/Preferences/PreferencesComponents'
+import {
+  PreferencesGroup,
+  PreferencesSegment,
+  Title,
+  Text,
+  Subtitle,
+} from '@/Components/Preferences/PreferencesComponents'
 import { Button } from '@/Components/Button/Button'
 
 type Props = {

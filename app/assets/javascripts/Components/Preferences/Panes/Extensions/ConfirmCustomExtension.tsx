@@ -1,7 +1,12 @@
 import { DisplayStringForContentType, SNComponent } from '@standardnotes/snjs'
 import { Button } from '@/Components/Button/Button'
 import { FunctionComponent } from 'preact'
-import { Title, Text, Subtitle, PreferencesSegment } from '@/Components/Preferences/PreferencesComponents'
+import {
+  Title,
+  Text,
+  Subtitle,
+  PreferencesSegment,
+} from '@/Components/Preferences/PreferencesComponents'
 
 export const ConfirmCustomExtension: FunctionComponent<{
   component: SNComponent
