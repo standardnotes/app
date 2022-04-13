@@ -5,7 +5,7 @@ import {
   Text,
   Title,
 } from '@/Components/Preferences/Components'
-import { Button } from '@/Components/Button'
+import { Button } from '@/Components/Button/Button'
 import { WebApplication } from '@/UIModels/Application'
 import { observer } from '@node_modules/mobx-react-lite'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'

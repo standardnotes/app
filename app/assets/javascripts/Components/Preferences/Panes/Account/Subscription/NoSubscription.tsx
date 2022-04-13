@@ -1,6 +1,6 @@
 import { FunctionalComponent } from 'preact'
 import { LinkButton, Text } from '@/Components/Preferences/Components'
-import { Button } from '@/Components/Button'
+import { Button } from '@/Components/Button/Button'
 import { WebApplication } from '@/UIModels/Application'
 import { useState } from 'preact/hooks'
 import { loadPurchaseFlowUrl } from '@/Components/PurchaseFlow/PurchaseFlowWrapper'

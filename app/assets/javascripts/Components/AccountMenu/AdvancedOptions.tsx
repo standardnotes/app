@@ -3,8 +3,8 @@ import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
 import { useEffect, useState } from 'preact/hooks'
-import { Checkbox } from '../Checkbox'
-import { DecoratedInput } from '../DecoratedInput/DecoratedInput'
+import { Checkbox } from '@/Components/Checkbox'
+import { DecoratedInput } from '../Input/DecoratedInput'
 import { Icon } from '../Icon'
 
 type Props = {

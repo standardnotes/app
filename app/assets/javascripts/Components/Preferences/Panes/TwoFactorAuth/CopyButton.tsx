@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'preact'
 
-import { IconButton } from '../../../IconButton'
+import { IconButton } from '@/Components/Button/IconButton'
 
 import { useState } from 'preact/hooks'
 

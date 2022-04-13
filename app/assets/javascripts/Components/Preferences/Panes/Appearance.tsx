@@ -1,6 +1,5 @@
 import { Dropdown, DropdownItem } from '@/Components/Dropdown'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
-import { sortThemes } from '@/Components/QuickSettingsMenu/QuickSettingsMenu'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
 import { Switch } from '@/Components/Switch'
 import { WebApplication } from '@/UIModels/Application'
@@ -23,6 +22,7 @@ import {
   Title,
   Text,
 } from '../Components'
+import { sortThemes } from '@/Utils/SortThemes'
 
 type Props = {
   application: WebApplication

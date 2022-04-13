@@ -5,7 +5,7 @@ import {
   ModalDialogDescription,
   ModalDialogLabel,
 } from '@/Components/Shared/ModalDialog'
-import { Button } from '@/Components/Button'
+import { Button } from '@/Components/Button/Button'
 import { FunctionalComponent } from 'preact'
 import { WebApplication } from '@/UIModels/Application'
 import { useBeforeUnload } from '@/Hooks/useBeforeUnload'

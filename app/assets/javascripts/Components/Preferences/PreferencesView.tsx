@@ -1,8 +1,8 @@
-import { RoundIconButton } from '@/Components/RoundIconButton'
-import { TitleBar, Title } from '@/Components/TitleBar'
+import { RoundIconButton } from '@/Components/Button/RoundIconButton'
+import { TitleBar } from '@/Components/TitleBar/TitleBar'
+import { Title } from '@/Components/TitleBar/Title'
 import { FunctionComponent } from 'preact'
 import { observer } from 'mobx-react-lite'
-
 import { AccountPreferences, HelpAndFeedback, Listed, General, Security } from './Panes'
 import { PreferencesMenu } from './PreferencesMenu'
 import { PreferencesMenuView } from './PreferencesMenuView'

@@ -4,7 +4,7 @@ import {
   Text,
   Title,
 } from '@/Components/Preferences/Components'
-import { Button } from '@/Components/Button'
+import { Button } from '@/Components/Button/Button'
 import { SyncQueueStrategy, dateToLocalizedString } from '@standardnotes/snjs'
 import { STRING_GENERIC_SYNC_ERROR } from '@/Strings'
 import { useState } from '@node_modules/preact/hooks'

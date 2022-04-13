@@ -1,4 +1,4 @@
-import { Button } from '@/Components/Button'
+import { Button } from '@/Components/Button/Button'
 import { OtherSessionsSignOutContainer } from '@/Components/OtherSessionsSignOut'
 import {
   PreferencesGroup,

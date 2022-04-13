@@ -3,10 +3,10 @@ import { calculateSubmenuStyle, SubmenuStyle } from '@/Utils/CalculateSubmenuSty
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { FunctionComponent } from 'preact'
 import { StateUpdater, useCallback, useEffect, useRef, useState } from 'preact/hooks'
-import { Icon } from '../Icon'
-import { Switch } from '../Switch'
+import { Icon } from '@/Components/Icon'
+import { Switch } from '@/Components/Switch'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
-import { useFilePreviewModal } from '../Files/FilePreviewModalProvider'
+import { useFilePreviewModal } from '@/Components/Files/FilePreviewModalProvider'
 import { PopoverFileItemProps } from './PopoverFileItem'
 import { PopoverFileItemActionType } from './PopoverFileItemAction'
 

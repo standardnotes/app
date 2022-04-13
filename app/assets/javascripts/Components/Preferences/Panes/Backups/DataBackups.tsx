@@ -18,7 +18,7 @@ import TargetedEvent = JSXInternal.TargetedEvent
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
 import { PreferencesGroup, PreferencesSegment, Title, Text, Subtitle } from '../../Components'
-import { Button } from '@/Components/Button'
+import { Button } from '@/Components/Button/Button'
 
 type Props = {
   application: WebApplication

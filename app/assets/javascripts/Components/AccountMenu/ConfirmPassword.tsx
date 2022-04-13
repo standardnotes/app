@@ -5,11 +5,11 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
 import { useEffect, useRef, useState } from 'preact/hooks'
 import { AccountMenuPane } from '.'
-import { Button } from '../Button'
-import { Checkbox } from '../Checkbox'
-import { DecoratedPasswordInput } from '../DecoratedInput/DecoratedPasswordInput'
+import { Button } from '../Button/Button'
+import { Checkbox } from '@/Components/Checkbox'
+import { DecoratedPasswordInput } from '../Input/DecoratedPasswordInput'
 import { Icon } from '../Icon'
-import { IconButton } from '../IconButton'
+import { IconButton } from '@/Components/Button/IconButton'
 
 type Props = {
   appState: AppState

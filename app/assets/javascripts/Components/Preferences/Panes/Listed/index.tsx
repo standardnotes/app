@@ -11,7 +11,7 @@ import { WebApplication } from '@/UIModels/Application'
 import { ButtonType, ListedAccount } from '@standardnotes/snjs'
 import { useCallback, useEffect, useState } from 'preact/hooks'
 import { ListedAccountItem } from './BlogItem'
-import { Button } from '@/Components/Button'
+import { Button } from '@/Components/Button/Button'
 
 type Props = {
   application: WebApplication

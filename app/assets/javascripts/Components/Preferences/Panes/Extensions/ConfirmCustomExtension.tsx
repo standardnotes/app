@@ -1,5 +1,5 @@
 import { DisplayStringForContentType, SNComponent } from '@standardnotes/snjs'
-import { Button } from '@/Components/Button'
+import { Button } from '@/Components/Button/Button'
 import { FunctionComponent } from 'preact'
 import { Title, Text, Subtitle, PreferencesSegment } from '../../Components'
 

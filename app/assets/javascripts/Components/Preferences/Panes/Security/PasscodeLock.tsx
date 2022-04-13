@@ -24,7 +24,7 @@ import {
   Text,
   PreferencesGroup,
 } from '@/Components/Preferences/Components'
-import { Button } from '@/Components/Button'
+import { Button } from '@/Components/Button/Button'
 
 type Props = {
   application: WebApplication

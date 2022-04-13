@@ -1,6 +1,6 @@
 import { AppState } from '@/UIModels/AppState'
-import { Icon } from '../Icon'
-import { Switch } from '../Switch'
+import { Icon } from '@/Components/Icon'
+import { Switch } from '@/Components/Switch'
 import { observer } from 'mobx-react-lite'
 import { useState, useEffect, useMemo } from 'preact/hooks'
 import { SNApplication, SNNote } from '@standardnotes/snjs'

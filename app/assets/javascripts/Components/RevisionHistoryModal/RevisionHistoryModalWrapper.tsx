@@ -15,7 +15,7 @@ import {
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks'
-import { Button } from '../Button'
+import { Button } from '../Button/Button'
 import { HistoryListContainer } from './HistoryListContainer'
 import { RevisionContentLocked } from './RevisionContentLocked'
 import { SelectedRevisionContent } from './SelectedRevisionContent'

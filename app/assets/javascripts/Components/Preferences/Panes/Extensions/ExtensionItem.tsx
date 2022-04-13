@@ -4,7 +4,7 @@ import { PreferencesSegment, SubtitleLight, Title } from '@/Components/Preferenc
 import { Switch } from '@/Components/Switch'
 import { WebApplication } from '@/UIModels/Application'
 import { useState } from 'preact/hooks'
-import { Button } from '@/Components/Button'
+import { Button } from '@/Components/Button/Button'
 import { RenameExtension } from './RenameExtension'
 
 const UseHosted: FunctionComponent<{

@@ -11,7 +11,7 @@ import {
 import { ProtectedIllustration } from '@standardnotes/stylekit'
 import { FunctionComponent } from 'preact'
 import { useCallback, useEffect, useState } from 'preact/hooks'
-import { Button } from '../Button'
+import { Button } from '../Button/Button'
 import { Icon } from '../Icon'
 import { ChallengeModalPrompt } from './ChallengePrompt'
 

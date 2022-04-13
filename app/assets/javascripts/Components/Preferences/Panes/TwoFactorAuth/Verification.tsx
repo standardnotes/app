@@ -1,5 +1,5 @@
-import { Button } from '@/Components/Button'
-import { DecoratedInput } from '@/Components/DecoratedInput/DecoratedInput'
+import { Button } from '@/Components/Button/Button'
+import { DecoratedInput } from '@/Components/Input/DecoratedInput'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
 import { Bullet } from './Bullet'

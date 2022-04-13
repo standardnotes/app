@@ -1,4 +1,4 @@
-import { IconButton } from '@/Components/IconButton'
+import { IconButton } from '@/Components/Button/IconButton'
 import { FeaturesState } from '@/UIModels/AppState/FeaturesState'
 import { TagsState } from '@/UIModels/AppState/TagsState'
 import { observer } from 'mobx-react-lite'

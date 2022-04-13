@@ -3,10 +3,10 @@ import { FeatureStatus } from '@standardnotes/snjs'
 import { FunctionComponent } from 'preact'
 import { useMemo } from 'preact/hooks'
 import { JSXInternal } from 'preact/src/jsx'
-import { Icon } from '../Icon'
+import { Icon } from '@/Components/Icon'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
-import { Switch } from '../Switch'
-import { ThemeItem } from './QuickSettingsMenu'
+import { Switch } from '@/Components/Switch'
+import { ThemeItem } from './ThemeItem'
 
 type Props = {
   item: ThemeItem

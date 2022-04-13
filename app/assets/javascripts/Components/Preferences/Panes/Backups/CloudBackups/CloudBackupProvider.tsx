@@ -8,7 +8,7 @@ import {
   OneDriveBackupFrequency,
 } from '@standardnotes/snjs'
 import { WebApplication } from '@/UIModels/Application'
-import { Button } from '@/Components/Button'
+import { Button } from '@/Components/Button/Button'
 import { isDev, openInNewTab } from '@/Utils'
 import { Subtitle } from '@/Components/Preferences/Components'
 import { KeyboardKey } from '@/Services/IOService'

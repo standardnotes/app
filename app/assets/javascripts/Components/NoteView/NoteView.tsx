@@ -26,17 +26,17 @@ import {
   StringDeleteNote,
 } from '@/Strings'
 import { confirmDialog } from '@/Services/AlertService'
-import { PureComponent } from '../Abstract/PureComponent'
-import { ProtectedNoteOverlay } from '../ProtectedNoteOverlay'
-import { Icon } from '../Icon'
-import { PinNoteButton } from '../PinNoteButton'
-import { NotesOptionsPanel } from '../NotesOptionsPanel'
-import { NoteTagsContainer } from '../NoteTagsContainer'
-import { ComponentView } from '../ComponentView'
-import { PanelSide, PanelResizer, PanelResizeType } from '../PanelResizer'
+import { PureComponent } from '@/Components/Abstract/PureComponent'
+import { ProtectedNoteOverlay } from '@/Components/ProtectedNoteOverlay'
+import { Icon } from '@/Components/Icon'
+import { PinNoteButton } from '@/Components/PinNoteButton'
+import { NotesOptionsPanel } from '@/Components/NotesOptions/NotesOptionsPanel'
+import { NoteTagsContainer } from '@/Components/NoteTags/NoteTagsContainer'
+import { ComponentView } from '@/Components/ComponentView'
+import { PanelSide, PanelResizer, PanelResizeType } from '@/Components/PanelResizer'
 import { ElementIds } from '@/ElementIDs'
-import { ChangeEditorButton } from '../ChangeEditorButton'
-import { AttachedFilesButton } from '../AttachedFilesPopover/AttachedFilesButton'
+import { ChangeEditorButton } from '@/Components/ChangeEditor/ChangeEditorButton'
+import { AttachedFilesButton } from '@/Components/AttachedFilesPopover/AttachedFilesButton'
 
 const MINIMUM_STATUS_DURATION = 400
 const TEXTAREA_DEBOUNCE = 100
