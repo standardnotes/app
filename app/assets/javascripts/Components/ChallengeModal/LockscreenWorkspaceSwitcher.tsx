@@ -68,6 +68,7 @@ export const LockscreenWorkspaceSwitcher: FunctionComponent<Props> = ({
             mainApplicationGroup={mainApplicationGroup}
             appState={appState}
             isOpen={isOpen}
+            hideWorkspaceOptions={true}
           />
         </div>
       )}

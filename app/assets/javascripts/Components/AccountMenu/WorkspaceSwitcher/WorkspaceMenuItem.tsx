@@ -10,6 +10,7 @@ type Props = {
   onClick: () => void
   onDelete: () => void
   renameDescriptor: (label: string) => void
+  hideOptions: boolean
 }
 
 export const WorkspaceMenuItem: FunctionComponent<Props> = ({
@@ -17,6 +18,7 @@ export const WorkspaceMenuItem: FunctionComponent<Props> = ({
   onClick,
   onDelete,
   renameDescriptor,
+  hideOptions,
 }) => {
   const [isRenaming, setIsRenaming] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -58,7 +60,7 @@ export const WorkspaceMenuItem: FunctionComponent<Props> = ({
         ) : (
           <div>{descriptor.label}</div>
         )}
-        {descriptor.primary && (
+        {descriptor.primary && !hideOptions && (
           <div>
             <button
               className="w-5 h-5 p-0 mr-3 border-0 bg-transparent hover:bg-contrast cursor-pointer"
