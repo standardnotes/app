@@ -76,7 +76,7 @@ export abstract class PureComponent<
     })
   }
 
-  onAppStateEvent(_eventName: AppStateEvent, _data: any) {
+  onAppStateEvent(_eventName: AppStateEvent, _data: unknown) {
     /** Optional override */
   }
 
@@ -87,7 +87,7 @@ export abstract class PureComponent<
     if (this.application.isLaunched()) {
       this.onAppLaunch().catch(console.error)
     }
-    this.unsubApp = this.application.addEventObserver(async (eventName, data: any) => {
+    this.unsubApp = this.application.addEventObserver(async (eventName, data: unknown) => {
       this.onAppEvent(eventName, data)
       if (eventName === ApplicationEvent.Started) {
         await this.onAppStart()
@@ -105,7 +105,7 @@ export abstract class PureComponent<
     })
   }
 
-  onAppEvent(_eventName: ApplicationEvent, _data?: any) {
+  onAppEvent(_eventName: ApplicationEvent, _data?: unknown) {
     /** Optional override */
   }
 
