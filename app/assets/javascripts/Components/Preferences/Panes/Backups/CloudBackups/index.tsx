@@ -7,7 +7,7 @@ import {
   Subtitle,
   Text,
   Title,
-} from '@/Components/Preferences/Components'
+} from '@/Components/Preferences/PreferencesComponents'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
 import {
   FeatureStatus,

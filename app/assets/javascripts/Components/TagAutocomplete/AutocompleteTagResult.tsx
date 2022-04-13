@@ -3,7 +3,7 @@ import { splitQueryInString } from '@/Utils/StringUtils'
 import { SNTag } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { useEffect, useRef } from 'preact/hooks'
-import { Icon } from '../Icon'
+import { Icon } from '@/Components/Icon'
 
 type Props = {
   appState: AppState

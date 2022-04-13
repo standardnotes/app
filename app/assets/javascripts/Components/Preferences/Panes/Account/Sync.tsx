@@ -3,7 +3,7 @@ import {
   PreferencesSegment,
   Text,
   Title,
-} from '@/Components/Preferences/Components'
+} from '@/Components/Preferences/PreferencesComponents'
 import { Button } from '@/Components/Button/Button'
 import { SyncQueueStrategy, dateToLocalizedString } from '@standardnotes/snjs'
 import { STRING_GENERIC_SYNC_ERROR } from '@/Strings'

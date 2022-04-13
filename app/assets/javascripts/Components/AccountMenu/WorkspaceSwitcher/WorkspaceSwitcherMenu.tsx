@@ -4,9 +4,9 @@ import { ApplicationDescriptor } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
 import { useEffect, useState } from 'preact/hooks'
-import { Icon } from '../../Icon'
-import { Menu } from '../../Menu/Menu'
-import { MenuItem, MenuItemSeparator, MenuItemType } from '../../Menu/MenuItem'
+import { Icon } from '@/Components/Icon'
+import { Menu } from '@/Components/Menu/Menu'
+import { MenuItem, MenuItemSeparator, MenuItemType } from '@/Components/Menu/MenuItem'
 import { WorkspaceMenuItem } from './WorkspaceMenuItem'
 
 type Props = {

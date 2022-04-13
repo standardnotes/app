@@ -6,7 +6,7 @@ import {
   Subtitle,
   Text,
   Title,
-} from '@/Components/Preferences/Components'
+} from '@/Components/Preferences/PreferencesComponents'
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'

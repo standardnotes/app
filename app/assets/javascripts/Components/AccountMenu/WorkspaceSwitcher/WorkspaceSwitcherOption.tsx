@@ -5,7 +5,7 @@ import { calculateSubmenuStyle, SubmenuStyle } from '@/Utils/CalculateSubmenuSty
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
 import { useEffect, useRef, useState } from 'preact/hooks'
-import { Icon } from '../../Icon'
+import { Icon } from '@/Components/Icon'
 import { WorkspaceSwitcherMenu } from './WorkspaceSwitcherMenu'
 
 type Props = {

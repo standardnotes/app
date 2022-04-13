@@ -20,7 +20,7 @@ import {
 } from '@standardnotes/snjs'
 import { Fragment, FunctionComponent } from 'preact'
 import { useCallback, useEffect, useState } from 'preact/hooks'
-import { EditorMenuItem, EditorMenuGroup } from '../NotesOptions/ChangeEditorOption'
+import { EditorMenuItem, EditorMenuGroup } from '@/Components/NotesOptions/ChangeEditorOption'
 import { createEditorMenuGroups, PLAIN_EDITOR_NAME } from './createEditorMenuGroups'
 
 type ChangeEditorMenuProps = {

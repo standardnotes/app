@@ -7,7 +7,7 @@ import {
   PreferencesGroup,
   PreferencesPane,
   PreferencesSegment,
-} from '../Components'
+} from '@/Components/Preferences/PreferencesComponents'
 
 export const HelpAndFeedback: FunctionComponent = () => (
   <PreferencesPane>

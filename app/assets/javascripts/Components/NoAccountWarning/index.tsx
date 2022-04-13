@@ -1,4 +1,4 @@
-import { Icon } from '../Icon'
+import { Icon } from '@/Components/Icon'
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
 

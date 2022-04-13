@@ -5,7 +5,7 @@ import {
   Subtitle,
   Text,
   Title,
-} from '@/Components/Preferences/Components'
+} from '@/Components/Preferences/PreferencesComponents'
 import { WebApplication } from '@/UIModels/Application'
 import { FeatureIdentifier, FeatureStatus, FindNativeFeature } from '@standardnotes/snjs'
 import { FunctionComponent } from 'preact'

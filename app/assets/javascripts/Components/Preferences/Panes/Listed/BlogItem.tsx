@@ -1,5 +1,5 @@
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
-import { LinkButton, Subtitle } from '@/Components/Preferences/Components'
+import { LinkButton, Subtitle } from '@/Components/Preferences/PreferencesComponents'
 import { WebApplication } from '@/UIModels/Application'
 import { ListedAccount, ListedAccountInfo } from '@standardnotes/snjs'
 import { FunctionalComponent } from 'preact'

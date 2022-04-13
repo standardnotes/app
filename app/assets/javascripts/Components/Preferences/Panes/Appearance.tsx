@@ -21,7 +21,7 @@ import {
   Subtitle,
   Title,
   Text,
-} from '../Components'
+} from '@/Components/Preferences/PreferencesComponents'
 import { sortThemes } from '@/Utils/SortThemes'
 
 type Props = {

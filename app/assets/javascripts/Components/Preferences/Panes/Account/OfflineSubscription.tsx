@@ -1,5 +1,5 @@
 import { FunctionalComponent } from 'preact'
-import { Subtitle } from '@/Components/Preferences/Components'
+import { Subtitle } from '@/Components/Preferences/PreferencesComponents'
 import { DecoratedInput } from '@/Components/Input/DecoratedInput'
 import { Button } from '@/Components/Button/Button'
 import { useEffect, useState } from 'preact/hooks'

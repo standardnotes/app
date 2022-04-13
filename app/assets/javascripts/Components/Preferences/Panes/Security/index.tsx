@@ -1,7 +1,7 @@
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { FunctionComponent } from 'preact'
-import { PreferencesPane } from '../../Components'
+import { PreferencesPane } from '@/Components/Preferences/PreferencesComponents'
 import { TwoFactorAuthWrapper } from '../TwoFactorAuth'
 import { MfaProps } from '../TwoFactorAuth/MfaProps'
 import { Encryption } from './Encryption'

@@ -4,7 +4,7 @@ import ModalDialog, {
   ModalDialogDescription,
   ModalDialogLabel,
 } from '@/Components/Shared/ModalDialog'
-import { Subtitle } from '@/Components/Preferences/Components'
+import { Subtitle } from '@/Components/Preferences/PreferencesComponents'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
 import { TwoFactorActivation } from './TwoFactorActivation'

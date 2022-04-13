@@ -10,7 +10,7 @@ import {
 import { WebApplication } from '@/UIModels/Application'
 import { Button } from '@/Components/Button/Button'
 import { isDev, openInNewTab } from '@/Utils'
-import { Subtitle } from '@/Components/Preferences/Components'
+import { Subtitle } from '@/Components/Preferences/PreferencesComponents'
 import { KeyboardKey } from '@/Services/IOService'
 import { FunctionComponent } from 'preact'
 

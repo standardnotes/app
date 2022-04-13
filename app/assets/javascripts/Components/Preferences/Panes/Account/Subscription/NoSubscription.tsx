@@ -1,5 +1,5 @@
 import { FunctionalComponent } from 'preact'
-import { LinkButton, Text } from '@/Components/Preferences/Components'
+import { LinkButton, Text } from '@/Components/Preferences/PreferencesComponents'
 import { Button } from '@/Components/Button/Button'
 import { WebApplication } from '@/UIModels/Application'
 import { useState } from 'preact/hooks'

@@ -4,7 +4,7 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure
 import { Action, ListedAccount, SNNote } from '@standardnotes/snjs'
 import { Fragment, FunctionComponent } from 'preact'
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
-import { Icon } from '../Icon'
+import { Icon } from '@/Components/Icon'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 
 type Props = {

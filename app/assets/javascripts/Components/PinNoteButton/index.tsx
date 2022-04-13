@@ -2,7 +2,7 @@ import { AppState } from '@/UIModels/AppState'
 import VisuallyHidden from '@reach/visually-hidden'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
-import { Icon } from '../Icon'
+import { Icon } from '@/Components/Icon'
 
 type Props = {
   appState: AppState

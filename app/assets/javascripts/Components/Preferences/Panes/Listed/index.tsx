@@ -5,7 +5,7 @@ import {
   Title,
   Subtitle,
   Text,
-} from '../../Components'
+} from '@/Components/Preferences/PreferencesComponents'
 import { observer } from 'mobx-react-lite'
 import { WebApplication } from '@/UIModels/Application'
 import { ButtonType, ListedAccount } from '@standardnotes/snjs'

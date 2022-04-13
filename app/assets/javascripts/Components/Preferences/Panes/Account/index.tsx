@@ -1,4 +1,4 @@
-import { PreferencesPane } from '@/Components/Preferences/Components'
+import { PreferencesPane } from '@/Components/Preferences/PreferencesComponents'
 import { observer } from 'mobx-react-lite'
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'

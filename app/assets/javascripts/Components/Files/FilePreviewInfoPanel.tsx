@@ -1,7 +1,7 @@
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { SNFile } from '@standardnotes/snjs'
 import { FunctionComponent } from 'preact'
-import { Icon } from '../Icon'
+import { Icon } from '@/Components/Icon'
 
 type Props = {
   file: SNFile

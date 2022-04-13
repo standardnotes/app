@@ -8,7 +8,7 @@ import {
   GetFeatures,
   NoteType,
 } from '@standardnotes/snjs'
-import { EditorMenuItem, EditorMenuGroup } from '../NotesOptions/ChangeEditorOption'
+import { EditorMenuItem, EditorMenuGroup } from '@/Components/NotesOptions/ChangeEditorOption'
 
 export const PLAIN_EDITOR_NAME = 'Plain Editor'
 

@@ -7,7 +7,7 @@ import { FunctionComponent } from 'preact'
 import { useEffect, useRef, useState } from 'preact/hooks'
 import { FloatingLabelInput } from '@/Components/Input/FloatingLabelInput'
 import { isEmailValid } from '@/Utils'
-import { loadPurchaseFlowUrl } from '../PurchaseFlowWrapper'
+import { loadPurchaseFlowUrl } from '@/Components/PurchaseFlow/PurchaseFlowWrapper'
 import {
   BlueDotIcon,
   CircleIcon,

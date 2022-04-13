@@ -4,7 +4,7 @@ import {
   Subtitle,
   Text,
   Title,
-} from '@/Components/Preferences/Components'
+} from '@/Components/Preferences/PreferencesComponents'
 import { Button } from '@/Components/Button/Button'
 import { WebApplication } from '@/UIModels/Application'
 import { observer } from '@node_modules/mobx-react-lite'

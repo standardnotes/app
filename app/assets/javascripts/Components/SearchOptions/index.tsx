@@ -1,7 +1,7 @@
 import { AppState } from '@/UIModels/AppState'
 import { WebApplication } from '@/UIModels/Application'
 import { observer } from 'mobx-react-lite'
-import Bubble from '../Bubble'
+import Bubble from '@/Components/Bubble'
 
 type Props = {
   appState: AppState

@@ -5,10 +5,10 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
 import { useEffect, useRef, useState } from 'preact/hooks'
 import { AccountMenuPane } from '.'
-import { Button } from '../Button/Button'
+import { Button } from '@/Components/Button/Button'
 import { Checkbox } from '@/Components/Checkbox'
-import { DecoratedPasswordInput } from '../Input/DecoratedPasswordInput'
-import { Icon } from '../Icon'
+import { DecoratedPasswordInput } from '@/Components/Input/DecoratedPasswordInput'
+import { Icon } from '@/Components/Icon'
 import { IconButton } from '@/Components/Button/IconButton'
 
 type Props = {

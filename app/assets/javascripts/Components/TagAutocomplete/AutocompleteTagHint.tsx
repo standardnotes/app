@@ -1,7 +1,7 @@
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
 import { useRef, useEffect } from 'preact/hooks'
-import { Icon } from '../Icon'
+import { Icon } from '@/Components/Icon'
 
 type Props = {
   appState: AppState

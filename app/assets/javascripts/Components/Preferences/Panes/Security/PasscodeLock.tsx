@@ -23,7 +23,7 @@ import {
   Title,
   Text,
   PreferencesGroup,
-} from '@/Components/Preferences/Components'
+} from '@/Components/Preferences/PreferencesComponents'
 import { Button } from '@/Components/Button/Button'
 
 type Props = {

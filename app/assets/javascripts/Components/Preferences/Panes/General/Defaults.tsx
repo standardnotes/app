@@ -12,7 +12,7 @@ import {
   Subtitle,
   Text,
   Title,
-} from '@/Components/Preferences/Components'
+} from '@/Components/Preferences/PreferencesComponents'
 import { WebApplication } from '@/UIModels/Application'
 import { FunctionComponent } from 'preact'
 import { useEffect, useState } from 'preact/hooks'

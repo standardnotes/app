@@ -1,6 +1,6 @@
 import { WebApplication } from '@/UIModels/Application'
 import { createRef, JSX } from 'preact'
-import { PureComponent } from '../Abstract/PureComponent'
+import { PureComponent } from '@/Components/Abstract/PureComponent'
 
 interface Props {
   application: WebApplication

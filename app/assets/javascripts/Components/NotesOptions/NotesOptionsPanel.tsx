@@ -1,5 +1,5 @@
 import { AppState } from '@/UIModels/AppState'
-import { Icon } from '../Icon'
+import { Icon } from '@/Components/Icon'
 import VisuallyHidden from '@reach/visually-hidden'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'

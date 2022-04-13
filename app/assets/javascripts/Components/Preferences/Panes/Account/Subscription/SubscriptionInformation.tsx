@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
-import { SubscriptionState } from '../../../../../UIModels/AppState/SubscriptionState'
-import { Text } from '@/Components/Preferences/Components'
+import { SubscriptionState } from '@/UIModels/AppState/SubscriptionState'
+import { Text } from '@/Components/Preferences/PreferencesComponents'
 import { Button } from '@/Components/Button/Button'
 import { WebApplication } from '@/UIModels/Application'
 import { openSubscriptionDashboard } from '@/Utils/ManageSubscription'
