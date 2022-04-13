@@ -235,7 +235,7 @@ export const ChallengeModal: FunctionComponent<Props> = ({
             submit().catch(console.error)
           }}
         >
-          {isProcessing ? 'Generating Keys...' : 'Unlock'}
+          {isProcessing ? 'Generating Keys...' : 'Submit'}
         </Button>
         {shouldShowForgotPasscode && (
           <Button
