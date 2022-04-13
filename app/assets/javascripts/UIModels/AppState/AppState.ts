@@ -312,17 +312,17 @@ export class AppState {
 
         const selectedTag = this.tags.selected
 
+        const isBrowswingTrashedNotes =
+          selectedTag instanceof SmartView && selectedTag.uuid === SystemViewId.TrashedNotes
+
+        const isBrowsingArchivedNotes =
+          selectedTag instanceof SmartView && selectedTag.uuid === SystemViewId.ArchivedNotes
+
         for (const note of changedOrInserted) {
           const noteController = this.noteControllerForNote(note.uuid)
           if (!noteController) {
             continue
           }
-
-          const isBrowswingTrashedNotes =
-            selectedTag instanceof SmartView && selectedTag.uuid === SystemViewId.TrashedNotes
-
-          const isBrowsingArchivedNotes =
-            selectedTag instanceof SmartView && selectedTag.uuid === SystemViewId.ArchivedNotes
 
           if (note.trashed && !isBrowswingTrashedNotes && !this.searchOptions.includeTrashed) {
             this.closeNoteController(noteController)
