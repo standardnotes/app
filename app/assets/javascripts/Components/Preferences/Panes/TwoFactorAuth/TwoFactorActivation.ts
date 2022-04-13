@@ -1,4 +1,4 @@
-import { MfaProvider } from '@/Components/Providers'
+import { MfaProvider } from '@/Components/Preferences/Providers'
 import { action, makeAutoObservable, observable } from 'mobx'
 
 type ActivationStep = 'scan-qr-code' | 'save-secret-key' | 'verification' | 'success'

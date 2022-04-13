@@ -1,4 +1,4 @@
-import { MfaProvider, UserProvider } from '@/Components/Providers'
+import { MfaProvider, UserProvider } from '@/Components/Preferences/Providers'
 
 export interface MfaProps {
   userProvider: UserProvider

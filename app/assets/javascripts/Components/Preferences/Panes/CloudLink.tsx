@@ -7,7 +7,7 @@ import {
   PreferencesGroup,
   PreferencesPane,
   PreferencesSegment,
-} from '@/Components/PreferencesComponents'
+} from '@/Components/Preferences/PreferencesComponents'
 
 export const CloudLink: FunctionComponent = () => (
   <PreferencesPane>
