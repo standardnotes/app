@@ -38,13 +38,14 @@ export const LockscreenWorkspaceSwitcher: FunctionComponent<Props> = ({
 
   useEffect(() => {
     if (isOpen) {
+      const timeToWaitBeforeCheckingMenuCollision = 0
       setTimeout(() => {
         const newMenuPosition = calculateSubmenuStyle(buttonRef.current, menuRef.current)
 
         if (newMenuPosition) {
           setMenuStyle(newMenuPosition)
         }
-      })
+      }, timeToWaitBeforeCheckingMenuCollision)
     }
   }, [isOpen])
 
