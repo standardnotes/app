@@ -198,7 +198,7 @@ export class ThemeManager extends ApplicationService {
     const isDefaultThemePreferredAndNotActive =
       themeIdentifier === DefaultThemeIdentifier && activeTheme
 
-    if (isPreferredThemeNotActive || isDefaultThemePreferredAndNotActive) {
+    if (isPreferredThemeNotActive && isDefaultThemePreferredAndNotActive) {
       this.showColorSchemeToast(setTheme)
     }
   }
