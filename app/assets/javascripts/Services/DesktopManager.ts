@@ -74,6 +74,7 @@ export class DesktopManager
     if (!this.isDesktop) {
       return
     }
+
     Promise.all(
       components.map((component) => {
         return this.convertComponentForTransmission(component)
