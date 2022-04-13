@@ -78,8 +78,8 @@
       margin-top: 10px;
 
       display: grid;
-      grid-template-columns: repeat( 3, 1fr );
-      gap: .5rem;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
 
       font-size: var(--sn-stylekit-font-size-p);
       white-space: nowrap;

@@ -82,7 +82,8 @@ button.sk-button {
   border: none;
 }
 
-a, .sk-a {
+a,
+.sk-a {
   background: none;
   border: none;
   color: var(--sn-stylekit-info-color);
@@ -105,12 +106,13 @@ input:focus {
   box-shadow: 0 0 0 1px var(--sn-stylekit-info-color);
 }
 
-.sk-button:focus, button:focus {
-  box-shadow: 0 0 0 2px var(--sn-stylekit-background-color),
-    0 0 0 4px var(--sn-stylekit-info-color);
+.sk-button:focus,
+button:focus {
+  box-shadow: 0 0 0 2px var(--sn-stylekit-background-color), 0 0 0 4px var(--sn-stylekit-info-color);
 }
 
-.sk-button:focus-visible, button:focus-visible {
+.sk-button:focus-visible,
+button:focus-visible {
   outline: none;
 }
 
