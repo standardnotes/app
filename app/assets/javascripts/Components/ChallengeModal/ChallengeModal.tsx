@@ -14,6 +14,9 @@ import { useCallback, useEffect, useState } from 'preact/hooks'
 import { Button } from '@/Components/Button/Button'
 import { Icon } from '@/Components/Icon'
 import { ChallengeModalPrompt } from './ChallengePrompt'
+import { LockscreenWorkspaceSwitcher } from './LockscreenWorkspaceSwitcher'
+import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
+import { AppState } from '@/UIModels/AppState'
 
 type InputValue = {
   prompt: ChallengePrompt
@@ -25,6 +28,8 @@ export type ChallengeModalValues = Record<ChallengePrompt['id'], InputValue>
 
 type Props = {
   application: WebApplication
+  appState: AppState
+  mainApplicationGroup: ApplicationGroup
   challenge: Challenge
   onDismiss: (challenge: Challenge) => Promise<void>
 }
@@ -48,7 +53,13 @@ const validateValues = (
   return undefined
 }
 
-export const ChallengeModal: FunctionComponent<Props> = ({ application, challenge, onDismiss }) => {
+export const ChallengeModal: FunctionComponent<Props> = ({
+  application,
+  appState,
+  mainApplicationGroup,
+  challenge,
+  onDismiss,
+}) => {
   const [values, setValues] = useState<ChallengeModalValues>(() => {
     const values = {} as ChallengeModalValues
     for (const prompt of challenge.prompts) {
@@ -68,6 +79,7 @@ export const ChallengeModal: FunctionComponent<Props> = ({ application, challeng
     ChallengeReason.ApplicationUnlock,
     ChallengeReason.Migration,
   ].includes(challenge.reason)
+  const shouldShowWorkspaceSwitcher = challenge.reason === ChallengeReason.ApplicationUnlock
 
   const submit = async () => {
     const validatedValues = validateValues(values, challenge.prompts)
@@ -251,6 +263,12 @@ export const ChallengeModal: FunctionComponent<Props> = ({ application, challeng
             <Icon type="help" className="mr-2 color-neutral" />
             Forgot passcode?
           </Button>
+        )}
+        {shouldShowWorkspaceSwitcher && (
+          <LockscreenWorkspaceSwitcher
+            mainApplicationGroup={mainApplicationGroup}
+            appState={appState}
+          />
         )}
       </DialogContent>
     </DialogOverlay>

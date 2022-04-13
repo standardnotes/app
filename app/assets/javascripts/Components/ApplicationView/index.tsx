@@ -193,6 +193,8 @@ export class ApplicationView extends PureComponent<Props, State> {
                   <ChallengeModal
                     key={challenge.id}
                     application={this.application}
+                    appState={this.appState}
+                    mainApplicationGroup={this.props.mainApplicationGroup}
                     challenge={challenge}
                     onDismiss={this.removeChallenge}
                   />
