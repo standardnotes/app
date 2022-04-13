@@ -1,8 +1,7 @@
-const pathsToModuleNameMapper =
-  require('ts-jest/utils').pathsToModuleNameMapper;
-const tsConfig = require('./tsconfig.json');
+const pathsToModuleNameMapper = require('ts-jest/utils').pathsToModuleNameMapper
+const tsConfig = require('./tsconfig.json')
 
-const pathsFromTsconfig = tsConfig.compilerOptions.paths;
+const pathsFromTsconfig = tsConfig.compilerOptions.paths
 
 module.exports = {
   restoreMocks: true,
@@ -26,4 +25,4 @@ module.exports = {
     '^.+\\.(ts|tsx)?$': 'ts-jest',
     '\\.svg$': 'svg-jest',
   },
-};
+}

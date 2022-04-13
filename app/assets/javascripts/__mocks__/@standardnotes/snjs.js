@@ -2,10 +2,10 @@ const {
   ApplicationEvent,
   ProtectionSessionDurations,
   ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
-} = require('@standardnotes/snjs');
+} = require('@standardnotes/snjs')
 
 module.exports = {
   ApplicationEvent: ApplicationEvent,
   ProtectionSessionDurations: ProtectionSessionDurations,
   ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
-};
+}
