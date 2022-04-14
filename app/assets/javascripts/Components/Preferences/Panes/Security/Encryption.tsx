@@ -16,7 +16,7 @@ const EncryptionStatusItem: FunctionComponent<{
   icon: ComponentChild
   status: string
 }> = ({ icon, status }) => (
-  <div className="w-full rounded py-1.5 px-3 text-input my-1 h-8 flex flex-row items-center bg-contrast no-border focus-within:ring-info">
+  <div className="w-full rounded py-1.5 px-3 text-input my-1 min-h-8 flex flex-row items-center bg-contrast no-border focus-within:ring-info">
     {icon}
     <div className="min-w-3 min-h-1" />
     <div className="flex-grow color-text text-sm">{status}</div>
@@ -38,12 +38,12 @@ const EncryptionEnabled: FunctionComponent<{ appState: AppState }> = observer(({
   const trashIcon = <Icon type="trash" className="min-w-5 min-h-5" />
   return (
     <>
-      <div className="flex flex-row pb-1 pt-1.5">
+      <div className="flex flex-row items-start pb-1 pt-1.5">
         <EncryptionStatusItem status={notes} icon={[noteIcon]} />
         <div className="min-w-3" />
         <EncryptionStatusItem status={tags} icon={[tagIcon]} />
       </div>
-      <div className="flex flex-row">
+      <div className="flex flex-row items-start">
         <EncryptionStatusItem status={archived} icon={[archiveIcon]} />
         <div className="min-w-3" />
         <EncryptionStatusItem status={deleted} icon={[trashIcon]} />
