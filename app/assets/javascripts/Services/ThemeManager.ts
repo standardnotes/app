@@ -176,6 +176,7 @@ export class ThemeManager extends ApplicationService {
     const themes = this.application.items.getDisplayableItems(ContentType.Theme) as SNTheme[]
 
     const activeTheme = themes.find((theme) => theme.active && !theme.isLayerable())
+    const activeThemeIdentifier = activeTheme ? activeTheme.identifier : DefaultThemeIdentifier
 
     const themeIdentifier = this.application.getPreference(
       preference,
@@ -193,12 +194,9 @@ export class ThemeManager extends ApplicationService {
       }
     }
 
-    const isPreferredThemeNotActive = activeTheme?.identifier !== themeIdentifier
+    const isPreferredThemeNotActive = activeThemeIdentifier !== themeIdentifier
 
-    const isDefaultThemePreferredAndNotActive =
-      themeIdentifier === DefaultThemeIdentifier && activeTheme
-
-    if (isPreferredThemeNotActive && isDefaultThemePreferredAndNotActive) {
+    if (isPreferredThemeNotActive) {
       this.showColorSchemeToast(setTheme)
     }
   }
