@@ -20,6 +20,6 @@ export const Security: FunctionComponent<SecurityProps> = (props) => (
     <Protections application={props.application} />
     <TwoFactorAuthWrapper mfaProvider={props.mfaProvider} userProvider={props.userProvider} />
     <PasscodeLock appState={props.appState} application={props.application} />
-    <Privacy application={props.application} />
+    {props.application.getUser() && <Privacy application={props.application} />}
   </PreferencesPane>
 )
