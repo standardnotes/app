@@ -91,17 +91,19 @@ export const Listed = observer(({ application }: Props) => {
             </a>
           </Text>
         </PreferencesSegment>
-        <PreferencesSegment>
-          <Subtitle>Get Started</Subtitle>
-          <Text>Create a free Listed author account to get started.</Text>
-          <Button
-            className="mt-3"
-            variant="normal"
-            disabled={requestingAccount}
-            label={requestingAccount ? 'Creating account...' : 'Create new author'}
-            onClick={registerNewAccount}
-          />
-        </PreferencesSegment>
+        {application.getUser() && (
+          <PreferencesSegment>
+            <Subtitle>Get Started</Subtitle>
+            <Text>Create a free Listed author account to get started.</Text>
+            <Button
+              className="mt-3"
+              variant="normal"
+              disabled={requestingAccount}
+              label={requestingAccount ? 'Creating account...' : 'Create new author'}
+              onClick={registerNewAccount}
+            />
+          </PreferencesSegment>
+        )}
       </PreferencesGroup>
     </PreferencesPane>
   )
