@@ -20,7 +20,7 @@ export const ImagePreview: FunctionComponent<Props> = ({ objectUrl }) => {
   }, [imageZoomPercent])
 
   return (
-    <div className="flex items-center justify-center w-full h-full">
+    <div className="flex items-center justify-center w-full h-full overflow-auto">
       <img
         src={objectUrl}
         height={imageHeight}
@@ -31,7 +31,7 @@ export const ImagePreview: FunctionComponent<Props> = ({ objectUrl }) => {
         }}
       />
       <div className="flex items-center absolute bottom-6 py-1 px-3 bg-default border-1 border-solid border-main rounded">
-        <span className="mr-1">Zoom:</span>
+        <span className="mr-1.5">Zoom:</span>
         <IconButton
           className="hover:bg-contrast p-1 rounded"
           icon="add"
@@ -48,7 +48,14 @@ export const ImagePreview: FunctionComponent<Props> = ({ objectUrl }) => {
           title="Zoom Out"
           focusable={true}
           onClick={() => {
-            setImageZoomPercent((percent) => percent - 10)
+            setImageZoomPercent((percent) => {
+              const newPercent = percent - 10
+              if (newPercent >= 10) {
+                return newPercent
+              } else {
+                return percent
+              }
+            })
           }}
         />
       </div>
