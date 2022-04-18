@@ -10,27 +10,12 @@ import { Button } from '@/Components/Button/Button'
 import { Icon } from '@/Components/Icon'
 import { FilePreviewInfoPanel } from './FilePreviewInfoPanel'
 import { isFileTypePreviewable } from './isFilePreviewable'
+import { PreviewComponent } from './PreviewComponent'
 
 type Props = {
   application: WebApplication
   file: SNFile
   onDismiss: () => void
-}
-
-const getPreviewComponentForFile = (file: SNFile, objectUrl: string) => {
-  if (file.mimeType.startsWith('image/')) {
-    return <img src={objectUrl} />
-  }
-
-  if (file.mimeType.startsWith('video/')) {
-    return <video className="w-full h-full" src={objectUrl} controls />
-  }
-
-  if (file.mimeType.startsWith('audio/')) {
-    return <audio src={objectUrl} controls />
-  }
-
-  return <object className="w-full h-full" data={objectUrl} />
 }
 
 export const FilePreviewModal: FunctionComponent<Props> = ({ application, file, onDismiss }) => {
@@ -132,9 +117,9 @@ export const FilePreviewModal: FunctionComponent<Props> = ({ application, file, 
           </div>
         </div>
         <div className="flex flex-grow min-h-0 overflow-auto">
-          <div className="flex flex-grow items-center justify-center">
+          <div className="flex flex-grow items-center justify-center relative">
             {objectUrl ? (
-              getPreviewComponentForFile(file, objectUrl)
+              <PreviewComponent file={file} objectUrl={objectUrl} />
             ) : isLoadingFile ? (
               <div className="sk-spinner w-5 h-5 spinner-info"></div>
             ) : (
