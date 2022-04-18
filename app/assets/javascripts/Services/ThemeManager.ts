@@ -8,10 +8,11 @@ import {
   ContentType,
   UuidString,
   FeatureStatus,
-  PayloadSource,
   PrefKey,
   CreateDecryptedLocalStorageContextPayload,
   InternalEventBus,
+  PayloadEmitSource,
+  LocalStorageDecryptedContextualPayload,
 } from '@standardnotes/snjs'
 import { dismissToast, ToastType, addTimedToast } from '@standardnotes/stylekit'
 
@@ -233,7 +234,7 @@ export class ThemeManager extends ApplicationService {
             this.deactivateTheme(theme.uuid)
           }
         }
-        if (source !== PayloadSource.LocalRetrieved) {
+        if (source !== PayloadEmitSource.LocalRetrieved) {
           this.cacheThemeState().catch(console.error)
         }
       },
@@ -300,7 +301,8 @@ export class ThemeManager extends ApplicationService {
     const cachedThemes = (await this.application.getValue(
       CachedThemesKey,
       StorageValueModes.Nonwrapped,
-    )) as SNTheme[]
+    )) as LocalStorageDecryptedContextualPayload[]
+
     if (cachedThemes) {
       const themes = []
       for (const cachedTheme of cachedThemes) {

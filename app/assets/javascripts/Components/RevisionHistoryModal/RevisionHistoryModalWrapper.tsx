@@ -8,7 +8,7 @@ import {
   ButtonType,
   ContentType,
   HistoryEntry,
-  PayloadSource,
+  PayloadEmitSource,
   RevisionListEntry,
   SNNote,
 } from '@standardnotes/snjs'
@@ -124,10 +124,10 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
                 .changeAndSaveItem(
                   originalNote,
                   (mutator) => {
-                    mutator.unsafe_setCustomContent(selectedRevision.payload.content)
+                    mutator.setCustomContent(selectedRevision.payload.content)
                   },
                   true,
-                  PayloadSource.RemoteActionRetrieved,
+                  PayloadEmitSource.RemoteRetrieved,
                 )
                 .catch(console.error)
               dismissModal()
