@@ -7,7 +7,6 @@ import {
   ApplicationEvent,
   removeFromArray,
   DesktopManagerInterface,
-  PayloadSource,
   InternalEventBus,
 } from '@standardnotes/snjs'
 import { WebAppEvent, WebApplication } from '@/UIModels/Application'
@@ -140,7 +139,6 @@ export class DesktopManager
         }
       },
       undefined,
-      PayloadSource.DesktopInstalled,
     )
 
     for (const observer of this.updateObservers) {

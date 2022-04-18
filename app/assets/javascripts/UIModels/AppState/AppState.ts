@@ -14,8 +14,8 @@ import {
   SNTag,
   SystemViewId,
   removeFromArray,
-  PayloadSource,
   Uuid,
+  PayloadEmitSource,
 } from '@standardnotes/snjs'
 import { action, computed, IReactionDisposer, makeObservable, observable, reaction } from 'mobx'
 import { ActionsMenuState } from './ActionsMenuState'
@@ -293,7 +293,7 @@ export class AppState {
     this.application.streamItems<SNNote | SNTag>(
       [ContentType.Note, ContentType.Tag],
       async ({ changed, inserted, removed, source }) => {
-        if (![PayloadSource.PreSyncSave, PayloadSource.RemoteRetrieved].includes(source)) {
+        if (![PayloadEmitSource.PreSyncSave, PayloadEmitSource.RemoteRetrieved].includes(source)) {
           return
         }
 

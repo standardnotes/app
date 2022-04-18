@@ -119,7 +119,11 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
       const contentWindow = iframe.contentWindow as Window
       excessiveLoadingTimeout.current && clearTimeout(excessiveLoadingTimeout.current)
 
-      componentViewer.setWindow(contentWindow).catch(console.error)
+      try {
+        componentViewer.setWindow(contentWindow)
+      } catch (error) {
+        console.error(error)
+      }
 
       setTimeout(() => {
         setIsLoading(false)

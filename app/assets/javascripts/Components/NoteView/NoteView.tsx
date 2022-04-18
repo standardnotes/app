@@ -10,12 +10,12 @@ import {
   ComponentArea,
   PrefKey,
   ComponentMutator,
-  PayloadSource,
   ComponentViewer,
   TransactionalMutation,
   ItemMutator,
   ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
   NoteViewController,
+  PayloadEmitSource,
 } from '@standardnotes/snjs'
 import { debounce, isDesktopApplication } from '@/Utils'
 import { KeyboardModifier, KeyboardKey } from '@/Services/IOService'
@@ -245,7 +245,7 @@ export class NoteView extends PureComponent<Props, State> {
     }
   }
 
-  private onNoteInnerChange(note: SNNote, source: PayloadSource): void {
+  private onNoteInnerChange(note: SNNote, source: PayloadEmitSource): void {
     if (note.uuid !== this.note.uuid) {
       throw Error('Editor received changes for non-current note')
     }
@@ -282,7 +282,7 @@ export class NoteView extends PureComponent<Props, State> {
     this.reloadSpellcheck().catch(console.error)
 
     const isTemplateNoteInsertedToBeInteractableWithEditor =
-      source === PayloadSource.Constructor && note.dirty
+      source === PayloadEmitSource.LocalInserted && note.dirty
     if (isTemplateNoteInsertedToBeInteractableWithEditor) {
       return
     }
@@ -411,7 +411,7 @@ export class NoteView extends PureComponent<Props, State> {
       async ({ source }) => {
         if (
           isPayloadSourceInternalChange(source) ||
-          source === PayloadSource.InitialObserverRegistrationPush
+          source === PayloadEmitSource.InitialObserverRegistrationPush
         ) {
           return
         }
