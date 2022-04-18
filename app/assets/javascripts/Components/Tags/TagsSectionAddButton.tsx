@@ -15,7 +15,7 @@ export const TagsSectionAddButton: FunctionComponent<Props> = observer(({ tags }
       focusable={true}
       icon="add"
       title="Create a new tag"
-      className="color-neutral"
+      className="color-neutral p-0"
       onClick={() => tags.createNewTemplate()}
     />
   )

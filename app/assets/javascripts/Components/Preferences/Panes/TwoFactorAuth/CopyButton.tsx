@@ -11,7 +11,7 @@ export const CopyButton: FunctionComponent<{ copyValue: string }> = ({ copyValue
       focusable={false}
       title="Copy to clipboard"
       icon={isCopied ? 'check' : 'copy'}
-      className={isCopied ? 'success' : undefined}
+      className={`${isCopied ? 'success' : undefined} p-0`}
       onClick={() => {
         navigator?.clipboard?.writeText(secretKey).catch(console.error)
         setCopied(() => true)

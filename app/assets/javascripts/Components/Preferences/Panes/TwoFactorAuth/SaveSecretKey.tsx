@@ -22,6 +22,7 @@ export const SaveSecretKey: FunctionComponent<{
       focusable={false}
       title="Download"
       icon="download"
+      className="p-0"
       onClick={() => {
         downloadSecretKey(act.secretKey)
       }}
