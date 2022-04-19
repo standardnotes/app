@@ -208,9 +208,11 @@ export const ChallengeModal: FunctionComponent<Props> = ({
         )}
         <ProtectedIllustration className="w-30 h-30 mb-4" />
         <div className="font-bold text-lg text-center max-w-76 mb-3">{challenge.heading}</div>
-        <div className="text-center text-sm max-w-76 mb-4">{challenge.subheading}</div>
+        {challenge.subheading && (
+          <div className="text-center text-sm max-w-76 mb-4 break-word">{challenge.subheading}</div>
+        )}
         <form
-          className="flex flex-col items-center min-w-76 mb-4"
+          className="flex flex-col items-center min-w-76"
           onSubmit={(e) => {
             e.preventDefault()
             submit().catch(console.error)
@@ -230,7 +232,7 @@ export const ChallengeModal: FunctionComponent<Props> = ({
         <Button
           variant="primary"
           disabled={isProcessing}
-          className="min-w-76 mb-3.5"
+          className="min-w-76 mt-1 mb-3.5"
           onClick={() => {
             submit().catch(console.error)
           }}
