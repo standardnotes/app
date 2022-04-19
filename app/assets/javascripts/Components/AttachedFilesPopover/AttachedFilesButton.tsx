@@ -72,7 +72,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     }, [application, reloadAttachedFilesCount])
 
     const toggleAttachedFilesMenu = useCallback(async () => {
-      if (!appState.features.hasFilesBeta) {
+      if (!appState.features.isEntitledToFiles) {
         premiumModal.activate('Files')
         return
       }
@@ -99,7 +99,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
 
         setOpen(newOpenState)
       }
-    }, [appState.features.hasFilesBeta, onClickPreprocessing, open, premiumModal])
+    }, [appState.features.isEntitledToFiles, onClickPreprocessing, open, premiumModal])
 
     const deleteFile = async (file: SNFile) => {
       const shouldDelete = await confirmDialog({

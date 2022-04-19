@@ -68,7 +68,11 @@ export class FeaturesState {
     return this._hasSmartViews
   }
 
-  public get hasFilesBeta(): boolean {
+  public get isFilesEnabled(): boolean {
+    return this._hasFilesBeta || window.enabledUnfinishedFeatures || isDev
+  }
+
+  public get isEntitledToFiles(): boolean {
     return this._hasFilesBeta
   }
 
@@ -96,6 +100,6 @@ export class FeaturesState {
   private isEntitledToFilesBeta(): boolean {
     const status = this.application.features.getFeatureStatus(FeatureIdentifier.FilesBeta)
 
-    return status === FeatureStatus.Entitled || window.enabledUnfinishedFeatures || isDev
+    return status === FeatureStatus.Entitled
   }
 }
