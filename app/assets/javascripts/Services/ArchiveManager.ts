@@ -39,7 +39,7 @@ export class ArchiveManager {
 
   public async downloadBackup(encrypted: boolean): Promise<void> {
     const data = encrypted
-      ? await this.application.createEncryptedBackupFile(true)
+      ? await this.application.createEncryptedBackupFile()
       : await this.application.createDecryptedBackupFile()
 
     if (!data) {
