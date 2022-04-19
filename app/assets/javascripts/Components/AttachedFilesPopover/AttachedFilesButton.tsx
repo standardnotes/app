@@ -8,13 +8,7 @@ import { FunctionComponent } from 'preact'
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import { Icon } from '@/Components/Icon'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
-import {
-  ChallengeReason,
-  ContentType,
-  FeatureIdentifier,
-  FeatureStatus,
-  SNFile,
-} from '@standardnotes/snjs'
+import { ChallengeReason, ContentType, SNFile } from '@standardnotes/snjs'
 import { confirmDialog } from '@/Services/AlertService'
 import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit'
 import { StreamingFileReader } from '@standardnotes/filepicker'
@@ -79,11 +73,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     }, [application, reloadAttachedFilesCount])
 
     const toggleAttachedFilesMenu = useCallback(async () => {
-      if (
-        !isDev &&
-        application.features.getFeatureStatus(FeatureIdentifier.FilesBeta) !==
-          FeatureStatus.Entitled
-      ) {
+      if (!isDev && appState.features.hasFilesBeta) {
         premiumModal.activate('Files')
         return
       }
@@ -110,7 +100,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
 
         setOpen(newOpenState)
       }
-    }, [application.features, onClickPreprocessing, open, premiumModal])
+    }, [appState.features.hasFilesBeta, onClickPreprocessing, open, premiumModal])
 
     const deleteFile = async (file: SNFile) => {
       const shouldDelete = await confirmDialog({
