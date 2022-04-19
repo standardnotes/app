@@ -72,7 +72,7 @@
     "@standardnotes/components": "1.7.15",
     "@standardnotes/filepicker": "1.11.0",
     "@standardnotes/sncrypto-web": "1.8.3",
-    "@standardnotes/snjs": "2.96.2",
+    "@standardnotes/snjs": "2.97.1",
     "@standardnotes/stylekit": "5.23.0",
     "@zip.js/zip.js": "^2.4.7",
     "mobx": "^6.5.0",
