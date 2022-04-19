@@ -21,6 +21,7 @@ import { StreamingFileReader } from '@standardnotes/filepicker'
 import { PopoverFileItemAction, PopoverFileItemActionType } from './PopoverFileItemAction'
 import { AttachedFilesPopover, PopoverTabs } from './AttachedFilesPopover'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
+import { isDev } from '@/Utils'
 
 type Props = {
   application: WebApplication
@@ -79,7 +80,9 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
 
     const toggleAttachedFilesMenu = useCallback(async () => {
       if (
-        application.features.getFeatureStatus(FeatureIdentifier.Files) !== FeatureStatus.Entitled
+        !isDev &&
+        application.features.getFeatureStatus(FeatureIdentifier.FilesBeta) !==
+          FeatureStatus.Entitled
       ) {
         premiumModal.activate('Files')
         return
