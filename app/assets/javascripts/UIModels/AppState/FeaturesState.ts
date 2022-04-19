@@ -1,3 +1,4 @@
+import { isDev } from '@/Utils'
 import { ApplicationEvent, FeatureIdentifier, FeatureStatus } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, runInAction, when } from 'mobx'
 import { WebApplication } from '../Application'
@@ -95,6 +96,6 @@ export class FeaturesState {
   private isEntitledToFilesBeta(): boolean {
     const status = this.application.features.getFeatureStatus(FeatureIdentifier.FilesBeta)
 
-    return status === FeatureStatus.Entitled
+    return status === FeatureStatus.Entitled || window.enabledUnfinishedFeatures || isDev
   }
 }

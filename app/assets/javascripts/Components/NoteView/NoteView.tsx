@@ -989,7 +989,7 @@ export class NoteView extends PureComponent<Props, State> {
                       )}
                     </div>
                   </div>
-                  {(window.enabledUnfinishedFeatures || this.appState.features.hasFilesBeta) && (
+                  {this.appState.features.hasFilesBeta && (
                     <div className="mr-3">
                       <AttachedFilesButton
                         application={this.application}
