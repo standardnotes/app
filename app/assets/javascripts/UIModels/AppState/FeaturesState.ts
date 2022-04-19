@@ -1,3 +1,4 @@
+import { isDev } from '@/Utils'
 import { ApplicationEvent, FeatureIdentifier, FeatureStatus } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, runInAction, when } from 'mobx'
 import { WebApplication } from '../Application'
@@ -16,6 +17,7 @@ export class FeaturesState {
 
   _hasFolders = false
   _hasSmartViews = false
+  _hasFilesBeta = false
   _premiumAlertFeatureName: string | undefined
 
   private unsub: () => void
@@ -23,6 +25,7 @@ export class FeaturesState {
   constructor(private application: WebApplication) {
     this._hasFolders = this.hasNativeFolders()
     this._hasSmartViews = this.hasNativeSmartViews()
+    this._hasFilesBeta = this.isEntitledToFilesBeta()
     this._premiumAlertFeatureName = undefined
 
     makeObservable(this, {
@@ -44,6 +47,7 @@ export class FeaturesState {
           runInAction(() => {
             this._hasFolders = this.hasNativeFolders()
             this._hasSmartViews = this.hasNativeSmartViews()
+            this._hasFilesBeta = this.isEntitledToFilesBeta()
           })
           break
         default:
@@ -64,6 +68,14 @@ export class FeaturesState {
     return this._hasSmartViews
   }
 
+  public get isFilesEnabled(): boolean {
+    return this._hasFilesBeta || window.enabledUnfinishedFeatures || isDev
+  }
+
+  public get isEntitledToFiles(): boolean {
+    return this._hasFilesBeta
+  }
+
   public async showPremiumAlert(featureName: string): Promise<void> {
     this._premiumAlertFeatureName = featureName
     return when(() => this._premiumAlertFeatureName === undefined)
@@ -82,6 +94,15 @@ export class FeaturesState {
   private hasNativeSmartViews(): boolean {
     const status = this.application.features.getFeatureStatus(FeatureIdentifier.SmartFilters)
 
+    return status === FeatureStatus.Entitled
+  }
+
+  private isEntitledToFilesBeta(): boolean {
+    if (window.enabledUnfinishedFeatures) {
+      return true
+    }
+
+    const status = this.application.features.getFeatureStatus(FeatureIdentifier.FilesBeta)
     return status === FeatureStatus.Entitled
   }
 }
