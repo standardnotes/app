@@ -98,8 +98,11 @@ export class FeaturesState {
   }
 
   private isEntitledToFilesBeta(): boolean {
-    const status = this.application.features.getFeatureStatus(FeatureIdentifier.FilesBeta)
+    if (window.enabledUnfinishedFeatures) {
+      return true
+    }
 
+    const status = this.application.features.getFeatureStatus(FeatureIdentifier.FilesBeta)
     return status === FeatureStatus.Entitled
   }
 }
