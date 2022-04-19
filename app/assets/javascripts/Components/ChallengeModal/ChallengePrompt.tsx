@@ -39,9 +39,9 @@ export const ChallengeModalPrompt: FunctionComponent<Props> = ({
   }, [isInvalid])
 
   return (
-    <>
+    <div className="w-full mb-3">
       {prompt.validation === ChallengeValidation.ProtectionSessionDuration ? (
-        <div className="mt-3 min-w-76">
+        <div className="min-w-76">
           <div className="text-sm font-medium mb-2">Allow protected access for</div>
           <div className="flex items-center justify-between bg-grey-4 rounded p-1">
             {ProtectionSessionDurations.map((option) => {
@@ -91,6 +91,6 @@ export const ChallengeModalPrompt: FunctionComponent<Props> = ({
       {isInvalid && (
         <div className="text-sm color-danger mt-2">Invalid authentication, please try again.</div>
       )}
-    </>
+    </div>
   )
 }
