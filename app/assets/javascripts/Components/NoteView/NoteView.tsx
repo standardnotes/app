@@ -16,6 +16,8 @@ import {
   ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
   NoteViewController,
   PayloadEmitSource,
+  FeatureIdentifier,
+  FeatureStatus,
 } from '@standardnotes/snjs'
 import { debounce, isDesktopApplication } from '@/Utils'
 import { KeyboardModifier, KeyboardKey } from '@/Services/IOService'
@@ -112,6 +114,7 @@ type State = {
   /** Setting to true then false will allow the main content textarea to be destroyed
    * then re-initialized. Used when reloading spellcheck status. */
   textareaUnloading: boolean
+  isEntitledToFilesBeta: boolean
 
   leftResizerWidth: number
   leftResizerOffset: number
@@ -154,6 +157,10 @@ export class NoteView extends PureComponent<Props, State> {
 
     this.textAreaChangeDebounceSave = debounce(this.textAreaChangeDebounceSave, TEXTAREA_DEBOUNCE)
 
+    const isEntitledToFilesBeta =
+      this.application.features.getFeatureStatus(FeatureIdentifier.FilesBeta) ===
+      FeatureStatus.Entitled
+
     this.state = {
       availableStackComponents: [],
       editorStateDidLoad: false,
@@ -173,6 +180,7 @@ export class NoteView extends PureComponent<Props, State> {
       leftResizerOffset: 0,
       rightResizerWidth: 0,
       rightResizerOffset: 0,
+      isEntitledToFilesBeta,
     }
 
     this.editorContentRef = createRef<HTMLDivElement>()
@@ -989,13 +997,15 @@ export class NoteView extends PureComponent<Props, State> {
                       )}
                     </div>
                   </div>
-                  <div className="mr-3">
-                    <AttachedFilesButton
-                      application={this.application}
-                      appState={this.appState}
-                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                    />
-                  </div>
+                  {(window.enabledUnfinishedFeatures || this.state.isEntitledToFilesBeta) && (
+                    <div className="mr-3">
+                      <AttachedFilesButton
+                        application={this.application}
+                        appState={this.appState}
+                        onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                      />
+                    </div>
+                  )}
                   <div className="mr-3">
                     <ChangeEditorButton
                       application={this.application}
