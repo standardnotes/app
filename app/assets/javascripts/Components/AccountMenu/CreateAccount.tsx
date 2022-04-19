@@ -84,7 +84,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
           <IconButton
             icon="arrow-left"
             title="Go back"
-            className="flex mr-2 color-neutral"
+            className="flex mr-2 color-neutral p-0"
             onClick={handleClose}
             focusable={true}
           />

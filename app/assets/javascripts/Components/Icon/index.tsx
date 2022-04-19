@@ -88,6 +88,7 @@ import {
   UserSwitch,
   WarningIcon,
   WindowIcon,
+  SubtractIcon,
 } from '@standardnotes/stylekit'
 
 export const ICONS = {
@@ -177,6 +178,7 @@ export const ICONS = {
   user: UserIcon,
   warning: WarningIcon,
   window: WindowIcon,
+  subtract: SubtractIcon,
 }
 
 type Props = {
@@ -194,7 +196,7 @@ export const Icon: FunctionalComponent<Props> = ({ type, className = '', ariaLab
     <IconComponent
       className={`sn-icon ${className}`}
       role="img"
-      {...(ariaLabel ? { 'aria-label': ariaLabel } : {})}
+      {...(ariaLabel ? { 'aria-label': ariaLabel } : { 'aria-hidden': true })}
     />
   )
 }

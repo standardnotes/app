@@ -10,7 +10,7 @@ const Toggle: FunctionComponent<{
   setIsToggled: StateUpdater<boolean>
 }> = ({ isToggled, setIsToggled }) => (
   <IconButton
-    className="w-5 h-5 justify-center sk-circle hover:bg-grey-4 color-neutral"
+    className="w-5 h-5 p-0 justify-center sk-circle hover:bg-grey-4 color-neutral"
     icon={isToggled ? 'eye-off' : 'eye'}
     iconClassName="sn-icon--small"
     title="Show/hide password"
