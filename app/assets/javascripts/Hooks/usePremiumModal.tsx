@@ -31,7 +31,7 @@ interface Props {
 
 export const PremiumModalProvider: FunctionalComponent<Props> = observer(
   ({ application, appState, children }) => {
-    const featureName = appState.features._premiumAlertFeatureName
+    const featureName = appState.features.premiumAlertFeatureName
     const activate = appState.features.showPremiumAlert
     const close = appState.features.closePremiumAlert
 
