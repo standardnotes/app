@@ -102,7 +102,7 @@ export class AppState {
       this.appEventObserverRemovers,
     )
     this.noteTags = new NoteTagsState(application, this, this.appEventObserverRemovers)
-    this.features = new FeaturesState(application)
+    this.features = new FeaturesState(application, this.appEventObserverRemovers)
     this.tags = new TagsState(application, this.appEventObserverRemovers, this.features)
     this.noAccountWarning = new NoAccountWarningState(application, this.appEventObserverRemovers)
     this.accountMenu = new AccountMenuState(application, this.appEventObserverRemovers)
@@ -155,8 +155,6 @@ export class AppState {
 
     this.appEventObserverRemovers.forEach((remover) => remover())
     this.appEventObserverRemovers.length = 0
-
-    this.features.deinit()
     ;(this.features as unknown) = undefined
 
     this.webAppEventDisposer?.()

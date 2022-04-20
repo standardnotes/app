@@ -1,38 +1,29 @@
+import { WebApplication } from '@/UIModels/Application'
 import { isDev } from '@/Utils'
 import { ApplicationEvent, FeatureIdentifier, FeatureStatus } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, runInAction, when } from 'mobx'
-import { WebApplication } from '../Application'
 
-export const TAG_FOLDERS_FEATURE_NAME = 'Tag folders'
-export const TAG_FOLDERS_FEATURE_TOOLTIP = 'A Plus or Pro plan is required to enable Tag folders.'
-
-export const SMART_TAGS_FEATURE_NAME = 'Smart Tags'
-
-/**
- * Holds state for premium/non premium features for the current user features,
- * and eventually for in-development features (feature flags).
- */
 export class FeaturesState {
-  readonly enableUnfinishedFeatures: boolean = window?.enabledUnfinishedFeatures
+  hasFolders: boolean
+  hasSmartViews: boolean
+  hasFilesBeta: boolean
+  premiumAlertFeatureName: string | undefined
 
-  _hasFolders = false
-  _hasSmartViews = false
-  _hasFilesBeta = false
-  _premiumAlertFeatureName: string | undefined
-
-  private unsub: () => void
-
-  constructor(private application: WebApplication) {
-    this._hasFolders = this.hasNativeFolders()
-    this._hasSmartViews = this.hasNativeSmartViews()
-    this._hasFilesBeta = this.isEntitledToFilesBeta()
-    this._premiumAlertFeatureName = undefined
+  constructor(private application: WebApplication, appObservers: (() => void)[]) {
+    this.hasFolders = this.hasNativeFolders()
+    this.hasSmartViews = this.hasNativeSmartViews()
+    this.hasFilesBeta = this.isEntitledToFilesBeta()
+    this.premiumAlertFeatureName = undefined
 
     makeObservable(this, {
-      _hasFolders: observable,
-      _hasSmartViews: observable,
-      hasFolders: computed,
-      _premiumAlertFeatureName: observable,
+      hasFolders: observable,
+      hasSmartViews: observable,
+
+      hasFilesBeta: observable,
+      isFilesEnabled: computed,
+      isEntitledToFiles: computed,
+
+      premiumAlertFeatureName: observable,
       showPremiumAlert: action,
       closePremiumAlert: action,
     })
@@ -40,49 +31,36 @@ export class FeaturesState {
     this.showPremiumAlert = this.showPremiumAlert.bind(this)
     this.closePremiumAlert = this.closePremiumAlert.bind(this)
 
-    this.unsub = this.application.addEventObserver(async (eventName) => {
-      switch (eventName) {
-        case ApplicationEvent.FeaturesUpdated:
-        case ApplicationEvent.Launched:
-          runInAction(() => {
-            this._hasFolders = this.hasNativeFolders()
-            this._hasSmartViews = this.hasNativeSmartViews()
-            this._hasFilesBeta = this.isEntitledToFilesBeta()
-          })
-          break
-        default:
-          break
-      }
-    })
-  }
-
-  public deinit() {
-    this.unsub()
-  }
-
-  public get hasFolders(): boolean {
-    return this._hasFolders
-  }
-
-  public get hasSmartViews(): boolean {
-    return this._hasSmartViews
-  }
-
-  public get isFilesEnabled(): boolean {
-    return this._hasFilesBeta || window.enabledUnfinishedFeatures || isDev
-  }
-
-  public get isEntitledToFiles(): boolean {
-    return this._hasFilesBeta
+    appObservers.push(
+      application.addEventObserver(async (event) => {
+        switch (event) {
+          case ApplicationEvent.FeaturesUpdated:
+          case ApplicationEvent.Launched:
+            runInAction(() => {
+              this.hasFolders = this.hasNativeFolders()
+              this.hasSmartViews = this.hasNativeSmartViews()
+              this.hasFilesBeta = this.isEntitledToFilesBeta()
+            })
+        }
+      }),
+    )
   }
 
   public async showPremiumAlert(featureName: string): Promise<void> {
-    this._premiumAlertFeatureName = featureName
-    return when(() => this._premiumAlertFeatureName === undefined)
+    this.premiumAlertFeatureName = featureName
+    return when(() => this.premiumAlertFeatureName === undefined)
   }
 
   public async closePremiumAlert(): Promise<void> {
-    this._premiumAlertFeatureName = undefined
+    this.premiumAlertFeatureName = undefined
+  }
+
+  get isFilesEnabled(): boolean {
+    return this.hasFilesBeta || window.enabledUnfinishedFeatures || isDev
+  }
+
+  get isEntitledToFiles(): boolean {
+    return this.hasFilesBeta
   }
 
   private hasNativeFolders(): boolean {
