@@ -51,7 +51,7 @@ export class FeaturesState {
     return when(() => this.premiumAlertFeatureName === undefined)
   }
 
-  public async closePremiumAlert(): Promise<void> {
+  public closePremiumAlert() {
     this.premiumAlertFeatureName = undefined
   }
 
