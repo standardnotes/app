@@ -149,7 +149,7 @@ export class DesktopManager
   async desktop_requestBackupFile(): Promise<string | undefined> {
     const encrypted = this.application.hasProtectionSources()
     const data = encrypted
-      ? await this.application.createEncryptedBackupFile()
+      ? await this.application.createEncryptedBackupFileForAutomatedDesktopBackups()
       : await this.application.createDecryptedBackupFile()
 
     if (data) {
