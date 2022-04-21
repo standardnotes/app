@@ -1,7 +1,8 @@
 import { action, makeAutoObservable, observable } from 'mobx'
-import { FeatureIdentifier, IconType } from '@standardnotes/snjs'
+import { IconType } from '@standardnotes/snjs'
 import { WebApplication } from '@/UIModels/Application'
 import { ExtensionsLatestVersions } from './Panes/Extensions/ExtensionsLatestVersions'
+import { securityPrefsHasBubble } from './Panes'
 
 const PREFERENCE_IDS = [
   'general',
@@ -17,10 +18,12 @@ const PREFERENCE_IDS = [
 ] as const
 
 export type PreferenceId = typeof PREFERENCE_IDS[number]
+
 interface PreferencesMenuItem {
-  readonly id: PreferenceId | FeatureIdentifier
+  readonly id: PreferenceId
   readonly icon: IconType
   readonly label: string
+  readonly hasBubble?: boolean
 }
 
 interface SelectableMenuItem extends PreferencesMenuItem {
@@ -34,8 +37,8 @@ const PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
   { id: 'account', label: 'Account', icon: 'user' },
   { id: 'general', label: 'General', icon: 'settings' },
   { id: 'security', label: 'Security', icon: 'security' },
-  { id: 'appearance', label: 'Appearance', icon: 'themes' },
   { id: 'backups', label: 'Backups', icon: 'restore' },
+  { id: 'appearance', label: 'Appearance', icon: 'themes' },
   { id: 'listed', label: 'Listed', icon: 'listed' },
   { id: 'shortcuts', label: 'Shortcuts', icon: 'keyboard' },
   { id: 'accessibility', label: 'Accessibility', icon: 'accessibility' },
@@ -47,14 +50,14 @@ const READY_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
   { id: 'account', label: 'Account', icon: 'user' },
   { id: 'general', label: 'General', icon: 'settings' },
   { id: 'security', label: 'Security', icon: 'security' },
-  { id: 'appearance', label: 'Appearance', icon: 'themes' },
   { id: 'backups', label: 'Backups', icon: 'restore' },
+  { id: 'appearance', label: 'Appearance', icon: 'themes' },
   { id: 'listed', label: 'Listed', icon: 'listed' },
   { id: 'help-feedback', label: 'Help & feedback', icon: 'help' },
 ]
 
 export class PreferencesMenu {
-  private _selectedPane: PreferenceId | FeatureIdentifier = 'account'
+  private _selectedPane: PreferenceId = 'account'
   private _menu: PreferencesMenuItem[]
   private _extensionLatestVersions: ExtensionsLatestVersions = new ExtensionsLatestVersions(
     new Map(),
@@ -101,10 +104,14 @@ export class PreferencesMenu {
   }
 
   get menuItems(): SelectableMenuItem[] {
-    const menuItems = this._menu.map((preference) => ({
-      ...preference,
-      selected: preference.id === this._selectedPane,
-    }))
+    const menuItems = this._menu.map((preference) => {
+      const item: SelectableMenuItem = {
+        ...preference,
+        selected: preference.id === this._selectedPane,
+        hasBubble: this.sectionHasBubble(preference.id),
+      }
+      return item
+    })
 
     return menuItems
   }
@@ -113,7 +120,7 @@ export class PreferencesMenu {
     return this._menu.find((item) => item.id === this._selectedPane)
   }
 
-  get selectedPaneId(): PreferenceId | FeatureIdentifier {
+  get selectedPaneId(): PreferenceId {
     if (this.selectedMenuItem != undefined) {
       return this.selectedMenuItem.id
     }
@@ -121,7 +128,15 @@ export class PreferencesMenu {
     return 'account'
   }
 
-  selectPane(key: PreferenceId | FeatureIdentifier): void {
+  selectPane(key: PreferenceId): void {
     this._selectedPane = key
+  }
+
+  sectionHasBubble(id: PreferenceId): boolean {
+    if (id === 'security') {
+      return securityPrefsHasBubble(this.application)
+    }
+
+    return false
   }
 }

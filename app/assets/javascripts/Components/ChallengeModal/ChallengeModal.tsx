@@ -125,8 +125,9 @@ export const ChallengeModal: FunctionComponent<Props> = ({
     [values],
   )
 
-  const closeModal = () => {
+  const cancelChallenge = () => {
     if (challenge.cancelable) {
+      application.cancelChallenge(challenge)
       onDismiss(challenge).catch(console.error)
     }
   }
@@ -187,7 +188,7 @@ export const ChallengeModal: FunctionComponent<Props> = ({
       className={`sn-component ${
         challenge.reason === ChallengeReason.ApplicationUnlock ? 'challenge-modal-overlay' : ''
       }`}
-      onDismiss={closeModal}
+      onDismiss={cancelChallenge}
       dangerouslyBypassFocusLock={bypassModalFocusLock}
     >
       <DialogContent
@@ -199,7 +200,7 @@ export const ChallengeModal: FunctionComponent<Props> = ({
       >
         {challenge.cancelable && (
           <button
-            onClick={closeModal}
+            onClick={cancelChallenge}
             aria-label="Close modal"
             className="flex p-1 bg-transparent border-0 cursor-pointer absolute top-4 right-4"
           >
