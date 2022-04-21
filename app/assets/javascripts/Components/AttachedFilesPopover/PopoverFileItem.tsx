@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'preact/hooks'
 import { Icon, ICONS } from '@/Components/Icon'
 import { PopoverFileItemAction, PopoverFileItemActionType } from './PopoverFileItemAction'
 import { PopoverFileSubmenu } from './PopoverFileSubmenu'
+import { useFilePreviewModal } from '@/Components/Files/FilePreviewModalProvider'
 
 export const getFileIconComponent = (iconType: string, className: string) => {
   const IconComponent = ICONS[iconType as keyof typeof ICONS]
@@ -29,6 +30,8 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
   getIconType,
   closeOnBlur,
 }) => {
+  const filePreviewModal = useFilePreviewModal()
+
   const [fileName, setFileName] = useState(file.name)
   const [isRenamingFile, setIsRenamingFile] = useState(false)
   const itemRef = useRef<HTMLDivElement>(null)
@@ -65,13 +68,17 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
     renameFile(file, fileName).catch(console.error)
   }
 
+  const clickHandler = () => {
+    filePreviewModal.activate(file)
+  }
+
   return (
     <div
       ref={itemRef}
       className="flex items-center justify-between p-3 focus:shadow-none"
       tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
     >
-      <div className="flex items-center">
+      <div onClick={clickHandler} className="flex items-center cursor-pointer">
         {getFileIconComponent(getIconType(file.mimeType), 'w-8 h-8 flex-shrink-0')}
         <div className="flex flex-col mx-4">
           {isRenamingFile ? (
