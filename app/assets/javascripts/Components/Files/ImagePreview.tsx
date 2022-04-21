@@ -17,7 +17,7 @@ export const ImagePreview: FunctionComponent<Props> = ({ objectUrl }) => {
       <img
         src={objectUrl}
         style={{
-          width: '100%',
+          'min-width': '100%',
           height: `${imageZoomPercent}%`,
           'object-fit': 'contain',
         }}
