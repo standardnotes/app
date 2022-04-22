@@ -1,8 +1,8 @@
-import { Bridge } from './Services/Bridge'
+import { WebOrDesktopDevice } from './WebOrDesktopDevice'
 
 export type StartApplication = (
   defaultSyncServerHost: string,
-  bridge: Bridge,
+  device: WebOrDesktopDevice,
   enableUnfinishedFeatures: boolean,
   webSocketUrl: string,
 ) => Promise<void>

@@ -1,38 +1,60 @@
 import {
-  getGlobalScope,
   SNApplication,
   ApplicationIdentifier,
-  AbstractDevice,
+  Environment,
+  LegacyRawKeychainValue,
+  RawKeychainValue,
+  TransferPayload,
+  NamespacedRootKeyInKeychain,
 } from '@standardnotes/snjs'
-import { Database } from '@/Database'
-import { Bridge } from './Services/Bridge'
+import { Database } from '../Database'
+import { WebOrDesktopDeviceInterface } from './WebOrDesktopDeviceInterface'
 
-export class WebDeviceInterface extends AbstractDevice {
+export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface {
+  constructor(public appVersion: string) {}
+
   private databases: Database[] = []
 
-  constructor(private bridge: Bridge) {
-    super(setTimeout.bind(getGlobalScope()), setInterval.bind(getGlobalScope()))
-  }
+  abstract environment: Environment
 
   setApplication(application: SNApplication) {
     const database = new Database(application.identifier, application.alertService)
+
     this.databases.push(database)
+  }
+
+  public async getJsonParsedRawStorageValue(key: string): Promise<unknown | undefined> {
+    const value = await this.getRawStorageValue(key)
+    if (value == undefined) {
+      return undefined
+    }
+
+    try {
+      return JSON.parse(value)
+    } catch (e) {
+      return value
+    }
   }
 
   private databaseForIdentifier(identifier: ApplicationIdentifier) {
     return this.databases.find((database) => database.databaseName === identifier) as Database
   }
 
-  override deinit() {
-    super.deinit()
+  deinit() {
     for (const database of this.databases) {
       database.deinit()
     }
     this.databases = []
   }
 
-  async getRawStorageValue(key: string) {
-    return localStorage.getItem(key) as any
+  async getRawStorageValue(key: string): Promise<string | undefined> {
+    const result = localStorage.getItem(key)
+
+    if (result == undefined) {
+      return undefined
+    }
+
+    return result
   }
 
   async getAllRawStorageKeyValues() {
@@ -46,7 +68,7 @@ export class WebDeviceInterface extends AbstractDevice {
     return results
   }
 
-  async setRawStorageValue(key: string, value: any) {
+  async setRawStorageValue(key: string, value: string) {
     localStorage.setItem(key, value)
   }
 
@@ -78,11 +100,11 @@ export class WebDeviceInterface extends AbstractDevice {
     return this.databaseForIdentifier(identifier).getAllPayloads()
   }
 
-  async saveRawDatabasePayload(payload: any, identifier: ApplicationIdentifier) {
+  async saveRawDatabasePayload(payload: TransferPayload, identifier: ApplicationIdentifier) {
     return this.databaseForIdentifier(identifier).savePayload(payload)
   }
 
-  async saveRawDatabasePayloads(payloads: any[], identifier: ApplicationIdentifier) {
+  async saveRawDatabasePayloads(payloads: TransferPayload[], identifier: ApplicationIdentifier) {
     return this.databaseForIdentifier(identifier).savePayloads(payloads)
   }
 
@@ -95,43 +117,44 @@ export class WebDeviceInterface extends AbstractDevice {
   }
 
   async getNamespacedKeychainValue(identifier: ApplicationIdentifier) {
-    const keychain = await this.getRawKeychainValue()
+    const keychain = await this.getKeychainValue()
+
     if (!keychain) {
       return
     }
+
     return keychain[identifier]
   }
 
-  async setNamespacedKeychainValue(value: any, identifier: ApplicationIdentifier) {
-    let keychain = await this.getRawKeychainValue()
+  async setNamespacedKeychainValue(
+    value: NamespacedRootKeyInKeychain,
+    identifier: ApplicationIdentifier,
+  ) {
+    let keychain = await this.getKeychainValue()
+
     if (!keychain) {
       keychain = {}
     }
-    return this.bridge.setKeychainValue({
+
+    return this.setKeychainValue({
       ...keychain,
       [identifier]: value,
     })
   }
 
   async clearNamespacedKeychainValue(identifier: ApplicationIdentifier) {
-    const keychain = await this.getRawKeychainValue()
+    const keychain = await this.getKeychainValue()
     if (!keychain) {
       return
     }
+
     delete keychain[identifier]
-    return this.bridge.setKeychainValue(keychain)
+
+    return this.setKeychainValue(keychain)
   }
 
-  getRawKeychainValue(): Promise<any> {
-    return this.bridge.getKeychainValue()
-  }
-
-  legacy_setRawKeychainValue(value: unknown): Promise<any> {
-    return this.bridge.setKeychainValue(value)
-  }
-
-  clearRawKeychainValue() {
-    return this.bridge.clearKeychainValue()
+  setRawKeychainValue(value: unknown): Promise<void> {
+    return this.setKeychainValue(value)
   }
 
   openUrl(url: string) {
@@ -140,4 +163,14 @@ export class WebDeviceInterface extends AbstractDevice {
       win.focus()
     }
   }
+
+  setLegacyRawKeychainValue(value: LegacyRawKeychainValue): Promise<void> {
+    return this.setKeychainValue(value)
+  }
+
+  abstract getKeychainValue(): Promise<RawKeychainValue>
+
+  abstract setKeychainValue(value: unknown): Promise<void>
+
+  abstract clearRawKeychainValue(): Promise<void>
 }

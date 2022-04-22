@@ -20,15 +20,15 @@ import { IsWebPlatform, WebAppVersion } from '@/Version'
 import { Runtime, SNLog } from '@standardnotes/snjs'
 import { render } from 'preact'
 import { ApplicationGroupView } from './Components/ApplicationGroupView'
-import { Bridge } from './Services/Bridge'
-import { BrowserBridge } from './Services/BrowserBridge'
-import { StartApplication } from './StartApplication'
+import { WebDevice } from './Device/WebDevice'
+import { StartApplication } from './Device/StartApplication'
 import { ApplicationGroup } from './UIModels/ApplicationGroup'
 import { isDev } from './Utils'
+import { WebOrDesktopDevice } from './Device/WebOrDesktopDevice'
 
 const startApplication: StartApplication = async function startApplication(
   defaultSyncServerHost: string,
-  bridge: Bridge,
+  device: WebOrDesktopDevice,
   enableUnfinishedFeatures: boolean,
   webSocketUrl: string,
 ) {
@@ -37,7 +37,7 @@ const startApplication: StartApplication = async function startApplication(
 
   const mainApplicationGroup = new ApplicationGroup(
     defaultSyncServerHost,
-    bridge,
+    device,
     enableUnfinishedFeatures ? Runtime.Dev : Runtime.Prod,
     webSocketUrl,
   )
@@ -70,7 +70,7 @@ const startApplication: StartApplication = async function startApplication(
 if (IsWebPlatform) {
   startApplication(
     window.defaultSyncServer,
-    new BrowserBridge(WebAppVersion),
+    new WebDevice(WebAppVersion),
     window.enabledUnfinishedFeatures,
     window.websocketUrl,
   ).catch(console.error)

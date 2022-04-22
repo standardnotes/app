@@ -22,7 +22,7 @@ const DefaultThemeIdentifier = 'Default'
 
 export class ThemeManager extends ApplicationService {
   private activeThemes: UuidString[] = []
-  private unregisterDesktop!: () => void
+  private unregisterDesktop?: () => void
   private unregisterStream!: () => void
   private lastUseDeviceThemeSettings = false
 
@@ -91,10 +91,12 @@ export class ThemeManager extends ApplicationService {
 
   override deinit() {
     this.activeThemes.length = 0
-    this.unregisterDesktop()
+
+    this.unregisterDesktop?.()
     this.unregisterStream()
     ;(this.unregisterDesktop as unknown) = undefined
     ;(this.unregisterStream as unknown) = undefined
+
     window
       .matchMedia('(prefers-color-scheme: dark)')
       .removeEventListener('change', this.colorSchemeEventHandler)
@@ -212,7 +214,7 @@ export class ThemeManager extends ApplicationService {
   private registerObservers() {
     this.unregisterDesktop = this.webApplication
       .getDesktopService()
-      .registerUpdateObserver((component) => {
+      ?.registerUpdateObserver((component) => {
         if (component.active && component.isTheme()) {
           this.deactivateTheme(component.uuid)
           setTimeout(() => {

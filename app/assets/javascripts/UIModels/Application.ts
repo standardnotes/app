@@ -2,13 +2,13 @@ import { WebCrypto } from '@/Crypto'
 import { AlertService } from '@/Services/AlertService'
 import { ArchiveManager } from '@/Services/ArchiveManager'
 import { AutolockService } from '@/Services/AutolockService'
-import { Bridge } from '@/Services/Bridge'
+import { DesktopDeviceInterface, isDesktopDevice } from '@/Device/DesktopDeviceInterface'
 import { DesktopManager } from '@/Services/DesktopManager'
 import { IOService } from '@/Services/IOService'
 import { StatusManager } from '@/Services/StatusManager'
 import { ThemeManager } from '@/Services/ThemeManager'
 import { AppState } from '@/UIModels/AppState'
-import { WebDeviceInterface } from '@/WebDeviceInterface'
+import { WebOrDesktopDevice } from '@/Device/WebOrDesktopDevice'
 import {
   DeinitSource,
   Platform,
@@ -21,7 +21,7 @@ import {
 
 type WebServices = {
   appState: AppState
-  desktopService: DesktopManager
+  desktopService?: DesktopManager
   autolockService: AutolockService
   archiveService: ArchiveManager
   statusManager: StatusManager
@@ -44,26 +44,26 @@ export class WebApplication extends SNApplication {
   public iconsController: IconsController
 
   constructor(
-    deviceInterface: WebDeviceInterface,
+    deviceInterface: WebOrDesktopDevice,
     platform: Platform,
     identifier: string,
     defaultSyncServerHost: string,
-    public bridge: Bridge,
     webSocketUrl: string,
     runtime: Runtime,
   ) {
     super({
-      environment: bridge.environment,
+      environment: deviceInterface.environment,
       platform: platform,
       deviceInterface: deviceInterface,
       crypto: WebCrypto,
       alertService: new AlertService(),
       identifier,
       defaultHost: defaultSyncServerHost,
-      appVersion: bridge.appVersion,
+      appVersion: deviceInterface.appVersion,
       webSocketUrl: webSocketUrl,
       runtime,
     })
+
     deviceInterface.setApplication(this)
     this.noteControllerGroup = new NoteGroupController(this)
     this.iconsController = new IconsController()
@@ -80,7 +80,7 @@ export class WebApplication extends SNApplication {
         if ('deinit' in service) {
           service.deinit?.(source)
         }
-        ;(service as any).application = undefined
+        ;(service as { application?: WebApplication }).application = undefined
       }
 
       this.webServices = {} as WebServices
@@ -88,7 +88,7 @@ export class WebApplication extends SNApplication {
       this.webEventObservers.length = 0
 
       if (source === DeinitSource.SignOut) {
-        this.bridge.onSignOut()
+        isDesktopDevice(this.deviceInterface) && this.deviceInterface.onSignOut()
       }
     } catch (error) {
       console.error('Error while deiniting application', error)
@@ -116,7 +116,7 @@ export class WebApplication extends SNApplication {
     return this.webServices.appState
   }
 
-  public getDesktopService(): DesktopManager {
+  public getDesktopService(): DesktopManager | undefined {
     return this.webServices.desktopService
   }
 
@@ -126,6 +126,14 @@ export class WebApplication extends SNApplication {
 
   public getArchiveService() {
     return this.webServices.archiveService
+  }
+
+  public get desktopDevice(): DesktopDeviceInterface | undefined {
+    if (isDesktopDevice(this.deviceInterface)) {
+      return this.deviceInterface
+    }
+
+    return undefined
   }
 
   getStatusManager() {
@@ -145,11 +153,14 @@ export class WebApplication extends SNApplication {
   }
 
   downloadBackup(): void | Promise<void> {
-    return this.bridge.downloadBackup()
+    if (isDesktopDevice(this.deviceInterface)) {
+      return this.deviceInterface.downloadBackup()
+    }
   }
 
   async signOutAndDeleteLocalBackups(): Promise<void> {
-    await this.bridge.deleteLocalBackups()
+    isDesktopDevice(this.deviceInterface) && (await this.deviceInterface.deleteLocalBackups())
+
     return this.user.signOut()
   }
 }

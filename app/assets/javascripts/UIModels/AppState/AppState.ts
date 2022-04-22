@@ -1,4 +1,3 @@
-import { Bridge } from '@/Services/Bridge'
 import { storage, StorageKey } from '@/Services/LocalStorage'
 import { WebApplication, WebAppEvent } from '@/UIModels/Application'
 import { AccountMenuState } from '@/UIModels/AppState/AccountMenuState'
@@ -32,6 +31,7 @@ import { SearchOptionsState } from './SearchOptionsState'
 import { SubscriptionState } from './SubscriptionState'
 import { SyncState } from './SyncState'
 import { TagsState } from './TagsState'
+import { WebOrDesktopDevice } from '@/Device/WebOrDesktopDevice'
 
 export enum AppStateEvent {
   TagChanged,
@@ -91,7 +91,7 @@ export class AppState {
 
   private readonly tagChangedDisposer: IReactionDisposer
 
-  constructor(application: WebApplication, private bridge: Bridge) {
+  constructor(application: WebApplication, private device: WebOrDesktopDevice) {
     this.application = application
     this.notes = new NotesState(
       application,
@@ -120,7 +120,7 @@ export class AppState {
     }
     this.registerVisibilityObservers()
 
-    if (this.bridge.appVersion.includes('-beta')) {
+    if (this.device.appVersion.includes('-beta')) {
       this.showBetaWarning = storage.get(StorageKey.ShowBetaWarning) ?? true
     } else {
       this.showBetaWarning = false
@@ -198,7 +198,7 @@ export class AppState {
   }
 
   public get version(): string {
-    return this.bridge.appVersion
+    return this.device.appVersion
   }
 
   async openNewNote(title?: string) {
