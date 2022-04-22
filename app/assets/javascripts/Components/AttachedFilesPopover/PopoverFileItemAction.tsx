@@ -7,6 +7,7 @@ export enum PopoverFileItemActionType {
   DownloadFile,
   RenameFile,
   ToggleFileProtection,
+  PreviewFile,
 }
 
 export type PopoverFileItemAction =

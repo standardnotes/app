@@ -50,7 +50,7 @@ module Web
          frame_ancestors: ["*", "*.standardnotes.com", "*.standardnotes.org"],
          img_src: ["'self'", '* data:', 'blob:'],
          manifest_src: %w('self'),
-         media_src: %w('self'),
+         media_src: %w('self' blob: *.standardnotes.com),
          object_src: %w('self'),
          plugin_types: %w(),
          script_src: %w('self' 'unsafe-inline' 'unsafe-eval'),

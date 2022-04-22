@@ -21,12 +21,11 @@ type Props = {
 export const FilePreviewModal: FunctionComponent<Props> = ({ application, file, onDismiss }) => {
   const [objectUrl, setObjectUrl] = useState<string>()
   const [isFilePreviewable, setIsFilePreviewable] = useState(false)
-  const [isLoadingFile, setIsLoadingFile] = useState(false)
+  const [isLoadingFile, setIsLoadingFile] = useState(true)
   const [showFileInfoPanel, setShowFileInfoPanel] = useState(false)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
 
   const getObjectUrl = useCallback(async () => {
-    setIsLoadingFile(true)
     try {
       const chunks: Uint8Array[] = []
       await application.files.downloadFile(file, async (decryptedChunk: Uint8Array) => {

@@ -6,12 +6,12 @@ import { StateUpdater, useCallback, useEffect, useRef, useState } from 'preact/h
 import { Icon } from '@/Components/Icon'
 import { Switch } from '@/Components/Switch'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
-import { useFilePreviewModal } from '@/Components/Files/FilePreviewModalProvider'
 import { PopoverFileItemProps } from './PopoverFileItem'
 import { PopoverFileItemActionType } from './PopoverFileItemAction'
 
 type Props = Omit<PopoverFileItemProps, 'renameFile' | 'getIconType'> & {
   setIsRenamingFile: StateUpdater<boolean>
+  previewHandler: () => void
 }
 
 export const PopoverFileSubmenu: FunctionComponent<Props> = ({
@@ -19,9 +19,8 @@ export const PopoverFileSubmenu: FunctionComponent<Props> = ({
   isAttachedToNote,
   handleFileAction,
   setIsRenamingFile,
+  previewHandler,
 }) => {
-  const filePreviewModal = useFilePreviewModal()
-
   const menuContainerRef = useRef<HTMLDivElement>(null)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -90,7 +89,7 @@ export const PopoverFileSubmenu: FunctionComponent<Props> = ({
                 onBlur={closeOnBlur}
                 className="sn-dropdown-item focus:bg-info-backdrop"
                 onClick={() => {
-                  filePreviewModal.activate(file)
+                  previewHandler()
                   closeMenu()
                 }}
               >

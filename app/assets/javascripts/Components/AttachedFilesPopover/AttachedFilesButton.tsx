@@ -15,6 +15,7 @@ import { StreamingFileReader } from '@standardnotes/filepicker'
 import { PopoverFileItemAction, PopoverFileItemActionType } from './PopoverFileItemAction'
 import { AttachedFilesPopover, PopoverTabs } from './AttachedFilesPopover'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
+import { useFilePreviewModal } from '../Files/FilePreviewModalProvider'
 
 type Props = {
   application: WebApplication
@@ -40,6 +41,8 @@ const removeDragOverlay = () => {
 export const AttachedFilesButton: FunctionComponent<Props> = observer(
   ({ application, appState, onClickPreprocessing }) => {
     const premiumModal = usePremiumModal()
+    const filePreviewModal = useFilePreviewModal()
+
     const note = Object.values(appState.notes.selectedNotes)[0]
 
     const [open, setOpen] = useState(false)
@@ -204,6 +207,9 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
         }
         case PopoverFileItemActionType.RenameFile:
           await renameFile(file, action.payload.name)
+          break
+        case PopoverFileItemActionType.PreviewFile:
+          filePreviewModal.activate(file)
           break
       }
 
