@@ -7,6 +7,7 @@ import { Credentials } from './Credentials'
 import { Sync } from './Sync'
 import { Subscription } from './Subscription/Subscription'
 import { SignOutWrapper } from './SignOutView'
+import { FilesSection } from './Files'
 
 type Props = {
   application: WebApplication
@@ -24,6 +25,7 @@ export const AccountPreferences = observer(({ application, appState }: Props) =>
       </>
     )}
     <Subscription application={application} appState={appState} />
+    <FilesSection appState={appState} />
     <SignOutWrapper application={application} appState={appState} />
   </PreferencesPane>
 ))
