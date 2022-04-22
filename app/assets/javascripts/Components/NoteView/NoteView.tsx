@@ -147,7 +147,7 @@ export class NoteView extends PureComponent<Props, State> {
     this.controller = props.controller
 
     this.onEditorComponentLoad = () => {
-      this.application.getDesktopService().redoSearch()
+      this.application.getDesktopService()?.redoSearch()
     }
 
     this.debounceReloadEditorComponent = debounce(this.debounceReloadEditorComponent.bind(this), 25)

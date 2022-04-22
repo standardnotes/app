@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import {
   SNComponent,
   ComponentMutator,
@@ -8,27 +7,26 @@ import {
   removeFromArray,
   DesktopManagerInterface,
   InternalEventBus,
+  DecryptedTransferPayload,
+  ComponentContent,
+  assert,
 } from '@standardnotes/snjs'
 import { WebAppEvent, WebApplication } from '@/UIModels/Application'
-import { isDesktopApplication } from '@/Utils'
-import { Bridge, ElectronDesktopCallbacks } from './Bridge'
+import { DesktopDeviceInterface } from '../Device/DesktopDeviceInterface'
+import { DesktopCommunicationReceiver } from '@/Device/DesktopWebCommunication'
 
-/**
- * An interface used by the Desktop application to interact with SN
- */
 export class DesktopManager
   extends ApplicationService
-  implements DesktopManagerInterface, ElectronDesktopCallbacks
+  implements DesktopManagerInterface, DesktopCommunicationReceiver
 {
   updateObservers: {
     callback: (component: SNComponent) => void
   }[] = []
 
-  isDesktop = isDesktopApplication()
   dataLoaded = false
   lastSearchedText?: string
 
-  constructor(application: WebApplication, private bridge: Bridge) {
+  constructor(application: WebApplication, private device: DesktopDeviceInterface) {
     super(application, new InternalEventBus())
   }
 
@@ -45,19 +43,20 @@ export class DesktopManager
     super.onAppEvent(eventName).catch(console.error)
     if (eventName === ApplicationEvent.LocalDataLoaded) {
       this.dataLoaded = true
-      this.bridge.onInitialDataLoad()
+      this.device.onInitialDataLoad()
     } else if (eventName === ApplicationEvent.MajorDataChange) {
-      this.bridge.onMajorDataChange()
+      this.device.onMajorDataChange()
     }
   }
 
   saveBackup() {
-    this.bridge.onMajorDataChange()
+    this.device.onMajorDataChange()
   }
 
   getExtServerHost(): string {
-    console.assert(!!this.bridge.extensionsServerHost, 'extServerHost is null')
-    return this.bridge.extensionsServerHost as string
+    assert(this.device.extensionsServerHost)
+
+    return this.device.extensionsServerHost
   }
 
   /**
@@ -70,17 +69,13 @@ export class DesktopManager
 
   // All `components` should be installed
   syncComponentsInstallation(components: SNComponent[]) {
-    if (!this.isDesktop) {
-      return
-    }
-
     Promise.all(
       components.map((component) => {
         return this.convertComponentForTransmission(component)
       }),
     )
       .then((payloads) => {
-        this.bridge.syncComponents(payloads)
+        this.device.syncComponents(payloads)
       })
       .catch(console.error)
   }
@@ -96,11 +91,8 @@ export class DesktopManager
   }
 
   searchText(text?: string) {
-    if (!this.isDesktop) {
-      return
-    }
     this.lastSearchedText = text
-    this.bridge.onSearch(text)
+    this.device.onSearch(text)
   }
 
   redoSearch() {
@@ -109,23 +101,27 @@ export class DesktopManager
     }
   }
 
-  desktop_updateAvailable(): void {
+  updateAvailable(): void {
     this.webApplication.notifyWebEvent(WebAppEvent.NewUpdateAvailable)
   }
 
-  desktop_windowGainedFocus(): void {
+  windowGainedFocus(): void {
     this.webApplication.notifyWebEvent(WebAppEvent.DesktopWindowGainedFocus)
   }
 
-  desktop_windowLostFocus(): void {
+  windowLostFocus(): void {
     this.webApplication.notifyWebEvent(WebAppEvent.DesktopWindowLostFocus)
   }
 
-  async desktop_onComponentInstallationComplete(componentData: any, error: any) {
+  async onComponentInstallationComplete(
+    componentData: DecryptedTransferPayload<ComponentContent>,
+    error: unknown,
+  ) {
     const component = this.application.items.findItem(componentData.uuid)
     if (!component) {
       return
     }
+
     const updatedComponent = await this.application.mutator.changeAndSaveItem(
       component,
       (m) => {
@@ -133,7 +129,9 @@ export class DesktopManager
         if (error) {
           mutator.setAppDataItem(AppDataField.ComponentInstallError, error)
         } else {
-          mutator.local_url = componentData.content.local_url
+          // eslint-disable-next-line camelcase
+          mutator.local_url = componentData.content.local_url as string
+          // eslint-disable-next-line camelcase
           mutator.package_info = componentData.content.package_info
           mutator.setAppDataItem(AppDataField.ComponentInstallError, undefined)
         }
@@ -146,7 +144,7 @@ export class DesktopManager
     }
   }
 
-  async desktop_requestBackupFile(): Promise<string | undefined> {
+  async requestBackupFile(): Promise<string | undefined> {
     const encrypted = this.application.hasProtectionSources()
     const data = encrypted
       ? await this.application.createEncryptedBackupFileForAutomatedDesktopBackups()
@@ -159,11 +157,11 @@ export class DesktopManager
     return undefined
   }
 
-  desktop_didBeginBackup() {
+  didBeginBackup() {
     this.webApplication.getAppState().beganBackupDownload()
   }
 
-  desktop_didFinishBackup(success: boolean) {
+  didFinishBackup(success: boolean) {
     this.webApplication.getAppState().endedBackupDownload(success)
   }
 }

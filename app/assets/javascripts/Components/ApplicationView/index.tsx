@@ -59,7 +59,11 @@ export class ApplicationView extends PureComponent<Props, State> {
   }
 
   async loadApplication() {
-    this.application.componentManager.setDesktopManager(this.application.getDesktopService())
+    const desktopService = this.application.getDesktopService()
+    if (desktopService) {
+      this.application.componentManager.setDesktopManager(desktopService)
+    }
+
     await this.application.prepareForLaunch({
       receiveChallenge: async (challenge) => {
         const challenges = this.state.challenges.slice()
@@ -67,6 +71,7 @@ export class ApplicationView extends PureComponent<Props, State> {
         this.setState({ challenges: challenges })
       },
     })
+
     await this.application.launch()
   }
 
