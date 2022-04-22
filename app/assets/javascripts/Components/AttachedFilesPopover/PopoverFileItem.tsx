@@ -65,13 +65,20 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
     renameFile(file, fileName).catch(console.error)
   }
 
+  const clickPreviewHandler = () => {
+    handleFileAction({
+      type: PopoverFileItemActionType.PreviewFile,
+      payload: file,
+    }).catch(console.error)
+  }
+
   return (
     <div
       ref={itemRef}
       className="flex items-center justify-between p-3 focus:shadow-none"
       tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
     >
-      <div className="flex items-center">
+      <div onClick={clickPreviewHandler} className="flex items-center cursor-pointer">
         {getFileIconComponent(getIconType(file.mimeType), 'w-8 h-8 flex-shrink-0')}
         <div className="flex flex-col mx-4">
           {isRenamingFile ? (
@@ -106,6 +113,7 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
         handleFileAction={handleFileAction}
         setIsRenamingFile={setIsRenamingFile}
         closeOnBlur={closeOnBlur}
+        previewHandler={clickPreviewHandler}
       />
     </div>
   )

@@ -1051,6 +1051,10 @@
   color: var(--sn-stylekit-neutral-contrast-color);
 }
 
+.color-warning {
+  color: var(--sn-stylekit-warning-color);
+}
+
 .active\:bg-info:active {
   background-color: var(--sn-stylekit-info-color);
 }

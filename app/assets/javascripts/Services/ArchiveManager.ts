@@ -5,6 +5,7 @@ import {
   BackupFile,
   BackupFileDecryptedContextualPayload,
   NoteContent,
+  EncryptedItemInterface,
 } from '@standardnotes/snjs'
 
 function sanitizeFileName(name: string): string {
@@ -148,12 +149,21 @@ export class ArchiveManager {
     return this.textFile
   }
 
-  downloadData(data: Blob | ObjectURL, fileName: string) {
+  downloadData(data: Blob | ObjectURL, fileName: string): void {
     const link = document.createElement('a')
     link.setAttribute('download', fileName)
     link.href = typeof data === 'string' ? data : this.hrefForData(data)
     document.body.appendChild(link)
     link.click()
     link.remove()
+  }
+
+  downloadEncryptedItem(item: EncryptedItemInterface) {
+    this.downloadData(new Blob([JSON.stringify(item.payload.ejected())]), `${item.uuid}.txt`)
+  }
+
+  downloadEncryptedItems(items: EncryptedItemInterface[]) {
+    const data = JSON.stringify(items.map((i) => i.payload.ejected()))
+    this.downloadData(new Blob([data]), 'errored-items.txt')
   }
 }

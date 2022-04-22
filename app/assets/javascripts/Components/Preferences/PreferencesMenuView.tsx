@@ -13,6 +13,7 @@ export const PreferencesMenuView: FunctionComponent<{
         iconType={pref.icon}
         label={pref.label}
         selected={pref.selected}
+        hasBubble={pref.hasBubble}
         onClick={() => menu.selectPane(pref.id)}
       />
     ))}
