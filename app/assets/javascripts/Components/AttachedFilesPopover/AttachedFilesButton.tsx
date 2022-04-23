@@ -223,8 +223,13 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     const dragCounter = useRef(0)
 
     const handleDrag = (event: DragEvent) => {
-      event.preventDefault()
-      event.stopPropagation()
+      if (
+        event.dataTransfer?.items &&
+        Array.from(event.dataTransfer.items).some((item) => item.kind === 'file')
+      ) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
     }
 
     const handleDragIn = useCallback(
