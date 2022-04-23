@@ -168,14 +168,14 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
     useEffect(() => {
       const unregisterDesktopObserver = application
         .getDesktopService()
-        .registerUpdateObserver((updatedComponent: SNComponent) => {
+        ?.registerUpdateObserver((updatedComponent: SNComponent) => {
           if (updatedComponent.uuid === component.uuid && updatedComponent.active) {
             requestReload?.(componentViewer)
           }
         })
 
       return () => {
-        unregisterDesktopObserver()
+        unregisterDesktopObserver?.()
       }
     }, [application, requestReload, componentViewer, component.uuid])
 

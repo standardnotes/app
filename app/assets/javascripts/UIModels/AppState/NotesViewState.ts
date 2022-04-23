@@ -379,8 +379,9 @@ export class NotesViewState {
   paginate = () => {
     this.notesToDisplay += this.pageSize
     this.reloadNotes()
+
     if (this.searchSubmitted) {
-      this.application.getDesktopService().searchText(this.noteFilterText)
+      this.application.getDesktopService()?.searchText(this.noteFilterText)
     }
   }
 
@@ -482,8 +483,9 @@ export class NotesViewState {
         })
         .catch(console.error)
     }
+
     if (this.isFiltering) {
-      this.application.getDesktopService().searchText(this.noteFilterText)
+      this.application.getDesktopService()?.searchText(this.noteFilterText)
     }
   }
 
@@ -496,9 +498,13 @@ export class NotesViewState {
 
   handleTagChange = () => {
     this.resetScrollPosition()
+
     this.setShowDisplayOptionsMenu(false)
+
     this.setNoteFilterText('')
-    this.application.getDesktopService().searchText()
+
+    this.application.getDesktopService()?.searchText()
+
     this.resetPagination()
 
     /* Capture db load state before beginning reloadNotes,
@@ -525,7 +531,8 @@ export class NotesViewState {
      * enter before highlighting desktop search results.
      */
     this.searchSubmitted = true
-    this.application.getDesktopService().searchText(this.noteFilterText)
+
+    this.application.getDesktopService()?.searchText(this.noteFilterText)
   }
 
   handleFilterTextChanged = () => {

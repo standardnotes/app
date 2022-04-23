@@ -28,8 +28,8 @@ export const ConfirmSignoutModal = observer(({ application, appState }: Props) =
   const [localBackupsCount, setLocalBackupsCount] = useState(0)
 
   useEffect(() => {
-    application.bridge.localBackupsCount().then(setLocalBackupsCount).catch(console.error)
-  }, [appState.accountMenu.signingOut, application.bridge])
+    application.desktopDevice?.localBackupsCount().then(setLocalBackupsCount).catch(console.error)
+  }, [appState.accountMenu.signingOut, application.desktopDevice])
 
   return (
     <AlertDialog onDismiss={closeDialog} leastDestructiveRef={cancelRef}>
@@ -44,6 +44,7 @@ export const ConfirmSignoutModal = observer(({ application, appState }: Props) =
                 <AlertDialogDescription className="sk-panel-row">
                   <p className="color-foreground">{STRING_SIGN_OUT_CONFIRMATION}</p>
                 </AlertDialogDescription>
+
                 {localBackupsCount > 0 && (
                   <div className="flex">
                     <div className="sk-panel-row"></div>
@@ -63,13 +64,14 @@ export const ConfirmSignoutModal = observer(({ application, appState }: Props) =
                     <button
                       className="capitalize sk-a ml-1.5 p-0 rounded cursor-pointer"
                       onClick={() => {
-                        application.bridge.viewlocalBackups()
+                        application.desktopDevice?.viewlocalBackups()
                       }}
                     >
                       View backup files
                     </button>
                   </div>
                 )}
+
                 <div className="flex my-1 mt-4">
                   <button className="sn-button small neutral" ref={cancelRef} onClick={closeDialog}>
                     Cancel
