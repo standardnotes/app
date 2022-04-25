@@ -115,8 +115,8 @@ export const FilePreviewModal: FunctionComponent<Props> = ({ application, file, 
             </button>
           </div>
         </div>
-        <div className="flex flex-grow min-h-0 overflow-auto">
-          <div className="flex flex-grow items-center justify-center relative">
+        <div className="flex flex-grow min-h-0">
+          <div className="flex flex-grow items-center justify-center relative max-w-full">
             {objectUrl ? (
               <PreviewComponent file={file} objectUrl={objectUrl} />
             ) : isLoadingFile ? (
