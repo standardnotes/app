@@ -13,21 +13,31 @@ export const ImagePreview: FunctionComponent<Props> = ({ objectUrl }) => {
   const [imageZoomPercent, setImageZoomPercent] = useState(100)
 
   return (
-    <div className="flex items-center justify-center w-full h-full overflow-auto">
-      <img
-        src={objectUrl}
-        style={{
-          'min-width': '100%',
-          height: `${imageZoomPercent}%`,
-          'object-fit': 'contain',
-        }}
-        ref={(imgElement) => {
-          if (!initialImgHeightRef.current) {
-            initialImgHeightRef.current = imgElement?.height
-          }
-        }}
-      />
-      <div className="flex items-center absolute bottom-6 py-1 px-3 bg-default border-1 border-solid border-main rounded">
+    <div className="flex items-center justify-center w-full h-full">
+      <div className="flex items-center justify-center w-full h-full relative overflow-auto">
+        <img
+          src={objectUrl}
+          style={{
+            height: `${imageZoomPercent}%`,
+            ...(imageZoomPercent <= 100
+              ? {
+                  'min-width': '100%',
+                  'object-fit': 'contain',
+                }
+              : {
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                }),
+          }}
+          ref={(imgElement) => {
+            if (!initialImgHeightRef.current) {
+              initialImgHeightRef.current = imgElement?.height
+            }
+          }}
+        />
+      </div>
+      <div className="flex items-center absolute left-1/2 -translate-x-1/2 bottom-6 py-1 px-3 bg-default border-1 border-solid border-main rounded">
         <span className="mr-1.5">Zoom:</span>
         <IconButton
           className="hover:bg-contrast p-1 rounded"
