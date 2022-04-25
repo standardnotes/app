@@ -25,7 +25,7 @@ export const AccountPreferences = observer(({ application, appState }: Props) =>
       </>
     )}
     <Subscription application={application} appState={appState} />
-    <FilesSection appState={appState} />
+    <FilesSection application={application} appState={appState} />
     <SignOutWrapper application={application} appState={appState} />
   </PreferencesPane>
 ))

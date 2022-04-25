@@ -110,7 +110,7 @@ export class AppState {
     this.subscription = new SubscriptionState(application, this.appEventObserverRemovers)
     this.purchaseFlow = new PurchaseFlowState(application)
     this.notesView = new NotesViewState(application, this, this.appEventObserverRemovers)
-    this.files = new FilesState(application, this.appEventObserverRemovers)
+    this.files = new FilesState(application)
     this.addAppEventObserver()
     this.streamNotesAndTags()
     this.onVisibilityChange = () => {
