@@ -7,61 +7,12 @@ import {
   ClassicFileSaver,
   parseFileName,
 } from '@standardnotes/filepicker'
-import {
-  ApplicationEvent,
-  ClientDisplayableError,
-  ContentType,
-  SNFile,
-  SubscriptionSettingName,
-} from '@standardnotes/snjs'
+import { ClientDisplayableError, SNFile } from '@standardnotes/snjs'
 import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit'
-import { action, makeObservable, observable } from 'mobx'
-
 import { WebApplication } from '../Application'
 
 export class FilesState {
-  filesQuotaUsed: number
-  filesQuotaTotal: number
-
-  constructor(private application: WebApplication, appObservers: (() => void)[]) {
-    this.filesQuotaUsed = 0
-    this.filesQuotaTotal = 0
-
-    makeObservable(this, {
-      filesQuotaUsed: observable,
-      filesQuotaTotal: observable,
-      getFilesQuota: action,
-    })
-
-    appObservers.push(
-      application.addEventObserver(async (event) => {
-        switch (event) {
-          case ApplicationEvent.Launched:
-          case ApplicationEvent.SignedIn:
-            this.getFilesQuota().catch(console.error)
-        }
-      }),
-      application.streamItems(ContentType.File, () => {
-        this.getFilesQuota().catch(console.error)
-      }),
-    )
-  }
-
-  public async getFilesQuota() {
-    const filesQuotaUsed = await this.application.settings.getSubscriptionSetting(
-      SubscriptionSettingName.FileUploadBytesUsed,
-    )
-    const filesQuotaTotal = await this.application.settings.getSubscriptionSetting(
-      SubscriptionSettingName.FileUploadBytesLimit,
-    )
-
-    if (filesQuotaUsed) {
-      this.filesQuotaUsed = parseFloat(filesQuotaUsed)
-    }
-    if (filesQuotaTotal) {
-      this.filesQuotaTotal = parseFloat(filesQuotaTotal)
-    }
-  }
+  constructor(private application: WebApplication) {}
 
   public async downloadFile(file: SNFile): Promise<void> {
     let downloadingToastId = ''
