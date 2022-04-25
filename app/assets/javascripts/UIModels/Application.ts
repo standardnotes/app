@@ -77,9 +77,14 @@ export class WebApplication extends SNApplication {
       }
 
       for (const service of Object.values(this.webServices)) {
+        if (!service) {
+          continue
+        }
+
         if ('deinit' in service) {
           service.deinit?.(source)
         }
+
         ;(service as { application?: WebApplication }).application = undefined
       }
 
