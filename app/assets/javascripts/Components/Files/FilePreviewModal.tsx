@@ -50,6 +50,10 @@ export const FilePreviewModal: FunctionComponent<Props> = ({ application, file, 
     const isPreviewable = isFileTypePreviewable(file.mimeType)
     setIsFilePreviewable(isPreviewable)
 
+    if (!isPreviewable) {
+      setIsLoadingFile(false)
+    }
+
     if (!objectUrl && isPreviewable) {
       getObjectUrl().catch(console.error)
     }
