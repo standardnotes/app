@@ -1,5 +1,5 @@
 import { DeviceInterface, Environment } from '@standardnotes/snjs'
-import { WebCommunicationReceiver } from './DesktopWebCommunication'
+import { WebClientRequiresDesktopMethods } from './DesktopWebCommunication'
 import { WebOrDesktopDeviceInterface } from './WebOrDesktopDeviceInterface'
 
 export function isDesktopDevice(x: DeviceInterface): x is DesktopDeviceInterface {
@@ -8,6 +8,6 @@ export function isDesktopDevice(x: DeviceInterface): x is DesktopDeviceInterface
 
 export interface DesktopDeviceInterface
   extends WebOrDesktopDeviceInterface,
-    WebCommunicationReceiver {
+    WebClientRequiresDesktopMethods {
   environment: Environment.Desktop
 }

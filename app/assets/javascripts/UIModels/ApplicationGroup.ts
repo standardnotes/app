@@ -33,10 +33,14 @@ export class ApplicationGroup extends SNApplicationGroup<WebOrDesktopDevice> {
     })
 
     if (isDesktopApplication()) {
-      Object.defineProperty(window, 'desktopCommunicationReceiver', {
+      Object.defineProperty(window, 'webClient', {
         get: () => (this.primaryApplication as WebApplication).getDesktopService(),
       })
     }
+  }
+
+  override handleAllWorkspacesSignedOut(): void {
+    isDesktopDevice(this.deviceInterface) && this.deviceInterface.destroyAllData()
   }
 
   private createApplication = (
@@ -44,6 +48,7 @@ export class ApplicationGroup extends SNApplicationGroup<WebOrDesktopDevice> {
     deviceInterface: WebOrDesktopDevice,
   ) => {
     const platform = getPlatform()
+
     const application = new WebApplication(
       deviceInterface,
       platform,
@@ -52,6 +57,7 @@ export class ApplicationGroup extends SNApplicationGroup<WebOrDesktopDevice> {
       this.webSocketUrl,
       this.runtime,
     )
+
     const appState = new AppState(application, this.device)
     const archiveService = new ArchiveManager(application)
     const io = new IOService(platform === Platform.MacWeb || platform === Platform.MacDesktop)
