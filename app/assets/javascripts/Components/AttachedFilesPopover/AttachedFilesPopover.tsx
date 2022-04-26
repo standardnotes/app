@@ -55,15 +55,15 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
     useEffect(() => {
       const unregisterFileStream = application.streamItems(ContentType.File, () => {
         setAttachedFiles(
-          application.items
-            .getFilesForNote(note)
-            .sort((a, b) => (a.created_at < b.created_at ? 1 : -1)),
+          application.items.getFilesForNote(note).sort((a, b) => {
+            return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1
+          }),
         )
 
         setAllFiles(
-          application.items
-            .getItems(ContentType.File)
-            .sort((a, b) => (a.created_at < b.created_at ? 1 : -1)) as SNFile[],
+          (application.items.getItems(ContentType.File) as SNFile[]).sort((a, b) => {
+            return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1
+          }),
         )
       })
 
