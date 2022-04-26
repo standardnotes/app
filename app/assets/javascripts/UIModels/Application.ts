@@ -91,10 +91,6 @@ export class WebApplication extends SNApplication {
       this.webServices = {} as WebServices
       this.noteControllerGroup.deinit()
       this.webEventObservers.length = 0
-
-      if (source === DeinitSource.SignOut) {
-        isDesktopDevice(this.deviceInterface) && this.deviceInterface.onSignOut()
-      }
     } catch (error) {
       console.error('Error while deiniting application', error)
     }

@@ -64,7 +64,8 @@ export const WorkspaceMenuItem: FunctionComponent<Props> = ({
           <div>
             <button
               className="w-5 h-5 p-0 mr-3 border-0 bg-transparent hover:bg-contrast cursor-pointer"
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation()
                 setIsRenaming((isRenaming) => !isRenaming)
               }}
             >
@@ -72,7 +73,10 @@ export const WorkspaceMenuItem: FunctionComponent<Props> = ({
             </button>
             <button
               className="w-5 h-5 p-0 border-0 bg-transparent hover:bg-contrast cursor-pointer"
-              onClick={onDelete}
+              onClick={(e) => {
+                e.stopPropagation()
+                onDelete()
+              }}
             >
               <Icon type="trash" className="sn-icon--mid color-danger" />
             </button>

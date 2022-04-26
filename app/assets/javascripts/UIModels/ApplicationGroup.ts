@@ -1,11 +1,5 @@
 import { WebApplication } from './Application'
-import {
-  ApplicationDescriptor,
-  SNApplicationGroup,
-  Platform,
-  Runtime,
-  InternalEventBus,
-} from '@standardnotes/snjs'
+import { ApplicationDescriptor, SNApplicationGroup, Platform, Runtime, InternalEventBus } from '@standardnotes/snjs'
 import { AppState } from '@/UIModels/AppState'
 import { getPlatform, isDesktopApplication } from '@/Utils'
 import { ArchiveManager } from '@/Services/ArchiveManager'
@@ -33,17 +27,19 @@ export class ApplicationGroup extends SNApplicationGroup<WebOrDesktopDevice> {
     })
 
     if (isDesktopApplication()) {
-      Object.defineProperty(window, 'desktopCommunicationReceiver', {
+      Object.defineProperty(window, 'webClient', {
         get: () => (this.primaryApplication as WebApplication).getDesktopService(),
       })
     }
   }
 
-  private createApplication = (
-    descriptor: ApplicationDescriptor,
-    deviceInterface: WebOrDesktopDevice,
-  ) => {
+  override handleAllWorkspacesSignedOut(): void {
+    isDesktopDevice(this.deviceInterface) && this.deviceInterface.destroyAllData()
+  }
+
+  private createApplication = (descriptor: ApplicationDescriptor, deviceInterface: WebOrDesktopDevice) => {
     const platform = getPlatform()
+
     const application = new WebApplication(
       deviceInterface,
       platform,
@@ -52,6 +48,7 @@ export class ApplicationGroup extends SNApplicationGroup<WebOrDesktopDevice> {
       this.webSocketUrl,
       this.runtime,
     )
+
     const appState = new AppState(application, this.device)
     const archiveService = new ArchiveManager(application)
     const io = new IOService(platform === Platform.MacWeb || platform === Platform.MacDesktop)
@@ -62,9 +59,7 @@ export class ApplicationGroup extends SNApplicationGroup<WebOrDesktopDevice> {
     application.setWebServices({
       appState,
       archiveService,
-      desktopService: isDesktopDevice(this.device)
-        ? new DesktopManager(application, this.device)
-        : undefined,
+      desktopService: isDesktopDevice(this.device) ? new DesktopManager(application, this.device) : undefined,
       io,
       autolockService,
       statusManager,
