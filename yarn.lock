@@ -2475,7 +2475,15 @@
     "@standardnotes/auth" "^3.18.11"
     "@standardnotes/common" "^1.19.6"
 
-"@standardnotes/filepicker@1.13.2", "@standardnotes/filepicker@^1.13.2":
+"@standardnotes/filepicker@1.13.3":
+  version "1.13.3"
+  resolved "https://registry.yarnpkg.com/@standardnotes/filepicker/-/filepicker-1.13.3.tgz#fa4aee37432ec189a9be0dbbdb655ebdf9e33cbf"
+  integrity sha512-og2eU0PasZviLKfm55j6ZC6LfTJnVqTF+brEosgeJdcc5mOLmbRZ9aLhYT5N3qkjJdlRSXiwWQ7mYiYQ/rF4Kw==
+  dependencies:
+    "@standardnotes/common" "^1.19.6"
+    "@standardnotes/utils" "^1.6.2"
+
+"@standardnotes/filepicker@^1.13.2":
   version "1.13.2"
   resolved "https://registry.yarnpkg.com/@standardnotes/filepicker/-/filepicker-1.13.2.tgz#63fc12ae5c08c2704f76b6757a080d8fe385ba8c"
   integrity sha512-BlGabKd1uBvnnWTWXXexGhydZTX7mTWO/0O9slP8B+h9yUz0G9DYXDlWEGyMSf3/1YArqJOnAHLU+ID/R1lvSA==
