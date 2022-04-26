@@ -19,8 +19,9 @@ export enum PopoverTabs {
 type Props = {
   application: WebApplication
   appState: AppState
-  currentTab: PopoverTabs
+  attachedFiles: SNFile[]
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
+  currentTab: PopoverTabs
   handleFileAction: (action: PopoverFileItemAction) => Promise<boolean>
   isDraggingFiles: boolean
   note: SNNote
@@ -31,14 +32,14 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
   ({
     application,
     appState,
-    currentTab,
+    attachedFiles,
     closeOnBlur,
+    currentTab,
     handleFileAction,
     isDraggingFiles,
     note,
     setCurrentTab,
   }) => {
-    const [attachedFiles, setAttachedFiles] = useState<SNFile[]>([])
     const [allFiles, setAllFiles] = useState<SNFile[]>([])
     const [searchQuery, setSearchQuery] = useState('')
     const searchInputRef = useRef<HTMLInputElement>(null)
@@ -54,12 +55,6 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
 
     useEffect(() => {
       const unregisterFileStream = application.streamItems(ContentType.File, () => {
-        setAttachedFiles(
-          application.items
-            .getFilesForNote(note)
-            .sort((a, b) => (a.created_at < b.created_at ? 1 : -1)),
-        )
-
         setAllFiles(
           application.items
             .getItems(ContentType.File)

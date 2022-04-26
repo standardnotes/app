@@ -60,23 +60,20 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     const containerRef = useRef<HTMLDivElement>(null)
     const [closeOnBlur, keepMenuOpen] = useCloseOnBlur(containerRef, setOpen)
 
-    const [attachedFilesCount, setAttachedFilesCount] = useState(
-      note ? application.items.getFilesForNote(note).length : 0,
-    )
-
-    const reloadAttachedFilesCount = useCallback(() => {
-      setAttachedFilesCount(note ? application.items.getFilesForNote(note).length : 0)
-    }, [application.items, note])
+    const [attachedFiles, setAttachedFiles] = useState<SNFile[]>(() => {
+      return note ? application.items.getFilesForNote(note) : []
+    })
+    const attachedFilesCount = attachedFiles.length
 
     useEffect(() => {
       const unregisterFileStream = application.streamItems(ContentType.File, () => {
-        reloadAttachedFilesCount()
+        setAttachedFiles(application.items.getFilesForNote(note))
       })
 
       return () => {
         unregisterFileStream()
       }
-    }, [application, reloadAttachedFilesCount])
+    }, [application, note])
 
     const toggleAttachedFilesMenu = useCallback(async () => {
       if (!appState.features.isEntitledToFiles) {
@@ -213,7 +210,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
           await renameFile(file, action.payload.name)
           break
         case PopoverFileItemActionType.PreviewFile:
-          filePreviewModal.activate(file)
+          filePreviewModal.activate(file, attachedFiles)
           break
       }
 
@@ -373,12 +370,13 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
               <AttachedFilesPopover
                 application={application}
                 appState={appState}
-                note={note}
-                handleFileAction={handleFileAction}
-                currentTab={currentTab}
+                attachedFiles={attachedFiles}
                 closeOnBlur={closeOnBlur}
-                setCurrentTab={setCurrentTab}
+                currentTab={currentTab}
+                handleFileAction={handleFileAction}
                 isDraggingFiles={isDraggingFiles}
+                note={note}
+                setCurrentTab={setCurrentTab}
               />
             )}
           </DisclosurePanel>
