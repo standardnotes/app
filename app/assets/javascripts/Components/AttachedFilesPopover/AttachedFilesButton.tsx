@@ -217,7 +217,12 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
           break
       }
 
-      application.sync.sync().catch(console.error)
+      if (
+        action.type !== PopoverFileItemActionType.DownloadFile &&
+        action.type !== PopoverFileItemActionType.PreviewFile
+      ) {
+        application.sync.sync().catch(console.error)
+      }
 
       return true
     }
