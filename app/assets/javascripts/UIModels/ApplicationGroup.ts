@@ -1,11 +1,5 @@
 import { WebApplication } from './Application'
-import {
-  ApplicationDescriptor,
-  SNApplicationGroup,
-  Platform,
-  Runtime,
-  InternalEventBus,
-} from '@standardnotes/snjs'
+import { ApplicationDescriptor, SNApplicationGroup, Platform, Runtime, InternalEventBus } from '@standardnotes/snjs'
 import { AppState } from '@/UIModels/AppState'
 import { getPlatform, isDesktopApplication } from '@/Utils'
 import { ArchiveManager } from '@/Services/ArchiveManager'
@@ -43,10 +37,7 @@ export class ApplicationGroup extends SNApplicationGroup<WebOrDesktopDevice> {
     isDesktopDevice(this.deviceInterface) && this.deviceInterface.destroyAllData()
   }
 
-  private createApplication = (
-    descriptor: ApplicationDescriptor,
-    deviceInterface: WebOrDesktopDevice,
-  ) => {
+  private createApplication = (descriptor: ApplicationDescriptor, deviceInterface: WebOrDesktopDevice) => {
     const platform = getPlatform()
 
     const application = new WebApplication(
@@ -68,9 +59,7 @@ export class ApplicationGroup extends SNApplicationGroup<WebOrDesktopDevice> {
     application.setWebServices({
       appState,
       archiveService,
-      desktopService: isDesktopDevice(this.device)
-        ? new DesktopManager(application, this.device)
-        : undefined,
+      desktopService: isDesktopDevice(this.device) ? new DesktopManager(application, this.device) : undefined,
       io,
       autolockService,
       statusManager,

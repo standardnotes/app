@@ -181,16 +181,10 @@ export class ApplicationView extends PureComponent<Props, State> {
             )}
             {renderAppContents && (
               <>
-                <Footer
-                  application={this.application}
-                  applicationGroup={this.props.mainApplicationGroup}
-                />
+                <Footer application={this.application} applicationGroup={this.props.mainApplicationGroup} />
                 <SessionsModal application={this.application} appState={this.appState} />
                 <PreferencesViewWrapper appState={this.appState} application={this.application} />
-                <RevisionHistoryModalWrapper
-                  application={this.application}
-                  appState={this.appState}
-                />
+                <RevisionHistoryModalWrapper application={this.application} appState={this.appState} />
               </>
             )}
             {this.state.challenges.map((challenge) => {

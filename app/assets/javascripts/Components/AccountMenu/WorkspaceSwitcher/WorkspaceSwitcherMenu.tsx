@@ -18,9 +18,7 @@ type Props = {
 
 export const WorkspaceSwitcherMenu: FunctionComponent<Props> = observer(
   ({ mainApplicationGroup, appState, isOpen, hideWorkspaceOptions = false }) => {
-    const [applicationDescriptors, setApplicationDescriptors] = useState<ApplicationDescriptor[]>(
-      [],
-    )
+    const [applicationDescriptors, setApplicationDescriptors] = useState<ApplicationDescriptor[]>([])
 
     useEffect(() => {
       const removeAppGroupObserver = mainApplicationGroup.addApplicationChangeObserver(() => {
@@ -58,9 +56,7 @@ export const WorkspaceSwitcherMenu: FunctionComponent<Props> = observer(
             onClick={() => {
               mainApplicationGroup.loadApplicationForDescriptor(descriptor)
             }}
-            renameDescriptor={(label: string) =>
-              mainApplicationGroup.renameDescriptor(descriptor, label)
-            }
+            renameDescriptor={(label: string) => mainApplicationGroup.renameDescriptor(descriptor, label)}
           />
         ))}
         <MenuItemSeparator />
