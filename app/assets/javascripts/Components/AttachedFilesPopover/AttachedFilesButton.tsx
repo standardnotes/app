@@ -38,6 +38,10 @@ const removeDragOverlay = () => {
   document.getElementById('drag-overlay')?.remove()
 }
 
+const isHandlingFileDrag = (event: DragEvent) =>
+  event.dataTransfer?.items &&
+  Array.from(event.dataTransfer.items).some((item) => item.kind === 'file')
+
 export const AttachedFilesButton: FunctionComponent<Props> = observer(
   ({ application, appState, onClickPreprocessing }) => {
     const premiumModal = usePremiumModal()
@@ -223,10 +227,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     const dragCounter = useRef(0)
 
     const handleDrag = (event: DragEvent) => {
-      if (
-        event.dataTransfer?.items &&
-        Array.from(event.dataTransfer.items).some((item) => item.kind === 'file')
-      ) {
+      if (isHandlingFileDrag(event)) {
         event.preventDefault()
         event.stopPropagation()
       }
@@ -234,6 +235,10 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
 
     const handleDragIn = useCallback(
       (event: DragEvent) => {
+        if (!isHandlingFileDrag(event)) {
+          return
+        }
+
         event.preventDefault()
         event.stopPropagation()
 
@@ -251,6 +256,10 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     )
 
     const handleDragOut = (event: DragEvent) => {
+      if (!isHandlingFileDrag(event)) {
+        return
+      }
+
       event.preventDefault()
       event.stopPropagation()
 
@@ -267,6 +276,10 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
 
     const handleDrop = useCallback(
       (event: DragEvent) => {
+        if (!isHandlingFileDrag(event)) {
+          return
+        }
+
         event.preventDefault()
         event.stopPropagation()
 
