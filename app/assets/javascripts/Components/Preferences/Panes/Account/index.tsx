@@ -25,7 +25,9 @@ export const AccountPreferences = observer(({ application, appState }: Props) =>
       </>
     )}
     <Subscription application={application} appState={appState} />
-    <FilesSection application={application} appState={appState} />
+    {application.hasAccount() && appState.features.isEntitledToFiles && (
+      <FilesSection application={application} />
+    )}
     <SignOutWrapper application={application} appState={appState} />
   </PreferencesPane>
 ))
