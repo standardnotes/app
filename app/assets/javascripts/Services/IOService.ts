@@ -5,6 +5,8 @@ export enum KeyboardKey {
   Backspace = 'Backspace',
   Up = 'ArrowUp',
   Down = 'ArrowDown',
+  Left = 'ArrowLeft',
+  Right = 'ArrowRight',
   Enter = 'Enter',
   Escape = 'Escape',
   Home = 'Home',

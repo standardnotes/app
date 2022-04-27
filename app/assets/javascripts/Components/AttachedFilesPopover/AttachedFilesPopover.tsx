@@ -1,11 +1,11 @@
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
-import { ContentType, SNFile, SNNote } from '@standardnotes/snjs'
+import { SNFile } from '@standardnotes/snjs'
 import { FilesIllustration } from '@standardnotes/stylekit'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
-import { StateUpdater, useEffect, useRef, useState } from 'preact/hooks'
+import { StateUpdater, useRef, useState } from 'preact/hooks'
 import { Button } from '@/Components/Button/Button'
 import { Icon } from '@/Components/Icon'
 import { PopoverFileItem } from './PopoverFileItem'
@@ -19,11 +19,12 @@ export enum PopoverTabs {
 type Props = {
   application: WebApplication
   appState: AppState
-  currentTab: PopoverTabs
+  allFiles: SNFile[]
+  attachedFiles: SNFile[]
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
+  currentTab: PopoverTabs
   handleFileAction: (action: PopoverFileItemAction) => Promise<boolean>
   isDraggingFiles: boolean
-  note: SNNote
   setCurrentTab: StateUpdater<PopoverTabs>
 }
 
@@ -31,15 +32,14 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
   ({
     application,
     appState,
-    currentTab,
+    allFiles,
+    attachedFiles,
     closeOnBlur,
+    currentTab,
     handleFileAction,
     isDraggingFiles,
-    note,
     setCurrentTab,
   }) => {
-    const [attachedFiles, setAttachedFiles] = useState<SNFile[]>([])
-    const [allFiles, setAllFiles] = useState<SNFile[]>([])
     const [searchQuery, setSearchQuery] = useState('')
     const searchInputRef = useRef<HTMLInputElement>(null)
 
@@ -51,26 +51,6 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
             (file) => file.name.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1,
           )
         : filesList
-
-    useEffect(() => {
-      const unregisterFileStream = application.streamItems(ContentType.File, () => {
-        setAttachedFiles(
-          application.items
-            .getFilesForNote(note)
-            .sort((a, b) => (a.created_at < b.created_at ? 1 : -1)),
-        )
-
-        setAllFiles(
-          application.items
-            .getItems(ContentType.File)
-            .sort((a, b) => (a.created_at < b.created_at ? 1 : -1)) as SNFile[],
-        )
-      })
-
-      return () => {
-        unregisterFileStream()
-      }
-    }, [application, note])
 
     const handleAttachFilesClick = async () => {
       const uploadedFiles = await appState.files.uploadNewFile()

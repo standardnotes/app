@@ -11,18 +11,30 @@ import { Icon } from '@/Components/Icon'
 import { FilePreviewInfoPanel } from './FilePreviewInfoPanel'
 import { isFileTypePreviewable } from './isFilePreviewable'
 import { PreviewComponent } from './PreviewComponent'
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
+import { useFilePreviewModal } from './FilePreviewModalProvider'
+import { KeyboardKey } from '@/Services/IOService'
 
 type Props = {
   application: WebApplication
+  files: SNFile[]
   file: SNFile
   onDismiss: () => void
 }
 
-export const FilePreviewModal: FunctionComponent<Props> = ({ application, file, onDismiss }) => {
+export const FilePreviewModal: FunctionComponent<Props> = ({
+  application,
+  files,
+  file,
+  onDismiss,
+}) => {
+  const context = useFilePreviewModal()
+
   const [objectUrl, setObjectUrl] = useState<string>()
   const [isFilePreviewable, setIsFilePreviewable] = useState(false)
   const [isLoadingFile, setIsLoadingFile] = useState(true)
   const [showFileInfoPanel, setShowFileInfoPanel] = useState(false)
+  const currentFileIdRef = useRef<string>()
   const closeButtonRef = useRef<HTMLButtonElement>(null)
 
   const getObjectUrl = useCallback(async () => {
@@ -47,6 +59,10 @@ export const FilePreviewModal: FunctionComponent<Props> = ({ application, file, 
   }, [application.files, file])
 
   useEffect(() => {
+    setIsLoadingFile(true)
+  }, [file.uuid])
+
+  useEffect(() => {
     const isPreviewable = isFileTypePreviewable(file.mimeType)
     setIsFilePreviewable(isPreviewable)
 
@@ -54,16 +70,48 @@ export const FilePreviewModal: FunctionComponent<Props> = ({ application, file, 
       setIsLoadingFile(false)
     }
 
-    if (!objectUrl && isPreviewable) {
+    if (currentFileIdRef.current !== file.uuid && isPreviewable) {
       getObjectUrl().catch(console.error)
     }
+
+    currentFileIdRef.current = file.uuid
 
     return () => {
       if (objectUrl) {
         URL.revokeObjectURL(objectUrl)
       }
     }
-  }, [file.mimeType, getObjectUrl, objectUrl])
+  }, [file, getObjectUrl, objectUrl])
+
+  const keyDownHandler = (event: KeyboardEvent) => {
+    if (event.key !== KeyboardKey.Left && event.key !== KeyboardKey.Right) {
+      return
+    }
+
+    event.preventDefault()
+
+    const currentFileIndex = files.findIndex((fileFromArray) => fileFromArray.uuid === file.uuid)
+
+    switch (event.key) {
+      case KeyboardKey.Left: {
+        const previousFileIndex =
+          currentFileIndex - 1 >= 0 ? currentFileIndex - 1 : files.length - 1
+        const previousFile = files[previousFileIndex]
+        if (previousFile) {
+          context.setCurrentFile(previousFile)
+        }
+        break
+      }
+      case KeyboardKey.Right: {
+        const nextFileIndex = currentFileIndex + 1 < files.length ? currentFileIndex + 1 : 0
+        const nextFile = files[nextFileIndex]
+        if (nextFile) {
+          context.setCurrentFile(nextFile)
+        }
+        break
+      }
+    }
+  }
 
   return (
     <DialogOverlay
@@ -81,7 +129,11 @@ export const FilePreviewModal: FunctionComponent<Props> = ({ application, file, 
           background: 'var(--sn-stylekit-background-color)',
         }}
       >
-        <div className="flex flex-shrink-0 justify-between items-center min-h-6 px-4 py-3 border-0 border-b-1 border-solid border-main">
+        <div
+          className="flex flex-shrink-0 justify-between items-center min-h-6 px-4 py-3 border-0 border-b-1 border-solid border-main focus:shadow-none"
+          tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
+          onKeyDown={keyDownHandler}
+        >
           <div className="flex items-center">
             <div className="w-6 h-6">
               {getFileIconComponent(
@@ -121,10 +173,10 @@ export const FilePreviewModal: FunctionComponent<Props> = ({ application, file, 
         </div>
         <div className="flex flex-grow min-h-0">
           <div className="flex flex-grow items-center justify-center relative max-w-full">
-            {objectUrl ? (
-              <PreviewComponent file={file} objectUrl={objectUrl} />
-            ) : isLoadingFile ? (
+            {isLoadingFile ? (
               <div className="sk-spinner w-5 h-5 spinner-info"></div>
+            ) : objectUrl ? (
+              <PreviewComponent file={file} objectUrl={objectUrl} />
             ) : (
               <div className="flex flex-col items-center">
                 <NoPreviewIllustration className="w-30 h-30 mb-4" />
