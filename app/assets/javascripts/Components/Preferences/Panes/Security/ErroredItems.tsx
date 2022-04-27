@@ -10,6 +10,7 @@ import {
 } from '@/Components/Preferences/PreferencesComponents'
 import {
   ButtonType,
+  ClientDisplayableError,
   DisplayStringForContentType,
   EncryptedItemInterface,
 } from '@standardnotes/snjs'
@@ -17,7 +18,9 @@ import { Button } from '@/Components/Button/Button'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
 import { useState } from 'preact/hooks'
 
-export const ErroredItems: FunctionComponent<{ appState: AppState }> = observer(({ appState }) => {
+type Props = { appState: AppState }
+
+export const ErroredItems: FunctionComponent<Props> = observer(({ appState }: Props) => {
   const app = appState.application
 
   const [erroredItems, setErroredItems] = useState(app.items.invalidItems)
@@ -49,6 +52,18 @@ export const ErroredItems: FunctionComponent<{ appState: AppState }> = observer(
     void app.mutator.deleteItems(items)
 
     setErroredItems(app.items.invalidItems)
+  }
+
+  const attemptDecryption = (item: EncryptedItemInterface): void => {
+    const errorOrTrue = app.canAttemptDecryptionOfItem(item)
+
+    if (errorOrTrue instanceof ClientDisplayableError) {
+      void app.alertService.showErrorAlert(errorOrTrue)
+
+      return
+    }
+
+    app.presentKeyRecoveryWizard()
   }
 
   return (
@@ -84,9 +99,7 @@ export const ErroredItems: FunctionComponent<{ appState: AppState }> = observer(
             <>
               <div className="flex items-center justify-between">
                 <div className="flex flex-col">
-                  <Subtitle>{`${getContentTypeDisplay(item)} created on ${
-                    item.createdAtString
-                  }`}</Subtitle>
+                  <Subtitle>{`${getContentTypeDisplay(item)} created on ${item.createdAtString}`}</Subtitle>
                   <Text>
                     <div>Item ID: {item.uuid}</div>
                     <div>Last Modified: {item.updatedAtString}</div>
@@ -97,7 +110,7 @@ export const ErroredItems: FunctionComponent<{ appState: AppState }> = observer(
                       variant="normal"
                       label="Attempt decryption"
                       onClick={() => {
-                        void app.presentKeyRecoveryWizard()
+                        attemptDecryption(item)
                       }}
                     />
                     <Button

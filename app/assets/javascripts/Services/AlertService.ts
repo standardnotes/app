@@ -1,4 +1,3 @@
-/* eslint-disable prefer-promise-reject-errors */
 import { SNAlertService, ButtonType, sanitizeHtmlString } from '@standardnotes/snjs'
 import { SKAlert } from '@standardnotes/stylekit'
 
@@ -66,10 +65,7 @@ export function alertDialog({
   })
 }
 
-export class AlertService implements SNAlertService {
-  /**
-   * @deprecated use the standalone `alertDialog` function instead
-   */
+export class AlertService extends SNAlertService {
   alert(text: string, title?: string, closeButtonText?: string) {
     return alertDialog({ text, title, closeButtonText })
   }

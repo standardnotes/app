@@ -55,7 +55,8 @@ export class ApplicationView extends PureComponent<Props, State> {
 
   override componentDidMount(): void {
     super.componentDidMount()
-    this.loadApplication().catch(console.error)
+
+    void this.loadApplication()
   }
 
   async loadApplication() {
@@ -180,16 +181,10 @@ export class ApplicationView extends PureComponent<Props, State> {
             )}
             {renderAppContents && (
               <>
-                <Footer
-                  application={this.application}
-                  applicationGroup={this.props.mainApplicationGroup}
-                />
+                <Footer application={this.application} applicationGroup={this.props.mainApplicationGroup} />
                 <SessionsModal application={this.application} appState={this.appState} />
                 <PreferencesViewWrapper appState={this.appState} application={this.application} />
-                <RevisionHistoryModalWrapper
-                  application={this.application}
-                  appState={this.appState}
-                />
+                <RevisionHistoryModalWrapper application={this.application} appState={this.appState} />
               </>
             )}
             {this.state.challenges.map((challenge) => {
@@ -211,7 +206,11 @@ export class ApplicationView extends PureComponent<Props, State> {
                 <NotesContextMenu application={this.application} appState={this.appState} />
                 <TagsContextMenu appState={this.appState} />
                 <PurchaseFlowWrapper application={this.application} appState={this.appState} />
-                <ConfirmSignoutContainer appState={this.appState} application={this.application} />
+                <ConfirmSignoutContainer
+                  applicationGroup={this.props.mainApplicationGroup}
+                  appState={this.appState}
+                  application={this.application}
+                />
                 <ToastContainer />
               </>
             )}

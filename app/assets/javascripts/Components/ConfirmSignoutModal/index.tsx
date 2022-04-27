@@ -4,10 +4,13 @@ import { STRING_SIGN_OUT_CONFIRMATION } from '@/Strings'
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
+import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
+import { isDesktopApplication } from '@/Utils'
 
 type Props = {
   application: WebApplication
   appState: AppState
+  applicationGroup: ApplicationGroup
 }
 
 export const ConfirmSignoutContainer = observer((props: Props) => {
@@ -17,7 +20,7 @@ export const ConfirmSignoutContainer = observer((props: Props) => {
   return <ConfirmSignoutModal {...props} />
 })
 
-export const ConfirmSignoutModal = observer(({ application, appState }: Props) => {
+export const ConfirmSignoutModal = observer(({ application, appState, applicationGroup }: Props) => {
   const [deleteLocalBackups, setDeleteLocalBackups] = useState(false)
 
   const cancelRef = useRef<HTMLButtonElement>(null)
@@ -31,6 +34,9 @@ export const ConfirmSignoutModal = observer(({ application, appState }: Props) =
     application.desktopDevice?.localBackupsCount().then(setLocalBackupsCount).catch(console.error)
   }, [appState.accountMenu.signingOut, application.desktopDevice])
 
+  const workspaces = applicationGroup.getDescriptors()
+  const showWorkspaceWarning = workspaces.length > 1 && isDesktopApplication()
+
   return (
     <AlertDialog onDismiss={closeDialog} leastDestructiveRef={cancelRef}>
       <div className="sk-modal-content">
@@ -38,11 +44,22 @@ export const ConfirmSignoutModal = observer(({ application, appState }: Props) =
           <div className="sk-panel">
             <div className="sk-panel-content">
               <div className="sk-panel-section">
-                <AlertDialogLabel className="sk-h3 sk-panel-section-title">
-                  Sign out workspace?
-                </AlertDialogLabel>
+                <AlertDialogLabel className="sk-h3 sk-panel-section-title">Sign out workspace?</AlertDialogLabel>
                 <AlertDialogDescription className="sk-panel-row">
-                  <p className="color-foreground">{STRING_SIGN_OUT_CONFIRMATION}</p>
+                  <div>
+                    <p className="color-foreground">{STRING_SIGN_OUT_CONFIRMATION}</p>
+                    {showWorkspaceWarning && (
+                      <>
+                        <br />
+                        <p className="color-foreground">
+                          <strong>Note: </strong>
+                          Because you have other workspaces signed in, this sign out may leave logs and other metadata
+                          of your session on this device. For a more robust sign out that performs a hard clear of all
+                          app-related data, use the <i>Sign out all workspaces</i> option under <i>Switch workspace</i>.
+                        </p>
+                      </>
+                    )}
+                  </div>
                 </AlertDialogDescription>
 
                 {localBackupsCount > 0 && (
