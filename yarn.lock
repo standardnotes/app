@@ -2458,14 +2458,14 @@
     "@standardnotes/auth" "^3.18.11"
     "@standardnotes/features" "^1.38.1"
 
-"@standardnotes/encryption@^1.4.12":
-  version "1.4.12"
-  resolved "https://registry.yarnpkg.com/@standardnotes/encryption/-/encryption-1.4.12.tgz#098c9320a7b19aba44e0c7baa1fcd243120c2fef"
-  integrity sha512-DTW/CAlDDOimXwE8XN+V2R3sPXXQYzYnWZHs6WCD3NaLN41MAoG1j8cVuTKHHMP0hhaS2/refOllgt8Kf97mKQ==
+"@standardnotes/encryption@^1.4.13":
+  version "1.4.13"
+  resolved "https://registry.yarnpkg.com/@standardnotes/encryption/-/encryption-1.4.13.tgz#056880bd82f2dcb5ca6bb2e38650b1f6004db35c"
+  integrity sha512-0AXjs15UKKjTEIyZTzTqny5yd/5lVGxZOtxAkO8/z8Qx1lK/J3KTUlWz2h0JBsRyA4PaTyLSNVKoF51mE8Bd1w==
   dependencies:
-    "@standardnotes/models" "^1.5.1"
+    "@standardnotes/models" "^1.6.0"
     "@standardnotes/responses" "^1.6.12"
-    "@standardnotes/services" "^1.9.13"
+    "@standardnotes/services" "^1.9.14"
 
 "@standardnotes/features@^1.38.1":
   version "1.38.1"
@@ -2483,10 +2483,10 @@
     "@standardnotes/common" "^1.19.6"
     "@standardnotes/utils" "^1.6.2"
 
-"@standardnotes/models@^1.5.1":
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/@standardnotes/models/-/models-1.5.1.tgz#a522c715c74c63e58fc4182e69baad46548dbfba"
-  integrity sha512-dOVnT5HCAjU3i4KqTeu05h5d+LDp8nteam6xb9V75XbA/UT9TMC3zwE+yEYpvWC4iKSbdPQvIuuvp8hXFyOnbA==
+"@standardnotes/models@^1.6.0":
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/models/-/models-1.6.0.tgz#63cab950b2e533bbe3feab1fad8deddc51c66ae9"
+  integrity sha512-tO7YpRQXHsJkF06BNxOwI89Rhk5G3thkcfv6/dKaxG274F91XYBzoFGaRvs3EczEKDfqkOyb1H7wM02T8LXIvw==
   dependencies:
     "@standardnotes/features" "^1.38.1"
     "@standardnotes/responses" "^1.6.12"
@@ -2501,13 +2501,13 @@
     "@standardnotes/common" "^1.19.6"
     "@standardnotes/features" "^1.38.1"
 
-"@standardnotes/services@^1.9.13":
-  version "1.9.13"
-  resolved "https://registry.yarnpkg.com/@standardnotes/services/-/services-1.9.13.tgz#4af36863626cd70be976785f85dc76cb3fd8f3d8"
-  integrity sha512-UWrg8ThBUl3JvLRFc3tEPXstJFQtnLAVHOfRppUL8MZZ+U6sYmKRpQp9+pX0Wdx0SQwQuuRyFKtSw9JFlLvrnA==
+"@standardnotes/services@^1.9.14":
+  version "1.9.14"
+  resolved "https://registry.yarnpkg.com/@standardnotes/services/-/services-1.9.14.tgz#6bc692ce58c2db3573474c7efd44b3586a59d52e"
+  integrity sha512-9Z62AP+zcOpmQfRiOFYUZnYIsHgTVsV6x3DcvE800xvBkQkHbkx5VeeDzV9r06iJzIl4f2BGvss3rjj3PC/R3Q==
   dependencies:
     "@standardnotes/common" "^1.19.6"
-    "@standardnotes/models" "^1.5.1"
+    "@standardnotes/models" "^1.6.0"
     "@standardnotes/responses" "^1.6.12"
     "@standardnotes/utils" "^1.6.2"
 
@@ -2530,20 +2530,20 @@
     buffer "^6.0.3"
     libsodium-wrappers "^0.7.9"
 
-"@standardnotes/snjs@2.102.0":
-  version "2.102.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.102.0.tgz#756ad160395c87d791399d0d2784ae9b2853d07e"
-  integrity sha512-+cPyYW6MUex1D8MeX0hrDzKywnuGZj8le7varDbhs3zT++f7UWt6pmu7SEXx71A75rP5u5oDtdaOxqSyBNHOlg==
+"@standardnotes/snjs@2.103.0":
+  version "2.103.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.103.0.tgz#708d39780b685b9e27478cb70900d71e89d6ec57"
+  integrity sha512-ak89W+ShM2kNxlW+eMA86AgjGGMUkyy+4zOa5G0KWdQJEHcevFnLVyn4ZPhvywxJWAnNZi0gGEQFuLd5IunyLQ==
   dependencies:
     "@standardnotes/auth" "^3.18.11"
     "@standardnotes/common" "^1.19.6"
     "@standardnotes/domain-events" "^2.27.12"
-    "@standardnotes/encryption" "^1.4.12"
+    "@standardnotes/encryption" "^1.4.13"
     "@standardnotes/features" "^1.38.1"
     "@standardnotes/filepicker" "^1.13.3"
-    "@standardnotes/models" "^1.5.1"
+    "@standardnotes/models" "^1.6.0"
     "@standardnotes/responses" "^1.6.12"
-    "@standardnotes/services" "^1.9.13"
+    "@standardnotes/services" "^1.9.14"
     "@standardnotes/settings" "^1.14.1"
     "@standardnotes/sncrypto-common" "^1.7.7"
     "@standardnotes/utils" "^1.6.2"

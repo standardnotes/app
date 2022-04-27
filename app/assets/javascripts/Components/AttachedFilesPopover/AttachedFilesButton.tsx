@@ -8,7 +8,7 @@ import { FunctionComponent } from 'preact'
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import { Icon } from '@/Components/Icon'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
-import { ChallengeReason, ContentType, SNFile } from '@standardnotes/snjs'
+import { ChallengeReason, CollectionSort, ContentType, SNFile } from '@standardnotes/snjs'
 import { confirmDialog } from '@/Services/AlertService'
 import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit'
 import { StreamingFileReader } from '@standardnotes/filepicker'
@@ -39,8 +39,7 @@ const removeDragOverlay = () => {
 }
 
 const isHandlingFileDrag = (event: DragEvent) =>
-  event.dataTransfer?.items &&
-  Array.from(event.dataTransfer.items).some((item) => item.kind === 'file')
+  event.dataTransfer?.items && Array.from(event.dataTransfer.items).some((item) => item.kind === 'file')
 
 export const AttachedFilesButton: FunctionComponent<Props> = observer(
   ({ application, appState, onClickPreprocessing }) => {
@@ -66,17 +65,11 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     const attachedFilesCount = attachedFiles.length
 
     useEffect(() => {
+      application.items.setDisplayOptions(ContentType.File, CollectionSort.Title, 'dsc')
+
       const unregisterFileStream = application.streamItems(ContentType.File, () => {
-        setAllFiles(
-          application.items
-            .getItems<SNFile>(ContentType.File)
-            .sort((a, b) => (a.created_at < b.created_at ? 1 : -1)),
-        )
-        setAttachedFiles(
-          application.items
-            .getFilesForNote(note)
-            .sort((a, b) => (a.created_at < b.created_at ? 1 : -1)),
-        )
+        setAllFiles(application.items.getDisplayableItems<SNFile>(ContentType.File))
+        setAttachedFiles(application.items.getFilesForNote(note))
       })
 
       return () => {
@@ -162,14 +155,8 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
       return isProtected
     }
 
-    const authorizeProtectedActionForFile = async (
-      file: SNFile,
-      challengeReason: ChallengeReason,
-    ) => {
-      const authorizedFiles = await application.protections.authorizeProtectedActionForFiles(
-        [file],
-        challengeReason,
-      )
+    const authorizeProtectedActionForFile = async (file: SNFile, challengeReason: ChallengeReason) => {
+      const authorizedFiles = await application.protections.authorizeProtectedActionForFiles([file], challengeReason)
       const isAuthorized = authorizedFiles.length > 0 && authorizedFiles.includes(file)
       return isAuthorized
     }
@@ -179,16 +166,12 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     }
 
     const handleFileAction = async (action: PopoverFileItemAction) => {
-      const file =
-        action.type !== PopoverFileItemActionType.RenameFile ? action.payload : action.payload.file
+      const file = action.type !== PopoverFileItemActionType.RenameFile ? action.payload : action.payload.file
       let isAuthorizedForAction = true
 
       if (file.protected && action.type !== PopoverFileItemActionType.ToggleFileProtection) {
         keepMenuOpen(true)
-        isAuthorizedForAction = await authorizeProtectedActionForFile(
-          file,
-          ChallengeReason.AccessProtectedFile,
-        )
+        isAuthorizedForAction = await authorizeProtectedActionForFile(file, ChallengeReason.AccessProtectedFile)
         keepMenuOpen(false)
         buttonRef.current?.focus()
       }
@@ -219,10 +202,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
           await renameFile(file, action.payload.name)
           break
         case PopoverFileItemActionType.PreviewFile:
-          filePreviewModal.activate(
-            file,
-            currentTab === PopoverTabs.AllFiles ? allFiles : attachedFiles,
-          )
+          filePreviewModal.activate(file, currentTab === PopoverTabs.AllFiles ? allFiles : attachedFiles)
           break
       }
 
@@ -353,9 +333,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
               }
             }}
             ref={buttonRef}
-            className={`sn-icon-button border-contrast ${
-              attachedFilesCount > 0 ? 'py-1 px-3' : ''
-            }`}
+            className={`sn-icon-button border-contrast ${attachedFilesCount > 0 ? 'py-1 px-3' : ''}`}
             onBlur={closeOnBlur}
           >
             <VisuallyHidden>Attached files</VisuallyHidden>

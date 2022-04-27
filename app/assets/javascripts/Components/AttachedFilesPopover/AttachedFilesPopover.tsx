@@ -47,9 +47,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
 
     const filteredList =
       searchQuery.length > 0
-        ? filesList.filter(
-            (file) => file.name.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1,
-          )
+        ? filesList.filter((file) => file.name.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1)
         : filesList
 
     const handleAttachFilesClick = async () => {
@@ -78,9 +76,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
         <div className="flex border-0 border-b-1 border-solid border-main">
           <button
             className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:bg-info-backdrop focus:shadow-bottom ${
-              currentTab === PopoverTabs.AttachedFiles
-                ? 'color-info font-medium shadow-bottom'
-                : 'color-text'
+              currentTab === PopoverTabs.AttachedFiles ? 'color-info font-medium shadow-bottom' : 'color-text'
             }`}
             onClick={() => {
               setCurrentTab(PopoverTabs.AttachedFiles)
@@ -91,9 +87,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
           </button>
           <button
             className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:bg-info-backdrop focus:shadow-bottom ${
-              currentTab === PopoverTabs.AllFiles
-                ? 'color-info font-medium shadow-bottom'
-                : 'color-text'
+              currentTab === PopoverTabs.AllFiles ? 'color-info font-medium shadow-bottom' : 'color-text'
             }`}
             onClick={() => {
               setCurrentTab(PopoverTabs.AllFiles)

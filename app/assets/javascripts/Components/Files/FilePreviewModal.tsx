@@ -22,12 +22,7 @@ type Props = {
   onDismiss: () => void
 }
 
-export const FilePreviewModal: FunctionComponent<Props> = ({
-  application,
-  files,
-  file,
-  onDismiss,
-}) => {
+export const FilePreviewModal: FunctionComponent<Props> = ({ application, files, file, onDismiss }) => {
   const context = useFilePreviewModal()
 
   const [objectUrl, setObjectUrl] = useState<string>()
@@ -94,8 +89,7 @@ export const FilePreviewModal: FunctionComponent<Props> = ({
 
     switch (event.key) {
       case KeyboardKey.Left: {
-        const previousFileIndex =
-          currentFileIndex - 1 >= 0 ? currentFileIndex - 1 : files.length - 1
+        const previousFileIndex = currentFileIndex - 1 >= 0 ? currentFileIndex - 1 : files.length - 1
         const previousFile = files[previousFileIndex]
         if (previousFile) {
           context.setCurrentFile(previousFile)
@@ -184,8 +178,8 @@ export const FilePreviewModal: FunctionComponent<Props> = ({
                 {isFilePreviewable ? (
                   <>
                     <div className="text-sm text-center color-grey-0 mb-4 max-w-35ch">
-                      There was an error loading the file. Try again, or download the file and open
-                      it using another application.
+                      There was an error loading the file. Try again, or download the file and open it using another
+                      application.
                     </div>
                     <div className="flex items-center">
                       <Button

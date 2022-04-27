@@ -113,10 +113,7 @@ export class DesktopManager
     this.webApplication.notifyWebEvent(WebAppEvent.DesktopWindowLostFocus)
   }
 
-  async onComponentInstallationComplete(
-    componentData: DecryptedTransferPayload<ComponentContent>,
-    error: unknown,
-  ) {
+  async onComponentInstallationComplete(componentData: DecryptedTransferPayload<ComponentContent>, error: unknown) {
     const component = this.application.items.findItem(componentData.uuid)
     if (!component) {
       return

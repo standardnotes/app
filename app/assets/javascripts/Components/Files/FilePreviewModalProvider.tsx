@@ -44,12 +44,7 @@ export const FilePreviewModalProvider: FunctionComponent<{
     <>
       <FilePreviewModalContext.Provider value={{ activate, setCurrentFile }}>
         {isOpen && currentFile && (
-          <FilePreviewModal
-            application={application}
-            files={files}
-            file={currentFile}
-            onDismiss={close}
-          />
+          <FilePreviewModal application={application} files={files} file={currentFile} onDismiss={close} />
         )}
         {children}
       </FilePreviewModalContext.Provider>
