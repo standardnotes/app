@@ -1,22 +1,15 @@
 import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { SubscriptionSettingName } from '@standardnotes/snjs'
-import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
 import { useEffect, useState } from 'preact/hooks'
 import { PreferencesGroup, PreferencesSegment, Subtitle, Title } from '../../PreferencesComponents'
 
 type Props = {
   application: WebApplication
-  appState: AppState
 }
 
-export const FilesSection: FunctionComponent<Props> = observer(({ application, appState }) => {
-  if (!application.getUser() || !appState.features.isEntitledToFiles) {
-    return null
-  }
-
+export const FilesSection: FunctionComponent<Props> = ({ application }) => {
   const [isLoading, setIsLoading] = useState(true)
   const [filesQuotaUsed, setFilesQuotaUsed] = useState<number>(0)
   const [filesQuotaTotal, setFilesQuotaTotal] = useState<number>(0)
@@ -41,7 +34,7 @@ export const FilesSection: FunctionComponent<Props> = observer(({ application, a
     }
 
     getFilesQuota().catch(console.error)
-  })
+  }, [application.settings])
 
   return (
     <PreferencesGroup>
@@ -69,4 +62,4 @@ export const FilesSection: FunctionComponent<Props> = observer(({ application, a
       </PreferencesSegment>
     </PreferencesGroup>
   )
-})
+}
