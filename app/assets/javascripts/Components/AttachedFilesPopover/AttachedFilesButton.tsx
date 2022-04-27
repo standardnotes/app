@@ -60,14 +60,23 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     const containerRef = useRef<HTMLDivElement>(null)
     const [closeOnBlur, keepMenuOpen] = useCloseOnBlur(containerRef, setOpen)
 
-    const [attachedFiles, setAttachedFiles] = useState<SNFile[]>(() => {
-      return note ? application.items.getFilesForNote(note) : []
-    })
+    const [currentTab, setCurrentTab] = useState(PopoverTabs.AttachedFiles)
+    const [allFiles, setAllFiles] = useState<SNFile[]>([])
+    const [attachedFiles, setAttachedFiles] = useState<SNFile[]>([])
     const attachedFilesCount = attachedFiles.length
 
     useEffect(() => {
       const unregisterFileStream = application.streamItems(ContentType.File, () => {
-        setAttachedFiles(application.items.getFilesForNote(note))
+        setAllFiles(
+          application.items
+            .getItems<SNFile>(ContentType.File)
+            .sort((a, b) => (a.created_at < b.created_at ? 1 : -1)),
+        )
+        setAttachedFiles(
+          application.items
+            .getFilesForNote(note)
+            .sort((a, b) => (a.created_at < b.created_at ? 1 : -1)),
+        )
       })
 
       return () => {
@@ -210,7 +219,10 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
           await renameFile(file, action.payload.name)
           break
         case PopoverFileItemActionType.PreviewFile:
-          filePreviewModal.activate(file, attachedFiles)
+          filePreviewModal.activate(
+            file,
+            currentTab === PopoverTabs.AllFiles ? allFiles : attachedFiles,
+          )
           break
       }
 
@@ -225,7 +237,6 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     }
 
     const [isDraggingFiles, setIsDraggingFiles] = useState(false)
-    const [currentTab, setCurrentTab] = useState(PopoverTabs.AttachedFiles)
     const dragCounter = useRef(0)
 
     const handleDrag = (event: DragEvent) => {
@@ -371,11 +382,11 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
                 application={application}
                 appState={appState}
                 attachedFiles={attachedFiles}
+                allFiles={allFiles}
                 closeOnBlur={closeOnBlur}
                 currentTab={currentTab}
                 handleFileAction={handleFileAction}
                 isDraggingFiles={isDraggingFiles}
-                note={note}
                 setCurrentTab={setCurrentTab}
               />
             )}

@@ -4,7 +4,7 @@ import { createContext, FunctionComponent } from 'preact'
 import { useContext, useState } from 'preact/hooks'
 import { FilePreviewModal } from './FilePreviewModal'
 
-type FilePreviewActivateFunction = (file: SNFile, attachedFiles: SNFile[]) => void
+type FilePreviewActivateFunction = (file: SNFile, files: SNFile[]) => void
 
 type FilePreviewModalContextData = {
   activate: FilePreviewActivateFunction
@@ -28,11 +28,11 @@ export const FilePreviewModalProvider: FunctionComponent<{
 }> = ({ application, children }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [currentFile, setCurrentFile] = useState<SNFile>()
-  const [attachedFiles, setAttachedFiles] = useState<SNFile[]>([])
+  const [files, setFiles] = useState<SNFile[]>([])
 
-  const activate: FilePreviewActivateFunction = (file, attachedFiles) => {
+  const activate: FilePreviewActivateFunction = (file, files) => {
     setCurrentFile(file)
-    setAttachedFiles(attachedFiles)
+    setFiles(files)
     setIsOpen(true)
   }
 
@@ -46,7 +46,7 @@ export const FilePreviewModalProvider: FunctionComponent<{
         {isOpen && currentFile && (
           <FilePreviewModal
             application={application}
-            attachedFiles={attachedFiles}
+            files={files}
             file={currentFile}
             onDismiss={close}
           />

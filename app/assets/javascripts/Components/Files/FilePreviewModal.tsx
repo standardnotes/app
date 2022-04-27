@@ -17,14 +17,14 @@ import { KeyboardKey } from '@/Services/IOService'
 
 type Props = {
   application: WebApplication
-  attachedFiles: SNFile[]
+  files: SNFile[]
   file: SNFile
   onDismiss: () => void
 }
 
 export const FilePreviewModal: FunctionComponent<Props> = ({
   application,
-  attachedFiles,
+  files,
   file,
   onDismiss,
 }) => {
@@ -90,23 +90,21 @@ export const FilePreviewModal: FunctionComponent<Props> = ({
 
     event.preventDefault()
 
-    const currentFileIndex = attachedFiles.findIndex(
-      (fileFromArray) => fileFromArray.uuid === file.uuid,
-    )
+    const currentFileIndex = files.findIndex((fileFromArray) => fileFromArray.uuid === file.uuid)
 
     switch (event.key) {
       case KeyboardKey.Left: {
         const previousFileIndex =
-          currentFileIndex - 1 >= 0 ? currentFileIndex - 1 : attachedFiles.length - 1
-        const previousFile = attachedFiles[previousFileIndex]
+          currentFileIndex - 1 >= 0 ? currentFileIndex - 1 : files.length - 1
+        const previousFile = files[previousFileIndex]
         if (previousFile) {
           context.setCurrentFile(previousFile)
         }
         break
       }
       case KeyboardKey.Right: {
-        const nextFileIndex = currentFileIndex + 1 < attachedFiles.length ? currentFileIndex + 1 : 0
-        const nextFile = attachedFiles[nextFileIndex]
+        const nextFileIndex = currentFileIndex + 1 < files.length ? currentFileIndex + 1 : 0
+        const nextFile = files[nextFileIndex]
         if (nextFile) {
           context.setCurrentFile(nextFile)
         }
