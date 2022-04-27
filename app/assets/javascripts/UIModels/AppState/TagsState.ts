@@ -1,10 +1,6 @@
 import { confirmDialog } from '@/Services/AlertService'
 import { STRING_DELETE_TAG } from '@/Strings'
-import {
-  MAX_MENU_SIZE_MULTIPLIER,
-  MENU_MARGIN_FROM_APP_BORDER,
-  SMART_TAGS_FEATURE_NAME,
-} from '@/Constants'
+import { MAX_MENU_SIZE_MULTIPLIER, MENU_MARGIN_FROM_APP_BORDER, SMART_TAGS_FEATURE_NAME } from '@/Constants'
 import {
   ComponentAction,
   ContentType,
@@ -46,11 +42,7 @@ const tagSiblings = (application: SNApplication, tag: SNTag): SNTag[] => {
   return withoutCurrentTag(rootTags(application))
 }
 
-const isValidFutureSiblings = (
-  application: SNApplication,
-  futureSiblings: SNTag[],
-  tag: SNTag,
-): boolean => {
+const isValidFutureSiblings = (application: SNApplication, futureSiblings: SNTag[], tag: SNTag): boolean => {
   const siblingWithSameName = futureSiblings.find((otherTag) => otherTag.title === tag.title)
 
   if (siblingWithSameName) {
@@ -83,11 +75,7 @@ export class TagsState {
 
   private readonly tagsCountsState: TagsCountsState
 
-  constructor(
-    private application: WebApplication,
-    appEventListeners: (() => void)[],
-    private features: FeaturesState,
-  ) {
+  constructor(private application: WebApplication, appEventListeners: (() => void)[], private features: FeaturesState) {
     this.tagsCountsState = new TagsCountsState(this.application)
 
     this.selected_ = undefined
@@ -138,31 +126,28 @@ export class TagsState {
     })
 
     appEventListeners.push(
-      this.application.streamItems(
-        [ContentType.Tag, ContentType.SmartView],
-        ({ changed, removed }) => {
-          runInAction(() => {
-            this.tags = this.application.items.getDisplayableItems<SNTag>(ContentType.Tag)
+      this.application.streamItems([ContentType.Tag, ContentType.SmartView], ({ changed, removed }) => {
+        runInAction(() => {
+          this.tags = this.application.items.getDisplayableItems<SNTag>(ContentType.Tag)
 
-            this.smartViews = this.application.items.getSmartViews()
+          this.smartViews = this.application.items.getSmartViews()
 
-            const selectedTag = this.selected_
+          const selectedTag = this.selected_
 
-            if (selectedTag && !isSystemView(selectedTag as SmartView)) {
-              if (FindItem(removed, selectedTag.uuid)) {
-                this.selected_ = this.smartViews[0]
-              }
-
-              const updated = FindItem(changed, selectedTag.uuid)
-              if (updated) {
-                this.selected_ = updated as AnyTag
-              }
-            } else {
+          if (selectedTag && !isSystemView(selectedTag as SmartView)) {
+            if (FindItem(removed, selectedTag.uuid)) {
               this.selected_ = this.smartViews[0]
             }
-          })
-        },
-      ),
+
+            const updated = FindItem(changed, selectedTag.uuid)
+            if (updated) {
+              this.selected_ = updated as AnyTag
+            }
+          } else {
+            this.selected_ = this.smartViews[0]
+          }
+        })
+      }),
     )
 
     appEventListeners.push(
@@ -170,7 +155,10 @@ export class TagsState {
         if (!tagUuid) {
           this.setAllNotesCount(this.application.items.allCountableNotesCount())
         } else {
-          this.tagsCountsState.update([this.application.items.findItem(tagUuid) as SNTag])
+          const tag = this.application.items.findItem<SNTag>(tagUuid)
+          if (tag) {
+            this.tagsCountsState.update([tag])
+          }
         }
       }),
     )
@@ -314,8 +302,7 @@ export class TagsState {
       return
     }
 
-    const futureParent =
-      futureParentUuid && (this.application.items.findItem(futureParentUuid) as SNTag)
+    const futureParent = futureParentUuid && (this.application.items.findItem(futureParentUuid) as SNTag)
 
     if (!futureParent) {
       const futureSiblings = rootTags(this.application)
@@ -399,8 +386,7 @@ export class TagsState {
   }
 
   public async createNewTemplate() {
-    const isAlreadyEditingATemplate =
-      this.editing_ && this.application.items.isTemplateItem(this.editing_)
+    const isAlreadyEditingATemplate = this.editing_ && this.application.items.isTemplateItem(this.editing_)
 
     if (isAlreadyEditingATemplate) {
       return
@@ -439,9 +425,7 @@ export class TagsState {
     const isTemplateChange = this.application.items.isTemplateItem(tag)
 
     const siblings = tag instanceof SNTag ? tagSiblings(this.application, tag) : []
-    const hasDuplicatedTitle = siblings.some(
-      (other) => other.title.toLowerCase() === newTitle.toLowerCase(),
-    )
+    const hasDuplicatedTitle = siblings.some((other) => other.title.toLowerCase() === newTitle.toLowerCase())
 
     runInAction(() => {
       this.editing_ = undefined
@@ -458,9 +442,7 @@ export class TagsState {
       if (isTemplateChange) {
         this.undoCreateNewTag()
       }
-      this.application.alertService
-        ?.alert('A tag with this name already exists.')
-        .catch(console.error)
+      this.application.alertService?.alert('A tag with this name already exists.').catch(console.error)
       return
     }
 

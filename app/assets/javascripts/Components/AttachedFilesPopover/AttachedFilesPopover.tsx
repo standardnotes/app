@@ -1,11 +1,11 @@
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
-import { ContentType, SNFile, SNNote } from '@standardnotes/snjs'
+import { SNFile } from '@standardnotes/snjs'
 import { FilesIllustration } from '@standardnotes/stylekit'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
-import { StateUpdater, useEffect, useRef, useState } from 'preact/hooks'
+import { StateUpdater, useRef, useState } from 'preact/hooks'
 import { Button } from '@/Components/Button/Button'
 import { Icon } from '@/Components/Icon'
 import { PopoverFileItem } from './PopoverFileItem'
@@ -19,11 +19,12 @@ export enum PopoverTabs {
 type Props = {
   application: WebApplication
   appState: AppState
-  currentTab: PopoverTabs
+  allFiles: SNFile[]
+  attachedFiles: SNFile[]
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
+  currentTab: PopoverTabs
   handleFileAction: (action: PopoverFileItemAction) => Promise<boolean>
   isDraggingFiles: boolean
-  note: SNNote
   setCurrentTab: StateUpdater<PopoverTabs>
 }
 
@@ -31,15 +32,14 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
   ({
     application,
     appState,
-    currentTab,
+    allFiles,
+    attachedFiles,
     closeOnBlur,
+    currentTab,
     handleFileAction,
     isDraggingFiles,
-    note,
     setCurrentTab,
   }) => {
-    const [attachedFiles, setAttachedFiles] = useState<SNFile[]>([])
-    const [allFiles, setAllFiles] = useState<SNFile[]>([])
     const [searchQuery, setSearchQuery] = useState('')
     const searchInputRef = useRef<HTMLInputElement>(null)
 
@@ -47,30 +47,8 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
 
     const filteredList =
       searchQuery.length > 0
-        ? filesList.filter(
-            (file) => file.name.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1,
-          )
+        ? filesList.filter((file) => file.name.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1)
         : filesList
-
-    useEffect(() => {
-      const unregisterFileStream = application.streamItems(ContentType.File, () => {
-        setAttachedFiles(
-          application.items.getFilesForNote(note).sort((a, b) => {
-            return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1
-          }),
-        )
-
-        setAllFiles(
-          (application.items.getItems(ContentType.File) as SNFile[]).sort((a, b) => {
-            return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1
-          }),
-        )
-      })
-
-      return () => {
-        unregisterFileStream()
-      }
-    }, [application, note])
 
     const handleAttachFilesClick = async () => {
       const uploadedFiles = await appState.files.uploadNewFile()
@@ -98,9 +76,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
         <div className="flex border-0 border-b-1 border-solid border-main">
           <button
             className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:bg-info-backdrop focus:shadow-bottom ${
-              currentTab === PopoverTabs.AttachedFiles
-                ? 'color-info font-medium shadow-bottom'
-                : 'color-text'
+              currentTab === PopoverTabs.AttachedFiles ? 'color-info font-medium shadow-bottom' : 'color-text'
             }`}
             onClick={() => {
               setCurrentTab(PopoverTabs.AttachedFiles)
@@ -111,9 +87,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
           </button>
           <button
             className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:bg-info-backdrop focus:shadow-bottom ${
-              currentTab === PopoverTabs.AllFiles
-                ? 'color-info font-medium shadow-bottom'
-                : 'color-text'
+              currentTab === PopoverTabs.AllFiles ? 'color-info font-medium shadow-bottom' : 'color-text'
             }`}
             onClick={() => {
               setCurrentTab(PopoverTabs.AllFiles)

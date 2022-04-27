@@ -11,7 +11,7 @@ export interface PreferencesViewWrapperProps {
 
 export const PreferencesViewWrapper: FunctionComponent<PreferencesViewWrapperProps> = observer(
   ({ appState, application }) => {
-    if (!appState.preferences.isOpen) {
+    if (!appState.preferences?.isOpen) {
       return null
     }
 

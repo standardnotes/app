@@ -18,9 +18,7 @@ export class FilesState {
     let downloadingToastId = ''
 
     try {
-      const saver = StreamingFileSaver.available()
-        ? new StreamingFileSaver(file.name)
-        : new ClassicFileSaver()
+      const saver = StreamingFileSaver.available() ? new StreamingFileSaver(file.name) : new ClassicFileSaver()
 
       const isUsingStreamingSaver = saver instanceof StreamingFileSaver
 
@@ -110,7 +108,7 @@ export class FilesState {
           message: `Uploading file "${file.name}"...`,
         })
 
-        const operation = await this.application.files.beginNewFileUpload()
+        const operation = await this.application.files.beginNewFileUpload(file.size)
 
         if (operation instanceof ClientDisplayableError) {
           addToast({

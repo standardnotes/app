@@ -95,15 +95,12 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
             <div className="text-sm mb-1 break-word">
               <span className="vertical-middle">{file.name}</span>
               {file.protected && (
-                <Icon
-                  type="lock-filled"
-                  className="sn-icon--small ml-2 color-neutral vertical-middle"
-                />
+                <Icon type="lock-filled" className="sn-icon--small ml-2 color-neutral vertical-middle" />
               )}
             </div>
           )}
           <div className="text-xs color-grey-0">
-            {file.created_at.toLocaleString()} · {formatSizeToReadableString(file.size)}
+            {file.created_at.toLocaleString()} · {formatSizeToReadableString(file.decryptedSize)}
           </div>
         </div>
       </div>

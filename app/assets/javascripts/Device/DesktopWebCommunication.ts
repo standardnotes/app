@@ -1,7 +1,6 @@
 import { DecryptedTransferPayload } from '@standardnotes/snjs'
 
-/** Receives communications emitted by Web Core. This would be the Desktop client. */
-export interface WebCommunicationReceiver {
+export interface WebClientRequiresDesktopMethods {
   localBackupsCount(): Promise<number>
 
   viewlocalBackups(): void
@@ -14,7 +13,10 @@ export interface WebCommunicationReceiver {
 
   onInitialDataLoad(): void
 
-  onSignOut(): void
+  /**
+   * Destroys all sensitive storage data, such as localStorage, IndexedDB, and other log files.
+   */
+  destroyAllData(): void
 
   onSearch(text?: string): void
 
@@ -23,18 +25,14 @@ export interface WebCommunicationReceiver {
   get extensionsServerHost(): string
 }
 
-/** Receives communications emitted by the desktop client. This would be Web Core. */
-export interface DesktopCommunicationReceiver {
+export interface DesktopClientRequiresWebMethods {
   updateAvailable(): void
 
   windowGainedFocus(): void
 
   windowLostFocus(): void
 
-  onComponentInstallationComplete(
-    componentData: DecryptedTransferPayload,
-    error: unknown,
-  ): Promise<void>
+  onComponentInstallationComplete(componentData: DecryptedTransferPayload, error: unknown): Promise<void>
 
   requestBackupFile(): Promise<string | undefined>
 

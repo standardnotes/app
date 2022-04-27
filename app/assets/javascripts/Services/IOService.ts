@@ -5,6 +5,8 @@ export enum KeyboardKey {
   Backspace = 'Backspace',
   Up = 'ArrowUp',
   Down = 'ArrowDown',
+  Left = 'ArrowLeft',
+  Right = 'ArrowRight',
   Enter = 'Enter',
   Escape = 'Escape',
   Home = 'Home',
@@ -127,14 +129,10 @@ export class IOService {
       // For a modifier like ctrlKey, must check both event.ctrlKey and event.key.
       // That's because on keyup, event.ctrlKey would be false, but event.key == Control would be true.
       const matches =
-        ((event.ctrlKey || event.key === KeyboardModifier.Ctrl) &&
-          modifier === KeyboardModifier.Ctrl) ||
-        ((event.metaKey || event.key === KeyboardModifier.Meta) &&
-          modifier === KeyboardModifier.Meta) ||
-        ((event.altKey || event.key === KeyboardModifier.Alt) &&
-          modifier === KeyboardModifier.Alt) ||
-        ((event.shiftKey || event.key === KeyboardModifier.Shift) &&
-          modifier === KeyboardModifier.Shift)
+        ((event.ctrlKey || event.key === KeyboardModifier.Ctrl) && modifier === KeyboardModifier.Ctrl) ||
+        ((event.metaKey || event.key === KeyboardModifier.Meta) && modifier === KeyboardModifier.Meta) ||
+        ((event.altKey || event.key === KeyboardModifier.Alt) && modifier === KeyboardModifier.Alt) ||
+        ((event.shiftKey || event.key === KeyboardModifier.Shift) && modifier === KeyboardModifier.Shift)
 
       return matches
     })
@@ -188,10 +186,7 @@ export class IOService {
         continue
       }
 
-      if (
-        observer.key &&
-        this.eventMatchesKeyAndModifiers(event, observer.key, observer.modifiers)
-      ) {
+      if (observer.key && this.eventMatchesKeyAndModifiers(event, observer.key, observer.modifiers)) {
         const callback = keyEvent === KeyboardKeyEvent.Down ? observer.onKeyDown : observer.onKeyUp
         if (callback) {
           callback(event)
