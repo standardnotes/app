@@ -8,7 +8,7 @@ import { FunctionComponent } from 'preact'
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import { Icon } from '@/Components/Icon'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
-import { ChallengeReason, ContentType, SNFile } from '@standardnotes/snjs'
+import { ChallengeReason, CollectionSort, ContentType, SNFile } from '@standardnotes/snjs'
 import { confirmDialog } from '@/Services/AlertService'
 import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit'
 import { StreamingFileReader } from '@standardnotes/filepicker'
@@ -65,11 +65,11 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     const attachedFilesCount = attachedFiles.length
 
     useEffect(() => {
+      application.items.setDisplayOptions(ContentType.File, CollectionSort.Title, 'dsc')
+
       const unregisterFileStream = application.streamItems(ContentType.File, () => {
-        setAllFiles(
-          application.items.getItems<SNFile>(ContentType.File).sort((a, b) => (a.created_at < b.created_at ? 1 : -1)),
-        )
-        setAttachedFiles(application.items.getFilesForNote(note).sort((a, b) => (a.created_at < b.created_at ? 1 : -1)))
+        setAllFiles(application.items.getDisplayableItems<SNFile>(ContentType.File))
+        setAttachedFiles(application.items.getFilesForNote(note))
       })
 
       return () => {
