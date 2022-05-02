@@ -6,6 +6,7 @@ import {
   RawKeychainValue,
   TransferPayload,
   NamespacedRootKeyInKeychain,
+  extendArray,
 } from '@standardnotes/snjs'
 import { Database } from '../Database'
 import { WebOrDesktopDeviceInterface } from './WebOrDesktopDeviceInterface'
@@ -126,10 +127,17 @@ export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface 
     return keychain[identifier]
   }
 
-  async setNamespacedKeychainValue(
-    value: NamespacedRootKeyInKeychain,
-    identifier: ApplicationIdentifier,
-  ) {
+  async getDatabaseKeys(): Promise<string[]> {
+    const keys: string[] = []
+
+    for (const database of this.databases) {
+      extendArray(keys, await database.getAllKeys())
+    }
+
+    return keys
+  }
+
+  async setNamespacedKeychainValue(value: NamespacedRootKeyInKeychain, identifier: ApplicationIdentifier) {
     let keychain = await this.getKeychainValue()
 
     if (!keychain) {

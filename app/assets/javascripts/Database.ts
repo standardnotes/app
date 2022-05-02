@@ -1,4 +1,4 @@
-import { SNAlertService } from '@standardnotes/snjs'
+import { isString, AlertService } from '@standardnotes/snjs'
 
 const STORE_NAME = 'items'
 const READ_WRITE = 'readwrite'
@@ -19,7 +19,7 @@ export class Database {
   private locked = true
   private db?: IDBDatabase
 
-  constructor(public databaseName: string, private alertService: SNAlertService) {}
+  constructor(public databaseName: string, private alertService: AlertService) {}
 
   public deinit() {
     ;(this.alertService as any) = undefined
@@ -109,6 +109,28 @@ export class Database {
         } else {
           resolve(payloads)
         }
+      }
+    })
+  }
+
+  public async getAllKeys(): Promise<string[]> {
+    const db = (await this.openDatabase()) as IDBDatabase
+
+    return new Promise((resolve) => {
+      const objectStore = db.transaction(STORE_NAME).objectStore(STORE_NAME)
+      const getAllKeysRequest = objectStore.getAllKeys()
+      getAllKeysRequest.onsuccess = function () {
+        const result = getAllKeysRequest.result
+
+        const strings = result.map((key) => {
+          if (isString(key)) {
+            return key
+          } else {
+            return JSON.stringify(key)
+          }
+        })
+
+        resolve(strings)
       }
     })
   }

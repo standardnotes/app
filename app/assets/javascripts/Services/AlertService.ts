@@ -1,4 +1,4 @@
-import { SNAlertService, ButtonType, sanitizeHtmlString } from '@standardnotes/snjs'
+import { AlertService, ButtonType, sanitizeHtmlString } from '@standardnotes/snjs'
 import { SKAlert } from '@standardnotes/stylekit'
 
 /** @returns a promise resolving to true if the user confirmed, false if they canceled */
@@ -65,7 +65,7 @@ export function alertDialog({
   })
 }
 
-export class AlertService extends SNAlertService {
+export class WebAlertService extends AlertService {
   alert(text: string, title?: string, closeButtonText?: string) {
     return alertDialog({ text, title, closeButtonText })
   }

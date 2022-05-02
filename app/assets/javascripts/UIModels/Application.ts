@@ -1,5 +1,5 @@
 import { WebCrypto } from '@/Crypto'
-import { AlertService } from '@/Services/AlertService'
+import { WebAlertService } from '@/Services/AlertService'
 import { ArchiveManager } from '@/Services/ArchiveManager'
 import { AutolockService } from '@/Services/AutolockService'
 import { DesktopDeviceInterface, isDesktopDevice } from '@/Device/DesktopDeviceInterface'
@@ -56,7 +56,7 @@ export class WebApplication extends SNApplication {
       platform: platform,
       deviceInterface: deviceInterface,
       crypto: WebCrypto,
-      alertService: new AlertService(),
+      alertService: new WebAlertService(),
       identifier,
       defaultHost: defaultSyncServerHost,
       appVersion: deviceInterface.appVersion,
