@@ -8,7 +8,7 @@ import {
   parseFileName,
 } from '@standardnotes/filepicker'
 import { ClientDisplayableError, SNFile } from '@standardnotes/snjs'
-import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit'
+import { addToast, dismissToast, ToastType, updateToast } from '@standardnotes/stylekit'
 import { WebApplication } from '../Application'
 
 export class FilesState {
@@ -27,17 +27,29 @@ export class FilesState {
       }
 
       downloadingToastId = addToast({
-        type: ToastType.Loading,
-        message: 'Downloading file...',
+        type: ToastType.Progress,
+        message: `Downloading file "${file.name}" (0%)`,
+        progress: 0,
       })
 
       const decryptedBytesArray: Uint8Array[] = []
 
-      await this.application.files.downloadFile(file, async (decryptedBytes: Uint8Array) => {
+      await this.application.files.downloadFile(file, async (decryptedBytes, progress) => {
         if (isUsingStreamingSaver) {
           await saver.pushBytes(decryptedBytes)
         } else {
           decryptedBytesArray.push(decryptedBytes)
+        }
+
+        if (progress) {
+          const progressPercent = Number.isInteger(progress.percentComplete)
+            ? progress.percentComplete
+            : progress.percentComplete.toFixed(2)
+
+          updateToast(downloadingToastId, {
+            message: `Downloading file "${file.name}" (${progressPercent}%)`,
+            progress: progress.percentComplete,
+          })
         }
       })
 
@@ -103,11 +115,6 @@ export class FilesState {
           continue
         }
 
-        toastId = addToast({
-          type: ToastType.Loading,
-          message: `Uploading file "${file.name}"...`,
-        })
-
         const operation = await this.application.files.beginNewFileUpload(file.size)
 
         if (operation instanceof ClientDisplayableError) {
@@ -118,8 +125,23 @@ export class FilesState {
           throw new Error('Unable to start upload session')
         }
 
+        const initialProgress = operation.getProgress().percentComplete
+
+        toastId = addToast({
+          type: ToastType.Progress,
+          message: `Uploading file "${file.name}" (${initialProgress}%)`,
+          progress: initialProgress,
+        })
+
         const onChunk = async (chunk: Uint8Array, index: number, isLast: boolean) => {
           await this.application.files.pushBytesForUpload(operation, chunk, index, isLast)
+
+          const progress = operation.getProgress().percentComplete
+          const formattedProgress = Number.isInteger(progress) ? progress : progress.toFixed(2)
+          updateToast(toastId, {
+            message: `Uploading file "${file.name}" (${formattedProgress}%)`,
+            progress,
+          })
         }
 
         const fileResult = await picker.readFile(file, minimumChunkSize, onChunk)
