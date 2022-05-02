@@ -1,6 +1,6 @@
 {
-  "name": "sn-futura-theme",
-  "version": "1.2.6",
+  "name": "@standardnotes/futura-theme",
+  "version": "1.2.8",
   "main": "dist/dist.css",
   "devDependencies": {
     "grunt": "^1.0.1",
@@ -13,6 +13,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/sn-extensions/futura-theme.git"
+    "url": "git://github.com/standardnotes/futura-theme.git"
+  },
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "build": "grunt"
   }
 }
