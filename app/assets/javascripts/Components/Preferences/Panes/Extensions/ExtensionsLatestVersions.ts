@@ -29,10 +29,7 @@ export class ExtensionsLatestVersions {
   }
 }
 
-function collectFeatures(
-  features: FeatureDescription[] | undefined,
-  versionMap: Map<string, string>,
-) {
+function collectFeatures(features: FeatureDescription[] | undefined, versionMap: Map<string, string>) {
   if (features == undefined) {
     return
   }

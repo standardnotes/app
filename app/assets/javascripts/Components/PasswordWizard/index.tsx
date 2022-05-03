@@ -109,9 +109,7 @@ export class PasswordWizard extends PureComponent<Props, State> {
     const currentPassword = this.state.formData.currentPassword
     const newPass = this.state.formData.newPassword
     if (!currentPassword || currentPassword.length === 0) {
-      this.application.alertService
-        .alert('Please enter your current password.')
-        .catch(console.error)
+      this.application.alertService.alert('Please enter your current password.').catch(console.error)
       return false
     }
 
@@ -120,9 +118,7 @@ export class PasswordWizard extends PureComponent<Props, State> {
       return false
     }
     if (newPass !== this.state.formData.newPasswordConfirmation) {
-      this.application.alertService
-        .alert('Your new password does not match its confirmation.')
-        .catch(console.error)
+      this.application.alertService.alert('Your new password does not match its confirmation.').catch(console.error)
       this.setFormDataState({
         status: undefined,
       }).catch(console.error)
@@ -131,9 +127,7 @@ export class PasswordWizard extends PureComponent<Props, State> {
 
     if (!this.application.getUser()?.email) {
       this.application.alertService
-        .alert(
-          "We don't have your email stored. Please sign out then log back in to fix this issue.",
-        )
+        .alert("We don't have your email stored. Please sign out then log back in to fix this issue.")
         .catch(console.error)
       this.setFormDataState({
         status: undefined,
@@ -142,9 +136,7 @@ export class PasswordWizard extends PureComponent<Props, State> {
     }
 
     /** Validate current password */
-    const success = await this.application.validateAccountPassword(
-      this.state.formData.currentPassword as string,
-    )
+    const success = await this.application.validateAccountPassword(this.state.formData.currentPassword as string)
     if (!success) {
       this.application.alertService
         .alert('The current password you entered is not correct. Please try again.')
@@ -194,9 +186,7 @@ export class PasswordWizard extends PureComponent<Props, State> {
 
   dismiss = () => {
     if (this.state.lockContinue) {
-      this.application.alertService
-        .alert('Cannot close window until pending tasks are complete.')
-        .catch(console.error)
+      this.application.alertService.alert('Cannot close window until pending tasks are complete.').catch(console.error)
     } else {
       this.dismissModal()
     }
@@ -211,25 +201,19 @@ export class PasswordWizard extends PureComponent<Props, State> {
     })
   }
 
-  handleCurrentPasswordInputChange = ({
-    currentTarget,
-  }: JSX.TargetedEvent<HTMLInputElement, Event>) => {
+  handleCurrentPasswordInputChange = ({ currentTarget }: JSX.TargetedEvent<HTMLInputElement, Event>) => {
     this.setFormDataState({
       currentPassword: currentTarget.value,
     }).catch(console.error)
   }
 
-  handleNewPasswordInputChange = ({
-    currentTarget,
-  }: JSX.TargetedEvent<HTMLInputElement, Event>) => {
+  handleNewPasswordInputChange = ({ currentTarget }: JSX.TargetedEvent<HTMLInputElement, Event>) => {
     this.setFormDataState({
       newPassword: currentTarget.value,
     }).catch(console.error)
   }
 
-  handleNewPasswordConfirmationInputChange = ({
-    currentTarget,
-  }: JSX.TargetedEvent<HTMLInputElement, Event>) => {
+  handleNewPasswordConfirmationInputChange = ({ currentTarget }: JSX.TargetedEvent<HTMLInputElement, Event>) => {
     this.setFormDataState({
       newPasswordConfirmation: currentTarget.value,
     }).catch(console.error)
@@ -283,10 +267,7 @@ export class PasswordWizard extends PureComponent<Props, State> {
                             />
                             <div className="sk-panel-row" />
 
-                            <label
-                              htmlFor="password-wiz-confirm-new-password"
-                              className="block mb-1"
-                            >
+                            <label htmlFor="password-wiz-confirm-new-password" className="block mb-1">
                               Confirm New Password
                             </label>
 
@@ -304,12 +285,10 @@ export class PasswordWizard extends PureComponent<Props, State> {
                   )}
                   {this.state.step === Steps.FinishStep && (
                     <div className="sk-panel-section">
-                      <div className="sk-label sk-bold info">
-                        Your password has been successfully changed.
-                      </div>
+                      <div className="sk-label sk-bold info">Your password has been successfully changed.</div>
                       <p className="sk-p">
-                        Please ensure you are running the latest version of Standard Notes on all
-                        platforms to ensure maximum compatibility.
+                        Please ensure you are running the latest version of Standard Notes on all platforms to ensure
+                        maximum compatibility.
                       </p>
                     </div>
                   )}

@@ -1,11 +1,5 @@
 import { AppState } from '@/UIModels/AppState'
-import {
-  SNApplication,
-  SessionStrings,
-  UuidString,
-  isNullOrUndefined,
-  RemoteSession,
-} from '@standardnotes/snjs'
+import { SNApplication, SessionStrings, UuidString, isNullOrUndefined, RemoteSession } from '@standardnotes/snjs'
 import { FunctionComponent } from 'preact'
 import { useState, useEffect, useRef, useMemo } from 'preact/hooks'
 import { Dialog } from '@reach/dialog'

@@ -16,30 +16,14 @@ type Props = {
 
 export const NotesListOptionsMenu: FunctionComponent<Props> = observer(
   ({ closeDisplayOptionsMenu, closeOnBlur, application, isOpen }) => {
-    const [sortBy, setSortBy] = useState(() =>
-      application.getPreference(PrefKey.SortNotesBy, CollectionSort.CreatedAt),
-    )
-    const [sortReverse, setSortReverse] = useState(() =>
-      application.getPreference(PrefKey.SortNotesReverse, false),
-    )
-    const [hidePreview, setHidePreview] = useState(() =>
-      application.getPreference(PrefKey.NotesHideNotePreview, false),
-    )
-    const [hideDate, setHideDate] = useState(() =>
-      application.getPreference(PrefKey.NotesHideDate, false),
-    )
-    const [hideTags, setHideTags] = useState(() =>
-      application.getPreference(PrefKey.NotesHideTags, true),
-    )
-    const [hidePinned, setHidePinned] = useState(() =>
-      application.getPreference(PrefKey.NotesHidePinned, false),
-    )
-    const [showArchived, setShowArchived] = useState(() =>
-      application.getPreference(PrefKey.NotesShowArchived, false),
-    )
-    const [showTrashed, setShowTrashed] = useState(() =>
-      application.getPreference(PrefKey.NotesShowTrashed, false),
-    )
+    const [sortBy, setSortBy] = useState(() => application.getPreference(PrefKey.SortNotesBy, CollectionSort.CreatedAt))
+    const [sortReverse, setSortReverse] = useState(() => application.getPreference(PrefKey.SortNotesReverse, false))
+    const [hidePreview, setHidePreview] = useState(() => application.getPreference(PrefKey.NotesHideNotePreview, false))
+    const [hideDate, setHideDate] = useState(() => application.getPreference(PrefKey.NotesHideDate, false))
+    const [hideTags, setHideTags] = useState(() => application.getPreference(PrefKey.NotesHideTags, true))
+    const [hidePinned, setHidePinned] = useState(() => application.getPreference(PrefKey.NotesHidePinned, false))
+    const [showArchived, setShowArchived] = useState(() => application.getPreference(PrefKey.NotesShowArchived, false))
+    const [showTrashed, setShowTrashed] = useState(() => application.getPreference(PrefKey.NotesShowTrashed, false))
     const [hideProtected, setHideProtected] = useState(() =>
       application.getPreference(PrefKey.NotesHideProtected, false),
     )

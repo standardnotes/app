@@ -115,9 +115,7 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
           />
           {dropdownVisible && (autocompleteTagResults.length > 0 || autocompleteTagHintVisible) && (
             <DisclosurePanel
-              className={`${
-                tags.length > 0 ? 'w-80' : 'w-70 mr-10'
-              } sn-dropdown flex flex-col py-2 absolute`}
+              className={`${tags.length > 0 ? 'w-80' : 'w-70 mr-10'} sn-dropdown flex flex-col py-2 absolute`}
               style={{
                 maxHeight: dropdownMaxHeight,
                 maxWidth: tagsContainerMaxWidth,
@@ -134,9 +132,7 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
                   />
                 ))}
               </div>
-              {autocompleteTagHintVisible && (
-                <AutocompleteTagHint appState={appState} closeOnBlur={closeOnBlur} />
-              )}
+              {autocompleteTagHintVisible && <AutocompleteTagHint appState={appState} closeOnBlur={closeOnBlur} />}
             </DisclosurePanel>
           )}
         </Disclosure>

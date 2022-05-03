@@ -14,15 +14,9 @@ type Props = {
   isEnabled: boolean
 }
 
-export const FocusModeSwitch: FunctionComponent<Props> = ({
-  application,
-  onToggle,
-  onClose,
-  isEnabled,
-}) => {
+export const FocusModeSwitch: FunctionComponent<Props> = ({ application, onToggle, onClose, isEnabled }) => {
   const premiumModal = usePremiumModal()
-  const isEntitled =
-    application.features.getFeatureStatus(FeatureIdentifier.FocusMode) === FeatureStatus.Entitled
+  const isEntitled = application.features.getFeatureStatus(FeatureIdentifier.FocusMode) === FeatureStatus.Entitled
 
   const toggle = useCallback(
     (e: JSXInternal.TargetedMouseEvent<HTMLButtonElement>) => {
@@ -40,10 +34,7 @@ export const FocusModeSwitch: FunctionComponent<Props> = ({
 
   return (
     <>
-      <button
-        className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none justify-between"
-        onClick={toggle}
-      >
+      <button className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none justify-between" onClick={toggle}>
         <div className="flex items-center">
           <Icon type="menu-close" className="color-neutral mr-2" />
           Focused Writing

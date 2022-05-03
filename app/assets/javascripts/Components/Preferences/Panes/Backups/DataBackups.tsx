@@ -160,8 +160,7 @@ export const DataBackups = observer(({ application, appState }: Props) => {
 
           {!isDesktopApplication() && (
             <Text className="mb-3">
-              Backups are automatically created on desktop and can be managed via the "Backups"
-              top-level menu.
+              Backups are automatically created on desktop and can be managed via the "Backups" top-level menu.
             </Text>
           )}
 
@@ -171,43 +170,25 @@ export const DataBackups = observer(({ application, appState }: Props) => {
             <form className="sk-panel-form sk-panel-row">
               <div className="sk-input-group">
                 <label className="sk-horizontal-group tight">
-                  <input
-                    type="radio"
-                    onChange={() => setIsBackupEncrypted(true)}
-                    checked={isBackupEncrypted}
-                  />
+                  <input type="radio" onChange={() => setIsBackupEncrypted(true)} checked={isBackupEncrypted} />
                   <Subtitle>Encrypted</Subtitle>
                 </label>
                 <label className="sk-horizontal-group tight">
-                  <input
-                    type="radio"
-                    onChange={() => setIsBackupEncrypted(false)}
-                    checked={!isBackupEncrypted}
-                  />
+                  <input type="radio" onChange={() => setIsBackupEncrypted(false)} checked={!isBackupEncrypted} />
                   <Subtitle>Decrypted</Subtitle>
                 </label>
               </div>
             </form>
           )}
 
-          <Button
-            variant="normal"
-            onClick={downloadDataArchive}
-            label="Download backup"
-            className="mt-2"
-          />
+          <Button variant="normal" onClick={downloadDataArchive} label="Download backup" className="mt-2" />
         </PreferencesSegment>
         <PreferencesSegment>
           <Subtitle>Import a previously saved backup file</Subtitle>
 
           <div class="flex flex-row items-center mt-3">
             <Button variant="normal" label="Import backup" onClick={handleImportFile} />
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={importFileSelected}
-              className="hidden"
-            />
+            <input type="file" ref={fileInputRef} onChange={importFileSelected} className="hidden" />
             {isImportDataLoading && <div className="sk-spinner normal info ml-4" />}
           </div>
         </PreferencesSegment>

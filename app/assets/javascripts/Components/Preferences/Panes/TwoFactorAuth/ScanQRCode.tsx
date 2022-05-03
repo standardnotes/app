@@ -19,16 +19,10 @@ export const ScanQRCode: FunctionComponent<{
 }> = observer(({ activation: act }) => {
   return (
     <ModalDialog>
-      <ModalDialogLabel closeDialog={act.cancelActivation}>
-        Step 1 of 3 - Scan QR code
-      </ModalDialogLabel>
+      <ModalDialogLabel closeDialog={act.cancelActivation}>Step 1 of 3 - Scan QR code</ModalDialogLabel>
       <ModalDialogDescription className="h-33">
         <div className="w-25 h-25 flex items-center justify-center bg-info">
-          <QRCode
-            className="border-neutral-contrast-bg border-solid border-2"
-            value={act.qrCode}
-            size={100}
-          />
+          <QRCode className="border-neutral-contrast-bg border-solid border-2" value={act.qrCode} size={100} />
         </div>
         <div className="min-w-5" />
         <div className="flex-grow flex flex-col">
@@ -59,18 +53,8 @@ export const ScanQRCode: FunctionComponent<{
         </div>
       </ModalDialogDescription>
       <ModalDialogButtons>
-        <Button
-          className="min-w-20"
-          variant="normal"
-          label="Cancel"
-          onClick={() => act.cancelActivation()}
-        />
-        <Button
-          className="min-w-20"
-          variant="primary"
-          label="Next"
-          onClick={() => act.openSaveSecretKey()}
-        />
+        <Button className="min-w-20" variant="normal" label="Cancel" onClick={() => act.cancelActivation()} />
+        <Button className="min-w-20" variant="primary" label="Next" onClick={() => act.openSaveSecretKey()} />
       </ModalDialogButtons>
     </ModalDialog>
   )

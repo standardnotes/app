@@ -8,10 +8,7 @@ import { findDOMNode, unmountComponentAtNode } from 'preact/compat'
 export type PureComponentState = Partial<Record<string, any>>
 export type PureComponentProps = Partial<Record<string, any>>
 
-export abstract class PureComponent<
-  P = PureComponentProps,
-  S = PureComponentState,
-> extends Component<P, S> {
+export abstract class PureComponent<P = PureComponentProps, S = PureComponentState> extends Component<P, S> {
   private unsubApp!: () => void
   private unsubState!: () => void
   private reactionDisposers: IReactionDisposer[] = []

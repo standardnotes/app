@@ -85,9 +85,7 @@ export class NotesState {
   private async selectNotesRange(selectedNote: SNNote): Promise<void> {
     const notes = this.application.items.getDisplayableNotes()
 
-    const lastSelectedNoteIndex = notes.findIndex(
-      (note) => note.uuid == this.lastSelectedNote?.uuid,
-    )
+    const lastSelectedNoteIndex = notes.findIndex((note) => note.uuid == this.lastSelectedNote?.uuid)
     const selectedNoteIndex = notes.findIndex((note) => note.uuid == selectedNote.uuid)
 
     let notesToSelect = []
@@ -351,9 +349,7 @@ export class NotesState {
   }
 
   getSpellcheckStateForNote(note: SNNote) {
-    return note.spellcheck != undefined
-      ? note.spellcheck
-      : this.appState.isGlobalSpellcheckEnabled()
+    return note.spellcheck != undefined ? note.spellcheck : this.appState.isGlobalSpellcheckEnabled()
   }
 
   async toggleGlobalSpellcheckForNote(note: SNNote) {
@@ -395,9 +391,7 @@ export class NotesState {
 
   isTagInSelectedNotes(tag: SNTag): boolean {
     const selectedNotes = Object.values(this.selectedNotes)
-    return selectedNotes.every((note) =>
-      this.appState.getNoteTags(note).find((noteTag) => noteTag.uuid === tag.uuid),
-    )
+    return selectedNotes.every((note) => this.appState.getNoteTags(note).find((noteTag) => noteTag.uuid === tag.uuid))
   }
 
   setShowProtectedWarning(show: boolean): void {

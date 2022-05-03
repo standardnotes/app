@@ -51,9 +51,7 @@ const MenuPaneSelector: FunctionComponent<PaneSelectorProps> = observer(
           />
         )
       case AccountMenuPane.SignIn:
-        return (
-          <SignInPane appState={appState} application={application} setMenuPane={setMenuPane} />
-        )
+        return <SignInPane appState={appState} application={application} setMenuPane={setMenuPane} />
       case AccountMenuPane.Register:
         return (
           <CreateAccount
@@ -82,8 +80,7 @@ const MenuPaneSelector: FunctionComponent<PaneSelectorProps> = observer(
 
 export const AccountMenu: FunctionComponent<Props> = observer(
   ({ application, appState, onClickOutside, mainApplicationGroup }) => {
-    const { currentPane, setCurrentPane, shouldAnimateCloseMenu, closeAccountMenu } =
-      appState.accountMenu
+    const { currentPane, setCurrentPane, shouldAnimateCloseMenu, closeAccountMenu } = appState.accountMenu
 
     const ref = useRef<HTMLDivElement>(null)
     useCloseOnClickOutside(ref, () => {

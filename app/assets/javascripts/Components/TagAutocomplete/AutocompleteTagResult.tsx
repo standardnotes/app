@@ -12,12 +12,8 @@ type Props = {
 }
 
 export const AutocompleteTagResult = observer(({ appState, tagResult, closeOnBlur }: Props) => {
-  const {
-    autocompleteSearchQuery,
-    autocompleteTagHintVisible,
-    autocompleteTagResults,
-    focusedTagResultUuid,
-  } = appState.noteTags
+  const { autocompleteSearchQuery, autocompleteTagHintVisible, autocompleteTagResults, focusedTagResultUuid } =
+    appState.noteTags
 
   const tagResultRef = useRef<HTMLButtonElement>(null)
 

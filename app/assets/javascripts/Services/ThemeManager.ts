@@ -42,9 +42,7 @@ export class ThemeManager extends ApplicationService {
       case ApplicationEvent.SignedOut: {
         this.deactivateAllThemes()
         this.activeThemes = []
-        this.application
-          ?.removeValue(CachedThemesKey, StorageValueModes.Nonwrapped)
-          .catch(console.error)
+        this.application?.removeValue(CachedThemesKey, StorageValueModes.Nonwrapped).catch(console.error)
         break
       }
       case ApplicationEvent.StorageReady: {
@@ -56,9 +54,7 @@ export class ThemeManager extends ApplicationService {
         break
       }
       case ApplicationEvent.Launched: {
-        window
-          .matchMedia('(prefers-color-scheme: dark)')
-          .addEventListener('change', this.colorSchemeEventHandler)
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', this.colorSchemeEventHandler)
         break
       }
       case ApplicationEvent.PreferencesChanged: {
@@ -69,10 +65,7 @@ export class ThemeManager extends ApplicationService {
   }
 
   private handlePreferencesChangeEvent(): void {
-    const useDeviceThemeSettings = this.application.getPreference(
-      PrefKey.UseSystemColorScheme,
-      false,
-    )
+    const useDeviceThemeSettings = this.application.getPreference(PrefKey.UseSystemColorScheme, false)
 
     if (useDeviceThemeSettings !== this.lastUseDeviceThemeSettings) {
       this.lastUseDeviceThemeSettings = useDeviceThemeSettings
@@ -97,9 +90,7 @@ export class ThemeManager extends ApplicationService {
     ;(this.unregisterDesktop as unknown) = undefined
     ;(this.unregisterStream as unknown) = undefined
 
-    window
-      .matchMedia('(prefers-color-scheme: dark)')
-      .removeEventListener('change', this.colorSchemeEventHandler)
+    window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', this.colorSchemeEventHandler)
     super.deinit()
   }
 
@@ -172,19 +163,14 @@ export class ThemeManager extends ApplicationService {
   }
 
   private setThemeAsPerColorScheme(prefersDarkColorScheme: boolean) {
-    const preference = prefersDarkColorScheme
-      ? PrefKey.AutoDarkThemeIdentifier
-      : PrefKey.AutoLightThemeIdentifier
+    const preference = prefersDarkColorScheme ? PrefKey.AutoDarkThemeIdentifier : PrefKey.AutoLightThemeIdentifier
 
     const themes = this.application.items.getDisplayableItems(ContentType.Theme) as SNTheme[]
 
     const activeTheme = themes.find((theme) => theme.active && !theme.isLayerable())
     const activeThemeIdentifier = activeTheme ? activeTheme.identifier : DefaultThemeIdentifier
 
-    const themeIdentifier = this.application.getPreference(
-      preference,
-      DefaultThemeIdentifier,
-    ) as string
+    const themeIdentifier = this.application.getPreference(preference, DefaultThemeIdentifier) as string
 
     const setTheme = () => {
       if (themeIdentifier === DefaultThemeIdentifier && activeTheme) {
@@ -212,35 +198,30 @@ export class ThemeManager extends ApplicationService {
   }
 
   private registerObservers() {
-    this.unregisterDesktop = this.webApplication
-      .getDesktopService()
-      ?.registerUpdateObserver((component) => {
-        if (component.active && component.isTheme()) {
-          this.deactivateTheme(component.uuid)
-          setTimeout(() => {
-            this.activateTheme(component as SNTheme)
-            this.cacheThemeState().catch(console.error)
-          }, 10)
-        }
-      })
-
-    this.unregisterStream = this.application.streamItems(
-      ContentType.Theme,
-      ({ changed, inserted, source }) => {
-        const items = changed.concat(inserted)
-        const themes = items as SNTheme[]
-        for (const theme of themes) {
-          if (theme.active) {
-            this.activateTheme(theme)
-          } else {
-            this.deactivateTheme(theme.uuid)
-          }
-        }
-        if (source !== PayloadEmitSource.LocalRetrieved) {
+    this.unregisterDesktop = this.webApplication.getDesktopService()?.registerUpdateObserver((component) => {
+      if (component.active && component.isTheme()) {
+        this.deactivateTheme(component.uuid)
+        setTimeout(() => {
+          this.activateTheme(component as SNTheme)
           this.cacheThemeState().catch(console.error)
+        }, 10)
+      }
+    })
+
+    this.unregisterStream = this.application.streamItems(ContentType.Theme, ({ changed, inserted, source }) => {
+      const items = changed.concat(inserted)
+      const themes = items as SNTheme[]
+      for (const theme of themes) {
+        if (theme.active) {
+          this.activateTheme(theme)
+        } else {
+          this.deactivateTheme(theme.uuid)
         }
-      },
-    )
+      }
+      if (source !== PayloadEmitSource.LocalRetrieved) {
+        this.cacheThemeState().catch(console.error)
+      }
+    })
   }
 
   public deactivateAllThemes() {

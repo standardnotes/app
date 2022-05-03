@@ -75,9 +75,7 @@ export const SessionHistoryList: FunctionComponent<Props> = ({
           </Fragment>
         ) : null),
       )}
-      {!sessionHistoryLength && (
-        <div className="color-grey-0 select-none">No session history found</div>
-      )}
+      {!sessionHistoryLength && <div className="color-grey-0 select-none">No session history found</div>}
     </div>
   )
 }

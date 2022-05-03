@@ -21,11 +21,7 @@ export const General: FunctionComponent<GeneralProps> = observer(
       <Tools application={application} />
       <Defaults application={application} />
       <LabsPane application={application} />
-      <Advanced
-        application={application}
-        appState={appState}
-        extensionsLatestVersions={extensionsLatestVersions}
-      />
+      <Advanced application={application} appState={appState} extensionsLatestVersions={extensionsLatestVersions} />
     </PreferencesPane>
   ),
 )

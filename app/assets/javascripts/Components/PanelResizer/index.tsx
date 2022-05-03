@@ -107,9 +107,7 @@ export class PanelResizer extends Component<Props, State> {
 
   isAtMaxWidth = () => {
     const marginOfError = 5
-    const difference = Math.abs(
-      Math.round(this.lastWidth + this.lastLeft) - Math.round(this.getParentRect().width),
-    )
+    const difference = Math.abs(Math.round(this.lastWidth + this.lastLeft) - Math.round(this.getParentRect().width))
     return difference < marginOfError
   }
 
@@ -159,12 +157,7 @@ export class PanelResizer extends Component<Props, State> {
     if (finish) {
       this.finishSettingWidth()
       if (this.props.resizeFinishCallback) {
-        this.props.resizeFinishCallback(
-          this.lastWidth,
-          this.lastLeft,
-          this.isAtMaxWidth(),
-          this.isCollapsed(),
-        )
+        this.props.resizeFinishCallback(this.lastWidth, this.lastLeft, this.isAtMaxWidth(), this.isCollapsed())
       }
     }
   }
@@ -184,12 +177,7 @@ export class PanelResizer extends Component<Props, State> {
     }
     this.finishSettingWidth()
 
-    this.props.resizeFinishCallback?.(
-      this.lastWidth,
-      this.lastLeft,
-      this.isAtMaxWidth(),
-      this.isCollapsed(),
-    )
+    this.props.resizeFinishCallback?.(this.lastWidth, this.lastLeft, this.isAtMaxWidth(), this.isCollapsed())
   }
 
   handleWidthEvent(event?: MouseEvent) {

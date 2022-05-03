@@ -28,9 +28,7 @@ export const OfflineSubscription: FunctionalComponent<IProps> = observer(({ appl
   }, [application])
 
   const shouldShowOfflineSubscription = () => {
-    return (
-      !application.hasAccount() || application.isThirdPartyHostUsed() || hasUserPreviouslyStoredCode
-    )
+    return !application.hasAccount() || application.isThirdPartyHostUsed() || hasUserPreviouslyStoredCode
   }
 
   const handleSubscriptionCodeSubmit = async (event: Event) => {
@@ -98,8 +96,8 @@ export const OfflineSubscription: FunctionalComponent<IProps> = observer(({ appl
             </div>
             {(isSuccessfullyActivated || isSuccessfullyRemoved) && (
               <div className={'mt-3 mb-3 info'}>
-                Your offline subscription code has been successfully{' '}
-                {isSuccessfullyActivated ? 'activated' : 'removed'}.
+                Your offline subscription code has been successfully {isSuccessfullyActivated ? 'activated' : 'removed'}
+                .
               </div>
             )}
             {hasUserPreviouslyStoredCode && (

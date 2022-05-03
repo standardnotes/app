@@ -1,12 +1,5 @@
 import { ElementIds } from '@/ElementIDs'
-import {
-  ApplicationEvent,
-  ContentType,
-  PrefKey,
-  SNNote,
-  SNTag,
-  UuidString,
-} from '@standardnotes/snjs'
+import { ApplicationEvent, ContentType, PrefKey, SNNote, SNTag, UuidString } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable } from 'mobx'
 import { WebApplication } from '../Application'
 import { AppState } from './AppState'
@@ -22,11 +15,7 @@ export class NoteTagsState {
   tagsContainerMaxWidth: number | 'auto' = 0
   addNoteToParentFolders: boolean
 
-  constructor(
-    private application: WebApplication,
-    private appState: AppState,
-    appEventListeners: (() => void)[],
-  ) {
+  constructor(private application: WebApplication, private appState: AppState, appEventListeners: (() => void)[]) {
     makeObservable(this, {
       autocompleteInputFocused: observable,
       autocompleteSearchQuery: observable,
@@ -56,10 +45,7 @@ export class NoteTagsState {
         this.reloadTags()
       }),
       application.addSingleEventObserver(ApplicationEvent.PreferencesChanged, async () => {
-        this.addNoteToParentFolders = application.getPreference(
-          PrefKey.NoteAddToParentFolders,
-          true,
-        )
+        this.addNoteToParentFolders = application.getPreference(PrefKey.NoteAddToParentFolders, true)
       }),
     )
   }
@@ -71,9 +57,7 @@ export class NoteTagsState {
   get autocompleteTagHintVisible(): boolean {
     return (
       this.autocompleteSearchQuery !== '' &&
-      !this.autocompleteTagResults.some(
-        (tagResult) => tagResult.title === this.autocompleteSearchQuery,
-      )
+      !this.autocompleteTagResults.some((tagResult) => tagResult.title === this.autocompleteSearchQuery)
     )
   }
 
@@ -146,20 +130,14 @@ export class NoteTagsState {
 
   focusPreviousTagResult(tagResult: SNTag): void {
     const previousTagResultIndex = this.getTagIndex(tagResult, this.autocompleteTagResults) - 1
-    if (
-      previousTagResultIndex > -1 &&
-      this.autocompleteTagResults.length > previousTagResultIndex
-    ) {
+    if (previousTagResultIndex > -1 && this.autocompleteTagResults.length > previousTagResultIndex) {
       const previousTagResult = this.autocompleteTagResults[previousTagResultIndex]
       this.setFocusedTagResultUuid(previousTagResult.uuid)
     }
   }
 
   searchActiveNoteAutocompleteTags(): void {
-    const newResults = this.application.items.searchTags(
-      this.autocompleteSearchQuery,
-      this.activeNote,
-    )
+    const newResults = this.application.items.searchTags(this.autocompleteSearchQuery, this.activeNote)
     this.setAutocompleteTagResults(newResults)
   }
 

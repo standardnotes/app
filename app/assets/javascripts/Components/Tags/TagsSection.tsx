@@ -52,11 +52,7 @@ export const TagsSection: FunctionComponent<Props> = observer(({ appState }) => 
     <section>
       <div className="section-title-bar">
         <div className="section-title-bar-header">
-          <TagsSectionTitle
-            features={appState.features}
-            hasMigration={hasMigration}
-            onClickMigration={runMigration}
-          />
+          <TagsSectionTitle features={appState.features} hasMigration={hasMigration} onClickMigration={runMigration} />
           <TagsSectionAddButton tags={appState.tags} features={appState.features} />
         </div>
       </div>

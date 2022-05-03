@@ -208,14 +208,9 @@ export class AppState {
 
     const selectedTag = this.selectedTag
 
-    const activeRegularTagUuid =
-      selectedTag && selectedTag instanceof SNTag ? selectedTag.uuid : undefined
+    const activeRegularTagUuid = selectedTag && selectedTag instanceof SNTag ? selectedTag.uuid : undefined
 
-    await this.application.noteControllerGroup.createNoteView(
-      undefined,
-      title,
-      activeRegularTagUuid,
-    )
+    await this.application.noteControllerGroup.createNoteView(undefined, title, activeRegularTagUuid)
   }
 
   getActiveNoteController() {
@@ -304,9 +299,7 @@ export class AppState {
           }
         }
 
-        const changedOrInserted = [...changed, ...inserted].filter(
-          (i) => i.content_type === ContentType.Note,
-        )
+        const changedOrInserted = [...changed, ...inserted].filter((i) => i.content_type === ContentType.Note)
 
         const selectedTag = this.tags.selected
 

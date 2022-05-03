@@ -21,12 +21,7 @@ interface Props {
  * IconButton component with an icon
  * preventDefault is already handled within the component
  */
-export const RoundIconButton: FunctionComponent<Props> = ({
-  onClick,
-  type,
-  className,
-  icon: iconType,
-}) => {
+export const RoundIconButton: FunctionComponent<Props> = ({ onClick, type, className, icon: iconType }) => {
   const click = (e: MouseEvent) => {
     e.preventDefault()
     onClick()

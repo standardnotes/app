@@ -32,10 +32,7 @@ export const RootTagDropZone: React.FC<Props> = observer(({ tagsState }) => {
   )
 
   return (
-    <div
-      ref={dropRef}
-      className={`root-drop ${canDrop ? 'active' : ''} ${isOver ? 'is-drag-over' : ''}`}
-    >
+    <div ref={dropRef} className={`root-drop ${canDrop ? 'active' : ''} ${isOver ? 'is-drag-over' : ''}`}>
       <Icon className="color-neutral" type="link-off" />
       <p className="content">
         Move the tag here to <br />

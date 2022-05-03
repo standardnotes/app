@@ -107,10 +107,8 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
         </div>
         <div className="px-3 mb-3 text-sm">
           Because your notes are encrypted using your password,{' '}
-          <span className="color-dark-red">
-            Standard Notes does not have a password reset option
-          </span>
-          . If you forget your password, you will permanently lose access to your data.
+          <span className="color-dark-red">Standard Notes does not have a password reset option</span>. If you forget
+          your password, you will permanently lose access to your data.
         </div>
         <form onSubmit={handleConfirmFormSubmit} className="px-3 mb-1">
           <DecoratedPasswordInput

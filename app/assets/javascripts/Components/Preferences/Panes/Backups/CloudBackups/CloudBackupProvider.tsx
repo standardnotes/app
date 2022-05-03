@@ -66,18 +66,13 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
   const performBackupNow = async () => {
     // A backup is performed anytime the setting is updated with the integration token, so just update it here
     try {
-      await application.settings.updateSetting(
-        backupFrequencySettingName,
-        backupFrequency as string,
-      )
+      await application.settings.updateSetting(backupFrequencySettingName, backupFrequency as string)
       void application.alertService.alert(
         'A backup has been triggered for this provider. Please allow a couple minutes for your backup to be processed.',
       )
     } catch (err) {
       application.alertService
-        .alert(
-          'There was an error while trying to trigger a backup for this provider. Please try again.',
-        )
+        .alert('There was an error while trying to trigger a backup for this provider. Please try again.')
         .catch(console.error)
     }
   }
@@ -184,8 +179,8 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
       {authBegan && (
         <div>
           <p className="sk-panel-row">
-            Complete authentication from the newly opened window. Upon completion, a confirmation
-            code will be displayed. Enter this code below:
+            Complete authentication from the newly opened window. Upon completion, a confirmation code will be
+            displayed. Enter this code below:
           </p>
           <div className={'mt-1'}>
             <input

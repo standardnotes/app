@@ -67,14 +67,12 @@ const PaneSelector: FunctionComponent<PreferencesProps & { menu: PreferencesMenu
   },
 )
 
-const PreferencesCanvas: FunctionComponent<PreferencesProps & { menu: PreferencesMenu }> = observer(
-  (props) => (
-    <div className="flex flex-row flex-grow min-h-0 justify-between">
-      <PreferencesMenuView menu={props.menu} />
-      <PaneSelector {...props} />
-    </div>
-  ),
-)
+const PreferencesCanvas: FunctionComponent<PreferencesProps & { menu: PreferencesMenu }> = observer((props) => (
+  <div className="flex flex-row flex-grow min-h-0 justify-between">
+    <PreferencesMenuView menu={props.menu} />
+    <PaneSelector {...props} />
+  </div>
+))
 
 export const PreferencesView: FunctionComponent<PreferencesProps> = observer((props) => {
   const menu = useMemo(

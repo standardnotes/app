@@ -24,8 +24,7 @@ export const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentP
         return undefined
       }
 
-      const componentViewer =
-        application.componentManager.createComponentViewer(editorForCurrentNote)
+      const componentViewer = application.componentManager.createComponentViewer(editorForCurrentNote)
       componentViewer.setReadonly(true)
       componentViewer.lockReadonly = true
       componentViewer.overrideContextItem = templateNoteForRevision

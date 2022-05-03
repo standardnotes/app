@@ -1,12 +1,4 @@
-import {
-  JSX,
-  FunctionComponent,
-  ComponentChildren,
-  VNode,
-  RefCallback,
-  ComponentChild,
-  toChildArray,
-} from 'preact'
+import { JSX, FunctionComponent, ComponentChildren, VNode, RefCallback, ComponentChild, toChildArray } from 'preact'
 import { useEffect, useRef } from 'preact/hooks'
 import { JSXInternal } from 'preact/src/jsx'
 import { MenuItem, MenuItemListElement } from './MenuItem'
@@ -70,11 +62,7 @@ export const Menu: FunctionComponent<MenuProps> = ({
     }
   }
 
-  const mapMenuItems = (
-    child: ComponentChild,
-    index: number,
-    array: ComponentChild[],
-  ): ComponentChild => {
+  const mapMenuItems = (child: ComponentChild, index: number, array: ComponentChild[]): ComponentChild => {
     if (!child || (Array.isArray(child) && child.length < 1)) {
       return
     }
@@ -84,8 +72,7 @@ export const Menu: FunctionComponent<MenuProps> = ({
     }
 
     const _child = child as VNode<unknown>
-    const isFirstMenuItem =
-      index === array.findIndex((child) => (child as VNode<unknown>).type === MenuItem)
+    const isFirstMenuItem = index === array.findIndex((child) => (child as VNode<unknown>).type === MenuItem)
 
     const hasMultipleItems = Array.isArray(_child.props.children)
       ? Array.from(_child.props.children as ComponentChild[]).some(

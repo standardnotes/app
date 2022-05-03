@@ -36,9 +36,7 @@ export const TagsList: FunctionComponent<Props> = observer(({ appState }) => {
   return (
     <DndProvider backend={backend}>
       {allTags.length === 0 ? (
-        <div className="no-tags-placeholder">
-          No tags or folders. Create one using the add button above.
-        </div>
+        <div className="no-tags-placeholder">No tags or folders. Create one using the add button above.</div>
       ) : (
         <>
           {allTags.map((tag) => {

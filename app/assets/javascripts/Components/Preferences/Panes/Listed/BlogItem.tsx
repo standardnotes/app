@@ -11,11 +11,7 @@ type Props = {
   application: WebApplication
 }
 
-export const ListedAccountItem: FunctionalComponent<Props> = ({
-  account,
-  showSeparator,
-  application,
-}) => {
+export const ListedAccountItem: FunctionalComponent<Props> = ({ account, showSeparator, application }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [accountInfo, setAccountInfo] = useState<ListedAccountInfo>()
 

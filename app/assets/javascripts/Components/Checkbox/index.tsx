@@ -8,13 +8,7 @@ type CheckboxProps = {
   label: string
 }
 
-export const Checkbox: FunctionComponent<CheckboxProps> = ({
-  name,
-  checked,
-  onChange,
-  disabled,
-  label,
-}) => {
+export const Checkbox: FunctionComponent<CheckboxProps> = ({ name, checked, onChange, disabled, label }) => {
   return (
     <label htmlFor={name} className="flex items-center fit-content mb-2">
       <input

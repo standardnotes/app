@@ -22,8 +22,8 @@ const Toggle: FunctionComponent<{
 /**
  * Password input that has a toggle to show/hide password and can be decorated on the left and right side
  */
-export const DecoratedPasswordInput: FunctionComponent<Omit<DecoratedInputProps, 'type'>> =
-  forwardRef((props, ref: Ref<HTMLInputElement>) => {
+export const DecoratedPasswordInput: FunctionComponent<Omit<DecoratedInputProps, 'type'>> = forwardRef(
+  (props, ref: Ref<HTMLInputElement>) => {
     const [isToggled, setIsToggled] = useState(false)
 
     const rightSideDecorations = props.right ? [...props.right] : []
@@ -33,10 +33,8 @@ export const DecoratedPasswordInput: FunctionComponent<Omit<DecoratedInputProps,
         {...props}
         ref={ref}
         type={isToggled ? 'text' : 'password'}
-        right={[
-          ...rightSideDecorations,
-          <Toggle isToggled={isToggled} setIsToggled={setIsToggled} />,
-        ]}
+        right={[...rightSideDecorations, <Toggle isToggled={isToggled} setIsToggled={setIsToggled} />]}
       />
     )
-  })
+  },
+)

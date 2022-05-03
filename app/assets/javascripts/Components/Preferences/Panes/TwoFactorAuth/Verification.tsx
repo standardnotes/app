@@ -18,9 +18,7 @@ export const Verification: FunctionComponent<{
   const authTokenClass = act.verificationStatus === 'invalid-auth-code' ? 'border-danger' : ''
   return (
     <ModalDialog>
-      <ModalDialogLabel closeDialog={act.cancelActivation}>
-        Step 3 of 3 - Verification
-      </ModalDialogLabel>
+      <ModalDialogLabel closeDialog={act.cancelActivation}>Step 3 of 3 - Verification</ModalDialogLabel>
       <ModalDialogDescription className="h-33">
         <div className="flex-grow flex flex-col">
           <div className="flex flex-row items-center mb-4">
@@ -45,21 +43,12 @@ export const Verification: FunctionComponent<{
       </ModalDialogDescription>
       <ModalDialogButtons>
         {act.verificationStatus === 'invalid-auth-code' && (
-          <div className="text-sm color-danger flex-grow">
-            Incorrect authentication code, please try again.
-          </div>
+          <div className="text-sm color-danger flex-grow">Incorrect authentication code, please try again.</div>
         )}
         {act.verificationStatus === 'invalid-secret' && (
-          <div className="text-sm color-danger flex-grow">
-            Incorrect secret key, please try again.
-          </div>
+          <div className="text-sm color-danger flex-grow">Incorrect secret key, please try again.</div>
         )}
-        <Button
-          className="min-w-20"
-          variant="normal"
-          label="Back"
-          onClick={act.openSaveSecretKey}
-        />
+        <Button className="min-w-20" variant="normal" label="Back" onClick={act.openSaveSecretKey} />
         <Button className="min-w-20" variant="primary" label="Next" onClick={act.enable2FA} />
       </ModalDialogButtons>
     </ModalDialog>

@@ -1,10 +1,6 @@
 import { FunctionComponent } from 'preact'
 import { SNComponent } from '@standardnotes/snjs'
-import {
-  PreferencesSegment,
-  SubtitleLight,
-  Title,
-} from '@/Components/Preferences/PreferencesComponents'
+import { PreferencesSegment, SubtitleLight, Title } from '@/Components/Preferences/PreferencesComponents'
 import { Switch } from '@/Components/Switch'
 import { WebApplication } from '@/UIModels/Application'
 import { useState } from 'preact/hooks'
@@ -30,12 +26,7 @@ export interface ExtensionItemProps {
   toggleActivate?: (extension: SNComponent) => void
 }
 
-export const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({
-  application,
-  extension,
-  first,
-  uninstall,
-}) => {
+export const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({ application, extension, first, uninstall }) => {
   const [offlineOnly, setOfflineOnly] = useState(extension.offlineOnly ?? false)
   const [extensionName, setExtensionName] = useState(extension.name)
 
@@ -95,12 +86,7 @@ export const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({
       <>
         <div className="min-h-2" />
         <div className="flex flex-row">
-          <Button
-            className="min-w-20"
-            variant="normal"
-            label="Uninstall"
-            onClick={() => uninstall(extension)}
-          />
+          <Button className="min-w-20" variant="normal" label="Uninstall" onClick={() => uninstall(extension)} />
         </div>
       </>
     </PreferencesSegment>

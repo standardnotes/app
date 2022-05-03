@@ -1,12 +1,5 @@
 import { WebApplication } from '@/UIModels/Application'
-import {
-  Action,
-  ActionVerb,
-  HistoryEntry,
-  NoteHistoryEntry,
-  RevisionListEntry,
-  SNNote,
-} from '@standardnotes/snjs'
+import { Action, ActionVerb, HistoryEntry, NoteHistoryEntry, RevisionListEntry, SNNote } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
 import { StateUpdater, useCallback, useState } from 'preact/hooks'
@@ -55,26 +48,19 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
       const fetchLegacyHistory = async () => {
         const actionExtensions = application.actionsManager.getExtensions()
         actionExtensions.forEach(async (ext) => {
-          const actionExtension = await application.actionsManager.loadExtensionInContextOfItem(
-            ext,
-            note,
-          )
+          const actionExtension = await application.actionsManager.loadExtensionInContextOfItem(ext, note)
 
           if (!actionExtension) {
             return
           }
 
-          const isLegacyNoteHistoryExt = actionExtension?.actions.some(
-            (action) => action.verb === ActionVerb.Nested,
-          )
+          const isLegacyNoteHistoryExt = actionExtension?.actions.some((action) => action.verb === ActionVerb.Nested)
 
           if (!isLegacyNoteHistoryExt) {
             return
           }
 
-          const legacyHistoryEntries = actionExtension.actions.filter(
-            (action) => action.subactions?.[0],
-          )
+          const legacyHistoryEntries = actionExtension.actions.filter((action) => action.subactions?.[0])
 
           setLegacyHistory(legacyHistoryEntries)
         })
@@ -114,10 +100,7 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
             throw new Error('Could not find revision action url')
           }
 
-          const response = await application.actionsManager.runAction(
-            revisionListEntry.subactions[0],
-            note,
-          )
+          const response = await application.actionsManager.runAction(revisionListEntry.subactions[0], note)
 
           if (!response) {
             throw new Error('Could not fetch revision')
@@ -131,13 +114,7 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
           setIsFetchingSelectedRevision(false)
         }
       },
-      [
-        application.actionsManager,
-        note,
-        setIsFetchingSelectedRevision,
-        setSelectedRemoteEntry,
-        setSelectedRevision,
-      ],
+      [application.actionsManager, note, setIsFetchingSelectedRevision, setSelectedRemoteEntry, setSelectedRevision],
     )
 
     const fetchAndSetRemoteRevision = useCallback(
@@ -150,10 +127,7 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
           setSelectedRemoteEntry(undefined)
 
           try {
-            const remoteRevision = await application.historyManager.fetchRemoteRevision(
-              note,
-              revisionListEntry,
-            )
+            const remoteRevision = await application.historyManager.fetchRemoteRevision(note, revisionListEntry)
             setSelectedRevision(remoteRevision)
             setSelectedRemoteEntry(revisionListEntry)
           } catch (err) {
@@ -177,17 +151,11 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
     )
 
     return (
-      <div
-        className={
-          'flex flex-col min-w-60 border-0 border-r-1px border-solid border-main overflow-auto h-full'
-        }
-      >
+      <div className={'flex flex-col min-w-60 border-0 border-r-1px border-solid border-main overflow-auto h-full'}>
         <div className="flex border-0 border-b-1 border-solid border-main">
           <TabButton type={RevisionListTabType.Remote} />
           <TabButton type={RevisionListTabType.Session} />
-          {legacyHistory && legacyHistory.length > 0 && (
-            <TabButton type={RevisionListTabType.Legacy} />
-          )}
+          {legacyHistory && legacyHistory.length > 0 && <TabButton type={RevisionListTabType.Legacy} />}
         </div>
         <div className={'min-h-0 overflow-auto py-1.5 h-full'}>
           {selectedTab === RevisionListTabType.Session && (

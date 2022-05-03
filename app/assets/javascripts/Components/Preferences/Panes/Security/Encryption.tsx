@@ -3,12 +3,7 @@ import { STRING_E2E_ENABLED, STRING_ENC_NOT_ENABLED, STRING_LOCAL_ENC_ENABLED } 
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
 import { ComponentChild, FunctionComponent } from 'preact'
-import {
-  PreferencesGroup,
-  PreferencesSegment,
-  Text,
-  Title,
-} from '@/Components/Preferences/PreferencesComponents'
+import { PreferencesGroup, PreferencesSegment, Text, Title } from '@/Components/Preferences/PreferencesComponents'
 
 const formatCount = (count: number, itemType: string) => `${count} / ${count} ${itemType}`
 

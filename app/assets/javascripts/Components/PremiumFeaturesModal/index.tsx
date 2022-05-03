@@ -51,8 +51,8 @@ export const PremiumFeaturesModal: FunctionalComponent<Props> = ({
             <div className="text-lg text-center font-bold mb-1">Enable Premium Features</div>
           </AlertDialogLabel>
           <AlertDialogDescription className="text-sm text-center color-grey-1 px-4.5 mb-2">
-            In order to use <span className="font-semibold">{featureName}</span> and other premium
-            features, please purchase a subscription or upgrade your current plan.
+            In order to use <span className="font-semibold">{featureName}</span> and other premium features, please
+            purchase a subscription or upgrade your current plan.
           </AlertDialogDescription>
           <div className="p-4">
             <button

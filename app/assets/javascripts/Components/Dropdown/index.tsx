@@ -1,11 +1,4 @@
-import {
-  ListboxArrow,
-  ListboxButton,
-  ListboxInput,
-  ListboxList,
-  ListboxOption,
-  ListboxPopover,
-} from '@reach/listbox'
+import { ListboxArrow, ListboxButton, ListboxInput, ListboxList, ListboxOption, ListboxPopover } from '@reach/listbox'
 import VisuallyHidden from '@reach/visually-hidden'
 import { FunctionComponent } from 'preact'
 import { Icon } from '@/Components/Icon'
@@ -53,14 +46,7 @@ const CustomDropdownButton: FunctionComponent<ListboxButtonProps> = ({
   </>
 )
 
-export const Dropdown: FunctionComponent<DropdownProps> = ({
-  id,
-  label,
-  items,
-  value,
-  onChange,
-  disabled,
-}) => {
+export const Dropdown: FunctionComponent<DropdownProps> = ({ id, label, items, value, onChange, disabled }) => {
   const labelId = `${id}-label`
 
   const handleChange = (value: string) => {
@@ -72,12 +58,7 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({
   return (
     <>
       <VisuallyHidden id={labelId}>{label}</VisuallyHidden>
-      <ListboxInput
-        value={value}
-        onChange={handleChange}
-        aria-labelledby={labelId}
-        disabled={disabled}
-      >
+      <ListboxInput value={value} onChange={handleChange} aria-labelledby={labelId} disabled={disabled}>
         <ListboxButton
           className="sn-dropdown-button"
           children={({ value, label, isExpanded }) => {
@@ -105,10 +86,7 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({
                 >
                   {item.icon ? (
                     <div className="flex mr-3">
-                      <Icon
-                        type={item.icon}
-                        className={`sn-icon--small ${item.iconClassName ?? ''}`}
-                      />
+                      <Icon type={item.icon} className={`sn-icon--small ${item.iconClassName ?? ''}`} />
                     </div>
                   ) : null}
                   <div className="text-input">{item.label}</div>

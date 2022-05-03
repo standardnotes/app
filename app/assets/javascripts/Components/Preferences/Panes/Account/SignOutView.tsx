@@ -33,11 +33,7 @@ const SignOutView: FunctionComponent<{
                 appState.accountMenu.setOtherSessionsSignOut(true)
               }}
             />
-            <Button
-              variant="normal"
-              label="Manage sessions"
-              onClick={() => appState.openSessionsModal()}
-            />
+            <Button variant="normal" label="Manage sessions" onClick={() => appState.openSessionsModal()} />
           </div>
         </PreferencesSegment>
         <PreferencesSegment>

@@ -76,11 +76,7 @@ type ListedActionsMenuProps = {
   recalculateMenuStyle: () => void
 }
 
-const ListedActionsMenu: FunctionComponent<ListedActionsMenuProps> = ({
-  application,
-  note,
-  recalculateMenuStyle,
-}) => {
+const ListedActionsMenu: FunctionComponent<ListedActionsMenuProps> = ({ application, note, recalculateMenuStyle }) => {
   const [menuGroups, setMenuGroups] = useState<ListedMenuGroup[]>([])
   const [isFetchingAccounts, setIsFetchingAccounts] = useState(true)
 
@@ -251,11 +247,7 @@ export const ListedActionsOption: FunctionComponent<Props> = ({ application, not
   return (
     <div ref={menuContainerRef}>
       <Disclosure open={isMenuOpen} onChange={toggleListedMenu}>
-        <DisclosureButton
-          ref={menuButtonRef}
-          onBlur={closeOnBlur}
-          className="sn-dropdown-item justify-between"
-        >
+        <DisclosureButton ref={menuButtonRef} onBlur={closeOnBlur} className="sn-dropdown-item justify-between">
           <div className="flex items-center">
             <Icon type="listed" className="color-neutral mr-2" />
             Listed actions
@@ -271,11 +263,7 @@ export const ListedActionsOption: FunctionComponent<Props> = ({ application, not
           className="sn-dropdown flex flex-col max-h-120 min-w-68 pb-1 fixed overflow-y-auto"
         >
           {isMenuOpen && (
-            <ListedActionsMenu
-              application={application}
-              note={note}
-              recalculateMenuStyle={recalculateMenuStyle}
-            />
+            <ListedActionsMenu application={application} note={note} recalculateMenuStyle={recalculateMenuStyle} />
           )}
         </DisclosurePanel>
       </Disclosure>

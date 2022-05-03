@@ -43,13 +43,7 @@ export const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = obse
       if (firstEntry && !selectedEntryUuid.length) {
         selectFirstEntry()
       }
-    }, [
-      fetchAndSetRemoteRevision,
-      firstEntry,
-      remoteHistory,
-      selectFirstEntry,
-      selectedEntryUuid.length,
-    ])
+    }, [fetchAndSetRemoteRevision, firstEntry, remoteHistory, selectFirstEntry, selectedEntryUuid.length])
 
     return (
       <div
@@ -76,9 +70,7 @@ export const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = obse
                 >
                   <div className="flex flex-grow items-center justify-between">
                     <div>{previewHistoryEntryTitle(entry)}</div>
-                    {!application.features.hasMinimumRole(entry.required_role) && (
-                      <Icon type="premium-feature" />
-                    )}
+                    {!application.features.hasMinimumRole(entry.required_role) && <Icon type="premium-feature" />}
                   </div>
                 </HistoryListItem>
               ))}

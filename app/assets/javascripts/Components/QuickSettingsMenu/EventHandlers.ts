@@ -9,8 +9,7 @@ export const quickSettingsKeyDownHandler = (
   themesMenuOpen: boolean,
 ) => {
   if (quickSettingsMenuRef?.current) {
-    const items: NodeListOf<HTMLButtonElement> =
-      quickSettingsMenuRef.current.querySelectorAll(':scope > button')
+    const items: NodeListOf<HTMLButtonElement> = quickSettingsMenuRef.current.querySelectorAll(':scope > button')
     const currentFocusedIndex = Array.from(items).findIndex((btn) => btn === document.activeElement)
 
     if (!themesMenuOpen) {
@@ -45,9 +44,7 @@ export const themesMenuKeyDownHandler = (
 ) => {
   if (themesMenuRef?.current) {
     const themes = themesMenuRef.current.querySelectorAll('button')
-    const currentFocusedIndex = Array.from(themes).findIndex(
-      (themeBtn) => themeBtn === document.activeElement,
-    )
+    const currentFocusedIndex = Array.from(themes).findIndex((themeBtn) => themeBtn === document.activeElement)
 
     switch (event.key) {
       case 'Escape':

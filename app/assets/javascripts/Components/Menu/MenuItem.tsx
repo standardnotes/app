@@ -65,15 +65,9 @@ export const MenuItem: FunctionComponent<MenuItemProps> = forwardRef(
         onBlur={onBlur}
         {...(type === MenuItemType.RadioButton ? { 'aria-checked': checked } : {})}
       >
-        {type === MenuItemType.IconButton && icon ? (
-          <Icon type={icon} className={iconClassName} />
-        ) : null}
+        {type === MenuItemType.IconButton && icon ? <Icon type={icon} className={iconClassName} /> : null}
         {type === MenuItemType.RadioButton && typeof checked === 'boolean' ? (
-          <div
-            className={`pseudo-radio-btn ${
-              checked ? 'pseudo-radio-btn--checked' : ''
-            } mr-2 flex-shrink-0`}
-          ></div>
+          <div className={`pseudo-radio-btn ${checked ? 'pseudo-radio-btn--checked' : ''} mr-2 flex-shrink-0`}></div>
         ) : null}
         {children}
       </button>
@@ -81,9 +75,7 @@ export const MenuItem: FunctionComponent<MenuItemProps> = forwardRef(
   },
 )
 
-export const MenuItemSeparator: FunctionComponent = () => (
-  <div role="separator" className="h-1px my-2 bg-border"></div>
-)
+export const MenuItemSeparator: FunctionComponent = () => <div role="separator" className="h-1px my-2 bg-border"></div>
 
 type ListElementProps = {
   isFirstMenuItem: boolean

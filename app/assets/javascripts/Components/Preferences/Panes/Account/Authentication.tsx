@@ -1,11 +1,6 @@
 import { AccountMenuPane } from '@/Components/AccountMenu'
 import { Button } from '@/Components/Button/Button'
-import {
-  PreferencesGroup,
-  PreferencesSegment,
-  Text,
-  Title,
-} from '@/Components/Preferences/PreferencesComponents'
+import { PreferencesGroup, PreferencesSegment, Text, Title } from '@/Components/Preferences/PreferencesComponents'
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
@@ -35,21 +30,12 @@ export const Authentication: FunctionComponent<{
           <AccountIllustration className="mb-3" />
           <Title>You're not signed in</Title>
           <Text className="text-center mb-3">
-            Sign in to sync your notes and preferences across all your devices and enable end-to-end
-            encryption.
+            Sign in to sync your notes and preferences across all your devices and enable end-to-end encryption.
           </Text>
-          <Button
-            variant="primary"
-            label="Create free account"
-            onClick={clickRegister}
-            className="mb-3"
-          />
+          <Button variant="primary" label="Create free account" onClick={clickRegister} className="mb-3" />
           <div className="text-input">
             Already have an account?{' '}
-            <button
-              className="border-0 p-0 bg-default color-info underline cursor-pointer"
-              onClick={clickSignIn}
-            >
+            <button className="border-0 p-0 bg-default color-info underline cursor-pointer" onClick={clickSignIn}>
               Sign in
             </button>
           </div>

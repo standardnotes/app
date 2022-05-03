@@ -10,9 +10,7 @@ export type PurchaseFlowWrapperProps = {
   application: WebApplication
 }
 
-export const getPurchaseFlowUrl = async (
-  application: WebApplication,
-): Promise<string | undefined> => {
+export const getPurchaseFlowUrl = async (application: WebApplication): Promise<string | undefined> => {
   const currentUrl = window.location.origin
   const successUrl = isDesktopApplication() ? 'standardnotes://' : currentUrl
   if (application.noAccount()) {

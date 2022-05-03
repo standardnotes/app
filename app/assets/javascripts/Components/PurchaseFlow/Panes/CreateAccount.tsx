@@ -8,12 +8,7 @@ import { useEffect, useRef, useState } from 'preact/hooks'
 import { FloatingLabelInput } from '@/Components/Input/FloatingLabelInput'
 import { isEmailValid } from '@/Utils'
 import { loadPurchaseFlowUrl } from '@/Components/PurchaseFlow/PurchaseFlowWrapper'
-import {
-  BlueDotIcon,
-  CircleIcon,
-  DiamondIcon,
-  CreateAccountIllustration,
-} from '@standardnotes/stylekit'
+import { BlueDotIcon, CircleIcon, DiamondIcon, CreateAccountIllustration } from '@standardnotes/stylekit'
 
 type Props = {
   appState: AppState
@@ -145,9 +140,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(({ appState, app
               disabled={isCreatingAccount}
               isInvalid={isEmailInvalid}
             />
-            {isEmailInvalid ? (
-              <div className="color-dark-red mb-4">Please provide a valid email.</div>
-            ) : null}
+            {isEmailInvalid ? <div className="color-dark-red mb-4">Please provide a valid email.</div> : null}
             <FloatingLabelInput
               className="min-w-90 xs:min-w-auto mb-4"
               id="purchase-create-account-password"

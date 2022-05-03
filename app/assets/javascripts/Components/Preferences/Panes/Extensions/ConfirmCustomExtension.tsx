@@ -1,12 +1,7 @@
 import { DisplayStringForContentType, SNComponent } from '@standardnotes/snjs'
 import { Button } from '@/Components/Button/Button'
 import { FunctionComponent } from 'preact'
-import {
-  Title,
-  Text,
-  Subtitle,
-  PreferencesSegment,
-} from '@/Components/Preferences/PreferencesComponents'
+import { Title, Text, Subtitle, PreferencesSegment } from '@/Components/Preferences/PreferencesComponents'
 
 export const ConfirmCustomExtension: FunctionComponent<{
   component: SNComponent
@@ -59,21 +54,11 @@ export const ConfirmCustomExtension: FunctionComponent<{
       <div className="min-h-3" />
 
       <div className="flex flex-row">
-        <Button
-          className="min-w-20"
-          variant="normal"
-          label="Cancel"
-          onClick={() => callback(false)}
-        />
+        <Button className="min-w-20" variant="normal" label="Cancel" onClick={() => callback(false)} />
 
         <div className="min-w-3" />
 
-        <Button
-          className="min-w-20"
-          variant="normal"
-          label="Install"
-          onClick={() => callback(true)}
-        />
+        <Button className="min-w-20" variant="normal" label="Install" onClick={() => callback(true)} />
       </div>
     </PreferencesSegment>
   )

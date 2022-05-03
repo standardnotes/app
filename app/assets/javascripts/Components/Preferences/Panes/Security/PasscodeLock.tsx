@@ -18,12 +18,7 @@ import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import { ApplicationEvent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { AppState } from '@/UIModels/AppState'
-import {
-  PreferencesSegment,
-  Title,
-  Text,
-  PreferencesGroup,
-} from '@/Components/Preferences/PreferencesComponents'
+import { PreferencesSegment, Title, Text, PreferencesGroup } from '@/Components/Preferences/PreferencesComponents'
 import { Button } from '@/Components/Button/Button'
 
 type Props = {
@@ -35,8 +30,7 @@ export const PasscodeLock = observer(({ application, appState }: Props) => {
   const keyStorageInfo = StringUtils.keyStorageInfo(application)
   const passcodeAutoLockOptions = application.getAutolockService().getAutoLockIntervalOptions()
 
-  const { setIsEncryptionEnabled, setIsBackupEncrypted, setEncryptionStatusString } =
-    appState.accountMenu
+  const { setIsEncryptionEnabled, setIsBackupEncrypted, setEncryptionStatusString } = appState.accountMenu
 
   const passcodeInputRef = useRef<HTMLInputElement>(null)
 
@@ -109,9 +103,7 @@ export const PasscodeLock = observer(({ application, appState }: Props) => {
     setPasscodeConfirmation(value)
   }
 
-  const submitPasscodeForm = async (
-    event: TargetedEvent<HTMLFormElement> | TargetedMouseEvent<HTMLButtonElement>,
-  ) => {
+  const submitPasscodeForm = async (event: TargetedEvent<HTMLFormElement> | TargetedMouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
     if (!passcode || passcode.length === 0) {
@@ -183,22 +175,18 @@ export const PasscodeLock = observer(({ application, appState }: Props) => {
 
           {!hasPasscode && canAddPasscode && (
             <>
-              <Text className="mb-3">
-                Add a passcode to lock the application and encrypt on-device key storage.
-              </Text>
+              <Text className="mb-3">Add a passcode to lock the application and encrypt on-device key storage.</Text>
 
               {keyStorageInfo && <Text className="mb-3">{keyStorageInfo}</Text>}
 
-              {!showPasscodeForm && (
-                <Button label="Add passcode" onClick={handleAddPassCode} variant="primary" />
-              )}
+              {!showPasscodeForm && <Button label="Add passcode" onClick={handleAddPassCode} variant="primary" />}
             </>
           )}
 
           {!hasPasscode && !canAddPasscode && (
             <Text>
-              Adding a passcode is not supported in temporary sessions. Please sign out, then sign
-              back in with the "Stay signed in" option checked.
+              Adding a passcode is not supported in temporary sessions. Please sign out, then sign back in with the
+              "Stay signed in" option checked.
             </Text>
           )}
 
@@ -221,12 +209,7 @@ export const PasscodeLock = observer(({ application, appState }: Props) => {
                 placeholder="Confirm Passcode"
               />
               <div className="min-h-2" />
-              <Button
-                variant="primary"
-                onClick={submitPasscodeForm}
-                label="Set Passcode"
-                className="mr-3"
-              />
+              <Button variant="primary" onClick={submitPasscodeForm} label="Set Passcode" className="mr-3" />
               <Button variant="normal" onClick={() => setShowPasscodeForm(false)} label="Cancel" />
             </form>
           )}
@@ -235,17 +218,8 @@ export const PasscodeLock = observer(({ application, appState }: Props) => {
             <>
               <Text>Passcode lock is enabled.</Text>
               <div className="flex flex-row mt-3">
-                <Button
-                  variant="normal"
-                  label="Change Passcode"
-                  onClick={changePasscodePressed}
-                  className="mr-3"
-                />
-                <Button
-                  dangerStyle={true}
-                  label="Remove Passcode"
-                  onClick={removePasscodePressed}
-                />
+                <Button variant="normal" label="Change Passcode" onClick={changePasscodePressed} className="mr-3" />
+                <Button dangerStyle={true} label="Remove Passcode" onClick={removePasscodePressed} />
               </div>
             </>
           )}
@@ -258,16 +232,12 @@ export const PasscodeLock = observer(({ application, appState }: Props) => {
           <PreferencesGroup>
             <PreferencesSegment>
               <Title>Autolock</Title>
-              <Text className="mb-3">
-                The autolock timer begins when the window or tab loses focus.
-              </Text>
+              <Text className="mb-3">The autolock timer begins when the window or tab loses focus.</Text>
               <div className="flex flex-row items-center">
                 {passcodeAutoLockOptions.map((option) => {
                   return (
                     <a
-                      className={`sk-a info mr-3 ${
-                        option.value === selectedAutoLockInterval ? 'boxed' : ''
-                      }`}
+                      className={`sk-a info mr-3 ${option.value === selectedAutoLockInterval ? 'boxed' : ''}`}
                       onClick={() => selectAutoLockInterval(option.value)}
                     >
                       {option.label}

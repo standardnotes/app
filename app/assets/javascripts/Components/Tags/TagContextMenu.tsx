@@ -24,9 +24,7 @@ export const TagsContextMenu: FunctionComponent<Props> = observer(({ appState })
   const { contextMenuOpen, contextMenuPosition, contextMenuMaxHeight } = appState.tags
 
   const contextMenuRef = useRef<HTMLDivElement>(null)
-  const [closeOnBlur] = useCloseOnBlur(contextMenuRef, (open: boolean) =>
-    appState.tags.setContextMenuOpen(open),
-  )
+  const [closeOnBlur] = useCloseOnBlur(contextMenuRef, (open: boolean) => appState.tags.setContextMenuOpen(open))
 
   const reloadContextMenuLayout = useCallback(() => {
     appState.tags.reloadContextMenuLayout()
@@ -86,21 +84,11 @@ export const TagsContextMenu: FunctionComponent<Props> = observer(({ appState })
           </div>
           {!appState.features.hasFolders && <Icon type="premium-feature" />}
         </MenuItem>
-        <MenuItem
-          type={MenuItemType.IconButton}
-          onBlur={closeOnBlur}
-          className={'py-1.5'}
-          onClick={onClickRename}
-        >
+        <MenuItem type={MenuItemType.IconButton} onBlur={closeOnBlur} className={'py-1.5'} onClick={onClickRename}>
           <Icon type="pencil-filled" className="color-neutral mr-2" />
           Rename
         </MenuItem>
-        <MenuItem
-          type={MenuItemType.IconButton}
-          onBlur={closeOnBlur}
-          className={'py-1.5'}
-          onClick={onClickDelete}
-        >
+        <MenuItem type={MenuItemType.IconButton} onBlur={closeOnBlur} className={'py-1.5'} onClick={onClickDelete}>
           <Icon type="trash" className="mr-2 color-danger" />
           <span className="color-danger">Delete</span>
         </MenuItem>

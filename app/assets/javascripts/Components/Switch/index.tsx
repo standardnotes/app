@@ -1,8 +1,4 @@
-import {
-  CustomCheckboxContainer,
-  CustomCheckboxInput,
-  CustomCheckboxInputProps,
-} from '@reach/checkbox'
+import { CustomCheckboxContainer, CustomCheckboxInput, CustomCheckboxInputProps } from '@reach/checkbox'
 import '@reach/checkbox/styles.css'
 import { ComponentChildren, FunctionalComponent } from 'preact'
 import { useState } from 'preact/hooks'
@@ -49,10 +45,7 @@ export const Switch: FunctionalComponent<SwitchProps> = (props: SwitchProps) => 
             children: undefined,
           } as CustomCheckboxInputProps)}
         />
-        <span
-          aria-hidden
-          className={`sn-switch-handle ${checked ? 'sn-switch-handle--right' : ''}`}
-        />
+        <span aria-hidden className={`sn-switch-handle ${checked ? 'sn-switch-handle--right' : ''}`} />
       </CustomCheckboxContainer>
     </label>
   )

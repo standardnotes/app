@@ -59,11 +59,7 @@ export class NotesViewState {
     hideEditorIcon: false,
   }
 
-  constructor(
-    private application: WebApplication,
-    private appState: AppState,
-    appObservers: (() => void)[],
-  ) {
+  constructor(private application: WebApplication, private appState: AppState, appObservers: (() => void)[]) {
     this.resetPagination()
 
     appObservers.push(
@@ -78,11 +74,7 @@ export class NotesViewState {
               this.appState.selectedTag instanceof SmartView &&
               this.appState.selectedTag?.uuid === SystemViewId.TrashedNotes
 
-            if (
-              activeNote.trashed &&
-              !browsingTrashedNotes &&
-              !this.appState?.searchOptions.includeTrashed
-            ) {
+            if (activeNote.trashed && !browsingTrashedNotes && !this.appState?.searchOptions.includeTrashed) {
               this.selectNextOrCreateNew()
             } else if (!this.selectedNotes[activeNote.uuid]) {
               this.selectNote(activeNote).catch(console.error)
@@ -99,10 +91,7 @@ export class NotesViewState {
         this.reloadNotesDisplayOptions()
         this.reloadNotes()
 
-        if (
-          this.appState.selectedTag &&
-          findInArray(tags, 'uuid', this.appState.selectedTag.uuid)
-        ) {
+        if (this.appState.selectedTag && findInArray(tags, 'uuid', this.appState.selectedTag.uuid)) {
           /** Tag title could have changed */
           this.reloadPanelTitle()
         }
@@ -271,33 +260,15 @@ export class NotesViewState {
       sortBy = CollectionSort.UpdatedAt
     }
     freshDisplayOptions.sortBy = sortBy
-    freshDisplayOptions.sortReverse = this.application.getPreference(
-      PrefKey.SortNotesReverse,
-      false,
-    )
-    freshDisplayOptions.showArchived = this.application.getPreference(
-      PrefKey.NotesShowArchived,
-      false,
-    )
-    freshDisplayOptions.showTrashed = this.application.getPreference(
-      PrefKey.NotesShowTrashed,
-      false,
-    ) as boolean
+    freshDisplayOptions.sortReverse = this.application.getPreference(PrefKey.SortNotesReverse, false)
+    freshDisplayOptions.showArchived = this.application.getPreference(PrefKey.NotesShowArchived, false)
+    freshDisplayOptions.showTrashed = this.application.getPreference(PrefKey.NotesShowTrashed, false) as boolean
     freshDisplayOptions.hidePinned = this.application.getPreference(PrefKey.NotesHidePinned, false)
-    freshDisplayOptions.hideProtected = this.application.getPreference(
-      PrefKey.NotesHideProtected,
-      false,
-    )
-    freshDisplayOptions.hideNotePreview = this.application.getPreference(
-      PrefKey.NotesHideNotePreview,
-      false,
-    )
+    freshDisplayOptions.hideProtected = this.application.getPreference(PrefKey.NotesHideProtected, false)
+    freshDisplayOptions.hideNotePreview = this.application.getPreference(PrefKey.NotesHideNotePreview, false)
     freshDisplayOptions.hideDate = this.application.getPreference(PrefKey.NotesHideDate, false)
     freshDisplayOptions.hideTags = this.application.getPreference(PrefKey.NotesHideTags, true)
-    freshDisplayOptions.hideEditorIcon = this.application.getPreference(
-      PrefKey.NotesHideEditorIcon,
-      false,
-    )
+    freshDisplayOptions.hideEditorIcon = this.application.getPreference(PrefKey.NotesHideEditorIcon, false)
     const displayOptionsChanged =
       freshDisplayOptions.sortBy !== this.displayOptions.sortBy ||
       freshDisplayOptions.sortReverse !== this.displayOptions.sortReverse ||
@@ -339,11 +310,7 @@ export class NotesViewState {
 
   createPlaceholderNote = () => {
     const selectedTag = this.appState.selectedTag
-    if (
-      selectedTag &&
-      selectedTag instanceof SmartView &&
-      selectedTag.uuid !== SystemViewId.AllNotes
-    ) {
+    if (selectedTag && selectedTag instanceof SmartView && selectedTag.uuid !== SystemViewId.AllNotes) {
       return
     }
     return this.createNewNote()
@@ -405,11 +372,7 @@ export class NotesViewState {
     return document.getElementById(ELEMENT_ID_SCROLL_CONTAINER)
   }
 
-  selectNote = async (
-    note: SNNote,
-    userTriggered?: boolean,
-    scrollIntoView = true,
-  ): Promise<void> => {
+  selectNote = async (note: SNNote, userTriggered?: boolean, scrollIntoView = true): Promise<void> => {
     await this.appState.notes.selectNote(note.uuid, userTriggered)
     if (scrollIntoView) {
       const noteElement = document.getElementById(`note-${note.uuid}`)

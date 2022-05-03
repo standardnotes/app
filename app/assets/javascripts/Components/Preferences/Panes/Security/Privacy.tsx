@@ -71,9 +71,7 @@ export const Privacy: FunctionalComponent<Props> = observer(({ application }: Pr
   const toggleMuteSignInEmails = async () => {
     const previousValue = signInEmailsMutedValue
     const newValue =
-      previousValue === MuteSignInEmailsOption.Muted
-        ? MuteSignInEmailsOption.NotMuted
-        : MuteSignInEmailsOption.Muted
+      previousValue === MuteSignInEmailsOption.Muted ? MuteSignInEmailsOption.NotMuted : MuteSignInEmailsOption.Muted
     setSignInEmailsMutedValue(newValue)
 
     const updateResult = await updateSetting(SettingName.MuteSignInEmails, newValue)
@@ -107,8 +105,8 @@ export const Privacy: FunctionalComponent<Props> = observer(({ application }: Pr
             <div className="flex flex-col">
               <Subtitle>Disable sign-in notification emails</Subtitle>
               <Text>
-                Disables email notifications when a new sign-in occurs on your account. (Email
-                notifications are available to paid subscribers).
+                Disables email notifications when a new sign-in occurs on your account. (Email notifications are
+                available to paid subscribers).
               </Text>
             </div>
             {isLoading ? (
@@ -125,9 +123,9 @@ export const Privacy: FunctionalComponent<Props> = observer(({ application }: Pr
             <div className="flex flex-col">
               <Subtitle>Session user agent logging</Subtitle>
               <Text>
-                User agent logging allows you to identify the devices or browsers signed into your
-                account. For increased privacy, you can disable this feature, which will remove all
-                saved user agent values from our server, and disable future logging of this value.
+                User agent logging allows you to identify the devices or browsers signed into your account. For
+                increased privacy, you can disable this feature, which will remove all saved user agent values from our
+                server, and disable future logging of this value.
               </Text>
             </div>
             {isLoading ? (

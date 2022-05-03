@@ -114,9 +114,7 @@ export const SignIn: FunctionComponent<Props> = observer(({ appState, applicatio
         <form onSubmit={handleSignIn}>
           <div className="flex flex-col">
             <FloatingLabelInput
-              className={`min-w-90 xs:min-w-auto ${
-                isEmailInvalid && !otherErrorMessage ? 'mb-2' : 'mb-4'
-              }`}
+              className={`min-w-90 xs:min-w-auto ${isEmailInvalid && !otherErrorMessage ? 'mb-2' : 'mb-4'}`}
               id="purchase-sign-in-email"
               type="email"
               label="Email"
@@ -140,9 +138,7 @@ export const SignIn: FunctionComponent<Props> = observer(({ appState, applicatio
               disabled={isSigningIn}
               isInvalid={isPasswordInvalid}
             />
-            {otherErrorMessage ? (
-              <div className="color-dark-red mb-4">{otherErrorMessage}</div>
-            ) : null}
+            {otherErrorMessage ? <div className="color-dark-red mb-4">{otherErrorMessage}</div> : null}
           </div>
           <Button
             className={`${isSigningIn ? 'min-w-30' : 'min-w-24'} py-2.5 mb-5`}

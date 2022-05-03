@@ -20,11 +20,7 @@ import {
 import { debounce, isDesktopApplication } from '@/Utils'
 import { KeyboardModifier, KeyboardKey } from '@/Services/IOService'
 import { EventSource } from '@/UIModels/AppState'
-import {
-  STRING_DELETE_PLACEHOLDER_ATTEMPT,
-  STRING_DELETE_LOCKED_ATTEMPT,
-  StringDeleteNote,
-} from '@/Strings'
+import { STRING_DELETE_PLACEHOLDER_ATTEMPT, STRING_DELETE_LOCKED_ATTEMPT, StringDeleteNote } from '@/Strings'
 import { confirmDialog } from '@/Services/AlertService'
 import { PureComponent } from '@/Components/Abstract/PureComponent'
 import { ProtectedNoteOverlay } from '@/Components/ProtectedNoteOverlay'
@@ -50,10 +46,7 @@ function sortAlphabetically(array: SNComponent[]): SNComponent[] {
   return array.sort((a, b) => (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1))
 }
 
-export const transactionForAssociateComponentWithCurrentNote = (
-  component: SNComponent,
-  note: SNNote,
-) => {
+export const transactionForAssociateComponentWithCurrentNote = (component: SNComponent, note: SNNote) => {
   const transaction: TransactionalMutation = {
     itemUuid: component.uuid,
     mutate: (m: ItemMutator) => {
@@ -65,10 +58,7 @@ export const transactionForAssociateComponentWithCurrentNote = (
   return transaction
 }
 
-export const transactionForDisassociateComponentWithCurrentNote = (
-  component: SNComponent,
-  note: SNNote,
-) => {
+export const transactionForDisassociateComponentWithCurrentNote = (component: SNComponent, note: SNNote) => {
   const transaction: TransactionalMutation = {
     itemUuid: component.uuid,
     mutate: (m: ItemMutator) => {
@@ -209,11 +199,9 @@ export class NoteView extends PureComponent<Props, State> {
 
     this.registerKeyboardShortcuts()
 
-    this.removeInnerNoteObserver = this.controller.addNoteInnerValueChangeObserver(
-      (note, source) => {
-        this.onNoteInnerChange(note, source)
-      },
-    )
+    this.removeInnerNoteObserver = this.controller.addNoteInnerValueChangeObserver((note, source) => {
+      this.onNoteInnerChange(note, source)
+    })
 
     this.autorun(() => {
       this.setState({
@@ -281,18 +269,15 @@ export class NoteView extends PureComponent<Props, State> {
 
     this.reloadSpellcheck().catch(console.error)
 
-    const isTemplateNoteInsertedToBeInteractableWithEditor =
-      source === PayloadEmitSource.LocalInserted && note.dirty
+    const isTemplateNoteInsertedToBeInteractableWithEditor = source === PayloadEmitSource.LocalInserted && note.dirty
     if (isTemplateNoteInsertedToBeInteractableWithEditor) {
       return
     }
 
     if (note.lastSyncBegan || note.dirty) {
       if (note.lastSyncEnd) {
-        const shouldShowSavingStatus =
-          note.lastSyncBegan && note.lastSyncBegan.getTime() > note.lastSyncEnd.getTime()
-        const shouldShowSavedStatus =
-          note.lastSyncBegan && note.lastSyncEnd.getTime() > note.lastSyncBegan.getTime()
+        const shouldShowSavingStatus = note.lastSyncBegan && note.lastSyncBegan.getTime() > note.lastSyncEnd.getTime()
+        const shouldShowSavedStatus = note.lastSyncBegan && note.lastSyncEnd.getTime() > note.lastSyncBegan.getTime()
         if (note.dirty || shouldShowSavingStatus) {
           this.showSavingStatus()
         } else if (this.state.noteStatus && shouldShowSavedStatus) {
@@ -367,15 +352,11 @@ export class NoteView extends PureComponent<Props, State> {
 
   hideProtectedNoteIfInactive(): void {
     const secondsElapsedSinceLastEdit = this.getSecondsElapsedSinceLastEdit()
-    if (
-      secondsElapsedSinceLastEdit >=
-      ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction
-    ) {
+    if (secondsElapsedSinceLastEdit >= ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction) {
       this.setShowProtectedOverlay(true)
     } else {
       const secondsUntilTheNextCheck =
-        ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction -
-        secondsElapsedSinceLastEdit
+        ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction - secondsElapsedSinceLastEdit
       this.startNoteProtectionInactivityTimer(secondsUntilTheNextCheck)
     }
   }
@@ -406,36 +387,24 @@ export class NoteView extends PureComponent<Props, State> {
   }
 
   streamItems() {
-    this.removeComponentStreamObserver = this.application.streamItems(
-      ContentType.Component,
-      async ({ source }) => {
-        if (
-          isPayloadSourceInternalChange(source) ||
-          source === PayloadEmitSource.InitialObserverRegistrationPush
-        ) {
-          return
-        }
-        if (!this.note) {
-          return
-        }
-        await this.reloadStackComponents()
-        this.debounceReloadEditorComponent()
-      },
-    )
+    this.removeComponentStreamObserver = this.application.streamItems(ContentType.Component, async ({ source }) => {
+      if (isPayloadSourceInternalChange(source) || source === PayloadEmitSource.InitialObserverRegistrationPush) {
+        return
+      }
+      if (!this.note) {
+        return
+      }
+      await this.reloadStackComponents()
+      this.debounceReloadEditorComponent()
+    })
   }
 
   private createComponentViewer(component: SNComponent) {
-    const viewer = this.application.componentManager.createComponentViewer(
-      component,
-      this.note.uuid,
-    )
+    const viewer = this.application.componentManager.createComponentViewer(component, this.note.uuid)
     return viewer
   }
 
-  public editorComponentViewerRequestsReload = async (
-    viewer: ComponentViewer,
-    force?: boolean,
-  ): Promise<void> => {
+  public editorComponentViewerRequestsReload = async (viewer: ComponentViewer, force?: boolean): Promise<void> => {
     if (this.state.editorComponentViewerDidAlreadyReload && !force) {
       return
     }
@@ -698,10 +667,7 @@ export class NoteView extends PureComponent<Props, State> {
   async reloadPreferences() {
     const monospaceFont = this.application.getPreference(PrefKey.EditorMonospaceEnabled, true)
 
-    const marginResizersEnabled = this.application.getPreference(
-      PrefKey.EditorResizersEnabled,
-      true,
-    )
+    const marginResizersEnabled = this.application.getPreference(PrefKey.EditorResizersEnabled, true)
 
     await this.reloadSpellcheck()
 
@@ -758,9 +724,7 @@ export class NoteView extends PureComponent<Props, State> {
 
     const newViewers: ComponentViewer[] = []
     for (const component of needsNewViewer) {
-      newViewers.push(
-        this.application.componentManager.createComponentViewer(component, this.note.uuid),
-      )
+      newViewers.push(this.application.componentManager.createComponentViewer(component, this.note.uuid))
     }
 
     for (const viewer of needsDestroyViewer) {
@@ -773,9 +737,7 @@ export class NoteView extends PureComponent<Props, State> {
   }
 
   stackComponentExpanded = (component: SNComponent): boolean => {
-    return !!this.state.stackComponentViewers.find(
-      (viewer) => viewer.componentUuid === component.uuid,
-    )
+    return !!this.state.stackComponentViewers.find((viewer) => viewer.componentUuid === component.uuid)
   }
 
   toggleStackComponent = async (component: SNComponent) => {
@@ -942,9 +904,7 @@ export class NoteView extends PureComponent<Props, State> {
                   className="sk-app-bar-item"
                 >
                   <div className="sk-label warning flex items-center">
-                    {this.state.showLockedIcon && (
-                      <Icon type="pencil-off" className="flex fill-current mr-2" />
-                    )}
+                    {this.state.showLockedIcon && <Icon type="pencil-off" className="flex fill-current mr-2" />}
                     {this.state.lockText}
                   </div>
                 </div>
@@ -984,9 +944,7 @@ export class NoteView extends PureComponent<Props, State> {
                       >
                         {this.state.noteStatus?.message}
                       </div>
-                      {this.state.noteStatus?.desc && (
-                        <div className="desc">{this.state.noteStatus.desc}</div>
-                      )}
+                      {this.state.noteStatus?.desc && <div className="desc">{this.state.noteStatus.desc}</div>}
                     </div>
                   </div>
                   {this.appState.features.isFilesEnabled && (
@@ -1022,11 +980,7 @@ export class NoteView extends PureComponent<Props, State> {
             </div>
           )}
 
-          <div
-            id={ElementIds.EditorContent}
-            className={ElementIds.EditorContent}
-            ref={this.editorContentRef}
-          >
+          <div id={ElementIds.EditorContent} className={ElementIds.EditorContent} ref={this.editorContentRef}>
             {this.state.marginResizersEnabled && this.editorContentRef.current ? (
               <PanelResizer
                 minWidth={300}
@@ -1053,22 +1007,20 @@ export class NoteView extends PureComponent<Props, State> {
               </div>
             )}
 
-            {this.state.editorStateDidLoad &&
-              !this.state.editorComponentViewer &&
-              !this.state.textareaUnloading && (
-                <textarea
-                  autocomplete="off"
-                  className="editable font-editor"
-                  dir="auto"
-                  id={ElementIds.NoteTextEditor}
-                  onChange={this.onTextAreaChange}
-                  value={this.state.editorText}
-                  readonly={this.state.noteLocked}
-                  onFocus={this.onContentFocus}
-                  spellcheck={this.state.spellcheck}
-                  ref={(ref) => this.onSystemEditorLoad(ref)}
-                ></textarea>
-              )}
+            {this.state.editorStateDidLoad && !this.state.editorComponentViewer && !this.state.textareaUnloading && (
+              <textarea
+                autocomplete="off"
+                className="editable font-editor"
+                dir="auto"
+                id={ElementIds.NoteTextEditor}
+                onChange={this.onTextAreaChange}
+                value={this.state.editorText}
+                readonly={this.state.noteLocked}
+                onFocus={this.onContentFocus}
+                spellcheck={this.state.spellcheck}
+                ref={(ref) => this.onSystemEditorLoad(ref)}
+              ></textarea>
+            )}
 
             {this.state.marginResizersEnabled && this.editorContentRef.current ? (
               <PanelResizer
@@ -1101,9 +1053,7 @@ export class NoteView extends PureComponent<Props, State> {
                         <div className="sk-app-bar-item-column">
                           <div
                             className={
-                              (this.stackComponentExpanded(component) && component.active
-                                ? 'info '
-                                : '') +
+                              (this.stackComponentExpanded(component) && component.active ? 'info ' : '') +
                               (!this.stackComponentExpanded(component) ? 'neutral ' : '') +
                               ' sk-circle small'
                             }

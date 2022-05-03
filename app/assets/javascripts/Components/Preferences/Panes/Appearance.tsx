@@ -3,14 +3,7 @@ import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
 import { Switch } from '@/Components/Switch'
 import { WebApplication } from '@/UIModels/Application'
-import {
-  ContentType,
-  FeatureIdentifier,
-  FeatureStatus,
-  PrefKey,
-  GetFeatures,
-  SNTheme,
-} from '@standardnotes/snjs'
+import { ContentType, FeatureIdentifier, FeatureStatus, PrefKey, GetFeatures, SNTheme } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
 import { useEffect, useState } from 'preact/hooks'
@@ -31,8 +24,7 @@ type Props = {
 export const Appearance: FunctionComponent<Props> = observer(({ application }) => {
   const premiumModal = usePremiumModal()
   const isEntitledToMidnightTheme =
-    application.features.getFeatureStatus(FeatureIdentifier.MidnightTheme) ===
-    FeatureStatus.Entitled
+    application.features.getFeatureStatus(FeatureIdentifier.MidnightTheme) === FeatureStatus.Entitled
 
   const [themeItems, setThemeItems] = useState<DropdownItem[]>([])
   const [autoLightTheme, setAutoLightTheme] = useState<string>(
@@ -100,9 +92,7 @@ export const Appearance: FunctionComponent<Props> = observer(({ application }) =
     if (item.icon === 'premium-feature') {
       premiumModal.activate(`${item.label} theme`)
     } else {
-      application
-        .setPreference(PrefKey.AutoLightThemeIdentifier, value as FeatureIdentifier)
-        .catch(console.error)
+      application.setPreference(PrefKey.AutoLightThemeIdentifier, value as FeatureIdentifier).catch(console.error)
       setAutoLightTheme(value)
     }
   }
@@ -111,9 +101,7 @@ export const Appearance: FunctionComponent<Props> = observer(({ application }) =
     if (item.icon === 'premium-feature') {
       premiumModal.activate(`${item.label} theme`)
     } else {
-      application
-        .setPreference(PrefKey.AutoDarkThemeIdentifier, value as FeatureIdentifier)
-        .catch(console.error)
+      application.setPreference(PrefKey.AutoDarkThemeIdentifier, value as FeatureIdentifier).catch(console.error)
       setAutoDarkTheme(value)
     }
   }

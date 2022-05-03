@@ -5,9 +5,7 @@ import { runInAction, makeObservable, observable, action } from 'mobx'
 export class NoAccountWarningState {
   show: boolean
   constructor(application: SNApplication, appObservers: (() => void)[]) {
-    this.show = application.hasAccount()
-      ? false
-      : storage.get(StorageKey.ShowNoAccountWarning) ?? true
+    this.show = application.hasAccount() ? false : storage.get(StorageKey.ShowNoAccountWarning) ?? true
 
     appObservers.push(
       application.addEventObserver(async () => {

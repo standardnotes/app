@@ -15,9 +15,7 @@ export const NotesContextMenu = observer(({ application, appState }: Props) => {
   const { contextMenuOpen, contextMenuPosition, contextMenuMaxHeight } = appState.notes
 
   const contextMenuRef = useRef<HTMLDivElement>(null)
-  const [closeOnBlur] = useCloseOnBlur(contextMenuRef, (open: boolean) =>
-    appState.notes.setContextMenuOpen(open),
-  )
+  const [closeOnBlur] = useCloseOnBlur(contextMenuRef, (open: boolean) => appState.notes.setContextMenuOpen(open))
 
   useCloseOnClickOutside(contextMenuRef, () => appState.notes.setContextMenuOpen(false))
 

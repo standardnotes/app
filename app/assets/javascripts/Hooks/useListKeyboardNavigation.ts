@@ -34,11 +34,7 @@ export const useListKeyboardNavigation = (container: Ref<HTMLElement | null>, in
       }
 
       if (!listItems?.length) {
-        setListItems(
-          Array.from(
-            container.current?.querySelectorAll('button') as NodeListOf<HTMLButtonElement>,
-          ),
-        )
+        setListItems(Array.from(container.current?.querySelectorAll('button') as NodeListOf<HTMLButtonElement>))
       }
 
       if (listItems) {
@@ -67,15 +63,11 @@ export const useListKeyboardNavigation = (container: Ref<HTMLElement | null>, in
   const containerFocusHandler = useCallback(() => {
     let temporaryItems = listItems && listItems?.length > 0 ? listItems : []
     if (!temporaryItems.length) {
-      temporaryItems = Array.from(
-        container.current?.querySelectorAll('button') as NodeListOf<HTMLButtonElement>,
-      )
+      temporaryItems = Array.from(container.current?.querySelectorAll('button') as NodeListOf<HTMLButtonElement>)
       setListItems(temporaryItems)
     }
     if (temporaryItems.length > 0) {
-      const selectedItemIndex = Array.from(temporaryItems).findIndex(
-        (item) => item.dataset.selected,
-      )
+      const selectedItemIndex = Array.from(temporaryItems).findIndex((item) => item.dataset.selected)
       const indexToFocus = selectedItemIndex > -1 ? selectedItemIndex : initialFocus
       setTimeout(() => {
         focusItemWithIndex(indexToFocus, temporaryItems)

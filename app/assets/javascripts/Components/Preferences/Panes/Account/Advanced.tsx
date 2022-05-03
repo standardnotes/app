@@ -1,8 +1,5 @@
 import { FunctionalComponent } from 'preact'
-import {
-  PreferencesGroup,
-  PreferencesSegment,
-} from '@/Components/Preferences/PreferencesComponents'
+import { PreferencesGroup, PreferencesSegment } from '@/Components/Preferences/PreferencesComponents'
 import { OfflineSubscription } from '@/Components/Preferences/Panes/Account/OfflineSubscription'
 import { WebApplication } from '@/UIModels/Application'
 import { observer } from 'mobx-react-lite'
@@ -17,25 +14,23 @@ interface IProps {
   extensionsLatestVersions: ExtensionsLatestVersions
 }
 
-export const Advanced: FunctionalComponent<IProps> = observer(
-  ({ application, appState, extensionsLatestVersions }) => {
-    return (
-      <PreferencesGroup>
-        <PreferencesSegment>
-          <AccordionItem title={'Advanced Settings'}>
-            <div className="flex flex-row items-center">
-              <div className="flex-grow flex flex-col">
-                <OfflineSubscription application={application} appState={appState} />
-                <Extensions
-                  className={'mt-3'}
-                  application={application}
-                  extensionsLatestVersions={extensionsLatestVersions}
-                />
-              </div>
+export const Advanced: FunctionalComponent<IProps> = observer(({ application, appState, extensionsLatestVersions }) => {
+  return (
+    <PreferencesGroup>
+      <PreferencesSegment>
+        <AccordionItem title={'Advanced Settings'}>
+          <div className="flex flex-row items-center">
+            <div className="flex-grow flex flex-col">
+              <OfflineSubscription application={application} appState={appState} />
+              <Extensions
+                className={'mt-3'}
+                application={application}
+                extensionsLatestVersions={extensionsLatestVersions}
+              />
             </div>
-          </AccordionItem>
-        </PreferencesSegment>
-      </PreferencesGroup>
-    )
-  },
-)
+          </div>
+        </AccordionItem>
+      </PreferencesSegment>
+    </PreferencesGroup>
+  )
+})

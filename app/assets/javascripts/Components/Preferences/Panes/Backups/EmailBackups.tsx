@@ -27,9 +27,7 @@ type Props = {
 
 export const EmailBackups = observer(({ application }: Props) => {
   const [isLoading, setIsLoading] = useState(false)
-  const [emailFrequency, setEmailFrequency] = useState<EmailBackupFrequency>(
-    EmailBackupFrequency.Disabled,
-  )
+  const [emailFrequency, setEmailFrequency] = useState<EmailBackupFrequency>(EmailBackupFrequency.Disabled)
   const [emailFrequencyOptions, setEmailFrequencyOptions] = useState<DropdownItem[]>([])
   const [isFailedBackupEmailMuted, setIsFailedBackupEmailMuted] = useState(true)
   const [isEntitledToEmailBackups, setIsEntitledToEmailBackups] = useState(false)
@@ -64,9 +62,7 @@ export const EmailBackups = observer(({ application }: Props) => {
   }, [application])
 
   useEffect(() => {
-    const emailBackupsFeatureStatus = application.features.getFeatureStatus(
-      FeatureIdentifier.DailyEmailBackup,
-    )
+    const emailBackupsFeatureStatus = application.features.getFeatureStatus(FeatureIdentifier.DailyEmailBackup)
     setIsEntitledToEmailBackups(emailBackupsFeatureStatus === FeatureStatus.Entitled)
 
     const frequencyOptions = []
@@ -109,10 +105,7 @@ export const EmailBackups = observer(({ application }: Props) => {
     const previousValue = isFailedBackupEmailMuted
     setIsFailedBackupEmailMuted(!isFailedBackupEmailMuted)
 
-    const updateResult = await updateSetting(
-      SettingName.MuteFailedBackupsEmails,
-      `${!isFailedBackupEmailMuted}`,
-    )
+    const updateResult = await updateSetting(SettingName.MuteFailedBackupsEmails, `${!isFailedBackupEmailMuted}`)
     if (!updateResult) {
       setIsFailedBackupEmailMuted(previousValue)
     }
@@ -132,9 +125,8 @@ export const EmailBackups = observer(({ application }: Props) => {
         {!isEntitledToEmailBackups && (
           <>
             <Text>
-              A <span className={'font-bold'}>Plus</span> or{' '}
-              <span className={'font-bold'}>Pro</span> subscription plan is required to enable Email
-              Backups.{' '}
+              A <span className={'font-bold'}>Plus</span> or <span className={'font-bold'}>Pro</span> subscription plan
+              is required to enable Email Backups.{' '}
               <a target="_blank" href="https://standardnotes.com/features">
                 Learn more
               </a>
@@ -146,8 +138,7 @@ export const EmailBackups = observer(({ application }: Props) => {
         <div className={isEntitledToEmailBackups ? '' : 'faded cursor-default pointer-events-none'}>
           {!isDesktopApplication() && (
             <Text className="mb-3">
-              Daily encrypted email backups of your entire data set delivered directly to your
-              inbox.
+              Daily encrypted email backups of your entire data set delivered directly to your inbox.
             </Text>
           )}
           <Subtitle>Email frequency</Subtitle>

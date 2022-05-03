@@ -43,9 +43,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
 
     const [hasIssueLoading, setHasIssueLoading] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
-    const [featureStatus, setFeatureStatus] = useState<FeatureStatus>(
-      componentViewer.getFeatureStatus(),
-    )
+    const [featureStatus, setFeatureStatus] = useState<FeatureStatus>(componentViewer.getFeatureStatus())
     const [isComponentValid, setIsComponentValid] = useState(true)
     const [error, setError] = useState<ComponentViewerError | undefined>(undefined)
     const [deprecationMessage, setDeprecationMessage] = useState<string | undefined>(undefined)
@@ -199,10 +197,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
           />
         )}
         {deprecationMessage && !isDeprecationMessageDismissed && (
-          <IsDeprecated
-            deprecationMessage={deprecationMessage}
-            dismissDeprecationMessage={dismissDeprecationMessage}
-          />
+          <IsDeprecated deprecationMessage={deprecationMessage} dismissDeprecationMessage={dismissDeprecationMessage} />
         )}
         {error === ComponentViewerError.OfflineRestricted && <OfflineRestricted />}
         {error === ComponentViewerError.MissingUrl && <UrlMissing componentName={component.name} />}

@@ -12,8 +12,7 @@ export const NoSubscription: FunctionalComponent<{
   const [purchaseFlowError, setPurchaseFlowError] = useState<string | undefined>(undefined)
 
   const onPurchaseClick = async () => {
-    const errorMessage =
-      'There was an error when attempting to redirect you to the subscription page.'
+    const errorMessage = 'There was an error when attempting to redirect you to the subscription page.'
     setIsLoadingPurchaseFlow(true)
     try {
       if (!(await loadPurchaseFlowUrl(application))) {
@@ -32,18 +31,9 @@ export const NoSubscription: FunctionalComponent<{
       {isLoadingPurchaseFlow && <Text>Redirecting you to the subscription page...</Text>}
       {purchaseFlowError && <Text className="color-danger">{purchaseFlowError}</Text>}
       <div className="flex">
-        <LinkButton
-          className="min-w-20 mt-3 mr-3"
-          label="Learn More"
-          link={window.plansUrl as string}
-        />
+        <LinkButton className="min-w-20 mt-3 mr-3" label="Learn More" link={window.plansUrl as string} />
         {application.hasAccount() && (
-          <Button
-            className="min-w-20 mt-3"
-            variant="primary"
-            label="Subscribe"
-            onClick={onPurchaseClick}
-          />
+          <Button className="min-w-20 mt-3" variant="primary" label="Subscribe" onClick={onPurchaseClick} />
         )}
       </div>
     </>

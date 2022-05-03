@@ -5,18 +5,13 @@ interface IProps {
   dismissDeprecationMessage: () => void
 }
 
-export const IsDeprecated: FunctionalComponent<IProps> = ({
-  deprecationMessage,
-  dismissDeprecationMessage,
-}) => {
+export const IsDeprecated: FunctionalComponent<IProps> = ({ deprecationMessage, dismissDeprecationMessage }) => {
   return (
     <div className={'sn-component'}>
       <div className={'sk-app-bar no-edges no-top-edge dynamic-height'}>
         <div className={'left'}>
           <div className={'sk-app-bar-item'}>
-            <div className={'sk-label warning'}>
-              {deprecationMessage || 'This extension is deprecated.'}
-            </div>
+            <div className={'sk-label warning'}>{deprecationMessage || 'This extension is deprecated.'}</div>
           </div>
         </div>
         <div className={'right'}>

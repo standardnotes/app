@@ -28,11 +28,7 @@ export const AccordionItem: FunctionalComponent<Props> = ({ title, className = '
           data-is-expanded={isExpanded}
         />
       </div>
-      <div
-        className={'accordion-contents-container cursor-auto'}
-        data-is-expanded={isExpanded}
-        ref={elementRef}
-      >
+      <div className={'accordion-contents-container cursor-auto'} data-is-expanded={isExpanded} ref={elementRef}>
         {children}
       </div>
     </div>

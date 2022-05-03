@@ -13,14 +13,7 @@ export const SmartViewsList: FunctionComponent<Props> = observer(({ appState }) 
   return (
     <>
       {allViews.map((view) => {
-        return (
-          <SmartViewsListItem
-            key={view.uuid}
-            view={view}
-            tagsState={appState.tags}
-            features={appState.features}
-          />
-        )
+        return <SmartViewsListItem key={view.uuid} view={view} tagsState={appState.tags} features={appState.features} />
       })}
     </>
   )

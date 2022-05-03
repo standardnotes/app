@@ -10,23 +10,16 @@ export const is2FADisabled = (status: TwoFactorStatus): status is 'two-factor-di
 export const is2FAActivation = (status: TwoFactorStatus): status is TwoFactorActivation =>
   (status as TwoFactorActivation)?.type === 'two-factor-activation'
 
-export const is2FAEnabled = (status: TwoFactorStatus): status is 'two-factor-enabled' =>
-  status === 'two-factor-enabled'
+export const is2FAEnabled = (status: TwoFactorStatus): status is 'two-factor-enabled' => status === 'two-factor-enabled'
 
 export class TwoFactorAuth {
   private _status: TwoFactorStatus | 'fetching' = 'fetching'
   private _errorMessage: string | null
 
-  constructor(
-    private readonly mfaProvider: MfaProvider,
-    private readonly userProvider: UserProvider,
-  ) {
+  constructor(private readonly mfaProvider: MfaProvider, private readonly userProvider: UserProvider) {
     this._errorMessage = null
 
-    makeAutoObservable<
-      TwoFactorAuth,
-      '_status' | '_errorMessage' | 'deactivateMfa' | 'startActivation'
-    >(
+    makeAutoObservable<TwoFactorAuth, '_status' | '_errorMessage' | 'deactivateMfa' | 'startActivation'>(
       this,
       {
         _status: observable,

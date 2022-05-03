@@ -1,9 +1,5 @@
 import { FunctionComponent } from 'preact'
-import {
-  AlertDialog,
-  AlertDialogDescription,
-  AlertDialogLabel,
-} from '@node_modules/@reach/alert-dialog'
+import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@node_modules/@reach/alert-dialog'
 import { useRef } from '@node_modules/preact/hooks'
 
 export const ModalDialog: FunctionComponent = ({ children }) => {
@@ -16,10 +12,7 @@ export const ModalDialog: FunctionComponent = ({ children }) => {
           at the sn-component level, only below it. tabIndex -1 disables focus
           and enables it on the child component */}
       <div tabIndex={-1} className="sn-component">
-        <div
-          tabIndex={0}
-          className="sk-panel w-160 bg-default rounded shadow-overlay focus:padded-ring-info"
-        >
+        <div tabIndex={0} className="sk-panel w-160 bg-default rounded shadow-overlay focus:padded-ring-info">
           {children}
         </div>
       </div>
@@ -50,10 +43,7 @@ export const ModalDialogDescription: FunctionComponent<{
   </AlertDialogDescription>
 )
 
-export const ModalDialogButtons: FunctionComponent<{ className?: string }> = ({
-  children,
-  className,
-}) => (
+export const ModalDialogButtons: FunctionComponent<{ className?: string }> = ({ children, className }) => (
   <>
     <hr className="h-1px bg-border no-border m-0" />
     <div className={`px-4 py-4 flex flex-row items-center ${className}`}>

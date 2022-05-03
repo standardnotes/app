@@ -63,9 +63,7 @@ export const ChangeEmail: FunctionalComponent<Props> = ({ onCloseDialog, applica
   const validateNewEmail = async () => {
     if (!isEmailValid(newEmail)) {
       applicationAlertService
-        .alert(
-          'The email you entered has an invalid format. Please review your input and try again.',
-        )
+        .alert('The email you entered has an invalid format. Please review your input and try again.')
         .catch(console.error)
 
       return false
@@ -95,9 +93,7 @@ export const ChangeEmail: FunctionalComponent<Props> = ({ onCloseDialog, applica
 
   const dismiss = () => {
     if (lockContinue) {
-      applicationAlertService
-        .alert('Cannot close window until pending tasks are complete.')
-        .catch(console.error)
+      applicationAlertService.alert('Cannot close window until pending tasks are complete.').catch(console.error)
     } else {
       onCloseDialog()
     }
@@ -139,9 +135,7 @@ export const ChangeEmail: FunctionalComponent<Props> = ({ onCloseDialog, applica
 
   const handleDialogClose = () => {
     if (lockContinue) {
-      applicationAlertService
-        .alert('Cannot close window until pending tasks are complete.')
-        .catch(console.error)
+      applicationAlertService.alert('Cannot close window until pending tasks are complete.').catch(console.error)
     } else {
       onCloseDialog()
     }
@@ -158,12 +152,7 @@ export const ChangeEmail: FunctionalComponent<Props> = ({ onCloseDialog, applica
           {currentStep === Steps.FinishStep && <ChangeEmailSuccess />}
         </ModalDialogDescription>
         <ModalDialogButtons className="px-4.5">
-          <Button
-            className="min-w-20"
-            variant="primary"
-            label={submitButtonTitle}
-            onClick={handleSubmit}
-          />
+          <Button className="min-w-20" variant="primary" label={submitButtonTitle} onClick={handleSubmit} />
         </ModalDialogButtons>
       </ModalDialog>
     </div>

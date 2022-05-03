@@ -74,9 +74,7 @@ describe('editor-view', () => {
     it("should hide the note if at the time of the session expiration the note wasn't edited for longer than the allowed idle time", async () => {
       jest
         .spyOn(ctrl, 'getSecondsElapsedSinceLastEdit')
-        .mockImplementation(
-          () => ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction + 5,
-        )
+        .mockImplementation(() => ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction + 5)
 
       await ctrl.onAppEvent(ApplicationEvent.UnprotectedSessionExpired)
 
@@ -84,8 +82,7 @@ describe('editor-view', () => {
     })
 
     it('should postpone the note hiding by correct time if the time passed after its last modification is less than the allowed idle time', async () => {
-      const secondsElapsedSinceLastEdit =
-        ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction - 3
+      const secondsElapsedSinceLastEdit = ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction - 3
 
       Object.defineProperty(ctrl.note, 'userModifiedDate', {
         value: new Date(Date.now() - secondsElapsedSinceLastEdit * 1000),
@@ -95,8 +92,7 @@ describe('editor-view', () => {
       await ctrl.onAppEvent(ApplicationEvent.UnprotectedSessionExpired)
 
       const secondsAfterWhichTheNoteShouldHide =
-        ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction -
-        secondsElapsedSinceLastEdit
+        ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction - secondsElapsedSinceLastEdit
       jest.advanceTimersByTime((secondsAfterWhichTheNoteShouldHide - 1) * 1000)
       expect(setShowProtectedWarningSpy).not.toHaveBeenCalled()
 
@@ -114,8 +110,7 @@ describe('editor-view', () => {
       await ctrl.onAppEvent(ApplicationEvent.UnprotectedSessionExpired)
 
       let secondsAfterWhichTheNoteShouldHide =
-        ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction -
-        secondsElapsedSinceLastModification
+        ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction - secondsElapsedSinceLastModification
       jest.advanceTimersByTime((secondsAfterWhichTheNoteShouldHide - 1) * 1000)
 
       // A new modification has just happened
@@ -124,8 +119,7 @@ describe('editor-view', () => {
         configurable: true,
       })
 
-      secondsAfterWhichTheNoteShouldHide =
-        ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction
+      secondsAfterWhichTheNoteShouldHide = ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction
       jest.advanceTimersByTime((secondsAfterWhichTheNoteShouldHide - 1) * 1000)
       expect(setShowProtectedWarningSpy).not.toHaveBeenCalled()
 
@@ -152,9 +146,7 @@ describe('editor-view', () => {
   describe('dismissProtectedWarning', () => {
     describe('the note has protection sources', () => {
       it('should reveal note contents if the authorization has been passed', async () => {
-        jest
-          .spyOn(ctrl['application'], 'authorizeNoteAccess')
-          .mockImplementation(async () => Promise.resolve(true))
+        jest.spyOn(ctrl['application'], 'authorizeNoteAccess').mockImplementation(async () => Promise.resolve(true))
 
         await ctrl.dismissProtectedWarning()
 
@@ -162,9 +154,7 @@ describe('editor-view', () => {
       })
 
       it('should not reveal note contents if the authorization has not been passed', async () => {
-        jest
-          .spyOn(ctrl['application'], 'authorizeNoteAccess')
-          .mockImplementation(async () => Promise.resolve(false))
+        jest.spyOn(ctrl['application'], 'authorizeNoteAccess').mockImplementation(async () => Promise.resolve(false))
 
         await ctrl.dismissProtectedWarning()
 

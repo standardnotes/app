@@ -12,41 +12,39 @@ type Props = {
   onClickMigration: () => void
 }
 
-export const TagsSectionTitle: FunctionComponent<Props> = observer(
-  ({ features, hasMigration, onClickMigration }) => {
-    const entitledToFolders = features.hasFolders
-    const modal = usePremiumModal()
+export const TagsSectionTitle: FunctionComponent<Props> = observer(({ features, hasMigration, onClickMigration }) => {
+  const entitledToFolders = features.hasFolders
+  const modal = usePremiumModal()
 
-    const showPremiumAlert = useCallback(() => {
-      modal.activate(TAG_FOLDERS_FEATURE_NAME)
-    }, [modal])
+  const showPremiumAlert = useCallback(() => {
+    modal.activate(TAG_FOLDERS_FEATURE_NAME)
+  }, [modal])
 
-    if (entitledToFolders) {
-      return (
-        <>
-          <div className="sk-h3 title">
-            <span className="sk-bold">Folders</span>
-            {hasMigration && (
-              <label className="ml-1 sk-bold color-info cursor-pointer" onClick={onClickMigration}>
-                Migration Available
-              </label>
-            )}
-          </div>
-        </>
-      )
-    }
-
+  if (entitledToFolders) {
     return (
       <>
         <div className="sk-h3 title">
-          <span className="sk-bold">Tags</span>
-          <Tooltip label={TAG_FOLDERS_FEATURE_TOOLTIP}>
-            <label className="ml-1 sk-bold color-grey-2 cursor-pointer" onClick={showPremiumAlert}>
-              Folders
+          <span className="sk-bold">Folders</span>
+          {hasMigration && (
+            <label className="ml-1 sk-bold color-info cursor-pointer" onClick={onClickMigration}>
+              Migration Available
             </label>
-          </Tooltip>
+          )}
         </div>
       </>
     )
-  },
-)
+  }
+
+  return (
+    <>
+      <div className="sk-h3 title">
+        <span className="sk-bold">Tags</span>
+        <Tooltip label={TAG_FOLDERS_FEATURE_TOOLTIP}>
+          <label className="ml-1 sk-bold color-grey-2 cursor-pointer" onClick={showPremiumAlert}>
+            Folders
+          </label>
+        </Tooltip>
+      </div>
+    </>
+  )
+})

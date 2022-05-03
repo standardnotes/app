@@ -39,9 +39,7 @@ export const DecoratedInput: FunctionalComponent<DecoratedInputProps> = forwardR
     const classNames = getClassNames(hasLeftDecorations, hasRightDecorations)
 
     return (
-      <div
-        className={`${classNames.container} ${disabled ? classNames.disabled : ''} ${className}`}
-      >
+      <div className={`${classNames.container} ${disabled ? classNames.disabled : ''} ${className}`}>
         {left && (
           <div className="flex items-center px-2 py-1.5">
             {left.map((leftChild) => (

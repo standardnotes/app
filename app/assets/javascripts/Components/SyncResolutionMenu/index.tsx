@@ -28,9 +28,8 @@ export class SyncResolutionMenu extends PureComponent<Props> {
           <div className="sk-panel-content">
             <div className="sk-panel-section">
               <div className="sk-panel-row sk-p">
-                We've detected that the data in the current application session may not match the
-                data on the server. An attempt was made to auto-resolve the issue, but it was unable
-                to reconcile the differences.
+                We've detected that the data in the current application session may not match the data on the server. An
+                attempt was made to auto-resolve the issue, but it was unable to reconcile the differences.
               </div>
               <div className="sk-p sk-panel-row">
                 <div className="sk-panel-column">
@@ -44,9 +43,8 @@ export class SyncResolutionMenu extends PureComponent<Props> {
                 <div className="sk-panel-column">
                   <strong className="sk-panel-row">Option 2 — Sign Out and Back In:</strong>
                   <div className="sk-p">
-                    Sign out of your account, then sign back in. This will ensure your data is
-                    consistent with the server. Be sure to download a backup of your data before
-                    doing so.
+                    Sign out of your account, then sign back in. This will ensure your data is consistent with the
+                    server. Be sure to download a backup of your data before doing so.
                   </div>
                 </div>
               </div>

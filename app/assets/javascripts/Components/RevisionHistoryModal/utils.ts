@@ -25,9 +25,7 @@ export const formatDateAsMonthYearString = (date: Date) =>
 
 export const getGroupIndexForEntry = (entry: RevisionEntry, groups: ListGroup<RevisionEntry>[]) => {
   const todayAsDate = new Date()
-  const entryDate = new Date(
-    (entry as RevisionListEntry).created_at ?? (entry as NoteHistoryEntry).payload.created_at,
-  )
+  const entryDate = new Date((entry as RevisionListEntry).created_at ?? (entry as NoteHistoryEntry).payload.created_at)
 
   const differenceBetweenDatesInDays = calculateDifferenceBetweenDatesInDays(todayAsDate, entryDate)
 
@@ -52,9 +50,7 @@ const GROUP_TITLE_TODAY = 'Today'
 const GROUP_TITLE_WEEK = 'This Week'
 const GROUP_TITLE_YEAR = 'More Than A Year Ago'
 
-export const sortRevisionListIntoGroups = <EntryType extends RevisionEntry>(
-  revisionList: EntryType[] | undefined,
-) => {
+export const sortRevisionListIntoGroups = <EntryType extends RevisionEntry>(revisionList: EntryType[] | undefined) => {
   const sortedGroups: ListGroup<EntryType>[] = [
     {
       title: GROUP_TITLE_TODAY,
@@ -82,10 +78,7 @@ export const sortRevisionListIntoGroups = <EntryType extends RevisionEntry>(
     } else {
       addBeforeLastGroup({
         title: formatDateAsMonthYearString(
-          new Date(
-            (entry as RevisionListEntry).created_at ??
-              (entry as NoteHistoryEntry).payload.created_at,
-          ),
+          new Date((entry as RevisionListEntry).created_at ?? (entry as NoteHistoryEntry).payload.created_at),
         ),
         entries: [entry],
       })

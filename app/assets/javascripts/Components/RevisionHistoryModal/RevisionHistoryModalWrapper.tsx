@@ -46,13 +46,9 @@ const RevisionContentPlaceholder: FunctionComponent<RevisionContentPlaceholderPr
         : '-z-index-1'
     }`}
   >
-    {isFetchingSelectedRevision && (
-      <div className={`sk-spinner w-5 h-5 spinner-info ${ABSOLUTE_CENTER_CLASSNAME}`} />
-    )}
+    {isFetchingSelectedRevision && <div className={`sk-spinner w-5 h-5 spinner-info ${ABSOLUTE_CENTER_CLASSNAME}`} />}
     {!isFetchingSelectedRevision && !selectedRevision ? (
-      <div className={`color-grey-0 select-none ${ABSOLUTE_CENTER_CLASSNAME}`}>
-        No revision selected
-      </div>
+      <div className={`color-grey-0 select-none ${ABSOLUTE_CENTER_CLASSNAME}`}>No revision selected</div>
     ) : null}
   </div>
 )
@@ -87,8 +83,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
         try {
           const initialRemoteHistory = await application.historyManager.remoteHistoryForItem(note)
 
-          const remoteHistoryAsGroups =
-            sortRevisionListIntoGroups<RevisionListEntry>(initialRemoteHistory)
+          const remoteHistoryAsGroups = sortRevisionListIntoGroups<RevisionListEntry>(initialRemoteHistory)
 
           setRemoteHistory(remoteHistoryAsGroups)
         } catch (err) {
@@ -240,9 +235,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
                   isFetchingSelectedRevision={isFetchingSelectedRevision}
                   showContentLockedScreen={showContentLockedScreen}
                 />
-                {showContentLockedScreen && !selectedRevision && (
-                  <RevisionContentLocked appState={appState} />
-                )}
+                {showContentLockedScreen && !selectedRevision && <RevisionContentLocked appState={appState} />}
                 {selectedRevision && templateNoteForRevision && (
                   <SelectedRevisionContent
                     application={application}
@@ -267,11 +260,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
               {selectedRevision && (
                 <div class="flex items-center">
                   {selectedRemoteEntry && (
-                    <Button
-                      className="py-1.35 mr-2.5"
-                      onClick={deleteSelectedRevision}
-                      variant="normal"
-                    >
+                    <Button className="py-1.35 mr-2.5" onClick={deleteSelectedRevision} variant="normal">
                       {isDeletingRevision ? (
                         <div className="sk-spinner my-1 w-3 h-3 spinner-info" />
                       ) : (
@@ -285,12 +274,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
                     onClick={restoreAsCopy}
                     variant="normal"
                   />
-                  <Button
-                    className="py-1.35"
-                    label="Restore version"
-                    onClick={restore}
-                    variant="primary"
-                  />
+                  <Button className="py-1.35" label="Restore version" onClick={restore} variant="primary" />
                 </div>
               )}
             </div>

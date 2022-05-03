@@ -11,11 +11,7 @@ import { ExtensionItem } from './ExtensionItem'
 import { ConfirmCustomExtension } from './ConfirmCustomExtension'
 
 const loadExtensions = (application: WebApplication) =>
-  application.items.getItems([
-    ContentType.ActionsExtension,
-    ContentType.Component,
-    ContentType.Theme,
-  ]) as SNComponent[]
+  application.items.getItems([ContentType.ActionsExtension, ContentType.Component, ContentType.Theme]) as SNComponent[]
 
 export const Extensions: FunctionComponent<{
   application: WebApplication
@@ -23,9 +19,7 @@ export const Extensions: FunctionComponent<{
   className?: string
 }> = observer(({ application, extensionsLatestVersions, className = '' }) => {
   const [customUrl, setCustomUrl] = useState('')
-  const [confirmableExtension, setConfirmableExtension] = useState<SNComponent | undefined>(
-    undefined,
-  )
+  const [confirmableExtension, setConfirmableExtension] = useState<SNComponent | undefined>(undefined)
   const [extensions, setExtensions] = useState(loadExtensions(application))
 
   const confirmableEnd = useRef<HTMLDivElement>(null)
@@ -122,10 +116,7 @@ export const Extensions: FunctionComponent<{
         )}
         {confirmableExtension && (
           <PreferencesSegment>
-            <ConfirmCustomExtension
-              component={confirmableExtension}
-              callback={handleConfirmExtensionSubmit}
-            />
+            <ConfirmCustomExtension component={confirmableExtension} callback={handleConfirmExtensionSubmit} />
             <div ref={confirmableEnd} />
           </PreferencesSegment>
         )}

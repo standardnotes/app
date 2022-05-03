@@ -1,8 +1,4 @@
-import {
-  ApplicationEvent,
-  ClientDisplayableError,
-  convertTimestampToMilliseconds,
-} from '@standardnotes/snjs'
+import { ApplicationEvent, ClientDisplayableError, convertTimestampToMilliseconds } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable } from 'mobx'
 import { WebApplication } from '../Application'
 

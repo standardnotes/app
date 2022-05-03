@@ -84,8 +84,8 @@ export const Listed = observer(({ application }: Props) => {
           <div className="h-2 w-full" />
           <Subtitle>What is Listed?</Subtitle>
           <Text>
-            Listed is a free blogging platform that allows you to create a public journal published
-            directly from your notes.{' '}
+            Listed is a free blogging platform that allows you to create a public journal published directly from your
+            notes.{' '}
             <a target="_blank" href="https://listed.to" rel="noreferrer noopener">
               Learn more
             </a>

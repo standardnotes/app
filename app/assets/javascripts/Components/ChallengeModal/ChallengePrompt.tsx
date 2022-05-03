@@ -1,8 +1,4 @@
-import {
-  ChallengePrompt,
-  ChallengeValidation,
-  ProtectionSessionDurations,
-} from '@standardnotes/snjs'
+import { ChallengePrompt, ChallengeValidation, ProtectionSessionDurations } from '@standardnotes/snjs'
 import { FunctionComponent } from 'preact'
 import { useEffect, useRef } from 'preact/hooks'
 import { DecoratedInput } from '@/Components/Input/DecoratedInput'
@@ -17,13 +13,7 @@ type Props = {
   isInvalid: boolean
 }
 
-export const ChallengeModalPrompt: FunctionComponent<Props> = ({
-  prompt,
-  values,
-  index,
-  onValueChange,
-  isInvalid,
-}) => {
+export const ChallengeModalPrompt: FunctionComponent<Props> = ({ prompt, values, index, onValueChange, isInvalid }) => {
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -49,9 +39,7 @@ export const ChallengeModalPrompt: FunctionComponent<Props> = ({
               return (
                 <label
                   className={`cursor-pointer px-2 py-1.5 rounded ${
-                    selected
-                      ? 'bg-default color-foreground font-semibold'
-                      : 'color-grey-0 hover:bg-grey-3'
+                    selected ? 'bg-default color-foreground font-semibold' : 'color-grey-0 hover:bg-grey-3'
                   }`}
                 >
                   <input
@@ -88,9 +76,7 @@ export const ChallengeModalPrompt: FunctionComponent<Props> = ({
           onChange={(value) => onValueChange(value, prompt)}
         />
       )}
-      {isInvalid && (
-        <div className="text-sm color-danger mt-2">Invalid authentication, please try again.</div>
-      )}
+      {isInvalid && <div className="text-sm color-danger mt-2">Invalid authentication, please try again.</div>}
     </div>
   )
 }

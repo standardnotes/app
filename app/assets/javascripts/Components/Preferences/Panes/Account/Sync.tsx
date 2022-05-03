@@ -1,9 +1,4 @@
-import {
-  PreferencesGroup,
-  PreferencesSegment,
-  Text,
-  Title,
-} from '@/Components/Preferences/PreferencesComponents'
+import { PreferencesGroup, PreferencesSegment, Text, Title } from '@/Components/Preferences/PreferencesComponents'
 import { Button } from '@/Components/Button/Button'
 import { SyncQueueStrategy, dateToLocalizedString } from '@standardnotes/snjs'
 import { STRING_GENERIC_SYNC_ERROR } from '@/Strings'
@@ -22,9 +17,7 @@ export const formatLastSyncDate = (lastUpdatedDate: Date) => {
 
 export const Sync: FunctionComponent<Props> = observer(({ application }: Props) => {
   const [isSyncingInProgress, setIsSyncingInProgress] = useState(false)
-  const [lastSyncDate, setLastSyncDate] = useState(
-    formatLastSyncDate(application.sync.getLastSyncDate() as Date),
-  )
+  const [lastSyncDate, setLastSyncDate] = useState(formatLastSyncDate(application.sync.getLastSyncDate() as Date))
 
   const doSynchronization = async () => {
     setIsSyncingInProgress(true)

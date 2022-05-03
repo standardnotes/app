@@ -77,10 +77,7 @@ export class PermissionsModal extends Component<Props> {
                 </div>
               </div>
               <div className="sk-panel-footer">
-                <button
-                  onClick={this.accept}
-                  className="sn-button info block w-full text-base py-3"
-                >
+                <button onClick={this.accept} className="sn-button info block w-full text-base py-3">
                   Continue
                 </button>
               </div>

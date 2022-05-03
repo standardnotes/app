@@ -6,9 +6,7 @@ export const splitRangeWithinString = (string: string, start: number, end: numbe
   if (isStartOutOfBounds || isEndOutOfBounds || isInvalidRange) {
     return [string]
   } else {
-    return [string.slice(0, start), string.slice(start, end), string.slice(end)].filter(
-      (slice) => slice.length > 0,
-    )
+    return [string.slice(0, start), string.slice(start, end), string.slice(end)].filter((slice) => slice.length > 0)
   }
 }
 

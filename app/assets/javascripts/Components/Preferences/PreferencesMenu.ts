@@ -59,27 +59,16 @@ const READY_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
 export class PreferencesMenu {
   private _selectedPane: PreferenceId = 'account'
   private _menu: PreferencesMenuItem[]
-  private _extensionLatestVersions: ExtensionsLatestVersions = new ExtensionsLatestVersions(
-    new Map(),
-  )
+  private _extensionLatestVersions: ExtensionsLatestVersions = new ExtensionsLatestVersions(new Map())
 
-  constructor(
-    private application: WebApplication,
-    private readonly _enableUnfinishedFeatures: boolean,
-  ) {
-    this._menu = this._enableUnfinishedFeatures
-      ? PREFERENCES_MENU_ITEMS
-      : READY_PREFERENCES_MENU_ITEMS
+  constructor(private application: WebApplication, private readonly _enableUnfinishedFeatures: boolean) {
+    this._menu = this._enableUnfinishedFeatures ? PREFERENCES_MENU_ITEMS : READY_PREFERENCES_MENU_ITEMS
 
     this.loadLatestVersions()
 
     makeAutoObservable<
       PreferencesMenu,
-      | '_selectedPane'
-      | '_twoFactorAuth'
-      | '_extensionPanes'
-      | '_extensionLatestVersions'
-      | 'loadLatestVersions'
+      '_selectedPane' | '_twoFactorAuth' | '_extensionPanes' | '_extensionLatestVersions' | 'loadLatestVersions'
     >(this, {
       _twoFactorAuth: observable,
       _selectedPane: observable,

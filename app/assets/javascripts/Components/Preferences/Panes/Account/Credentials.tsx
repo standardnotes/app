@@ -30,10 +30,7 @@ export const Credentials: FunctionComponent<Props> = observer(({ application }: 
   const passwordCreatedOn = dateToLocalizedString(passwordCreatedAtTimestamp)
 
   const presentPasswordWizard = useCallback(() => {
-    render(
-      <PasswordWizard application={application} />,
-      document.body.appendChild(document.createElement('div')),
-    )
+    render(<PasswordWizard application={application} />, document.body.appendChild(document.createElement('div')))
   }, [application])
 
   return (
@@ -57,17 +54,9 @@ export const Credentials: FunctionComponent<Props> = observer(({ application }: 
         <Text>
           Current password was set on <span className="font-bold">{passwordCreatedOn}</span>
         </Text>
-        <Button
-          className="min-w-20 mt-3"
-          variant="normal"
-          label="Change password"
-          onClick={presentPasswordWizard}
-        />
+        <Button className="min-w-20 mt-3" variant="normal" label="Change password" onClick={presentPasswordWizard} />
         {isChangeEmailDialogOpen && (
-          <ChangeEmail
-            onCloseDialog={() => setIsChangeEmailDialogOpen(false)}
-            application={application}
-          />
+          <ChangeEmail onCloseDialog={() => setIsChangeEmailDialogOpen(false)} application={application} />
         )}
       </PreferencesSegment>
     </PreferencesGroup>

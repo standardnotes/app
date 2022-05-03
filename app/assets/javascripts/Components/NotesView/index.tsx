@@ -10,12 +10,7 @@ import { NoAccountWarning } from '@/Components/NoAccountWarning'
 import { NotesList } from '@/Components/NotesList'
 import { NotesListOptionsMenu } from '@/Components/NotesList/NotesListOptionsMenu'
 import { SearchOptions } from '@/Components/SearchOptions'
-import {
-  PanelSide,
-  ResizeFinishCallback,
-  PanelResizer,
-  PanelResizeType,
-} from '@/Components/PanelResizer'
+import { PanelSide, ResizeFinishCallback, PanelResizer, PanelResizeType } from '@/Components/PanelResizer'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 
@@ -51,10 +46,7 @@ export const NotesView: FunctionComponent<Props> = observer(({ application, appS
   const [showDisplayOptionsMenu, setShowDisplayOptionsMenu] = useState(false)
   const [focusedSearch, setFocusedSearch] = useState(false)
 
-  const [closeDisplayOptMenuOnBlur] = useCloseOnBlur(
-    displayOptionsMenuRef,
-    setShowDisplayOptionsMenu,
-  )
+  const [closeDisplayOptMenuOnBlur] = useCloseOnBlur(displayOptionsMenuRef, setShowDisplayOptionsMenu)
 
   useEffect(() => {
     handleFilterTextChanged()
@@ -125,12 +117,7 @@ export const NotesView: FunctionComponent<Props> = observer(({ application, appS
     }
   }
 
-  const panelResizeFinishCallback: ResizeFinishCallback = (
-    width,
-    _lastLeft,
-    _isMaxWidth,
-    isCollapsed,
-  ) => {
+  const panelResizeFinishCallback: ResizeFinishCallback = (width, _lastLeft, _isMaxWidth, isCollapsed) => {
     application.setPreference(PrefKey.NotesPanelWidth, width).catch(console.error)
     appState.noteTags.reloadTagsContainerMaxWidth()
     appState.panelDidResize(PANEL_NAME_NOTES, isCollapsed)
@@ -229,9 +216,7 @@ export const NotesView: FunctionComponent<Props> = observer(({ application, appS
             </div>
           </div>
         </div>
-        {completedFullSync && !renderedNotes.length ? (
-          <p className="empty-notes-list faded">No notes.</p>
-        ) : null}
+        {completedFullSync && !renderedNotes.length ? <p className="empty-notes-list faded">No notes.</p> : null}
         {!completedFullSync && !renderedNotes.length ? (
           <p className="empty-notes-list faded">Loading notes...</p>
         ) : null}

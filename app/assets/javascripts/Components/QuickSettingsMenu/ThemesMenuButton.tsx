@@ -25,10 +25,7 @@ export const ThemesMenuButton: FunctionComponent<Props> = ({ application, item, 
     () => application.features.getFeatureStatus(item.identifier) === FeatureStatus.Entitled,
     [application, item.identifier],
   )
-  const canActivateTheme = useMemo(
-    () => isEntitledToTheme || isThirdPartyTheme,
-    [isEntitledToTheme, isThirdPartyTheme],
-  )
+  const canActivateTheme = useMemo(() => isEntitledToTheme || isThirdPartyTheme, [isEntitledToTheme, isThirdPartyTheme])
 
   const toggleTheme: JSXInternal.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault()
@@ -61,14 +58,8 @@ export const ThemesMenuButton: FunctionComponent<Props> = ({ application, item, 
       ) : (
         <>
           <div className="flex items-center">
-            <div
-              className={`pseudo-radio-btn ${
-                item.component?.active ? 'pseudo-radio-btn--checked' : ''
-              } mr-2`}
-            ></div>
-            <span className={item.component?.active ? 'font-semibold' : undefined}>
-              {item.name}
-            </span>
+            <div className={`pseudo-radio-btn ${item.component?.active ? 'pseudo-radio-btn--checked' : ''} mr-2`}></div>
+            <span className={item.component?.active ? 'font-semibold' : undefined}>{item.name}</span>
           </div>
           {item.component && canActivateTheme ? (
             <div

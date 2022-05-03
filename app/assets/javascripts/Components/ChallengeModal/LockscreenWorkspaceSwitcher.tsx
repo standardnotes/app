@@ -13,10 +13,7 @@ type Props = {
   appState: AppState
 }
 
-export const LockscreenWorkspaceSwitcher: FunctionComponent<Props> = ({
-  mainApplicationGroup,
-  appState,
-}) => {
+export const LockscreenWorkspaceSwitcher: FunctionComponent<Props> = ({ mainApplicationGroup, appState }) => {
   const buttonRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -51,20 +48,12 @@ export const LockscreenWorkspaceSwitcher: FunctionComponent<Props> = ({
 
   return (
     <div ref={containerRef}>
-      <Button
-        ref={buttonRef}
-        onClick={toggleMenu}
-        className="flex items-center justify-center min-w-76 mt-2"
-      >
+      <Button ref={buttonRef} onClick={toggleMenu} className="flex items-center justify-center min-w-76 mt-2">
         <Icon type="user-switch" className="color-neutral mr-2" />
         Switch workspace
       </Button>
       {isOpen && (
-        <div
-          ref={menuRef}
-          className="sn-dropdown max-h-120 min-w-68 py-2 fixed overflow-y-auto"
-          style={menuStyle}
-        >
+        <div ref={menuRef} className="sn-dropdown max-h-120 min-w-68 py-2 fixed overflow-y-auto" style={menuStyle}>
           <WorkspaceSwitcherMenu
             mainApplicationGroup={mainApplicationGroup}
             appState={appState}

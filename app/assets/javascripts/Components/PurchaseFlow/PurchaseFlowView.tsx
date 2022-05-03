@@ -16,11 +16,7 @@ type PurchaseFlowViewProps = {
   application: WebApplication
 }
 
-const PurchaseFlowPaneSelector: FunctionComponent<PaneSelectorProps> = ({
-  currentPane,
-  appState,
-  application,
-}) => {
+const PurchaseFlowPaneSelector: FunctionComponent<PaneSelectorProps> = ({ currentPane, appState, application }) => {
   switch (currentPane) {
     case PurchaseFlowPane.CreateAccount:
       return <CreateAccount appState={appState} application={application} />
@@ -29,41 +25,35 @@ const PurchaseFlowPaneSelector: FunctionComponent<PaneSelectorProps> = ({
   }
 }
 
-export const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> = observer(
-  ({ appState, application }) => {
-    const { currentPane } = appState.purchaseFlow
+export const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> = observer(({ appState, application }) => {
+  const { currentPane } = appState.purchaseFlow
 
-    return (
-      <div className="flex items-center justify-center overflow-hidden h-full w-full absolute top-left-0 z-index-purchase-flow bg-grey-super-light">
-        <div className="relative fit-content">
-          <div className="relative p-12 xs:px-8 mb-4 bg-default border-1 border-solid border-main rounded xs:rounded-0">
-            <SNLogoFull className="mb-5" />
-            <PurchaseFlowPaneSelector
-              currentPane={currentPane}
-              appState={appState}
-              application={application}
-            />
-          </div>
-          <div className="flex justify-end xs:px-4">
-            <a
-              className="mr-3 font-medium color-grey-1"
-              href="https://standardnotes.com/privacy"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Privacy
-            </a>
-            <a
-              className="font-medium color-grey-1"
-              href="https://standardnotes.com/help"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Help
-            </a>
-          </div>
+  return (
+    <div className="flex items-center justify-center overflow-hidden h-full w-full absolute top-left-0 z-index-purchase-flow bg-grey-super-light">
+      <div className="relative fit-content">
+        <div className="relative p-12 xs:px-8 mb-4 bg-default border-1 border-solid border-main rounded xs:rounded-0">
+          <SNLogoFull className="mb-5" />
+          <PurchaseFlowPaneSelector currentPane={currentPane} appState={appState} application={application} />
+        </div>
+        <div className="flex justify-end xs:px-4">
+          <a
+            className="mr-3 font-medium color-grey-1"
+            href="https://standardnotes.com/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Privacy
+          </a>
+          <a
+            className="font-medium color-grey-1"
+            href="https://standardnotes.com/help"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Help
+          </a>
         </div>
       </div>
-    )
-  },
-)
+    </div>
+  )
+})

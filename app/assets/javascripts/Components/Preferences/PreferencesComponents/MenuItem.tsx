@@ -10,13 +10,7 @@ interface Props {
   onClick: () => void
 }
 
-export const MenuItem: FunctionComponent<Props> = ({
-  iconType,
-  label,
-  selected,
-  onClick,
-  hasBubble,
-}) => (
+export const MenuItem: FunctionComponent<Props> = ({ iconType, label, selected, onClick, hasBubble }) => (
   <div
     className={`preferences-menu-item select-none ${selected ? 'selected' : ''}`}
     onClick={(e) => {

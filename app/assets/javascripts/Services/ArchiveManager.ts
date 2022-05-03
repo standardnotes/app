@@ -52,10 +52,7 @@ export class ArchiveManager {
     })
 
     if (encrypted) {
-      this.downloadData(
-        blobData,
-        `Standard Notes Encrypted Backup and Import File - ${this.formattedDate()}.txt`,
-      )
+      this.downloadData(blobData, `Standard Notes Encrypted Backup and Import File - ${this.formattedDate()}.txt`)
     } else {
       this.downloadZippedDecryptedItems(data).catch(console.error)
     }
@@ -103,8 +100,7 @@ export class ArchiveManager {
 
       const blob = new Blob([contents], { type: 'text/plain' })
       const fileName =
-        `Items/${sanitizeFileName(item.content_type)}/` +
-        zippableFileName(name, `-${item.uuid.split('-')[0]}`)
+        `Items/${sanitizeFileName(item.content_type)}/` + zippableFileName(name, `-${item.uuid.split('-')[0]}`)
       await zipWriter.add(fileName, new zip.BlobReader(blob))
 
       index++

@@ -29,33 +29,31 @@ interface Props {
   appState: AppState
 }
 
-export const PremiumModalProvider: FunctionalComponent<Props> = observer(
-  ({ application, appState, children }) => {
-    const featureName = appState.features.premiumAlertFeatureName
-    const activate = appState.features.showPremiumAlert
-    const close = appState.features.closePremiumAlert
+export const PremiumModalProvider: FunctionalComponent<Props> = observer(({ application, appState, children }) => {
+  const featureName = appState.features.premiumAlertFeatureName
+  const activate = appState.features.showPremiumAlert
+  const close = appState.features.closePremiumAlert
 
-    const showModal = !!featureName
+  const showModal = !!featureName
 
-    const hasSubscription = Boolean(
-      appState.subscription.userSubscription &&
-        !appState.subscription.isUserSubscriptionExpired &&
-        !appState.subscription.isUserSubscriptionCanceled,
-    )
+  const hasSubscription = Boolean(
+    appState.subscription.userSubscription &&
+      !appState.subscription.isUserSubscriptionExpired &&
+      !appState.subscription.isUserSubscriptionCanceled,
+  )
 
-    return (
-      <>
-        {showModal && (
-          <PremiumFeaturesModal
-            application={application}
-            featureName={featureName}
-            hasSubscription={hasSubscription}
-            onClose={close}
-            showModal={!!featureName}
-          />
-        )}
-        <PremiumModalProvider_ value={{ activate }}>{children}</PremiumModalProvider_>
-      </>
-    )
-  },
-)
+  return (
+    <>
+      {showModal && (
+        <PremiumFeaturesModal
+          application={application}
+          featureName={featureName}
+          hasSubscription={hasSubscription}
+          onClose={close}
+          showModal={!!featureName}
+        />
+      )}
+      <PremiumModalProvider_ value={{ activate }}>{children}</PremiumModalProvider_>
+    </>
+  )
+})

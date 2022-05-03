@@ -22,11 +22,7 @@ import { Switch } from '@/Components/Switch'
 import { convertStringifiedBooleanToBoolean } from '@/Utils'
 import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/Strings'
 
-const providerData = [
-  { name: CloudProvider.Dropbox },
-  { name: CloudProvider.Google },
-  { name: CloudProvider.OneDrive },
-]
+const providerData = [{ name: CloudProvider.Dropbox }, { name: CloudProvider.Google }, { name: CloudProvider.OneDrive }]
 
 type Props = {
   application: WebApplication
@@ -62,20 +58,12 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
   }, [application])
 
   useEffect(() => {
-    const dailyDropboxBackupStatus = application.features.getFeatureStatus(
-      FeatureIdentifier.DailyDropboxBackup,
+    const dailyDropboxBackupStatus = application.features.getFeatureStatus(FeatureIdentifier.DailyDropboxBackup)
+    const dailyGdriveBackupStatus = application.features.getFeatureStatus(FeatureIdentifier.DailyGDriveBackup)
+    const dailyOneDriveBackupStatus = application.features.getFeatureStatus(FeatureIdentifier.DailyOneDriveBackup)
+    const isCloudBackupsAllowed = [dailyDropboxBackupStatus, dailyGdriveBackupStatus, dailyOneDriveBackupStatus].every(
+      (status) => status === FeatureStatus.Entitled,
     )
-    const dailyGdriveBackupStatus = application.features.getFeatureStatus(
-      FeatureIdentifier.DailyGDriveBackup,
-    )
-    const dailyOneDriveBackupStatus = application.features.getFeatureStatus(
-      FeatureIdentifier.DailyOneDriveBackup,
-    )
-    const isCloudBackupsAllowed = [
-      dailyDropboxBackupStatus,
-      dailyGdriveBackupStatus,
-      dailyOneDriveBackupStatus,
-    ].every((status) => status === FeatureStatus.Entitled)
 
     setIsEntitledToCloudBackups(isCloudBackupsAllowed)
     loadIsFailedCloudBackupEmailMutedSetting().catch(console.error)
@@ -114,9 +102,8 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
         {!isEntitledToCloudBackups && (
           <>
             <Text>
-              A <span className={'font-bold'}>Plus</span> or{' '}
-              <span className={'font-bold'}>Pro</span> subscription plan is required to enable Cloud
-              Backups.{' '}
+              A <span className={'font-bold'}>Plus</span> or <span className={'font-bold'}>Pro</span> subscription plan
+              is required to enable Cloud Backups.{' '}
               <a target="_blank" href="https://standardnotes.com/features">
                 Learn more
               </a>
@@ -127,8 +114,8 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
         )}
         <div>
           <Text className={additionalClass}>
-            Configure the integrations below to enable automatic daily backups of your encrypted
-            data set to your third-party cloud provider.
+            Configure the integrations below to enable automatic daily backups of your encrypted data set to your
+            third-party cloud provider.
           </Text>
           <div>
             <HorizontalSeparator classes={`mt-3 mb-3 ${additionalClass}`} />

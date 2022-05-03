@@ -25,12 +25,7 @@ export class TwoFactorActivation {
 
     makeAutoObservable<
       TwoFactorActivation,
-      | '_secretKey'
-      | '_authCode'
-      | '_step'
-      | '_enable2FAVerification'
-      | 'inputOtpToken'
-      | 'inputSecretKey'
+      '_secretKey' | '_authCode' | '_step' | '_enable2FAVerification' | 'inputOtpToken' | 'inputSecretKey'
     >(
       this,
       {

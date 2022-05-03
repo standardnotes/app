@@ -117,16 +117,12 @@ export const SmartViewsListItem: FunctionComponent<Props> = observer(({ view, ta
             spellCheck={false}
             ref={inputRef}
           />
-          <div className="count">
-            {view.uuid === SystemViewId.AllNotes && tagsState.allNotesCount}
-          </div>
+          <div className="count">{view.uuid === SystemViewId.AllNotes && tagsState.allNotesCount}</div>
         </div>
 
         {!isSystemView(view) && (
           <div className="meta">
-            {view.conflictOf && (
-              <div className="danger small-text font-bold">Conflicted Copy {view.conflictOf}</div>
-            )}
+            {view.conflictOf && <div className="danger small-text font-bold">Conflicted Copy {view.conflictOf}</div>}
 
             {isSelected && (
               <div className="menu">

@@ -26,9 +26,7 @@ const iconClassName = 'color-neutral mr-2'
 export const GeneralAccountMenu: FunctionComponent<Props> = observer(
   ({ application, appState, setMenuPane, closeMenu, mainApplicationGroup }) => {
     const [isSyncingInProgress, setIsSyncingInProgress] = useState(false)
-    const [lastSyncDate, setLastSyncDate] = useState(
-      formatLastSyncDate(application.sync.getLastSyncDate() as Date),
-    )
+    const [lastSyncDate, setLastSyncDate] = useState(formatLastSyncDate(application.sync.getLastSyncDate() as Date))
 
     const doSynchronization = async () => {
       setIsSyncingInProgress(true)
@@ -97,8 +95,8 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
           <>
             <div className="px-3 mb-1">
               <div className="mb-3 color-foreground">
-                You’re offline. Sign in to sync your notes and preferences across all your devices
-                and enable end-to-end encryption.
+                You’re offline. Sign in to sync your notes and preferences across all your devices and enable end-to-end
+                encryption.
               </div>
               <div className="flex items-center color-grey-1">
                 <Icon type="cloud-off" className="mr-2" />
@@ -114,10 +112,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
           initialFocus={!application.hasAccount() ? CREATE_ACCOUNT_INDEX : SWITCHER_INDEX}
         >
           <MenuItemSeparator />
-          <WorkspaceSwitcherOption
-            mainApplicationGroup={mainApplicationGroup}
-            appState={appState}
-          />
+          <WorkspaceSwitcherOption mainApplicationGroup={mainApplicationGroup} appState={appState} />
           <MenuItemSeparator />
           {user ? (
             <MenuItem

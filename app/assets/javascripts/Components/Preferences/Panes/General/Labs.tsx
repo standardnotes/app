@@ -29,19 +29,16 @@ export const LabsPane: FunctionComponent<Props> = ({ application }) => {
   const [experimentalFeatures, setExperimentalFeatures] = useState<ExperimentalFeatureItem[]>([])
 
   const reloadExperimentalFeatures = useCallback(() => {
-    const experimentalFeatures = application.features
-      .getExperimentalFeatures()
-      .map((featureIdentifier) => {
-        const feature = FindNativeFeature(featureIdentifier)
-        return {
-          identifier: featureIdentifier,
-          name: feature?.name ?? featureIdentifier,
-          description: feature?.description ?? '',
-          isEnabled: application.features.isExperimentalFeatureEnabled(featureIdentifier),
-          isEntitled:
-            application.features.getFeatureStatus(featureIdentifier) === FeatureStatus.Entitled,
-        }
-      })
+    const experimentalFeatures = application.features.getExperimentalFeatures().map((featureIdentifier) => {
+      const feature = FindNativeFeature(featureIdentifier)
+      return {
+        identifier: featureIdentifier,
+        name: feature?.name ?? featureIdentifier,
+        description: feature?.description ?? '',
+        isEnabled: application.features.isExperimentalFeatureEnabled(featureIdentifier),
+        isEntitled: application.features.getFeatureStatus(featureIdentifier) === FeatureStatus.Entitled,
+      }
+    })
     setExperimentalFeatures(experimentalFeatures)
   }, [application.features])
 
@@ -56,35 +53,32 @@ export const LabsPane: FunctionComponent<Props> = ({ application }) => {
       <PreferencesSegment>
         <Title>Labs</Title>
         <div>
-          {experimentalFeatures.map(
-            ({ identifier, name, description, isEnabled, isEntitled }, index: number) => {
-              const toggleFeature = () => {
-                if (!isEntitled) {
-                  premiumModal.activate(name)
-                  return
-                }
-
-                application.features.toggleExperimentalFeature(identifier)
-                reloadExperimentalFeatures()
+          {experimentalFeatures.map(({ identifier, name, description, isEnabled, isEntitled }, index: number) => {
+            const toggleFeature = () => {
+              if (!isEntitled) {
+                premiumModal.activate(name)
+                return
               }
 
-              const showHorizontalSeparator =
-                experimentalFeatures.length > 1 && index !== experimentalFeatures.length - 1
+              application.features.toggleExperimentalFeature(identifier)
+              reloadExperimentalFeatures()
+            }
 
-              return (
-                <>
-                  <div className="flex items-center justify-between">
-                    <div className="flex flex-col">
-                      <Subtitle>{name}</Subtitle>
-                      <Text>{description}</Text>
-                    </div>
-                    <Switch onChange={toggleFeature} checked={isEnabled} />
+            const showHorizontalSeparator = experimentalFeatures.length > 1 && index !== experimentalFeatures.length - 1
+
+            return (
+              <>
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <Subtitle>{name}</Subtitle>
+                    <Text>{description}</Text>
                   </div>
-                  {showHorizontalSeparator && <HorizontalSeparator classes="mt-5 mb-3" />}
-                </>
-              )
-            },
-          )}
+                  <Switch onChange={toggleFeature} checked={isEnabled} />
+                </div>
+                {showHorizontalSeparator && <HorizontalSeparator classes="mt-5 mb-3" />}
+              </>
+            )
+          })}
           {experimentalFeatures.length === 0 && (
             <div className="flex items-center justify-between">
               <div className="flex flex-col">

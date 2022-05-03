@@ -34,10 +34,7 @@ type Props = {
   onDismiss: (challenge: Challenge) => Promise<void>
 }
 
-const validateValues = (
-  values: ChallengeModalValues,
-  prompts: ChallengePrompt[],
-): ChallengeModalValues | undefined => {
+const validateValues = (values: ChallengeModalValues, prompts: ChallengePrompt[]): ChallengeModalValues | undefined => {
   let hasInvalidValues = false
   const validatedValues = { ...values }
   for (const prompt of prompts) {
@@ -75,10 +72,9 @@ export const ChallengeModal: FunctionComponent<Props> = ({
   const [isProcessing, setIsProcessing] = useState(false)
   const [, setProcessingPrompts] = useState<ChallengePrompt[]>([])
   const [bypassModalFocusLock, setBypassModalFocusLock] = useState(false)
-  const shouldShowForgotPasscode = [
-    ChallengeReason.ApplicationUnlock,
-    ChallengeReason.Migration,
-  ].includes(challenge.reason)
+  const shouldShowForgotPasscode = [ChallengeReason.ApplicationUnlock, ChallengeReason.Migration].includes(
+    challenge.reason,
+  )
   const shouldShowWorkspaceSwitcher = challenge.reason === ChallengeReason.ApplicationUnlock
 
   const submit = async () => {
@@ -268,10 +264,7 @@ export const ChallengeModal: FunctionComponent<Props> = ({
           </Button>
         )}
         {shouldShowWorkspaceSwitcher && (
-          <LockscreenWorkspaceSwitcher
-            mainApplicationGroup={mainApplicationGroup}
-            appState={appState}
-          />
+          <LockscreenWorkspaceSwitcher mainApplicationGroup={mainApplicationGroup} appState={appState} />
         )}
       </DialogContent>
     </DialogOverlay>

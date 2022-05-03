@@ -2,12 +2,7 @@ import { WebAppEvent, WebApplication } from '@/UIModels/Application'
 import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
 import { PureComponent } from '@/Components/Abstract/PureComponent'
 import { preventRefreshing } from '@/Utils'
-import {
-  ApplicationEvent,
-  ContentType,
-  CollectionSort,
-  ApplicationDescriptor,
-} from '@standardnotes/snjs'
+import { ApplicationEvent, ContentType, CollectionSort, ApplicationDescriptor } from '@standardnotes/snjs'
 import {
   STRING_NEW_UPDATE_READY,
   STRING_CONFIRM_APP_QUIT_DURING_UPGRADE,
@@ -241,9 +236,7 @@ export class Footer extends PureComponent<Props, State> {
         style: 'percent',
       })
 
-      statusManager.setMessage(
-        `Syncing ${stats.uploadTotalCount} items (${stringPercentage} complete)`,
-      )
+      statusManager.setMessage(`Syncing ${stats.uploadTotalCount} items (${stringPercentage} complete)`)
     } else {
       statusManager.setMessage('')
     }
@@ -330,9 +323,7 @@ export class Footer extends PureComponent<Props, State> {
   betaMessageClickHandler = () => {
     alertDialog({
       title: 'You are using a beta version of the app',
-      text:
-        'If you wish to go back to a stable version, make sure to sign out ' +
-        'of this beta app first.',
+      text: 'If you wish to go back to a stable version, make sure to sign out ' + 'of this beta app first.',
     }).catch(console.error)
   }
 
@@ -357,11 +348,7 @@ export class Footer extends PureComponent<Props, State> {
                   ' w-8 h-full flex items-center justify-center cursor-pointer rounded-full'
                 }
               >
-                <div
-                  className={
-                    this.state.hasError ? 'danger' : (this.user ? 'info' : 'neutral') + ' w-5 h-5'
-                  }
-                >
+                <div className={this.state.hasError ? 'danger' : (this.user ? 'info' : 'neutral') + ' w-5 h-5'}>
                   <Icon type="account-circle" className="hover:color-info w-5 h-5 max-h-5" />
                 </div>
               </div>
@@ -382,10 +369,7 @@ export class Footer extends PureComponent<Props, State> {
                 <div className="h-5">
                   <Icon
                     type="tune"
-                    className={
-                      (this.state.showQuickSettingsMenu ? 'color-info' : '') +
-                      ' rounded hover:color-info'
-                    }
+                    className={(this.state.showQuickSettingsMenu ? 'color-info' : '') + ' rounded hover:color-info'}
                   />
                 </div>
               </div>
@@ -401,10 +385,7 @@ export class Footer extends PureComponent<Props, State> {
               <Fragment>
                 <div className="sk-app-bar-item border" />
                 <div className="sk-app-bar-item">
-                  <a
-                    onClick={this.betaMessageClickHandler}
-                    className="no-decoration sk-label title"
-                  >
+                  <a onClick={this.betaMessageClickHandler} className="no-decoration sk-label title">
                     You are using a beta version of the app
                   </a>
                 </div>
@@ -439,10 +420,7 @@ export class Footer extends PureComponent<Props, State> {
                   </div>
                 )}
                 {this.state.showSyncResolution && (
-                  <SyncResolutionMenu
-                    close={this.syncResolutionClickHandler}
-                    application={this.application}
-                  />
+                  <SyncResolutionMenu close={this.syncResolutionClickHandler} application={this.application} />
                 )}
               </div>
             )}
