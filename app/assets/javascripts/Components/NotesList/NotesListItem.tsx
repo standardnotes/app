@@ -1,12 +1,8 @@
 import { WebApplication } from '@/UIModels/Application'
-import {
-  CollectionSort,
-  CollectionSortProperty,
-  sanitizeHtmlString,
-  SNNote,
-} from '@standardnotes/snjs'
+import { CollectionSort, CollectionSortProperty, sanitizeHtmlString, SNNote } from '@standardnotes/snjs'
 import { FunctionComponent } from 'preact'
 import { Icon } from '@/Components/Icon'
+import { PLAIN_EDITOR_NAME } from '@/Constants'
 
 type Props = {
   application: WebApplication
@@ -55,10 +51,8 @@ export const NotesListItem: FunctionComponent<Props> = ({
   const flags = flagsForNote(note)
   const showModifiedDate = sortedBy === CollectionSort.UpdatedAt
   const editorForNote = application.componentManager.editorForNote(note)
-  const editorName = editorForNote?.name ?? 'Plain editor'
-  const [icon, tint] = application.iconsController.getIconAndTintForEditor(
-    editorForNote?.identifier,
-  )
+  const editorName = editorForNote?.name ?? PLAIN_EDITOR_NAME
+  const [icon, tint] = application.iconsController.getIconAndTintForEditor(editorForNote?.identifier)
 
   return (
     <div
@@ -69,17 +63,11 @@ export const NotesListItem: FunctionComponent<Props> = ({
     >
       {!hideEditorIcon && (
         <div className="icon">
-          <Icon
-            ariaLabel={`Icon for ${editorName}`}
-            type={icon}
-            className={`color-accessory-tint-${tint}`}
-          />
+          <Icon ariaLabel={`Icon for ${editorName}`} type={icon} className={`color-accessory-tint-${tint}`} />
         </div>
       )}
       <div className={`meta ${hideEditorIcon ? 'icon-hidden' : ''}`}>
-        <div className="name-container">
-          {note.title.length ? <div className="name">{note.title}</div> : null}
-        </div>
+        <div className="name-container">{note.title.length ? <div className="name">{note.title}</div> : null}</div>
         {!hidePreview && !note.hidePreview && !note.protected && (
           <div className="note-preview">
             {note.preview_html && (
@@ -90,9 +78,7 @@ export const NotesListItem: FunctionComponent<Props> = ({
                 }}
               ></div>
             )}
-            {!note.preview_html && note.preview_plain && (
-              <div className="plain-preview">{note.preview_plain}</div>
-            )}
+            {!note.preview_html && note.preview_plain && <div className="plain-preview">{note.preview_plain}</div>}
             {!note.preview_html && !note.preview_plain && note.text && (
               <div className="default-preview">{note.text}</div>
             )}
@@ -128,11 +114,7 @@ export const NotesListItem: FunctionComponent<Props> = ({
       <div className="flag-icons">
         {note.locked && (
           <span title="Editing Disabled">
-            <Icon
-              ariaLabel="Editing Disabled"
-              type="pencil-off"
-              className="sn-icon--small color-info"
-            />
+            <Icon ariaLabel="Editing Disabled" type="pencil-off" className="sn-icon--small color-info" />
           </span>
         )}
         {note.trashed && (
@@ -142,11 +124,7 @@ export const NotesListItem: FunctionComponent<Props> = ({
         )}
         {note.archived && (
           <span title="Archived">
-            <Icon
-              ariaLabel="Archived"
-              type="archive"
-              className="sn-icon--mid color-accessory-tint-3"
-            />
+            <Icon ariaLabel="Archived" type="archive" className="sn-icon--mid color-accessory-tint-3" />
           </span>
         )}
         {note.pinned && (

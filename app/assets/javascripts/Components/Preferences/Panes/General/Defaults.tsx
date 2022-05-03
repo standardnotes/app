@@ -1,11 +1,5 @@
 import { Dropdown, DropdownItem } from '@/Components/Dropdown'
-import {
-  FeatureIdentifier,
-  PrefKey,
-  ComponentArea,
-  ComponentMutator,
-  SNComponent,
-} from '@standardnotes/snjs'
+import { FeatureIdentifier, PrefKey, ComponentArea, ComponentMutator, SNComponent } from '@standardnotes/snjs'
 import {
   PreferencesGroup,
   PreferencesSegment,
@@ -18,6 +12,7 @@ import { FunctionComponent } from 'preact'
 import { useEffect, useState } from 'preact/hooks'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
 import { Switch } from '@/Components/Switch'
+import { PLAIN_EDITOR_NAME } from '@/Constants'
 
 type Props = {
   application: WebApplication
@@ -27,11 +22,7 @@ type EditorOption = DropdownItem & {
   value: FeatureIdentifier | 'plain-editor'
 }
 
-const makeEditorDefault = (
-  application: WebApplication,
-  component: SNComponent,
-  currentDefault: SNComponent,
-) => {
+const makeEditorDefault = (application: WebApplication, component: SNComponent, currentDefault: SNComponent) => {
   if (currentDefault) {
     removeEditorDefault(application, currentDefault)
   }
@@ -53,9 +44,7 @@ const removeEditorDefault = (application: WebApplication, component: SNComponent
 }
 
 const getDefaultEditor = (application: WebApplication) => {
-  return application.componentManager
-    .componentsForArea(ComponentArea.Editor)
-    .filter((e) => e.isDefaultEditor())[0]
+  return application.componentManager.componentsForArea(ComponentArea.Editor).filter((e) => e.isDefaultEditor())[0]
 }
 
 export const Defaults: FunctionComponent<Props> = ({ application }) => {
@@ -64,9 +53,7 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
     () => getDefaultEditor(application)?.package_info?.identifier || 'plain-editor',
   )
 
-  const [spellcheck, setSpellcheck] = useState(() =>
-    application.getPreference(PrefKey.EditorSpellcheck, true),
-  )
+  const [spellcheck, setSpellcheck] = useState(() => application.getPreference(PrefKey.EditorSpellcheck, true))
 
   const [addNoteToParentFolders, setAddNoteToParentFolders] = useState(() =>
     application.getPreference(PrefKey.NoteAddToParentFolders, true),
@@ -95,7 +82,7 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
         {
           icon: 'plain-text',
           iconClassName: 'color-accessory-tint-1',
-          label: 'Plain Editor',
+          label: PLAIN_EDITOR_NAME,
           value: 'plain-editor',
         },
       ])
@@ -124,12 +111,12 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
       <PreferencesSegment>
         <Title>Defaults</Title>
         <div>
-          <Subtitle>Default Editor</Subtitle>
-          <Text>New notes will be created using this editor.</Text>
+          <Subtitle>Default Note Type</Subtitle>
+          <Text>New notes will be created using this type.</Text>
           <div className="mt-2">
             <Dropdown
               id="def-editor-dropdown"
-              label="Select the default editor"
+              label="Select the default note type"
               items={editorItems}
               value={defaultEditorValue}
               onChange={setDefaultEditor}
@@ -141,9 +128,8 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
           <div className="flex flex-col">
             <Subtitle>Spellcheck</Subtitle>
             <Text>
-              The default spellcheck value for new notes. Spellcheck can be configured per note from
-              the note context menu. Spellcheck may degrade overall typing performance with long
-              notes.
+              The default spellcheck value for new notes. Spellcheck can be configured per note from the note context
+              menu. Spellcheck may degrade overall typing performance with long notes.
             </Text>
           </div>
           <Switch onChange={toggleSpellcheck} checked={spellcheck} />
@@ -152,16 +138,11 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
             <Subtitle>Add all parent tags when adding a nested tag to a note</Subtitle>
-            <Text>
-              When enabled, adding a nested tag to a note will automatically add all associated
-              parent tags.
-            </Text>
+            <Text>When enabled, adding a nested tag to a note will automatically add all associated parent tags.</Text>
           </div>
           <Switch
             onChange={() => {
-              application
-                .setPreference(PrefKey.NoteAddToParentFolders, !addNoteToParentFolders)
-                .catch(console.error)
+              application.setPreference(PrefKey.NoteAddToParentFolders, !addNoteToParentFolders).catch(console.error)
               setAddNoteToParentFolders(!addNoteToParentFolders)
             }}
             checked={addNoteToParentFolders}

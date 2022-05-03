@@ -21,7 +21,8 @@ import {
 import { Fragment, FunctionComponent } from 'preact'
 import { useCallback, useEffect, useState } from 'preact/hooks'
 import { EditorMenuItem, EditorMenuGroup } from '@/Components/NotesOptions/ChangeEditorOption'
-import { createEditorMenuGroups, PLAIN_EDITOR_NAME } from './createEditorMenuGroups'
+import { createEditorMenuGroups } from './createEditorMenuGroups'
+import { PLAIN_EDITOR_NAME } from '@/Constants'
 
 type ChangeEditorMenuProps = {
   application: WebApplication
@@ -169,7 +170,7 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   }
 
   return (
-    <Menu className="pt-0.5 pb-1" a11yLabel="Change editor menu" isOpen={isVisible}>
+    <Menu className="pt-0.5 pb-1" a11yLabel="Change note type menu" isOpen={isVisible}>
       {groups
         .filter((group) => group.items && group.items.length)
         .map((group, index) => {
@@ -194,9 +195,7 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
                   <MenuItem
                     type={MenuItemType.RadioButton}
                     onClick={onClickEditorItem}
-                    className={
-                      'sn-dropdown-item py-2 text-input focus:bg-info-backdrop focus:shadow-none'
-                    }
+                    className={'sn-dropdown-item py-2 text-input focus:bg-info-backdrop focus:shadow-none'}
                     onBlur={closeOnBlur}
                     checked={isSelectedEditor(item)}
                   >

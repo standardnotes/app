@@ -9,8 +9,7 @@ import {
   NoteType,
 } from '@standardnotes/snjs'
 import { EditorMenuItem, EditorMenuGroup } from '@/Components/NotesOptions/ChangeEditorOption'
-
-export const PLAIN_EDITOR_NAME = 'Plain Editor'
+import { PLAIN_EDITOR_NAME } from '@/Constants'
 
 type EditorGroup = NoteType | 'plain' | 'others'
 
@@ -50,10 +49,7 @@ export const createEditorMenuGroups = (application: WebApplication, editors: SNC
   }
 
   GetFeatures()
-    .filter(
-      (feature) =>
-        feature.content_type === ContentType.Component && feature.area === ComponentArea.Editor,
-    )
+    .filter((feature) => feature.content_type === ContentType.Component && feature.area === ComponentArea.Editor)
     .forEach((editorFeature) => {
       const notInstalled = !editors.find((editor) => editor.identifier === editorFeature.identifier)
       const isExperimental = application.features.isExperimentalFeature(editorFeature.identifier)
@@ -69,8 +65,7 @@ export const createEditorMenuGroups = (application: WebApplication, editors: SNC
     const editorItem: EditorMenuItem = {
       name: editor.name,
       component: editor,
-      isEntitled:
-        application.features.getFeatureStatus(editor.identifier) === FeatureStatus.Entitled,
+      isEntitled: application.features.getFeatureStatus(editor.identifier) === FeatureStatus.Entitled,
     }
 
     editorItems[getEditorGroup(editor.package_info)].push(editorItem)

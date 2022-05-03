@@ -20,3 +20,5 @@ export const BYTES_IN_ONE_MEGABYTE = 1_000_000
 export const TAG_FOLDERS_FEATURE_NAME = 'Tag folders'
 export const TAG_FOLDERS_FEATURE_TOOLTIP = 'A Plus or Pro plan is required to enable Tag folders.'
 export const SMART_TAGS_FEATURE_NAME = 'Smart Tags'
+
+export const PLAIN_EDITOR_NAME = 'Plain Text'

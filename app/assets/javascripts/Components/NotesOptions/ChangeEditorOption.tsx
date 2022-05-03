@@ -31,10 +31,7 @@ export type EditorMenuItem = {
 
 export type EditorMenuGroup = AccordionMenuGroup<EditorMenuItem>
 
-export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
-  application,
-  note,
-}) => {
+export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({ application, note }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
   const [menuStyle, setMenuStyle] = useState<SubmenuStyle>({
@@ -90,7 +87,7 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
         >
           <div className="flex items-center">
             <Icon type="dashboard" className="color-neutral mr-2" />
-            Change editor
+            Change note type
           </div>
           <Icon type="chevron-right" className="color-neutral" />
         </DisclosureButton>

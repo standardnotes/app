@@ -72,7 +72,7 @@ export const ChangeEditorButton: FunctionComponent<Props> = observer(
             ref={buttonRef}
             className="sn-icon-button border-contrast"
           >
-            <VisuallyHidden>Change editor</VisuallyHidden>
+            <VisuallyHidden>Change note type</VisuallyHidden>
             <Icon type="dashboard" className="block" />
           </DisclosureButton>
           <DisclosurePanel

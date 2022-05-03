@@ -32,6 +32,8 @@ const DeletePermanentlyButton = ({ closeOnBlur, onClick }: DeletePermanentlyButt
 )
 
 const iconClass = 'color-neutral mr-2'
+const iconClassDanger = 'color-danger mr-2'
+const iconClassWarning = 'color-warning mr-2'
 
 const getWordCount = (text: string) => {
   if (text.trim().length === 0) {
@@ -88,15 +90,9 @@ const NoteAttributes: FunctionComponent<{
   application: SNApplication
   note: SNNote
 }> = ({ application, note }) => {
-  const { words, characters, paragraphs } = useMemo(
-    () => countNoteAttributes(note.text),
-    [note.text],
-  )
+  const { words, characters, paragraphs } = useMemo(() => countNoteAttributes(note.text), [note.text])
 
-  const readTime = useMemo(
-    () => (typeof words === 'number' ? calculateReadTime(words) : 'N/A'),
-    [words],
-  )
+  const readTime = useMemo(() => (typeof words === 'number' ? calculateReadTime(words) : 'N/A'), [words])
 
   const dateLastModified = useMemo(() => formatDate(note.userModifiedDate), [note.userModifiedDate])
 
@@ -168,283 +164,276 @@ const NOTE_SIZE_WARNING_THRESHOLD = 0.5 * BYTES_IN_ONE_MEGABYTE
 
 const NoteSizeWarning: FunctionComponent<{
   note: SNNote
-}> = ({ note }) =>
-  (new Blob([note.text]).size > NOTE_SIZE_WARNING_THRESHOLD ? (
+}> = ({ note }) => {
+  return new Blob([note.text]).size > NOTE_SIZE_WARNING_THRESHOLD ? (
     <div className="flex items-center px-3 py-3.5 relative bg-note-size-warning">
       <Icon type="warning" className="color-accessory-tint-3 flex-shrink-0 mr-3" />
       <div className="color-grey-0 select-none leading-140% max-w-80%">
         This note may have trouble syncing to the mobile application due to its size.
       </div>
     </div>
-  ) : null)
+  ) : null
+}
 
-export const NotesOptions = observer(
-  ({ application, appState, closeOnBlur }: NotesOptionsProps) => {
-    const [altKeyDown, setAltKeyDown] = useState(false)
+export const NotesOptions = observer(({ application, appState, closeOnBlur }: NotesOptionsProps) => {
+  const [altKeyDown, setAltKeyDown] = useState(false)
 
-    const toggleOn = (condition: (note: SNNote) => boolean) => {
-      const notesMatchingAttribute = notes.filter(condition)
-      const notesNotMatchingAttribute = notes.filter((note) => !condition(note))
-      return notesMatchingAttribute.length > notesNotMatchingAttribute.length
+  const toggleOn = (condition: (note: SNNote) => boolean) => {
+    const notesMatchingAttribute = notes.filter(condition)
+    const notesNotMatchingAttribute = notes.filter((note) => !condition(note))
+    return notesMatchingAttribute.length > notesNotMatchingAttribute.length
+  }
+
+  const notes = Object.values(appState.notes.selectedNotes)
+  const hidePreviews = toggleOn((note) => note.hidePreview)
+  const locked = toggleOn((note) => note.locked)
+  const protect = toggleOn((note) => note.protected)
+  const archived = notes.some((note) => note.archived)
+  const unarchived = notes.some((note) => !note.archived)
+  const trashed = notes.some((note) => note.trashed)
+  const notTrashed = notes.some((note) => !note.trashed)
+  const pinned = notes.some((note) => note.pinned)
+  const unpinned = notes.some((note) => !note.pinned)
+
+  useEffect(() => {
+    const removeAltKeyObserver = application.io.addKeyObserver({
+      modifiers: [KeyboardModifier.Alt],
+      onKeyDown: () => {
+        setAltKeyDown(true)
+      },
+      onKeyUp: () => {
+        setAltKeyDown(false)
+      },
+    })
+
+    return () => {
+      removeAltKeyObserver()
+    }
+  }, [application])
+
+  const getNoteFileName = (note: SNNote): string => {
+    const editor = application.componentManager.editorForNote(note)
+    const format = editor?.package_info?.file_type || 'txt'
+    return `${note.title}.${format}`
+  }
+
+  const downloadSelectedItems = async () => {
+    if (notes.length === 1) {
+      application.getArchiveService().downloadData(new Blob([notes[0].text]), getNoteFileName(notes[0]))
+      return
     }
 
-    const notes = Object.values(appState.notes.selectedNotes)
-    const hidePreviews = toggleOn((note) => note.hidePreview)
-    const locked = toggleOn((note) => note.locked)
-    const protect = toggleOn((note) => note.protected)
-    const archived = notes.some((note) => note.archived)
-    const unarchived = notes.some((note) => !note.archived)
-    const trashed = notes.some((note) => note.trashed)
-    const notTrashed = notes.some((note) => !note.trashed)
-    const pinned = notes.some((note) => note.pinned)
-    const unpinned = notes.some((note) => !note.pinned)
-
-    useEffect(() => {
-      const removeAltKeyObserver = application.io.addKeyObserver({
-        modifiers: [KeyboardModifier.Alt],
-        onKeyDown: () => {
-          setAltKeyDown(true)
-        },
-        onKeyUp: () => {
-          setAltKeyDown(false)
-        },
+    if (notes.length > 1) {
+      const loadingToastId = addToast({
+        type: ToastType.Loading,
+        message: `Exporting ${notes.length} notes...`,
       })
-
-      return () => {
-        removeAltKeyObserver()
-      }
-    }, [application])
-
-    const getNoteFileName = (note: SNNote): string => {
-      const editor = application.componentManager.editorForNote(note)
-      const format = editor?.package_info?.file_type || 'txt'
-      return `${note.title}.${format}`
-    }
-
-    const downloadSelectedItems = async () => {
-      if (notes.length === 1) {
-        application
-          .getArchiveService()
-          .downloadData(new Blob([notes[0].text]), getNoteFileName(notes[0]))
-        return
-      }
-
-      if (notes.length > 1) {
-        const loadingToastId = addToast({
-          type: ToastType.Loading,
-          message: `Exporting ${notes.length} notes...`,
-        })
-        await application.getArchiveService().downloadDataAsZip(
-          notes.map((note) => {
-            return {
-              filename: getNoteFileName(note),
-              content: new Blob([note.text]),
-            }
-          }),
-        )
-        dismissToast(loadingToastId)
-        addToast({
-          type: ToastType.Success,
-          message: `Exported ${notes.length} notes`,
-        })
-      }
-    }
-
-    const duplicateSelectedItems = () => {
-      notes.forEach((note) => {
-        application.mutator.duplicateItem(note).catch(console.error)
+      await application.getArchiveService().downloadDataAsZip(
+        notes.map((note) => {
+          return {
+            filename: getNoteFileName(note),
+            content: new Blob([note.text]),
+          }
+        }),
+      )
+      dismissToast(loadingToastId)
+      addToast({
+        type: ToastType.Success,
+        message: `Exported ${notes.length} notes`,
       })
     }
+  }
 
-    const openRevisionHistoryModal = () => {
-      appState.notes.setShowRevisionHistoryModal(true)
-    }
+  const duplicateSelectedItems = () => {
+    notes.forEach((note) => {
+      application.mutator.duplicateItem(note).catch(console.error)
+    })
+  }
 
-    return (
-      <>
-        {notes.length === 1 && (
-          <>
-            <button
-              onBlur={closeOnBlur}
-              className="sn-dropdown-item"
-              onClick={openRevisionHistoryModal}
-            >
-              <Icon type="history" className={iconClass} />
-              Note history
-            </button>
-            <div className="min-h-1px my-2 bg-border"></div>
-          </>
-        )}
+  const openRevisionHistoryModal = () => {
+    appState.notes.setShowRevisionHistoryModal(true)
+  }
+
+  return (
+    <>
+      {notes.length === 1 && (
+        <>
+          <button onBlur={closeOnBlur} className="sn-dropdown-item" onClick={openRevisionHistoryModal}>
+            <Icon type="history" className={iconClass} />
+            Note history
+          </button>
+          <div className="min-h-1px my-2 bg-border"></div>
+        </>
+      )}
+      <button
+        className="sn-dropdown-item justify-between"
+        onClick={() => {
+          appState.notes.setLockSelectedNotes(!locked)
+        }}
+        onBlur={closeOnBlur}
+      >
+        <span className="flex items-center">
+          <Icon type="pencil-off" className={iconClass} />
+          Prevent editing
+        </span>
+        <Switch className="px-0" checked={locked} />
+      </button>
+      <button
+        className="sn-dropdown-item justify-between"
+        onClick={() => {
+          appState.notes.setHideSelectedNotePreviews(!hidePreviews)
+        }}
+        onBlur={closeOnBlur}
+      >
+        <span className="flex items-center">
+          <Icon type="rich-text" className={iconClass} />
+          Show preview
+        </span>
+        <Switch className="px-0" checked={!hidePreviews} />
+      </button>
+      <button
+        className="sn-dropdown-item justify-between"
+        onClick={() => {
+          appState.notes.setProtectSelectedNotes(!protect).catch(console.error)
+        }}
+        onBlur={closeOnBlur}
+      >
+        <span className="flex items-center">
+          <Icon type="password" className={iconClass} />
+          Password protect
+        </span>
+        <Switch className="px-0" checked={protect} />
+      </button>
+      {notes.length === 1 && (
+        <>
+          <div className="min-h-1px my-2 bg-border"></div>
+          <ChangeEditorOption appState={appState} application={application} note={notes[0]} />
+        </>
+      )}
+      <div className="min-h-1px my-2 bg-border"></div>
+      {appState.tags.tagsCount > 0 && <AddTagOption appState={appState} />}
+      {unpinned && (
         <button
-          className="sn-dropdown-item justify-between"
-          onClick={() => {
-            appState.notes.setLockSelectedNotes(!locked)
-          }}
           onBlur={closeOnBlur}
+          className="sn-dropdown-item"
+          onClick={() => {
+            appState.notes.setPinSelectedNotes(true)
+          }}
         >
-          <span className="flex items-center">
-            <Icon type="pencil-off" className={iconClass} />
-            Prevent editing
-          </span>
-          <Switch className="px-0" checked={locked} />
+          <Icon type="pin" className={iconClass} />
+          Pin to top
         </button>
+      )}
+      {pinned && (
         <button
-          className="sn-dropdown-item justify-between"
-          onClick={() => {
-            appState.notes.setHideSelectedNotePreviews(!hidePreviews)
-          }}
           onBlur={closeOnBlur}
+          className="sn-dropdown-item"
+          onClick={() => {
+            appState.notes.setPinSelectedNotes(false)
+          }}
         >
-          <span className="flex items-center">
-            <Icon type="rich-text" className={iconClass} />
-            Show preview
-          </span>
-          <Switch className="px-0" checked={!hidePreviews} />
+          <Icon type="unpin" className={iconClass} />
+          Unpin
         </button>
+      )}
+      <button onBlur={closeOnBlur} className="sn-dropdown-item" onClick={downloadSelectedItems}>
+        <Icon type="download" className={iconClass} />
+        Export
+      </button>
+      <button onBlur={closeOnBlur} className="sn-dropdown-item" onClick={duplicateSelectedItems}>
+        <Icon type="copy" className={iconClass} />
+        Duplicate
+      </button>
+      {unarchived && (
         <button
-          className="sn-dropdown-item justify-between"
-          onClick={() => {
-            appState.notes.setProtectSelectedNotes(!protect).catch(console.error)
-          }}
           onBlur={closeOnBlur}
+          className="sn-dropdown-item"
+          onClick={() => {
+            appState.notes.setArchiveSelectedNotes(true).catch(console.error)
+          }}
         >
-          <span className="flex items-center">
-            <Icon type="password" className={iconClass} />
-            Protect
-          </span>
-          <Switch className="px-0" checked={protect} />
+          <Icon type="archive" className={iconClassWarning} />
+          <span className="color-warning">Archive</span>
         </button>
-        {notes.length === 1 && (
-          <>
-            <div className="min-h-1px my-2 bg-border"></div>
-            <ChangeEditorOption appState={appState} application={application} note={notes[0]} />
-          </>
-        )}
-        <div className="min-h-1px my-2 bg-border"></div>
-        {appState.tags.tagsCount > 0 && <AddTagOption appState={appState} />}
-        {unpinned && (
-          <button
-            onBlur={closeOnBlur}
-            className="sn-dropdown-item"
-            onClick={() => {
-              appState.notes.setPinSelectedNotes(true)
-            }}
-          >
-            <Icon type="pin" className={iconClass} />
-            Pin to top
-          </button>
-        )}
-        {pinned && (
-          <button
-            onBlur={closeOnBlur}
-            className="sn-dropdown-item"
-            onClick={() => {
-              appState.notes.setPinSelectedNotes(false)
-            }}
-          >
-            <Icon type="unpin" className={iconClass} />
-            Unpin
-          </button>
-        )}
-        <button onBlur={closeOnBlur} className="sn-dropdown-item" onClick={downloadSelectedItems}>
-          <Icon type="download" className={iconClass} />
-          Export
+      )}
+      {archived && (
+        <button
+          onBlur={closeOnBlur}
+          className="sn-dropdown-item"
+          onClick={() => {
+            appState.notes.setArchiveSelectedNotes(false).catch(console.error)
+          }}
+        >
+          <Icon type="unarchive" className={iconClassWarning} />
+          <span className="color-warning">Unarchive</span>
         </button>
-        <button onBlur={closeOnBlur} className="sn-dropdown-item" onClick={duplicateSelectedItems}>
-          <Icon type="copy" className={iconClass} />
-          Duplicate
-        </button>
-        {unarchived && (
+      )}
+      {notTrashed &&
+        (altKeyDown ? (
+          <DeletePermanentlyButton
+            closeOnBlur={closeOnBlur}
+            onClick={async () => {
+              await appState.notes.deleteNotesPermanently()
+            }}
+          />
+        ) : (
           <button
             onBlur={closeOnBlur}
             className="sn-dropdown-item"
-            onClick={() => {
-              appState.notes.setArchiveSelectedNotes(true).catch(console.error)
+            onClick={async () => {
+              await appState.notes.setTrashSelectedNotes(true)
             }}
           >
-            <Icon type="archive" className={iconClass} />
-            Archive
+            <Icon type="trash" className={iconClassDanger} />
+            <span className="color-danger">Move to trash</span>
           </button>
-        )}
-        {archived && (
+        ))}
+      {trashed && (
+        <>
           <button
             onBlur={closeOnBlur}
             className="sn-dropdown-item"
-            onClick={() => {
-              appState.notes.setArchiveSelectedNotes(false).catch(console.error)
+            onClick={async () => {
+              await appState.notes.setTrashSelectedNotes(false)
             }}
           >
-            <Icon type="unarchive" className={iconClass} />
-            Unarchive
+            <Icon type="restore" className={iconClass} />
+            Restore
           </button>
-        )}
-        {notTrashed &&
-          (altKeyDown ? (
-            <DeletePermanentlyButton
-              closeOnBlur={closeOnBlur}
-              onClick={async () => {
-                await appState.notes.deleteNotesPermanently()
-              }}
-            />
-          ) : (
-            <button
-              onBlur={closeOnBlur}
-              className="sn-dropdown-item"
-              onClick={async () => {
-                await appState.notes.setTrashSelectedNotes(true)
-              }}
-            >
-              <Icon type="trash" className={iconClass} />
-              Move to trash
-            </button>
-          ))}
-        {trashed && (
-          <>
-            <button
-              onBlur={closeOnBlur}
-              className="sn-dropdown-item"
-              onClick={async () => {
-                await appState.notes.setTrashSelectedNotes(false)
-              }}
-            >
-              <Icon type="restore" className={iconClass} />
-              Restore
-            </button>
-            <DeletePermanentlyButton
-              closeOnBlur={closeOnBlur}
-              onClick={async () => {
-                await appState.notes.deleteNotesPermanently()
-              }}
-            />
-            <button
-              onBlur={closeOnBlur}
-              className="sn-dropdown-item"
-              onClick={async () => {
-                await appState.notes.emptyTrash()
-              }}
-            >
-              <div className="flex items-start">
-                <Icon type="trash-sweep" className="color-danger mr-2" />
-                <div className="flex-row">
-                  <div className="color-danger">Empty Trash</div>
-                  <div className="text-xs">{appState.notes.trashedNotesCount} notes in Trash</div>
-                </div>
+          <DeletePermanentlyButton
+            closeOnBlur={closeOnBlur}
+            onClick={async () => {
+              await appState.notes.deleteNotesPermanently()
+            }}
+          />
+          <button
+            onBlur={closeOnBlur}
+            className="sn-dropdown-item"
+            onClick={async () => {
+              await appState.notes.emptyTrash()
+            }}
+          >
+            <div className="flex items-start">
+              <Icon type="trash-sweep" className="color-danger mr-2" />
+              <div className="flex-row">
+                <div className="color-danger">Empty Trash</div>
+                <div className="text-xs">{appState.notes.trashedNotesCount} notes in Trash</div>
               </div>
-            </button>
-          </>
-        )}
-        {notes.length === 1 ? (
-          <>
-            <div className="min-h-1px my-2 bg-border"></div>
-            <ListedActionsOption application={application} note={notes[0]} />
-            <div className="min-h-1px my-2 bg-border"></div>
-            <SpellcheckOptions appState={appState} note={notes[0]} />
-            <div className="min-h-1px my-2 bg-border"></div>
-            <NoteAttributes application={application} note={notes[0]} />
-            <NoteSizeWarning note={notes[0]} />
-          </>
-        ) : null}
-      </>
-    )
-  },
-)
+            </div>
+          </button>
+        </>
+      )}
+      {notes.length === 1 ? (
+        <>
+          <div className="min-h-1px my-2 bg-border"></div>
+          <ListedActionsOption application={application} note={notes[0]} />
+          <div className="min-h-1px my-2 bg-border"></div>
+          <SpellcheckOptions appState={appState} note={notes[0]} />
+          <div className="min-h-1px my-2 bg-border"></div>
+          <NoteAttributes application={application} note={notes[0]} />
+          <NoteSizeWarning note={notes[0]} />
+        </>
+      ) : null}
+    </>
+  )
+})
