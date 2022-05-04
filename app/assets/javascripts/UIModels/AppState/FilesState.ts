@@ -42,13 +42,11 @@ export class FilesState {
         }
 
         if (progress) {
-          const progressPercent = Number.isInteger(progress.percentComplete)
-            ? progress.percentComplete
-            : progress.percentComplete.toFixed(2)
+          const progressPercent = Math.floor(progress.percentComplete)
 
           updateToast(downloadingToastId, {
             message: `Downloading file "${file.name}" (${progressPercent}%)`,
-            progress: progress.percentComplete,
+            progress: progressPercent,
           })
         }
       })
@@ -136,10 +134,9 @@ export class FilesState {
         const onChunk = async (chunk: Uint8Array, index: number, isLast: boolean) => {
           await this.application.files.pushBytesForUpload(operation, chunk, index, isLast)
 
-          const progress = operation.getProgress().percentComplete
-          const formattedProgress = Number.isInteger(progress) ? progress : progress.toFixed(2)
+          const progress = Math.round(operation.getProgress().percentComplete)
           updateToast(toastId, {
-            message: `Uploading file "${file.name}" (${formattedProgress}%)`,
+            message: `Uploading file "${file.name}" (${progress}%)`,
             progress,
           })
         }
