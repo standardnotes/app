@@ -2,7 +2,7 @@ import { WebApplication } from '@/UIModels/Application'
 import { concatenateUint8Arrays } from '@/Utils/ConcatenateUint8Arrays'
 import { DialogContent, DialogOverlay } from '@reach/dialog'
 import { SNFile } from '@standardnotes/snjs'
-import { NoPreviewIllustration } from '@standardnotes/stylekit'
+import { addToast, NoPreviewIllustration, ToastType } from '@standardnotes/stylekit'
 import { FunctionComponent } from 'preact'
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import { getFileIconComponent } from '@/Components/AttachedFilesPopover/PopoverFileItem'
@@ -28,6 +28,7 @@ export const FilePreviewModal: FunctionComponent<Props> = ({ application, files,
   const [objectUrl, setObjectUrl] = useState<string>()
   const [isFilePreviewable, setIsFilePreviewable] = useState(false)
   const [isLoadingFile, setIsLoadingFile] = useState(true)
+  const [fileDownloadProgress, setFileDownloadProgress] = useState(0)
   const [showFileInfoPanel, setShowFileInfoPanel] = useState(false)
   const currentFileIdRef = useRef<string>()
   const closeButtonRef = useRef<HTMLButtonElement>(null)
@@ -35,8 +36,12 @@ export const FilePreviewModal: FunctionComponent<Props> = ({ application, files,
   const getObjectUrl = useCallback(async () => {
     try {
       const chunks: Uint8Array[] = []
-      await application.files.downloadFile(file, async (decryptedChunk: Uint8Array) => {
+      setFileDownloadProgress(0)
+      await application.files.downloadFile(file, async (decryptedChunk, progress) => {
         chunks.push(decryptedChunk)
+        if (progress) {
+          setFileDownloadProgress(Math.round(progress.percentComplete))
+        }
       })
       const finalDecryptedBytes = concatenateUint8Arrays(chunks)
       setObjectUrl(
@@ -150,6 +155,10 @@ export const FilePreviewModal: FunctionComponent<Props> = ({ application, files,
                 className="mr-4"
                 onClick={() => {
                   application.getArchiveService().downloadData(objectUrl, file.name)
+                  addToast({
+                    type: ToastType.Success,
+                    message: 'Successfully downloaded file',
+                  })
                 }}
               >
                 Download
@@ -168,7 +177,10 @@ export const FilePreviewModal: FunctionComponent<Props> = ({ application, files,
         <div className="flex flex-grow min-h-0">
           <div className="flex flex-grow items-center justify-center relative max-w-full">
             {isLoadingFile ? (
-              <div className="sk-spinner w-5 h-5 spinner-info"></div>
+              <div className="flex items-center">
+                <div className="sk-spinner w-5 h-5 spinner-info"></div>
+                <span className="ml-2">Loading file... ({fileDownloadProgress}%)</span>
+              </div>
             ) : objectUrl ? (
               <PreviewComponent file={file} objectUrl={objectUrl} />
             ) : (
