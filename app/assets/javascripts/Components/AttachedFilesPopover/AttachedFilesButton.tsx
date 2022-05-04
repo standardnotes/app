@@ -8,7 +8,7 @@ import { FunctionComponent } from 'preact'
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import { Icon } from '@/Components/Icon'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
-import { ChallengeReason, CollectionSort, ContentType, SNFile } from '@standardnotes/snjs'
+import { ChallengeReason, CollectionSort, ContentType, SNFile, SNNote } from '@standardnotes/snjs'
 import { confirmDialog } from '@/Services/AlertService'
 import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit'
 import { StreamingFileReader } from '@standardnotes/filepicker'
@@ -46,7 +46,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     const premiumModal = usePremiumModal()
     const filePreviewModal = useFilePreviewModal()
 
-    const note = Object.values(appState.notes.selectedNotes)[0]
+    const note: SNNote | undefined = Object.values(appState.notes.selectedNotes)[0]
 
     const [open, setOpen] = useState(false)
     const [position, setPosition] = useState({
@@ -69,7 +69,9 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
 
       const unregisterFileStream = application.streamItems(ContentType.File, () => {
         setAllFiles(application.items.getDisplayableItems<SNFile>(ContentType.File))
-        setAttachedFiles(application.items.getFilesForNote(note))
+        if (note) {
+          setAttachedFiles(application.items.getFilesForNote(note))
+        }
       })
 
       return () => {
@@ -132,12 +134,27 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
 
     const attachFileToNote = useCallback(
       async (file: SNFile) => {
+        if (!note) {
+          addToast({
+            type: ToastType.Error,
+            message: 'Could not attach file because selected note was deleted',
+          })
+          return
+        }
+
         await application.items.associateFileWithNote(file, note)
       },
       [application.items, note],
     )
 
     const detachFileFromNote = async (file: SNFile) => {
+      if (!note) {
+        addToast({
+          type: ToastType.Error,
+          message: 'Could not attach file because selected note was deleted',
+        })
+        return
+      }
       await application.items.disassociateFileWithNote(file, note)
     }
 
