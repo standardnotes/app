@@ -142,7 +142,7 @@ export class IOService {
 
   private eventMatchesKeyAndModifiers(
     event: KeyboardEvent,
-    key: KeyboardKey | string,
+    key: KeyboardKey | string | undefined,
     modifiers: KeyboardModifier[] = [],
   ): boolean {
     const eventModifiers = this.modifiersForEvent(event)
@@ -186,7 +186,7 @@ export class IOService {
         continue
       }
 
-      if (observer.key && this.eventMatchesKeyAndModifiers(event, observer.key, observer.modifiers)) {
+      if (this.eventMatchesKeyAndModifiers(event, observer.key, observer.modifiers)) {
         const callback = keyEvent === KeyboardKeyEvent.Down ? observer.onKeyDown : observer.onKeyUp
         if (callback) {
           callback(event)
