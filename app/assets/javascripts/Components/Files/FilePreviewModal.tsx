@@ -118,6 +118,7 @@ export const FilePreviewModal: FunctionComponent<Props> = ({ application, files,
       aria-label="File preview modal"
       onDismiss={onDismiss}
       initialFocusRef={closeButtonRef}
+      dangerouslyBypassScrollLock
     >
       <DialogContent
         className="flex flex-col rounded shadow-overlay"
