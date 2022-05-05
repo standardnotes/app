@@ -177,9 +177,12 @@ export const FilePreviewModal: FunctionComponent<Props> = ({ application, files,
         <div className="flex flex-grow min-h-0">
           <div className="flex flex-grow items-center justify-center relative max-w-full">
             {isLoadingFile ? (
-              <div className="flex items-center">
-                <div className="sk-spinner w-5 h-5 spinner-info"></div>
-                <span className="ml-2">Loading file... ({fileDownloadProgress}%)</span>
+              <div className="flex flex-col items-center">
+                <div className="flex items-center">
+                  <div className="sk-spinner w-5 h-5 spinner-info mr-3"></div>
+                  <div className="text-base font-semibold">{fileDownloadProgress}%</div>
+                </div>
+                <span className="mt-3">Loading file...</span>
               </div>
             ) : objectUrl ? (
               <PreviewComponent file={file} objectUrl={objectUrl} />
