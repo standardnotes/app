@@ -10,11 +10,7 @@ import { Button } from '@/Components/Button/Button'
 import { Icon } from '@/Components/Icon'
 import { PopoverFileItem } from './PopoverFileItem'
 import { PopoverFileItemAction, PopoverFileItemActionType } from './PopoverFileItemAction'
-
-export enum PopoverTabs {
-  AttachedFiles,
-  AllFiles,
-}
+import { PopoverTabs } from './PopoverTabs'
 
 type Props = {
   application: WebApplication
@@ -75,6 +71,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
       >
         <div className="flex border-0 border-b-1 border-solid border-main">
           <button
+            id={PopoverTabs.AttachedFiles}
             className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:bg-info-backdrop focus:shadow-bottom ${
               currentTab === PopoverTabs.AttachedFiles ? 'color-info font-medium shadow-bottom' : 'color-text'
             }`}
@@ -86,6 +83,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
             Attached
           </button>
           <button
+            id={PopoverTabs.AllFiles}
             className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:bg-info-backdrop focus:shadow-bottom ${
               currentTab === PopoverTabs.AllFiles ? 'color-info font-medium shadow-bottom' : 'color-text'
             }`}
