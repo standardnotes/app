@@ -13,29 +13,15 @@ import { confirmDialog } from '@/Services/AlertService'
 import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit'
 import { StreamingFileReader } from '@standardnotes/filepicker'
 import { PopoverFileItemAction, PopoverFileItemActionType } from './PopoverFileItemAction'
-import { AttachedFilesPopover, PopoverTabs } from './AttachedFilesPopover'
+import { AttachedFilesPopover } from './AttachedFilesPopover'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { useFilePreviewModal } from '../Files/FilePreviewModalProvider'
+import { PopoverTabs } from './PopoverTabs'
 
 type Props = {
   application: WebApplication
   appState: AppState
   onClickPreprocessing?: () => Promise<void>
-}
-
-const createDragOverlay = () => {
-  if (document.getElementById('drag-overlay')) {
-    return
-  }
-
-  const overlayElementTemplate =
-    '<div class="sn-component" id="drag-overlay"><div class="absolute top-0 left-0 w-full h-full z-index-1001"></div></div>'
-  const overlayFragment = document.createRange().createContextualFragment(overlayElementTemplate)
-  document.body.appendChild(overlayFragment)
-}
-
-const removeDragOverlay = () => {
-  document.getElementById('drag-overlay')?.remove()
 }
 
 const isHandlingFileDrag = (event: DragEvent) =>
@@ -252,11 +238,19 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
         event.preventDefault()
         event.stopPropagation()
 
+        switch ((event.target as HTMLElement).id) {
+          case PopoverTabs.AllFiles:
+            setCurrentTab(PopoverTabs.AllFiles)
+            break
+          case PopoverTabs.AttachedFiles:
+            setCurrentTab(PopoverTabs.AttachedFiles)
+            break
+        }
+
         dragCounter.current = dragCounter.current + 1
 
         if (event.dataTransfer?.items.length) {
           setIsDraggingFiles(true)
-          createDragOverlay()
           if (!open) {
             toggleAttachedFilesMenu().catch(console.error)
           }
@@ -279,8 +273,6 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
         return
       }
 
-      removeDragOverlay()
-
       setIsDraggingFiles(false)
     }
 
@@ -294,7 +286,6 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
         event.stopPropagation()
 
         setIsDraggingFiles(false)
-        removeDragOverlay()
 
         if (event.dataTransfer?.items.length) {
           Array.from(event.dataTransfer.items).forEach(async (item) => {
