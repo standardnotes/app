@@ -53,30 +53,34 @@ export const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = obse
         ref={remoteHistoryListRef}
       >
         {isFetchingRemoteHistory && <div className="sk-spinner w-5 h-5 spinner-info"></div>}
-        {remoteHistory?.map((group) =>
-          (group.entries && group.entries.length ? (
-            <Fragment key={group.title}>
-              <div className="px-3 mt-2.5 mb-1 font-semibold color-text uppercase color-grey-0 select-none">
-                {group.title}
-              </div>
-              {group.entries.map((entry) => (
-                <HistoryListItem
-                  key={entry.uuid}
-                  isSelected={selectedEntryUuid === entry.uuid}
-                  onClick={() => {
-                    setSelectedEntryUuid(entry.uuid)
-                    fetchAndSetRemoteRevision(entry).catch(console.error)
-                  }}
-                >
-                  <div className="flex flex-grow items-center justify-between">
-                    <div>{previewHistoryEntryTitle(entry)}</div>
-                    {!application.features.hasMinimumRole(entry.required_role) && <Icon type="premium-feature" />}
-                  </div>
-                </HistoryListItem>
-              ))}
-            </Fragment>
-          ) : null),
-        )}
+        {remoteHistory?.map((group) => {
+          if (group.entries && group.entries.length) {
+            return (
+              <Fragment key={group.title}>
+                <div className="px-3 mt-2.5 mb-1 font-semibold color-text uppercase color-grey-0 select-none">
+                  {group.title}
+                </div>
+                {group.entries.map((entry) => (
+                  <HistoryListItem
+                    key={entry.uuid}
+                    isSelected={selectedEntryUuid === entry.uuid}
+                    onClick={() => {
+                      setSelectedEntryUuid(entry.uuid)
+                      fetchAndSetRemoteRevision(entry).catch(console.error)
+                    }}
+                  >
+                    <div className="flex flex-grow items-center justify-between">
+                      <div>{previewHistoryEntryTitle(entry)}</div>
+                      {!application.features.hasMinimumRole(entry.required_role) && <Icon type="premium-feature" />}
+                    </div>
+                  </HistoryListItem>
+                ))}
+              </Fragment>
+            )
+          } else {
+            return null
+          }
+        })}
         {!remoteHistoryLength && !isFetchingRemoteHistory && (
           <div className="color-grey-0 select-none">No remote history found</div>
         )}
