@@ -53,28 +53,32 @@ export const SessionHistoryList: FunctionComponent<Props> = ({
       }`}
       ref={sessionHistoryListRef}
     >
-      {sessionHistory?.map((group) =>
-        (group.entries && group.entries.length ? (
-          <Fragment key={group.title}>
-            <div className="px-3 mt-2.5 mb-1 font-semibold color-text uppercase color-grey-0 select-none">
-              {group.title}
-            </div>
-            {group.entries.map((entry, index) => (
-              <HistoryListItem
-                key={index}
-                isSelected={selectedItemCreatedAt === entry.payload.created_at}
-                onClick={() => {
-                  setSelectedItemCreatedAt(entry.payload.created_at)
-                  setSelectedRevision(entry)
-                  setSelectedRemoteEntry(undefined)
-                }}
-              >
-                {entry.previewTitle()}
-              </HistoryListItem>
-            ))}
-          </Fragment>
-        ) : null),
-      )}
+      {sessionHistory?.map((group) => {
+        if (group.entries && group.entries.length) {
+          return (
+            <Fragment key={group.title}>
+              <div className="px-3 mt-2.5 mb-1 font-semibold color-text uppercase color-grey-0 select-none">
+                {group.title}
+              </div>
+              {group.entries.map((entry, index) => (
+                <HistoryListItem
+                  key={index}
+                  isSelected={selectedItemCreatedAt === entry.payload.created_at}
+                  onClick={() => {
+                    setSelectedItemCreatedAt(entry.payload.created_at)
+                    setSelectedRevision(entry)
+                    setSelectedRemoteEntry(undefined)
+                  }}
+                >
+                  {entry.previewTitle()}
+                </HistoryListItem>
+              ))}
+            </Fragment>
+          )
+        } else {
+          return null
+        }
+      })}
       {!sessionHistoryLength && <div className="color-grey-0 select-none">No session history found</div>}
     </div>
   )
