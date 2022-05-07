@@ -101,7 +101,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
               <div className="relative">
                 <input
                   type="text"
-                  className="w-full rounded py-1.5 px-3 text-input bg-default border-solid border-1 border-main"
+                  className="color-text w-full rounded py-1.5 px-3 text-input bg-default border-solid border-1 border-main"
                   placeholder="Search files..."
                   value={searchQuery}
                   onInput={(e) => {
