@@ -15,7 +15,6 @@ import { StreamingFileReader } from '@standardnotes/filepicker'
 import { PopoverFileItemAction, PopoverFileItemActionType } from './PopoverFileItemAction'
 import { AttachedFilesPopover } from './AttachedFilesPopover'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
-import { useFilePreviewModal } from '../Files/FilePreviewModalProvider'
 import { PopoverTabs } from './PopoverTabs'
 
 type Props = {
@@ -30,7 +29,6 @@ const isHandlingFileDrag = (event: DragEvent) =>
 export const AttachedFilesButton: FunctionComponent<Props> = observer(
   ({ application, appState, onClickPreprocessing }) => {
     const premiumModal = usePremiumModal()
-    const filePreviewModal = useFilePreviewModal()
 
     const note: SNNote | undefined = Object.values(appState.notes.selectedNotes)[0]
 
@@ -44,6 +42,14 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     const panelRef = useRef<HTMLDivElement>(null)
     const containerRef = useRef<HTMLDivElement>(null)
     const [closeOnBlur, keepMenuOpen] = useCloseOnBlur(containerRef, setOpen)
+
+    useEffect(() => {
+      if (appState.filePreviewModal.isOpen) {
+        keepMenuOpen(true)
+      } else {
+        keepMenuOpen(false)
+      }
+    }, [appState.filePreviewModal.isOpen, keepMenuOpen])
 
     const [currentTab, setCurrentTab] = useState(PopoverTabs.AttachedFiles)
     const [allFiles, setAllFiles] = useState<SNFile[]>([])
@@ -205,7 +211,8 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
           await renameFile(file, action.payload.name)
           break
         case PopoverFileItemActionType.PreviewFile:
-          filePreviewModal.activate(file, currentTab === PopoverTabs.AllFiles ? allFiles : attachedFiles)
+          keepMenuOpen(true)
+          appState.filePreviewModal.activate(file, currentTab === PopoverTabs.AllFiles ? allFiles : attachedFiles)
           break
       }
 
