@@ -76,7 +76,7 @@ export class FeaturesState {
   }
 
   private isEntitledToFilesBeta(): boolean {
-    if (window.enabledUnfinishedFeatures) {
+    if (isDev && this.application.hasAccount()) {
       return true
     }
 
