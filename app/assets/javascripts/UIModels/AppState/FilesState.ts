@@ -34,7 +34,7 @@ export class FilesState {
 
       const decryptedBytesArray: Uint8Array[] = []
 
-      await this.application.files.downloadFile(file, async (decryptedBytes, progress) => {
+      const result = await this.application.files.downloadFile(file, async (decryptedBytes, progress) => {
         if (isUsingStreamingSaver) {
           await saver.pushBytes(decryptedBytes)
         } else {
@@ -50,6 +50,10 @@ export class FilesState {
           })
         }
       })
+
+      if (result instanceof ClientDisplayableError) {
+        throw new Error(result.text)
+      }
 
       if (isUsingStreamingSaver) {
         await saver.finish()
