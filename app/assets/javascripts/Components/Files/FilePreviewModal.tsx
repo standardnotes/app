@@ -1,7 +1,6 @@
 import { WebApplication } from '@/UIModels/Application'
 import { concatenateUint8Arrays } from '@/Utils/ConcatenateUint8Arrays'
 import { DialogContent, DialogOverlay } from '@reach/dialog'
-import { SNFile } from '@standardnotes/snjs'
 import { addToast, NoPreviewIllustration, ToastType } from '@standardnotes/stylekit'
 import { FunctionComponent } from 'preact'
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
@@ -12,18 +11,21 @@ import { FilePreviewInfoPanel } from './FilePreviewInfoPanel'
 import { isFileTypePreviewable } from './isFilePreviewable'
 import { PreviewComponent } from './PreviewComponent'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
-import { useFilePreviewModal } from './FilePreviewModalProvider'
 import { KeyboardKey } from '@/Services/IOService'
+import { AppState } from '@/UIModels/AppState'
+import { observer } from 'mobx-react-lite'
 
 type Props = {
   application: WebApplication
-  files: SNFile[]
-  file: SNFile
-  onDismiss: () => void
+  appState: AppState
 }
 
-export const FilePreviewModal: FunctionComponent<Props> = ({ application, files, file, onDismiss }) => {
-  const context = useFilePreviewModal()
+export const FilePreviewModal: FunctionComponent<Props> = observer(({ application, appState }) => {
+  const { currentFile, setCurrentFile, otherFiles, dismiss, isOpen } = appState.filePreviewModal
+
+  if (!currentFile || !isOpen) {
+    return null
+  }
 
   const [objectUrl, setObjectUrl] = useState<string>()
   const [isFilePreviewable, setIsFilePreviewable] = useState(false)
@@ -37,7 +39,7 @@ export const FilePreviewModal: FunctionComponent<Props> = ({ application, files,
     try {
       const chunks: Uint8Array[] = []
       setFileDownloadProgress(0)
-      await application.files.downloadFile(file, async (decryptedChunk, progress) => {
+      await application.files.downloadFile(currentFile, async (decryptedChunk, progress) => {
         chunks.push(decryptedChunk)
         if (progress) {
           setFileDownloadProgress(Math.round(progress.percentComplete))
@@ -47,7 +49,7 @@ export const FilePreviewModal: FunctionComponent<Props> = ({ application, files,
       setObjectUrl(
         URL.createObjectURL(
           new Blob([finalDecryptedBytes], {
-            type: file.mimeType,
+            type: currentFile.mimeType,
           }),
         ),
       )
@@ -56,32 +58,32 @@ export const FilePreviewModal: FunctionComponent<Props> = ({ application, files,
     } finally {
       setIsLoadingFile(false)
     }
-  }, [application.files, file])
+  }, [application.files, currentFile])
 
   useEffect(() => {
     setIsLoadingFile(true)
-  }, [file.uuid])
+  }, [currentFile.uuid])
 
   useEffect(() => {
-    const isPreviewable = isFileTypePreviewable(file.mimeType)
+    const isPreviewable = isFileTypePreviewable(currentFile.mimeType)
     setIsFilePreviewable(isPreviewable)
 
     if (!isPreviewable) {
       setIsLoadingFile(false)
     }
 
-    if (currentFileIdRef.current !== file.uuid && isPreviewable) {
+    if (currentFileIdRef.current !== currentFile.uuid && isPreviewable) {
       getObjectUrl().catch(console.error)
     }
 
-    currentFileIdRef.current = file.uuid
+    currentFileIdRef.current = currentFile.uuid
 
     return () => {
       if (objectUrl) {
         URL.revokeObjectURL(objectUrl)
       }
     }
-  }, [file, getObjectUrl, objectUrl])
+  }, [currentFile, getObjectUrl, objectUrl])
 
   const keyDownHandler = (event: KeyboardEvent) => {
     if (event.key !== KeyboardKey.Left && event.key !== KeyboardKey.Right) {
@@ -90,22 +92,22 @@ export const FilePreviewModal: FunctionComponent<Props> = ({ application, files,
 
     event.preventDefault()
 
-    const currentFileIndex = files.findIndex((fileFromArray) => fileFromArray.uuid === file.uuid)
+    const currentFileIndex = otherFiles.findIndex((fileFromArray) => fileFromArray.uuid === currentFile.uuid)
 
     switch (event.key) {
       case KeyboardKey.Left: {
-        const previousFileIndex = currentFileIndex - 1 >= 0 ? currentFileIndex - 1 : files.length - 1
-        const previousFile = files[previousFileIndex]
+        const previousFileIndex = currentFileIndex - 1 >= 0 ? currentFileIndex - 1 : otherFiles.length - 1
+        const previousFile = otherFiles[previousFileIndex]
         if (previousFile) {
-          context.setCurrentFile(previousFile)
+          setCurrentFile(previousFile)
         }
         break
       }
       case KeyboardKey.Right: {
-        const nextFileIndex = currentFileIndex + 1 < files.length ? currentFileIndex + 1 : 0
-        const nextFile = files[nextFileIndex]
+        const nextFileIndex = currentFileIndex + 1 < otherFiles.length ? currentFileIndex + 1 : 0
+        const nextFile = otherFiles[nextFileIndex]
         if (nextFile) {
-          context.setCurrentFile(nextFile)
+          setCurrentFile(nextFile)
         }
         break
       }
@@ -116,7 +118,7 @@ export const FilePreviewModal: FunctionComponent<Props> = ({ application, files,
     <DialogOverlay
       className="sn-component"
       aria-label="File preview modal"
-      onDismiss={onDismiss}
+      onDismiss={dismiss}
       initialFocusRef={closeButtonRef}
       dangerouslyBypassScrollLock
     >
@@ -137,11 +139,11 @@ export const FilePreviewModal: FunctionComponent<Props> = ({ application, files,
           <div className="flex items-center">
             <div className="w-6 h-6">
               {getFileIconComponent(
-                application.iconsController.getIconForFileType(file.mimeType),
+                application.iconsController.getIconForFileType(currentFile.mimeType),
                 'w-6 h-6 flex-shrink-0',
               )}
             </div>
-            <span className="ml-3 font-medium">{file.name}</span>
+            <span className="ml-3 font-medium">{currentFile.name}</span>
           </div>
           <div className="flex items-center">
             <button
@@ -155,7 +157,7 @@ export const FilePreviewModal: FunctionComponent<Props> = ({ application, files,
                 variant="primary"
                 className="mr-4"
                 onClick={() => {
-                  application.getArchiveService().downloadData(objectUrl, file.name)
+                  application.getArchiveService().downloadData(objectUrl, currentFile.name)
                   addToast({
                     type: ToastType.Success,
                     message: 'Successfully downloaded file',
@@ -167,7 +169,7 @@ export const FilePreviewModal: FunctionComponent<Props> = ({ application, files,
             )}
             <button
               ref={closeButtonRef}
-              onClick={onDismiss}
+              onClick={dismiss}
               aria-label="Close modal"
               className="flex p-1 bg-transparent hover:bg-contrast border-0 cursor-pointer rounded"
             >
@@ -186,7 +188,7 @@ export const FilePreviewModal: FunctionComponent<Props> = ({ application, files,
                 <span className="mt-3">Loading file...</span>
               </div>
             ) : objectUrl ? (
-              <PreviewComponent file={file} objectUrl={objectUrl} />
+              <PreviewComponent file={currentFile} objectUrl={objectUrl} />
             ) : (
               <div className="flex flex-col items-center">
                 <NoPreviewIllustration className="w-30 h-30 mb-4" />
@@ -210,7 +212,7 @@ export const FilePreviewModal: FunctionComponent<Props> = ({ application, files,
                       <Button
                         variant="normal"
                         onClick={() => {
-                          application.getAppState().files.downloadFile(file).catch(console.error)
+                          application.getAppState().files.downloadFile(currentFile).catch(console.error)
                         }}
                       >
                         Download
@@ -225,7 +227,7 @@ export const FilePreviewModal: FunctionComponent<Props> = ({ application, files,
                     <Button
                       variant="primary"
                       onClick={() => {
-                        application.getAppState().files.downloadFile(file).catch(console.error)
+                        application.getAppState().files.downloadFile(currentFile).catch(console.error)
                       }}
                     >
                       Download
@@ -235,9 +237,9 @@ export const FilePreviewModal: FunctionComponent<Props> = ({ application, files,
               </div>
             )}
           </div>
-          {showFileInfoPanel && <FilePreviewInfoPanel file={file} />}
+          {showFileInfoPanel && <FilePreviewInfoPanel file={currentFile} />}
         </div>
       </DialogContent>
     </DialogOverlay>
   )
-}
+})

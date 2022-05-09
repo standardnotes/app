@@ -32,6 +32,7 @@ import { SubscriptionState } from './SubscriptionState'
 import { SyncState } from './SyncState'
 import { TagsState } from './TagsState'
 import { WebOrDesktopDevice } from '@/Device/WebOrDesktopDevice'
+import { FilePreviewModalState } from './FilePreviewModalState'
 
 export enum AppStateEvent {
   TagChanged,
@@ -84,6 +85,7 @@ export class AppState {
   readonly notesView: NotesViewState
   readonly subscription: SubscriptionState
   readonly files: FilesState
+  readonly filePreviewModal = new FilePreviewModalState()
 
   isSessionsModalVisible = false
 

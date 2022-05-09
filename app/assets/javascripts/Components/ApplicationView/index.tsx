@@ -22,7 +22,7 @@ import { PremiumModalProvider } from '@/Hooks/usePremiumModal'
 import { ConfirmSignoutContainer } from '@/Components/ConfirmSignoutModal'
 import { TagsContextMenu } from '@/Components/Tags/TagContextMenu'
 import { ToastContainer } from '@standardnotes/stylekit'
-import { FilePreviewModalProvider } from '@/Components/Files/FilePreviewModalProvider'
+import { FilePreviewModal } from '../Files/FilePreviewModal'
 
 type Props = {
   application: WebApplication
@@ -169,54 +169,53 @@ export class ApplicationView extends PureComponent<Props, State> {
     const renderAppContents = !this.state.needsUnlock && this.state.launched
 
     return (
-      <FilePreviewModalProvider application={this.application}>
-        <PremiumModalProvider application={this.application} appState={this.appState}>
-          <div className={this.platformString + ' main-ui-view sn-component'}>
-            {renderAppContents && (
-              <div id="app" className={this.state.appClass + ' app app-column-container'}>
-                <Navigation application={this.application} />
-                <NotesView application={this.application} appState={this.appState} />
-                <NoteGroupView application={this.application} />
-              </div>
-            )}
-            {renderAppContents && (
-              <>
-                <Footer application={this.application} applicationGroup={this.props.mainApplicationGroup} />
-                <SessionsModal application={this.application} appState={this.appState} />
-                <PreferencesViewWrapper appState={this.appState} application={this.application} />
-                <RevisionHistoryModalWrapper application={this.application} appState={this.appState} />
-              </>
-            )}
-            {this.state.challenges.map((challenge) => {
-              return (
-                <div className="sk-modal">
-                  <ChallengeModal
-                    key={challenge.id}
-                    application={this.application}
-                    appState={this.appState}
-                    mainApplicationGroup={this.props.mainApplicationGroup}
-                    challenge={challenge}
-                    onDismiss={this.removeChallenge}
-                  />
-                </div>
-              )
-            })}
-            {renderAppContents && (
-              <>
-                <NotesContextMenu application={this.application} appState={this.appState} />
-                <TagsContextMenu appState={this.appState} />
-                <PurchaseFlowWrapper application={this.application} appState={this.appState} />
-                <ConfirmSignoutContainer
-                  applicationGroup={this.props.mainApplicationGroup}
-                  appState={this.appState}
+      <PremiumModalProvider application={this.application} appState={this.appState}>
+        <div className={this.platformString + ' main-ui-view sn-component'}>
+          {renderAppContents && (
+            <div id="app" className={this.state.appClass + ' app app-column-container'}>
+              <Navigation application={this.application} />
+              <NotesView application={this.application} appState={this.appState} />
+              <NoteGroupView application={this.application} />
+            </div>
+          )}
+          {renderAppContents && (
+            <>
+              <Footer application={this.application} applicationGroup={this.props.mainApplicationGroup} />
+              <SessionsModal application={this.application} appState={this.appState} />
+              <PreferencesViewWrapper appState={this.appState} application={this.application} />
+              <RevisionHistoryModalWrapper application={this.application} appState={this.appState} />
+            </>
+          )}
+          {this.state.challenges.map((challenge) => {
+            return (
+              <div className="sk-modal">
+                <ChallengeModal
+                  key={challenge.id}
                   application={this.application}
+                  appState={this.appState}
+                  mainApplicationGroup={this.props.mainApplicationGroup}
+                  challenge={challenge}
+                  onDismiss={this.removeChallenge}
                 />
-                <ToastContainer />
-              </>
-            )}
-          </div>
-        </PremiumModalProvider>
-      </FilePreviewModalProvider>
+              </div>
+            )
+          })}
+          {renderAppContents && (
+            <>
+              <NotesContextMenu application={this.application} appState={this.appState} />
+              <TagsContextMenu appState={this.appState} />
+              <PurchaseFlowWrapper application={this.application} appState={this.appState} />
+              <ConfirmSignoutContainer
+                applicationGroup={this.props.mainApplicationGroup}
+                appState={this.appState}
+                application={this.application}
+              />
+              <ToastContainer />
+              <FilePreviewModal application={this.application} appState={this.appState} />
+            </>
+          )}
+        </div>
+      </PremiumModalProvider>
     )
   }
 }
