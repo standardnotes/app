@@ -99,27 +99,20 @@ export const AdvancedOptions: FunctionComponent<Props> = observer(
           <div className="px-3 my-2">
             {children}
 
-            {appState.enableUnfinishedFeatures && (
-              <div className="flex justify-between items-center mb-1">
-                <Checkbox
-                  name="private-workspace"
-                  label="Private workspace"
-                  checked={isPrivateWorkspace}
-                  disabled={disabled}
-                  onChange={handleIsPrivateWorkspaceChange}
-                />
-                <a
-                  href="https://standardnotes.com/help/80"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title="Learn more"
-                >
-                  <Icon type="info" className="color-neutral" />
-                </a>
-              </div>
-            )}
+            <div className="flex justify-between items-center mb-1">
+              <Checkbox
+                name="private-workspace"
+                label="Private workspace"
+                checked={isPrivateWorkspace}
+                disabled={disabled}
+                onChange={handleIsPrivateWorkspaceChange}
+              />
+              <a href="https://standardnotes.com/help/80" target="_blank" rel="noopener noreferrer" title="Learn more">
+                <Icon type="info" className="color-neutral" />
+              </a>
+            </div>
 
-            {appState.enableUnfinishedFeatures && isPrivateWorkspace && (
+            {isPrivateWorkspace && (
               <>
                 <DecoratedInput
                   className={'mb-2'}
