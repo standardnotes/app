@@ -11,53 +11,56 @@ type Props = {
   application: WebApplication
   appState: AppState
   disabled?: boolean
-  onVaultChange?: (isVault: boolean, vaultedEmail?: string) => void
+  onPrivateWorkspaceChange?: (isPrivate: boolean, identifier?: string) => void
   onStrictSignInChange?: (isStrictSignIn: boolean) => void
 }
 
 export const AdvancedOptions: FunctionComponent<Props> = observer(
-  ({ appState, application, disabled = false, onVaultChange, onStrictSignInChange, children }) => {
+  ({ appState, application, disabled = false, onPrivateWorkspaceChange, onStrictSignInChange, children }) => {
     const { server, setServer, enableServerOption, setEnableServerOption } = appState.accountMenu
     const [showAdvanced, setShowAdvanced] = useState(false)
 
-    const [isVault, setIsVault] = useState(false)
-    const [vaultName, setVaultName] = useState('')
-    const [vaultUserphrase, setVaultUserphrase] = useState('')
+    const [isPrivateWorkspace, setIsPrivateWorkspace] = useState(false)
+    const [privateWorkspaceName, setPrivateWorkspaceName] = useState('')
+    const [privateWorkspaceUserphrase, setPrivateWorkspaceUserphrase] = useState('')
 
     const [isStrictSignin, setIsStrictSignin] = useState(false)
 
     useEffect(() => {
-      const recomputeVaultedEmail = async () => {
-        const vaultedEmail = await application.vaultToEmail(vaultName, vaultUserphrase)
+      const recomputePrivateWorkspaceIdentifier = async () => {
+        const identifier = await application.computePrivateWorkspaceEmail(
+          privateWorkspaceName,
+          privateWorkspaceUserphrase,
+        )
 
-        if (!vaultedEmail) {
-          if (vaultName?.length > 0 && vaultUserphrase?.length > 0) {
-            application.alertService.alert('Unable to compute vault name.').catch(console.error)
+        if (!identifier) {
+          if (privateWorkspaceName?.length > 0 && privateWorkspaceUserphrase?.length > 0) {
+            application.alertService.alert('Unable to compute private workspace name.').catch(console.error)
           }
           return
         }
-        onVaultChange?.(true, vaultedEmail)
+        onPrivateWorkspaceChange?.(true, identifier)
       }
 
-      if (vaultName && vaultUserphrase) {
-        recomputeVaultedEmail().catch(console.error)
+      if (privateWorkspaceName && privateWorkspaceUserphrase) {
+        recomputePrivateWorkspaceIdentifier().catch(console.error)
       }
-    }, [vaultName, vaultUserphrase, application, onVaultChange])
+    }, [privateWorkspaceName, privateWorkspaceUserphrase, application, onPrivateWorkspaceChange])
 
     useEffect(() => {
-      onVaultChange?.(isVault)
-    }, [isVault, onVaultChange])
+      onPrivateWorkspaceChange?.(isPrivateWorkspace)
+    }, [isPrivateWorkspace, onPrivateWorkspaceChange])
 
-    const handleIsVaultChange = () => {
-      setIsVault(!isVault)
+    const handleIsPrivateWorkspaceChange = () => {
+      setIsPrivateWorkspace(!isPrivateWorkspace)
     }
 
-    const handleVaultNameChange = (name: string) => {
-      setVaultName(name)
+    const handlePrivateWorkspaceNameChange = (name: string) => {
+      setPrivateWorkspaceName(name)
     }
 
-    const handleVaultUserphraseChange = (userphrase: string) => {
-      setVaultUserphrase(userphrase)
+    const handlePrivateWorkspaceUserphraseChange = (userphrase: string) => {
+      setPrivateWorkspaceUserphrase(userphrase)
     }
 
     const handleServerOptionChange = (e: Event) => {
@@ -99,11 +102,11 @@ export const AdvancedOptions: FunctionComponent<Props> = observer(
             {appState.enableUnfinishedFeatures && (
               <div className="flex justify-between items-center mb-1">
                 <Checkbox
-                  name="vault-mode"
-                  label="Vault Mode"
-                  checked={isVault}
+                  name="private-workspace"
+                  label="Private workspace"
+                  checked={isPrivateWorkspace}
                   disabled={disabled}
-                  onChange={handleIsVaultChange}
+                  onChange={handleIsPrivateWorkspaceChange}
                 />
                 <a
                   href="https://standardnotes.com/help/80"
@@ -116,24 +119,24 @@ export const AdvancedOptions: FunctionComponent<Props> = observer(
               </div>
             )}
 
-            {appState.enableUnfinishedFeatures && isVault && (
+            {appState.enableUnfinishedFeatures && isPrivateWorkspace && (
               <>
-                <DecoratedInput
-                  className={'mb-2'}
-                  left={[<Icon type="folder" className="color-neutral" />]}
-                  type="text"
-                  placeholder="Vault name"
-                  value={vaultName}
-                  onChange={handleVaultNameChange}
-                  disabled={disabled}
-                />
                 <DecoratedInput
                   className={'mb-2'}
                   left={[<Icon type="server" className="color-neutral" />]}
                   type="text"
-                  placeholder="Vault userphrase"
-                  value={vaultUserphrase}
-                  onChange={handleVaultUserphraseChange}
+                  placeholder="Userphrase"
+                  value={privateWorkspaceUserphrase}
+                  onChange={handlePrivateWorkspaceUserphraseChange}
+                  disabled={disabled}
+                />
+                <DecoratedInput
+                  className={'mb-2'}
+                  left={[<Icon type="folder" className="color-neutral" />]}
+                  type="text"
+                  placeholder="Name"
+                  value={privateWorkspaceName}
+                  onChange={handlePrivateWorkspaceNameChange}
                   disabled={disabled}
                 />
               </>

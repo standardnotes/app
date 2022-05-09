@@ -25,7 +25,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
   ({ appState, application, setMenuPane, email, setEmail, password, setPassword }) => {
     const emailInputRef = useRef<HTMLInputElement>(null)
     const passwordInputRef = useRef<HTMLInputElement>(null)
-    const [isVault, setIsVault] = useState(false)
+    const [isPrivateWorkspace, setIsPrivateWorkspace] = useState(false)
 
     useEffect(() => {
       if (emailInputRef.current) {
@@ -71,10 +71,10 @@ export const CreateAccount: FunctionComponent<Props> = observer(
       setPassword('')
     }
 
-    const onVaultChange = (isVault: boolean, vaultedEmail?: string) => {
-      setIsVault(isVault)
-      if (isVault && vaultedEmail) {
-        setEmail(vaultedEmail)
+    const onPrivateWorkspaceChange = (isPrivateWorkspace: boolean, privateWorkspaceIdentifier?: string) => {
+      setIsPrivateWorkspace(isPrivateWorkspace)
+      if (isPrivateWorkspace && privateWorkspaceIdentifier) {
+        setEmail(privateWorkspaceIdentifier)
       }
     }
 
@@ -93,7 +93,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
         <form onSubmit={handleRegisterFormSubmit} className="px-3 mb-1">
           <DecoratedInput
             className="mb-2"
-            disabled={isVault}
+            disabled={isPrivateWorkspace}
             left={[<Icon type="email" className="color-neutral" />]}
             onChange={handleEmailChange}
             onKeyDown={handleKeyDown}
@@ -114,7 +114,11 @@ export const CreateAccount: FunctionComponent<Props> = observer(
           <Button className="btn-w-full mt-1" label="Next" variant="primary" onClick={handleRegisterFormSubmit} />
         </form>
         <div className="h-1px my-2 bg-border"></div>
-        <AdvancedOptions application={application} appState={appState} onVaultChange={onVaultChange} />
+        <AdvancedOptions
+          application={application}
+          appState={appState}
+          onPrivateWorkspaceChange={onPrivateWorkspaceChange}
+        />
       </>
     )
   },
