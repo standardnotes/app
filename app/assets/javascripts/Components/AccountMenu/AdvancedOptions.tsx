@@ -28,7 +28,7 @@ export const AdvancedOptions: FunctionComponent<Props> = observer(
 
     useEffect(() => {
       const recomputePrivateWorkspaceIdentifier = async () => {
-        const identifier = await application.computePrivateWorkspaceEmail(
+        const identifier = await application.computePrivateWorkspaceIdentifier(
           privateWorkspaceName,
           privateWorkspaceUserphrase,
         )
