@@ -29,7 +29,7 @@ export const SignInPane: FunctionComponent<Props> = observer(({ application, app
   const [isStrictSignin, setIsStrictSignin] = useState(false)
   const [isSigningIn, setIsSigningIn] = useState(false)
   const [shouldMergeLocal, setShouldMergeLocal] = useState(true)
-  const [isVault, setIsVault] = useState(false)
+  const [isPrivateWorkspace, setIsPrivateWorkspace] = useState(false)
 
   const emailInputRef = useRef<HTMLInputElement>(null)
   const passwordInputRef = useRef<HTMLInputElement>(null)
@@ -103,11 +103,11 @@ export const SignInPane: FunctionComponent<Props> = observer(({ application, app
     }
   }
 
-  const onVaultChange = useCallback(
-    (newIsVault: boolean, vaultedEmail?: string) => {
-      setIsVault(newIsVault)
-      if (newIsVault && vaultedEmail) {
-        setEmail(vaultedEmail)
+  const onPrivateWorkspaceChange = useCallback(
+    (newIsPrivateWorkspace: boolean, privateWorkspaceIdentifier?: string) => {
+      setIsPrivateWorkspace(newIsPrivateWorkspace)
+      if (newIsPrivateWorkspace && privateWorkspaceIdentifier) {
+        setEmail(privateWorkspaceIdentifier)
       }
     },
     [setEmail],
@@ -152,7 +152,7 @@ export const SignInPane: FunctionComponent<Props> = observer(({ application, app
           onChange={handleEmailChange}
           onFocus={resetInvalid}
           onKeyDown={handleKeyDown}
-          disabled={isSigningIn || isVault}
+          disabled={isSigningIn || isPrivateWorkspace}
           ref={emailInputRef}
         />
         <DecoratedPasswordInput
@@ -196,7 +196,7 @@ export const SignInPane: FunctionComponent<Props> = observer(({ application, app
         appState={appState}
         application={application}
         disabled={isSigningIn}
-        onVaultChange={onVaultChange}
+        onPrivateWorkspaceChange={onPrivateWorkspaceChange}
         onStrictSignInChange={handleStrictSigninChange}
       />
     </>
