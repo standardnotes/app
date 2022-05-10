@@ -18,7 +18,10 @@ export const FilePreviewInfoPanel: FunctionComponent<Props> = ({ file }) => {
         <span className="font-semibold">Type:</span> {file.mimeType}
       </div>
       <div className="mb-3">
-        <span className="font-semibold">Size:</span> {formatSizeToReadableString(file.decryptedSize)}
+        <span className="font-semibold">Decrypted Size:</span> {formatSizeToReadableString(file.decryptedSize)}
+      </div>
+      <div className="mb-3">
+        <span className="font-semibold">Encrypted Size:</span> {formatSizeToReadableString(file.encryptedSize)}
       </div>
       <div className="mb-3">
         <span className="font-semibold">Created:</span> {file.created_at.toLocaleString()}

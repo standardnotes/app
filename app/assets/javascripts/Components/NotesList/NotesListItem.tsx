@@ -49,6 +49,7 @@ export const NotesListItem: FunctionComponent<Props> = ({
   tags,
 }) => {
   const flags = flagsForNote(note)
+  const hasFiles = application.items.getFilesForNote(note).length > 0
   const showModifiedDate = sortedBy === CollectionSort.UpdatedAt
   const editorForNote = application.componentManager.editorForNote(note)
   const editorName = editorForNote?.name ?? PLAIN_EDITOR_NAME
@@ -130,6 +131,11 @@ export const NotesListItem: FunctionComponent<Props> = ({
         {note.pinned && (
           <span title="Pinned">
             <Icon ariaLabel="Pinned" type="pin-filled" className="sn-icon--small color-info" />
+          </span>
+        )}
+        {hasFiles && (
+          <span title="Files">
+            <Icon ariaLabel="Files" type="attachment-file" className="sn-icon--small color-info" />
           </span>
         )}
       </div>

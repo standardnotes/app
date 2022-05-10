@@ -1,27 +1,23 @@
 import { WebApplication } from '@/UIModels/Application'
-import { isDev } from '@/Utils'
 import { ApplicationEvent, FeatureIdentifier, FeatureStatus } from '@standardnotes/snjs'
-import { action, computed, makeObservable, observable, runInAction, when } from 'mobx'
+import { action, makeObservable, observable, runInAction, when } from 'mobx'
 
 export class FeaturesState {
   hasFolders: boolean
   hasSmartViews: boolean
-  hasFilesBeta: boolean
+  hasFiles: boolean
   premiumAlertFeatureName: string | undefined
 
   constructor(private application: WebApplication, appObservers: (() => void)[]) {
-    this.hasFolders = this.hasNativeFolders()
-    this.hasSmartViews = this.hasNativeSmartViews()
-    this.hasFilesBeta = this.isEntitledToFilesBeta()
+    this.hasFolders = this.isEntitledToFolders()
+    this.hasSmartViews = this.isEntitledToSmartViews()
+    this.hasFiles = this.isEntitledToFiles()
     this.premiumAlertFeatureName = undefined
 
     makeObservable(this, {
       hasFolders: observable,
       hasSmartViews: observable,
-
-      hasFilesBeta: observable,
-      isFilesEnabled: computed,
-      isEntitledToFiles: computed,
+      hasFiles: observable,
 
       premiumAlertFeatureName: observable,
       showPremiumAlert: action,
@@ -37,9 +33,9 @@ export class FeaturesState {
           case ApplicationEvent.FeaturesUpdated:
           case ApplicationEvent.Launched:
             runInAction(() => {
-              this.hasFolders = this.hasNativeFolders()
-              this.hasSmartViews = this.hasNativeSmartViews()
-              this.hasFilesBeta = this.isEntitledToFilesBeta()
+              this.hasFolders = this.isEntitledToFolders()
+              this.hasSmartViews = this.isEntitledToSmartViews()
+              this.hasFiles = this.isEntitledToFiles()
             })
         }
       }),
@@ -55,32 +51,21 @@ export class FeaturesState {
     this.premiumAlertFeatureName = undefined
   }
 
-  get isFilesEnabled(): boolean {
-    return this.hasFilesBeta || window.enabledUnfinishedFeatures || isDev
+  private isEntitledToFiles(): boolean {
+    const status = this.application.features.getFeatureStatus(FeatureIdentifier.Files)
+
+    return status === FeatureStatus.Entitled
   }
 
-  get isEntitledToFiles(): boolean {
-    return this.hasFilesBeta
-  }
-
-  private hasNativeFolders(): boolean {
+  private isEntitledToFolders(): boolean {
     const status = this.application.features.getFeatureStatus(FeatureIdentifier.TagNesting)
 
     return status === FeatureStatus.Entitled
   }
 
-  private hasNativeSmartViews(): boolean {
+  private isEntitledToSmartViews(): boolean {
     const status = this.application.features.getFeatureStatus(FeatureIdentifier.SmartFilters)
 
-    return status === FeatureStatus.Entitled
-  }
-
-  private isEntitledToFilesBeta(): boolean {
-    if (isDev && this.application.hasAccount()) {
-      return true
-    }
-
-    const status = this.application.features.getFeatureStatus(FeatureIdentifier.FilesBeta)
     return status === FeatureStatus.Entitled
   }
 }

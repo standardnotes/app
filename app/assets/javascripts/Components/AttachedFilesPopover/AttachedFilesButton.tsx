@@ -72,7 +72,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     }, [application, note])
 
     const toggleAttachedFilesMenu = useCallback(async () => {
-      if (!appState.features.isEntitledToFiles) {
+      if (!appState.features.hasFiles) {
         premiumModal.activate('Files')
         return
       }
@@ -99,7 +99,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
 
         setOpen(newOpenState)
       }
-    }, [appState.features.isEntitledToFiles, onClickPreprocessing, open, premiumModal])
+    }, [appState.features.hasFiles, onClickPreprocessing, open, premiumModal])
 
     const deleteFile = async (file: SNFile) => {
       const shouldDelete = await confirmDialog({
@@ -294,6 +294,10 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
 
         setIsDraggingFiles(false)
 
+        if (!appState.features.hasFiles) {
+          return
+        }
+
         if (event.dataTransfer?.items.length) {
           Array.from(event.dataTransfer.items).forEach(async (item) => {
             const fileOrHandle = StreamingFileReader.available()
@@ -321,7 +325,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
           dragCounter.current = 0
         }
       },
-      [appState.files, attachFileToNote, currentTab],
+      [appState.files, appState.features.hasFiles, attachFileToNote, currentTab],
     )
 
     useEffect(() => {

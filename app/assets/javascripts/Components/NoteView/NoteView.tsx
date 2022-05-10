@@ -947,15 +947,13 @@ export class NoteView extends PureComponent<Props, State> {
                       {this.state.noteStatus?.desc && <div className="desc">{this.state.noteStatus.desc}</div>}
                     </div>
                   </div>
-                  {this.appState.features.isFilesEnabled && (
-                    <div className="mr-3">
-                      <AttachedFilesButton
-                        application={this.application}
-                        appState={this.appState}
-                        onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                      />
-                    </div>
-                  )}
+                  <div className="mr-3">
+                    <AttachedFilesButton
+                      application={this.application}
+                      appState={this.appState}
+                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                    />
+                  </div>
                   <div className="mr-3">
                     <ChangeEditorButton
                       application={this.application}
