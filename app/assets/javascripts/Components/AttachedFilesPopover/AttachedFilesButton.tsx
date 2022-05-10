@@ -41,7 +41,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     const buttonRef = useRef<HTMLButtonElement>(null)
     const panelRef = useRef<HTMLDivElement>(null)
     const containerRef = useRef<HTMLDivElement>(null)
-    const [closeOnBlur, keepMenuOpen] = useCloseOnBlur(containerRef, setOpen)
+    const [closeOnBlur, keepMenuOpen] = useCloseOnBlur(containerRef, setOpen, true)
 
     useEffect(() => {
       if (appState.filePreviewModal.isOpen) {
