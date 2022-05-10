@@ -69,6 +69,7 @@ export const FilePreviewModal: FunctionComponent<Props> = observer(({ applicatio
     setIsFilePreviewable(isPreviewable)
 
     if (!isPreviewable) {
+      setObjectUrl('')
       setIsLoadingFile(false)
     }
 
