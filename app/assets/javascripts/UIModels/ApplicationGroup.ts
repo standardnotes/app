@@ -1,15 +1,20 @@
 import { WebApplication } from './Application'
-import { ApplicationDescriptor, SNApplicationGroup, Platform, Runtime, InternalEventBus } from '@standardnotes/snjs'
+import {
+  ApplicationDescriptor,
+  SNApplicationGroup,
+  Platform,
+  Runtime,
+  InternalEventBus,
+  isDesktopDevice,
+} from '@standardnotes/snjs'
 import { AppState } from '@/UIModels/AppState'
 import { getPlatform, isDesktopApplication } from '@/Utils'
 import { ArchiveManager } from '@/Services/ArchiveManager'
 import { DesktopManager } from '@/Services/DesktopManager'
 import { IOService } from '@/Services/IOService'
 import { AutolockService } from '@/Services/AutolockService'
-import { StatusManager } from '@/Services/StatusManager'
 import { ThemeManager } from '@/Services/ThemeManager'
 import { WebOrDesktopDevice } from '@/Device/WebOrDesktopDevice'
-import { isDesktopDevice } from '@/Device/DesktopDeviceInterface'
 
 export class ApplicationGroup extends SNApplicationGroup<WebOrDesktopDevice> {
   constructor(
@@ -53,7 +58,6 @@ export class ApplicationGroup extends SNApplicationGroup<WebOrDesktopDevice> {
     const archiveService = new ArchiveManager(application)
     const io = new IOService(platform === Platform.MacWeb || platform === Platform.MacDesktop)
     const autolockService = new AutolockService(application, new InternalEventBus())
-    const statusManager = new StatusManager()
     const themeService = new ThemeManager(application)
 
     application.setWebServices({
@@ -62,7 +66,6 @@ export class ApplicationGroup extends SNApplicationGroup<WebOrDesktopDevice> {
       desktopService: isDesktopDevice(this.device) ? new DesktopManager(application, this.device) : undefined,
       io,
       autolockService,
-      statusManager,
       themeService,
     })
 

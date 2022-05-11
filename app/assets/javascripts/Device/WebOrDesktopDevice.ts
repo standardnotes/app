@@ -7,9 +7,9 @@ import {
   TransferPayload,
   NamespacedRootKeyInKeychain,
   extendArray,
+  WebOrDesktopDeviceInterface,
 } from '@standardnotes/snjs'
 import { Database } from '../Database'
-import { WebOrDesktopDeviceInterface } from './WebOrDesktopDeviceInterface'
 
 export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface {
   constructor(public appVersion: string) {}

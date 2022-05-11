@@ -76,7 +76,7 @@ export class Footer extends PureComponent<Props, State> {
 
   override componentDidMount(): void {
     super.componentDidMount()
-    this.application.getStatusManager().onStatusChange((message) => {
+    this.application.status.addEventObserver((_event, message) => {
       this.setState({
         arbitraryStatusMessage: message,
       })
@@ -124,7 +124,7 @@ export class Footer extends PureComponent<Props, State> {
   }
 
   override onAppStateEvent(eventName: AppStateEvent, data: any) {
-    const statusService = this.application.getStatusManager()
+    const statusService = this.application.status
     switch (eventName) {
       case AppStateEvent.EditorFocused:
         if (data.eventSource === EventSource.UserInteraction) {
@@ -172,7 +172,7 @@ export class Footer extends PureComponent<Props, State> {
         break
       case ApplicationEvent.CompletedFullSync:
         if (!this.completedInitialSync) {
-          this.application.getStatusManager().setMessage('')
+          this.application.status.setMessage('')
           this.completedInitialSync = true
         }
         if (!this.didCheckForOffline) {
@@ -202,7 +202,7 @@ export class Footer extends PureComponent<Props, State> {
         break
       case ApplicationEvent.WillSync:
         if (!this.completedInitialSync) {
-          this.application.getStatusManager().setMessage('Syncing…')
+          this.application.status.setMessage('Syncing…')
         }
         break
     }
@@ -213,7 +213,7 @@ export class Footer extends PureComponent<Props, State> {
   }
 
   updateSyncStatus() {
-    const statusManager = this.application.getStatusManager()
+    const statusManager = this.application.status
     const syncStatus = this.application.sync.getSyncStatus()
     const stats = syncStatus.getStats()
     if (syncStatus.hasError()) {
@@ -243,7 +243,7 @@ export class Footer extends PureComponent<Props, State> {
   }
 
   updateLocalDataStatus() {
-    const statusManager = this.application.getStatusManager()
+    const statusManager = this.application.status
     const syncStatus = this.application.sync.getSyncStatus()
     const stats = syncStatus.getStats()
     const encryption = this.application.isEncryptionAvailable()

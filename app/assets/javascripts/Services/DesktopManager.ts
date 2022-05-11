@@ -10,10 +10,10 @@ import {
   DecryptedTransferPayload,
   ComponentContent,
   assert,
+  DesktopClientRequiresWebMethods,
+  DesktopDeviceInterface,
 } from '@standardnotes/snjs'
 import { WebAppEvent, WebApplication } from '@/UIModels/Application'
-import { DesktopDeviceInterface } from '../Device/DesktopDeviceInterface'
-import { DesktopClientRequiresWebMethods } from '@/Device/DesktopWebCommunication'
 
 export class DesktopManager
   extends ApplicationService
