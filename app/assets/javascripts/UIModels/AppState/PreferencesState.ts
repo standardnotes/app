@@ -4,7 +4,7 @@ import { action, computed, makeObservable, observable } from 'mobx'
 const DEFAULT_PANE = 'account'
 
 export class PreferencesState {
-  private _open = true
+  private _open = false
   currentPane: PreferenceId = DEFAULT_PANE
 
   constructor() {
