@@ -17,9 +17,7 @@ import {
   Runtime,
   DesktopDeviceInterface,
   isDesktopDevice,
-  SNFile,
 } from '@standardnotes/snjs'
-import { StreamingFileApi } from '@standardnotes/filepicker'
 
 type WebServices = {
   appState: AppState
@@ -144,14 +142,6 @@ export class WebApplication extends SNApplication {
 
   public get io() {
     return this.webServices.io
-  }
-
-  public async triggerBackupFileDemo(file: SNFile) {
-    const fileSystem = new StreamingFileApi()
-
-    const result = await this.files.selectFileBackupAndSaveDecrypted(file.content, fileSystem)
-
-    console.log('triggerBackupFileDemo result', result)
   }
 
   async checkForSecurityUpdate() {

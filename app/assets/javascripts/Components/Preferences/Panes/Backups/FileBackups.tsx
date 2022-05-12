@@ -9,11 +9,13 @@ import {
 } from '@/Components/Preferences/PreferencesComponents'
 import { useCallback, useEffect, useState } from 'preact/hooks'
 import { Button } from '@/Components/Button/Button'
-import { isDesktopDevice } from '@standardnotes/snjs'
+import { FileBackupMetadataFile, isDesktopDevice } from '@standardnotes/snjs'
 import { Switch } from '@/Components/Switch'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
 import { EncryptionStatusItem } from '../Security/Encryption'
 import { Icon } from '@/Components/Icon'
+import { StreamingFileApi } from '@standardnotes/filepicker'
+import { FunctionComponent } from 'preact'
 
 type Props = {
   application: WebApplication
@@ -130,6 +132,7 @@ export const FileBackups = observer(({ application }: Props) => {
               <Text>
                 To decrypt a backup file, drag and drop the file's respective <i>metadata.sn.json</i> file here.
               </Text>
+              <BackupsDropZone application={application} />
             </PreferencesSegment>
           </>
         )}
@@ -137,3 +140,119 @@ export const FileBackups = observer(({ application }: Props) => {
     </>
   )
 })
+
+const isHandlingBackupDrag = (event: DragEvent, application: WebApplication) => {
+  const items = event.dataTransfer?.items
+
+  if (!items) {
+    return false
+  }
+
+  return Array.from(items).every((item) => {
+    const isFile = item.kind === 'file'
+    const fileName = item.getAsFile()?.name || ''
+    const isBackupMetadataFile = application.fileBackups?.isFileNameMetadataFile(fileName)
+    return isFile && isBackupMetadataFile
+  })
+}
+
+export const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
+  const handleMetadataFileDrop = useCallback(
+    async (metadata: FileBackupMetadataFile) => {
+      const decryptedFile = await application.files.decryptBackupMetadataFile(metadata)
+
+      if (!decryptedFile) {
+        return
+      }
+
+      const fileSystem = new StreamingFileApi()
+      await application.files.selectFileBackupAndSaveDecrypted(decryptedFile, fileSystem)
+    },
+    [application],
+  )
+
+  const handleDrag = useCallback(
+    (event: DragEvent) => {
+      if (isHandlingBackupDrag(event, application)) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+    },
+    [application],
+  )
+
+  const handleDragIn = useCallback(
+    (event: DragEvent) => {
+      if (!isHandlingBackupDrag(event, application)) {
+        return
+      }
+
+      event.preventDefault()
+      event.stopPropagation()
+    },
+    [application],
+  )
+
+  const handleDragOut = useCallback(
+    (event: DragEvent) => {
+      if (!isHandlingBackupDrag(event, application)) {
+        return
+      }
+
+      event.preventDefault()
+      event.stopPropagation()
+    },
+    [application],
+  )
+
+  const handleDrop = useCallback(
+    async (event: DragEvent) => {
+      if (!isHandlingBackupDrag(event, application)) {
+        return
+      }
+
+      event.preventDefault()
+      event.stopPropagation()
+
+      const items = event.dataTransfer?.items
+
+      if (!items || items.length === 0) {
+        return
+      }
+
+      const item = items[0]
+      const file = item.getAsFile()
+      if (!file) {
+        return
+      }
+
+      const text = await file.text()
+
+      try {
+        const metadata = JSON.parse(text) as FileBackupMetadataFile
+        void handleMetadataFileDrop(metadata)
+      } catch (error) {
+        console.error(error)
+      }
+
+      event.dataTransfer.clearData()
+    },
+    [application, handleMetadataFileDrop],
+  )
+
+  useEffect(() => {
+    window.addEventListener('dragenter', handleDragIn)
+    window.addEventListener('dragleave', handleDragOut)
+    window.addEventListener('dragover', handleDrag)
+    window.addEventListener('drop', handleDrop)
+
+    return () => {
+      window.removeEventListener('dragenter', handleDragIn)
+      window.removeEventListener('dragleave', handleDragOut)
+      window.removeEventListener('dragover', handleDrag)
+      window.removeEventListener('drop', handleDrop)
+    }
+  }, [handleDragIn, handleDrop, handleDrag, handleDragOut])
+
+  return null
+}
