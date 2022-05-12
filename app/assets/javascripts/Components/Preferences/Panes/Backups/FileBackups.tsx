@@ -7,9 +7,9 @@ import {
   Text,
   Subtitle,
 } from '@/Components/Preferences/PreferencesComponents'
-import { useCallback, useEffect, useState } from 'preact/hooks'
+import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
 import { Button } from '@/Components/Button/Button'
-import { FileBackupMetadataFile, isDesktopDevice } from '@standardnotes/snjs'
+import { FileBackupMetadataFile, FileContent, FileHandleRead, isDesktopDevice } from '@standardnotes/snjs'
 import { Switch } from '@/Components/Switch'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
 import { EncryptionStatusItem } from '../Security/Encryption'
@@ -125,17 +125,12 @@ export const FileBackups = observer(({ application }: Props) => {
                 </div>
               </>
             </PreferencesSegment>
-
-            <HorizontalSeparator classes="mt-5 mb-4" />
-
-            <PreferencesSegment>
-              <Text>
-                To decrypt a backup file, drag and drop the file's respective <i>metadata.sn.json</i> file here.
-              </Text>
-              <BackupsDropZone application={application} />
-            </PreferencesSegment>
           </>
         )}
+
+        <PreferencesSegment>
+          <BackupsDropZone application={application} />
+        </PreferencesSegment>
       </PreferencesGroup>
     </>
   )
@@ -157,19 +152,55 @@ const isHandlingBackupDrag = (event: DragEvent, application: WebApplication) => 
 }
 
 export const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
-  const handleMetadataFileDrop = useCallback(
-    async (metadata: FileBackupMetadataFile) => {
-      const decryptedFile = await application.files.decryptBackupMetadataFile(metadata)
+  const [droppedFile, setDroppedFile] = useState<FileBackupMetadataFile | undefined>(undefined)
+  const [decryptedFileContent, setDecryptedFileContent] = useState<FileContent | undefined>(undefined)
+  const [binaryFile, setBinaryFile] = useState<FileHandleRead | undefined>(undefined)
+  const [isSavingAsDecrypted, setIsSavingAsDecrypted] = useState(false)
 
-      if (!decryptedFile) {
-        return
-      }
+  const fileSystem = useMemo(() => new StreamingFileApi(), [])
 
-      const fileSystem = new StreamingFileApi()
-      await application.files.selectFileBackupAndSaveDecrypted(decryptedFile, fileSystem)
-    },
-    [application],
-  )
+  useEffect(() => {
+    if (droppedFile) {
+      void application.files.decryptBackupMetadataFile(droppedFile).then(setDecryptedFileContent)
+    } else {
+      setDecryptedFileContent(undefined)
+    }
+  }, [droppedFile, application])
+
+  const chooseRelatedBinaryFile = useCallback(async () => {
+    const selection = await application.files.selectFile(fileSystem)
+
+    if (selection === 'aborted' || selection === 'failed') {
+      return
+    }
+
+    setBinaryFile(selection)
+  }, [application, fileSystem])
+
+  const downloadBinaryFileAsDecrypted = useCallback(async () => {
+    if (!decryptedFileContent || !binaryFile) {
+      return
+    }
+
+    setIsSavingAsDecrypted(true)
+
+    const result = await application.files.readBackupFileAndSaveDecrypted(binaryFile, decryptedFileContent, fileSystem)
+
+    if (result === 'success') {
+      void application.alertService.alert(
+        `<strong>${decryptedFileContent.name}</strong> has been successfully decrypted and saved to your chosen directory.`,
+      )
+      setBinaryFile(undefined)
+      setDecryptedFileContent(undefined)
+      setDroppedFile(undefined)
+    } else if (result === 'failed') {
+      void application.alertService.alert(
+        'Unable to save file to local directory. This may be caused by failure to decrypt, or failure to save the file locally.',
+      )
+    }
+
+    setIsSavingAsDecrypted(false)
+  }, [decryptedFileContent, application, binaryFile, fileSystem])
 
   const handleDrag = useCallback(
     (event: DragEvent) => {
@@ -222,6 +253,7 @@ export const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
 
       const item = items[0]
       const file = item.getAsFile()
+
       if (!file) {
         return
       }
@@ -230,14 +262,14 @@ export const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
 
       try {
         const metadata = JSON.parse(text) as FileBackupMetadataFile
-        void handleMetadataFileDrop(metadata)
+        setDroppedFile(metadata)
       } catch (error) {
         console.error(error)
       }
 
       event.dataTransfer.clearData()
     },
-    [application, handleMetadataFileDrop],
+    [application],
   )
 
   useEffect(() => {
@@ -254,5 +286,69 @@ export const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
     }
   }, [handleDragIn, handleDrop, handleDrag, handleDragOut])
 
-  return null
+  if (!droppedFile) {
+    return (
+      <Text>
+        To decrypt a backup file, drag and drop the file's respective <i>metadata.sn.json</i> file here.
+      </Text>
+    )
+  }
+
+  return (
+    <>
+      <PreferencesSegment>
+        {!decryptedFileContent && <Text>Attempting to decrypt metadata file...</Text>}
+
+        {decryptedFileContent && (
+          <>
+            <Title>Backup Decryption</Title>
+
+            <Subtitle className="success">
+              Successfully decrypted metadata file for <i>{decryptedFileContent.name}.</i>
+            </Subtitle>
+
+            <HorizontalSeparator classes={'mt-3 mb-3'} />
+
+            <div className="flex justify-between items-center">
+              <div>
+                <Subtitle>1. Choose related data file</Subtitle>
+                <Text>{droppedFile.file.uuid}</Text>
+              </div>
+              <div>
+                <Button
+                  variant="normal"
+                  label="Choose"
+                  className={'px-1 text-xs min-w-40'}
+                  onClick={chooseRelatedBinaryFile}
+                  disabled={!!binaryFile}
+                />
+              </div>
+            </div>
+
+            <HorizontalSeparator classes={'mt-3 mb-3'} />
+
+            <div className="flex justify-between items-center">
+              <Subtitle>2. Decrypt and save file to your computer</Subtitle>
+
+              <div>
+                <Button
+                  variant="normal"
+                  label={isSavingAsDecrypted ? undefined : 'Save'}
+                  className={'px-1 text-xs min-w-40'}
+                  onClick={downloadBinaryFileAsDecrypted}
+                  disabled={isSavingAsDecrypted || !binaryFile}
+                >
+                  {isSavingAsDecrypted && (
+                    <div className="flex justify-center w-full">
+                      <div className="sk-spinner w-5 h-5 spinner-info"></div>
+                    </div>
+                  )}
+                </Button>
+              </div>
+            </div>
+          </>
+        )}
+      </PreferencesSegment>
+    </>
+  )
 }
