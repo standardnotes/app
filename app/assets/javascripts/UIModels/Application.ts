@@ -2,10 +2,8 @@ import { WebCrypto } from '@/Crypto'
 import { WebAlertService } from '@/Services/AlertService'
 import { ArchiveManager } from '@/Services/ArchiveManager'
 import { AutolockService } from '@/Services/AutolockService'
-import { DesktopDeviceInterface, isDesktopDevice } from '@/Device/DesktopDeviceInterface'
 import { DesktopManager } from '@/Services/DesktopManager'
 import { IOService } from '@/Services/IOService'
-import { StatusManager } from '@/Services/StatusManager'
 import { ThemeManager } from '@/Services/ThemeManager'
 import { AppState } from '@/UIModels/AppState'
 import { WebOrDesktopDevice } from '@/Device/WebOrDesktopDevice'
@@ -17,6 +15,8 @@ import {
   removeFromArray,
   IconsController,
   Runtime,
+  DesktopDeviceInterface,
+  isDesktopDevice,
 } from '@standardnotes/snjs'
 
 type WebServices = {
@@ -24,7 +24,6 @@ type WebServices = {
   desktopService?: DesktopManager
   autolockService: AutolockService
   archiveService: ArchiveManager
-  statusManager: StatusManager
   themeService: ThemeManager
   io: IOService
 }
@@ -135,10 +134,6 @@ export class WebApplication extends SNApplication {
     }
 
     return undefined
-  }
-
-  getStatusManager() {
-    return this.webServices.statusManager
   }
 
   public getThemeService() {

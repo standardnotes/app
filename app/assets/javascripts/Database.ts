@@ -21,7 +21,7 @@ export class Database {
 
   constructor(public databaseName: string, private alertService: AlertService) {}
 
-  public deinit() {
+  public deinit(): void {
     ;(this.alertService as any) = undefined
     this.db = undefined
   }
@@ -29,7 +29,7 @@ export class Database {
   /**
    * Relinquishes the lock and allows db operations to proceed
    */
-  public unlock() {
+  public unlock(): void {
     this.locked = false
   }
 

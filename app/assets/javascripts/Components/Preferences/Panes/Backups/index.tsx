@@ -5,6 +5,7 @@ import { PreferencesPane } from '@/Components/Preferences/PreferencesComponents'
 import { CloudLink } from './CloudBackups'
 import { DataBackups } from './DataBackups'
 import { EmailBackups } from './EmailBackups'
+import { FileBackups } from './FileBackups'
 
 interface Props {
   appState: AppState
@@ -15,6 +16,7 @@ export const Backups: FunctionComponent<Props> = ({ application, appState }) => 
   return (
     <PreferencesPane>
       <DataBackups application={application} appState={appState} />
+      <FileBackups application={application} />
       <EmailBackups application={application} />
       <CloudLink application={application} />
     </PreferencesPane>

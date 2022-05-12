@@ -1,5 +1,5 @@
 import { Environment, RawKeychainValue } from '@standardnotes/snjs'
-import { WebOrDesktopDevice } from '@/Device/WebOrDesktopDevice'
+import { WebOrDesktopDevice } from './WebOrDesktopDevice'
 
 const KEYCHAIN_STORAGE_KEY = 'keychain'
 

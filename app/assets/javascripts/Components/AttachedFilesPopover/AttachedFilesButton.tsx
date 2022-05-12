@@ -23,8 +23,20 @@ type Props = {
   onClickPreprocessing?: () => Promise<void>
 }
 
-const isHandlingFileDrag = (event: DragEvent) =>
-  event.dataTransfer?.items && Array.from(event.dataTransfer.items).some((item) => item.kind === 'file')
+const isHandlingFileDrag = (event: DragEvent, application: WebApplication) => {
+  const items = event.dataTransfer?.items
+
+  if (!items) {
+    return false
+  }
+
+  return Array.from(items).some((item) => {
+    const isFile = item.kind === 'file'
+    const fileName = item.getAsFile()?.name || ''
+    const isBackupMetadataFile = application.files.isFileNameFileBackupMetadataFile(fileName)
+    return isFile && !isBackupMetadataFile
+  })
+}
 
 export const AttachedFilesButton: FunctionComponent<Props> = observer(
   ({ application, appState, onClickPreprocessing }) => {
@@ -234,16 +246,19 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     const [isDraggingFiles, setIsDraggingFiles] = useState(false)
     const dragCounter = useRef(0)
 
-    const handleDrag = (event: DragEvent) => {
-      if (isHandlingFileDrag(event)) {
-        event.preventDefault()
-        event.stopPropagation()
-      }
-    }
+    const handleDrag = useCallback(
+      (event: DragEvent) => {
+        if (isHandlingFileDrag(event, application)) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+      },
+      [application],
+    )
 
     const handleDragIn = useCallback(
       (event: DragEvent) => {
-        if (!isHandlingFileDrag(event)) {
+        if (!isHandlingFileDrag(event, application)) {
           return
         }
 
@@ -268,29 +283,32 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
           }
         }
       },
-      [open, toggleAttachedFilesMenu],
+      [open, toggleAttachedFilesMenu, application],
     )
 
-    const handleDragOut = (event: DragEvent) => {
-      if (!isHandlingFileDrag(event)) {
-        return
-      }
+    const handleDragOut = useCallback(
+      (event: DragEvent) => {
+        if (!isHandlingFileDrag(event, application)) {
+          return
+        }
 
-      event.preventDefault()
-      event.stopPropagation()
+        event.preventDefault()
+        event.stopPropagation()
 
-      dragCounter.current = dragCounter.current - 1
+        dragCounter.current = dragCounter.current - 1
 
-      if (dragCounter.current > 0) {
-        return
-      }
+        if (dragCounter.current > 0) {
+          return
+        }
 
-      setIsDraggingFiles(false)
-    }
+        setIsDraggingFiles(false)
+      },
+      [application],
+    )
 
     const handleDrop = useCallback(
       (event: DragEvent) => {
-        if (!isHandlingFileDrag(event)) {
+        if (!isHandlingFileDrag(event, application)) {
           return
         }
 
@@ -330,7 +348,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
           dragCounter.current = 0
         }
       },
-      [appState.files, appState.features.hasFiles, attachFileToNote, currentTab],
+      [appState.files, appState.features.hasFiles, attachFileToNote, currentTab, application],
     )
 
     useEffect(() => {
@@ -345,7 +363,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
         window.removeEventListener('dragover', handleDrag)
         window.removeEventListener('drop', handleDrop)
       }
-    }, [handleDragIn, handleDrop])
+    }, [handleDragIn, handleDrop, handleDrag, handleDragOut])
 
     return (
       <div ref={containerRef}>

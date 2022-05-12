@@ -7,9 +7,9 @@ import {
   TransferPayload,
   NamespacedRootKeyInKeychain,
   extendArray,
+  WebOrDesktopDeviceInterface,
 } from '@standardnotes/snjs'
 import { Database } from '../Database'
-import { WebOrDesktopDeviceInterface } from './WebOrDesktopDeviceInterface'
 
 export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface {
   constructor(public appVersion: string) {}
@@ -18,7 +18,7 @@ export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface 
 
   abstract environment: Environment
 
-  setApplication(application: SNApplication) {
+  setApplication(application: SNApplication): void {
     const database = new Database(application.identifier, application.alertService)
 
     this.databases.push(database)
