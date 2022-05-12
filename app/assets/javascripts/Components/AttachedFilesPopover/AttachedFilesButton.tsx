@@ -33,7 +33,7 @@ const isHandlingFileDrag = (event: DragEvent, application: WebApplication) => {
   return Array.from(items).some((item) => {
     const isFile = item.kind === 'file'
     const fileName = item.getAsFile()?.name || ''
-    const isBackupMetadataFile = application.fileBackups?.isFileNameMetadataFile(fileName)
+    const isBackupMetadataFile = application.files.isFileNameFileBackupMetadataFile(fileName)
     return isFile && !isBackupMetadataFile
   })
 }
