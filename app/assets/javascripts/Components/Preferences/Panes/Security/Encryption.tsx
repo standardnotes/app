@@ -7,16 +7,17 @@ import { PreferencesGroup, PreferencesSegment, Text, Title } from '@/Components/
 
 const formatCount = (count: number, itemType: string) => `${count} / ${count} ${itemType}`
 
-const EncryptionStatusItem: FunctionComponent<{
+export const EncryptionStatusItem: FunctionComponent<{
   icon: ComponentChild
   status: string
-}> = ({ icon, status }) => (
+  checkmark?: boolean
+}> = ({ icon, status, checkmark = true }) => (
   <div className="w-full rounded py-1.5 px-3 text-input my-1 min-h-8 flex flex-row items-center bg-contrast no-border focus-within:ring-info">
     {icon}
     <div className="min-w-3 min-h-1" />
     <div className="flex-grow color-text text-sm">{status}</div>
     <div className="min-w-3 min-h-1" />
-    <Icon className="success min-w-4 min-h-4" type="check-bold" />
+    {checkmark && <Icon className="success min-w-4 min-h-4" type="check-bold" />}
   </div>
 )
 
