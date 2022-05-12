@@ -18,7 +18,7 @@ export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface 
 
   abstract environment: Environment
 
-  setApplication(application: SNApplication) {
+  setApplication(application: SNApplication): void {
     const database = new Database(application.identifier, application.alertService)
 
     this.databases.push(database)

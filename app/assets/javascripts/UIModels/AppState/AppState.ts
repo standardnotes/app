@@ -15,6 +15,7 @@ import {
   removeFromArray,
   Uuid,
   PayloadEmitSource,
+  WebOrDesktopDeviceInterface,
 } from '@standardnotes/snjs'
 import { action, computed, IReactionDisposer, makeObservable, observable, reaction } from 'mobx'
 import { ActionsMenuState } from './ActionsMenuState'
@@ -31,7 +32,6 @@ import { SearchOptionsState } from './SearchOptionsState'
 import { SubscriptionState } from './SubscriptionState'
 import { SyncState } from './SyncState'
 import { TagsState } from './TagsState'
-import { WebOrDesktopDevice } from '@/Device/WebOrDesktopDevice'
 import { FilePreviewModalState } from './FilePreviewModalState'
 
 export enum AppStateEvent {
@@ -93,7 +93,7 @@ export class AppState {
 
   private readonly tagChangedDisposer: IReactionDisposer
 
-  constructor(application: WebApplication, private device: WebOrDesktopDevice) {
+  constructor(application: WebApplication, private device: WebOrDesktopDeviceInterface) {
     this.application = application
     this.notes = new NotesState(
       application,

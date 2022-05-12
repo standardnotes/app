@@ -90,7 +90,7 @@ export const ChallengeModal: FunctionComponent<Props> = ({
     const valuesToProcess: ChallengeValue[] = []
     for (const inputValue of Object.values(validatedValues)) {
       const rawValue = inputValue.value
-      const value = new ChallengeValue(inputValue.prompt, rawValue)
+      const value = { prompt: inputValue.prompt, value: rawValue }
       valuesToProcess.push(value)
     }
     const processingPrompts = valuesToProcess.map((v) => v.prompt)

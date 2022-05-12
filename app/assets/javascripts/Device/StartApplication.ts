@@ -1,8 +1,8 @@
-import { WebOrDesktopDeviceInterface } from '@standardnotes/snjs'
+import { WebOrDesktopDevice } from './WebOrDesktopDevice'
 
 export type StartApplication = (
   defaultSyncServerHost: string,
-  device: WebOrDesktopDeviceInterface,
+  device: WebOrDesktopDevice,
   enableUnfinishedFeatures: boolean,
   webSocketUrl: string,
 ) => Promise<void>

@@ -9,7 +9,7 @@ import {
 } from '@/Components/Preferences/PreferencesComponents'
 import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
 import { Button } from '@/Components/Button/Button'
-import { FileBackupMetadataFile, FileContent, FileHandleRead, isDesktopDevice } from '@standardnotes/snjs'
+import { FileBackupMetadataFile, FileContent, FileHandleRead } from '@standardnotes/snjs'
 import { Switch } from '@/Components/Switch'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
 import { EncryptionStatusItem } from '../Security/Encryption'
@@ -24,18 +24,19 @@ type Props = {
 export const FileBackups = observer(({ application }: Props) => {
   const [backupsEnabled, setBackupsEnabled] = useState(false)
   const [backupsLocation, setBackupsLocation] = useState('')
-  const [backupsService, _] = useState(application.fileBackups)
+  const backupsService = useMemo(() => application.fileBackups, [application.fileBackups])
 
-  if (!isDesktopDevice(application.deviceInterface)) {
+  if (!backupsService) {
     return (
       <>
         <PreferencesGroup>
           <PreferencesSegment>
             <Title>File Backups</Title>
-            <Subtitle>
-              Automatically save encrypted backups of files uploaded to any device to this computer. To use file
-              backups, use the Standard Notes desktop application.
-            </Subtitle>
+            <Subtitle>Automatically save encrypted backups of files uploaded to any device to this computer.</Subtitle>
+            <Text className="mt-3">To enable file backups, use the Standard Notes desktop application.</Text>
+          </PreferencesSegment>
+          <PreferencesSegment>
+            <BackupsDropZone application={application} />
           </PreferencesSegment>
         </PreferencesGroup>
       </>
@@ -146,7 +147,7 @@ const isHandlingBackupDrag = (event: DragEvent, application: WebApplication) => 
   return Array.from(items).every((item) => {
     const isFile = item.kind === 'file'
     const fileName = item.getAsFile()?.name || ''
-    const isBackupMetadataFile = application.fileBackups?.isFileNameMetadataFile(fileName)
+    const isBackupMetadataFile = application.files.isFileNameMetadataFile(fileName)
     return isFile && isBackupMetadataFile
   })
 }
