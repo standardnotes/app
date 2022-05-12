@@ -53,7 +53,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     const buttonRef = useRef<HTMLButtonElement>(null)
     const panelRef = useRef<HTMLDivElement>(null)
     const containerRef = useRef<HTMLDivElement>(null)
-    const [closeOnBlur, keepMenuOpen] = useCloseOnBlur(containerRef, setOpen)
+    const [closeOnBlur, keepMenuOpen] = useCloseOnBlur(containerRef, setOpen, true)
 
     useEffect(() => {
       if (appState.filePreviewModal.isOpen) {
@@ -222,10 +222,15 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
         case PopoverFileItemActionType.RenameFile:
           await renameFile(file, action.payload.name)
           break
-        case PopoverFileItemActionType.PreviewFile:
+        case PopoverFileItemActionType.PreviewFile: {
           keepMenuOpen(true)
-          appState.filePreviewModal.activate(file, currentTab === PopoverTabs.AllFiles ? allFiles : attachedFiles)
+          const otherFiles = currentTab === PopoverTabs.AllFiles ? allFiles : attachedFiles
+          appState.filePreviewModal.activate(
+            file,
+            otherFiles.filter((file) => !file.protected),
+          )
           break
+        }
       }
 
       if (
