@@ -127,7 +127,7 @@
     cursor: pointer;
 
     &:hover {
-      background-color: var(--sn-stylekit-grey-5);
+      background-color: var(--sn-stylekit-contrast-background-color);
     }
 
     .icon {
@@ -299,7 +299,7 @@
     }
 
     &.selected {
-      background-color: var(--sn-stylekit-grey-5);
+      background-color: var(--sn-stylekit-contrast-background-color);
       border-left: 2px solid var(--sn-stylekit-info-color);
 
       progress {
@@ -321,3 +321,4 @@
     }
   }
 }
+
