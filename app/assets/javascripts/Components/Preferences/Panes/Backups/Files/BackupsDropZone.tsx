@@ -7,8 +7,12 @@ import { EncryptionStatusItem } from '../../Security/Encryption'
 import { Icon } from '@/Components/Icon'
 import { StreamingFileApi } from '@standardnotes/filepicker'
 import { FunctionComponent } from 'preact'
-import { Props } from './FileBackups'
 import { isHandlingBackupDrag } from '@/Utils/DragTypeCheck'
+import { WebApplication } from '@/UIModels/Application'
+
+type Props = {
+  application: WebApplication
+}
 
 export const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
   const [droppedFile, setDroppedFile] = useState<FileBackupMetadataFile | undefined>(undefined)

@@ -15,7 +15,7 @@ import { EncryptionStatusItem } from '../../Security/Encryption'
 import { Icon } from '@/Components/Icon'
 import { BackupsDropZone } from './BackupsDropZone'
 
-export type Props = {
+type Props = {
   application: WebApplication
 }
 
