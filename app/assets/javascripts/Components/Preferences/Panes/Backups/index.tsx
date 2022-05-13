@@ -5,7 +5,7 @@ import { PreferencesPane } from '@/Components/Preferences/PreferencesComponents'
 import { CloudLink } from './CloudBackups'
 import { DataBackups } from './DataBackups'
 import { EmailBackups } from './EmailBackups'
-import { FileBackups } from './FileBackups'
+import { FileBackups } from './Files/FileBackups'
 
 interface Props {
   appState: AppState

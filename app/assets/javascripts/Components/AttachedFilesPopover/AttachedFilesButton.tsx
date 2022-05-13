@@ -16,26 +16,12 @@ import { PopoverFileItemAction, PopoverFileItemActionType } from './PopoverFileI
 import { AttachedFilesPopover } from './AttachedFilesPopover'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { PopoverTabs } from './PopoverTabs'
+import { isHandlingFileDrag } from '@/Utils/DragTypeCheck'
 
 type Props = {
   application: WebApplication
   appState: AppState
   onClickPreprocessing?: () => Promise<void>
-}
-
-const isHandlingFileDrag = (event: DragEvent, application: WebApplication) => {
-  const items = event.dataTransfer?.items
-
-  if (!items) {
-    return false
-  }
-
-  return Array.from(items).some((item) => {
-    const isFile = item.kind === 'file'
-    const fileName = item.getAsFile()?.name || ''
-    const isBackupMetadataFile = application.files.isFileNameFileBackupMetadataFile(fileName)
-    return isFile && !isBackupMetadataFile
-  })
 }
 
 export const AttachedFilesButton: FunctionComponent<Props> = observer(
