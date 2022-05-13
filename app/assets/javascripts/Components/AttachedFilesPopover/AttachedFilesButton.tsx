@@ -111,7 +111,6 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     const prospectivelyShowFilesPremiumModal = useCallback(() => {
       if (!appState.features.hasFiles) {
         premiumModal.activate('Files')
-        return
       }
     }, [appState.features.hasFiles, premiumModal])
 
