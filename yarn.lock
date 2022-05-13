@@ -2461,14 +2461,14 @@
     "@standardnotes/auth" "^3.18.13"
     "@standardnotes/features" "^1.42.1"
 
-"@standardnotes/encryption@^1.7.0":
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/encryption/-/encryption-1.7.0.tgz#3012bed5283e23ddeaae01e9fbaa80c24e8af42d"
-  integrity sha512-gBVcTCZ53Eg3/2eZkVrBrS98BU95CR2h23ofnNGhCcy0FlWwv6fAqupSsPufOdce8gh27gF0mhRbi80ljYxCUA==
+"@standardnotes/encryption@^1.7.1":
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/@standardnotes/encryption/-/encryption-1.7.1.tgz#7d84389e204a6ca2906617daa62423ce9ec38879"
+  integrity sha512-5SZy5MG0ike80y889SmBTJMGAG753PdvOtc23+tNwbleBoubZjzw8gTgZYY52kl74KLtXmAEKiw2Ym2Pq5FcOg==
   dependencies:
     "@standardnotes/models" "^1.8.0"
     "@standardnotes/responses" "^1.6.19"
-    "@standardnotes/services" "^1.11.0"
+    "@standardnotes/services" "^1.11.1"
 
 "@standardnotes/features@^1.42.1":
   version "1.42.1"
@@ -2478,24 +2478,24 @@
     "@standardnotes/auth" "^3.18.13"
     "@standardnotes/common" "^1.19.8"
 
-"@standardnotes/filepicker@1.14.0", "@standardnotes/filepicker@^1.14.0":
-  version "1.14.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/filepicker/-/filepicker-1.14.0.tgz#f1ea5e66a453cfc2131bbf665f676b430f649cf2"
-  integrity sha512-E/frksUJhHbMVlLNu4UdHLIdFNuQe9Co8dq/WQgeK/X+Ic+5t5Jm91c4GA1LvCUVF1vhYl/Vo76LY8gE1J2mfg==
+"@standardnotes/filepicker@1.14.1", "@standardnotes/filepicker@^1.14.1":
+  version "1.14.1"
+  resolved "https://registry.yarnpkg.com/@standardnotes/filepicker/-/filepicker-1.14.1.tgz#81a3ba2be6e3615103875e528dc1720fa3698dea"
+  integrity sha512-AOR+iQqNqbfZU7ur/LKsF/M0x9EoBT0kXhewZBs7h3OwrtJES7nFRr/janJMrecvUL/ZdfXmazudadZdvcxPyg==
   dependencies:
     "@standardnotes/common" "^1.19.8"
-    "@standardnotes/services" "^1.11.0"
+    "@standardnotes/services" "^1.11.1"
     "@standardnotes/utils" "^1.6.6"
 
-"@standardnotes/files@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/files/-/files-1.1.0.tgz#c2499f50fdc31addf3b0307388d4c78420415dfe"
-  integrity sha512-O4cB8nxBTSLPUCoLyglzbj5oshaJ6hKuBleAWPaC+treaiwpWVyfxn3TF7G4MejlNUMIrGfb566YAZ3R5YVfGg==
+"@standardnotes/files@^1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@standardnotes/files/-/files-1.1.2.tgz#6e75d6233975f359173ddcb352647b21c587be89"
+  integrity sha512-Q3f+gYd/FkWb8nuNHgUqGSxkAKkAU3kwb+Ar89LhqSNkgq0e4MsUigy+lzOagdiavwT/C1SE8j5d7E4oIZWynw==
   dependencies:
-    "@standardnotes/encryption" "^1.7.0"
+    "@standardnotes/encryption" "^1.7.1"
     "@standardnotes/models" "^1.8.0"
     "@standardnotes/responses" "^1.6.19"
-    "@standardnotes/services" "^1.11.0"
+    "@standardnotes/services" "^1.11.1"
     "@standardnotes/utils" "^1.6.6"
 
 "@standardnotes/models@^1.8.0":
@@ -2516,10 +2516,10 @@
     "@standardnotes/common" "^1.19.8"
     "@standardnotes/features" "^1.42.1"
 
-"@standardnotes/services@^1.11.0":
-  version "1.11.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/services/-/services-1.11.0.tgz#7b214093a4d5ef540ce2b6a40cf0f83517c1a2da"
-  integrity sha512-bR084UoR7EzTC6GD5QxFi7FmcoqhOhZmdeWIwByEOQEDeWG9h0i/lNZo4pAyYykDDv8Z/U3+kNjify4wI+ksZw==
+"@standardnotes/services@^1.11.1":
+  version "1.11.1"
+  resolved "https://registry.yarnpkg.com/@standardnotes/services/-/services-1.11.1.tgz#2fa3ce3c7025a048964204321a4c50591134d7ac"
+  integrity sha512-MvDAJM1Cn9586sMm+w4iCgznsqT6uli3bpf/xZKOHWITkrH6dik/FpgpbxmRfOz2VnbZ6lyLVjsnNDIWFZDqxw==
   dependencies:
     "@standardnotes/auth" "^3.18.13"
     "@standardnotes/common" "^1.19.8"
@@ -2546,21 +2546,21 @@
     buffer "^6.0.3"
     libsodium-wrappers "^0.7.9"
 
-"@standardnotes/snjs@2.107.0":
-  version "2.107.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.107.0.tgz#1254f8ae439023e6dab60dae73b4c8435bf117d2"
-  integrity sha512-3FOxSDlRADoQoSr3gSvAA9eFQbvo7vOaeeLXtoN7ElUUtG78DadPORtwyQtsUee9EfxQnlaWBXVImPAoy2LUew==
+"@standardnotes/snjs@2.107.2":
+  version "2.107.2"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.107.2.tgz#b50be49a44a96eac0158e44df7d547e2b1ecfe5a"
+  integrity sha512-zTa1n+Bed6ElWOepA/5gJew1aI03XB4lKiysJmDduKS2QsYEdyeQ2p3SuJZSDFX57e/PVYnU9uI851CobrN/Fg==
   dependencies:
     "@standardnotes/auth" "^3.18.13"
     "@standardnotes/common" "^1.19.8"
     "@standardnotes/domain-events" "^2.28.3"
-    "@standardnotes/encryption" "^1.7.0"
+    "@standardnotes/encryption" "^1.7.1"
     "@standardnotes/features" "^1.42.1"
-    "@standardnotes/filepicker" "^1.14.0"
-    "@standardnotes/files" "^1.1.0"
+    "@standardnotes/filepicker" "^1.14.1"
+    "@standardnotes/files" "^1.1.2"
     "@standardnotes/models" "^1.8.0"
     "@standardnotes/responses" "^1.6.19"
-    "@standardnotes/services" "^1.11.0"
+    "@standardnotes/services" "^1.11.1"
     "@standardnotes/settings" "^1.14.3"
     "@standardnotes/sncrypto-common" "^1.8.2"
     "@standardnotes/utils" "^1.6.6"

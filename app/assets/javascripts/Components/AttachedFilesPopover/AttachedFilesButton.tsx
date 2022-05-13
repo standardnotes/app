@@ -84,11 +84,6 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     }, [application, note])
 
     const toggleAttachedFilesMenu = useCallback(async () => {
-      if (!appState.features.hasFiles) {
-        premiumModal.activate('Files')
-        return
-      }
-
       const rect = buttonRef.current?.getBoundingClientRect()
       if (rect) {
         const { clientHeight } = document.documentElement
@@ -111,7 +106,20 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
 
         setOpen(newOpenState)
       }
-    }, [appState.features.hasFiles, onClickPreprocessing, open, premiumModal])
+    }, [onClickPreprocessing, open])
+
+    const prospectivelyShowFilesPremiumModal = useCallback(() => {
+      if (!appState.features.hasFiles) {
+        premiumModal.activate('Files')
+        return
+      }
+    }, [appState.features.hasFiles, premiumModal])
+
+    const toggleAttachedFilesMenuWithEntitlementCheck = useCallback(async () => {
+      prospectivelyShowFilesPremiumModal()
+
+      await toggleAttachedFilesMenu()
+    }, [toggleAttachedFilesMenu, prospectivelyShowFilesPremiumModal])
 
     const deleteFile = async (file: SNFile) => {
       const shouldDelete = await confirmDialog({
@@ -318,6 +326,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
         setIsDraggingFiles(false)
 
         if (!appState.features.hasFiles) {
+          prospectivelyShowFilesPremiumModal()
           return
         }
 
@@ -348,7 +357,14 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
           dragCounter.current = 0
         }
       },
-      [appState.files, appState.features.hasFiles, attachFileToNote, currentTab, application],
+      [
+        appState.files,
+        appState.features.hasFiles,
+        attachFileToNote,
+        currentTab,
+        application,
+        prospectivelyShowFilesPremiumModal,
+      ],
     )
 
     useEffect(() => {
@@ -367,7 +383,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
 
     return (
       <div ref={containerRef}>
-        <Disclosure open={open} onChange={toggleAttachedFilesMenu}>
+        <Disclosure open={open} onChange={toggleAttachedFilesMenuWithEntitlementCheck}>
           <DisclosureButton
             onKeyDown={(event) => {
               if (event.key === 'Escape') {

@@ -9,7 +9,7 @@ import {
 } from '@/Components/Preferences/PreferencesComponents'
 import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
 import { Button } from '@/Components/Button/Button'
-import { FileBackupMetadataFile, FileContent, FileHandleRead } from '@standardnotes/snjs'
+import { FileBackupMetadataFile, FileBackupsConstantsV1, FileContent, FileHandleRead } from '@standardnotes/snjs'
 import { Switch } from '@/Components/Switch'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
 import { EncryptionStatusItem } from '../Security/Encryption'
@@ -102,7 +102,7 @@ export const FileBackups = observer(({ application }: Props) => {
               <>
                 <Text className="mb-3">
                   Files backups are enabled. When you upload a new file on any device and open this application, files
-                  will be downloaded in encrypted form to:
+                  will be backed up in encrypted form to:
                 </Text>
 
                 <EncryptionStatusItem
@@ -304,16 +304,20 @@ export const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
           <>
             <Title>Backup Decryption</Title>
 
-            <Subtitle className="success">
-              Successfully decrypted metadata file for <i>{decryptedFileContent.name}.</i>
-            </Subtitle>
+            <EncryptionStatusItem
+              status={decryptedFileContent.name}
+              icon={[<Icon type="attachment-file" className="min-w-5 min-h-5" />]}
+              checkmark={true}
+            />
 
             <HorizontalSeparator classes={'mt-3 mb-3'} />
 
             <div className="flex justify-between items-center">
               <div>
                 <Subtitle>1. Choose related data file</Subtitle>
-                <Text>{droppedFile.file.uuid}</Text>
+                <Text className={`text-xs mr-3 em ${binaryFile ? 'font-bold success' : ''}`}>
+                  {droppedFile.file.uuid}/{FileBackupsConstantsV1.BinaryFileName}
+                </Text>
               </div>
               <div>
                 <Button
