@@ -2,7 +2,7 @@ import { FunctionComponent } from 'preact'
 
 export const Title: FunctionComponent = ({ children }) => (
   <>
-    <h2 className="text-base m-0 mb-1">{children}</h2>
+    <h2 className="text-base m-0 mb-1 info">{children}</h2>
     <div className="min-h-2" />
   </>
 )
