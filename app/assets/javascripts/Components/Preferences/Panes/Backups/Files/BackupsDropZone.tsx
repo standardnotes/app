@@ -1,7 +1,7 @@
 import { PreferencesSegment, Title, Text, Subtitle } from '@/Components/Preferences/PreferencesComponents'
 import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
 import { Button } from '@/Components/Button/Button'
-import { FileBackupMetadataFile, FileBackupsConstantsV1, FileContent, FileHandleRead } from '@standardnotes/snjs'
+import { FileBackupMetadataFile, FileBackupsConstantsV1, FileItem, FileHandleRead } from '@standardnotes/snjs'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
 import { EncryptionStatusItem } from '../../Security/Encryption'
 import { Icon } from '@/Components/Icon'
@@ -16,7 +16,7 @@ type Props = {
 
 export const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
   const [droppedFile, setDroppedFile] = useState<FileBackupMetadataFile | undefined>(undefined)
-  const [decryptedFileContent, setDecryptedFileContent] = useState<FileContent | undefined>(undefined)
+  const [decryptedFileContent, setDecryptedFileContent] = useState<FileItem | undefined>(undefined)
   const [binaryFile, setBinaryFile] = useState<FileHandleRead | undefined>(undefined)
   const [isSavingAsDecrypted, setIsSavingAsDecrypted] = useState(false)
 

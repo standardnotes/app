@@ -7,14 +7,14 @@ import {
   ClassicFileSaver,
   parseFileName,
 } from '@standardnotes/filepicker'
-import { ClientDisplayableError, SNFile } from '@standardnotes/snjs'
+import { ClientDisplayableError, FileItem } from '@standardnotes/snjs'
 import { addToast, dismissToast, ToastType, updateToast } from '@standardnotes/stylekit'
 import { WebApplication } from '../Application'
 
 export class FilesState {
   constructor(private application: WebApplication) {}
 
-  public async downloadFile(file: SNFile): Promise<void> {
+  public async downloadFile(file: FileItem): Promise<void> {
     let downloadingToastId = ''
 
     try {
@@ -102,7 +102,7 @@ export class FilesState {
         return
       }
 
-      const uploadedFiles: SNFile[] = []
+      const uploadedFiles: FileItem[] = []
 
       for (const file of selectedFiles) {
         if (!shouldUseStreamingReader && maxFileSize && file.size >= maxFileSize) {

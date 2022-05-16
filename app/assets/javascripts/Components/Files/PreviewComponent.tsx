@@ -1,9 +1,9 @@
-import { SNFile } from '@standardnotes/snjs'
+import { FileItem } from '@standardnotes/snjs'
 import { FunctionComponent } from 'preact'
 import { ImagePreview } from './ImagePreview'
 
 type Props = {
-  file: SNFile
+  file: FileItem
   objectUrl: string
 }
 

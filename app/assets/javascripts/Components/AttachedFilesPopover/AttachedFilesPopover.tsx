@@ -1,7 +1,7 @@
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
-import { SNFile } from '@standardnotes/snjs'
+import { FileItem } from '@standardnotes/snjs'
 import { FilesIllustration } from '@standardnotes/stylekit'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
@@ -15,8 +15,8 @@ import { PopoverTabs } from './PopoverTabs'
 type Props = {
   application: WebApplication
   appState: AppState
-  allFiles: SNFile[]
-  attachedFiles: SNFile[]
+  allFiles: FileItem[]
+  attachedFiles: FileItem[]
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
   currentTab: PopoverTabs
   handleFileAction: (action: PopoverFileItemAction) => Promise<boolean>
@@ -126,7 +126,7 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
             </div>
           ) : null}
           {filteredList.length > 0 ? (
-            filteredList.map((file: SNFile) => {
+            filteredList.map((file: FileItem) => {
               return (
                 <PopoverFileItem
                   key={file.uuid}

@@ -1,10 +1,10 @@
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
-import { SNFile } from '@standardnotes/snjs'
+import { FileItem } from '@standardnotes/snjs'
 import { FunctionComponent } from 'preact'
 import { Icon } from '@/Components/Icon'
 
 type Props = {
-  file: SNFile
+  file: FileItem
 }
 
 export const FilePreviewInfoPanel: FunctionComponent<Props> = ({ file }) => {
