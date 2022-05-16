@@ -165,7 +165,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
 
   const readyToDrop = isOver && canDrop
 
-  const toggleContextMenu = () => {
+  const toggleContextMenu = useCallback(() => {
     if (!menuButtonRef.current) {
       return
     }
@@ -178,7 +178,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
     } else {
       onContextMenu(tag, menuButtonRect.right, menuButtonRect.top)
     }
-  }
+  }, [onContextMenu, tagsState, tag])
 
   return (
     <>

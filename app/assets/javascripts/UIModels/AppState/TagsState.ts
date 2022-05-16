@@ -12,10 +12,13 @@ import {
   UuidString,
   isSystemView,
   FindItem,
+  DeinitSource,
 } from '@standardnotes/snjs'
 import { action, computed, makeAutoObservable, makeObservable, observable, runInAction } from 'mobx'
 import { WebApplication } from '../Application'
 import { FeaturesState } from './FeaturesState'
+import { AbstractState } from './AbstractState'
+import { destroyAllObjectProperties } from '@/Utils'
 
 type AnyTag = SNTag | SmartView
 
@@ -56,7 +59,7 @@ const isValidFutureSiblings = (application: SNApplication, futureSiblings: SNTag
   return true
 }
 
-export class TagsState {
+export class TagsState extends AbstractState {
   tags: SNTag[] = []
   smartViews: SmartView[] = []
   allNotesCount_ = 0
@@ -75,7 +78,9 @@ export class TagsState {
 
   private readonly tagsCountsState: TagsCountsState
 
-  constructor(private application: WebApplication, appEventListeners: (() => void)[], private features: FeaturesState) {
+  constructor(application: WebApplication, appEventListeners: (() => void)[], private features: FeaturesState) {
+    super(application)
+
     this.tagsCountsState = new TagsCountsState(this.application)
 
     this.selected_ = undefined
@@ -162,6 +167,19 @@ export class TagsState {
         }
       }),
     )
+  }
+
+  override deinit(source: DeinitSource) {
+    super.deinit(source)
+    ;(this.features as unknown) = undefined
+    ;(this.tags as unknown) = undefined
+    ;(this.smartViews as unknown) = undefined
+    ;(this.selected_ as unknown) = undefined
+    ;(this.previouslySelected_ as unknown) = undefined
+    ;(this.editing_ as unknown) = undefined
+    ;(this.addingSubtagTo as unknown) = undefined
+
+    destroyAllObjectProperties(this)
   }
 
   async createSubtagAndAssignParent(parent: SNTag, title: string) {

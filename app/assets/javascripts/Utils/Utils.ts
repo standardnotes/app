@@ -134,6 +134,16 @@ if (!IsWebPlatform && !IsDesktopPlatform) {
   throw Error('Neither __WEB__ nor __DESKTOP__ is true. Check your configuration files.')
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function destroyAllObjectProperties(object: any): void {
+  for (const prop of Object.getOwnPropertyNames(object)) {
+    try {
+      delete object[prop]
+      // eslint-disable-next-line no-empty
+    } catch (error) {}
+  }
+}
+
 export function isDesktopApplication() {
   return IsDesktopPlatform
 }

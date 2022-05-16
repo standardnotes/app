@@ -67,7 +67,7 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
       }
 
       fetchLegacyHistory().catch(console.error)
-    }, [application.actionsManager, note])
+    }, [application, note])
 
     const TabButton: FunctionComponent<{
       type: RevisionListTabType

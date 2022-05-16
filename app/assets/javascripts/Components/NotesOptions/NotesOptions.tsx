@@ -2,7 +2,7 @@ import { AppState } from '@/UIModels/AppState'
 import { Icon } from '@/Components/Icon'
 import { Switch } from '@/Components/Switch'
 import { observer } from 'mobx-react-lite'
-import { useState, useEffect, useMemo } from 'preact/hooks'
+import { useState, useEffect, useMemo, useCallback } from 'preact/hooks'
 import { SNApplication, SNNote } from '@standardnotes/snjs'
 import { WebApplication } from '@/UIModels/Application'
 import { KeyboardModifier } from '@/Services/IOService'
@@ -211,13 +211,16 @@ export const NotesOptions = observer(({ application, appState, closeOnBlur }: No
     }
   }, [application])
 
-  const getNoteFileName = (note: SNNote): string => {
-    const editor = application.componentManager.editorForNote(note)
-    const format = editor?.package_info?.file_type || 'txt'
-    return `${note.title}.${format}`
-  }
+  const getNoteFileName = useCallback(
+    (note: SNNote): string => {
+      const editor = application.componentManager.editorForNote(note)
+      const format = editor?.package_info?.file_type || 'txt'
+      return `${note.title}.${format}`
+    },
+    [application],
+  )
 
-  const downloadSelectedItems = async () => {
+  const downloadSelectedItems = useCallback(async () => {
     if (notes.length === 1) {
       application.getArchiveService().downloadData(new Blob([notes[0].text]), getNoteFileName(notes[0]))
       return
@@ -242,17 +245,17 @@ export const NotesOptions = observer(({ application, appState, closeOnBlur }: No
         message: `Exported ${notes.length} notes`,
       })
     }
-  }
+  }, [application, getNoteFileName, notes])
 
-  const duplicateSelectedItems = () => {
+  const duplicateSelectedItems = useCallback(() => {
     notes.forEach((note) => {
       application.mutator.duplicateItem(note).catch(console.error)
     })
-  }
+  }, [application, notes])
 
-  const openRevisionHistoryModal = () => {
+  const openRevisionHistoryModal = useCallback(() => {
     appState.notes.setShowRevisionHistoryModal(true)
-  }
+  }, [appState])
 
   return (
     <>

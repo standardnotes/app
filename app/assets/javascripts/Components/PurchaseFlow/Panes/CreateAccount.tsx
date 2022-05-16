@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from 'preact/hooks'
 import { FloatingLabelInput } from '@/Components/Input/FloatingLabelInput'
 import { isEmailValid } from '@/Utils'
 import { loadPurchaseFlowUrl } from '@/Components/PurchaseFlow/PurchaseFlowWrapper'
-import { BlueDotIcon, CircleIcon, DiamondIcon, CreateAccountIllustration } from '@standardnotes/stylekit'
+import { BlueDotIcon, CircleIcon, DiamondIcon, CreateAccountIllustration } from '@standardnotes/icons'
 
 type Props = {
   appState: AppState

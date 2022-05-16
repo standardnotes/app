@@ -28,7 +28,7 @@ export const TagsContextMenu: FunctionComponent<Props> = observer(({ appState })
 
   const reloadContextMenuLayout = useCallback(() => {
     appState.tags.reloadContextMenuLayout()
-  }, [appState.tags])
+  }, [appState])
 
   useEffect(() => {
     window.addEventListener('resize', reloadContextMenuLayout)
@@ -45,16 +45,16 @@ export const TagsContextMenu: FunctionComponent<Props> = observer(({ appState })
 
     appState.tags.setContextMenuOpen(false)
     appState.tags.setAddingSubtagTo(selectedTag)
-  }, [appState.features.hasFolders, appState.tags, premiumModal, selectedTag])
+  }, [appState, selectedTag, premiumModal])
 
   const onClickRename = useCallback(() => {
     appState.tags.setContextMenuOpen(false)
     appState.tags.editingTag = selectedTag
-  }, [appState.tags, selectedTag])
+  }, [appState, selectedTag])
 
   const onClickDelete = useCallback(() => {
     appState.tags.remove(selectedTag, true).catch(console.error)
-  }, [appState.tags, selectedTag])
+  }, [appState, selectedTag])
 
   return contextMenuOpen ? (
     <div

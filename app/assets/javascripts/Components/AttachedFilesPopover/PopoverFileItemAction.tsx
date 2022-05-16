@@ -1,4 +1,4 @@
-import { SNFile } from '@standardnotes/snjs'
+import { FileItem } from '@standardnotes/snjs'
 
 export enum PopoverFileItemActionType {
   AttachFileToNote,
@@ -16,17 +16,17 @@ export type PopoverFileItemAction =
         PopoverFileItemActionType,
         PopoverFileItemActionType.RenameFile | PopoverFileItemActionType.ToggleFileProtection
       >
-      payload: SNFile
+      payload: FileItem
     }
   | {
       type: PopoverFileItemActionType.ToggleFileProtection
-      payload: SNFile
+      payload: FileItem
       callback: (isProtected: boolean) => void
     }
   | {
       type: PopoverFileItemActionType.RenameFile
       payload: {
-        file: SNFile
+        file: FileItem
         name: string
       }
     }

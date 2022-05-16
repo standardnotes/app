@@ -29,7 +29,7 @@ export const ChallengeModalPrompt: FunctionComponent<Props> = ({ prompt, values,
   }, [isInvalid])
 
   return (
-    <div className="w-full mb-3">
+    <div key={prompt.id} className="w-full mb-3">
       {prompt.validation === ChallengeValidation.ProtectionSessionDuration ? (
         <div className="min-w-76">
           <div className="text-sm font-medium mb-2">Allow protected access for</div>

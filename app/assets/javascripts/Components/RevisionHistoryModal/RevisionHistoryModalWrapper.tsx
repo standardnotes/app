@@ -64,7 +64,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
     const note = Object.values(appState.notes.selectedNotes)[0]
     const editorForCurrentNote = useMemo(() => {
       return application.componentManager.editorForNote(note)
-    }, [application.componentManager, note])
+    }, [application, note])
 
     const [isFetchingSelectedRevision, setIsFetchingSelectedRevision] = useState(false)
     const [selectedRevision, setSelectedRevision] = useState<HistoryEntry | LegacyHistoryEntry>()
@@ -92,7 +92,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
           setIsFetchingRemoteHistory(false)
         }
       }
-    }, [application.historyManager, note])
+    }, [application, note])
 
     useEffect(() => {
       if (!remoteHistory?.length) {

@@ -1,11 +1,11 @@
-const path = require('path');
-const webpack = require('webpack');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const mergeWithEnvDefaults = require('./webpack-defaults');
-require('dotenv').config();
+const path = require('path')
+const webpack = require('webpack')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const mergeWithEnvDefaults = require('./webpack-defaults')
+require('dotenv').config()
 
 module.exports = (env) => {
-  mergeWithEnvDefaults(env);
+  mergeWithEnvDefaults(env)
   return {
     entry: './app/assets/javascripts/index.ts',
     output: {
@@ -32,10 +32,7 @@ module.exports = (env) => {
       alias: {
         '%': path.resolve(__dirname, 'app/assets/templates'),
         '@': path.resolve(__dirname, 'app/assets/javascripts'),
-        '@Controllers': path.resolve(
-          __dirname,
-          'app/assets/javascripts/controllers'
-        ),
+        '@Controllers': path.resolve(__dirname, 'app/assets/javascripts/controllers'),
         '@Views': path.resolve(__dirname, 'app/assets/javascripts/views'),
         '@Services': path.resolve(__dirname, 'app/assets/javascripts/services'),
         '@node_modules': path.resolve(__dirname, 'node_modules'),
@@ -72,11 +69,7 @@ module.exports = (env) => {
             'sass-loader',
           ],
         },
-        {
-          test: /\.svg$/i,
-          use: ['@svgr/webpack'],
-        },
       ],
     },
-  };
-};
+  }
+}

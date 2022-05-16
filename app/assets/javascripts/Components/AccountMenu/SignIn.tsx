@@ -44,36 +44,39 @@ export const SignInPane: FunctionComponent<Props> = observer(({ application, app
     }
   }, [])
 
-  const resetInvalid = () => {
+  const resetInvalid = useCallback(() => {
     if (error.length) {
       setError('')
     }
-  }
+  }, [setError, error])
 
-  const handleEmailChange = (text: string) => {
+  const handleEmailChange = useCallback((text: string) => {
     setEmail(text)
-  }
+  }, [])
 
-  const handlePasswordChange = (text: string) => {
-    if (error.length) {
-      setError('')
-    }
-    setPassword(text)
-  }
+  const handlePasswordChange = useCallback(
+    (text: string) => {
+      if (error.length) {
+        setError('')
+      }
+      setPassword(text)
+    },
+    [setPassword, error],
+  )
 
-  const handleEphemeralChange = () => {
+  const handleEphemeralChange = useCallback(() => {
     setIsEphemeral(!isEphemeral)
-  }
+  }, [isEphemeral])
 
-  const handleStrictSigninChange = () => {
+  const handleStrictSigninChange = useCallback(() => {
     setIsStrictSignin(!isStrictSignin)
-  }
+  }, [isStrictSignin])
 
-  const handleShouldMergeChange = () => {
+  const handleShouldMergeChange = useCallback(() => {
     setShouldMergeLocal(!shouldMergeLocal)
-  }
+  }, [shouldMergeLocal])
 
-  const signIn = () => {
+  const signIn = useCallback(() => {
     setIsSigningIn(true)
     emailInputRef?.current?.blur()
     passwordInputRef?.current?.blur()
@@ -95,13 +98,7 @@ export const SignInPane: FunctionComponent<Props> = observer(({ application, app
       .finally(() => {
         setIsSigningIn(false)
       })
-  }
-
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSignInFormSubmit(e)
-    }
-  }
+  }, [appState, application, email, isEphemeral, isStrictSignin, password, shouldMergeLocal])
 
   const onPrivateWorkspaceChange = useCallback(
     (newIsPrivateWorkspace: boolean, privateWorkspaceIdentifier?: string) => {
@@ -113,21 +110,33 @@ export const SignInPane: FunctionComponent<Props> = observer(({ application, app
     [setEmail],
   )
 
-  const handleSignInFormSubmit = (e: Event) => {
-    e.preventDefault()
+  const handleSignInFormSubmit = useCallback(
+    (e: Event) => {
+      e.preventDefault()
 
-    if (!email || email.length === 0) {
-      emailInputRef?.current?.focus()
-      return
-    }
+      if (!email || email.length === 0) {
+        emailInputRef?.current?.focus()
+        return
+      }
 
-    if (!password || password.length === 0) {
-      passwordInputRef?.current?.focus()
-      return
-    }
+      if (!password || password.length === 0) {
+        passwordInputRef?.current?.focus()
+        return
+      }
 
-    signIn()
-  }
+      signIn()
+    },
+    [email, password, signIn],
+  )
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        handleSignInFormSubmit(e)
+      }
+    },
+    [handleSignInFormSubmit],
+  )
 
   return (
     <>

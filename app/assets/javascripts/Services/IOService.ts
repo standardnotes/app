@@ -62,6 +62,7 @@ export class IOService {
     if (!modifier) {
       return
     }
+
     switch (modifier) {
       case KeyboardModifier.Meta: {
         if (this.isMac) {
@@ -197,8 +198,10 @@ export class IOService {
 
   addKeyObserver(observer: KeyboardObserver): () => void {
     this.observers.push(observer)
+
+    const thislessObservers = this.observers
     return () => {
-      removeFromArray(this.observers, observer)
+      removeFromArray(thislessObservers, observer)
     }
   }
 }

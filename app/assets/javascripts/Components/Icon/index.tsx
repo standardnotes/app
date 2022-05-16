@@ -89,7 +89,7 @@ import {
   WarningIcon,
   WindowIcon,
   SubtractIcon,
-} from '@standardnotes/stylekit'
+} from '@standardnotes/icons'
 
 export const ICONS = {
   'account-circle': AccountCircleIcon,

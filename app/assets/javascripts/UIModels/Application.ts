@@ -70,6 +70,7 @@ export class WebApplication extends SNApplication {
 
   override deinit(source: DeinitSource): void {
     super.deinit(source)
+
     try {
       if (source === DeinitSource.AppGroupUnload) {
         this.getThemeService().deactivateAllThemes()
@@ -88,7 +89,10 @@ export class WebApplication extends SNApplication {
       }
 
       this.webServices = {} as WebServices
+
       this.noteControllerGroup.deinit()
+      ;(this.noteControllerGroup as unknown) = undefined
+
       this.webEventObservers.length = 0
     } catch (error) {
       console.error('Error while deiniting application', error)

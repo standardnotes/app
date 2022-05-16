@@ -1,10 +1,15 @@
 import { storage, StorageKey } from '@/Services/LocalStorage'
-import { SNApplication, ApplicationEvent } from '@standardnotes/snjs'
+import { ApplicationEvent } from '@standardnotes/snjs'
 import { runInAction, makeObservable, observable, action } from 'mobx'
+import { WebApplication } from '../Application'
+import { AbstractState } from './AbstractState'
 
-export class NoAccountWarningState {
+export class NoAccountWarningState extends AbstractState {
   show: boolean
-  constructor(application: SNApplication, appObservers: (() => void)[]) {
+
+  constructor(application: WebApplication, appObservers: (() => void)[]) {
+    super(application)
+
     this.show = application.hasAccount() ? false : storage.get(StorageKey.ShowNoAccountWarning) ?? true
 
     appObservers.push(

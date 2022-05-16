@@ -21,6 +21,8 @@ export const WorkspaceSwitcherMenu: FunctionComponent<Props> = observer(
     const [applicationDescriptors, setApplicationDescriptors] = useState<ApplicationDescriptor[]>([])
 
     useEffect(() => {
+      const applicationDescriptors = mainApplicationGroup.getDescriptors()
+      setApplicationDescriptors(applicationDescriptors)
       const removeAppGroupObserver = mainApplicationGroup.addApplicationChangeObserver(() => {
         const applicationDescriptors = mainApplicationGroup.getDescriptors()
         setApplicationDescriptors(applicationDescriptors)
@@ -42,20 +44,28 @@ export const WorkspaceSwitcherMenu: FunctionComponent<Props> = observer(
         return
       }
       mainApplicationGroup.signOutAllWorkspaces().catch(console.error)
-    }, [mainApplicationGroup, appState.application.alertService])
+    }, [mainApplicationGroup, appState])
+
+    const loadApplication = useCallback(
+      async (descriptor: ApplicationDescriptor) => {
+        await mainApplicationGroup.loadApplicationForDescriptor(descriptor)
+      },
+      [mainApplicationGroup],
+    )
+
+    const destroyWorkspace = useCallback(() => {
+      appState.accountMenu.setSigningOut(true)
+    }, [appState])
 
     return (
       <Menu a11yLabel="Workspace switcher menu" className="px-0 focus:shadow-none" isOpen={isOpen}>
         {applicationDescriptors.map((descriptor) => (
           <WorkspaceMenuItem
+            key={descriptor.identifier}
             descriptor={descriptor}
             hideOptions={hideWorkspaceOptions}
-            onDelete={() => {
-              appState.accountMenu.setSigningOut(true)
-            }}
-            onClick={() => {
-              mainApplicationGroup.loadApplicationForDescriptor(descriptor)
-            }}
+            onDelete={destroyWorkspace}
+            onClick={() => loadApplication(descriptor)}
             renameDescriptor={(label: string) => mainApplicationGroup.renameDescriptor(descriptor, label)}
           />
         ))}
@@ -64,7 +74,7 @@ export const WorkspaceSwitcherMenu: FunctionComponent<Props> = observer(
         <MenuItem
           type={MenuItemType.IconButton}
           onClick={() => {
-            mainApplicationGroup.addNewApplication()
+            mainApplicationGroup.addNewDescriptor()
           }}
         >
           <Icon type="user-add" className="color-neutral mr-2" />

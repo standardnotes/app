@@ -1,7 +1,7 @@
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
 import { KeyboardKey } from '@/Services/IOService'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
-import { IconType, SNFile } from '@standardnotes/snjs'
+import { IconType, FileItem } from '@standardnotes/snjs'
 import { FunctionComponent } from 'preact'
 import { useEffect, useRef, useState } from 'preact/hooks'
 import { Icon, ICONS } from '@/Components/Icon'
@@ -15,7 +15,7 @@ export const getFileIconComponent = (iconType: string, className: string) => {
 }
 
 export type PopoverFileItemProps = {
-  file: SNFile
+  file: FileItem
   isAttachedToNote: boolean
   handleFileAction: (action: PopoverFileItemAction) => Promise<boolean>
   getIconType(type: string): IconType
@@ -40,7 +40,7 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
     }
   }, [isRenamingFile])
 
-  const renameFile = async (file: SNFile, name: string) => {
+  const renameFile = async (file: FileItem, name: string) => {
     await handleFileAction({
       type: PopoverFileItemActionType.RenameFile,
       payload: {

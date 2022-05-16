@@ -40,7 +40,7 @@ export const LabsPane: FunctionComponent<Props> = ({ application }) => {
       }
     })
     setExperimentalFeatures(experimentalFeatures)
-  }, [application.features])
+  }, [application])
 
   useEffect(() => {
     reloadExperimentalFeatures()

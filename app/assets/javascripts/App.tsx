@@ -13,18 +13,31 @@ declare global {
     startApplication?: StartApplication
     websocketUrl: string
     electronAppVersion?: string
+    webClient?: DesktopManagerInterface
+
+    application?: WebApplication
+    mainApplicationGroup?: ApplicationGroup
   }
 }
 
 import { IsWebPlatform, WebAppVersion } from '@/Version'
-import { Runtime, SNLog } from '@standardnotes/snjs'
+import { DesktopManagerInterface, SNLog } from '@standardnotes/snjs'
 import { render } from 'preact'
+import { unmountComponentAtNode } from 'preact/compat'
 import { ApplicationGroupView } from './Components/ApplicationGroupView'
 import { WebDevice } from './Device/WebDevice'
 import { StartApplication } from './Device/StartApplication'
 import { ApplicationGroup } from './UIModels/ApplicationGroup'
-import { isDev } from './Utils'
 import { WebOrDesktopDevice } from './Device/WebOrDesktopDevice'
+import { WebApplication } from './UIModels/Application'
+
+let keyCount = 0
+
+const getKey = () => {
+  return keyCount++
+}
+
+const RootId = 'app-group-root'
 
 const startApplication: StartApplication = async function startApplication(
   defaultSyncServerHost: string,
@@ -35,34 +48,41 @@ const startApplication: StartApplication = async function startApplication(
   SNLog.onLog = console.log
   SNLog.onError = console.error
 
-  const mainApplicationGroup = new ApplicationGroup(
-    defaultSyncServerHost,
-    device,
-    enableUnfinishedFeatures ? Runtime.Dev : Runtime.Prod,
-    webSocketUrl,
-  )
-
-  if (isDev) {
-    Object.defineProperties(window, {
-      application: {
-        get: () => mainApplicationGroup.primaryApplication,
-      },
-    })
+  const onDestroy = () => {
+    const root = document.getElementById(RootId) as HTMLElement
+    unmountComponentAtNode(root)
+    root.remove()
+    renderApp()
   }
 
   const renderApp = () => {
+    const root = document.createElement('div')
+    root.id = RootId
+
+    const parentNode = document.body.appendChild(root)
+
     render(
-      <ApplicationGroupView mainApplicationGroup={mainApplicationGroup} />,
-      document.body.appendChild(document.createElement('div')),
+      <ApplicationGroupView
+        key={getKey()}
+        server={defaultSyncServerHost}
+        device={device}
+        enableUnfinished={enableUnfinishedFeatures}
+        websocketUrl={webSocketUrl}
+        onDestroy={onDestroy}
+      />,
+      parentNode,
     )
   }
 
   const domReady = document.readyState === 'complete' || document.readyState === 'interactive'
+
   if (domReady) {
     renderApp()
   } else {
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded', function callback() {
       renderApp()
+
+      window.removeEventListener('DOMContentLoaded', callback)
     })
   }
 }

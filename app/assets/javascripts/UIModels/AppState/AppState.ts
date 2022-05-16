@@ -1,7 +1,7 @@
 import { storage, StorageKey } from '@/Services/LocalStorage'
 import { WebApplication, WebAppEvent } from '@/UIModels/Application'
 import { AccountMenuState } from '@/UIModels/AppState/AccountMenuState'
-import { isDesktopApplication } from '@/Utils'
+import { destroyAllObjectProperties, isDesktopApplication } from '@/Utils'
 import {
   ApplicationEvent,
   ContentType,
@@ -33,6 +33,7 @@ import { SubscriptionState } from './SubscriptionState'
 import { SyncState } from './SyncState'
 import { TagsState } from './TagsState'
 import { FilePreviewModalState } from './FilePreviewModalState'
+import { AbstractState } from './AbstractState'
 
 export enum AppStateEvent {
   TagChanged,
@@ -57,35 +58,34 @@ export enum EventSource {
 
 type ObserverCallback = (event: AppStateEvent, data?: any) => Promise<void>
 
-export class AppState {
+export class AppState extends AbstractState {
   readonly enableUnfinishedFeatures: boolean = window?.enabledUnfinishedFeatures
 
-  application: WebApplication
   observers: ObserverCallback[] = []
   locked = true
-  unsubApp: any
+  unsubAppEventObserver!: () => void
   webAppEventDisposer?: () => void
-  onVisibilityChange: any
+  onVisibilityChange: () => void
   showBetaWarning: boolean
 
   private multiEditorSupport = false
 
-  readonly quickSettingsMenu = new QuickSettingsState()
   readonly accountMenu: AccountMenuState
   readonly actionsMenu = new ActionsMenuState()
+  readonly features: FeaturesState
+  readonly filePreviewModal = new FilePreviewModalState()
+  readonly files: FilesState
+  readonly noAccountWarning: NoAccountWarningState
+  readonly notes: NotesState
+  readonly notesView: NotesViewState
+  readonly noteTags: NoteTagsState
   readonly preferences = new PreferencesState()
   readonly purchaseFlow: PurchaseFlowState
-  readonly noAccountWarning: NoAccountWarningState
-  readonly noteTags: NoteTagsState
-  readonly sync = new SyncState()
+  readonly quickSettingsMenu = new QuickSettingsState()
   readonly searchOptions: SearchOptionsState
-  readonly notes: NotesState
-  readonly features: FeaturesState
-  readonly tags: TagsState
-  readonly notesView: NotesViewState
   readonly subscription: SubscriptionState
-  readonly files: FilesState
-  readonly filePreviewModal = new FilePreviewModalState()
+  readonly sync = new SyncState()
+  readonly tags: TagsState
 
   isSessionsModalVisible = false
 
@@ -94,7 +94,8 @@ export class AppState {
   private readonly tagChangedDisposer: IReactionDisposer
 
   constructor(application: WebApplication, private device: WebOrDesktopDeviceInterface) {
-    this.application = application
+    super(application)
+
     this.notes = new NotesState(
       application,
       this,
@@ -103,6 +104,7 @@ export class AppState {
       },
       this.appEventObserverRemovers,
     )
+
     this.noteTags = new NoteTagsState(application, this, this.appEventObserverRemovers)
     this.features = new FeaturesState(application, this.appEventObserverRemovers)
     this.tags = new TagsState(application, this.appEventObserverRemovers, this.features)
@@ -144,41 +146,72 @@ export class AppState {
     this.tagChangedDisposer = this.tagChangedNotifier()
   }
 
-  deinit(source: DeinitSource): void {
+  override deinit(source: DeinitSource): void {
+    super.deinit(source)
+
     if (source === DeinitSource.SignOut) {
       storage.remove(StorageKey.ShowBetaWarning)
       this.noAccountWarning.reset()
     }
-    ;(this.application as unknown) = undefined
-    this.actionsMenu.reset()
-    this.unsubApp?.()
-    this.unsubApp = undefined
+
+    this.unsubAppEventObserver?.()
+    ;(this.unsubAppEventObserver as unknown) = undefined
     this.observers.length = 0
 
     this.appEventObserverRemovers.forEach((remover) => remover())
     this.appEventObserverRemovers.length = 0
-    ;(this.features as unknown) = undefined
+    ;(this.device as unknown) = undefined
 
     this.webAppEventDisposer?.()
     this.webAppEventDisposer = undefined
-    ;(this.quickSettingsMenu as unknown) = undefined
-    ;(this.accountMenu as unknown) = undefined
-    ;(this.actionsMenu as unknown) = undefined
+    ;(this.filePreviewModal as unknown) = undefined
     ;(this.preferences as unknown) = undefined
-    ;(this.purchaseFlow as unknown) = undefined
-    ;(this.noteTags as unknown) = undefined
+    ;(this.quickSettingsMenu as unknown) = undefined
     ;(this.sync as unknown) = undefined
-    ;(this.searchOptions as unknown) = undefined
-    ;(this.notes as unknown) = undefined
+
+    this.actionsMenu.reset()
+    ;(this.actionsMenu as unknown) = undefined
+
+    this.features.deinit(source)
     ;(this.features as unknown) = undefined
-    ;(this.tags as unknown) = undefined
+
+    this.accountMenu.deinit(source)
+    ;(this.accountMenu as unknown) = undefined
+
+    this.files.deinit(source)
+    ;(this.files as unknown) = undefined
+
+    this.noAccountWarning.deinit(source)
+    ;(this.noAccountWarning as unknown) = undefined
+
+    this.notes.deinit(source)
+    ;(this.notes as unknown) = undefined
+
+    this.notesView.deinit(source)
     ;(this.notesView as unknown) = undefined
 
+    this.noteTags.deinit(source)
+    ;(this.noteTags as unknown) = undefined
+
+    this.purchaseFlow.deinit(source)
+    ;(this.purchaseFlow as unknown) = undefined
+
+    this.searchOptions.deinit(source)
+    ;(this.searchOptions as unknown) = undefined
+
+    this.subscription.deinit(source)
+    ;(this.subscription as unknown) = undefined
+
+    this.tags.deinit(source)
+    ;(this.tags as unknown) = undefined
+
     document.removeEventListener('visibilitychange', this.onVisibilityChange)
-    this.onVisibilityChange = undefined
+    ;(this.onVisibilityChange as unknown) = undefined
 
     this.tagChangedDisposer()
     ;(this.tagChangedDisposer as unknown) = undefined
+
+    destroyAllObjectProperties(this)
   }
 
   openSessionsModal(): void {
@@ -333,7 +366,7 @@ export class AppState {
   }
 
   addAppEventObserver() {
-    this.unsubApp = this.application.addEventObserver(async (eventName) => {
+    this.unsubAppEventObserver = this.application.addEventObserver(async (eventName) => {
       switch (eventName) {
         case ApplicationEvent.Started:
           this.locked = true
@@ -370,11 +403,12 @@ export class AppState {
     }
   }
 
-  /** @returns  A function that unregisters this observer */
-  addObserver(callback: ObserverCallback) {
+  addObserver(callback: ObserverCallback): () => void {
     this.observers.push(callback)
+
+    const thislessObservers = this.observers
     return () => {
-      removeFromArray(this.observers, callback)
+      removeFromArray(thislessObservers, callback)
     }
   }
 

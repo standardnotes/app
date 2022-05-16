@@ -16,16 +16,20 @@ export const TagsSection: FunctionComponent<Props> = observer(({ appState }) => 
 
   const checkIfMigrationNeeded = useCallback(() => {
     setHasMigration(appState.application.items.hasTagsNeedingFoldersMigration())
-  }, [appState.application])
+  }, [appState])
 
   useEffect(() => {
-    appState.application.addEventObserver(async (event) => {
+    const removeObserver = appState.application.addEventObserver(async (event) => {
       const events = [ApplicationEvent.CompletedInitialSync, ApplicationEvent.SignedIn]
       if (events.includes(event)) {
         checkIfMigrationNeeded()
       }
     })
-  }, [appState.application, checkIfMigrationNeeded])
+
+    return () => {
+      removeObserver()
+    }
+  }, [appState, checkIfMigrationNeeded])
 
   const runMigration = useCallback(async () => {
     if (
@@ -46,7 +50,7 @@ export const TagsSection: FunctionComponent<Props> = observer(({ appState }) => 
         })
         .catch(console.error)
     }
-  }, [appState.application, checkIfMigrationNeeded])
+  }, [appState, checkIfMigrationNeeded])
 
   return (
     <section>

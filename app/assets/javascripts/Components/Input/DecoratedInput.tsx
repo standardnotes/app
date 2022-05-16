@@ -47,6 +47,7 @@ export const DecoratedInput: FunctionalComponent<DecoratedInputProps> = forwardR
             ))}
           </div>
         )}
+
         <input
           type={type}
           className={`${classNames.input} ${disabled ? classNames.disabled : ''}`}
@@ -60,6 +61,7 @@ export const DecoratedInput: FunctionalComponent<DecoratedInputProps> = forwardR
           autocomplete={autocomplete ? 'on' : 'off'}
           ref={ref}
         />
+
         {right && (
           <div className="flex items-center px-2 py-1.5">
             {right.map((rightChild, index) => (

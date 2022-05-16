@@ -1,7 +1,7 @@
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
-import HistoryLockedIllustration from '../../../svg/il-history-locked.svg'
+import { HistoryLockedIllustration } from '@standardnotes/icons'
 import { Button } from '@/Components/Button/Button'
 
 const getPlanHistoryDuration = (planName: string | undefined) => {

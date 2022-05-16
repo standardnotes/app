@@ -1,3 +1,4 @@
+import { destroyAllObjectProperties } from '@/Utils'
 import { confirmDialog } from '@/Services/AlertService'
 import { KeyboardModifier } from '@/Services/IOService'
 import { StringEmptyTrash, Strings, StringUtils } from '@/Strings'
@@ -10,12 +11,14 @@ import {
   SNTag,
   ChallengeReason,
   NoteViewController,
+  DeinitSource,
 } from '@standardnotes/snjs'
 import { makeObservable, observable, action, computed, runInAction } from 'mobx'
 import { WebApplication } from '../Application'
 import { AppState } from './AppState'
+import { AbstractState } from './AbstractState'
 
-export class NotesState {
+export class NotesState extends AbstractState {
   lastSelectedNote: SNNote | undefined
   selectedNotes: Record<UuidString, SNNote> = {}
   contextMenuOpen = false
@@ -28,12 +31,23 @@ export class NotesState {
   showProtectedWarning = false
   showRevisionHistoryModal = false
 
+  override deinit(source: DeinitSource) {
+    super.deinit(source)
+    ;(this.lastSelectedNote as unknown) = undefined
+    ;(this.selectedNotes as unknown) = undefined
+    ;(this.onActiveEditorChanged as unknown) = undefined
+
+    destroyAllObjectProperties(this)
+  }
+
   constructor(
-    private application: WebApplication,
-    private appState: AppState,
+    application: WebApplication,
+    public override appState: AppState,
     private onActiveEditorChanged: () => Promise<void>,
     appEventListeners: (() => void)[],
   ) {
+    super(application, appState)
+
     makeObservable(this, {
       selectedNotes: observable,
       contextMenuOpen: observable,

@@ -2,7 +2,7 @@ import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
 import { FunctionalComponent } from 'preact'
-import { useContext } from 'preact/hooks'
+import { useCallback, useContext, useMemo } from 'preact/hooks'
 import { createContext } from 'react'
 import { PremiumFeaturesModal } from '@/Components/PremiumFeaturesModal'
 
@@ -30,17 +30,37 @@ interface Props {
 }
 
 export const PremiumModalProvider: FunctionalComponent<Props> = observer(({ application, appState, children }) => {
-  const featureName = appState.features.premiumAlertFeatureName
-  const activate = appState.features.showPremiumAlert
-  const close = appState.features.closePremiumAlert
-
-  const showModal = !!featureName
-
-  const hasSubscription = Boolean(
-    appState.subscription.userSubscription &&
-      !appState.subscription.isUserSubscriptionExpired &&
-      !appState.subscription.isUserSubscriptionCanceled,
+  const featureName = useMemo(
+    () => appState.features.premiumAlertFeatureName || '',
+    [appState.features.premiumAlertFeatureName],
   )
+
+  const showModal = useMemo(() => !!featureName, [featureName])
+
+  const hasSubscription = useMemo(
+    () =>
+      Boolean(
+        appState.subscription.userSubscription &&
+          !appState.subscription.isUserSubscriptionExpired &&
+          !appState.subscription.isUserSubscriptionCanceled,
+      ),
+    [
+      appState.subscription.userSubscription,
+      appState.subscription.isUserSubscriptionExpired,
+      appState.subscription.isUserSubscriptionCanceled,
+    ],
+  )
+
+  const activate = useCallback(
+    (feature: string) => {
+      appState.features.showPremiumAlert(feature).catch(console.error)
+    },
+    [appState],
+  )
+
+  const close = useCallback(() => {
+    appState.features.closePremiumAlert()
+  }, [appState])
 
   return (
     <>

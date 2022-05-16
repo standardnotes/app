@@ -1,5 +1,5 @@
 import { JSX, FunctionComponent, ComponentChildren, VNode, RefCallback, ComponentChild, toChildArray } from 'preact'
-import { useEffect, useRef } from 'preact/hooks'
+import { useCallback, useEffect, useRef } from 'preact/hooks'
 import { JSXInternal } from 'preact/src/jsx'
 import { MenuItem, MenuItemListElement } from './MenuItem'
 import { KeyboardKey } from '@/Services/IOService'
@@ -28,16 +28,19 @@ export const Menu: FunctionComponent<MenuProps> = ({
 
   const menuElementRef = useRef<HTMLMenuElement>(null)
 
-  const handleKeyDown: JSXInternal.KeyboardEventHandler<HTMLMenuElement> = (event) => {
-    if (!menuItemRefs.current) {
-      return
-    }
+  const handleKeyDown: JSXInternal.KeyboardEventHandler<HTMLMenuElement> = useCallback(
+    (event) => {
+      if (!menuItemRefs.current) {
+        return
+      }
 
-    if (event.key === KeyboardKey.Escape) {
-      closeMenu?.()
-      return
-    }
-  }
+      if (event.key === KeyboardKey.Escape) {
+        closeMenu?.()
+        return
+      }
+    },
+    [closeMenu],
+  )
 
   useListKeyboardNavigation(menuElementRef, initialFocus)
 
@@ -49,7 +52,7 @@ export const Menu: FunctionComponent<MenuProps> = ({
     }
   }, [isOpen])
 
-  const pushRefToArray: RefCallback<HTMLLIElement> = (instance) => {
+  const pushRefToArray: RefCallback<HTMLLIElement> = useCallback((instance) => {
     if (instance && instance.children) {
       Array.from(instance.children).forEach((child) => {
         if (
@@ -60,36 +63,39 @@ export const Menu: FunctionComponent<MenuProps> = ({
         }
       })
     }
-  }
+  }, [])
 
-  const mapMenuItems = (child: ComponentChild, index: number, array: ComponentChild[]): ComponentChild => {
-    if (!child || (Array.isArray(child) && child.length < 1)) {
-      return
-    }
+  const mapMenuItems = useCallback(
+    (child: ComponentChild, index: number, array: ComponentChild[]): ComponentChild => {
+      if (!child || (Array.isArray(child) && child.length < 1)) {
+        return
+      }
 
-    if (Array.isArray(child)) {
-      return child.map(mapMenuItems)
-    }
+      if (Array.isArray(child)) {
+        return child.map(mapMenuItems)
+      }
 
-    const _child = child as VNode<unknown>
-    const isFirstMenuItem = index === array.findIndex((child) => (child as VNode<unknown>).type === MenuItem)
+      const _child = child as VNode<unknown>
+      const isFirstMenuItem = index === array.findIndex((child) => (child as VNode<unknown>).type === MenuItem)
 
-    const hasMultipleItems = Array.isArray(_child.props.children)
-      ? Array.from(_child.props.children as ComponentChild[]).some(
-          (child) => (child as VNode<unknown>).type === MenuItem,
+      const hasMultipleItems = Array.isArray(_child.props.children)
+        ? Array.from(_child.props.children as ComponentChild[]).some(
+            (child) => (child as VNode<unknown>).type === MenuItem,
+          )
+        : false
+
+      const items = hasMultipleItems ? [...(_child.props.children as ComponentChild[])] : [_child]
+
+      return items.map((child) => {
+        return (
+          <MenuItemListElement isFirstMenuItem={isFirstMenuItem} ref={pushRefToArray}>
+            {child}
+          </MenuItemListElement>
         )
-      : false
-
-    const items = hasMultipleItems ? [...(_child.props.children as ComponentChild[])] : [_child]
-
-    return items.map((child) => {
-      return (
-        <MenuItemListElement isFirstMenuItem={isFirstMenuItem} ref={pushRefToArray}>
-          {child}
-        </MenuItemListElement>
-      )
-    })
-  }
+      })
+    },
+    [pushRefToArray],
+  )
 
   return (
     <menu

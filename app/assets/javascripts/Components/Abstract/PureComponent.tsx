@@ -31,6 +31,9 @@ export abstract class PureComponent<P = PureComponentProps, S = PureComponentSta
     this.reactionDisposers.length = 0
     ;(this.unsubApp as unknown) = undefined
     ;(this.unsubState as unknown) = undefined
+    ;(this.application as unknown) = undefined
+    ;(this.props as unknown) = undefined
+    ;(this.state as unknown) = undefined
   }
 
   protected dismissModal(): void {

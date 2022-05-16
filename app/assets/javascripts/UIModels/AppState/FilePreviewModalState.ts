@@ -1,10 +1,10 @@
-import { SNFile } from '@standardnotes/snjs/dist/@types'
+import { FileItem } from '@standardnotes/snjs/dist/@types'
 import { action, makeObservable, observable } from 'mobx'
 
 export class FilePreviewModalState {
   isOpen = false
-  currentFile: SNFile | undefined = undefined
-  otherFiles: SNFile[] = []
+  currentFile: FileItem | undefined = undefined
+  otherFiles: FileItem[] = []
 
   constructor() {
     makeObservable(this, {
@@ -18,11 +18,11 @@ export class FilePreviewModalState {
     })
   }
 
-  setCurrentFile = (currentFile: SNFile) => {
+  setCurrentFile = (currentFile: FileItem) => {
     this.currentFile = currentFile
   }
 
-  activate = (currentFile: SNFile, otherFiles: SNFile[]) => {
+  activate = (currentFile: FileItem, otherFiles: FileItem[]) => {
     this.currentFile = currentFile
     this.otherFiles = otherFiles
     this.isOpen = true

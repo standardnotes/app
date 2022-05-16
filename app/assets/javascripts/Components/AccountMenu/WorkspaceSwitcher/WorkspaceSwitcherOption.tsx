@@ -4,7 +4,7 @@ import { AppState } from '@/UIModels/AppState'
 import { calculateSubmenuStyle, SubmenuStyle } from '@/Utils/CalculateSubmenuStyle'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
-import { useEffect, useRef, useState } from 'preact/hooks'
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import { Icon } from '@/Components/Icon'
 import { WorkspaceSwitcherMenu } from './WorkspaceSwitcherMenu'
 
@@ -19,7 +19,7 @@ export const WorkspaceSwitcherOption: FunctionComponent<Props> = observer(({ mai
   const [isOpen, setIsOpen] = useState(false)
   const [menuStyle, setMenuStyle] = useState<SubmenuStyle>()
 
-  const toggleMenu = () => {
+  const toggleMenu = useCallback(() => {
     if (!isOpen) {
       const menuPosition = calculateSubmenuStyle(buttonRef.current)
       if (menuPosition) {
@@ -28,7 +28,7 @@ export const WorkspaceSwitcherOption: FunctionComponent<Props> = observer(({ mai
     }
 
     setIsOpen(!isOpen)
-  }
+  }, [isOpen, setIsOpen])
 
   useEffect(() => {
     if (isOpen) {

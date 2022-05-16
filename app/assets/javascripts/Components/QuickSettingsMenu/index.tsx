@@ -139,7 +139,7 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(({ appli
 
   const [closeOnBlur] = useCloseOnBlur(themesMenuRef, setThemesMenuOpen)
 
-  const toggleThemesMenu = () => {
+  const toggleThemesMenu = useCallback(() => {
     if (!themesMenuOpen && themesButtonRef.current) {
       const themesButtonRect = themesButtonRef.current.getBoundingClientRect()
       setThemesMenuPosition({
@@ -150,48 +150,57 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(({ appli
     } else {
       setThemesMenuOpen(false)
     }
-  }
+  }, [themesMenuOpen])
 
-  const openPreferences = () => {
+  const openPreferences = useCallback(() => {
     closeQuickSettingsMenu()
     appState.preferences.openPreferences()
-  }
+  }, [appState, closeQuickSettingsMenu])
 
-  const toggleComponent = (component: SNComponent) => {
-    if (component.isTheme()) {
-      application.mutator.toggleTheme(component).catch(console.error)
-    } else {
-      application.mutator.toggleComponent(component).catch(console.error)
-    }
-  }
+  const toggleComponent = useCallback(
+    (component: SNComponent) => {
+      if (component.isTheme()) {
+        application.mutator.toggleTheme(component).catch(console.error)
+      } else {
+        application.mutator.toggleComponent(component).catch(console.error)
+      }
+    },
+    [application],
+  )
 
-  const handleBtnKeyDown: React.KeyboardEventHandler<HTMLButtonElement> = (event) => {
-    switch (event.key) {
-      case 'Escape':
-        setThemesMenuOpen(false)
-        themesButtonRef.current?.focus()
-        break
-      case 'ArrowRight':
-        if (!themesMenuOpen) {
-          toggleThemesMenu()
-        }
-    }
-  }
+  const handleBtnKeyDown: React.KeyboardEventHandler<HTMLButtonElement> = useCallback(
+    (event) => {
+      switch (event.key) {
+        case 'Escape':
+          setThemesMenuOpen(false)
+          themesButtonRef.current?.focus()
+          break
+        case 'ArrowRight':
+          if (!themesMenuOpen) {
+            toggleThemesMenu()
+          }
+      }
+    },
+    [themesMenuOpen, toggleThemesMenu],
+  )
 
-  const handleQuickSettingsKeyDown: JSXInternal.KeyboardEventHandler<HTMLDivElement> = (event) => {
-    quickSettingsKeyDownHandler(closeQuickSettingsMenu, event, quickSettingsMenuRef, themesMenuOpen)
-  }
+  const handleQuickSettingsKeyDown: JSXInternal.KeyboardEventHandler<HTMLDivElement> = useCallback(
+    (event) => {
+      quickSettingsKeyDownHandler(closeQuickSettingsMenu, event, quickSettingsMenuRef, themesMenuOpen)
+    },
+    [closeQuickSettingsMenu, themesMenuOpen],
+  )
 
-  const handlePanelKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (event) => {
+  const handlePanelKeyDown: React.KeyboardEventHandler<HTMLDivElement> = useCallback((event) => {
     themesMenuKeyDownHandler(event, themesMenuRef, setThemesMenuOpen, themesButtonRef)
-  }
+  }, [])
 
-  const toggleDefaultTheme = () => {
+  const toggleDefaultTheme = useCallback(() => {
     const activeTheme = themes.map((item) => item.component).find((theme) => theme?.active && !theme.isLayerable())
     if (activeTheme) {
       application.mutator.toggleTheme(activeTheme).catch(console.error)
     }
-  }
+  }, [application, themes])
 
   return (
     <div ref={mainRef} className="sn-component">

@@ -1,5 +1,5 @@
 import { Icon } from '@/Components/Icon'
-import { useEffect, useRef, useState } from 'preact/hooks'
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import { AppState } from '@/UIModels/AppState'
 import { SNTag } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
@@ -24,40 +24,49 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
   const prefixTitle = noteTags.getPrefixTitle(tag)
   const longTitle = noteTags.getLongTitle(tag)
 
-  const deleteTag = () => {
+  const deleteTag = useCallback(() => {
     appState.noteTags.focusPreviousTag(tag)
     appState.noteTags.removeTagFromActiveNote(tag).catch(console.error)
-  }
+  }, [appState, tag])
 
-  const onDeleteTagClick = (event: MouseEvent) => {
-    event.stopImmediatePropagation()
-    event.stopPropagation()
-    deleteTag()
-  }
+  const onDeleteTagClick = useCallback(
+    (event: MouseEvent) => {
+      event.stopImmediatePropagation()
+      event.stopPropagation()
+      deleteTag()
+    },
+    [deleteTag],
+  )
 
-  const onTagClick = (event: MouseEvent) => {
-    if (tagClicked && event.target !== deleteTagRef.current) {
-      setTagClicked(false)
-      appState.selectedTag = tag
-    } else {
-      setTagClicked(true)
-    }
-  }
+  const onTagClick = useCallback(
+    (event: MouseEvent) => {
+      if (tagClicked && event.target !== deleteTagRef.current) {
+        setTagClicked(false)
+        appState.selectedTag = tag
+      } else {
+        setTagClicked(true)
+      }
+    },
+    [appState, tagClicked, tag],
+  )
 
-  const onFocus = () => {
+  const onFocus = useCallback(() => {
     appState.noteTags.setFocusedTagUuid(tag.uuid)
     setShowDeleteButton(true)
-  }
+  }, [appState, tag])
 
-  const onBlur = (event: FocusEvent) => {
-    const relatedTarget = event.relatedTarget as Node
-    if (relatedTarget !== deleteTagRef.current) {
-      appState.noteTags.setFocusedTagUuid(undefined)
-      setShowDeleteButton(false)
-    }
-  }
+  const onBlur = useCallback(
+    (event: FocusEvent) => {
+      const relatedTarget = event.relatedTarget as Node
+      if (relatedTarget !== deleteTagRef.current) {
+        appState.noteTags.setFocusedTagUuid(undefined)
+        setShowDeleteButton(false)
+      }
+    },
+    [appState],
+  )
 
-  const getTabIndex = () => {
+  const getTabIndex = useCallback(() => {
     if (focusedTagUuid) {
       return focusedTagUuid === tag.uuid ? 0 : -1
     }
@@ -65,34 +74,37 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
       return -1
     }
     return tags[0].uuid === tag.uuid ? 0 : -1
-  }
+  }, [autocompleteInputFocused, tags, tag, focusedTagUuid])
 
-  const onKeyDown = (event: KeyboardEvent) => {
-    const tagIndex = appState.noteTags.getTagIndex(tag, tags)
-    switch (event.key) {
-      case 'Backspace':
-        deleteTag()
-        break
-      case 'ArrowLeft':
-        appState.noteTags.focusPreviousTag(tag)
-        break
-      case 'ArrowRight':
-        if (tagIndex === tags.length - 1) {
-          appState.noteTags.setAutocompleteInputFocused(true)
-        } else {
-          appState.noteTags.focusNextTag(tag)
-        }
-        break
-      default:
-        return
-    }
-  }
+  const onKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      const tagIndex = appState.noteTags.getTagIndex(tag, tags)
+      switch (event.key) {
+        case 'Backspace':
+          deleteTag()
+          break
+        case 'ArrowLeft':
+          appState.noteTags.focusPreviousTag(tag)
+          break
+        case 'ArrowRight':
+          if (tagIndex === tags.length - 1) {
+            appState.noteTags.setAutocompleteInputFocused(true)
+          } else {
+            appState.noteTags.focusNextTag(tag)
+          }
+          break
+        default:
+          return
+      }
+    },
+    [appState, deleteTag, tag, tags],
+  )
 
   useEffect(() => {
     if (focusedTagUuid === tag.uuid) {
       tagRef.current?.focus()
     }
-  }, [appState.noteTags, focusedTagUuid, tag])
+  }, [appState, focusedTagUuid, tag])
 
   return (
     <button

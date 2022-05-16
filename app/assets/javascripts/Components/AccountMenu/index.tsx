@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
 import { AppState } from '@/UIModels/AppState'
 import { WebApplication } from '@/UIModels/Application'
-import { useRef, useState } from 'preact/hooks'
+import { useCallback, useRef, useState } from 'preact/hooks'
 import { GeneralAccountMenu } from './GeneralAccountMenu'
 import { FunctionComponent } from 'preact'
 import { SignInPane } from './SignIn'
@@ -80,26 +80,40 @@ const MenuPaneSelector: FunctionComponent<PaneSelectorProps> = observer(
 
 export const AccountMenu: FunctionComponent<Props> = observer(
   ({ application, appState, onClickOutside, mainApplicationGroup }) => {
-    const { currentPane, setCurrentPane, shouldAnimateCloseMenu, closeAccountMenu } = appState.accountMenu
+    const { currentPane, shouldAnimateCloseMenu } = appState.accountMenu
+
+    const closeAccountMenu = useCallback(() => {
+      appState.accountMenu.closeAccountMenu()
+    }, [appState])
+
+    const setCurrentPane = useCallback(
+      (pane: AccountMenuPane) => {
+        appState.accountMenu.setCurrentPane(pane)
+      },
+      [appState],
+    )
 
     const ref = useRef<HTMLDivElement>(null)
     useCloseOnClickOutside(ref, () => {
       onClickOutside()
     })
 
-    const handleKeyDown: JSXInternal.KeyboardEventHandler<HTMLDivElement> = (event) => {
-      switch (event.key) {
-        case 'Escape':
-          if (currentPane === AccountMenuPane.GeneralMenu) {
-            closeAccountMenu()
-          } else if (currentPane === AccountMenuPane.ConfirmPassword) {
-            setCurrentPane(AccountMenuPane.Register)
-          } else {
-            setCurrentPane(AccountMenuPane.GeneralMenu)
-          }
-          break
-      }
-    }
+    const handleKeyDown: JSXInternal.KeyboardEventHandler<HTMLDivElement> = useCallback(
+      (event) => {
+        switch (event.key) {
+          case 'Escape':
+            if (currentPane === AccountMenuPane.GeneralMenu) {
+              closeAccountMenu()
+            } else if (currentPane === AccountMenuPane.ConfirmPassword) {
+              setCurrentPane(AccountMenuPane.Register)
+            } else {
+              setCurrentPane(AccountMenuPane.GeneralMenu)
+            }
+            break
+        }
+      },
+      [closeAccountMenu, currentPane, setCurrentPane],
+    )
 
     return (
       <div ref={ref} id="account-menu" className="sn-component">

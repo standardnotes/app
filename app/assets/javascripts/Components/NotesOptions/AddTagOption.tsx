@@ -25,7 +25,7 @@ export const AddTagOption: FunctionComponent<Props> = observer(({ appState }) =>
 
   const [closeOnBlur] = useCloseOnBlur(menuContainerRef, setIsMenuOpen)
 
-  const toggleTagsMenu = () => {
+  const toggleTagsMenu = useCallback(() => {
     if (!isMenuOpen) {
       const menuPosition = calculateSubmenuStyle(menuButtonRef.current)
       if (menuPosition) {
@@ -34,7 +34,7 @@ export const AddTagOption: FunctionComponent<Props> = observer(({ appState }) =>
     }
 
     setIsMenuOpen(!isMenuOpen)
-  }
+  }, [isMenuOpen])
 
   const recalculateMenuStyle = useCallback(() => {
     const newMenuPosition = calculateSubmenuStyle(menuButtonRef.current, menuRef.current)

@@ -2,7 +2,7 @@ import { WebApplication } from '@/UIModels/Application'
 import { CollectionSort, CollectionSortProperty, PrefKey } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
-import { useState } from 'preact/hooks'
+import { useCallback, useState } from 'preact/hooks'
 import { Icon } from '@/Components/Icon'
 import { Menu } from '@/Components/Menu/Menu'
 import { MenuItem, MenuItemSeparator, MenuItemType } from '@/Components/Menu/MenuItem'
@@ -31,71 +31,74 @@ export const NotesListOptionsMenu: FunctionComponent<Props> = observer(
       application.getPreference(PrefKey.NotesHideEditorIcon, false),
     )
 
-    const toggleSortReverse = () => {
+    const toggleSortReverse = useCallback(() => {
       application.setPreference(PrefKey.SortNotesReverse, !sortReverse).catch(console.error)
       setSortReverse(!sortReverse)
-    }
+    }, [application, sortReverse])
 
-    const toggleSortBy = (sort: CollectionSortProperty) => {
-      if (sortBy === sort) {
-        toggleSortReverse()
-      } else {
-        setSortBy(sort)
-        application.setPreference(PrefKey.SortNotesBy, sort).catch(console.error)
-      }
-    }
+    const toggleSortBy = useCallback(
+      (sort: CollectionSortProperty) => {
+        if (sortBy === sort) {
+          toggleSortReverse()
+        } else {
+          setSortBy(sort)
+          application.setPreference(PrefKey.SortNotesBy, sort).catch(console.error)
+        }
+      },
+      [application, sortBy, toggleSortReverse],
+    )
 
-    const toggleSortByDateModified = () => {
+    const toggleSortByDateModified = useCallback(() => {
       toggleSortBy(CollectionSort.UpdatedAt)
-    }
+    }, [toggleSortBy])
 
-    const toggleSortByCreationDate = () => {
+    const toggleSortByCreationDate = useCallback(() => {
       toggleSortBy(CollectionSort.CreatedAt)
-    }
+    }, [toggleSortBy])
 
-    const toggleSortByTitle = () => {
+    const toggleSortByTitle = useCallback(() => {
       toggleSortBy(CollectionSort.Title)
-    }
+    }, [toggleSortBy])
 
-    const toggleHidePreview = () => {
+    const toggleHidePreview = useCallback(() => {
       setHidePreview(!hidePreview)
       application.setPreference(PrefKey.NotesHideNotePreview, !hidePreview).catch(console.error)
-    }
+    }, [application, hidePreview])
 
-    const toggleHideDate = () => {
+    const toggleHideDate = useCallback(() => {
       setHideDate(!hideDate)
       application.setPreference(PrefKey.NotesHideDate, !hideDate).catch(console.error)
-    }
+    }, [application, hideDate])
 
-    const toggleHideTags = () => {
+    const toggleHideTags = useCallback(() => {
       setHideTags(!hideTags)
       application.setPreference(PrefKey.NotesHideTags, !hideTags).catch(console.error)
-    }
+    }, [application, hideTags])
 
-    const toggleHidePinned = () => {
+    const toggleHidePinned = useCallback(() => {
       setHidePinned(!hidePinned)
       application.setPreference(PrefKey.NotesHidePinned, !hidePinned).catch(console.error)
-    }
+    }, [application, hidePinned])
 
-    const toggleShowArchived = () => {
+    const toggleShowArchived = useCallback(() => {
       setShowArchived(!showArchived)
       application.setPreference(PrefKey.NotesShowArchived, !showArchived).catch(console.error)
-    }
+    }, [application, showArchived])
 
-    const toggleShowTrashed = () => {
+    const toggleShowTrashed = useCallback(() => {
       setShowTrashed(!showTrashed)
       application.setPreference(PrefKey.NotesShowTrashed, !showTrashed).catch(console.error)
-    }
+    }, [application, showTrashed])
 
-    const toggleHideProtected = () => {
+    const toggleHideProtected = useCallback(() => {
       setHideProtected(!hideProtected)
       application.setPreference(PrefKey.NotesHideProtected, !hideProtected).catch(console.error)
-    }
+    }, [application, hideProtected])
 
-    const toggleEditorIcon = () => {
+    const toggleEditorIcon = useCallback(() => {
       setHideEditorIcon(!hideEditorIcon)
       application.setPreference(PrefKey.NotesHideEditorIcon, !hideEditorIcon).catch(console.error)
-    }
+    }, [application, hideEditorIcon])
 
     return (
       <Menu

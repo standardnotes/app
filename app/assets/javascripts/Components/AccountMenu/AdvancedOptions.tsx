@@ -2,7 +2,7 @@ import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
-import { useEffect, useState } from 'preact/hooks'
+import { useCallback, useEffect, useState } from 'preact/hooks'
 import { Checkbox } from '@/Components/Checkbox'
 import { DecoratedInput } from '@/Components/Input/DecoratedInput'
 import { Icon } from '@/Components/Icon'
@@ -51,38 +51,44 @@ export const AdvancedOptions: FunctionComponent<Props> = observer(
       onPrivateWorkspaceChange?.(isPrivateWorkspace)
     }, [isPrivateWorkspace, onPrivateWorkspaceChange])
 
-    const handleIsPrivateWorkspaceChange = () => {
+    const handleIsPrivateWorkspaceChange = useCallback(() => {
       setIsPrivateWorkspace(!isPrivateWorkspace)
-    }
+    }, [isPrivateWorkspace])
 
-    const handlePrivateWorkspaceNameChange = (name: string) => {
+    const handlePrivateWorkspaceNameChange = useCallback((name: string) => {
       setPrivateWorkspaceName(name)
-    }
+    }, [])
 
-    const handlePrivateWorkspaceUserphraseChange = (userphrase: string) => {
+    const handlePrivateWorkspaceUserphraseChange = useCallback((userphrase: string) => {
       setPrivateWorkspaceUserphrase(userphrase)
-    }
+    }, [])
 
-    const handleServerOptionChange = (e: Event) => {
-      if (e.target instanceof HTMLInputElement) {
-        setEnableServerOption(e.target.checked)
-      }
-    }
+    const handleServerOptionChange = useCallback(
+      (e: Event) => {
+        if (e.target instanceof HTMLInputElement) {
+          setEnableServerOption(e.target.checked)
+        }
+      },
+      [setEnableServerOption],
+    )
 
-    const handleSyncServerChange = (server: string) => {
-      setServer(server)
-      application.setCustomHost(server).catch(console.error)
-    }
+    const handleSyncServerChange = useCallback(
+      (server: string) => {
+        setServer(server)
+        application.setCustomHost(server).catch(console.error)
+      },
+      [application, setServer],
+    )
 
-    const handleStrictSigninChange = () => {
+    const handleStrictSigninChange = useCallback(() => {
       const newValue = !isStrictSignin
       setIsStrictSignin(newValue)
       onStrictSignInChange?.(newValue)
-    }
+    }, [isStrictSignin, onStrictSignInChange])
 
-    const toggleShowAdvanced = () => {
+    const toggleShowAdvanced = useCallback(() => {
       setShowAdvanced(!showAdvanced)
-    }
+    }, [showAdvanced])
 
     return (
       <>

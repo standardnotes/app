@@ -13,7 +13,7 @@ export const NoteTagsContainer = observer(({ appState }: Props) => {
 
   useEffect(() => {
     appState.noteTags.reloadTagsContainerMaxWidth()
-  }, [appState.noteTags])
+  }, [appState])
 
   return (
     <div

@@ -1,8 +1,8 @@
 import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
 import { FunctionalComponent } from 'preact'
 import { Icon } from '@/Components/Icon'
-import { PremiumIllustration } from '@standardnotes/stylekit'
-import { useRef } from 'preact/hooks'
+import { PremiumIllustration } from '@standardnotes/icons'
+import { useCallback, useRef } from 'preact/hooks'
 import { WebApplication } from '@/UIModels/Application'
 import { openSubscriptionDashboard } from '@/Utils/ManageSubscription'
 
@@ -23,13 +23,13 @@ export const PremiumFeaturesModal: FunctionalComponent<Props> = ({
 }) => {
   const plansButtonRef = useRef<HTMLButtonElement>(null)
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     if (hasSubscription) {
       openSubscriptionDashboard(application)
     } else if (window.plansUrl) {
       window.location.assign(window.plansUrl)
     }
-  }
+  }, [application, hasSubscription])
 
   return showModal ? (
     <AlertDialog leastDestructiveRef={plansButtonRef}>

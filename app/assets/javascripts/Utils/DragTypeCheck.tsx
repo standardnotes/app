@@ -1,5 +1,11 @@
 import { WebApplication } from '@/UIModels/Application'
 
+const isBackupRelatedFile = (item: DataTransferItem, application: WebApplication): boolean => {
+  const fileName = item.getAsFile()?.name || ''
+  const isBackupMetadataFile = application.files.isFileNameFileBackupRelated(fileName) !== false
+  return isBackupMetadataFile
+}
+
 export const isHandlingFileDrag = (event: DragEvent, application: WebApplication) => {
   const items = event.dataTransfer?.items
 
@@ -8,10 +14,7 @@ export const isHandlingFileDrag = (event: DragEvent, application: WebApplication
   }
 
   return Array.from(items).some((item) => {
-    const isFile = item.kind === 'file'
-    const fileName = item.getAsFile()?.name || ''
-    const isBackupMetadataFile = application.files.isFileNameFileBackupMetadataFile(fileName)
-    return isFile && !isBackupMetadataFile
+    return item.kind === 'file' && !isBackupRelatedFile(item, application)
   })
 }
 
@@ -23,9 +26,6 @@ export const isHandlingBackupDrag = (event: DragEvent, application: WebApplicati
   }
 
   return Array.from(items).every((item) => {
-    const isFile = item.kind === 'file'
-    const fileName = item.getAsFile()?.name || ''
-    const isBackupMetadataFile = application.files.isFileNameFileBackupMetadataFile(fileName)
-    return isFile && isBackupMetadataFile
+    return item.kind === 'file' && isBackupRelatedFile(item, application)
   })
 }

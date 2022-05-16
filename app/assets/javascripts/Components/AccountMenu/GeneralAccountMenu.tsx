@@ -5,7 +5,7 @@ import { Icon } from '@/Components/Icon'
 import { formatLastSyncDate } from '@/Components/Preferences/Panes/Account/Sync'
 import { SyncQueueStrategy } from '@standardnotes/snjs'
 import { STRING_GENERIC_SYNC_ERROR } from '@/Strings'
-import { useState } from 'preact/hooks'
+import { useCallback, useMemo, useState } from 'preact/hooks'
 import { AccountMenuPane } from '.'
 import { FunctionComponent } from 'preact'
 import { Menu } from '@/Components/Menu/Menu'
@@ -28,7 +28,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
     const [isSyncingInProgress, setIsSyncingInProgress] = useState(false)
     const [lastSyncDate, setLastSyncDate] = useState(formatLastSyncDate(application.sync.getLastSyncDate() as Date))
 
-    const doSynchronization = async () => {
+    const doSynchronization = useCallback(async () => {
       setIsSyncingInProgress(true)
 
       application.sync
@@ -49,9 +49,33 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
         .finally(() => {
           setIsSyncingInProgress(false)
         })
-    }
+    }, [application])
 
-    const user = application.getUser()
+    const user = useMemo(() => application.getUser(), [application])
+
+    const openPreferences = useCallback(() => {
+      appState.accountMenu.closeAccountMenu()
+      appState.preferences.setCurrentPane('account')
+      appState.preferences.openPreferences()
+    }, [appState])
+
+    const openHelp = useCallback(() => {
+      appState.accountMenu.closeAccountMenu()
+      appState.preferences.setCurrentPane('help-feedback')
+      appState.preferences.openPreferences()
+    }, [appState])
+
+    const signOut = useCallback(() => {
+      appState.accountMenu.setSigningOut(true)
+    }, [appState])
+
+    const activateRegisterPane = useCallback(() => {
+      setMenuPane(AccountMenuPane.Register)
+    }, [setMenuPane])
+
+    const activateSignInPane = useCallback(() => {
+      setMenuPane(AccountMenuPane.SignIn)
+    }, [setMenuPane])
 
     const CREATE_ACCOUNT_INDEX = 1
     const SWITCHER_INDEX = 0
@@ -115,48 +139,23 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
           <WorkspaceSwitcherOption mainApplicationGroup={mainApplicationGroup} appState={appState} />
           <MenuItemSeparator />
           {user ? (
-            <MenuItem
-              type={MenuItemType.IconButton}
-              onClick={() => {
-                appState.accountMenu.closeAccountMenu()
-                appState.preferences.setCurrentPane('account')
-                appState.preferences.openPreferences()
-              }}
-            >
+            <MenuItem type={MenuItemType.IconButton} onClick={openPreferences}>
               <Icon type="user" className={iconClassName} />
               Account settings
             </MenuItem>
           ) : (
             <>
-              <MenuItem
-                type={MenuItemType.IconButton}
-                onClick={() => {
-                  setMenuPane(AccountMenuPane.Register)
-                }}
-              >
+              <MenuItem type={MenuItemType.IconButton} onClick={activateRegisterPane}>
                 <Icon type="user" className={iconClassName} />
                 Create free account
               </MenuItem>
-              <MenuItem
-                type={MenuItemType.IconButton}
-                onClick={() => {
-                  setMenuPane(AccountMenuPane.SignIn)
-                }}
-              >
+              <MenuItem type={MenuItemType.IconButton} onClick={activateSignInPane}>
                 <Icon type="signIn" className={iconClassName} />
                 Sign in
               </MenuItem>
             </>
           )}
-          <MenuItem
-            className="justify-between"
-            type={MenuItemType.IconButton}
-            onClick={() => {
-              appState.accountMenu.closeAccountMenu()
-              appState.preferences.setCurrentPane('help-feedback')
-              appState.preferences.openPreferences()
-            }}
-          >
+          <MenuItem className="justify-between" type={MenuItemType.IconButton} onClick={openHelp}>
             <div className="flex items-center">
               <Icon type="help" className={iconClassName} />
               Help &amp; feedback
@@ -166,12 +165,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
           {user ? (
             <>
               <MenuItemSeparator />
-              <MenuItem
-                type={MenuItemType.IconButton}
-                onClick={() => {
-                  appState.accountMenu.setSigningOut(true)
-                }}
-              >
+              <MenuItem type={MenuItemType.IconButton} onClick={signOut}>
                 <Icon type="signOut" className={iconClassName} />
                 Sign out workspace
               </MenuItem>

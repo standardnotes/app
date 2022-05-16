@@ -1,6 +1,13 @@
-import { ApplicationEvent, ClientDisplayableError, convertTimestampToMilliseconds } from '@standardnotes/snjs'
+import { destroyAllObjectProperties } from '@/Utils'
+import {
+  ApplicationEvent,
+  ClientDisplayableError,
+  convertTimestampToMilliseconds,
+  DeinitSource,
+} from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable } from 'mobx'
 import { WebApplication } from '../Application'
+import { AbstractState } from './AbstractState'
 
 type Subscription = {
   planName: string
@@ -14,11 +21,21 @@ type AvailableSubscriptions = {
   }
 }
 
-export class SubscriptionState {
+export class SubscriptionState extends AbstractState {
   userSubscription: Subscription | undefined = undefined
   availableSubscriptions: AvailableSubscriptions | undefined = undefined
 
-  constructor(private application: WebApplication, appObservers: (() => void)[]) {
+  override deinit(source: DeinitSource) {
+    super.deinit(source)
+    ;(this.userSubscription as unknown) = undefined
+    ;(this.availableSubscriptions as unknown) = undefined
+
+    destroyAllObjectProperties(this)
+  }
+
+  constructor(application: WebApplication, appObservers: (() => void)[]) {
+    super(application)
+
     makeObservable(this, {
       userSubscription: observable,
       availableSubscriptions: observable,

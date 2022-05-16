@@ -5,7 +5,7 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
 import { CreateAccount } from './Panes/CreateAccount'
 import { SignIn } from './Panes/SignIn'
-import { SNLogoFull } from '@standardnotes/stylekit'
+import { SNLogoFull } from '@standardnotes/icons'
 
 type PaneSelectorProps = {
   currentPane: PurchaseFlowPane

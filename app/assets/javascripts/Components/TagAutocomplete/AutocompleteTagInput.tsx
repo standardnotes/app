@@ -94,7 +94,7 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
     if (autocompleteInputFocused) {
       inputRef.current?.focus()
     }
-  }, [appState.noteTags, autocompleteInputFocused])
+  }, [appState, autocompleteInputFocused])
 
   return (
     <div ref={containerRef}>

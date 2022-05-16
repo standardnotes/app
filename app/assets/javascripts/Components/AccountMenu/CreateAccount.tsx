@@ -2,7 +2,7 @@ import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
-import { StateUpdater, useEffect, useRef, useState } from 'preact/hooks'
+import { StateUpdater, useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import { AccountMenuPane } from '.'
 import { Button } from '@/Components/Button/Button'
 import { DecoratedInput } from '@/Components/Input/DecoratedInput'
@@ -33,50 +33,65 @@ export const CreateAccount: FunctionComponent<Props> = observer(
       }
     }, [])
 
-    const handleEmailChange = (text: string) => {
-      setEmail(text)
-    }
+    const handleEmailChange = useCallback(
+      (text: string) => {
+        setEmail(text)
+      },
+      [setEmail],
+    )
 
-    const handlePasswordChange = (text: string) => {
-      setPassword(text)
-    }
+    const handlePasswordChange = useCallback(
+      (text: string) => {
+        setPassword(text)
+      },
+      [setPassword],
+    )
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Enter') {
-        handleRegisterFormSubmit(e)
-      }
-    }
+    const handleRegisterFormSubmit = useCallback(
+      (e: Event) => {
+        e.preventDefault()
 
-    const handleRegisterFormSubmit = (e: Event) => {
-      e.preventDefault()
+        if (!email || email.length === 0) {
+          emailInputRef.current?.focus()
+          return
+        }
 
-      if (!email || email.length === 0) {
-        emailInputRef.current?.focus()
-        return
-      }
+        if (!password || password.length === 0) {
+          passwordInputRef.current?.focus()
+          return
+        }
 
-      if (!password || password.length === 0) {
-        passwordInputRef.current?.focus()
-        return
-      }
+        setEmail(email)
+        setPassword(password)
+        setMenuPane(AccountMenuPane.ConfirmPassword)
+      },
+      [email, password, setPassword, setMenuPane, setEmail],
+    )
 
-      setEmail(email)
-      setPassword(password)
-      setMenuPane(AccountMenuPane.ConfirmPassword)
-    }
+    const handleKeyDown = useCallback(
+      (e: KeyboardEvent) => {
+        if (e.key === 'Enter') {
+          handleRegisterFormSubmit(e)
+        }
+      },
+      [handleRegisterFormSubmit],
+    )
 
-    const handleClose = () => {
+    const handleClose = useCallback(() => {
       setMenuPane(AccountMenuPane.GeneralMenu)
       setEmail('')
       setPassword('')
-    }
+    }, [setEmail, setMenuPane, setPassword])
 
-    const onPrivateWorkspaceChange = (isPrivateWorkspace: boolean, privateWorkspaceIdentifier?: string) => {
-      setIsPrivateWorkspace(isPrivateWorkspace)
-      if (isPrivateWorkspace && privateWorkspaceIdentifier) {
-        setEmail(privateWorkspaceIdentifier)
-      }
-    }
+    const onPrivateWorkspaceChange = useCallback(
+      (isPrivateWorkspace: boolean, privateWorkspaceIdentifier?: string) => {
+        setIsPrivateWorkspace(isPrivateWorkspace)
+        if (isPrivateWorkspace && privateWorkspaceIdentifier) {
+          setEmail(privateWorkspaceIdentifier)
+        }
+      },
+      [setEmail],
+    )
 
     return (
       <>

@@ -2498,6 +2498,11 @@
     "@standardnotes/services" "^1.11.1"
     "@standardnotes/utils" "^1.6.6"
 
+"@standardnotes/icons@^1.1.7":
+  version "1.1.7"
+  resolved "https://registry.yarnpkg.com/@standardnotes/icons/-/icons-1.1.7.tgz#4523d8e2e3aa34d0e921df802d54c0babe054279"
+  integrity sha512-yHB/KInj7qSmtnUqtTo6CPttu+2+oAwdANfjE3a69sgS7nVBxUuwSHHxb9xUOKpJBmipFjJi5F0YVF9kLmHiwg==
+
 "@standardnotes/models@^1.8.0":
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/@standardnotes/models/-/models-1.8.0.tgz#b295ba16f0392549eb79cd02d67b7e2455f2d9be"

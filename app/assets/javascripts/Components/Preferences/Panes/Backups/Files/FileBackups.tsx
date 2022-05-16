@@ -22,7 +22,7 @@ type Props = {
 export const FileBackups = observer(({ application }: Props) => {
   const [backupsEnabled, setBackupsEnabled] = useState(false)
   const [backupsLocation, setBackupsLocation] = useState('')
-  const backupsService = useMemo(() => application.fileBackups, [application.fileBackups])
+  const backupsService = useMemo(() => application.fileBackups, [application])
 
   if (!backupsService) {
     return (

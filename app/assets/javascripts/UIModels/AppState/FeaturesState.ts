@@ -1,14 +1,30 @@
 import { WebApplication } from '@/UIModels/Application'
-import { ApplicationEvent, FeatureIdentifier, FeatureStatus } from '@standardnotes/snjs'
+import { destroyAllObjectProperties } from '@/Utils'
+import { ApplicationEvent, DeinitSource, FeatureIdentifier, FeatureStatus } from '@standardnotes/snjs'
 import { action, makeObservable, observable, runInAction, when } from 'mobx'
+import { AbstractState } from './AbstractState'
 
-export class FeaturesState {
+export class FeaturesState extends AbstractState {
   hasFolders: boolean
   hasSmartViews: boolean
   hasFiles: boolean
   premiumAlertFeatureName: string | undefined
 
-  constructor(private application: WebApplication, appObservers: (() => void)[]) {
+  override deinit(source: DeinitSource) {
+    super.deinit(source)
+    ;(this.showPremiumAlert as unknown) = undefined
+    ;(this.closePremiumAlert as unknown) = undefined
+    ;(this.hasFolders as unknown) = undefined
+    ;(this.hasSmartViews as unknown) = undefined
+    ;(this.hasFiles as unknown) = undefined
+    ;(this.premiumAlertFeatureName as unknown) = undefined
+
+    destroyAllObjectProperties(this)
+  }
+
+  constructor(application: WebApplication, appObservers: (() => void)[]) {
+    super(application)
+
     this.hasFolders = this.isEntitledToFolders()
     this.hasSmartViews = this.isEntitledToSmartViews()
     this.hasFiles = this.isEntitledToFiles()
