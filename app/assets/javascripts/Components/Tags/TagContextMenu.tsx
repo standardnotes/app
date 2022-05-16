@@ -8,12 +8,17 @@ import { MenuItem, MenuItemType } from '@/Components/Menu/MenuItem'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { SNTag } from '@standardnotes/snjs'
+import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 
 type Props = {
   appState: AppState
 }
 
-export const TagsContextMenu: FunctionComponent<Props> = observer(({ appState }) => {
+export const TagsContextMenu: FunctionComponent<Props> = observer(({ appState }: Props) => {
+  if (isStateDealloced(appState)) {
+    return null
+  }
+
   const premiumModal = usePremiumModal()
   const selectedTag = appState.tags.selected
 

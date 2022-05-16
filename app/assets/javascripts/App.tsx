@@ -32,7 +32,6 @@ import { WebOrDesktopDevice } from './Device/WebOrDesktopDevice'
 import { WebApplication } from './UIModels/Application'
 
 let keyCount = 0
-
 const getKey = () => {
   return keyCount++
 }

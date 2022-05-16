@@ -9,6 +9,7 @@ import { useRef, useState } from 'preact/hooks'
 import { Icon } from '@/Components/Icon'
 import { ChangeEditorMenu } from './ChangeEditorMenu'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
+import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 
 type Props = {
   application: WebApplication
@@ -17,7 +18,11 @@ type Props = {
 }
 
 export const ChangeEditorButton: FunctionComponent<Props> = observer(
-  ({ application, appState, onClickPreprocessing }) => {
+  ({ application, appState, onClickPreprocessing }: Props) => {
+    if (isStateDealloced(appState)) {
+      return null
+    }
+
     const note = Object.values(appState.notes.selectedNotes)[0]
     const [isOpen, setIsOpen] = useState(false)
     const [isVisible, setIsVisible] = useState(false)

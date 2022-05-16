@@ -17,6 +17,7 @@ import {
   Runtime,
   DesktopDeviceInterface,
   isDesktopDevice,
+  DeinitMode,
 } from '@standardnotes/snjs'
 
 type WebServices = {
@@ -68,14 +69,10 @@ export class WebApplication extends SNApplication {
     this.iconsController = new IconsController()
   }
 
-  override deinit(source: DeinitSource): void {
-    super.deinit(source)
+  override deinit(mode: DeinitMode, source: DeinitSource): void {
+    super.deinit(mode, source)
 
     try {
-      if (source === DeinitSource.AppGroupUnload) {
-        this.getThemeService().deactivateAllThemes()
-      }
-
       for (const service of Object.values(this.webServices)) {
         if (!service) {
           continue

@@ -23,6 +23,7 @@ import { TagsContextMenu } from '@/Components/Tags/TagContextMenu'
 import { ToastContainer } from '@standardnotes/stylekit'
 import { FilePreviewModal } from '../Files/FilePreviewModal'
 import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
+import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 
 type Props = {
   application: WebApplication
@@ -38,8 +39,8 @@ export const ApplicationView: FunctionComponent<Props> = ({ application, mainApp
   const [challenges, setChallenges] = useState<Challenge[]>([])
   const [dealloced, setDealloced] = useState(false)
 
-  const componentManager = useMemo(() => application.componentManager, [application])
-  const appState = useMemo(() => application.getAppState(), [application])
+  const componentManager = application.componentManager
+  const appState = application.getAppState()
 
   useEffect(() => {
     setDealloced(application.dealloced)
@@ -198,7 +199,7 @@ export const ApplicationView: FunctionComponent<Props> = ({ application, mainApp
     )
   }, [appState, challenges, mainApplicationGroup, removeChallenge, application])
 
-  if (dealloced) {
+  if (dealloced || isStateDealloced(appState)) {
     return null
   }
 

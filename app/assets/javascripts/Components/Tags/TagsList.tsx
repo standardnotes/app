@@ -1,4 +1,5 @@
 import { AppState } from '@/UIModels/AppState'
+import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 import { isMobile } from '@/Utils'
 import { SNTag } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
@@ -14,7 +15,11 @@ type Props = {
   appState: AppState
 }
 
-export const TagsList: FunctionComponent<Props> = observer(({ appState }) => {
+export const TagsList: FunctionComponent<Props> = observer(({ appState }: Props) => {
+  if (isStateDealloced(appState)) {
+    return null
+  }
+
   const tagsState = appState.tags
   const allTags = tagsState.allLocalRootTags
 

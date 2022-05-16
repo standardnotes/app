@@ -6,7 +6,6 @@ import {
   Runtime,
   InternalEventBus,
   isDesktopDevice,
-  ApplicationGroupMode,
 } from '@standardnotes/snjs'
 import { AppState } from '@/UIModels/AppState'
 import { getPlatform, isDesktopApplication } from '@/Utils'
@@ -61,7 +60,7 @@ export class ApplicationGroup extends SNApplicationGroup<WebOrDesktopDevice> {
     private runtime: Runtime,
     private webSocketUrl: string,
   ) {
-    super(device, ApplicationGroupMode.RequiresReload)
+    super(device)
   }
 
   override async initialize(): Promise<void> {
@@ -91,6 +90,6 @@ export class ApplicationGroup extends SNApplicationGroup<WebOrDesktopDevice> {
   }
 
   override handleAllWorkspacesSignedOut(): void {
-    isDesktopDevice(this.deviceInterface) && this.deviceInterface.destroyAllData()
+    isDesktopDevice(this.device) && this.device.destroyAllData()
   }
 }

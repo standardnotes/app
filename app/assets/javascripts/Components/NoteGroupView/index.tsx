@@ -38,9 +38,11 @@ export class NoteGroupView extends PureComponent<Props, State> {
     })
 
     this.autorun(() => {
-      this.setState({
-        showMultipleSelectedNotes: this.appState.notes.selectedNotesCount > 1,
-      })
+      if (this.appState && this.appState.notes) {
+        this.setState({
+          showMultipleSelectedNotes: this.appState.notes.selectedNotesCount > 1,
+        })
+      }
     })
   }
 

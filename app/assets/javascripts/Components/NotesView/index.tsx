@@ -13,13 +13,18 @@ import { SearchOptions } from '@/Components/SearchOptions'
 import { PanelSide, ResizeFinishCallback, PanelResizer, PanelResizeType } from '@/Components/PanelResizer'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
+import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 
 type Props = {
   application: WebApplication
   appState: AppState
 }
 
-export const NotesView: FunctionComponent<Props> = observer(({ application, appState }) => {
+export const NotesView: FunctionComponent<Props> = observer(({ application, appState }: Props) => {
+  if (isStateDealloced(appState)) {
+    return null
+  }
+
   const notesViewPanelRef = useRef<HTMLDivElement>(null)
   const displayOptionsMenuRef = useRef<HTMLDivElement>(null)
 

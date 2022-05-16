@@ -89,6 +89,10 @@ export class NotesState extends AbstractState {
   }
 
   get selectedNotesCount(): number {
+    if (this.dealloced) {
+      return 0
+    }
+
     return Object.keys(this.selectedNotes).length
   }
 
