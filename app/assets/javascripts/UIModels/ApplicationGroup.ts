@@ -86,8 +86,4 @@ export class ApplicationGroup extends SNApplicationGroup<WebOrDesktopDevice> {
       delete window.webClient
     }
   }
-
-  override handleAllWorkspacesSignedOut(): void {
-    isDesktopDevice(this.device) && this.device.destroyAllData()
-  }
 }

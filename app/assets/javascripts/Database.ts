@@ -19,10 +19,10 @@ export class Database {
   private locked = true
   private db?: IDBDatabase
 
-  constructor(public databaseName: string, private alertService: AlertService) {}
+  constructor(public databaseName: string, private alertService?: AlertService) {}
 
   public deinit(): void {
-    ;(this.alertService as any) = undefined
+    ;(this.alertService as unknown) = undefined
     this.db = undefined
   }
 
@@ -31,6 +31,19 @@ export class Database {
    */
   public unlock(): void {
     this.locked = false
+  }
+
+  static async deleteAll(): Promise<void> {
+    const rawDatabases = await window.indexedDB.databases()
+
+    for (const rawDb of rawDatabases) {
+      if (!rawDb.name) {
+        continue
+      }
+      const db = new Database(rawDb.name)
+      await db.clearAllPayloads()
+      db.deinit()
+    }
   }
 
   /**
@@ -208,13 +221,18 @@ export class Database {
   }
 
   private showAlert(message: string) {
-    this.alertService.alert(message).catch(console.error)
+    if (this.alertService) {
+      this.alertService.alert(message).catch(console.error)
+    } else {
+      window.alert(message)
+    }
   }
 
   private showGenericError(error: { code: number; name: string }) {
     const message =
       'Unable to save changes locally due to an unknown system issue. ' +
       `Issue Code: ${error.code} Issue Name: ${error.name}.`
+
     this.showAlert(message)
   }
 
@@ -225,6 +243,7 @@ export class Database {
       'access to the local database. Please use a non-private window.' +
       '\n\n2. You have two windows of the app open at the same time. ' +
       'Please close any other app instances and reload the page.'
-    this.alertService.alert(message).catch(console.error)
+
+    this.showAlert(message)
   }
 }

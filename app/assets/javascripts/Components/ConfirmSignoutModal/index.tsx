@@ -104,7 +104,7 @@ export const ConfirmSignoutModal = observer(({ application, appState, applicatio
                       closeDialog()
                     }}
                   >
-                    {application.hasAccount() ? 'Sign Out' : 'Clear Session Data'}
+                    {application.hasAccount() ? 'Sign Out' : 'Delete Workspace'}
                   </button>
                 </div>
               </div>
