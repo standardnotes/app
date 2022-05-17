@@ -20,8 +20,8 @@ type Props = {
 
 export const NotesList: FunctionComponent<Props> = observer(
   ({ application, appState, notes, selectedNotes, displayOptions, paginate }) => {
-    const selectNextNote = useCallback(() => appState.notesView.selectNextNote, [appState])
-    const selectPreviousNote = useCallback(() => appState.notesView.selectPreviousNote, [appState])
+    const selectNextNote = useCallback(() => appState.notesView.selectNextNote(), [appState])
+    const selectPreviousNote = useCallback(() => appState.notesView.selectPreviousNote(), [appState])
 
     const { hideTags, hideDate, hideNotePreview, hideEditorIcon, sortBy } = displayOptions
 

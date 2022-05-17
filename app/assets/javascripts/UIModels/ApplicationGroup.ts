@@ -75,9 +75,7 @@ export class ApplicationGroup extends SNApplicationGroup<WebOrDesktopDevice> {
     })
 
     if (isDesktopApplication()) {
-      Object.defineProperty(window, 'webClient', {
-        get: () => (this.primaryApplication as WebApplication).getDesktopService(),
-      })
+      window.webClient = (this.primaryApplication as WebApplication).getDesktopService()
     }
   }
 
