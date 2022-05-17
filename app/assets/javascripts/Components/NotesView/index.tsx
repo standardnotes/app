@@ -41,12 +41,12 @@ export const NotesView: FunctionComponent<Props> = observer(({ application, appS
     panelWidth,
   } = appState.notesView
 
-  const createNewNote = useCallback(() => appState.notesView.createNewNote, [appState])
-  const onFilterEnter = useCallback(() => appState.notesView.onFilterEnter, [appState])
-  const clearFilterText = useCallback(() => appState.notesView.clearFilterText, [appState])
+  const createNewNote = useCallback(() => appState.notesView.createNewNote(), [appState])
+  const onFilterEnter = useCallback(() => appState.notesView.onFilterEnter(), [appState])
+  const clearFilterText = useCallback(() => appState.notesView.clearFilterText(), [appState])
   const setNoteFilterText = useCallback((text: string) => appState.notesView.setNoteFilterText(text), [appState])
-  const selectNextNote = useCallback(() => appState.notesView.selectNextNote, [appState])
-  const selectPreviousNote = useCallback(() => appState.notesView.selectPreviousNote, [appState])
+  const selectNextNote = useCallback(() => appState.notesView.selectNextNote(), [appState])
+  const selectPreviousNote = useCallback(() => appState.notesView.selectPreviousNote(), [appState])
 
   const [showDisplayOptionsMenu, setShowDisplayOptionsMenu] = useState(false)
   const [focusedSearch, setFocusedSearch] = useState(false)
@@ -64,7 +64,7 @@ export const NotesView: FunctionComponent<Props> = observer(({ application, appS
       modifiers: [KeyboardModifier.Meta, KeyboardModifier.Ctrl],
       onKeyDown: (event) => {
         event.preventDefault()
-        createNewNote()
+        void createNewNote()
       },
     })
 
