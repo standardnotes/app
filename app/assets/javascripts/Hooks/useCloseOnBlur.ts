@@ -8,20 +8,16 @@ import { StateUpdater, useCallback, useState } from 'preact/hooks'
 export function useCloseOnBlur(
   container: { current?: HTMLDivElement | null },
   setOpen: (open: boolean) => void,
-  keepOpenOnDialogs = false,
 ): [(event: { relatedTarget: EventTarget | null }) => void, StateUpdater<boolean>] {
   const [locked, setLocked] = useState(false)
   return [
     useCallback(
       function onBlur(event: { relatedTarget: EventTarget | null }) {
-        setTimeout(() => {
-          const keepOpen = keepOpenOnDialogs && document.activeElement?.closest('[role="dialog"], .sk-modal')
-          if (!keepOpen && !locked && !container.current?.contains(event.relatedTarget as Node)) {
-            setOpen(false)
-          }
-        })
+        if (!locked && !container.current?.contains(event.relatedTarget as Node)) {
+          setOpen(false)
+        }
       },
-      [keepOpenOnDialogs, locked, container, setOpen],
+      [container, setOpen, locked],
     ),
     setLocked,
   ]
