@@ -3,7 +3,7 @@ import { WebApplication } from '@/UIModels/Application'
 import { Component } from 'preact'
 import { ApplicationView } from '@/Components/ApplicationView'
 import { WebOrDesktopDevice } from '@/Device/WebOrDesktopDevice'
-import { ApplicationGroupEvent, Runtime } from '@standardnotes/snjs'
+import { ApplicationGroupEvent, Runtime, ApplicationGroupEventData, DeinitSource } from '@standardnotes/snjs'
 import { unmountComponentAtNode, findDOMNode } from 'preact/compat'
 import { DialogContent, DialogOverlay } from '@reach/dialog'
 import { isDesktopApplication } from '@/Utils'
@@ -19,6 +19,7 @@ type Props = {
 type State = {
   activeApplication?: WebApplication
   dealloced?: boolean
+  deallocSource?: DeinitSource
   deviceDestroyed?: boolean
 }
 
@@ -49,11 +50,14 @@ export class ApplicationGroupView extends Component<Props, State> {
 
     this.applicationObserverRemover = this.group.addEventObserver((event, data) => {
       if (event === ApplicationGroupEvent.PrimaryApplicationSet) {
-        this.application = data?.primaryApplication as WebApplication
+        const castData = data as ApplicationGroupEventData[ApplicationGroupEvent.PrimaryApplicationSet]
 
+        this.application = castData.application as WebApplication
         this.setState({ activeApplication: this.application })
       } else if (event === ApplicationGroupEvent.DeviceWillRestart) {
-        this.setState({ dealloced: true })
+        const castData = data as ApplicationGroupEventData[ApplicationGroupEvent.DeviceWillRestart]
+
+        this.setState({ dealloced: true, deallocSource: castData.source })
       }
     })
 
@@ -107,7 +111,8 @@ export class ApplicationGroupView extends Component<Props, State> {
     }
 
     if (this.state.dealloced) {
-      return renderDialog('Switching workspace...')
+      const message = this.state.deallocSource === DeinitSource.Lock ? 'Locking workspace...' : 'Switching workspace...'
+      return renderDialog(message)
     }
 
     if (!this.group || !this.state.activeApplication || this.state.activeApplication.dealloced) {
