@@ -5,7 +5,7 @@ import { PANEL_NAME_NOTES } from '@/Constants'
 import { PrefKey } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
-import { useEffect, useRef, useState } from 'preact/hooks'
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import { NoAccountWarning } from '@/Components/NoAccountWarning'
 import { NotesList } from '@/Components/NotesList'
 import { NotesListOptionsMenu } from '@/Components/NotesList/NotesListOptionsMenu'
@@ -13,44 +13,45 @@ import { SearchOptions } from '@/Components/SearchOptions'
 import { PanelSide, ResizeFinishCallback, PanelResizer, PanelResizeType } from '@/Components/PanelResizer'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
+import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 
 type Props = {
   application: WebApplication
   appState: AppState
 }
 
-export const NotesView: FunctionComponent<Props> = observer(({ application, appState }) => {
+export const NotesView: FunctionComponent<Props> = observer(({ application, appState }: Props) => {
+  if (isStateDealloced(appState)) {
+    return null
+  }
+
   const notesViewPanelRef = useRef<HTMLDivElement>(null)
   const displayOptionsMenuRef = useRef<HTMLDivElement>(null)
 
   const {
     completedFullSync,
-    createNewNote,
     displayOptions,
     noteFilterText,
     optionsSubtitle,
     panelTitle,
     renderedNotes,
     selectedNotes,
-    setNoteFilterText,
     searchBarElement,
-    selectNextNote,
-    selectPreviousNote,
-    onFilterEnter,
-    handleFilterTextChanged,
-    clearFilterText,
     paginate,
     panelWidth,
   } = appState.notesView
+
+  const createNewNote = useCallback(() => appState.notesView.createNewNote, [appState])
+  const onFilterEnter = useCallback(() => appState.notesView.onFilterEnter, [appState])
+  const clearFilterText = useCallback(() => appState.notesView.clearFilterText, [appState])
+  const setNoteFilterText = useCallback((text: string) => appState.notesView.setNoteFilterText(text), [appState])
+  const selectNextNote = useCallback(() => appState.notesView.selectNextNote, [appState])
+  const selectPreviousNote = useCallback(() => appState.notesView.selectPreviousNote, [appState])
 
   const [showDisplayOptionsMenu, setShowDisplayOptionsMenu] = useState(false)
   const [focusedSearch, setFocusedSearch] = useState(false)
 
   const [closeDisplayOptMenuOnBlur] = useCloseOnBlur(displayOptionsMenuRef, setShowDisplayOptionsMenu)
-
-  useEffect(() => {
-    handleFilterTextChanged()
-  }, [noteFilterText, handleFilterTextChanged])
 
   useEffect(() => {
     /**
@@ -63,7 +64,7 @@ export const NotesView: FunctionComponent<Props> = observer(({ application, appS
       modifiers: [KeyboardModifier.Meta, KeyboardModifier.Ctrl],
       onKeyDown: (event) => {
         event.preventDefault()
-        createNewNote().catch(console.error)
+        createNewNote()
       },
     })
 
@@ -102,34 +103,43 @@ export const NotesView: FunctionComponent<Props> = observer(({ application, appS
       previousNoteKeyObserver()
       searchKeyObserver()
     }
-  }, [application.io, createNewNote, searchBarElement, selectNextNote, selectPreviousNote])
+  }, [application, createNewNote, selectPreviousNote, searchBarElement, selectNextNote])
 
-  const onNoteFilterTextChange = (e: Event) => {
-    setNoteFilterText((e.target as HTMLInputElement).value)
-  }
+  const onNoteFilterTextChange = useCallback(
+    (e: Event) => {
+      setNoteFilterText((e.target as HTMLInputElement).value)
+    },
+    [setNoteFilterText],
+  )
 
-  const onSearchFocused = () => setFocusedSearch(true)
-  const onSearchBlurred = () => setFocusedSearch(false)
+  const onSearchFocused = useCallback(() => setFocusedSearch(true), [])
+  const onSearchBlurred = useCallback(() => setFocusedSearch(false), [])
 
-  const onNoteFilterKeyUp = (e: KeyboardEvent) => {
-    if (e.key === KeyboardKey.Enter) {
-      onFilterEnter()
-    }
-  }
+  const onNoteFilterKeyUp = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === KeyboardKey.Enter) {
+        onFilterEnter()
+      }
+    },
+    [onFilterEnter],
+  )
 
-  const panelResizeFinishCallback: ResizeFinishCallback = (width, _lastLeft, _isMaxWidth, isCollapsed) => {
-    application.setPreference(PrefKey.NotesPanelWidth, width).catch(console.error)
+  const panelResizeFinishCallback: ResizeFinishCallback = useCallback(
+    (width, _lastLeft, _isMaxWidth, isCollapsed) => {
+      application.setPreference(PrefKey.NotesPanelWidth, width).catch(console.error)
+      appState.noteTags.reloadTagsContainerMaxWidth()
+      appState.panelDidResize(PANEL_NAME_NOTES, isCollapsed)
+    },
+    [appState, application],
+  )
+
+  const panelWidthEventCallback = useCallback(() => {
     appState.noteTags.reloadTagsContainerMaxWidth()
-    appState.panelDidResize(PANEL_NAME_NOTES, isCollapsed)
-  }
+  }, [appState])
 
-  const panelWidthEventCallback = () => {
-    appState.noteTags.reloadTagsContainerMaxWidth()
-  }
-
-  const toggleDisplayOptionsMenu = () => {
+  const toggleDisplayOptionsMenu = useCallback(() => {
     setShowDisplayOptionsMenu(!showDisplayOptionsMenu)
-  }
+  }, [showDisplayOptionsMenu])
 
   return (
     <div

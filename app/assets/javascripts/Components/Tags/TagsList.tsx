@@ -1,8 +1,10 @@
 import { AppState } from '@/UIModels/AppState'
+import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 import { isMobile } from '@/Utils'
 import { SNTag } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
+import { useCallback } from 'preact/hooks'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { TouchBackend } from 'react-dnd-touch-backend'
@@ -13,25 +15,35 @@ type Props = {
   appState: AppState
 }
 
-export const TagsList: FunctionComponent<Props> = observer(({ appState }) => {
+export const TagsList: FunctionComponent<Props> = observer(({ appState }: Props) => {
+  if (isStateDealloced(appState)) {
+    return null
+  }
+
   const tagsState = appState.tags
   const allTags = tagsState.allLocalRootTags
 
   const backend = isMobile({ tablet: true }) ? TouchBackend : HTML5Backend
 
-  const openTagContextMenu = (posX: number, posY: number) => {
-    appState.tags.setContextMenuClickLocation({
-      x: posX,
-      y: posY,
-    })
-    appState.tags.reloadContextMenuLayout()
-    appState.tags.setContextMenuOpen(true)
-  }
+  const openTagContextMenu = useCallback(
+    (posX: number, posY: number) => {
+      appState.tags.setContextMenuClickLocation({
+        x: posX,
+        y: posY,
+      })
+      appState.tags.reloadContextMenuLayout()
+      appState.tags.setContextMenuOpen(true)
+    },
+    [appState],
+  )
 
-  const onContextMenu = (tag: SNTag, posX: number, posY: number) => {
-    appState.tags.selected = tag
-    openTagContextMenu(posX, posY)
-  }
+  const onContextMenu = useCallback(
+    (tag: SNTag, posX: number, posY: number) => {
+      appState.tags.selected = tag
+      openTagContextMenu(posX, posY)
+    },
+    [appState, openTagContextMenu],
+  )
 
   return (
     <DndProvider backend={backend}>

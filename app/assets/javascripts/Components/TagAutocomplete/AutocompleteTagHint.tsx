@@ -1,6 +1,6 @@
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
-import { useRef, useEffect } from 'preact/hooks'
+import { useRef, useEffect, useCallback } from 'preact/hooks'
 import { Icon } from '@/Components/Icon'
 
 type Props = {
@@ -15,36 +15,42 @@ export const AutocompleteTagHint = observer(({ appState, closeOnBlur }: Props) =
 
   const { autocompleteSearchQuery, autocompleteTagResults } = appState.noteTags
 
-  const onTagHintClick = async () => {
+  const onTagHintClick = useCallback(async () => {
     await appState.noteTags.createAndAddNewTag()
     appState.noteTags.setAutocompleteInputFocused(true)
-  }
+  }, [appState])
 
-  const onFocus = () => {
+  const onFocus = useCallback(() => {
     appState.noteTags.setAutocompleteTagHintFocused(true)
-  }
+  }, [appState])
 
-  const onBlur = (event: FocusEvent) => {
-    closeOnBlur(event)
-    appState.noteTags.setAutocompleteTagHintFocused(false)
-  }
+  const onBlur = useCallback(
+    (event: FocusEvent) => {
+      closeOnBlur(event)
+      appState.noteTags.setAutocompleteTagHintFocused(false)
+    },
+    [appState, closeOnBlur],
+  )
 
-  const onKeyDown = (event: KeyboardEvent) => {
-    if (event.key === 'ArrowUp') {
-      if (autocompleteTagResults.length > 0) {
-        const lastTagResult = autocompleteTagResults[autocompleteTagResults.length - 1]
-        appState.noteTags.setFocusedTagResultUuid(lastTagResult.uuid)
-      } else {
-        appState.noteTags.setAutocompleteInputFocused(true)
+  const onKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === 'ArrowUp') {
+        if (autocompleteTagResults.length > 0) {
+          const lastTagResult = autocompleteTagResults[autocompleteTagResults.length - 1]
+          appState.noteTags.setFocusedTagResultUuid(lastTagResult.uuid)
+        } else {
+          appState.noteTags.setAutocompleteInputFocused(true)
+        }
       }
-    }
-  }
+    },
+    [appState, autocompleteTagResults],
+  )
 
   useEffect(() => {
     if (autocompleteTagHintFocused) {
       hintRef.current?.focus()
     }
-  }, [appState.noteTags, autocompleteTagHintFocused])
+  }, [appState, autocompleteTagHintFocused])
 
   return (
     <>

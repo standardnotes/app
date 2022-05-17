@@ -1,8 +1,10 @@
+import { destroyAllObjectProperties } from '@/Utils'
 import {
   ApplicationEvent,
   CollectionSort,
   CollectionSortProperty,
   ContentType,
+  DeinitSource,
   findInArray,
   NotesDisplayCriteria,
   PrefKey,
@@ -15,6 +17,7 @@ import {
 import { action, autorun, computed, makeObservable, observable, reaction } from 'mobx'
 import { AppState, AppStateEvent } from '.'
 import { WebApplication } from '../Application'
+import { AbstractState } from './AbstractState'
 
 const MIN_NOTE_CELL_HEIGHT = 51.0
 const DEFAULT_LIST_NUM_NOTES = 20
@@ -34,7 +37,7 @@ export type DisplayOptions = {
   hideEditorIcon: boolean
 }
 
-export class NotesViewState {
+export class NotesViewState extends AbstractState {
   completedFullSync = false
   noteFilterText = ''
   notes: SNNote[] = []
@@ -59,22 +62,34 @@ export class NotesViewState {
     hideEditorIcon: false,
   }
 
-  constructor(private application: WebApplication, private appState: AppState, appObservers: (() => void)[]) {
+  override deinit(source: DeinitSource) {
+    super.deinit(source)
+    ;(this.noteFilterText as unknown) = undefined
+    ;(this.notes as unknown) = undefined
+    ;(this.renderedNotes as unknown) = undefined
+    ;(this.selectedNotes as unknown) = undefined
+    ;(window.onresize as unknown) = undefined
+
+    destroyAllObjectProperties(this)
+  }
+
+  constructor(application: WebApplication, override appState: AppState, appObservers: (() => void)[]) {
+    super(application, appState)
+
     this.resetPagination()
 
     appObservers.push(
       application.streamItems<SNNote>(ContentType.Note, () => {
         this.reloadNotes()
 
-        const activeNote = this.appState.notes.activeNoteController?.note
+        const activeNote = appState.notes.activeNoteController?.note
 
-        if (this.application.getAppState().notes.selectedNotesCount < 2) {
+        if (appState.notes.selectedNotesCount < 2) {
           if (activeNote) {
             const browsingTrashedNotes =
-              this.appState.selectedTag instanceof SmartView &&
-              this.appState.selectedTag?.uuid === SystemViewId.TrashedNotes
+              appState.selectedTag instanceof SmartView && appState.selectedTag?.uuid === SystemViewId.TrashedNotes
 
-            if (activeNote.trashed && !browsingTrashedNotes && !this.appState?.searchOptions.includeTrashed) {
+            if (activeNote.trashed && !browsingTrashedNotes && !appState?.searchOptions.includeTrashed) {
               this.selectNextOrCreateNew()
             } else if (!this.selectedNotes[activeNote.uuid]) {
               this.selectNote(activeNote).catch(console.error)
@@ -91,7 +106,7 @@ export class NotesViewState {
         this.reloadNotesDisplayOptions()
         this.reloadNotes()
 
-        if (this.appState.selectedTag && findInArray(tags, 'uuid', this.appState.selectedTag.uuid)) {
+        if (appState.selectedTag && findInArray(tags, 'uuid', appState.selectedTag.uuid)) {
           /** Tag title could have changed */
           this.reloadPanelTitle()
         }
@@ -100,7 +115,7 @@ export class NotesViewState {
         this.reloadPreferences()
       }, ApplicationEvent.PreferencesChanged),
       application.addEventObserver(async () => {
-        this.appState.closeAllNoteControllers()
+        appState.closeAllNoteControllers()
         this.selectFirstNote()
         this.setCompletedFullSync(false)
       }, ApplicationEvent.SignedIn),
@@ -108,20 +123,22 @@ export class NotesViewState {
         this.reloadNotes()
         if (
           this.notes.length === 0 &&
-          this.appState.selectedTag instanceof SmartView &&
-          this.appState.selectedTag.uuid === SystemViewId.AllNotes &&
+          appState.selectedTag instanceof SmartView &&
+          appState.selectedTag.uuid === SystemViewId.AllNotes &&
           this.noteFilterText === '' &&
-          !this.appState.notes.activeNoteController
+          !appState.notes.activeNoteController
         ) {
           this.createPlaceholderNote()?.catch(console.error)
         }
         this.setCompletedFullSync(true)
       }, ApplicationEvent.CompletedFullSync),
+
       autorun(() => {
         if (appState.notes.selectedNotes) {
           this.syncSelectedNotes()
         }
       }),
+
       reaction(
         () => [
           appState.searchOptions.includeProtectedContents,
@@ -133,6 +150,7 @@ export class NotesViewState {
           this.reloadNotes()
         },
       ),
+
       appState.addObserver(async (eventName) => {
         if (eventName === AppStateEvent.TagChanged) {
           this.handleTagChange()
@@ -414,6 +432,7 @@ export class NotesViewState {
 
   selectPreviousNote = () => {
     const displayableNotes = this.notes
+
     if (this.activeEditorNote) {
       const currentIndex = displayableNotes.indexOf(this.activeEditorNote)
       if (currentIndex - 1 >= 0) {
@@ -426,11 +445,13 @@ export class NotesViewState {
         return false
       }
     }
+
     return undefined
   }
 
   setNoteFilterText = (text: string) => {
     this.noteFilterText = text
+    this.handleFilterTextChanged()
   }
 
   syncSelectedNotes = () => {

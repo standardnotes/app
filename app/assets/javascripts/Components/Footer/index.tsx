@@ -1,7 +1,7 @@
 import { WebAppEvent, WebApplication } from '@/UIModels/Application'
 import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
 import { PureComponent } from '@/Components/Abstract/PureComponent'
-import { preventRefreshing } from '@/Utils'
+import { destroyAllObjectProperties, preventRefreshing } from '@/Utils'
 import { ApplicationEvent, ContentType, CollectionSort, ApplicationDescriptor } from '@standardnotes/snjs'
 import {
   STRING_NEW_UPDATE_READY,
@@ -44,6 +44,7 @@ export class Footer extends PureComponent<Props, State> {
   private completedInitialSync = false
   private showingDownloadStatus = false
   private webEventListenerDestroyer: () => void
+  private removeStatusObserver!: () => void
 
   constructor(props: Props) {
     super(props, props.application)
@@ -69,18 +70,26 @@ export class Footer extends PureComponent<Props, State> {
   }
 
   override deinit() {
+    this.removeStatusObserver()
+    ;(this.removeStatusObserver as unknown) = undefined
+
     this.webEventListenerDestroyer()
     ;(this.webEventListenerDestroyer as unknown) = undefined
+
     super.deinit()
+
+    destroyAllObjectProperties(this)
   }
 
   override componentDidMount(): void {
     super.componentDidMount()
-    this.application.status.addEventObserver((_event, message) => {
+
+    this.removeStatusObserver = this.application.status.addEventObserver((_event, message) => {
       this.setState({
         arbitraryStatusMessage: message,
       })
     })
+
     this.autorun(() => {
       const showBetaWarning = this.appState.showBetaWarning
       this.setState({

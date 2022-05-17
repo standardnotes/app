@@ -21,7 +21,7 @@ export const NotesContextMenu = observer(({ application, appState }: Props) => {
 
   const reloadContextMenuLayout = useCallback(() => {
     appState.notes.reloadContextMenuLayout()
-  }, [appState.notes])
+  }, [appState])
 
   useEffect(() => {
     window.addEventListener('resize', reloadContextMenuLayout)

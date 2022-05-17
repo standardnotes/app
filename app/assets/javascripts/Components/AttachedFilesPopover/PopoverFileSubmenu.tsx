@@ -34,11 +34,11 @@ export const PopoverFileSubmenu: FunctionComponent<Props> = ({
   })
   const [closeOnBlur] = useCloseOnBlur(menuContainerRef, setIsMenuOpen)
 
-  const closeMenu = () => {
+  const closeMenu = useCallback(() => {
     setIsMenuOpen(false)
-  }
+  }, [])
 
-  const toggleMenu = () => {
+  const toggleMenu = useCallback(() => {
     if (!isMenuOpen) {
       const menuPosition = calculateSubmenuStyle(menuButtonRef.current)
       if (menuPosition) {
@@ -47,7 +47,7 @@ export const PopoverFileSubmenu: FunctionComponent<Props> = ({
     }
 
     setIsMenuOpen(!isMenuOpen)
-  }
+  }, [isMenuOpen])
 
   const recalculateMenuStyle = useCallback(() => {
     const newMenuPosition = calculateSubmenuStyle(menuButtonRef.current, menuRef.current)

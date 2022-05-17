@@ -1,10 +1,12 @@
 import { ElementIds } from '@/ElementIDs'
-import { ApplicationEvent, ContentType, PrefKey, SNNote, SNTag, UuidString } from '@standardnotes/snjs'
+import { destroyAllObjectProperties } from '@/Utils'
+import { ApplicationEvent, ContentType, DeinitSource, PrefKey, SNNote, SNTag, UuidString } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable } from 'mobx'
 import { WebApplication } from '../Application'
+import { AbstractState } from './AbstractState'
 import { AppState } from './AppState'
 
-export class NoteTagsState {
+export class NoteTagsState extends AbstractState {
   autocompleteInputFocused = false
   autocompleteSearchQuery = ''
   autocompleteTagHintFocused = false
@@ -15,7 +17,17 @@ export class NoteTagsState {
   tagsContainerMaxWidth: number | 'auto' = 0
   addNoteToParentFolders: boolean
 
-  constructor(private application: WebApplication, private appState: AppState, appEventListeners: (() => void)[]) {
+  override deinit(source: DeinitSource) {
+    super.deinit(source)
+    ;(this.tags as unknown) = undefined
+    ;(this.autocompleteTagResults as unknown) = undefined
+
+    destroyAllObjectProperties(this)
+  }
+
+  constructor(application: WebApplication, override appState: AppState, appEventListeners: (() => void)[]) {
+    super(application, appState)
+
     makeObservable(this, {
       autocompleteInputFocused: observable,
       autocompleteSearchQuery: observable,

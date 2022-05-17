@@ -31,6 +31,9 @@ export abstract class PureComponent<P = PureComponentProps, S = PureComponentSta
     this.reactionDisposers.length = 0
     ;(this.unsubApp as unknown) = undefined
     ;(this.unsubState as unknown) = undefined
+    ;(this.application as unknown) = undefined
+    ;(this.props as unknown) = undefined
+    ;(this.state as unknown) = undefined
   }
 
   protected dismissModal(): void {
@@ -81,11 +84,18 @@ export abstract class PureComponent<P = PureComponentProps, S = PureComponentSta
     if (this.application.isStarted()) {
       this.onAppStart().catch(console.error)
     }
+
     if (this.application.isLaunched()) {
       this.onAppLaunch().catch(console.error)
     }
+
     this.unsubApp = this.application.addEventObserver(async (eventName, data: unknown) => {
+      if (!this.application) {
+        return
+      }
+
       this.onAppEvent(eventName, data)
+
       if (eventName === ApplicationEvent.Started) {
         await this.onAppStart()
       } else if (eventName === ApplicationEvent.Launched) {

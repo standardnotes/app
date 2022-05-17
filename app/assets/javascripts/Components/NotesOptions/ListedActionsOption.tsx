@@ -35,7 +35,7 @@ const ListedMenuItem: FunctionComponent<ListedMenuItemProps> = ({
 }) => {
   const [isRunning, setIsRunning] = useState(false)
 
-  const handleClick = async () => {
+  const handleClick = useCallback(async () => {
     if (isRunning) {
       return
     }
@@ -47,7 +47,7 @@ const ListedMenuItem: FunctionComponent<ListedMenuItemProps> = ({
     setIsRunning(false)
 
     reloadMenuGroup(group).catch(console.error)
-  }
+  }, [application, action, group, isRunning, note, reloadMenuGroup])
 
   return (
     <button
@@ -80,29 +80,32 @@ const ListedActionsMenu: FunctionComponent<ListedActionsMenuProps> = ({ applicat
   const [menuGroups, setMenuGroups] = useState<ListedMenuGroup[]>([])
   const [isFetchingAccounts, setIsFetchingAccounts] = useState(true)
 
-  const reloadMenuGroup = async (group: ListedMenuGroup) => {
-    const updatedAccountInfo = await application.getListedAccountInfo(group.account, note.uuid)
+  const reloadMenuGroup = useCallback(
+    async (group: ListedMenuGroup) => {
+      const updatedAccountInfo = await application.getListedAccountInfo(group.account, note.uuid)
 
-    if (!updatedAccountInfo) {
-      return
-    }
-
-    const updatedGroup: ListedMenuGroup = {
-      name: updatedAccountInfo.display_name,
-      account: group.account,
-      actions: updatedAccountInfo.actions as Action[],
-    }
-
-    const updatedGroups = menuGroups.map((group) => {
-      if (updatedGroup.account.authorId === group.account.authorId) {
-        return updatedGroup
-      } else {
-        return group
+      if (!updatedAccountInfo) {
+        return
       }
-    })
 
-    setMenuGroups(updatedGroups)
-  }
+      const updatedGroup: ListedMenuGroup = {
+        name: updatedAccountInfo.display_name,
+        account: group.account,
+        actions: updatedAccountInfo.actions as Action[],
+      }
+
+      const updatedGroups = menuGroups.map((group) => {
+        if (updatedGroup.account.authorId === group.account.authorId) {
+          return updatedGroup
+        } else {
+          return group
+        }
+      })
+
+      setMenuGroups(updatedGroups)
+    },
+    [application, menuGroups, note],
+  )
 
   useEffect(() => {
     const fetchListedAccounts = async () => {
@@ -217,7 +220,7 @@ export const ListedActionsOption: FunctionComponent<Props> = ({ application, not
 
   const [closeOnBlur] = useCloseOnBlur(menuContainerRef, setIsMenuOpen)
 
-  const toggleListedMenu = () => {
+  const toggleListedMenu = useCallback(() => {
     if (!isMenuOpen) {
       const menuPosition = calculateSubmenuStyle(menuButtonRef.current)
       if (menuPosition) {
@@ -226,7 +229,7 @@ export const ListedActionsOption: FunctionComponent<Props> = ({ application, not
     }
 
     setIsMenuOpen(!isMenuOpen)
-  }
+  }, [isMenuOpen])
 
   const recalculateMenuStyle = useCallback(() => {
     const newMenuPosition = calculateSubmenuStyle(menuButtonRef.current, menuRef.current)

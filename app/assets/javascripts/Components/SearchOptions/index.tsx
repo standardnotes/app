@@ -2,6 +2,7 @@ import { AppState } from '@/UIModels/AppState'
 import { WebApplication } from '@/UIModels/Application'
 import { observer } from 'mobx-react-lite'
 import Bubble from '@/Components/Bubble'
+import { useCallback } from 'preact/hooks'
 
 type Props = {
   appState: AppState
@@ -13,9 +14,9 @@ export const SearchOptions = observer(({ appState }: Props) => {
 
   const { includeProtectedContents, includeArchived, includeTrashed } = searchOptions
 
-  async function toggleIncludeProtectedContents() {
+  const toggleIncludeProtectedContents = useCallback(async () => {
     await searchOptions.toggleIncludeProtectedContents()
-  }
+  }, [searchOptions])
 
   return (
     <div role="tablist" className="search-options justify-center" onMouseDown={(e) => e.preventDefault()}>

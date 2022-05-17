@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'preact'
-import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@node_modules/@reach/alert-dialog'
-import { useRef } from '@node_modules/preact/hooks'
+import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
+import { useRef } from 'preact/hooks'
 
 export const ModalDialog: FunctionComponent = ({ children }) => {
   const ldRef = useRef<HTMLButtonElement>(null)

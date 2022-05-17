@@ -15,6 +15,8 @@ type Props = {
 }
 
 export class NoteGroupView extends PureComponent<Props, State> {
+  private removeChangeObserver!: () => void
+
   constructor(props: Props) {
     super(props, props.application)
     this.state = {
@@ -25,16 +27,30 @@ export class NoteGroupView extends PureComponent<Props, State> {
 
   override componentDidMount(): void {
     super.componentDidMount()
-    this.application.noteControllerGroup.addActiveControllerChangeObserver(() => {
+
+    const controllerGroup = this.application.noteControllerGroup
+    this.removeChangeObserver = this.application.noteControllerGroup.addActiveControllerChangeObserver(() => {
+      const controllers = controllerGroup.noteControllers
+
       this.setState({
-        controllers: this.application.noteControllerGroup.noteControllers,
+        controllers: controllers,
       })
     })
+
     this.autorun(() => {
-      this.setState({
-        showMultipleSelectedNotes: this.appState.notes.selectedNotesCount > 1,
-      })
+      if (this.appState && this.appState.notes) {
+        this.setState({
+          showMultipleSelectedNotes: this.appState.notes.selectedNotesCount > 1,
+        })
+      }
     })
+  }
+
+  override deinit() {
+    this.removeChangeObserver?.()
+    ;(this.removeChangeObserver as unknown) = undefined
+
+    super.deinit()
   }
 
   override render() {

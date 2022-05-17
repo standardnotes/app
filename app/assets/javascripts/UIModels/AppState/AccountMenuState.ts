@@ -1,8 +1,9 @@
-import { isDev } from '@/Utils'
+import { destroyAllObjectProperties, isDev } from '@/Utils'
 import { action, computed, makeObservable, observable, runInAction } from 'mobx'
-import { ApplicationEvent, ContentType, SNNote, SNTag } from '@standardnotes/snjs'
+import { ApplicationEvent, ContentType, DeinitSource, SNNote, SNTag } from '@standardnotes/snjs'
 import { WebApplication } from '@/UIModels/Application'
 import { AccountMenuPane } from '@/Components/AccountMenu'
+import { AbstractState } from './AbstractState'
 
 type StructuredItemsCount = {
   notes: number
@@ -11,7 +12,7 @@ type StructuredItemsCount = {
   archived: number
 }
 
-export class AccountMenuState {
+export class AccountMenuState extends AbstractState {
   show = false
   signingOut = false
   otherSessionsSignOut = false
@@ -26,7 +27,15 @@ export class AccountMenuState {
   shouldAnimateCloseMenu = false
   currentPane = AccountMenuPane.GeneralMenu
 
-  constructor(private application: WebApplication, private appEventListeners: (() => void)[]) {
+  override deinit(source: DeinitSource) {
+    super.deinit(source)
+    ;(this.notesAndTags as unknown) = undefined
+
+    destroyAllObjectProperties(this)
+  }
+
+  constructor(application: WebApplication, private appEventListeners: (() => void)[]) {
+    super(application)
     makeObservable(this, {
       show: observable,
       signingOut: observable,

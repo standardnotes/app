@@ -7,6 +7,7 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
 import { NotesListItem } from './NotesListItem'
 import { FOCUSABLE_BUT_NOT_TABBABLE, NOTES_LIST_SCROLL_THRESHOLD } from '@/Constants'
+import { useCallback } from 'preact/hooks'
 
 type Props = {
   application: WebApplication
@@ -19,55 +20,72 @@ type Props = {
 
 export const NotesList: FunctionComponent<Props> = observer(
   ({ application, appState, notes, selectedNotes, displayOptions, paginate }) => {
-    const { selectPreviousNote, selectNextNote } = appState.notesView
+    const selectNextNote = useCallback(() => appState.notesView.selectNextNote, [appState])
+    const selectPreviousNote = useCallback(() => appState.notesView.selectPreviousNote, [appState])
+
     const { hideTags, hideDate, hideNotePreview, hideEditorIcon, sortBy } = displayOptions
 
-    const tagsForNote = (note: SNNote): string[] => {
-      if (hideTags) {
-        return []
-      }
-      const selectedTag = appState.selectedTag
-      if (!selectedTag) {
-        return []
-      }
-      const tags = appState.getNoteTags(note)
-      if (selectedTag instanceof SNTag && tags.length === 1) {
-        return []
-      }
-      return tags.map((tag) => tag.title).sort()
-    }
+    const tagsForNote = useCallback(
+      (note: SNNote): string[] => {
+        if (hideTags) {
+          return []
+        }
+        const selectedTag = appState.selectedTag
+        if (!selectedTag) {
+          return []
+        }
+        const tags = appState.getNoteTags(note)
+        if (selectedTag instanceof SNTag && tags.length === 1) {
+          return []
+        }
+        return tags.map((tag) => tag.title).sort()
+      },
+      [appState, hideTags],
+    )
 
-    const openNoteContextMenu = (posX: number, posY: number) => {
-      appState.notes.setContextMenuClickLocation({
-        x: posX,
-        y: posY,
-      })
-      appState.notes.reloadContextMenuLayout()
-      appState.notes.setContextMenuOpen(true)
-    }
+    const openNoteContextMenu = useCallback(
+      (posX: number, posY: number) => {
+        appState.notes.setContextMenuClickLocation({
+          x: posX,
+          y: posY,
+        })
+        appState.notes.reloadContextMenuLayout()
+        appState.notes.setContextMenuOpen(true)
+      },
+      [appState],
+    )
 
-    const onContextMenu = (note: SNNote, posX: number, posY: number) => {
-      appState.notes.selectNote(note.uuid, true).catch(console.error)
-      openNoteContextMenu(posX, posY)
-    }
+    const onContextMenu = useCallback(
+      (note: SNNote, posX: number, posY: number) => {
+        appState.notes.selectNote(note.uuid, true).catch(console.error)
+        openNoteContextMenu(posX, posY)
+      },
+      [appState, openNoteContextMenu],
+    )
 
-    const onScroll = (e: Event) => {
-      const offset = NOTES_LIST_SCROLL_THRESHOLD
-      const element = e.target as HTMLElement
-      if (element.scrollTop + element.offsetHeight >= element.scrollHeight - offset) {
-        paginate()
-      }
-    }
+    const onScroll = useCallback(
+      (e: Event) => {
+        const offset = NOTES_LIST_SCROLL_THRESHOLD
+        const element = e.target as HTMLElement
+        if (element.scrollTop + element.offsetHeight >= element.scrollHeight - offset) {
+          paginate()
+        }
+      },
+      [paginate],
+    )
 
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === KeyboardKey.Up) {
-        e.preventDefault()
-        selectPreviousNote()
-      } else if (e.key === KeyboardKey.Down) {
-        e.preventDefault()
-        selectNextNote()
-      }
-    }
+    const onKeyDown = useCallback(
+      (e: KeyboardEvent) => {
+        if (e.key === KeyboardKey.Up) {
+          e.preventDefault()
+          selectPreviousNote()
+        } else if (e.key === KeyboardKey.Down) {
+          e.preventDefault()
+          selectNextNote()
+        }
+      },
+      [selectNextNote, selectPreviousNote],
+    )
 
     return (
       <div

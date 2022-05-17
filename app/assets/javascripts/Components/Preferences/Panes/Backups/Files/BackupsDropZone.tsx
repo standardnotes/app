@@ -1,7 +1,7 @@
 import { PreferencesSegment, Title, Text, Subtitle } from '@/Components/Preferences/PreferencesComponents'
 import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
 import { Button } from '@/Components/Button/Button'
-import { FileBackupMetadataFile, FileBackupsConstantsV1, FileContent, FileHandleRead } from '@standardnotes/snjs'
+import { FileBackupMetadataFile, FileBackupsConstantsV1, FileItem, FileHandleRead } from '@standardnotes/snjs'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
 import { EncryptionStatusItem } from '../../Security/Encryption'
 import { Icon } from '@/Components/Icon'
@@ -16,7 +16,7 @@ type Props = {
 
 export const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
   const [droppedFile, setDroppedFile] = useState<FileBackupMetadataFile | undefined>(undefined)
-  const [decryptedFileContent, setDecryptedFileContent] = useState<FileContent | undefined>(undefined)
+  const [decryptedFileItem, setDecryptedFileItem] = useState<FileItem | undefined>(undefined)
   const [binaryFile, setBinaryFile] = useState<FileHandleRead | undefined>(undefined)
   const [isSavingAsDecrypted, setIsSavingAsDecrypted] = useState(false)
 
@@ -24,9 +24,9 @@ export const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
 
   useEffect(() => {
     if (droppedFile) {
-      void application.files.decryptBackupMetadataFile(droppedFile).then(setDecryptedFileContent)
+      void application.files.decryptBackupMetadataFile(droppedFile).then(setDecryptedFileItem)
     } else {
-      setDecryptedFileContent(undefined)
+      setDecryptedFileItem(undefined)
     }
   }, [droppedFile, application])
 
@@ -41,20 +41,20 @@ export const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
   }, [application, fileSystem])
 
   const downloadBinaryFileAsDecrypted = useCallback(async () => {
-    if (!decryptedFileContent || !binaryFile) {
+    if (!decryptedFileItem || !binaryFile) {
       return
     }
 
     setIsSavingAsDecrypted(true)
 
-    const result = await application.files.readBackupFileAndSaveDecrypted(binaryFile, decryptedFileContent, fileSystem)
+    const result = await application.files.readBackupFileAndSaveDecrypted(binaryFile, decryptedFileItem, fileSystem)
 
     if (result === 'success') {
       void application.alertService.alert(
-        `<strong>${decryptedFileContent.name}</strong> has been successfully decrypted and saved to your chosen directory.`,
+        `<strong>${decryptedFileItem.name}</strong> has been successfully decrypted and saved to your chosen directory.`,
       )
       setBinaryFile(undefined)
-      setDecryptedFileContent(undefined)
+      setDecryptedFileItem(undefined)
       setDroppedFile(undefined)
     } else if (result === 'failed') {
       void application.alertService.alert(
@@ -63,7 +63,7 @@ export const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
     }
 
     setIsSavingAsDecrypted(false)
-  }, [decryptedFileContent, application, binaryFile, fileSystem])
+  }, [decryptedFileItem, application, binaryFile, fileSystem])
 
   const handleDrag = useCallback(
     (event: DragEvent) => {
@@ -123,6 +123,12 @@ export const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
 
       const text = await file.text()
 
+      const type = application.files.isFileNameFileBackupRelated(file.name)
+      if (type === 'binary') {
+        void application.alertService.alert('Please drag the metadata file instead of the encrypted data file.')
+        return
+      }
+
       try {
         const metadata = JSON.parse(text) as FileBackupMetadataFile
         setDroppedFile(metadata)
@@ -160,14 +166,14 @@ export const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
   return (
     <>
       <PreferencesSegment>
-        {!decryptedFileContent && <Text>Attempting to decrypt metadata file...</Text>}
+        {!decryptedFileItem && <Text>Attempting to decrypt metadata file...</Text>}
 
-        {decryptedFileContent && (
+        {decryptedFileItem && (
           <>
             <Title>Backup Decryption</Title>
 
             <EncryptionStatusItem
-              status={decryptedFileContent.name}
+              status={decryptedFileItem.name}
               icon={[<Icon type="attachment-file" className="min-w-5 min-h-5" />]}
               checkmark={true}
             />

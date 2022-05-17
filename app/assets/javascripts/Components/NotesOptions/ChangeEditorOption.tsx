@@ -4,7 +4,7 @@ import { AppState } from '@/UIModels/AppState'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { IconType, SNComponent, SNNote } from '@standardnotes/snjs'
 import { FunctionComponent } from 'preact'
-import { useEffect, useRef, useState } from 'preact/hooks'
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import { Icon } from '@/Components/Icon'
 import { ChangeEditorMenu } from '@/Components/ChangeEditor/ChangeEditorMenu'
 import { calculateSubmenuStyle, SubmenuStyle } from '@/Utils/CalculateSubmenuStyle'
@@ -48,7 +48,7 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
     setIsVisible(open)
   })
 
-  const toggleChangeEditorMenu = () => {
+  const toggleChangeEditorMenu = useCallback(() => {
     if (!isOpen) {
       const menuStyle = calculateSubmenuStyle(buttonRef.current)
       if (menuStyle) {
@@ -57,7 +57,7 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
     }
 
     setIsOpen(!isOpen)
-  }
+  }, [isOpen])
 
   useEffect(() => {
     if (isOpen) {

@@ -8,7 +8,7 @@ import {
   ChallengeValue,
   removeFromArray,
 } from '@standardnotes/snjs'
-import { ProtectedIllustration } from '@standardnotes/stylekit'
+import { ProtectedIllustration } from '@standardnotes/icons'
 import { FunctionComponent } from 'preact'
 import { useCallback, useEffect, useState } from 'preact/hooks'
 import { Button } from '@/Components/Button/Button'
@@ -31,7 +31,7 @@ type Props = {
   appState: AppState
   mainApplicationGroup: ApplicationGroup
   challenge: Challenge
-  onDismiss: (challenge: Challenge) => Promise<void>
+  onDismiss?: (challenge: Challenge) => void
 }
 
 const validateValues = (values: ChallengeModalValues, prompts: ChallengePrompt[]): ChallengeModalValues | undefined => {
@@ -77,7 +77,7 @@ export const ChallengeModal: FunctionComponent<Props> = ({
   )
   const shouldShowWorkspaceSwitcher = challenge.reason === ChallengeReason.ApplicationUnlock
 
-  const submit = async () => {
+  const submit = useCallback(() => {
     const validatedValues = validateValues(values, challenge.prompts)
     if (!validatedValues) {
       return
@@ -87,12 +87,14 @@ export const ChallengeModal: FunctionComponent<Props> = ({
     }
     setIsSubmitting(true)
     setIsProcessing(true)
+
     const valuesToProcess: ChallengeValue[] = []
     for (const inputValue of Object.values(validatedValues)) {
       const rawValue = inputValue.value
       const value = { prompt: inputValue.prompt, value: rawValue }
       valuesToProcess.push(value)
     }
+
     const processingPrompts = valuesToProcess.map((v) => v.prompt)
     setIsProcessing(processingPrompts.length > 0)
     setProcessingPrompts(processingPrompts)
@@ -109,7 +111,7 @@ export const ChallengeModal: FunctionComponent<Props> = ({
       }
       setIsSubmitting(false)
     }, 50)
-  }
+  }, [application, challenge, isProcessing, isSubmitting, values])
 
   const onValueChange = useCallback(
     (value: string | number, prompt: ChallengePrompt) => {
@@ -121,12 +123,12 @@ export const ChallengeModal: FunctionComponent<Props> = ({
     [values],
   )
 
-  const cancelChallenge = () => {
+  const cancelChallenge = useCallback(() => {
     if (challenge.cancelable) {
       application.cancelChallenge(challenge)
-      onDismiss(challenge).catch(console.error)
+      onDismiss?.(challenge)
     }
-  }
+  }, [application, challenge, onDismiss])
 
   useEffect(() => {
     const removeChallengeObserver = application.addChallengeObserver(challenge, {
@@ -163,10 +165,10 @@ export const ChallengeModal: FunctionComponent<Props> = ({
         }
       },
       onComplete: () => {
-        onDismiss(challenge).catch(console.error)
+        onDismiss?.(challenge)
       },
       onCancel: () => {
-        onDismiss(challenge).catch(console.error)
+        onDismiss?.(challenge)
       },
     })
 
@@ -186,6 +188,7 @@ export const ChallengeModal: FunctionComponent<Props> = ({
       }`}
       onDismiss={cancelChallenge}
       dangerouslyBypassFocusLock={bypassModalFocusLock}
+      key={challenge.id}
     >
       <DialogContent
         className={`challenge-modal flex flex-col items-center bg-default p-8 rounded relative ${
@@ -205,14 +208,16 @@ export const ChallengeModal: FunctionComponent<Props> = ({
         )}
         <ProtectedIllustration className="w-30 h-30 mb-4" />
         <div className="font-bold text-lg text-center max-w-76 mb-3">{challenge.heading}</div>
+
         {challenge.subheading && (
           <div className="text-center text-sm max-w-76 mb-4 break-word">{challenge.subheading}</div>
         )}
+
         <form
           className="flex flex-col items-center min-w-76"
           onSubmit={(e) => {
             e.preventDefault()
-            submit().catch(console.error)
+            submit()
           }}
         >
           {challenge.prompts.map((prompt, index) => (
@@ -226,14 +231,7 @@ export const ChallengeModal: FunctionComponent<Props> = ({
             />
           ))}
         </form>
-        <Button
-          variant="primary"
-          disabled={isProcessing}
-          className="min-w-76 mt-1 mb-3.5"
-          onClick={() => {
-            submit().catch(console.error)
-          }}
-        >
+        <Button variant="primary" disabled={isProcessing} className="min-w-76 mt-1 mb-3.5" onClick={submit}>
           {isProcessing ? 'Generating Keys...' : 'Submit'}
         </Button>
         {shouldShowForgotPasscode && (

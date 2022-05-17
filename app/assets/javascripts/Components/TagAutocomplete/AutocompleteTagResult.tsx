@@ -64,7 +64,7 @@ export const AutocompleteTagResult = observer(({ appState, tagResult, closeOnBlu
       tagResultRef.current?.focus()
       appState.noteTags.setFocusedTagResultUuid(undefined)
     }
-  }, [appState.noteTags, focusedTagResultUuid, tagResult])
+  }, [appState, focusedTagResultUuid, tagResult])
 
   return (
     <button

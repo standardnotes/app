@@ -3,7 +3,7 @@ import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
-import { useEffect, useRef, useState } from 'preact/hooks'
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import { AccountMenuPane } from '.'
 import { Button } from '@/Components/Button/Button'
 import { Checkbox } from '@/Components/Checkbox'
@@ -34,63 +34,69 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
       passwordInputRef.current?.focus()
     }, [])
 
-    const handlePasswordChange = (text: string) => {
+    const handlePasswordChange = useCallback((text: string) => {
       setConfirmPassword(text)
-    }
+    }, [])
 
-    const handleEphemeralChange = () => {
+    const handleEphemeralChange = useCallback(() => {
       setIsEphemeral(!isEphemeral)
-    }
+    }, [isEphemeral])
 
-    const handleShouldMergeChange = () => {
+    const handleShouldMergeChange = useCallback(() => {
       setShouldMergeLocal(!shouldMergeLocal)
-    }
+    }, [shouldMergeLocal])
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (error.length) {
-        setError('')
-      }
-      if (e.key === 'Enter') {
-        handleConfirmFormSubmit(e)
-      }
-    }
+    const handleConfirmFormSubmit = useCallback(
+      (e: Event) => {
+        e.preventDefault()
 
-    const handleConfirmFormSubmit = (e: Event) => {
-      e.preventDefault()
+        if (!password) {
+          passwordInputRef.current?.focus()
+          return
+        }
 
-      if (!password) {
-        passwordInputRef.current?.focus()
-        return
-      }
+        if (password === confirmPassword) {
+          setIsRegistering(true)
+          application
+            .register(email, password, isEphemeral, shouldMergeLocal)
+            .then((res) => {
+              if (res.error) {
+                throw new Error(res.error.message)
+              }
+              appState.accountMenu.closeAccountMenu()
+              appState.accountMenu.setCurrentPane(AccountMenuPane.GeneralMenu)
+            })
+            .catch((err) => {
+              console.error(err)
+              setError(err.message)
+            })
+            .finally(() => {
+              setIsRegistering(false)
+            })
+        } else {
+          setError(STRING_NON_MATCHING_PASSWORDS)
+          setConfirmPassword('')
+          passwordInputRef.current?.focus()
+        }
+      },
+      [appState, application, confirmPassword, email, isEphemeral, password, shouldMergeLocal],
+    )
 
-      if (password === confirmPassword) {
-        setIsRegistering(true)
-        application
-          .register(email, password, isEphemeral, shouldMergeLocal)
-          .then((res) => {
-            if (res.error) {
-              throw new Error(res.error.message)
-            }
-            appState.accountMenu.closeAccountMenu()
-            appState.accountMenu.setCurrentPane(AccountMenuPane.GeneralMenu)
-          })
-          .catch((err) => {
-            console.error(err)
-            setError(err.message)
-          })
-          .finally(() => {
-            setIsRegistering(false)
-          })
-      } else {
-        setError(STRING_NON_MATCHING_PASSWORDS)
-        setConfirmPassword('')
-        passwordInputRef.current?.focus()
-      }
-    }
+    const handleKeyDown = useCallback(
+      (e: KeyboardEvent) => {
+        if (error.length) {
+          setError('')
+        }
+        if (e.key === 'Enter') {
+          handleConfirmFormSubmit(e)
+        }
+      },
+      [handleConfirmFormSubmit, error],
+    )
 
-    const handleGoBack = () => {
+    const handleGoBack = useCallback(() => {
       setMenuPane(AccountMenuPane.Register)
-    }
+    }, [setMenuPane])
 
     return (
       <>

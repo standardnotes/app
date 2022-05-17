@@ -8,12 +8,17 @@ import { MenuItem, MenuItemType } from '@/Components/Menu/MenuItem'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { SNTag } from '@standardnotes/snjs'
+import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 
 type Props = {
   appState: AppState
 }
 
-export const TagsContextMenu: FunctionComponent<Props> = observer(({ appState }) => {
+export const TagsContextMenu: FunctionComponent<Props> = observer(({ appState }: Props) => {
+  if (isStateDealloced(appState)) {
+    return null
+  }
+
   const premiumModal = usePremiumModal()
   const selectedTag = appState.tags.selected
 
@@ -28,7 +33,7 @@ export const TagsContextMenu: FunctionComponent<Props> = observer(({ appState })
 
   const reloadContextMenuLayout = useCallback(() => {
     appState.tags.reloadContextMenuLayout()
-  }, [appState.tags])
+  }, [appState])
 
   useEffect(() => {
     window.addEventListener('resize', reloadContextMenuLayout)
@@ -45,16 +50,16 @@ export const TagsContextMenu: FunctionComponent<Props> = observer(({ appState })
 
     appState.tags.setContextMenuOpen(false)
     appState.tags.setAddingSubtagTo(selectedTag)
-  }, [appState.features.hasFolders, appState.tags, premiumModal, selectedTag])
+  }, [appState, selectedTag, premiumModal])
 
   const onClickRename = useCallback(() => {
     appState.tags.setContextMenuOpen(false)
     appState.tags.editingTag = selectedTag
-  }, [appState.tags, selectedTag])
+  }, [appState, selectedTag])
 
   const onClickDelete = useCallback(() => {
     appState.tags.remove(selectedTag, true).catch(console.error)
-  }, [appState.tags, selectedTag])
+  }, [appState, selectedTag])
 
   return contextMenuOpen ? (
     <div

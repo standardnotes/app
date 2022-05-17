@@ -34,7 +34,7 @@ export const FilesSection: FunctionComponent<Props> = ({ application }) => {
     }
 
     getFilesQuota().catch(console.error)
-  }, [application.settings])
+  }, [application])
 
   return (
     <PreferencesGroup>

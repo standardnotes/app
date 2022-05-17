@@ -2,8 +2,7 @@ import { WebApplication } from '@/UIModels/Application'
 import { Action, ActionVerb, HistoryEntry, NoteHistoryEntry, RevisionListEntry, SNNote } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
-import { StateUpdater, useCallback, useState } from 'preact/hooks'
-import { useEffect } from 'react'
+import { StateUpdater, useCallback, useState, useEffect } from 'preact/hooks'
 import { LegacyHistoryList } from './LegacyHistoryList'
 import { RemoteHistoryList } from './RemoteHistoryList'
 import { SessionHistoryList } from './SessionHistoryList'
@@ -67,7 +66,7 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
       }
 
       fetchLegacyHistory().catch(console.error)
-    }, [application.actionsManager, note])
+    }, [application, note])
 
     const TabButton: FunctionComponent<{
       type: RevisionListTabType

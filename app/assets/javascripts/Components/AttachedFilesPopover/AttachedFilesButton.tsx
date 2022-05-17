@@ -8,7 +8,7 @@ import { FunctionComponent } from 'preact'
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import { Icon } from '@/Components/Icon'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
-import { ChallengeReason, CollectionSort, ContentType, SNFile, SNNote } from '@standardnotes/snjs'
+import { ChallengeReason, CollectionSort, ContentType, FileItem, SNNote } from '@standardnotes/snjs'
 import { confirmDialog } from '@/Services/AlertService'
 import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit'
 import { StreamingFileReader } from '@standardnotes/filepicker'
@@ -17,6 +17,7 @@ import { AttachedFilesPopover } from './AttachedFilesPopover'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { PopoverTabs } from './PopoverTabs'
 import { isHandlingFileDrag } from '@/Utils/DragTypeCheck'
+import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 
 type Props = {
   application: WebApplication
@@ -25,9 +26,12 @@ type Props = {
 }
 
 export const AttachedFilesButton: FunctionComponent<Props> = observer(
-  ({ application, appState, onClickPreprocessing }) => {
-    const premiumModal = usePremiumModal()
+  ({ application, appState, onClickPreprocessing }: Props) => {
+    if (isStateDealloced(appState)) {
+      return null
+    }
 
+    const premiumModal = usePremiumModal()
     const note: SNNote | undefined = Object.values(appState.notes.selectedNotes)[0]
 
     const [open, setOpen] = useState(false)
@@ -50,15 +54,15 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     }, [appState.filePreviewModal.isOpen, keepMenuOpen])
 
     const [currentTab, setCurrentTab] = useState(PopoverTabs.AttachedFiles)
-    const [allFiles, setAllFiles] = useState<SNFile[]>([])
-    const [attachedFiles, setAttachedFiles] = useState<SNFile[]>([])
+    const [allFiles, setAllFiles] = useState<FileItem[]>([])
+    const [attachedFiles, setAttachedFiles] = useState<FileItem[]>([])
     const attachedFilesCount = attachedFiles.length
 
     useEffect(() => {
       application.items.setDisplayOptions(ContentType.File, CollectionSort.Title, 'dsc')
 
       const unregisterFileStream = application.streamItems(ContentType.File, () => {
-        setAllFiles(application.items.getDisplayableItems<SNFile>(ContentType.File))
+        setAllFiles(application.items.getDisplayableItems<FileItem>(ContentType.File))
         if (note) {
           setAttachedFiles(application.items.getFilesForNote(note))
         }
@@ -106,7 +110,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
       await toggleAttachedFilesMenu()
     }, [toggleAttachedFilesMenu, prospectivelyShowFilesPremiumModal])
 
-    const deleteFile = async (file: SNFile) => {
+    const deleteFile = async (file: FileItem) => {
       const shouldDelete = await confirmDialog({
         text: `Are you sure you want to permanently delete "${file.name}"?`,
         confirmButtonStyle: 'danger',
@@ -125,12 +129,12 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
       }
     }
 
-    const downloadFile = async (file: SNFile) => {
+    const downloadFile = async (file: FileItem) => {
       appState.files.downloadFile(file).catch(console.error)
     }
 
     const attachFileToNote = useCallback(
-      async (file: SNFile) => {
+      async (file: FileItem) => {
         if (!note) {
           addToast({
             type: ToastType.Error,
@@ -144,7 +148,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
       [application.items, note],
     )
 
-    const detachFileFromNote = async (file: SNFile) => {
+    const detachFileFromNote = async (file: FileItem) => {
       if (!note) {
         addToast({
           type: ToastType.Error,
@@ -155,8 +159,8 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
       await application.items.disassociateFileWithNote(file, note)
     }
 
-    const toggleFileProtection = async (file: SNFile) => {
-      let result: SNFile | undefined
+    const toggleFileProtection = async (file: FileItem) => {
+      let result: FileItem | undefined
       if (file.protected) {
         keepMenuOpen(true)
         result = await application.mutator.unprotectFile(file)
@@ -169,13 +173,13 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
       return isProtected
     }
 
-    const authorizeProtectedActionForFile = async (file: SNFile, challengeReason: ChallengeReason) => {
+    const authorizeProtectedActionForFile = async (file: FileItem, challengeReason: ChallengeReason) => {
       const authorizedFiles = await application.protections.authorizeProtectedActionForFiles([file], challengeReason)
       const isAuthorized = authorizedFiles.length > 0 && authorizedFiles.includes(file)
       return isAuthorized
     }
 
-    const renameFile = async (file: SNFile, fileName: string) => {
+    const renameFile = async (file: FileItem, fileName: string) => {
       await application.items.renameFile(file, fileName)
     }
 

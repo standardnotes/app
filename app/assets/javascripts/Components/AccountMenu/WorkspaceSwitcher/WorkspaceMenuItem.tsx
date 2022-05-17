@@ -1,9 +1,9 @@
 import { Icon } from '@/Components/Icon'
 import { MenuItem, MenuItemType } from '@/Components/Menu/MenuItem'
 import { KeyboardKey } from '@/Services/IOService'
-import { ApplicationDescriptor } from '@standardnotes/snjs/dist/@types'
+import { ApplicationDescriptor } from '@standardnotes/snjs'
 import { FunctionComponent } from 'preact'
-import { useEffect, useRef, useState } from 'preact/hooks'
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 
 type Props = {
   descriptor: ApplicationDescriptor
@@ -29,17 +29,20 @@ export const WorkspaceMenuItem: FunctionComponent<Props> = ({
     }
   }, [isRenaming])
 
-  const handleInputKeyDown = (event: KeyboardEvent) => {
+  const handleInputKeyDown = useCallback((event: KeyboardEvent) => {
     if (event.key === KeyboardKey.Enter) {
       inputRef.current?.blur()
     }
-  }
+  }, [])
 
-  const handleInputBlur = (event: FocusEvent) => {
-    const name = (event.target as HTMLInputElement).value
-    renameDescriptor(name)
-    setIsRenaming(false)
-  }
+  const handleInputBlur = useCallback(
+    (event: FocusEvent) => {
+      const name = (event.target as HTMLInputElement).value
+      renameDescriptor(name)
+      setIsRenaming(false)
+    },
+    [renameDescriptor],
+  )
 
   return (
     <MenuItem

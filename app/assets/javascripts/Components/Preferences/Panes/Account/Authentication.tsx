@@ -5,7 +5,7 @@ import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
-import { AccountIllustration } from '@standardnotes/stylekit'
+import { AccountIllustration } from '@standardnotes/icons'
 
 export const Authentication: FunctionComponent<{
   application: WebApplication

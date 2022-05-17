@@ -1,5 +1,5 @@
 import { AppState } from '@/UIModels/AppState'
-import { IlNotesIcon } from '@standardnotes/stylekit'
+import { IlNotesIcon } from '@standardnotes/icons'
 import { observer } from 'mobx-react-lite'
 import { NotesOptionsPanel } from '@/Components/NotesOptions/NotesOptionsPanel'
 import { WebApplication } from '@/UIModels/Application'

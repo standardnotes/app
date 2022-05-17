@@ -85,7 +85,6 @@ type ListElementProps = {
 export const MenuItemListElement: FunctionComponent<ListElementProps> = forwardRef(
   ({ children, isFirstMenuItem }: ListElementProps, ref: Ref<HTMLLIElement>) => {
     const child = children as VNode<unknown>
-
     return (
       <li className="list-style-none" role="none" ref={ref}>
         {{

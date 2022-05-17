@@ -1,7 +1,7 @@
 import { WebApplication } from '@/UIModels/Application'
 import { FeatureStatus } from '@standardnotes/snjs'
 import { FunctionComponent } from 'preact'
-import { useMemo } from 'preact/hooks'
+import { useCallback, useMemo } from 'preact/hooks'
 import { JSXInternal } from 'preact/src/jsx'
 import { Icon } from '@/Components/Icon'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
@@ -27,19 +27,22 @@ export const ThemesMenuButton: FunctionComponent<Props> = ({ application, item, 
   )
   const canActivateTheme = useMemo(() => isEntitledToTheme || isThirdPartyTheme, [isEntitledToTheme, isThirdPartyTheme])
 
-  const toggleTheme: JSXInternal.MouseEventHandler<HTMLButtonElement> = (e) => {
-    e.preventDefault()
+  const toggleTheme: JSXInternal.MouseEventHandler<HTMLButtonElement> = useCallback(
+    (e) => {
+      e.preventDefault()
 
-    if (item.component && canActivateTheme) {
-      const themeIsLayerableOrNotActive = item.component.isLayerable() || !item.component.active
+      if (item.component && canActivateTheme) {
+        const themeIsLayerableOrNotActive = item.component.isLayerable() || !item.component.active
 
-      if (themeIsLayerableOrNotActive) {
-        application.mutator.toggleTheme(item.component).catch(console.error)
+        if (themeIsLayerableOrNotActive) {
+          application.mutator.toggleTheme(item.component).catch(console.error)
+        }
+      } else {
+        premiumModal.activate(`${item.name} theme`)
       }
-    } else {
-      premiumModal.activate(`${item.name} theme`)
-    }
-  }
+    },
+    [application, canActivateTheme, item, premiumModal],
+  )
 
   return (
     <button

@@ -38,6 +38,7 @@ export class ThemeManager extends ApplicationService {
 
   override async onAppEvent(event: ApplicationEvent) {
     super.onAppEvent(event).catch(console.error)
+
     switch (event) {
       case ApplicationEvent.SignedOut: {
         this.deactivateAllThemes()
@@ -91,6 +92,7 @@ export class ThemeManager extends ApplicationService {
     ;(this.unregisterStream as unknown) = undefined
 
     window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', this.colorSchemeEventHandler)
+
     super.deinit()
   }
 
@@ -226,6 +228,7 @@ export class ThemeManager extends ApplicationService {
 
   public deactivateAllThemes() {
     const activeThemes = this.activeThemes.slice()
+
     for (const uuid of activeThemes) {
       this.deactivateTheme(uuid)
     }

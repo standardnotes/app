@@ -29,7 +29,7 @@ export const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentP
       componentViewer.lockReadonly = true
       componentViewer.overrideContextItem = templateNoteForRevision
       return componentViewer
-    }, [application.componentManager, editorForCurrentNote, templateNoteForRevision])
+    }, [application, editorForCurrentNote, templateNoteForRevision])
 
     useEffect(() => {
       return () => {
@@ -37,7 +37,7 @@ export const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentP
           application.componentManager.destroyComponentViewer(componentViewer)
         }
       }
-    }, [application.componentManager, componentViewer])
+    }, [application, componentViewer])
 
     return (
       <div className="flex flex-col h-full overflow-hidden">

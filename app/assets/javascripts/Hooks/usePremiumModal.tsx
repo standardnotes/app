@@ -1,9 +1,9 @@
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
-import { FunctionalComponent } from 'preact'
-import { useContext } from 'preact/hooks'
-import { createContext } from 'react'
+import { ComponentChildren, FunctionalComponent, createContext } from 'preact'
+import { useCallback, useContext } from 'preact/hooks'
+
 import { PremiumFeaturesModal } from '@/Components/PremiumFeaturesModal'
 
 type PremiumModalContextData = {
@@ -27,33 +27,50 @@ export const usePremiumModal = (): PremiumModalContextData => {
 interface Props {
   application: WebApplication
   appState: AppState
+  children: ComponentChildren | ComponentChildren[]
 }
 
-export const PremiumModalProvider: FunctionalComponent<Props> = observer(({ application, appState, children }) => {
-  const featureName = appState.features.premiumAlertFeatureName
-  const activate = appState.features.showPremiumAlert
-  const close = appState.features.closePremiumAlert
+export const PremiumModalProvider: FunctionalComponent<Props> = observer(
+  ({ application, appState, children }: Props) => {
+    const dealloced = !appState || appState.dealloced == undefined
+    if (dealloced) {
+      return null
+    }
 
-  const showModal = !!featureName
+    const featureName = appState.features.premiumAlertFeatureName || ''
 
-  const hasSubscription = Boolean(
-    appState.subscription.userSubscription &&
-      !appState.subscription.isUserSubscriptionExpired &&
-      !appState.subscription.isUserSubscriptionCanceled,
-  )
+    const showModal = !!featureName
 
-  return (
-    <>
-      {showModal && (
-        <PremiumFeaturesModal
-          application={application}
-          featureName={featureName}
-          hasSubscription={hasSubscription}
-          onClose={close}
-          showModal={!!featureName}
-        />
-      )}
-      <PremiumModalProvider_ value={{ activate }}>{children}</PremiumModalProvider_>
-    </>
-  )
-})
+    const hasSubscription = Boolean(
+      appState.subscription.userSubscription &&
+        !appState.subscription.isUserSubscriptionExpired &&
+        !appState.subscription.isUserSubscriptionCanceled,
+    )
+
+    const activate = useCallback(
+      (feature: string) => {
+        appState.features.showPremiumAlert(feature).catch(console.error)
+      },
+      [appState],
+    )
+
+    const close = useCallback(() => {
+      appState.features.closePremiumAlert()
+    }, [appState])
+
+    return (
+      <>
+        {showModal && (
+          <PremiumFeaturesModal
+            application={application}
+            featureName={featureName}
+            hasSubscription={hasSubscription}
+            onClose={close}
+            showModal={!!featureName}
+          />
+        )}
+        <PremiumModalProvider_ value={{ activate }}>{children}</PremiumModalProvider_>
+      </>
+    )
+  },
+)

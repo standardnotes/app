@@ -181,4 +181,12 @@ export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface 
   abstract setKeychainValue(value: unknown): Promise<void>
 
   abstract clearRawKeychainValue(): Promise<void>
+
+  abstract isDeviceDestroyed(): boolean
+
+  abstract performHardReset(): Promise<void>
+
+  async performSoftReset(): Promise<void> {
+    window.location.reload()
+  }
 }

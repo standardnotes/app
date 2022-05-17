@@ -3,17 +3,22 @@ import { observer } from 'mobx-react-lite'
 import { AutocompleteTagInput } from '@/Components/TagAutocomplete/AutocompleteTagInput'
 import { NoteTag } from './NoteTag'
 import { useEffect } from 'preact/hooks'
+import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 
 type Props = {
   appState: AppState
 }
 
 export const NoteTagsContainer = observer(({ appState }: Props) => {
+  if (isStateDealloced(appState)) {
+    return null
+  }
+
   const { tags, tagsContainerMaxWidth } = appState.noteTags
 
   useEffect(() => {
     appState.noteTags.reloadTagsContainerMaxWidth()
-  }, [appState.noteTags])
+  }, [appState])
 
   return (
     <div

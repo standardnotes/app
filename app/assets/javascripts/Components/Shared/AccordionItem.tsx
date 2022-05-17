@@ -1,6 +1,6 @@
 import { FunctionalComponent } from 'preact'
 import { useRef, useState } from 'preact/hooks'
-import { ArrowDownCheckmarkIcon } from '@standardnotes/stylekit'
+import { ArrowDownCheckmarkIcon } from '@standardnotes/icons'
 import { Title } from '@/Components/Preferences/PreferencesComponents'
 
 type Props = {

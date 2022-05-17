@@ -1,6 +1,6 @@
 import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
 import { AppState } from '@/UIModels/AppState'
-import { ApplicationDescriptor, ButtonType } from '@standardnotes/snjs'
+import { ApplicationDescriptor, ApplicationGroupEvent, ButtonType } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
 import { useCallback, useEffect, useState } from 'preact/hooks'
@@ -17,13 +17,18 @@ type Props = {
 }
 
 export const WorkspaceSwitcherMenu: FunctionComponent<Props> = observer(
-  ({ mainApplicationGroup, appState, isOpen, hideWorkspaceOptions = false }) => {
+  ({ mainApplicationGroup, appState, isOpen, hideWorkspaceOptions = false }: Props) => {
     const [applicationDescriptors, setApplicationDescriptors] = useState<ApplicationDescriptor[]>([])
 
     useEffect(() => {
-      const removeAppGroupObserver = mainApplicationGroup.addApplicationChangeObserver(() => {
-        const applicationDescriptors = mainApplicationGroup.getDescriptors()
-        setApplicationDescriptors(applicationDescriptors)
+      const applicationDescriptors = mainApplicationGroup.getDescriptors()
+      setApplicationDescriptors(applicationDescriptors)
+
+      const removeAppGroupObserver = mainApplicationGroup.addEventObserver((event) => {
+        if (event === ApplicationGroupEvent.DescriptorsDataChanged) {
+          const applicationDescriptors = mainApplicationGroup.getDescriptors()
+          setApplicationDescriptors(applicationDescriptors)
+        }
       })
 
       return () => {
@@ -42,20 +47,21 @@ export const WorkspaceSwitcherMenu: FunctionComponent<Props> = observer(
         return
       }
       mainApplicationGroup.signOutAllWorkspaces().catch(console.error)
-    }, [mainApplicationGroup, appState.application.alertService])
+    }, [mainApplicationGroup, appState])
+
+    const destroyWorkspace = useCallback(() => {
+      appState.accountMenu.setSigningOut(true)
+    }, [appState])
 
     return (
       <Menu a11yLabel="Workspace switcher menu" className="px-0 focus:shadow-none" isOpen={isOpen}>
         {applicationDescriptors.map((descriptor) => (
           <WorkspaceMenuItem
+            key={descriptor.identifier}
             descriptor={descriptor}
             hideOptions={hideWorkspaceOptions}
-            onDelete={() => {
-              appState.accountMenu.setSigningOut(true)
-            }}
-            onClick={() => {
-              mainApplicationGroup.loadApplicationForDescriptor(descriptor)
-            }}
+            onDelete={destroyWorkspace}
+            onClick={() => void mainApplicationGroup.unloadCurrentAndActivateDescriptor(descriptor)}
             renameDescriptor={(label: string) => mainApplicationGroup.renameDescriptor(descriptor, label)}
           />
         ))}
@@ -64,7 +70,7 @@ export const WorkspaceSwitcherMenu: FunctionComponent<Props> = observer(
         <MenuItem
           type={MenuItemType.IconButton}
           onClick={() => {
-            mainApplicationGroup.addNewApplication()
+            void mainApplicationGroup.unloadCurrentAndCreateNewDescriptor()
           }}
         >
           <Icon type="user-add" className="color-neutral mr-2" />

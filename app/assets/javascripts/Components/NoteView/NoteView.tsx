@@ -134,6 +134,7 @@ export class NoteView extends PureComponent<Props, State> {
 
   constructor(props: Props) {
     super(props, props.application)
+
     this.controller = props.controller
 
     this.onEditorComponentLoad = () => {
@@ -171,19 +172,42 @@ export class NoteView extends PureComponent<Props, State> {
   override deinit() {
     this.removeComponentStreamObserver?.()
     ;(this.removeComponentStreamObserver as unknown) = undefined
+
     this.removeInnerNoteObserver?.()
     ;(this.removeInnerNoteObserver as unknown) = undefined
+
     this.removeComponentManagerObserver?.()
     ;(this.removeComponentManagerObserver as unknown) = undefined
+
     this.removeTrashKeyObserver?.()
     this.removeTrashKeyObserver = undefined
+
     this.clearNoteProtectionInactivityTimer()
+    ;(this.ensureNoteIsInsertedBeforeUIAction as unknown) = undefined
+    ;(this.controller as unknown) = undefined
+
     this.removeTabObserver?.()
     this.removeTabObserver = undefined
     this.onEditorComponentLoad = undefined
+
     this.statusTimeout = undefined
     ;(this.onPanelResizeFinish as unknown) = undefined
     super.deinit()
+    ;(this.dismissProtectedWarning as unknown) = undefined
+    ;(this.editorComponentViewerRequestsReload as unknown) = undefined
+    ;(this.onTextAreaChange as unknown) = undefined
+    ;(this.onTitleEnter as unknown) = undefined
+    ;(this.onTitleChange as unknown) = undefined
+    ;(this.onContentFocus as unknown) = undefined
+    ;(this.onPanelResizeFinish as unknown) = undefined
+    ;(this.stackComponentExpanded as unknown) = undefined
+    ;(this.toggleStackComponent as unknown) = undefined
+    ;(this.setScrollPosition as unknown) = undefined
+    ;(this.resetScrollPosition as unknown) = undefined
+    ;(this.onSystemEditorLoad as unknown) = undefined
+    ;(this.debounceReloadEditorComponent as unknown) = undefined
+    ;(this.textAreaChangeDebounceSave as unknown) = undefined
+    ;(this.editorContentRef as unknown) = undefined
   }
 
   getState() {
@@ -295,6 +319,7 @@ export class NoteView extends PureComponent<Props, State> {
     }
     super.componentWillUnmount()
   }
+
   override async onAppLaunch() {
     await super.onAppLaunch()
     this.streamItems()
@@ -1016,7 +1041,7 @@ export class NoteView extends PureComponent<Props, State> {
                 readonly={this.state.noteLocked}
                 onFocus={this.onContentFocus}
                 spellcheck={this.state.spellcheck}
-                ref={(ref) => this.onSystemEditorLoad(ref)}
+                ref={(ref) => ref && this.onSystemEditorLoad(ref)}
               ></textarea>
             )}
 

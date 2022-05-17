@@ -2,7 +2,7 @@ import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
 import { AppState } from '@/UIModels/AppState'
 import { calculateSubmenuStyle, SubmenuStyle } from '@/Utils/CalculateSubmenuStyle'
 import { FunctionComponent } from 'preact'
-import { useEffect, useRef, useState } from 'preact/hooks'
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import { WorkspaceSwitcherMenu } from '@/Components/AccountMenu/WorkspaceSwitcher/WorkspaceSwitcherMenu'
 import { Button } from '@/Components/Button/Button'
 import { Icon } from '@/Components/Icon'
@@ -22,7 +22,7 @@ export const LockscreenWorkspaceSwitcher: FunctionComponent<Props> = ({ mainAppl
 
   useCloseOnClickOutside(containerRef, () => setIsOpen(false))
 
-  const toggleMenu = () => {
+  const toggleMenu = useCallback(() => {
     if (!isOpen) {
       const menuPosition = calculateSubmenuStyle(buttonRef.current)
       if (menuPosition) {
@@ -31,7 +31,7 @@ export const LockscreenWorkspaceSwitcher: FunctionComponent<Props> = ({ mainAppl
     }
 
     setIsOpen(!isOpen)
-  }
+  }, [isOpen])
 
   useEffect(() => {
     if (isOpen) {

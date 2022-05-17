@@ -69,7 +69,7 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
       .componentsForArea(ComponentArea.Editor)
       .map((editor): EditorOption => {
         const identifier = editor.package_info.identifier
-        const [iconType, tint] = application.iconsController.getIconAndTintForEditor(identifier)
+        const [iconType, tint] = application.iconsController.getIconAndTintForNoteType(editor.package_info.note_type)
 
         return {
           label: editor.name,

@@ -1,17 +1,20 @@
 import { loadPurchaseFlowUrl } from '@/Components/PurchaseFlow/PurchaseFlowWrapper'
 import { action, makeObservable, observable } from 'mobx'
 import { WebApplication } from '../Application'
+import { AbstractState } from './AbstractState'
 
 export enum PurchaseFlowPane {
   SignIn,
   CreateAccount,
 }
 
-export class PurchaseFlowState {
+export class PurchaseFlowState extends AbstractState {
   isOpen = false
   currentPane = PurchaseFlowPane.CreateAccount
 
-  constructor(private application: WebApplication) {
+  constructor(application: WebApplication) {
+    super(application)
+
     makeObservable(this, {
       isOpen: observable,
       currentPane: observable,

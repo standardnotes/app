@@ -4,8 +4,7 @@ import { AppStateEvent, PanelResizedData } from '@/UIModels/AppState'
 import { ApplicationEvent, Challenge, PermissionDialog, removeFromArray } from '@standardnotes/snjs'
 import { PANEL_NAME_NOTES, PANEL_NAME_NAVIGATION } from '@/Constants'
 import { alertDialog } from '@/Services/AlertService'
-import { WebAppEvent, WebApplication } from '@/UIModels/Application'
-import { PureComponent } from '@/Components/Abstract/PureComponent'
+import { WebApplication } from '@/UIModels/Application'
 import { Navigation } from '@/Components/Navigation'
 import { NotesView } from '@/Components/NotesView'
 import { NoteGroupView } from '@/Components/NoteGroupView'
@@ -15,7 +14,7 @@ import { PreferencesViewWrapper } from '@/Components/Preferences/PreferencesView
 import { ChallengeModal } from '@/Components/ChallengeModal/ChallengeModal'
 import { NotesContextMenu } from '@/Components/NotesContextMenu'
 import { PurchaseFlowWrapper } from '@/Components/PurchaseFlow/PurchaseFlowWrapper'
-import { render } from 'preact'
+import { render, FunctionComponent } from 'preact'
 import { PermissionsModal } from '@/Components/PermissionsModal'
 import { RevisionHistoryModalWrapper } from '@/Components/RevisionHistoryModal/RevisionHistoryModalWrapper'
 import { PremiumModalProvider } from '@/Hooks/usePremiumModal'
@@ -23,199 +22,221 @@ import { ConfirmSignoutContainer } from '@/Components/ConfirmSignoutModal'
 import { TagsContextMenu } from '@/Components/Tags/TagContextMenu'
 import { ToastContainer } from '@standardnotes/stylekit'
 import { FilePreviewModal } from '../Files/FilePreviewModal'
+import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
+import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 
 type Props = {
   application: WebApplication
   mainApplicationGroup: ApplicationGroup
 }
 
-type State = {
-  started?: boolean
-  launched?: boolean
-  needsUnlock?: boolean
-  appClass: string
-  challenges: Challenge[]
-}
+export const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicationGroup }) => {
+  const platformString = getPlatformString()
+  const [appClass, setAppClass] = useState('')
+  const [launched, setLaunched] = useState(false)
+  const [needsUnlock, setNeedsUnlock] = useState(true)
+  const [challenges, setChallenges] = useState<Challenge[]>([])
+  const [dealloced, setDealloced] = useState(false)
 
-export class ApplicationView extends PureComponent<Props, State> {
-  public readonly platformString = getPlatformString()
+  const componentManager = application.componentManager
+  const appState = application.getAppState()
 
-  constructor(props: Props) {
-    super(props, props.application)
-    this.state = {
-      appClass: '',
-      challenges: [],
-    }
-  }
+  useEffect(() => {
+    setDealloced(application.dealloced)
+  }, [application.dealloced])
 
-  override deinit() {
-    ;(this.application as unknown) = undefined
-    super.deinit()
-  }
-
-  override componentDidMount(): void {
-    super.componentDidMount()
-
-    void this.loadApplication()
-  }
-
-  async loadApplication() {
-    const desktopService = this.application.getDesktopService()
-    if (desktopService) {
-      this.application.componentManager.setDesktopManager(desktopService)
-    }
-
-    await this.application.prepareForLaunch({
-      receiveChallenge: async (challenge) => {
-        const challenges = this.state.challenges.slice()
-        challenges.push(challenge)
-        this.setState({ challenges: challenges })
-      },
-    })
-
-    await this.application.launch()
-  }
-
-  public removeChallenge = async (challenge: Challenge) => {
-    const challenges = this.state.challenges.slice()
-    removeFromArray(challenges, challenge)
-    this.setState({ challenges: challenges })
-  }
-
-  override async onAppStart() {
-    super.onAppStart().catch(console.error)
-    this.setState({
-      started: true,
-      needsUnlock: this.application.hasPasscode(),
-    })
-
-    this.application.componentManager.presentPermissionsDialog = this.presentPermissionsDialog
-  }
-
-  override async onAppLaunch() {
-    super.onAppLaunch().catch(console.error)
-    this.setState({
-      launched: true,
-      needsUnlock: false,
-    })
-    this.handleDemoSignInFromParams().catch(console.error)
-  }
-
-  onUpdateAvailable() {
-    this.application.notifyWebEvent(WebAppEvent.NewUpdateAvailable)
-  }
-
-  override async onAppEvent(eventName: ApplicationEvent) {
-    super.onAppEvent(eventName)
-    switch (eventName) {
-      case ApplicationEvent.LocalDatabaseReadError:
-        alertDialog({
-          text: 'Unable to load local database. Please restart the app and try again.',
-        }).catch(console.error)
-        break
-      case ApplicationEvent.LocalDatabaseWriteError:
-        alertDialog({
-          text: 'Unable to write to local database. Please restart the app and try again.',
-        }).catch(console.error)
-        break
-    }
-  }
-
-  override async onAppStateEvent(eventName: AppStateEvent, data?: unknown) {
-    if (eventName === AppStateEvent.PanelResized) {
-      const { panel, collapsed } = data as PanelResizedData
-      let appClass = ''
-      if (panel === PANEL_NAME_NOTES && collapsed) {
-        appClass += 'collapsed-notes'
-      }
-      if (panel === PANEL_NAME_NAVIGATION && collapsed) {
-        appClass += ' collapsed-navigation'
-      }
-      this.setState({ appClass })
-    } else if (eventName === AppStateEvent.WindowDidFocus) {
-      if (!(await this.application.isLocked())) {
-        this.application.sync.sync().catch(console.error)
-      }
-    }
-  }
-
-  async handleDemoSignInFromParams() {
-    const token = getWindowUrlParams().get('demo-token')
-    if (!token || this.application.hasAccount()) {
+  useEffect(() => {
+    if (dealloced) {
       return
     }
 
-    await this.application.sessions.populateSessionFromDemoShareToken(token)
-  }
+    const desktopService = application.getDesktopService()
 
-  presentPermissionsDialog = (dialog: PermissionDialog) => {
-    render(
-      <PermissionsModal
-        application={this.application}
-        callback={dialog.callback}
-        component={dialog.component}
-        permissionsString={dialog.permissionsString}
-      />,
-      document.body.appendChild(document.createElement('div')),
-    )
-  }
-
-  override render() {
-    if (this.application['dealloced'] === true) {
-      console.error('Attempting to render dealloced application')
-      return <div></div>
+    if (desktopService) {
+      application.componentManager.setDesktopManager(desktopService)
     }
 
-    const renderAppContents = !this.state.needsUnlock && this.state.launched
+    application
+      .prepareForLaunch({
+        receiveChallenge: async (challenge) => {
+          const challengesCopy = challenges.slice()
+          challengesCopy.push(challenge)
+          setChallenges(challengesCopy)
+        },
+      })
+      .then(() => {
+        void application.launch()
+      })
+      .catch(console.error)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [application, dealloced])
 
+  const removeChallenge = useCallback(
+    (challenge: Challenge) => {
+      const challengesCopy = challenges.slice()
+      removeFromArray(challengesCopy, challenge)
+      setChallenges(challengesCopy)
+    },
+    [challenges],
+  )
+
+  const presentPermissionsDialog = useCallback(
+    (dialog: PermissionDialog) => {
+      render(
+        <PermissionsModal
+          application={application}
+          callback={dialog.callback}
+          component={dialog.component}
+          permissionsString={dialog.permissionsString}
+        />,
+        document.body.appendChild(document.createElement('div')),
+      )
+    },
+    [application],
+  )
+
+  const onAppStart = useCallback(() => {
+    setNeedsUnlock(application.hasPasscode())
+    componentManager.presentPermissionsDialog = presentPermissionsDialog
+
+    return () => {
+      ;(componentManager.presentPermissionsDialog as unknown) = undefined
+    }
+  }, [application, componentManager, presentPermissionsDialog])
+
+  const handleDemoSignInFromParams = useCallback(() => {
+    const token = getWindowUrlParams().get('demo-token')
+    if (!token || application.hasAccount()) {
+      return
+    }
+
+    void application.sessions.populateSessionFromDemoShareToken(token)
+  }, [application])
+
+  const onAppLaunch = useCallback(() => {
+    setLaunched(true)
+    setNeedsUnlock(false)
+    handleDemoSignInFromParams()
+  }, [handleDemoSignInFromParams])
+
+  useEffect(() => {
+    if (application.isStarted()) {
+      onAppStart()
+    }
+
+    if (application.isLaunched()) {
+      onAppLaunch()
+    }
+
+    const removeAppObserver = application.addEventObserver(async (eventName) => {
+      if (eventName === ApplicationEvent.Started) {
+        onAppStart()
+      } else if (eventName === ApplicationEvent.Launched) {
+        onAppLaunch()
+      } else if (eventName === ApplicationEvent.LocalDatabaseReadError) {
+        alertDialog({
+          text: 'Unable to load local database. Please restart the app and try again.',
+        }).catch(console.error)
+      } else if (eventName === ApplicationEvent.LocalDatabaseWriteError) {
+        alertDialog({
+          text: 'Unable to write to local database. Please restart the app and try again.',
+        }).catch(console.error)
+      }
+    })
+
+    return () => {
+      removeAppObserver()
+    }
+  }, [application, onAppLaunch, onAppStart])
+
+  useEffect(() => {
+    const removeObserver = application.getAppState().addObserver(async (eventName, data) => {
+      if (eventName === AppStateEvent.PanelResized) {
+        const { panel, collapsed } = data as PanelResizedData
+        let appClass = ''
+        if (panel === PANEL_NAME_NOTES && collapsed) {
+          appClass += 'collapsed-notes'
+        }
+        if (panel === PANEL_NAME_NAVIGATION && collapsed) {
+          appClass += ' collapsed-navigation'
+        }
+        setAppClass(appClass)
+      } else if (eventName === AppStateEvent.WindowDidFocus) {
+        if (!(await application.isLocked())) {
+          application.sync.sync().catch(console.error)
+        }
+      }
+    })
+
+    return () => {
+      removeObserver()
+    }
+  }, [application])
+
+  const renderAppContents = useMemo(() => {
+    return !needsUnlock && launched
+  }, [needsUnlock, launched])
+
+  const renderChallenges = useCallback(() => {
     return (
-      <PremiumModalProvider application={this.application} appState={this.appState}>
-        <div className={this.platformString + ' main-ui-view sn-component'}>
-          {renderAppContents && (
-            <div id="app" className={this.state.appClass + ' app app-column-container'}>
-              <Navigation application={this.application} />
-              <NotesView application={this.application} appState={this.appState} />
-              <NoteGroupView application={this.application} />
-            </div>
-          )}
-          {renderAppContents && (
-            <>
-              <Footer application={this.application} applicationGroup={this.props.mainApplicationGroup} />
-              <SessionsModal application={this.application} appState={this.appState} />
-              <PreferencesViewWrapper appState={this.appState} application={this.application} />
-              <RevisionHistoryModalWrapper application={this.application} appState={this.appState} />
-            </>
-          )}
-          {this.state.challenges.map((challenge) => {
-            return (
-              <div className="sk-modal">
-                <ChallengeModal
-                  key={challenge.id}
-                  application={this.application}
-                  appState={this.appState}
-                  mainApplicationGroup={this.props.mainApplicationGroup}
-                  challenge={challenge}
-                  onDismiss={this.removeChallenge}
-                />
-              </div>
-            )
-          })}
-          {renderAppContents && (
-            <>
-              <NotesContextMenu application={this.application} appState={this.appState} />
-              <TagsContextMenu appState={this.appState} />
-              <PurchaseFlowWrapper application={this.application} appState={this.appState} />
-              <ConfirmSignoutContainer
-                applicationGroup={this.props.mainApplicationGroup}
-                appState={this.appState}
-                application={this.application}
+      <>
+        {challenges.map((challenge) => {
+          return (
+            <div className="sk-modal">
+              <ChallengeModal
+                key={`${challenge.id}${application.ephemeralIdentifier}`}
+                application={application}
+                appState={appState}
+                mainApplicationGroup={mainApplicationGroup}
+                challenge={challenge}
+                onDismiss={removeChallenge}
               />
-              <ToastContainer />
-              <FilePreviewModal application={this.application} appState={this.appState} />
-            </>
-          )}
-        </div>
-      </PremiumModalProvider>
+            </div>
+          )
+        })}
+      </>
     )
+  }, [appState, challenges, mainApplicationGroup, removeChallenge, application])
+
+  if (dealloced || isStateDealloced(appState)) {
+    return null
   }
+
+  if (!renderAppContents) {
+    return renderChallenges()
+  }
+
+  return (
+    <PremiumModalProvider application={application} appState={appState}>
+      <div className={platformString + ' main-ui-view sn-component'}>
+        <div id="app" className={appClass + ' app app-column-container'}>
+          <Navigation application={application} />
+          <NotesView application={application} appState={appState} />
+          <NoteGroupView application={application} />
+        </div>
+
+        <>
+          <Footer application={application} applicationGroup={mainApplicationGroup} />
+          <SessionsModal application={application} appState={appState} />
+          <PreferencesViewWrapper appState={appState} application={application} />
+          <RevisionHistoryModalWrapper application={application} appState={appState} />
+        </>
+
+        {renderChallenges()}
+
+        <>
+          <NotesContextMenu application={application} appState={appState} />
+          <TagsContextMenu appState={appState} />
+          <PurchaseFlowWrapper application={application} appState={appState} />
+          <ConfirmSignoutContainer
+            applicationGroup={mainApplicationGroup}
+            appState={appState}
+            application={application}
+          />
+          <ToastContainer />
+          <FilePreviewModal application={application} appState={appState} />
+        </>
+      </div>
+    </PremiumModalProvider>
+  )
 }

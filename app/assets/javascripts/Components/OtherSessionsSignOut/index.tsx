@@ -1,4 +1,4 @@
-import { useRef } from 'preact/hooks'
+import { useCallback, useRef } from 'preact/hooks'
 import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
@@ -18,9 +18,10 @@ export const OtherSessionsSignOutContainer = observer((props: Props) => {
 
 const ConfirmOtherSessionsSignOut = observer(({ application, appState }: Props) => {
   const cancelRef = useRef<HTMLButtonElement>(null)
-  function closeDialog() {
+
+  const closeDialog = useCallback(() => {
     appState.accountMenu.setOtherSessionsSignOut(false)
-  }
+  }, [appState])
 
   return (
     <AlertDialog onDismiss={closeDialog} leastDestructiveRef={cancelRef}>
