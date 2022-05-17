@@ -70,9 +70,9 @@
     "binary": "d8060e0eb8dc727339329be5e5150c077e2795ff2145521dc90a38717eea5d3c"
   },
   "org.standardnotes.simple-task-editor": {
-    "version": "1.3.9",
-    "base64": "98ecadbe8e4ce6f722980aa172ebe7290c2ddbad7f0da6708587096ce19d5d3c",
-    "binary": "3f553a232f3ec81ae95506d60eda2f30877974af213b144f02d0464517f74a97"
+    "version": "1.3.10",
+    "base64": "2da772eb55106dd5a79859e7866fcd36df83cd473435a2473fd81c2cdce3acb7",
+    "binary": "9c772c6eab7f5e694c11d72032f4fbf924eb3f152cc35453bcaac39850897f5d"
   },
   "org.standardnotes.token-vault": {
     "version": "2.0.10",
