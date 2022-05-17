@@ -69,7 +69,7 @@ export class ApplicationGroup extends SNApplicationGroup<WebOrDesktopDevice> {
     const webSocketUrl = this.webSocketUrl
 
     await super.initialize({
-      applicationCreator: (descriptor, device) => {
+      applicationCreator: async (descriptor, device) => {
         return createApplication(descriptor, device, defaultSyncServerHost, device, runtime, webSocketUrl)
       },
     })

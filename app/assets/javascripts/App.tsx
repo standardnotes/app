@@ -23,13 +23,13 @@ declare global {
 import { IsWebPlatform, WebAppVersion } from '@/Version'
 import { DesktopManagerInterface, SNLog } from '@standardnotes/snjs'
 import { render } from 'preact'
-import { unmountComponentAtNode } from 'preact/compat'
 import { ApplicationGroupView } from './Components/ApplicationGroupView'
 import { WebDevice } from './Device/WebDevice'
 import { StartApplication } from './Device/StartApplication'
 import { ApplicationGroup } from './UIModels/ApplicationGroup'
 import { WebOrDesktopDevice } from './Device/WebOrDesktopDevice'
 import { WebApplication } from './UIModels/Application'
+import { unmountComponentAtRoot } from './Utils/PreactUtils'
 
 let keyCount = 0
 const getKey = () => {
@@ -49,7 +49,7 @@ const startApplication: StartApplication = async function startApplication(
 
   const onDestroy = () => {
     const root = document.getElementById(RootId) as HTMLElement
-    unmountComponentAtNode(root)
+    unmountComponentAtRoot(root)
     root.remove()
     renderApp()
   }

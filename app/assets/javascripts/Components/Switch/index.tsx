@@ -11,6 +11,7 @@ export type SwitchProps = {
   children?: ComponentChildren
   role?: string
   disabled?: boolean
+  tabIndex?: number
 }
 
 export const Switch: FunctionalComponent<SwitchProps> = (props: SwitchProps) => {
