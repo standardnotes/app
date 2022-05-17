@@ -7,7 +7,7 @@ require('dotenv').config()
 module.exports = (env) => {
   mergeWithEnvDefaults(env)
   return {
-    entry: './app/assets/javascripts/index.ts',
+    entry: './app/assets/javascripts/index.tsx',
     output: {
       filename: './javascripts/app.js',
     },

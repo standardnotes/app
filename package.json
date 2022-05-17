@@ -48,6 +48,7 @@
     "node-sass": "^7.0.1",
     "npm-check-updates": "^12.5.9",
     "prettier": "^2.6.2",
+    "react": "^18.1.0",
     "sass-loader": "^12.6.0",
     "svg-jest": "^1.0.1",
     "ts-jest": "^27.1.4",

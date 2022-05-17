@@ -120,7 +120,6 @@ export class ApplicationGroupView extends Component<Props, State> {
           key={this.state.activeApplication.ephemeralIdentifier}
           mainApplicationGroup={this.group}
           application={this.state.activeApplication}
-          isApplicationView={true}
         />
       </div>
     )

@@ -28,7 +28,6 @@ import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 type Props = {
   application: WebApplication
   mainApplicationGroup: ApplicationGroup
-  isApplicationView: true
 }
 
 export const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicationGroup }) => {

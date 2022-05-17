@@ -1,7 +1,7 @@
 import { Icon } from '@/Components/Icon'
 import { MenuItem, MenuItemType } from '@/Components/Menu/MenuItem'
 import { KeyboardKey } from '@/Services/IOService'
-import { ApplicationDescriptor } from '@standardnotes/snjs/dist/@types'
+import { ApplicationDescriptor } from '@standardnotes/snjs'
 import { FunctionComponent } from 'preact'
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 

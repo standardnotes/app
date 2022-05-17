@@ -1,4 +1,4 @@
-import { FileItem } from '@standardnotes/snjs/dist/@types'
+import { FileItem } from '@standardnotes/snjs'
 import { action, makeObservable, observable } from 'mobx'
 
 export class FilePreviewModalState {

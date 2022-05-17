@@ -1,9 +1,9 @@
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
-import { ComponentChildren, FunctionalComponent } from 'preact'
+import { ComponentChildren, FunctionalComponent, createContext } from 'preact'
 import { useCallback, useContext } from 'preact/hooks'
-import { createContext } from 'react'
+
 import { PremiumFeaturesModal } from '@/Components/PremiumFeaturesModal'
 
 type PremiumModalContextData = {
