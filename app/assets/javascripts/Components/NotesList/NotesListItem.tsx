@@ -53,7 +53,7 @@ export const NotesListItem: FunctionComponent<Props> = ({
   const showModifiedDate = sortedBy === CollectionSort.UpdatedAt
   const editorForNote = application.componentManager.editorForNote(note)
   const editorName = editorForNote?.name ?? PLAIN_EDITOR_NAME
-  const [icon, tint] = application.iconsController.getIconAndTintForEditor(editorForNote?.identifier)
+  const [icon, tint] = application.iconsController.getIconAndTintForNoteType(editorForNote?.package_info.note_type)
 
   return (
     <div
