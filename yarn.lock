@@ -2401,10 +2401,10 @@
     buffer "^6.0.3"
     libsodium-wrappers "^0.7.9"
 
-"@standardnotes/snjs@2.109.2":
-  version "2.109.2"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.109.2.tgz#c7ee667cd7a3a9db5ccf7132a41d680a33888e2c"
-  integrity sha512-+4G8LQjzLrZe7Unzjqyr5Y2q4dtxu816MSMqWTmoAWQ3LFE0BEOm+1ltEfLC0cgic8ieH4tY14RUaTvNyznrFA==
+"@standardnotes/snjs@2.109.3":
+  version "2.109.3"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.109.3.tgz#a6fcd8af317caf340c6099b5e7cfb36f1ec7a1ba"
+  integrity sha512-RIV22G99ZuolxrHTrh12i9IicxsXYZ9kK0mzfG1uO3E7BtFyvKgaoX5Yugi305Q0WsLzf4bWaeAuWl7i3nTJ0Q==
   dependencies:
     "@standardnotes/auth" "^3.18.16"
     "@standardnotes/common" "^1.21.0"
