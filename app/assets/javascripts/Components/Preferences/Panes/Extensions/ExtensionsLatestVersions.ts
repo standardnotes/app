@@ -11,7 +11,6 @@ export class ExtensionsLatestVersions {
     }
 
     const versionMap: Map<string, string> = new Map()
-    collectFeatures(response.CORE_PLAN?.features as FeatureDescription[], versionMap)
     collectFeatures(response.PLUS_PLAN?.features as FeatureDescription[], versionMap)
     collectFeatures(response.PRO_PLAN?.features as FeatureDescription[], versionMap)
 

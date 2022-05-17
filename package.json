@@ -19,7 +19,8 @@
     "test": "jest --config app/assets/javascripts/jest.config.js",
     "test:coverage": "yarn test --coverage",
     "prepare": "husky install",
-    "postinstall": "yarn run ncu -loglevel verbose --packageFile package.json"
+    "postinstall": "yarn run ncu -loglevel verbose --packageFile package.json",
+    "upgrade:snjs": "ncu -u '@standardnotes/*' && yarn"
   },
   "devDependencies": {
     "@babel/core": "^7.17.9",
@@ -69,11 +70,11 @@
     "@reach/tooltip": "^0.16.2",
     "@reach/visually-hidden": "^0.16.0",
     "@standardnotes/components": "1.8.1",
-    "@standardnotes/filepicker": "1.14.6",
+    "@standardnotes/filepicker": "1.14.7",
     "@standardnotes/icons": "^1.1.7",
     "@standardnotes/sncrypto-web": "1.9.2",
-    "@standardnotes/snjs": "2.108.4",
-    "@standardnotes/stylekit": "5.26.0",
+    "@standardnotes/snjs": "2.109.1",
+    "@standardnotes/stylekit": "5.27.0",
     "@zip.js/zip.js": "^2.4.10",
     "mobx": "^6.5.0",
     "mobx-react-lite": "^3.3.0",
