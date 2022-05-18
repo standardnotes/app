@@ -14,7 +14,7 @@ import {
   SNTag,
   SystemViewId,
 } from '@standardnotes/snjs'
-import { action, computed, makeObservable, observable, reaction } from 'mobx'
+import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { AppState, AppStateEvent } from '.'
 import { WebApplication } from '../Application'
 import { AbstractState } from './AbstractState'
@@ -228,7 +228,9 @@ export class NotesViewState extends AbstractState {
 
     this.notes = notes
 
-    this.renderedNotes = renderedNotes
+    runInAction(() => {
+      this.renderedNotes = renderedNotes
+    })
 
     await this.recomputeSelectionAfterNotesReload()
 
@@ -258,7 +260,7 @@ export class NotesViewState extends AbstractState {
 
     const noteExistsInUpdatedResults = this.notes.find((note) => note.uuid === activeNote.uuid)
     if (!noteExistsInUpdatedResults && !isSearching) {
-      this.application.noteControllerGroup.closeNoteController(activeController)
+      this.closeNoteController(activeController)
 
       this.selectNextNote()
 
@@ -318,11 +320,12 @@ export class NotesViewState extends AbstractState {
   reloadPreferences = async () => {
     const freshDisplayOptions = {} as DisplayOptions
     const currentSortBy = this.displayOptions.sortBy
+
     let sortBy = this.application.getPreference(PrefKey.SortNotesBy, CollectionSort.CreatedAt)
     if (sortBy === CollectionSort.UpdatedAt || (sortBy as string) === 'client_updated_at') {
-      /** Use UserUpdatedAt instead */
       sortBy = CollectionSort.UpdatedAt
     }
+
     freshDisplayOptions.sortBy = sortBy
     freshDisplayOptions.sortReverse = this.application.getPreference(PrefKey.SortNotesReverse, false)
     freshDisplayOptions.showArchived = this.application.getPreference(PrefKey.NotesShowArchived, false)
@@ -468,17 +471,29 @@ export class NotesViewState extends AbstractState {
 
   selectNextNote = () => {
     const displayableNotes = this.notes
+
     const currentIndex = displayableNotes.findIndex((candidate) => {
       return candidate.uuid === this.activeControllerNote?.uuid
     })
 
-    if (currentIndex + 1 < displayableNotes.length) {
-      const nextNote = displayableNotes[currentIndex + 1]
+    let nextIndex = currentIndex + 1
+
+    while (nextIndex < displayableNotes.length) {
+      const nextNote = displayableNotes[nextIndex]
+
+      nextIndex++
+
+      if (nextNote.protected) {
+        continue
+      }
 
       this.selectNoteWithScrollHandling(nextNote).catch(console.error)
 
       const nextNoteElement = document.getElementById(`note-${nextNote.uuid}`)
+
       nextNoteElement?.focus()
+
+      return
     }
   }
 
@@ -495,20 +510,31 @@ export class NotesViewState extends AbstractState {
   selectPreviousNote = () => {
     const displayableNotes = this.notes
 
-    if (this.activeControllerNote) {
-      const currentIndex = displayableNotes.indexOf(this.activeControllerNote)
-      if (currentIndex - 1 >= 0) {
-        const previousNote = displayableNotes[currentIndex - 1]
-        this.selectNoteWithScrollHandling(previousNote).catch(console.error)
-        const previousNoteElement = document.getElementById(`note-${previousNote.uuid}`)
-        previousNoteElement?.focus()
-        return true
-      } else {
-        return false
-      }
+    if (!this.activeControllerNote) {
+      return
     }
 
-    return undefined
+    const currentIndex = displayableNotes.indexOf(this.activeControllerNote)
+
+    let previousIndex = currentIndex - 1
+
+    while (previousIndex >= 0) {
+      const previousNote = displayableNotes[previousIndex]
+
+      previousIndex--
+
+      if (previousNote.protected) {
+        continue
+      }
+
+      this.selectNoteWithScrollHandling(previousNote).catch(console.error)
+
+      const previousNoteElement = document.getElementById(`note-${previousNote.uuid}`)
+
+      previousNoteElement?.focus()
+
+      return
+    }
   }
 
   setNoteFilterText = (text: string) => {
@@ -543,10 +569,14 @@ export class NotesViewState extends AbstractState {
     }
   }
 
+  private closeNoteController(controller: NoteViewController): void {
+    this.application.noteControllerGroup.closeNoteController(controller)
+  }
+
   handleTagChange = () => {
     const activeNoteController = this.getActiveNoteController()
     if (activeNoteController?.isTemplateNote) {
-      this.application.noteControllerGroup.closeNoteController(activeNoteController)
+      this.closeNoteController(activeNoteController)
     }
 
     this.resetScrollPosition()
@@ -591,7 +621,9 @@ export class NotesViewState extends AbstractState {
     if (this.searchSubmitted) {
       this.searchSubmitted = false
     }
+
     this.reloadNotesDisplayOptions()
+
     void this.reloadNotes()
   }
 

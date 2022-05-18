@@ -54,10 +54,6 @@ export abstract class PureComponent<P = PureComponentProps, S = PureComponentSta
     this.deinit()
   }
 
-  render() {
-    return <div>Must override</div>
-  }
-
   public get appState(): AppState {
     return this.application.getAppState()
   }

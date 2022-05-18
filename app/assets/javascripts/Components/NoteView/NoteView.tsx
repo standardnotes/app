@@ -264,21 +264,26 @@ export class NoteView extends PureComponent<Props, State> {
 
     let title = this.state.editorTitle,
       text = this.state.editorText
+
     if (isPayloadSourceRetrieved(source)) {
       title = note.title
       text = note.text
     }
+
     if (!this.state.editorTitle) {
       title = note.title
     }
+
     if (!this.state.editorText) {
       text = note.text
     }
+
     if (title !== this.state.editorTitle) {
       this.setState({
         editorTitle: title,
       })
     }
+
     if (text !== this.state.editorText) {
       this.setState({
         editorText: text,
@@ -317,6 +322,7 @@ export class NoteView extends PureComponent<Props, State> {
     if (this.state.editorComponentViewer) {
       this.application.componentManager?.destroyComponentViewer(this.state.editorComponentViewer)
     }
+
     super.componentWillUnmount()
   }
 
@@ -401,12 +407,15 @@ export class NoteView extends PureComponent<Props, State> {
 
   dismissProtectedWarning = async () => {
     let showNoteContents = true
+
     if (this.application.hasProtectionSources()) {
       showNoteContents = await this.application.authorizeNoteAccess(this.note)
     }
+
     if (!showNoteContents) {
       return
     }
+
     this.setShowProtectedOverlay(false)
     this.focusTitle()
   }
@@ -1021,6 +1030,7 @@ export class NoteView extends PureComponent<Props, State> {
             {this.state.editorComponentViewer && (
               <div className="component-view">
                 <ComponentView
+                  key={this.state.editorComponentViewer.identifier}
                   componentViewer={this.state.editorComponentViewer}
                   onLoad={this.onEditorComponentLoad}
                   requestReload={this.editorComponentViewerRequestsReload}
@@ -1099,7 +1109,6 @@ export class NoteView extends PureComponent<Props, State> {
                     <ComponentView
                       key={viewer.identifier}
                       componentViewer={viewer}
-                      manualDealloc={true}
                       application={this.application}
                       appState={this.appState}
                     />

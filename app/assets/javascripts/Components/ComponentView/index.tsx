@@ -9,7 +9,7 @@ import {
 } from '@standardnotes/snjs'
 import { WebApplication } from '@/UIModels/Application'
 import { FunctionalComponent } from 'preact'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks'
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import { observer } from 'mobx-react-lite'
 import { OfflineRestricted } from '@/Components/ComponentView/OfflineRestricted'
 import { UrlMissing } from '@/Components/ComponentView/UrlMissing'
@@ -25,7 +25,6 @@ interface IProps {
   componentViewer: ComponentViewer
   requestReload?: (viewer: ComponentViewer, force?: boolean) => void
   onLoad?: (component: SNComponent) => void
-  manualDealloc?: boolean
 }
 
 /**
@@ -39,7 +38,7 @@ const MSToWaitAfterIframeLoadToAvoidFlicker = 35
 export const ComponentView: FunctionalComponent<IProps> = observer(
   ({ application, onLoad, componentViewer, requestReload }) => {
     const iframeRef = useRef<HTMLIFrameElement>(null)
-    const excessiveLoadingTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+    const [loadTimeout, setLoadTimeout] = useState<ReturnType<typeof setTimeout> | undefined>(undefined)
 
     const [hasIssueLoading, setHasIssueLoading] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
@@ -88,34 +87,36 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
       }
     }, [hasIssueLoading, componentViewer, requestReload])
 
-    const handleIframeTakingTooLongToLoad = useCallback(async () => {
-      setIsLoading(false)
-      setHasIssueLoading(true)
-
-      if (!didAttemptReload) {
-        setDidAttemptReload(true)
-        requestReload?.(componentViewer)
-      } else {
-        document.addEventListener(VisibilityChangeKey, onVisibilityChange)
-      }
-    }, [didAttemptReload, onVisibilityChange, componentViewer, requestReload])
-
-    useMemo(() => {
+    useEffect(() => {
       const loadTimeout = setTimeout(() => {
-        handleIframeTakingTooLongToLoad().catch(console.error)
+        setIsLoading(false)
+        setHasIssueLoading(true)
+
+        if (!didAttemptReload) {
+          setDidAttemptReload(true)
+          requestReload?.(componentViewer)
+        } else {
+          document.addEventListener(VisibilityChangeKey, onVisibilityChange)
+        }
       }, MaxLoadThreshold)
 
-      excessiveLoadingTimeout.current = loadTimeout
+      setLoadTimeout(loadTimeout)
 
       return () => {
-        excessiveLoadingTimeout.current && clearTimeout(excessiveLoadingTimeout.current)
+        if (loadTimeout) {
+          clearTimeout(loadTimeout)
+        }
       }
-    }, [handleIframeTakingTooLongToLoad])
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [componentViewer])
 
     const onIframeLoad = useCallback(() => {
       const iframe = iframeRef.current as HTMLIFrameElement
       const contentWindow = iframe.contentWindow as Window
-      excessiveLoadingTimeout.current && clearTimeout(excessiveLoadingTimeout.current)
+
+      if (loadTimeout) {
+        clearTimeout(loadTimeout)
+      }
 
       try {
         componentViewer.setWindow(contentWindow)
@@ -128,7 +129,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
         setHasIssueLoading(false)
         onLoad?.(component)
       }, MSToWaitAfterIframeLoadToAvoidFlicker)
-    }, [componentViewer, onLoad, component, excessiveLoadingTimeout])
+    }, [componentViewer, onLoad, component, loadTimeout])
 
     useEffect(() => {
       const removeFeaturesChangedObserver = componentViewer.addEventObserver((event) => {
