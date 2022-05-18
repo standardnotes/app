@@ -41,16 +41,21 @@ export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface 
     return this.databases.find((database) => database.databaseName === identifier) as Database
   }
 
-  async clearAllDataFromDevice(): Promise<void> {
+  async clearAllDataFromDevice(workspaceIdentifiers: ApplicationIdentifier[]): Promise<{ killsApplication: boolean }> {
     await this.clearRawKeychainValue()
+
     await this.removeAllRawStorageValues()
-    await Database.deleteAll()
+
+    await Database.deleteAll(workspaceIdentifiers)
+
+    return { killsApplication: false }
   }
 
   deinit() {
     for (const database of this.databases) {
       database.deinit()
     }
+
     this.databases = []
   }
 

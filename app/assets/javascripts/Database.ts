@@ -1,4 +1,4 @@
-import { isString, AlertService } from '@standardnotes/snjs'
+import { isString, AlertService, uniqueArray } from '@standardnotes/snjs'
 
 const STORE_NAME = 'items'
 const READ_WRITE = 'readwrite'
@@ -33,15 +33,29 @@ export class Database {
     this.locked = false
   }
 
-  static async deleteAll(): Promise<void> {
-    const rawDatabases = await window.indexedDB.databases()
+  static async getAllDatabaseNames(): Promise<string[] | undefined> {
+    if (!window.indexedDB.databases) {
+      return undefined
+    }
 
-    for (const rawDb of rawDatabases) {
-      if (!rawDb.name) {
-        continue
+    const rawDatabases = await window.indexedDB.databases()
+    return rawDatabases.map((db) => db.name).filter((name) => name && name.length > 0) as string[]
+  }
+
+  static async deleteAll(databaseNames: string[]): Promise<void> {
+    if (window.indexedDB.databases != undefined) {
+      const idbNames = await this.getAllDatabaseNames()
+
+      if (idbNames) {
+        databaseNames = uniqueArray([...idbNames, ...databaseNames])
       }
-      const db = new Database(rawDb.name)
+    }
+
+    for (const name of databaseNames) {
+      const db = new Database(name)
+
       await db.clearAllPayloads()
+
       db.deinit()
     }
   }
