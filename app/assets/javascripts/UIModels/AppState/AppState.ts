@@ -6,18 +6,13 @@ import {
   ApplicationEvent,
   ContentType,
   DeinitSource,
-  NoteViewController,
   PrefKey,
   SNNote,
-  SmartView,
   SNTag,
-  SystemViewId,
   removeFromArray,
-  Uuid,
-  PayloadEmitSource,
   WebOrDesktopDeviceInterface,
 } from '@standardnotes/snjs'
-import { action, computed, IReactionDisposer, makeObservable, observable, reaction } from 'mobx'
+import { action, IReactionDisposer, makeObservable, observable, reaction } from 'mobx'
 import { ActionsMenuState } from './ActionsMenuState'
 import { FeaturesState } from './FeaturesState'
 import { FilesState } from './FilesState'
@@ -56,7 +51,7 @@ export enum EventSource {
   Script,
 }
 
-type ObserverCallback = (event: AppStateEvent, data?: any) => Promise<void>
+type ObserverCallback = (event: AppStateEvent, data?: unknown) => Promise<void>
 
 export class AppState extends AbstractState {
   readonly enableUnfinishedFeatures: boolean = window?.enabledUnfinishedFeatures
@@ -67,8 +62,6 @@ export class AppState extends AbstractState {
   webAppEventDisposer?: () => void
   onVisibilityChange: () => void
   showBetaWarning: boolean
-
-  private multiEditorSupport = false
 
   readonly accountMenu: AccountMenuState
   readonly actionsMenu = new ActionsMenuState()
@@ -116,7 +109,6 @@ export class AppState extends AbstractState {
     this.notesView = new NotesViewState(application, this, this.appEventObserverRemovers)
     this.files = new FilesState(application)
     this.addAppEventObserver()
-    this.streamNotesAndTags()
     this.onVisibilityChange = () => {
       const visible = document.visibilityState === 'visible'
       const event = visible ? AppStateEvent.WindowDidFocus : AppStateEvent.WindowDidBlur
@@ -131,8 +123,6 @@ export class AppState extends AbstractState {
     }
 
     makeObservable(this, {
-      selectedTag: computed,
-
       showBetaWarning: observable,
       isSessionsModalVisible: observable,
       preferences: observable,
@@ -236,47 +226,6 @@ export class AppState extends AbstractState {
     return this.device.appVersion
   }
 
-  async openNewNote(title?: string) {
-    if (!this.multiEditorSupport) {
-      this.closeActiveNoteController()
-    }
-
-    const selectedTag = this.selectedTag
-
-    const activeRegularTagUuid = selectedTag && selectedTag instanceof SNTag ? selectedTag.uuid : undefined
-
-    await this.application.noteControllerGroup.createNoteView(undefined, title, activeRegularTagUuid)
-  }
-
-  getActiveNoteController() {
-    return this.application.noteControllerGroup.noteControllers[0]
-  }
-
-  getNoteControllers() {
-    return this.application.noteControllerGroup.noteControllers
-  }
-
-  closeNoteController(controller: NoteViewController) {
-    this.application.noteControllerGroup.closeNoteView(controller)
-  }
-
-  closeActiveNoteController() {
-    this.application.noteControllerGroup.closeActiveNoteView()
-  }
-
-  closeAllNoteControllers() {
-    this.application.noteControllerGroup.closeAllNoteViews()
-  }
-
-  noteControllerForNote(uuid: Uuid) {
-    for (const controller of this.getNoteControllers()) {
-      if (controller.note.uuid === uuid) {
-        return controller
-      }
-    }
-    return undefined
-  }
-
   isGlobalSpellcheckEnabled(): boolean {
     return this.application.getPreference(PrefKey.EditorSpellcheck, true)
   }
@@ -305,62 +254,6 @@ export class AppState extends AbstractState {
           tag,
           previousTag,
         }).catch(console.error)
-      },
-    )
-  }
-
-  public get selectedTag(): SNTag | SmartView | undefined {
-    return this.tags.selected
-  }
-
-  public set selectedTag(tag: SNTag | SmartView | undefined) {
-    this.tags.selected = tag
-  }
-
-  streamNotesAndTags() {
-    this.application.streamItems<SNNote | SNTag>(
-      [ContentType.Note, ContentType.Tag],
-      async ({ changed, inserted, removed, source }) => {
-        if (![PayloadEmitSource.PreSyncSave, PayloadEmitSource.RemoteRetrieved].includes(source)) {
-          return
-        }
-
-        const removedNotes = removed.filter((i) => i.content_type === ContentType.Note)
-
-        for (const removedNote of removedNotes) {
-          const noteController = this.noteControllerForNote(removedNote.uuid)
-          if (noteController) {
-            this.closeNoteController(noteController)
-          }
-        }
-
-        const changedOrInserted = [...changed, ...inserted].filter((i) => i.content_type === ContentType.Note)
-
-        const selectedTag = this.tags.selected
-
-        const isBrowswingTrashedNotes =
-          selectedTag instanceof SmartView && selectedTag.uuid === SystemViewId.TrashedNotes
-
-        const isBrowsingArchivedNotes =
-          selectedTag instanceof SmartView && selectedTag.uuid === SystemViewId.ArchivedNotes
-
-        for (const note of changedOrInserted) {
-          const noteController = this.noteControllerForNote(note.uuid)
-          if (!noteController) {
-            continue
-          }
-
-          if (note.trashed && !isBrowswingTrashedNotes && !this.searchOptions.includeTrashed) {
-            this.closeNoteController(noteController)
-          } else if (
-            note.archived &&
-            !isBrowsingArchivedNotes &&
-            !this.searchOptions.includeArchived &&
-            !this.application.getPreference(PrefKey.NotesShowArchived, false)
-          ) {
-            this.closeNoteController(noteController)
-          }
-        }
       },
     )
   }
@@ -412,7 +305,7 @@ export class AppState extends AbstractState {
     }
   }
 
-  async notifyEvent(eventName: AppStateEvent, data?: any) {
+  async notifyEvent(eventName: AppStateEvent, data?: unknown) {
     /**
      * Timeout is particularly important so we can give all initial
      * controllers a chance to construct before propogting any events *

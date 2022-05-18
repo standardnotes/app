@@ -3,16 +3,7 @@ import { confirmDialog } from '@/Services/AlertService'
 import { KeyboardModifier } from '@/Services/IOService'
 import { StringEmptyTrash, Strings, StringUtils } from '@/Strings'
 import { MENU_MARGIN_FROM_APP_BORDER } from '@/Constants'
-import {
-  UuidString,
-  SNNote,
-  NoteMutator,
-  ContentType,
-  SNTag,
-  ChallengeReason,
-  NoteViewController,
-  DeinitSource,
-} from '@standardnotes/snjs'
+import { UuidString, SNNote, NoteMutator, ContentType, SNTag, ChallengeReason, DeinitSource } from '@standardnotes/snjs'
 import { makeObservable, observable, action, computed, runInAction } from 'mobx'
 import { WebApplication } from '../Application'
 import { AppState } from './AppState'
@@ -81,11 +72,21 @@ export class NotesState extends AbstractState {
           }
         })
       }),
-    )
-  }
 
-  get activeNoteController(): NoteViewController | undefined {
-    return this.application.noteControllerGroup.noteControllers[0]
+      this.application.noteControllerGroup.addActiveControllerChangeObserver(() => {
+        const controllers = this.application.noteControllerGroup.noteControllers
+
+        const activeNoteUuids = controllers.map((c) => c.note.uuid)
+
+        const selectedUuids = this.getSelectedNotesList().map((n) => n.uuid)
+
+        for (const selectedId of selectedUuids) {
+          if (!activeNoteUuids.includes(selectedId)) {
+            delete this.selectedNotes[selectedId]
+          }
+        }
+      }),
+    )
   }
 
   get selectedNotesCount(): number {
@@ -132,11 +133,18 @@ export class NotesState extends AbstractState {
       return
     }
 
+    if (this.selectedNotes[uuid]) {
+      return
+    }
+
     const hasMeta = this.io.activeModifiers.has(KeyboardModifier.Meta)
     const hasCtrl = this.io.activeModifiers.has(KeyboardModifier.Ctrl)
     const hasShift = this.io.activeModifiers.has(KeyboardModifier.Shift)
 
-    if (userTriggered && (hasMeta || hasCtrl)) {
+    const isMultipleSelectSingle = userTriggered && (hasMeta || hasCtrl)
+    const isMultipleSelectRange = userTriggered && hasShift
+
+    if (isMultipleSelectSingle) {
       if (this.selectedNotes[uuid]) {
         delete this.selectedNotes[uuid]
       } else if (await this.application.authorizeNoteAccess(note)) {
@@ -145,7 +153,7 @@ export class NotesState extends AbstractState {
           this.lastSelectedNote = note
         })
       }
-    } else if (userTriggered && hasShift) {
+    } else if (isMultipleSelectRange) {
       await this.selectNotesRange(note)
     } else {
       const shouldSelectNote = this.selectedNotesCount > 1 || !this.selectedNotes[uuid]
@@ -165,7 +173,7 @@ export class NotesState extends AbstractState {
   }
 
   private async openNote(noteUuid: string): Promise<void> {
-    if (this.activeNoteController?.note?.uuid === noteUuid) {
+    if (this.appState.notesView.activeControllerNote?.uuid === noteUuid) {
       return
     }
 
@@ -175,14 +183,19 @@ export class NotesState extends AbstractState {
       return
     }
 
-    if (this.activeNoteController) {
-      this.application.noteControllerGroup.closeActiveNoteView()
-    }
-
-    await this.application.noteControllerGroup.createNoteView(noteUuid)
+    await this.application.noteControllerGroup.createNoteController(noteUuid)
 
     this.appState.noteTags.reloadTags()
+
     await this.onActiveEditorChanged()
+  }
+
+  async createNewNoteController(title?: string) {
+    const selectedTag = this.appState.tags.selected
+
+    const activeRegularTagUuid = selectedTag && selectedTag instanceof SNTag ? selectedTag.uuid : undefined
+
+    await this.application.noteControllerGroup.createNoteController(undefined, title, activeRegularTagUuid)
   }
 
   setContextMenuOpen(open: boolean): void {
@@ -249,7 +262,7 @@ export class NotesState extends AbstractState {
   }
 
   async changeSelectedNotes(mutate: (mutator: NoteMutator) => void): Promise<void> {
-    await this.application.mutator.changeItems(Object.values(this.selectedNotes), mutate, false)
+    await this.application.mutator.changeItems(this.getSelectedNotesList(), mutate, false)
     this.application.sync.sync().catch(console.error)
   }
 
@@ -290,7 +303,7 @@ export class NotesState extends AbstractState {
   }
 
   async deleteNotes(permanently: boolean): Promise<boolean> {
-    if (Object.values(this.selectedNotes).some((note) => note.locked)) {
+    if (this.getSelectedNotesList().some((note) => note.locked)) {
       const text = StringUtils.deleteLockedNotesAttempt(this.selectedNotesCount)
       this.application.alertService.alert(text).catch(console.error)
       return false
@@ -299,7 +312,7 @@ export class NotesState extends AbstractState {
     const title = Strings.trashNotesTitle
     let noteTitle = undefined
     if (this.selectedNotesCount === 1) {
-      const selectedNote = Object.values(this.selectedNotes)[0]
+      const selectedNote = this.getSelectedNotesList()[0]
       noteTitle = selectedNote.title.length ? `'${selectedNote.title}'` : 'this note'
     }
     const text = StringUtils.deleteNotes(permanently, this.selectedNotesCount, noteTitle)
@@ -312,7 +325,7 @@ export class NotesState extends AbstractState {
       })
     ) {
       if (permanently) {
-        for (const note of Object.values(this.selectedNotes)) {
+        for (const note of this.getSelectedNotesList()) {
           await this.application.mutator.deleteItem(note)
           delete this.selectedNotes[note.uuid]
         }
@@ -334,7 +347,7 @@ export class NotesState extends AbstractState {
   }
 
   async setArchiveSelectedNotes(archived: boolean): Promise<void> {
-    if (Object.values(this.selectedNotes).some((note) => note.locked)) {
+    if (this.getSelectedNotesList().some((note) => note.locked)) {
       this.application.alertService
         .alert(StringUtils.archiveLockedNotesAttempt(archived, this.selectedNotesCount))
         .catch(console.error)
@@ -352,7 +365,7 @@ export class NotesState extends AbstractState {
   }
 
   async setProtectSelectedNotes(protect: boolean): Promise<void> {
-    const selectedNotes = Object.values(this.selectedNotes)
+    const selectedNotes = this.getSelectedNotesList()
     if (protect) {
       await this.application.mutator.protectNotes(selectedNotes)
       this.setShowProtectedWarning(true)
@@ -382,7 +395,7 @@ export class NotesState extends AbstractState {
   }
 
   async addTagToSelectedNotes(tag: SNTag): Promise<void> {
-    const selectedNotes = Object.values(this.selectedNotes)
+    const selectedNotes = this.getSelectedNotesList()
     const parentChainTags = this.application.items.getTagParentChain(tag)
     const tagsToAdd = [...parentChainTags, tag]
     await Promise.all(
@@ -398,7 +411,7 @@ export class NotesState extends AbstractState {
   }
 
   async removeTagFromSelectedNotes(tag: SNTag): Promise<void> {
-    const selectedNotes = Object.values(this.selectedNotes)
+    const selectedNotes = this.getSelectedNotesList()
     await this.application.mutator.changeItem(tag, (mutator) => {
       for (const note of selectedNotes) {
         mutator.removeItemAsRelationship(note)
@@ -408,7 +421,7 @@ export class NotesState extends AbstractState {
   }
 
   isTagInSelectedNotes(tag: SNTag): boolean {
-    const selectedNotes = Object.values(this.selectedNotes)
+    const selectedNotes = this.getSelectedNotesList()
     return selectedNotes.every((note) => this.appState.getNoteTags(note).find((noteTag) => noteTag.uuid === tag.uuid))
   }
 
@@ -426,6 +439,10 @@ export class NotesState extends AbstractState {
       this.application.mutator.emptyTrash().catch(console.error)
       this.application.sync.sync().catch(console.error)
     }
+  }
+
+  private getSelectedNotesList(): SNNote[] {
+    return Object.values(this.selectedNotes)
   }
 
   private get io() {

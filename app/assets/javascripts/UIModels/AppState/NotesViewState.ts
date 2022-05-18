@@ -7,14 +7,14 @@ import {
   DeinitSource,
   findInArray,
   NotesDisplayCriteria,
+  NoteViewController,
   PrefKey,
   SmartView,
   SNNote,
   SNTag,
   SystemViewId,
-  UuidString,
 } from '@standardnotes/snjs'
-import { action, autorun, computed, makeObservable, observable, reaction } from 'mobx'
+import { action, computed, makeObservable, observable, reaction } from 'mobx'
 import { AppState, AppStateEvent } from '.'
 import { WebApplication } from '../Application'
 import { AbstractState } from './AbstractState'
@@ -47,7 +47,6 @@ export class NotesViewState extends AbstractState {
   panelWidth = 0
   renderedNotes: SNNote[] = []
   searchSubmitted = false
-  selectedNotes: Record<UuidString, SNNote> = {}
   showDisplayOptionsMenu = false
   displayOptions = {
     sortBy: CollectionSort.CreatedAt,
@@ -61,13 +60,13 @@ export class NotesViewState extends AbstractState {
     hideNotePreview: false,
     hideEditorIcon: false,
   }
+  private reloadNotesPromise?: Promise<unknown>
 
   override deinit(source: DeinitSource) {
     super.deinit(source)
     ;(this.noteFilterText as unknown) = undefined
     ;(this.notes as unknown) = undefined
     ;(this.renderedNotes as unknown) = undefined
-    ;(this.selectedNotes as unknown) = undefined
     ;(window.onresize as unknown) = undefined
 
     destroyAllObjectProperties(this)
@@ -80,64 +79,44 @@ export class NotesViewState extends AbstractState {
 
     appObservers.push(
       application.streamItems<SNNote>(ContentType.Note, () => {
-        this.reloadNotes()
-
-        const activeNote = appState.notes.activeNoteController?.note
-
-        if (appState.notes.selectedNotesCount < 2) {
-          if (activeNote) {
-            const browsingTrashedNotes =
-              appState.selectedTag instanceof SmartView && appState.selectedTag?.uuid === SystemViewId.TrashedNotes
-
-            if (activeNote.trashed && !browsingTrashedNotes && !appState?.searchOptions.includeTrashed) {
-              this.selectNextOrCreateNew()
-            } else if (!this.selectedNotes[activeNote.uuid]) {
-              this.selectNote(activeNote).catch(console.error)
-            }
-          } else {
-            this.selectFirstNote()
-          }
-        }
+        void this.reloadNotes()
       }),
 
       application.streamItems<SNTag>([ContentType.Tag], async ({ changed, inserted }) => {
         const tags = [...changed, ...inserted]
+
         /** A tag could have changed its relationships, so we need to reload the filter */
         this.reloadNotesDisplayOptions()
-        this.reloadNotes()
 
-        if (appState.selectedTag && findInArray(tags, 'uuid', appState.selectedTag.uuid)) {
+        void this.reloadNotes()
+
+        if (appState.tags.selected && findInArray(tags, 'uuid', appState.tags.selected.uuid)) {
           /** Tag title could have changed */
           this.reloadPanelTitle()
         }
       }),
       application.addEventObserver(async () => {
-        this.reloadPreferences()
+        void this.reloadPreferences()
       }, ApplicationEvent.PreferencesChanged),
       application.addEventObserver(async () => {
-        appState.closeAllNoteControllers()
-        this.selectFirstNote()
+        this.application.noteControllerGroup.closeAllNoteControllers()
+        void this.selectFirstNote()
         this.setCompletedFullSync(false)
       }, ApplicationEvent.SignedIn),
       application.addEventObserver(async () => {
-        this.reloadNotes()
-        if (
-          this.notes.length === 0 &&
-          appState.selectedTag instanceof SmartView &&
-          appState.selectedTag.uuid === SystemViewId.AllNotes &&
-          this.noteFilterText === '' &&
-          !appState.notes.activeNoteController
-        ) {
-          this.createPlaceholderNote()?.catch(console.error)
-        }
+        void this.reloadNotes().then(() => {
+          if (
+            this.notes.length === 0 &&
+            appState.tags.selected instanceof SmartView &&
+            appState.tags.selected.uuid === SystemViewId.AllNotes &&
+            this.noteFilterText === '' &&
+            !this.getActiveNoteController()
+          ) {
+            this.createPlaceholderNote()?.catch(console.error)
+          }
+        })
         this.setCompletedFullSync(true)
       }, ApplicationEvent.CompletedFullSync),
-
-      autorun(() => {
-        if (appState.notes.selectedNotes) {
-          this.syncSelectedNotes()
-        }
-      }),
 
       reaction(
         () => [
@@ -147,7 +126,7 @@ export class NotesViewState extends AbstractState {
         ],
         () => {
           this.reloadNotesDisplayOptions()
-          this.reloadNotes()
+          void this.reloadNotes()
         },
       ),
 
@@ -170,7 +149,6 @@ export class NotesViewState extends AbstractState {
       notesToDisplay: observable,
       panelTitle: observable,
       renderedNotes: observable,
-      selectedNotes: observable,
       showDisplayOptionsMenu: observable,
 
       reloadNotes: action,
@@ -179,7 +157,6 @@ export class NotesViewState extends AbstractState {
       resetPagination: action,
       setCompletedFullSync: action,
       setNoteFilterText: action,
-      syncSelectedNotes: action,
       setShowDisplayOptionsMenu: action,
       onFilterEnter: action,
       handleFilterTextChanged: action,
@@ -190,6 +167,14 @@ export class NotesViewState extends AbstractState {
     window.onresize = () => {
       this.resetPagination(true)
     }
+  }
+
+  public getActiveNoteController(): NoteViewController | undefined {
+    return this.application.noteControllerGroup.activeNoteViewController
+  }
+
+  public get activeControllerNote(): SNNote | undefined {
+    return this.getActiveNoteController()?.note
   }
 
   setCompletedFullSync = (completed: boolean) => {
@@ -208,36 +193,96 @@ export class NotesViewState extends AbstractState {
     return !!this.noteFilterText && this.noteFilterText.length > 0
   }
 
-  get activeEditorNote() {
-    return this.appState.notes.activeNoteController?.note
-  }
-
   reloadPanelTitle = () => {
     let title = this.panelTitle
+
     if (this.isFiltering) {
       const resultCount = this.notes.length
       title = `${resultCount} search results`
-    } else if (this.appState.selectedTag) {
-      title = `${this.appState.selectedTag.title}`
+    } else if (this.appState.tags.selected) {
+      title = `${this.appState.tags.selected.title}`
     }
+
     this.panelTitle = title
   }
 
-  reloadNotes = () => {
-    const tag = this.appState.selectedTag
+  reloadNotes = async (): Promise<void> => {
+    if (this.reloadNotesPromise) {
+      await this.reloadNotesPromise
+    }
+
+    this.reloadNotesPromise = this.performReloadNotes()
+
+    await this.reloadNotesPromise
+  }
+
+  private async performReloadNotes() {
+    const tag = this.appState.tags.selected
     if (!tag) {
       return
     }
+
     const notes = this.application.items.getDisplayableNotes()
+
     const renderedNotes = notes.slice(0, this.notesToDisplay)
 
     this.notes = notes
+
     this.renderedNotes = renderedNotes
+
+    await this.recomputeSelectionAfterNotesReload()
+
     this.reloadPanelTitle()
   }
 
+  private async recomputeSelectionAfterNotesReload() {
+    const appState = this.appState
+    const activeController = this.getActiveNoteController()
+    const activeNote = activeController?.note
+    const isSearching = this.noteFilterText.length > 0
+    const hasMultipleNotesSelected = appState.notes.selectedNotesCount >= 2
+
+    if (hasMultipleNotesSelected) {
+      return
+    }
+
+    if (!activeNote) {
+      await this.selectFirstNote()
+
+      return
+    }
+
+    if (activeController.isTemplateNote) {
+      return
+    }
+
+    const noteExistsInUpdatedResults = this.notes.find((note) => note.uuid === activeNote.uuid)
+    if (!noteExistsInUpdatedResults && !isSearching) {
+      this.application.noteControllerGroup.closeNoteController(activeController)
+
+      this.selectNextNote()
+
+      return
+    }
+
+    const showTrashedNotes =
+      (appState.tags.selected instanceof SmartView && appState.tags.selected?.uuid === SystemViewId.TrashedNotes) ||
+      appState?.searchOptions.includeTrashed
+
+    const showArchivedNotes =
+      (appState.tags.selected instanceof SmartView && appState.tags.selected.uuid === SystemViewId.ArchivedNotes) ||
+      appState.searchOptions.includeArchived ||
+      this.application.getPreference(PrefKey.NotesShowArchived, false)
+
+    if ((activeNote.trashed && !showTrashedNotes) || (activeNote.archived && !showArchivedNotes)) {
+      await this.selectNextOrCreateNew()
+    } else if (!this.appState.notes.selectedNotes[activeNote.uuid]) {
+      await this.selectNoteWithScrollHandling(activeNote).catch(console.error)
+    }
+  }
+
   reloadNotesDisplayOptions = () => {
-    const tag = this.appState.selectedTag
+    const tag = this.appState.tags.selected
 
     const searchText = this.noteFilterText.toLowerCase()
     const isSearching = searchText.length
@@ -266,10 +311,11 @@ export class NotesViewState extends AbstractState {
         includeProtectedNoteText: this.appState.searchOptions.includeProtectedContents,
       },
     })
+
     this.application.items.setNotesDisplayCriteria(criteria)
   }
 
-  reloadPreferences = () => {
+  reloadPreferences = async () => {
     const freshDisplayOptions = {} as DisplayOptions
     const currentSortBy = this.displayOptions.sortBy
     let sortBy = this.application.getPreference(PrefKey.SortNotesBy, CollectionSort.CreatedAt)
@@ -287,6 +333,7 @@ export class NotesViewState extends AbstractState {
     freshDisplayOptions.hideDate = this.application.getPreference(PrefKey.NotesHideDate, false)
     freshDisplayOptions.hideTags = this.application.getPreference(PrefKey.NotesHideTags, true)
     freshDisplayOptions.hideEditorIcon = this.application.getPreference(PrefKey.NotesHideEditorIcon, false)
+
     const displayOptionsChanged =
       freshDisplayOptions.sortBy !== this.displayOptions.sortBy ||
       freshDisplayOptions.sortReverse !== this.displayOptions.sortReverse ||
@@ -296,12 +343,14 @@ export class NotesViewState extends AbstractState {
       freshDisplayOptions.hideProtected !== this.displayOptions.hideProtected ||
       freshDisplayOptions.hideEditorIcon !== this.displayOptions.hideEditorIcon ||
       freshDisplayOptions.hideTags !== this.displayOptions.hideTags
+
     this.displayOptions = freshDisplayOptions
+
     if (displayOptionsChanged) {
       this.reloadNotesDisplayOptions()
     }
 
-    this.reloadNotes()
+    await this.reloadNotes()
 
     const width = this.application.getPreference(PrefKey.NotesPanelWidth)
     if (width) {
@@ -309,28 +358,29 @@ export class NotesViewState extends AbstractState {
     }
 
     if (freshDisplayOptions.sortBy !== currentSortBy) {
-      this.selectFirstNote()
+      await this.selectFirstNote()
     }
   }
 
   createNewNote = async () => {
     this.appState.notes.unselectNotes()
+
     let title = `Note ${this.notes.length + 1}`
     if (this.isFiltering) {
       title = this.noteFilterText
     }
 
-    await this.appState.openNewNote(title)
+    await this.appState.notes.createNewNoteController(title)
 
-    this.reloadNotes()
     this.appState.noteTags.reloadTags()
   }
 
   createPlaceholderNote = () => {
-    const selectedTag = this.appState.selectedTag
+    const selectedTag = this.appState.tags.selected
     if (selectedTag && selectedTag instanceof SmartView && selectedTag.uuid !== SystemViewId.AllNotes) {
       return
     }
+
     return this.createNewNote()
   }
 
@@ -363,7 +413,8 @@ export class NotesViewState extends AbstractState {
 
   paginate = () => {
     this.notesToDisplay += this.pageSize
-    this.reloadNotes()
+
+    void this.reloadNotes()
 
     if (this.searchSubmitted) {
       this.application.getDesktopService()?.searchText(this.noteFilterText)
@@ -390,8 +441,13 @@ export class NotesViewState extends AbstractState {
     return document.getElementById(ELEMENT_ID_SCROLL_CONTAINER)
   }
 
-  selectNote = async (note: SNNote, userTriggered?: boolean, scrollIntoView = true): Promise<void> => {
+  selectNoteWithScrollHandling = async (
+    note: SNNote,
+    userTriggered?: boolean,
+    scrollIntoView = true,
+  ): Promise<void> => {
     await this.appState.notes.selectNote(note.uuid, userTriggered)
+
     if (scrollIntoView) {
       const noteElement = document.getElementById(`note-${note.uuid}`)
       noteElement?.scrollIntoView({
@@ -400,10 +456,12 @@ export class NotesViewState extends AbstractState {
     }
   }
 
-  selectFirstNote = () => {
+  selectFirstNote = async () => {
     const note = this.getFirstNonProtectedNote()
+
     if (note) {
-      this.selectNote(note, false, false).catch(console.error)
+      await this.selectNoteWithScrollHandling(note, false, false)
+
       this.resetScrollPosition()
     }
   }
@@ -411,33 +469,37 @@ export class NotesViewState extends AbstractState {
   selectNextNote = () => {
     const displayableNotes = this.notes
     const currentIndex = displayableNotes.findIndex((candidate) => {
-      return candidate.uuid === this.activeEditorNote?.uuid
+      return candidate.uuid === this.activeControllerNote?.uuid
     })
+
     if (currentIndex + 1 < displayableNotes.length) {
       const nextNote = displayableNotes[currentIndex + 1]
-      this.selectNote(nextNote).catch(console.error)
+
+      this.selectNoteWithScrollHandling(nextNote).catch(console.error)
+
       const nextNoteElement = document.getElementById(`note-${nextNote.uuid}`)
       nextNoteElement?.focus()
     }
   }
 
-  selectNextOrCreateNew = () => {
+  selectNextOrCreateNew = async () => {
     const note = this.getFirstNonProtectedNote()
+
     if (note) {
-      this.selectNote(note, false, false).catch(console.error)
+      await this.selectNoteWithScrollHandling(note, false, false).catch(console.error)
     } else {
-      this.appState.closeActiveNoteController()
+      await this.createNewNote()
     }
   }
 
   selectPreviousNote = () => {
     const displayableNotes = this.notes
 
-    if (this.activeEditorNote) {
-      const currentIndex = displayableNotes.indexOf(this.activeEditorNote)
+    if (this.activeControllerNote) {
+      const currentIndex = displayableNotes.indexOf(this.activeControllerNote)
       if (currentIndex - 1 >= 0) {
         const previousNote = displayableNotes[currentIndex - 1]
-        this.selectNote(previousNote).catch(console.error)
+        this.selectNoteWithScrollHandling(previousNote).catch(console.error)
         const previousNoteElement = document.getElementById(`note-${previousNote.uuid}`)
         previousNoteElement?.focus()
         return true
@@ -450,16 +512,17 @@ export class NotesViewState extends AbstractState {
   }
 
   setNoteFilterText = (text: string) => {
+    if (text === this.noteFilterText) {
+      return
+    }
+
     this.noteFilterText = text
     this.handleFilterTextChanged()
   }
 
-  syncSelectedNotes = () => {
-    this.selectedNotes = this.appState.notes.selectedNotes
-  }
-
   handleEditorChange = async () => {
-    const activeNote = this.appState.getActiveNoteController()?.note
+    const activeNote = this.application.noteControllerGroup.activeNoteViewController?.note
+
     if (activeNote && activeNote.conflictOf) {
       this.application.mutator
         .changeAndSaveItem(activeNote, (mutator) => {
@@ -481,6 +544,11 @@ export class NotesViewState extends AbstractState {
   }
 
   handleTagChange = () => {
+    const activeNoteController = this.getActiveNoteController()
+    if (activeNoteController?.isTemplateNote) {
+      this.application.noteControllerGroup.closeNoteController(activeNoteController)
+    }
+
     this.resetScrollPosition()
 
     this.setShowDisplayOptionsMenu(false)
@@ -491,21 +559,9 @@ export class NotesViewState extends AbstractState {
 
     this.resetPagination()
 
-    /* Capture db load state before beginning reloadNotes,
-      since this status may change during reload */
-    const dbLoaded = this.application.isDatabaseLoaded()
     this.reloadNotesDisplayOptions()
-    this.reloadNotes()
 
-    const hasSomeNotes = this.notes.length > 0
-
-    if (hasSomeNotes) {
-      this.selectFirstNote()
-    } else if (dbLoaded) {
-      if (this.activeEditorNote && !this.notes.includes(this.activeEditorNote)) {
-        this.appState.closeActiveNoteController()
-      }
-    }
+    void this.reloadNotes()
   }
 
   onFilterEnter = () => {
@@ -519,12 +575,24 @@ export class NotesViewState extends AbstractState {
     this.application.getDesktopService()?.searchText(this.noteFilterText)
   }
 
+  public async insertCurrentIfTemplate(): Promise<void> {
+    const controller = this.getActiveNoteController()
+
+    if (!controller) {
+      return
+    }
+
+    if (controller.isTemplateNote) {
+      await controller.insertTemplatedNote()
+    }
+  }
+
   handleFilterTextChanged = () => {
     if (this.searchSubmitted) {
       this.searchSubmitted = false
     }
     this.reloadNotesDisplayOptions()
-    this.reloadNotes()
+    void this.reloadNotes()
   }
 
   clearFilterText = () => {

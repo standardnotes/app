@@ -34,6 +34,7 @@ const DeletePermanentlyButton = ({ closeOnBlur, onClick }: DeletePermanentlyButt
 const iconClass = 'color-neutral mr-2'
 const iconClassDanger = 'color-danger mr-2'
 const iconClassWarning = 'color-warning mr-2'
+const iconClassSuccess = 'color-success mr-2'
 
 const getWordCount = (text: string) => {
   if (text.trim().length === 0) {
@@ -400,8 +401,8 @@ export const NotesOptions = observer(({ application, appState, closeOnBlur }: No
               await appState.notes.setTrashSelectedNotes(false)
             }}
           >
-            <Icon type="restore" className={iconClass} />
-            Restore
+            <Icon type="restore" className={iconClassSuccess} />
+            <span className="color-success">Restore</span>
           </button>
           <DeletePermanentlyButton
             closeOnBlur={closeOnBlur}

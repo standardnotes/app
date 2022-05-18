@@ -88,9 +88,7 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 
     const transactions: TransactionalMutation[] = []
 
-    if (application.getAppState().getActiveNoteController()?.isTemplateNote) {
-      await application.getAppState().getActiveNoteController().insertTemplatedNote()
-    }
+    await application.getAppState().notesView.insertCurrentIfTemplate()
 
     if (note.locked) {
       application.alertService.alert(STRING_EDIT_LOCKED_ATTEMPT).catch(console.error)
