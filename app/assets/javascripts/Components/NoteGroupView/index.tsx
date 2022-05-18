@@ -31,7 +31,6 @@ export class NoteGroupView extends PureComponent<Props, State> {
     const controllerGroup = this.application.noteControllerGroup
     this.removeChangeObserver = this.application.noteControllerGroup.addActiveControllerChangeObserver(() => {
       const controllers = controllerGroup.noteControllers
-
       this.setState({
         controllers: controllers,
       })
@@ -63,7 +62,7 @@ export class NoteGroupView extends PureComponent<Props, State> {
         {!this.state.showMultipleSelectedNotes && (
           <>
             {this.state.controllers.map((controller) => {
-              return <NoteView application={this.application} controller={controller} />
+              return <NoteView key={controller.note.uuid} application={this.application} controller={controller} />
             })}
           </>
         )}

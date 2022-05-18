@@ -30,7 +30,7 @@ export const NotesList: FunctionComponent<Props> = observer(
         if (hideTags) {
           return []
         }
-        const selectedTag = appState.selectedTag
+        const selectedTag = appState.tags.selected
         if (!selectedTag) {
           return []
         }

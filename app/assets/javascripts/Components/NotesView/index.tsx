@@ -35,11 +35,12 @@ export const NotesView: FunctionComponent<Props> = observer(({ application, appS
     optionsSubtitle,
     panelTitle,
     renderedNotes,
-    selectedNotes,
     searchBarElement,
     paginate,
     panelWidth,
   } = appState.notesView
+
+  const { selectedNotes } = appState.notes
 
   const createNewNote = useCallback(() => appState.notesView.createNewNote(), [appState])
   const onFilterEnter = useCallback(() => appState.notesView.onFilterEnter(), [appState])

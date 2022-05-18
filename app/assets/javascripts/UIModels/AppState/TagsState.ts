@@ -137,19 +137,25 @@ export class TagsState extends AbstractState {
 
           this.smartViews = this.application.items.getSmartViews()
 
-          const selectedTag = this.selected_
+          const currrentSelectedTag = this.selected_
 
-          if (selectedTag && !isSystemView(selectedTag as SmartView)) {
-            if (FindItem(removed, selectedTag.uuid)) {
-              this.selected_ = this.smartViews[0]
-            }
+          if (!currrentSelectedTag) {
+            this.setSelectedTagInstance(this.smartViews[0])
 
-            const updated = FindItem(changed, selectedTag.uuid)
-            if (updated) {
-              this.selected_ = updated as AnyTag
-            }
+            return
+          }
+
+          if (isSystemView(currrentSelectedTag as SmartView)) {
+            return
+          }
+
+          if (FindItem(removed, currrentSelectedTag.uuid)) {
+            this.setSelectedTagInstance(this.smartViews[0])
           } else {
-            this.selected_ = this.smartViews[0]
+            const updated = FindItem(changed, currrentSelectedTag.uuid)
+            if (updated) {
+              this.setSelectedTagInstance(updated as AnyTag)
+            }
           }
         })
       }),
@@ -379,6 +385,11 @@ export class TagsState extends AbstractState {
     }
 
     this.previouslySelected_ = this.selected_
+
+    this.setSelectedTagInstance(tag)
+  }
+
+  private setSelectedTagInstance(tag: AnyTag | undefined): void {
     this.selected_ = tag
   }
 
