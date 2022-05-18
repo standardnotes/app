@@ -6,7 +6,6 @@ import { PANEL_NAME_NOTES, PANEL_NAME_NAVIGATION } from '@/Constants'
 import { alertDialog } from '@/Services/AlertService'
 import { WebApplication } from '@/UIModels/Application'
 import { Navigation } from '@/Components/Navigation'
-import { NotesView } from '@/Components/NotesView'
 import { NoteGroupView } from '@/Components/NoteGroupView'
 import { Footer } from '@/Components/Footer'
 import { SessionsModal } from '@/Components/SessionsModal'
@@ -24,6 +23,7 @@ import { ToastContainer } from '@standardnotes/stylekit'
 import { FilePreviewModal } from '../Files/FilePreviewModal'
 import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
 import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
+import { ContentListView } from '../ContentListView'
 
 type Props = {
   application: WebApplication
@@ -211,7 +211,7 @@ export const ApplicationView: FunctionComponent<Props> = ({ application, mainApp
       <div className={platformString + ' main-ui-view sn-component'}>
         <div id="app" className={appClass + ' app app-column-container'}>
           <Navigation application={application} />
-          <NotesView application={application} appState={appState} />
+          <ContentListView application={application} appState={appState} />
           <NoteGroupView application={application} />
         </div>
 

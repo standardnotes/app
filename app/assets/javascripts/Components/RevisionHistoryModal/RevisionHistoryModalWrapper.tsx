@@ -143,7 +143,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
             : undefined,
         })
 
-        appState.notes.selectNote(duplicatedItem.uuid).catch(console.error)
+        appState.selectedItems.selectItem(duplicatedItem.uuid).catch(console.error)
 
         dismissModal()
       }

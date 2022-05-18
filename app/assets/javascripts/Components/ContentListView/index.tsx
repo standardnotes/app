@@ -7,8 +7,8 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import { NoAccountWarning } from '@/Components/NoAccountWarning'
-import { NotesList } from '@/Components/NotesList'
-import { NotesListOptionsMenu } from '@/Components/NotesList/NotesListOptionsMenu'
+import { ContentList } from '@/Components/ContentListView/ContentList'
+import { NotesListOptionsMenu } from '@/Components/ContentListView/NotesListOptionsMenu'
 import { SearchOptions } from '@/Components/SearchOptions'
 import { PanelSide, ResizeFinishCallback, PanelResizer, PanelResizeType } from '@/Components/PanelResizer'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
@@ -20,12 +20,12 @@ type Props = {
   appState: AppState
 }
 
-export const NotesView: FunctionComponent<Props> = observer(({ application, appState }: Props) => {
+export const ContentListView: FunctionComponent<Props> = observer(({ application, appState }) => {
   if (isStateDealloced(appState)) {
     return null
   }
 
-  const notesViewPanelRef = useRef<HTMLDivElement>(null)
+  const itemsViewPanelRef = useRef<HTMLDivElement>(null)
   const displayOptionsMenuRef = useRef<HTMLDivElement>(null)
 
   const {
@@ -34,20 +34,19 @@ export const NotesView: FunctionComponent<Props> = observer(({ application, appS
     noteFilterText,
     optionsSubtitle,
     panelTitle,
-    renderedNotes,
+    renderedItems,
+    setNoteFilterText,
     searchBarElement,
+    selectNextItem,
+    selectPreviousItem,
+    onFilterEnter,
+    clearFilterText,
     paginate,
     panelWidth,
-  } = appState.notesView
+    createNewNote,
+  } = appState.contentListView
 
-  const { selectedNotes } = appState.notes
-
-  const createNewNote = useCallback(() => appState.notesView.createNewNote(), [appState])
-  const onFilterEnter = useCallback(() => appState.notesView.onFilterEnter(), [appState])
-  const clearFilterText = useCallback(() => appState.notesView.clearFilterText(), [appState])
-  const setNoteFilterText = useCallback((text: string) => appState.notesView.setNoteFilterText(text), [appState])
-  const selectNextNote = useCallback(() => appState.notesView.selectNextNote(), [appState])
-  const selectPreviousNote = useCallback(() => appState.notesView.selectPreviousNote(), [appState])
+  const { selectedItems } = appState.selectedItems
 
   const [showDisplayOptionsMenu, setShowDisplayOptionsMenu] = useState(false)
   const [focusedSearch, setFocusedSearch] = useState(false)
@@ -76,7 +75,7 @@ export const NotesView: FunctionComponent<Props> = observer(({ application, appS
         if (searchBarElement === document.activeElement) {
           searchBarElement?.blur()
         }
-        selectNextNote()
+        selectNextItem()
       },
     })
 
@@ -84,7 +83,7 @@ export const NotesView: FunctionComponent<Props> = observer(({ application, appS
       key: KeyboardKey.Up,
       element: document.body,
       onKeyDown: () => {
-        selectPreviousNote()
+        selectPreviousItem()
       },
     })
 
@@ -104,7 +103,7 @@ export const NotesView: FunctionComponent<Props> = observer(({ application, appS
       previousNoteKeyObserver()
       searchKeyObserver()
     }
-  }, [application, createNewNote, selectPreviousNote, searchBarElement, selectNextNote])
+  }, [application.io, createNewNote, searchBarElement, selectNextItem, selectPreviousItem])
 
   const onNoteFilterTextChange = useCallback(
     (e: Event) => {
@@ -146,8 +145,8 @@ export const NotesView: FunctionComponent<Props> = observer(({ application, appS
     <div
       id="notes-column"
       className="sn-component section notes app-column app-column-second"
-      aria-label="Notes"
-      ref={notesViewPanelRef}
+      aria-label={'Notes & Files'}
+      ref={itemsViewPanelRef}
     >
       <div className="content">
         <div id="notes-title-bar" className="section-title-bar">
@@ -227,14 +226,14 @@ export const NotesView: FunctionComponent<Props> = observer(({ application, appS
             </div>
           </div>
         </div>
-        {completedFullSync && !renderedNotes.length ? <p className="empty-notes-list faded">No notes.</p> : null}
-        {!completedFullSync && !renderedNotes.length ? (
+        {completedFullSync && !renderedItems.length ? <p className="empty-notes-list faded">No notes.</p> : null}
+        {!completedFullSync && !renderedItems.length ? (
           <p className="empty-notes-list faded">Loading notes...</p>
         ) : null}
-        {renderedNotes.length ? (
-          <NotesList
-            notes={renderedNotes}
-            selectedNotes={selectedNotes}
+        {renderedItems.length ? (
+          <ContentList
+            items={renderedItems}
+            selectedItems={selectedItems}
             application={application}
             appState={appState}
             displayOptions={displayOptions}
@@ -242,12 +241,12 @@ export const NotesView: FunctionComponent<Props> = observer(({ application, appS
           />
         ) : null}
       </div>
-      {notesViewPanelRef.current && (
+      {itemsViewPanelRef.current && (
         <PanelResizer
           collapsable={true}
           hoverable={true}
           defaultWidth={300}
-          panel={notesViewPanelRef.current}
+          panel={itemsViewPanelRef.current}
           side={PanelSide.Right}
           type={PanelResizeType.WidthOnly}
           resizeFinishCallback={panelResizeFinishCallback}
