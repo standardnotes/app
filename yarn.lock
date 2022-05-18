@@ -2348,7 +2348,7 @@
     "@standardnotes/services" "^1.11.8"
     "@standardnotes/utils" "^1.6.9"
 
-"@standardnotes/icons@^1.1.6", "@standardnotes/icons@^1.1.7":
+"@standardnotes/icons@^1.1.7":
   version "1.1.7"
   resolved "https://registry.yarnpkg.com/@standardnotes/icons/-/icons-1.1.7.tgz#4523d8e2e3aa34d0e921df802d54c0babe054279"
   integrity sha512-yHB/KInj7qSmtnUqtTo6CPttu+2+oAwdANfjE3a69sgS7nVBxUuwSHHxb9xUOKpJBmipFjJi5F0YVF9kLmHiwg==
@@ -2420,15 +2420,15 @@
     "@standardnotes/sncrypto-common" "^1.8.2"
     "@standardnotes/utils" "^1.6.9"
 
-"@standardnotes/stylekit@5.27.0":
-  version "5.27.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/stylekit/-/stylekit-5.27.0.tgz#113fcf8c67f2ad6a3a37c62edf0c26427d012b25"
-  integrity sha512-NdwrAQDqosfOMtPpsG7YSxGwJH6HPBJxA/WnLRCBZzsNM7TikHTxPIaAR+sfDV+ABTDair/Ld/oyMOEu1ZIiwA==
+"@standardnotes/stylekit@5.27.1":
+  version "5.27.1"
+  resolved "https://registry.yarnpkg.com/@standardnotes/stylekit/-/stylekit-5.27.1.tgz#49a49d72865759647c64e01841f2a55ba464be9a"
+  integrity sha512-Sto/SCxtPPXZmRKJtvTZGck0Pl4pOIhR36CKT24R6it1P/9eabeqWL0E83Gutj5ME2mqa/hl8Cg/ipMheDz2uQ==
   dependencies:
     "@nanostores/preact" "^0.1.3"
     "@reach/listbox" "^0.16.2"
     "@reach/menu-button" "^0.16.2"
-    "@standardnotes/icons" "^1.1.6"
+    "@standardnotes/icons" "^1.1.7"
     nanoid "^3.3.1"
     nanostores "^0.5.10"
     prop-types "^15.8.1"
