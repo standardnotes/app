@@ -29,10 +29,8 @@ body {
 
 html,
 body {
-  font-family: -apple-system, BlinkMacSystemFont,
-    "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans",
-    "Droid Sans", "Helvetica Neue", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -moz-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
@@ -72,7 +70,10 @@ h3 {
   font-size: var(--sn-stylekit-font-size-h3);
 }
 
-input, button, select, textarea {
+input,
+button,
+select,
+textarea {
   font-family: inherit;
   font-size: inherit;
   line-height: normal;
@@ -135,7 +136,8 @@ $footer-height: 2rem;
   vertical-align: top;
   width: 100%;
 
-  panel-resizer, .panel-resizer {
+  panel-resizer,
+  .panel-resizer {
     top: 0;
     right: 0;
     z-index: $z-index-panel-resizer;
@@ -210,26 +212,25 @@ $footer-height: 2rem;
     }
 
     .section-title-bar {
+      .add-button {
+        font-size: 12px;
+      }
 
-     .add-button {
-       font-size: 12px;
-     }
+      .section-title-bar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        // This was causing problems with tags + button cutting off on right when the panel is a certain size
+        // overflow: hidden;
 
-     .section-title-bar-header {
-       display: flex;
-       justify-content: space-between;
-       align-items: center;
-       // This was causing problems with tags + button cutting off on right when the panel is a certain size
-       // overflow: hidden;
-
-       > .title {
-         white-space: nowrap;
-         text-overflow: ellipsis;
-         width: 80%;
-         overflow: hidden;
-       }
-     }
-   }
+        > .title {
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          width: 80%;
+          overflow: hidden;
+        }
+      }
+    }
   }
 }
 

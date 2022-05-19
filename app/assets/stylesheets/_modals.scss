@@ -12,24 +12,22 @@
 }
 
 .challenge-modal {
-  max-width: 480px;
-  min-width: 400px !important;
+  min-width: 0 !important;
 
-  .prompt, .subprompt {
+  .prompt,
+  .subprompt {
     text-align: center;
   }
   .sk-panel .sk-panel-header {
     justify-content: center;
-  }
-  input {
-    text-align: center;
   }
 }
 
 #account-switcher {
   min-width: 400px;
   max-width: 580px;
-  input, input:disabled {
+  input,
+  input:disabled {
     width: 100%;
     border: none;
     background-color: transparent !important;

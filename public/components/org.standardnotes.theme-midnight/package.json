@@ -1,6 +1,6 @@
 {
-  "name": "sn-theme-midnight",
-  "version": "1.2.6",
+  "name": "@standardnotes/midnight-theme",
+  "version": "1.2.7",
   "main": "dist/dist.css",
   "devDependencies": {
     "grunt": "^1.0.1",
@@ -13,6 +13,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/sn-extensions/midnight-theme.git"
+    "url": "git://github.com/standardnotes/midnight-theme.git"
+  },
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "build": "grunt"
   }
 }

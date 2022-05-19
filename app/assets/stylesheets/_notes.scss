@@ -78,8 +78,8 @@
       margin-top: 10px;
 
       display: grid;
-      grid-template-columns: repeat( 3, 1fr );
-      gap: .5rem;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
 
       font-size: var(--sn-stylekit-font-size-p);
       white-space: nowrap;
@@ -127,7 +127,7 @@
     cursor: pointer;
 
     &:hover {
-      background-color: var(--sn-stylekit-grey-5);
+      background-color: var(--sn-stylekit-contrast-background-color);
     }
 
     .icon {
@@ -299,7 +299,7 @@
     }
 
     &.selected {
-      background-color: var(--sn-stylekit-grey-5);
+      background-color: var(--sn-stylekit-contrast-background-color);
       border-left: 2px solid var(--sn-stylekit-info-color);
 
       progress {
@@ -315,9 +315,10 @@
         }
 
         &::-moz-progress-bar {
-          background-color: var(--sn-stylekit-secondary-background-color);
+          background-color: var(--sn-stylekit-info-color);
         }
       }
     }
   }
 }
+

@@ -1,4 +1,5 @@
 {
+  "extends": "../../../node_modules/@standardnotes/config/src/tsconfig.json",
   "compilerOptions": {
     "target": "ES2019",
     "module": "commonjs",
@@ -15,14 +16,13 @@
     "baseUrl": ".",
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
-    "typeRoots": ["./@types"],
-    "types": ["@types/jest"],
+    "typeRoots": ["./@types", "../../../node_modules/@types"],
     "paths": {
       "%/*": ["../templates/*"],
       "@/*": ["./*"],
       "@Controllers/*": ["./controllers/*"],
       "@Views/*": ["./views/*"],
-      "@Services/*": ["./services/*"],
+      "@Services/*": ["Services/*"],
       "@node_modules/*": ["../../../node_modules/*"]
     }
   }
