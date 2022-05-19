@@ -119,7 +119,7 @@ export const NotesListOptionsMenu: FunctionComponent<Props> = observer(
           checked={sortBy === CollectionSort.UpdatedAt}
           onBlur={closeOnBlur}
         >
-          <div className="flex flex-grow items-center justify-between ml-2">
+          <div className="flex flex-grow items-center justify-between">
             <span>Date modified</span>
             {sortBy === CollectionSort.UpdatedAt ? (
               sortReverse ? (
@@ -137,7 +137,7 @@ export const NotesListOptionsMenu: FunctionComponent<Props> = observer(
           checked={sortBy === CollectionSort.CreatedAt}
           onBlur={closeOnBlur}
         >
-          <div className="flex flex-grow items-center justify-between ml-2">
+          <div className="flex flex-grow items-center justify-between">
             <span>Creation date</span>
             {sortBy === CollectionSort.CreatedAt ? (
               sortReverse ? (
@@ -155,7 +155,7 @@ export const NotesListOptionsMenu: FunctionComponent<Props> = observer(
           checked={sortBy === CollectionSort.Title}
           onBlur={closeOnBlur}
         >
-          <div className="flex flex-grow items-center justify-between ml-2">
+          <div className="flex flex-grow items-center justify-between">
             <span>Title</span>
             {sortBy === CollectionSort.Title ? (
               sortReverse ? (

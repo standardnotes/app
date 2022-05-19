@@ -176,32 +176,34 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 
           return (
             <Fragment key={groupId}>
-              <div className={`py-1 border-0 border-t-1px border-solid border-main ${index === 0 ? 'border-t-0' : ''}`}>
-                {group.items.map((item) => {
-                  const onClickEditorItem = () => {
-                    selectEditor(item).catch(console.error)
-                  }
-                  return (
-                    <MenuItem
-                      type={MenuItemType.RadioButton}
-                      onClick={onClickEditorItem}
-                      className={
-                        'sn-dropdown-item py-2 text-input focus:bg-info-backdrop focus:shadow-none flex-row-reverse'
-                      }
-                      onBlur={closeOnBlur}
-                      checked={isSelectedEditor(item)}
-                    >
-                      <div className="flex flex-grow items-center justify-between">
-                        <div className="flex items-center">
-                          {group.icon && <Icon type={group.icon} className={`mr-2 ${group.iconClassName}`} />}
-                          {item.name}
-                        </div>
-                        {!item.isEntitled && <Icon type="premium-feature" />}
-                      </div>
-                    </MenuItem>
-                  )
-                })}
+              <div
+                className={`flex items-center px-2.5 py-2 text-xs font-semibold color-text border-0 border-y-1px border-solid border-main ${
+                  index === 0 ? 'border-t-0 mb-2' : 'my-2'
+                }`}
+              >
+                {group.icon && <Icon type={group.icon} className={`mr-2 ${group.iconClassName}`} />}
+                <div className="font-semibold text-input">{group.title}</div>
               </div>
+              {group.items.map((item) => {
+                const onClickEditorItem = () => {
+                  selectEditor(item).catch(console.error)
+                }
+
+                return (
+                  <MenuItem
+                    type={MenuItemType.RadioButton}
+                    onClick={onClickEditorItem}
+                    className={'sn-dropdown-item py-2 text-input focus:bg-info-backdrop focus:shadow-none'}
+                    onBlur={closeOnBlur}
+                    checked={isSelectedEditor(item)}
+                  >
+                    <div className="flex flex-grow items-center justify-between">
+                      {item.name}
+                      {!item.isEntitled && <Icon type="premium-feature" />}
+                    </div>
+                  </MenuItem>
+                )
+              })}
             </Fragment>
           )
         })}
