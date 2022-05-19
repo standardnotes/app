@@ -24,6 +24,7 @@ import { FilePreviewModal } from '../Files/FilePreviewModal'
 import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
 import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 import { ContentListView } from '../ContentListView'
+import { FileContextMenu } from '../FileContextMenu'
 
 type Props = {
   application: WebApplication
@@ -227,6 +228,7 @@ export const ApplicationView: FunctionComponent<Props> = ({ application, mainApp
         <>
           <NotesContextMenu application={application} appState={appState} />
           <TagsContextMenu appState={appState} />
+          <FileContextMenu appState={appState} />
           <PurchaseFlowWrapper application={application} appState={appState} />
           <ConfirmSignoutContainer
             applicationGroup={mainApplicationGroup}

@@ -28,7 +28,7 @@ export const FileContextMenu: FunctionComponent<Props> = observer(({ appState })
   useCloseOnClickOutside(contextMenuRef, () => appState.files.setShowFileContextMenu(false))
 
   const selectedFile = Object.values(selectedFiles)[0]
-  if (!selectedFile) {
+  if (!showFileContextMenu || !selectedFile) {
     return null
   }
 
@@ -89,10 +89,6 @@ export const FileContextMenu: FunctionComponent<Props> = observer(({ appState })
       window.removeEventListener('resize', reloadContextMenuLayout)
     }
   }, [reloadContextMenuLayout])
-
-  if (!showFileContextMenu || !selectedFile) {
-    return null
-  }
 
   const handleFileAction = async (action: PopoverFileItemAction) => {
     return await appState.files.handleFileAction(action, PopoverTabs.AllFiles)
