@@ -283,8 +283,6 @@ export class ContentListViewState extends AbstractState {
       appState.searchOptions.includeArchived ||
       this.application.getPreference(PrefKey.NotesShowArchived, false)
 
-    console.log(activeNote.uuid)
-
     if ((activeNote.trashed && !showTrashedNotes) || (activeNote.archived && !showArchivedNotes)) {
       await this.selectNextItemOrCreateNewNote()
     } else if (!this.appState.selectedItems.selectedItems[activeNote.uuid]) {
@@ -458,7 +456,7 @@ export class ContentListViewState extends AbstractState {
     userTriggered?: boolean,
     scrollIntoView = true,
   ): Promise<void> => {
-    void this.appState.selectedItems.selectItem(item.uuid, userTriggered)
+    await this.appState.selectedItems.selectItem(item.uuid, userTriggered)
 
     if (scrollIntoView) {
       const itemElement = document.getElementById(item.uuid)
