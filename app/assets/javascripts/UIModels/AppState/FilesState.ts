@@ -13,14 +13,7 @@ import {
   ClassicFileSaver,
   parseFileName,
 } from '@standardnotes/filepicker'
-import {
-  ChallengeReason,
-  ClientDisplayableError,
-  CollectionSort,
-  ContentType,
-  FileItem,
-  UuidString,
-} from '@standardnotes/snjs'
+import { ChallengeReason, ClientDisplayableError, ContentType, FileItem, UuidString } from '@standardnotes/snjs'
 import { addToast, dismissToast, ToastType, updateToast } from '@standardnotes/stylekit'
 import { action, computed, makeObservable, observable, reaction } from 'mobx'
 import { WebApplication } from '../Application'
@@ -55,8 +48,6 @@ export class FilesState extends AbstractState {
       setFileContextMenuLocation: action,
     })
 
-    application.items.setDisplayOptions(ContentType.File, CollectionSort.Title, 'dsc')
-
     appObservers.push(
       application.streamItems(ContentType.File, () => {
         this.reloadAllFiles()
@@ -87,7 +78,7 @@ export class FilesState extends AbstractState {
   }
 
   reloadAllFiles = () => {
-    this.allFiles = this.application.items.getDisplayableItems<FileItem>(ContentType.File)
+    this.allFiles = this.application.items.getDisplayableFiles()
   }
 
   reloadAttachedFiles = () => {

@@ -43,8 +43,9 @@ export const Appearance: FunctionComponent<Props> = observer(({ application }) =
 
   useEffect(() => {
     const themesAsItems: DropdownItem[] = application.items
-      .getDisplayableItems<SNTheme>(ContentType.Theme)
-      .filter((theme) => !theme.isLayerable())
+      .getDisplayableComponents()
+      .filter((component) => component.isTheme)
+      .filter((component) => !(component as SNTheme).isLayerable())
       .sort(sortThemes)
       .map((theme) => {
         return {

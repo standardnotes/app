@@ -1,4 +1,4 @@
-import { ContentType, FileItem } from '@standardnotes/snjs'
+import { FileItem } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
 import { getFileIconComponent } from '../AttachedFilesPopover/PopoverFileItem'
@@ -31,10 +31,7 @@ export const FileListItem: FunctionComponent<DisplayableListItemProps> = observe
         id={item.uuid}
         onClick={() => {
           if (selected) {
-            appState.filePreviewModal.activate(
-              item as FileItem,
-              application.items.getDisplayableItems(ContentType.File),
-            )
+            appState.filePreviewModal.activate(item as FileItem, appState.files.allFiles)
           } else {
             void appState.selectedItems.selectItem(item.uuid, true)
           }

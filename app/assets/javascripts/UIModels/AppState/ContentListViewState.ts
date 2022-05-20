@@ -6,9 +6,7 @@ import {
   CollectionSortProperty,
   ContentType,
   DeinitSource,
-  FileItem,
   findInArray,
-  NotesDisplayCriteria,
   NoteViewController,
   PrefKey,
   SmartView,
@@ -227,9 +225,7 @@ export class ContentListViewState extends AbstractState {
 
     const notes = this.application.items.getDisplayableNotes()
 
-    const files = this.application.items.getDisplayableItems<FileItem>(ContentType.File)
-
-    const items = [...notes, ...files]
+    const items = this.application.items.getDisplayableNotesAndFiles()
 
     const renderedItems = items.slice(0, this.notesToDisplay)
 
@@ -306,7 +302,7 @@ export class ContentListViewState extends AbstractState {
       includeTrashed = this.displayOptions.showTrashed ?? false
     }
 
-    const criteria = NotesDisplayCriteria.Create({
+    const criteria = {
       sortProperty: this.displayOptions.sortBy,
       sortDirection: this.displayOptions.sortReverse ? 'asc' : 'dsc',
       tags: tag instanceof SNTag ? [tag] : [],
@@ -319,9 +315,9 @@ export class ContentListViewState extends AbstractState {
         query: searchText,
         includeProtectedNoteText: this.appState.searchOptions.includeProtectedContents,
       },
-    })
+    }
 
-    this.application.items.setNotesDisplayCriteria(criteria)
+    this.application.items.setPrimaryItemDisplayOptions(criteria)
   }
 
   reloadPreferences = async () => {

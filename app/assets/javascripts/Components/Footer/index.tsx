@@ -2,7 +2,7 @@ import { WebAppEvent, WebApplication } from '@/UIModels/Application'
 import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
 import { PureComponent } from '@/Components/Abstract/PureComponent'
 import { destroyAllObjectProperties, preventRefreshing } from '@/Utils'
-import { ApplicationEvent, ContentType, CollectionSort, ApplicationDescriptor } from '@standardnotes/snjs'
+import { ApplicationEvent, ApplicationDescriptor } from '@standardnotes/snjs'
 import {
   STRING_NEW_UPDATE_READY,
   STRING_CONFIRM_APP_QUIT_DURING_UPGRADE,
@@ -118,7 +118,6 @@ export class Footer extends PureComponent<Props, State> {
     this.reloadUpgradeStatus()
     this.updateOfflineStatus()
     this.findErrors()
-    this.streamItems()
   }
 
   reloadUser() {
@@ -215,10 +214,6 @@ export class Footer extends PureComponent<Props, State> {
         }
         break
     }
-  }
-
-  streamItems() {
-    this.application.items.setDisplayOptions(ContentType.Theme, CollectionSort.Title, 'asc')
   }
 
   updateSyncStatus() {
