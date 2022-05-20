@@ -919,7 +919,7 @@ export class NoteView extends PureComponent<Props, State> {
           <div className="sn-component">
             {this.state.noteLocked && (
               <div
-                className="sk-app-bar no-edges"
+                className="flex items-center px-3.5 py-2 bg-warning cursor-pointer"
                 onMouseLeave={() => {
                   this.setState({
                     lockText: 'Note Editing Disabled',
@@ -932,16 +932,14 @@ export class NoteView extends PureComponent<Props, State> {
                     showLockedIcon: false,
                   })
                 }}
+                onClick={() => this.appState.notes.setLockSelectedNotes(!this.state.noteLocked)}
               >
-                <div
-                  onClick={() => this.appState.notes.setLockSelectedNotes(!this.state.noteLocked)}
-                  className="sk-app-bar-item"
-                >
-                  <div className="sk-label warning flex items-center">
-                    {this.state.showLockedIcon && <Icon type="pencil-off" className="flex fill-current mr-2" />}
-                    {this.state.lockText}
-                  </div>
-                </div>
+                {this.state.showLockedIcon ? (
+                  <Icon type="pencil-off" className="color-accessory-tint-3 flex fill-current mr-3" />
+                ) : (
+                  <Icon type="pencil" className="color-accessory-tint-3 flex fill-current mr-3" />
+                )}
+                <span className="color-grey-0">{this.state.lockText}</span>
               </div>
             )}
           </div>
