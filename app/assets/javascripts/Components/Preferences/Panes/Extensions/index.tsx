@@ -9,9 +9,10 @@ import { observer } from 'mobx-react-lite'
 import { ExtensionsLatestVersions } from './ExtensionsLatestVersions'
 import { ExtensionItem } from './ExtensionItem'
 import { ConfirmCustomExtension } from './ConfirmCustomExtension'
+import { AnyExtension } from './AnyExtension'
 
 const loadExtensions = (application: WebApplication) =>
-  application.items.getItems([ContentType.ActionsExtension, ContentType.Component, ContentType.Theme]) as SNComponent[]
+  application.items.getItems([ContentType.ActionsExtension, ContentType.Component, ContentType.Theme]) as AnyExtension[]
 
 export const Extensions: FunctionComponent<{
   application: WebApplication
@@ -19,7 +20,7 @@ export const Extensions: FunctionComponent<{
   className?: string
 }> = observer(({ application, extensionsLatestVersions, className = '' }) => {
   const [customUrl, setCustomUrl] = useState('')
-  const [confirmableExtension, setConfirmableExtension] = useState<SNComponent | undefined>(undefined)
+  const [confirmableExtension, setConfirmableExtension] = useState<AnyExtension | undefined>(undefined)
   const [extensions, setExtensions] = useState(loadExtensions(application))
 
   const confirmableEnd = useRef<HTMLDivElement>(null)
@@ -30,7 +31,7 @@ export const Extensions: FunctionComponent<{
     }
   }, [confirmableExtension, confirmableEnd])
 
-  const uninstallExtension = async (extension: SNComponent) => {
+  const uninstallExtension = async (extension: AnyExtension) => {
     application.alertService
       .confirm(
         'Are you sure you want to uninstall this extension? Note that extensions managed by your subscription will automatically be re-installed on application restart.',
@@ -66,13 +67,23 @@ export const Extensions: FunctionComponent<{
   }
 
   const confirmExtension = async () => {
-    await application.mutator.insertItem(confirmableExtension as SNComponent)
+    await application.mutator.insertItem(confirmableExtension as AnyExtension)
     application.sync.sync().catch(console.error)
     setExtensions(loadExtensions(application))
   }
 
   const visibleExtensions = extensions.filter((extension) => {
-    return extension.package_info != undefined && !['modal', 'rooms'].includes(extension.area)
+    const hasPackageInfo = extension.package_info != undefined
+
+    if (!hasPackageInfo) {
+      return false
+    }
+
+    if (extension instanceof SNComponent) {
+      return !['modal', 'rooms'].includes(extension.area)
+    }
+
+    return true
   })
 
   return (
@@ -80,7 +91,7 @@ export const Extensions: FunctionComponent<{
       {visibleExtensions.length > 0 && (
         <div>
           {visibleExtensions
-            .sort((e1, e2) => e1.name?.toLowerCase().localeCompare(e2.name?.toLowerCase()))
+            .sort((e1, e2) => e1.displayName?.toLowerCase().localeCompare(e2.displayName?.toLowerCase()))
             .map((extension, i) => (
               <ExtensionItem
                 key={extension.uuid}

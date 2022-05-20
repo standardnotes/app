@@ -67,7 +67,7 @@ export const MenuItem: FunctionComponent<MenuItemProps> = forwardRef(
       >
         {type === MenuItemType.IconButton && icon ? <Icon type={icon} className={iconClassName} /> : null}
         {type === MenuItemType.RadioButton && typeof checked === 'boolean' ? (
-          <div className={`pseudo-radio-btn ${checked ? 'pseudo-radio-btn--checked' : ''} mr-2 flex-shrink-0`}></div>
+          <div className={`pseudo-radio-btn ${checked ? 'pseudo-radio-btn--checked' : ''} flex-shrink-0`}></div>
         ) : null}
         {children}
       </button>

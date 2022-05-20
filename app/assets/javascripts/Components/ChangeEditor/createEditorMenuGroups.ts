@@ -63,7 +63,7 @@ export const createEditorMenuGroups = (application: WebApplication, editors: SNC
 
   editors.forEach((editor) => {
     const editorItem: EditorMenuItem = {
-      name: editor.name,
+      name: editor.displayName,
       component: editor,
       isEntitled: application.features.getFeatureStatus(editor.identifier) === FeatureStatus.Entitled,
     }

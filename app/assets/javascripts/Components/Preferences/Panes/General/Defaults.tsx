@@ -72,7 +72,7 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
         const [iconType, tint] = application.iconsController.getIconAndTintForNoteType(editor.package_info.note_type)
 
         return {
-          label: editor.name,
+          label: editor.displayName,
           value: identifier,
           ...(iconType ? { icon: iconType } : null),
           ...(tint ? { iconClassName: `color-accessory-tint-${tint}` } : null),

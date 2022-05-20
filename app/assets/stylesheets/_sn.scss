@@ -522,6 +522,10 @@
   border-top-width: 1px;
 }
 
+.sn-component .border-b-0 {
+  border-bottom-width: 0;
+}
+
 .border-2 {
   border-width: 0.5rem;
 }
@@ -1041,7 +1045,7 @@
   box-shadow: currentcolor 0px -1px 0px 0px inset, currentcolor 0px 1px 0px 0px;
 }
 
-.bg-note-size-warning {
+.bg-warning {
   background-color: rgba(235, 173, 0, 0.08);
 }
 
@@ -1188,4 +1192,8 @@
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
+}
+
+.sn-component .flex-row-reverse {
+  flex-flow: row-reverse;
 }

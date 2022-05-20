@@ -36,6 +36,7 @@ import { AttachedFilesButton } from '@/Components/AttachedFilesPopover/AttachedF
 
 const MINIMUM_STATUS_DURATION = 400
 const TEXTAREA_DEBOUNCE = 100
+const NOTE_EDITING_DISABLED_TEXT = 'Note editing disabled.'
 
 type NoteStatus = {
   message?: string
@@ -151,7 +152,7 @@ export class NoteView extends PureComponent<Props, State> {
       editorText: '',
       editorTitle: '',
       isDesktop: isDesktopApplication(),
-      lockText: 'Note Editing Disabled',
+      lockText: NOTE_EDITING_DISABLED_TEXT,
       noteStatus: undefined,
       noteLocked: this.controller.note.locked,
       showLockedIcon: true,
@@ -919,10 +920,10 @@ export class NoteView extends PureComponent<Props, State> {
           <div className="sn-component">
             {this.state.noteLocked && (
               <div
-                className="sk-app-bar no-edges"
+                className="flex items-center px-3.5 py-2 bg-warning cursor-pointer"
                 onMouseLeave={() => {
                   this.setState({
-                    lockText: 'Note Editing Disabled',
+                    lockText: NOTE_EDITING_DISABLED_TEXT,
                     showLockedIcon: true,
                   })
                 }}
@@ -932,16 +933,14 @@ export class NoteView extends PureComponent<Props, State> {
                     showLockedIcon: false,
                   })
                 }}
+                onClick={() => this.appState.notes.setLockSelectedNotes(!this.state.noteLocked)}
               >
-                <div
-                  onClick={() => this.appState.notes.setLockSelectedNotes(!this.state.noteLocked)}
-                  className="sk-app-bar-item"
-                >
-                  <div className="sk-label warning flex items-center">
-                    {this.state.showLockedIcon && <Icon type="pencil-off" className="flex fill-current mr-2" />}
-                    {this.state.lockText}
-                  </div>
-                </div>
+                {this.state.showLockedIcon ? (
+                  <Icon type="pencil-off" className="color-accessory-tint-3 flex fill-current mr-3" />
+                ) : (
+                  <Icon type="pencil" className="color-accessory-tint-3 flex fill-current mr-3" />
+                )}
+                <span className="color-grey-0">{this.state.lockText}</span>
               </div>
             )}
           </div>
