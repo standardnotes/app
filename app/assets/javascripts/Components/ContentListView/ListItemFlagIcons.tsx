@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'preact'
 import { Icon } from '../Icon'
-import { ListableContentItem } from './types'
+import { ListableContentItem } from './Types/ListableContentItem'
 
 type Props = {
   item: ListableContentItem

@@ -29,7 +29,7 @@ import { TagsState } from './TagsState'
 import { FilePreviewModalState } from './FilePreviewModalState'
 import { AbstractState } from './AbstractState'
 import { SelectedItemsState } from './SelectedItemsState'
-import { ListableContentItem } from '@/Components/ContentListView/types'
+import { ListableContentItem } from '@/Components/ContentListView/Types/ListableContentItem'
 
 export enum AppStateEvent {
   TagChanged,

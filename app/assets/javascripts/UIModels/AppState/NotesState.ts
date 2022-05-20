@@ -2,7 +2,7 @@ import { destroyAllObjectProperties } from '@/Utils'
 import { confirmDialog } from '@/Services/AlertService'
 import { StringEmptyTrash, Strings, StringUtils } from '@/Strings'
 import { MENU_MARGIN_FROM_APP_BORDER } from '@/Constants'
-import { UuidString, SNNote, NoteMutator, ContentType, SNTag, DeinitSource } from '@standardnotes/snjs'
+import { UuidString, SNNote, NoteMutator, ContentType, SNTag, DeinitSource, TagMutator } from '@standardnotes/snjs'
 import { makeObservable, observable, action, computed, runInAction } from 'mobx'
 import { WebApplication } from '../Application'
 import { AppState } from './AppState'
@@ -333,9 +333,9 @@ export class NotesState extends AbstractState {
     const tagsToAdd = [...parentChainTags, tag]
     await Promise.all(
       tagsToAdd.map(async (tag) => {
-        await this.application.mutator.changeItem(tag, (mutator) => {
+        await this.application.mutator.changeItem<TagMutator>(tag, (mutator) => {
           for (const note of selectedNotes) {
-            mutator.addItemAsRelationship(note)
+            mutator.addNote(note)
           }
         })
       }),
