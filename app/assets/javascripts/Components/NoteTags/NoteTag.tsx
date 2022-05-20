@@ -1,4 +1,4 @@
-import { Icon } from '@/Components/Icon'
+import { Icon } from '@/Components/Icon/Icon'
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import { AppState } from '@/UIModels/AppState'
 import { SNTag } from '@standardnotes/snjs'

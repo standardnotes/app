@@ -1,4 +1,4 @@
-import { AccountMenuPane } from '@/Components/AccountMenu'
+import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenu'
 import { Button } from '@/Components/Button/Button'
 import { PreferencesGroup, PreferencesSegment, Text, Title } from '@/Components/Preferences/PreferencesComponents'
 import { WebApplication } from '@/UIModels/Application'

@@ -1,4 +1,4 @@
-import { Icon } from '@/Components/Icon'
+import { Icon } from '@/Components/Icon/Icon'
 import { MenuItem, MenuItemType } from '@/Components/Menu/MenuItem'
 import { KeyboardKey } from '@/Services/IOService'
 import { ApplicationDescriptor } from '@standardnotes/snjs'

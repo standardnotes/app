@@ -2,7 +2,7 @@ import { destroyAllObjectProperties, isDev } from '@/Utils'
 import { action, computed, makeObservable, observable, runInAction } from 'mobx'
 import { ApplicationEvent, ContentType, DeinitSource, SNNote, SNTag } from '@standardnotes/snjs'
 import { WebApplication } from '@/UIModels/Application'
-import { AccountMenuPane } from '@/Components/AccountMenu'
+import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenu'
 import { AbstractState } from './AbstractState'
 
 type StructuredItemsCount = {

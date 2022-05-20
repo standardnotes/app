@@ -1,7 +1,7 @@
 import { WebApplication } from '@/UIModels/Application'
 import { CollectionSort, CollectionSortProperty, sanitizeHtmlString, SNNote } from '@standardnotes/snjs'
 import { FunctionComponent } from 'preact'
-import { Icon } from '@/Components/Icon'
+import { Icon } from '@/Components/Icon/Icon'
 import { PLAIN_EDITOR_NAME } from '@/Constants'
 
 type Props = {

@@ -4,7 +4,7 @@ import { ApplicationDescriptor, ApplicationGroupEvent, ButtonType } from '@stand
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
 import { useCallback, useEffect, useState } from 'preact/hooks'
-import { Icon } from '@/Components/Icon'
+import { Icon } from '@/Components/Icon/Icon'
 import { Menu } from '@/Components/Menu/Menu'
 import { MenuItem, MenuItemSeparator, MenuItemType } from '@/Components/Menu/MenuItem'
 import { WorkspaceMenuItem } from './WorkspaceMenuItem'

@@ -1,7 +1,7 @@
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { FileItem } from '@standardnotes/snjs'
 import { FunctionComponent } from 'preact'
-import { Icon } from '@/Components/Icon'
+import { Icon } from '@/Components/Icon/Icon'
 
 type Props = {
   file: FileItem
