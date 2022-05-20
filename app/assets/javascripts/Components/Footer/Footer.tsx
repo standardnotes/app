@@ -14,7 +14,7 @@ import { alertDialog, confirmDialog } from '@/Services/AlertService'
 import { AccountMenu, AccountMenuPane } from '@/Components/AccountMenu'
 import { AppStateEvent, EventSource } from '@/UIModels/AppState'
 import { Icon } from '@/Components/Icon'
-import { QuickSettingsMenu } from '@/Components/QuickSettingsMenu'
+import { QuickSettingsMenu } from '@/Components/QuickSettingsMenu/QuickSettingsMenu'
 import { SyncResolutionMenu } from '@/Components/SyncResolutionMenu'
 import { Fragment } from 'preact'
 

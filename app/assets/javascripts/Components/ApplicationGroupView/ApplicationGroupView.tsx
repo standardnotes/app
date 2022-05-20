@@ -1,7 +1,7 @@
 import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
 import { WebApplication } from '@/UIModels/Application'
 import { Component } from 'preact'
-import { ApplicationView } from '@/Components/ApplicationView'
+import { ApplicationView } from '@/Components/ApplicationView/ApplicationView'
 import { WebOrDesktopDevice } from '@/Device/WebOrDesktopDevice'
 import { ApplicationGroupEvent, Runtime, ApplicationGroupEventData, DeinitSource } from '@standardnotes/snjs'
 import { unmountComponentAtNode, findDOMNode } from 'preact/compat'
