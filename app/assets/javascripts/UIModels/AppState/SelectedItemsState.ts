@@ -1,4 +1,4 @@
-import { ListableContentItem } from '@/Components/ContentListView/types'
+import { ListableContentItem } from '@/Components/ContentListView/Types/ListableContentItem'
 import { ChallengeReason, ContentType, KeyboardModifier, FileItem, SNNote, UuidString } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, runInAction } from 'mobx'
 import { WebApplication } from '../Application'

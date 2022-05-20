@@ -31,6 +31,7 @@ export const ContentListView: FunctionComponent<Props> = observer(({ application
   const {
     completedFullSync,
     displayOptions,
+    webDisplayOptions,
     noteFilterText,
     optionsSubtitle,
     panelTitle,
@@ -237,6 +238,7 @@ export const ContentListView: FunctionComponent<Props> = observer(({ application
             application={application}
             appState={appState}
             displayOptions={displayOptions}
+            webDisplayOptions={webDisplayOptions}
             paginate={paginate}
           />
         ) : null}

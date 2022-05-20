@@ -89,7 +89,6 @@ export class TagsState extends AbstractState {
     this.addingSubtagTo = undefined
 
     this.smartViews = this.application.items.getSmartViews()
-    this.selected_ = this.smartViews[0]
 
     makeObservable(this, {
       tags: observable.ref,
@@ -145,17 +144,18 @@ export class TagsState extends AbstractState {
             return
           }
 
+          const updatedReference =
+            FindItem(changed, currrentSelectedTag.uuid) || FindItem(this.smartViews, currrentSelectedTag.uuid)
+          if (updatedReference) {
+            this.setSelectedTagInstance(updatedReference as AnyTag)
+          }
+
           if (isSystemView(currrentSelectedTag as SmartView)) {
             return
           }
 
           if (FindItem(removed, currrentSelectedTag.uuid)) {
             this.setSelectedTagInstance(this.smartViews[0])
-          } else {
-            const updated = FindItem(changed, currrentSelectedTag.uuid)
-            if (updated) {
-              this.setSelectedTagInstance(updated as AnyTag)
-            }
           }
         })
       }),
@@ -244,22 +244,21 @@ export class TagsState extends AbstractState {
     const footerElementRect = document.getElementById('footer-bar')?.getBoundingClientRect()
     const footerHeightInPx = footerElementRect?.height
 
-    // Open up-bottom is default behavior
     let openUpBottom = true
 
     if (footerHeightInPx) {
       const bottomSpace = clientHeight - footerHeightInPx - this.contextMenuClickLocation.y
       const upSpace = this.contextMenuClickLocation.y
 
-      // If not enough space to open up-bottom
-      if (maxContextMenuHeight > bottomSpace) {
-        // If there's enough space, open bottom-up
-        if (upSpace > maxContextMenuHeight) {
+      const notEnoughSpaceToOpenUpBottom = maxContextMenuHeight > bottomSpace
+      if (notEnoughSpaceToOpenUpBottom) {
+        const enoughSpaceToOpenBottomUp = upSpace > maxContextMenuHeight
+        if (enoughSpaceToOpenBottomUp) {
           openUpBottom = false
           this.setContextMenuMaxHeight('auto')
-          // Else, reduce max height (menu will be scrollable) and open in whichever direction there's more space
         } else {
-          if (upSpace > bottomSpace) {
+          const hasMoreUpSpace = upSpace > bottomSpace
+          if (hasMoreUpSpace) {
             this.setContextMenuMaxHeight(upSpace - MENU_MARGIN_FROM_APP_BORDER)
             openUpBottom = false
           } else {
@@ -414,14 +413,14 @@ export class TagsState extends AbstractState {
     this.selected = editingTag
   }
 
-  public async createNewTemplate() {
+  public createNewTemplate() {
     const isAlreadyEditingATemplate = this.editing_ && this.application.items.isTemplateItem(this.editing_)
 
     if (isAlreadyEditingATemplate) {
       return
     }
 
-    const newTag = (await this.application.mutator.createTemplateItem(ContentType.Tag)) as SNTag
+    const newTag = this.application.mutator.createTemplateItem(ContentType.Tag) as SNTag
 
     runInAction(() => {
       this.editing_ = newTag

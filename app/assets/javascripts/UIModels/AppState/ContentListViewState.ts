@@ -1,9 +1,8 @@
-import { ListableContentItem } from '@/Components/ContentListView/types'
+import { ListableContentItem } from '@/Components/ContentListView/Types/ListableContentItem'
 import { destroyAllObjectProperties } from '@/Utils'
 import {
   ApplicationEvent,
   CollectionSort,
-  CollectionSortProperty,
   ContentType,
   DeinitSource,
   findInArray,
@@ -13,29 +12,18 @@ import {
   SNNote,
   SNTag,
   SystemViewId,
+  DisplayOptions,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { AppState, AppStateEvent } from '.'
 import { WebApplication } from '../Application'
 import { AbstractState } from './AbstractState'
+import { WebDisplayOptions } from './WebDisplayOptions'
 
 const MIN_NOTE_CELL_HEIGHT = 51.0
 const DEFAULT_LIST_NUM_NOTES = 20
 const ELEMENT_ID_SEARCH_BAR = 'search-bar'
 const ELEMENT_ID_SCROLL_CONTAINER = 'notes-scrollable'
-
-export type DisplayOptions = {
-  sortBy: CollectionSortProperty
-  sortReverse: boolean
-  hidePinned: boolean
-  showArchived: boolean
-  showTrashed: boolean
-  hideProtected: boolean
-  hideTags: boolean
-  hideNotePreview: boolean
-  hideDate: boolean
-  hideEditorIcon: boolean
-}
 
 export class ContentListViewState extends AbstractState {
   completedFullSync = false
@@ -49,13 +37,15 @@ export class ContentListViewState extends AbstractState {
   renderedItems: ListableContentItem[] = []
   searchSubmitted = false
   showDisplayOptionsMenu = false
-  displayOptions = {
+  displayOptions: DisplayOptions = {
     sortBy: CollectionSort.CreatedAt,
-    sortReverse: false,
-    hidePinned: false,
-    showArchived: false,
-    showTrashed: false,
-    hideProtected: false,
+    sortDirection: 'dsc',
+    includePinned: true,
+    includeArchived: false,
+    includeTrashed: false,
+    includeProtected: true,
+  }
+  webDisplayOptions: WebDisplayOptions = {
     hideTags: true,
     hideDate: false,
     hideNotePreview: false,
@@ -145,6 +135,7 @@ export class ContentListViewState extends AbstractState {
     makeObservable(this, {
       completedFullSync: observable,
       displayOptions: observable.struct,
+      webDisplayOptions: observable.struct,
       noteFilterText: observable,
       notes: observable,
       notesToDisplay: observable,
@@ -225,7 +216,7 @@ export class ContentListViewState extends AbstractState {
 
     const notes = this.application.items.getDisplayableNotes()
 
-    const items = this.application.items.getDisplayableNotesAndFiles()
+    const items = [...notes, ...this.application.items.getDisplayableFiles()]
 
     const renderedItems = items.slice(0, this.notesToDisplay)
 
@@ -298,19 +289,19 @@ export class ContentListViewState extends AbstractState {
       includeArchived = this.appState.searchOptions.includeArchived
       includeTrashed = this.appState.searchOptions.includeTrashed
     } else {
-      includeArchived = this.displayOptions.showArchived ?? false
-      includeTrashed = this.displayOptions.showTrashed ?? false
+      includeArchived = this.displayOptions.includeArchived ?? false
+      includeTrashed = this.displayOptions.includeTrashed ?? false
     }
 
-    const criteria = {
-      sortProperty: this.displayOptions.sortBy,
-      sortDirection: this.displayOptions.sortReverse ? 'asc' : 'dsc',
+    const criteria: DisplayOptions = {
+      sortBy: this.displayOptions.sortBy,
+      sortDirection: this.displayOptions.sortDirection,
       tags: tag instanceof SNTag ? [tag] : [],
       views: tag instanceof SmartView ? [tag] : [],
       includeArchived,
       includeTrashed,
-      includePinned: !this.displayOptions.hidePinned,
-      includeProtected: !this.displayOptions.hideProtected,
+      includePinned: this.displayOptions.includePinned,
+      includeProtected: this.displayOptions.includeProtected,
       searchQuery: {
         query: searchText,
         includeProtectedNoteText: this.appState.searchOptions.includeProtectedContents,
@@ -321,7 +312,9 @@ export class ContentListViewState extends AbstractState {
   }
 
   reloadPreferences = async () => {
-    const freshDisplayOptions = {} as DisplayOptions
+    const newDisplayOptions = {} as DisplayOptions
+    const newWebDisplayOptions = {} as WebDisplayOptions
+
     const currentSortBy = this.displayOptions.sortBy
 
     let sortBy = this.application.getPreference(PrefKey.SortNotesBy, CollectionSort.CreatedAt)
@@ -329,28 +322,30 @@ export class ContentListViewState extends AbstractState {
       sortBy = CollectionSort.UpdatedAt
     }
 
-    freshDisplayOptions.sortBy = sortBy
-    freshDisplayOptions.sortReverse = this.application.getPreference(PrefKey.SortNotesReverse, false)
-    freshDisplayOptions.showArchived = this.application.getPreference(PrefKey.NotesShowArchived, false)
-    freshDisplayOptions.showTrashed = this.application.getPreference(PrefKey.NotesShowTrashed, false) as boolean
-    freshDisplayOptions.hidePinned = this.application.getPreference(PrefKey.NotesHidePinned, false)
-    freshDisplayOptions.hideProtected = this.application.getPreference(PrefKey.NotesHideProtected, false)
-    freshDisplayOptions.hideNotePreview = this.application.getPreference(PrefKey.NotesHideNotePreview, false)
-    freshDisplayOptions.hideDate = this.application.getPreference(PrefKey.NotesHideDate, false)
-    freshDisplayOptions.hideTags = this.application.getPreference(PrefKey.NotesHideTags, true)
-    freshDisplayOptions.hideEditorIcon = this.application.getPreference(PrefKey.NotesHideEditorIcon, false)
+    newDisplayOptions.sortBy = sortBy
+    newDisplayOptions.sortDirection =
+      this.application.getPreference(PrefKey.SortNotesReverse, false) === false ? 'dsc' : 'asc'
+    newDisplayOptions.includeArchived = this.application.getPreference(PrefKey.NotesShowArchived, false)
+    newDisplayOptions.includeTrashed = this.application.getPreference(PrefKey.NotesShowTrashed, false) as boolean
+    newDisplayOptions.includePinned = !this.application.getPreference(PrefKey.NotesHidePinned, false)
+    newDisplayOptions.includeProtected = !this.application.getPreference(PrefKey.NotesHideProtected, false)
+
+    newWebDisplayOptions.hideNotePreview = this.application.getPreference(PrefKey.NotesHideNotePreview, false)
+    newWebDisplayOptions.hideDate = this.application.getPreference(PrefKey.NotesHideDate, false)
+    newWebDisplayOptions.hideTags = this.application.getPreference(PrefKey.NotesHideTags, true)
+    newWebDisplayOptions.hideEditorIcon = this.application.getPreference(PrefKey.NotesHideEditorIcon, false)
 
     const displayOptionsChanged =
-      freshDisplayOptions.sortBy !== this.displayOptions.sortBy ||
-      freshDisplayOptions.sortReverse !== this.displayOptions.sortReverse ||
-      freshDisplayOptions.hidePinned !== this.displayOptions.hidePinned ||
-      freshDisplayOptions.showArchived !== this.displayOptions.showArchived ||
-      freshDisplayOptions.showTrashed !== this.displayOptions.showTrashed ||
-      freshDisplayOptions.hideProtected !== this.displayOptions.hideProtected ||
-      freshDisplayOptions.hideEditorIcon !== this.displayOptions.hideEditorIcon ||
-      freshDisplayOptions.hideTags !== this.displayOptions.hideTags
+      newDisplayOptions.sortBy !== this.displayOptions.sortBy ||
+      newDisplayOptions.sortDirection !== this.displayOptions.sortDirection ||
+      newDisplayOptions.includePinned !== this.displayOptions.includePinned ||
+      newDisplayOptions.includeArchived !== this.displayOptions.includeArchived ||
+      newDisplayOptions.includeTrashed !== this.displayOptions.includeTrashed ||
+      newDisplayOptions.includeProtected !== this.displayOptions.includeProtected ||
+      newWebDisplayOptions.hideEditorIcon !== this.webDisplayOptions.hideEditorIcon ||
+      newWebDisplayOptions.hideTags !== this.webDisplayOptions.hideTags
 
-    this.displayOptions = freshDisplayOptions
+    this.displayOptions = newDisplayOptions
 
     if (displayOptionsChanged) {
       this.reloadNotesDisplayOptions()
@@ -363,7 +358,7 @@ export class ContentListViewState extends AbstractState {
       this.panelWidth = width
     }
 
-    if (freshDisplayOptions.sortBy !== currentSortBy) {
+    if (newDisplayOptions.sortBy !== currentSortBy) {
       await this.selectFirstItem()
     }
   }
@@ -392,6 +387,7 @@ export class ContentListViewState extends AbstractState {
 
   get optionsSubtitle(): string {
     let base = ''
+
     if (this.displayOptions.sortBy === CollectionSort.CreatedAt) {
       base += ' Date Added'
     } else if (this.displayOptions.sortBy === CollectionSort.UpdatedAt) {
@@ -399,21 +395,27 @@ export class ContentListViewState extends AbstractState {
     } else if (this.displayOptions.sortBy === CollectionSort.Title) {
       base += ' Title'
     }
-    if (this.displayOptions.showArchived) {
+
+    if (this.displayOptions.includeArchived) {
       base += ' | + Archived'
     }
-    if (this.displayOptions.showTrashed) {
+
+    if (this.displayOptions.includeTrashed) {
       base += ' | + Trashed'
     }
-    if (this.displayOptions.hidePinned) {
+
+    if (!this.displayOptions.includePinned) {
       base += ' | – Pinned'
     }
-    if (this.displayOptions.hideProtected) {
+
+    if (!this.displayOptions.includeProtected) {
       base += ' | – Protected'
     }
-    if (this.displayOptions.sortReverse) {
+
+    if (this.displayOptions.sortDirection === 'asc') {
       base += ' | Reversed'
     }
+
     return base
   }
 

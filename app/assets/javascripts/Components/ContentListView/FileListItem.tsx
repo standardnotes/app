@@ -6,7 +6,7 @@ import { ListItemConflictIndicator } from './ListItemConflictIndicator'
 import { ListItemFlagIcons } from './ListItemFlagIcons'
 import { ListItemTags } from './ListItemTags'
 import { ListItemTimestamps } from './ListItemTimestamps'
-import { DisplayableListItemProps } from './types'
+import { DisplayableListItemProps } from './Types/DisplayableListItemProps'
 
 export const FileListItem: FunctionComponent<DisplayableListItemProps> = observer(
   ({ application, appState, hideDate, hideIcon, hideTags, item, selected, sortBy, tags }) => {

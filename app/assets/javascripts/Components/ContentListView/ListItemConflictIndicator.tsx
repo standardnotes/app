@@ -1,5 +1,5 @@
 import { FunctionComponent } from 'preact'
-import { ListableContentItem } from './types'
+import { ListableContentItem } from './Types/ListableContentItem'
 
 export const ListItemConflictIndicator: FunctionComponent<{
   item: ListableContentItem
