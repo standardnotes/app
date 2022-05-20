@@ -3,7 +3,7 @@ import { calculateSubmenuStyle, SubmenuStyle } from '@/Utils/CalculateSubmenuSty
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { FunctionComponent } from 'preact'
 import { StateUpdater, useCallback, useEffect, useRef, useState } from 'preact/hooks'
-import { Icon } from '@/Components/Icon'
+import { Icon } from '@/Components/Icon/Icon'
 import { Switch } from '@/Components/Switch'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { PopoverFileItemProps } from './PopoverFileItem'

@@ -3,9 +3,9 @@ import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
 import { useCallback, useEffect, useState } from 'preact/hooks'
-import { Checkbox } from '@/Components/Checkbox'
+import { Checkbox } from '@/Components/Checkbox/Checkbox'
 import { DecoratedInput } from '@/Components/Input/DecoratedInput'
-import { Icon } from '@/Components/Icon'
+import { Icon } from '@/Components/Icon/Icon'
 
 type Props = {
   application: WebApplication

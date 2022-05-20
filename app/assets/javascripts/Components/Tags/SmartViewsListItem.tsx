@@ -1,4 +1,4 @@
-import { Icon } from '@/Components/Icon'
+import { Icon } from '@/Components/Icon/Icon'
 import { FeaturesState } from '@/UIModels/AppState/FeaturesState'
 import { TagsState } from '@/UIModels/AppState/TagsState'
 import '@reach/tooltip/styles.css'

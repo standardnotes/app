@@ -5,7 +5,7 @@ import { FunctionComponent } from 'preact'
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import { WorkspaceSwitcherMenu } from '@/Components/AccountMenu/WorkspaceSwitcher/WorkspaceSwitcherMenu'
 import { Button } from '@/Components/Button/Button'
-import { Icon } from '@/Components/Icon'
+import { Icon } from '@/Components/Icon/Icon'
 import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
 
 type Props = {

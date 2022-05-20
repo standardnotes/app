@@ -4,7 +4,7 @@ import { HistoryEntry, SNComponent, SNNote } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
 import { useEffect, useMemo } from 'preact/hooks'
-import { ComponentView } from '@/Components/ComponentView'
+import { ComponentView } from '@/Components/ComponentView/ComponentView'
 import { LegacyHistoryEntry } from './utils'
 
 const ABSOLUTE_CENTER_CLASSNAME = 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'

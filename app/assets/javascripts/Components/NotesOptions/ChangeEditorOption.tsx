@@ -5,7 +5,7 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure
 import { IconType, SNComponent, SNNote } from '@standardnotes/snjs'
 import { FunctionComponent } from 'preact'
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
-import { Icon } from '@/Components/Icon'
+import { Icon } from '@/Components/Icon/Icon'
 import { ChangeEditorMenu } from '@/Components/ChangeEditor/ChangeEditorMenu'
 import { calculateSubmenuStyle, SubmenuStyle } from '@/Utils/CalculateSubmenuStyle'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'

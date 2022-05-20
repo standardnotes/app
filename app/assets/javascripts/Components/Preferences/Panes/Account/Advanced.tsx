@@ -4,7 +4,7 @@ import { OfflineSubscription } from '@/Components/Preferences/Panes/Account/Offl
 import { WebApplication } from '@/UIModels/Application'
 import { observer } from 'mobx-react-lite'
 import { AppState } from '@/UIModels/AppState'
-import { Extensions } from '@/Components/Preferences/Panes/Extensions'
+import { Extensions } from '@/Components/Preferences/Panes/Extensions/Extensions'
 import { ExtensionsLatestVersions } from '@/Components/Preferences/Panes/Extensions/ExtensionsLatestVersions'
 import { AccordionItem } from '@/Components/Shared/AccordionItem'
 

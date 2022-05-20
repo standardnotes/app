@@ -1,7 +1,7 @@
 import { ComponentChildren, FunctionComponent, VNode } from 'preact'
 import { forwardRef, Ref } from 'preact/compat'
 import { JSXInternal } from 'preact/src/jsx'
-import { Icon } from '@/Components/Icon'
+import { Icon } from '@/Components/Icon/Icon'
 import { Switch, SwitchProps } from '@/Components/Switch'
 import { IconType } from '@standardnotes/snjs'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'

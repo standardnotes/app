@@ -10,7 +10,7 @@ import { WebApplication } from '@/UIModels/Application'
 import { MfaProps } from './Panes/TwoFactorAuth/MfaProps'
 import { AppState } from '@/UIModels/AppState'
 import { useEffect, useMemo } from 'preact/hooks'
-import { Backups } from '@/Components/Preferences/Panes/Backups'
+import { Backups } from '@/Components/Preferences/Panes/Backups/Backups'
 import { Appearance } from './Panes/Appearance'
 
 interface PreferencesProps extends MfaProps {

@@ -1,4 +1,4 @@
-import { Icon } from '@/Components/Icon'
+import { Icon } from '@/Components/Icon/Icon'
 import { Menu } from '@/Components/Menu/Menu'
 import { MenuItem, MenuItemType } from '@/Components/Menu/MenuItem'
 import {

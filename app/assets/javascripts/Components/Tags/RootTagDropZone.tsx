@@ -1,4 +1,4 @@
-import { Icon } from '@/Components/Icon'
+import { Icon } from '@/Components/Icon/Icon'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { FeaturesState } from '@/UIModels/AppState/FeaturesState'
 import { TagsState } from '@/UIModels/AppState/TagsState'

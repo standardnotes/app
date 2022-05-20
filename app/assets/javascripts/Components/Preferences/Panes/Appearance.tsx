@@ -1,4 +1,4 @@
-import { Dropdown, DropdownItem } from '@/Components/Dropdown'
+import { Dropdown, DropdownItem } from '@/Components/Dropdown/Dropdown'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
 import { Switch } from '@/Components/Switch'

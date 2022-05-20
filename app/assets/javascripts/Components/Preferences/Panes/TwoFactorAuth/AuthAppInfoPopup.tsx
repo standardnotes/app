@@ -1,4 +1,4 @@
-import { Icon } from '@/Components/Icon'
+import { Icon } from '@/Components/Icon/Icon'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { FunctionComponent } from 'preact'
 import { useState, useRef, useEffect } from 'preact/hooks'

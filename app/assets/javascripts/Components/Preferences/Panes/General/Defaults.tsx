@@ -1,4 +1,4 @@
-import { Dropdown, DropdownItem } from '@/Components/Dropdown'
+import { Dropdown, DropdownItem } from '@/Components/Dropdown/Dropdown'
 import { FeatureIdentifier, PrefKey, ComponentArea, ComponentMutator, SNComponent } from '@standardnotes/snjs'
 import {
   PreferencesGroup,

@@ -11,10 +11,10 @@ import { observer } from '@node_modules/mobx-react-lite'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
 import { dateToLocalizedString } from '@standardnotes/snjs'
 import { useCallback, useState } from 'preact/hooks'
-import { ChangeEmail } from '@/Components/Preferences/Panes/Account/ChangeEmail'
+import { ChangeEmail } from '@/Components/Preferences/Panes/Account/ChangeEmail/ChangeEmail'
 import { FunctionComponent, render } from 'preact'
 import { AppState } from '@/UIModels/AppState'
-import { PasswordWizard } from '@/Components/PasswordWizard'
+import { PasswordWizard } from '@/Components/PasswordWizard/PasswordWizard'
 
 type Props = {
   application: WebApplication

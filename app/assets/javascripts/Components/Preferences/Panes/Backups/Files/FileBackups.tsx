@@ -12,7 +12,7 @@ import { Button } from '@/Components/Button/Button'
 import { Switch } from '@/Components/Switch'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
 import { EncryptionStatusItem } from '../../Security/Encryption'
-import { Icon } from '@/Components/Icon'
+import { Icon } from '@/Components/Icon/Icon'
 import { BackupsDropZone } from './BackupsDropZone'
 
 type Props = {

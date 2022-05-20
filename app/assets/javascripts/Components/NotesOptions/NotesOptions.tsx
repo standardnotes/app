@@ -1,5 +1,5 @@
 import { AppState } from '@/UIModels/AppState'
-import { Icon } from '@/Components/Icon'
+import { Icon } from '@/Components/Icon/Icon'
 import { Switch } from '@/Components/Switch'
 import { observer } from 'mobx-react-lite'
 import { useState, useEffect, useMemo, useCallback } from 'preact/hooks'

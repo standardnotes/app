@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { ComponentChildren, FunctionalComponent, createContext } from 'preact'
 import { useCallback, useContext } from 'preact/hooks'
 
-import { PremiumFeaturesModal } from '@/Components/PremiumFeaturesModal'
+import { PremiumFeaturesModal } from '@/Components/PremiumFeaturesModal/PremiumFeaturesModal'
 
 type PremiumModalContextData = {
   activate: (featureName: string) => void
