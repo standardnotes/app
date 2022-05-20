@@ -51,7 +51,7 @@ export const WorkspaceMenuItem: FunctionComponent<Props> = ({
       onClick={onClick}
       checked={descriptor.primary}
     >
-      <div className="flex items-center justify-between w-full">
+      <div className="flex items-center justify-between w-full ml-2">
         {isRenaming ? (
           <input
             ref={inputRef}
