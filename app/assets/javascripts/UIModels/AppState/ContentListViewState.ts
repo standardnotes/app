@@ -135,6 +135,7 @@ export class ContentListViewState extends AbstractState {
     makeObservable(this, {
       completedFullSync: observable,
       displayOptions: observable.struct,
+      webDisplayOptions: observable.struct,
       noteFilterText: observable,
       notes: observable,
       notesToDisplay: observable,
