@@ -30,11 +30,11 @@ export const FileListItem: FunctionComponent<DisplayableListItemProps> = observe
         }`}
         id={item.uuid}
         onClick={() => {
-          if (selected) {
-            appState.filePreviewModal.activate(item as FileItem, appState.files.allFiles)
-          } else {
-            void appState.selectedItems.selectItem(item.uuid, true)
-          }
+          void appState.selectedItems.selectItem(item.uuid, true).then(() => {
+            if (appState.selectedItems.selectedItemsCount < 2) {
+              appState.filePreviewModal.activate(item as FileItem, appState.files.allFiles)
+            }
+          })
         }}
         onContextMenu={(event) => {
           event.preventDefault()
