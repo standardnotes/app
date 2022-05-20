@@ -36,6 +36,7 @@ import { AttachedFilesButton } from '@/Components/AttachedFilesPopover/AttachedF
 
 const MINIMUM_STATUS_DURATION = 400
 const TEXTAREA_DEBOUNCE = 100
+const NOTE_EDITING_DISABLED_TEXT = 'Note editing disabled.'
 
 type NoteStatus = {
   message?: string
@@ -151,7 +152,7 @@ export class NoteView extends PureComponent<Props, State> {
       editorText: '',
       editorTitle: '',
       isDesktop: isDesktopApplication(),
-      lockText: 'Note Editing Disabled',
+      lockText: NOTE_EDITING_DISABLED_TEXT,
       noteStatus: undefined,
       noteLocked: this.controller.note.locked,
       showLockedIcon: true,
@@ -922,7 +923,7 @@ export class NoteView extends PureComponent<Props, State> {
                 className="flex items-center px-3.5 py-2 bg-warning cursor-pointer"
                 onMouseLeave={() => {
                   this.setState({
-                    lockText: 'Note Editing Disabled',
+                    lockText: NOTE_EDITING_DISABLED_TEXT,
                     showLockedIcon: true,
                   })
                 }}
