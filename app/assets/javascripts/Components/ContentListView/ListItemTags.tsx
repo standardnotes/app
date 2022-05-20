@@ -1,5 +1,5 @@
 import { FunctionComponent } from 'preact'
-import { Icon } from '../Icon'
+import { Icon } from '@/Components/Icon/Icon'
 
 export const ListItemTags: FunctionComponent<{
   hideTags: boolean

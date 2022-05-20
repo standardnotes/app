@@ -1,4 +1,4 @@
-import { Icon } from '@/Components/Icon'
+import { Icon } from '@/Components/Icon/Icon'
 import { FunctionComponent } from 'preact'
 import { IconType } from '@standardnotes/snjs'
 

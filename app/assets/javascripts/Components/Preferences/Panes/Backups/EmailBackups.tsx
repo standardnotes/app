@@ -10,8 +10,8 @@ import {
   Text,
   Title,
 } from '@/Components/Preferences/PreferencesComponents'
-import { Dropdown, DropdownItem } from '@/Components/Dropdown'
-import { Switch } from '@/Components/Switch'
+import { Dropdown, DropdownItem } from '@/Components/Dropdown/Dropdown'
+import { Switch } from '@/Components/Switch/Switch'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
 import {
   FeatureStatus,

@@ -4,7 +4,7 @@ import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { IconType, FileItem } from '@standardnotes/snjs'
 import { FunctionComponent } from 'preact'
 import { useEffect, useRef, useState } from 'preact/hooks'
-import { Icon, ICONS } from '@/Components/Icon'
+import { Icon, ICONS } from '@/Components/Icon/Icon'
 import { PopoverFileItemAction, PopoverFileItemActionType } from './PopoverFileItemAction'
 import { PopoverFileSubmenu } from './PopoverFileSubmenu'
 

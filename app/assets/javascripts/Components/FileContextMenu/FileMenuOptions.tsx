@@ -2,8 +2,8 @@ import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
 import { FileItem } from '@standardnotes/snjs'
 import { FunctionComponent } from 'preact'
 import { PopoverFileItemAction, PopoverFileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
-import { Icon } from '../Icon'
-import { Switch } from '../Switch'
+import { Icon } from '@/Components/Icon/Icon'
+import { Switch } from '@/Components/Switch/Switch'
 
 type Props = {
   closeMenu: () => void

@@ -2,7 +2,7 @@ import { AppState } from '@/UIModels/AppState'
 import VisuallyHidden from '@reach/visually-hidden'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
-import { Icon } from '@/Components/Icon'
+import { Icon } from '@/Components/Icon/Icon'
 import { useCallback } from 'preact/hooks'
 import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 

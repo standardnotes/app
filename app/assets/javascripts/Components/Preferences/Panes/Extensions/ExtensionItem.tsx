@@ -1,7 +1,7 @@
 import { FunctionComponent } from 'preact'
 import { SNComponent } from '@standardnotes/snjs'
 import { PreferencesSegment, SubtitleLight } from '@/Components/Preferences/PreferencesComponents'
-import { Switch } from '@/Components/Switch'
+import { Switch } from '@/Components/Switch/Switch'
 import { WebApplication } from '@/UIModels/Application'
 import { useState } from 'preact/hooks'
 import { Button } from '@/Components/Button/Button'

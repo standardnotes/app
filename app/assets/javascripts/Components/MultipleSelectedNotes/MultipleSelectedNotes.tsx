@@ -3,7 +3,7 @@ import { IlNotesIcon } from '@standardnotes/icons'
 import { observer } from 'mobx-react-lite'
 import { NotesOptionsPanel } from '@/Components/NotesOptions/NotesOptionsPanel'
 import { WebApplication } from '@/UIModels/Application'
-import { PinNoteButton } from '@/Components/PinNoteButton'
+import { PinNoteButton } from '@/Components/PinNoteButton/PinNoteButton'
 
 type Props = {
   application: WebApplication

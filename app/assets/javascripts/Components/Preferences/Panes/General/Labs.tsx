@@ -1,4 +1,4 @@
-import { Switch } from '@/Components/Switch'
+import { Switch } from '@/Components/Switch/Switch'
 import {
   PreferencesGroup,
   PreferencesSegment,

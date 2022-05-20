@@ -1,6 +1,6 @@
 import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
 import { FunctionalComponent } from 'preact'
-import { Icon } from '@/Components/Icon'
+import { Icon } from '@/Components/Icon/Icon'
 import { PremiumIllustration } from '@standardnotes/icons'
 import { useCallback, useRef } from 'preact/hooks'
 import { WebApplication } from '@/UIModels/Application'
