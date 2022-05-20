@@ -216,7 +216,7 @@ export class ContentListViewState extends AbstractState {
 
     const notes = this.application.items.getDisplayableNotes()
 
-    const items = [...notes, ...this.application.items.getDisplayableFiles()]
+    const items = this.application.items.getDisplayableNotesAndFiles()
 
     const renderedItems = items.slice(0, this.notesToDisplay)
 
@@ -239,6 +239,12 @@ export class ContentListViewState extends AbstractState {
     const hasMultipleItemsSelected = appState.selectedItems.selectedItemsCount >= 2
 
     if (hasMultipleItemsSelected) {
+      return
+    }
+
+    const selectedItem = Object.values(appState.selectedItems.selectedItems)[0]
+
+    if (this.items.includes(selectedItem) && selectedItem && selectedItem.content_type === ContentType.File) {
       return
     }
 
