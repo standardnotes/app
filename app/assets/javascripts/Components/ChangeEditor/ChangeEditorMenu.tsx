@@ -43,7 +43,7 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 }) => {
   const [editors] = useState<SNComponent[]>(() =>
     application.componentManager.componentsForArea(ComponentArea.Editor).sort((a, b) => {
-      return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1
+      return a.displayName.toLowerCase() < b.displayName.toLowerCase() ? -1 : 1
     }),
   )
   const [groups, setGroups] = useState<EditorMenuGroup[]>([])

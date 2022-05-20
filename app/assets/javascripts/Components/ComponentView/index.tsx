@@ -49,7 +49,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
     const [isDeprecationMessageDismissed, setIsDeprecationMessageDismissed] = useState(false)
     const [didAttemptReload, setDidAttemptReload] = useState(false)
 
-    const component = componentViewer.component
+    const component: SNComponent = componentViewer.component
 
     const manageSubscription = useCallback(() => {
       openSubscriptionDashboard(application)
@@ -182,7 +182,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
       <>
         {hasIssueLoading && (
           <IssueOnLoading
-            componentName={component.name}
+            componentName={component.displayName}
             reloadIframe={() => {
               reloadValidityStatus(), requestReload?.(componentViewer, true)
             }}
@@ -193,7 +193,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
           <IsExpired
             expiredDate={dateToLocalizedString(component.valid_until)}
             featureStatus={featureStatus}
-            componentName={component.name}
+            componentName={component.displayName}
             manageSubscription={manageSubscription}
           />
         )}
@@ -201,7 +201,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
           <IsDeprecated deprecationMessage={deprecationMessage} dismissDeprecationMessage={dismissDeprecationMessage} />
         )}
         {error === ComponentViewerError.OfflineRestricted && <OfflineRestricted />}
-        {error === ComponentViewerError.MissingUrl && <UrlMissing componentName={component.name} />}
+        {error === ComponentViewerError.MissingUrl && <UrlMissing componentName={component.displayName} />}
         {component.uuid && isComponentValid && (
           <iframe
             ref={iframeRef}

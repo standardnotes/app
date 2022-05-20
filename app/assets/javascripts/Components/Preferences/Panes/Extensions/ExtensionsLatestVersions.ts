@@ -1,6 +1,7 @@
 import { WebApplication } from '@/UIModels/Application'
-import { SNComponent, ClientDisplayableError, FeatureDescription } from '@standardnotes/snjs'
+import { ClientDisplayableError, FeatureDescription } from '@standardnotes/snjs'
 import { makeAutoObservable, observable } from 'mobx'
+import { AnyExtension } from './AnyExtension'
 
 export class ExtensionsLatestVersions {
   static async load(application: WebApplication): Promise<ExtensionsLatestVersions | undefined> {
@@ -23,7 +24,7 @@ export class ExtensionsLatestVersions {
     })
   }
 
-  getVersion(extension: SNComponent): string | undefined {
+  getVersion(extension: AnyExtension): string | undefined {
     return this.latestVersionsMap.get(extension.package_info.identifier)
   }
 }

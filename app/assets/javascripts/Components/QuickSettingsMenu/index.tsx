@@ -67,7 +67,7 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(({ appli
   const reloadThemes = useCallback(() => {
     const themes = application.items.getDisplayableItems<SNTheme>(ContentType.Theme).map((item) => {
       return {
-        name: item.name,
+        name: item.displayName,
         identifier: item.identifier,
         component: item,
       }
@@ -263,7 +263,7 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(({ appli
           >
             <div className="flex items-center">
               <Icon type="window" className="color-neutral mr-2" />
-              {component.name}
+              {component.displayName}
             </div>
             <Switch checked={component.active} className="px-0" />
           </button>

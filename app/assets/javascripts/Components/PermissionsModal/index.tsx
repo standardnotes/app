@@ -56,7 +56,7 @@ export class PermissionsModal extends Component<Props> {
                 <div className="sk-panel-section">
                   <div className="sk-panel-row">
                     <div className="sk-h2">
-                      <strong>{this.props.component.name}</strong>
+                      <strong>{this.props.component.displayName}</strong>
                       {' would like to interact with your '}
                       {this.props.permissionsString}
                     </div>
