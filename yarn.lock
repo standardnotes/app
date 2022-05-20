@@ -2412,10 +2412,10 @@
   resolved "https://registry.yarnpkg.com/@standardnotes/sncrypto-common/-/sncrypto-common-1.9.0.tgz#7c7387357fbd95f6121c35c88c53d5c72203fe22"
   integrity sha512-EoPwt0gU0kDU1feyumXU3neSaNQivC2+LVQp8C5kDYi6OrrLPzq3dGPc21GFLKinAdcZvjfLc/RkFo6b/CEnAA==
 
-"@standardnotes/sncrypto-web@1.10.0":
-  version "1.10.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/sncrypto-web/-/sncrypto-web-1.10.0.tgz#e30821c724d12d866c076df1293f6b2e6a0bf9ce"
-  integrity sha512-nRHLfEXG/+/lUP6yDfuwVAw8yq+jjcixQoyFf8nYQgBecqixmVbQdtRJd7KVRzQjqIVNt0elYuZuvoG/om01yw==
+"@standardnotes/sncrypto-web@1.10.1":
+  version "1.10.1"
+  resolved "https://registry.yarnpkg.com/@standardnotes/sncrypto-web/-/sncrypto-web-1.10.1.tgz#c3467a074bb76b7ebc7858a479a15486ebf7b3be"
+  integrity sha512-/drPoz2bg5G6QiC48yqp2kkUVsoDKyJHyAb5x0X5rdnCAHaYv+b4NdkSihsj+enWvpocQ0sr2n/gewqmUIPivQ==
   dependencies:
     "@standardnotes/sncrypto-common" "^1.9.0"
     buffer "^6.0.3"

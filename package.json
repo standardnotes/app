@@ -73,7 +73,7 @@
     "@standardnotes/filepicker": "1.14.9",
     "@standardnotes/icons": "^1.1.7",
     "@standardnotes/services": "^1.12.0",
-    "@standardnotes/sncrypto-web": "1.10.0",
+    "@standardnotes/sncrypto-web": "1.10.1",
     "@standardnotes/snjs": "2.110.0",
     "@standardnotes/stylekit": "5.27.1",
     "@zip.js/zip.js": "^2.4.10",
