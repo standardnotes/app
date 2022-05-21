@@ -32,7 +32,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     }
 
     const premiumModal = usePremiumModal()
-    const note: SNNote | undefined = Object.values(appState.notes.selectedNotes)[0]
+    const note: SNNote | undefined = appState.notes.firstSelectedNote
 
     const [open, setOpen] = useState(false)
     const [position, setPosition] = useState({

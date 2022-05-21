@@ -82,7 +82,7 @@ export class FilesState extends AbstractState {
   }
 
   reloadAttachedFiles = () => {
-    const note = Object.values(this.appState.notes.selectedNotes)[0]
+    const note = this.appState.notes.firstSelectedNote
     if (note) {
       this.attachedFiles = this.application.items.getFilesForNote(note)
     }
@@ -108,7 +108,7 @@ export class FilesState extends AbstractState {
   }
 
   attachFileToNote = async (file: FileItem) => {
-    const note = Object.values(this.appState.notes.selectedNotes)[0]
+    const note = this.appState.notes.firstSelectedNote
     if (!note) {
       addToast({
         type: ToastType.Error,
@@ -121,7 +121,7 @@ export class FilesState extends AbstractState {
   }
 
   detachFileFromNote = async (file: FileItem) => {
-    const note = Object.values(this.appState.notes.selectedNotes)[0]
+    const note = this.appState.notes.firstSelectedNote
     if (!note) {
       addToast({
         type: ToastType.Error,

@@ -61,7 +61,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
       appState.notes.setShowRevisionHistoryModal(false)
     }
 
-    const note = Object.values(appState.notes.selectedNotes)[0]
+    const note = appState.notes.firstSelectedNote
     const editorForCurrentNote = useMemo(() => {
       return application.componentManager.editorForNote(note)
     }, [application, note])

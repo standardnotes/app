@@ -43,6 +43,7 @@ export class NotesState extends AbstractState {
       showRevisionHistoryModal: observable,
 
       selectedNotes: computed,
+      firstSelectedNote: computed,
       selectedNotesCount: computed,
       trashedNotesCount: computed,
 
@@ -88,6 +89,10 @@ export class NotesState extends AbstractState {
 
   get selectedNotes() {
     return this.appState.selectedItems.getSelectedItems(ContentType.Note) as Record<UuidString, SNNote>
+  }
+
+  get firstSelectedNote(): SNNote | undefined {
+    return Object.values(this.selectedNotes)[0]
   }
 
   get selectedNotesCount(): number {
