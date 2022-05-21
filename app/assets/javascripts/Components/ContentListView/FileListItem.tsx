@@ -30,8 +30,8 @@ export const FileListItem: FunctionComponent<DisplayableListItemProps> = observe
         }`}
         id={item.uuid}
         onClick={() => {
-          void appState.selectedItems.selectItem(item.uuid, true).then((didSelect: boolean) => {
-            if (didSelect && appState.selectedItems.selectedItemsCount < 2) {
+          void appState.selectedItems.selectItem(item.uuid, true).then(() => {
+            if (appState.selectedItems.selectedItemsCount < 2) {
               appState.filePreviewModal.activate(item as FileItem, appState.files.allFiles)
             }
           })

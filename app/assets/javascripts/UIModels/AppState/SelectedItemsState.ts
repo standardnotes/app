@@ -78,8 +78,9 @@ export class SelectedItemsState extends AbstractState {
       itemsToSelect = items.slice(selectedItemIndex, lastSelectedItemIndex + 1)
     }
 
-    const authorizedItems = await this.application.protections.authorizeProtectedActionForItems(
-      itemsToSelect,
+    /** @TODO */
+    const authorizedItems = await this.application.authorizeProtectedActionForNotes(
+      itemsToSelect as SNNote[],
       ChallengeReason.SelectProtectedNote,
     )
 
@@ -91,39 +92,33 @@ export class SelectedItemsState extends AbstractState {
     }
   }
 
-  selectItem = async (uuid: UuidString, userTriggered?: boolean): Promise<boolean> => {
-    let didSelectItem = false
-
+  selectItem = async (uuid: UuidString, userTriggered?: boolean): Promise<void> => {
     const item = this.application.items.findItem<ListableContentItem>(uuid)
     if (!item) {
-      return didSelectItem
+      return
     }
 
     const hasMeta = this.io.activeModifiers.has(KeyboardModifier.Meta)
     const hasCtrl = this.io.activeModifiers.has(KeyboardModifier.Ctrl)
     const hasShift = this.io.activeModifiers.has(KeyboardModifier.Shift)
-    const isAuthorizedToAccess = await this.application.protections.authorizeItemAccess(item)
 
     if (userTriggered && (hasMeta || hasCtrl)) {
       if (this.selectedItems[uuid]) {
         delete this.selectedItems[uuid]
-        didSelectItem = false
-      } else if (isAuthorizedToAccess) {
+      } else if (await this.application.authorizeNoteAccess(item as SNNote)) {
         this.selectedItems[uuid] = item
         this.lastSelectedItem = item
-        didSelectItem = true
       }
     } else if (userTriggered && hasShift) {
       await this.selectItemsRange(item)
     } else {
       const shouldSelectNote = this.selectedItemsCount > 1 || !this.selectedItems[uuid]
-      if (shouldSelectNote && isAuthorizedToAccess) {
+      if (shouldSelectNote && (await this.application.authorizeNoteAccess(item as SNNote))) {
         this.setSelectedItems({
           [item.uuid]: item,
         })
         this.lastSelectedItem = item
       }
-      didSelectItem = true
     }
 
     if (this.selectedItemsCount === 1) {
@@ -132,7 +127,5 @@ export class SelectedItemsState extends AbstractState {
         await this.appState.notes.openNote(item.uuid)
       }
     }
-
-    return didSelectItem
   }
 }

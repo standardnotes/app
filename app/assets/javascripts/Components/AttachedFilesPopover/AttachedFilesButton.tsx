@@ -172,7 +172,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     }
 
     const authorizeProtectedActionForFile = async (file: FileItem, challengeReason: ChallengeReason) => {
-      const authorizedFiles = await application.protections.authorizeProtectedActionForItems([file], challengeReason)
+      const authorizedFiles = await application.protections.authorizeProtectedActionForFiles([file], challengeReason)
       const isAuthorized = authorizedFiles.length > 0 && authorizedFiles.includes(file)
       return isAuthorized
     }
