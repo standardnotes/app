@@ -88,19 +88,27 @@ export class SelectedItemsState extends AbstractState {
     }
   }
 
-  selectItem = async (uuid: UuidString, userTriggered?: boolean): Promise<void> => {
+  selectItem = async (
+    uuid: UuidString,
+    userTriggered?: boolean,
+  ): Promise<{
+    didSelect: boolean
+  }> => {
     const item = this.application.items.findItem<ListableContentItem>(uuid)
     if (!item) {
-      return
+      return {
+        didSelect: false,
+      }
     }
 
     const hasMeta = this.io.activeModifiers.has(KeyboardModifier.Meta)
     const hasCtrl = this.io.activeModifiers.has(KeyboardModifier.Ctrl)
     const hasShift = this.io.activeModifiers.has(KeyboardModifier.Shift)
+    const hasMoreThanOneSelected = this.selectedItemsCount > 1
     const isAuthorizedForAccess = await this.application.protections.authorizeItemAccess(item)
 
     if (userTriggered && (hasMeta || hasCtrl)) {
-      if (this.selectedItems[uuid]) {
+      if (this.selectedItems[uuid] && hasMoreThanOneSelected) {
         delete this.selectedItems[uuid]
       } else if (isAuthorizedForAccess) {
         this.selectedItems[uuid] = item
@@ -109,7 +117,7 @@ export class SelectedItemsState extends AbstractState {
     } else if (userTriggered && hasShift) {
       await this.selectItemsRange(item)
     } else {
-      const shouldSelectNote = this.selectedItemsCount > 1 || !this.selectedItems[uuid]
+      const shouldSelectNote = hasMoreThanOneSelected || !this.selectedItems[uuid]
       if (shouldSelectNote && isAuthorizedForAccess) {
         this.setSelectedItems({
           [item.uuid]: item,
@@ -123,6 +131,10 @@ export class SelectedItemsState extends AbstractState {
       if (item.content_type === ContentType.Note) {
         await this.appState.notes.openNote(item.uuid)
       }
+    }
+
+    return {
+      didSelect: this.selectedItems[uuid] != undefined,
     }
   }
 }

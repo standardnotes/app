@@ -39,8 +39,8 @@ export const FileListItem: FunctionComponent<DisplayableListItemProps> = observe
     )
 
     const onClick = useCallback(() => {
-      void appState.selectedItems.selectItem(item.uuid, true).then(() => {
-        if (appState.selectedItems.selectedItemsCount < 2) {
+      void appState.selectedItems.selectItem(item.uuid, true).then(({ didSelect }) => {
+        if (didSelect && appState.selectedItems.selectedItemsCount < 2) {
           appState.filePreviewModal.activate(item as FileItem, appState.files.allFiles)
         }
       })
