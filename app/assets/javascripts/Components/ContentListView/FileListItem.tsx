@@ -49,8 +49,8 @@ export const FileListItem: FunctionComponent<DisplayableListItemProps> = observe
 
     return (
       <div
-        className={`content-list-item flex items-stretch w-full cursor-pointer hover:bg-grey-5 ${
-          selected && 'selected bg-grey-5 border-0 border-l-2px border-solid border-info'
+        className={`content-list-item flex items-stretch w-full cursor-pointer ${
+          selected && 'selected border-0 border-l-2px border-solid border-info'
         }`}
         id={item.uuid}
         onClick={onClick}

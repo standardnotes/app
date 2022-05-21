@@ -120,6 +120,10 @@
   }
 
   .content-list-item {
+    &.selected, &:hover {
+      background-color: var(--item-cell-selected-background-color);
+    }
+
     progress {
       background-color: var(--note-preview-progress-background-color);
       color: var(--note-preview-progress-color);
