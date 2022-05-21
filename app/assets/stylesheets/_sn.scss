@@ -1167,6 +1167,10 @@
   background-color: var(--sn-stylekit-background-color);
 }
 
+.sn-component .hover\:bg-grey-5:hover {
+  background-color: var(--sn-stylekit-grey-5);
+}
+
 .sn-component .progress-bar {
   border-radius: 0.5rem;
   background-color: var(--sn-stylekit-contrast-background-color);
