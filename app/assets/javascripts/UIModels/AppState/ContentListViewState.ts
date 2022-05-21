@@ -457,8 +457,7 @@ export class ContentListViewState extends AbstractState {
 
   selectItemWithScrollHandling = async (
     item: ListableContentItem,
-    userTriggered?: boolean,
-    scrollIntoView = true,
+    { userTriggered = false, scrollIntoView = true },
   ): Promise<void> => {
     await this.appState.selectedItems.selectItem(item.uuid, userTriggered)
 
@@ -474,7 +473,10 @@ export class ContentListViewState extends AbstractState {
     const item = this.getFirstNonProtectedItem()
 
     if (item) {
-      await this.selectItemWithScrollHandling(item, false, false)
+      await this.selectItemWithScrollHandling(item, {
+        userTriggered: false,
+        scrollIntoView: false,
+      })
 
       this.resetScrollPosition()
     }
@@ -498,7 +500,7 @@ export class ContentListViewState extends AbstractState {
         continue
       }
 
-      this.selectItemWithScrollHandling(nextItem, true).catch(console.error)
+      this.selectItemWithScrollHandling(nextItem, { userTriggered: true }).catch(console.error)
 
       const nextNoteElement = document.getElementById(nextItem.uuid)
 
@@ -512,7 +514,10 @@ export class ContentListViewState extends AbstractState {
     const item = this.getFirstNonProtectedItem()
 
     if (item) {
-      await this.selectItemWithScrollHandling(item, false, false).catch(console.error)
+      await this.selectItemWithScrollHandling(item, {
+        userTriggered: false,
+        scrollIntoView: false,
+      }).catch(console.error)
     } else {
       await this.createNewNote()
     }
@@ -538,7 +543,7 @@ export class ContentListViewState extends AbstractState {
         continue
       }
 
-      this.selectItemWithScrollHandling(previousItem).catch(console.error)
+      this.selectItemWithScrollHandling(previousItem, { userTriggered: true }).catch(console.error)
 
       const previousNoteElement = document.getElementById(previousItem.uuid)
 
