@@ -24,32 +24,22 @@ export class SelectedItemsState extends AbstractState {
     })
 
     appObservers.push(
-      application.streamItems<SNNote>(ContentType.Note, ({ changed, inserted, removed }) => {
-        runInAction(() => {
-          for (const removedNote of removed) {
-            delete this.selectedItems[removedNote.uuid]
-          }
-
-          for (const note of [...changed, ...inserted]) {
-            if (this.selectedItems[note.uuid]) {
-              this.selectedItems[note.uuid] = note
+      application.streamItems<SNNote | FileItem>(
+        [ContentType.Note, ContentType.File],
+        ({ changed, inserted, removed }) => {
+          runInAction(() => {
+            for (const removedNote of removed) {
+              delete this.selectedItems[removedNote.uuid]
             }
-          }
-        })
-      }),
-      application.streamItems<FileItem>(ContentType.File, ({ changed, inserted, removed }) => {
-        runInAction(() => {
-          for (const removedFile of removed) {
-            delete this.selectedItems[removedFile.uuid]
-          }
 
-          for (const file of [...changed, ...inserted]) {
-            if (this.selectedItems[file.uuid]) {
-              this.selectedItems[file.uuid] = file
+            for (const item of [...changed, ...inserted]) {
+              if (this.selectedItems[item.uuid]) {
+                this.selectedItems[item.uuid] = item
+              }
             }
-          }
-        })
-      }),
+          })
+        },
+      ),
     )
   }
 
