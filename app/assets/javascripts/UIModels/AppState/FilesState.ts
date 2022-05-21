@@ -20,6 +20,9 @@ import { WebApplication } from '../Application'
 import { AbstractState } from './AbstractState'
 import { AppState } from './AppState'
 
+const UnprotectedFileActions = [PopoverFileItemActionType.ToggleFileProtection]
+const NonMutatingFileActions = [PopoverFileItemActionType.DownloadFile, PopoverFileItemActionType.PreviewFile]
+
 type FileContextMenuLocation = { x: number; y: number }
 
 export class FilesState extends AbstractState {
@@ -159,7 +162,9 @@ export class FilesState extends AbstractState {
     const file = action.type !== PopoverFileItemActionType.RenameFile ? action.payload : action.payload.file
     let isAuthorizedForAction = true
 
-    if (file.protected && action.type !== PopoverFileItemActionType.ToggleFileProtection) {
+    const requiresAuthorization = file.protected && !UnprotectedFileActions.includes(action.type)
+
+    if (requiresAuthorization) {
       isAuthorizedForAction = await this.authorizeProtectedActionForFile(file, ChallengeReason.AccessProtectedFile)
     }
 
@@ -198,10 +203,7 @@ export class FilesState extends AbstractState {
         break
     }
 
-    if (
-      action.type !== PopoverFileItemActionType.DownloadFile &&
-      action.type !== PopoverFileItemActionType.PreviewFile
-    ) {
+    if (!NonMutatingFileActions.includes(action.type)) {
       this.application.sync.sync().catch(console.error)
     }
 
