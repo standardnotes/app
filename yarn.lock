@@ -2311,14 +2311,14 @@
     "@standardnotes/auth" "^3.18.16"
     "@standardnotes/features" "^1.44.1"
 
-"@standardnotes/encryption@^1.7.12":
-  version "1.7.12"
-  resolved "https://registry.yarnpkg.com/@standardnotes/encryption/-/encryption-1.7.12.tgz#01edca2e84949ce64a0d3c05e438f89bc40b8e38"
-  integrity sha512-QOtYzdPOZhldBQ2t4C6bwBUvxsycyEfBzd/ii9UGknl1TovRR01a+B2A1DqeN8oQxBecvUC5B9Uxhxfsiq2efw==
+"@standardnotes/encryption@^1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/encryption/-/encryption-1.8.0.tgz#e9012318aa2b4d630a53cd6cc22db61487792b09"
+  integrity sha512-T/xEkWTyUrfvFLDApkUTWTgCqjH2ptXdMFsvX0RFo7sCF7k47KvAZ7HOMAsKYjrHmMbLfETbwLlsIOf8xiXKlw==
   dependencies:
-    "@standardnotes/models" "^1.8.8"
+    "@standardnotes/models" "^1.9.0"
     "@standardnotes/responses" "^1.6.24"
-    "@standardnotes/services" "^1.12.2"
+    "@standardnotes/services" "^1.13.0"
 
 "@standardnotes/features@^1.44.1":
   version "1.44.1"
@@ -2328,24 +2328,24 @@
     "@standardnotes/auth" "^3.18.16"
     "@standardnotes/common" "^1.21.0"
 
-"@standardnotes/filepicker@1.14.12", "@standardnotes/filepicker@^1.14.12":
-  version "1.14.12"
-  resolved "https://registry.yarnpkg.com/@standardnotes/filepicker/-/filepicker-1.14.12.tgz#ded6526f11ad7cb3309a1dc23955235350d35bef"
-  integrity sha512-GYIc8f0eVDJfvWV2bagRq4oJ2Uj0XJ5lemf4EReZzPK0MTpqmqvCJrlYd8WzVc8OYBaWNNUwP6qs8Esop2wuRg==
+"@standardnotes/filepicker@1.14.13", "@standardnotes/filepicker@^1.14.13":
+  version "1.14.13"
+  resolved "https://registry.yarnpkg.com/@standardnotes/filepicker/-/filepicker-1.14.13.tgz#8e608678244e733b23cbdeab296ccd93311d52a4"
+  integrity sha512-BddTLSD6gjzRP89VElU+EuyZbKOgU/ArbBCFjzAN6hTTv/aiRl9P0BiIrlWxfuPJimVhpOIAAvBreyFR3nXHQw==
   dependencies:
     "@standardnotes/common" "^1.21.0"
-    "@standardnotes/services" "^1.12.2"
+    "@standardnotes/services" "^1.13.0"
     "@standardnotes/utils" "^1.6.9"
 
-"@standardnotes/files@^1.1.13":
-  version "1.1.13"
-  resolved "https://registry.yarnpkg.com/@standardnotes/files/-/files-1.1.13.tgz#0bc4a67c6a43538cf5fbbd2e8c34a72c5cdef61e"
-  integrity sha512-jEsz5+MbM3dKY3xPfjQ+FIz+0bzA2/e80hnmsqX0dzaMuYXtpEFuTG4gpkaSoGCLRm9vqJPUmgXf736s7+bs7g==
+"@standardnotes/files@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/files/-/files-1.2.0.tgz#10e81910767fea6bd380ffadb05ef55a23a7ade5"
+  integrity sha512-dJcDMOUxRdUe3mMCYUsTEVQvafP4ppomQkyOLqjZkKnGt0otNfq2u3qVr8HtChAT9Bft7ieCTI0Lt2OecCht/w==
   dependencies:
-    "@standardnotes/encryption" "^1.7.12"
-    "@standardnotes/models" "^1.8.8"
+    "@standardnotes/encryption" "^1.8.0"
+    "@standardnotes/models" "^1.9.0"
     "@standardnotes/responses" "^1.6.24"
-    "@standardnotes/services" "^1.12.2"
+    "@standardnotes/services" "^1.13.0"
     "@standardnotes/utils" "^1.6.9"
 
 "@standardnotes/icons@^1.1.7":
@@ -2353,10 +2353,10 @@
   resolved "https://registry.yarnpkg.com/@standardnotes/icons/-/icons-1.1.7.tgz#4523d8e2e3aa34d0e921df802d54c0babe054279"
   integrity sha512-yHB/KInj7qSmtnUqtTo6CPttu+2+oAwdANfjE3a69sgS7nVBxUuwSHHxb9xUOKpJBmipFjJi5F0YVF9kLmHiwg==
 
-"@standardnotes/models@^1.8.8":
-  version "1.8.8"
-  resolved "https://registry.yarnpkg.com/@standardnotes/models/-/models-1.8.8.tgz#a086b597a4da9169add163fa4770f1afb40d8598"
-  integrity sha512-H/7BGU8wdkFNcQLhemdKUDmqoC5CacfVOU0uctTjXdOwW7PKMhtV2g7Fvj8lWWtnOYW86bKB7VV9uK7rgQcieQ==
+"@standardnotes/models@^1.9.0":
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/models/-/models-1.9.0.tgz#c2dc063b5c0af9b472da45d4eb43aeb749e566bf"
+  integrity sha512-PaKSepWcyXsUwbGiC+lvBexcE2TZ6iAQ0cX8azic8xyrvURi0sn+KTKpwzB2bQ9Wj25pfS6RUY0pn7S3DfcUMw==
   dependencies:
     "@standardnotes/features" "^1.44.1"
     "@standardnotes/responses" "^1.6.24"
@@ -2371,14 +2371,14 @@
     "@standardnotes/common" "^1.21.0"
     "@standardnotes/features" "^1.44.1"
 
-"@standardnotes/services@^1.12.2":
-  version "1.12.2"
-  resolved "https://registry.yarnpkg.com/@standardnotes/services/-/services-1.12.2.tgz#efc52192ac63668b2de5bcc7c3a5d082b40d942c"
-  integrity sha512-n+taTbHxnA63bFgioJGCoAqASbk6CFlLzYQdaoV/vAyyVntN4vyuy9hb06ku6kl2vBQQbTJse7CPHe9W1istWQ==
+"@standardnotes/services@^1.13.0":
+  version "1.13.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/services/-/services-1.13.0.tgz#e927773c4842659beb2f2a9c33e1d335472f917d"
+  integrity sha512-0obK8pEa1NEoZ5zBb2gm6UdmGvKyvOgmk3MWtN/WB/0vGXXbxm26772vCTXiJFiPEfITUH1sb6UsrJDjMkljsw==
   dependencies:
     "@standardnotes/auth" "^3.18.16"
     "@standardnotes/common" "^1.21.0"
-    "@standardnotes/models" "^1.8.8"
+    "@standardnotes/models" "^1.9.0"
     "@standardnotes/responses" "^1.6.24"
     "@standardnotes/utils" "^1.6.9"
 
@@ -2401,21 +2401,21 @@
     buffer "^6.0.3"
     libsodium-wrappers "^0.7.9"
 
-"@standardnotes/snjs@2.110.3":
-  version "2.110.3"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.110.3.tgz#ea9fc61598a8ddebac342e74f2cfb7fce45ac4f4"
-  integrity sha512-oXj0cSs+NxCHahqo3hYr/nGlOP0u+jPmsDDCUfG1XAOi/mftMTXTPeIWzNceNYVZNLoF/HmDME3zlcWn7WTXXw==
+"@standardnotes/snjs@2.111.0":
+  version "2.111.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.111.0.tgz#91749eb6d54254abaf797018828a7766f6f3e759"
+  integrity sha512-kO47jffagMnLeccHI1cb9N9XiQgIo+3wtLZLgObkl/V1X0PHqxRWN4lWStk5K4k4uitxvdzrTHEGySBpg7DhNw==
   dependencies:
     "@standardnotes/auth" "^3.18.16"
     "@standardnotes/common" "^1.21.0"
     "@standardnotes/domain-events" "^2.28.8"
-    "@standardnotes/encryption" "^1.7.12"
+    "@standardnotes/encryption" "^1.8.0"
     "@standardnotes/features" "^1.44.1"
-    "@standardnotes/filepicker" "^1.14.12"
-    "@standardnotes/files" "^1.1.13"
-    "@standardnotes/models" "^1.8.8"
+    "@standardnotes/filepicker" "^1.14.13"
+    "@standardnotes/files" "^1.2.0"
+    "@standardnotes/models" "^1.9.0"
     "@standardnotes/responses" "^1.6.24"
-    "@standardnotes/services" "^1.12.2"
+    "@standardnotes/services" "^1.13.0"
     "@standardnotes/settings" "^1.14.3"
     "@standardnotes/sncrypto-common" "^1.9.0"
     "@standardnotes/utils" "^1.6.9"
