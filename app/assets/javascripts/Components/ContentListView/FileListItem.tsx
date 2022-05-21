@@ -1,6 +1,7 @@
 import { FileItem } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
+import { useCallback } from 'preact/hooks'
 import { getFileIconComponent } from '../AttachedFilesPopover/PopoverFileItem'
 import { ListItemConflictIndicator } from './ListItemConflictIndicator'
 import { ListItemFlagIcons } from './ListItemFlagIcons'
@@ -10,18 +11,32 @@ import { DisplayableListItemProps } from './Types/DisplayableListItemProps'
 
 export const FileListItem: FunctionComponent<DisplayableListItemProps> = observer(
   ({ application, appState, hideDate, hideIcon, hideTags, item, selected, sortBy, tags }) => {
-    const openFileContextMenu = (posX: number, posY: number) => {
-      appState.files.setFileContextMenuLocation({
-        x: posX,
-        y: posY,
-      })
-      appState.files.setShowFileContextMenu(true)
-    }
+    const openFileContextMenu = useCallback(
+      (posX: number, posY: number) => {
+        appState.files.setFileContextMenuLocation({
+          x: posX,
+          y: posY,
+        })
+        appState.files.setShowFileContextMenu(true)
+      },
+      [appState.files],
+    )
 
-    const openContextMenu = (posX: number, posY: number) => {
-      void appState.contentListView.selectItemWithScrollHandling(item, true, false)
-      openFileContextMenu(posX, posY)
-    }
+    const openContextMenu = useCallback(
+      (posX: number, posY: number) => {
+        void appState.contentListView.selectItemWithScrollHandling(item, true, false)
+        openFileContextMenu(posX, posY)
+      },
+      [appState.contentListView, item, openFileContextMenu],
+    )
+
+    const onClick = useCallback(() => {
+      void appState.selectedItems.selectItem(item.uuid, true).then(() => {
+        if (appState.selectedItems.selectedItemsCount < 2) {
+          appState.filePreviewModal.activate(item as FileItem, appState.files.allFiles)
+        }
+      })
+    }, [appState.filePreviewModal, appState.files.allFiles, appState.selectedItems, item])
 
     return (
       <div
@@ -29,13 +44,7 @@ export const FileListItem: FunctionComponent<DisplayableListItemProps> = observe
           selected && 'selected bg-grey-5 border-0 border-l-2px border-solid border-info'
         }`}
         id={item.uuid}
-        onClick={() => {
-          void appState.selectedItems.selectItem(item.uuid, true).then(() => {
-            if (appState.selectedItems.selectedItemsCount < 2) {
-              appState.filePreviewModal.activate(item as FileItem, appState.files.allFiles)
-            }
-          })
-        }}
+        onClick={onClick}
         onContextMenu={(event) => {
           event.preventDefault()
           openContextMenu(event.clientX, event.clientY)

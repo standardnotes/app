@@ -8,6 +8,7 @@ import { FOCUSABLE_BUT_NOT_TABBABLE, NOTES_LIST_SCROLL_THRESHOLD } from '@/Const
 import { ListableContentItem } from './Types/ListableContentItem'
 import { ContentListItem } from './ContentListItem'
 import { WebDisplayOptions } from '@/UIModels/AppState/WebDisplayOptions'
+import { useCallback } from 'preact/hooks'
 
 type Props = {
   application: WebApplication
@@ -25,23 +26,29 @@ export const ContentList: FunctionComponent<Props> = observer(
     const { hideTags, hideDate, hideNotePreview, hideEditorIcon } = webDisplayOptions
     const { sortBy } = displayOptions
 
-    const onScroll = (e: Event) => {
-      const offset = NOTES_LIST_SCROLL_THRESHOLD
-      const element = e.target as HTMLElement
-      if (element.scrollTop + element.offsetHeight >= element.scrollHeight - offset) {
-        paginate()
-      }
-    }
+    const onScroll = useCallback(
+      (e: Event) => {
+        const offset = NOTES_LIST_SCROLL_THRESHOLD
+        const element = e.target as HTMLElement
+        if (element.scrollTop + element.offsetHeight >= element.scrollHeight - offset) {
+          paginate()
+        }
+      },
+      [paginate],
+    )
 
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === KeyboardKey.Up) {
-        e.preventDefault()
-        selectPreviousItem()
-      } else if (e.key === KeyboardKey.Down) {
-        e.preventDefault()
-        selectNextItem()
-      }
-    }
+    const onKeyDown = useCallback(
+      (e: KeyboardEvent) => {
+        if (e.key === KeyboardKey.Up) {
+          e.preventDefault()
+          selectPreviousItem()
+        } else if (e.key === KeyboardKey.Down) {
+          e.preventDefault()
+          selectNextItem()
+        }
+      },
+      [selectNextItem, selectPreviousItem],
+    )
 
     return (
       <div

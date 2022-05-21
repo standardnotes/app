@@ -90,9 +90,12 @@ export const FileContextMenu: FunctionComponent<Props> = observer(({ appState })
     }
   }, [reloadContextMenuLayout])
 
-  const handleFileAction = async (action: PopoverFileItemAction) => {
-    return await appState.files.handleFileAction(action, PopoverTabs.AllFiles)
-  }
+  const handleFileAction = useCallback(
+    async (action: PopoverFileItemAction) => {
+      return await appState.files.handleFileAction(action, PopoverTabs.AllFiles)
+    },
+    [appState.files],
+  )
 
   return (
     <div
