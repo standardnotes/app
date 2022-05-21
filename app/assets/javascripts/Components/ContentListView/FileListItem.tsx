@@ -41,6 +41,12 @@ export const FileListItem: FunctionComponent<DisplayableListItemProps> = observe
       })
     }, [appState.filePreviewModal, appState.files.allFiles, appState.selectedItems, item])
 
+    const IconComponent = () =>
+      getFileIconComponent(
+        application.iconsController.getIconForFileType((item as FileItem).mimeType),
+        'w-5 h-5 flex-shrink-0',
+      )
+
     return (
       <div
         className={`content-list-item flex items-stretch w-full cursor-pointer hover:bg-grey-5 ${
@@ -55,10 +61,7 @@ export const FileListItem: FunctionComponent<DisplayableListItemProps> = observe
       >
         {!hideIcon && (
           <div className="flex flex-col items-center justify-between p-4 pr-3 mr-0">
-            {getFileIconComponent(
-              application.iconsController.getIconForFileType((item as FileItem).mimeType),
-              'w-5 h-5 flex-shrink-0',
-            )}
+            <IconComponent />
           </div>
         )}
         <div className="flex-grow min-w-0 py-4 px-0 border-0 border-b-1 border-solid border-main">
