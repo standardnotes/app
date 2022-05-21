@@ -51,6 +51,13 @@ export class SelectedItemsState extends AbstractState {
     return Object.keys(this.selectedItems).length
   }
 
+  getSelectedItems = (contentType: ContentType) => {
+    const filteredEntries = Object.entries(this.appState.selectedItems.selectedItems).filter(
+      ([_, item]) => item.content_type === contentType,
+    )
+    return Object.fromEntries(filteredEntries)
+  }
+
   setSelectedItems = (selectedItems: SelectedItems) => {
     this.selectedItems = selectedItems
   }

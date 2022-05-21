@@ -63,10 +63,7 @@ export class FilesState extends AbstractState {
   }
 
   get selectedFiles() {
-    const filteredEnteries = Object.entries(this.appState.selectedItems.selectedItems).filter(
-      ([_, item]) => item.content_type === ContentType.File,
-    )
-    return Object.fromEntries(filteredEnteries) as Record<UuidString, FileItem>
+    return this.appState.selectedItems.getSelectedItems(ContentType.File) as Record<UuidString, FileItem>
   }
 
   setShowFileContextMenu = (enabled: boolean) => {

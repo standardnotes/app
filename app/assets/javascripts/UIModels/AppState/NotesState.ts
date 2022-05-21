@@ -87,10 +87,7 @@ export class NotesState extends AbstractState {
   }
 
   get selectedNotes() {
-    const filteredEnteries = Object.entries(this.appState.selectedItems.selectedItems).filter(
-      ([_, item]) => item.content_type === ContentType.Note,
-    )
-    return Object.fromEntries(filteredEnteries) as Record<UuidString, SNNote>
+    return this.appState.selectedItems.getSelectedItems(ContentType.Note) as Record<UuidString, SNNote>
   }
 
   get selectedNotesCount(): number {
