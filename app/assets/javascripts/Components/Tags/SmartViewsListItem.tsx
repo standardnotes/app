@@ -20,6 +20,9 @@ const smartViewIconType = (view: SmartView): IconType => {
   if (view.uuid === SystemViewId.AllNotes) {
     return 'notes'
   }
+  if (view.uuid === SystemViewId.Files) {
+    return 'file'
+  }
   if (view.uuid === SystemViewId.ArchivedNotes) {
     return 'archive'
   }
