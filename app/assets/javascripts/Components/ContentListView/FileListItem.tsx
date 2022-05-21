@@ -6,7 +6,7 @@ import { getFileIconComponent } from '../AttachedFilesPopover/PopoverFileItem'
 import { ListItemConflictIndicator } from './ListItemConflictIndicator'
 import { ListItemFlagIcons } from './ListItemFlagIcons'
 import { ListItemTags } from './ListItemTags'
-import { ListItemTimestamps } from './ListItemTimestamps'
+import { ListItemMetadata } from './ListItemMetadata'
 import { DisplayableListItemProps } from './Types/DisplayableListItemProps'
 
 export const FileListItem: FunctionComponent<DisplayableListItemProps> = observer(
@@ -68,11 +68,28 @@ export const FileListItem: FunctionComponent<DisplayableListItemProps> = observe
           <div className="flex items-start justify-between font-semibold text-base leading-1.3 overflow-hidden">
             <div className="break-word mr-2">{item.title}</div>
           </div>
-          <ListItemTimestamps item={item} hideDate={hideDate} sortBy={sortBy} />
-          <ListItemTags hideTags={hideTags} tags={tags} />
-          <ListItemConflictIndicator item={item} />
+          {(!hideDate || item.protected) && (
+            <ListItemMetadata
+              item={{
+                protected: item.protected,
+                updatedAtString: item.updatedAtString,
+                createdAtString: item.createdAtString,
+              }}
+              hideDate={hideDate}
+              sortBy={sortBy}
+            />
+          )}
+          {!hideTags && <ListItemTags tags={tags} />}
+          {item.conflictOf && <ListItemConflictIndicator />}
         </div>
-        <ListItemFlagIcons item={item} />
+        <ListItemFlagIcons
+          item={{
+            archived: item.archived,
+            locked: item.locked,
+            pinned: item.pinned,
+            trashed: item.trashed,
+          }}
+        />
       </div>
     )
   },

@@ -3,7 +3,12 @@ import { Icon } from '@/Components/Icon/Icon'
 import { ListableContentItem } from './Types/ListableContentItem'
 
 type Props = {
-  item: ListableContentItem
+  item: {
+    locked: ListableContentItem['locked']
+    trashed: ListableContentItem['trashed']
+    archived: ListableContentItem['archived']
+    pinned: ListableContentItem['pinned']
+  }
   hasFiles?: boolean
 }
 
