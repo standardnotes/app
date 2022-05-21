@@ -51,11 +51,11 @@ export class SelectedItemsState extends AbstractState {
     return Object.keys(this.selectedItems).length
   }
 
-  getSelectedItems = (contentType: ContentType) => {
+  getSelectedItems = <T extends ListableContentItem>(contentType: ContentType) => {
     const filteredEntries = Object.entries(this.appState.selectedItems.selectedItems).filter(
       ([_, item]) => item.content_type === contentType,
-    )
-    return Object.fromEntries(filteredEntries)
+    ) as [UuidString, T][]
+    return Object.fromEntries<T>(filteredEntries)
   }
 
   setSelectedItems = (selectedItems: SelectedItems) => {

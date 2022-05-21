@@ -2,7 +2,7 @@ import { destroyAllObjectProperties } from '@/Utils'
 import { confirmDialog } from '@/Services/AlertService'
 import { StringEmptyTrash, Strings, StringUtils } from '@/Strings'
 import { MENU_MARGIN_FROM_APP_BORDER } from '@/Constants'
-import { UuidString, SNNote, NoteMutator, ContentType, SNTag, DeinitSource, TagMutator } from '@standardnotes/snjs'
+import { SNNote, NoteMutator, ContentType, SNTag, DeinitSource, TagMutator } from '@standardnotes/snjs'
 import { makeObservable, observable, action, computed, runInAction } from 'mobx'
 import { WebApplication } from '../Application'
 import { AppState } from './AppState'
@@ -88,7 +88,7 @@ export class NotesState extends AbstractState {
   }
 
   get selectedNotes() {
-    return this.appState.selectedItems.getSelectedItems(ContentType.Note) as Record<UuidString, SNNote>
+    return this.appState.selectedItems.getSelectedItems<SNNote>(ContentType.Note)
   }
 
   get firstSelectedNote(): SNNote | undefined {

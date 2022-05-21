@@ -13,7 +13,7 @@ import {
   ClassicFileSaver,
   parseFileName,
 } from '@standardnotes/filepicker'
-import { ChallengeReason, ClientDisplayableError, ContentType, FileItem, UuidString } from '@standardnotes/snjs'
+import { ChallengeReason, ClientDisplayableError, ContentType, FileItem } from '@standardnotes/snjs'
 import { addToast, dismissToast, ToastType, updateToast } from '@standardnotes/stylekit'
 import { action, computed, makeObservable, observable, reaction } from 'mobx'
 import { WebApplication } from '../Application'
@@ -63,7 +63,7 @@ export class FilesState extends AbstractState {
   }
 
   get selectedFiles() {
-    return this.appState.selectedItems.getSelectedItems(ContentType.File) as Record<UuidString, FileItem>
+    return this.appState.selectedItems.getSelectedItems<FileItem>(ContentType.File)
   }
 
   setShowFileContextMenu = (enabled: boolean) => {
