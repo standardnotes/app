@@ -144,7 +144,7 @@ export class FilesState extends AbstractState {
   }
 
   authorizeProtectedActionForFile = async (file: FileItem, challengeReason: ChallengeReason) => {
-    const authorizedFiles = await this.application.protections.authorizeProtectedActionForFiles([file], challengeReason)
+    const authorizedFiles = await this.application.protections.authorizeProtectedActionForItems([file], challengeReason)
     const isAuthorized = authorizedFiles.length > 0 && authorizedFiles.includes(file)
     return isAuthorized
   }

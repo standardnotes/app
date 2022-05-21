@@ -68,9 +68,8 @@ export class SelectedItemsState extends AbstractState {
       itemsToSelect = items.slice(selectedItemIndex, lastSelectedItemIndex + 1)
     }
 
-    /** @TODO */
-    const authorizedItems = await this.application.authorizeProtectedActionForNotes(
-      itemsToSelect as SNNote[],
+    const authorizedItems = await this.application.protections.authorizeProtectedActionForItems(
+      itemsToSelect,
       ChallengeReason.SelectProtectedNote,
     )
 
@@ -91,11 +90,12 @@ export class SelectedItemsState extends AbstractState {
     const hasMeta = this.io.activeModifiers.has(KeyboardModifier.Meta)
     const hasCtrl = this.io.activeModifiers.has(KeyboardModifier.Ctrl)
     const hasShift = this.io.activeModifiers.has(KeyboardModifier.Shift)
+    const isAuthorizedForAccess = await this.application.protections.authorizeItemAccess(item)
 
     if (userTriggered && (hasMeta || hasCtrl)) {
       if (this.selectedItems[uuid]) {
         delete this.selectedItems[uuid]
-      } else if (await this.application.authorizeNoteAccess(item as SNNote)) {
+      } else if (isAuthorizedForAccess) {
         this.selectedItems[uuid] = item
         this.lastSelectedItem = item
       }
@@ -103,7 +103,7 @@ export class SelectedItemsState extends AbstractState {
       await this.selectItemsRange(item)
     } else {
       const shouldSelectNote = this.selectedItemsCount > 1 || !this.selectedItems[uuid]
-      if (shouldSelectNote && (await this.application.authorizeNoteAccess(item as SNNote))) {
+      if (shouldSelectNote && isAuthorizedForAccess) {
         this.setSelectedItems({
           [item.uuid]: item,
         })
