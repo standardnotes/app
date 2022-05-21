@@ -210,7 +210,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
             width: '90%',
             maxWidth: '90%',
             minHeight: '90%',
-            background: 'var(--sn-stylekit-background-color)',
+            background: 'var(--modal-background-color)',
           }}
         >
           <div

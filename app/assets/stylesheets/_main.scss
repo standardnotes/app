@@ -38,8 +38,6 @@ body {
   height: 100%;
   line-height: normal;
   margin: 0;
-  color: var(--sn-stylekit-foreground-color);
-  background-color: var(--sn-stylekit-background-color);
 }
 
 * {
@@ -48,14 +46,6 @@ body {
 
 .uppercase {
   text-transform: uppercase;
-}
-
-.tinted {
-  color: var(--sn-stylekit-info-color);
-}
-
-.tinted-selected {
-  color: var(--sn-stylekit-info-contrast-color);
 }
 
 h1 {
@@ -96,13 +86,13 @@ a {
 }
 
 ::selection {
-  background: var(--sn-stylekit-info-color) !important; /* WebKit/Blink Browsers */
-  color: var(--sn-stylekit-info-contrast-color);
+  background: var(--text-selection-background-color) !important;
+  color: var(--text-selection-color);
 }
 
 ::-moz-selection {
-  background: var(--sn-stylekit-info-color) !important;
-  color: var(--sn-stylekit-info-contrast-color);
+  background: var(--text-selection-background-color) !important;
+  color: var(--text-selection-color);
 }
 
 p {
@@ -115,7 +105,7 @@ p {
   height: 100vh;
   position: relative;
   overflow: auto;
-  background-color: var(--sn-stylekit-background-color);
+  background-color: var(--editor-header-bar-background-color);
 }
 
 $footer-height: 2rem;
@@ -145,8 +135,7 @@ $footer-height: 2rem;
     height: 100%;
     position: absolute;
     cursor: col-resize;
-    // needs to be a color that works on main bg and contrast bg
-    background-color: var(--sn-stylekit-secondary-contrast-background-color);
+    background-color: var(--panel-resizer-background-color);
     opacity: 0;
     border-top: none;
     border-bottom: none;
@@ -176,8 +165,6 @@ $footer-height: 2rem;
 
     &.collapsed {
       opacity: 1;
-      // so it blends in with editor a bit more
-      // background-color: var(--sn-stylekit-editor-background-color);
     }
 
     &.dragging {
@@ -207,7 +194,6 @@ $footer-height: 2rem;
     > .content {
       height: 100%;
       max-height: 100%;
-      background-color: var(--sn-stylekit-background-color);
       position: relative;
     }
 
@@ -244,22 +230,4 @@ $footer-height: 2rem;
 
 .z-index-purchase-flow {
   z-index: $z-index-purchase-flow;
-}
-
-textarea {
-  &.non-interactive {
-    user-select: text !important;
-    resize: none;
-    background-color: transparent;
-    border-color: var(--sn-stylekit-border-color);
-    font-family: monospace;
-    outline: 0;
-
-    -webkit-user-select: none;
-    -webkit-touch-callout: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    -o-user-select: none;
-  }
 }

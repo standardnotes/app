@@ -144,14 +144,14 @@ export const ContentListView: FunctionComponent<Props> = observer(({ application
 
   return (
     <div
-      id="notes-column"
-      className="sn-component section notes app-column app-column-second"
+      id="items-column"
+      className="sn-component section app-column app-column-second"
       aria-label={'Notes & Files'}
       ref={itemsViewPanelRef}
     >
       <div className="content">
-        <div id="notes-title-bar" className="section-title-bar">
-          <div id="notes-title-bar-container">
+        <div id="items-title-bar" className="section-title-bar">
+          <div id="items-title-bar-container">
             <div className="section-title-bar-header">
               <div className="sk-h2 font-semibold title">{panelTitle}</div>
               <button
@@ -172,7 +172,7 @@ export const ContentListView: FunctionComponent<Props> = observer(({ application
                   id="search-bar"
                   className="filter-bar"
                   placeholder="Search"
-                  title="Searches notes in the currently selected tag"
+                  title="Searches notes and files in the currently selected tag"
                   value={noteFilterText}
                   onChange={onNoteFilterTextChange}
                   onKeyUp={onNoteFilterKeyUp}
@@ -195,7 +195,7 @@ export const ContentListView: FunctionComponent<Props> = observer(({ application
             </div>
             <NoAccountWarning appState={appState} />
           </div>
-          <div id="notes-menu-bar" className="sn-component" ref={displayOptionsMenuRef}>
+          <div id="items-menu-bar" className="sn-component" ref={displayOptionsMenuRef}>
             <div className="sk-app-bar no-edges">
               <div className="left">
                 <Disclosure open={showDisplayOptionsMenu} onChange={toggleDisplayOptionsMenu}>
@@ -227,10 +227,8 @@ export const ContentListView: FunctionComponent<Props> = observer(({ application
             </div>
           </div>
         </div>
-        {completedFullSync && !renderedItems.length ? <p className="empty-notes-list faded">No notes.</p> : null}
-        {!completedFullSync && !renderedItems.length ? (
-          <p className="empty-notes-list faded">Loading notes...</p>
-        ) : null}
+        {completedFullSync && !renderedItems.length ? <p className="empty-items-list faded">No items.</p> : null}
+        {!completedFullSync && !renderedItems.length ? <p className="empty-items-list faded">Loading...</p> : null}
         {renderedItems.length ? (
           <ContentList
             items={renderedItems}

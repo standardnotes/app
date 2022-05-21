@@ -3,23 +3,6 @@
 }
 
 .sn-component {
-  .sk-notification {
-    &.unpadded {
-      padding: 0;
-      padding-bottom: 0 !important;
-      padding-top: 0;
-    }
-
-    .padded-row {
-      padding: 10px 12px;
-    }
-
-    .bordered-row {
-      border-bottom: 1px solid var(--sn-stylekit-border-color);
-      border-top: 1px solid var(--sn-stylekit-border-color);
-    }
-  }
-
   .sk-app-bar {
     &.dynamic-height {
       min-height: 1.625rem !important;
@@ -86,7 +69,7 @@ a,
 .sk-a {
   background: none;
   border: none;
-  color: var(--sn-stylekit-info-color);
+  color: var(--link-element-color);
 }
 
 button.sk-a {
