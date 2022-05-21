@@ -57,13 +57,17 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
   ({ application, appState }) => {
     const closeButtonRef = useRef<HTMLButtonElement>(null)
 
-    const dismissModal = () => {
+    const dismissModal = useCallback(() => {
       appState.notes.setShowRevisionHistoryModal(false)
-    }
+    }, [appState.notes])
 
     const note = appState.notes.firstSelectedNote
     const editorForCurrentNote = useMemo(() => {
-      return application.componentManager.editorForNote(note)
+      if (note) {
+        return application.componentManager.editorForNote(note)
+      } else {
+        return undefined
+      }
     }, [application, note])
 
     const [isFetchingSelectedRevision, setIsFetchingSelectedRevision] = useState(false)
@@ -100,7 +104,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
       }
     }, [fetchRemoteHistory, remoteHistory?.length])
 
-    const restore = () => {
+    const restore = useCallback(() => {
       if (selectedRevision) {
         const originalNote = application.items.findItem(selectedRevision.payload.uuid) as SNNote
 
@@ -130,9 +134,9 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
           })
           .catch(console.error)
       }
-    }
+    }, [application.alertService, application.items, application.mutator, dismissModal, selectedRevision])
 
-    const restoreAsCopy = async () => {
+    const restoreAsCopy = useCallback(async () => {
       if (selectedRevision) {
         const originalNote = application.items.findSureItem<SNNote>(selectedRevision.payload.uuid)
 
@@ -147,7 +151,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
 
         dismissModal()
       }
-    }
+    }, [appState.selectedItems, application.items, application.mutator, dismissModal, selectedRevision])
 
     useEffect(() => {
       const fetchTemplateNote = async () => {
@@ -164,7 +168,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
       fetchTemplateNote().catch(console.error)
     }, [application, selectedRevision])
 
-    const deleteSelectedRevision = () => {
+    const deleteSelectedRevision = useCallback(() => {
       if (!selectedRemoteEntry) {
         return
       }
@@ -178,7 +182,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
           'Cancel',
         )
         .then((shouldDelete) => {
-          if (shouldDelete) {
+          if (shouldDelete && note) {
             setIsDeletingRevision(true)
 
             application.historyManager
@@ -195,7 +199,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
           }
         })
         .catch(console.error)
-    }
+    }, [application.alertService, application.historyManager, fetchRemoteHistory, note, selectedRemoteEntry])
 
     return (
       <DialogOverlay
@@ -219,16 +223,18 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
             }`}
           >
             <div className="flex flex-grow min-h-0">
-              <HistoryListContainer
-                application={application}
-                note={note}
-                remoteHistory={remoteHistory}
-                isFetchingRemoteHistory={isFetchingRemoteHistory}
-                setSelectedRevision={setSelectedRevision}
-                setSelectedRemoteEntry={setSelectedRemoteEntry}
-                setShowContentLockedScreen={setShowContentLockedScreen}
-                setIsFetchingSelectedRevision={setIsFetchingSelectedRevision}
-              />
+              {note && (
+                <HistoryListContainer
+                  application={application}
+                  note={note}
+                  remoteHistory={remoteHistory}
+                  isFetchingRemoteHistory={isFetchingRemoteHistory}
+                  setSelectedRevision={setSelectedRevision}
+                  setSelectedRemoteEntry={setSelectedRemoteEntry}
+                  setShowContentLockedScreen={setShowContentLockedScreen}
+                  setIsFetchingSelectedRevision={setIsFetchingSelectedRevision}
+                />
+              )}
               <div className={'flex flex-col flex-grow relative'}>
                 <RevisionContentPlaceholder
                   selectedRevision={selectedRevision}
