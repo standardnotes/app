@@ -34,9 +34,6 @@ export class FilesState extends AbstractState {
   constructor(application: WebApplication, override appState: AppState, appObservers: (() => void)[]) {
     super(application, appState)
 
-    this.reloadAllFiles()
-    this.reloadAttachedFiles()
-
     makeObservable(this, {
       allFiles: observable,
       attachedFiles: observable,
