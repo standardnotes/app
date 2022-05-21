@@ -150,7 +150,12 @@ export class FilesState extends AbstractState {
     await this.application.items.renameFile(file, fileName)
   }
 
-  handleFileAction = async (action: PopoverFileItemAction, currentTab: PopoverTabs) => {
+  handleFileAction = async (
+    action: PopoverFileItemAction,
+    currentTab: PopoverTabs,
+  ): Promise<{
+    didHandleAction: boolean
+  }> => {
     const file = action.type !== PopoverFileItemActionType.RenameFile ? action.payload : action.payload.file
     let isAuthorizedForAction = true
 
@@ -159,7 +164,9 @@ export class FilesState extends AbstractState {
     }
 
     if (!isAuthorizedForAction) {
-      return false
+      return {
+        didHandleAction: false,
+      }
     }
 
     switch (action.type) {
@@ -198,7 +205,9 @@ export class FilesState extends AbstractState {
       this.application.sync.sync().catch(console.error)
     }
 
-    return true
+    return {
+      didHandleAction: true,
+    }
   }
 
   public async downloadFile(file: FileItem): Promise<void> {
