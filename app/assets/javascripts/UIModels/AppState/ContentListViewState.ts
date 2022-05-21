@@ -456,7 +456,9 @@ export class ContentListViewState extends AbstractState {
   }
 
   selectItemWithScrollHandling = async (
-    item: ListableContentItem,
+    item: {
+      uuid: ListableContentItem['uuid']
+    },
     { userTriggered = false, scrollIntoView = true },
   ): Promise<void> => {
     await this.appState.selectedItems.selectItem(item.uuid, userTriggered)
@@ -473,10 +475,15 @@ export class ContentListViewState extends AbstractState {
     const item = this.getFirstNonProtectedItem()
 
     if (item) {
-      await this.selectItemWithScrollHandling(item, {
-        userTriggered: false,
-        scrollIntoView: false,
-      })
+      await this.selectItemWithScrollHandling(
+        {
+          uuid: item.uuid,
+        },
+        {
+          userTriggered: false,
+          scrollIntoView: false,
+        },
+      )
 
       this.resetScrollPosition()
     }
@@ -500,7 +507,12 @@ export class ContentListViewState extends AbstractState {
         continue
       }
 
-      this.selectItemWithScrollHandling(nextItem, { userTriggered: true }).catch(console.error)
+      this.selectItemWithScrollHandling(
+        {
+          uuid: nextItem.uuid,
+        },
+        { userTriggered: true },
+      ).catch(console.error)
 
       const nextNoteElement = document.getElementById(nextItem.uuid)
 
@@ -514,10 +526,15 @@ export class ContentListViewState extends AbstractState {
     const item = this.getFirstNonProtectedItem()
 
     if (item) {
-      await this.selectItemWithScrollHandling(item, {
-        userTriggered: false,
-        scrollIntoView: false,
-      }).catch(console.error)
+      await this.selectItemWithScrollHandling(
+        {
+          uuid: item.uuid,
+        },
+        {
+          userTriggered: false,
+          scrollIntoView: false,
+        },
+      ).catch(console.error)
     } else {
       await this.createNewNote()
     }
@@ -543,7 +560,12 @@ export class ContentListViewState extends AbstractState {
         continue
       }
 
-      this.selectItemWithScrollHandling(previousItem, { userTriggered: true }).catch(console.error)
+      this.selectItemWithScrollHandling(
+        {
+          uuid: previousItem.uuid,
+        },
+        { userTriggered: true },
+      ).catch(console.error)
 
       const previousNoteElement = document.getElementById(previousItem.uuid)
 
