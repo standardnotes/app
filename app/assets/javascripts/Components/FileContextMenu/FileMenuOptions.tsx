@@ -12,7 +12,6 @@ type Props = {
   fileProtectionToggleCallback?: (isProtected: boolean) => void
   handleFileAction: (action: PopoverFileItemAction) => Promise<boolean>
   isFileAttachedToNote?: boolean
-  isFileProtected: boolean
   renameToggleCallback?: (isRenamingFile: boolean) => void
   shouldShowRenameOption: boolean
   shouldShowAttachOption: boolean
@@ -25,7 +24,6 @@ export const FileMenuOptions: FunctionComponent<Props> = ({
   fileProtectionToggleCallback,
   handleFileAction,
   isFileAttachedToNote,
-  isFileProtected,
   renameToggleCallback,
   shouldShowRenameOption,
   shouldShowAttachOption,
@@ -95,7 +93,7 @@ export const FileMenuOptions: FunctionComponent<Props> = ({
           <Icon type="password" className="mr-2 color-neutral" />
           Password protection
         </span>
-        <Switch className="px-0 pointer-events-none" tabIndex={FOCUSABLE_BUT_NOT_TABBABLE} checked={isFileProtected} />
+        <Switch className="px-0 pointer-events-none" tabIndex={FOCUSABLE_BUT_NOT_TABBABLE} checked={file.protected} />
       </button>
       <div className="min-h-1px my-1 bg-border"></div>
       <button

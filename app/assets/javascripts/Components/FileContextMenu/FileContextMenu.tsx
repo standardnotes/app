@@ -110,7 +110,6 @@ export const FileContextMenu: FunctionComponent<Props> = observer(({ appState })
       <FileMenuOptions
         file={selectedFile}
         handleFileAction={handleFileAction}
-        isFileProtected={selectedFile.protected}
         closeOnBlur={closeOnBlur}
         closeMenu={() => setShowFileContextMenu(false)}
         shouldShowRenameOption={false}
