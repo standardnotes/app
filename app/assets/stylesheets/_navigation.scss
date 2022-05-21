@@ -17,11 +17,11 @@ $content-horizontal-padding: 16px;
   #navigation-content {
     display: flex;
     flex-direction: column;
-    background-color: var(--sn-stylekit-secondary-background-color);
+    background-color: var(--navigation-column-background-color);
   }
 
   .section-title-bar {
-    color: var(--sn-stylekit-secondary-foreground-color);
+    color: var(--navigation-section-title-color);
     padding-top: 0.8125rem;
     padding-bottom: 8px;
     padding-left: $content-horizontal-padding;
@@ -64,10 +64,6 @@ $content-horizontal-padding: 16px;
   .tag {
     border: 0;
     background-color: transparent;
-
-    &:focus {
-      background-color: var(--sn-stylekit-secondary-contrast-background-color);
-    }
   }
 
   .tag,
@@ -123,8 +119,8 @@ $content-horizontal-padding: 16px;
         width: 80%;
         background-color: transparent;
         font-weight: 600;
-        color: var(--sn-stylekit-secondary-foreground-color);
-        -webkit-text-fill-color: var(--sn-stylekit-secondary-foreground-color);
+        color: var(--navigation-item-text-color);
+        -webkit-text-fill-color: var(--navigation-item-text-color);
         border: none;
         cursor: pointer;
         text-overflow: ellipsis;
@@ -158,7 +154,7 @@ $content-horizontal-padding: 16px;
         padding-right: 4px;
         padding-top: 1px;
         font-weight: bold;
-        color: var(--sn-stylekit-neutral-color);
+        color: var(--navigation-item-count-color);
         min-width: 15px;
         text-align: right;
       }
@@ -201,12 +197,7 @@ $content-horizontal-padding: 16px;
     &:hover:not(.selected),
     &.selected,
     &.is-drag-over {
-      background-color: var(--sn-stylekit-secondary-contrast-background-color);
-      color: var(--sn-stylekit-secondary-contrast-foreground-color);
-
-      > .title {
-        color: var(--sn-stylekit-secondary-contrast-foreground-color);
-      }
+      background-color: var(--navigation-item-selected-background-color);
     }
   }
 }

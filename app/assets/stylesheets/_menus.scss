@@ -25,10 +25,6 @@
   @extend .cursor-auto;
 }
 
-.sn-menu-border {
-  border: var(--sn-stylekit-menu-border);
-}
-
 .sn-account-menu-headline {
   @extend .sk-h2;
   @extend .sk-bold;

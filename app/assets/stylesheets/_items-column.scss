@@ -1,9 +1,9 @@
 @import './scrollbar';
 
-#notes-column,
-.notes {
-  border-left: 1px solid var(--sn-stylekit-border-color);
-  border-right: 1px solid var(--sn-stylekit-border-color);
+#items-column {
+  background-color: var(--items-column-background-color);
+  border-left: 1px solid var(--items-column-border-left-color);
+  border-right: 1px solid var(--items-column-border-right-color);
   font-size: var(--sn-stylekit-font-size-h2);
   user-select: none;
 
@@ -11,7 +11,7 @@
   -khtml-user-select: none;
   -webkit-user-select: none;
 
-  .empty-notes-list {
+  .empty-items-list {
     flex-grow: 1;
     margin: 0;
     display: flex;
@@ -25,11 +25,11 @@
     flex-direction: column;
   }
 
-  #notes-title-bar-container {
+  #items-title-bar-container {
     padding: 0.8125rem;
   }
 
-  #notes-title-bar {
+  #items-title-bar {
     font-weight: normal;
     overflow: visible;
 
@@ -42,7 +42,7 @@
     }
   }
 
-  #notes-menu-bar {
+  #items-menu-bar {
     position: relative;
   }
 
@@ -59,7 +59,7 @@
     flex-direction: column;
 
     .filter-bar {
-      background-color: var(--sn-stylekit-contrast-background-color);
+      background-color: var(--items-column-search-background-color);
       border-radius: var(--sn-stylekit-general-border-radius);
       height: 100%;
       color: #909090;
@@ -116,49 +116,48 @@
   .infinite-scroll {
     @include minimal_scrollbar();
     height: inherit;
-    background-color: var(--sn-stylekit-background-color);
+    background-color: var(--items-column-items-background-color);
   }
 
   .content-list-item {
     progress {
-      background-color: var(--sn-stylekit-contrast-background-color);
-      color: var(--sn-stylekit-info-color);
+      background-color: var(--note-preview-progress-background-color);
+      color: var(--note-preview-progress-color);
       border: none;
 
       &::-webkit-progress-bar {
-        background-color: var(--sn-stylekit-contrast-background-color);
+        background-color: var(--note-preview-progress-background-color);
       }
 
       &::-webkit-progress-value {
-        background-color: var(--sn-stylekit-info-color);
+        background-color: var(--note-preview-progress-color);
       }
 
       &::-moz-progress-bar {
-        background-color: var(--sn-stylekit-info-color);
+        background-color: var(--note-preview-progress-color);
       }
     }
 
     &.selected {
-      background-color: var(--sn-stylekit-contrast-background-color);
-      border-left: 2px solid var(--sn-stylekit-info-color);
+      background-color: var(--item-cell-selected-background-color);
+      border-left: 2px solid var(--item-cell-selected-border-left-color);
 
       progress {
-        background-color: var(--sn-stylekit-secondary-foreground-color);
-        color: var(--sn-stylekit-secondary-background-color);
+        background-color: var(--note-preview-selected-progress-background-color);
+        color: var(--note-preview-selected-progress-color);
 
         &::-webkit-progress-bar {
-          background-color: var(--sn-stylekit-secondary-foreground-color);
+          background-color: var(--note-preview-selected-progress-background-color);
         }
 
         &::-webkit-progress-value {
-          background-color: var(--sn-stylekit-info-color);
+          background-color: var(--note-preview-progress-color);
         }
 
         &::-moz-progress-bar {
-          background-color: var(--sn-stylekit-info-color);
+          background-color: var(--note-preview-progress-color);
         }
       }
     }
   }
 }
-

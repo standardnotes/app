@@ -878,7 +878,7 @@
   @extend .border-solid;
   @extend .rounded-full;
   @extend .relative;
-  border-color: var(--sn-stylekit-grey-1);
+  border-color: var(--dropdown-menu-radio-button-inactive-color);
 
   &--checked {
     @extend .border-info;
@@ -957,10 +957,6 @@
       border-radius: 0;
     }
   }
-}
-
-.border-info-contrast {
-  border-color: var(--sn-stylekit-info-contrast-color);
 }
 
 .sn-icon-button {

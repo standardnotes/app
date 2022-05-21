@@ -21,7 +21,7 @@
   @extend .border-1;
 
   .icon {
-    color: var(--sn-stylekit-neutral-color);
+    color: var(--preferences-navigation-icon-color);
     @extend .text-base;
   }
 
@@ -38,7 +38,7 @@
   @extend .color-info;
   @extend .font-bold;
 
-  background-color: var(--sn-stylekit-info-backdrop-color);
+  background-color: var(--preferences-navigation-selected-background-color);
 
   .icon {
     @extend .color-info;

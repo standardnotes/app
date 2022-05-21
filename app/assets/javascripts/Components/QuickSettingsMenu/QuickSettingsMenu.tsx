@@ -18,7 +18,7 @@ import { sortThemes } from '@/Utils/SortThemes'
 
 const focusModeAnimationDuration = 1255
 
-const MENU_CLASSNAME = 'sn-menu-border sn-dropdown min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto'
+const MENU_CLASSNAME = 'sn-dropdown min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto'
 
 type MenuProps = {
   appState: AppState

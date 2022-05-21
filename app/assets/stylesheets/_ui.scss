@@ -164,9 +164,6 @@ $screen-md-max: ($screen-lg-min - 1) !default;
   border-radius: 0.3046875rem;
 }
 
-.bg-main {
-  background-color: var(--sn-stylekit-info-color);
-}
 .bg-transparent {
   background-color: transparent;
 }
@@ -242,9 +239,6 @@ $screen-md-max: ($screen-lg-min - 1) !default;
 
 .text-sm {
   font-size: var(--sn-stylekit-font-size-h5);
-}
-.text-info-contrast {
-  color: var(--sn-stylekit-info-contrast-color);
 }
 
 .wrap {
