@@ -351,10 +351,13 @@ export class ContentListViewState extends AbstractState {
       newDisplayOptions.includeArchived !== this.displayOptions.includeArchived ||
       newDisplayOptions.includeTrashed !== this.displayOptions.includeTrashed ||
       newDisplayOptions.includeProtected !== this.displayOptions.includeProtected ||
+      newWebDisplayOptions.hideNotePreview !== this.webDisplayOptions.hideNotePreview ||
+      newWebDisplayOptions.hideDate !== this.webDisplayOptions.hideDate ||
       newWebDisplayOptions.hideEditorIcon !== this.webDisplayOptions.hideEditorIcon ||
       newWebDisplayOptions.hideTags !== this.webDisplayOptions.hideTags
 
     this.displayOptions = newDisplayOptions
+    this.webDisplayOptions = newWebDisplayOptions
 
     if (displayOptionsChanged) {
       this.reloadNotesDisplayOptions()

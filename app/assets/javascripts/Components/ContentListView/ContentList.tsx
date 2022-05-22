@@ -1,13 +1,12 @@
 import { WebApplication } from '@/UIModels/Application'
 import { KeyboardKey } from '@/Services/IOService'
 import { AppState } from '@/UIModels/AppState'
-import { UuidString, DisplayOptions } from '@standardnotes/snjs'
+import { UuidString } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
 import { FOCUSABLE_BUT_NOT_TABBABLE, NOTES_LIST_SCROLL_THRESHOLD } from '@/Constants'
 import { ListableContentItem } from './Types/ListableContentItem'
 import { ContentListItem } from './ContentListItem'
-import { WebDisplayOptions } from '@/UIModels/AppState/WebDisplayOptions'
 import { useCallback } from 'preact/hooks'
 
 type Props = {
@@ -15,16 +14,14 @@ type Props = {
   appState: AppState
   items: ListableContentItem[]
   selectedItems: Record<UuidString, ListableContentItem>
-  displayOptions: DisplayOptions
-  webDisplayOptions: WebDisplayOptions
   paginate: () => void
 }
 
 export const ContentList: FunctionComponent<Props> = observer(
-  ({ application, appState, items, selectedItems, displayOptions, webDisplayOptions, paginate }) => {
+  ({ application, appState, items, selectedItems, paginate }) => {
     const { selectPreviousItem, selectNextItem } = appState.contentListView
-    const { hideTags, hideDate, hideNotePreview, hideEditorIcon } = webDisplayOptions
-    const { sortBy } = displayOptions
+    const { hideTags, hideDate, hideNotePreview, hideEditorIcon } = appState.contentListView.webDisplayOptions
+    const { sortBy } = appState.contentListView.displayOptions
 
     const onScroll = useCallback(
       (e: Event) => {
