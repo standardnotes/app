@@ -3,7 +3,6 @@ import {
   ApplicationDescriptor,
   SNApplicationGroup,
   Platform,
-  Runtime,
   InternalEventBus,
   isDesktopDevice,
 } from '@standardnotes/snjs'
@@ -21,7 +20,6 @@ const createApplication = (
   deviceInterface: WebOrDesktopDevice,
   defaultSyncServerHost: string,
   device: WebOrDesktopDevice,
-  runtime: Runtime,
   webSocketUrl: string,
 ) => {
   const platform = getPlatform()
@@ -32,7 +30,6 @@ const createApplication = (
     descriptor.identifier,
     defaultSyncServerHost,
     webSocketUrl,
-    runtime,
   )
 
   const appState = new AppState(application, device)
@@ -54,23 +51,17 @@ const createApplication = (
 }
 
 export class ApplicationGroup extends SNApplicationGroup<WebOrDesktopDevice> {
-  constructor(
-    private defaultSyncServerHost: string,
-    device: WebOrDesktopDevice,
-    private runtime: Runtime,
-    private webSocketUrl: string,
-  ) {
+  constructor(private defaultSyncServerHost: string, device: WebOrDesktopDevice, private webSocketUrl: string) {
     super(device)
   }
 
   override async initialize(): Promise<void> {
     const defaultSyncServerHost = this.defaultSyncServerHost
-    const runtime = this.runtime
     const webSocketUrl = this.webSocketUrl
 
     await super.initialize({
       applicationCreator: async (descriptor, device) => {
-        return createApplication(descriptor, device, defaultSyncServerHost, device, runtime, webSocketUrl)
+        return createApplication(descriptor, device, defaultSyncServerHost, device, webSocketUrl)
       },
     })
 

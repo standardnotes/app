@@ -243,10 +243,11 @@ export class ContentListViewState extends AbstractState {
     }
 
     const selectedItem = Object.values(appState.selectedItems.selectedItems)[0]
-    const shouldReturnIfSelectedFile =
+
+    const isSelectedItemFile =
       this.items.includes(selectedItem) && selectedItem && selectedItem.content_type === ContentType.File
 
-    if (shouldReturnIfSelectedFile) {
+    if (isSelectedItemFile) {
       return
     }
 
