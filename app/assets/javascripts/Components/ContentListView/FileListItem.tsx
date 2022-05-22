@@ -59,10 +59,12 @@ export const FileListItem: FunctionComponent<DisplayableListItemProps> = observe
           openContextMenu(event.clientX, event.clientY)
         }}
       >
-        {!hideIcon && (
+        {!hideIcon ? (
           <div className="flex flex-col items-center justify-between p-4 pr-3 mr-0">
             <IconComponent />
           </div>
+        ) : (
+          <div className="pr-4" />
         )}
         <div className="flex-grow min-w-0 py-4 px-0 border-0 border-b-1 border-solid border-main">
           <div className="flex items-start justify-between font-semibold text-base leading-1.3 overflow-hidden">
