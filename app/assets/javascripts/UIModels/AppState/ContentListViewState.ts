@@ -20,10 +20,11 @@ import { WebApplication } from '../Application'
 import { AbstractState } from './AbstractState'
 import { WebDisplayOptions } from './WebDisplayOptions'
 
-const MIN_NOTE_CELL_HEIGHT = 51.0
-const DEFAULT_LIST_NUM_NOTES = 20
-const ELEMENT_ID_SEARCH_BAR = 'search-bar'
-const ELEMENT_ID_SCROLL_CONTAINER = 'notes-scrollable'
+const MinNoteCellHeight = 51.0
+const DefaultListNumNotes = 20
+const ElementIdSearchBar = 'search-bar'
+const ElementIdScrollContainer = 'notes-scrollable'
+const SupportsFileSelectionState = false
 
 export class ContentListViewState extends AbstractState {
   completedFullSync = false
@@ -178,7 +179,7 @@ export class ContentListViewState extends AbstractState {
   }
 
   get searchBarElement() {
-    return document.getElementById(ELEMENT_ID_SEARCH_BAR)
+    return document.getElementById(ElementIdSearchBar)
   }
 
   get isFiltering(): boolean {
@@ -247,7 +248,7 @@ export class ContentListViewState extends AbstractState {
     const isSelectedItemFile =
       this.items.includes(selectedItem) && selectedItem && selectedItem.content_type === ContentType.File
 
-    if (isSelectedItemFile) {
+    if (isSelectedItemFile && !SupportsFileSelectionState) {
       return
     }
 
@@ -443,9 +444,9 @@ export class ContentListViewState extends AbstractState {
 
   resetPagination = (keepCurrentIfLarger = false) => {
     const clientHeight = document.documentElement.clientHeight
-    this.pageSize = Math.ceil(clientHeight / MIN_NOTE_CELL_HEIGHT)
+    this.pageSize = Math.ceil(clientHeight / MinNoteCellHeight)
     if (this.pageSize === 0) {
-      this.pageSize = DEFAULT_LIST_NUM_NOTES
+      this.pageSize = DefaultListNumNotes
     }
     if (keepCurrentIfLarger && this.notesToDisplay > this.pageSize) {
       return
@@ -458,7 +459,7 @@ export class ContentListViewState extends AbstractState {
   }
 
   get notesListScrollContainer() {
-    return document.getElementById(ELEMENT_ID_SCROLL_CONTAINER)
+    return document.getElementById(ElementIdScrollContainer)
   }
 
   selectItemWithScrollHandling = async (
