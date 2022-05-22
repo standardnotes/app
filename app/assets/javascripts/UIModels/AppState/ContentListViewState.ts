@@ -1,72 +1,64 @@
+import { ListableContentItem } from '@/Components/ContentListView/Types/ListableContentItem'
 import { destroyAllObjectProperties } from '@/Utils'
 import {
   ApplicationEvent,
   CollectionSort,
-  CollectionSortProperty,
   ContentType,
   DeinitSource,
   findInArray,
-  NotesDisplayCriteria,
   NoteViewController,
   PrefKey,
   SmartView,
   SNNote,
   SNTag,
   SystemViewId,
+  DisplayOptions,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { AppState, AppStateEvent } from '.'
 import { WebApplication } from '../Application'
 import { AbstractState } from './AbstractState'
+import { WebDisplayOptions } from './WebDisplayOptions'
 
-const MIN_NOTE_CELL_HEIGHT = 51.0
-const DEFAULT_LIST_NUM_NOTES = 20
-const ELEMENT_ID_SEARCH_BAR = 'search-bar'
-const ELEMENT_ID_SCROLL_CONTAINER = 'notes-scrollable'
+const MinNoteCellHeight = 51.0
+const DefaultListNumNotes = 20
+const ElementIdSearchBar = 'search-bar'
+const ElementIdScrollContainer = 'notes-scrollable'
+const SupportsFileSelectionState = false
 
-export type DisplayOptions = {
-  sortBy: CollectionSortProperty
-  sortReverse: boolean
-  hidePinned: boolean
-  showArchived: boolean
-  showTrashed: boolean
-  hideProtected: boolean
-  hideTags: boolean
-  hideNotePreview: boolean
-  hideDate: boolean
-  hideEditorIcon: boolean
-}
-
-export class NotesViewState extends AbstractState {
+export class ContentListViewState extends AbstractState {
   completedFullSync = false
   noteFilterText = ''
   notes: SNNote[] = []
+  items: ListableContentItem[] = []
   notesToDisplay = 0
   pageSize = 0
   panelTitle = 'All Notes'
   panelWidth = 0
-  renderedNotes: SNNote[] = []
+  renderedItems: ListableContentItem[] = []
   searchSubmitted = false
   showDisplayOptionsMenu = false
-  displayOptions = {
+  displayOptions: DisplayOptions = {
     sortBy: CollectionSort.CreatedAt,
-    sortReverse: false,
-    hidePinned: false,
-    showArchived: false,
-    showTrashed: false,
-    hideProtected: false,
+    sortDirection: 'dsc',
+    includePinned: true,
+    includeArchived: false,
+    includeTrashed: false,
+    includeProtected: true,
+  }
+  webDisplayOptions: WebDisplayOptions = {
     hideTags: true,
     hideDate: false,
     hideNotePreview: false,
     hideEditorIcon: false,
   }
-  private reloadNotesPromise?: Promise<unknown>
+  private reloadItemsPromise?: Promise<unknown>
 
   override deinit(source: DeinitSource) {
     super.deinit(source)
     ;(this.noteFilterText as unknown) = undefined
     ;(this.notes as unknown) = undefined
-    ;(this.renderedNotes as unknown) = undefined
+    ;(this.renderedItems as unknown) = undefined
     ;(window.onresize as unknown) = undefined
 
     destroyAllObjectProperties(this)
@@ -79,7 +71,7 @@ export class NotesViewState extends AbstractState {
 
     appObservers.push(
       application.streamItems<SNNote>(ContentType.Note, () => {
-        void this.reloadNotes()
+        void this.reloadItems()
       }),
 
       application.streamItems<SNTag>([ContentType.Tag], async ({ changed, inserted }) => {
@@ -88,7 +80,7 @@ export class NotesViewState extends AbstractState {
         /** A tag could have changed its relationships, so we need to reload the filter */
         this.reloadNotesDisplayOptions()
 
-        void this.reloadNotes()
+        void this.reloadItems()
 
         if (appState.tags.selected && findInArray(tags, 'uuid', appState.tags.selected.uuid)) {
           /** Tag title could have changed */
@@ -100,11 +92,11 @@ export class NotesViewState extends AbstractState {
       }, ApplicationEvent.PreferencesChanged),
       application.addEventObserver(async () => {
         this.application.noteControllerGroup.closeAllNoteControllers()
-        void this.selectFirstNote()
+        void this.selectFirstItem()
         this.setCompletedFullSync(false)
       }, ApplicationEvent.SignedIn),
       application.addEventObserver(async () => {
-        void this.reloadNotes().then(() => {
+        void this.reloadItems().then(() => {
           if (
             this.notes.length === 0 &&
             appState.tags.selected instanceof SmartView &&
@@ -126,7 +118,7 @@ export class NotesViewState extends AbstractState {
         ],
         () => {
           this.reloadNotesDisplayOptions()
-          void this.reloadNotes()
+          void this.reloadItems()
         },
       ),
 
@@ -144,14 +136,15 @@ export class NotesViewState extends AbstractState {
     makeObservable(this, {
       completedFullSync: observable,
       displayOptions: observable.struct,
+      webDisplayOptions: observable.struct,
       noteFilterText: observable,
       notes: observable,
       notesToDisplay: observable,
       panelTitle: observable,
-      renderedNotes: observable,
+      renderedItems: observable,
       showDisplayOptionsMenu: observable,
 
-      reloadNotes: action,
+      reloadItems: action,
       reloadPanelTitle: action,
       reloadPreferences: action,
       resetPagination: action,
@@ -186,7 +179,7 @@ export class NotesViewState extends AbstractState {
   }
 
   get searchBarElement() {
-    return document.getElementById(ELEMENT_ID_SEARCH_BAR)
+    return document.getElementById(ElementIdSearchBar)
   }
 
   get isFiltering(): boolean {
@@ -206,17 +199,17 @@ export class NotesViewState extends AbstractState {
     this.panelTitle = title
   }
 
-  reloadNotes = async (): Promise<void> => {
-    if (this.reloadNotesPromise) {
-      await this.reloadNotesPromise
+  reloadItems = async (): Promise<void> => {
+    if (this.reloadItemsPromise) {
+      await this.reloadItemsPromise
     }
 
-    this.reloadNotesPromise = this.performReloadNotes()
+    this.reloadItemsPromise = this.performReloadItems()
 
-    await this.reloadNotesPromise
+    await this.reloadItemsPromise
   }
 
-  private async performReloadNotes() {
+  private async performReloadItems() {
     const tag = this.appState.tags.selected
     if (!tag) {
       return
@@ -224,32 +217,43 @@ export class NotesViewState extends AbstractState {
 
     const notes = this.application.items.getDisplayableNotes()
 
-    const renderedNotes = notes.slice(0, this.notesToDisplay)
+    const items = this.application.items.getDisplayableNotesAndFiles()
 
-    this.notes = notes
+    const renderedItems = items.slice(0, this.notesToDisplay)
 
     runInAction(() => {
-      this.renderedNotes = renderedNotes
+      this.notes = notes
+      this.items = items
+      this.renderedItems = renderedItems
     })
 
-    await this.recomputeSelectionAfterNotesReload()
+    await this.recomputeSelectionAfterItemsReload()
 
     this.reloadPanelTitle()
   }
 
-  private async recomputeSelectionAfterNotesReload() {
+  private async recomputeSelectionAfterItemsReload() {
     const appState = this.appState
     const activeController = this.getActiveNoteController()
     const activeNote = activeController?.note
     const isSearching = this.noteFilterText.length > 0
-    const hasMultipleNotesSelected = appState.notes.selectedNotesCount >= 2
+    const hasMultipleItemsSelected = appState.selectedItems.selectedItemsCount >= 2
 
-    if (hasMultipleNotesSelected) {
+    if (hasMultipleItemsSelected) {
+      return
+    }
+
+    const selectedItem = Object.values(appState.selectedItems.selectedItems)[0]
+
+    const isSelectedItemFile =
+      this.items.includes(selectedItem) && selectedItem && selectedItem.content_type === ContentType.File
+
+    if (isSelectedItemFile && !SupportsFileSelectionState) {
       return
     }
 
     if (!activeNote) {
-      await this.selectFirstNote()
+      await this.selectFirstItem()
 
       return
     }
@@ -262,7 +266,7 @@ export class NotesViewState extends AbstractState {
     if (!noteExistsInUpdatedResults && !isSearching) {
       this.closeNoteController(activeController)
 
-      this.selectNextNote()
+      this.selectNextItem()
 
       return
     }
@@ -277,9 +281,9 @@ export class NotesViewState extends AbstractState {
       this.application.getPreference(PrefKey.NotesShowArchived, false)
 
     if ((activeNote.trashed && !showTrashedNotes) || (activeNote.archived && !showArchivedNotes)) {
-      await this.selectNextOrCreateNew()
-    } else if (!this.appState.notes.selectedNotes[activeNote.uuid]) {
-      await this.selectNoteWithScrollHandling(activeNote).catch(console.error)
+      await this.selectNextItemOrCreateNewNote()
+    } else if (!this.appState.selectedItems.selectedItems[activeNote.uuid]) {
+      await this.appState.selectedItems.selectItem(activeNote.uuid).catch(console.error)
     }
   }
 
@@ -295,30 +299,32 @@ export class NotesViewState extends AbstractState {
       includeArchived = this.appState.searchOptions.includeArchived
       includeTrashed = this.appState.searchOptions.includeTrashed
     } else {
-      includeArchived = this.displayOptions.showArchived ?? false
-      includeTrashed = this.displayOptions.showTrashed ?? false
+      includeArchived = this.displayOptions.includeArchived ?? false
+      includeTrashed = this.displayOptions.includeTrashed ?? false
     }
 
-    const criteria = NotesDisplayCriteria.Create({
-      sortProperty: this.displayOptions.sortBy,
-      sortDirection: this.displayOptions.sortReverse ? 'asc' : 'dsc',
+    const criteria: DisplayOptions = {
+      sortBy: this.displayOptions.sortBy,
+      sortDirection: this.displayOptions.sortDirection,
       tags: tag instanceof SNTag ? [tag] : [],
       views: tag instanceof SmartView ? [tag] : [],
       includeArchived,
       includeTrashed,
-      includePinned: !this.displayOptions.hidePinned,
-      includeProtected: !this.displayOptions.hideProtected,
+      includePinned: this.displayOptions.includePinned,
+      includeProtected: this.displayOptions.includeProtected,
       searchQuery: {
         query: searchText,
         includeProtectedNoteText: this.appState.searchOptions.includeProtectedContents,
       },
-    })
+    }
 
-    this.application.items.setNotesDisplayCriteria(criteria)
+    this.application.items.setPrimaryItemDisplayOptions(criteria)
   }
 
   reloadPreferences = async () => {
-    const freshDisplayOptions = {} as DisplayOptions
+    const newDisplayOptions = {} as DisplayOptions
+    const newWebDisplayOptions = {} as WebDisplayOptions
+
     const currentSortBy = this.displayOptions.sortBy
 
     let sortBy = this.application.getPreference(PrefKey.SortNotesBy, CollectionSort.CreatedAt)
@@ -326,42 +332,47 @@ export class NotesViewState extends AbstractState {
       sortBy = CollectionSort.UpdatedAt
     }
 
-    freshDisplayOptions.sortBy = sortBy
-    freshDisplayOptions.sortReverse = this.application.getPreference(PrefKey.SortNotesReverse, false)
-    freshDisplayOptions.showArchived = this.application.getPreference(PrefKey.NotesShowArchived, false)
-    freshDisplayOptions.showTrashed = this.application.getPreference(PrefKey.NotesShowTrashed, false) as boolean
-    freshDisplayOptions.hidePinned = this.application.getPreference(PrefKey.NotesHidePinned, false)
-    freshDisplayOptions.hideProtected = this.application.getPreference(PrefKey.NotesHideProtected, false)
-    freshDisplayOptions.hideNotePreview = this.application.getPreference(PrefKey.NotesHideNotePreview, false)
-    freshDisplayOptions.hideDate = this.application.getPreference(PrefKey.NotesHideDate, false)
-    freshDisplayOptions.hideTags = this.application.getPreference(PrefKey.NotesHideTags, true)
-    freshDisplayOptions.hideEditorIcon = this.application.getPreference(PrefKey.NotesHideEditorIcon, false)
+    newDisplayOptions.sortBy = sortBy
+    newDisplayOptions.sortDirection =
+      this.application.getPreference(PrefKey.SortNotesReverse, false) === false ? 'dsc' : 'asc'
+    newDisplayOptions.includeArchived = this.application.getPreference(PrefKey.NotesShowArchived, false)
+    newDisplayOptions.includeTrashed = this.application.getPreference(PrefKey.NotesShowTrashed, false) as boolean
+    newDisplayOptions.includePinned = !this.application.getPreference(PrefKey.NotesHidePinned, false)
+    newDisplayOptions.includeProtected = !this.application.getPreference(PrefKey.NotesHideProtected, false)
+
+    newWebDisplayOptions.hideNotePreview = this.application.getPreference(PrefKey.NotesHideNotePreview, false)
+    newWebDisplayOptions.hideDate = this.application.getPreference(PrefKey.NotesHideDate, false)
+    newWebDisplayOptions.hideTags = this.application.getPreference(PrefKey.NotesHideTags, true)
+    newWebDisplayOptions.hideEditorIcon = this.application.getPreference(PrefKey.NotesHideEditorIcon, false)
 
     const displayOptionsChanged =
-      freshDisplayOptions.sortBy !== this.displayOptions.sortBy ||
-      freshDisplayOptions.sortReverse !== this.displayOptions.sortReverse ||
-      freshDisplayOptions.hidePinned !== this.displayOptions.hidePinned ||
-      freshDisplayOptions.showArchived !== this.displayOptions.showArchived ||
-      freshDisplayOptions.showTrashed !== this.displayOptions.showTrashed ||
-      freshDisplayOptions.hideProtected !== this.displayOptions.hideProtected ||
-      freshDisplayOptions.hideEditorIcon !== this.displayOptions.hideEditorIcon ||
-      freshDisplayOptions.hideTags !== this.displayOptions.hideTags
+      newDisplayOptions.sortBy !== this.displayOptions.sortBy ||
+      newDisplayOptions.sortDirection !== this.displayOptions.sortDirection ||
+      newDisplayOptions.includePinned !== this.displayOptions.includePinned ||
+      newDisplayOptions.includeArchived !== this.displayOptions.includeArchived ||
+      newDisplayOptions.includeTrashed !== this.displayOptions.includeTrashed ||
+      newDisplayOptions.includeProtected !== this.displayOptions.includeProtected ||
+      newWebDisplayOptions.hideNotePreview !== this.webDisplayOptions.hideNotePreview ||
+      newWebDisplayOptions.hideDate !== this.webDisplayOptions.hideDate ||
+      newWebDisplayOptions.hideEditorIcon !== this.webDisplayOptions.hideEditorIcon ||
+      newWebDisplayOptions.hideTags !== this.webDisplayOptions.hideTags
 
-    this.displayOptions = freshDisplayOptions
+    this.displayOptions = newDisplayOptions
+    this.webDisplayOptions = newWebDisplayOptions
 
     if (displayOptionsChanged) {
       this.reloadNotesDisplayOptions()
     }
 
-    await this.reloadNotes()
+    await this.reloadItems()
 
     const width = this.application.getPreference(PrefKey.NotesPanelWidth)
     if (width) {
       this.panelWidth = width
     }
 
-    if (freshDisplayOptions.sortBy !== currentSortBy) {
-      await this.selectFirstNote()
+    if (newDisplayOptions.sortBy !== currentSortBy) {
+      await this.selectFirstItem()
     }
   }
 
@@ -389,6 +400,7 @@ export class NotesViewState extends AbstractState {
 
   get optionsSubtitle(): string {
     let base = ''
+
     if (this.displayOptions.sortBy === CollectionSort.CreatedAt) {
       base += ' Date Added'
     } else if (this.displayOptions.sortBy === CollectionSort.UpdatedAt) {
@@ -396,28 +408,34 @@ export class NotesViewState extends AbstractState {
     } else if (this.displayOptions.sortBy === CollectionSort.Title) {
       base += ' Title'
     }
-    if (this.displayOptions.showArchived) {
+
+    if (this.displayOptions.includeArchived) {
       base += ' | + Archived'
     }
-    if (this.displayOptions.showTrashed) {
+
+    if (this.displayOptions.includeTrashed) {
       base += ' | + Trashed'
     }
-    if (this.displayOptions.hidePinned) {
+
+    if (!this.displayOptions.includePinned) {
       base += ' | – Pinned'
     }
-    if (this.displayOptions.hideProtected) {
+
+    if (!this.displayOptions.includeProtected) {
       base += ' | – Protected'
     }
-    if (this.displayOptions.sortReverse) {
+
+    if (this.displayOptions.sortDirection === 'asc') {
       base += ' | Reversed'
     }
+
     return base
   }
 
   paginate = () => {
     this.notesToDisplay += this.pageSize
 
-    void this.reloadNotes()
+    void this.reloadItems()
 
     if (this.searchSubmitted) {
       this.application.getDesktopService()?.searchText(this.noteFilterText)
@@ -426,9 +444,9 @@ export class NotesViewState extends AbstractState {
 
   resetPagination = (keepCurrentIfLarger = false) => {
     const clientHeight = document.documentElement.clientHeight
-    this.pageSize = Math.ceil(clientHeight / MIN_NOTE_CELL_HEIGHT)
+    this.pageSize = Math.ceil(clientHeight / MinNoteCellHeight)
     if (this.pageSize === 0) {
-      this.pageSize = DEFAULT_LIST_NUM_NOTES
+      this.pageSize = DefaultListNumNotes
     }
     if (keepCurrentIfLarger && this.notesToDisplay > this.pageSize) {
       return
@@ -436,60 +454,64 @@ export class NotesViewState extends AbstractState {
     this.notesToDisplay = this.pageSize
   }
 
-  getFirstNonProtectedNote = () => {
-    return this.notes.find((note) => !note.protected)
+  getFirstNonProtectedItem = () => {
+    return this.items.find((item) => !item.protected)
   }
 
   get notesListScrollContainer() {
-    return document.getElementById(ELEMENT_ID_SCROLL_CONTAINER)
+    return document.getElementById(ElementIdScrollContainer)
   }
 
-  selectNoteWithScrollHandling = async (
-    note: SNNote,
-    userTriggered?: boolean,
-    scrollIntoView = true,
+  selectItemWithScrollHandling = async (
+    item: {
+      uuid: ListableContentItem['uuid']
+    },
+    { userTriggered = false, scrollIntoView = true },
   ): Promise<void> => {
-    await this.appState.notes.selectNote(note.uuid, userTriggered)
+    await this.appState.selectedItems.selectItem(item.uuid, userTriggered)
 
     if (scrollIntoView) {
-      const noteElement = document.getElementById(`note-${note.uuid}`)
-      noteElement?.scrollIntoView({
+      const itemElement = document.getElementById(item.uuid)
+      itemElement?.scrollIntoView({
         behavior: 'smooth',
       })
     }
   }
 
-  selectFirstNote = async () => {
-    const note = this.getFirstNonProtectedNote()
+  selectFirstItem = async () => {
+    const item = this.getFirstNonProtectedItem()
 
-    if (note) {
-      await this.selectNoteWithScrollHandling(note, false, false)
+    if (item) {
+      await this.selectItemWithScrollHandling(item, {
+        userTriggered: false,
+        scrollIntoView: false,
+      })
 
       this.resetScrollPosition()
     }
   }
 
-  selectNextNote = () => {
-    const displayableNotes = this.notes
+  selectNextItem = () => {
+    const displayableItems = this.items
 
-    const currentIndex = displayableNotes.findIndex((candidate) => {
-      return candidate.uuid === this.activeControllerNote?.uuid
+    const currentIndex = displayableItems.findIndex((candidate) => {
+      return candidate.uuid === this.appState.selectedItems.lastSelectedItem?.uuid
     })
 
     let nextIndex = currentIndex + 1
 
-    while (nextIndex < displayableNotes.length) {
-      const nextNote = displayableNotes[nextIndex]
+    while (nextIndex < displayableItems.length) {
+      const nextItem = displayableItems[nextIndex]
 
       nextIndex++
 
-      if (nextNote.protected) {
+      if (nextItem.protected) {
         continue
       }
 
-      this.selectNoteWithScrollHandling(nextNote).catch(console.error)
+      this.selectItemWithScrollHandling(nextItem, { userTriggered: true }).catch(console.error)
 
-      const nextNoteElement = document.getElementById(`note-${nextNote.uuid}`)
+      const nextNoteElement = document.getElementById(nextItem.uuid)
 
       nextNoteElement?.focus()
 
@@ -497,39 +519,42 @@ export class NotesViewState extends AbstractState {
     }
   }
 
-  selectNextOrCreateNew = async () => {
-    const note = this.getFirstNonProtectedNote()
+  selectNextItemOrCreateNewNote = async () => {
+    const item = this.getFirstNonProtectedItem()
 
-    if (note) {
-      await this.selectNoteWithScrollHandling(note, false, false).catch(console.error)
+    if (item) {
+      await this.selectItemWithScrollHandling(item, {
+        userTriggered: false,
+        scrollIntoView: false,
+      }).catch(console.error)
     } else {
       await this.createNewNote()
     }
   }
 
-  selectPreviousNote = () => {
-    const displayableNotes = this.notes
+  selectPreviousItem = () => {
+    const displayableItems = this.items
 
-    if (!this.activeControllerNote) {
+    if (!this.appState.selectedItems.lastSelectedItem) {
       return
     }
 
-    const currentIndex = displayableNotes.indexOf(this.activeControllerNote)
+    const currentIndex = displayableItems.indexOf(this.appState.selectedItems.lastSelectedItem)
 
     let previousIndex = currentIndex - 1
 
     while (previousIndex >= 0) {
-      const previousNote = displayableNotes[previousIndex]
+      const previousItem = displayableItems[previousIndex]
 
       previousIndex--
 
-      if (previousNote.protected) {
+      if (previousItem.protected) {
         continue
       }
 
-      this.selectNoteWithScrollHandling(previousNote).catch(console.error)
+      this.selectItemWithScrollHandling(previousItem, { userTriggered: true }).catch(console.error)
 
-      const previousNoteElement = document.getElementById(`note-${previousNote.uuid}`)
+      const previousNoteElement = document.getElementById(previousItem.uuid)
 
       previousNoteElement?.focus()
 
@@ -591,7 +616,7 @@ export class NotesViewState extends AbstractState {
 
     this.reloadNotesDisplayOptions()
 
-    void this.reloadNotes()
+    void this.reloadItems()
   }
 
   onFilterEnter = () => {
@@ -624,7 +649,7 @@ export class NotesViewState extends AbstractState {
 
     this.reloadNotesDisplayOptions()
 
-    void this.reloadNotes()
+    void this.reloadItems()
   }
 
   clearFilterText = () => {

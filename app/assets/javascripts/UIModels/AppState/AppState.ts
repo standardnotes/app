@@ -7,7 +7,6 @@ import {
   ContentType,
   DeinitSource,
   PrefKey,
-  SNNote,
   SNTag,
   removeFromArray,
   WebOrDesktopDeviceInterface,
@@ -17,7 +16,7 @@ import { ActionsMenuState } from './ActionsMenuState'
 import { FeaturesState } from './FeaturesState'
 import { FilesState } from './FilesState'
 import { NotesState } from './NotesState'
-import { NotesViewState } from './NotesViewState'
+import { ContentListViewState } from './ContentListViewState'
 import { NoteTagsState } from './NoteTagsState'
 import { NoAccountWarningState } from './NoAccountWarningState'
 import { PreferencesState } from './PreferencesState'
@@ -29,6 +28,8 @@ import { SyncState } from './SyncState'
 import { TagsState } from './TagsState'
 import { FilePreviewModalState } from './FilePreviewModalState'
 import { AbstractState } from './AbstractState'
+import { SelectedItemsState } from './SelectedItemsState'
+import { ListableContentItem } from '@/Components/ContentListView/Types/ListableContentItem'
 
 export enum AppStateEvent {
   TagChanged,
@@ -70,7 +71,7 @@ export class AppState extends AbstractState {
   readonly files: FilesState
   readonly noAccountWarning: NoAccountWarningState
   readonly notes: NotesState
-  readonly notesView: NotesViewState
+  readonly contentListView: ContentListViewState
   readonly noteTags: NoteTagsState
   readonly preferences = new PreferencesState()
   readonly purchaseFlow: PurchaseFlowState
@@ -79,6 +80,7 @@ export class AppState extends AbstractState {
   readonly subscription: SubscriptionState
   readonly sync = new SyncState()
   readonly tags: TagsState
+  readonly selectedItems: SelectedItemsState
 
   isSessionsModalVisible = false
 
@@ -89,6 +91,7 @@ export class AppState extends AbstractState {
   constructor(application: WebApplication, private device: WebOrDesktopDeviceInterface) {
     super(application)
 
+    this.selectedItems = new SelectedItemsState(application, this, this.appEventObserverRemovers)
     this.notes = new NotesState(
       application,
       this,
@@ -106,8 +109,8 @@ export class AppState extends AbstractState {
     this.searchOptions = new SearchOptionsState(application, this.appEventObserverRemovers)
     this.subscription = new SubscriptionState(application, this.appEventObserverRemovers)
     this.purchaseFlow = new PurchaseFlowState(application)
-    this.notesView = new NotesViewState(application, this, this.appEventObserverRemovers)
-    this.files = new FilesState(application)
+    this.contentListView = new ContentListViewState(application, this, this.appEventObserverRemovers)
+    this.files = new FilesState(application, this, this.appEventObserverRemovers)
     this.addAppEventObserver()
     this.onVisibilityChange = () => {
       const visible = document.visibilityState === 'visible'
@@ -177,8 +180,8 @@ export class AppState extends AbstractState {
     this.notes.deinit(source)
     ;(this.notes as unknown) = undefined
 
-    this.notesView.deinit(source)
-    ;(this.notesView as unknown) = undefined
+    this.contentListView.deinit(source)
+    ;(this.contentListView as unknown) = undefined
 
     this.noteTags.deinit(source)
     ;(this.noteTags as unknown) = undefined
@@ -321,8 +324,8 @@ export class AppState extends AbstractState {
   }
 
   /** Returns the tags that are referncing this note */
-  public getNoteTags(note: SNNote) {
-    return this.application.items.itemsReferencingItem(note).filter((ref) => {
+  public getItemTags(item: ListableContentItem) {
+    return this.application.items.itemsReferencingItem(item).filter((ref) => {
       return ref.content_type === ContentType.Tag
     }) as SNTag[]
   }

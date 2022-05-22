@@ -8,7 +8,7 @@ import { FunctionComponent } from 'preact'
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import { Icon } from '@/Components/Icon/Icon'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
-import { ChallengeReason, CollectionSort, ContentType, FileItem, SNNote } from '@standardnotes/snjs'
+import { ChallengeReason, ContentType, FileItem, SNNote } from '@standardnotes/snjs'
 import { confirmDialog } from '@/Services/AlertService'
 import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit'
 import { StreamingFileReader } from '@standardnotes/filepicker'
@@ -32,7 +32,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     }
 
     const premiumModal = usePremiumModal()
-    const note: SNNote | undefined = Object.values(appState.notes.selectedNotes)[0]
+    const note: SNNote | undefined = appState.notes.firstSelectedNote
 
     const [open, setOpen] = useState(false)
     const [position, setPosition] = useState({
@@ -59,10 +59,8 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     const attachedFilesCount = attachedFiles.length
 
     useEffect(() => {
-      application.items.setDisplayOptions(ContentType.File, CollectionSort.Title, 'dsc')
-
       const unregisterFileStream = application.streamItems(ContentType.File, () => {
-        setAllFiles(application.items.getDisplayableItems<FileItem>(ContentType.File))
+        setAllFiles(application.items.getDisplayableFiles())
         if (note) {
           setAttachedFiles(application.items.getFilesForNote(note))
         }
@@ -174,7 +172,7 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     }
 
     const authorizeProtectedActionForFile = async (file: FileItem, challengeReason: ChallengeReason) => {
-      const authorizedFiles = await application.protections.authorizeProtectedActionForFiles([file], challengeReason)
+      const authorizedFiles = await application.protections.authorizeProtectedActionForItems([file], challengeReason)
       const isAuthorized = authorizedFiles.length > 0 && authorizedFiles.includes(file)
       return isAuthorized
     }

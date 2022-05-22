@@ -1,13 +1,13 @@
 @import '@standardnotes/stylekit/dist/stylekit';
+@import 'theme';
 @import 'main';
 @import 'ui';
 @import 'footer';
 @import 'navigation';
-@import 'notes';
+@import 'items-column';
 @import 'editor';
 @import 'menus';
 @import 'modals';
-@import 'lock-screen';
 @import 'stylekit-sub';
 @import 'ionicons';
 @import 'reach-sub';

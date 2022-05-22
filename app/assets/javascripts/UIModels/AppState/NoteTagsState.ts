@@ -147,7 +147,7 @@ export class NoteTagsState extends AbstractState {
   searchActiveNoteAutocompleteTags(): void {
     const newResults = this.application.items.searchTags(
       this.autocompleteSearchQuery,
-      this.appState.notesView.activeControllerNote,
+      this.appState.contentListView.activeControllerNote,
     )
     this.setAutocompleteTagResults(newResults)
   }
@@ -157,7 +157,7 @@ export class NoteTagsState extends AbstractState {
   }
 
   reloadTags(): void {
-    const activeNote = this.appState.notesView.activeControllerNote
+    const activeNote = this.appState.contentListView.activeControllerNote
 
     if (activeNote) {
       const tags = this.application.items.getSortedTagsForNote(activeNote)
@@ -173,7 +173,7 @@ export class NoteTagsState extends AbstractState {
   }
 
   async addTagToActiveNote(tag: SNTag): Promise<void> {
-    const activeNote = this.appState.notesView.activeControllerNote
+    const activeNote = this.appState.contentListView.activeControllerNote
 
     if (activeNote) {
       await this.application.items.addTagToNote(activeNote, tag, this.addNoteToParentFolders)
@@ -183,7 +183,7 @@ export class NoteTagsState extends AbstractState {
   }
 
   async removeTagFromActiveNote(tag: SNTag): Promise<void> {
-    const activeNote = this.appState.notesView.activeControllerNote
+    const activeNote = this.appState.contentListView.activeControllerNote
 
     if (activeNote) {
       await this.application.mutator.changeItem(tag, (mutator) => {

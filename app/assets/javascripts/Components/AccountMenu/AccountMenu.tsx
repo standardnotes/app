@@ -118,7 +118,7 @@ export const AccountMenu: FunctionComponent<Props> = observer(
     return (
       <div ref={ref} id="account-menu" className="sn-component">
         <div
-          className={`sn-menu-border sn-account-menu sn-dropdown ${
+          className={`sn-account-menu sn-dropdown ${
             shouldAnimateCloseMenu ? 'slide-up-animation' : 'sn-dropdown--animated'
           } min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto absolute`}
           onKeyDown={handleKeyDown}

@@ -18,7 +18,7 @@ import {
 } from '@standardnotes/snjs'
 import { FunctionComponent } from 'preact'
 
-import { Switch } from '@/Components/Switch'
+import { Switch } from '@/Components/Switch/Switch'
 import { convertStringifiedBooleanToBoolean } from '@/Utils'
 import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/Strings'
 

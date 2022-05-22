@@ -1,13 +1,13 @@
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
-import { ComponentArea, ContentType, FeatureIdentifier, GetFeatures, SNComponent, SNTheme } from '@standardnotes/snjs'
+import { ComponentArea, ContentType, FeatureIdentifier, GetFeatures, SNComponent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import { JSXInternal } from 'preact/src/jsx'
 import { Icon } from '@/Components/Icon/Icon'
-import { Switch } from '@/Components/Switch'
+import { Switch } from '@/Components/Switch/Switch'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { quickSettingsKeyDownHandler, themesMenuKeyDownHandler } from './EventHandlers'
 import { FocusModeSwitch } from './FocusModeSwitch'
@@ -18,7 +18,7 @@ import { sortThemes } from '@/Utils/SortThemes'
 
 const focusModeAnimationDuration = 1255
 
-const MENU_CLASSNAME = 'sn-menu-border sn-dropdown min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto'
+const MENU_CLASSNAME = 'sn-dropdown min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto'
 
 type MenuProps = {
   appState: AppState
@@ -65,13 +65,16 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(({ appli
   }, [focusModeEnabled])
 
   const reloadThemes = useCallback(() => {
-    const themes = application.items.getDisplayableItems<SNTheme>(ContentType.Theme).map((item) => {
-      return {
-        name: item.displayName,
-        identifier: item.identifier,
-        component: item,
-      }
-    }) as ThemeItem[]
+    const themes = application.items
+      .getDisplayableComponents()
+      .filter((component) => component.isTheme())
+      .map((item) => {
+        return {
+          name: item.displayName,
+          identifier: item.identifier,
+          component: item,
+        }
+      }) as ThemeItem[]
 
     GetFeatures()
       .filter((feature) => feature.content_type === ContentType.Theme && !feature.layerable)
@@ -91,9 +94,10 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(({ appli
 
   const reloadToggleableComponents = useCallback(() => {
     const toggleableComponents = application.items
-      .getDisplayableItems<SNComponent>(ContentType.Component)
+      .getDisplayableComponents()
       .filter(
         (component) =>
+          !component.isTheme() &&
           [ComponentArea.EditorStack].includes(component.area) &&
           component.identifier !== FeatureIdentifier.DeprecatedFoldersComponent,
       )

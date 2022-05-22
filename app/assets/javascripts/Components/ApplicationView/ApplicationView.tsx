@@ -6,10 +6,9 @@ import { PANEL_NAME_NOTES, PANEL_NAME_NAVIGATION } from '@/Constants'
 import { alertDialog } from '@/Services/AlertService'
 import { WebApplication } from '@/UIModels/Application'
 import { Navigation } from '@/Components/Navigation/Navigation'
-import { NotesView } from '@/Components/NotesView/NotesView'
 import { NoteGroupView } from '@/Components/NoteGroupView/NoteGroupView'
 import { Footer } from '@/Components/Footer/Footer'
-import { SessionsModal } from '@/Components/SessionsModal'
+import { SessionsModal } from '@/Components/SessionsModal/SessionsModal'
 import { PreferencesViewWrapper } from '@/Components/Preferences/PreferencesViewWrapper'
 import { ChallengeModal } from '@/Components/ChallengeModal/ChallengeModal'
 import { NotesContextMenu } from '@/Components/NotesContextMenu/NotesContextMenu'
@@ -21,9 +20,11 @@ import { PremiumModalProvider } from '@/Hooks/usePremiumModal'
 import { ConfirmSignoutContainer } from '@/Components/ConfirmSignoutModal/ConfirmSignoutModal'
 import { TagsContextMenu } from '@/Components/Tags/TagContextMenu'
 import { ToastContainer } from '@standardnotes/stylekit'
-import { FilePreviewModal } from '../Files/FilePreviewModal'
+import { FilePreviewModal } from '@/Components/Files/FilePreviewModal'
 import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
 import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
+import { ContentListView } from '@/Components/ContentListView/ContentListView'
+import { FileContextMenu } from '@/Components/FileContextMenu/FileContextMenu'
 
 type Props = {
   application: WebApplication
@@ -211,7 +212,7 @@ export const ApplicationView: FunctionComponent<Props> = ({ application, mainApp
       <div className={platformString + ' main-ui-view sn-component'}>
         <div id="app" className={appClass + ' app app-column-container'}>
           <Navigation application={application} />
-          <NotesView application={application} appState={appState} />
+          <ContentListView application={application} appState={appState} />
           <NoteGroupView application={application} />
         </div>
 
@@ -227,6 +228,7 @@ export const ApplicationView: FunctionComponent<Props> = ({ application, mainApp
         <>
           <NotesContextMenu application={application} appState={appState} />
           <TagsContextMenu appState={appState} />
+          <FileContextMenu appState={appState} />
           <PurchaseFlowWrapper application={application} appState={appState} />
           <ConfirmSignoutContainer
             applicationGroup={mainApplicationGroup}

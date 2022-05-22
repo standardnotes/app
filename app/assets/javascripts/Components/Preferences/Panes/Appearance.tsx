@@ -1,7 +1,7 @@
 import { Dropdown, DropdownItem } from '@/Components/Dropdown/Dropdown'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
-import { Switch } from '@/Components/Switch'
+import { Switch } from '@/Components/Switch/Switch'
 import { WebApplication } from '@/UIModels/Application'
 import { ContentType, FeatureIdentifier, FeatureStatus, PrefKey, GetFeatures, SNTheme } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
@@ -43,8 +43,9 @@ export const Appearance: FunctionComponent<Props> = observer(({ application }) =
 
   useEffect(() => {
     const themesAsItems: DropdownItem[] = application.items
-      .getDisplayableItems<SNTheme>(ContentType.Theme)
-      .filter((theme) => !theme.isLayerable())
+      .getDisplayableComponents()
+      .filter((component) => component.isTheme())
+      .filter((component) => !(component as SNTheme).isLayerable())
       .sort(sortThemes)
       .map((theme) => {
         return {

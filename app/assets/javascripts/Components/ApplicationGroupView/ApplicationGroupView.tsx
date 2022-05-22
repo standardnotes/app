@@ -3,7 +3,7 @@ import { WebApplication } from '@/UIModels/Application'
 import { Component } from 'preact'
 import { ApplicationView } from '@/Components/ApplicationView/ApplicationView'
 import { WebOrDesktopDevice } from '@/Device/WebOrDesktopDevice'
-import { ApplicationGroupEvent, Runtime, ApplicationGroupEventData, DeinitSource } from '@standardnotes/snjs'
+import { ApplicationGroupEvent, ApplicationGroupEventData, DeinitSource } from '@standardnotes/snjs'
 import { unmountComponentAtNode, findDOMNode } from 'preact/compat'
 import { DialogContent, DialogOverlay } from '@reach/dialog'
 import { isDesktopApplication } from '@/Utils'
@@ -39,12 +39,7 @@ export class ApplicationGroupView extends Component<Props, State> {
       return
     }
 
-    this.group = new ApplicationGroup(
-      props.server,
-      props.device,
-      props.enableUnfinished ? Runtime.Dev : Runtime.Prod,
-      props.websocketUrl,
-    )
+    this.group = new ApplicationGroup(props.server, props.device, props.websocketUrl)
 
     window.mainApplicationGroup = this.group
 

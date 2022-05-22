@@ -1,9 +1,8 @@
 import { destroyAllObjectProperties } from '@/Utils'
 import { confirmDialog } from '@/Services/AlertService'
-import { KeyboardModifier } from '@/Services/IOService'
 import { StringEmptyTrash, Strings, StringUtils } from '@/Strings'
 import { MENU_MARGIN_FROM_APP_BORDER } from '@/Constants'
-import { UuidString, SNNote, NoteMutator, ContentType, SNTag, ChallengeReason, DeinitSource } from '@standardnotes/snjs'
+import { SNNote, NoteMutator, ContentType, SNTag, DeinitSource, TagMutator } from '@standardnotes/snjs'
 import { makeObservable, observable, action, computed, runInAction } from 'mobx'
 import { WebApplication } from '../Application'
 import { AppState } from './AppState'
@@ -11,7 +10,6 @@ import { AbstractState } from './AbstractState'
 
 export class NotesState extends AbstractState {
   lastSelectedNote: SNNote | undefined
-  selectedNotes: Record<UuidString, SNNote> = {}
   contextMenuOpen = false
   contextMenuPosition: { top?: number; left: number; bottom?: number } = {
     top: 0,
@@ -25,7 +23,6 @@ export class NotesState extends AbstractState {
   override deinit(source: DeinitSource) {
     super.deinit(source)
     ;(this.lastSelectedNote as unknown) = undefined
-    ;(this.selectedNotes as unknown) = undefined
     ;(this.onActiveEditorChanged as unknown) = undefined
 
     destroyAllObjectProperties(this)
@@ -40,12 +37,13 @@ export class NotesState extends AbstractState {
     super(application, appState)
 
     makeObservable(this, {
-      selectedNotes: observable,
       contextMenuOpen: observable,
       contextMenuPosition: observable,
       showProtectedWarning: observable,
       showRevisionHistoryModal: observable,
 
+      selectedNotes: computed,
+      firstSelectedNote: computed,
       selectedNotesCount: computed,
       trashedNotesCount: computed,
 
@@ -89,6 +87,14 @@ export class NotesState extends AbstractState {
     )
   }
 
+  get selectedNotes() {
+    return this.appState.selectedItems.getSelectedItems<SNNote>(ContentType.Note)
+  }
+
+  get firstSelectedNote(): SNNote | undefined {
+    return Object.values(this.selectedNotes)[0]
+  }
+
   get selectedNotesCount(): number {
     if (this.dealloced) {
       return 0
@@ -101,79 +107,8 @@ export class NotesState extends AbstractState {
     return this.application.items.trashedItems.length
   }
 
-  private async selectNotesRange(selectedNote: SNNote): Promise<void> {
-    const notes = this.application.items.getDisplayableNotes()
-
-    const lastSelectedNoteIndex = notes.findIndex((note) => note.uuid == this.lastSelectedNote?.uuid)
-    const selectedNoteIndex = notes.findIndex((note) => note.uuid == selectedNote.uuid)
-
-    let notesToSelect = []
-    if (selectedNoteIndex > lastSelectedNoteIndex) {
-      notesToSelect = notes.slice(lastSelectedNoteIndex, selectedNoteIndex + 1)
-    } else {
-      notesToSelect = notes.slice(selectedNoteIndex, lastSelectedNoteIndex + 1)
-    }
-
-    const authorizedNotes = await this.application.authorizeProtectedActionForNotes(
-      notesToSelect,
-      ChallengeReason.SelectProtectedNote,
-    )
-
-    for (const note of authorizedNotes) {
-      runInAction(() => {
-        this.selectedNotes[note.uuid] = note
-        this.lastSelectedNote = note
-      })
-    }
-  }
-
-  async selectNote(uuid: UuidString, userTriggered?: boolean): Promise<void> {
-    const note = this.application.items.findItem(uuid) as SNNote
-    if (!note) {
-      return
-    }
-
-    if (this.selectedNotes[uuid]) {
-      return
-    }
-
-    const hasMeta = this.io.activeModifiers.has(KeyboardModifier.Meta)
-    const hasCtrl = this.io.activeModifiers.has(KeyboardModifier.Ctrl)
-    const hasShift = this.io.activeModifiers.has(KeyboardModifier.Shift)
-
-    const isMultipleSelectSingle = userTriggered && (hasMeta || hasCtrl)
-    const isMultipleSelectRange = userTriggered && hasShift
-
-    if (isMultipleSelectSingle) {
-      if (this.selectedNotes[uuid]) {
-        delete this.selectedNotes[uuid]
-      } else if (await this.application.authorizeNoteAccess(note)) {
-        runInAction(() => {
-          this.selectedNotes[uuid] = note
-          this.lastSelectedNote = note
-        })
-      }
-    } else if (isMultipleSelectRange) {
-      await this.selectNotesRange(note)
-    } else {
-      const shouldSelectNote = this.selectedNotesCount > 1 || !this.selectedNotes[uuid]
-      if (shouldSelectNote && (await this.application.authorizeNoteAccess(note))) {
-        runInAction(() => {
-          this.selectedNotes = {
-            [note.uuid]: note,
-          }
-          this.lastSelectedNote = note
-        })
-      }
-    }
-
-    if (this.selectedNotesCount === 1) {
-      await this.openNote(Object.keys(this.selectedNotes)[0])
-    }
-  }
-
-  private async openNote(noteUuid: string): Promise<void> {
-    if (this.appState.notesView.activeControllerNote?.uuid === noteUuid) {
+  async openNote(noteUuid: string): Promise<void> {
+    if (this.appState.contentListView.activeControllerNote?.uuid === noteUuid) {
       return
     }
 
@@ -359,7 +294,7 @@ export class NotesState extends AbstractState {
     })
 
     runInAction(() => {
-      this.selectedNotes = {}
+      this.appState.selectedItems.setSelectedItems({})
       this.contextMenuOpen = false
     })
   }
@@ -376,7 +311,7 @@ export class NotesState extends AbstractState {
   }
 
   unselectNotes(): void {
-    this.selectedNotes = {}
+    this.appState.selectedItems.setSelectedItems({})
   }
 
   getSpellcheckStateForNote(note: SNNote) {
@@ -400,9 +335,9 @@ export class NotesState extends AbstractState {
     const tagsToAdd = [...parentChainTags, tag]
     await Promise.all(
       tagsToAdd.map(async (tag) => {
-        await this.application.mutator.changeItem(tag, (mutator) => {
+        await this.application.mutator.changeItem<TagMutator>(tag, (mutator) => {
           for (const note of selectedNotes) {
-            mutator.addItemAsRelationship(note)
+            mutator.addNote(note)
           }
         })
       }),
@@ -422,7 +357,7 @@ export class NotesState extends AbstractState {
 
   isTagInSelectedNotes(tag: SNTag): boolean {
     const selectedNotes = this.getSelectedNotesList()
-    return selectedNotes.every((note) => this.appState.getNoteTags(note).find((noteTag) => noteTag.uuid === tag.uuid))
+    return selectedNotes.every((note) => this.appState.getItemTags(note).find((noteTag) => noteTag.uuid === tag.uuid))
   }
 
   setShowProtectedWarning(show: boolean): void {
@@ -443,10 +378,6 @@ export class NotesState extends AbstractState {
 
   private getSelectedNotesList(): SNNote[] {
     return Object.values(this.selectedNotes)
-  }
-
-  private get io() {
-    return this.application.io
   }
 
   setShowRevisionHistoryModal(show: boolean): void {

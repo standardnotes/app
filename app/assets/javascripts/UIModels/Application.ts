@@ -14,7 +14,6 @@ import {
   NoteGroupController,
   removeFromArray,
   IconsController,
-  Runtime,
   DesktopDeviceInterface,
   isDesktopDevice,
   DeinitMode,
@@ -49,7 +48,6 @@ export class WebApplication extends SNApplication {
     identifier: string,
     defaultSyncServerHost: string,
     webSocketUrl: string,
-    runtime: Runtime,
   ) {
     super({
       environment: deviceInterface.environment,
@@ -61,7 +59,7 @@ export class WebApplication extends SNApplication {
       defaultHost: defaultSyncServerHost,
       appVersion: deviceInterface.appVersion,
       webSocketUrl: webSocketUrl,
-      runtime,
+      supportsFileNavigation: window.enabledUnfinishedFeatures,
     })
 
     deviceInterface.setApplication(this)

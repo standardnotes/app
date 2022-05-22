@@ -4,7 +4,7 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure
 import { FunctionComponent } from 'preact'
 import { StateUpdater, useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import { Icon } from '@/Components/Icon/Icon'
-import { Switch } from '@/Components/Switch'
+import { Switch } from '@/Components/Switch/Switch'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { PopoverFileItemProps } from './PopoverFileItem'
 import { PopoverFileItemActionType } from './PopoverFileItemAction'

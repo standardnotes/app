@@ -29,7 +29,7 @@ type ChangeEditorMenuProps = {
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
   closeMenu: () => void
   isVisible: boolean
-  note: SNNote
+  note: SNNote | undefined
 }
 
 const getGroupId = (group: EditorMenuGroup) => group.title.toLowerCase().replace(/\s/, '-')
@@ -75,97 +75,103 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
     [currentEditor],
   )
 
-  const selectComponent = async (component: SNComponent | null, note: SNNote) => {
-    if (component) {
-      if (component.conflictOf) {
-        application.mutator
-          .changeAndSaveItem(component, (mutator) => {
-            mutator.conflictOf = undefined
+  const selectComponent = useCallback(
+    async (component: SNComponent | null, note: SNNote) => {
+      if (component) {
+        if (component.conflictOf) {
+          application.mutator
+            .changeAndSaveItem(component, (mutator) => {
+              mutator.conflictOf = undefined
+            })
+            .catch(console.error)
+        }
+      }
+
+      const transactions: TransactionalMutation[] = []
+
+      await application.getAppState().contentListView.insertCurrentIfTemplate()
+
+      if (note.locked) {
+        application.alertService.alert(STRING_EDIT_LOCKED_ATTEMPT).catch(console.error)
+        return
+      }
+
+      if (!component) {
+        if (!note.prefersPlainEditor) {
+          transactions.push({
+            itemUuid: note.uuid,
+            mutate: (m: ItemMutator) => {
+              const noteMutator = m as NoteMutator
+              noteMutator.prefersPlainEditor = true
+            },
           })
-          .catch(console.error)
+        }
+        const currentEditor = application.componentManager.editorForNote(note)
+        if (currentEditor?.isExplicitlyEnabledForItem(note.uuid)) {
+          transactions.push(transactionForDisassociateComponentWithCurrentNote(currentEditor, note))
+        }
+        reloadFont(application.getPreference(PrefKey.EditorMonospaceEnabled))
+      } else if (component.area === ComponentArea.Editor) {
+        const currentEditor = application.componentManager.editorForNote(note)
+        if (currentEditor && component.uuid !== currentEditor.uuid) {
+          transactions.push(transactionForDisassociateComponentWithCurrentNote(currentEditor, note))
+        }
+        const prefersPlain = note.prefersPlainEditor
+        if (prefersPlain) {
+          transactions.push({
+            itemUuid: note.uuid,
+            mutate: (m: ItemMutator) => {
+              const noteMutator = m as NoteMutator
+              noteMutator.prefersPlainEditor = false
+            },
+          })
+        }
+        transactions.push(transactionForAssociateComponentWithCurrentNote(component, note))
       }
-    }
 
-    const transactions: TransactionalMutation[] = []
+      await application.mutator.runTransactionalMutations(transactions)
+      /** Dirtying can happen above */
+      application.sync.sync().catch(console.error)
 
-    await application.getAppState().notesView.insertCurrentIfTemplate()
+      setCurrentEditor(application.componentManager.editorForNote(note))
+    },
+    [application],
+  )
 
-    if (note.locked) {
-      application.alertService.alert(STRING_EDIT_LOCKED_ATTEMPT).catch(console.error)
-      return
-    }
-
-    if (!component) {
-      if (!note.prefersPlainEditor) {
-        transactions.push({
-          itemUuid: note.uuid,
-          mutate: (m: ItemMutator) => {
-            const noteMutator = m as NoteMutator
-            noteMutator.prefersPlainEditor = true
-          },
-        })
+  const selectEditor = useCallback(
+    async (itemToBeSelected: EditorMenuItem) => {
+      if (!itemToBeSelected.isEntitled) {
+        premiumModal.activate(itemToBeSelected.name)
+        return
       }
-      const currentEditor = application.componentManager.editorForNote(note)
-      if (currentEditor?.isExplicitlyEnabledForItem(note.uuid)) {
-        transactions.push(transactionForDisassociateComponentWithCurrentNote(currentEditor, note))
+
+      const areBothEditorsPlain = !currentEditor && !itemToBeSelected.component
+
+      if (areBothEditorsPlain) {
+        return
       }
-      reloadFont(application.getPreference(PrefKey.EditorMonospaceEnabled))
-    } else if (component.area === ComponentArea.Editor) {
-      const currentEditor = application.componentManager.editorForNote(note)
-      if (currentEditor && component.uuid !== currentEditor.uuid) {
-        transactions.push(transactionForDisassociateComponentWithCurrentNote(currentEditor, note))
+
+      let shouldSelectEditor = true
+
+      if (itemToBeSelected.component) {
+        const changeRequiresAlert = application.componentManager.doesEditorChangeRequireAlert(
+          currentEditor,
+          itemToBeSelected.component,
+        )
+
+        if (changeRequiresAlert) {
+          shouldSelectEditor = await application.componentManager.showEditorChangeAlert()
+        }
       }
-      const prefersPlain = note.prefersPlainEditor
-      if (prefersPlain) {
-        transactions.push({
-          itemUuid: note.uuid,
-          mutate: (m: ItemMutator) => {
-            const noteMutator = m as NoteMutator
-            noteMutator.prefersPlainEditor = false
-          },
-        })
+
+      if (shouldSelectEditor && note) {
+        selectComponent(itemToBeSelected.component ?? null, note).catch(console.error)
       }
-      transactions.push(transactionForAssociateComponentWithCurrentNote(component, note))
-    }
 
-    await application.mutator.runTransactionalMutations(transactions)
-    /** Dirtying can happen above */
-    application.sync.sync().catch(console.error)
-
-    setCurrentEditor(application.componentManager.editorForNote(note))
-  }
-
-  const selectEditor = async (itemToBeSelected: EditorMenuItem) => {
-    if (!itemToBeSelected.isEntitled) {
-      premiumModal.activate(itemToBeSelected.name)
-      return
-    }
-
-    const areBothEditorsPlain = !currentEditor && !itemToBeSelected.component
-
-    if (areBothEditorsPlain) {
-      return
-    }
-
-    let shouldSelectEditor = true
-
-    if (itemToBeSelected.component) {
-      const changeRequiresAlert = application.componentManager.doesEditorChangeRequireAlert(
-        currentEditor,
-        itemToBeSelected.component,
-      )
-
-      if (changeRequiresAlert) {
-        shouldSelectEditor = await application.componentManager.showEditorChangeAlert()
-      }
-    }
-
-    if (shouldSelectEditor) {
-      selectComponent(itemToBeSelected.component ?? null, note).catch(console.error)
-    }
-
-    closeMenu()
-  }
+      closeMenu()
+    },
+    [application.componentManager, closeMenu, currentEditor, note, premiumModal, selectComponent],
+  )
 
   return (
     <Menu className="pt-0.5 pb-1" a11yLabel="Change note type menu" isOpen={isVisible}>

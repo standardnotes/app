@@ -23,7 +23,7 @@ export const ChangeEditorButton: FunctionComponent<Props> = observer(
       return null
     }
 
-    const note = Object.values(appState.notes.selectedNotes)[0]
+    const note = appState.notes.firstSelectedNote
     const [isOpen, setIsOpen] = useState(false)
     const [isVisible, setIsVisible] = useState(false)
     const [position, setPosition] = useState({

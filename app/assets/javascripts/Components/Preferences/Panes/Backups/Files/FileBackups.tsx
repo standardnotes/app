@@ -9,7 +9,7 @@ import {
 } from '@/Components/Preferences/PreferencesComponents'
 import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
 import { Button } from '@/Components/Button/Button'
-import { Switch } from '@/Components/Switch'
+import { Switch } from '@/Components/Switch/Switch'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
 import { EncryptionStatusItem } from '../../Security/Encryption'
 import { Icon } from '@/Components/Icon/Icon'

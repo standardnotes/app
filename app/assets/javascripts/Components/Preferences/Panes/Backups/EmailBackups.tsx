@@ -11,7 +11,7 @@ import {
   Title,
 } from '@/Components/Preferences/PreferencesComponents'
 import { Dropdown, DropdownItem } from '@/Components/Dropdown/Dropdown'
-import { Switch } from '@/Components/Switch'
+import { Switch } from '@/Components/Switch/Switch'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
 import {
   FeatureStatus,

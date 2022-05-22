@@ -11,7 +11,7 @@ import { WebApplication } from '@/UIModels/Application'
 import { FunctionComponent } from 'preact'
 import { useEffect, useState } from 'preact/hooks'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
-import { Switch } from '@/Components/Switch'
+import { Switch } from '@/Components/Switch/Switch'
 import { PLAIN_EDITOR_NAME } from '@/Constants'
 
 type Props = {

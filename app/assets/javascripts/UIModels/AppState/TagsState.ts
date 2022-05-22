@@ -25,7 +25,7 @@ type AnyTag = SNTag | SmartView
 const rootTags = (application: SNApplication): SNTag[] => {
   const hasNoParent = (tag: SNTag) => !application.items.getTagParent(tag)
 
-  const allTags = application.items.getDisplayableItems<SNTag>(ContentType.Tag)
+  const allTags = application.items.getDisplayableTags()
   const rootTags = allTags.filter(hasNoParent)
 
   return rootTags
@@ -132,7 +132,7 @@ export class TagsState extends AbstractState {
     appEventListeners.push(
       this.application.streamItems([ContentType.Tag, ContentType.SmartView], ({ changed, removed }) => {
         runInAction(() => {
-          this.tags = this.application.items.getDisplayableItems<SNTag>(ContentType.Tag)
+          this.tags = this.application.items.getDisplayableTags()
 
           this.smartViews = this.application.items.getSmartViews()
 

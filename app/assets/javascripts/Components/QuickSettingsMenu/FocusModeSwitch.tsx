@@ -5,7 +5,7 @@ import { useCallback } from 'preact/hooks'
 import { JSXInternal } from 'preact/src/jsx'
 import { Icon } from '@/Components/Icon/Icon'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
-import { Switch } from '@/Components/Switch'
+import { Switch } from '@/Components/Switch/Switch'
 
 type Props = {
   application: WebApplication
