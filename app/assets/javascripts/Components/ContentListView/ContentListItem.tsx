@@ -2,9 +2,9 @@ import { ContentType, SNTag } from '@standardnotes/snjs'
 import { FunctionComponent } from 'preact'
 import { FileListItem } from './FileListItem'
 import { NoteListItem } from './NoteListItem'
-import { BaseListItemProps } from './Types/BaseListItemProps'
+import { AbstractListItemProps } from './Types/AbstractListItemProps'
 
-export const ContentListItem: FunctionComponent<BaseListItemProps> = (props) => {
+export const ContentListItem: FunctionComponent<AbstractListItemProps> = (props) => {
   const getTags = () => {
     if (props.hideTags) {
       return []

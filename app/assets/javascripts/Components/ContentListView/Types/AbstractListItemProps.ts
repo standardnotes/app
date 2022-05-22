@@ -3,7 +3,7 @@ import { AppState } from '@/UIModels/AppState'
 import { SortableItem } from '@standardnotes/snjs'
 import { ListableContentItem } from './ListableContentItem'
 
-export type BaseListItemProps = {
+export type AbstractListItemProps = {
   application: WebApplication
   appState: AppState
   hideDate: boolean

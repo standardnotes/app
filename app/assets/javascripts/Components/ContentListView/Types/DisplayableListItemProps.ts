@@ -1,5 +1,5 @@
-import { BaseListItemProps } from './BaseListItemProps'
+import { AbstractListItemProps } from './AbstractListItemProps'
 
-export type DisplayableListItemProps = BaseListItemProps & {
+export type DisplayableListItemProps = AbstractListItemProps & {
   tags: string[]
 }
