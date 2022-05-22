@@ -5,8 +5,8 @@ import { ListableContentItem } from './Types/ListableContentItem'
 type Props = {
   item: {
     protected: ListableContentItem['protected']
-    updatedAtString: ListableContentItem['updatedAtString']
-    createdAtString: ListableContentItem['createdAtString']
+    updatedAtString?: ListableContentItem['updatedAtString']
+    createdAtString?: ListableContentItem['createdAtString']
   }
   hideDate: boolean
   sortBy: keyof SortableItem | undefined
@@ -14,6 +14,10 @@ type Props = {
 
 export const ListItemMetadata: FunctionComponent<Props> = ({ item, hideDate, sortBy }) => {
   const showModifiedDate = sortBy === CollectionSort.UpdatedAt
+
+  if (hideDate && !item.protected) {
+    return null
+  }
 
   return (
     <div className="text-xs leading-1.4 mt-1 faded">
