@@ -24,15 +24,10 @@ export const FileListItem: FunctionComponent<DisplayableListItemProps> = observe
 
     const openContextMenu = useCallback(
       (posX: number, posY: number) => {
-        void appState.contentListView.selectItemWithScrollHandling(
-          {
-            uuid: item.uuid,
-          },
-          {
-            userTriggered: true,
-            scrollIntoView: false,
-          },
-        )
+        void appState.contentListView.selectItemWithScrollHandling(item, {
+          userTriggered: true,
+          scrollIntoView: false,
+        })
         openFileContextMenu(posX, posY)
       },
       [appState.contentListView, item, openFileContextMenu],
@@ -73,28 +68,11 @@ export const FileListItem: FunctionComponent<DisplayableListItemProps> = observe
           <div className="flex items-start justify-between font-semibold text-base leading-1.3 overflow-hidden">
             <div className="break-word mr-2">{item.title}</div>
           </div>
-          {(!hideDate || item.protected) && (
-            <ListItemMetadata
-              item={{
-                protected: item.protected,
-                updatedAtString: item.updatedAtString,
-                createdAtString: item.createdAtString,
-              }}
-              hideDate={hideDate}
-              sortBy={sortBy}
-            />
-          )}
-          {!hideTags && <ListItemTags tags={tags} />}
-          {item.conflictOf && <ListItemConflictIndicator />}
+          <ListItemMetadata item={item} hideDate={hideDate} sortBy={sortBy} />
+          <ListItemTags hideTags={hideTags} tags={tags} />
+          <ListItemConflictIndicator item={item} />
         </div>
-        <ListItemFlagIcons
-          item={{
-            archived: item.archived,
-            locked: item.locked,
-            pinned: item.pinned,
-            trashed: item.trashed,
-          }}
-        />
+        <ListItemFlagIcons item={item} />
       </div>
     )
   },

@@ -71,27 +71,11 @@ export const NoteListItem: FunctionComponent<DisplayableListItemProps> = observe
               )}
             </div>
           )}
-          <ListItemMetadata
-            item={{
-              protected: item.protected,
-              updatedAtString: item.updatedAtString,
-              createdAtString: item.createdAtString,
-            }}
-            hideDate={hideDate}
-            sortBy={sortBy}
-          />
-          {!hideTags && <ListItemTags tags={tags} />}
-          {item.conflictOf && <ListItemConflictIndicator />}
+          <ListItemMetadata item={item} hideDate={hideDate} sortBy={sortBy} />
+          <ListItemTags hideTags={hideTags} tags={tags} />
+          <ListItemConflictIndicator item={item} />
         </div>
-        <ListItemFlagIcons
-          item={{
-            archived: item.archived,
-            locked: item.locked,
-            pinned: item.pinned,
-            trashed: item.trashed,
-          }}
-          hasFiles={hasFiles}
-        />
+        <ListItemFlagIcons item={item} hasFiles={hasFiles} />
       </div>
     )
   },
