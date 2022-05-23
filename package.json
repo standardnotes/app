@@ -34,6 +34,7 @@
     "@typescript-eslint/eslint-plugin": "^5.20.0",
     "@typescript-eslint/parser": "^5.20.0",
     "babel-loader": "^8.2.5",
+    "circular-dependency-plugin": "^5.2.2",
     "css-loader": "^6.7.1",
     "dotenv": "^16.0.0",
     "eslint": "^8.13.0",
