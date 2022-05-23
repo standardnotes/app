@@ -38,6 +38,14 @@
   background-color: var(--sn-stylekit-grey-5);
 }
 
+.bg-warning-faded {
+  background-color: rgba(235, 173, 0, 0.08);
+}
+
+.bg-info-faded {
+  background-color: rgba(8, 109, 214, 0.08);
+}
+
 .color-inverted-default {
   color: var(--sn-stylekit-background-color);
 }
@@ -60,4 +68,8 @@
 
 .active\:color-neutral-contrast:active {
   color: var(--sn-stylekit-neutral-contrast-color);
+}
+
+.color-warning-contrast {
+  color: var(--warning-text-color);
 }
