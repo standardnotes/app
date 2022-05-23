@@ -4,7 +4,7 @@ import { DialogContent, DialogOverlay } from '@reach/dialog'
 import { addToast, ToastType } from '@standardnotes/stylekit'
 import { NoPreviewIllustration } from '@standardnotes/icons'
 import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks'
 import { getFileIconComponent } from '@/Components/AttachedFilesPopover/PopoverFileItem'
 import { Button } from '@/Components/Button/Button'
 import { Icon } from '@/Components/Icon/Icon'
@@ -87,34 +87,46 @@ export const FilePreviewModal: FunctionComponent<Props> = observer(({ applicatio
     }
   }, [currentFile, getObjectUrl, objectUrl])
 
-  const keyDownHandler = (event: KeyboardEvent) => {
-    if (event.key !== KeyboardKey.Left && event.key !== KeyboardKey.Right) {
-      return
-    }
-
-    event.preventDefault()
-
-    const currentFileIndex = otherFiles.findIndex((fileFromArray) => fileFromArray.uuid === currentFile.uuid)
-
-    switch (event.key) {
-      case KeyboardKey.Left: {
-        const previousFileIndex = currentFileIndex - 1 >= 0 ? currentFileIndex - 1 : otherFiles.length - 1
-        const previousFile = otherFiles[previousFileIndex]
-        if (previousFile) {
-          setCurrentFile(previousFile)
-        }
-        break
+  const keyDownHandler = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key !== KeyboardKey.Left && event.key !== KeyboardKey.Right) {
+        return
       }
-      case KeyboardKey.Right: {
-        const nextFileIndex = currentFileIndex + 1 < otherFiles.length ? currentFileIndex + 1 : 0
-        const nextFile = otherFiles[nextFileIndex]
-        if (nextFile) {
-          setCurrentFile(nextFile)
+
+      event.preventDefault()
+
+      const currentFileIndex = otherFiles.findIndex((fileFromArray) => fileFromArray.uuid === currentFile.uuid)
+
+      switch (event.key) {
+        case KeyboardKey.Left: {
+          const previousFileIndex = currentFileIndex - 1 >= 0 ? currentFileIndex - 1 : otherFiles.length - 1
+          const previousFile = otherFiles[previousFileIndex]
+          if (previousFile) {
+            setCurrentFile(previousFile)
+          }
+          break
         }
-        break
+        case KeyboardKey.Right: {
+          const nextFileIndex = currentFileIndex + 1 < otherFiles.length ? currentFileIndex + 1 : 0
+          const nextFile = otherFiles[nextFileIndex]
+          if (nextFile) {
+            setCurrentFile(nextFile)
+          }
+          break
+        }
       }
-    }
-  }
+    },
+    [currentFile.uuid, otherFiles, setCurrentFile],
+  )
+
+  const IconComponent = useMemo(
+    () =>
+      getFileIconComponent(
+        application.iconsController.getIconForFileType(currentFile.mimeType),
+        'w-6 h-6 flex-shrink-0',
+      ),
+    [application.iconsController, currentFile.mimeType],
+  )
 
   return (
     <DialogOverlay
@@ -139,12 +151,7 @@ export const FilePreviewModal: FunctionComponent<Props> = observer(({ applicatio
           onKeyDown={keyDownHandler}
         >
           <div className="flex items-center">
-            <div className="w-6 h-6">
-              {getFileIconComponent(
-                application.iconsController.getIconForFileType(currentFile.mimeType),
-                'w-6 h-6 flex-shrink-0',
-              )}
-            </div>
+            <div className="w-6 h-6">{IconComponent}</div>
             <span className="ml-3 font-medium">{currentFile.name}</span>
           </div>
           <div className="flex items-center">
