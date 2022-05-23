@@ -20,7 +20,7 @@ import { PremiumModalProvider } from '@/Hooks/usePremiumModal'
 import { ConfirmSignoutContainer } from '@/Components/ConfirmSignoutModal/ConfirmSignoutModal'
 import { TagsContextMenu } from '@/Components/Tags/TagContextMenu'
 import { ToastContainer } from '@standardnotes/stylekit'
-import { FilePreviewModal } from '@/Components/Files/FilePreviewModal'
+import { FilePreviewModalWrapper } from '@/Components/Files/FilePreviewModal'
 import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
 import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 import { ContentListView } from '@/Components/ContentListView/ContentListView'
@@ -236,7 +236,7 @@ export const ApplicationView: FunctionComponent<Props> = ({ application, mainApp
             application={application}
           />
           <ToastContainer />
-          <FilePreviewModal application={application} appState={appState} />
+          <FilePreviewModalWrapper application={application} appState={appState} />
         </>
       </div>
     </PremiumModalProvider>

@@ -21,10 +21,14 @@ type Props = {
   appState: AppState
 }
 
-export const FilePreviewModal: FunctionComponent<Props> = observer(({ application, appState }) => {
-  const { currentFile, setCurrentFile, otherFiles, dismiss, isOpen } = appState.filePreviewModal
+export const FilePreviewModalWrapper: FunctionComponent<Props> = observer(({ application, appState }) => {
+  return appState.filePreviewModal.isOpen ? <FilePreviewModal application={application} appState={appState} /> : null
+})
 
-  if (!currentFile || !isOpen) {
+const FilePreviewModal: FunctionComponent<Props> = observer(({ application, appState }) => {
+  const { currentFile, setCurrentFile, otherFiles, dismiss } = appState.filePreviewModal
+
+  if (!currentFile) {
     return null
   }
 
