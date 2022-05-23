@@ -18,11 +18,11 @@ export const EditingDisabledBanner: FunctionComponent<Props> = ({
 }) => {
   const background = showLockedIcon ? 'bg-warning-faded' : 'bg-info-faded'
   const iconColor = showLockedIcon ? 'color-accessory-tint-3' : 'color-accessory-tint-1'
-  const textColor = showLockedIcon ? 'color-warning-contrast' : 'color-accessory-tint-1'
+  const textColor = showLockedIcon ? 'color-warning' : 'color-accessory-tint-1'
 
   return (
     <div
-      className={`flex items-center px-3.5 py-2 ${background} cursor-pointer`}
+      className={`flex items-center relative ${background} px-3.5 py-2 cursor-pointer`}
       onMouseLeave={onMouseLeave}
       onMouseOver={onMouseOver}
       onClick={onClick}
