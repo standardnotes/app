@@ -29,7 +29,7 @@ export const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> = observ
   const { currentPane } = appState.purchaseFlow
 
   return (
-    <div className="flex items-center justify-center overflow-hidden h-full w-full absolute top-left-0 z-index-purchase-flow bg-grey-super-light">
+    <div className="flex items-center justify-center overflow-hidden h-full w-full absolute top-left-0 z-index-purchase-flow bg-passive-super-light">
       <div className="relative fit-content">
         <div className="relative p-12 xs:px-8 mb-4 bg-default border-1 border-solid border-main rounded xs:rounded-0">
           <SNLogoFull className="mb-5" />
@@ -37,7 +37,7 @@ export const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> = observ
         </div>
         <div className="flex justify-end xs:px-4">
           <a
-            className="mr-3 font-medium color-grey-1"
+            className="mr-3 font-medium color-passive-1"
             href="https://standardnotes.com/privacy"
             target="_blank"
             rel="noopener noreferrer"
@@ -45,7 +45,7 @@ export const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> = observ
             Privacy
           </a>
           <a
-            className="font-medium color-grey-1"
+            className="font-medium color-passive-1"
             href="https://standardnotes.com/help"
             target="_blank"
             rel="noopener noreferrer"

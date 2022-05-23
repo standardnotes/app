@@ -54,7 +54,7 @@ export const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentP
                 {selectedRevision.payload.content.text}
               </textarea>
             ) : (
-              <div className={`color-grey-0 ${ABSOLUTE_CENTER_CLASSNAME}`}>Empty note.</div>
+              <div className={`color-passive-0 ${ABSOLUTE_CENTER_CLASSNAME}`}>Empty note.</div>
             )}
           </div>
         )}

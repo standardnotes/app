@@ -125,7 +125,7 @@ export const SignIn: FunctionComponent<Props> = observer(({ appState, applicatio
               isInvalid={isEmailInvalid}
             />
             {isEmailInvalid && !otherErrorMessage ? (
-              <div className="color-dark-red mb-4">Please provide a valid email.</div>
+              <div className="color-danger mb-4">Please provide a valid email.</div>
             ) : null}
             <FloatingLabelInput
               className={`min-w-90 xs:min-w-auto ${otherErrorMessage ? 'mb-2' : 'mb-4'}`}
@@ -138,7 +138,7 @@ export const SignIn: FunctionComponent<Props> = observer(({ appState, applicatio
               disabled={isSigningIn}
               isInvalid={isPasswordInvalid}
             />
-            {otherErrorMessage ? <div className="color-dark-red mb-4">{otherErrorMessage}</div> : null}
+            {otherErrorMessage ? <div className="color-danger mb-4">{otherErrorMessage}</div> : null}
           </div>
           <Button
             className={`${isSigningIn ? 'min-w-30' : 'min-w-24'} py-2.5 mb-5`}
@@ -148,7 +148,7 @@ export const SignIn: FunctionComponent<Props> = observer(({ appState, applicatio
             disabled={isSigningIn}
           />
         </form>
-        <div className="text-sm font-medium color-grey-1">
+        <div className="text-sm font-medium color-passive-1">
           Don’t have an account yet?{' '}
           <a
             className={`color-info ${isSigningIn ? 'cursor-not-allowed' : 'cursor-pointer '}`}

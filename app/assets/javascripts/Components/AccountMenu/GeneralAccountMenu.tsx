@@ -110,7 +110,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
                   </div>
                 </div>
               )}
-              <div className="flex cursor-pointer color-grey-1" onClick={doSynchronization}>
+              <div className="flex cursor-pointer color-passive-1" onClick={doSynchronization}>
                 <Icon type="sync" />
               </div>
             </div>
@@ -122,7 +122,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
                 You’re offline. Sign in to sync your notes and preferences across all your devices and enable end-to-end
                 encryption.
               </div>
-              <div className="flex items-center color-grey-1">
+              <div className="flex items-center color-passive-1">
                 <Icon type="cloud-off" className="mr-2" />
                 <span className="font-semibold">Offline</span>
               </div>

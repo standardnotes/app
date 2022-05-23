@@ -140,7 +140,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(({ appState, app
               disabled={isCreatingAccount}
               isInvalid={isEmailInvalid}
             />
-            {isEmailInvalid ? <div className="color-dark-red mb-4">Please provide a valid email.</div> : null}
+            {isEmailInvalid ? <div className="color-danger mb-4">Please provide a valid email.</div> : null}
             <FloatingLabelInput
               className="min-w-90 xs:min-w-auto mb-4"
               id="purchase-create-account-password"
@@ -163,7 +163,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(({ appState, app
               isInvalid={isPasswordNotMatching}
             />
             {isPasswordNotMatching ? (
-              <div className="color-dark-red mb-4">Passwords don't match. Please try again.</div>
+              <div className="color-danger mb-4">Passwords don't match. Please try again.</div>
             ) : null}
           </div>
         </form>

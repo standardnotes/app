@@ -211,7 +211,7 @@
 }
 
 .placeholder-dark-red::placeholder {
-  @extend .color-dark-red;
+  @extend .color-danger;
 }
 
 .placeholder-medium::placeholder {

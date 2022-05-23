@@ -208,7 +208,7 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, appS
                 <div className="font-bold text-base mb-2">This file can't be previewed.</div>
                 {isFilePreviewable ? (
                   <>
-                    <div className="text-sm text-center color-grey-0 mb-4 max-w-35ch">
+                    <div className="text-sm text-center color-passive-0 mb-4 max-w-35ch">
                       There was an error loading the file. Try again, or download the file and open it using another
                       application.
                     </div>
@@ -234,7 +234,7 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, appS
                   </>
                 ) : (
                   <>
-                    <div className="text-sm text-center color-grey-0 mb-4 max-w-35ch">
+                    <div className="text-sm text-center color-passive-0 mb-4 max-w-35ch">
                       To view this file, download it and open it using another application.
                     </div>
                     <Button

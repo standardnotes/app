@@ -79,7 +79,7 @@ export const AutocompleteTagResult = observer(({ appState, tagResult, closeOnBlu
     >
       <Icon type="hashtag" className="color-neutral mr-2 min-h-5 min-w-5" />
       <span className="whitespace-nowrap overflow-hidden overflow-ellipsis">
-        {prefixTitle && <span className="grey-2">{prefixTitle}</span>}
+        {prefixTitle && <span className="color-passive-2">{prefixTitle}</span>}
         {autocompleteSearchQuery === ''
           ? title
           : splitQueryInString(title, autocompleteSearchQuery).map((substring, index) => (

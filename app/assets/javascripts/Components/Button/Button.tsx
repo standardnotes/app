@@ -22,7 +22,7 @@ const getClassName = (variant: ButtonVariant, danger: boolean, disabled: boolean
   }
 
   if (disabled) {
-    colors = variant === 'normal' ? 'bg-default color-grey-2' : 'bg-grey-2 color-info-contrast'
+    colors = variant === 'normal' ? 'bg-default color-passive-2' : 'bg-passive-2 color-info-contrast'
     focusHoverStates =
       variant === 'normal'
         ? 'focus:bg-default focus:outline-none hover:bg-default'

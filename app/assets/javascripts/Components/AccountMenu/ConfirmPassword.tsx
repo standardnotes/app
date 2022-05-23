@@ -113,8 +113,8 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
         </div>
         <div className="px-3 mb-3 text-sm">
           Because your notes are encrypted using your password,{' '}
-          <span className="color-dark-red">Standard Notes does not have a password reset option</span>. If you forget
-          your password, you will permanently lose access to your data.
+          <span className="color-danger">Standard Notes does not have a password reset option</span>. If you forget your
+          password, you will permanently lose access to your data.
         </div>
         <form onSubmit={handleConfirmFormSubmit} className="px-3 mb-1">
           <DecoratedPasswordInput
@@ -127,7 +127,7 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
             ref={passwordInputRef}
             value={confirmPassword}
           />
-          {error ? <div className="color-dark-red my-2">{error}</div> : null}
+          {error ? <div className="color-danger my-2">{error}</div> : null}
           <Button
             className="btn-w-full mt-1 mb-3"
             label={isRegistering ? 'Creating account...' : 'Create account & sign in'}
