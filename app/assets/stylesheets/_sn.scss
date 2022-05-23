@@ -1045,8 +1045,16 @@
   box-shadow: currentcolor 0px -1px 0px 0px inset, currentcolor 0px 1px 0px 0px;
 }
 
-.bg-warning {
+.bg-warning-faded {
   background-color: rgba(235, 173, 0, 0.08);
+}
+
+.color-warning-contrast {
+  color: var(--warning-text-color);
+}
+
+.bg-info-faded {
+  background-color: rgba(8, 109, 214, 0.08);
 }
 
 .overflow-x-hidden {
