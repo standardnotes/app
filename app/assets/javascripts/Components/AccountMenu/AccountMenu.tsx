@@ -10,13 +10,7 @@ import { CreateAccount } from './CreateAccount'
 import { ConfirmPassword } from './ConfirmPassword'
 import { JSXInternal } from 'preact/src/jsx'
 import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
-
-export enum AccountMenuPane {
-  GeneralMenu,
-  SignIn,
-  Register,
-  ConfirmPassword,
-}
+import { AccountMenuPane } from './AccountMenuPane'
 
 type Props = {
   appState: AppState

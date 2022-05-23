@@ -3,7 +3,7 @@ import { LinkButton, Text } from '@/Components/Preferences/PreferencesComponents
 import { Button } from '@/Components/Button/Button'
 import { WebApplication } from '@/UIModels/Application'
 import { useState } from 'preact/hooks'
-import { loadPurchaseFlowUrl } from '@/Components/PurchaseFlow/PurchaseFlowWrapper'
+import { loadPurchaseFlowUrl } from '@/Components/PurchaseFlow/PurchaseFlowFunctions'
 
 export const NoSubscription: FunctionalComponent<{
   application: WebApplication
