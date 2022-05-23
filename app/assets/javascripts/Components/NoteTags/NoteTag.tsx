@@ -119,7 +119,7 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
     >
       <Icon type="hashtag" className="sn-icon--small color-info mr-1" />
       <span className="whitespace-nowrap overflow-hidden overflow-ellipsis max-w-290px">
-        {prefixTitle && <span className="color-grey-1">{prefixTitle}</span>}
+        {prefixTitle && <span className="color-passive-1">{prefixTitle}</span>}
         {title}
       </span>
       {showDeleteButton && (

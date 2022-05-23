@@ -57,7 +57,7 @@ export const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = obse
           if (group.entries && group.entries.length) {
             return (
               <Fragment key={group.title}>
-                <div className="px-3 mt-2.5 mb-1 font-semibold color-text uppercase color-grey-0 select-none">
+                <div className="px-3 mt-2.5 mb-1 font-semibold color-text uppercase color-passive-0 select-none">
                   {group.title}
                 </div>
                 {group.entries.map((entry) => (
@@ -82,7 +82,7 @@ export const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = obse
           }
         })}
         {!remoteHistoryLength && !isFetchingRemoteHistory && (
-          <div className="color-grey-0 select-none">No remote history found</div>
+          <div className="color-passive-0 select-none">No remote history found</div>
         )}
       </div>
     )

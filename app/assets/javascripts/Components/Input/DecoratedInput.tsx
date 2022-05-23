@@ -10,7 +10,7 @@ const getClassNames = (hasLeftDecorations: boolean, hasRightDecorations: boolean
     input: `w-full border-0 focus:shadow-none bg-transparent color-text ${
       !hasLeftDecorations && hasRightDecorations ? 'pl-2' : ''
     } ${hasRightDecorations ? 'pr-2' : ''}`,
-    disabled: 'bg-grey-5 cursor-not-allowed',
+    disabled: 'bg-passive-5 cursor-not-allowed',
   }
 }
 

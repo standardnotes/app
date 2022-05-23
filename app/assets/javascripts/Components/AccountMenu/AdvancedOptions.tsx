@@ -98,7 +98,7 @@ export const AdvancedOptions: FunctionComponent<Props> = observer(
         >
           <div className="flex items-center">
             Advanced options
-            <Icon type="chevron-down" className="color-grey-1 ml-1" />
+            <Icon type="chevron-down" className="color-passive-1 ml-1" />
           </div>
         </button>
         {showAdvanced ? (

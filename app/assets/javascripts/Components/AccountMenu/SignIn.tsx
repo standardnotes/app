@@ -153,7 +153,7 @@ export const SignInPane: FunctionComponent<Props> = observer(({ application, app
       </div>
       <div className="px-3 mb-1">
         <DecoratedInput
-          className={`mb-2 ${error ? 'border-dark-red' : null}`}
+          className={`mb-2 ${error ? 'border-danger' : null}`}
           left={[<Icon type="email" className="color-neutral" />]}
           type="email"
           placeholder="Email"
@@ -165,7 +165,7 @@ export const SignInPane: FunctionComponent<Props> = observer(({ application, app
           ref={emailInputRef}
         />
         <DecoratedPasswordInput
-          className={`mb-2 ${error ? 'border-dark-red' : null}`}
+          className={`mb-2 ${error ? 'border-danger' : null}`}
           disabled={isSigningIn}
           left={[<Icon type="password" className="color-neutral" />]}
           onChange={handlePasswordChange}
@@ -175,7 +175,7 @@ export const SignInPane: FunctionComponent<Props> = observer(({ application, app
           ref={passwordInputRef}
           value={password}
         />
-        {error ? <div className="color-dark-red my-2">{error}</div> : null}
+        {error ? <div className="color-danger my-2">{error}</div> : null}
         <Button
           className="btn-w-full mt-1 mb-3"
           label={isSigningIn ? 'Signing in...' : 'Sign in'}

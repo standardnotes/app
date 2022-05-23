@@ -99,7 +99,7 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
               )}
             </div>
           )}
-          <div className="text-xs color-grey-0">
+          <div className="text-xs color-passive-0">
             {file.created_at.toLocaleString()} · {formatSizeToReadableString(file.decryptedSize)}
           </div>
         </div>

@@ -33,13 +33,13 @@ export const ChallengeModalPrompt: FunctionComponent<Props> = ({ prompt, values,
       {prompt.validation === ChallengeValidation.ProtectionSessionDuration ? (
         <div className="min-w-76">
           <div className="text-sm font-medium mb-2">Allow protected access for</div>
-          <div className="flex items-center justify-between bg-grey-4 rounded p-1">
+          <div className="flex items-center justify-between bg-passive-4 rounded p-1">
             {ProtectionSessionDurations.map((option) => {
               const selected = option.valueInSeconds === values[prompt.id].value
               return (
                 <label
                   className={`cursor-pointer px-2 py-1.5 rounded ${
-                    selected ? 'bg-default color-foreground font-semibold' : 'color-grey-0 hover:bg-grey-3'
+                    selected ? 'bg-default color-foreground font-semibold' : 'color-passive-0 hover:bg-passive-3'
                   }`}
                 >
                   <input

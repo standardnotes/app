@@ -50,7 +50,7 @@ export const PremiumFeaturesModal: FunctionalComponent<Props> = ({
             </div>
             <div className="text-lg text-center font-bold mb-1">Enable Advanced Features</div>
           </AlertDialogLabel>
-          <AlertDialogDescription className="text-sm text-center color-grey-1 px-4.5 mb-2">
+          <AlertDialogDescription className="text-sm text-center color-passive-1 px-4.5 mb-2">
             In order to use <span className="font-semibold">{featureName}</span> and other advanced features, please
             purchase a subscription or upgrade your current plan.
           </AlertDialogDescription>

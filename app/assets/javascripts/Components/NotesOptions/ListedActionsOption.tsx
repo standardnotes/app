@@ -58,7 +58,7 @@ const ListedMenuItem: FunctionComponent<ListedMenuItemProps> = ({
       <div className="flex flex-col">
         <div className="font-semibold">{action.label}</div>
         {action.access_type && (
-          <div className="text-xs mt-0.5 color-grey-0">
+          <div className="text-xs mt-0.5 color-passive-0">
             {'Uses '}
             <strong>{action.access_type}</strong>
             {' access to this note.'}
@@ -191,7 +191,7 @@ const ListedActionsMenu: FunctionComponent<ListedActionsMenuProps> = ({ applicat
                   />
                 ))
               ) : (
-                <div className="px-3 py-2 color-grey-0 select-none">No actions available</div>
+                <div className="px-3 py-2 color-passive-0 select-none">No actions available</div>
               )}
             </Fragment>
           ))}
@@ -199,7 +199,7 @@ const ListedActionsMenu: FunctionComponent<ListedActionsMenuProps> = ({ applicat
       ) : null}
       {!isFetchingAccounts && !menuGroups.length ? (
         <div className="w-full flex items-center justify-center px-4 py-6">
-          <div className="color-grey-0 select-none">No Listed accounts found</div>
+          <div className="color-passive-0 select-none">No Listed accounts found</div>
         </div>
       ) : null}
     </>

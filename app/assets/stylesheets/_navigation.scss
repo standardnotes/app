@@ -53,11 +53,6 @@ $content-horizontal-padding: 16px;
 
     &.active {
       opacity: 1;
-
-      &.is-over {
-        background-color: var(--sn-stylekit-white);
-        color: var(--sn-stylekit-secondary-contrast-foreground-color);
-      }
     }
   }
 

@@ -48,7 +48,7 @@ const RevisionContentPlaceholder: FunctionComponent<RevisionContentPlaceholderPr
   >
     {isFetchingSelectedRevision && <div className={`sk-spinner w-5 h-5 spinner-info ${ABSOLUTE_CENTER_CLASSNAME}`} />}
     {!isFetchingSelectedRevision && !selectedRevision ? (
-      <div className={`color-grey-0 select-none ${ABSOLUTE_CENTER_CLASSNAME}`}>No revision selected</div>
+      <div className={`color-passive-0 select-none ${ABSOLUTE_CENTER_CLASSNAME}`}>No revision selected</div>
     ) : null}
   </div>
 )

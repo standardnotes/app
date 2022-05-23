@@ -9,16 +9,16 @@
   opacity: $opacity;
 }
 
-.bg-grey-super-light {
-  background-color: var(--sn-stylekit-grey-super-light);
+.bg-passive-super-light {
+  background-color: var(--sn-stylekit-passive-color-super-light);
 }
 
 .bg-inverted-default {
   background-color: var(--sn-stylekit-contrast-foreground-color);
 }
 
-.hover\:bg-grey-4:hover {
-  background: var(--sn-stylekit-grey-4);
+.hover\:bg-passive-4:hover {
+  background: var(--sn-stylekit-passive-color-4);
 }
 
 .focus\:bg-info:focus {
@@ -45,8 +45,8 @@
   background-color: var(--sn-stylekit-background-color);
 }
 
-.hover\:bg-grey-5:hover {
-  background-color: var(--sn-stylekit-grey-5);
+.hover\:bg-passive-5:hover {
+  background-color: var(--sn-stylekit-passive-color-5);
 }
 
 .bg-warning-faded::after {

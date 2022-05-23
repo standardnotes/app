@@ -29,7 +29,7 @@ export const RevisionContentLocked: FunctionComponent<{
       <div className="flex flex-col items-center text-center max-w-40%">
         <HistoryLockedIllustration />
         <div class="text-lg font-bold mt-2 mb-1">Can't access this version</div>
-        <div className="mb-4 color-grey-0 leading-140%">
+        <div className="mb-4 color-passive-0 leading-140%">
           {getPremiumContentCopy(
             !isUserSubscriptionCanceled && !isUserSubscriptionExpired && userSubscriptionName
               ? userSubscriptionName
