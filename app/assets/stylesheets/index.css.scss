@@ -16,3 +16,14 @@
 @import 'focused';
 @import 'sn';
 @import 'columns';
+
+.sn-component {
+  @import './utils/padding';
+  @import './utils/margin';
+  @import './utils/width';
+  @import './utils/height';
+  @import './utils/color';
+  @import './utils/border';
+  @import './utils/position';
+  @import './utils/leading';
+}

@@ -105,51 +105,6 @@ $screen-md-max: ($screen-lg-min - 1) !default;
   }
 }
 
-.m-0 {
-  margin: 0;
-}
-
-.mb-0 {
-  margin-bottom: 0;
-}
-
-.mt-1 {
-  margin-top: 0.203125rem;
-}
-.mt-2 {
-  margin-top: 0.40625rem;
-}
-.mt-3 {
-  margin-top: 0.609375rem;
-}
-.mt-5 {
-  margin-top: 1.015625rem;
-}
-.mt-8 {
-  margin-top: 2rem;
-}
-
-.p-0 {
-  padding: 0rem;
-}
-.p-4 {
-  padding: 0.8125rem;
-}
-
-.pt-0 {
-  padding-top: 0;
-}
-
-.px-3 {
-  padding-left: 0.609375rem;
-  padding-right: 0.609375rem;
-}
-
-.py-2 {
-  padding-top: 0.40625rem;
-  padding-bottom: 0.40625rem;
-}
-
 .border-0 {
   border-width: 0px;
 }
