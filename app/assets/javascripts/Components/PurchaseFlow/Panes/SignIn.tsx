@@ -1,14 +1,14 @@
 import { Button } from '@/Components/Button/Button'
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
-import { PurchaseFlowPane } from '@/UIModels/AppState/PurchaseFlowState'
+import { PurchaseFlowPane } from '@/UIModels/AppState/PurchaseFlowPane'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
 import { useEffect, useRef, useState } from 'preact/hooks'
 import { FloatingLabelInput } from '@/Components/Input/FloatingLabelInput'
 import { isEmailValid } from '@/Utils'
-import { loadPurchaseFlowUrl } from '@/Components/PurchaseFlow/PurchaseFlowWrapper'
 import { BlueDotIcon, CircleIcon, DiamondIcon } from '@standardnotes/icons'
+import { loadPurchaseFlowUrl } from '../PurchaseFlowFunctions'
 
 type Props = {
   appState: AppState

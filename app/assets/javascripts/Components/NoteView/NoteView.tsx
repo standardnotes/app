@@ -9,10 +9,7 @@ import {
   SNNote,
   ComponentArea,
   PrefKey,
-  ComponentMutator,
   ComponentViewer,
-  TransactionalMutation,
-  ItemMutator,
   ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
   NoteViewController,
   PayloadEmitSource,
@@ -33,6 +30,11 @@ import { ElementIds } from '@/ElementIDs'
 import { ChangeEditorButton } from '@/Components/ChangeEditor/ChangeEditorButton'
 import { AttachedFilesButton } from '@/Components/AttachedFilesPopover/AttachedFilesButton'
 import { EditingDisabledBanner } from './EditingDisabledBanner'
+import {
+  transactionForAssociateComponentWithCurrentNote,
+  transactionForDisassociateComponentWithCurrentNote,
+} from './TransactionFunctions'
+import { reloadFont } from './FontFunctions'
 
 const MINIMUM_STATUS_DURATION = 400
 const TEXTAREA_DEBOUNCE = 100
@@ -45,40 +47,6 @@ type NoteStatus = {
 
 function sortAlphabetically(array: SNComponent[]): SNComponent[] {
   return array.sort((a, b) => (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1))
-}
-
-export const transactionForAssociateComponentWithCurrentNote = (component: SNComponent, note: SNNote) => {
-  const transaction: TransactionalMutation = {
-    itemUuid: component.uuid,
-    mutate: (m: ItemMutator) => {
-      const mutator = m as ComponentMutator
-      mutator.removeDisassociatedItemId(note.uuid)
-      mutator.associateWithItem(note.uuid)
-    },
-  }
-  return transaction
-}
-
-export const transactionForDisassociateComponentWithCurrentNote = (component: SNComponent, note: SNNote) => {
-  const transaction: TransactionalMutation = {
-    itemUuid: component.uuid,
-    mutate: (m: ItemMutator) => {
-      const mutator = m as ComponentMutator
-      mutator.removeAssociatedItemId(note.uuid)
-      mutator.disassociateWithItem(note.uuid)
-    },
-  }
-  return transaction
-}
-
-export const reloadFont = (monospaceFont?: boolean) => {
-  const root = document.querySelector(':root') as HTMLElement
-  const propertyName = '--sn-stylekit-editor-font-family'
-  if (monospaceFont) {
-    root.style.setProperty(propertyName, 'var(--sn-stylekit-monospace-font)')
-  } else {
-    root.style.setProperty(propertyName, 'var(--sn-stylekit-sans-serif-font)')
-  }
 }
 
 type State = {

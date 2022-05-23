@@ -60,7 +60,7 @@ export const FileListItem: FunctionComponent<DisplayableListItemProps> = observe
         }}
       >
         {!hideIcon ? (
-          <div className="flex flex-col items-center justify-between p-4 pr-3 mr-0">
+          <div className="flex flex-col items-center justify-between p-4.5 pr-3 mr-0">
             <IconComponent />
           </div>
         ) : (

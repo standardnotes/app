@@ -1,11 +1,6 @@
 import { Icon } from '@/Components/Icon/Icon'
 import { Menu } from '@/Components/Menu/Menu'
 import { MenuItem, MenuItemType } from '@/Components/Menu/MenuItem'
-import {
-  reloadFont,
-  transactionForAssociateComponentWithCurrentNote,
-  transactionForDisassociateComponentWithCurrentNote,
-} from '@/Components/NoteView/NoteView'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { STRING_EDIT_LOCKED_ATTEMPT } from '@/Strings'
 import { WebApplication } from '@/UIModels/Application'
@@ -23,6 +18,11 @@ import { useCallback, useEffect, useState } from 'preact/hooks'
 import { EditorMenuItem, EditorMenuGroup } from '@/Components/NotesOptions/ChangeEditorOption'
 import { createEditorMenuGroups } from './createEditorMenuGroups'
 import { PLAIN_EDITOR_NAME } from '@/Constants'
+import {
+  transactionForAssociateComponentWithCurrentNote,
+  transactionForDisassociateComponentWithCurrentNote,
+} from '../NoteView/TransactionFunctions'
+import { reloadFont } from '../NoteView/FontFunctions'
 
 type ChangeEditorMenuProps = {
   application: WebApplication

@@ -13,7 +13,7 @@ export const PreviewComponent: FunctionComponent<Props> = ({ file, objectUrl }) 
   }
 
   if (file.mimeType.startsWith('video/')) {
-    return <video className="w-full h-full" src={objectUrl} controls />
+    return <video className="w-full h-full" src={objectUrl} controls autoPlay />
   }
 
   if (file.mimeType.startsWith('audio/')) {
