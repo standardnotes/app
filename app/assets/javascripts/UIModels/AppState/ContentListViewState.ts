@@ -15,9 +15,10 @@ import {
   DisplayOptions,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
-import { AppState, AppStateEvent } from '.'
 import { WebApplication } from '../Application'
 import { AbstractState } from './AbstractState'
+import { AppState } from './AppState'
+import { AppStateEvent } from './AppStateEvent'
 import { WebDisplayOptions } from './WebDisplayOptions'
 
 const MinNoteCellHeight = 51.0

@@ -1,6 +1,6 @@
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
-import { PurchaseFlowPane } from '@/UIModels/AppState/PurchaseFlowState'
+import { PurchaseFlowPane } from '@/UIModels/AppState/PurchaseFlowPane'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'preact'
 import { CreateAccount } from './Panes/CreateAccount'

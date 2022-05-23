@@ -30,17 +30,7 @@ import { FilePreviewModalState } from './FilePreviewModalState'
 import { AbstractState } from './AbstractState'
 import { SelectedItemsState } from './SelectedItemsState'
 import { ListableContentItem } from '@/Components/ContentListView/Types/ListableContentItem'
-
-export enum AppStateEvent {
-  TagChanged,
-  ActiveEditorChanged,
-  PanelResized,
-  EditorFocused,
-  BeganBackupDownload,
-  EndedBackupDownload,
-  WindowDidFocus,
-  WindowDidBlur,
-}
+import { AppStateEvent } from './AppStateEvent'
 
 export type PanelResizedData = {
   panel: string

@@ -9,10 +9,7 @@ import {
   SNNote,
   ComponentArea,
   PrefKey,
-  ComponentMutator,
   ComponentViewer,
-  TransactionalMutation,
-  ItemMutator,
   ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
   NoteViewController,
   PayloadEmitSource,
@@ -24,7 +21,6 @@ import { STRING_DELETE_PLACEHOLDER_ATTEMPT, STRING_DELETE_LOCKED_ATTEMPT, String
 import { confirmDialog } from '@/Services/AlertService'
 import { PureComponent } from '@/Components/Abstract/PureComponent'
 import { ProtectedNoteOverlay } from '@/Components/ProtectedNoteOverlay/ProtectedNoteOverlay'
-import { Icon } from '@/Components/Icon/Icon'
 import { PinNoteButton } from '@/Components/PinNoteButton/PinNoteButton'
 import { NotesOptionsPanel } from '@/Components/NotesOptions/NotesOptionsPanel'
 import { NoteTagsContainer } from '@/Components/NoteTags/NoteTagsContainer'
@@ -33,6 +29,12 @@ import { PanelSide, PanelResizer, PanelResizeType } from '@/Components/PanelResi
 import { ElementIds } from '@/ElementIDs'
 import { ChangeEditorButton } from '@/Components/ChangeEditor/ChangeEditorButton'
 import { AttachedFilesButton } from '@/Components/AttachedFilesPopover/AttachedFilesButton'
+import { EditingDisabledBanner } from './EditingDisabledBanner'
+import {
+  transactionForAssociateComponentWithCurrentNote,
+  transactionForDisassociateComponentWithCurrentNote,
+} from './TransactionFunctions'
+import { reloadFont } from './FontFunctions'
 
 const MINIMUM_STATUS_DURATION = 400
 const TEXTAREA_DEBOUNCE = 100
@@ -45,40 +47,6 @@ type NoteStatus = {
 
 function sortAlphabetically(array: SNComponent[]): SNComponent[] {
   return array.sort((a, b) => (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1))
-}
-
-export const transactionForAssociateComponentWithCurrentNote = (component: SNComponent, note: SNNote) => {
-  const transaction: TransactionalMutation = {
-    itemUuid: component.uuid,
-    mutate: (m: ItemMutator) => {
-      const mutator = m as ComponentMutator
-      mutator.removeDisassociatedItemId(note.uuid)
-      mutator.associateWithItem(note.uuid)
-    },
-  }
-  return transaction
-}
-
-export const transactionForDisassociateComponentWithCurrentNote = (component: SNComponent, note: SNNote) => {
-  const transaction: TransactionalMutation = {
-    itemUuid: component.uuid,
-    mutate: (m: ItemMutator) => {
-      const mutator = m as ComponentMutator
-      mutator.removeAssociatedItemId(note.uuid)
-      mutator.disassociateWithItem(note.uuid)
-    },
-  }
-  return transaction
-}
-
-export const reloadFont = (monospaceFont?: boolean) => {
-  const root = document.querySelector(':root') as HTMLElement
-  const propertyName = '--sn-stylekit-editor-font-family'
-  if (monospaceFont) {
-    root.style.setProperty(propertyName, 'var(--sn-stylekit-monospace-font)')
-  } else {
-    root.style.setProperty(propertyName, 'var(--sn-stylekit-sans-serif-font)')
-  }
 }
 
 type State = {
@@ -919,8 +887,7 @@ export class NoteView extends PureComponent<Props, State> {
         <div className="flex-grow flex flex-col">
           <div className="sn-component">
             {this.state.noteLocked && (
-              <div
-                className="flex items-center px-3.5 py-2 bg-warning cursor-pointer"
+              <EditingDisabledBanner
                 onMouseLeave={() => {
                   this.setState({
                     lockText: NOTE_EDITING_DISABLED_TEXT,
@@ -934,14 +901,9 @@ export class NoteView extends PureComponent<Props, State> {
                   })
                 }}
                 onClick={() => this.appState.notes.setLockSelectedNotes(!this.state.noteLocked)}
-              >
-                {this.state.showLockedIcon ? (
-                  <Icon type="pencil-off" className="color-accessory-tint-3 flex fill-current mr-3" />
-                ) : (
-                  <Icon type="pencil" className="color-accessory-tint-3 flex fill-current mr-3" />
-                )}
-                <span className="color-grey-0">{this.state.lockText}</span>
-              </div>
+                showLockedIcon={this.state.showLockedIcon}
+                lockText={this.state.lockText}
+              />
             )}
           </div>
 
