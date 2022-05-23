@@ -169,7 +169,7 @@ const NoteSizeWarning: FunctionComponent<{
   return new Blob([note.text]).size > NOTE_SIZE_WARNING_THRESHOLD ? (
     <div className="flex items-center px-3 py-3.5 relative bg-warning-faded">
       <Icon type="warning" className="color-accessory-tint-3 flex-shrink-0 mr-3" />
-      <div className="color-warning-contrast select-none leading-140% max-w-80%">
+      <div className="color-warning select-none leading-140% max-w-80%">
         This note may have trouble syncing to the mobile application due to its size.
       </div>
     </div>

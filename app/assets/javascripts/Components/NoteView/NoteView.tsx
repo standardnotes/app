@@ -885,27 +885,25 @@ export class NoteView extends PureComponent<Props, State> {
     return (
       <div aria-label="Note" className="section editor sn-component">
         <div className="flex-grow flex flex-col">
-          <div className="sn-component">
-            {this.state.noteLocked && (
-              <EditingDisabledBanner
-                onMouseLeave={() => {
-                  this.setState({
-                    lockText: NOTE_EDITING_DISABLED_TEXT,
-                    showLockedIcon: true,
-                  })
-                }}
-                onMouseOver={() => {
-                  this.setState({
-                    lockText: 'Enable editing',
-                    showLockedIcon: false,
-                  })
-                }}
-                onClick={() => this.appState.notes.setLockSelectedNotes(!this.state.noteLocked)}
-                showLockedIcon={this.state.showLockedIcon}
-                lockText={this.state.lockText}
-              />
-            )}
-          </div>
+          {this.state.noteLocked && (
+            <EditingDisabledBanner
+              onMouseLeave={() => {
+                this.setState({
+                  lockText: NOTE_EDITING_DISABLED_TEXT,
+                  showLockedIcon: true,
+                })
+              }}
+              onMouseOver={() => {
+                this.setState({
+                  lockText: 'Enable editing',
+                  showLockedIcon: false,
+                })
+              }}
+              onClick={() => this.appState.notes.setLockSelectedNotes(!this.state.noteLocked)}
+              showLockedIcon={this.state.showLockedIcon}
+              lockText={this.state.lockText}
+            />
+          )}
 
           {this.note && (
             <div id="editor-title-bar" className="section-title-bar w-full">
