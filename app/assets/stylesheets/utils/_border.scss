@@ -1,0 +1,52 @@
+.border-danger {
+  border-color: var(--sn-stylekit-danger-color);
+}
+
+.border-neutral-contrast-bg {
+  border-color: var(--sn-stylekit-neutral-contrast-color);
+}
+
+.border-secondary {
+  border-color: var(--sn-stylekit-secondary-border-color);
+}
+
+.border-contrast {
+  border-color: var(--sn-stylekit-contrast-border-color);
+}
+
+.active\:border-info:active {
+  border-color: var(--sn-stylekit-info-color);
+}
+
+.border-t-0 {
+  border-top-width: 0;
+}
+
+.border-t-1px {
+  border-top-width: 1px;
+}
+
+.border-b-0 {
+  border-bottom-width: 0;
+}
+
+.border-l-1px {
+  border-left-width: 1px;
+}
+
+.border-l-2px {
+  border-left-width: 2px;
+}
+
+.border-r-1px {
+  border-right-width: 1px;
+}
+
+.border-y-1px {
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+}
+
+.border-2 {
+  border-width: 0.5rem;
+}
