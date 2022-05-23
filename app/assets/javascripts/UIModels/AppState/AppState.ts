@@ -90,16 +90,15 @@ export class AppState extends AbstractState {
       },
       this.appEventObserverRemovers,
     )
-
-    this.noteTags = new NoteTagsState(application, this, this.appEventObserverRemovers)
     this.features = new FeaturesState(application, this.appEventObserverRemovers)
     this.tags = new TagsState(application, this.appEventObserverRemovers, this.features)
+    this.searchOptions = new SearchOptionsState(application, this.appEventObserverRemovers)
+    this.contentListView = new ContentListViewState(application, this, this.appEventObserverRemovers)
+    this.noteTags = new NoteTagsState(application, this, this.appEventObserverRemovers)
     this.noAccountWarning = new NoAccountWarningState(application, this.appEventObserverRemovers)
     this.accountMenu = new AccountMenuState(application, this.appEventObserverRemovers)
-    this.searchOptions = new SearchOptionsState(application, this.appEventObserverRemovers)
     this.subscription = new SubscriptionState(application, this.appEventObserverRemovers)
     this.purchaseFlow = new PurchaseFlowState(application)
-    this.contentListView = new ContentListViewState(application, this, this.appEventObserverRemovers)
     this.files = new FilesState(application, this, this.appEventObserverRemovers)
     this.addAppEventObserver()
     this.onVisibilityChange = () => {
