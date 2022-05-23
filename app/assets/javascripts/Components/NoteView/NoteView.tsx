@@ -24,7 +24,6 @@ import { STRING_DELETE_PLACEHOLDER_ATTEMPT, STRING_DELETE_LOCKED_ATTEMPT, String
 import { confirmDialog } from '@/Services/AlertService'
 import { PureComponent } from '@/Components/Abstract/PureComponent'
 import { ProtectedNoteOverlay } from '@/Components/ProtectedNoteOverlay/ProtectedNoteOverlay'
-import { Icon } from '@/Components/Icon/Icon'
 import { PinNoteButton } from '@/Components/PinNoteButton/PinNoteButton'
 import { NotesOptionsPanel } from '@/Components/NotesOptions/NotesOptionsPanel'
 import { NoteTagsContainer } from '@/Components/NoteTags/NoteTagsContainer'
@@ -33,6 +32,7 @@ import { PanelSide, PanelResizer, PanelResizeType } from '@/Components/PanelResi
 import { ElementIds } from '@/ElementIDs'
 import { ChangeEditorButton } from '@/Components/ChangeEditor/ChangeEditorButton'
 import { AttachedFilesButton } from '@/Components/AttachedFilesPopover/AttachedFilesButton'
+import { EditingDisabledBanner } from './EditingDisabledBanner'
 
 const MINIMUM_STATUS_DURATION = 400
 const TEXTAREA_DEBOUNCE = 100
@@ -919,8 +919,7 @@ export class NoteView extends PureComponent<Props, State> {
         <div className="flex-grow flex flex-col">
           <div className="sn-component">
             {this.state.noteLocked && (
-              <div
-                className="flex items-center px-3.5 py-2 bg-warning cursor-pointer"
+              <EditingDisabledBanner
                 onMouseLeave={() => {
                   this.setState({
                     lockText: NOTE_EDITING_DISABLED_TEXT,
@@ -934,14 +933,9 @@ export class NoteView extends PureComponent<Props, State> {
                   })
                 }}
                 onClick={() => this.appState.notes.setLockSelectedNotes(!this.state.noteLocked)}
-              >
-                {this.state.showLockedIcon ? (
-                  <Icon type="pencil-off" className="color-accessory-tint-3 flex fill-current mr-3" />
-                ) : (
-                  <Icon type="pencil" className="color-accessory-tint-3 flex fill-current mr-3" />
-                )}
-                <span className="color-grey-0">{this.state.lockText}</span>
-              </div>
+                showLockedIcon={this.state.showLockedIcon}
+                lockText={this.state.lockText}
+              />
             )}
           </div>
 
