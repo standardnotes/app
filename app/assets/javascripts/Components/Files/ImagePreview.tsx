@@ -26,7 +26,7 @@ export const ImagePreview: FunctionComponent<Props> = ({ objectUrl }) => {
                 }
               : {
                   position: 'absolute',
-                  inset: 0,
+                  top: 0,
                   margin: 'auto',
                 }),
           }}
