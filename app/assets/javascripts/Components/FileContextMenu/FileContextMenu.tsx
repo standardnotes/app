@@ -27,7 +27,7 @@ export const FileContextMenu: FunctionComponent<Props> = observer(({ appState })
   const [closeOnBlur] = useCloseOnBlur(contextMenuRef, (open: boolean) => setShowFileContextMenu(open))
   useCloseOnClickOutside(contextMenuRef, () => appState.files.setShowFileContextMenu(false))
 
-  const selectedFile = Object.values(selectedFiles)[0]
+  const selectedFile = selectedFiles[0]
   if (!showFileContextMenu || !selectedFile) {
     return null
   }

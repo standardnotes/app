@@ -4,6 +4,8 @@ import { observer } from 'mobx-react-lite'
 import { NotesOptionsPanel } from '@/Components/NotesOptions/NotesOptionsPanel'
 import { WebApplication } from '@/UIModels/Application'
 import { PinNoteButton } from '@/Components/PinNoteButton/PinNoteButton'
+import { Button } from '../Button/Button'
+import { useCallback } from 'preact/hooks'
 
 type Props = {
   application: WebApplication
@@ -12,6 +14,10 @@ type Props = {
 
 export const MultipleSelectedNotes = observer(({ application, appState }: Props) => {
   const count = appState.notes.selectedNotesCount
+
+  const cancelMultipleSelection = useCallback(() => {
+    appState.selectedItems.cancelMultipleSelection()
+  }, [appState])
 
   return (
     <div className="flex flex-col h-full items-center">
@@ -28,6 +34,9 @@ export const MultipleSelectedNotes = observer(({ application, appState }: Props)
         <IlNotesIcon className="block" />
         <h2 className="text-lg m-0 text-center mt-4">{count} selected notes</h2>
         <p className="text-sm mt-2 text-center max-w-60">Actions will be performed on all selected notes.</p>
+        <Button className="mt-2.5" onClick={cancelMultipleSelection}>
+          Cancel multiple selection
+        </Button>
       </div>
     </div>
   )

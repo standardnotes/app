@@ -60,12 +60,12 @@ export class NotesState extends AbstractState {
       application.streamItems<SNNote>(ContentType.Note, ({ changed, inserted, removed }) => {
         runInAction(() => {
           for (const removedNote of removed) {
-            delete this.selectedNotes[removedNote.uuid]
+            this.appState.selectedItems.deselectItem(removedNote)
           }
 
           for (const note of [...changed, ...inserted]) {
-            if (this.selectedNotes[note.uuid]) {
-              this.selectedNotes[note.uuid] = note
+            if (this.appState.selectedItems.isItemSelected(note)) {
+              this.appState.selectedItems.updateReferenceOfSelectedItem(note)
             }
           }
         })
@@ -80,14 +80,14 @@ export class NotesState extends AbstractState {
 
         for (const selectedId of selectedUuids) {
           if (!activeNoteUuids.includes(selectedId)) {
-            delete this.selectedNotes[selectedId]
+            this.appState.selectedItems.deselectItem({ uuid: selectedId })
           }
         }
       }),
     )
   }
 
-  get selectedNotes() {
+  public get selectedNotes(): SNNote[] {
     return this.appState.selectedItems.getSelectedItems<SNNote>(ContentType.Note)
   }
 
@@ -262,7 +262,7 @@ export class NotesState extends AbstractState {
       if (permanently) {
         for (const note of this.getSelectedNotesList()) {
           await this.application.mutator.deleteItem(note)
-          delete this.selectedNotes[note.uuid]
+          this.appState.selectedItems.deselectItem(note)
         }
       } else {
         await this.changeSelectedNotes((mutator) => {
