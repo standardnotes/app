@@ -18,7 +18,7 @@ export const PinNoteButton: FunctionComponent<Props> = observer(
       return null
     }
 
-    const notes = Object.values(appState.notes.selectedNotes)
+    const notes = appState.notes.selectedNotes
     const pinned = notes.some((note) => note.pinned)
 
     const togglePinned = useCallback(async () => {

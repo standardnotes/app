@@ -62,7 +62,7 @@ export class FilesState extends AbstractState {
     )
   }
 
-  get selectedFiles() {
+  get selectedFiles(): FileItem[] {
     return this.appState.selectedItems.getSelectedItems<FileItem>(ContentType.File)
   }
 

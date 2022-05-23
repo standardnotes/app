@@ -185,7 +185,7 @@ export const NotesOptions = observer(({ application, appState, closeOnBlur }: No
     return notesMatchingAttribute.length > notesNotMatchingAttribute.length
   }
 
-  const notes = Object.values(appState.notes.selectedNotes)
+  const notes = appState.notes.selectedNotes
   const hidePreviews = toggleOn((note) => note.hidePreview)
   const locked = toggleOn((note) => note.locked)
   const protect = toggleOn((note) => note.protected)

@@ -51,15 +51,30 @@ export class SelectedItemsState extends AbstractState {
     return Object.keys(this.selectedItems).length
   }
 
-  getSelectedItems = <T extends ListableContentItem>(contentType: ContentType) => {
-    const filteredEntries = Object.entries(this.appState.selectedItems.selectedItems).filter(
-      ([_, item]) => item.content_type === contentType,
-    ) as [UuidString, T][]
-    return Object.fromEntries<T>(filteredEntries)
+  getSelectedItems = <T extends ListableContentItem = ListableContentItem>(contentType?: ContentType): T[] => {
+    return Object.values(this.selectedItems).filter((item) => {
+      return !contentType ? true : item.content_type === contentType
+    }) as T[]
   }
 
   setSelectedItems = (selectedItems: SelectedItems) => {
     this.selectedItems = selectedItems
+  }
+
+  public deselectItem = (item: { uuid: ListableContentItem['uuid'] }): void => {
+    delete this.selectedItems[item.uuid]
+
+    if (item.uuid === this.lastSelectedItem?.uuid) {
+      this.lastSelectedItem = undefined
+    }
+  }
+
+  public isItemSelected = (item: ListableContentItem): boolean => {
+    return this.selectedItems[item.uuid] != undefined
+  }
+
+  public updateReferenceOfSelectedItem = (item: ListableContentItem): void => {
+    this.selectedItems[item.uuid] = item
   }
 
   private selectItemsRange = async (selectedItem: ListableContentItem): Promise<void> => {
@@ -86,6 +101,32 @@ export class SelectedItemsState extends AbstractState {
         this.lastSelectedItem = item
       })
     }
+  }
+
+  cancelMultipleSelection = () => {
+    this.io.cancelAllKeyboardModifiers()
+
+    const firstSelectedItem = this.getSelectedItems()[0]
+
+    if (firstSelectedItem) {
+      this.replaceSelection(firstSelectedItem)
+    } else {
+      this.deselectAll()
+    }
+  }
+
+  private replaceSelection = (item: ListableContentItem): void => {
+    this.setSelectedItems({
+      [item.uuid]: item,
+    })
+
+    this.lastSelectedItem = item
+  }
+
+  private deselectAll = (): void => {
+    this.setSelectedItems({})
+
+    this.lastSelectedItem = undefined
   }
 
   selectItem = async (
@@ -119,10 +160,7 @@ export class SelectedItemsState extends AbstractState {
     } else {
       const shouldSelectNote = hasMoreThanOneSelected || !this.selectedItems[uuid]
       if (shouldSelectNote && isAuthorizedForAccess) {
-        this.setSelectedItems({
-          [item.uuid]: item,
-        })
-        this.lastSelectedItem = item
+        this.replaceSelection(item)
       }
     }
 
