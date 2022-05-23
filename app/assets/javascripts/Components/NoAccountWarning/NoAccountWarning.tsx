@@ -24,7 +24,7 @@ export const NoAccountWarning = observer(({ appState }: Props) => {
   }, [appState])
 
   return (
-    <div className="mt-5 p-5 rounded-md shadow-sm grid grid-template-cols-1fr">
+    <div className="mt-5 p-4 rounded-md shadow-sm grid grid-template-cols-1fr">
       <h1 className="sk-h3 m-0 font-semibold">Data not backed up</h1>
       <p className="m-0 mt-1 col-start-1 col-end-3">Sign in or register to back up your notes.</p>
       <button className="sn-button small info mt-3 col-start-1 col-end-3 justify-self-start" onClick={showAccountMenu}>
