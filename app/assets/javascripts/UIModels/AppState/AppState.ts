@@ -31,15 +31,11 @@ import { AbstractState } from './AbstractState'
 import { SelectedItemsState } from './SelectedItemsState'
 import { ListableContentItem } from '@/Components/ContentListView/Types/ListableContentItem'
 import { AppStateEvent } from './AppStateEvent'
+import { EventSource } from './EventSource'
 
 export type PanelResizedData = {
   panel: string
   collapsed: boolean
-}
-
-export enum EventSource {
-  UserInteraction,
-  Script,
 }
 
 type ObserverCallback = (event: AppStateEvent, data?: unknown) => Promise<void>

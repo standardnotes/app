@@ -25,4 +25,12 @@ module.exports = {
     '^.+\\.(ts|tsx)?$': 'ts-jest',
     '\\.svg$': 'svg-jest',
   },
+  coverageThreshold: {
+    global: {
+      branches: 3,
+      functions: 5,
+      lines: 21,
+      statements: 22,
+    },
+  },
 }

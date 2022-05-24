@@ -1,4 +1,3 @@
-import { WebApplication } from '@/UIModels/Application'
 import { createRef, JSX, RefObject } from 'preact'
 import {
   ApplicationEvent,
@@ -15,8 +14,8 @@ import {
   PayloadEmitSource,
 } from '@standardnotes/snjs'
 import { debounce, isDesktopApplication } from '@/Utils'
+import { EventSource } from '../../UIModels/AppState/EventSource'
 import { KeyboardModifier, KeyboardKey } from '@/Services/IOService'
-import { EventSource } from '@/UIModels/AppState'
 import { STRING_DELETE_PLACEHOLDER_ATTEMPT, STRING_DELETE_LOCKED_ATTEMPT, StringDeleteNote } from '@/Strings'
 import { confirmDialog } from '@/Services/AlertService'
 import { PureComponent } from '@/Components/Abstract/PureComponent'
@@ -35,6 +34,7 @@ import {
   transactionForDisassociateComponentWithCurrentNote,
 } from './TransactionFunctions'
 import { reloadFont } from './FontFunctions'
+import { NoteViewProps } from './NoteViewProps'
 
 const MINIMUM_STATUS_DURATION = 400
 const TEXTAREA_DEBOUNCE = 100
@@ -78,12 +78,7 @@ type State = {
   rightResizerOffset: number
 }
 
-interface Props {
-  application: WebApplication
-  controller: NoteViewController
-}
-
-export class NoteView extends PureComponent<Props, State> {
+export class NoteView extends PureComponent<NoteViewProps, State> {
   readonly controller!: NoteViewController
 
   private statusTimeout?: NodeJS.Timeout
@@ -101,7 +96,7 @@ export class NoteView extends PureComponent<Props, State> {
 
   private editorContentRef: RefObject<HTMLDivElement>
 
-  constructor(props: Props) {
+  constructor(props: NoteViewProps) {
     super(props, props.application)
 
     this.controller = props.controller
@@ -217,7 +212,7 @@ export class NoteView extends PureComponent<Props, State> {
     }
   }
 
-  override componentDidUpdate(_prevProps: Props, prevState: State): void {
+  override componentDidUpdate(_prevProps: NoteViewProps, prevState: State): void {
     if (
       this.state.showProtectedWarning != undefined &&
       prevState.showProtectedWarning !== this.state.showProtectedWarning
