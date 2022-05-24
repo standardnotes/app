@@ -16,8 +16,7 @@
     "setup": "bundle install && yarn install --frozen-lockfile && bundle exec rails assets:precompile && yarn bundle",
     "lint": "eslint --fix app/assets/javascripts",
     "tsc": "tsc --project app/assets/javascripts/tsconfig.json",
-    "test": "jest --config app/assets/javascripts/jest.config.js",
-    "test:coverage": "yarn test --coverage",
+    "test": "jest --config app/assets/javascripts/jest.config.js --coverage",
     "prepare": "husky install",
     "postinstall": "yarn run ncu -loglevel verbose --packageFile package.json",
     "upgrade:snjs": "ncu -u '@standardnotes/*' && yarn"

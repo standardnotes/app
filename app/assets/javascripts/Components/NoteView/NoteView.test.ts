@@ -2,173 +2,175 @@
  * @jest-environment jsdom
  */
 
-import { NoteView } from './NoteView'
+import { WebApplication } from '@/UIModels/Application'
+import { AppState } from '@/UIModels/AppState'
+import { NotesState } from '@/UIModels/AppState/NotesState'
 import {
   ApplicationEvent,
   ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
-} from '@standardnotes/snjs/'
+  NoteViewController,
+  SNNote,
+} from '@standardnotes/snjs'
 
-describe('editor-view', () => {
-  let ctrl: NoteView
-  let setShowProtectedWarningSpy: jest.SpyInstance
+import { NoteView } from './NoteView'
 
-  beforeEach(() => {
-    ctrl = new NoteView({} as any)
+describe('NoteView', () => {
+  let noteViewController: NoteViewController
+  let application: WebApplication
+  let appState: AppState
+  let notesState: NotesState
 
-    setShowProtectedWarningSpy = jest.spyOn(ctrl, 'setShowProtectedOverlay')
-
-    Object.defineProperties(ctrl, {
-      application: {
-        value: {
-          getAppState: () => {
-            return {
-              notes: {
-                setShowProtectedWarning: jest.fn(),
-              },
-            }
-          },
-          hasProtectionSources: () => true,
-          authorizeNoteAccess: jest.fn(),
-        },
-      },
-      removeComponentsObserver: {
-        value: jest.fn(),
-        writable: true,
-      },
-      removeTrashKeyObserver: {
-        value: jest.fn(),
-        writable: true,
-      },
-      unregisterComponent: {
-        value: jest.fn(),
-        writable: true,
-      },
-      editor: {
-        value: {
-          clearNoteChangeListener: jest.fn(),
-        },
-      },
+  const createNoteView = () =>
+    new NoteView({
+      controller: noteViewController,
+      application,
     })
-  })
+
   beforeEach(() => {
     jest.useFakeTimers()
+
+    noteViewController = {} as jest.Mocked<NoteViewController>
+
+    notesState = {} as jest.Mocked<NotesState>
+    notesState.setShowProtectedWarning = jest.fn()
+
+    appState = {
+      notes: notesState,
+    } as jest.Mocked<AppState>
+
+    application = {} as jest.Mocked<WebApplication>
+    application.getAppState = jest.fn().mockReturnValue(appState)
+    application.hasProtectionSources = jest.fn().mockReturnValue(true)
+    application.authorizeNoteAccess = jest.fn()
   })
 
   afterEach(() => {
     jest.useRealTimers()
   })
 
-  afterEach(() => {
-    ctrl.deinit()
-  })
-
   describe('note is protected', () => {
-    beforeEach(() => {
-      Object.defineProperty(ctrl, 'note', {
-        value: {
-          protected: true,
-        },
-      })
-    })
-
     it("should hide the note if at the time of the session expiration the note wasn't edited for longer than the allowed idle time", async () => {
-      jest
-        .spyOn(ctrl, 'getSecondsElapsedSinceLastEdit')
-        .mockImplementation(() => ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction + 5)
+      const secondsElapsedSinceLastEdit = ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction + 5
 
-      await ctrl.onAppEvent(ApplicationEvent.UnprotectedSessionExpired)
+      noteViewController.note = {
+        protected: true,
+        userModifiedDate: new Date(Date.now() - secondsElapsedSinceLastEdit * 1000),
+      } as jest.Mocked<SNNote>
 
-      expect(setShowProtectedWarningSpy).toHaveBeenCalledWith(true)
+      await createNoteView().onAppEvent(ApplicationEvent.UnprotectedSessionExpired)
+
+      expect(notesState.setShowProtectedWarning).toHaveBeenCalledWith(true)
     })
 
     it('should postpone the note hiding by correct time if the time passed after its last modification is less than the allowed idle time', async () => {
       const secondsElapsedSinceLastEdit = ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction - 3
 
-      Object.defineProperty(ctrl.note, 'userModifiedDate', {
-        value: new Date(Date.now() - secondsElapsedSinceLastEdit * 1000),
-        configurable: true,
-      })
+      noteViewController.note = {
+        protected: true,
+        userModifiedDate: new Date(Date.now() - secondsElapsedSinceLastEdit * 1000),
+      } as jest.Mocked<SNNote>
 
-      await ctrl.onAppEvent(ApplicationEvent.UnprotectedSessionExpired)
+      await createNoteView().onAppEvent(ApplicationEvent.UnprotectedSessionExpired)
 
       const secondsAfterWhichTheNoteShouldHide =
         ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction - secondsElapsedSinceLastEdit
+
       jest.advanceTimersByTime((secondsAfterWhichTheNoteShouldHide - 1) * 1000)
-      expect(setShowProtectedWarningSpy).not.toHaveBeenCalled()
+
+      expect(notesState.setShowProtectedWarning).not.toHaveBeenCalled()
 
       jest.advanceTimersByTime(1 * 1000)
-      expect(setShowProtectedWarningSpy).toHaveBeenCalledWith(true)
+
+      expect(notesState.setShowProtectedWarning).toHaveBeenCalledWith(true)
     })
 
     it('should postpone the note hiding by correct time if the user continued editing it even after the protection session has expired', async () => {
       const secondsElapsedSinceLastModification = 3
-      Object.defineProperty(ctrl.note, 'userModifiedDate', {
-        value: new Date(Date.now() - secondsElapsedSinceLastModification * 1000),
-        configurable: true,
-      })
 
-      await ctrl.onAppEvent(ApplicationEvent.UnprotectedSessionExpired)
+      noteViewController.note = {
+        protected: true,
+        userModifiedDate: new Date(Date.now() - secondsElapsedSinceLastModification * 1000),
+      } as jest.Mocked<SNNote>
+
+      await createNoteView().onAppEvent(ApplicationEvent.UnprotectedSessionExpired)
 
       let secondsAfterWhichTheNoteShouldHide =
         ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction - secondsElapsedSinceLastModification
       jest.advanceTimersByTime((secondsAfterWhichTheNoteShouldHide - 1) * 1000)
 
-      // A new modification has just happened
-      Object.defineProperty(ctrl.note, 'userModifiedDate', {
-        value: new Date(),
-        configurable: true,
-      })
+      noteViewController.note = {
+        protected: true,
+        userModifiedDate: new Date(),
+      } as jest.Mocked<SNNote>
 
       secondsAfterWhichTheNoteShouldHide = ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction
       jest.advanceTimersByTime((secondsAfterWhichTheNoteShouldHide - 1) * 1000)
-      expect(setShowProtectedWarningSpy).not.toHaveBeenCalled()
+      expect(notesState.setShowProtectedWarning).not.toHaveBeenCalled()
 
       jest.advanceTimersByTime(1 * 1000)
-      expect(setShowProtectedWarningSpy).toHaveBeenCalledWith(true)
+      expect(notesState.setShowProtectedWarning).toHaveBeenCalledWith(true)
     })
   })
 
   describe('note is unprotected', () => {
     it('should not call any hiding logic', async () => {
-      Object.defineProperty(ctrl, 'note', {
-        value: {
-          protected: false,
-        },
-      })
-      const hideProtectedNoteIfInactiveSpy = jest.spyOn(ctrl, 'hideProtectedNoteIfInactive')
+      noteViewController.note = {
+        protected: false,
+      } as jest.Mocked<SNNote>
 
-      await ctrl.onAppEvent(ApplicationEvent.UnprotectedSessionExpired)
+      await createNoteView().onAppEvent(ApplicationEvent.UnprotectedSessionExpired)
 
-      expect(hideProtectedNoteIfInactiveSpy).not.toHaveBeenCalled()
+      expect(notesState.setShowProtectedWarning).not.toHaveBeenCalled()
     })
   })
 
   describe('dismissProtectedWarning', () => {
+    beforeEach(() => {
+      noteViewController.note = {
+        protected: false,
+      } as jest.Mocked<SNNote>
+    })
+
     describe('the note has protection sources', () => {
       it('should reveal note contents if the authorization has been passed', async () => {
-        jest.spyOn(ctrl['application'], 'authorizeNoteAccess').mockImplementation(async () => Promise.resolve(true))
+        application.authorizeNoteAccess = jest.fn().mockReturnValue(true)
 
-        await ctrl.dismissProtectedWarning()
+        const noteView = new NoteView({
+          controller: noteViewController,
+          application,
+        })
 
-        expect(setShowProtectedWarningSpy).toHaveBeenCalledWith(false)
+        await noteView.dismissProtectedWarning()
+
+        expect(notesState.setShowProtectedWarning).toHaveBeenCalledWith(false)
       })
 
       it('should not reveal note contents if the authorization has not been passed', async () => {
-        jest.spyOn(ctrl['application'], 'authorizeNoteAccess').mockImplementation(async () => Promise.resolve(false))
+        application.authorizeNoteAccess = jest.fn().mockReturnValue(false)
 
-        await ctrl.dismissProtectedWarning()
+        const noteView = new NoteView({
+          controller: noteViewController,
+          application,
+        })
 
-        expect(setShowProtectedWarningSpy).not.toHaveBeenCalled()
+        await noteView.dismissProtectedWarning()
+
+        expect(notesState.setShowProtectedWarning).not.toHaveBeenCalled()
       })
     })
 
     describe('the note does not have protection sources', () => {
       it('should reveal note contents', async () => {
-        jest.spyOn(ctrl['application'], 'hasProtectionSources').mockImplementation(() => false)
+        application.hasProtectionSources = jest.fn().mockReturnValue(false)
 
-        await ctrl.dismissProtectedWarning()
+        const noteView = new NoteView({
+          controller: noteViewController,
+          application,
+        })
 
-        expect(setShowProtectedWarningSpy).toHaveBeenCalledWith(false)
+        await noteView.dismissProtectedWarning()
+
+        expect(notesState.setShowProtectedWarning).toHaveBeenCalledWith(false)
       })
     })
   })
