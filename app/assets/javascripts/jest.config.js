@@ -1,4 +1,4 @@
-const pathsToModuleNameMapper = require('ts-jest/utils').pathsToModuleNameMapper
+const pathsToModuleNameMapper = require('ts-jest').pathsToModuleNameMapper
 const tsConfig = require('./tsconfig.json')
 
 const pathsFromTsconfig = tsConfig.compilerOptions.paths
@@ -30,7 +30,7 @@ module.exports = {
       branches: 3,
       functions: 5,
       lines: 21,
-      statements: 23,
+      statements: 22,
     },
   },
 }
