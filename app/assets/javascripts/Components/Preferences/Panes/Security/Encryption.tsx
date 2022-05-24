@@ -2,13 +2,13 @@ import { Icon } from '@/Components/Icon/Icon'
 import { STRING_E2E_ENABLED, STRING_ENC_NOT_ENABLED, STRING_LOCAL_ENC_ENABLED } from '@/Strings'
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
-import { ComponentChild, FunctionComponent } from 'preact'
+import { FunctionComponent, ReactNode } from 'react'
 import { PreferencesGroup, PreferencesSegment, Text, Title } from '@/Components/Preferences/PreferencesComponents'
 
 const formatCount = (count: number, itemType: string) => `${count} / ${count} ${itemType}`
 
 export const EncryptionStatusItem: FunctionComponent<{
-  icon: ComponentChild
+  icon: ReactNode
   status: string
   checkmark?: boolean
 }> = ({ icon, status, checkmark = true }) => (

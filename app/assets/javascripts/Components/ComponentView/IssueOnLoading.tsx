@@ -1,11 +1,11 @@
-import { FunctionalComponent } from 'preact'
+import { FunctionComponent } from 'react'
 
-interface IProps {
+type Props = {
   componentName: string
   reloadIframe: () => void
 }
 
-export const IssueOnLoading: FunctionalComponent<IProps> = ({ componentName, reloadIframe }) => {
+export const IssueOnLoading: FunctionComponent<Props> = ({ componentName, reloadIframe }) => {
   return (
     <div className={'sn-component'}>
       <div className={'sk-app-bar no-edges no-top-edge dynamic-height'}>

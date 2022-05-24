@@ -1,12 +1,11 @@
 import { PreferencesSegment, Title, Text, Subtitle } from '@/Components/Preferences/PreferencesComponents'
-import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
+import { useCallback, useEffect, useMemo, useState, FunctionComponent } from 'react'
 import { Button } from '@/Components/Button/Button'
 import { FileBackupMetadataFile, FileBackupsConstantsV1, FileItem, FileHandleRead } from '@standardnotes/snjs'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
 import { EncryptionStatusItem } from '../../Security/Encryption'
 import { Icon } from '@/Components/Icon/Icon'
 import { StreamingFileApi } from '@standardnotes/filepicker'
-import { FunctionComponent } from 'preact'
 import { isHandlingBackupDrag } from '@/Utils/DragTypeCheck'
 import { WebApplication } from '@/UIModels/Application'
 

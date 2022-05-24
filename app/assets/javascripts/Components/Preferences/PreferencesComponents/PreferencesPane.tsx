@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 
 export const PreferencesPane: FunctionComponent = ({ children }) => (
   <div className="color-foreground flex-grow flex flex-row overflow-y-auto min-h-0">

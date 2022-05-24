@@ -1,5 +1,4 @@
-import { FunctionalComponent, Ref } from 'preact'
-import { forwardRef } from 'preact/compat'
+import { forwardRef, Ref } from 'react'
 import { DecoratedInputProps } from './DecoratedInputProps'
 
 const getClassNames = (hasLeftDecorations: boolean, hasRightDecorations: boolean) => {
@@ -17,7 +16,7 @@ const getClassNames = (hasLeftDecorations: boolean, hasRightDecorations: boolean
 /**
  * Input that can be decorated on the left and right side
  */
-export const DecoratedInput: FunctionalComponent<DecoratedInputProps> = forwardRef(
+export const DecoratedInput = forwardRef(
   (
     {
       type = 'text',
@@ -58,7 +57,7 @@ export const DecoratedInput: FunctionalComponent<DecoratedInputProps> = forwardR
           onFocus={onFocus}
           onKeyDown={onKeyDown}
           data-lpignore={type !== 'password' ? true : false}
-          autocomplete={autocomplete ? 'on' : 'off'}
+          autoComplete={autocomplete ? 'on' : 'off'}
           ref={ref}
         />
 

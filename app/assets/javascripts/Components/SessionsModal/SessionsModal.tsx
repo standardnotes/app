@@ -1,7 +1,6 @@
 import { AppState } from '@/UIModels/AppState'
 import { SNApplication, SessionStrings, UuidString, isNullOrUndefined, RemoteSession } from '@standardnotes/snjs'
-import { FunctionComponent } from 'preact'
-import { useState, useEffect, useRef, useMemo } from 'preact/hooks'
+import { FunctionComponent, useState, useEffect, useRef, useMemo } from 'react'
 import { Dialog } from '@reach/dialog'
 import { Alert } from '@reach/alert'
 import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
@@ -103,23 +102,23 @@ const SessionsModalContent: FunctionComponent<{
     <>
       <Dialog onDismiss={close} className="sessions-modal h-90vh">
         <div className="sk-modal-content">
-          <div class="sn-component">
-            <div class="sk-panel">
-              <div class="sk-panel-header">
-                <div class="sk-panel-header-title">Active Sessions</div>
+          <div className="sn-component">
+            <div className="sk-panel">
+              <div className="sk-panel-header">
+                <div className="sk-panel-header-title">Active Sessions</div>
                 <div className="buttons">
-                  <button class="sk-a close-button info" disabled={refreshing} onClick={refresh}>
+                  <button className="sk-a close-button info" disabled={refreshing} onClick={refresh}>
                     Refresh
                   </button>
-                  <button class="sk-a close-button info" onClick={close}>
+                  <button className="sk-a close-button info" onClick={close}>
                     Close
                   </button>
                 </div>
               </div>
-              <div class="sk-panel-content overflow-y-auto">
+              <div className="sk-panel-content overflow-y-auto">
                 {refreshing ? (
                   <>
-                    <div class="sk-spinner small info"></div>
+                    <div className="sk-spinner small info"></div>
                     <h2 className="sk-p sessions-modal-refreshing">Loading sessions</h2>
                   </>
                 ) : (

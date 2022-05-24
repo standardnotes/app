@@ -7,7 +7,7 @@ import {
   Text,
   Subtitle,
 } from '@/Components/Preferences/PreferencesComponents'
-import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Button } from '@/Components/Button/Button'
 import { Switch } from '@/Components/Switch/Switch'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'

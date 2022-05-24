@@ -1,5 +1,5 @@
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 
 type HistoryListItemProps = {
   isSelected: boolean

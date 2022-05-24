@@ -1,6 +1,5 @@
 import { IconType } from '@standardnotes/snjs'
-import { FunctionComponent } from 'preact'
-import { useRef, useState } from 'preact/hooks'
+import { FunctionComponent, useRef, useState } from 'react'
 import { IconButton } from '../Button/IconButton'
 
 type Props = {

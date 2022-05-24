@@ -2,7 +2,7 @@ import { Button } from '@/Components/Button/Button'
 import { DecoratedInput } from '@/Components/Input/DecoratedInput'
 import { IconButton } from '@/Components/Button/IconButton'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 import { CopyButton } from './CopyButton'
 import { Bullet } from './Bullet'
 import { downloadSecretKey } from './download-secret-key'
@@ -14,9 +14,11 @@ import {
   ModalDialogLabel,
 } from '@/Components/Shared/ModalDialog'
 
-export const SaveSecretKey: FunctionComponent<{
+type Props = {
   activation: TwoFactorActivation
-}> = observer(({ activation: act }) => {
+}
+
+export const SaveSecretKey: FunctionComponent<Props> = observer(({ activation: act }) => {
   const download = (
     <IconButton
       focusable={false}

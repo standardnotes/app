@@ -10,11 +10,11 @@ import { WebApplication } from '@/UIModels/Application'
 import { observer } from '@node_modules/mobx-react-lite'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
 import { dateToLocalizedString } from '@standardnotes/snjs'
-import { useCallback, useState } from 'preact/hooks'
+import { useCallback, useState, FunctionComponent } from 'react'
 import { ChangeEmail } from '@/Components/Preferences/Panes/Account/ChangeEmail/ChangeEmail'
-import { FunctionComponent, render } from 'preact'
 import { AppState } from '@/UIModels/AppState'
 import { PasswordWizard } from '@/Components/PasswordWizard/PasswordWizard'
+import { root } from '@/App'
 
 type Props = {
   application: WebApplication
@@ -30,7 +30,7 @@ export const Credentials: FunctionComponent<Props> = observer(({ application }: 
   const passwordCreatedOn = dateToLocalizedString(passwordCreatedAtTimestamp)
 
   const presentPasswordWizard = useCallback(() => {
-    render(<PasswordWizard application={application} />, document.body.appendChild(document.createElement('div')))
+    root.render(<PasswordWizard application={application} />)
   }, [application])
 
   return (

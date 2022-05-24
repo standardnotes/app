@@ -4,8 +4,7 @@ import { WebApplication } from '@/UIModels/Application'
 import { PANEL_NAME_NAVIGATION } from '@/Constants'
 import { ApplicationEvent, PrefKey } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
+import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
 import { PanelSide, ResizeFinishCallback, PanelResizer, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
 
 type Props = {

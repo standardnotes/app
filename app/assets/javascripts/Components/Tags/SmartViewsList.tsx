@@ -1,7 +1,7 @@
 import { AppState } from '@/UIModels/AppState'
 import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 import { SmartViewsListItem } from './SmartViewsListItem'
 
 type Props = {

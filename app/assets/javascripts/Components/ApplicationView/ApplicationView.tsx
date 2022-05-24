@@ -13,7 +13,7 @@ import { PreferencesViewWrapper } from '@/Components/Preferences/PreferencesView
 import { ChallengeModal } from '@/Components/ChallengeModal/ChallengeModal'
 import { NotesContextMenu } from '@/Components/NotesContextMenu/NotesContextMenu'
 import { PurchaseFlowWrapper } from '@/Components/PurchaseFlow/PurchaseFlowWrapper'
-import { render, FunctionComponent } from 'preact'
+import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
 import { PermissionsModal } from '@/Components/PermissionsModal/PermissionsModal'
 import { RevisionHistoryModalWrapper } from '@/Components/RevisionHistoryModal/RevisionHistoryModalWrapper'
 import { PremiumModalProvider } from '@/Hooks/usePremiumModal'
@@ -21,10 +21,10 @@ import { ConfirmSignoutContainer } from '@/Components/ConfirmSignoutModal/Confir
 import { TagsContextMenu } from '@/Components/Tags/TagContextMenu'
 import { ToastContainer } from '@standardnotes/stylekit'
 import { FilePreviewModalWrapper } from '@/Components/Files/FilePreviewModal'
-import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
 import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 import { ContentListView } from '@/Components/ContentListView/ContentListView'
 import { FileContextMenu } from '@/Components/FileContextMenu/FileContextMenu'
+import { root } from '@/App'
 
 type Props = {
   application: WebApplication
@@ -83,14 +83,13 @@ export const ApplicationView: FunctionComponent<Props> = ({ application, mainApp
 
   const presentPermissionsDialog = useCallback(
     (dialog: PermissionDialog) => {
-      render(
+      root.render(
         <PermissionsModal
           application={application}
           callback={dialog.callback}
           component={dialog.component}
           permissionsString={dialog.permissionsString}
         />,
-        document.body.appendChild(document.createElement('div')),
       )
     },
     [application],

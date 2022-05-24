@@ -1,5 +1,4 @@
-import { FunctionComponent } from 'preact'
-import { useState } from 'preact/hooks'
+import { FunctionComponent, useState } from 'react'
 import { MfaProps } from './MfaProps'
 import { TwoFactorAuth } from './TwoFactorAuth'
 import { TwoFactorAuthView } from './TwoFactorAuthView'

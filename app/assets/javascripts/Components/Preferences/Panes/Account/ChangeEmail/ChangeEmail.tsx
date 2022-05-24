@@ -1,4 +1,3 @@
-import { useState } from '@node_modules/preact/hooks'
 import {
   ModalDialog,
   ModalDialogButtons,
@@ -6,7 +5,7 @@ import {
   ModalDialogLabel,
 } from '@/Components/Shared/ModalDialog'
 import { Button } from '@/Components/Button/Button'
-import { FunctionalComponent } from 'preact'
+import { FunctionComponent, useState } from 'react'
 import { WebApplication } from '@/UIModels/Application'
 import { useBeforeUnload } from '@/Hooks/useBeforeUnload'
 import { ChangeEmailForm } from './ChangeEmailForm'
@@ -29,7 +28,7 @@ type Props = {
   application: WebApplication
 }
 
-export const ChangeEmail: FunctionalComponent<Props> = ({ onCloseDialog, application }) => {
+export const ChangeEmail: FunctionComponent<Props> = ({ onCloseDialog, application }) => {
   const [currentPassword, setCurrentPassword] = useState('')
   const [newEmail, setNewEmail] = useState('')
   const [isContinuing, setIsContinuing] = useState(false)

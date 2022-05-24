@@ -2,8 +2,7 @@ import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { isDev } from '@/Utils'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
+import React, { FunctionComponent, KeyboardEventHandler, useCallback, useEffect, useRef, useState } from 'react'
 import { AccountMenuPane } from './AccountMenuPane'
 import { Button } from '@/Components/Button/Button'
 import { Checkbox } from '@/Components/Checkbox/Checkbox'
@@ -111,7 +110,7 @@ export const SignInPane: FunctionComponent<Props> = observer(({ application, app
   )
 
   const handleSignInFormSubmit = useCallback(
-    (e: Event) => {
+    (e: React.SyntheticEvent) => {
       e.preventDefault()
 
       if (!email || email.length === 0) {
@@ -129,8 +128,8 @@ export const SignInPane: FunctionComponent<Props> = observer(({ application, app
     [email, password, signIn],
   )
 
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
+  const handleKeyDown: KeyboardEventHandler = useCallback(
+    (e) => {
       if (e.key === 'Enter') {
         handleSignInFormSubmit(e)
       }

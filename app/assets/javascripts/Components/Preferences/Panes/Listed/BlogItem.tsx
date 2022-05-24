@@ -2,8 +2,7 @@ import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
 import { LinkButton, Subtitle } from '@/Components/Preferences/PreferencesComponents'
 import { WebApplication } from '@/UIModels/Application'
 import { ListedAccount, ListedAccountInfo } from '@standardnotes/snjs'
-import { FunctionalComponent } from 'preact'
-import { useEffect, useState } from 'preact/hooks'
+import { FunctionComponent, useEffect, useState } from 'react'
 
 type Props = {
   account: ListedAccount
@@ -11,7 +10,7 @@ type Props = {
   application: WebApplication
 }
 
-export const ListedAccountItem: FunctionalComponent<Props> = ({ account, showSeparator, application }) => {
+export const ListedAccountItem: FunctionComponent<Props> = ({ account, showSeparator, application }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [accountInfo, setAccountInfo] = useState<ListedAccountInfo>()
 

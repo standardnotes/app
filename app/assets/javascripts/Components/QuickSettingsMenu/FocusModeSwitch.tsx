@@ -1,8 +1,6 @@
 import { WebApplication } from '@/UIModels/Application'
 import { FeatureStatus, FeatureIdentifier } from '@standardnotes/snjs'
-import { FunctionComponent } from 'preact'
-import { useCallback } from 'preact/hooks'
-import { JSXInternal } from 'preact/src/jsx'
+import { FunctionComponent, MouseEventHandler, useCallback } from 'react'
 import { Icon } from '@/Components/Icon/Icon'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { Switch } from '@/Components/Switch/Switch'
@@ -18,8 +16,8 @@ export const FocusModeSwitch: FunctionComponent<Props> = ({ application, onToggl
   const premiumModal = usePremiumModal()
   const isEntitled = application.features.getFeatureStatus(FeatureIdentifier.FocusMode) === FeatureStatus.Entitled
 
-  const toggle = useCallback(
-    (e: JSXInternal.TargetedMouseEvent<HTMLButtonElement>) => {
+  const toggle: MouseEventHandler = useCallback(
+    (e) => {
       e.preventDefault()
 
       if (isEntitled) {

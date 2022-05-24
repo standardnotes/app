@@ -1,5 +1,5 @@
 import { Icon } from '@/Components/Icon/Icon'
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 import { IconType } from '@standardnotes/snjs'
 
 interface Props {

@@ -1,8 +1,7 @@
 import { WebApplication } from '@/UIModels/Application'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { SubscriptionSettingName } from '@standardnotes/snjs'
-import { FunctionComponent } from 'preact'
-import { useEffect, useState } from 'preact/hooks'
+import { FunctionComponent, useEffect, useState } from 'react'
 import { PreferencesGroup, PreferencesSegment, Subtitle, Title } from '../../PreferencesComponents'
 
 type Props = {

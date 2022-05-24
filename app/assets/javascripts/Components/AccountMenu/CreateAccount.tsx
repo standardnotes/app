@@ -1,8 +1,7 @@
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { StateUpdater, useCallback, useEffect, useRef, useState } from 'preact/hooks'
+import { FunctionComponent, KeyboardEventHandler, useCallback, useEffect, useRef, useState } from 'react'
 import { AccountMenuPane } from './AccountMenuPane'
 import { Button } from '@/Components/Button/Button'
 import { DecoratedInput } from '@/Components/Input/DecoratedInput'
@@ -16,9 +15,9 @@ type Props = {
   application: WebApplication
   setMenuPane: (pane: AccountMenuPane) => void
   email: string
-  setEmail: StateUpdater<string>
+  setEmail: React.Dispatch<React.SetStateAction<string>>
   password: string
-  setPassword: StateUpdater<string>
+  setPassword: React.Dispatch<React.SetStateAction<string>>
 }
 
 export const CreateAccount: FunctionComponent<Props> = observer(
@@ -48,7 +47,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
     )
 
     const handleRegisterFormSubmit = useCallback(
-      (e: Event) => {
+      (e) => {
         e.preventDefault()
 
         if (!email || email.length === 0) {
@@ -68,8 +67,8 @@ export const CreateAccount: FunctionComponent<Props> = observer(
       [email, password, setPassword, setMenuPane, setEmail],
     )
 
-    const handleKeyDown = useCallback(
-      (e: KeyboardEvent) => {
+    const handleKeyDown: KeyboardEventHandler = useCallback(
+      (e) => {
         if (e.key === 'Enter') {
           handleRegisterFormSubmit(e)
         }

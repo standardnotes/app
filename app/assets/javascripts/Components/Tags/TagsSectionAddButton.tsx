@@ -2,7 +2,7 @@ import { IconButton } from '@/Components/Button/IconButton'
 import { FeaturesState } from '@/UIModels/AppState/FeaturesState'
 import { TagsState } from '@/UIModels/AppState/TagsState'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 
 type Props = {
   tags: TagsState

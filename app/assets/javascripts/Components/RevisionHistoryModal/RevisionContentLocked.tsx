@@ -1,6 +1,6 @@
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 import { HistoryLockedIllustration } from '@standardnotes/icons'
 import { Button } from '@/Components/Button/Button'
 
@@ -28,7 +28,7 @@ export const RevisionContentLocked: FunctionComponent<{
     <div className="flex w-full h-full items-center justify-center">
       <div className="flex flex-col items-center text-center max-w-40%">
         <HistoryLockedIllustration />
-        <div class="text-lg font-bold mt-2 mb-1">Can't access this version</div>
+        <div className="text-lg font-bold mt-2 mb-1">Can't access this version</div>
         <div className="mb-4 color-passive-0 leading-140%">
           {getPremiumContentCopy(
             !isUserSubscriptionCanceled && !isUserSubscriptionExpired && userSubscriptionName

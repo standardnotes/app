@@ -1,11 +1,15 @@
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 import { Title, Text, PreferencesGroup, PreferencesSegment } from '@/Components/Preferences/PreferencesComponents'
 import { Switch } from '@/Components/Switch/Switch'
 import { observer } from 'mobx-react-lite'
 import { is2FAActivation, is2FADisabled, TwoFactorAuth } from './TwoFactorAuth'
 import { TwoFactorActivationView } from './TwoFactorActivationView'
 
-const TwoFactorTitle: FunctionComponent<{ auth: TwoFactorAuth }> = observer(({ auth }) => {
+type Props = {
+  auth: TwoFactorAuth
+}
+
+const TwoFactorTitle: FunctionComponent<Props> = observer(({ auth }) => {
   if (!auth.isLoggedIn()) {
     return <Title>Two-factor authentication not available</Title>
   }
@@ -15,7 +19,7 @@ const TwoFactorTitle: FunctionComponent<{ auth: TwoFactorAuth }> = observer(({ a
   return <Title>Two-factor authentication</Title>
 })
 
-const TwoFactorDescription: FunctionComponent<{ auth: TwoFactorAuth }> = observer(({ auth }) => {
+const TwoFactorDescription: FunctionComponent<Props> = observer(({ auth }) => {
   if (!auth.isLoggedIn()) {
     return <Text>Sign in or register for an account to configure 2FA.</Text>
   }
@@ -33,21 +37,19 @@ const TwoFactorDescription: FunctionComponent<{ auth: TwoFactorAuth }> = observe
   return <Text>An extra layer of security when logging in to your account.</Text>
 })
 
-const TwoFactorSwitch: FunctionComponent<{ auth: TwoFactorAuth }> = observer(({ auth }) => {
+const TwoFactorSwitch: FunctionComponent<Props> = observer(({ auth }) => {
   if (!(auth.isLoggedIn() && auth.isMfaFeatureAvailable())) {
     return null
   }
 
   if (auth.status === 'fetching') {
-    return <div class="sk-spinner normal info" />
+    return <div className="sk-spinner normal info" />
   }
 
   return <Switch checked={!is2FADisabled(auth.status)} onChange={auth.toggle2FA} />
 })
 
-export const TwoFactorAuthView: FunctionComponent<{
-  auth: TwoFactorAuth
-}> = observer(({ auth }) => {
+export const TwoFactorAuthView: FunctionComponent<Props> = observer(({ auth }) => {
   return (
     <>
       <PreferencesGroup>

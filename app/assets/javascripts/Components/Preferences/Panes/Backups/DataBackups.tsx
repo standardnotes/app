@@ -11,10 +11,8 @@ import {
   STRING_ENC_NOT_ENABLED,
 } from '@/Strings'
 import { BackupFile } from '@standardnotes/snjs'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
+import { ChangeEventHandler, MouseEventHandler, useCallback, useEffect, useRef, useState } from 'react'
 import { WebApplication } from '@/UIModels/Application'
-import { JSXInternal } from 'preact/src/jsx'
-import TargetedEvent = JSXInternal.TargetedEvent
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
 import {
@@ -109,8 +107,8 @@ export const DataBackups = observer(({ application, appState }: Props) => {
     })
   }
 
-  const importFileSelected = async (event: TargetedEvent<HTMLInputElement, Event>) => {
-    const { files } = event.target as HTMLInputElement
+  const importFileSelected: ChangeEventHandler<HTMLInputElement> = async (event) => {
+    const { files } = event.target
 
     if (!files) {
       return
@@ -136,7 +134,7 @@ export const DataBackups = observer(({ application, appState }: Props) => {
   }
 
   // Whenever "Import Backup" is either clicked or key-pressed, proceed the import
-  const handleImportFile = (event: TargetedEvent<HTMLSpanElement, Event> | KeyboardEvent) => {
+  const handleImportFile: MouseEventHandler = (event) => {
     if (event instanceof KeyboardEvent) {
       const { code } = event
 
@@ -186,7 +184,7 @@ export const DataBackups = observer(({ application, appState }: Props) => {
         <PreferencesSegment>
           <Subtitle>Import a previously saved backup file</Subtitle>
 
-          <div class="flex flex-row items-center mt-3">
+          <div className="flex flex-row items-center mt-3">
             <Button variant="normal" label="Import backup" onClick={handleImportFile} />
             <input type="file" ref={fileInputRef} onChange={importFileSelected} className="hidden" />
             {isImportDataLoading && <div className="sk-spinner normal info ml-4" />}

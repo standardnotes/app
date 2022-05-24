@@ -2,13 +2,11 @@ import { observer } from 'mobx-react-lite'
 import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
 import { AppState } from '@/UIModels/AppState'
 import { WebApplication } from '@/UIModels/Application'
-import { useCallback, useRef, useState } from 'preact/hooks'
+import { useCallback, useRef, useState, FunctionComponent, KeyboardEventHandler } from 'react'
 import { GeneralAccountMenu } from './GeneralAccountMenu'
-import { FunctionComponent } from 'preact'
 import { SignInPane } from './SignIn'
 import { CreateAccount } from './CreateAccount'
 import { ConfirmPassword } from './ConfirmPassword'
-import { JSXInternal } from 'preact/src/jsx'
 import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
 import { AccountMenuPane } from './AccountMenuPane'
 
@@ -92,7 +90,7 @@ export const AccountMenu: FunctionComponent<Props> = observer(
       onClickOutside()
     })
 
-    const handleKeyDown: JSXInternal.KeyboardEventHandler<HTMLDivElement> = useCallback(
+    const handleKeyDown: KeyboardEventHandler<HTMLDivElement> = useCallback(
       (event) => {
         switch (event.key) {
           case 'Escape':

@@ -6,12 +6,14 @@ import ModalDialog, {
 } from '@/Components/Shared/ModalDialog'
 import { Subtitle } from '@/Components/Preferences/PreferencesComponents'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 import { TwoFactorActivation } from './TwoFactorActivation'
 
-export const TwoFactorSuccess: FunctionComponent<{
+type Props = {
   activation: TwoFactorActivation
-}> = observer(({ activation: act }) => (
+}
+
+export const TwoFactorSuccess: FunctionComponent<Props> = observer(({ activation: act }) => (
   <ModalDialog>
     <ModalDialogLabel closeDialog={act.finishActivation}>Successfully Enabled</ModalDialogLabel>
     <ModalDialogDescription>

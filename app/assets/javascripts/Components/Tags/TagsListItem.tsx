@@ -8,8 +8,16 @@ import '@reach/tooltip/styles.css'
 import { SNTag } from '@standardnotes/snjs'
 import { computed } from 'mobx'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, JSX } from 'preact'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
+import {
+  FormEventHandler,
+  FunctionComponent,
+  KeyboardEventHandler,
+  MouseEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import { DropItem, DropProps, ItemTypes } from './DragNDrop'
 
@@ -58,8 +66,8 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
     setTitle(tag.title || '')
   }, [setTitle, tag])
 
-  const toggleChildren = useCallback(
-    (e: MouseEvent) => {
+  const toggleChildren: MouseEventHandler = useCallback(
+    (e) => {
       e.stopPropagation()
       setShowChildren((x) => {
         tagsState.setExpanded(tag, !x)
@@ -78,16 +86,16 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
     setTitle(tag.title)
   }, [tagsState, tag, title, setTitle])
 
-  const onInput = useCallback(
-    (e: JSX.TargetedEvent<HTMLInputElement>) => {
+  const onInput: FormEventHandler = useCallback(
+    (e) => {
       const value = (e.target as HTMLInputElement).value
       setTitle(value)
     },
     [setTitle],
   )
 
-  const onKeyDown = useCallback(
-    (e: KeyboardEvent) => {
+  const onKeyDown: KeyboardEventHandler = useCallback(
+    (e) => {
       if (e.key === KeyboardKey.Enter) {
         inputRef.current?.blur()
         e.preventDefault()
@@ -102,7 +110,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
     }
   }, [inputRef, isEditing])
 
-  const onSubtagInput = useCallback((e: JSX.TargetedEvent<HTMLInputElement>) => {
+  const onSubtagInput = useCallback((e) => {
     const value = (e.target as HTMLInputElement).value
     setSubtagTitle(value)
   }, [])
@@ -112,8 +120,8 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
     setSubtagTitle('')
   }, [subtagTitle, tag, tagsState])
 
-  const onSubtagKeyDown = useCallback(
-    (e: KeyboardEvent) => {
+  const onSubtagKeyDown: KeyboardEventHandler = useCallback(
+    (e) => {
       if (e.key === KeyboardKey.Enter) {
         e.preventDefault()
         subtagInputRef.current?.blur()
@@ -189,7 +197,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
         style={{
           paddingLeft: `${level * PADDING_PER_LEVEL_PX + PADDING_BASE_PX}px`,
         }}
-        onContextMenu={(e: MouseEvent) => {
+        onContextMenu={(e) => {
           e.preventDefault()
           onContextMenu(tag, e.clientX, e.clientY)
         }}

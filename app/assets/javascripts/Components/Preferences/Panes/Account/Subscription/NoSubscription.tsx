@@ -1,11 +1,10 @@
-import { FunctionalComponent } from 'preact'
+import { FunctionComponent, useState } from 'react'
 import { LinkButton, Text } from '@/Components/Preferences/PreferencesComponents'
 import { Button } from '@/Components/Button/Button'
 import { WebApplication } from '@/UIModels/Application'
-import { useState } from 'preact/hooks'
 import { loadPurchaseFlowUrl } from '@/Components/PurchaseFlow/PurchaseFlowFunctions'
 
-export const NoSubscription: FunctionalComponent<{
+export const NoSubscription: FunctionComponent<{
   application: WebApplication
 }> = ({ application }) => {
   const [isLoadingPurchaseFlow, setIsLoadingPurchaseFlow] = useState(false)

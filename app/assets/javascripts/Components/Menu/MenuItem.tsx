@@ -1,4 +1,4 @@
-import { ComponentChildren, FunctionComponent, VNode } from 'preact'
+import { ComponentChildren, FunctionComponent, VNode } from 'react'
 import { forwardRef, Ref } from 'preact/compat'
 import { JSXInternal } from 'preact/src/jsx'
 import { Icon } from '@/Components/Icon/Icon'

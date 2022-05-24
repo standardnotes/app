@@ -1,6 +1,6 @@
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
-import { useRef, useEffect, useCallback } from 'preact/hooks'
+import { useRef, useEffect, useCallback, FocusEventHandler, KeyboardEventHandler } from 'react'
 import { Icon } from '@/Components/Icon/Icon'
 
 type Props = {
@@ -24,16 +24,16 @@ export const AutocompleteTagHint = observer(({ appState, closeOnBlur }: Props) =
     appState.noteTags.setAutocompleteTagHintFocused(true)
   }, [appState])
 
-  const onBlur = useCallback(
-    (event: FocusEvent) => {
+  const onBlur: FocusEventHandler = useCallback(
+    (event) => {
       closeOnBlur(event)
       appState.noteTags.setAutocompleteTagHintFocused(false)
     },
     [appState, closeOnBlur],
   )
 
-  const onKeyDown = useCallback(
-    (event: KeyboardEvent) => {
+  const onKeyDown: KeyboardEventHandler = useCallback(
+    (event) => {
       if (event.key === 'ArrowUp') {
         if (autocompleteTagResults.length > 0) {
           const lastTagResult = autocompleteTagResults[autocompleteTagResults.length - 1]

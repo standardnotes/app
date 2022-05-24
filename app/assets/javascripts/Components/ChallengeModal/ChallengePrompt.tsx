@@ -1,6 +1,5 @@
 import { ChallengePrompt, ChallengeValidation, ProtectionSessionDurations } from '@standardnotes/snjs'
-import { FunctionComponent } from 'preact'
-import { useEffect, useRef } from 'preact/hooks'
+import { FunctionComponent, useEffect, useRef } from 'react'
 import { DecoratedInput } from '@/Components/Input/DecoratedInput'
 import { DecoratedPasswordInput } from '@/Components/Input/DecoratedPasswordInput'
 import { ChallengeModalValues } from './ChallengeModal'

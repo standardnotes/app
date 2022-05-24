@@ -2,8 +2,7 @@ import { STRING_NON_MATCHING_PASSWORDS } from '@/Strings'
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
+import { FunctionComponent, KeyboardEventHandler, useCallback, useEffect, useRef, useState } from 'react'
 import { AccountMenuPane } from './AccountMenuPane'
 import { Button } from '@/Components/Button/Button'
 import { Checkbox } from '@/Components/Checkbox/Checkbox'
@@ -47,7 +46,7 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
     }, [shouldMergeLocal])
 
     const handleConfirmFormSubmit = useCallback(
-      (e: Event) => {
+      (e) => {
         e.preventDefault()
 
         if (!password) {
@@ -82,8 +81,8 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
       [appState, application, confirmPassword, email, isEphemeral, password, shouldMergeLocal],
     )
 
-    const handleKeyDown = useCallback(
-      (e: KeyboardEvent) => {
+    const handleKeyDown: KeyboardEventHandler = useCallback(
+      (e) => {
         if (error.length) {
           setError('')
         }

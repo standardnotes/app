@@ -10,11 +10,8 @@ import {
 } from '@/Strings'
 import { WebApplication } from '@/UIModels/Application'
 import { preventRefreshing } from '@/Utils'
-import { JSXInternal } from 'preact/src/jsx'
-import TargetedEvent = JSXInternal.TargetedEvent
-import TargetedMouseEvent = JSXInternal.TargetedMouseEvent
 import { alertDialog } from '@/Services/AlertService'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
+import { ChangeEventHandler, FormEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { ApplicationEvent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { AppState } from '@/UIModels/AppState'
@@ -93,17 +90,17 @@ export const PasscodeLock = observer(({ application, appState }: Props) => {
     })
   }
 
-  const handlePasscodeChange = (event: TargetedEvent<HTMLInputElement>) => {
-    const { value } = event.target as HTMLInputElement
+  const handlePasscodeChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+    const { value } = event.target
     setPasscode(value)
   }
 
-  const handleConfirmPasscodeChange = (event: TargetedEvent<HTMLInputElement>) => {
-    const { value } = event.target as HTMLInputElement
+  const handleConfirmPasscodeChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+    const { value } = event.target
     setPasscodeConfirmation(value)
   }
 
-  const submitPasscodeForm = async (event: TargetedEvent<HTMLFormElement> | TargetedMouseEvent<HTMLButtonElement>) => {
+  const submitPasscodeForm = async (event: MouseEvent | FormEvent) => {
     event.preventDefault()
 
     if (!passcode || passcode.length === 0) {

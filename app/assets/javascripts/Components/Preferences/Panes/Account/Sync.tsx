@@ -2,10 +2,9 @@ import { PreferencesGroup, PreferencesSegment, Text, Title } from '@/Components/
 import { Button } from '@/Components/Button/Button'
 import { SyncQueueStrategy, dateToLocalizedString } from '@standardnotes/snjs'
 import { STRING_GENERIC_SYNC_ERROR } from '@/Strings'
-import { useState } from '@node_modules/preact/hooks'
 import { observer } from 'mobx-react-lite'
 import { WebApplication } from '@/UIModels/Application'
-import { FunctionComponent } from 'preact'
+import { FunctionComponent, useState } from 'react'
 
 type Props = {
   application: WebApplication

@@ -1,7 +1,7 @@
 import { Icon } from '@/Components/Icon/Icon'
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
-import { useCallback } from 'preact/hooks'
+import { MouseEventHandler, useCallback } from 'react'
 
 type Props = { appState: AppState }
 
@@ -11,8 +11,8 @@ export const NoAccountWarning = observer(({ appState }: Props) => {
     return null
   }
 
-  const showAccountMenu = useCallback(
-    (event: Event) => {
+  const showAccountMenu: MouseEventHandler = useCallback(
+    (event) => {
       event.stopPropagation()
       appState.accountMenu.setShow(true)
     },
@@ -32,9 +32,9 @@ export const NoAccountWarning = observer(({ appState }: Props) => {
       </button>
       <button
         onClick={hideWarning}
-        title="Ignore"
-        label="Ignore"
-        style="height: 20px"
+        title="Ignore warning"
+        aria-label="Ignore warning"
+        style={{ height: '20px' }}
         className="border-0 m-0 p-0 bg-transparent cursor-pointer rounded-md col-start-2 row-start-1 color-neutral hover:color-info"
       >
         <Icon type="close" className="block" />

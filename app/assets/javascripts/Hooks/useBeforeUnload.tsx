@@ -1,4 +1,4 @@
-import { useEffect } from '@node_modules/preact/hooks'
+import { useEffect } from 'react'
 
 export const useBeforeUnload = (): void => {
   useEffect(() => {

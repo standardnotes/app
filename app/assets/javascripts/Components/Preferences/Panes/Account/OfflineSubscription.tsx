@@ -1,8 +1,7 @@
-import { FunctionalComponent } from 'preact'
+import React, { FunctionComponent, useEffect, useState } from 'react'
 import { Subtitle } from '@/Components/Preferences/PreferencesComponents'
 import { DecoratedInput } from '@/Components/Input/DecoratedInput'
 import { Button } from '@/Components/Button/Button'
-import { useEffect, useState } from 'preact/hooks'
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
@@ -15,7 +14,7 @@ interface IProps {
   appState: AppState
 }
 
-export const OfflineSubscription: FunctionalComponent<IProps> = observer(({ application }) => {
+export const OfflineSubscription: FunctionComponent<IProps> = observer(({ application }) => {
   const [activationCode, setActivationCode] = useState('')
   const [isSuccessfullyActivated, setIsSuccessfullyActivated] = useState(false)
   const [isSuccessfullyRemoved, setIsSuccessfullyRemoved] = useState(false)
@@ -31,7 +30,7 @@ export const OfflineSubscription: FunctionalComponent<IProps> = observer(({ appl
     return !application.hasAccount() || application.isThirdPartyHostUsed() || hasUserPreviouslyStoredCode
   }
 
-  const handleSubscriptionCodeSubmit = async (event: Event) => {
+  const handleSubscriptionCodeSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
 
     const result = await application.features.setOfflineFeaturesCode(activationCode)

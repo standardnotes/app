@@ -1,10 +1,9 @@
 import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
 import { WebApplication } from '@/UIModels/Application'
-import { Component } from 'preact'
+import { Component } from 'react'
 import { ApplicationView } from '@/Components/ApplicationView/ApplicationView'
 import { WebOrDesktopDevice } from '@/Device/WebOrDesktopDevice'
 import { ApplicationGroupEvent, ApplicationGroupEventData, DeinitSource } from '@standardnotes/snjs'
-import { unmountComponentAtNode, findDOMNode } from 'preact/compat'
 import { DialogContent, DialogOverlay } from '@reach/dialog'
 import { isDesktopApplication } from '@/Utils'
 
@@ -80,7 +79,7 @@ export class ApplicationGroupView extends Component<Props, State> {
     onDestroy()
   }
 
-  render() {
+  override render() {
     const renderDialog = (message: string) => {
       return (
         <DialogOverlay className={'sn-component challenge-modal-overlay'}>

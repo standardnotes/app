@@ -1,20 +1,18 @@
 import { CustomCheckboxContainer, CustomCheckboxInput, CustomCheckboxInputProps } from '@reach/checkbox'
 import '@reach/checkbox/styles.css'
-import { ComponentChildren, FunctionalComponent } from 'preact'
-import { useState } from 'preact/hooks'
+import { FunctionComponent, ReactNode, useState } from 'react'
 
 export type SwitchProps = {
   checked?: boolean
-  // Optional in case it is wrapped in a button (e.g. a menu item)
   onChange?: (checked: boolean) => void
   className?: string
-  children?: ComponentChildren
+  children?: ReactNode
   role?: string
   disabled?: boolean
   tabIndex?: number
 }
 
-export const Switch: FunctionalComponent<SwitchProps> = (props: SwitchProps) => {
+export const Switch: FunctionComponent<SwitchProps> = (props: SwitchProps) => {
   const [checkedState, setChecked] = useState(props.checked || false)
   const checked = props.checked ?? checkedState
   const className = props.className ?? ''

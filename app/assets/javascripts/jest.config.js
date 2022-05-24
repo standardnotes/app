@@ -11,8 +11,6 @@ module.exports = {
     ...pathsToModuleNameMapper(pathsFromTsconfig, {
       prefix: '<rootDir>',
     }),
-    '^react$': ['preact/compat'],
-    '^react-dom$': 'preact',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
   },
   globals: {

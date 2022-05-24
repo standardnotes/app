@@ -5,9 +5,8 @@ import { Icon } from '@/Components/Icon/Icon'
 import { formatLastSyncDate } from '@/Components/Preferences/Panes/Account/Sync'
 import { SyncQueueStrategy } from '@standardnotes/snjs'
 import { STRING_GENERIC_SYNC_ERROR } from '@/Strings'
-import { useCallback, useMemo, useState } from 'preact/hooks'
+import { useCallback, useMemo, useState, FunctionComponent } from 'react'
 import { AccountMenuPane } from './AccountMenuPane'
-import { FunctionComponent } from 'preact'
 import { Menu } from '@/Components/Menu/Menu'
 import { MenuItem, MenuItemSeparator, MenuItemType } from '@/Components/Menu/MenuItem'
 import { WorkspaceSwitcherOption } from './WorkspaceSwitcher/WorkspaceSwitcherOption'
@@ -105,8 +104,8 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
                 <div className="flex items-start">
                   <Icon type="check-circle" className="mr-2 success" />
                   <div>
-                    <div class="font-semibold success">Last synced:</div>
-                    <div class="color-text">{lastSyncDate}</div>
+                    <div className="font-semibold success">Last synced:</div>
+                    <div className="color-text">{lastSyncDate}</div>
                   </div>
                 </div>
               )}

@@ -10,14 +10,13 @@ import {
 import { WebApplication } from '@/UIModels/Application'
 import { PrefKey } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionalComponent } from 'preact'
-import { useState } from 'preact/hooks'
+import { FunctionComponent, useState } from 'react'
 
 type Props = {
   application: WebApplication
 }
 
-export const Tools: FunctionalComponent<Props> = observer(({ application }: Props) => {
+export const Tools: FunctionComponent<Props> = observer(({ application }: Props) => {
   const [monospaceFont, setMonospaceFont] = useState(() =>
     application.getPreference(PrefKey.EditorMonospaceEnabled, true),
   )

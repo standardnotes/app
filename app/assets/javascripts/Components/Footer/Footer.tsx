@@ -16,7 +16,7 @@ import { AppStateEvent, EventSource } from '@/UIModels/AppState'
 import { Icon } from '@/Components/Icon/Icon'
 import { QuickSettingsMenu } from '@/Components/QuickSettingsMenu/QuickSettingsMenu'
 import { SyncResolutionMenu } from '@/Components/SyncResolutionMenu/SyncResolutionMenu'
-import { Fragment } from 'preact'
+import { Fragment } from 'react'
 import { AccountMenuPane } from '../AccountMenu/AccountMenuPane'
 
 type Props = {

@@ -1,6 +1,6 @@
 import { DisplayStringForContentType } from '@standardnotes/snjs'
 import { Button } from '@/Components/Button/Button'
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 import { Title, Text, Subtitle, PreferencesSegment } from '@/Components/Preferences/PreferencesComponents'
 import { AnyExtension } from './AnyExtension'
 

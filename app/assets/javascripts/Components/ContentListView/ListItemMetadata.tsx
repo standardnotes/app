@@ -1,5 +1,5 @@
 import { CollectionSort, SortableItem } from '@standardnotes/snjs'
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 import { ListableContentItem } from './Types/ListableContentItem'
 
 type Props = {

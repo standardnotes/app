@@ -1,6 +1,6 @@
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { FileItem } from '@standardnotes/snjs'
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 import { Icon } from '@/Components/Icon/Icon'
 
 type Props = {

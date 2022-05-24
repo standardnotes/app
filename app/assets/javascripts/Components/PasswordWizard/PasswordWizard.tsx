@@ -1,5 +1,5 @@
 import { WebApplication } from '@/UIModels/Application'
-import { createRef, JSX } from 'preact'
+import { ChangeEventHandler, createRef } from 'react'
 import { PureComponent } from '@/Components/Abstract/PureComponent'
 
 interface Props {
@@ -201,19 +201,19 @@ export class PasswordWizard extends PureComponent<Props, State> {
     })
   }
 
-  handleCurrentPasswordInputChange = ({ currentTarget }: JSX.TargetedEvent<HTMLInputElement, Event>) => {
+  handleCurrentPasswordInputChange: ChangeEventHandler<HTMLInputElement> = ({ currentTarget }) => {
     this.setFormDataState({
       currentPassword: currentTarget.value,
     }).catch(console.error)
   }
 
-  handleNewPasswordInputChange = ({ currentTarget }: JSX.TargetedEvent<HTMLInputElement, Event>) => {
+  handleNewPasswordInputChange: ChangeEventHandler<HTMLInputElement> = ({ currentTarget }) => {
     this.setFormDataState({
       newPassword: currentTarget.value,
     }).catch(console.error)
   }
 
-  handleNewPasswordConfirmationInputChange = ({ currentTarget }: JSX.TargetedEvent<HTMLInputElement, Event>) => {
+  handleNewPasswordConfirmationInputChange: ChangeEventHandler<HTMLInputElement> = ({ currentTarget }) => {
     this.setFormDataState({
       newPasswordConfirmation: currentTarget.value,
     }).catch(console.error)

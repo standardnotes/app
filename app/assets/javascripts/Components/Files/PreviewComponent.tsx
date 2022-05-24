@@ -1,5 +1,5 @@
 import { FileItem } from '@standardnotes/snjs'
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 import { ImagePreview } from './ImagePreview'
 
 type Props = {

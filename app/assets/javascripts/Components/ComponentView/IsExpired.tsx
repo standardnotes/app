@@ -1,7 +1,7 @@
 import { FeatureStatus } from '@standardnotes/snjs'
-import { FunctionalComponent } from 'preact'
+import { FunctionComponent } from 'react'
 
-interface IProps {
+type Props = {
   expiredDate: string
   componentName: string
   featureStatus: FeatureStatus
@@ -21,7 +21,7 @@ const statusString = (featureStatus: FeatureStatus, expiredDate: string, compone
   }
 }
 
-export const IsExpired: FunctionalComponent<IProps> = ({
+export const IsExpired: FunctionComponent<Props> = ({
   expiredDate,
   featureStatus,
   componentName,

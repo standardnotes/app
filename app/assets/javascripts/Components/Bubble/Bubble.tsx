@@ -1,4 +1,6 @@
-interface BubbleProperties {
+import { FunctionComponent } from 'react'
+
+type Props = {
   label: string
   selected: boolean
   onSelect: () => void
@@ -10,7 +12,7 @@ const styles = {
   selected: 'border-info bg-info color-neutral-contrast',
 }
 
-const Bubble = ({ label, selected, onSelect }: BubbleProperties) => (
+const Bubble: FunctionComponent<Props> = ({ label, selected, onSelect }) => (
   <span
     role="tab"
     className={`bubble ${styles.base} ${selected ? styles.selected : styles.unselected}`}

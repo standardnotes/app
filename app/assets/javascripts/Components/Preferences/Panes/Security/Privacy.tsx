@@ -10,15 +10,14 @@ import {
 import { WebApplication } from '@/UIModels/Application'
 import { MuteSignInEmailsOption, LogSessionUserAgentOption, SettingName } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionalComponent } from 'preact'
-import { useCallback, useEffect, useState } from 'preact/hooks'
+import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/Strings'
 
 type Props = {
   application: WebApplication
 }
 
-export const Privacy: FunctionalComponent<Props> = observer(({ application }: Props) => {
+export const Privacy: FunctionComponent<Props> = observer(({ application }: Props) => {
   const [signInEmailsMutedValue, setSignInEmailsMutedValue] = useState<MuteSignInEmailsOption>(
     MuteSignInEmailsOption.NotMuted,
   )

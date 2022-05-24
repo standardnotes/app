@@ -1,7 +1,6 @@
 import { WebApplication } from '@/UIModels/Application'
 import { SNComponent } from '@standardnotes/snjs'
-import { Component } from 'preact'
-import { findDOMNode, unmountComponentAtNode } from 'preact/compat'
+import { Component } from 'react'
 
 interface Props {
   application: WebApplication
@@ -39,7 +38,7 @@ export class PermissionsModal extends Component<Props> {
     this.dismiss()
   }
 
-  render() {
+  override render() {
     return (
       <div className="sk-modal">
         <div onClick={this.deny} className="sk-modal-background" />

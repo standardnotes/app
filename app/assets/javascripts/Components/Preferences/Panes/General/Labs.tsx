@@ -8,8 +8,7 @@ import {
 } from '@/Components/Preferences/PreferencesComponents'
 import { WebApplication } from '@/UIModels/Application'
 import { FeatureIdentifier, FeatureStatus, FindNativeFeature } from '@standardnotes/snjs'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useState } from 'preact/hooks'
+import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
 

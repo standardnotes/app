@@ -5,8 +5,7 @@ import { Switch } from '@/Components/Switch/Switch'
 import { WebApplication } from '@/UIModels/Application'
 import { ContentType, FeatureIdentifier, FeatureStatus, PrefKey, GetFeatures, SNTheme } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useEffect, useState } from 'preact/hooks'
+import { FunctionComponent, useEffect, useState } from 'react'
 import {
   PreferencesGroup,
   PreferencesPane,

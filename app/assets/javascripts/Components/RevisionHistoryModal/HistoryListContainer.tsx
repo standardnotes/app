@@ -1,8 +1,7 @@
 import { WebApplication } from '@/UIModels/Application'
 import { Action, ActionVerb, HistoryEntry, NoteHistoryEntry, RevisionListEntry, SNNote } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { StateUpdater, useCallback, useState, useEffect } from 'preact/hooks'
+import { FunctionComponent, useCallback, useState, useEffect, SetStateAction, Dispatch } from 'react'
 import { LegacyHistoryList } from './LegacyHistoryList'
 import { RemoteHistoryList } from './RemoteHistoryList'
 import { SessionHistoryList } from './SessionHistoryList'
@@ -19,10 +18,10 @@ type Props = {
   isFetchingRemoteHistory: boolean
   note: SNNote
   remoteHistory: RemoteRevisionListGroup[] | undefined
-  setIsFetchingSelectedRevision: StateUpdater<boolean>
-  setSelectedRemoteEntry: StateUpdater<RevisionListEntry | undefined>
-  setSelectedRevision: StateUpdater<HistoryEntry | LegacyHistoryEntry | undefined>
-  setShowContentLockedScreen: StateUpdater<boolean>
+  setIsFetchingSelectedRevision: Dispatch<SetStateAction<boolean>>
+  setSelectedRemoteEntry: Dispatch<SetStateAction<RevisionListEntry | undefined>>
+  setSelectedRevision: Dispatch<SetStateAction<HistoryEntry | LegacyHistoryEntry | undefined>>
+  setShowContentLockedScreen: Dispatch<SetStateAction<boolean>>
 }
 
 export const HistoryListContainer: FunctionComponent<Props> = observer(

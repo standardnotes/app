@@ -1,15 +1,16 @@
 import { Icon } from '@/Components/Icon/Icon'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
-import { FunctionComponent } from 'preact'
-import { useState, useRef, useEffect } from 'preact/hooks'
+import { FunctionComponent, useState, useRef, useEffect, MouseEventHandler } from 'react'
 import { IconType } from '@standardnotes/snjs'
 
-const DisclosureIconButton: FunctionComponent<{
+type Props = {
   className?: string
   icon: IconType
-  onMouseEnter?: any
-  onMouseLeave?: any
-}> = ({ className = '', icon, onMouseEnter, onMouseLeave }) => (
+  onMouseEnter?: MouseEventHandler<HTMLButtonElement>
+  onMouseLeave?: MouseEventHandler<HTMLButtonElement>
+}
+
+const DisclosureIconButton: FunctionComponent<Props> = ({ className = '', icon, onMouseEnter, onMouseLeave }) => (
   <DisclosureButton
     onMouseEnter={onMouseEnter}
     onMouseLeave={onMouseLeave}

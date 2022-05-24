@@ -1,5 +1,5 @@
 import { CloudBackupProvider } from './CloudBackupProvider'
-import { useCallback, useEffect, useState } from 'preact/hooks'
+import { useCallback, useEffect, useState, FunctionComponent } from 'react'
 import { WebApplication } from '@/UIModels/Application'
 import {
   PreferencesGroup,
@@ -16,7 +16,6 @@ import {
   MuteFailedCloudBackupsEmailsOption,
   SettingName,
 } from '@standardnotes/snjs'
-import { FunctionComponent } from 'preact'
 
 import { Switch } from '@/Components/Switch/Switch'
 import { convertStringifiedBooleanToBoolean } from '@/Utils'

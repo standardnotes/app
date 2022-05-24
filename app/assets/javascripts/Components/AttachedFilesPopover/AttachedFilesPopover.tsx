@@ -4,8 +4,7 @@ import { AppState } from '@/UIModels/AppState'
 import { FileItem } from '@standardnotes/snjs'
 import { FilesIllustration } from '@standardnotes/icons'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { StateUpdater, useRef, useState } from 'preact/hooks'
+import { Dispatch, FunctionComponent, SetStateAction, useRef, useState } from 'react'
 import { Button } from '@/Components/Button/Button'
 import { Icon } from '@/Components/Icon/Icon'
 import { PopoverFileItem } from './PopoverFileItem'
@@ -21,7 +20,7 @@ type Props = {
   currentTab: PopoverTabs
   handleFileAction: (action: PopoverFileItemAction) => Promise<boolean>
   isDraggingFiles: boolean
-  setCurrentTab: StateUpdater<PopoverTabs>
+  setCurrentTab: Dispatch<SetStateAction<PopoverTabs>>
 }
 
 export const AttachedFilesPopover: FunctionComponent<Props> = observer(

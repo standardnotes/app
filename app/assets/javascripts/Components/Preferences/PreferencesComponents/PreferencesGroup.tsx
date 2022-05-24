@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
 
 const HorizontalLine: FunctionComponent<{ index: number; length: number }> = ({ index, length }) => {

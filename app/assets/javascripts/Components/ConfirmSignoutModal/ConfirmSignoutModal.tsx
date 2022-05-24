@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'preact/hooks'
+import { useEffect, useRef, useState } from 'react'
 import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
 import { STRING_SIGN_OUT_CONFIRMATION } from '@/Strings'
 import { WebApplication } from '@/UIModels/Application'

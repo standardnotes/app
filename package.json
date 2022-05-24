@@ -29,6 +29,7 @@
     "@standardnotes/config": "^2.4.3",
     "@types/jest": "^27.4.1",
     "@types/react": "^17.0.42",
+    "@types/react-dom": "^18.0.5",
     "@types/wicg-file-system-access": "^2020.9.5",
     "@typescript-eslint/eslint-plugin": "^5.20.0",
     "@typescript-eslint/parser": "^5.20.0",
@@ -79,11 +80,12 @@
     "@zip.js/zip.js": "^2.4.10",
     "mobx": "^6.5.0",
     "mobx-react-lite": "^3.3.0",
-    "preact": "^10.7.1",
     "qrcode.react": "^3.0.1",
+    "react": "^18.1.0",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
-    "react-dnd-touch-backend": "^16.0.1"
+    "react-dnd-touch-backend": "^16.0.1",
+    "react-dom": "^18.1.0"
   },
   "lint-staged": {
     "app/**/*.{js,ts,jsx,tsx}": "eslint --cache --fix",

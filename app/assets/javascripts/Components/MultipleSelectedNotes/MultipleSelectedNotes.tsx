@@ -5,7 +5,7 @@ import { NotesOptionsPanel } from '@/Components/NotesOptions/NotesOptionsPanel'
 import { WebApplication } from '@/UIModels/Application'
 import { PinNoteButton } from '@/Components/PinNoteButton/PinNoteButton'
 import { Button } from '../Button/Button'
-import { useCallback } from 'preact/hooks'
+import { useCallback } from 'react'
 
 type Props = {
   application: WebApplication

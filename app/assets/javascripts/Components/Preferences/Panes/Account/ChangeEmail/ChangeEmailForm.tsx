@@ -1,16 +1,15 @@
-import { StateUpdater } from 'preact/hooks'
-import { FunctionalComponent } from 'preact'
+import { Dispatch, SetStateAction, FunctionComponent } from 'react'
 
 type Props = {
-  setNewEmail: StateUpdater<string>
-  setCurrentPassword: StateUpdater<string>
+  setNewEmail: Dispatch<SetStateAction<string>>
+  setCurrentPassword: Dispatch<SetStateAction<string>>
 }
 
 const labelClassName = 'block mb-1'
 
 const inputClassName = 'sk-input contrast'
 
-export const ChangeEmailForm: FunctionalComponent<Props> = ({ setNewEmail, setCurrentPassword }) => {
+export const ChangeEmailForm: FunctionComponent<Props> = ({ setNewEmail, setCurrentPassword }) => {
   return (
     <div className="w-full flex flex-col">
       <div className="mt-2 mb-3">

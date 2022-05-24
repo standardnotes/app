@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 import { observer } from 'mobx-react-lite'
 import QRCode from 'qrcode.react'
 import { DecoratedInput } from '@/Components/Input/DecoratedInput'
@@ -14,9 +14,11 @@ import {
 import { CopyButton } from './CopyButton'
 import { Bullet } from './Bullet'
 
-export const ScanQRCode: FunctionComponent<{
+type Props = {
   activation: TwoFactorActivation
-}> = observer(({ activation: act }) => {
+}
+
+export const ScanQRCode: FunctionComponent<Props> = observer(({ activation: act }) => {
   return (
     <ModalDialog>
       <ModalDialogLabel closeDialog={act.cancelActivation}>Step 1 of 3 - Scan QR code</ModalDialogLabel>

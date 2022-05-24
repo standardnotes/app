@@ -1,8 +1,7 @@
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useState } from 'preact/hooks'
+import { ChangeEventHandler, FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { Checkbox } from '@/Components/Checkbox/Checkbox'
 import { DecoratedInput } from '@/Components/Input/DecoratedInput'
 import { Icon } from '@/Components/Icon/Icon'
@@ -63,8 +62,8 @@ export const AdvancedOptions: FunctionComponent<Props> = observer(
       setPrivateWorkspaceUserphrase(userphrase)
     }, [])
 
-    const handleServerOptionChange = useCallback(
-      (e: Event) => {
+    const handleServerOptionChange: ChangeEventHandler<HTMLInputElement> = useCallback(
+      (e) => {
         if (e.target instanceof HTMLInputElement) {
           setEnableServerOption(e.target.checked)
         }

@@ -1,4 +1,4 @@
-import { FunctionalComponent } from 'preact'
+import { FunctionComponent } from 'react'
 import { PreferencesGroup, PreferencesSegment } from '@/Components/Preferences/PreferencesComponents'
 import { OfflineSubscription } from '@/Components/Preferences/Panes/Account/OfflineSubscription'
 import { WebApplication } from '@/UIModels/Application'
@@ -14,7 +14,7 @@ interface IProps {
   extensionsLatestVersions: ExtensionsLatestVersions
 }
 
-export const Advanced: FunctionalComponent<IProps> = observer(({ application, appState, extensionsLatestVersions }) => {
+export const Advanced: FunctionComponent<IProps> = observer(({ application, appState, extensionsLatestVersions }) => {
   return (
     <PreferencesGroup>
       <PreferencesSegment>

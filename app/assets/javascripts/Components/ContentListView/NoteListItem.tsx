@@ -1,7 +1,7 @@
 import { PLAIN_EDITOR_NAME } from '@/Constants'
 import { sanitizeHtmlString, SNNote } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 import { Icon } from '@/Components/Icon/Icon'
 import { ListItemConflictIndicator } from './ListItemConflictIndicator'
 import { ListItemFlagIcons } from './ListItemFlagIcons'

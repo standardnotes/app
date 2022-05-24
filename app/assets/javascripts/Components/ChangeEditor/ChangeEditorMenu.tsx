@@ -13,8 +13,7 @@ import {
   SNNote,
   TransactionalMutation,
 } from '@standardnotes/snjs'
-import { Fragment, FunctionComponent } from 'preact'
-import { useCallback, useEffect, useState } from 'preact/hooks'
+import { Fragment, FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { EditorMenuItem, EditorMenuGroup } from '@/Components/NotesOptions/ChangeEditorOption'
 import { createEditorMenuGroups } from './createEditorMenuGroups'
 import { PLAIN_EDITOR_NAME } from '@/Constants'

@@ -8,8 +8,7 @@ import {
   ComponentViewerError,
 } from '@standardnotes/snjs'
 import { WebApplication } from '@/UIModels/Application'
-import { FunctionalComponent } from 'preact'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
+import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { OfflineRestricted } from '@/Components/ComponentView/OfflineRestricted'
 import { UrlMissing } from '@/Components/ComponentView/UrlMissing'
@@ -35,7 +34,7 @@ const MaxLoadThreshold = 4000
 const VisibilityChangeKey = 'visibilitychange'
 const MSToWaitAfterIframeLoadToAvoidFlicker = 35
 
-export const ComponentView: FunctionalComponent<IProps> = observer(
+export const ComponentView: FunctionComponent<IProps> = observer(
   ({ application, onLoad, componentViewer, requestReload }) => {
     const iframeRef = useRef<HTMLIFrameElement>(null)
     const [loadTimeout, setLoadTimeout] = useState<ReturnType<typeof setTimeout> | undefined>(undefined)

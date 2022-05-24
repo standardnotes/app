@@ -9,8 +9,7 @@ import {
   removeFromArray,
 } from '@standardnotes/snjs'
 import { ProtectedIllustration } from '@standardnotes/icons'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useState } from 'preact/hooks'
+import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { Button } from '@/Components/Button/Button'
 import { Icon } from '@/Components/Icon/Icon'
 import { ChallengeModalPrompt } from './ChallengePrompt'

@@ -8,8 +8,7 @@ import {
   Title,
 } from '@/Components/Preferences/PreferencesComponents'
 import { WebApplication } from '@/UIModels/Application'
-import { FunctionComponent } from 'preact'
-import { useEffect, useState } from 'preact/hooks'
+import { FunctionComponent, useEffect, useState } from 'react'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
 import { Switch } from '@/Components/Switch/Switch'
 import { PLAIN_EDITOR_NAME } from '@/Constants'

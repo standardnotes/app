@@ -1,4 +1,4 @@
-import { Component, createRef } from 'preact'
+import { Component, createRef, MouseEventHandler } from 'react'
 import { debounce } from '@/Utils'
 
 export type ResizeFinishCallback = (
@@ -76,6 +76,10 @@ export class PanelResizer extends Component<Props, State> {
     }
   }
 
+  override componentDidMount() {
+    this.resizerElementRef.current?.addEventListener('dblclick', this.onDblClick)
+  }
+
   override componentDidUpdate(prevProps: Props) {
     if (this.props.width != prevProps.width) {
       this.setWidth(this.props.width)
@@ -92,6 +96,7 @@ export class PanelResizer extends Component<Props, State> {
   }
 
   override componentWillUnmount() {
+    this.resizerElementRef.current?.removeEventListener('dblclick', this.onDblClick)
     document.removeEventListener('mouseup', this.onMouseUp)
     document.removeEventListener('mousemove', this.onMouseMove)
     window.removeEventListener('resize', this.debouncedResizeHandler)
@@ -241,7 +246,7 @@ export class PanelResizer extends Component<Props, State> {
     this.finishSettingWidth()
   }
 
-  onMouseDown = (event: MouseEvent) => {
+  onMouseDown: MouseEventHandler = (event) => {
     this.addInvisibleOverlay()
     this.lastDownX = event.clientX
     this.startWidth = this.props.panel.scrollWidth
@@ -299,14 +304,13 @@ export class PanelResizer extends Component<Props, State> {
     }
   }
 
-  render() {
+  override render() {
     return (
       <div
         className={`panel-resizer ${this.props.side} ${this.props.hoverable ? 'hoverable' : ''} ${
           this.props.alwaysVisible ? 'alwaysVisible' : ''
         } ${this.state.pressed ? 'dragging' : ''} ${this.state.collapsed ? 'collapsed' : ''}`}
         onMouseDown={this.onMouseDown}
-        onDblClick={this.onDblClick}
         ref={this.resizerElementRef}
       ></div>
     )

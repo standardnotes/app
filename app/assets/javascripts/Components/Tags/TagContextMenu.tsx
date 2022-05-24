@@ -1,7 +1,6 @@
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useRef } from 'preact/hooks'
+import { FunctionComponent, useCallback, useEffect, useRef } from 'react'
 import { Icon } from '@/Components/Icon/Icon'
 import { Menu } from '@/Components/Menu/Menu'
 import { MenuItem, MenuItemType } from '@/Components/Menu/MenuItem'

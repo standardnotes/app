@@ -3,7 +3,7 @@ import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
 import { observer } from 'mobx-react-lite'
 import { NotesOptions } from '@/Components/NotesOptions/NotesOptions'
-import { useCallback, useEffect, useRef } from 'preact/hooks'
+import { useCallback, useEffect, useRef } from 'react'
 import { WebApplication } from '@/UIModels/Application'
 
 type Props = {

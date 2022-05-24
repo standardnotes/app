@@ -1,8 +1,7 @@
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
-import { ComponentChildren, FunctionalComponent, createContext } from 'preact'
-import { useCallback, useContext } from 'preact/hooks'
+import { FunctionComponent, createContext, useCallback, useContext, ReactNode } from 'react'
 
 import { PremiumFeaturesModal } from '@/Components/PremiumFeaturesModal/PremiumFeaturesModal'
 
@@ -27,50 +26,48 @@ export const usePremiumModal = (): PremiumModalContextData => {
 interface Props {
   application: WebApplication
   appState: AppState
-  children: ComponentChildren | ComponentChildren[]
+  children: ReactNode
 }
 
-export const PremiumModalProvider: FunctionalComponent<Props> = observer(
-  ({ application, appState, children }: Props) => {
-    const dealloced = !appState || appState.dealloced == undefined
-    if (dealloced) {
-      return null
-    }
+export const PremiumModalProvider: FunctionComponent<Props> = observer(({ application, appState, children }: Props) => {
+  const dealloced = !appState || appState.dealloced == undefined
+  if (dealloced) {
+    return null
+  }
 
-    const featureName = appState.features.premiumAlertFeatureName || ''
+  const featureName = appState.features.premiumAlertFeatureName || ''
 
-    const showModal = !!featureName
+  const showModal = !!featureName
 
-    const hasSubscription = Boolean(
-      appState.subscription.userSubscription &&
-        !appState.subscription.isUserSubscriptionExpired &&
-        !appState.subscription.isUserSubscriptionCanceled,
-    )
+  const hasSubscription = Boolean(
+    appState.subscription.userSubscription &&
+      !appState.subscription.isUserSubscriptionExpired &&
+      !appState.subscription.isUserSubscriptionCanceled,
+  )
 
-    const activate = useCallback(
-      (feature: string) => {
-        appState.features.showPremiumAlert(feature).catch(console.error)
-      },
-      [appState],
-    )
+  const activate = useCallback(
+    (feature: string) => {
+      appState.features.showPremiumAlert(feature).catch(console.error)
+    },
+    [appState],
+  )
 
-    const close = useCallback(() => {
-      appState.features.closePremiumAlert()
-    }, [appState])
+  const close = useCallback(() => {
+    appState.features.closePremiumAlert()
+  }, [appState])
 
-    return (
-      <>
-        {showModal && (
-          <PremiumFeaturesModal
-            application={application}
-            featureName={featureName}
-            hasSubscription={hasSubscription}
-            onClose={close}
-            showModal={!!featureName}
-          />
-        )}
-        <PremiumModalProvider_ value={{ activate }}>{children}</PremiumModalProvider_>
-      </>
-    )
-  },
-)
+  return (
+    <>
+      {showModal && (
+        <PremiumFeaturesModal
+          application={application}
+          featureName={featureName}
+          hasSubscription={hasSubscription}
+          onClose={close}
+          showModal={!!featureName}
+        />
+      )}
+      <PremiumModalProvider_ value={{ activate }}>{children}</PremiumModalProvider_>
+    </>
+  )
+})

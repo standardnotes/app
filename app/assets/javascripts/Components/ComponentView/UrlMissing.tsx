@@ -1,10 +1,10 @@
-import { FunctionalComponent } from 'preact'
+import { FunctionComponent } from 'react'
 
-interface IProps {
+type Props = {
   componentName: string
 }
 
-export const UrlMissing: FunctionalComponent<IProps> = ({ componentName }) => {
+export const UrlMissing: FunctionComponent<Props> = ({ componentName }) => {
   return (
     <div className={'sn-component'}>
       <div className={'sk-panel static'}>

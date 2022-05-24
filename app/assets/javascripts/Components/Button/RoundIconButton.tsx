@@ -1,28 +1,18 @@
-import { FunctionComponent } from 'preact'
+import { FunctionComponent, MouseEventHandler } from 'react'
 import { Icon } from '@/Components/Icon/Icon'
 import { IconType } from '@standardnotes/snjs'
 
 type ButtonType = 'normal' | 'primary'
 
-interface Props {
-  /**
-   * onClick - preventDefault is handled within the component
-   */
+type Props = {
   onClick: () => void
-
   type: ButtonType
-
   className?: string
-
   icon: IconType
 }
 
-/**
- * IconButton component with an icon
- * preventDefault is already handled within the component
- */
 export const RoundIconButton: FunctionComponent<Props> = ({ onClick, type, className, icon: iconType }) => {
-  const click = (e: MouseEvent) => {
+  const click: MouseEventHandler = (e) => {
     e.preventDefault()
     onClick()
   }

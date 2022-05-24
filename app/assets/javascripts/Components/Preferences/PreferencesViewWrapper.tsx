@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 import { observer } from 'mobx-react-lite'
 import { WebApplication } from '@/UIModels/Application'
 import { PreferencesView } from './PreferencesView'

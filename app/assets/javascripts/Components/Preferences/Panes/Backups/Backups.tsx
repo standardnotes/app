@@ -1,6 +1,6 @@
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 import { PreferencesPane } from '@/Components/Preferences/PreferencesComponents'
 import { CloudLink } from './CloudBackups/CloudBackups'
 import { DataBackups } from './DataBackups'

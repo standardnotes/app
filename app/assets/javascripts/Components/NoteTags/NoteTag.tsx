@@ -1,5 +1,13 @@
 import { Icon } from '@/Components/Icon/Icon'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
+import {
+  FocusEventHandler,
+  KeyboardEventHandler,
+  MouseEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { AppState } from '@/UIModels/AppState'
 import { SNTag } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
@@ -29,17 +37,16 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
     appState.noteTags.removeTagFromActiveNote(tag).catch(console.error)
   }, [appState, tag])
 
-  const onDeleteTagClick = useCallback(
-    (event: MouseEvent) => {
-      event.stopImmediatePropagation()
+  const onDeleteTagClick: MouseEventHandler = useCallback(
+    (event) => {
       event.stopPropagation()
       deleteTag()
     },
     [deleteTag],
   )
 
-  const onTagClick = useCallback(
-    (event: MouseEvent) => {
+  const onTagClick: MouseEventHandler = useCallback(
+    (event) => {
       if (tagClicked && event.target !== deleteTagRef.current) {
         setTagClicked(false)
         appState.tags.selected = tag
@@ -55,8 +62,8 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
     setShowDeleteButton(true)
   }, [appState, tag])
 
-  const onBlur = useCallback(
-    (event: FocusEvent) => {
+  const onBlur: FocusEventHandler = useCallback(
+    (event) => {
       const relatedTarget = event.relatedTarget as Node
       if (relatedTarget !== deleteTagRef.current) {
         appState.noteTags.setFocusedTagUuid(undefined)
@@ -76,8 +83,8 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
     return tags[0].uuid === tag.uuid ? 0 : -1
   }, [autocompleteInputFocused, tags, tag, focusedTagUuid])
 
-  const onKeyDown = useCallback(
-    (event: KeyboardEvent) => {
+  const onKeyDown: KeyboardEventHandler = useCallback(
+    (event) => {
       const tagIndex = appState.noteTags.getTagIndex(tag, tags)
       switch (event.key) {
         case 'Backspace':

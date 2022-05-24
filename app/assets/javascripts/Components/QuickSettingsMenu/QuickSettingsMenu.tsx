@@ -3,9 +3,7 @@ import { AppState } from '@/UIModels/AppState'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { ComponentArea, ContentType, FeatureIdentifier, GetFeatures, SNComponent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
-import { JSXInternal } from 'preact/src/jsx'
+import { FunctionComponent, KeyboardEventHandler, useCallback, useEffect, useRef, useState } from 'react'
 import { Icon } from '@/Components/Icon/Icon'
 import { Switch } from '@/Components/Switch/Switch'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
@@ -188,7 +186,7 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(({ appli
     [themesMenuOpen, toggleThemesMenu],
   )
 
-  const handleQuickSettingsKeyDown: JSXInternal.KeyboardEventHandler<HTMLDivElement> = useCallback(
+  const handleQuickSettingsKeyDown: KeyboardEventHandler<HTMLDivElement> = useCallback(
     (event) => {
       quickSettingsKeyDownHandler(closeQuickSettingsMenu, event, quickSettingsMenuRef, themesMenuOpen)
     },

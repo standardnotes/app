@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'preact/hooks'
+import { useCallback, useRef } from 'react'
 import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'

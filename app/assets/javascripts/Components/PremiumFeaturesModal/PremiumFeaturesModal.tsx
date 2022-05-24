@@ -1,8 +1,7 @@
 import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
-import { FunctionalComponent } from 'preact'
+import { FunctionComponent, useCallback, useRef } from 'react'
 import { Icon } from '@/Components/Icon/Icon'
 import { PremiumIllustration } from '@standardnotes/icons'
-import { useCallback, useRef } from 'preact/hooks'
 import { WebApplication } from '@/UIModels/Application'
 import { openSubscriptionDashboard } from '@/Utils/ManageSubscription'
 
@@ -14,7 +13,7 @@ type Props = {
   showModal: boolean
 }
 
-export const PremiumFeaturesModal: FunctionalComponent<Props> = ({
+export const PremiumFeaturesModal: FunctionComponent<Props> = ({
   application,
   featureName,
   hasSubscription,

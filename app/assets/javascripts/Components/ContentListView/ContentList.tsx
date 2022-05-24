@@ -3,11 +3,10 @@ import { KeyboardKey } from '@/Services/IOService'
 import { AppState } from '@/UIModels/AppState'
 import { UuidString } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
+import { FunctionComponent, KeyboardEventHandler, UIEventHandler, useCallback } from 'react'
 import { FOCUSABLE_BUT_NOT_TABBABLE, NOTES_LIST_SCROLL_THRESHOLD } from '@/Constants'
 import { ListableContentItem } from './Types/ListableContentItem'
 import { ContentListItem } from './ContentListItem'
-import { useCallback } from 'preact/hooks'
 
 type Props = {
   application: WebApplication
@@ -23,8 +22,8 @@ export const ContentList: FunctionComponent<Props> = observer(
     const { hideTags, hideDate, hideNotePreview, hideEditorIcon } = appState.contentListView.webDisplayOptions
     const { sortBy } = appState.contentListView.displayOptions
 
-    const onScroll = useCallback(
-      (e: Event) => {
+    const onScroll: UIEventHandler = useCallback(
+      (e) => {
         const offset = NOTES_LIST_SCROLL_THRESHOLD
         const element = e.target as HTMLElement
         if (element.scrollTop + element.offsetHeight >= element.scrollHeight - offset) {
@@ -34,8 +33,8 @@ export const ContentList: FunctionComponent<Props> = observer(
       [paginate],
     )
 
-    const onKeyDown = useCallback(
-      (e: KeyboardEvent) => {
+    const onKeyDown: KeyboardEventHandler = useCallback(
+      (e) => {
         if (e.key === KeyboardKey.Up) {
           e.preventDefault()
           selectPreviousItem()

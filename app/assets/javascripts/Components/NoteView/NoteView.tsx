@@ -1,4 +1,4 @@
-import { createRef, JSX, RefObject } from 'preact'
+import { ChangeEventHandler, createRef, KeyboardEventHandler, RefObject } from 'react'
 import {
   ApplicationEvent,
   isPayloadSourceRetrieved,
@@ -528,7 +528,7 @@ export class NoteView extends PureComponent<NoteViewProps, State> {
     }
   }
 
-  onTextAreaChange = ({ currentTarget }: JSX.TargetedEvent<HTMLTextAreaElement, Event>) => {
+  onTextAreaChange: ChangeEventHandler<HTMLTextAreaElement> = ({ currentTarget }) => {
     const text = currentTarget.value
     this.setState({
       editorText: text,
@@ -548,12 +548,16 @@ export class NoteView extends PureComponent<NoteViewProps, State> {
       .catch(console.error)
   }
 
-  onTitleEnter = ({ currentTarget }: JSX.TargetedEvent<HTMLInputElement, Event>) => {
+  onTitleEnter: KeyboardEventHandler<HTMLInputElement> = ({ key, currentTarget }) => {
+    if (key !== KeyboardKey.Enter) {
+      return
+    }
+
     currentTarget.blur()
     this.focusEditor()
   }
 
-  onTitleChange = ({ currentTarget }: JSX.TargetedEvent<HTMLInputElement, Event>) => {
+  onTitleChange: ChangeEventHandler<HTMLInputElement> = ({ currentTarget }) => {
     const title = currentTarget.value
     this.setState({
       editorTitle: title,
@@ -911,12 +915,12 @@ export class NoteView extends PureComponent<NoteViewProps, State> {
                       id={ElementIds.NoteTitleEditor}
                       onChange={this.onTitleChange}
                       onFocus={(event) => {
-                        ;(event.target as HTMLTextAreaElement).select()
+                        event.target.select()
                       }}
-                      onKeyUp={(event) => event.keyCode == 13 && this.onTitleEnter(event)}
-                      spellcheck={false}
+                      onKeyUp={this.onTitleEnter}
+                      spellCheck={false}
                       value={this.state.editorTitle}
-                      autocomplete="off"
+                      autoComplete="off"
                     />
                   </div>
                 </div>
@@ -996,15 +1000,15 @@ export class NoteView extends PureComponent<NoteViewProps, State> {
 
             {this.state.editorStateDidLoad && !this.state.editorComponentViewer && !this.state.textareaUnloading && (
               <textarea
-                autocomplete="off"
+                autoComplete="off"
                 className="editable font-editor"
                 dir="auto"
                 id={ElementIds.NoteTextEditor}
                 onChange={this.onTextAreaChange}
                 value={this.state.editorText}
-                readonly={this.state.noteLocked}
+                readOnly={this.state.noteLocked}
                 onFocus={this.onContentFocus}
-                spellcheck={this.state.spellcheck}
+                spellCheck={this.state.spellcheck}
                 ref={(ref) => ref && this.onSystemEditorLoad(ref)}
               ></textarea>
             )}

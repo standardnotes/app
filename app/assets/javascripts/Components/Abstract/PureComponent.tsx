@@ -2,8 +2,8 @@ import { ApplicationEvent } from '@standardnotes/snjs'
 import { WebApplication } from '@/UIModels/Application'
 import { AppState, AppStateEvent } from '@/UIModels/AppState'
 import { autorun, IReactionDisposer, IReactionPublic } from 'mobx'
-import { Component } from 'preact'
-import { findDOMNode, unmountComponentAtNode } from 'preact/compat'
+import { Component } from 'react'
+import { findDOMNode } from 'react-dom'
 
 export type PureComponentState = Partial<Record<string, any>>
 export type PureComponentProps = Partial<Record<string, any>>

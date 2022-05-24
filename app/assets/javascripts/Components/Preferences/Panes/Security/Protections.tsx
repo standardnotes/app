@@ -1,6 +1,5 @@
 import { WebApplication } from '@/UIModels/Application'
-import { FunctionalComponent } from 'preact'
-import { useCallback, useState, useEffect } from 'preact/hooks'
+import { FunctionComponent, useCallback, useState, useEffect } from 'react'
 import { ApplicationEvent } from '@standardnotes/snjs'
 import { isSameDay } from '@/Utils'
 import { PreferencesGroup, PreferencesSegment, Title, Text } from '@/Components/Preferences/PreferencesComponents'
@@ -10,7 +9,7 @@ type Props = {
   application: WebApplication
 }
 
-export const Protections: FunctionalComponent<Props> = ({ application }) => {
+export const Protections: FunctionComponent<Props> = ({ application }) => {
   const enableProtections = () => {
     application.clearProtectionSession().catch(console.error)
   }

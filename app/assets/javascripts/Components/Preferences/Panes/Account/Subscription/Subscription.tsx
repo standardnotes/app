@@ -3,7 +3,7 @@ import { WebApplication } from '@/UIModels/Application'
 import { SubscriptionInformation } from './SubscriptionInformation'
 import { NoSubscription } from './NoSubscription'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 import { AppState } from '@/UIModels/AppState'
 
 type Props = {

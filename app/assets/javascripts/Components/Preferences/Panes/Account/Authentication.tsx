@@ -3,7 +3,7 @@ import { PreferencesGroup, PreferencesSegment, Text, Title } from '@/Components/
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 import { AccountIllustration } from '@standardnotes/icons'
 import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
 

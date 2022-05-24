@@ -1,5 +1,9 @@
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 
-export const TitleBar: FunctionComponent<{ className?: string }> = ({ children, className }) => (
+type Props = {
+  className?: string
+}
+
+export const TitleBar: FunctionComponent<Props> = ({ children, className }) => (
   <div className={`sn-titlebar ${className ?? ''}`}>{children}</div>
 )

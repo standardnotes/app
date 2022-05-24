@@ -2,7 +2,7 @@ import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
 import { AutocompleteTagInput } from '@/Components/TagAutocomplete/AutocompleteTagInput'
 import { NoteTag } from './NoteTag'
-import { useEffect } from 'preact/hooks'
+import { useEffect } from 'react'
 import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 
 type Props = {

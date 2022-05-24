@@ -13,8 +13,7 @@ import {
   SNNote,
 } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks'
+import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Button } from '@/Components/Button/Button'
 import { HistoryListContainer } from './HistoryListContainer'
 import { RevisionContentLocked } from './RevisionContentLocked'
@@ -264,7 +263,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
                 />
               </div>
               {selectedRevision && (
-                <div class="flex items-center">
+                <div className="flex items-center">
                   {selectedRemoteEntry && (
                     <Button className="py-1.35 mr-2.5" onClick={deleteSelectedRevision} variant="normal">
                       {isDeletingRevision ? (

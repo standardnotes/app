@@ -2,7 +2,7 @@ import { AppState } from '@/UIModels/AppState'
 import { WebApplication } from '@/UIModels/Application'
 import { observer } from 'mobx-react-lite'
 import Bubble from '@/Components/Bubble/Bubble'
-import { useCallback } from 'preact/hooks'
+import { useCallback } from 'react'
 
 type Props = {
   appState: AppState

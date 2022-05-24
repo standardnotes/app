@@ -1,14 +1,11 @@
-import { FunctionComponent, Ref } from 'preact'
-import { JSXInternal } from 'preact/src/jsx'
-import { forwardRef } from 'preact/compat'
-import { useState } from 'preact/hooks'
+import { ChangeEventHandler, Ref, forwardRef, useState } from 'react'
 
 type Props = {
   id: string
   type: 'text' | 'email' | 'password'
   label: string
   value: string
-  onChange: JSXInternal.GenericEventHandler<HTMLInputElement>
+  onChange: ChangeEventHandler<HTMLInputElement>
   disabled?: boolean
   className?: string
   labelClassName?: string
@@ -16,7 +13,7 @@ type Props = {
   isInvalid?: boolean
 }
 
-export const FloatingLabelInput: FunctionComponent<Props> = forwardRef(
+export const FloatingLabelInput = forwardRef(
   (
     {
       id,

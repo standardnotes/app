@@ -1,9 +1,9 @@
-import { FunctionComponent } from 'preact'
+import { ChangeEventHandler, FunctionComponent } from 'react'
 
 type CheckboxProps = {
   name: string
   checked: boolean
-  onChange: (e: Event) => void
+  onChange: ChangeEventHandler<HTMLInputElement>
   disabled?: boolean
   label: string
 }

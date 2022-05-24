@@ -1,6 +1,6 @@
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
+import { FunctionComponent, useState } from 'react'
 import {
   PreferencesGroup,
   PreferencesSegment,
@@ -16,7 +16,6 @@ import {
 } from '@standardnotes/snjs'
 import { Button } from '@/Components/Button/Button'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
-import { useState } from 'preact/hooks'
 
 type Props = { appState: AppState }
 

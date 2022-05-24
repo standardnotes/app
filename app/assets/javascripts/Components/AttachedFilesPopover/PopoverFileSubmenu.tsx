@@ -1,8 +1,7 @@
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
 import { calculateSubmenuStyle, SubmenuStyle } from '@/Utils/CalculateSubmenuStyle'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
-import { FunctionComponent } from 'preact'
-import { StateUpdater, useCallback, useEffect, useRef, useState } from 'preact/hooks'
+import { Dispatch, FunctionComponent, SetStateAction, useCallback, useEffect, useRef, useState } from 'react'
 import { Icon } from '@/Components/Icon/Icon'
 import { Switch } from '@/Components/Switch/Switch'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
@@ -10,7 +9,7 @@ import { PopoverFileItemProps } from './PopoverFileItem'
 import { PopoverFileItemActionType } from './PopoverFileItemAction'
 
 type Props = Omit<PopoverFileItemProps, 'renameFile' | 'getIconType'> & {
-  setIsRenamingFile: StateUpdater<boolean>
+  setIsRenamingFile: Dispatch<SetStateAction<boolean>>
   previewHandler: () => void
 }
 

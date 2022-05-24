@@ -3,8 +3,7 @@ import { concatenateUint8Arrays } from '@/Utils/ConcatenateUint8Arrays'
 import { DialogContent, DialogOverlay } from '@reach/dialog'
 import { addToast, ToastType } from '@standardnotes/stylekit'
 import { NoPreviewIllustration } from '@standardnotes/icons'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks'
+import { FunctionComponent, KeyboardEventHandler, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { getFileIconComponent } from '@/Components/AttachedFilesPopover/PopoverFileItem'
 import { Button } from '@/Components/Button/Button'
 import { Icon } from '@/Components/Icon/Icon'
@@ -91,8 +90,8 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, appS
     }
   }, [currentFile, getObjectUrl, objectUrl])
 
-  const keyDownHandler = useCallback(
-    (event: KeyboardEvent) => {
+  const keyDownHandler: KeyboardEventHandler = useCallback(
+    (event) => {
       if (event.key !== KeyboardKey.Left && event.key !== KeyboardKey.Right) {
         return
       }

@@ -3,8 +3,7 @@ import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { FeaturesState } from '@/UIModels/AppState/FeaturesState'
 import { Tooltip } from '@reach/tooltip'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useCallback } from 'preact/hooks'
+import { FunctionComponent, useCallback } from 'react'
 
 type Props = {
   features: FeaturesState

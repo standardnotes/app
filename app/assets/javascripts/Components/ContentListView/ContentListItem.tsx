@@ -1,5 +1,5 @@
 import { ContentType, SNTag } from '@standardnotes/snjs'
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 import { FileListItem } from './FileListItem'
 import { NoteListItem } from './NoteListItem'
 import { AbstractListItemProps } from './Types/AbstractListItemProps'

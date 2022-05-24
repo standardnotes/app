@@ -1,8 +1,6 @@
 import { WebApplication } from '@/UIModels/Application'
 import { FeatureStatus } from '@standardnotes/snjs'
-import { FunctionComponent } from 'preact'
-import { useCallback, useMemo } from 'preact/hooks'
-import { JSXInternal } from 'preact/src/jsx'
+import { FunctionComponent, MouseEventHandler, useCallback, useMemo } from 'react'
 import { Icon } from '@/Components/Icon/Icon'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { Switch } from '@/Components/Switch/Switch'
@@ -27,7 +25,7 @@ export const ThemesMenuButton: FunctionComponent<Props> = ({ application, item, 
   )
   const canActivateTheme = useMemo(() => isEntitledToTheme || isThirdPartyTheme, [isEntitledToTheme, isThirdPartyTheme])
 
-  const toggleTheme: JSXInternal.MouseEventHandler<HTMLButtonElement> = useCallback(
+  const toggleTheme: MouseEventHandler<HTMLButtonElement> = useCallback(
     (e) => {
       e.preventDefault()
 

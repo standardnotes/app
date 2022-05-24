@@ -1,7 +1,6 @@
 import { FileItem } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useCallback } from 'preact/hooks'
+import { FunctionComponent, useCallback } from 'react'
 import { getFileIconComponent } from '../AttachedFilesPopover/PopoverFileItem'
 import { ListItemConflictIndicator } from './ListItemConflictIndicator'
 import { ListItemFlagIcons } from './ListItemFlagIcons'

@@ -9,7 +9,7 @@ import {
 import { observer } from 'mobx-react-lite'
 import { WebApplication } from '@/UIModels/Application'
 import { ButtonType, ListedAccount } from '@standardnotes/snjs'
-import { useCallback, useEffect, useState } from 'preact/hooks'
+import { useCallback, useEffect, useState } from 'react'
 import { ListedAccountItem } from './BlogItem'
 import { Button } from '@/Components/Button/Button'
 

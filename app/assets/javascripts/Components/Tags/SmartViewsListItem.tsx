@@ -4,8 +4,15 @@ import { TagsState } from '@/UIModels/AppState/TagsState'
 import '@reach/tooltip/styles.css'
 import { SmartView, SystemViewId, IconType, isSystemView } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
+import {
+  FormEventHandler,
+  FunctionComponent,
+  KeyboardEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 
 type Props = {
   view: SmartView
@@ -57,16 +64,16 @@ export const SmartViewsListItem: FunctionComponent<Props> = observer(({ view, ta
     setTitle(view.title)
   }, [tagsState, view, title, setTitle])
 
-  const onInput = useCallback(
-    (e: Event) => {
+  const onInput: FormEventHandler = useCallback(
+    (e) => {
       const value = (e.target as HTMLInputElement).value
       setTitle(value)
     },
     [setTitle],
   )
 
-  const onKeyUp = useCallback(
-    (e: KeyboardEvent) => {
+  const onKeyUp: KeyboardEventHandler = useCallback(
+    (e) => {
       if (e.code === 'Enter') {
         inputRef.current?.blur()
         e.preventDefault()
