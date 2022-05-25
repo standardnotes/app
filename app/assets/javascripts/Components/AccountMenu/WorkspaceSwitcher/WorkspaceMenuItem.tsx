@@ -72,7 +72,8 @@ export const WorkspaceMenuItem: FunctionComponent<Props> = ({
         )}
         {descriptor.primary && !hideOptions && (
           <div>
-            <button
+            <a
+              role="button"
               className="w-5 h-5 p-0 mr-3 border-0 bg-transparent hover:bg-contrast cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation()
@@ -80,8 +81,9 @@ export const WorkspaceMenuItem: FunctionComponent<Props> = ({
               }}
             >
               <Icon type="pencil" className="sn-icon--mid color-neutral" />
-            </button>
-            <button
+            </a>
+            <a
+              role="button"
               className="w-5 h-5 p-0 border-0 bg-transparent hover:bg-contrast cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation()
@@ -89,7 +91,7 @@ export const WorkspaceMenuItem: FunctionComponent<Props> = ({
               }}
             >
               <Icon type="trash" className="sn-icon--mid color-danger" />
-            </button>
+            </a>
           </div>
         )}
       </div>
