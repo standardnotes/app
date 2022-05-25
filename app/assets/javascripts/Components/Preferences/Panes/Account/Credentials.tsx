@@ -14,7 +14,6 @@ import { useCallback, useState, FunctionComponent } from 'react'
 import { ChangeEmail } from '@/Components/Preferences/Panes/Account/ChangeEmail/ChangeEmail'
 import { AppState } from '@/UIModels/AppState'
 import { PasswordWizard } from '@/Components/PasswordWizard/PasswordWizard'
-import { root } from '@/App'
 
 type Props = {
   application: WebApplication
@@ -23,6 +22,7 @@ type Props = {
 
 export const Credentials: FunctionComponent<Props> = observer(({ application }: Props) => {
   const [isChangeEmailDialogOpen, setIsChangeEmailDialogOpen] = useState(false)
+  const [shouldShowPasswordWizard, setShouldShowPasswordWizard] = useState(false)
 
   const user = application.getUser()
 
@@ -30,35 +30,44 @@ export const Credentials: FunctionComponent<Props> = observer(({ application }: 
   const passwordCreatedOn = dateToLocalizedString(passwordCreatedAtTimestamp)
 
   const presentPasswordWizard = useCallback(() => {
-    root.render(<PasswordWizard application={application} />)
-  }, [application])
+    setShouldShowPasswordWizard(true)
+  }, [])
+
+  const dismissPasswordWizard = useCallback(() => {
+    setShouldShowPasswordWizard(false)
+  }, [])
 
   return (
-    <PreferencesGroup>
-      <PreferencesSegment>
-        <Title>Credentials</Title>
-        <Subtitle>Email</Subtitle>
-        <Text>
-          You're signed in as <span className="font-bold wrap">{user?.email}</span>
-        </Text>
-        <Button
-          className="min-w-20 mt-3"
-          variant="normal"
-          label="Change email"
-          onClick={() => {
-            setIsChangeEmailDialogOpen(true)
-          }}
-        />
-        <HorizontalSeparator classes="mt-5 mb-3" />
-        <Subtitle>Password</Subtitle>
-        <Text>
-          Current password was set on <span className="font-bold">{passwordCreatedOn}</span>
-        </Text>
-        <Button className="min-w-20 mt-3" variant="normal" label="Change password" onClick={presentPasswordWizard} />
-        {isChangeEmailDialogOpen && (
-          <ChangeEmail onCloseDialog={() => setIsChangeEmailDialogOpen(false)} application={application} />
-        )}
-      </PreferencesSegment>
-    </PreferencesGroup>
+    <>
+      <PreferencesGroup>
+        <PreferencesSegment>
+          <Title>Credentials</Title>
+          <Subtitle>Email</Subtitle>
+          <Text>
+            You're signed in as <span className="font-bold wrap">{user?.email}</span>
+          </Text>
+          <Button
+            className="min-w-20 mt-3"
+            variant="normal"
+            label="Change email"
+            onClick={() => {
+              setIsChangeEmailDialogOpen(true)
+            }}
+          />
+          <HorizontalSeparator classes="mt-5 mb-3" />
+          <Subtitle>Password</Subtitle>
+          <Text>
+            Current password was set on <span className="font-bold">{passwordCreatedOn}</span>
+          </Text>
+          <Button className="min-w-20 mt-3" variant="normal" label="Change password" onClick={presentPasswordWizard} />
+          {isChangeEmailDialogOpen && (
+            <ChangeEmail onCloseDialog={() => setIsChangeEmailDialogOpen(false)} application={application} />
+          )}
+        </PreferencesSegment>
+      </PreferencesGroup>
+      {shouldShowPasswordWizard ? (
+        <PasswordWizard application={application} dismissModal={dismissPasswordWizard} />
+      ) : null}
+    </>
   )
 })

@@ -4,6 +4,7 @@ import { PureComponent } from '@/Components/Abstract/PureComponent'
 
 interface Props {
   application: WebApplication
+  dismissModal: () => void
 }
 
 type State = {
@@ -188,7 +189,7 @@ export class PasswordWizard extends PureComponent<Props, State> {
     if (this.state.lockContinue) {
       this.application.alertService.alert('Cannot close window until pending tasks are complete.').catch(console.error)
     } else {
-      this.dismissModal()
+      this.props.dismissModal()
     }
   }
 
