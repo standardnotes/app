@@ -186,7 +186,7 @@ export const ContentListView: FunctionComponent<Props> = observer(({ application
                   autoComplete="off"
                 />
                 {noteFilterText && (
-                  <button onClick={clearFilterText} aria-role="button" id="search-clear-button">
+                  <button onClick={clearFilterText} id="search-clear-button">
                     ✕
                   </button>
                 )}
