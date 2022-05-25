@@ -1,6 +1,7 @@
 {
   "extends": "../../../node_modules/@standardnotes/config/src/tsconfig.json",
   "compilerOptions": {
+    "skipLibCheck": true,
     "target": "ES2019",
     "module": "commonjs",
     "moduleResolution": "node",
