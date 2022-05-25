@@ -1,6 +1,6 @@
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { Icon } from '@/Components/Icon/Icon'
 import { Menu } from '@/Components/Menu/Menu'
 import { MenuItem, MenuItemType } from '@/Components/Menu/MenuItem'
@@ -9,21 +9,30 @@ import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { SNTag } from '@standardnotes/snjs'
 import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 
-type Props = {
+type WrapperProps = {
   appState: AppState
 }
 
-export const TagsContextMenu: FunctionComponent<Props> = observer(({ appState }: Props) => {
+type ContextMenuProps = WrapperProps & {
+  selectedTag: SNTag
+}
+
+export const TagsContextMenuWrapper = observer(({ appState }: WrapperProps) => {
   if (isStateDealloced(appState)) {
     return null
   }
 
-  const premiumModal = usePremiumModal()
   const selectedTag = appState.tags.selected
 
   if (!selectedTag || !(selectedTag instanceof SNTag)) {
     return null
   }
+
+  return <TagsContextMenu appState={appState} selectedTag={selectedTag} />
+})
+
+const TagsContextMenu = observer(({ appState, selectedTag }: ContextMenuProps) => {
+  const premiumModal = usePremiumModal()
 
   const { contextMenuOpen, contextMenuPosition, contextMenuMaxHeight } = appState.tags
 
