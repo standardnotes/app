@@ -5,37 +5,20 @@ import { Component } from 'react'
 interface Props {
   application: WebApplication
   callback: (approved: boolean) => void
+  dismiss: () => void
   component: SNComponent
   permissionsString: string
 }
 
 export class PermissionsModal extends Component<Props> {
-  getElement(): Element | null {
-    return findDOMNode(this)
-  }
-
-  dismiss = () => {
-    const elem = this.getElement()
-    if (!elem) {
-      return
-    }
-
-    const parent = elem.parentElement
-    if (!parent) {
-      return
-    }
-    parent.remove()
-    unmountComponentAtNode(parent)
-  }
-
   accept = () => {
     this.props.callback(true)
-    this.dismiss()
+    this.props.dismiss()
   }
 
   deny = () => {
     this.props.callback(false)
-    this.dismiss()
+    this.props.dismiss()
   }
 
   override render() {

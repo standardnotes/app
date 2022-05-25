@@ -14,6 +14,10 @@ export const PermissionsModalWrapper: FunctionComponent<Props> = ({ application 
     setDialog(permissionDialog)
   }, [])
 
+  const dismissPermissionsDialog = useCallback(() => {
+    setDialog(undefined)
+  }, [])
+
   const onAppStart = useCallback(() => {
     application.componentManager.presentPermissionsDialog = presentPermissionsDialog
 
@@ -42,6 +46,7 @@ export const PermissionsModalWrapper: FunctionComponent<Props> = ({ application 
     <PermissionsModal
       application={application}
       callback={dialog.callback}
+      dismiss={dismissPermissionsDialog}
       component={dialog.component}
       permissionsString={dialog.permissionsString}
     />
