@@ -22,7 +22,7 @@ import { ToastContainer } from '@standardnotes/stylekit'
 import { FilePreviewModalWrapper } from '@/Components/Files/FilePreviewModal'
 import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 import { ContentListView } from '@/Components/ContentListView/ContentListView'
-import { FileContextMenu } from '@/Components/FileContextMenu/FileContextMenu'
+import { FileContextMenuWrapper } from '@/Components/FileContextMenu/FileContextMenu'
 import { PermissionsModalWrapper } from '../PermissionsModalWrapper/PermissionsModalWrapper'
 
 type Props = {
@@ -206,7 +206,7 @@ export const ApplicationView: FunctionComponent<Props> = ({ application, mainApp
         <>
           <NotesContextMenu application={application} appState={appState} />
           <TagsContextMenuWrapper appState={appState} />
-          <FileContextMenu appState={appState} />
+          <FileContextMenuWrapper appState={appState} />
           <PurchaseFlowWrapper application={application} appState={appState} />
           <ConfirmSignoutContainer
             applicationGroup={mainApplicationGroup}

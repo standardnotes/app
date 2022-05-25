@@ -12,7 +12,19 @@ type Props = {
   appState: AppState
 }
 
-export const FileContextMenu: FunctionComponent<Props> = observer(({ appState }) => {
+export const FileContextMenuWrapper: FunctionComponent<Props> = observer(({ appState }) => {
+  const { selectedFiles, showFileContextMenu } = appState.files
+
+  const selectedFile = selectedFiles[0]
+
+  if (!showFileContextMenu || !selectedFile) {
+    return null
+  }
+
+  return <FileContextMenu appState={appState} />
+})
+
+const FileContextMenu: FunctionComponent<Props> = observer(({ appState }) => {
   const { selectedFiles, showFileContextMenu, setShowFileContextMenu, fileContextMenuLocation } = appState.files
 
   const [contextMenuStyle, setContextMenuStyle] = useState<React.CSSProperties>({
@@ -26,9 +38,6 @@ export const FileContextMenu: FunctionComponent<Props> = observer(({ appState })
   useCloseOnClickOutside(contextMenuRef, () => appState.files.setShowFileContextMenu(false))
 
   const selectedFile = selectedFiles[0]
-  if (!showFileContextMenu || !selectedFile) {
-    return null
-  }
 
   const reloadContextMenuLayout = useCallback(() => {
     const { clientHeight } = document.documentElement
