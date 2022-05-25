@@ -1,7 +1,7 @@
 import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
 import { getPlatformString, getWindowUrlParams } from '@/Utils'
 import { AppStateEvent, PanelResizedData } from '@/UIModels/AppState'
-import { ApplicationEvent, Challenge, PermissionDialog, removeFromArray } from '@standardnotes/snjs'
+import { ApplicationEvent, Challenge, removeFromArray } from '@standardnotes/snjs'
 import { PANEL_NAME_NOTES, PANEL_NAME_NAVIGATION } from '@/Constants'
 import { alertDialog } from '@/Services/AlertService'
 import { WebApplication } from '@/UIModels/Application'
@@ -14,17 +14,16 @@ import { ChallengeModal } from '@/Components/ChallengeModal/ChallengeModal'
 import { NotesContextMenu } from '@/Components/NotesContextMenu/NotesContextMenu'
 import { PurchaseFlowWrapper } from '@/Components/PurchaseFlow/PurchaseFlowWrapper'
 import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
-import { PermissionsModal } from '@/Components/PermissionsModal/PermissionsModal'
 import { RevisionHistoryModalWrapper } from '@/Components/RevisionHistoryModal/RevisionHistoryModalWrapper'
 import { PremiumModalProvider } from '@/Hooks/usePremiumModal'
 import { ConfirmSignoutContainer } from '@/Components/ConfirmSignoutModal/ConfirmSignoutModal'
-import { TagsContextMenu } from '@/Components/Tags/TagContextMenu'
+import { TagsContextMenuWrapper } from '@/Components/Tags/TagContextMenu'
 import { ToastContainer } from '@standardnotes/stylekit'
 import { FilePreviewModalWrapper } from '@/Components/Files/FilePreviewModal'
 import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 import { ContentListView } from '@/Components/ContentListView/ContentListView'
 import { FileContextMenu } from '@/Components/FileContextMenu/FileContextMenu'
-import { root } from '@/App'
+import { PermissionsModalWrapper } from '../PermissionsModalWrapper/PermissionsModalWrapper'
 
 type Props = {
   application: WebApplication
@@ -39,7 +38,6 @@ export const ApplicationView: FunctionComponent<Props> = ({ application, mainApp
   const [challenges, setChallenges] = useState<Challenge[]>([])
   const [dealloced, setDealloced] = useState(false)
 
-  const componentManager = application.componentManager
   const appState = application.getAppState()
 
   useEffect(() => {
@@ -81,28 +79,9 @@ export const ApplicationView: FunctionComponent<Props> = ({ application, mainApp
     [challenges],
   )
 
-  const presentPermissionsDialog = useCallback(
-    (dialog: PermissionDialog) => {
-      root.render(
-        <PermissionsModal
-          application={application}
-          callback={dialog.callback}
-          component={dialog.component}
-          permissionsString={dialog.permissionsString}
-        />,
-      )
-    },
-    [application],
-  )
-
   const onAppStart = useCallback(() => {
     setNeedsUnlock(application.hasPasscode())
-    componentManager.presentPermissionsDialog = presentPermissionsDialog
-
-    return () => {
-      ;(componentManager.presentPermissionsDialog as unknown) = undefined
-    }
-  }, [application, componentManager, presentPermissionsDialog])
+  }, [application])
 
   const handleDemoSignInFromParams = useCallback(() => {
     const token = getWindowUrlParams().get('demo-token')
@@ -226,7 +205,7 @@ export const ApplicationView: FunctionComponent<Props> = ({ application, mainApp
 
         <>
           <NotesContextMenu application={application} appState={appState} />
-          <TagsContextMenu appState={appState} />
+          <TagsContextMenuWrapper appState={appState} />
           <FileContextMenu appState={appState} />
           <PurchaseFlowWrapper application={application} appState={appState} />
           <ConfirmSignoutContainer
@@ -236,6 +215,7 @@ export const ApplicationView: FunctionComponent<Props> = ({ application, mainApp
           />
           <ToastContainer />
           <FilePreviewModalWrapper application={application} appState={appState} />
+          <PermissionsModalWrapper application={application} />
         </>
       </div>
     </PremiumModalProvider>
