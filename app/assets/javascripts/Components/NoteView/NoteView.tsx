@@ -1063,7 +1063,7 @@ export class NoteView extends PureComponent<NoteViewProps, State> {
             <div className="sn-component">
               {this.state.stackComponentViewers.map((viewer) => {
                 return (
-                  <div className="component-view component-stack-item">
+                  <div className="component-view component-stack-item" key={viewer.identifier}>
                     <ComponentView
                       key={viewer.identifier}
                       componentViewer={viewer}

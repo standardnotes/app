@@ -20,8 +20,8 @@ export const ImagePreview: FunctionComponent<Props> = ({ objectUrl }) => {
             height: `${imageZoomPercent}%`,
             ...(imageZoomPercent <= 100
               ? {
-                  'min-width': '100%',
-                  'object-fit': 'contain',
+                  minWidth: '100%',
+                  objectFit: 'contain',
                 }
               : {
                   position: 'absolute',

@@ -8,7 +8,7 @@ import {
 } from '@/Components/Preferences/PreferencesComponents'
 import { WebApplication } from '@/UIModels/Application'
 import { FeatureIdentifier, FeatureStatus, FindNativeFeature } from '@standardnotes/snjs'
-import { FunctionComponent, useCallback, useEffect, useState } from 'react'
+import { Fragment, FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
 
@@ -66,7 +66,7 @@ export const LabsPane: FunctionComponent<Props> = ({ application }) => {
             const showHorizontalSeparator = experimentalFeatures.length > 1 && index !== experimentalFeatures.length - 1
 
             return (
-              <>
+              <Fragment key={identifier}>
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col">
                     <Subtitle>{name}</Subtitle>
@@ -75,7 +75,7 @@ export const LabsPane: FunctionComponent<Props> = ({ application }) => {
                   <Switch onChange={toggleFeature} checked={isEnabled} />
                 </div>
                 {showHorizontalSeparator && <HorizontalSeparator classes="mt-5 mb-3" />}
-              </>
+              </Fragment>
             )
           })}
           {experimentalFeatures.length === 0 && (

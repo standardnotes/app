@@ -208,6 +208,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
         aria-label="Note revision history"
       >
         <DialogContent
+          aria-label="Note revision history"
           className="rounded shadow-overlay"
           style={{
             width: '90%',

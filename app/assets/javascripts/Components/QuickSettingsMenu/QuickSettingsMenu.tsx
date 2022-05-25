@@ -262,6 +262,7 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(({ appli
             onClick={() => {
               toggleComponent(component)
             }}
+            key={component.uuid}
           >
             <div className="flex items-center">
               <Icon type="window" className="color-neutral mr-2" />

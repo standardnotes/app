@@ -37,6 +37,7 @@ export const ChallengeModalPrompt: FunctionComponent<Props> = ({ prompt, values,
               const selected = option.valueInSeconds === values[prompt.id].value
               return (
                 <label
+                  key={option.label}
                   className={`cursor-pointer px-2 py-1.5 rounded ${
                     selected ? 'bg-default color-foreground font-semibold' : 'color-passive-0 hover:bg-passive-3'
                   }`}

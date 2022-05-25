@@ -1,6 +1,6 @@
 import { DisplayStringForContentType } from '@standardnotes/snjs'
 import { Button } from '@/Components/Button/Button'
-import { FunctionComponent } from 'react'
+import { Fragment, FunctionComponent } from 'react'
 import { Title, Text, Subtitle, PreferencesSegment } from '@/Components/Preferences/PreferencesComponents'
 import { AnyExtension } from './AnyExtension'
 
@@ -44,11 +44,11 @@ export const ConfirmCustomExtension: FunctionComponent<{
           return undefined
         }
         return (
-          <>
+          <Fragment key={field.value}>
             <Subtitle>{field.label}</Subtitle>
             <Text className={'wrap'}>{field.value}</Text>
             <div className="min-h-2" />
-          </>
+          </Fragment>
         )
       })}
 

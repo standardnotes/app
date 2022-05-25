@@ -190,6 +190,7 @@ export const ChallengeModal: FunctionComponent<Props> = ({
       key={challenge.id}
     >
       <DialogContent
+        aria-label="Challenge modal"
         className={`challenge-modal flex flex-col items-center bg-default p-8 rounded relative ${
           challenge.reason !== ChallengeReason.ApplicationUnlock
             ? 'shadow-overlay-light border-1 border-solid border-main'

@@ -188,6 +188,7 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
                   }
                   return (
                     <MenuItem
+                      key={item.name}
                       type={MenuItemType.RadioButton}
                       onClick={onClickEditorItem}
                       className={

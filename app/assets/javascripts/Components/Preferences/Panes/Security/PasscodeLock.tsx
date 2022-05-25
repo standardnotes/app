@@ -234,6 +234,7 @@ export const PasscodeLock = observer(({ application, appState }: Props) => {
                 {passcodeAutoLockOptions.map((option) => {
                   return (
                     <a
+                      key={option.value}
                       className={`sk-a info mr-3 ${option.value === selectedAutoLockInterval ? 'boxed' : ''}`}
                       onClick={() => selectAutoLockInterval(option.value)}
                     >

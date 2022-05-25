@@ -140,6 +140,7 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, appS
       dangerouslyBypassScrollLock
     >
       <DialogContent
+        aria-label="File preview modal"
         className="flex flex-col rounded shadow-overlay"
         style={{
           width: '90%',

@@ -79,6 +79,7 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({ id, label, items, v
             <ListboxList>
               {items.map((item) => (
                 <ListboxOption
+                  key={item.value}
                   className="sn-dropdown-item"
                   value={item.value}
                   label={item.label}

@@ -1,6 +1,6 @@
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useState } from 'react'
+import { Fragment, FunctionComponent, useState } from 'react'
 import {
   PreferencesGroup,
   PreferencesSegment,
@@ -95,7 +95,7 @@ export const ErroredItems: FunctionComponent<Props> = observer(({ appState }: Pr
 
         {erroredItems.map((item, index) => {
           return (
-            <>
+            <Fragment key={item.uuid}>
               <div className="flex items-center justify-between">
                 <div className="flex flex-col">
                   <Subtitle>{`${getContentTypeDisplay(item)} created on ${item.createdAtString}`}</Subtitle>
@@ -133,7 +133,7 @@ export const ErroredItems: FunctionComponent<Props> = observer(({ appState }: Pr
                 </div>
               </div>
               {index < erroredItems.length - 1 && <HorizontalSeparator classes="mt-5 mb-3" />}
-            </>
+            </Fragment>
           )
         })}
       </PreferencesSegment>

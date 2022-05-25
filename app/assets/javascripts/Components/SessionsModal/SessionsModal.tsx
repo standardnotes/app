@@ -127,7 +127,7 @@ const SessionsModalContent: FunctionComponent<{
                     {sessions.length > 0 && (
                       <ul>
                         {sessions.map((session) => (
-                          <li>
+                          <li key={session.uuid}>
                             <h2>{session.device_info}</h2>
                             {session.current ? (
                               <span className="info bold">Current session</span>

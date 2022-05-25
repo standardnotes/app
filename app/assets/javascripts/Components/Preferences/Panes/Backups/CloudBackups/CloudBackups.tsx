@@ -1,5 +1,5 @@
 import { CloudBackupProvider } from './CloudBackupProvider'
-import { useCallback, useEffect, useState, FunctionComponent } from 'react'
+import { useCallback, useEffect, useState, FunctionComponent, Fragment } from 'react'
 import { WebApplication } from '@/UIModels/Application'
 import {
   PreferencesGroup,
@@ -120,14 +120,14 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
             <HorizontalSeparator classes={`mt-3 mb-3 ${additionalClass}`} />
             <div>
               {providerData.map(({ name }) => (
-                <>
+                <Fragment key={name}>
                   <CloudBackupProvider
                     application={application}
                     providerName={name}
                     isEntitledToCloudBackups={isEntitledToCloudBackups}
                   />
                   <HorizontalSeparator classes={`mt-3 mb-3 ${additionalClass}`} />
-                </>
+                </Fragment>
               ))}
             </div>
           </div>

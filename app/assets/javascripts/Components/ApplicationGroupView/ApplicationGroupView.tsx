@@ -81,6 +81,7 @@ export class ApplicationGroupView extends Component<Props, State> {
       return (
         <DialogOverlay className={'sn-component challenge-modal-overlay'}>
           <DialogContent
+            aria-label="Switching workspace"
             className={
               'challenge-modal flex flex-col items-center bg-default p-8 rounded relative shadow-overlay-light border-1 border-solid border-main'
             }
