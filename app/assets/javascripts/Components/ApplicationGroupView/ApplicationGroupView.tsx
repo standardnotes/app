@@ -73,9 +73,6 @@ export class ApplicationGroupView extends Component<Props, State> {
 
     const onDestroy = this.props.onDestroy
 
-    const node = findDOMNode(this) as Element
-    unmountComponentAtNode(node)
-
     onDestroy()
   }
 

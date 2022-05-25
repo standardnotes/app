@@ -40,7 +40,7 @@ const RootId = 'app-group-root'
 const rootElement = document.createElement('div')
 rootElement.id = RootId
 const appendedRootNode = document.body.appendChild(rootElement)
-export const root = createRoot(appendedRootNode)
+const root = createRoot(appendedRootNode)
 
 const startApplication: StartApplication = async function startApplication(
   defaultSyncServerHost: string,
