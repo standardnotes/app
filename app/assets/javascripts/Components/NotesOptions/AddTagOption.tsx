@@ -86,7 +86,7 @@ export const AddTagOption: FunctionComponent<Props> = observer(({ appState }) =>
         >
           {appState.tags.tags.map((tag) => (
             <button
-              key={tag.title}
+              key={tag.uuid}
               className="sn-dropdown-item sn-dropdown-item--no-icon max-w-80"
               onBlur={closeOnBlur}
               onClick={() => {
