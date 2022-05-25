@@ -37,7 +37,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
   const [subtagTitle, setSubtagTitle] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
   const subtagInputRef = useRef<HTMLInputElement>(null)
-  const menuButtonRef = useRef<HTMLButtonElement>(null)
+  const menuButtonRef = useRef<HTMLAnchorElement>(null)
 
   const isSelected = tagsState.selected === tag
   const isEditing = tagsState.editingTag === tag
@@ -205,14 +205,15 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
         <div className="tag-info" title={title} ref={dropRef}>
           {hasAtLeastOneFolder && (
             <div className="tag-fold-container">
-              <button
+              <a
+                role="button"
                 className={`tag-fold focus:shadow-inner ${showChildren ? 'opened' : 'closed'} ${
                   !hasChildren ? 'invisible' : ''
                 }`}
                 onClick={hasChildren ? toggleChildren : undefined}
               >
                 <Icon className={'color-neutral'} type={showChildren ? 'menu-arrow-down-alt' : 'menu-arrow-right'} />
-              </button>
+              </a>
             </div>
           )}
           <div className={'tag-icon draggable mr-1'} ref={dragRef}>
@@ -230,7 +231,8 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
             ref={inputRef}
           />
           <div className="flex items-center">
-            <button
+            <a
+              role="button"
               className={`border-0 mr-2 bg-transparent hover:bg-contrast focus:shadow-inner cursor-pointer ${
                 isSelected ? 'visible' : 'invisible'
               }`}
@@ -238,7 +240,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
               ref={menuButtonRef}
             >
               <Icon type="more" className="color-neutral" />
-            </button>
+            </a>
             <div className="count">{noteCounts.get()}</div>
           </div>
         </div>
@@ -290,3 +292,5 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
     </>
   )
 })
+
+TagsListItem.displayName = 'TagsListItem'
