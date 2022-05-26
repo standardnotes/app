@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/midnight-theme",
-  "version": "1.2.7",
+  "version": "1.2.8",
   "main": "dist/dist.css",
   "devDependencies": {
     "grunt": "^1.0.1",
@@ -18,5 +18,9 @@
   "scripts": {
     "prepublishOnly": "npm run build",
     "build": "grunt"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }
