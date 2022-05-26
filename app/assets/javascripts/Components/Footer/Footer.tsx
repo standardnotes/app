@@ -11,7 +11,7 @@ import {
   STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON,
 } from '@/Strings'
 import { alertDialog, confirmDialog } from '@/Services/AlertService'
-import { AccountMenu } from '@/Components/AccountMenu/AccountMenu'
+import AccountMenu from '@/Components/AccountMenu/AccountMenu'
 import { AppStateEvent, EventSource } from '@/UIModels/AppState'
 import { Icon } from '@/Components/Icon/Icon'
 import { QuickSettingsMenu } from '@/Components/QuickSettingsMenu/QuickSettingsMenu'
