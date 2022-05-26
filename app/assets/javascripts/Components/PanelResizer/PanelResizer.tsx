@@ -38,7 +38,7 @@ type State = {
   pressed: boolean
 }
 
-export class PanelResizer extends Component<Props, State> {
+class PanelResizer extends Component<Props, State> {
   private overlay?: HTMLDivElement
   private resizerElementRef = createRef<HTMLDivElement>()
   private debouncedResizeHandler: () => void
@@ -316,3 +316,5 @@ export class PanelResizer extends Component<Props, State> {
     )
   }
 }
+
+export default PanelResizer

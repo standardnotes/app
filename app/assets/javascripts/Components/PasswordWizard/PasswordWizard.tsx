@@ -32,7 +32,7 @@ type FormData = {
   status?: string
 }
 
-export class PasswordWizard extends PureComponent<Props, State> {
+class PasswordWizard extends PureComponent<Props, State> {
   private currentPasswordInput = createRef<HTMLInputElement>()
 
   constructor(props: Props) {
@@ -311,3 +311,5 @@ export class PasswordWizard extends PureComponent<Props, State> {
     )
   }
 }
+
+export default PasswordWizard

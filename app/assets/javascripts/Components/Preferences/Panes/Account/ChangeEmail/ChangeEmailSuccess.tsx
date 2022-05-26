@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'react'
 
-export const ChangeEmailSuccess: FunctionComponent = () => {
+const ChangeEmailSuccess: FunctionComponent = () => {
   return (
     <div>
       <div className={'sk-label sk-bold info mt-2'}>Your email has been successfully changed.</div>
@@ -11,3 +11,5 @@ export const ChangeEmailSuccess: FunctionComponent = () => {
     </div>
   )
 }
+
+export default ChangeEmailSuccess

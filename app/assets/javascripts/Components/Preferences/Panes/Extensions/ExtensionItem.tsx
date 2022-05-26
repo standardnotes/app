@@ -1,11 +1,11 @@
 import { FunctionComponent, useState } from 'react'
 import { SNComponent } from '@standardnotes/snjs'
-import { PreferencesSegment, SubtitleLight } from '@/Components/Preferences/PreferencesComponents'
-import { Switch } from '@/Components/Switch/Switch'
-import { WebApplication } from '@/UIModels/Application'
-import { Button } from '@/Components/Button/Button'
-import { ExtensionInfoCell } from './ExtensionInfoCell'
-import { AnyExtension } from './AnyExtension'
+import { SubtitleLight } from '@/Components/Preferences/PreferencesComponents/Content'
+import Switch from '@/Components/Switch/Switch'
+import Button from '@/Components/Button/Button'
+import ExtensionInfoCell from './ExtensionInfoCell'
+import { ExtensionItemProps } from './ExtensionItemProps'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
 const UseHosted: FunctionComponent<{
   offlineOnly: boolean
@@ -17,16 +17,7 @@ const UseHosted: FunctionComponent<{
   </div>
 )
 
-export interface ExtensionItemProps {
-  application: WebApplication
-  extension: AnyExtension
-  first: boolean
-  latestVersion: string | undefined
-  uninstall: (extension: AnyExtension) => void
-  toggleActivate?: (extension: AnyExtension) => void
-}
-
-export const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({ application, extension, uninstall }) => {
+const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({ application, extension, uninstall }) => {
   const [offlineOnly, setOfflineOnly] = useState(extension instanceof SNComponent ? extension.offlineOnly : false)
   const [extensionName, setExtensionName] = useState(extension.displayName)
 
@@ -93,3 +84,5 @@ export const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({ applicati
     </PreferencesSegment>
   )
 }
+
+export default ExtensionItem

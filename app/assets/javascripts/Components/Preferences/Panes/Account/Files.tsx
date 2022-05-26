@@ -2,13 +2,15 @@ import { WebApplication } from '@/UIModels/Application'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { SubscriptionSettingName } from '@standardnotes/snjs'
 import { FunctionComponent, useEffect, useState } from 'react'
-import { PreferencesGroup, PreferencesSegment, Subtitle, Title } from '../../PreferencesComponents'
+import { Subtitle, Title } from '../../PreferencesComponents/Content'
+import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
 type Props = {
   application: WebApplication
 }
 
-export const FilesSection: FunctionComponent<Props> = ({ application }) => {
+const FilesSection: FunctionComponent<Props> = ({ application }) => {
   const [isLoading, setIsLoading] = useState(true)
   const [filesQuotaUsed, setFilesQuotaUsed] = useState<number>(0)
   const [filesQuotaTotal, setFilesQuotaTotal] = useState<number>(0)
@@ -62,3 +64,5 @@ export const FilesSection: FunctionComponent<Props> = ({ application }) => {
     </PreferencesGroup>
   )
 }
+
+export default FilesSection

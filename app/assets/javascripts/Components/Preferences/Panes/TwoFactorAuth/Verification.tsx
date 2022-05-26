@@ -1,21 +1,19 @@
-import { Button } from '@/Components/Button/Button'
-import { DecoratedInput } from '@/Components/Input/DecoratedInput'
+import Button from '@/Components/Button/Button'
+import DecoratedInput from '@/Components/Input/DecoratedInput'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
-import { Bullet } from './Bullet'
+import Bullet from './Bullet'
 import { TwoFactorActivation } from './TwoFactorActivation'
-import {
-  ModalDialog,
-  ModalDialogButtons,
-  ModalDialogDescription,
-  ModalDialogLabel,
-} from '@/Components/Shared/ModalDialog'
+import ModalDialog from '@/Components/Shared/ModalDialog'
+import ModalDialogButtons from '@/Components/Shared/ModalDialogButtons'
+import ModalDialogDescription from '@/Components/Shared/ModalDialogDescription'
+import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
 
 type Props = {
   activation: TwoFactorActivation
 }
 
-export const Verification: FunctionComponent<Props> = observer(({ activation: act }) => {
+const Verification: FunctionComponent<Props> = ({ activation: act }) => {
   const secretKeyClass = act.verificationStatus === 'invalid-secret' ? 'border-danger' : ''
   const authTokenClass = act.verificationStatus === 'invalid-auth-code' ? 'border-danger' : ''
   return (
@@ -55,6 +53,6 @@ export const Verification: FunctionComponent<Props> = observer(({ activation: ac
       </ModalDialogButtons>
     </ModalDialog>
   )
-})
+}
 
-Verification.displayName = 'Verification'
+export default observer(Verification)

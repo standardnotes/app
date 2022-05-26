@@ -22,7 +22,7 @@ declare global {
 
 import { IsWebPlatform, WebAppVersion } from '@/Version'
 import { DesktopManagerInterface, SNLog } from '@standardnotes/snjs'
-import { ApplicationGroupView } from './Components/ApplicationGroupView/ApplicationGroupView'
+import ApplicationGroupView from './Components/ApplicationGroupView/ApplicationGroupView'
 import { WebDevice } from './Device/WebDevice'
 import { StartApplication } from './Device/StartApplication'
 import { ApplicationGroup } from './UIModels/ApplicationGroup'

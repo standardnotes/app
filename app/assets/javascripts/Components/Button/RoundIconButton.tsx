@@ -1,5 +1,5 @@
 import { FunctionComponent, MouseEventHandler } from 'react'
-import { Icon } from '@/Components/Icon/Icon'
+import Icon from '@/Components/Icon/Icon'
 import { IconType } from '@standardnotes/snjs'
 
 type ButtonType = 'normal' | 'primary'
@@ -11,7 +11,7 @@ type Props = {
   icon: IconType
 }
 
-export const RoundIconButton: FunctionComponent<Props> = ({ onClick, type, className, icon: iconType }) => {
+const RoundIconButton: FunctionComponent<Props> = ({ onClick, type, className, icon: iconType }) => {
   const click: MouseEventHandler = (e) => {
     e.preventDefault()
     onClick()
@@ -23,3 +23,5 @@ export const RoundIconButton: FunctionComponent<Props> = ({ onClick, type, class
     </button>
   )
 }
+
+export default RoundIconButton

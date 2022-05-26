@@ -1,24 +1,22 @@
 import { FunctionComponent } from 'react'
 import { observer } from 'mobx-react-lite'
 import QRCode from 'qrcode.react'
-import { DecoratedInput } from '@/Components/Input/DecoratedInput'
-import { Button } from '@/Components/Button/Button'
+import DecoratedInput from '@/Components/Input/DecoratedInput'
+import Button from '@/Components/Button/Button'
 import { TwoFactorActivation } from './TwoFactorActivation'
-import { AuthAppInfoTooltip } from './AuthAppInfoPopup'
-import {
-  ModalDialog,
-  ModalDialogButtons,
-  ModalDialogDescription,
-  ModalDialogLabel,
-} from '@/Components/Shared/ModalDialog'
-import { CopyButton } from './CopyButton'
-import { Bullet } from './Bullet'
+import AuthAppInfoTooltip from './AuthAppInfoPopup'
+import ModalDialog from '@/Components/Shared/ModalDialog'
+import ModalDialogButtons from '@/Components/Shared/ModalDialogButtons'
+import ModalDialogDescription from '@/Components/Shared/ModalDialogDescription'
+import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
+import CopyButton from './CopyButton'
+import Bullet from './Bullet'
 
 type Props = {
   activation: TwoFactorActivation
 }
 
-export const ScanQRCode: FunctionComponent<Props> = observer(({ activation: act }) => {
+const ScanQRCode: FunctionComponent<Props> = ({ activation: act }) => {
   return (
     <ModalDialog>
       <ModalDialogLabel closeDialog={act.cancelActivation}>Step 1 of 3 - Scan QR code</ModalDialogLabel>
@@ -60,6 +58,6 @@ export const ScanQRCode: FunctionComponent<Props> = observer(({ activation: act 
       </ModalDialogButtons>
     </ModalDialog>
   )
-})
+}
 
-ScanQRCode.displayName = 'ScanQRCode'
+export default observer(ScanQRCode)

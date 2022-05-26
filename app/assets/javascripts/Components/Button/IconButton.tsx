@@ -1,5 +1,5 @@
 import { FunctionComponent, MouseEventHandler } from 'react'
-import { Icon } from '@/Components/Icon/Icon'
+import Icon from '@/Components/Icon/Icon'
 import { IconType } from '@standardnotes/snjs'
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
   disabled?: boolean
 }
 
-export const IconButton: FunctionComponent<Props> = ({
+const IconButton: FunctionComponent<Props> = ({
   onClick,
   className = '',
   icon,
@@ -39,3 +39,5 @@ export const IconButton: FunctionComponent<Props> = ({
     </button>
   )
 }
+
+export default IconButton

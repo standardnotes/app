@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { FunctionComponent, useEffect, useRef, useState } from 'react'
 import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
 import { STRING_SIGN_OUT_CONFIRMATION } from '@/Strings'
 import { WebApplication } from '@/UIModels/Application'
@@ -13,16 +13,7 @@ type Props = {
   applicationGroup: ApplicationGroup
 }
 
-export const ConfirmSignoutContainer = observer((props: Props) => {
-  if (!props.appState.accountMenu.signingOut) {
-    return null
-  }
-  return <ConfirmSignoutModal {...props} />
-})
-
-ConfirmSignoutContainer.displayName = 'ConfirmSignoutContainer'
-
-const ConfirmSignoutModal = observer(({ application, appState, applicationGroup }: Props) => {
+const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, appState, applicationGroup }) => {
   const [deleteLocalBackups, setDeleteLocalBackups] = useState(false)
 
   const cancelRef = useRef<HTMLButtonElement>(null)
@@ -116,6 +107,15 @@ const ConfirmSignoutModal = observer(({ application, appState, applicationGroup 
       </div>
     </AlertDialog>
   )
-})
+}
 
 ConfirmSignoutModal.displayName = 'ConfirmSignoutModal'
+
+const ConfirmSignoutContainer = (props: Props) => {
+  if (!props.appState.accountMenu.signingOut) {
+    return null
+  }
+  return <ConfirmSignoutModal {...props} />
+}
+
+export default observer(ConfirmSignoutContainer)

@@ -1,15 +1,9 @@
-import { Icon } from '@/Components/Icon/Icon'
+import Icon from '@/Components/Icon/Icon'
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
 import { MouseEventHandler, useCallback } from 'react'
 
 type Props = { appState: AppState }
-
-export const NoAccountWarningWrapper = observer(({ appState }: Props) => {
-  const canShow = appState.noAccountWarning.show
-
-  return canShow ? <NoAccountWarning appState={appState} /> : null
-})
 
 const NoAccountWarning = observer(({ appState }: Props) => {
   const showAccountMenu: MouseEventHandler = useCallback(
@@ -44,5 +38,12 @@ const NoAccountWarning = observer(({ appState }: Props) => {
   )
 })
 
-NoAccountWarningWrapper.displayName = 'NoAccountWarningWrapper'
 NoAccountWarning.displayName = 'NoAccountWarning'
+
+const NoAccountWarningWrapper = ({ appState }: Props) => {
+  const canShow = appState.noAccountWarning.show
+
+  return canShow ? <NoAccountWarning appState={appState} /> : null
+}
+
+export default observer(NoAccountWarningWrapper)

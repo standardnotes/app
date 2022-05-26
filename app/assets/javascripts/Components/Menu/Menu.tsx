@@ -20,7 +20,7 @@ type MenuProps = {
   initialFocus?: number
 }
 
-export const Menu: FunctionComponent<MenuProps> = ({
+const Menu: FunctionComponent<MenuProps> = ({
   children,
   className = '',
   style,
@@ -63,3 +63,5 @@ export const Menu: FunctionComponent<MenuProps> = ({
     </menu>
   )
 }
+
+export default Menu

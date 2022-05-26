@@ -1,4 +1,4 @@
-import { Icon } from '@/Components/Icon/Icon'
+import Icon from '@/Components/Icon/Icon'
 import { FeaturesState } from '@/UIModels/AppState/FeaturesState'
 import { TagsState } from '@/UIModels/AppState/TagsState'
 import '@reach/tooltip/styles.css'
@@ -43,7 +43,7 @@ const smartViewIconType = (view: SmartView): IconType => {
   return 'hashtag'
 }
 
-export const SmartViewsListItem: FunctionComponent<Props> = observer(({ view, tagsState }) => {
+const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
   const [title, setTitle] = useState(view.title || '')
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -156,6 +156,6 @@ export const SmartViewsListItem: FunctionComponent<Props> = observer(({ view, ta
       </div>
     </>
   )
-})
+}
 
-SmartViewsListItem.displayName = 'SmartViewsListItem'
+export default observer(SmartViewsListItem)

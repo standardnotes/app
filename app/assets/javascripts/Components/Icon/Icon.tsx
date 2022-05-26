@@ -187,7 +187,7 @@ type Props = {
   ariaLabel?: string
 }
 
-export const Icon: FunctionComponent<Props> = ({ type, className = '', ariaLabel }) => {
+const Icon: FunctionComponent<Props> = ({ type, className = '', ariaLabel }) => {
   const IconComponent = ICONS[type as keyof typeof ICONS]
   if (!IconComponent) {
     return null
@@ -200,3 +200,5 @@ export const Icon: FunctionComponent<Props> = ({ type, className = '', ariaLabel
     />
   )
 }
+
+export default Icon

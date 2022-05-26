@@ -21,12 +21,7 @@ const statusString = (featureStatus: FeatureStatus, expiredDate: string, compone
   }
 }
 
-export const IsExpired: FunctionComponent<Props> = ({
-  expiredDate,
-  featureStatus,
-  componentName,
-  manageSubscription,
-}) => {
+const IsExpired: FunctionComponent<Props> = ({ expiredDate, featureStatus, componentName, manageSubscription }) => {
   return (
     <div className={'sn-component'}>
       <div className={'sk-app-bar no-edges no-top-edge dynamic-height'}>
@@ -52,3 +47,5 @@ export const IsExpired: FunctionComponent<Props> = ({
     </div>
   )
 }
+
+export default IsExpired

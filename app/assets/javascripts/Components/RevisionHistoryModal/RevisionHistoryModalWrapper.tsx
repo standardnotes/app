@@ -14,10 +14,10 @@ import {
 } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Button } from '@/Components/Button/Button'
-import { HistoryListContainer } from './HistoryListContainer'
-import { RevisionContentLocked } from './RevisionContentLocked'
-import { SelectedRevisionContent } from './SelectedRevisionContent'
+import Button from '@/Components/Button/Button'
+import HistoryListContainer from './HistoryListContainer'
+import RevisionContentLocked from './RevisionContentLocked'
+import SelectedRevisionContent from './SelectedRevisionContent'
 import { LegacyHistoryEntry, RemoteRevisionListGroup, sortRevisionListIntoGroups } from './utils'
 
 type RevisionHistoryModalProps = {
@@ -291,15 +291,14 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
   },
 )
 
-export const RevisionHistoryModalWrapper: FunctionComponent<RevisionHistoryModalProps> = observer(
-  ({ application, appState }) => {
-    if (!appState.notes.showRevisionHistoryModal) {
-      return null
-    }
-
-    return <RevisionHistoryModal application={application} appState={appState} />
-  },
-)
-
 RevisionHistoryModal.displayName = 'RevisionHistoryModal'
-RevisionHistoryModalWrapper.displayName = 'RevisionHistoryModalWrapper'
+
+const RevisionHistoryModalWrapper: FunctionComponent<RevisionHistoryModalProps> = ({ application, appState }) => {
+  if (!appState.notes.showRevisionHistoryModal) {
+    return null
+  }
+
+  return <RevisionHistoryModal application={application} appState={appState} />
+}
+
+export default observer(RevisionHistoryModalWrapper)

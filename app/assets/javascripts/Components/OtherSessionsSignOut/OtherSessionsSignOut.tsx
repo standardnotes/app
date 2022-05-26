@@ -9,13 +9,6 @@ type Props = {
   appState: AppState
 }
 
-export const OtherSessionsSignOutContainer = observer((props: Props) => {
-  if (!props.appState.accountMenu.otherSessionsSignOut) {
-    return null
-  }
-  return <ConfirmOtherSessionsSignOut {...props} />
-})
-
 const ConfirmOtherSessionsSignOut = observer(({ application, appState }: Props) => {
   const cancelRef = useRef<HTMLButtonElement>(null)
 
@@ -66,5 +59,13 @@ const ConfirmOtherSessionsSignOut = observer(({ application, appState }: Props) 
   )
 })
 
-OtherSessionsSignOutContainer.displayName = 'OtherSessionsSignOutContainer'
 ConfirmOtherSessionsSignOut.displayName = 'ConfirmOtherSessionsSignOut'
+
+const OtherSessionsSignOutContainer = (props: Props) => {
+  if (!props.appState.accountMenu.otherSessionsSignOut) {
+    return null
+  }
+  return <ConfirmOtherSessionsSignOut {...props} />
+}
+
+export default observer(OtherSessionsSignOutContainer)

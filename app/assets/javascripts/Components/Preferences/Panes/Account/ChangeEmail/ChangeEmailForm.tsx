@@ -9,7 +9,7 @@ const labelClassName = 'block mb-1'
 
 const inputClassName = 'sk-input contrast'
 
-export const ChangeEmailForm: FunctionComponent<Props> = ({ setNewEmail, setCurrentPassword }) => {
+const ChangeEmailForm: FunctionComponent<Props> = ({ setNewEmail, setCurrentPassword }) => {
   return (
     <div className="w-full flex flex-col">
       <div className="mt-2 mb-3">
@@ -41,3 +41,5 @@ export const ChangeEmailForm: FunctionComponent<Props> = ({ setNewEmail, setCurr
     </div>
   )
 }
+
+export default ChangeEmailForm

@@ -1,25 +1,21 @@
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { FunctionComponent } from 'react'
-import { PreferencesPane } from '@/Components/Preferences/PreferencesComponents'
-import { TwoFactorAuthWrapper } from '../TwoFactorAuth/TwoFactorAuthWrapper'
+import TwoFactorAuthWrapper from '../TwoFactorAuth/TwoFactorAuthWrapper'
 import { MfaProps } from '../TwoFactorAuth/MfaProps'
-import { Encryption } from './Encryption'
-import { PasscodeLock } from './PasscodeLock'
-import { Privacy } from './Privacy'
-import { Protections } from './Protections'
-import { ErroredItems } from './ErroredItems'
+import Encryption from './Encryption'
+import PasscodeLock from './PasscodeLock'
+import Privacy from './Privacy'
+import Protections from './Protections'
+import ErroredItems from './ErroredItems'
+import PreferencesPane from '@/Components/Preferences/PreferencesComponents/PreferencesPane'
 
 interface SecurityProps extends MfaProps {
   appState: AppState
   application: WebApplication
 }
 
-export const securityPrefsHasBubble = (application: WebApplication): boolean => {
-  return application.items.invalidItems.length > 0
-}
-
-export const Security: FunctionComponent<SecurityProps> = (props) => (
+const Security: FunctionComponent<SecurityProps> = (props) => (
   <PreferencesPane>
     <Encryption appState={props.appState} />
     {props.application.items.invalidItems.length > 0 && <ErroredItems appState={props.appState} />}
@@ -29,3 +25,5 @@ export const Security: FunctionComponent<SecurityProps> = (props) => (
     {props.application.getUser() && <Privacy application={props.application} />}
   </PreferencesPane>
 )
+
+export default Security

@@ -15,15 +15,17 @@ import { ChangeEventHandler, FormEvent, useCallback, useEffect, useRef, useState
 import { ApplicationEvent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { AppState } from '@/UIModels/AppState'
-import { PreferencesSegment, Title, Text, PreferencesGroup } from '@/Components/Preferences/PreferencesComponents'
-import { Button } from '@/Components/Button/Button'
+import { Title, Text } from '@/Components/Preferences/PreferencesComponents/Content'
+import Button from '@/Components/Button/Button'
+import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
 type Props = {
   application: WebApplication
   appState: AppState
 }
 
-export const PasscodeLock = observer(({ application, appState }: Props) => {
+const PasscodeLock = ({ application, appState }: Props) => {
   const keyStorageInfo = StringUtils.keyStorageInfo(application)
   const passcodeAutoLockOptions = application.getAutolockService().getAutoLockIntervalOptions()
 
@@ -249,6 +251,6 @@ export const PasscodeLock = observer(({ application, appState }: Props) => {
       )}
     </>
   )
-})
+}
 
-PasscodeLock.displayName = 'PasscodeLock'
+export default observer(PasscodeLock)

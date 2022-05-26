@@ -1,5 +1,5 @@
-import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
-import { LinkButton, Subtitle } from '@/Components/Preferences/PreferencesComponents'
+import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
+import { LinkButton, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/UIModels/Application'
 import { ListedAccount, ListedAccountInfo } from '@standardnotes/snjs'
 import { FunctionComponent, useEffect, useState } from 'react'
@@ -10,7 +10,7 @@ type Props = {
   application: WebApplication
 }
 
-export const ListedAccountItem: FunctionComponent<Props> = ({ account, showSeparator, application }) => {
+const ListedAccountItem: FunctionComponent<Props> = ({ account, showSeparator, application }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [accountInfo, setAccountInfo] = useState<ListedAccountInfo>()
 
@@ -41,3 +41,5 @@ export const ListedAccountItem: FunctionComponent<Props> = ({ account, showSepar
     </>
   )
 }
+
+export default ListedAccountItem

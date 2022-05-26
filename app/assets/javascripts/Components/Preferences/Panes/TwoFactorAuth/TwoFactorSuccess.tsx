@@ -1,10 +1,9 @@
-import { Button } from '@/Components/Button/Button'
-import ModalDialog, {
-  ModalDialogButtons,
-  ModalDialogDescription,
-  ModalDialogLabel,
-} from '@/Components/Shared/ModalDialog'
-import { Subtitle } from '@/Components/Preferences/PreferencesComponents'
+import Button from '@/Components/Button/Button'
+import ModalDialog from '@/Components/Shared/ModalDialog'
+import ModalDialogButtons from '@/Components/Shared/ModalDialogButtons'
+import ModalDialogDescription from '@/Components/Shared/ModalDialogDescription'
+import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
+import { Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
 import { TwoFactorActivation } from './TwoFactorActivation'
@@ -13,7 +12,7 @@ type Props = {
   activation: TwoFactorActivation
 }
 
-export const TwoFactorSuccess: FunctionComponent<Props> = observer(({ activation: act }) => (
+const TwoFactorSuccess: FunctionComponent<Props> = ({ activation: act }) => (
   <ModalDialog>
     <ModalDialogLabel closeDialog={act.finishActivation}>Successfully Enabled</ModalDialogLabel>
     <ModalDialogDescription>
@@ -25,6 +24,6 @@ export const TwoFactorSuccess: FunctionComponent<Props> = observer(({ activation
       <Button className="min-w-20" variant="primary" label="Finish" onClick={act.finishActivation} />
     </ModalDialogButtons>
   </ModalDialog>
-))
+)
 
-TwoFactorSuccess.displayName = 'TwoFactorSuccess'
+export default observer(TwoFactorSuccess)

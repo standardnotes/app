@@ -1,8 +1,8 @@
 import { ChallengePrompt, ChallengeValidation, ProtectionSessionDurations } from '@standardnotes/snjs'
 import { FunctionComponent, useEffect, useRef } from 'react'
-import { DecoratedInput } from '@/Components/Input/DecoratedInput'
-import { DecoratedPasswordInput } from '@/Components/Input/DecoratedPasswordInput'
-import { ChallengeModalValues } from './ChallengeModal'
+import DecoratedInput from '@/Components/Input/DecoratedInput'
+import DecoratedPasswordInput from '@/Components/Input/DecoratedPasswordInput'
+import { ChallengeModalValues } from './ChallengeModalValues'
 
 type Props = {
   prompt: ChallengePrompt
@@ -12,7 +12,7 @@ type Props = {
   isInvalid: boolean
 }
 
-export const ChallengeModalPrompt: FunctionComponent<Props> = ({ prompt, values, index, onValueChange, isInvalid }) => {
+const ChallengeModalPrompt: FunctionComponent<Props> = ({ prompt, values, index, onValueChange, isInvalid }) => {
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -80,3 +80,5 @@ export const ChallengeModalPrompt: FunctionComponent<Props> = ({ prompt, values,
     </div>
   )
 }
+
+export default ChallengeModalPrompt

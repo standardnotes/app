@@ -6,7 +6,7 @@ type Props = {
   close: () => void
 }
 
-export class SyncResolutionMenu extends PureComponent<Props> {
+class SyncResolutionMenu extends PureComponent<Props> {
   constructor(props: Props) {
     super(props, props.application)
   }
@@ -55,3 +55,5 @@ export class SyncResolutionMenu extends PureComponent<Props> {
     )
   }
 }
+
+export default SyncResolutionMenu

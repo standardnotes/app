@@ -3,7 +3,7 @@ import { splitQueryInString } from '@/Utils/StringUtils'
 import { SNTag } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FocusEventHandler, KeyboardEventHandler, useEffect, useRef } from 'react'
-import { Icon } from '@/Components/Icon/Icon'
+import Icon from '@/Components/Icon/Icon'
 
 type Props = {
   appState: AppState
@@ -11,7 +11,7 @@ type Props = {
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
 }
 
-export const AutocompleteTagResult = observer(({ appState, tagResult, closeOnBlur }: Props) => {
+const AutocompleteTagResult = ({ appState, tagResult, closeOnBlur }: Props) => {
   const { autocompleteSearchQuery, autocompleteTagHintVisible, autocompleteTagResults, focusedTagResultUuid } =
     appState.noteTags
 
@@ -97,6 +97,6 @@ export const AutocompleteTagResult = observer(({ appState, tagResult, closeOnBlu
       </span>
     </button>
   )
-})
+}
 
-AutocompleteTagResult.displayName = 'AutocompleteTagResult'
+export default observer(AutocompleteTagResult)

@@ -4,10 +4,10 @@ import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useState } from 'react'
 import { AccountMenuPane } from './AccountMenuPane'
-import { ConfirmPassword } from './ConfirmPassword'
-import { CreateAccount } from './CreateAccount'
-import { GeneralAccountMenu } from './GeneralAccountMenu'
-import { SignInPane } from './SignIn'
+import ConfirmPassword from './ConfirmPassword'
+import CreateAccount from './CreateAccount'
+import GeneralAccountMenu from './GeneralAccountMenu'
+import SignInPane from './SignIn'
 
 type Props = {
   appState: AppState

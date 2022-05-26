@@ -1,5 +1,5 @@
 import { FunctionComponent } from 'react'
-import { Icon } from '@/Components/Icon/Icon'
+import Icon from '@/Components/Icon/Icon'
 import { ListableContentItem } from './Types/ListableContentItem'
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
   hasFiles?: boolean
 }
 
-export const ListItemFlagIcons: FunctionComponent<Props> = ({ item, hasFiles = false }) => {
+const ListItemFlagIcons: FunctionComponent<Props> = ({ item, hasFiles = false }) => {
   return (
     <div className="flex items-start p-4 pl-0 border-0 border-b-1 border-solid border-main">
       {item.locked && (
@@ -43,3 +43,5 @@ export const ListItemFlagIcons: FunctionComponent<Props> = ({ item, hasFiles = f
     </div>
   )
 }
+
+export default ListItemFlagIcons

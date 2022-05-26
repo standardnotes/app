@@ -4,12 +4,12 @@ import { DialogContent, DialogOverlay } from '@reach/dialog'
 import { addToast, ToastType } from '@standardnotes/stylekit'
 import { NoPreviewIllustration } from '@standardnotes/icons'
 import { FunctionComponent, KeyboardEventHandler, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { getFileIconComponent } from '@/Components/AttachedFilesPopover/PopoverFileItem'
-import { Button } from '@/Components/Button/Button'
-import { Icon } from '@/Components/Icon/Icon'
-import { FilePreviewInfoPanel } from './FilePreviewInfoPanel'
+import { getFileIconComponent } from '@/Components/AttachedFilesPopover/getFileIconComponent'
+import Button from '@/Components/Button/Button'
+import Icon from '@/Components/Icon/Icon'
+import FilePreviewInfoPanel from './FilePreviewInfoPanel'
 import { isFileTypePreviewable } from './isFilePreviewable'
-import { PreviewComponent } from './PreviewComponent'
+import PreviewComponent from './PreviewComponent'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
 import { KeyboardKey } from '@/Services/IOService'
 import { AppState } from '@/UIModels/AppState'
@@ -19,10 +19,6 @@ type Props = {
   application: WebApplication
   appState: AppState
 }
-
-export const FilePreviewModalWrapper: FunctionComponent<Props> = observer(({ application, appState }) => {
-  return appState.filePreviewModal.isOpen ? <FilePreviewModal application={application} appState={appState} /> : null
-})
 
 const FilePreviewModal: FunctionComponent<Props> = observer(({ application, appState }) => {
   const { currentFile, setCurrentFile, otherFiles, dismiss } = appState.filePreviewModal
@@ -257,5 +253,10 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, appS
   )
 })
 
-FilePreviewModalWrapper.displayName = 'FilePreviewModalWrapper'
 FilePreviewModal.displayName = 'FilePreviewModal'
+
+const FilePreviewModalWrapper: FunctionComponent<Props> = ({ application, appState }) => {
+  return appState.filePreviewModal.isOpen ? <FilePreviewModal application={application} appState={appState} /> : null
+}
+
+export default observer(FilePreviewModalWrapper)

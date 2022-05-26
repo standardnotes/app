@@ -38,7 +38,7 @@ interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
   label?: string
 }
 
-export const Button = forwardRef(
+const Button = forwardRef(
   (
     {
       variant = 'normal',
@@ -64,3 +64,5 @@ export const Button = forwardRef(
     )
   },
 )
+
+export default Button

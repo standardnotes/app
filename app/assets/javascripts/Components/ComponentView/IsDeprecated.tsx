@@ -5,7 +5,7 @@ type Props = {
   dismissDeprecationMessage: () => void
 }
 
-export const IsDeprecated: FunctionComponent<Props> = ({ deprecationMessage, dismissDeprecationMessage }) => {
+const IsDeprecated: FunctionComponent<Props> = ({ deprecationMessage, dismissDeprecationMessage }) => {
   return (
     <div className={'sn-component'}>
       <div className={'sk-app-bar no-edges no-top-edge dynamic-height'}>
@@ -23,3 +23,5 @@ export const IsDeprecated: FunctionComponent<Props> = ({ deprecationMessage, dis
     </div>
   )
 }
+
+export default IsDeprecated

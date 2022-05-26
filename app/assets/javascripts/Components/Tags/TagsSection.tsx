@@ -1,16 +1,16 @@
-import { TagsList } from '@/Components/Tags/TagsList'
+import TagsList from '@/Components/Tags/TagsList'
 import { AppState } from '@/UIModels/AppState'
 import { ApplicationEvent } from '@/__mocks__/@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
-import { TagsSectionAddButton } from './TagsSectionAddButton'
-import { TagsSectionTitle } from './TagsSectionTitle'
+import TagsSectionAddButton from './TagsSectionAddButton'
+import TagsSectionTitle from './TagsSectionTitle'
 
 type Props = {
   appState: AppState
 }
 
-export const TagsSection: FunctionComponent<Props> = observer(({ appState }) => {
+const TagsSection: FunctionComponent<Props> = ({ appState }) => {
   const [hasMigration, setHasMigration] = useState<boolean>(false)
 
   const checkIfMigrationNeeded = useCallback(() => {
@@ -62,6 +62,6 @@ export const TagsSection: FunctionComponent<Props> = observer(({ appState }) => 
       <TagsList appState={appState} />
     </section>
   )
-})
+}
 
-TagsSection.displayName = 'TagsSection'
+export default observer(TagsSection)

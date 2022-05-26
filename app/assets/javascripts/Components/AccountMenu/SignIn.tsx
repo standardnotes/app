@@ -4,13 +4,13 @@ import { isDev } from '@/Utils'
 import { observer } from 'mobx-react-lite'
 import React, { FunctionComponent, KeyboardEventHandler, useCallback, useEffect, useRef, useState } from 'react'
 import { AccountMenuPane } from './AccountMenuPane'
-import { Button } from '@/Components/Button/Button'
-import { Checkbox } from '@/Components/Checkbox/Checkbox'
-import { DecoratedInput } from '@/Components/Input/DecoratedInput'
-import { DecoratedPasswordInput } from '@/Components/Input/DecoratedPasswordInput'
-import { Icon } from '@/Components/Icon/Icon'
-import { IconButton } from '@/Components/Button/IconButton'
-import { AdvancedOptions } from './AdvancedOptions'
+import Button from '@/Components/Button/Button'
+import Checkbox from '@/Components/Checkbox/Checkbox'
+import DecoratedInput from '@/Components/Input/DecoratedInput'
+import DecoratedPasswordInput from '@/Components/Input/DecoratedPasswordInput'
+import Icon from '@/Components/Icon/Icon'
+import IconButton from '@/Components/Button/IconButton'
+import AdvancedOptions from './AdvancedOptions'
 
 type Props = {
   appState: AppState
@@ -18,7 +18,7 @@ type Props = {
   setMenuPane: (pane: AccountMenuPane) => void
 }
 
-export const SignInPane: FunctionComponent<Props> = observer(({ application, appState, setMenuPane }) => {
+const SignInPane: FunctionComponent<Props> = ({ application, appState, setMenuPane }) => {
   const { notesAndTagsCount } = appState.accountMenu
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -209,6 +209,6 @@ export const SignInPane: FunctionComponent<Props> = observer(({ application, app
       />
     </>
   )
-})
+}
 
-SignInPane.displayName = 'SignInPane'
+export default observer(SignInPane)

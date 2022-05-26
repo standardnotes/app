@@ -1,12 +1,12 @@
 import { IconType } from '@standardnotes/snjs'
 import { FunctionComponent, useRef, useState } from 'react'
-import { IconButton } from '../Button/IconButton'
+import IconButton from '../Button/IconButton'
 
 type Props = {
   objectUrl: string
 }
 
-export const ImagePreview: FunctionComponent<Props> = ({ objectUrl }) => {
+const ImagePreview: FunctionComponent<Props> = ({ objectUrl }) => {
   const initialImgHeightRef = useRef<number>()
 
   const [imageZoomPercent, setImageZoomPercent] = useState(100)
@@ -68,3 +68,5 @@ export const ImagePreview: FunctionComponent<Props> = ({ objectUrl }) => {
     </div>
   )
 }
+
+export default ImagePreview

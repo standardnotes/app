@@ -1,23 +1,26 @@
 import { ButtonType, ContentType, SNComponent } from '@standardnotes/snjs'
-import { Button } from '@/Components/Button/Button'
-import { DecoratedInput } from '@/Components/Input/DecoratedInput'
+import Button from '@/Components/Button/Button'
+import DecoratedInput from '@/Components/Input/DecoratedInput'
 import { WebApplication } from '@/UIModels/Application'
 import { FunctionComponent, useEffect, useRef, useState } from 'react'
-import { Title, PreferencesSegment } from '@/Components/Preferences/PreferencesComponents'
+import { Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { observer } from 'mobx-react-lite'
 import { ExtensionsLatestVersions } from './ExtensionsLatestVersions'
-import { ExtensionItem } from './ExtensionItem'
-import { ConfirmCustomExtension } from './ConfirmCustomExtension'
+import ExtensionItem from './ExtensionItem'
+import ConfirmCustomExtension from './ConfirmCustomExtension'
 import { AnyExtension } from './AnyExtension'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
 const loadExtensions = (application: WebApplication) =>
   application.items.getItems([ContentType.ActionsExtension, ContentType.Component, ContentType.Theme]) as AnyExtension[]
 
-export const Extensions: FunctionComponent<{
+type Props = {
   application: WebApplication
   extensionsLatestVersions: ExtensionsLatestVersions
   className?: string
-}> = observer(({ application, extensionsLatestVersions, className = '' }) => {
+}
+
+const Extensions: FunctionComponent<Props> = ({ application, extensionsLatestVersions, className = '' }) => {
   const [customUrl, setCustomUrl] = useState('')
   const [confirmableExtension, setConfirmableExtension] = useState<AnyExtension | undefined>(undefined)
   const [extensions, setExtensions] = useState(loadExtensions(application))
@@ -133,6 +136,6 @@ export const Extensions: FunctionComponent<{
       </div>
     </div>
   )
-})
+}
 
-Extensions.displayName = 'Extensions'
+export default observer(Extensions)

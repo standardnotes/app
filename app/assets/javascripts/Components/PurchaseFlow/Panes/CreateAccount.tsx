@@ -1,10 +1,10 @@
-import { Button } from '@/Components/Button/Button'
+import Button from '@/Components/Button/Button'
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { PurchaseFlowPane } from '@/UIModels/AppState/PurchaseFlowPane'
 import { observer } from 'mobx-react-lite'
 import { ChangeEventHandler, FunctionComponent, useEffect, useRef, useState } from 'react'
-import { FloatingLabelInput } from '@/Components/Input/FloatingLabelInput'
+import FloatingLabelInput from '@/Components/Input/FloatingLabelInput'
 import { isEmailValid } from '@/Utils'
 import { BlueDotIcon, CircleIcon, DiamondIcon, CreateAccountIllustration } from '@standardnotes/icons'
 import { loadPurchaseFlowUrl } from '../PurchaseFlowFunctions'
@@ -14,7 +14,7 @@ type Props = {
   application: WebApplication
 }
 
-export const CreateAccount: FunctionComponent<Props> = observer(({ appState, application }) => {
+const CreateAccount: FunctionComponent<Props> = ({ appState, application }) => {
   const { setCurrentPane } = appState.purchaseFlow
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -189,6 +189,6 @@ export const CreateAccount: FunctionComponent<Props> = observer(({ appState, app
       <CreateAccountIllustration className="md:hidden" />
     </div>
   )
-})
+}
 
-CreateAccount.displayName = 'CreateAccount'
+export default observer(CreateAccount)

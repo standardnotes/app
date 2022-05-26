@@ -6,23 +6,11 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import { PopoverFileItemAction } from '../AttachedFilesPopover/PopoverFileItemAction'
 import { PopoverTabs } from '../AttachedFilesPopover/PopoverTabs'
-import { FileMenuOptions } from './FileMenuOptions'
+import FileMenuOptions from './FileMenuOptions'
 
 type Props = {
   appState: AppState
 }
-
-export const FileContextMenuWrapper: FunctionComponent<Props> = observer(({ appState }) => {
-  const { selectedFiles, showFileContextMenu } = appState.files
-
-  const selectedFile = selectedFiles[0]
-
-  if (!showFileContextMenu || !selectedFile) {
-    return null
-  }
-
-  return <FileContextMenu appState={appState} />
-})
 
 const FileContextMenu: FunctionComponent<Props> = observer(({ appState }) => {
   const { selectedFiles, showFileContextMenu, setShowFileContextMenu, fileContextMenuLocation } = appState.files
@@ -126,5 +114,18 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ appState }) => {
   )
 })
 
-FileContextMenuWrapper.displayName = 'FileContextMenuWrapper'
 FileContextMenu.displayName = 'FileContextMenu'
+
+const FileContextMenuWrapper: FunctionComponent<Props> = ({ appState }) => {
+  const { selectedFiles, showFileContextMenu } = appState.files
+
+  const selectedFile = selectedFiles[0]
+
+  if (!showFileContextMenu || !selectedFile) {
+    return null
+  }
+
+  return <FileContextMenu appState={appState} />
+}
+
+export default observer(FileContextMenuWrapper)

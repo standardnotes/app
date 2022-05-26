@@ -1,22 +1,21 @@
-import { Button } from '@/Components/Button/Button'
-import { OtherSessionsSignOutContainer } from '@/Components/OtherSessionsSignOut/OtherSessionsSignOut'
-import {
-  PreferencesGroup,
-  PreferencesSegment,
-  Subtitle,
-  Text,
-  Title,
-} from '@/Components/Preferences/PreferencesComponents'
-import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
+import Button from '@/Components/Button/Button'
+import OtherSessionsSignOutContainer from '@/Components/OtherSessionsSignOut/OtherSessionsSignOut'
+import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
+import { Subtitle, Title, Text } from '../../PreferencesComponents/Content'
+import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
+import ClearSessionDataView from './ClearSessionDataView'
 
-const SignOutView: FunctionComponent<{
+type Props = {
   application: WebApplication
   appState: AppState
-}> = observer(({ application, appState }) => {
+}
+
+const SignOutView: FunctionComponent<Props> = observer(({ application, appState }) => {
   return (
     <>
       <PreferencesGroup>
@@ -56,37 +55,13 @@ const SignOutView: FunctionComponent<{
   )
 })
 
-const ClearSessionDataView: FunctionComponent<{
-  appState: AppState
-}> = observer(({ appState }) => {
-  return (
-    <PreferencesGroup>
-      <PreferencesSegment>
-        <Title>Clear workspace</Title>
-        <Text>Remove all data related to the current workspace from the application.</Text>
-        <div className="min-h-3" />
-        <Button
-          dangerStyle={true}
-          label="Clear workspace"
-          onClick={() => {
-            appState.accountMenu.setSigningOut(true)
-          }}
-        />
-      </PreferencesSegment>
-    </PreferencesGroup>
-  )
-})
+SignOutView.displayName = 'SignOutView'
 
-export const SignOutWrapper: FunctionComponent<{
-  application: WebApplication
-  appState: AppState
-}> = observer(({ application, appState }) => {
+const SignOutWrapper: FunctionComponent<Props> = ({ application, appState }) => {
   if (!application.hasAccount()) {
     return <ClearSessionDataView appState={appState} />
   }
   return <SignOutView appState={appState} application={application} />
-})
+}
 
-SignOutView.displayName = 'SignOutView'
-ClearSessionDataView.displayName = 'ClearSessionDataView'
-SignOutWrapper.displayName = 'SignOutWrapper'
+export default observer(SignOutWrapper)

@@ -2,7 +2,7 @@ import { AppState } from '@/UIModels/AppState'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
 import { observer } from 'mobx-react-lite'
-import { NotesOptions } from '@/Components/NotesOptions/NotesOptions'
+import NotesOptions from '@/Components/NotesOptions/NotesOptions'
 import { useCallback, useEffect, useRef } from 'react'
 import { WebApplication } from '@/UIModels/Application'
 
@@ -11,7 +11,7 @@ type Props = {
   appState: AppState
 }
 
-export const NotesContextMenu = observer(({ application, appState }: Props) => {
+const NotesContextMenu = ({ application, appState }: Props) => {
   const { contextMenuOpen, contextMenuPosition, contextMenuMaxHeight } = appState.notes
 
   const contextMenuRef = useRef<HTMLDivElement>(null)
@@ -42,6 +42,6 @@ export const NotesContextMenu = observer(({ application, appState }: Props) => {
       <NotesOptions application={application} appState={appState} closeOnBlur={closeOnBlur} />
     </div>
   ) : null
-})
+}
 
-NotesContextMenu.displayName = 'NotesContextMenu'
+export default observer(NotesContextMenu)

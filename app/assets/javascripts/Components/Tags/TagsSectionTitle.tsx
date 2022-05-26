@@ -11,7 +11,7 @@ type Props = {
   onClickMigration: () => void
 }
 
-export const TagsSectionTitle: FunctionComponent<Props> = observer(({ features, hasMigration, onClickMigration }) => {
+const TagsSectionTitle: FunctionComponent<Props> = ({ features, hasMigration, onClickMigration }) => {
   const entitledToFolders = features.hasFolders
   const modal = usePremiumModal()
 
@@ -46,6 +46,6 @@ export const TagsSectionTitle: FunctionComponent<Props> = observer(({ features, 
       </div>
     </>
   )
-})
+}
 
-TagsSectionTitle.displayName = 'TagsSectionTitle'
+export default observer(TagsSectionTitle)

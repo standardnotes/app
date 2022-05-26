@@ -1,11 +1,11 @@
 import { FunctionComponent, useState } from 'react'
-import { IconButton } from '@/Components/Button/IconButton'
+import IconButton from '@/Components/Button/IconButton'
 
 type Props = {
   copyValue: string
 }
 
-export const CopyButton: FunctionComponent<Props> = ({ copyValue: secretKey }) => {
+const CopyButton: FunctionComponent<Props> = ({ copyValue: secretKey }) => {
   const [isCopied, setCopied] = useState(false)
   return (
     <IconButton
@@ -20,3 +20,5 @@ export const CopyButton: FunctionComponent<Props> = ({ copyValue: secretKey }) =
     />
   )
 }
+
+export default CopyButton

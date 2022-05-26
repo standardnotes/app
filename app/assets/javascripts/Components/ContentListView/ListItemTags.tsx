@@ -1,10 +1,12 @@
 import { FunctionComponent } from 'react'
-import { Icon } from '@/Components/Icon/Icon'
+import Icon from '@/Components/Icon/Icon'
 
-export const ListItemTags: FunctionComponent<{
+type Props = {
   hideTags: boolean
   tags: string[]
-}> = ({ hideTags, tags }) => {
+}
+
+const ListItemTags: FunctionComponent<Props> = ({ hideTags, tags }) => {
   if (hideTags || !tags.length) {
     return null
   }
@@ -23,3 +25,5 @@ export const ListItemTags: FunctionComponent<{
     </div>
   )
 }
+
+export default ListItemTags

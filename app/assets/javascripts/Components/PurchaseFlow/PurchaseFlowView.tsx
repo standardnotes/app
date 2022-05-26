@@ -3,8 +3,8 @@ import { AppState } from '@/UIModels/AppState'
 import { PurchaseFlowPane } from '@/UIModels/AppState/PurchaseFlowPane'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
-import { CreateAccount } from './Panes/CreateAccount'
-import { SignIn } from './Panes/SignIn'
+import CreateAccount from './Panes/CreateAccount'
+import SignIn from './Panes/SignIn'
 import { SNLogoFull } from '@standardnotes/icons'
 
 type PaneSelectorProps = {
@@ -25,7 +25,7 @@ const PurchaseFlowPaneSelector: FunctionComponent<PaneSelectorProps> = ({ curren
   }
 }
 
-export const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> = observer(({ appState, application }) => {
+const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> = ({ appState, application }) => {
   const { currentPane } = appState.purchaseFlow
 
   return (
@@ -56,6 +56,6 @@ export const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> = observ
       </div>
     </div>
   )
-})
+}
 
-PurchaseFlowView.displayName = 'PurchaseFlowView'
+export default observer(PurchaseFlowView)

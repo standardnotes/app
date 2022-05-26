@@ -1,10 +1,10 @@
 import { ContentType, SNTag } from '@standardnotes/snjs'
 import { FunctionComponent } from 'react'
-import { FileListItem } from './FileListItem'
-import { NoteListItem } from './NoteListItem'
+import FileListItem from './FileListItem'
+import NoteListItem from './NoteListItem'
 import { AbstractListItemProps } from './Types/AbstractListItemProps'
 
-export const ContentListItem: FunctionComponent<AbstractListItemProps> = (props) => {
+const ContentListItem: FunctionComponent<AbstractListItemProps> = (props) => {
   const getTags = () => {
     if (props.hideTags) {
       return []
@@ -34,3 +34,5 @@ export const ContentListItem: FunctionComponent<AbstractListItemProps> = (props)
       return null
   }
 }
+
+export default ContentListItem

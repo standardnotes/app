@@ -1,12 +1,14 @@
 import { FunctionComponent, useState } from 'react'
-import { LinkButton, Text } from '@/Components/Preferences/PreferencesComponents'
-import { Button } from '@/Components/Button/Button'
+import { LinkButton, Text } from '@/Components/Preferences/PreferencesComponents/Content'
+import Button from '@/Components/Button/Button'
 import { WebApplication } from '@/UIModels/Application'
 import { loadPurchaseFlowUrl } from '@/Components/PurchaseFlow/PurchaseFlowFunctions'
 
-export const NoSubscription: FunctionComponent<{
+type Props = {
   application: WebApplication
-}> = ({ application }) => {
+}
+
+const NoSubscription: FunctionComponent<Props> = ({ application }) => {
   const [isLoadingPurchaseFlow, setIsLoadingPurchaseFlow] = useState(false)
   const [purchaseFlowError, setPurchaseFlowError] = useState<string | undefined>(undefined)
 
@@ -38,3 +40,5 @@ export const NoSubscription: FunctionComponent<{
     </>
   )
 }
+
+export default NoSubscription

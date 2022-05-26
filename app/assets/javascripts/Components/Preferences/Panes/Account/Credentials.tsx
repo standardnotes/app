@@ -1,26 +1,22 @@
-import {
-  PreferencesGroup,
-  PreferencesSegment,
-  Subtitle,
-  Text,
-  Title,
-} from '@/Components/Preferences/PreferencesComponents'
-import { Button } from '@/Components/Button/Button'
+import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
+import Button from '@/Components/Button/Button'
 import { WebApplication } from '@/UIModels/Application'
 import { observer } from '@node_modules/mobx-react-lite'
-import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
+import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import { dateToLocalizedString } from '@standardnotes/snjs'
 import { useCallback, useState, FunctionComponent } from 'react'
-import { ChangeEmail } from '@/Components/Preferences/Panes/Account/ChangeEmail/ChangeEmail'
+import ChangeEmail from '@/Components/Preferences/Panes/Account/ChangeEmail/ChangeEmail'
 import { AppState } from '@/UIModels/AppState'
-import { PasswordWizard } from '@/Components/PasswordWizard/PasswordWizard'
+import PasswordWizard from '@/Components/PasswordWizard/PasswordWizard'
+import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
 type Props = {
   application: WebApplication
   appState: AppState
 }
 
-export const Credentials: FunctionComponent<Props> = observer(({ application }: Props) => {
+const Credentials: FunctionComponent<Props> = ({ application }: Props) => {
   const [isChangeEmailDialogOpen, setIsChangeEmailDialogOpen] = useState(false)
   const [shouldShowPasswordWizard, setShouldShowPasswordWizard] = useState(false)
 
@@ -70,6 +66,6 @@ export const Credentials: FunctionComponent<Props> = observer(({ application }: 
       ) : null}
     </>
   )
-})
+}
 
-Credentials.displayName = 'Credentials'
+export default observer(Credentials)

@@ -1,10 +1,11 @@
 import { DisplayStringForContentType } from '@standardnotes/snjs'
-import { Button } from '@/Components/Button/Button'
+import Button from '@/Components/Button/Button'
 import { Fragment, FunctionComponent } from 'react'
-import { Title, Text, Subtitle, PreferencesSegment } from '@/Components/Preferences/PreferencesComponents'
+import { Title, Text, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
 import { AnyExtension } from './AnyExtension'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
-export const ConfirmCustomExtension: FunctionComponent<{
+const ConfirmCustomExtension: FunctionComponent<{
   component: AnyExtension
   callback: (confirmed: boolean) => void
 }> = ({ component, callback }) => {
@@ -64,3 +65,5 @@ export const ConfirmCustomExtension: FunctionComponent<{
     </PreferencesSegment>
   )
 }
+
+export default ConfirmCustomExtension

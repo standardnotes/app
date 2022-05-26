@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'react'
 
-export const OfflineRestricted: FunctionComponent = () => {
+const OfflineRestricted: FunctionComponent = () => {
   return (
     <div className={'sn-component'}>
       <div className={'sk-panel static'}>
@@ -29,3 +29,5 @@ export const OfflineRestricted: FunctionComponent = () => {
     </div>
   )
 }
+
+export default OfflineRestricted

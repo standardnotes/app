@@ -6,7 +6,7 @@ type Props = {
   isThirdParty: boolean
 }
 
-export const ExtensionInfoCell: FunctionComponent<Props> = ({ extensionName, changeName, isThirdParty }) => {
+const ExtensionInfoCell: FunctionComponent<Props> = ({ extensionName, changeName, isThirdParty }) => {
   const [isRenaming, setIsRenaming] = useState(false)
   const [newExtensionName, setNewExtensionName] = useState<string>(extensionName)
 
@@ -72,3 +72,5 @@ export const ExtensionInfoCell: FunctionComponent<Props> = ({ extensionName, cha
     </div>
   )
 }
+
+export default ExtensionInfoCell

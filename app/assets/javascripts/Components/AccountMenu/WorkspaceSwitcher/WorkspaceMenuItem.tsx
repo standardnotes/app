@@ -1,5 +1,6 @@
-import { Icon } from '@/Components/Icon/Icon'
-import { MenuItem, MenuItemType } from '@/Components/Menu/MenuItem'
+import Icon from '@/Components/Icon/Icon'
+import MenuItem from '@/Components/Menu/MenuItem'
+import { MenuItemType } from '@/Components/Menu/MenuItemType'
 import { KeyboardKey } from '@/Services/IOService'
 import { ApplicationDescriptor } from '@standardnotes/snjs'
 import {
@@ -20,7 +21,7 @@ type Props = {
   hideOptions: boolean
 }
 
-export const WorkspaceMenuItem: FunctionComponent<Props> = ({
+const WorkspaceMenuItem: FunctionComponent<Props> = ({
   descriptor,
   onClick,
   onDelete,
@@ -98,3 +99,5 @@ export const WorkspaceMenuItem: FunctionComponent<Props> = ({
     </MenuItem>
   )
 }
+
+export default WorkspaceMenuItem

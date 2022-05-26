@@ -1,6 +1,7 @@
-import { Icon } from '@/Components/Icon/Icon'
-import { Menu } from '@/Components/Menu/Menu'
-import { MenuItem, MenuItemType } from '@/Components/Menu/MenuItem'
+import Icon from '@/Components/Icon/Icon'
+import Menu from '@/Components/Menu/Menu'
+import MenuItem from '@/Components/Menu/MenuItem'
+import { MenuItemType } from '@/Components/Menu/MenuItemType'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { STRING_EDIT_LOCKED_ATTEMPT } from '@/Strings'
 import { WebApplication } from '@/UIModels/Application'
@@ -14,7 +15,8 @@ import {
   TransactionalMutation,
 } from '@standardnotes/snjs'
 import { Fragment, FunctionComponent, useCallback, useEffect, useState } from 'react'
-import { EditorMenuItem, EditorMenuGroup } from '@/Components/NotesOptions/ChangeEditorOption'
+import { EditorMenuGroup } from '@/Components/NotesOptions/EditorMenuGroup'
+import { EditorMenuItem } from '@/Components/NotesOptions/EditorMenuItem'
 import { createEditorMenuGroups } from './createEditorMenuGroups'
 import { PLAIN_EDITOR_NAME } from '@/Constants'
 import {
@@ -33,7 +35,7 @@ type ChangeEditorMenuProps = {
 
 const getGroupId = (group: EditorMenuGroup) => group.title.toLowerCase().replace(/\s/, '-')
 
-export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
+const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   application,
   closeOnBlur,
   closeMenu,
@@ -214,3 +216,5 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
     </Menu>
   )
 }
+
+export default ChangeEditorMenu

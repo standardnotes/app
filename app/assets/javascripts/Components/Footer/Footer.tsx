@@ -13,9 +13,9 @@ import {
 import { alertDialog, confirmDialog } from '@/Services/AlertService'
 import AccountMenu from '@/Components/AccountMenu/AccountMenu'
 import { AppStateEvent, EventSource } from '@/UIModels/AppState'
-import { Icon } from '@/Components/Icon/Icon'
-import { QuickSettingsMenu } from '@/Components/QuickSettingsMenu/QuickSettingsMenu'
-import { SyncResolutionMenu } from '@/Components/SyncResolutionMenu/SyncResolutionMenu'
+import Icon from '@/Components/Icon/Icon'
+import QuickSettingsMenu from '@/Components/QuickSettingsMenu/QuickSettingsMenu'
+import SyncResolutionMenu from '@/Components/SyncResolutionMenu/SyncResolutionMenu'
 import { Fragment } from 'react'
 import { AccountMenuPane } from '../AccountMenu/AccountMenuPane'
 
@@ -39,7 +39,7 @@ type State = {
   arbitraryStatusMessage?: string
 }
 
-export class Footer extends PureComponent<Props, State> {
+class Footer extends PureComponent<Props, State> {
   public user?: unknown
   private didCheckForOffline = false
   private completedInitialSync = false
@@ -455,3 +455,5 @@ export class Footer extends PureComponent<Props, State> {
     )
   }
 }
+
+export default Footer

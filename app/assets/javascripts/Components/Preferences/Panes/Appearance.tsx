@@ -1,26 +1,23 @@
-import { Dropdown, DropdownItem } from '@/Components/Dropdown/Dropdown'
+import Dropdown from '@/Components/Dropdown/Dropdown'
+import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
-import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
-import { Switch } from '@/Components/Switch/Switch'
+import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
+import Switch from '@/Components/Switch/Switch'
 import { WebApplication } from '@/UIModels/Application'
 import { ContentType, FeatureIdentifier, FeatureStatus, PrefKey, GetFeatures, SNTheme } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useEffect, useState } from 'react'
-import {
-  PreferencesGroup,
-  PreferencesPane,
-  PreferencesSegment,
-  Subtitle,
-  Title,
-  Text,
-} from '@/Components/Preferences/PreferencesComponents'
+import { Subtitle, Title, Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import { sortThemes } from '@/Utils/SortThemes'
+import PreferencesPane from '../PreferencesComponents/PreferencesPane'
+import PreferencesGroup from '../PreferencesComponents/PreferencesGroup'
+import PreferencesSegment from '../PreferencesComponents/PreferencesSegment'
 
 type Props = {
   application: WebApplication
 }
 
-export const Appearance: FunctionComponent<Props> = observer(({ application }) => {
+const Appearance: FunctionComponent<Props> = ({ application }) => {
   const premiumModal = usePremiumModal()
   const isEntitledToMidnightTheme =
     application.features.getFeatureStatus(FeatureIdentifier.MidnightTheme) === FeatureStatus.Entitled
@@ -154,6 +151,6 @@ export const Appearance: FunctionComponent<Props> = observer(({ application }) =
       </PreferencesGroup>
     </PreferencesPane>
   )
-})
+}
 
-Appearance.displayName = 'Appearance'
+export default observer(Appearance)

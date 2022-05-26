@@ -12,7 +12,7 @@ type Props = {
   sortBy: keyof SortableItem | undefined
 }
 
-export const ListItemMetadata: FunctionComponent<Props> = ({ item, hideDate, sortBy }) => {
+const ListItemMetadata: FunctionComponent<Props> = ({ item, hideDate, sortBy }) => {
   const showModifiedDate = sortBy === CollectionSort.UpdatedAt
 
   if (hideDate && !item.protected) {
@@ -27,3 +27,5 @@ export const ListItemMetadata: FunctionComponent<Props> = ({ item, hideDate, sor
     </div>
   )
 }
+
+export default ListItemMetadata

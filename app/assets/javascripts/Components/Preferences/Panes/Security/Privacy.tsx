@@ -1,23 +1,19 @@
-import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
-import { Switch } from '@/Components/Switch/Switch'
-import {
-  PreferencesGroup,
-  PreferencesSegment,
-  Subtitle,
-  Text,
-  Title,
-} from '@/Components/Preferences/PreferencesComponents'
+import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
+import Switch from '@/Components/Switch/Switch'
+import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/UIModels/Application'
 import { MuteSignInEmailsOption, LogSessionUserAgentOption, SettingName } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/Strings'
+import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
 type Props = {
   application: WebApplication
 }
 
-export const Privacy: FunctionComponent<Props> = observer(({ application }: Props) => {
+const Privacy: FunctionComponent<Props> = ({ application }: Props) => {
   const [signInEmailsMutedValue, setSignInEmailsMutedValue] = useState<MuteSignInEmailsOption>(
     MuteSignInEmailsOption.NotMuted,
   )
@@ -140,6 +136,6 @@ export const Privacy: FunctionComponent<Props> = observer(({ application }: Prop
       </PreferencesSegment>
     </PreferencesGroup>
   )
-})
+}
 
-Privacy.displayName = 'Privacy'
+export default observer(Privacy)

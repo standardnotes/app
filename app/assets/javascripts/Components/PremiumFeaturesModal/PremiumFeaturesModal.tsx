@@ -1,6 +1,6 @@
 import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
 import { FunctionComponent, useCallback, useRef } from 'react'
-import { Icon } from '@/Components/Icon/Icon'
+import Icon from '@/Components/Icon/Icon'
 import { PremiumIllustration } from '@standardnotes/icons'
 import { WebApplication } from '@/UIModels/Application'
 import { openSubscriptionDashboard } from '@/Utils/ManageSubscription'
@@ -13,7 +13,7 @@ type Props = {
   showModal: boolean
 }
 
-export const PremiumFeaturesModal: FunctionComponent<Props> = ({
+const PremiumFeaturesModal: FunctionComponent<Props> = ({
   application,
   featureName,
   hasSubscription,
@@ -67,3 +67,5 @@ export const PremiumFeaturesModal: FunctionComponent<Props> = ({
     </AlertDialog>
   ) : null
 }
+
+export default PremiumFeaturesModal

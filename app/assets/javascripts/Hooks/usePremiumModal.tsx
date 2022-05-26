@@ -2,8 +2,7 @@ import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, createContext, useCallback, useContext, ReactNode } from 'react'
-
-import { PremiumFeaturesModal } from '@/Components/PremiumFeaturesModal/PremiumFeaturesModal'
+import PremiumFeaturesModal from '@/Components/PremiumFeaturesModal/PremiumFeaturesModal'
 
 type PremiumModalContextData = {
   activate: (featureName: string) => void
@@ -29,7 +28,7 @@ interface Props {
   children: ReactNode
 }
 
-export const PremiumModalProvider: FunctionComponent<Props> = observer(({ application, appState, children }: Props) => {
+const PremiumModalProvider: FunctionComponent<Props> = ({ application, appState, children }: Props) => {
   const dealloced = !appState || appState.dealloced == undefined
   if (dealloced) {
     return null
@@ -70,6 +69,6 @@ export const PremiumModalProvider: FunctionComponent<Props> = observer(({ applic
       <PremiumModalProvider_ value={{ activate }}>{children}</PremiumModalProvider_>
     </>
   )
-})
+}
 
-PremiumModalProvider.displayName = 'PremiumModalProvider'
+export default observer(PremiumModalProvider)

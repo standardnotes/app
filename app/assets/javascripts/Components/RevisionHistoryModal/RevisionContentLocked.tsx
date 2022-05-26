@@ -2,7 +2,7 @@ import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
 import { HistoryLockedIllustration } from '@standardnotes/icons'
-import { Button } from '@/Components/Button/Button'
+import Button from '@/Components/Button/Button'
 
 const getPlanHistoryDuration = (planName: string | undefined) => {
   switch (planName) {
@@ -19,9 +19,11 @@ const getPremiumContentCopy = (planName: string | undefined) => {
   return `Version history is limited to ${getPlanHistoryDuration(planName)} in the ${planName} plan`
 }
 
-export const RevisionContentLocked: FunctionComponent<{
+type Props = {
   appState: AppState
-}> = observer(({ appState }) => {
+}
+
+const RevisionContentLocked: FunctionComponent<Props> = ({ appState }) => {
   const { userSubscriptionName, isUserSubscriptionExpired, isUserSubscriptionCanceled } = appState.subscription
 
   return (
@@ -49,6 +51,6 @@ export const RevisionContentLocked: FunctionComponent<{
       </div>
     </div>
   )
-})
+}
 
-RevisionContentLocked.displayName = 'RevisionContentLocked'
+export default observer(RevisionContentLocked)

@@ -1,7 +1,7 @@
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
-import { AutocompleteTagInput } from '@/Components/TagAutocomplete/AutocompleteTagInput'
-import { NoteTag } from './NoteTag'
+import AutocompleteTagInput from '@/Components/TagAutocomplete/AutocompleteTagInput'
+import NoteTag from './NoteTag'
 import { useEffect } from 'react'
 import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 
@@ -9,7 +9,7 @@ type Props = {
   appState: AppState
 }
 
-export const NoteTagsContainer = observer(({ appState }: Props) => {
+const NoteTagsContainer = ({ appState }: Props) => {
   if (isStateDealloced(appState)) {
     return null
   }
@@ -33,6 +33,6 @@ export const NoteTagsContainer = observer(({ appState }: Props) => {
       <AutocompleteTagInput appState={appState} />
     </div>
   )
-})
+}
 
-NoteTagsContainer.displayName = 'NoteTagsContainer'
+export default observer(NoteTagsContainer)

@@ -1,16 +1,20 @@
-import { Button } from '@/Components/Button/Button'
-import { PreferencesGroup, PreferencesSegment, Text, Title } from '@/Components/Preferences/PreferencesComponents'
+import Button from '@/Components/Button/Button'
+import { Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
 import { AccountIllustration } from '@standardnotes/icons'
 import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
+import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
-export const Authentication: FunctionComponent<{
+type Props = {
   application: WebApplication
   appState: AppState
-}> = observer(({ appState }) => {
+}
+
+const Authentication: FunctionComponent<Props> = ({ appState }) => {
   const clickSignIn = () => {
     appState.preferences.closePreferences()
     appState.accountMenu.setCurrentPane(AccountMenuPane.SignIn)
@@ -43,6 +47,6 @@ export const Authentication: FunctionComponent<{
       </PreferencesSegment>
     </PreferencesGroup>
   )
-})
+}
 
-Authentication.displayName = 'Authentication'
+export default observer(Authentication)

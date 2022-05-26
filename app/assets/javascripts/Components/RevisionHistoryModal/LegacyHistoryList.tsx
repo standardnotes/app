@@ -1,7 +1,7 @@
 import { Action, HistoryEntry, RevisionListEntry } from '@standardnotes/snjs'
 import { Dispatch, FunctionComponent, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
-import { HistoryListItem } from './HistoryListItem'
+import HistoryListItem from './HistoryListItem'
 import { LegacyHistoryEntry } from './utils'
 
 type Props = {
@@ -11,7 +11,7 @@ type Props = {
   fetchAndSetLegacyRevision: (revisionListEntry: Action) => Promise<void>
 }
 
-export const LegacyHistoryList: FunctionComponent<Props> = ({
+const LegacyHistoryList: FunctionComponent<Props> = ({
   legacyHistory,
   setSelectedRevision,
   setSelectedRemoteEntry,
@@ -71,3 +71,5 @@ export const LegacyHistoryList: FunctionComponent<Props> = ({
     </div>
   )
 }
+
+export default LegacyHistoryList

@@ -1,14 +1,14 @@
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
 import { useRef, useEffect, useCallback, FocusEventHandler, KeyboardEventHandler } from 'react'
-import { Icon } from '@/Components/Icon/Icon'
+import Icon from '@/Components/Icon/Icon'
 
 type Props = {
   appState: AppState
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
 }
 
-export const AutocompleteTagHint = observer(({ appState, closeOnBlur }: Props) => {
+const AutocompleteTagHint = ({ appState, closeOnBlur }: Props) => {
   const { autocompleteTagHintFocused } = appState.noteTags
 
   const hintRef = useRef<HTMLButtonElement>(null)
@@ -75,6 +75,6 @@ export const AutocompleteTagHint = observer(({ appState, closeOnBlur }: Props) =
       </button>
     </>
   )
-})
+}
 
-AutocompleteTagHint.displayName = 'AutocompleteTagHint'
+export default observer(AutocompleteTagHint)

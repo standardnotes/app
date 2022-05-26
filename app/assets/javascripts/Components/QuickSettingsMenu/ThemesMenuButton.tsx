@@ -1,9 +1,9 @@
 import { WebApplication } from '@/UIModels/Application'
 import { FeatureStatus } from '@standardnotes/snjs'
 import { FunctionComponent, MouseEventHandler, useCallback, useMemo } from 'react'
-import { Icon } from '@/Components/Icon/Icon'
+import Icon from '@/Components/Icon/Icon'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
-import { Switch } from '@/Components/Switch/Switch'
+import Switch from '@/Components/Switch/Switch'
 import { ThemeItem } from './ThemeItem'
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
   onBlur: (event: { relatedTarget: EventTarget | null }) => void
 }
 
-export const ThemesMenuButton: FunctionComponent<Props> = ({ application, item, onBlur }) => {
+const ThemesMenuButton: FunctionComponent<Props> = ({ application, item, onBlur }) => {
   const premiumModal = usePremiumModal()
 
   const isThirdPartyTheme = useMemo(
@@ -77,3 +77,5 @@ export const ThemesMenuButton: FunctionComponent<Props> = ({ application, item, 
     </button>
   )
 }
+
+export default ThemesMenuButton

@@ -1,14 +1,14 @@
 import { AppState } from '@/UIModels/AppState'
-import { Icon } from '@/Components/Icon/Icon'
-import { Switch } from '@/Components/Switch/Switch'
+import Icon from '@/Components/Icon/Icon'
+import Switch from '@/Components/Switch/Switch'
 import { observer } from 'mobx-react-lite'
 import { useState, useEffect, useMemo, useCallback, FunctionComponent } from 'react'
 import { SNApplication, SNNote } from '@standardnotes/snjs'
 import { KeyboardModifier } from '@/Services/IOService'
-import { ChangeEditorOption } from './ChangeEditorOption'
+import ChangeEditorOption from './ChangeEditorOption'
 import { BYTES_IN_ONE_MEGABYTE } from '@/Constants'
-import { ListedActionsOption } from './ListedActionsOption'
-import { AddTagOption } from './AddTagOption'
+import ListedActionsOption from './ListedActionsOption'
+import AddTagOption from './AddTagOption'
 import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit'
 import { NotesOptionsProps } from './NotesOptionsProps'
 
@@ -169,7 +169,7 @@ const NoteSizeWarning: FunctionComponent<{
   ) : null
 }
 
-export const NotesOptions = observer(({ application, appState, closeOnBlur }: NotesOptionsProps) => {
+const NotesOptions = ({ application, appState, closeOnBlur }: NotesOptionsProps) => {
   const [altKeyDown, setAltKeyDown] = useState(false)
 
   const toggleOn = (condition: (note: SNNote) => boolean) => {
@@ -433,6 +433,6 @@ export const NotesOptions = observer(({ application, appState, closeOnBlur }: No
       ) : null}
     </>
   )
-})
+}
 
-NotesOptions.displayName = 'NotesOptions'
+export default observer(NotesOptions)

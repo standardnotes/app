@@ -1,4 +1,4 @@
-import { Icon } from '@/Components/Icon/Icon'
+import Icon from '@/Components/Icon/Icon'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { FunctionComponent, useState, useRef, useEffect, MouseEventHandler } from 'react'
 import { IconType } from '@standardnotes/snjs'
@@ -27,7 +27,7 @@ const DisclosureIconButton: FunctionComponent<Props> = ({ className = '', icon, 
  * Note: it can be generalized but more use cases are required
  * @returns
  */
-export const AuthAppInfoTooltip: FunctionComponent = () => {
+const AuthAppInfoTooltip: FunctionComponent = () => {
   const [isClicked, setClicked] = useState(false)
   const [isHover, setHover] = useState(false)
   const ref = useRef(null)
@@ -62,3 +62,5 @@ py-1.5 px-2 absolute w-103 -top-10 -left-51`}
     </Disclosure>
   )
 }
+
+export default AuthAppInfoTooltip

@@ -1,7 +1,7 @@
 import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
 import { WebApplication } from '@/UIModels/Application'
 import { Component } from 'react'
-import { ApplicationView } from '@/Components/ApplicationView/ApplicationView'
+import ApplicationView from '@/Components/ApplicationView/ApplicationView'
 import { WebOrDesktopDevice } from '@/Device/WebOrDesktopDevice'
 import { ApplicationGroupEvent, ApplicationGroupEventData, DeinitSource } from '@standardnotes/snjs'
 import { DialogContent, DialogOverlay } from '@reach/dialog'
@@ -22,7 +22,7 @@ type State = {
   deviceDestroyed?: boolean
 }
 
-export class ApplicationGroupView extends Component<Props, State> {
+class ApplicationGroupView extends Component<Props, State> {
   applicationObserverRemover?: () => void
   private group?: ApplicationGroup
   private application?: WebApplication
@@ -122,3 +122,5 @@ export class ApplicationGroupView extends Component<Props, State> {
     )
   }
 }
+
+export default ApplicationGroupView

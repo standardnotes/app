@@ -1,22 +1,18 @@
-import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
-import { Switch } from '@/Components/Switch/Switch'
-import {
-  PreferencesGroup,
-  PreferencesSegment,
-  Subtitle,
-  Text,
-  Title,
-} from '@/Components/Preferences/PreferencesComponents'
+import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
+import Switch from '@/Components/Switch/Switch'
+import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/UIModels/Application'
 import { PrefKey } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useState } from 'react'
+import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
 type Props = {
   application: WebApplication
 }
 
-export const Tools: FunctionComponent<Props> = observer(({ application }: Props) => {
+const Tools: FunctionComponent<Props> = ({ application }: Props) => {
   const [monospaceFont, setMonospaceFont] = useState(() =>
     application.getPreference(PrefKey.EditorMonospaceEnabled, true),
   )
@@ -58,6 +54,6 @@ export const Tools: FunctionComponent<Props> = observer(({ application }: Props)
       </PreferencesSegment>
     </PreferencesGroup>
   )
-})
+}
 
-Tools.displayName = 'Tools'
+export default observer(Tools)

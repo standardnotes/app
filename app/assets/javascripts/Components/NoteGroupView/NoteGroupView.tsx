@@ -1,8 +1,8 @@
 import { NoteViewController } from '@standardnotes/snjs'
 import { PureComponent } from '@/Components/Abstract/PureComponent'
 import { WebApplication } from '@/UIModels/Application'
-import { MultipleSelectedNotes } from '@/Components/MultipleSelectedNotes/MultipleSelectedNotes'
-import { NoteView } from '@/Components/NoteView/NoteView'
+import MultipleSelectedNotes from '@/Components/MultipleSelectedNotes/MultipleSelectedNotes'
+import NoteView from '@/Components/NoteView/NoteView'
 import { ElementIds } from '@/ElementIDs'
 
 type State = {
@@ -14,7 +14,7 @@ type Props = {
   application: WebApplication
 }
 
-export class NoteGroupView extends PureComponent<Props, State> {
+class NoteGroupView extends PureComponent<Props, State> {
   private removeChangeObserver!: () => void
 
   constructor(props: Props) {
@@ -70,3 +70,5 @@ export class NoteGroupView extends PureComponent<Props, State> {
     )
   }
 }
+
+export default NoteGroupView

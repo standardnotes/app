@@ -1,14 +1,8 @@
-import { CloudBackupProvider } from './CloudBackupProvider'
+import CloudBackupProvider from './CloudBackupProvider'
 import { useCallback, useEffect, useState, FunctionComponent, Fragment } from 'react'
 import { WebApplication } from '@/UIModels/Application'
-import {
-  PreferencesGroup,
-  PreferencesSegment,
-  Subtitle,
-  Text,
-  Title,
-} from '@/Components/Preferences/PreferencesComponents'
-import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
+import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
+import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import {
   FeatureStatus,
   FeatureIdentifier,
@@ -17,9 +11,11 @@ import {
   SettingName,
 } from '@standardnotes/snjs'
 
-import { Switch } from '@/Components/Switch/Switch'
+import Switch from '@/Components/Switch/Switch'
 import { convertStringifiedBooleanToBoolean } from '@/Utils'
 import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/Strings'
+import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
+import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 
 const providerData = [{ name: CloudProvider.Dropbox }, { name: CloudProvider.Google }, { name: CloudProvider.OneDrive }]
 
@@ -27,7 +23,7 @@ type Props = {
   application: WebApplication
 }
 
-export const CloudLink: FunctionComponent<Props> = ({ application }) => {
+const CloudLink: FunctionComponent<Props> = ({ application }) => {
   const [isEntitledToCloudBackups, setIsEntitledToCloudBackups] = useState(false)
   const [isFailedCloudBackupEmailMuted, setIsFailedCloudBackupEmailMuted] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
@@ -154,3 +150,5 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
     </PreferencesGroup>
   )
 }
+
+export default CloudLink

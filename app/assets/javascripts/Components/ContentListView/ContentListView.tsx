@@ -13,11 +13,11 @@ import {
   useRef,
   useState,
 } from 'react'
-import { ContentList } from '@/Components/ContentListView/ContentList'
-import { NotesListOptionsMenu } from '@/Components/ContentListView/NotesListOptionsMenu'
-import { NoAccountWarningWrapper } from '@/Components/NoAccountWarning/NoAccountWarning'
-import { SearchOptions } from '@/Components/SearchOptions/SearchOptions'
-import { PanelSide, ResizeFinishCallback, PanelResizer, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
+import ContentList from '@/Components/ContentListView/ContentList'
+import NotesListOptionsMenu from '@/Components/ContentListView/NotesListOptionsMenu'
+import NoAccountWarningWrapper from '@/Components/NoAccountWarning/NoAccountWarning'
+import SearchOptions from '@/Components/SearchOptions/SearchOptions'
+import PanelResizer, { PanelSide, ResizeFinishCallback, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
@@ -27,7 +27,7 @@ type Props = {
   appState: AppState
 }
 
-export const ContentListView: FunctionComponent<Props> = observer(({ application, appState }) => {
+const ContentListView: FunctionComponent<Props> = ({ application, appState }) => {
   if (isStateDealloced(appState)) {
     return null
   }
@@ -260,6 +260,6 @@ export const ContentListView: FunctionComponent<Props> = observer(({ application
       )}
     </div>
   )
-})
+}
 
-ContentListView.displayName = 'ContentListView'
+export default observer(ContentListView)

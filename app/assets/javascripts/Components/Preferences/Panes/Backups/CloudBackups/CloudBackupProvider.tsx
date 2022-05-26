@@ -16,9 +16,9 @@ import {
   OneDriveBackupFrequency,
 } from '@standardnotes/snjs'
 import { WebApplication } from '@/UIModels/Application'
-import { Button } from '@/Components/Button/Button'
+import Button from '@/Components/Button/Button'
 import { isDev, openInNewTab } from '@/Utils'
-import { Subtitle } from '@/Components/Preferences/PreferencesComponents'
+import { Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
 import { KeyboardKey } from '@/Services/IOService'
 
 type Props = {
@@ -27,11 +27,7 @@ type Props = {
   isEntitledToCloudBackups: boolean
 }
 
-export const CloudBackupProvider: FunctionComponent<Props> = ({
-  application,
-  providerName,
-  isEntitledToCloudBackups,
-}) => {
+const CloudBackupProvider: FunctionComponent<Props> = ({ application, providerName, isEntitledToCloudBackups }) => {
   const [authBegan, setAuthBegan] = useState(false)
   const [successfullyInstalled, setSuccessfullyInstalled] = useState(false)
   const [backupFrequency, setBackupFrequency] = useState<string | undefined>(undefined)
@@ -226,3 +222,5 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
     </div>
   )
 }
+
+export default CloudBackupProvider

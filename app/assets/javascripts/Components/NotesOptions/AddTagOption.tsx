@@ -3,14 +3,14 @@ import { calculateSubmenuStyle, SubmenuStyle } from '@/Utils/CalculateSubmenuSty
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
-import { Icon } from '@/Components/Icon/Icon'
+import Icon from '@/Components/Icon/Icon'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 
 type Props = {
   appState: AppState
 }
 
-export const AddTagOption: FunctionComponent<Props> = observer(({ appState }) => {
+const AddTagOption: FunctionComponent<Props> = ({ appState }) => {
   const menuContainerRef = useRef<HTMLDivElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
@@ -107,6 +107,6 @@ export const AddTagOption: FunctionComponent<Props> = observer(({ appState }) =>
       </Disclosure>
     </div>
   )
-})
+}
 
-AddTagOption.displayName = 'AddTagOption'
+export default observer(AddTagOption)

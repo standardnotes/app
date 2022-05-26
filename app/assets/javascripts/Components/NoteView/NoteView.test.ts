@@ -12,7 +12,7 @@ import {
   SNNote,
 } from '@standardnotes/snjs'
 
-import { NoteView } from './NoteView'
+import NoteView from './NoteView'
 
 describe('NoteView', () => {
   let noteViewController: NoteViewController

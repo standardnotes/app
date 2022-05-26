@@ -1,20 +1,19 @@
-import { PreferencesGroup, PreferencesSegment, Text, Title } from '@/Components/Preferences/PreferencesComponents'
-import { Button } from '@/Components/Button/Button'
-import { SyncQueueStrategy, dateToLocalizedString } from '@standardnotes/snjs'
+import { Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
+import Button from '@/Components/Button/Button'
+import { SyncQueueStrategy } from '@standardnotes/snjs'
 import { STRING_GENERIC_SYNC_ERROR } from '@/Strings'
 import { observer } from 'mobx-react-lite'
 import { WebApplication } from '@/UIModels/Application'
 import { FunctionComponent, useState } from 'react'
+import { formatLastSyncDate } from '@/Utils/FormatLastSyncDate'
+import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
 type Props = {
   application: WebApplication
 }
 
-export const formatLastSyncDate = (lastUpdatedDate: Date) => {
-  return dateToLocalizedString(lastUpdatedDate)
-}
-
-export const Sync: FunctionComponent<Props> = observer(({ application }: Props) => {
+const Sync: FunctionComponent<Props> = ({ application }: Props) => {
   const [isSyncingInProgress, setIsSyncingInProgress] = useState(false)
   const [lastSyncDate, setLastSyncDate] = useState(formatLastSyncDate(application.sync.getLastSyncDate() as Date))
 
@@ -54,6 +53,6 @@ export const Sync: FunctionComponent<Props> = observer(({ application }: Props) 
       </PreferencesSegment>
     </PreferencesGroup>
   )
-})
+}
 
-Sync.displayName = 'Sync'
+export default observer(Sync)

@@ -15,21 +15,17 @@ import { ChangeEventHandler, MouseEventHandler, useCallback, useEffect, useRef, 
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
-import {
-  PreferencesGroup,
-  PreferencesSegment,
-  Title,
-  Text,
-  Subtitle,
-} from '@/Components/Preferences/PreferencesComponents'
-import { Button } from '@/Components/Button/Button'
+import { Title, Text, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
+import Button from '@/Components/Button/Button'
+import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
 type Props = {
   application: WebApplication
   appState: AppState
 }
 
-export const DataBackups = observer(({ application, appState }: Props) => {
+const DataBackups = ({ application, appState }: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isImportDataLoading, setIsImportDataLoading] = useState(false)
   const {
@@ -193,6 +189,6 @@ export const DataBackups = observer(({ application, appState }: Props) => {
       </PreferencesGroup>
     </>
   )
-})
+}
 
-DataBackups.displayName = 'DataBackups'
+export default observer(DataBackups)

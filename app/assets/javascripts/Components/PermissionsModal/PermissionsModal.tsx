@@ -10,7 +10,7 @@ interface Props {
   permissionsString: string
 }
 
-export class PermissionsModal extends Component<Props> {
+class PermissionsModal extends Component<Props> {
   accept = () => {
     this.props.callback(true)
     this.props.dismiss()
@@ -70,3 +70,5 @@ export class PermissionsModal extends Component<Props> {
     )
   }
 }
+
+export default PermissionsModal

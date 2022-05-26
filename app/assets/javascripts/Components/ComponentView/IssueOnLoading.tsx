@@ -5,7 +5,7 @@ type Props = {
   reloadIframe: () => void
 }
 
-export const IssueOnLoading: FunctionComponent<Props> = ({ componentName, reloadIframe }) => {
+const IssueOnLoading: FunctionComponent<Props> = ({ componentName, reloadIframe }) => {
   return (
     <div className={'sn-component'}>
       <div className={'sk-app-bar no-edges no-top-edge dynamic-height'}>
@@ -23,3 +23,5 @@ export const IssueOnLoading: FunctionComponent<Props> = ({ componentName, reload
     </div>
   )
 }
+
+export default IssueOnLoading

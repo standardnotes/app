@@ -1,6 +1,6 @@
 import { Dispatch, FunctionComponent, Ref, SetStateAction, forwardRef, useState } from 'react'
-import { DecoratedInput } from './DecoratedInput'
-import { IconButton } from '@/Components/Button/IconButton'
+import DecoratedInput from './DecoratedInput'
+import IconButton from '@/Components/Button/IconButton'
 import { DecoratedInputProps } from './DecoratedInputProps'
 
 const Toggle: FunctionComponent<{
@@ -20,7 +20,7 @@ const Toggle: FunctionComponent<{
 /**
  * Password input that has a toggle to show/hide password and can be decorated on the left and right side
  */
-export const DecoratedPasswordInput = forwardRef((props: DecoratedInputProps, ref: Ref<HTMLInputElement>) => {
+const DecoratedPasswordInput = forwardRef((props: DecoratedInputProps, ref: Ref<HTMLInputElement>) => {
   const [isToggled, setIsToggled] = useState(false)
 
   const rightSideDecorations = props.right ? [...props.right] : []
@@ -34,3 +34,5 @@ export const DecoratedPasswordInput = forwardRef((props: DecoratedInputProps, re
     />
   )
 })
+
+export default DecoratedPasswordInput

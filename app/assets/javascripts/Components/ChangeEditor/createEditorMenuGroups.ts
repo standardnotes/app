@@ -8,7 +8,8 @@ import {
   GetFeatures,
   NoteType,
 } from '@standardnotes/snjs'
-import { EditorMenuItem, EditorMenuGroup } from '@/Components/NotesOptions/ChangeEditorOption'
+import { EditorMenuGroup } from '@/Components/NotesOptions/EditorMenuGroup'
+import { EditorMenuItem } from '@/Components/NotesOptions/EditorMenuItem'
 import { PLAIN_EDITOR_NAME } from '@/Constants'
 
 type EditorGroup = NoteType | 'plain' | 'others'

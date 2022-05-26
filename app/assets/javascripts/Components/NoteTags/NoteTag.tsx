@@ -1,4 +1,4 @@
-import { Icon } from '@/Components/Icon/Icon'
+import Icon from '@/Components/Icon/Icon'
 import {
   FocusEventHandler,
   KeyboardEventHandler,
@@ -17,7 +17,7 @@ type Props = {
   tag: SNTag
 }
 
-export const NoteTag = observer(({ appState, tag }: Props) => {
+const NoteTag = ({ appState, tag }: Props) => {
   const noteTags = appState.noteTags
 
   const { autocompleteInputFocused, focusedTagUuid, tags } = noteTags
@@ -143,6 +143,6 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
       )}
     </button>
   )
-})
+}
 
-NoteTag.displayName = 'NoteTag'
+export default observer(NoteTag)

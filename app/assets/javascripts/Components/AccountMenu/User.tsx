@@ -8,7 +8,7 @@ type Props = {
   application: WebApplication
 }
 
-const User = observer(({ appState, application }: Props) => {
+const User = ({ appState, application }: Props) => {
   const { server } = appState.accountMenu
   const user = application.getUser() as UserType
 
@@ -39,8 +39,6 @@ const User = observer(({ appState, application }: Props) => {
       <div className="sk-panel-row" />
     </div>
   )
-})
+}
 
-User.displayName = 'User'
-
-export default User
+export default observer(User)

@@ -7,14 +7,14 @@ import { FunctionComponent, useCallback } from 'react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { TouchBackend } from 'react-dnd-touch-backend'
-import { RootTagDropZone } from './RootTagDropZone'
+import RootTagDropZone from './RootTagDropZone'
 import { TagsListItem } from './TagsListItem'
 
 type Props = {
   appState: AppState
 }
 
-export const TagsList: FunctionComponent<Props> = observer(({ appState }: Props) => {
+const TagsList: FunctionComponent<Props> = ({ appState }: Props) => {
   if (isStateDealloced(appState)) {
     return null
   }
@@ -67,6 +67,6 @@ export const TagsList: FunctionComponent<Props> = observer(({ appState }: Props)
       )}
     </DndProvider>
   )
-})
+}
 
-TagsList.displayName = 'TagsList'
+export default observer(TagsList)

@@ -1,18 +1,18 @@
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { FunctionComponent } from 'react'
-import { PreferencesPane } from '@/Components/Preferences/PreferencesComponents'
-import { CloudLink } from './CloudBackups/CloudBackups'
-import { DataBackups } from './DataBackups'
-import { EmailBackups } from './EmailBackups'
-import { FileBackups } from './Files/FileBackups'
+import PreferencesPane from '@/Components/Preferences/PreferencesComponents/PreferencesPane'
+import CloudLink from './CloudBackups/CloudBackups'
+import DataBackups from './DataBackups'
+import EmailBackups from './EmailBackups'
+import FileBackups from './Files/FileBackups'
 
-interface Props {
+type Props = {
   appState: AppState
   application: WebApplication
 }
 
-export const Backups: FunctionComponent<Props> = ({ application, appState }) => {
+const Backups: FunctionComponent<Props> = ({ application, appState }) => {
   return (
     <PreferencesPane>
       <DataBackups application={application} appState={appState} />
@@ -22,3 +22,5 @@ export const Backups: FunctionComponent<Props> = ({ application, appState }) => 
     </PreferencesPane>
   )
 }
+
+export default Backups

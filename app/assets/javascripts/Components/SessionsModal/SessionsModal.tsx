@@ -201,15 +201,15 @@ const SessionsModalContent: FunctionComponent<{
   )
 }
 
-export const SessionsModal: FunctionComponent<{
+const SessionsModal: FunctionComponent<{
   appState: AppState
   application: WebApplication
-}> = observer(({ appState, application }) => {
+}> = ({ appState, application }) => {
   if (appState.isSessionsModalVisible) {
     return <SessionsModalContent application={application} appState={appState} />
   } else {
     return null
   }
-})
+}
 
-SessionsModal.displayName = 'SessionsModal'
+export default observer(SessionsModal)

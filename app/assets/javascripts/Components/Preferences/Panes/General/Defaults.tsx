@@ -1,17 +1,14 @@
-import { Dropdown, DropdownItem } from '@/Components/Dropdown/Dropdown'
+import Dropdown from '@/Components/Dropdown/Dropdown'
+import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
 import { FeatureIdentifier, PrefKey, ComponentArea, ComponentMutator, SNComponent } from '@standardnotes/snjs'
-import {
-  PreferencesGroup,
-  PreferencesSegment,
-  Subtitle,
-  Text,
-  Title,
-} from '@/Components/Preferences/PreferencesComponents'
+import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/UIModels/Application'
 import { FunctionComponent, useEffect, useState } from 'react'
-import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
-import { Switch } from '@/Components/Switch/Switch'
+import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
+import Switch from '@/Components/Switch/Switch'
 import { PLAIN_EDITOR_NAME } from '@/Constants'
+import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
 type Props = {
   application: WebApplication
@@ -46,7 +43,7 @@ const getDefaultEditor = (application: WebApplication) => {
   return application.componentManager.componentsForArea(ComponentArea.Editor).filter((e) => e.isDefaultEditor())[0]
 }
 
-export const Defaults: FunctionComponent<Props> = ({ application }) => {
+const Defaults: FunctionComponent<Props> = ({ application }) => {
   const [editorItems, setEditorItems] = useState<DropdownItem[]>([])
   const [defaultEditorValue, setDefaultEditorValue] = useState(
     () => getDefaultEditor(application)?.package_info?.identifier || 'plain-editor',
@@ -151,3 +148,5 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
     </PreferencesGroup>
   )
 }
+
+export default Defaults

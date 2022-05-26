@@ -9,7 +9,7 @@ type Props = {
   application: WebApplication
 }
 
-export const SearchOptions = observer(({ appState }: Props) => {
+const SearchOptions = ({ appState }: Props) => {
   const { searchOptions } = appState
 
   const { includeProtectedContents, includeArchived, includeTrashed } = searchOptions
@@ -31,6 +31,6 @@ export const SearchOptions = observer(({ appState }: Props) => {
       <Bubble label="Trashed" selected={includeTrashed} onSelect={searchOptions.toggleIncludeTrashed} />
     </div>
   )
-})
+}
 
-SearchOptions.displayName = 'SearchOptions'
+export default observer(SearchOptions)

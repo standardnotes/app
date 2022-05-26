@@ -3,7 +3,7 @@ import { calculateSubmenuStyle, SubmenuStyle } from '@/Utils/CalculateSubmenuSty
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { Action, ListedAccount, SNNote } from '@standardnotes/snjs'
 import { Fragment, FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
-import { Icon } from '@/Components/Icon/Icon'
+import Icon from '@/Components/Icon/Icon'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 
 type Props = {
@@ -205,7 +205,7 @@ const ListedActionsMenu: FunctionComponent<ListedActionsMenuProps> = ({ applicat
   )
 }
 
-export const ListedActionsOption: FunctionComponent<Props> = ({ application, note }) => {
+const ListedActionsOption: FunctionComponent<Props> = ({ application, note }) => {
   const menuContainerRef = useRef<HTMLDivElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
@@ -272,3 +272,5 @@ export const ListedActionsOption: FunctionComponent<Props> = ({ application, not
     </div>
   )
 }
+
+export default ListedActionsOption

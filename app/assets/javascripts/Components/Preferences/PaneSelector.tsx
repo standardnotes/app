@@ -1,0 +1,60 @@
+import { FunctionComponent } from 'react'
+import { observer } from 'mobx-react-lite'
+import { PreferencesMenu } from './PreferencesMenu'
+import Backups from '@/Components/Preferences/Panes/Backups/Backups'
+import Appearance from './Panes/Appearance'
+import General from './Panes/General/General'
+import AccountPreferences from './Panes/Account/AccountPreferences'
+import Security from './Panes/Security/Security'
+import Listed from './Panes/Listed/Listed'
+import HelpAndFeedback from './Panes/HelpFeedback'
+import { PreferencesProps } from './PreferencesProps'
+
+const PaneSelector: FunctionComponent<PreferencesProps & { menu: PreferencesMenu }> = ({
+  menu,
+  appState,
+  application,
+  mfaProvider,
+  userProvider,
+}) => {
+  switch (menu.selectedPaneId) {
+    case 'general':
+      return (
+        <General
+          appState={appState}
+          application={application}
+          extensionsLatestVersions={menu.extensionsLatestVersions}
+        />
+      )
+    case 'account':
+      return <AccountPreferences application={application} appState={appState} />
+    case 'appearance':
+      return <Appearance application={application} />
+    case 'security':
+      return (
+        <Security mfaProvider={mfaProvider} userProvider={userProvider} appState={appState} application={application} />
+      )
+    case 'backups':
+      return <Backups application={application} appState={appState} />
+    case 'listed':
+      return <Listed application={application} />
+    case 'shortcuts':
+      return null
+    case 'accessibility':
+      return null
+    case 'get-free-month':
+      return null
+    case 'help-feedback':
+      return <HelpAndFeedback />
+    default:
+      return (
+        <General
+          appState={appState}
+          application={application}
+          extensionsLatestVersions={menu.extensionsLatestVersions}
+        />
+      )
+  }
+}
+
+export default observer(PaneSelector)

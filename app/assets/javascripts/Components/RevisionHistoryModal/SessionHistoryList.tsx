@@ -11,7 +11,7 @@ import {
   useState,
 } from 'react'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
-import { HistoryListItem } from './HistoryListItem'
+import HistoryListItem from './HistoryListItem'
 import { LegacyHistoryEntry, ListGroup } from './utils'
 
 type Props = {
@@ -20,7 +20,7 @@ type Props = {
   setSelectedRemoteEntry: Dispatch<SetStateAction<RevisionListEntry | undefined>>
 }
 
-export const SessionHistoryList: FunctionComponent<Props> = ({
+const SessionHistoryList: FunctionComponent<Props> = ({
   sessionHistory,
   setSelectedRevision,
   setSelectedRemoteEntry,
@@ -92,3 +92,5 @@ export const SessionHistoryList: FunctionComponent<Props> = ({
     </div>
   )
 }
+
+export default SessionHistoryList

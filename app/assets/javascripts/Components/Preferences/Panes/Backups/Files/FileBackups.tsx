@@ -1,25 +1,21 @@
 import { WebApplication } from '@/UIModels/Application'
 import { observer } from 'mobx-react-lite'
-import {
-  PreferencesGroup,
-  PreferencesSegment,
-  Title,
-  Text,
-  Subtitle,
-} from '@/Components/Preferences/PreferencesComponents'
+import { Title, Text, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Button } from '@/Components/Button/Button'
-import { Switch } from '@/Components/Switch/Switch'
-import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
-import { Icon } from '@/Components/Icon/Icon'
-import { BackupsDropZone } from './BackupsDropZone'
-import { EncryptionStatusItem } from '../../Security/EncryptionStatusItem'
+import Button from '@/Components/Button/Button'
+import Switch from '@/Components/Switch/Switch'
+import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
+import Icon from '@/Components/Icon/Icon'
+import BackupsDropZone from './BackupsDropZone'
+import EncryptionStatusItem from '../../Security/EncryptionStatusItem'
+import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
+import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 
 type Props = {
   application: WebApplication
 }
 
-export const FileBackups = observer(({ application }: Props) => {
+const FileBackups = ({ application }: Props) => {
   const [backupsEnabled, setBackupsEnabled] = useState(false)
   const [backupsLocation, setBackupsLocation] = useState('')
   const backupsService = useMemo(() => application.fileBackups, [application])
@@ -134,6 +130,6 @@ export const FileBackups = observer(({ application }: Props) => {
       </PreferencesGroup>
     </>
   )
-})
+}
 
-FileBackups.displayName = 'FileBackups'
+export default observer(FileBackups)

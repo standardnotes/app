@@ -4,7 +4,7 @@ type Props = {
   componentName: string
 }
 
-export const UrlMissing: FunctionComponent<Props> = ({ componentName }) => {
+const UrlMissing: FunctionComponent<Props> = ({ componentName }) => {
   return (
     <div className={'sn-component'}>
       <div className={'sk-panel static'}>
@@ -20,3 +20,5 @@ export const UrlMissing: FunctionComponent<Props> = ({ componentName }) => {
     </div>
   )
 }
+
+export default UrlMissing

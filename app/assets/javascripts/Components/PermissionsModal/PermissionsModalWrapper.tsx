@@ -1,13 +1,13 @@
 import { WebApplication } from '@/UIModels/Application'
 import { ApplicationEvent, PermissionDialog } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
-import { PermissionsModal } from '../PermissionsModal/PermissionsModal'
+import PermissionsModal from './PermissionsModal'
 
 type Props = {
   application: WebApplication
 }
 
-export const PermissionsModalWrapper: FunctionComponent<Props> = ({ application }) => {
+const PermissionsModalWrapper: FunctionComponent<Props> = ({ application }) => {
   const [dialog, setDialog] = useState<PermissionDialog>()
 
   const presentPermissionsDialog = useCallback((permissionDialog: PermissionDialog) => {
@@ -52,3 +52,5 @@ export const PermissionsModalWrapper: FunctionComponent<Props> = ({ application 
     />
   ) : null
 }
+
+export default PermissionsModalWrapper

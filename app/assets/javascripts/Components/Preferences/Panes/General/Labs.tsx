@@ -1,16 +1,12 @@
-import { Switch } from '@/Components/Switch/Switch'
-import {
-  PreferencesGroup,
-  PreferencesSegment,
-  Subtitle,
-  Text,
-  Title,
-} from '@/Components/Preferences/PreferencesComponents'
+import Switch from '@/Components/Switch/Switch'
+import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/UIModels/Application'
 import { FeatureIdentifier, FeatureStatus, FindNativeFeature } from '@standardnotes/snjs'
 import { Fragment, FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
-import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
+import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
+import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
 type ExperimentalFeatureItem = {
   identifier: FeatureIdentifier
@@ -24,7 +20,7 @@ type Props = {
   application: WebApplication
 }
 
-export const LabsPane: FunctionComponent<Props> = ({ application }) => {
+const LabsPane: FunctionComponent<Props> = ({ application }) => {
   const [experimentalFeatures, setExperimentalFeatures] = useState<ExperimentalFeatureItem[]>([])
 
   const reloadExperimentalFeatures = useCallback(() => {
@@ -90,3 +86,5 @@ export const LabsPane: FunctionComponent<Props> = ({ application }) => {
     </PreferencesGroup>
   )
 }
+
+export default LabsPane

@@ -5,32 +5,32 @@ import { ApplicationEvent, Challenge, removeFromArray } from '@standardnotes/snj
 import { PANEL_NAME_NOTES, PANEL_NAME_NAVIGATION } from '@/Constants'
 import { alertDialog } from '@/Services/AlertService'
 import { WebApplication } from '@/UIModels/Application'
-import { Navigation } from '@/Components/Navigation/Navigation'
-import { NoteGroupView } from '@/Components/NoteGroupView/NoteGroupView'
-import { Footer } from '@/Components/Footer/Footer'
-import { SessionsModal } from '@/Components/SessionsModal/SessionsModal'
-import { PreferencesViewWrapper } from '@/Components/Preferences/PreferencesViewWrapper'
-import { ChallengeModal } from '@/Components/ChallengeModal/ChallengeModal'
-import { NotesContextMenu } from '@/Components/NotesContextMenu/NotesContextMenu'
-import { PurchaseFlowWrapper } from '@/Components/PurchaseFlow/PurchaseFlowWrapper'
+import Navigation from '@/Components/Navigation/Navigation'
+import NoteGroupView from '@/Components/NoteGroupView/NoteGroupView'
+import Footer from '@/Components/Footer/Footer'
+import SessionsModal from '@/Components/SessionsModal/SessionsModal'
+import PreferencesViewWrapper from '@/Components/Preferences/PreferencesViewWrapper'
+import ChallengeModal from '@/Components/ChallengeModal/ChallengeModal'
+import NotesContextMenu from '@/Components/NotesContextMenu/NotesContextMenu'
+import PurchaseFlowWrapper from '@/Components/PurchaseFlow/PurchaseFlowWrapper'
 import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
-import { RevisionHistoryModalWrapper } from '@/Components/RevisionHistoryModal/RevisionHistoryModalWrapper'
-import { PremiumModalProvider } from '@/Hooks/usePremiumModal'
-import { ConfirmSignoutContainer } from '@/Components/ConfirmSignoutModal/ConfirmSignoutModal'
-import { TagsContextMenuWrapper } from '@/Components/Tags/TagContextMenu'
+import RevisionHistoryModalWrapper from '@/Components/RevisionHistoryModal/RevisionHistoryModalWrapper'
+import PremiumModalProvider from '@/Hooks/usePremiumModal'
+import ConfirmSignoutContainer from '@/Components/ConfirmSignoutModal/ConfirmSignoutModal'
+import TagsContextMenuWrapper from '@/Components/Tags/TagContextMenu'
 import { ToastContainer } from '@standardnotes/stylekit'
-import { FilePreviewModalWrapper } from '@/Components/Files/FilePreviewModal'
+import FilePreviewModalWrapper from '@/Components/Files/FilePreviewModal'
 import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
-import { ContentListView } from '@/Components/ContentListView/ContentListView'
-import { FileContextMenuWrapper } from '@/Components/FileContextMenu/FileContextMenu'
-import { PermissionsModalWrapper } from '../PermissionsModalWrapper/PermissionsModalWrapper'
+import ContentListView from '@/Components/ContentListView/ContentListView'
+import FileContextMenuWrapper from '@/Components/FileContextMenu/FileContextMenu'
+import PermissionsModalWrapper from '@/Components/PermissionsModal/PermissionsModalWrapper'
 
 type Props = {
   application: WebApplication
   mainApplicationGroup: ApplicationGroup
 }
 
-export const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicationGroup }) => {
+const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicationGroup }) => {
   const platformString = getPlatformString()
   const [appClass, setAppClass] = useState('')
   const [launched, setLaunched] = useState(false)
@@ -221,3 +221,5 @@ export const ApplicationView: FunctionComponent<Props> = ({ application, mainApp
     </PremiumModalProvider>
   )
 }
+
+export default ApplicationView

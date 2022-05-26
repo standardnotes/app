@@ -10,8 +10,8 @@ import {
 import { Disclosure, DisclosurePanel } from '@reach/disclosure'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { AppState } from '@/UIModels/AppState'
-import { AutocompleteTagResult } from './AutocompleteTagResult'
-import { AutocompleteTagHint } from './AutocompleteTagHint'
+import AutocompleteTagResult from './AutocompleteTagResult'
+import AutocompleteTagHint from './AutocompleteTagHint'
 import { observer } from 'mobx-react-lite'
 import { SNTag } from '@standardnotes/snjs'
 
@@ -19,7 +19,7 @@ type Props = {
   appState: AppState
 }
 
-export const AutocompleteTagInput = observer(({ appState }: Props) => {
+const AutocompleteTagInput = ({ appState }: Props) => {
   const {
     autocompleteInputFocused,
     autocompleteSearchQuery,
@@ -147,6 +147,6 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
       </form>
     </div>
   )
-})
+}
 
-AutocompleteTagInput.displayName = 'AutocompleteTagInput'
+export default observer(AutocompleteTagInput)

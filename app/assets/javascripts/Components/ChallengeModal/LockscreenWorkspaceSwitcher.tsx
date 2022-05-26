@@ -2,9 +2,9 @@ import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
 import { AppState } from '@/UIModels/AppState'
 import { calculateSubmenuStyle, SubmenuStyle } from '@/Utils/CalculateSubmenuStyle'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
-import { WorkspaceSwitcherMenu } from '@/Components/AccountMenu/WorkspaceSwitcher/WorkspaceSwitcherMenu'
-import { Button } from '@/Components/Button/Button'
-import { Icon } from '@/Components/Icon/Icon'
+import WorkspaceSwitcherMenu from '@/Components/AccountMenu/WorkspaceSwitcher/WorkspaceSwitcherMenu'
+import Button from '@/Components/Button/Button'
+import Icon from '@/Components/Icon/Icon'
 import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
   appState: AppState
 }
 
-export const LockscreenWorkspaceSwitcher: FunctionComponent<Props> = ({ mainApplicationGroup, appState }) => {
+const LockscreenWorkspaceSwitcher: FunctionComponent<Props> = ({ mainApplicationGroup, appState }) => {
   const buttonRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -64,3 +64,5 @@ export const LockscreenWorkspaceSwitcher: FunctionComponent<Props> = ({ mainAppl
     </div>
   )
 }
+
+export default LockscreenWorkspaceSwitcher

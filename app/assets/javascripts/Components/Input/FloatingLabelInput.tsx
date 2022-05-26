@@ -13,7 +13,7 @@ type Props = {
   isInvalid?: boolean
 }
 
-export const FloatingLabelInput = forwardRef(
+const FloatingLabelInput = forwardRef(
   (
     {
       id,
@@ -68,3 +68,5 @@ export const FloatingLabelInput = forwardRef(
     )
   },
 )
+
+export default FloatingLabelInput

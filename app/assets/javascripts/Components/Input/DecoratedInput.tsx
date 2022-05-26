@@ -16,7 +16,7 @@ const getClassNames = (hasLeftDecorations: boolean, hasRightDecorations: boolean
 /**
  * Input that can be decorated on the left and right side
  */
-export const DecoratedInput = forwardRef(
+const DecoratedInput = forwardRef(
   (
     {
       type = 'text',
@@ -75,4 +75,4 @@ export const DecoratedInput = forwardRef(
   },
 )
 
-DecoratedInput.displayName = 'DecoratedInput'
+export default DecoratedInput

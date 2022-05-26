@@ -1,25 +1,21 @@
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
 import { Fragment, FunctionComponent, useState } from 'react'
-import {
-  PreferencesGroup,
-  PreferencesSegment,
-  Text,
-  Title,
-  Subtitle,
-} from '@/Components/Preferences/PreferencesComponents'
+import { Text, Title, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
 import {
   ButtonType,
   ClientDisplayableError,
   DisplayStringForContentType,
   EncryptedItemInterface,
 } from '@standardnotes/snjs'
-import { Button } from '@/Components/Button/Button'
-import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
+import Button from '@/Components/Button/Button'
+import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
+import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 
 type Props = { appState: AppState }
 
-export const ErroredItems: FunctionComponent<Props> = observer(({ appState }: Props) => {
+const ErroredItems: FunctionComponent<Props> = ({ appState }: Props) => {
   const app = appState.application
 
   const [erroredItems, setErroredItems] = useState(app.items.invalidItems)
@@ -139,6 +135,6 @@ export const ErroredItems: FunctionComponent<Props> = observer(({ appState }: Pr
       </PreferencesSegment>
     </PreferencesGroup>
   )
-})
+}
 
-ErroredItems.displayName = 'ErroredItems'
+export default observer(ErroredItems)

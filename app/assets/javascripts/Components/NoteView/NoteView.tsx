@@ -19,16 +19,16 @@ import { KeyboardModifier, KeyboardKey } from '@/Services/IOService'
 import { STRING_DELETE_PLACEHOLDER_ATTEMPT, STRING_DELETE_LOCKED_ATTEMPT, StringDeleteNote } from '@/Strings'
 import { confirmDialog } from '@/Services/AlertService'
 import { PureComponent } from '@/Components/Abstract/PureComponent'
-import { ProtectedNoteOverlay } from '@/Components/ProtectedNoteOverlay/ProtectedNoteOverlay'
-import { PinNoteButton } from '@/Components/PinNoteButton/PinNoteButton'
-import { NotesOptionsPanel } from '@/Components/NotesOptions/NotesOptionsPanel'
-import { NoteTagsContainer } from '@/Components/NoteTags/NoteTagsContainer'
-import { ComponentView } from '@/Components/ComponentView/ComponentView'
-import { PanelSide, PanelResizer, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
+import ProtectedNoteOverlay from '@/Components/ProtectedNoteOverlay/ProtectedNoteOverlay'
+import PinNoteButton from '@/Components/PinNoteButton/PinNoteButton'
+import NotesOptionsPanel from '@/Components/NotesOptions/NotesOptionsPanel'
+import NoteTagsContainer from '@/Components/NoteTags/NoteTagsContainer'
+import ComponentView from '@/Components/ComponentView/ComponentView'
+import PanelResizer, { PanelSide, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
 import { ElementIds } from '@/ElementIDs'
-import { ChangeEditorButton } from '@/Components/ChangeEditor/ChangeEditorButton'
-import { AttachedFilesButton } from '@/Components/AttachedFilesPopover/AttachedFilesButton'
-import { EditingDisabledBanner } from './EditingDisabledBanner'
+import ChangeEditorButton from '@/Components/ChangeEditor/ChangeEditorButton'
+import AttachedFilesButton from '@/Components/AttachedFilesPopover/AttachedFilesButton'
+import EditingDisabledBanner from './EditingDisabledBanner'
 import {
   transactionForAssociateComponentWithCurrentNote,
   transactionForDisassociateComponentWithCurrentNote,
@@ -78,7 +78,7 @@ type State = {
   rightResizerOffset: number
 }
 
-export class NoteView extends PureComponent<NoteViewProps, State> {
+class NoteView extends PureComponent<NoteViewProps, State> {
   readonly controller!: NoteViewController
 
   private statusTimeout?: NodeJS.Timeout
@@ -1080,3 +1080,5 @@ export class NoteView extends PureComponent<NoteViewProps, State> {
     )
   }
 }
+
+export default NoteView

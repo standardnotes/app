@@ -1,14 +1,10 @@
-import { forwardRef, FunctionComponent, MouseEventHandler, ReactNode, Ref } from 'react'
-import { Icon } from '@/Components/Icon/Icon'
-import { Switch, SwitchProps } from '@/Components/Switch/Switch'
+import { forwardRef, MouseEventHandler, ReactNode, Ref } from 'react'
+import Icon from '@/Components/Icon/Icon'
+import Switch from '@/Components/Switch/Switch'
+import { SwitchProps } from '@/Components/Switch/SwitchProps'
 import { IconType } from '@standardnotes/snjs'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
-
-export enum MenuItemType {
-  IconButton,
-  RadioButton,
-  SwitchButton,
-}
+import { MenuItemType } from './MenuItemType'
 
 type MenuItemProps = {
   type: MenuItemType
@@ -23,7 +19,7 @@ type MenuItemProps = {
   tabIndex?: number
 }
 
-export const MenuItem = forwardRef(
+const MenuItem = forwardRef(
   (
     {
       children,
@@ -78,8 +74,4 @@ export const MenuItem = forwardRef(
   },
 )
 
-export const MenuItemSeparator: FunctionComponent = () => (
-  <li className="list-style-none" role="none">
-    <div role="separator" className="h-1px my-2 bg-border" />
-  </li>
-)
+export default MenuItem
