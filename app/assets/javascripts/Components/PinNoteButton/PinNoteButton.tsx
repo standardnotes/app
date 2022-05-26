@@ -3,7 +3,6 @@ import VisuallyHidden from '@reach/visually-hidden'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback } from 'react'
 import Icon from '@/Components/Icon/Icon'
-import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 
 type Props = {
   appState: AppState
@@ -12,10 +11,6 @@ type Props = {
 }
 
 const PinNoteButton: FunctionComponent<Props> = ({ appState, className = '', onClickPreprocessing }: Props) => {
-  if (isStateDealloced(appState)) {
-    return null
-  }
-
   const notes = appState.notes.selectedNotes
   const pinned = notes.some((note) => note.pinned)
 

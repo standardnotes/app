@@ -8,7 +8,6 @@ import { FunctionComponent, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import ChangeEditorMenu from './ChangeEditorMenu'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
-import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 
 type Props = {
   application: WebApplication
@@ -17,10 +16,6 @@ type Props = {
 }
 
 const ChangeEditorButton: FunctionComponent<Props> = ({ application, appState, onClickPreprocessing }: Props) => {
-  if (isStateDealloced(appState)) {
-    return null
-  }
-
   const note = appState.notes.firstSelectedNote
   const [isOpen, setIsOpen] = useState(false)
   const [isVisible, setIsVisible] = useState(false)

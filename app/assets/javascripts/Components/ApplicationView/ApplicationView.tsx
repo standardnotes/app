@@ -24,6 +24,7 @@ import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 import ContentListView from '@/Components/ContentListView/ContentListView'
 import FileContextMenuWrapper from '@/Components/FileContextMenu/FileContextMenu'
 import PermissionsModalWrapper from '@/Components/PermissionsModal/PermissionsModalWrapper'
+import DeallocateHandler from '../DeallocateHandler/DeallocateHandler'
 
 type Props = {
   application: WebApplication
@@ -190,7 +191,9 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
       <div className={platformString + ' main-ui-view sn-component'}>
         <div id="app" className={appClass + ' app app-column-container'}>
           <Navigation application={application} />
-          <ContentListView application={application} appState={appState} />
+          <DeallocateHandler appState={appState}>
+            <ContentListView application={application} appState={appState} />
+          </DeallocateHandler>
           <NoteGroupView application={application} />
         </div>
 

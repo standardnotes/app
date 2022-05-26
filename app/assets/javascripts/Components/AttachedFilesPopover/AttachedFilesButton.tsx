@@ -16,7 +16,6 @@ import AttachedFilesPopover from './AttachedFilesPopover'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { PopoverTabs } from './PopoverTabs'
 import { isHandlingFileDrag } from '@/Utils/DragTypeCheck'
-import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 
 type Props = {
   application: WebApplication
@@ -25,10 +24,6 @@ type Props = {
 }
 
 const AttachedFilesButton: FunctionComponent<Props> = ({ application, appState, onClickPreprocessing }: Props) => {
-  if (isStateDealloced(appState)) {
-    return null
-  }
-
   const premiumModal = usePremiumModal()
   const note: SNNote | undefined = appState.notes.firstSelectedNote
 

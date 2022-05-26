@@ -20,7 +20,6 @@ import SearchOptions from '@/Components/SearchOptions/SearchOptions'
 import PanelResizer, { PanelSide, ResizeFinishCallback, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
-import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 
 type Props = {
   application: WebApplication
@@ -28,10 +27,6 @@ type Props = {
 }
 
 const ContentListView: FunctionComponent<Props> = ({ application, appState }) => {
-  if (isStateDealloced(appState)) {
-    return null
-  }
-
   const itemsViewPanelRef = useRef<HTMLDivElement>(null)
   const displayOptionsMenuRef = useRef<HTMLDivElement>(null)
 

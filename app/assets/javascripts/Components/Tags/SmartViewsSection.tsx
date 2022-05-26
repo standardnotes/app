@@ -1,6 +1,7 @@
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
+import DeallocateHandler from '../DeallocateHandler/DeallocateHandler'
 import SmartViewsList from './SmartViewsList'
 
 type Props = {
@@ -10,7 +11,9 @@ type Props = {
 const SmartViewsSection: FunctionComponent<Props> = ({ appState }) => {
   return (
     <section>
-      <SmartViewsList appState={appState} />
+      <DeallocateHandler appState={appState}>
+        <SmartViewsList appState={appState} />
+      </DeallocateHandler>
     </section>
   )
 }
