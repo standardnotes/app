@@ -3,11 +3,11 @@ import { useCallback, useEffect, useMemo, useState, FunctionComponent } from 're
 import { Button } from '@/Components/Button/Button'
 import { FileBackupMetadataFile, FileBackupsConstantsV1, FileItem, FileHandleRead } from '@standardnotes/snjs'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
-import { EncryptionStatusItem } from '../../Security/Encryption'
 import { Icon } from '@/Components/Icon/Icon'
 import { StreamingFileApi } from '@standardnotes/filepicker'
 import { isHandlingBackupDrag } from '@/Utils/DragTypeCheck'
 import { WebApplication } from '@/UIModels/Application'
+import { EncryptionStatusItem } from '../../Security/EncryptionStatusItem'
 
 type Props = {
   application: WebApplication

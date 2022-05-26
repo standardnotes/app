@@ -11,9 +11,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Button } from '@/Components/Button/Button'
 import { Switch } from '@/Components/Switch/Switch'
 import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
-import { EncryptionStatusItem } from '../../Security/Encryption'
 import { Icon } from '@/Components/Icon/Icon'
 import { BackupsDropZone } from './BackupsDropZone'
+import { EncryptionStatusItem } from '../../Security/EncryptionStatusItem'
 
 type Props = {
   application: WebApplication
@@ -108,6 +108,7 @@ export const FileBackups = observer(({ application }: Props) => {
                   icon={[<Icon type="attachment-file" className="min-w-5 min-h-5" />]}
                   checkmark={false}
                 />
+
                 <div className="flex flex-row mt-5">
                   <Button
                     variant="normal"
