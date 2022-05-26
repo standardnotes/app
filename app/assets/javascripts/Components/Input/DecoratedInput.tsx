@@ -1,4 +1,4 @@
-import { forwardRef, Ref } from 'react'
+import { forwardRef, Fragment, Ref } from 'react'
 import { DecoratedInputProps } from './DecoratedInputProps'
 
 const getClassNames = (hasLeftDecorations: boolean, hasRightDecorations: boolean) => {
@@ -41,8 +41,8 @@ export const DecoratedInput = forwardRef(
       <div className={`${classNames.container} ${disabled ? classNames.disabled : ''} ${className}`}>
         {left && (
           <div className="flex items-center px-2 py-1.5">
-            {left.map((leftChild) => (
-              <>{leftChild}</>
+            {left.map((leftChild, index) => (
+              <Fragment key={index}>{leftChild}</Fragment>
             ))}
           </div>
         )}
@@ -64,7 +64,9 @@ export const DecoratedInput = forwardRef(
         {right && (
           <div className="flex items-center px-2 py-1.5">
             {right.map((rightChild, index) => (
-              <div className={index > 0 ? 'ml-3' : ''}>{rightChild}</div>
+              <div className={index > 0 ? 'ml-3' : ''} key={index}>
+                {rightChild}
+              </div>
             ))}
           </div>
         )}
@@ -72,3 +74,5 @@ export const DecoratedInput = forwardRef(
     )
   },
 )
+
+DecoratedInput.displayName = 'DecoratedInput'
