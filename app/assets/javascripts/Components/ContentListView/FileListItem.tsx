@@ -22,14 +22,13 @@ export const FileListItem: FunctionComponent<DisplayableListItemProps> = observe
     )
 
     const openContextMenu = useCallback(
-      (posX: number, posY: number) => {
-        void appState.contentListView.selectItemWithScrollHandling(item, {
-          userTriggered: true,
-          scrollIntoView: false,
-        })
-        openFileContextMenu(posX, posY)
+      async (posX: number, posY: number) => {
+        const { didSelect } = await appState.selectedItems.selectItem(item.uuid)
+        if (didSelect) {
+          openFileContextMenu(posX, posY)
+        }
       },
-      [appState.contentListView, item, openFileContextMenu],
+      [appState.selectedItems, item.uuid, openFileContextMenu],
     )
 
     const onClick = useCallback(() => {
@@ -55,7 +54,7 @@ export const FileListItem: FunctionComponent<DisplayableListItemProps> = observe
         onClick={onClick}
         onContextMenu={(event) => {
           event.preventDefault()
-          openContextMenu(event.clientX, event.clientY)
+          void openContextMenu(event.clientX, event.clientY)
         }}
       >
         {!hideIcon ? (

@@ -25,9 +25,11 @@ export const NoteListItem: FunctionComponent<DisplayableListItemProps> = observe
       appState.notes.setContextMenuOpen(true)
     }
 
-    const openContextMenu = (posX: number, posY: number) => {
-      void appState.selectedItems.selectItem(item.uuid, true)
-      openNoteContextMenu(posX, posY)
+    const openContextMenu = async (posX: number, posY: number) => {
+      const { didSelect } = await appState.selectedItems.selectItem(item.uuid, true)
+      if (didSelect) {
+        openNoteContextMenu(posX, posY)
+      }
     }
 
     return (
@@ -41,7 +43,7 @@ export const NoteListItem: FunctionComponent<DisplayableListItemProps> = observe
         }}
         onContextMenu={(event) => {
           event.preventDefault()
-          openContextMenu(event.clientX, event.clientY)
+          void openContextMenu(event.clientX, event.clientY)
         }}
       >
         {!hideIcon ? (
