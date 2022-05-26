@@ -3,6 +3,7 @@ import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, createContext, useCallback, useContext, ReactNode } from 'react'
 import PremiumFeaturesModal from '@/Components/PremiumFeaturesModal/PremiumFeaturesModal'
+import DeallocateHandler from '@/Components/DeallocateHandler/DeallocateHandler'
 
 type PremiumModalContextData = {
   activate: (featureName: string) => void
@@ -28,12 +29,7 @@ interface Props {
   children: ReactNode
 }
 
-const PremiumModalProvider: FunctionComponent<Props> = ({ application, appState, children }: Props) => {
-  const dealloced = !appState || appState.dealloced == undefined
-  if (dealloced) {
-    return null
-  }
-
+const PremiumModalProvider: FunctionComponent<Props> = observer(({ application, appState, children }: Props) => {
   const featureName = appState.features.premiumAlertFeatureName || ''
 
   const showModal = !!featureName
@@ -69,6 +65,16 @@ const PremiumModalProvider: FunctionComponent<Props> = ({ application, appState,
       <PremiumModalProvider_ value={{ activate }}>{children}</PremiumModalProvider_>
     </>
   )
+})
+
+PremiumModalProvider.displayName = 'PremiumModalProvider'
+
+const PremiumModalProviderWithDeallocateHandling: FunctionComponent<Props> = ({ application, appState, children }) => {
+  return (
+    <DeallocateHandler appState={appState}>
+      <PremiumModalProvider application={application} appState={appState} children={children} />
+    </DeallocateHandler>
+  )
 }
 
-export default observer(PremiumModalProvider)
+export default observer(PremiumModalProviderWithDeallocateHandling)
