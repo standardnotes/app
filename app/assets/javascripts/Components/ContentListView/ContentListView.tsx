@@ -15,7 +15,7 @@ import {
 } from 'react'
 import { ContentList } from '@/Components/ContentListView/ContentList'
 import { NotesListOptionsMenu } from '@/Components/ContentListView/NotesListOptionsMenu'
-import { NoAccountWarning } from '@/Components/NoAccountWarning/NoAccountWarning'
+import { NoAccountWarningWrapper } from '@/Components/NoAccountWarning/NoAccountWarning'
 import { SearchOptions } from '@/Components/SearchOptions/SearchOptions'
 import { PanelSide, ResizeFinishCallback, PanelResizer, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
@@ -198,7 +198,7 @@ export const ContentListView: FunctionComponent<Props> = observer(({ application
                 </div>
               )}
             </div>
-            <NoAccountWarning appState={appState} />
+            <NoAccountWarningWrapper appState={appState} />
           </div>
           <div id="items-menu-bar" className="sn-component" ref={displayOptionsMenuRef}>
             <div className="sk-app-bar no-edges">

@@ -5,12 +5,13 @@ import { MouseEventHandler, useCallback } from 'react'
 
 type Props = { appState: AppState }
 
-export const NoAccountWarning = observer(({ appState }: Props) => {
+export const NoAccountWarningWrapper = observer(({ appState }: Props) => {
   const canShow = appState.noAccountWarning.show
-  if (!canShow) {
-    return null
-  }
 
+  return canShow ? <NoAccountWarning appState={appState} /> : null
+})
+
+const NoAccountWarning = observer(({ appState }: Props) => {
   const showAccountMenu: MouseEventHandler = useCallback(
     (event) => {
       event.stopPropagation()
@@ -43,4 +44,5 @@ export const NoAccountWarning = observer(({ appState }: Props) => {
   )
 })
 
+NoAccountWarningWrapper.displayName = 'NoAccountWarningWrapper'
 NoAccountWarning.displayName = 'NoAccountWarning'
