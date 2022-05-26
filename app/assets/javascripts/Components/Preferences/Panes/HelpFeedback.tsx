@@ -8,6 +8,7 @@ import {
   PreferencesPane,
   PreferencesSegment,
 } from '@/Components/Preferences/PreferencesComponents'
+import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
 
 export const HelpAndFeedback: FunctionComponent = () => (
   <PreferencesPane>
@@ -26,6 +27,7 @@ export const HelpAndFeedback: FunctionComponent = () => (
           </a>
         </Text>
       </PreferencesSegment>
+      <HorizontalSeparator classes="my-4" />
       <PreferencesSegment>
         <Subtitle>Can I collaborate with others on a note?</Subtitle>
         <Text>
@@ -34,6 +36,7 @@ export const HelpAndFeedback: FunctionComponent = () => (
           conflicts, which may result in the duplication of notes.
         </Text>
       </PreferencesSegment>
+      <HorizontalSeparator classes="my-4" />
       <PreferencesSegment>
         <Subtitle>Can I use Standard Notes totally offline?</Subtitle>
         <Text>
@@ -44,6 +47,7 @@ export const HelpAndFeedback: FunctionComponent = () => (
           </a>
         </Text>
       </PreferencesSegment>
+      <HorizontalSeparator classes="my-4" />
       <PreferencesSegment>
         <Subtitle>Can’t find your question here?</Subtitle>
         <LinkButton className="mt-3" label="Open FAQ" link="https://standardnotes.com/help" />

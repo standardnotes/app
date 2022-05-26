@@ -122,7 +122,7 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
             />
           </div>
         </div>
-        <HorizontalSeparator classes="mt-5 mb-3" />
+        <HorizontalSeparator classes="my-4" />
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
             <Subtitle>Spellcheck</Subtitle>
@@ -133,7 +133,7 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
           </div>
           <Switch onChange={toggleSpellcheck} checked={spellcheck} />
         </div>
-        <HorizontalSeparator classes="mt-5 mb-3" />
+        <HorizontalSeparator classes="my-4" />
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
             <Subtitle>Add all parent tags when adding a nested tag to a note</Subtitle>

@@ -7,6 +7,7 @@ import {
   Text,
   Title,
 } from '@/Components/Preferences/PreferencesComponents'
+import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
@@ -36,6 +37,7 @@ const SignOutView: FunctionComponent<{
             <Button variant="normal" label="Manage sessions" onClick={() => appState.openSessionsModal()} />
           </div>
         </PreferencesSegment>
+        <HorizontalSeparator classes="my-4" />
         <PreferencesSegment>
           <Subtitle>This workspace</Subtitle>
           <Text>Remove all data related to the current workspace from the application.</Text>

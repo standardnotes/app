@@ -119,7 +119,7 @@ export const Appearance: FunctionComponent<Props> = observer(({ application }) =
               </div>
               <Switch onChange={toggleUseDeviceSettings} checked={useDeviceSettings} />
             </div>
-            <HorizontalSeparator classes="mt-5 mb-3" />
+            <HorizontalSeparator classes="my-4" />
             <div>
               <Subtitle>Automatic Light Theme</Subtitle>
               <Text>Theme to be used for system light mode:</Text>
@@ -134,7 +134,7 @@ export const Appearance: FunctionComponent<Props> = observer(({ application }) =
                 />
               </div>
             </div>
-            <HorizontalSeparator classes="mt-5 mb-3" />
+            <HorizontalSeparator classes="my-4" />
             <div>
               <Subtitle>Automatic Dark Theme</Subtitle>
               <Text>Theme to be used for system dark mode:</Text>

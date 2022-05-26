@@ -132,7 +132,7 @@ export const EmailBackups = observer(({ application }: Props) => {
               </a>
               .
             </Text>
-            <HorizontalSeparator classes="mt-3 mb-3" />
+            <HorizontalSeparator classes="my-4" />
           </>
         )}
         <div className={isEntitledToEmailBackups ? '' : 'faded cursor-default pointer-events-none'}>
@@ -157,7 +157,7 @@ export const EmailBackups = observer(({ application }: Props) => {
               />
             )}
           </div>
-          <HorizontalSeparator classes="mt-5 mb-4" />
+          <HorizontalSeparator classes="my-4" />
           <Subtitle>Email preferences</Subtitle>
           <div className="flex items-center justify-between">
             <div className="flex flex-col">

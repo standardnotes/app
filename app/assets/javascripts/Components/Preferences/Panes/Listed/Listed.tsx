@@ -12,6 +12,7 @@ import { ButtonType, ListedAccount } from '@standardnotes/snjs'
 import { useCallback, useEffect, useState } from 'react'
 import { ListedAccountItem } from './BlogItem'
 import { Button } from '@/Components/Button/Button'
+import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
 
 type Props = {
   application: WebApplication
@@ -92,17 +93,20 @@ export const Listed = observer(({ application }: Props) => {
           </Text>
         </PreferencesSegment>
         {application.getUser() && (
-          <PreferencesSegment>
-            <Subtitle>Get Started</Subtitle>
-            <Text>Create a free Listed author account to get started.</Text>
-            <Button
-              className="mt-3"
-              variant="normal"
-              disabled={requestingAccount}
-              label={requestingAccount ? 'Creating account...' : 'Create new author'}
-              onClick={registerNewAccount}
-            />
-          </PreferencesSegment>
+          <>
+            <HorizontalSeparator classes="my-4" />
+            <PreferencesSegment>
+              <Subtitle>Get Started</Subtitle>
+              <Text>Create a free Listed author account to get started.</Text>
+              <Button
+                className="mt-3"
+                variant="normal"
+                disabled={requestingAccount}
+                label={requestingAccount ? 'Creating account...' : 'Create new author'}
+                onClick={registerNewAccount}
+              />
+            </PreferencesSegment>
+          </>
         )}
       </PreferencesGroup>
     </PreferencesPane>

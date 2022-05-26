@@ -54,7 +54,7 @@ export const Credentials: FunctionComponent<Props> = observer(({ application }: 
               setIsChangeEmailDialogOpen(true)
             }}
           />
-          <HorizontalSeparator classes="mt-5 mb-3" />
+          <HorizontalSeparator classes="my-4" />
           <Subtitle>Password</Subtitle>
           <Text>
             Current password was set on <span className="font-bold">{passwordCreatedOn}</span>

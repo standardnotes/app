@@ -46,7 +46,7 @@ export const Tools: FunctionComponent<Props> = observer(({ application }: Props)
             </div>
             <Switch onChange={toggleMonospaceFont} checked={monospaceFont} />
           </div>
-          <HorizontalSeparator classes="mt-5 mb-3" />
+          <HorizontalSeparator classes="my-4" />
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
               <Subtitle>Margin Resizers</Subtitle>
