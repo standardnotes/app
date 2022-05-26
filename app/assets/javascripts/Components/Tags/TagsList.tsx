@@ -68,3 +68,5 @@ export const TagsList: FunctionComponent<Props> = observer(({ appState }: Props)
     </DndProvider>
   )
 })
+
+TagsList.displayName = 'TagsList'

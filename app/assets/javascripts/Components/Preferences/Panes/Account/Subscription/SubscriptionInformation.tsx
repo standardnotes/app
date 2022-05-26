@@ -81,3 +81,6 @@ export const SubscriptionInformation = observer(({ subscriptionState, applicatio
     </>
   )
 })
+
+StatusText.displayName = 'StatusText'
+SubscriptionInformation.displayName = 'SubscriptionInformation'

@@ -128,3 +128,5 @@ export const AccountMenu: FunctionComponent<Props> = observer(
     )
   },
 )
+
+AccountMenu.displayName = 'AccountMenu'

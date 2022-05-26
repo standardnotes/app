@@ -79,3 +79,5 @@ export const Navigation: FunctionComponent<Props> = observer(({ application }) =
     </div>
   )
 })
+
+Navigation.displayName = 'Navigation'

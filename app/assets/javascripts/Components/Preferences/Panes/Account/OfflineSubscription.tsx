@@ -123,3 +123,5 @@ export const OfflineSubscription: FunctionComponent<IProps> = observer(({ applic
     </>
   )
 })
+
+OfflineSubscription.displayName = 'OfflineSubscription'

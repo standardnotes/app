@@ -108,3 +108,5 @@ export const AddTagOption: FunctionComponent<Props> = observer(({ appState }) =>
     </div>
   )
 })
+
+AddTagOption.displayName = 'AddTagOption'

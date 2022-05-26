@@ -87,3 +87,5 @@ export const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = obse
     )
   },
 )
+
+RemoteHistoryList.displayName = 'RemoteHistoryList'

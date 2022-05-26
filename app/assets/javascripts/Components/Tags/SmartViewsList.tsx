@@ -23,3 +23,5 @@ export const SmartViewsList: FunctionComponent<Props> = observer(({ appState }: 
     </>
   )
 })
+
+SmartViewsList.displayName = 'SmartViewsList'

@@ -84,3 +84,5 @@ export const SaveSecretKey: FunctionComponent<Props> = observer(({ activation: a
     </ModalDialog>
   )
 })
+
+SaveSecretKey.displayName = 'SaveSecretKey'

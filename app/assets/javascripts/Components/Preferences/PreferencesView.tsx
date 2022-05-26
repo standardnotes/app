@@ -111,3 +111,7 @@ export const PreferencesView: FunctionComponent<PreferencesProps> = observer((pr
     </div>
   )
 })
+
+PaneSelector.displayName = 'PaneSelector'
+PreferencesCanvas.displayName = 'PreferencesCanvas'
+PreferencesView.displayName = 'PreferencesView'

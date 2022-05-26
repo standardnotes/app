@@ -170,3 +170,5 @@ export const AttachedFilesPopover: FunctionComponent<Props> = observer(
     )
   },
 )
+
+AttachedFilesPopover.displayName = 'AttachedFilesPopover'

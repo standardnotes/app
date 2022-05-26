@@ -256,3 +256,6 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, appS
     </DialogOverlay>
   )
 })
+
+FilePreviewModalWrapper.displayName = 'FilePreviewModalWrapper'
+FilePreviewModal.displayName = 'FilePreviewModal'

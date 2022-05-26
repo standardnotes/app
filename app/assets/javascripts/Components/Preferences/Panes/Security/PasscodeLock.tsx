@@ -250,3 +250,5 @@ export const PasscodeLock = observer(({ application, appState }: Props) => {
     </>
   )
 })
+
+PasscodeLock.displayName = 'PasscodeLock'

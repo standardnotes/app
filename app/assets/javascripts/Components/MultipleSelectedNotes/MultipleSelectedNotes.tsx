@@ -41,3 +41,5 @@ export const MultipleSelectedNotes = observer(({ application, appState }: Props)
     </div>
   )
 })
+
+MultipleSelectedNotes.displayName = 'MultipleSelectedNotes'

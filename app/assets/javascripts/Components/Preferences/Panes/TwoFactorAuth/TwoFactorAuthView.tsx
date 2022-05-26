@@ -77,3 +77,8 @@ export const TwoFactorAuthView: FunctionComponent<Props> = observer(({ auth }) =
     </>
   )
 })
+
+TwoFactorTitle.displayName = 'TwoFactorTitle'
+TwoFactorDescription.displayName = 'TwoFactorDescription'
+TwoFactorSwitch.displayName = 'TwoFactorSwitch'
+TwoFactorAuthView.displayName = 'TwoFactorAuthView'

@@ -42,3 +42,5 @@ export const NoAccountWarning = observer(({ appState }: Props) => {
     </div>
   )
 })
+
+NoAccountWarning.displayName = 'NoAccountWarning'

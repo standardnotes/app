@@ -190,3 +190,5 @@ export const CreateAccount: FunctionComponent<Props> = observer(({ appState, app
     </div>
   )
 })
+
+CreateAccount.displayName = 'CreateAccount'

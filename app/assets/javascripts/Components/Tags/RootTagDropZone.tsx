@@ -41,3 +41,5 @@ export const RootTagDropZone: React.FC<Props> = observer(({ tagsState }) => {
     </div>
   )
 })
+
+RootTagDropZone.displayName = 'RootTagDropZone'

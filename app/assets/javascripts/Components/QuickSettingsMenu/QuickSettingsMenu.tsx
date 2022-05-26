@@ -290,3 +290,5 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(({ appli
     </div>
   )
 })
+
+QuickSettingsMenu.displayName = 'QuickSettingsMenu'

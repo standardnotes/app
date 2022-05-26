@@ -112,3 +112,5 @@ export const Listed = observer(({ application }: Props) => {
     </PreferencesPane>
   )
 })
+
+Listed.displayName = 'Listed'

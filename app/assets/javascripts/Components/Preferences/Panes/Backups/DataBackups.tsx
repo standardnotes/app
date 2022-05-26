@@ -194,3 +194,5 @@ export const DataBackups = observer(({ application, appState }: Props) => {
     </>
   )
 })
+
+DataBackups.displayName = 'DataBackups'

@@ -22,3 +22,5 @@ export const TwoFactorActivationView: FunctionComponent<Props> = observer(({ act
       return <TwoFactorSuccess activation={act} />
   }
 })
+
+TwoFactorActivationView.displayName = 'TwoFactorActivationView'

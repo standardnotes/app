@@ -137,3 +137,5 @@ export const CreateAccount: FunctionComponent<Props> = observer(
     )
   },
 )
+
+CreateAccount.displayName = 'CreateAccount'

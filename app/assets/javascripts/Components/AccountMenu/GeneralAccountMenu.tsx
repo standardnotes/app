@@ -175,3 +175,5 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
     )
   },
 )
+
+GeneralAccountMenu.displayName = 'GeneralAccountMenu'

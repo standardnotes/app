@@ -26,3 +26,5 @@ export const TwoFactorSuccess: FunctionComponent<Props> = observer(({ activation
     </ModalDialogButtons>
   </ModalDialog>
 ))
+
+TwoFactorSuccess.displayName = 'TwoFactorSuccess'

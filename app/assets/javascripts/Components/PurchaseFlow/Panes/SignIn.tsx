@@ -156,3 +156,5 @@ export const SignIn: FunctionComponent<Props> = observer(({ appState, applicatio
     </div>
   )
 })
+
+SignIn.displayName = 'SignIn'

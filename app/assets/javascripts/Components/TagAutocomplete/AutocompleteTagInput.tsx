@@ -148,3 +148,5 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
     </div>
   )
 })
+
+AutocompleteTagInput.displayName = 'AutocompleteTagInput'

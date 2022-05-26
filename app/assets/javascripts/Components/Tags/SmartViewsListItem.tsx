@@ -157,3 +157,5 @@ export const SmartViewsListItem: FunctionComponent<Props> = observer(({ view, ta
     </>
   )
 })
+
+SmartViewsListItem.displayName = 'SmartViewsListItem'

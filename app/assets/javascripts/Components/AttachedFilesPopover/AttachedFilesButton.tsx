@@ -418,3 +418,5 @@ export const AttachedFilesButton: FunctionComponent<Props> = observer(
     )
   },
 )
+
+AttachedFilesButton.displayName = 'AttachedFilesButton'

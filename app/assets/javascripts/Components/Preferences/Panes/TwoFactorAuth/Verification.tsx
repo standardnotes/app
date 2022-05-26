@@ -56,3 +56,5 @@ export const Verification: FunctionComponent<Props> = observer(({ activation: ac
     </ModalDialog>
   )
 })
+
+Verification.displayName = 'Verification'

@@ -50,3 +50,5 @@ export const RevisionContentLocked: FunctionComponent<{
     </div>
   )
 })
+
+RevisionContentLocked.displayName = 'RevisionContentLocked'

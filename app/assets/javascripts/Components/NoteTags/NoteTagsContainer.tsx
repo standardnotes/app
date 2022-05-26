@@ -34,3 +34,5 @@ export const NoteTagsContainer = observer(({ appState }: Props) => {
     </div>
   )
 })
+
+NoteTagsContainer.displayName = 'NoteTagsContainer'

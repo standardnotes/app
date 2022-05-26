@@ -71,3 +71,5 @@ export const PremiumModalProvider: FunctionComponent<Props> = observer(({ applic
     </>
   )
 })
+
+PremiumModalProvider.displayName = 'PremiumModalProvider'

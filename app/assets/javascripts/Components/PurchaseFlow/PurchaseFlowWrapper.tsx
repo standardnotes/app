@@ -18,3 +18,5 @@ export const PurchaseFlowWrapper: FunctionComponent<PurchaseFlowWrapperProps> = 
     return <PurchaseFlowView appState={appState} application={application} />
   },
 )
+
+PurchaseFlowWrapper.displayName = 'PurchaseFlowWrapper'

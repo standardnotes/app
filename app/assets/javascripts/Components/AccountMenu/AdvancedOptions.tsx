@@ -181,3 +181,5 @@ export const AdvancedOptions: FunctionComponent<Props> = observer(
     )
   },
 )
+
+AdvancedOptions.displayName = 'AdvancedOptions'

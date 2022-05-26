@@ -211,3 +211,5 @@ export const SessionsModal: FunctionComponent<{
     return null
   }
 })
+
+SessionsModal.displayName = 'SessionsModal'

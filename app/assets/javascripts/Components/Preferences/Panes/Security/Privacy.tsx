@@ -141,3 +141,5 @@ export const Privacy: FunctionComponent<Props> = observer(({ application }: Prop
     </PreferencesGroup>
   )
 })
+
+Privacy.displayName = 'Privacy'

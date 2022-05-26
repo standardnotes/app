@@ -144,3 +144,5 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
     </button>
   )
 })
+
+NoteTag.displayName = 'NoteTag'

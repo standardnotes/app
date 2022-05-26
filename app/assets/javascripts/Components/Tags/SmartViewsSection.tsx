@@ -14,3 +14,5 @@ export const SmartViewsSection: FunctionComponent<Props> = observer(({ appState 
     </section>
   )
 })
+
+SmartViewsSection.displayName = 'SmartViewsSection'

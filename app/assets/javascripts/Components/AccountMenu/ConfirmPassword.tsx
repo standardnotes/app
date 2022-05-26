@@ -155,3 +155,5 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
     )
   },
 )
+
+ConfirmPassword.displayName = 'ConfirmPassword'

@@ -155,3 +155,5 @@ export const Appearance: FunctionComponent<Props> = observer(({ application }) =
     </PreferencesPane>
   )
 })
+
+Appearance.displayName = 'Appearance'

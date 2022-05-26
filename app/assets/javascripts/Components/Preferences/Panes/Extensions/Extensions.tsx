@@ -134,3 +134,5 @@ export const Extensions: FunctionComponent<{
     </div>
   )
 })
+
+Extensions.displayName = 'Extensions'

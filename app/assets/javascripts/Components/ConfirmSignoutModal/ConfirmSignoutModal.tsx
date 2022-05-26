@@ -20,7 +20,9 @@ export const ConfirmSignoutContainer = observer((props: Props) => {
   return <ConfirmSignoutModal {...props} />
 })
 
-export const ConfirmSignoutModal = observer(({ application, appState, applicationGroup }: Props) => {
+ConfirmSignoutContainer.displayName = 'ConfirmSignoutContainer'
+
+const ConfirmSignoutModal = observer(({ application, appState, applicationGroup }: Props) => {
   const [deleteLocalBackups, setDeleteLocalBackups] = useState(false)
 
   const cancelRef = useRef<HTMLButtonElement>(null)
@@ -115,3 +117,5 @@ export const ConfirmSignoutModal = observer(({ application, appState, applicatio
     </AlertDialog>
   )
 })
+
+ConfirmSignoutModal.displayName = 'ConfirmSignoutModal'

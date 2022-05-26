@@ -34,3 +34,5 @@ export const Subscription: FunctionComponent<Props> = observer(({ application, a
     </PreferencesGroup>
   )
 })
+
+Subscription.displayName = 'Subscription'

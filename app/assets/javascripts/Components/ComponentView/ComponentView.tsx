@@ -218,3 +218,5 @@ export const ComponentView: FunctionComponent<IProps> = observer(
     )
   },
 )
+
+ComponentView.displayName = 'ComponentView'

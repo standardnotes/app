@@ -71,3 +71,5 @@ export const Credentials: FunctionComponent<Props> = observer(({ application }: 
     </>
   )
 })
+
+Credentials.displayName = 'Credentials'

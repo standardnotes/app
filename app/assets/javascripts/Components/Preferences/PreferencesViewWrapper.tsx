@@ -26,3 +26,5 @@ export const PreferencesViewWrapper: FunctionComponent<PreferencesViewWrapperPro
     )
   },
 )
+
+PreferencesViewWrapper.displayName = 'PreferencesViewWrapper'

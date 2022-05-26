@@ -59,3 +59,5 @@ export const Tools: FunctionComponent<Props> = observer(({ application }: Props)
     </PreferencesGroup>
   )
 })
+
+Tools.displayName = 'Tools'

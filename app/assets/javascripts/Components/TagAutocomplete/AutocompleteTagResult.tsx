@@ -98,3 +98,5 @@ export const AutocompleteTagResult = observer(({ appState, tagResult, closeOnBlu
     </button>
   )
 })
+
+AutocompleteTagResult.displayName = 'AutocompleteTagResult'

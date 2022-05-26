@@ -178,3 +178,5 @@ export const EmailBackups = observer(({ application }: Props) => {
     </PreferencesGroup>
   )
 })
+
+EmailBackups.displayName = 'EmailBackups'

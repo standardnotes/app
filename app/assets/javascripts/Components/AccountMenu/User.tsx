@@ -41,4 +41,6 @@ const User = observer(({ appState, application }: Props) => {
   )
 })
 
+User.displayName = 'User'
+
 export default User

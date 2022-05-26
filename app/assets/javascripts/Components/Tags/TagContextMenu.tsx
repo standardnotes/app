@@ -109,3 +109,6 @@ const TagsContextMenu = observer(({ appState, selectedTag }: ContextMenuProps) =
     </div>
   ) : null
 })
+
+TagsContextMenuWrapper.displayName = 'TagsContextMenuWrapper'
+TagsContextMenu.displayName = 'TagsContextMenu'

@@ -44,3 +44,5 @@ export const Authentication: FunctionComponent<{
     </PreferencesGroup>
   )
 })
+
+Authentication.displayName = 'Authentication'

@@ -76,3 +76,5 @@ export const AutocompleteTagHint = observer(({ appState, closeOnBlur }: Props) =
     </>
   )
 })
+
+AutocompleteTagHint.displayName = 'AutocompleteTagHint'

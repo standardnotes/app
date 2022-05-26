@@ -34,3 +34,5 @@ export const Advanced: FunctionComponent<IProps> = observer(({ application, appS
     </PreferencesGroup>
   )
 })
+
+Advanced.displayName = 'Advanced'

@@ -57,3 +57,5 @@ export const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> = observ
     </div>
   )
 })
+
+PurchaseFlowView.displayName = 'PurchaseFlowView'

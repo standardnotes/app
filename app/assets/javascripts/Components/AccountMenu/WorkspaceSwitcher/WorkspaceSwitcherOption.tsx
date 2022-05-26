@@ -64,3 +64,5 @@ export const WorkspaceSwitcherOption: FunctionComponent<Props> = observer(({ mai
     </>
   )
 })
+
+WorkspaceSwitcherOption.displayName = 'WorkspaceSwitcherOption'

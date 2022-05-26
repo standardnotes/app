@@ -32,3 +32,5 @@ export const SearchOptions = observer(({ appState }: Props) => {
     </div>
   )
 })
+
+SearchOptions.displayName = 'SearchOptions'

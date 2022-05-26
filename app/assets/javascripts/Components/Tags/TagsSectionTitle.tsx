@@ -47,3 +47,5 @@ export const TagsSectionTitle: FunctionComponent<Props> = observer(({ features, 
     </>
   )
 })
+
+TagsSectionTitle.displayName = 'TagsSectionTitle'

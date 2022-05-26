@@ -261,3 +261,5 @@ export const ContentListView: FunctionComponent<Props> = observer(({ application
     </div>
   )
 })
+
+ContentListView.displayName = 'ContentListView'

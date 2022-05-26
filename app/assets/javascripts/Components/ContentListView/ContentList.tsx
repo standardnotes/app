@@ -72,3 +72,5 @@ export const ContentList: FunctionComponent<Props> = observer(
     )
   },
 )
+
+ContentList.displayName = 'ContentList'

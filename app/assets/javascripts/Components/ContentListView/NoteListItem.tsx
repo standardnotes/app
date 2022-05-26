@@ -84,3 +84,5 @@ export const NoteListItem: FunctionComponent<DisplayableListItemProps> = observe
     )
   },
 )
+
+NoteListItem.displayName = 'NoteListItem'

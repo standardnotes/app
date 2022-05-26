@@ -84,3 +84,5 @@ export const NotesOptionsPanel = observer(({ application, appState, onClickPrepr
     </Disclosure>
   )
 })
+
+NotesOptionsPanel.displayName = 'NotesOptionsPanel'

@@ -20,3 +20,5 @@ export const TagsSectionAddButton: FunctionComponent<Props> = observer(({ tags }
     />
   )
 })
+
+TagsSectionAddButton.displayName = 'TagsSectionAddButton'

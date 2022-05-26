@@ -63,3 +63,5 @@ export const TagsSection: FunctionComponent<Props> = observer(({ appState }) => 
     </section>
   )
 })
+
+TagsSection.displayName = 'TagsSection'

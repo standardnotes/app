@@ -25,3 +25,5 @@ export const General: FunctionComponent<GeneralProps> = observer(
     </PreferencesPane>
   ),
 )
+
+General.displayName = 'General'

@@ -125,3 +125,6 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ appState }) => {
     </div>
   )
 })
+
+FileContextMenuWrapper.displayName = 'FileContextMenuWrapper'
+FileContextMenu.displayName = 'FileContextMenu'

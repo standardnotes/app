@@ -55,3 +55,5 @@ export const Sync: FunctionComponent<Props> = observer(({ application }: Props) 
     </PreferencesGroup>
   )
 })
+
+Sync.displayName = 'Sync'

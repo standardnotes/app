@@ -86,3 +86,7 @@ export const SignOutWrapper: FunctionComponent<{
   }
   return <SignOutView appState={appState} application={application} />
 })
+
+SignOutView.displayName = 'SignOutView'
+ClearSessionDataView.displayName = 'ClearSessionDataView'
+SignOutWrapper.displayName = 'SignOutWrapper'

@@ -86,3 +86,5 @@ export const WorkspaceSwitcherMenu: FunctionComponent<Props> = observer(
     )
   },
 )
+
+WorkspaceSwitcherMenu.displayName = 'WorkspaceSwitcherMenu'

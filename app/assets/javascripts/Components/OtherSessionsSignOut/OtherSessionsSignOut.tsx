@@ -65,3 +65,6 @@ const ConfirmOtherSessionsSignOut = observer(({ application, appState }: Props) 
     </AlertDialog>
   )
 })
+
+OtherSessionsSignOutContainer.displayName = 'OtherSessionsSignOutContainer'
+ConfirmOtherSessionsSignOut.displayName = 'ConfirmOtherSessionsSignOut'

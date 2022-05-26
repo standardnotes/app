@@ -300,3 +300,6 @@ export const RevisionHistoryModalWrapper: FunctionComponent<RevisionHistoryModal
     return <RevisionHistoryModal application={application} appState={appState} />
   },
 )
+
+RevisionHistoryModal.displayName = 'RevisionHistoryModal'
+RevisionHistoryModalWrapper.displayName = 'RevisionHistoryModalWrapper'

@@ -43,3 +43,5 @@ export const NotesContextMenu = observer(({ application, appState }: Props) => {
     </div>
   ) : null
 })
+
+NotesContextMenu.displayName = 'NotesContextMenu'

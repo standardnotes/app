@@ -29,3 +29,5 @@ export const AccountPreferences = observer(({ application, appState }: Props) =>
     <SignOutWrapper application={application} appState={appState} />
   </PreferencesPane>
 ))
+
+AccountPreferences.displayName = 'AccountPreferences'

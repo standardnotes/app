@@ -19,3 +19,5 @@ export const PreferencesMenuView: FunctionComponent<{
     ))}
   </div>
 ))
+
+PreferencesMenuView.displayName = 'PreferencesMenuView'

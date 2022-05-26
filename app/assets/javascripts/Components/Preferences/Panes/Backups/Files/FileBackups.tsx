@@ -135,3 +135,5 @@ export const FileBackups = observer(({ application }: Props) => {
     </>
   )
 })
+
+FileBackups.displayName = 'FileBackups'

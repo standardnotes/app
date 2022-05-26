@@ -58,3 +58,6 @@ export const Encryption: FunctionComponent<{ appState: AppState }> = observer(({
     </PreferencesGroup>
   )
 })
+
+EncryptionEnabled.displayName = 'EncryptionEnabled'
+Encryption.displayName = 'Encryption'

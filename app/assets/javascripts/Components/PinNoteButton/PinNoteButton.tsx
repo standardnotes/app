@@ -42,3 +42,5 @@ export const PinNoteButton: FunctionComponent<Props> = observer(
     )
   },
 )
+
+PinNoteButton.displayName = 'PinNoteButton'

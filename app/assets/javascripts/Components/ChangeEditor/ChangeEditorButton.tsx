@@ -111,3 +111,5 @@ export const ChangeEditorButton: FunctionComponent<Props> = observer(
     )
   },
 )
+
+ChangeEditorButton.displayName = 'ChangeEditorButton'

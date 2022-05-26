@@ -245,3 +245,5 @@ export const NotesListOptionsMenu: FunctionComponent<Props> = observer(
     )
   },
 )
+
+NotesListOptionsMenu.displayName = 'NotesListOptionsMenu'

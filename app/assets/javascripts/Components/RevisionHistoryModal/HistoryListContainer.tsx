@@ -184,3 +184,5 @@ export const HistoryListContainer: FunctionComponent<Props> = observer(
     )
   },
 )
+
+HistoryListContainer.displayName = 'HistoryListContainer'

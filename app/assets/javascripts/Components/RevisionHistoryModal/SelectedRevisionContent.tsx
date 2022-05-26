@@ -71,3 +71,5 @@ export const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentP
     )
   },
 )
+
+SelectedRevisionContent.displayName = 'SelectedRevisionContent'

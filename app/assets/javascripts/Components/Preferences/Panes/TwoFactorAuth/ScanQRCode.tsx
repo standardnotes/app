@@ -61,3 +61,5 @@ export const ScanQRCode: FunctionComponent<Props> = observer(({ activation: act 
     </ModalDialog>
   )
 })
+
+ScanQRCode.displayName = 'ScanQRCode'

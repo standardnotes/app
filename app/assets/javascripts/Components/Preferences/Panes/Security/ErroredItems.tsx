@@ -140,3 +140,5 @@ export const ErroredItems: FunctionComponent<Props> = observer(({ appState }: Pr
     </PreferencesGroup>
   )
 })
+
+ErroredItems.displayName = 'ErroredItems'

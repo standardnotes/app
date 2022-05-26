@@ -434,3 +434,5 @@ export const NotesOptions = observer(({ application, appState, closeOnBlur }: No
     </>
   )
 })
+
+NotesOptions.displayName = 'NotesOptions'

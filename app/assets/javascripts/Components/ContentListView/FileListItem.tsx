@@ -77,3 +77,5 @@ export const FileListItem: FunctionComponent<DisplayableListItemProps> = observe
     )
   },
 )
+
+FileListItem.displayName = 'FileListItem'

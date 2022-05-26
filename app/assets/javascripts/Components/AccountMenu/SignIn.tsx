@@ -210,3 +210,5 @@ export const SignInPane: FunctionComponent<Props> = observer(({ application, app
     </>
   )
 })
+
+SignInPane.displayName = 'SignInPane'
