@@ -161,7 +161,7 @@ export const ApplicationView: FunctionComponent<Props> = ({ application, mainApp
       <>
         {challenges.map((challenge) => {
           return (
-            <div className="sk-modal">
+            <div className="sk-modal" key={`${challenge.id}${application.ephemeralIdentifier}`}>
               <ChallengeModal
                 key={`${challenge.id}${application.ephemeralIdentifier}`}
                 application={application}
