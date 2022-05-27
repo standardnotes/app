@@ -33,8 +33,8 @@ const PasscodeLock = ({ application, appState }: Props) => {
 
   const passcodeInputRef = useRef<HTMLInputElement>(null)
 
-  const [passcode, setPasscode] = useState<string>('')
-  const [passcodeConfirmation, setPasscodeConfirmation] = useState<string>('')
+  const [passcode, setPasscode] = useState<string>()
+  const [passcodeConfirmation, setPasscodeConfirmation] = useState<string>()
   const [selectedAutoLockInterval, setSelectedAutoLockInterval] = useState<unknown>(null)
   const [isPasscodeFocused, setIsPasscodeFocused] = useState(false)
   const [showPasscodeForm, setShowPasscodeForm] = useState(false)
@@ -129,8 +129,8 @@ const PasscodeLock = ({ application, appState }: Props) => {
       }
     })
 
-    setPasscode('')
-    setPasscodeConfirmation('')
+    setPasscode(undefined)
+    setPasscodeConfirmation(undefined)
     setShowPasscodeForm(false)
 
     refreshEncryptionStatus()
@@ -168,8 +168,8 @@ const PasscodeLock = ({ application, appState }: Props) => {
 
   const cancelPasscodeForm = () => {
     setShowPasscodeForm(false)
-    setPasscode('')
-    setPasscodeConfirmation('')
+    setPasscode(undefined)
+    setPasscodeConfirmation(undefined)
   }
 
   return (
@@ -202,14 +202,14 @@ const PasscodeLock = ({ application, appState }: Props) => {
                 className="sk-input contrast"
                 type="password"
                 ref={passcodeInputRef}
-                value={passcode}
+                value={passcode ? passcode : ''}
                 onChange={handlePasscodeChange}
                 placeholder="Passcode"
               />
               <input
                 className="sk-input contrast"
                 type="password"
-                value={passcodeConfirmation}
+                value={passcodeConfirmation ? passcodeConfirmation : ''}
                 onChange={handleConfirmPasscodeChange}
                 placeholder="Confirm Passcode"
               />
