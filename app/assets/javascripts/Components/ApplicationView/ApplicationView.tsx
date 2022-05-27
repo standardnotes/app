@@ -20,11 +20,9 @@ import ConfirmSignoutContainer from '@/Components/ConfirmSignoutModal/ConfirmSig
 import TagsContextMenuWrapper from '@/Components/Tags/TagContextMenu'
 import { ToastContainer } from '@standardnotes/stylekit'
 import FilePreviewModalWrapper from '@/Components/Files/FilePreviewModal'
-import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 import ContentListView from '@/Components/ContentListView/ContentListView'
 import FileContextMenuWrapper from '@/Components/FileContextMenu/FileContextMenu'
 import PermissionsModalWrapper from '@/Components/PermissionsModal/PermissionsModalWrapper'
-import DeallocateHandler from '@/Components/DeallocateHandler/DeallocateHandler'
 
 type Props = {
   application: WebApplication
@@ -37,19 +35,10 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
   const [launched, setLaunched] = useState(false)
   const [needsUnlock, setNeedsUnlock] = useState(true)
   const [challenges, setChallenges] = useState<Challenge[]>([])
-  const [dealloced, setDealloced] = useState(false)
 
   const appState = application.getAppState()
 
   useEffect(() => {
-    setDealloced(application.dealloced)
-  }, [application.dealloced])
-
-  useEffect(() => {
-    if (dealloced) {
-      return
-    }
-
     const desktopService = application.getDesktopService()
 
     if (desktopService) {
@@ -69,7 +58,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
       })
       .catch(console.error)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [application, dealloced])
+  }, [application])
 
   const removeChallenge = useCallback(
     (challenge: Challenge) => {
@@ -178,50 +167,44 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
     )
   }, [appState, challenges, mainApplicationGroup, removeChallenge, application])
 
-  if (dealloced || isStateDealloced(appState)) {
-    return null
-  }
-
   if (!renderAppContents) {
     return renderChallenges()
   }
 
   return (
-    <DeallocateHandler appState={appState}>
-      <PremiumModalProvider application={application} appState={appState}>
-        <div className={platformString + ' main-ui-view sn-component'}>
-          <div id="app" className={appClass + ' app app-column-container'}>
-            <Navigation application={application} />
-            <ContentListView application={application} appState={appState} />
-            <NoteGroupView application={application} />
-          </div>
-
-          <>
-            <Footer application={application} applicationGroup={mainApplicationGroup} />
-            <SessionsModal application={application} appState={appState} />
-            <PreferencesViewWrapper appState={appState} application={application} />
-            <RevisionHistoryModalWrapper application={application} appState={appState} />
-          </>
-
-          {renderChallenges()}
-
-          <>
-            <NotesContextMenu application={application} appState={appState} />
-            <TagsContextMenuWrapper appState={appState} />
-            <FileContextMenuWrapper appState={appState} />
-            <PurchaseFlowWrapper application={application} appState={appState} />
-            <ConfirmSignoutContainer
-              applicationGroup={mainApplicationGroup}
-              appState={appState}
-              application={application}
-            />
-            <ToastContainer />
-            <FilePreviewModalWrapper application={application} appState={appState} />
-            <PermissionsModalWrapper application={application} />
-          </>
+    <PremiumModalProvider application={application} appState={appState}>
+      <div className={platformString + ' main-ui-view sn-component'}>
+        <div id="app" className={appClass + ' app app-column-container'}>
+          <Navigation application={application} />
+          <ContentListView application={application} appState={appState} />
+          <NoteGroupView application={application} />
         </div>
-      </PremiumModalProvider>
-    </DeallocateHandler>
+
+        <>
+          <Footer application={application} applicationGroup={mainApplicationGroup} />
+          <SessionsModal application={application} appState={appState} />
+          <PreferencesViewWrapper appState={appState} application={application} />
+          <RevisionHistoryModalWrapper application={application} appState={appState} />
+        </>
+
+        {renderChallenges()}
+
+        <>
+          <NotesContextMenu application={application} appState={appState} />
+          <TagsContextMenuWrapper appState={appState} />
+          <FileContextMenuWrapper appState={appState} />
+          <PurchaseFlowWrapper application={application} appState={appState} />
+          <ConfirmSignoutContainer
+            applicationGroup={mainApplicationGroup}
+            appState={appState}
+            application={application}
+          />
+          <ToastContainer />
+          <FilePreviewModalWrapper application={application} appState={appState} />
+          <PermissionsModalWrapper application={application} />
+        </>
+      </div>
+    </PremiumModalProvider>
   )
 }
 

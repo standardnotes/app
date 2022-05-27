@@ -6,6 +6,7 @@ import { WebOrDesktopDevice } from '@/Device/WebOrDesktopDevice'
 import { ApplicationGroupEvent, ApplicationGroupEventData, DeinitSource } from '@standardnotes/snjs'
 import { DialogContent, DialogOverlay } from '@reach/dialog'
 import { isDesktopApplication } from '@/Utils'
+import DeallocateHandler from '../DeallocateHandler/DeallocateHandler'
 
 type Props = {
   server: string
@@ -113,11 +114,13 @@ class ApplicationGroupView extends Component<Props, State> {
 
     return (
       <div id={this.state.activeApplication.identifier} key={this.state.activeApplication.ephemeralIdentifier}>
-        <ApplicationView
-          key={this.state.activeApplication.ephemeralIdentifier}
-          mainApplicationGroup={this.group}
-          application={this.state.activeApplication}
-        />
+        <DeallocateHandler application={this.state.activeApplication}>
+          <ApplicationView
+            key={this.state.activeApplication.ephemeralIdentifier}
+            mainApplicationGroup={this.group}
+            application={this.state.activeApplication}
+          />
+        </DeallocateHandler>
       </div>
     )
   }
