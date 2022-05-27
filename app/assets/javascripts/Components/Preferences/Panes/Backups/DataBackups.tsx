@@ -19,6 +19,7 @@ import { Title, Text, Subtitle } from '@/Components/Preferences/PreferencesCompo
 import Button from '@/Components/Button/Button'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
+import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 
 type Props = {
   application: WebApplication
@@ -177,6 +178,7 @@ const DataBackups = ({ application, appState }: Props) => {
 
           <Button variant="normal" onClick={downloadDataArchive} label="Download backup" className="mt-2" />
         </PreferencesSegment>
+        <HorizontalSeparator classes="my-4" />
         <PreferencesSegment>
           <Subtitle>Import a previously saved backup file</Subtitle>
 
