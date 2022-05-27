@@ -16,7 +16,7 @@ type Props = {
   backupsService: NonNullable<WebApplication['fileBackups']>
 }
 
-const FileBackups = ({ application, backupsService }: Props) => {
+const FileBackupsDesktop = ({ application, backupsService }: Props) => {
   const [backupsEnabled, setBackupsEnabled] = useState(false)
   const [backupsLocation, setBackupsLocation] = useState('')
 
@@ -115,4 +115,4 @@ const FileBackups = ({ application, backupsService }: Props) => {
   )
 }
 
-export default observer(FileBackups)
+export default observer(FileBackupsDesktop)

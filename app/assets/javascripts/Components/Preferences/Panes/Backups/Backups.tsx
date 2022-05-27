@@ -5,7 +5,7 @@ import PreferencesPane from '@/Components/Preferences/PreferencesComponents/Pref
 import CloudLink from './CloudBackups/CloudBackups'
 import DataBackups from './DataBackups'
 import EmailBackups from './EmailBackups'
-import FileBackupsWithFallback from './Files/FileBackupsWithFallback'
+import FileBackupsCrossPlatform from './Files/FileBackupsWithFallback'
 import { observer } from 'mobx-react-lite'
 
 type Props = {
@@ -17,7 +17,7 @@ const Backups: FunctionComponent<Props> = ({ application, appState }) => {
   return (
     <PreferencesPane>
       <DataBackups application={application} appState={appState} />
-      <FileBackupsWithFallback application={application} />
+      <FileBackupsCrossPlatform application={application} />
       <EmailBackups application={application} />
       <CloudLink application={application} />
     </PreferencesPane>

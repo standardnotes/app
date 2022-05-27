@@ -4,17 +4,17 @@ import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/P
 import { WebApplication } from '@/UIModels/Application'
 import { useMemo } from 'react'
 import BackupsDropZone from './BackupsDropZone'
-import FileBackups from './FileBackups'
+import FileBackupsDesktop from './FileBackups'
 
 type Props = {
   application: WebApplication
 }
 
-const FileBackupsWithFallback = ({ application }: Props) => {
+const FileBackupsCrossPlatform = ({ application }: Props) => {
   const fileBackupsService = useMemo(() => application.fileBackups, [application])
 
   return fileBackupsService ? (
-    <FileBackups application={application} backupsService={fileBackupsService} />
+    <FileBackupsDesktop application={application} backupsService={fileBackupsService} />
   ) : (
     <>
       <PreferencesGroup>
@@ -31,4 +31,4 @@ const FileBackupsWithFallback = ({ application }: Props) => {
   )
 }
 
-export default FileBackupsWithFallback
+export default FileBackupsCrossPlatform
