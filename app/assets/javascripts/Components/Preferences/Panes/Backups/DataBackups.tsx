@@ -153,7 +153,7 @@ const DataBackups = ({ application, appState }: Props) => {
         <PreferencesSegment>
           <Title>Data Backups</Title>
 
-          {!isDesktopApplication() && (
+          {isDesktopApplication() && (
             <Text className="mb-3">
               Backups are automatically created on desktop and can be managed via the "Backups" top-level menu.
             </Text>

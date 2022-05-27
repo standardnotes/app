@@ -4,7 +4,7 @@ import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/P
 import { WebApplication } from '@/UIModels/Application'
 import { useMemo } from 'react'
 import BackupsDropZone from './BackupsDropZone'
-import FileBackupsDesktop from './FileBackups'
+import FileBackupsDesktop from './FileBackupsDesktop'
 
 type Props = {
   application: WebApplication

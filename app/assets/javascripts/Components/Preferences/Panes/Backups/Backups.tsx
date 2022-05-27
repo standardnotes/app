@@ -5,7 +5,7 @@ import PreferencesPane from '@/Components/Preferences/PreferencesComponents/Pref
 import CloudLink from './CloudBackups/CloudBackups'
 import DataBackups from './DataBackups'
 import EmailBackups from './EmailBackups'
-import FileBackupsCrossPlatform from './Files/FileBackupsWithFallback'
+import FileBackupsCrossPlatform from './Files/FileBackupsCrossPlatform'
 import { observer } from 'mobx-react-lite'
 
 type Props = {
