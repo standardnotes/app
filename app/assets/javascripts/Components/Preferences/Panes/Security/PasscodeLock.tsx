@@ -33,8 +33,8 @@ const PasscodeLock = ({ application, appState }: Props) => {
 
   const passcodeInputRef = useRef<HTMLInputElement>(null)
 
-  const [passcode, setPasscode] = useState<string | undefined>(undefined)
-  const [passcodeConfirmation, setPasscodeConfirmation] = useState<string | undefined>(undefined)
+  const [passcode, setPasscode] = useState<string>('')
+  const [passcodeConfirmation, setPasscodeConfirmation] = useState<string>('')
   const [selectedAutoLockInterval, setSelectedAutoLockInterval] = useState<unknown>(null)
   const [isPasscodeFocused, setIsPasscodeFocused] = useState(false)
   const [showPasscodeForm, setShowPasscodeForm] = useState(false)
@@ -129,8 +129,8 @@ const PasscodeLock = ({ application, appState }: Props) => {
       }
     })
 
-    setPasscode(undefined)
-    setPasscodeConfirmation(undefined)
+    setPasscode('')
+    setPasscodeConfirmation('')
     setShowPasscodeForm(false)
 
     refreshEncryptionStatus()
@@ -165,6 +165,12 @@ const PasscodeLock = ({ application, appState }: Props) => {
       removeKeyStatusChangedObserver()
     }
   }, [application])
+
+  const cancelPasscodeForm = () => {
+    setShowPasscodeForm(false)
+    setPasscode('')
+    setPasscodeConfirmation('')
+  }
 
   return (
     <>
@@ -209,7 +215,7 @@ const PasscodeLock = ({ application, appState }: Props) => {
               />
               <div className="min-h-2" />
               <Button variant="primary" onClick={submitPasscodeForm} label="Set Passcode" className="mr-3" />
-              <Button variant="normal" onClick={() => setShowPasscodeForm(false)} label="Cancel" />
+              <Button variant="normal" onClick={cancelPasscodeForm} label="Cancel" />
             </form>
           )}
 
