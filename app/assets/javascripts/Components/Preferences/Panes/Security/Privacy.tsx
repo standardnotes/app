@@ -20,7 +20,7 @@ const Privacy: FunctionComponent<Props> = ({ application }: Props) => {
   const [sessionUaLoggingValue, setSessionUaLoggingValue] = useState<LogSessionUserAgentOption>(
     LogSessionUserAgentOption.Enabled,
   )
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   const updateSetting = async (settingName: SettingName, payload: string): Promise<boolean> => {
     try {
@@ -105,7 +105,7 @@ const Privacy: FunctionComponent<Props> = ({ application }: Props) => {
               </Text>
             </div>
             {isLoading ? (
-              <div className={'sk-spinner info small'} />
+              <div className={'sk-spinner info small flex-shrink-0 ml-2'} />
             ) : (
               <Switch
                 onChange={toggleMuteSignInEmails}
@@ -124,7 +124,7 @@ const Privacy: FunctionComponent<Props> = ({ application }: Props) => {
               </Text>
             </div>
             {isLoading ? (
-              <div className={'sk-spinner info small'} />
+              <div className={'sk-spinner info small flex-shrink-0 ml-2'} />
             ) : (
               <Switch
                 onChange={toggleSessionLogging}
