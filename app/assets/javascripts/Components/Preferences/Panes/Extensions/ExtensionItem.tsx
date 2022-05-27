@@ -9,11 +9,11 @@ import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
 const UseHosted: FunctionComponent<{
   offlineOnly: boolean
-  toggleOfllineOnly: () => void
-}> = ({ offlineOnly, toggleOfllineOnly }) => (
+  toggleOfflineOnly: () => void
+}> = ({ offlineOnly, toggleOfflineOnly }) => (
   <div className="flex flex-row">
     <SubtitleLight className="flex-grow">Use hosted when local is unavailable</SubtitleLight>
-    <Switch onChange={toggleOfllineOnly} checked={!offlineOnly} />
+    <Switch onChange={toggleOfflineOnly} checked={!offlineOnly} />
   </div>
 )
 
@@ -21,15 +21,12 @@ const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({ application, ext
   const [offlineOnly, setOfflineOnly] = useState(extension instanceof SNComponent ? extension.offlineOnly : false)
   const [extensionName, setExtensionName] = useState(extension.displayName)
 
-  const toggleOffllineOnly = () => {
+  const toggleOfflineOnly = () => {
     const newOfflineOnly = !offlineOnly
     setOfflineOnly(newOfflineOnly)
     application.mutator
       .changeAndSaveItem(extension, (m: any) => {
-        if (m.content == undefined) {
-          m.content = {}
-        }
-        m.content.offlineOnly = newOfflineOnly
+        m.mutableContent.offlineOnly = newOfflineOnly
       })
       .then((item) => {
         const component = item as SNComponent
@@ -44,10 +41,7 @@ const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({ application, ext
     setExtensionName(newName)
     application.mutator
       .changeAndSaveItem(extension, (m: any) => {
-        if (m.content == undefined) {
-          m.content = {}
-        }
-        m.content.name = newName
+        m.mutableContent.name = newName
       })
       .then((item) => {
         const component = item as SNComponent
@@ -66,9 +60,7 @@ const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({ application, ext
 
       <div className="min-h-2" />
 
-      {isThirParty && localInstallable && (
-        <UseHosted offlineOnly={offlineOnly} toggleOfllineOnly={toggleOffllineOnly} />
-      )}
+      {isThirParty && localInstallable && <UseHosted offlineOnly={offlineOnly} toggleOfflineOnly={toggleOfflineOnly} />}
 
       <>
         <div className="min-h-2" />
