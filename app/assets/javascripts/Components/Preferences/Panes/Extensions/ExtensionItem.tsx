@@ -1,5 +1,5 @@
 import { FunctionComponent, useState } from 'react'
-import { SNComponent } from '@standardnotes/snjs'
+import { ComponentMutator, SNComponent } from '@standardnotes/snjs'
 import { SubtitleLight } from '@/Components/Preferences/PreferencesComponents/Content'
 import Switch from '@/Components/Switch/Switch'
 import Button from '@/Components/Button/Button'
@@ -25,8 +25,8 @@ const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({ application, ext
     const newOfflineOnly = !offlineOnly
     setOfflineOnly(newOfflineOnly)
     application.mutator
-      .changeAndSaveItem(extension, (m: any) => {
-        m.mutableContent.offlineOnly = newOfflineOnly
+      .changeAndSaveItem<ComponentMutator>(extension, (mutator) => {
+        mutator.offlineOnly = newOfflineOnly
       })
       .then((item) => {
         const component = item as SNComponent
@@ -40,8 +40,8 @@ const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({ application, ext
   const changeExtensionName = (newName: string) => {
     setExtensionName(newName)
     application.mutator
-      .changeAndSaveItem(extension, (m: any) => {
-        m.mutableContent.name = newName
+      .changeAndSaveItem<ComponentMutator>(extension, (mutator) => {
+        mutator.name = newName
       })
       .then((item) => {
         const component = item as SNComponent
