@@ -3,7 +3,6 @@ import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, createContext, useCallback, useContext, ReactNode } from 'react'
 import PremiumFeaturesModal from '@/Components/PremiumFeaturesModal/PremiumFeaturesModal'
-import DeallocateHandler from '@/Components/DeallocateHandler/DeallocateHandler'
 
 type PremiumModalContextData = {
   activate: (featureName: string) => void
@@ -70,11 +69,7 @@ const PremiumModalProvider: FunctionComponent<Props> = observer(({ application, 
 PremiumModalProvider.displayName = 'PremiumModalProvider'
 
 const PremiumModalProviderWithDeallocateHandling: FunctionComponent<Props> = ({ application, appState, children }) => {
-  return (
-    <DeallocateHandler appState={appState}>
-      <PremiumModalProvider application={application} appState={appState} children={children} />
-    </DeallocateHandler>
-  )
+  return <PremiumModalProvider application={application} appState={appState} children={children} />
 }
 
 export default observer(PremiumModalProviderWithDeallocateHandling)
