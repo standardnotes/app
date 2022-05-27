@@ -75,7 +75,7 @@
     "@standardnotes/icons": "^1.1.8",
     "@standardnotes/services": "^1.13.3",
     "@standardnotes/sncrypto-web": "1.10.1",
-    "@standardnotes/snjs": "^2.114.2",
+    "@standardnotes/snjs": "^2.114.5",
     "@standardnotes/stylekit": "5.29.2",
     "@zip.js/zip.js": "^2.4.10",
     "mobx": "^6.5.0",
