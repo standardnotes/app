@@ -35,7 +35,6 @@ import {
 } from './TransactionFunctions'
 import { reloadFont } from './FontFunctions'
 import { NoteViewProps } from './NoteViewProps'
-import DeallocateHandler from '../DeallocateHandler/DeallocateHandler'
 
 const MINIMUM_STATUS_DURATION = 400
 const TEXTAREA_DEBOUNCE = 100
@@ -941,30 +940,24 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                     </div>
                   </div>
                   <div className="mr-3">
-                    <DeallocateHandler appState={this.appState}>
-                      <AttachedFilesButton
-                        application={this.application}
-                        appState={this.appState}
-                        onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                      />
-                    </DeallocateHandler>
+                    <AttachedFilesButton
+                      application={this.application}
+                      appState={this.appState}
+                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                    />
                   </div>
                   <div className="mr-3">
-                    <DeallocateHandler appState={this.appState}>
-                      <ChangeEditorButton
-                        application={this.application}
-                        appState={this.appState}
-                        onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                      />
-                    </DeallocateHandler>
+                    <ChangeEditorButton
+                      application={this.application}
+                      appState={this.appState}
+                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                    />
                   </div>
                   <div className="mr-3">
-                    <DeallocateHandler appState={this.appState}>
-                      <PinNoteButton
-                        appState={this.appState}
-                        onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                      />
-                    </DeallocateHandler>
+                    <PinNoteButton
+                      appState={this.appState}
+                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                    />
                   </div>
                   <NotesOptionsPanel
                     application={this.application}
@@ -973,9 +966,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                   />
                 </div>
               </div>
-              <DeallocateHandler appState={this.appState}>
-                <NoteTagsContainer appState={this.appState} />
-              </DeallocateHandler>
+              <NoteTagsContainer appState={this.appState} />
             </div>
           )}
 

@@ -6,7 +6,6 @@ import { WebApplication } from '@/UIModels/Application'
 import PinNoteButton from '@/Components/PinNoteButton/PinNoteButton'
 import Button from '../Button/Button'
 import { useCallback } from 'react'
-import DeallocateHandler from '../DeallocateHandler/DeallocateHandler'
 
 type Props = {
   application: WebApplication
@@ -26,9 +25,7 @@ const MultipleSelectedNotes = ({ application, appState }: Props) => {
         <h1 className="sk-h1 font-bold m-0">{count} selected notes</h1>
         <div className="flex">
           <div className="mr-3">
-            <DeallocateHandler appState={appState}>
-              <PinNoteButton appState={appState} />
-            </DeallocateHandler>
+            <PinNoteButton appState={appState} />
           </div>
           <NotesOptionsPanel application={application} appState={appState} />
         </div>

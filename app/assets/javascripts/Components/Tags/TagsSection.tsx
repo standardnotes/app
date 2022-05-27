@@ -3,7 +3,6 @@ import { AppState } from '@/UIModels/AppState'
 import { ApplicationEvent } from '@/__mocks__/@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
-import DeallocateHandler from '../DeallocateHandler/DeallocateHandler'
 import TagsSectionAddButton from './TagsSectionAddButton'
 import TagsSectionTitle from './TagsSectionTitle'
 
@@ -60,9 +59,7 @@ const TagsSection: FunctionComponent<Props> = ({ appState }) => {
           <TagsSectionAddButton tags={appState.tags} features={appState.features} />
         </div>
       </div>
-      <DeallocateHandler appState={appState}>
-        <TagsList appState={appState} />
-      </DeallocateHandler>
+      <TagsList appState={appState} />
     </section>
   )
 }
