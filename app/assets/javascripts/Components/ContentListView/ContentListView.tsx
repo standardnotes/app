@@ -2,7 +2,7 @@ import { KeyboardKey, KeyboardModifier } from '@/Services/IOService'
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { PANEL_NAME_NOTES } from '@/Constants'
-import { PrefKey } from '@standardnotes/snjs'
+import { PrefKey, SystemViewId } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import {
   ChangeEventHandler,
@@ -10,6 +10,7 @@ import {
   KeyboardEventHandler,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react'
@@ -54,6 +55,19 @@ const ContentListView: FunctionComponent<Props> = ({ application, appState }) =>
 
   const [closeDisplayOptMenuOnBlur] = useCloseOnBlur(displayOptionsMenuRef, setShowDisplayOptionsMenu)
 
+  const isFilesSmartView = useMemo(
+    () => appState.tags.selected?.uuid === SystemViewId.Files,
+    [appState.tags.selected?.uuid],
+  )
+
+  const addNewItem = useCallback(() => {
+    if (isFilesSmartView) {
+      void appState.files.uploadNewFile()
+    } else {
+      void createNewNote()
+    }
+  }, [appState.files, createNewNote, isFilesSmartView])
+
   useEffect(() => {
     /**
      * In the browser we're not allowed to override cmd/ctrl + n, so we have to
@@ -65,7 +79,7 @@ const ContentListView: FunctionComponent<Props> = ({ application, appState }) =>
       modifiers: [KeyboardModifier.Meta, KeyboardModifier.Ctrl],
       onKeyDown: (event) => {
         event.preventDefault()
-        void createNewNote()
+        addNewItem()
       },
     })
 
@@ -104,7 +118,7 @@ const ContentListView: FunctionComponent<Props> = ({ application, appState }) =>
       previousNoteKeyObserver()
       searchKeyObserver()
     }
-  }, [application.io, createNewNote, searchBarElement, selectNextItem, selectPreviousItem])
+  }, [addNewItem, application.io, createNewNote, searchBarElement, selectNextItem, selectPreviousItem])
 
   const onNoteFilterTextChange: ChangeEventHandler<HTMLInputElement> = useCallback(
     (e) => {
@@ -156,9 +170,9 @@ const ContentListView: FunctionComponent<Props> = ({ application, appState }) =>
               <div className="sk-h2 font-semibold title">{panelTitle}</div>
               <button
                 className="sk-button contrast wide"
-                title="Create a new note in the selected tag"
-                aria-label="Create new note"
-                onClick={() => createNewNote()}
+                title={isFilesSmartView ? 'Upload file' : 'Create a new note in the selected tag'}
+                aria-label={isFilesSmartView ? 'Upload file' : 'Create new note'}
+                onClick={addNewItem}
               >
                 <div className="sk-label">
                   <i className="ion-plus add-button" aria-hidden></i>
