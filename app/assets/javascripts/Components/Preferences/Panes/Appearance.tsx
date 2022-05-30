@@ -1,27 +1,23 @@
-import { Dropdown, DropdownItem } from '@/Components/Dropdown/Dropdown'
+import Dropdown from '@/Components/Dropdown/Dropdown'
+import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
-import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
-import { Switch } from '@/Components/Switch/Switch'
+import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
+import Switch from '@/Components/Switch/Switch'
 import { WebApplication } from '@/UIModels/Application'
 import { ContentType, FeatureIdentifier, FeatureStatus, PrefKey, GetFeatures, SNTheme } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useEffect, useState } from 'preact/hooks'
-import {
-  PreferencesGroup,
-  PreferencesPane,
-  PreferencesSegment,
-  Subtitle,
-  Title,
-  Text,
-} from '@/Components/Preferences/PreferencesComponents'
+import { FunctionComponent, useEffect, useState } from 'react'
+import { Subtitle, Title, Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import { sortThemes } from '@/Utils/SortThemes'
+import PreferencesPane from '../PreferencesComponents/PreferencesPane'
+import PreferencesGroup from '../PreferencesComponents/PreferencesGroup'
+import PreferencesSegment from '../PreferencesComponents/PreferencesSegment'
 
 type Props = {
   application: WebApplication
 }
 
-export const Appearance: FunctionComponent<Props> = observer(({ application }) => {
+const Appearance: FunctionComponent<Props> = ({ application }) => {
   const premiumModal = usePremiumModal()
   const isEntitledToMidnightTheme =
     application.features.getFeatureStatus(FeatureIdentifier.MidnightTheme) === FeatureStatus.Entitled
@@ -120,7 +116,7 @@ export const Appearance: FunctionComponent<Props> = observer(({ application }) =
               </div>
               <Switch onChange={toggleUseDeviceSettings} checked={useDeviceSettings} />
             </div>
-            <HorizontalSeparator classes="mt-5 mb-3" />
+            <HorizontalSeparator classes="my-4" />
             <div>
               <Subtitle>Automatic Light Theme</Subtitle>
               <Text>Theme to be used for system light mode:</Text>
@@ -135,7 +131,7 @@ export const Appearance: FunctionComponent<Props> = observer(({ application }) =
                 />
               </div>
             </div>
-            <HorizontalSeparator classes="mt-5 mb-3" />
+            <HorizontalSeparator classes="my-4" />
             <div>
               <Subtitle>Automatic Dark Theme</Subtitle>
               <Text>Theme to be used for system dark mode:</Text>
@@ -155,4 +151,6 @@ export const Appearance: FunctionComponent<Props> = observer(({ application }) =
       </PreferencesGroup>
     </PreferencesPane>
   )
-})
+}
+
+export default observer(Appearance)

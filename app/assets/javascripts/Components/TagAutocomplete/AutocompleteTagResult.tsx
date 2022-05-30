@@ -2,8 +2,8 @@ import { AppState } from '@/UIModels/AppState'
 import { splitQueryInString } from '@/Utils/StringUtils'
 import { SNTag } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { useEffect, useRef } from 'preact/hooks'
-import { Icon } from '@/Components/Icon/Icon'
+import { FocusEventHandler, KeyboardEventHandler, useEffect, useRef } from 'react'
+import Icon from '@/Components/Icon/Icon'
 
 type Props = {
   appState: AppState
@@ -11,7 +11,7 @@ type Props = {
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
 }
 
-export const AutocompleteTagResult = observer(({ appState, tagResult, closeOnBlur }: Props) => {
+const AutocompleteTagResult = ({ appState, tagResult, closeOnBlur }: Props) => {
   const { autocompleteSearchQuery, autocompleteTagHintVisible, autocompleteTagResults, focusedTagResultUuid } =
     appState.noteTags
 
@@ -26,7 +26,7 @@ export const AutocompleteTagResult = observer(({ appState, tagResult, closeOnBlu
     appState.noteTags.setAutocompleteInputFocused(true)
   }
 
-  const onKeyDown = (event: KeyboardEvent) => {
+  const onKeyDown: KeyboardEventHandler = (event) => {
     const tagResultIndex = appState.noteTags.getTagIndex(tagResult, autocompleteTagResults)
     switch (event.key) {
       case 'ArrowUp':
@@ -54,7 +54,7 @@ export const AutocompleteTagResult = observer(({ appState, tagResult, closeOnBlu
     appState.noteTags.setFocusedTagResultUuid(tagResult.uuid)
   }
 
-  const onBlur = (event: FocusEvent) => {
+  const onBlur: FocusEventHandler = (event) => {
     closeOnBlur(event)
     appState.noteTags.setFocusedTagResultUuid(undefined)
   }
@@ -97,4 +97,6 @@ export const AutocompleteTagResult = observer(({ appState, tagResult, closeOnBlu
       </span>
     </button>
   )
-})
+}
+
+export default observer(AutocompleteTagResult)

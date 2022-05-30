@@ -1,23 +1,20 @@
-import {
-  PreferencesGroup,
-  PreferencesPane,
-  PreferencesSegment,
-  Title,
-  Subtitle,
-  Text,
-} from '@/Components/Preferences/PreferencesComponents'
+import { Title, Subtitle, Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import { observer } from 'mobx-react-lite'
 import { WebApplication } from '@/UIModels/Application'
 import { ButtonType, ListedAccount } from '@standardnotes/snjs'
-import { useCallback, useEffect, useState } from 'preact/hooks'
-import { ListedAccountItem } from './BlogItem'
-import { Button } from '@/Components/Button/Button'
+import { useCallback, useEffect, useState } from 'react'
+import ListedAccountItem from './ListedAccountItem'
+import Button from '@/Components/Button/Button'
+import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
+import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
+import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
 type Props = {
   application: WebApplication
 }
 
-export const Listed = observer(({ application }: Props) => {
+const Listed = ({ application }: Props) => {
   const [accounts, setAccounts] = useState<ListedAccount[]>([])
   const [requestingAccount, setRequestingAccount] = useState<boolean>()
 
@@ -92,19 +89,24 @@ export const Listed = observer(({ application }: Props) => {
           </Text>
         </PreferencesSegment>
         {application.getUser() && (
-          <PreferencesSegment>
-            <Subtitle>Get Started</Subtitle>
-            <Text>Create a free Listed author account to get started.</Text>
-            <Button
-              className="mt-3"
-              variant="normal"
-              disabled={requestingAccount}
-              label={requestingAccount ? 'Creating account...' : 'Create new author'}
-              onClick={registerNewAccount}
-            />
-          </PreferencesSegment>
+          <>
+            <HorizontalSeparator classes="my-4" />
+            <PreferencesSegment>
+              <Subtitle>Get Started</Subtitle>
+              <Text>Create a free Listed author account to get started.</Text>
+              <Button
+                className="mt-3"
+                variant="normal"
+                disabled={requestingAccount}
+                label={requestingAccount ? 'Creating account...' : 'Create new author'}
+                onClick={registerNewAccount}
+              />
+            </PreferencesSegment>
+          </>
         )}
       </PreferencesGroup>
     </PreferencesPane>
   )
-})
+}
+
+export default observer(Listed)

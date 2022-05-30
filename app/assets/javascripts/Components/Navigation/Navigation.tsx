@@ -1,18 +1,17 @@
-import { SmartViewsSection } from '@/Components/Tags/SmartViewsSection'
-import { TagsSection } from '@/Components/Tags/TagsSection'
+import SmartViewsSection from '@/Components/Tags/SmartViewsSection'
+import TagsSection from '@/Components/Tags/TagsSection'
 import { WebApplication } from '@/UIModels/Application'
 import { PANEL_NAME_NAVIGATION } from '@/Constants'
 import { ApplicationEvent, PrefKey } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
-import { PanelSide, ResizeFinishCallback, PanelResizer, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
+import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
+import PanelResizer, { PanelSide, ResizeFinishCallback, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
 
 type Props = {
   application: WebApplication
 }
 
-export const Navigation: FunctionComponent<Props> = observer(({ application }) => {
+const Navigation: FunctionComponent<Props> = ({ application }) => {
   const appState = useMemo(() => application.getAppState(), [application])
   const [ref, setRef] = useState<HTMLDivElement | null>()
   const [panelWidth, setPanelWidth] = useState<number>(0)
@@ -79,4 +78,6 @@ export const Navigation: FunctionComponent<Props> = observer(({ application }) =
       )}
     </div>
   )
-})
+}
+
+export default observer(Navigation)

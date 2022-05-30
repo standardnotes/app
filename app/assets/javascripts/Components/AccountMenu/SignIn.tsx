@@ -2,16 +2,15 @@ import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { isDev } from '@/Utils'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
+import React, { FunctionComponent, KeyboardEventHandler, useCallback, useEffect, useRef, useState } from 'react'
 import { AccountMenuPane } from './AccountMenuPane'
-import { Button } from '@/Components/Button/Button'
-import { Checkbox } from '@/Components/Checkbox/Checkbox'
-import { DecoratedInput } from '@/Components/Input/DecoratedInput'
-import { DecoratedPasswordInput } from '@/Components/Input/DecoratedPasswordInput'
-import { Icon } from '@/Components/Icon/Icon'
-import { IconButton } from '@/Components/Button/IconButton'
-import { AdvancedOptions } from './AdvancedOptions'
+import Button from '@/Components/Button/Button'
+import Checkbox from '@/Components/Checkbox/Checkbox'
+import DecoratedInput from '@/Components/Input/DecoratedInput'
+import DecoratedPasswordInput from '@/Components/Input/DecoratedPasswordInput'
+import Icon from '@/Components/Icon/Icon'
+import IconButton from '@/Components/Button/IconButton'
+import AdvancedOptions from './AdvancedOptions'
 
 type Props = {
   appState: AppState
@@ -19,7 +18,7 @@ type Props = {
   setMenuPane: (pane: AccountMenuPane) => void
 }
 
-export const SignInPane: FunctionComponent<Props> = observer(({ application, appState, setMenuPane }) => {
+const SignInPane: FunctionComponent<Props> = ({ application, appState, setMenuPane }) => {
   const { notesAndTagsCount } = appState.accountMenu
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -111,7 +110,7 @@ export const SignInPane: FunctionComponent<Props> = observer(({ application, app
   )
 
   const handleSignInFormSubmit = useCallback(
-    (e: Event) => {
+    (e: React.SyntheticEvent) => {
       e.preventDefault()
 
       if (!email || email.length === 0) {
@@ -129,8 +128,8 @@ export const SignInPane: FunctionComponent<Props> = observer(({ application, app
     [email, password, signIn],
   )
 
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
+  const handleKeyDown: KeyboardEventHandler = useCallback(
+    (e) => {
       if (e.key === 'Enter') {
         handleSignInFormSubmit(e)
       }
@@ -210,4 +209,6 @@ export const SignInPane: FunctionComponent<Props> = observer(({ application, app
       />
     </>
   )
-})
+}
+
+export default observer(SignInPane)

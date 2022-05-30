@@ -1,9 +1,10 @@
 import { WebApplication } from '@/UIModels/Application'
-import { createRef, JSX } from 'preact'
+import { ChangeEventHandler, createRef } from 'react'
 import { PureComponent } from '@/Components/Abstract/PureComponent'
 
 interface Props {
   application: WebApplication
+  dismissModal: () => void
 }
 
 type State = {
@@ -31,7 +32,7 @@ type FormData = {
   status?: string
 }
 
-export class PasswordWizard extends PureComponent<Props, State> {
+class PasswordWizard extends PureComponent<Props, State> {
   private currentPasswordInput = createRef<HTMLInputElement>()
 
   constructor(props: Props) {
@@ -188,7 +189,7 @@ export class PasswordWizard extends PureComponent<Props, State> {
     if (this.state.lockContinue) {
       this.application.alertService.alert('Cannot close window until pending tasks are complete.').catch(console.error)
     } else {
-      this.dismissModal()
+      this.props.dismissModal()
     }
   }
 
@@ -201,19 +202,19 @@ export class PasswordWizard extends PureComponent<Props, State> {
     })
   }
 
-  handleCurrentPasswordInputChange = ({ currentTarget }: JSX.TargetedEvent<HTMLInputElement, Event>) => {
+  handleCurrentPasswordInputChange: ChangeEventHandler<HTMLInputElement> = ({ currentTarget }) => {
     this.setFormDataState({
       currentPassword: currentTarget.value,
     }).catch(console.error)
   }
 
-  handleNewPasswordInputChange = ({ currentTarget }: JSX.TargetedEvent<HTMLInputElement, Event>) => {
+  handleNewPasswordInputChange: ChangeEventHandler<HTMLInputElement> = ({ currentTarget }) => {
     this.setFormDataState({
       newPassword: currentTarget.value,
     }).catch(console.error)
   }
 
-  handleNewPasswordConfirmationInputChange = ({ currentTarget }: JSX.TargetedEvent<HTMLInputElement, Event>) => {
+  handleNewPasswordConfirmationInputChange: ChangeEventHandler<HTMLInputElement> = ({ currentTarget }) => {
     this.setFormDataState({
       newPasswordConfirmation: currentTarget.value,
     }).catch(console.error)
@@ -310,3 +311,5 @@ export class PasswordWizard extends PureComponent<Props, State> {
     )
   }
 }
+
+export default PasswordWizard

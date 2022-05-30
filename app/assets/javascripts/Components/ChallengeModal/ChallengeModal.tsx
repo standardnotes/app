@@ -9,22 +9,14 @@ import {
   removeFromArray,
 } from '@standardnotes/snjs'
 import { ProtectedIllustration } from '@standardnotes/icons'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useState } from 'preact/hooks'
-import { Button } from '@/Components/Button/Button'
-import { Icon } from '@/Components/Icon/Icon'
-import { ChallengeModalPrompt } from './ChallengePrompt'
-import { LockscreenWorkspaceSwitcher } from './LockscreenWorkspaceSwitcher'
+import { FunctionComponent, useCallback, useEffect, useState } from 'react'
+import Button from '@/Components/Button/Button'
+import Icon from '@/Components/Icon/Icon'
+import ChallengeModalPrompt from './ChallengePrompt'
+import LockscreenWorkspaceSwitcher from './LockscreenWorkspaceSwitcher'
 import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
 import { AppState } from '@/UIModels/AppState'
-
-type InputValue = {
-  prompt: ChallengePrompt
-  value: string | number | boolean
-  invalid: boolean
-}
-
-export type ChallengeModalValues = Record<ChallengePrompt['id'], InputValue>
+import { ChallengeModalValues } from './ChallengeModalValues'
 
 type Props = {
   application: WebApplication
@@ -50,7 +42,7 @@ const validateValues = (values: ChallengeModalValues, prompts: ChallengePrompt[]
   return undefined
 }
 
-export const ChallengeModal: FunctionComponent<Props> = ({
+const ChallengeModal: FunctionComponent<Props> = ({
   application,
   appState,
   mainApplicationGroup,
@@ -191,6 +183,7 @@ export const ChallengeModal: FunctionComponent<Props> = ({
       key={challenge.id}
     >
       <DialogContent
+        aria-label="Challenge modal"
         className={`challenge-modal flex flex-col items-center bg-default p-8 rounded relative ${
           challenge.reason !== ChallengeReason.ApplicationUnlock
             ? 'shadow-overlay-light border-1 border-solid border-main'
@@ -268,3 +261,5 @@ export const ChallengeModal: FunctionComponent<Props> = ({
     </DialogOverlay>
   )
 }
+
+export default ChallengeModal

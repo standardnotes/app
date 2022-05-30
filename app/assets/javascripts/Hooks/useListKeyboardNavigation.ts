@@ -1,8 +1,8 @@
 import { KeyboardKey } from '@/Services/IOService'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
-import { useCallback, useState, useEffect, Ref } from 'preact/hooks'
+import { useCallback, useState, useEffect, RefObject } from 'react'
 
-export const useListKeyboardNavigation = (container: Ref<HTMLElement | null>, initialFocus = 0) => {
+export const useListKeyboardNavigation = (container: RefObject<HTMLElement | null>, initialFocus = 0) => {
   const [listItems, setListItems] = useState<HTMLButtonElement[]>()
   const [focusedItemIndex, setFocusedItemIndex] = useState<number>(initialFocus)
 

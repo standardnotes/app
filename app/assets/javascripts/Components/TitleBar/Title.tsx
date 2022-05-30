@@ -1,5 +1,11 @@
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 
-export const Title: FunctionComponent<{ className?: string }> = ({ children, className }) => {
+type Props = {
+  className?: string
+}
+
+const Title: FunctionComponent<Props> = ({ children, className }) => {
   return <div className={`sn-title ${className ?? ''}`}>{children}</div>
 }
+
+export default Title

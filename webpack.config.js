@@ -50,9 +50,6 @@ module.exports = (env) => {
         '@Views': path.resolve(__dirname, 'app/assets/javascripts/views'),
         '@Services': path.resolve(__dirname, 'app/assets/javascripts/services'),
         '@node_modules': path.resolve(__dirname, 'node_modules'),
-        react: 'preact/compat',
-        'react-dom/test-utils': 'preact/test-utils',
-        'react-dom': 'preact/compat',
       },
     },
     module: {

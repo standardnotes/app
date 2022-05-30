@@ -1,16 +1,8 @@
 import { ListboxArrow, ListboxButton, ListboxInput, ListboxList, ListboxOption, ListboxPopover } from '@reach/listbox'
 import VisuallyHidden from '@reach/visually-hidden'
-import { FunctionComponent } from 'preact'
-import { Icon } from '@/Components/Icon/Icon'
-import { IconType } from '@standardnotes/snjs'
-
-export type DropdownItem = {
-  icon?: IconType
-  iconClassName?: string
-  label: string
-  value: string
-  disabled?: boolean
-}
+import { FunctionComponent } from 'react'
+import Icon from '@/Components/Icon/Icon'
+import { DropdownItem } from './DropdownItem'
 
 type DropdownProps = {
   id: string
@@ -46,7 +38,7 @@ const CustomDropdownButton: FunctionComponent<ListboxButtonProps> = ({
   </>
 )
 
-export const Dropdown: FunctionComponent<DropdownProps> = ({ id, label, items, value, onChange, disabled }) => {
+const Dropdown: FunctionComponent<DropdownProps> = ({ id, label, items, value, onChange, disabled }) => {
   const labelId = `${id}-label`
 
   const handleChange = (value: string) => {
@@ -79,6 +71,7 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({ id, label, items, v
             <ListboxList>
               {items.map((item) => (
                 <ListboxOption
+                  key={item.value}
                   className="sn-dropdown-item"
                   value={item.value}
                   label={item.label}
@@ -99,3 +92,5 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({ id, label, items, v
     </>
   )
 }
+
+export default Dropdown

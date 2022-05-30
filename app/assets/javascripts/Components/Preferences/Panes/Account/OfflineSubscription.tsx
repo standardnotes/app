@@ -1,21 +1,20 @@
-import { FunctionalComponent } from 'preact'
-import { Subtitle } from '@/Components/Preferences/PreferencesComponents'
-import { DecoratedInput } from '@/Components/Input/DecoratedInput'
-import { Button } from '@/Components/Button/Button'
-import { useEffect, useState } from 'preact/hooks'
+import React, { FunctionComponent, useEffect, useState } from 'react'
+import { Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
+import DecoratedInput from '@/Components/Input/DecoratedInput'
+import Button from '@/Components/Button/Button'
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
 import { STRING_REMOVE_OFFLINE_KEY_CONFIRMATION } from '@/Strings'
 import { ButtonType, ClientDisplayableError } from '@standardnotes/snjs'
-import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
+import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 
-interface IProps {
+type Props = {
   application: WebApplication
   appState: AppState
 }
 
-export const OfflineSubscription: FunctionalComponent<IProps> = observer(({ application }) => {
+const OfflineSubscription: FunctionComponent<Props> = ({ application }) => {
   const [activationCode, setActivationCode] = useState('')
   const [isSuccessfullyActivated, setIsSuccessfullyActivated] = useState(false)
   const [isSuccessfullyRemoved, setIsSuccessfullyRemoved] = useState(false)
@@ -31,7 +30,7 @@ export const OfflineSubscription: FunctionalComponent<IProps> = observer(({ appl
     return !application.hasAccount() || application.isThirdPartyHostUsed() || hasUserPreviouslyStoredCode
   }
 
-  const handleSubscriptionCodeSubmit = async (event: Event) => {
+  const handleSubscriptionCodeSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
 
     const result = await application.features.setOfflineFeaturesCode(activationCode)
@@ -123,4 +122,6 @@ export const OfflineSubscription: FunctionalComponent<IProps> = observer(({ appl
       <HorizontalSeparator classes="mt-8 mb-5" />
     </>
   )
-})
+}
+
+export default observer(OfflineSubscription)

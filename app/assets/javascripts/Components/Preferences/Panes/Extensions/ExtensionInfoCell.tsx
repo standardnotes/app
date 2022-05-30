@@ -1,11 +1,12 @@
-import { FunctionComponent } from 'preact'
-import { useState, useRef, useEffect } from 'preact/hooks'
+import { FunctionComponent, useState, useRef, useEffect } from 'react'
 
-export const ExtensionInfoCell: FunctionComponent<{
+type Props = {
   extensionName: string
   changeName: (newName: string) => void
   isThirdParty: boolean
-}> = ({ extensionName, changeName, isThirdParty }) => {
+}
+
+const ExtensionInfoCell: FunctionComponent<Props> = ({ extensionName, changeName, isThirdParty }) => {
   const [isRenaming, setIsRenaming] = useState(false)
   const [newExtensionName, setNewExtensionName] = useState<string>(extensionName)
 
@@ -42,7 +43,7 @@ export const ExtensionInfoCell: FunctionComponent<{
       <input
         ref={inputRef}
         disabled={!isRenaming || !renameable}
-        autocomplete="off"
+        autoComplete="off"
         className="flex-grow text-base font-bold no-border bg-default px-0 color-text"
         type="text"
         value={newExtensionName}
@@ -71,3 +72,5 @@ export const ExtensionInfoCell: FunctionComponent<{
     </div>
   )
 }
+
+export default ExtensionInfoCell

@@ -1,12 +1,12 @@
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 
 type HistoryListItemProps = {
   isSelected: boolean
   onClick: () => void
 }
 
-export const HistoryListItem: FunctionComponent<HistoryListItemProps> = ({ children, isSelected, onClick }) => {
+const HistoryListItem: FunctionComponent<HistoryListItemProps> = ({ children, isSelected, onClick }) => {
   return (
     <button
       tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
@@ -19,3 +19,5 @@ export const HistoryListItem: FunctionComponent<HistoryListItemProps> = ({ child
     </button>
   )
 }
+
+export default HistoryListItem

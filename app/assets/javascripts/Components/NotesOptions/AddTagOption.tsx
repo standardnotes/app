@@ -2,16 +2,15 @@ import { AppState } from '@/UIModels/AppState'
 import { calculateSubmenuStyle, SubmenuStyle } from '@/Utils/CalculateSubmenuStyle'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
-import { Icon } from '@/Components/Icon/Icon'
+import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
+import Icon from '@/Components/Icon/Icon'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 
 type Props = {
   appState: AppState
 }
 
-export const AddTagOption: FunctionComponent<Props> = observer(({ appState }) => {
+const AddTagOption: FunctionComponent<Props> = ({ appState }) => {
   const menuContainerRef = useRef<HTMLDivElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
@@ -87,7 +86,7 @@ export const AddTagOption: FunctionComponent<Props> = observer(({ appState }) =>
         >
           {appState.tags.tags.map((tag) => (
             <button
-              key={tag.title}
+              key={tag.uuid}
               className="sn-dropdown-item sn-dropdown-item--no-icon max-w-80"
               onBlur={closeOnBlur}
               onClick={() => {
@@ -108,4 +107,6 @@ export const AddTagOption: FunctionComponent<Props> = observer(({ appState }) =>
       </Disclosure>
     </div>
   )
-})
+}
+
+export default observer(AddTagOption)

@@ -4,27 +4,29 @@ import { AppState } from '@/UIModels/AppState'
 import { PANEL_NAME_NOTES } from '@/Constants'
 import { PrefKey } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
-import { ContentList } from '@/Components/ContentListView/ContentList'
-import { NotesListOptionsMenu } from '@/Components/ContentListView/NotesListOptionsMenu'
-import { NoAccountWarning } from '@/Components/NoAccountWarning/NoAccountWarning'
-import { SearchOptions } from '@/Components/SearchOptions/SearchOptions'
-import { PanelSide, ResizeFinishCallback, PanelResizer, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
+import {
+  ChangeEventHandler,
+  FunctionComponent,
+  KeyboardEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
+import ContentList from '@/Components/ContentListView/ContentList'
+import NotesListOptionsMenu from '@/Components/ContentListView/NotesListOptionsMenu'
+import NoAccountWarningWrapper from '@/Components/NoAccountWarning/NoAccountWarning'
+import SearchOptions from '@/Components/SearchOptions/SearchOptions'
+import PanelResizer, { PanelSide, ResizeFinishCallback, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
-import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 
 type Props = {
   application: WebApplication
   appState: AppState
 }
 
-export const ContentListView: FunctionComponent<Props> = observer(({ application, appState }) => {
-  if (isStateDealloced(appState)) {
-    return null
-  }
-
+const ContentListView: FunctionComponent<Props> = ({ application, appState }) => {
   const itemsViewPanelRef = useRef<HTMLDivElement>(null)
   const displayOptionsMenuRef = useRef<HTMLDivElement>(null)
 
@@ -104,9 +106,9 @@ export const ContentListView: FunctionComponent<Props> = observer(({ application
     }
   }, [application.io, createNewNote, searchBarElement, selectNextItem, selectPreviousItem])
 
-  const onNoteFilterTextChange = useCallback(
-    (e: Event) => {
-      setNoteFilterText((e.target as HTMLInputElement).value)
+  const onNoteFilterTextChange: ChangeEventHandler<HTMLInputElement> = useCallback(
+    (e) => {
+      setNoteFilterText(e.target.value)
     },
     [setNoteFilterText],
   )
@@ -114,8 +116,8 @@ export const ContentListView: FunctionComponent<Props> = observer(({ application
   const onSearchFocused = useCallback(() => setFocusedSearch(true), [])
   const onSearchBlurred = useCallback(() => setFocusedSearch(false), [])
 
-  const onNoteFilterKeyUp = useCallback(
-    (e: KeyboardEvent) => {
+  const onNoteFilterKeyUp: KeyboardEventHandler = useCallback(
+    (e) => {
       if (e.key === KeyboardKey.Enter) {
         onFilterEnter()
       }
@@ -176,10 +178,10 @@ export const ContentListView: FunctionComponent<Props> = observer(({ application
                   onKeyUp={onNoteFilterKeyUp}
                   onFocus={onSearchFocused}
                   onBlur={onSearchBlurred}
-                  autocomplete="off"
+                  autoComplete="off"
                 />
                 {noteFilterText && (
-                  <button onClick={clearFilterText} aria-role="button" id="search-clear-button">
+                  <button onClick={clearFilterText} id="search-clear-button">
                     ✕
                   </button>
                 )}
@@ -191,7 +193,7 @@ export const ContentListView: FunctionComponent<Props> = observer(({ application
                 </div>
               )}
             </div>
-            <NoAccountWarning appState={appState} />
+            <NoAccountWarningWrapper appState={appState} />
           </div>
           <div id="items-menu-bar" className="sn-component" ref={displayOptionsMenuRef}>
             <div className="sk-app-bar no-edges">
@@ -253,4 +255,6 @@ export const ContentListView: FunctionComponent<Props> = observer(({ application
       )}
     </div>
   )
-})
+}
+
+export default observer(ContentListView)

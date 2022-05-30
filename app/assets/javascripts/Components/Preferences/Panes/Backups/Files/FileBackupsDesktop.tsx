@@ -1,45 +1,24 @@
 import { WebApplication } from '@/UIModels/Application'
 import { observer } from 'mobx-react-lite'
-import {
-  PreferencesGroup,
-  PreferencesSegment,
-  Title,
-  Text,
-  Subtitle,
-} from '@/Components/Preferences/PreferencesComponents'
-import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
-import { Button } from '@/Components/Button/Button'
-import { Switch } from '@/Components/Switch/Switch'
-import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
-import { EncryptionStatusItem } from '../../Security/Encryption'
-import { Icon } from '@/Components/Icon/Icon'
-import { BackupsDropZone } from './BackupsDropZone'
+import { Title, Text, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
+import { useCallback, useEffect, useState } from 'react'
+import Button from '@/Components/Button/Button'
+import Switch from '@/Components/Switch/Switch'
+import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
+import Icon from '@/Components/Icon/Icon'
+import BackupsDropZone from './BackupsDropZone'
+import EncryptionStatusItem from '../../Security/EncryptionStatusItem'
+import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
+import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 
 type Props = {
   application: WebApplication
+  backupsService: NonNullable<WebApplication['fileBackups']>
 }
 
-export const FileBackups = observer(({ application }: Props) => {
+const FileBackupsDesktop = ({ application, backupsService }: Props) => {
   const [backupsEnabled, setBackupsEnabled] = useState(false)
   const [backupsLocation, setBackupsLocation] = useState('')
-  const backupsService = useMemo(() => application.fileBackups, [application])
-
-  if (!backupsService) {
-    return (
-      <>
-        <PreferencesGroup>
-          <PreferencesSegment>
-            <Title>File Backups</Title>
-            <Subtitle>Automatically save encrypted backups of files uploaded to any device to this computer.</Subtitle>
-            <Text className="mt-3">To enable file backups, use the Standard Notes desktop application.</Text>
-          </PreferencesSegment>
-          <PreferencesSegment>
-            <BackupsDropZone application={application} />
-          </PreferencesSegment>
-        </PreferencesGroup>
-      </>
-    )
-  }
 
   useEffect(() => {
     void backupsService.isFilesBackupsEnabled().then(setBackupsEnabled)
@@ -108,6 +87,7 @@ export const FileBackups = observer(({ application }: Props) => {
                   icon={[<Icon type="attachment-file" className="min-w-5 min-h-5" />]}
                   checkmark={false}
                 />
+
                 <div className="flex flex-row mt-5">
                   <Button
                     variant="normal"
@@ -133,4 +113,6 @@ export const FileBackups = observer(({ application }: Props) => {
       </PreferencesGroup>
     </>
   )
-})
+}
+
+export default observer(FileBackupsDesktop)

@@ -1,9 +1,17 @@
-import { Icon } from '@/Components/Icon/Icon'
-import { MenuItem, MenuItemType } from '@/Components/Menu/MenuItem'
+import Icon from '@/Components/Icon/Icon'
+import MenuItem from '@/Components/Menu/MenuItem'
+import { MenuItemType } from '@/Components/Menu/MenuItemType'
 import { KeyboardKey } from '@/Services/IOService'
 import { ApplicationDescriptor } from '@standardnotes/snjs'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
+import {
+  FocusEventHandler,
+  FunctionComponent,
+  KeyboardEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 
 type Props = {
   descriptor: ApplicationDescriptor
@@ -13,7 +21,7 @@ type Props = {
   hideOptions: boolean
 }
 
-export const WorkspaceMenuItem: FunctionComponent<Props> = ({
+const WorkspaceMenuItem: FunctionComponent<Props> = ({
   descriptor,
   onClick,
   onDelete,
@@ -29,15 +37,15 @@ export const WorkspaceMenuItem: FunctionComponent<Props> = ({
     }
   }, [isRenaming])
 
-  const handleInputKeyDown = useCallback((event: KeyboardEvent) => {
+  const handleInputKeyDown: KeyboardEventHandler = useCallback((event) => {
     if (event.key === KeyboardKey.Enter) {
       inputRef.current?.blur()
     }
   }, [])
 
-  const handleInputBlur = useCallback(
-    (event: FocusEvent) => {
-      const name = (event.target as HTMLInputElement).value
+  const handleInputBlur: FocusEventHandler<HTMLInputElement> = useCallback(
+    (event) => {
+      const name = event.target.value
       renameDescriptor(name)
       setIsRenaming(false)
     },
@@ -65,7 +73,8 @@ export const WorkspaceMenuItem: FunctionComponent<Props> = ({
         )}
         {descriptor.primary && !hideOptions && (
           <div>
-            <button
+            <a
+              role="button"
               className="w-5 h-5 p-0 mr-3 border-0 bg-transparent hover:bg-contrast cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation()
@@ -73,8 +82,9 @@ export const WorkspaceMenuItem: FunctionComponent<Props> = ({
               }}
             >
               <Icon type="pencil" className="sn-icon--mid color-neutral" />
-            </button>
-            <button
+            </a>
+            <a
+              role="button"
               className="w-5 h-5 p-0 border-0 bg-transparent hover:bg-contrast cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation()
@@ -82,10 +92,12 @@ export const WorkspaceMenuItem: FunctionComponent<Props> = ({
               }}
             >
               <Icon type="trash" className="sn-icon--mid color-danger" />
-            </button>
+            </a>
           </div>
         )}
       </div>
     </MenuItem>
   )
 }
+
+export default WorkspaceMenuItem

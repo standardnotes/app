@@ -1,18 +1,13 @@
 import { AppState } from '@/UIModels/AppState'
-import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { SmartViewsListItem } from './SmartViewsListItem'
+import { FunctionComponent } from 'react'
+import SmartViewsListItem from './SmartViewsListItem'
 
 type Props = {
   appState: AppState
 }
 
-export const SmartViewsList: FunctionComponent<Props> = observer(({ appState }: Props) => {
-  if (isStateDealloced(appState)) {
-    return null
-  }
-
+const SmartViewsList: FunctionComponent<Props> = ({ appState }: Props) => {
   const allViews = appState.tags.smartViews
 
   return (
@@ -22,4 +17,6 @@ export const SmartViewsList: FunctionComponent<Props> = observer(({ appState }: 
       })}
     </>
   )
-})
+}
+
+export default observer(SmartViewsList)

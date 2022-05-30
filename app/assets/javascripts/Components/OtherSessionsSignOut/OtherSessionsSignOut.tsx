@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'preact/hooks'
+import { useCallback, useRef } from 'react'
 import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
@@ -8,13 +8,6 @@ type Props = {
   application: WebApplication
   appState: AppState
 }
-
-export const OtherSessionsSignOutContainer = observer((props: Props) => {
-  if (!props.appState.accountMenu.otherSessionsSignOut) {
-    return null
-  }
-  return <ConfirmOtherSessionsSignOut {...props} />
-})
 
 const ConfirmOtherSessionsSignOut = observer(({ application, appState }: Props) => {
   const cancelRef = useRef<HTMLButtonElement>(null)
@@ -65,3 +58,14 @@ const ConfirmOtherSessionsSignOut = observer(({ application, appState }: Props) 
     </AlertDialog>
   )
 })
+
+ConfirmOtherSessionsSignOut.displayName = 'ConfirmOtherSessionsSignOut'
+
+const OtherSessionsSignOutContainer = (props: Props) => {
+  if (!props.appState.accountMenu.otherSessionsSignOut) {
+    return null
+  }
+  return <ConfirmOtherSessionsSignOut {...props} />
+}
+
+export default observer(OtherSessionsSignOutContainer)

@@ -1,6 +1,6 @@
-import { FunctionalComponent } from 'preact'
+import { FunctionComponent } from 'react'
 
-export const ChangeEmailSuccess: FunctionalComponent = () => {
+const ChangeEmailSuccess: FunctionComponent = () => {
   return (
     <div>
       <div className={'sk-label sk-bold info mt-2'}>Your email has been successfully changed.</div>
@@ -11,3 +11,5 @@ export const ChangeEmailSuccess: FunctionalComponent = () => {
     </div>
   )
 }
+
+export default ChangeEmailSuccess

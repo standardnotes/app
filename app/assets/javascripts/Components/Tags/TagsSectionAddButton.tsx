@@ -1,15 +1,15 @@
-import { IconButton } from '@/Components/Button/IconButton'
+import IconButton from '@/Components/Button/IconButton'
 import { FeaturesState } from '@/UIModels/AppState/FeaturesState'
 import { TagsState } from '@/UIModels/AppState/TagsState'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 
 type Props = {
   tags: TagsState
   features: FeaturesState
 }
 
-export const TagsSectionAddButton: FunctionComponent<Props> = observer(({ tags }) => {
+const TagsSectionAddButton: FunctionComponent<Props> = ({ tags }) => {
   return (
     <IconButton
       focusable={true}
@@ -19,4 +19,6 @@ export const TagsSectionAddButton: FunctionComponent<Props> = observer(({ tags }
       onClick={() => tags.createNewTemplate()}
     />
   )
-})
+}
+
+export default observer(TagsSectionAddButton)

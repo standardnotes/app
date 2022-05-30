@@ -1,16 +1,18 @@
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { SmartViewsList } from './SmartViewsList'
+import { FunctionComponent } from 'react'
+import SmartViewsList from './SmartViewsList'
 
 type Props = {
   appState: AppState
 }
 
-export const SmartViewsSection: FunctionComponent<Props> = observer(({ appState }) => {
+const SmartViewsSection: FunctionComponent<Props> = ({ appState }) => {
   return (
     <section>
       <SmartViewsList appState={appState} />
     </section>
   )
-})
+}
+
+export default observer(SmartViewsSection)

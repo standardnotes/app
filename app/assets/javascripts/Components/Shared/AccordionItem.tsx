@@ -1,14 +1,13 @@
-import { FunctionalComponent } from 'preact'
-import { useRef, useState } from 'preact/hooks'
+import { FunctionComponent, useRef, useState } from 'react'
 import { ArrowDownCheckmarkIcon } from '@standardnotes/icons'
-import { Title } from '@/Components/Preferences/PreferencesComponents'
+import { Title } from '@/Components/Preferences/PreferencesComponents/Content'
 
 type Props = {
   title: string | JSX.Element
   className?: string
 }
 
-export const AccordionItem: FunctionalComponent<Props> = ({ title, className = '', children }) => {
+const AccordionItem: FunctionComponent<Props> = ({ title, className = '', children }) => {
   const elementRef = useRef<HTMLDivElement>(null)
   const [isExpanded, setIsExpanded] = useState(false)
 
@@ -34,3 +33,5 @@ export const AccordionItem: FunctionalComponent<Props> = ({ title, className = '
     </div>
   )
 }
+
+export default AccordionItem

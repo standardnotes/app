@@ -1,11 +1,10 @@
-import { Button } from '@/Components/Button/Button'
+import Button from '@/Components/Button/Button'
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { PurchaseFlowPane } from '@/UIModels/AppState/PurchaseFlowPane'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useEffect, useRef, useState } from 'preact/hooks'
-import { FloatingLabelInput } from '@/Components/Input/FloatingLabelInput'
+import { ChangeEventHandler, FunctionComponent, useEffect, useRef, useState } from 'react'
+import FloatingLabelInput from '@/Components/Input/FloatingLabelInput'
 import { isEmailValid } from '@/Utils'
 import { BlueDotIcon, CircleIcon, DiamondIcon } from '@standardnotes/icons'
 import { loadPurchaseFlowUrl } from '../PurchaseFlowFunctions'
@@ -15,7 +14,7 @@ type Props = {
   application: WebApplication
 }
 
-export const SignIn: FunctionComponent<Props> = observer(({ appState, application }) => {
+const SignIn: FunctionComponent<Props> = ({ appState, application }) => {
   const { setCurrentPane } = appState.purchaseFlow
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -33,19 +32,15 @@ export const SignIn: FunctionComponent<Props> = observer(({ appState, applicatio
     }
   }, [])
 
-  const handleEmailChange = (e: Event) => {
-    if (e.target instanceof HTMLInputElement) {
-      setEmail(e.target.value)
-      setIsEmailInvalid(false)
-    }
+  const handleEmailChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+    setEmail(e.target.value)
+    setIsEmailInvalid(false)
   }
 
-  const handlePasswordChange = (e: Event) => {
-    if (e.target instanceof HTMLInputElement) {
-      setPassword(e.target.value)
-      setIsPasswordInvalid(false)
-      setOtherErrorMessage('')
-    }
+  const handlePasswordChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+    setPassword(e.target.value)
+    setIsPasswordInvalid(false)
+    setOtherErrorMessage('')
   }
 
   const handleCreateAccountInstead = () => {
@@ -160,4 +155,6 @@ export const SignIn: FunctionComponent<Props> = observer(({ appState, applicatio
       </div>
     </div>
   )
-})
+}
+
+export default observer(SignIn)

@@ -2,14 +2,14 @@ import { AppState } from '@/UIModels/AppState'
 import { WebApplication } from '@/UIModels/Application'
 import { observer } from 'mobx-react-lite'
 import Bubble from '@/Components/Bubble/Bubble'
-import { useCallback } from 'preact/hooks'
+import { useCallback } from 'react'
 
 type Props = {
   appState: AppState
   application: WebApplication
 }
 
-export const SearchOptions = observer(({ appState }: Props) => {
+const SearchOptions = ({ appState }: Props) => {
   const { searchOptions } = appState
 
   const { includeProtectedContents, includeArchived, includeTrashed } = searchOptions
@@ -31,4 +31,6 @@ export const SearchOptions = observer(({ appState }: Props) => {
       <Bubble label="Trashed" selected={includeTrashed} onSelect={searchOptions.toggleIncludeTrashed} />
     </div>
   )
-})
+}
+
+export default observer(SearchOptions)

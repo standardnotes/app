@@ -18,6 +18,7 @@ import {
   isDesktopDevice,
   DeinitMode,
 } from '@standardnotes/snjs'
+import { makeObservable, observable } from 'mobx'
 
 type WebServices = {
   appState: AppState
@@ -60,6 +61,10 @@ export class WebApplication extends SNApplication {
       appVersion: deviceInterface.appVersion,
       webSocketUrl: webSocketUrl,
       supportsFileNavigation: window.enabledUnfinishedFeatures,
+    })
+
+    makeObservable(this, {
+      dealloced: observable,
     })
 
     deviceInterface.setApplication(this)

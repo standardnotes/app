@@ -13,12 +13,11 @@ import {
   SNNote,
 } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks'
-import { Button } from '@/Components/Button/Button'
-import { HistoryListContainer } from './HistoryListContainer'
-import { RevisionContentLocked } from './RevisionContentLocked'
-import { SelectedRevisionContent } from './SelectedRevisionContent'
+import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import Button from '@/Components/Button/Button'
+import HistoryListContainer from './HistoryListContainer'
+import RevisionContentLocked from './RevisionContentLocked'
+import SelectedRevisionContent from './SelectedRevisionContent'
 import { LegacyHistoryEntry, RemoteRevisionListGroup, sortRevisionListIntoGroups } from './utils'
 
 type RevisionHistoryModalProps = {
@@ -209,6 +208,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
         aria-label="Note revision history"
       >
         <DialogContent
+          aria-label="Note revision history"
           className="rounded shadow-overlay"
           style={{
             width: '90%',
@@ -264,7 +264,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
                 />
               </div>
               {selectedRevision && (
-                <div class="flex items-center">
+                <div className="flex items-center">
                   {selectedRemoteEntry && (
                     <Button className="py-1.35 mr-2.5" onClick={deleteSelectedRevision} variant="normal">
                       {isDeletingRevision ? (
@@ -291,12 +291,14 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
   },
 )
 
-export const RevisionHistoryModalWrapper: FunctionComponent<RevisionHistoryModalProps> = observer(
-  ({ application, appState }) => {
-    if (!appState.notes.showRevisionHistoryModal) {
-      return null
-    }
+RevisionHistoryModal.displayName = 'RevisionHistoryModal'
 
-    return <RevisionHistoryModal application={application} appState={appState} />
-  },
-)
+const RevisionHistoryModalWrapper: FunctionComponent<RevisionHistoryModalProps> = ({ application, appState }) => {
+  if (!appState.notes.showRevisionHistoryModal) {
+    return null
+  }
+
+  return <RevisionHistoryModal application={application} appState={appState} />
+}
+
+export default observer(RevisionHistoryModalWrapper)

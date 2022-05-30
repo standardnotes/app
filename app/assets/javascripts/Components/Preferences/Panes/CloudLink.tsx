@@ -1,15 +1,10 @@
-import { FunctionComponent } from 'preact'
-import {
-  Title,
-  Subtitle,
-  Text,
-  LinkButton,
-  PreferencesGroup,
-  PreferencesPane,
-  PreferencesSegment,
-} from '@/Components/Preferences/PreferencesComponents'
+import { FunctionComponent } from 'react'
+import { Title, Subtitle, Text, LinkButton } from '@/Components/Preferences/PreferencesComponents/Content'
+import PreferencesPane from '../PreferencesComponents/PreferencesPane'
+import PreferencesGroup from '../PreferencesComponents/PreferencesGroup'
+import PreferencesSegment from '../PreferencesComponents/PreferencesSegment'
 
-export const CloudLink: FunctionComponent = () => (
+const CloudLink: FunctionComponent = () => (
   <PreferencesPane>
     <PreferencesGroup>
       <PreferencesSegment>
@@ -83,3 +78,5 @@ export const CloudLink: FunctionComponent = () => (
     </PreferencesGroup>
   </PreferencesPane>
 )
+
+export default CloudLink

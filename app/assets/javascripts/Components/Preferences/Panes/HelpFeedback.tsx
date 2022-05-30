@@ -1,15 +1,11 @@
-import { FunctionComponent } from 'preact'
-import {
-  Title,
-  Subtitle,
-  Text,
-  LinkButton,
-  PreferencesGroup,
-  PreferencesPane,
-  PreferencesSegment,
-} from '@/Components/Preferences/PreferencesComponents'
+import { FunctionComponent } from 'react'
+import { Title, Subtitle, Text, LinkButton } from '@/Components/Preferences/PreferencesComponents/Content'
+import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
+import PreferencesPane from '../PreferencesComponents/PreferencesPane'
+import PreferencesGroup from '../PreferencesComponents/PreferencesGroup'
+import PreferencesSegment from '../PreferencesComponents/PreferencesSegment'
 
-export const HelpAndFeedback: FunctionComponent = () => (
+const HelpAndFeedback: FunctionComponent = () => (
   <PreferencesPane>
     <PreferencesGroup>
       <PreferencesSegment>
@@ -26,6 +22,7 @@ export const HelpAndFeedback: FunctionComponent = () => (
           </a>
         </Text>
       </PreferencesSegment>
+      <HorizontalSeparator classes="my-4" />
       <PreferencesSegment>
         <Subtitle>Can I collaborate with others on a note?</Subtitle>
         <Text>
@@ -34,6 +31,7 @@ export const HelpAndFeedback: FunctionComponent = () => (
           conflicts, which may result in the duplication of notes.
         </Text>
       </PreferencesSegment>
+      <HorizontalSeparator classes="my-4" />
       <PreferencesSegment>
         <Subtitle>Can I use Standard Notes totally offline?</Subtitle>
         <Text>
@@ -44,6 +42,7 @@ export const HelpAndFeedback: FunctionComponent = () => (
           </a>
         </Text>
       </PreferencesSegment>
+      <HorizontalSeparator classes="my-4" />
       <PreferencesSegment>
         <Subtitle>Can’t find your question here?</Subtitle>
         <LinkButton className="mt-3" label="Open FAQ" link="https://standardnotes.com/help" />
@@ -83,3 +82,5 @@ export const HelpAndFeedback: FunctionComponent = () => (
     </PreferencesGroup>
   </PreferencesPane>
 )
+
+export default HelpAndFeedback

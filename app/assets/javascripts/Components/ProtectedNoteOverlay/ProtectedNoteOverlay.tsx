@@ -6,7 +6,7 @@ type Props = {
   hasProtectionSources: boolean
 }
 
-export function ProtectedNoteOverlay({ appState, onViewNote, hasProtectionSources }: Props) {
+const ProtectedNoteOverlay = ({ appState, onViewNote, hasProtectionSources }: Props) => {
   const instructionText = hasProtectionSources
     ? 'Authenticate to view this note.'
     : 'Add a passcode or create an account to require authentication to view this note.'
@@ -33,3 +33,5 @@ export function ProtectedNoteOverlay({ appState, onViewNote, hasProtectionSource
     </div>
   )
 }
+
+export default ProtectedNoteOverlay

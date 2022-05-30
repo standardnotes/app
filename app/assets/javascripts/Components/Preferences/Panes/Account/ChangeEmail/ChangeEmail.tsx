@@ -1,16 +1,13 @@
-import { useState } from '@node_modules/preact/hooks'
-import {
-  ModalDialog,
-  ModalDialogButtons,
-  ModalDialogDescription,
-  ModalDialogLabel,
-} from '@/Components/Shared/ModalDialog'
-import { Button } from '@/Components/Button/Button'
-import { FunctionalComponent } from 'preact'
+import ModalDialog from '@/Components/Shared/ModalDialog'
+import ModalDialogButtons from '@/Components/Shared/ModalDialogButtons'
+import ModalDialogDescription from '@/Components/Shared/ModalDialogDescription'
+import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
+import Button from '@/Components/Button/Button'
+import { FunctionComponent, useState } from 'react'
 import { WebApplication } from '@/UIModels/Application'
 import { useBeforeUnload } from '@/Hooks/useBeforeUnload'
-import { ChangeEmailForm } from './ChangeEmailForm'
-import { ChangeEmailSuccess } from './ChangeEmailSuccess'
+import ChangeEmailForm from './ChangeEmailForm'
+import ChangeEmailSuccess from './ChangeEmailSuccess'
 import { isEmailValid } from '@/Utils'
 
 enum SubmitButtonTitles {
@@ -29,7 +26,7 @@ type Props = {
   application: WebApplication
 }
 
-export const ChangeEmail: FunctionalComponent<Props> = ({ onCloseDialog, application }) => {
+const ChangeEmail: FunctionComponent<Props> = ({ onCloseDialog, application }) => {
   const [currentPassword, setCurrentPassword] = useState('')
   const [newEmail, setNewEmail] = useState('')
   const [isContinuing, setIsContinuing] = useState(false)
@@ -158,3 +155,5 @@ export const ChangeEmail: FunctionalComponent<Props> = ({ onCloseDialog, applica
     </div>
   )
 }
+
+export default ChangeEmail

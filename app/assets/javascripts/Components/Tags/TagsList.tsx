@@ -1,25 +1,19 @@
 import { AppState } from '@/UIModels/AppState'
-import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
 import { isMobile } from '@/Utils'
 import { SNTag } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useCallback } from 'preact/hooks'
+import { FunctionComponent, useCallback } from 'react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { TouchBackend } from 'react-dnd-touch-backend'
-import { RootTagDropZone } from './RootTagDropZone'
+import RootTagDropZone from './RootTagDropZone'
 import { TagsListItem } from './TagsListItem'
 
 type Props = {
   appState: AppState
 }
 
-export const TagsList: FunctionComponent<Props> = observer(({ appState }: Props) => {
-  if (isStateDealloced(appState)) {
-    return null
-  }
-
+const TagsList: FunctionComponent<Props> = ({ appState }: Props) => {
   const tagsState = appState.tags
   const allTags = tagsState.allLocalRootTags
 
@@ -68,4 +62,6 @@ export const TagsList: FunctionComponent<Props> = observer(({ appState }: Props)
       )}
     </DndProvider>
   )
-})
+}
+
+export default observer(TagsList)

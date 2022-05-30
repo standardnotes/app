@@ -3,14 +3,13 @@ import { concatenateUint8Arrays } from '@/Utils/ConcatenateUint8Arrays'
 import { DialogContent, DialogOverlay } from '@reach/dialog'
 import { addToast, ToastType } from '@standardnotes/stylekit'
 import { NoPreviewIllustration } from '@standardnotes/icons'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks'
-import { getFileIconComponent } from '@/Components/AttachedFilesPopover/PopoverFileItem'
-import { Button } from '@/Components/Button/Button'
-import { Icon } from '@/Components/Icon/Icon'
-import { FilePreviewInfoPanel } from './FilePreviewInfoPanel'
+import { FunctionComponent, KeyboardEventHandler, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { getFileIconComponent } from '@/Components/AttachedFilesPopover/getFileIconComponent'
+import Button from '@/Components/Button/Button'
+import Icon from '@/Components/Icon/Icon'
+import FilePreviewInfoPanel from './FilePreviewInfoPanel'
 import { isFileTypePreviewable } from './isFilePreviewable'
-import { PreviewComponent } from './PreviewComponent'
+import PreviewComponent from './PreviewComponent'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
 import { KeyboardKey } from '@/Services/IOService'
 import { AppState } from '@/UIModels/AppState'
@@ -20,10 +19,6 @@ type Props = {
   application: WebApplication
   appState: AppState
 }
-
-export const FilePreviewModalWrapper: FunctionComponent<Props> = observer(({ application, appState }) => {
-  return appState.filePreviewModal.isOpen ? <FilePreviewModal application={application} appState={appState} /> : null
-})
 
 const FilePreviewModal: FunctionComponent<Props> = observer(({ application, appState }) => {
   const { currentFile, setCurrentFile, otherFiles, dismiss } = appState.filePreviewModal
@@ -91,8 +86,8 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, appS
     }
   }, [currentFile, getObjectUrl, objectUrl])
 
-  const keyDownHandler = useCallback(
-    (event: KeyboardEvent) => {
+  const keyDownHandler: KeyboardEventHandler = useCallback(
+    (event) => {
       if (event.key !== KeyboardKey.Left && event.key !== KeyboardKey.Right) {
         return
       }
@@ -141,6 +136,7 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, appS
       dangerouslyBypassScrollLock
     >
       <DialogContent
+        aria-label="File preview modal"
         className="flex flex-col rounded shadow-overlay"
         style={{
           width: '90%',
@@ -256,3 +252,11 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, appS
     </DialogOverlay>
   )
 })
+
+FilePreviewModal.displayName = 'FilePreviewModal'
+
+const FilePreviewModalWrapper: FunctionComponent<Props> = ({ application, appState }) => {
+  return appState.filePreviewModal.isOpen ? <FilePreviewModal application={application} appState={appState} /> : null
+}
+
+export default observer(FilePreviewModalWrapper)

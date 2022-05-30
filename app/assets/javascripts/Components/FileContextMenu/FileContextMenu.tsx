@@ -3,18 +3,16 @@ import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
-import React from 'react'
+import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import { PopoverFileItemAction } from '../AttachedFilesPopover/PopoverFileItemAction'
 import { PopoverTabs } from '../AttachedFilesPopover/PopoverTabs'
-import { FileMenuOptions } from './FileMenuOptions'
+import FileMenuOptions from './FileMenuOptions'
 
 type Props = {
   appState: AppState
 }
 
-export const FileContextMenu: FunctionComponent<Props> = observer(({ appState }) => {
+const FileContextMenu: FunctionComponent<Props> = observer(({ appState }) => {
   const { selectedFiles, showFileContextMenu, setShowFileContextMenu, fileContextMenuLocation } = appState.files
 
   const [contextMenuStyle, setContextMenuStyle] = useState<React.CSSProperties>({
@@ -28,9 +26,6 @@ export const FileContextMenu: FunctionComponent<Props> = observer(({ appState })
   useCloseOnClickOutside(contextMenuRef, () => appState.files.setShowFileContextMenu(false))
 
   const selectedFile = selectedFiles[0]
-  if (!showFileContextMenu || !selectedFile) {
-    return null
-  }
 
   const reloadContextMenuLayout = useCallback(() => {
     const { clientHeight } = document.documentElement
@@ -118,3 +113,19 @@ export const FileContextMenu: FunctionComponent<Props> = observer(({ appState })
     </div>
   )
 })
+
+FileContextMenu.displayName = 'FileContextMenu'
+
+const FileContextMenuWrapper: FunctionComponent<Props> = ({ appState }) => {
+  const { selectedFiles, showFileContextMenu } = appState.files
+
+  const selectedFile = selectedFiles[0]
+
+  if (!showFileContextMenu || !selectedFile) {
+    return null
+  }
+
+  return <FileContextMenu appState={appState} />
+}
+
+export default observer(FileContextMenuWrapper)

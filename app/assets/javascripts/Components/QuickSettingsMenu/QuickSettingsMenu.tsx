@@ -3,15 +3,13 @@ import { AppState } from '@/UIModels/AppState'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { ComponentArea, ContentType, FeatureIdentifier, GetFeatures, SNComponent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
-import { JSXInternal } from 'preact/src/jsx'
-import { Icon } from '@/Components/Icon/Icon'
-import { Switch } from '@/Components/Switch/Switch'
+import { FunctionComponent, KeyboardEventHandler, useCallback, useEffect, useRef, useState } from 'react'
+import Icon from '@/Components/Icon/Icon'
+import Switch from '@/Components/Switch/Switch'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { quickSettingsKeyDownHandler, themesMenuKeyDownHandler } from './EventHandlers'
-import { FocusModeSwitch } from './FocusModeSwitch'
-import { ThemesMenuButton } from './ThemesMenuButton'
+import FocusModeSwitch from './FocusModeSwitch'
+import ThemesMenuButton from './ThemesMenuButton'
 import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
 import { ThemeItem } from './ThemeItem'
 import { sortThemes } from '@/Utils/SortThemes'
@@ -40,7 +38,7 @@ const toggleFocusMode = (enabled: boolean) => {
   }
 }
 
-export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(({ application, appState, onClickOutside }) => {
+const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, appState, onClickOutside }) => {
   const { closeQuickSettingsMenu, shouldAnimateCloseMenu, focusModeEnabled, setFocusModeEnabled } =
     appState.quickSettingsMenu
   const [themes, setThemes] = useState<ThemeItem[]>([])
@@ -188,7 +186,7 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(({ appli
     [themesMenuOpen, toggleThemesMenu],
   )
 
-  const handleQuickSettingsKeyDown: JSXInternal.KeyboardEventHandler<HTMLDivElement> = useCallback(
+  const handleQuickSettingsKeyDown: KeyboardEventHandler<HTMLDivElement> = useCallback(
     (event) => {
       quickSettingsKeyDownHandler(closeQuickSettingsMenu, event, quickSettingsMenuRef, themesMenuOpen)
     },
@@ -264,6 +262,7 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(({ appli
             onClick={() => {
               toggleComponent(component)
             }}
+            key={component.uuid}
           >
             <div className="flex items-center">
               <Icon type="window" className="color-neutral mr-2" />
@@ -290,4 +289,6 @@ export const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(({ appli
       </div>
     </div>
   )
-})
+}
+
+export default observer(QuickSettingsMenu)

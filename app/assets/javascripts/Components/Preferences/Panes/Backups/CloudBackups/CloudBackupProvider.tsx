@@ -1,4 +1,12 @@
-import { useCallback, useEffect, useState } from 'preact/hooks'
+import {
+  useCallback,
+  useEffect,
+  useState,
+  FunctionComponent,
+  KeyboardEventHandler,
+  ChangeEventHandler,
+  MouseEventHandler,
+} from 'react'
 import {
   ButtonType,
   SettingName,
@@ -8,11 +16,10 @@ import {
   OneDriveBackupFrequency,
 } from '@standardnotes/snjs'
 import { WebApplication } from '@/UIModels/Application'
-import { Button } from '@/Components/Button/Button'
+import Button from '@/Components/Button/Button'
 import { isDev, openInNewTab } from '@/Utils'
-import { Subtitle } from '@/Components/Preferences/PreferencesComponents'
+import { Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
 import { KeyboardKey } from '@/Services/IOService'
-import { FunctionComponent } from 'preact'
 
 type Props = {
   application: WebApplication
@@ -20,17 +27,13 @@ type Props = {
   isEntitledToCloudBackups: boolean
 }
 
-export const CloudBackupProvider: FunctionComponent<Props> = ({
-  application,
-  providerName,
-  isEntitledToCloudBackups,
-}) => {
+const CloudBackupProvider: FunctionComponent<Props> = ({ application, providerName, isEntitledToCloudBackups }) => {
   const [authBegan, setAuthBegan] = useState(false)
   const [successfullyInstalled, setSuccessfullyInstalled] = useState(false)
   const [backupFrequency, setBackupFrequency] = useState<string | undefined>(undefined)
   const [confirmation, setConfirmation] = useState('')
 
-  const disable = async (event: Event) => {
+  const disable: MouseEventHandler = async (event) => {
     event.stopPropagation()
 
     try {
@@ -52,7 +55,7 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
     }
   }
 
-  const installIntegration = (event: Event) => {
+  const installIntegration: MouseEventHandler = (event) => {
     if (!isEntitledToCloudBackups) {
       return
     }
@@ -117,7 +120,7 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
     return urlSearchParams.get(integrationTokenKeyInUrl)
   }
 
-  const handleKeyPress = async (event: KeyboardEvent) => {
+  const handleKeyPress: KeyboardEventHandler = async (event) => {
     if (event.key === KeyboardKey.Enter) {
       try {
         const decryptedCode = atob(confirmation)
@@ -145,8 +148,8 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
     }
   }
 
-  const handleChange = (event: Event) => {
-    setConfirmation((event.target as HTMLInputElement).value)
+  const handleChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+    setConfirmation(event.target.value)
   }
 
   const getIntegrationStatus = useCallback(async () => {
@@ -219,3 +222,5 @@ export const CloudBackupProvider: FunctionComponent<Props> = ({
     </div>
   )
 }
+
+export default CloudBackupProvider

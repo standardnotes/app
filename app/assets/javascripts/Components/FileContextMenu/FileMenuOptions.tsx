@@ -1,9 +1,9 @@
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
 import { FileItem } from '@standardnotes/snjs'
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 import { PopoverFileItemAction, PopoverFileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
-import { Icon } from '@/Components/Icon/Icon'
-import { Switch } from '@/Components/Switch/Switch'
+import Icon from '@/Components/Icon/Icon'
+import Switch from '@/Components/Switch/Switch'
 
 type Props = {
   closeMenu: () => void
@@ -17,7 +17,7 @@ type Props = {
   shouldShowAttachOption: boolean
 }
 
-export const FileMenuOptions: FunctionComponent<Props> = ({
+const FileMenuOptions: FunctionComponent<Props> = ({
   closeMenu,
   closeOnBlur,
   file,
@@ -139,3 +139,5 @@ export const FileMenuOptions: FunctionComponent<Props> = ({
     </>
   )
 }
+
+export default FileMenuOptions

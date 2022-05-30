@@ -1,20 +1,20 @@
-import { PreferencesPane } from '@/Components/Preferences/PreferencesComponents'
 import { observer } from 'mobx-react-lite'
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
-import { Authentication } from './Authentication'
-import { Credentials } from './Credentials'
-import { Sync } from './Sync'
-import { Subscription } from './Subscription/Subscription'
-import { SignOutWrapper } from './SignOutView'
-import { FilesSection } from './Files'
+import Authentication from './Authentication'
+import Credentials from './Credentials'
+import Sync from './Sync'
+import Subscription from './Subscription/Subscription'
+import SignOutWrapper from './SignOutView'
+import FilesSection from './Files'
+import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 
 type Props = {
   application: WebApplication
   appState: AppState
 }
 
-export const AccountPreferences = observer(({ application, appState }: Props) => (
+const AccountPreferences = ({ application, appState }: Props) => (
   <PreferencesPane>
     {!application.hasAccount() ? (
       <Authentication application={application} appState={appState} />
@@ -28,4 +28,6 @@ export const AccountPreferences = observer(({ application, appState }: Props) =>
     {application.hasAccount() && appState.features.hasFiles && <FilesSection application={application} />}
     <SignOutWrapper application={application} appState={appState} />
   </PreferencesPane>
-))
+)
+
+export default observer(AccountPreferences)

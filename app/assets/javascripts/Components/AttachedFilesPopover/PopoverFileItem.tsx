@@ -1,28 +1,15 @@
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
 import { KeyboardKey } from '@/Services/IOService'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
-import { IconType, FileItem } from '@standardnotes/snjs'
-import { FunctionComponent } from 'preact'
-import { useEffect, useRef, useState } from 'preact/hooks'
-import { Icon, ICONS } from '@/Components/Icon/Icon'
-import { PopoverFileItemAction, PopoverFileItemActionType } from './PopoverFileItemAction'
-import { PopoverFileSubmenu } from './PopoverFileSubmenu'
+import { FileItem } from '@standardnotes/snjs'
+import { FormEventHandler, FunctionComponent, KeyboardEventHandler, useEffect, useRef, useState } from 'react'
+import Icon from '@/Components/Icon/Icon'
+import { PopoverFileItemActionType } from './PopoverFileItemAction'
+import PopoverFileSubmenu from './PopoverFileSubmenu'
+import { getFileIconComponent } from './getFileIconComponent'
+import { PopoverFileItemProps } from './PopoverFileItemProps'
 
-export const getFileIconComponent = (iconType: string, className: string) => {
-  const IconComponent = ICONS[iconType as keyof typeof ICONS]
-
-  return <IconComponent className={className} />
-}
-
-export type PopoverFileItemProps = {
-  file: FileItem
-  isAttachedToNote: boolean
-  handleFileAction: (action: PopoverFileItemAction) => Promise<boolean>
-  getIconType(type: string): IconType
-  closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
-}
-
-export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
+const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
   file,
   isAttachedToNote,
   handleFileAction,
@@ -51,11 +38,11 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
     setIsRenamingFile(false)
   }
 
-  const handleFileNameInput = (event: Event) => {
+  const handleFileNameInput: FormEventHandler<HTMLInputElement> = (event) => {
     setFileName((event.target as HTMLInputElement).value)
   }
 
-  const handleFileNameInputKeyDown = (event: KeyboardEvent) => {
+  const handleFileNameInputKeyDown: KeyboardEventHandler = (event) => {
     if (event.key === KeyboardKey.Enter) {
       itemRef.current?.focus()
     }
@@ -115,3 +102,5 @@ export const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
     </div>
   )
 }
+
+export default PopoverFileItem

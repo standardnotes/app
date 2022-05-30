@@ -2,7 +2,7 @@ import { action, makeAutoObservable, observable } from 'mobx'
 import { IconType } from '@standardnotes/snjs'
 import { WebApplication } from '@/UIModels/Application'
 import { ExtensionsLatestVersions } from './Panes/Extensions/ExtensionsLatestVersions'
-import { securityPrefsHasBubble } from './Panes'
+import { securityPrefsHasBubble } from './Panes/Security/securityPrefsHasBubble'
 
 const PREFERENCE_IDS = [
   'general',

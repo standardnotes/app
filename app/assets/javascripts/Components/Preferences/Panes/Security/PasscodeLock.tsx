@@ -10,23 +10,22 @@ import {
 } from '@/Strings'
 import { WebApplication } from '@/UIModels/Application'
 import { preventRefreshing } from '@/Utils'
-import { JSXInternal } from 'preact/src/jsx'
-import TargetedEvent = JSXInternal.TargetedEvent
-import TargetedMouseEvent = JSXInternal.TargetedMouseEvent
 import { alertDialog } from '@/Services/AlertService'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
+import { ChangeEventHandler, FormEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { ApplicationEvent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { AppState } from '@/UIModels/AppState'
-import { PreferencesSegment, Title, Text, PreferencesGroup } from '@/Components/Preferences/PreferencesComponents'
-import { Button } from '@/Components/Button/Button'
+import { Title, Text } from '@/Components/Preferences/PreferencesComponents/Content'
+import Button from '@/Components/Button/Button'
+import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
 type Props = {
   application: WebApplication
   appState: AppState
 }
 
-export const PasscodeLock = observer(({ application, appState }: Props) => {
+const PasscodeLock = ({ application, appState }: Props) => {
   const keyStorageInfo = StringUtils.keyStorageInfo(application)
   const passcodeAutoLockOptions = application.getAutolockService().getAutoLockIntervalOptions()
 
@@ -34,8 +33,8 @@ export const PasscodeLock = observer(({ application, appState }: Props) => {
 
   const passcodeInputRef = useRef<HTMLInputElement>(null)
 
-  const [passcode, setPasscode] = useState<string | undefined>(undefined)
-  const [passcodeConfirmation, setPasscodeConfirmation] = useState<string | undefined>(undefined)
+  const [passcode, setPasscode] = useState<string>()
+  const [passcodeConfirmation, setPasscodeConfirmation] = useState<string>()
   const [selectedAutoLockInterval, setSelectedAutoLockInterval] = useState<unknown>(null)
   const [isPasscodeFocused, setIsPasscodeFocused] = useState(false)
   const [showPasscodeForm, setShowPasscodeForm] = useState(false)
@@ -93,17 +92,17 @@ export const PasscodeLock = observer(({ application, appState }: Props) => {
     })
   }
 
-  const handlePasscodeChange = (event: TargetedEvent<HTMLInputElement>) => {
-    const { value } = event.target as HTMLInputElement
+  const handlePasscodeChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+    const { value } = event.target
     setPasscode(value)
   }
 
-  const handleConfirmPasscodeChange = (event: TargetedEvent<HTMLInputElement>) => {
-    const { value } = event.target as HTMLInputElement
+  const handleConfirmPasscodeChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+    const { value } = event.target
     setPasscodeConfirmation(value)
   }
 
-  const submitPasscodeForm = async (event: TargetedEvent<HTMLFormElement> | TargetedMouseEvent<HTMLButtonElement>) => {
+  const submitPasscodeForm = async (event: MouseEvent | FormEvent) => {
     event.preventDefault()
 
     if (!passcode || passcode.length === 0) {
@@ -167,6 +166,12 @@ export const PasscodeLock = observer(({ application, appState }: Props) => {
     }
   }, [application])
 
+  const cancelPasscodeForm = () => {
+    setShowPasscodeForm(false)
+    setPasscode(undefined)
+    setPasscodeConfirmation(undefined)
+  }
+
   return (
     <>
       <PreferencesGroup>
@@ -197,20 +202,20 @@ export const PasscodeLock = observer(({ application, appState }: Props) => {
                 className="sk-input contrast"
                 type="password"
                 ref={passcodeInputRef}
-                value={passcode}
+                value={passcode ? passcode : ''}
                 onChange={handlePasscodeChange}
                 placeholder="Passcode"
               />
               <input
                 className="sk-input contrast"
                 type="password"
-                value={passcodeConfirmation}
+                value={passcodeConfirmation ? passcodeConfirmation : ''}
                 onChange={handleConfirmPasscodeChange}
                 placeholder="Confirm Passcode"
               />
               <div className="min-h-2" />
               <Button variant="primary" onClick={submitPasscodeForm} label="Set Passcode" className="mr-3" />
-              <Button variant="normal" onClick={() => setShowPasscodeForm(false)} label="Cancel" />
+              <Button variant="normal" onClick={cancelPasscodeForm} label="Cancel" />
             </form>
           )}
 
@@ -237,6 +242,7 @@ export const PasscodeLock = observer(({ application, appState }: Props) => {
                 {passcodeAutoLockOptions.map((option) => {
                   return (
                     <a
+                      key={option.value}
                       className={`sk-a info mr-3 ${option.value === selectedAutoLockInterval ? 'boxed' : ''}`}
                       onClick={() => selectAutoLockInterval(option.value)}
                     >
@@ -251,4 +257,6 @@ export const PasscodeLock = observer(({ application, appState }: Props) => {
       )}
     </>
   )
-})
+}
+
+export default observer(PasscodeLock)

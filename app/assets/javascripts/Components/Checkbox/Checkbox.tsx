@@ -1,14 +1,14 @@
-import { FunctionComponent } from 'preact'
+import { ChangeEventHandler, FunctionComponent } from 'react'
 
 type CheckboxProps = {
   name: string
   checked: boolean
-  onChange: (e: Event) => void
+  onChange: ChangeEventHandler<HTMLInputElement>
   disabled?: boolean
   label: string
 }
 
-export const Checkbox: FunctionComponent<CheckboxProps> = ({ name, checked, onChange, disabled, label }) => {
+const Checkbox: FunctionComponent<CheckboxProps> = ({ name, checked, onChange, disabled, label }) => {
   return (
     <label htmlFor={name} className="flex items-center fit-content mb-2">
       <input
@@ -24,3 +24,5 @@ export const Checkbox: FunctionComponent<CheckboxProps> = ({ name, checked, onCh
     </label>
   )
 }
+
+export default Checkbox

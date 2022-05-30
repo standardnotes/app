@@ -1,8 +1,8 @@
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 import { HistoryLockedIllustration } from '@standardnotes/icons'
-import { Button } from '@/Components/Button/Button'
+import Button from '@/Components/Button/Button'
 
 const getPlanHistoryDuration = (planName: string | undefined) => {
   switch (planName) {
@@ -19,16 +19,18 @@ const getPremiumContentCopy = (planName: string | undefined) => {
   return `Version history is limited to ${getPlanHistoryDuration(planName)} in the ${planName} plan`
 }
 
-export const RevisionContentLocked: FunctionComponent<{
+type Props = {
   appState: AppState
-}> = observer(({ appState }) => {
+}
+
+const RevisionContentLocked: FunctionComponent<Props> = ({ appState }) => {
   const { userSubscriptionName, isUserSubscriptionExpired, isUserSubscriptionCanceled } = appState.subscription
 
   return (
     <div className="flex w-full h-full items-center justify-center">
       <div className="flex flex-col items-center text-center max-w-40%">
         <HistoryLockedIllustration />
-        <div class="text-lg font-bold mt-2 mb-1">Can't access this version</div>
+        <div className="text-lg font-bold mt-2 mb-1">Can't access this version</div>
         <div className="mb-4 color-passive-0 leading-140%">
           {getPremiumContentCopy(
             !isUserSubscriptionCanceled && !isUserSubscriptionExpired && userSubscriptionName
@@ -49,4 +51,6 @@ export const RevisionContentLocked: FunctionComponent<{
       </div>
     </div>
   )
-})
+}
+
+export default observer(RevisionContentLocked)

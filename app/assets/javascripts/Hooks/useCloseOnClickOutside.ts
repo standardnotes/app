@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'preact/hooks'
+import { useCallback, useEffect } from 'react'
 
 export function useCloseOnClickOutside(container: { current: HTMLDivElement | null }, callback: () => void): void {
   const closeOnClickOutside = useCallback(

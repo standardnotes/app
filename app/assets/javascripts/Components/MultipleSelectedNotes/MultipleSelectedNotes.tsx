@@ -1,18 +1,18 @@
 import { AppState } from '@/UIModels/AppState'
 import { IlNotesIcon } from '@standardnotes/icons'
 import { observer } from 'mobx-react-lite'
-import { NotesOptionsPanel } from '@/Components/NotesOptions/NotesOptionsPanel'
+import NotesOptionsPanel from '@/Components/NotesOptions/NotesOptionsPanel'
 import { WebApplication } from '@/UIModels/Application'
-import { PinNoteButton } from '@/Components/PinNoteButton/PinNoteButton'
-import { Button } from '../Button/Button'
-import { useCallback } from 'preact/hooks'
+import PinNoteButton from '@/Components/PinNoteButton/PinNoteButton'
+import Button from '../Button/Button'
+import { useCallback } from 'react'
 
 type Props = {
   application: WebApplication
   appState: AppState
 }
 
-export const MultipleSelectedNotes = observer(({ application, appState }: Props) => {
+const MultipleSelectedNotes = ({ application, appState }: Props) => {
   const count = appState.notes.selectedNotesCount
 
   const cancelMultipleSelection = useCallback(() => {
@@ -40,4 +40,6 @@ export const MultipleSelectedNotes = observer(({ application, appState }: Props)
       </div>
     </div>
   )
-})
+}
+
+export default observer(MultipleSelectedNotes)

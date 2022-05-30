@@ -1,6 +1,6 @@
-import { FunctionalComponent } from 'preact'
+import { FunctionComponent } from 'react'
 
-export const OfflineRestricted: FunctionalComponent = () => {
+const OfflineRestricted: FunctionComponent = () => {
   return (
     <div className={'sn-component'}>
       <div className={'sk-panel static'}>
@@ -29,3 +29,5 @@ export const OfflineRestricted: FunctionalComponent = () => {
     </div>
   )
 }
+
+export default OfflineRestricted

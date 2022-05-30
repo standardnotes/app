@@ -3,17 +3,16 @@ import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
 import { AppState } from '@/UIModels/AppState'
 import { calculateSubmenuStyle, SubmenuStyle } from '@/Utils/CalculateSubmenuStyle'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
-import { Icon } from '@/Components/Icon/Icon'
-import { WorkspaceSwitcherMenu } from './WorkspaceSwitcherMenu'
+import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
+import Icon from '@/Components/Icon/Icon'
+import WorkspaceSwitcherMenu from './WorkspaceSwitcherMenu'
 
 type Props = {
   mainApplicationGroup: ApplicationGroup
   appState: AppState
 }
 
-export const WorkspaceSwitcherOption: FunctionComponent<Props> = observer(({ mainApplicationGroup, appState }) => {
+const WorkspaceSwitcherOption: FunctionComponent<Props> = ({ mainApplicationGroup, appState }) => {
   const buttonRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const [isOpen, setIsOpen] = useState(false)
@@ -64,4 +63,6 @@ export const WorkspaceSwitcherOption: FunctionComponent<Props> = observer(({ mai
       )}
     </>
   )
-})
+}
+
+export default observer(WorkspaceSwitcherOption)

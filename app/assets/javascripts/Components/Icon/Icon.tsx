@@ -1,4 +1,4 @@
-import { FunctionalComponent } from 'preact'
+import { FunctionComponent } from 'react'
 import { IconType } from '@standardnotes/snjs'
 
 import {
@@ -187,7 +187,7 @@ type Props = {
   ariaLabel?: string
 }
 
-export const Icon: FunctionalComponent<Props> = ({ type, className = '', ariaLabel }) => {
+const Icon: FunctionComponent<Props> = ({ type, className = '', ariaLabel }) => {
   const IconComponent = ICONS[type as keyof typeof ICONS]
   if (!IconComponent) {
     return null
@@ -200,3 +200,5 @@ export const Icon: FunctionalComponent<Props> = ({ type, className = '', ariaLab
     />
   )
 }
+
+export default Icon

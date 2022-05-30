@@ -1,31 +1,26 @@
-import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
-import { Switch } from '@/Components/Switch/Switch'
-import {
-  PreferencesGroup,
-  PreferencesSegment,
-  Subtitle,
-  Text,
-  Title,
-} from '@/Components/Preferences/PreferencesComponents'
+import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
+import Switch from '@/Components/Switch/Switch'
+import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/UIModels/Application'
 import { MuteSignInEmailsOption, LogSessionUserAgentOption, SettingName } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionalComponent } from 'preact'
-import { useCallback, useEffect, useState } from 'preact/hooks'
+import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/Strings'
+import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
 type Props = {
   application: WebApplication
 }
 
-export const Privacy: FunctionalComponent<Props> = observer(({ application }: Props) => {
+const Privacy: FunctionComponent<Props> = ({ application }: Props) => {
   const [signInEmailsMutedValue, setSignInEmailsMutedValue] = useState<MuteSignInEmailsOption>(
     MuteSignInEmailsOption.NotMuted,
   )
   const [sessionUaLoggingValue, setSessionUaLoggingValue] = useState<LogSessionUserAgentOption>(
     LogSessionUserAgentOption.Enabled,
   )
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   const updateSetting = async (settingName: SettingName, payload: string): Promise<boolean> => {
     try {
@@ -110,7 +105,7 @@ export const Privacy: FunctionalComponent<Props> = observer(({ application }: Pr
               </Text>
             </div>
             {isLoading ? (
-              <div className={'sk-spinner info small'} />
+              <div className={'sk-spinner info small flex-shrink-0 ml-2'} />
             ) : (
               <Switch
                 onChange={toggleMuteSignInEmails}
@@ -118,7 +113,7 @@ export const Privacy: FunctionalComponent<Props> = observer(({ application }: Pr
               />
             )}
           </div>
-          <HorizontalSeparator classes="mt-5 mb-3" />
+          <HorizontalSeparator classes="my-4" />
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
               <Subtitle>Session user agent logging</Subtitle>
@@ -129,7 +124,7 @@ export const Privacy: FunctionalComponent<Props> = observer(({ application }: Pr
               </Text>
             </div>
             {isLoading ? (
-              <div className={'sk-spinner info small'} />
+              <div className={'sk-spinner info small flex-shrink-0 ml-2'} />
             ) : (
               <Switch
                 onChange={toggleSessionLogging}
@@ -141,4 +136,6 @@ export const Privacy: FunctionalComponent<Props> = observer(({ application }: Pr
       </PreferencesSegment>
     </PreferencesGroup>
   )
-})
+}
+
+export default observer(Privacy)

@@ -1,17 +1,26 @@
 import { HistoryEntry, NoteHistoryEntry, RevisionListEntry } from '@standardnotes/snjs'
-import { Fragment, FunctionComponent } from 'preact'
-import { StateUpdater, useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks'
+import {
+  Dispatch,
+  Fragment,
+  FunctionComponent,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
-import { HistoryListItem } from './HistoryListItem'
+import HistoryListItem from './HistoryListItem'
 import { LegacyHistoryEntry, ListGroup } from './utils'
 
 type Props = {
   sessionHistory: ListGroup<NoteHistoryEntry>[]
-  setSelectedRevision: StateUpdater<HistoryEntry | LegacyHistoryEntry | undefined>
-  setSelectedRemoteEntry: StateUpdater<RevisionListEntry | undefined>
+  setSelectedRevision: Dispatch<SetStateAction<HistoryEntry | LegacyHistoryEntry | undefined>>
+  setSelectedRemoteEntry: Dispatch<SetStateAction<RevisionListEntry | undefined>>
 }
 
-export const SessionHistoryList: FunctionComponent<Props> = ({
+const SessionHistoryList: FunctionComponent<Props> = ({
   sessionHistory,
   setSelectedRevision,
   setSelectedRemoteEntry,
@@ -83,3 +92,5 @@ export const SessionHistoryList: FunctionComponent<Props> = ({
     </div>
   )
 }
+
+export default SessionHistoryList

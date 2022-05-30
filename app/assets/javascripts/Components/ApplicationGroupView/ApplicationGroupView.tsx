@@ -1,12 +1,12 @@
 import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
 import { WebApplication } from '@/UIModels/Application'
-import { Component } from 'preact'
-import { ApplicationView } from '@/Components/ApplicationView/ApplicationView'
+import { Component } from 'react'
+import ApplicationView from '@/Components/ApplicationView/ApplicationView'
 import { WebOrDesktopDevice } from '@/Device/WebOrDesktopDevice'
 import { ApplicationGroupEvent, ApplicationGroupEventData, DeinitSource } from '@standardnotes/snjs'
-import { unmountComponentAtNode, findDOMNode } from 'preact/compat'
 import { DialogContent, DialogOverlay } from '@reach/dialog'
 import { isDesktopApplication } from '@/Utils'
+import DeallocateHandler from '../DeallocateHandler/DeallocateHandler'
 
 type Props = {
   server: string
@@ -23,7 +23,7 @@ type State = {
   deviceDestroyed?: boolean
 }
 
-export class ApplicationGroupView extends Component<Props, State> {
+class ApplicationGroupView extends Component<Props, State> {
   applicationObserverRemover?: () => void
   private group?: ApplicationGroup
   private application?: WebApplication
@@ -74,17 +74,15 @@ export class ApplicationGroupView extends Component<Props, State> {
 
     const onDestroy = this.props.onDestroy
 
-    const node = findDOMNode(this) as Element
-    unmountComponentAtNode(node)
-
     onDestroy()
   }
 
-  render() {
+  override render() {
     const renderDialog = (message: string) => {
       return (
         <DialogOverlay className={'sn-component challenge-modal-overlay'}>
           <DialogContent
+            aria-label="Switching workspace"
             className={
               'challenge-modal flex flex-col items-center bg-default p-8 rounded relative shadow-overlay-light border-1 border-solid border-main'
             }
@@ -116,12 +114,16 @@ export class ApplicationGroupView extends Component<Props, State> {
 
     return (
       <div id={this.state.activeApplication.identifier} key={this.state.activeApplication.ephemeralIdentifier}>
-        <ApplicationView
-          key={this.state.activeApplication.ephemeralIdentifier}
-          mainApplicationGroup={this.group}
-          application={this.state.activeApplication}
-        />
+        <DeallocateHandler application={this.state.activeApplication}>
+          <ApplicationView
+            key={this.state.activeApplication.ephemeralIdentifier}
+            mainApplicationGroup={this.group}
+            application={this.state.activeApplication}
+          />
+        </DeallocateHandler>
       </div>
     )
   }
 }
+
+export default ApplicationGroupView

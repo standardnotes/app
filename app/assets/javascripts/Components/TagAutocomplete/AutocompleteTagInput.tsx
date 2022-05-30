@@ -1,9 +1,17 @@
-import { useEffect, useRef, useState } from 'preact/hooks'
+import {
+  ChangeEventHandler,
+  FocusEventHandler,
+  FormEventHandler,
+  KeyboardEventHandler,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { Disclosure, DisclosurePanel } from '@reach/disclosure'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { AppState } from '@/UIModels/AppState'
-import { AutocompleteTagResult } from './AutocompleteTagResult'
-import { AutocompleteTagHint } from './AutocompleteTagHint'
+import AutocompleteTagResult from './AutocompleteTagResult'
+import AutocompleteTagHint from './AutocompleteTagHint'
 import { observer } from 'mobx-react-lite'
 import { SNTag } from '@standardnotes/snjs'
 
@@ -11,7 +19,7 @@ type Props = {
   appState: AppState
 }
 
-export const AutocompleteTagInput = observer(({ appState }: Props) => {
+const AutocompleteTagInput = ({ appState }: Props) => {
   const {
     autocompleteInputFocused,
     autocompleteSearchQuery,
@@ -41,8 +49,8 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
     }
   }
 
-  const onSearchQueryChange = (event: Event) => {
-    const query = (event.target as HTMLInputElement).value
+  const onSearchQueryChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+    const query = event.target.value
 
     if (query === '') {
       appState.noteTags.clearAutocompleteSearch()
@@ -52,14 +60,14 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
     }
   }
 
-  const onFormSubmit = async (event: Event) => {
+  const onFormSubmit: FormEventHandler = async (event) => {
     event.preventDefault()
     if (autocompleteSearchQuery !== '') {
       await appState.noteTags.createAndAddNewTag()
     }
   }
 
-  const onKeyDown = (event: KeyboardEvent) => {
+  const onKeyDown: KeyboardEventHandler = (event) => {
     switch (event.key) {
       case 'Backspace':
       case 'ArrowLeft':
@@ -85,7 +93,7 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
     appState.noteTags.setAutocompleteInputFocused(true)
   }
 
-  const onBlur = (event: FocusEvent) => {
+  const onBlur: FocusEventHandler = (event) => {
     closeOnBlur(event)
     appState.noteTags.setAutocompleteInputFocused(false)
   }
@@ -139,4 +147,6 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
       </form>
     </div>
   )
-})
+}
+
+export default observer(AutocompleteTagInput)

@@ -1,5 +1,5 @@
-import { FunctionComponent } from 'preact'
-import { Icon } from '../Icon/Icon'
+import { FunctionComponent } from 'react'
+import Icon from '../Icon/Icon'
 
 type Props = {
   onMouseLeave: () => void
@@ -9,7 +9,7 @@ type Props = {
   lockText: string
 }
 
-export const EditingDisabledBanner: FunctionComponent<Props> = ({
+const EditingDisabledBanner: FunctionComponent<Props> = ({
   onMouseLeave,
   onMouseOver,
   onClick,
@@ -36,3 +36,5 @@ export const EditingDisabledBanner: FunctionComponent<Props> = ({
     </div>
   )
 }
+
+export default EditingDisabledBanner

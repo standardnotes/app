@@ -1,56 +1,44 @@
 import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
 import { getPlatformString, getWindowUrlParams } from '@/Utils'
 import { AppStateEvent, PanelResizedData } from '@/UIModels/AppState'
-import { ApplicationEvent, Challenge, PermissionDialog, removeFromArray } from '@standardnotes/snjs'
+import { ApplicationEvent, Challenge, removeFromArray } from '@standardnotes/snjs'
 import { PANEL_NAME_NOTES, PANEL_NAME_NAVIGATION } from '@/Constants'
 import { alertDialog } from '@/Services/AlertService'
 import { WebApplication } from '@/UIModels/Application'
-import { Navigation } from '@/Components/Navigation/Navigation'
-import { NoteGroupView } from '@/Components/NoteGroupView/NoteGroupView'
-import { Footer } from '@/Components/Footer/Footer'
-import { SessionsModal } from '@/Components/SessionsModal/SessionsModal'
-import { PreferencesViewWrapper } from '@/Components/Preferences/PreferencesViewWrapper'
-import { ChallengeModal } from '@/Components/ChallengeModal/ChallengeModal'
-import { NotesContextMenu } from '@/Components/NotesContextMenu/NotesContextMenu'
-import { PurchaseFlowWrapper } from '@/Components/PurchaseFlow/PurchaseFlowWrapper'
-import { render, FunctionComponent } from 'preact'
-import { PermissionsModal } from '@/Components/PermissionsModal/PermissionsModal'
-import { RevisionHistoryModalWrapper } from '@/Components/RevisionHistoryModal/RevisionHistoryModalWrapper'
-import { PremiumModalProvider } from '@/Hooks/usePremiumModal'
-import { ConfirmSignoutContainer } from '@/Components/ConfirmSignoutModal/ConfirmSignoutModal'
-import { TagsContextMenu } from '@/Components/Tags/TagContextMenu'
+import Navigation from '@/Components/Navigation/Navigation'
+import NoteGroupView from '@/Components/NoteGroupView/NoteGroupView'
+import Footer from '@/Components/Footer/Footer'
+import SessionsModal from '@/Components/SessionsModal/SessionsModal'
+import PreferencesViewWrapper from '@/Components/Preferences/PreferencesViewWrapper'
+import ChallengeModal from '@/Components/ChallengeModal/ChallengeModal'
+import NotesContextMenu from '@/Components/NotesContextMenu/NotesContextMenu'
+import PurchaseFlowWrapper from '@/Components/PurchaseFlow/PurchaseFlowWrapper'
+import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
+import RevisionHistoryModalWrapper from '@/Components/RevisionHistoryModal/RevisionHistoryModalWrapper'
+import PremiumModalProvider from '@/Hooks/usePremiumModal'
+import ConfirmSignoutContainer from '@/Components/ConfirmSignoutModal/ConfirmSignoutModal'
+import TagsContextMenuWrapper from '@/Components/Tags/TagContextMenu'
 import { ToastContainer } from '@standardnotes/stylekit'
-import { FilePreviewModalWrapper } from '@/Components/Files/FilePreviewModal'
-import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
-import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
-import { ContentListView } from '@/Components/ContentListView/ContentListView'
-import { FileContextMenu } from '@/Components/FileContextMenu/FileContextMenu'
+import FilePreviewModalWrapper from '@/Components/Files/FilePreviewModal'
+import ContentListView from '@/Components/ContentListView/ContentListView'
+import FileContextMenuWrapper from '@/Components/FileContextMenu/FileContextMenu'
+import PermissionsModalWrapper from '@/Components/PermissionsModal/PermissionsModalWrapper'
 
 type Props = {
   application: WebApplication
   mainApplicationGroup: ApplicationGroup
 }
 
-export const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicationGroup }) => {
+const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicationGroup }) => {
   const platformString = getPlatformString()
   const [appClass, setAppClass] = useState('')
   const [launched, setLaunched] = useState(false)
   const [needsUnlock, setNeedsUnlock] = useState(true)
   const [challenges, setChallenges] = useState<Challenge[]>([])
-  const [dealloced, setDealloced] = useState(false)
 
-  const componentManager = application.componentManager
   const appState = application.getAppState()
 
   useEffect(() => {
-    setDealloced(application.dealloced)
-  }, [application.dealloced])
-
-  useEffect(() => {
-    if (dealloced) {
-      return
-    }
-
     const desktopService = application.getDesktopService()
 
     if (desktopService) {
@@ -70,7 +58,7 @@ export const ApplicationView: FunctionComponent<Props> = ({ application, mainApp
       })
       .catch(console.error)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [application, dealloced])
+  }, [application])
 
   const removeChallenge = useCallback(
     (challenge: Challenge) => {
@@ -81,29 +69,9 @@ export const ApplicationView: FunctionComponent<Props> = ({ application, mainApp
     [challenges],
   )
 
-  const presentPermissionsDialog = useCallback(
-    (dialog: PermissionDialog) => {
-      render(
-        <PermissionsModal
-          application={application}
-          callback={dialog.callback}
-          component={dialog.component}
-          permissionsString={dialog.permissionsString}
-        />,
-        document.body.appendChild(document.createElement('div')),
-      )
-    },
-    [application],
-  )
-
   const onAppStart = useCallback(() => {
     setNeedsUnlock(application.hasPasscode())
-    componentManager.presentPermissionsDialog = presentPermissionsDialog
-
-    return () => {
-      ;(componentManager.presentPermissionsDialog as unknown) = undefined
-    }
-  }, [application, componentManager, presentPermissionsDialog])
+  }, [application])
 
   const handleDemoSignInFromParams = useCallback(() => {
     const token = getWindowUrlParams().get('demo-token')
@@ -183,7 +151,7 @@ export const ApplicationView: FunctionComponent<Props> = ({ application, mainApp
       <>
         {challenges.map((challenge) => {
           return (
-            <div className="sk-modal">
+            <div className="sk-modal" key={`${challenge.id}${application.ephemeralIdentifier}`}>
               <ChallengeModal
                 key={`${challenge.id}${application.ephemeralIdentifier}`}
                 application={application}
@@ -198,10 +166,6 @@ export const ApplicationView: FunctionComponent<Props> = ({ application, mainApp
       </>
     )
   }, [appState, challenges, mainApplicationGroup, removeChallenge, application])
-
-  if (dealloced || isStateDealloced(appState)) {
-    return null
-  }
 
   if (!renderAppContents) {
     return renderChallenges()
@@ -227,8 +191,8 @@ export const ApplicationView: FunctionComponent<Props> = ({ application, mainApp
 
         <>
           <NotesContextMenu application={application} appState={appState} />
-          <TagsContextMenu appState={appState} />
-          <FileContextMenu appState={appState} />
+          <TagsContextMenuWrapper appState={appState} />
+          <FileContextMenuWrapper appState={appState} />
           <PurchaseFlowWrapper application={application} appState={appState} />
           <ConfirmSignoutContainer
             applicationGroup={mainApplicationGroup}
@@ -237,8 +201,11 @@ export const ApplicationView: FunctionComponent<Props> = ({ application, mainApp
           />
           <ToastContainer />
           <FilePreviewModalWrapper application={application} appState={appState} />
+          <PermissionsModalWrapper application={application} />
         </>
       </div>
     </PremiumModalProvider>
   )
 }
+
+export default ApplicationView

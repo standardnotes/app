@@ -1,4 +1,4 @@
-import { StateUpdater, useCallback, useState } from 'preact/hooks'
+import { Dispatch, SetStateAction, useCallback, useState } from 'react'
 
 /**
  * @returns a callback that will close a dropdown if none of its children has
@@ -8,7 +8,7 @@ import { StateUpdater, useCallback, useState } from 'preact/hooks'
 export function useCloseOnBlur(
   container: { current?: HTMLDivElement | null },
   setOpen: (open: boolean) => void,
-): [(event: { relatedTarget: EventTarget | null }) => void, StateUpdater<boolean>] {
+): [(event: { relatedTarget: EventTarget | null }) => void, Dispatch<SetStateAction<boolean>>] {
   const [locked, setLocked] = useState(false)
   return [
     useCallback(

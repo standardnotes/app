@@ -1,18 +1,13 @@
 import { convertStringifiedBooleanToBoolean, isDesktopApplication } from '@/Utils'
 import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/Strings'
-import { useCallback, useEffect, useState } from 'preact/hooks'
+import { useCallback, useEffect, useState } from 'react'
 import { WebApplication } from '@/UIModels/Application'
 import { observer } from 'mobx-react-lite'
-import {
-  PreferencesGroup,
-  PreferencesSegment,
-  Subtitle,
-  Text,
-  Title,
-} from '@/Components/Preferences/PreferencesComponents'
-import { Dropdown, DropdownItem } from '@/Components/Dropdown/Dropdown'
-import { Switch } from '@/Components/Switch/Switch'
-import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
+import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
+import Dropdown from '@/Components/Dropdown/Dropdown'
+import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
+import Switch from '@/Components/Switch/Switch'
+import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import {
   FeatureStatus,
   FeatureIdentifier,
@@ -20,12 +15,14 @@ import {
   MuteFailedBackupsEmailsOption,
   SettingName,
 } from '@standardnotes/snjs'
+import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
 type Props = {
   application: WebApplication
 }
 
-export const EmailBackups = observer(({ application }: Props) => {
+const EmailBackups = ({ application }: Props) => {
   const [isLoading, setIsLoading] = useState(false)
   const [emailFrequency, setEmailFrequency] = useState<EmailBackupFrequency>(EmailBackupFrequency.Disabled)
   const [emailFrequencyOptions, setEmailFrequencyOptions] = useState<DropdownItem[]>([])
@@ -132,7 +129,7 @@ export const EmailBackups = observer(({ application }: Props) => {
               </a>
               .
             </Text>
-            <HorizontalSeparator classes="mt-3 mb-3" />
+            <HorizontalSeparator classes="my-4" />
           </>
         )}
         <div className={isEntitledToEmailBackups ? '' : 'faded cursor-default pointer-events-none'}>
@@ -157,7 +154,7 @@ export const EmailBackups = observer(({ application }: Props) => {
               />
             )}
           </div>
-          <HorizontalSeparator classes="mt-5 mb-4" />
+          <HorizontalSeparator classes="my-4" />
           <Subtitle>Email preferences</Subtitle>
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
@@ -177,4 +174,6 @@ export const EmailBackups = observer(({ application }: Props) => {
       </PreferencesSegment>
     </PreferencesGroup>
   )
-})
+}
+
+export default observer(EmailBackups)

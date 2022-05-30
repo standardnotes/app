@@ -2,11 +2,10 @@ import { KeyboardKey } from '@/Services/IOService'
 import { WebApplication } from '@/UIModels/Application'
 import { AppState } from '@/UIModels/AppState'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
-import { IconType, SNComponent, SNNote } from '@standardnotes/snjs'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
-import { Icon } from '@/Components/Icon/Icon'
-import { ChangeEditorMenu } from '@/Components/ChangeEditor/ChangeEditorMenu'
+import { SNNote } from '@standardnotes/snjs'
+import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
+import Icon from '@/Components/Icon/Icon'
+import ChangeEditorMenu from '@/Components/ChangeEditor/ChangeEditorMenu'
 import { calculateSubmenuStyle, SubmenuStyle } from '@/Utils/CalculateSubmenuStyle'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 
@@ -16,22 +15,7 @@ type ChangeEditorOptionProps = {
   note: SNNote
 }
 
-type AccordionMenuGroup<T> = {
-  icon?: IconType
-  iconClassName?: string
-  title: string
-  items: Array<T>
-}
-
-export type EditorMenuItem = {
-  name: string
-  component?: SNComponent
-  isEntitled: boolean
-}
-
-export type EditorMenuGroup = AccordionMenuGroup<EditorMenuItem>
-
-export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({ application, note }) => {
+const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({ application, note }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
   const [menuStyle, setMenuStyle] = useState<SubmenuStyle>({
@@ -121,3 +105,5 @@ export const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
     </div>
   )
 }
+
+export default ChangeEditorOption

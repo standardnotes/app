@@ -1,10 +1,8 @@
-import { RefObject } from 'preact'
-import { StateUpdater } from 'preact/hooks'
-import { JSXInternal } from 'preact/src/jsx'
+import { Dispatch, RefObject, SetStateAction } from 'react'
 
 export const quickSettingsKeyDownHandler = (
   closeQuickSettingsMenu: () => void,
-  event: JSXInternal.TargetedKeyboardEvent<HTMLDivElement>,
+  event: React.KeyboardEvent,
   quickSettingsMenuRef: RefObject<HTMLDivElement>,
   themesMenuOpen: boolean,
 ) => {
@@ -39,7 +37,7 @@ export const quickSettingsKeyDownHandler = (
 export const themesMenuKeyDownHandler = (
   event: React.KeyboardEvent<HTMLDivElement>,
   themesMenuRef: RefObject<HTMLDivElement>,
-  setThemesMenuOpen: StateUpdater<boolean>,
+  setThemesMenuOpen: Dispatch<SetStateAction<boolean>>,
   themesButtonRef: RefObject<HTMLButtonElement>,
 ) => {
   if (themesMenuRef?.current) {

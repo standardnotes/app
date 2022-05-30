@@ -1,10 +1,11 @@
-import { FunctionComponent } from 'preact'
+import { FunctionComponent, useState } from 'react'
+import IconButton from '@/Components/Button/IconButton'
 
-import { IconButton } from '@/Components/Button/IconButton'
+type Props = {
+  copyValue: string
+}
 
-import { useState } from 'preact/hooks'
-
-export const CopyButton: FunctionComponent<{ copyValue: string }> = ({ copyValue: secretKey }) => {
+const CopyButton: FunctionComponent<Props> = ({ copyValue: secretKey }) => {
   const [isCopied, setCopied] = useState(false)
   return (
     <IconButton
@@ -19,3 +20,5 @@ export const CopyButton: FunctionComponent<{ copyValue: string }> = ({ copyValue
     />
   )
 }
+
+export default CopyButton

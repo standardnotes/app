@@ -2,9 +2,7 @@ import { ApplicationEvent } from '@standardnotes/snjs'
 import { WebApplication } from '@/UIModels/Application'
 import { AppState, AppStateEvent } from '@/UIModels/AppState'
 import { autorun, IReactionDisposer, IReactionPublic } from 'mobx'
-import { Component } from 'preact'
-import { findDOMNode, unmountComponentAtNode } from 'preact/compat'
-
+import { Component } from 'react'
 export type PureComponentState = Partial<Record<string, any>>
 export type PureComponentProps = Partial<Record<string, any>>
 
@@ -36,30 +34,12 @@ export abstract class PureComponent<P = PureComponentProps, S = PureComponentSta
     ;(this.state as unknown) = undefined
   }
 
-  protected dismissModal(): void {
-    const elem = this.getElement()
-    if (!elem) {
-      return
-    }
-
-    const parent = elem.parentElement
-    if (!parent) {
-      return
-    }
-    parent.remove()
-    unmountComponentAtNode(parent)
-  }
-
   override componentWillUnmount(): void {
     this.deinit()
   }
 
   public get appState(): AppState {
     return this.application.getAppState()
-  }
-
-  protected getElement(): Element | null {
-    return findDOMNode(this)
   }
 
   autorun(view: (r: IReactionPublic) => void): void {
