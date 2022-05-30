@@ -156,6 +156,11 @@ const ContentListView: FunctionComponent<Props> = ({ application, appState }) =>
     setShowDisplayOptionsMenu(!showDisplayOptionsMenu)
   }, [showDisplayOptionsMenu])
 
+  const addButtonLabel = useMemo(
+    () => (isFilesSmartView ? 'Upload file' : 'Create a new note in the selected tag'),
+    [isFilesSmartView],
+  )
+
   return (
     <div
       id="items-column"
@@ -170,8 +175,8 @@ const ContentListView: FunctionComponent<Props> = ({ application, appState }) =>
               <div className="sk-h2 font-semibold title">{panelTitle}</div>
               <button
                 className="sk-button contrast wide"
-                title={isFilesSmartView ? 'Upload file' : 'Create a new note in the selected tag'}
-                aria-label={isFilesSmartView ? 'Upload file' : 'Create new note'}
+                title={addButtonLabel}
+                aria-label={addButtonLabel}
                 onClick={addNewItem}
               >
                 <div className="sk-label">
