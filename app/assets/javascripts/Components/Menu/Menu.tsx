@@ -53,7 +53,7 @@ const Menu: FunctionComponent<MenuProps> = ({
 
   return (
     <menu
-      className={`m-0 p-0 list-style-none focus:shadow-none ${className}`}
+      className={`m-0 pl-0 list-style-none focus:shadow-none ${className}`}
       onKeyDown={handleKeyDown}
       ref={menuElementRef}
       style={style}
