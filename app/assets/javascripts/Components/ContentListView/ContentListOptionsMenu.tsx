@@ -1,5 +1,5 @@
 import { WebApplication } from '@/UIModels/Application'
-import { CollectionSort, CollectionSortProperty, PrefKey } from '@standardnotes/snjs'
+import { CollectionSort, CollectionSortProperty, PrefKey, SystemViewId } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
@@ -7,18 +7,21 @@ import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
 import MenuItemSeparator from '@/Components/Menu/MenuItemSeparator'
 import { MenuItemType } from '@/Components/Menu/MenuItemType'
+import { AppState } from '@/UIModels/AppState'
 
 type Props = {
   application: WebApplication
+  appState: AppState
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
   closeDisplayOptionsMenu: () => void
   isOpen: boolean
 }
 
-const NotesListOptionsMenu: FunctionComponent<Props> = ({
+const ContentListOptionsMenu: FunctionComponent<Props> = ({
   closeDisplayOptionsMenu,
   closeOnBlur,
   application,
+  appState,
   isOpen,
 }) => {
   const [sortBy, setSortBy] = useState(() => application.getPreference(PrefKey.SortNotesBy, CollectionSort.CreatedAt))
@@ -171,15 +174,17 @@ const NotesListOptionsMenu: FunctionComponent<Props> = ({
       </MenuItem>
       <MenuItemSeparator />
       <div className="px-3 py-1 text-xs font-semibold color-text uppercase">View</div>
-      <MenuItem
-        type={MenuItemType.SwitchButton}
-        className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-        checked={!hidePreview}
-        onChange={toggleHidePreview}
-        onBlur={closeOnBlur}
-      >
-        <div className="flex flex-col max-w-3/4">Show note preview</div>
-      </MenuItem>
+      {appState.tags.selectedUuid !== SystemViewId.Files && (
+        <MenuItem
+          type={MenuItemType.SwitchButton}
+          className="py-1 hover:bg-contrast focus:bg-info-backdrop"
+          checked={!hidePreview}
+          onChange={toggleHidePreview}
+          onBlur={closeOnBlur}
+        >
+          <div className="flex flex-col max-w-3/4">Show note preview</div>
+        </MenuItem>
+      )}
       <MenuItem
         type={MenuItemType.SwitchButton}
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
@@ -205,7 +210,7 @@ const NotesListOptionsMenu: FunctionComponent<Props> = ({
         onChange={toggleEditorIcon}
         onBlur={closeOnBlur}
       >
-        Show editor icon
+        Show icon
       </MenuItem>
       <div className="h-1px my-2 bg-border"></div>
       <div className="px-3 py-1 text-xs font-semibold color-text uppercase">Other</div>
@@ -216,7 +221,7 @@ const NotesListOptionsMenu: FunctionComponent<Props> = ({
         onChange={toggleHidePinned}
         onBlur={closeOnBlur}
       >
-        Show pinned notes
+        Show pinned
       </MenuItem>
       <MenuItem
         type={MenuItemType.SwitchButton}
@@ -225,7 +230,7 @@ const NotesListOptionsMenu: FunctionComponent<Props> = ({
         onChange={toggleHideProtected}
         onBlur={closeOnBlur}
       >
-        Show protected notes
+        Show protected
       </MenuItem>
       <MenuItem
         type={MenuItemType.SwitchButton}
@@ -234,7 +239,7 @@ const NotesListOptionsMenu: FunctionComponent<Props> = ({
         onChange={toggleShowArchived}
         onBlur={closeOnBlur}
       >
-        Show archived notes
+        Show archived
       </MenuItem>
       <MenuItem
         type={MenuItemType.SwitchButton}
@@ -243,10 +248,10 @@ const NotesListOptionsMenu: FunctionComponent<Props> = ({
         onChange={toggleShowTrashed}
         onBlur={closeOnBlur}
       >
-        Show trashed notes
+        Show trashed
       </MenuItem>
     </Menu>
   )
 }
 
-export default observer(NotesListOptionsMenu)
+export default observer(ContentListOptionsMenu)
