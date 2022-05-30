@@ -15,12 +15,12 @@ import {
   useState,
 } from 'react'
 import ContentList from '@/Components/ContentListView/ContentList'
-import NotesListOptionsMenu from '@/Components/ContentListView/NotesListOptionsMenu'
 import NoAccountWarningWrapper from '@/Components/NoAccountWarning/NoAccountWarning'
 import SearchOptions from '@/Components/SearchOptions/SearchOptions'
 import PanelResizer, { PanelSide, ResizeFinishCallback, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
+import ContentListOptionsMenu from './ContentListOptionsMenu'
 
 type Props = {
   application: WebApplication
@@ -233,8 +233,9 @@ const ContentListView: FunctionComponent<Props> = ({ application, appState }) =>
                   </DisclosureButton>
                   <DisclosurePanel onBlur={closeDisplayOptMenuOnBlur}>
                     {showDisplayOptionsMenu && (
-                      <NotesListOptionsMenu
+                      <ContentListOptionsMenu
                         application={application}
+                        appState={appState}
                         closeDisplayOptionsMenu={toggleDisplayOptionsMenu}
                         closeOnBlur={closeDisplayOptMenuOnBlur}
                         isOpen={showDisplayOptionsMenu}
