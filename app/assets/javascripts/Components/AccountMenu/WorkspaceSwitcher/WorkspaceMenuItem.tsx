@@ -4,6 +4,7 @@ import { MenuItemType } from '@/Components/Menu/MenuItemType'
 import { KeyboardKey } from '@/Services/IOService'
 import { ApplicationDescriptor } from '@standardnotes/snjs'
 import {
+  ChangeEventHandler,
   FocusEventHandler,
   FunctionComponent,
   KeyboardEventHandler,
@@ -29,6 +30,7 @@ const WorkspaceMenuItem: FunctionComponent<Props> = ({
   hideOptions,
 }) => {
   const [isRenaming, setIsRenaming] = useState(false)
+  const [inputValue, setInputValue] = useState(descriptor.label)
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -37,20 +39,21 @@ const WorkspaceMenuItem: FunctionComponent<Props> = ({
     }
   }, [isRenaming])
 
+  const handleChange: ChangeEventHandler<HTMLInputElement> = useCallback((event) => {
+    setInputValue(event.target.value)
+  }, [])
+
   const handleInputKeyDown: KeyboardEventHandler = useCallback((event) => {
     if (event.key === KeyboardKey.Enter) {
       inputRef.current?.blur()
     }
   }, [])
 
-  const handleInputBlur: FocusEventHandler<HTMLInputElement> = useCallback(
-    (event) => {
-      const name = event.target.value
-      renameDescriptor(name)
-      setIsRenaming(false)
-    },
-    [renameDescriptor],
-  )
+  const handleInputBlur: FocusEventHandler<HTMLInputElement> = useCallback(() => {
+    renameDescriptor(inputValue)
+    setIsRenaming(false)
+    setInputValue('')
+  }, [inputValue, renameDescriptor])
 
   return (
     <MenuItem
@@ -64,7 +67,8 @@ const WorkspaceMenuItem: FunctionComponent<Props> = ({
           <input
             ref={inputRef}
             type="text"
-            value={descriptor.label}
+            value={inputValue}
+            onChange={handleChange}
             onKeyDown={handleInputKeyDown}
             onBlur={handleInputBlur}
           />
