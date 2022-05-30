@@ -2551,10 +2551,10 @@
     "@standardnotes/sncrypto-common" "^1.9.0"
     "@standardnotes/utils" "^1.6.10"
 
-"@standardnotes/stylekit@5.29.2":
-  version "5.29.2"
-  resolved "https://registry.yarnpkg.com/@standardnotes/stylekit/-/stylekit-5.29.2.tgz#44c7f3ecef86126a853028c5a71851b85f470392"
-  integrity sha512-Y8sW65YH/2dCOadMJ1x+WvvwHcYxpUL/fvpQQ2/RKfM4EPtKZnqvSDoIMIQBNKt4+0ho6/BQkoPmUthpbGrLoQ==
+"@standardnotes/stylekit@5.29.3":
+  version "5.29.3"
+  resolved "https://registry.yarnpkg.com/@standardnotes/stylekit/-/stylekit-5.29.3.tgz#8db39196d99ee4039eff5bf0d1bd408c4892e39b"
+  integrity sha512-BMJE+YEbC4xOvSXlUx23FAnoNtrVLW2Thcf2wkkF9lpc8ZbQJAF5Np7mcmtgBRFyR8apbz2jEVFaq7pYPOeVKg==
   dependencies:
     "@nanostores/react" "^0.2.0"
     "@reach/listbox" "^0.17.0"
