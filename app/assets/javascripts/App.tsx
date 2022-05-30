@@ -28,7 +28,7 @@ import { StartApplication } from './Device/StartApplication'
 import { ApplicationGroup } from './UIModels/ApplicationGroup'
 import { WebOrDesktopDevice } from './Device/WebOrDesktopDevice'
 import { WebApplication } from './UIModels/Application'
-import { createRoot } from 'react-dom/client'
+import { createRoot, Root } from 'react-dom/client'
 
 let keyCount = 0
 const getKey = () => {
@@ -36,11 +36,6 @@ const getKey = () => {
 }
 
 const RootId = 'app-group-root'
-
-const rootElement = document.createElement('div')
-rootElement.id = RootId
-const appendedRootNode = document.body.appendChild(rootElement)
-const root = createRoot(appendedRootNode)
 
 const startApplication: StartApplication = async function startApplication(
   defaultSyncServerHost: string,
@@ -50,6 +45,7 @@ const startApplication: StartApplication = async function startApplication(
 ) {
   SNLog.onLog = console.log
   SNLog.onError = console.error
+  let root: Root
 
   const onDestroy = () => {
     const rootElement = document.getElementById(RootId) as HTMLElement
@@ -59,6 +55,11 @@ const startApplication: StartApplication = async function startApplication(
   }
 
   const renderApp = () => {
+    const rootElement = document.createElement('div')
+    rootElement.id = RootId
+    const appendedRootNode = document.body.appendChild(rootElement)
+    root = createRoot(appendedRootNode)
+
     root.render(
       <ApplicationGroupView
         key={getKey()}
