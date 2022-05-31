@@ -60,7 +60,7 @@ export class WebApplication extends SNApplication {
       defaultHost: defaultSyncServerHost,
       appVersion: deviceInterface.appVersion,
       webSocketUrl: webSocketUrl,
-      supportsFileNavigation: window.enabledUnfinishedFeatures,
+      supportsFileNavigation: window.enabledUnfinishedFeatures || false,
     })
 
     makeObservable(this, {
