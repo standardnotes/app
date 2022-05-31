@@ -1,5 +1,9 @@
+import { SNTag } from '@standardnotes/snjs'
 import { AbstractListItemProps } from './AbstractListItemProps'
 
 export type DisplayableListItemProps = AbstractListItemProps & {
-  tags: string[]
+  tags: {
+    uuid: SNTag['uuid']
+    title: SNTag['title']
+  }[]
 }
