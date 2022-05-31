@@ -22,7 +22,7 @@ const ContentListItem: FunctionComponent<AbstractListItemProps> = (props) => {
       return []
     }
 
-    return tags.map((tag) => tag.title).sort()
+    return tags
   }
 
   switch (props.item.content_type) {
