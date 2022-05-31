@@ -13,9 +13,9 @@ import {
   ClassicFileSaver,
   parseFileName,
 } from '@standardnotes/filepicker'
-import { ChallengeReason, ClientDisplayableError, ContentType, FileItem } from '@standardnotes/snjs'
+import { ChallengeReason, ClientDisplayableError, ContentType, FileItem, SystemViewId } from '@standardnotes/snjs'
 import { addToast, dismissToast, ToastType, updateToast } from '@standardnotes/stylekit'
-import { action, computed, makeObservable, observable, reaction } from 'mobx'
+import { action, autorun, computed, makeObservable, observable, reaction } from 'mobx'
 import { WebApplication } from '../Application'
 import { AbstractState } from './AbstractState'
 import { AppState } from './AppState'
@@ -30,6 +30,7 @@ export class FilesState extends AbstractState {
   attachedFiles: FileItem[] = []
   showFileContextMenu = false
   fileContextMenuLocation: FileContextMenuLocation = { x: 0, y: 0 }
+  currentTab = PopoverTabs.AttachedFiles
 
   constructor(application: WebApplication, override appState: AppState, appObservers: (() => void)[]) {
     super(application, appState)
@@ -39,6 +40,7 @@ export class FilesState extends AbstractState {
       attachedFiles: observable,
       showFileContextMenu: observable,
       fileContextMenuLocation: observable,
+      currentTab: observable,
 
       selectedFiles: computed,
 
@@ -46,6 +48,7 @@ export class FilesState extends AbstractState {
       reloadAttachedFiles: action,
       setShowFileContextMenu: action,
       setFileContextMenuLocation: action,
+      setCurrentTab: action,
     })
 
     appObservers.push(
@@ -54,16 +57,27 @@ export class FilesState extends AbstractState {
         this.reloadAttachedFiles()
       }),
       reaction(
-        () => appState.notes.selectedNotes,
+        () => appState.notes.firstSelectedNote,
         () => {
           this.reloadAttachedFiles()
         },
       ),
+      autorun(() => {
+        if (appState.tags.selected?.uuid === SystemViewId.Files) {
+          this.setCurrentTab(PopoverTabs.AllFiles)
+        } else {
+          this.setCurrentTab(PopoverTabs.AttachedFiles)
+        }
+      }),
     )
   }
 
   get selectedFiles(): FileItem[] {
     return this.appState.selectedItems.getSelectedItems<FileItem>(ContentType.File)
+  }
+
+  setCurrentTab = (tab: PopoverTabs) => {
+    this.currentTab = tab
   }
 
   setShowFileContextMenu = (enabled: boolean) => {

@@ -32,6 +32,7 @@ import { SelectedItemsState } from './SelectedItemsState'
 import { ListableContentItem } from '@/Components/ContentListView/Types/ListableContentItem'
 import { AppStateEvent } from './AppStateEvent'
 import { EventSource } from './EventSource'
+import { FilesDragState } from './FilesDragState'
 
 export type PanelResizedData = {
   panel: string
@@ -55,6 +56,7 @@ export class AppState extends AbstractState {
   readonly features: FeaturesState
   readonly filePreviewModal = new FilePreviewModalState()
   readonly files: FilesState
+  readonly filesDragManager: FilesDragState
   readonly noAccountWarning: NoAccountWarningState
   readonly notes: NotesState
   readonly contentListView: ContentListViewState
@@ -96,6 +98,7 @@ export class AppState extends AbstractState {
     this.subscription = new SubscriptionState(application, this.appEventObserverRemovers)
     this.purchaseFlow = new PurchaseFlowState(application)
     this.files = new FilesState(application, this, this.appEventObserverRemovers)
+    this.filesDragManager = new FilesDragState(application, this, this.appEventObserverRemovers)
     this.addAppEventObserver()
     this.onVisibilityChange = () => {
       const visible = document.visibilityState === 'visible'

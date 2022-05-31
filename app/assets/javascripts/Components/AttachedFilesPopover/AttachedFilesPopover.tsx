@@ -4,7 +4,7 @@ import { AppState } from '@/UIModels/AppState'
 import { FileItem } from '@standardnotes/snjs'
 import { FilesIllustration } from '@standardnotes/icons'
 import { observer } from 'mobx-react-lite'
-import { Dispatch, FunctionComponent, SetStateAction, useRef, useState } from 'react'
+import { FunctionComponent, useRef, useState } from 'react'
 import Button from '@/Components/Button/Button'
 import Icon from '@/Components/Icon/Icon'
 import PopoverFileItem from './PopoverFileItem'
@@ -19,8 +19,7 @@ type Props = {
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
   currentTab: PopoverTabs
   handleFileAction: (action: PopoverFileItemAction) => Promise<boolean>
-  isDraggingFiles: boolean
-  setCurrentTab: Dispatch<SetStateAction<PopoverTabs>>
+  setCurrentTab: (tab: PopoverTabs) => void
 }
 
 const AttachedFilesPopover: FunctionComponent<Props> = ({
@@ -31,9 +30,10 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
   closeOnBlur,
   currentTab,
   handleFileAction,
-  isDraggingFiles,
   setCurrentTab,
 }) => {
+  const { isDraggingFiles } = appState.filesDragManager
+
   const [searchQuery, setSearchQuery] = useState('')
   const searchInputRef = useRef<HTMLInputElement>(null)
 
