@@ -21,7 +21,7 @@ const AttachedFilesButton: FunctionComponent<Props> = ({ application, appState, 
   const premiumModal = usePremiumModal()
   const { currentTab, setCurrentTab, allFiles, attachedFiles } = appState.files
   const attachedFilesCount = attachedFiles.length
-  const { isDraggingFiles } = appState.filesDragManager
+  const { isDraggingFiles } = appState.filesDragService
 
   const [open, setOpen] = useState(false)
   const [position, setPosition] = useState({

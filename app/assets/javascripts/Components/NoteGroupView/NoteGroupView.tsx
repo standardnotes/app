@@ -50,9 +50,9 @@ class NoteGroupView extends PureComponent<Props, State> {
         })
       }
 
-      if (this.appState.filesDragManager) {
+      if (this.appState.filesDragService) {
         this.setState({
-          isDraggingFiles: this.appState.filesDragManager.isDraggingFiles,
+          isDraggingFiles: this.appState.filesDragService.isDraggingFiles,
         })
       }
     })

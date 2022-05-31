@@ -7,7 +7,7 @@ import { WebApplication } from '../Application'
 import { AbstractState } from './AbstractState'
 import { AppState } from './AppState'
 
-export class FilesDragState extends AbstractState {
+export class FilesDragService extends AbstractState {
   dragCount = 0
   isDraggingFiles = false
 

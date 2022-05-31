@@ -32,7 +32,7 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
   handleFileAction,
   setCurrentTab,
 }) => {
-  const { isDraggingFiles } = appState.filesDragManager
+  const { isDraggingFiles } = appState.filesDragService
 
   const [searchQuery, setSearchQuery] = useState('')
   const searchInputRef = useRef<HTMLInputElement>(null)
