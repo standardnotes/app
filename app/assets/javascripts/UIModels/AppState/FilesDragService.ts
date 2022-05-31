@@ -19,6 +19,7 @@ export class FilesDragService extends AbstractState {
       isDraggingFiles: observable,
 
       setDragCount: action,
+      setIsDraggingFiles: action,
     })
 
     window.addEventListener('dragenter', this.handleDragIn)
