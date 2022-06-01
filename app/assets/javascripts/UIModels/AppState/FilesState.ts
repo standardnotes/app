@@ -2,9 +2,9 @@ import {
   PopoverFileItemAction,
   PopoverFileItemActionType,
 } from '@/Components/AttachedFilesPopover/PopoverFileItemAction'
-import { PopoverTabs } from '@/Components/AttachedFilesPopover/PopoverTabs'
 import { BYTES_IN_ONE_MEGABYTE } from '@/Constants'
 import { confirmDialog } from '@/Services/AlertService'
+import { Strings, StringUtils } from '@/Strings'
 import { concatenateUint8Arrays } from '@/Utils/ConcatenateUint8Arrays'
 import {
   ClassicFileReader,
@@ -41,6 +41,7 @@ export class FilesState extends AbstractState {
       fileContextMenuLocation: observable,
 
       selectedFiles: computed,
+      selectedFilesCount: computed,
 
       reloadAllFiles: action,
       reloadAttachedFiles: action,
@@ -64,6 +65,10 @@ export class FilesState extends AbstractState {
 
   get selectedFiles(): FileItem[] {
     return this.appState.selectedItems.getSelectedItems<FileItem>(ContentType.File)
+  }
+
+  get selectedFilesCount(): number {
+    return this.selectedFiles.length
   }
 
   setShowFileContextMenu = (enabled: boolean) => {
@@ -152,11 +157,10 @@ export class FilesState extends AbstractState {
 
   handleFileAction = async (
     action: PopoverFileItemAction,
-    currentTab: PopoverTabs,
   ): Promise<{
     didHandleAction: boolean
   }> => {
-    const file = action.type !== PopoverFileItemActionType.RenameFile ? action.payload : action.payload.file
+    const file = action.payload.file
     let isAuthorizedForAction = true
 
     const requiresAuthorization = file.protected && !UnprotectedFileActions.includes(action.type)
@@ -193,10 +197,7 @@ export class FilesState extends AbstractState {
         await this.renameFile(file, action.payload.name)
         break
       case PopoverFileItemActionType.PreviewFile:
-        this.appState.filePreviewModal.activate(
-          file,
-          currentTab === PopoverTabs.AllFiles ? this.allFiles : this.attachedFiles,
-        )
+        this.appState.filePreviewModal.activate(file, action.payload.otherFiles)
         break
     }
 
@@ -380,5 +381,43 @@ export class FilesState extends AbstractState {
     }
 
     return undefined
+  }
+
+  deleteSelectedFilesPermanently = async () => {
+    const title = Strings.trashItemsTitle
+    let fileTitle = undefined
+    if (this.selectedFilesCount === 1) {
+      const selectedFile = this.selectedFiles[0]
+      fileTitle = selectedFile.name.length ? `'${selectedFile.name}'` : 'this note'
+    }
+    const text = StringUtils.deleteFiles(true, this.selectedFilesCount, fileTitle)
+
+    if (
+      await confirmDialog({
+        title,
+        text,
+        confirmButtonStyle: 'danger',
+      })
+    ) {
+      for (const file of this.selectedFiles) {
+        await this.application.mutator.deleteItem(file)
+        this.appState.selectedItems.deselectItem(file)
+      }
+    }
+  }
+
+  setProtectionForSelectedFiles = async (protect: boolean) => {
+    const selectedFiles = this.selectedFiles
+    if (protect) {
+      await this.application.mutator.protectItems(selectedFiles)
+    } else {
+      await this.application.mutator.unprotectItems(selectedFiles, ChallengeReason.UnprotectFile)
+    }
+  }
+
+  downloadSelectedFiles = async () => {
+    for (const file of this.selectedFiles) {
+      this.downloadFile(file).catch(console.error)
+    }
   }
 }

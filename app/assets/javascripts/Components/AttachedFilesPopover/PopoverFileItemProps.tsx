@@ -1,10 +1,21 @@
 import { IconType, FileItem } from '@standardnotes/snjs'
+import { Dispatch, SetStateAction } from 'react'
 import { PopoverFileItemAction } from './PopoverFileItemAction'
 
-export type PopoverFileItemProps = {
+type CommonProps = {
   file: FileItem
   isAttachedToNote: boolean
-  handleFileAction: (action: PopoverFileItemAction) => Promise<boolean>
-  getIconType(type: string): IconType
+  handleFileAction: (action: PopoverFileItemAction) => Promise<{
+    didHandleAction: boolean
+  }>
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
+  previewHandler: (file: FileItem) => void
+}
+
+export type PopoverFileItemProps = CommonProps & {
+  getIconType(type: string): IconType
+}
+
+export type PopoverFileSubmenuProps = CommonProps & {
+  setIsRenamingFile: Dispatch<SetStateAction<boolean>>
 }

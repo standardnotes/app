@@ -4,8 +4,6 @@ import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
 import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
-import { PopoverFileItemAction } from '../AttachedFilesPopover/PopoverFileItemAction'
-import { PopoverTabs } from '../AttachedFilesPopover/PopoverTabs'
 import FileMenuOptions from './FileMenuOptions'
 
 type Props = {
@@ -13,7 +11,7 @@ type Props = {
 }
 
 const FileContextMenu: FunctionComponent<Props> = observer(({ appState }) => {
-  const { selectedFiles, showFileContextMenu, setShowFileContextMenu, fileContextMenuLocation } = appState.files
+  const { showFileContextMenu, setShowFileContextMenu, fileContextMenuLocation } = appState.files
 
   const [contextMenuStyle, setContextMenuStyle] = useState<React.CSSProperties>({
     top: 0,
@@ -24,8 +22,6 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ appState }) => {
   const contextMenuRef = useRef<HTMLDivElement>(null)
   const [closeOnBlur] = useCloseOnBlur(contextMenuRef, (open: boolean) => setShowFileContextMenu(open))
   useCloseOnClickOutside(contextMenuRef, () => appState.files.setShowFileContextMenu(false))
-
-  const selectedFile = selectedFiles[0]
 
   const reloadContextMenuLayout = useCallback(() => {
     const { clientHeight } = document.documentElement
@@ -85,14 +81,6 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ appState }) => {
     }
   }, [reloadContextMenuLayout])
 
-  const handleFileAction = useCallback(
-    async (action: PopoverFileItemAction) => {
-      const { didHandleAction } = await appState.files.handleFileAction(action, PopoverTabs.AllFiles)
-      return didHandleAction
-    },
-    [appState.files],
-  )
-
   return (
     <div
       ref={contextMenuRef}
@@ -103,8 +91,7 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ appState }) => {
       }}
     >
       <FileMenuOptions
-        file={selectedFile}
-        handleFileAction={handleFileAction}
+        appState={appState}
         closeOnBlur={closeOnBlur}
         closeMenu={() => setShowFileContextMenu(false)}
         shouldShowRenameOption={false}

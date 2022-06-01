@@ -8,7 +8,7 @@ import { Dispatch, FunctionComponent, SetStateAction, useRef, useState } from 'r
 import Button from '@/Components/Button/Button'
 import Icon from '@/Components/Icon/Icon'
 import PopoverFileItem from './PopoverFileItem'
-import { PopoverFileItemAction, PopoverFileItemActionType } from './PopoverFileItemAction'
+import { PopoverFileItemActionType } from './PopoverFileItemAction'
 import { PopoverTabs } from './PopoverTabs'
 
 type Props = {
@@ -18,7 +18,6 @@ type Props = {
   attachedFiles: FileItem[]
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
   currentTab: PopoverTabs
-  handleFileAction: (action: PopoverFileItemAction) => Promise<boolean>
   isDraggingFiles: boolean
   setCurrentTab: Dispatch<SetStateAction<PopoverTabs>>
 }
@@ -30,7 +29,6 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
   attachedFiles,
   closeOnBlur,
   currentTab,
-  handleFileAction,
   isDraggingFiles,
   setCurrentTab,
 }) => {
@@ -51,12 +49,23 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
     }
     if (currentTab === PopoverTabs.AttachedFiles) {
       uploadedFiles.forEach((file) => {
-        handleFileAction({
-          type: PopoverFileItemActionType.AttachFileToNote,
-          payload: file,
-        }).catch(console.error)
+        appState.files
+          .handleFileAction({
+            type: PopoverFileItemActionType.AttachFileToNote,
+            payload: { file },
+          })
+          .catch(console.error)
       })
     }
+  }
+
+  const previewHandler = (file: FileItem) => {
+    appState.files
+      .handleFileAction({
+        type: PopoverFileItemActionType.PreviewFile,
+        payload: { file, otherFiles: currentTab === PopoverTabs.AllFiles ? allFiles : attachedFiles },
+      })
+      .catch(console.error)
   }
 
   return (
@@ -130,9 +139,10 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
                 key={file.uuid}
                 file={file}
                 isAttachedToNote={attachedFiles.includes(file)}
-                handleFileAction={handleFileAction}
+                handleFileAction={appState.files.handleFileAction}
                 getIconType={application.iconsController.getIconForFileType}
                 closeOnBlur={closeOnBlur}
+                previewHandler={previewHandler}
               />
             )
           })
