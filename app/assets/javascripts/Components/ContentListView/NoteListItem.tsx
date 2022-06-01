@@ -1,4 +1,4 @@
-import { PLAIN_EDITOR_NAME } from '@/Constants'
+import { PLAIN_EDITOR_NAME } from '@/Constants/Constants'
 import { sanitizeHtmlString, SNNote } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'

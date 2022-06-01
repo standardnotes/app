@@ -1,4 +1,4 @@
-import { STRING_NON_MATCHING_PASSWORDS } from '@/Strings'
+import { STRING_NON_MATCHING_PASSWORDS } from '@/Constants/Strings'
 import { WebApplication } from '@/Application/Application'
 import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'

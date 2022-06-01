@@ -10,7 +10,7 @@ import {
 } from '@standardnotes/snjs'
 import { EditorMenuGroup } from '@/Components/NotesOptions/EditorMenuGroup'
 import { EditorMenuItem } from '@/Components/NotesOptions/EditorMenuItem'
-import { PLAIN_EDITOR_NAME } from '@/Constants'
+import { PLAIN_EDITOR_NAME } from '@/Constants/Constants'
 
 type EditorGroup = NoteType | 'plain' | 'others'
 

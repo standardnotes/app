@@ -4,7 +4,7 @@ import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { UuidString } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, KeyboardEventHandler, UIEventHandler, useCallback } from 'react'
-import { FOCUSABLE_BUT_NOT_TABBABLE, NOTES_LIST_SCROLL_THRESHOLD } from '@/Constants'
+import { FOCUSABLE_BUT_NOT_TABBABLE, NOTES_LIST_SCROLL_THRESHOLD } from '@/Constants/Constants'
 import { ListableContentItem } from './Types/ListableContentItem'
 import ContentListItem from './ContentListItem'
 

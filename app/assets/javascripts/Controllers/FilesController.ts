@@ -3,7 +3,7 @@ import {
   PopoverFileItemActionType,
 } from '@/Components/AttachedFilesPopover/PopoverFileItemAction'
 import { PopoverTabs } from '@/Components/AttachedFilesPopover/PopoverTabs'
-import { BYTES_IN_ONE_MEGABYTE } from '@/Constants'
+import { BYTES_IN_ONE_MEGABYTE } from '@/Constants/Constants'
 import { confirmDialog } from '@/Services/AlertService'
 import { concatenateUint8Arrays } from '@/Utils/ConcatenateUint8Arrays'
 import {

@@ -1,5 +1,5 @@
 import { Platform, SNApplication } from '@standardnotes/snjs'
-import { getPlatform, isDesktopApplication } from './Utils'
+import { getPlatform, isDesktopApplication } from '../Utils'
 
 /** @generic */
 export const STRING_SESSION_EXPIRED =

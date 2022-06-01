@@ -1,4 +1,4 @@
-import { TAG_FOLDERS_FEATURE_NAME, TAG_FOLDERS_FEATURE_TOOLTIP } from '@/Constants'
+import { TAG_FOLDERS_FEATURE_NAME, TAG_FOLDERS_FEATURE_TOOLTIP } from '@/Constants/Constants'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { Tooltip } from '@reach/tooltip'

@@ -1,4 +1,4 @@
-import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { calculateSubmenuStyle, SubmenuStyle } from '@/Utils/CalculateSubmenuStyle'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { Dispatch, FunctionComponent, SetStateAction, useCallback, useEffect, useRef, useState } from 'react'

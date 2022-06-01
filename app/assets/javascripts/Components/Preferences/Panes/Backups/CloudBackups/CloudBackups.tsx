@@ -13,7 +13,7 @@ import {
 
 import Switch from '@/Components/Switch/Switch'
 import { convertStringifiedBooleanToBoolean } from '@/Utils'
-import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/Strings'
+import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/Constants/Strings'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 

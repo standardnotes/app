@@ -3,7 +3,7 @@ import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
 import { MenuItemType } from '@/Components/Menu/MenuItemType'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
-import { STRING_EDIT_LOCKED_ATTEMPT } from '@/Strings'
+import { STRING_EDIT_LOCKED_ATTEMPT } from '@/Constants/Strings'
 import { WebApplication } from '@/Application/Application'
 import {
   ComponentArea,
@@ -18,7 +18,7 @@ import { Fragment, FunctionComponent, useCallback, useEffect, useState } from 'r
 import { EditorMenuGroup } from '@/Components/NotesOptions/EditorMenuGroup'
 import { EditorMenuItem } from '@/Components/NotesOptions/EditorMenuItem'
 import { createEditorMenuGroups } from './createEditorMenuGroups'
-import { PLAIN_EDITOR_NAME } from '@/Constants'
+import { PLAIN_EDITOR_NAME } from '@/Constants/Constants'
 import {
   transactionForAssociateComponentWithCurrentNote,
   transactionForDisassociateComponentWithCurrentNote,

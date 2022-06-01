@@ -6,7 +6,7 @@ import { useState, useEffect, useMemo, useCallback, FunctionComponent } from 're
 import { SNApplication, SNNote } from '@standardnotes/snjs'
 import { KeyboardModifier } from '@/Services/IOService'
 import ChangeEditorOption from './ChangeEditorOption'
-import { BYTES_IN_ONE_MEGABYTE } from '@/Constants'
+import { BYTES_IN_ONE_MEGABYTE } from '@/Constants/Constants'
 import ListedActionsOption from './ListedActionsOption'
 import AddTagOption from './AddTagOption'
 import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit'

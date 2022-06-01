@@ -3,7 +3,7 @@ import Icon from '@/Components/Icon/Icon'
 import Switch from '@/Components/Switch/Switch'
 import { SwitchProps } from '@/Components/Switch/SwitchProps'
 import { IconType } from '@standardnotes/snjs'
-import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { MenuItemType } from './MenuItemType'
 
 type MenuItemProps = {

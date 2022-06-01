@@ -9,7 +9,7 @@ import {
   STRING_UPGRADE_ACCOUNT_CONFIRM_TEXT,
   STRING_UPGRADE_ACCOUNT_CONFIRM_TITLE,
   STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON,
-} from '@/Strings'
+} from '@/Constants/Strings'
 import { alertDialog, confirmDialog } from '@/Services/AlertService'
 import AccountMenu from '@/Components/AccountMenu/AccountMenu'
 import { ViewControllerManagerEvent } from '@/Services/ViewControllerManager'
@@ -18,7 +18,7 @@ import QuickSettingsMenu from '@/Components/QuickSettingsMenu/QuickSettingsMenu'
 import SyncResolutionMenu from '@/Components/SyncResolutionMenu/SyncResolutionMenu'
 import { Fragment } from 'react'
 import { AccountMenuPane } from '../AccountMenu/AccountMenuPane'
-import { EditorEventSource } from '@/Typings/EditorEventSource'
+import { EditorEventSource } from '@/Types/EditorEventSource'
 
 type Props = {
   application: WebApplication

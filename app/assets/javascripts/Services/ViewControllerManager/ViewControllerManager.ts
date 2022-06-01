@@ -30,8 +30,8 @@ import { FilePreviewModalController } from '../../Controllers/FilePreviewModalCo
 import { SelectedItemsController } from '../../Controllers/SelectedItemsController'
 import { ListableContentItem } from '@/Components/ContentListView/Types/ListableContentItem'
 import { ViewControllerManagerEvent } from './ViewControllerManagerEvent'
-import { EditorEventSource } from '../../Typings/EditorEventSource'
-import { PanelResizedData } from '../../Typings/PanelResizedData'
+import { EditorEventSource } from '../../Types/EditorEventSource'
+import { PanelResizedData } from '../../Types/PanelResizedData'
 
 type ObserverCallback = (event: ViewControllerManagerEvent, data?: unknown) => Promise<void>
 

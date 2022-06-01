@@ -1,5 +1,5 @@
 import { confirmDialog } from '@/Services/AlertService'
-import { STRING_RESTORE_LOCKED_ATTEMPT } from '@/Strings'
+import { STRING_RESTORE_LOCKED_ATTEMPT } from '@/Constants/Strings'
 import { WebApplication } from '@/Application/Application'
 import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { getPlatformString } from '@/Utils'

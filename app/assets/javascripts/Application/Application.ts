@@ -1,4 +1,4 @@
-import { WebCrypto } from '@/Crypto'
+import { WebCrypto } from '@/Application/Crypto'
 import { WebAlertService } from '@/Services/AlertService'
 import { ArchiveManager } from '@/Services/ArchiveManager'
 import { AutolockService } from '@/Services/AutolockService'
@@ -6,7 +6,7 @@ import { DesktopManager } from '@/Services/DesktopManager'
 import { IOService } from '@/Services/IOService'
 import { ThemeManager } from '@/Services/ThemeManager'
 import { ViewControllerManager } from '@/Services/ViewControllerManager'
-import { WebOrDesktopDevice } from '@/Device/WebOrDesktopDevice'
+import { WebOrDesktopDevice } from '@/Application/Device/WebOrDesktopDevice'
 import {
   DeinitSource,
   Platform,

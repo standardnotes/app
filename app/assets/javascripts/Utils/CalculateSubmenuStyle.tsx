@@ -1,4 +1,4 @@
-import { MAX_MENU_SIZE_MULTIPLIER, MENU_MARGIN_FROM_APP_BORDER } from '@/Constants'
+import { MAX_MENU_SIZE_MULTIPLIER, MENU_MARGIN_FROM_APP_BORDER } from '@/Constants/Constants'
 
 export type SubmenuStyle = {
   top?: number | 'auto'

@@ -1,5 +1,5 @@
 import Icon from '@/Components/Icon/Icon'
-import { TAG_FOLDERS_FEATURE_NAME } from '@/Constants'
+import { TAG_FOLDERS_FEATURE_NAME } from '@/Constants/Constants'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { KeyboardKey } from '@/Services/IOService'
 import { FeaturesController } from '@/Controllers/FeaturesController'

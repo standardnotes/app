@@ -1,4 +1,4 @@
-import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { WebApplication } from '@/Application/Application'
 import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { FileItem } from '@standardnotes/snjs'

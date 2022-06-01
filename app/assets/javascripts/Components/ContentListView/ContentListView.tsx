@@ -1,7 +1,7 @@
 import { KeyboardKey, KeyboardModifier } from '@/Services/IOService'
 import { WebApplication } from '@/Application/Application'
 import { ViewControllerManager } from '@/Services/ViewControllerManager'
-import { PANEL_NAME_NOTES } from '@/Constants'
+import { PANEL_NAME_NOTES } from '@/Constants/Constants'
 import { PrefKey, SystemViewId } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import {

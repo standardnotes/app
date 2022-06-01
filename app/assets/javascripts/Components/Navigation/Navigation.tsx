@@ -1,7 +1,7 @@
 import SmartViewsSection from '@/Components/Tags/SmartViewsSection'
 import TagsSection from '@/Components/Tags/TagsSection'
 import { WebApplication } from '@/Application/Application'
-import { PANEL_NAME_NAVIGATION } from '@/Constants'
+import { PANEL_NAME_NAVIGATION } from '@/Constants/Constants'
 import { ApplicationEvent, PrefKey } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'

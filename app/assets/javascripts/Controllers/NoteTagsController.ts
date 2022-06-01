@@ -1,4 +1,4 @@
-import { ElementIds } from '@/ElementIDs'
+import { ElementIds } from '@/Constants/ElementIDs'
 import { destroyAllObjectProperties } from '@/Utils'
 import { ApplicationEvent, ContentType, DeinitSource, PrefKey, SNNote, SNTag, UuidString } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable } from 'mobx'

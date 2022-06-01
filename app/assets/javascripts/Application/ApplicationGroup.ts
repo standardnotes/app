@@ -13,7 +13,7 @@ import { DesktopManager } from '@/Services/DesktopManager'
 import { IOService } from '@/Services/IOService'
 import { AutolockService } from '@/Services/AutolockService'
 import { ThemeManager } from '@/Services/ThemeManager'
-import { WebOrDesktopDevice } from '@/Device/WebOrDesktopDevice'
+import { WebOrDesktopDevice } from '@/Application/Device/WebOrDesktopDevice'
 
 const createApplication = (
   descriptor: ApplicationDescriptor,

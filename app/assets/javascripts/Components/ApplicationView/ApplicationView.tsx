@@ -2,7 +2,7 @@ import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { getPlatformString, getWindowUrlParams } from '@/Utils'
 import { ViewControllerManagerEvent } from '@/Services/ViewControllerManager'
 import { ApplicationEvent, Challenge, removeFromArray } from '@standardnotes/snjs'
-import { PANEL_NAME_NOTES, PANEL_NAME_NAVIGATION } from '@/Constants'
+import { PANEL_NAME_NOTES, PANEL_NAME_NAVIGATION } from '@/Constants/Constants'
 import { alertDialog } from '@/Services/AlertService'
 import { WebApplication } from '@/Application/Application'
 import Navigation from '@/Components/Navigation/Navigation'
@@ -23,7 +23,7 @@ import FilePreviewModalWrapper from '@/Components/Files/FilePreviewModal'
 import ContentListView from '@/Components/ContentListView/ContentListView'
 import FileContextMenuWrapper from '@/Components/FileContextMenu/FileContextMenu'
 import PermissionsModalWrapper from '@/Components/PermissionsModal/PermissionsModalWrapper'
-import { PanelResizedData } from '@/Typings/PanelResizedData'
+import { PanelResizedData } from '@/Types/PanelResizedData'
 
 type Props = {
   application: WebApplication

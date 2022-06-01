@@ -1,6 +1,6 @@
 import { WebApplication } from '@/Application/Application'
 import { ViewControllerManager } from '@/Services/ViewControllerManager'
-import { MENU_MARGIN_FROM_APP_BORDER } from '@/Constants'
+import { MENU_MARGIN_FROM_APP_BORDER } from '@/Constants/Constants'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import VisuallyHidden from '@reach/visually-hidden'
 import { observer } from 'mobx-react-lite'

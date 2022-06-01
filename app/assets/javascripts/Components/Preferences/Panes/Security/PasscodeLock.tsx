@@ -7,7 +7,7 @@ import {
   STRING_NON_MATCHING_PASSCODES,
   StringUtils,
   Strings,
-} from '@/Strings'
+} from '@/Constants/Strings'
 import { WebApplication } from '@/Application/Application'
 import { preventRefreshing } from '@/Utils'
 import { alertDialog } from '@/Services/AlertService'

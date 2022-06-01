@@ -1,4 +1,4 @@
-import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { calculateSubmenuStyle, SubmenuStyle } from '@/Utils/CalculateSubmenuStyle'

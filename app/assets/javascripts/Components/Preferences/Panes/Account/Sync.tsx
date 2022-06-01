@@ -1,7 +1,7 @@
 import { Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import Button from '@/Components/Button/Button'
 import { SyncQueueStrategy } from '@standardnotes/snjs'
-import { STRING_GENERIC_SYNC_ERROR } from '@/Strings'
+import { STRING_GENERIC_SYNC_ERROR } from '@/Constants/Strings'
 import { observer } from 'mobx-react-lite'
 import { WebApplication } from '@/Application/Application'
 import { FunctionComponent, useState } from 'react'

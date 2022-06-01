@@ -9,7 +9,7 @@ import {
   STRING_E2E_ENABLED,
   STRING_LOCAL_ENC_ENABLED,
   STRING_ENC_NOT_ENABLED,
-} from '@/Strings'
+} from '@/Constants/Strings'
 import { BackupFile } from '@standardnotes/snjs'
 import { ChangeEventHandler, MouseEventHandler, useCallback, useEffect, useRef, useState } from 'react'
 import { WebApplication } from '@/Application/Application'

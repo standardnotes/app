@@ -1,4 +1,4 @@
-import { DAYS_IN_A_WEEK, DAYS_IN_A_YEAR } from '@/Constants'
+import { DAYS_IN_A_WEEK, DAYS_IN_A_YEAR } from '@/Constants/Constants'
 import { HistoryEntry, NoteHistoryEntry, RevisionListEntry } from '@standardnotes/snjs'
 import { calculateDifferenceBetweenDatesInDays } from '../../Utils/CalculateDifferenceBetweenDatesInDays'
 

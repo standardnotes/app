@@ -7,7 +7,7 @@ import { useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import NotesOptions from './NotesOptions'
 import { WebApplication } from '@/Application/Application'
-import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 
 type Props = {
   application: WebApplication

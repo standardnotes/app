@@ -3,7 +3,7 @@ import { PureComponent } from '@/Components/Abstract/PureComponent'
 import { WebApplication } from '@/Application/Application'
 import MultipleSelectedNotes from '@/Components/MultipleSelectedNotes/MultipleSelectedNotes'
 import NoteView from '@/Components/NoteView/NoteView'
-import { ElementIds } from '@/ElementIDs'
+import { ElementIds } from '@/Constants/ElementIDs'
 
 type State = {
   showMultipleSelectedNotes: boolean
