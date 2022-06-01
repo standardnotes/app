@@ -1,6 +1,6 @@
 import { PopoverFileItemActionType } from '@/Components/AttachedFilesPopover/PopoverFileItemAction'
 import { PopoverTabs } from '@/Components/AttachedFilesPopover/PopoverTabs'
-import { isHandlingFileDrag } from '@/Utils/DragTypeCheck'
+import { isBackupRelatedFile, isHandlingFileDrag } from '@/Utils/DragTypeCheck'
 import { StreamingFileReader } from '@standardnotes/filepicker'
 import { action, makeObservable, observable } from 'mobx'
 import { WebApplication } from '../Application'
@@ -52,6 +52,7 @@ export class FilesDragService extends AbstractState {
 
   handleDragIn = (event: DragEvent) => {
     if (!isHandlingFileDrag(event, this.application)) {
+      this.setIsDraggingFiles(false)
       return
     }
 
@@ -76,6 +77,7 @@ export class FilesDragService extends AbstractState {
 
   handleDragOut = (event: DragEvent) => {
     if (!isHandlingFileDrag(event, this.application)) {
+      this.setIsDraggingFiles(false)
       return
     }
 
@@ -92,7 +94,20 @@ export class FilesDragService extends AbstractState {
   }
 
   handleDrop = (event: DragEvent) => {
+    if (!event.dataTransfer?.items) {
+      return
+    }
+
+    const items = Array.from(event.dataTransfer.items)
+
     if (!isHandlingFileDrag(event, this.application)) {
+      this.setIsDraggingFiles(false)
+
+      if (items.every((item) => isBackupRelatedFile(item, this.application))) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+
       return
     }
 
@@ -106,37 +121,35 @@ export class FilesDragService extends AbstractState {
       return
     }
 
-    if (event.dataTransfer?.items.length) {
-      Array.from(event.dataTransfer.items).forEach(async (item) => {
-        const fileOrHandle = StreamingFileReader.available()
-          ? ((await item.getAsFileSystemHandle()) as FileSystemFileHandle)
-          : item.getAsFile()
+    items.forEach(async (item) => {
+      const fileOrHandle = StreamingFileReader.available()
+        ? ((await item.getAsFileSystemHandle()) as FileSystemFileHandle)
+        : item.getAsFile()
 
-        if (!fileOrHandle) {
-          return
-        }
+      if (!fileOrHandle) {
+        return
+      }
 
-        const uploadedFiles = await this.appState.files.uploadNewFile(fileOrHandle)
+      const uploadedFiles = await this.appState.files.uploadNewFile(fileOrHandle)
 
-        if (!uploadedFiles) {
-          return
-        }
+      if (!uploadedFiles) {
+        return
+      }
 
-        if (this.appState.files.currentTab === PopoverTabs.AttachedFiles) {
-          uploadedFiles.forEach((file) => {
-            void this.appState.files.handleFileAction(
-              {
-                type: PopoverFileItemActionType.AttachFileToNote,
-                payload: file,
-              },
-              this.appState.files.currentTab,
-            )
-          })
-        }
-      })
+      if (this.appState.files.currentTab === PopoverTabs.AttachedFiles) {
+        uploadedFiles.forEach((file) => {
+          void this.appState.files.handleFileAction(
+            {
+              type: PopoverFileItemActionType.AttachFileToNote,
+              payload: file,
+            },
+            this.appState.files.currentTab,
+          )
+        })
+      }
+    })
 
-      event.dataTransfer.clearData()
-      this.setDragCount(0)
-    }
+    event.dataTransfer.clearData()
+    this.setDragCount(0)
   }
 }

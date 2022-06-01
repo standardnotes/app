@@ -1,6 +1,6 @@
 import { WebApplication } from '@/UIModels/Application'
 
-const isBackupRelatedFile = (item: DataTransferItem, application: WebApplication): boolean => {
+export const isBackupRelatedFile = (item: DataTransferItem, application: WebApplication): boolean => {
   const fileName = item.getAsFile()?.name || ''
   const isBackupMetadataFile = application.files.isFileNameFileBackupRelated(fileName) !== false
   return isBackupMetadataFile
