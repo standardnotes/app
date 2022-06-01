@@ -1,6 +1,6 @@
 import { PopoverFileItemActionType } from '@/Components/AttachedFilesPopover/PopoverFileItemAction'
 import { PopoverTabs } from '@/Components/AttachedFilesPopover/PopoverTabs'
-import { isBackupRelatedFile, isHandlingFileDrag } from '@/Utils/DragTypeCheck'
+import { isHandlingBackupDrag, isHandlingFileDrag } from '@/Utils/DragTypeCheck'
 import { StreamingFileReader } from '@standardnotes/filepicker'
 import { action, makeObservable, observable } from 'mobx'
 import { WebApplication } from '../Application'
@@ -103,7 +103,7 @@ export class FilesDragService extends AbstractState {
     if (!isHandlingFileDrag(event, this.application)) {
       this.setIsDraggingFiles(false)
 
-      if (items.every((item) => isBackupRelatedFile(item, this.application))) {
+      if (isHandlingBackupDrag(event, this.application)) {
         event.preventDefault()
         event.stopPropagation()
       }
