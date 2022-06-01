@@ -1,9 +1,10 @@
 import { FunctionComponent } from 'react'
 import Icon from '@/Components/Icon/Icon'
+import { DisplayableListItemProps } from './Types/DisplayableListItemProps'
 
 type Props = {
   hideTags: boolean
-  tags: string[]
+  tags: DisplayableListItemProps['tags']
 }
 
 const ListItemTags: FunctionComponent<Props> = ({ hideTags, tags }) => {
@@ -16,10 +17,10 @@ const ListItemTags: FunctionComponent<Props> = ({ hideTags, tags }) => {
       {tags.map((tag) => (
         <span
           className="inline-flex items-center py-1 px-1.5 bg-passive-4-opacity-variant color-foreground rounded-0.5"
-          key={tag}
+          key={tag.uuid}
         >
           <Icon type="hashtag" className="sn-icon--small color-passive-1 mr-1" />
-          <span>{tag}</span>
+          <span>{tag.title}</span>
         </span>
       ))}
     </div>
