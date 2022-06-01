@@ -1,4 +1,4 @@
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import { concatenateUint8Arrays } from '@/Utils/ConcatenateUint8Arrays'
 import { DialogContent, DialogOverlay } from '@reach/dialog'
 import { addToast, ToastType } from '@standardnotes/stylekit'
@@ -12,16 +12,16 @@ import { isFileTypePreviewable } from './isFilePreviewable'
 import PreviewComponent from './PreviewComponent'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
 import { KeyboardKey } from '@/Services/IOService'
-import { AppState } from '@/UIModels/AppState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 
 type Props = {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
 }
 
-const FilePreviewModal: FunctionComponent<Props> = observer(({ application, appState }) => {
-  const { currentFile, setCurrentFile, otherFiles, dismiss } = appState.filePreviewModal
+const FilePreviewModal: FunctionComponent<Props> = observer(({ application, viewControllerManager }) => {
+  const { currentFile, setCurrentFile, otherFiles, dismiss } = viewControllerManager.filePreviewModalController
 
   if (!currentFile) {
     return null
@@ -221,7 +221,10 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, appS
                       <Button
                         variant="normal"
                         onClick={() => {
-                          application.getAppState().files.downloadFile(currentFile).catch(console.error)
+                          application
+                            .getViewControllerManager()
+                            .filesController.downloadFile(currentFile)
+                            .catch(console.error)
                         }}
                       >
                         Download
@@ -236,7 +239,10 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, appS
                     <Button
                       variant="primary"
                       onClick={() => {
-                        application.getAppState().files.downloadFile(currentFile).catch(console.error)
+                        application
+                          .getViewControllerManager()
+                          .filesController.downloadFile(currentFile)
+                          .catch(console.error)
                       }}
                     >
                       Download
@@ -255,8 +261,10 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, appS
 
 FilePreviewModal.displayName = 'FilePreviewModal'
 
-const FilePreviewModalWrapper: FunctionComponent<Props> = ({ application, appState }) => {
-  return appState.filePreviewModal.isOpen ? <FilePreviewModal application={application} appState={appState} /> : null
+const FilePreviewModalWrapper: FunctionComponent<Props> = ({ application, viewControllerManager }) => {
+  return viewControllerManager.filePreviewModalController.isOpen ? (
+    <FilePreviewModal application={application} viewControllerManager={viewControllerManager} />
+  ) : null
 }
 
 export default observer(FilePreviewModalWrapper)

@@ -1,6 +1,6 @@
 import SmartViewsSection from '@/Components/Tags/SmartViewsSection'
 import TagsSection from '@/Components/Tags/TagsSection'
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import { PANEL_NAME_NAVIGATION } from '@/Constants'
 import { ApplicationEvent, PrefKey } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
@@ -12,7 +12,7 @@ type Props = {
 }
 
 const Navigation: FunctionComponent<Props> = ({ application }) => {
-  const appState = useMemo(() => application.getAppState(), [application])
+  const viewControllerManager = useMemo(() => application.getViewControllerManager(), [application])
   const [ref, setRef] = useState<HTMLDivElement | null>()
   const [panelWidth, setPanelWidth] = useState<number>(0)
 
@@ -32,15 +32,15 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
   const panelResizeFinishCallback: ResizeFinishCallback = useCallback(
     (width, _lastLeft, _isMaxWidth, isCollapsed) => {
       application.setPreference(PrefKey.TagsPanelWidth, width).catch(console.error)
-      appState.noteTags.reloadTagsContainerMaxWidth()
-      appState.panelDidResize(PANEL_NAME_NAVIGATION, isCollapsed)
+      viewControllerManager.noteTagsController.reloadTagsContainerMaxWidth()
+      viewControllerManager.panelDidResize(PANEL_NAME_NAVIGATION, isCollapsed)
     },
-    [application, appState],
+    [application, viewControllerManager],
   )
 
   const panelWidthEventCallback = useCallback(() => {
-    appState.noteTags.reloadTagsContainerMaxWidth()
-  }, [appState])
+    viewControllerManager.noteTagsController.reloadTagsContainerMaxWidth()
+  }, [viewControllerManager])
 
   return (
     <div
@@ -58,8 +58,8 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
           </div>
         </div>
         <div className="scrollable">
-          <SmartViewsSection appState={appState} />
-          <TagsSection appState={appState} />
+          <SmartViewsSection viewControllerManager={viewControllerManager} />
+          <TagsSection viewControllerManager={viewControllerManager} />
         </div>
       </div>
       {ref && (

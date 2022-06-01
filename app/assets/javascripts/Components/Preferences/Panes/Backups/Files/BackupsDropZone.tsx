@@ -6,7 +6,7 @@ import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Icon from '@/Components/Icon/Icon'
 import { StreamingFileApi } from '@standardnotes/filepicker'
 import { isHandlingBackupDrag } from '@/Utils/DragTypeCheck'
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import EncryptionStatusItem from '../../Security/EncryptionStatusItem'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 

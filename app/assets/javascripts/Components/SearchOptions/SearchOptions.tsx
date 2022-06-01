@@ -1,16 +1,16 @@
-import { AppState } from '@/UIModels/AppState'
-import { WebApplication } from '@/UIModels/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { WebApplication } from '@/Application/Application'
 import { observer } from 'mobx-react-lite'
 import Bubble from '@/Components/Bubble/Bubble'
 import { useCallback } from 'react'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   application: WebApplication
 }
 
-const SearchOptions = ({ appState }: Props) => {
-  const { searchOptions } = appState
+const SearchOptions = ({ viewControllerManager }: Props) => {
+  const { searchOptionsController: searchOptions } = viewControllerManager
 
   const { includeProtectedContents, includeArchived, includeTrashed } = searchOptions
 

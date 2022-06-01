@@ -1,6 +1,6 @@
 import { Title, Subtitle, Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import { observer } from 'mobx-react-lite'
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import { ButtonType, ListedAccount } from '@standardnotes/snjs'
 import { useCallback, useEffect, useState } from 'react'
 import ListedAccountItem from './ListedAccountItem'

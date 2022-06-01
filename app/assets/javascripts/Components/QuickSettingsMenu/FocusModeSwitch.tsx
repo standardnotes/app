@@ -1,4 +1,4 @@
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import { FeatureStatus, FeatureIdentifier } from '@standardnotes/snjs'
 import { FunctionComponent, MouseEventHandler, useCallback } from 'react'
 import Icon from '@/Components/Icon/Icon'

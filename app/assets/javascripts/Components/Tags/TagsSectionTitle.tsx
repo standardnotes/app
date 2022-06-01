@@ -1,12 +1,12 @@
 import { TAG_FOLDERS_FEATURE_NAME, TAG_FOLDERS_FEATURE_TOOLTIP } from '@/Constants'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
-import { FeaturesState } from '@/UIModels/AppState/FeaturesState'
+import { FeaturesController } from '@/Controllers/FeaturesController'
 import { Tooltip } from '@reach/tooltip'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback } from 'react'
 
 type Props = {
-  features: FeaturesState
+  features: FeaturesController
   hasMigration: boolean
   onClickMigration: () => void
 }

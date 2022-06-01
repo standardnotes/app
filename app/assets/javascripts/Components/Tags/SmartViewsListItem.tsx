@@ -1,6 +1,6 @@
 import Icon from '@/Components/Icon/Icon'
-import { FeaturesState } from '@/UIModels/AppState/FeaturesState'
-import { TagsState } from '@/UIModels/AppState/TagsState'
+import { FeaturesController } from '@/Controllers/FeaturesController'
+import { TagsController } from '@/Controllers/Navigation/TagsController'
 import '@reach/tooltip/styles.css'
 import { SmartView, SystemViewId, IconType, isSystemView } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
@@ -16,8 +16,8 @@ import {
 
 type Props = {
   view: SmartView
-  tagsState: TagsState
-  features: FeaturesState
+  tagsState: TagsController
+  features: FeaturesController
 }
 
 const PADDING_BASE_PX = 14

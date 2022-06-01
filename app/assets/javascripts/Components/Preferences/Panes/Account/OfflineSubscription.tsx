@@ -2,8 +2,8 @@ import React, { FunctionComponent, useEffect, useState } from 'react'
 import { Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import Button from '@/Components/Button/Button'
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { STRING_REMOVE_OFFLINE_KEY_CONFIRMATION } from '@/Strings'
 import { ButtonType, ClientDisplayableError } from '@standardnotes/snjs'
@@ -11,7 +11,7 @@ import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 
 type Props = {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
 }
 
 const OfflineSubscription: FunctionComponent<Props> = ({ application }) => {

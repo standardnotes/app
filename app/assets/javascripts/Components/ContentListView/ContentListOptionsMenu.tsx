@@ -1,4 +1,4 @@
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import { CollectionSort, CollectionSortProperty, PrefKey, SystemViewId } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useState } from 'react'
@@ -7,11 +7,11 @@ import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
 import MenuItemSeparator from '@/Components/Menu/MenuItemSeparator'
 import { MenuItemType } from '@/Components/Menu/MenuItemType'
-import { AppState } from '@/UIModels/AppState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 
 type Props = {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
   closeDisplayOptionsMenu: () => void
   isOpen: boolean
@@ -21,7 +21,7 @@ const ContentListOptionsMenu: FunctionComponent<Props> = ({
   closeDisplayOptionsMenu,
   closeOnBlur,
   application,
-  appState,
+  viewControllerManager,
   isOpen,
 }) => {
   const [sortBy, setSortBy] = useState(() => application.getPreference(PrefKey.SortNotesBy, CollectionSort.CreatedAt))
@@ -174,7 +174,7 @@ const ContentListOptionsMenu: FunctionComponent<Props> = ({
       </MenuItem>
       <MenuItemSeparator />
       <div className="px-3 py-1 text-xs font-semibold color-text uppercase">View</div>
-      {appState.tags.selectedUuid !== SystemViewId.Files && (
+      {viewControllerManager.navigationController.selectedUuid !== SystemViewId.Files && (
         <MenuItem
           type={MenuItemType.SwitchButton}
           className="py-1 hover:bg-contrast focus:bg-info-backdrop"

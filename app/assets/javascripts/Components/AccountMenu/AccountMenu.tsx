@@ -1,31 +1,36 @@
 import { observer } from 'mobx-react-lite'
 import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
-import { AppState } from '@/UIModels/AppState'
-import { WebApplication } from '@/UIModels/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { WebApplication } from '@/Application/Application'
 import { useCallback, useRef, FunctionComponent, KeyboardEventHandler } from 'react'
-import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
+import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { AccountMenuPane } from './AccountMenuPane'
 import MenuPaneSelector from './MenuPaneSelector'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   application: WebApplication
   onClickOutside: () => void
   mainApplicationGroup: ApplicationGroup
 }
 
-const AccountMenu: FunctionComponent<Props> = ({ application, appState, onClickOutside, mainApplicationGroup }) => {
-  const { currentPane, shouldAnimateCloseMenu } = appState.accountMenu
+const AccountMenu: FunctionComponent<Props> = ({
+  application,
+  viewControllerManager,
+  onClickOutside,
+  mainApplicationGroup,
+}) => {
+  const { currentPane, shouldAnimateCloseMenu } = viewControllerManager.accountMenuController
 
   const closeAccountMenu = useCallback(() => {
-    appState.accountMenu.closeAccountMenu()
-  }, [appState])
+    viewControllerManager.accountMenuController.closeAccountMenu()
+  }, [viewControllerManager])
 
   const setCurrentPane = useCallback(
     (pane: AccountMenuPane) => {
-      appState.accountMenu.setCurrentPane(pane)
+      viewControllerManager.accountMenuController.setCurrentPane(pane)
     },
-    [appState],
+    [viewControllerManager],
   )
 
   const ref = useRef<HTMLDivElement>(null)
@@ -59,7 +64,7 @@ const AccountMenu: FunctionComponent<Props> = ({ application, appState, onClickO
         onKeyDown={handleKeyDown}
       >
         <MenuPaneSelector
-          appState={appState}
+          viewControllerManager={viewControllerManager}
           application={application}
           mainApplicationGroup={mainApplicationGroup}
           menuPane={currentPane}

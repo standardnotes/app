@@ -1,5 +1,5 @@
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, KeyboardEventHandler, useCallback, useEffect, useRef, useState } from 'react'
 import { AccountMenuPane } from './AccountMenuPane'
@@ -11,7 +11,7 @@ import IconButton from '@/Components/Button/IconButton'
 import AdvancedOptions from './AdvancedOptions'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   application: WebApplication
   setMenuPane: (pane: AccountMenuPane) => void
   email: string
@@ -21,7 +21,7 @@ type Props = {
 }
 
 const CreateAccount: FunctionComponent<Props> = ({
-  appState,
+  viewControllerManager,
   application,
   setMenuPane,
   email,
@@ -137,7 +137,7 @@ const CreateAccount: FunctionComponent<Props> = ({
       <div className="h-1px my-2 bg-border"></div>
       <AdvancedOptions
         application={application}
-        appState={appState}
+        viewControllerManager={viewControllerManager}
         onPrivateWorkspaceChange={onPrivateWorkspaceChange}
       />
     </>

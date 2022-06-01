@@ -1,10 +1,10 @@
-import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
+import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { getPlatformString, getWindowUrlParams } from '@/Utils'
-import { AppStateEvent, PanelResizedData } from '@/UIModels/AppState'
+import { ViewControllerManagerEvent } from '@/Services/ViewControllerManager'
 import { ApplicationEvent, Challenge, removeFromArray } from '@standardnotes/snjs'
 import { PANEL_NAME_NOTES, PANEL_NAME_NAVIGATION } from '@/Constants'
 import { alertDialog } from '@/Services/AlertService'
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import Navigation from '@/Components/Navigation/Navigation'
 import NoteGroupView from '@/Components/NoteGroupView/NoteGroupView'
 import Footer from '@/Components/Footer/Footer'
@@ -23,6 +23,7 @@ import FilePreviewModalWrapper from '@/Components/Files/FilePreviewModal'
 import ContentListView from '@/Components/ContentListView/ContentListView'
 import FileContextMenuWrapper from '@/Components/FileContextMenu/FileContextMenu'
 import PermissionsModalWrapper from '@/Components/PermissionsModal/PermissionsModalWrapper'
+import { PanelResizedData } from '@/Typings/PanelResizedData'
 
 type Props = {
   application: WebApplication
@@ -36,7 +37,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
   const [needsUnlock, setNeedsUnlock] = useState(true)
   const [challenges, setChallenges] = useState<Challenge[]>([])
 
-  const appState = application.getAppState()
+  const viewControllerManager = application.getViewControllerManager()
 
   useEffect(() => {
     const desktopService = application.getDesktopService()
@@ -119,8 +120,8 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
   }, [application, onAppLaunch, onAppStart])
 
   useEffect(() => {
-    const removeObserver = application.getAppState().addObserver(async (eventName, data) => {
-      if (eventName === AppStateEvent.PanelResized) {
+    const removeObserver = application.getViewControllerManager().addObserver(async (eventName, data) => {
+      if (eventName === ViewControllerManagerEvent.PanelResized) {
         const { panel, collapsed } = data as PanelResizedData
         let appClass = ''
         if (panel === PANEL_NAME_NOTES && collapsed) {
@@ -130,7 +131,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
           appClass += ' collapsed-navigation'
         }
         setAppClass(appClass)
-      } else if (eventName === AppStateEvent.WindowDidFocus) {
+      } else if (eventName === ViewControllerManagerEvent.WindowDidFocus) {
         if (!(await application.isLocked())) {
           application.sync.sync().catch(console.error)
         }
@@ -155,7 +156,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
               <ChallengeModal
                 key={`${challenge.id}${application.ephemeralIdentifier}`}
                 application={application}
-                appState={appState}
+                viewControllerManager={viewControllerManager}
                 mainApplicationGroup={mainApplicationGroup}
                 challenge={challenge}
                 onDismiss={removeChallenge}
@@ -165,42 +166,42 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
         })}
       </>
     )
-  }, [appState, challenges, mainApplicationGroup, removeChallenge, application])
+  }, [viewControllerManager, challenges, mainApplicationGroup, removeChallenge, application])
 
   if (!renderAppContents) {
     return renderChallenges()
   }
 
   return (
-    <PremiumModalProvider application={application} appState={appState}>
+    <PremiumModalProvider application={application} viewControllerManager={viewControllerManager}>
       <div className={platformString + ' main-ui-view sn-component'}>
         <div id="app" className={appClass + ' app app-column-container'}>
           <Navigation application={application} />
-          <ContentListView application={application} appState={appState} />
+          <ContentListView application={application} viewControllerManager={viewControllerManager} />
           <NoteGroupView application={application} />
         </div>
 
         <>
           <Footer application={application} applicationGroup={mainApplicationGroup} />
-          <SessionsModal application={application} appState={appState} />
-          <PreferencesViewWrapper appState={appState} application={application} />
-          <RevisionHistoryModalWrapper application={application} appState={appState} />
+          <SessionsModal application={application} viewControllerManager={viewControllerManager} />
+          <PreferencesViewWrapper viewControllerManager={viewControllerManager} application={application} />
+          <RevisionHistoryModalWrapper application={application} viewControllerManager={viewControllerManager} />
         </>
 
         {renderChallenges()}
 
         <>
-          <NotesContextMenu application={application} appState={appState} />
-          <TagsContextMenuWrapper appState={appState} />
-          <FileContextMenuWrapper appState={appState} />
-          <PurchaseFlowWrapper application={application} appState={appState} />
+          <NotesContextMenu application={application} viewControllerManager={viewControllerManager} />
+          <TagsContextMenuWrapper viewControllerManager={viewControllerManager} />
+          <FileContextMenuWrapper viewControllerManager={viewControllerManager} />
+          <PurchaseFlowWrapper application={application} viewControllerManager={viewControllerManager} />
           <ConfirmSignoutContainer
             applicationGroup={mainApplicationGroup}
-            appState={appState}
+            viewControllerManager={viewControllerManager}
             application={application}
           />
           <ToastContainer />
-          <FilePreviewModalWrapper application={application} appState={appState} />
+          <FilePreviewModalWrapper application={application} viewControllerManager={viewControllerManager} />
           <PermissionsModalWrapper application={application} />
         </>
       </div>

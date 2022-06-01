@@ -9,12 +9,12 @@ import { PreferencesProps } from './PreferencesProps'
 
 const PreferencesView: FunctionComponent<PreferencesProps> = (props) => {
   const menu = useMemo(
-    () => new PreferencesMenu(props.application, props.appState.enableUnfinishedFeatures),
-    [props.appState.enableUnfinishedFeatures, props.application],
+    () => new PreferencesMenu(props.application, props.viewControllerManager.enableUnfinishedFeatures),
+    [props.viewControllerManager.enableUnfinishedFeatures, props.application],
   )
 
   useEffect(() => {
-    menu.selectPane(props.appState.preferences.currentPane)
+    menu.selectPane(props.viewControllerManager.preferencesController.currentPane)
     const removeEscKeyObserver = props.application.io.addKeyObserver({
       key: 'Escape',
       onKeyDown: (event) => {

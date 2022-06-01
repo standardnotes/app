@@ -12,7 +12,7 @@ import { PreferencesProps } from './PreferencesProps'
 
 const PaneSelector: FunctionComponent<PreferencesProps & { menu: PreferencesMenu }> = ({
   menu,
-  appState,
+  viewControllerManager,
   application,
   mfaProvider,
   userProvider,
@@ -21,21 +21,26 @@ const PaneSelector: FunctionComponent<PreferencesProps & { menu: PreferencesMenu
     case 'general':
       return (
         <General
-          appState={appState}
+          viewControllerManager={viewControllerManager}
           application={application}
           extensionsLatestVersions={menu.extensionsLatestVersions}
         />
       )
     case 'account':
-      return <AccountPreferences application={application} appState={appState} />
+      return <AccountPreferences application={application} viewControllerManager={viewControllerManager} />
     case 'appearance':
       return <Appearance application={application} />
     case 'security':
       return (
-        <Security mfaProvider={mfaProvider} userProvider={userProvider} appState={appState} application={application} />
+        <Security
+          mfaProvider={mfaProvider}
+          userProvider={userProvider}
+          viewControllerManager={viewControllerManager}
+          application={application}
+        />
       )
     case 'backups':
-      return <Backups application={application} appState={appState} />
+      return <Backups application={application} viewControllerManager={viewControllerManager} />
     case 'listed':
       return <Listed application={application} />
     case 'shortcuts':
@@ -49,7 +54,7 @@ const PaneSelector: FunctionComponent<PreferencesProps & { menu: PreferencesMenu
     default:
       return (
         <General
-          appState={appState}
+          viewControllerManager={viewControllerManager}
           application={application}
           extensionsLatestVersions={menu.extensionsLatestVersions}
         />

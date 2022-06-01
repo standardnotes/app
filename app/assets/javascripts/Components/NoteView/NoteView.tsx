@@ -14,7 +14,7 @@ import {
   PayloadEmitSource,
 } from '@standardnotes/snjs'
 import { debounce, isDesktopApplication } from '@/Utils'
-import { EventSource } from '../../UIModels/AppState/EventSource'
+import { EditorEventSource } from '../../Typings/EditorEventSource'
 import { KeyboardModifier, KeyboardKey } from '@/Services/IOService'
 import { STRING_DELETE_PLACEHOLDER_ATTEMPT, STRING_DELETE_LOCKED_ATTEMPT, StringDeleteNote } from '@/Strings'
 import { confirmDialog } from '@/Services/AlertService'
@@ -82,7 +82,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
   readonly controller!: NoteViewController
 
   private statusTimeout?: NodeJS.Timeout
-  private lastEditorFocusEventSource?: EventSource
+  private lastEditorFocusEventSource?: EditorEventSource
   onEditorComponentLoad?: () => void
 
   private scrollPosition = 0
@@ -193,7 +193,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
     this.autorun(() => {
       this.setState({
-        showProtectedWarning: this.appState.notes.showProtectedWarning,
+        showProtectedWarning: this.viewControllerManager.notesController.showProtectedWarning,
       })
     })
 
@@ -577,7 +577,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
   focusEditor() {
     const element = document.getElementById(ElementIds.NoteTextEditor)
     if (element) {
-      this.lastEditorFocusEventSource = EventSource.Script
+      this.lastEditorFocusEventSource = EditorEventSource.Script
       element.focus()
     }
   }
@@ -588,13 +588,13 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
   onContentFocus = () => {
     if (this.lastEditorFocusEventSource) {
-      this.application.getAppState().editorDidFocus(this.lastEditorFocusEventSource)
+      this.application.getViewControllerManager().editorDidFocus(this.lastEditorFocusEventSource)
     }
     this.lastEditorFocusEventSource = undefined
   }
 
   setShowProtectedOverlay(show: boolean) {
-    this.appState.notes.setShowProtectedWarning(show)
+    this.viewControllerManager.notesController.setShowProtectedWarning(show)
   }
 
   async deleteNote(permanently: boolean) {
@@ -653,7 +653,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
   }
 
   async reloadSpellcheck() {
-    const spellcheck = this.appState.notes.getSpellcheckStateForNote(this.note)
+    const spellcheck = this.viewControllerManager.notesController.getSpellcheckStateForNote(this.note)
 
     if (spellcheck !== this.state.spellcheck) {
       this.setState({ textareaUnloading: true })
@@ -871,7 +871,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
           {this.state.showProtectedWarning && (
             <div className="h-full flex justify-center items-center">
               <ProtectedNoteOverlay
-                appState={this.appState}
+                viewControllerManager={this.viewControllerManager}
                 hasProtectionSources={this.application.hasProtectionSources()}
                 onViewNote={this.dismissProtectedWarning}
               />
@@ -898,7 +898,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                   showLockedIcon: false,
                 })
               }}
-              onClick={() => this.appState.notes.setLockSelectedNotes(!this.state.noteLocked)}
+              onClick={() => this.viewControllerManager.notesController.setLockSelectedNotes(!this.state.noteLocked)}
               showLockedIcon={this.state.showLockedIcon}
               lockText={this.state.lockText}
             />
@@ -942,31 +942,31 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                   <div className="mr-3">
                     <AttachedFilesButton
                       application={this.application}
-                      appState={this.appState}
+                      viewControllerManager={this.viewControllerManager}
                       onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                     />
                   </div>
                   <div className="mr-3">
                     <ChangeEditorButton
                       application={this.application}
-                      appState={this.appState}
+                      viewControllerManager={this.viewControllerManager}
                       onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                     />
                   </div>
                   <div className="mr-3">
                     <PinNoteButton
-                      appState={this.appState}
+                      viewControllerManager={this.viewControllerManager}
                       onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                     />
                   </div>
                   <NotesOptionsPanel
                     application={this.application}
-                    appState={this.appState}
+                    viewControllerManager={this.viewControllerManager}
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                   />
                 </div>
               </div>
-              <NoteTagsContainer appState={this.appState} />
+              <NoteTagsContainer viewControllerManager={this.viewControllerManager} />
             </div>
           )}
 
@@ -993,7 +993,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                   onLoad={this.onEditorComponentLoad}
                   requestReload={this.editorComponentViewerRequestsReload}
                   application={this.application}
-                  appState={this.appState}
+                  viewControllerManager={this.viewControllerManager}
                 />
               </div>
             )}
@@ -1068,7 +1068,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                       key={viewer.identifier}
                       componentViewer={viewer}
                       application={this.application}
-                      appState={this.appState}
+                      viewControllerManager={this.viewControllerManager}
                     />
                   </div>
                 )

@@ -1,5 +1,5 @@
-import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
-import { AppState } from '@/UIModels/AppState'
+import { ApplicationGroup } from '@/Application/ApplicationGroup'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { calculateSubmenuStyle, SubmenuStyle } from '@/Utils/CalculateSubmenuStyle'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import WorkspaceSwitcherMenu from '@/Components/AccountMenu/WorkspaceSwitcher/WorkspaceSwitcherMenu'
@@ -9,10 +9,10 @@ import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
 
 type Props = {
   mainApplicationGroup: ApplicationGroup
-  appState: AppState
+  viewControllerManager: ViewControllerManager
 }
 
-const LockscreenWorkspaceSwitcher: FunctionComponent<Props> = ({ mainApplicationGroup, appState }) => {
+const LockscreenWorkspaceSwitcher: FunctionComponent<Props> = ({ mainApplicationGroup, viewControllerManager }) => {
   const buttonRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -55,7 +55,7 @@ const LockscreenWorkspaceSwitcher: FunctionComponent<Props> = ({ mainApplication
         <div ref={menuRef} className="sn-dropdown max-h-120 min-w-68 py-2 fixed overflow-y-auto" style={menuStyle}>
           <WorkspaceSwitcherMenu
             mainApplicationGroup={mainApplicationGroup}
-            appState={appState}
+            viewControllerManager={viewControllerManager}
             isOpen={isOpen}
             hideWorkspaceOptions={true}
           />

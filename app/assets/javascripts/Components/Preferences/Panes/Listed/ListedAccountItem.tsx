@@ -1,6 +1,6 @@
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import { LinkButton, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import { ListedAccount, ListedAccountInfo } from '@standardnotes/snjs'
 import { FunctionComponent, useEffect, useState } from 'react'
 

@@ -13,7 +13,7 @@ import {
   DesktopClientRequiresWebMethods,
   DesktopDeviceInterface,
 } from '@standardnotes/snjs'
-import { WebAppEvent, WebApplication } from '@/UIModels/Application'
+import { WebAppEvent, WebApplication } from '@/Application/Application'
 
 export class DesktopManager
   extends ApplicationService
@@ -155,10 +155,10 @@ export class DesktopManager
   }
 
   didBeginBackup() {
-    this.webApplication.getAppState().beganBackupDownload()
+    this.webApplication.getViewControllerManager().beganBackupDownload()
   }
 
   didFinishBackup(success: boolean) {
-    this.webApplication.getAppState().endedBackupDownload(success)
+    this.webApplication.getViewControllerManager().endedBackupDownload(success)
   }
 }

@@ -1,4 +1,4 @@
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import { ClientDisplayableError, FeatureDescription } from '@standardnotes/snjs'
 import { makeAutoObservable, observable } from 'mobx'
 import { AnyExtension } from './AnyExtension'

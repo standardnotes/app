@@ -1,16 +1,16 @@
 import Icon from '@/Components/Icon/Icon'
-import { AppState } from '@/UIModels/AppState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
 import EncryptionStatusItem from './EncryptionStatusItem'
 import { formatCount } from './formatCount'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
 }
 
-const EncryptionEnabled: FunctionComponent<Props> = ({ appState }) => {
-  const count = appState.accountMenu.structuredNotesAndTagsCount
+const EncryptionEnabled: FunctionComponent<Props> = ({ viewControllerManager }) => {
+  const count = viewControllerManager.accountMenuController.structuredNotesAndTagsCount
   const notes = formatCount(count.notes, 'notes')
   const tags = formatCount(count.tags, 'tags')
   const archived = formatCount(count.archived, 'archived notes')

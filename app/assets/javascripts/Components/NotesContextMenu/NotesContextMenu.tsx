@@ -1,27 +1,29 @@
-import { AppState } from '@/UIModels/AppState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
 import { observer } from 'mobx-react-lite'
 import NotesOptions from '@/Components/NotesOptions/NotesOptions'
 import { useCallback, useEffect, useRef } from 'react'
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 
 type Props = {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
 }
 
-const NotesContextMenu = ({ application, appState }: Props) => {
-  const { contextMenuOpen, contextMenuPosition, contextMenuMaxHeight } = appState.notes
+const NotesContextMenu = ({ application, viewControllerManager }: Props) => {
+  const { contextMenuOpen, contextMenuPosition, contextMenuMaxHeight } = viewControllerManager.notesController
 
   const contextMenuRef = useRef<HTMLDivElement>(null)
-  const [closeOnBlur] = useCloseOnBlur(contextMenuRef, (open: boolean) => appState.notes.setContextMenuOpen(open))
+  const [closeOnBlur] = useCloseOnBlur(contextMenuRef, (open: boolean) =>
+    viewControllerManager.notesController.setContextMenuOpen(open),
+  )
 
-  useCloseOnClickOutside(contextMenuRef, () => appState.notes.setContextMenuOpen(false))
+  useCloseOnClickOutside(contextMenuRef, () => viewControllerManager.notesController.setContextMenuOpen(false))
 
   const reloadContextMenuLayout = useCallback(() => {
-    appState.notes.reloadContextMenuLayout()
-  }, [appState])
+    viewControllerManager.notesController.reloadContextMenuLayout()
+  }, [viewControllerManager])
 
   useEffect(() => {
     window.addEventListener('resize', reloadContextMenuLayout)
@@ -39,7 +41,7 @@ const NotesContextMenu = ({ application, appState }: Props) => {
         maxHeight: contextMenuMaxHeight,
       }}
     >
-      <NotesOptions application={application} appState={appState} closeOnBlur={closeOnBlur} />
+      <NotesOptions application={application} viewControllerManager={viewControllerManager} closeOnBlur={closeOnBlur} />
     </div>
   ) : null
 }

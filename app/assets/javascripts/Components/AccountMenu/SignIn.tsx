@@ -1,5 +1,5 @@
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { isDev } from '@/Utils'
 import { observer } from 'mobx-react-lite'
 import React, { FunctionComponent, KeyboardEventHandler, useCallback, useEffect, useRef, useState } from 'react'
@@ -13,13 +13,13 @@ import IconButton from '@/Components/Button/IconButton'
 import AdvancedOptions from './AdvancedOptions'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   application: WebApplication
   setMenuPane: (pane: AccountMenuPane) => void
 }
 
-const SignInPane: FunctionComponent<Props> = ({ application, appState, setMenuPane }) => {
-  const { notesAndTagsCount } = appState.accountMenu
+const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManager, setMenuPane }) => {
+  const { notesAndTagsCount } = viewControllerManager.accountMenuController
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -86,7 +86,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, appState, setMenuPa
         if (res.error) {
           throw new Error(res.error.message)
         }
-        appState.accountMenu.closeAccountMenu()
+        viewControllerManager.accountMenuController.closeAccountMenu()
       })
       .catch((err) => {
         console.error(err)
@@ -97,7 +97,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, appState, setMenuPa
       .finally(() => {
         setIsSigningIn(false)
       })
-  }, [appState, application, email, isEphemeral, isStrictSignin, password, shouldMergeLocal])
+  }, [viewControllerManager, application, email, isEphemeral, isStrictSignin, password, shouldMergeLocal])
 
   const onPrivateWorkspaceChange = useCallback(
     (newIsPrivateWorkspace: boolean, privateWorkspaceIdentifier?: string) => {
@@ -201,7 +201,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, appState, setMenuPa
       </div>
       <div className="h-1px my-2 bg-border"></div>
       <AdvancedOptions
-        appState={appState}
+        viewControllerManager={viewControllerManager}
         application={application}
         disabled={isSigningIn}
         onPrivateWorkspaceChange={onPrivateWorkspaceChange}

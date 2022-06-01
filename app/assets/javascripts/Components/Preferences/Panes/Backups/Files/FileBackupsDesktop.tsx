@@ -1,4 +1,4 @@
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import { observer } from 'mobx-react-lite'
 import { Title, Text, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
 import { useCallback, useEffect, useState } from 'react'

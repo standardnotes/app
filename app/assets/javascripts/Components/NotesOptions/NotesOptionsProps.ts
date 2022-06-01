@@ -1,8 +1,8 @@
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 
 export type NotesOptionsProps = {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
 }

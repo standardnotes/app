@@ -1,20 +1,20 @@
 import { useCallback, useRef } from 'react'
 import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 
 type Props = {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
 }
 
-const ConfirmOtherSessionsSignOut = observer(({ application, appState }: Props) => {
+const ConfirmOtherSessionsSignOut = observer(({ application, viewControllerManager }: Props) => {
   const cancelRef = useRef<HTMLButtonElement>(null)
 
   const closeDialog = useCallback(() => {
-    appState.accountMenu.setOtherSessionsSignOut(false)
-  }, [appState])
+    viewControllerManager.accountMenuController.setOtherSessionsSignOut(false)
+  }, [viewControllerManager])
 
   return (
     <AlertDialog onDismiss={closeDialog} leastDestructiveRef={cancelRef}>
@@ -62,7 +62,7 @@ const ConfirmOtherSessionsSignOut = observer(({ application, appState }: Props) 
 ConfirmOtherSessionsSignOut.displayName = 'ConfirmOtherSessionsSignOut'
 
 const OtherSessionsSignOutContainer = (props: Props) => {
-  if (!props.appState.accountMenu.otherSessionsSignOut) {
+  if (!props.viewControllerManager.accountMenuController.otherSessionsSignOut) {
     return null
   }
   return <ConfirmOtherSessionsSignOut {...props} />

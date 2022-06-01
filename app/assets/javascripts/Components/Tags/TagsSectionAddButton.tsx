@@ -1,12 +1,12 @@
 import IconButton from '@/Components/Button/IconButton'
-import { FeaturesState } from '@/UIModels/AppState/FeaturesState'
-import { TagsState } from '@/UIModels/AppState/TagsState'
+import { FeaturesController } from '@/Controllers/FeaturesController'
+import { TagsController } from '@/Controllers/Navigation/TagsController'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
 
 type Props = {
-  tags: TagsState
-  features: FeaturesState
+  tags: TagsController
+  features: FeaturesController
 }
 
 const TagsSectionAddButton: FunctionComponent<Props> = ({ tags }) => {

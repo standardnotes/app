@@ -1,6 +1,6 @@
 import CloudBackupProvider from './CloudBackupProvider'
 import { useCallback, useEffect, useState, FunctionComponent, Fragment } from 'react'
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import {

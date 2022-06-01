@@ -1,5 +1,5 @@
-import { WebAppEvent, WebApplication } from '@/UIModels/Application'
-import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
+import { WebAppEvent, WebApplication } from '@/Application/Application'
+import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { PureComponent } from '@/Components/Abstract/PureComponent'
 import { destroyAllObjectProperties, preventRefreshing } from '@/Utils'
 import { ApplicationEvent, ApplicationDescriptor } from '@standardnotes/snjs'
@@ -12,12 +12,13 @@ import {
 } from '@/Strings'
 import { alertDialog, confirmDialog } from '@/Services/AlertService'
 import AccountMenu from '@/Components/AccountMenu/AccountMenu'
-import { AppStateEvent, EventSource } from '@/UIModels/AppState'
+import { ViewControllerManagerEvent } from '@/Services/ViewControllerManager'
 import Icon from '@/Components/Icon/Icon'
 import QuickSettingsMenu from '@/Components/QuickSettingsMenu/QuickSettingsMenu'
 import SyncResolutionMenu from '@/Components/SyncResolutionMenu/SyncResolutionMenu'
 import { Fragment } from 'react'
 import { AccountMenuPane } from '../AccountMenu/AccountMenuPane'
+import { EditorEventSource } from '@/Typings/EditorEventSource'
 
 type Props = {
   application: WebApplication
@@ -92,11 +93,11 @@ class Footer extends PureComponent<Props, State> {
     })
 
     this.autorun(() => {
-      const showBetaWarning = this.appState.showBetaWarning
+      const showBetaWarning = this.viewControllerManager.showBetaWarning
       this.setState({
         showBetaWarning: showBetaWarning,
-        showAccountMenu: this.appState.accountMenu.show,
-        showQuickSettingsMenu: this.appState.quickSettingsMenu.open,
+        showAccountMenu: this.viewControllerManager.accountMenuController.show,
+        showQuickSettingsMenu: this.viewControllerManager.quickSettingsMenuController.open,
       })
     })
   }
@@ -132,18 +133,18 @@ class Footer extends PureComponent<Props, State> {
     })
   }
 
-  override onAppStateEvent(eventName: AppStateEvent, data: any) {
+  override onViewControllerManagerEvent(eventName: ViewControllerManagerEvent, data: any) {
     const statusService = this.application.status
     switch (eventName) {
-      case AppStateEvent.EditorFocused:
-        if (data.eventSource === EventSource.UserInteraction) {
+      case ViewControllerManagerEvent.EditorFocused:
+        if (data.eventSource === EditorEventSource.UserInteraction) {
           this.closeAccountMenu()
         }
         break
-      case AppStateEvent.BeganBackupDownload:
+      case ViewControllerManagerEvent.BeganBackupDownload:
         statusService.setMessage('Saving local backup…')
         break
-      case AppStateEvent.EndedBackupDownload: {
+      case ViewControllerManagerEvent.EndedBackupDownload: {
         const successMessage = 'Successfully saved backup.'
         const errorMessage = 'Unable to save local backup.'
         statusService.setMessage(data.success ? successMessage : errorMessage)
@@ -187,7 +188,7 @@ class Footer extends PureComponent<Props, State> {
         if (!this.didCheckForOffline) {
           this.didCheckForOffline = true
           if (this.state.offline && this.application.items.getNoteCount() === 0) {
-            this.appState.accountMenu.setShow(true)
+            this.viewControllerManager.accountMenuController.setShow(true)
           }
         }
         this.findErrors()
@@ -288,13 +289,13 @@ class Footer extends PureComponent<Props, State> {
   }
 
   accountMenuClickHandler = () => {
-    this.appState.quickSettingsMenu.closeQuickSettingsMenu()
-    this.appState.accountMenu.toggleShow()
+    this.viewControllerManager.quickSettingsMenuController.closeQuickSettingsMenu()
+    this.viewControllerManager.accountMenuController.toggleShow()
   }
 
   quickSettingsClickHandler = () => {
-    this.appState.accountMenu.closeAccountMenu()
-    this.appState.quickSettingsMenu.toggle()
+    this.viewControllerManager.accountMenuController.closeAccountMenu()
+    this.viewControllerManager.quickSettingsMenuController.toggle()
   }
 
   syncResolutionClickHandler = () => {
@@ -304,8 +305,8 @@ class Footer extends PureComponent<Props, State> {
   }
 
   closeAccountMenu = () => {
-    this.appState.accountMenu.setShow(false)
-    this.appState.accountMenu.setCurrentPane(AccountMenuPane.GeneralMenu)
+    this.viewControllerManager.accountMenuController.setShow(false)
+    this.viewControllerManager.accountMenuController.setCurrentPane(AccountMenuPane.GeneralMenu)
   }
 
   lockClickHandler = () => {
@@ -333,11 +334,11 @@ class Footer extends PureComponent<Props, State> {
   }
 
   clickOutsideAccountMenu = () => {
-    this.appState.accountMenu.closeAccountMenu()
+    this.viewControllerManager.accountMenuController.closeAccountMenu()
   }
 
   clickOutsideQuickSettingsMenu = () => {
-    this.appState.quickSettingsMenu.closeQuickSettingsMenu()
+    this.viewControllerManager.quickSettingsMenuController.closeQuickSettingsMenu()
   }
 
   override render() {
@@ -360,7 +361,7 @@ class Footer extends PureComponent<Props, State> {
               {this.state.showAccountMenu && (
                 <AccountMenu
                   onClickOutside={this.clickOutsideAccountMenu}
-                  appState={this.appState}
+                  viewControllerManager={this.viewControllerManager}
                   application={this.application}
                   mainApplicationGroup={this.props.applicationGroup}
                 />
@@ -381,7 +382,7 @@ class Footer extends PureComponent<Props, State> {
               {this.state.showQuickSettingsMenu && (
                 <QuickSettingsMenu
                   onClickOutside={this.clickOutsideQuickSettingsMenu}
-                  appState={this.appState}
+                  viewControllerManager={this.viewControllerManager}
                   application={this.application}
                 />
               )}

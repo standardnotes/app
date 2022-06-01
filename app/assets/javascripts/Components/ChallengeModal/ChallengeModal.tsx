@@ -1,4 +1,4 @@
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import { DialogContent, DialogOverlay } from '@reach/dialog'
 import {
   ButtonType,
@@ -14,13 +14,13 @@ import Button from '@/Components/Button/Button'
 import Icon from '@/Components/Icon/Icon'
 import ChallengeModalPrompt from './ChallengePrompt'
 import LockscreenWorkspaceSwitcher from './LockscreenWorkspaceSwitcher'
-import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
-import { AppState } from '@/UIModels/AppState'
+import { ApplicationGroup } from '@/Application/ApplicationGroup'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { ChallengeModalValues } from './ChallengeModalValues'
 
 type Props = {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   mainApplicationGroup: ApplicationGroup
   challenge: Challenge
   onDismiss?: (challenge: Challenge) => void
@@ -44,7 +44,7 @@ const validateValues = (values: ChallengeModalValues, prompts: ChallengePrompt[]
 
 const ChallengeModal: FunctionComponent<Props> = ({
   application,
-  appState,
+  viewControllerManager,
   mainApplicationGroup,
   challenge,
   onDismiss,
@@ -255,7 +255,10 @@ const ChallengeModal: FunctionComponent<Props> = ({
           </Button>
         )}
         {shouldShowWorkspaceSwitcher && (
-          <LockscreenWorkspaceSwitcher mainApplicationGroup={mainApplicationGroup} appState={appState} />
+          <LockscreenWorkspaceSwitcher
+            mainApplicationGroup={mainApplicationGroup}
+            viewControllerManager={viewControllerManager}
+          />
         )}
       </DialogContent>
     </DialogOverlay>

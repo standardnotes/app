@@ -1,22 +1,22 @@
 import Icon from '@/Components/Icon/Icon'
-import { AppState } from '@/UIModels/AppState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { MouseEventHandler, useCallback } from 'react'
 
-type Props = { appState: AppState }
+type Props = { viewControllerManager: ViewControllerManager }
 
-const NoAccountWarning = observer(({ appState }: Props) => {
+const NoAccountWarning = observer(({ viewControllerManager }: Props) => {
   const showAccountMenu: MouseEventHandler = useCallback(
     (event) => {
       event.stopPropagation()
-      appState.accountMenu.setShow(true)
+      viewControllerManager.accountMenuController.setShow(true)
     },
-    [appState],
+    [viewControllerManager],
   )
 
   const hideWarning = useCallback(() => {
-    appState.noAccountWarning.hide()
-  }, [appState])
+    viewControllerManager.noAccountWarningController.hide()
+  }, [viewControllerManager])
 
   return (
     <div className="mt-4 p-4 rounded-md shadow-sm grid grid-template-cols-1fr">
@@ -40,10 +40,10 @@ const NoAccountWarning = observer(({ appState }: Props) => {
 
 NoAccountWarning.displayName = 'NoAccountWarning'
 
-const NoAccountWarningWrapper = ({ appState }: Props) => {
-  const canShow = appState.noAccountWarning.show
+const NoAccountWarningWrapper = ({ viewControllerManager }: Props) => {
+  const canShow = viewControllerManager.noAccountWarningController.show
 
-  return canShow ? <NoAccountWarning appState={appState} /> : null
+  return canShow ? <NoAccountWarning viewControllerManager={viewControllerManager} /> : null
 }
 
 export default observer(NoAccountWarningWrapper)

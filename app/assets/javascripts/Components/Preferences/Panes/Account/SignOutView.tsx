@@ -1,8 +1,8 @@
 import Button from '@/Components/Button/Button'
 import OtherSessionsSignOutContainer from '@/Components/OtherSessionsSignOut/OtherSessionsSignOut'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
 import { Subtitle, Title, Text } from '../../PreferencesComponents/Content'
@@ -12,10 +12,10 @@ import ClearSessionDataView from './ClearSessionDataView'
 
 type Props = {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
 }
 
-const SignOutView: FunctionComponent<Props> = observer(({ application, appState }) => {
+const SignOutView: FunctionComponent<Props> = observer(({ application, viewControllerManager }) => {
   return (
     <>
       <PreferencesGroup>
@@ -30,10 +30,14 @@ const SignOutView: FunctionComponent<Props> = observer(({ application, appState 
               variant="normal"
               label="Sign out other sessions"
               onClick={() => {
-                appState.accountMenu.setOtherSessionsSignOut(true)
+                viewControllerManager.accountMenuController.setOtherSessionsSignOut(true)
               }}
             />
-            <Button variant="normal" label="Manage sessions" onClick={() => appState.openSessionsModal()} />
+            <Button
+              variant="normal"
+              label="Manage sessions"
+              onClick={() => viewControllerManager.openSessionsModal()}
+            />
           </div>
         </PreferencesSegment>
         <HorizontalSeparator classes="my-4" />
@@ -45,23 +49,23 @@ const SignOutView: FunctionComponent<Props> = observer(({ application, appState 
             dangerStyle={true}
             label="Sign out workspace"
             onClick={() => {
-              appState.accountMenu.setSigningOut(true)
+              viewControllerManager.accountMenuController.setSigningOut(true)
             }}
           />
         </PreferencesSegment>
       </PreferencesGroup>
-      <OtherSessionsSignOutContainer appState={appState} application={application} />
+      <OtherSessionsSignOutContainer viewControllerManager={viewControllerManager} application={application} />
     </>
   )
 })
 
 SignOutView.displayName = 'SignOutView'
 
-const SignOutWrapper: FunctionComponent<Props> = ({ application, appState }) => {
+const SignOutWrapper: FunctionComponent<Props> = ({ application, viewControllerManager }) => {
   if (!application.hasAccount()) {
-    return <ClearSessionDataView appState={appState} />
+    return <ClearSessionDataView viewControllerManager={viewControllerManager} />
   }
-  return <SignOutView appState={appState} application={application} />
+  return <SignOutView viewControllerManager={viewControllerManager} application={application} />
 }
 
 export default observer(SignOutWrapper)

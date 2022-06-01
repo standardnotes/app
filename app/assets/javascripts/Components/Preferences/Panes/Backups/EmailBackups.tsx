@@ -1,7 +1,7 @@
 import { convertStringifiedBooleanToBoolean, isDesktopApplication } from '@/Utils'
 import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/Strings'
 import { useCallback, useEffect, useState } from 'react'
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import { observer } from 'mobx-react-lite'
 import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import Dropdown from '@/Components/Dropdown/Dropdown'

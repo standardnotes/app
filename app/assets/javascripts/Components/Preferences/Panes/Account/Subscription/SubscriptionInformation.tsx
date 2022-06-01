@@ -1,12 +1,12 @@
 import { observer } from 'mobx-react-lite'
-import { SubscriptionState } from '@/UIModels/AppState/SubscriptionState'
+import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
 import Button from '@/Components/Button/Button'
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import { openSubscriptionDashboard } from '@/Utils/ManageSubscription'
 import StatusText from './StatusText'
 
 type Props = {
-  subscriptionState: SubscriptionState
+  subscriptionState: SubscriptionController
   application: WebApplication
 }
 

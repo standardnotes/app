@@ -12,8 +12,8 @@ import {
 } from '@/Strings'
 import { BackupFile } from '@standardnotes/snjs'
 import { ChangeEventHandler, MouseEventHandler, useCallback, useEffect, useRef, useState } from 'react'
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { Title, Text, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
 import Button from '@/Components/Button/Button'
@@ -23,10 +23,10 @@ import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 
 type Props = {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
 }
 
-const DataBackups = ({ application, appState }: Props) => {
+const DataBackups = ({ application, viewControllerManager }: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isImportDataLoading, setIsImportDataLoading] = useState(false)
   const {
@@ -35,7 +35,7 @@ const DataBackups = ({ application, appState }: Props) => {
     setIsBackupEncrypted,
     setIsEncryptionEnabled,
     setEncryptionStatusString,
-  } = appState.accountMenu
+  } = viewControllerManager.accountMenuController
 
   const refreshEncryptionStatus = useCallback(() => {
     const hasUser = application.hasAccount()

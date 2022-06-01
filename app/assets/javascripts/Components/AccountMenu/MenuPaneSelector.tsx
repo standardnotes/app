@@ -1,6 +1,6 @@
-import { WebApplication } from '@/UIModels/Application'
-import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
-import { AppState } from '@/UIModels/AppState'
+import { WebApplication } from '@/Application/Application'
+import { ApplicationGroup } from '@/Application/ApplicationGroup'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useState } from 'react'
 import { AccountMenuPane } from './AccountMenuPane'
@@ -10,7 +10,7 @@ import GeneralAccountMenu from './GeneralAccountMenu'
 import SignInPane from './SignIn'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   application: WebApplication
   mainApplicationGroup: ApplicationGroup
   menuPane: AccountMenuPane
@@ -20,7 +20,7 @@ type Props = {
 
 const MenuPaneSelector: FunctionComponent<Props> = ({
   application,
-  appState,
+  viewControllerManager,
   menuPane,
   setMenuPane,
   closeMenu,
@@ -33,7 +33,7 @@ const MenuPaneSelector: FunctionComponent<Props> = ({
     case AccountMenuPane.GeneralMenu:
       return (
         <GeneralAccountMenu
-          appState={appState}
+          viewControllerManager={viewControllerManager}
           application={application}
           mainApplicationGroup={mainApplicationGroup}
           setMenuPane={setMenuPane}
@@ -41,11 +41,13 @@ const MenuPaneSelector: FunctionComponent<Props> = ({
         />
       )
     case AccountMenuPane.SignIn:
-      return <SignInPane appState={appState} application={application} setMenuPane={setMenuPane} />
+      return (
+        <SignInPane viewControllerManager={viewControllerManager} application={application} setMenuPane={setMenuPane} />
+      )
     case AccountMenuPane.Register:
       return (
         <CreateAccount
-          appState={appState}
+          viewControllerManager={viewControllerManager}
           application={application}
           setMenuPane={setMenuPane}
           email={email}
@@ -57,7 +59,7 @@ const MenuPaneSelector: FunctionComponent<Props> = ({
     case AccountMenuPane.ConfirmPassword:
       return (
         <ConfirmPassword
-          appState={appState}
+          viewControllerManager={viewControllerManager}
           application={application}
           setMenuPane={setMenuPane}
           email={email}

@@ -7,7 +7,7 @@ import {
   ComponentViewerEvent,
   ComponentViewerError,
 } from '@standardnotes/snjs'
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import OfflineRestricted from '@/Components/ComponentView/OfflineRestricted'
@@ -15,12 +15,12 @@ import UrlMissing from '@/Components/ComponentView/UrlMissing'
 import IsDeprecated from '@/Components/ComponentView/IsDeprecated'
 import IsExpired from '@/Components/ComponentView/IsExpired'
 import IssueOnLoading from '@/Components/ComponentView/IssueOnLoading'
-import { AppState } from '@/UIModels/AppState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { openSubscriptionDashboard } from '@/Utils/ManageSubscription'
 
 interface IProps {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   componentViewer: ComponentViewer
   requestReload?: (viewer: ComponentViewer, force?: boolean) => void
   onLoad?: (component: SNComponent) => void
@@ -151,7 +151,7 @@ const ComponentView: FunctionComponent<IProps> = ({ application, onLoad, compone
           application.io.handleComponentKeyUp(data.keyboardModifier)
           break
         case ComponentAction.Click:
-          application.getAppState().notes.setContextMenuOpen(false)
+          application.getViewControllerManager().notesController.setContextMenuOpen(false)
           break
         default:
           return

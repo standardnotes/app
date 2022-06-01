@@ -1,23 +1,23 @@
-import { AppState } from '@/UIModels/AppState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { IlNotesIcon } from '@standardnotes/icons'
 import { observer } from 'mobx-react-lite'
 import NotesOptionsPanel from '@/Components/NotesOptions/NotesOptionsPanel'
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import PinNoteButton from '@/Components/PinNoteButton/PinNoteButton'
 import Button from '../Button/Button'
 import { useCallback } from 'react'
 
 type Props = {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
 }
 
-const MultipleSelectedNotes = ({ application, appState }: Props) => {
-  const count = appState.notes.selectedNotesCount
+const MultipleSelectedNotes = ({ application, viewControllerManager }: Props) => {
+  const count = viewControllerManager.notesController.selectedNotesCount
 
   const cancelMultipleSelection = useCallback(() => {
-    appState.selectedItems.cancelMultipleSelection()
-  }, [appState])
+    viewControllerManager.selectionController.cancelMultipleSelection()
+  }, [viewControllerManager])
 
   return (
     <div className="flex flex-col h-full items-center">
@@ -25,9 +25,9 @@ const MultipleSelectedNotes = ({ application, appState }: Props) => {
         <h1 className="sk-h1 font-bold m-0">{count} selected notes</h1>
         <div className="flex">
           <div className="mr-3">
-            <PinNoteButton appState={appState} />
+            <PinNoteButton viewControllerManager={viewControllerManager} />
           </div>
-          <NotesOptionsPanel application={application} appState={appState} />
+          <NotesOptionsPanel application={application} viewControllerManager={viewControllerManager} />
         </div>
       </div>
       <div className="flex-grow flex flex-col justify-center items-center w-full max-w-md">

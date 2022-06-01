@@ -1,8 +1,8 @@
-import { SubscriptionState } from '@/UIModels/AppState/SubscriptionState'
+import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
 import { observer } from 'mobx-react-lite'
 import { Text } from '@/Components/Preferences/PreferencesComponents/Content'
 
-type Props = { subscriptionState: SubscriptionState }
+type Props = { subscriptionState: SubscriptionController }
 
 const StatusText = ({ subscriptionState }: Props) => {
   const {

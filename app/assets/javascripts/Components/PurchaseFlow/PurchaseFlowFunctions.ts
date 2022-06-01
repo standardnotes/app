@@ -1,4 +1,4 @@
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import { getWindowUrlParams, isDesktopApplication } from '@/Utils'
 
 export const getPurchaseFlowUrl = async (application: WebApplication): Promise<string | undefined> => {
