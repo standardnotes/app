@@ -56,7 +56,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
   }, [setTitle, view])
 
   const selectCurrentTag = useCallback(() => {
-    tagsState.selected = view
+    void tagsState.setSelectedTag(view)
   }, [tagsState, view])
 
   const onBlur = useCallback(() => {

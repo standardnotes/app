@@ -54,7 +54,7 @@ export class NoteTagsState extends AbstractState {
 
     appEventListeners.push(
       application.streamItems(ContentType.Tag, () => {
-        this.reloadTags()
+        this.reloadTagsForCurrentNote()
       }),
       application.addSingleEventObserver(ApplicationEvent.PreferencesChanged, async () => {
         this.addNoteToParentFolders = application.getPreference(PrefKey.NoteAddToParentFolders, true)
@@ -156,7 +156,7 @@ export class NoteTagsState extends AbstractState {
     return tagsArr.findIndex((t) => t.uuid === tag.uuid)
   }
 
-  reloadTags(): void {
+  reloadTagsForCurrentNote(): void {
     const activeNote = this.appState.contentListView.activeControllerNote
 
     if (activeNote) {
@@ -178,7 +178,7 @@ export class NoteTagsState extends AbstractState {
     if (activeNote) {
       await this.application.items.addTagToNote(activeNote, tag, this.addNoteToParentFolders)
       this.application.sync.sync().catch(console.error)
-      this.reloadTags()
+      this.reloadTagsForCurrentNote()
     }
   }
 
@@ -190,7 +190,7 @@ export class NoteTagsState extends AbstractState {
         mutator.removeItemAsRelationship(activeNote)
       })
       this.application.sync.sync().catch(console.error)
-      this.reloadTags()
+      this.reloadTagsForCurrentNote()
     }
   }
 

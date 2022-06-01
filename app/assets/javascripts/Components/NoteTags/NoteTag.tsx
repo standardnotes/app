@@ -49,7 +49,7 @@ const NoteTag = ({ appState, tag }: Props) => {
     (event) => {
       if (tagClicked && event.target !== deleteTagRef.current) {
         setTagClicked(false)
-        appState.tags.selected = tag
+        void appState.tags.setSelectedTag(tag)
       } else {
         setTagClicked(true)
       }

@@ -33,7 +33,7 @@ const TagsList: FunctionComponent<Props> = ({ appState }: Props) => {
 
   const onContextMenu = useCallback(
     (tag: SNTag, posX: number, posY: number) => {
-      appState.tags.selected = tag
+      void appState.tags.setSelectedTag(tag)
       openTagContextMenu(posX, posY)
     },
     [appState, openTagContextMenu],

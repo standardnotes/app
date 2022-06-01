@@ -78,7 +78,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
   )
 
   const selectCurrentTag = useCallback(() => {
-    tagsState.selected = tag
+    void tagsState.setSelectedTag(tag)
   }, [tagsState, tag])
 
   const onBlur = useCallback(() => {
