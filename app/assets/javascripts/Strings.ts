@@ -106,8 +106,9 @@ export const Strings = {
   protectingNoteWithoutProtectionSources:
     'Access to this note will not be restricted until you set up a passcode or account.',
   openAccountMenu: 'Open Account Menu',
-  trashNotesTitle: 'Move to Trash',
+  trashItemsTitle: 'Move to Trash',
   trashNotesText: 'Are you sure you want to move these notes to the trash?',
+  trashFilesText: 'Are you sure you want to move these files to the trash?',
   enterPasscode: 'Please enter a passcode.',
 }
 
@@ -137,6 +138,17 @@ export const StringUtils = {
       return permanently
         ? 'Are you sure you want to permanently delete these notes?'
         : 'Are you sure you want to move these notes to the trash?'
+    }
+  },
+  deleteFiles(permanently: boolean, filesCount = 1, title?: string): string {
+    if (filesCount === 1) {
+      return permanently
+        ? `Are you sure you want to permanently delete ${title}?`
+        : `Are you sure you want to move ${title} to the trash?`
+    } else {
+      return permanently
+        ? 'Are you sure you want to permanently delete these files?'
+        : 'Are you sure you want to move these files to the trash?'
     }
   },
   archiveLockedNotesAttempt(archive: boolean, notesCount = 1): string {
