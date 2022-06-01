@@ -1,6 +1,6 @@
 import { destroyAllObjectProperties, isDev } from '@/Utils'
 import { action, computed, makeObservable, observable, runInAction } from 'mobx'
-import { ApplicationEvent, ContentType, DeinitSource, SNNote, SNTag } from '@standardnotes/snjs'
+import { ApplicationEvent, ContentType, InternalEventBus, SNNote, SNTag } from '@standardnotes/snjs'
 import { WebApplication } from '@/Application/Application'
 import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
@@ -21,15 +21,16 @@ export class AccountMenuController extends AbstractViewController {
   shouldAnimateCloseMenu = false
   currentPane = AccountMenuPane.GeneralMenu
 
-  override deinit(source: DeinitSource) {
-    super.deinit(source)
+  override deinit() {
+    super.deinit()
     ;(this.notesAndTags as unknown) = undefined
 
     destroyAllObjectProperties(this)
   }
 
-  constructor(application: WebApplication, private appEventListeners: (() => void)[]) {
-    super(application)
+  constructor(application: WebApplication, eventBus: InternalEventBus) {
+    super(application, eventBus)
+
     makeObservable(this, {
       show: observable,
       signingOut: observable,
@@ -60,12 +61,7 @@ export class AccountMenuController extends AbstractViewController {
       notesAndTagsCount: computed,
     })
 
-    this.addAppLaunchedEventObserver()
-    this.streamNotesAndTags()
-  }
-
-  addAppLaunchedEventObserver = (): void => {
-    this.appEventListeners.push(
+    this.disposers.push(
       this.application.addEventObserver(async () => {
         runInAction(() => {
           if (isDev && window.devAccountServer) {
@@ -77,10 +73,8 @@ export class AccountMenuController extends AbstractViewController {
         })
       }, ApplicationEvent.Launched),
     )
-  }
 
-  streamNotesAndTags = (): void => {
-    this.appEventListeners.push(
+    this.disposers.push(
       this.application.streamItems([ContentType.Note, ContentType.Tag], () => {
         runInAction(() => {
           this.notesAndTags = this.application.items.getItems([ContentType.Note, ContentType.Tag])

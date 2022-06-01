@@ -33,7 +33,7 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
     (width, _lastLeft, _isMaxWidth, isCollapsed) => {
       application.setPreference(PrefKey.TagsPanelWidth, width).catch(console.error)
       viewControllerManager.noteTagsController.reloadTagsContainerMaxWidth()
-      viewControllerManager.panelDidResize(PANEL_NAME_NAVIGATION, isCollapsed)
+      application.publishPanelDidResizeEvent(PANEL_NAME_NAVIGATION, isCollapsed)
     },
     [application, viewControllerManager],
   )

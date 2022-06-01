@@ -1,4 +1,5 @@
-import { WebAppEvent, WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/Application'
+import { WebAppEvent } from '@/Application/WebAppEvent'
 import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { PureComponent } from '@/Components/Abstract/PureComponent'
 import { destroyAllObjectProperties, preventRefreshing } from '@/Utils'
@@ -12,7 +13,6 @@ import {
 } from '@/Constants/Strings'
 import { alertDialog, confirmDialog } from '@/Services/AlertService'
 import AccountMenu from '@/Components/AccountMenu/AccountMenu'
-import { ViewControllerManagerEvent } from '@/Services/ViewControllerManager'
 import Icon from '@/Components/Icon/Icon'
 import QuickSettingsMenu from '@/Components/QuickSettingsMenu/QuickSettingsMenu'
 import SyncResolutionMenu from '@/Components/SyncResolutionMenu/SyncResolutionMenu'
@@ -64,9 +64,34 @@ class Footer extends PureComponent<Props, State> {
       showQuickSettingsMenu: false,
     }
 
-    this.webEventListenerDestroyer = props.application.addWebEventObserver((event) => {
-      if (event === WebAppEvent.NewUpdateAvailable) {
-        this.onNewUpdateAvailable()
+    this.webEventListenerDestroyer = props.application.addWebEventObserver((event, data) => {
+      const statusService = this.application.status
+
+      switch (event) {
+        case WebAppEvent.NewUpdateAvailable:
+          this.onNewUpdateAvailable()
+          break
+        case WebAppEvent.EditorFocused:
+          if ((data as any).eventSource === EditorEventSource.UserInteraction) {
+            this.closeAccountMenu()
+          }
+          break
+        case WebAppEvent.BeganBackupDownload:
+          statusService.setMessage('Saving local backup…')
+          break
+        case WebAppEvent.EndedBackupDownload: {
+          const successMessage = 'Successfully saved backup.'
+          const errorMessage = 'Unable to save local backup.'
+          statusService.setMessage((data as any).success ? successMessage : errorMessage)
+
+          const twoSeconds = 2000
+          setTimeout(() => {
+            if (statusService.message === successMessage || statusService.message === errorMessage) {
+              statusService.setMessage('')
+            }
+          }, twoSeconds)
+          break
+        }
       }
     })
   }
@@ -131,33 +156,6 @@ class Footer extends PureComponent<Props, State> {
     this.setState({
       hasPasscode: hasPasscode,
     })
-  }
-
-  override onViewControllerManagerEvent(eventName: ViewControllerManagerEvent, data: any) {
-    const statusService = this.application.status
-    switch (eventName) {
-      case ViewControllerManagerEvent.EditorFocused:
-        if (data.eventSource === EditorEventSource.UserInteraction) {
-          this.closeAccountMenu()
-        }
-        break
-      case ViewControllerManagerEvent.BeganBackupDownload:
-        statusService.setMessage('Saving local backup…')
-        break
-      case ViewControllerManagerEvent.EndedBackupDownload: {
-        const successMessage = 'Successfully saved backup.'
-        const errorMessage = 'Unable to save local backup.'
-        statusService.setMessage(data.success ? successMessage : errorMessage)
-
-        const twoSeconds = 2000
-        setTimeout(() => {
-          if (statusService.message === successMessage || statusService.message === errorMessage) {
-            statusService.setMessage('')
-          }
-        }, twoSeconds)
-        break
-      }
-    }
   }
 
   override async onAppKeyChange() {

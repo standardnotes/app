@@ -90,7 +90,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 
       const transactions: TransactionalMutation[] = []
 
-      await application.getViewControllerManager().contentListController.insertCurrentIfTemplate()
+      await application.getViewControllerManager().itemListController.insertCurrentIfTemplate()
 
       if (note.locked) {
         application.alertService.alert(STRING_EDIT_LOCKED_ATTEMPT).catch(console.error)

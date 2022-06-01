@@ -1,11 +1,11 @@
 import IconButton from '@/Components/Button/IconButton'
 import { FeaturesController } from '@/Controllers/FeaturesController'
-import { TagsController } from '@/Controllers/Navigation/TagsController'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
 
 type Props = {
-  tags: TagsController
+  tags: NavigationController
   features: FeaturesController
 }
 

@@ -1,22 +1,35 @@
 import { ListableContentItem } from '@/Components/ContentListView/Types/ListableContentItem'
-import { ChallengeReason, ContentType, KeyboardModifier, FileItem, SNNote, UuidString } from '@standardnotes/snjs'
+import {
+  ChallengeReason,
+  ContentType,
+  KeyboardModifier,
+  FileItem,
+  SNNote,
+  UuidString,
+  InternalEventBus,
+} from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, runInAction } from 'mobx'
 import { WebApplication } from '../Application/Application'
 import { AbstractViewController } from './Abstract/AbstractViewController'
-import { ViewControllerManager } from '../Services/ViewControllerManager/ViewControllerManager'
+import { ItemListController } from './ItemList/ItemListController'
+import { NotesController } from './NotesController'
 
 type SelectedItems = Record<UuidString, ListableContentItem>
 
 export class SelectedItemsController extends AbstractViewController {
   lastSelectedItem: ListableContentItem | undefined
   selectedItems: SelectedItems = {}
+  private itemListController!: ItemListController
+  private notesController!: NotesController
 
-  constructor(
-    application: WebApplication,
-    override viewControllerManager: ViewControllerManager,
-    appObservers: (() => void)[],
-  ) {
-    super(application)
+  override deinit(): void {
+    super.deinit()
+    ;(this.itemListController as unknown) = undefined
+    ;(this.notesController as unknown) = undefined
+  }
+
+  constructor(application: WebApplication, eventBus: InternalEventBus) {
+    super(application, eventBus)
 
     makeObservable(this, {
       selectedItems: observable,
@@ -26,9 +39,14 @@ export class SelectedItemsController extends AbstractViewController {
       selectItem: action,
       setSelectedItems: action,
     })
+  }
 
-    appObservers.push(
-      application.streamItems<SNNote | FileItem>(
+  public setServicestPostConstruction(itemListController: ItemListController, notesController: NotesController) {
+    this.itemListController = itemListController
+    this.notesController = notesController
+
+    this.disposers.push(
+      this.application.streamItems<SNNote | FileItem>(
         [ContentType.Note, ContentType.File],
         ({ changed, inserted, removed }) => {
           runInAction(() => {
@@ -82,7 +100,7 @@ export class SelectedItemsController extends AbstractViewController {
   }
 
   private selectItemsRange = async (selectedItem: ListableContentItem): Promise<void> => {
-    const items = this.viewControllerManager.contentListController.renderedItems
+    const items = this.itemListController.renderedItems
 
     const lastSelectedItemIndex = items.findIndex((item) => item.uuid == this.lastSelectedItem?.uuid)
     const selectedItemIndex = items.findIndex((item) => item.uuid == selectedItem.uuid)
@@ -171,7 +189,7 @@ export class SelectedItemsController extends AbstractViewController {
     if (this.selectedItemsCount === 1) {
       const item = Object.values(this.selectedItems)[0]
       if (item.content_type === ContentType.Note) {
-        await this.viewControllerManager.notesController.openNote(item.uuid)
+        await this.notesController.openNote(item.uuid)
       }
     }
 

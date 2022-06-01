@@ -35,6 +35,7 @@ import {
 } from './TransactionFunctions'
 import { reloadFont } from './FontFunctions'
 import { NoteViewProps } from './NoteViewProps'
+import { WebAppEvent } from '@/Application/WebAppEvent'
 
 const MINIMUM_STATUS_DURATION = 400
 const TEXTAREA_DEBOUNCE = 100
@@ -588,7 +589,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
   onContentFocus = () => {
     if (this.lastEditorFocusEventSource) {
-      this.application.getViewControllerManager().editorDidFocus(this.lastEditorFocusEventSource)
+      this.application.notifyWebEvent(WebAppEvent.EditorFocused, { eventSource: this.lastEditorFocusEventSource })
     }
     this.lastEditorFocusEventSource = undefined
   }

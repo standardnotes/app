@@ -4,7 +4,6 @@ import {
   ApplicationEvent,
   CollectionSort,
   ContentType,
-  DeinitSource,
   findInArray,
   NoteViewController,
   PrefKey,
@@ -13,13 +12,21 @@ import {
   SNTag,
   SystemViewId,
   DisplayOptions,
+  InternalEventBus,
+  InternalEventHandlerInterface,
+  InternalEventInterface,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
-import { ViewControllerManager } from '../../Services/ViewControllerManager/ViewControllerManager'
-import { ViewControllerManagerEvent } from '../../Services/ViewControllerManager/ViewControllerManagerEvent'
 import { WebDisplayOptions } from './WebDisplayOptions'
+import { NavigationController } from '../Navigation/NavigationController'
+import { CrossControllerEvent } from '../CrossControllerEvent'
+import { SearchOptionsController } from '../SearchOptionsController'
+import { SelectedItemsController } from '../SelectedItemsController'
+import { NotesController } from '../NotesController'
+import { NoteTagsController } from '../NoteTagsController'
+import { WebAppEvent } from '@/Application/WebAppEvent'
 
 const MinNoteCellHeight = 51.0
 const DefaultListNumNotes = 20
@@ -27,7 +34,7 @@ const ElementIdSearchBar = 'search-bar'
 const ElementIdScrollContainer = 'notes-scrollable'
 const SupportsFileSelectionState = false
 
-export class ItemListController extends AbstractViewController {
+export class ItemListController extends AbstractViewController implements InternalEventHandlerInterface {
   completedFullSync = false
   noteFilterText = ''
   notes: SNNote[] = []
@@ -55,11 +62,16 @@ export class ItemListController extends AbstractViewController {
   }
   private reloadItemsPromise?: Promise<unknown>
 
-  override deinit(source: DeinitSource) {
-    super.deinit(source)
+  override deinit() {
+    super.deinit()
     ;(this.noteFilterText as unknown) = undefined
     ;(this.notes as unknown) = undefined
     ;(this.renderedItems as unknown) = undefined
+    ;(this.navigationController as unknown) = undefined
+    ;(this.searchOptionsController as unknown) = undefined
+    ;(this.selectionController as unknown) = undefined
+    ;(this.notesController as unknown) = undefined
+    ;(this.noteTagsController as unknown) = undefined
     ;(window.onresize as unknown) = undefined
 
     destroyAllObjectProperties(this)
@@ -67,18 +79,27 @@ export class ItemListController extends AbstractViewController {
 
   constructor(
     application: WebApplication,
-    override viewControllerManager: ViewControllerManager,
-    appObservers: (() => void)[],
+    private navigationController: NavigationController,
+    private searchOptionsController: SearchOptionsController,
+    private selectionController: SelectedItemsController,
+    private notesController: NotesController,
+    private noteTagsController: NoteTagsController,
+    eventBus: InternalEventBus,
   ) {
-    super(application, viewControllerManager)
+    super(application, eventBus)
+
+    eventBus.addEventHandler(this, CrossControllerEvent.TagChanged)
+    eventBus.addEventHandler(this, CrossControllerEvent.ActiveEditorChanged)
 
     this.resetPagination()
 
-    appObservers.push(
+    this.disposers.push(
       application.streamItems<SNNote>(ContentType.Note, () => {
         void this.reloadItems()
       }),
+    )
 
+    this.disposers.push(
       application.streamItems<SNTag>([ContentType.Tag], async ({ changed, inserted }) => {
         const tags = [...changed, ...inserted]
 
@@ -87,28 +108,34 @@ export class ItemListController extends AbstractViewController {
 
         void this.reloadItems()
 
-        if (
-          viewControllerManager.navigationController.selected &&
-          findInArray(tags, 'uuid', viewControllerManager.navigationController.selected.uuid)
-        ) {
+        if (this.navigationController.selected && findInArray(tags, 'uuid', this.navigationController.selected.uuid)) {
           /** Tag title could have changed */
           this.reloadPanelTitle()
         }
       }),
+    )
+
+    this.disposers.push(
       application.addEventObserver(async () => {
         void this.reloadPreferences()
       }, ApplicationEvent.PreferencesChanged),
+    )
+
+    this.disposers.push(
       application.addEventObserver(async () => {
         this.application.noteControllerGroup.closeAllNoteControllers()
         void this.selectFirstItem()
         this.setCompletedFullSync(false)
       }, ApplicationEvent.SignedIn),
+    )
+
+    this.disposers.push(
       application.addEventObserver(async () => {
         void this.reloadItems().then(() => {
           if (
             this.notes.length === 0 &&
-            viewControllerManager.navigationController.selected instanceof SmartView &&
-            viewControllerManager.navigationController.selected.uuid === SystemViewId.AllNotes &&
+            this.navigationController.selected instanceof SmartView &&
+            this.navigationController.selected.uuid === SystemViewId.AllNotes &&
             this.noteFilterText === '' &&
             !this.getActiveNoteController()
           ) {
@@ -117,28 +144,28 @@ export class ItemListController extends AbstractViewController {
         })
         this.setCompletedFullSync(true)
       }, ApplicationEvent.CompletedFullSync),
+    )
 
+    this.disposers.push(
+      application.addWebEventObserver((webEvent) => {
+        if (webEvent === WebAppEvent.EditorFocused) {
+          this.setShowDisplayOptionsMenu(false)
+        }
+      }),
+    )
+
+    this.disposers.push(
       reaction(
         () => [
-          viewControllerManager.searchOptionsController.includeProtectedContents,
-          viewControllerManager.searchOptionsController.includeArchived,
-          viewControllerManager.searchOptionsController.includeTrashed,
+          this.searchOptionsController.includeProtectedContents,
+          this.searchOptionsController.includeArchived,
+          this.searchOptionsController.includeTrashed,
         ],
         () => {
           this.reloadNotesDisplayOptions()
           void this.reloadItems()
         },
       ),
-
-      viewControllerManager.addObserver(async (eventName) => {
-        if (eventName === ViewControllerManagerEvent.TagChanged) {
-          this.handleTagChange()
-        } else if (eventName === ViewControllerManagerEvent.ActiveEditorChanged) {
-          this.handleEditorChange().catch(console.error)
-        } else if (eventName === ViewControllerManagerEvent.EditorFocused) {
-          this.setShowDisplayOptionsMenu(false)
-        }
-      }),
     )
 
     makeObservable(this, {
@@ -167,6 +194,14 @@ export class ItemListController extends AbstractViewController {
 
     window.onresize = () => {
       this.resetPagination(true)
+    }
+  }
+
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === CrossControllerEvent.TagChanged) {
+      this.handleTagChange()
+    } else if (event.type === CrossControllerEvent.ActiveEditorChanged) {
+      this.handleEditorChange().catch(console.error)
     }
   }
 
@@ -200,8 +235,8 @@ export class ItemListController extends AbstractViewController {
     if (this.isFiltering) {
       const resultCount = this.notes.length
       title = `${resultCount} search results`
-    } else if (this.viewControllerManager.navigationController.selected) {
-      title = `${this.viewControllerManager.navigationController.selected.title}`
+    } else if (this.navigationController.selected) {
+      title = `${this.navigationController.selected.title}`
     }
 
     this.panelTitle = title
@@ -218,7 +253,7 @@ export class ItemListController extends AbstractViewController {
   }
 
   private async performReloadItems() {
-    const tag = this.viewControllerManager.navigationController.selected
+    const tag = this.navigationController.selected
     if (!tag) {
       return
     }
@@ -241,17 +276,16 @@ export class ItemListController extends AbstractViewController {
   }
 
   private async recomputeSelectionAfterItemsReload() {
-    const viewControllerManager = this.viewControllerManager
     const activeController = this.getActiveNoteController()
     const activeNote = activeController?.note
     const isSearching = this.noteFilterText.length > 0
-    const hasMultipleItemsSelected = viewControllerManager.selectionController.selectedItemsCount >= 2
+    const hasMultipleItemsSelected = this.selectionController.selectedItemsCount >= 2
 
     if (hasMultipleItemsSelected) {
       return
     }
 
-    const selectedItem = Object.values(viewControllerManager.selectionController.selectedItems)[0]
+    const selectedItem = Object.values(this.selectionController.selectedItems)[0]
 
     const isSelectedItemFile =
       this.items.includes(selectedItem) && selectedItem && selectedItem.content_type === ContentType.File
@@ -280,25 +314,25 @@ export class ItemListController extends AbstractViewController {
     }
 
     const showTrashedNotes =
-      (viewControllerManager.navigationController.selected instanceof SmartView &&
-        viewControllerManager.navigationController.selected?.uuid === SystemViewId.TrashedNotes) ||
-      viewControllerManager?.searchOptionsController.includeTrashed
+      (this.navigationController.selected instanceof SmartView &&
+        this.navigationController.selected?.uuid === SystemViewId.TrashedNotes) ||
+      this.searchOptionsController.includeTrashed
 
     const showArchivedNotes =
-      (viewControllerManager.navigationController.selected instanceof SmartView &&
-        viewControllerManager.navigationController.selected.uuid === SystemViewId.ArchivedNotes) ||
-      viewControllerManager.searchOptionsController.includeArchived ||
+      (this.navigationController.selected instanceof SmartView &&
+        this.navigationController.selected.uuid === SystemViewId.ArchivedNotes) ||
+      this.searchOptionsController.includeArchived ||
       this.application.getPreference(PrefKey.NotesShowArchived, false)
 
     if ((activeNote.trashed && !showTrashedNotes) || (activeNote.archived && !showArchivedNotes)) {
       await this.selectNextItemOrCreateNewNote()
-    } else if (!this.viewControllerManager.selectionController.selectedItems[activeNote.uuid]) {
-      await this.viewControllerManager.selectionController.selectItem(activeNote.uuid).catch(console.error)
+    } else if (!this.selectionController.selectedItems[activeNote.uuid]) {
+      await this.selectionController.selectItem(activeNote.uuid).catch(console.error)
     }
   }
 
   reloadNotesDisplayOptions = () => {
-    const tag = this.viewControllerManager.navigationController.selected
+    const tag = this.navigationController.selected
 
     const searchText = this.noteFilterText.toLowerCase()
     const isSearching = searchText.length
@@ -306,8 +340,8 @@ export class ItemListController extends AbstractViewController {
     let includeTrashed: boolean
 
     if (isSearching) {
-      includeArchived = this.viewControllerManager.searchOptionsController.includeArchived
-      includeTrashed = this.viewControllerManager.searchOptionsController.includeTrashed
+      includeArchived = this.searchOptionsController.includeArchived
+      includeTrashed = this.searchOptionsController.includeTrashed
     } else {
       includeArchived = this.displayOptions.includeArchived ?? false
       includeTrashed = this.displayOptions.includeTrashed ?? false
@@ -324,7 +358,7 @@ export class ItemListController extends AbstractViewController {
       includeProtected: this.displayOptions.includeProtected,
       searchQuery: {
         query: searchText,
-        includeProtectedNoteText: this.viewControllerManager.searchOptionsController.includeProtectedContents,
+        includeProtectedNoteText: this.searchOptionsController.includeProtectedContents,
       },
     }
 
@@ -387,13 +421,10 @@ export class ItemListController extends AbstractViewController {
   }
 
   createNewNote = async () => {
-    this.viewControllerManager.notesController.unselectNotes()
+    this.notesController.unselectNotes()
 
-    if (
-      this.viewControllerManager.navigationController.isInSmartView() &&
-      !this.viewControllerManager.navigationController.isInHomeView()
-    ) {
-      await this.viewControllerManager.navigationController.selectHomeNavigationView()
+    if (this.navigationController.isInSmartView() && !this.navigationController.isInHomeView()) {
+      await this.navigationController.selectHomeNavigationView()
     }
 
     let title = `Note ${this.notes.length + 1}`
@@ -401,16 +432,13 @@ export class ItemListController extends AbstractViewController {
       title = this.noteFilterText
     }
 
-    await this.viewControllerManager.notesController.createNewNoteController(title)
+    await this.notesController.createNewNoteController(title)
 
-    this.viewControllerManager.noteTagsController.reloadTagsForCurrentNote()
+    this.noteTagsController.reloadTagsForCurrentNote()
   }
 
   createPlaceholderNote = () => {
-    if (
-      this.viewControllerManager.navigationController.isInSmartView() &&
-      !this.viewControllerManager.navigationController.isInHomeView()
-    ) {
+    if (this.navigationController.isInSmartView() && !this.navigationController.isInHomeView()) {
       return
     }
 
@@ -487,7 +515,7 @@ export class ItemListController extends AbstractViewController {
     },
     { userTriggered = false, scrollIntoView = true },
   ): Promise<void> => {
-    await this.viewControllerManager.selectionController.selectItem(item.uuid, userTriggered)
+    await this.selectionController.selectItem(item.uuid, userTriggered)
 
     if (scrollIntoView) {
       const itemElement = document.getElementById(item.uuid)
@@ -514,7 +542,7 @@ export class ItemListController extends AbstractViewController {
     const displayableItems = this.items
 
     const currentIndex = displayableItems.findIndex((candidate) => {
-      return candidate.uuid === this.viewControllerManager.selectionController.lastSelectedItem?.uuid
+      return candidate.uuid === this.selectionController.lastSelectedItem?.uuid
     })
 
     let nextIndex = currentIndex + 1
@@ -554,11 +582,11 @@ export class ItemListController extends AbstractViewController {
   selectPreviousItem = () => {
     const displayableItems = this.items
 
-    if (!this.viewControllerManager.selectionController.lastSelectedItem) {
+    if (!this.selectionController.lastSelectedItem) {
       return
     }
 
-    const currentIndex = displayableItems.indexOf(this.viewControllerManager.selectionController.lastSelectedItem)
+    const currentIndex = displayableItems.indexOf(this.selectionController.lastSelectedItem)
 
     let previousIndex = currentIndex - 1
 

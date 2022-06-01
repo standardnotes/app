@@ -2,11 +2,15 @@ import { destroyAllObjectProperties } from '@/Utils'
 import { confirmDialog } from '@/Services/AlertService'
 import { StringEmptyTrash, Strings, StringUtils } from '@/Constants/Strings'
 import { MENU_MARGIN_FROM_APP_BORDER } from '@/Constants/Constants'
-import { SNNote, NoteMutator, ContentType, SNTag, DeinitSource, TagMutator } from '@standardnotes/snjs'
+import { SNNote, NoteMutator, ContentType, SNTag, TagMutator, InternalEventBus } from '@standardnotes/snjs'
 import { makeObservable, observable, action, computed, runInAction } from 'mobx'
 import { WebApplication } from '../Application/Application'
-import { ViewControllerManager } from '../Services/ViewControllerManager/ViewControllerManager'
 import { AbstractViewController } from './Abstract/AbstractViewController'
+import { SelectedItemsController } from './SelectedItemsController'
+import { ItemListController } from './ItemList/ItemListController'
+import { NoteTagsController } from './NoteTagsController'
+import { NavigationController } from './Navigation/NavigationController'
+import { CrossControllerEvent } from './CrossControllerEvent'
 
 export class NotesController extends AbstractViewController {
   lastSelectedNote: SNNote | undefined
@@ -19,22 +23,27 @@ export class NotesController extends AbstractViewController {
   contextMenuMaxHeight: number | 'auto' = 'auto'
   showProtectedWarning = false
   showRevisionHistoryModal = false
+  private itemListController!: ItemListController
 
-  override deinit(source: DeinitSource) {
-    super.deinit(source)
+  override deinit() {
+    super.deinit()
     ;(this.lastSelectedNote as unknown) = undefined
-    ;(this.onActiveEditorChanged as unknown) = undefined
+    ;(this.selectionController as unknown) = undefined
+    ;(this.noteTagsController as unknown) = undefined
+    ;(this.navigationController as unknown) = undefined
+    ;(this.itemListController as unknown) = undefined
 
     destroyAllObjectProperties(this)
   }
 
   constructor(
     application: WebApplication,
-    public override viewControllerManager: ViewControllerManager,
-    private onActiveEditorChanged: () => Promise<void>,
-    appEventListeners: (() => void)[],
+    private selectionController: SelectedItemsController,
+    private noteTagsController: NoteTagsController,
+    private navigationController: NavigationController,
+    eventBus: InternalEventBus,
   ) {
-    super(application, viewControllerManager)
+    super(application, eventBus)
 
     makeObservable(this, {
       contextMenuOpen: observable,
@@ -55,17 +64,21 @@ export class NotesController extends AbstractViewController {
       setShowRevisionHistoryModal: action,
       unselectNotes: action,
     })
+  }
 
-    appEventListeners.push(
-      application.streamItems<SNNote>(ContentType.Note, ({ changed, inserted, removed }) => {
+  public setServicestPostConstruction(itemListController: ItemListController) {
+    this.itemListController = itemListController
+
+    this.disposers.push(
+      this.application.streamItems<SNNote>(ContentType.Note, ({ changed, inserted, removed }) => {
         runInAction(() => {
           for (const removedNote of removed) {
-            this.viewControllerManager.selectionController.deselectItem(removedNote)
+            this.selectionController.deselectItem(removedNote)
           }
 
           for (const note of [...changed, ...inserted]) {
-            if (this.viewControllerManager.selectionController.isItemSelected(note)) {
-              this.viewControllerManager.selectionController.updateReferenceOfSelectedItem(note)
+            if (this.selectionController.isItemSelected(note)) {
+              this.selectionController.updateReferenceOfSelectedItem(note)
             }
           }
         })
@@ -80,7 +93,7 @@ export class NotesController extends AbstractViewController {
 
         for (const selectedId of selectedUuids) {
           if (!activeNoteUuids.includes(selectedId)) {
-            this.viewControllerManager.selectionController.deselectItem({ uuid: selectedId })
+            this.selectionController.deselectItem({ uuid: selectedId })
           }
         }
       }),
@@ -88,7 +101,7 @@ export class NotesController extends AbstractViewController {
   }
 
   public get selectedNotes(): SNNote[] {
-    return this.viewControllerManager.selectionController.getSelectedItems<SNNote>(ContentType.Note)
+    return this.selectionController.getSelectedItems<SNNote>(ContentType.Note)
   }
 
   get firstSelectedNote(): SNNote | undefined {
@@ -108,7 +121,7 @@ export class NotesController extends AbstractViewController {
   }
 
   async openNote(noteUuid: string): Promise<void> {
-    if (this.viewControllerManager.contentListController.activeControllerNote?.uuid === noteUuid) {
+    if (this.itemListController.activeControllerNote?.uuid === noteUuid) {
       return
     }
 
@@ -120,13 +133,13 @@ export class NotesController extends AbstractViewController {
 
     await this.application.noteControllerGroup.createNoteController(noteUuid)
 
-    this.viewControllerManager.noteTagsController.reloadTagsForCurrentNote()
+    this.noteTagsController.reloadTagsForCurrentNote()
 
-    await this.onActiveEditorChanged()
+    await this.publishEventSync(CrossControllerEvent.ActiveEditorChanged)
   }
 
   async createNewNoteController(title?: string) {
-    const selectedTag = this.viewControllerManager.navigationController.selected
+    const selectedTag = this.navigationController.selected
 
     const activeRegularTagUuid = selectedTag && selectedTag instanceof SNTag ? selectedTag.uuid : undefined
 
@@ -262,7 +275,7 @@ export class NotesController extends AbstractViewController {
       if (permanently) {
         for (const note of this.getSelectedNotesList()) {
           await this.application.mutator.deleteItem(note)
-          this.viewControllerManager.selectionController.deselectItem(note)
+          this.selectionController.deselectItem(note)
         }
       } else {
         await this.changeSelectedNotes((mutator) => {
@@ -294,7 +307,7 @@ export class NotesController extends AbstractViewController {
     })
 
     runInAction(() => {
-      this.viewControllerManager.selectionController.setSelectedItems({})
+      this.selectionController.setSelectedItems({})
       this.contextMenuOpen = false
     })
   }
@@ -311,11 +324,11 @@ export class NotesController extends AbstractViewController {
   }
 
   unselectNotes(): void {
-    this.viewControllerManager.selectionController.setSelectedItems({})
+    this.selectionController.setSelectedItems({})
   }
 
   getSpellcheckStateForNote(note: SNNote) {
-    return note.spellcheck != undefined ? note.spellcheck : this.viewControllerManager.isGlobalSpellcheckEnabled()
+    return note.spellcheck != undefined ? note.spellcheck : this.application.isGlobalSpellcheckEnabled()
   }
 
   async toggleGlobalSpellcheckForNote(note: SNNote) {
@@ -358,7 +371,7 @@ export class NotesController extends AbstractViewController {
   isTagInSelectedNotes(tag: SNTag): boolean {
     const selectedNotes = this.getSelectedNotesList()
     return selectedNotes.every((note) =>
-      this.viewControllerManager.getItemTags(note).find((noteTag) => noteTag.uuid === tag.uuid),
+      this.application.getItemTags(note).find((noteTag) => noteTag.uuid === tag.uuid),
     )
   }
 
