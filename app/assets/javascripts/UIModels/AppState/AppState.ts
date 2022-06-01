@@ -11,7 +11,7 @@ import {
   removeFromArray,
   WebOrDesktopDeviceInterface,
 } from '@standardnotes/snjs'
-import { action, IReactionDisposer, makeObservable, observable, reaction } from 'mobx'
+import { action, makeObservable, observable } from 'mobx'
 import { ActionsMenuState } from './ActionsMenuState'
 import { FeaturesState } from './FeaturesState'
 import { FilesState } from './FilesState'
@@ -72,8 +72,6 @@ export class AppState extends AbstractState {
 
   private appEventObserverRemovers: (() => void)[] = []
 
-  private readonly tagChangedDisposer: IReactionDisposer
-
   constructor(application: WebApplication, private device: WebOrDesktopDeviceInterface) {
     super(application)
 
@@ -87,7 +85,7 @@ export class AppState extends AbstractState {
       this.appEventObserverRemovers,
     )
     this.features = new FeaturesState(application, this.appEventObserverRemovers)
-    this.tags = new TagsState(application, this.appEventObserverRemovers, this.features)
+    this.tags = new TagsState(application, this, this.appEventObserverRemovers, this.features)
     this.searchOptions = new SearchOptionsState(application, this.appEventObserverRemovers)
     this.contentListView = new ContentListViewState(application, this, this.appEventObserverRemovers)
     this.noteTags = new NoteTagsState(application, this, this.appEventObserverRemovers)
@@ -120,8 +118,6 @@ export class AppState extends AbstractState {
       openSessionsModal: action,
       closeSessionsModal: action,
     })
-
-    this.tagChangedDisposer = this.tagChangedNotifier()
   }
 
   override deinit(source: DeinitSource): void {
@@ -186,9 +182,6 @@ export class AppState extends AbstractState {
     document.removeEventListener('visibilitychange', this.onVisibilityChange)
     ;(this.onVisibilityChange as unknown) = undefined
 
-    this.tagChangedDisposer()
-    ;(this.tagChangedDisposer as unknown) = undefined
-
     destroyAllObjectProperties(this)
   }
 
@@ -221,29 +214,6 @@ export class AppState extends AbstractState {
   async toggleGlobalSpellcheck() {
     const currentValue = this.isGlobalSpellcheckEnabled()
     return this.application.setPreference(PrefKey.EditorSpellcheck, !currentValue)
-  }
-
-  private tagChangedNotifier(): IReactionDisposer {
-    return reaction(
-      () => this.tags.selectedUuid,
-      () => {
-        const tag = this.tags.selected
-        const previousTag = this.tags.previouslySelected
-
-        if (!tag) {
-          return
-        }
-
-        if (this.application.items.isTemplateItem(tag)) {
-          return
-        }
-
-        this.notifyEvent(AppStateEvent.TagChanged, {
-          tag,
-          previousTag,
-        }).catch(console.error)
-      },
-    )
   }
 
   addAppEventObserver() {
@@ -294,18 +264,9 @@ export class AppState extends AbstractState {
   }
 
   async notifyEvent(eventName: AppStateEvent, data?: unknown) {
-    /**
-     * Timeout is particularly important so we can give all initial
-     * controllers a chance to construct before propogting any events *
-     */
-    return new Promise<void>((resolve) => {
-      setTimeout(async () => {
-        for (const callback of this.observers) {
-          await callback(eventName, data)
-        }
-        resolve()
-      })
-    })
+    for (const callback of this.observers) {
+      await callback(eventName, data)
+    }
   }
 
   /** Returns the tags that are referncing this note */

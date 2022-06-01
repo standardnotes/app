@@ -13,12 +13,15 @@ import {
   isSystemView,
   FindItem,
   DeinitSource,
+  SystemViewId,
 } from '@standardnotes/snjs'
 import { action, computed, makeAutoObservable, makeObservable, observable, runInAction } from 'mobx'
 import { WebApplication } from '../Application'
 import { FeaturesState } from './FeaturesState'
 import { AbstractState } from './AbstractState'
 import { destroyAllObjectProperties } from '@/Utils'
+import { AppState } from './AppState'
+import { AppStateEvent } from './AppStateEvent'
 
 type AnyTag = SNTag | SmartView
 
@@ -78,7 +81,12 @@ export class TagsState extends AbstractState {
 
   private readonly tagsCountsState: TagsCountsState
 
-  constructor(application: WebApplication, appEventListeners: (() => void)[], private features: FeaturesState) {
+  constructor(
+    application: WebApplication,
+    override appState: AppState,
+    appEventListeners: (() => void)[],
+    private features: FeaturesState,
+  ) {
     super(application)
 
     this.tagsCountsState = new TagsCountsState(this.application)
@@ -211,10 +219,18 @@ export class TagsState extends AbstractState {
     this.application.sync.sync().catch(console.error)
 
     runInAction(() => {
-      this.selected = createdTag as SNTag
+      void this.setSelectedTag(createdTag as SNTag)
     })
 
     this.setAddingSubtagTo(undefined)
+  }
+
+  public isInSmartView(): boolean {
+    return this.selected instanceof SmartView
+  }
+
+  public isInHomeView(): boolean {
+    return this.selected instanceof SmartView && this.selected.uuid === SystemViewId.AllNotes
   }
 
   setAddingSubtagTo(tag: SNTag | undefined): void {
@@ -368,7 +384,7 @@ export class TagsState extends AbstractState {
     return this.selected_
   }
 
-  public set selected(tag: AnyTag | undefined) {
+  public async setSelectedTag(tag: AnyTag | undefined) {
     if (tag && tag.conflictOf) {
       this.application.mutator
         .changeAndSaveItem(tag, (mutator) => {
@@ -386,6 +402,23 @@ export class TagsState extends AbstractState {
     this.previouslySelected_ = this.selected_
 
     this.setSelectedTagInstance(tag)
+
+    if (tag && this.application.items.isTemplateItem(tag)) {
+      return
+    }
+
+    await this.appState.notifyEvent(AppStateEvent.TagChanged, {
+      tag,
+      previousTag: this.previouslySelected_,
+    })
+  }
+
+  public async selectHomeNavigationView(): Promise<void> {
+    await this.setSelectedTag(this.homeNavigationView)
+  }
+
+  get homeNavigationView(): SmartView {
+    return this.smartViews[0]
   }
 
   private setSelectedTagInstance(tag: AnyTag | undefined): void {
@@ -410,7 +443,7 @@ export class TagsState extends AbstractState {
 
   public set editingTag(editingTag: SNTag | SmartView | undefined) {
     this.editing_ = editingTag
-    this.selected = editingTag
+    void this.setSelectedTag(editingTag)
   }
 
   public createNewTemplate() {
@@ -430,7 +463,7 @@ export class TagsState extends AbstractState {
   public undoCreateNewTag() {
     this.editing_ = undefined
     const previousTag = this.previouslySelected_ || this.smartViews[0]
-    this.selected = previousTag
+    void this.setSelectedTag(previousTag)
   }
 
   public async remove(tag: SNTag | SmartView, userTriggered: boolean) {
@@ -443,7 +476,7 @@ export class TagsState extends AbstractState {
     }
     if (shouldDelete) {
       this.application.mutator.deleteItem(tag).catch(console.error)
-      this.selected = this.smartViews[0]
+      await this.setSelectedTag(this.smartViews[0])
     }
   }
 
@@ -487,7 +520,7 @@ export class TagsState extends AbstractState {
       const insertedTag = await this.application.mutator.createTagOrSmartView(newTitle)
       this.application.sync.sync().catch(console.error)
       runInAction(() => {
-        this.selected = insertedTag as SNTag
+        void this.setSelectedTag(insertedTag as SNTag)
       })
     } else {
       await this.application.mutator.changeAndSaveItem<TagMutator>(tag, (mutator) => {
@@ -508,12 +541,12 @@ export class TagsState extends AbstractState {
         const matchingTag = this.application.items.findItem(item.uuid)
 
         if (matchingTag) {
-          this.selected = matchingTag as AnyTag
+          void this.setSelectedTag(matchingTag as AnyTag)
           return
         }
       }
     } else if (action === ComponentAction.ClearSelection) {
-      this.selected = this.smartViews[0]
+      void this.setSelectedTag(this.smartViews[0])
     }
   }
 

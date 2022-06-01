@@ -120,7 +120,7 @@ export class NotesState extends AbstractState {
 
     await this.application.noteControllerGroup.createNoteController(noteUuid)
 
-    this.appState.noteTags.reloadTags()
+    this.appState.noteTags.reloadTagsForCurrentNote()
 
     await this.onActiveEditorChanged()
   }

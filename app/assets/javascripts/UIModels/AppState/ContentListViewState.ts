@@ -380,6 +380,10 @@ export class ContentListViewState extends AbstractState {
   createNewNote = async () => {
     this.appState.notes.unselectNotes()
 
+    if (this.appState.tags.isInSmartView() && !this.appState.tags.isInHomeView()) {
+      await this.appState.tags.selectHomeNavigationView()
+    }
+
     let title = `Note ${this.notes.length + 1}`
     if (this.isFiltering) {
       title = this.noteFilterText
@@ -387,12 +391,11 @@ export class ContentListViewState extends AbstractState {
 
     await this.appState.notes.createNewNoteController(title)
 
-    this.appState.noteTags.reloadTags()
+    this.appState.noteTags.reloadTagsForCurrentNote()
   }
 
   createPlaceholderNote = () => {
-    const selectedTag = this.appState.tags.selected
-    if (selectedTag && selectedTag instanceof SmartView && selectedTag.uuid !== SystemViewId.AllNotes) {
+    if (this.appState.tags.isInSmartView() && !this.appState.tags.isInHomeView()) {
       return
     }
 
