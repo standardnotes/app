@@ -4,9 +4,11 @@ import { WebApplication } from '@/UIModels/Application'
 import MultipleSelectedNotes from '@/Components/MultipleSelectedNotes/MultipleSelectedNotes'
 import NoteView from '@/Components/NoteView/NoteView'
 import { ElementIds } from '@/ElementIDs'
+import MultipleSelectedFiles from '../MultipleSelectedFiles/MultipleSelectedFiles'
 
 type State = {
   showMultipleSelectedNotes: boolean
+  showMultipleSelectedFiles: boolean
   controllers: NoteViewController[]
 }
 
@@ -21,6 +23,7 @@ class NoteGroupView extends PureComponent<Props, State> {
     super(props, props.application)
     this.state = {
       showMultipleSelectedNotes: false,
+      showMultipleSelectedFiles: false,
       controllers: [],
     }
   }
@@ -37,9 +40,19 @@ class NoteGroupView extends PureComponent<Props, State> {
     })
 
     this.autorun(() => {
-      if (this.appState && this.appState.notes) {
+      if (!this.appState) {
+        return
+      }
+
+      if (this.appState.notes) {
         this.setState({
           showMultipleSelectedNotes: this.appState.notes.selectedNotesCount > 1,
+        })
+      }
+
+      if (this.appState.files) {
+        this.setState({
+          showMultipleSelectedFiles: this.appState.files.selectedFilesCount > 1,
         })
       }
     })
@@ -58,6 +71,8 @@ class NoteGroupView extends PureComponent<Props, State> {
         {this.state.showMultipleSelectedNotes && (
           <MultipleSelectedNotes application={this.application} appState={this.appState} />
         )}
+
+        {this.state.showMultipleSelectedFiles && <MultipleSelectedFiles appState={this.appState} />}
 
         {!this.state.showMultipleSelectedNotes && (
           <>
