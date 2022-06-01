@@ -1,15 +1,15 @@
 import Icon from '@/Components/Icon/Icon'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
-import { FeaturesState } from '@/UIModels/AppState/FeaturesState'
-import { TagsState } from '@/UIModels/AppState/TagsState'
+import { FeaturesController } from '@/Controllers/FeaturesController'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
 import { useDrop } from 'react-dnd'
 import { DropItem, DropProps, ItemTypes } from './DragNDrop'
 
 type Props = {
-  tagsState: TagsState
-  featuresState: FeaturesState
+  tagsState: NavigationController
+  featuresState: FeaturesController
 }
 
 const RootTagDropZone: FunctionComponent<Props> = ({ tagsState }) => {

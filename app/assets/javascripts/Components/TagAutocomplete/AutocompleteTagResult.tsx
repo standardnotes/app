@@ -1,4 +1,4 @@
-import { AppState } from '@/UIModels/AppState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { splitQueryInString } from '@/Utils/StringUtils'
 import { SNTag } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
@@ -6,43 +6,43 @@ import { FocusEventHandler, KeyboardEventHandler, useEffect, useRef } from 'reac
 import Icon from '@/Components/Icon/Icon'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   tagResult: SNTag
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
 }
 
-const AutocompleteTagResult = ({ appState, tagResult, closeOnBlur }: Props) => {
+const AutocompleteTagResult = ({ viewControllerManager, tagResult, closeOnBlur }: Props) => {
   const { autocompleteSearchQuery, autocompleteTagHintVisible, autocompleteTagResults, focusedTagResultUuid } =
-    appState.noteTags
+    viewControllerManager.noteTagsController
 
   const tagResultRef = useRef<HTMLButtonElement>(null)
 
   const title = tagResult.title
-  const prefixTitle = appState.noteTags.getPrefixTitle(tagResult)
+  const prefixTitle = viewControllerManager.noteTagsController.getPrefixTitle(tagResult)
 
   const onTagOptionClick = async (tag: SNTag) => {
-    await appState.noteTags.addTagToActiveNote(tag)
-    appState.noteTags.clearAutocompleteSearch()
-    appState.noteTags.setAutocompleteInputFocused(true)
+    await viewControllerManager.noteTagsController.addTagToActiveNote(tag)
+    viewControllerManager.noteTagsController.clearAutocompleteSearch()
+    viewControllerManager.noteTagsController.setAutocompleteInputFocused(true)
   }
 
   const onKeyDown: KeyboardEventHandler = (event) => {
-    const tagResultIndex = appState.noteTags.getTagIndex(tagResult, autocompleteTagResults)
+    const tagResultIndex = viewControllerManager.noteTagsController.getTagIndex(tagResult, autocompleteTagResults)
     switch (event.key) {
       case 'ArrowUp':
         event.preventDefault()
         if (tagResultIndex === 0) {
-          appState.noteTags.setAutocompleteInputFocused(true)
+          viewControllerManager.noteTagsController.setAutocompleteInputFocused(true)
         } else {
-          appState.noteTags.focusPreviousTagResult(tagResult)
+          viewControllerManager.noteTagsController.focusPreviousTagResult(tagResult)
         }
         break
       case 'ArrowDown':
         event.preventDefault()
         if (tagResultIndex === autocompleteTagResults.length - 1 && autocompleteTagHintVisible) {
-          appState.noteTags.setAutocompleteTagHintFocused(true)
+          viewControllerManager.noteTagsController.setAutocompleteTagHintFocused(true)
         } else {
-          appState.noteTags.focusNextTagResult(tagResult)
+          viewControllerManager.noteTagsController.focusNextTagResult(tagResult)
         }
         break
       default:
@@ -51,20 +51,20 @@ const AutocompleteTagResult = ({ appState, tagResult, closeOnBlur }: Props) => {
   }
 
   const onFocus = () => {
-    appState.noteTags.setFocusedTagResultUuid(tagResult.uuid)
+    viewControllerManager.noteTagsController.setFocusedTagResultUuid(tagResult.uuid)
   }
 
   const onBlur: FocusEventHandler = (event) => {
     closeOnBlur(event)
-    appState.noteTags.setFocusedTagResultUuid(undefined)
+    viewControllerManager.noteTagsController.setFocusedTagResultUuid(undefined)
   }
 
   useEffect(() => {
     if (focusedTagResultUuid === tagResult.uuid) {
       tagResultRef.current?.focus()
-      appState.noteTags.setFocusedTagResultUuid(undefined)
+      viewControllerManager.noteTagsController.setFocusedTagResultUuid(undefined)
     }
-  }, [appState, focusedTagResultUuid, tagResult])
+  }, [viewControllerManager, focusedTagResultUuid, tagResult])
 
   return (
     <button

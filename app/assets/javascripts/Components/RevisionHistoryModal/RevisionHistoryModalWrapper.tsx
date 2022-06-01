@@ -1,7 +1,7 @@
 import { confirmDialog } from '@/Services/AlertService'
-import { STRING_RESTORE_LOCKED_ATTEMPT } from '@/Strings'
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
+import { STRING_RESTORE_LOCKED_ATTEMPT } from '@/Constants/Strings'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { getPlatformString } from '@/Utils'
 import { DialogContent, DialogOverlay } from '@reach/dialog'
 import {
@@ -22,7 +22,7 @@ import { LegacyHistoryEntry, RemoteRevisionListGroup, sortRevisionListIntoGroups
 
 type RevisionHistoryModalProps = {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
 }
 
 const ABSOLUTE_CENTER_CLASSNAME = 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
@@ -53,14 +53,14 @@ const RevisionContentPlaceholder: FunctionComponent<RevisionContentPlaceholderPr
 )
 
 export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = observer(
-  ({ application, appState }) => {
+  ({ application, viewControllerManager }) => {
     const closeButtonRef = useRef<HTMLButtonElement>(null)
 
     const dismissModal = useCallback(() => {
-      appState.notes.setShowRevisionHistoryModal(false)
-    }, [appState.notes])
+      viewControllerManager.notesController.setShowRevisionHistoryModal(false)
+    }, [viewControllerManager.notesController])
 
-    const note = appState.notes.firstSelectedNote
+    const note = viewControllerManager.notesController.firstSelectedNote
     const editorForCurrentNote = useMemo(() => {
       if (note) {
         return application.componentManager.editorForNote(note)
@@ -146,11 +146,17 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
             : undefined,
         })
 
-        appState.selectedItems.selectItem(duplicatedItem.uuid).catch(console.error)
+        viewControllerManager.selectionController.selectItem(duplicatedItem.uuid).catch(console.error)
 
         dismissModal()
       }
-    }, [appState.selectedItems, application.items, application.mutator, dismissModal, selectedRevision])
+    }, [
+      viewControllerManager.selectionController,
+      application.items,
+      application.mutator,
+      dismissModal,
+      selectedRevision,
+    ])
 
     useEffect(() => {
       const fetchTemplateNote = async () => {
@@ -241,11 +247,13 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
                   isFetchingSelectedRevision={isFetchingSelectedRevision}
                   showContentLockedScreen={showContentLockedScreen}
                 />
-                {showContentLockedScreen && !selectedRevision && <RevisionContentLocked appState={appState} />}
+                {showContentLockedScreen && !selectedRevision && (
+                  <RevisionContentLocked viewControllerManager={viewControllerManager} />
+                )}
                 {selectedRevision && templateNoteForRevision && (
                   <SelectedRevisionContent
                     application={application}
-                    appState={appState}
+                    viewControllerManager={viewControllerManager}
                     selectedRevision={selectedRevision}
                     editorForCurrentNote={editorForCurrentNote}
                     templateNoteForRevision={templateNoteForRevision}
@@ -293,12 +301,15 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
 
 RevisionHistoryModal.displayName = 'RevisionHistoryModal'
 
-const RevisionHistoryModalWrapper: FunctionComponent<RevisionHistoryModalProps> = ({ application, appState }) => {
-  if (!appState.notes.showRevisionHistoryModal) {
+const RevisionHistoryModalWrapper: FunctionComponent<RevisionHistoryModalProps> = ({
+  application,
+  viewControllerManager,
+}) => {
+  if (!viewControllerManager.notesController.showRevisionHistoryModal) {
     return null
   }
 
-  return <RevisionHistoryModal application={application} appState={appState} />
+  return <RevisionHistoryModal application={application} viewControllerManager={viewControllerManager} />
 }
 
 export default observer(RevisionHistoryModalWrapper)

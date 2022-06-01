@@ -1,31 +1,31 @@
 import { FunctionComponent, useEffect, useRef, useState } from 'react'
 import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
-import { STRING_SIGN_OUT_CONFIRMATION } from '@/Strings'
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
+import { STRING_SIGN_OUT_CONFIRMATION } from '@/Constants/Strings'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
-import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
+import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { isDesktopApplication } from '@/Utils'
 
 type Props = {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   applicationGroup: ApplicationGroup
 }
 
-const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, appState, applicationGroup }) => {
+const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewControllerManager, applicationGroup }) => {
   const [deleteLocalBackups, setDeleteLocalBackups] = useState(false)
 
   const cancelRef = useRef<HTMLButtonElement>(null)
   function closeDialog() {
-    appState.accountMenu.setSigningOut(false)
+    viewControllerManager.accountMenuController.setSigningOut(false)
   }
 
   const [localBackupsCount, setLocalBackupsCount] = useState(0)
 
   useEffect(() => {
     application.desktopDevice?.localBackupsCount().then(setLocalBackupsCount).catch(console.error)
-  }, [appState.accountMenu.signingOut, application.desktopDevice])
+  }, [viewControllerManager.accountMenuController.signingOut, application.desktopDevice])
 
   const workspaces = applicationGroup.getDescriptors()
   const showWorkspaceWarning = workspaces.length > 1 && isDesktopApplication()
@@ -112,7 +112,7 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, appState, 
 ConfirmSignoutModal.displayName = 'ConfirmSignoutModal'
 
 const ConfirmSignoutContainer = (props: Props) => {
-  if (!props.appState.accountMenu.signingOut) {
+  if (!props.viewControllerManager.accountMenuController.signingOut) {
     return null
   }
   return <ConfirmSignoutModal {...props} />

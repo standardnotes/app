@@ -1,27 +1,29 @@
-import { AppState } from '@/UIModels/AppState'
 import { IlNotesIcon } from '@standardnotes/icons'
 import { observer } from 'mobx-react-lite'
 import Button from '../Button/Button'
 import { useCallback } from 'react'
 import FileOptionsPanel from '../FileContextMenu/FileOptionsPanel'
+import { FilesController } from '@/Controllers/FilesController'
+import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 
 type Props = {
-  appState: AppState
+  filesController: FilesController
+  selectionController: SelectedItemsController
 }
 
-const MultipleSelectedFiles = ({ appState }: Props) => {
-  const count = appState.files.selectedFilesCount
+const MultipleSelectedFiles = ({ filesController, selectionController }: Props) => {
+  const count = filesController.selectedFilesCount
 
   const cancelMultipleSelection = useCallback(() => {
-    appState.selectedItems.cancelMultipleSelection()
-  }, [appState])
+    selectionController.cancelMultipleSelection()
+  }, [selectionController])
 
   return (
     <div className="flex flex-col h-full items-center">
       <div className="flex items-center justify-between p-4 w-full">
         <h1 className="sk-h1 font-bold m-0">{count} selected files</h1>
         <div className="flex">
-          <FileOptionsPanel appState={appState} />
+          <FileOptionsPanel filesController={filesController} />
         </div>
       </div>
       <div className="flex-grow flex flex-col justify-center items-center w-full max-w-md">

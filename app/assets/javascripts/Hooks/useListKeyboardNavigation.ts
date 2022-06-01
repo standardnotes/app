@@ -1,5 +1,5 @@
 import { KeyboardKey } from '@/Services/IOService'
-import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { useCallback, useState, useEffect, RefObject } from 'react'
 
 export const useListKeyboardNavigation = (container: RefObject<HTMLElement | null>, initialFocus = 0) => {

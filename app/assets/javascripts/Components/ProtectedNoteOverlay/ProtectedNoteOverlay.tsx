@@ -1,12 +1,12 @@
-import { AppState } from '@/UIModels/AppState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   onViewNote: () => void
   hasProtectionSources: boolean
 }
 
-const ProtectedNoteOverlay = ({ appState, onViewNote, hasProtectionSources }: Props) => {
+const ProtectedNoteOverlay = ({ viewControllerManager, onViewNote, hasProtectionSources }: Props) => {
   const instructionText = hasProtectionSources
     ? 'Authenticate to view this note.'
     : 'Add a passcode or create an account to require authentication to view this note.'
@@ -20,7 +20,7 @@ const ProtectedNoteOverlay = ({ appState, onViewNote, hasProtectionSources }: Pr
           <button
             className="sn-button small info"
             onClick={() => {
-              appState.accountMenu.setShow(true)
+              viewControllerManager.accountMenuController.setShow(true)
             }}
           >
             Open account menu

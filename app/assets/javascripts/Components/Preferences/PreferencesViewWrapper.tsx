@@ -3,16 +3,19 @@ import { observer } from 'mobx-react-lite'
 import PreferencesView from './PreferencesView'
 import { PreferencesViewWrapperProps } from './PreferencesViewWrapperProps'
 
-const PreferencesViewWrapper: FunctionComponent<PreferencesViewWrapperProps> = ({ appState, application }) => {
-  if (!appState.preferences?.isOpen) {
+const PreferencesViewWrapper: FunctionComponent<PreferencesViewWrapperProps> = ({
+  viewControllerManager,
+  application,
+}) => {
+  if (!viewControllerManager.preferencesController?.isOpen) {
     return null
   }
 
   return (
     <PreferencesView
-      closePreferences={() => appState.preferences.closePreferences()}
+      closePreferences={() => viewControllerManager.preferencesController.closePreferences()}
       application={application}
-      appState={appState}
+      viewControllerManager={viewControllerManager}
       mfaProvider={application}
       userProvider={application}
     />

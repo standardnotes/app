@@ -1,6 +1,6 @@
-import { STRING_NON_MATCHING_PASSWORDS } from '@/Strings'
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
+import { STRING_NON_MATCHING_PASSWORDS } from '@/Constants/Strings'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, KeyboardEventHandler, useCallback, useEffect, useRef, useState } from 'react'
 import { AccountMenuPane } from './AccountMenuPane'
@@ -11,15 +11,21 @@ import Icon from '@/Components/Icon/Icon'
 import IconButton from '@/Components/Button/IconButton'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   application: WebApplication
   setMenuPane: (pane: AccountMenuPane) => void
   email: string
   password: string
 }
 
-const ConfirmPassword: FunctionComponent<Props> = ({ application, appState, setMenuPane, email, password }) => {
-  const { notesAndTagsCount } = appState.accountMenu
+const ConfirmPassword: FunctionComponent<Props> = ({
+  application,
+  viewControllerManager,
+  setMenuPane,
+  email,
+  password,
+}) => {
+  const { notesAndTagsCount } = viewControllerManager.accountMenuController
   const [confirmPassword, setConfirmPassword] = useState('')
   const [isRegistering, setIsRegistering] = useState(false)
   const [isEphemeral, setIsEphemeral] = useState(false)
@@ -61,8 +67,8 @@ const ConfirmPassword: FunctionComponent<Props> = ({ application, appState, setM
             if (res.error) {
               throw new Error(res.error.message)
             }
-            appState.accountMenu.closeAccountMenu()
-            appState.accountMenu.setCurrentPane(AccountMenuPane.GeneralMenu)
+            viewControllerManager.accountMenuController.closeAccountMenu()
+            viewControllerManager.accountMenuController.setCurrentPane(AccountMenuPane.GeneralMenu)
           })
           .catch((err) => {
             console.error(err)
@@ -77,7 +83,7 @@ const ConfirmPassword: FunctionComponent<Props> = ({ application, appState, setM
         passwordInputRef.current?.focus()
       }
     },
-    [appState, application, confirmPassword, email, isEphemeral, password, shouldMergeLocal],
+    [viewControllerManager, application, confirmPassword, email, isEphemeral, password, shouldMergeLocal],
   )
 
   const handleKeyDown: KeyboardEventHandler = useCallback(

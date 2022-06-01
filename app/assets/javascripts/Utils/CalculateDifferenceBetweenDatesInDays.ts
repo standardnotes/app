@@ -1,4 +1,4 @@
-import { MILLISECONDS_IN_A_DAY } from '@/Constants'
+import { MILLISECONDS_IN_A_DAY } from '@/Constants/Constants'
 
 export const calculateDifferenceBetweenDatesInDays = (firstDate: Date, secondDate: Date) => {
   const firstDateAsUTCMilliseconds = Date.UTC(firstDate.getFullYear(), firstDate.getMonth(), firstDate.getDate())

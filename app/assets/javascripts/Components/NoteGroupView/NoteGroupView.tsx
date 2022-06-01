@@ -1,10 +1,10 @@
 import { NoteViewController } from '@standardnotes/snjs'
 import { PureComponent } from '@/Components/Abstract/PureComponent'
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import MultipleSelectedNotes from '@/Components/MultipleSelectedNotes/MultipleSelectedNotes'
 import NoteView from '@/Components/NoteView/NoteView'
-import { ElementIds } from '@/ElementIDs'
 import MultipleSelectedFiles from '../MultipleSelectedFiles/MultipleSelectedFiles'
+import { ElementIds } from '@/Constants/ElementIDs'
 
 type State = {
   showMultipleSelectedNotes: boolean
@@ -40,19 +40,19 @@ class NoteGroupView extends PureComponent<Props, State> {
     })
 
     this.autorun(() => {
-      if (!this.appState) {
+      if (!this.viewControllerManager) {
         return
       }
 
-      if (this.appState.notes) {
+      if (this.viewControllerManager && this.viewControllerManager.notesController) {
         this.setState({
-          showMultipleSelectedNotes: this.appState.notes.selectedNotesCount > 1,
+          showMultipleSelectedNotes: this.viewControllerManager.notesController.selectedNotesCount > 1,
         })
       }
 
-      if (this.appState.files) {
+      if (this.viewControllerManager.filesController) {
         this.setState({
-          showMultipleSelectedFiles: this.appState.files.selectedFilesCount > 1,
+          showMultipleSelectedFiles: this.viewControllerManager.filesController.selectedFilesCount > 1,
         })
       }
     })
@@ -69,10 +69,15 @@ class NoteGroupView extends PureComponent<Props, State> {
     return (
       <div id={ElementIds.EditorColumn} className="h-full app-column app-column-third">
         {this.state.showMultipleSelectedNotes && (
-          <MultipleSelectedNotes application={this.application} appState={this.appState} />
+          <MultipleSelectedNotes application={this.application} viewControllerManager={this.viewControllerManager} />
         )}
 
-        {this.state.showMultipleSelectedFiles && <MultipleSelectedFiles appState={this.appState} />}
+        {this.state.showMultipleSelectedFiles && (
+          <MultipleSelectedFiles
+            filesController={this.viewControllerManager.filesController}
+            selectionController={this.viewControllerManager.selectionController}
+          />
+        )}
 
         {!this.state.showMultipleSelectedNotes && (
           <>

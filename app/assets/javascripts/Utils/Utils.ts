@@ -1,6 +1,6 @@
 import { Platform, platformFromString } from '@standardnotes/snjs'
-import { IsDesktopPlatform, IsWebPlatform } from '@/Version'
-import { EMAIL_REGEX } from '../Constants'
+import { IsDesktopPlatform, IsWebPlatform } from '@/Constants/Version'
+import { EMAIL_REGEX } from '../Constants/Constants'
 export { isMobile } from './IsMobile'
 
 declare const process: {

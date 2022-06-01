@@ -1,6 +1,6 @@
 import CloudBackupProvider from './CloudBackupProvider'
 import { useCallback, useEffect, useState, FunctionComponent, Fragment } from 'react'
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import {
@@ -13,7 +13,7 @@ import {
 
 import Switch from '@/Components/Switch/Switch'
 import { convertStringifiedBooleanToBoolean } from '@/Utils'
-import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/Strings'
+import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/Constants/Strings'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 

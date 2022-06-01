@@ -1,7 +1,7 @@
 import { ButtonType, ContentType, SNComponent } from '@standardnotes/snjs'
 import Button from '@/Components/Button/Button'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import { FunctionComponent, useEffect, useRef, useState } from 'react'
 import { Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { observer } from 'mobx-react-lite'

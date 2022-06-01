@@ -1,17 +1,17 @@
-import { MAX_MENU_SIZE_MULTIPLIER, MENU_MARGIN_FROM_APP_BORDER } from '@/Constants'
+import { MAX_MENU_SIZE_MULTIPLIER, MENU_MARGIN_FROM_APP_BORDER } from '@/Constants/Constants'
+import { FilesController } from '@/Controllers/FilesController'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
-import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import FileMenuOptions from './FileMenuOptions'
 
 type Props = {
-  appState: AppState
+  filesController: FilesController
 }
 
-const FileContextMenu: FunctionComponent<Props> = observer(({ appState }) => {
-  const { showFileContextMenu, setShowFileContextMenu, fileContextMenuLocation } = appState.files
+const FileContextMenu: FunctionComponent<Props> = observer(({ filesController }) => {
+  const { showFileContextMenu, setShowFileContextMenu, fileContextMenuLocation } = filesController
 
   const [contextMenuStyle, setContextMenuStyle] = useState<React.CSSProperties>({
     top: 0,
@@ -21,7 +21,7 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ appState }) => {
   const [contextMenuMaxHeight, setContextMenuMaxHeight] = useState<number | 'auto'>('auto')
   const contextMenuRef = useRef<HTMLDivElement>(null)
   const [closeOnBlur] = useCloseOnBlur(contextMenuRef, (open: boolean) => setShowFileContextMenu(open))
-  useCloseOnClickOutside(contextMenuRef, () => appState.files.setShowFileContextMenu(false))
+  useCloseOnClickOutside(contextMenuRef, () => filesController.setShowFileContextMenu(false))
 
   const reloadContextMenuLayout = useCallback(() => {
     const { clientHeight } = document.documentElement
@@ -91,7 +91,7 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ appState }) => {
       }}
     >
       <FileMenuOptions
-        appState={appState}
+        filesController={filesController}
         closeOnBlur={closeOnBlur}
         closeMenu={() => setShowFileContextMenu(false)}
         shouldShowRenameOption={false}
@@ -103,8 +103,8 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ appState }) => {
 
 FileContextMenu.displayName = 'FileContextMenu'
 
-const FileContextMenuWrapper: FunctionComponent<Props> = ({ appState }) => {
-  const { selectedFiles, showFileContextMenu } = appState.files
+const FileContextMenuWrapper: FunctionComponent<Props> = ({ filesController }) => {
+  const { selectedFiles, showFileContextMenu } = filesController
 
   const selectedFile = selectedFiles[0]
 
@@ -112,7 +112,7 @@ const FileContextMenuWrapper: FunctionComponent<Props> = ({ appState }) => {
     return null
   }
 
-  return <FileContextMenu appState={appState} />
+  return <FileContextMenu filesController={filesController} />
 }
 
 export default observer(FileContextMenuWrapper)

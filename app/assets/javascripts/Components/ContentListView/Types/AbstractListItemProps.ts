@@ -1,11 +1,11 @@
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { SortableItem } from '@standardnotes/snjs'
 import { ListableContentItem } from './ListableContentItem'
 
 export type AbstractListItemProps = {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   hideDate: boolean
   hideIcon: boolean
   hideTags: boolean

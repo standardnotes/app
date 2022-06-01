@@ -1,4 +1,4 @@
-import { PLAIN_EDITOR_NAME } from '@/Constants'
+import { PLAIN_EDITOR_NAME } from '@/Constants/Constants'
 import { sanitizeHtmlString, SNNote } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
@@ -11,7 +11,7 @@ import { DisplayableListItemProps } from './Types/DisplayableListItemProps'
 
 const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
   application,
-  appState,
+  viewControllerManager,
   hideDate,
   hideIcon,
   hideTags,
@@ -27,16 +27,16 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
   const hasFiles = application.items.getFilesForNote(item as SNNote).length > 0
 
   const openNoteContextMenu = (posX: number, posY: number) => {
-    appState.notes.setContextMenuClickLocation({
+    viewControllerManager.notesController.setContextMenuClickLocation({
       x: posX,
       y: posY,
     })
-    appState.notes.reloadContextMenuLayout()
-    appState.notes.setContextMenuOpen(true)
+    viewControllerManager.notesController.reloadContextMenuLayout()
+    viewControllerManager.notesController.setContextMenuOpen(true)
   }
 
   const openContextMenu = async (posX: number, posY: number) => {
-    const { didSelect } = await appState.selectedItems.selectItem(item.uuid, true)
+    const { didSelect } = await viewControllerManager.selectionController.selectItem(item.uuid, true)
     if (didSelect) {
       openNoteContextMenu(posX, posY)
     }
@@ -49,7 +49,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
       }`}
       id={item.uuid}
       onClick={() => {
-        void appState.selectedItems.selectItem(item.uuid, true)
+        void viewControllerManager.selectionController.selectItem(item.uuid, true)
       }}
       onContextMenu={(event) => {
         event.preventDefault()

@@ -1,4 +1,4 @@
-import { AppState } from '@/UIModels/AppState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import Icon from '@/Components/Icon/Icon'
 import VisuallyHidden from '@reach/visually-hidden'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
@@ -6,16 +6,16 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure
 import { useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import NotesOptions from './NotesOptions'
-import { WebApplication } from '@/UIModels/Application'
-import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
+import { WebApplication } from '@/Application/Application'
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 
 type Props = {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   onClickPreprocessing?: () => Promise<void>
 }
 
-const NotesOptionsPanel = ({ application, appState, onClickPreprocessing }: Props) => {
+const NotesOptionsPanel = ({ application, viewControllerManager, onClickPreprocessing }: Props) => {
   const [open, setOpen] = useState(false)
   const [position, setPosition] = useState({
     top: 0,
@@ -79,7 +79,13 @@ const NotesOptionsPanel = ({ application, appState, onClickPreprocessing }: Prop
         onBlur={closeOnBlur}
         tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
       >
-        {open && <NotesOptions application={application} appState={appState} closeOnBlur={closeOnBlur} />}
+        {open && (
+          <NotesOptions
+            application={application}
+            viewControllerManager={viewControllerManager}
+            closeOnBlur={closeOnBlur}
+          />
+        )}
       </DisclosurePanel>
     </Disclosure>
   )

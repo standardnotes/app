@@ -1,4 +1,4 @@
-import { AppState } from '@/UIModels/AppState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
 import { HistoryLockedIllustration } from '@standardnotes/icons'
@@ -20,11 +20,12 @@ const getPremiumContentCopy = (planName: string | undefined) => {
 }
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
 }
 
-const RevisionContentLocked: FunctionComponent<Props> = ({ appState }) => {
-  const { userSubscriptionName, isUserSubscriptionExpired, isUserSubscriptionCanceled } = appState.subscription
+const RevisionContentLocked: FunctionComponent<Props> = ({ viewControllerManager }) => {
+  const { userSubscriptionName, isUserSubscriptionExpired, isUserSubscriptionCanceled } =
+    viewControllerManager.subscriptionController
 
   return (
     <div className="flex w-full h-full items-center justify-center">

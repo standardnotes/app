@@ -1,16 +1,16 @@
-import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
 import { FunctionComponent, useCallback, useMemo } from 'react'
 import { PopoverFileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
+import { FileItem } from '@standardnotes/snjs'
 import Icon from '@/Components/Icon/Icon'
 import Switch from '@/Components/Switch/Switch'
-import { AppState } from '@/UIModels/AppState'
 import { observer } from 'mobx-react-lite'
-import { FileItem } from '@standardnotes/snjs/dist/@types'
+import { FilesController } from '@/Controllers/FilesController'
 
 type Props = {
   closeMenu: () => void
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
-  appState: AppState
+  filesController: FilesController
   isFileAttachedToNote?: boolean
   renameToggleCallback?: (isRenamingFile: boolean) => void
   shouldShowRenameOption: boolean
@@ -26,13 +26,13 @@ const matchesCondition = (condition: (file: FileItem) => boolean, files: FileIte
 const FileMenuOptions: FunctionComponent<Props> = ({
   closeMenu,
   closeOnBlur,
-  appState,
+  filesController,
   isFileAttachedToNote,
   renameToggleCallback,
   shouldShowRenameOption,
   shouldShowAttachOption,
 }) => {
-  const { selectedFiles, handleFileAction } = appState.files
+  const { selectedFiles, handleFileAction } = filesController
 
   const hasProtectedFiles = useMemo(() => matchesCondition((file) => file.protected, selectedFiles), [selectedFiles])
 
@@ -41,11 +41,11 @@ const FileMenuOptions: FunctionComponent<Props> = ({
       type: PopoverFileItemActionType.PreviewFile,
       payload: {
         file: selectedFiles[0],
-        otherFiles: selectedFiles.length > 1 ? selectedFiles : appState.files.allFiles,
+        otherFiles: selectedFiles.length > 1 ? selectedFiles : filesController.allFiles,
       },
     }).catch(console.error)
     closeMenu()
-  }, [appState.files.allFiles, closeMenu, handleFileAction, selectedFiles])
+  }, [closeMenu, filesController.allFiles, handleFileAction, selectedFiles])
 
   const onDetach = useCallback(() => {
     const file = selectedFiles[0]
@@ -90,7 +90,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
       <button
         className="sn-dropdown-item justify-between focus:bg-info-backdrop"
         onClick={() => {
-          appState.files.setProtectionForSelectedFiles(!hasProtectedFiles).catch(console.error)
+          filesController.setProtectionForSelectedFiles(!hasProtectedFiles).catch(console.error)
         }}
         onBlur={closeOnBlur}
       >
@@ -109,7 +109,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
         onBlur={closeOnBlur}
         className="sn-dropdown-item focus:bg-info-backdrop"
         onClick={() => {
-          appState.files.downloadSelectedFiles().catch(console.error)
+          filesController.downloadSelectedFiles().catch(console.error)
         }}
       >
         <Icon type="download" className="mr-2 color-neutral" />
@@ -131,7 +131,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
         onBlur={closeOnBlur}
         className="sn-dropdown-item focus:bg-info-backdrop"
         onClick={() => {
-          appState.files.deleteSelectedFilesPermanently().catch(console.error)
+          filesController.deleteSelectedFilesPermanently().catch(console.error)
         }}
       >
         <Icon type="trash" className="mr-2 color-danger" />

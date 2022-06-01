@@ -1,9 +1,9 @@
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import { MfaProps } from './Panes/TwoFactorAuth/MfaProps'
-import { AppState } from '@/UIModels/AppState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 
 export interface PreferencesProps extends MfaProps {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   closePreferences: () => void
 }

@@ -2,11 +2,11 @@ import Dropdown from '@/Components/Dropdown/Dropdown'
 import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
 import { FeatureIdentifier, PrefKey, ComponentArea, ComponentMutator, SNComponent } from '@standardnotes/snjs'
 import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import { FunctionComponent, useEffect, useState } from 'react'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Switch from '@/Components/Switch/Switch'
-import { PLAIN_EDITOR_NAME } from '@/Constants'
+import { PLAIN_EDITOR_NAME } from '@/Constants/Constants'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
@@ -57,7 +57,7 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
 
   const toggleSpellcheck = () => {
     setSpellcheck(!spellcheck)
-    application.getAppState().toggleGlobalSpellcheck().catch(console.error)
+    application.toggleGlobalSpellcheck().catch(console.error)
   }
 
   useEffect(() => {

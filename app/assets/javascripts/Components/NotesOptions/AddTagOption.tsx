@@ -1,4 +1,4 @@
-import { AppState } from '@/UIModels/AppState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { calculateSubmenuStyle, SubmenuStyle } from '@/Utils/CalculateSubmenuStyle'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { observer } from 'mobx-react-lite'
@@ -7,10 +7,10 @@ import Icon from '@/Components/Icon/Icon'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
 }
 
-const AddTagOption: FunctionComponent<Props> = ({ appState }) => {
+const AddTagOption: FunctionComponent<Props> = ({ viewControllerManager }) => {
   const menuContainerRef = useRef<HTMLDivElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
@@ -84,22 +84,22 @@ const AddTagOption: FunctionComponent<Props> = ({ appState }) => {
           }}
           className="sn-dropdown min-w-80 flex flex-col py-2 max-h-120 max-w-xs fixed overflow-y-auto"
         >
-          {appState.tags.tags.map((tag) => (
+          {viewControllerManager.navigationController.tags.map((tag) => (
             <button
               key={tag.uuid}
               className="sn-dropdown-item sn-dropdown-item--no-icon max-w-80"
               onBlur={closeOnBlur}
               onClick={() => {
-                appState.notes.isTagInSelectedNotes(tag)
-                  ? appState.notes.removeTagFromSelectedNotes(tag).catch(console.error)
-                  : appState.notes.addTagToSelectedNotes(tag).catch(console.error)
+                viewControllerManager.notesController.isTagInSelectedNotes(tag)
+                  ? viewControllerManager.notesController.removeTagFromSelectedNotes(tag).catch(console.error)
+                  : viewControllerManager.notesController.addTagToSelectedNotes(tag).catch(console.error)
               }}
             >
               <span
                 className={`whitespace-nowrap overflow-hidden overflow-ellipsis
-                      ${appState.notes.isTagInSelectedNotes(tag) ? 'font-bold' : ''}`}
+                      ${viewControllerManager.notesController.isTagInSelectedNotes(tag) ? 'font-bold' : ''}`}
               >
-                {appState.noteTags.getLongTitle(tag)}
+                {viewControllerManager.noteTagsController.getLongTitle(tag)}
               </span>
             </button>
           ))}

@@ -1,4 +1,4 @@
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import { ChangeEventHandler, createRef } from 'react'
 import { PureComponent } from '@/Components/Abstract/PureComponent'
 

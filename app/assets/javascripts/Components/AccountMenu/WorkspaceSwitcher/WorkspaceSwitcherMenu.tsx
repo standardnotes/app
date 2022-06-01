@@ -1,5 +1,5 @@
-import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
-import { AppState } from '@/UIModels/AppState'
+import { ApplicationGroup } from '@/Application/ApplicationGroup'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { ApplicationDescriptor, ApplicationGroupEvent, ButtonType } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
@@ -12,14 +12,14 @@ import WorkspaceMenuItem from './WorkspaceMenuItem'
 
 type Props = {
   mainApplicationGroup: ApplicationGroup
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   isOpen: boolean
   hideWorkspaceOptions?: boolean
 }
 
 const WorkspaceSwitcherMenu: FunctionComponent<Props> = ({
   mainApplicationGroup,
-  appState,
+  viewControllerManager,
   isOpen,
   hideWorkspaceOptions = false,
 }: Props) => {
@@ -42,7 +42,7 @@ const WorkspaceSwitcherMenu: FunctionComponent<Props> = ({
   }, [mainApplicationGroup])
 
   const signoutAll = useCallback(async () => {
-    const confirmed = await appState.application.alertService.confirm(
+    const confirmed = await viewControllerManager.application.alertService.confirm(
       'Are you sure you want to sign out of all workspaces on this device?',
       undefined,
       'Sign out all',
@@ -52,11 +52,11 @@ const WorkspaceSwitcherMenu: FunctionComponent<Props> = ({
       return
     }
     mainApplicationGroup.signOutAllWorkspaces().catch(console.error)
-  }, [mainApplicationGroup, appState])
+  }, [mainApplicationGroup, viewControllerManager])
 
   const destroyWorkspace = useCallback(() => {
-    appState.accountMenu.setSigningOut(true)
-  }, [appState])
+    viewControllerManager.accountMenuController.setSigningOut(true)
+  }, [viewControllerManager])
 
   return (
     <Menu a11yLabel="Workspace switcher menu" className="px-0 focus:shadow-none" isOpen={isOpen}>

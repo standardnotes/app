@@ -1,7 +1,7 @@
 import { KeyboardKey, KeyboardModifier } from '@/Services/IOService'
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
-import { PANEL_NAME_NOTES } from '@/Constants'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { PANEL_NAME_NOTES } from '@/Constants/Constants'
 import { PrefKey, SystemViewId } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import {
@@ -24,10 +24,10 @@ import ContentListOptionsMenu from './ContentListOptionsMenu'
 
 type Props = {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
 }
 
-const ContentListView: FunctionComponent<Props> = ({ application, appState }) => {
+const ContentListView: FunctionComponent<Props> = ({ application, viewControllerManager }) => {
   const itemsViewPanelRef = useRef<HTMLDivElement>(null)
   const displayOptionsMenuRef = useRef<HTMLDivElement>(null)
 
@@ -46,9 +46,9 @@ const ContentListView: FunctionComponent<Props> = ({ application, appState }) =>
     paginate,
     panelWidth,
     createNewNote,
-  } = appState.contentListView
+  } = viewControllerManager.itemListController
 
-  const { selectedItems } = appState.selectedItems
+  const { selectedItems } = viewControllerManager.selectionController
 
   const [showDisplayOptionsMenu, setShowDisplayOptionsMenu] = useState(false)
   const [focusedSearch, setFocusedSearch] = useState(false)
@@ -56,17 +56,17 @@ const ContentListView: FunctionComponent<Props> = ({ application, appState }) =>
   const [closeDisplayOptMenuOnBlur] = useCloseOnBlur(displayOptionsMenuRef, setShowDisplayOptionsMenu)
 
   const isFilesSmartView = useMemo(
-    () => appState.tags.selected?.uuid === SystemViewId.Files,
-    [appState.tags.selected?.uuid],
+    () => viewControllerManager.navigationController.selected?.uuid === SystemViewId.Files,
+    [viewControllerManager.navigationController.selected?.uuid],
   )
 
   const addNewItem = useCallback(() => {
     if (isFilesSmartView) {
-      void appState.files.uploadNewFile()
+      void viewControllerManager.filesController.uploadNewFile()
     } else {
       void createNewNote()
     }
-  }, [appState.files, createNewNote, isFilesSmartView])
+  }, [viewControllerManager.filesController, createNewNote, isFilesSmartView])
 
   useEffect(() => {
     /**
@@ -142,15 +142,15 @@ const ContentListView: FunctionComponent<Props> = ({ application, appState }) =>
   const panelResizeFinishCallback: ResizeFinishCallback = useCallback(
     (width, _lastLeft, _isMaxWidth, isCollapsed) => {
       application.setPreference(PrefKey.NotesPanelWidth, width).catch(console.error)
-      appState.noteTags.reloadTagsContainerMaxWidth()
-      appState.panelDidResize(PANEL_NAME_NOTES, isCollapsed)
+      viewControllerManager.noteTagsController.reloadTagsContainerMaxWidth()
+      application.publishPanelDidResizeEvent(PANEL_NAME_NOTES, isCollapsed)
     },
-    [appState, application],
+    [viewControllerManager, application],
   )
 
   const panelWidthEventCallback = useCallback(() => {
-    appState.noteTags.reloadTagsContainerMaxWidth()
-  }, [appState])
+    viewControllerManager.noteTagsController.reloadTagsContainerMaxWidth()
+  }, [viewControllerManager])
 
   const toggleDisplayOptionsMenu = useCallback(() => {
     setShowDisplayOptionsMenu(!showDisplayOptionsMenu)
@@ -208,11 +208,11 @@ const ContentListView: FunctionComponent<Props> = ({ application, appState }) =>
 
               {(focusedSearch || noteFilterText) && (
                 <div className="animate-fade-from-top">
-                  <SearchOptions application={application} appState={appState} />
+                  <SearchOptions application={application} viewControllerManager={viewControllerManager} />
                 </div>
               )}
             </div>
-            <NoAccountWarningWrapper appState={appState} />
+            <NoAccountWarningWrapper viewControllerManager={viewControllerManager} />
           </div>
           <div id="items-menu-bar" className="sn-component" ref={displayOptionsMenuRef}>
             <div className="sk-app-bar no-edges">
@@ -235,7 +235,7 @@ const ContentListView: FunctionComponent<Props> = ({ application, appState }) =>
                     {showDisplayOptionsMenu && (
                       <ContentListOptionsMenu
                         application={application}
-                        appState={appState}
+                        viewControllerManager={viewControllerManager}
                         closeDisplayOptionsMenu={toggleDisplayOptionsMenu}
                         closeOnBlur={closeDisplayOptMenuOnBlur}
                         isOpen={showDisplayOptionsMenu}
@@ -254,7 +254,7 @@ const ContentListView: FunctionComponent<Props> = ({ application, appState }) =>
             items={renderedItems}
             selectedItems={selectedItems}
             application={application}
-            appState={appState}
+            viewControllerManager={viewControllerManager}
             paginate={paginate}
           />
         ) : null}

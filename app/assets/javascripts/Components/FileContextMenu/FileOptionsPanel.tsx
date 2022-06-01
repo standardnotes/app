@@ -1,18 +1,18 @@
-import { AppState } from '@/UIModels/AppState'
 import Icon from '@/Components/Icon/Icon'
 import VisuallyHidden from '@reach/visually-hidden'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import FileMenuOptions from './FileMenuOptions'
+import { FilesController } from '@/Controllers/FilesController'
 
 type Props = {
-  appState: AppState
+  filesController: FilesController
 }
 
-const FilesOptionsPanel = ({ appState }: Props) => {
+const FilesOptionsPanel = ({ filesController }: Props) => {
   const [open, setOpen] = useState(false)
   const [position, setPosition] = useState({
     top: 0,
@@ -74,7 +74,7 @@ const FilesOptionsPanel = ({ appState }: Props) => {
       >
         {open && (
           <FileMenuOptions
-            appState={appState}
+            filesController={filesController}
             closeOnBlur={closeOnBlur}
             closeMenu={() => {
               setOpen(false)

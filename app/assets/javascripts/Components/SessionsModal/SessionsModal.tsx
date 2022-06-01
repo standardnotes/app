@@ -1,10 +1,10 @@
-import { AppState } from '@/UIModels/AppState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { SNApplication, SessionStrings, UuidString, isNullOrUndefined, RemoteSession } from '@standardnotes/snjs'
 import { FunctionComponent, useState, useEffect, useRef, useMemo } from 'react'
 import { Dialog } from '@reach/dialog'
 import { Alert } from '@reach/alert'
 import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import { observer } from 'mobx-react-lite'
 
 type Session = RemoteSession & {
@@ -74,10 +74,10 @@ function useSessions(
 }
 
 const SessionsModalContent: FunctionComponent<{
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   application: SNApplication
-}> = ({ appState, application }) => {
-  const close = () => appState.closeSessionsModal()
+}> = ({ viewControllerManager, application }) => {
+  const close = () => viewControllerManager.closeSessionsModal()
 
   const [sessions, refresh, refreshing, revokeSession, errorMessage] = useSessions(application)
 
@@ -202,11 +202,11 @@ const SessionsModalContent: FunctionComponent<{
 }
 
 const SessionsModal: FunctionComponent<{
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   application: WebApplication
-}> = ({ appState, application }) => {
-  if (appState.isSessionsModalVisible) {
-    return <SessionsModalContent application={application} appState={appState} />
+}> = ({ viewControllerManager, application }) => {
+  if (viewControllerManager.isSessionsModalVisible) {
+    return <SessionsModalContent application={application} viewControllerManager={viewControllerManager} />
   } else {
     return null
   }

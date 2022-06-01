@@ -1,5 +1,5 @@
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { FunctionComponent } from 'react'
 import TwoFactorAuthWrapper from '../TwoFactorAuth/TwoFactorAuthWrapper'
 import { MfaProps } from '../TwoFactorAuth/MfaProps'
@@ -11,17 +11,19 @@ import ErroredItems from './ErroredItems'
 import PreferencesPane from '@/Components/Preferences/PreferencesComponents/PreferencesPane'
 
 interface SecurityProps extends MfaProps {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   application: WebApplication
 }
 
 const Security: FunctionComponent<SecurityProps> = (props) => (
   <PreferencesPane>
-    <Encryption appState={props.appState} />
-    {props.application.items.invalidItems.length > 0 && <ErroredItems appState={props.appState} />}
+    <Encryption viewControllerManager={props.viewControllerManager} />
+    {props.application.items.invalidItems.length > 0 && (
+      <ErroredItems viewControllerManager={props.viewControllerManager} />
+    )}
     <Protections application={props.application} />
     <TwoFactorAuthWrapper mfaProvider={props.mfaProvider} userProvider={props.userProvider} />
-    <PasscodeLock appState={props.appState} application={props.application} />
+    <PasscodeLock viewControllerManager={props.viewControllerManager} application={props.application} />
     {props.application.getUser() && <Privacy application={props.application} />}
   </PreferencesPane>
 )

@@ -20,14 +20,14 @@ declare global {
   }
 }
 
-import { IsWebPlatform, WebAppVersion } from '@/Version'
+import { IsWebPlatform, WebAppVersion } from '@/Constants/Version'
 import { DesktopManagerInterface, SNLog } from '@standardnotes/snjs'
 import ApplicationGroupView from './Components/ApplicationGroupView/ApplicationGroupView'
-import { WebDevice } from './Device/WebDevice'
-import { StartApplication } from './Device/StartApplication'
-import { ApplicationGroup } from './UIModels/ApplicationGroup'
-import { WebOrDesktopDevice } from './Device/WebOrDesktopDevice'
-import { WebApplication } from './UIModels/Application'
+import { WebDevice } from './Application/Device/WebDevice'
+import { StartApplication } from './Application/Device/StartApplication'
+import { ApplicationGroup } from './Application/ApplicationGroup'
+import { WebOrDesktopDevice } from './Application/Device/WebOrDesktopDevice'
+import { WebApplication } from './Application/Application'
 import { createRoot, Root } from 'react-dom/client'
 
 let keyCount = 0

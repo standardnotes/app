@@ -1,5 +1,5 @@
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { HistoryEntry, SNComponent, SNNote } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useEffect, useMemo } from 'react'
@@ -10,7 +10,7 @@ const ABSOLUTE_CENTER_CLASSNAME = 'absolute top-1/2 left-1/2 -translate-x-1/2 -t
 
 type SelectedRevisionContentProps = {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   selectedRevision: HistoryEntry | LegacyHistoryEntry
   editorForCurrentNote: SNComponent | undefined
   templateNoteForRevision: SNNote
@@ -18,7 +18,7 @@ type SelectedRevisionContentProps = {
 
 const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentProps> = ({
   application,
-  appState,
+  viewControllerManager,
   selectedRevision,
   editorForCurrentNote,
   templateNoteForRevision,
@@ -68,7 +68,7 @@ const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentProps> =
             key={componentViewer.identifier}
             componentViewer={componentViewer}
             application={application}
-            appState={appState}
+            viewControllerManager={viewControllerManager}
           />
         </div>
       )}

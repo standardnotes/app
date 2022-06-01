@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import Authentication from './Authentication'
 import Credentials from './Credentials'
 import Sync from './Sync'
@@ -11,22 +11,24 @@ import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 
 type Props = {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
 }
 
-const AccountPreferences = ({ application, appState }: Props) => (
+const AccountPreferences = ({ application, viewControllerManager }: Props) => (
   <PreferencesPane>
     {!application.hasAccount() ? (
-      <Authentication application={application} appState={appState} />
+      <Authentication application={application} viewControllerManager={viewControllerManager} />
     ) : (
       <>
-        <Credentials application={application} appState={appState} />
+        <Credentials application={application} viewControllerManager={viewControllerManager} />
         <Sync application={application} />
       </>
     )}
-    <Subscription application={application} appState={appState} />
-    {application.hasAccount() && appState.features.hasFiles && <FilesSection application={application} />}
-    <SignOutWrapper application={application} appState={appState} />
+    <Subscription application={application} viewControllerManager={viewControllerManager} />
+    {application.hasAccount() && viewControllerManager.featuresController.hasFiles && (
+      <FilesSection application={application} />
+    )}
+    <SignOutWrapper application={application} viewControllerManager={viewControllerManager} />
   </PreferencesPane>
 )
 

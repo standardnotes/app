@@ -1,6 +1,5 @@
-import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
+import { WebApplication } from '@/Application/Application'
 import { FileItem } from '@standardnotes/snjs'
 import { FilesIllustration } from '@standardnotes/icons'
 import { observer } from 'mobx-react-lite'
@@ -10,10 +9,11 @@ import Icon from '@/Components/Icon/Icon'
 import PopoverFileItem from './PopoverFileItem'
 import { PopoverFileItemActionType } from './PopoverFileItemAction'
 import { PopoverTabs } from './PopoverTabs'
+import { FilesController } from '@/Controllers/FilesController'
 
 type Props = {
   application: WebApplication
-  appState: AppState
+  filesController: FilesController
   allFiles: FileItem[]
   attachedFiles: FileItem[]
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
@@ -24,7 +24,7 @@ type Props = {
 
 const AttachedFilesPopover: FunctionComponent<Props> = ({
   application,
-  appState,
+  filesController,
   allFiles,
   attachedFiles,
   closeOnBlur,
@@ -43,13 +43,13 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
       : filesList
 
   const handleAttachFilesClick = async () => {
-    const uploadedFiles = await appState.files.uploadNewFile()
+    const uploadedFiles = await filesController.uploadNewFile()
     if (!uploadedFiles) {
       return
     }
     if (currentTab === PopoverTabs.AttachedFiles) {
       uploadedFiles.forEach((file) => {
-        appState.files
+        filesController
           .handleFileAction({
             type: PopoverFileItemActionType.AttachFileToNote,
             payload: { file },
@@ -60,7 +60,7 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
   }
 
   const previewHandler = (file: FileItem) => {
-    appState.files
+    filesController
       .handleFileAction({
         type: PopoverFileItemActionType.PreviewFile,
         payload: { file, otherFiles: currentTab === PopoverTabs.AllFiles ? allFiles : attachedFiles },
@@ -139,7 +139,7 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
                 key={file.uuid}
                 file={file}
                 isAttachedToNote={attachedFiles.includes(file)}
-                handleFileAction={appState.files.handleFileAction}
+                handleFileAction={filesController.handleFileAction}
                 getIconType={application.iconsController.getIconForFileType}
                 closeOnBlur={closeOnBlur}
                 previewHandler={previewHandler}

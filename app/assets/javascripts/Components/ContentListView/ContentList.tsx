@@ -1,25 +1,32 @@
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import { KeyboardKey } from '@/Services/IOService'
-import { AppState } from '@/UIModels/AppState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { UuidString } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, KeyboardEventHandler, UIEventHandler, useCallback } from 'react'
-import { FOCUSABLE_BUT_NOT_TABBABLE, NOTES_LIST_SCROLL_THRESHOLD } from '@/Constants'
+import { FOCUSABLE_BUT_NOT_TABBABLE, NOTES_LIST_SCROLL_THRESHOLD } from '@/Constants/Constants'
 import { ListableContentItem } from './Types/ListableContentItem'
 import ContentListItem from './ContentListItem'
 
 type Props = {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   items: ListableContentItem[]
   selectedItems: Record<UuidString, ListableContentItem>
   paginate: () => void
 }
 
-const ContentList: FunctionComponent<Props> = ({ application, appState, items, selectedItems, paginate }) => {
-  const { selectPreviousItem, selectNextItem } = appState.contentListView
-  const { hideTags, hideDate, hideNotePreview, hideEditorIcon } = appState.contentListView.webDisplayOptions
-  const { sortBy } = appState.contentListView.displayOptions
+const ContentList: FunctionComponent<Props> = ({
+  application,
+  viewControllerManager,
+  items,
+  selectedItems,
+  paginate,
+}) => {
+  const { selectPreviousItem, selectNextItem } = viewControllerManager.itemListController
+  const { hideTags, hideDate, hideNotePreview, hideEditorIcon } =
+    viewControllerManager.itemListController.webDisplayOptions
+  const { sortBy } = viewControllerManager.itemListController.displayOptions
 
   const onScroll: UIEventHandler = useCallback(
     (e) => {
@@ -57,7 +64,7 @@ const ContentList: FunctionComponent<Props> = ({ application, appState, items, s
         <ContentListItem
           key={item.uuid}
           application={application}
-          appState={appState}
+          viewControllerManager={viewControllerManager}
           item={item}
           selected={!!selectedItems[item.uuid]}
           hideDate={hideDate}

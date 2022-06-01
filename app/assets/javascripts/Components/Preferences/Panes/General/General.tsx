@@ -1,5 +1,5 @@
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { FunctionComponent } from 'react'
 import { ExtensionsLatestVersions } from '@/Components/Preferences/Panes/Extensions/ExtensionsLatestVersions'
 import { observer } from 'mobx-react-lite'
@@ -10,17 +10,21 @@ import Advanced from '@/Components/Preferences/Panes/Account/Advanced'
 import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   application: WebApplication
   extensionsLatestVersions: ExtensionsLatestVersions
 }
 
-const General: FunctionComponent<Props> = ({ appState, application, extensionsLatestVersions }) => (
+const General: FunctionComponent<Props> = ({ viewControllerManager, application, extensionsLatestVersions }) => (
   <PreferencesPane>
     <Tools application={application} />
     <Defaults application={application} />
     <LabsPane application={application} />
-    <Advanced application={application} appState={appState} extensionsLatestVersions={extensionsLatestVersions} />
+    <Advanced
+      application={application}
+      viewControllerManager={viewControllerManager}
+      extensionsLatestVersions={extensionsLatestVersions}
+    />
   </PreferencesPane>
 )
 

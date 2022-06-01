@@ -1,4 +1,4 @@
-import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { FunctionComponent } from 'react'
 
 type HistoryListItemProps = {
