@@ -1,10 +1,10 @@
 import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { getPlatformString, getWindowUrlParams } from '@/Utils'
-import { ViewControllerManagerEvent } from '@/Services/ViewControllerManager'
 import { ApplicationEvent, Challenge, removeFromArray } from '@standardnotes/snjs'
 import { PANEL_NAME_NOTES, PANEL_NAME_NAVIGATION } from '@/Constants/Constants'
 import { alertDialog } from '@/Services/AlertService'
 import { WebApplication } from '@/Application/Application'
+import { WebAppEvent } from '@/Application/WebAppEvent'
 import Navigation from '@/Components/Navigation/Navigation'
 import NoteGroupView from '@/Components/NoteGroupView/NoteGroupView'
 import Footer from '@/Components/Footer/Footer'
@@ -120,8 +120,8 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
   }, [application, onAppLaunch, onAppStart])
 
   useEffect(() => {
-    const removeObserver = application.getViewControllerManager().addObserver(async (eventName, data) => {
-      if (eventName === ViewControllerManagerEvent.PanelResized) {
+    const removeObserver = application.addWebEventObserver(async (eventName, data) => {
+      if (eventName === WebAppEvent.PanelResized) {
         const { panel, collapsed } = data as PanelResizedData
         let appClass = ''
         if (panel === PANEL_NAME_NOTES && collapsed) {
@@ -131,7 +131,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
           appClass += ' collapsed-navigation'
         }
         setAppClass(appClass)
-      } else if (eventName === ViewControllerManagerEvent.WindowDidFocus) {
+      } else if (eventName === WebAppEvent.WindowDidFocus) {
         if (!(await application.isLocked())) {
           application.sync.sync().catch(console.error)
         }

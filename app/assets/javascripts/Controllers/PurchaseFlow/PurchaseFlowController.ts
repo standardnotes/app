@@ -1,4 +1,5 @@
 import { loadPurchaseFlowUrl } from '@/Components/PurchaseFlow/PurchaseFlowFunctions'
+import { InternalEventBus } from '@standardnotes/snjs'
 import { action, makeObservable, observable } from 'mobx'
 import { WebApplication } from '../../Application/Application'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
@@ -8,8 +9,8 @@ export class PurchaseFlowController extends AbstractViewController {
   isOpen = false
   currentPane = PurchaseFlowPane.CreateAccount
 
-  constructor(application: WebApplication) {
-    super(application)
+  constructor(application: WebApplication, eventBus: InternalEventBus) {
+    super(application, eventBus)
 
     makeObservable(this, {
       isOpen: observable,

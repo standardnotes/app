@@ -1,10 +1,18 @@
 import { ElementIds } from '@/Constants/ElementIDs'
 import { destroyAllObjectProperties } from '@/Utils'
-import { ApplicationEvent, ContentType, DeinitSource, PrefKey, SNNote, SNTag, UuidString } from '@standardnotes/snjs'
+import {
+  ApplicationEvent,
+  ContentType,
+  InternalEventBus,
+  PrefKey,
+  SNNote,
+  SNTag,
+  UuidString,
+} from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable } from 'mobx'
 import { WebApplication } from '../Application/Application'
 import { AbstractViewController } from './Abstract/AbstractViewController'
-import { ViewControllerManager } from '../Services/ViewControllerManager/ViewControllerManager'
+import { ItemListController } from './ItemList/ItemListController'
 
 export class NoteTagsController extends AbstractViewController {
   autocompleteInputFocused = false
@@ -16,21 +24,19 @@ export class NoteTagsController extends AbstractViewController {
   tags: SNTag[] = []
   tagsContainerMaxWidth: number | 'auto' = 0
   addNoteToParentFolders: boolean
+  private itemListController!: ItemListController
 
-  override deinit(source: DeinitSource) {
-    super.deinit(source)
+  override deinit() {
+    super.deinit()
     ;(this.tags as unknown) = undefined
     ;(this.autocompleteTagResults as unknown) = undefined
+    ;(this.itemListController as unknown) = undefined
 
     destroyAllObjectProperties(this)
   }
 
-  constructor(
-    application: WebApplication,
-    override viewControllerManager: ViewControllerManager,
-    appEventListeners: (() => void)[],
-  ) {
-    super(application, viewControllerManager)
+  constructor(application: WebApplication, eventBus: InternalEventBus) {
+    super(application, eventBus)
 
     makeObservable(this, {
       autocompleteInputFocused: observable,
@@ -55,13 +61,17 @@ export class NoteTagsController extends AbstractViewController {
     })
 
     this.addNoteToParentFolders = application.getPreference(PrefKey.NoteAddToParentFolders, true)
+  }
 
-    appEventListeners.push(
-      application.streamItems(ContentType.Tag, () => {
+  public setServicestPostConstruction(itemListController: ItemListController) {
+    this.itemListController = itemListController
+
+    this.disposers.push(
+      this.application.streamItems(ContentType.Tag, () => {
         this.reloadTagsForCurrentNote()
       }),
-      application.addSingleEventObserver(ApplicationEvent.PreferencesChanged, async () => {
-        this.addNoteToParentFolders = application.getPreference(PrefKey.NoteAddToParentFolders, true)
+      this.application.addSingleEventObserver(ApplicationEvent.PreferencesChanged, async () => {
+        this.addNoteToParentFolders = this.application.getPreference(PrefKey.NoteAddToParentFolders, true)
       }),
     )
   }
@@ -151,7 +161,7 @@ export class NoteTagsController extends AbstractViewController {
   searchActiveNoteAutocompleteTags(): void {
     const newResults = this.application.items.searchTags(
       this.autocompleteSearchQuery,
-      this.viewControllerManager.contentListController.activeControllerNote,
+      this.itemListController.activeControllerNote,
     )
     this.setAutocompleteTagResults(newResults)
   }
@@ -161,7 +171,7 @@ export class NoteTagsController extends AbstractViewController {
   }
 
   reloadTagsForCurrentNote(): void {
-    const activeNote = this.viewControllerManager.contentListController.activeControllerNote
+    const activeNote = this.itemListController.activeControllerNote
 
     if (activeNote) {
       const tags = this.application.items.getSortedTagsForNote(activeNote)
@@ -177,7 +187,7 @@ export class NoteTagsController extends AbstractViewController {
   }
 
   async addTagToActiveNote(tag: SNTag): Promise<void> {
-    const activeNote = this.viewControllerManager.contentListController.activeControllerNote
+    const activeNote = this.itemListController.activeControllerNote
 
     if (activeNote) {
       await this.application.items.addTagToNote(activeNote, tag, this.addNoteToParentFolders)
@@ -187,7 +197,7 @@ export class NoteTagsController extends AbstractViewController {
   }
 
   async removeTagFromActiveNote(tag: SNTag): Promise<void> {
-    const activeNote = this.viewControllerManager.contentListController.activeControllerNote
+    const activeNote = this.itemListController.activeControllerNote
 
     if (activeNote) {
       await this.application.mutator.changeItem(tag, (mutator) => {

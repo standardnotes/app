@@ -11,20 +11,20 @@ import {
   UuidString,
   isSystemView,
   FindItem,
-  DeinitSource,
   SystemViewId,
+  InternalEventBus,
+  InternalEventPublishStrategy,
 } from '@standardnotes/snjs'
 import { action, computed, makeAutoObservable, makeObservable, observable, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
 import { FeaturesController } from '../FeaturesController'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { destroyAllObjectProperties } from '@/Utils'
-import { ViewControllerManager } from '../../Services/ViewControllerManager/ViewControllerManager'
-import { ViewControllerManagerEvent } from '../../Services/ViewControllerManager/ViewControllerManagerEvent'
 import { isValidFutureSiblings, rootTags, tagSiblings } from './Utils'
 import { AnyTag } from './AnyTagType'
+import { CrossControllerEvent } from '../CrossControllerEvent'
 
-export class TagsController extends AbstractViewController {
+export class NavigationController extends AbstractViewController {
   tags: SNTag[] = []
   smartViews: SmartView[] = []
   allNotesCount_ = 0
@@ -43,13 +43,8 @@ export class TagsController extends AbstractViewController {
 
   private readonly tagsCountsState: TagsCountsState
 
-  constructor(
-    application: WebApplication,
-    override viewControllerManager: ViewControllerManager,
-    appEventListeners: (() => void)[],
-    private features: FeaturesController,
-  ) {
-    super(application)
+  constructor(application: WebApplication, private featuresController: FeaturesController, eventBus: InternalEventBus) {
+    super(application, eventBus)
 
     this.tagsCountsState = new TagsCountsState(this.application)
 
@@ -99,7 +94,7 @@ export class TagsController extends AbstractViewController {
       setContextMenuMaxHeight: action,
     })
 
-    appEventListeners.push(
+    this.disposers.push(
       this.application.streamItems([ContentType.Tag, ContentType.SmartView], ({ changed, removed }) => {
         runInAction(() => {
           this.tags = this.application.items.getDisplayableTags()
@@ -131,7 +126,7 @@ export class TagsController extends AbstractViewController {
       }),
     )
 
-    appEventListeners.push(
+    this.disposers.push(
       this.application.items.addNoteCountChangeObserver((tagUuid) => {
         if (!tagUuid) {
           this.setAllNotesCount(this.application.items.allCountableNotesCount())
@@ -145,15 +140,16 @@ export class TagsController extends AbstractViewController {
     )
   }
 
-  override deinit(source: DeinitSource) {
-    super.deinit(source)
-    ;(this.features as unknown) = undefined
+  override deinit() {
+    super.deinit()
+    ;(this.featuresController as unknown) = undefined
     ;(this.tags as unknown) = undefined
     ;(this.smartViews as unknown) = undefined
     ;(this.selected_ as unknown) = undefined
     ;(this.previouslySelected_ as unknown) = undefined
     ;(this.editing_ as unknown) = undefined
     ;(this.addingSubtagTo as unknown) = undefined
+    ;(this.featuresController as unknown) = undefined
 
     destroyAllObjectProperties(this)
   }
@@ -369,10 +365,13 @@ export class TagsController extends AbstractViewController {
       return
     }
 
-    await this.viewControllerManager.notifyEvent(ViewControllerManagerEvent.TagChanged, {
-      tag,
-      previousTag: this.previouslySelected_,
-    })
+    await this.eventBus.publishSync(
+      {
+        type: CrossControllerEvent.TagChanged,
+        payload: { tag, previousTag: this.previouslySelected_ },
+      },
+      InternalEventPublishStrategy.SEQUENCE,
+    )
   }
 
   public async selectHomeNavigationView(): Promise<void> {
@@ -473,8 +472,8 @@ export class TagsController extends AbstractViewController {
       const isSmartViewTitle = this.application.items.isSmartViewTitle(newTitle)
 
       if (isSmartViewTitle) {
-        if (!this.features.hasSmartViews) {
-          await this.features.showPremiumAlert(SMART_TAGS_FEATURE_NAME)
+        if (!this.featuresController.hasSmartViews) {
+          await this.featuresController.showPremiumAlert(SMART_TAGS_FEATURE_NAME)
           return
         }
       }

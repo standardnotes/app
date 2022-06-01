@@ -46,7 +46,7 @@ const ContentListView: FunctionComponent<Props> = ({ application, viewController
     paginate,
     panelWidth,
     createNewNote,
-  } = viewControllerManager.contentListController
+  } = viewControllerManager.itemListController
 
   const { selectedItems } = viewControllerManager.selectionController
 
@@ -143,7 +143,7 @@ const ContentListView: FunctionComponent<Props> = ({ application, viewController
     (width, _lastLeft, _isMaxWidth, isCollapsed) => {
       application.setPreference(PrefKey.NotesPanelWidth, width).catch(console.error)
       viewControllerManager.noteTagsController.reloadTagsContainerMaxWidth()
-      viewControllerManager.panelDidResize(PANEL_NAME_NOTES, isCollapsed)
+      application.publishPanelDidResizeEvent(PANEL_NAME_NOTES, isCollapsed)
     },
     [viewControllerManager, application],
   )

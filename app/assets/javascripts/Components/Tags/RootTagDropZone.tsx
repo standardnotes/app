@@ -1,14 +1,14 @@
 import Icon from '@/Components/Icon/Icon'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { FeaturesController } from '@/Controllers/FeaturesController'
-import { TagsController } from '@/Controllers/Navigation/TagsController'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
 import { useDrop } from 'react-dnd'
 import { DropItem, DropProps, ItemTypes } from './DragNDrop'
 
 type Props = {
-  tagsState: TagsController
+  tagsState: NavigationController
   featuresState: FeaturesController
 }
 

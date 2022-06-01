@@ -57,7 +57,7 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
 
   const toggleSpellcheck = () => {
     setSpellcheck(!spellcheck)
-    application.getViewControllerManager().toggleGlobalSpellcheck().catch(console.error)
+    application.toggleGlobalSpellcheck().catch(console.error)
   }
 
   useEffect(() => {

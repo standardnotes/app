@@ -3,7 +3,7 @@ import {
   ApplicationEvent,
   ClientDisplayableError,
   convertTimestampToMilliseconds,
-  DeinitSource,
+  InternalEventBus,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable } from 'mobx'
 import { WebApplication } from '../../Application/Application'
@@ -15,16 +15,16 @@ export class SubscriptionController extends AbstractViewController {
   userSubscription: Subscription | undefined = undefined
   availableSubscriptions: AvailableSubscriptions | undefined = undefined
 
-  override deinit(source: DeinitSource) {
-    super.deinit(source)
+  override deinit() {
+    super.deinit()
     ;(this.userSubscription as unknown) = undefined
     ;(this.availableSubscriptions as unknown) = undefined
 
     destroyAllObjectProperties(this)
   }
 
-  constructor(application: WebApplication, appObservers: (() => void)[]) {
-    super(application)
+  constructor(application: WebApplication, eventBus: InternalEventBus) {
+    super(application, eventBus)
 
     makeObservable(this, {
       userSubscription: observable,
@@ -39,15 +39,21 @@ export class SubscriptionController extends AbstractViewController {
       setAvailableSubscriptions: action,
     })
 
-    appObservers.push(
+    this.disposers.push(
       application.addEventObserver(async () => {
         if (application.hasAccount()) {
           this.getSubscriptionInfo().catch(console.error)
         }
       }, ApplicationEvent.Launched),
+    )
+
+    this.disposers.push(
       application.addEventObserver(async () => {
         this.getSubscriptionInfo().catch(console.error)
       }, ApplicationEvent.SignedIn),
+    )
+
+    this.disposers.push(
       application.addEventObserver(async () => {
         this.getSubscriptionInfo().catch(console.error)
       }, ApplicationEvent.UserRolesChanged),

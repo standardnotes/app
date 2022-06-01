@@ -23,10 +23,10 @@ const ContentList: FunctionComponent<Props> = ({
   selectedItems,
   paginate,
 }) => {
-  const { selectPreviousItem, selectNextItem } = viewControllerManager.contentListController
+  const { selectPreviousItem, selectNextItem } = viewControllerManager.itemListController
   const { hideTags, hideDate, hideNotePreview, hideEditorIcon } =
-    viewControllerManager.contentListController.webDisplayOptions
-  const { sortBy } = viewControllerManager.contentListController.displayOptions
+    viewControllerManager.itemListController.webDisplayOptions
+  const { sortBy } = viewControllerManager.itemListController.displayOptions
 
   const onScroll: UIEventHandler = useCallback(
     (e) => {

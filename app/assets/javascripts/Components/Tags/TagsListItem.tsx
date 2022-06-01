@@ -3,7 +3,7 @@ import { TAG_FOLDERS_FEATURE_NAME } from '@/Constants/Constants'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { KeyboardKey } from '@/Services/IOService'
 import { FeaturesController } from '@/Controllers/FeaturesController'
-import { TagsController } from '@/Controllers/Navigation/TagsController'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import '@reach/tooltip/styles.css'
 import { SNTag } from '@standardnotes/snjs'
 import { computed } from 'mobx'
@@ -23,7 +23,7 @@ import { DropItem, DropProps, ItemTypes } from './DragNDrop'
 
 type Props = {
   tag: SNTag
-  tagsState: TagsController
+  tagsState: NavigationController
   features: FeaturesController
   level: number
   onContextMenu: (tag: SNTag, posX: number, posY: number) => void

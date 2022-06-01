@@ -73,7 +73,6 @@
     "@standardnotes/components": "1.8.2",
     "@standardnotes/filepicker": "1.16.2",
     "@standardnotes/icons": "^1.1.8",
-    "@standardnotes/services": "^1.13.3",
     "@standardnotes/sncrypto-web": "1.10.1",
     "@standardnotes/snjs": "^2.114.5",
     "@standardnotes/stylekit": "5.29.3",

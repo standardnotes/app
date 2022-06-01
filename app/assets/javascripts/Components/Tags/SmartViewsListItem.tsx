@@ -1,6 +1,6 @@
 import Icon from '@/Components/Icon/Icon'
 import { FeaturesController } from '@/Controllers/FeaturesController'
-import { TagsController } from '@/Controllers/Navigation/TagsController'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import '@reach/tooltip/styles.css'
 import { SmartView, SystemViewId, IconType, isSystemView } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
@@ -16,7 +16,7 @@ import {
 
 type Props = {
   view: SmartView
-  tagsState: TagsController
+  tagsState: NavigationController
   features: FeaturesController
 }
 

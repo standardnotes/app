@@ -1,6 +1,6 @@
 import { WebApplication } from '@/Application/Application'
 import { destroyAllObjectProperties } from '@/Utils'
-import { ApplicationEvent, DeinitSource, FeatureIdentifier, FeatureStatus } from '@standardnotes/snjs'
+import { ApplicationEvent, FeatureIdentifier, FeatureStatus, InternalEventBus } from '@standardnotes/snjs'
 import { action, makeObservable, observable, runInAction, when } from 'mobx'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 
@@ -10,8 +10,8 @@ export class FeaturesController extends AbstractViewController {
   hasFiles: boolean
   premiumAlertFeatureName: string | undefined
 
-  override deinit(source: DeinitSource) {
-    super.deinit(source)
+  override deinit() {
+    super.deinit()
     ;(this.showPremiumAlert as unknown) = undefined
     ;(this.closePremiumAlert as unknown) = undefined
     ;(this.hasFolders as unknown) = undefined
@@ -22,8 +22,8 @@ export class FeaturesController extends AbstractViewController {
     destroyAllObjectProperties(this)
   }
 
-  constructor(application: WebApplication, appObservers: (() => void)[]) {
-    super(application)
+  constructor(application: WebApplication, eventBus: InternalEventBus) {
+    super(application, eventBus)
 
     this.hasFolders = this.isEntitledToFolders()
     this.hasSmartViews = this.isEntitledToSmartViews()
@@ -43,7 +43,7 @@ export class FeaturesController extends AbstractViewController {
     this.showPremiumAlert = this.showPremiumAlert.bind(this)
     this.closePremiumAlert = this.closePremiumAlert.bind(this)
 
-    appObservers.push(
+    this.disposers.push(
       application.addEventObserver(async (event) => {
         switch (event) {
           case ApplicationEvent.FeaturesUpdated:

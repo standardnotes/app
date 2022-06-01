@@ -1,3 +1,4 @@
+import { FilePreviewModalController } from './FilePreviewModalController'
 import {
   PopoverFileItemAction,
   PopoverFileItemActionType,
@@ -13,12 +14,13 @@ import {
   ClassicFileSaver,
   parseFileName,
 } from '@standardnotes/filepicker'
-import { ChallengeReason, ClientDisplayableError, ContentType, FileItem } from '@standardnotes/snjs'
+import { ChallengeReason, ClientDisplayableError, ContentType, FileItem, InternalEventBus } from '@standardnotes/snjs'
 import { addToast, dismissToast, ToastType, updateToast } from '@standardnotes/stylekit'
 import { action, computed, makeObservable, observable, reaction } from 'mobx'
 import { WebApplication } from '../Application/Application'
 import { AbstractViewController } from './Abstract/AbstractViewController'
-import { ViewControllerManager } from '../Services/ViewControllerManager/ViewControllerManager'
+import { NotesController } from './NotesController'
+import { SelectedItemsController } from './SelectedItemsController'
 
 const UnprotectedFileActions = [PopoverFileItemActionType.ToggleFileProtection]
 const NonMutatingFileActions = [PopoverFileItemActionType.DownloadFile, PopoverFileItemActionType.PreviewFile]
@@ -31,12 +33,20 @@ export class FilesController extends AbstractViewController {
   showFileContextMenu = false
   fileContextMenuLocation: FileContextMenuLocation = { x: 0, y: 0 }
 
+  override deinit(): void {
+    ;(this.notesController as unknown) = undefined
+    ;(this.selectionController as unknown) = undefined
+    ;(this.filePreviewModalController as unknown) = undefined
+  }
+
   constructor(
     application: WebApplication,
-    override viewControllerManager: ViewControllerManager,
-    appObservers: (() => void)[],
+    private notesController: NotesController,
+    private selectionController: SelectedItemsController,
+    private filePreviewModalController: FilePreviewModalController,
+    eventBus: InternalEventBus,
   ) {
-    super(application, viewControllerManager)
+    super(application, eventBus)
 
     makeObservable(this, {
       allFiles: observable,
@@ -52,13 +62,16 @@ export class FilesController extends AbstractViewController {
       setFileContextMenuLocation: action,
     })
 
-    appObservers.push(
+    this.disposers.push(
       application.streamItems(ContentType.File, () => {
         this.reloadAllFiles()
         this.reloadAttachedFiles()
       }),
+    )
+
+    this.disposers.push(
       reaction(
-        () => viewControllerManager.notesController.selectedNotes,
+        () => notesController.selectedNotes,
         () => {
           this.reloadAttachedFiles()
         },
@@ -67,7 +80,7 @@ export class FilesController extends AbstractViewController {
   }
 
   get selectedFiles(): FileItem[] {
-    return this.viewControllerManager.selectionController.getSelectedItems<FileItem>(ContentType.File)
+    return this.selectionController.getSelectedItems<FileItem>(ContentType.File)
   }
 
   setShowFileContextMenu = (enabled: boolean) => {
@@ -83,7 +96,7 @@ export class FilesController extends AbstractViewController {
   }
 
   reloadAttachedFiles = () => {
-    const note = this.viewControllerManager.notesController.firstSelectedNote
+    const note = this.notesController.firstSelectedNote
     if (note) {
       this.attachedFiles = this.application.items.getFilesForNote(note)
     }
@@ -109,7 +122,7 @@ export class FilesController extends AbstractViewController {
   }
 
   attachFileToNote = async (file: FileItem) => {
-    const note = this.viewControllerManager.notesController.firstSelectedNote
+    const note = this.notesController.firstSelectedNote
     if (!note) {
       addToast({
         type: ToastType.Error,
@@ -122,7 +135,7 @@ export class FilesController extends AbstractViewController {
   }
 
   detachFileFromNote = async (file: FileItem) => {
-    const note = this.viewControllerManager.notesController.firstSelectedNote
+    const note = this.notesController.firstSelectedNote
     if (!note) {
       addToast({
         type: ToastType.Error,
@@ -197,7 +210,7 @@ export class FilesController extends AbstractViewController {
         await this.renameFile(file, action.payload.name)
         break
       case PopoverFileItemActionType.PreviewFile:
-        this.viewControllerManager.filePreviewModalController.activate(
+        this.filePreviewModalController.activate(
           file,
           currentTab === PopoverTabs.AllFiles ? this.allFiles : this.attachedFiles,
         )

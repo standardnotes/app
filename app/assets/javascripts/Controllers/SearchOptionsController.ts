@@ -1,4 +1,4 @@
-import { ApplicationEvent } from '@standardnotes/snjs'
+import { ApplicationEvent, InternalEventBus } from '@standardnotes/snjs'
 import { makeObservable, observable, action, runInAction } from 'mobx'
 import { WebApplication } from '../Application/Application'
 import { AbstractViewController } from './Abstract/AbstractViewController'
@@ -8,8 +8,8 @@ export class SearchOptionsController extends AbstractViewController {
   includeArchived = false
   includeTrashed = false
 
-  constructor(application: WebApplication, appObservers: (() => void)[]) {
-    super(application)
+  constructor(application: WebApplication, eventBus: InternalEventBus) {
+    super(application, eventBus)
 
     makeObservable(this, {
       includeProtectedContents: observable,
@@ -22,7 +22,7 @@ export class SearchOptionsController extends AbstractViewController {
       refreshIncludeProtectedContents: action,
     })
 
-    appObservers.push(
+    this.disposers.push(
       this.application.addEventObserver(async () => {
         this.refreshIncludeProtectedContents()
       }, ApplicationEvent.UnprotectedSessionBegan),

@@ -17,8 +17,15 @@ import {
   DesktopDeviceInterface,
   isDesktopDevice,
   DeinitMode,
+  PrefKey,
+  SNTag,
+  ContentType,
+  DecryptedItemInterface,
 } from '@standardnotes/snjs'
 import { makeObservable, observable } from 'mobx'
+import { PanelResizedData } from '@/Types/PanelResizedData'
+import { WebAppEvent } from './WebAppEvent'
+import { isDesktopApplication } from '@/Utils'
 
 type WebServices = {
   viewControllerManager: ViewControllerManager
@@ -29,19 +36,14 @@ type WebServices = {
   io: IOService
 }
 
-export enum WebAppEvent {
-  NewUpdateAvailable = 'NewUpdateAvailable',
-  DesktopWindowGainedFocus = 'DesktopWindowGainedFocus',
-  DesktopWindowLostFocus = 'DesktopWindowLostFocus',
-}
-
-export type WebEventObserver = (event: WebAppEvent) => void
+export type WebEventObserver = (event: WebAppEvent, data?: unknown) => void
 
 export class WebApplication extends SNApplication {
   private webServices!: WebServices
   private webEventObservers: WebEventObserver[] = []
   public noteControllerGroup: NoteGroupController
   public iconsController: IconsController
+  private onVisibilityChange: () => void
 
   constructor(
     deviceInterface: WebOrDesktopDevice,
@@ -70,6 +72,16 @@ export class WebApplication extends SNApplication {
     deviceInterface.setApplication(this)
     this.noteControllerGroup = new NoteGroupController(this)
     this.iconsController = new IconsController()
+
+    this.onVisibilityChange = () => {
+      const visible = document.visibilityState === 'visible'
+      const event = visible ? WebAppEvent.WindowDidFocus : WebAppEvent.WindowDidBlur
+      this.notifyWebEvent(event)
+    }
+
+    if (!isDesktopApplication()) {
+      document.addEventListener('visibilitychange', this.onVisibilityChange)
+    }
   }
 
   override deinit(mode: DeinitMode, source: DeinitSource): void {
@@ -94,6 +106,9 @@ export class WebApplication extends SNApplication {
       ;(this.noteControllerGroup as unknown) = undefined
 
       this.webEventObservers.length = 0
+
+      document.removeEventListener('visibilitychange', this.onVisibilityChange)
+      ;(this.onVisibilityChange as unknown) = undefined
     } catch (error) {
       console.error('Error while deiniting application', error)
     }
@@ -105,15 +120,24 @@ export class WebApplication extends SNApplication {
 
   public addWebEventObserver(observer: WebEventObserver): () => void {
     this.webEventObservers.push(observer)
+
     return () => {
       removeFromArray(this.webEventObservers, observer)
     }
   }
 
-  public notifyWebEvent(event: WebAppEvent): void {
+  public notifyWebEvent(event: WebAppEvent, data?: unknown): void {
     for (const observer of this.webEventObservers) {
-      observer(event)
+      observer(event, data)
     }
+  }
+
+  publishPanelDidResizeEvent(name: string, collapsed: boolean) {
+    const data: PanelResizedData = {
+      panel: name,
+      collapsed: collapsed,
+    }
+    this.notifyWebEvent(WebAppEvent.PanelResized, data)
   }
 
   public getViewControllerManager(): ViewControllerManager {
@@ -162,5 +186,24 @@ export class WebApplication extends SNApplication {
     isDesktopDevice(this.deviceInterface) && (await this.deviceInterface.deleteLocalBackups())
 
     return this.user.signOut()
+  }
+
+  isGlobalSpellcheckEnabled(): boolean {
+    return this.getPreference(PrefKey.EditorSpellcheck, true)
+  }
+
+  public getItemTags(item: DecryptedItemInterface) {
+    return this.items.itemsReferencingItem(item).filter((ref) => {
+      return ref.content_type === ContentType.Tag
+    }) as SNTag[]
+  }
+
+  public get version(): string {
+    return (this.deviceInterface as WebOrDesktopDevice).appVersion
+  }
+
+  async toggleGlobalSpellcheck() {
+    const currentValue = this.isGlobalSpellcheckEnabled()
+    return this.setPreference(PrefKey.EditorSpellcheck, !currentValue)
   }
 }

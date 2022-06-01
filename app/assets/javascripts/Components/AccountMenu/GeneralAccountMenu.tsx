@@ -169,7 +169,7 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
             <Icon type="help" className={iconClassName} />
             Help &amp; feedback
           </div>
-          <span className="color-neutral">v{viewControllerManager.version}</span>
+          <span className="color-neutral">v{application.version}</span>
         </MenuItem>
         {user ? (
           <>
