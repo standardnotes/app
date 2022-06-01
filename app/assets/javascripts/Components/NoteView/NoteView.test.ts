@@ -2,9 +2,9 @@
  * @jest-environment jsdom
  */
 
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
-import { NotesState } from '@/UIModels/AppState/NotesState'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { NotesController } from '@/Controllers/NotesController'
 import {
   ApplicationEvent,
   ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
@@ -17,8 +17,8 @@ import NoteView from './NoteView'
 describe('NoteView', () => {
   let noteViewController: NoteViewController
   let application: WebApplication
-  let appState: AppState
-  let notesState: NotesState
+  let viewControllerManager: ViewControllerManager
+  let notesState: NotesController
 
   const createNoteView = () =>
     new NoteView({
@@ -31,15 +31,15 @@ describe('NoteView', () => {
 
     noteViewController = {} as jest.Mocked<NoteViewController>
 
-    notesState = {} as jest.Mocked<NotesState>
+    notesState = {} as jest.Mocked<NotesController>
     notesState.setShowProtectedWarning = jest.fn()
 
-    appState = {
-      notes: notesState,
-    } as jest.Mocked<AppState>
+    viewControllerManager = {
+      notesController: notesState,
+    } as jest.Mocked<ViewControllerManager>
 
     application = {} as jest.Mocked<WebApplication>
-    application.getAppState = jest.fn().mockReturnValue(appState)
+    application.getViewControllerManager = jest.fn().mockReturnValue(viewControllerManager)
     application.hasProtectionSources = jest.fn().mockReturnValue(true)
     application.authorizeNoteAccess = jest.fn()
   })

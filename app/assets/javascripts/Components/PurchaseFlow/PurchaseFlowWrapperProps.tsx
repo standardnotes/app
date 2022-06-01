@@ -1,7 +1,7 @@
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 
 export type PurchaseFlowWrapperProps = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   application: WebApplication
 }

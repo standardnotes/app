@@ -1,5 +1,5 @@
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { FunctionComponent } from 'react'
 import PreferencesPane from '@/Components/Preferences/PreferencesComponents/PreferencesPane'
 import CloudLink from './CloudBackups/CloudBackups'
@@ -9,14 +9,14 @@ import FileBackupsCrossPlatform from './Files/FileBackupsCrossPlatform'
 import { observer } from 'mobx-react-lite'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   application: WebApplication
 }
 
-const Backups: FunctionComponent<Props> = ({ application, appState }) => {
+const Backups: FunctionComponent<Props> = ({ application, viewControllerManager }) => {
   return (
     <PreferencesPane>
-      <DataBackups application={application} appState={appState} />
+      <DataBackups application={application} viewControllerManager={viewControllerManager} />
       <FileBackupsCrossPlatform application={application} />
       <EmailBackups application={application} />
       <CloudLink application={application} />

@@ -2,8 +2,8 @@ import Icon from '@/Components/Icon/Icon'
 import { TAG_FOLDERS_FEATURE_NAME } from '@/Constants'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { KeyboardKey } from '@/Services/IOService'
-import { FeaturesState } from '@/UIModels/AppState/FeaturesState'
-import { TagsState } from '@/UIModels/AppState/TagsState'
+import { FeaturesController } from '@/Controllers/FeaturesController'
+import { TagsController } from '@/Controllers/Navigation/TagsController'
 import '@reach/tooltip/styles.css'
 import { SNTag } from '@standardnotes/snjs'
 import { computed } from 'mobx'
@@ -23,8 +23,8 @@ import { DropItem, DropProps, ItemTypes } from './DragNDrop'
 
 type Props = {
   tag: SNTag
-  tagsState: TagsState
-  features: FeaturesState
+  tagsState: TagsController
+  features: FeaturesController
   level: number
   onContextMenu: (tag: SNTag, posX: number, posY: number) => void
 }

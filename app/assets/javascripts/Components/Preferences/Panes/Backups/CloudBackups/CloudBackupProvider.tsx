@@ -15,7 +15,7 @@ import {
   GoogleDriveBackupFrequency,
   OneDriveBackupFrequency,
 } from '@standardnotes/snjs'
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import Button from '@/Components/Button/Button'
 import { isDev, openInNewTab } from '@/Utils'
 import { Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'

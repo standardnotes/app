@@ -1,4 +1,4 @@
-import { AppState } from '@/UIModels/AppState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { Fragment, FunctionComponent, useState } from 'react'
 import { Text, Title, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
@@ -13,10 +13,10 @@ import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 
-type Props = { appState: AppState }
+type Props = { viewControllerManager: ViewControllerManager }
 
-const ErroredItems: FunctionComponent<Props> = ({ appState }: Props) => {
-  const app = appState.application
+const ErroredItems: FunctionComponent<Props> = ({ viewControllerManager }: Props) => {
+  const app = viewControllerManager.application
 
   const [erroredItems, setErroredItems] = useState(app.items.invalidItems)
 

@@ -1,8 +1,9 @@
 import { ApplicationEvent } from '@standardnotes/snjs'
-import { WebApplication } from '@/UIModels/Application'
-import { AppState, AppStateEvent } from '@/UIModels/AppState'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager, ViewControllerManagerEvent } from '@/Services/ViewControllerManager'
 import { autorun, IReactionDisposer, IReactionPublic } from 'mobx'
 import { Component } from 'react'
+
 export type PureComponentState = Partial<Record<string, any>>
 export type PureComponentProps = Partial<Record<string, any>>
 
@@ -17,7 +18,7 @@ export abstract class PureComponent<P = PureComponentProps, S = PureComponentSta
 
   override componentDidMount() {
     this.addAppEventObserver()
-    this.addAppStateObserver()
+    this.addViewControllerManagerObserver()
   }
 
   deinit(): void {
@@ -38,21 +39,21 @@ export abstract class PureComponent<P = PureComponentProps, S = PureComponentSta
     this.deinit()
   }
 
-  public get appState(): AppState {
-    return this.application.getAppState()
+  public get viewControllerManager(): ViewControllerManager {
+    return this.application.getViewControllerManager()
   }
 
   autorun(view: (r: IReactionPublic) => void): void {
     this.reactionDisposers.push(autorun(view))
   }
 
-  addAppStateObserver() {
-    this.unsubState = this.application.getAppState().addObserver(async (eventName, data) => {
-      this.onAppStateEvent(eventName, data)
+  addViewControllerManagerObserver() {
+    this.unsubState = this.application.getViewControllerManager().addObserver(async (eventName, data) => {
+      this.onViewControllerManagerEvent(eventName, data)
     })
   }
 
-  onAppStateEvent(_eventName: AppStateEvent, _data: unknown) {
+  onViewControllerManagerEvent(_eventName: ViewControllerManagerEvent, _data: unknown) {
     /** Optional override */
   }
 

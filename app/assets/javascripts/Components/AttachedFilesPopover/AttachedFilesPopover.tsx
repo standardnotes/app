@@ -1,6 +1,6 @@
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { FileItem } from '@standardnotes/snjs'
 import { FilesIllustration } from '@standardnotes/icons'
 import { observer } from 'mobx-react-lite'
@@ -13,7 +13,7 @@ import { PopoverTabs } from './PopoverTabs'
 
 type Props = {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   allFiles: FileItem[]
   attachedFiles: FileItem[]
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
@@ -25,7 +25,7 @@ type Props = {
 
 const AttachedFilesPopover: FunctionComponent<Props> = ({
   application,
-  appState,
+  viewControllerManager,
   allFiles,
   attachedFiles,
   closeOnBlur,
@@ -45,7 +45,7 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
       : filesList
 
   const handleAttachFilesClick = async () => {
-    const uploadedFiles = await appState.files.uploadNewFile()
+    const uploadedFiles = await viewControllerManager.filesController.uploadNewFile()
     if (!uploadedFiles) {
       return
     }

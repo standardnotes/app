@@ -10,7 +10,7 @@ import { DisplayableListItemProps } from './Types/DisplayableListItemProps'
 
 const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
   application,
-  appState,
+  viewControllerManager,
   hideDate,
   hideIcon,
   hideTags,
@@ -21,32 +21,40 @@ const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
 }) => {
   const openFileContextMenu = useCallback(
     (posX: number, posY: number) => {
-      appState.files.setFileContextMenuLocation({
+      viewControllerManager.filesController.setFileContextMenuLocation({
         x: posX,
         y: posY,
       })
-      appState.files.setShowFileContextMenu(true)
+      viewControllerManager.filesController.setShowFileContextMenu(true)
     },
-    [appState.files],
+    [viewControllerManager.filesController],
   )
 
   const openContextMenu = useCallback(
     async (posX: number, posY: number) => {
-      const { didSelect } = await appState.selectedItems.selectItem(item.uuid)
+      const { didSelect } = await viewControllerManager.selectionController.selectItem(item.uuid)
       if (didSelect) {
         openFileContextMenu(posX, posY)
       }
     },
-    [appState.selectedItems, item.uuid, openFileContextMenu],
+    [viewControllerManager.selectionController, item.uuid, openFileContextMenu],
   )
 
   const onClick = useCallback(() => {
-    void appState.selectedItems.selectItem(item.uuid, true).then(({ didSelect }) => {
-      if (didSelect && appState.selectedItems.selectedItemsCount < 2) {
-        appState.filePreviewModal.activate(item as FileItem, appState.files.allFiles)
+    void viewControllerManager.selectionController.selectItem(item.uuid, true).then(({ didSelect }) => {
+      if (didSelect && viewControllerManager.selectionController.selectedItemsCount < 2) {
+        viewControllerManager.filePreviewModalController.activate(
+          item as FileItem,
+          viewControllerManager.filesController.allFiles,
+        )
       }
     })
-  }, [appState.filePreviewModal, appState.files.allFiles, appState.selectedItems, item])
+  }, [
+    viewControllerManager.filePreviewModalController,
+    viewControllerManager.filesController.allFiles,
+    viewControllerManager.selectionController,
+    item,
+  ])
 
   const IconComponent = () =>
     getFileIconComponent(

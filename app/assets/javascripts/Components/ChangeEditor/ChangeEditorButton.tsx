@@ -1,5 +1,5 @@
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { MENU_MARGIN_FROM_APP_BORDER } from '@/Constants'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import VisuallyHidden from '@reach/visually-hidden'
@@ -11,12 +11,16 @@ import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 
 type Props = {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   onClickPreprocessing?: () => Promise<void>
 }
 
-const ChangeEditorButton: FunctionComponent<Props> = ({ application, appState, onClickPreprocessing }: Props) => {
-  const note = appState.notes.firstSelectedNote
+const ChangeEditorButton: FunctionComponent<Props> = ({
+  application,
+  viewControllerManager,
+  onClickPreprocessing,
+}: Props) => {
+  const note = viewControllerManager.notesController.firstSelectedNote
   const [isOpen, setIsOpen] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
   const [position, setPosition] = useState({

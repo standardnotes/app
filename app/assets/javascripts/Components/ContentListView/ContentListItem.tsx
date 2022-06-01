@@ -10,12 +10,12 @@ const ContentListItem: FunctionComponent<AbstractListItemProps> = (props) => {
       return []
     }
 
-    const selectedTag = props.appState.tags.selected
+    const selectedTag = props.viewControllerManager.navigationController.selected
     if (!selectedTag) {
       return []
     }
 
-    const tags = props.appState.getItemTags(props.item)
+    const tags = props.viewControllerManager.getItemTags(props.item)
 
     const isNavigatingOnlyTag = selectedTag instanceof SNTag && tags.length === 1
     if (isNavigatingOnlyTag) {

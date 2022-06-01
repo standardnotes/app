@@ -1,4 +1,4 @@
-import { AppState } from '@/UIModels/AppState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { useCallback, useEffect, useRef } from 'react'
 import Icon from '@/Components/Icon/Icon'
@@ -8,27 +8,29 @@ import { MenuItemType } from '@/Components/Menu/MenuItemType'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { SNTag } from '@standardnotes/snjs'
-import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
+import { isControllerDealloced } from '@/Controllers/Abstract/IsControllerDealloced'
 
 type WrapperProps = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
 }
 
 type ContextMenuProps = WrapperProps & {
   selectedTag: SNTag
 }
 
-const TagsContextMenu = observer(({ appState, selectedTag }: ContextMenuProps) => {
+const TagsContextMenu = observer(({ viewControllerManager, selectedTag }: ContextMenuProps) => {
   const premiumModal = usePremiumModal()
 
-  const { contextMenuOpen, contextMenuPosition, contextMenuMaxHeight } = appState.tags
+  const { contextMenuOpen, contextMenuPosition, contextMenuMaxHeight } = viewControllerManager.navigationController
 
   const contextMenuRef = useRef<HTMLDivElement>(null)
-  const [closeOnBlur] = useCloseOnBlur(contextMenuRef, (open: boolean) => appState.tags.setContextMenuOpen(open))
+  const [closeOnBlur] = useCloseOnBlur(contextMenuRef, (open: boolean) =>
+    viewControllerManager.navigationController.setContextMenuOpen(open),
+  )
 
   const reloadContextMenuLayout = useCallback(() => {
-    appState.tags.reloadContextMenuLayout()
-  }, [appState])
+    viewControllerManager.navigationController.reloadContextMenuLayout()
+  }, [viewControllerManager])
 
   useEffect(() => {
     window.addEventListener('resize', reloadContextMenuLayout)
@@ -38,23 +40,23 @@ const TagsContextMenu = observer(({ appState, selectedTag }: ContextMenuProps) =
   }, [reloadContextMenuLayout])
 
   const onClickAddSubtag = useCallback(() => {
-    if (!appState.features.hasFolders) {
+    if (!viewControllerManager.featuresController.hasFolders) {
       premiumModal.activate('Folders')
       return
     }
 
-    appState.tags.setContextMenuOpen(false)
-    appState.tags.setAddingSubtagTo(selectedTag)
-  }, [appState, selectedTag, premiumModal])
+    viewControllerManager.navigationController.setContextMenuOpen(false)
+    viewControllerManager.navigationController.setAddingSubtagTo(selectedTag)
+  }, [viewControllerManager, selectedTag, premiumModal])
 
   const onClickRename = useCallback(() => {
-    appState.tags.setContextMenuOpen(false)
-    appState.tags.editingTag = selectedTag
-  }, [appState, selectedTag])
+    viewControllerManager.navigationController.setContextMenuOpen(false)
+    viewControllerManager.navigationController.editingTag = selectedTag
+  }, [viewControllerManager, selectedTag])
 
   const onClickDelete = useCallback(() => {
-    appState.tags.remove(selectedTag, true).catch(console.error)
-  }, [appState, selectedTag])
+    viewControllerManager.navigationController.remove(selectedTag, true).catch(console.error)
+  }, [viewControllerManager, selectedTag])
 
   return contextMenuOpen ? (
     <div
@@ -69,7 +71,7 @@ const TagsContextMenu = observer(({ appState, selectedTag }: ContextMenuProps) =
         a11yLabel="Tag context menu"
         isOpen={contextMenuOpen}
         closeMenu={() => {
-          appState.tags.setContextMenuOpen(false)
+          viewControllerManager.navigationController.setContextMenuOpen(false)
         }}
       >
         <MenuItem
@@ -82,7 +84,7 @@ const TagsContextMenu = observer(({ appState, selectedTag }: ContextMenuProps) =
             <Icon type="add" className="color-neutral mr-2" />
             Add subtag
           </div>
-          {!appState.features.hasFolders && <Icon type="premium-feature" />}
+          {!viewControllerManager.featuresController.hasFolders && <Icon type="premium-feature" />}
         </MenuItem>
         <MenuItem type={MenuItemType.IconButton} onBlur={closeOnBlur} className={'py-1.5'} onClick={onClickRename}>
           <Icon type="pencil-filled" className="color-neutral mr-2" />
@@ -99,18 +101,18 @@ const TagsContextMenu = observer(({ appState, selectedTag }: ContextMenuProps) =
 
 TagsContextMenu.displayName = 'TagsContextMenu'
 
-const TagsContextMenuWrapper = ({ appState }: WrapperProps) => {
-  if (isStateDealloced(appState)) {
+const TagsContextMenuWrapper = ({ viewControllerManager }: WrapperProps) => {
+  if (isControllerDealloced(viewControllerManager)) {
     return null
   }
 
-  const selectedTag = appState.tags.selected
+  const selectedTag = viewControllerManager.navigationController.selected
 
   if (!selectedTag || !(selectedTag instanceof SNTag)) {
     return null
   }
 
-  return <TagsContextMenu appState={appState} selectedTag={selectedTag} />
+  return <TagsContextMenu viewControllerManager={viewControllerManager} selectedTag={selectedTag} />
 }
 
 export default observer(TagsContextMenuWrapper)

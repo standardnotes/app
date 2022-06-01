@@ -16,29 +16,14 @@
     "declarationDir": "../../../dist/@types",
     "baseUrl": ".",
     "jsx": "react-jsx",
-    "typeRoots": [
-      "./@types",
-      "../../../node_modules/@types"
-    ],
+    "typeRoots": ["./@types", "../../../node_modules/@types"],
     "paths": {
-      "%/*": [
-        "../templates/*"
-      ],
-      "@/*": [
-        "./*"
-      ],
-      "@Controllers/*": [
-        "./controllers/*"
-      ],
-      "@Views/*": [
-        "./views/*"
-      ],
-      "@Services/*": [
-        "Services/*"
-      ],
-      "@node_modules/*": [
-        "../../../node_modules/*"
-      ]
+      "%/*": ["../templates/*"],
+      "@/*": ["./*"],
+      "@Controllers/*": ["./controllers/*"],
+      "@Views/*": ["./views/*"],
+      "@Services/*": ["Services/*"],
+      "@node_modules/*": ["../../../node_modules/*"]
     }
   }
 }

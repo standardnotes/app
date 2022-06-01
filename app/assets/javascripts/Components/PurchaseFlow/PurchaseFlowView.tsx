@@ -1,6 +1,6 @@
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
-import { PurchaseFlowPane } from '@/UIModels/AppState/PurchaseFlowPane'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { PurchaseFlowPane } from '@/Controllers/PurchaseFlow/PurchaseFlowPane'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
 import CreateAccount from './Panes/CreateAccount'
@@ -12,28 +12,36 @@ type PaneSelectorProps = {
 } & PurchaseFlowViewProps
 
 type PurchaseFlowViewProps = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   application: WebApplication
 }
 
-const PurchaseFlowPaneSelector: FunctionComponent<PaneSelectorProps> = ({ currentPane, appState, application }) => {
+const PurchaseFlowPaneSelector: FunctionComponent<PaneSelectorProps> = ({
+  currentPane,
+  viewControllerManager,
+  application,
+}) => {
   switch (currentPane) {
     case PurchaseFlowPane.CreateAccount:
-      return <CreateAccount appState={appState} application={application} />
+      return <CreateAccount viewControllerManager={viewControllerManager} application={application} />
     case PurchaseFlowPane.SignIn:
-      return <SignIn appState={appState} application={application} />
+      return <SignIn viewControllerManager={viewControllerManager} application={application} />
   }
 }
 
-const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> = ({ appState, application }) => {
-  const { currentPane } = appState.purchaseFlow
+const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> = ({ viewControllerManager, application }) => {
+  const { currentPane } = viewControllerManager.purchaseFlowController
 
   return (
     <div className="flex items-center justify-center overflow-hidden h-full w-full absolute top-left-0 z-index-purchase-flow bg-passive-super-light">
       <div className="relative fit-content">
         <div className="relative p-12 xs:px-8 mb-4 bg-default border-1 border-solid border-main rounded xs:rounded-0">
           <SNLogoFull className="mb-5" />
-          <PurchaseFlowPaneSelector currentPane={currentPane} appState={appState} application={application} />
+          <PurchaseFlowPaneSelector
+            currentPane={currentPane}
+            viewControllerManager={viewControllerManager}
+            application={application}
+          />
         </div>
         <div className="flex justify-end xs:px-4">
           <a

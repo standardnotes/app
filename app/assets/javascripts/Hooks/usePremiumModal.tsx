@@ -1,5 +1,5 @@
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, createContext, useCallback, useContext, ReactNode } from 'react'
 import PremiumFeaturesModal from '@/Components/PremiumFeaturesModal/PremiumFeaturesModal'
@@ -24,52 +24,60 @@ export const usePremiumModal = (): PremiumModalContextData => {
 
 interface Props {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   children: ReactNode
 }
 
-const PremiumModalProvider: FunctionComponent<Props> = observer(({ application, appState, children }: Props) => {
-  const featureName = appState.features.premiumAlertFeatureName || ''
+const PremiumModalProvider: FunctionComponent<Props> = observer(
+  ({ application, viewControllerManager, children }: Props) => {
+    const featureName = viewControllerManager.featuresController.premiumAlertFeatureName || ''
 
-  const showModal = !!featureName
+    const showModal = !!featureName
 
-  const hasSubscription = Boolean(
-    appState.subscription.userSubscription &&
-      !appState.subscription.isUserSubscriptionExpired &&
-      !appState.subscription.isUserSubscriptionCanceled,
-  )
+    const hasSubscription = Boolean(
+      viewControllerManager.subscriptionController.userSubscription &&
+        !viewControllerManager.subscriptionController.isUserSubscriptionExpired &&
+        !viewControllerManager.subscriptionController.isUserSubscriptionCanceled,
+    )
 
-  const activate = useCallback(
-    (feature: string) => {
-      appState.features.showPremiumAlert(feature).catch(console.error)
-    },
-    [appState],
-  )
+    const activate = useCallback(
+      (feature: string) => {
+        viewControllerManager.featuresController.showPremiumAlert(feature).catch(console.error)
+      },
+      [viewControllerManager],
+    )
 
-  const close = useCallback(() => {
-    appState.features.closePremiumAlert()
-  }, [appState])
+    const close = useCallback(() => {
+      viewControllerManager.featuresController.closePremiumAlert()
+    }, [viewControllerManager])
 
-  return (
-    <>
-      {showModal && (
-        <PremiumFeaturesModal
-          application={application}
-          featureName={featureName}
-          hasSubscription={hasSubscription}
-          onClose={close}
-          showModal={!!featureName}
-        />
-      )}
-      <PremiumModalProvider_ value={{ activate }}>{children}</PremiumModalProvider_>
-    </>
-  )
-})
+    return (
+      <>
+        {showModal && (
+          <PremiumFeaturesModal
+            application={application}
+            featureName={featureName}
+            hasSubscription={hasSubscription}
+            onClose={close}
+            showModal={!!featureName}
+          />
+        )}
+        <PremiumModalProvider_ value={{ activate }}>{children}</PremiumModalProvider_>
+      </>
+    )
+  },
+)
 
 PremiumModalProvider.displayName = 'PremiumModalProvider'
 
-const PremiumModalProviderWithDeallocateHandling: FunctionComponent<Props> = ({ application, appState, children }) => {
-  return <PremiumModalProvider application={application} appState={appState} children={children} />
+const PremiumModalProviderWithDeallocateHandling: FunctionComponent<Props> = ({
+  application,
+  viewControllerManager,
+  children,
+}) => {
+  return (
+    <PremiumModalProvider application={application} viewControllerManager={viewControllerManager} children={children} />
+  )
 }
 
 export default observer(PremiumModalProviderWithDeallocateHandling)

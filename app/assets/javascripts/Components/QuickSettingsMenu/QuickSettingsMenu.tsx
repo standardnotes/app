@@ -1,5 +1,5 @@
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { ComponentArea, ContentType, FeatureIdentifier, GetFeatures, SNComponent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
@@ -19,7 +19,7 @@ const focusModeAnimationDuration = 1255
 const MENU_CLASSNAME = 'sn-dropdown min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto'
 
 type MenuProps = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   application: WebApplication
   onClickOutside: () => void
 }
@@ -38,9 +38,9 @@ const toggleFocusMode = (enabled: boolean) => {
   }
 }
 
-const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, appState, onClickOutside }) => {
+const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewControllerManager, onClickOutside }) => {
   const { closeQuickSettingsMenu, shouldAnimateCloseMenu, focusModeEnabled, setFocusModeEnabled } =
-    appState.quickSettingsMenu
+    viewControllerManager.quickSettingsMenuController
   const [themes, setThemes] = useState<ThemeItem[]>([])
   const [toggleableComponents, setToggleableComponents] = useState<SNComponent[]>([])
   const [themesMenuOpen, setThemesMenuOpen] = useState(false)
@@ -156,8 +156,8 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, appState
 
   const openPreferences = useCallback(() => {
     closeQuickSettingsMenu()
-    appState.preferences.openPreferences()
-  }, [appState, closeQuickSettingsMenu])
+    viewControllerManager.preferencesController.openPreferences()
+  }, [viewControllerManager, closeQuickSettingsMenu])
 
   const toggleComponent = useCallback(
     (component: SNComponent) => {

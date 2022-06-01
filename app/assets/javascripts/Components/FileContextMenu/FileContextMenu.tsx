@@ -1,7 +1,7 @@
 import { MAX_MENU_SIZE_MULTIPLIER, MENU_MARGIN_FROM_APP_BORDER } from '@/Constants'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
-import { AppState } from '@/UIModels/AppState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import { PopoverFileItemAction } from '../AttachedFilesPopover/PopoverFileItemAction'
@@ -9,11 +9,12 @@ import { PopoverTabs } from '../AttachedFilesPopover/PopoverTabs'
 import FileMenuOptions from './FileMenuOptions'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
 }
 
-const FileContextMenu: FunctionComponent<Props> = observer(({ appState }) => {
-  const { selectedFiles, showFileContextMenu, setShowFileContextMenu, fileContextMenuLocation } = appState.files
+const FileContextMenu: FunctionComponent<Props> = observer(({ viewControllerManager }) => {
+  const { selectedFiles, showFileContextMenu, setShowFileContextMenu, fileContextMenuLocation } =
+    viewControllerManager.filesController
 
   const [contextMenuStyle, setContextMenuStyle] = useState<React.CSSProperties>({
     top: 0,
@@ -23,7 +24,7 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ appState }) => {
   const [contextMenuMaxHeight, setContextMenuMaxHeight] = useState<number | 'auto'>('auto')
   const contextMenuRef = useRef<HTMLDivElement>(null)
   const [closeOnBlur] = useCloseOnBlur(contextMenuRef, (open: boolean) => setShowFileContextMenu(open))
-  useCloseOnClickOutside(contextMenuRef, () => appState.files.setShowFileContextMenu(false))
+  useCloseOnClickOutside(contextMenuRef, () => viewControllerManager.filesController.setShowFileContextMenu(false))
 
   const selectedFile = selectedFiles[0]
 
@@ -87,10 +88,13 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ appState }) => {
 
   const handleFileAction = useCallback(
     async (action: PopoverFileItemAction) => {
-      const { didHandleAction } = await appState.files.handleFileAction(action, PopoverTabs.AllFiles)
+      const { didHandleAction } = await viewControllerManager.filesController.handleFileAction(
+        action,
+        PopoverTabs.AllFiles,
+      )
       return didHandleAction
     },
-    [appState.files],
+    [viewControllerManager.filesController],
   )
 
   return (
@@ -116,8 +120,8 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ appState }) => {
 
 FileContextMenu.displayName = 'FileContextMenu'
 
-const FileContextMenuWrapper: FunctionComponent<Props> = ({ appState }) => {
-  const { selectedFiles, showFileContextMenu } = appState.files
+const FileContextMenuWrapper: FunctionComponent<Props> = ({ viewControllerManager }) => {
+  const { selectedFiles, showFileContextMenu } = viewControllerManager.filesController
 
   const selectedFile = selectedFiles[0]
 
@@ -125,7 +129,7 @@ const FileContextMenuWrapper: FunctionComponent<Props> = ({ appState }) => {
     return null
   }
 
-  return <FileContextMenu appState={appState} />
+  return <FileContextMenu viewControllerManager={viewControllerManager} />
 }
 
 export default observer(FileContextMenuWrapper)

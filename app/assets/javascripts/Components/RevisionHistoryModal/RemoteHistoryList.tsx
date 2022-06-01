@@ -1,4 +1,4 @@
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import { RevisionListEntry } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { Fragment, FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'

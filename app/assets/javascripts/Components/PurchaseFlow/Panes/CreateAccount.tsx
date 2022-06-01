@@ -1,7 +1,7 @@
 import Button from '@/Components/Button/Button'
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
-import { PurchaseFlowPane } from '@/UIModels/AppState/PurchaseFlowPane'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { PurchaseFlowPane } from '@/Controllers/PurchaseFlow/PurchaseFlowPane'
 import { observer } from 'mobx-react-lite'
 import { ChangeEventHandler, FunctionComponent, useEffect, useRef, useState } from 'react'
 import FloatingLabelInput from '@/Components/Input/FloatingLabelInput'
@@ -10,12 +10,12 @@ import { BlueDotIcon, CircleIcon, DiamondIcon, CreateAccountIllustration } from 
 import { loadPurchaseFlowUrl } from '../PurchaseFlowFunctions'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   application: WebApplication
 }
 
-const CreateAccount: FunctionComponent<Props> = ({ appState, application }) => {
-  const { setCurrentPane } = appState.purchaseFlow
+const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, application }) => {
+  const { setCurrentPane } = viewControllerManager.purchaseFlowController
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')

@@ -8,13 +8,13 @@ import {
   StringUtils,
   Strings,
 } from '@/Strings'
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import { preventRefreshing } from '@/Utils'
 import { alertDialog } from '@/Services/AlertService'
 import { ChangeEventHandler, FormEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { ApplicationEvent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { AppState } from '@/UIModels/AppState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { Title, Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import Button from '@/Components/Button/Button'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
@@ -22,14 +22,15 @@ import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
 type Props = {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
 }
 
-const PasscodeLock = ({ application, appState }: Props) => {
+const PasscodeLock = ({ application, viewControllerManager }: Props) => {
   const keyStorageInfo = StringUtils.keyStorageInfo(application)
   const passcodeAutoLockOptions = application.getAutolockService().getAutoLockIntervalOptions()
 
-  const { setIsEncryptionEnabled, setIsBackupEncrypted, setEncryptionStatusString } = appState.accountMenu
+  const { setIsEncryptionEnabled, setIsBackupEncrypted, setEncryptionStatusString } =
+    viewControllerManager.accountMenuController
 
   const passcodeInputRef = useRef<HTMLInputElement>(null)
 

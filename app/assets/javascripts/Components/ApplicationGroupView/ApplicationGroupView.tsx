@@ -1,5 +1,5 @@
-import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
-import { WebApplication } from '@/UIModels/Application'
+import { ApplicationGroup } from '@/Application/ApplicationGroup'
+import { WebApplication } from '@/Application/Application'
 import { Component } from 'react'
 import ApplicationView from '@/Components/ApplicationView/ApplicationView'
 import { WebOrDesktopDevice } from '@/Device/WebOrDesktopDevice'

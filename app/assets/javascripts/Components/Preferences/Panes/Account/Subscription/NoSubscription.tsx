@@ -1,7 +1,7 @@
 import { FunctionComponent, useState } from 'react'
 import { LinkButton, Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import Button from '@/Components/Button/Button'
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import { loadPurchaseFlowUrl } from '@/Components/PurchaseFlow/PurchaseFlowFunctions'
 
 type Props = {

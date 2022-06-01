@@ -1,19 +1,19 @@
 import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import Button from '@/Components/Button/Button'
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import { observer } from '@node_modules/mobx-react-lite'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import { dateToLocalizedString } from '@standardnotes/snjs'
 import { useCallback, useState, FunctionComponent } from 'react'
 import ChangeEmail from '@/Components/Preferences/Panes/Account/ChangeEmail/ChangeEmail'
-import { AppState } from '@/UIModels/AppState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import PasswordWizard from '@/Components/PasswordWizard/PasswordWizard'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
 type Props = {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
 }
 
 const Credentials: FunctionComponent<Props> = ({ application }: Props) => {

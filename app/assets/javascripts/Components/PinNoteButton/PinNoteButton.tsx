@@ -1,17 +1,21 @@
-import { AppState } from '@/UIModels/AppState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import VisuallyHidden from '@reach/visually-hidden'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback } from 'react'
 import Icon from '@/Components/Icon/Icon'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   className?: string
   onClickPreprocessing?: () => Promise<void>
 }
 
-const PinNoteButton: FunctionComponent<Props> = ({ appState, className = '', onClickPreprocessing }: Props) => {
-  const notes = appState.notes.selectedNotes
+const PinNoteButton: FunctionComponent<Props> = ({
+  viewControllerManager,
+  className = '',
+  onClickPreprocessing,
+}: Props) => {
+  const notes = viewControllerManager.notesController.selectedNotes
   const pinned = notes.some((note) => note.pinned)
 
   const togglePinned = useCallback(async () => {
@@ -19,11 +23,11 @@ const PinNoteButton: FunctionComponent<Props> = ({ appState, className = '', onC
       await onClickPreprocessing()
     }
     if (!pinned) {
-      appState.notes.setPinSelectedNotes(true)
+      viewControllerManager.notesController.setPinSelectedNotes(true)
     } else {
-      appState.notes.setPinSelectedNotes(false)
+      viewControllerManager.notesController.setPinSelectedNotes(false)
     }
-  }, [appState, onClickPreprocessing, pinned])
+  }, [viewControllerManager, onClickPreprocessing, pinned])
 
   return (
     <button className={`sn-icon-button border-contrast ${pinned ? 'toggled' : ''} ${className}`} onClick={togglePinned}>

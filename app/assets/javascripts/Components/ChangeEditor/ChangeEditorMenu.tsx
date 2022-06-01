@@ -4,7 +4,7 @@ import MenuItem from '@/Components/Menu/MenuItem'
 import { MenuItemType } from '@/Components/Menu/MenuItemType'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { STRING_EDIT_LOCKED_ATTEMPT } from '@/Strings'
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import {
   ComponentArea,
   ItemMutator,
@@ -90,7 +90,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 
       const transactions: TransactionalMutation[] = []
 
-      await application.getAppState().contentListView.insertCurrentIfTemplate()
+      await application.getViewControllerManager().contentListController.insertCurrentIfTemplate()
 
       if (note.locked) {
         application.alertService.alert(STRING_EDIT_LOCKED_ATTEMPT).catch(console.error)

@@ -9,17 +9,17 @@ import {
 } from 'react'
 import { Disclosure, DisclosurePanel } from '@reach/disclosure'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
-import { AppState } from '@/UIModels/AppState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import AutocompleteTagResult from './AutocompleteTagResult'
 import AutocompleteTagHint from './AutocompleteTagHint'
 import { observer } from 'mobx-react-lite'
 import { SNTag } from '@standardnotes/snjs'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
 }
 
-const AutocompleteTagInput = ({ appState }: Props) => {
+const AutocompleteTagInput = ({ viewControllerManager }: Props) => {
   const {
     autocompleteInputFocused,
     autocompleteSearchQuery,
@@ -27,7 +27,7 @@ const AutocompleteTagInput = ({ appState }: Props) => {
     autocompleteTagResults,
     tags,
     tagsContainerMaxWidth,
-  } = appState.noteTags
+  } = viewControllerManager.noteTagsController
 
   const [dropdownVisible, setDropdownVisible] = useState(false)
   const [dropdownMaxHeight, setDropdownMaxHeight] = useState<number | 'auto'>('auto')
@@ -37,7 +37,7 @@ const AutocompleteTagInput = ({ appState }: Props) => {
 
   const [closeOnBlur] = useCloseOnBlur(containerRef, (visible: boolean) => {
     setDropdownVisible(visible)
-    appState.noteTags.clearAutocompleteSearch()
+    viewControllerManager.noteTagsController.clearAutocompleteSearch()
   })
 
   const showDropdown = () => {
@@ -53,17 +53,17 @@ const AutocompleteTagInput = ({ appState }: Props) => {
     const query = event.target.value
 
     if (query === '') {
-      appState.noteTags.clearAutocompleteSearch()
+      viewControllerManager.noteTagsController.clearAutocompleteSearch()
     } else {
-      appState.noteTags.setAutocompleteSearchQuery(query)
-      appState.noteTags.searchActiveNoteAutocompleteTags()
+      viewControllerManager.noteTagsController.setAutocompleteSearchQuery(query)
+      viewControllerManager.noteTagsController.searchActiveNoteAutocompleteTags()
     }
   }
 
   const onFormSubmit: FormEventHandler = async (event) => {
     event.preventDefault()
     if (autocompleteSearchQuery !== '') {
-      await appState.noteTags.createAndAddNewTag()
+      await viewControllerManager.noteTagsController.createAndAddNewTag()
     }
   }
 
@@ -72,15 +72,15 @@ const AutocompleteTagInput = ({ appState }: Props) => {
       case 'Backspace':
       case 'ArrowLeft':
         if (autocompleteSearchQuery === '' && tags.length > 0) {
-          appState.noteTags.setFocusedTagUuid(tags[tags.length - 1].uuid)
+          viewControllerManager.noteTagsController.setFocusedTagUuid(tags[tags.length - 1].uuid)
         }
         break
       case 'ArrowDown':
         event.preventDefault()
         if (autocompleteTagResults.length > 0) {
-          appState.noteTags.setFocusedTagResultUuid(autocompleteTagResults[0].uuid)
+          viewControllerManager.noteTagsController.setFocusedTagResultUuid(autocompleteTagResults[0].uuid)
         } else if (autocompleteTagHintVisible) {
-          appState.noteTags.setAutocompleteTagHintFocused(true)
+          viewControllerManager.noteTagsController.setAutocompleteTagHintFocused(true)
         }
         break
       default:
@@ -90,19 +90,19 @@ const AutocompleteTagInput = ({ appState }: Props) => {
 
   const onFocus = () => {
     showDropdown()
-    appState.noteTags.setAutocompleteInputFocused(true)
+    viewControllerManager.noteTagsController.setAutocompleteInputFocused(true)
   }
 
   const onBlur: FocusEventHandler = (event) => {
     closeOnBlur(event)
-    appState.noteTags.setAutocompleteInputFocused(false)
+    viewControllerManager.noteTagsController.setAutocompleteInputFocused(false)
   }
 
   useEffect(() => {
     if (autocompleteInputFocused) {
       inputRef.current?.focus()
     }
-  }, [appState, autocompleteInputFocused])
+  }, [viewControllerManager, autocompleteInputFocused])
 
   return (
     <div ref={containerRef}>
@@ -134,13 +134,15 @@ const AutocompleteTagInput = ({ appState }: Props) => {
                 {autocompleteTagResults.map((tagResult: SNTag) => (
                   <AutocompleteTagResult
                     key={tagResult.uuid}
-                    appState={appState}
+                    viewControllerManager={viewControllerManager}
                     tagResult={tagResult}
                     closeOnBlur={closeOnBlur}
                   />
                 ))}
               </div>
-              {autocompleteTagHintVisible && <AutocompleteTagHint appState={appState} closeOnBlur={closeOnBlur} />}
+              {autocompleteTagHintVisible && (
+                <AutocompleteTagHint viewControllerManager={viewControllerManager} closeOnBlur={closeOnBlur} />
+              )}
             </DisclosurePanel>
           )}
         </Disclosure>

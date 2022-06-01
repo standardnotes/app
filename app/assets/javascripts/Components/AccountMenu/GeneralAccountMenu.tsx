@@ -1,5 +1,5 @@
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import Icon from '@/Components/Icon/Icon'
 import { SyncQueueStrategy } from '@standardnotes/snjs'
@@ -11,11 +11,11 @@ import MenuItem from '@/Components/Menu/MenuItem'
 import MenuItemSeparator from '@/Components/Menu/MenuItemSeparator'
 import { MenuItemType } from '@/Components/Menu/MenuItemType'
 import WorkspaceSwitcherOption from './WorkspaceSwitcher/WorkspaceSwitcherOption'
-import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
+import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { formatLastSyncDate } from '@/Utils/FormatLastSyncDate'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   application: WebApplication
   mainApplicationGroup: ApplicationGroup
   setMenuPane: (pane: AccountMenuPane) => void
@@ -26,7 +26,7 @@ const iconClassName = 'color-neutral mr-2'
 
 const GeneralAccountMenu: FunctionComponent<Props> = ({
   application,
-  appState,
+  viewControllerManager,
   setMenuPane,
   closeMenu,
   mainApplicationGroup,
@@ -60,20 +60,20 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
   const user = useMemo(() => application.getUser(), [application])
 
   const openPreferences = useCallback(() => {
-    appState.accountMenu.closeAccountMenu()
-    appState.preferences.setCurrentPane('account')
-    appState.preferences.openPreferences()
-  }, [appState])
+    viewControllerManager.accountMenuController.closeAccountMenu()
+    viewControllerManager.preferencesController.setCurrentPane('account')
+    viewControllerManager.preferencesController.openPreferences()
+  }, [viewControllerManager])
 
   const openHelp = useCallback(() => {
-    appState.accountMenu.closeAccountMenu()
-    appState.preferences.setCurrentPane('help-feedback')
-    appState.preferences.openPreferences()
-  }, [appState])
+    viewControllerManager.accountMenuController.closeAccountMenu()
+    viewControllerManager.preferencesController.setCurrentPane('help-feedback')
+    viewControllerManager.preferencesController.openPreferences()
+  }, [viewControllerManager])
 
   const signOut = useCallback(() => {
-    appState.accountMenu.setSigningOut(true)
-  }, [appState])
+    viewControllerManager.accountMenuController.setSigningOut(true)
+  }, [viewControllerManager])
 
   const activateRegisterPane = useCallback(() => {
     setMenuPane(AccountMenuPane.Register)
@@ -136,13 +136,16 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
         </>
       )}
       <Menu
-        isOpen={appState.accountMenu.show}
+        isOpen={viewControllerManager.accountMenuController.show}
         a11yLabel="General account menu"
         closeMenu={closeMenu}
         initialFocus={!application.hasAccount() ? CREATE_ACCOUNT_INDEX : SWITCHER_INDEX}
       >
         <MenuItemSeparator />
-        <WorkspaceSwitcherOption mainApplicationGroup={mainApplicationGroup} appState={appState} />
+        <WorkspaceSwitcherOption
+          mainApplicationGroup={mainApplicationGroup}
+          viewControllerManager={viewControllerManager}
+        />
         <MenuItemSeparator />
         {user ? (
           <MenuItem type={MenuItemType.IconButton} onClick={openPreferences}>
@@ -166,7 +169,7 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
             <Icon type="help" className={iconClassName} />
             Help &amp; feedback
           </div>
-          <span className="color-neutral">v{appState.version}</span>
+          <span className="color-neutral">v{viewControllerManager.version}</span>
         </MenuItem>
         {user ? (
           <>

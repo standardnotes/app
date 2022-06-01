@@ -1,4 +1,4 @@
-import { AppState } from '@/UIModels/AppState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { isMobile } from '@/Utils'
 import { SNTag } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
@@ -10,33 +10,33 @@ import RootTagDropZone from './RootTagDropZone'
 import { TagsListItem } from './TagsListItem'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
 }
 
-const TagsList: FunctionComponent<Props> = ({ appState }: Props) => {
-  const tagsState = appState.tags
+const TagsList: FunctionComponent<Props> = ({ viewControllerManager }: Props) => {
+  const tagsState = viewControllerManager.navigationController
   const allTags = tagsState.allLocalRootTags
 
   const backend = isMobile({ tablet: true }) ? TouchBackend : HTML5Backend
 
   const openTagContextMenu = useCallback(
     (posX: number, posY: number) => {
-      appState.tags.setContextMenuClickLocation({
+      viewControllerManager.navigationController.setContextMenuClickLocation({
         x: posX,
         y: posY,
       })
-      appState.tags.reloadContextMenuLayout()
-      appState.tags.setContextMenuOpen(true)
+      viewControllerManager.navigationController.reloadContextMenuLayout()
+      viewControllerManager.navigationController.setContextMenuOpen(true)
     },
-    [appState],
+    [viewControllerManager],
   )
 
   const onContextMenu = useCallback(
     (tag: SNTag, posX: number, posY: number) => {
-      void appState.tags.setSelectedTag(tag)
+      void viewControllerManager.navigationController.setSelectedTag(tag)
       openTagContextMenu(posX, posY)
     },
-    [appState, openTagContextMenu],
+    [viewControllerManager, openTagContextMenu],
   )
 
   return (
@@ -52,12 +52,15 @@ const TagsList: FunctionComponent<Props> = ({ appState }: Props) => {
                 key={tag.uuid}
                 tag={tag}
                 tagsState={tagsState}
-                features={appState.features}
+                features={viewControllerManager.featuresController}
                 onContextMenu={onContextMenu}
               />
             )
           })}
-          <RootTagDropZone tagsState={appState.tags} featuresState={appState.features} />
+          <RootTagDropZone
+            tagsState={viewControllerManager.navigationController}
+            featuresState={viewControllerManager.featuresController}
+          />
         </>
       )}
     </DndProvider>
