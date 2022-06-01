@@ -379,18 +379,15 @@ export class ContentListViewState extends AbstractState {
 
   createNewNote = async () => {
     this.appState.notes.unselectNotes()
-    this.appState.tags.selected = this.appState.tags.smartViews.find((view) => view.uuid === SystemViewId.AllNotes)
 
-    setTimeout(async () => {
-      let title = `Note ${this.notes.length + 1}`
-      if (this.isFiltering) {
-        title = this.noteFilterText
-      }
+    let title = `Note ${this.notes.length + 1}`
+    if (this.isFiltering) {
+      title = this.noteFilterText
+    }
 
-      await this.appState.notes.createNewNoteController(title)
+    await this.appState.notes.createNewNoteController(title)
 
-      this.appState.noteTags.reloadTags()
-    })
+    this.appState.noteTags.reloadTags()
   }
 
   createPlaceholderNote = () => {
