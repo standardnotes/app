@@ -34,6 +34,7 @@ export class FilesController extends AbstractViewController {
   fileContextMenuLocation: FileContextMenuLocation = { x: 0, y: 0 }
 
   override deinit(): void {
+    super.deinit()
     ;(this.notesController as unknown) = undefined
     ;(this.selectionController as unknown) = undefined
     ;(this.filePreviewModalController as unknown) = undefined
