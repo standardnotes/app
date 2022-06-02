@@ -404,11 +404,7 @@ export class FilesController extends AbstractViewController {
         confirmButtonStyle: 'danger',
       })
     ) {
-      await Promise.all(
-        files.map(async (file) => {
-          await this.application.mutator.deleteItem(file)
-        }),
-      )
+      await Promise.all(files.map((file) => this.application.mutator.deleteItem(file)))
     }
   }
 
@@ -421,10 +417,6 @@ export class FilesController extends AbstractViewController {
   }
 
   downloadFiles = async (files: FileItem[]) => {
-    return Promise.all(
-      files.map((file) => {
-        this.downloadFile(file).catch(console.error)
-      }),
-    )
+    await Promise.all(files.map((file) => this.downloadFile(file)))
   }
 }
