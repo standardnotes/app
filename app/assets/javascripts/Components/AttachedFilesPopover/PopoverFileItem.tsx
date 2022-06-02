@@ -2,7 +2,15 @@ import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { KeyboardKey } from '@/Services/IOService'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { FileItem } from '@standardnotes/snjs'
-import { FormEventHandler, FunctionComponent, KeyboardEventHandler, useEffect, useRef, useState } from 'react'
+import {
+  FormEventHandler,
+  FunctionComponent,
+  KeyboardEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { PopoverFileItemActionType } from './PopoverFileItemAction'
 import PopoverFileSubmenu from './PopoverFileSubmenu'
@@ -28,34 +36,37 @@ const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
     }
   }, [isRenamingFile])
 
-  const renameFile = async (file: FileItem, name: string) => {
-    await handleFileAction({
-      type: PopoverFileItemActionType.RenameFile,
-      payload: {
-        file,
-        name,
-      },
-    })
-    setIsRenamingFile(false)
-  }
+  const renameFile = useCallback(
+    async (file: FileItem, name: string) => {
+      await handleFileAction({
+        type: PopoverFileItemActionType.RenameFile,
+        payload: {
+          file,
+          name,
+        },
+      })
+      setIsRenamingFile(false)
+    },
+    [handleFileAction],
+  )
 
-  const handleFileNameInput: FormEventHandler<HTMLInputElement> = (event) => {
+  const handleFileNameInput: FormEventHandler<HTMLInputElement> = useCallback((event) => {
     setFileName((event.target as HTMLInputElement).value)
-  }
+  }, [])
 
-  const handleFileNameInputKeyDown: KeyboardEventHandler = (event) => {
+  const handleFileNameInputKeyDown: KeyboardEventHandler = useCallback((event) => {
     if (event.key === KeyboardKey.Enter) {
       itemRef.current?.focus()
     }
-  }
+  }, [])
 
-  const handleFileNameInputBlur = () => {
+  const handleFileNameInputBlur = useCallback(() => {
     renameFile(file, fileName).catch(console.error)
-  }
+  }, [file, fileName, renameFile])
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     previewHandler(file)
-  }
+  }, [file, previewHandler])
 
   return (
     <div
