@@ -140,15 +140,11 @@ export const StringUtils = {
         : 'Are you sure you want to move these notes to the trash?'
     }
   },
-  deleteFiles(permanently: boolean, filesCount = 1, title?: string): string {
+  deleteFiles(filesCount = 1, title?: string): string {
     if (filesCount === 1) {
-      return permanently
-        ? `Are you sure you want to permanently delete ${title}?`
-        : `Are you sure you want to move ${title} to the trash?`
+      return `Are you sure you want to permanently delete ${title}?`
     } else {
-      return permanently
-        ? 'Are you sure you want to permanently delete these files?'
-        : 'Are you sure you want to move these files to the trash?'
+      return 'Are you sure you want to permanently delete these files?'
     }
   },
   archiveLockedNotesAttempt(archive: boolean, notesCount = 1): string {
