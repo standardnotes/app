@@ -110,6 +110,7 @@ export const Strings = {
   trashNotesText: 'Are you sure you want to move these notes to the trash?',
   trashFilesText: 'Are you sure you want to move these files to the trash?',
   enterPasscode: 'Please enter a passcode.',
+  deleteMultipleFiles: 'Are you sure you want to permanently delete these files?',
 }
 
 export const StringUtils = {
@@ -140,12 +141,8 @@ export const StringUtils = {
         : 'Are you sure you want to move these notes to the trash?'
     }
   },
-  deleteFiles(filesCount = 1, title?: string): string {
-    if (filesCount === 1) {
-      return `Are you sure you want to permanently delete ${title}?`
-    } else {
-      return 'Are you sure you want to permanently delete these files?'
-    }
+  deleteFile(title: string): string {
+    return `Are you sure you want to permanently delete ${title}?`
   },
   archiveLockedNotesAttempt(archive: boolean, notesCount = 1): string {
     const archiveString = archive ? 'archive' : 'unarchive'
