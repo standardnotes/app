@@ -37,31 +37,31 @@ const FileMenuOptions: FunctionComponent<Props> = ({
   const hasProtectedFiles = useMemo(() => matchesCondition((file) => file.protected, selectedFiles), [selectedFiles])
 
   const onPreview = useCallback(() => {
-    handleFileAction({
+    void handleFileAction({
       type: PopoverFileItemActionType.PreviewFile,
       payload: {
         file: selectedFiles[0],
         otherFiles: selectedFiles.length > 1 ? selectedFiles : filesController.allFiles,
       },
-    }).catch(console.error)
+    })
     closeMenu()
   }, [closeMenu, filesController.allFiles, handleFileAction, selectedFiles])
 
   const onDetach = useCallback(() => {
     const file = selectedFiles[0]
-    handleFileAction({
+    void handleFileAction({
       type: PopoverFileItemActionType.DetachFileToNote,
       payload: { file },
-    }).catch(console.error)
+    })
     closeMenu()
   }, [closeMenu, handleFileAction, selectedFiles])
 
   const onAttach = useCallback(() => {
     const file = selectedFiles[0]
-    handleFileAction({
+    void handleFileAction({
       type: PopoverFileItemActionType.AttachFileToNote,
       payload: { file },
-    }).catch(console.error)
+    })
     closeMenu()
   }, [closeMenu, handleFileAction, selectedFiles])
 
@@ -90,7 +90,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
       <button
         className="sn-dropdown-item justify-between focus:bg-info-backdrop"
         onClick={() => {
-          filesController.setProtectionForSelectedFiles(!hasProtectedFiles).catch(console.error)
+          void filesController.setProtectionForSelectedFiles(!hasProtectedFiles)
         }}
         onBlur={closeOnBlur}
       >
@@ -109,7 +109,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
         onBlur={closeOnBlur}
         className="sn-dropdown-item focus:bg-info-backdrop"
         onClick={() => {
-          filesController.downloadSelectedFiles().catch(console.error)
+          void filesController.downloadSelectedFiles()
         }}
       >
         <Icon type="download" className="mr-2 color-neutral" />
@@ -131,7 +131,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
         onBlur={closeOnBlur}
         className="sn-dropdown-item focus:bg-info-backdrop"
         onClick={() => {
-          filesController.deleteSelectedFilesPermanently().catch(console.error)
+          void filesController.deleteSelectedFilesPermanently()
         }}
       >
         <Icon type="trash" className="mr-2 color-danger" />
