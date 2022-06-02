@@ -395,7 +395,7 @@ export class FilesController extends AbstractViewController {
     let fileTitle = undefined
     if (this.selectionController.selectedFilesCount === 1) {
       const selectedFile = this.selectionController.selectedFiles[0]
-      fileTitle = selectedFile.name.length ? `'${selectedFile.name}'` : 'this note'
+      fileTitle = selectedFile.name.length ? `'${selectedFile.name}'` : 'this file'
     }
     const text = StringUtils.deleteFiles(true, this.selectionController.selectedFilesCount, fileTitle)
 
