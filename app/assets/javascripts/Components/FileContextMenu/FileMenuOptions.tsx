@@ -1,7 +1,6 @@
 import { FunctionComponent, useCallback, useMemo } from 'react'
 import { PopoverFileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
-import { FileItem } from '@standardnotes/snjs'
 import Icon from '@/Components/Icon/Icon'
 import Switch from '@/Components/Switch/Switch'
 import { observer } from 'mobx-react-lite'
@@ -19,12 +18,6 @@ type Props = {
   shouldShowAttachOption: boolean
 }
 
-const matchesCondition = (condition: (file: FileItem) => boolean, files: FileItem[]) => {
-  const filesMatchingAttribute = files.filter(condition)
-  const filesNotMatchingAttribute = files.filter((file) => !condition(file))
-  return filesMatchingAttribute.length > filesNotMatchingAttribute.length
-}
-
 const FileMenuOptions: FunctionComponent<Props> = ({
   closeMenu,
   closeOnBlur,
@@ -38,7 +31,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
   const { selectedFiles } = selectionController
   const { handleFileAction } = filesController
 
-  const hasProtectedFiles = useMemo(() => matchesCondition((file) => file.protected, selectedFiles), [selectedFiles])
+  const hasProtectedFiles = useMemo(() => selectedFiles.some((file) => file.protected), [selectedFiles])
 
   const onPreview = useCallback(() => {
     void handleFileAction({
