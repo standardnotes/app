@@ -390,14 +390,15 @@ export class FilesController extends AbstractViewController {
     return undefined
   }
 
-  deleteSelectedFilesPermanently = async () => {
+  deleteFilesPermanently = async (files: FileItem[]) => {
     const title = Strings.trashItemsTitle
-    let fileTitle = undefined
-    if (this.selectionController.selectedFilesCount === 1) {
-      const selectedFile = this.selectionController.selectedFiles[0]
-      fileTitle = selectedFile.name.length ? `'${selectedFile.name}'` : 'this file'
+    let text = Strings.deleteMultipleFiles
+
+    if (files.length === 1) {
+      const selectedFile = files[0]
+      const fileTitle = selectedFile.name.length ? `'${selectedFile.name}'` : 'this file'
+      text = StringUtils.deleteFile(fileTitle)
     }
-    const text = StringUtils.deleteFiles(true, this.selectionController.selectedFilesCount, fileTitle)
 
     if (
       await confirmDialog({
@@ -406,10 +407,12 @@ export class FilesController extends AbstractViewController {
         confirmButtonStyle: 'danger',
       })
     ) {
-      for (const file of this.selectionController.selectedFiles) {
-        await this.application.mutator.deleteItem(file)
-        this.selectionController.deselectItem(file)
-      }
+      await Promise.all(
+        files.map(async (file) => {
+          await this.application.mutator.deleteItem(file)
+          this.selectionController.deselectItem(file)
+        }),
+      )
     }
   }
 
@@ -422,9 +425,11 @@ export class FilesController extends AbstractViewController {
     }
   }
 
-  downloadSelectedFiles = async () => {
-    for (const file of this.selectionController.selectedFiles) {
-      this.downloadFile(file).catch(console.error)
-    }
+  downloadSelectedFiles = async (files: FileItem[]) => {
+    return Promise.all(
+      files.map((file) => {
+        this.downloadFile(file).catch(console.error)
+      }),
+    )
   }
 }

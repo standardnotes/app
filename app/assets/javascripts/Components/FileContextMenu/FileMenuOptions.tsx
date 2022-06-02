@@ -113,7 +113,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
         onBlur={closeOnBlur}
         className="sn-dropdown-item focus:bg-info-backdrop"
         onClick={() => {
-          void filesController.downloadSelectedFiles()
+          void filesController.downloadSelectedFiles(selectionController.selectedFiles)
         }}
       >
         <Icon type="download" className="mr-2 color-neutral" />
@@ -135,7 +135,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
         onBlur={closeOnBlur}
         className="sn-dropdown-item focus:bg-info-backdrop"
         onClick={() => {
-          void filesController.deleteSelectedFilesPermanently()
+          void filesController.deleteFilesPermanently(selectionController.selectedFiles)
         }}
       >
         <Icon type="trash" className="mr-2 color-danger" />
