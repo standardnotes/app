@@ -393,8 +393,7 @@ export class FilesController extends AbstractViewController {
 
     if (files.length === 1) {
       const selectedFile = files[0]
-      const fileTitle = selectedFile.name.length ? `'${selectedFile.name}'` : 'this file'
-      text = StringUtils.deleteFile(fileTitle)
+      text = StringUtils.deleteFile(selectedFile.name)
     }
 
     if (

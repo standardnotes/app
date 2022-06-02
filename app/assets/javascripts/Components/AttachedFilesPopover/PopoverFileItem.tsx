@@ -38,6 +38,10 @@ const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
 
   const renameFile = useCallback(
     async (file: FileItem, name: string) => {
+      if (name.length < 1) {
+        return
+      }
+
       await handleFileAction({
         type: PopoverFileItemActionType.RenameFile,
         payload: {
@@ -54,19 +58,26 @@ const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
     setFileName((event.target as HTMLInputElement).value)
   }, [])
 
-  const handleFileNameInputKeyDown: KeyboardEventHandler = useCallback((event) => {
-    if (event.key === KeyboardKey.Enter) {
-      itemRef.current?.focus()
-    }
-  }, [])
+  const handleFileNameInputKeyDown: KeyboardEventHandler = useCallback(
+    (event) => {
+      if (fileName.length > 0 && event.key === KeyboardKey.Enter) {
+        itemRef.current?.focus()
+      }
+    },
+    [fileName.length],
+  )
 
   const handleFileNameInputBlur = useCallback(() => {
     renameFile(file, fileName).catch(console.error)
   }, [file, fileName, renameFile])
 
   const handleClick = useCallback(() => {
+    if (isRenamingFile) {
+      return
+    }
+
     previewHandler(file)
-  }, [file, previewHandler])
+  }, [file, isRenamingFile, previewHandler])
 
   return (
     <div
