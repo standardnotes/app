@@ -1,17 +1,26 @@
 import { HistoryEntry, NoteHistoryEntry, RevisionListEntry } from '@standardnotes/snjs'
-import { Fragment, FunctionComponent } from 'preact'
-import { StateUpdater, useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks'
+import {
+  Dispatch,
+  Fragment,
+  FunctionComponent,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
-import { HistoryListItem } from './HistoryListItem'
+import HistoryListItem from './HistoryListItem'
 import { LegacyHistoryEntry, ListGroup } from './utils'
 
 type Props = {
   sessionHistory: ListGroup<NoteHistoryEntry>[]
-  setSelectedRevision: StateUpdater<HistoryEntry | LegacyHistoryEntry | undefined>
-  setSelectedRemoteEntry: StateUpdater<RevisionListEntry | undefined>
+  setSelectedRevision: Dispatch<SetStateAction<HistoryEntry | LegacyHistoryEntry | undefined>>
+  setSelectedRemoteEntry: Dispatch<SetStateAction<RevisionListEntry | undefined>>
 }
 
-export const SessionHistoryList: FunctionComponent<Props> = ({
+const SessionHistoryList: FunctionComponent<Props> = ({
   sessionHistory,
   setSelectedRevision,
   setSelectedRemoteEntry,
@@ -57,7 +66,7 @@ export const SessionHistoryList: FunctionComponent<Props> = ({
         if (group.entries && group.entries.length) {
           return (
             <Fragment key={group.title}>
-              <div className="px-3 mt-2.5 mb-1 font-semibold color-text uppercase color-grey-0 select-none">
+              <div className="px-3 mt-2.5 mb-1 font-semibold color-text uppercase color-passive-0 select-none">
                 {group.title}
               </div>
               {group.entries.map((entry, index) => (
@@ -79,7 +88,9 @@ export const SessionHistoryList: FunctionComponent<Props> = ({
           return null
         }
       })}
-      {!sessionHistoryLength && <div className="color-grey-0 select-none">No session history found</div>}
+      {!sessionHistoryLength && <div className="color-passive-0 select-none">No session history found</div>}
     </div>
   )
 }
+
+export default SessionHistoryList

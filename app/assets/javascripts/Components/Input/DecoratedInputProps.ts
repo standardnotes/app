@@ -1,15 +1,15 @@
-import { ComponentChild } from 'preact'
+import { FocusEventHandler, KeyboardEventHandler, ReactNode } from 'react'
 
 export type DecoratedInputProps = {
   type?: 'text' | 'email' | 'password'
   className?: string
   disabled?: boolean
-  left?: ComponentChild[]
-  right?: ComponentChild[]
+  left?: ReactNode[]
+  right?: ReactNode[]
   value?: string
   placeholder?: string
   onChange?: (text: string) => void
-  onFocus?: (event: FocusEvent) => void
-  onKeyDown?: (event: KeyboardEvent) => void
+  onFocus?: FocusEventHandler
+  onKeyDown?: KeyboardEventHandler
   autocomplete?: boolean
 }

@@ -1,26 +1,30 @@
-import { AccountMenuPane } from '@/Components/AccountMenu'
-import { Button } from '@/Components/Button/Button'
-import { PreferencesGroup, PreferencesSegment, Text, Title } from '@/Components/Preferences/PreferencesComponents'
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
+import Button from '@/Components/Button/Button'
+import { Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 import { AccountIllustration } from '@standardnotes/icons'
+import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
+import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
-export const Authentication: FunctionComponent<{
+type Props = {
   application: WebApplication
-  appState: AppState
-}> = observer(({ appState }) => {
+  viewControllerManager: ViewControllerManager
+}
+
+const Authentication: FunctionComponent<Props> = ({ viewControllerManager }) => {
   const clickSignIn = () => {
-    appState.preferences.closePreferences()
-    appState.accountMenu.setCurrentPane(AccountMenuPane.SignIn)
-    appState.accountMenu.setShow(true)
+    viewControllerManager.preferencesController.closePreferences()
+    viewControllerManager.accountMenuController.setCurrentPane(AccountMenuPane.SignIn)
+    viewControllerManager.accountMenuController.setShow(true)
   }
 
   const clickRegister = () => {
-    appState.preferences.closePreferences()
-    appState.accountMenu.setCurrentPane(AccountMenuPane.Register)
-    appState.accountMenu.setShow(true)
+    viewControllerManager.preferencesController.closePreferences()
+    viewControllerManager.accountMenuController.setCurrentPane(AccountMenuPane.Register)
+    viewControllerManager.accountMenuController.setShow(true)
   }
 
   return (
@@ -43,4 +47,6 @@ export const Authentication: FunctionComponent<{
       </PreferencesSegment>
     </PreferencesGroup>
   )
-})
+}
+
+export default observer(Authentication)

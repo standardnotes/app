@@ -7,21 +7,16 @@ on:
       - main
 
 jobs:
-
-  tsc:
-
+  test:
     runs-on: ubuntu-latest
-
     steps:
-
       - name: Checkout code
         uses: actions/checkout@v2
-
       - name: Install dependencies
         run: yarn install --pure-lockfile
-
-      - name: Typescript
-        run: yarn tsc
-
+      - name: Bundle
+        run: yarn bundle
       - name: ESLint
-        run: yarn lint --quiet
+        run: yarn lint
+      - name: Test
+        run: yarn test

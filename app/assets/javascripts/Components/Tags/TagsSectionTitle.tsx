@@ -1,18 +1,17 @@
-import { TAG_FOLDERS_FEATURE_NAME, TAG_FOLDERS_FEATURE_TOOLTIP } from '@/Constants'
+import { TAG_FOLDERS_FEATURE_NAME, TAG_FOLDERS_FEATURE_TOOLTIP } from '@/Constants/Constants'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
-import { FeaturesState } from '@/UIModels/AppState/FeaturesState'
+import { FeaturesController } from '@/Controllers/FeaturesController'
 import { Tooltip } from '@reach/tooltip'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useCallback } from 'preact/hooks'
+import { FunctionComponent, useCallback } from 'react'
 
 type Props = {
-  features: FeaturesState
+  features: FeaturesController
   hasMigration: boolean
   onClickMigration: () => void
 }
 
-export const TagsSectionTitle: FunctionComponent<Props> = observer(({ features, hasMigration, onClickMigration }) => {
+const TagsSectionTitle: FunctionComponent<Props> = ({ features, hasMigration, onClickMigration }) => {
   const entitledToFolders = features.hasFolders
   const modal = usePremiumModal()
 
@@ -40,11 +39,13 @@ export const TagsSectionTitle: FunctionComponent<Props> = observer(({ features, 
       <div className="sk-h3 title">
         <span className="sk-bold">Tags</span>
         <Tooltip label={TAG_FOLDERS_FEATURE_TOOLTIP}>
-          <label className="ml-1 sk-bold color-grey-2 cursor-pointer" onClick={showPremiumAlert}>
+          <label className="ml-1 sk-bold color-passive-2 cursor-pointer" onClick={showPremiumAlert}>
             Folders
           </label>
         </Tooltip>
       </div>
     </>
   )
-})
+}
+
+export default observer(TagsSectionTitle)

@@ -1,24 +1,25 @@
 import { observer } from 'mobx-react-lite'
-import { AppState } from '@/UIModels/AppState'
-import { WebApplication } from '@/UIModels/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { WebApplication } from '@/Application/Application'
 import { User as UserType } from '@standardnotes/snjs'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   application: WebApplication
 }
 
-const User = observer(({ appState, application }: Props) => {
-  const { server } = appState.accountMenu
+const User = ({ viewControllerManager, application }: Props) => {
+  const { server } = viewControllerManager.accountMenuController
   const user = application.getUser() as UserType
 
   return (
     <div className="sk-panel-section">
-      {appState.sync.errorMessage && (
+      {viewControllerManager.syncStatusController.errorMessage && (
         <div className="sk-notification danger">
           <div className="sk-notification-title">Sync Unreachable</div>
           <div className="sk-notification-text">
-            Hmm...we can't seem to sync your account. The reason: {appState.sync.errorMessage}
+            Hmm...we can't seem to sync your account. The reason:{' '}
+            {viewControllerManager.syncStatusController.errorMessage}
           </div>
           <a
             className="sk-a info-contrast sk-bold sk-panel-row"
@@ -39,6 +40,6 @@ const User = observer(({ appState, application }: Props) => {
       <div className="sk-panel-row" />
     </div>
   )
-})
+}
 
-export default User
+export default observer(User)

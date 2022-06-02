@@ -1,4 +1,4 @@
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import { parseFileName } from '@standardnotes/filepicker'
 import {
   ContentType,

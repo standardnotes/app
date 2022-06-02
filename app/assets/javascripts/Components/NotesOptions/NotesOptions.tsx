@@ -1,23 +1,16 @@
-import { AppState } from '@/UIModels/AppState'
-import { Icon } from '@/Components/Icon'
-import { Switch } from '@/Components/Switch'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import Icon from '@/Components/Icon/Icon'
+import Switch from '@/Components/Switch/Switch'
 import { observer } from 'mobx-react-lite'
-import { useState, useEffect, useMemo, useCallback } from 'preact/hooks'
+import { useState, useEffect, useMemo, useCallback, FunctionComponent } from 'react'
 import { SNApplication, SNNote } from '@standardnotes/snjs'
-import { WebApplication } from '@/UIModels/Application'
 import { KeyboardModifier } from '@/Services/IOService'
-import { FunctionComponent } from 'preact'
-import { ChangeEditorOption } from './ChangeEditorOption'
-import { BYTES_IN_ONE_MEGABYTE } from '@/Constants'
-import { ListedActionsOption } from './ListedActionsOption'
-import { AddTagOption } from './AddTagOption'
+import ChangeEditorOption from './ChangeEditorOption'
+import { BYTES_IN_ONE_MEGABYTE } from '@/Constants/Constants'
+import ListedActionsOption from './ListedActionsOption'
+import AddTagOption from './AddTagOption'
 import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit'
-
-export type NotesOptionsProps = {
-  application: WebApplication
-  appState: AppState
-  closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
-}
+import { NotesOptionsProps } from './NotesOptionsProps'
 
 type DeletePermanentlyButtonProps = {
   closeOnBlur: NotesOptionsProps['closeOnBlur']
@@ -128,15 +121,15 @@ const NoteAttributes: FunctionComponent<{
 }
 
 const SpellcheckOptions: FunctionComponent<{
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   note: SNNote
-}> = ({ appState, note }) => {
-  const editor = appState.application.componentManager.editorForNote(note)
+}> = ({ viewControllerManager, note }) => {
+  const editor = viewControllerManager.application.componentManager.editorForNote(note)
   const spellcheckControllable = Boolean(!editor || editor.package_info.spellcheckControl)
   const noteSpellcheck = !spellcheckControllable
     ? true
     : note
-    ? appState.notes.getSpellcheckStateForNote(note)
+    ? viewControllerManager.notesController.getSpellcheckStateForNote(note)
     : undefined
 
   return (
@@ -144,7 +137,7 @@ const SpellcheckOptions: FunctionComponent<{
       <button
         className="sn-dropdown-item justify-between px-3 py-1"
         onClick={() => {
-          appState.notes.toggleGlobalSpellcheckForNote(note).catch(console.error)
+          viewControllerManager.notesController.toggleGlobalSpellcheckForNote(note).catch(console.error)
         }}
         disabled={!spellcheckControllable}
       >
@@ -167,16 +160,16 @@ const NoteSizeWarning: FunctionComponent<{
   note: SNNote
 }> = ({ note }) => {
   return new Blob([note.text]).size > NOTE_SIZE_WARNING_THRESHOLD ? (
-    <div className="flex items-center px-3 py-3.5 relative bg-note-size-warning">
+    <div className="flex items-center px-3 py-3.5 relative bg-warning-faded">
       <Icon type="warning" className="color-accessory-tint-3 flex-shrink-0 mr-3" />
-      <div className="color-grey-0 select-none leading-140% max-w-80%">
+      <div className="color-warning select-none leading-140% max-w-80%">
         This note may have trouble syncing to the mobile application due to its size.
       </div>
     </div>
   ) : null
 }
 
-export const NotesOptions = observer(({ application, appState, closeOnBlur }: NotesOptionsProps) => {
+const NotesOptions = ({ application, viewControllerManager, closeOnBlur }: NotesOptionsProps) => {
   const [altKeyDown, setAltKeyDown] = useState(false)
 
   const toggleOn = (condition: (note: SNNote) => boolean) => {
@@ -185,7 +178,7 @@ export const NotesOptions = observer(({ application, appState, closeOnBlur }: No
     return notesMatchingAttribute.length > notesNotMatchingAttribute.length
   }
 
-  const notes = Object.values(appState.notes.selectedNotes)
+  const notes = viewControllerManager.notesController.selectedNotes
   const hidePreviews = toggleOn((note) => note.hidePreview)
   const locked = toggleOn((note) => note.locked)
   const protect = toggleOn((note) => note.protected)
@@ -255,8 +248,8 @@ export const NotesOptions = observer(({ application, appState, closeOnBlur }: No
   }, [application, notes])
 
   const openRevisionHistoryModal = useCallback(() => {
-    appState.notes.setShowRevisionHistoryModal(true)
-  }, [appState])
+    viewControllerManager.notesController.setShowRevisionHistoryModal(true)
+  }, [viewControllerManager])
 
   return (
     <>
@@ -272,7 +265,7 @@ export const NotesOptions = observer(({ application, appState, closeOnBlur }: No
       <button
         className="sn-dropdown-item justify-between"
         onClick={() => {
-          appState.notes.setLockSelectedNotes(!locked)
+          viewControllerManager.notesController.setLockSelectedNotes(!locked)
         }}
         onBlur={closeOnBlur}
       >
@@ -285,7 +278,7 @@ export const NotesOptions = observer(({ application, appState, closeOnBlur }: No
       <button
         className="sn-dropdown-item justify-between"
         onClick={() => {
-          appState.notes.setHideSelectedNotePreviews(!hidePreviews)
+          viewControllerManager.notesController.setHideSelectedNotePreviews(!hidePreviews)
         }}
         onBlur={closeOnBlur}
       >
@@ -298,7 +291,7 @@ export const NotesOptions = observer(({ application, appState, closeOnBlur }: No
       <button
         className="sn-dropdown-item justify-between"
         onClick={() => {
-          appState.notes.setProtectSelectedNotes(!protect).catch(console.error)
+          viewControllerManager.notesController.setProtectSelectedNotes(!protect).catch(console.error)
         }}
         onBlur={closeOnBlur}
       >
@@ -311,17 +304,19 @@ export const NotesOptions = observer(({ application, appState, closeOnBlur }: No
       {notes.length === 1 && (
         <>
           <div className="min-h-1px my-2 bg-border"></div>
-          <ChangeEditorOption appState={appState} application={application} note={notes[0]} />
+          <ChangeEditorOption viewControllerManager={viewControllerManager} application={application} note={notes[0]} />
         </>
       )}
       <div className="min-h-1px my-2 bg-border"></div>
-      {appState.tags.tagsCount > 0 && <AddTagOption appState={appState} />}
+      {viewControllerManager.navigationController.tagsCount > 0 && (
+        <AddTagOption viewControllerManager={viewControllerManager} />
+      )}
       {unpinned && (
         <button
           onBlur={closeOnBlur}
           className="sn-dropdown-item"
           onClick={() => {
-            appState.notes.setPinSelectedNotes(true)
+            viewControllerManager.notesController.setPinSelectedNotes(true)
           }}
         >
           <Icon type="pin" className={iconClass} />
@@ -333,7 +328,7 @@ export const NotesOptions = observer(({ application, appState, closeOnBlur }: No
           onBlur={closeOnBlur}
           className="sn-dropdown-item"
           onClick={() => {
-            appState.notes.setPinSelectedNotes(false)
+            viewControllerManager.notesController.setPinSelectedNotes(false)
           }}
         >
           <Icon type="unpin" className={iconClass} />
@@ -353,7 +348,7 @@ export const NotesOptions = observer(({ application, appState, closeOnBlur }: No
           onBlur={closeOnBlur}
           className="sn-dropdown-item"
           onClick={() => {
-            appState.notes.setArchiveSelectedNotes(true).catch(console.error)
+            viewControllerManager.notesController.setArchiveSelectedNotes(true).catch(console.error)
           }}
         >
           <Icon type="archive" className={iconClassWarning} />
@@ -365,7 +360,7 @@ export const NotesOptions = observer(({ application, appState, closeOnBlur }: No
           onBlur={closeOnBlur}
           className="sn-dropdown-item"
           onClick={() => {
-            appState.notes.setArchiveSelectedNotes(false).catch(console.error)
+            viewControllerManager.notesController.setArchiveSelectedNotes(false).catch(console.error)
           }}
         >
           <Icon type="unarchive" className={iconClassWarning} />
@@ -377,7 +372,7 @@ export const NotesOptions = observer(({ application, appState, closeOnBlur }: No
           <DeletePermanentlyButton
             closeOnBlur={closeOnBlur}
             onClick={async () => {
-              await appState.notes.deleteNotesPermanently()
+              await viewControllerManager.notesController.deleteNotesPermanently()
             }}
           />
         ) : (
@@ -385,7 +380,7 @@ export const NotesOptions = observer(({ application, appState, closeOnBlur }: No
             onBlur={closeOnBlur}
             className="sn-dropdown-item"
             onClick={async () => {
-              await appState.notes.setTrashSelectedNotes(true)
+              await viewControllerManager.notesController.setTrashSelectedNotes(true)
             }}
           >
             <Icon type="trash" className={iconClassDanger} />
@@ -398,7 +393,7 @@ export const NotesOptions = observer(({ application, appState, closeOnBlur }: No
             onBlur={closeOnBlur}
             className="sn-dropdown-item"
             onClick={async () => {
-              await appState.notes.setTrashSelectedNotes(false)
+              await viewControllerManager.notesController.setTrashSelectedNotes(false)
             }}
           >
             <Icon type="restore" className={iconClassSuccess} />
@@ -407,21 +402,21 @@ export const NotesOptions = observer(({ application, appState, closeOnBlur }: No
           <DeletePermanentlyButton
             closeOnBlur={closeOnBlur}
             onClick={async () => {
-              await appState.notes.deleteNotesPermanently()
+              await viewControllerManager.notesController.deleteNotesPermanently()
             }}
           />
           <button
             onBlur={closeOnBlur}
             className="sn-dropdown-item"
             onClick={async () => {
-              await appState.notes.emptyTrash()
+              await viewControllerManager.notesController.emptyTrash()
             }}
           >
             <div className="flex items-start">
               <Icon type="trash-sweep" className="color-danger mr-2" />
               <div className="flex-row">
                 <div className="color-danger">Empty Trash</div>
-                <div className="text-xs">{appState.notes.trashedNotesCount} notes in Trash</div>
+                <div className="text-xs">{viewControllerManager.notesController.trashedNotesCount} notes in Trash</div>
               </div>
             </div>
           </button>
@@ -432,7 +427,7 @@ export const NotesOptions = observer(({ application, appState, closeOnBlur }: No
           <div className="min-h-1px my-2 bg-border"></div>
           <ListedActionsOption application={application} note={notes[0]} />
           <div className="min-h-1px my-2 bg-border"></div>
-          <SpellcheckOptions appState={appState} note={notes[0]} />
+          <SpellcheckOptions viewControllerManager={viewControllerManager} note={notes[0]} />
           <div className="min-h-1px my-2 bg-border"></div>
           <NoteAttributes application={application} note={notes[0]} />
           <NoteSizeWarning note={notes[0]} />
@@ -440,4 +435,6 @@ export const NotesOptions = observer(({ application, appState, closeOnBlur }: No
       ) : null}
     </>
   )
-})
+}
+
+export default observer(NotesOptions)

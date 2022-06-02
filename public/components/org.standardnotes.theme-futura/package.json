@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/futura-theme",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "main": "dist/dist.css",
   "devDependencies": {
     "grunt": "^1.0.1",
@@ -18,5 +18,9 @@
   "scripts": {
     "prepublishOnly": "npm run build",
     "build": "grunt"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }

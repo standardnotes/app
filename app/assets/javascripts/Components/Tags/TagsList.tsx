@@ -1,48 +1,42 @@
-import { AppState } from '@/UIModels/AppState'
-import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { isMobile } from '@/Utils'
 import { SNTag } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useCallback } from 'preact/hooks'
+import { FunctionComponent, useCallback } from 'react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { TouchBackend } from 'react-dnd-touch-backend'
-import { RootTagDropZone } from './RootTagDropZone'
+import RootTagDropZone from './RootTagDropZone'
 import { TagsListItem } from './TagsListItem'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
 }
 
-export const TagsList: FunctionComponent<Props> = observer(({ appState }: Props) => {
-  if (isStateDealloced(appState)) {
-    return null
-  }
-
-  const tagsState = appState.tags
+const TagsList: FunctionComponent<Props> = ({ viewControllerManager }: Props) => {
+  const tagsState = viewControllerManager.navigationController
   const allTags = tagsState.allLocalRootTags
 
   const backend = isMobile({ tablet: true }) ? TouchBackend : HTML5Backend
 
   const openTagContextMenu = useCallback(
     (posX: number, posY: number) => {
-      appState.tags.setContextMenuClickLocation({
+      viewControllerManager.navigationController.setContextMenuClickLocation({
         x: posX,
         y: posY,
       })
-      appState.tags.reloadContextMenuLayout()
-      appState.tags.setContextMenuOpen(true)
+      viewControllerManager.navigationController.reloadContextMenuLayout()
+      viewControllerManager.navigationController.setContextMenuOpen(true)
     },
-    [appState],
+    [viewControllerManager],
   )
 
   const onContextMenu = useCallback(
     (tag: SNTag, posX: number, posY: number) => {
-      appState.tags.selected = tag
+      void viewControllerManager.navigationController.setSelectedTag(tag)
       openTagContextMenu(posX, posY)
     },
-    [appState, openTagContextMenu],
+    [viewControllerManager, openTagContextMenu],
   )
 
   return (
@@ -58,14 +52,19 @@ export const TagsList: FunctionComponent<Props> = observer(({ appState }: Props)
                 key={tag.uuid}
                 tag={tag}
                 tagsState={tagsState}
-                features={appState.features}
+                features={viewControllerManager.featuresController}
                 onContextMenu={onContextMenu}
               />
             )
           })}
-          <RootTagDropZone tagsState={appState.tags} featuresState={appState.features} />
+          <RootTagDropZone
+            tagsState={viewControllerManager.navigationController}
+            featuresState={viewControllerManager.featuresController}
+          />
         </>
       )}
     </DndProvider>
   )
-})
+}
+
+export default observer(TagsList)

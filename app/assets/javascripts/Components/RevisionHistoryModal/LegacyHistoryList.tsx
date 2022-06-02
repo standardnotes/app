@@ -1,18 +1,17 @@
 import { Action, HistoryEntry, RevisionListEntry } from '@standardnotes/snjs'
-import { FunctionComponent } from 'preact'
-import { StateUpdater, useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks'
+import { Dispatch, FunctionComponent, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
-import { HistoryListItem } from './HistoryListItem'
+import HistoryListItem from './HistoryListItem'
 import { LegacyHistoryEntry } from './utils'
 
 type Props = {
   legacyHistory: Action[] | undefined
-  setSelectedRevision: StateUpdater<HistoryEntry | LegacyHistoryEntry | undefined>
-  setSelectedRemoteEntry: StateUpdater<RevisionListEntry | undefined>
+  setSelectedRevision: Dispatch<SetStateAction<HistoryEntry | LegacyHistoryEntry | undefined>>
+  setSelectedRemoteEntry: Dispatch<SetStateAction<RevisionListEntry | undefined>>
   fetchAndSetLegacyRevision: (revisionListEntry: Action) => Promise<void>
 }
 
-export const LegacyHistoryList: FunctionComponent<Props> = ({
+const LegacyHistoryList: FunctionComponent<Props> = ({
   legacyHistory,
   setSelectedRevision,
   setSelectedRemoteEntry,
@@ -68,7 +67,9 @@ export const LegacyHistoryList: FunctionComponent<Props> = ({
           </HistoryListItem>
         )
       })}
-      {!legacyHistory?.length && <div className="color-grey-0 select-none">No legacy history found</div>}
+      {!legacyHistory?.length && <div className="color-passive-0 select-none">No legacy history found</div>}
     </div>
   )
 }
+
+export default LegacyHistoryList

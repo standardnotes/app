@@ -1,10 +1,9 @@
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import { calculateSubmenuStyle, SubmenuStyle } from '@/Utils/CalculateSubmenuStyle'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { Action, ListedAccount, SNNote } from '@standardnotes/snjs'
-import { Fragment, FunctionComponent } from 'preact'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
-import { Icon } from '@/Components/Icon'
+import { Fragment, FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
+import Icon from '@/Components/Icon/Icon'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 
 type Props = {
@@ -58,7 +57,7 @@ const ListedMenuItem: FunctionComponent<ListedMenuItemProps> = ({
       <div className="flex flex-col">
         <div className="font-semibold">{action.label}</div>
         {action.access_type && (
-          <div className="text-xs mt-0.5 color-grey-0">
+          <div className="text-xs mt-0.5 color-passive-0">
             {'Uses '}
             <strong>{action.access_type}</strong>
             {' access to this note.'}
@@ -191,7 +190,7 @@ const ListedActionsMenu: FunctionComponent<ListedActionsMenuProps> = ({ applicat
                   />
                 ))
               ) : (
-                <div className="px-3 py-2 color-grey-0 select-none">No actions available</div>
+                <div className="px-3 py-2 color-passive-0 select-none">No actions available</div>
               )}
             </Fragment>
           ))}
@@ -199,14 +198,14 @@ const ListedActionsMenu: FunctionComponent<ListedActionsMenuProps> = ({ applicat
       ) : null}
       {!isFetchingAccounts && !menuGroups.length ? (
         <div className="w-full flex items-center justify-center px-4 py-6">
-          <div className="color-grey-0 select-none">No Listed accounts found</div>
+          <div className="color-passive-0 select-none">No Listed accounts found</div>
         </div>
       ) : null}
     </>
   )
 }
 
-export const ListedActionsOption: FunctionComponent<Props> = ({ application, note }) => {
+const ListedActionsOption: FunctionComponent<Props> = ({ application, note }) => {
   const menuContainerRef = useRef<HTMLDivElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
@@ -273,3 +272,5 @@ export const ListedActionsOption: FunctionComponent<Props> = ({ application, not
     </div>
   )
 }
+
+export default ListedActionsOption

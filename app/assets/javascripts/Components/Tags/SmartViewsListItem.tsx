@@ -1,16 +1,23 @@
-import { Icon } from '@/Components/Icon'
-import { FeaturesState } from '@/UIModels/AppState/FeaturesState'
-import { TagsState } from '@/UIModels/AppState/TagsState'
+import Icon from '@/Components/Icon/Icon'
+import { FeaturesController } from '@/Controllers/FeaturesController'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import '@reach/tooltip/styles.css'
 import { SmartView, SystemViewId, IconType, isSystemView } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
+import {
+  FormEventHandler,
+  FunctionComponent,
+  KeyboardEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 
 type Props = {
   view: SmartView
-  tagsState: TagsState
-  features: FeaturesState
+  tagsState: NavigationController
+  features: FeaturesController
 }
 
 const PADDING_BASE_PX = 14
@@ -19,6 +26,9 @@ const PADDING_PER_LEVEL_PX = 21
 const smartViewIconType = (view: SmartView): IconType => {
   if (view.uuid === SystemViewId.AllNotes) {
     return 'notes'
+  }
+  if (view.uuid === SystemViewId.Files) {
+    return 'file'
   }
   if (view.uuid === SystemViewId.ArchivedNotes) {
     return 'archive'
@@ -33,7 +43,7 @@ const smartViewIconType = (view: SmartView): IconType => {
   return 'hashtag'
 }
 
-export const SmartViewsListItem: FunctionComponent<Props> = observer(({ view, tagsState }) => {
+const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
   const [title, setTitle] = useState(view.title || '')
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -46,7 +56,7 @@ export const SmartViewsListItem: FunctionComponent<Props> = observer(({ view, ta
   }, [setTitle, view])
 
   const selectCurrentTag = useCallback(() => {
-    tagsState.selected = view
+    void tagsState.setSelectedTag(view)
   }, [tagsState, view])
 
   const onBlur = useCallback(() => {
@@ -54,16 +64,16 @@ export const SmartViewsListItem: FunctionComponent<Props> = observer(({ view, ta
     setTitle(view.title)
   }, [tagsState, view, title, setTitle])
 
-  const onInput = useCallback(
-    (e: Event) => {
+  const onInput: FormEventHandler = useCallback(
+    (e) => {
       const value = (e.target as HTMLInputElement).value
       setTitle(value)
     },
     [setTitle],
   )
 
-  const onKeyUp = useCallback(
-    (e: KeyboardEvent) => {
+  const onKeyUp: KeyboardEventHandler = useCallback(
+    (e) => {
       if (e.code === 'Enter') {
         inputRef.current?.blur()
         e.preventDefault()
@@ -146,4 +156,6 @@ export const SmartViewsListItem: FunctionComponent<Props> = observer(({ view, ta
       </div>
     </>
   )
-})
+}
+
+export default observer(SmartViewsListItem)

@@ -1,5 +1,4 @@
-import { WebApplication } from '@/UIModels/Application'
-import { createRef, JSX, RefObject } from 'preact'
+import { ChangeEventHandler, createRef, KeyboardEventHandler, RefObject } from 'react'
 import {
   ApplicationEvent,
   isPayloadSourceRetrieved,
@@ -9,33 +8,38 @@ import {
   SNNote,
   ComponentArea,
   PrefKey,
-  ComponentMutator,
   ComponentViewer,
-  TransactionalMutation,
-  ItemMutator,
   ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
   NoteViewController,
   PayloadEmitSource,
 } from '@standardnotes/snjs'
 import { debounce, isDesktopApplication } from '@/Utils'
+import { EditorEventSource } from '../../Types/EditorEventSource'
 import { KeyboardModifier, KeyboardKey } from '@/Services/IOService'
-import { EventSource } from '@/UIModels/AppState'
-import { STRING_DELETE_PLACEHOLDER_ATTEMPT, STRING_DELETE_LOCKED_ATTEMPT, StringDeleteNote } from '@/Strings'
+import { STRING_DELETE_PLACEHOLDER_ATTEMPT, STRING_DELETE_LOCKED_ATTEMPT, StringDeleteNote } from '@/Constants/Strings'
 import { confirmDialog } from '@/Services/AlertService'
 import { PureComponent } from '@/Components/Abstract/PureComponent'
-import { ProtectedNoteOverlay } from '@/Components/ProtectedNoteOverlay'
-import { Icon } from '@/Components/Icon'
-import { PinNoteButton } from '@/Components/PinNoteButton'
-import { NotesOptionsPanel } from '@/Components/NotesOptions/NotesOptionsPanel'
-import { NoteTagsContainer } from '@/Components/NoteTags/NoteTagsContainer'
-import { ComponentView } from '@/Components/ComponentView'
-import { PanelSide, PanelResizer, PanelResizeType } from '@/Components/PanelResizer'
-import { ElementIds } from '@/ElementIDs'
-import { ChangeEditorButton } from '@/Components/ChangeEditor/ChangeEditorButton'
-import { AttachedFilesButton } from '@/Components/AttachedFilesPopover/AttachedFilesButton'
+import ProtectedNoteOverlay from '@/Components/ProtectedNoteOverlay/ProtectedNoteOverlay'
+import PinNoteButton from '@/Components/PinNoteButton/PinNoteButton'
+import NotesOptionsPanel from '@/Components/NotesOptions/NotesOptionsPanel'
+import NoteTagsContainer from '@/Components/NoteTags/NoteTagsContainer'
+import ComponentView from '@/Components/ComponentView/ComponentView'
+import PanelResizer, { PanelSide, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
+import { ElementIds } from '@/Constants/ElementIDs'
+import ChangeEditorButton from '@/Components/ChangeEditor/ChangeEditorButton'
+import AttachedFilesButton from '@/Components/AttachedFilesPopover/AttachedFilesButton'
+import EditingDisabledBanner from './EditingDisabledBanner'
+import {
+  transactionForAssociateComponentWithCurrentNote,
+  transactionForDisassociateComponentWithCurrentNote,
+} from './TransactionFunctions'
+import { reloadFont } from './FontFunctions'
+import { NoteViewProps } from './NoteViewProps'
+import { WebAppEvent } from '@/Application/WebAppEvent'
 
 const MINIMUM_STATUS_DURATION = 400
 const TEXTAREA_DEBOUNCE = 100
+const NOTE_EDITING_DISABLED_TEXT = 'Note editing disabled.'
 
 type NoteStatus = {
   message?: string
@@ -44,40 +48,6 @@ type NoteStatus = {
 
 function sortAlphabetically(array: SNComponent[]): SNComponent[] {
   return array.sort((a, b) => (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1))
-}
-
-export const transactionForAssociateComponentWithCurrentNote = (component: SNComponent, note: SNNote) => {
-  const transaction: TransactionalMutation = {
-    itemUuid: component.uuid,
-    mutate: (m: ItemMutator) => {
-      const mutator = m as ComponentMutator
-      mutator.removeDisassociatedItemId(note.uuid)
-      mutator.associateWithItem(note.uuid)
-    },
-  }
-  return transaction
-}
-
-export const transactionForDisassociateComponentWithCurrentNote = (component: SNComponent, note: SNNote) => {
-  const transaction: TransactionalMutation = {
-    itemUuid: component.uuid,
-    mutate: (m: ItemMutator) => {
-      const mutator = m as ComponentMutator
-      mutator.removeAssociatedItemId(note.uuid)
-      mutator.disassociateWithItem(note.uuid)
-    },
-  }
-  return transaction
-}
-
-export const reloadFont = (monospaceFont?: boolean) => {
-  const root = document.querySelector(':root') as HTMLElement
-  const propertyName = '--sn-stylekit-editor-font-family'
-  if (monospaceFont) {
-    root.style.setProperty(propertyName, 'var(--sn-stylekit-monospace-font)')
-  } else {
-    root.style.setProperty(propertyName, 'var(--sn-stylekit-sans-serif-font)')
-  }
 }
 
 type State = {
@@ -109,16 +79,11 @@ type State = {
   rightResizerOffset: number
 }
 
-interface Props {
-  application: WebApplication
-  controller: NoteViewController
-}
-
-export class NoteView extends PureComponent<Props, State> {
+class NoteView extends PureComponent<NoteViewProps, State> {
   readonly controller!: NoteViewController
 
   private statusTimeout?: NodeJS.Timeout
-  private lastEditorFocusEventSource?: EventSource
+  private lastEditorFocusEventSource?: EditorEventSource
   onEditorComponentLoad?: () => void
 
   private scrollPosition = 0
@@ -132,7 +97,7 @@ export class NoteView extends PureComponent<Props, State> {
 
   private editorContentRef: RefObject<HTMLDivElement>
 
-  constructor(props: Props) {
+  constructor(props: NoteViewProps) {
     super(props, props.application)
 
     this.controller = props.controller
@@ -151,7 +116,7 @@ export class NoteView extends PureComponent<Props, State> {
       editorText: '',
       editorTitle: '',
       isDesktop: isDesktopApplication(),
-      lockText: 'Note Editing Disabled',
+      lockText: NOTE_EDITING_DISABLED_TEXT,
       noteStatus: undefined,
       noteLocked: this.controller.note.locked,
       showLockedIcon: true,
@@ -229,7 +194,7 @@ export class NoteView extends PureComponent<Props, State> {
 
     this.autorun(() => {
       this.setState({
-        showProtectedWarning: this.appState.notes.showProtectedWarning,
+        showProtectedWarning: this.viewControllerManager.notesController.showProtectedWarning,
       })
     })
 
@@ -248,7 +213,7 @@ export class NoteView extends PureComponent<Props, State> {
     }
   }
 
-  override componentDidUpdate(_prevProps: Props, prevState: State): void {
+  override componentDidUpdate(_prevProps: NoteViewProps, prevState: State): void {
     if (
       this.state.showProtectedWarning != undefined &&
       prevState.showProtectedWarning !== this.state.showProtectedWarning
@@ -564,7 +529,7 @@ export class NoteView extends PureComponent<Props, State> {
     }
   }
 
-  onTextAreaChange = ({ currentTarget }: JSX.TargetedEvent<HTMLTextAreaElement, Event>) => {
+  onTextAreaChange: ChangeEventHandler<HTMLTextAreaElement> = ({ currentTarget }) => {
     const text = currentTarget.value
     this.setState({
       editorText: text,
@@ -584,12 +549,16 @@ export class NoteView extends PureComponent<Props, State> {
       .catch(console.error)
   }
 
-  onTitleEnter = ({ currentTarget }: JSX.TargetedEvent<HTMLInputElement, Event>) => {
+  onTitleEnter: KeyboardEventHandler<HTMLInputElement> = ({ key, currentTarget }) => {
+    if (key !== KeyboardKey.Enter) {
+      return
+    }
+
     currentTarget.blur()
     this.focusEditor()
   }
 
-  onTitleChange = ({ currentTarget }: JSX.TargetedEvent<HTMLInputElement, Event>) => {
+  onTitleChange: ChangeEventHandler<HTMLInputElement> = ({ currentTarget }) => {
     const title = currentTarget.value
     this.setState({
       editorTitle: title,
@@ -609,7 +578,7 @@ export class NoteView extends PureComponent<Props, State> {
   focusEditor() {
     const element = document.getElementById(ElementIds.NoteTextEditor)
     if (element) {
-      this.lastEditorFocusEventSource = EventSource.Script
+      this.lastEditorFocusEventSource = EditorEventSource.Script
       element.focus()
     }
   }
@@ -620,13 +589,13 @@ export class NoteView extends PureComponent<Props, State> {
 
   onContentFocus = () => {
     if (this.lastEditorFocusEventSource) {
-      this.application.getAppState().editorDidFocus(this.lastEditorFocusEventSource)
+      this.application.notifyWebEvent(WebAppEvent.EditorFocused, { eventSource: this.lastEditorFocusEventSource })
     }
     this.lastEditorFocusEventSource = undefined
   }
 
   setShowProtectedOverlay(show: boolean) {
-    this.appState.notes.setShowProtectedWarning(show)
+    this.viewControllerManager.notesController.setShowProtectedWarning(show)
   }
 
   async deleteNote(permanently: boolean) {
@@ -685,7 +654,7 @@ export class NoteView extends PureComponent<Props, State> {
   }
 
   async reloadSpellcheck() {
-    const spellcheck = this.appState.notes.getSpellcheckStateForNote(this.note)
+    const spellcheck = this.viewControllerManager.notesController.getSpellcheckStateForNote(this.note)
 
     if (spellcheck !== this.state.spellcheck) {
       this.setState({ textareaUnloading: true })
@@ -903,7 +872,7 @@ export class NoteView extends PureComponent<Props, State> {
           {this.state.showProtectedWarning && (
             <div className="h-full flex justify-center items-center">
               <ProtectedNoteOverlay
-                appState={this.appState}
+                viewControllerManager={this.viewControllerManager}
                 hasProtectionSources={this.application.hasProtectionSources()}
                 onViewNote={this.dismissProtectedWarning}
               />
@@ -916,35 +885,25 @@ export class NoteView extends PureComponent<Props, State> {
     return (
       <div aria-label="Note" className="section editor sn-component">
         <div className="flex-grow flex flex-col">
-          <div className="sn-component">
-            {this.state.noteLocked && (
-              <div
-                className="sk-app-bar no-edges"
-                onMouseLeave={() => {
-                  this.setState({
-                    lockText: 'Note Editing Disabled',
-                    showLockedIcon: true,
-                  })
-                }}
-                onMouseOver={() => {
-                  this.setState({
-                    lockText: 'Enable editing',
-                    showLockedIcon: false,
-                  })
-                }}
-              >
-                <div
-                  onClick={() => this.appState.notes.setLockSelectedNotes(!this.state.noteLocked)}
-                  className="sk-app-bar-item"
-                >
-                  <div className="sk-label warning flex items-center">
-                    {this.state.showLockedIcon && <Icon type="pencil-off" className="flex fill-current mr-2" />}
-                    {this.state.lockText}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
+          {this.state.noteLocked && (
+            <EditingDisabledBanner
+              onMouseLeave={() => {
+                this.setState({
+                  lockText: NOTE_EDITING_DISABLED_TEXT,
+                  showLockedIcon: true,
+                })
+              }}
+              onMouseOver={() => {
+                this.setState({
+                  lockText: 'Enable editing',
+                  showLockedIcon: false,
+                })
+              }}
+              onClick={() => this.viewControllerManager.notesController.setLockSelectedNotes(!this.state.noteLocked)}
+              showLockedIcon={this.state.showLockedIcon}
+              lockText={this.state.lockText}
+            />
+          )}
 
           {this.note && (
             <div id="editor-title-bar" className="section-title-bar w-full">
@@ -957,12 +916,12 @@ export class NoteView extends PureComponent<Props, State> {
                       id={ElementIds.NoteTitleEditor}
                       onChange={this.onTitleChange}
                       onFocus={(event) => {
-                        ;(event.target as HTMLTextAreaElement).select()
+                        event.target.select()
                       }}
-                      onKeyUp={(event) => event.keyCode == 13 && this.onTitleEnter(event)}
-                      spellcheck={false}
+                      onKeyUp={this.onTitleEnter}
+                      spellCheck={false}
                       value={this.state.editorTitle}
-                      autocomplete="off"
+                      autoComplete="off"
                     />
                   </div>
                 </div>
@@ -984,31 +943,31 @@ export class NoteView extends PureComponent<Props, State> {
                   <div className="mr-3">
                     <AttachedFilesButton
                       application={this.application}
-                      appState={this.appState}
+                      viewControllerManager={this.viewControllerManager}
                       onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                     />
                   </div>
                   <div className="mr-3">
                     <ChangeEditorButton
                       application={this.application}
-                      appState={this.appState}
+                      viewControllerManager={this.viewControllerManager}
                       onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                     />
                   </div>
                   <div className="mr-3">
                     <PinNoteButton
-                      appState={this.appState}
+                      viewControllerManager={this.viewControllerManager}
                       onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                     />
                   </div>
                   <NotesOptionsPanel
                     application={this.application}
-                    appState={this.appState}
+                    viewControllerManager={this.viewControllerManager}
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                   />
                 </div>
               </div>
-              <NoteTagsContainer appState={this.appState} />
+              <NoteTagsContainer viewControllerManager={this.viewControllerManager} />
             </div>
           )}
 
@@ -1035,22 +994,22 @@ export class NoteView extends PureComponent<Props, State> {
                   onLoad={this.onEditorComponentLoad}
                   requestReload={this.editorComponentViewerRequestsReload}
                   application={this.application}
-                  appState={this.appState}
+                  viewControllerManager={this.viewControllerManager}
                 />
               </div>
             )}
 
             {this.state.editorStateDidLoad && !this.state.editorComponentViewer && !this.state.textareaUnloading && (
               <textarea
-                autocomplete="off"
+                autoComplete="off"
                 className="editable font-editor"
                 dir="auto"
                 id={ElementIds.NoteTextEditor}
                 onChange={this.onTextAreaChange}
                 value={this.state.editorText}
-                readonly={this.state.noteLocked}
+                readOnly={this.state.noteLocked}
                 onFocus={this.onContentFocus}
-                spellcheck={this.state.spellcheck}
+                spellCheck={this.state.spellcheck}
                 ref={(ref) => ref && this.onSystemEditorLoad(ref)}
               ></textarea>
             )}
@@ -1105,12 +1064,12 @@ export class NoteView extends PureComponent<Props, State> {
             <div className="sn-component">
               {this.state.stackComponentViewers.map((viewer) => {
                 return (
-                  <div className="component-view component-stack-item">
+                  <div className="component-view component-stack-item" key={viewer.identifier}>
                     <ComponentView
                       key={viewer.identifier}
                       componentViewer={viewer}
                       application={this.application}
-                      appState={this.appState}
+                      viewControllerManager={this.viewControllerManager}
                     />
                   </div>
                 )
@@ -1122,3 +1081,5 @@ export class NoteView extends PureComponent<Props, State> {
     )
   }
 }
+
+export default NoteView

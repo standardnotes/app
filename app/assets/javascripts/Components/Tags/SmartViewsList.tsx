@@ -1,25 +1,29 @@
-import { AppState } from '@/UIModels/AppState'
-import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { SmartViewsListItem } from './SmartViewsListItem'
+import { FunctionComponent } from 'react'
+import SmartViewsListItem from './SmartViewsListItem'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
 }
 
-export const SmartViewsList: FunctionComponent<Props> = observer(({ appState }: Props) => {
-  if (isStateDealloced(appState)) {
-    return null
-  }
-
-  const allViews = appState.tags.smartViews
+const SmartViewsList: FunctionComponent<Props> = ({ viewControllerManager }: Props) => {
+  const allViews = viewControllerManager.navigationController.smartViews
 
   return (
     <>
       {allViews.map((view) => {
-        return <SmartViewsListItem key={view.uuid} view={view} tagsState={appState.tags} features={appState.features} />
+        return (
+          <SmartViewsListItem
+            key={view.uuid}
+            view={view}
+            tagsState={viewControllerManager.navigationController}
+            features={viewControllerManager.featuresController}
+          />
+        )
       })}
     </>
   )
-})
+}
+
+export default observer(SmartViewsList)

@@ -1,0 +1,86 @@
+@mixin DimmedBackground($color, $opacity) {
+  content: '';
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: $color;
+  opacity: $opacity;
+}
+
+.bg-passive-super-light {
+  background-color: var(--sn-stylekit-passive-color-super-light);
+}
+
+.bg-inverted-default {
+  background-color: var(--sn-stylekit-contrast-foreground-color);
+}
+
+.hover\:bg-passive-4:hover {
+  background: var(--sn-stylekit-passive-color-4);
+}
+
+.focus\:bg-info:focus {
+  @extend .bg-info;
+}
+
+.bg-info-backdrop {
+  background-color: var(--sn-stylekit-info-backdrop-color);
+}
+
+.focus\:bg-info-backdrop:focus {
+  background-color: var(--sn-stylekit-info-backdrop-color);
+}
+
+.active\:bg-info:active {
+  background-color: var(--sn-stylekit-info-color);
+}
+
+.focus\:bg-default:focus {
+  background-color: var(--sn-stylekit-background-color);
+}
+
+.hover\:bg-default:hover {
+  background-color: var(--sn-stylekit-background-color);
+}
+
+.hover\:bg-passive-5:hover {
+  background-color: var(--sn-stylekit-passive-color-5);
+}
+
+.bg-warning-faded::after {
+  @include DimmedBackground(var(--sn-stylekit-warning-color), 0.08);
+}
+
+.bg-info-faded::after {
+  @include DimmedBackground(var(--sn-stylekit-info-color), 0.08);
+}
+
+.color-inverted-default {
+  color: var(--sn-stylekit-background-color);
+}
+
+.focus\:color-info-contrast:focus {
+  @extend .color-info-contrast;
+}
+
+.hover\:color-foreground:hover {
+  color: var(--sn-stylekit-foreground-color) !important;
+}
+
+.color-neutral-contrast {
+  color: var(--sn-stylekit-neutral-contrast-color);
+}
+
+.color-warning {
+  color: var(--sn-stylekit-warning-color);
+}
+
+.active\:color-neutral-contrast:active {
+  color: var(--sn-stylekit-neutral-contrast-color);
+}
+
+.color-danger-contrast {
+  color: var(--sn-stylekit-danger-contrast-color);
+}

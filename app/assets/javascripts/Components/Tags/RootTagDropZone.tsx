@@ -1,17 +1,18 @@
-import { Icon } from '@/Components/Icon'
+import Icon from '@/Components/Icon/Icon'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
-import { FeaturesState } from '@/UIModels/AppState/FeaturesState'
-import { TagsState } from '@/UIModels/AppState/TagsState'
+import { FeaturesController } from '@/Controllers/FeaturesController'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { observer } from 'mobx-react-lite'
+import { FunctionComponent } from 'react'
 import { useDrop } from 'react-dnd'
 import { DropItem, DropProps, ItemTypes } from './DragNDrop'
 
 type Props = {
-  tagsState: TagsState
-  featuresState: FeaturesState
+  tagsState: NavigationController
+  featuresState: FeaturesController
 }
 
-export const RootTagDropZone: React.FC<Props> = observer(({ tagsState }) => {
+const RootTagDropZone: FunctionComponent<Props> = ({ tagsState }) => {
   const premiumModal = usePremiumModal()
 
   const [{ isOver, canDrop }, dropRef] = useDrop<DropItem, void, DropProps>(
@@ -40,4 +41,6 @@ export const RootTagDropZone: React.FC<Props> = observer(({ tagsState }) => {
       </p>
     </div>
   )
-})
+}
+
+export default observer(RootTagDropZone)

@@ -20,13 +20,9 @@
 .sn-account-menu,
 .sn-quick-settings-menu {
   z-index: $z-index-footer-bar-item-panel;
-  @extend .bottom-100;
+  @extend .bottom-100\%;
   @extend .left-0;
   @extend .cursor-auto;
-}
-
-.sn-menu-border {
-  border: var(--sn-stylekit-menu-border);
 }
 
 .sn-account-menu-headline {

@@ -1,27 +1,22 @@
-import { AppState } from '@/UIModels/AppState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import {
-  PreferencesGroup,
-  PreferencesSegment,
-  Text,
-  Title,
-  Subtitle,
-} from '@/Components/Preferences/PreferencesComponents'
+import { Fragment, FunctionComponent, useState } from 'react'
+import { Text, Title, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
 import {
   ButtonType,
   ClientDisplayableError,
   DisplayStringForContentType,
   EncryptedItemInterface,
 } from '@standardnotes/snjs'
-import { Button } from '@/Components/Button/Button'
-import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
-import { useState } from 'preact/hooks'
+import Button from '@/Components/Button/Button'
+import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
+import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 
-type Props = { appState: AppState }
+type Props = { viewControllerManager: ViewControllerManager }
 
-export const ErroredItems: FunctionComponent<Props> = observer(({ appState }: Props) => {
-  const app = appState.application
+const ErroredItems: FunctionComponent<Props> = ({ viewControllerManager }: Props) => {
+  const app = viewControllerManager.application
 
   const [erroredItems, setErroredItems] = useState(app.items.invalidItems)
 
@@ -92,11 +87,11 @@ export const ErroredItems: FunctionComponent<Props> = observer(({ appState }: Pr
             }}
           />
         </div>
-        <HorizontalSeparator classes="mt-5 mb-3" />
+        <HorizontalSeparator classes="mt-2.5 mb-3" />
 
         {erroredItems.map((item, index) => {
           return (
-            <>
+            <Fragment key={item.uuid}>
               <div className="flex items-center justify-between">
                 <div className="flex flex-col">
                   <Subtitle>{`${getContentTypeDisplay(item)} created on ${item.createdAtString}`}</Subtitle>
@@ -133,11 +128,13 @@ export const ErroredItems: FunctionComponent<Props> = observer(({ appState }: Pr
                   </div>
                 </div>
               </div>
-              {index < erroredItems.length - 1 && <HorizontalSeparator classes="mt-5 mb-3" />}
-            </>
+              {index < erroredItems.length - 1 && <HorizontalSeparator classes="mt-2.5 mb-3" />}
+            </Fragment>
           )
         })}
       </PreferencesSegment>
     </PreferencesGroup>
   )
-})
+}
+
+export default observer(ErroredItems)

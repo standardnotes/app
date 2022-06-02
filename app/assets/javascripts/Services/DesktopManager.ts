@@ -13,7 +13,8 @@ import {
   DesktopClientRequiresWebMethods,
   DesktopDeviceInterface,
 } from '@standardnotes/snjs'
-import { WebAppEvent, WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
+import { WebAppEvent } from '@/Application/WebAppEvent'
 
 export class DesktopManager
   extends ApplicationService
@@ -106,11 +107,11 @@ export class DesktopManager
   }
 
   windowGainedFocus(): void {
-    this.webApplication.notifyWebEvent(WebAppEvent.DesktopWindowGainedFocus)
+    this.webApplication.notifyWebEvent(WebAppEvent.WindowDidFocus)
   }
 
   windowLostFocus(): void {
-    this.webApplication.notifyWebEvent(WebAppEvent.DesktopWindowLostFocus)
+    this.webApplication.notifyWebEvent(WebAppEvent.WindowDidBlur)
   }
 
   async onComponentInstallationComplete(componentData: DecryptedTransferPayload<ComponentContent>, error: unknown) {
@@ -155,10 +156,10 @@ export class DesktopManager
   }
 
   didBeginBackup() {
-    this.webApplication.getAppState().beganBackupDownload()
+    this.webApplication.notifyWebEvent(WebAppEvent.BeganBackupDownload)
   }
 
   didFinishBackup(success: boolean) {
-    this.webApplication.getAppState().endedBackupDownload(success)
+    this.webApplication.notifyWebEvent(WebAppEvent.EndedBackupDownload, { success })
   }
 }

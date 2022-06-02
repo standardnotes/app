@@ -1,10 +1,12 @@
-import { DisplayStringForContentType, SNComponent } from '@standardnotes/snjs'
-import { Button } from '@/Components/Button/Button'
-import { FunctionComponent } from 'preact'
-import { Title, Text, Subtitle, PreferencesSegment } from '@/Components/Preferences/PreferencesComponents'
+import { DisplayStringForContentType } from '@standardnotes/snjs'
+import Button from '@/Components/Button/Button'
+import { Fragment, FunctionComponent } from 'react'
+import { Title, Text, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
+import { AnyExtension } from './AnyExtension'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
-export const ConfirmCustomExtension: FunctionComponent<{
-  component: SNComponent
+const ConfirmCustomExtension: FunctionComponent<{
+  component: AnyExtension
   callback: (confirmed: boolean) => void
 }> = ({ component, callback }) => {
   const fields = [
@@ -43,11 +45,11 @@ export const ConfirmCustomExtension: FunctionComponent<{
           return undefined
         }
         return (
-          <>
+          <Fragment key={field.value}>
             <Subtitle>{field.label}</Subtitle>
             <Text className={'wrap'}>{field.value}</Text>
             <div className="min-h-2" />
-          </>
+          </Fragment>
         )
       })}
 
@@ -63,3 +65,5 @@ export const ConfirmCustomExtension: FunctionComponent<{
     </PreferencesSegment>
   )
 }
+
+export default ConfirmCustomExtension

@@ -1,26 +1,25 @@
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { isDev } from '@/Utils'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
-import { AccountMenuPane } from '.'
-import { Button } from '@/Components/Button/Button'
-import { Checkbox } from '@/Components/Checkbox'
-import { DecoratedInput } from '@/Components/Input/DecoratedInput'
-import { DecoratedPasswordInput } from '@/Components/Input/DecoratedPasswordInput'
-import { Icon } from '@/Components/Icon'
-import { IconButton } from '@/Components/Button/IconButton'
-import { AdvancedOptions } from './AdvancedOptions'
+import React, { FunctionComponent, KeyboardEventHandler, useCallback, useEffect, useRef, useState } from 'react'
+import { AccountMenuPane } from './AccountMenuPane'
+import Button from '@/Components/Button/Button'
+import Checkbox from '@/Components/Checkbox/Checkbox'
+import DecoratedInput from '@/Components/Input/DecoratedInput'
+import DecoratedPasswordInput from '@/Components/Input/DecoratedPasswordInput'
+import Icon from '@/Components/Icon/Icon'
+import IconButton from '@/Components/Button/IconButton'
+import AdvancedOptions from './AdvancedOptions'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   application: WebApplication
   setMenuPane: (pane: AccountMenuPane) => void
 }
 
-export const SignInPane: FunctionComponent<Props> = observer(({ application, appState, setMenuPane }) => {
-  const { notesAndTagsCount } = appState.accountMenu
+const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManager, setMenuPane }) => {
+  const { notesAndTagsCount } = viewControllerManager.accountMenuController
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -87,7 +86,7 @@ export const SignInPane: FunctionComponent<Props> = observer(({ application, app
         if (res.error) {
           throw new Error(res.error.message)
         }
-        appState.accountMenu.closeAccountMenu()
+        viewControllerManager.accountMenuController.closeAccountMenu()
       })
       .catch((err) => {
         console.error(err)
@@ -98,7 +97,7 @@ export const SignInPane: FunctionComponent<Props> = observer(({ application, app
       .finally(() => {
         setIsSigningIn(false)
       })
-  }, [appState, application, email, isEphemeral, isStrictSignin, password, shouldMergeLocal])
+  }, [viewControllerManager, application, email, isEphemeral, isStrictSignin, password, shouldMergeLocal])
 
   const onPrivateWorkspaceChange = useCallback(
     (newIsPrivateWorkspace: boolean, privateWorkspaceIdentifier?: string) => {
@@ -111,7 +110,7 @@ export const SignInPane: FunctionComponent<Props> = observer(({ application, app
   )
 
   const handleSignInFormSubmit = useCallback(
-    (e: Event) => {
+    (e: React.SyntheticEvent) => {
       e.preventDefault()
 
       if (!email || email.length === 0) {
@@ -129,8 +128,8 @@ export const SignInPane: FunctionComponent<Props> = observer(({ application, app
     [email, password, signIn],
   )
 
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
+  const handleKeyDown: KeyboardEventHandler = useCallback(
+    (e) => {
       if (e.key === 'Enter') {
         handleSignInFormSubmit(e)
       }
@@ -153,7 +152,7 @@ export const SignInPane: FunctionComponent<Props> = observer(({ application, app
       </div>
       <div className="px-3 mb-1">
         <DecoratedInput
-          className={`mb-2 ${error ? 'border-dark-red' : null}`}
+          className={`mb-2 ${error ? 'border-danger' : null}`}
           left={[<Icon type="email" className="color-neutral" />]}
           type="email"
           placeholder="Email"
@@ -165,7 +164,7 @@ export const SignInPane: FunctionComponent<Props> = observer(({ application, app
           ref={emailInputRef}
         />
         <DecoratedPasswordInput
-          className={`mb-2 ${error ? 'border-dark-red' : null}`}
+          className={`mb-2 ${error ? 'border-danger' : null}`}
           disabled={isSigningIn}
           left={[<Icon type="password" className="color-neutral" />]}
           onChange={handlePasswordChange}
@@ -175,7 +174,7 @@ export const SignInPane: FunctionComponent<Props> = observer(({ application, app
           ref={passwordInputRef}
           value={password}
         />
-        {error ? <div className="color-dark-red my-2">{error}</div> : null}
+        {error ? <div className="color-danger my-2">{error}</div> : null}
         <Button
           className="btn-w-full mt-1 mb-3"
           label={isSigningIn ? 'Signing in...' : 'Sign in'}
@@ -202,7 +201,7 @@ export const SignInPane: FunctionComponent<Props> = observer(({ application, app
       </div>
       <div className="h-1px my-2 bg-border"></div>
       <AdvancedOptions
-        appState={appState}
+        viewControllerManager={viewControllerManager}
         application={application}
         disabled={isSigningIn}
         onPrivateWorkspaceChange={onPrivateWorkspaceChange}
@@ -210,4 +209,6 @@ export const SignInPane: FunctionComponent<Props> = observer(({ application, app
       />
     </>
   )
-})
+}
+
+export default observer(SignInPane)

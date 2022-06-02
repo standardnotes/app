@@ -87,7 +87,12 @@ export class IOService {
     if (!modifier) {
       return
     }
+
     this.activeModifiers.delete(modifier)
+  }
+
+  public cancelAllKeyboardModifiers = (): void => {
+    this.activeModifiers.clear()
   }
 
   public handleComponentKeyDown = (modifier: KeyboardModifier | undefined): void => {

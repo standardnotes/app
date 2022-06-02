@@ -1,22 +1,30 @@
-import { Icon } from '@/Components/Icon'
-import { TAG_FOLDERS_FEATURE_NAME } from '@/Constants'
+import Icon from '@/Components/Icon/Icon'
+import { TAG_FOLDERS_FEATURE_NAME } from '@/Constants/Constants'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { KeyboardKey } from '@/Services/IOService'
-import { FeaturesState } from '@/UIModels/AppState/FeaturesState'
-import { TagsState } from '@/UIModels/AppState/TagsState'
+import { FeaturesController } from '@/Controllers/FeaturesController'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import '@reach/tooltip/styles.css'
 import { SNTag } from '@standardnotes/snjs'
 import { computed } from 'mobx'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, JSX } from 'preact'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
+import {
+  FormEventHandler,
+  FunctionComponent,
+  KeyboardEventHandler,
+  MouseEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import { DropItem, DropProps, ItemTypes } from './DragNDrop'
 
 type Props = {
   tag: SNTag
-  tagsState: TagsState
-  features: FeaturesState
+  tagsState: NavigationController
+  features: FeaturesController
   level: number
   onContextMenu: (tag: SNTag, posX: number, posY: number) => void
 }
@@ -29,7 +37,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
   const [subtagTitle, setSubtagTitle] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
   const subtagInputRef = useRef<HTMLInputElement>(null)
-  const menuButtonRef = useRef<HTMLButtonElement>(null)
+  const menuButtonRef = useRef<HTMLAnchorElement>(null)
 
   const isSelected = tagsState.selected === tag
   const isEditing = tagsState.editingTag === tag
@@ -58,8 +66,8 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
     setTitle(tag.title || '')
   }, [setTitle, tag])
 
-  const toggleChildren = useCallback(
-    (e: MouseEvent) => {
+  const toggleChildren: MouseEventHandler = useCallback(
+    (e) => {
       e.stopPropagation()
       setShowChildren((x) => {
         tagsState.setExpanded(tag, !x)
@@ -70,7 +78,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
   )
 
   const selectCurrentTag = useCallback(() => {
-    tagsState.selected = tag
+    void tagsState.setSelectedTag(tag)
   }, [tagsState, tag])
 
   const onBlur = useCallback(() => {
@@ -78,16 +86,16 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
     setTitle(tag.title)
   }, [tagsState, tag, title, setTitle])
 
-  const onInput = useCallback(
-    (e: JSX.TargetedEvent<HTMLInputElement>) => {
+  const onInput: FormEventHandler = useCallback(
+    (e) => {
       const value = (e.target as HTMLInputElement).value
       setTitle(value)
     },
     [setTitle],
   )
 
-  const onKeyDown = useCallback(
-    (e: KeyboardEvent) => {
+  const onKeyDown: KeyboardEventHandler = useCallback(
+    (e) => {
       if (e.key === KeyboardKey.Enter) {
         inputRef.current?.blur()
         e.preventDefault()
@@ -102,7 +110,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
     }
   }, [inputRef, isEditing])
 
-  const onSubtagInput = useCallback((e: JSX.TargetedEvent<HTMLInputElement>) => {
+  const onSubtagInput = useCallback((e) => {
     const value = (e.target as HTMLInputElement).value
     setSubtagTitle(value)
   }, [])
@@ -112,8 +120,8 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
     setSubtagTitle('')
   }, [subtagTitle, tag, tagsState])
 
-  const onSubtagKeyDown = useCallback(
-    (e: KeyboardEvent) => {
+  const onSubtagKeyDown: KeyboardEventHandler = useCallback(
+    (e) => {
       if (e.key === KeyboardKey.Enter) {
         e.preventDefault()
         subtagInputRef.current?.blur()
@@ -189,7 +197,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
         style={{
           paddingLeft: `${level * PADDING_PER_LEVEL_PX + PADDING_BASE_PX}px`,
         }}
-        onContextMenu={(e: MouseEvent) => {
+        onContextMenu={(e) => {
           e.preventDefault()
           onContextMenu(tag, e.clientX, e.clientY)
         }}
@@ -197,14 +205,15 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
         <div className="tag-info" title={title} ref={dropRef}>
           {hasAtLeastOneFolder && (
             <div className="tag-fold-container">
-              <button
+              <a
+                role="button"
                 className={`tag-fold focus:shadow-inner ${showChildren ? 'opened' : 'closed'} ${
                   !hasChildren ? 'invisible' : ''
                 }`}
                 onClick={hasChildren ? toggleChildren : undefined}
               >
                 <Icon className={'color-neutral'} type={showChildren ? 'menu-arrow-down-alt' : 'menu-arrow-right'} />
-              </button>
+              </a>
             </div>
           )}
           <div className={'tag-icon draggable mr-1'} ref={dragRef}>
@@ -222,7 +231,8 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
             ref={inputRef}
           />
           <div className="flex items-center">
-            <button
+            <a
+              role="button"
               className={`border-0 mr-2 bg-transparent hover:bg-contrast focus:shadow-inner cursor-pointer ${
                 isSelected ? 'visible' : 'invisible'
               }`}
@@ -230,7 +240,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
               ref={menuButtonRef}
             >
               <Icon type="more" className="color-neutral" />
-            </button>
+            </a>
             <div className="count">{noteCounts.get()}</div>
           </div>
         </div>
@@ -282,3 +292,5 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
     </>
   )
 })
+
+TagsListItem.displayName = 'TagsListItem'

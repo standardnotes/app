@@ -1,27 +1,28 @@
-import { FunctionalComponent } from 'preact'
-import { PreferencesGroup, PreferencesSegment } from '@/Components/Preferences/PreferencesComponents'
-import { OfflineSubscription } from '@/Components/Preferences/Panes/Account/OfflineSubscription'
-import { WebApplication } from '@/UIModels/Application'
+import { FunctionComponent } from 'react'
+import OfflineSubscription from '@/Components/Preferences/Panes/Account/OfflineSubscription'
+import { WebApplication } from '@/Application/Application'
 import { observer } from 'mobx-react-lite'
-import { AppState } from '@/UIModels/AppState'
-import { Extensions } from '@/Components/Preferences/Panes/Extensions'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import Extensions from '@/Components/Preferences/Panes/Extensions/Extensions'
 import { ExtensionsLatestVersions } from '@/Components/Preferences/Panes/Extensions/ExtensionsLatestVersions'
-import { AccordionItem } from '@/Components/Shared/AccordionItem'
+import AccordionItem from '@/Components/Shared/AccordionItem'
+import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
-interface IProps {
+type Props = {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   extensionsLatestVersions: ExtensionsLatestVersions
 }
 
-export const Advanced: FunctionalComponent<IProps> = observer(({ application, appState, extensionsLatestVersions }) => {
+const Advanced: FunctionComponent<Props> = ({ application, viewControllerManager, extensionsLatestVersions }) => {
   return (
     <PreferencesGroup>
       <PreferencesSegment>
         <AccordionItem title={'Advanced Settings'}>
           <div className="flex flex-row items-center">
             <div className="flex-grow flex flex-col">
-              <OfflineSubscription application={application} appState={appState} />
+              <OfflineSubscription application={application} viewControllerManager={viewControllerManager} />
               <Extensions
                 className={'mt-3'}
                 application={application}
@@ -33,4 +34,6 @@ export const Advanced: FunctionalComponent<IProps> = observer(({ application, ap
       </PreferencesSegment>
     </PreferencesGroup>
   )
-})
+}
+
+export default observer(Advanced)

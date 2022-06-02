@@ -1,56 +1,56 @@
-import { AppState } from '@/UIModels/AppState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
-import { useRef, useEffect, useCallback } from 'preact/hooks'
-import { Icon } from '@/Components/Icon'
+import { useRef, useEffect, useCallback, FocusEventHandler, KeyboardEventHandler } from 'react'
+import Icon from '@/Components/Icon/Icon'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
 }
 
-export const AutocompleteTagHint = observer(({ appState, closeOnBlur }: Props) => {
-  const { autocompleteTagHintFocused } = appState.noteTags
+const AutocompleteTagHint = ({ viewControllerManager, closeOnBlur }: Props) => {
+  const { autocompleteTagHintFocused } = viewControllerManager.noteTagsController
 
   const hintRef = useRef<HTMLButtonElement>(null)
 
-  const { autocompleteSearchQuery, autocompleteTagResults } = appState.noteTags
+  const { autocompleteSearchQuery, autocompleteTagResults } = viewControllerManager.noteTagsController
 
   const onTagHintClick = useCallback(async () => {
-    await appState.noteTags.createAndAddNewTag()
-    appState.noteTags.setAutocompleteInputFocused(true)
-  }, [appState])
+    await viewControllerManager.noteTagsController.createAndAddNewTag()
+    viewControllerManager.noteTagsController.setAutocompleteInputFocused(true)
+  }, [viewControllerManager])
 
   const onFocus = useCallback(() => {
-    appState.noteTags.setAutocompleteTagHintFocused(true)
-  }, [appState])
+    viewControllerManager.noteTagsController.setAutocompleteTagHintFocused(true)
+  }, [viewControllerManager])
 
-  const onBlur = useCallback(
-    (event: FocusEvent) => {
+  const onBlur: FocusEventHandler = useCallback(
+    (event) => {
       closeOnBlur(event)
-      appState.noteTags.setAutocompleteTagHintFocused(false)
+      viewControllerManager.noteTagsController.setAutocompleteTagHintFocused(false)
     },
-    [appState, closeOnBlur],
+    [viewControllerManager, closeOnBlur],
   )
 
-  const onKeyDown = useCallback(
-    (event: KeyboardEvent) => {
+  const onKeyDown: KeyboardEventHandler = useCallback(
+    (event) => {
       if (event.key === 'ArrowUp') {
         if (autocompleteTagResults.length > 0) {
           const lastTagResult = autocompleteTagResults[autocompleteTagResults.length - 1]
-          appState.noteTags.setFocusedTagResultUuid(lastTagResult.uuid)
+          viewControllerManager.noteTagsController.setFocusedTagResultUuid(lastTagResult.uuid)
         } else {
-          appState.noteTags.setAutocompleteInputFocused(true)
+          viewControllerManager.noteTagsController.setAutocompleteInputFocused(true)
         }
       }
     },
-    [appState, autocompleteTagResults],
+    [viewControllerManager, autocompleteTagResults],
   )
 
   useEffect(() => {
     if (autocompleteTagHintFocused) {
       hintRef.current?.focus()
     }
-  }, [appState, autocompleteTagHintFocused])
+  }, [viewControllerManager, autocompleteTagHintFocused])
 
   return (
     <>
@@ -75,4 +75,6 @@ export const AutocompleteTagHint = observer(({ appState, closeOnBlur }: Props) =
       </button>
     </>
   )
-})
+}
+
+export default observer(AutocompleteTagHint)

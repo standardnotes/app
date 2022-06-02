@@ -1,24 +1,19 @@
-import { AppState } from '@/UIModels/AppState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
-import { AutocompleteTagInput } from '@/Components/TagAutocomplete/AutocompleteTagInput'
-import { NoteTag } from './NoteTag'
-import { useEffect } from 'preact/hooks'
-import { isStateDealloced } from '@/UIModels/AppState/AbstractState'
+import AutocompleteTagInput from '@/Components/TagAutocomplete/AutocompleteTagInput'
+import NoteTag from './NoteTag'
+import { useEffect } from 'react'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
 }
 
-export const NoteTagsContainer = observer(({ appState }: Props) => {
-  if (isStateDealloced(appState)) {
-    return null
-  }
-
-  const { tags, tagsContainerMaxWidth } = appState.noteTags
+const NoteTagsContainer = ({ viewControllerManager }: Props) => {
+  const { tags, tagsContainerMaxWidth } = viewControllerManager.noteTagsController
 
   useEffect(() => {
-    appState.noteTags.reloadTagsContainerMaxWidth()
-  }, [appState])
+    viewControllerManager.noteTagsController.reloadTagsContainerMaxWidth()
+  }, [viewControllerManager])
 
   return (
     <div
@@ -28,9 +23,11 @@ export const NoteTagsContainer = observer(({ appState }: Props) => {
       }}
     >
       {tags.map((tag) => (
-        <NoteTag key={tag.uuid} appState={appState} tag={tag} />
+        <NoteTag key={tag.uuid} viewControllerManager={viewControllerManager} tag={tag} />
       ))}
-      <AutocompleteTagInput appState={appState} />
+      <AutocompleteTagInput viewControllerManager={viewControllerManager} />
     </div>
   )
-})
+}
+
+export default observer(NoteTagsContainer)

@@ -1,11 +1,11 @@
-import { FunctionalComponent } from 'preact'
+import { FunctionComponent } from 'react'
 
-interface IProps {
+type Props = {
   deprecationMessage: string | undefined
   dismissDeprecationMessage: () => void
 }
 
-export const IsDeprecated: FunctionalComponent<IProps> = ({ deprecationMessage, dismissDeprecationMessage }) => {
+const IsDeprecated: FunctionComponent<Props> = ({ deprecationMessage, dismissDeprecationMessage }) => {
   return (
     <div className={'sn-component'}>
       <div className={'sk-app-bar no-edges no-top-edge dynamic-height'}>
@@ -23,3 +23,5 @@ export const IsDeprecated: FunctionalComponent<IProps> = ({ deprecationMessage, 
     </div>
   )
 }
+
+export default IsDeprecated

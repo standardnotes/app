@@ -1,9 +1,18 @@
-import { Icon } from '@/Components/Icon'
-import { MenuItem, MenuItemType } from '@/Components/Menu/MenuItem'
+import Icon from '@/Components/Icon/Icon'
+import MenuItem from '@/Components/Menu/MenuItem'
+import { MenuItemType } from '@/Components/Menu/MenuItemType'
 import { KeyboardKey } from '@/Services/IOService'
 import { ApplicationDescriptor } from '@standardnotes/snjs'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
+import {
+  ChangeEventHandler,
+  FocusEventHandler,
+  FunctionComponent,
+  KeyboardEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 
 type Props = {
   descriptor: ApplicationDescriptor
@@ -13,7 +22,7 @@ type Props = {
   hideOptions: boolean
 }
 
-export const WorkspaceMenuItem: FunctionComponent<Props> = ({
+const WorkspaceMenuItem: FunctionComponent<Props> = ({
   descriptor,
   onClick,
   onDelete,
@@ -21,6 +30,7 @@ export const WorkspaceMenuItem: FunctionComponent<Props> = ({
   hideOptions,
 }) => {
   const [isRenaming, setIsRenaming] = useState(false)
+  const [inputValue, setInputValue] = useState(descriptor.label)
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -29,20 +39,21 @@ export const WorkspaceMenuItem: FunctionComponent<Props> = ({
     }
   }, [isRenaming])
 
-  const handleInputKeyDown = useCallback((event: KeyboardEvent) => {
+  const handleChange: ChangeEventHandler<HTMLInputElement> = useCallback((event) => {
+    setInputValue(event.target.value)
+  }, [])
+
+  const handleInputKeyDown: KeyboardEventHandler = useCallback((event) => {
     if (event.key === KeyboardKey.Enter) {
       inputRef.current?.blur()
     }
   }, [])
 
-  const handleInputBlur = useCallback(
-    (event: FocusEvent) => {
-      const name = (event.target as HTMLInputElement).value
-      renameDescriptor(name)
-      setIsRenaming(false)
-    },
-    [renameDescriptor],
-  )
+  const handleInputBlur: FocusEventHandler<HTMLInputElement> = useCallback(() => {
+    renameDescriptor(inputValue)
+    setIsRenaming(false)
+    setInputValue('')
+  }, [inputValue, renameDescriptor])
 
   return (
     <MenuItem
@@ -51,12 +62,13 @@ export const WorkspaceMenuItem: FunctionComponent<Props> = ({
       onClick={onClick}
       checked={descriptor.primary}
     >
-      <div className="flex items-center justify-between w-full">
+      <div className="flex items-center justify-between w-full ml-2">
         {isRenaming ? (
           <input
             ref={inputRef}
             type="text"
-            value={descriptor.label}
+            value={inputValue}
+            onChange={handleChange}
             onKeyDown={handleInputKeyDown}
             onBlur={handleInputBlur}
           />
@@ -65,7 +77,8 @@ export const WorkspaceMenuItem: FunctionComponent<Props> = ({
         )}
         {descriptor.primary && !hideOptions && (
           <div>
-            <button
+            <a
+              role="button"
               className="w-5 h-5 p-0 mr-3 border-0 bg-transparent hover:bg-contrast cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation()
@@ -73,8 +86,9 @@ export const WorkspaceMenuItem: FunctionComponent<Props> = ({
               }}
             >
               <Icon type="pencil" className="sn-icon--mid color-neutral" />
-            </button>
-            <button
+            </a>
+            <a
+              role="button"
               className="w-5 h-5 p-0 border-0 bg-transparent hover:bg-contrast cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation()
@@ -82,10 +96,12 @@ export const WorkspaceMenuItem: FunctionComponent<Props> = ({
               }}
             >
               <Icon type="trash" className="sn-icon--mid color-danger" />
-            </button>
+            </a>
           </div>
         )}
       </div>
     </MenuItem>
   )
 }
+
+export default WorkspaceMenuItem

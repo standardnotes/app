@@ -1,18 +1,20 @@
-import { PreferencesGroup, PreferencesSegment, Title } from '@/Components/Preferences/PreferencesComponents'
-import { WebApplication } from '@/UIModels/Application'
-import { SubscriptionInformation } from './SubscriptionInformation'
-import { NoSubscription } from './NoSubscription'
+import { Title } from '@/Components/Preferences/PreferencesComponents/Content'
+import { WebApplication } from '@/Application/Application'
+import SubscriptionInformation from './SubscriptionInformation'
+import NoSubscription from './NoSubscription'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { AppState } from '@/UIModels/AppState'
+import { FunctionComponent } from 'react'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
+import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 
 type Props = {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
 }
 
-export const Subscription: FunctionComponent<Props> = observer(({ application, appState }: Props) => {
-  const subscriptionState = appState.subscription
+const Subscription: FunctionComponent<Props> = ({ application, viewControllerManager }: Props) => {
+  const subscriptionState = viewControllerManager.subscriptionController
   const { userSubscription } = subscriptionState
 
   const now = new Date().getTime()
@@ -33,4 +35,6 @@ export const Subscription: FunctionComponent<Props> = observer(({ application, a
       </PreferencesSegment>
     </PreferencesGroup>
   )
-})
+}
+
+export default observer(Subscription)

@@ -1,14 +1,10 @@
-import { Icon } from '@/Components/Icon'
-import { Menu } from '@/Components/Menu/Menu'
-import { MenuItem, MenuItemType } from '@/Components/Menu/MenuItem'
-import {
-  reloadFont,
-  transactionForAssociateComponentWithCurrentNote,
-  transactionForDisassociateComponentWithCurrentNote,
-} from '@/Components/NoteView/NoteView'
+import Icon from '@/Components/Icon/Icon'
+import Menu from '@/Components/Menu/Menu'
+import MenuItem from '@/Components/Menu/MenuItem'
+import { MenuItemType } from '@/Components/Menu/MenuItemType'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
-import { STRING_EDIT_LOCKED_ATTEMPT } from '@/Strings'
-import { WebApplication } from '@/UIModels/Application'
+import { STRING_EDIT_LOCKED_ATTEMPT } from '@/Constants/Strings'
+import { WebApplication } from '@/Application/Application'
 import {
   ComponentArea,
   ItemMutator,
@@ -18,23 +14,28 @@ import {
   SNNote,
   TransactionalMutation,
 } from '@standardnotes/snjs'
-import { Fragment, FunctionComponent } from 'preact'
-import { useCallback, useEffect, useState } from 'preact/hooks'
-import { EditorMenuItem, EditorMenuGroup } from '@/Components/NotesOptions/ChangeEditorOption'
+import { Fragment, FunctionComponent, useCallback, useEffect, useState } from 'react'
+import { EditorMenuGroup } from '@/Components/NotesOptions/EditorMenuGroup'
+import { EditorMenuItem } from '@/Components/NotesOptions/EditorMenuItem'
 import { createEditorMenuGroups } from './createEditorMenuGroups'
-import { PLAIN_EDITOR_NAME } from '@/Constants'
+import { PLAIN_EDITOR_NAME } from '@/Constants/Constants'
+import {
+  transactionForAssociateComponentWithCurrentNote,
+  transactionForDisassociateComponentWithCurrentNote,
+} from '../NoteView/TransactionFunctions'
+import { reloadFont } from '../NoteView/FontFunctions'
 
 type ChangeEditorMenuProps = {
   application: WebApplication
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
   closeMenu: () => void
   isVisible: boolean
-  note: SNNote
+  note: SNNote | undefined
 }
 
 const getGroupId = (group: EditorMenuGroup) => group.title.toLowerCase().replace(/\s/, '-')
 
-export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
+const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   application,
   closeOnBlur,
   closeMenu,
@@ -43,7 +44,7 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 }) => {
   const [editors] = useState<SNComponent[]>(() =>
     application.componentManager.componentsForArea(ComponentArea.Editor).sort((a, b) => {
-      return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1
+      return a.displayName.toLowerCase() < b.displayName.toLowerCase() ? -1 : 1
     }),
   )
   const [groups, setGroups] = useState<EditorMenuGroup[]>([])
@@ -75,97 +76,103 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
     [currentEditor],
   )
 
-  const selectComponent = async (component: SNComponent | null, note: SNNote) => {
-    if (component) {
-      if (component.conflictOf) {
-        application.mutator
-          .changeAndSaveItem(component, (mutator) => {
-            mutator.conflictOf = undefined
+  const selectComponent = useCallback(
+    async (component: SNComponent | null, note: SNNote) => {
+      if (component) {
+        if (component.conflictOf) {
+          application.mutator
+            .changeAndSaveItem(component, (mutator) => {
+              mutator.conflictOf = undefined
+            })
+            .catch(console.error)
+        }
+      }
+
+      const transactions: TransactionalMutation[] = []
+
+      await application.getViewControllerManager().itemListController.insertCurrentIfTemplate()
+
+      if (note.locked) {
+        application.alertService.alert(STRING_EDIT_LOCKED_ATTEMPT).catch(console.error)
+        return
+      }
+
+      if (!component) {
+        if (!note.prefersPlainEditor) {
+          transactions.push({
+            itemUuid: note.uuid,
+            mutate: (m: ItemMutator) => {
+              const noteMutator = m as NoteMutator
+              noteMutator.prefersPlainEditor = true
+            },
           })
-          .catch(console.error)
+        }
+        const currentEditor = application.componentManager.editorForNote(note)
+        if (currentEditor?.isExplicitlyEnabledForItem(note.uuid)) {
+          transactions.push(transactionForDisassociateComponentWithCurrentNote(currentEditor, note))
+        }
+        reloadFont(application.getPreference(PrefKey.EditorMonospaceEnabled))
+      } else if (component.area === ComponentArea.Editor) {
+        const currentEditor = application.componentManager.editorForNote(note)
+        if (currentEditor && component.uuid !== currentEditor.uuid) {
+          transactions.push(transactionForDisassociateComponentWithCurrentNote(currentEditor, note))
+        }
+        const prefersPlain = note.prefersPlainEditor
+        if (prefersPlain) {
+          transactions.push({
+            itemUuid: note.uuid,
+            mutate: (m: ItemMutator) => {
+              const noteMutator = m as NoteMutator
+              noteMutator.prefersPlainEditor = false
+            },
+          })
+        }
+        transactions.push(transactionForAssociateComponentWithCurrentNote(component, note))
       }
-    }
 
-    const transactions: TransactionalMutation[] = []
+      await application.mutator.runTransactionalMutations(transactions)
+      /** Dirtying can happen above */
+      application.sync.sync().catch(console.error)
 
-    await application.getAppState().notesView.insertCurrentIfTemplate()
+      setCurrentEditor(application.componentManager.editorForNote(note))
+    },
+    [application],
+  )
 
-    if (note.locked) {
-      application.alertService.alert(STRING_EDIT_LOCKED_ATTEMPT).catch(console.error)
-      return
-    }
-
-    if (!component) {
-      if (!note.prefersPlainEditor) {
-        transactions.push({
-          itemUuid: note.uuid,
-          mutate: (m: ItemMutator) => {
-            const noteMutator = m as NoteMutator
-            noteMutator.prefersPlainEditor = true
-          },
-        })
+  const selectEditor = useCallback(
+    async (itemToBeSelected: EditorMenuItem) => {
+      if (!itemToBeSelected.isEntitled) {
+        premiumModal.activate(itemToBeSelected.name)
+        return
       }
-      const currentEditor = application.componentManager.editorForNote(note)
-      if (currentEditor?.isExplicitlyEnabledForItem(note.uuid)) {
-        transactions.push(transactionForDisassociateComponentWithCurrentNote(currentEditor, note))
+
+      const areBothEditorsPlain = !currentEditor && !itemToBeSelected.component
+
+      if (areBothEditorsPlain) {
+        return
       }
-      reloadFont(application.getPreference(PrefKey.EditorMonospaceEnabled))
-    } else if (component.area === ComponentArea.Editor) {
-      const currentEditor = application.componentManager.editorForNote(note)
-      if (currentEditor && component.uuid !== currentEditor.uuid) {
-        transactions.push(transactionForDisassociateComponentWithCurrentNote(currentEditor, note))
+
+      let shouldSelectEditor = true
+
+      if (itemToBeSelected.component) {
+        const changeRequiresAlert = application.componentManager.doesEditorChangeRequireAlert(
+          currentEditor,
+          itemToBeSelected.component,
+        )
+
+        if (changeRequiresAlert) {
+          shouldSelectEditor = await application.componentManager.showEditorChangeAlert()
+        }
       }
-      const prefersPlain = note.prefersPlainEditor
-      if (prefersPlain) {
-        transactions.push({
-          itemUuid: note.uuid,
-          mutate: (m: ItemMutator) => {
-            const noteMutator = m as NoteMutator
-            noteMutator.prefersPlainEditor = false
-          },
-        })
+
+      if (shouldSelectEditor && note) {
+        selectComponent(itemToBeSelected.component ?? null, note).catch(console.error)
       }
-      transactions.push(transactionForAssociateComponentWithCurrentNote(component, note))
-    }
 
-    await application.mutator.runTransactionalMutations(transactions)
-    /** Dirtying can happen above */
-    application.sync.sync().catch(console.error)
-
-    setCurrentEditor(application.componentManager.editorForNote(note))
-  }
-
-  const selectEditor = async (itemToBeSelected: EditorMenuItem) => {
-    if (!itemToBeSelected.isEntitled) {
-      premiumModal.activate(itemToBeSelected.name)
-      return
-    }
-
-    const areBothEditorsPlain = !currentEditor && !itemToBeSelected.component
-
-    if (areBothEditorsPlain) {
-      return
-    }
-
-    let shouldSelectEditor = true
-
-    if (itemToBeSelected.component) {
-      const changeRequiresAlert = application.componentManager.doesEditorChangeRequireAlert(
-        currentEditor,
-        itemToBeSelected.component,
-      )
-
-      if (changeRequiresAlert) {
-        shouldSelectEditor = await application.componentManager.showEditorChangeAlert()
-      }
-    }
-
-    if (shouldSelectEditor) {
-      selectComponent(itemToBeSelected.component ?? null, note).catch(console.error)
-    }
-
-    closeMenu()
-  }
+      closeMenu()
+    },
+    [application.componentManager, closeMenu, currentEditor, note, premiumModal, selectComponent],
+  )
 
   return (
     <Menu className="pt-0.5 pb-1" a11yLabel="Change note type menu" isOpen={isVisible}>
@@ -176,37 +183,38 @@ export const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 
           return (
             <Fragment key={groupId}>
-              <div
-                className={`flex items-center px-2.5 py-2 text-xs font-semibold color-text border-0 border-y-1px border-solid border-main ${
-                  index === 0 ? 'border-t-0 mb-2' : 'my-2'
-                }`}
-              >
-                {group.icon && <Icon type={group.icon} className={`mr-2 ${group.iconClassName}`} />}
-                <div className="font-semibold text-input">{group.title}</div>
+              <div className={`py-1 border-0 border-t-1px border-solid border-main ${index === 0 ? 'border-t-0' : ''}`}>
+                {group.items.map((item) => {
+                  const onClickEditorItem = () => {
+                    selectEditor(item).catch(console.error)
+                  }
+                  return (
+                    <MenuItem
+                      key={item.name}
+                      type={MenuItemType.RadioButton}
+                      onClick={onClickEditorItem}
+                      className={
+                        'sn-dropdown-item py-2 text-input focus:bg-info-backdrop focus:shadow-none flex-row-reverse'
+                      }
+                      onBlur={closeOnBlur}
+                      checked={isSelectedEditor(item)}
+                    >
+                      <div className="flex flex-grow items-center justify-between">
+                        <div className="flex items-center">
+                          {group.icon && <Icon type={group.icon} className={`mr-2 ${group.iconClassName}`} />}
+                          {item.name}
+                        </div>
+                        {!item.isEntitled && <Icon type="premium-feature" />}
+                      </div>
+                    </MenuItem>
+                  )
+                })}
               </div>
-              {group.items.map((item) => {
-                const onClickEditorItem = () => {
-                  selectEditor(item).catch(console.error)
-                }
-
-                return (
-                  <MenuItem
-                    type={MenuItemType.RadioButton}
-                    onClick={onClickEditorItem}
-                    className={'sn-dropdown-item py-2 text-input focus:bg-info-backdrop focus:shadow-none'}
-                    onBlur={closeOnBlur}
-                    checked={isSelectedEditor(item)}
-                  >
-                    <div className="flex flex-grow items-center justify-between">
-                      {item.name}
-                      {!item.isEntitled && <Icon type="premium-feature" />}
-                    </div>
-                  </MenuItem>
-                )
-              })}
             </Fragment>
           )
         })}
     </Menu>
   )
 }
+
+export default ChangeEditorMenu

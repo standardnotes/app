@@ -1,23 +1,18 @@
-import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
-import { Switch } from '@/Components/Switch'
-import {
-  PreferencesGroup,
-  PreferencesSegment,
-  Subtitle,
-  Text,
-  Title,
-} from '@/Components/Preferences/PreferencesComponents'
-import { WebApplication } from '@/UIModels/Application'
+import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
+import Switch from '@/Components/Switch/Switch'
+import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
+import { WebApplication } from '@/Application/Application'
 import { PrefKey } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionalComponent } from 'preact'
-import { useState } from 'preact/hooks'
+import { FunctionComponent, useState } from 'react'
+import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
 type Props = {
   application: WebApplication
 }
 
-export const Tools: FunctionalComponent<Props> = observer(({ application }: Props) => {
+const Tools: FunctionComponent<Props> = ({ application }: Props) => {
   const [monospaceFont, setMonospaceFont] = useState(() =>
     application.getPreference(PrefKey.EditorMonospaceEnabled, true),
   )
@@ -47,7 +42,7 @@ export const Tools: FunctionalComponent<Props> = observer(({ application }: Prop
             </div>
             <Switch onChange={toggleMonospaceFont} checked={monospaceFont} />
           </div>
-          <HorizontalSeparator classes="mt-5 mb-3" />
+          <HorizontalSeparator classes="my-4" />
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
               <Subtitle>Margin Resizers</Subtitle>
@@ -59,4 +54,6 @@ export const Tools: FunctionalComponent<Props> = observer(({ application }: Prop
       </PreferencesSegment>
     </PreferencesGroup>
   )
-})
+}
+
+export default observer(Tools)

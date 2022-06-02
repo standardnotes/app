@@ -1,55 +1,16 @@
-import { Icon } from '@/Components/Icon'
-import { STRING_E2E_ENABLED, STRING_ENC_NOT_ENABLED, STRING_LOCAL_ENC_ENABLED } from '@/Strings'
-import { AppState } from '@/UIModels/AppState'
+import { STRING_E2E_ENABLED, STRING_ENC_NOT_ENABLED, STRING_LOCAL_ENC_ENABLED } from '@/Constants/Strings'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
-import { ComponentChild, FunctionComponent } from 'preact'
-import { PreferencesGroup, PreferencesSegment, Text, Title } from '@/Components/Preferences/PreferencesComponents'
+import { FunctionComponent } from 'react'
+import { Title, Text } from '../../PreferencesComponents/Content'
+import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
+import EncryptionEnabled from './EncryptionEnabled'
 
-const formatCount = (count: number, itemType: string) => `${count} / ${count} ${itemType}`
+type Props = { viewControllerManager: ViewControllerManager }
 
-export const EncryptionStatusItem: FunctionComponent<{
-  icon: ComponentChild
-  status: string
-  checkmark?: boolean
-}> = ({ icon, status, checkmark = true }) => (
-  <div className="w-full rounded py-1.5 px-3 text-input my-1 min-h-8 flex flex-row items-center bg-contrast no-border focus-within:ring-info">
-    {icon}
-    <div className="min-w-3 min-h-1" />
-    <div className="flex-grow color-text text-sm">{status}</div>
-    <div className="min-w-3 min-h-1" />
-    {checkmark && <Icon className="success min-w-4 min-h-4" type="check-bold" />}
-  </div>
-)
-
-const EncryptionEnabled: FunctionComponent<{ appState: AppState }> = observer(({ appState }) => {
-  const count = appState.accountMenu.structuredNotesAndTagsCount
-  const notes = formatCount(count.notes, 'notes')
-  const tags = formatCount(count.tags, 'tags')
-  const archived = formatCount(count.archived, 'archived notes')
-  const deleted = formatCount(count.deleted, 'trashed notes')
-
-  const noteIcon = <Icon type="rich-text" className="min-w-5 min-h-5" />
-  const tagIcon = <Icon type="hashtag" className="min-w-5 min-h-5" />
-  const archiveIcon = <Icon type="archive" className="min-w-5 min-h-5" />
-  const trashIcon = <Icon type="trash" className="min-w-5 min-h-5" />
-  return (
-    <>
-      <div className="flex flex-row items-start pb-1 pt-1.5">
-        <EncryptionStatusItem status={notes} icon={[noteIcon]} />
-        <div className="min-w-3" />
-        <EncryptionStatusItem status={tags} icon={[tagIcon]} />
-      </div>
-      <div className="flex flex-row items-start">
-        <EncryptionStatusItem status={archived} icon={[archiveIcon]} />
-        <div className="min-w-3" />
-        <EncryptionStatusItem status={deleted} icon={[trashIcon]} />
-      </div>
-    </>
-  )
-})
-
-export const Encryption: FunctionComponent<{ appState: AppState }> = observer(({ appState }) => {
-  const app = appState.application
+const Encryption: FunctionComponent<Props> = ({ viewControllerManager }) => {
+  const app = viewControllerManager.application
   const hasUser = app.hasAccount()
   const hasPasscode = app.hasPasscode()
   const isEncryptionEnabled = app.isEncryptionAvailable()
@@ -66,8 +27,10 @@ export const Encryption: FunctionComponent<{ appState: AppState }> = observer(({
         <Title>Encryption</Title>
         <Text>{encryptionStatusString}</Text>
 
-        {isEncryptionEnabled && <EncryptionEnabled appState={appState} />}
+        {isEncryptionEnabled && <EncryptionEnabled viewControllerManager={viewControllerManager} />}
       </PreferencesSegment>
     </PreferencesGroup>
   )
-})
+}
+
+export default observer(Encryption)

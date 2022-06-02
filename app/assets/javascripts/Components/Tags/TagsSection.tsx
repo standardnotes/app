@@ -1,25 +1,24 @@
-import { TagsList } from '@/Components/Tags/TagsList'
-import { AppState } from '@/UIModels/AppState'
+import TagsList from '@/Components/Tags/TagsList'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { ApplicationEvent } from '@/__mocks__/@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useState } from 'preact/hooks'
-import { TagsSectionAddButton } from './TagsSectionAddButton'
-import { TagsSectionTitle } from './TagsSectionTitle'
+import { FunctionComponent, useCallback, useEffect, useState } from 'react'
+import TagsSectionAddButton from './TagsSectionAddButton'
+import TagsSectionTitle from './TagsSectionTitle'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
 }
 
-export const TagsSection: FunctionComponent<Props> = observer(({ appState }) => {
+const TagsSection: FunctionComponent<Props> = ({ viewControllerManager }) => {
   const [hasMigration, setHasMigration] = useState<boolean>(false)
 
   const checkIfMigrationNeeded = useCallback(() => {
-    setHasMigration(appState.application.items.hasTagsNeedingFoldersMigration())
-  }, [appState])
+    setHasMigration(viewControllerManager.application.items.hasTagsNeedingFoldersMigration())
+  }, [viewControllerManager])
 
   useEffect(() => {
-    const removeObserver = appState.application.addEventObserver(async (event) => {
+    const removeObserver = viewControllerManager.application.addEventObserver(async (event) => {
       const events = [ApplicationEvent.CompletedInitialSync, ApplicationEvent.SignedIn]
       if (events.includes(event)) {
         checkIfMigrationNeeded()
@@ -29,11 +28,11 @@ export const TagsSection: FunctionComponent<Props> = observer(({ appState }) => 
     return () => {
       removeObserver()
     }
-  }, [appState, checkIfMigrationNeeded])
+  }, [viewControllerManager, checkIfMigrationNeeded])
 
   const runMigration = useCallback(async () => {
     if (
-      await appState.application.alertService.confirm(
+      await viewControllerManager.application.alertService.confirm(
         '<i>Introducing native, built-in nested tags without requiring the legacy Folders extension.</i><br/></br> ' +
           " To get started, we'll need to migrate any tags containing a dot character to the new system.<br/></br> " +
           ' This migration will convert any tags with dots appearing in their name into a natural' +
@@ -43,24 +42,33 @@ export const TagsSection: FunctionComponent<Props> = observer(({ appState }) => 
         'Run Migration',
       )
     ) {
-      appState.application.mutator
+      viewControllerManager.application.mutator
         .migrateTagsToFolders()
         .then(() => {
           checkIfMigrationNeeded()
         })
         .catch(console.error)
     }
-  }, [appState, checkIfMigrationNeeded])
+  }, [viewControllerManager, checkIfMigrationNeeded])
 
   return (
     <section>
       <div className="section-title-bar">
         <div className="section-title-bar-header">
-          <TagsSectionTitle features={appState.features} hasMigration={hasMigration} onClickMigration={runMigration} />
-          <TagsSectionAddButton tags={appState.tags} features={appState.features} />
+          <TagsSectionTitle
+            features={viewControllerManager.featuresController}
+            hasMigration={hasMigration}
+            onClickMigration={runMigration}
+          />
+          <TagsSectionAddButton
+            tags={viewControllerManager.navigationController}
+            features={viewControllerManager.featuresController}
+          />
         </div>
       </div>
-      <TagsList appState={appState} />
+      <TagsList viewControllerManager={viewControllerManager} />
     </section>
   )
-})
+}
+
+export default observer(TagsSection)

@@ -1,8 +1,7 @@
-import { FunctionComponent } from 'preact'
-import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
-import { useRef } from 'preact/hooks'
+import { FunctionComponent, useRef } from 'react'
+import { AlertDialog } from '@reach/alert-dialog'
 
-export const ModalDialog: FunctionComponent = ({ children }) => {
+const ModalDialog: FunctionComponent = ({ children }) => {
   const ldRef = useRef<HTMLButtonElement>(null)
 
   return (
@@ -19,44 +18,5 @@ export const ModalDialog: FunctionComponent = ({ children }) => {
     </AlertDialog>
   )
 }
-
-export const ModalDialogLabel: FunctionComponent<{
-  closeDialog: () => void
-  className?: string
-}> = ({ children, closeDialog, className }) => (
-  <AlertDialogLabel className={`sk-panel-header px-4.5 ${className}`}>
-    <div className="w-full flex flex-row justify-between items-center">
-      <div className="flex-grow color-text text-base font-medium">{children}</div>
-      <div tabIndex={0} className="font-bold color-info cursor-pointer" onClick={closeDialog}>
-        Close
-      </div>
-    </div>
-    <hr className="h-1px bg-border no-border m-0" />
-  </AlertDialogLabel>
-)
-
-export const ModalDialogDescription: FunctionComponent<{
-  className?: string
-}> = ({ children, className = '' }) => (
-  <AlertDialogDescription className={`px-4 py-4 flex flex-row items-center ${className}`}>
-    {children}
-  </AlertDialogDescription>
-)
-
-export const ModalDialogButtons: FunctionComponent<{ className?: string }> = ({ children, className }) => (
-  <>
-    <hr className="h-1px bg-border no-border m-0" />
-    <div className={`px-4 py-4 flex flex-row items-center ${className}`}>
-      {children != undefined && Array.isArray(children)
-        ? children.map((child, idx, arr) => (
-            <>
-              {child}
-              {idx < arr.length - 1 ? <div className="min-w-3" /> : undefined}
-            </>
-          ))
-        : children}
-    </div>
-  </>
-)
 
 export default ModalDialog

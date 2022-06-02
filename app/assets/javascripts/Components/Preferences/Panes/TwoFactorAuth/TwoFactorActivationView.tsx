@@ -1,14 +1,16 @@
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 import { TwoFactorActivation } from './TwoFactorActivation'
-import { SaveSecretKey } from './SaveSecretKey'
-import { ScanQRCode } from './ScanQRCode'
-import { Verification } from './Verification'
-import { TwoFactorSuccess } from './TwoFactorSuccess'
+import SaveSecretKey from './SaveSecretKey'
+import ScanQRCode from './ScanQRCode'
+import Verification from './Verification'
+import TwoFactorSuccess from './TwoFactorSuccess'
 
-export const TwoFactorActivationView: FunctionComponent<{
+type Props = {
   activation: TwoFactorActivation
-}> = observer(({ activation: act }) => {
+}
+
+const TwoFactorActivationView: FunctionComponent<Props> = ({ activation: act }) => {
   switch (act.activationStep) {
     case 'scan-qr-code':
       return <ScanQRCode activation={act} />
@@ -19,4 +21,6 @@ export const TwoFactorActivationView: FunctionComponent<{
     case 'success':
       return <TwoFactorSuccess activation={act} />
   }
-})
+}
+
+export default observer(TwoFactorActivationView)

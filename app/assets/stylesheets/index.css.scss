@@ -1,13 +1,13 @@
 @import '@standardnotes/stylekit/dist/stylekit';
+@import 'theme';
 @import 'main';
 @import 'ui';
 @import 'footer';
 @import 'navigation';
-@import 'notes';
+@import 'items-column';
 @import 'editor';
 @import 'menus';
 @import 'modals';
-@import 'lock-screen';
 @import 'stylekit-sub';
 @import 'ionicons';
 @import 'reach-sub';
@@ -16,3 +16,14 @@
 @import 'focused';
 @import 'sn';
 @import 'columns';
+
+.sn-component {
+  @import './utils/padding';
+  @import './utils/margin';
+  @import './utils/width';
+  @import './utils/height';
+  @import './utils/color';
+  @import './utils/border';
+  @import './utils/position';
+  @import './utils/leading';
+}

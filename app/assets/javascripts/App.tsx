@@ -20,16 +20,15 @@ declare global {
   }
 }
 
-import { IsWebPlatform, WebAppVersion } from '@/Version'
+import { IsWebPlatform, WebAppVersion } from '@/Constants/Version'
 import { DesktopManagerInterface, SNLog } from '@standardnotes/snjs'
-import { render } from 'preact'
-import { ApplicationGroupView } from './Components/ApplicationGroupView'
-import { WebDevice } from './Device/WebDevice'
-import { StartApplication } from './Device/StartApplication'
-import { ApplicationGroup } from './UIModels/ApplicationGroup'
-import { WebOrDesktopDevice } from './Device/WebOrDesktopDevice'
-import { WebApplication } from './UIModels/Application'
-import { unmountComponentAtRoot } from './Utils/PreactUtils'
+import ApplicationGroupView from './Components/ApplicationGroupView/ApplicationGroupView'
+import { WebDevice } from './Application/Device/WebDevice'
+import { StartApplication } from './Application/Device/StartApplication'
+import { ApplicationGroup } from './Application/ApplicationGroup'
+import { WebOrDesktopDevice } from './Application/Device/WebOrDesktopDevice'
+import { WebApplication } from './Application/Application'
+import { createRoot, Root } from 'react-dom/client'
 
 let keyCount = 0
 const getKey = () => {
@@ -46,21 +45,22 @@ const startApplication: StartApplication = async function startApplication(
 ) {
   SNLog.onLog = console.log
   SNLog.onError = console.error
+  let root: Root
 
   const onDestroy = () => {
-    const root = document.getElementById(RootId) as HTMLElement
-    unmountComponentAtRoot(root)
-    root.remove()
+    const rootElement = document.getElementById(RootId) as HTMLElement
+    root.unmount()
+    rootElement.remove()
     renderApp()
   }
 
   const renderApp = () => {
-    const root = document.createElement('div')
-    root.id = RootId
+    const rootElement = document.createElement('div')
+    rootElement.id = RootId
+    const appendedRootNode = document.body.appendChild(rootElement)
+    root = createRoot(appendedRootNode)
 
-    const parentNode = document.body.appendChild(root)
-
-    render(
+    root.render(
       <ApplicationGroupView
         key={getKey()}
         server={defaultSyncServerHost}
@@ -69,7 +69,6 @@ const startApplication: StartApplication = async function startApplication(
         websocketUrl={webSocketUrl}
         onDestroy={onDestroy}
       />,
-      parentNode,
     )
   }
 

@@ -1,20 +1,19 @@
-import { PreferencesSegment, Title, Text, Subtitle } from '@/Components/Preferences/PreferencesComponents'
-import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
-import { Button } from '@/Components/Button/Button'
+import { Title, Text, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
+import { useCallback, useEffect, useMemo, useState, FunctionComponent } from 'react'
+import Button from '@/Components/Button/Button'
 import { FileBackupMetadataFile, FileBackupsConstantsV1, FileItem, FileHandleRead } from '@standardnotes/snjs'
-import { HorizontalSeparator } from '@/Components/Shared/HorizontalSeparator'
-import { EncryptionStatusItem } from '../../Security/Encryption'
-import { Icon } from '@/Components/Icon'
+import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
+import Icon from '@/Components/Icon/Icon'
 import { StreamingFileApi } from '@standardnotes/filepicker'
-import { FunctionComponent } from 'preact'
-import { isHandlingBackupDrag } from '@/Utils/DragTypeCheck'
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
+import EncryptionStatusItem from '../../Security/EncryptionStatusItem'
+import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 
 type Props = {
   application: WebApplication
 }
 
-export const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
+const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
   const [droppedFile, setDroppedFile] = useState<FileBackupMetadataFile | undefined>(undefined)
   const [decryptedFileItem, setDecryptedFileItem] = useState<FileItem | undefined>(undefined)
   const [binaryFile, setBinaryFile] = useState<FileHandleRead | undefined>(undefined)
@@ -65,65 +64,40 @@ export const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
     setIsSavingAsDecrypted(false)
   }, [decryptedFileItem, application, binaryFile, fileSystem])
 
-  const handleDrag = useCallback(
-    (event: DragEvent) => {
-      if (isHandlingBackupDrag(event, application)) {
-        event.preventDefault()
-        event.stopPropagation()
-      }
-    },
-    [application],
-  )
+  const handleDragOver = useCallback((event: DragEvent) => {
+    event.stopPropagation()
+  }, [])
 
-  const handleDragIn = useCallback(
-    (event: DragEvent) => {
-      if (!isHandlingBackupDrag(event, application)) {
-        return
-      }
+  const handleDragIn = useCallback((event: DragEvent) => {
+    event.stopPropagation()
+  }, [])
 
-      event.preventDefault()
-      event.stopPropagation()
-    },
-    [application],
-  )
-
-  const handleDragOut = useCallback(
-    (event: DragEvent) => {
-      if (!isHandlingBackupDrag(event, application)) {
-        return
-      }
-
-      event.preventDefault()
-      event.stopPropagation()
-    },
-    [application],
-  )
+  const handleDragOut = useCallback((event: DragEvent) => {
+    event.stopPropagation()
+  }, [])
 
   const handleDrop = useCallback(
     async (event: DragEvent) => {
-      if (!isHandlingBackupDrag(event, application)) {
-        return
-      }
-
       event.preventDefault()
       event.stopPropagation()
 
       const items = event.dataTransfer?.items
-
       if (!items || items.length === 0) {
         return
       }
 
       const item = items[0]
       const file = item.getAsFile()
-
       if (!file) {
         return
       }
 
       const text = await file.text()
-
       const type = application.files.isFileNameFileBackupRelated(file.name)
+      if (type === false) {
+        return
+      }
+
       if (type === 'binary') {
         void application.alertService.alert('Please drag the metadata file instead of the encrypted data file.')
         return
@@ -144,16 +118,16 @@ export const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
   useEffect(() => {
     window.addEventListener('dragenter', handleDragIn)
     window.addEventListener('dragleave', handleDragOut)
-    window.addEventListener('dragover', handleDrag)
+    window.addEventListener('dragover', handleDragOver)
     window.addEventListener('drop', handleDrop)
 
     return () => {
       window.removeEventListener('dragenter', handleDragIn)
       window.removeEventListener('dragleave', handleDragOut)
-      window.removeEventListener('dragover', handleDrag)
+      window.removeEventListener('dragover', handleDragOver)
       window.removeEventListener('drop', handleDrop)
     }
-  }, [handleDragIn, handleDrop, handleDrag, handleDragOut])
+  }, [handleDragIn, handleDrop, handleDragOver, handleDragOut])
 
   if (!droppedFile) {
     return (
@@ -174,7 +148,7 @@ export const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
 
             <EncryptionStatusItem
               status={decryptedFileItem.name}
-              icon={[<Icon type="attachment-file" className="min-w-5 min-h-5" />]}
+              icon={<Icon type="attachment-file" className="min-w-5 min-h-5" />}
               checkmark={true}
             />
 
@@ -225,3 +199,5 @@ export const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
     </>
   )
 }
+
+export default BackupsDropZone

@@ -1,22 +1,21 @@
-import { Button } from '@/Components/Button/Button'
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
-import { PurchaseFlowPane } from '@/UIModels/AppState/PurchaseFlowState'
+import Button from '@/Components/Button/Button'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { PurchaseFlowPane } from '@/Controllers/PurchaseFlow/PurchaseFlowPane'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useEffect, useRef, useState } from 'preact/hooks'
-import { FloatingLabelInput } from '@/Components/Input/FloatingLabelInput'
+import { ChangeEventHandler, FunctionComponent, useEffect, useRef, useState } from 'react'
+import FloatingLabelInput from '@/Components/Input/FloatingLabelInput'
 import { isEmailValid } from '@/Utils'
-import { loadPurchaseFlowUrl } from '@/Components/PurchaseFlow/PurchaseFlowWrapper'
 import { BlueDotIcon, CircleIcon, DiamondIcon, CreateAccountIllustration } from '@standardnotes/icons'
+import { loadPurchaseFlowUrl } from '../PurchaseFlowFunctions'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   application: WebApplication
 }
 
-export const CreateAccount: FunctionComponent<Props> = observer(({ appState, application }) => {
-  const { setCurrentPane } = appState.purchaseFlow
+const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, application }) => {
+  const { setCurrentPane } = viewControllerManager.purchaseFlowController
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -34,24 +33,18 @@ export const CreateAccount: FunctionComponent<Props> = observer(({ appState, app
     }
   }, [])
 
-  const handleEmailChange = (e: Event) => {
-    if (e.target instanceof HTMLInputElement) {
-      setEmail(e.target.value)
-      setIsEmailInvalid(false)
-    }
+  const handleEmailChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+    setEmail(e.target.value)
+    setIsEmailInvalid(false)
   }
 
-  const handlePasswordChange = (e: Event) => {
-    if (e.target instanceof HTMLInputElement) {
-      setPassword(e.target.value)
-    }
+  const handlePasswordChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+    setPassword(e.target.value)
   }
 
-  const handleConfirmPasswordChange = (e: Event) => {
-    if (e.target instanceof HTMLInputElement) {
-      setConfirmPassword(e.target.value)
-      setIsPasswordNotMatching(false)
-    }
+  const handleConfirmPasswordChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+    setConfirmPassword(e.target.value)
+    setIsPasswordNotMatching(false)
   }
 
   const handleSignInInstead = () => {
@@ -140,7 +133,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(({ appState, app
               disabled={isCreatingAccount}
               isInvalid={isEmailInvalid}
             />
-            {isEmailInvalid ? <div className="color-dark-red mb-4">Please provide a valid email.</div> : null}
+            {isEmailInvalid ? <div className="color-danger mb-4">Please provide a valid email.</div> : null}
             <FloatingLabelInput
               className="min-w-90 xs:min-w-auto mb-4"
               id="purchase-create-account-password"
@@ -163,7 +156,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(({ appState, app
               isInvalid={isPasswordNotMatching}
             />
             {isPasswordNotMatching ? (
-              <div className="color-dark-red mb-4">Passwords don't match. Please try again.</div>
+              <div className="color-danger mb-4">Passwords don't match. Please try again.</div>
             ) : null}
           </div>
         </form>
@@ -196,4 +189,6 @@ export const CreateAccount: FunctionComponent<Props> = observer(({ appState, app
       <CreateAccountIllustration className="md:hidden" />
     </div>
   )
-})
+}
+
+export default observer(CreateAccount)

@@ -1,6 +1,4 @@
-import { JSXInternal } from 'preact/src/jsx'
-import { ComponentChildren, FunctionComponent, Ref } from 'preact'
-import { forwardRef } from 'preact/compat'
+import { Ref, forwardRef, ReactNode, ComponentPropsWithoutRef } from 'react'
 
 const baseClass = 'rounded px-4 py-1.75 font-bold text-sm fit-content'
 
@@ -22,7 +20,7 @@ const getClassName = (variant: ButtonVariant, danger: boolean, disabled: boolean
   }
 
   if (disabled) {
-    colors = variant === 'normal' ? 'bg-default color-grey-2' : 'bg-grey-2 color-info-contrast'
+    colors = variant === 'normal' ? 'bg-default color-passive-2' : 'bg-passive-2 color-info-contrast'
     focusHoverStates =
       variant === 'normal'
         ? 'focus:bg-default focus:outline-none hover:bg-default'
@@ -32,15 +30,15 @@ const getClassName = (variant: ButtonVariant, danger: boolean, disabled: boolean
   return `${baseClass} ${colors} ${borders} ${focusHoverStates} ${cursor}`
 }
 
-type ButtonProps = JSXInternal.HTMLAttributes<HTMLButtonElement> & {
-  children?: ComponentChildren
+interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
+  children?: ReactNode
   className?: string
   variant?: ButtonVariant
   dangerStyle?: boolean
   label?: string
 }
 
-export const Button: FunctionComponent<ButtonProps> = forwardRef(
+const Button = forwardRef(
   (
     {
       variant = 'normal',
@@ -66,3 +64,5 @@ export const Button: FunctionComponent<ButtonProps> = forwardRef(
     )
   },
 )
+
+export default Button

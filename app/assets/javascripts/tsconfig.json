@@ -1,6 +1,7 @@
 {
   "extends": "../../../node_modules/@standardnotes/config/src/tsconfig.json",
   "compilerOptions": {
+    "skipLibCheck": true,
     "target": "ES2019",
     "module": "commonjs",
     "moduleResolution": "node",
@@ -15,8 +16,7 @@
     "declarationDir": "../../../dist/@types",
     "baseUrl": ".",
     "jsx": "react-jsx",
-    "jsxImportSource": "preact",
-    "typeRoots": ["./@types", "../../../node_modules/@types"],
+    "typeRoots": ["./Types/External", "../../../node_modules/@types"],
     "paths": {
       "%/*": ["../templates/*"],
       "@/*": ["./*"],

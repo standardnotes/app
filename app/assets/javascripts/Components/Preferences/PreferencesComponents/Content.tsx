@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'preact'
+import { FunctionComponent } from 'react'
 
 export const Title: FunctionComponent = ({ children }) => (
   <>

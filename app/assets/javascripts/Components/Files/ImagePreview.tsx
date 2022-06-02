@@ -1,13 +1,12 @@
 import { IconType } from '@standardnotes/snjs'
-import { FunctionComponent } from 'preact'
-import { useRef, useState } from 'preact/hooks'
-import { IconButton } from '../Button/IconButton'
+import { FunctionComponent, useRef, useState } from 'react'
+import IconButton from '../Button/IconButton'
 
 type Props = {
   objectUrl: string
 }
 
-export const ImagePreview: FunctionComponent<Props> = ({ objectUrl }) => {
+const ImagePreview: FunctionComponent<Props> = ({ objectUrl }) => {
   const initialImgHeightRef = useRef<number>()
 
   const [imageZoomPercent, setImageZoomPercent] = useState(100)
@@ -21,12 +20,12 @@ export const ImagePreview: FunctionComponent<Props> = ({ objectUrl }) => {
             height: `${imageZoomPercent}%`,
             ...(imageZoomPercent <= 100
               ? {
-                  'min-width': '100%',
-                  'object-fit': 'contain',
+                  minWidth: '100%',
+                  objectFit: 'contain',
                 }
               : {
                   position: 'absolute',
-                  inset: 0,
+                  top: 0,
                   margin: 'auto',
                 }),
           }}
@@ -69,3 +68,5 @@ export const ImagePreview: FunctionComponent<Props> = ({ objectUrl }) => {
     </div>
   )
 }
+
+export default ImagePreview

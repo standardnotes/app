@@ -1,4 +1,4 @@
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import {
   ContentType,
   FeatureStatus,
@@ -8,8 +8,9 @@ import {
   GetFeatures,
   NoteType,
 } from '@standardnotes/snjs'
-import { EditorMenuItem, EditorMenuGroup } from '@/Components/NotesOptions/ChangeEditorOption'
-import { PLAIN_EDITOR_NAME } from '@/Constants'
+import { EditorMenuGroup } from '@/Components/NotesOptions/EditorMenuGroup'
+import { EditorMenuItem } from '@/Components/NotesOptions/EditorMenuItem'
+import { PLAIN_EDITOR_NAME } from '@/Constants/Constants'
 
 type EditorGroup = NoteType | 'plain' | 'others'
 
@@ -63,7 +64,7 @@ export const createEditorMenuGroups = (application: WebApplication, editors: SNC
 
   editors.forEach((editor) => {
     const editorItem: EditorMenuItem = {
-      name: editor.name,
+      name: editor.displayName,
       component: editor,
       isEntitled: application.features.getFeatureStatus(editor.identifier) === FeatureStatus.Entitled,
     }

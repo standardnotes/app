@@ -1,19 +1,18 @@
-import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants'
-import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
-import { AppState } from '@/UIModels/AppState'
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
+import { ApplicationGroup } from '@/Application/ApplicationGroup'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { calculateSubmenuStyle, SubmenuStyle } from '@/Utils/CalculateSubmenuStyle'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
-import { Icon } from '@/Components/Icon'
-import { WorkspaceSwitcherMenu } from './WorkspaceSwitcherMenu'
+import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
+import Icon from '@/Components/Icon/Icon'
+import WorkspaceSwitcherMenu from './WorkspaceSwitcherMenu'
 
 type Props = {
   mainApplicationGroup: ApplicationGroup
-  appState: AppState
+  viewControllerManager: ViewControllerManager
 }
 
-export const WorkspaceSwitcherOption: FunctionComponent<Props> = observer(({ mainApplicationGroup, appState }) => {
+const WorkspaceSwitcherOption: FunctionComponent<Props> = ({ mainApplicationGroup, viewControllerManager }) => {
   const buttonRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const [isOpen, setIsOpen] = useState(false)
@@ -59,9 +58,15 @@ export const WorkspaceSwitcherOption: FunctionComponent<Props> = observer(({ mai
       </button>
       {isOpen && (
         <div ref={menuRef} className="sn-dropdown max-h-120 min-w-68 py-2 fixed overflow-y-auto" style={menuStyle}>
-          <WorkspaceSwitcherMenu mainApplicationGroup={mainApplicationGroup} appState={appState} isOpen={isOpen} />
+          <WorkspaceSwitcherMenu
+            mainApplicationGroup={mainApplicationGroup}
+            viewControllerManager={viewControllerManager}
+            isOpen={isOpen}
+          />
         </div>
       )}
     </>
   )
-})
+}
+
+export default observer(WorkspaceSwitcherOption)

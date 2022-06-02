@@ -1,7 +1,7 @@
 import { confirmDialog } from '@/Services/AlertService'
-import { STRING_RESTORE_LOCKED_ATTEMPT } from '@/Strings'
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
+import { STRING_RESTORE_LOCKED_ATTEMPT } from '@/Constants/Strings'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { getPlatformString } from '@/Utils'
 import { DialogContent, DialogOverlay } from '@reach/dialog'
 import {
@@ -13,17 +13,16 @@ import {
   SNNote,
 } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks'
-import { Button } from '@/Components/Button/Button'
-import { HistoryListContainer } from './HistoryListContainer'
-import { RevisionContentLocked } from './RevisionContentLocked'
-import { SelectedRevisionContent } from './SelectedRevisionContent'
+import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import Button from '@/Components/Button/Button'
+import HistoryListContainer from './HistoryListContainer'
+import RevisionContentLocked from './RevisionContentLocked'
+import SelectedRevisionContent from './SelectedRevisionContent'
 import { LegacyHistoryEntry, RemoteRevisionListGroup, sortRevisionListIntoGroups } from './utils'
 
 type RevisionHistoryModalProps = {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
 }
 
 const ABSOLUTE_CENTER_CLASSNAME = 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
@@ -48,22 +47,26 @@ const RevisionContentPlaceholder: FunctionComponent<RevisionContentPlaceholderPr
   >
     {isFetchingSelectedRevision && <div className={`sk-spinner w-5 h-5 spinner-info ${ABSOLUTE_CENTER_CLASSNAME}`} />}
     {!isFetchingSelectedRevision && !selectedRevision ? (
-      <div className={`color-grey-0 select-none ${ABSOLUTE_CENTER_CLASSNAME}`}>No revision selected</div>
+      <div className={`color-passive-0 select-none ${ABSOLUTE_CENTER_CLASSNAME}`}>No revision selected</div>
     ) : null}
   </div>
 )
 
 export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = observer(
-  ({ application, appState }) => {
+  ({ application, viewControllerManager }) => {
     const closeButtonRef = useRef<HTMLButtonElement>(null)
 
-    const dismissModal = () => {
-      appState.notes.setShowRevisionHistoryModal(false)
-    }
+    const dismissModal = useCallback(() => {
+      viewControllerManager.notesController.setShowRevisionHistoryModal(false)
+    }, [viewControllerManager.notesController])
 
-    const note = Object.values(appState.notes.selectedNotes)[0]
+    const note = viewControllerManager.notesController.firstSelectedNote
     const editorForCurrentNote = useMemo(() => {
-      return application.componentManager.editorForNote(note)
+      if (note) {
+        return application.componentManager.editorForNote(note)
+      } else {
+        return undefined
+      }
     }, [application, note])
 
     const [isFetchingSelectedRevision, setIsFetchingSelectedRevision] = useState(false)
@@ -100,7 +103,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
       }
     }, [fetchRemoteHistory, remoteHistory?.length])
 
-    const restore = () => {
+    const restore = useCallback(() => {
       if (selectedRevision) {
         const originalNote = application.items.findItem(selectedRevision.payload.uuid) as SNNote
 
@@ -130,9 +133,9 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
           })
           .catch(console.error)
       }
-    }
+    }, [application.alertService, application.items, application.mutator, dismissModal, selectedRevision])
 
-    const restoreAsCopy = async () => {
+    const restoreAsCopy = useCallback(async () => {
       if (selectedRevision) {
         const originalNote = application.items.findSureItem<SNNote>(selectedRevision.payload.uuid)
 
@@ -143,11 +146,17 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
             : undefined,
         })
 
-        appState.notes.selectNote(duplicatedItem.uuid).catch(console.error)
+        viewControllerManager.selectionController.selectItem(duplicatedItem.uuid).catch(console.error)
 
         dismissModal()
       }
-    }
+    }, [
+      viewControllerManager.selectionController,
+      application.items,
+      application.mutator,
+      dismissModal,
+      selectedRevision,
+    ])
 
     useEffect(() => {
       const fetchTemplateNote = async () => {
@@ -164,7 +173,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
       fetchTemplateNote().catch(console.error)
     }, [application, selectedRevision])
 
-    const deleteSelectedRevision = () => {
+    const deleteSelectedRevision = useCallback(() => {
       if (!selectedRemoteEntry) {
         return
       }
@@ -178,7 +187,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
           'Cancel',
         )
         .then((shouldDelete) => {
-          if (shouldDelete) {
+          if (shouldDelete && note) {
             setIsDeletingRevision(true)
 
             application.historyManager
@@ -195,7 +204,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
           }
         })
         .catch(console.error)
-    }
+    }, [application.alertService, application.historyManager, fetchRemoteHistory, note, selectedRemoteEntry])
 
     return (
       <DialogOverlay
@@ -205,12 +214,13 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
         aria-label="Note revision history"
       >
         <DialogContent
+          aria-label="Note revision history"
           className="rounded shadow-overlay"
           style={{
             width: '90%',
             maxWidth: '90%',
             minHeight: '90%',
-            background: 'var(--sn-stylekit-background-color)',
+            background: 'var(--modal-background-color)',
           }}
         >
           <div
@@ -219,27 +229,31 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
             }`}
           >
             <div className="flex flex-grow min-h-0">
-              <HistoryListContainer
-                application={application}
-                note={note}
-                remoteHistory={remoteHistory}
-                isFetchingRemoteHistory={isFetchingRemoteHistory}
-                setSelectedRevision={setSelectedRevision}
-                setSelectedRemoteEntry={setSelectedRemoteEntry}
-                setShowContentLockedScreen={setShowContentLockedScreen}
-                setIsFetchingSelectedRevision={setIsFetchingSelectedRevision}
-              />
+              {note && (
+                <HistoryListContainer
+                  application={application}
+                  note={note}
+                  remoteHistory={remoteHistory}
+                  isFetchingRemoteHistory={isFetchingRemoteHistory}
+                  setSelectedRevision={setSelectedRevision}
+                  setSelectedRemoteEntry={setSelectedRemoteEntry}
+                  setShowContentLockedScreen={setShowContentLockedScreen}
+                  setIsFetchingSelectedRevision={setIsFetchingSelectedRevision}
+                />
+              )}
               <div className={'flex flex-col flex-grow relative'}>
                 <RevisionContentPlaceholder
                   selectedRevision={selectedRevision}
                   isFetchingSelectedRevision={isFetchingSelectedRevision}
                   showContentLockedScreen={showContentLockedScreen}
                 />
-                {showContentLockedScreen && !selectedRevision && <RevisionContentLocked appState={appState} />}
+                {showContentLockedScreen && !selectedRevision && (
+                  <RevisionContentLocked viewControllerManager={viewControllerManager} />
+                )}
                 {selectedRevision && templateNoteForRevision && (
                   <SelectedRevisionContent
                     application={application}
-                    appState={appState}
+                    viewControllerManager={viewControllerManager}
                     selectedRevision={selectedRevision}
                     editorForCurrentNote={editorForCurrentNote}
                     templateNoteForRevision={templateNoteForRevision}
@@ -258,7 +272,7 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
                 />
               </div>
               {selectedRevision && (
-                <div class="flex items-center">
+                <div className="flex items-center">
                   {selectedRemoteEntry && (
                     <Button className="py-1.35 mr-2.5" onClick={deleteSelectedRevision} variant="normal">
                       {isDeletingRevision ? (
@@ -285,12 +299,17 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
   },
 )
 
-export const RevisionHistoryModalWrapper: FunctionComponent<RevisionHistoryModalProps> = observer(
-  ({ application, appState }) => {
-    if (!appState.notes.showRevisionHistoryModal) {
-      return null
-    }
+RevisionHistoryModal.displayName = 'RevisionHistoryModal'
 
-    return <RevisionHistoryModal application={application} appState={appState} />
-  },
-)
+const RevisionHistoryModalWrapper: FunctionComponent<RevisionHistoryModalProps> = ({
+  application,
+  viewControllerManager,
+}) => {
+  if (!viewControllerManager.notesController.showRevisionHistoryModal) {
+    return null
+  }
+
+  return <RevisionHistoryModal application={application} viewControllerManager={viewControllerManager} />
+}
+
+export default observer(RevisionHistoryModalWrapper)

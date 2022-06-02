@@ -1,16 +1,24 @@
-import { Icon } from '@/Components/Icon'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
-import { AppState } from '@/UIModels/AppState'
+import Icon from '@/Components/Icon/Icon'
+import {
+  FocusEventHandler,
+  KeyboardEventHandler,
+  MouseEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { SNTag } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   tag: SNTag
 }
 
-export const NoteTag = observer(({ appState, tag }: Props) => {
-  const noteTags = appState.noteTags
+const NoteTag = ({ viewControllerManager, tag }: Props) => {
+  const noteTags = viewControllerManager.noteTagsController
 
   const { autocompleteInputFocused, focusedTagUuid, tags } = noteTags
 
@@ -25,45 +33,44 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
   const longTitle = noteTags.getLongTitle(tag)
 
   const deleteTag = useCallback(() => {
-    appState.noteTags.focusPreviousTag(tag)
-    appState.noteTags.removeTagFromActiveNote(tag).catch(console.error)
-  }, [appState, tag])
+    viewControllerManager.noteTagsController.focusPreviousTag(tag)
+    viewControllerManager.noteTagsController.removeTagFromActiveNote(tag).catch(console.error)
+  }, [viewControllerManager, tag])
 
-  const onDeleteTagClick = useCallback(
-    (event: MouseEvent) => {
-      event.stopImmediatePropagation()
+  const onDeleteTagClick: MouseEventHandler = useCallback(
+    (event) => {
       event.stopPropagation()
       deleteTag()
     },
     [deleteTag],
   )
 
-  const onTagClick = useCallback(
-    (event: MouseEvent) => {
+  const onTagClick: MouseEventHandler = useCallback(
+    (event) => {
       if (tagClicked && event.target !== deleteTagRef.current) {
         setTagClicked(false)
-        appState.tags.selected = tag
+        void viewControllerManager.navigationController.setSelectedTag(tag)
       } else {
         setTagClicked(true)
       }
     },
-    [appState, tagClicked, tag],
+    [viewControllerManager, tagClicked, tag],
   )
 
   const onFocus = useCallback(() => {
-    appState.noteTags.setFocusedTagUuid(tag.uuid)
+    viewControllerManager.noteTagsController.setFocusedTagUuid(tag.uuid)
     setShowDeleteButton(true)
-  }, [appState, tag])
+  }, [viewControllerManager, tag])
 
-  const onBlur = useCallback(
-    (event: FocusEvent) => {
+  const onBlur: FocusEventHandler = useCallback(
+    (event) => {
       const relatedTarget = event.relatedTarget as Node
       if (relatedTarget !== deleteTagRef.current) {
-        appState.noteTags.setFocusedTagUuid(undefined)
+        viewControllerManager.noteTagsController.setFocusedTagUuid(undefined)
         setShowDeleteButton(false)
       }
     },
-    [appState],
+    [viewControllerManager],
   )
 
   const getTabIndex = useCallback(() => {
@@ -76,35 +83,35 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
     return tags[0].uuid === tag.uuid ? 0 : -1
   }, [autocompleteInputFocused, tags, tag, focusedTagUuid])
 
-  const onKeyDown = useCallback(
-    (event: KeyboardEvent) => {
-      const tagIndex = appState.noteTags.getTagIndex(tag, tags)
+  const onKeyDown: KeyboardEventHandler = useCallback(
+    (event) => {
+      const tagIndex = viewControllerManager.noteTagsController.getTagIndex(tag, tags)
       switch (event.key) {
         case 'Backspace':
           deleteTag()
           break
         case 'ArrowLeft':
-          appState.noteTags.focusPreviousTag(tag)
+          viewControllerManager.noteTagsController.focusPreviousTag(tag)
           break
         case 'ArrowRight':
           if (tagIndex === tags.length - 1) {
-            appState.noteTags.setAutocompleteInputFocused(true)
+            viewControllerManager.noteTagsController.setAutocompleteInputFocused(true)
           } else {
-            appState.noteTags.focusNextTag(tag)
+            viewControllerManager.noteTagsController.focusNextTag(tag)
           }
           break
         default:
           return
       }
     },
-    [appState, deleteTag, tag, tags],
+    [viewControllerManager, deleteTag, tag, tags],
   )
 
   useEffect(() => {
     if (focusedTagUuid === tag.uuid) {
       tagRef.current?.focus()
     }
-  }, [appState, focusedTagUuid, tag])
+  }, [viewControllerManager, focusedTagUuid, tag])
 
   return (
     <button
@@ -119,7 +126,7 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
     >
       <Icon type="hashtag" className="sn-icon--small color-info mr-1" />
       <span className="whitespace-nowrap overflow-hidden overflow-ellipsis max-w-290px">
-        {prefixTitle && <span className="color-grey-1">{prefixTitle}</span>}
+        {prefixTitle && <span className="color-passive-1">{prefixTitle}</span>}
         {title}
       </span>
       {showDeleteButton && (
@@ -136,4 +143,6 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
       )}
     </button>
   )
-})
+}
+
+export default observer(NoteTag)

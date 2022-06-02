@@ -1,13 +1,13 @@
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { FileItem } from '@standardnotes/snjs'
-import { FunctionComponent } from 'preact'
-import { Icon } from '@/Components/Icon'
+import { FunctionComponent } from 'react'
+import Icon from '@/Components/Icon/Icon'
 
 type Props = {
   file: FileItem
 }
 
-export const FilePreviewInfoPanel: FunctionComponent<Props> = ({ file }) => {
+const FilePreviewInfoPanel: FunctionComponent<Props> = ({ file }) => {
   return (
     <div className="flex flex-col min-w-70 p-4 border-0 border-l-1px border-solid border-main">
       <div className="flex items-center mb-4">
@@ -35,3 +35,5 @@ export const FilePreviewInfoPanel: FunctionComponent<Props> = ({ file }) => {
     </div>
   )
 }
+
+export default FilePreviewInfoPanel

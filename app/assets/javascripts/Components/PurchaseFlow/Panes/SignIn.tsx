@@ -1,22 +1,21 @@
-import { Button } from '@/Components/Button/Button'
-import { WebApplication } from '@/UIModels/Application'
-import { AppState } from '@/UIModels/AppState'
-import { PurchaseFlowPane } from '@/UIModels/AppState/PurchaseFlowState'
+import Button from '@/Components/Button/Button'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { PurchaseFlowPane } from '@/Controllers/PurchaseFlow/PurchaseFlowPane'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'preact'
-import { useEffect, useRef, useState } from 'preact/hooks'
-import { FloatingLabelInput } from '@/Components/Input/FloatingLabelInput'
+import { ChangeEventHandler, FunctionComponent, useEffect, useRef, useState } from 'react'
+import FloatingLabelInput from '@/Components/Input/FloatingLabelInput'
 import { isEmailValid } from '@/Utils'
-import { loadPurchaseFlowUrl } from '@/Components/PurchaseFlow/PurchaseFlowWrapper'
 import { BlueDotIcon, CircleIcon, DiamondIcon } from '@standardnotes/icons'
+import { loadPurchaseFlowUrl } from '../PurchaseFlowFunctions'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   application: WebApplication
 }
 
-export const SignIn: FunctionComponent<Props> = observer(({ appState, application }) => {
-  const { setCurrentPane } = appState.purchaseFlow
+const SignIn: FunctionComponent<Props> = ({ viewControllerManager, application }) => {
+  const { setCurrentPane } = viewControllerManager.purchaseFlowController
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isSigningIn, setIsSigningIn] = useState(false)
@@ -33,19 +32,15 @@ export const SignIn: FunctionComponent<Props> = observer(({ appState, applicatio
     }
   }, [])
 
-  const handleEmailChange = (e: Event) => {
-    if (e.target instanceof HTMLInputElement) {
-      setEmail(e.target.value)
-      setIsEmailInvalid(false)
-    }
+  const handleEmailChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+    setEmail(e.target.value)
+    setIsEmailInvalid(false)
   }
 
-  const handlePasswordChange = (e: Event) => {
-    if (e.target instanceof HTMLInputElement) {
-      setPassword(e.target.value)
-      setIsPasswordInvalid(false)
-      setOtherErrorMessage('')
-    }
+  const handlePasswordChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+    setPassword(e.target.value)
+    setIsPasswordInvalid(false)
+    setOtherErrorMessage('')
   }
 
   const handleCreateAccountInstead = () => {
@@ -125,7 +120,7 @@ export const SignIn: FunctionComponent<Props> = observer(({ appState, applicatio
               isInvalid={isEmailInvalid}
             />
             {isEmailInvalid && !otherErrorMessage ? (
-              <div className="color-dark-red mb-4">Please provide a valid email.</div>
+              <div className="color-danger mb-4">Please provide a valid email.</div>
             ) : null}
             <FloatingLabelInput
               className={`min-w-90 xs:min-w-auto ${otherErrorMessage ? 'mb-2' : 'mb-4'}`}
@@ -138,7 +133,7 @@ export const SignIn: FunctionComponent<Props> = observer(({ appState, applicatio
               disabled={isSigningIn}
               isInvalid={isPasswordInvalid}
             />
-            {otherErrorMessage ? <div className="color-dark-red mb-4">{otherErrorMessage}</div> : null}
+            {otherErrorMessage ? <div className="color-danger mb-4">{otherErrorMessage}</div> : null}
           </div>
           <Button
             className={`${isSigningIn ? 'min-w-30' : 'min-w-24'} py-2.5 mb-5`}
@@ -148,7 +143,7 @@ export const SignIn: FunctionComponent<Props> = observer(({ appState, applicatio
             disabled={isSigningIn}
           />
         </form>
-        <div className="text-sm font-medium color-grey-1">
+        <div className="text-sm font-medium color-passive-1">
           Don’t have an account yet?{' '}
           <a
             className={`color-info ${isSigningIn ? 'cursor-not-allowed' : 'cursor-pointer '}`}
@@ -160,4 +155,6 @@ export const SignIn: FunctionComponent<Props> = observer(({ appState, applicatio
       </div>
     </div>
   )
-})
+}
+
+export default observer(SignIn)

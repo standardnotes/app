@@ -1,4 +1,4 @@
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import {
   StorageValueModes,
   ApplicationService,
@@ -167,7 +167,9 @@ export class ThemeManager extends ApplicationService {
   private setThemeAsPerColorScheme(prefersDarkColorScheme: boolean) {
     const preference = prefersDarkColorScheme ? PrefKey.AutoDarkThemeIdentifier : PrefKey.AutoLightThemeIdentifier
 
-    const themes = this.application.items.getDisplayableItems(ContentType.Theme) as SNTheme[]
+    const themes = this.application.items
+      .getDisplayableComponents()
+      .filter((component) => component.isTheme()) as SNTheme[]
 
     const activeTheme = themes.find((theme) => theme.active && !theme.isLayerable())
     const activeThemeIdentifier = activeTheme ? activeTheme.identifier : DefaultThemeIdentifier

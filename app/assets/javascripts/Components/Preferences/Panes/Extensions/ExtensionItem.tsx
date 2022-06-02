@@ -1,44 +1,32 @@
-import { FunctionComponent } from 'preact'
-import { SNComponent } from '@standardnotes/snjs'
-import { PreferencesSegment, SubtitleLight, Title } from '@/Components/Preferences/PreferencesComponents'
-import { Switch } from '@/Components/Switch'
-import { WebApplication } from '@/UIModels/Application'
-import { useState } from 'preact/hooks'
-import { Button } from '@/Components/Button/Button'
-import { RenameExtension } from './RenameExtension'
+import { FunctionComponent, useState } from 'react'
+import { ComponentMutator, SNComponent } from '@standardnotes/snjs'
+import { SubtitleLight } from '@/Components/Preferences/PreferencesComponents/Content'
+import Switch from '@/Components/Switch/Switch'
+import Button from '@/Components/Button/Button'
+import ExtensionInfoCell from './ExtensionInfoCell'
+import { ExtensionItemProps } from './ExtensionItemProps'
+import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
 const UseHosted: FunctionComponent<{
   offlineOnly: boolean
-  toggleOfllineOnly: () => void
-}> = ({ offlineOnly, toggleOfllineOnly }) => (
+  toggleOfflineOnly: () => void
+}> = ({ offlineOnly, toggleOfflineOnly }) => (
   <div className="flex flex-row">
     <SubtitleLight className="flex-grow">Use hosted when local is unavailable</SubtitleLight>
-    <Switch onChange={toggleOfllineOnly} checked={!offlineOnly} />
+    <Switch onChange={toggleOfflineOnly} checked={!offlineOnly} />
   </div>
 )
 
-export interface ExtensionItemProps {
-  application: WebApplication
-  extension: SNComponent
-  first: boolean
-  latestVersion: string | undefined
-  uninstall: (extension: SNComponent) => void
-  toggleActivate?: (extension: SNComponent) => void
-}
+const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({ application, extension, uninstall }) => {
+  const [offlineOnly, setOfflineOnly] = useState(extension instanceof SNComponent ? extension.offlineOnly : false)
+  const [extensionName, setExtensionName] = useState(extension.displayName)
 
-export const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({ application, extension, first, uninstall }) => {
-  const [offlineOnly, setOfflineOnly] = useState(extension.offlineOnly ?? false)
-  const [extensionName, setExtensionName] = useState(extension.name)
-
-  const toggleOffllineOnly = () => {
+  const toggleOfflineOnly = () => {
     const newOfflineOnly = !offlineOnly
     setOfflineOnly(newOfflineOnly)
     application.mutator
-      .changeAndSaveItem(extension, (m: any) => {
-        if (m.content == undefined) {
-          m.content = {}
-        }
-        m.content.offlineOnly = newOfflineOnly
+      .changeAndSaveItem<ComponentMutator>(extension, (mutator) => {
+        mutator.offlineOnly = newOfflineOnly
       })
       .then((item) => {
         const component = item as SNComponent
@@ -52,11 +40,8 @@ export const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({ applicati
   const changeExtensionName = (newName: string) => {
     setExtensionName(newName)
     application.mutator
-      .changeAndSaveItem(extension, (m: any) => {
-        if (m.content == undefined) {
-          m.content = {}
-        }
-        m.content.name = newName
+      .changeAndSaveItem<ComponentMutator>(extension, (mutator) => {
+        mutator.name = newName
       })
       .then((item) => {
         const component = item as SNComponent
@@ -66,29 +51,30 @@ export const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({ applicati
   }
 
   const localInstallable = extension.package_info.download_url
-  const isThirParty = application.features.isThirdPartyFeature(extension.identifier)
+
+  const isThirParty = 'identifier' in extension && application.features.isThirdPartyFeature(extension.identifier)
 
   return (
     <PreferencesSegment classes={'mb-5'}>
-      {first && (
-        <>
-          <Title>Extensions</Title>
-        </>
-      )}
+      <ExtensionInfoCell isThirdParty={isThirParty} extensionName={extensionName} changeName={changeExtensionName} />
 
-      <RenameExtension extensionName={extensionName} changeName={changeExtensionName} />
       <div className="min-h-2" />
 
-      {isThirParty && localInstallable && (
-        <UseHosted offlineOnly={offlineOnly} toggleOfllineOnly={toggleOffllineOnly} />
-      )}
+      {isThirParty && localInstallable && <UseHosted offlineOnly={offlineOnly} toggleOfflineOnly={toggleOfflineOnly} />}
 
       <>
         <div className="min-h-2" />
         <div className="flex flex-row">
-          <Button className="min-w-20" variant="normal" label="Uninstall" onClick={() => uninstall(extension)} />
+          <Button
+            className="min-w-20"
+            variant="normal"
+            label={isThirParty ? 'Uninstall' : 'Reset'}
+            onClick={() => uninstall(extension)}
+          />
         </div>
       </>
     </PreferencesSegment>
   )
 }
+
+export default ExtensionItem

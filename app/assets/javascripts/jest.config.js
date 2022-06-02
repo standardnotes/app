@@ -11,8 +11,6 @@ module.exports = {
     ...pathsToModuleNameMapper(pathsFromTsconfig, {
       prefix: '<rootDir>',
     }),
-    '^react$': ['preact/compat'],
-    '^react-dom$': 'preact',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
   },
   globals: {
@@ -24,5 +22,13 @@ module.exports = {
   transform: {
     '^.+\\.(ts|tsx)?$': 'ts-jest',
     '\\.svg$': 'svg-jest',
+  },
+  coverageThreshold: {
+    global: {
+      branches: 3,
+      functions: 5,
+      lines: 21,
+      statements: 22,
+    },
   },
 }

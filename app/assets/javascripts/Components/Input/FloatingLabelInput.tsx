@@ -1,14 +1,11 @@
-import { FunctionComponent, Ref } from 'preact'
-import { JSXInternal } from 'preact/src/jsx'
-import { forwardRef } from 'preact/compat'
-import { useState } from 'preact/hooks'
+import { ChangeEventHandler, Ref, forwardRef, useState } from 'react'
 
 type Props = {
   id: string
   type: 'text' | 'email' | 'password'
   label: string
   value: string
-  onChange: JSXInternal.GenericEventHandler<HTMLInputElement>
+  onChange: ChangeEventHandler<HTMLInputElement>
   disabled?: boolean
   className?: string
   labelClassName?: string
@@ -16,7 +13,7 @@ type Props = {
   isInvalid?: boolean
 }
 
-export const FloatingLabelInput: FunctionComponent<Props> = forwardRef(
+const FloatingLabelInput = forwardRef(
   (
     {
       id,
@@ -38,12 +35,12 @@ export const FloatingLabelInput: FunctionComponent<Props> = forwardRef(
 
     const LABEL_CLASSNAME = `hidden absolute ${!focused ? 'color-neutral' : 'color-info'} ${
       focused || value ? 'flex top-0 left-2 pt-1.5 px-1' : ''
-    } ${isInvalid ? 'color-dark-red' : ''} ${labelClassName}`
+    } ${isInvalid ? 'color-danger' : ''} ${labelClassName}`
 
     const INPUT_CLASSNAME = `w-full h-full ${
       focused || value ? 'pt-6 pb-2' : 'py-2.5'
     } px-3 text-input border-1 border-solid border-main rounded placeholder-medium text-input focus:ring-info ${
-      isInvalid ? 'border-dark-red placeholder-dark-red' : ''
+      isInvalid ? 'border-danger placeholder-dark-red' : ''
     } ${inputClassName}`
 
     const handleFocus = () => setFocused(true)
@@ -71,3 +68,5 @@ export const FloatingLabelInput: FunctionComponent<Props> = forwardRef(
     )
   },
 )
+
+export default FloatingLabelInput

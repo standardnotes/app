@@ -10,8 +10,8 @@ $heading-height: 75px;
   display: flex;
   flex-direction: column;
   overflow-y: hidden;
-  background-color: var(--sn-stylekit-editor-background-color);
-  color: var(--sn-stylekit-editor-foreground-color);
+  background-color: var(--editor-background-color);
+  color: var(--editor-foreground-color);
 }
 
 #error-decrypting-container {
@@ -34,7 +34,7 @@ $heading-height: 75px;
   padding-bottom: 10px;
   padding-right: 14px;
 
-  border-bottom: 1px solid var(--sn-stylekit-border-color);
+  border-bottom: 1px solid var(--editor-title-bar-border-bottom-color);
   z-index: $z-index-editor-title-bar;
 
   height: auto;
@@ -53,10 +53,10 @@ $heading-height: 75px;
       border: none;
       outline: none;
       background-color: transparent;
-      color: var(--sn-stylekit-editor-foreground-color);
+      color: var(--editor-title-input-color);
 
       &:disabled {
-        color: var(--sn-stylekit-editor-foreground-color);
+        color: var(--editor-title-input-color);
       }
       &:focus {
         box-shadow: none;
@@ -100,7 +100,7 @@ $heading-height: 75px;
   height: 100%;
   display: flex;
   tab-size: 2;
-  background-color: var(--sn-stylekit-background-color);
+  background-color: var(--editor-pane-background-color);
 
   position: relative;
 
@@ -112,8 +112,8 @@ $heading-height: 75px;
   .editable {
     overflow-y: scroll;
     width: 100%;
-    background-color: var(--sn-stylekit-editor-background-color);
-    color: var(--sn-stylekit-editor-foreground-color);
+    background-color: var(--editor-pane-editor-background-color);
+    color: var(--editor-pane-editor-foreground-color);
 
     border: none;
     outline: none;
@@ -143,7 +143,7 @@ $heading-height: 75px;
 
     iframe {
       width: 100%;
-      background-color: var(--sn-stylekit-background-color);
+      background-color: var(--editor-pane-component-stack-item-background-color);
       // we moved the border top from the .component-stack-item to the .iframe, as on parent,
       // it increases its height and caused unneccessary scrollbars on windows.
       border-top: 1px solid var(--sn-stylekit-border-color);

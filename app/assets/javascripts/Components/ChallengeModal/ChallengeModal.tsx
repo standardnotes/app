@@ -1,4 +1,4 @@
-import { WebApplication } from '@/UIModels/Application'
+import { WebApplication } from '@/Application/Application'
 import { DialogContent, DialogOverlay } from '@reach/dialog'
 import {
   ButtonType,
@@ -9,26 +9,18 @@ import {
   removeFromArray,
 } from '@standardnotes/snjs'
 import { ProtectedIllustration } from '@standardnotes/icons'
-import { FunctionComponent } from 'preact'
-import { useCallback, useEffect, useState } from 'preact/hooks'
-import { Button } from '@/Components/Button/Button'
-import { Icon } from '@/Components/Icon'
-import { ChallengeModalPrompt } from './ChallengePrompt'
-import { LockscreenWorkspaceSwitcher } from './LockscreenWorkspaceSwitcher'
-import { ApplicationGroup } from '@/UIModels/ApplicationGroup'
-import { AppState } from '@/UIModels/AppState'
-
-type InputValue = {
-  prompt: ChallengePrompt
-  value: string | number | boolean
-  invalid: boolean
-}
-
-export type ChallengeModalValues = Record<ChallengePrompt['id'], InputValue>
+import { FunctionComponent, useCallback, useEffect, useState } from 'react'
+import Button from '@/Components/Button/Button'
+import Icon from '@/Components/Icon/Icon'
+import ChallengeModalPrompt from './ChallengePrompt'
+import LockscreenWorkspaceSwitcher from './LockscreenWorkspaceSwitcher'
+import { ApplicationGroup } from '@/Application/ApplicationGroup'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { ChallengeModalValues } from './ChallengeModalValues'
 
 type Props = {
   application: WebApplication
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   mainApplicationGroup: ApplicationGroup
   challenge: Challenge
   onDismiss?: (challenge: Challenge) => void
@@ -50,9 +42,9 @@ const validateValues = (values: ChallengeModalValues, prompts: ChallengePrompt[]
   return undefined
 }
 
-export const ChallengeModal: FunctionComponent<Props> = ({
+const ChallengeModal: FunctionComponent<Props> = ({
   application,
-  appState,
+  viewControllerManager,
   mainApplicationGroup,
   challenge,
   onDismiss,
@@ -191,6 +183,7 @@ export const ChallengeModal: FunctionComponent<Props> = ({
       key={challenge.id}
     >
       <DialogContent
+        aria-label="Challenge modal"
         className={`challenge-modal flex flex-col items-center bg-default p-8 rounded relative ${
           challenge.reason !== ChallengeReason.ApplicationUnlock
             ? 'shadow-overlay-light border-1 border-solid border-main'
@@ -262,9 +255,14 @@ export const ChallengeModal: FunctionComponent<Props> = ({
           </Button>
         )}
         {shouldShowWorkspaceSwitcher && (
-          <LockscreenWorkspaceSwitcher mainApplicationGroup={mainApplicationGroup} appState={appState} />
+          <LockscreenWorkspaceSwitcher
+            mainApplicationGroup={mainApplicationGroup}
+            viewControllerManager={viewControllerManager}
+          />
         )}
       </DialogContent>
     </DialogOverlay>
   )
 }
+
+export default ChallengeModal

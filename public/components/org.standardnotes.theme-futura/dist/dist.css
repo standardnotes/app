@@ -36,11 +36,11 @@
   --sn-desktop-titlebar-ui-color: var(--foreground-color);
   --sn-desktop-titlebar-ui-hover-color: var(--highlight-color);
   --sn-stylekit-menu-border: 1px solid #434b60;
-  --sn-stylekit-grey-0: #a4a5b3;
-  --sn-stylekit-grey-3: #3a3a48;
-  --sn-stylekit-grey-4: #2c2c39;
-  --sn-stylekit-grey-4-opacity-variant: #292937;
-  --sn-stylekit-grey-5: #2e2e3e;
+  --sn-stylekit-passive-color-0: #a4a5b3;
+  --sn-stylekit-passive-color-3: #3a3a48;
+  --sn-stylekit-passive-color-4: #2c2c39;
+  --sn-stylekit-passive-color-4-opacity-variant: #292937;
+  --sn-stylekit-passive-color-5: #2e2e3e;
 }
 
 /*# sourceMappingURL=dist.css.map */

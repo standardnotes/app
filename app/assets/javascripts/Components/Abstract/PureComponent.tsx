@@ -1,16 +1,14 @@
 import { ApplicationEvent } from '@standardnotes/snjs'
-import { WebApplication } from '@/UIModels/Application'
-import { AppState, AppStateEvent } from '@/UIModels/AppState'
+import { WebApplication } from '@/Application/Application'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { autorun, IReactionDisposer, IReactionPublic } from 'mobx'
-import { Component } from 'preact'
-import { findDOMNode, unmountComponentAtNode } from 'preact/compat'
+import { Component } from 'react'
 
 export type PureComponentState = Partial<Record<string, any>>
 export type PureComponentProps = Partial<Record<string, any>>
 
 export abstract class PureComponent<P = PureComponentProps, S = PureComponentState> extends Component<P, S> {
   private unsubApp!: () => void
-  private unsubState!: () => void
   private reactionDisposers: IReactionDisposer[] = []
 
   constructor(props: P, protected application: WebApplication) {
@@ -19,61 +17,32 @@ export abstract class PureComponent<P = PureComponentProps, S = PureComponentSta
 
   override componentDidMount() {
     this.addAppEventObserver()
-    this.addAppStateObserver()
   }
 
   deinit(): void {
     this.unsubApp?.()
-    this.unsubState?.()
+
     for (const disposer of this.reactionDisposers) {
       disposer()
     }
+
     this.reactionDisposers.length = 0
     ;(this.unsubApp as unknown) = undefined
-    ;(this.unsubState as unknown) = undefined
     ;(this.application as unknown) = undefined
     ;(this.props as unknown) = undefined
     ;(this.state as unknown) = undefined
-  }
-
-  protected dismissModal(): void {
-    const elem = this.getElement()
-    if (!elem) {
-      return
-    }
-
-    const parent = elem.parentElement
-    if (!parent) {
-      return
-    }
-    parent.remove()
-    unmountComponentAtNode(parent)
   }
 
   override componentWillUnmount(): void {
     this.deinit()
   }
 
-  public get appState(): AppState {
-    return this.application.getAppState()
-  }
-
-  protected getElement(): Element | null {
-    return findDOMNode(this)
+  public get viewControllerManager(): ViewControllerManager {
+    return this.application.getViewControllerManager()
   }
 
   autorun(view: (r: IReactionPublic) => void): void {
     this.reactionDisposers.push(autorun(view))
-  }
-
-  addAppStateObserver() {
-    this.unsubState = this.application.getAppState().addObserver(async (eventName, data) => {
-      this.onAppStateEvent(eventName, data)
-    })
-  }
-
-  onAppStateEvent(_eventName: AppStateEvent, _data: unknown) {
-    /** Optional override */
   }
 
   addAppEventObserver() {

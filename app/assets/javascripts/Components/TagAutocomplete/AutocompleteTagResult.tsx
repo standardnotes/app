@@ -1,48 +1,48 @@
-import { AppState } from '@/UIModels/AppState'
+import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { splitQueryInString } from '@/Utils/StringUtils'
 import { SNTag } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { useEffect, useRef } from 'preact/hooks'
-import { Icon } from '@/Components/Icon'
+import { FocusEventHandler, KeyboardEventHandler, useEffect, useRef } from 'react'
+import Icon from '@/Components/Icon/Icon'
 
 type Props = {
-  appState: AppState
+  viewControllerManager: ViewControllerManager
   tagResult: SNTag
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
 }
 
-export const AutocompleteTagResult = observer(({ appState, tagResult, closeOnBlur }: Props) => {
+const AutocompleteTagResult = ({ viewControllerManager, tagResult, closeOnBlur }: Props) => {
   const { autocompleteSearchQuery, autocompleteTagHintVisible, autocompleteTagResults, focusedTagResultUuid } =
-    appState.noteTags
+    viewControllerManager.noteTagsController
 
   const tagResultRef = useRef<HTMLButtonElement>(null)
 
   const title = tagResult.title
-  const prefixTitle = appState.noteTags.getPrefixTitle(tagResult)
+  const prefixTitle = viewControllerManager.noteTagsController.getPrefixTitle(tagResult)
 
   const onTagOptionClick = async (tag: SNTag) => {
-    await appState.noteTags.addTagToActiveNote(tag)
-    appState.noteTags.clearAutocompleteSearch()
-    appState.noteTags.setAutocompleteInputFocused(true)
+    await viewControllerManager.noteTagsController.addTagToActiveNote(tag)
+    viewControllerManager.noteTagsController.clearAutocompleteSearch()
+    viewControllerManager.noteTagsController.setAutocompleteInputFocused(true)
   }
 
-  const onKeyDown = (event: KeyboardEvent) => {
-    const tagResultIndex = appState.noteTags.getTagIndex(tagResult, autocompleteTagResults)
+  const onKeyDown: KeyboardEventHandler = (event) => {
+    const tagResultIndex = viewControllerManager.noteTagsController.getTagIndex(tagResult, autocompleteTagResults)
     switch (event.key) {
       case 'ArrowUp':
         event.preventDefault()
         if (tagResultIndex === 0) {
-          appState.noteTags.setAutocompleteInputFocused(true)
+          viewControllerManager.noteTagsController.setAutocompleteInputFocused(true)
         } else {
-          appState.noteTags.focusPreviousTagResult(tagResult)
+          viewControllerManager.noteTagsController.focusPreviousTagResult(tagResult)
         }
         break
       case 'ArrowDown':
         event.preventDefault()
         if (tagResultIndex === autocompleteTagResults.length - 1 && autocompleteTagHintVisible) {
-          appState.noteTags.setAutocompleteTagHintFocused(true)
+          viewControllerManager.noteTagsController.setAutocompleteTagHintFocused(true)
         } else {
-          appState.noteTags.focusNextTagResult(tagResult)
+          viewControllerManager.noteTagsController.focusNextTagResult(tagResult)
         }
         break
       default:
@@ -51,20 +51,20 @@ export const AutocompleteTagResult = observer(({ appState, tagResult, closeOnBlu
   }
 
   const onFocus = () => {
-    appState.noteTags.setFocusedTagResultUuid(tagResult.uuid)
+    viewControllerManager.noteTagsController.setFocusedTagResultUuid(tagResult.uuid)
   }
 
-  const onBlur = (event: FocusEvent) => {
+  const onBlur: FocusEventHandler = (event) => {
     closeOnBlur(event)
-    appState.noteTags.setFocusedTagResultUuid(undefined)
+    viewControllerManager.noteTagsController.setFocusedTagResultUuid(undefined)
   }
 
   useEffect(() => {
     if (focusedTagResultUuid === tagResult.uuid) {
       tagResultRef.current?.focus()
-      appState.noteTags.setFocusedTagResultUuid(undefined)
+      viewControllerManager.noteTagsController.setFocusedTagResultUuid(undefined)
     }
-  }, [appState, focusedTagResultUuid, tagResult])
+  }, [viewControllerManager, focusedTagResultUuid, tagResult])
 
   return (
     <button
@@ -79,7 +79,7 @@ export const AutocompleteTagResult = observer(({ appState, tagResult, closeOnBlu
     >
       <Icon type="hashtag" className="color-neutral mr-2 min-h-5 min-w-5" />
       <span className="whitespace-nowrap overflow-hidden overflow-ellipsis">
-        {prefixTitle && <span className="grey-2">{prefixTitle}</span>}
+        {prefixTitle && <span className="color-passive-2">{prefixTitle}</span>}
         {autocompleteSearchQuery === ''
           ? title
           : splitQueryInString(title, autocompleteSearchQuery).map((substring, index) => (
@@ -97,4 +97,6 @@ export const AutocompleteTagResult = observer(({ appState, tagResult, closeOnBlu
       </span>
     </button>
   )
-})
+}
+
+export default observer(AutocompleteTagResult)
