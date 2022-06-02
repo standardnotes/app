@@ -2,7 +2,7 @@ import Icon from '@/Components/Icon/Icon'
 import VisuallyHidden from '@reach/visually-hidden'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
-import { useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import FileMenuOptions from './FileMenuOptions'
@@ -23,26 +23,25 @@ const FilesOptionsPanel = ({ filesController }: Props) => {
   const panelRef = useRef<HTMLDivElement>(null)
   const [closeOnBlur] = useCloseOnBlur(panelRef, setOpen)
 
+  const onDisclosureChange = useCallback(async () => {
+    const rect = buttonRef.current?.getBoundingClientRect()
+    if (rect) {
+      const { clientHeight } = document.documentElement
+      const footerElementRect = document.getElementById('footer-bar')?.getBoundingClientRect()
+      const footerHeightInPx = footerElementRect?.height
+      if (footerHeightInPx) {
+        setMaxHeight(clientHeight - rect.bottom - footerHeightInPx - 2)
+      }
+      setPosition({
+        top: rect.bottom,
+        right: document.body.clientWidth - rect.right,
+      })
+      setOpen((open) => !open)
+    }
+  }, [])
+
   return (
-    <Disclosure
-      open={open}
-      onChange={async () => {
-        const rect = buttonRef.current?.getBoundingClientRect()
-        if (rect) {
-          const { clientHeight } = document.documentElement
-          const footerElementRect = document.getElementById('footer-bar')?.getBoundingClientRect()
-          const footerHeightInPx = footerElementRect?.height
-          if (footerHeightInPx) {
-            setMaxHeight(clientHeight - rect.bottom - footerHeightInPx - 2)
-          }
-          setPosition({
-            top: rect.bottom,
-            right: document.body.clientWidth - rect.right,
-          })
-          setOpen((open) => !open)
-        }
-      }}
-    >
+    <Disclosure open={open} onChange={onDisclosureChange}>
       <DisclosureButton
         onKeyDown={(event) => {
           if (event.key === 'Escape') {
