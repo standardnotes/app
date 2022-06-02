@@ -87,7 +87,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
       <button
         className="sn-dropdown-item justify-between focus:bg-info-backdrop"
         onClick={() => {
-          void filesController.setProtectionForSelectedFiles(!hasProtectedFiles)
+          void filesController.setProtectionForFiles(!hasProtectedFiles, selectionController.selectedFiles)
         }}
         onBlur={closeOnBlur}
       >
@@ -106,7 +106,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
         onBlur={closeOnBlur}
         className="sn-dropdown-item focus:bg-info-backdrop"
         onClick={() => {
-          void filesController.downloadSelectedFiles(selectionController.selectedFiles)
+          void filesController.downloadFiles(selectionController.selectedFiles)
         }}
       >
         <Icon type="download" className="mr-2 color-neutral" />

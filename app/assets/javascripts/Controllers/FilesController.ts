@@ -20,7 +20,6 @@ import { action, makeObservable, observable, reaction } from 'mobx'
 import { WebApplication } from '../Application/Application'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { NotesController } from './NotesController'
-import { SelectedItemsController } from './SelectedItemsController'
 
 const UnprotectedFileActions = [PopoverFileItemActionType.ToggleFileProtection]
 const NonMutatingFileActions = [PopoverFileItemActionType.DownloadFile, PopoverFileItemActionType.PreviewFile]
@@ -36,14 +35,12 @@ export class FilesController extends AbstractViewController {
   override deinit(): void {
     super.deinit()
     ;(this.notesController as unknown) = undefined
-    ;(this.selectionController as unknown) = undefined
     ;(this.filePreviewModalController as unknown) = undefined
   }
 
   constructor(
     application: WebApplication,
     private notesController: NotesController,
-    private selectionController: SelectedItemsController,
     private filePreviewModalController: FilePreviewModalController,
     eventBus: InternalEventBus,
   ) {
@@ -410,22 +407,20 @@ export class FilesController extends AbstractViewController {
       await Promise.all(
         files.map(async (file) => {
           await this.application.mutator.deleteItem(file)
-          this.selectionController.deselectItem(file)
         }),
       )
     }
   }
 
-  setProtectionForSelectedFiles = async (protect: boolean) => {
-    const selectedFiles = this.selectionController.selectedFiles
+  setProtectionForFiles = async (protect: boolean, files: FileItem[]) => {
     if (protect) {
-      await this.application.mutator.protectItems(selectedFiles)
+      await this.application.mutator.protectItems(files)
     } else {
-      await this.application.mutator.unprotectItems(selectedFiles, ChallengeReason.UnprotectFile)
+      await this.application.mutator.unprotectItems(files, ChallengeReason.UnprotectFile)
     }
   }
 
-  downloadSelectedFiles = async (files: FileItem[]) => {
+  downloadFiles = async (files: FileItem[]) => {
     return Promise.all(
       files.map((file) => {
         this.downloadFile(file).catch(console.error)
