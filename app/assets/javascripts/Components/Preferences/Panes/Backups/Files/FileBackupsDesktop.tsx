@@ -73,6 +73,8 @@ const FileBackupsDesktop = ({ application, backupsService }: Props) => {
           )}
         </PreferencesSegment>
 
+        <HorizontalSeparator classes="my-4" />
+
         {backupsEnabled && (
           <>
             <PreferencesSegment>
@@ -84,7 +86,7 @@ const FileBackupsDesktop = ({ application, backupsService }: Props) => {
 
                 <EncryptionStatusItem
                   status={backupsLocation}
-                  icon={[<Icon type="attachment-file" className="min-w-5 min-h-5" />]}
+                  icon={<Icon type="attachment-file" className="min-w-5 min-h-5" />}
                   checkmark={false}
                 />
 
@@ -106,6 +108,8 @@ const FileBackupsDesktop = ({ application, backupsService }: Props) => {
             </PreferencesSegment>
           </>
         )}
+
+        <HorizontalSeparator classes="my-4" />
 
         <PreferencesSegment>
           <BackupsDropZone application={application} />
