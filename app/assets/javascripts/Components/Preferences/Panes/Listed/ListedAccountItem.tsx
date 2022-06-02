@@ -37,7 +37,7 @@ const ListedAccountItem: FunctionComponent<Props> = ({ account, showSeparator, a
           </>
         )}
       </div>
-      {showSeparator && <HorizontalSeparator classes="mt-5 mb-3" />}
+      {showSeparator && <HorizontalSeparator classes="mt-2.5 mb-3" />}
     </>
   )
 }

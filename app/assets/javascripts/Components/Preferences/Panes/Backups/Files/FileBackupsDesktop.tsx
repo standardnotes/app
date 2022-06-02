@@ -67,7 +67,7 @@ const FileBackupsDesktop = ({ application, backupsService }: Props) => {
 
           {!backupsEnabled && (
             <>
-              <HorizontalSeparator classes="mt-5 mb-4" />
+              <HorizontalSeparator classes="mt-2.5 mb-4" />
               <Text>File backups are not enabled. Enable to choose where your files are backed up.</Text>
             </>
           )}
@@ -90,7 +90,7 @@ const FileBackupsDesktop = ({ application, backupsService }: Props) => {
                   checkmark={false}
                 />
 
-                <div className="flex flex-row mt-5">
+                <div className="flex flex-row mt-2.5">
                   <Button
                     variant="normal"
                     label="Open Backups Location"

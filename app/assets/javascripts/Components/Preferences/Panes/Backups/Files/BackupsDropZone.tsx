@@ -52,15 +52,15 @@ const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
       void application.alertService.alert(
         `<strong>${decryptedFileItem.name}</strong> has been successfully decrypted and saved to your chosen directory.`,
       )
+      setBinaryFile(undefined)
+      setDecryptedFileItem(undefined)
+      setDroppedFile(undefined)
     } else if (result === 'failed') {
       void application.alertService.alert(
         'Unable to save file to local directory. This may be caused by failure to decrypt, or failure to save the file locally.',
       )
     }
 
-    setBinaryFile(undefined)
-    setDecryptedFileItem(undefined)
-    setDroppedFile(undefined)
     setIsSavingAsDecrypted(false)
   }, [decryptedFileItem, application, binaryFile, fileSystem])
 

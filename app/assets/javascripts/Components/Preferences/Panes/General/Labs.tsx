@@ -70,7 +70,7 @@ const LabsPane: FunctionComponent<Props> = ({ application }) => {
                   </div>
                   <Switch onChange={toggleFeature} checked={isEnabled} />
                 </div>
-                {showHorizontalSeparator && <HorizontalSeparator classes="mt-5 mb-3" />}
+                {showHorizontalSeparator && <HorizontalSeparator classes="mt-2.5 mb-3" />}
               </Fragment>
             )
           })}

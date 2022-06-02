@@ -87,7 +87,7 @@ const ErroredItems: FunctionComponent<Props> = ({ viewControllerManager }: Props
             }}
           />
         </div>
-        <HorizontalSeparator classes="mt-5 mb-3" />
+        <HorizontalSeparator classes="mt-2.5 mb-3" />
 
         {erroredItems.map((item, index) => {
           return (
@@ -128,7 +128,7 @@ const ErroredItems: FunctionComponent<Props> = ({ viewControllerManager }: Props
                   </div>
                 </div>
               </div>
-              {index < erroredItems.length - 1 && <HorizontalSeparator classes="mt-5 mb-3" />}
+              {index < erroredItems.length - 1 && <HorizontalSeparator classes="mt-2.5 mb-3" />}
             </Fragment>
           )
         })}
