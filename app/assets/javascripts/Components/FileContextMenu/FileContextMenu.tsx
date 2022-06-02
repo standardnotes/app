@@ -1,5 +1,6 @@
 import { MAX_MENU_SIZE_MULTIPLIER, MENU_MARGIN_FROM_APP_BORDER } from '@/Constants/Constants'
 import { FilesController } from '@/Controllers/FilesController'
+import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
 import { observer } from 'mobx-react-lite'
@@ -8,9 +9,10 @@ import FileMenuOptions from './FileMenuOptions'
 
 type Props = {
   filesController: FilesController
+  selectionController: SelectedItemsController
 }
 
-const FileContextMenu: FunctionComponent<Props> = observer(({ filesController }) => {
+const FileContextMenu: FunctionComponent<Props> = observer(({ filesController, selectionController }) => {
   const { showFileContextMenu, setShowFileContextMenu, fileContextMenuLocation } = filesController
 
   const [contextMenuStyle, setContextMenuStyle] = useState<React.CSSProperties>({
@@ -92,6 +94,7 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ filesController })
     >
       <FileMenuOptions
         filesController={filesController}
+        selectionController={selectionController}
         closeOnBlur={closeOnBlur}
         closeMenu={() => setShowFileContextMenu(false)}
         shouldShowRenameOption={false}
@@ -103,8 +106,9 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ filesController })
 
 FileContextMenu.displayName = 'FileContextMenu'
 
-const FileContextMenuWrapper: FunctionComponent<Props> = ({ filesController }) => {
-  const { selectedFiles, showFileContextMenu } = filesController
+const FileContextMenuWrapper: FunctionComponent<Props> = ({ filesController, selectionController }) => {
+  const { showFileContextMenu } = filesController
+  const { selectedFiles } = selectionController
 
   const selectedFile = selectedFiles[0]
 
@@ -112,7 +116,7 @@ const FileContextMenuWrapper: FunctionComponent<Props> = ({ filesController }) =
     return null
   }
 
-  return <FileContextMenu filesController={filesController} />
+  return <FileContextMenu filesController={filesController} selectionController={selectionController} />
 }
 
 export default observer(FileContextMenuWrapper)

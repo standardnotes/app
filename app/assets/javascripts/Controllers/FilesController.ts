@@ -16,7 +16,7 @@ import {
 } from '@standardnotes/filepicker'
 import { ChallengeReason, ClientDisplayableError, ContentType, FileItem, InternalEventBus } from '@standardnotes/snjs'
 import { addToast, dismissToast, ToastType, updateToast } from '@standardnotes/stylekit'
-import { action, computed, makeObservable, observable, reaction } from 'mobx'
+import { action, makeObservable, observable, reaction } from 'mobx'
 import { WebApplication } from '../Application/Application'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { NotesController } from './NotesController'
@@ -55,9 +55,6 @@ export class FilesController extends AbstractViewController {
       showFileContextMenu: observable,
       fileContextMenuLocation: observable,
 
-      selectedFiles: computed,
-      selectedFilesCount: computed,
-
       reloadAllFiles: action,
       reloadAttachedFiles: action,
       setShowFileContextMenu: action,
@@ -79,14 +76,6 @@ export class FilesController extends AbstractViewController {
         },
       ),
     )
-  }
-
-  get selectedFiles(): FileItem[] {
-    return this.selectionController.getSelectedItems<FileItem>(ContentType.File)
-  }
-
-  get selectedFilesCount(): number {
-    return this.selectedFiles.length
   }
 
   setShowFileContextMenu = (enabled: boolean) => {
@@ -404,11 +393,11 @@ export class FilesController extends AbstractViewController {
   deleteSelectedFilesPermanently = async () => {
     const title = Strings.trashItemsTitle
     let fileTitle = undefined
-    if (this.selectedFilesCount === 1) {
-      const selectedFile = this.selectedFiles[0]
+    if (this.selectionController.selectedFilesCount === 1) {
+      const selectedFile = this.selectionController.selectedFiles[0]
       fileTitle = selectedFile.name.length ? `'${selectedFile.name}'` : 'this note'
     }
-    const text = StringUtils.deleteFiles(true, this.selectedFilesCount, fileTitle)
+    const text = StringUtils.deleteFiles(true, this.selectionController.selectedFilesCount, fileTitle)
 
     if (
       await confirmDialog({
@@ -417,7 +406,7 @@ export class FilesController extends AbstractViewController {
         confirmButtonStyle: 'danger',
       })
     ) {
-      for (const file of this.selectedFiles) {
+      for (const file of this.selectionController.selectedFiles) {
         await this.application.mutator.deleteItem(file)
         this.selectionController.deselectItem(file)
       }
@@ -425,7 +414,7 @@ export class FilesController extends AbstractViewController {
   }
 
   setProtectionForSelectedFiles = async (protect: boolean) => {
-    const selectedFiles = this.selectedFiles
+    const selectedFiles = this.selectionController.selectedFiles
     if (protect) {
       await this.application.mutator.protectItems(selectedFiles)
     } else {
@@ -434,7 +423,7 @@ export class FilesController extends AbstractViewController {
   }
 
   downloadSelectedFiles = async () => {
-    for (const file of this.selectedFiles) {
+    for (const file of this.selectionController.selectedFiles) {
       this.downloadFile(file).catch(console.error)
     }
   }

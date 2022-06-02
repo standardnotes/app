@@ -6,11 +6,13 @@ import Icon from '@/Components/Icon/Icon'
 import Switch from '@/Components/Switch/Switch'
 import { observer } from 'mobx-react-lite'
 import { FilesController } from '@/Controllers/FilesController'
+import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 
 type Props = {
   closeMenu: () => void
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
   filesController: FilesController
+  selectionController: SelectedItemsController
   isFileAttachedToNote?: boolean
   renameToggleCallback?: (isRenamingFile: boolean) => void
   shouldShowRenameOption: boolean
@@ -27,12 +29,14 @@ const FileMenuOptions: FunctionComponent<Props> = ({
   closeMenu,
   closeOnBlur,
   filesController,
+  selectionController,
   isFileAttachedToNote,
   renameToggleCallback,
   shouldShowRenameOption,
   shouldShowAttachOption,
 }) => {
-  const { selectedFiles, handleFileAction } = filesController
+  const { selectedFiles } = selectionController
+  const { handleFileAction } = filesController
 
   const hasProtectedFiles = useMemo(() => matchesCondition((file) => file.protected, selectedFiles), [selectedFiles])
 

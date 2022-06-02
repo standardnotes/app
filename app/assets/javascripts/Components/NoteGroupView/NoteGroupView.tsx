@@ -50,9 +50,9 @@ class NoteGroupView extends PureComponent<Props, State> {
         })
       }
 
-      if (this.viewControllerManager.filesController) {
+      if (this.viewControllerManager.selectionController) {
         this.setState({
-          showMultipleSelectedFiles: this.viewControllerManager.filesController.selectedFilesCount > 1,
+          showMultipleSelectedFiles: this.viewControllerManager.selectionController.selectedFilesCount > 1,
         })
       }
     })

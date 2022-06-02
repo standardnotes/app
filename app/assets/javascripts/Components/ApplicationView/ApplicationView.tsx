@@ -193,7 +193,10 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
         <>
           <NotesContextMenu application={application} viewControllerManager={viewControllerManager} />
           <TagsContextMenuWrapper viewControllerManager={viewControllerManager} />
-          <FileContextMenuWrapper filesController={viewControllerManager.filesController} />
+          <FileContextMenuWrapper
+            filesController={viewControllerManager.filesController}
+            selectionController={viewControllerManager.selectionController}
+          />
           <PurchaseFlowWrapper application={application} viewControllerManager={viewControllerManager} />
           <ConfirmSignoutContainer
             applicationGroup={mainApplicationGroup}

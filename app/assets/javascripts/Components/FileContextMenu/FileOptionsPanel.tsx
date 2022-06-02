@@ -7,12 +7,14 @@ import { observer } from 'mobx-react-lite'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import FileMenuOptions from './FileMenuOptions'
 import { FilesController } from '@/Controllers/FilesController'
+import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 
 type Props = {
   filesController: FilesController
+  selectionController: SelectedItemsController
 }
 
-const FilesOptionsPanel = ({ filesController }: Props) => {
+const FilesOptionsPanel = ({ filesController, selectionController }: Props) => {
   const [open, setOpen] = useState(false)
   const [position, setPosition] = useState({
     top: 0,
@@ -74,6 +76,7 @@ const FilesOptionsPanel = ({ filesController }: Props) => {
         {open && (
           <FileMenuOptions
             filesController={filesController}
+            selectionController={selectionController}
             closeOnBlur={closeOnBlur}
             closeMenu={() => {
               setOpen(false)

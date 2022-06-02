@@ -12,7 +12,7 @@ type Props = {
 }
 
 const MultipleSelectedFiles = ({ filesController, selectionController }: Props) => {
-  const count = filesController.selectedFilesCount
+  const count = selectionController.selectedFilesCount
 
   const cancelMultipleSelection = useCallback(() => {
     selectionController.cancelMultipleSelection()
@@ -23,7 +23,7 @@ const MultipleSelectedFiles = ({ filesController, selectionController }: Props) 
       <div className="flex items-center justify-between p-4 w-full">
         <h1 className="sk-h1 font-bold m-0">{count} selected files</h1>
         <div className="flex">
-          <FileOptionsPanel filesController={filesController} />
+          <FileOptionsPanel filesController={filesController} selectionController={selectionController} />
         </div>
       </div>
       <div className="flex-grow flex flex-col justify-center items-center w-full max-w-md">
