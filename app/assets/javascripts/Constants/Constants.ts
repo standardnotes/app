@@ -22,3 +22,6 @@ export const TAG_FOLDERS_FEATURE_TOOLTIP = 'A Plus or Pro plan is required to en
 export const SMART_TAGS_FEATURE_NAME = 'Smart Tags'
 
 export const PLAIN_EDITOR_NAME = 'Plain Text'
+
+export const SYNC_TIMEOUT_DEBOUNCE = 350
+export const SYNC_TIMEOUT_NO_DEBOUNCE = 100
