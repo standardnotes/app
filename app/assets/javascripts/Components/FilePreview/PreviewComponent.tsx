@@ -1,5 +1,6 @@
 import { FileItem } from '@standardnotes/snjs'
-import { FunctionComponent, MutableRefObject, useEffect, useMemo, useRef } from 'react'
+import { FunctionComponent, useEffect, useMemo, useRef } from 'react'
+import { createObjectURLWithRef } from './CreateObjectURLWithRef'
 import ImagePreview from './ImagePreview'
 import { PreviewableTextFileTypes } from './isFilePreviewable'
 import TextPreview from './TextPreview'
@@ -7,22 +8,6 @@ import TextPreview from './TextPreview'
 type Props = {
   file: FileItem
   bytes: Uint8Array
-}
-
-const createObjectURLWithRef = (
-  type: FileItem['mimeType'],
-  bytes: Uint8Array,
-  ref: MutableRefObject<string | undefined>,
-) => {
-  const objectURL = URL.createObjectURL(
-    new Blob([bytes], {
-      type,
-    }),
-  )
-
-  ref.current = objectURL
-
-  return objectURL
 }
 
 const PreviewComponent: FunctionComponent<Props> = ({ file, bytes }) => {
