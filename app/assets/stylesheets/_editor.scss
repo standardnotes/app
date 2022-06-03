@@ -26,7 +26,7 @@ $heading-height: 75px;
   max-width: 500px;
 }
 
-#editor-title-bar {
+.content-title-bar {
   width: 100%;
 
   padding-top: 14px;
@@ -108,19 +108,21 @@ $heading-height: 75px;
     flex: 1;
     width: 100%;
   }
+}
 
-  .editable {
-    overflow-y: scroll;
-    width: 100%;
-    background-color: var(--editor-pane-editor-background-color);
-    color: var(--editor-pane-editor-foreground-color);
+.editor-content .editable,
+#editor-content .editable,
+#file-text-preview {
+  overflow-y: scroll;
+  width: 100%;
+  background-color: var(--editor-pane-editor-background-color);
+  color: var(--editor-pane-editor-foreground-color);
 
-    border: none;
-    outline: none;
-    padding: 15px;
-    font-size: var(--sn-stylekit-font-size-editor);
-    resize: none;
-  }
+  border: none;
+  outline: none;
+  padding: 15px;
+  font-size: var(--sn-stylekit-font-size-editor);
+  resize: none;
 }
 
 #editor-pane-component-stack {
