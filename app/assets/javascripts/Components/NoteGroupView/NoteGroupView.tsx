@@ -77,6 +77,9 @@ class NoteGroupView extends PureComponent<Props, State> {
   }
 
   override render() {
+    const shouldNotShowMultipleSelectedItems =
+      !this.state.showMultipleSelectedNotes && !this.state.showMultipleSelectedFiles
+
     return (
       <div id={ElementIds.EditorColumn} className="h-full app-column app-column-third">
         {this.state.showMultipleSelectedNotes && (
@@ -90,26 +93,21 @@ class NoteGroupView extends PureComponent<Props, State> {
           />
         )}
 
-        {!this.state.showMultipleSelectedNotes &&
-          !this.state.showMultipleSelectedFiles &&
-          this.state.controllers.length > 0 && (
-            <>
-              {this.state.controllers.map((controller) => {
-                return <NoteView key={controller.note.uuid} application={this.application} controller={controller} />
-              })}
-            </>
-          )}
+        {shouldNotShowMultipleSelectedItems && this.state.controllers.length > 0 && (
+          <>
+            {this.state.controllers.map((controller) => {
+              return <NoteView key={controller.note.uuid} application={this.application} controller={controller} />
+            })}
+          </>
+        )}
 
-        {!this.state.showMultipleSelectedNotes &&
-          !this.state.showMultipleSelectedFiles &&
-          this.state.controllers.length < 1 &&
-          this.state.selectedFile && (
-            <FileViewWithProtectedOverlay
-              application={this.application}
-              viewControllerManager={this.viewControllerManager}
-              file={this.state.selectedFile}
-            />
-          )}
+        {shouldNotShowMultipleSelectedItems && this.state.controllers.length < 1 && this.state.selectedFile && (
+          <FileViewWithProtectedOverlay
+            application={this.application}
+            viewControllerManager={this.viewControllerManager}
+            file={this.state.selectedFile}
+          />
+        )}
       </div>
     )
   }
