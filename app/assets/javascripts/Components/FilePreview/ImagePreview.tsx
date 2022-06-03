@@ -26,6 +26,7 @@ const ImagePreview: FunctionComponent<Props> = ({ objectUrl }) => {
               : {
                   position: 'absolute',
                   top: 0,
+                  left: 0,
                   margin: 'auto',
                 }),
           }}
