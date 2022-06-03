@@ -2,7 +2,6 @@ import { WebApplication } from '@/Application/Application'
 import { concatenateUint8Arrays } from '@/Utils/ConcatenateUint8Arrays'
 import { DialogContent, DialogOverlay } from '@reach/dialog'
 import { addToast, ToastType } from '@standardnotes/stylekit'
-import { NoPreviewIllustration } from '@standardnotes/icons'
 import { FunctionComponent, KeyboardEventHandler, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { getFileIconComponent } from '@/Components/AttachedFilesPopover/getFileIconComponent'
 import Button from '@/Components/Button/Button'
@@ -14,6 +13,7 @@ import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { KeyboardKey } from '@/Services/IOService'
 import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
+import FilePreviewError from './FilePreviewError'
 
 type Props = {
   application: WebApplication
@@ -27,7 +27,7 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
     return null
   }
 
-  const [objectUrl, setObjectUrl] = useState<string>()
+  const [downloadedBytes, setDownloadedBytes] = useState<Uint8Array>()
   const [isFilePreviewable, setIsFilePreviewable] = useState(false)
   const [isLoadingFile, setIsLoadingFile] = useState(true)
   const [fileDownloadProgress, setFileDownloadProgress] = useState(0)
@@ -35,7 +35,7 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
   const currentFileIdRef = useRef<string>()
   const closeButtonRef = useRef<HTMLButtonElement>(null)
 
-  const getObjectUrl = useCallback(async () => {
+  const downloadFile = useCallback(async () => {
     try {
       const chunks: Uint8Array[] = []
       setFileDownloadProgress(0)
@@ -46,13 +46,7 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
         }
       })
       const finalDecryptedBytes = concatenateUint8Arrays(chunks)
-      setObjectUrl(
-        URL.createObjectURL(
-          new Blob([finalDecryptedBytes], {
-            type: currentFile.mimeType,
-          }),
-        ),
-      )
+      setDownloadedBytes(finalDecryptedBytes)
     } catch (error) {
       console.error(error)
     } finally {
@@ -69,22 +63,16 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
     setIsFilePreviewable(isPreviewable)
 
     if (!isPreviewable) {
-      setObjectUrl('')
+      setDownloadedBytes(undefined)
       setIsLoadingFile(false)
     }
 
     if (currentFileIdRef.current !== currentFile.uuid && isPreviewable) {
-      getObjectUrl().catch(console.error)
+      downloadFile().catch(console.error)
     }
 
     currentFileIdRef.current = currentFile.uuid
-
-    return () => {
-      if (objectUrl) {
-        URL.revokeObjectURL(objectUrl)
-      }
-    }
-  }, [currentFile, getObjectUrl, objectUrl])
+  }, [currentFile, downloadFile, downloadedBytes])
 
   const keyDownHandler: KeyboardEventHandler = useCallback(
     (event) => {
@@ -161,12 +149,12 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
             >
               <Icon type="info" className="color-neutral" />
             </button>
-            {objectUrl && (
+            {downloadedBytes && (
               <Button
                 variant="primary"
                 className="mr-4"
                 onClick={() => {
-                  application.getArchiveService().downloadData(objectUrl, currentFile.name)
+                  void viewControllerManager.filesController.downloadFile(currentFile)
                   addToast({
                     type: ToastType.Success,
                     message: 'Successfully downloaded file',
@@ -196,60 +184,17 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
                 </div>
                 <span className="mt-3">Loading file...</span>
               </div>
-            ) : objectUrl ? (
-              <PreviewComponent file={currentFile} objectUrl={objectUrl} />
+            ) : downloadedBytes ? (
+              <PreviewComponent file={currentFile} bytes={downloadedBytes} />
             ) : (
-              <div className="flex flex-col items-center">
-                <NoPreviewIllustration className="w-30 h-30 mb-4" />
-                <div className="font-bold text-base mb-2">This file can't be previewed.</div>
-                {isFilePreviewable ? (
-                  <>
-                    <div className="text-sm text-center color-passive-0 mb-4 max-w-35ch">
-                      There was an error loading the file. Try again, or download the file and open it using another
-                      application.
-                    </div>
-                    <div className="flex items-center">
-                      <Button
-                        variant="primary"
-                        className="mr-3"
-                        onClick={() => {
-                          getObjectUrl().catch(console.error)
-                        }}
-                      >
-                        Try again
-                      </Button>
-                      <Button
-                        variant="normal"
-                        onClick={() => {
-                          application
-                            .getViewControllerManager()
-                            .filesController.downloadFile(currentFile)
-                            .catch(console.error)
-                        }}
-                      >
-                        Download
-                      </Button>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="text-sm text-center color-passive-0 mb-4 max-w-35ch">
-                      To view this file, download it and open it using another application.
-                    </div>
-                    <Button
-                      variant="primary"
-                      onClick={() => {
-                        application
-                          .getViewControllerManager()
-                          .filesController.downloadFile(currentFile)
-                          .catch(console.error)
-                      }}
-                    >
-                      Download
-                    </Button>
-                  </>
-                )}
-              </div>
+              <FilePreviewError
+                application={application}
+                file={currentFile}
+                isFilePreviewable={isFilePreviewable}
+                tryAgainCallback={() => {
+                  void downloadFile()
+                }}
+              />
             )}
           </div>
           {showFileInfoPanel && <FilePreviewInfoPanel file={currentFile} />}
