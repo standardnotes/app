@@ -16,7 +16,7 @@ const FilePreview = ({ file, application }: Props) => {
     return isFileTypePreviewable(file.mimeType)
   }, [file.mimeType])
 
-  const [isDownloading, setIsDownloading] = useState(false)
+  const [isDownloading, setIsDownloading] = useState(true)
   const [downloadProgress, setDownloadProgress] = useState(0)
   const [downloadedBytes, setDownloadedBytes] = useState<Uint8Array>()
 
