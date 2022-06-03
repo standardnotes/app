@@ -1,16 +1,16 @@
-import { WebApplication } from '@/Application/Application'
+import { FilesController } from '@/Controllers/FilesController'
 import { NoPreviewIllustration } from '@standardnotes/icons'
 import { FileItem } from '@standardnotes/snjs'
 import Button from '../Button/Button'
 
 type Props = {
-  application: WebApplication
   file: FileItem
+  filesController: FilesController
   isFilePreviewable: boolean
   tryAgainCallback: () => void
 }
 
-const FilePreviewError = ({ application, file, isFilePreviewable, tryAgainCallback }: Props) => {
+const FilePreviewError = ({ file, filesController, isFilePreviewable, tryAgainCallback }: Props) => {
   return (
     <div className="flex flex-col justify-center items-center flex-grow">
       <NoPreviewIllustration className="w-30 h-30 mb-4" />
@@ -33,7 +33,7 @@ const FilePreviewError = ({ application, file, isFilePreviewable, tryAgainCallba
             <Button
               variant="normal"
               onClick={() => {
-                application.getViewControllerManager().filesController.downloadFile(file).catch(console.error)
+                filesController.downloadFile(file).catch(console.error)
               }}
             >
               Download
@@ -48,7 +48,7 @@ const FilePreviewError = ({ application, file, isFilePreviewable, tryAgainCallba
           <Button
             variant="primary"
             onClick={() => {
-              application.getViewControllerManager().filesController.downloadFile(file).catch(console.error)
+              filesController.downloadFile(file).catch(console.error)
             }}
           >
             Download

@@ -68,8 +68,8 @@ const FilePreview = ({ file, application }: Props) => {
     <PreviewComponent file={file} bytes={downloadedBytes} />
   ) : (
     <FilePreviewError
-      application={application}
       file={file}
+      filesController={application.getViewControllerManager().filesController}
       tryAgainCallback={() => {
         setDownloadedBytes(undefined)
       }}

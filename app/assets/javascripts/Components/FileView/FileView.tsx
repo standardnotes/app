@@ -52,7 +52,14 @@ const FileView = observer(({ application, viewControllerManager, file }: Props) 
             </div>
             <div className="flex items-center">
               <div className="mr-3">
-                <AttachedFilesButton application={application} viewControllerManager={viewControllerManager} />
+                <AttachedFilesButton
+                  application={application}
+                  featuresController={viewControllerManager.featuresController}
+                  filePreviewModalController={viewControllerManager.filePreviewModalController}
+                  filesController={viewControllerManager.filesController}
+                  navigationController={viewControllerManager.navigationController}
+                  notesController={viewControllerManager.notesController}
+                />
               </div>
               <FileOptionsPanel
                 filesController={viewControllerManager.filesController}

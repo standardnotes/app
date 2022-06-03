@@ -64,7 +64,6 @@ const ContentList: FunctionComponent<Props> = ({
         <ContentListItem
           key={item.uuid}
           application={application}
-          viewControllerManager={viewControllerManager}
           item={item}
           selected={!!selectedItems[item.uuid]}
           hideDate={hideDate}
@@ -72,6 +71,10 @@ const ContentList: FunctionComponent<Props> = ({
           hideTags={hideTags}
           hideIcon={hideEditorIcon}
           sortBy={sortBy}
+          filesController={viewControllerManager.filesController}
+          selectionController={viewControllerManager.selectionController}
+          navigationController={viewControllerManager.navigationController}
+          notesController={viewControllerManager.notesController}
         />
       ))}
     </div>

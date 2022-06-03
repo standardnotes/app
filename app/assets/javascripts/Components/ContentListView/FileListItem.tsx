@@ -10,7 +10,8 @@ import { DisplayableListItemProps } from './Types/DisplayableListItemProps'
 
 const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
   application,
-  viewControllerManager,
+  filesController,
+  selectionController,
   hideDate,
   hideIcon,
   hideTags,
@@ -21,28 +22,28 @@ const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
 }) => {
   const openFileContextMenu = useCallback(
     (posX: number, posY: number) => {
-      viewControllerManager.filesController.setFileContextMenuLocation({
+      filesController.setFileContextMenuLocation({
         x: posX,
         y: posY,
       })
-      viewControllerManager.filesController.setShowFileContextMenu(true)
+      filesController.setShowFileContextMenu(true)
     },
-    [viewControllerManager.filesController],
+    [filesController],
   )
 
   const openContextMenu = useCallback(
     async (posX: number, posY: number) => {
-      const { didSelect } = await viewControllerManager.selectionController.selectItem(item.uuid)
+      const { didSelect } = await selectionController.selectItem(item.uuid)
       if (didSelect) {
         openFileContextMenu(posX, posY)
       }
     },
-    [viewControllerManager.selectionController, item.uuid, openFileContextMenu],
+    [selectionController, item.uuid, openFileContextMenu],
   )
 
   const onClick = useCallback(() => {
-    void viewControllerManager.selectionController.selectItem(item.uuid, true)
-  }, [item.uuid, viewControllerManager.selectionController])
+    void selectionController.selectItem(item.uuid, true)
+  }, [item.uuid, selectionController])
 
   const IconComponent = () =>
     getFileIconComponent(

@@ -944,8 +944,12 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                   <div className="mr-3">
                     <AttachedFilesButton
                       application={this.application}
-                      viewControllerManager={this.viewControllerManager}
                       onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                      featuresController={this.viewControllerManager.featuresController}
+                      filePreviewModalController={this.viewControllerManager.filePreviewModalController}
+                      filesController={this.viewControllerManager.filesController}
+                      navigationController={this.viewControllerManager.navigationController}
+                      notesController={this.viewControllerManager.notesController}
                     />
                   </div>
                   <div className="mr-3">

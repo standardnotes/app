@@ -1,33 +1,45 @@
 import { WebApplication } from '@/Application/Application'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { MENU_MARGIN_FROM_APP_BORDER } from '@/Constants/Constants'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import VisuallyHidden from '@reach/visually-hidden'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
-import { ContentType, FileItem, SNNote, SystemViewId } from '@standardnotes/snjs'
+import { ContentType, FileItem, SNNote } from '@standardnotes/snjs'
 import { addToast, ToastType } from '@standardnotes/stylekit'
 import { StreamingFileReader } from '@standardnotes/filepicker'
 import AttachedFilesPopover from './AttachedFilesPopover'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { PopoverTabs } from './PopoverTabs'
 import { isHandlingFileDrag } from '@/Utils/DragTypeCheck'
+import { NotesController } from '@/Controllers/NotesController'
+import { FilePreviewModalController } from '@/Controllers/FilePreviewModalController'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
+import { FeaturesController } from '@/Controllers/FeaturesController'
+import { FilesController } from '@/Controllers/FilesController'
 
 type Props = {
   application: WebApplication
-  viewControllerManager: ViewControllerManager
+  featuresController: FeaturesController
+  filePreviewModalController: FilePreviewModalController
+  filesController: FilesController
+  navigationController: NavigationController
+  notesController: NotesController
   onClickPreprocessing?: () => Promise<void>
 }
 
 const AttachedFilesButton: FunctionComponent<Props> = ({
   application,
-  viewControllerManager,
+  featuresController,
+  filesController,
+  filePreviewModalController,
+  navigationController,
+  notesController,
   onClickPreprocessing,
 }: Props) => {
   const premiumModal = usePremiumModal()
-  const note: SNNote | undefined = viewControllerManager.notesController.firstSelectedNote
+  const note: SNNote | undefined = notesController.firstSelectedNote
 
   const [open, setOpen] = useState(false)
   const [position, setPosition] = useState({
@@ -41,18 +53,16 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
   const [closeOnBlur, keepMenuOpen] = useCloseOnBlur(containerRef, setOpen)
 
   useEffect(() => {
-    if (viewControllerManager.filePreviewModalController.isOpen) {
+    if (filePreviewModalController.isOpen) {
       keepMenuOpen(true)
     } else {
       keepMenuOpen(false)
     }
-  }, [viewControllerManager.filePreviewModalController.isOpen, keepMenuOpen])
+  }, [filePreviewModalController.isOpen, keepMenuOpen])
 
-  const isInFilesView = useMemo(
-    () => viewControllerManager.navigationController.selectedUuid === SystemViewId.Files,
-    [viewControllerManager.navigationController.selectedUuid],
+  const [currentTab, setCurrentTab] = useState(
+    navigationController.isInFilesView ? PopoverTabs.AllFiles : PopoverTabs.AttachedFiles,
   )
-  const [currentTab, setCurrentTab] = useState(isInFilesView ? PopoverTabs.AllFiles : PopoverTabs.AttachedFiles)
   const [allFiles, setAllFiles] = useState<FileItem[]>([])
   const [attachedFiles, setAttachedFiles] = useState<FileItem[]>([])
   const attachedFilesCount = attachedFiles.length
@@ -96,10 +106,10 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
   }, [onClickPreprocessing, open])
 
   const prospectivelyShowFilesPremiumModal = useCallback(() => {
-    if (!viewControllerManager.featuresController.hasFiles) {
+    if (!featuresController.hasFiles) {
       premiumModal.activate('Files')
     }
-  }, [viewControllerManager.featuresController.hasFiles, premiumModal])
+  }, [featuresController.hasFiles, premiumModal])
 
   const toggleAttachedFilesMenuWithEntitlementCheck = useCallback(async () => {
     prospectivelyShowFilesPremiumModal()
@@ -196,7 +206,7 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
 
       setIsDraggingFiles(false)
 
-      if (!viewControllerManager.featuresController.hasFiles) {
+      if (!featuresController.hasFiles) {
         prospectivelyShowFilesPremiumModal()
         return
       }
@@ -211,7 +221,7 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
             return
           }
 
-          const uploadedFiles = await viewControllerManager.filesController.uploadNewFile(fileOrHandle)
+          const uploadedFiles = await filesController.uploadNewFile(fileOrHandle)
 
           if (!uploadedFiles) {
             return
@@ -229,8 +239,8 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
       }
     },
     [
-      viewControllerManager.filesController,
-      viewControllerManager.featuresController.hasFiles,
+      filesController,
+      featuresController.hasFiles,
       attachFileToNote,
       currentTab,
       application,
@@ -287,14 +297,14 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
           {open && (
             <AttachedFilesPopover
               application={application}
-              filesController={viewControllerManager.filesController}
+              filesController={filesController}
               attachedFiles={attachedFiles}
               allFiles={allFiles}
               closeOnBlur={closeOnBlur}
               currentTab={currentTab}
               isDraggingFiles={isDraggingFiles}
               setCurrentTab={setCurrentTab}
-              isInFilesView={isInFilesView}
+              isInFilesView={navigationController.isInFilesView}
             />
           )}
         </DisclosurePanel>
