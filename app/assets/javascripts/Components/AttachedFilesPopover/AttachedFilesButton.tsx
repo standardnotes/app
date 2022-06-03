@@ -4,10 +4,10 @@ import { MENU_MARGIN_FROM_APP_BORDER } from '@/Constants/Constants'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import VisuallyHidden from '@reach/visually-hidden'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
-import { ContentType, FileItem, SNNote } from '@standardnotes/snjs'
+import { ContentType, FileItem, SNNote, SystemViewId } from '@standardnotes/snjs'
 import { addToast, ToastType } from '@standardnotes/stylekit'
 import { StreamingFileReader } from '@standardnotes/filepicker'
 import AttachedFilesPopover from './AttachedFilesPopover'
@@ -48,7 +48,11 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
     }
   }, [viewControllerManager.filePreviewModalController.isOpen, keepMenuOpen])
 
-  const [currentTab, setCurrentTab] = useState(PopoverTabs.AttachedFiles)
+  const isInFilesView = useMemo(
+    () => viewControllerManager.navigationController.selectedUuid === SystemViewId.Files,
+    [viewControllerManager.navigationController.selectedUuid],
+  )
+  const [currentTab, setCurrentTab] = useState(isInFilesView ? PopoverTabs.AllFiles : PopoverTabs.AttachedFiles)
   const [allFiles, setAllFiles] = useState<FileItem[]>([])
   const [attachedFiles, setAttachedFiles] = useState<FileItem[]>([])
   const attachedFilesCount = attachedFiles.length
@@ -290,6 +294,7 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
               currentTab={currentTab}
               isDraggingFiles={isDraggingFiles}
               setCurrentTab={setCurrentTab}
+              isInFilesView={isInFilesView}
             />
           )}
         </DisclosurePanel>

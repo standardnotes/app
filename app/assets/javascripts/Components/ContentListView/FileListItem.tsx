@@ -41,20 +41,8 @@ const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
   )
 
   const onClick = useCallback(() => {
-    void viewControllerManager.selectionController.selectItem(item.uuid, true).then(({ didSelect }) => {
-      if (didSelect && viewControllerManager.selectionController.selectedItemsCount < 2) {
-        viewControllerManager.filePreviewModalController.activate(
-          item as FileItem,
-          viewControllerManager.filesController.allFiles,
-        )
-      }
-    })
-  }, [
-    viewControllerManager.filePreviewModalController,
-    viewControllerManager.filesController.allFiles,
-    viewControllerManager.selectionController,
-    item,
-  ])
+    void viewControllerManager.selectionController.selectItem(item.uuid, true)
+  }, [item.uuid, viewControllerManager.selectionController])
 
   const IconComponent = () =>
     getFileIconComponent(
