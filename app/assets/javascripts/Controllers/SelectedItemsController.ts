@@ -35,6 +35,8 @@ export class SelectedItemsController extends AbstractViewController {
       selectedItems: observable,
 
       selectedItemsCount: computed,
+      selectedFiles: computed,
+      selectedFilesCount: computed,
 
       selectItem: action,
       setSelectedItems: action,
@@ -71,6 +73,14 @@ export class SelectedItemsController extends AbstractViewController {
 
   get selectedItemsCount(): number {
     return Object.keys(this.selectedItems).length
+  }
+
+  get selectedFiles(): FileItem[] {
+    return this.getSelectedItems<FileItem>(ContentType.File)
+  }
+
+  get selectedFilesCount(): number {
+    return this.selectedFiles.length
   }
 
   getSelectedItems = <T extends ListableContentItem = ListableContentItem>(contentType?: ContentType): T[] => {

@@ -7,11 +7,9 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
-import { ChallengeReason, ContentType, FileItem, SNNote } from '@standardnotes/snjs'
-import { confirmDialog } from '@/Services/AlertService'
-import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit'
+import { ContentType, FileItem, SNNote } from '@standardnotes/snjs'
+import { addToast, ToastType } from '@standardnotes/stylekit'
 import { StreamingFileReader } from '@standardnotes/filepicker'
-import { PopoverFileItemAction, PopoverFileItemActionType } from './PopoverFileItemAction'
 import AttachedFilesPopover from './AttachedFilesPopover'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { PopoverTabs } from './PopoverTabs'
@@ -105,29 +103,6 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
     await toggleAttachedFilesMenu()
   }, [toggleAttachedFilesMenu, prospectivelyShowFilesPremiumModal])
 
-  const deleteFile = async (file: FileItem) => {
-    const shouldDelete = await confirmDialog({
-      text: `Are you sure you want to permanently delete "${file.name}"?`,
-      confirmButtonStyle: 'danger',
-    })
-    if (shouldDelete) {
-      const deletingToastId = addToast({
-        type: ToastType.Loading,
-        message: `Deleting file "${file.name}"...`,
-      })
-      await application.files.deleteFile(file)
-      addToast({
-        type: ToastType.Success,
-        message: `Deleted file "${file.name}"`,
-      })
-      dismissToast(deletingToastId)
-    }
-  }
-
-  const downloadFile = async (file: FileItem) => {
-    viewControllerManager.filesController.downloadFile(file).catch(console.error)
-  }
-
   const attachFileToNote = useCallback(
     async (file: FileItem) => {
       if (!note) {
@@ -142,98 +117,6 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
     },
     [application.items, note],
   )
-
-  const detachFileFromNote = async (file: FileItem) => {
-    if (!note) {
-      addToast({
-        type: ToastType.Error,
-        message: 'Could not attach file because selected note was deleted',
-      })
-      return
-    }
-    await application.items.disassociateFileWithNote(file, note)
-  }
-
-  const toggleFileProtection = async (file: FileItem) => {
-    let result: FileItem | undefined
-    if (file.protected) {
-      keepMenuOpen(true)
-      result = await application.mutator.unprotectFile(file)
-      keepMenuOpen(false)
-      buttonRef.current?.focus()
-    } else {
-      result = await application.mutator.protectFile(file)
-    }
-    const isProtected = result ? result.protected : file.protected
-    return isProtected
-  }
-
-  const authorizeProtectedActionForFile = async (file: FileItem, challengeReason: ChallengeReason) => {
-    const authorizedFiles = await application.protections.authorizeProtectedActionForItems([file], challengeReason)
-    const isAuthorized = authorizedFiles.length > 0 && authorizedFiles.includes(file)
-    return isAuthorized
-  }
-
-  const renameFile = async (file: FileItem, fileName: string) => {
-    await application.items.renameFile(file, fileName)
-  }
-
-  const handleFileAction = async (action: PopoverFileItemAction) => {
-    const file = action.type !== PopoverFileItemActionType.RenameFile ? action.payload : action.payload.file
-    let isAuthorizedForAction = true
-
-    if (file.protected && action.type !== PopoverFileItemActionType.ToggleFileProtection) {
-      keepMenuOpen(true)
-      isAuthorizedForAction = await authorizeProtectedActionForFile(file, ChallengeReason.AccessProtectedFile)
-      keepMenuOpen(false)
-      buttonRef.current?.focus()
-    }
-
-    if (!isAuthorizedForAction) {
-      return false
-    }
-
-    switch (action.type) {
-      case PopoverFileItemActionType.AttachFileToNote:
-        await attachFileToNote(file)
-        break
-      case PopoverFileItemActionType.DetachFileToNote:
-        await detachFileFromNote(file)
-        break
-      case PopoverFileItemActionType.DeleteFile:
-        await deleteFile(file)
-        break
-      case PopoverFileItemActionType.DownloadFile:
-        await downloadFile(file)
-        break
-      case PopoverFileItemActionType.ToggleFileProtection: {
-        const isProtected = await toggleFileProtection(file)
-        action.callback(isProtected)
-        break
-      }
-      case PopoverFileItemActionType.RenameFile:
-        await renameFile(file, action.payload.name)
-        break
-      case PopoverFileItemActionType.PreviewFile: {
-        keepMenuOpen(true)
-        const otherFiles = currentTab === PopoverTabs.AllFiles ? allFiles : attachedFiles
-        viewControllerManager.filePreviewModalController.activate(
-          file,
-          otherFiles.filter((file) => !file.protected),
-        )
-        break
-      }
-    }
-
-    if (
-      action.type !== PopoverFileItemActionType.DownloadFile &&
-      action.type !== PopoverFileItemActionType.PreviewFile
-    ) {
-      application.sync.sync().catch(console.error)
-    }
-
-    return true
-  }
 
   const [isDraggingFiles, setIsDraggingFiles] = useState(false)
   const dragCounter = useRef(0)
@@ -400,12 +283,11 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
           {open && (
             <AttachedFilesPopover
               application={application}
-              viewControllerManager={viewControllerManager}
+              filesController={viewControllerManager.filesController}
               attachedFiles={attachedFiles}
               allFiles={allFiles}
               closeOnBlur={closeOnBlur}
               currentTab={currentTab}
-              handleFileAction={handleFileAction}
               isDraggingFiles={isDraggingFiles}
               setCurrentTab={setCurrentTab}
             />

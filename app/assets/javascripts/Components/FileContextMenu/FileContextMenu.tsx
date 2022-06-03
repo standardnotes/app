@@ -1,20 +1,19 @@
 import { MAX_MENU_SIZE_MULTIPLIER, MENU_MARGIN_FROM_APP_BORDER } from '@/Constants/Constants'
+import { FilesController } from '@/Controllers/FilesController'
+import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
-import { PopoverFileItemAction } from '../AttachedFilesPopover/PopoverFileItemAction'
-import { PopoverTabs } from '../AttachedFilesPopover/PopoverTabs'
 import FileMenuOptions from './FileMenuOptions'
 
 type Props = {
-  viewControllerManager: ViewControllerManager
+  filesController: FilesController
+  selectionController: SelectedItemsController
 }
 
-const FileContextMenu: FunctionComponent<Props> = observer(({ viewControllerManager }) => {
-  const { selectedFiles, showFileContextMenu, setShowFileContextMenu, fileContextMenuLocation } =
-    viewControllerManager.filesController
+const FileContextMenu: FunctionComponent<Props> = observer(({ filesController, selectionController }) => {
+  const { showFileContextMenu, setShowFileContextMenu, fileContextMenuLocation } = filesController
 
   const [contextMenuStyle, setContextMenuStyle] = useState<React.CSSProperties>({
     top: 0,
@@ -24,9 +23,7 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ viewControllerMana
   const [contextMenuMaxHeight, setContextMenuMaxHeight] = useState<number | 'auto'>('auto')
   const contextMenuRef = useRef<HTMLDivElement>(null)
   const [closeOnBlur] = useCloseOnBlur(contextMenuRef, (open: boolean) => setShowFileContextMenu(open))
-  useCloseOnClickOutside(contextMenuRef, () => viewControllerManager.filesController.setShowFileContextMenu(false))
-
-  const selectedFile = selectedFiles[0]
+  useCloseOnClickOutside(contextMenuRef, () => filesController.setShowFileContextMenu(false))
 
   const reloadContextMenuLayout = useCallback(() => {
     const { clientHeight } = document.documentElement
@@ -86,17 +83,6 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ viewControllerMana
     }
   }, [reloadContextMenuLayout])
 
-  const handleFileAction = useCallback(
-    async (action: PopoverFileItemAction) => {
-      const { didHandleAction } = await viewControllerManager.filesController.handleFileAction(
-        action,
-        PopoverTabs.AllFiles,
-      )
-      return didHandleAction
-    },
-    [viewControllerManager.filesController],
-  )
-
   return (
     <div
       ref={contextMenuRef}
@@ -107,8 +93,8 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ viewControllerMana
       }}
     >
       <FileMenuOptions
-        file={selectedFile}
-        handleFileAction={handleFileAction}
+        filesController={filesController}
+        selectionController={selectionController}
         closeOnBlur={closeOnBlur}
         closeMenu={() => setShowFileContextMenu(false)}
         shouldShowRenameOption={false}
@@ -120,8 +106,9 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ viewControllerMana
 
 FileContextMenu.displayName = 'FileContextMenu'
 
-const FileContextMenuWrapper: FunctionComponent<Props> = ({ viewControllerManager }) => {
-  const { selectedFiles, showFileContextMenu } = viewControllerManager.filesController
+const FileContextMenuWrapper: FunctionComponent<Props> = ({ filesController, selectionController }) => {
+  const { showFileContextMenu } = filesController
+  const { selectedFiles } = selectionController
 
   const selectedFile = selectedFiles[0]
 
@@ -129,7 +116,7 @@ const FileContextMenuWrapper: FunctionComponent<Props> = ({ viewControllerManage
     return null
   }
 
-  return <FileContextMenu viewControllerManager={viewControllerManager} />
+  return <FileContextMenu filesController={filesController} selectionController={selectionController} />
 }
 
 export default observer(FileContextMenuWrapper)

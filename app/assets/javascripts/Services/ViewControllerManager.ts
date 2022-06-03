@@ -97,7 +97,6 @@ export class ViewControllerManager {
     this.filesController = new FilesController(
       application,
       this.notesController,
-      this.selectionController,
       this.filePreviewModalController,
       this.eventBus,
     )

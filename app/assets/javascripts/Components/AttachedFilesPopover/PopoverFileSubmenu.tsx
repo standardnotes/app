@@ -1,19 +1,14 @@
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { calculateSubmenuStyle, SubmenuStyle } from '@/Utils/CalculateSubmenuStyle'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
-import { Dispatch, FunctionComponent, SetStateAction, useCallback, useEffect, useRef, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import Switch from '@/Components/Switch/Switch'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
-import { PopoverFileItemProps } from './PopoverFileItemProps'
+import { PopoverFileSubmenuProps } from './PopoverFileItemProps'
 import { PopoverFileItemActionType } from './PopoverFileItemAction'
 
-type Props = Omit<PopoverFileItemProps, 'renameFile' | 'getIconType'> & {
-  setIsRenamingFile: Dispatch<SetStateAction<boolean>>
-  previewHandler: () => void
-}
-
-const PopoverFileSubmenu: FunctionComponent<Props> = ({
+const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
   file,
   isAttachedToNote,
   handleFileAction,
@@ -88,7 +83,7 @@ const PopoverFileSubmenu: FunctionComponent<Props> = ({
                 onBlur={closeOnBlur}
                 className="sn-dropdown-item focus:bg-info-backdrop"
                 onClick={() => {
-                  previewHandler()
+                  previewHandler(file)
                   closeMenu()
                 }}
               >
@@ -102,7 +97,7 @@ const PopoverFileSubmenu: FunctionComponent<Props> = ({
                   onClick={() => {
                     handleFileAction({
                       type: PopoverFileItemActionType.DetachFileToNote,
-                      payload: file,
+                      payload: { file },
                     }).catch(console.error)
                     closeMenu()
                   }}
@@ -117,7 +112,7 @@ const PopoverFileSubmenu: FunctionComponent<Props> = ({
                   onClick={() => {
                     handleFileAction({
                       type: PopoverFileItemActionType.AttachFileToNote,
-                      payload: file,
+                      payload: { file },
                     }).catch(console.error)
                     closeMenu()
                   }}
@@ -132,7 +127,7 @@ const PopoverFileSubmenu: FunctionComponent<Props> = ({
                 onClick={() => {
                   handleFileAction({
                     type: PopoverFileItemActionType.ToggleFileProtection,
-                    payload: file,
+                    payload: { file },
                     callback: (isProtected: boolean) => {
                       setIsFileProtected(isProtected)
                     },
@@ -157,7 +152,7 @@ const PopoverFileSubmenu: FunctionComponent<Props> = ({
                 onClick={() => {
                   handleFileAction({
                     type: PopoverFileItemActionType.DownloadFile,
-                    payload: file,
+                    payload: { file },
                   }).catch(console.error)
                   closeMenu()
                 }}
@@ -181,7 +176,7 @@ const PopoverFileSubmenu: FunctionComponent<Props> = ({
                 onClick={() => {
                   handleFileAction({
                     type: PopoverFileItemActionType.DeleteFile,
-                    payload: file,
+                    payload: { file },
                   }).catch(console.error)
                   closeMenu()
                 }}

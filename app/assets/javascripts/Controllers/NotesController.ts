@@ -257,7 +257,7 @@ export class NotesController extends AbstractViewController {
       return false
     }
 
-    const title = Strings.trashNotesTitle
+    const title = Strings.trashItemsTitle
     let noteTitle = undefined
     if (this.selectedNotesCount === 1) {
       const selectedNote = this.getSelectedNotesList()[0]

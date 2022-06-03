@@ -3,9 +3,9 @@ import {
   PopoverFileItemAction,
   PopoverFileItemActionType,
 } from '@/Components/AttachedFilesPopover/PopoverFileItemAction'
-import { PopoverTabs } from '@/Components/AttachedFilesPopover/PopoverTabs'
 import { BYTES_IN_ONE_MEGABYTE } from '@/Constants/Constants'
 import { confirmDialog } from '@/Services/AlertService'
+import { Strings, StringUtils } from '@/Constants/Strings'
 import { concatenateUint8Arrays } from '@/Utils/ConcatenateUint8Arrays'
 import {
   ClassicFileReader,
@@ -16,11 +16,10 @@ import {
 } from '@standardnotes/filepicker'
 import { ChallengeReason, ClientDisplayableError, ContentType, FileItem, InternalEventBus } from '@standardnotes/snjs'
 import { addToast, dismissToast, ToastType, updateToast } from '@standardnotes/stylekit'
-import { action, computed, makeObservable, observable, reaction } from 'mobx'
+import { action, makeObservable, observable, reaction } from 'mobx'
 import { WebApplication } from '../Application/Application'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { NotesController } from './NotesController'
-import { SelectedItemsController } from './SelectedItemsController'
 
 const UnprotectedFileActions = [PopoverFileItemActionType.ToggleFileProtection]
 const NonMutatingFileActions = [PopoverFileItemActionType.DownloadFile, PopoverFileItemActionType.PreviewFile]
@@ -36,14 +35,12 @@ export class FilesController extends AbstractViewController {
   override deinit(): void {
     super.deinit()
     ;(this.notesController as unknown) = undefined
-    ;(this.selectionController as unknown) = undefined
     ;(this.filePreviewModalController as unknown) = undefined
   }
 
   constructor(
     application: WebApplication,
     private notesController: NotesController,
-    private selectionController: SelectedItemsController,
     private filePreviewModalController: FilePreviewModalController,
     eventBus: InternalEventBus,
   ) {
@@ -54,8 +51,6 @@ export class FilesController extends AbstractViewController {
       attachedFiles: observable,
       showFileContextMenu: observable,
       fileContextMenuLocation: observable,
-
-      selectedFiles: computed,
 
       reloadAllFiles: action,
       reloadAttachedFiles: action,
@@ -78,10 +73,6 @@ export class FilesController extends AbstractViewController {
         },
       ),
     )
-  }
-
-  get selectedFiles(): FileItem[] {
-    return this.selectionController.getSelectedItems<FileItem>(ContentType.File)
   }
 
   setShowFileContextMenu = (enabled: boolean) => {
@@ -170,11 +161,10 @@ export class FilesController extends AbstractViewController {
 
   handleFileAction = async (
     action: PopoverFileItemAction,
-    currentTab: PopoverTabs,
   ): Promise<{
     didHandleAction: boolean
   }> => {
-    const file = action.type !== PopoverFileItemActionType.RenameFile ? action.payload : action.payload.file
+    const file = action.payload.file
     let isAuthorizedForAction = true
 
     const requiresAuthorization = file.protected && !UnprotectedFileActions.includes(action.type)
@@ -211,10 +201,7 @@ export class FilesController extends AbstractViewController {
         await this.renameFile(file, action.payload.name)
         break
       case PopoverFileItemActionType.PreviewFile:
-        this.filePreviewModalController.activate(
-          file,
-          currentTab === PopoverTabs.AllFiles ? this.allFiles : this.attachedFiles,
-        )
+        this.filePreviewModalController.activate(file, action.payload.otherFiles)
         break
     }
 
@@ -398,5 +385,32 @@ export class FilesController extends AbstractViewController {
     }
 
     return undefined
+  }
+
+  deleteFilesPermanently = async (files: FileItem[]) => {
+    const title = Strings.trashItemsTitle
+    const text = files.length === 1 ? StringUtils.deleteFile(files[0].name) : Strings.deleteMultipleFiles
+
+    if (
+      await confirmDialog({
+        title,
+        text,
+        confirmButtonStyle: 'danger',
+      })
+    ) {
+      await Promise.all(files.map((file) => this.application.mutator.deleteItem(file)))
+    }
+  }
+
+  setProtectionForFiles = async (protect: boolean, files: FileItem[]) => {
+    if (protect) {
+      await this.application.mutator.protectItems(files)
+    } else {
+      await this.application.mutator.unprotectItems(files, ChallengeReason.UnprotectFile)
+    }
+  }
+
+  downloadFiles = async (files: FileItem[]) => {
+    await Promise.all(files.map((file) => this.downloadFile(file)))
   }
 }

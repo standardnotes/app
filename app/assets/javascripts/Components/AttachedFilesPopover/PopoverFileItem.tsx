@@ -2,7 +2,15 @@ import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { KeyboardKey } from '@/Services/IOService'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { FileItem } from '@standardnotes/snjs'
-import { FormEventHandler, FunctionComponent, KeyboardEventHandler, useEffect, useRef, useState } from 'react'
+import {
+  FormEventHandler,
+  FunctionComponent,
+  KeyboardEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { PopoverFileItemActionType } from './PopoverFileItemAction'
 import PopoverFileSubmenu from './PopoverFileSubmenu'
@@ -15,6 +23,7 @@ const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
   handleFileAction,
   getIconType,
   closeOnBlur,
+  previewHandler,
 }) => {
   const [fileName, setFileName] = useState(file.name)
   const [isRenamingFile, setIsRenamingFile] = useState(false)
@@ -27,37 +36,48 @@ const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
     }
   }, [isRenamingFile])
 
-  const renameFile = async (file: FileItem, name: string) => {
-    await handleFileAction({
-      type: PopoverFileItemActionType.RenameFile,
-      payload: {
-        file,
-        name,
-      },
-    })
-    setIsRenamingFile(false)
-  }
+  const renameFile = useCallback(
+    async (file: FileItem, name: string) => {
+      if (name.length < 1) {
+        return
+      }
 
-  const handleFileNameInput: FormEventHandler<HTMLInputElement> = (event) => {
+      await handleFileAction({
+        type: PopoverFileItemActionType.RenameFile,
+        payload: {
+          file,
+          name,
+        },
+      })
+      setIsRenamingFile(false)
+    },
+    [handleFileAction],
+  )
+
+  const handleFileNameInput: FormEventHandler<HTMLInputElement> = useCallback((event) => {
     setFileName((event.target as HTMLInputElement).value)
-  }
+  }, [])
 
-  const handleFileNameInputKeyDown: KeyboardEventHandler = (event) => {
-    if (event.key === KeyboardKey.Enter) {
-      itemRef.current?.focus()
-    }
-  }
+  const handleFileNameInputKeyDown: KeyboardEventHandler = useCallback(
+    (event) => {
+      if (fileName.length > 0 && event.key === KeyboardKey.Enter) {
+        itemRef.current?.focus()
+      }
+    },
+    [fileName.length],
+  )
 
-  const handleFileNameInputBlur = () => {
+  const handleFileNameInputBlur = useCallback(() => {
     renameFile(file, fileName).catch(console.error)
-  }
+  }, [file, fileName, renameFile])
 
-  const clickPreviewHandler = () => {
-    handleFileAction({
-      type: PopoverFileItemActionType.PreviewFile,
-      payload: file,
-    }).catch(console.error)
-  }
+  const handleClick = useCallback(() => {
+    if (isRenamingFile) {
+      return
+    }
+
+    previewHandler(file)
+  }, [file, isRenamingFile, previewHandler])
 
   return (
     <div
@@ -65,7 +85,7 @@ const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
       className="flex items-center justify-between p-3 focus:shadow-none"
       tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
     >
-      <div onClick={clickPreviewHandler} className="flex items-center cursor-pointer">
+      <div onClick={handleClick} className="flex items-center cursor-pointer">
         {getFileIconComponent(getIconType(file.mimeType), 'w-8 h-8 flex-shrink-0')}
         <div className="flex flex-col mx-4">
           {isRenamingFile ? (
@@ -97,7 +117,7 @@ const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
         handleFileAction={handleFileAction}
         setIsRenamingFile={setIsRenamingFile}
         closeOnBlur={closeOnBlur}
-        previewHandler={clickPreviewHandler}
+        previewHandler={previewHandler}
       />
     </div>
   )

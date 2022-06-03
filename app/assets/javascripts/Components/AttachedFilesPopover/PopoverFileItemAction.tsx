@@ -14,13 +14,19 @@ export type PopoverFileItemAction =
   | {
       type: Exclude<
         PopoverFileItemActionType,
-        PopoverFileItemActionType.RenameFile | PopoverFileItemActionType.ToggleFileProtection
+        | PopoverFileItemActionType.RenameFile
+        | PopoverFileItemActionType.ToggleFileProtection
+        | PopoverFileItemActionType.PreviewFile
       >
-      payload: FileItem
+      payload: {
+        file: FileItem
+      }
     }
   | {
       type: PopoverFileItemActionType.ToggleFileProtection
-      payload: FileItem
+      payload: {
+        file: FileItem
+      }
       callback: (isProtected: boolean) => void
     }
   | {
@@ -28,5 +34,12 @@ export type PopoverFileItemAction =
       payload: {
         file: FileItem
         name: string
+      }
+    }
+  | {
+      type: PopoverFileItemActionType.PreviewFile
+      payload: {
+        file: FileItem
+        otherFiles: FileItem[]
       }
     }
