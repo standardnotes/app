@@ -38,6 +38,7 @@ const PreviewComponent: FunctionComponent<Props> = ({ file, bytes }) => {
     return () => {
       if (objectUrl) {
         URL.revokeObjectURL(objectUrl)
+        objectUrlRef.current = ''
       }
     }
   }, [])
@@ -51,7 +52,11 @@ const PreviewComponent: FunctionComponent<Props> = ({ file, bytes }) => {
   }
 
   if (file.mimeType.startsWith('audio/')) {
-    return <audio src={objectUrl} controls />
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <audio src={objectUrl} controls />
+      </div>
+    )
   }
 
   if (PreviewableTextFileTypes.includes(file.mimeType)) {
