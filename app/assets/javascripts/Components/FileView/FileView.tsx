@@ -1,22 +1,13 @@
-import { WebApplication } from '@/Application/Application'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { KeyboardKey } from '@/Services/IOService'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
-import { FileItem } from '@standardnotes/snjs/dist/@types'
 import { observer } from 'mobx-react-lite'
-import { ChangeEventHandler, KeyboardEventHandler, useCallback, useEffect, useState } from 'react'
+import { ChangeEventHandler, KeyboardEventHandler, useCallback } from 'react'
 import AttachedFilesButton from '@/Components/AttachedFilesPopover/AttachedFilesButton'
 import FileOptionsPanel from '@/Components/FileContextMenu/FileOptionsPanel'
 import FilePreview from '@/Components/FilePreview/FilePreview'
-import ProtectedItemOverlay from '@/Components/ProtectedItemOverlay/ProtectedItemOverlay'
+import { FileViewProps } from './FileViewProps'
 
-type Props = {
-  application: WebApplication
-  viewControllerManager: ViewControllerManager
-  file: FileItem
-}
-
-const FileView = observer(({ application, viewControllerManager, file }: Props) => {
+const FileView = observer(({ application, viewControllerManager, file }: FileViewProps) => {
   const onTitleChange: ChangeEventHandler<HTMLInputElement> = useCallback(async () => {
     /** @TODO */
   }, [])
@@ -74,35 +65,4 @@ const FileView = observer(({ application, viewControllerManager, file }: Props) 
   )
 })
 
-const FileViewWithProtectedOverlay = ({ application, viewControllerManager, file }: Props) => {
-  const [shouldShowProtectedOverlay, setShouldShowProtectedOverlay] = useState(
-    file.protected && !application.hasProtectionSources(),
-  )
-
-  useEffect(() => {
-    setShouldShowProtectedOverlay(viewControllerManager.filesController.showProtectedOverlay)
-  }, [viewControllerManager.filesController.showProtectedOverlay])
-
-  const dismissProtectedWarning = useCallback(() => {
-    void viewControllerManager.filesController.toggleFileProtection(file)
-  }, [file, viewControllerManager.filesController])
-
-  return shouldShowProtectedOverlay ? (
-    <div aria-label="Note" className="section editor sn-component">
-      {shouldShowProtectedOverlay && (
-        <div className="h-full flex justify-center items-center">
-          <ProtectedItemOverlay
-            viewControllerManager={viewControllerManager}
-            hasProtectionSources={application.hasProtectionSources()}
-            onViewItem={dismissProtectedWarning}
-            itemType={'note'}
-          />
-        </div>
-      )}
-    </div>
-  ) : (
-    <FileView application={application} viewControllerManager={viewControllerManager} file={file} />
-  )
-}
-
-export default observer(FileViewWithProtectedOverlay)
+export default observer(FileView)
