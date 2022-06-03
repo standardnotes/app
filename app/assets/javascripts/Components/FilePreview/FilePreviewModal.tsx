@@ -1,19 +1,14 @@
 import { WebApplication } from '@/Application/Application'
-import { concatenateUint8Arrays } from '@/Utils/ConcatenateUint8Arrays'
 import { DialogContent, DialogOverlay } from '@reach/dialog'
-import { addToast, ToastType } from '@standardnotes/stylekit'
-import { FunctionComponent, KeyboardEventHandler, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { FunctionComponent, KeyboardEventHandler, useCallback, useMemo, useRef, useState } from 'react'
 import { getFileIconComponent } from '@/Components/AttachedFilesPopover/getFileIconComponent'
-import Button from '@/Components/Button/Button'
 import Icon from '@/Components/Icon/Icon'
 import FilePreviewInfoPanel from './FilePreviewInfoPanel'
-import { isFileTypePreviewable } from './isFilePreviewable'
-import PreviewComponent from './PreviewComponent'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { KeyboardKey } from '@/Services/IOService'
 import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
-import FilePreviewError from './FilePreviewError'
+import FilePreview from './FilePreview'
 
 type Props = {
   application: WebApplication
@@ -27,52 +22,8 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
     return null
   }
 
-  const [downloadedBytes, setDownloadedBytes] = useState<Uint8Array>()
-  const [isFilePreviewable, setIsFilePreviewable] = useState(false)
-  const [isLoadingFile, setIsLoadingFile] = useState(true)
-  const [fileDownloadProgress, setFileDownloadProgress] = useState(0)
   const [showFileInfoPanel, setShowFileInfoPanel] = useState(false)
-  const currentFileIdRef = useRef<string>()
   const closeButtonRef = useRef<HTMLButtonElement>(null)
-
-  const downloadFile = useCallback(async () => {
-    try {
-      const chunks: Uint8Array[] = []
-      setFileDownloadProgress(0)
-      await application.files.downloadFile(currentFile, async (decryptedChunk, progress) => {
-        chunks.push(decryptedChunk)
-        if (progress) {
-          setFileDownloadProgress(Math.round(progress.percentComplete))
-        }
-      })
-      const finalDecryptedBytes = concatenateUint8Arrays(chunks)
-      setDownloadedBytes(finalDecryptedBytes)
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setIsLoadingFile(false)
-    }
-  }, [application.files, currentFile])
-
-  useEffect(() => {
-    setIsLoadingFile(true)
-  }, [currentFile.uuid])
-
-  useEffect(() => {
-    const isPreviewable = isFileTypePreviewable(currentFile.mimeType)
-    setIsFilePreviewable(isPreviewable)
-
-    if (!isPreviewable) {
-      setDownloadedBytes(undefined)
-      setIsLoadingFile(false)
-    }
-
-    if (currentFileIdRef.current !== currentFile.uuid && isPreviewable) {
-      downloadFile().catch(console.error)
-    }
-
-    currentFileIdRef.current = currentFile.uuid
-  }, [currentFile, downloadFile, downloadedBytes])
 
   const keyDownHandler: KeyboardEventHandler = useCallback(
     (event) => {
@@ -149,21 +100,6 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
             >
               <Icon type="info" className="color-neutral" />
             </button>
-            {downloadedBytes && (
-              <Button
-                variant="primary"
-                className="mr-4"
-                onClick={() => {
-                  void viewControllerManager.filesController.downloadFile(currentFile)
-                  addToast({
-                    type: ToastType.Success,
-                    message: 'Successfully downloaded file',
-                  })
-                }}
-              >
-                Download
-              </Button>
-            )}
             <button
               ref={closeButtonRef}
               onClick={dismiss}
@@ -176,26 +112,7 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
         </div>
         <div className="flex flex-grow min-h-0">
           <div className="flex flex-grow items-center justify-center relative max-w-full">
-            {isLoadingFile ? (
-              <div className="flex flex-col items-center">
-                <div className="flex items-center">
-                  <div className="sk-spinner w-5 h-5 spinner-info mr-3"></div>
-                  <div className="text-base font-semibold">{fileDownloadProgress}%</div>
-                </div>
-                <span className="mt-3">Loading file...</span>
-              </div>
-            ) : downloadedBytes ? (
-              <PreviewComponent file={currentFile} bytes={downloadedBytes} />
-            ) : (
-              <FilePreviewError
-                application={application}
-                file={currentFile}
-                isFilePreviewable={isFilePreviewable}
-                tryAgainCallback={() => {
-                  void downloadFile()
-                }}
-              />
-            )}
+            <FilePreview file={currentFile} application={application} key={currentFile.uuid} />
           </div>
           {showFileInfoPanel && <FilePreviewInfoPanel file={currentFile} />}
         </div>
