@@ -1,5 +1,5 @@
 import { FileItem } from '@standardnotes/snjs'
-import { FunctionComponent, useEffect, useState } from 'react'
+import { FunctionComponent, MutableRefObject, useEffect, useMemo, useRef } from 'react'
 import ImagePreview from './ImagePreview'
 import { PreviewableTextFileTypes } from './isFilePreviewable'
 import TextPreview from './TextPreview'
@@ -9,24 +9,38 @@ type Props = {
   bytes: Uint8Array
 }
 
+const createObjectURLWithRef = (
+  type: FileItem['mimeType'],
+  bytes: Uint8Array,
+  ref: MutableRefObject<string | undefined>,
+) => {
+  const objectURL = URL.createObjectURL(
+    new Blob([bytes], {
+      type,
+    }),
+  )
+
+  ref.current = objectURL
+
+  return objectURL
+}
+
 const PreviewComponent: FunctionComponent<Props> = ({ file, bytes }) => {
-  const [objectUrl, setObjectUrl] = useState('')
+  const objectUrlRef = useRef<string>()
+
+  const objectUrl = useMemo(() => {
+    return createObjectURLWithRef(file.mimeType, bytes, objectUrlRef)
+  }, [bytes, file.mimeType])
 
   useEffect(() => {
-    if (!objectUrl) {
-      setObjectUrl(
-        URL.createObjectURL(
-          new Blob([bytes], {
-            type: file.mimeType,
-          }),
-        ),
-      )
-    }
+    const objectUrl = objectUrlRef.current
 
     return () => {
-      URL.revokeObjectURL(objectUrl)
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl)
+      }
     }
-  }, [bytes, file.mimeType, objectUrl])
+  }, [])
 
   if (file.mimeType.startsWith('image/')) {
     return <ImagePreview objectUrl={objectUrl} />
