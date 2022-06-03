@@ -27,7 +27,9 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
 
   const keyDownHandler: KeyboardEventHandler = useCallback(
     (event) => {
-      if (event.key !== KeyboardKey.Left && event.key !== KeyboardKey.Right) {
+      const hasNotPressedLeftOrRightKeys = event.key !== KeyboardKey.Left && event.key !== KeyboardKey.Right
+
+      if (hasNotPressedLeftOrRightKeys) {
         return
       }
 
