@@ -14,7 +14,7 @@ const TextPreview = ({ bytes }: Props) => {
   return (
     <textarea
       autoComplete="off"
-      className="flex-grow font-editor focus:shadow-none focus:outline-none"
+      className="w-full h-full flex-grow font-editor focus:shadow-none focus:outline-none"
       dir="auto"
       id={ElementIds.FileTextPreview}
       defaultValue={text}
