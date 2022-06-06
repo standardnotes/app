@@ -5,13 +5,32 @@ import { useCallback } from 'react'
 import FileOptionsPanel from '../FileContextMenu/FileOptionsPanel'
 import { FilesController } from '@/Controllers/FilesController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
+import { WebApplication } from '@/Application/Application'
+import { FeaturesController } from '@/Controllers/FeaturesController'
+import { FilePreviewModalController } from '@/Controllers/FilePreviewModalController'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
+import { NotesController } from '@/Controllers/NotesController'
+import AttachedFilesButton from '../AttachedFilesPopover/AttachedFilesButton'
 
 type Props = {
+  application: WebApplication
+  featuresController: FeaturesController
+  filePreviewModalController: FilePreviewModalController
   filesController: FilesController
+  navigationController: NavigationController
+  notesController: NotesController
   selectionController: SelectedItemsController
 }
 
-const MultipleSelectedFiles = ({ filesController, selectionController }: Props) => {
+const MultipleSelectedFiles = ({
+  application,
+  filesController,
+  featuresController,
+  filePreviewModalController,
+  navigationController,
+  notesController,
+  selectionController,
+}: Props) => {
   const count = selectionController.selectedFilesCount
 
   const cancelMultipleSelection = useCallback(() => {
@@ -23,6 +42,17 @@ const MultipleSelectedFiles = ({ filesController, selectionController }: Props) 
       <div className="flex items-center justify-between p-4 w-full">
         <h1 className="sk-h1 font-bold m-0">{count} selected files</h1>
         <div className="flex">
+          <div className="mr-3">
+            <AttachedFilesButton
+              application={application}
+              featuresController={featuresController}
+              filePreviewModalController={filePreviewModalController}
+              filesController={filesController}
+              navigationController={navigationController}
+              notesController={notesController}
+              selectionController={selectionController}
+            />
+          </div>
           <FileOptionsPanel filesController={filesController} selectionController={selectionController} />
         </div>
       </div>

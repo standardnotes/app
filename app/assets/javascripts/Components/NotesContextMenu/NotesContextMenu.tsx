@@ -1,29 +1,31 @@
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
 import { observer } from 'mobx-react-lite'
 import NotesOptions from '@/Components/NotesOptions/NotesOptions'
 import { useCallback, useEffect, useRef } from 'react'
 import { WebApplication } from '@/Application/Application'
+import { NotesController } from '@/Controllers/NotesController'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
+import { NoteTagsController } from '@/Controllers/NoteTagsController'
 
 type Props = {
   application: WebApplication
-  viewControllerManager: ViewControllerManager
+  navigationController: NavigationController
+  notesController: NotesController
+  noteTagsController: NoteTagsController
 }
 
-const NotesContextMenu = ({ application, viewControllerManager }: Props) => {
-  const { contextMenuOpen, contextMenuPosition, contextMenuMaxHeight } = viewControllerManager.notesController
+const NotesContextMenu = ({ application, navigationController, notesController, noteTagsController }: Props) => {
+  const { contextMenuOpen, contextMenuPosition, contextMenuMaxHeight } = notesController
 
   const contextMenuRef = useRef<HTMLDivElement>(null)
-  const [closeOnBlur] = useCloseOnBlur(contextMenuRef, (open: boolean) =>
-    viewControllerManager.notesController.setContextMenuOpen(open),
-  )
+  const [closeOnBlur] = useCloseOnBlur(contextMenuRef, (open: boolean) => notesController.setContextMenuOpen(open))
 
-  useCloseOnClickOutside(contextMenuRef, () => viewControllerManager.notesController.setContextMenuOpen(false))
+  useCloseOnClickOutside(contextMenuRef, () => notesController.setContextMenuOpen(false))
 
   const reloadContextMenuLayout = useCallback(() => {
-    viewControllerManager.notesController.reloadContextMenuLayout()
-  }, [viewControllerManager])
+    notesController.reloadContextMenuLayout()
+  }, [notesController])
 
   useEffect(() => {
     window.addEventListener('resize', reloadContextMenuLayout)
@@ -41,7 +43,13 @@ const NotesContextMenu = ({ application, viewControllerManager }: Props) => {
         maxHeight: contextMenuMaxHeight,
       }}
     >
-      <NotesOptions application={application} viewControllerManager={viewControllerManager} closeOnBlur={closeOnBlur} />
+      <NotesOptions
+        application={application}
+        closeOnBlur={closeOnBlur}
+        navigationController={navigationController}
+        notesController={notesController}
+        noteTagsController={noteTagsController}
+      />
     </div>
   ) : null
 }
