@@ -304,7 +304,7 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
               currentTab={currentTab}
               isDraggingFiles={isDraggingFiles}
               setCurrentTab={setCurrentTab}
-              isInFilesView={navigationController.isInFilesView}
+              attachedTabDisabled={navigationController.isInFilesView}
             />
           )}
         </DisclosurePanel>
