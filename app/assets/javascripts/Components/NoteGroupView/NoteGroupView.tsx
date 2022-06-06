@@ -83,13 +83,27 @@ class NoteGroupView extends PureComponent<Props, State> {
     return (
       <div id={ElementIds.EditorColumn} className="h-full app-column app-column-third">
         {this.state.showMultipleSelectedNotes && (
-          <MultipleSelectedNotes application={this.application} viewControllerManager={this.viewControllerManager} />
+          <MultipleSelectedNotes
+            application={this.application}
+            filesController={this.viewControllerManager.filesController}
+            selectionController={this.viewControllerManager.selectionController}
+            featuresController={this.viewControllerManager.featuresController}
+            filePreviewModalController={this.viewControllerManager.filePreviewModalController}
+            navigationController={this.viewControllerManager.navigationController}
+            notesController={this.viewControllerManager.notesController}
+            noteTagsController={this.viewControllerManager.noteTagsController}
+          />
         )}
 
         {this.state.showMultipleSelectedFiles && (
           <MultipleSelectedFiles
+            application={this.application}
             filesController={this.viewControllerManager.filesController}
             selectionController={this.viewControllerManager.selectionController}
+            featuresController={this.viewControllerManager.featuresController}
+            filePreviewModalController={this.viewControllerManager.filePreviewModalController}
+            navigationController={this.viewControllerManager.navigationController}
+            notesController={this.viewControllerManager.notesController}
           />
         )}
 

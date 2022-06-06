@@ -1,16 +1,20 @@
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { calculateSubmenuStyle, SubmenuStyle } from '@/Utils/CalculateSubmenuStyle'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
+import { NotesController } from '@/Controllers/NotesController'
+import { NoteTagsController } from '@/Controllers/NoteTagsController'
 
 type Props = {
-  viewControllerManager: ViewControllerManager
+  navigationController: NavigationController
+  notesController: NotesController
+  noteTagsController: NoteTagsController
 }
 
-const AddTagOption: FunctionComponent<Props> = ({ viewControllerManager }) => {
+const AddTagOption: FunctionComponent<Props> = ({ navigationController, notesController, noteTagsController }) => {
   const menuContainerRef = useRef<HTMLDivElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
@@ -84,22 +88,22 @@ const AddTagOption: FunctionComponent<Props> = ({ viewControllerManager }) => {
           }}
           className="sn-dropdown min-w-80 flex flex-col py-2 max-h-120 max-w-xs fixed overflow-y-auto"
         >
-          {viewControllerManager.navigationController.tags.map((tag) => (
+          {navigationController.tags.map((tag) => (
             <button
               key={tag.uuid}
               className="sn-dropdown-item sn-dropdown-item--no-icon max-w-80"
               onBlur={closeOnBlur}
               onClick={() => {
-                viewControllerManager.notesController.isTagInSelectedNotes(tag)
-                  ? viewControllerManager.notesController.removeTagFromSelectedNotes(tag).catch(console.error)
-                  : viewControllerManager.notesController.addTagToSelectedNotes(tag).catch(console.error)
+                notesController.isTagInSelectedNotes(tag)
+                  ? notesController.removeTagFromSelectedNotes(tag).catch(console.error)
+                  : notesController.addTagToSelectedNotes(tag).catch(console.error)
               }}
             >
               <span
                 className={`whitespace-nowrap overflow-hidden overflow-ellipsis
-                      ${viewControllerManager.notesController.isTagInSelectedNotes(tag) ? 'font-bold' : ''}`}
+                      ${notesController.isTagInSelectedNotes(tag) ? 'font-bold' : ''}`}
               >
-                {viewControllerManager.noteTagsController.getLongTitle(tag)}
+                {noteTagsController.getLongTitle(tag)}
               </span>
             </button>
           ))}
