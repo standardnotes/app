@@ -1,40 +1,32 @@
 import { ElementIds } from '@/Constants/ElementIDs'
-import { KeyboardKey } from '@/Services/IOService'
 import { observer } from 'mobx-react-lite'
-import { ChangeEventHandler, KeyboardEventHandler, useCallback, useRef } from 'react'
+import { ChangeEventHandler, FormEventHandler, useCallback, useEffect, useState } from 'react'
 import AttachedFilesButton from '@/Components/AttachedFilesPopover/AttachedFilesButton'
 import FileOptionsPanel from '@/Components/FileContextMenu/FileOptionsPanel'
 import FilePreview from '@/Components/FilePreview/FilePreview'
 import { FileViewProps } from './FileViewProps'
-import { SYNC_TIMEOUT_DEBOUNCE, SYNC_TIMEOUT_NO_DEBOUNCE } from '@/Constants/Constants'
 
 const FileViewWithoutProtection = ({ application, viewControllerManager, file }: FileViewProps) => {
-  const syncTimeoutRef = useRef<number>()
+  const [name, setName] = useState(file.name)
 
-  const onTitleChange: ChangeEventHandler<HTMLInputElement> = useCallback(
-    async (event) => {
-      void application.items.renameFile(file, event.target.value)
+  useEffect(() => {
+    setName(file.name)
+  }, [file.name])
 
-      if (syncTimeoutRef.current) {
-        clearTimeout(syncTimeoutRef.current)
-      }
-
-      const debounceTime = application.noAccount() ? SYNC_TIMEOUT_NO_DEBOUNCE : SYNC_TIMEOUT_DEBOUNCE
-
-      syncTimeoutRef.current = window.setTimeout(() => {
-        void application.sync.sync()
-      }, debounceTime)
-    },
-    [application, file],
-  )
-
-  const onTitleEnter: KeyboardEventHandler<HTMLInputElement> = useCallback(({ key, currentTarget }) => {
-    if (key !== KeyboardKey.Enter) {
-      return
-    }
-
-    currentTarget.blur()
+  const onTitleChange: ChangeEventHandler<HTMLInputElement> = useCallback(async (event) => {
+    setName(event.target.value)
   }, [])
+
+  const onFormSubmit: FormEventHandler = useCallback(
+    async (event) => {
+      event.preventDefault()
+
+      await application.items.renameFile(file, name)
+
+      void application.sync.sync()
+    },
+    [application.items, application.sync, file, name],
+  )
 
   return (
     <div className="sn-component section editor" aria-label="File">
@@ -42,7 +34,7 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
         <div className="content-title-bar section-title-bar w-full" id="file-title-bar">
           <div className="flex items-center justify-between h-8">
             <div className="flex-grow">
-              <div className="title overflow-auto">
+              <form onSubmit={onFormSubmit} className="title overflow-auto">
                 <input
                   className="input"
                   id={ElementIds.FileTitleEditor}
@@ -50,12 +42,11 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
                   onFocus={(event) => {
                     event.target.select()
                   }}
-                  onKeyUp={onTitleEnter}
                   spellCheck={false}
-                  value={file.name}
+                  value={name}
                   autoComplete="off"
                 />
-              </div>
+              </form>
             </div>
             <div className="flex items-center">
               <div className="mr-3">
