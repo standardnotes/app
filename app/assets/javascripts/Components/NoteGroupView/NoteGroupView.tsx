@@ -5,7 +5,7 @@ import MultipleSelectedNotes from '@/Components/MultipleSelectedNotes/MultipleSe
 import NoteView from '@/Components/NoteView/NoteView'
 import MultipleSelectedFiles from '../MultipleSelectedFiles/MultipleSelectedFiles'
 import { ElementIds } from '@/Constants/ElementIDs'
-import FileViewWithProtectedOverlay from '@/Components/FileView/FileViewWithProtectedOverlay'
+import FileView from '@/Components/FileView/FileView'
 
 type State = {
   showMultipleSelectedNotes: boolean
@@ -102,7 +102,7 @@ class NoteGroupView extends PureComponent<Props, State> {
         )}
 
         {shouldNotShowMultipleSelectedItems && this.state.controllers.length < 1 && this.state.selectedFile && (
-          <FileViewWithProtectedOverlay
+          <FileView
             application={this.application}
             viewControllerManager={this.viewControllerManager}
             file={this.state.selectedFile}
