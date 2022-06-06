@@ -1,4 +1,3 @@
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { IlNotesIcon } from '@standardnotes/icons'
 import { observer } from 'mobx-react-lite'
 import NotesOptionsPanel from '@/Components/NotesOptions/NotesOptionsPanel'
@@ -6,18 +5,41 @@ import { WebApplication } from '@/Application/Application'
 import PinNoteButton from '@/Components/PinNoteButton/PinNoteButton'
 import Button from '../Button/Button'
 import { useCallback } from 'react'
+import AttachedFilesButton from '../AttachedFilesPopover/AttachedFilesButton'
+import { FeaturesController } from '@/Controllers/FeaturesController'
+import { FilePreviewModalController } from '@/Controllers/FilePreviewModalController'
+import { FilesController } from '@/Controllers/FilesController'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
+import { NotesController } from '@/Controllers/NotesController'
+import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
+import { NoteTagsController } from '@/Controllers/NoteTagsController'
 
 type Props = {
   application: WebApplication
-  viewControllerManager: ViewControllerManager
+  featuresController: FeaturesController
+  filePreviewModalController: FilePreviewModalController
+  filesController: FilesController
+  navigationController: NavigationController
+  notesController: NotesController
+  noteTagsController: NoteTagsController
+  selectionController: SelectedItemsController
 }
 
-const MultipleSelectedNotes = ({ application, viewControllerManager }: Props) => {
-  const count = viewControllerManager.notesController.selectedNotesCount
+const MultipleSelectedNotes = ({
+  application,
+  featuresController,
+  filePreviewModalController,
+  filesController,
+  navigationController,
+  notesController,
+  noteTagsController,
+  selectionController,
+}: Props) => {
+  const count = notesController.selectedNotesCount
 
   const cancelMultipleSelection = useCallback(() => {
-    viewControllerManager.selectionController.cancelMultipleSelection()
-  }, [viewControllerManager])
+    selectionController.cancelMultipleSelection()
+  }, [selectionController])
 
   return (
     <div className="flex flex-col h-full items-center">
@@ -25,9 +47,25 @@ const MultipleSelectedNotes = ({ application, viewControllerManager }: Props) =>
         <h1 className="sk-h1 font-bold m-0">{count} selected notes</h1>
         <div className="flex">
           <div className="mr-3">
-            <PinNoteButton viewControllerManager={viewControllerManager} />
+            <AttachedFilesButton
+              application={application}
+              featuresController={featuresController}
+              filePreviewModalController={filePreviewModalController}
+              filesController={filesController}
+              navigationController={navigationController}
+              notesController={notesController}
+              selectionController={selectionController}
+            />
           </div>
-          <NotesOptionsPanel application={application} viewControllerManager={viewControllerManager} />
+          <div className="mr-3">
+            <PinNoteButton notesController={notesController} />
+          </div>
+          <NotesOptionsPanel
+            application={application}
+            navigationController={navigationController}
+            notesController={notesController}
+            noteTagsController={noteTagsController}
+          />
         </div>
       </div>
       <div className="flex-grow flex flex-col justify-center items-center w-full max-w-md">
