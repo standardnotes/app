@@ -63,10 +63,7 @@ const ConfirmPassword: FunctionComponent<Props> = ({
         setIsRegistering(true)
         application
           .register(email, password, isEphemeral, shouldMergeLocal)
-          .then((res) => {
-            if (res.error) {
-              throw new Error(res.error.message)
-            }
+          .then(() => {
             viewControllerManager.accountMenuController.closeAccountMenu()
             viewControllerManager.accountMenuController.setCurrentPane(AccountMenuPane.GeneralMenu)
           })

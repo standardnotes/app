@@ -90,15 +90,11 @@ const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, applic
     setIsCreatingAccount(true)
 
     try {
-      const response = await application.register(email, password)
-      if (response.error || response.data?.error) {
-        throw new Error(response.error?.message || response.data?.error?.message)
-      } else {
-        loadPurchaseFlowUrl(application).catch((err) => {
-          console.error(err)
-          application.alertService.alert(err).catch(console.error)
-        })
-      }
+      await application.register(email, password)
+      loadPurchaseFlowUrl(application).catch((err) => {
+        console.error(err)
+        application.alertService.alert(err).catch(console.error)
+      })
     } catch (err) {
       console.error(err)
       application.alertService.alert(err as string).catch(console.error)
