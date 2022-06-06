@@ -1,0 +1,11 @@
+{
+  "name": "@standardnotes/web-server",
+  "private": true,
+  "author": "Standard Notes",
+  "engines": {
+    "node": ">=12.19.0 <17.0.0"
+  },
+  "scripts": {},
+  "devDependencies": {},
+  "dependencies": {}
+}

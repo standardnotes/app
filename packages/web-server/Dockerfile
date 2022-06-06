@@ -10,15 +10,17 @@ RUN apk add --update --no-cache \
 
 WORKDIR /app/
 
-COPY ../packages/web/package.json ../packages/web/yarn.lock Gemfile Gemfile.lock /app/
+COPY package.json yarn.lock /app/
+
+COPY packages/web/package.json /app/packages/web/package.json
 
 RUN yarn install --pure-lockfile
 
+COPY packages/web-server/ packages/web/ /app/
+
+RUN yarn --cwd packages/web bundle
+
 RUN gem install bundler && bundle install
-
-COPY . /app/
-
-RUN yarn bundle
 
 RUN bundle exec rails assets:precompile
 

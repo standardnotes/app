@@ -2,4 +2,4 @@
 .git/
 .gitignore
 node_modules
-public/assets
+packages/web-server/public/assets

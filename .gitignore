@@ -5,16 +5,16 @@
 node_modules
 
 # Ignore bundler config.
-web-server/.bundle
-web-server/log/*
-!web-server/log/.keep
-web-server/tmp
-web-server/config/cap.yml
-web-server/app/assets/templates/generated/
-web-server/public/assets
-web-server/public/robots.txt
-web-server/public/uploads/*
-!web-server/public/uploads/.keep
+packages/web-server/.bundle
+packages/web-server/log/*
+packages/!web-server/log/.keep
+packages/web-server/tmp
+packages/web-server/config/cap.yml
+packages/web-server/app/assets/templates/generated/
+packages/web-server/public/assets
+packages/web-server/public/robots.txt
+packages/web-server/public/uploads/*
+packages/!web-server/public/uploads/.keep
 
 packages/web/dist
 

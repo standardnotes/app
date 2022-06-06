@@ -2,7 +2,8 @@ version: '3.8'
 services:
   app:
     build:
-      context: .
+      context: ./../..
+      dockerfile: ./packages/web-server/Dockerfile
     command: start-local
     env_file: .env
     restart: unless-stopped
