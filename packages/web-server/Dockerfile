@@ -14,9 +14,9 @@ COPY package.json yarn.lock /app/
 
 COPY packages/web/package.json /app/packages/web/package.json
 
-RUN yarn install --pure-lockfile
-
 COPY packages/web-server/ packages/web/ /app/
+
+RUN yarn install --pure-lockfile
 
 RUN yarn --cwd packages/web bundle
 
