@@ -1,6 +1,6 @@
 {
   "name": "standard-notes-web",
-  "version": "3.20.3",
+  "version": "3.20.4",
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
@@ -71,12 +71,12 @@
     "@reach/tooltip": "^0.16.2",
     "@reach/visually-hidden": "^0.16.0",
     "@standardnotes/components": "1.8.3",
-    "@standardnotes/filepicker": "1.16.10",
+    "@standardnotes/filepicker": "1.16.11",
     "@standardnotes/icons": "^1.1.8",
     "@standardnotes/sncrypto-web": "1.10.1",
-    "@standardnotes/snjs": "^2.115.3",
+    "@standardnotes/snjs": "^2.115.6",
     "@standardnotes/stylekit": "5.29.3",
-    "@standardnotes/services": "^1.13.10",
+    "@standardnotes/services": "^1.13.11",
     "@zip.js/zip.js": "^2.4.10",
     "mobx": "^6.5.0",
     "mobx-react-lite": "^3.3.0",
