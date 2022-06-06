@@ -10,7 +10,7 @@ RUN apk add --update --no-cache \
 
 WORKDIR /app/
 
-COPY package.json yarn.lock Gemfile Gemfile.lock /app/
+COPY ../packages/web/package.json ../packages/web/yarn.lock Gemfile Gemfile.lock /app/
 
 RUN yarn install --pure-lockfile
 

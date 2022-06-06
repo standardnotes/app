@@ -22,7 +22,7 @@ module.exports = (env, argv) => {
     ],
     devServer: {
       hot: 'only',
-      static: './public',
+      static: '../../web-server/public',
       port,
       devMiddleware: {
         writeToDisk: argv.writeToDisk,

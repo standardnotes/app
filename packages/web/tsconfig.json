@@ -1,0 +1,26 @@
+{
+  "extends": "../../node_modules/@standardnotes/config/src/tsconfig.json",
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "target": "ES2019",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "allowJs": true,
+    "noEmit": true,
+    "strict": true,
+    "isolatedModules": false,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "newLine": "lf",
+    "declarationDir": "dist/@types",
+    "baseUrl": ".",
+    "jsx": "react-jsx",
+    "typeRoots": ["./src/javascripts/Types/External", "../../node_modules/@types"],
+    "paths": {
+      "@/*": ["./src/javascripts/*"],
+      "@Controllers/*": ["src/javascripts/Controllers/*"],
+      "@Services/*": ["src/javascripts/Services/*"],
+    }
+  }
+}

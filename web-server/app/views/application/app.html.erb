@@ -41,11 +41,11 @@
     </script>
 
     <% if Rails.env.development? %>
-      <%= javascript_include_tag "javascripts/app.js", debug: true %>
+      <%= javascript_include_tag "app.js", debug: true %>
     <% else %>
-      <%= javascript_include_tag "javascripts/app.js", debug: false %>
+      <%= javascript_include_tag "app.js", debug: false %>
     <% end %>
-    <%= stylesheet_link_tag "stylesheets/app.css", media: "all", debug: false %>
+    <%= stylesheet_link_tag "app.css", media: "all", debug: false %>
 
   </head>
 

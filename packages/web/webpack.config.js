@@ -8,9 +8,9 @@ require('dotenv').config()
 module.exports = (env) => {
   mergeWithEnvDefaults(env)
   return {
-    entry: './app/assets/javascripts/index.ts',
+    entry: './src/javascripts/index.ts',
     output: {
-      filename: './javascripts/app.js',
+      filename: './app.js',
     },
     plugins: [
       new CircularDependencyPlugin({
@@ -33,7 +33,7 @@ module.exports = (env) => {
       }),
       new MiniCssExtractPlugin({
         // Options similar to the same options in webpackOptions.output
-        filename: './stylesheets/app.css',
+        filename: './app.css',
         ignoreOrder: true, // Enable to remove warnings about conflicting order
       }),
     ],
@@ -44,16 +44,21 @@ module.exports = (env) => {
         path: false,
       },
       alias: {
-        '%': path.resolve(__dirname, 'app/assets/templates'),
-        '@': path.resolve(__dirname, 'app/assets/javascripts'),
-        '@Controllers': path.resolve(__dirname, 'app/assets/javascripts/controllers'),
-        '@Views': path.resolve(__dirname, 'app/assets/javascripts/views'),
-        '@Services': path.resolve(__dirname, 'app/assets/javascripts/services'),
-        '@node_modules': path.resolve(__dirname, 'node_modules'),
+        '@': path.resolve(__dirname, 'src/javascripts'),
+        '@Controllers': path.resolve(__dirname, 'src/javascripts/controllers'),
+        '@Services': path.resolve(__dirname, 'src/javascripts/services'),
       },
     },
     module: {
       rules: [
+        {
+          test: /\.(woff|woff2|eot|ttf|otf)$/i,
+          type: 'asset/resource',
+          generator: {
+            filename: '[name][ext]',
+            publicPath: 'assets/',
+          },
+        },
         {
           test: /\.(js|tsx?)$/,
           exclude: /(node_modules)/,

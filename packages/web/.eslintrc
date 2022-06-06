@@ -6,11 +6,11 @@
     "plugin:@typescript-eslint/recommended",
     "prettier",
     "plugin:react-hooks/recommended",
-    "./node_modules/@standardnotes/config/src/.eslintrc"
+    "./../../node_modules/@standardnotes/config/src/.eslintrc"
   ],
   "plugins": ["@typescript-eslint", "react", "react-hooks"],
   "parserOptions": {
-    "project": "./app/assets/javascripts/tsconfig.json"
+    "project": "./packages/web/tsconfig.json"
   },
   "ignorePatterns": [".eslintrc.js", "webpack.*.js", "webpack-defaults.js", "jest.config.js", "__mocks__"],
   "rules": {
