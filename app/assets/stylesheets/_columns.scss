@@ -1,21 +1,14 @@
 .app-column-container {
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: auto auto 2fr;
 }
 
 .app-column-first {
   width: 220px;
-  flex-shrink: 0.2;
 }
 
 .app-column-second {
   width: 350px;
-  flex-shrink: 0.5;
-}
-
-.app-column-third {
-  flex-grow: 1;
-  flex-shrink: 0.3;
 }
 
 .app-column {

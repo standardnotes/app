@@ -30,6 +30,7 @@ export class FilesController extends AbstractViewController {
   allFiles: FileItem[] = []
   attachedFiles: FileItem[] = []
   showFileContextMenu = false
+  showProtectedOverlay = false
   fileContextMenuLocation: FileContextMenuLocation = { x: 0, y: 0 }
 
   override deinit(): void {
@@ -52,9 +53,12 @@ export class FilesController extends AbstractViewController {
       showFileContextMenu: observable,
       fileContextMenuLocation: observable,
 
+      showProtectedOverlay: observable,
+
       reloadAllFiles: action,
       reloadAttachedFiles: action,
       setShowFileContextMenu: action,
+      setShowProtectedOverlay: action,
       setFileContextMenuLocation: action,
     })
 
@@ -77,6 +81,10 @@ export class FilesController extends AbstractViewController {
 
   setShowFileContextMenu = (enabled: boolean) => {
     this.showFileContextMenu = enabled
+  }
+
+  setShowProtectedOverlay = (enabled: boolean) => {
+    this.showProtectedOverlay = enabled
   }
 
   setFileContextMenuLocation = (location: FileContextMenuLocation) => {
@@ -404,9 +412,15 @@ export class FilesController extends AbstractViewController {
 
   setProtectionForFiles = async (protect: boolean, files: FileItem[]) => {
     if (protect) {
-      await this.application.mutator.protectItems(files)
+      const protectedItems = await this.application.mutator.protectItems(files)
+      if (protectedItems) {
+        this.setShowProtectedOverlay(true)
+      }
     } else {
-      await this.application.mutator.unprotectItems(files, ChallengeReason.UnprotectFile)
+      const unprotectedItems = await this.application.mutator.unprotectItems(files, ChallengeReason.UnprotectFile)
+      if (unprotectedItems) {
+        this.setShowProtectedOverlay(false)
+      }
     }
   }
 

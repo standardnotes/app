@@ -12,7 +12,7 @@ const ImagePreview: FunctionComponent<Props> = ({ objectUrl }) => {
   const [imageZoomPercent, setImageZoomPercent] = useState(100)
 
   return (
-    <div className="flex items-center justify-center w-full h-full">
+    <div className="flex items-center justify-center w-full h-full min-h-0">
       <div className="flex items-center justify-center w-full h-full relative overflow-auto">
         <img
           src={objectUrl}
@@ -26,6 +26,7 @@ const ImagePreview: FunctionComponent<Props> = ({ objectUrl }) => {
               : {
                   position: 'absolute',
                   top: 0,
+                  left: 0,
                   margin: 'auto',
                 }),
           }}

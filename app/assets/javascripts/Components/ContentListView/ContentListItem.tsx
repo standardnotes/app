@@ -10,7 +10,7 @@ const ContentListItem: FunctionComponent<AbstractListItemProps> = (props) => {
       return []
     }
 
-    const selectedTag = props.viewControllerManager.navigationController.selected
+    const selectedTag = props.navigationController.selected
     if (!selectedTag) {
       return []
     }

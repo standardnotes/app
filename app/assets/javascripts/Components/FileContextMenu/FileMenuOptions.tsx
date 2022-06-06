@@ -134,6 +134,13 @@ const FileMenuOptions: FunctionComponent<Props> = ({
         <Icon type="trash" className="mr-2 color-danger" />
         <span className="color-danger">Delete permanently</span>
       </button>
+      {selectedFiles.length === 1 && (
+        <div className="px-3 pt-1.5 pb-0.5 text-xs color-neutral font-medium">
+          <div>
+            <span className="font-semibold">File ID:</span> {selectedFiles[0].uuid}
+          </div>
+        </div>
+      )}
     </>
   )
 }

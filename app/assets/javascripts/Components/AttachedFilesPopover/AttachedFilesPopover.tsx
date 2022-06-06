@@ -20,6 +20,7 @@ type Props = {
   currentTab: PopoverTabs
   isDraggingFiles: boolean
   setCurrentTab: Dispatch<SetStateAction<PopoverTabs>>
+  attachedTabDisabled: boolean
 }
 
 const AttachedFilesPopover: FunctionComponent<Props> = ({
@@ -31,6 +32,7 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
   currentTab,
   isDraggingFiles,
   setCurrentTab,
+  attachedTabDisabled,
 }) => {
   const [searchQuery, setSearchQuery] = useState('')
   const searchInputRef = useRef<HTMLInputElement>(null)
@@ -81,11 +83,12 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
           id={PopoverTabs.AttachedFiles}
           className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:bg-info-backdrop focus:shadow-bottom ${
             currentTab === PopoverTabs.AttachedFiles ? 'color-info font-medium shadow-bottom' : 'color-text'
-          }`}
+          } ${attachedTabDisabled ? 'color-neutral cursor-not-allowed' : ''}`}
           onClick={() => {
             setCurrentTab(PopoverTabs.AttachedFiles)
           }}
           onBlur={closeOnBlur}
+          disabled={attachedTabDisabled}
         >
           Attached
         </button>

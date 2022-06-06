@@ -19,7 +19,7 @@ import { KeyboardModifier, KeyboardKey } from '@/Services/IOService'
 import { STRING_DELETE_PLACEHOLDER_ATTEMPT, STRING_DELETE_LOCKED_ATTEMPT, StringDeleteNote } from '@/Constants/Strings'
 import { confirmDialog } from '@/Services/AlertService'
 import { PureComponent } from '@/Components/Abstract/PureComponent'
-import ProtectedNoteOverlay from '@/Components/ProtectedNoteOverlay/ProtectedNoteOverlay'
+import ProtectedItemOverlay from '@/Components/ProtectedItemOverlay/ProtectedItemOverlay'
 import PinNoteButton from '@/Components/PinNoteButton/PinNoteButton'
 import NotesOptionsPanel from '@/Components/NotesOptions/NotesOptionsPanel'
 import NoteTagsContainer from '@/Components/NoteTags/NoteTagsContainer'
@@ -871,10 +871,11 @@ class NoteView extends PureComponent<NoteViewProps, State> {
         <div aria-label="Note" className="section editor sn-component">
           {this.state.showProtectedWarning && (
             <div className="h-full flex justify-center items-center">
-              <ProtectedNoteOverlay
+              <ProtectedItemOverlay
                 viewControllerManager={this.viewControllerManager}
                 hasProtectionSources={this.application.hasProtectionSources()}
-                onViewNote={this.dismissProtectedWarning}
+                onViewItem={this.dismissProtectedWarning}
+                itemType={'note'}
               />
             </div>
           )}
@@ -906,7 +907,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
           )}
 
           {this.note && (
-            <div id="editor-title-bar" className="section-title-bar w-full">
+            <div id="editor-title-bar" className="content-title-bar section-title-bar w-full">
               <div className="flex items-center justify-between h-8">
                 <div className={(this.state.noteLocked ? 'locked' : '') + ' flex-grow'}>
                   <div className="title overflow-auto">
@@ -943,8 +944,12 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                   <div className="mr-3">
                     <AttachedFilesButton
                       application={this.application}
-                      viewControllerManager={this.viewControllerManager}
                       onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                      featuresController={this.viewControllerManager.featuresController}
+                      filePreviewModalController={this.viewControllerManager.filePreviewModalController}
+                      filesController={this.viewControllerManager.filesController}
+                      navigationController={this.viewControllerManager.navigationController}
+                      notesController={this.viewControllerManager.notesController}
                     />
                   </div>
                   <div className="mr-3">

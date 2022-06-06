@@ -1,11 +1,17 @@
 import { WebApplication } from '@/Application/Application'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { FilesController } from '@/Controllers/FilesController'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
+import { NotesController } from '@/Controllers/NotesController'
+import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import { SortableItem } from '@standardnotes/snjs'
 import { ListableContentItem } from './ListableContentItem'
 
 export type AbstractListItemProps = {
   application: WebApplication
-  viewControllerManager: ViewControllerManager
+  filesController: FilesController
+  selectionController: SelectedItemsController
+  navigationController: NavigationController
+  notesController: NotesController
   hideDate: boolean
   hideIcon: boolean
   hideTags: boolean

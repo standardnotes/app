@@ -11,7 +11,8 @@ import { DisplayableListItemProps } from './Types/DisplayableListItemProps'
 
 const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
   application,
-  viewControllerManager,
+  notesController,
+  selectionController,
   hideDate,
   hideIcon,
   hideTags,
@@ -27,16 +28,16 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
   const hasFiles = application.items.getFilesForNote(item as SNNote).length > 0
 
   const openNoteContextMenu = (posX: number, posY: number) => {
-    viewControllerManager.notesController.setContextMenuClickLocation({
+    notesController.setContextMenuClickLocation({
       x: posX,
       y: posY,
     })
-    viewControllerManager.notesController.reloadContextMenuLayout()
-    viewControllerManager.notesController.setContextMenuOpen(true)
+    notesController.reloadContextMenuLayout()
+    notesController.setContextMenuOpen(true)
   }
 
   const openContextMenu = async (posX: number, posY: number) => {
-    const { didSelect } = await viewControllerManager.selectionController.selectItem(item.uuid, true)
+    const { didSelect } = await selectionController.selectItem(item.uuid, true)
     if (didSelect) {
       openNoteContextMenu(posX, posY)
     }
@@ -49,7 +50,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
       }`}
       id={item.uuid}
       onClick={() => {
-        void viewControllerManager.selectionController.selectItem(item.uuid, true)
+        void selectionController.selectItem(item.uuid, true)
       }}
       onContextMenu={(event) => {
         event.preventDefault()

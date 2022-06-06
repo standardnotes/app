@@ -92,6 +92,8 @@ export class NavigationController extends AbstractViewController {
       setContextMenuClickLocation: action,
       setContextMenuPosition: action,
       setContextMenuMaxHeight: action,
+
+      isInFilesView: computed,
     })
 
     this.disposers.push(
@@ -255,6 +257,10 @@ export class NavigationController extends AbstractViewController {
         left: this.contextMenuClickLocation.x,
       })
     }
+  }
+
+  public get isInFilesView(): boolean {
+    return this.selectedUuid === SystemViewId.Files
   }
 
   public get allLocalRootTags(): SNTag[] {
