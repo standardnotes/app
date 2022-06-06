@@ -6,7 +6,7 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
-import { ContentType, FileItem, SNNote } from '@standardnotes/snjs'
+import { FileItem, SNNote } from '@standardnotes/snjs'
 import { addToast, ToastType } from '@standardnotes/stylekit'
 import { StreamingFileReader } from '@standardnotes/filepicker'
 import AttachedFilesPopover from './AttachedFilesPopover'
@@ -18,6 +18,7 @@ import { FilePreviewModalController } from '@/Controllers/FilePreviewModalContro
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { FilesController } from '@/Controllers/FilesController'
+import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 
 type Props = {
   application: WebApplication
@@ -26,6 +27,7 @@ type Props = {
   filesController: FilesController
   navigationController: NavigationController
   notesController: NotesController
+  selectionController: SelectedItemsController
   onClickPreprocessing?: () => Promise<void>
 }
 
@@ -36,8 +38,12 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
   filePreviewModalController,
   navigationController,
   notesController,
+  selectionController,
   onClickPreprocessing,
 }: Props) => {
+  const { allFiles, attachedFiles } = filesController
+  const attachedFilesCount = attachedFiles.length
+
   const premiumModal = usePremiumModal()
   const note: SNNote | undefined = notesController.firstSelectedNote
 
@@ -63,22 +69,14 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
   const [currentTab, setCurrentTab] = useState(
     navigationController.isInFilesView ? PopoverTabs.AllFiles : PopoverTabs.AttachedFiles,
   )
-  const [allFiles, setAllFiles] = useState<FileItem[]>([])
-  const [attachedFiles, setAttachedFiles] = useState<FileItem[]>([])
-  const attachedFilesCount = attachedFiles.length
+
+  const isAttachedTabDisabled = navigationController.isInFilesView || selectionController.selectedItemsCount > 1
 
   useEffect(() => {
-    const unregisterFileStream = application.streamItems(ContentType.File, () => {
-      setAllFiles(application.items.getDisplayableFiles())
-      if (note) {
-        setAttachedFiles(application.items.getFilesForNote(note))
-      }
-    })
-
-    return () => {
-      unregisterFileStream()
+    if (isAttachedTabDisabled && currentTab === PopoverTabs.AttachedFiles) {
+      setCurrentTab(PopoverTabs.AllFiles)
     }
-  }, [application, note])
+  }, [currentTab, isAttachedTabDisabled])
 
   const toggleAttachedFilesMenu = useCallback(async () => {
     const rect = buttonRef.current?.getBoundingClientRect()
@@ -304,7 +302,7 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
               currentTab={currentTab}
               isDraggingFiles={isDraggingFiles}
               setCurrentTab={setCurrentTab}
-              attachedTabDisabled={navigationController.isInFilesView}
+              attachedTabDisabled={isAttachedTabDisabled}
             />
           )}
         </DisclosurePanel>

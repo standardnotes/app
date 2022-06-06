@@ -1,6 +1,5 @@
 import { KeyboardKey } from '@/Services/IOService'
 import { WebApplication } from '@/Application/Application'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { SNNote } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
@@ -10,7 +9,6 @@ import { calculateSubmenuStyle, SubmenuStyle } from '@/Utils/CalculateSubmenuSty
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 
 type ChangeEditorOptionProps = {
-  viewControllerManager: ViewControllerManager
   application: WebApplication
   note: SNNote
 }

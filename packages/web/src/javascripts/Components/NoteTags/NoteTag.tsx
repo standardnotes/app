@@ -24,7 +24,7 @@ const NoteTag = ({ viewControllerManager, tag }: Props) => {
 
   const [showDeleteButton, setShowDeleteButton] = useState(false)
   const [tagClicked, setTagClicked] = useState(false)
-  const deleteTagRef = useRef<HTMLButtonElement>(null)
+  const deleteTagRef = useRef<HTMLAnchorElement>(null)
 
   const tagRef = useRef<HTMLButtonElement>(null)
 
@@ -130,7 +130,7 @@ const NoteTag = ({ viewControllerManager, tag }: Props) => {
         {title}
       </span>
       {showDeleteButton && (
-        <button
+        <a
           ref={deleteTagRef}
           type="button"
           className="ml-2 -mr-1 border-0 p-0 bg-transparent cursor-pointer flex"
@@ -139,7 +139,7 @@ const NoteTag = ({ viewControllerManager, tag }: Props) => {
           tabIndex={-1}
         >
           <Icon type="close" className="sn-icon--small color-neutral hover:color-info" />
-        </button>
+        </a>
       )}
     </button>
   )

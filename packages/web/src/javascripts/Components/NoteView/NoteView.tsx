@@ -950,6 +950,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                       filesController={this.viewControllerManager.filesController}
                       navigationController={this.viewControllerManager.navigationController}
                       notesController={this.viewControllerManager.notesController}
+                      selectionController={this.viewControllerManager.selectionController}
                     />
                   </div>
                   <div className="mr-3">
@@ -961,13 +962,15 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                   </div>
                   <div className="mr-3">
                     <PinNoteButton
-                      viewControllerManager={this.viewControllerManager}
+                      notesController={this.viewControllerManager.notesController}
                       onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                     />
                   </div>
                   <NotesOptionsPanel
                     application={this.application}
-                    viewControllerManager={this.viewControllerManager}
+                    navigationController={this.viewControllerManager.navigationController}
+                    notesController={this.viewControllerManager.notesController}
+                    noteTagsController={this.viewControllerManager.noteTagsController}
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                   />
                 </div>

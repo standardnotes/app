@@ -191,7 +191,12 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
         {renderChallenges()}
 
         <>
-          <NotesContextMenu application={application} viewControllerManager={viewControllerManager} />
+          <NotesContextMenu
+            application={application}
+            navigationController={viewControllerManager.navigationController}
+            notesController={viewControllerManager.notesController}
+            noteTagsController={viewControllerManager.noteTagsController}
+          />
           <TagsContextMenuWrapper viewControllerManager={viewControllerManager} />
           <FileContextMenuWrapper
             filesController={viewControllerManager.filesController}
