@@ -1,0 +1,4 @@
+owner: standardnotes
+repo: app
+provider: github
+updaterCacheDirName: standard-notes-updater

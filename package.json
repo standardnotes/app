@@ -15,8 +15,9 @@
     "test": "lerna run test --parallel",
     "clean": "lerna run clean",
     "build": "lerna run build",
-    "start:web": "lerna run start --scope=@standardnotes/web-server",
-    "start:web:localhost": "lerna run start:no-binding --scope=@standardnotes/web-server",
+    "build:web": "lerna run build --scope=@standardnotes/web",
+    "start:server:web": "lerna run start --scope=@standardnotes/web-server",
+    "start:server:web:localhost": "lerna run start:no-binding --scope=@standardnotes/web-server",
     "prepare": "husky install"
   },
   "devDependencies": {

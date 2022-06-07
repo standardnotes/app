@@ -14,7 +14,7 @@ module.exports = {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
   },
   globals: {
-    __VERSION__: '1.0.0',
+    __WEB_VERSION__: '1.0.0',
     __DESKTOP__: false,
     __WEB__: true,
     self: {}, // fixes error happening on `import { SKAlert } from 'sn-stylekit'`

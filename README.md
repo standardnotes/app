@@ -8,7 +8,7 @@ Standard Notes is a simple and private notes app available on most platforms, in
 <div align="center">
 
 [![latest release version](https://img.shields.io/github/v/release/standardnotes/desktop)](https://github.com/standardnotes/desktop/releases)
-[![License](https://img.shields.io/github/license/standardnotes/web?color=blue)](https://github.com/standardnotes/web/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/standardnotes/app?color=blue)](https://github.com/standardnotes/app/blob/main/LICENSE)
 [![Slack](https://img.shields.io/badge/slack-standardnotes-CC2B5E.svg?style=flat&logo=slack)](https://standardnotes.com/slack)
 [![Twitter Follow](https://img.shields.io/badge/follow-%40standardnotes-blue.svg?style=flat&logo=twitter)](https://twitter.com/standardnotes)
 
@@ -57,8 +57,6 @@ Plug in to the community of note-lovers and privacy-enthusiasts. Join us on [Sla
 Developers can create and publish their own extensions. Visit the [documentation hub](https://docs.standardnotes.com/) to learn more.
 
 Questions? Find answers on our [Help page](https://standardnotes.com/help).
-
-🙏
 
 ---
 

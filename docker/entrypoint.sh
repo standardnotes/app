@@ -8,7 +8,7 @@ case "$COMMAND" in
     echo "Prestart Step 1/1 - Removing server lock"
     rm -f /app/packages/web-server/tmp/pids/server.pid
     echo "Starting Server..."
-    yarn start:web
+    yarn start:server:web
     ;;
 
   'start-local' )
@@ -21,7 +21,7 @@ case "$COMMAND" in
     echo "Prestart Step 4/4 - Building"
     yarn build
     echo "Starting Server..."
-    yarn start:web
+    yarn start:server:web
     ;;
 
    * )
