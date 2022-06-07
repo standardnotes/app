@@ -10,21 +10,21 @@
   },
   "scripts": {
     "bootstrap": "lerna bootstrap",
-    "start": "lerna run start --parallel",
-    "test:unit": "lerna run test:unit --parallel",
+    "prebuild": "cp -r node_modules/@standardnotes/components/dist/ packages/web-server/public/components/",
+    "lint": "lerna run lint --parallel",
+    "test": "lerna run test --parallel",
+    "clean": "lerna run clean",
     "build": "lerna run build",
-    "lint": "lerna run lint",
-    "version-bump": "lerna version --conventional-commits --yes -m \"chore(release): publish\"",
-    "version-bump-beta": "lerna version --conventional-commits --conventional-prerelease --yes -m \"chore(release): publish beta\"",
-    "publish-packages": "lerna publish from-git --yes",
-    "publish-packages-beta": "lerna publish from-git --yes --dist-tag beta",
+    "start:web": "lerna run start --scope=@standardnotes/web-server",
+    "start:web:localhost": "lerna run start:no-binding --scope=@standardnotes/web-server",
     "prepare": "husky install"
   },
   "devDependencies": {
     "@types/node": "^17.0.21",
-    "eslint": "^8.10.0",
+    "eslint": "^8.13.0",
     "husky": "^7.0.4",
-    "lerna": "^3.22.1"
+    "lerna": "^3.22.1",
+    "@standardnotes/config": "^2.4.3"
   },
   "dependencies": {}
 }

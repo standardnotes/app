@@ -20,7 +20,7 @@
     "paths": {
       "@/*": ["./src/javascripts/*"],
       "@Controllers/*": ["src/javascripts/Controllers/*"],
-      "@Services/*": ["src/javascripts/Services/*"],
+      "@Services/*": ["src/javascripts/Services/*"]
     }
   }
 }

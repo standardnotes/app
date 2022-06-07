@@ -1,0 +1,9 @@
+# git
+.git/
+.gitignore
+.eslintcache
+node_modules
+dist
+packages/web-server/public/assets
+packages/web-server/tmp
+packages/web-server/vendor/bundles

@@ -13,8 +13,8 @@ jobs:
         uses: actions/checkout@v2
       - name: Install dependencies
         run: yarn install --pure-lockfile
-      - name: Bundle
-        run: yarn bundle
+      - name: Build
+        run: yarn build
       - name: ESLint
         run: yarn lint
       - name: Test

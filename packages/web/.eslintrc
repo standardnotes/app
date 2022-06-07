@@ -10,7 +10,7 @@
   ],
   "plugins": ["@typescript-eslint", "react", "react-hooks"],
   "parserOptions": {
-    "project": "./packages/web/tsconfig.json"
+    "project": "./tsconfig.json"
   },
   "ignorePatterns": [".eslintrc.js", "webpack.*.js", "webpack-defaults.js", "jest.config.js", "__mocks__"],
   "rules": {
