@@ -3,6 +3,7 @@
   "main": "./app/dist/index.js",
   "version": "3.20.2",
   "license": "AGPL-3.0-or-later",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "git://github.com/standardnotes/app"
@@ -36,7 +37,7 @@
     "fs-extra": "^10.1.0",
     "mime-types": "^2.1.35",
     "mobx": "^6.5.0",
-    "@standardnotes/web": "^3.20.4",
+    "@standardnotes/web": "*",
     "@electron/remote": "^2.0.8",
     "electron": "17.4.2",
     "lodash": "^4.17.21",

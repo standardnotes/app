@@ -4,6 +4,7 @@
   "license": "AGPL-3.0-or-later",
   "main": "dist/app.js",
   "author": "Standard Notes",
+  "private": true,
   "files": [
     "dist"
   ],
