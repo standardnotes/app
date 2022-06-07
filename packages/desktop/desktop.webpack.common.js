@@ -1,19 +1,15 @@
-const env = process.env.NODE_ENV ?? 'production';
+const env = process.env.NODE_ENV ?? 'production'
 require('dotenv').config({
   path: `.env.${env}`,
-});
+})
 
-const path = require('path');
-const CopyPlugin = require('copy-webpack-plugin');
-const webpack = require('webpack');
-const { DefinePlugin } = require('webpack');
-const TerserPlugin = require('terser-webpack-plugin');
+const path = require('path')
+const CopyPlugin = require('copy-webpack-plugin')
+const webpack = require('webpack')
+const { DefinePlugin } = require('webpack')
+const TerserPlugin = require('terser-webpack-plugin')
 
-module.exports = function ({
-  onlyTranspileTypescript = false,
-  experimentalFeatures = false,
-  snap = false,
-} = {}) {
+module.exports = function ({ onlyTranspileTypescript = false, experimentalFeatures = false, snap = false } = {}) {
   const moduleConfig = {
     rules: [
       {
@@ -42,17 +38,17 @@ module.exports = function ({
         },
       },
     ],
-  };
+  }
 
   const resolve = {
     extensions: ['.ts', '.js'],
     alias: {
       '@web': path.resolve(__dirname, '../web/src/javascripts'),
     },
-  };
+  }
 
-  const EXPERIMENTAL_FEATURES = JSON.stringify(experimentalFeatures);
-  const IS_SNAP = JSON.stringify(snap ? true : false);
+  const EXPERIMENTAL_FEATURES = JSON.stringify(experimentalFeatures)
+  const IS_SNAP = JSON.stringify(snap ? true : false)
 
   const electronMainConfig = {
     entry: {
@@ -75,7 +71,7 @@ module.exports = function ({
     optimization: {
       minimizer: [
         new TerserPlugin({
-          exclude: ['vendor', 'web', 'node_modules'],
+          exclude: ['web', 'node_modules'],
         }),
       ],
     },
@@ -86,10 +82,6 @@ module.exports = function ({
       }),
       new CopyPlugin({
         patterns: [
-          {
-            from: 'app/vendor',
-            to: 'vendor',
-          },
           {
             from: '../web/dist',
             to: 'web',
@@ -113,7 +105,7 @@ module.exports = function ({
         ],
       }),
     ],
-  };
+  }
 
   const electronRendererConfig = {
     entry: {
@@ -137,9 +129,7 @@ module.exports = function ({
     },
     plugins: [
       new webpack.DefinePlugin({
-        DEFAULT_SYNC_SERVER: JSON.stringify(
-          process.env.DEFAULT_SYNC_SERVER || 'https://api.standardnotes.com'
-        ),
+        DEFAULT_SYNC_SERVER: JSON.stringify(process.env.DEFAULT_SYNC_SERVER || 'https://api.standardnotes.com'),
         PURCHASE_URL: JSON.stringify(process.env.PURCHASE_URL),
         PLANS_URL: JSON.stringify(process.env.PLANS_URL),
         DASHBOARD_URL: JSON.stringify(process.env.DASHBOARD_URL),
@@ -148,6 +138,6 @@ module.exports = function ({
         ENABLE_UNFINISHED_FEATURES: JSON.stringify(process.env.ENABLE_UNFINISHED_FEATURES),
       }),
     ],
-  };
-  return [electronMainConfig, electronRendererConfig];
-};
+  }
+  return [electronMainConfig, electronRendererConfig]
+}

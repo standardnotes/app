@@ -1,5 +1,5 @@
 module.exports = function (api) {
-  api.cache(true);
+  api.cache(true)
 
   const presets = [
     [
@@ -10,10 +10,9 @@ module.exports = function (api) {
         },
       },
     ],
-  ];
+  ]
 
   const ignore = [
-    './app/vendor',
     './app/compiled',
     './app/assets',
     './app/stylesheets',
@@ -22,10 +21,10 @@ module.exports = function (api) {
     './node_modules',
     './package.json',
     './npm-debug.log',
-  ];
+  ]
 
   return {
     ignore,
     presets,
-  };
-};
+  }
+}
