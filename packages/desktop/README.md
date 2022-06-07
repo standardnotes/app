@@ -72,7 +72,7 @@ Building can then be done by running:
 
 Followed by
 
-- `node scripts/build.mjs deb-arm64`
+- `node scripts/desktop/build.mjs deb-arm64`
 
 ## Installation
 
