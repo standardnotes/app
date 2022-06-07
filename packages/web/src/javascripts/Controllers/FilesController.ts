@@ -15,7 +15,7 @@ import {
   parseFileName,
 } from '@standardnotes/filepicker'
 import { ChallengeReason, ClientDisplayableError, ContentType, FileItem, InternalEventBus } from '@standardnotes/snjs'
-import { addToast, dismissToast, ToastType, updateToast } from '@standardnotes/stylekit'
+import { addToast, dismissToast, ToastType, updateToast } from '@standardnotes/toast'
 import { action, makeObservable, observable, reaction } from 'mobx'
 import { WebApplication } from '../Application/Application'
 import { AbstractViewController } from './Abstract/AbstractViewController'
