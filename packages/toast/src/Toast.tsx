@@ -2,7 +2,7 @@ import type { Toast as ToastPropType } from './types'
 import { CheckCircleFilledIcon, ClearCircleFilledIcon } from '@standardnotes/icons'
 import { dismissToast } from './toastStore'
 import { ToastType } from './enums'
-import { forwardRef, RefObject, useEffect } from 'react'
+import { ForwardedRef, forwardRef, RefObject, useEffect } from 'react'
 
 const prefersReducedMotion = () => {
   const mediaQuery = matchMedia('(prefers-reduced-motion: reduce)')
@@ -39,10 +39,10 @@ type Props = {
   index: number
 }
 
-export const Toast = forwardRef(({ toast, index }: Props, ref: RefObject<HTMLDivElement>) => {
+export const Toast = forwardRef(({ toast, index }: Props, ref: ForwardedRef<HTMLDivElement>) => {
   const icon = iconForToastType(toast.type)
-  const hasActions = toast.actions?.length > 0
-  const hasProgress = toast.type === ToastType.Progress && toast.progress > -1
+  const hasActions = toast.actions && toast.actions.length > 0
+  const hasProgress = toast.type === ToastType.Progress && toast.progress !== undefined && toast.progress > -1
 
   const shouldReduceMotion = prefersReducedMotion()
   const enterAnimation = shouldReduceMotion ? 'fade-in-animation' : 'slide-in-right-animation'
@@ -50,8 +50,14 @@ export const Toast = forwardRef(({ toast, index }: Props, ref: RefObject<HTMLDiv
   const currentAnimation = toast.dismissed ? exitAnimation : enterAnimation
 
   useEffect(() => {
-    if (ref.current && toast.dismissed) {
-      const { scrollHeight, style } = ref.current
+    if (!ref) {
+      return
+    }
+
+    const element = (ref as RefObject<HTMLDivElement>).current
+
+    if (element && toast.dismissed) {
+      const { scrollHeight, style } = element
 
       requestAnimationFrame(() => {
         style.minHeight = 'initial'
@@ -75,7 +81,7 @@ export const Toast = forwardRef(({ toast, index }: Props, ref: RefObject<HTMLDiv
       style={{
         boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.16)',
         transition: shouldReduceMotion ? undefined : 'all 0.2s ease',
-        animationDelay: !toast.dismissed ? '50ms' : null,
+        animationDelay: !toast.dismissed ? '50ms' : undefined,
       }}
       onClick={() => {
         if (!hasActions && toast.type !== ToastType.Loading && toast.type !== ToastType.Progress) {
@@ -89,7 +95,7 @@ export const Toast = forwardRef(({ toast, index }: Props, ref: RefObject<HTMLDiv
         <div className="text-sm">{toast.message}</div>
         {hasActions && (
           <div className="ml-4">
-            {toast.actions.map((action, index) => (
+            {toast.actions?.map((action, index) => (
               <button
                 style={{
                   paddingLeft: '0.45rem',
@@ -101,6 +107,7 @@ export const Toast = forwardRef(({ toast, index }: Props, ref: RefObject<HTMLDiv
                 onClick={() => {
                   action.handler(toast.id)
                 }}
+                key={index}
               >
                 {action.label}
               </button>
