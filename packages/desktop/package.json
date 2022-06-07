@@ -3,10 +3,14 @@
   "main": "./app/dist/index.js",
   "version": "3.20.2",
   "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/standardnotes/app"
+  },
   "scripts": {
     "build:remove-unpacked": "rimraf dist/{linux-*,mac,win-*}",
     "build": "yarn run webpack --config desktop.webpack.prod.js",
-    "change-version": "node scripts/change-version.mjs",
+    "change-version": "node ../../scripts/desktop/change-version.mjs",
     "clean:build": "rimraf app/dist/",
     "clean:tests": "rimraf test/data/tmp/",
     "clean": "npm-run-all --parallel clean:*",
@@ -17,8 +21,8 @@
     "lint:types": "tsc --noEmit",
     "lint": "npm-run-all --parallel lint:*",
     "postinstall": "electron-builder install-app-deps",
-    "release": "node scripts/build.mjs mainstream",
-    "release:mac": "node scripts/build.mjs mac",
+    "release": "node ../../scripts/desktop/build.mjs mainstream",
+    "release:mac": "node ../../scripts/desktop/build.mjs mac",
     "setup": "yarn --ignore-engines && yarn --ignore-engines --cwd ./app",
     "start": "electron ./app --enable-logging --icon _icon/icon.png",
     "ava": "rimraf test/data/tmp && ava --serial"
@@ -82,7 +86,7 @@
     "electronVersion": "17.4.2",
     "appId": "org.standardnotes.standardnotes",
     "artifactName": "${name}-${version}-${os}-${arch}.${ext}",
-    "afterSign": "./scripts/afterSignHook.js",
+    "afterSign": "../../scripts/desktop/afterSignHook.js",
     "files": [
       "compiled/**/*",
       "dist/**/*",

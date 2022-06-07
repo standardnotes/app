@@ -33,7 +33,7 @@
   },
   "globals": {
     "SFJS": true,
-    "__VERSION__": true,
+    "__WEB_VERSION__": true,
     "zip": true
   }
 }

@@ -12,7 +12,7 @@ module.exports = async function (params) {
   }
   console.log('afterSign hook triggered');
 
-  const { appId } = JSON.parse(await fs.promises.readFile('./package.json')).build;
+  const { appId } = JSON.parse(await fs.promises.readFile('../../packages/desktop/package.json')).build;
 
   const appPath = path.join(params.appOutDir, `${params.packager.appInfo.productFilename}.app`);
   await fs.promises.access(appPath);

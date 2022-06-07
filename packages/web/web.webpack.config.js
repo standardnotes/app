@@ -27,7 +27,7 @@ module.exports = (env) => {
         cwd: process.cwd(),
       }),
       new webpack.DefinePlugin({
-        __VERSION__: JSON.stringify(require('./package.json').version),
+        __WEB_VERSION__: JSON.stringify(require('./package.json').version),
       }),
       new MiniCssExtractPlugin({
         // Options similar to the same options in webpackOptions.output
