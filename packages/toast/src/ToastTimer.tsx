@@ -19,7 +19,7 @@ export const ToastTimer: FunctionComponent<Props> = ({ toast, index }) => {
   const toastElementRef = useRef<HTMLDivElement>(null)
   const toastTimerIdRef = useRef<number>()
 
-  const shouldAutoClose = toast.autoClose ?? getDefaultForAutoClose(toast?.actions?.length < 1, toast.type)
+  const shouldAutoClose = toast.autoClose ?? getDefaultForAutoClose(toast?.actions!.length < 1, toast.type)
   const duration = toast.duration ?? getDefaultToastDuration(toast.type)
 
   const startTimeRef = useRef(duration)
@@ -78,16 +78,16 @@ export const ToastTimer: FunctionComponent<Props> = ({ toast, index }) => {
     }
 
     const toastElement = toastElementRef.current
-    toastElement.addEventListener('mouseenter', handleMouseEnter)
-    toastElement.addEventListener('mouseleave', handleMouseLeave)
+    toastElement?.addEventListener('mouseenter', handleMouseEnter)
+    toastElement?.addEventListener('mouseleave', handleMouseLeave)
     document.addEventListener('visibilitychange', handlePageVisibility)
     window.addEventListener('focus', handlePageFocus)
     window.addEventListener('blur', handlePageBlur)
 
     return () => {
       clearTimer()
-      toastElement.removeEventListener('mouseenter', handleMouseEnter)
-      toastElement.removeEventListener('mouseleave', handleMouseLeave)
+      toastElement?.removeEventListener('mouseenter', handleMouseEnter)
+      toastElement?.removeEventListener('mouseleave', handleMouseLeave)
       document.removeEventListener('visibilitychange', handlePageVisibility)
       window.removeEventListener('focus', handlePageFocus)
       window.removeEventListener('blur', handlePageBlur)

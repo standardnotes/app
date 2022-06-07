@@ -39,10 +39,11 @@ type Props = {
   index: number
 }
 
+// @ts-ignore
 export const Toast = forwardRef(({ toast, index }: Props, ref: RefObject<HTMLDivElement>) => {
   const icon = iconForToastType(toast.type)
-  const hasActions = toast.actions?.length > 0
-  const hasProgress = toast.type === ToastType.Progress && toast.progress > -1
+  const hasActions = toast.actions!.length > 0
+  const hasProgress = toast.type === ToastType.Progress && toast.progress! > -1
 
   const shouldReduceMotion = prefersReducedMotion()
   const enterAnimation = shouldReduceMotion ? 'fade-in-animation' : 'slide-in-right-animation'
@@ -75,7 +76,7 @@ export const Toast = forwardRef(({ toast, index }: Props, ref: RefObject<HTMLDiv
       style={{
         boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.16)',
         transition: shouldReduceMotion ? undefined : 'all 0.2s ease',
-        animationDelay: !toast.dismissed ? '50ms' : null,
+        animationDelay: !toast.dismissed ? '50ms' : undefined,
       }}
       onClick={() => {
         if (!hasActions && toast.type !== ToastType.Loading && toast.type !== ToastType.Progress) {
@@ -89,7 +90,7 @@ export const Toast = forwardRef(({ toast, index }: Props, ref: RefObject<HTMLDiv
         <div className="text-sm">{toast.message}</div>
         {hasActions && (
           <div className="ml-4">
-            {toast.actions.map((action, index) => (
+            {toast.actions!.map((action, index) => (
               <button
                 style={{
                   paddingLeft: '0.45rem',
