@@ -21,6 +21,7 @@ import PanelResizer, { PanelSide, ResizeFinishCallback, PanelResizeType } from '
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import ContentListOptionsMenu from './ContentListOptionsMenu'
+import Icon from '@/Components/Icon/Icon'
 
 type Props = {
   application: WebApplication
@@ -174,14 +175,12 @@ const ContentListView: FunctionComponent<Props> = ({ application, viewController
             <div className="section-title-bar-header">
               <div className="sk-h2 font-semibold title">{panelTitle}</div>
               <button
-                className="sk-button contrast wide"
+                className="flex items-center px-5 py-1 bg-contrast hover:brightness-130 color-text border-0 cursor-pointer"
                 title={addButtonLabel}
                 aria-label={addButtonLabel}
                 onClick={addNewItem}
               >
-                <div className="sk-label">
-                  <i className="ion-plus add-button" aria-hidden></i>
-                </div>
+                <Icon type="add" className="w-3.5 h-3.5" />
               </button>
             </div>
             <div className="filter-section" role="search">
