@@ -12,7 +12,7 @@
     "prestart": "yarn clean",
     "start": "tsc -p tsconfig.json --watch",
     "prebuild": "yarn clean",
-    "lint": "eslint . --ext .ts"
+    "lint": "eslint ./src"
   },
   "dependencies": {
     "@nanostores/react": "^0.2.0",

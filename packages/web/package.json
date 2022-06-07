@@ -58,7 +58,6 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
-    "@standardnotes/toast": "1.0.0",
     "@reach/alert": "^0.16.0",
     "@reach/alert-dialog": "^0.16.2",
     "@reach/checkbox": "^0.16.0",
@@ -74,6 +73,7 @@
     "@standardnotes/sncrypto-web": "1.10.1",
     "@standardnotes/snjs": "^2.115.6",
     "@standardnotes/stylekit": "5.29.3",
+    "@standardnotes/toast": "1.0.0",
     "@zip.js/zip.js": "^2.4.10",
     "mobx": "^6.5.0",
     "mobx-react-lite": "^3.3.0",
