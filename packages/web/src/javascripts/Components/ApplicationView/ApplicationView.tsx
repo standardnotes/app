@@ -18,7 +18,7 @@ import RevisionHistoryModalWrapper from '@/Components/RevisionHistoryModal/Revis
 import PremiumModalProvider from '@/Hooks/usePremiumModal'
 import ConfirmSignoutContainer from '@/Components/ConfirmSignoutModal/ConfirmSignoutModal'
 import TagsContextMenuWrapper from '@/Components/Tags/TagContextMenu'
-import { ToastContainer } from '@standardnotes/stylekit'
+import { ToastContainer } from '@standardnotes/toast'
 import FilePreviewModalWrapper from '@/Components/FilePreview/FilePreviewModal'
 import ContentListView from '@/Components/ContentListView/ContentListView'
 import FileContextMenuWrapper from '@/Components/FileContextMenu/FileContextMenu'

@@ -7,7 +7,7 @@ import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'rea
 import Icon from '@/Components/Icon/Icon'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { FileItem, SNNote } from '@standardnotes/snjs'
-import { addToast, ToastType } from '@standardnotes/stylekit'
+import { addToast, ToastType } from '@standardnotes/toast'
 import { StreamingFileReader } from '@standardnotes/filepicker'
 import AttachedFilesPopover from './AttachedFilesPopover'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'

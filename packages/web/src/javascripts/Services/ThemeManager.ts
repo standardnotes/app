@@ -14,7 +14,7 @@ import {
   PayloadEmitSource,
   LocalStorageDecryptedContextualPayload,
 } from '@standardnotes/snjs'
-import { dismissToast, ToastType, addTimedToast } from '@standardnotes/stylekit'
+import { dismissToast, ToastType, addTimedToast } from '@standardnotes/toast'
 
 const CachedThemesKey = 'cachedThemes'
 const TimeBeforeApplyingColorScheme = 5

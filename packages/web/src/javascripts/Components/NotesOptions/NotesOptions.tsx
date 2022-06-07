@@ -8,7 +8,7 @@ import ChangeEditorOption from './ChangeEditorOption'
 import { BYTES_IN_ONE_MEGABYTE } from '@/Constants/Constants'
 import ListedActionsOption from './ListedActionsOption'
 import AddTagOption from './AddTagOption'
-import { addToast, dismissToast, ToastType } from '@standardnotes/stylekit'
+import { addToast, dismissToast, ToastType } from '@standardnotes/toast'
 import { NotesOptionsProps } from './NotesOptionsProps'
 import { NotesController } from '@/Controllers/NotesController'
 

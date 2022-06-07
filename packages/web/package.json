@@ -73,6 +73,7 @@
     "@standardnotes/sncrypto-web": "1.10.1",
     "@standardnotes/snjs": "^2.115.6",
     "@standardnotes/stylekit": "5.29.3",
+    "@standardnotes/toast": "1.0.0",
     "@zip.js/zip.js": "^2.4.10",
     "mobx": "^6.5.0",
     "mobx-react-lite": "^3.3.0",
