@@ -48,7 +48,7 @@ const loadAndStartApplication = async () => {
 window.onload = () => {
   loadWindowVarsRequiredByWebApp()
 
-  loadAndStartApplication()
+  void loadAndStartApplication()
 }
 
 /** @returns whether the keychain structure is up to date or not */
@@ -156,7 +156,7 @@ function listenForMessagesSentFromMainToPreloadToUs(device: DesktopDevice) {
     } else if (message === MessageToWebApp.UpdateAvailable) {
       receiver.updateAvailable()
     } else if (message === MessageToWebApp.PerformAutomatedBackup) {
-      device.downloadBackup()
+      void device.downloadBackup()
     } else if (message === MessageToWebApp.FinishedSavingBackup) {
       receiver.didFinishBackup(data.success)
     }

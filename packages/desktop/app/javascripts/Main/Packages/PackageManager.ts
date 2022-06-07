@@ -113,7 +113,10 @@ export async function initializePackageManager(webContents: Electron.WebContents
       )
       syncTasks.push({ components })
 
-      if (isRunningTasks) return
+      if (isRunningTasks) {
+        return
+      }
+
       isRunningTasks = true
       await runTasks(webContents, mapping, syncTasks)
       isRunningTasks = false

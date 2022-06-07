@@ -6,12 +6,9 @@
     "plugin:@typescript-eslint/recommended",
     "prettier",
     "plugin:react-hooks/recommended",
-    "./../../node_modules/@standardnotes/config/src/.eslintrc"
+    "../../node_modules/@standardnotes/config/src/.eslintrc"
   ],
   "plugins": ["@typescript-eslint", "react", "react-hooks"],
-  "parserOptions": {
-    "project": "./tsconfig.json"
-  },
   "ignorePatterns": [".eslintrc.js", "webpack.*.js", "webpack-defaults.js", "jest.config.js", "__mocks__"],
   "rules": {
     "standard/no-callback-literal": 0, // Disable this as we have too many callbacks relying on literals
@@ -32,8 +29,6 @@
     "browser": true
   },
   "globals": {
-    "SFJS": true,
-    "__WEB_VERSION__": true,
-    "zip": true
+    "__WEB_VERSION__": true
   }
 }

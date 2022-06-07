@@ -101,7 +101,7 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
   }
 
   async deleteLocalBackups() {
-    this.remoteBridge.deleteLocalBackups()
+    return this.remoteBridge.deleteLocalBackups()
   }
 
   public isFilesBackupsEnabled(): Promise<boolean> {

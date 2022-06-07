@@ -150,12 +150,17 @@ export function createMenuManager({
 
   function reload() {
     if (isTesting()) {
+      // eslint-disable-next-line block-scoped-var
       hasReloaded = true
+      // eslint-disable-next-line block-scoped-var
       clearTimeout(hasReloadedTimeout)
+      // eslint-disable-next-line block-scoped-var
       hasReloadedTimeout = setTimeout(() => {
+        // eslint-disable-next-line block-scoped-var
         hasReloaded = false
       }, 300)
     }
+
     menu = Menu.buildFromTemplate([
       ...(isMac() ? [macAppMenu(app.name)] : []),
       editMenu(spellcheckerManager, reload),
@@ -169,7 +174,7 @@ export function createMenuManager({
     Menu.setApplicationMenu(menu)
   }
   autorun(() => {
-    reload() // initialization
+    reload()
   })
 
   return {
@@ -177,7 +182,9 @@ export function createMenuManager({
     popupMenu() {
       if (isDev()) {
         /** Check the state */
-        if (!menu) throw new Error('called popupMenu() before loading')
+        if (!menu) {
+          throw new Error('called popupMenu() before loading')
+        }
       }
       // eslint-disable-next-line no-unused-expressions
       menu?.popup()
@@ -393,7 +400,7 @@ function menuBarOptions(window: Electron.BrowserWindow, store: Store, reload: ()
       click: () => {
         store.set(StoreKeys.UseSystemMenuBar, !useSystemMenuBar)
         reload()
-        dialog.showMessageBox({
+        void dialog.showMessageBox({
           title: str().preferencesChanged.title,
           message: str().preferencesChanged.message,
         })
@@ -481,7 +488,7 @@ function backupsMenu(archiveManager: BackupsManagerInterface, reload: () => any)
       {
         label: str().openBackupsLocation,
         click() {
-          shell.openPath(archiveManager.backupsLocation)
+          void shell.openPath(archiveManager.backupsLocation)
         },
       },
     ],
@@ -506,7 +513,7 @@ function updateMenu(window: BrowserWindow, appState: AppState) {
       submenu.push({
         label: str().installPendingUpdate(updateState.latestVersion),
         click() {
-          showUpdateInstallationDialog(window, appState)
+          void showUpdateInstallationDialog(window, appState)
         },
       })
     }
@@ -552,7 +559,7 @@ function updateMenu(window: BrowserWindow, appState: AppState) {
       submenu.push({
         label: str().checkForUpdate,
         click() {
-          checkForUpdate(appState, updateState, true)
+          void checkForUpdate(appState, updateState, true)
         },
       })
     }
@@ -574,31 +581,31 @@ function helpMenu(window: Electron.BrowserWindow, shell: Electron.Shell) {
       {
         label: str().emailSupport,
         click() {
-          shell.openExternal(Urls.Support)
+          void shell.openExternal(Urls.Support)
         },
       },
       {
         label: str().website,
         click() {
-          shell.openExternal(Urls.Website)
+          void shell.openExternal(Urls.Website)
         },
       },
       {
         label: str().gitHub,
         click() {
-          shell.openExternal(Urls.GitHub)
+          void shell.openExternal(Urls.GitHub)
         },
       },
       {
         label: str().slack,
         click() {
-          shell.openExternal(Urls.Slack)
+          void shell.openExternal(Urls.Slack)
         },
       },
       {
         label: str().twitter,
         click() {
-          shell.openExternal(Urls.Twitter)
+          void shell.openExternal(Urls.Twitter)
         },
       },
       Separator,
@@ -612,7 +619,7 @@ function helpMenu(window: Electron.BrowserWindow, shell: Electron.Shell) {
         label: str().openDataDirectory,
         click() {
           const userDataPath = app.getPath('userData')
-          shell.openPath(userDataPath)
+          void shell.openPath(userDataPath)
         },
       },
       {
@@ -626,7 +633,7 @@ function helpMenu(window: Electron.BrowserWindow, shell: Electron.Shell) {
       {
         label: str().version(app.getVersion()),
         click() {
-          shell.openExternal(Urls.GitHubReleases)
+          void shell.openExternal(Urls.GitHubReleases)
         },
       },
     ],

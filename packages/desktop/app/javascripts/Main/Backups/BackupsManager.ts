@@ -64,7 +64,7 @@ export function createBackupsManager(webContents: WebContents, appState: AppStat
   let needsBackup = false
 
   if (!backupsDisabled) {
-    copyDecryptScript(backupsLocation)
+    void copyDecryptScript(backupsLocation)
   }
 
   determineLastBackupDate(backupsLocation)
@@ -195,7 +195,7 @@ export function createBackupsManager(webContents: WebContents, appState: AppStat
       }
     },
     viewBackups() {
-      shell.openPath(backupsLocation)
+      void shell.openPath(backupsLocation)
     },
     async deleteBackups() {
       await deleteDirContents(backupsLocation)
@@ -214,7 +214,7 @@ export function createBackupsManager(webContents: WebContents, appState: AppStat
         performBackup()
       } catch (e) {
         logError(e)
-        dialog.showMessageBox({
+        void dialog.showMessageBox({
           message: str().errorChangingDirectory(e),
         })
       }

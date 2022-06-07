@@ -1,0 +1,4 @@
+{
+  "exclude": ["node_modules"],
+  "extends": "./node_modules/@standardnotes/config/src/linter.tsconfig.json"
+}

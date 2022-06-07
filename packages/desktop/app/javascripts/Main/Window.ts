@@ -80,7 +80,7 @@ export async function createWindowState({
   window.on('closed', teardown)
 
   window.on('show', () => {
-    checkForUpdate(appState, appState.updates, false)
+    void checkForUpdate(appState, appState.updates, false)
     hideWindowsTaskbarPreviewThumbnail(window)
   })
 
@@ -120,7 +120,7 @@ export async function createWindowState({
   /** handle link clicks */
   window.webContents.on('new-window', (event, url) => {
     if (shouldOpenUrl(url)) {
-      shell.openExternal(url)
+      void shell.openExternal(url)
     }
     event.preventDefault()
   })
@@ -135,7 +135,7 @@ export async function createWindowState({
       return
     }
     if (shouldOpenUrl(url)) {
-      shell.openExternal(url)
+      void shell.openExternal(url)
     }
     event.preventDefault()
   })
@@ -313,7 +313,11 @@ function persistWindowPosition(window: BrowserWindow) {
       isMaximized: window.isMaximized(),
       isFullScreen: window.isFullScreen(),
     }
-    if (writingToDisk) return
+
+    if (writingToDisk) {
+      return
+    }
+
     writingToDisk = true
     try {
       await fs.promises.writeFile(Paths.windowPositionJson, JSON.stringify(position), 'utf-8')

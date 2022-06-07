@@ -99,7 +99,7 @@ export class FilesBackupManager implements FileBackupsDevice {
   async openFilesBackupsLocation(): Promise<void> {
     const location = await this.getFilesBackupsLocation()
 
-    shell.openPath(location)
+    void shell.openPath(location)
   }
 
   async saveFilesBackupsMappingFile(file: FileBackupsMapping): Promise<'success' | 'failed'> {

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const { ipcRenderer } = require('electron')
 import { MessageToMainProcess } from '../Shared/IpcMessages'
 

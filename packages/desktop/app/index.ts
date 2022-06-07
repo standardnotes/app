@@ -67,7 +67,9 @@ initializeApplication({
  */
 function migrateSnapStorage() {
   const snapUserCommonDir = process.env['SNAP_USER_COMMON']
-  if (!snapUserCommonDir) return
+  if (!snapUserCommonDir) {
+    return
+  }
 
   const legacyUserDataPath = app.getPath('userData')
   app.setPath('userData', snapUserCommonDir)

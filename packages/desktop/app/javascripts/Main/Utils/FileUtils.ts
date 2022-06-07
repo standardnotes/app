@@ -14,7 +14,9 @@ const DeviceIsBusy = 'EBUSY'
 export function debouncedJSONDiskWriter(durationMs: number, location: string, data: () => unknown): () => void {
   let writingToDisk = false
   return debounce(async () => {
-    if (writingToDisk) return
+    if (writingToDisk) {
+      return
+    }
     writingToDisk = true
     try {
       await writeJSONFile(location, data())
@@ -122,7 +124,11 @@ export async function deleteDirContents(dirPath: string): Promise<void> {
     const children = await fs.promises.readdir(dirPath, {
       withFileTypes: true,
     })
-    if (children.length === 0) break
+
+    if (children.length === 0) {
+      break
+    }
+
     for (const child of children) {
       const childPath = path.join(dirPath, child.name)
       if (child.isDirectory()) {
@@ -173,13 +179,19 @@ export async function extractNestedZip(source: string, dest: string): Promise<vo
           reject(err)
         }
       }
-      if (err) return tryReject(err)
-      if (!zipFile) return tryReject(new Error('zipFile === undefined'))
+      if (err) {
+        return tryReject(err)
+      }
+      if (!zipFile) {
+        return tryReject(new Error('zipFile === undefined'))
+      }
 
       zipFile.readEntry()
       zipFile.on('close', resolve)
       zipFile.on('entry', (entry) => {
-        if (cancelled) return
+        if (cancelled) {
+          return
+        }
         if (entry.fileName.endsWith('/')) {
           /** entry is a directory, skip and read next entry */
           zipFile.readEntry()
@@ -187,9 +199,15 @@ export async function extractNestedZip(source: string, dest: string): Promise<vo
         }
 
         zipFile.openReadStream(entry, async (err, stream) => {
-          if (cancelled) return
-          if (err) return tryReject(err)
-          if (!stream) return tryReject(new Error('stream === undefined'))
+          if (cancelled) {
+            return
+          }
+          if (err) {
+            return tryReject(err)
+          }
+          if (!stream) {
+            return tryReject(new Error('stream === undefined'))
+          }
           stream.on('error', tryReject)
           const filepath = path.join(
             dest,
@@ -207,7 +225,7 @@ export async function extractNestedZip(source: string, dest: string): Promise<vo
           const writeStream = fs.createWriteStream(filepath).on('error', tryReject).on('error', tryReject)
 
           stream.pipe(writeStream).on('close', () => {
-            zipFile.readEntry() /** Reads next entry. */
+            zipFile.readEntry()
           })
         })
       })

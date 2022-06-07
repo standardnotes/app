@@ -136,18 +136,19 @@ export function setupUpdates(window: BrowserWindow, appState: AppState, backupsM
   if (isTesting()) {
     handleTestMessage(MessageType.AutoUpdateEnabled, () => store.get(StoreKeys.EnableAutoUpdate))
     handleTestMessage(MessageType.CheckForUpdate, () => checkForUpdate(appState, updateState))
+    // eslint-disable-next-line block-scoped-var
     handleTestMessage(MessageType.UpdateManagerNotifiedStateChange, () => notifiedStateUpdate)
   } else {
-    checkForUpdate(appState, updateState)
+    void checkForUpdate(appState, updateState)
   }
 }
 
 export function openChangelog(state: UpdateState): void {
   const url = 'https://github.com/standardnotes/desktop/releases'
   if (state.latestVersion) {
-    shell.openExternal(`${url}/tag/v${state.latestVersion}`)
+    void shell.openExternal(`${url}/tag/v${state.latestVersion}`)
   } else {
-    shell.openExternal(url)
+    void shell.openExternal(url)
   }
 }
 
@@ -167,7 +168,10 @@ function isLessThanOneHourFromNow(date: number | null) {
 }
 
 export async function showUpdateInstallationDialog(parentWindow: BrowserWindow, appState: AppState): Promise<void> {
-  if (!appState.updates.latestVersion) return
+  if (!appState.updates.latestVersion) {
+    return
+  }
+
   if (appState.lastBackupDate && isLessThanOneHourFromNow(appState.lastBackupDate)) {
     const result = await dialog.showMessageBox(parentWindow, {
       type: 'info',
@@ -202,7 +206,9 @@ export async function showUpdateInstallationDialog(parentWindow: BrowserWindow, 
 }
 
 export async function checkForUpdate(appState: AppState, state: UpdateState, userTriggered = false): Promise<void> {
-  if (!autoUpdatingAvailable) return
+  if (!autoUpdatingAvailable) {
+    return
+  }
 
   if (state.enableAutoUpdate || userTriggered) {
     state.setCheckingForUpdate(true)
@@ -224,14 +230,14 @@ export async function checkForUpdate(appState: AppState, state: UpdateState, use
           message = str().finishedChecking.noUpdateAvailable(appState.version)
         }
 
-        dialog.showMessageBox({
+        void dialog.showMessageBox({
           title: str().finishedChecking.title,
           message,
         })
       }
     } catch (error) {
       if (userTriggered) {
-        dialog.showMessageBox({
+        void dialog.showMessageBox({
           title: str().finishedChecking.title,
           message: str().finishedChecking.error(JSON.stringify(error)),
         })

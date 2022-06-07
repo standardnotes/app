@@ -43,8 +43,12 @@ export function normalizeFilePath(requestUrl: string, host: string): string {
 
 async function handleRequest(request: IncomingMessage, response: ServerResponse) {
   try {
-    if (!request.url) throw new Error('No url.')
-    if (!request.headers.host) throw new Error('No `host` header.')
+    if (!request.url) {
+      throw new Error('No url.')
+    }
+    if (!request.headers.host) {
+      throw new Error('No `host` header.')
+    }
 
     const filePath = normalizeFilePath(request.url, request.headers.host)
 

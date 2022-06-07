@@ -51,8 +51,10 @@ function askForKeychainAccess(store: Store): Promise<BrowserWindow> {
     },
     autoHideMenuBar: true,
   })
+
   window.on('ready-to-show', window.show)
-  window.loadURL(Urls.grantLinuxPasswordsAccessHtml)
+
+  void window.loadURL(Urls.grantLinuxPasswordsAccessHtml)
 
   const quit = () => {
     app.quit()

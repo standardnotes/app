@@ -98,8 +98,12 @@ function sanitizeBackupsLocation(location?: unknown): string {
 }
 
 function sanitizeSpellCheckerLanguageCodes(languages?: unknown): Set<Language> | null {
-  if (!languages) return null
-  if (!Array.isArray(languages)) return null
+  if (!languages) {
+    return null
+  }
+  if (!Array.isArray(languages)) {
+    return null
+  }
 
   const set = new Set<Language>()
   const validLanguages = Object.values(Language)

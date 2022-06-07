@@ -135,7 +135,7 @@ export class RemoteBridge implements CrossProcessBridge {
   }
 
   syncComponents(components: Component[]) {
-    this.packages.syncComponents(components)
+    void this.packages.syncComponents(components)
   }
 
   onMajorDataChange() {

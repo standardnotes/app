@@ -7,13 +7,10 @@
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
-    "prettier"
+    "prettier",
+    "../../node_modules/@standardnotes/config/src/.eslintrc"
   ],
   "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "project": "./tsconfig.json",
-    "extraFileExtensions": [".mjs"]
-  },
   "ignorePatterns": ["test", "scripts", ".eslintrc", "tsconfig.json", "node_modules"],
   "rules": {
     /** Style */
@@ -28,9 +25,7 @@
     "@typescript-eslint/no-use-before-define": ["error", "nofunc"],
     "@typescript-eslint/no-non-null-assertion": 0,
     "@typescript-eslint/no-explicit-any": 0,
-
     "@typescript-eslint/no-var-requires": 0,
-
     /**
      * The following rules are disabled because they are already implemented
      * in the TypeScript configuration, or vice-versa

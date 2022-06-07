@@ -1,3 +1,4 @@
+/* eslint-disable no-inline-comments */
 import { isMac } from './Types/Platforms'
 import { Store, StoreKeys } from './Store'
 import { isDev } from './Utils/Utils'
@@ -82,7 +83,9 @@ export function createSpellcheckerManager(
    * On MacOS the system spellchecker is used and every related Electron method
    * is a no-op. Return early to prevent unnecessary code execution/allocations
    */
-  if (isMac()) return
+  if (isMac()) {
+    return
+  }
 
   const session = webContents.session
 

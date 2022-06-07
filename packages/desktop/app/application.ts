@@ -53,8 +53,11 @@ export function initializeApplication(args: { app: Electron.App; ipcMain: Electr
   app.name = AppName
 
   const state = new AppState(app)
-  setupDeepLinking(app)
+
+  void setupDeepLinking(app)
+
   registerSingleInstanceHandler(app, state)
+
   registerAppEventListeners({
     ...args,
     state,
@@ -111,7 +114,9 @@ function registerAppEventListeners(args: {
 
   app.on('activate', () => {
     const windowState = state.windowState
-    if (!windowState) return
+    if (!windowState) {
+      return
+    }
     windowState.window.show()
   })
 
@@ -127,7 +132,7 @@ function registerAppEventListeners(args: {
       return
     }
 
-    finishApplicationInitialization(args)
+    void finishApplicationInitialization(args)
   })
 }
 
@@ -164,7 +169,7 @@ async function finishApplicationInitialization({ app, shell, state }: { app: App
     state.windowState.trayManager.createTrayIcon()
   }
 
-  windowState.window.loadURL(state.startUrl)
+  void windowState.window.loadURL(state.startUrl)
 }
 
 function initializeExtensionsServer(store: Store) {

@@ -80,7 +80,7 @@ export function createTrayManager(window: Electron.BrowserWindow, store: Store):
 
         tray!.setContextMenu(trayContextMenu)
       }
-      updateContextMenu() // initialization
+      updateContextMenu()
 
       window.on('hide', updateContextMenu)
       window.on('focus', updateContextMenu)
@@ -93,7 +93,9 @@ export function createTrayManager(window: Electron.BrowserWindow, store: Store):
         if (!updateContextMenu) {
           throw new Error('updateContextMenu === undefined')
         }
-        if (!tray) throw new Error('tray === undefined')
+        if (!tray) {
+          throw new Error('tray === undefined')
+        }
       }
 
       window.off('hide', updateContextMenu!)

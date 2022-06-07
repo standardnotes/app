@@ -16,7 +16,11 @@ export function initializeStrings(locale: string): void {
       throw new Error('`strings` has already been initialized')
     }
   }
-  if (strings) return
+
+  if (strings) {
+    return
+  }
+
   strings = stringsForLocale(locale)
 }
 

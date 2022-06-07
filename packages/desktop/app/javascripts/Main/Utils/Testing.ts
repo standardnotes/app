@@ -15,7 +15,9 @@ export function handleTestMessage(type: MessageType, handler: (...args: any) => 
 }
 
 export function send(type: AppMessageType, data?: unknown): void {
-  if (!isTesting()) return
+  if (!isTesting()) {
+    return
+  }
 
   process.send!({ type, data })
 }
