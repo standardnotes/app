@@ -85,7 +85,6 @@
     "afterSign": "./scripts/afterSignHook.js",
     "files": [
       "compiled/**/*",
-      "vendor/**/*",
       "dist/**/*",
       "stylesheets/**/*",
       "assets/**/*",

@@ -49,8 +49,6 @@ window.onload = () => {
   loadWindowVarsRequiredByWebApp()
 
   loadAndStartApplication()
-
-  loadZipLibrary()
 }
 
 /** @returns whether the keychain structure is up to date or not */
@@ -163,16 +161,4 @@ function listenForMessagesSentFromMainToPreloadToUs(device: DesktopDevice) {
       receiver.didFinishBackup(data.success)
     }
   })
-}
-
-async function loadZipLibrary() {
-  // load zip library (for exporting items as zip)
-  const scriptTag = document.createElement('script')
-  scriptTag.src = './vendor/zip/zip.js'
-  scriptTag.async = true
-  const headTag = document.getElementsByTagName('head')[0]
-  headTag.appendChild(scriptTag)
-  scriptTag.onload = () => {
-    window.zip.workerScriptsPath = './vendor/zip/'
-  }
 }
