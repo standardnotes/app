@@ -440,11 +440,9 @@ class Footer extends PureComponent<Props, State> {
                   id="lock-item"
                   onClick={this.lockClickHandler}
                   title="Locks application and wipes unencrypted data from memory."
-                  className="sk-app-bar-item"
+                  className="sk-app-bar-item pl-1 hover:color-info"
                 >
-                  <div className="sk-label">
-                    <i id="footer-lock-icon" className="icon ion-locked" />
-                  </div>
+                  <Icon type="lock-filled" />
                 </div>
               </Fragment>
             )}
