@@ -5,7 +5,7 @@
 node_modules
 
 packages/web-server/log/*
-packages/!web-server/log/.gitkeep
+!packages/web-server/log/.gitkeep
 packages/web-server/tmp
 packages/web-server/config/cap.yml
 packages/web-server/app/assets/templates/generated/
