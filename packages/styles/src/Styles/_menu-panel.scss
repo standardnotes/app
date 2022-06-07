@@ -1,0 +1,96 @@
+.sk-menu-panel {
+  // box-shadow: 0px 4px 4px var(--sn-stylekit-shadow-color);
+  background-color: var(--sn-stylekit-background-color);
+  border: 1px solid var(--sn-stylekit-contrast-border-color);
+  border-radius: var(--sn-stylekit-general-border-radius);
+  overflow: scroll;
+  user-select: none;
+
+  // For Windows to hide needless scrollbars
+  overflow-y: auto !important;
+  overflow-x: auto !important;
+
+  .sk-menu-panel-header {
+    padding: 0.65rem 0.8125rem;
+    border-bottom: 1px solid var(--sn-stylekit-contrast-border-color);
+    background-color: var(--sn-stylekit-contrast-background-color);
+    color: var(--sn-stylekit-contrast-foreground-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .sk-menu-panel-header-title {
+    font-weight: bold;
+    font-size: var(--sn-stylekit-font-size-h4);
+  }
+
+  .sk-menu-panel-header-subtitle {
+    margin-top: 0.1625rem;
+    opacity: 0.6;
+  }
+
+  .sk-menu-panel-row {
+    padding: 0.8125rem 0.8125rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--sn-stylekit-border-color);
+
+    &:hover {
+      background-color: var(--sn-stylekit-contrast-background-color);
+      color: var(--sn-stylekit-contrast-foreground-color);
+      border-color: var(--sn-stylekit-contrast-border-color);
+    }
+
+    .sk-menu-panel-column {
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+
+      &:not(:first-child) {
+        padding-left: 1rem;
+        padding-right: 0.121875rem;
+      }
+
+      &.stretch {
+        width: 100%;
+      }
+
+      .sk-menu-panel-subrows {
+        margin-top: 0.8125rem;
+      }
+
+      /* Nested row */
+      .sk-menu-panel-row,
+      .sk-menu-panel-subrow {
+        border: 1px solid var(--sn-stylekit-contrast-border-color);
+        margin-top: -1px;
+        &:hover {
+          background-color: var(--sn-stylekit-background-color);
+        }
+      }
+
+      .left {
+        display: flex;
+      }
+    }
+
+    .sk-button .sk-label {
+      font-size: var(--sn-stylekit-font-size-h6);
+      font-weight: normal;
+    }
+
+    .sk-label {
+      font-size: var(--sn-stylekit-font-size-p);
+      font-weight: bold;
+    }
+
+    .sk-sublabel {
+      font-size: var(--sn-stylekit-font-size-h5);
+      margin-top: 0.1625rem;
+      opacity: 0.6;
+    }
+  }
+}

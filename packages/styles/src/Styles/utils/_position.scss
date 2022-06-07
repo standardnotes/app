@@ -1,0 +1,40 @@
+.top-0 {
+  top: 0;
+}
+
+.left-0 {
+  left: 0;
+}
+
+.bottom-0 {
+  bottom: 0;
+}
+
+.bottom-6 {
+  bottom: 1.5rem;
+}
+
+.right-0 {
+  right: 0;
+}
+
+.right-6 {
+  right: 1.5rem;
+}
+
+.top-left-0 {
+  @extend .top-0;
+  @extend .left-0;
+}
+
+.-top-10 {
+  top: -2.5rem;
+}
+
+.-left-51 {
+  left: -12.75rem;
+}
+
+.z-index-toast {
+  z-index: 11000;
+}

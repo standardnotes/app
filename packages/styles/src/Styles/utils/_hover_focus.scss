@@ -1,0 +1,101 @@
+.hover\:bg-passive-3:hover {
+  background-color: var(--sn-stylekit-passive-color-3);
+}
+
+.hover\:brightness-130:hover {
+  filter: brightness(130%);
+}
+
+.focus\:brightness-130:focus {
+  filter: brightness(130%);
+}
+
+.hover\:bg-highlight:hover {
+  background-color: var(--sn-stylekit-passive-color-5);
+}
+
+.focus\:bg-highlight:focus {
+  background-color: var(--sn-stylekit-passive-color-5);
+}
+
+.hover\:bg-contrast:hover {
+  @extend .bg-contrast;
+}
+
+.hover\:bg-info-dark:hover {
+  @extend .bg-info-dark;
+}
+.focus\:bg-info-dark:focus {
+  @extend .bg-info-dark;
+}
+
+.focus\:padded-ring-info:focus {
+  box-shadow: 0 0 0 2px var(--sn-stylekit-background-color), 0 0 0 4px var(--sn-stylekit-info-color);
+}
+
+.focus\:border-bottom:focus {
+  border-bottom: 2px solid var(--sn-stylekit-info-color);
+}
+
+.focus-within\:padded-ring-info:focus-within {
+  box-shadow: 0 0 0 2px var(--sn-stylekit-background-color), 0 0 0 4px var(--sn-stylekit-info-color);
+}
+
+.focus-within\:border-background:focus-within {
+  border-color: var(--sn-stylekit-background-color);
+}
+
+.box-shadow,
+.box-shadow:focus,
+.box-shadow:focus-within {
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12), 0px 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.focus\:bg-contrast:focus {
+  @extend .bg-contrast;
+}
+
+.hover\:color-text:hover {
+  @extend .color-text;
+}
+
+.focus\:color-text:focus {
+  @extend .color-text;
+}
+
+.hover\:bg-secondary-contrast:hover {
+  @extend .bg-secondary-contrast;
+}
+
+.focus\:bg-secondary-contrast:focus {
+  @extend .bg-secondary-contrast;
+}
+
+.focus\:inner-ring-info:focus {
+  @extend .inner-ring-info;
+}
+
+.focus\:ring-info:focus {
+  @extend .ring-info;
+}
+
+.focus-within\:ring-info:focus-within {
+  @extend .ring-info;
+}
+
+/**
+ * Do not use these rules without explicitly handling focus in a different
+ * way, otherwise keyboard focus will break.
+ */
+.focus\:outline-none:focus {
+  outline: none;
+}
+.focus\:shadow-none:focus {
+  box-shadow: none;
+}
+.focus-within\:outline-none:focus-within {
+  outline: none;
+}
+.focus-within\:shadow-none:focus-within {
+  box-shadow: none;
+}

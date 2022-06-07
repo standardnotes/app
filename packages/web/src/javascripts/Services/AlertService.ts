@@ -1,6 +1,6 @@
 import { ButtonType, sanitizeHtmlString } from '@standardnotes/snjs'
 import { AlertService } from '@standardnotes/services'
-import { SKAlert } from '@standardnotes/stylekit'
+import { SKAlert } from '@standardnotes/styles'
 
 /** @returns a promise resolving to true if the user confirmed, false if they canceled */
 export function confirmDialog({

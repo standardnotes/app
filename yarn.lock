@@ -2517,14 +2517,6 @@
     "@reach/utils" "0.16.0"
     tslib "^2.3.0"
 
-"@reach/auto-id@0.17.0":
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/@reach/auto-id/-/auto-id-0.17.0.tgz#60cce65eb7a0d6de605820727f00dfe2b03b5f17"
-  integrity sha512-ud8iPwF52RVzEmkHq1twuqGuPA+moreumUHdtgvU3sr3/15BNhwp3KyDLrKKSz0LP1r3V4pSdyF9MbYM8BoSjA==
-  dependencies:
-    "@reach/utils" "0.17.0"
-    tslib "^2.3.0"
-
 "@reach/checkbox@^0.16.0":
   version "0.16.0"
   resolved "https://registry.yarnpkg.com/@reach/checkbox/-/checkbox-0.16.0.tgz#198223a14182f318fdbd01289a2073e191f878cc"
@@ -2543,14 +2535,6 @@
   integrity sha512-3WZgRnD9O4EORKE31rrduJDiPFNMOjUkATx0zl192ZxMq3qITe4tUj70pS5IbJl/+v9zk78JwyQLvA1pL7XAPA==
   dependencies:
     "@reach/utils" "0.16.0"
-    tslib "^2.3.0"
-
-"@reach/descendants@0.17.0":
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/@reach/descendants/-/descendants-0.17.0.tgz#3fb087125a67870acd4dee1528449ed546829b67"
-  integrity sha512-c7lUaBfjgcmKFZiAWqhG+VnXDMEhPkI4kAav/82XKZD6NVvFjsQOTH+v3tUkskrAPV44Yuch0mFW/u5Ntifr7Q==
-  dependencies:
-    "@reach/utils" "0.17.0"
     tslib "^2.3.0"
 
 "@reach/dialog@0.16.2", "@reach/dialog@^0.16.2":
@@ -2576,17 +2560,6 @@
     tiny-warning "^1.0.3"
     tslib "^2.3.0"
 
-"@reach/dropdown@0.17.0":
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/@reach/dropdown/-/dropdown-0.17.0.tgz#8140bb2e6a045f91e07c6d5a6ff960958df2ef33"
-  integrity sha512-qBTIGInhxtPHtdj4Pl2XZgZMz3e37liydh0xR3qc48syu7g71sL4nqyKjOzThykyfhA3Pb3/wFgsFJKGTSdaig==
-  dependencies:
-    "@reach/auto-id" "0.17.0"
-    "@reach/descendants" "0.17.0"
-    "@reach/popover" "0.17.0"
-    "@reach/utils" "0.17.0"
-    tslib "^2.3.0"
-
 "@reach/listbox@^0.16.2":
   version "0.16.2"
   resolved "https://registry.yarnpkg.com/@reach/listbox/-/listbox-0.16.2.tgz#2ed4b30ebdf9ce0addffb0207f843b8232a7db1c"
@@ -2599,18 +2572,6 @@
     "@reach/utils" "0.16.0"
     prop-types "^15.7.2"
 
-"@reach/listbox@^0.17.0":
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/@reach/listbox/-/listbox-0.17.0.tgz#e709f31056bb77781e74c9f0b69bf9ec8efbbc8b"
-  integrity sha512-AMnH1P6/3VKy2V/nPb4Es441arYR+t4YRdh9jdcFVrCOD6y7CQrlmxsYjeg9Ocdz08XpdoEBHM3PKLJqNAUr7A==
-  dependencies:
-    "@reach/auto-id" "0.17.0"
-    "@reach/descendants" "0.17.0"
-    "@reach/machine" "0.17.0"
-    "@reach/popover" "0.17.0"
-    "@reach/utils" "0.17.0"
-    prop-types "^15.7.2"
-
 "@reach/machine@0.16.0":
   version "0.16.0"
   resolved "https://registry.yarnpkg.com/@reach/machine/-/machine-0.16.0.tgz#0504ba47ac09ed495bd341bf5fdd6625bcade0e3"
@@ -2618,27 +2579,6 @@
   dependencies:
     "@reach/utils" "0.16.0"
     "@xstate/fsm" "1.4.0"
-    tslib "^2.3.0"
-
-"@reach/machine@0.17.0":
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/@reach/machine/-/machine-0.17.0.tgz#4e4bbf66e3c3934e65243485ac84f6f8fa3d9a24"
-  integrity sha512-9EHnuPgXzkbRENvRUzJvVvYt+C2jp7PGN0xon7ffmKoK8rTO6eA/bb7P0xgloyDDQtu88TBUXKzW0uASqhTXGA==
-  dependencies:
-    "@reach/utils" "0.17.0"
-    "@xstate/fsm" "1.4.0"
-    tslib "^2.3.0"
-
-"@reach/menu-button@^0.17.0":
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/@reach/menu-button/-/menu-button-0.17.0.tgz#9f40979129b61f8bdc19590c527f7ed4883d2dce"
-  integrity sha512-YyuYVyMZKamPtivoEI6D0UEILYH3qZtg4kJzEAuzPmoR/aHN66NZO75Fx0gtjG1S6fZfbiARaCOZJC0VEiDOtQ==
-  dependencies:
-    "@reach/dropdown" "0.17.0"
-    "@reach/popover" "0.17.0"
-    "@reach/utils" "0.17.0"
-    prop-types "^15.7.2"
-    tiny-warning "^1.0.3"
     tslib "^2.3.0"
 
 "@reach/observe-rect@1.2.0":
@@ -2657,32 +2597,12 @@
     tabbable "^4.0.0"
     tslib "^2.3.0"
 
-"@reach/popover@0.17.0":
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/@reach/popover/-/popover-0.17.0.tgz#feda6961f37d17b8738d2d52af6bfc5c4584464f"
-  integrity sha512-yYbBF4fMz4Ml4LB3agobZjcZ/oPtPsNv70ZAd7lEC2h7cvhF453pA+zOBGYTPGupKaeBvgAnrMjj7RnxDU5hoQ==
-  dependencies:
-    "@reach/portal" "0.17.0"
-    "@reach/rect" "0.17.0"
-    "@reach/utils" "0.17.0"
-    tabbable "^4.0.0"
-    tslib "^2.3.0"
-
 "@reach/portal@0.16.2":
   version "0.16.2"
   resolved "https://registry.yarnpkg.com/@reach/portal/-/portal-0.16.2.tgz#ca83696215ee03acc2bb25a5ae5d8793eaaf2f64"
   integrity sha512-9ur/yxNkuVYTIjAcfi46LdKUvH0uYZPfEp4usWcpt6PIp+WDF57F/5deMe/uGi/B/nfDweQu8VVwuMVrCb97JQ==
   dependencies:
     "@reach/utils" "0.16.0"
-    tiny-warning "^1.0.3"
-    tslib "^2.3.0"
-
-"@reach/portal@0.17.0":
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/@reach/portal/-/portal-0.17.0.tgz#1dd69ffc8ffc8ba3e26dd127bf1cc4b15f0c6bdc"
-  integrity sha512-+IxsgVycOj+WOeNPL2NdgooUdHPSY285wCtj/iWID6akyr4FgGUK7sMhRM9aGFyrGpx2vzr+eggbUmAVZwOz+A==
-  dependencies:
-    "@reach/utils" "0.17.0"
     tiny-warning "^1.0.3"
     tslib "^2.3.0"
 
@@ -2693,17 +2613,6 @@
   dependencies:
     "@reach/observe-rect" "1.2.0"
     "@reach/utils" "0.16.0"
-    prop-types "^15.7.2"
-    tiny-warning "^1.0.3"
-    tslib "^2.3.0"
-
-"@reach/rect@0.17.0":
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/@reach/rect/-/rect-0.17.0.tgz#804f0cfb211e0beb81632c64d4532ec9d1d73c48"
-  integrity sha512-3YB7KA5cLjbLc20bmPkJ06DIfXSK06Cb5BbD2dHgKXjUkT9WjZaLYIbYCO8dVjwcyO3GCNfOmPxy62VsPmZwYA==
-  dependencies:
-    "@reach/observe-rect" "1.2.0"
-    "@reach/utils" "0.17.0"
     prop-types "^15.7.2"
     tiny-warning "^1.0.3"
     tslib "^2.3.0"
@@ -2726,14 +2635,6 @@
   version "0.16.0"
   resolved "https://registry.yarnpkg.com/@reach/utils/-/utils-0.16.0.tgz#5b0777cf16a7cab1ddd4728d5d02762df0ba84ce"
   integrity sha512-PCggBet3qaQmwFNcmQ/GqHSefadAFyNCUekq9RrWoaU9hh/S4iaFgf2MBMdM47eQj5i/Bk0Mm07cP/XPFlkN+Q==
-  dependencies:
-    tiny-warning "^1.0.3"
-    tslib "^2.3.0"
-
-"@reach/utils@0.17.0":
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/@reach/utils/-/utils-0.17.0.tgz#3d1d2ec56d857f04fe092710d8faee2b2b121303"
-  integrity sha512-M5y8fCBbrWeIsxedgcSw6oDlAMQDkl5uv3VnMVJ7guwpf4E48Xlh1v66z/1BgN/WYe2y8mB/ilFD2nysEfdGeA==
   dependencies:
     tiny-warning "^1.0.3"
     tslib "^2.3.0"
@@ -2943,19 +2844,6 @@
     "@standardnotes/settings" "^1.14.3"
     "@standardnotes/sncrypto-common" "^1.9.0"
     "@standardnotes/utils" "^1.6.10"
-
-"@standardnotes/stylekit@5.29.3":
-  version "5.29.3"
-  resolved "https://registry.yarnpkg.com/@standardnotes/stylekit/-/stylekit-5.29.3.tgz#8db39196d99ee4039eff5bf0d1bd408c4892e39b"
-  integrity sha512-BMJE+YEbC4xOvSXlUx23FAnoNtrVLW2Thcf2wkkF9lpc8ZbQJAF5Np7mcmtgBRFyR8apbz2jEVFaq7pYPOeVKg==
-  dependencies:
-    "@nanostores/react" "^0.2.0"
-    "@reach/listbox" "^0.17.0"
-    "@reach/menu-button" "^0.17.0"
-    "@standardnotes/icons" "^1.1.8"
-    nanoid "^3.3.4"
-    nanostores "^0.5.12"
-    prop-types "^15.8.1"
 
 "@standardnotes/utils@^1.6.10":
   version "1.6.10"
@@ -5575,6 +5463,20 @@ css-loader@^6.7.1:
   dependencies:
     icss-utils "^5.1.0"
     postcss "^8.4.7"
+    postcss-modules-extract-imports "^3.0.0"
+    postcss-modules-local-by-default "^4.0.0"
+    postcss-modules-scope "^3.0.0"
+    postcss-modules-values "^4.0.0"
+    postcss-value-parser "^4.2.0"
+    semver "^7.3.5"
+
+css-loader@~6.6.0:
+  version "6.6.0"
+  resolved "https://registry.yarnpkg.com/css-loader/-/css-loader-6.6.0.tgz#c792ad5510bd1712618b49381bd0310574fafbd3"
+  integrity sha512-FK7H2lisOixPT406s5gZM1S3l8GrfhEBT3ZiL2UX1Ng1XWs0y2GPllz/OTyvbaHe12VgQrIXIzuEGVlbUhodqg==
+  dependencies:
+    icss-utils "^5.1.0"
+    postcss "^8.4.5"
     postcss-modules-extract-imports "^3.0.0"
     postcss-modules-local-by-default "^4.0.0"
     postcss-modules-scope "^3.0.0"
@@ -10137,7 +10039,7 @@ min-indent@^1.0.0:
   resolved "https://registry.yarnpkg.com/min-indent/-/min-indent-1.0.1.tgz#a63f681673b30571fbe8bc25686ae746eefa9869"
   integrity sha512-I9jwMn07Sy/IwOj3zVkVik2JTvgpaykDZEigL6Rx6N9LbMywwUSMtxET+7lVoDLLd3O3IXwJwvuuns8UB/HeAg==
 
-mini-css-extract-plugin@^2.6.0:
+mini-css-extract-plugin@^2.5.3, mini-css-extract-plugin@^2.6.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/mini-css-extract-plugin/-/mini-css-extract-plugin-2.6.0.tgz#578aebc7fc14d32c0ad304c2c34f08af44673f5e"
   integrity sha512-ndG8nxCEnAemsg4FSgS+yNyHKgkTB4nPKqCOgh65j3/30qqC5RaSQQXMm++Y6sb6E1zRSxPkztj9fqxhS1Eo6w==
@@ -11595,7 +11497,7 @@ postcss-value-parser@^4.1.0, postcss-value-parser@^4.2.0:
   resolved "https://registry.yarnpkg.com/postcss-value-parser/-/postcss-value-parser-4.2.0.tgz#723c09920836ba6d3e5af019f92bc0971c02e514"
   integrity sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==
 
-postcss@^8.4.7:
+postcss@^8.4.5, postcss@^8.4.7:
   version "8.4.14"
   resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.4.14.tgz#ee9274d5622b4858c1007a74d76e42e56fd21caf"
   integrity sha512-E398TUmfAYFPBSdzgeieK2Y1+1cpdxJx8yXbK/m57nRhKSmk1GB2tO4lbLBtlkfPQTDKfe4Xqv1ASWPpayPEig==
@@ -13412,6 +13314,11 @@ strong-log-transformer@^2.0.0:
     minimist "^1.2.0"
     through "^2.3.4"
 
+style-loader@~3.3.1:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/style-loader/-/style-loader-3.3.1.tgz#057dfa6b3d4d7c7064462830f9113ed417d38575"
+  integrity sha512-GPcQ+LDJbrcxHORTRes6Jy2sfvK2kS6hpSfI/fXhPt+spVzxF6LJ1dHLN9zIGmVaaP044YKaIatFaufENRiDoQ==
+
 sumchecker@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/sumchecker/-/sumchecker-3.0.1.tgz#6377e996795abb0b6d348e9b3e1dfb24345a8e42"
@@ -14381,7 +14288,7 @@ webpack-sources@^3.2.3:
   resolved "https://registry.yarnpkg.com/webpack-sources/-/webpack-sources-3.2.3.tgz#2d4daab8451fd4b240cc27055ff6a0c2ccea0cde"
   integrity sha512-/DyMEOrDgLKKIG0fmvtz+4dUX/3Ghozwgm6iPp8KRhvn+eQf9+Q7GWxVNMk3+uCPWfdXYC4ExGBckIXdFEfH1w==
 
-webpack@^5.72.0:
+webpack@^5.69.1, webpack@^5.72.0:
   version "5.73.0"
   resolved "https://registry.yarnpkg.com/webpack/-/webpack-5.73.0.tgz#bbd17738f8a53ee5760ea2f59dce7f3431d35d38"
   integrity sha512-svjudQRPPa0YiOYa2lM/Gacw0r6PvxptHj4FuEKQ2kX05ZLkjbVc5MnPs6its5j7IZljnIqSVo/OsY2X0IpHGA==

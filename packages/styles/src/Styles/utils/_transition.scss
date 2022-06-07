@@ -1,0 +1,15 @@
+.duration-150 {
+  transition-duration: 150ms;
+}
+
+.ease-out {
+  transition-timing-function: ease-out;
+}
+
+.transition-background {
+  transition-property: background;
+}
+
+.transition-transform {
+  transition-property: transform;
+}
