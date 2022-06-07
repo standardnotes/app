@@ -1,4 +1,3 @@
-# git
 .git/
 .gitignore
 .eslintcache
@@ -7,3 +6,4 @@ dist
 packages/web-server/public/assets
 packages/web-server/tmp
 packages/web-server/vendor/bundles
+packages/desktop

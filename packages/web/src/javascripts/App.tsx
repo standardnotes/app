@@ -14,6 +14,7 @@ declare global {
     websocketUrl: string
     electronAppVersion?: string
     webClient?: DesktopManagerInterface
+    electronRemoteBridge?: unknown
 
     application?: WebApplication
     mainApplicationGroup?: ApplicationGroup
