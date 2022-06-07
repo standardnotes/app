@@ -5,7 +5,7 @@ import proxyquire from 'proxyquire'
 import { timeout } from '../app/javascripts/Main/Utils/Utils'
 import { createDriver, Driver } from './driver'
 
-const { serializeStoreData } = proxyquire('../app/javascripts/Main/store', {
+const { serializeStoreData } = proxyquire('../app/javascripts/Main/Store', {
   './backupsManager': {
     '@noCallThru': true,
   },

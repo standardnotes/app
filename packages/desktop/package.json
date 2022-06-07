@@ -21,7 +21,7 @@
     "release:mac": "node scripts/build.mjs mac",
     "setup": "yarn --ignore-engines && yarn --ignore-engines --cwd ./app",
     "start": "electron ./app --enable-logging --icon _icon/icon.png",
-    "test": "rimraf test/data/tmp && ava"
+    "ava": "rimraf test/data/tmp && ava --serial"
   },
   "dependencies": {
     "axios": "^0.27.2",
@@ -150,8 +150,7 @@
     "require": [
       "ts-node/register/transpile-only"
     ],
-    "verbose": true,
-    "serial": true
+    "verbose": true
   },
   "pre-push": [
     "lint"

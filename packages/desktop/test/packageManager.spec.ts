@@ -14,7 +14,7 @@ const FakePaths = makeFakePaths(tmpDir.path)
 const contentDir = path.join(tmpDir.path, 'Extensions')
 let downloadFileCallCount = 0
 
-const { initializePackageManager } = proxyquire('../app/javascripts/Main/packageManager', {
+const { initializePackageManager } = proxyquire('../app/javascripts/Main/Packages/PackageManager', {
   './paths': {
     Paths: FakePaths,
     '@noCallThru': true,

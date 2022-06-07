@@ -19,7 +19,7 @@ const FakePaths = makeFakePaths(tmpDir.path)
 
 let server: http.Server
 
-const { createExtensionsServer, normalizeFilePath } = proxyquire('../app/javascripts/Main/extServer', {
+const { createExtensionsServer, normalizeFilePath } = proxyquire('../app/javascripts/Main/ExtensionsServer', {
   './paths': {
     Paths: FakePaths,
     '@noCallThru': true,
