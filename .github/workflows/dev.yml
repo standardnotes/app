@@ -1,4 +1,4 @@
-name: Dev
+name: Web Dev
 
 concurrency:
   group: dev_environment
@@ -7,6 +7,9 @@ concurrency:
 on:
   push:
     branches: [ develop ]
+    paths:
+      - packages/web-server
+      - packages/web
   workflow_dispatch:
 
 jobs:

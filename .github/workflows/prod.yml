@@ -1,4 +1,4 @@
-name: Prod
+name: Web Prod
 
 concurrency:
   group: prod_environment
@@ -7,6 +7,9 @@ concurrency:
 on:
   push:
     branches: [ main ]
+    paths:
+      - packages/web-server
+      - packages/web
 
 jobs:
   test:
