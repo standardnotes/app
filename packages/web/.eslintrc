@@ -1,0 +1,39 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier",
+    "plugin:react-hooks/recommended",
+    "./../../node_modules/@standardnotes/config/src/.eslintrc"
+  ],
+  "plugins": ["@typescript-eslint", "react", "react-hooks"],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "ignorePatterns": [".eslintrc.js", "webpack.*.js", "webpack-defaults.js", "jest.config.js", "__mocks__"],
+  "rules": {
+    "standard/no-callback-literal": 0, // Disable this as we have too many callbacks relying on literals
+    "no-throw-literal": 0,
+    "no-console": "off",
+    "semi": 1,
+    "camelcase": "warn",
+    "sort-imports": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "error",
+    "eol-last": "error",
+    "no-multiple-empty-lines": ["error", { "max": 1, "maxEOF": 0 }],
+    "no-trailing-spaces": "error",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "no-invalid-this": "warn"
+  },
+  "env": {
+    "browser": true
+  },
+  "globals": {
+    "SFJS": true,
+    "__VERSION__": true,
+    "zip": true
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "@standardnotes/web-server",
+  "version": "1.0.0",
+  "license": "AGPL-3.0-or-later",
+  "author": "Standard Notes",
+  "description": "Ruby on Rails web server for hosting the web application",
+  "engines": {
+    "node": ">=12.19.0 <17.0.0"
+  },
+  "scripts": {
+    "start": "bundle exec rails s -b 0.0.0.0",
+    "start:no-binding": "bundle exec rails s",
+    "clean": "bundle exec rails assets:clobber",
+    "build": "bundle install && bundle exec rails assets:precompile"
+  },
+  "dependencies": {
+    "@standardnotes/web": "^3.20.4"
+  }
+}

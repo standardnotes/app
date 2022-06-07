@@ -12,10 +12,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6.8
       - name: Install dependencies
         run: yarn install --pure-lockfile
-      - name: Bundle
-        run: yarn bundle
+      - name: Build
+        run: yarn build
       - name: ESLint
         run: yarn lint
       - name: Test

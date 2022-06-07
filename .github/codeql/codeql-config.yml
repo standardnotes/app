@@ -5,7 +5,7 @@ queries:
 - uses: ./.github/codeql/custom-queries/javascript
 
 paths:
-- app/assets/javascripts
+- packages/web/src/javascripts
 
 paths-ignore:
 - bin
