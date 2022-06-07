@@ -2,9 +2,14 @@
   "name": "@standardnotes/app-monorepo",
   "private": true,
   "author": "Standard Notes",
-  "workspaces": [
-    "packages/*"
-  ],
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ],
+    "nohoist": [
+      "**/mobile/**"
+    ]
+  },
   "engines": {
     "node": ">=12.19.0 <17.0.0"
   },

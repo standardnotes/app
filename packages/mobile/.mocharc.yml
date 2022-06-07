@@ -1,0 +1,5 @@
+recursive: true
+timeout: 120000
+bail: true
+file:
+  - e2e/init.js

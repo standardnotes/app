@@ -1,0 +1,21 @@
+Fixes Android on launch performance issue
+https://github.com/oblador/react-native-keychain/issues/314#issuecomment-736640077
+
+diff --git a/node_modules/react-native-keychain/android/src/main/java/com/oblador/keychain/KeychainModule.java b/node_modules/react-native-keychain/android/src/main/java/com/oblador/keychain/KeychainModule.java
+index 6ca68cb..a600f38 100644
+--- a/node_modules/react-native-keychain/android/src/main/java/com/oblador/keychain/KeychainModule.java
++++ b/node_modules/react-native-keychain/android/src/main/java/com/oblador/keychain/KeychainModule.java
+@@ -140,13 +140,7 @@ public class KeychainModule extends ReactContextBaseJavaModule {
+     super(reactContext);
+     prefsStorage = new PrefsStorage(reactContext);
+
+-    addCipherStorageToMap(new CipherStorageFacebookConceal(reactContext));
+     addCipherStorageToMap(new CipherStorageKeystoreAesCbc());
+-
+-    // we have a references to newer api that will fail load of app classes in old androids OS
+-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+-      addCipherStorageToMap(new CipherStorageKeystoreRsaEcb());
+-    }
+   }
+
+   /** Allow initialization in chain. */
