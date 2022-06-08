@@ -12,7 +12,7 @@
     "start": "bundle exec rails s -b 0.0.0.0",
     "start:no-binding": "bundle exec rails s",
     "clean": "bundle exec rails assets:clobber",
-    "build": "bundle install && bundle exec rails assets:precompile"
+    "build": "bundle install && cp -r ../web/node_modules/@standardnotes/components/dist/ public/components/ && bundle exec rails assets:precompile"
   },
   "dependencies": {
     "@standardnotes/web": "^3.20.4"

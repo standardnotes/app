@@ -12,7 +12,6 @@
   },
   "scripts": {
     "bootstrap": "lerna bootstrap",
-    "prebuild": "cp -r node_modules/@standardnotes/components/dist/ packages/web-server/public/components/",
     "lint": "lerna run lint --parallel",
     "test": "lerna run test --parallel",
     "clean": "lerna run clean",
