@@ -17,7 +17,7 @@ case "$COMMAND" in
     echo "Prestart Step 2/4 - Cleaning assets"
     yarn clean
     echo "Prestart Step 3/4 - Installing dependencies"
-    yarn install --pure-lockfile
+    yarn install
     echo "Prestart Step 4/4 - Building"
     yarn build
     echo "Starting Server..."
