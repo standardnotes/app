@@ -38,7 +38,8 @@
     "@standardnotes/config": "^2.4.3",
     "husky": "^7.0.4",
     "lerna": "^3.22.1",
-    "lint-staged": "^13.0.1"
+    "lint-staged": "^13.0.1",
+    "typescript": "^4.7.3"
   },
   "packageManager": "yarn@3.2.1"
 }

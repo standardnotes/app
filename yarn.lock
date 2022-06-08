@@ -4204,6 +4204,7 @@ __metadata:
     husky: ^7.0.4
     lerna: ^3.22.1
     lint-staged: ^13.0.1
+    typescript: ^4.7.3
   languageName: unknown
   linkType: soft
 
@@ -4601,6 +4602,7 @@ __metadata:
     css-loader: ~6.6.0
     mini-css-extract-plugin: ^2.5.3
     node-sass: ^7.0.1
+    prettier: ^2.6.2
     sass-loader: ^12.6.0
     style-loader: ~3.3.1
     typescript: 4.6.3
@@ -4620,6 +4622,7 @@ __metadata:
     "@standardnotes/config": ^2.4.3
     "@standardnotes/icons": ^1.1.7
     "@types/react": ^18
+    "@typescript-eslint/parser": ^5.27.1
     eslint: ^8.13.0
     nanoid: ^3.3.4
     nanostores: ^0.5.12
@@ -4682,6 +4685,7 @@ __metadata:
     circular-dependency-plugin: ^5.2.2
     css-loader: ^6.7.1
     dotenv: ^16.0.0
+    eslint: ^8.17.0
     eslint-config-prettier: ^8.5.0
     eslint-plugin-react: ^7.29.4
     eslint-plugin-react-hooks: ^4.4.0
@@ -5595,7 +5599,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^5.12.1, @typescript-eslint/parser@npm:^5.15.0, @typescript-eslint/parser@npm:^5.20.0, @typescript-eslint/parser@npm:^5.22.0":
+"@typescript-eslint/parser@npm:^5.12.1, @typescript-eslint/parser@npm:^5.15.0, @typescript-eslint/parser@npm:^5.20.0, @typescript-eslint/parser@npm:^5.22.0, @typescript-eslint/parser@npm:^5.27.1":
   version: 5.27.1
   resolution: "@typescript-eslint/parser@npm:5.27.1"
   dependencies:
@@ -10509,7 +10513,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^8.13.0, eslint@npm:^8.14.0":
+"eslint@npm:^8.13.0, eslint@npm:^8.14.0, eslint@npm:^8.17.0":
   version: 8.17.0
   resolution: "eslint@npm:8.17.0"
   dependencies:
@@ -22295,7 +22299,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.4.3, typescript@npm:^4.6.3, typescript@npm:^4.6.4":
+"typescript@npm:^4.4.3, typescript@npm:^4.6.3, typescript@npm:^4.6.4, typescript@npm:^4.7.3":
   version: 4.7.3
   resolution: "typescript@npm:4.7.3"
   bin:
@@ -22315,7 +22319,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.4.3#~builtin<compat/typescript>, typescript@patch:typescript@^4.6.3#~builtin<compat/typescript>, typescript@patch:typescript@^4.6.4#~builtin<compat/typescript>":
+"typescript@patch:typescript@^4.4.3#~builtin<compat/typescript>, typescript@patch:typescript@^4.6.3#~builtin<compat/typescript>, typescript@patch:typescript@^4.6.4#~builtin<compat/typescript>, typescript@patch:typescript@^4.7.3#~builtin<compat/typescript>":
   version: 4.7.3
   resolution: "typescript@patch:typescript@npm%3A4.7.3#~builtin<compat/typescript>::version=4.7.3&hash=7ad353"
   bin:

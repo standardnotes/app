@@ -35,6 +35,7 @@
     "circular-dependency-plugin": "^5.2.2",
     "css-loader": "^6.7.1",
     "dotenv": "^16.0.0",
+    "eslint": "^8.17.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-react": "^7.29.4",
     "eslint-plugin-react-hooks": "^4.4.0",
