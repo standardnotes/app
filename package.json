@@ -5,10 +5,6 @@
   "workspaces": {
     "packages": [
       "packages/*"
-    ],
-    "nohoist": [
-      "**/mobile/**",
-      "**/@reach/**"
     ]
   },
   "engines": {
@@ -26,14 +22,22 @@
     "start:server:web:localhost": "lerna run start:no-binding --scope=@standardnotes/web-server",
     "prepare": "husky install",
     "version-bump": "lerna version --conventional-commits --yes -m \"chore(release): publish\"",
-    "publish-packages": "lerna publish from-git --yes"
+    "publish-packages": "lerna publish from-git --yes",
+    "reset": "find . -type dir -name node_modules | xargs rm -rf && rm -rf yarn.lock"
+  },
+  "resolutions": {
+    "@types/styled-components/@types/react": "17.0.2",
+    "@types/styled-components-react-native/@types/react": "17.0.2",
+    "@types/react-native-vector-icons/@types/react": "17.0.2",
+    "@types/react-native/@types/react": "17.0.2",
+    "@types/hoist-non-react-statics/@types/react": "17.0.2"
   },
   "devDependencies": {
+    "@standardnotes/config": "^2.4.3",
     "@types/node": "^17.0.21",
     "eslint": "^8.13.0",
     "husky": "^7.0.4",
-    "lerna": "^3.22.1",
-    "@standardnotes/config": "^2.4.3"
+    "lerna": "^3.22.1"
   },
-  "dependencies": {}
+  "packageManager": "yarn@3.2.1"
 }
