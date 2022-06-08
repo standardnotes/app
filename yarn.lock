@@ -4451,7 +4451,7 @@ __metadata:
     react-native-safe-area-context: ^4.2.2
     react-native-screens: 3.13.1
     react-native-search-bar: "standardnotes/react-native-search-bar#7d2139daf9b7663b570403f21f520deceba9bb09"
-    react-native-search-box: "standardnotes/react-native-search-box#c0de5bab18cb418fef75ef2c2cd921304142e492"
+    react-native-search-box: "standardnotes/react-native-search-box#8c46369912cba78dca718588aca9c16926953ff7"
     react-native-share: ^7.3.7
     react-native-sodium-jsi: 1.2.0
     react-native-static-server: "standardnotes/react-native-static-server#d0c4cb0feae233634ef26fc33118f258192c7b7d"
@@ -18977,12 +18977,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-search-box@standardnotes/react-native-search-box#c0de5bab18cb418fef75ef2c2cd921304142e492":
+"react-native-search-box@standardnotes/react-native-search-box#8c46369912cba78dca718588aca9c16926953ff7":
   version: 0.0.19
-  resolution: "react-native-search-box@https://github.com/standardnotes/react-native-search-box.git#commit=c0de5bab18cb418fef75ef2c2cd921304142e492"
+  resolution: "react-native-search-box@https://github.com/standardnotes/react-native-search-box.git#commit=8c46369912cba78dca718588aca9c16926953ff7"
   dependencies:
     prop-types: ^15.5.10
-  checksum: 3297130fd349750e595173bd65f2e6dfed9d7476fe69878edbfa04327f034ad4989a7be9fd4d96ba5d71757592e327fe641f765c2437c6544f5d896745f73b88
+  checksum: 58e057b9981b2d15ac45f478b92f9d5b7c243dd9b229bd2facb6055851eba97556267c4da9705b41b4141efb2cb58217641623aa402404c04d827a0e5102f5c2
   languageName: node
   linkType: hard
 
