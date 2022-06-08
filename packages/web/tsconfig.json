@@ -16,11 +16,12 @@
     "declarationDir": "dist/@types",
     "baseUrl": ".",
     "jsx": "react-jsx",
-    "typeRoots": ["./src/javascripts/Types/External", "../../node_modules/@types"],
+    "typeRoots": ["./src/javascripts/Types/External", "node_modules/@types"],
     "paths": {
       "@/*": ["./src/javascripts/*"],
       "@Controllers/*": ["src/javascripts/Controllers/*"],
       "@Services/*": ["src/javascripts/Services/*"]
     }
-  }
+  },
+  "exclude": ["node_modules", "dist", "coverage"]
 }

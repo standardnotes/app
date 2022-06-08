@@ -4202,7 +4202,6 @@ __metadata:
   dependencies:
     "@standardnotes/config": ^2.4.3
     "@types/node": ^17.0.21
-    eslint: ^8.13.0
     husky: ^7.0.4
     lerna: ^3.22.1
     lint-staged: ^13.0.1
@@ -4607,6 +4606,7 @@ __metadata:
     node-sass: ^7.0.1
     sass-loader: ^12.6.0
     style-loader: ~3.3.1
+    typescript: 4.6.3
     webpack: ^5.69.1
     webpack-cli: ^4.9.2
   languageName: unknown
@@ -4622,9 +4622,12 @@ __metadata:
     "@nanostores/react": ^0.2.0
     "@standardnotes/config": ^2.4.3
     "@standardnotes/icons": ^1.1.7
+    "@types/react": ^18
+    eslint: ^8.13.0
     nanoid: ^3.3.4
     nanostores: ^0.5.12
     react: 18
+    typescript: 4.6.3
   languageName: unknown
   linkType: soft
 
@@ -5018,12 +5021,12 @@ __metadata:
   linkType: hard
 
 "@types/eslint@npm:*":
-  version: 8.4.2
-  resolution: "@types/eslint@npm:8.4.2"
+  version: 8.4.3
+  resolution: "@types/eslint@npm:8.4.3"
   dependencies:
     "@types/estree": "*"
     "@types/json-schema": "*"
-  checksum: e81268cdeb8d64d84af649344df88f064ece0f05db62072657c976b6162ffe16f94b6480a5367d627c629272c2d86d0ee8c24f7095e98f8e743b16f98500673b
+  checksum: cc199be84e22754cc625b171c90852da2b563088d32f4161d310b70470eab47f9bc812774c61eab6530083a214fe634abc32d06ef38e0a5e29f68436331cfabb
   languageName: node
   linkType: hard
 
@@ -5369,7 +5372,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*":
+"@types/react@npm:*, @types/react@npm:^18":
   version: 18.0.12
   resolution: "@types/react@npm:18.0.12"
   dependencies:
@@ -5895,9 +5898,9 @@ __metadata:
   linkType: hard
 
 "@zip.js/zip.js@npm:^2.4.10":
-  version: 2.4.12
-  resolution: "@zip.js/zip.js@npm:2.4.12"
-  checksum: c49ced7526bf8c9a729640ba44c24bdef011de9ceb782f25682e35ccdd5e27c9f30763289f640f1bcc82dae534d0194378303ef098c024b646822e4ee140e33c
+  version: 2.4.14
+  resolution: "@zip.js/zip.js@npm:2.4.14"
+  checksum: e855237c8d0e07b3818aeab210665e3b8f7ec333f9ddc5ed449e63a3dac16ee7b1a4b9eface29deef919328509f97104b26bc882b69a3b8cf830770987efda90
   languageName: node
   linkType: hard
 

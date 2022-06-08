@@ -18,6 +18,9 @@
     "clean": "lerna run clean",
     "build": "lerna run build",
     "build:web": "lerna run build --scope=@standardnotes/web",
+    "build:toast": "lerna run build --scope=@standardnotes/toast",
+    "build:styles": "lerna run build --scope=@standardnotes/styles",
+    "build:web:all": "yarn build:toast && yarn build:styles && yarn build:web",
     "start:server:web": "lerna run start --scope=@standardnotes/web-server",
     "start:server:web:localhost": "lerna run start:no-binding --scope=@standardnotes/web-server",
     "prepare": "husky install",
@@ -35,7 +38,6 @@
   "devDependencies": {
     "@standardnotes/config": "^2.4.3",
     "@types/node": "^17.0.21",
-    "eslint": "^8.13.0",
     "husky": "^7.0.4",
     "lerna": "^3.22.1",
     "lint-staged": "^13.0.1"
