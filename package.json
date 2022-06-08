@@ -37,7 +37,8 @@
     "@types/node": "^17.0.21",
     "eslint": "^8.13.0",
     "husky": "^7.0.4",
-    "lerna": "^3.22.1"
+    "lerna": "^3.22.1",
+    "lint-staged": "^13.0.1"
   },
   "packageManager": "yarn@3.2.1"
 }

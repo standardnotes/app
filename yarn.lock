@@ -4205,6 +4205,7 @@ __metadata:
     eslint: ^8.13.0
     husky: ^7.0.4
     lerna: ^3.22.1
+    lint-staged: ^13.0.1
   languageName: unknown
   linkType: soft
 
@@ -14788,7 +14789,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lint-staged@npm:>=12":
+"lint-staged@npm:>=12, lint-staged@npm:^13.0.1":
   version: 13.0.1
   resolution: "lint-staged@npm:13.0.1"
   dependencies:
