@@ -37,7 +37,6 @@
   },
   "devDependencies": {
     "@standardnotes/config": "^2.4.3",
-    "@types/node": "^17.0.21",
     "husky": "^7.0.4",
     "lerna": "^3.22.1",
     "lint-staged": "^13.0.1"
