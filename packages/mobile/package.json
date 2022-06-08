@@ -17,7 +17,6 @@
     "lint:prettier": "prettier ./src --write",
     "tsc": "tsc --noEmit",
     "start": "react-native start",
-    "test": "jest",
     "postinstall": "patch-package",
     "android:bundle": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/build/intermediates/res/merged/release/",
     "upgrade:snjs": "ncu -u '@standardnotes/*' && yarn"
