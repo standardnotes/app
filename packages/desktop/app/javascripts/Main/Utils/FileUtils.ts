@@ -1,9 +1,9 @@
+import { dialog } from 'electron'
 import fs, { PathLike } from 'fs'
 import { debounce } from 'lodash'
 import path from 'path'
 import yauzl from 'yauzl'
 import { removeFromArray } from '../Utils/Utils'
-import { dialog } from 'electron'
 
 export const FileDoesNotExist = 'ENOENT'
 export const FileAlreadyExists = 'EEXIST'

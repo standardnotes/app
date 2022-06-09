@@ -1,12 +1,12 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import keytar from 'keytar'
-import { isLinux } from '../Types/Platforms'
+import { MessageToMainProcess } from '../../Shared/IpcMessages'
+import { Store, StoreKeys } from '../Store'
 import { AppName } from '../Strings'
 import { keychainAccessIsUserConfigurable } from '../Types/Constants'
+import { Paths, Urls } from '../Types/Paths'
+import { isLinux } from '../Types/Platforms'
 import { isDev, isTesting } from '../Utils/Utils'
-import { MessageToMainProcess } from '../../Shared/IpcMessages'
-import { Urls, Paths } from '../Types/Paths'
-import { Store, StoreKeys } from '../Store'
 import { KeychainInterface } from './KeychainInterface'
 
 const ServiceName = isTesting() ? AppName + ' (Testing)' : isDev() ? AppName + ' (Development)' : AppName

@@ -1,10 +1,12 @@
-import { dialog, WebContents, shell } from 'electron'
+import { dialog, shell, WebContents } from 'electron'
 import { promises as fs } from 'fs'
 import path from 'path'
 import { AppMessageType, MessageType } from '../../../../test/TestIpcMessage'
 import { AppState } from '../../../application'
 import { MessageToWebApp } from '../../Shared/IpcMessages'
-import { BackupsManagerInterface } from './BackupsManagerInterface'
+import { StoreKeys } from '../Store'
+import { backups as str } from '../Strings'
+import { Paths } from '../Types/Paths'
 import {
   deleteDir,
   deleteDirContents,
@@ -13,11 +15,9 @@ import {
   moveFiles,
   openDirectoryPicker,
 } from '../Utils/FileUtils'
-import { Paths } from '../Types/Paths'
-import { StoreKeys } from '../Store'
-import { backups as str } from '../Strings'
 import { handleTestMessage, send } from '../Utils/Testing'
 import { isTesting, last } from '../Utils/Utils'
+import { BackupsManagerInterface } from './BackupsManagerInterface'
 
 function log(...message: any) {
   console.log('BackupsManager:', ...message)

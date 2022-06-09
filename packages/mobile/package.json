@@ -34,7 +34,7 @@
     "@react-navigation/stack": "^6.2.1",
     "@standardnotes/components": "^1.9.0",
     "@standardnotes/filepicker": "^1.16.9",
-    "@standardnotes/icons": "^1.1.8",
+    "@standardnotes/icons": "*",
     "@standardnotes/react-native-aes": "^1.4.3",
     "@standardnotes/react-native-textview": "1.0.2",
     "@standardnotes/react-native-utils": "1.0.1",

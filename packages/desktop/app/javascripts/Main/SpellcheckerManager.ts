@@ -1,6 +1,6 @@
 /* eslint-disable no-inline-comments */
-import { isMac } from './Types/Platforms'
 import { Store, StoreKeys } from './Store'
+import { isMac } from './Types/Platforms'
 import { isDev } from './Utils/Utils'
 
 export enum Language {

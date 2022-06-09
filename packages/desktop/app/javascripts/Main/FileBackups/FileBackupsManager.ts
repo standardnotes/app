@@ -1,5 +1,6 @@
 import { FileBackupsDevice, FileBackupsMapping } from '@web/Application/Device/DesktopSnjsExports'
 import { AppState } from 'app/application'
+import { shell } from 'electron'
 import { StoreKeys } from '../Store'
 import {
   ensureDirectoryExists,
@@ -10,7 +11,6 @@ import {
   writeJSONFile,
 } from '../Utils/FileUtils'
 import { FileDownloader } from './FileDownloader'
-import { shell } from 'electron'
 
 export const FileBackupsConstantsV1 = {
   Version: '1.0.0',
