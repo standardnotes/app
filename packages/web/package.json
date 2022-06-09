@@ -62,7 +62,7 @@
     "@reach/listbox": "^0.16.2",
     "@reach/tooltip": "^0.16.2",
     "@reach/visually-hidden": "^0.16.0",
-    "@standardnotes/components": "1.8.3",
+    "@standardnotes/components": "1.9.0",
     "@standardnotes/filepicker": "1.16.11",
     "@standardnotes/icons": "^1.1.8",
     "@standardnotes/services": "^1.13.11",
