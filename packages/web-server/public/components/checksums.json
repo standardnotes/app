@@ -98,5 +98,10 @@
     "version": "1.0.6",
     "base64": "13497d3939fbec67cf0baa0f7c182112f0d13474a3e7f4750790823f78688a47",
     "binary": "fc6e37d7250d14b245facb760aece51d006fd321d9ac2f153c5a571565411311"
+  },
+  "org.standardnotes.advanced-checklist": {
+    "version": "0.0.1",
+    "base64": "6fc4b14848e1692524448cfde7a06db543d5abbe3f7194fcd8c69c605ab08039",
+    "binary": "de1e23aa983a0f600d93e69dfd3d615d9ff608d88cd6f8ad0b15ffd04e0482bc"
   }
 }
