@@ -8,13 +8,7 @@ import Dropdown from '@/Components/Dropdown/Dropdown'
 import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
 import Switch from '@/Components/Switch/Switch'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
-import {
-  FeatureStatus,
-  FeatureIdentifier,
-  EmailBackupFrequency,
-  MuteFailedBackupsEmailsOption,
-  SettingName,
-} from '@standardnotes/snjs'
+import { EmailBackupFrequency, MuteFailedBackupsEmailsOption, SettingName } from '@standardnotes/snjs'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
@@ -27,7 +21,6 @@ const EmailBackups = ({ application }: Props) => {
   const [emailFrequency, setEmailFrequency] = useState<EmailBackupFrequency>(EmailBackupFrequency.Disabled)
   const [emailFrequencyOptions, setEmailFrequencyOptions] = useState<DropdownItem[]>([])
   const [isFailedBackupEmailMuted, setIsFailedBackupEmailMuted] = useState(true)
-  const [isEntitledToEmailBackups, setIsEntitledToEmailBackups] = useState(false)
 
   const loadEmailFrequencySetting = useCallback(async () => {
     if (!application.getUser()) {
@@ -59,9 +52,6 @@ const EmailBackups = ({ application }: Props) => {
   }, [application])
 
   useEffect(() => {
-    const emailBackupsFeatureStatus = application.features.getFeatureStatus(FeatureIdentifier.DailyEmailBackup)
-    setIsEntitledToEmailBackups(emailBackupsFeatureStatus === FeatureStatus.Entitled)
-
     const frequencyOptions = []
     for (const frequency in EmailBackupFrequency) {
       const frequencyValue = EmailBackupFrequency[frequency as keyof typeof EmailBackupFrequency]
@@ -96,9 +86,6 @@ const EmailBackups = ({ application }: Props) => {
   }
 
   const toggleMuteFailedBackupEmails = async () => {
-    if (!isEntitledToEmailBackups) {
-      return
-    }
     const previousValue = isFailedBackupEmailMuted
     setIsFailedBackupEmailMuted(!isFailedBackupEmailMuted)
 
@@ -109,9 +96,6 @@ const EmailBackups = ({ application }: Props) => {
   }
 
   const handleEmailFrequencyChange = (item: string) => {
-    if (!isEntitledToEmailBackups) {
-      return
-    }
     updateEmailFrequency(item as EmailBackupFrequency).catch(console.error)
   }
 
@@ -119,20 +103,7 @@ const EmailBackups = ({ application }: Props) => {
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Email Backups</Title>
-        {!isEntitledToEmailBackups && (
-          <>
-            <Text>
-              A <span className={'font-bold'}>Plus</span> or <span className={'font-bold'}>Pro</span> subscription plan
-              is required to enable Email Backups.{' '}
-              <a target="_blank" href="https://standardnotes.com/features">
-                Learn more
-              </a>
-              .
-            </Text>
-            <HorizontalSeparator classes="my-4" />
-          </>
-        )}
-        <div className={isEntitledToEmailBackups ? '' : 'faded cursor-default pointer-events-none'}>
+        <div>
           {!isDesktopApplication() && (
             <Text className="mb-3">
               Daily encrypted email backups of your entire data set delivered directly to your inbox.
@@ -150,7 +121,6 @@ const EmailBackups = ({ application }: Props) => {
                 items={emailFrequencyOptions}
                 value={emailFrequency}
                 onChange={handleEmailFrequencyChange}
-                disabled={!isEntitledToEmailBackups}
               />
             )}
           </div>
@@ -163,11 +133,7 @@ const EmailBackups = ({ application }: Props) => {
             {isLoading ? (
               <div className={'sk-spinner info small'} />
             ) : (
-              <Switch
-                onChange={toggleMuteFailedBackupEmails}
-                checked={!isFailedBackupEmailMuted}
-                disabled={!isEntitledToEmailBackups}
-              />
+              <Switch onChange={toggleMuteFailedBackupEmails} checked={!isFailedBackupEmailMuted} />
             )}
           </div>
         </div>
