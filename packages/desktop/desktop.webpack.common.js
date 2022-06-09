@@ -87,7 +87,7 @@ module.exports = function ({ onlyTranspileTypescript = false, experimentalFeatur
             to: 'web',
           },
           {
-            from: '../web/node_modules/@standardnotes/components/dist/',
+            from: '../../node_modules/@standardnotes/components/dist/',
             to: 'web/components',
           },
           {
