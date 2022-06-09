@@ -4,5 +4,8 @@
   "description": "An end-to-end encrypted notes app for digitalists and professionals.",
   "author": "Standard Notes <help@standardnotes.com>",
   "version": "3.20.2",
-  "main": "./dist/index.js"
+  "main": "./dist/index.js",
+  "devDependencies": {
+    "keytar": "^7.9.0"
+  }
 }

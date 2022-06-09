@@ -4332,7 +4332,6 @@ __metadata:
     file-loader: ^6.2.0
     fs-extra: ^10.1.0
     husky: ^7.0.4
-    keytar: ^7.9.0
     lodash: ^4.17.21
     mime-types: ^2.1.35
     mobx: ^6.5.0
@@ -20482,6 +20481,8 @@ __metadata:
 "standard-notes@workspace:packages/desktop/app":
   version: 0.0.0-use.local
   resolution: "standard-notes@workspace:packages/desktop/app"
+  dependencies:
+    keytar: ^7.9.0
   languageName: unknown
   linkType: soft
 
