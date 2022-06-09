@@ -21,7 +21,7 @@
     "build:styles": "lerna run build --scope=@standardnotes/styles",
     "build:web:front": "yarn build:toast && yarn build:styles && yarn build:web",
     "build:web:back": "lerna run build --scope=@standardnotes/web-server",
-    "build:web:all": "yarn build:web:front && build:web:back",
+    "build:web:all": "yarn build:web:front && yarn build:web:back",
     "start:server:web": "lerna run start --scope=@standardnotes/web-server",
     "start:server:web:localhost": "lerna run start:no-binding --scope=@standardnotes/web-server",
     "prepare": "husky install",
