@@ -32,7 +32,6 @@ const MinNoteCellHeight = 51.0
 const DefaultListNumNotes = 20
 const ElementIdSearchBar = 'search-bar'
 const ElementIdScrollContainer = 'notes-scrollable'
-const SupportsFileSelectionState = false
 
 export class ItemListController extends AbstractViewController implements InternalEventHandlerInterface {
   completedFullSync = false
@@ -285,15 +284,6 @@ export class ItemListController extends AbstractViewController implements Intern
       return
     }
 
-    const selectedItem = Object.values(this.selectionController.selectedItems)[0]
-
-    const isSelectedItemFile =
-      this.items.includes(selectedItem) && selectedItem && selectedItem.content_type === ContentType.File
-
-    if (isSelectedItemFile && !SupportsFileSelectionState) {
-      return
-    }
-
     if (!activeNote) {
       await this.selectFirstItem()
 
@@ -305,22 +295,20 @@ export class ItemListController extends AbstractViewController implements Intern
     }
 
     const noteExistsInUpdatedResults = this.notes.find((note) => note.uuid === activeNote.uuid)
-    if (!noteExistsInUpdatedResults && !isSearching) {
+    const shouldCloseActiveNote =
+      !noteExistsInUpdatedResults && !isSearching && this.navigationController.isInAnySystemView()
+
+    if (shouldCloseActiveNote) {
       this.closeNoteController(activeController)
-
       this.selectNextItem()
-
       return
     }
 
     const showTrashedNotes =
-      (this.navigationController.selected instanceof SmartView &&
-        this.navigationController.selected?.uuid === SystemViewId.TrashedNotes) ||
-      this.searchOptionsController.includeTrashed
+      this.navigationController.isInSystemView(SystemViewId.TrashedNotes) || this.searchOptionsController.includeTrashed
 
     const showArchivedNotes =
-      (this.navigationController.selected instanceof SmartView &&
-        this.navigationController.selected.uuid === SystemViewId.ArchivedNotes) ||
+      this.navigationController.isInSystemView(SystemViewId.ArchivedNotes) ||
       this.searchOptionsController.includeArchived ||
       this.application.getPreference(PrefKey.NotesShowArchived, false)
 
