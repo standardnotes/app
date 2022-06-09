@@ -22,5 +22,6 @@
       "@Controllers/*": ["src/javascripts/Controllers/*"],
       "@Services/*": ["src/javascripts/Services/*"]
     }
-  }
+  },
+  "exclude": ["node_modules", "dist", "coverage"]
 }

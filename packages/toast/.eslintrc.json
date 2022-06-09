@@ -1,3 +1,4 @@
 {
-  "extends": ["../../node_modules/@standardnotes/config/src/.eslintrc"]
+  "extends": ["../../node_modules/@standardnotes/config/src/.eslintrc"],
+  "ignorePatterns": [".eslintrc.js", "*.webpack.*.js", "webpack-defaults.js", "jest.config.js", "__mocks__"]
 }

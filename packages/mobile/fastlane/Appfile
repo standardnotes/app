@@ -1,0 +1,17 @@
+for_platform :ios do
+  for_lane :dev do
+    app_identifier "com.standardnotes.standardnotes.dev"
+  end
+  for_lane :prod do
+    app_identifier "com.standardnotes.standardnotes"
+  end
+end
+
+for_platform :android do
+  for_lane :dev do
+    package_name 'com.standardnotes.dev'
+  end
+  for_lane :prod do
+    package_name 'com.standardnotes'
+  end
+end

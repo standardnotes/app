@@ -19,7 +19,7 @@ jobs:
         with:
           ruby-version: 2.6.8
       - name: Install dependencies
-        run: yarn install --pure-lockfile
+        run: yarn install
       - name: Build
         run: yarn build
       - name: ESLint

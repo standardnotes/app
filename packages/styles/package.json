@@ -11,14 +11,14 @@
     "start": "webpack --watch --mode='development'",
     "lint": "prettier --check *.js"
   },
-  "dependencies": {},
   "devDependencies": {
     "css-loader": "~6.6.0",
+    "eslint": "*",
     "mini-css-extract-plugin": "^2.5.3",
     "node-sass": "^7.0.1",
     "sass-loader": "^12.6.0",
     "style-loader": "~3.3.1",
-    "webpack": "^5.69.1",
-    "webpack-cli": "^4.9.2"
+    "typescript": "*",
+    "webpack": "*"
   }
 }

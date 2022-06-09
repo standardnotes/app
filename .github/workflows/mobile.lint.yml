@@ -1,0 +1,20 @@
+name: lint & typescript check
+
+on:
+  push:
+    paths:
+      - packages/mobile/**
+
+jobs:
+  lint:
+    defaults:
+      run:
+        working-directory: ./packages/mobile
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: yarn install
+      - name: Lint code
+        run: yarn lint

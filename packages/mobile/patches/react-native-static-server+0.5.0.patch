@@ -1,0 +1,61 @@
+diff --git a/node_modules/react-native-static-server/android/build.gradle b/node_modules/react-native-static-server/android/build.gradle
+index 0c7bca6..6de3115 100644
+--- a/node_modules/react-native-static-server/android/build.gradle
++++ b/node_modules/react-native-static-server/android/build.gradle
+@@ -20,7 +20,7 @@ def safeExtGet(prop, fallback) {
+ }
+
+ apply plugin: 'com.android.library'
+-apply plugin: 'maven'
++apply plugin: 'maven-publish'
+
+ buildscript {
+     // The Android Gradle plugin is only required when opening the android folder stand-alone.
+@@ -39,7 +39,7 @@ buildscript {
+ }
+
+ apply plugin: 'com.android.library'
+-apply plugin: 'maven'
++apply plugin: 'maven-publish'
+
+ android {
+     compileSdkVersion safeExtGet('compileSdkVersion', DEFAULT_COMPILE_SDK_VERSION)
+@@ -108,17 +108,6 @@ def configureReactNativePom(def pom) {
+ afterEvaluate { project ->
+     // some Gradle build hooks ref:
+     // https://www.oreilly.com/library/view/gradle-beyond-the/9781449373801/ch03.html
+-    task androidJavadoc(type: Javadoc) {
+-        source = android.sourceSets.main.java.srcDirs
+-        classpath += files(android.bootClasspath)
+-        classpath += files(project.getConfigurations().getByName('compile').asList())
+-        include '**/*.java'
+-    }
+-
+-    task androidJavadocJar(type: Jar, dependsOn: androidJavadoc) {
+-        classifier = 'javadoc'
+-        from androidJavadoc.destinationDir
+-    }
+
+     task androidSourcesJar(type: Jar) {
+         classifier = 'sources'
+@@ -137,15 +126,13 @@ afterEvaluate { project ->
+
+     artifacts {
+         archives androidSourcesJar
+-        archives androidJavadocJar
+     }
++}
+
+-    task installArchives(type: Upload) {
+-        configuration = configurations.archives
+-        repositories.mavenDeployer {
+-            // Deploy to react-native-event-bridge/maven, ready to publish to npm
+-            repository url: "file://${projectDir}/../android/maven"
+-            configureReactNativePom pom
++publishing {
++    repositories {
++        maven {
++            url = uri("file://${projectDir}/../android/maven")
+         }
+     }
+ }
