@@ -59,7 +59,7 @@ jobs:
         run:
           echo "PACKAGE_VERSION=$(grep '"version"' package.json | cut -d '"' -f 4)" >> $GITHUB_ENV
       - name: Install dependencies
-        run: yarn run init
+        run: yarn install && yarn run init
       - name: Set ssh connection to Github
         uses: webfactory/ssh-agent@v0.4.1
         with:
