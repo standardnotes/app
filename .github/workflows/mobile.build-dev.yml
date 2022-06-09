@@ -43,6 +43,7 @@ jobs:
           GOOGLE_PLAY_JSON_KEY_DATA: ${{ secrets.GOOGLE_PLAY_JSON_KEY_DATA }}
         with:
           lane: 'android dev'
+          subdirectory: 'packages/mobile'
       - name: Upload universal apk to artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -51,7 +52,7 @@ jobs:
   ios:
     defaults:
       run:
-        working-directory: ./packages/mobile
+        working-directory: packages/mobile
     runs-on: macos-11
     timeout-minutes: 90
     if: "!contains(github.event.head_commit.message, 'skip ci')"
@@ -79,6 +80,7 @@ jobs:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
         with:
           lane: 'ios setup'
+          subdirectory: 'packages/mobile'
       - name: fastlane
         uses: maierj/fastlane-action@v1.4.0
         env:
@@ -96,3 +98,4 @@ jobs:
           BUILD_NUMBER: ${{ github.run_number }}
         with:
           lane: 'ios dev'
+          subdirectory: 'packages/mobile'
