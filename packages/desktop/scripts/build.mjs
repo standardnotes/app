@@ -6,8 +6,8 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-const RootDir = path.join(__dirname, '../..')
-const DesktopDir = path.join(__dirname, '../../packages/desktop')
+const RootDir = path.join(__dirname, '../../..')
+const DesktopDir = path.join(__dirname, '../')
 const ScriptsDir = path.join(__dirname)
 
 async function buildTargets(targets) {

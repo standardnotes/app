@@ -93,6 +93,9 @@ module.exports = function ({ onlyTranspileTypescript = false, experimentalFeatur
           {
             from: 'app/node_modules',
             to: 'node_modules',
+            globOptions: {
+              ignore: ['**/standard-notes/**'],
+            },
           },
           {
             from: 'app/stylesheets/renderer.css',
