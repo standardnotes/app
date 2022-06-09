@@ -2,11 +2,11 @@ import test from 'ava'
 import { promises as fs } from 'fs'
 import path from 'path'
 import proxyquire from 'proxyquire'
-import { ensureDirectoryExists, readJSONFile } from '../app/javascripts/Main/Utils/FileUtils'
-import { createTmpDir } from './testUtils'
-import { AppName } from '../app/javascripts/Main/strings'
-import makeFakePaths from './fakePaths'
 import { PackageManagerInterface } from '../app/javascripts/Main/Packages/PackageManagerInterface'
+import { AppName } from '../app/javascripts/Main/strings'
+import { ensureDirectoryExists, readJSONFile } from '../app/javascripts/Main/Utils/FileUtils'
+import makeFakePaths from './fakePaths'
+import { createTmpDir } from './testUtils'
 
 const tmpDir = createTmpDir(__filename)
 const FakePaths = makeFakePaths(tmpDir.path)
