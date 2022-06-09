@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: '14.x'
           registry-url: 'https://registry.npmjs.org'
-      - run: yarn setup
+      - run: yarn install
       - run: node scripts/build.mjs appimage-x64
       - uses: actions/upload-artifact@v2
         with:

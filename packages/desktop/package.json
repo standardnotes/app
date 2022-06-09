@@ -27,7 +27,6 @@
     "tsc": "tsc --noEmit",
     "release": "node scripts/build.mjs mainstream",
     "release:mac": "node scripts/build.mjs mac",
-    "setup": "yarn && yarn --cwd ./app",
     "start": "electron ./app --enable-logging --icon _icon/icon.png",
     "ava": "rimraf test/data/tmp && ava --serial"
   },

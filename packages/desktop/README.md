@@ -16,7 +16,7 @@ This application makes use of the core JS/CSS/HTML code found in the [web repo](
 Make sure [Yarn](https://classic.yarnpkg.com/en/) is installed on your system.
 
 ```bash
-yarn setup
+yarn install
 yarn build:web # Or `yarn dev:web`
 yarn dev
 
@@ -68,7 +68,7 @@ Snap releases also require a working snapcraft / `snapd` installation.
 
 Building can then be done by running:
 
-- `yarn setup`
+- `yarn install`
 
 Followed by
 
