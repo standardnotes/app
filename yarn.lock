@@ -4227,16 +4227,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/api@npm:^1.1.4, @standardnotes/api@npm:^1.1.6":
-  version: 1.1.6
-  resolution: "@standardnotes/api@npm:1.1.6"
+"@standardnotes/api@npm:^1.1.7":
+  version: 1.1.7
+  resolution: "@standardnotes/api@npm:1.1.7"
   dependencies:
     "@standardnotes/auth": ^3.19.2
     "@standardnotes/common": ^1.22.0
-    "@standardnotes/encryption": ^1.8.13
-    "@standardnotes/responses": ^1.6.31
+    "@standardnotes/encryption": ^1.8.14
+    "@standardnotes/responses": ^1.6.32
     "@standardnotes/utils": ^1.6.10
-  checksum: 6202fecc6c6e41d0346e6d0217d82d16f73a327777ff3bc55d12cfa4f57a39b7f0b2ed04da72e8e4304376a6b70465ba01bcc761c196d2f51b51b5593e68fb92
+  checksum: 120e415050004d69acfe89b5b198e5172c8e72fd36cbe344968d6977c9eb2e8ccfaeba64194d96732810168801441480fafd618e1744b4936194bbff0130f3c0
   languageName: node
   linkType: hard
 
@@ -4348,13 +4348,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/domain-events@npm:^2.29.1, @standardnotes/domain-events@npm:^2.29.2":
-  version: 2.29.2
-  resolution: "@standardnotes/domain-events@npm:2.29.2"
+"@standardnotes/domain-events@npm:^2.29.3":
+  version: 2.29.3
+  resolution: "@standardnotes/domain-events@npm:2.29.3"
   dependencies:
     "@standardnotes/auth": ^3.19.2
-    "@standardnotes/features": ^1.45.0
-  checksum: 9d1a41ac98529c8bc48d6d198bb5d49106afdbcb3d88f9357532bdc25002536ed158ee582fa9be8e4285b6a6b01825d270046fce3a4dadb3976a58e0f7426527
+    "@standardnotes/features": ^1.45.1
+  checksum: a13e8a03634ae1cfe4b47871c368626fe3ce8b8e8fa4943e3161fa4e78758c3a7485b20ad74d9f40322d9579691d4c47de840e1d5e55bcefc6ed7deff713840d
   languageName: node
   linkType: hard
 
@@ -4367,60 +4367,49 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/encryption@npm:^1.8.11, @standardnotes/encryption@npm:^1.8.13":
-  version: 1.8.13
-  resolution: "@standardnotes/encryption@npm:1.8.13"
+"@standardnotes/encryption@npm:^1.8.14":
+  version: 1.8.14
+  resolution: "@standardnotes/encryption@npm:1.8.14"
   dependencies:
-    "@standardnotes/models": ^1.11.5
-    "@standardnotes/responses": ^1.6.31
-    "@standardnotes/services": ^1.13.13
-  checksum: 9775e959bfad17802d14838897562fa066efcb9980967f5d8e0bff46ee6081d32d7edf1d5305301bb9dd2479d1cc2b210d9f9e333ec996ce5d4a389bc63a9f2b
+    "@standardnotes/models": ^1.11.6
+    "@standardnotes/responses": ^1.6.32
+    "@standardnotes/services": ^1.13.14
+  checksum: f1b2d81b4da417aa7a8a244650158ecfb93588b35b42de975fa0e728850baa12c4c5dc0217dccc616a91959b40364a1fec37d5c48fb8c551b9ea5ba5586e16cc
   languageName: node
   linkType: hard
 
-"@standardnotes/features@npm:^1.44.7, @standardnotes/features@npm:^1.45.0":
-  version: 1.45.0
-  resolution: "@standardnotes/features@npm:1.45.0"
+"@standardnotes/features@npm:^1.45.1":
+  version: 1.45.1
+  resolution: "@standardnotes/features@npm:1.45.1"
   dependencies:
     "@standardnotes/auth": ^3.19.2
     "@standardnotes/common": ^1.22.0
-  checksum: e92d55728fb5ee55ebfeab85442136772a2cac85d70e229120b780d0660219cb758541c1055eb8ef27e1e5e39b64c3086484c0d9f292509c6ae569b70eab7f79
+  checksum: 0e851e3e29264db40511b6adcc6a0369240b37c09e8b4c7619f3fc291c0808d2c8608dca55535f7f0c17440c1a4f26bf406157cfdcadcd2e4597779ae1814268
   languageName: node
   linkType: hard
 
-"@standardnotes/filepicker@npm:1.16.11":
-  version: 1.16.11
-  resolution: "@standardnotes/filepicker@npm:1.16.11"
+"@standardnotes/filepicker@npm:1.16.14, @standardnotes/filepicker@npm:^1.16.14":
+  version: 1.16.14
+  resolution: "@standardnotes/filepicker@npm:1.16.14"
   dependencies:
     "@standardnotes/common": ^1.22.0
-    "@standardnotes/services": ^1.13.11
+    "@standardnotes/services": ^1.13.14
     "@standardnotes/utils": ^1.6.10
-  checksum: da9dc08c5b957c09529a700e97efebda1df4ee5c506b4536c2e7a5172781a0a0f116f261ccb53f450cfc823cb772a2405eaa8642ef83b71d2936253e48eb5ccf
+  checksum: a26b0d24f6c139137cfcfc83c9b0d9b3d6b3782ba54a170390a4ad22a1f61c229d36511de3c01386dbc1452f1253b6550806ae4ec0e0588ae5e59d300808f252
   languageName: node
   linkType: hard
 
-"@standardnotes/filepicker@npm:^1.16.11, @standardnotes/filepicker@npm:^1.16.13, @standardnotes/filepicker@npm:^1.16.9":
-  version: 1.16.13
-  resolution: "@standardnotes/filepicker@npm:1.16.13"
+"@standardnotes/files@npm:^1.3.14":
+  version: 1.3.14
+  resolution: "@standardnotes/files@npm:1.3.14"
   dependencies:
-    "@standardnotes/common": ^1.22.0
-    "@standardnotes/services": ^1.13.13
+    "@standardnotes/encryption": ^1.8.14
+    "@standardnotes/filepicker": ^1.16.14
+    "@standardnotes/models": ^1.11.6
+    "@standardnotes/responses": ^1.6.32
+    "@standardnotes/services": ^1.13.14
     "@standardnotes/utils": ^1.6.10
-  checksum: 2907057e2a6a67d9c4f3b0569f82db35bc890d5949a10aad074f54de9cbfb5e3d0a39d95a365a1ddf7d1050ed75bb65fbac8317aa9cb1d022377f994e0ce88c9
-  languageName: node
-  linkType: hard
-
-"@standardnotes/files@npm:^1.3.11, @standardnotes/files@npm:^1.3.13":
-  version: 1.3.13
-  resolution: "@standardnotes/files@npm:1.3.13"
-  dependencies:
-    "@standardnotes/encryption": ^1.8.13
-    "@standardnotes/filepicker": ^1.16.13
-    "@standardnotes/models": ^1.11.5
-    "@standardnotes/responses": ^1.6.31
-    "@standardnotes/services": ^1.13.13
-    "@standardnotes/utils": ^1.6.10
-  checksum: af10f78135b1ef821476cee92c88c495011038960f0e4f2db396bcbe5e76aa5b961929cd01ae079c1c94e9b7f3d5441d9a4cbd6392b02617dfb067f72961ed1d
+  checksum: a94cb3a10c7738ab30ec686b81dd806cca035643649660f19f2b93995bb3da7f4d9f65817da0c2c9da98d46a228b106bf2707b5321d7b05bfcf30d70a1a229cb
   languageName: node
   linkType: hard
 
@@ -4468,13 +4457,13 @@ __metadata:
     "@react-navigation/stack": ^6.2.1
     "@standardnotes/components": ^1.9.0
     "@standardnotes/config": ^2.4.3
-    "@standardnotes/filepicker": ^1.16.9
+    "@standardnotes/filepicker": ^1.16.14
     "@standardnotes/icons": "*"
     "@standardnotes/react-native-aes": ^1.4.3
     "@standardnotes/react-native-textview": 1.0.2
     "@standardnotes/react-native-utils": 1.0.1
     "@standardnotes/sncrypto-common": 1.9.0
-    "@standardnotes/snjs": 2.115.6
+    "@standardnotes/snjs": 2.115.9
     "@standardnotes/stylekit": 5.29.3
     "@types/detox": ^18.1.0
     "@types/faker": ^6.6.9
@@ -4549,14 +4538,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/models@npm:^1.11.4, @standardnotes/models@npm:^1.11.5":
-  version: 1.11.5
-  resolution: "@standardnotes/models@npm:1.11.5"
+"@standardnotes/models@npm:^1.11.6":
+  version: 1.11.6
+  resolution: "@standardnotes/models@npm:1.11.6"
   dependencies:
-    "@standardnotes/features": ^1.45.0
-    "@standardnotes/responses": ^1.6.31
+    "@standardnotes/features": ^1.45.1
+    "@standardnotes/responses": ^1.6.32
     "@standardnotes/utils": ^1.6.10
-  checksum: 67feb10251d125a012b81d3bbdd7be6bc1e9d4311138c8e6f7c9931b5181bb04cfb7d56fbf06dcc3b6cc7a256445f02bb0aff180877dc602439b76b86b1ce46c
+  checksum: 304922082135225c8523f50700507747ab587646d1ef26b9b4a20e94291e2fe458bf4d196ebc230de78ce7c69afe6553d5741b0e65255069ce04ff4164b5c38c
   languageName: node
   linkType: hard
 
@@ -4584,27 +4573,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/responses@npm:^1.6.30, @standardnotes/responses@npm:^1.6.31":
-  version: 1.6.31
-  resolution: "@standardnotes/responses@npm:1.6.31"
+"@standardnotes/responses@npm:^1.6.32":
+  version: 1.6.32
+  resolution: "@standardnotes/responses@npm:1.6.32"
   dependencies:
     "@standardnotes/auth": ^3.19.2
     "@standardnotes/common": ^1.22.0
-    "@standardnotes/features": ^1.45.0
-  checksum: 350010e04873582a727f91f6bff24f94b9dcdde876dbeaf2496319c383c35a57b11e6712e2443dbf298438f9065a700cd8231919cd4466200c1014ca4c21bc06
+    "@standardnotes/features": ^1.45.1
+  checksum: 3a4ae07fd3418b91bc5754140ae553b1631fbb60df8e4fd61879193a0f1ec83039de62a6b363b2e0829d29bfb36c0f49d4101aa4b0b0e36cc2c364633d5f5125
   languageName: node
   linkType: hard
 
-"@standardnotes/services@npm:^1.13.11, @standardnotes/services@npm:^1.13.13":
-  version: 1.13.13
-  resolution: "@standardnotes/services@npm:1.13.13"
+"@standardnotes/services@npm:^1.13.14":
+  version: 1.13.14
+  resolution: "@standardnotes/services@npm:1.13.14"
   dependencies:
     "@standardnotes/auth": ^3.19.2
     "@standardnotes/common": ^1.22.0
-    "@standardnotes/models": ^1.11.5
-    "@standardnotes/responses": ^1.6.31
+    "@standardnotes/models": ^1.11.6
+    "@standardnotes/responses": ^1.6.32
     "@standardnotes/utils": ^1.6.10
-  checksum: d51176672854a6727101c6cb0a0268e4c647be63fa9410d46ef3344a4b9603deb08b9b52c611fde96285821a992079faccd0cee4ec44be01faaa16aec475d19f
+  checksum: 79a15e50e9fa35eca6cad10f597b0d12d09d1ff3b247fbbdfd91aab4f8a3aebefbed57fab3a99f261164d38025f8304ec8e8deb695a06c3501d60f7d62a1872c
   languageName: node
   linkType: hard
 
@@ -4633,47 +4622,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/snjs@npm:2.115.6":
-  version: 2.115.6
-  resolution: "@standardnotes/snjs@npm:2.115.6"
+"@standardnotes/snjs@npm:2.115.9, @standardnotes/snjs@npm:^2.115.9, @standardnotes/snjs@npm:^2.41.1":
+  version: 2.115.9
+  resolution: "@standardnotes/snjs@npm:2.115.9"
   dependencies:
-    "@standardnotes/api": ^1.1.4
+    "@standardnotes/api": ^1.1.7
     "@standardnotes/auth": ^3.19.2
     "@standardnotes/common": ^1.22.0
-    "@standardnotes/domain-events": ^2.29.1
-    "@standardnotes/encryption": ^1.8.11
-    "@standardnotes/features": ^1.44.7
-    "@standardnotes/filepicker": ^1.16.11
-    "@standardnotes/files": ^1.3.11
-    "@standardnotes/models": ^1.11.4
-    "@standardnotes/responses": ^1.6.30
-    "@standardnotes/services": ^1.13.11
+    "@standardnotes/domain-events": ^2.29.3
+    "@standardnotes/encryption": ^1.8.14
+    "@standardnotes/features": ^1.45.1
+    "@standardnotes/filepicker": ^1.16.14
+    "@standardnotes/files": ^1.3.14
+    "@standardnotes/models": ^1.11.6
+    "@standardnotes/responses": ^1.6.32
+    "@standardnotes/services": ^1.13.14
     "@standardnotes/settings": ^1.14.3
     "@standardnotes/sncrypto-common": ^1.9.0
     "@standardnotes/utils": ^1.6.10
-  checksum: 02f2ae32843e86b3c3849ac9c57404b6f33c4eedddeba7de8d48bb59f9c3a2b50ba4f4816e6e619ecde2c8ae28927b08b75006c89cad12f72f6c015f5dfa7d14
-  languageName: node
-  linkType: hard
-
-"@standardnotes/snjs@npm:^2.115.6, @standardnotes/snjs@npm:^2.41.1":
-  version: 2.115.8
-  resolution: "@standardnotes/snjs@npm:2.115.8"
-  dependencies:
-    "@standardnotes/api": ^1.1.6
-    "@standardnotes/auth": ^3.19.2
-    "@standardnotes/common": ^1.22.0
-    "@standardnotes/domain-events": ^2.29.2
-    "@standardnotes/encryption": ^1.8.13
-    "@standardnotes/features": ^1.45.0
-    "@standardnotes/filepicker": ^1.16.13
-    "@standardnotes/files": ^1.3.13
-    "@standardnotes/models": ^1.11.5
-    "@standardnotes/responses": ^1.6.31
-    "@standardnotes/services": ^1.13.13
-    "@standardnotes/settings": ^1.14.3
-    "@standardnotes/sncrypto-common": ^1.9.0
-    "@standardnotes/utils": ^1.6.10
-  checksum: 903af34a27751a3a0657093bcd737c4e580581684811a5b8c6b37e9ccbedb8e4946ead99bbb9f01f9d8a12d73d8b7cc2db0c25718d8e2ad5faedc16997a87a8f
+  checksum: 51e8c3b45875f5416f02d2901ec2c733095571037c52a90e6240875005c917c0dfb6a2db9b9a7426f539b70265bac07fc20118e50d92b5836c2a84f20ab91def
   languageName: node
   linkType: hard
 
@@ -4762,11 +4729,11 @@ __metadata:
     "@reach/tooltip": ^0.16.2
     "@reach/visually-hidden": ^0.16.0
     "@standardnotes/components": 1.9.0
-    "@standardnotes/filepicker": 1.16.11
+    "@standardnotes/filepicker": 1.16.14
     "@standardnotes/icons": "*"
-    "@standardnotes/services": ^1.13.11
+    "@standardnotes/services": ^1.13.14
     "@standardnotes/sncrypto-web": 1.10.1
-    "@standardnotes/snjs": ^2.115.6
+    "@standardnotes/snjs": ^2.115.9
     "@standardnotes/styles": "*"
     "@standardnotes/toast": 1.0.0
     "@types/jest": ^27.4.1
