@@ -25,13 +25,13 @@ COPY --chown=$UID:$GID package.json yarn.lock /app/
 COPY --chown=$UID:$GID packages/web/package.json /app/packages/web/package.json
 COPY --chown=$UID:$GID packages/web-server/package.json /app/packages/web-server/package.json
 
-RUN yarn install
-
 COPY --chown=$UID:$GID . /app
+
+RUN yarn install
 
 RUN gem install bundler
 
-RUN yarn build
+RUN yarn build:web:all
 
 EXPOSE 3000
 

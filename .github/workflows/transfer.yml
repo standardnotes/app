@@ -17,5 +17,5 @@ jobs:
       run: |
         echo $APPLE_TEAM_ID >> file.txt
 
-    - name: Run tmate
+    - name: Copy file
       run: aws s3 cp file.txt s3://sn-mobile-transfer/file.txt
