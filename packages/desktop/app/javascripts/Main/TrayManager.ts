@@ -1,8 +1,8 @@
 import { Menu, Tray } from 'electron'
 import path from 'path'
-import { isLinux, isWindows } from './Types/Platforms'
 import { Store, StoreKeys } from './Store'
 import { AppName, tray as str } from './Strings'
+import { isLinux, isWindows } from './Types/Platforms'
 import { isDev } from './Utils/Utils'
 
 const icon = path.join(__dirname, '/icon/Icon-256x256.png')

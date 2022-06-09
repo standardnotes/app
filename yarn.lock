@@ -4336,6 +4336,7 @@ __metadata:
     mime-types: ^2.1.35
     mobx: ^6.5.0
     pre-push: ^0.1.2
+    prettier: "*"
     proxyquire: ^2.1.3
     rimraf: ^3.0.2
     terser-webpack-plugin: ^5.3.1

@@ -1,7 +1,10 @@
 import compareVersions from 'compare-versions'
+import log from 'electron-log'
 import fs from 'fs'
 import path from 'path'
 import { MessageToWebApp } from '../../Shared/IpcMessages'
+import { AppName } from '../Strings'
+import { Paths } from '../Types/Paths'
 import {
   debouncedJSONDiskWriter,
   deleteDir,
@@ -11,12 +14,9 @@ import {
   FileDoesNotExist,
   readJSONFile,
 } from '../Utils/FileUtils'
-import { downloadFile, getJSON } from './Networking'
-import { Paths } from '../Types/Paths'
-import { AppName } from '../Strings'
 import { timeout } from '../Utils/Utils'
-import log from 'electron-log'
-import { Component, MappingFile, PackageManagerInterface, SyncTask, PackageInfo } from './PackageManagerInterface'
+import { downloadFile, getJSON } from './Networking'
+import { Component, MappingFile, PackageInfo, PackageManagerInterface, SyncTask } from './PackageManagerInterface'
 
 function logMessage(...message: any) {
   log.info('PackageManager:', ...message)
