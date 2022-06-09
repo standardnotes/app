@@ -5,7 +5,7 @@
   "author": "Standard Notes <help@standardnotes.com>",
   "version": "3.20.2",
   "main": "./dist/index.js",
-  "devDependencies": {
+  "dependencies": {
     "keytar": "^7.9.0"
   }
 }
