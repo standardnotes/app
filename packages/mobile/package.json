@@ -11,7 +11,7 @@
     "ios-dev": "react-native run-ios --scheme StandardNotesDev",
     "ios-prod": "react-native run-ios --scheme StandardNotes",
     "clear-cache": "watchman watch-del-all && rm -rf $TMPDIR/react-native-packager-cache-* && rm -rf $TMPDIR/metro-bundler-cache-*",
-    "init": "yarn cache clean snjs && yarn && pod-install ios",
+    "init": "pod-install ios",
     "lint": "yarn lint:eslint && yarn lint:prettier",
     "lint:eslint": "yarn eslint . --ext .ts,.tsx --fix --quiet",
     "lint:prettier": "prettier ./src --write",
