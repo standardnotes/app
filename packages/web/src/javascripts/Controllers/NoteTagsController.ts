@@ -63,7 +63,7 @@ export class NoteTagsController extends AbstractViewController {
     this.addNoteToParentFolders = application.getPreference(PrefKey.NoteAddToParentFolders, true)
   }
 
-  public setServicestPostConstruction(itemListController: ItemListController) {
+  public setServicesPostConstruction(itemListController: ItemListController) {
     this.itemListController = itemListController
 
     this.disposers.push(

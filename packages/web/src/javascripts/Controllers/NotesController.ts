@@ -66,7 +66,7 @@ export class NotesController extends AbstractViewController {
     })
   }
 
-  public setServicestPostConstruction(itemListController: ItemListController) {
+  public setServicesPostConstruction(itemListController: ItemListController) {
     this.itemListController = itemListController
 
     this.disposers.push(

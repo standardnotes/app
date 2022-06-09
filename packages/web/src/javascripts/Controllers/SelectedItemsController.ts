@@ -43,7 +43,7 @@ export class SelectedItemsController extends AbstractViewController {
     })
   }
 
-  public setServicestPostConstruction(itemListController: ItemListController, notesController: NotesController) {
+  public setServicesPostConstruction(itemListController: ItemListController, notesController: NotesController) {
     this.itemListController = itemListController
     this.notesController = notesController
 
