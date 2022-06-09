@@ -23,7 +23,7 @@
     "postinstall": "electron-builder install-app-deps",
     "release": "node ../../scripts/desktop/build.mjs mainstream",
     "release:mac": "node ../../scripts/desktop/build.mjs mac",
-    "setup": "yarn --ignore-engines && yarn --ignore-engines --cwd ./app",
+    "setup": "yarn && yarn --cwd ./app",
     "start": "electron ./app --enable-logging --icon _icon/icon.png",
     "ava": "rimraf test/data/tmp && ava --serial"
   },
