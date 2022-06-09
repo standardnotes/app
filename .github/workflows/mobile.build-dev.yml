@@ -12,7 +12,7 @@ jobs:
   android:
     defaults:
       run:
-        working-directory: ./packages/mobile
+        working-directory: packages/mobile
     runs-on: ubuntu-latest
     timeout-minutes: 45
     if: "!contains(github.event.head_commit.message, 'skip ci')"
