@@ -1,4 +1,4 @@
-name: e2e
+name: Mobile e2e
 
 on: [workflow_dispatch]
 

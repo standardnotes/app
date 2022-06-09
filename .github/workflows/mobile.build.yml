@@ -1,4 +1,4 @@
-name: Build Development
+name: Mobile Build Development
 
 on:
   push:

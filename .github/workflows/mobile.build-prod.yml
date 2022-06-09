@@ -1,4 +1,4 @@
-name: Build Production
+name: Mobile Build Production
 
 on: [workflow_dispatch]
 
