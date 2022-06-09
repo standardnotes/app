@@ -1,0 +1,37 @@
+{
+  "name": "@standardnotes/icons",
+  "version": "1.2.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "start": "webpack-dev-server --config webpack.config.js",
+    "watch": "webpack -w --config webpack.config.js",
+    "build": "webpack --config webpack.config.js && yarn run tsc",
+    "tsc": "tsc --project ./tsconfig.json"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.2",
+    "@babel/plugin-transform-react-jsx": "^7.17.12",
+    "@babel/plugin-transform-runtime": "^7.18.2",
+    "@babel/preset-env": "^7.18.2",
+    "@babel/preset-react": "^7.12.12",
+    "@babel/preset-typescript": "^7.17.12",
+    "@babel/runtime": "^7.18.2",
+    "@svgr/webpack": "^6.2.1",
+    "babel-loader": "^8.2.5",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "copy-webpack-plugin": "^11.0.0",
+    "prettier": "*",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "ts-jest": "^28.0.3",
+    "ts-loader": "^9.3.0",
+    "typescript": "*",
+    "webpack": "*",
+    "webpack-cli": "*",
+    "webpack-dev-server": "^4.9.0"
+  }
+}

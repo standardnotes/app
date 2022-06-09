@@ -2,7 +2,7 @@ import { promises as fs } from 'fs'
 import path from 'path'
 
 import anyTest, { TestFn } from 'ava'
-import { Driver, createDriver } from './driver'
+import { createDriver, Driver } from './driver'
 
 const test = anyTest as TestFn<Driver>
 

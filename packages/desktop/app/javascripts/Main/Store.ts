@@ -1,11 +1,11 @@
 import fs from 'fs'
 import path from 'path'
 import { MessageType } from '../../../test/TestIpcMessage'
-import { Language } from './SpellcheckerManager'
-import { ensureIsBoolean, isTesting, isDev, isBoolean } from './Utils/Utils'
-import { FileDoesNotExist } from './Utils/FileUtils'
 import { BackupsDirectoryName } from './Backups/BackupsManager'
+import { Language } from './SpellcheckerManager'
+import { FileDoesNotExist } from './Utils/FileUtils'
 import { handleTestMessage } from './Utils/Testing'
+import { ensureIsBoolean, isBoolean, isDev, isTesting } from './Utils/Utils'
 
 const app = process.type === 'browser' ? require('electron').app : require('@electron/remote').app
 

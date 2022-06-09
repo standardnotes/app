@@ -3,39 +3,12 @@
     "node": true,
     "commonjs": true
   },
-  "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended",
-    "prettier",
-    "../../node_modules/@standardnotes/config/src/.eslintrc"
-  ],
-  "parser": "@typescript-eslint/parser",
-  "ignorePatterns": ["test", "scripts", ".eslintrc", "tsconfig.json", "node_modules", "*.webpack.*.js"],
+  "extends": ["../../.eslintrc.json"],
   "rules": {
-    /** Style */
-    "quotes": ["error", "single", { "avoidEscape": true }],
-
-    /** Preferences */
-    "no-console": "off",
-    "accessor-pairs": 0,
-    "no-nonoctal-decimal-escape": 0,
-    "no-unsafe-optional-chaining": 0,
-    "@typescript-eslint/explicit-function-return-type": 0,
-    "@typescript-eslint/no-use-before-define": ["error", "nofunc"],
-    "@typescript-eslint/no-non-null-assertion": 0,
-    "@typescript-eslint/no-explicit-any": 0,
-    "@typescript-eslint/no-var-requires": 0,
-    /**
-     * The following rules are disabled because they are already implemented
-     * in the TypeScript configuration, or vice-versa
-     */
-    "no-unused-vars": 0,
-    "no-useless-constructor": 0,
-    "no-unused-expressions": 0,
-    "@typescript-eslint/camelcase": 0
+    "no-console": "warn",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-var-requires": "off"
   },
-  "plugins": ["@typescript-eslint"],
   "globals": {
     "zip": true
   }

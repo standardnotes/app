@@ -1,4 +1,4 @@
-import anyTest, { TestFn, ExecutionContext } from 'ava'
+import anyTest, { ExecutionContext, TestFn } from 'ava'
 import fs from 'fs'
 import path from 'path'
 import proxyquire from 'proxyquire'

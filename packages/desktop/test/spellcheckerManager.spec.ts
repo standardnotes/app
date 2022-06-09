@@ -1,5 +1,5 @@
 import anyTest, { TestFn } from 'ava'
-import { Driver, createDriver } from './driver'
+import { createDriver, Driver } from './driver'
 
 const StoreKeys = {
   SelectedSpellCheckerLanguageCodes: 'selectedSpellCheckerLanguageCodes',

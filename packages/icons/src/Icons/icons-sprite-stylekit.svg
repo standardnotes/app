@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg">
+  <svg width="20" height="20" fill="none" viewBox="0 0 20 20" id="ic-history" xmlns="http://www.w3.org/2000/svg">
+    <path d="M11.667 6.667h-1.25v4.166l3.566 2.117.6-1.008-2.916-1.734V6.667zM11.25 2.5a7.5 7.5 0 00-7.5 7.5h-2.5l3.3 3.358L7.917 10h-2.5a5.833 5.833 0 115.833 5.833 5.786 5.786 0 01-4.117-1.716L5.95 15.3a7.413 7.413 0 005.3 2.2 7.5 7.5 0 000-15z" fill="#72767E" />
+  </svg>
+  <svg width="20" height="20" fill="none" viewBox="0 0 20 20" id="ic-menu-arrow-up" xmlns="http://www.w3.org/2000/svg">
+    <path transform="rotate(180 9.99992561340332,10.416574478149414)" fill="#72767E" d="m5.83325,8.33325l4.16667,4.16665l4.16668,-4.16665l-8.33335,0z"/>
+  </svg>
+  <svg width="20" height="20" fill="none" viewBox="0 0 20 20" id="ic-menu-arrow-down" xmlns="http://www.w3.org/2000/svg">
+    <path d="M5.833 8.333L10 12.5l4.167-4.167H5.833z" fill="#72767E" />
+  </svg>
+  <svg width="20" height="20" fill="none" viewBox="0 0 20 20" id="ic-redo" xmlns="http://www.w3.org/2000/svg">
+    <path d="M14.537 9.4a7.306 7.306 0 00-4.722-1.733c-3.182 0-5.87 2.02-6.815 4.813l1.615.52c.718-2.127 2.771-3.667 5.2-3.667 1.335 0 2.553.48 3.504 1.254L10.842 13H17V7l-2.463 2.4z" fill="#72767E" />
+  </svg>
+  <svg width="20" height="20" fill="none" viewBox="0 0 20 20" id="ic-text-rich" xmlns="http://www.w3.org/2000/svg">
+    <path d="M2.5 7.5h5v5h-5v-5zm0-3.333h15v1.666h-15V4.166zm15 3.333v1.666H9.167V7.5H17.5zm0 3.333V12.5H9.167v-1.667H17.5zm-15 3.333h11.667v1.667H2.5v-1.667z" fill="#72767E" />
+  </svg>
+  <svg width="20" height="20" fill="none" viewBox="0 0 20 20" id="ic-undo" xmlns="http://www.w3.org/2000/svg">
+    <path d="M10.181 7.667A7.3 7.3 0 005.462 9.4L3 7v6h6.155L6.68 10.587a5.523 5.523 0 013.501-1.254c2.421 0 4.48 1.54 5.198 3.667L17 12.48c-.95-2.793-3.639-4.813-6.819-4.813z" fill="#72767E" />
+  </svg>
+</svg>
