@@ -8,10 +8,15 @@
     "type": "git",
     "url": "git://github.com/standardnotes/app"
   },
+  "workspaces": {
+    "packages": [
+      "app"
+    ]
+  },
   "scripts": {
     "build:remove-unpacked": "rimraf dist/{linux-*,mac,win-*}",
     "build": "yarn run webpack --config desktop.webpack.prod.js",
-    "change-version": "node ../../scripts/desktop/change-version.mjs",
+    "change-version": "node scripts/change-version.mjs",
     "clean:build": "rimraf app/dist/",
     "clean:tests": "rimraf test/data/tmp/",
     "dev": "NODE_ENV=development webpack --config desktop.webpack.dev.js --watch",
@@ -20,15 +25,18 @@
     "lint:formatting": "prettier --check .",
     "lint": "yarn lint:formatting && yarn lint:eslint",
     "tsc": "tsc --noEmit",
-    "postinstall": "electron-builder install-app-deps",
-    "release": "node ../../scripts/desktop/build.mjs mainstream",
-    "release:mac": "node ../../scripts/desktop/build.mjs mac",
+    "release": "node scripts/build.mjs mainstream",
+    "release:mac": "node scripts/build.mjs mac",
     "setup": "yarn && yarn --cwd ./app",
     "start": "electron ./app --enable-logging --icon _icon/icon.png",
     "ava": "rimraf test/data/tmp && ava --serial"
   },
+  "installConfig": {
+    "hoistingLimits": "workspaces"
+  },
   "dependencies": {
     "@electron/remote": "^2.0.8",
+    "@standardnotes/electron-clear-data": "1.1.1",
     "@standardnotes/web": "*",
     "axios": "^0.27.2",
     "compare-versions": "^4.1.3",
@@ -38,6 +46,7 @@
     "electron-log": "^4.4.6",
     "electron-updater": "^5.0.1",
     "fs-extra": "^10.1.0",
+    "keytar": "^7.9.0",
     "lodash": "^4.17.21",
     "mime-types": "^2.1.35",
     "mobx": "^6.5.0"
@@ -46,7 +55,6 @@
     "@babel/core": "^7.17.10",
     "@babel/preset-env": "^7.17.10",
     "@commitlint/config-conventional": "^16.2.4",
-    "@standardnotes/electron-clear-data": "1.1.1",
     "@types/lodash": "^4.14.182",
     "@types/mime-types": "^2.1.1",
     "@types/node": "15",
@@ -82,13 +90,14 @@
     "electronVersion": "17.4.2",
     "appId": "org.standardnotes.standardnotes",
     "artifactName": "${name}-${version}-${os}-${arch}.${ext}",
-    "afterSign": "../../scripts/desktop/afterSignHook.js",
+    "afterSign": "scripts/afterSignHook.js",
     "files": [
       "compiled/**/*",
       "dist/**/*",
       "stylesheets/**/*",
       "assets/**/*",
-      "icon/**/*"
+      "icon/**/*",
+      "../node_modules/keytar"
     ],
     "protocols": [
       {

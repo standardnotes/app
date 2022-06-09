@@ -91,10 +91,6 @@ module.exports = function ({ onlyTranspileTypescript = false, experimentalFeatur
             to: 'web/components',
           },
           {
-            from: 'app/node_modules',
-            to: 'node_modules',
-          },
-          {
             from: 'app/stylesheets/renderer.css',
             to: 'stylesheets/renderer.css',
           },
