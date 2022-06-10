@@ -28,7 +28,7 @@
     "eslint": "^7.29.0",
     "eslint-plugin-react": "^7.24.0",
     "mini-css-extract-plugin": "^2.0.0",
-    "node-sass": "^4.14.1",
+    "node-sass": "*",
     "react": "16.x",
     "react-dom": "16.x",
     "sass-loader": "^11.0.1",

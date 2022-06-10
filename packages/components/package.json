@@ -9,18 +9,18 @@
   },
   "scripts": {
     "build": "yarn workspaces foreach --parallel run build",
-    "preversion": "yarn workspaces foreach --parallel run build",
+    "preversion": "yarn build",
     "version": "node scripts/package-components.mjs"
   },
   "installConfig": {
     "hoistingLimits": "workspaces"
   },
-  "dependencies": {
-    "@standardnotes/autobiography-theme": "1.0.4"
-  },
   "devDependencies": {
+    "@standardnotes/advanced-checklist": "0.0.1",
+    "@standardnotes/autobiography-theme": "1.0.4",
     "@standardnotes/deterministic-zip": "^1.2.0",
     "@standardnotes/features": "^1.45.1",
+    "node-sass": "7.0.1",
     "sass": "^1.52.3"
   }
 }

@@ -31,7 +31,7 @@
     "filesafe-embed": "1.0.9",
     "filesafe-js": "1.0.4",
     "husky": "^3.0.9",
-    "node-sass": "^4.13.0",
+    "node-sass": "*",
     "open-browser-webpack-plugin": "0.0.5",
     "react": "16.11.x",
     "react-dom": "16.11.x",
