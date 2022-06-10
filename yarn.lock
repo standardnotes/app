@@ -4743,7 +4743,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/components-meta@*, @standardnotes/components-meta@workspace:packages/components":
+"@standardnotes/components-meta@^0.1.0, @standardnotes/components-meta@workspace:packages/components":
   version: 0.0.0-use.local
   resolution: "@standardnotes/components-meta@workspace:packages/components"
   dependencies:
@@ -4785,7 +4785,7 @@ __metadata:
     "@commitlint/config-conventional": ^16.2.4
     "@electron/remote": ^2.0.8
     "@standardnotes/electron-clear-data": 1.1.1
-    "@standardnotes/web": ^3.21.0
+    "@standardnotes/web": ^3.22.0
     "@types/lodash": ^4.14.182
     "@types/mime-types": ^2.1.1
     "@types/node": 15
@@ -4928,7 +4928,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/icons@^1.1.8, @standardnotes/icons@^1.3.0, @standardnotes/icons@workspace:packages/icons":
+"@standardnotes/icons@^1.1.8, @standardnotes/icons@^1.4.0, @standardnotes/icons@workspace:packages/icons":
   version: 0.0.0-use.local
   resolution: "@standardnotes/icons@workspace:packages/icons"
   dependencies:
@@ -4972,7 +4972,7 @@ __metadata:
     "@standardnotes/components": ^1.9.1
     "@standardnotes/config": ^2.4.3
     "@standardnotes/filepicker": ^1.16.14
-    "@standardnotes/icons": ^1.3.0
+    "@standardnotes/icons": ^1.4.0
     "@standardnotes/react-native-aes": ^1.4.3
     "@standardnotes/react-native-textview": 1.0.2
     "@standardnotes/react-native-utils": 1.0.1
@@ -5216,7 +5216,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/styles@^1.1.0, @standardnotes/styles@workspace:packages/styles":
+"@standardnotes/styles@^1.2.0, @standardnotes/styles@workspace:packages/styles":
   version: 0.0.0-use.local
   resolution: "@standardnotes/styles@workspace:packages/styles"
   dependencies:
@@ -5231,12 +5231,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/toast@^1.1.0, @standardnotes/toast@workspace:packages/toast":
+"@standardnotes/toast@^1.2.0, @standardnotes/toast@workspace:packages/toast":
   version: 0.0.0-use.local
   resolution: "@standardnotes/toast@workspace:packages/toast"
   dependencies:
     "@nanostores/react": ^0.2.0
-    "@standardnotes/icons": ^1.3.0
+    "@standardnotes/icons": ^1.4.0
     eslint: "*"
     nanoid: ^3.3.4
     nanostores: ^0.5.12
@@ -5273,12 +5273,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/web-server@workspace:packages/web-server"
   dependencies:
-    "@standardnotes/components-meta": "*"
-    "@standardnotes/web": ^3.21.0
+    "@standardnotes/components-meta": ^0.1.0
+    "@standardnotes/web": ^3.22.0
   languageName: unknown
   linkType: soft
 
-"@standardnotes/web@^3.21.0, @standardnotes/web@workspace:packages/web":
+"@standardnotes/web@^3.22.0, @standardnotes/web@workspace:packages/web":
   version: 0.0.0-use.local
   resolution: "@standardnotes/web@workspace:packages/web"
   dependencies:
@@ -5296,12 +5296,12 @@ __metadata:
     "@reach/visually-hidden": ^0.16.0
     "@standardnotes/components": 1.9.1
     "@standardnotes/filepicker": 1.16.14
-    "@standardnotes/icons": ^1.3.0
+    "@standardnotes/icons": ^1.4.0
     "@standardnotes/services": ^1.13.14
     "@standardnotes/sncrypto-web": 1.10.1
     "@standardnotes/snjs": ^2.115.9
-    "@standardnotes/styles": ^1.1.0
-    "@standardnotes/toast": ^1.1.0
+    "@standardnotes/styles": ^1.2.0
+    "@standardnotes/toast": ^1.2.0
     "@types/jest": ^27.4.1
     "@types/react": ^17.0.42
     "@types/react-dom": ^18.0.5
