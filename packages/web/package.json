@@ -42,7 +42,7 @@
     "jest": "^27.5.1",
     "lint-staged": ">=12",
     "mini-css-extract-plugin": "^2.6.0",
-    "node-sass": "^7.0.1",
+    "node-sass": "*",
     "npm-check-updates": "^12.5.9",
     "sass-loader": "^12.6.0",
     "svg-jest": "^1.0.1",
