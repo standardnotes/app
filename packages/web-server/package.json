@@ -15,6 +15,7 @@
     "build": "bundle install && cp -r ../../node_modules/@standardnotes/components/dist/. public/components/ && bundle exec rails assets:precompile"
   },
   "dependencies": {
+    "@standardnotes/components-meta": "*",
     "@standardnotes/web": "^3.21.0"
   }
 }

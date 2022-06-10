@@ -4286,7 +4286,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/components-meta@workspace:packages/components":
+"@standardnotes/components-meta@*, @standardnotes/components-meta@workspace:packages/components":
   version: 0.0.0-use.local
   resolution: "@standardnotes/components-meta@workspace:packages/components"
   dependencies:
@@ -4326,7 +4326,7 @@ __metadata:
     "@commitlint/config-conventional": ^16.2.4
     "@electron/remote": ^2.0.8
     "@standardnotes/electron-clear-data": 1.1.1
-    "@standardnotes/web": "*"
+    "@standardnotes/web": ^3.21.0
     "@types/lodash": ^4.14.182
     "@types/mime-types": ^2.1.1
     "@types/node": 15
@@ -4446,7 +4446,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/icons@*, @standardnotes/icons@^1.1.8, @standardnotes/icons@workspace:packages/icons":
+"@standardnotes/icons@^1.1.8, @standardnotes/icons@^1.3.0, @standardnotes/icons@workspace:packages/icons":
   version: 0.0.0-use.local
   resolution: "@standardnotes/icons@workspace:packages/icons"
   dependencies:
@@ -4490,7 +4490,7 @@ __metadata:
     "@standardnotes/components": ^1.9.0
     "@standardnotes/config": ^2.4.3
     "@standardnotes/filepicker": ^1.16.14
-    "@standardnotes/icons": "*"
+    "@standardnotes/icons": ^1.3.0
     "@standardnotes/react-native-aes": ^1.4.3
     "@standardnotes/react-native-textview": 1.0.2
     "@standardnotes/react-native-utils": 1.0.1
@@ -4695,7 +4695,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/styles@*, @standardnotes/styles@workspace:packages/styles":
+"@standardnotes/styles@^1.1.0, @standardnotes/styles@workspace:packages/styles":
   version: 0.0.0-use.local
   resolution: "@standardnotes/styles@workspace:packages/styles"
   dependencies:
@@ -4710,12 +4710,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/toast@1.0.0, @standardnotes/toast@workspace:packages/toast":
+"@standardnotes/toast@^1.1.0, @standardnotes/toast@workspace:packages/toast":
   version: 0.0.0-use.local
   resolution: "@standardnotes/toast@workspace:packages/toast"
   dependencies:
     "@nanostores/react": ^0.2.0
-    "@standardnotes/icons": "*"
+    "@standardnotes/icons": ^1.3.0
     eslint: "*"
     nanoid: ^3.3.4
     nanostores: ^0.5.12
@@ -4741,11 +4741,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/web-server@workspace:packages/web-server"
   dependencies:
-    "@standardnotes/web": "*"
+    "@standardnotes/components-meta": "*"
+    "@standardnotes/web": ^3.21.0
   languageName: unknown
   linkType: soft
 
-"@standardnotes/web@*, @standardnotes/web@workspace:packages/web":
+"@standardnotes/web@^3.21.0, @standardnotes/web@workspace:packages/web":
   version: 0.0.0-use.local
   resolution: "@standardnotes/web@workspace:packages/web"
   dependencies:
@@ -4763,12 +4764,12 @@ __metadata:
     "@reach/visually-hidden": ^0.16.0
     "@standardnotes/components": 1.9.0
     "@standardnotes/filepicker": 1.16.14
-    "@standardnotes/icons": "*"
+    "@standardnotes/icons": ^1.3.0
     "@standardnotes/services": ^1.13.14
     "@standardnotes/sncrypto-web": 1.10.1
     "@standardnotes/snjs": ^2.115.9
-    "@standardnotes/styles": "*"
-    "@standardnotes/toast": 1.0.0
+    "@standardnotes/styles": ^1.1.0
+    "@standardnotes/toast": ^1.1.0
     "@types/jest": ^27.4.1
     "@types/react": ^17.0.42
     "@types/react-dom": ^18.0.5
@@ -21746,8 +21747,8 @@ __metadata:
   linkType: hard
 
 "terser@npm:^5.10.0, terser@npm:^5.7.2":
-  version: 5.14.0
-  resolution: "terser@npm:5.14.0"
+  version: 5.14.1
+  resolution: "terser@npm:5.14.1"
   dependencies:
     "@jridgewell/source-map": ^0.3.2
     acorn: ^8.5.0
@@ -21755,7 +21756,7 @@ __metadata:
     source-map-support: ~0.5.20
   bin:
     terser: bin/terser
-  checksum: 9bce919c17cf028b1b41a3aca9f7e05354ff46701de39e733d6d7a43ebd9c6042d33cfa3e7ef84e5f4c17f1c429c7f40381a38c6e6d6ab1cdc46a1bf8f4e8985
+  checksum: 7b0e51f3d193a11cad82f07e3b0c1d62122eec786f809bdf2a54b865aaa1450872c3a7b6c33b5a40e264834060ffc1d4e197f971a76da5b0137997d756eb7548
   languageName: node
   linkType: hard
 
