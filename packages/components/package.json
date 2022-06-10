@@ -8,15 +8,17 @@
     ]
   },
   "scripts": {
-    "preversion": "yarn workspaces foreach run build",
+    "preversion": "yarn workspaces foreach --parallel run build",
     "version": "node scripts/package-components.mjs"
+  },
+  "installConfig": {
+    "hoistingLimits": "workspaces"
   },
   "dependencies": {
     "@standardnotes/autobiography-theme": "1.0.4"
   },
   "devDependencies": {
     "@standardnotes/deterministic-zip": "^1.2.0",
-    "@standardnotes/features": "^1.45.1",
-    "lerna": "*"
+    "@standardnotes/features": "^1.45.1"
   }
 }
