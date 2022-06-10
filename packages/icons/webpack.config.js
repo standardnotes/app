@@ -1,4 +1,3 @@
-const path = require('path')
 module.exports = () => {
   return {
     entry: './src/index.ts',
@@ -9,6 +8,8 @@ module.exports = () => {
     },
     output: {
       filename: 'index.js',
+      libraryTarget: 'umd',
+      umdNamedDefine: true,
     },
     resolve: {
       fallback: {
@@ -31,16 +32,5 @@ module.exports = () => {
         },
       ],
     },
-    plugins: [
-      new (require('copy-webpack-plugin'))({
-        patterns: [
-          {
-            from: '**/*.svg',
-            to: 'mobile-exports',
-            context: path.resolve(__dirname, 'src', 'Icons'),
-          },
-        ],
-      }),
-    ],
   }
 }

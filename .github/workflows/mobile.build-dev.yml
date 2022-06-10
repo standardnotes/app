@@ -65,7 +65,7 @@ jobs:
       - name: Ruby Setup for Fastlane
         uses: ruby/setup-ruby@v1
       - name: Install dependencies
-        run: yarn install && yarn run init
+        run: yarn install
       - name: Set ssh connection to Github
         uses: webfactory/ssh-agent@v0.4.1
         with:
