@@ -4297,10 +4297,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/components@npm:1.9.0, @standardnotes/components@npm:^1.9.0":
-  version: 1.9.0
-  resolution: "@standardnotes/components@npm:1.9.0"
-  checksum: 210c2ec1f38c98de5e33b4a400187e7860beeaf16bb346f7d4198200640dc2c4cfcde4df60ba0caefa79605b38e6de550b78f32d66b82f5d4424f883f5089d97
+"@standardnotes/components@npm:1.9.1, @standardnotes/components@npm:^1.9.1":
+  version: 1.9.1
+  resolution: "@standardnotes/components@npm:1.9.1"
+  checksum: 32c2dbb0295086f6ef77092c4a316f3af077c400598520240ae00c51d752ad59e45bc082013e1a070662b17882487c054c8f2f491179c41de5cbd5b90797b16f
   languageName: node
   linkType: hard
 
@@ -4487,7 +4487,7 @@ __metadata:
     "@react-navigation/elements": ^1.3.3
     "@react-navigation/native": ^6.0.10
     "@react-navigation/stack": ^6.2.1
-    "@standardnotes/components": ^1.9.0
+    "@standardnotes/components": ^1.9.1
     "@standardnotes/config": ^2.4.3
     "@standardnotes/filepicker": ^1.16.14
     "@standardnotes/icons": ^1.3.0
@@ -4762,7 +4762,7 @@ __metadata:
     "@reach/listbox": ^0.16.2
     "@reach/tooltip": ^0.16.2
     "@reach/visually-hidden": ^0.16.0
-    "@standardnotes/components": 1.9.0
+    "@standardnotes/components": 1.9.1
     "@standardnotes/filepicker": 1.16.14
     "@standardnotes/icons": ^1.3.0
     "@standardnotes/services": ^1.13.14

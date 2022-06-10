@@ -95,9 +95,9 @@
     "binary": "88d4b9a6ff94b1f6cba884787e051cda3cd8073022984b63f7d3b13157aa6e2a"
   },
   "org.standardnotes.markdown-visual-editor": {
-    "version": "1.0.6",
-    "base64": "13497d3939fbec67cf0baa0f7c182112f0d13474a3e7f4750790823f78688a47",
-    "binary": "fc6e37d7250d14b245facb760aece51d006fd321d9ac2f153c5a571565411311"
+    "version": "1.0.7",
+    "base64": "cc6cdd05685accb9bdbf34ea4faa2fd9324183b4d55312b60234b8e611cec71f",
+    "binary": "a7cf6e82a4ae7cc9e3c5c4efc24bcc69bd4ff17039123e9c0b883d1989f908c9"
   },
   "org.standardnotes.advanced-checklist": {
     "version": "0.0.1",
