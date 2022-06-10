@@ -8,7 +8,7 @@
     ]
   },
   "scripts": {
-    "preversion": "lerna run build --parallel",
+    "preversion": "yarn lerna run build --parallel",
     "version": "node scripts/package-components.mjs"
   },
   "dependencies": {
