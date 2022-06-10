@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "@standardnotes/deterministic-zip": "^1.2.0",
-    "@standardnotes/features": "^1.45.1"
+    "@standardnotes/features": "^1.45.1",
+    "sass": "^1.52.3"
   }
 }
