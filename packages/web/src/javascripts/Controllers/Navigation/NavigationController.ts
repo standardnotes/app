@@ -193,6 +193,20 @@ export class NavigationController extends AbstractViewController {
     return this.selected instanceof SmartView && this.selected.uuid === SystemViewId.AllNotes
   }
 
+  public get isInFilesView(): boolean {
+    return this.selectedUuid === SystemViewId.Files
+  }
+
+  public isInAnySystemView(): boolean {
+    return (
+      this.selected instanceof SmartView && Object.values(SystemViewId).includes(this.selected.uuid as SystemViewId)
+    )
+  }
+
+  public isInSystemView(id: SystemViewId): boolean {
+    return this.selected instanceof SmartView && this.selected.uuid === id
+  }
+
   setAddingSubtagTo(tag: SNTag | undefined): void {
     this.addingSubtagTo = tag
   }
@@ -257,10 +271,6 @@ export class NavigationController extends AbstractViewController {
         left: this.contextMenuClickLocation.x,
       })
     }
-  }
-
-  public get isInFilesView(): boolean {
-    return this.selectedUuid === SystemViewId.Files
   }
 
   public get allLocalRootTags(): SNTag[] {
@@ -389,7 +399,7 @@ export class NavigationController extends AbstractViewController {
   }
 
   private setSelectedTagInstance(tag: AnyTag | undefined): void {
-    this.selected_ = tag
+    runInAction(() => (this.selected_ = tag))
   }
 
   public setExpanded(tag: SNTag, expanded: boolean) {

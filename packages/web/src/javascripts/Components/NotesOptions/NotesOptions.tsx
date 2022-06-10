@@ -196,7 +196,7 @@ const NotesOptions = ({
   const unpinned = notes.some((note) => !note.pinned)
 
   const editorForNote = useMemo(
-    () => application.componentManager.editorForNote(notes[0]),
+    () => (notes[0] ? application.componentManager.editorForNote(notes[0]) : undefined),
     [application.componentManager, notes],
   )
 

@@ -82,9 +82,9 @@ export class ViewControllerManager {
       this.eventBus,
     )
 
-    this.notesController.setServicestPostConstruction(this.itemListController)
-    this.noteTagsController.setServicestPostConstruction(this.itemListController)
-    this.selectionController.setServicestPostConstruction(this.itemListController, this.notesController)
+    this.notesController.setServicesPostConstruction(this.itemListController)
+    this.noteTagsController.setServicesPostConstruction(this.itemListController)
+    this.selectionController.setServicesPostConstruction(this.itemListController, this.notesController)
 
     this.noAccountWarningController = new NoAccountWarningController(application, this.eventBus)
 
