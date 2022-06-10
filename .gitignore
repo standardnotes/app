@@ -17,7 +17,7 @@ packages/web-server/vendor
 
 packages/web/dist
 
-/.sass-cache
+.sass-cache
 
 .env
 .ssh

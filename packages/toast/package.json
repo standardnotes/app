@@ -1,10 +1,8 @@
 {
   "name": "@standardnotes/toast",
-  "version": "1.0.0",
+  "version": "1.1.0",
+  "private": true,
   "main": "./dist/index.js",
-  "publishConfig": {
-    "access": "public"
-  },
   "scripts": {
     "build": "yarn tsc",
     "clean": "rm -fr dist",
@@ -20,7 +18,7 @@
   },
   "dependencies": {
     "@nanostores/react": "^0.2.0",
-    "@standardnotes/icons": "*",
+    "@standardnotes/icons": "^1.3.0",
     "nanoid": "^3.3.4",
     "nanostores": "^0.5.12"
   },

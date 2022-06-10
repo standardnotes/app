@@ -1,0 +1,22 @@
+{
+  "name": "@standardnotes/components-meta",
+  "version": "0.0.1",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "src/*"
+    ]
+  },
+  "scripts": {
+    "preversion": "lerna run build --parallel",
+    "version": "node scripts/package-components.mjs"
+  },
+  "dependencies": {
+    "@standardnotes/autobiography-theme": "1.0.4"
+  },
+  "devDependencies": {
+    "@standardnotes/deterministic-zip": "^1.2.0",
+    "@standardnotes/features": "^1.45.1",
+    "lerna": "*"
+  }
+}

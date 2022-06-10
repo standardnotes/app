@@ -1,3 +1,24 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+# 1.3.0 (2022-06-10)
+
+
+### Bug Fixes
+
+* icons package ([4df06c1](https://github.com/standardnotes/app/commit/4df06c1d1a59f95ce735f87c106066ea28e5816c))
+
+
+### Features
+
+* **wip:** components monorepo ([8c5e11c](https://github.com/standardnotes/app/commit/8c5e11c22b717ada7a6a9b3115fc4c9b757ec71c))
+
+
+
+
+
 # Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.

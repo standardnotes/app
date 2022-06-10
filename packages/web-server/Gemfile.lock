@@ -106,6 +106,8 @@ GEM
     nokogiri (1.13.1)
       mini_portile2 (~> 2.7.0)
       racc (~> 1.4)
+    nokogiri (1.13.1-arm64-darwin)
+      racc (~> 1.4)
     nokogiri (1.13.1-x64-mingw32)
       racc (~> 1.4)
     nokogiri (1.13.1-x86_64-darwin)
@@ -198,6 +200,7 @@ GEM
     websocket-extensions (0.1.5)
 
 PLATFORMS
+  arm64-darwin-21
   ruby
   x64-mingw32
   x86_64-darwin-18
