@@ -283,6 +283,11 @@ export class ItemListController extends AbstractViewController implements Intern
     this.reloadPanelTitle()
   }
 
+  private isSelectedItemAFile = (): boolean => {
+    const selectedItem = Object.values(this.selectionController.selectedItems)[0]
+    return this.items.includes(selectedItem) && selectedItem && selectedItem.content_type === ContentType.File
+  }
+
   private async recomputeSelectionAfterItemsReload(itemsReloadSource: ItemsReloadSource) {
     const activeController = this.getActiveNoteController()
     const activeNote = activeController?.note
@@ -296,6 +301,14 @@ export class ItemListController extends AbstractViewController implements Intern
     if (itemsReloadSource === ItemsReloadSource.TagChange) {
       await this.selectFirstItem()
 
+      if (this.isSelectedItemAFile() && activeNote) {
+        this.closeNoteController(activeController)
+      }
+
+      return
+    }
+
+    if (this.isSelectedItemAFile()) {
       return
     }
 
