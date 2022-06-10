@@ -1,8 +1,3 @@
-node_modules/
 dist/
 app/dist/
 test/data/tmp/
-web/
-.github
-codeqldb
-*.js

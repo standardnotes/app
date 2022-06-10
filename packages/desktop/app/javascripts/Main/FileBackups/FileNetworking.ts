@@ -1,5 +1,5 @@
+import axios, { AxiosRequestHeaders, AxiosResponseHeaders } from 'axios'
 import { WriteStream } from 'fs'
-import axios, { AxiosResponseHeaders, AxiosRequestHeaders } from 'axios'
 
 export async function downloadData(
   writeStream: WriteStream,

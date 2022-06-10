@@ -1,8 +1,8 @@
-import { DesktopDevice } from './DesktopDevice'
-import { MessageToWebApp } from '../Shared/IpcMessages'
 import { DesktopClientRequiresWebMethods } from '@web/Application/Device/DesktopSnjsExports'
 import { StartApplication } from '@web/Application/Device/StartApplication'
+import { MessageToWebApp } from '../Shared/IpcMessages'
 import { CrossProcessBridge } from './CrossProcessBridge'
+import { DesktopDevice } from './DesktopDevice'
 
 declare const DEFAULT_SYNC_SERVER: string
 declare const WEBSOCKET_URL: string

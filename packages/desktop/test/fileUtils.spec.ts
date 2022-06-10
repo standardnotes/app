@@ -1,4 +1,4 @@
-import test, { TestFn } from 'ava'
+import test from 'ava'
 import { promises as fs } from 'fs'
 import path from 'path'
 import {

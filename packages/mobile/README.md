@@ -31,7 +31,7 @@ This is a React Native implementation of Standard Notes. React Native allows us 
 4. Install project dependencies via:
 
 ```shell
-yarn run init
+yarn install
 ```
 
 We have two flavors of the app:

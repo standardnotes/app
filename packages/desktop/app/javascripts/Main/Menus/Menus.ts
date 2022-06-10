@@ -10,17 +10,17 @@ import {
   WebContents,
 } from 'electron'
 import { autorun } from 'mobx'
-import { autoUpdatingAvailable } from '../Types/Constants'
-import { isLinux, isMac } from '../Types/Platforms'
 import { Store, StoreKeys } from '../Store'
 import { appMenu as str, contextMenu } from '../Strings'
-import { handleTestMessage } from '../Utils/Testing'
 import { TrayManager } from '../TrayManager'
-import { SpellcheckerManager } from './../SpellcheckerManager'
-import { BackupsManagerInterface } from './../Backups/BackupsManagerInterface'
-import { MessageType } from './../../../../test/TestIpcMessage'
+import { autoUpdatingAvailable } from '../Types/Constants'
+import { isLinux, isMac } from '../Types/Platforms'
 import { checkForUpdate, openChangelog, showUpdateInstallationDialog } from '../UpdateManager'
+import { handleTestMessage } from '../Utils/Testing'
 import { isDev, isTesting } from '../Utils/Utils'
+import { MessageType } from './../../../../test/TestIpcMessage'
+import { BackupsManagerInterface } from './../Backups/BackupsManagerInterface'
+import { SpellcheckerManager } from './../SpellcheckerManager'
 import { MenuManagerInterface } from './MenuManagerInterface'
 
 export const enum MenuId {

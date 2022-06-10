@@ -1,6 +1,6 @@
-import { Strings } from './types'
-import { createEnglishStrings } from './english'
 import { isDev } from '../Utils/Utils'
+import { createEnglishStrings } from './english'
+import { Strings } from './types'
 
 export function createFrenchStrings(): Strings {
   const fallback = createEnglishStrings()

@@ -4,14 +4,14 @@ import { Store, StoreKeys } from '../Store'
 const path = require('path')
 const rendererPath = path.join('file://', __dirname, '/renderer.js')
 
+import { FileBackupsDevice, FileBackupsMapping } from '@web/Application/Device/DesktopSnjsExports'
 import { app, BrowserWindow } from 'electron'
-import { KeychainInterface } from '../Keychain/KeychainInterface'
 import { BackupsManagerInterface } from '../Backups/BackupsManagerInterface'
-import { PackageManagerInterface, Component } from '../Packages/PackageManagerInterface'
+import { KeychainInterface } from '../Keychain/KeychainInterface'
+import { MenuManagerInterface } from '../Menus/MenuManagerInterface'
+import { Component, PackageManagerInterface } from '../Packages/PackageManagerInterface'
 import { SearchManagerInterface } from '../Search/SearchManagerInterface'
 import { RemoteDataInterface } from './DataInterface'
-import { MenuManagerInterface } from '../Menus/MenuManagerInterface'
-import { FileBackupsDevice, FileBackupsMapping } from '@web/Application/Device/DesktopSnjsExports'
 
 /**
  * Read https://github.com/electron/remote to understand how electron/remote works.

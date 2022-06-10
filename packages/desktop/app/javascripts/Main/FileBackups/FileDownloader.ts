@@ -1,4 +1,4 @@
-import { WriteStream, createWriteStream } from 'fs'
+import { createWriteStream, WriteStream } from 'fs'
 import { downloadData } from './FileNetworking'
 
 export class FileDownloader {

@@ -4,10 +4,10 @@ import http from 'http'
 import { AddressInfo } from 'net'
 import path from 'path'
 import proxyquire from 'proxyquire'
-import { ensureDirectoryExists } from '../app/javascripts/Main/Utils/FileUtils'
 import { initializeStrings } from '../app/javascripts/Main/strings'
-import { createTmpDir } from './testUtils'
+import { ensureDirectoryExists } from '../app/javascripts/Main/Utils/FileUtils'
 import makeFakePaths from './fakePaths'
+import { createTmpDir } from './testUtils'
 
 const test = anyTest as TestFn<{
   server: http.Server

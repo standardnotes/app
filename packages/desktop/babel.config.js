@@ -6,7 +6,7 @@ module.exports = function (api) {
       '@babel/preset-env',
       {
         targets: {
-          electron: 9,
+          electron: 17,
         },
       },
     ],
