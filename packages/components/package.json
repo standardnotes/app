@@ -8,6 +8,7 @@
     ]
   },
   "scripts": {
+    "build": "yarn workspaces foreach --parallel run build",
     "preversion": "yarn workspaces foreach --parallel run build",
     "version": "node scripts/package-components.mjs"
   },
