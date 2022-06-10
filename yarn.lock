@@ -4293,7 +4293,6 @@ __metadata:
     "@standardnotes/autobiography-theme": 1.0.4
     "@standardnotes/deterministic-zip": ^1.2.0
     "@standardnotes/features": ^1.45.1
-    lerna: "*"
   languageName: unknown
   linkType: soft
 
@@ -14989,7 +14988,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lerna@npm:*, lerna@npm:^5.1.1":
+"lerna@npm:^5.1.1":
   version: 5.1.1
   resolution: "lerna@npm:5.1.1"
   dependencies:
