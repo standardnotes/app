@@ -241,17 +241,17 @@ export class ItemListController extends AbstractViewController implements Intern
     this.panelTitle = title
   }
 
-  reloadItems = async (): Promise<void> => {
+  reloadItems = async (forceSelectFirstItem = false): Promise<void> => {
     if (this.reloadItemsPromise) {
       await this.reloadItemsPromise
     }
 
-    this.reloadItemsPromise = this.performReloadItems()
+    this.reloadItemsPromise = this.performReloadItems(forceSelectFirstItem)
 
     await this.reloadItemsPromise
   }
 
-  private async performReloadItems() {
+  private async performReloadItems(forceSelectFirstItem = false) {
     const tag = this.navigationController.selected
     if (!tag) {
       return
@@ -269,18 +269,24 @@ export class ItemListController extends AbstractViewController implements Intern
       this.renderedItems = renderedItems
     })
 
-    await this.recomputeSelectionAfterItemsReload()
+    await this.recomputeSelectionAfterItemsReload(forceSelectFirstItem)
 
     this.reloadPanelTitle()
   }
 
-  private async recomputeSelectionAfterItemsReload() {
+  private async recomputeSelectionAfterItemsReload(forceSelectFirstItem = false) {
     const activeController = this.getActiveNoteController()
     const activeNote = activeController?.note
     const isSearching = this.noteFilterText.length > 0
     const hasMultipleItemsSelected = this.selectionController.selectedItemsCount >= 2
 
     if (hasMultipleItemsSelected) {
+      return
+    }
+
+    if (forceSelectFirstItem) {
+      await this.selectFirstItem()
+
       return
     }
 
@@ -651,7 +657,7 @@ export class ItemListController extends AbstractViewController implements Intern
 
     this.reloadNotesDisplayOptions()
 
-    void this.reloadItems()
+    void this.reloadItems(true)
   }
 
   onFilterEnter = () => {
