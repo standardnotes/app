@@ -25,7 +25,7 @@
     "start:server:web": "lerna run start --scope=@standardnotes/web-server",
     "start:server:web:localhost": "lerna run start:no-binding --scope=@standardnotes/web-server",
     "prepare": "husky install",
-    "version-bump": "lerna version --conventional-commits --yes -m \"chore(release): publish\"",
+    "version-bump": "lerna version --no-push --conventional-commits --yes -m \"chore(release): publish\"",
     "publish-packages": "lerna publish from-git --yes",
     "reset": "find . -type dir -name node_modules | xargs rm -rf && rm -rf yarn.lock"
   },

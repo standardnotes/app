@@ -28,6 +28,7 @@ yarn-error.log
 package-lock.json
 codeqldb
 coverage
+lerna-debug.log
 
 **/.pnp.*
 **/.yarn/*
