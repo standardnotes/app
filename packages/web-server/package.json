@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/web-server",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "license": "AGPL-3.0-or-later",
   "private": true,
   "author": "Standard Notes",
@@ -15,7 +15,7 @@
     "build": "bundle install && cp -r ../../node_modules/@standardnotes/components/dist/. public/components/ && bundle exec rails assets:precompile"
   },
   "dependencies": {
-    "@standardnotes/components-meta": "*",
-    "@standardnotes/web": "^3.21.0"
+    "@standardnotes/components-meta": "^0.1.0",
+    "@standardnotes/web": "^3.22.0"
   }
 }

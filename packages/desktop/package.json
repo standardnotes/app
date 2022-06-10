@@ -1,7 +1,7 @@
 {
   "name": "@standardnotes/desktop",
   "main": "./app/dist/index.js",
-  "version": "3.21.0",
+  "version": "3.22.0",
   "license": "AGPL-3.0-or-later",
   "private": true,
   "repository": {
@@ -36,7 +36,7 @@
   "dependencies": {
     "@electron/remote": "^2.0.8",
     "@standardnotes/electron-clear-data": "1.1.1",
-    "@standardnotes/web": "^3.21.0",
+    "@standardnotes/web": "^3.22.0",
     "axios": "^0.27.2",
     "compare-versions": "^4.1.3",
     "decrypt": "github:standardnotes/decrypt#master",
