@@ -4427,7 +4427,6 @@ __metadata:
     "@svgr/webpack": ^6.2.1
     babel-loader: ^8.2.5
     babel-plugin-transform-runtime: ^6.23.0
-    copy-webpack-plugin: ^11.0.0
     prettier: "*"
     react: ^18.1.0
     react-dom: ^18.1.0
@@ -8749,22 +8748,6 @@ __metadata:
   peerDependencies:
     webpack: ^5.1.0
   checksum: 87f0f4530ab3e58ec06a7c3182028dfd8cc85b045a0d18c4464caafeae1ed1141c2aad6eae37e100a74a72b69dc48c93af358c07038b7a22f490a678c0ab142e
-  languageName: node
-  linkType: hard
-
-"copy-webpack-plugin@npm:^11.0.0":
-  version: 11.0.0
-  resolution: "copy-webpack-plugin@npm:11.0.0"
-  dependencies:
-    fast-glob: ^3.2.11
-    glob-parent: ^6.0.1
-    globby: ^13.1.1
-    normalize-path: ^3.0.0
-    schema-utils: ^4.0.0
-    serialize-javascript: ^6.0.0
-  peerDependencies:
-    webpack: ^5.1.0
-  checksum: df4f8743f003a29ee7dd3d9b1789998a3a99051c92afb2ba2203d3dacfa696f4e757b275560fafb8f206e520a0aa78af34b990324a0e36c2326cefdeef3ca82e
   languageName: node
   linkType: hard
 
