@@ -33,6 +33,15 @@ const DefaultListNumNotes = 20
 const ElementIdSearchBar = 'search-bar'
 const ElementIdScrollContainer = 'notes-scrollable'
 
+enum ItemsReloadSource {
+  ItemStream,
+  SyncEvent,
+  DisplayOptionsChange,
+  Pagination,
+  TagChange,
+  FilterTextChange,
+}
+
 export class ItemListController extends AbstractViewController implements InternalEventHandlerInterface {
   completedFullSync = false
   noteFilterText = ''
@@ -94,7 +103,7 @@ export class ItemListController extends AbstractViewController implements Intern
 
     this.disposers.push(
       application.streamItems<SNNote>(ContentType.Note, () => {
-        void this.reloadItems()
+        void this.reloadItems(ItemsReloadSource.ItemStream)
       }),
     )
 
@@ -105,7 +114,7 @@ export class ItemListController extends AbstractViewController implements Intern
         /** A tag could have changed its relationships, so we need to reload the filter */
         this.reloadNotesDisplayOptions()
 
-        void this.reloadItems()
+        void this.reloadItems(ItemsReloadSource.ItemStream)
 
         if (this.navigationController.selected && findInArray(tags, 'uuid', this.navigationController.selected.uuid)) {
           /** Tag title could have changed */
@@ -130,7 +139,7 @@ export class ItemListController extends AbstractViewController implements Intern
 
     this.disposers.push(
       application.addEventObserver(async () => {
-        void this.reloadItems().then(() => {
+        void this.reloadItems(ItemsReloadSource.SyncEvent).then(() => {
           if (
             this.notes.length === 0 &&
             this.navigationController.selected instanceof SmartView &&
@@ -162,7 +171,7 @@ export class ItemListController extends AbstractViewController implements Intern
         ],
         () => {
           this.reloadNotesDisplayOptions()
-          void this.reloadItems()
+          void this.reloadItems(ItemsReloadSource.DisplayOptionsChange)
         },
       ),
     )
@@ -241,17 +250,17 @@ export class ItemListController extends AbstractViewController implements Intern
     this.panelTitle = title
   }
 
-  reloadItems = async (forceSelectFirstItem = false): Promise<void> => {
+  reloadItems = async (source: ItemsReloadSource): Promise<void> => {
     if (this.reloadItemsPromise) {
       await this.reloadItemsPromise
     }
 
-    this.reloadItemsPromise = this.performReloadItems(forceSelectFirstItem)
+    this.reloadItemsPromise = this.performReloadItems(source)
 
     await this.reloadItemsPromise
   }
 
-  private async performReloadItems(forceSelectFirstItem = false) {
+  private async performReloadItems(source: ItemsReloadSource) {
     const tag = this.navigationController.selected
     if (!tag) {
       return
@@ -269,12 +278,12 @@ export class ItemListController extends AbstractViewController implements Intern
       this.renderedItems = renderedItems
     })
 
-    await this.recomputeSelectionAfterItemsReload(forceSelectFirstItem)
+    await this.recomputeSelectionAfterItemsReload(source)
 
     this.reloadPanelTitle()
   }
 
-  private async recomputeSelectionAfterItemsReload(forceSelectFirstItem = false) {
+  private async recomputeSelectionAfterItemsReload(itemsReloadSource: ItemsReloadSource) {
     const activeController = this.getActiveNoteController()
     const activeNote = activeController?.note
     const isSearching = this.noteFilterText.length > 0
@@ -284,7 +293,7 @@ export class ItemListController extends AbstractViewController implements Intern
       return
     }
 
-    if (forceSelectFirstItem) {
+    if (itemsReloadSource === ItemsReloadSource.TagChange) {
       await this.selectFirstItem()
 
       return
@@ -402,7 +411,7 @@ export class ItemListController extends AbstractViewController implements Intern
       this.reloadNotesDisplayOptions()
     }
 
-    await this.reloadItems()
+    await this.reloadItems(ItemsReloadSource.DisplayOptionsChange)
 
     const width = this.application.getPreference(PrefKey.NotesPanelWidth)
     if (width) {
@@ -476,7 +485,7 @@ export class ItemListController extends AbstractViewController implements Intern
   paginate = () => {
     this.notesToDisplay += this.pageSize
 
-    void this.reloadItems()
+    void this.reloadItems(ItemsReloadSource.Pagination)
 
     if (this.searchSubmitted) {
       this.application.getDesktopService()?.searchText(this.noteFilterText)
@@ -657,7 +666,7 @@ export class ItemListController extends AbstractViewController implements Intern
 
     this.reloadNotesDisplayOptions()
 
-    void this.reloadItems(true)
+    void this.reloadItems(ItemsReloadSource.TagChange)
   }
 
   onFilterEnter = () => {
@@ -690,7 +699,7 @@ export class ItemListController extends AbstractViewController implements Intern
 
     this.reloadNotesDisplayOptions()
 
-    void this.reloadItems()
+    void this.reloadItems(ItemsReloadSource.FilterTextChange)
   }
 
   clearFilterText = () => {
