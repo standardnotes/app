@@ -1,10 +1,8 @@
 {
   "name": "@standardnotes/toast",
   "version": "1.0.0",
+  "private": true,
   "main": "./dist/index.js",
-  "publishConfig": {
-    "access": "public"
-  },
   "scripts": {
     "build": "yarn tsc",
     "clean": "rm -fr dist",
