@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/components-meta",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "workspaces": {
     "packages": [
@@ -10,7 +10,7 @@
   "scripts": {
     "build": "yarn workspaces foreach --parallel run build",
     "preversion": "yarn build",
-    "version": "node scripts/package-components.mjs",
+    "version": "node scripts/package-components.mjs && git add dist && git commit -m 'chore(release): components'",
     "pretty": "yarn workspaces foreach --parallel run pretty"
   },
   "installConfig": {

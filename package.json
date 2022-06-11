@@ -1,5 +1,6 @@
 {
   "name": "@standardnotes/app-monorepo",
+  "version": "0.0.1",
   "private": true,
   "author": "Standard Notes",
   "workspaces": {
@@ -22,12 +23,14 @@
     "build:web:front": "yarn build:icons && yarn build:toast && yarn build:styles && yarn build:web",
     "build:web:back": "lerna run build --scope=@standardnotes/web-server",
     "build:web:all": "yarn build:web:front && yarn build:web:back",
+    "build:components": "lerna run build --scope=@standardnotes/components-meta",
     "start:server:web": "lerna run start --scope=@standardnotes/web-server",
     "start:server:web:localhost": "lerna run start:no-binding --scope=@standardnotes/web-server",
     "prepare": "husky install",
-    "version-bump": "lerna version --conventional-commits --yes -m \"chore(release): publish\"",
+    "version-bump": "lerna version --loglevel=silly --conventional-commits --yes -m \"chore(release): publish\"",
     "publish-packages": "lerna publish from-git --yes",
-    "reset": "find . -type dir -name node_modules | xargs rm -rf && rm -rf yarn.lock"
+    "reset": "find . -type dir -name node_modules | xargs rm -rf && rm -rf yarn.lock",
+    "version": "yarn install && git stage yarn.lock"
   },
   "resolutions": {
     "@types/styled-components/@types/react": "17.0.2",
