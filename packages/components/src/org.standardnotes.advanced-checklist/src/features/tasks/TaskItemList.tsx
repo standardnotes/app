@@ -39,19 +39,14 @@ const TaskItemList: React.FC<TaskItemListProps> = ({ group }) => {
         swapTaskIndex: source.index,
         withTaskIndex: destination.index,
         isSameSection: source.droppableId === destination.droppableId,
-      })
+      }),
     )
   }
 
   return (
     <Container data-testid="task-list">
       <DragDropContext onDragEnd={onDragEnd}>
-        <TasksContainer
-          testId="open-tasks-container"
-          type="open"
-          tasks={openTasks}
-          groupName={group.name}
-        />
+        <TasksContainer testId="open-tasks-container" type="open" tasks={openTasks} groupName={group.name} />
 
         <TasksContainer
           testId="completed-tasks-container"
@@ -59,9 +54,7 @@ const TaskItemList: React.FC<TaskItemListProps> = ({ group }) => {
           tasks={completedTasks}
           groupName={group.name}
         >
-          {completedTasks.length > 0 && (
-            <CompletedTasksActions groupName={group.name} />
-          )}
+          {completedTasks.length > 0 && <CompletedTasksActions groupName={group.name} />}
         </TasksContainer>
       </DragDropContext>
     </Container>

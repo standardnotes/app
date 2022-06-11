@@ -10,11 +10,7 @@ import styled from 'styled-components'
 import { store } from './app/store'
 import { useAppDispatch, useAppSelector } from './app/hooks'
 import CreateGroup from './features/tasks/CreateGroup'
-import {
-  setCanEdit,
-  setIsRunningOnMobile,
-  setSpellCheckerEnabled,
-} from './features/settings/settings-slice'
+import { setCanEdit, setIsRunningOnMobile, setSpellCheckerEnabled } from './features/settings/settings-slice'
 import { tasksLoaded } from './features/tasks/tasks-slice'
 import InvalidContentError from './features/tasks/InvalidContentError'
 import MigrateLegacyContent from './features/tasks/MigrateLegacyContent'
@@ -69,8 +65,7 @@ const TaskEditor: React.FC = () => {
       onNoteValueChange: async (currentNote: any) => {
         note.current = currentNote
 
-        const editable =
-          !currentNote.content.appData['org.standardnotes.sn'].locked ?? true
+        const editable = !currentNote.content.appData['org.standardnotes.sn'].locked ?? true
         const spellCheckEnabled = currentNote.content.spellcheck
 
         dispatch(setCanEdit(editable))
@@ -106,16 +101,10 @@ const TaskEditor: React.FC = () => {
 
     editorKit.current!.saveItemWithPresave(currentNote, () => {
       const { schemaVersion, groups } = store.getState().tasks
-      currentNote.content.text = JSON.stringify(
-        { schemaVersion, groups },
-        null,
-        2
-      )
+      currentNote.content.text = JSON.stringify({ schemaVersion, groups }, null, 2)
 
       currentNote.content.preview_plain = getPlainPreview(groups)
-      currentNote.content.preview_html = renderToString(
-        <NotePreview groupedTasks={groups} />
-      )
+      currentNote.content.preview_html = renderToString(<NotePreview groupedTasks={groups} />)
     })
   }, [])
 
@@ -186,5 +175,5 @@ ReactDOM.render(
       <TaskEditor />
     </Provider>
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById('root'),
 )

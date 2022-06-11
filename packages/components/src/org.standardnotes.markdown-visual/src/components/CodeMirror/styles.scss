@@ -43,15 +43,11 @@
         }
 
         .cm-activeLine {
-          background-color: var(
-            --sn-stylekit-secondary-contrast-background-color
-          ) !important;
+          background-color: var(--sn-stylekit-secondary-contrast-background-color) !important;
         }
 
         .cm-activeLineGutter {
-          background-color: var(
-            --sn-stylekit-contrast-background-color
-          ) !important;
+          background-color: var(--sn-stylekit-contrast-background-color) !important;
         }
       }
     }

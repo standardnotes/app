@@ -3,17 +3,14 @@ import './stylesheets/main.scss'
 import { Component, createRef, StrictMode } from 'react'
 import ReactDOM from 'react-dom'
 
-import MilkdownEditor, { MilkdownRef } from './components/Milkdown'
 import CodeMirrorEditor, { CodeMirrorRef } from './components/CodeMirror'
+import MilkdownEditor, { MilkdownRef } from './components/Milkdown'
 import SplitView, { SplitViewDirection } from './components/SplitView'
 
 import EditorKit, { EditorKitDelegate } from '@standardnotes/editor-kit'
 import { marked } from 'marked'
 
-import {
-  MenuConfig,
-  menuConfig,
-} from './components/Milkdown/plugins/advanced-menu/config'
+import { MenuConfig, menuConfig } from './components/Milkdown/plugins/advanced-menu/config'
 
 enum TextChangeSource {
   Milkdown = 'milkdown',
@@ -74,8 +71,7 @@ class AppWrapper extends Component<AppProps, AppState> {
         }
       },
       onNoteValueChange: async (note: any) => {
-        const editable =
-          !note.content.appData['org.standardnotes.sn'].locked ?? true
+        const editable = !note.content.appData['org.standardnotes.sn'].locked ?? true
         const spellcheck = note.content.spellcheck
 
         this.setState({
@@ -196,9 +192,7 @@ class AppWrapper extends Component<AppProps, AppState> {
         />
         <CodeMirrorEditor
           ref={this.codeMirrorRef}
-          onChange={(text) =>
-            this.onTextChange(text, TextChangeSource.CodeMirror)
-          }
+          onChange={(text) => this.onTextChange(text, TextChangeSource.CodeMirror)}
           value={this.prevText}
           editable={editable}
           spellcheck={spellcheck}
@@ -212,5 +206,5 @@ ReactDOM.render(
   <StrictMode>
     <AppWrapper />
   </StrictMode>,
-  document.getElementById('root')
+  document.getElementById('root'),
 )

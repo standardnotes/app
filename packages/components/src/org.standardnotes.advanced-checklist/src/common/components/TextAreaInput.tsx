@@ -26,24 +26,8 @@ type TextAreaInputProps = {
   onKeyUp?: (event: KeyboardEvent<HTMLTextAreaElement>) => void
 }
 
-export const TextAreaInput = forwardRef<
-  HTMLTextAreaElement,
-  TextAreaInputProps
->(
-  (
-    {
-      value,
-      className,
-      dir = 'auto',
-      disabled,
-      spellCheck,
-      testId,
-      onChange,
-      onKeyPress,
-      onKeyUp,
-    },
-    ref
-  ) => {
+export const TextAreaInput = forwardRef<HTMLTextAreaElement, TextAreaInputProps>(
+  ({ value, className, dir = 'auto', disabled, spellCheck, testId, onChange, onKeyPress, onKeyUp }, ref) => {
     return (
       <StyledTextArea
         className={className}
@@ -58,5 +42,5 @@ export const TextAreaInput = forwardRef<
         value={value}
       />
     )
-  }
+  },
 )

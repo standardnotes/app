@@ -21,12 +21,7 @@ export type SelectConfig<T = any> = {
   alwaysVisible: boolean
 } & MenuCommonConfig
 
-export const select = (
-  utils: Utils,
-  config: SelectConfig,
-  ctx: Ctx,
-  view: EditorView
-) => {
+export const select = (utils: Utils, config: SelectConfig, ctx: Ctx, view: EditorView) => {
   const selectStyle = utils.getStyle((themeTool) => {
     return css`
       flex-shrink: 0;
@@ -107,8 +102,7 @@ export const select = (
     e.stopPropagation()
     selectorWrapper.classList.toggle('fold')
     selectorList.style.left = `${
-      selectorWrapper.getBoundingClientRect().left -
-      view.dom.getBoundingClientRect().left
+      selectorWrapper.getBoundingClientRect().left - view.dom.getBoundingClientRect().left
     }px`
   })
   view.dom.addEventListener('click', () => {

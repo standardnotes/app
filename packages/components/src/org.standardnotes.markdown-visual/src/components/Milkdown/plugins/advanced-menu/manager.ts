@@ -14,19 +14,13 @@ type InnerConfig = (MenuConfigItem | DividerConfig) & { $: HTMLElement }
 export class Manager {
   private config: InnerConfig[]
 
-  constructor(
-    originalConfig: MenuConfig,
-    private utils: Utils,
-    private ctx: Ctx,
-    menu: HTMLElement,
-    view: EditorView
-  ) {
+  constructor(originalConfig: MenuConfig, private utils: Utils, private ctx: Ctx, menu: HTMLElement, view: EditorView) {
     this.config = originalConfig
       .map((xs) =>
         xs.map((x) => ({
           ...x,
           $: this.$create(x, view),
-        }))
+        })),
       )
       .map((xs, i): Array<InnerConfig> => {
         if (i === originalConfig.length - 1) {
@@ -69,8 +63,7 @@ export class Manager {
             return
           }
 
-          const disabled =
-            !enabled || (config.disabled && config.disabled(view))
+          const disabled = !enabled || (config.disabled && config.disabled(view))
           if (disabled) {
             config.$.setAttribute('disabled', 'true')
           } else {
@@ -85,8 +78,7 @@ export class Manager {
             return
           }
 
-          const disabled =
-            !enabled || (config.disabled && config.disabled(view))
+          const disabled = !enabled || (config.disabled && config.disabled(view))
           if (disabled) {
             config.$.classList.add('disabled')
             config.$.children[0].setAttribute('disabled', 'true')
@@ -98,10 +90,7 @@ export class Manager {
         }
 
         case 'divider': {
-          const disabled = config.group.every(
-            (x) =>
-              x.getAttribute('disabled') || x.classList.contains('disabled')
-          )
+          const disabled = config.group.every((x) => x.getAttribute('disabled') || x.classList.contains('disabled'))
           if (disabled) {
             config.$.classList.add('disabled')
           } else {
@@ -113,10 +102,7 @@ export class Manager {
     })
   }
 
-  private $create(
-    item: ButtonConfig | DividerConfig | SelectConfig,
-    view: EditorView
-  ): HTMLElement {
+  private $create(item: ButtonConfig | DividerConfig | SelectConfig, view: EditorView): HTMLElement {
     const { utils, ctx } = this
 
     switch (item.type) {

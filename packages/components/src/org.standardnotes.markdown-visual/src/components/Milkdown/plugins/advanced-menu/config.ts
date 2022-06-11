@@ -1,13 +1,13 @@
 import {
-  WrapInBulletList,
-  WrapInOrderedList,
+  InsertHr,
+  InsertImage,
   LiftListItem,
   SinkListItem,
-  InsertImage,
   WrapInBlockquote,
-  InsertHr,
+  WrapInBulletList,
+  WrapInOrderedList,
 } from '@milkdown/preset-commonmark'
-import { TurnIntoTaskList, InsertTable } from '@milkdown/preset-gfm'
+import { InsertTable, TurnIntoTaskList } from '@milkdown/preset-gfm'
 import { EditorView, liftListItem, sinkListItem, wrapIn } from '@milkdown/prose'
 import { ButtonConfig } from './button'
 import { SelectConfig } from './select'

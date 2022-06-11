@@ -5,12 +5,7 @@ import { Ctx, rootCtx } from '@milkdown/core'
 import { EditorView } from '@milkdown/prose'
 import { Utils } from '@milkdown/utils'
 
-export const MenuBar = (
-  utils: Utils,
-  view: EditorView,
-  ctx: Ctx,
-  domHandler: HandleDOM = defaultDOMHandler
-) => {
+export const MenuBar = (utils: Utils, view: EditorView, ctx: Ctx, domHandler: HandleDOM = defaultDOMHandler) => {
   const menuWrapper = document.createElement('div')
   menuWrapper.classList.add('milkdown-menu-wrapper')
   const menu = document.createElement('div')
@@ -96,12 +91,7 @@ const restore: HandleDOM = ({ milkdownDOM, editorRoot, menu, menuWrapper }) => {
   menu.remove()
 }
 
-const defaultDOMHandler: HandleDOM = ({
-  menu,
-  menuWrapper,
-  editorRoot,
-  milkdownDOM,
-}) => {
+const defaultDOMHandler: HandleDOM = ({ menu, menuWrapper, editorRoot, milkdownDOM }) => {
   menuWrapper.appendChild(menu)
   editorRoot.replaceChild(menuWrapper, milkdownDOM)
   menuWrapper.appendChild(milkdownDOM)

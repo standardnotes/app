@@ -8,10 +8,7 @@ import type { Utils } from '@milkdown/utils'
 
 import type { MenuCommonConfig } from './config'
 
-type RequireAtLeastOne<T, Keys extends keyof T = keyof T> = Pick<
-  T,
-  Exclude<keyof T, Keys>
-> &
+type RequireAtLeastOne<T, Keys extends keyof T = keyof T> = Pick<T, Exclude<keyof T, Keys>> &
   {
     [K in Keys]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<Keys, K>>>
   }[Keys]
@@ -28,12 +25,7 @@ type Config<T = any> = {
 
 export type ButtonConfig = RequireAtLeastOne<Config, 'key' | 'callback'>
 
-export const button = (
-  utils: Utils,
-  config: Config,
-  ctx: Ctx,
-  view: EditorView
-) => {
+export const button = (utils: Utils, config: Config, ctx: Ctx, view: EditorView) => {
   const buttonStyle = utils.getStyle((themeTool) => {
     return css`
       border: 0;

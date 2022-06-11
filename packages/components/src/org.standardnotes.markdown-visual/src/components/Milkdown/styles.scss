@@ -114,10 +114,7 @@
           }
 
           .strike-through {
-            text-decoration-color: rgba(
-              var(--sn-stylekit-editor-foreground-color),
-              0.5
-            );
+            text-decoration-color: rgba(var(--sn-stylekit-editor-foreground-color), 0.5);
           }
 
           .ProseMirror-gapcursor {
@@ -144,9 +141,7 @@
           .image,
           .system,
           .empty {
-            background-color: var(
-              --sn-stylekit-secondary-contrast-background-color
-            );
+            background-color: var(--sn-stylekit-secondary-contrast-background-color);
           }
 
           .empty .placeholder::before {
@@ -160,9 +155,7 @@
         }
 
         .slash-dropdown {
-          background-color: var(
-            --sn-stylekit-contrast-background-color
-          ) !important;
+          background-color: var(--sn-stylekit-contrast-background-color) !important;
           border-color: var(--sn-stylekit-border-color) !important;
 
           .slash-dropdown-item {
@@ -175,17 +168,13 @@
         }
 
         .milkdown-emoji-filter {
-          background-color: var(
-            --sn-stylekit-contrast-background-color
-          ) !important;
+          background-color: var(--sn-stylekit-contrast-background-color) !important;
           border-color: var(--sn-stylekit-border-color) !important;
           color: var(--sn-stylekit-paragraph-text-color) !important;
         }
 
         .tooltip {
-          background-color: var(
-            --sn-stylekit-contrast-background-color
-          ) !important;
+          background-color: var(--sn-stylekit-contrast-background-color) !important;
           border-color: var(--sn-stylekit-border-color) !important;
 
           .icon {
@@ -199,9 +188,7 @@
         }
 
         .tooltip-input {
-          background-color: var(
-            --sn-stylekit-contrast-background-color
-          ) !important;
+          background-color: var(--sn-stylekit-contrast-background-color) !important;
           border-color: var(--sn-stylekit-border-color) !important;
 
           button {

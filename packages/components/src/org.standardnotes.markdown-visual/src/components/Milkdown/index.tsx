@@ -1,9 +1,9 @@
 import './styles.scss'
 
-import { forwardRef, useImperativeHandle, useRef } from 'react'
-import { EditorRef, ReactEditor, useEditor } from '@milkdown/react'
 import { editorViewCtx, parserCtx } from '@milkdown/core'
 import { Slice } from '@milkdown/prose'
+import { EditorRef, ReactEditor, useEditor } from '@milkdown/react'
+import { forwardRef, useImperativeHandle, useRef } from 'react'
 
 import { createEditor, CreateEditorParams } from './editor'
 import { MenuConfig } from './plugins/advanced-menu/config'
@@ -22,7 +22,7 @@ type MilkdownProps = {
 
 const Milkdown = (
   { onChange, value, menuConfig, editable, spellcheck }: MilkdownProps,
-  ref: React.ForwardedRef<MilkdownRef>
+  ref: React.ForwardedRef<MilkdownRef>,
 ) => {
   const editorRef = useRef<EditorRef>(null)
 
@@ -47,13 +47,7 @@ const Milkdown = (
 
         const state = view.state
         view.dispatch(
-          state.tr
-            .replace(
-              0,
-              state.doc.content.size,
-              new Slice(document.content, 0, 0)
-            )
-            .setMeta('addToHistory', false)
+          state.tr.replace(0, state.doc.content.size, new Slice(document.content, 0, 0)).setMeta('addToHistory', false),
         )
       })
     },
@@ -70,7 +64,7 @@ const Milkdown = (
         spellcheck,
       })
     },
-    [value, onChange, value, menuConfig, editable, spellcheck]
+    [value, onChange, value, menuConfig, editable, spellcheck],
   )
 
   return (

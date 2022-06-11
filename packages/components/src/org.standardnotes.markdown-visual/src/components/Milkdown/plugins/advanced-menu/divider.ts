@@ -25,9 +25,7 @@ export const divider = (utils: Utils, config: DividerConfig) => {
     $divider.classList.add(dividerStyle)
   }
 
-  const disabled = config.group.every(
-    (x) => x.getAttribute('disabled') || x.classList.contains('disabled')
-  )
+  const disabled = config.group.every((x) => x.getAttribute('disabled') || x.classList.contains('disabled'))
 
   if (disabled) {
     $divider.classList.add('disabled')

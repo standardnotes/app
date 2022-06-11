@@ -28,6 +28,5 @@ const settingsSlice = createSlice({
   },
 })
 
-export const { setCanEdit, setIsRunningOnMobile, setSpellCheckerEnabled } =
-  settingsSlice.actions
+export const { setCanEdit, setIsRunningOnMobile, setSpellCheckerEnabled } = settingsSlice.actions
 export default settingsSlice.reducer

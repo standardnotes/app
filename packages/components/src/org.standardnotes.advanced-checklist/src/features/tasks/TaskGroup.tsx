@@ -10,17 +10,8 @@ import TaskItemList from './TaskItemList'
 
 import TaskGroupOptions from './TaskGroupOptions'
 
-import {
-  CircularProgressBar,
-  GenericInlineText,
-  MainTitle,
-  RoundButton,
-} from '../../common/components'
-import {
-  ChevronDownIcon,
-  ReorderIcon,
-  ChevronUpIcon,
-} from '../../common/components/icons'
+import { CircularProgressBar, GenericInlineText, MainTitle, RoundButton } from '../../common/components'
+import { ChevronDownIcon, ReorderIcon, ChevronUpIcon } from '../../common/components/icons'
 
 const TaskGroupContainer = styled.div<{ isLast?: boolean }>`
   background-color: var(--sn-stylekit-background-color);
@@ -100,10 +91,7 @@ const TaskGroup: React.FC<TaskGroupProps> = ({
               <ReorderIcon highlight={isDragging} />
             </div>
           )}
-          <MainTitle
-            crossed={allTasksCompleted && collapsed}
-            highlight={isDragging}
-          >
+          <MainTitle crossed={allTasksCompleted && collapsed} highlight={isDragging}>
             {groupName}
           </MainTitle>
           <CircularProgressBar size={18} percentage={percentageCompleted} />
@@ -119,10 +107,7 @@ const TaskGroup: React.FC<TaskGroupProps> = ({
               </div>
             )}
             <div className="ml-3">
-              <RoundButton
-                testId="collapse-task-group"
-                onClick={handleCollapse}
-              >
+              <RoundButton testId="collapse-task-group" onClick={handleCollapse}>
                 {!collapsed ? <ChevronUpIcon /> : <ChevronDownIcon />}
               </RoundButton>
             </div>

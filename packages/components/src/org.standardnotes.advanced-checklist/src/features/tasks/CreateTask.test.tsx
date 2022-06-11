@@ -79,6 +79,6 @@ test('pressing enter when input box is not empty, should create a new task', () 
     taskAdded({
       task: { id: 'my-fake-uuid', description: 'My awesome task' },
       groupName: defaultGroup.name,
-    })
+    }),
   )
 })

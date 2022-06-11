@@ -28,11 +28,7 @@ it('renders the alert dialog with an input box', () => {
     },
   }
 
-  testRender(
-    <RenameTaskGroups groupName={defaultGroup} handleClose={handleClose} />,
-    {},
-    defaultState
-  )
+  testRender(<RenameTaskGroups groupName={defaultGroup} handleClose={handleClose} />, {}, defaultState)
 
   const alertDialog = screen.getByTestId('rename-task-group-dialog')
   expect(alertDialog).toBeInTheDocument()
@@ -78,14 +74,12 @@ it('should dispatch the action to merge groups', () => {
   const { mockStore } = testRender(
     <RenameTaskGroups groupName={defaultGroup} handleClose={handleClose} />,
     {},
-    defaultState
+    defaultState,
   )
 
   const newGroupName = 'My new group name'
 
-  const inputBox = screen.getByTestId(
-    'new-group-name-input'
-  ) as HTMLInputElement
+  const inputBox = screen.getByTestId('new-group-name-input') as HTMLInputElement
 
   fireEvent.change(inputBox, { target: { value: newGroupName } })
 
@@ -104,9 +98,7 @@ it('should dispatch the action to merge groups', () => {
 
   const dispatchedActions = mockStore.getActions()
   expect(dispatchedActions).toHaveLength(1)
-  expect(dispatchedActions[0]).toMatchObject(
-    tasksGroupRenamed({ groupName: defaultGroup, newName: newGroupName })
-  )
+  expect(dispatchedActions[0]).toMatchObject(tasksGroupRenamed({ groupName: defaultGroup, newName: newGroupName }))
   expect(handleClose).toHaveBeenCalledTimes(1)
 })
 
@@ -145,14 +137,12 @@ it('should dispatch the action to merge groups on Enter press', () => {
   const { mockStore } = testRender(
     <RenameTaskGroups groupName={defaultGroup} handleClose={handleClose} />,
     {},
-    defaultState
+    defaultState,
   )
 
   const newGroupName = 'My new group name'
 
-  const inputBox = screen.getByTestId(
-    'new-group-name-input'
-  ) as HTMLInputElement
+  const inputBox = screen.getByTestId('new-group-name-input') as HTMLInputElement
 
   fireEvent.change(inputBox, { target: { value: newGroupName } })
   fireEvent.keyPress(inputBox, {
@@ -164,8 +154,6 @@ it('should dispatch the action to merge groups on Enter press', () => {
 
   const dispatchedActions = mockStore.getActions()
   expect(dispatchedActions).toHaveLength(1)
-  expect(dispatchedActions[0]).toMatchObject(
-    tasksGroupRenamed({ groupName: defaultGroup, newName: newGroupName })
-  )
+  expect(dispatchedActions[0]).toMatchObject(tasksGroupRenamed({ groupName: defaultGroup, newName: newGroupName }))
   expect(handleClose).toHaveBeenCalledTimes(1)
 })

@@ -43,9 +43,7 @@ it('should dispatch tasksGroupDeleted action', () => {
 
   const confirmDialog = screen.getByTestId('delete-task-group-dialog')
   expect(confirmDialog).toBeInTheDocument()
-  expect(confirmDialog).toHaveTextContent(
-    `Are you sure you want to delete the group '${groupName}'?`
-  )
+  expect(confirmDialog).toHaveTextContent(`Are you sure you want to delete the group '${groupName}'?`)
 
   const confirmButton = screen.getByTestId('confirm-dialog-button')
   fireEvent.click(confirmButton)
@@ -103,9 +101,7 @@ it('should close the delete task group dialog', () => {
   const cancelButton = screen.getByTestId('cancel-dialog-button')
   clickButton(cancelButton)
 
-  expect(
-    screen.queryByTestId('trash-task-group-dialog')
-  ).not.toBeInTheDocument()
+  expect(screen.queryByTestId('trash-task-group-dialog')).not.toBeInTheDocument()
 })
 
 it('should close the merge task group dialog', () => {
@@ -120,9 +116,7 @@ it('should close the merge task group dialog', () => {
   const cancelButton = screen.queryAllByRole('button')[0]
   clickButton(cancelButton)
 
-  expect(
-    screen.queryByTestId('merge-task-group-dialog')
-  ).not.toBeInTheDocument()
+  expect(screen.queryByTestId('merge-task-group-dialog')).not.toBeInTheDocument()
 })
 
 it('should close the rename task group dialog', () => {
@@ -137,7 +131,5 @@ it('should close the rename task group dialog', () => {
   const cancelButton = screen.queryAllByRole('button')[0]
   clickButton(cancelButton)
 
-  expect(
-    screen.queryByTestId('rename-task-group-dialog')
-  ).not.toBeInTheDocument()
+  expect(screen.queryByTestId('rename-task-group-dialog')).not.toBeInTheDocument()
 })

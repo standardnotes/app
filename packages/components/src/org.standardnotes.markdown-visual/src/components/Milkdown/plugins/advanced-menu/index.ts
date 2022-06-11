@@ -1,12 +1,7 @@
 /* Copyright 2021, Milkdown by Mirone. */
 
 import { createCmd, createCmdKey, Ctx } from '@milkdown/core'
-import {
-  EditorView,
-  Plugin,
-  PluginKey,
-  selectParentNode,
-} from '@milkdown/prose'
+import { EditorView, Plugin, PluginKey, selectParentNode } from '@milkdown/prose'
 import { createPlugin } from '@milkdown/utils'
 
 import { MenuConfig, menuConfig } from './config'

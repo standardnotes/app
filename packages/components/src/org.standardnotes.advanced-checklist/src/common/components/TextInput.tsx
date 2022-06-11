@@ -11,8 +11,7 @@ const StyledInput = styled.input<StyledInputProps>`
   background-color: unset;
   border: none;
   color: var(--sn-stylekit-foreground-color);
-  font-size: ${({ textSize }) =>
-    textSize === 'big' ? '1.125rem' : 'var(--sn-stylekit-font-size-h3)'};
+  font-size: ${({ textSize }) => (textSize === 'big' ? '1.125rem' : 'var(--sn-stylekit-font-size-h3)')};
   font-weight: ${({ textSize }) => (textSize === 'big' ? '500' : '400')};
   height: auto;
   margin: 6px 0 6px 0;
@@ -35,14 +34,7 @@ type TextInputProps = {
   autoFocus?: boolean
   dir?: 'ltr' | 'rtl' | 'auto'
   disabled?: boolean
-  enterKeyHint?:
-    | 'enter'
-    | 'done'
-    | 'go'
-    | 'next'
-    | 'previous'
-    | 'search'
-    | 'send'
+  enterKeyHint?: 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send'
   placeholder?: string
   spellCheck?: boolean
   testId?: string
@@ -68,7 +60,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
       onChange,
       onKeyPress,
     },
-    ref
+    ref,
   ) => {
     return (
       <StyledInput
@@ -88,5 +80,5 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
         value={value}
       />
     )
-  }
+  },
 )

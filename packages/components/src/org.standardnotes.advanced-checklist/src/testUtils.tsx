@@ -17,20 +17,12 @@ const defaultMockState: RootState = {
   },
 }
 
-export function testRender(
-  ui: React.ReactElement,
-  renderOptions?: RenderOptions,
-  state?: Partial<RootState>
-) {
+export function testRender(ui: React.ReactElement, renderOptions?: RenderOptions, state?: Partial<RootState>) {
   const mockStore = configureStore()({
     ...defaultMockState,
     ...state,
   })
-  function Wrapper({
-    children,
-  }: {
-    children: React.ReactElement<any, string | React.JSXElementConstructor<any>>
-  }) {
+  function Wrapper({ children }: { children: React.ReactElement<any, string | React.JSXElementConstructor<any>> }) {
     return <Provider store={mockStore}>{children}</Provider>
   }
   return {

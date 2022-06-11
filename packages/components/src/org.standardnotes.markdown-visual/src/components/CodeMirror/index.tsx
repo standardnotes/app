@@ -1,12 +1,9 @@
 import './styles.scss'
 
-import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 import { basicSetup } from '@codemirror/basic-setup'
 import { markdown } from '@codemirror/lang-markdown'
-import CodeMirrorReact, {
-  EditorView,
-  ReactCodeMirrorRef,
-} from '@uiw/react-codemirror'
+import CodeMirrorReact, { EditorView, ReactCodeMirrorRef } from '@uiw/react-codemirror'
+import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 
 export type CodeMirrorRef = {
   update: (markdown: string) => void
@@ -21,7 +18,7 @@ type CodeMirrorProps = {
 
 const CodeMirror = (
   { onChange, value, editable, spellcheck }: CodeMirrorProps,
-  ref: React.ForwardedRef<CodeMirrorRef>
+  ref: React.ForwardedRef<CodeMirrorRef>,
 ) => {
   const [hasFocus, setFocus] = useState(false)
   const editorRef = useRef<ReactCodeMirrorRef>(null)

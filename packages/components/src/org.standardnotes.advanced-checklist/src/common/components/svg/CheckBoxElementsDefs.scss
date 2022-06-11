@@ -38,8 +38,7 @@ $transition-duration: 750ms;
 .checkbox-square,
 .checkbox-mark {
   cursor: pointer;
-  transition: stroke-dashoffset $transition-duration
-    cubic-bezier(0.9, 0, 0.5, 1);
+  transition: stroke-dashoffset $transition-duration cubic-bezier(0.9, 0, 0.5, 1);
 }
 
 .checkbox-circle {

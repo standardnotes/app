@@ -9,12 +9,8 @@ type CheckBoxInputProps = {
 
 export const CheckBoxInput = forwardRef<HTMLInputElement, CheckBoxInputProps>(
   ({ checked, disabled, testId, onChange }, ref) => {
-    function onCheckBoxButtonClick({
-      currentTarget,
-    }: React.MouseEvent<SVGElement>) {
-      !checked
-        ? currentTarget.classList.add('explode')
-        : currentTarget.classList.remove('explode')
+    function onCheckBoxButtonClick({ currentTarget }: React.MouseEvent<SVGElement>) {
+      !checked ? currentTarget.classList.add('explode') : currentTarget.classList.remove('explode')
     }
 
     return (
@@ -41,5 +37,5 @@ export const CheckBoxInput = forwardRef<HTMLInputElement, CheckBoxInputProps>(
         </svg>
       </label>
     )
-  }
+  },
 )

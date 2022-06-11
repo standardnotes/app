@@ -10,12 +10,8 @@ const group = 'default group'
 it('renders two buttons', () => {
   testRender(<CompletedTasksActions groupName={group} />)
 
-  expect(screen.getByTestId('reopen-completed-button')).toHaveTextContent(
-    'Reopen Completed'
-  )
-  expect(screen.getByTestId('delete-completed-button')).toHaveTextContent(
-    'Delete Completed'
-  )
+  expect(screen.getByTestId('reopen-completed-button')).toHaveTextContent('Reopen Completed')
+  expect(screen.getByTestId('delete-completed-button')).toHaveTextContent('Delete Completed')
 })
 
 it('should not render buttons if can not edit', () => {
@@ -29,12 +25,8 @@ it('should not render buttons if can not edit', () => {
 
   testRender(<CompletedTasksActions groupName={group} />, {}, defaultState)
 
-  expect(
-    screen.queryByTestId('reopen-completed-button')
-  ).not.toBeInTheDocument()
-  expect(
-    screen.queryByTestId('delete-completed-button')
-  ).not.toBeInTheDocument()
+  expect(screen.queryByTestId('reopen-completed-button')).not.toBeInTheDocument()
+  expect(screen.queryByTestId('delete-completed-button')).not.toBeInTheDocument()
 })
 
 it('should dispatch openAllCompleted action', () => {
@@ -45,18 +37,14 @@ it('should dispatch openAllCompleted action', () => {
 
   const confirmDialog = screen.getByTestId('reopen-all-tasks-dialog')
   expect(confirmDialog).toBeInTheDocument()
-  expect(confirmDialog).toHaveTextContent(
-    `Are you sure you want to reopen completed tasks in the '${group}' group?`
-  )
+  expect(confirmDialog).toHaveTextContent(`Are you sure you want to reopen completed tasks in the '${group}' group?`)
 
   const confirmButton = screen.getByTestId('confirm-dialog-button')
   fireEvent.click(confirmButton)
 
   const dispatchedActions = mockStore.getActions()
   expect(dispatchedActions).toHaveLength(1)
-  expect(dispatchedActions[0]).toMatchObject(
-    openAllCompleted({ groupName: group })
-  )
+  expect(dispatchedActions[0]).toMatchObject(openAllCompleted({ groupName: group }))
 })
 
 it('should dispatch deleteCompleted action', () => {
@@ -67,18 +55,14 @@ it('should dispatch deleteCompleted action', () => {
 
   const confirmDialog = screen.getByTestId('delete-completed-tasks-dialog')
   expect(confirmDialog).toBeInTheDocument()
-  expect(confirmDialog).toHaveTextContent(
-    `Are you sure you want to delete completed tasks in the '${group}' group?`
-  )
+  expect(confirmDialog).toHaveTextContent(`Are you sure you want to delete completed tasks in the '${group}' group?`)
 
   const confirmButton = screen.getByTestId('confirm-dialog-button')
   fireEvent.click(confirmButton)
 
   const dispatchedActions = mockStore.getActions()
   expect(dispatchedActions).toHaveLength(1)
-  expect(dispatchedActions[0]).toMatchObject(
-    deleteAllCompleted({ groupName: group })
-  )
+  expect(dispatchedActions[0]).toMatchObject(deleteAllCompleted({ groupName: group }))
 })
 
 it('should dismiss dialogs', () => {
