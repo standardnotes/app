@@ -5932,21 +5932,20 @@ __metadata:
     "@types/react": ^17.0.40
     "@types/react-dom": ^17.0.13
     "@uiw/react-codemirror": 4.5.1
-    gh-pages: ^3.2.3
-    husky: ^7.0.4
+    husky: "*"
     katex: ^0.15.2
-    lint-staged: ^12.3.5
+    lint-staged: "*"
     marked: ^4.0.12
     material-icons: ^1.10.8
-    prettier: ^2.5.1
+    prettier: "*"
     react: ^17.0.2
     react-dom: ^17.0.2
     react-icons: ^4.3.1
     react-scripts: ^5.0.0
-    sass: 1.49.9
+    sass: "*"
     sn-stylekit: 5.2.21
     source-map-explorer: ^2.5.2
-    typescript: 4.6.2
+    typescript: "*"
   languageName: unknown
   linkType: soft
 
@@ -15594,7 +15593,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gh-pages@npm:3.2.3, gh-pages@npm:^3.2.3":
+"gh-pages@npm:3.2.3":
   version: 3.2.3
   resolution: "gh-pages@npm:3.2.3"
   dependencies:
@@ -16648,6 +16647,15 @@ __metadata:
   dependencies:
     ms: ^2.0.0
   checksum: 9c7a74a2827f9294c009266c82031030eae811ca87b0da3dceb8d6071b9bde22c9f3daef0469c3c533cc67a97d8a167cd9fc0389350e5f415f61a79b171ded16
+  languageName: node
+  linkType: hard
+
+"husky@npm:*":
+  version: 8.0.1
+  resolution: "husky@npm:8.0.1"
+  bin:
+    husky: lib/bin.js
+  checksum: 943a73a13d0201318fd30e83d299bb81d866bd245b69e6277804c3b462638dc1921694cb94c2b8c920a4a187060f7d6058d3365152865406352e934c5fff70dc
   languageName: node
   linkType: hard
 
@@ -19148,30 +19156,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lint-staged@npm:12.3.5":
-  version: 12.3.5
-  resolution: "lint-staged@npm:12.3.5"
-  dependencies:
-    cli-truncate: ^3.1.0
-    colorette: ^2.0.16
-    commander: ^8.3.0
-    debug: ^4.3.3
-    execa: ^5.1.1
-    lilconfig: 2.0.4
-    listr2: ^4.0.1
-    micromatch: ^4.0.4
-    normalize-path: ^3.0.0
-    object-inspect: ^1.12.0
-    string-argv: ^0.3.1
-    supports-color: ^9.2.1
-    yaml: ^1.10.2
-  bin:
-    lint-staged: bin/lint-staged.js
-  checksum: 6653c7078b36741e521e5f309b56bb75db198a05cbdd188124ff82a290e352ade3eb1e6080265729e19711ac08d190e300874af00e4e540b57b3c8f0690e2573
-  languageName: node
-  linkType: hard
-
-"lint-staged@npm:>=12, lint-staged@npm:^13.0.1":
+"lint-staged@npm:*, lint-staged@npm:>=12, lint-staged@npm:^13.0.1":
   version: 13.0.1
   resolution: "lint-staged@npm:13.0.1"
   dependencies:
@@ -19194,27 +19179,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lint-staged@npm:^12.3.5":
-  version: 12.5.0
-  resolution: "lint-staged@npm:12.5.0"
+"lint-staged@npm:12.3.5":
+  version: 12.3.5
+  resolution: "lint-staged@npm:12.3.5"
   dependencies:
     cli-truncate: ^3.1.0
     colorette: ^2.0.16
-    commander: ^9.3.0
-    debug: ^4.3.4
+    commander: ^8.3.0
+    debug: ^4.3.3
     execa: ^5.1.1
-    lilconfig: 2.0.5
-    listr2: ^4.0.5
-    micromatch: ^4.0.5
+    lilconfig: 2.0.4
+    listr2: ^4.0.1
+    micromatch: ^4.0.4
     normalize-path: ^3.0.0
-    object-inspect: ^1.12.2
-    pidtree: ^0.5.0
+    object-inspect: ^1.12.0
     string-argv: ^0.3.1
-    supports-color: ^9.2.2
+    supports-color: ^9.2.1
     yaml: ^1.10.2
   bin:
     lint-staged: bin/lint-staged.js
-  checksum: ac203917be098305bc0aebd5f1a969e88ea0854e8fb2199ebcbbb059d8bce324cf97db8f3d25f7954dd48c0666ae13987fb4db569d5b6fecda06f9fb742278e1
+  checksum: 6653c7078b36741e521e5f309b56bb75db198a05cbdd188124ff82a290e352ade3eb1e6080265729e19711ac08d190e300874af00e4e540b57b3c8f0690e2573
   languageName: node
   linkType: hard
 
@@ -22844,15 +22828,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pidtree@npm:^0.5.0":
-  version: 0.5.0
-  resolution: "pidtree@npm:0.5.0"
-  bin:
-    pidtree: bin/pidtree.js
-  checksum: 371cd14bbc9bdee2a6a44596dd521dd3565e223481e0b1afffdca3f1c29831850bfa7784114dc30d245d37e7d186cec035e036256b39f75d878d19498fe0df6a
-  languageName: node
-  linkType: hard
-
 "pidtree@npm:^0.6.0":
   version: 0.6.0
   resolution: "pidtree@npm:0.6.0"
@@ -23900,7 +23875,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:*, prettier@npm:^2.5.1, prettier@npm:^2.6.0, prettier@npm:^2.6.2":
+"prettier@npm:*, prettier@npm:^2.6.0, prettier@npm:^2.6.2":
   version: 2.6.2
   resolution: "prettier@npm:2.6.2"
   bin:
@@ -26506,20 +26481,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sass@npm:1.49.9":
-  version: 1.49.9
-  resolution: "sass@npm:1.49.9"
-  dependencies:
-    chokidar: ">=3.0.0 <4.0.0"
-    immutable: ^4.0.0
-    source-map-js: ">=0.6.2 <2.0.0"
-  bin:
-    sass: sass.js
-  checksum: e5653e3499274c5127dcb5c9e7c5f6930378fc61764d999a5d8965782e027181ed09714f94836dec74ef55e3a858107fe6c571954c0cab0ad0be5ab8e586829c
-  languageName: node
-  linkType: hard
-
-"sass@npm:^1.52.3":
+"sass@npm:*, sass@npm:^1.52.3":
   version: 1.52.3
   resolution: "sass@npm:1.52.3"
   dependencies:
@@ -28002,7 +27964,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"supports-color@npm:^9.2.1, supports-color@npm:^9.2.2":
+"supports-color@npm:^9.2.1":
   version: 9.2.2
   resolution: "supports-color@npm:9.2.2"
   checksum: 976d84877402fc38c1d43b1fde20b0a8dc0283273f21cfebe4ff7507d27543cdfbeec7db108a96b82d694465f06d64e8577562b05d0520b41710088e0a33cc50
