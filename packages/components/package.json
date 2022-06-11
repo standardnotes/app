@@ -10,7 +10,8 @@
   "scripts": {
     "build": "yarn workspaces foreach --parallel run build",
     "preversion": "yarn build",
-    "version": "node scripts/package-components.mjs"
+    "version": "node scripts/package-components.mjs",
+    "pretty": "yarn workspaces foreach --parallel run pretty"
   },
   "installConfig": {
     "hoistingLimits": "workspaces"
