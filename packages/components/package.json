@@ -9,8 +9,7 @@
   },
   "scripts": {
     "build": "yarn workspaces foreach --parallel run build",
-    "preversion": "yarn build",
-    "version": "node scripts/package-components.mjs"
+    "version": "node scripts/package-components.mjs && git add dist && git commit -m 'chore(release): components'"
   },
   "installConfig": {
     "hoistingLimits": "workspaces"
