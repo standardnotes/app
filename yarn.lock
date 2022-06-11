@@ -5963,6 +5963,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@standardnotes/midnight-theme@workspace:packages/components/src/org.standardnotes.theme-midnight":
+  version: 0.0.0-use.local
+  resolution: "@standardnotes/midnight-theme@workspace:packages/components/src/org.standardnotes.theme-midnight"
+  languageName: unknown
+  linkType: soft
+
 "@standardnotes/mobile@workspace:packages/mobile":
   version: 0.0.0-use.local
   resolution: "@standardnotes/mobile@workspace:packages/mobile"
