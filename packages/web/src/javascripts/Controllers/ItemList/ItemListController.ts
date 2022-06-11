@@ -229,7 +229,7 @@ export class ItemListController extends AbstractViewController implements Intern
       return
     }
 
-    const note = this.application.items.findItem(noteUuid) as SNNote | undefined
+    const note = this.application.items.findItem<SNNote>(noteUuid)
     if (!note) {
       console.warn('Tried accessing a non-existant note of UUID ' + noteUuid)
       return
@@ -247,7 +247,7 @@ export class ItemListController extends AbstractViewController implements Intern
       return
     }
 
-    const file = this.application.items.findItem(fileUuid) as FileItem | undefined
+    const file = this.application.items.findItem<FileItem>(fileUuid)
     if (!file) {
       console.warn('Tried accessing a non-existant file of UUID ' + fileUuid)
       return
