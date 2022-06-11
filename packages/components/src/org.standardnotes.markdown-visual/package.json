@@ -60,21 +60,20 @@
     "@types/react": "^17.0.40",
     "@types/react-dom": "^17.0.13",
     "@uiw/react-codemirror": "4.5.1",
-    "gh-pages": "^3.2.3",
-    "husky": "^7.0.4",
+    "husky": "*",
     "katex": "^0.15.2",
-    "lint-staged": "^12.3.5",
+    "lint-staged": "*",
     "marked": "^4.0.12",
     "material-icons": "^1.10.8",
-    "prettier": "^2.5.1",
+    "prettier": "*",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-icons": "^4.3.1",
     "react-scripts": "^5.0.0",
-    "sass": "1.49.9",
+    "sass": "*",
     "sn-stylekit": "5.2.21",
     "source-map-explorer": "^2.5.2",
-    "typescript": "4.6.2"
+    "typescript": "*"
   },
   "eslintConfig": {
     "extends": [
