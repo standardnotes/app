@@ -99,7 +99,7 @@
       "^.+\\.module\\.(css|sass|scss)$"
     ]
   },
-  "dependencies": {
+  "devDependencies": {
     "@reach/alert-dialog": "0.16.2",
     "@reach/menu-button": "0.16.2",
     "@reach/visually-hidden": "0.16.0",
