@@ -2,12 +2,7 @@
   "name": "@standardnotes/focus-theme",
   "version": "1.2.9",
   "main": "dist/dist.css",
-  "devDependencies": {
-    "grunt": "^1.0.1",
-    "grunt-contrib-sass": "^1.0.0",
-    "grunt-contrib-watch": "^1.0.0",
-    "grunt-newer": "^1.2.0"
-  },
+  "private": true,
   "sn": {
     "main": "dist/dist.css"
   },
@@ -16,11 +11,6 @@
     "url": "git://github.com/standardnotes/focus-theme.git"
   },
   "scripts": {
-    "prepublishOnly": "npm run build",
-    "build": "grunt"
-  },
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
+    "build": "webpack --entry ./src/main.scss --config ./../../theme.webpack.config.js"
   }
 }

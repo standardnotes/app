@@ -19,7 +19,10 @@
     "@standardnotes/autobiography-theme": "1.0.4",
     "@standardnotes/deterministic-zip": "^1.2.0",
     "@standardnotes/features": "^1.45.1",
+    "mini-css-extract-plugin": "^2.6.0",
     "node-sass": "7.0.1",
-    "sass": "^1.52.3"
+    "sass": "^1.52.3",
+    "webpack": "^5.73.0",
+    "webpack-remove-empty-scripts": "^0.8.0"
   }
 }
