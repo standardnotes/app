@@ -4637,7 +4637,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/advanced-checklist@0.0.1, @standardnotes/advanced-checklist@workspace:packages/components/src/org.standardnotes.advanced-checklist":
+"@standardnotes/advanced-checklist@workspace:packages/components/src/org.standardnotes.advanced-checklist":
   version: 0.0.0-use.local
   resolution: "@standardnotes/advanced-checklist@workspace:packages/components/src/org.standardnotes.advanced-checklist"
   dependencies:
@@ -4725,7 +4725,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/autobiography-theme@1.0.4, @standardnotes/autobiography-theme@workspace:packages/components/src/org.standardnotes.theme-autobiography":
+"@standardnotes/autobiography-theme@workspace:packages/components/src/org.standardnotes.theme-autobiography":
   version: 0.0.0-use.local
   resolution: "@standardnotes/autobiography-theme@workspace:packages/components/src/org.standardnotes.theme-autobiography"
   languageName: unknown
@@ -4742,8 +4742,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/components-meta@workspace:packages/components"
   dependencies:
-    "@standardnotes/advanced-checklist": 0.0.1
-    "@standardnotes/autobiography-theme": 1.0.4
     "@standardnotes/deterministic-zip": ^1.2.0
     "@standardnotes/features": ^1.45.1
     mini-css-extract-plugin: ^2.6.0
