@@ -461,7 +461,7 @@ export class ItemListController extends AbstractViewController implements Intern
   async createNewNoteController(title?: string) {
     const selectedTag = this.navigationController.selected
 
-    const activeRegularTagUuid = selectedTag && selectedTag instanceof SNTag ? selectedTag.uuid : undefined
+    const activeRegularTagUuid = selectedTag instanceof SNTag ? selectedTag.uuid : undefined
 
     await this.application.itemControllerGroup.createNoteController(undefined, title, activeRegularTagUuid)
   }
