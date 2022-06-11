@@ -4850,6 +4850,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standardnotes/dynamic-theme@workspace:packages/components/src/org.standardnotes.theme-dynamic":
+  version: 0.0.0-use.local
+  resolution: "@standardnotes/dynamic-theme@workspace:packages/components/src/org.standardnotes.theme-dynamic"
+  dependencies:
+    grunt: ^1.0.1
+    grunt-contrib-sass: ^1.0.0
+    grunt-contrib-watch: ^1.0.0
+    grunt-newer: ^1.2.0
+  languageName: unknown
+  linkType: soft
+
 "@standardnotes/editor-kit@npm:2.2.5":
   version: 2.2.5
   resolution: "@standardnotes/editor-kit@npm:2.2.5"
@@ -4927,6 +4938,28 @@ __metadata:
   checksum: d8b65164efd13e1614f385e206113cb1bd12b6cd1eeab2aacbb7ef52a17e6cbe770e7393254bbf6bff47cfcd035e8e68cabfac2351ce7cb757df4a044a13f212
   languageName: node
   linkType: hard
+
+"@standardnotes/focus-theme@workspace:packages/components/src/org.standardnotes.theme-focus":
+  version: 0.0.0-use.local
+  resolution: "@standardnotes/focus-theme@workspace:packages/components/src/org.standardnotes.theme-focus"
+  dependencies:
+    grunt: ^1.0.1
+    grunt-contrib-sass: ^1.0.0
+    grunt-contrib-watch: ^1.0.0
+    grunt-newer: ^1.2.0
+  languageName: unknown
+  linkType: soft
+
+"@standardnotes/futura-theme@workspace:packages/components/src/org.standardnotes.theme-futura":
+  version: 0.0.0-use.local
+  resolution: "@standardnotes/futura-theme@workspace:packages/components/src/org.standardnotes.theme-futura"
+  dependencies:
+    grunt: ^1.0.1
+    grunt-contrib-sass: ^1.0.0
+    grunt-contrib-watch: ^1.0.0
+    grunt-newer: ^1.2.0
+  languageName: unknown
+  linkType: soft
 
 "@standardnotes/icons@^1.1.8, @standardnotes/icons@^1.4.0, @standardnotes/icons@workspace:packages/icons":
   version: 0.0.0-use.local
@@ -5181,6 +5214,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standardnotes/solarized-dark-theme@workspace:packages/components/src/org.standardnotes.theme-solarized-dark":
+  version: 0.0.0-use.local
+  resolution: "@standardnotes/solarized-dark-theme@workspace:packages/components/src/org.standardnotes.theme-solarized-dark"
+  dependencies:
+    grunt: ^1.0.1
+    grunt-contrib-sass: ^1.0.0
+    grunt-contrib-watch: ^1.0.0
+    grunt-newer: ^1.2.0
+  languageName: unknown
+  linkType: soft
+
 "@standardnotes/stylekit@npm:5.23.0":
   version: 5.23.0
   resolution: "@standardnotes/stylekit@npm:5.23.0"
@@ -5228,6 +5272,17 @@ __metadata:
     style-loader: ~3.3.1
     typescript: "*"
     webpack: "*"
+  languageName: unknown
+  linkType: soft
+
+"@standardnotes/titanium-theme@workspace:packages/components/src/org.standardnotes.theme-titanium":
+  version: 0.0.0-use.local
+  resolution: "@standardnotes/titanium-theme@workspace:packages/components/src/org.standardnotes.theme-titanium"
+  dependencies:
+    grunt: ^1.0.1
+    grunt-contrib-sass: ^1.0.0
+    grunt-contrib-watch: ^1.0.0
+    grunt-newer: ^1.2.0
   languageName: unknown
   linkType: soft
 
