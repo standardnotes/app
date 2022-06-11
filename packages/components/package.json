@@ -11,9 +11,6 @@
     "build": "yarn workspaces foreach --parallel run build",
     "version": "node scripts/package-components.mjs && git add dist && git commit -m 'chore(release): components'"
   },
-  "installConfig": {
-    "hoistingLimits": "workspaces"
-  },
   "devDependencies": {
     "@standardnotes/advanced-checklist": "0.0.1",
     "@standardnotes/autobiography-theme": "1.0.4",
