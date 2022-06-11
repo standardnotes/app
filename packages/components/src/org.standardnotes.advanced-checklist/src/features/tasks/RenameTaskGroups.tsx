@@ -1,11 +1,7 @@
 import '@reach/dialog/styles.css'
 
 import React, { KeyboardEvent, useRef, useState } from 'react'
-import {
-  AlertDialog,
-  AlertDialogLabel,
-  AlertDialogDescription,
-} from '@reach/alert-dialog'
+import { AlertDialog, AlertDialogLabel, AlertDialogDescription } from '@reach/alert-dialog'
 
 import { useAppDispatch } from '../../app/hooks'
 import { tasksGroupRenamed } from './tasks-slice'
@@ -16,10 +12,7 @@ type RenameTaskGroupsProps = {
   handleClose: () => void
 }
 
-const RenameTaskGroups: React.FC<RenameTaskGroupsProps> = ({
-  groupName,
-  handleClose,
-}) => {
+const RenameTaskGroups: React.FC<RenameTaskGroupsProps> = ({ groupName, handleClose }) => {
   const cancelRef = useRef<HTMLButtonElement>(null)
 
   const dispatch = useAppDispatch()
@@ -44,10 +37,7 @@ const RenameTaskGroups: React.FC<RenameTaskGroupsProps> = ({
   }
 
   return (
-    <AlertDialog
-      data-testid="rename-task-group-dialog"
-      leastDestructiveRef={cancelRef}
-    >
+    <AlertDialog data-testid="rename-task-group-dialog" leastDestructiveRef={cancelRef}>
       <div className="sk-modal-content">
         <div className="sn-component">
           <div className="sk-panel">
@@ -69,11 +59,7 @@ const RenameTaskGroups: React.FC<RenameTaskGroupsProps> = ({
                 </AlertDialogDescription>
 
                 <div className="flex my-1 mt-4">
-                  <button
-                    className="sn-button small neutral"
-                    onClick={handleClose}
-                    ref={cancelRef}
-                  >
+                  <button className="sn-button small neutral" onClick={handleClose} ref={cancelRef}>
                     {renameTo.length === 0 ? 'Close' : 'Cancel'}
                   </button>
                   <button

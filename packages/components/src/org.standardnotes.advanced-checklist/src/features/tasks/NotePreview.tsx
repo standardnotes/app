@@ -19,10 +19,7 @@ type GroupSummaryProps = {
 
 const GroupSummary: React.FC<GroupSummaryProps> = ({ groups }) => {
   const totalGroups = groups.length
-  const groupsToPreview = groups.slice(
-    0,
-    Math.min(totalGroups, GROUPS_PREVIEW_LIMIT)
-  )
+  const groupsToPreview = groups.slice(0, Math.min(totalGroups, GROUPS_PREVIEW_LIMIT))
   if (groupsToPreview.length === 0) {
     return <></>
   }
@@ -35,16 +32,10 @@ const GroupSummary: React.FC<GroupSummaryProps> = ({ groups }) => {
       <div className="my-2">
         {groupsToPreview.map((group, index) => {
           const totalTasks = group.tasks.length
-          const totalCompletedTasks = group.tasks.filter(
-            (task) => task.completed === true
-          ).length
+          const totalCompletedTasks = group.tasks.filter((task) => task.completed === true).length
 
           return (
-            <p
-              data-testid="group-summary"
-              key={`group-${group.name}`}
-              className="mb-1"
-            >
+            <p data-testid="group-summary" key={`group-${group.name}`} className="mb-1">
               {truncateText(group.name, MAX_GROUP_DESCRIPTION_LENGTH)}
               <span className="px-2 neutral">
                 {totalCompletedTasks}/{totalTasks}
@@ -75,11 +66,7 @@ const NotePreview: React.FC<NotePreviewProps> = ({ groupedTasks }) => {
   return (
     <>
       <div className="flex flex-grow items-center mb-3">
-        <svg
-          data-testid="circular-progress-bar"
-          className="sk-circular-progress"
-          viewBox="0 0 18 18"
-        >
+        <svg data-testid="circular-progress-bar" className="sk-circular-progress" viewBox="0 0 18 18">
           <circle className="background" />
           <circle className={`progress p-${roundedPercentage}`} />
         </svg>

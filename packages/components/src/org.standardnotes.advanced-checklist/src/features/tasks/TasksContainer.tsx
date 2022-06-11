@@ -1,12 +1,7 @@
 import './TasksContainer.scss'
 
 import React from 'react'
-import {
-  Draggable,
-  DraggingStyle,
-  Droppable,
-  NotDraggingStyle,
-} from 'react-beautiful-dnd'
+import { Draggable, DraggingStyle, Droppable, NotDraggingStyle } from 'react-beautiful-dnd'
 import styled from 'styled-components'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 
@@ -27,13 +22,11 @@ const InnerTasksContainer = styled.div<{
     margin-bottom: 5px;
   }
 
-  ${({ type, items }) =>
-    type === 'completed' && items > 0 ? 'margin-bottom: 28px' : ''};
+  ${({ type, items }) => (type === 'completed' && items > 0 ? 'margin-bottom: 28px' : '')};
 `
 
 const OuterContainer = styled.div<{ type: ContainerType; items: number }>`
-  ${({ type, items }) =>
-    type === 'open' && items > 0 ? 'margin-bottom: 18px' : ''};
+  ${({ type, items }) => (type === 'open' && items > 0 ? 'margin-bottom: 18px' : '')};
 `
 
 const SubTitleContainer = styled.div`
@@ -49,10 +42,7 @@ const Wrapper = styled.div`
   color: var(--sn-stylekit-foreground-color);
 `
 
-const getItemStyle = (
-  isDragging: boolean,
-  draggableStyle?: DraggingStyle | NotDraggingStyle
-) => ({
+const getItemStyle = (isDragging: boolean, draggableStyle?: DraggingStyle | NotDraggingStyle) => ({
   ...draggableStyle,
   ...(isDragging && {
     color: 'var(--sn-stylekit-info-color)',
@@ -69,13 +59,7 @@ type TasksContainerProps = {
   testId?: string
 }
 
-const TasksContainer: React.FC<TasksContainerProps> = ({
-  groupName,
-  tasks,
-  type,
-  testId,
-  children,
-}) => {
+const TasksContainer: React.FC<TasksContainerProps> = ({ groupName, tasks, type, testId, children }) => {
   const canEdit = useAppSelector((state) => state.settings.canEdit)
   const droppableId = `${type}-tasks-droppable`
 
@@ -94,10 +78,7 @@ const TasksContainer: React.FC<TasksContainerProps> = ({
               ref={provided.innerRef}
               type={type}
             >
-              <TransitionGroup
-                component={null}
-                childFactory={(child) => React.cloneElement(child)}
-              >
+              <TransitionGroup component={null} childFactory={(child) => React.cloneElement(child)}>
                 {tasks.map((task, index) => {
                   return (
                     <CSSTransition
@@ -128,7 +109,7 @@ const TasksContainer: React.FC<TasksContainerProps> = ({
                           () => {
                             node.classList.remove('explode')
                           },
-                          false
+                          false,
                         )
                       }}
                       onExited={(node: HTMLElement) => {
@@ -146,18 +127,10 @@ const TasksContainer: React.FC<TasksContainerProps> = ({
                         index={index}
                         isDragDisabled={!canEdit}
                       >
-                        {(
-                          { innerRef, draggableProps, dragHandleProps },
-                          { isDragging }
-                        ) => {
-                          const { style, ...restDraggableProps } =
-                            draggableProps
+                        {({ innerRef, draggableProps, dragHandleProps }, { isDragging }) => {
+                          const { style, ...restDraggableProps } = draggableProps
                           return (
-                            <div
-                              className="task-item"
-                              style={getItemStyle(isDragging, style)}
-                              {...restDraggableProps}
-                            >
+                            <div className="task-item" style={getItemStyle(isDragging, style)} {...restDraggableProps}>
                               <TaskItem
                                 key={`task-item-${task.id}`}
                                 task={task}

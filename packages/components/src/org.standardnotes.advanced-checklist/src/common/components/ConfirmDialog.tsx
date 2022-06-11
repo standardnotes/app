@@ -1,11 +1,7 @@
 import '@reach/dialog/styles.css'
 
 import React, { useRef } from 'react'
-import {
-  AlertDialog,
-  AlertDialogLabel,
-  AlertDialogDescription,
-} from '@reach/alert-dialog'
+import { AlertDialog, AlertDialogLabel, AlertDialogDescription } from '@reach/alert-dialog'
 
 import { sanitizeHtmlString } from '@standardnotes/utils'
 
@@ -32,11 +28,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   const cancelRef = useRef<HTMLButtonElement>(null)
 
   return (
-    <AlertDialog
-      data-testid={testId}
-      onDismiss={cancelButtonCb}
-      leastDestructiveRef={cancelRef}
-    >
+    <AlertDialog data-testid={testId} onDismiss={cancelButtonCb} leastDestructiveRef={cancelRef}>
       <div className="sk-modal-content">
         <div className="sn-component">
           <div className="sk-panel">

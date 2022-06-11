@@ -6,10 +6,6 @@
   "sn": {
     "main": "dist/dist.css"
   },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/sn-extensions/dynamic-theme.git"
-  },
   "scripts": {
     "build": "webpack --entry ./src/main.scss --config ./../../theme.webpack.config.js"
   }

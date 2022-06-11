@@ -1,9 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import {
-  arrayMoveImmutable,
-  isJsonString,
-  parseMarkdownTasks,
-} from '../../common/utils'
+import { arrayMoveImmutable, isJsonString, parseMarkdownTasks } from '../../common/utils'
 
 export type TasksState = {
   schemaVersion: string
@@ -44,7 +40,7 @@ const tasksSlice = createSlice({
       action: PayloadAction<{
         task: { id: string; description: string }
         groupName: string
-      }>
+      }>,
     ) {
       const { groupName, task } = action.payload
       const group = state.groups.find((item) => item.name === groupName)
@@ -63,7 +59,7 @@ const tasksSlice = createSlice({
       action: PayloadAction<{
         task: { id: string; description: string }
         groupName: string
-      }>
+      }>,
     ) {
       const { groupName, task } = action.payload
       const group = state.groups.find((item) => item.name === groupName)
@@ -77,10 +73,7 @@ const tasksSlice = createSlice({
       currentTask.description = task.description
       currentTask.updatedAt = new Date()
     },
-    taskDeleted(
-      state,
-      action: PayloadAction<{ id: string; groupName: string }>
-    ) {
+    taskDeleted(state, action: PayloadAction<{ id: string; groupName: string }>) {
       const { id, groupName } = action.payload
       const group = state.groups.find((item) => item.name === groupName)
       if (!group) {
@@ -88,10 +81,7 @@ const tasksSlice = createSlice({
       }
       group.tasks = group.tasks.filter((task) => task.id !== id)
     },
-    taskToggled(
-      state,
-      action: PayloadAction<{ id: string; groupName: string }>
-    ) {
+    taskToggled(state, action: PayloadAction<{ id: string; groupName: string }>) {
       const { id, groupName } = action.payload
       const group = state.groups.find((item) => item.name === groupName)
       if (!group) {
@@ -140,10 +130,9 @@ const tasksSlice = createSlice({
         swapTaskIndex: number
         withTaskIndex: number
         isSameSection: boolean
-      }>
+      }>,
     ) {
-      const { groupName, swapTaskIndex, withTaskIndex, isSameSection } =
-        action.payload
+      const { groupName, swapTaskIndex, withTaskIndex, isSameSection } = action.payload
       if (!isSameSection) {
         return
       }
@@ -151,17 +140,13 @@ const tasksSlice = createSlice({
       if (!group) {
         return
       }
-      group.tasks = arrayMoveImmutable(
-        group.tasks,
-        swapTaskIndex,
-        withTaskIndex
-      )
+      group.tasks = arrayMoveImmutable(group.tasks, swapTaskIndex, withTaskIndex)
     },
     tasksGroupAdded(
       state,
       action: PayloadAction<{
         groupName: string
-      }>
+      }>,
     ) {
       const { groupName } = action.payload
       const group = state.groups.find((item) => item.name === groupName)
@@ -178,20 +163,16 @@ const tasksSlice = createSlice({
       action: PayloadAction<{
         swapGroupIndex: number
         withGroupIndex: number
-      }>
+      }>,
     ) {
       const { swapGroupIndex, withGroupIndex } = action.payload
-      state.groups = arrayMoveImmutable(
-        state.groups,
-        swapGroupIndex,
-        withGroupIndex
-      )
+      state.groups = arrayMoveImmutable(state.groups, swapGroupIndex, withGroupIndex)
     },
     tasksGroupDeleted(
       state,
       action: PayloadAction<{
         groupName: string
-      }>
+      }>,
     ) {
       const { groupName } = action.payload
       state.groups = state.groups.filter((item) => item.name !== groupName)
@@ -201,7 +182,7 @@ const tasksSlice = createSlice({
       action: PayloadAction<{
         groupName: string
         mergeWith: string
-      }>
+      }>,
     ) {
       const { groupName, mergeWith } = action.payload
       if (groupName === mergeWith) {
@@ -224,7 +205,7 @@ const tasksSlice = createSlice({
       action: PayloadAction<{
         groupName: string
         newName: string
-      }>
+      }>,
     ) {
       const { groupName, newName } = action.payload
       if (groupName === newName) {
@@ -241,7 +222,7 @@ const tasksSlice = createSlice({
       action: PayloadAction<{
         groupName: string
         collapsed: boolean
-      }>
+      }>,
     ) {
       const { groupName, collapsed } = action.payload
       const group = state.groups.find((item) => item.name === groupName)
@@ -255,7 +236,7 @@ const tasksSlice = createSlice({
       action: PayloadAction<{
         groupName: string
         draft: string
-      }>
+      }>,
     ) {
       const { groupName, draft } = action.payload
       const group = state.groups.find((item) => item.name === groupName)
@@ -268,7 +249,7 @@ const tasksSlice = createSlice({
       state,
       action: PayloadAction<{
         groupName: string
-      }>
+      }>,
     ) {
       const { groupName } = action.payload
       const group = state.groups.find((item) => item.name === groupName)
@@ -277,10 +258,7 @@ const tasksSlice = createSlice({
       }
       group.lastActive = new Date()
     },
-    tasksLegacyContentMigrated(
-      state,
-      { payload }: PayloadAction<{ continue: boolean }>
-    ) {
+    tasksLegacyContentMigrated(state, { payload }: PayloadAction<{ continue: boolean }>) {
       if (!state.legacyContent) {
         return
       }

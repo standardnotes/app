@@ -1,11 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 import { GroupPayload, TaskPayload } from '../features/tasks/tasks-slice'
 
-export function arrayMoveMutable(
-  array: any[],
-  fromIndex: number,
-  toIndex: number
-) {
+export function arrayMoveMutable(array: any[], fromIndex: number, toIndex: number) {
   const startIndex = fromIndex < 0 ? array.length + fromIndex : fromIndex
   if (startIndex >= 0 && startIndex < array.length) {
     const endIndex = toIndex < 0 ? array.length + toIndex : toIndex
@@ -14,11 +10,7 @@ export function arrayMoveMutable(
   }
 }
 
-export function arrayMoveImmutable(
-  array: any[],
-  fromIndex: number,
-  toIndex: number
-) {
+export function arrayMoveImmutable(array: any[], fromIndex: number, toIndex: number) {
   array = [...array]
   arrayMoveMutable(array, fromIndex, toIndex)
   return array
@@ -43,9 +35,7 @@ export function groupTasksByCompletedStatus(tasks: TaskPayload[]) {
   }
 }
 
-export function getTaskArrayFromGroupedTasks(
-  groupedTasks: GroupPayload[]
-): TaskPayload[] {
+export function getTaskArrayFromGroupedTasks(groupedTasks: GroupPayload[]): TaskPayload[] {
   let taskArray: TaskPayload[] = []
 
   groupedTasks.forEach((group) => {
@@ -124,10 +114,7 @@ export function isJsonString(rawString: string) {
   return true
 }
 
-export function isLastActiveGroup(
-  allGroups: GroupPayload[],
-  groupName: string
-): boolean {
+export function isLastActiveGroup(allGroups: GroupPayload[], groupName: string): boolean {
   if (allGroups.length === 0) {
     return true
   }

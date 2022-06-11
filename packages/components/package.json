@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/components-meta",
-  "version": "0.1.1",
+  "version": "0.1.3",
   "private": true,
   "workspaces": {
     "packages": [
@@ -9,10 +9,8 @@
   },
   "scripts": {
     "build": "yarn workspaces foreach --parallel run build",
+    "lint": "yarn workspaces foreach --parallel run lint",
     "version": "node scripts/package-components.mjs && git add dist && git commit -m 'chore(release): components'"
-  },
-  "installConfig": {
-    "hoistingLimits": "workspaces"
   },
   "devDependencies": {
     "@standardnotes/deterministic-zip": "^1.2.0",

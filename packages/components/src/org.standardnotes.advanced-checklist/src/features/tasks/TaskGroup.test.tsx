@@ -31,14 +31,10 @@ it('renders the group name', () => {
 it('renders the number of completed tasks and total tasks', () => {
   testRender(<TaskGroup group={defaultGroup} isDragging={false} />)
 
-  const completedTasks = defaultGroup.tasks.filter(
-    (task) => task.completed
-  ).length
+  const completedTasks = defaultGroup.tasks.filter((task) => task.completed).length
   const totalTasks = defaultGroup.tasks.length
 
-  expect(screen.getByTestId('task-group-stats')).toHaveTextContent(
-    `${completedTasks}/${totalTasks}`
-  )
+  expect(screen.getByTestId('task-group-stats')).toHaveTextContent(`${completedTasks}/${totalTasks}`)
 })
 
 it('renders the circular progress bar', () => {
@@ -96,11 +92,7 @@ it('hides group options if can not edit', () => {
     },
   }
 
-  testRender(
-    <TaskGroup group={defaultGroup} isDragging={false} />,
-    {},
-    defaultState
-  )
+  testRender(<TaskGroup group={defaultGroup} isDragging={false} />, {}, defaultState)
 
   expect(screen.queryByTestId('task-group-options')).not.toBeInTheDocument()
 })
@@ -114,11 +106,7 @@ it('shows a reorder icon when on mobile', () => {
     },
   }
 
-  testRender(
-    <TaskGroup group={defaultGroup} isDragging={false} />,
-    {},
-    defaultState
-  )
+  testRender(<TaskGroup group={defaultGroup} isDragging={false} />, {}, defaultState)
 
   expect(screen.queryByTestId('reorder-icon')).not.toBeInTheDocument()
 
@@ -130,11 +118,7 @@ it('shows a reorder icon when on mobile', () => {
     },
   }
 
-  testRender(
-    <TaskGroup group={defaultGroup} isDragging={false} />,
-    {},
-    defaultState
-  )
+  testRender(<TaskGroup group={defaultGroup} isDragging={false} />, {}, defaultState)
 
   expect(screen.getByTestId('reorder-icon')).toBeInTheDocument()
 })

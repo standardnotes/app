@@ -2,10 +2,7 @@ import './CheckBoxElementsDefs.scss'
 
 export const CheckBoxElementsDefs = () => {
   return (
-    <svg
-      viewBox="0 0 0 0"
-      style={{ position: 'absolute', zIndex: -1, opacity: 0 }}
-    >
+    <svg viewBox="0 0 0 0" style={{ position: 'absolute', zIndex: -1, opacity: 0 }}>
       <defs>
         <path
           id="checkbox-square"
