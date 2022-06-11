@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/components-meta",
-  "version": "0.0.1",
+  "version": "0.1.1",
   "private": true,
   "workspaces": {
     "packages": [
@@ -8,15 +8,18 @@
     ]
   },
   "scripts": {
-    "preversion": "yarn lerna run build --parallel",
-    "version": "node scripts/package-components.mjs"
+    "build": "yarn workspaces foreach --parallel run build",
+    "version": "node scripts/package-components.mjs && git add dist && git commit -m 'chore(release): components'"
   },
-  "dependencies": {
-    "@standardnotes/autobiography-theme": "1.0.4"
+  "installConfig": {
+    "hoistingLimits": "workspaces"
   },
   "devDependencies": {
+    "@standardnotes/advanced-checklist": "0.0.1",
+    "@standardnotes/autobiography-theme": "1.0.4",
     "@standardnotes/deterministic-zip": "^1.2.0",
     "@standardnotes/features": "^1.45.1",
-    "lerna": "*"
+    "node-sass": "7.0.1",
+    "sass": "^1.52.3"
   }
 }

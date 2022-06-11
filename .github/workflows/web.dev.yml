@@ -14,6 +14,7 @@ on:
 
 jobs:
   test:
+    if: contains(github.event.head_commit.message, 'chore(release)') == false
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -31,6 +32,7 @@ jobs:
 
 
   deploy:
+    if: contains(github.event.head_commit.message, 'chore(release)') == false
 
     runs-on: ubuntu-latest
 
@@ -78,6 +80,7 @@ jobs:
         wait-for-service-stability: true
 
   notify_discord:
+    if: contains(github.event.head_commit.message, 'chore(release)') == false
     needs: deploy
 
     runs-on: ubuntu-latest

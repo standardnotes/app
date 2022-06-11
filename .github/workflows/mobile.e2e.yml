@@ -2,7 +2,6 @@ name: Mobile e2e
 
 on: [workflow_dispatch]
 
-
 jobs:
   android:
     defaults:
