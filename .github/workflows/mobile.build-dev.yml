@@ -10,6 +10,7 @@ on:
 
 jobs:
   android:
+    if: contains(github.event.head_commit.message, 'chore(release)') == false
     defaults:
       run:
         working-directory: packages/mobile
@@ -50,6 +51,7 @@ jobs:
           name: dev.apk
           path: android/app/build/outputs/apk/dev/release/app-dev-release.apk
   ios:
+    if: contains(github.event.head_commit.message, 'chore(release)') == false
     defaults:
       run:
         working-directory: packages/mobile

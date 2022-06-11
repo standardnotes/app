@@ -2,25 +2,18 @@
   "name": "@standardnotes/autobiography-theme",
   "version": "1.0.4",
   "main": "dist/dist.css",
-  "devDependencies": {
-    "grunt": "^1.0.1",
-    "grunt-contrib-sass": "^1.0.0",
-    "grunt-contrib-watch": "^1.0.0",
-    "grunt-newer": "^1.2.0"
-  },
+  "private": true,
   "scripts": {
-    "build": "grunt",
+    "build": "yarn run grunt",
     "prepublishOnly": "yarn run build"
   },
   "sn": {
     "main": "dist/dist.css"
   },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/standardnotes/autobiography-theme.git"
-  },
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-sass": "^1.0.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-newer": "^1.2.0"
   }
 }

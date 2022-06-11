@@ -1,0 +1,11 @@
+log/*
+!log/.gitkeep
+tmp
+config/cap.yml
+app/assets/templates/generated/
+public/assets
+public/components
+public/robots.txt
+public/uploads/*
+packages/!web-server/public/uploads/.keep
+vendor

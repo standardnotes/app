@@ -13,6 +13,7 @@ on:
 
 jobs:
   build:
+    if: contains(github.event.head_commit.message, 'chore(release)') == false
     runs-on: ubuntu-latest
     defaults:
       run:

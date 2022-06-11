@@ -4,17 +4,6 @@
 .idea
 node_modules
 
-packages/web-server/log/*
-!packages/web-server/log/.gitkeep
-packages/web-server/tmp
-packages/web-server/config/cap.yml
-packages/web-server/app/assets/templates/generated/
-packages/web-server/public/assets
-packages/web-server/public/robots.txt
-packages/web-server/public/uploads/*
-packages/!web-server/public/uploads/.keep
-packages/web-server/vendor
-
 packages/web/dist
 
 .sass-cache
@@ -28,6 +17,7 @@ yarn-error.log
 package-lock.json
 codeqldb
 coverage
+lerna-debug.log
 
 **/.pnp.*
 **/.yarn/*

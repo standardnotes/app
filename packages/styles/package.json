@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/styles",
-  "version": "1.1.0",
+  "version": "1.2.1",
   "private": true,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -16,7 +16,7 @@
     "css-loader": "~6.6.0",
     "eslint": "*",
     "mini-css-extract-plugin": "^2.5.3",
-    "node-sass": "^7.0.1",
+    "node-sass": "*",
     "sass-loader": "^12.6.0",
     "style-loader": "~3.3.1",
     "typescript": "*",

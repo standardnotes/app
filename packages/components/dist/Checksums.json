@@ -1,7 +1,12 @@
 {
   "org.standardnotes.theme-autobiography": {
     "version": "1.0.4",
-    "base64": "b1df118550bca4ef10b6f8eaeeeddb051cde8171212c5a73a577c834d331725f",
-    "binary": "8cf9b21daea61b41bde70bfd6a7a4fcb1a8cf5539da52a7f7bcd48f2faa1c748"
+    "base64": "64abd932647cc41a6780d7dc6ace34053c26eab79403b9f09c682221a72337f3",
+    "binary": "12b90a338fb068615557dff1c11d5c08cebdf55868d448be20299fa0438a24f1"
+  },
+  "org.standardnotes.advanced-checklist": {
+    "version": "0.0.1",
+    "base64": "b7b9807b14554e933889ad18ba7e6891ed784b91c8cd14d58e575e0616631822",
+    "binary": "bda0917402d5a671e4c53e9f66cfe643cfc773e3b93591eca1b1b08df059c064"
   }
 }

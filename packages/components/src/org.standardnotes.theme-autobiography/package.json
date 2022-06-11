@@ -4,7 +4,7 @@
   "main": "dist/dist.css",
   "private": true,
   "scripts": {
-    "build": "grunt",
+    "build": "yarn run grunt",
     "prepublishOnly": "yarn run build"
   },
   "sn": {
