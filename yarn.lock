@@ -5912,9 +5912,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/markdown-visual@workspace:packages/components/src/org.standardnotes.markdown-visual":
+"@standardnotes/markdown-visual@workspace:packages/components/src/org.standardnotes.markdown-visual-editor":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/markdown-visual@workspace:packages/components/src/org.standardnotes.markdown-visual"
+  resolution: "@standardnotes/markdown-visual@workspace:packages/components/src/org.standardnotes.markdown-visual-editor"
   dependencies:
     "@codemirror/lang-markdown": ^0.19.6
     "@milkdown/core": 5.5.0
