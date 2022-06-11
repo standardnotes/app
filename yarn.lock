@@ -4743,7 +4743,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/components-meta@^0.1.0, @standardnotes/components-meta@workspace:packages/components":
+"@standardnotes/components-meta@^0.1.1, @standardnotes/components-meta@workspace:packages/components":
   version: 0.0.0-use.local
   resolution: "@standardnotes/components-meta@workspace:packages/components"
   dependencies:
@@ -4785,7 +4785,7 @@ __metadata:
     "@commitlint/config-conventional": ^16.2.4
     "@electron/remote": ^2.0.8
     "@standardnotes/electron-clear-data": 1.1.1
-    "@standardnotes/web": ^3.22.0
+    "@standardnotes/web": ^3.22.1
     "@types/lodash": ^4.14.182
     "@types/mime-types": ^2.1.1
     "@types/node": 15
@@ -5216,7 +5216,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/styles@^1.2.0, @standardnotes/styles@workspace:packages/styles":
+"@standardnotes/styles@^1.2.1, @standardnotes/styles@workspace:packages/styles":
   version: 0.0.0-use.local
   resolution: "@standardnotes/styles@workspace:packages/styles"
   dependencies:
@@ -5273,12 +5273,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/web-server@workspace:packages/web-server"
   dependencies:
-    "@standardnotes/components-meta": ^0.1.0
-    "@standardnotes/web": ^3.22.0
+    "@standardnotes/components-meta": ^0.1.1
+    "@standardnotes/web": ^3.22.1
   languageName: unknown
   linkType: soft
 
-"@standardnotes/web@^3.22.0, @standardnotes/web@workspace:packages/web":
+"@standardnotes/web@^3.22.1, @standardnotes/web@workspace:packages/web":
   version: 0.0.0-use.local
   resolution: "@standardnotes/web@workspace:packages/web"
   dependencies:
@@ -5300,7 +5300,7 @@ __metadata:
     "@standardnotes/services": ^1.13.14
     "@standardnotes/sncrypto-web": 1.10.1
     "@standardnotes/snjs": ^2.115.9
-    "@standardnotes/styles": ^1.2.0
+    "@standardnotes/styles": ^1.2.1
     "@standardnotes/toast": ^1.2.0
     "@types/jest": ^27.4.1
     "@types/react": ^17.0.42

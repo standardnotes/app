@@ -27,7 +27,8 @@
     "prepare": "husky install",
     "version-bump": "lerna version --conventional-commits --yes -m \"chore(release): publish\"",
     "publish-packages": "lerna publish from-git --yes",
-    "reset": "find . -type dir -name node_modules | xargs rm -rf && rm -rf yarn.lock"
+    "reset": "find . -type dir -name node_modules | xargs rm -rf && rm -rf yarn.lock",
+    "version": "yarn install && git stage yarn.lock"
   },
   "resolutions": {
     "@types/styled-components/@types/react": "17.0.2",
