@@ -1,12 +1,47 @@
 {
   "org.standardnotes.theme-autobiography": {
     "version": "1.0.4",
-    "base64": "64abd932647cc41a6780d7dc6ace34053c26eab79403b9f09c682221a72337f3",
-    "binary": "12b90a338fb068615557dff1c11d5c08cebdf55868d448be20299fa0438a24f1"
+    "base64": "a624b4e93ce8297c98f96b0cb0b5c0913d36046d2ed3d70ccaad555edc2042b2",
+    "binary": "d0550811103227e0e47bdd3972afcc6a8af9866b0482cd509aba3c4af8e6fb41"
   },
   "org.standardnotes.advanced-checklist": {
     "version": "0.0.1",
     "base64": "093ce4de51a0a2fc2105a39206999f15719f8231b74318f1c123b802c3501116",
     "binary": "d9a542762a95675a5483fea5a0528f43eab65e3add86eb2e1de0a2b84724cc6b"
+  },
+  "org.standardnotes.theme-midnight": {
+    "version": "1.2.8",
+    "base64": "94f08b1b4336b68e458b60555ba8308ba3377eec2ea2f6f4a911cbd86ccde609",
+    "binary": "d884bbaade86163275c7140d8bad5419158ffdd5f4640c0fc00fa6c0ff22118b"
+  },
+  "org.standardnotes.theme-futura": {
+    "version": "1.2.9",
+    "base64": "c90a1651c59c8d728287bff2f272f7e6fd4a1bcf3819c11c5c0d2f2e3aecb505",
+    "binary": "9dd1e549d940463d1cfd4426f777a701fa25c9cdb4ef036db41d4a287c8b33f5"
+  },
+  "org.standardnotes.theme-solarized-dark": {
+    "version": "1.2.7",
+    "base64": "f2ed5ac2342219faa28070163bdf10d4dcc6b499ac31aeda1f3bf6f14f81dc69",
+    "binary": "1ef5890b16cb3ec0553fa9ad770d58fca4c7a70c2ed91ee19377db737128eb42"
+  },
+  "org.standardnotes.theme-focus": {
+    "version": "1.2.9",
+    "base64": "43914cb77bd70cce631ae27941cbc541e73c180cf727d161f6fdbd4bbba3c9e0",
+    "binary": "96dd014e6d28509c1efb9dd15375f5eee208258c407dbd1a70524ee887cfe67d"
+  },
+  "org.standardnotes.theme-titanium": {
+    "version": "1.2.7",
+    "base64": "3a38a111099fb6c576f3d906ea9e9419923356cc4ce082199cdee5401bfc728c",
+    "binary": "6e366819b4d159c833e95300229e15c26e04e9fc316ef8bb6d6b1a4aeb2e10ca"
+  },
+  "org.standardnotes.theme-dynamic": {
+    "version": "1.0.4",
+    "base64": "e95383bf05e14d31b669d367df7c6b1425e969929ebb17c53eb2cd0393def31e",
+    "binary": "bde0a9ee172648a532bc50d7f7a090f380edd2282096742016fd193b00f5be53"
+  },
+  "org.standardnotes.markdown-visual-editor": {
+    "version": "1.0.7",
+    "base64": "972948500687fd3d4be69c39aa1a97833f5f7d8735c29f0f31064e104d93f904",
+    "binary": "68c43e0d0e51400876af5ead3ba535a18cc415462316024d02e987b7b4a8c6af"
   }
 }
