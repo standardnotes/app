@@ -118,7 +118,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
       isDesktop: isDesktopApplication(),
       lockText: NOTE_EDITING_DISABLED_TEXT,
       noteStatus: undefined,
-      noteLocked: this.controller.note.locked,
+      noteLocked: this.controller.item.locked,
       showLockedIcon: true,
       showProtectedWarning: false,
       spellcheck: true,
@@ -180,7 +180,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
   }
 
   get note() {
-    return this.controller.note
+    return this.controller.item
   }
 
   override componentDidMount(): void {

@@ -15,6 +15,8 @@ import {
   InternalEventBus,
   InternalEventHandlerInterface,
   InternalEventInterface,
+  FileViewController,
+  FileItem,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
@@ -131,7 +133,7 @@ export class ItemListController extends AbstractViewController implements Intern
 
     this.disposers.push(
       application.addEventObserver(async () => {
-        this.application.noteControllerGroup.closeAllNoteControllers()
+        this.application.itemControllerGroup.closeAllItemControllers()
         void this.selectFirstItem()
         this.setCompletedFullSync(false)
       }, ApplicationEvent.SignedIn),
@@ -145,7 +147,7 @@ export class ItemListController extends AbstractViewController implements Intern
             this.navigationController.selected instanceof SmartView &&
             this.navigationController.selected.uuid === SystemViewId.AllNotes &&
             this.noteFilterText === '' &&
-            !this.getActiveNoteController()
+            !this.getActiveItemController()
           ) {
             this.createPlaceholderNote()?.catch(console.error)
           }
@@ -213,12 +215,45 @@ export class ItemListController extends AbstractViewController implements Intern
     }
   }
 
-  public getActiveNoteController(): NoteViewController | undefined {
-    return this.application.noteControllerGroup.activeNoteViewController
+  public getActiveItemController(): NoteViewController | FileViewController | undefined {
+    return this.application.itemControllerGroup.activeItemViewController
   }
 
   public get activeControllerNote(): SNNote | undefined {
-    return this.getActiveNoteController()?.note
+    const activeController = this.getActiveItemController()
+    return activeController instanceof NoteViewController ? activeController.item : undefined
+  }
+
+  async openNote(noteUuid: string): Promise<void> {
+    if (this.activeControllerNote?.uuid === noteUuid) {
+      return
+    }
+
+    const note = this.application.items.findItem(noteUuid) as SNNote | undefined
+    if (!note) {
+      console.warn('Tried accessing a non-existant note of UUID ' + noteUuid)
+      return
+    }
+
+    await this.application.itemControllerGroup.createNoteController(noteUuid)
+
+    this.noteTagsController.reloadTagsForCurrentNote()
+
+    await this.publishEventSync(CrossControllerEvent.ActiveEditorChanged)
+  }
+
+  async openFile(fileUuid: string): Promise<void> {
+    if (this.getActiveItemController()?.item.uuid === fileUuid) {
+      return
+    }
+
+    const file = this.application.items.findItem(fileUuid) as FileItem | undefined
+    if (!file) {
+      console.warn('Tried accessing a non-existant file of UUID ' + fileUuid)
+      return
+    }
+
+    await this.application.itemControllerGroup.createFileController(fileUuid)
   }
 
   setCompletedFullSync = (completed: boolean) => {
@@ -283,14 +318,9 @@ export class ItemListController extends AbstractViewController implements Intern
     this.reloadPanelTitle()
   }
 
-  private isSelectedItemAFile = (): boolean => {
-    const selectedItem = Object.values(this.selectionController.selectedItems)[0]
-    return this.items.includes(selectedItem) && selectedItem && selectedItem.content_type === ContentType.File
-  }
-
   private async recomputeSelectionAfterItemsReload(itemsReloadSource: ItemsReloadSource) {
-    const activeController = this.getActiveNoteController()
-    const activeNote = activeController?.note
+    const activeController = this.getActiveItemController()
+    const activeItem = activeController?.item
     const isSearching = this.noteFilterText.length > 0
     const hasMultipleItemsSelected = this.selectionController.selectedItemsCount >= 2
 
@@ -301,33 +331,25 @@ export class ItemListController extends AbstractViewController implements Intern
     if (itemsReloadSource === ItemsReloadSource.TagChange) {
       await this.selectFirstItem()
 
-      if (this.isSelectedItemAFile() && activeNote) {
-        this.closeNoteController(activeController)
-      }
-
       return
     }
 
-    if (this.isSelectedItemAFile()) {
-      return
-    }
-
-    if (!activeNote) {
+    if (!activeItem) {
       await this.selectFirstItem()
 
       return
     }
 
-    if (activeController.isTemplateNote) {
+    if (activeController instanceof NoteViewController && activeController.isTemplateNote) {
       return
     }
 
-    const noteExistsInUpdatedResults = this.notes.find((note) => note.uuid === activeNote.uuid)
+    const noteExistsInUpdatedResults = this.notes.find((note) => note.uuid === activeItem.uuid)
     const shouldCloseActiveNote =
       !noteExistsInUpdatedResults && !isSearching && this.navigationController.isInAnySystemView()
 
     if (shouldCloseActiveNote) {
-      this.closeNoteController(activeController)
+      this.closeItemController(activeController)
       this.selectNextItem()
       return
     }
@@ -340,10 +362,10 @@ export class ItemListController extends AbstractViewController implements Intern
       this.searchOptionsController.includeArchived ||
       this.application.getPreference(PrefKey.NotesShowArchived, false)
 
-    if ((activeNote.trashed && !showTrashedNotes) || (activeNote.archived && !showArchivedNotes)) {
+    if ((activeItem.trashed && !showTrashedNotes) || (activeItem.archived && !showArchivedNotes)) {
       await this.selectNextItemOrCreateNewNote()
-    } else if (!this.selectionController.selectedItems[activeNote.uuid]) {
-      await this.selectionController.selectItem(activeNote.uuid).catch(console.error)
+    } else if (!this.selectionController.selectedItems[activeItem.uuid]) {
+      await this.selectionController.selectItem(activeItem.uuid).catch(console.error)
     }
   }
 
@@ -436,6 +458,14 @@ export class ItemListController extends AbstractViewController implements Intern
     }
   }
 
+  async createNewNoteController(title?: string) {
+    const selectedTag = this.navigationController.selected
+
+    const activeRegularTagUuid = selectedTag && selectedTag instanceof SNTag ? selectedTag.uuid : undefined
+
+    await this.application.itemControllerGroup.createNoteController(undefined, title, activeRegularTagUuid)
+  }
+
   createNewNote = async () => {
     this.notesController.unselectNotes()
 
@@ -448,7 +478,7 @@ export class ItemListController extends AbstractViewController implements Intern
       title = this.noteFilterText
     }
 
-    await this.notesController.createNewNoteController(title)
+    await this.createNewNoteController(title)
 
     this.noteTagsController.reloadTagsForCurrentNote()
   }
@@ -635,7 +665,7 @@ export class ItemListController extends AbstractViewController implements Intern
   }
 
   handleEditorChange = async () => {
-    const activeNote = this.application.noteControllerGroup.activeNoteViewController?.note
+    const activeNote = this.application.itemControllerGroup.activeItemViewController?.item
 
     if (activeNote && activeNote.conflictOf) {
       this.application.mutator
@@ -657,14 +687,14 @@ export class ItemListController extends AbstractViewController implements Intern
     }
   }
 
-  private closeNoteController(controller: NoteViewController): void {
-    this.application.noteControllerGroup.closeNoteController(controller)
+  private closeItemController(controller: NoteViewController | FileViewController): void {
+    this.application.itemControllerGroup.closeItemController(controller)
   }
 
   handleTagChange = () => {
-    const activeNoteController = this.getActiveNoteController()
-    if (activeNoteController?.isTemplateNote) {
-      this.closeNoteController(activeNoteController)
+    const activeNoteController = this.getActiveItemController()
+    if (activeNoteController instanceof NoteViewController && activeNoteController.isTemplateNote) {
+      this.closeItemController(activeNoteController)
     }
 
     this.resetScrollPosition()
@@ -694,13 +724,13 @@ export class ItemListController extends AbstractViewController implements Intern
   }
 
   public async insertCurrentIfTemplate(): Promise<void> {
-    const controller = this.getActiveNoteController()
+    const controller = this.getActiveItemController()
 
     if (!controller) {
       return
     }
 
-    if (controller.isTemplateNote) {
+    if (controller instanceof NoteViewController && controller.isTemplateNote) {
       await controller.insertTemplatedNote()
     }
   }
