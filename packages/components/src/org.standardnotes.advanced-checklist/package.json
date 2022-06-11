@@ -6,18 +6,8 @@
     "Standard Notes",
     "Standard Notes Extensions"
   ],
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
-  },
+  "private": true,
   "license": "AGPL-3.0-or-later",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/standardnotes/advanced-checklist.git"
-  },
-  "bugs": {
-    "url": "https://github.com/standardnotes/advanced-checklist/issues"
-  },
   "sn": {
     "main": "build/index.html"
   },
@@ -39,7 +29,7 @@
     "server-public": "http-server -p 3000 --cors",
     "server-root": "http-server ./ -p 3000 --cors",
     "server": "http-server ./build -p 3000 --cors",
-    "pretty": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md",
+    "lint": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md",
     "prepare": "husky install"
   },
   "eslintConfig": {

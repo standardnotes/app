@@ -29,9 +29,7 @@ const CreateTask: React.FC<CreateTaskProps> = ({ group }) => {
 
   const dispatch = useAppDispatch()
 
-  const spellCheckerEnabled = useAppSelector(
-    (state) => state.settings.spellCheckerEnabled
-  )
+  const spellCheckerEnabled = useAppSelector((state) => state.settings.spellCheckerEnabled)
   const canEdit = useAppSelector((state) => state.settings.canEdit)
   const allGroups = useAppSelector((state) => state.tasks.groups)
 
@@ -51,9 +49,7 @@ const CreateTask: React.FC<CreateTaskProps> = ({ group }) => {
         return
       }
 
-      dispatch(
-        taskAdded({ task: { id: uuidv4(), description: rawString }, groupName })
-      )
+      dispatch(taskAdded({ task: { id: uuidv4(), description: rawString }, groupName }))
       setTaskDraft('')
     }
   }

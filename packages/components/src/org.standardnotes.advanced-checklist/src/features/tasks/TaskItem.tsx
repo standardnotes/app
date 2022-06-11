@@ -1,20 +1,9 @@
 import './TaskItem.scss'
 
-import {
-  ChangeEvent,
-  createRef,
-  KeyboardEvent,
-  useEffect,
-  useState,
-} from 'react'
+import { ChangeEvent, createRef, KeyboardEvent, useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-import {
-  taskDeleted,
-  taskModified,
-  TaskPayload,
-  taskToggled,
-} from './tasks-slice'
+import { taskDeleted, taskModified, TaskPayload, taskToggled } from './tasks-slice'
 import { useAppDispatch, useAppSelector, useDidMount } from '../../app/hooks'
 
 import { CheckBoxInput, TextAreaInput } from '../../common/components'
@@ -53,20 +42,13 @@ export type TaskItemProps = {
   innerRef?: (element?: HTMLElement | null | undefined) => any
 }
 
-const TaskItem: React.FC<TaskItemProps> = ({
-  task,
-  groupName,
-  innerRef,
-  ...props
-}) => {
+const TaskItem: React.FC<TaskItemProps> = ({ task, groupName, innerRef, ...props }) => {
   const textAreaRef = createRef<HTMLTextAreaElement>()
 
   const dispatch = useAppDispatch()
 
   const canEdit = useAppSelector((state) => state.settings.canEdit)
-  const spellCheckEnabled = useAppSelector(
-    (state) => state.settings.spellCheckerEnabled
-  )
+  const spellCheckEnabled = useAppSelector((state) => state.settings.spellCheckerEnabled)
 
   const [completed, setCompleted] = useState(!!task.completed)
   const [description, setDescription] = useState(task.description)
@@ -96,9 +78,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
       ? textAreaRef.current!.classList.add('cross-out')
       : textAreaRef.current!.classList.add('no-text-decoration')
 
-    const dispatchDelay = newCompletedState
-      ? DISPATCH_COMPLETED_DELAY_MS
-      : DISPATCH_OPENED_DELAY_MS
+    const dispatchDelay = newCompletedState ? DISPATCH_COMPLETED_DELAY_MS : DISPATCH_OPENED_DELAY_MS
 
     setTimeout(() => {
       dispatch(taskToggled({ id: task.id, groupName }))
@@ -135,9 +115,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
   useDidMount(() => {
     const timeoutId = setTimeout(() => {
       if (description !== task.description) {
-        dispatch(
-          taskModified({ task: { id: task.id, description }, groupName })
-        )
+        dispatch(taskModified({ task: { id: task.id, description }, groupName }))
       }
     }, 500)
 
@@ -145,18 +123,8 @@ const TaskItem: React.FC<TaskItemProps> = ({
   }, [description, groupName])
 
   return (
-    <Container
-      data-testid="task-item"
-      completed={completed}
-      ref={innerRef}
-      {...props}
-    >
-      <CheckBoxInput
-        testId="check-box-input"
-        checked={completed}
-        disabled={!canEdit}
-        onChange={onCheckBoxToggle}
-      />
+    <Container data-testid="task-item" completed={completed} ref={innerRef} {...props}>
+      <CheckBoxInput testId="check-box-input" checked={completed} disabled={!canEdit} onChange={onCheckBoxToggle} />
       <TextAreaInput
         testId="text-area-input"
         className="text-area-input"

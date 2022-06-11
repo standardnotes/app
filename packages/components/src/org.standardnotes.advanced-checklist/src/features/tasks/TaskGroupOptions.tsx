@@ -5,12 +5,7 @@ import VisuallyHidden from '@reach/visually-hidden'
 import { useAppDispatch } from '../../app/hooks'
 import { tasksGroupDeleted } from './tasks-slice'
 
-import {
-  MoreIcon,
-  MergeIcon,
-  TrashIcon,
-  RenameIcon,
-} from '../../common/components/icons'
+import { MoreIcon, MergeIcon, TrashIcon, RenameIcon } from '../../common/components/icons'
 
 import { ConfirmDialog } from '../../common/components'
 
@@ -36,24 +31,15 @@ const TaskGroupOptions: React.FC<TaskGroupOptionsProps> = ({ groupName }) => {
           <MoreIcon />
         </MenuButton>
         <MenuList>
-          <MenuItem
-            data-testid="delete-task-group"
-            onSelect={() => setShowDeleteDialog(true)}
-          >
+          <MenuItem data-testid="delete-task-group" onSelect={() => setShowDeleteDialog(true)}>
             <TrashIcon />
             <span className="px-1">Delete group</span>
           </MenuItem>
-          <MenuItem
-            data-testid="merge-task-group"
-            onSelect={() => setShowMergeDialog(true)}
-          >
+          <MenuItem data-testid="merge-task-group" onSelect={() => setShowMergeDialog(true)}>
             <MergeIcon />
             <span className="px-1">Merge into another group</span>
           </MenuItem>
-          <MenuItem
-            data-testid="rename-task-group"
-            onSelect={() => setShowRenameDialog(true)}
-          >
+          <MenuItem data-testid="rename-task-group" onSelect={() => setShowRenameDialog(true)}>
             <RenameIcon />
             <span className="px-1">Rename</span>
           </MenuItem>
@@ -68,22 +54,11 @@ const TaskGroupOptions: React.FC<TaskGroupOptionsProps> = ({ groupName }) => {
           confirmButtonCb={() => dispatch(tasksGroupDeleted({ groupName }))}
           cancelButtonCb={() => setShowDeleteDialog(false)}
         >
-          Are you sure you want to delete the group '
-          <strong>{groupName}</strong>'?
+          Are you sure you want to delete the group '<strong>{groupName}</strong>'?
         </ConfirmDialog>
       )}
-      {showMergeDialog && (
-        <MergeTaskGroups
-          groupName={groupName}
-          handleClose={() => setShowMergeDialog(false)}
-        />
-      )}
-      {showRenameDialog && (
-        <RenameTaskGroups
-          groupName={groupName}
-          handleClose={() => setShowRenameDialog(false)}
-        />
-      )}
+      {showMergeDialog && <MergeTaskGroups groupName={groupName} handleClose={() => setShowMergeDialog(false)} />}
+      {showRenameDialog && <RenameTaskGroups groupName={groupName} handleClose={() => setShowRenameDialog(false)} />}
     </>
   )
 }

@@ -1,10 +1,4 @@
-import {
-  ChangeEvent,
-  createRef,
-  FocusEvent,
-  KeyboardEvent,
-  useState,
-} from 'react'
+import { ChangeEvent, createRef, FocusEvent, KeyboardEvent, useState } from 'react'
 import styled from 'styled-components'
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
@@ -82,9 +76,7 @@ const CreateGroup: React.FC = () => {
   const [isCreateMode, setIsCreateMode] = useState(false)
 
   const canEdit = useAppSelector((state) => state.settings.canEdit)
-  const spellCheckerEnabled = useAppSelector(
-    (state) => state.settings.spellCheckerEnabled
-  )
+  const spellCheckerEnabled = useAppSelector((state) => state.settings.spellCheckerEnabled)
   const groupedTasks = useAppSelector((state) => state.tasks.groups)
   const taskGroupCount = groupedTasks.length
 
@@ -144,9 +136,7 @@ const CreateGroup: React.FC = () => {
             <TutorialContainer>
               <Tutorial>
                 <ArrowVector style={{ marginRight: 140, marginBottom: 12 }} />
-                <TutorialText>
-                  Get started by naming your first task group
-                </TutorialText>
+                <TutorialText>Get started by naming your first task group</TutorialText>
               </Tutorial>
               <EmptyContainer1 />
               <EmptyContainer2 />

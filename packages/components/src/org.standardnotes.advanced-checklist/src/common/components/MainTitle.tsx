@@ -17,11 +17,7 @@ type MainTitleProps = {
   crossed?: boolean
 }
 
-export const MainTitle: React.FC<MainTitleProps> = ({
-  children,
-  highlight = false,
-  crossed = false,
-}) => {
+export const MainTitle: React.FC<MainTitleProps> = ({ children, highlight = false, crossed = false }) => {
   return (
     <Header1 className={`sk-h1 ${highlight ? 'info' : ''}`} crossed={crossed}>
       {children}
