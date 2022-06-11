@@ -1,7 +1,7 @@
-import './styles.scss';
+import './styles.scss'
 
-import { memo } from 'react';
-import PropTypes, { InferProps } from 'prop-types';
+import { memo } from 'react'
+import PropTypes, { InferProps } from 'prop-types'
 
 export const enum SplitViewDirection {
   Horizontal = 'horizontal',
@@ -20,9 +20,9 @@ const propTypes = {
     SplitViewDirection.Vertical,
   ]).isRequired,
   children: PropTypes.arrayOf(PropTypes.element).isRequired,
-};
+}
 
-type SplitViewProps = InferProps<typeof propTypes>;
+type SplitViewProps = InferProps<typeof propTypes>
 
 const SplitView: React.FC<SplitViewProps> = ({
   children,
@@ -32,7 +32,7 @@ const SplitView: React.FC<SplitViewProps> = ({
   const childClassName =
     direction === SplitViewDirection.Horizontal
       ? SplitViewType.Column
-      : SplitViewType.Row;
+      : SplitViewType.Row
 
   return (
     <div className={`container ${direction}`}>
@@ -46,9 +46,9 @@ const SplitView: React.FC<SplitViewProps> = ({
         </>
       )}
     </div>
-  );
-};
+  )
+}
 
-SplitView.propTypes = propTypes;
+SplitView.propTypes = propTypes
 
-export default memo(SplitView);
+export default memo(SplitView)

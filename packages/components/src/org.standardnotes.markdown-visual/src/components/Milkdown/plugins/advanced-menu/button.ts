@@ -1,32 +1,32 @@
 /* Copyright 2021, Milkdown by Mirone. */
 
-import { css } from '@emotion/css';
-import { CmdKey, commandsCtx, Ctx } from '@milkdown/core';
-import type { Icon } from '@milkdown/design-system';
-import type { EditorView } from '@milkdown/prose';
-import type { Utils } from '@milkdown/utils';
+import { css } from '@emotion/css'
+import { CmdKey, commandsCtx, Ctx } from '@milkdown/core'
+import type { Icon } from '@milkdown/design-system'
+import type { EditorView } from '@milkdown/prose'
+import type { Utils } from '@milkdown/utils'
 
-import type { MenuCommonConfig } from './config';
+import type { MenuCommonConfig } from './config'
 
 type RequireAtLeastOne<T, Keys extends keyof T = keyof T> = Pick<
   T,
   Exclude<keyof T, Keys>
 > &
   {
-    [K in Keys]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<Keys, K>>>;
-  }[Keys];
+    [K in Keys]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<Keys, K>>>
+  }[Keys]
 
 type Config<T = any> = {
-  type: 'button';
-  icon: Icon;
-  key?: CmdKey<T>;
-  callback?: () => void;
-  options?: T;
-  active?: (view?: EditorView) => boolean;
-  alwaysVisible: boolean;
-} & MenuCommonConfig;
+  type: 'button'
+  icon: Icon
+  key?: CmdKey<T>
+  callback?: () => void
+  options?: T
+  active?: (view?: EditorView) => boolean
+  alwaysVisible: boolean
+} & MenuCommonConfig
 
-export type ButtonConfig = RequireAtLeastOne<Config, 'key' | 'callback'>;
+export type ButtonConfig = RequireAtLeastOne<Config, 'key' | 'callback'>
 
 export const button = (
   utils: Utils,
@@ -58,53 +58,53 @@ export const button = (
       &:disabled {
         display: none;
       }
-    `;
-  });
+    `
+  })
 
-  const $button = document.createElement('button');
-  $button.setAttribute('type', 'button');
-  $button.classList.add('button');
+  const $button = document.createElement('button')
+  $button.setAttribute('type', 'button')
+  $button.classList.add('button')
 
   if (buttonStyle) {
-    $button.classList.add(buttonStyle);
+    $button.classList.add(buttonStyle)
   }
 
-  const $label = utils.themeTool.slots.label(config.icon);
+  const $label = utils.themeTool.slots.label(config.icon)
   if ($label) {
-    $button.setAttribute('aria-label', $label);
-    $button.setAttribute('title', $label);
+    $button.setAttribute('aria-label', $label)
+    $button.setAttribute('title', $label)
   }
 
-  const $icon = utils.themeTool.slots.icon(config.icon);
-  $button.appendChild($icon);
+  const $icon = utils.themeTool.slots.icon(config.icon)
+  $button.appendChild($icon)
   $button.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault()
+    e.stopPropagation()
 
-    config.callback && config.callback();
-    config.key && ctx.get(commandsCtx).call(config.key, config.options);
-  });
+    config.callback && config.callback()
+    config.key && ctx.get(commandsCtx).call(config.key, config.options)
+  })
 
   if (config.active) {
-    const active = config.active();
+    const active = config.active()
     if (active) {
-      $button.classList.add('active');
+      $button.classList.add('active')
     } else {
-      $button.classList.remove('active');
+      $button.classList.remove('active')
     }
   }
 
   if (config.alwaysVisible) {
-    $button.removeAttribute('disabled');
-    return $button;
+    $button.removeAttribute('disabled')
+    return $button
   }
 
-  const disabled = !view.editable || (config.disabled && config.disabled(view));
+  const disabled = !view.editable || (config.disabled && config.disabled(view))
   if (disabled) {
-    $button.setAttribute('disabled', 'true');
+    $button.setAttribute('disabled', 'true')
   } else {
-    $button.removeAttribute('disabled');
+    $button.removeAttribute('disabled')
   }
 
-  return $button;
-};
+  return $button
+}

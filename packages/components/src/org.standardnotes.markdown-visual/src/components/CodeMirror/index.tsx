@@ -1,45 +1,45 @@
-import './styles.scss';
+import './styles.scss'
 
-import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
-import { basicSetup } from '@codemirror/basic-setup';
-import { markdown } from '@codemirror/lang-markdown';
+import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
+import { basicSetup } from '@codemirror/basic-setup'
+import { markdown } from '@codemirror/lang-markdown'
 import CodeMirrorReact, {
   EditorView,
   ReactCodeMirrorRef,
-} from '@uiw/react-codemirror';
+} from '@uiw/react-codemirror'
 
 export type CodeMirrorRef = {
-  update: (markdown: string) => void;
-};
+  update: (markdown: string) => void
+}
 
 type CodeMirrorProps = {
-  onChange: (text: string) => void;
-  value?: string;
-  editable: boolean;
-  spellcheck: boolean;
-};
+  onChange: (text: string) => void
+  value?: string
+  editable: boolean
+  spellcheck: boolean
+}
 
 const CodeMirror = (
   { onChange, value, editable, spellcheck }: CodeMirrorProps,
   ref: React.ForwardedRef<CodeMirrorRef>
 ) => {
-  const [hasFocus, setFocus] = useState(false);
-  const editorRef = useRef<ReactCodeMirrorRef>(null);
+  const [hasFocus, setFocus] = useState(false)
+  const editorRef = useRef<ReactCodeMirrorRef>(null)
   const extensions = [
     basicSetup,
     markdown(),
     EditorView.lineWrapping,
     EditorView.updateListener.of((update) => {
       if (update.focusChanged) {
-        setFocus(update.view.hasFocus);
+        setFocus(update.view.hasFocus)
       }
 
       if (update.docChanged) {
-        const text = update.state.doc.toString();
-        onChange(text);
+        const text = update.state.doc.toString()
+        onChange(text)
       }
     }),
-  ];
+  ]
 
   useImperativeHandle(ref, () => ({
     update: (markdown: string) => {
@@ -48,26 +48,26 @@ const CodeMirror = (
        * is sent back from the Milkdown editor.
        */
       if (hasFocus) {
-        return;
+        return
       }
 
       if (!editable || !editorRef.current) {
-        return;
+        return
       }
 
-      const view = editorRef.current.view;
+      const view = editorRef.current.view
       if (!view) {
-        return;
+        return
       }
 
-      const { state } = view;
+      const { state } = view
       if (!state) {
-        return;
+        return
       }
 
-      const document = state.doc;
+      const document = state.doc
       if (!document) {
-        return;
+        return
       }
 
       view.dispatch({
@@ -76,9 +76,9 @@ const CodeMirror = (
           to: document.toString().length,
           insert: markdown,
         },
-      });
+      })
     },
-  }));
+  }))
 
   return (
     <div className="codemirror-container">
@@ -91,7 +91,7 @@ const CodeMirror = (
         indentWithTab
       />
     </div>
-  );
-};
+  )
+}
 
-export default forwardRef<CodeMirrorRef, CodeMirrorProps>(CodeMirror);
+export default forwardRef<CodeMirrorRef, CodeMirrorProps>(CodeMirror)

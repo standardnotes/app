@@ -1,25 +1,25 @@
 /* Copyright 2021, Milkdown by Mirone. */
 
-import { css } from '@emotion/css';
-import { CmdKey, commandsCtx, Ctx } from '@milkdown/core';
-import { EditorView } from '@milkdown/prose';
-import { Utils } from '@milkdown/utils';
+import { css } from '@emotion/css'
+import { CmdKey, commandsCtx, Ctx } from '@milkdown/core'
+import { EditorView } from '@milkdown/prose'
+import { Utils } from '@milkdown/utils'
 
-import type { MenuCommonConfig } from './config';
+import type { MenuCommonConfig } from './config'
 
 type SelectOptions = {
-  id: string;
-  text: string;
-};
+  id: string
+  text: string
+}
 
 export type SelectConfig<T = any> = {
-  type: 'select';
-  text: string;
-  options: SelectOptions[];
-  active?: (view: EditorView) => string;
-  onSelect: (id: string, view: EditorView) => [key: CmdKey<T>, info?: T];
-  alwaysVisible: boolean;
-} & MenuCommonConfig;
+  type: 'select'
+  text: string
+  options: SelectOptions[]
+  active?: (view: EditorView) => string
+  onSelect: (id: string, view: EditorView) => [key: CmdKey<T>, info?: T]
+  alwaysVisible: boolean
+} & MenuCommonConfig
 
 export const select = (
   utils: Utils,
@@ -93,77 +93,77 @@ export const select = (
           display: none;
         }
       }
-    `;
-  });
+    `
+  })
 
-  const selectorWrapper = document.createElement('div');
-  selectorWrapper.classList.add('menu-selector-wrapper', 'fold');
+  const selectorWrapper = document.createElement('div')
+  selectorWrapper.classList.add('menu-selector-wrapper', 'fold')
 
-  const selector = document.createElement('button');
-  selector.setAttribute('type', 'button');
-  selector.classList.add('menu-selector', 'fold');
+  const selector = document.createElement('button')
+  selector.setAttribute('type', 'button')
+  selector.classList.add('menu-selector', 'fold')
   selector.addEventListener('mousedown', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    selectorWrapper.classList.toggle('fold');
+    e.preventDefault()
+    e.stopPropagation()
+    selectorWrapper.classList.toggle('fold')
     selectorList.style.left = `${
       selectorWrapper.getBoundingClientRect().left -
       view.dom.getBoundingClientRect().left
-    }px`;
-  });
+    }px`
+  })
   view.dom.addEventListener('click', () => {
-    selectorWrapper.classList.add('fold');
-  });
+    selectorWrapper.classList.add('fold')
+  })
 
-  const selectorValue = document.createElement('span');
-  selectorValue.classList.add('menu-selector-value');
-  selectorValue.textContent = config.text;
+  const selectorValue = document.createElement('span')
+  selectorValue.classList.add('menu-selector-value')
+  selectorValue.textContent = config.text
 
-  const selectorButton = utils.themeTool.slots.icon('downArrow');
-  selectorButton.setAttribute('aria-hidden', 'true');
+  const selectorButton = utils.themeTool.slots.icon('downArrow')
+  selectorButton.setAttribute('aria-hidden', 'true')
 
-  selectorWrapper.appendChild(selector);
-  selector.appendChild(selectorValue);
-  selector.appendChild(selectorButton);
+  selectorWrapper.appendChild(selector)
+  selector.appendChild(selectorValue)
+  selector.appendChild(selectorButton)
 
-  const selectorList = document.createElement('div');
-  selectorList.classList.add('menu-selector-list');
+  const selectorList = document.createElement('div')
+  selectorList.classList.add('menu-selector-list')
   config.options.forEach((option) => {
-    const selectorListItem = document.createElement('button');
-    selectorListItem.setAttribute('type', 'button');
-    selectorListItem.dataset.id = option.id;
-    selectorListItem.textContent = option.text;
-    selectorListItem.classList.add('menu-selector-list-item');
-    selectorList.appendChild(selectorListItem);
-  });
+    const selectorListItem = document.createElement('button')
+    selectorListItem.setAttribute('type', 'button')
+    selectorListItem.dataset.id = option.id
+    selectorListItem.textContent = option.text
+    selectorListItem.classList.add('menu-selector-list-item')
+    selectorList.appendChild(selectorListItem)
+  })
 
   selectorList.addEventListener('mousedown', (e) => {
-    const { target } = e;
+    const { target } = e
     if (target instanceof HTMLButtonElement && target.dataset.id) {
-      ctx.get(commandsCtx).call(...config.onSelect(target.dataset.id, view));
-      selectorWrapper.classList.add('fold');
+      ctx.get(commandsCtx).call(...config.onSelect(target.dataset.id, view))
+      selectorWrapper.classList.add('fold')
     }
-  });
+  })
 
-  selectorWrapper.appendChild(selectorList);
+  selectorWrapper.appendChild(selectorList)
 
   if (selectStyle) {
-    selectorWrapper.classList.add(selectStyle);
+    selectorWrapper.classList.add(selectStyle)
   }
 
   if (config.alwaysVisible) {
-    selector.removeAttribute('disabled');
-    return selectorWrapper;
+    selector.removeAttribute('disabled')
+    return selectorWrapper
   }
 
-  const disabled = !view.editable || (config.disabled && config.disabled(view));
+  const disabled = !view.editable || (config.disabled && config.disabled(view))
   if (disabled) {
-    selector.classList.add('disabled');
-    selector.children[0].setAttribute('disabled', 'true');
+    selector.classList.add('disabled')
+    selector.children[0].setAttribute('disabled', 'true')
   } else {
-    selector.classList.remove('disabled');
-    selector.children[0].removeAttribute('disabled');
+    selector.classList.remove('disabled')
+    selector.children[0].removeAttribute('disabled')
   }
 
-  return selectorWrapper;
-};
+  return selectorWrapper
+}

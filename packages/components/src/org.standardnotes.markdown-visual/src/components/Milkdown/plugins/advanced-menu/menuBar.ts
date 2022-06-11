@@ -1,9 +1,9 @@
 /* Copyright 2021, Milkdown by Mirone. */
 
-import { css } from '@emotion/css';
-import { Ctx, rootCtx } from '@milkdown/core';
-import { EditorView } from '@milkdown/prose';
-import { Utils } from '@milkdown/utils';
+import { css } from '@emotion/css'
+import { Ctx, rootCtx } from '@milkdown/core'
+import { EditorView } from '@milkdown/prose'
+import { Utils } from '@milkdown/utils'
 
 export const MenuBar = (
   utils: Utils,
@@ -11,24 +11,24 @@ export const MenuBar = (
   ctx: Ctx,
   domHandler: HandleDOM = defaultDOMHandler
 ) => {
-  const menuWrapper = document.createElement('div');
-  menuWrapper.classList.add('milkdown-menu-wrapper');
-  const menu = document.createElement('div');
-  menu.classList.add('milkdown-menu');
+  const menuWrapper = document.createElement('div')
+  menuWrapper.classList.add('milkdown-menu-wrapper')
+  const menu = document.createElement('div')
+  menu.classList.add('milkdown-menu')
 
-  const editorDOM = view.dom as HTMLDivElement;
+  const editorDOM = view.dom as HTMLDivElement
 
   const editorWrapperStyle = utils.getStyle((themeTool) => {
-    return themeTool.mixin.scrollbar('y');
-  });
+    return themeTool.mixin.scrollbar('y')
+  })
 
   if (editorWrapperStyle) {
-    editorDOM.classList.add(editorWrapperStyle);
+    editorDOM.classList.add(editorWrapperStyle)
   }
 
   const menuStyle = utils.getStyle((themeTool) => {
-    const border = themeTool.mixin.border();
-    const scrollbar = themeTool.mixin.scrollbar('x');
+    const border = themeTool.mixin.border()
+    const scrollbar = themeTool.mixin.scrollbar('x')
     const style = css`
       box-sizing: border-box;
       width: 100%;
@@ -42,21 +42,21 @@ export const MenuBar = (
       .disabled {
         display: none;
       }
-    `;
-    return style;
-  });
+    `
+    return style
+  })
 
   if (menuStyle) {
-    menuStyle.split(' ').forEach((x) => menu.classList.add(x));
+    menuStyle.split(' ').forEach((x) => menu.classList.add(x))
   }
 
-  const root = ctx.get(rootCtx);
+  const root = ctx.get(rootCtx)
 
-  const editorRoot = getRoot(root) as HTMLElement;
-  const milkdownDOM = editorDOM.parentElement;
+  const editorRoot = getRoot(root) as HTMLElement
+  const milkdownDOM = editorDOM.parentElement
 
   if (!milkdownDOM) {
-    throw new Error('No parent node found');
+    throw new Error('No parent node found')
   }
 
   domHandler({
@@ -65,7 +65,7 @@ export const MenuBar = (
     editorDOM,
     editorRoot,
     milkdownDOM,
-  });
+  })
 
   const restoreDOM = () => {
     restore({
@@ -74,27 +74,27 @@ export const MenuBar = (
       editorDOM,
       editorRoot,
       milkdownDOM,
-    });
-  };
+    })
+  }
 
-  return [menu, restoreDOM] as const;
-};
+  return [menu, restoreDOM] as const
+}
 
 export type HandleDOMParams = {
-  menu: HTMLDivElement;
-  menuWrapper: HTMLDivElement;
-  editorRoot: HTMLElement;
-  milkdownDOM: HTMLElement;
-  editorDOM: HTMLDivElement;
-};
+  menu: HTMLDivElement
+  menuWrapper: HTMLDivElement
+  editorRoot: HTMLElement
+  milkdownDOM: HTMLElement
+  editorDOM: HTMLDivElement
+}
 
-export type HandleDOM = (params: HandleDOMParams) => void;
+export type HandleDOM = (params: HandleDOMParams) => void
 
 const restore: HandleDOM = ({ milkdownDOM, editorRoot, menu, menuWrapper }) => {
-  editorRoot.appendChild(milkdownDOM);
-  menuWrapper.remove();
-  menu.remove();
-};
+  editorRoot.appendChild(milkdownDOM)
+  menuWrapper.remove()
+  menu.remove()
+}
 
 const defaultDOMHandler: HandleDOM = ({
   menu,
@@ -102,17 +102,17 @@ const defaultDOMHandler: HandleDOM = ({
   editorRoot,
   milkdownDOM,
 }) => {
-  menuWrapper.appendChild(menu);
-  editorRoot.replaceChild(menuWrapper, milkdownDOM);
-  menuWrapper.appendChild(milkdownDOM);
-};
+  menuWrapper.appendChild(menu)
+  editorRoot.replaceChild(menuWrapper, milkdownDOM)
+  menuWrapper.appendChild(milkdownDOM)
+}
 
 const getRoot = (root: string | Node | null | undefined) => {
-  if (!root) return document.body;
+  if (!root) return document.body
   if (typeof root === 'string') {
-    const el = document.querySelector(root);
-    if (el) return el;
-    return document.body;
+    const el = document.querySelector(root)
+    if (el) return el
+    return document.body
   }
-  return root;
-};
+  return root
+}

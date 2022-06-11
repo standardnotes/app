@@ -6,23 +6,18 @@ import {
   InsertImage,
   WrapInBlockquote,
   InsertHr,
-} from '@milkdown/preset-commonmark';
-import { TurnIntoTaskList, InsertTable } from '@milkdown/preset-gfm';
-import {
-  EditorView,
-  liftListItem,
-  sinkListItem,
-  wrapIn,
-} from '@milkdown/prose';
-import { ButtonConfig } from './button';
-import { SelectConfig } from './select';
+} from '@milkdown/preset-commonmark'
+import { TurnIntoTaskList, InsertTable } from '@milkdown/preset-gfm'
+import { EditorView, liftListItem, sinkListItem, wrapIn } from '@milkdown/prose'
+import { ButtonConfig } from './button'
+import { SelectConfig } from './select'
 
 export type MenuCommonConfig = {
-  disabled?: (view: EditorView) => boolean;
-};
+  disabled?: (view: EditorView) => boolean
+}
 
-export type MenuConfigItem = SelectConfig | ButtonConfig;
-export type MenuConfig = Array<Array<MenuConfigItem>>;
+export type MenuConfigItem = SelectConfig | ButtonConfig
+export type MenuConfig = Array<Array<MenuConfigItem>>
 
 export const menuConfig: any = [
   [
@@ -31,8 +26,8 @@ export const menuConfig: any = [
       icon: 'bulletList',
       key: WrapInBulletList,
       disabled: (view: EditorView) => {
-        const { state } = view;
-        return !wrapIn(state.schema.nodes.bullet_list)(state);
+        const { state } = view
+        return !wrapIn(state.schema.nodes.bullet_list)(state)
       },
     },
     {
@@ -40,8 +35,8 @@ export const menuConfig: any = [
       icon: 'orderedList',
       key: WrapInOrderedList,
       disabled: (view: EditorView) => {
-        const { state } = view;
-        return !wrapIn(state.schema.nodes.ordered_list)(state);
+        const { state } = view
+        return !wrapIn(state.schema.nodes.ordered_list)(state)
       },
     },
     {
@@ -49,8 +44,8 @@ export const menuConfig: any = [
       icon: 'taskList',
       key: TurnIntoTaskList,
       disabled: (view: EditorView) => {
-        const { state } = view;
-        return !wrapIn(state.schema.nodes.task_list_item)(state);
+        const { state } = view
+        return !wrapIn(state.schema.nodes.task_list_item)(state)
       },
     },
     {
@@ -58,8 +53,8 @@ export const menuConfig: any = [
       icon: 'liftList',
       key: LiftListItem,
       disabled: (view: EditorView) => {
-        const { state } = view;
-        return !liftListItem(state.schema.nodes.list_item)(state);
+        const { state } = view
+        return !liftListItem(state.schema.nodes.list_item)(state)
       },
     },
     {
@@ -67,8 +62,8 @@ export const menuConfig: any = [
       icon: 'sinkList',
       key: SinkListItem,
       disabled: (view: EditorView) => {
-        const { state } = view;
-        return !sinkListItem(state.schema.nodes.list_item)(state);
+        const { state } = view
+        return !sinkListItem(state.schema.nodes.list_item)(state)
       },
     },
   ],
@@ -96,4 +91,4 @@ export const menuConfig: any = [
       key: InsertHr,
     },
   ],
-];
+]
