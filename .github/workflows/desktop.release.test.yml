@@ -1,4 +1,4 @@
-name: Desktop Dev
+name: Desktop Release (Test)
 
 on:
   workflow_dispatch:
@@ -29,8 +29,9 @@ jobs:
         run: yarn run electron-builder --linux --x64 --ia32 -c.linux.target=AppImage --publish=never
 
       - name: Snap
-        run: yarn run webpack --config desktop.webpack.prod.js --env snap'
-        run: yarn run electron-builder --linux --x64 -c.linux.target=snap --publish=never
+        run: |
+          yarn run webpack --config desktop.webpack.prod.js --env snap'
+          yarn run electron-builder --linux --x64 -c.linux.target=snap --publish=never
 
       - name: Upload
         uses: actions/upload-artifact@v3.0.0
