@@ -29,7 +29,7 @@ jobs:
         uses: actions/upload-artifact@v3.0.0
         with:
           name: assets
-          path: 'packages/desktop/dist/*+(.snap|.AppImage|.yml|.yaml|.blockmap|.deb|.dmg|.zip|.exe)'
+          path: packages/desktop/dist/*+(.snap|.AppImage|.yml|.yaml|.blockmap|.deb|.dmg|.zip|.exe)
 
   Linux:
     if: true == false
@@ -92,7 +92,7 @@ jobs:
         uses: actions/upload-artifact@v3.0.0
         with:
           name: assets
-          path: 'packages/desktop/dist/*+(.snap|.AppImage|.yml|.yaml|.blockmap|.deb|.dmg|.zip|.exe)'
+          path: packages/desktop/dist/*+(.snap|.AppImage|.yml|.yaml|.blockmap|.deb|.dmg|.zip|.exe)
 
   Windows:
     runs-on: windows-latest
@@ -113,7 +113,7 @@ jobs:
         uses: actions/upload-artifact@v3.0.0
         with:
           name: assets
-          path: 'packages/desktop/dist/*+(.snap|.AppImage|.yml|.yaml|.blockmap|.deb|.dmg|.zip|.exe)'
+          path: packages/desktop/dist/*+(.snap|.AppImage|.yml|.yaml|.blockmap|.deb|.dmg|.zip|.exe)
 
   Publish:
     runs-on: ubuntu-latest

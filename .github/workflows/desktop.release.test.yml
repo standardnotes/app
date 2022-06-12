@@ -25,5 +25,4 @@ jobs:
           name: assets
           path: |
             packages/desktop/dist/foo.txt
-            packages\desktop\dist\foo.txt
 
