@@ -144,6 +144,5 @@ jobs:
           prerelease: true
           draft: true
           name: "Desktop ${{ steps.package-version.outputs.current-version}}"
-          files: |
-            packages/desktop/dist/*
+          files: packages/desktop/dist/*
       - run: node scripts/publishSnap.mjs
