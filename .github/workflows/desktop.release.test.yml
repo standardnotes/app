@@ -4,8 +4,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  Linux:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/desktop
     steps:
       - uses: actions/checkout@v2
       - name: Set up Ruby
@@ -17,14 +20,6 @@ jobs:
       - run: yarn install
       - run: yarn build:web:all
 
-
-  Linux:
-    runs-on: ubuntu-latest
-    needs: build
-    defaults:
-      run:
-        working-directory: packages/desktop
-    steps:
       - name: Compile for AppImage
         run: yarn run webpack --config desktop.webpack.prod.js
       - name: AppImage
