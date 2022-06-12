@@ -4,22 +4,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-      - uses: actions/setup-node@v2
-        with:
-          registry-url: 'https://registry.npmjs.org'
-      - run: yarn install
-      - run: yarn build:web:all
-
   Mac:
     if: true == false
     runs-on: macos-latest
-    needs: build
     defaults:
       run:
         working-directory: packages/desktop
@@ -47,7 +34,6 @@ jobs:
   Linux:
     if: true == false
     runs-on: ubuntu-latest
-    needs: build
     defaults:
       run:
         working-directory: packages/desktop
@@ -110,7 +96,6 @@ jobs:
 
   Windows:
     runs-on: windows-latest
-    needs: build
     defaults:
       run:
         working-directory: packages/desktop
