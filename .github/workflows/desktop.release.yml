@@ -79,11 +79,11 @@ jobs:
 
       - name: Snap
         run: |
-          yarn run webpack --config desktop.webpack.prod.js --env snap'
+          yarn run webpack --config desktop.webpack.prod.js --env snap
           yarn run electron-builder --linux --x64 -c.linux.target=snap --publish=never
       - name: SnapArm64
         run: |
-          yarn run webpack --config desktop.webpack.prod.js --env snap'
+          yarn run webpack --config desktop.webpack.prod.js --env snap
           yarn run electron-builder --linux --arm64 -c.linux.target=snap --publish=never
         env:
           npm_config_target_arch: 'arm64'
