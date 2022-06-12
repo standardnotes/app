@@ -4,35 +4,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  Linux:
+  Release:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: packages/desktop
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-      - uses: actions/setup-node@v2
-        with:
-          registry-url: 'https://registry.npmjs.org'
-      - run: yarn install
-      - run: yarn build:web:all
-
-      - name: Compile for AppImage
-        run: yarn run webpack --config desktop.webpack.prod.js
-      - name: AppImage
-        run: yarn run electron-builder --linux --x64 --ia32 -c.linux.target=AppImage --publish=never
-
-      - name: Upload
-        uses: actions/upload-artifact@v3.0.0
-        with:
-          name: assets
-          path: 'packages/desktop/dist/'
-
-  Publish:
-    runs-on: ubuntu-latest
-    needs: [Linux]
     defaults:
       run:
         working-directory: packages/desktop
@@ -41,9 +14,20 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           registry-url: 'https://registry.npmjs.org'
-      - uses: actions/download-artifact@v3
+      - run: mkdir files
+      - run: echo Foo >> files/foo.txt
+      - run: echo Bar >> files/bar.txt
+      - name: 'Get Previous tag'
+        id: previous_tag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
         with:
-          name: assets
-          path: packages/desktop/dist
-      - run: node scripts/sums.mjs
-      - run: node scripts/create-draft-release.mjs
+          fallback: 1.0.0
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          token: ${{ secrets.CI_PAT_TOKEN }}
+          tag_name: ${{steps.previous_tag.outputs.tag}}
+          prerelease: true
+          draft: true
+          files: |
+            packages/desktop/files/*
