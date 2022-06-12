@@ -13,9 +13,8 @@ jobs:
         with:
           token: ${{ secrets.CI_PAT_TOKEN }}
           fetch-depth: 0
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
         with:
-          node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1

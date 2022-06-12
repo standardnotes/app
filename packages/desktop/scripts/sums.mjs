@@ -4,14 +4,20 @@ import { getLatestBuiltFilesList } from './utils.mjs'
 
 function sha256(filePath) {
   return new Promise((resolve, reject) => {
-    fs.createReadStream(filePath)
-      .pipe(crypto.createHash('sha256').setEncoding('hex'))
-      .on('finish', function () {
-        resolve(this.read())
-      })
-      .on('error', reject)
+    try {
+      fs.createReadStream(filePath)
+        .pipe(crypto.createHash('sha256').setEncoding('hex'))
+        .on('finish', function () {
+          resolve(this.read())
+        })
+        .on('error', reject)
+    } catch (error) {}
   })
 }
+
+process.on('uncaughtException', function (err) {
+  console.log('Caught exception: ' + err)
+})
 
 ;(async () => {
   console.log('Writing SHA256 sums to dist/SHA256SUMS')

@@ -12,7 +12,6 @@ jobs:
         uses: ruby/setup-ruby@v1
       - uses: actions/setup-node@v2
         with:
-          node-version: '14.x'
           registry-url: 'https://registry.npmjs.org'
       - run: yarn install
       - run: yarn build:web:all
@@ -24,6 +23,9 @@ jobs:
       run:
         working-directory: packages/desktop
     steps:
+      - uses: actions/setup-node@v2
+        with:
+          registry-url: 'https://registry.npmjs.org'
       - name: Compile Mac
         run: yarn run webpack --config desktop.webpack.prod.js
       - name: MacX64
@@ -45,6 +47,9 @@ jobs:
       run:
         working-directory: packages/desktop
     steps:
+      - uses: actions/setup-node@v2
+        with:
+          registry-url: 'https://registry.npmjs.org'
       - name: Compile for AppImage
         run: yarn run webpack --config desktop.webpack.prod.js
       - name: AppImage
@@ -102,6 +107,9 @@ jobs:
       run:
         working-directory: packages/desktop
     steps:
+      - uses: actions/setup-node@v2
+        with:
+          registry-url: 'https://registry.npmjs.org'
       - run: yarn run webpack --config desktop.webpack.prod.js
       - run: yarn run electron-builder --windows --x64 --ia32 --publish=never
 
@@ -118,6 +126,9 @@ jobs:
       run:
         working-directory: packages/desktop
     steps:
+      - uses: actions/setup-node@v2
+        with:
+          registry-url: 'https://registry.npmjs.org'
       - uses: actions/download-artifact@v3
         with:
           name: assets
