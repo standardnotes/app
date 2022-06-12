@@ -6032,7 +6032,7 @@ __metadata:
     react-native-document-picker: ^8.1.0
     react-native-fab: "standardnotes/react-native-fab#cb60e0067bbd938df5e85838760d8ff87f0cddda"
     react-native-file-viewer: ^2.1.5
-    react-native-fingerprint-scanner: "standardnotes/react-native-fingerprint-scanner#8f3b2df05d88350f1f704417c8b90981cec87301"
+    react-native-fingerprint-scanner: "standardnotes/react-native-fingerprint-scanner#0f9c1f6712ee0c1a2908fe7e589c72151d143c48"
     react-native-flag-secure-android: "standardnotes/react-native-flag-secure-android#cb08e74583c22a5d912842459b35ebbbb4bcd852"
     react-native-fs: ^2.19.0
     react-native-gesture-handler: 2.3.2
@@ -24226,12 +24226,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-fingerprint-scanner@standardnotes/react-native-fingerprint-scanner#8f3b2df05d88350f1f704417c8b90981cec87301":
+"react-native-fingerprint-scanner@standardnotes/react-native-fingerprint-scanner#0f9c1f6712ee0c1a2908fe7e589c72151d143c48":
   version: 5.0.0
-  resolution: "react-native-fingerprint-scanner@https://github.com/standardnotes/react-native-fingerprint-scanner.git#commit=8f3b2df05d88350f1f704417c8b90981cec87301"
+  resolution: "react-native-fingerprint-scanner@https://github.com/standardnotes/react-native-fingerprint-scanner.git#commit=0f9c1f6712ee0c1a2908fe7e589c72151d143c48"
   peerDependencies:
     react-native: ">=0.60 <1.0.0"
-  checksum: 74ccda0e964d566ed7b58f8ae50d725f61eb88dea3ee6b2e3fc740516f5b786e03cbebce4a868ba5414a0cdfd563bf05ba6e35078b28fd224bf909c756412e19
+  checksum: 8e57d3afb692b03ff3e3a4d88e0019c06c209a3bf43525ebde5bd67cbe6f807c78f938fea868d6d5ea64208e2557152ccfe92cc9e2720413b957ea534550d238
   languageName: node
   linkType: hard
 

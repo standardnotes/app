@@ -51,7 +51,7 @@
     "react-native-document-picker": "^8.1.0",
     "react-native-fab": "standardnotes/react-native-fab#cb60e0067bbd938df5e85838760d8ff87f0cddda",
     "react-native-file-viewer": "^2.1.5",
-    "react-native-fingerprint-scanner": "standardnotes/react-native-fingerprint-scanner#8f3b2df05d88350f1f704417c8b90981cec87301",
+    "react-native-fingerprint-scanner": "standardnotes/react-native-fingerprint-scanner#0f9c1f6712ee0c1a2908fe7e589c72151d143c48",
     "react-native-flag-secure-android": "standardnotes/react-native-flag-secure-android#cb08e74583c22a5d912842459b35ebbbb4bcd852",
     "react-native-fs": "^2.19.0",
     "react-native-gesture-handler": "2.3.2",
