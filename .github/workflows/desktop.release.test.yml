@@ -24,6 +24,6 @@ jobs:
         with:
           name: assets
           path: |
-            'packages/desktop/dist/*+(.txt|.exe)'
-            'packages\desktop\dist\*+(.txt|.exe)'
+            'packages/desktop/dist/foo.txt'
+            'packages\desktop\dist\foo.txt'
 
