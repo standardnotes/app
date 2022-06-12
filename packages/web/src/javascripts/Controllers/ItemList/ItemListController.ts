@@ -224,18 +224,18 @@ export class ItemListController extends AbstractViewController implements Intern
     return activeController instanceof NoteViewController ? activeController.item : undefined
   }
 
-  async openNote(noteUuid: string): Promise<void> {
-    if (this.activeControllerNote?.uuid === noteUuid) {
+  async openNote(uuid: string): Promise<void> {
+    if (this.activeControllerNote?.uuid === uuid) {
       return
     }
 
-    const note = this.application.items.findItem<SNNote>(noteUuid)
+    const note = this.application.items.findItem<SNNote>(uuid)
     if (!note) {
-      console.warn('Tried accessing a non-existant note of UUID ' + noteUuid)
+      console.warn('Tried accessing a non-existant note of UUID ' + uuid)
       return
     }
 
-    await this.application.itemControllerGroup.createNoteController(noteUuid)
+    await this.application.itemControllerGroup.createItemController({ uuid })
 
     this.noteTagsController.reloadTagsForCurrentNote()
 
@@ -253,7 +253,7 @@ export class ItemListController extends AbstractViewController implements Intern
       return
     }
 
-    await this.application.itemControllerGroup.createFileController(fileUuid)
+    await this.application.itemControllerGroup.createItemController(file)
   }
 
   setCompletedFullSync = (completed: boolean) => {
@@ -324,33 +324,27 @@ export class ItemListController extends AbstractViewController implements Intern
     const isSearching = this.noteFilterText.length > 0
     const hasMultipleItemsSelected = this.selectionController.selectedItemsCount >= 2
 
-    if (hasMultipleItemsSelected) {
+    if (
+      hasMultipleItemsSelected ||
+      (activeController instanceof NoteViewController && activeController.isTemplateNote)
+    ) {
       return
     }
 
-    if (itemsReloadSource === ItemsReloadSource.TagChange) {
+    if (itemsReloadSource === ItemsReloadSource.TagChange || !activeItem) {
       await this.selectFirstItem()
 
       return
     }
 
-    if (!activeItem) {
-      await this.selectFirstItem()
+    const itemExistsInUpdatedResults = this.items.find((item) => item.uuid === activeItem.uuid)
+    const shouldCloseActiveItem =
+      !itemExistsInUpdatedResults && !isSearching && this.navigationController.isInAnySystemView()
 
-      return
-    }
-
-    if (activeController instanceof NoteViewController && activeController.isTemplateNote) {
-      return
-    }
-
-    const noteExistsInUpdatedResults = this.notes.find((note) => note.uuid === activeItem.uuid)
-    const shouldCloseActiveNote =
-      !noteExistsInUpdatedResults && !isSearching && this.navigationController.isInAnySystemView()
-
-    if (shouldCloseActiveNote) {
+    if (shouldCloseActiveItem) {
       this.closeItemController(activeController)
       this.selectNextItem()
+
       return
     }
 
@@ -463,7 +457,11 @@ export class ItemListController extends AbstractViewController implements Intern
 
     const activeRegularTagUuid = selectedTag instanceof SNTag ? selectedTag.uuid : undefined
 
-    await this.application.itemControllerGroup.createNoteController(undefined, title, activeRegularTagUuid)
+    await this.application.itemControllerGroup.createItemController({
+      uuid: undefined,
+      title,
+      tag: activeRegularTagUuid,
+    })
   }
 
   createNewNote = async () => {
