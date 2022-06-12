@@ -17,6 +17,7 @@ jobs:
       - run: mkdir dist
       - run: echo Foo >> dist/foo.txt
       - run: ls
+      - run: ls dist
 
       - name: Upload
         uses: actions/upload-artifact@v3.0.0
