@@ -17,16 +17,16 @@ jobs:
       - run: mkdir files
       - run: echo Foo >> files/foo.txt
       - run: echo Bar >> files/bar.txt
-      - name: 'Get Previous tag'
-        id: previous_tag
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+      - name: get-npm-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@main
         with:
-          fallback: 1.0.0
+          path: packages/desktop
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.CI_PAT_TOKEN }}
-          tag_name: ${{steps.previous_tag.outputs.tag}}
+          tag_name: "@standardnotes/desktop@${{ steps.package-version.outputs.current-version}}"
           prerelease: true
           draft: true
           files: |
