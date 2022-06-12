@@ -41,9 +41,5 @@ jobs:
         with:
           registry-url: 'https://registry.npmjs.org'
       - run: ls
-      - uses: actions/download-artifact@v3
-        with:
-          name: assets
-          path: packages/desktop/dist
       - run: node scripts/sums.mjs
       - run: node scripts/create-draft-release.mjs
