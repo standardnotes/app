@@ -16,8 +16,8 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - run: mkdir dist
       - run: |
-        echo Foo >> dist/foo.exe
-        echo Foo >> dist/foo.exe.blockmap
+          echo Foo >> dist/foo.exe
+          echo Foo >> dist/foo.exe.blockmap
       - run: ls
       - run: ls dist
 
