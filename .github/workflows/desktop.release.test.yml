@@ -15,7 +15,7 @@ jobs:
           node-version: '14.x'
           registry-url: 'https://registry.npmjs.org'
       - run: yarn install
-      - run: yarn build
+      - run: yarn build:web:all
 
 
   Linux:
@@ -23,7 +23,7 @@ jobs:
     needs: build
     defaults:
       run:
-        working-directory: ./packages/desktop
+        working-directory: packages/desktop
     steps:
       - name: Compile for AppImage
         run: yarn run webpack --config desktop.webpack.prod.js
@@ -46,7 +46,7 @@ jobs:
     needs: [Linux]
     defaults:
       run:
-        working-directory: ./packages/desktop
+        working-directory: packages/desktop
     steps:
       - uses: actions/download-artifact@v3
         with:

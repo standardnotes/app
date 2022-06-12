@@ -15,14 +15,14 @@ jobs:
           node-version: '14.x'
           registry-url: 'https://registry.npmjs.org'
       - run: yarn install
-      - run: yarn build
+      - run: yarn build:web:all
 
   Mac:
     runs-on: macos-latest
     needs: build
     defaults:
       run:
-        working-directory: ./packages/desktop
+        working-directory: packages/desktop
     steps:
       - name: Compile Mac
         run: yarn run webpack --config desktop.webpack.prod.js
@@ -43,7 +43,7 @@ jobs:
     needs: build
     defaults:
       run:
-        working-directory: ./packages/desktop
+        working-directory: packages/desktop
     steps:
       - name: Compile for AppImage
         run: yarn run webpack --config desktop.webpack.prod.js
@@ -100,7 +100,7 @@ jobs:
     needs: build
     defaults:
       run:
-        working-directory: ./packages/desktop
+        working-directory: packages/desktop
     steps:
       - run: yarn run webpack --config desktop.webpack.prod.js
       - run: yarn run electron-builder --windows --x64 --ia32 --publish=never
@@ -116,7 +116,7 @@ jobs:
     needs: [Windows, Linux, Mac]
     defaults:
       run:
-        working-directory: ./packages/desktop
+        working-directory: packages/desktop
     steps:
       - uses: actions/download-artifact@v3
         with:
