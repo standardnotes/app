@@ -10,12 +10,12 @@ jobs:
       run:
         working-directory: packages/desktop
     steps:
-      - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
           registry-url: 'https://registry.npmjs.org'
       - run: mkdir dist
       - run: echo Foo >> dist/foo.txt
+      - run: ls
 
       - name: Upload
         uses: actions/upload-artifact@v3.0.0
