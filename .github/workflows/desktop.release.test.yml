@@ -15,7 +15,9 @@ jobs:
         with:
           registry-url: 'https://registry.npmjs.org'
       - run: mkdir dist
-      - run: echo Foo >> dist/foo.txt
+      - run: |
+        echo Foo >> dist/foo.exe
+        echo Foo >> dist/foo.exe.blockmap
       - run: ls
       - run: ls dist
 
@@ -23,6 +25,5 @@ jobs:
         uses: actions/upload-artifact@v3.0.0
         with:
           name: assets
-          path: |
-            packages/desktop/dist/foo.txt
+          path: packages/desktop/dist/*+(.blockmap|.exe)
 
