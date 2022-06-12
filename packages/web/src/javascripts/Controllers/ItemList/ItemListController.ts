@@ -276,7 +276,7 @@ export class ItemListController extends AbstractViewController implements Intern
     let title = this.panelTitle
 
     if (this.isFiltering) {
-      const resultCount = this.notes.length
+      const resultCount = this.items.length
       title = `${resultCount} search results`
     } else if (this.navigationController.selected) {
       title = `${this.navigationController.selected.title}`
