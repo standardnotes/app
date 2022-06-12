@@ -1,11 +1,15 @@
 import fs from 'fs'
 import path from 'path'
-import { Command } from './Command'
-import { runCommand } from './runCommand'
-import { DesktopDir } from './build'
+import { Command } from './Command.mjs'
+import { runCommand } from './runCommand.mjs'
+import { DesktopDir } from './build.mjs'
 
 export async function publishSnap() {
-  const packageJson = await fs.promises.readFile(path.join(DesktopDir, 'package.json'))
-  const version = JSON.parse(packageJson).version
-  await runCommand(Command(`snapcraft upload dist/standard-notes-${version}-linux-amd64.snap`, DesktopDir))
+  try {
+    const packageJson = await fs.promises.readFile(path.join(DesktopDir, 'package.json'))
+    const version = JSON.parse(packageJson).version
+    await runCommand(Command(`snapcraft upload dist/standard-notes-${version}-linux-amd64.snap`, DesktopDir))
+  } catch (error) {
+    console.error('Error publishing snap', error)
+  }
 }

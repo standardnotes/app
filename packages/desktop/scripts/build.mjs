@@ -1,8 +1,8 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
-import { Command } from './Command'
-import { publishSnap } from './publishSnap'
-import { runCommand } from './runCommand'
+import { Command } from './Command.mjs'
+import { publishSnap } from './publishSnap.mjs'
+import { runCommand } from './runCommand.mjs'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -160,28 +160,3 @@ const BuildCommands = {
   ],
   [Targets.Windows]: [Command('yarn run electron-builder --windows --x64 --ia32 --publish=never', DesktopDir)],
 }
-
-;(async () => {
-  try {
-    const input = process.argv[2]
-    let targets = input.split(',')
-
-    console.log('Input targets:', targets)
-
-    if (targets.length === 1) {
-      if (TargetGroups[targets[0]]) {
-        targets = TargetGroups[targets[0]]
-      }
-    }
-    await buildTargets(targets)
-
-    if (input === MainstreamTargetGroup) {
-      await runCommand(Command('node sums.mjs', ScriptsDir))
-      await runCommand(Command('node create-draft-release.mjs', ScriptsDir))
-      await publishSnap()
-    }
-  } catch (e) {
-    console.error(e)
-    process.exitCode = 1
-  }
-})()
