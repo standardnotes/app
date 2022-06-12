@@ -1,0 +1,110 @@
+name: Desktop Dev
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/desktop
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14.x'
+          registry-url: 'https://registry.npmjs.org'
+      - run: yarn install
+      - run: yarn build
+
+  Mac:
+    runs-on: macos-latest
+    needs: build
+    steps:
+      - name: Compile Mac
+        run: yarn run webpack --config desktop.webpack.prod.js
+      - name: MacX64
+        run: yarn run electron-builder --mac --x64 --publish=never
+        run: node scripts/fix-mac-zip
+      - name: MacArm64
+        run: yarn run electron-builder --mac --arm64 --publish=never
+      - name: Upload
+        uses: actions/upload-artifact@v3.0.0
+        with:
+          name: assets
+          path: 'dist/'
+
+  Linux:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Compile for AppImage
+        run: yarn run webpack --config desktop.webpack.prod.js
+      - name: AppImage
+        run: yarn run electron-builder --linux --x64 --ia32 -c.linux.target=AppImage --publish=never
+      - name: AppImageX64
+        run: yarn run electron-builder --linux --x64 -c.linux.target=AppImage --publish=never
+      - name: AppImageArm64
+        run: yarn run electron-builder --linux --arm64 -c.linux.target=AppImage --publish=never
+
+      - name: Deb
+        run: yarn run webpack --config desktop.webpack.prod.js --env deb
+        run: yarn run electron-builder --linux --x64 --ia32 -c.linux.target=deb --publish=never
+      - name: DebArm64
+        env:
+          npm_config_target_arch: 'arm64'
+          USE_SYSTEM_FPM: 'true'
+        run: yarn run webpack --config desktop.webpack.prod.js --env deb
+        run: yarn run electron-builder --linux --arm64 -c.linux.target=deb --publish=never
+
+      - name: Dir
+        run: yarn run webpack --config desktop.webpack.prod.js
+        run: yarn run electron-builder --linux --x64 -c.linux.target=dir --publish=never
+      - name: DirArm64
+        run: yarn run webpack --config desktop.webpack.prod.js
+        run: yarn run electron-builder --linux --arm64 -c.linux.target=dir --publish=never
+        env:
+          npm_config_target_arch: 'arm64'
+
+      - name: Snap
+        run: yarn run webpack --config desktop.webpack.prod.js --env snap'
+        run: yarn run electron-builder --linux --x64 -c.linux.target=snap --publish=never
+      - name: SnapArm64
+        run: yarn run webpack --config desktop.webpack.prod.js --env snap'
+        run: yarn run electron-builder --linux --arm64 -c.linux.target=snap --publish=never
+        env:
+          npm_config_target_arch: 'arm64'
+          SNAPCRAFT_BUILD_ENVIRONMENT: 'host'
+
+      - name: Upload
+        uses: actions/upload-artifact@v3.0.0
+        with:
+          name: assets
+          path: 'dist/'
+
+  Windows:
+    runs-on: windows-latest
+    needs: build
+    steps:
+      - run: yarn run webpack --config desktop.webpack.prod.js
+      - name: Windows
+        run: yarn run electron-builder --windows --x64 --ia32 --publish=never
+
+      - name: Upload
+        uses: actions/upload-artifact@v3.0.0
+        with:
+          name: assets
+          path: 'dist/'
+
+  Publish:
+    runs-on: ubuntu-latest
+    needs: [Windows, Linux, Mac]
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: assets
+          path: dist
+      - run: node scripts/sums.mjs
+      - run: node scripts/create-draft-release.mjs
+      - run: node scripts/publishSnap.mjs

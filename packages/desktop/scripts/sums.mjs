@@ -23,8 +23,13 @@ function sha256(filePath) {
 
     let hashes = await Promise.all(
       files.map(async (fileName) => {
-        const hash = await sha256(fileName)
-        return `${hash}  ${fileName}`
+        try {
+          const hash = await sha256(fileName)
+          return `${hash}  ${fileName}`
+        } catch (error) {
+          console.error('Unable to hash file', fileName)
+          return null
+        }
       }),
     )
     hashes = hashes.join('\n')

@@ -16,7 +16,6 @@ jobs:
         working-directory: packages/mobile
     runs-on: ubuntu-latest
     timeout-minutes: 45
-    if: "!contains(github.event.head_commit.message, 'skip ci')"
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -57,7 +56,6 @@ jobs:
         working-directory: packages/mobile
     runs-on: macos-11
     timeout-minutes: 90
-    if: "!contains(github.event.head_commit.message, 'skip ci')"
     steps:
       - name: Checkout code
         uses: actions/checkout@v2

@@ -1,13 +1,14 @@
-import { spawn } from 'child_process'
-import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { Command } from './Command'
+import { publishSnap } from './publishSnap'
+import { runCommand } from './runCommand'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 const RootDir = path.join(__dirname, '../../..')
-const DesktopDir = path.join(__dirname, '../')
+export const DesktopDir = path.join(__dirname, '../')
 const ScriptsDir = path.join(__dirname)
 
 async function buildTargets(targets) {
@@ -32,30 +33,6 @@ async function buildTargets(targets) {
       }
     }
   }
-}
-
-function runCommand(commandObj) {
-  return new Promise((resolve, reject) => {
-    const { prompt, extraEnv } = commandObj
-
-    console.log(prompt, Object.keys(extraEnv).length > 0 ? extraEnv : '')
-
-    const [command, ...args] = prompt.split(' ')
-    const options = { cwd: commandObj.dir, env: Object.assign({}, process.env, extraEnv) }
-    const child = spawn(command, args, options)
-
-    child.stdout.pipe(process.stdout)
-    child.stderr.pipe(process.stderr)
-
-    child.on('error', reject)
-    child.on('close', (code) => {
-      if (code > 0) {
-        reject(code)
-      } else {
-        resolve(code)
-      }
-    })
-  })
 }
 
 const Targets = {
@@ -101,14 +78,6 @@ const TargetGroups = {
 }
 
 const arm64Env = { npm_config_target_arch: 'arm64' }
-
-const Command = function (prompt, dir, extraEnv = {}) {
-  return {
-    prompt,
-    dir,
-    extraEnv,
-  }
-}
 
 const CompileGroups = [
   {
@@ -190,12 +159,6 @@ const BuildCommands = {
     }),
   ],
   [Targets.Windows]: [Command('yarn run electron-builder --windows --x64 --ia32 --publish=never', DesktopDir)],
-}
-
-async function publishSnap() {
-  const packageJson = await fs.promises.readFile(path.join(DesktopDir, 'package.json'))
-  const version = JSON.parse(packageJson).version
-  await runCommand(Command(`snapcraft upload dist/standard-notes-${version}-linux-amd64.snap`, DesktopDir))
 }
 
 ;(async () => {
