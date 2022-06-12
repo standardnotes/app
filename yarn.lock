@@ -6019,7 +6019,6 @@ __metadata:
     metro-react-native-babel-preset: ^0.70.1
     moment: ^2.29.2
     npm-check-updates: ^12.5.9
-    patch-package: ^6.4.7
     pod-install: ^0.1.33
     prettier: ^2.6.0
     prettier-plugin-organize-imports: ^2.3.4
@@ -6037,7 +6036,7 @@ __metadata:
     react-native-fs: ^2.19.0
     react-native-gesture-handler: 2.3.2
     react-native-image-picker: ^4.7.3
-    react-native-keychain: ^8.0.0
+    react-native-keychain: "patch:react-native-keychain@8.0.0#./patches/react-native-keychain+8.0.0.patch"
     react-native-mail: "standardnotes/react-native-mail#fd26119e67a2ffc5eaa95a9c17049743e39ce2d3"
     react-native-monorepo-tools: ^1.1.4
     react-native-pager-view: ^5.4.15
@@ -6049,7 +6048,7 @@ __metadata:
     react-native-search-box: "standardnotes/react-native-search-box#8c46369912cba78dca718588aca9c16926953ff7"
     react-native-share: ^7.3.7
     react-native-sodium-jsi: 1.2.0
-    react-native-static-server: "standardnotes/react-native-static-server#d0c4cb0feae233634ef26fc33118f258192c7b7d"
+    react-native-static-server: "standardnotes/react-native-static-server#6b5baab43f11f8b2072d17183f9f35b08fa0707b"
     react-native-store-review: ^0.2.0
     react-native-svg: ^12.3.0
     react-native-svg-transformer: ^1.0.0
@@ -8196,13 +8195,6 @@ __metadata:
   version: 4.2.2
   resolution: "@xtuc/long@npm:4.2.2"
   checksum: 8ed0d477ce3bc9c6fe2bf6a6a2cc316bb9c4127c5a7827bae947fa8ec34c7092395c5a283cc300c05b5fa01cbbfa1f938f410a7bf75db7c7846fea41949989ec
-  languageName: node
-  linkType: hard
-
-"@yarnpkg/lockfile@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "@yarnpkg/lockfile@npm:1.1.0"
-  checksum: 05b881b4866a3546861fee756e6d3812776ea47fa6eb7098f983d6d0eefa02e12b66c3fff931574120f196286a7ad4879ce02743c8bb2be36c6a576c7852083a
   languageName: node
   linkType: hard
 
@@ -11494,7 +11486,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-spawn@npm:^6.0.0, cross-spawn@npm:^6.0.5":
+"cross-spawn@npm:^6.0.0":
   version: 6.0.5
   resolution: "cross-spawn@npm:6.0.5"
   dependencies:
@@ -14881,15 +14873,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"find-yarn-workspace-root@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "find-yarn-workspace-root@npm:2.0.0"
-  dependencies:
-    micromatch: ^4.0.2
-  checksum: fa5ca8f9d08fe7a54ce7c0a5931ff9b7e36f9ee7b9475fb13752bcea80ec6b5f180fa5102d60b376d5526ce924ea3fc6b19301262efa0a5d248dd710f3644242
-  languageName: node
-  linkType: hard
-
 "flat-cache@npm:^3.0.4":
   version: 3.0.4
   resolution: "flat-cache@npm:3.0.4"
@@ -15108,17 +15091,6 @@ __metadata:
     jsonfile: ^4.0.0
     universalify: ^0.1.0
   checksum: c5ae3c7043ad7187128e619c0371da01b58694c1ffa02c36fb3f5b459925d9c27c3cb1e095d9df0a34a85ca993d8b8ff6f6ecef868fd5ebb243548afa7fc0936
-  languageName: node
-  linkType: hard
-
-"fs-extra@npm:^7.0.1":
-  version: 7.0.1
-  resolution: "fs-extra@npm:7.0.1"
-  dependencies:
-    graceful-fs: ^4.1.2
-    jsonfile: ^4.0.0
-    universalify: ^0.1.0
-  checksum: 141b9dccb23b66a66cefdd81f4cda959ff89282b1d721b98cea19ba08db3dcbe6f862f28841f3cf24bb299e0b7e6c42303908f65093cb7e201708e86ea5a8dcf
   languageName: node
   linkType: hard
 
@@ -18551,15 +18523,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"klaw-sync@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "klaw-sync@npm:6.0.0"
-  dependencies:
-    graceful-fs: ^4.1.11
-  checksum: 0da397f8961313c3ef8f79fb63af9002cde5a8fb2aeb1a37351feff0dd6006129c790400c3f5c3b4e757bedcabb13d21ec0a5eaef5a593d59515d4f2c291e475
-  languageName: node
-  linkType: hard
-
 "klaw@npm:^1.0.0":
   version: 1.3.1
   resolution: "klaw@npm:1.3.1"
@@ -21670,7 +21633,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"open@npm:^7.3.1, open@npm:^7.4.2":
+"open@npm:^7.3.1":
   version: 7.4.2
   resolution: "open@npm:7.4.2"
   dependencies:
@@ -22161,29 +22124,6 @@ __metadata:
   version: 0.1.1
   resolution: "pascalcase@npm:0.1.1"
   checksum: f83681c3c8ff75fa473a2bb2b113289952f802ff895d435edd717e7cb898b0408cbdb247117a938edcbc5d141020909846cc2b92c47213d764e2a94d2ad2b925
-  languageName: node
-  linkType: hard
-
-"patch-package@npm:^6.4.7":
-  version: 6.4.7
-  resolution: "patch-package@npm:6.4.7"
-  dependencies:
-    "@yarnpkg/lockfile": ^1.1.0
-    chalk: ^2.4.2
-    cross-spawn: ^6.0.5
-    find-yarn-workspace-root: ^2.0.0
-    fs-extra: ^7.0.1
-    is-ci: ^2.0.0
-    klaw-sync: ^6.0.0
-    minimist: ^1.2.0
-    open: ^7.4.2
-    rimraf: ^2.6.3
-    semver: ^5.6.0
-    slash: ^2.0.0
-    tmp: ^0.0.33
-  bin:
-    patch-package: index.js
-  checksum: f36d5324da3b69ee635e7cd2c68f4d3dd89dc91d60ffdaad3b602fd953277f4da901c91033683bf6ff31c14799bc049849af3a389455c25d0435fe9cfb0d4088
   languageName: node
   linkType: hard
 
@@ -24284,10 +24224,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-keychain@npm:^8.0.0":
+"react-native-keychain@npm:8.0.0":
   version: 8.0.0
   resolution: "react-native-keychain@npm:8.0.0"
   checksum: cbab1cef8565743072f919663068727df20fc0ef5edd53b0aa96fac74c11fcd0daa197968b06cabed4f1b3f8e5e5ae73b6db8543ed9adbecc13662c38958c9ce
+  languageName: node
+  linkType: hard
+
+"react-native-keychain@patch:react-native-keychain@8.0.0#./patches/react-native-keychain+8.0.0.patch::locator=%40standardnotes%2Fmobile%40workspace%3Apackages%2Fmobile":
+  version: 8.0.0
+  resolution: "react-native-keychain@patch:react-native-keychain@npm%3A8.0.0#./patches/react-native-keychain+8.0.0.patch::version=8.0.0&hash=f18549&locator=%40standardnotes%2Fmobile%40workspace%3Apackages%2Fmobile"
+  checksum: a924004df309323ef2683bda7eda5f83ab73838997d6e546545479db50a4bb21d97f0f5d80e48264c2b5ec54dca46a5ffbb0978914aee7bc8b263d5c030083c0
   languageName: node
   linkType: hard
 
@@ -24410,13 +24357,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-static-server@standardnotes/react-native-static-server#d0c4cb0feae233634ef26fc33118f258192c7b7d":
-  version: 0.5.0
-  resolution: "react-native-static-server@https://github.com/standardnotes/react-native-static-server.git#commit=d0c4cb0feae233634ef26fc33118f258192c7b7d"
+"react-native-static-server@standardnotes/react-native-static-server#6b5baab43f11f8b2072d17183f9f35b08fa0707b":
+  version: 0.5.1
+  resolution: "react-native-static-server@https://github.com/standardnotes/react-native-static-server.git#commit=6b5baab43f11f8b2072d17183f9f35b08fa0707b"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: c8620f76e3f6b2e5d5290037e0f62884c707f814ff26a164085596d7e44604ded7a729f3ec4e0450d03741db1f17f21fed506c9d413d28cccf365028df19be86
+  checksum: 3032c56983a06f009b99c294d590214bafead9759fa29f75d81acd33388875132e93c63bf2226b7bca26f1964aefa4ad1fdee97fc72e544fa77a5c57f2a273dd
   languageName: node
   linkType: hard
 
@@ -25664,7 +25611,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rimraf@npm:^2.5.4, rimraf@npm:^2.6.3":
+"rimraf@npm:^2.5.4":
   version: 2.7.1
   resolution: "rimraf@npm:2.7.1"
   dependencies:
@@ -26397,13 +26344,6 @@ __metadata:
   version: 1.0.5
   resolution: "sisteransi@npm:1.0.5"
   checksum: aba6438f46d2bfcef94cf112c835ab395172c75f67453fe05c340c770d3c402363018ae1ab4172a1026a90c47eaccf3af7b6ff6fa749a680c2929bd7fa2b37a4
-  languageName: node
-  linkType: hard
-
-"slash@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "slash@npm:2.0.0"
-  checksum: 512d4350735375bd11647233cb0e2f93beca6f53441015eea241fe784d8068281c3987fbaa93e7ef1c38df68d9c60013045c92837423c69115297d6169aa85e6
   languageName: node
   linkType: hard
 
