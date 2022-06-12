@@ -34,7 +34,7 @@ jobs:
         uses: actions/upload-artifact@v3.0.0
         with:
           name: assets
-          path: 'dist/'
+          path: 'packages/desktop/dist/'
 
   Publish:
     runs-on: ubuntu-latest
@@ -46,6 +46,6 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: assets
-          path: dist
+          path: packages/desktop/dist
       - run: node scripts/sums.mjs
       - run: node scripts/create-draft-release.mjs
