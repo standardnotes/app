@@ -24,7 +24,7 @@ jobs:
       - name: Install Snap Deps
         run: |
           sudo snap install snapcraft --classic
-          lxd init --auto
+          sudo lxd init --auto
       - name: SnapArm64
         run: |
           yarn run webpack --config desktop.webpack.prod.js --env snap
