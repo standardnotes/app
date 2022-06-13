@@ -4751,17 +4751,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/domain-events@npm:^2.30.0":
-  version: 2.30.0
-  resolution: "@standardnotes/domain-events@npm:2.30.0"
-  dependencies:
-    "@standardnotes/auth": ^3.19.2
-    "@standardnotes/features": ^1.45.2
-    "@standardnotes/scheduler": ^1.1.0
-  checksum: 92779a9be73afcb557dff62528cbbdca0f2c050e55aef2c755d780ecf854b9a02248d623a203e8e644c994c1430a3211b43e3801e6c807cd36aea1380a44ad48
-  languageName: node
-  linkType: hard
-
 "@standardnotes/editor-kit@npm:2.2.5":
   version: 2.2.5
   resolution: "@standardnotes/editor-kit@npm:2.2.5"
@@ -5148,7 +5137,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/snjs@npm:^2.116.0":
+"@standardnotes/snjs@npm:^2.116.0, @standardnotes/snjs@npm:^2.41.1":
   version: 2.116.0
   resolution: "@standardnotes/snjs@npm:2.116.0"
   dependencies:
@@ -5166,27 +5155,6 @@ __metadata:
     "@standardnotes/sncrypto-common": ^1.9.0
     "@standardnotes/utils": ^1.6.10
   checksum: 27e9eff8214def10c299471a318d06fbfbf07fd780819b9f75e6415aa5220d065c57443274bcc8e3ff9def0348950eabdf2ed636724bc01ece72a7b90af5f660
-  languageName: node
-  linkType: hard
-
-"@standardnotes/snjs@npm:^2.41.1":
-  version: 2.115.10
-  resolution: "@standardnotes/snjs@npm:2.115.10"
-  dependencies:
-    "@standardnotes/api": ^1.1.8
-    "@standardnotes/auth": ^3.19.2
-    "@standardnotes/common": ^1.22.0
-    "@standardnotes/domain-events": ^2.30.0
-    "@standardnotes/encryption": ^1.8.15
-    "@standardnotes/features": ^1.45.2
-    "@standardnotes/files": ^1.3.15
-    "@standardnotes/models": ^1.11.7
-    "@standardnotes/responses": ^1.6.33
-    "@standardnotes/services": ^1.13.15
-    "@standardnotes/settings": ^1.14.3
-    "@standardnotes/sncrypto-common": ^1.9.0
-    "@standardnotes/utils": ^1.6.10
-  checksum: 808bca0c48ca995d678ddc14120f21f144689670f451b2a88be86c9c4d424efadd41fff0648e4a0542a4b000de30331a1486533e9dec70233a4fcab41f7181e7
   languageName: node
   linkType: hard
 
