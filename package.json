@@ -22,7 +22,7 @@
     "start:server:web": "lerna run start --scope=@standardnotes/web-server",
     "start:server:web:localhost": "lerna run start:no-binding --scope=@standardnotes/web-server",
     "prepare": "husky install",
-    "version-bump": "lerna version --loglevel=silly --conventional-commits --yes -m \"chore(release): publish\"",
+    "version-bump": "lerna version --no-push --loglevel=silly --conventional-commits --yes -m \"chore(release): publish\"",
     "publish-packages": "lerna publish from-git --yes",
     "reset": "find . -type dir -name node_modules | xargs rm -rf && rm -rf yarn.lock",
     "version": "yarn install --no-immutable && git add yarn.lock"
@@ -35,7 +35,6 @@
     "@types/hoist-non-react-statics/@types/react": "17.0.2"
   },
   "devDependencies": {
-    "@lerna-lite/cli": "^1.5.1",
     "@standardnotes/config": "^2.4.3",
     "@typescript-eslint/eslint-plugin": "^5.20.0",
     "@typescript-eslint/parser": "^5.20.0",

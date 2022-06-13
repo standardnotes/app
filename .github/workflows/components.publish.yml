@@ -1,6 +1,10 @@
 name: Components Publish
 
 on:
+  push:
+    branches: [ develop, main ]
+    paths:
+      - packages/components/**
   workflow_dispatch:
 
 jobs:
