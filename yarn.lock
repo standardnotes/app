@@ -2369,15 +2369,15 @@ __metadata:
   linkType: hard
 
 "@emotion/cache@npm:^11.7.1":
-  version: 11.7.1
-  resolution: "@emotion/cache@npm:11.7.1"
+  version: 11.9.3
+  resolution: "@emotion/cache@npm:11.9.3"
   dependencies:
     "@emotion/memoize": ^0.7.4
-    "@emotion/sheet": ^1.1.0
+    "@emotion/sheet": ^1.1.1
     "@emotion/utils": ^1.0.0
     "@emotion/weak-memoize": ^0.2.5
     stylis: 4.0.13
-  checksum: cf7aa8fe3bacfdedcda94b53e76a7635e122043439715fcfbf7f1a81340cfe6099a59134481a03ec3e0437466566d18528577d1e6ea92f5b98c372b8b38a8f35
+  checksum: 6e0aab2fa5b9b6b0b9bf66b5328ed44265c23ced16b46c13d2602c3497fabd95299f6cf2c87cbc02b630452aa3cff599c194c538125d744aa135824129698ccc
   languageName: node
   linkType: hard
 
@@ -2407,11 +2407,11 @@ __metadata:
   linkType: hard
 
 "@emotion/is-prop-valid@npm:^1.1.0":
-  version: 1.1.2
-  resolution: "@emotion/is-prop-valid@npm:1.1.2"
+  version: 1.1.3
+  resolution: "@emotion/is-prop-valid@npm:1.1.3"
   dependencies:
     "@emotion/memoize": ^0.7.4
-  checksum: 58b1f2d429a589f8f5bc2c33a8732cbb7bbcb17131a103511ef9a94ac754d7eeb53d627f947da480cd977f9d419fd92e244991680292f3287204159652745707
+  checksum: 511997c3bbaab5a967db65b65a111afc46c4aac8b3b87a436fd9e3dc2891829a9ada1405b77326f407d93934ee3b831e62248b498c071089312c5be080af75dd
   languageName: node
   linkType: hard
 
@@ -2423,22 +2423,22 @@ __metadata:
   linkType: hard
 
 "@emotion/serialize@npm:^1.0.2, @emotion/serialize@npm:^1.0.3":
-  version: 1.0.3
-  resolution: "@emotion/serialize@npm:1.0.3"
+  version: 1.0.4
+  resolution: "@emotion/serialize@npm:1.0.4"
   dependencies:
     "@emotion/hash": ^0.8.0
     "@emotion/memoize": ^0.7.4
     "@emotion/unitless": ^0.7.5
     "@emotion/utils": ^1.0.0
     csstype: ^3.0.2
-  checksum: 99a9053bd98c99d63af542ebee029281eeaf653e3a12e97ee79bad7330c68408104c30be6fc07a528e38bb69aba680655181744b76ec6c6f459c121cb805fac2
+  checksum: e8cc342056734e176ea837fe44035126dea174962db40852a7ced499d258c0056b0fd3c298743c446f9ba0f2647cb42dfb623b8e5783c265deb9eb20138d68e7
   languageName: node
   linkType: hard
 
-"@emotion/sheet@npm:^1.0.3, @emotion/sheet@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "@emotion/sheet@npm:1.1.0"
-  checksum: a4b74e16a8fea1157413efe4904f5f679d724323cb605d66d20a0b98744422f5d411fca927ceb52e4de454a0a819c5273ca9496db9f011b4ecd17b9f1b212007
+"@emotion/sheet@npm:^1.0.3, @emotion/sheet@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "@emotion/sheet@npm:1.1.1"
+  checksum: b916ac665735ef6dfda26b09f2d3493789d432d649733db9da18c4db0115e7fdadeb8d45f6490320248916bb13d978bba74c914b711ac96f659b76a5e52d5cd2
   languageName: node
   linkType: hard
 
@@ -6174,8 +6174,8 @@ __metadata:
   linkType: hard
 
 "@standardnotes/snjs@npm:^2.115.9, @standardnotes/snjs@npm:^2.41.1":
-  version: 2.115.10
-  resolution: "@standardnotes/snjs@npm:2.115.10"
+  version: 2.115.11
+  resolution: "@standardnotes/snjs@npm:2.115.11"
   dependencies:
     "@standardnotes/api": ^1.1.8
     "@standardnotes/auth": ^3.19.2
@@ -6183,7 +6183,6 @@ __metadata:
     "@standardnotes/domain-events": ^2.29.4
     "@standardnotes/encryption": ^1.8.15
     "@standardnotes/features": ^1.45.2
-    "@standardnotes/filepicker": ^1.16.15
     "@standardnotes/files": ^1.3.15
     "@standardnotes/models": ^1.11.7
     "@standardnotes/responses": ^1.6.33
@@ -6191,7 +6190,7 @@ __metadata:
     "@standardnotes/settings": ^1.14.3
     "@standardnotes/sncrypto-common": ^1.9.0
     "@standardnotes/utils": ^1.6.10
-  checksum: 04259d0661a186cf443935347a0e0464dadc7032c0bea9803a0f2bc92b299a768894aa2d1b9a436f6ca13e6a2523cfd53a74046df5dbcc2bc8bbeba784f3891e
+  checksum: 718d10e934f26835ac58a92f46f8ec208cf0cbac8e54358f2b00627f07e9c7eff0bef708c3aa529d533a801ab0b0edc11584768fc4da5b04f57b3eb9916a987b
   languageName: node
   linkType: hard
 
@@ -6263,13 +6262,14 @@ __metadata:
   dependencies:
     "@nanostores/react": ^0.2.0
     "@standardnotes/icons": ^1.4.0
+    "@types/react": "link:../web/node_modules/@types/react"
+    "@types/react-dom": "link:../web/node_modules/@types/react-dom"
     eslint: "*"
     nanoid: ^3.3.4
     nanostores: ^0.5.12
+    react: "link:../web/node_modules/react"
+    react-dom: "link:../web/node_modules/react-dom"
     typescript: "*"
-  peerDependencies:
-    react: ^18
-    react-dom: ^18
   languageName: unknown
   linkType: soft
 
@@ -6800,30 +6800,30 @@ __metadata:
   linkType: hard
 
 "@tsconfig/node10@npm:^1.0.7":
-  version: 1.0.8
-  resolution: "@tsconfig/node10@npm:1.0.8"
-  checksum: b8d5fffbc6b17ef64ef74f7fdbccee02a809a063ade785c3648dae59406bc207f70ea2c4296f92749b33019fa36a5ae716e42e49cc7f1bbf0fd147be0d6b970a
+  version: 1.0.9
+  resolution: "@tsconfig/node10@npm:1.0.9"
+  checksum: a33ae4dc2a621c0678ac8ac4bceb8e512ae75dac65417a2ad9b022d9b5411e863c4c198b6ba9ef659e14b9fb609bbec680841a2e84c1172df7a5ffcf076539df
   languageName: node
   linkType: hard
 
 "@tsconfig/node12@npm:^1.0.7":
-  version: 1.0.9
-  resolution: "@tsconfig/node12@npm:1.0.9"
-  checksum: a01b2400ab3582b86b589c6d31dcd0c0656f333adecde85d6d7d4086adb059808b82692380bb169546d189bf771ae21d02544a75b57bd6da4a5dd95f8567bec9
+  version: 1.0.10
+  resolution: "@tsconfig/node12@npm:1.0.10"
+  checksum: 3683668703d5a2b43fe9b3135c5e475c401b5aaf7a586df8bb7eead1184b901d6606b6aee093dbb82e2d23b58f26104da433c86601a2912f512c1c935e4144a0
   languageName: node
   linkType: hard
 
 "@tsconfig/node14@npm:^1.0.0":
-  version: 1.0.1
-  resolution: "@tsconfig/node14@npm:1.0.1"
-  checksum: 976345e896c0f059867f94f8d0f6ddb8b1844fb62bf36b727de8a9a68f024857e5db97ed51d3325e23e0616a5e48c034ff51a8d595b3fe7e955f3587540489be
+  version: 1.0.2
+  resolution: "@tsconfig/node14@npm:1.0.2"
+  checksum: 6260dd461728c200921b4848cd9e1df2bfb2c1ee6c1b6dadbc9bf81afadff8ddf11c6312e08c07de89f6c40163916ff8307f6008bf6c76a4d72a2833dae7bf7c
   languageName: node
   linkType: hard
 
 "@tsconfig/node16@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "@tsconfig/node16@npm:1.0.2"
-  checksum: ca94d3639714672bbfd55f03521d3f56bb6a25479bd425da81faf21f13e1e9d15f40f97377dedbbf477a5841c5b0c8f4cd1b391f33553d750b9202c54c2c07aa
+  version: 1.0.3
+  resolution: "@tsconfig/node16@npm:1.0.3"
+  checksum: 3a8b657dd047495b7ad23437d6afd20297ce90380ff0bdee93fc7d39a900dbd8d9e26e53ff6b465e7967ce2adf0b218782590ce9013285121e6a5928fbd6819f
   languageName: node
   linkType: hard
 
@@ -7487,6 +7487,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-dom@link:../web/node_modules/@types/react-dom::locator=%40standardnotes%2Ftoast%40workspace%3Apackages%2Ftoast":
+  version: 0.0.0-use.local
+  resolution: "@types/react-dom@link:../web/node_modules/@types/react-dom::locator=%40standardnotes%2Ftoast%40workspace%3Apackages%2Ftoast"
+  languageName: node
+  linkType: soft
+
 "@types/react-dom@npm:*, @types/react-dom@npm:^18.0.5":
   version: 18.0.5
   resolution: "@types/react-dom@npm:18.0.5"
@@ -7583,6 +7589,12 @@ __metadata:
   checksum: 86e9ff9731798e12bc2afe0304678918769633b531dcf6397f86af81718fb7930ef8648e894eeb3718fc6eab6eb885cfb9b82a44d1d74e10951ee11ebc4643ae
   languageName: node
   linkType: hard
+
+"@types/react@link:../web/node_modules/@types/react::locator=%40standardnotes%2Ftoast%40workspace%3Apackages%2Ftoast":
+  version: 0.0.0-use.local
+  resolution: "@types/react@link:../web/node_modules/@types/react::locator=%40standardnotes%2Ftoast%40workspace%3Apackages%2Ftoast"
+  languageName: node
+  linkType: soft
 
 "@types/react@npm:*":
   version: 18.0.12
@@ -8144,36 +8156,36 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webpack-cli/configtest@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "@webpack-cli/configtest@npm:1.1.1"
+"@webpack-cli/configtest@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "@webpack-cli/configtest@npm:1.2.0"
   peerDependencies:
     webpack: 4.x.x || 5.x.x
     webpack-cli: 4.x.x
-  checksum: c4e7fca21315e487655fbdc7d079092c3f88b274a720d245ca2e13dce7553009fb3f9d82218c33f5c9b208832d72bb4114a9cca97d53b66212eff5da1d3ad44b
+  checksum: a2726cd9ec601d2b57e5fc15e0ebf5200a8892065e735911269ac2038e62be4bfc176ea1f88c2c46ff09b4d05d4c10ae045e87b3679372483d47da625a327e28
   languageName: node
   linkType: hard
 
-"@webpack-cli/info@npm:^1.4.1":
-  version: 1.4.1
-  resolution: "@webpack-cli/info@npm:1.4.1"
+"@webpack-cli/info@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "@webpack-cli/info@npm:1.5.0"
   dependencies:
     envinfo: ^7.7.3
   peerDependencies:
     webpack-cli: 4.x.x
-  checksum: 7a7cac2ba4f2528caa329311599da1685b1bc099bfc5b7210932b7c86024c1277fd7857b08557902b187ea01247a8e8f72f7f5719af72b0c8d97f22087aa0c14
+  checksum: 7f56fe037cd7d1fd5c7428588519fbf04a0cad33925ee4202ffbafd00f8ec1f2f67d991245e687d50e0f3e23f7b7814273d56cb9f7da4b05eed47c8d815c6296
   languageName: node
   linkType: hard
 
-"@webpack-cli/serve@npm:^1.6.1":
-  version: 1.6.1
-  resolution: "@webpack-cli/serve@npm:1.6.1"
+"@webpack-cli/serve@npm:^1.7.0":
+  version: 1.7.0
+  resolution: "@webpack-cli/serve@npm:1.7.0"
   peerDependencies:
     webpack-cli: 4.x.x
   peerDependenciesMeta:
     webpack-dev-server:
       optional: true
-  checksum: 8b273f906aeffa60c7d5700ae25f98d4b66b7e922cad38acb9575d55ff83872cd20b9894aacfa81c4d54e5b51b16253ae0e70c5e9e0608dc8768276e15c74536
+  checksum: d475e8effa23eb7ff9a48b14d4de425989fd82f906ce71c210921cc3852327c22873be00c35e181a25a6bd03d424ae2b83e7f3b3f410ac7ee31b128ab4ac7713
   languageName: node
   linkType: hard
 
@@ -15694,15 +15706,15 @@ __metadata:
   linkType: hard
 
 "globby@npm:^13.1.1":
-  version: 13.1.1
-  resolution: "globby@npm:13.1.1"
+  version: 13.1.2
+  resolution: "globby@npm:13.1.2"
   dependencies:
     dir-glob: ^3.0.1
     fast-glob: ^3.2.11
     ignore: ^5.2.0
     merge2: ^1.4.1
     slash: ^4.0.0
-  checksum: e6c43409c6c31b374fbd1c01a8c1811de52336928be9c697e472d2a89a156c9cbf1fb33863755c0447b4db16485858aa57f16628d66a6b7c7131669c9fbe76cd
+  checksum: c148fcda0c981f00fb434bb94ca258f0a9d23cedbde6fb3f37098e1abde5b065019e2c63fe2aa2fad4daf2b54bf360b4d0423d85fb3a63d09ed75a2837d4de0f
   languageName: node
   linkType: hard
 
@@ -24011,6 +24023,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-dom@link:../web/node_modules/react-dom::locator=%40standardnotes%2Ftoast%40workspace%3Apackages%2Ftoast":
+  version: 0.0.0-use.local
+  resolution: "react-dom@link:../web/node_modules/react-dom::locator=%40standardnotes%2Ftoast%40workspace%3Apackages%2Ftoast"
+  languageName: node
+  linkType: soft
+
 "react-dom@npm:17.0.2, react-dom@npm:^17.0.2":
   version: 17.0.2
   resolution: "react-dom@npm:17.0.2"
@@ -24130,8 +24148,8 @@ __metadata:
   linkType: hard
 
 "react-native-document-picker@npm:^8.1.0":
-  version: 8.1.0
-  resolution: "react-native-document-picker@npm:8.1.0"
+  version: 8.1.1
+  resolution: "react-native-document-picker@npm:8.1.1"
   dependencies:
     invariant: ^2.2.4
   peerDependencies:
@@ -24141,7 +24159,7 @@ __metadata:
   peerDependenciesMeta:
     react-native-windows:
       optional: true
-  checksum: 9aba7d274b8033efe6e8be7b5b350cc32fe4b9b670ba7c52ac91f6f9bc74badc96e34cf90bfec69b3643d7c63a3e347eaee20710c95e4afbe7e3bc43394d33bf
+  checksum: d47cc8d7422a19e62ce971c4f44bd122b85e83be44f8f126550632fc6ca320f68c941cd11cf009d11f7c5ac97b296270a565c3b3083e107bbe8ec9e10f4aafd8
   languageName: node
   linkType: hard
 
@@ -24339,9 +24357,9 @@ __metadata:
   linkType: hard
 
 "react-native-share@npm:^7.3.7":
-  version: 7.6.1
-  resolution: "react-native-share@npm:7.6.1"
-  checksum: dcadef3b7818f9f4679e7024171b6a0445cf206a8ee26dd48afa633c60fd0373d0f5acad868b02a3df6c4f8b68929fd6d49d32700dd6fa0573ea6df0a15cc955
+  version: 7.6.2
+  resolution: "react-native-share@npm:7.6.2"
+  checksum: 3c523fa3914b59c095e2b57ceb18ffea782d9ce11a793804be36987663d05a77cc54f631c6afa3988efbb99bc24cde0217f7deb5443549236b34843f18fb62a2
   languageName: node
   linkType: hard
 
@@ -24793,6 +24811,12 @@ __metadata:
   checksum: b67bf5b3e86dbab72d658b9a52a3589e5960583ab28c7c66272427d8fe30d4c7de422d5046ae96bd2683cdf80cc3264b2516f5ce80cae1dbe6cf3ca6dda392c5
   languageName: node
   linkType: hard
+
+"react@link:../web/node_modules/react::locator=%40standardnotes%2Ftoast%40workspace%3Apackages%2Ftoast":
+  version: 0.0.0-use.local
+  resolution: "react@link:../web/node_modules/react::locator=%40standardnotes%2Ftoast%40workspace%3Apackages%2Ftoast"
+  languageName: node
+  linkType: soft
 
 "react@npm:17.0.2, react@npm:^17.0.2":
   version: 17.0.2
@@ -28920,14 +28944,14 @@ __metadata:
   linkType: hard
 
 "vfile@npm:^5.0.0":
-  version: 5.3.2
-  resolution: "vfile@npm:5.3.2"
+  version: 5.3.3
+  resolution: "vfile@npm:5.3.3"
   dependencies:
     "@types/unist": ^2.0.0
     is-buffer: ^2.0.0
     unist-util-stringify-position: ^3.0.0
     vfile-message: ^3.0.0
-  checksum: c352a76974c4ce0a0177e157335c95a647dae9e510ed4fad9b328479eb46230dc9ade8793d4c8b7f78263314797fc5026ff14da086e3805d530645e7d8057dcb
+  checksum: 975d1e1ec4608355ca914d1a559607950316eb25008eafb14ef9c94d047fc38064a731a372d18501efcb2dcd657eb03e735bdcd2f0a48efaf2add8192f1a0b69
   languageName: node
   linkType: hard
 
@@ -29043,16 +29067,16 @@ __metadata:
   linkType: hard
 
 "webpack-cli@npm:*, webpack-cli@npm:^4.9.2":
-  version: 4.9.2
-  resolution: "webpack-cli@npm:4.9.2"
+  version: 4.10.0
+  resolution: "webpack-cli@npm:4.10.0"
   dependencies:
     "@discoveryjs/json-ext": ^0.5.0
-    "@webpack-cli/configtest": ^1.1.1
-    "@webpack-cli/info": ^1.4.1
-    "@webpack-cli/serve": ^1.6.1
+    "@webpack-cli/configtest": ^1.2.0
+    "@webpack-cli/info": ^1.5.0
+    "@webpack-cli/serve": ^1.7.0
     colorette: ^2.0.14
     commander: ^7.0.0
-    execa: ^5.0.0
+    cross-spawn: ^7.0.3
     fastest-levenshtein: ^1.0.12
     import-local: ^3.0.2
     interpret: ^2.2.0
@@ -29071,7 +29095,7 @@ __metadata:
       optional: true
   bin:
     webpack-cli: bin/cli.js
-  checksum: ffb4c5d53ab65ce9f1e8efd34fca4cb858ec6afc91ece0d9375094edff2e7615708c8a586991057fd9cc8d37aab0eb0511913b178daac534e51bcf7d3583e61c
+  checksum: 2ff5355ac348e6b40f2630a203b981728834dca96d6d621be96249764b2d0fc01dd54edfcc37f02214d02935de2cf0eefd6ce689d970d154ef493f01ba922390
   languageName: node
   linkType: hard
 

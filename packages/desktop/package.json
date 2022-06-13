@@ -17,7 +17,6 @@
     "build:remove-unpacked": "rimraf dist/{linux-*,mac,win-*}",
     "build": "echo BUILDING DESKTOP && yarn run webpack --config desktop.webpack.prod.js",
     "build:desktop:all": "yarn workspaces foreach -ptR run build",
-    "change-version": "node scripts/change-version.mjs",
     "clean:build": "rimraf app/dist/",
     "clean:tests": "rimraf test/data/tmp/",
     "dev": "NODE_ENV=development webpack --config desktop.webpack.dev.js --watch",

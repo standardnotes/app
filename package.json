@@ -17,7 +17,6 @@
     "clean": "lerna run clean",
     "build": "yarn workspaces foreach -pt run build",
     "build:icons": "yarn workspace @standardnotes/icons build",
-    "build:toast": "yarn workspace @standardnotes/toast build",
     "build:styles": "yarn workspace @standardnotes/styles build",
     "build:web": "yarn workspace @standardnotes/web build",
     "start:server:web": "lerna run start --scope=@standardnotes/web-server",

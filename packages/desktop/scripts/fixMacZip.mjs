@@ -4,12 +4,6 @@
  * https://snippets.cacher.io/snippet/354a3eb7b0dcbe711383
  */
 
-if (process.platform !== 'darwin') {
-  console.error(`this script (${__filename}) can only be run from a darwin platform.`)
-  process.exitCode = 1
-  return
-}
-
 const fs = require('fs')
 const childProcess = require('child_process')
 const yaml = require('js-yaml')
@@ -45,6 +39,7 @@ async function getBlockMapInfo(fileName) {
 
     process.chdir('dist/mac')
     const appName = process.argv.includes('--beta') ? 'Standard\\ Notes\\ \\(Beta\\).app' : 'Standard\\ Notes.app'
+
     /** @see https://superuser.com/questions/574032/what-is-the-equivalent-unix-command-to-a-mac-osx-compress-menu-action */
     await exec(`ditto -c -k --sequesterRsrc --keepParent ${appName} ../${zipName}`)
     process.chdir('../..')

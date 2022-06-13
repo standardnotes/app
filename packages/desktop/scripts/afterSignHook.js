@@ -6,7 +6,6 @@ const electronNotarize = require('electron-notarize')
 
 module.exports = async function (params) {
   const platformName = params.electronPlatformName
-  // Only notarize the app on macOS.
   if (platformName !== 'darwin') {
     return
   }
