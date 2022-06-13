@@ -166,7 +166,8 @@ jobs:
           name: "Desktop ${{ steps.package-version.outputs.current-version}}"
           files: packages/desktop/dist/*
       - name: Publish Snap
+        continue-on-error: true
         run: |
-          echo ${{ secrets.SNAPCRAFT_LOGIN_FILE }} >> snapauth.txt
+          echo "${{ secrets.SNAPCRAFT_LOGIN_FILE }}" >> snapauth.txt
           snapcraft login --with=snapauth.txt
           snapcraft upload dist/standard-notes-${{ steps.package-version.outputs.current-version}}-linux-amd64.snap
