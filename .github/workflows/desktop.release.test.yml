@@ -24,7 +24,6 @@ jobs:
       - name: Install Snap Deps
         run: |
           sudo snap install snapcraft --classic
-          sudo snap install lxd
           lxd init --auto
       - name: SnapArm64
         run: |
