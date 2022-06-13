@@ -1,13 +1,11 @@
 {
   "packages": {
-    ".": {
-      "releaseType": "node",
-      "draft": false,
-      "prerelease": false,
-      "bumpMinorPreMajor": false,
-      "bumpPatchForMinorPreMajor": false,
-      "changelogPath": "CHANGELOG.md",
-      "versioning": "default"
-    }
+    "packages/desktop": {},
+    "packages/web": {},
+    "packages/mobile": {},
+    "packages/components-meta": {},
+    "packages/icons": {},
+    "packages/toast": {},
+    "packages/styles": {}
   }
 }
