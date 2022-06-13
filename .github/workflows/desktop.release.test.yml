@@ -16,13 +16,15 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           registry-url: 'https://registry.npmjs.org'
-      - run: yarn install
-      - run: yarn build:web:all
 
       - name: Install Snap Deps
         run: |
           brew update
           brew install snapcraft
+
+      - run: yarn install
+      - run: yarn build:web:all
+
       - name: SnapArm64
         run: |
           yarn run webpack --config desktop.webpack.prod.js --env snap
