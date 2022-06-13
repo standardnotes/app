@@ -4837,7 +4837,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^5.20.0
     "@typescript-eslint/parser": ^5.20.0
     eslint: ^8.17.0
-    husky: ^8.0.1
+    husky: ^8.0.0
     lint-staged: ^13.0.1
     prettier: ^2.6.2
     release-please: ^13.18.3
@@ -15295,7 +15295,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"husky@npm:^8.0.1":
+"husky@npm:^8.0.0":
   version: 8.0.1
   resolution: "husky@npm:8.0.1"
   bin:
