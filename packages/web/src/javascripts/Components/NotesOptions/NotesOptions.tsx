@@ -174,6 +174,7 @@ const NotesOptions = ({
   navigationController,
   notesController,
   noteTagsController,
+  historyModalController,
   closeOnBlur,
 }: NotesOptionsProps) => {
   const [altKeyDown, setAltKeyDown] = useState(false)
@@ -259,8 +260,8 @@ const NotesOptions = ({
   }, [application, notes])
 
   const openRevisionHistoryModal = useCallback(() => {
-    notesController.setShowRevisionHistoryModal(true)
-  }, [notesController])
+    historyModalController.setShowRevisionHistoryModal(true)
+  }, [historyModalController])
 
   return (
     <>

@@ -20,6 +20,7 @@ import { SyncStatusController } from '../Controllers/SyncStatusController'
 import { NavigationController } from '../Controllers/Navigation/NavigationController'
 import { FilePreviewModalController } from '../Controllers/FilePreviewModalController'
 import { SelectedItemsController } from '../Controllers/SelectedItemsController'
+import { HistoryModalController } from '@/Controllers/HistoryModalController'
 
 export class ViewControllerManager {
   readonly enableUnfinishedFeatures: boolean = window?.enabledUnfinishedFeatures
@@ -45,6 +46,7 @@ export class ViewControllerManager {
   readonly syncStatusController = new SyncStatusController()
   readonly navigationController: NavigationController
   readonly selectionController: SelectedItemsController
+  readonly historyModalController: HistoryModalController
 
   public isSessionsModalVisible = false
 
@@ -100,6 +102,8 @@ export class ViewControllerManager {
       this.filePreviewModalController,
       this.eventBus,
     )
+
+    this.historyModalController = new HistoryModalController(this.application)
 
     this.addAppEventObserver()
 

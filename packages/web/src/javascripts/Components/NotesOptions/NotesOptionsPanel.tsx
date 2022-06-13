@@ -10,12 +10,14 @@ import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { NotesController } from '@/Controllers/NotesController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { NoteTagsController } from '@/Controllers/NoteTagsController'
+import { HistoryModalController } from '@/Controllers/HistoryModalController'
 
 type Props = {
   application: WebApplication
   navigationController: NavigationController
   notesController: NotesController
   noteTagsController: NoteTagsController
+  historyModalController: HistoryModalController
   onClickPreprocessing?: () => Promise<void>
 }
 
@@ -24,6 +26,7 @@ const NotesOptionsPanel = ({
   navigationController,
   notesController,
   noteTagsController,
+  historyModalController,
   onClickPreprocessing,
 }: Props) => {
   const [open, setOpen] = useState(false)
@@ -95,6 +98,7 @@ const NotesOptionsPanel = ({
             navigationController={navigationController}
             notesController={notesController}
             noteTagsController={noteTagsController}
+            historyModalController={historyModalController}
             closeOnBlur={closeOnBlur}
           />
         )}

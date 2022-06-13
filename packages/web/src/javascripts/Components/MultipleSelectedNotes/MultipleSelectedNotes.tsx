@@ -13,6 +13,7 @@ import { NavigationController } from '@/Controllers/Navigation/NavigationControl
 import { NotesController } from '@/Controllers/NotesController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import { NoteTagsController } from '@/Controllers/NoteTagsController'
+import { HistoryModalController } from '@/Controllers/HistoryModalController'
 
 type Props = {
   application: WebApplication
@@ -23,6 +24,7 @@ type Props = {
   notesController: NotesController
   noteTagsController: NoteTagsController
   selectionController: SelectedItemsController
+  historyModalController: HistoryModalController
 }
 
 const MultipleSelectedNotes = ({
@@ -34,6 +36,7 @@ const MultipleSelectedNotes = ({
   notesController,
   noteTagsController,
   selectionController,
+  historyModalController,
 }: Props) => {
   const count = notesController.selectedNotesCount
 
@@ -65,6 +68,7 @@ const MultipleSelectedNotes = ({
             navigationController={navigationController}
             notesController={notesController}
             noteTagsController={noteTagsController}
+            historyModalController={historyModalController}
           />
         </div>
       </div>

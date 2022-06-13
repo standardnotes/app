@@ -185,7 +185,11 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
           <Footer application={application} applicationGroup={mainApplicationGroup} />
           <SessionsModal application={application} viewControllerManager={viewControllerManager} />
           <PreferencesViewWrapper viewControllerManager={viewControllerManager} application={application} />
-          <RevisionHistoryModal application={application} viewControllerManager={viewControllerManager} />
+          <RevisionHistoryModal
+            application={application}
+            viewControllerManager={viewControllerManager}
+            historyModalController={viewControllerManager.historyModalController}
+          />
         </>
 
         {renderChallenges()}
@@ -196,6 +200,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
             navigationController={viewControllerManager.navigationController}
             notesController={viewControllerManager.notesController}
             noteTagsController={viewControllerManager.noteTagsController}
+            historyModalController={viewControllerManager.historyModalController}
           />
           <TagsContextMenuWrapper viewControllerManager={viewControllerManager} />
           <FileContextMenuWrapper

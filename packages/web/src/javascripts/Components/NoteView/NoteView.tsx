@@ -971,6 +971,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                     navigationController={this.viewControllerManager.navigationController}
                     notesController={this.viewControllerManager.notesController}
                     noteTagsController={this.viewControllerManager.noteTagsController}
+                    historyModalController={this.viewControllerManager.historyModalController}
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                   />
                 </div>

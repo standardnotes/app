@@ -1,7 +1,5 @@
 import { confirmDialog } from '@/Services/AlertService'
 import { STRING_RESTORE_LOCKED_ATTEMPT } from '@/Constants/Strings'
-import { WebApplication } from '@/Application/Application'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { getPlatformString } from '@/Utils'
 import { DialogContent, DialogOverlay } from '@reach/dialog'
 import {
@@ -19,11 +17,7 @@ import HistoryListContainer from './HistoryListContainer'
 import RevisionContentLocked from './RevisionContentLocked'
 import SelectedRevisionContent from './SelectedRevisionContent'
 import { LegacyHistoryEntry, RemoteRevisionListGroup, sortRevisionListIntoGroups } from './utils'
-
-export type RevisionHistoryModalProps = {
-  application: WebApplication
-  viewControllerManager: ViewControllerManager
-}
+import { RevisionHistoryModalProps } from './RevisionHistoryModalProps'
 
 const ABSOLUTE_CENTER_CLASSNAME = 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
 
@@ -53,12 +47,10 @@ const RevisionContentPlaceholder: FunctionComponent<RevisionContentPlaceholderPr
 )
 
 export const RevisionHistoryModalContent: FunctionComponent<RevisionHistoryModalProps> = observer(
-  ({ application, viewControllerManager }) => {
+  ({ application, viewControllerManager, historyModalController }) => {
     const closeButtonRef = useRef<HTMLButtonElement>(null)
 
-    const dismissModal = useCallback(() => {
-      viewControllerManager.notesController.setShowRevisionHistoryModal(false)
-    }, [viewControllerManager.notesController])
+    const { dismissModal } = historyModalController
 
     const note = viewControllerManager.notesController.firstSelectedNote
     const editorForCurrentNote = useMemo(() => {

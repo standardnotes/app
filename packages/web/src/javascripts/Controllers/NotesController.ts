@@ -22,7 +22,6 @@ export class NotesController extends AbstractViewController {
   contextMenuClickLocation: { x: number; y: number } = { x: 0, y: 0 }
   contextMenuMaxHeight: number | 'auto' = 'auto'
   showProtectedWarning = false
-  showRevisionHistoryModal = false
   private itemListController!: ItemListController
 
   override deinit() {
@@ -49,7 +48,6 @@ export class NotesController extends AbstractViewController {
       contextMenuOpen: observable,
       contextMenuPosition: observable,
       showProtectedWarning: observable,
-      showRevisionHistoryModal: observable,
 
       selectedNotes: computed,
       firstSelectedNote: computed,
@@ -61,7 +59,6 @@ export class NotesController extends AbstractViewController {
       setContextMenuPosition: action,
       setContextMenuMaxHeight: action,
       setShowProtectedWarning: action,
-      setShowRevisionHistoryModal: action,
       unselectNotes: action,
     })
   }
@@ -393,9 +390,5 @@ export class NotesController extends AbstractViewController {
 
   private getSelectedNotesList(): SNNote[] {
     return Object.values(this.selectedNotes)
-  }
-
-  setShowRevisionHistoryModal(show: boolean): void {
-    this.showRevisionHistoryModal = show
   }
 }
