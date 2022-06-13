@@ -1,10 +1,5 @@
 import React from 'react'
-import {
-  DragDropContext,
-  Draggable,
-  Droppable,
-  DropResult,
-} from 'react-beautiful-dnd'
+import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd'
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { tasksGroupReordered } from './tasks-slice'
@@ -32,16 +27,13 @@ const TaskGroupList: React.FC = () => {
       tasksGroupReordered({
         swapGroupIndex: source.index,
         withGroupIndex: destination.index,
-      })
+      }),
     )
   }
 
   return (
     <DragDropContext data-testid="task-group-list" onDragEnd={onDragEnd}>
-      <Droppable
-        droppableId={'droppable-task-group-list'}
-        isDropDisabled={!canEdit}
-      >
+      <Droppable droppableId={'droppable-task-group-list'} isDropDisabled={!canEdit}>
         {(provided) => (
           <div {...provided.droppableProps} ref={provided.innerRef}>
             {groupedTasks.map((group, index) => {
@@ -52,12 +44,8 @@ const TaskGroupList: React.FC = () => {
                   index={index}
                   isDragDisabled={!canEdit}
                 >
-                  {(
-                    { innerRef, draggableProps, dragHandleProps },
-                    { isDragging }
-                  ) => {
-                    const { onTransitionEnd, ...restDraggableProps } =
-                      draggableProps
+                  {({ innerRef, draggableProps, dragHandleProps }, { isDragging }) => {
+                    const { onTransitionEnd, ...restDraggableProps } = draggableProps
                     return (
                       <TaskGroup
                         key={`group-${group.name}`}

@@ -30,9 +30,7 @@ type CompletedTasksActionsProps = {
   groupName: string
 }
 
-const CompletedTasksActions: React.FC<CompletedTasksActionsProps> = ({
-  groupName,
-}) => {
+const CompletedTasksActions: React.FC<CompletedTasksActionsProps> = ({ groupName }) => {
   const dispatch = useAppDispatch()
 
   const canEdit = useAppSelector((state) => state.settings.canEdit)
@@ -46,16 +44,10 @@ const CompletedTasksActions: React.FC<CompletedTasksActionsProps> = ({
 
   return (
     <div data-testid="completed-tasks-actions">
-      <ActionButton
-        onClick={() => setShowReopenDialog(true)}
-        data-testid="reopen-completed-button"
-      >
+      <ActionButton onClick={() => setShowReopenDialog(true)} data-testid="reopen-completed-button">
         Reopen Completed
       </ActionButton>
-      <ActionButton
-        onClick={() => setShowDeleteDialog(true)}
-        data-testid="delete-completed-button"
-      >
+      <ActionButton onClick={() => setShowDeleteDialog(true)} data-testid="delete-completed-button">
         Delete Completed
       </ActionButton>
       {showReopenDialog && (
@@ -65,8 +57,7 @@ const CompletedTasksActions: React.FC<CompletedTasksActionsProps> = ({
           confirmButtonCb={() => dispatch(openAllCompleted({ groupName }))}
           cancelButtonCb={() => setShowReopenDialog(false)}
         >
-          Are you sure you want to reopen completed tasks in the '
-          <strong>{groupName}</strong>' group?
+          Are you sure you want to reopen completed tasks in the '<strong>{groupName}</strong>' group?
         </ConfirmDialog>
       )}
       {showDeleteDialog && (
@@ -76,8 +67,7 @@ const CompletedTasksActions: React.FC<CompletedTasksActionsProps> = ({
           confirmButtonCb={() => dispatch(deleteAllCompleted({ groupName }))}
           cancelButtonCb={() => setShowDeleteDialog(false)}
         >
-          Are you sure you want to delete completed tasks in the '
-          <strong>{groupName}</strong>' group?
+          Are you sure you want to delete completed tasks in the '<strong>{groupName}</strong>' group?
         </ConfirmDialog>
       )}
     </div>

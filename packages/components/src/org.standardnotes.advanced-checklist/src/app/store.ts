@@ -9,8 +9,7 @@ export const store = configureStore({
     tasks: tasksReducer,
     settings: settingsReducer,
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().prepend(listenerMiddleware),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().prepend(listenerMiddleware),
 })
 
 export type AppDispatch = typeof store.dispatch

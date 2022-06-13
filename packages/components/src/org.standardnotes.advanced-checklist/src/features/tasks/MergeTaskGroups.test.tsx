@@ -28,20 +28,12 @@ it('renders the alert dialog when no groups are available to merge', () => {
     },
   }
 
-  testRender(
-    <MergeTaskGroups groupName={defaultGroup} handleClose={handleClose} />,
-    {},
-    defaultState
-  )
+  testRender(<MergeTaskGroups groupName={defaultGroup} handleClose={handleClose} />, {}, defaultState)
 
   const alertDialog = screen.getByTestId('merge-task-group-dialog')
   expect(alertDialog).toBeInTheDocument()
-  expect(alertDialog).toHaveTextContent(
-    `There are no other groups to merge '${defaultGroup}' with.`
-  )
-  expect(alertDialog).not.toHaveTextContent(
-    `Select which group you want to merge '${defaultGroup}' into:`
-  )
+  expect(alertDialog).toHaveTextContent(`There are no other groups to merge '${defaultGroup}' with.`)
+  expect(alertDialog).not.toHaveTextContent(`Select which group you want to merge '${defaultGroup}' into:`)
 
   // There shouldn't be any radio buttons
   expect(screen.queryAllByRole('radio')).toHaveLength(0)
@@ -90,20 +82,12 @@ it('renders the alert dialog when there are groups available to merge', () => {
     },
   }
 
-  testRender(
-    <MergeTaskGroups groupName={defaultGroup} handleClose={handleClose} />,
-    {},
-    defaultState
-  )
+  testRender(<MergeTaskGroups groupName={defaultGroup} handleClose={handleClose} />, {}, defaultState)
 
   const alertDialog = screen.getByTestId('merge-task-group-dialog')
   expect(alertDialog).toBeInTheDocument()
-  expect(alertDialog).toHaveTextContent(
-    `Select which group you want to merge '${defaultGroup}' into:`
-  )
-  expect(alertDialog).not.toHaveTextContent(
-    `There are no other groups to merge '${defaultGroup}' with.`
-  )
+  expect(alertDialog).toHaveTextContent(`Select which group you want to merge '${defaultGroup}' into:`)
+  expect(alertDialog).not.toHaveTextContent(`There are no other groups to merge '${defaultGroup}' with.`)
 
   const radioButtons = screen.queryAllByRole('radio')
   expect(radioButtons).toHaveLength(2)
@@ -163,7 +147,7 @@ it('should close the dialog if no group is selected and the Merge button is clic
   const { mockStore } = testRender(
     <MergeTaskGroups groupName={defaultGroup} handleClose={handleClose} />,
     {},
-    defaultState
+    defaultState,
   )
 
   const buttons = screen.queryAllByRole('button')
@@ -225,7 +209,7 @@ it('should dispatch the action to merge groups', () => {
   const { mockStore } = testRender(
     <MergeTaskGroups groupName={defaultGroup} handleClose={handleClose} />,
     {},
-    defaultState
+    defaultState,
   )
 
   const radioButtons = screen.queryAllByRole('radio')
@@ -250,8 +234,6 @@ it('should dispatch the action to merge groups', () => {
 
   dispatchedActions = mockStore.getActions()
   expect(dispatchedActions).toHaveLength(1)
-  expect(dispatchedActions[0]).toMatchObject(
-    tasksGroupMerged({ groupName: defaultGroup, mergeWith: 'Testing' })
-  )
+  expect(dispatchedActions[0]).toMatchObject(tasksGroupMerged({ groupName: defaultGroup, mergeWith: 'Testing' }))
   expect(handleClose).toHaveBeenCalledTimes(1)
 })

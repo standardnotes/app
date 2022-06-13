@@ -15,8 +15,8 @@
   },
   "scripts": {
     "build:remove-unpacked": "rimraf dist/{linux-*,mac,win-*}",
-    "build": "yarn run webpack --config desktop.webpack.prod.js",
-    "change-version": "node scripts/change-version.mjs",
+    "build": "echo BUILDING DESKTOP && yarn run webpack --config desktop.webpack.prod.js",
+    "build:desktop:all": "yarn workspaces foreach -ptR run build",
     "clean:build": "rimraf app/dist/",
     "clean:tests": "rimraf test/data/tmp/",
     "dev": "NODE_ENV=development webpack --config desktop.webpack.dev.js --watch",
@@ -36,7 +36,7 @@
   "dependencies": {
     "@electron/remote": "^2.0.8",
     "@standardnotes/electron-clear-data": "1.1.1",
-    "@standardnotes/web": "^3.22.1",
+    "@standardnotes/web": "workspace:*",
     "axios": "^0.27.2",
     "compare-versions": "^4.1.3",
     "decrypt": "github:standardnotes/decrypt#master",
@@ -88,7 +88,7 @@
     "electronVersion": "17.4.2",
     "appId": "org.standardnotes.standardnotes",
     "artifactName": "${name}-${version}-${os}-${arch}.${ext}",
-    "afterSign": "scripts/afterSignHook.js",
+    "afterSign": "scripts/notarizeMac.js",
     "files": [
       "compiled/**/*",
       "dist/**/*",
@@ -113,11 +113,6 @@
         "dmg",
         "zip"
       ]
-    },
-    "win": {
-      "certificateSubjectName": "Standard Notes Ltd.",
-      "publisherName": "Standard Notes Ltd.",
-      "signDlls": true
     },
     "nsis": {
       "deleteAppDataOnUninstall": true

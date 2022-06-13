@@ -1,5 +1,6 @@
 {
   "name": "@standardnotes/app-monorepo",
+  "version": "0.0.1",
   "private": true,
   "author": "Standard Notes",
   "workspaces": {
@@ -11,24 +12,20 @@
     "node": ">=12.19.0 <17.0.0"
   },
   "scripts": {
-    "lint": "lerna run lint --parallel",
-    "test": "lerna run test --parallel",
+    "lint": "yarn workspaces foreach --parallel run lint",
+    "test": "yarn workspaces foreach --parallel run test",
     "clean": "lerna run clean",
-    "build": "lerna run build",
-    "build:icons": "lerna run build --scope=@standardnotes/icons",
-    "build:toast": "lerna run build --scope=@standardnotes/toast",
-    "build:styles": "lerna run build --scope=@standardnotes/styles",
-    "build:web": "lerna run build --scope=@standardnotes/web",
-    "build:web:front": "yarn build:icons && yarn build:toast && yarn build:styles && yarn build:web",
-    "build:web:back": "lerna run build --scope=@standardnotes/web-server",
-    "build:web:all": "yarn build:web:front && yarn build:web:back",
+    "build": "yarn workspaces foreach -pt run build",
+    "build:icons": "yarn workspace @standardnotes/icons build",
+    "build:styles": "yarn workspace @standardnotes/styles build",
+    "build:web": "yarn workspace @standardnotes/web build",
     "start:server:web": "lerna run start --scope=@standardnotes/web-server",
     "start:server:web:localhost": "lerna run start:no-binding --scope=@standardnotes/web-server",
     "prepare": "husky install",
-    "version-bump": "lerna version --loglevel=silly --conventional-commits --yes -m \"chore(release): publish\"",
+    "version-bump": "lerna version --no-push --loglevel=silly --conventional-commits --yes -m \"chore(release): publish\"",
     "publish-packages": "lerna publish from-git --yes",
     "reset": "find . -type dir -name node_modules | xargs rm -rf && rm -rf yarn.lock",
-    "version": "yarn install && git stage yarn.lock"
+    "version": "yarn install --no-immutable && git add yarn.lock"
   },
   "resolutions": {
     "@types/styled-components/@types/react": "17.0.2",
@@ -43,7 +40,6 @@
     "@typescript-eslint/parser": "^5.20.0",
     "eslint": "^8.17.0",
     "husky": "^7.0.4",
-    "lerna": "^5.1.1",
     "lint-staged": "^13.0.1",
     "prettier": "^2.6.2",
     "typescript": "^4.7.3",

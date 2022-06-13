@@ -17,10 +17,7 @@ type CircularProgressBarProps = {
   percentage: number
 }
 
-export const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
-  size,
-  percentage,
-}) => {
+export const CircularProgressBar: React.FC<CircularProgressBarProps> = ({ size, percentage }) => {
   const [progress, setProgress] = useState(0)
 
   useEffect(() => {
@@ -34,18 +31,8 @@ export const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
   const dash = (progress * circumference) / 100
 
   return (
-    <svg
-      height={size}
-      viewBox={viewBox}
-      width={size}
-      data-testid="circular-progress-bar"
-    >
-      <ProgressBarBackground
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        strokeWidth={strokeWidth}
-      />
+    <svg height={size} viewBox={viewBox} width={size} data-testid="circular-progress-bar">
+      <ProgressBarBackground cx={size / 2} cy={size / 2} r={radius} strokeWidth={strokeWidth} />
       <ProgressBarStroke
         cx={size / 2}
         cy={size / 2}

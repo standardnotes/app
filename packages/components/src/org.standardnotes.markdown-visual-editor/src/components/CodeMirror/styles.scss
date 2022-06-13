@@ -1,0 +1,55 @@
+.container {
+  .codemirror-container {
+    overflow-y: auto;
+    max-height: 100%;
+
+    .cm-theme-light {
+      .cm-editor {
+        background-color: var(--sn-stylekit-editor-background-color) !important;
+        color: var(--sn-stylekit-editor-foreground-color) !important;
+        font-family: var(--sn-stylekit-monospace-font);
+        -webkit-overflow-scrolling: touch;
+        font-size: calc(var(--sn-stylekit-font-size-editor) - 0.3rem);
+
+        @media only screen and (min-width: 768px) {
+          font-size: calc(var(--sn-stylekit-font-size-editor) - 0.1rem);
+        }
+
+        .cm-content {
+          caret-color: var(--sn-stylekit-editor-foreground-color) !important;
+        }
+
+        .cm-lineNumbers {
+          color: var(--sn-stylekit-neutral-color) !important;
+          opacity: 0.5;
+        }
+
+        .cm-cursor {
+          border-color: var(--sn-stylekit-info-color) !important;
+        }
+
+        .cm-gutters {
+          background-color: var(--sn-stylekit-background-color) !important;
+          color: var(--sn-stylekit-editor-foreground-color) !important;
+          border-color: var(--sn-stylekit-border-color) !important;
+        }
+
+        .ͼb {
+          color: var(--sn-stylekit-info-color) !important;
+        }
+
+        .cm-selectionBackground {
+          background: var(--sn-stylekit-info-color) !important;
+        }
+
+        .cm-activeLine {
+          background-color: var(--sn-stylekit-secondary-contrast-background-color) !important;
+        }
+
+        .cm-activeLineGutter {
+          background-color: var(--sn-stylekit-contrast-background-color) !important;
+        }
+      }
+    }
+  }
+}

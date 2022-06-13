@@ -229,9 +229,7 @@ describe('getPlainPreview', () => {
 
     expect(getPlainPreview(groupedTasks)).toBe('2/5 tasks completed')
     expect(getPlainPreview([])).toBe('0/0 tasks completed')
-    expect(getPlainPreview([{ name: 'Test', tasks: [] }])).toBe(
-      '0/0 tasks completed'
-    )
+    expect(getPlainPreview([{ name: 'Test', tasks: [] }])).toBe('0/0 tasks completed')
   })
 })
 

@@ -32,7 +32,7 @@ const actionsWithGroup = isAnyOf(
   tasksGroupAdded,
   tasksGroupDeleted,
   tasksGroupMerged,
-  tasksGroupCollapsed
+  tasksGroupCollapsed,
 )
 
 listenerMiddleware.startListening({

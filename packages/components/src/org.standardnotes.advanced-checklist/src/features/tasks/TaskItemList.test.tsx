@@ -52,9 +52,7 @@ it('renders the completed tasks container', () => {
 
   testRender(<TaskItemList group={groupWithCompletedTask} />)
 
-  const completedTasksContainer = screen.getByTestId(
-    'completed-tasks-container'
-  )
+  const completedTasksContainer = screen.getByTestId('completed-tasks-container')
 
   expect(completedTasksContainer).toBeInTheDocument()
   expect(completedTasksContainer).toHaveTextContent('completed tasks')

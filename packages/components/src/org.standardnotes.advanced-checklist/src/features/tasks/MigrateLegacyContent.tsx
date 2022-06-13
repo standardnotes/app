@@ -20,32 +20,21 @@ const MigrateLegacyContent: React.FC = () => {
   }
 
   return (
-    <AlertDialog
-      data-testid="migrate-legacy-content-dialog"
-      leastDestructiveRef={cancelRef}
-    >
+    <AlertDialog data-testid="migrate-legacy-content-dialog" leastDestructiveRef={cancelRef}>
       <div className="sk-modal-content">
         <div className="sn-component">
           <div className="sk-panel">
             <div className="sk-panel-content">
               <div className="sk-panel-section">
                 <AlertDialogLabel className="sk-h3 sk-panel-section-title">
-                  Are you sure you want to migrate legacy content to the new
-                  format?
+                  Are you sure you want to migrate legacy content to the new format?
                 </AlertDialogLabel>
 
                 <div className="flex my-1 mt-4">
-                  <button
-                    className="sn-button small neutral"
-                    onClick={handleCancel}
-                    ref={cancelRef}
-                  >
+                  <button className="sn-button small neutral" onClick={handleCancel} ref={cancelRef}>
                     Cancel
                   </button>
-                  <button
-                    className="sn-button small ml-2 info"
-                    onClick={handleMigrate}
-                  >
+                  <button className="sn-button small ml-2 info" onClick={handleMigrate}>
                     Migrate
                   </button>
                 </div>

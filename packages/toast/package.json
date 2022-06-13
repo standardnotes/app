@@ -2,27 +2,23 @@
   "name": "@standardnotes/toast",
   "version": "1.2.0",
   "private": true,
-  "main": "./dist/index.js",
+  "main": "./src/index.ts",
   "scripts": {
-    "build": "yarn tsc",
-    "clean": "rm -fr dist",
-    "prestart": "yarn clean",
     "start": "tsc -p tsconfig.json --watch",
     "tsc": "tsc --project tsconfig.json",
-    "prebuild": "yarn clean",
     "lint": "eslint ./src"
-  },
-  "peerDependencies": {
-    "react": "^18",
-    "react-dom": "^18"
   },
   "dependencies": {
     "@nanostores/react": "^0.2.0",
-    "@standardnotes/icons": "^1.4.0",
+    "@standardnotes/icons": "workspace:*",
     "nanoid": "^3.3.4",
-    "nanostores": "^0.5.12"
+    "nanostores": "^0.5.12",
+    "react": "link:../web/node_modules/react",
+    "react-dom": "link:../web/node_modules/react-dom"
   },
   "devDependencies": {
+    "@types/react": "link:../web/node_modules/@types/react",
+    "@types/react-dom": "link:../web/node_modules/@types/react-dom",
     "eslint": "*",
     "typescript": "*"
   }
