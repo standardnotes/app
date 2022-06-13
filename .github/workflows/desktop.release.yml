@@ -85,6 +85,7 @@ jobs:
 
       - name: Snap
         run: |
+          sudo snap install snapcraft --classic
           yarn run webpack --config desktop.webpack.prod.js --env snap
           yarn run electron-builder --linux --x64 -c.linux.target=snap --publish=never
       - name: SnapArm64
