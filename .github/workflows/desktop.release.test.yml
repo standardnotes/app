@@ -11,6 +11,8 @@ jobs:
         working-directory: packages/desktop
     steps:
       - uses: actions/checkout@v2
+      - name: Ruby Setup
+        uses: ruby/setup-ruby@v1
       - uses: actions/setup-node@v2
         with:
           registry-url: 'https://registry.npmjs.org'
@@ -19,7 +21,8 @@ jobs:
 
       - name: Install Snap Deps
         run: |
-          sudo snap install snapcraft --classic
+          brew update
+          brew install snapcraft
       - name: SnapArm64
         run: |
           yarn run webpack --config desktop.webpack.prod.js --env snap
