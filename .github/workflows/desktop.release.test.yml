@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  Windows:
-    runs-on: windows-latest
+  Linux:
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: packages/desktop
@@ -14,18 +14,29 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           registry-url: 'https://registry.npmjs.org'
-      - run: mkdir dist
-      - run: |
-          echo Foo >> dist/foo.exe
-          echo Foo >> dist/foo.exe.blockmap
-      - run: ls
-      - run: ls dist
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+      - name: Install FPM
+        run: sudo gem install fpm -f
+      - run: yarn install
+      - run: yarn build:web:all
+
+      - name: SnapArm64
+        run: |
+          sudo snap install snapcraft --classic
+          yarn run webpack --config desktop.webpack.prod.js --env snap
+          yarn run electron-builder --linux --arm64 -c.linux.target=snap --publish=never
+        env:
+          npm_config_target_arch: 'arm64'
 
       - name: Upload
         uses: actions/upload-artifact@v3.0.0
         with:
           name: assets
           path: |
+            packages/desktop/dist/*.snap
+            packages/desktop/dist/*.AppImage
+            packages/desktop/dist/*.deb
             packages/desktop/dist/*.blockmap
-            packages/desktop/dist/*.exe
-
+            packages/desktop/dist/*.yml
+            packages/desktop/dist/*.yaml
