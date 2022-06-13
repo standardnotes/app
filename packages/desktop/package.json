@@ -123,7 +123,9 @@
         "StartupWMClass": "standard notes"
       },
       "target": [
-        "AppImage"
+        "AppImage",
+        "snap",
+        "deb"
       ]
     },
     "snap": {
