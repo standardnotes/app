@@ -29,8 +29,7 @@
     "server-public": "http-server -p 3000 --cors",
     "server-root": "http-server ./ -p 3000 --cors",
     "server": "http-server ./build -p 3000 --cors",
-    "lint": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md",
-    "prepare": "husky install"
+    "lint": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md"
   },
   "eslintConfig": {
     "extends": [
@@ -113,7 +112,6 @@
     "@types/styled-components": "5.1.24",
     "@types/uuid": "8.3.4",
     "gh-pages": "3.2.3",
-    "husky": "7.0.0",
     "lint-staged": "12.3.5",
     "node-sass": "*",
     "prettier": "2.5.1",

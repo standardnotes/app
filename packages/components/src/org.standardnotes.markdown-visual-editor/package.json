@@ -18,8 +18,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md",
-    "prepare": "husky install"
+    "lint": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md"
   },
   "devDependencies": {
     "@codemirror/lang-markdown": "^0.19.6",
@@ -52,7 +51,6 @@
     "@types/react": "^17.0.40",
     "@types/react-dom": "^17.0.13",
     "@uiw/react-codemirror": "4.5.1",
-    "husky": "*",
     "katex": "^0.15.2",
     "lint-staged": "*",
     "marked": "^4.0.12",

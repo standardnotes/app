@@ -1,6 +1,10 @@
 name: Desktop Release
 
 on:
+  push:
+    branches: [ develop, main ]
+    paths:
+      - packages/desktop/**
   workflow_dispatch:
 
 jobs:
