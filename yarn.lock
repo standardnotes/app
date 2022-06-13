@@ -4698,7 +4698,6 @@ __metadata:
     lodash: ^4.17.21
     mime-types: ^2.1.35
     mobx: ^6.5.0
-    pre-push: ^0.1.2
     prettier: "*"
     proxyquire: ^2.1.3
     rimraf: ^3.0.2
@@ -9854,7 +9853,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"concat-stream@npm:^1.4.7, concat-stream@npm:^1.6.2":
+"concat-stream@npm:^1.6.2":
   version: 1.6.2
   resolution: "concat-stream@npm:1.6.2"
   dependencies:
@@ -19954,13 +19953,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"os-shim@npm:^0.1.2":
-  version: 0.1.3
-  resolution: "os-shim@npm:0.1.3"
-  checksum: 2172be6da7ec31b26d06556588779ae7e2f1a4d14df76820a06e38cedf3eb7fccdb151e928a4e2678da00630edd3c031fabea8c764e52dca9226e0aaf25c6869
-  languageName: node
-  linkType: hard
-
 "os-tmpdir@npm:^1.0.0":
   version: 1.0.2
   resolution: "os-tmpdir@npm:1.0.2"
@@ -21363,17 +21355,6 @@ __metadata:
     picocolors: ^1.0.0
     source-map-js: ^1.0.2
   checksum: fe58766ff32e4becf65a7d57678995cfd239df6deed2fe0557f038b47c94e4132e7e5f68b5aa820c13adfec32e523b693efaeb65798efb995ce49ccd83953816
-  languageName: node
-  linkType: hard
-
-"pre-push@npm:^0.1.2":
-  version: 0.1.2
-  resolution: "pre-push@npm:0.1.2"
-  dependencies:
-    cross-spawn: ^5.0.1
-    spawn-sync: ^1.0.15
-    which: 1.2.x
-  checksum: 646a30767fc3edf73bf06bac6d32275714c196ebcda9236c5890f4b9e401f63be5abbfd1e2ac4af80377ce6f0486e7acd580e3a499a3cd9f4abf129abdab63e0
   languageName: node
   linkType: hard
 
@@ -24678,16 +24659,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"spawn-sync@npm:^1.0.15":
-  version: 1.0.15
-  resolution: "spawn-sync@npm:1.0.15"
-  dependencies:
-    concat-stream: ^1.4.7
-    os-shim: ^0.1.2
-  checksum: a280ff895b2251ba7ea5ae3f12aa56e5775e15f17c4db75493dc39ac68dfa891a022a1643af120618f4669ae60a3d79967e5267ec4bc555605cf9f668d61ecc9
-  languageName: node
-  linkType: hard
-
 "spdx-correct@npm:^3.0.0":
   version: 3.1.1
   resolution: "spdx-correct@npm:3.1.1"
@@ -27224,17 +27195,6 @@ __metadata:
   version: 2.0.0
   resolution: "which-module@npm:2.0.0"
   checksum: 809f7fd3dfcb2cdbe0180b60d68100c88785084f8f9492b0998c051d7a8efe56784492609d3f09ac161635b78ea29219eb1418a98c15ce87d085bce905705c9c
-  languageName: node
-  linkType: hard
-
-"which@npm:1.2.x":
-  version: 1.2.14
-  resolution: "which@npm:1.2.14"
-  dependencies:
-    isexe: ^2.0.0
-  bin:
-    which: ./bin/which
-  checksum: f69f2b75ac72a09d9bbabc1c309bc5d0dc6c48710fd2719db3cb4eb0868ca556ec01f7944ff15cf6ef95c8977f1588d887c40060a9479b9efec28f8370c7ba30
   languageName: node
   linkType: hard
 
