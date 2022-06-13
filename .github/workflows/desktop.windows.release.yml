@@ -6,6 +6,10 @@ on:
 jobs:
   Windows:
     runs-on: self-hosted
+    env:
+      WINDOWS_TOKEN_ALIAS: ${{ secrets.WINDOWS_TOKEN_ALIAS }}
+      WINDOWS_TOKEN_PASSWORD: ${{ secrets.WINDOWS_TOKEN_PASSWORD }}
+
     defaults:
       run:
         working-directory: packages/desktop
