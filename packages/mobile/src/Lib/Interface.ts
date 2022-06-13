@@ -306,10 +306,10 @@ export class MobileDeviceInterface implements DeviceInterface {
       .catch(() => showAlert())
   }
 
-  async clearAllDataFromDevice(_workspaceIdentifiers: string[]): Promise<{ killsApplication: boolean }> {
+  async clearAllDataFromDevice(workspaceIdentifiers: string[]): Promise<{ killsApplication: boolean }> {
     await this.removeAllRawStorageValues()
 
-    for (const identifier of _workspaceIdentifiers) {
+    for (const identifier of workspaceIdentifiers) {
       await this.removeAllRawDatabasePayloads(identifier)
     }
 
