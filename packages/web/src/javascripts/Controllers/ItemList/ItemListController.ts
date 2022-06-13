@@ -363,24 +363,12 @@ export class ItemListController extends AbstractViewController implements Intern
 
     if (this.shouldSelectFirstItem(itemsReloadSource, activeItem)) {
       await this.selectFirstItem()
-
-      return
-    }
-
-    if (this.shouldCloseActiveItem(activeItem) && activeController) {
+    } else if (this.shouldCloseActiveItem(activeItem) && activeController) {
       this.closeItemController(activeController)
       this.selectNextItem()
-
-      return
-    }
-
-    if (this.shouldSelectNextItemOrCreateNewNote(activeItem)) {
+    } else if (this.shouldSelectNextItemOrCreateNewNote(activeItem)) {
       await this.selectNextItemOrCreateNewNote()
-
-      return
-    }
-
-    if (this.shouldSelectActiveItem(activeItem) && activeItem) {
+    } else if (this.shouldSelectActiveItem(activeItem) && activeItem) {
       await this.selectionController.selectItem(activeItem.uuid).catch(console.error)
     }
   }
