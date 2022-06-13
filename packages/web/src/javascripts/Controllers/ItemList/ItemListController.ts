@@ -355,11 +355,12 @@ export class ItemListController extends AbstractViewController implements Intern
 
   private async recomputeSelectionAfterItemsReload(itemsReloadSource: ItemsReloadSource) {
     const activeController = this.getActiveItemController()
-    const activeItem = activeController?.item
 
     if (this.shouldLeaveSelectionUnchanged(activeController)) {
       return
     }
+
+    const activeItem = activeController?.item
 
     if (this.shouldSelectFirstItem(itemsReloadSource, activeItem)) {
       await this.selectFirstItem()
