@@ -8,6 +8,9 @@ jobs:
     if: contains(github.event.head_commit.message, 'chore(release)') == false
 
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/components
     steps:
       - uses: actions/checkout@v2
         with:
@@ -31,4 +34,8 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           git_user_signingkey: true
           git_commit_gpgsign: true
-      - run: yarn version-bump
+      - run: |
+        node scripts/package-components.mjs
+        git add dist
+        git commit -m 'chore(release): components'
+        git push -u origin HEAD
