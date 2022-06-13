@@ -235,7 +235,7 @@ export class ItemListController extends AbstractViewController implements Intern
       return
     }
 
-    await this.application.itemControllerGroup.createItemController({ uuid })
+    await this.application.itemControllerGroup.createItemController(note)
 
     this.noteTagsController.reloadTagsForCurrentNote()
 
@@ -458,7 +458,6 @@ export class ItemListController extends AbstractViewController implements Intern
     const activeRegularTagUuid = selectedTag instanceof SNTag ? selectedTag.uuid : undefined
 
     await this.application.itemControllerGroup.createItemController({
-      uuid: undefined,
       title,
       tag: activeRegularTagUuid,
     })
