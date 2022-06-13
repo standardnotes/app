@@ -6,6 +6,11 @@ on:
 jobs:
   Mac:
     runs-on: macos-latest
+    env:
+      CSC_LINK: ${{ secrets.MAC_CI_KEYS }}
+      CSC_KEY_PASSWORD: ${{ secrets.MAC_CI_KEYS_PASSWORD }}
+      NOTARIZE_APPLE_ID: ${{ secrets.NOTARIZE_APPLE_ID }}
+      NOTARIZE_APPLE_ID_PASSWORD: ${{ secrets.NOTARIZE_APPLE_ID_PASSWORD }}
     defaults:
       run:
         working-directory: packages/desktop
