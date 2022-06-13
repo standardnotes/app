@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@nanostores/react": "^0.2.0",
-    "@standardnotes/icons": "^1.4.0",
+    "@standardnotes/icons": "workspace:*",
     "nanoid": "^3.3.4",
     "nanostores": "^0.5.12",
     "react": "link:../web/node_modules/react",
