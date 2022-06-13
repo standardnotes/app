@@ -15,13 +15,14 @@ jobs:
         with:
           registry-url: 'https://registry.npmjs.org'
       - run: yarn install
+      - run: yarn build:web:all
 
       - name: Install Snap Deps
         run: |
           sudo snap install snapcraft --classic
-          sudo lxd init --auto
       - name: SnapArm64
         run: |
+          yarn run webpack --config desktop.webpack.prod.js --env snap
           yarn run electron-builder --linux --arm64 -c.linux.target=snap --publish=never
         env:
           npm_config_target_arch: 'arm64'
