@@ -6,6 +6,8 @@ on:
 jobs:
   Linux:
     runs-on: ubuntu-18.04
+    env:
+      SNAPCRAFT_BUILD_ENVIRONMENT: host
     defaults:
       run:
         working-directory: packages/desktop
@@ -23,9 +25,7 @@ jobs:
       - name: SnapArm64
         run: |
           yarn run webpack --config desktop.webpack.prod.js --env snap
-          yarn run electron-builder --linux --arm64 -c.linux.target=snap --publish=never
-        env:
-          SNAPCRAFT_BUILD_ENVIRONMENT: 'host'
+          yarn run electron-builder --linux snap --arm64 --publish=never
 
       - name: Upload
         uses: actions/upload-artifact@v3.0.0
