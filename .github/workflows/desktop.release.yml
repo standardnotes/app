@@ -45,6 +45,10 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           registry-url: 'https://registry.npmjs.org'
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+      - name: Install FPM
+        run: sudo gem install fpm -f
       - run: yarn install
       - run: yarn build:web:all
       - name: Compile for AppImage
