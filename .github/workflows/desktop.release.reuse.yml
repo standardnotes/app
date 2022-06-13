@@ -1,4 +1,4 @@
-name: Desktop Release
+name: Desktop Reusable Release Workflow
 
 on:
   workflow_call:
@@ -141,6 +141,7 @@ jobs:
 
   Publish:
     runs-on: ubuntu-latest
+    if: ${{ always() }}
     needs: [Windows, Mac, Linux]
     defaults:
       run:
