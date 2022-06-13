@@ -20,7 +20,7 @@ import RevisionContentLocked from './RevisionContentLocked'
 import SelectedRevisionContent from './SelectedRevisionContent'
 import { LegacyHistoryEntry, RemoteRevisionListGroup, sortRevisionListIntoGroups } from './utils'
 
-type RevisionHistoryModalProps = {
+export type RevisionHistoryModalProps = {
   application: WebApplication
   viewControllerManager: ViewControllerManager
 }
@@ -52,7 +52,7 @@ const RevisionContentPlaceholder: FunctionComponent<RevisionContentPlaceholderPr
   </div>
 )
 
-export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = observer(
+export const RevisionHistoryModalContent: FunctionComponent<RevisionHistoryModalProps> = observer(
   ({ application, viewControllerManager }) => {
     const closeButtonRef = useRef<HTMLButtonElement>(null)
 
@@ -299,17 +299,4 @@ export const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> 
   },
 )
 
-RevisionHistoryModal.displayName = 'RevisionHistoryModal'
-
-const RevisionHistoryModalWrapper: FunctionComponent<RevisionHistoryModalProps> = ({
-  application,
-  viewControllerManager,
-}) => {
-  if (!viewControllerManager.notesController.showRevisionHistoryModal) {
-    return null
-  }
-
-  return <RevisionHistoryModal application={application} viewControllerManager={viewControllerManager} />
-}
-
-export default observer(RevisionHistoryModalWrapper)
+RevisionHistoryModalContent.displayName = 'RevisionHistoryModal'
