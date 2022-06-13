@@ -8,7 +8,7 @@
     ]
   },
   "scripts": {
-    "build": "yarn workspaces foreach --parallel run build",
+    "build": "echo BUILDING COMPONENTS && yarn workspaces foreach --parallel run build",
     "lint": "yarn workspaces foreach --parallel run lint",
     "version": "node scripts/package-components.mjs && git add dist && git commit -m 'chore(release): components'"
   },

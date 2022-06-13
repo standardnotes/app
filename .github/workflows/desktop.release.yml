@@ -16,7 +16,7 @@ jobs:
         with:
           registry-url: 'https://registry.npmjs.org'
       - run: yarn install
-      - run: yarn build:web:front
+      - run: yarn build:web:all
       - name: Compile Mac
         run: yarn run webpack --config desktop.webpack.prod.js
       - name: MacX64
@@ -48,7 +48,7 @@ jobs:
         with:
           registry-url: 'https://registry.npmjs.org'
       - run: yarn install
-      - run: yarn build:web:front
+      - run: yarn build:web:all
       - name: Compile for AppImage
         run: yarn run webpack --config desktop.webpack.prod.js
       - name: AppImage
@@ -116,7 +116,7 @@ jobs:
         with:
           registry-url: 'https://registry.npmjs.org'
       - run: yarn install
-      - run: yarn build:web:front
+      - run: yarn build:web:all
       - run: yarn run webpack --config desktop.webpack.prod.js
       - run: yarn run electron-builder --windows --x64 --ia32 --publish=never
 

@@ -7,7 +7,7 @@
   "scripts": {
     "start": "webpack-dev-server --config webpack.config.js",
     "watch": "webpack -w --config webpack.config.js",
-    "build": "webpack --config webpack.config.js && yarn run tsc",
+    "build": "echo BUILDING ICONS && webpack --config webpack.config.js && yarn run tsc",
     "tsc": "tsc --project ./tsconfig.json"
   },
   "devDependencies": {
