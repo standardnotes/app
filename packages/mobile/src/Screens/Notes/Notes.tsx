@@ -344,7 +344,7 @@ export const Notes = React.memo(
           reloadNotesDisplayOptions()
         }
 
-        const newNotes = application.items.getDisplayableNotes()
+        const newNotes = application.items.getDisplayableNotes() // TODO: returns notes from all workspaces when in Main workspace
         const renderedNotes: SNNote[] = newNotes
 
         setNotes(renderedNotes)

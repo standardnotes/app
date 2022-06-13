@@ -14,13 +14,15 @@ import {
   SCREEN_INPUT_MODAL_FILE_NAME,
   SCREEN_INPUT_MODAL_PASSCODE,
   SCREEN_INPUT_MODAL_TAG,
+  SCREEN_INPUT_MODAL_WORKSPACE_NAME,
   SCREEN_MANAGE_SESSIONS,
   SCREEN_SETTINGS,
   SCREEN_UPLOADED_FILES_LIST,
 } from '@Root/Screens/screens'
 import { Settings } from '@Root/Screens/Settings/Settings'
 import { UploadedFilesList } from '@Root/Screens/UploadedFilesList/UploadedFilesList'
-import { Challenge, DeinitMode, DeinitSource, FileItem, SNNote } from '@standardnotes/snjs'
+import { WorkspaceInputModal } from '@Screens/InputModal/WorkspaceInputModal'
+import { ApplicationDescriptor, Challenge, DeinitMode, DeinitSource, FileItem, SNNote } from '@standardnotes/snjs'
 import { ICON_CHECKMARK, ICON_CLOSE } from '@Style/Icons'
 import { ThemeService } from '@Style/ThemeService'
 import React, { memo, useContext } from 'react'
@@ -47,6 +49,10 @@ export type ModalStackNavigatorParamList = {
   }
   [SCREEN_UPLOADED_FILES_LIST]: HeaderTitleParams & {
     note: SNNote
+  }
+  [SCREEN_INPUT_MODAL_WORKSPACE_NAME]: HeaderTitleParams & {
+    descriptor: ApplicationDescriptor
+    renameWorkspace: (descriptor: ApplicationDescriptor, workspaceName: string) => Promise<void>
   }
   [SCREEN_INPUT_MODAL_PASSCODE]: undefined
   [SCREEN_AUTHENTICATE]: {
@@ -274,6 +280,28 @@ export const MainStackComponent = ({ env }: { env: TEnvironment }) => {
           }),
         })}
         component={BlockingModal}
+      />
+      <MainStack.Screen
+        name={SCREEN_INPUT_MODAL_WORKSPACE_NAME}
+        options={({ route }) => ({
+          title: 'Workspace',
+          gestureEnabled: false,
+          headerTitle: ({ children }) => {
+            return <HeaderTitleView title={route.params?.title ?? (children || '')} />
+          },
+          headerLeft: ({ disabled, onPress }) => (
+            <HeaderButtons HeaderButtonComponent={IoniconsHeaderButton}>
+              <Item
+                testID="headerButton"
+                disabled={disabled}
+                title={Platform.OS === 'ios' ? 'Cancel' : ''}
+                iconName={Platform.OS === 'ios' ? undefined : ThemeService.nameForIcon(ICON_CLOSE)}
+                onPress={onPress}
+              />
+            </HeaderButtons>
+          ),
+        })}
+        component={WorkspaceInputModal}
       />
     </MainStack.Navigator>
   )

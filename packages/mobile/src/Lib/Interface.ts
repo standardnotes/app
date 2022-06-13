@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-community/async-storage'
+import SNReactNative from '@standardnotes/react-native-utils'
 import {
   ApplicationIdentifier,
   DeviceInterface,
@@ -80,7 +81,7 @@ export class MobileDeviceInterface implements DeviceInterface {
   private async getAllDatabaseKeys(identifier: ApplicationIdentifier) {
     const keys = await AsyncStorage.getAllKeys()
     const filtered = keys.filter(key => {
-      return key.includes(this.getDatabaseKeyPrefix(identifier))
+      return key.startsWith(this.getDatabaseKeyPrefix(identifier))
     })
     return filtered
   }
@@ -306,15 +307,20 @@ export class MobileDeviceInterface implements DeviceInterface {
   }
 
   async clearAllDataFromDevice(_workspaceIdentifiers: string[]): Promise<{ killsApplication: boolean }> {
-    await this.clearRawKeychainValue()
-
     await this.removeAllRawStorageValues()
+
+    for (const identifier of _workspaceIdentifiers) {
+      await this.removeAllRawDatabasePayloads(identifier)
+    }
+
+    await this.clearRawKeychainValue()
 
     return { killsApplication: false }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  performSoftReset() {}
+  performSoftReset() {
+    SNReactNative.exitApp()
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   performHardReset() {}

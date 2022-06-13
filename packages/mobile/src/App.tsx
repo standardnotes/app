@@ -4,6 +4,7 @@ import { MobileApplication } from '@Lib/Application'
 import { ApplicationGroup } from '@Lib/ApplicationGroup'
 import { navigationRef } from '@Lib/NavigationService'
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native'
+import { ApplicationGroupContext } from '@Root/ApplicationGroupContext'
 import { MobileThemeVariables } from '@Root/Style/Themes/styled-components'
 import { ApplicationGroupEvent, DeinitMode, DeinitSource } from '@standardnotes/snjs'
 import { ThemeService, ThemeServiceContext } from '@Style/ThemeService'
@@ -145,15 +146,17 @@ export const App = (props: { env: TEnvironment }) => {
       }
     })
     return removeAppChangeObserver
-  }, [appGroup, appGroup.primaryApplication, setAppGroup, createNewAppGroup])
+  }, [appGroup, appGroup.primaryApplication, createNewAppGroup])
 
   if (!application) {
     return null
   }
 
   return (
-    <ApplicationContext.Provider value={application}>
-      <AppComponent env={props.env} key={application.Uuid} application={application} />
-    </ApplicationContext.Provider>
+    <ApplicationGroupContext.Provider value={appGroup}>
+      <ApplicationContext.Provider value={application}>
+        <AppComponent env={props.env} key={application.Uuid} application={application} />
+      </ApplicationContext.Provider>
+    </ApplicationGroupContext.Provider>
   )
 }
