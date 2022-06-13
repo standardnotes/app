@@ -256,7 +256,7 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
     }
 
     try {
-      await application.user.signOut() // TODO: do I need to call `SNReactNative.exitApp()` here as well?
+      await application.user.signOut()
     } catch (error) {
       console.error(error)
     }
@@ -269,7 +269,6 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
         return
       }
 
-      // await application.getInstallationService().customWipeData()
       await appGroup.unloadCurrentAndActivateDescriptor(descriptor)
       // TODO: find a way to check if there are memory leaks *without* the below call.
       SNReactNative.exitApp()
@@ -335,8 +334,7 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
     if (!confirmed) {
       return
     }
-    // await application.getInstallationService().wipeData()
-    // await application.getInstallationService().customWipeData()
+
     await appGroup.unloadCurrentAndCreateNewDescriptor()
     SNReactNative.exitApp()
   }, [AddAnother, appGroup, getWorkspaceActionConfirmation])
