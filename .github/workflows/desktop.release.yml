@@ -99,6 +99,7 @@ jobs:
           yarn run electron-builder --linux --arm64 -c.linux.target=snap --publish=never
         env:
           npm_config_target_arch: 'arm64'
+          SNAPCRAFT_BUILD_ENVIRONMENT: 'host'
 
       - name: Upload
         uses: actions/upload-artifact@v3.0.0

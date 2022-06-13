@@ -21,11 +21,18 @@ jobs:
       - run: yarn install
       - run: yarn build:web:all
 
-      - name: SnapArm64
+      - name: Install Snap Deps
         run: |
           sudo snap install snapcraft --classic
+          sudo snap install lxd
+          lxd init --auto
+      - name: SnapArm64
+        run: |
           yarn run webpack --config desktop.webpack.prod.js --env snap
           yarn run electron-builder --linux --arm64 -c.linux.target=snap --publish=never
+        env:
+          npm_config_target_arch: 'arm64'
+          SNAPCRAFT_BUILD_ENVIRONMENT: 'lxd'
 
       - name: Upload
         uses: actions/upload-artifact@v3.0.0
