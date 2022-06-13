@@ -318,47 +318,69 @@ export class ItemListController extends AbstractViewController implements Intern
     this.reloadPanelTitle()
   }
 
+  private shouldLeaveSelectionUnchanged = (activeController: NoteViewController | FileViewController | undefined) => {
+    const hasMultipleItemsSelected = this.selectionController.selectedItemsCount >= 2
+
+    return (
+      hasMultipleItemsSelected || (activeController instanceof NoteViewController && activeController.isTemplateNote)
+    )
+  }
+
+  private shouldSelectFirstItem = (itemsReloadSource: ItemsReloadSource, activeItem: SNNote | FileItem | undefined) => {
+    return itemsReloadSource === ItemsReloadSource.TagChange || !activeItem
+  }
+
+  private shouldCloseActiveItem = (activeItem: SNNote | FileItem | undefined) => {
+    const isSearching = this.noteFilterText.length > 0
+    const itemExistsInUpdatedResults = this.items.find((item) => item.uuid === activeItem?.uuid)
+
+    return !itemExistsInUpdatedResults && !isSearching && this.navigationController.isInAnySystemView()
+  }
+
+  private shouldSelectNextItemOrCreateNewNote = (activeItem: SNNote | FileItem | undefined) => {
+    const shouldShowTrashedNotes =
+      this.navigationController.isInSystemView(SystemViewId.TrashedNotes) || this.searchOptionsController.includeTrashed
+
+    const shouldShowArchivedNotes =
+      this.navigationController.isInSystemView(SystemViewId.ArchivedNotes) ||
+      this.searchOptionsController.includeArchived ||
+      this.application.getPreference(PrefKey.NotesShowArchived, false)
+
+    return (activeItem?.trashed && !shouldShowTrashedNotes) || (activeItem?.archived && !shouldShowArchivedNotes)
+  }
+
+  private shouldSelectActiveItem = (activeItem: SNNote | FileItem | undefined) => {
+    return activeItem && !this.selectionController.selectedItems[activeItem.uuid]
+  }
+
   private async recomputeSelectionAfterItemsReload(itemsReloadSource: ItemsReloadSource) {
     const activeController = this.getActiveItemController()
     const activeItem = activeController?.item
-    const isSearching = this.noteFilterText.length > 0
-    const hasMultipleItemsSelected = this.selectionController.selectedItemsCount >= 2
 
-    if (
-      hasMultipleItemsSelected ||
-      (activeController instanceof NoteViewController && activeController.isTemplateNote)
-    ) {
+    if (this.shouldLeaveSelectionUnchanged(activeController)) {
       return
     }
 
-    if (itemsReloadSource === ItemsReloadSource.TagChange || !activeItem) {
+    if (this.shouldSelectFirstItem(itemsReloadSource, activeItem)) {
       await this.selectFirstItem()
 
       return
     }
 
-    const itemExistsInUpdatedResults = this.items.find((item) => item.uuid === activeItem.uuid)
-    const shouldCloseActiveItem =
-      !itemExistsInUpdatedResults && !isSearching && this.navigationController.isInAnySystemView()
-
-    if (shouldCloseActiveItem) {
+    if (this.shouldCloseActiveItem(activeItem) && activeController) {
       this.closeItemController(activeController)
       this.selectNextItem()
 
       return
     }
 
-    const showTrashedNotes =
-      this.navigationController.isInSystemView(SystemViewId.TrashedNotes) || this.searchOptionsController.includeTrashed
-
-    const showArchivedNotes =
-      this.navigationController.isInSystemView(SystemViewId.ArchivedNotes) ||
-      this.searchOptionsController.includeArchived ||
-      this.application.getPreference(PrefKey.NotesShowArchived, false)
-
-    if ((activeItem.trashed && !showTrashedNotes) || (activeItem.archived && !showArchivedNotes)) {
+    if (this.shouldSelectNextItemOrCreateNewNote(activeItem)) {
       await this.selectNextItemOrCreateNewNote()
-    } else if (!this.selectionController.selectedItems[activeItem.uuid]) {
+
+      return
+    }
+
+    if (this.shouldSelectActiveItem(activeItem) && activeItem) {
       await this.selectionController.selectItem(activeItem.uuid).catch(console.error)
     }
   }
