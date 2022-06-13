@@ -110,6 +110,11 @@
         "zip"
       ]
     },
+    "win": {
+      "certificateSubjectName": "Standard Notes Ltd.",
+      "publisherName": "Standard Notes Ltd.",
+      "signDlls": true
+    },
     "nsis": {
       "deleteAppDataOnUninstall": true
     },
