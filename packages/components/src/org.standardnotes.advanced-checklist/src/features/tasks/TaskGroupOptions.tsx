@@ -1,11 +1,11 @@
-import { useState } from 'react'
-import { Menu, MenuList, MenuButton, MenuItem } from '@reach/menu-button'
+import { Menu, MenuButton, MenuItem, MenuList } from '@reach/menu-button'
 import VisuallyHidden from '@reach/visually-hidden'
+import { useState } from 'react'
 
 import { useAppDispatch } from '../../app/hooks'
 import { tasksGroupDeleted } from './tasks-slice'
 
-import { MoreIcon, MergeIcon, TrashIcon, RenameIcon } from '../../common/components/icons'
+import { MergeIcon, MoreIcon, RenameIcon, TrashIcon } from '../../common/components/icons'
 
 import { ConfirmDialog } from '../../common/components'
 

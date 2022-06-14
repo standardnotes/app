@@ -2,8 +2,8 @@ import { fireEvent, screen } from '@testing-library/react'
 import { RootState } from '../../app/store'
 
 import { testRender } from '../../testUtils'
-import { tasksGroupAdded } from './tasks-slice'
 import CreateGroup from './CreateGroup'
+import { tasksGroupAdded } from './tasks-slice'
 
 const defaultTasksState = {
   tasks: {

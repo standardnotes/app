@@ -1,6 +1,6 @@
 import { ChangeEvent, createRef, KeyboardEvent, useState } from 'react'
-import { v4 as uuidv4 } from 'uuid'
 import styled from 'styled-components'
+import { v4 as uuidv4 } from 'uuid'
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { GroupPayload, taskAdded, tasksGroupDraft } from './tasks-slice'

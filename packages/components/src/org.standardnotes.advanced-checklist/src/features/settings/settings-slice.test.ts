@@ -1,5 +1,5 @@
-import reducer, { setCanEdit, setIsRunningOnMobile, setSpellCheckerEnabled } from './settings-slice'
 import type { SettingsState } from './settings-slice'
+import reducer, { setCanEdit, setIsRunningOnMobile, setSpellCheckerEnabled } from './settings-slice'
 
 it('should return the initial state', () => {
   return expect(
