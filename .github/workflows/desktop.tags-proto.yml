@@ -1,4 +1,4 @@
-name: Desktop Beta Release
+name: Desktop Tags Matching Release
 
 on:
   push:
