@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.22.3-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.22.2...@standardnotes/web@3.22.3-alpha.0) (2022-06-14)
+
+**Note:** Version bump only for package @standardnotes/web
+
 ## [3.22.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.22.1...@standardnotes/web@3.22.2) (2022-06-14)
 
 ### Reverts
