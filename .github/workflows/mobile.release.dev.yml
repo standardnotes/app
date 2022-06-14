@@ -1,7 +1,7 @@
 name: Mobile Build Development
 
 on:
-  push:
+  create:
     tags:
       - '**standardnotes/mobile+(*alpha*|*beta*)'
   workflow_dispatch:

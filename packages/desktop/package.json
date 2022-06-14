@@ -3,7 +3,6 @@
   "main": "./app/dist/index.js",
   "version": "3.22.3-alpha.7",
   "license": "AGPL-3.0-or-later",
-  "author": "Standard Notes",
   "private": true,
   "repository": {
     "type": "git",

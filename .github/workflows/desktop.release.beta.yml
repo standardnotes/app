@@ -1,7 +1,7 @@
 name: Desktop Beta Release
 
 on:
-  push:
+  create:
     tags:
       - '**standardnotes/desktop+(*alpha*|*beta*)'
   workflow_dispatch:

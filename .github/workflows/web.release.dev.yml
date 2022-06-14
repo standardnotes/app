@@ -1,11 +1,11 @@
-name: Web Dev
+name: Web Server Dev
 
 concurrency:
   group: dev_environment
   cancel-in-progress: true
 
 on:
-  push:
+  create:
     tags:
       - '**standardnotes/web-server+(*alpha*|*beta*)'
   workflow_dispatch:

@@ -1,11 +1,11 @@
-name: Web Prod
+name: Web Server Prod
 
 concurrency:
   group: prod_environment
   cancel-in-progress: true
 
 on:
-  push:
+  create:
     tags:
       - '**standardnotes/web-server!(*alpha*|*beta*)'
 

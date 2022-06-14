@@ -1,4 +1,4 @@
-name: Web Beta
+name: Web Server Beta
 
 on:
   push:
