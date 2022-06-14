@@ -22,8 +22,7 @@
     "start:server:web:localhost": "lerna run start:no-binding --scope=@standardnotes/web-server",
     "prepare": "husky install",
     "reset": "find . -type dir -name node_modules | xargs rm -rf && rm -rf yarn.lock",
-    "release": "yarn workspaces foreach run release",
-    "version-bump": "lerna version --conventional-commits --yes -m \"chore(release): publish\""
+    "release": "lerna version --conventional-commits --yes -m \"chore(release): publish\""
   },
   "resolutions": {
     "@types/styled-components/@types/react": "17.0.2",

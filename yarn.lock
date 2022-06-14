@@ -4950,9 +4950,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/components-meta@workspace:*, @standardnotes/components-meta@workspace:packages/components":
+"@standardnotes/components@npm:1.9.1, @standardnotes/components@npm:^1.9.1":
+  version: 1.9.1
+  resolution: "@standardnotes/components@npm:1.9.1"
+  checksum: 32c2dbb0295086f6ef77092c4a316f3af077c400598520240ae00c51d752ad59e45bc082013e1a070662b17882487c054c8f2f491179c41de5cbd5b90797b16f
+  languageName: node
+  linkType: hard
+
+"@standardnotes/components@workspace:*, @standardnotes/components@workspace:packages/components":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/components-meta@workspace:packages/components"
+  resolution: "@standardnotes/components@workspace:packages/components"
   dependencies:
     "@standardnotes/deterministic-zip": ^1.2.0
     "@standardnotes/features": ^1.45.1
@@ -4963,13 +4970,6 @@ __metadata:
     webpack-remove-empty-scripts: ^0.8.0
   languageName: unknown
   linkType: soft
-
-"@standardnotes/components@npm:1.9.1, @standardnotes/components@npm:^1.9.1":
-  version: 1.9.1
-  resolution: "@standardnotes/components@npm:1.9.1"
-  checksum: 32c2dbb0295086f6ef77092c4a316f3af077c400598520240ae00c51d752ad59e45bc082013e1a070662b17882487c054c8f2f491179c41de5cbd5b90797b16f
-  languageName: node
-  linkType: hard
 
 "@standardnotes/config@npm:^2.4.3":
   version: 2.4.3
@@ -5586,7 +5586,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/web-server@workspace:packages/web-server"
   dependencies:
-    "@standardnotes/components-meta": "workspace:*"
+    "@standardnotes/components": "workspace:*"
     "@standardnotes/web": "workspace:*"
   languageName: unknown
   linkType: soft
