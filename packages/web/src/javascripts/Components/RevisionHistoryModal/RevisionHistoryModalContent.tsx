@@ -1,8 +1,8 @@
 import { getPlatformString } from '@/Utils'
 import { DialogContent, DialogOverlay } from '@reach/dialog'
-import { ButtonType, ContentType, HistoryEntry, RevisionListEntry, SNNote } from '@standardnotes/snjs'
+import { ContentType, HistoryEntry, SNNote } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { FunctionComponent, useEffect, useMemo, useRef, useState } from 'react'
 import HistoryListContainer from './HistoryListContainer'
 import RevisionContentLocked from './RevisionContentLocked'
 import SelectedRevisionContent from './SelectedRevisionContent'
@@ -56,8 +56,6 @@ const RevisionHistoryModalContent: FunctionComponent<RevisionHistoryModalProps> 
   }, [application, note])
 
   const [isFetchingSelectedRevision, setIsFetchingSelectedRevision] = useState(false)
-  const [selectedRemoteEntry, setSelectedRemoteEntry] = useState<RevisionListEntry>()
-  const [isDeletingRevision, setIsDeletingRevision] = useState(false)
   const [templateNoteForRevision, setTemplateNoteForRevision] = useState<SNNote>()
   const [showContentLockedScreen, setShowContentLockedScreen] = useState(false)
 
@@ -93,18 +91,13 @@ const RevisionHistoryModalContent: FunctionComponent<RevisionHistoryModalProps> 
           background: 'var(--modal-background-color)',
         }}
       >
-        <div
-          className={`bg-default flex flex-col h-full overflow-hidden ${
-            isDeletingRevision ? 'pointer-events-none cursor-not-allowed' : ''
-          }`}
-        >
+        <div className="bg-default flex flex-col h-full overflow-hidden">
           <div className="flex flex-grow min-h-0">
             {note && (
               <HistoryListContainer
                 application={application}
                 historyModalController={historyModalController}
                 note={note}
-                setSelectedRemoteEntry={setSelectedRemoteEntry}
                 setShowContentLockedScreen={setShowContentLockedScreen}
                 setIsFetchingSelectedRevision={setIsFetchingSelectedRevision}
               />

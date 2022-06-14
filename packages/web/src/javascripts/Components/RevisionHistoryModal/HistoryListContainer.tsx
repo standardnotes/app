@@ -13,7 +13,6 @@ type Props = {
   historyModalController: HistoryModalController
   note: SNNote
   setIsFetchingSelectedRevision: Dispatch<SetStateAction<boolean>>
-  setSelectedRemoteEntry: Dispatch<SetStateAction<RevisionListEntry | undefined>>
   setShowContentLockedScreen: Dispatch<SetStateAction<boolean>>
 }
 
@@ -22,10 +21,10 @@ const HistoryListContainer: FunctionComponent<Props> = ({
   historyModalController,
   note,
   setIsFetchingSelectedRevision,
-  setSelectedRemoteEntry,
   setShowContentLockedScreen,
 }) => {
-  const { legacyHistory, currentTab, setCurrentTab, setSelectedRevision } = historyModalController
+  const { legacyHistory, currentTab, setCurrentTab, setSelectedRevision, setSelectedRemoteEntry } =
+    historyModalController
 
   const TabButton: FunctionComponent<{
     type: RevisionListTab
@@ -117,10 +116,7 @@ const HistoryListContainer: FunctionComponent<Props> = ({
       </div>
       <div className={'min-h-0 overflow-auto py-1.5 h-full'}>
         {currentTab === RevisionListTab.Session && (
-          <SessionHistoryList
-            historyModalController={historyModalController}
-            setSelectedRemoteEntry={setSelectedRemoteEntry}
-          />
+          <SessionHistoryList historyModalController={historyModalController} />
         )}
         {currentTab === RevisionListTab.Remote && (
           <RemoteHistoryList
@@ -133,7 +129,6 @@ const HistoryListContainer: FunctionComponent<Props> = ({
           <LegacyHistoryList
             legacyHistory={legacyHistory}
             historyModalController={historyModalController}
-            setSelectedRemoteEntry={setSelectedRemoteEntry}
             fetchAndSetLegacyRevision={fetchAndSetLegacyRevision}
           />
         )}

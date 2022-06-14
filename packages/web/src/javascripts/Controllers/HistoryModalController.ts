@@ -11,6 +11,7 @@ import { confirmDialog } from '@/Services/AlertService'
 import {
   Action,
   ActionVerb,
+  ButtonType,
   HistoryEntry,
   InternalEventBus,
   NoteHistoryEntry,
@@ -40,6 +41,7 @@ export class HistoryModalController extends AbstractViewController {
   legacyHistory: LegacyHistory = undefined
 
   selectedRevision: SelectedRevision = undefined
+  selectedRemoteEntry: RevisionListEntry | undefined = undefined
 
   currentTab = RevisionListTab.Remote
 
@@ -65,6 +67,9 @@ export class HistoryModalController extends AbstractViewController {
       selectedRevision: observable,
       setSelectedRevision: action,
 
+      selectedRemoteEntry: observable,
+      setSelectedRemoteEntry: action,
+
       remoteHistory: observable,
       setRemoteHistory: action,
       isFetchingRemoteHistory: observable,
@@ -85,6 +90,10 @@ export class HistoryModalController extends AbstractViewController {
 
   setSelectedRevision = (revision: SelectedRevision) => {
     this.selectedRevision = revision
+  }
+
+  setSelectedRemoteEntry = (remoteEntry: RevisionListEntry | undefined) => {
+    this.selectedRemoteEntry = remoteEntry
   }
 
   setCurrentTab = (tab: RevisionListTab) => {
@@ -230,5 +239,31 @@ export class HistoryModalController extends AbstractViewController {
     this.selectionController.selectItem(duplicatedItem.uuid).catch(console.error)
 
     this.dismissModal()
+  }
+
+  deleteRevision = (revision: RevisionListEntry) => {
+    this.application.alertService
+      .confirm(
+        'Are you sure you want to delete this revision?',
+        'Delete revision?',
+        'Delete revision',
+        ButtonType.Danger,
+        'Cancel',
+      )
+      .then((shouldDelete) => {
+        if (shouldDelete && this.notesController.firstSelectedNote) {
+          this.application.historyManager
+            .deleteRemoteRevision(this.notesController.firstSelectedNote, revision)
+            .then((res) => {
+              if (res.error?.message) {
+                throw new Error(res.error.message)
+              }
+
+              void this.fetchRemoteHistory()
+            })
+            .catch(console.error)
+        }
+      })
+      .catch(console.error)
   }
 }

@@ -1,26 +1,14 @@
-import { RevisionListEntry } from '@standardnotes/snjs'
-import {
-  Dispatch,
-  Fragment,
-  FunctionComponent,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import { Fragment, FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import HistoryListItem from './HistoryListItem'
 import { HistoryModalController } from '@/Controllers/HistoryModalController'
 
 type Props = {
   historyModalController: HistoryModalController
-  setSelectedRemoteEntry: Dispatch<SetStateAction<RevisionListEntry | undefined>>
 }
 
-const SessionHistoryList: FunctionComponent<Props> = ({ historyModalController, setSelectedRemoteEntry }) => {
-  const { sessionHistory, setSelectedRevision } = historyModalController
+const SessionHistoryList: FunctionComponent<Props> = ({ historyModalController }) => {
+  const { sessionHistory, setSelectedRevision, setSelectedRemoteEntry } = historyModalController
 
   const sessionHistoryListRef = useRef<HTMLDivElement>(null)
 
