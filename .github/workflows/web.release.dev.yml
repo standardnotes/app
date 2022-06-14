@@ -5,9 +5,10 @@ concurrency:
   cancel-in-progress: true
 
 on:
-  create:
+  push:
     tags:
-      - '**standardnotes/web-server+(*alpha*|*beta*)'
+      - '@standardnotes/web-server@[0-9]*.[0-9]*.[0-9]*-alpha.[0-9]*'
+      - '@standardnotes/web-server@[0-9]*.[0-9]*.[0-9]*-beta.[0-9]*'
   workflow_dispatch:
 
 jobs:

@@ -1,10 +1,9 @@
 name: Desktop Prod Release
 
 on:
-  create:
+  push:
     tags:
-      - '@standardnotes/desktop@!(*alpha*)'
-      - '@standardnotes/desktop@!(*beta*)'
+      - '@standardnotes/desktop@!(*alpha*|*beta*)'
   workflow_dispatch:
 
 jobs:

@@ -1,9 +1,10 @@
 name: Mobile Build Development
 
 on:
-  create:
+  push:
     tags:
-      - '**standardnotes/mobile+(*alpha*|*beta*)'
+      - '@standardnotes/mobile@[0-9]*.[0-9]*.[0-9]*-alpha.[0-9]*'
+      - '@standardnotes/mobile@[0-9]*.[0-9]*.[0-9]*-beta.[0-9]*'
   workflow_dispatch:
 
 jobs:

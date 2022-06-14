@@ -5,9 +5,9 @@ concurrency:
   cancel-in-progress: true
 
 on:
-  create:
+  push:
     tags:
-      - '**standardnotes/web-server!(*alpha*|*beta*)'
+      - '@standardnotes/web-server@!(*alpha*|*beta*)'
 
 jobs:
   test:
