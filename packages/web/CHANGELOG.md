@@ -2,8 +2,6 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-### [3.22.4](https://github.com/standardnotes/app/compare/v3.22.3...v3.22.4) (2022-06-14)
-
 ### [3.22.3](https://github.com/standardnotes/app/compare/v3.21.0...v3.22.3) (2022-06-14)
 
 
