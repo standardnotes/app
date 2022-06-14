@@ -2,9 +2,8 @@ name: Desktop Beta Release
 
 on:
   push:
-    branches: [ develop ]
-    paths:
-      - packages/desktop/**
+    tags:
+      - '@standardnotes/desktop@*'
   workflow_dispatch:
 
 jobs:

@@ -1,7 +1,7 @@
 {
   "name": "@standardnotes/mobile",
-  "version": "3.22.0",
-  "user-version": "3.22.0",
+  "version": "3.23.1-alpha.0",
+  "user-version": "3.23.0",
   "private": true,
   "license": "AGPL-3.0-or-later",
   "scripts": {
@@ -56,7 +56,7 @@
     "react-native-fs": "^2.19.0",
     "react-native-gesture-handler": "2.3.2",
     "react-native-image-picker": "^4.7.3",
-    "react-native-keychain": "patch:react-native-keychain@8.0.0#./patches/react-native-keychain+8.0.0.patch",
+    "react-native-keychain": "standardnotes/react-native-keychain#d277d360494cbd02be4accb4a360772a8e0e97b6",
     "react-native-mail": "standardnotes/react-native-mail#fd26119e67a2ffc5eaa95a9c17049743e39ce2d3",
     "react-native-privacy-snapshot": "standardnotes/react-native-privacy-snapshot#653e904c90fc6f2b578da59138f2bfe5d7f942fe",
     "react-native-reanimated": "^2.8.0",

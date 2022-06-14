@@ -1,6 +1,6 @@
 {
-  "name": "@standardnotes/components-meta",
-  "version": "0.2.0",
+  "name": "@standardnotes/components",
+  "version": "0.3.0-alpha.0",
   "private": true,
   "workspaces": {
     "packages": [
@@ -8,9 +8,8 @@
     ]
   },
   "scripts": {
-    "build": "echo BUILDING COMPONENTS && yarn workspaces foreach --parallel run build",
-    "lint": "yarn workspaces foreach --parallel run lint",
-    "version": "node scripts/package-components.mjs && git add dist && git commit -m 'chore(release): components'"
+    "build": "yarn workspaces foreach --parallel --verbose run build",
+    "lint": "yarn workspaces foreach --parallel --verbose run lint"
   },
   "devDependencies": {
     "@standardnotes/deterministic-zip": "^1.2.0",

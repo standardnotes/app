@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/styles",
-  "version": "1.2.1",
+  "version": "1.2.2-alpha.0",
   "private": true,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,7 +8,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "echo BUILDING STYLES && webpack --mode='production' && yarn run tsc",
+    "build": "webpack --mode='production' && yarn run tsc",
     "start": "webpack --watch --mode='development'",
     "lint": "prettier --check *.js"
   },

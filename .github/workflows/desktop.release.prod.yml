@@ -2,9 +2,8 @@ name: Desktop Prod Release
 
 on:
   push:
-    branches: [ main ]
-    paths:
-      - packages/desktop/**
+    tags:
+      - '@standardnotes/desktop@*'
   workflow_dispatch:
 
 jobs:

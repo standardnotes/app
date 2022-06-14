@@ -1,10 +1,13 @@
 name: Mobile Build Production
 
-on: [workflow_dispatch]
+on:
+  push:
+    tags:
+      - '@standardnotes/mobile@*'
+  workflow_dispatch:
 
 jobs:
   android:
-    if: contains(github.event.head_commit.message, 'chore(release)') == false
     defaults:
       run:
         working-directory: packages/mobile
@@ -49,7 +52,6 @@ jobs:
           name: release.aab
           path: android/app/build/outputs/bundle/prodRelease/app-prod-release.aab
   ios:
-    if: contains(github.event.head_commit.message, 'chore(release)') == false
     defaults:
       run:
         working-directory: packages/mobile
