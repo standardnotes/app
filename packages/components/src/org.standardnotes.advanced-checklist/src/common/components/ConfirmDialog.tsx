@@ -1,7 +1,7 @@
 import '@reach/dialog/styles.css'
 
+import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
 import React, { useRef } from 'react'
-import { AlertDialog, AlertDialogLabel, AlertDialogDescription } from '@reach/alert-dialog'
 
 import { sanitizeHtmlString } from '@standardnotes/utils'
 

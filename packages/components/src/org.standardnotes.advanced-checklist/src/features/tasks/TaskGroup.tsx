@@ -11,7 +11,7 @@ import TaskItemList from './TaskItemList'
 import TaskGroupOptions from './TaskGroupOptions'
 
 import { CircularProgressBar, GenericInlineText, MainTitle, RoundButton } from '../../common/components'
-import { ChevronDownIcon, ReorderIcon, ChevronUpIcon } from '../../common/components/icons'
+import { ChevronDownIcon, ChevronUpIcon, ReorderIcon } from '../../common/components/icons'
 
 const TaskGroupContainer = styled.div<{ isLast?: boolean }>`
   background-color: var(--sn-stylekit-background-color);
