@@ -6,6 +6,10 @@ import { GetFeatures } from '@standardnotes/features/dist/Domain/Feature/Feature
 import { GetDeprecatedFeatures } from '@standardnotes/features/dist/Domain/Feature/Lists/DeprecatedFeatures.js'
 import zip from '@standardnotes/deterministic-zip'
 
+import {fileURLToPath} from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 console.log('Beginning packaging procedure...')
 
 const specificFeatureIdentifier = process.argv[2]
@@ -13,8 +17,8 @@ if (specificFeatureIdentifier) {
   console.log('Processing only', specificFeatureIdentifier)
 }
 
-const SOURCE_FILES_PATH = 'src'
-const DistDir = path.join('dist')
+const SourceFilesPath = path.join(__dirname, '../src')
+const DistDir = path.join(__dirname, '../dist')
 
 const ChecksumsSrcPath = path.join(DistDir, 'Checksums.json')
 const ChecksumsDistPath = path.join(DistDir, 'Checksums.json')
@@ -64,7 +68,7 @@ const emptyExistingDir = (dir) => {
 }
 
 const copyToDist = async (feature) => {
-  const srcComponentPath = path.join(SOURCE_FILES_PATH, feature.identifier)
+  const srcComponentPath = path.join(SourceFilesPath, feature.identifier)
 
   if (!doesDirExist(srcComponentPath)) {
     return

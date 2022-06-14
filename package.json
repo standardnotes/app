@@ -11,8 +11,8 @@
     "node": ">=12.19.0 <17.0.0"
   },
   "scripts": {
-    "lint": "yarn workspaces foreach --parallel --verbose run lint",
-    "test": "yarn workspaces foreach --parallel --verbose run test",
+    "lint": "yarn workspaces foreach -pt --parallel --jobs 10 --verbose run lint",
+    "test": "yarn workspaces foreach -pt --parallel --jobs 10 --verbose run test",
     "clean": "lerna run clean",
     "build:all": "yarn workspaces foreach -pt --verbose run build",
     "build:web": "yarn workspaces foreach -pt --verbose -R --from @standardnotes/web run build",
