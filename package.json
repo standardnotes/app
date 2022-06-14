@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/app-monorepo",
-  "version": "3.21.0",
+  "version": "3.21.1",
   "private": true,
   "author": "Standard Notes",
   "workspaces": {
