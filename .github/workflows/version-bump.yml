@@ -29,6 +29,9 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
 
+      - name: Install dependencies
+        run: yarn install
+
       - name: Bump Prod Version
         if: ${{ github.ref == 'refs/heads/main' }}
         run: yarn release:prod
