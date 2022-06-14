@@ -1,4 +1,4 @@
-import { FileItem, NoteViewController } from '@standardnotes/snjs'
+import { FileItem, FileViewController, NoteViewController } from '@standardnotes/snjs'
 import { PureComponent } from '@/Components/Abstract/PureComponent'
 import { WebApplication } from '@/Application/Application'
 import MultipleSelectedNotes from '@/Components/MultipleSelectedNotes/MultipleSelectedNotes'
@@ -10,7 +10,7 @@ import FileView from '@/Components/FileView/FileView'
 type State = {
   showMultipleSelectedNotes: boolean
   showMultipleSelectedFiles: boolean
-  controllers: NoteViewController[]
+  controllers: (NoteViewController | FileViewController)[]
   selectedFile: FileItem | undefined
 }
 
@@ -34,9 +34,9 @@ class NoteGroupView extends PureComponent<Props, State> {
   override componentDidMount(): void {
     super.componentDidMount()
 
-    const controllerGroup = this.application.noteControllerGroup
-    this.removeChangeObserver = this.application.noteControllerGroup.addActiveControllerChangeObserver(() => {
-      const controllers = controllerGroup.noteControllers
+    const controllerGroup = this.application.itemControllerGroup
+    this.removeChangeObserver = this.application.itemControllerGroup.addActiveControllerChangeObserver(() => {
+      const controllers = controllerGroup.itemControllers
       this.setState({
         controllers: controllers,
       })
@@ -111,17 +111,18 @@ class NoteGroupView extends PureComponent<Props, State> {
         {shouldNotShowMultipleSelectedItems && this.state.controllers.length > 0 && (
           <>
             {this.state.controllers.map((controller) => {
-              return <NoteView key={controller.note.uuid} application={this.application} controller={controller} />
+              return controller instanceof NoteViewController ? (
+                <NoteView key={controller.item.uuid} application={this.application} controller={controller} />
+              ) : (
+                <FileView
+                  key={controller.item.uuid}
+                  application={this.application}
+                  viewControllerManager={this.viewControllerManager}
+                  file={controller.item}
+                />
+              )
             })}
           </>
-        )}
-
-        {shouldNotShowMultipleSelectedItems && this.state.controllers.length < 1 && this.state.selectedFile && (
-          <FileView
-            application={this.application}
-            viewControllerManager={this.viewControllerManager}
-            file={this.state.selectedFile}
-          />
         )}
       </div>
     )

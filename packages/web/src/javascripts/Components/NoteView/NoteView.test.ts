@@ -52,7 +52,7 @@ describe('NoteView', () => {
     it("should hide the note if at the time of the session expiration the note wasn't edited for longer than the allowed idle time", async () => {
       const secondsElapsedSinceLastEdit = ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction + 5
 
-      noteViewController.note = {
+      noteViewController.item = {
         protected: true,
         userModifiedDate: new Date(Date.now() - secondsElapsedSinceLastEdit * 1000),
       } as jest.Mocked<SNNote>
@@ -65,7 +65,7 @@ describe('NoteView', () => {
     it('should postpone the note hiding by correct time if the time passed after its last modification is less than the allowed idle time', async () => {
       const secondsElapsedSinceLastEdit = ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction - 3
 
-      noteViewController.note = {
+      noteViewController.item = {
         protected: true,
         userModifiedDate: new Date(Date.now() - secondsElapsedSinceLastEdit * 1000),
       } as jest.Mocked<SNNote>
@@ -87,7 +87,7 @@ describe('NoteView', () => {
     it('should postpone the note hiding by correct time if the user continued editing it even after the protection session has expired', async () => {
       const secondsElapsedSinceLastModification = 3
 
-      noteViewController.note = {
+      noteViewController.item = {
         protected: true,
         userModifiedDate: new Date(Date.now() - secondsElapsedSinceLastModification * 1000),
       } as jest.Mocked<SNNote>
@@ -98,7 +98,7 @@ describe('NoteView', () => {
         ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction - secondsElapsedSinceLastModification
       jest.advanceTimersByTime((secondsAfterWhichTheNoteShouldHide - 1) * 1000)
 
-      noteViewController.note = {
+      noteViewController.item = {
         protected: true,
         userModifiedDate: new Date(),
       } as jest.Mocked<SNNote>
@@ -114,7 +114,7 @@ describe('NoteView', () => {
 
   describe('note is unprotected', () => {
     it('should not call any hiding logic', async () => {
-      noteViewController.note = {
+      noteViewController.item = {
         protected: false,
       } as jest.Mocked<SNNote>
 
@@ -126,7 +126,7 @@ describe('NoteView', () => {
 
   describe('dismissProtectedWarning', () => {
     beforeEach(() => {
-      noteViewController.note = {
+      noteViewController.item = {
         protected: false,
       } as jest.Mocked<SNNote>
     })

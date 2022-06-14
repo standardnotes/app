@@ -10,7 +10,6 @@ import { SelectedItemsController } from './SelectedItemsController'
 import { ItemListController } from './ItemList/ItemListController'
 import { NoteTagsController } from './NoteTagsController'
 import { NavigationController } from './Navigation/NavigationController'
-import { CrossControllerEvent } from './CrossControllerEvent'
 
 export class NotesController extends AbstractViewController {
   lastSelectedNote: SNNote | undefined
@@ -81,10 +80,10 @@ export class NotesController extends AbstractViewController {
         })
       }),
 
-      this.application.noteControllerGroup.addActiveControllerChangeObserver(() => {
-        const controllers = this.application.noteControllerGroup.noteControllers
+      this.application.itemControllerGroup.addActiveControllerChangeObserver(() => {
+        const controllers = this.application.itemControllerGroup.itemControllers
 
-        const activeNoteUuids = controllers.map((c) => c.note.uuid)
+        const activeNoteUuids = controllers.map((controller) => controller.item.uuid)
 
         const selectedUuids = this.getSelectedNotesList().map((n) => n.uuid)
 
@@ -115,32 +114,6 @@ export class NotesController extends AbstractViewController {
 
   get trashedNotesCount(): number {
     return this.application.items.trashedItems.length
-  }
-
-  async openNote(noteUuid: string): Promise<void> {
-    if (this.itemListController.activeControllerNote?.uuid === noteUuid) {
-      return
-    }
-
-    const note = this.application.items.findItem(noteUuid) as SNNote | undefined
-    if (!note) {
-      console.warn('Tried accessing a non-existant note of UUID ' + noteUuid)
-      return
-    }
-
-    await this.application.noteControllerGroup.createNoteController(noteUuid)
-
-    this.noteTagsController.reloadTagsForCurrentNote()
-
-    await this.publishEventSync(CrossControllerEvent.ActiveEditorChanged)
-  }
-
-  async createNewNoteController(title?: string) {
-    const selectedTag = this.navigationController.selected
-
-    const activeRegularTagUuid = selectedTag && selectedTag instanceof SNTag ? selectedTag.uuid : undefined
-
-    await this.application.noteControllerGroup.createNoteController(undefined, title, activeRegularTagUuid)
   }
 
   setContextMenuOpen(open: boolean): void {

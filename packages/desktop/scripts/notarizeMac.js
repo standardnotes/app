@@ -23,8 +23,8 @@ module.exports = async function (params) {
       .notarize({
         appBundleId: appId,
         appPath: appPath,
-        appleId: process.env.notarizeAppleId,
-        appleIdPassword: process.env.notarizeAppleIdPassword,
+        appleId: process.env.NOTARIZE_APPLE_ID,
+        appleIdPassword: process.env.NOTARIZE_APPLE_ID_PASSWORD,
       })
       .then(() => {
         console.log(`Done notarizing ${appId}`)
