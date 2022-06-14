@@ -5394,7 +5394,7 @@ __metadata:
     react-native-search-box: "standardnotes/react-native-search-box#8c46369912cba78dca718588aca9c16926953ff7"
     react-native-share: ^7.3.7
     react-native-sodium-jsi: 1.2.0
-    react-native-static-server: "standardnotes/react-native-static-server#6b5baab43f11f8b2072d17183f9f35b08fa0707b"
+    react-native-static-server: "standardnotes/react-native-static-server#28ef0175dbee3db9aadfab57498497067556a836"
     react-native-store-review: ^0.2.0
     react-native-svg: ^12.3.0
     react-native-svg-transformer: ^1.0.0
@@ -26465,13 +26465,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-static-server@standardnotes/react-native-static-server#6b5baab43f11f8b2072d17183f9f35b08fa0707b":
-  version: 0.5.1
-  resolution: "react-native-static-server@https://github.com/standardnotes/react-native-static-server.git#commit=6b5baab43f11f8b2072d17183f9f35b08fa0707b"
+"react-native-static-server@standardnotes/react-native-static-server#28ef0175dbee3db9aadfab57498497067556a836":
+  version: 0.5.2
+  resolution: "react-native-static-server@https://github.com/standardnotes/react-native-static-server.git#commit=28ef0175dbee3db9aadfab57498497067556a836"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 3032c56983a06f009b99c294d590214bafead9759fa29f75d81acd33388875132e93c63bf2226b7bca26f1964aefa4ad1fdee97fc72e544fa77a5c57f2a273dd
+  checksum: df37288bffac20602748769f52bc87dbd9754b934f21ffe712ffe0995a30546388bb48bd101d1bf9989e6d39203206079c429ae4cabe2f911519e4b9e03e1014
   languageName: node
   linkType: hard
 
