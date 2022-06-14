@@ -3,7 +3,8 @@ name: Desktop Prod Release
 on:
   create:
     tags:
-      - '**standardnotes/desktop!(*alpha*|*beta*)'
+      - '@standardnotes/desktop@!(*alpha*)'
+      - '@standardnotes/desktop@!(*beta*)'
   workflow_dispatch:
 
 jobs:
