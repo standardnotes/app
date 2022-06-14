@@ -30,7 +30,7 @@
     "immutability-helper": "^3.0.1",
     "jsqr": "^1.2.0",
     "mini-css-extract-plugin": "^1.3.9",
-    "node-sass": "^4.12.0",
+    "node-sass": "*",
     "notp": "^2.0.3",
     "otplib": "^11.0.1",
     "prop-types": "^15.7.2",

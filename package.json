@@ -22,7 +22,7 @@
     "start:server:web": "lerna run start --scope=@standardnotes/web-server",
     "start:server:web:localhost": "lerna run start:no-binding --scope=@standardnotes/web-server",
     "prepare": "husky install",
-    "reset": "find . -type dir -name node_modules | xargs rm -rf && rm -rf yarn.lock",
+    "reset": "find . -type dir -name node_modules | xargs rm -rf && rm -rf yarn.lock && yarn install",
     "version": "yarn install --no-immutable && git add yarn.lock"
   },
   "resolutions": {
