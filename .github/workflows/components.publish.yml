@@ -3,7 +3,7 @@ name: Components Publish
 on:
   push:
     tags:
-      - '@standardnotes/components@*'
+      - '*standardnotes/components*'
   workflow_dispatch:
 
 jobs:
