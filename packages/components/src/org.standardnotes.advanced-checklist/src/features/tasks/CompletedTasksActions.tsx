@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { ConfirmDialog } from '../../common/components'
 
-import { openAllCompleted, deleteAllCompleted } from './tasks-slice'
+import { deleteAllCompleted, openAllCompleted } from './tasks-slice'
 
 const ActionButton = styled.button`
   background-color: var(--sn-stylekit-contrast-background-color);
