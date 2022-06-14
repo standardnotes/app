@@ -9,7 +9,6 @@
     "main": "dist/index.html"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack serve --config webpack.dev.js --progress --hot",
     "build": "webpack --config webpack.prod.js",
     "custom:lint": "eslint src --ext .js",
