@@ -20,5 +20,7 @@ jobs:
         run: yarn lint
       - name: Build
         run: yarn build
+      - name: Build Android
+        run: yarn android:bundle
       - name: Test
         run: yarn test
