@@ -32,6 +32,14 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      - name: Compile Components
+        run: yarn compile:components
+      - name: Commit Components
+        run: |
+          node packages/components/scripts/package-components.mjs
+          git add .
+          (git commit -m 'chore(release): components') || true
+
       - name: Bump Prod Version
         if: ${{ github.ref == 'refs/heads/main' }}
         run: yarn release:prod
