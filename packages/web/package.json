@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/web",
-  "version": "3.22.3",
+  "version": "3.22.1",
   "license": "AGPL-3.0-or-later",
   "main": "dist/app.js",
   "author": "Standard Notes",
@@ -19,8 +19,7 @@
     "tsc": "tsc --project tsconfig.json",
     "test": "jest --config jest.config.js --coverage",
     "postinstall": "yarn run ncu -loglevel verbose --packageFile package.json",
-    "upgrade:snjs": "ncu -u '@standardnotes/*' && yarn",
-    "release": "standard-version"
+    "upgrade:snjs": "ncu -u '@standardnotes/*' && yarn"
   },
   "devDependencies": {
     "@babel/core": "^7.17.9",
