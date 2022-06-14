@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/web-server",
-  "version": "1.2.5",
+  "version": "1.2.7-alpha.0",
   "license": "AGPL-3.0-or-later",
   "private": true,
   "author": "Standard Notes",
@@ -16,7 +16,7 @@
     "build:server:all": "yarn workspaces foreach -ptR run build"
   },
   "dependencies": {
-    "@standardnotes/components-meta": "workspace:*",
+    "@standardnotes/components": "workspace:*",
     "@standardnotes/web": "workspace:*"
   }
 }

@@ -1,13 +1,13 @@
 {
   "name": "@standardnotes/icons",
-  "version": "1.4.0",
+  "version": "1.4.1-alpha.0",
   "private": true,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "start": "webpack-dev-server --config webpack.config.js",
     "watch": "webpack -w --config webpack.config.js",
-    "build": "echo BUILDING ICONS && webpack --config webpack.config.js && yarn run tsc",
+    "build": "webpack --config webpack.config.js && yarn run tsc",
     "tsc": "tsc --project ./tsconfig.json"
   },
   "devDependencies": {
