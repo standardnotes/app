@@ -1,22 +1,22 @@
+import type { TasksState } from './tasks-slice'
 import reducer, {
-  openAllCompleted,
   deleteAllCompleted,
+  openAllCompleted,
   taskAdded,
   taskDeleted,
   taskModified,
-  tasksLoaded,
-  taskToggled,
   tasksGroupAdded,
-  tasksReordered,
-  tasksGroupReordered,
-  tasksGroupDeleted,
-  tasksGroupMerged,
   tasksGroupCollapsed,
+  tasksGroupDeleted,
   tasksGroupDraft,
   tasksGroupLastActive,
+  tasksGroupMerged,
   tasksGroupRenamed,
+  tasksGroupReordered,
+  tasksLoaded,
+  tasksReordered,
+  taskToggled,
 } from './tasks-slice'
-import type { TasksState } from './tasks-slice'
 
 it('should return the initial state', () => {
   return expect(

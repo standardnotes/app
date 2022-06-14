@@ -1,11 +1,11 @@
 import '@reach/dialog/styles.css'
 
+import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
 import React, { KeyboardEvent, useRef, useState } from 'react'
-import { AlertDialog, AlertDialogLabel, AlertDialogDescription } from '@reach/alert-dialog'
 
 import { useAppDispatch } from '../../app/hooks'
-import { tasksGroupRenamed } from './tasks-slice'
 import { TextInput } from '../../common/components'
+import { tasksGroupRenamed } from './tasks-slice'
 
 type RenameTaskGroupsProps = {
   groupName: string

@@ -6,8 +6,8 @@ import { useAppDispatch } from '../../app/hooks'
 import { groupTasksByCompletedStatus } from '../../common/utils'
 import { GroupPayload, tasksReordered } from './tasks-slice'
 
-import TasksContainer from './TasksContainer'
 import CompletedTasksActions from './CompletedTasksActions'
+import TasksContainer from './TasksContainer'
 
 const Container = styled.div`
   position: relative;

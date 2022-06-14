@@ -3,8 +3,8 @@ import './TaskItem.scss'
 import { ChangeEvent, createRef, KeyboardEvent, useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-import { taskDeleted, taskModified, TaskPayload, taskToggled } from './tasks-slice'
 import { useAppDispatch, useAppSelector, useDidMount } from '../../app/hooks'
+import { taskDeleted, taskModified, TaskPayload, taskToggled } from './tasks-slice'
 
 import { CheckBoxInput, TextAreaInput } from '../../common/components'
 

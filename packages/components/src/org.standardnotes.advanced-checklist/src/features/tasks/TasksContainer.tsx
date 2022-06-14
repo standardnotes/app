@@ -2,8 +2,8 @@ import './TasksContainer.scss'
 
 import React from 'react'
 import { Draggable, DraggingStyle, Droppable, NotDraggingStyle } from 'react-beautiful-dnd'
-import styled from 'styled-components'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
+import styled from 'styled-components'
 
 import { useAppSelector } from '../../app/hooks'
 import { SubTitle } from '../../common/components'
