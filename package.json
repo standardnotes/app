@@ -11,10 +11,10 @@
     "node": ">=12.19.0 <17.0.0"
   },
   "scripts": {
-    "lint": "yarn workspaces foreach --parallel run lint",
-    "test": "yarn workspaces foreach --parallel run test",
+    "lint": "yarn workspaces foreach --parallel --verbose run lint",
+    "test": "yarn workspaces foreach --parallel --verbose run test",
     "clean": "lerna run clean",
-    "build": "yarn workspaces foreach -pt run build",
+    "build": "yarn workspaces foreach -pt --verbose run build",
     "build:icons": "yarn workspace @standardnotes/icons build",
     "build:styles": "yarn workspace @standardnotes/styles build",
     "build:web": "yarn workspace @standardnotes/web build",
@@ -22,7 +22,8 @@
     "start:server:web:localhost": "lerna run start:no-binding --scope=@standardnotes/web-server",
     "prepare": "husky install",
     "reset": "find . -type dir -name node_modules | xargs rm -rf && rm -rf yarn.lock",
-    "release": "lerna version --conventional-commits --yes -m \"chore(release): publish\""
+    "release:prod": "lerna version --conventional-commits --yes -m \"chore(release): publish\"",
+    "release:beta": "lerna version --conventional-prerelease --conventional-commits --yes -m \"chore(release): publish\""
   },
   "resolutions": {
     "@types/styled-components/@types/react": "17.0.2",

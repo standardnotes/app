@@ -15,7 +15,7 @@
   },
   "scripts": {
     "build:remove-unpacked": "rimraf dist/{linux-*,mac,win-*}",
-    "build": "echo BUILDING DESKTOP && yarn run webpack --config desktop.webpack.prod.js",
+    "build": "yarn run webpack --config desktop.webpack.prod.js",
     "build:desktop:all": "yarn workspaces foreach -ptR run build",
     "clean:build": "rimraf app/dist/",
     "clean:tests": "rimraf test/data/tmp/",

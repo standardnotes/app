@@ -8,8 +8,8 @@
     ]
   },
   "scripts": {
-    "build": "echo BUILDING COMPONENTS && yarn workspaces foreach --parallel run build",
-    "lint": "yarn workspaces foreach --parallel run lint"
+    "build": "yarn workspaces foreach --parallel --verbose run build",
+    "lint": "yarn workspaces foreach --parallel --verbose run lint"
   },
   "devDependencies": {
     "@standardnotes/deterministic-zip": "^1.2.0",

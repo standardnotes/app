@@ -13,7 +13,7 @@
     "watch": "webpack -w --config web.webpack.dev.js",
     "clean": "rm -fr dist",
     "prebuild": "yarn clean",
-    "build": "echo BUILDING WEB && webpack --config web.webpack.prod.js && yarn tsc",
+    "build": "webpack --config web.webpack.prod.js && yarn tsc",
     "build:web:all": "yarn workspaces foreach -ptR run build",
     "lint": "eslint src/javascripts",
     "tsc": "tsc --project tsconfig.json",
