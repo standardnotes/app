@@ -3,7 +3,7 @@
   "version": "1.2.7-alpha.5",
   "license": "AGPL-3.0-or-later",
   "private": true,
-  "author": "Standard Notes",
+  "author": "Standard Notes.",
   "description": "Ruby on Rails web server for hosting the web application",
   "engines": {
     "node": ">=12.19.0 <17.0.0"
