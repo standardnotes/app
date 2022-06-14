@@ -54,7 +54,6 @@ async function getFileNames() {
 process.on('uncaughtException', function (err) {
   console.log('Caught exception: ' + err)
 })
-
 ;(async () => {
   console.log('Writing SHA256 sums to dist/SHA256SUMS')
 
