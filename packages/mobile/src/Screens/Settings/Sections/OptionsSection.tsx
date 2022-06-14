@@ -9,7 +9,6 @@ import { useSafeApplicationContext } from '@Root/Hooks/useSafeApplicationContext
 import { useSafeApplicationGroupContext } from '@Root/Hooks/useSafeApplicationGroupContext'
 import { ModalStackNavigationProp } from '@Root/ModalStack'
 import { SCREEN_INPUT_MODAL_WORKSPACE_NAME, SCREEN_MANAGE_SESSIONS, SCREEN_SETTINGS } from '@Root/Screens/screens'
-import SNReactNative from '@standardnotes/react-native-utils'
 import { ApplicationDescriptor, ApplicationGroupEvent, ButtonType, PrefKey } from '@standardnotes/snjs'
 import { CustomActionSheetOption, useCustomActionSheet } from '@Style/CustomActionSheet'
 import moment from 'moment'
@@ -219,6 +218,9 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
 
       switch (action) {
         case Open:
+          message = 'The workspace will be ready for you when you come back.'
+          buttonText = 'Quit App'
+          break
         case AddAnother:
           message = 'Your new workspace will be ready for you when you come back.'
           buttonText = 'Quit App'
@@ -269,11 +271,11 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
         return
       }
 
+      await application.deviceInterface.clearRawKeychainValue()
       await appGroup.unloadCurrentAndActivateDescriptor(descriptor)
       // TODO: find a way to check if there are memory leaks *without* the below call.
-      SNReactNative.exitApp()
     },
-    [Open, appGroup, getWorkspaceActionConfirmation],
+    [Open, appGroup, application.deviceInterface, getWorkspaceActionConfirmation],
   )
 
   const getSingleWorkspaceItemOptions = useCallback(
@@ -335,9 +337,9 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
       return
     }
 
+    await application.deviceInterface.clearRawKeychainValue()
     await appGroup.unloadCurrentAndCreateNewDescriptor()
-    SNReactNative.exitApp()
-  }, [AddAnother, appGroup, getWorkspaceActionConfirmation])
+  }, [AddAnother, appGroup, application.deviceInterface, getWorkspaceActionConfirmation])
 
   const signOutAllWorkspaces = useCallback(async () => {
     try {
