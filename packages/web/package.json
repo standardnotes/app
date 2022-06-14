@@ -68,7 +68,7 @@
     "@standardnotes/icons": "workspace:*",
     "@standardnotes/services": "^1.13.14",
     "@standardnotes/sncrypto-web": "1.10.1",
-    "@standardnotes/snjs": "^2.115.9",
+    "@standardnotes/snjs": "^2.116.0",
     "@standardnotes/styles": "workspace:*",
     "@standardnotes/toast": "workspace:*",
     "@zip.js/zip.js": "^2.4.10",

@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/app-monorepo",
-  "version": "0.0.1",
+  "version": "3.21.0",
   "private": true,
   "author": "Standard Notes",
   "workspaces": {
@@ -22,8 +22,6 @@
     "start:server:web": "lerna run start --scope=@standardnotes/web-server",
     "start:server:web:localhost": "lerna run start:no-binding --scope=@standardnotes/web-server",
     "prepare": "husky install",
-    "version-bump": "lerna version --no-push --loglevel=silly --conventional-commits --yes -m \"chore(release): publish\"",
-    "publish-packages": "lerna publish from-git --yes",
     "reset": "find . -type dir -name node_modules | xargs rm -rf && rm -rf yarn.lock",
     "version": "yarn install --no-immutable && git add yarn.lock"
   },
@@ -35,13 +33,16 @@
     "@types/hoist-non-react-statics/@types/react": "17.0.2"
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.0.2",
+    "@commitlint/config-conventional": "^17.0.2",
     "@standardnotes/config": "^2.4.3",
     "@typescript-eslint/eslint-plugin": "^5.20.0",
     "@typescript-eslint/parser": "^5.20.0",
     "eslint": "^8.17.0",
-    "husky": "^7.0.4",
+    "husky": "^8.0.0",
     "lint-staged": "^13.0.1",
     "prettier": "^2.6.2",
+    "release-please": "^13.18.3",
     "typescript": "^4.7.3",
     "webpack": "^5.72.0",
     "webpack-cli": "^4.9.2"

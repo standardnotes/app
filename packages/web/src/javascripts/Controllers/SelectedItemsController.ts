@@ -12,7 +12,6 @@ import { action, computed, makeObservable, observable, runInAction } from 'mobx'
 import { WebApplication } from '../Application/Application'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { ItemListController } from './ItemList/ItemListController'
-import { NotesController } from './NotesController'
 
 type SelectedItems = Record<UuidString, ListableContentItem>
 
@@ -20,12 +19,10 @@ export class SelectedItemsController extends AbstractViewController {
   lastSelectedItem: ListableContentItem | undefined
   selectedItems: SelectedItems = {}
   private itemListController!: ItemListController
-  private notesController!: NotesController
 
   override deinit(): void {
     super.deinit()
     ;(this.itemListController as unknown) = undefined
-    ;(this.notesController as unknown) = undefined
   }
 
   constructor(application: WebApplication, eventBus: InternalEventBus) {
@@ -43,9 +40,8 @@ export class SelectedItemsController extends AbstractViewController {
     })
   }
 
-  public setServicesPostConstruction(itemListController: ItemListController, notesController: NotesController) {
+  public setServicesPostConstruction(itemListController: ItemListController) {
     this.itemListController = itemListController
-    this.notesController = notesController
 
     this.disposers.push(
       this.application.streamItems<SNNote | FileItem>(
@@ -198,8 +194,11 @@ export class SelectedItemsController extends AbstractViewController {
 
     if (this.selectedItemsCount === 1) {
       const item = Object.values(this.selectedItems)[0]
+
       if (item.content_type === ContentType.Note) {
-        await this.notesController.openNote(item.uuid)
+        await this.itemListController.openNote(item.uuid)
+      } else if (item.content_type === ContentType.File) {
+        await this.itemListController.openFile(item.uuid)
       }
     }
 

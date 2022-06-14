@@ -11,7 +11,7 @@ import {
   DeinitSource,
   Platform,
   SNApplication,
-  NoteGroupController,
+  ItemGroupController,
   removeFromArray,
   IconsController,
   DesktopDeviceInterface,
@@ -41,7 +41,7 @@ export type WebEventObserver = (event: WebAppEvent, data?: unknown) => void
 export class WebApplication extends SNApplication {
   private webServices!: WebServices
   private webEventObservers: WebEventObserver[] = []
-  public noteControllerGroup: NoteGroupController
+  public itemControllerGroup: ItemGroupController
   public iconsController: IconsController
   private onVisibilityChange: () => void
 
@@ -70,7 +70,7 @@ export class WebApplication extends SNApplication {
     })
 
     deviceInterface.setApplication(this)
-    this.noteControllerGroup = new NoteGroupController(this)
+    this.itemControllerGroup = new ItemGroupController(this)
     this.iconsController = new IconsController()
 
     this.onVisibilityChange = () => {
@@ -102,8 +102,8 @@ export class WebApplication extends SNApplication {
 
       this.webServices = {} as WebServices
 
-      this.noteControllerGroup.deinit()
-      ;(this.noteControllerGroup as unknown) = undefined
+      this.itemControllerGroup.deinit()
+      ;(this.itemControllerGroup as unknown) = undefined
 
       this.webEventObservers.length = 0
 
