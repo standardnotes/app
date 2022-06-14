@@ -31,12 +31,6 @@ jobs:
 
       - name: Install dependencies
         run: yarn install
-      - name: ESLint
-        run: yarn lint
-      - name: Build
-        run: yarn build
-      - name: Test
-        run: yarn test
 
       - name: Bump Prod Version
         if: ${{ github.ref == 'refs/heads/main' }}

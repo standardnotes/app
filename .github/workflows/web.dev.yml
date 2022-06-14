@@ -7,8 +7,8 @@ concurrency:
 on:
   push:
     tags:
-      - '@standardnotes/web@*'
-      - '@standardnotes/web-server@*'
+      - '*standardnotes/web*'
+      - '*standardnotes/web-server*'
   workflow_dispatch:
 
 jobs:

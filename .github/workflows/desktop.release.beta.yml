@@ -3,7 +3,7 @@ name: Desktop Beta Release
 on:
   push:
     tags:
-      - '@standardnotes/desktop@*'
+      - '*standardnotes/desktop*'
   workflow_dispatch:
 
 jobs:
