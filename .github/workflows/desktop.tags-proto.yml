@@ -1,0 +1,14 @@
+name: Desktop Beta Release
+
+on:
+  push:
+    tags:
+      - '*'
+  workflow_dispatch:
+
+jobs:
+  Build:
+    uses: standardnotes/app/.github/workflows/desktop.release.reuse.yml@develop
+    secrets: inherit
+    with:
+      channel: beta
