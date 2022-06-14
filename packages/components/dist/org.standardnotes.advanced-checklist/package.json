@@ -22,7 +22,7 @@
     "deploy-build": "yarn run predeploy && gh-pages -b build -d build",
     "deploy-dev": "yarn run predeploy && gh-pages -b dev -d build",
     "deploy-stable": "yarn run predeploy && gh-pages -b gh-pages -d build",
-    "test": "react-scripts test --watchAll=false",
+    "custom:test": "react-scripts test --watchAll=false",
     "test:coverage": "npm run test -- --coverage --watchAll",
     "eject": "react-scripts eject",
     "serve": "serve -s -p 3000 build",
