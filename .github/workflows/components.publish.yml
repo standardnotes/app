@@ -41,5 +41,5 @@ jobs:
       - run: |
           node scripts/package-components.mjs
           git add dist
-          git commit -m 'chore(release): components'
+          (git commit -m 'chore(release): components') || true
           (git push -u origin HEAD) || true
