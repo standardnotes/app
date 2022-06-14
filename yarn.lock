@@ -4907,7 +4907,7 @@ __metadata:
     gh-pages: 3.2.3
     lint-staged: 12.3.5
     node-sass: "*"
-    prettier: 2.5.1
+    prettier: "*"
     react: 17.0.2
     react-beautiful-dnd: 13.1.0
     react-dom: 17.0.2
@@ -5635,6 +5635,7 @@ __metadata:
     eslint: "*"
     mini-css-extract-plugin: ^2.5.3
     node-sass: "*"
+    prettier: "*"
     sass-loader: ^12.6.0
     style-loader: ~3.3.1
     typescript: "*"
@@ -5659,6 +5660,7 @@ __metadata:
     eslint: "*"
     nanoid: ^3.3.4
     nanostores: ^0.5.12
+    prettier: "*"
     react: "link:../web/node_modules/react"
     react-dom: "link:../web/node_modules/react-dom"
     typescript: "*"
@@ -5742,6 +5744,7 @@ __metadata:
     mobx-react-lite: ^3.3.0
     node-sass: "*"
     npm-check-updates: ^12.5.9
+    prettier: "*"
     qrcode.react: ^3.0.1
     react: ^18.1.0
     react-dnd: ^16.0.1
@@ -25313,15 +25316,6 @@ __metadata:
   bin:
     prettier: bin-prettier.js
   checksum: 5b55bb1dced9d16635b83229df8e670d150890fdb343f19e8a66e610094a108e960c0f57352b3e5cdbc4eff4ef00a834406047ffcd9f20bd22a6497ba143c81f
-  languageName: node
-  linkType: hard
-
-"prettier@npm:2.5.1":
-  version: 2.5.1
-  resolution: "prettier@npm:2.5.1"
-  bin:
-    prettier: bin-prettier.js
-  checksum: 21b9408476ea1c544b0e45d51ceb94a84789ff92095abb710942d780c862d0daebdb29972d47f6b4d0f7ebbfb0ffbf56cc2cfa3e3e9d1cca54864af185b15b66
   languageName: node
   linkType: hard
 

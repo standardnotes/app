@@ -1,4 +1,4 @@
-import { screen, fireEvent } from '@testing-library/react'
+import { fireEvent, screen } from '@testing-library/react'
 
 import { RootState } from '../../app/store'
 import { testRender } from '../../testUtils'

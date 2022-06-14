@@ -23,10 +23,10 @@ jobs:
         uses: ruby/setup-ruby@v1
       - name: Install dependencies
         run: yarn install
-      - name: Build
-        run: yarn build
       - name: ESLint
         run: yarn lint
+      - name: Build
+        run: yarn build
       - name: Test
         run: yarn test
 
