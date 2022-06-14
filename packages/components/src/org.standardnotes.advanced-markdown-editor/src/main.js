@@ -1,61 +1,60 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 document.addEventListener('DOMContentLoaded', function () {
-
-  let workingNote;
-  let ignoreTextChange = false;
-  let initialLoad = true;
-  let lastValue, lastUUID, clientData;
-  let renderNote = false;
-  let showingUnsafeContentAlert = false;
+  let workingNote
+  let ignoreTextChange = false
+  let initialLoad = true
+  let lastValue, lastUUID, clientData
+  let renderNote = false
+  let showingUnsafeContentAlert = false
 
   const componentRelay = new ComponentRelay({
     targetWindow: window,
     onReady: () => {
-      document.body.classList.add(componentRelay.platform);
-      document.body.classList.add(componentRelay.environment);
+      document.body.classList.add(componentRelay.platform)
+      document.body.classList.add(componentRelay.environment)
 
-      initializeEditor();
-    }
-  });
+      initializeEditor()
+    },
+  })
 
   componentRelay.streamContextItem(async (note) => {
     if (showingUnsafeContentAlert) {
-      return;
+      return
     }
 
     if (note.uuid !== lastUUID) {
       // Note changed, reset last values
-      lastValue = null;
-      initialLoad = true;
-      lastUUID = note.uuid;
-      clientData = note.clientData;
+      lastValue = null
+      initialLoad = true
+      lastUUID = note.uuid
+      clientData = note.clientData
     }
 
-    workingNote = note;
+    workingNote = note
 
     // Only update UI on non-metadata updates.
     if (note.isMetadataUpdate || !window.easymde) {
-      return;
+      return
     }
 
-    document.getElementsByClassName('CodeMirror-code')[0].setAttribute(
-      'spellcheck',
-      JSON.stringify(note.content.spellcheck)
-    );
+    document
+      .getElementsByClassName('CodeMirror-code')[0]
+      .setAttribute('spellcheck', JSON.stringify(note.content.spellcheck))
 
-    const isUnsafeContent = checkIfUnsafeContent(note.content.text);
+    const isUnsafeContent = checkIfUnsafeContent(note.content.text)
     if (isUnsafeContent) {
-      const trustUnsafeContent = clientData['trustUnsafeContent'] ?? false;
+      const trustUnsafeContent = clientData['trustUnsafeContent'] ?? false
       if (!trustUnsafeContent) {
-        const result = await showUnsafeContentAlert();
+        const result = await showUnsafeContentAlert()
         if (result) {
-          setTrustUnsafeContent(workingNote);
+          setTrustUnsafeContent(workingNote)
         }
-        renderNote = result;
+        renderNote = result
       } else {
-        renderNote = true;
+        renderNote = true
       }
     } else {
-      renderNote = true;
+      renderNote = true
     }
 
     /**
@@ -63,39 +62,39 @@ document.addEventListener('DOMContentLoaded', function () {
      * clear the editor and disable it.
      */
     if (!renderNote) {
-      window.easymde.value('');
+      window.easymde.value('')
       if (!window.easymde.isPreviewActive()) {
-        window.easymde.togglePreview();
+        window.easymde.togglePreview()
       }
-      return;
+      return
     }
 
     if (note.content.text !== lastValue) {
-      ignoreTextChange = true;
-      window.easymde.value(note.content.text);
-      ignoreTextChange = false;
+      ignoreTextChange = true
+      window.easymde.value(note.content.text)
+      ignoreTextChange = false
     }
 
     if (initialLoad) {
-      initialLoad = false;
-      window.easymde.codemirror.getDoc().clearHistory();
-      const mode = clientData && clientData.mode;
+      initialLoad = false
+      window.easymde.codemirror.getDoc().clearHistory()
+      const mode = clientData && clientData.mode
 
       // Set initial editor mode
       if (mode === 'preview') {
         if (!window.easymde.isPreviewActive()) {
-          window.easymde.togglePreview();
+          window.easymde.togglePreview()
         }
       } else if (mode === 'split') {
         if (!window.easymde.isSideBySideActive()) {
-          window.easymde.toggleSideBySide();
+          window.easymde.toggleSideBySide()
         }
         // falback config
       } else if (window.easymde.isPreviewActive()) {
-        window.easymde.togglePreview();
+        window.easymde.togglePreview()
       }
     }
-  });
+  })
 
   function initializeEditor() {
     window.easymde = new EasyMDE({
@@ -106,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function () {
       inputStyle: getInputStyleForEnvironment(),
       status: false,
       shortcuts: {
-        toggleSideBySide: 'Cmd-Alt-P'
+        toggleSideBySide: 'Cmd-Alt-P',
       },
       // Syntax highlighting is disabled until we figure out performance issue: https://github.com/sn-extensions/advanced-markdown-editor/pull/20#issuecomment-513811633
       // renderingConfig: {
@@ -120,9 +119,9 @@ document.addEventListener('DOMContentLoaded', function () {
           noDisable: true,
           title: 'Toggle Preview',
           action: function () {
-            window.easymde.togglePreview();
-            saveMetadata();
-          }
+            window.easymde.togglePreview()
+            saveMetadata()
+          },
         },
         {
           className: 'fa fa-columns',
@@ -132,62 +131,73 @@ document.addEventListener('DOMContentLoaded', function () {
           noMobile: true,
           title: 'Toggle Side by Side',
           action: function () {
-            window.easymde.toggleSideBySide();
-            saveMetadata();
-          }
+            window.easymde.toggleSideBySide()
+            saveMetadata()
+          },
         },
         '|',
-        'heading', 'bold', 'italic', 'strikethrough',
-        '|', 'quote', 'code',
-        '|', 'unordered-list', 'ordered-list',
-        '|', 'clean-block',
-        '|', 'link', 'image',
-        '|', 'table'
+        'heading',
+        'bold',
+        'italic',
+        'strikethrough',
+        '|',
+        'quote',
+        'code',
+        '|',
+        'unordered-list',
+        'ordered-list',
+        '|',
+        'clean-block',
+        '|',
+        'link',
+        'image',
+        '|',
+        'table',
       ],
-    });
+    })
 
     /**
      * Can be set to Infinity to make sure the whole document is always rendered,
      * and thus the browser's text search works on it. This will have bad effects
      * on performance of big documents.Really bad performance on Safari. Unusable.
      */
-    window.easymde.codemirror.setOption('viewportMargin', 100);
+    window.easymde.codemirror.setOption('viewportMargin', 100)
 
     window.easymde.codemirror.on('change', function () {
       const strip = (html) => {
-        const tmp = document.implementation.createHTMLDocument('New').body;
-        tmp.innerHTML = html;
-        return tmp.textContent || tmp.innerText || '';
-      };
+        const tmp = document.implementation.createHTMLDocument('New').body
+        tmp.innerHTML = html
+        return tmp.textContent || tmp.innerText || ''
+      }
 
       const truncateString = (string, limit = 90) => {
         if (string.length <= limit) {
-          return string;
+          return string
         } else {
-          return string.substring(0, limit) + '...';
+          return string.substring(0, limit) + '...'
         }
-      };
+      }
 
       if (!ignoreTextChange && renderNote) {
         if (workingNote) {
           // Be sure to capture this object as a variable, as this.note may be reassigned in `streamContextItem`, so by the time
           // you modify it in the presave block, it may not be the same object anymore, so the presave values will not be applied to
           // the right object, and it will save incorrectly.
-          const note = workingNote;
+          const note = workingNote
 
           componentRelay.saveItemWithPresave(note, () => {
-            lastValue = window.easymde.value();
+            lastValue = window.easymde.value()
 
-            let html = window.easymde.options.previewRender(window.easymde.value());
-            let strippedHtml = truncateString(strip(html));
+            let html = window.easymde.options.previewRender(window.easymde.value())
+            let strippedHtml = truncateString(strip(html))
 
-            note.content.preview_plain = strippedHtml;
-            note.content.preview_html = null;
-            note.content.text = lastValue;
-          });
+            note.content.preview_plain = strippedHtml
+            note.content.preview_html = null
+            note.content.text = lastValue
+          })
         }
       }
-    });
+    })
 
     /**
      * Scrolls the cursor into view, so the soft keyboard on mobile devices
@@ -195,72 +205,76 @@ document.addEventListener('DOMContentLoaded', function () {
      * before the keyboard is shown.
      */
     const scrollCursorIntoView = (editor) => {
-      setTimeout(() => editor.scrollIntoView(), 200);
-    };
+      setTimeout(() => editor.scrollIntoView(), 200)
+    }
 
     window.easymde.codemirror.on('cursorActivity', function (editor) {
       if (componentRelay.environment !== 'mobile') {
-        return;
+        return
       }
-      scrollCursorIntoView(editor);
-    });
+      scrollCursorIntoView(editor)
+    })
 
     // Some sort of issue on Mobile RN where this causes an exception (".className is not defined")
     try {
-      window.easymde.toggleFullScreen();
+      window.easymde.toggleFullScreen()
     } catch (e) {
-      console.log('Error:', e);
+      console.error('Error:', e)
     }
   }
 
   function saveMetadata() {
     if (!renderNote) {
-      return;
+      return
     }
 
     const getEditorMode = () => {
-      const editor = window.easymde;
+      const editor = window.easymde
 
       if (editor) {
-        if (editor.isPreviewActive()) return 'preview';
-        if (editor.isSideBySideActive()) return 'split';
+        if (editor.isPreviewActive()) {
+          return 'preview'
+        }
+        if (editor.isSideBySideActive()) {
+          return 'split'
+        }
       }
-      return 'edit';
-    };
+      return 'edit'
+    }
 
-    const note = workingNote;
+    const note = workingNote
 
     componentRelay.saveItemWithPresave(note, () => {
       note.clientData = {
         ...note.clientData,
-        mode: getEditorMode()
-      };
-    });
+        mode: getEditorMode(),
+      }
+    })
   }
 
   function setTrustUnsafeContent(note) {
     componentRelay.saveItemWithPresave(note, () => {
       note.clientData = {
         ...note.clientData,
-        trustUnsafeContent: true
-      };
-    });
+        trustUnsafeContent: true,
+      }
+    })
   }
 
   /**
    * Checks if a markdown text is safe to render.
    */
   function checkIfUnsafeContent(markdownText) {
-    const marked = require('marked');
-    const DOMPurify = require('dompurify');
+    const marked = require('marked')
+    const DOMPurify = require('dompurify')
 
     /**
      * Using marked to get the resulting HTML string from the markdown text.
      */
     const renderedHtml = marked(markdownText, {
       headerIds: false,
-      smartypants: true
-    });
+      smartypants: true,
+    })
 
     const sanitizedHtml = DOMPurify.sanitize(renderedHtml, {
       /**
@@ -289,9 +303,9 @@ document.addEventListener('DOMContentLoaded', function () {
         'onsubmit',
         'onreset',
         'onselect',
-        'onchange'
-      ]
-    });
+        'onchange',
+      ],
+    })
 
     /**
      * Create documents from both the sanitized string and the rendered string.
@@ -299,24 +313,25 @@ document.addEventListener('DOMContentLoaded', function () {
      * (i.e: do not contain the same properties, attributes, inner text, etc)
      * it means something was stripped.
      */
-    const renderedDom = new DOMParser().parseFromString(renderedHtml, 'text/html');
-    const sanitizedDom = new DOMParser().parseFromString(sanitizedHtml, 'text/html');
-    return !renderedDom.isEqualNode(sanitizedDom);
+    const renderedDom = new DOMParser().parseFromString(renderedHtml, 'text/html')
+    const sanitizedDom = new DOMParser().parseFromString(sanitizedHtml, 'text/html')
+    return !renderedDom.isEqualNode(sanitizedDom)
   }
 
   function showUnsafeContentAlert() {
     if (showingUnsafeContentAlert) {
-      return;
+      return
     }
 
-    showingUnsafeContentAlert = true;
+    showingUnsafeContentAlert = true
 
-    const text = 'We’ve detected that this note contains a script or code snippet which may be unsafe to execute. ' +
+    const text =
+      'We’ve detected that this note contains a script or code snippet which may be unsafe to execute. ' +
       'Scripts executed in the editor have the ability to impersonate as the editor to Standard Notes. ' +
-      'Press Continue to mark this script as safe and proceed, or Cancel to avoid rendering this note.';
+      'Press Continue to mark this script as safe and proceed, or Cancel to avoid rendering this note.'
 
     return new Promise((resolve) => {
-      const Stylekit = require('sn-stylekit');
+      const Stylekit = require('sn-stylekit')
       const alert = new Stylekit.SKAlert({
         title: null,
         text,
@@ -325,26 +340,26 @@ document.addEventListener('DOMContentLoaded', function () {
             text: 'Cancel',
             style: 'neutral',
             action: function () {
-              showingUnsafeContentAlert = false;
-              resolve(false);
+              showingUnsafeContentAlert = false
+              resolve(false)
             },
           },
           {
             text: 'Continue',
             style: 'danger',
             action: function () {
-              showingUnsafeContentAlert = false;
-              resolve(true);
+              showingUnsafeContentAlert = false
+              resolve(true)
             },
           },
-        ]
-      });
-      alert.present();
-    });
+        ],
+      })
+      alert.present()
+    })
   }
 
   function getInputStyleForEnvironment() {
-    const environment = componentRelay.environment ?? 'web';
-    return environment === 'mobile' ? 'textarea' : 'contenteditable';
+    const environment = componentRelay.environment ?? 'web'
+    return environment === 'mobile' ? 'textarea' : 'contenteditable'
   }
-});
+})
