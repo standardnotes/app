@@ -1,0 +1,43 @@
+{
+  "name": "@standardnotes/markdown-hybrid",
+  "private": true,
+  "version": "1.5.0",
+  "description": "A Standard Notes derived editor that offers full support for Markdown editing.",
+  "main": "dist/dist.js",
+  "author": "Standard Notes <hello@standardnotes.com>",
+  "license": "AGPL-3.0",
+  "sn": {
+    "main": "dist/index.html"
+  },
+  "scripts": {
+    "start": "webpack serve --config webpack.dev.js --progress --hot",
+    "build": "webpack --config webpack.prod.js",
+    "custom:lint": "eslint src --ext .js",
+    "custom:lint:fix": "yarn lint --fix"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.13.10",
+    "@babel/core": "^7.13.13",
+    "@babel/preset-env": "^7.13.12",
+    "@standardnotes/component-relay": "2.2.0",
+    "copy-webpack-plugin": "^8.1.0",
+    "css-loader": "^5.2.0",
+    "dompurify": "^2.2.9",
+    "easymde": "2.16.1",
+    "eslint": "*",
+    "file-loader": "^6.2.0",
+    "font-awesome": "^4.7.0",
+    "highlightjs": "^9.16.2",
+    "html-webpack-plugin": "^5.3.1",
+    "marked": "^2.0.7",
+    "mini-css-extract-plugin": "^1.4.0",
+    "prettier": "*",
+    "sass": "^1.32.8",
+    "sass-loader": "^11.0.1",
+    "sn-stylekit": "3.0.1",
+    "webpack": "*",
+    "webpack-cli": "*",
+    "webpack-dev-server": "^3.11.2",
+    "webpack-merge": "^5.7.3"
+  }
+}

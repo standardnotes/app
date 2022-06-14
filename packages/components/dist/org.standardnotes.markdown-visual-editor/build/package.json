@@ -1,0 +1,22 @@
+{
+  "name": "markdown-visual",
+  "version": "0.1.0",
+  "author": "Johnny Almonte <johnny@standardnotes.com>",
+  "description": "A lightweight WYSIWYG markdown editor, derivated from Milkdown editor",
+  "keywords": [
+    "Standard Notes",
+    "Standard Notes Extensions"
+  ],
+  "private": true,
+  "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/standardnotes/markdown-visual.git"
+  },
+  "bugs": {
+    "url": "https://github.com/standardnotes/markdown-visual/issues"
+  },
+  "sn": {
+    "main": "build/index.html"
+  }
+}
