@@ -1,7 +1,7 @@
 name: Desktop Tags Matching Release
 
 on:
-  push:
+  create:
     tags:
       - '*'
   workflow_dispatch:
