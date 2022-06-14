@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  BuildWorkflow:
+  Build:
     uses: standardnotes/app/.github/workflows/desktop.release.reuse.yml@main
     secrets: inherit
     with:
