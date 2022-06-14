@@ -15804,7 +15804,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^7.20.0, eslint@npm:^7.21.0, eslint@npm:^7.29.0":
+"eslint@npm:^7.20.0, eslint@npm:^7.21.0":
   version: 7.32.0
   resolution: "eslint@npm:7.32.0"
   dependencies:
@@ -31035,7 +31035,7 @@ __metadata:
     babel-loader: ^8.2.2
     copy-webpack-plugin: ^9.0.1
     css-loader: ^5.2.6
-    eslint: ^7.29.0
+    eslint: "*"
     eslint-plugin-react: ^7.24.0
     mini-css-extract-plugin: ^2.0.0
     node-sass: ^4.14.1
@@ -31045,8 +31045,8 @@ __metadata:
     sn-stylekit: 2.0.22
     style-loader: ^3.0.0
     terser-webpack-plugin: ^5.1.4
-    webpack: ^5.41.1
-    webpack-cli: ^4.7.2
+    webpack: "*"
+    webpack-cli: "*"
     webpack-dev-server: 3.11.0
     webpack-merge: ^5.8.0
   languageName: unknown
@@ -31146,8 +31146,8 @@ __metadata:
     style-loader: ~0.13.1
     svg-url-loader: ^7.1.1
     terser-webpack-plugin: ^5.1.1
-    webpack: ^5.24.4
-    webpack-cli: ^4.5.0
+    webpack: "*"
+    webpack-cli: "*"
     webpack-dev-server: ^3.11.2
     webpack-merge: ^5.7.3
   languageName: unknown
@@ -34506,7 +34506,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack-cli@npm:*, webpack-cli@npm:^4.5.0, webpack-cli@npm:^4.7.2, webpack-cli@npm:^4.9.2":
+"webpack-cli@npm:*, webpack-cli@npm:^4.9.2":
   version: 4.10.0
   resolution: "webpack-cli@npm:4.10.0"
   dependencies:
@@ -34873,7 +34873,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:*, webpack@npm:^5, webpack@npm:^5.24.4, webpack@npm:^5.41.1, webpack@npm:^5.64.4, webpack@npm:^5.72.0, webpack@npm:^5.73.0":
+"webpack@npm:*, webpack@npm:^5, webpack@npm:^5.64.4, webpack@npm:^5.72.0, webpack@npm:^5.73.0":
   version: 5.73.0
   resolution: "webpack@npm:5.73.0"
   dependencies:
