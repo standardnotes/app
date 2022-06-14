@@ -1,5 +1,4 @@
 {
-  ".": "3.21.0",
   "packages/mobile": "3.22.0",
   "packages/desktop": "3.22.1",
   "packages/web": "3.22.1"
