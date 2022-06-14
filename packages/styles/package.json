@@ -17,6 +17,7 @@
     "eslint": "*",
     "mini-css-extract-plugin": "^2.5.3",
     "node-sass": "*",
+    "prettier": "*",
     "sass-loader": "^12.6.0",
     "style-loader": "~3.3.1",
     "typescript": "*",

@@ -20,6 +20,7 @@
     "@types/react": "link:../web/node_modules/@types/react",
     "@types/react-dom": "link:../web/node_modules/@types/react-dom",
     "eslint": "*",
+    "prettier": "*",
     "typescript": "*"
   }
 }
