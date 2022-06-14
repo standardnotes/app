@@ -56,7 +56,7 @@
     "react-native-fs": "^2.19.0",
     "react-native-gesture-handler": "2.3.2",
     "react-native-image-picker": "^4.7.3",
-    "react-native-keychain": "patch:react-native-keychain@8.0.0#./patches/react-native-keychain+8.0.0.patch",
+    "react-native-keychain": "8.0.0",
     "react-native-mail": "standardnotes/react-native-mail#fd26119e67a2ffc5eaa95a9c17049743e39ce2d3",
     "react-native-privacy-snapshot": "standardnotes/react-native-privacy-snapshot#653e904c90fc6f2b578da59138f2bfe5d7f942fe",
     "react-native-reanimated": "^2.8.0",
