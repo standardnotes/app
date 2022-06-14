@@ -1,15 +1,17 @@
 {
-  "name": "@standardnotes/components",
-  "version": "0.3.0-alpha.2",
+  "name": "@standardnotes/components-meta",
+  "version": "2.0.0",
   "private": true,
+  "main": "dist",
   "workspaces": {
     "packages": [
       "src/*"
     ]
   },
   "scripts": {
-    "build": "yarn workspaces foreach --parallel --verbose run build",
-    "lint": "yarn workspaces foreach --parallel --verbose run lint"
+    "compile": "yarn compile:lint && yarn compile:all",
+    "compile:lint": "yarn workspaces foreach --parallel --verbose run lint",
+    "compile:all": "yarn workspaces foreach --parallel --verbose run compile"
   },
   "devDependencies": {
     "@standardnotes/deterministic-zip": "^1.2.0",

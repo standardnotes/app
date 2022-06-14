@@ -27,6 +27,7 @@ jobs:
           gpg -d --passphrase "${{ secrets.KEYSTORE_PASSPHRASE }}" --batch keystore.keystore.asc > android/app/keystore.keystore
       - name: Install dependencies
         run: yarn install
+      - run: yarn build:mobile
       - name: Ruby Setup for Fastlane
         uses: ruby/setup-ruby@v1
       - name: fastlane
@@ -65,6 +66,7 @@ jobs:
           echo "PACKAGE_VERSION=$(grep '"version"' package.json | cut -d '"' -f 4)" >> $GITHUB_ENV
       - name: Install dependencies
         run: yarn install && yarn install:pods
+      - run: yarn build:mobile
       - name: Set ssh connection to Github
         uses: webfactory/ssh-agent@v0.4.1
         with:

@@ -23,7 +23,7 @@ jobs:
           brew install snapcraft
 
       - run: yarn install
-      - run: yarn build:web:all
+      - run: yarn build:desktop
 
       - name: SnapArm64
         run: |

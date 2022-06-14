@@ -23,7 +23,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
       - run: yarn install
-      - run: yarn build:components
+      - run: yarn compile:components
       - name: Setup git config
         run: |
           git config --global user.name "standardci"

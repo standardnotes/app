@@ -21,7 +21,7 @@ jobs:
       - name: ESLint
         run: yarn lint
       - name: Build
-        run: yarn build
+        run: yarn build:web-server
       - name: Test
         run: yarn test
 
