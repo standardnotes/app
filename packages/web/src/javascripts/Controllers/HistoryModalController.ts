@@ -1,16 +1,35 @@
 import { WebApplication } from '@/Application/Application'
 import { RevisionListTab } from '@/Components/RevisionHistoryModal/RevisionListTabType'
-import { ListGroup, RemoteRevisionListGroup, sortRevisionListIntoGroups } from '@/Components/RevisionHistoryModal/utils'
-import { Action, ActionVerb, InternalEventBus, NoteHistoryEntry, RevisionListEntry } from '@standardnotes/snjs'
+import {
+  LegacyHistoryEntry,
+  ListGroup,
+  RemoteRevisionListGroup,
+  sortRevisionListIntoGroups,
+} from '@/Components/RevisionHistoryModal/utils'
+import { STRING_RESTORE_LOCKED_ATTEMPT } from '@/Constants/Strings'
+import { confirmDialog } from '@/Services/AlertService'
+import {
+  Action,
+  ActionVerb,
+  HistoryEntry,
+  InternalEventBus,
+  NoteHistoryEntry,
+  PayloadEmitSource,
+  RevisionListEntry,
+  SNNote,
+} from '@standardnotes/snjs'
 import { action, makeObservable, observable } from 'mobx'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { NotesController } from './NotesController'
+import { SelectedItemsController } from './SelectedItemsController'
 
 type RemoteHistory = RemoteRevisionListGroup[] | undefined
 
 type SessionHistory = ListGroup<NoteHistoryEntry>[] | undefined
 
 type LegacyHistory = Action[] | undefined
+
+type SelectedRevision = HistoryEntry | LegacyHistoryEntry | undefined
 
 export class HistoryModalController extends AbstractViewController {
   showRevisionHistoryModal = false
@@ -20,20 +39,31 @@ export class HistoryModalController extends AbstractViewController {
   sessionHistory: SessionHistory = undefined
   legacyHistory: LegacyHistory = undefined
 
+  selectedRevision: SelectedRevision = undefined
+
   currentTab = RevisionListTab.Remote
 
   override deinit(): void {
     super.deinit()
     this.clearAllHistory()
     ;(this.notesController as unknown) = undefined
+    ;(this.selectionController as unknown) = undefined
   }
 
-  constructor(application: WebApplication, eventBus: InternalEventBus, private notesController: NotesController) {
+  constructor(
+    application: WebApplication,
+    eventBus: InternalEventBus,
+    private notesController: NotesController,
+    private selectionController: SelectedItemsController,
+  ) {
     super(application, eventBus)
 
     makeObservable(this, {
       showRevisionHistoryModal: observable,
       setShowRevisionHistoryModal: action,
+
+      selectedRevision: observable,
+      setSelectedRevision: action,
 
       remoteHistory: observable,
       setRemoteHistory: action,
@@ -51,6 +81,10 @@ export class HistoryModalController extends AbstractViewController {
       currentTab: observable,
       setCurrentTab: action,
     })
+  }
+
+  setSelectedRevision = (revision: SelectedRevision) => {
+    this.selectedRevision = revision
   }
 
   setCurrentTab = (tab: RevisionListTab) => {
@@ -149,5 +183,52 @@ export class HistoryModalController extends AbstractViewController {
     this.remoteHistory = undefined
     this.sessionHistory = undefined
     this.legacyHistory = undefined
+  }
+
+  restoreRevision = (revision: NonNullable<SelectedRevision>) => {
+    const originalNote = this.application.items.findItem<SNNote>(revision.payload.uuid)
+
+    if (originalNote?.locked) {
+      this.application.alertService.alert(STRING_RESTORE_LOCKED_ATTEMPT).catch(console.error)
+      return
+    }
+
+    confirmDialog({
+      text: "Are you sure you want to replace the current note's contents with what you see in this preview?",
+      confirmButtonStyle: 'danger',
+    })
+      .then((confirmed) => {
+        if (!originalNote) {
+          throw new Error('Original note not found.')
+        }
+
+        if (confirmed) {
+          this.application.mutator
+            .changeAndSaveItem(
+              originalNote,
+              (mutator) => {
+                mutator.setCustomContent(revision.payload.content)
+              },
+              true,
+              PayloadEmitSource.RemoteRetrieved,
+            )
+            .catch(console.error)
+          this.dismissModal()
+        }
+      })
+      .catch(console.error)
+  }
+
+  restoreRevisionAsCopy = async (revision: NonNullable<SelectedRevision>) => {
+    const originalNote = this.application.items.findSureItem<SNNote>(revision.payload.uuid)
+
+    const duplicatedItem = await this.application.mutator.duplicateItem(originalNote, {
+      ...revision.payload.content,
+      title: revision.payload.content.title ? revision.payload.content.title + ' (copy)' : undefined,
+    })
+
+    this.selectionController.selectItem(duplicatedItem.uuid).catch(console.error)
+
+    this.dismissModal()
   }
 }

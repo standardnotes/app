@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
-import { RevisionHistoryModalContent } from './RevisionHistoryModalContent'
+import RevisionHistoryModalContent from './RevisionHistoryModalContent'
 import { RevisionHistoryModalProps } from './RevisionHistoryModalProps'
 
 const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = ({

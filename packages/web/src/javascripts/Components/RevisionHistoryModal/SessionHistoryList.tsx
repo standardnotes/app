@@ -1,4 +1,4 @@
-import { HistoryEntry, RevisionListEntry } from '@standardnotes/snjs'
+import { RevisionListEntry } from '@standardnotes/snjs'
 import {
   Dispatch,
   Fragment,
@@ -12,21 +12,15 @@ import {
 } from 'react'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import HistoryListItem from './HistoryListItem'
-import { LegacyHistoryEntry } from './utils'
 import { HistoryModalController } from '@/Controllers/HistoryModalController'
 
 type Props = {
   historyModalController: HistoryModalController
-  setSelectedRevision: Dispatch<SetStateAction<HistoryEntry | LegacyHistoryEntry | undefined>>
   setSelectedRemoteEntry: Dispatch<SetStateAction<RevisionListEntry | undefined>>
 }
 
-const SessionHistoryList: FunctionComponent<Props> = ({
-  historyModalController,
-  setSelectedRevision,
-  setSelectedRemoteEntry,
-}) => {
-  const { sessionHistory } = historyModalController
+const SessionHistoryList: FunctionComponent<Props> = ({ historyModalController, setSelectedRemoteEntry }) => {
+  const { sessionHistory, setSelectedRevision } = historyModalController
 
   const sessionHistoryListRef = useRef<HTMLDivElement>(null)
 
