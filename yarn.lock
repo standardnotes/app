@@ -15808,7 +15808,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-react@npm:^7.22.0, eslint-plugin-react@npm:^7.23.1, eslint-plugin-react@npm:^7.24.0, eslint-plugin-react@npm:^7.26.1, eslint-plugin-react@npm:^7.27.1, eslint-plugin-react@npm:^7.29.4":
+"eslint-plugin-react@npm:*, eslint-plugin-react@npm:^7.22.0, eslint-plugin-react@npm:^7.23.1, eslint-plugin-react@npm:^7.24.0, eslint-plugin-react@npm:^7.26.1, eslint-plugin-react@npm:^7.27.1, eslint-plugin-react@npm:^7.29.4":
   version: 7.30.0
   resolution: "eslint-plugin-react@npm:7.30.0"
   dependencies:
@@ -15982,7 +15982,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^7.18.0, eslint@npm:^7.20.0, eslint@npm:^7.21.0, eslint@npm:^7.22.0, eslint@npm:^7.23.0, eslint@npm:^7.29.0":
+"eslint@npm:^7.18.0, eslint@npm:^7.20.0, eslint@npm:^7.21.0, eslint@npm:^7.22.0, eslint@npm:^7.29.0":
   version: 7.32.0
   resolution: "eslint@npm:7.32.0"
   dependencies:
@@ -30980,8 +30980,8 @@ __metadata:
     copy-webpack-plugin: ^8.1.1
     css-loader: ^5.2.0
     dompurify: ^2.2.9
-    eslint: ^7.23.0
-    eslint-plugin-react: ^7.23.1
+    eslint: "*"
+    eslint-plugin-react: "*"
     filesafe-embed: 1.0.13
     filesafe-js: 1.0.5
     html-webpack-plugin: ^5.3.1
@@ -30993,8 +30993,8 @@ __metadata:
     sn-stylekit: 3.0.1
     style-loader: ~2.0.0
     terser-webpack-plugin: ^5.1.1
-    webpack: ^5.30.0
-    webpack-cli: ^4.6.0
+    webpack: "*"
+    webpack-cli: "*"
     webpack-dev-server: ^3.11.2
     webpack-merge: ^5.7.3
     webpack-merge-and-include-globally: ^2.3.4
@@ -34685,7 +34685,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack-cli@npm:*, webpack-cli@npm:^4.4.0, webpack-cli@npm:^4.5.0, webpack-cli@npm:^4.6.0, webpack-cli@npm:^4.7.2, webpack-cli@npm:^4.9.2":
+"webpack-cli@npm:*, webpack-cli@npm:^4.4.0, webpack-cli@npm:^4.5.0, webpack-cli@npm:^4.7.2, webpack-cli@npm:^4.9.2":
   version: 4.10.0
   resolution: "webpack-cli@npm:4.10.0"
   dependencies:
@@ -35089,7 +35089,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:*, webpack@npm:^5, webpack@npm:^5.19.0, webpack@npm:^5.24.2, webpack@npm:^5.24.4, webpack@npm:^5.30.0, webpack@npm:^5.41.1, webpack@npm:^5.64.4, webpack@npm:^5.72.0, webpack@npm:^5.73.0":
+"webpack@npm:*, webpack@npm:^5, webpack@npm:^5.19.0, webpack@npm:^5.24.2, webpack@npm:^5.24.4, webpack@npm:^5.41.1, webpack@npm:^5.64.4, webpack@npm:^5.72.0, webpack@npm:^5.73.0":
   version: 5.73.0
   resolution: "webpack@npm:5.73.0"
   dependencies:
