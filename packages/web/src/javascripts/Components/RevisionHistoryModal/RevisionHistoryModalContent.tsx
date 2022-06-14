@@ -16,7 +16,7 @@ import Button from '@/Components/Button/Button'
 import HistoryListContainer from './HistoryListContainer'
 import RevisionContentLocked from './RevisionContentLocked'
 import SelectedRevisionContent from './SelectedRevisionContent'
-import { LegacyHistoryEntry, RemoteRevisionListGroup, sortRevisionListIntoGroups } from './utils'
+import { LegacyHistoryEntry } from './utils'
 import { RevisionHistoryModalProps } from './RevisionHistoryModalProps'
 
 const ABSOLUTE_CENTER_CLASSNAME = 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
@@ -67,33 +67,6 @@ export const RevisionHistoryModalContent: FunctionComponent<RevisionHistoryModal
     const [isDeletingRevision, setIsDeletingRevision] = useState(false)
     const [templateNoteForRevision, setTemplateNoteForRevision] = useState<SNNote>()
     const [showContentLockedScreen, setShowContentLockedScreen] = useState(false)
-
-    const [remoteHistory, setRemoteHistory] = useState<RemoteRevisionListGroup[]>()
-    const [isFetchingRemoteHistory, setIsFetchingRemoteHistory] = useState(false)
-
-    const fetchRemoteHistory = useCallback(async () => {
-      if (note) {
-        setRemoteHistory(undefined)
-        setIsFetchingRemoteHistory(true)
-        try {
-          const initialRemoteHistory = await application.historyManager.remoteHistoryForItem(note)
-
-          const remoteHistoryAsGroups = sortRevisionListIntoGroups<RevisionListEntry>(initialRemoteHistory)
-
-          setRemoteHistory(remoteHistoryAsGroups)
-        } catch (err) {
-          console.error(err)
-        } finally {
-          setIsFetchingRemoteHistory(false)
-        }
-      }
-    }, [application, note])
-
-    useEffect(() => {
-      if (!remoteHistory?.length) {
-        fetchRemoteHistory().catch(console.error)
-      }
-    }, [fetchRemoteHistory, remoteHistory?.length])
 
     const restore = useCallback(() => {
       if (selectedRevision) {
@@ -189,14 +162,14 @@ export const RevisionHistoryModalContent: FunctionComponent<RevisionHistoryModal
                   throw new Error(res.error.message)
                 }
 
-                fetchRemoteHistory().catch(console.error)
+                // fetchRemoteHistory().catch(console.error)
                 setIsDeletingRevision(false)
               })
               .catch(console.error)
           }
         })
         .catch(console.error)
-    }, [application.alertService, application.historyManager, fetchRemoteHistory, note, selectedRemoteEntry])
+    }, [application.alertService, application.historyManager, note, selectedRemoteEntry])
 
     return (
       <DialogOverlay
@@ -224,9 +197,8 @@ export const RevisionHistoryModalContent: FunctionComponent<RevisionHistoryModal
               {note && (
                 <HistoryListContainer
                   application={application}
+                  historyModalController={historyModalController}
                   note={note}
-                  remoteHistory={remoteHistory}
-                  isFetchingRemoteHistory={isFetchingRemoteHistory}
                   setSelectedRevision={setSelectedRevision}
                   setSelectedRemoteEntry={setSelectedRemoteEntry}
                   setShowContentLockedScreen={setShowContentLockedScreen}

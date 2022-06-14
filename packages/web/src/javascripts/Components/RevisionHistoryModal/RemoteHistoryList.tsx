@@ -5,21 +5,22 @@ import { Fragment, FunctionComponent, useCallback, useEffect, useMemo, useRef, u
 import Icon from '@/Components/Icon/Icon'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import HistoryListItem from './HistoryListItem'
-import { previewHistoryEntryTitle, RemoteRevisionListGroup } from './utils'
+import { previewHistoryEntryTitle } from './utils'
+import { HistoryModalController } from '@/Controllers/HistoryModalController'
 
 type RemoteHistoryListProps = {
   application: WebApplication
-  remoteHistory: RemoteRevisionListGroup[] | undefined
-  isFetchingRemoteHistory: boolean
+  historyModalController: HistoryModalController
   fetchAndSetRemoteRevision: (revisionListEntry: RevisionListEntry) => Promise<void>
 }
 
 const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({
   application,
-  remoteHistory,
-  isFetchingRemoteHistory,
+  historyModalController,
   fetchAndSetRemoteRevision,
 }) => {
+  const { remoteHistory, isFetchingRemoteHistory } = historyModalController
+
   const remoteHistoryListRef = useRef<HTMLDivElement>(null)
 
   useListKeyboardNavigation(remoteHistoryListRef)

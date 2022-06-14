@@ -1,23 +1,18 @@
 import { WebApplication } from '@/Application/Application'
-import { Action, ActionVerb, HistoryEntry, NoteHistoryEntry, RevisionListEntry, SNNote } from '@standardnotes/snjs'
+import { HistoryModalController } from '@/Controllers/HistoryModalController'
+import { Action, HistoryEntry, RevisionListEntry, SNNote } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useCallback, useState, useEffect, SetStateAction, Dispatch } from 'react'
+import { FunctionComponent, useCallback, SetStateAction, Dispatch } from 'react'
 import LegacyHistoryList from './LegacyHistoryList'
 import RemoteHistoryList from './RemoteHistoryList'
+import { RevisionListTab } from './RevisionListTabType'
 import SessionHistoryList from './SessionHistoryList'
-import { LegacyHistoryEntry, RemoteRevisionListGroup, sortRevisionListIntoGroups } from './utils'
-
-export enum RevisionListTabType {
-  Session = 'Session',
-  Remote = 'Remote',
-  Legacy = 'Legacy',
-}
+import { LegacyHistoryEntry } from './utils'
 
 type Props = {
   application: WebApplication
-  isFetchingRemoteHistory: boolean
+  historyModalController: HistoryModalController
   note: SNNote
-  remoteHistory: RemoteRevisionListGroup[] | undefined
   setIsFetchingSelectedRevision: Dispatch<SetStateAction<boolean>>
   setSelectedRemoteEntry: Dispatch<SetStateAction<RevisionListEntry | undefined>>
   setSelectedRevision: Dispatch<SetStateAction<HistoryEntry | LegacyHistoryEntry | undefined>>
@@ -26,50 +21,19 @@ type Props = {
 
 const HistoryListContainer: FunctionComponent<Props> = ({
   application,
-  isFetchingRemoteHistory,
+  historyModalController,
   note,
-  remoteHistory,
   setIsFetchingSelectedRevision,
   setSelectedRemoteEntry,
   setSelectedRevision,
   setShowContentLockedScreen,
 }) => {
-  const sessionHistory = sortRevisionListIntoGroups<NoteHistoryEntry>(
-    application.historyManager.sessionHistoryForItem(note) as NoteHistoryEntry[],
-  )
-  const [legacyHistory, setLegacyHistory] = useState<Action[]>()
-
-  const [selectedTab, setSelectedTab] = useState<RevisionListTabType>(RevisionListTabType.Remote)
-
-  useEffect(() => {
-    const fetchLegacyHistory = async () => {
-      const actionExtensions = application.actionsManager.getExtensions()
-      actionExtensions.forEach(async (ext) => {
-        const actionExtension = await application.actionsManager.loadExtensionInContextOfItem(ext, note)
-
-        if (!actionExtension) {
-          return
-        }
-
-        const isLegacyNoteHistoryExt = actionExtension?.actions.some((action) => action.verb === ActionVerb.Nested)
-
-        if (!isLegacyNoteHistoryExt) {
-          return
-        }
-
-        const legacyHistoryEntries = actionExtension.actions.filter((action) => action.subactions?.[0])
-
-        setLegacyHistory(legacyHistoryEntries)
-      })
-    }
-
-    fetchLegacyHistory().catch(console.error)
-  }, [application, note])
+  const { legacyHistory, currentTab, setCurrentTab } = historyModalController
 
   const TabButton: FunctionComponent<{
-    type: RevisionListTabType
+    type: RevisionListTab
   }> = ({ type }) => {
-    const isSelected = selectedTab === type
+    const isSelected = currentTab === type
 
     return (
       <button
@@ -77,7 +41,7 @@ const HistoryListContainer: FunctionComponent<Props> = ({
           isSelected ? 'color-info font-medium shadow-bottom' : 'color-text'
         }`}
         onClick={() => {
-          setSelectedTab(type)
+          setCurrentTab(type)
           setSelectedRemoteEntry(undefined)
         }}
       >
@@ -150,27 +114,26 @@ const HistoryListContainer: FunctionComponent<Props> = ({
   return (
     <div className={'flex flex-col min-w-60 border-0 border-r-1px border-solid border-main overflow-auto h-full'}>
       <div className="flex border-0 border-b-1 border-solid border-main">
-        <TabButton type={RevisionListTabType.Remote} />
-        <TabButton type={RevisionListTabType.Session} />
-        {legacyHistory && legacyHistory.length > 0 && <TabButton type={RevisionListTabType.Legacy} />}
+        <TabButton type={RevisionListTab.Remote} />
+        <TabButton type={RevisionListTab.Session} />
+        {legacyHistory && legacyHistory.length > 0 && <TabButton type={RevisionListTab.Legacy} />}
       </div>
       <div className={'min-h-0 overflow-auto py-1.5 h-full'}>
-        {selectedTab === RevisionListTabType.Session && (
+        {currentTab === RevisionListTab.Session && (
           <SessionHistoryList
-            sessionHistory={sessionHistory}
+            historyModalController={historyModalController}
             setSelectedRevision={setSelectedRevision}
             setSelectedRemoteEntry={setSelectedRemoteEntry}
           />
         )}
-        {selectedTab === RevisionListTabType.Remote && (
+        {currentTab === RevisionListTab.Remote && (
           <RemoteHistoryList
             application={application}
-            remoteHistory={remoteHistory}
-            isFetchingRemoteHistory={isFetchingRemoteHistory}
+            historyModalController={historyModalController}
             fetchAndSetRemoteRevision={fetchAndSetRemoteRevision}
           />
         )}
-        {selectedTab === RevisionListTabType.Legacy && (
+        {currentTab === RevisionListTab.Legacy && (
           <LegacyHistoryList
             legacyHistory={legacyHistory}
             setSelectedRevision={setSelectedRevision}

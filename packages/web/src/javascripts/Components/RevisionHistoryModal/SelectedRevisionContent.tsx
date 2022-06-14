@@ -54,9 +54,8 @@ const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentProps> =
             <textarea
               readOnly={true}
               className="w-full h-full resize-none p-4 pt-0 border-0 bg-default color-text text-editor font-editor"
-            >
-              {selectedRevision.payload.content.text}
-            </textarea>
+              defaultValue={selectedRevision.payload.content.text}
+            />
           ) : (
             <div className={`color-passive-0 ${ABSOLUTE_CENTER_CLASSNAME}`}>Empty note.</div>
           )}

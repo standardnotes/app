@@ -1,4 +1,4 @@
-import { HistoryEntry, NoteHistoryEntry, RevisionListEntry } from '@standardnotes/snjs'
+import { HistoryEntry, RevisionListEntry } from '@standardnotes/snjs'
 import {
   Dispatch,
   Fragment,
@@ -12,25 +12,28 @@ import {
 } from 'react'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import HistoryListItem from './HistoryListItem'
-import { LegacyHistoryEntry, ListGroup } from './utils'
+import { LegacyHistoryEntry } from './utils'
+import { HistoryModalController } from '@/Controllers/HistoryModalController'
 
 type Props = {
-  sessionHistory: ListGroup<NoteHistoryEntry>[]
+  historyModalController: HistoryModalController
   setSelectedRevision: Dispatch<SetStateAction<HistoryEntry | LegacyHistoryEntry | undefined>>
   setSelectedRemoteEntry: Dispatch<SetStateAction<RevisionListEntry | undefined>>
 }
 
 const SessionHistoryList: FunctionComponent<Props> = ({
-  sessionHistory,
+  historyModalController,
   setSelectedRevision,
   setSelectedRemoteEntry,
 }) => {
+  const { sessionHistory } = historyModalController
+
   const sessionHistoryListRef = useRef<HTMLDivElement>(null)
 
   useListKeyboardNavigation(sessionHistoryListRef)
 
   const sessionHistoryLength = useMemo(
-    () => sessionHistory.map((group) => group.entries).flat().length,
+    () => sessionHistory?.map((group) => group.entries).flat().length,
     [sessionHistory],
   )
 
