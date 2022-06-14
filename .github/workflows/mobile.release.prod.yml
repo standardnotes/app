@@ -3,7 +3,7 @@ name: Mobile Build Production
 on:
   push:
     tags:
-      - '*standardnotes/mobile!(*alpha*|*beta*)'
+      - '**standardnotes/mobile!(*alpha*|*beta*)'
   workflow_dispatch:
 
 jobs:
