@@ -5053,6 +5053,64 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@standardnotes/bold-editor@workspace:packages/components/src/org.standardnotes.bold-editor":
+  version: 0.0.0-use.local
+  resolution: "@standardnotes/bold-editor@workspace:packages/components/src/org.standardnotes.bold-editor"
+  dependencies:
+    "@babel/core": ^7.13.14
+    "@babel/eslint-parser": ^7.13.14
+    "@babel/preset-env": ^7.13.12
+    "@babel/preset-react": ^7.13.13
+    "@standardnotes/editor-kit": 2.2.3
+    babel-loader: ^8.2.2
+    copy-webpack-plugin: ^8.1.1
+    css-loader: ^5.2.0
+    dompurify: ^2.2.9
+    eslint: "*"
+    eslint-plugin-react: "*"
+    filesafe-embed: 1.0.13
+    filesafe-js: 1.0.5
+    html-webpack-plugin: ^5.3.1
+    mini-css-extract-plugin: ^1.4.0
+    node-sass: "*"
+    react: 17.x
+    react-dom: 17.x
+    sass-loader: ^11.0.1
+    sn-stylekit: 3.0.1
+    style-loader: ~2.0.0
+    terser-webpack-plugin: ^5.1.1
+    webpack: "*"
+    webpack-cli: "*"
+    webpack-dev-server: ^3.11.2
+    webpack-merge: ^5.7.3
+    webpack-merge-and-include-globally: ^2.3.4
+  languageName: unknown
+  linkType: soft
+
+"@standardnotes/classic-code-editor@workspace:packages/components/src/org.standardnotes.code-editor":
+  version: 0.0.0-use.local
+  resolution: "@standardnotes/classic-code-editor@workspace:packages/components/src/org.standardnotes.code-editor"
+  dependencies:
+    "@babel/cli": ^7.12.10
+    "@babel/core": ^7.12.10
+    "@babel/preset-env": ^7.12.11
+    "@standardnotes/component-relay": 2.2.0
+    codemirror: 5.65.2
+    copy-webpack-plugin: ^7.0.0
+    css-loader: ^5.0.1
+    eslint: "*"
+    http-server: ^0.12.3
+    mini-css-extract-plugin: ^1.3.5
+    remove-files-webpack-plugin: ^1.4.4
+    sass: "*"
+    sass-loader: ^10.1.1
+    sn-stylekit: ^2.1.1
+    webpack: "*"
+    webpack-cli: "*"
+    webpack-merge: ^5.7.3
+  languageName: unknown
+  linkType: soft
+
 "@standardnotes/common@npm:^1.19.6, @standardnotes/common@npm:^1.22.0":
   version: 1.22.0
   resolution: "@standardnotes/common@npm:1.22.0"
@@ -5346,6 +5404,132 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@standardnotes/markdown-basic@workspace:packages/components/src/org.standardnotes.simple-markdown-editor":
+  version: 0.0.0-use.local
+  resolution: "@standardnotes/markdown-basic@workspace:packages/components/src/org.standardnotes.simple-markdown-editor"
+  dependencies:
+    "@babel/cli": ^7.10.5
+    "@babel/core": ^7.11.1
+    "@babel/eslint-parser": ^7.13.4
+    "@babel/plugin-proposal-class-properties": ^7.10.4
+    "@babel/plugin-transform-runtime": ^7.11.0
+    "@babel/preset-env": ^7.11.0
+    "@babel/preset-react": ^7.10.4
+    "@babel/preset-stage-0": ^7.8.3
+    "@babel/register": ^7.10.5
+    "@babel/runtime": ^7.11.2
+    "@standardnotes/component-relay": 2.2.0
+    "@standardnotes/eslint-config-extensions": ^1.0.0
+    babel-loader: ^8.1.0
+    copy-webpack-plugin: 6.0.3
+    css-loader: ~4.2.1
+    eslint: "*"
+    eslint-formatter-pretty: ^4.0.0
+    eslint-plugin-compat: ^3.9.0
+    eslint-plugin-import: ^2.22.1
+    eslint-plugin-promise: ^4.3.1
+    eslint-plugin-react: ^7.22.0
+    highlight.js: ^10.1.2
+    markdown-it: ^11.0.0
+    markdown-it-footnote: ^3.0.2
+    markdown-it-highlightjs: ^3.2.0
+    markdown-it-task-lists: ^2.1.1
+    mini-css-extract-plugin: ^0.10.0
+    node-sass: "*"
+    react: 16.x
+    react-dom: 16.x
+    sass-loader: ^9.0.3
+    sn-stylekit: 2.1.0
+    style-loader: ~1.2.1
+    webpack: 4.44.1
+    webpack-cli: ^3.3.12
+    webpack-dev-server: 3.11.0
+  languageName: unknown
+  linkType: soft
+
+"@standardnotes/markdown-hybrid@workspace:packages/components/src/org.standardnotes.advanced-markdown-editor":
+  version: 0.0.0-use.local
+  resolution: "@standardnotes/markdown-hybrid@workspace:packages/components/src/org.standardnotes.advanced-markdown-editor"
+  dependencies:
+    "@babel/cli": ^7.13.10
+    "@babel/core": ^7.13.13
+    "@babel/preset-env": ^7.13.12
+    "@standardnotes/component-relay": 2.2.0
+    copy-webpack-plugin: ^8.1.0
+    css-loader: ^5.2.0
+    dompurify: ^2.2.9
+    easymde: 2.16.1
+    eslint: "*"
+    file-loader: ^6.2.0
+    font-awesome: ^4.7.0
+    highlightjs: ^9.16.2
+    html-webpack-plugin: ^5.3.1
+    marked: ^2.0.7
+    mini-css-extract-plugin: ^1.4.0
+    prettier: "*"
+    sass: ^1.32.8
+    sass-loader: ^11.0.1
+    sn-stylekit: 3.0.1
+    webpack: "*"
+    webpack-cli: "*"
+    webpack-dev-server: ^3.11.2
+    webpack-merge: ^5.7.3
+  languageName: unknown
+  linkType: soft
+
+"@standardnotes/markdown-math@workspace:packages/components/src/org.standardnotes.fancy-markdown-editor":
+  version: 0.0.0-use.local
+  resolution: "@standardnotes/markdown-math@workspace:packages/components/src/org.standardnotes.fancy-markdown-editor"
+  dependencies:
+    "@babel/cli": ^7.7.7
+    "@babel/core": ^7.7.7
+    "@babel/preset-env": ^7.7.7
+    "@standardnotes/component-relay": 2.2.0
+    draggabilly: ^2.2.0
+    grunt: ^1.0.4
+    grunt-babel: ^8.0.0
+    grunt-browserify: ^5.3.0
+    grunt-contrib-concat: ^1.0.1
+    grunt-contrib-copy: ^1.0.0
+    grunt-contrib-sass: ^1.0.0
+    grunt-contrib-uglify: ^5.0.1
+    grunt-contrib-watch: ^1.1.0
+    grunt-newer: ^1.3.0
+    grunt-remove-comments: ^0.1.6
+    katex: ^0.11.1
+    markdown-it: ^10.0.0
+    markdown-it-footnote: ^3.0.2
+    markdown-it-sub: ^1.0.0
+    markdown-it-sup: ^1.0.0
+    markdown-it-task-lists: ^2.1.1
+    sass: "*"
+    sn-stylekit: 2.0.20
+  languageName: unknown
+  linkType: soft
+
+"@standardnotes/markdown-minimal@workspace:packages/components/src/org.standardnotes.minimal-markdown-editor":
+  version: 0.0.0-use.local
+  resolution: "@standardnotes/markdown-minimal@workspace:packages/components/src/org.standardnotes.minimal-markdown-editor"
+  dependencies:
+    "@babel/core": ^7.11.1
+    "@babel/preset-env": ^7.11.0
+    "@standardnotes/component-relay": 2.2.0
+    babel-cli: ^6.26.0
+    codemirror: ^5.56.0
+    grunt: ^1.2.1
+    grunt-babel: ^8.0.0
+    grunt-browserify: ^5.3.0
+    grunt-contrib-concat: ^1.0.1
+    grunt-contrib-copy: ^1.0.0
+    grunt-contrib-sass: ^1.0.0
+    grunt-contrib-watch: ^1.1.0
+    grunt-newer: ^1.3.0
+    sass: "*"
+    sn-codemirror-search: 1.0.0
+    sn-stylekit: 2.1.0
+  languageName: unknown
+  linkType: soft
+
 "@standardnotes/markdown-visual@workspace:packages/components/src/org.standardnotes.markdown-visual-editor":
   version: 0.0.0-use.local
   resolution: "@standardnotes/markdown-visual@workspace:packages/components/src/org.standardnotes.markdown-visual-editor"
@@ -5546,6 +5730,35 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standardnotes/rich-text@workspace:packages/components/src/org.standardnotes.plus-editor":
+  version: 0.0.0-use.local
+  resolution: "@standardnotes/rich-text@workspace:packages/components/src/org.standardnotes.plus-editor"
+  dependencies:
+    "@babel/cli": ^7.13.0
+    "@babel/core": ^7.13.8
+    "@babel/eslint-parser": ^7.13.8
+    "@babel/preset-env": ^7.13.8
+    "@standardnotes/component-relay": 2.2.0
+    "@standardnotes/eslint-config-extensions": 1.0.1
+    bootstrap: 3.4.1
+    css-loader: ^5.1.0
+    eslint: ^7.20.0
+    html-webpack-plugin: ^5.2.0
+    jquery: ^3.5.1
+    mini-css-extract-plugin: ^1.3.9
+    node-sass: "*"
+    sass-loader: ^11.0.1
+    sn-stylekit: ^2.1.1
+    style-loader: ^2.0.0
+    summernote: ^0.8.18
+    webpack: "*"
+    webpack-cli: "*"
+    webpack-dev-server: ^3.11.2
+    webpack-merge: ^5.7.3
+    webpack-merge-and-include-globally: ^2.3.3
+  languageName: unknown
+  linkType: soft
+
 "@standardnotes/scheduler@npm:^1.1.0":
   version: 1.1.0
   resolution: "@standardnotes/scheduler@npm:1.1.0"
@@ -5676,6 +5889,38 @@ __metadata:
 "@standardnotes/solarized-dark-theme@workspace:packages/components/src/org.standardnotes.theme-solarized-dark":
   version: 0.0.0-use.local
   resolution: "@standardnotes/solarized-dark-theme@workspace:packages/components/src/org.standardnotes.theme-solarized-dark"
+  languageName: unknown
+  linkType: soft
+
+"@standardnotes/spreadsheets@workspace:packages/components/src/org.standardnotes.standard-sheets":
+  version: 0.0.0-use.local
+  resolution: "@standardnotes/spreadsheets@workspace:packages/components/src/org.standardnotes.standard-sheets"
+  dependencies:
+    "@babel/core": ^7.14.6
+    "@babel/eslint-parser": ^7.14.7
+    "@babel/plugin-proposal-class-properties": ^7.10.1
+    "@babel/plugin-transform-runtime": ^7.10.1
+    "@babel/preset-env": ^7.14.7
+    "@babel/preset-react": ^7.10.1
+    "@standardnotes/component-relay": 2.2.0
+    "@standardnotes/eslint-config-extensions": ^1.0.4
+    babel-loader: ^8.2.2
+    copy-webpack-plugin: ^9.0.1
+    css-loader: ^5.2.6
+    eslint: "*"
+    eslint-plugin-react: ^7.24.0
+    mini-css-extract-plugin: ^2.0.0
+    node-sass: "*"
+    react: 16.x
+    react-dom: 16.x
+    sass-loader: ^11.0.1
+    sn-stylekit: 2.0.22
+    style-loader: ^3.0.0
+    terser-webpack-plugin: ^5.1.4
+    webpack: "*"
+    webpack-cli: "*"
+    webpack-dev-server: 3.11.0
+    webpack-merge: ^5.8.0
   languageName: unknown
   linkType: soft
 
@@ -29577,256 +29822,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sn-advanced-markdown-editor@workspace:packages/components/src/org.standardnotes.advanced-markdown-editor":
-  version: 0.0.0-use.local
-  resolution: "sn-advanced-markdown-editor@workspace:packages/components/src/org.standardnotes.advanced-markdown-editor"
-  dependencies:
-    "@babel/cli": ^7.13.10
-    "@babel/core": ^7.13.13
-    "@babel/preset-env": ^7.13.12
-    "@standardnotes/component-relay": 2.2.0
-    copy-webpack-plugin: ^8.1.0
-    css-loader: ^5.2.0
-    dompurify: ^2.2.9
-    easymde: 2.16.1
-    eslint: "*"
-    file-loader: ^6.2.0
-    font-awesome: ^4.7.0
-    highlightjs: ^9.16.2
-    html-webpack-plugin: ^5.3.1
-    marked: ^2.0.7
-    mini-css-extract-plugin: ^1.4.0
-    prettier: "*"
-    sass: ^1.32.8
-    sass-loader: ^11.0.1
-    sn-stylekit: 3.0.1
-    webpack: "*"
-    webpack-cli: "*"
-    webpack-dev-server: ^3.11.2
-    webpack-merge: ^5.7.3
-  languageName: unknown
-  linkType: soft
-
-"sn-bold-editor@workspace:packages/components/src/org.standardnotes.bold-editor":
-  version: 0.0.0-use.local
-  resolution: "sn-bold-editor@workspace:packages/components/src/org.standardnotes.bold-editor"
-  dependencies:
-    "@babel/core": ^7.13.14
-    "@babel/eslint-parser": ^7.13.14
-    "@babel/preset-env": ^7.13.12
-    "@babel/preset-react": ^7.13.13
-    "@standardnotes/editor-kit": 2.2.3
-    babel-loader: ^8.2.2
-    copy-webpack-plugin: ^8.1.1
-    css-loader: ^5.2.0
-    dompurify: ^2.2.9
-    eslint: "*"
-    eslint-plugin-react: "*"
-    filesafe-embed: 1.0.13
-    filesafe-js: 1.0.5
-    html-webpack-plugin: ^5.3.1
-    mini-css-extract-plugin: ^1.4.0
-    node-sass: "*"
-    react: 17.x
-    react-dom: 17.x
-    sass-loader: ^11.0.1
-    sn-stylekit: 3.0.1
-    style-loader: ~2.0.0
-    terser-webpack-plugin: ^5.1.1
-    webpack: "*"
-    webpack-cli: "*"
-    webpack-dev-server: ^3.11.2
-    webpack-merge: ^5.7.3
-    webpack-merge-and-include-globally: ^2.3.4
-  languageName: unknown
-  linkType: soft
-
-"sn-code-editor@workspace:packages/components/src/org.standardnotes.code-editor":
-  version: 0.0.0-use.local
-  resolution: "sn-code-editor@workspace:packages/components/src/org.standardnotes.code-editor"
-  dependencies:
-    "@babel/cli": ^7.12.10
-    "@babel/core": ^7.12.10
-    "@babel/preset-env": ^7.12.11
-    "@standardnotes/component-relay": 2.2.0
-    codemirror: 5.65.2
-    copy-webpack-plugin: ^7.0.0
-    css-loader: ^5.0.1
-    eslint: "*"
-    http-server: ^0.12.3
-    mini-css-extract-plugin: ^1.3.5
-    remove-files-webpack-plugin: ^1.4.4
-    sass: "*"
-    sass-loader: ^10.1.1
-    sn-stylekit: ^2.1.1
-    webpack: "*"
-    webpack-cli: "*"
-    webpack-merge: ^5.7.3
-  languageName: unknown
-  linkType: soft
-
 "sn-codemirror-search@npm:1.0.0":
   version: 1.0.0
   resolution: "sn-codemirror-search@npm:1.0.0"
   checksum: c2c39045d9cc375458570f0528b120fc88e2e7117a6d2f50e9dc27c15364d9a07ef3073aac9c662d6b49fbf1123743f108ffdcf21cc1b0ef9f974b77294f3585
   languageName: node
   linkType: hard
-
-"sn-fancy-markdown-editor@workspace:packages/components/src/org.standardnotes.fancy-markdown-editor":
-  version: 0.0.0-use.local
-  resolution: "sn-fancy-markdown-editor@workspace:packages/components/src/org.standardnotes.fancy-markdown-editor"
-  dependencies:
-    "@babel/cli": ^7.7.7
-    "@babel/core": ^7.7.7
-    "@babel/preset-env": ^7.7.7
-    "@standardnotes/component-relay": 2.2.0
-    draggabilly: ^2.2.0
-    grunt: ^1.0.4
-    grunt-babel: ^8.0.0
-    grunt-browserify: ^5.3.0
-    grunt-contrib-concat: ^1.0.1
-    grunt-contrib-copy: ^1.0.0
-    grunt-contrib-sass: ^1.0.0
-    grunt-contrib-uglify: ^5.0.1
-    grunt-contrib-watch: ^1.1.0
-    grunt-newer: ^1.3.0
-    grunt-remove-comments: ^0.1.6
-    katex: ^0.11.1
-    markdown-it: ^10.0.0
-    markdown-it-footnote: ^3.0.2
-    markdown-it-sub: ^1.0.0
-    markdown-it-sup: ^1.0.0
-    markdown-it-task-lists: ^2.1.1
-    sass: "*"
-    sn-stylekit: 2.0.20
-  languageName: unknown
-  linkType: soft
-
-"sn-minimal-markdown-editor@workspace:packages/components/src/org.standardnotes.minimal-markdown-editor":
-  version: 0.0.0-use.local
-  resolution: "sn-minimal-markdown-editor@workspace:packages/components/src/org.standardnotes.minimal-markdown-editor"
-  dependencies:
-    "@babel/core": ^7.11.1
-    "@babel/preset-env": ^7.11.0
-    "@standardnotes/component-relay": 2.2.0
-    babel-cli: ^6.26.0
-    codemirror: ^5.56.0
-    grunt: ^1.2.1
-    grunt-babel: ^8.0.0
-    grunt-browserify: ^5.3.0
-    grunt-contrib-concat: ^1.0.1
-    grunt-contrib-copy: ^1.0.0
-    grunt-contrib-sass: ^1.0.0
-    grunt-contrib-watch: ^1.1.0
-    grunt-newer: ^1.3.0
-    sn-codemirror-search: 1.0.0
-    sn-stylekit: 2.1.0
-  languageName: unknown
-  linkType: soft
-
-"sn-plus-editor@workspace:packages/components/src/org.standardnotes.plus-editor":
-  version: 0.0.0-use.local
-  resolution: "sn-plus-editor@workspace:packages/components/src/org.standardnotes.plus-editor"
-  dependencies:
-    "@babel/cli": ^7.13.0
-    "@babel/core": ^7.13.8
-    "@babel/eslint-parser": ^7.13.8
-    "@babel/preset-env": ^7.13.8
-    "@standardnotes/component-relay": 2.2.0
-    "@standardnotes/eslint-config-extensions": 1.0.1
-    bootstrap: 3.4.1
-    css-loader: ^5.1.0
-    eslint: ^7.20.0
-    html-webpack-plugin: ^5.2.0
-    jquery: ^3.5.1
-    mini-css-extract-plugin: ^1.3.9
-    node-sass: "*"
-    sass-loader: ^11.0.1
-    sn-stylekit: ^2.1.1
-    style-loader: ^2.0.0
-    summernote: ^0.8.18
-    webpack: "*"
-    webpack-cli: "*"
-    webpack-dev-server: ^3.11.2
-    webpack-merge: ^5.7.3
-    webpack-merge-and-include-globally: ^2.3.3
-  languageName: unknown
-  linkType: soft
-
-"sn-simple-markdown-editor@workspace:packages/components/src/org.standardnotes.simple-markdown-editor":
-  version: 0.0.0-use.local
-  resolution: "sn-simple-markdown-editor@workspace:packages/components/src/org.standardnotes.simple-markdown-editor"
-  dependencies:
-    "@babel/cli": ^7.10.5
-    "@babel/core": ^7.11.1
-    "@babel/eslint-parser": ^7.13.4
-    "@babel/plugin-proposal-class-properties": ^7.10.4
-    "@babel/plugin-transform-runtime": ^7.11.0
-    "@babel/preset-env": ^7.11.0
-    "@babel/preset-react": ^7.10.4
-    "@babel/preset-stage-0": ^7.8.3
-    "@babel/register": ^7.10.5
-    "@babel/runtime": ^7.11.2
-    "@standardnotes/component-relay": 2.2.0
-    "@standardnotes/eslint-config-extensions": ^1.0.0
-    babel-loader: ^8.1.0
-    copy-webpack-plugin: 6.0.3
-    css-loader: ~4.2.1
-    eslint: "*"
-    eslint-formatter-pretty: ^4.0.0
-    eslint-plugin-compat: ^3.9.0
-    eslint-plugin-import: ^2.22.1
-    eslint-plugin-promise: ^4.3.1
-    eslint-plugin-react: ^7.22.0
-    highlight.js: ^10.1.2
-    markdown-it: ^11.0.0
-    markdown-it-footnote: ^3.0.2
-    markdown-it-highlightjs: ^3.2.0
-    markdown-it-task-lists: ^2.1.1
-    mini-css-extract-plugin: ^0.10.0
-    node-sass: "*"
-    react: 16.x
-    react-dom: 16.x
-    sass-loader: ^9.0.3
-    sn-stylekit: 2.1.0
-    style-loader: ~1.2.1
-    webpack: 4.44.1
-    webpack-cli: ^3.3.12
-    webpack-dev-server: 3.11.0
-  languageName: unknown
-  linkType: soft
-
-"sn-spreadsheets@workspace:packages/components/src/org.standardnotes.standard-sheets":
-  version: 0.0.0-use.local
-  resolution: "sn-spreadsheets@workspace:packages/components/src/org.standardnotes.standard-sheets"
-  dependencies:
-    "@babel/core": ^7.14.6
-    "@babel/eslint-parser": ^7.14.7
-    "@babel/plugin-proposal-class-properties": ^7.10.1
-    "@babel/plugin-transform-runtime": ^7.10.1
-    "@babel/preset-env": ^7.14.7
-    "@babel/preset-react": ^7.10.1
-    "@standardnotes/component-relay": 2.2.0
-    "@standardnotes/eslint-config-extensions": ^1.0.4
-    babel-loader: ^8.2.2
-    copy-webpack-plugin: ^9.0.1
-    css-loader: ^5.2.6
-    eslint: "*"
-    eslint-plugin-react: ^7.24.0
-    mini-css-extract-plugin: ^2.0.0
-    node-sass: "*"
-    react: 16.x
-    react-dom: 16.x
-    sass-loader: ^11.0.1
-    sn-stylekit: 2.0.22
-    style-loader: ^3.0.0
-    terser-webpack-plugin: ^5.1.4
-    webpack: "*"
-    webpack-cli: "*"
-    webpack-dev-server: 3.11.0
-    webpack-merge: ^5.8.0
-  languageName: unknown
-  linkType: soft
 
 "sn-stylekit@npm:2.0.19":
   version: 2.0.19

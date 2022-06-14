@@ -1,5 +1,6 @@
 {
-  "name": "sn-spreadsheets",
+  "name": "@standardnotes/spreadsheets",
+  "private": true,
   "version": "1.4.4",
   "main": "dist/dist.js",
   "scripts": {

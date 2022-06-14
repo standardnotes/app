@@ -1,5 +1,6 @@
 {
-  "name": "sn-code-editor",
+  "name": "@standardnotes/classic-code-editor",
+  "private": true,
   "version": "1.3.12",
   "description": "A code editor for Standard Notes",
   "main": "dist/main.js",

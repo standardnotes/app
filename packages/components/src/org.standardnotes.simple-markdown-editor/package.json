@@ -1,5 +1,6 @@
 {
-  "name": "sn-simple-markdown-editor",
+  "name": "@standardnotes/markdown-basic",
+  "private": true,
   "version": "1.4.2",
   "main": "dist/dist.js",
   "scripts": {

@@ -1,5 +1,6 @@
 {
-  "name": "sn-minimal-markdown-editor",
+  "name": "@standardnotes/markdown-minimal",
+  "private": true,
   "version": "1.3.9",
   "description": "A minimal Markdown editor for Standard Notes.",
   "main": "dist/dist.js",
@@ -21,6 +22,7 @@
     "grunt-contrib-sass": "^1.0.0",
     "grunt-contrib-watch": "^1.1.0",
     "grunt-newer": "^1.3.0",
+    "sass": "*",
     "sn-codemirror-search": "1.0.0",
     "sn-stylekit": "2.1.0"
   }

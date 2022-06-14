@@ -1,5 +1,6 @@
 {
-  "name": "sn-plus-editor",
+  "name": "@standardnotes/rich-text",
+  "private": true,
   "version": "1.6.1",
   "description": "A rich text editor for Standard Notes",
   "main": "dist/dist.js",

@@ -1,5 +1,6 @@
 {
-  "name": "sn-fancy-markdown-editor",
+  "name": "@standardnotes/markdown-math",
+  "private": true,
   "version": "1.3.6",
   "description": "",
   "main": "index.js",
