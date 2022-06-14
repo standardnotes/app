@@ -23,7 +23,8 @@
     "prepare": "husky install",
     "reset": "find . -type dir -name node_modules | xargs rm -rf && rm -rf yarn.lock",
     "release:prod": "lerna version --conventional-commits --yes -m \"chore(release): publish\"",
-    "release:beta": "lerna version --conventional-prerelease --conventional-commits --yes -m \"chore(release): publish\""
+    "release:beta": "lerna version --conventional-prerelease --conventional-commits --yes -m \"chore(release): publish\"",
+    "version": "yarn install --no-immutable && git add yarn.lock"
   },
   "resolutions": {
     "@types/styled-components/@types/react": "17.0.2",

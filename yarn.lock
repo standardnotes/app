@@ -5312,7 +5312,7 @@ __metadata:
     react-native-fs: ^2.19.0
     react-native-gesture-handler: 2.3.2
     react-native-image-picker: ^4.7.3
-    react-native-keychain: 8.0.0
+    react-native-keychain: "standardnotes/react-native-keychain#d277d360494cbd02be4accb4a360772a8e0e97b6"
     react-native-mail: "standardnotes/react-native-mail#fd26119e67a2ffc5eaa95a9c17049743e39ce2d3"
     react-native-monorepo-tools: ^1.1.4
     react-native-pager-view: ^5.4.15
@@ -23121,10 +23121,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-keychain@npm:8.0.0":
+"react-native-keychain@standardnotes/react-native-keychain#d277d360494cbd02be4accb4a360772a8e0e97b6":
   version: 8.0.0
-  resolution: "react-native-keychain@npm:8.0.0"
-  checksum: cbab1cef8565743072f919663068727df20fc0ef5edd53b0aa96fac74c11fcd0daa197968b06cabed4f1b3f8e5e5ae73b6db8543ed9adbecc13662c38958c9ce
+  resolution: "react-native-keychain@https://github.com/standardnotes/react-native-keychain.git#commit=d277d360494cbd02be4accb4a360772a8e0e97b6"
+  checksum: a8a1484446a24db4f90bc72ba7b22a4637cc4f75421f9b3c30b22bfe753c2c349a165dc848cb0ed4508f64f96e5d2220e41aae57647629d9a70aff933152e8df
   languageName: node
   linkType: hard
 
