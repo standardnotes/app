@@ -1,13 +1,13 @@
 import { GroupPayload, TaskPayload } from '../features/tasks/tasks-slice'
 import {
-  arrayMoveMutable,
   arrayMoveImmutable,
+  arrayMoveMutable,
   getPercentage,
-  groupTasksByCompletedStatus,
-  truncateText,
   getPlainPreview,
   getTaskArrayFromGroupedTasks,
+  groupTasksByCompletedStatus,
   parseMarkdownTasks,
+  truncateText,
 } from './utils'
 
 describe('arrayMoveMutable', () => {

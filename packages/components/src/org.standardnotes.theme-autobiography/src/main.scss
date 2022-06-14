@@ -1,9 +1,9 @@
 :root {
-  --background-1: #EDE4DA;
+  --background-1: #ede4da;
   --background-2: #e8d9c8;
-  --foreground-color: #5C3F27;
+  --foreground-color: #5c3f27;
   --border-color: #d9c6b1;
-  --highlight-color: #D68420;
+  --highlight-color: #d68420;
   --highlight-contrast: #e3ae74;
 
   --sn-stylekit-info-color: #a37337;
@@ -58,7 +58,8 @@
   --sn-stylekit-passive-color-5: #e9d9c7;
 }
 
-#notes-column .note.selected, .notes .note.selected {
+#notes-column .note.selected,
+.notes .note.selected {
   background-color: #e9d9c7;
   color: var(--sn-stylekit-contrast-foreground-color);
 }

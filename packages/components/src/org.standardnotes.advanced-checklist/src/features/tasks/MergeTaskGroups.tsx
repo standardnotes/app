@@ -1,7 +1,7 @@
 import '@reach/dialog/styles.css'
 
+import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
 import React, { useRef, useState } from 'react'
-import { AlertDialog, AlertDialogLabel, AlertDialogDescription } from '@reach/alert-dialog'
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { tasksGroupMerged } from './tasks-slice'

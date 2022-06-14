@@ -1,24 +1,24 @@
 import './stylesheets/main.scss'
 
+import EditorKit, { EditorKitDelegate } from '@standardnotes/editor-kit'
 import React, { useCallback, useEffect, useRef } from 'react'
 import ReactDOM from 'react-dom'
 import { renderToString } from 'react-dom/server'
 import { Provider } from 'react-redux'
-import EditorKit, { EditorKitDelegate } from '@standardnotes/editor-kit'
 import styled from 'styled-components'
 
-import { store } from './app/store'
 import { useAppDispatch, useAppSelector } from './app/hooks'
-import CreateGroup from './features/tasks/CreateGroup'
+import { store } from './app/store'
 import { setCanEdit, setIsRunningOnMobile, setSpellCheckerEnabled } from './features/settings/settings-slice'
-import { tasksLoaded } from './features/tasks/tasks-slice'
+import CreateGroup from './features/tasks/CreateGroup'
 import InvalidContentError from './features/tasks/InvalidContentError'
 import MigrateLegacyContent from './features/tasks/MigrateLegacyContent'
 import NotePreview from './features/tasks/NotePreview'
 import TaskGroupList from './features/tasks/TaskGroupList'
+import { tasksLoaded } from './features/tasks/tasks-slice'
 
-import { getPlainPreview } from './common/utils'
 import { CheckBoxElementsDefs } from './common/components/svg'
+import { getPlainPreview } from './common/utils'
 
 const MainContainer = styled.div`
   margin: 16px;
