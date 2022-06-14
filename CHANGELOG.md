@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.21.1](https://github.com/standardnotes/app/compare/v3.21.0...v3.21.1) (2022-06-14)
+
+
+### Bug Fixes
+
+* sass deprecation warning ([#1100](https://github.com/standardnotes/app/issues/1100)) ([fd115bc](https://github.com/standardnotes/app/commit/fd115bc113c0777ed00c203ff2c9fa4ea4d72f50))
+
 ## [3.21.0](https://github.com/standardnotes/app/compare/v3.20.3...v3.21.0) (2022-06-13)
 
 
