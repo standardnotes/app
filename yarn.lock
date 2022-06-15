@@ -5375,18 +5375,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/filepicker@npm:1.16.14":
-  version: 1.16.14
-  resolution: "@standardnotes/filepicker@npm:1.16.14"
-  dependencies:
-    "@standardnotes/common": ^1.22.0
-    "@standardnotes/services": ^1.13.14
-    "@standardnotes/utils": ^1.6.10
-  checksum: a26b0d24f6c139137cfcfc83c9b0d9b3d6b3782ba54a170390a4ad22a1f61c229d36511de3c01386dbc1452f1253b6550806ae4ec0e0588ae5e59d300808f252
-  languageName: node
-  linkType: hard
-
-"@standardnotes/filepicker@npm:^1.16.14, @standardnotes/filepicker@npm:^1.16.16":
+"@standardnotes/filepicker@npm:1.16.16, @standardnotes/filepicker@npm:^1.16.14, @standardnotes/filepicker@npm:^1.16.16":
   version: 1.16.16
   resolution: "@standardnotes/filepicker@npm:1.16.16"
   dependencies:
@@ -5918,7 +5907,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/snjs@npm:^2.116.0, @standardnotes/snjs@npm:^2.41.1":
+"@standardnotes/snjs@npm:^2.117.0":
+  version: 2.117.0
+  resolution: "@standardnotes/snjs@npm:2.117.0"
+  dependencies:
+    "@standardnotes/api": ^1.1.9
+    "@standardnotes/auth": ^3.19.3
+    "@standardnotes/common": ^1.23.0
+    "@standardnotes/domain-events": ^2.31.1
+    "@standardnotes/encryption": ^1.8.16
+    "@standardnotes/features": ^1.45.3
+    "@standardnotes/files": ^1.3.16
+    "@standardnotes/models": ^1.11.8
+    "@standardnotes/responses": ^1.6.34
+    "@standardnotes/services": ^1.13.16
+    "@standardnotes/settings": ^1.14.3
+    "@standardnotes/sncrypto-common": ^1.9.0
+    "@standardnotes/utils": ^1.6.11
+  checksum: 90ae27ac09b8e7575c69e4fc616ff59c9712b5ae420cefffd38b2471571ea52ae3494b5f50b7958047a7358d016a81049c881cc8ee04c75ef3738004531a611f
+  languageName: node
+  linkType: hard
+
+"@standardnotes/snjs@npm:^2.41.1":
   version: 2.116.2
   resolution: "@standardnotes/snjs@npm:2.116.2"
   dependencies:
@@ -6099,11 +6109,11 @@ __metadata:
     "@reach/listbox": ^0.16.2
     "@reach/tooltip": ^0.16.2
     "@reach/visually-hidden": ^0.16.0
-    "@standardnotes/filepicker": 1.16.14
+    "@standardnotes/filepicker": 1.16.16
     "@standardnotes/icons": "workspace:*"
-    "@standardnotes/services": ^1.13.14
+    "@standardnotes/services": ^1.13.16
     "@standardnotes/sncrypto-web": 1.10.1
-    "@standardnotes/snjs": ^2.116.0
+    "@standardnotes/snjs": ^2.117.0
     "@standardnotes/styles": "workspace:*"
     "@standardnotes/toast": "workspace:*"
     "@types/jest": ^27.4.1
