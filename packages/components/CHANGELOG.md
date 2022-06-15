@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0-alpha.2](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.1.0-alpha.1...@standardnotes/components-meta@2.1.0-alpha.2) (2022-06-15)
+
+### Bug Fixes
+
+* override webpack output config for cra based editors ([#1108](https://github.com/standardnotes/app/issues/1108)) ([f076057](https://github.com/standardnotes/app/commit/f076057f4b531bbb2a5ee5d363962026f0be8f90))
+
 # [2.1.0-alpha.1](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.1.0-alpha.0...@standardnotes/components-meta@2.1.0-alpha.1) (2022-06-14)
 
 **Note:** Version bump only for package @standardnotes/components-meta
