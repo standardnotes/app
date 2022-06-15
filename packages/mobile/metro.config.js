@@ -8,6 +8,7 @@
  */
 const path = require('path')
 const { getDefaultConfig } = require('metro-config')
+const exclusionList = require('metro-config/src/defaults/exclusionList')
 
 const extraNodeModules = {
   common: path.resolve(__dirname + '../..'),
@@ -23,7 +24,6 @@ module.exports = (async () => {
       __dirname,
       path.resolve(__dirname, '../icons'),
       path.resolve(__dirname, '../styles'),
-     '../components',
     ],
     transformer: {
       getTransformOptions: async () => ({
@@ -43,6 +43,10 @@ module.exports = (async () => {
           return result
         },
       }),
+      blockList: exclusionList([
+        '/node_modules\/.*',
+        '/components\/src\/.*'
+      ])
     },
   }
 })()
