@@ -81,8 +81,8 @@
   },
   "org.standardnotes.token-vault": {
     "version": "2.0.10",
-    "base64": "0675c2eb07e35bbd34b6af61c06e28a3ad6f516f475256236054381f80283bd3",
-    "binary": "17122ff26b76b1ace5a736edb53fb444947fc799235822fd4c1e496f0be88a23"
+    "base64": "3db39101407bb0aad21d3e02f426989662859ab1b6b51e7060d3d54713423228",
+    "binary": "fd8306b1869c39b08e8f7355223e224df6ecc2877e651956a10a77bb50613087"
   },
   "org.standardnotes.standard-sheets": {
     "version": "1.4.4",
@@ -91,7 +91,7 @@
   },
   "org.standardnotes.advanced-checklist": {
     "version": "0.0.1",
-    "base64": "cb9c0ffc2435b8156af51276bef6757df21a87bd2936573642e4354416f3c453",
-    "binary": "0a2be0646af70a6457cf2c6811a85586c904da2276ee381df028cd8774d1a1e7"
+    "base64": "152f20cf215da04df73c93dec516aeb2fff497bcb8f9247bbe5b5b4eeee70ea8",
+    "binary": "fe9566931698a47a67039e38a6d9a4f157a0221479d29684d48b2e9e5403e4f5"
   }
 }
