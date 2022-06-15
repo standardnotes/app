@@ -8,12 +8,12 @@ import { RevisionType } from './RevisionType'
 import SessionHistoryList from './SessionHistoryList'
 
 type Props = {
-  hasMinimumRole: FeaturesClientInterface['hasMinimumRole']
+  features: FeaturesClientInterface
   historyModalController: HistoryModalController
 }
 
-const HistoryListContainer: FunctionComponent<Props> = ({ hasMinimumRole, historyModalController }) => {
-  const { legacyHistory, currentTab, setCurrentTab, setSelectedRemoteEntry } = historyModalController
+const HistoryListContainer: FunctionComponent<Props> = ({ features, historyModalController }) => {
+  const { legacyHistory, currentTab, selectTab } = historyModalController
 
   const TabButton: FunctionComponent<{
     type: RevisionType
@@ -26,8 +26,7 @@ const HistoryListContainer: FunctionComponent<Props> = ({ hasMinimumRole, histor
           isSelected ? 'color-info font-medium shadow-bottom' : 'color-text'
         }`}
         onClick={() => {
-          setCurrentTab(type)
-          setSelectedRemoteEntry(undefined)
+          selectTab(type)
         }}
       >
         {type}
@@ -45,7 +44,7 @@ const HistoryListContainer: FunctionComponent<Props> = ({ hasMinimumRole, histor
       <div className={'min-h-0 overflow-auto py-1.5 h-full'}>
         {currentTab === RevisionType.Session && <SessionHistoryList historyModalController={historyModalController} />}
         {currentTab === RevisionType.Remote && (
-          <RemoteHistoryList hasMinimumRole={hasMinimumRole} historyModalController={historyModalController} />
+          <RemoteHistoryList features={features} historyModalController={historyModalController} />
         )}
         {currentTab === RevisionType.Legacy && (
           <LegacyHistoryList legacyHistory={legacyHistory} historyModalController={historyModalController} />

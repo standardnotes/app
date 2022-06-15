@@ -8,11 +8,11 @@ import { HistoryModalController } from '@/Controllers/HistoryModalController'
 import { FeaturesClientInterface } from '@standardnotes/snjs/dist/@types'
 
 type RemoteHistoryListProps = {
-  hasMinimumRole: FeaturesClientInterface['hasMinimumRole']
+  features: FeaturesClientInterface
   historyModalController: HistoryModalController
 }
 
-const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({ hasMinimumRole, historyModalController }) => {
+const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({ features, historyModalController }) => {
   const { remoteHistory, isFetchingRemoteHistory, selectRemoteRevision, selectedRemoteEntry } = historyModalController
 
   const remoteHistoryListRef = useRef<HTMLDivElement>(null)
@@ -46,7 +46,7 @@ const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({ hasMinim
                 >
                   <div className="flex flex-grow items-center justify-between">
                     <div>{previewHistoryEntryTitle(entry)}</div>
-                    {!hasMinimumRole(entry.required_role) && <Icon type="premium-feature" />}
+                    {!features.hasMinimumRole(entry.required_role) && <Icon type="premium-feature" />}
                   </div>
                 </HistoryListItem>
               ))}

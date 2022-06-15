@@ -24,21 +24,21 @@ import { AbstractViewController } from './Abstract/AbstractViewController'
 import { NotesController } from './NotesController'
 import { SelectedItemsController } from './SelectedItemsController'
 
-type RemoteHistory = RemoteRevisionListGroup[] | undefined
+type RemoteHistory = RemoteRevisionListGroup[]
 
-type SessionHistory = ListGroup<NoteHistoryEntry>[] | undefined
+type SessionHistory = ListGroup<NoteHistoryEntry>[]
 
-type LegacyHistory = Action[] | undefined
+type LegacyHistory = Action[]
 
 type SelectedRevision = HistoryEntry | LegacyHistoryEntry | undefined
 
 export class HistoryModalController extends AbstractViewController {
   showRevisionHistoryModal = false
 
-  remoteHistory: RemoteHistory = undefined
+  remoteHistory: RemoteHistory = []
   isFetchingRemoteHistory = false
-  sessionHistory: SessionHistory = undefined
-  legacyHistory: LegacyHistory = undefined
+  sessionHistory: SessionHistory = []
+  legacyHistory: LegacyHistory = []
 
   selectedRevision: SelectedRevision = undefined
   isFetchingSelectedRevision = false
@@ -89,7 +89,7 @@ export class HistoryModalController extends AbstractViewController {
       clearAllHistory: action,
 
       currentTab: observable,
-      setCurrentTab: action,
+      selectTab: action,
 
       showContentLockedScreen: observable,
       setShowContentLockedScreen: action,
@@ -109,8 +109,10 @@ export class HistoryModalController extends AbstractViewController {
     this.setSelectedRevision(undefined)
   }
 
-  setCurrentTab = (tab: RevisionType) => {
+  selectTab = (tab: RevisionType) => {
     this.currentTab = tab
+    this.clearSelection()
+    this.selectFirstRevision()
   }
 
   setShowRevisionHistoryModal = (showRevisionHistoryModal: boolean) => {
@@ -133,6 +135,7 @@ export class HistoryModalController extends AbstractViewController {
   dismissModal = () => {
     this.setShowRevisionHistoryModal(false)
     this.clearAllHistory()
+    this.selectTab(RevisionType.Remote)
   }
 
   selectRemoteRevision = async (entry: RevisionListEntry) => {
@@ -196,7 +199,37 @@ export class HistoryModalController extends AbstractViewController {
   }
 
   private get flattenedRemoteHistory() {
-    return this.remoteHistory?.map((group) => group.entries).flat()
+    return this.remoteHistory.map((group) => group.entries).flat()
+  }
+
+  private get flattenedSessionHistory() {
+    return this.sessionHistory.map((group) => group.entries).flat()
+  }
+
+  selectFirstRevision = () => {
+    switch (this.currentTab) {
+      case RevisionType.Remote: {
+        const firstEntry = this.flattenedRemoteHistory[0]
+        if (firstEntry) {
+          void this.selectRemoteRevision(firstEntry)
+        }
+        break
+      }
+      case RevisionType.Session: {
+        const firstEntry = this.flattenedSessionHistory[0]
+        if (firstEntry) {
+          void this.selectSessionRevision(firstEntry)
+        }
+        break
+      }
+      case RevisionType.Legacy: {
+        const firstEntry = this.legacyHistory[0]
+        if (firstEntry) {
+          void this.selectLegacyRevision(firstEntry)
+        }
+        break
+      }
+    }
   }
 
   setRemoteHistory = (remoteHistory: RemoteHistory) => {
@@ -204,7 +237,7 @@ export class HistoryModalController extends AbstractViewController {
   }
 
   fetchRemoteHistory = async () => {
-    this.setRemoteHistory(undefined)
+    this.setRemoteHistory([])
 
     if (this.notesController.firstSelectedNote) {
       this.setIsFetchingRemoteHistory(true)
@@ -273,14 +306,16 @@ export class HistoryModalController extends AbstractViewController {
     )
     await this.fetchRemoteHistory()
     await this.fetchLegacyHistory()
+
+    this.selectFirstRevision()
   }
 
   clearAllHistory = () => {
     this.selectedRevision = undefined
     this.selectedRemoteEntry = undefined
-    this.remoteHistory = undefined
-    this.sessionHistory = undefined
-    this.legacyHistory = undefined
+    this.remoteHistory = []
+    this.sessionHistory = []
+    this.legacyHistory = []
   }
 
   restoreRevision = (revision: NonNullable<SelectedRevision>) => {

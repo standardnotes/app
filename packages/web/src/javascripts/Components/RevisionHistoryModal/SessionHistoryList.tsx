@@ -1,4 +1,4 @@
-import { Fragment, FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Fragment, FunctionComponent, useMemo, useRef } from 'react'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import HistoryListItem from './HistoryListItem'
 import { HistoryModalController } from '@/Controllers/HistoryModalController'
@@ -9,7 +9,7 @@ type Props = {
 }
 
 const SessionHistoryList: FunctionComponent<Props> = ({ historyModalController }) => {
-  const { sessionHistory, selectSessionRevision, clearSelection } = historyModalController
+  const { sessionHistory, selectedRevision, selectSessionRevision } = historyModalController
 
   const sessionHistoryListRef = useRef<HTMLDivElement>(null)
 
@@ -19,27 +19,6 @@ const SessionHistoryList: FunctionComponent<Props> = ({ historyModalController }
     () => sessionHistory?.map((group) => group.entries).flat().length,
     [sessionHistory],
   )
-
-  const [selectedItemCreatedAt, setSelectedItemCreatedAt] = useState<Date>()
-
-  const firstEntry = useMemo(() => {
-    return sessionHistory?.find((group) => group.entries?.length)?.entries?.[0]
-  }, [sessionHistory])
-
-  const selectFirstEntry = useCallback(() => {
-    if (firstEntry) {
-      setSelectedItemCreatedAt(firstEntry.payload.created_at)
-      selectSessionRevision(firstEntry)
-    }
-  }, [firstEntry, selectSessionRevision])
-
-  useEffect(() => {
-    if (firstEntry && !selectedItemCreatedAt) {
-      selectFirstEntry()
-    } else if (!firstEntry) {
-      clearSelection()
-    }
-  }, [clearSelection, firstEntry, selectFirstEntry, selectedItemCreatedAt])
 
   return (
     <div
@@ -58,9 +37,8 @@ const SessionHistoryList: FunctionComponent<Props> = ({ historyModalController }
               {group.entries.map((entry, index) => (
                 <HistoryListItem
                   key={index}
-                  isSelected={selectedItemCreatedAt === entry.payload.created_at}
+                  isSelected={selectedRevision?.payload.created_at === entry.payload.created_at}
                   onClick={() => {
-                    setSelectedItemCreatedAt(entry.payload.created_at)
                     selectSessionRevision(entry)
                   }}
                 >
