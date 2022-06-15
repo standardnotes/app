@@ -65,7 +65,10 @@ const RevisionHistoryModalContent: FunctionComponent<RevisionHistoryModalProps> 
       >
         <div className="bg-default flex flex-col h-full overflow-hidden">
           <div className="flex flex-grow min-h-0">
-            <HistoryListContainer application={application} historyModalController={historyModalController} />
+            <HistoryListContainer
+              hasMinimumRole={application.features.hasMinimumRole}
+              historyModalController={historyModalController}
+            />
             <div className={'flex flex-col flex-grow relative'}>
               <RevisionContentPlaceholder
                 selectedRevision={selectedRevision}

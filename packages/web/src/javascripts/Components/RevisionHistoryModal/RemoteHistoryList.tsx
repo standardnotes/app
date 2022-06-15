@@ -1,4 +1,3 @@
-import { WebApplication } from '@/Application/Application'
 import { observer } from 'mobx-react-lite'
 import { Fragment, FunctionComponent, useMemo, useRef } from 'react'
 import Icon from '@/Components/Icon/Icon'
@@ -6,13 +5,14 @@ import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import HistoryListItem from './HistoryListItem'
 import { previewHistoryEntryTitle } from './utils'
 import { HistoryModalController } from '@/Controllers/HistoryModalController'
+import { FeaturesClientInterface } from '@standardnotes/snjs/dist/@types'
 
 type RemoteHistoryListProps = {
-  application: WebApplication
+  hasMinimumRole: FeaturesClientInterface['hasMinimumRole']
   historyModalController: HistoryModalController
 }
 
-const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({ application, historyModalController }) => {
+const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({ hasMinimumRole, historyModalController }) => {
   const { remoteHistory, isFetchingRemoteHistory, selectRemoteRevision, selectedRemoteEntry } = historyModalController
 
   const remoteHistoryListRef = useRef<HTMLDivElement>(null)
@@ -46,7 +46,7 @@ const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({ applicat
                 >
                   <div className="flex flex-grow items-center justify-between">
                     <div>{previewHistoryEntryTitle(entry)}</div>
-                    {!application.features.hasMinimumRole(entry.required_role) && <Icon type="premium-feature" />}
+                    {!hasMinimumRole(entry.required_role) && <Icon type="premium-feature" />}
                   </div>
                 </HistoryListItem>
               ))}

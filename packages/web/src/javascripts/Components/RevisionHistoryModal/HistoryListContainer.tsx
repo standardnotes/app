@@ -1,5 +1,5 @@
-import { WebApplication } from '@/Application/Application'
 import { HistoryModalController } from '@/Controllers/HistoryModalController'
+import { FeaturesClientInterface } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
 import LegacyHistoryList from './LegacyHistoryList'
@@ -8,11 +8,11 @@ import { RevisionType } from './RevisionType'
 import SessionHistoryList from './SessionHistoryList'
 
 type Props = {
-  application: WebApplication
+  hasMinimumRole: FeaturesClientInterface['hasMinimumRole']
   historyModalController: HistoryModalController
 }
 
-const HistoryListContainer: FunctionComponent<Props> = ({ application, historyModalController }) => {
+const HistoryListContainer: FunctionComponent<Props> = ({ hasMinimumRole, historyModalController }) => {
   const { legacyHistory, currentTab, setCurrentTab, setSelectedRemoteEntry } = historyModalController
 
   const TabButton: FunctionComponent<{
@@ -45,7 +45,7 @@ const HistoryListContainer: FunctionComponent<Props> = ({ application, historyMo
       <div className={'min-h-0 overflow-auto py-1.5 h-full'}>
         {currentTab === RevisionType.Session && <SessionHistoryList historyModalController={historyModalController} />}
         {currentTab === RevisionType.Remote && (
-          <RemoteHistoryList application={application} historyModalController={historyModalController} />
+          <RemoteHistoryList hasMinimumRole={hasMinimumRole} historyModalController={historyModalController} />
         )}
         {currentTab === RevisionType.Legacy && (
           <LegacyHistoryList legacyHistory={legacyHistory} historyModalController={historyModalController} />
