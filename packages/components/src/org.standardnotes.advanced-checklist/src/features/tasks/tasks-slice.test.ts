@@ -535,8 +535,16 @@ it('should handle loading tasks into the tasks store, if an invalid payload is p
     ],
   }
 
-  expect(reducer(previousState, tasksLoaded('null'))).toEqual(previousState)
-  expect(reducer(previousState, tasksLoaded('undefined'))).toEqual(previousState)
+  expect(reducer(previousState, tasksLoaded('null'))).toEqual({
+    schemaVersion: '1.0.0',
+    groups: [],
+    initialized: true
+  })
+  expect(reducer(previousState, tasksLoaded('undefined'))).toMatchObject({
+    ...previousState,
+    initialized: false,
+    lastError: expect.stringContaining('An error has occurred while parsing the note\'s content')
+  })
 })
 
 it('should initialize the storage with an empty object', () => {
@@ -562,28 +570,6 @@ it('should initialize the storage with an empty object', () => {
     groups: [],
     initialized: true,
   })
-})
-
-it('should not initialize the storage again with an empty object', () => {
-  const previousState: TasksState = {
-    schemaVersion: '1.0.0',
-    groups: [
-      {
-        name: 'Test',
-        tasks: [
-          {
-            id: 'another-id',
-            description: 'Another simple task',
-            completed: false,
-            createdAt: new Date(),
-          },
-        ],
-      },
-    ],
-    initialized: true,
-  }
-
-  expect(reducer(previousState, tasksLoaded(''))).toEqual(previousState)
 })
 
 it('should handle loading tasks into the tasks store, with a valid payload', () => {
