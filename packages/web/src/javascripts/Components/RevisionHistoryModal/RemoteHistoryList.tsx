@@ -13,7 +13,8 @@ type RemoteHistoryListProps = {
 }
 
 const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({ application, historyModalController }) => {
-  const { remoteHistory, isFetchingRemoteHistory, fetchAndSetRemoteRevision, selectedEntry } = historyModalController
+  const { remoteHistory, isFetchingRemoteHistory, fetchAndSetRemoteRevision, selectedRemoteEntry } =
+    historyModalController
 
   const remoteHistoryListRef = useRef<HTMLDivElement>(null)
 
@@ -39,7 +40,7 @@ const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({ applicat
               {group.entries.map((entry) => (
                 <HistoryListItem
                   key={entry.uuid}
-                  isSelected={selectedEntry?.uuid === entry.uuid}
+                  isSelected={selectedRemoteEntry?.uuid === entry.uuid}
                   onClick={() => {
                     fetchAndSetRemoteRevision(entry).catch(console.error)
                   }}

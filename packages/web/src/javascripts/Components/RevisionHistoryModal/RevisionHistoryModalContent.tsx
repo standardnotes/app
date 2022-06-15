@@ -44,8 +44,7 @@ const RevisionHistoryModalContent: FunctionComponent<RevisionHistoryModalProps> 
 }) => {
   const closeButtonRef = useRef<HTMLButtonElement>(null)
 
-  const { dismissModal, selectedRevisionWithContent, showContentLockedScreen, isFetchingSelectedRevision } =
-    historyModalController
+  const { dismissModal, selectedRevision, showContentLockedScreen, isFetchingSelectedRevision } = historyModalController
 
   return (
     <DialogOverlay
@@ -69,14 +68,14 @@ const RevisionHistoryModalContent: FunctionComponent<RevisionHistoryModalProps> 
             <HistoryListContainer application={application} historyModalController={historyModalController} />
             <div className={'flex flex-col flex-grow relative'}>
               <RevisionContentPlaceholder
-                selectedRevision={selectedRevisionWithContent}
+                selectedRevision={selectedRevision}
                 isFetchingSelectedRevision={isFetchingSelectedRevision}
                 showContentLockedScreen={showContentLockedScreen}
               />
-              {showContentLockedScreen && !selectedRevisionWithContent && (
+              {showContentLockedScreen && !selectedRevision && (
                 <RevisionContentLocked subscriptionController={viewControllerManager.subscriptionController} />
               )}
-              {selectedRevisionWithContent && (
+              {selectedRevision && (
                 <SelectedRevisionContent application={application} viewControllerManager={viewControllerManager} />
               )}
             </div>

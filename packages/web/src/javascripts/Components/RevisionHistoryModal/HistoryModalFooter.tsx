@@ -11,8 +11,8 @@ type Props = {
 const HistoryModalFooter = ({ historyModalController, closeButtonRef }: Props) => {
   const {
     dismissModal,
-    selectedRevisionWithContent: selectedRevision,
-    selectedEntry: selectedRemoteEntry,
+    selectedRevision,
+    selectedRemoteEntry,
     restoreRevision,
     restoreRevisionAsCopy,
     deleteRemoteRevision,

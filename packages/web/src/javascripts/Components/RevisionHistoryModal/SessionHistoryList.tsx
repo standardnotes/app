@@ -2,13 +2,14 @@ import { Fragment, FunctionComponent, useCallback, useEffect, useMemo, useRef, u
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import HistoryListItem from './HistoryListItem'
 import { HistoryModalController } from '@/Controllers/HistoryModalController'
+import { observer } from 'mobx-react-lite'
 
 type Props = {
   historyModalController: HistoryModalController
 }
 
 const SessionHistoryList: FunctionComponent<Props> = ({ historyModalController }) => {
-  const { sessionHistory, setSelectedRevision, setSelectedRemoteEntry } = historyModalController
+  const { sessionHistory, selectSessionRevision, clearSelection } = historyModalController
 
   const sessionHistoryListRef = useRef<HTMLDivElement>(null)
 
@@ -28,17 +29,17 @@ const SessionHistoryList: FunctionComponent<Props> = ({ historyModalController }
   const selectFirstEntry = useCallback(() => {
     if (firstEntry) {
       setSelectedItemCreatedAt(firstEntry.payload.created_at)
-      setSelectedRevision(firstEntry)
+      selectSessionRevision(firstEntry)
     }
-  }, [firstEntry, setSelectedRevision])
+  }, [firstEntry, selectSessionRevision])
 
   useEffect(() => {
     if (firstEntry && !selectedItemCreatedAt) {
       selectFirstEntry()
     } else if (!firstEntry) {
-      setSelectedRevision(undefined)
+      clearSelection()
     }
-  }, [firstEntry, selectFirstEntry, selectedItemCreatedAt, setSelectedRevision])
+  }, [clearSelection, firstEntry, selectFirstEntry, selectedItemCreatedAt])
 
   return (
     <div
@@ -60,8 +61,7 @@ const SessionHistoryList: FunctionComponent<Props> = ({ historyModalController }
                   isSelected={selectedItemCreatedAt === entry.payload.created_at}
                   onClick={() => {
                     setSelectedItemCreatedAt(entry.payload.created_at)
-                    setSelectedRevision(entry)
-                    setSelectedRemoteEntry(undefined)
+                    selectSessionRevision(entry)
                   }}
                 >
                   {entry.previewTitle()}
@@ -78,4 +78,4 @@ const SessionHistoryList: FunctionComponent<Props> = ({ historyModalController }
   )
 }
 
-export default SessionHistoryList
+export default observer(SessionHistoryList)

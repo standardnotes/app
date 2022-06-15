@@ -17,7 +17,7 @@ const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentProps> =
   viewControllerManager,
 }) => {
   const note = viewControllerManager.notesController.firstSelectedNote
-  const { selectedRevisionWithContent } = viewControllerManager.historyModalController
+  const { selectedRevision } = viewControllerManager.historyModalController
 
   const componentViewer = useMemo(() => {
     const editorForCurrentNote = note ? application.componentManager.editorForNote(note) : undefined
@@ -28,7 +28,7 @@ const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentProps> =
 
     const templateNoteForRevision = application.mutator.createTemplateItem(
       ContentType.Note,
-      selectedRevisionWithContent?.payload.content,
+      selectedRevision?.payload.content,
     ) as SNNote
 
     const componentViewer = application.componentManager.createComponentViewer(editorForCurrentNote)
@@ -36,7 +36,7 @@ const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentProps> =
     componentViewer.lockReadonly = true
     componentViewer.overrideContextItem = templateNoteForRevision
     return componentViewer
-  }, [application.componentManager, application.mutator, note, selectedRevisionWithContent?.payload.content])
+  }, [application.componentManager, application.mutator, note, selectedRevision?.payload.content])
 
   useEffect(() => {
     return () => {
@@ -49,15 +49,15 @@ const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentProps> =
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <div className="p-4 text-base font-bold w-full">
-        <div className="title">{selectedRevisionWithContent?.payload.content.title}</div>
+        <div className="title">{selectedRevision?.payload.content.title}</div>
       </div>
       {!componentViewer && (
         <div className="relative flex-grow min-h-0 overflow-hidden">
-          {selectedRevisionWithContent?.payload.content.text.length ? (
+          {selectedRevision?.payload.content.text.length ? (
             <textarea
               readOnly={true}
               className="w-full h-full resize-none p-4 pt-0 border-0 bg-default color-text text-editor font-editor"
-              defaultValue={selectedRevisionWithContent?.payload.content.text}
+              value={selectedRevision?.payload.content.text}
             />
           ) : (
             <div className={`color-passive-0 ${ABSOLUTE_CENTER_CLASSNAME}`}>Empty note.</div>

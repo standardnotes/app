@@ -40,9 +40,9 @@ export class HistoryModalController extends AbstractViewController {
   sessionHistory: SessionHistory = undefined
   legacyHistory: LegacyHistory = undefined
 
-  selectedRevisionWithContent: SelectedRevision = undefined
+  selectedRevision: SelectedRevision = undefined
   isFetchingSelectedRevision = false
-  selectedEntry: RevisionListEntry | undefined = undefined
+  selectedRemoteEntry: RevisionListEntry | undefined = undefined
 
   showContentLockedScreen = false
 
@@ -67,12 +67,12 @@ export class HistoryModalController extends AbstractViewController {
       showRevisionHistoryModal: observable,
       setShowRevisionHistoryModal: action,
 
-      selectedRevisionWithContent: observable,
+      selectedRevision: observable,
       setSelectedRevision: action,
       isFetchingSelectedRevision: observable,
       setIsFetchingSelectedRevision: observable,
 
-      selectedEntry: observable,
+      selectedRemoteEntry: observable,
       setSelectedRemoteEntry: action,
 
       remoteHistory: observable,
@@ -97,11 +97,11 @@ export class HistoryModalController extends AbstractViewController {
   }
 
   setSelectedRevision = (revision: SelectedRevision) => {
-    this.selectedRevisionWithContent = revision
+    this.selectedRevision = revision
   }
 
   setSelectedRemoteEntry = (remoteEntry: RevisionListEntry | undefined) => {
-    this.selectedEntry = remoteEntry
+    this.selectedRemoteEntry = remoteEntry
   }
 
   clearSelection = () => {
@@ -252,6 +252,11 @@ export class HistoryModalController extends AbstractViewController {
     this.sessionHistory = sessionHistory
   }
 
+  selectSessionRevision = (entry: NoteHistoryEntry) => {
+    this.clearSelection()
+    this.setSelectedRevision(entry)
+  }
+
   fetchAllHistory = async () => {
     this.clearAllHistory()
 
@@ -271,8 +276,8 @@ export class HistoryModalController extends AbstractViewController {
   }
 
   clearAllHistory = () => {
-    this.selectedRevisionWithContent = undefined
-    this.selectedEntry = undefined
+    this.selectedRevision = undefined
+    this.selectedRemoteEntry = undefined
     this.remoteHistory = undefined
     this.sessionHistory = undefined
     this.legacyHistory = undefined
@@ -356,7 +361,7 @@ export class HistoryModalController extends AbstractViewController {
 
               await this.fetchRemoteHistory()
 
-              if (this.selectedEntry?.uuid !== revisionEntry.uuid) {
+              if (this.selectedRemoteEntry?.uuid !== revisionEntry.uuid) {
                 return
               }
 
