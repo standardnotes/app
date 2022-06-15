@@ -14,11 +14,11 @@
   "homepage": ".",
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
-    "start": "react-scripts start",
+    "start": "react-app-rewired start",
     "test:coverage": "npm run test -- --coverage --watchAll",
     "eject": "react-scripts eject",
-    "components:compile": "react-scripts build",
-    "components:test": "react-scripts test --watchAll=false",
+    "components:compile": "react-app-rewired build",
+    "components:test": "react-app-rewired test --watchAll=false --silent",
     "components:lint": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md"
   },
   "eslintConfig": {
