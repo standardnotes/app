@@ -1,3 +1,12 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+## 1.4.3-alpha.0 (2022-06-15)
+
+**Note:** Version bump only for package @standardnotes/markdown-basic
+
 <a name="1.2.0"></a>
 # [1.2.0](https://github.com/ruanyf/react-babel-webpack-boilerplate/compare/2804c45...v1.2.0) (2016-04-21)
 
@@ -23,4 +32,3 @@
 * add the support jsx extension into webpack configuration 28cac00
 * add webpack.production.config.js cf7c6c4
 * modifing component's css will reload the page 617225c
-

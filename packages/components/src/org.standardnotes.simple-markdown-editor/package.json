@@ -1,7 +1,7 @@
 {
   "name": "@standardnotes/markdown-basic",
   "private": true,
-  "version": "1.4.2",
+  "version": "1.4.3-alpha.0",
   "main": "dist/dist.js",
   "scripts": {
     "skip:components:lint": "eslint --cache --ext .jsx,.js --format=node_modules/eslint-formatter-pretty .",

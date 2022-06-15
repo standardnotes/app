@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/solarized-dark-theme",
-  "version": "1.2.7",
+  "version": "1.2.8-alpha.0",
   "main": "dist/dist.css",
   "private": true,
   "sn": {

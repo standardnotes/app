@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/focus-theme",
-  "version": "1.2.9",
+  "version": "1.2.10-alpha.0",
   "main": "dist/dist.css",
   "private": true,
   "sn": {
