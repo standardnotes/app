@@ -82,7 +82,7 @@ const RevisionHistoryModalContent: FunctionComponent<RevisionHistoryModalProps> 
                 showContentLockedScreen={showContentLockedScreen}
               />
               {showContentLockedScreen && !selectedRevisionWithContent && (
-                <RevisionContentLocked viewControllerManager={viewControllerManager} />
+                <RevisionContentLocked subscriptionController={viewControllerManager.subscriptionController} />
               )}
               {selectedRevisionWithContent && (
                 <SelectedRevisionContent application={application} viewControllerManager={viewControllerManager} />
