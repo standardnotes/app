@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0-alpha.5](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.1.0-alpha.4...@standardnotes/components-meta@2.1.0-alpha.5) (2022-06-15)
+
+### Bug Fixes
+
+* tasksLoaded tests ([#1106](https://github.com/standardnotes/app/issues/1106)) ([008452f](https://github.com/standardnotes/app/commit/008452fd86fa78abb7c3e71290ccaad1ac5bc01b))
+
 # [2.1.0-alpha.4](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.1.0-alpha.3...@standardnotes/components-meta@2.1.0-alpha.4) (2022-06-15)
 
 **Note:** Version bump only for package @standardnotes/components-meta
