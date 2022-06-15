@@ -1,5 +1,5 @@
 import { WebApplication } from '@/Application/Application'
-import { RevisionListTab } from '@/Components/RevisionHistoryModal/RevisionListTabType'
+import { RevisionType } from '@/Components/RevisionHistoryModal/RevisionType'
 import {
   LegacyHistoryEntry,
   ListGroup,
@@ -46,7 +46,7 @@ export class HistoryModalController extends AbstractViewController {
 
   showContentLockedScreen = false
 
-  currentTab = RevisionListTab.Remote
+  currentTab = RevisionType.Remote
 
   override deinit(): void {
     super.deinit()
@@ -109,7 +109,7 @@ export class HistoryModalController extends AbstractViewController {
     this.setSelectedRevision(undefined)
   }
 
-  setCurrentTab = (tab: RevisionListTab) => {
+  setCurrentTab = (tab: RevisionType) => {
     this.currentTab = tab
   }
 

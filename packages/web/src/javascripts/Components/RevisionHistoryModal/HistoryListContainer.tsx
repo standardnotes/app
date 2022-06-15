@@ -5,7 +5,7 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback } from 'react'
 import LegacyHistoryList from './LegacyHistoryList'
 import RemoteHistoryList from './RemoteHistoryList'
-import { RevisionListTab } from './RevisionListTabType'
+import { RevisionType } from './RevisionType'
 import SessionHistoryList from './SessionHistoryList'
 
 type Props = {
@@ -25,7 +25,7 @@ const HistoryListContainer: FunctionComponent<Props> = ({ application, historyMo
   } = historyModalController
 
   const TabButton: FunctionComponent<{
-    type: RevisionListTab
+    type: RevisionType
   }> = ({ type }) => {
     const isSelected = currentTab === type
 
@@ -75,23 +75,17 @@ const HistoryListContainer: FunctionComponent<Props> = ({ application, historyMo
   return (
     <div className={'flex flex-col min-w-60 border-0 border-r-1px border-solid border-main overflow-auto h-full'}>
       <div className="flex border-0 border-b-1 border-solid border-main">
-        <TabButton type={RevisionListTab.Remote} />
-        <TabButton type={RevisionListTab.Session} />
-        {legacyHistory && legacyHistory.length > 0 && <TabButton type={RevisionListTab.Legacy} />}
+        <TabButton type={RevisionType.Remote} />
+        <TabButton type={RevisionType.Session} />
+        {legacyHistory && legacyHistory.length > 0 && <TabButton type={RevisionType.Legacy} />}
       </div>
       <div className={'min-h-0 overflow-auto py-1.5 h-full'}>
-        {currentTab === RevisionListTab.Session && (
-          <SessionHistoryList historyModalController={historyModalController} />
-        )}
-        {currentTab === RevisionListTab.Remote && (
+        {currentTab === RevisionType.Session && <SessionHistoryList historyModalController={historyModalController} />}
+        {currentTab === RevisionType.Remote && (
           <RemoteHistoryList application={application} historyModalController={historyModalController} />
         )}
-        {currentTab === RevisionListTab.Legacy && (
-          <LegacyHistoryList
-            legacyHistory={legacyHistory}
-            historyModalController={historyModalController}
-            fetchAndSetLegacyRevision={fetchAndSetLegacyRevision}
-          />
+        {currentTab === RevisionType.Legacy && (
+          <LegacyHistoryList legacyHistory={legacyHistory} historyModalController={historyModalController} />
         )}
       </div>
     </div>
