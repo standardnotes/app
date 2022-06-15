@@ -11,9 +11,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: packages/components
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -25,10 +22,13 @@ jobs:
 
       - name: Lint components
         run: yarn components:lint
+        working-directory: packages/components
       - name: Compile components
         run: yarn components:compile
+        working-directory: packages/components
       - name: Test components
         run: yarn components:test
+        working-directory: packages/components
 
       - name: Lint all
         run: yarn lint
