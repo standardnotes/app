@@ -5198,13 +5198,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/components@npm:1.9.1":
-  version: 1.9.1
-  resolution: "@standardnotes/components@npm:1.9.1"
-  checksum: 32c2dbb0295086f6ef77092c4a316f3af077c400598520240ae00c51d752ad59e45bc082013e1a070662b17882487c054c8f2f491179c41de5cbd5b90797b16f
-  languageName: node
-  linkType: hard
-
 "@standardnotes/config@npm:^2.4.3":
   version: 2.4.3
   resolution: "@standardnotes/config@npm:2.4.3"
@@ -5661,7 +5654,7 @@ __metadata:
     "@react-navigation/elements": ^1.3.3
     "@react-navigation/native": ^6.0.10
     "@react-navigation/stack": ^6.2.1
-    "@standardnotes/components": 1.9.1
+    "@standardnotes/components-meta": "workspace:*"
     "@standardnotes/config": ^2.4.3
     "@standardnotes/filepicker": ^1.16.14
     "@standardnotes/icons": "workspace:*"
