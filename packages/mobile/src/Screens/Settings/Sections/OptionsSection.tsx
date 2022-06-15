@@ -107,7 +107,6 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
         ButtonType.Danger,
       )
     ) {
-      await application.deviceInterface.clearRawKeychainValue()
       await application.user.signOut()
     }
   }
@@ -259,7 +258,6 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
     }
 
     try {
-      await application.deviceInterface.clearRawKeychainValue()
       await application.user.signOut()
     } catch (error) {
       console.error(error)
@@ -273,7 +271,6 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
         return
       }
 
-      await application.deviceInterface.clearRawKeychainValue()
       await appGroup.unloadCurrentAndActivateDescriptor(descriptor)
     },
     [Open, appGroup, application.deviceInterface, getWorkspaceActionConfirmation],
