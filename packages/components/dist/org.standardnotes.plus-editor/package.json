@@ -6,8 +6,8 @@
   "main": "dist/dist.js",
   "author": "Standard Notes <hello@standardnotes.com>",
   "scripts": {
-    "components:lint": "eslint --ext .js .",
-    "compile": "webpack --config webpack.prod.js",
+    "skip:components:lint": "eslint --ext .js .",
+    "components:compile": "webpack --config webpack.prod.js",
     "start": "webpack serve --config webpack.dev.js --progress --hot"
   },
   "sn": {
