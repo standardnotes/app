@@ -8,9 +8,10 @@
   "license": "AGPL-3.0",
   "scripts": {
     "start": "http-server . --cors -p8001 & webpack --progress --config webpack.dev.js",
-    "compile": "webpack --config webpack.prod.js",
-    "components:lint": "eslint src --ext .js",
-    "components:lint:fix": "yarn lint --fix"
+    "components:compile": "webpack --config webpack.prod.js",
+    "skip:components:lint": "eslint src --ext .js",
+    "components:lint:fix": "yarn lint --fix",
+    "components:clean": "rm -rf ./vendor"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.10",
@@ -23,7 +24,6 @@
     "eslint": "*",
     "http-server": "^0.12.3",
     "mini-css-extract-plugin": "^1.3.5",
-    "remove-files-webpack-plugin": "^1.4.4",
     "sass": "*",
     "sass-loader": "^10.1.1",
     "sn-stylekit": "^2.1.1",

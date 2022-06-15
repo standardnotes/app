@@ -5,7 +5,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "compile": "grunt"
+    "components:compile": "grunt"
   },
   "author": "Standard Notes",
   "devDependencies": {
