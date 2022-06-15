@@ -33,7 +33,7 @@ jobs:
         run: yarn install
 
       - name: Compile Components
-        run: yarn compile:components
+        run: yarn components:clean && yarn components:compile
       - name: Commit Components
         run: |
           node packages/components/scripts/package-components.mjs

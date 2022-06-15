@@ -15,21 +15,21 @@
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "react-app-rewired start",
-    "compile": "react-app-rewired build",
     "prepublishOnly": "npm run build",
     "clean-deploy-cache": "rm -rf node_modules/.cache/gh-pages",
     "predeploy": "yarn run pretty && yarn run build && yarn clean-deploy-cache",
     "deploy-build": "yarn run predeploy && gh-pages -b build -d build",
     "deploy-dev": "yarn run predeploy && gh-pages -b dev -d build",
     "deploy-stable": "yarn run predeploy && gh-pages -b gh-pages -d build",
-    "custom:test": "react-app-rewired test --watchAll=false",
     "test:coverage": "npm run test -- --coverage --watchAll",
     "eject": "react-scripts eject",
     "serve": "serve -s -p 3000 build",
     "server-public": "http-server -p 3000 --cors",
     "server-root": "http-server ./ -p 3000 --cors",
     "server": "http-server ./build -p 3000 --cors",
-    "compile:lint": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md"
+    "components:compile": "react-app-rewired build",
+    "components:test": "react-app-rewired test --watchAll=false",
+    "components:lint": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md"
   },
   "eslintConfig": {
     "extends": [

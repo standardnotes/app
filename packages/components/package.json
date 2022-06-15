@@ -9,9 +9,10 @@
     ]
   },
   "scripts": {
-    "compile": "yarn compile:lint && yarn compile:all",
-    "compile:lint": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run lint",
-    "compile:all": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run compile"
+    "components:clean": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run components:clean",
+    "components:lint": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run components:lint",
+    "components:test": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run components:test",
+    "components:compile": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run components:compile"
   },
   "devDependencies": {
     "@standardnotes/deterministic-zip": "^1.2.0",

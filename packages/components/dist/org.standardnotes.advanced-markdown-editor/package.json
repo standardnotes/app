@@ -12,8 +12,8 @@
   "scripts": {
     "start": "webpack serve --config webpack.dev.js --progress --hot",
     "compile": "webpack --config webpack.prod.js",
-    "custom:lint": "eslint src --ext .js",
-    "custom:lint:fix": "yarn lint --fix"
+    "components:lint": "eslint src --ext .js",
+    "components:lint:fix": "yarn lint --fix"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.10",
