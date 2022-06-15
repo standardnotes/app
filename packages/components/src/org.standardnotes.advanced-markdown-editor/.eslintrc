@@ -1,0 +1,20 @@
+{
+  "env": {
+    "browser": true,
+    "amd": true,
+    "node": true,
+    "es6": true
+  },
+  "extends": [
+    "@standardnotes/eslint-config-extensions"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 11
+  },
+  "globals": {
+    "EasyMDE": true,
+    "ComponentRelay": true,
+    "Stylekit": true,
+    "DOMPurify": true
+  }
+}

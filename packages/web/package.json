@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/web",
-  "version": "3.22.3-alpha.2",
+  "version": "3.22.3-alpha.3",
   "license": "AGPL-3.0-or-later",
   "main": "dist/app.js",
   "author": "Standard Notes <>",
@@ -14,7 +14,6 @@
     "clean": "rm -fr dist",
     "prebuild": "yarn clean",
     "build": "webpack --config web.webpack.prod.js && yarn tsc",
-    "build:web:all": "yarn workspaces foreach -ptR run build",
     "lint": "eslint src/javascripts",
     "tsc": "tsc --project tsconfig.json",
     "test": "jest --config jest.config.js --coverage",

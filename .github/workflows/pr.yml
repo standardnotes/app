@@ -1,10 +1,12 @@
-name: Pull request
+name: General PR
 
 on:
   pull_request:
     branches:
       - develop
       - main
+    paths:
+      - packages/!(components)/**
 
 jobs:
   test:
@@ -19,6 +21,8 @@ jobs:
       - name: ESLint
         run: yarn lint
       - name: Build
-        run: yarn build
+        run: yarn build:all
+      - name: Build Android
+        run: yarn android:bundle
       - name: Test
         run: yarn test

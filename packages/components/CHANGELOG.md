@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0-alpha.1](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.1.0-alpha.0...@standardnotes/components-meta@2.1.0-alpha.1) (2022-06-14)
+
+**Note:** Version bump only for package @standardnotes/components-meta
+
+# [2.1.0-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@0.2.0...@standardnotes/components-meta@2.1.0-alpha.0) (2022-06-14)
+
+### Bug Fixes
+
+* sass deprecation warning ([#1100](https://github.com/standardnotes/app/issues/1100)) ([fd115bc](https://github.com/standardnotes/app/commit/fd115bc113c0777ed00c203ff2c9fa4ea4d72f50))
+
+### Features
+
+* add all editors ([#1098](https://github.com/standardnotes/app/issues/1098)) ([1246596](https://github.com/standardnotes/app/commit/1246596cd00d6a75a54f1574a0df91c4e7fe7432))
+
+# [0.3.0-alpha.2](https://github.com/standardnotes/app/compare/@standardnotes/components@0.3.0-alpha.1...@standardnotes/components@0.3.0-alpha.2) (2022-06-14)
+
+### Features
+
+* add all editors ([#1098](https://github.com/standardnotes/app/issues/1098)) ([1246596](https://github.com/standardnotes/app/commit/1246596cd00d6a75a54f1574a0df91c4e7fe7432))
+
 # [0.3.0-alpha.1](https://github.com/standardnotes/app/compare/@standardnotes/components@0.3.0-alpha.0...@standardnotes/components@0.3.0-alpha.1) (2022-06-14)
 
 **Note:** Version bump only for package @standardnotes/components
