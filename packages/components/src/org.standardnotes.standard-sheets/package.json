@@ -4,7 +4,7 @@
   "version": "1.4.4",
   "main": "dist/dist.js",
   "scripts": {
-    "components:lint": "eslint app/ --ext .js",
+    "skip:components:lint": "eslint app/ --ext .js",
     "components:lint:fix": "npm run lint -- --fix",
     "components:compile": "webpack --config webpack.prod.js",
     "start": "webpack serve --config webpack.dev.js --progress --hot",
