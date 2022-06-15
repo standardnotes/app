@@ -1,47 +1,97 @@
 {
-  "org.standardnotes.theme-autobiography": {
-    "version": "1.0.4",
-    "base64": "7f647ae6d3820bd422c59c8aa9f5b268e0f3597dc900ba576d9d78604a611da4",
-    "binary": "d73e98e94cf724966b98d4962e9e975d8769d04804740d6cf6ba9993713f5f21"
-  },
-  "org.standardnotes.advanced-checklist": {
-    "version": "0.0.1",
-    "base64": "7f7683158c14bf3f260d6f371af7f2b8562889a6c45f091dd8424c63975f578c",
-    "binary": "943b3926d7635fd373c4e58451469ddc2a298ef9a70f1e2ef08c2f415b02b263"
-  },
   "org.standardnotes.theme-midnight": {
     "version": "1.2.8",
-    "base64": "4faac453c45411062e79427d149b2386e9f235fd183d628f997c368924d7a566",
-    "binary": "7f548a06e62400a2678297939c8d5c1bf28e47c3f7f6523067a41f6cfcf2e7db"
+    "base64": "79085f55578169492fb3a0d70b120c39f9bdede94cb98548f18fab302fed0485",
+    "binary": "1ae1805538d691328ae0782b4f0ca3c7a7912d441d57fbedcfda81afedf561f4"
   },
   "org.standardnotes.theme-futura": {
     "version": "1.2.9",
-    "base64": "f46483df41f44daa3b3a1a5b296f0c8e6fd6012212200c9f4497b76a265f4209",
-    "binary": "1652ee85f4981f49cfefd2b8778a2a098a00aa987ef258b4dde9bfc2f435b166"
+    "base64": "b7a287552f89580782a9359b302baa87ca7abc4561d68429ce244f9b9fef071c",
+    "binary": "1428d78fc9556d2f6bcb4fd0d5aaaaee48fff14314da6c21fd2f663b566343e2"
   },
   "org.standardnotes.theme-solarized-dark": {
     "version": "1.2.7",
-    "base64": "d59f953fc5e0e12b8014f5934869f25012bc0ecfd4b1d11e95749a2071af5ec2",
-    "binary": "14d45b0f9e076e3c53c766eba964de75842604b64ca0d556b4cade3a7afb1536"
+    "base64": "159f6a42634b905486f12a0886a03c4e50926da8afdca322e9dc9521401571cc",
+    "binary": "ca01631d1bbd8ca9513692a9260b400dbdfff394322efe32e0af468cf38c3d8c"
+  },
+  "org.standardnotes.theme-autobiography": {
+    "version": "1.0.4",
+    "base64": "436f6afeba7241558e648052ad47084fdb64ff95eb61a1b91b690db2646a8a10",
+    "binary": "9d2ab975d807e76406c23602ae23708ed222979b92948c013b89ffb3212e1077"
   },
   "org.standardnotes.theme-focus": {
     "version": "1.2.9",
-    "base64": "9b00c7c40408169bede537f4da00ff2434adacd585b3ce819050e2144f0dee69",
-    "binary": "eff35bd7c25a9aa04025a307aa085ea8dcee4ffc583010ebcee2f6fbe4d6b148"
+    "base64": "62ba8aeb2b83e066b4bc8b7babe9bda1f8cbcee81a1f9d4dda8f6e7165f6cb23",
+    "binary": "b93cf8d9353e48b63dd076a4e1da42af125326c87d9990cccd9f25a44a0978d8"
   },
   "org.standardnotes.theme-titanium": {
     "version": "1.2.7",
-    "base64": "4d8e18e00d13dac8d52605d431a1addc9a2ee8fe2183fe44dcd9ab1edee770d2",
-    "binary": "4a241a6ddf9ec0d1671ac901a077ca707a02d151420e7a1d6f39d36b1b351908"
+    "base64": "7f22002992f49bf5c824c312af68b4cd505e51287c64bdf4ee77a7d312fcee98",
+    "binary": "2f293b6071b803b989d29610f8b801caae60e0dae7af44d52cab73828975c178"
   },
   "org.standardnotes.theme-dynamic": {
     "version": "1.0.4",
-    "base64": "a790a81022197d26bd4149769fd31059324b245beecc7c540c54e939250e770d",
-    "binary": "4d793128cc1358bc366bd2b88d8b950cd4f5a33c2c9b6fa2e2aa1b0fcef56715"
+    "base64": "04049de05d0a9c74ddbb0c95124f46f4e9b8769e4226779c1731a3ebe57bc59f",
+    "binary": "534cac27036ffd5eab05244e6d68a775d24a2bc30fdc6f99209716fdfc328403"
+  },
+  "org.standardnotes.code-editor": {
+    "version": "1.3.12",
+    "base64": "0d933b7542e8c6f4cbeb6acb89c2ea5690881e039cb10b25e2dc14f01bddb85d",
+    "binary": "fc49b050f4ed4ebe96f0f04affb6a55232e705fee67293103a4e766f01a3539b"
+  },
+  "org.standardnotes.bold-editor": {
+    "version": "1.3.5",
+    "base64": "55b6a660bebab3131e30eb0f4f601e8afdbc0405720cdaee394dcff41ffadb21",
+    "binary": "276995515204c095c5b0c52563ed37bb66cfa5d5474ee9899ee46ac4db2966c6"
+  },
+  "org.standardnotes.plus-editor": {
+    "version": "1.6.1",
+    "base64": "e286c398c4dbb882d85f2b9fbdd9eefd5377acdc4f5d9c254e6919ff05ab000b",
+    "binary": "e7e3b24ab2896ba3d8a407a58426d842967d62b5e6987f494de39a9173b85b1d"
+  },
+  "org.standardnotes.simple-markdown-editor": {
+    "version": "1.4.2",
+    "base64": "8064072a60aefdd661b1fce15f2f809bab417c687ed606a267f34323ee36d060",
+    "binary": "7ae9d6dc1914c196530ade1a831d03d8d03f256acd9b130817b6056468d52eff"
+  },
+  "org.standardnotes.advanced-markdown-editor": {
+    "version": "1.5.0",
+    "base64": "ff2ecbf66d40b8073ee027060a5560383d07305fc559f55f9b9df8e164b7c2fa",
+    "binary": "23c7eec06598313e124083c91265be3e4598ea01036e215a103c54b50150b261"
+  },
+  "org.standardnotes.minimal-markdown-editor": {
+    "version": "1.3.9",
+    "base64": "d0e9368c6406466eefdbd2a61fbef67b3a76625fb8028ec93dfef8f5d15a2043",
+    "binary": "438806e9b01e0d04d7fdccce1e87e69fb241b2a71c239ca60961bebc977298cd"
+  },
+  "org.standardnotes.fancy-markdown-editor": {
+    "version": "1.3.6",
+    "base64": "4135e216d4ff1f94d411201b19f88559e5c49fc051e282481285ffdb83a84f7a",
+    "binary": "08a5c339dd9c81eeee54327c9421cf805cb5c49f21bc82d94e6419713833486b"
   },
   "org.standardnotes.markdown-visual-editor": {
     "version": "1.0.7",
-    "base64": "5ee90ed492bfd9534d5c9acd16e9874b7dda1d74571b69f8c783a54b88001371",
-    "binary": "4f8058a5c8a02ad30db28138edc27e51e5921942d2a233e32c17029758ec48fa"
+    "base64": "cfa41ccf47de8757cef25eaff33c8fa679a44ffd4fb12236c94d74313776ac47",
+    "binary": "7949deb542e7acd5ea5c5514b857a1665658503999744157c3de6a0ff52539cd"
+  },
+  "org.standardnotes.simple-task-editor": {
+    "version": "1.3.10",
+    "base64": "d1037c8a9508e1bc57e4d5a235c6431d7b42484a3305f005dcb9ca99a402ae2c",
+    "binary": "cb01b490fe5d3fbff6d837af3f97927f9846a70d236d4c54b315dc7745ec870b"
+  },
+  "org.standardnotes.token-vault": {
+    "version": "2.0.10",
+    "base64": "730490eae3389271a8ebf8952bff68350da3d1d177aec10a16adf547613bcbf8",
+    "binary": "a03c241b8e7c0245a8b67029e8777b1b6521c5007d7a87b24f4c80095f0b2539"
+  },
+  "org.standardnotes.standard-sheets": {
+    "version": "1.4.4",
+    "base64": "e24e78f91bc8bed50d16300cc5f3eafff965e6babe7d69759a8d18cd78e1dcbb",
+    "binary": "7145b268b660f33a4caca8a91e826b7b266343d330854398d977bc04a09cd3f1"
+  },
+  "org.standardnotes.advanced-checklist": {
+    "version": "0.0.1",
+    "base64": "e1e5589c45810b0c670638843c27637316ced1c65d61410524f712459e41a0a2",
+    "binary": "07a3f6f31061095084b00d5735ab9c140b50e668ab2b5f0983afb73376f227ed"
   }
 }

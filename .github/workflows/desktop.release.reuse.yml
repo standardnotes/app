@@ -24,7 +24,7 @@ jobs:
         with:
           registry-url: 'https://registry.npmjs.org'
       - run: yarn install
-      - run: yarn build:web:all
+      - run: yarn build:desktop
       - name: Compile Mac
         run: yarn run webpack --config desktop.webpack.prod.js
       - name: MacX64
@@ -59,7 +59,7 @@ jobs:
       - name: Install FPM
         run: sudo gem install fpm -f
       - run: yarn install
-      - run: yarn build:web:all
+      - run: yarn build:desktop
       - name: Compile for AppImage
         run: yarn run webpack --config desktop.webpack.prod.js
       - name: AppImage
@@ -125,7 +125,7 @@ jobs:
         with:
           registry-url: 'https://registry.npmjs.org'
       - run: yarn install
-      - run: yarn build:web:all
+      - run: yarn build:desktop
       - run: yarn run webpack --config desktop.webpack.prod.js
       - run: yarn run electron-builder --windows --x64 --ia32 --publish=never
 

@@ -1,0 +1,169 @@
+@import '~sn-stylekit/dist/stylekit.css';
+
+body,
+html {
+  font-family: sans-serif;
+  font-size: var(--sn-stylekit-base-font-size);
+  height: 100%;
+  margin: 0;
+  background-color: transparent;
+}
+
+#summernote {
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  font-size: var(--sn-stylekit-font-size-editor);
+}
+
+#plus-editor {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 100%;
+  font-size: var(--sn-stylekit-font-size-editor);
+
+  .note-editor.note-frame.fullscreen {
+    // On Mobile, resizing the webview to avoid keyboard causes the option bar to be offset because its position is fixed.
+    position: relative !important;
+  }
+
+  pre {
+    background-color: var(--sn-stylekit-contrast-background-color);
+    color: var(--sn-stylekit-contrast-foreground-color);
+    border-color: var(--sn-stylekit-contrast-border-color);
+    font-size: var(--sn-stylekit-font-size-p);
+  }
+
+  a {
+    color: var(--sn-stylekit-info-color);
+  }
+
+  .note-editor {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .note-editor.fullscreen {
+    background-color: var(--sn-stylekit-background-color);
+  }
+
+  .note-editor.note-frame.fullscreen .note-editable {
+    background-color: var(--sn-stylekit-background-color);
+    color: var(--sn-stylekit-foreground-color);
+  }
+
+  .panel-default>.panel-heading {
+    background-color: var(--sn-stylekit-secondary-background-color);
+  }
+
+  .btn-default {
+    color: var(--sn-stylekit-secondary-foreground-color);
+    background-color: var(--sn-stylekit-secondary-background-color);
+    border-color: var(--sn-stylekit-secondary-border-color);
+  }
+
+  .panel-heading {
+    border-color: var(--sn-stylekit-border-color);
+  }
+
+  .dropdown-menu {
+    background-color: var(--sn-stylekit-background-color);
+  }
+
+  .dropdown-menu>li>a {
+    color: var(--sn-stylekit-foreground-color);
+
+    &:hover {
+      background-color: var(--sn-stylekit-contrast-background-color);
+      color: var(--sn-stylekit-contrast-foreground-color);
+    }
+  }
+
+  .note-codable {
+    caret-color: #cccccc;
+  }
+
+  .note-color-btn {
+    border-color: var(--sn-stylekit-border-color);
+  }
+
+  .note-color-reset {
+    background-color: var(--sn-stylekit-contrast-background-color);
+    color: var(--sn-stylekit-contrast-foreground-color);
+  }
+
+  .note-palette-title {
+    color: var(--sn-stylekit-info-color);
+  }
+
+  .modal-content {
+    background-color: var(--sn-stylekit-contrast-background-color);
+    color: var(--sn-stylekit-contrast-foreground-color);
+  }
+
+  .modal-header,
+  .modal-footer {
+    border-color: var(--sn-stylekit-contrast-border-color);
+
+    .btn-primary {
+      background-color: var(--sn-stylekit-info-color);
+      color: var(--sn-stylekit-info-contrast-color);
+      border-color: transparent;
+    }
+  }
+
+  table {
+    border-color: var(--sn-stylekit-contrast-border-color);
+    background-color: var(--sn-stylekit-contrast-background-color);
+    color: var(--sn-stylekit-contrast-foreground-color);
+
+    th,
+    td {
+      border: 1px solid var(--sn-stylekit-contrast-border-color);
+    }
+
+    tr:nth-child(2n) {
+      background-color: var(--sn-stylekit-background-color);
+    }
+  }
+
+
+  label kbd {
+    background-color: var(--sn-stylekit-background-color);
+    background-color: var(--sn-stylekit-foreground-color);
+  }
+
+  .modal-header .close {
+    color: var(--sn-stylekit-foreground-color);
+    text-shadow: none;
+  }
+}
+
+.note-popover,
+.note-popover .arrow {
+  background-color: var(--sn-stylekit-contrast-background-color);
+  color: var(--sn-stylekit-contrast-foreground-color);
+
+  a {
+    color: var(--sn-stylekit-info-color);
+  }
+
+  button {
+    background-color: var(--sn-stylekit-background-color);
+    color: var(--sn-stylekit-foreground-color);
+    border-color: var(--sn-stylekit-border-color);
+  }
+}
+
+.note-editor.note-frame {
+  border: 0 !important;
+}
+
+.panel-default {
+  border: 0;
+}
+
+.panel {
+  border-radius: 0;
+}

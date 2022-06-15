@@ -1,18 +1,21 @@
 {
-  "name": "@standardnotes/components",
-  "version": "0.3.0-alpha.1",
+  "name": "@standardnotes/components-meta",
+  "version": "2.1.0-alpha.1",
   "private": true,
+  "main": "dist",
   "workspaces": {
     "packages": [
       "src/*"
     ]
   },
   "scripts": {
-    "build": "yarn workspaces foreach --parallel --verbose run build",
-    "lint": "yarn workspaces foreach --parallel --verbose run lint"
+    "compile": "yarn compile:lint && yarn compile:all",
+    "compile:lint": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run lint",
+    "compile:all": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run compile"
   },
   "devDependencies": {
     "@standardnotes/deterministic-zip": "^1.2.0",
+    "@standardnotes/eslint-config-extensions": "^1.0.4",
     "@standardnotes/features": "^1.45.1",
     "mini-css-extract-plugin": "^2.6.0",
     "node-sass": "7.0.1",
