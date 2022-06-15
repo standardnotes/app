@@ -1,0 +1,8 @@
+{
+    "identifier": "org.standardnotes.plus-editor-local",
+    "name": "Plus Editor - Local",
+    "content_type": "SN|Component",
+    "area": "editor-editor",
+    "version": "1.0.0",
+    "url": "http://localhost:8001"
+}

@@ -1,6 +1,5 @@
 {
   "name": "@standardnotes/app-monorepo",
-  "version": "3.21.0",
   "private": true,
   "author": "Standard Notes",
   "workspaces": {
@@ -12,17 +11,21 @@
     "node": ">=12.19.0 <17.0.0"
   },
   "scripts": {
-    "lint": "yarn workspaces foreach --parallel run lint",
-    "test": "yarn workspaces foreach --parallel run test",
+    "lint": "yarn workspaces foreach -pt --parallel --jobs 10 --verbose run lint",
+    "test": "yarn workspaces foreach -pt --parallel --jobs 10 --verbose run test",
     "clean": "lerna run clean",
-    "build": "yarn workspaces foreach -pt run build",
-    "build:icons": "yarn workspace @standardnotes/icons build",
-    "build:styles": "yarn workspace @standardnotes/styles build",
-    "build:web": "yarn workspace @standardnotes/web build",
+    "build:all": "yarn workspaces foreach -pt --verbose run build",
+    "build:web": "yarn workspaces foreach -pt --verbose -R --from @standardnotes/web run build",
+    "build:desktop": "yarn workspaces foreach -pt --verbose -R --from @standardnotes/desktop run build",
+    "build:mobile": "yarn workspaces foreach -pt --verbose -R --from @standardnotes/mobile run build",
+    "build:web-server": "yarn workspaces foreach -pt --verbose -R --from @standardnotes/web-server run build",
+    "compile:components": "yarn workspace @standardnotes/components-meta run compile",
     "start:server:web": "lerna run start --scope=@standardnotes/web-server",
     "start:server:web:localhost": "lerna run start:no-binding --scope=@standardnotes/web-server",
     "prepare": "husky install",
-    "reset": "find . -type dir -name node_modules | xargs rm -rf && rm -rf yarn.lock",
+    "reset": "find . -type dir -name node_modules | xargs rm -rf && rm -rf yarn.lock && yarn install",
+    "release:prod": "lerna version --conventional-commits --yes -m \"chore(release): publish\"",
+    "release:beta": "lerna version --conventional-prerelease --conventional-commits --yes -m \"chore(release): publish\"",
     "version": "yarn install --no-immutable && git add yarn.lock"
   },
   "resolutions": {
@@ -35,6 +38,8 @@
   "devDependencies": {
     "@commitlint/cli": "^17.0.2",
     "@commitlint/config-conventional": "^17.0.2",
+    "@lerna-lite/cli": "^1.5.1",
+    "@lerna-lite/run": "^1.5.1",
     "@standardnotes/config": "^2.4.3",
     "@typescript-eslint/eslint-plugin": "^5.20.0",
     "@typescript-eslint/parser": "^5.20.0",
@@ -42,7 +47,6 @@
     "husky": "^8.0.0",
     "lint-staged": "^13.0.1",
     "prettier": "^2.6.2",
-    "release-please": "^13.18.3",
     "typescript": "^4.7.3",
     "webpack": "^5.72.0",
     "webpack-cli": "^4.9.2"

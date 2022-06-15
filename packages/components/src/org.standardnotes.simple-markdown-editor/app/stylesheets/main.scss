@@ -1,0 +1,242 @@
+@import '~highlightjs_css';
+
+body, html {
+  font-family: var(--sn-stylekit-sans-serif-font);
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-size: var(--sn-stylekit-base-font-size);
+  background-color: transparent;
+}
+
+* {
+  // To prevent gray flash when focusing input on mobile Safari
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+/* Simple Markdown Editor */
+
+#simple-markdown {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  font-size: var(--sn-stylekit-font-size-editor);
+
+  background-color: var(--sn-stylekit-editor-background-color);
+  color: var(--sn-stylekit-editor-foreground-color);
+
+  .sk-label {
+    width: 48px;
+  }
+}
+
+#editor-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden; // required for footer bar to display in Firefox
+}
+
+#editor {
+  background-color: var(--sn-stylekit-editor-background-color);
+  color: var(--sn-stylekit-editor-foreground-color);
+  font-size: var(--sn-stylekit-font-size-editor);
+  -webkit-overflow-scrolling: touch;
+  font-family: var(--sn-stylekit-sans-serif-font);
+
+  &.edit {
+    width: 100% !important;
+  }
+
+  &.split {
+    width: calc(50% - 4px);
+  }
+
+  &.preview {
+    width: 0 !important;
+    padding: 0;
+    padding-left: 0;
+  }
+
+  flex-grow: 0;
+  border: 0px;
+  outline: 0;
+  resize: none;
+  padding: 12px;
+}
+
+#column-resizer {
+  width: 8px;
+  background-color: var(--sn-stylekit-border-color);
+  cursor: col-resize;
+
+  &.edit, &.preview {
+    display: none;
+  }
+
+  &.dragging {
+
+  }
+}
+
+#preview {
+  padding: 12px;
+  padding-top: 0;
+  font-family: var(--sn-stylekit-sans-serif-font);
+
+  // To align top with textarea.
+  margin-top: -4px;
+
+  -webkit-overflow-scrolling: touch;
+
+  background-color: var(--sn-stylekit-background-color);
+  color: var(--sn-stylekit-foreground-color);
+
+  &.edit {
+    width: 0 !important;
+    padding: 0;
+    padding-left: 0;
+  }
+
+  &.split {
+    width: calc(50% - 4px);
+  }
+
+  &.preview {
+    width: 100% !important;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  ul.contains-task-list {
+    padding-left: 0;
+    list-style-type: none;
+  }
+
+  overflow: auto;
+  flex: 1;
+  word-wrap: break-word;
+
+  a {
+    color: var(--sn-stylekit-info-color);
+  }
+
+  pre {
+    background: var(--sn-stylekit-contrast-background-color);
+    color: var(--sn-stylekit-contrast-foreground-color);
+    border: 1px solid var(--sn-stylekit-contrast-border-color);
+    padding: 20px;
+    border-radius: 3px;
+
+    overflow: auto;
+
+    // We tried adding this to make code block wrap if too long, but this destroys spacing of code.
+    // We went with overflow: auto instead to make it scroll
+    // white-space: normal;
+    // word-break: break-all;
+  }
+
+  pre code {
+    background-color: transparent;
+    color: var(--sn-stylekit-contrast-foreground-color);
+  }
+
+  p code {
+    padding: 2px 6px;
+    background-color: var(--sn-stylekit-contrast-background-color);
+    color: var(--sn-stylekit-info-color);
+    border: 1px solid var(--sn-stylekit-contrast-border-color);;
+    border-radius: 3px;
+  }
+
+  code {
+    font-family: var(--sn-stylekit-monospace-font);
+  }
+
+  table {
+    display: block;
+    width: 100%;
+    overflow: auto;
+    margin-top: 0;
+    margin-bottom: 16px;
+    border-spacing: 0;
+    border-collapse: collapse;
+    color: var(--sn-stylekit-contrast-foreground-color);
+
+    tr {
+      background-color: transparent;
+      border-top: 1px solid var(--sn-stylekit-contrast-border-color);
+    }
+    
+    td, th {
+      padding: 6px 13px;
+      border: 1px solid var(--sn-stylekit-contrast-border-color);
+    }
+
+    tr:nth-child(2n) {
+      background-color: var(--sn-stylekit-contrast-background-color);
+      code, pre {
+        background-color: var(--sn-stylekit-background-color);
+      }
+    }
+  }
+
+  blockquote {
+    padding: 0 1rem;
+    margin-left: 0;
+    color: var(--sn-stylekit-neutral-color);
+    border-left: 0.3rem solid var(--sn-stylekit-contrast-background-color);
+  }
+
+  hr {
+    border-color: var(--sn-stylekit-contrast-background-color);
+  }
+
+  blockquote > :first-child {
+    margin-top: 0;
+  }
+
+  blockquote > :last-child {
+    margin-bottom: 0;
+  }
+}
+
+// #preview *:first-child {
+//   margin-top: 12px;
+// }
+
+#header {
+  border-bottom: 1px solid var(--sn-stylekit-border-color);
+  padding: 5px;
+  background-color: var(--sn-stylekit-background-color);
+  color: var(--sn-stylekit-foreground-color);
+
+  .segmented-buttons-container {
+    display: flex;
+    justify-content: center;
+    user-select: none;
+  }
+
+  .buttons {
+    display: flex;
+
+    .button {
+      padding: 4px 12px;
+      margin-right: 4px;
+      border: 1px solid var(--sn-component-inner-border-color);
+      border-radius: 0;
+
+      &.selected {
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+
+@import '~stylekit';

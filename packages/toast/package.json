@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/toast",
-  "version": "1.2.0",
+  "version": "1.2.1-alpha.1",
   "private": true,
   "main": "./src/index.ts",
   "scripts": {
@@ -20,6 +20,7 @@
     "@types/react": "link:../web/node_modules/@types/react",
     "@types/react-dom": "link:../web/node_modules/@types/react-dom",
     "eslint": "*",
+    "prettier": "*",
     "typescript": "*"
   }
 }

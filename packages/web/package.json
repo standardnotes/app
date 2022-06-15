@@ -1,9 +1,9 @@
 {
   "name": "@standardnotes/web",
-  "version": "3.22.1",
+  "version": "3.22.3-alpha.3",
   "license": "AGPL-3.0-or-later",
   "main": "dist/app.js",
-  "author": "Standard Notes",
+  "author": "Standard Notes <>",
   "private": true,
   "files": [
     "dist"
@@ -13,8 +13,7 @@
     "watch": "webpack -w --config web.webpack.dev.js",
     "clean": "rm -fr dist",
     "prebuild": "yarn clean",
-    "build": "echo BUILDING WEB && webpack --config web.webpack.prod.js && yarn tsc",
-    "build:web:all": "yarn workspaces foreach -ptR run build",
+    "build": "webpack --config web.webpack.prod.js && yarn tsc",
     "lint": "eslint src/javascripts",
     "tsc": "tsc --project tsconfig.json",
     "test": "jest --config jest.config.js --coverage",
@@ -45,6 +44,7 @@
     "mini-css-extract-plugin": "^2.6.0",
     "node-sass": "*",
     "npm-check-updates": "^12.5.9",
+    "prettier": "*",
     "sass-loader": "^12.6.0",
     "svg-jest": "^1.0.1",
     "ts-jest": "^27.1.4",

@@ -1,8 +1,9 @@
 {
   "name": "@standardnotes/desktop",
   "main": "./app/dist/index.js",
-  "version": "3.22.1",
+  "version": "3.22.3-alpha.12",
   "license": "AGPL-3.0-or-later",
+  "author": "Standard Notes.",
   "private": true,
   "repository": {
     "type": "git",
@@ -15,8 +16,7 @@
   },
   "scripts": {
     "build:remove-unpacked": "rimraf dist/{linux-*,mac,win-*}",
-    "build": "echo BUILDING DESKTOP && yarn run webpack --config desktop.webpack.prod.js",
-    "build:desktop:all": "yarn workspaces foreach -ptR run build",
+    "build": "yarn run webpack --config desktop.webpack.prod.js",
     "clean:build": "rimraf app/dist/",
     "clean:tests": "rimraf test/data/tmp/",
     "dev": "NODE_ENV=development webpack --config desktop.webpack.dev.js --watch",
@@ -25,7 +25,6 @@
     "lint:formatting": "prettier --check .",
     "lint": "yarn lint:formatting && yarn lint:eslint",
     "tsc": "tsc --noEmit",
-    "release": "node scripts/build.mjs mainstream",
     "release:mac": "node scripts/build.mjs mac",
     "start": "electron ./app --enable-logging --icon _icon/icon.png",
     "ava": "rimraf test/data/tmp && ava --serial"

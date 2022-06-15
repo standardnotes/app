@@ -3,37 +3,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# 1.4.0 (2022-06-10)
+## [1.4.1-alpha.1](https://github.com/standardnotes/app/compare/@standardnotes/icons@1.4.1-alpha.0...@standardnotes/icons@1.4.1-alpha.1) (2022-06-14)
 
+**Note:** Version bump only for package @standardnotes/icons
+
+## [1.4.1-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/icons@1.4.0...@standardnotes/icons@1.4.1-alpha.0) (2022-06-14)
+
+**Note:** Version bump only for package @standardnotes/icons
+
+# 1.4.0 (2022-06-10)
 
 ### Bug Fixes
 
 * icons package ([4df06c1](https://github.com/standardnotes/app/commit/4df06c1d1a59f95ce735f87c106066ea28e5816c))
-
 
 ### Features
 
 * **wip:** components monorepo ([#1082](https://github.com/standardnotes/app/issues/1082)) ([e3d6001](https://github.com/standardnotes/app/commit/e3d6001a178e11e619ca724b2b155b7c0405c023))
 
-
-
-
-
 # 1.3.0 (2022-06-10)
-
 
 ### Bug Fixes
 
 * icons package ([4df06c1](https://github.com/standardnotes/app/commit/4df06c1d1a59f95ce735f87c106066ea28e5816c))
 
-
 ### Features
 
 * **wip:** components monorepo ([8c5e11c](https://github.com/standardnotes/app/commit/8c5e11c22b717ada7a6a9b3115fc4c9b757ec71c))
-
-
-
-
 
 # Changelog
 
@@ -56,7 +52,6 @@ All notable changes to this project will be documented in this file. See [standa
 ### [1.1.1](https://github.com/standardnotes/icons/compare/v1.1.0...v1.1.1) (2022-05-16)
 
 ## 1.1.0 (2022-05-16)
-
 
 ### Features
 

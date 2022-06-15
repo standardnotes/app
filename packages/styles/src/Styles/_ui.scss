@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 .red {
   color: var(--sn-stylekit-danger-color);
 }
@@ -702,16 +704,16 @@ svg.sk-circular-progress {
   $pi: 3.14159265358979;
 
   $circle-size: 18px;
-  $stroke-width: $circle-size * (0.1 / 100) * 100 + 1;
-  $radius: ($circle-size - $stroke-width) / 2;
+  $stroke-width: $circle-size * math.div(0.1, 100) * 100 + 1;
+  $radius: math.div($circle-size - $stroke-width, 2);
   $circumference: ($radius * $pi * 2);
 
   height: $circle-size;
   width: $circle-size;
 
   circle.background {
-    cx: $circle-size / 2;
-    cy: $circle-size / 2;
+    cx: math.div($circle-size, 2);
+    cy: math.div($circle-size, 2);
     r: $radius;
     fill: none;
     stroke: var(--sn-stylekit-contrast-border-color);
@@ -719,8 +721,8 @@ svg.sk-circular-progress {
   }
 
   circle.progress {
-    cx: $circle-size / 2;
-    cy: $circle-size / 2;
+    cx: math.div($circle-size, 2);
+    cy: math.div($circle-size, 2);
     r: $radius;
     fill: none;
     stroke: var(--sn-stylekit-info-color);
@@ -731,7 +733,7 @@ svg.sk-circular-progress {
     transform-origin: 50% 50%;
 
     @mixin set-progress($progress) {
-      $dash: ($progress * $circumference) / 100;
+      $dash: math.div($progress * $circumference, 100);
       stroke-dasharray: $dash $circumference - $dash;
     }
 

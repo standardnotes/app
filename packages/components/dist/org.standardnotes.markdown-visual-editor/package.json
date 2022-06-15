@@ -15,10 +15,9 @@
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "compile": "react-scripts build",
     "eject": "react-scripts eject",
-    "lint": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md"
+    "compile:lint": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md"
   },
   "devDependencies": {
     "@codemirror/lang-markdown": "^0.19.6",
