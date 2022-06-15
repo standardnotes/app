@@ -40,8 +40,11 @@ export class HistoryModalController extends AbstractViewController {
   sessionHistory: SessionHistory = undefined
   legacyHistory: LegacyHistory = undefined
 
-  selectedRevision: SelectedRevision = undefined
-  selectedRemoteEntry: RevisionListEntry | undefined = undefined
+  selectedRevisionWithContent: SelectedRevision = undefined
+  isFetchingSelectedRevision = false
+  selectedEntry: RevisionListEntry | undefined = undefined
+
+  showContentLockedScreen = false
 
   currentTab = RevisionListTab.Remote
 
@@ -64,10 +67,12 @@ export class HistoryModalController extends AbstractViewController {
       showRevisionHistoryModal: observable,
       setShowRevisionHistoryModal: action,
 
-      selectedRevision: observable,
+      selectedRevisionWithContent: observable,
       setSelectedRevision: action,
+      isFetchingSelectedRevision: observable,
+      setIsFetchingSelectedRevision: observable,
 
-      selectedRemoteEntry: observable,
+      selectedEntry: observable,
       setSelectedRemoteEntry: action,
 
       remoteHistory: observable,
@@ -85,15 +90,23 @@ export class HistoryModalController extends AbstractViewController {
 
       currentTab: observable,
       setCurrentTab: action,
+
+      showContentLockedScreen: observable,
+      setShowContentLockedScreen: action,
     })
   }
 
   setSelectedRevision = (revision: SelectedRevision) => {
-    this.selectedRevision = revision
+    this.selectedRevisionWithContent = revision
   }
 
   setSelectedRemoteEntry = (remoteEntry: RevisionListEntry | undefined) => {
-    this.selectedRemoteEntry = remoteEntry
+    this.selectedEntry = remoteEntry
+  }
+
+  clearSelection = () => {
+    this.setSelectedRemoteEntry(undefined)
+    this.setSelectedRevision(undefined)
   }
 
   setCurrentTab = (tab: RevisionListTab) => {
@@ -105,13 +118,25 @@ export class HistoryModalController extends AbstractViewController {
     void this.fetchAllHistory()
   }
 
+  setShowContentLockedScreen = (value: boolean) => {
+    this.showContentLockedScreen = value
+  }
+
+  setIsFetchingRemoteHistory = (value: boolean) => {
+    this.isFetchingRemoteHistory = value
+  }
+
+  setIsFetchingSelectedRevision = (value: boolean) => {
+    this.isFetchingSelectedRevision = value
+  }
+
   dismissModal = () => {
     this.setShowRevisionHistoryModal(false)
     this.clearAllHistory()
   }
 
-  setIsFetchingRemoteHistory = (value: boolean) => {
-    this.isFetchingRemoteHistory = value
+  private get flattenedRemoteHistory() {
+    return this.remoteHistory?.map((group) => group.entries).flat()
   }
 
   setRemoteHistory = (remoteHistory: RemoteHistory) => {
@@ -119,6 +144,8 @@ export class HistoryModalController extends AbstractViewController {
   }
 
   fetchRemoteHistory = async () => {
+    this.setRemoteHistory(undefined)
+
     if (this.notesController.firstSelectedNote) {
       this.setIsFetchingRemoteHistory(true)
       try {
@@ -132,6 +159,31 @@ export class HistoryModalController extends AbstractViewController {
       } finally {
         this.setIsFetchingRemoteHistory(false)
       }
+    }
+  }
+
+  fetchAndSetRemoteRevision = async (revisionListEntry: RevisionListEntry) => {
+    this.setShowContentLockedScreen(false)
+
+    const note = this.notesController.firstSelectedNote
+
+    if (this.application.features.hasMinimumRole(revisionListEntry.required_role) && note) {
+      this.setIsFetchingSelectedRevision(true)
+      this.clearSelection()
+
+      try {
+        this.setSelectedRemoteEntry(revisionListEntry)
+        const remoteRevision = await this.application.historyManager.fetchRemoteRevision(note, revisionListEntry)
+        this.setSelectedRevision(remoteRevision)
+      } catch (err) {
+        this.clearSelection()
+        console.error(err)
+      } finally {
+        this.setIsFetchingSelectedRevision(false)
+      }
+    } else {
+      this.setShowContentLockedScreen(true)
+      this.setSelectedRevision(undefined)
     }
   }
 
@@ -189,6 +241,8 @@ export class HistoryModalController extends AbstractViewController {
   }
 
   clearAllHistory = () => {
+    this.selectedRevisionWithContent = undefined
+    this.selectedEntry = undefined
     this.remoteHistory = undefined
     this.sessionHistory = undefined
     this.legacyHistory = undefined
@@ -241,7 +295,7 @@ export class HistoryModalController extends AbstractViewController {
     this.dismissModal()
   }
 
-  deleteRevision = (revision: RevisionListEntry) => {
+  deleteRemoteRevision = (revisionEntry: RevisionListEntry) => {
     this.application.alertService
       .confirm(
         'Are you sure you want to delete this revision?',
@@ -253,13 +307,36 @@ export class HistoryModalController extends AbstractViewController {
       .then((shouldDelete) => {
         if (shouldDelete && this.notesController.firstSelectedNote) {
           this.application.historyManager
-            .deleteRemoteRevision(this.notesController.firstSelectedNote, revision)
-            .then((res) => {
+            .deleteRemoteRevision(this.notesController.firstSelectedNote, revisionEntry)
+            .then(async (res) => {
               if (res.error?.message) {
                 throw new Error(res.error.message)
               }
 
-              void this.fetchRemoteHistory()
+              const remoteHistory = this.flattenedRemoteHistory
+
+              if (!remoteHistory) {
+                return
+              }
+
+              const currentEntryIndex = remoteHistory.findIndex((entry) => entry?.uuid === revisionEntry.uuid)
+
+              const previousEntry = remoteHistory[currentEntryIndex - 1]
+              const nextEntry = remoteHistory[currentEntryIndex + 1]
+
+              await this.fetchRemoteHistory()
+
+              if (this.selectedEntry?.uuid !== revisionEntry.uuid) {
+                return
+              }
+
+              if (previousEntry) {
+                void this.fetchAndSetRemoteRevision(previousEntry)
+              }
+
+              if (nextEntry) {
+                void this.fetchAndSetRemoteRevision(nextEntry)
+              }
             })
             .catch(console.error)
         }

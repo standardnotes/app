@@ -1,8 +1,8 @@
 import { WebApplication } from '@/Application/Application'
 import { HistoryModalController } from '@/Controllers/HistoryModalController'
-import { Action, HistoryEntry, RevisionListEntry, SNNote } from '@standardnotes/snjs'
+import { Action, HistoryEntry, SNNote } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useCallback, SetStateAction, Dispatch } from 'react'
+import { FunctionComponent, useCallback } from 'react'
 import LegacyHistoryList from './LegacyHistoryList'
 import RemoteHistoryList from './RemoteHistoryList'
 import { RevisionListTab } from './RevisionListTabType'
@@ -12,19 +12,17 @@ type Props = {
   application: WebApplication
   historyModalController: HistoryModalController
   note: SNNote
-  setIsFetchingSelectedRevision: Dispatch<SetStateAction<boolean>>
-  setShowContentLockedScreen: Dispatch<SetStateAction<boolean>>
 }
 
-const HistoryListContainer: FunctionComponent<Props> = ({
-  application,
-  historyModalController,
-  note,
-  setIsFetchingSelectedRevision,
-  setShowContentLockedScreen,
-}) => {
-  const { legacyHistory, currentTab, setCurrentTab, setSelectedRevision, setSelectedRemoteEntry } =
-    historyModalController
+const HistoryListContainer: FunctionComponent<Props> = ({ application, historyModalController, note }) => {
+  const {
+    legacyHistory,
+    currentTab,
+    setCurrentTab,
+    setSelectedRevision,
+    setSelectedRemoteEntry,
+    setIsFetchingSelectedRevision,
+  } = historyModalController
 
   const TabButton: FunctionComponent<{
     type: RevisionListTab
@@ -74,39 +72,6 @@ const HistoryListContainer: FunctionComponent<Props> = ({
     [application.actionsManager, note, setIsFetchingSelectedRevision, setSelectedRemoteEntry, setSelectedRevision],
   )
 
-  const fetchAndSetRemoteRevision = useCallback(
-    async (revisionListEntry: RevisionListEntry) => {
-      setShowContentLockedScreen(false)
-
-      if (application.features.hasMinimumRole(revisionListEntry.required_role)) {
-        setIsFetchingSelectedRevision(true)
-        setSelectedRevision(undefined)
-        setSelectedRemoteEntry(undefined)
-
-        try {
-          const remoteRevision = await application.historyManager.fetchRemoteRevision(note, revisionListEntry)
-          setSelectedRevision(remoteRevision)
-          setSelectedRemoteEntry(revisionListEntry)
-        } catch (err) {
-          console.error(err)
-        } finally {
-          setIsFetchingSelectedRevision(false)
-        }
-      } else {
-        setShowContentLockedScreen(true)
-        setSelectedRevision(undefined)
-      }
-    },
-    [
-      application,
-      note,
-      setIsFetchingSelectedRevision,
-      setSelectedRemoteEntry,
-      setSelectedRevision,
-      setShowContentLockedScreen,
-    ],
-  )
-
   return (
     <div className={'flex flex-col min-w-60 border-0 border-r-1px border-solid border-main overflow-auto h-full'}>
       <div className="flex border-0 border-b-1 border-solid border-main">
@@ -119,11 +84,7 @@ const HistoryListContainer: FunctionComponent<Props> = ({
           <SessionHistoryList historyModalController={historyModalController} />
         )}
         {currentTab === RevisionListTab.Remote && (
-          <RemoteHistoryList
-            application={application}
-            historyModalController={historyModalController}
-            fetchAndSetRemoteRevision={fetchAndSetRemoteRevision}
-          />
+          <RemoteHistoryList application={application} historyModalController={historyModalController} />
         )}
         {currentTab === RevisionListTab.Legacy && (
           <LegacyHistoryList

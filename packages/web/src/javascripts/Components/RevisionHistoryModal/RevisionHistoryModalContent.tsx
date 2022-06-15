@@ -1,8 +1,8 @@
 import { getPlatformString } from '@/Utils'
 import { DialogContent, DialogOverlay } from '@reach/dialog'
-import { ContentType, HistoryEntry, SNNote } from '@standardnotes/snjs'
+import { HistoryEntry } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useEffect, useMemo, useRef, useState } from 'react'
+import { FunctionComponent, useRef } from 'react'
 import HistoryListContainer from './HistoryListContainer'
 import RevisionContentLocked from './RevisionContentLocked'
 import SelectedRevisionContent from './SelectedRevisionContent'
@@ -44,35 +44,10 @@ const RevisionHistoryModalContent: FunctionComponent<RevisionHistoryModalProps> 
 }) => {
   const closeButtonRef = useRef<HTMLButtonElement>(null)
 
-  const { dismissModal, selectedRevision } = historyModalController
+  const { dismissModal, selectedRevisionWithContent, showContentLockedScreen, isFetchingSelectedRevision } =
+    historyModalController
 
   const note = viewControllerManager.notesController.firstSelectedNote
-  const editorForCurrentNote = useMemo(() => {
-    if (note) {
-      return application.componentManager.editorForNote(note)
-    } else {
-      return undefined
-    }
-  }, [application, note])
-
-  const [isFetchingSelectedRevision, setIsFetchingSelectedRevision] = useState(false)
-  const [templateNoteForRevision, setTemplateNoteForRevision] = useState<SNNote>()
-  const [showContentLockedScreen, setShowContentLockedScreen] = useState(false)
-
-  useEffect(() => {
-    const fetchTemplateNote = async () => {
-      if (selectedRevision) {
-        const newTemplateNote = application.mutator.createTemplateItem(
-          ContentType.Note,
-          selectedRevision.payload.content,
-        ) as SNNote
-
-        setTemplateNoteForRevision(newTemplateNote)
-      }
-    }
-
-    fetchTemplateNote().catch(console.error)
-  }, [application, selectedRevision])
 
   return (
     <DialogOverlay
@@ -98,27 +73,19 @@ const RevisionHistoryModalContent: FunctionComponent<RevisionHistoryModalProps> 
                 application={application}
                 historyModalController={historyModalController}
                 note={note}
-                setShowContentLockedScreen={setShowContentLockedScreen}
-                setIsFetchingSelectedRevision={setIsFetchingSelectedRevision}
               />
             )}
             <div className={'flex flex-col flex-grow relative'}>
               <RevisionContentPlaceholder
-                selectedRevision={selectedRevision}
+                selectedRevision={selectedRevisionWithContent}
                 isFetchingSelectedRevision={isFetchingSelectedRevision}
                 showContentLockedScreen={showContentLockedScreen}
               />
-              {showContentLockedScreen && !selectedRevision && (
+              {showContentLockedScreen && !selectedRevisionWithContent && (
                 <RevisionContentLocked viewControllerManager={viewControllerManager} />
               )}
-              {selectedRevision && templateNoteForRevision && (
-                <SelectedRevisionContent
-                  application={application}
-                  viewControllerManager={viewControllerManager}
-                  selectedRevision={selectedRevision}
-                  editorForCurrentNote={editorForCurrentNote}
-                  templateNoteForRevision={templateNoteForRevision}
-                />
+              {selectedRevisionWithContent && (
+                <SelectedRevisionContent application={application} viewControllerManager={viewControllerManager} />
               )}
             </div>
           </div>

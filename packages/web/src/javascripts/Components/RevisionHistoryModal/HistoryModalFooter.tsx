@@ -11,11 +11,11 @@ type Props = {
 const HistoryModalFooter = ({ historyModalController, closeButtonRef }: Props) => {
   const {
     dismissModal,
-    selectedRevision,
-    selectedRemoteEntry,
+    selectedRevisionWithContent: selectedRevision,
+    selectedEntry: selectedRemoteEntry,
     restoreRevision,
     restoreRevisionAsCopy,
-    deleteRevision,
+    deleteRemoteRevision,
   } = historyModalController
 
   const restoreSelectedRevision = useCallback(() => {
@@ -35,8 +35,8 @@ const HistoryModalFooter = ({ historyModalController, closeButtonRef }: Props) =
       return
     }
 
-    void deleteRevision(selectedRemoteEntry)
-  }, [deleteRevision, selectedRemoteEntry])
+    void deleteRemoteRevision(selectedRemoteEntry)
+  }, [deleteRemoteRevision, selectedRemoteEntry])
 
   return (
     <div className="flex flex-shrink-0 justify-between items-center min-h-6 px-2.5 py-2 border-0 border-t-1px border-solid border-main">
