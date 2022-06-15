@@ -5,6 +5,7 @@ import { spawnSync as spawn } from 'child_process'
 import { GetFeatures } from '@standardnotes/features/dist/Domain/Feature/Features.js'
 import { GetDeprecatedFeatures } from '@standardnotes/features/dist/Domain/Feature/Lists/DeprecatedFeatures.js'
 import zip from '@standardnotes/deterministic-zip'
+import minimatch from 'minimatch'
 
 import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
@@ -19,6 +20,7 @@ if (specificFeatureIdentifier) {
 
 const SourceFilesPath = path.join(__dirname, '../src')
 const DistDir = path.join(__dirname, '../dist')
+const TmpDir = path.join(__dirname, '../tmp')
 const ZipsDir = path.join(DistDir, '/zips')
 const AssetsDir = path.join(DistDir, '/assets')
 const ChecksumsSrcPath = path.join(ZipsDir, 'checksums.json')
@@ -36,7 +38,7 @@ async function zipDirectory(sourceDir, outPath) {
   })
 }
 
-const copyFileOrDir = (src, dest) => {
+const copyFileOrDir = (src, dest, exludedFilesGlob) => {
   const isDir = fs.lstatSync(src).isDirectory()
   if (isDir) {
     ensureDirExists(dest)
@@ -44,11 +46,22 @@ const copyFileOrDir = (src, dest) => {
 
     for (const entry of entries) {
       const srcPath = path.join(src, entry.name)
+
+      const excluded = exludedFilesGlob && minimatch(srcPath, exludedFilesGlob)
+      if (excluded) {
+        console.log('Excluding file', srcPath)
+        continue
+      }
       const destPath = path.join(dest, entry.name)
 
       entry.isDirectory() ? copyFileOrDir(srcPath, destPath) : fs.copyFileSync(srcPath, destPath)
     }
   } else {
+    const excluded = exludedFilesGlob && minimatch(src, exludedFilesGlob)
+    if (excluded) {
+      console.log('Excluding file', src)
+      return
+    }
     fs.copyFileSync(src, dest)
   }
 }
@@ -69,25 +82,24 @@ const emptyExistingDir = (dir) => {
   }
 }
 
-const copyComponentAssets = async (feature, targetComponentPath) => {
+const copyComponentAssets = async (feature, destination, exludedFilesGlob) => {
   const srcComponentPath = path.join(SourceFilesPath, feature.identifier)
 
   if (!doesDirExist(srcComponentPath)) {
     return false
   }
 
-  emptyExistingDir(targetComponentPath)
-  ensureDirExists(targetComponentPath)
+  emptyExistingDir(destination)
+  ensureDirExists(destination)
 
   for (const file of feature.static_files) {
     const srcFilePath = path.join(srcComponentPath, file)
-
     if (!fs.existsSync(srcFilePath)) {
       continue
     }
 
-    const targetFilePath = path.join(targetComponentPath, file)
-    copyFileOrDir(srcFilePath, targetFilePath)
+    const targetFilePath = path.join(destination, file)
+    copyFileOrDir(srcFilePath, targetFilePath, exludedFilesGlob)
   }
 
   return true
@@ -110,16 +122,21 @@ const zipAndChecksumFeature = async (feature) => {
   console.log('Processing feature', feature.identifier, '...')
 
   const assetsLocation = `${path.join(AssetsDir, feature.identifier)}`
-  const success = await copyComponentAssets(feature, assetsLocation)
-
-  if (!success) {
+  const assetsSuccess = await copyComponentAssets(feature, assetsLocation, '**/package.json')
+  if (!assetsSuccess) {
     return
   }
 
-  const zipFilePath = `${ZipsDir}/${feature.identifier}.zip`
-  await zipDirectory(assetsLocation, zipFilePath)
+  const zipAssetsTmpLocation = `${path.join(TmpDir, feature.identifier)}`
+  const zipAssetsSuccess = await copyComponentAssets(feature, zipAssetsTmpLocation)
+  if (!zipAssetsSuccess) {
+    return
+  }
 
-  const checksum = await computeChecksum(zipFilePath, feature.version)
+  const zipDestination = `${ZipsDir}/${feature.identifier}.zip`
+  await zipDirectory(zipAssetsTmpLocation, zipDestination)
+
+  const checksum = await computeChecksum(zipDestination, feature.version)
   Checksums[feature.identifier] = checksum
 
   console.log(`Computed checksums for ${feature.identifier}:`, checksum)
@@ -150,6 +167,9 @@ await (async () => {
   }
 
   fs.writeFileSync(ChecksumsSrcPath, JSON.stringify(Checksums, undefined, 2))
-  console.log('Succesfully wrote checksums to', ChecksumsSrcPath)
   copyFileOrDir(ChecksumsSrcPath, ChecksumsDistPath)
+
+  console.log('Succesfully wrote checksums to', ChecksumsSrcPath)
+
+  emptyExistingDir(TmpDir)
 })()

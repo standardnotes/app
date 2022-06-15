@@ -5191,6 +5191,7 @@ __metadata:
     "@standardnotes/eslint-config-extensions": ^1.0.4
     "@standardnotes/features": ^1.45.1
     mini-css-extract-plugin: ^2.6.0
+    minimatch: ^5.1.0
     node-sass: 7.0.1
     sass: ^1.52.3
     webpack: ^5.73.0

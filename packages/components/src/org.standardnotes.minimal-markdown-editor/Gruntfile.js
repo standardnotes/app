@@ -96,7 +96,7 @@ module.exports = function (grunt) {
           {
             expand: true,
             cwd: path.dirname(require.resolve('sn-codemirror-search')),
-            src: '**',
+            src: ['**', '!package.json'],
             dest: 'dist/sn-codemirror-search',
           },
         ],
