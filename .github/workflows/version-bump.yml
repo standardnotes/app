@@ -37,7 +37,7 @@ jobs:
         working-directory: packages/components
       - name: Commit Components
         run: |
-          node packages/components/scripts/package-components.mjs
+          node packages/components/scripts/package.mjs
           git add .
           (git commit -m 'chore(release): components') || true
 

@@ -6,6 +6,9 @@
   "author": "Standard Notes <help@standardnotes.com>",
   "version": "3.20.2",
   "main": "./dist/index.js",
+  "installConfig": {
+    "selfReferences": true
+  },
   "dependencies": {
     "keytar": "^7.9.0"
   }

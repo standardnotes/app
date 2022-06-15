@@ -61,7 +61,7 @@ export const Paths = {
     return path.join(__dirname, 'javascripts/renderer/preload.js')
   },
   get components(): string {
-    return `${app.getAppPath()}/dist/web/components`
+    return `${app.getAppPath()}/dist/web/components/assets`
   },
   get grantLinuxPasswordsAccessJs(): string {
     return path.join(__dirname, 'javascripts/renderer/grantLinuxPasswordsAccess.js')

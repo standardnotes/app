@@ -27,13 +27,15 @@
     "tsc": "tsc --noEmit",
     "release:mac": "node scripts/build.mjs mac",
     "start": "electron ./app --enable-logging --icon _icon/icon.png",
-    "ava": "rimraf test/data/tmp && ava --serial"
+    "ava": "rimraf test/data/tmp && ava --serial",
+    "rebuild:keytar": "yarn app/node_modules/keytar build "
   },
   "installConfig": {
     "hoistingLimits": "workspaces"
   },
   "dependencies": {
     "@electron/remote": "^2.0.8",
+    "@standardnotes/components-meta": "workspace:*",
     "@standardnotes/electron-clear-data": "1.1.1",
     "@standardnotes/web": "workspace:*",
     "axios": "^0.27.2",

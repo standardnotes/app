@@ -1,4 +1,7 @@
 import { TEnvironment } from '@Root/App'
+import VersionInfo from 'react-native-version-info'
+
+export const IsDev = VersionInfo.bundleIdentifier?.includes('dev')
 
 export function isNullOrUndefined(value: unknown) {
   return value === null || value === undefined
