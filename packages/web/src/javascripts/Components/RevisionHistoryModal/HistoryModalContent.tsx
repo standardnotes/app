@@ -37,7 +37,7 @@ const RevisionContentPlaceholder: FunctionComponent<RevisionContentPlaceholderPr
   </div>
 )
 
-const RevisionHistoryModalContent: FunctionComponent<RevisionHistoryModalProps> = ({
+const HistoryModalContent: FunctionComponent<RevisionHistoryModalProps> = ({
   application,
   viewControllerManager,
   historyModalController,
@@ -90,4 +90,4 @@ const RevisionHistoryModalContent: FunctionComponent<RevisionHistoryModalProps> 
   )
 }
 
-export default observer(RevisionHistoryModalContent)
+export default observer(HistoryModalContent)

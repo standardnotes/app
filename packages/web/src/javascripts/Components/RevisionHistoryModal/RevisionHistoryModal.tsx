@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
-import RevisionHistoryModalContent from './RevisionHistoryModalContent'
+import HistoryModalContent from './HistoryModalContent'
 import { RevisionHistoryModalProps } from './RevisionHistoryModalProps'
 
 const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = ({
@@ -13,7 +13,7 @@ const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = ({
   }
 
   return (
-    <RevisionHistoryModalContent
+    <HistoryModalContent
       application={application}
       viewControllerManager={viewControllerManager}
       historyModalController={historyModalController}
