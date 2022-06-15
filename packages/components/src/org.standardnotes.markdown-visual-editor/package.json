@@ -14,8 +14,8 @@
   "homepage": ".",
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
-    "start": "react-scripts start",
-    "compile": "react-scripts build",
+    "start": "react-app-rewired start",
+    "compile": "react-app-rewired build",
     "eject": "react-scripts eject",
     "compile:lint": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md"
   },
