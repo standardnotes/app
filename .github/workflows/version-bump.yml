@@ -34,6 +34,7 @@ jobs:
 
       - name: Compile Components
         run: yarn components:clean && yarn components:compile
+        working-directory: packages/components
       - name: Commit Components
         run: |
           node packages/components/scripts/package-components.mjs
