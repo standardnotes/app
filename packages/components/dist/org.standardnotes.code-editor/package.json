@@ -9,8 +9,8 @@
   "scripts": {
     "start": "http-server . --cors -p8001 & webpack --progress --config webpack.dev.js",
     "compile": "webpack --config webpack.prod.js",
-    "custom:lint": "eslint src --ext .js",
-    "custom:lint:fix": "yarn lint --fix"
+    "components:lint": "eslint src --ext .js",
+    "components:lint:fix": "yarn lint --fix"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.10",

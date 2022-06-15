@@ -15,11 +15,11 @@
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "react-scripts start",
-    "build": "react-scripts build",
-    "custom:test": "react-scripts test --watchAll=false",
     "test:coverage": "npm run test -- --coverage --watchAll",
     "eject": "react-scripts eject",
-    "lint": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md"
+    "components:compile": "react-scripts build",
+    "components:test": "react-scripts test --watchAll=false",
+    "components:lint": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md"
   },
   "eslintConfig": {
     "extends": [

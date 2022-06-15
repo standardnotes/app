@@ -5,8 +5,8 @@
   "scripts": {
     "compile": "webpack --config webpack.prod.js",
     "start": "webpack serve --config webpack.dev.js --progress --hot",
-    "custom:lint": "eslint app/ --ext .js",
-    "custom:lint:fix": "yarn lint --fix"
+    "components:lint": "eslint app/ --ext .js",
+    "components:lint:fix": "yarn lint --fix"
   },
   "sn": {
     "main": "dist/index.html"
