@@ -3104,6 +3104,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@lerna-lite/list@npm:^1.5.1":
+  version: 1.5.1
+  resolution: "@lerna-lite/list@npm:1.5.1"
+  dependencies:
+    "@lerna-lite/core": 1.5.1
+    "@lerna-lite/optional-cmd-common": 1.5.1
+    chalk: ^4.1.2
+    columnify: ^1.6.0
+  checksum: d1d318087964e6751e9b348619cf14daf52f3c57173e66043958e8b91663bd905c64907efbca953ab509a4472a035121075b9f264fb766aa56d928d40cad926a
+  languageName: node
+  linkType: hard
+
 "@lerna-lite/optional-cmd-common@npm:1.5.1":
   version: 1.5.1
   resolution: "@lerna-lite/optional-cmd-common@npm:1.5.1"
@@ -5040,6 +5052,7 @@ __metadata:
     "@commitlint/cli": ^17.0.2
     "@commitlint/config-conventional": ^17.0.2
     "@lerna-lite/cli": ^1.5.1
+    "@lerna-lite/list": ^1.5.1
     "@lerna-lite/run": ^1.5.1
     "@standardnotes/config": ^2.4.3
     "@typescript-eslint/eslint-plugin": ^5.20.0

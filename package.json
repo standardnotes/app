@@ -4,7 +4,8 @@
   "author": "Standard Notes",
   "workspaces": {
     "packages": [
-      "packages/*"
+      "packages/*",
+      "packages/components/src/*"
     ]
   },
   "engines": {
@@ -26,7 +27,8 @@
     "release:prod": "lerna version --conventional-commits --yes -m \"chore(release): publish\"",
     "release:beta": "lerna version --conventional-prerelease --conventional-commits --yes -m \"chore(release): publish\"",
     "version": "yarn install --no-immutable && git add yarn.lock",
-    "postversion": "./scripts/push-tags-one-by-one.sh"
+    "postversion": "./scripts/push-tags-one-by-one.sh",
+    "lerna:list": " yarn lerna list -all"
   },
   "resolutions": {
     "@types/styled-components/@types/react": "17.0.2",
@@ -39,6 +41,7 @@
     "@commitlint/cli": "^17.0.2",
     "@commitlint/config-conventional": "^17.0.2",
     "@lerna-lite/cli": "^1.5.1",
+    "@lerna-lite/list": "^1.5.1",
     "@lerna-lite/run": "^1.5.1",
     "@standardnotes/config": "^2.4.3",
     "@typescript-eslint/eslint-plugin": "^5.20.0",

@@ -2,6 +2,7 @@
   "name": "@standardnotes/authenticator",
   "version": "2.0.10",
   "main": "dist/dist.js",
+  "private": true,
   "scripts": {
     "components:compile": "webpack --config webpack.prod.js",
     "start": "webpack serve --config webpack.dev.js --progress --hot",
