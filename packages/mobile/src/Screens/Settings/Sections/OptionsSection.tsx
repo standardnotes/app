@@ -273,7 +273,6 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
 
       await application.deviceInterface.clearRawKeychainValue()
       await appGroup.unloadCurrentAndActivateDescriptor(descriptor)
-      // TODO: find a way to check if there are memory leaks *without* the below call.
     },
     [Open, appGroup, application.deviceInterface, getWorkspaceActionConfirmation],
   )
