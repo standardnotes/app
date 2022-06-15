@@ -218,6 +218,36 @@ export class HistoryModalController extends AbstractViewController {
     })
   }
 
+  fetchAndSetLegacyRevision = async (revisionListEntry: Action) => {
+    this.clearSelection()
+    this.setIsFetchingSelectedRevision(true)
+
+    const note = this.notesController.firstSelectedNote
+
+    if (!note) {
+      return
+    }
+
+    try {
+      if (!revisionListEntry.subactions?.[0]) {
+        throw new Error('Could not find revision action url')
+      }
+
+      const response = await this.application.actionsManager.runAction(revisionListEntry.subactions[0], note)
+
+      if (!response) {
+        throw new Error('Could not fetch revision')
+      }
+
+      this.setSelectedRevision(response.item as unknown as HistoryEntry)
+    } catch (error) {
+      console.error(error)
+      this.setSelectedRevision(undefined)
+    } finally {
+      this.setIsFetchingSelectedRevision(false)
+    }
+  }
+
   setSessionHistory = (sessionHistory: SessionHistory) => {
     this.sessionHistory = sessionHistory
   }

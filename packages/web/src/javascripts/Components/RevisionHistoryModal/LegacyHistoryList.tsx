@@ -7,15 +7,10 @@ import { HistoryModalController } from '@/Controllers/HistoryModalController'
 type Props = {
   legacyHistory: Action[] | undefined
   historyModalController: HistoryModalController
-  fetchAndSetLegacyRevision: (revisionListEntry: Action) => Promise<void>
 }
 
-const LegacyHistoryList: FunctionComponent<Props> = ({
-  legacyHistory,
-  historyModalController,
-  fetchAndSetLegacyRevision,
-}) => {
-  const { setSelectedRevision, setSelectedRemoteEntry } = historyModalController
+const LegacyHistoryList: FunctionComponent<Props> = ({ legacyHistory, historyModalController }) => {
+  const { setSelectedRevision, setSelectedRemoteEntry, fetchAndSetLegacyRevision } = historyModalController
 
   const legacyHistoryListRef = useRef<HTMLDivElement>(null)
 

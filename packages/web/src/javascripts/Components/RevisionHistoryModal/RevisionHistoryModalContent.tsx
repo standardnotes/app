@@ -47,8 +47,6 @@ const RevisionHistoryModalContent: FunctionComponent<RevisionHistoryModalProps> 
   const { dismissModal, selectedRevisionWithContent, showContentLockedScreen, isFetchingSelectedRevision } =
     historyModalController
 
-  const note = viewControllerManager.notesController.firstSelectedNote
-
   return (
     <DialogOverlay
       className={`sn-component ${getPlatformString()}`}
@@ -68,13 +66,7 @@ const RevisionHistoryModalContent: FunctionComponent<RevisionHistoryModalProps> 
       >
         <div className="bg-default flex flex-col h-full overflow-hidden">
           <div className="flex flex-grow min-h-0">
-            {note && (
-              <HistoryListContainer
-                application={application}
-                historyModalController={historyModalController}
-                note={note}
-              />
-            )}
+            <HistoryListContainer application={application} historyModalController={historyModalController} />
             <div className={'flex flex-col flex-grow relative'}>
               <RevisionContentPlaceholder
                 selectedRevision={selectedRevisionWithContent}
