@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0-alpha.6](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.1.0-alpha.5...@standardnotes/components-meta@2.1.0-alpha.6) (2022-06-15)
+
+### Bug Fixes
+
+* advanced checklist scripts ([#1109](https://github.com/standardnotes/app/issues/1109)) ([f72ac77](https://github.com/standardnotes/app/commit/f72ac77f185020b26a29b558ba7fd15b08e9808b))
+
 # [2.1.0-alpha.5](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.1.0-alpha.4...@standardnotes/components-meta@2.1.0-alpha.5) (2022-06-15)
 
 ### Bug Fixes
