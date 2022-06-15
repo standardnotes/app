@@ -135,6 +135,66 @@ export class HistoryModalController extends AbstractViewController {
     this.clearAllHistory()
   }
 
+  selectRemoteRevision = async (entry: RevisionListEntry) => {
+    this.setShowContentLockedScreen(false)
+
+    const note = this.notesController.firstSelectedNote
+
+    if (this.application.features.hasMinimumRole(entry.required_role) && note) {
+      this.setIsFetchingSelectedRevision(true)
+      this.clearSelection()
+
+      try {
+        this.setSelectedRemoteEntry(entry)
+        const remoteRevision = await this.application.historyManager.fetchRemoteRevision(note, entry)
+        this.setSelectedRevision(remoteRevision)
+      } catch (err) {
+        this.clearSelection()
+        console.error(err)
+      } finally {
+        this.setIsFetchingSelectedRevision(false)
+      }
+    } else {
+      this.setShowContentLockedScreen(true)
+      this.setSelectedRevision(undefined)
+    }
+  }
+
+  selectLegacyRevision = async (entry: Action) => {
+    this.clearSelection()
+    this.setIsFetchingSelectedRevision(true)
+
+    const note = this.notesController.firstSelectedNote
+
+    if (!note) {
+      return
+    }
+
+    try {
+      if (!entry.subactions?.[0]) {
+        throw new Error('Could not find revision action url')
+      }
+
+      const response = await this.application.actionsManager.runAction(entry.subactions[0], note)
+
+      if (!response) {
+        throw new Error('Could not fetch revision')
+      }
+
+      this.setSelectedRevision(response.item as unknown as HistoryEntry)
+    } catch (error) {
+      console.error(error)
+      this.setSelectedRevision(undefined)
+    } finally {
+      this.setIsFetchingSelectedRevision(false)
+    }
+  }
+
+  selectSessionRevision = (entry: NoteHistoryEntry) => {
+    this.clearSelection()
+    this.setSelectedRevision(entry)
+  }
+
   private get flattenedRemoteHistory() {
     return this.remoteHistory?.map((group) => group.entries).flat()
   }
@@ -159,31 +219,6 @@ export class HistoryModalController extends AbstractViewController {
       } finally {
         this.setIsFetchingRemoteHistory(false)
       }
-    }
-  }
-
-  fetchAndSetRemoteRevision = async (revisionListEntry: RevisionListEntry) => {
-    this.setShowContentLockedScreen(false)
-
-    const note = this.notesController.firstSelectedNote
-
-    if (this.application.features.hasMinimumRole(revisionListEntry.required_role) && note) {
-      this.setIsFetchingSelectedRevision(true)
-      this.clearSelection()
-
-      try {
-        this.setSelectedRemoteEntry(revisionListEntry)
-        const remoteRevision = await this.application.historyManager.fetchRemoteRevision(note, revisionListEntry)
-        this.setSelectedRevision(remoteRevision)
-      } catch (err) {
-        this.clearSelection()
-        console.error(err)
-      } finally {
-        this.setIsFetchingSelectedRevision(false)
-      }
-    } else {
-      this.setShowContentLockedScreen(true)
-      this.setSelectedRevision(undefined)
     }
   }
 
@@ -218,43 +253,8 @@ export class HistoryModalController extends AbstractViewController {
     })
   }
 
-  fetchAndSetLegacyRevision = async (revisionListEntry: Action) => {
-    this.clearSelection()
-    this.setIsFetchingSelectedRevision(true)
-
-    const note = this.notesController.firstSelectedNote
-
-    if (!note) {
-      return
-    }
-
-    try {
-      if (!revisionListEntry.subactions?.[0]) {
-        throw new Error('Could not find revision action url')
-      }
-
-      const response = await this.application.actionsManager.runAction(revisionListEntry.subactions[0], note)
-
-      if (!response) {
-        throw new Error('Could not fetch revision')
-      }
-
-      this.setSelectedRevision(response.item as unknown as HistoryEntry)
-    } catch (error) {
-      console.error(error)
-      this.setSelectedRevision(undefined)
-    } finally {
-      this.setIsFetchingSelectedRevision(false)
-    }
-  }
-
   setSessionHistory = (sessionHistory: SessionHistory) => {
     this.sessionHistory = sessionHistory
-  }
-
-  selectSessionRevision = (entry: NoteHistoryEntry) => {
-    this.clearSelection()
-    this.setSelectedRevision(entry)
   }
 
   fetchAllHistory = async () => {
@@ -366,11 +366,11 @@ export class HistoryModalController extends AbstractViewController {
               }
 
               if (previousEntry) {
-                void this.fetchAndSetRemoteRevision(previousEntry)
+                void this.selectRemoteRevision(previousEntry)
               }
 
               if (nextEntry) {
-                void this.fetchAndSetRemoteRevision(nextEntry)
+                void this.selectRemoteRevision(nextEntry)
               }
             })
             .catch(console.error)

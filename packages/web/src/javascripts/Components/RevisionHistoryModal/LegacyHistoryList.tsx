@@ -10,7 +10,7 @@ type Props = {
 }
 
 const LegacyHistoryList: FunctionComponent<Props> = ({ legacyHistory, historyModalController }) => {
-  const { setSelectedRevision, setSelectedRemoteEntry, fetchAndSetLegacyRevision } = historyModalController
+  const { selectLegacyRevision, clearSelection } = historyModalController
 
   const legacyHistoryListRef = useRef<HTMLDivElement>(null)
 
@@ -25,18 +25,17 @@ const LegacyHistoryList: FunctionComponent<Props> = ({ legacyHistory, historyMod
   const selectFirstEntry = useCallback(() => {
     if (firstEntry) {
       setSelectedItemUrl(firstEntry.subactions?.[0].url)
-      setSelectedRevision(undefined)
-      fetchAndSetLegacyRevision(firstEntry).catch(console.error)
+      selectLegacyRevision(firstEntry)
     }
-  }, [fetchAndSetLegacyRevision, firstEntry, setSelectedRevision])
+  }, [firstEntry, selectLegacyRevision])
 
   useEffect(() => {
     if (firstEntry && !selectedItemUrl) {
       selectFirstEntry()
     } else if (!firstEntry) {
-      setSelectedRevision(undefined)
+      clearSelection()
     }
-  }, [firstEntry, selectFirstEntry, selectedItemUrl, setSelectedRevision])
+  }, [clearSelection, firstEntry, selectFirstEntry, selectedItemUrl])
 
   return (
     <div
@@ -54,8 +53,7 @@ const LegacyHistoryList: FunctionComponent<Props> = ({ legacyHistory, historyMod
             isSelected={selectedItemUrl === url}
             onClick={() => {
               setSelectedItemUrl(url)
-              setSelectedRemoteEntry(undefined)
-              fetchAndSetLegacyRevision(entry).catch(console.error)
+              selectLegacyRevision(entry)
             }}
           >
             {entry.label}
