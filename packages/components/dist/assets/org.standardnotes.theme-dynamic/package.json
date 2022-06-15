@@ -1,0 +1,12 @@
+{
+  "name": "@standardnotes/dynamic-theme",
+  "version": "1.0.4",
+  "main": "dist/dist.css",
+  "private": true,
+  "sn": {
+    "main": "dist/dist.css"
+  },
+  "scripts": {
+    "components:compile": "webpack --entry ./src/main.scss --config ./../../theme.webpack.config.js"
+  }
+}
