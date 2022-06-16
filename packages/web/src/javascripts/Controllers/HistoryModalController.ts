@@ -50,6 +50,7 @@ export class HistoryModalController extends AbstractViewController {
 
   override deinit(): void {
     super.deinit()
+    this.clearSelection()
     this.clearAllHistory()
     ;(this.notesController as unknown) = undefined
     ;(this.selectionController as unknown) = undefined
@@ -311,8 +312,6 @@ export class HistoryModalController extends AbstractViewController {
   }
 
   clearAllHistory = () => {
-    this.selectedRevision = undefined
-    this.selectedRemoteEntry = undefined
     this.remoteHistory = []
     this.sessionHistory = []
     this.legacyHistory = []
