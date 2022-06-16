@@ -18,7 +18,7 @@ if (specificFeatureIdentifier) {
   console.log('Processing only', specificFeatureIdentifier)
 }
 
-const SourceFilesPath = path.join(__dirname, '../src')
+const SourceFilesPath = path.join(__dirname, '../src/packages')
 const DistDir = path.join(__dirname, '../dist')
 const TmpDir = path.join(__dirname, '../tmp')
 const ZipsDir = path.join(DistDir, '/zips')
@@ -82,8 +82,12 @@ const emptyExistingDir = (dir) => {
   }
 }
 
+const getComponentSrcPath = (feature) => {
+  return path.join(SourceFilesPath, feature.identifier)
+}
+
 const copyComponentAssets = async (feature, destination, exludedFilesGlob) => {
-  const srcComponentPath = path.join(SourceFilesPath, feature.identifier)
+  const srcComponentPath = getComponentSrcPath(feature)
 
   if (!doesDirExist(srcComponentPath)) {
     return false
@@ -124,19 +128,24 @@ const zipAndChecksumFeature = async (feature) => {
   const assetsLocation = `${path.join(AssetsDir, feature.identifier)}`
   const assetsSuccess = await copyComponentAssets(feature, assetsLocation, '**/package.json')
   if (!assetsSuccess) {
+    console.log('Failed to copy assets for', feature.identifier)
     return
   }
 
   const zipAssetsTmpLocation = `${path.join(TmpDir, feature.identifier)}`
   const zipAssetsSuccess = await copyComponentAssets(feature, zipAssetsTmpLocation)
   if (!zipAssetsSuccess) {
+    console.log('Failed to copy zip assets for', feature.identifier)
     return
   }
 
   const zipDestination = `${ZipsDir}/${feature.identifier}.zip`
   await zipDirectory(zipAssetsTmpLocation, zipDestination)
 
-  const checksum = await computeChecksum(zipDestination, feature.version)
+  const packageJsonFilePath = path.join(getComponentSrcPath(feature), 'package.json')
+  const packageJsonFile = JSON.parse(fs.readFileSync(packageJsonFilePath).toString())
+
+  const checksum = await computeChecksum(zipDestination, packageJsonFile.version)
   Checksums[feature.identifier] = checksum
 
   console.log(`Computed checksums for ${feature.identifier}:`, checksum)
@@ -153,10 +162,10 @@ await (async () => {
       console.log('\n---\n')
     }
 
-    if (feature.download_url) {
+    if (['SN|Component', 'SN|Theme'].includes(feature.content_type)) {
       await zipAndChecksumFeature(feature)
     } else {
-      console.log('Feature does not have download_url, not packaging', feature.identifier)
+      console.log('Feature is not component, not packaging', feature.identifier)
     }
 
     if (index !== featuresToProcess.length - 1) {
