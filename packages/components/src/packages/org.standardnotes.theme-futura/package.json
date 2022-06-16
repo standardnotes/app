@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/futura-theme",
-  "version": "1.2.10-alpha.1",
+  "version": "1.2.10-alpha.2",
   "main": "dist/dist.css",
   "private": true,
   "sn": {
