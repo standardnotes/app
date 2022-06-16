@@ -34,6 +34,17 @@ const HistoryListContainer: FunctionComponent<Props> = ({ features, historyModal
     )
   }
 
+  const CurrentTabList = () => {
+    switch (currentTab) {
+      case RevisionType.Remote:
+        return <RemoteHistoryList features={features} historyModalController={historyModalController} />
+      case RevisionType.Session:
+        return <SessionHistoryList historyModalController={historyModalController} />
+      case RevisionType.Legacy:
+        return <LegacyHistoryList legacyHistory={legacyHistory} historyModalController={historyModalController} />
+    }
+  }
+
   return (
     <div className={'flex flex-col min-w-60 border-0 border-r-1px border-solid border-main overflow-auto h-full'}>
       <div className="flex border-0 border-b-1 border-solid border-main">
@@ -42,13 +53,7 @@ const HistoryListContainer: FunctionComponent<Props> = ({ features, historyModal
         {legacyHistory && legacyHistory.length > 0 && <TabButton type={RevisionType.Legacy} />}
       </div>
       <div className={'min-h-0 overflow-auto py-1.5 h-full'}>
-        {currentTab === RevisionType.Session && <SessionHistoryList historyModalController={historyModalController} />}
-        {currentTab === RevisionType.Remote && (
-          <RemoteHistoryList features={features} historyModalController={historyModalController} />
-        )}
-        {currentTab === RevisionType.Legacy && (
-          <LegacyHistoryList legacyHistory={legacyHistory} historyModalController={historyModalController} />
-        )}
+        <CurrentTabList />
       </div>
     </div>
   )
