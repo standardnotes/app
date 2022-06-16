@@ -1,7 +1,7 @@
 {
   "name": "@standardnotes/app-monorepo",
   "private": true,
-  "author": "Standard Notes",
+  "author": "Standard Notes.",
   "workspaces": {
     "packages": [
       "packages/*",
