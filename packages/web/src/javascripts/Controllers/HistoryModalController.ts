@@ -43,7 +43,7 @@ export enum RevisionContentState {
 export class HistoryModalController extends AbstractViewController {
   showRevisionHistoryModal = false
 
-  note: SNNote | undefined = undefined
+  note?: SNNote = undefined
 
   remoteHistory: RemoteHistory = []
   isFetchingRemoteHistory = false
