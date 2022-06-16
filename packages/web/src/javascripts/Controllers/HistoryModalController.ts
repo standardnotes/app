@@ -379,51 +379,46 @@ export class HistoryModalController extends AbstractViewController {
     this.dismissModal()
   }
 
-  deleteRemoteRevision = (revisionEntry: RevisionListEntry) => {
-    this.application.alertService
-      .confirm(
-        'Are you sure you want to delete this revision?',
-        'Delete revision?',
-        'Delete revision',
-        ButtonType.Danger,
-        'Cancel',
-      )
-      .then((shouldDelete) => {
-        if (shouldDelete && this.note) {
-          this.setIsDeletingRevision(true)
+  deleteRemoteRevision = async (revisionEntry: RevisionListEntry) => {
+    const shouldDelete = await this.application.alertService.confirm(
+      'Are you sure you want to delete this revision?',
+      'Delete revision?',
+      'Delete revision',
+      ButtonType.Danger,
+      'Cancel',
+    )
 
-          this.application.historyManager
-            .deleteRemoteRevision(this.note, revisionEntry)
-            .then(async (res) => {
-              if (res.error?.message) {
-                throw new Error(res.error.message)
-              }
+    if (!shouldDelete || !this.note) {
+      return
+    }
 
-              this.clearSelection()
+    this.setIsDeletingRevision(true)
 
-              const remoteHistory = this.flattenedRemoteHistory
+    const response = await this.application.historyManager.deleteRemoteRevision(this.note, revisionEntry)
 
-              await this.fetchRemoteHistory()
+    if (response.error?.message) {
+      throw new Error(response.error.message)
+    }
 
-              const currentEntryIndex = remoteHistory.findIndex((entry) => entry?.uuid === revisionEntry.uuid)
+    this.clearSelection()
 
-              const previousEntry = remoteHistory[currentEntryIndex - 1]
-              const nextEntry = remoteHistory[currentEntryIndex + 1]
+    const remoteHistory = this.flattenedRemoteHistory
 
-              if (previousEntry) {
-                void this.selectRemoteRevision(previousEntry)
-              }
+    await this.fetchRemoteHistory()
 
-              if (nextEntry) {
-                void this.selectRemoteRevision(nextEntry)
-              }
-            })
-            .catch(console.error)
-            .finally(() => {
-              this.setIsDeletingRevision(false)
-            })
-        }
-      })
-      .catch(console.error)
+    const currentEntryIndex = remoteHistory.findIndex((entry) => entry?.uuid === revisionEntry.uuid)
+
+    const previousEntry = remoteHistory[currentEntryIndex - 1]
+    const nextEntry = remoteHistory[currentEntryIndex + 1]
+
+    if (previousEntry) {
+      void this.selectRemoteRevision(previousEntry)
+    }
+
+    if (nextEntry) {
+      void this.selectRemoteRevision(nextEntry)
+    }
+
+    this.setIsDeletingRevision(false)
   }
 }
