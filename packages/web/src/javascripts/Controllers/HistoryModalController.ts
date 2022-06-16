@@ -255,6 +255,19 @@ export class HistoryModalController extends AbstractViewController {
     }
   }
 
+  selectPrevOrNextRemoteRevision = (currentIndex: number) => {
+    const previousEntry = this.flattenedRemoteHistory[currentIndex - 1]
+    const nextEntry = this.flattenedRemoteHistory[currentIndex + 1]
+
+    if (previousEntry) {
+      void this.selectRemoteRevision(previousEntry)
+    }
+
+    if (nextEntry) {
+      void this.selectRemoteRevision(nextEntry)
+    }
+  }
+
   setRemoteHistory = (remoteHistory: RemoteHistory) => {
     this.remoteHistory = remoteHistory
   }
@@ -408,16 +421,7 @@ export class HistoryModalController extends AbstractViewController {
 
     const currentEntryIndex = remoteHistory.findIndex((entry) => entry?.uuid === revisionEntry.uuid)
 
-    const previousEntry = remoteHistory[currentEntryIndex - 1]
-    const nextEntry = remoteHistory[currentEntryIndex + 1]
-
-    if (previousEntry) {
-      void this.selectRemoteRevision(previousEntry)
-    }
-
-    if (nextEntry) {
-      void this.selectRemoteRevision(nextEntry)
-    }
+    this.selectPrevOrNextRemoteRevision(currentEntryIndex)
 
     this.setIsDeletingRevision(false)
   }
