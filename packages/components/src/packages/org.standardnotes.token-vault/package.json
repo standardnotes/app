@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/authenticator",
-  "version": "2.0.11-alpha.3",
+  "version": "2.0.11",
   "main": "dist/dist.js",
   "private": true,
   "scripts": {
