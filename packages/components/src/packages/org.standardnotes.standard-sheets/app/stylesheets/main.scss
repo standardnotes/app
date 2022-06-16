@@ -1,0 +1,235 @@
+@import '~stylekit';
+
+body, html {
+  font-family: sans-serif;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  overflow-y: hidden !important;
+}
+
+#spreadsheet {
+  border: none;
+  width: 100%;
+  height: 100%;
+  color: var(--sn-stylekit-editor-foreground-color);
+  background-color: var(--sn-stylekit-editor-background-color);
+}
+
+.k-spreadsheet-column-header, .k-spreadsheet-row-header, .k-spreadsheet-top-corner {
+  color: var(--sn-stylekit-editor-foreground-color) !important;
+  background-color: var(--sn-stylekit-contrast-background-color) !important;
+}
+
+.k-spreadsheet .k-spreadsheet-action-bar {
+  color: var(--sn-stylekit-editor-foreground-color) !important;
+  background-color: var(--sn-stylekit-contrast-background-color) !important;
+  border-color: var(--sn-stylekit-border-color) !important;
+  border-top-width: 1px !important;
+}
+
+.k-spreadsheet .k-spreadsheet-formula-input {
+  color: var(--sn-stylekit-editor-foreground-color) !important;
+  background-color: var(--sn-stylekit-editor-background-color) !important;
+}
+
+.k-spreadsheet .k-spreadsheet-name-editor .k-select {
+  background-color: var(--sn-stylekit-contrast-background-color) !important;
+}
+
+.k-block, .k-content, .k-dropdown .k-input, .k-popup, .k-toolbar, .k-widget {
+  color: var(--sn-stylekit-editor-foreground-color) !important;
+  background-color: var(--sn-stylekit-editor-background-color) !important;
+}
+
+.k-spreadsheet-filter-menu .k-spreadsheet-value-treeview-wrapper {
+  color: var(--sn-stylekit-editor-foreground-color) !important;
+  background-color: var(--sn-stylekit-contrast-background-color) !important;
+}
+
+.k-grid-header .k-header>.k-link, .k-header, .k-treemap-title {
+  color: var(--sn-stylekit-editor-foreground-color) !important;
+}
+
+.k-dropdown .k-input, .k-dropdown .k-state-focused .k-input, .k-menu .k-popup {
+  color: var(--sn-stylekit-editor-foreground-color) !important;
+}
+
+.k-panelbar>li.k-state-default>.k-link, .k-tabstrip-items .k-state-default .k-link {
+  color: var(--sn-stylekit-editor-foreground-color) !important;
+}
+
+.k-input, .k-multiselect-wrap, .k-textbox>input, input.k-textbox, input.k-textbox:hover, textarea.k-textbox, textarea.k-textbox:hover {
+  color: var(--sn-stylekit-editor-foreground-color) !important;
+}
+
+.k-spreadsheet-active-cell {
+  background-color: var(--sn-stylekit-contrast-background-color) !important;
+}
+
+.k-spreadsheet-active-cell.k-single {
+  color: var(--sn-stylekit-editor-foreground-color) !important;
+  background-color: var(--sn-stylekit-contrast-background-color) !important;
+}
+
+.k-spreadsheet .k-spreadsheet-action-bar .k-spreadsheet-name-editor {
+  border-color: var(--sn-stylekit-border-color) !important;
+}
+
+.k-autocomplete .k-input, .k-autocomplete.k-state-focused .k-input, .k-dropdown-wrap .k-input, .k-dropdown-wrap.k-state-focused .k-input, .k-numeric-wrap.k-state-focused .k-input, .k-picker-wrap.k-state-focused .k-input, .k-textbox>input {
+  border-color: var(--sn-stylekit-border-color) !important;
+}
+
+.k-autocomplete, .k-block, .k-button-group .k-tool, .k-calendar th, .k-content, .k-dateinput.k-state-disabled>.k-textbox:hover, .k-dropdown-wrap, .k-dropzone-active, .k-editable-area, .k-editor-dialog .k-tabstrip-items, .k-filter-row>th, .k-footer-template td, .k-grid td, .k-grid td.k-state-selected, .k-grid-content-locked, .k-grid-footer, .k-grid-footer-locked, .k-grid-footer-wrap, .k-grid-header, .k-grid-header-locked, .k-grid-header-wrap, .k-group, .k-group-footer td, .k-grouping-header, .k-grouping-header .k-group-indicator, .k-header, .k-input, .k-maskedtextbox.k-state-disabled>.k-textbox:hover, .k-pager-refresh, .k-pager-wrap, .k-pager-wrap .k-link, .k-panel>.k-item>.k-link, .k-panelbar .k-content, .k-panelbar .k-panel, .k-panelbar>.k-item>.k-link, .k-popup.k-align .k-list .k-item:last-child, .k-separator, .k-slider-track, .k-splitbar, .k-state-default, .k-state-default .k-select, .k-state-disabled, .k-textbox, .k-textbox>input, .k-tiles, .k-toolbar, .k-tooltip, .k-treemap-tile, .k-upload-files, .k-widget {
+  border-color: var(--sn-stylekit-border-color) !important;
+}
+
+.k-input, .k-multiselect-wrap, .k-textbox>input, input.k-textbox, input.k-textbox:hover, textarea.k-textbox, textarea.k-textbox:hover {
+  color: var(--sn-stylekit-editor-foreground-color) !important;
+  background-color: var(--sn-stylekit-contrast-background-color) !important;
+}
+
+.k-spreadsheet-pane .k-spreadsheet-haxis, .k-spreadsheet-pane .k-spreadsheet-vaxis {
+  border-color: var(--sn-stylekit-border-color) !important;
+}
+
+.k-spreadsheet-pane .k-spreadsheet-column-header, .k-spreadsheet-pane .k-spreadsheet-row-header {
+  border-color: var(--sn-stylekit-border-color) !important;
+}
+
+.k-spreadsheet-toolbar>.k-separator {
+  border-color: var(--sn-stylekit-border-color) !important;
+}
+
+.k-spreadsheet-filter-menu .k-details {
+  border-color: var(--sn-stylekit-border-color) !important;
+}
+
+.k-list-container {
+  color: var(--sn-stylekit-editor-foreground-color) !important;
+  background-color: var(--sn-stylekit-contrast-background-color) !important;
+  border-color: var(--sn-stylekit-border-color) !important;
+
+  .k-button {
+    color: var(--sn-stylekit-editor-foreground-color) !important;
+  }
+}
+
+.k-spreadsheet-popup {
+  .k-button {
+    color: var(--sn-stylekit-editor-foreground-color) !important;
+  }
+}
+
+.k-calendar .k-header, .k-header.k-scheduler-toolbar, .k-menu.k-header, .k-scheduler-footer>.k-header, .k-tabstrip .k-tabstrip-items .k-item, .k-tabstrip.k-header {
+  background-color: var(--sn-stylekit-contrast-background-color) !important;
+  border-color: transparent !important;
+}
+
+.k-gantt-toolbar .k-state-default, .k-grid .k-grouping-header, .k-grid-header, .k-grid-header-wrap, .k-grouping-header .k-group-indicator, .k-header, .k-pager-wrap, .k-pager-wrap .k-link, .k-pager-wrap .k-textbox {
+  border-color: var(--sn-stylekit-border-color) !important;
+}
+
+.k-spreadsheet .k-spreadsheet-action-bar .k-spreadsheet-formula-bar::before {
+  border-color: var(--sn-stylekit-border-color) !important;
+}
+
+.k-active-filter, .k-state-active, .k-state-active:hover {
+  border-color: var(--sn-stylekit-border-color) !important;
+}
+
+.k-tabstrip .k-tabstrip-items .k-state-active {
+  border-color: var(--sn-stylekit-info-color) !important;
+}
+
+.k-syntax-paren-match {
+  background-color: var(--sn-stylekit-info-color) !important;
+}
+
+.k-autocomplete, .k-draghandle, .k-dropdown-wrap, .k-grid-header, .k-grouping-header, .k-header, .k-numeric-wrap, .k-pager-wrap, .k-panelbar .k-tabstrip-items .k-item, .k-picker-wrap, .k-progressbar, .k-state-highlight, .k-tabstrip-items .k-item, .k-textbox, .k-toolbar, .km-pane-wrapper>.km-pane>.km-view>.km-content {
+  background-color: var(--sn-stylekit-contrast-background-color) !important;
+  background-image: none;
+}
+
+.k-button .k-icon, .k-button .k-image, .k-button .k-sprite {
+  color: var(--sn-stylekit-info-color) !important;
+}
+
+.k-tabstrip .k-tabstrip-items .k-state-active .k-link {
+  color: var(--sn-stylekit-info-color) !important;
+}
+
+div.k-window, div.k-window.k-state-focused {
+  background-color: var(--sn-stylekit-contrast-background-color) !important;
+  border-color: var(--sn-stylekit-border-color) !important;
+}
+
+.k-content, .k-editable-area, .k-panel>li.k-item, .k-panelbar>li.k-item, .k-tiles {
+  background-color: var(--sn-stylekit-contrast-background-color) !important;
+}
+
+.k-action-window .k-action-buttons {
+  background-color: var(--sn-stylekit-contrast-background-color) !important;
+  border-color: var(--sn-stylekit-border-color) !important;
+}
+
+.k-state-hover>.k-select {
+  border-color: var(--sn-stylekit-info-color) !important;
+}
+
+.k-icon, .k-tool-icon {
+  color: var(--sn-stylekit-info-color) !important;
+}
+
+.k-button {
+  color: var(--sn-stylekit-info-color) !important;
+  background-color: var(--sn-stylekit-contrast-background-color) !important;
+  border: none !important;
+  font-weight: bold;
+
+  &:hover {
+    background-color: var(--sn-stylekit-background-color) !important;
+  }
+}
+
+.k-list .k-item {
+  border: none !important;
+  cursor: pointer !important;
+
+  .k-icon {
+    color: var(--sn-stylekit-info-color) !important;
+  }
+
+  &.k-state-hovered {
+    background-color: var(--sn-stylekit-background-color) !important;
+  }
+
+  &.k-state-selected {
+    background-color: var(--sn-stylekit-info-color) !important;
+    color: var(--sn-stylekit-info-contrast-color) !important;
+
+    .k-icon {
+      color: var(--sn-stylekit-info-contrast-color) !important;
+    }    
+  }
+}
+
+.k-button.k-primary {
+  color: var(--sn-stylekit-info-contrast-color) !important;
+  border-color: var(--sn-stylekit-info-color) !important;
+  background-color: var(--sn-stylekit-info-color) !important;
+
+  &:hover:not(:disabled) {
+    filter: brightness(130%);
+  }
+}
+
+.k-tabstrip-items-wrapper {
+  background-color: var(--sn-stylekit-contrast-background-color) !important;
+}
+
+.k-spreadsheet-pane .k-spreadsheet-merged-cell {
+  background-color: var(--sn-stylekit-background-color);
+}

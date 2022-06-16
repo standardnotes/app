@@ -1,0 +1,15 @@
+{
+  "name": "@standardnotes/futura-theme",
+  "version": "1.2.10-alpha.3",
+  "main": "dist/dist.css",
+  "private": true,
+  "sn": {
+    "main": "dist/dist.css"
+  },
+  "scripts": {
+    "components:compile": "webpack --entry ./src/main.scss --config ../theme.webpack.config.js"
+  },
+  "devDependencies": {
+    "webpack": "*"
+  }
+}

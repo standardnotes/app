@@ -6,8 +6,8 @@ jobs:
       - name: git-sync
         uses: wei/git-sync@v3
         with:
-          source_repo: "standardnotes/web"
+          source_repo: "standardnotes/app"
           source_branch: "refs/remotes/source/*"
-          destination_repo: "standardnotes/private-web"
+          destination_repo: "standardnotes/internal-app"
           destination_branch: "refs/heads/*"
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}

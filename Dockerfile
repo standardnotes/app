@@ -1,5 +1,9 @@
 FROM ruby:2.7.4-alpine3.14
 
+ARG USERNAME=snjs
+ARG UID=1001
+ARG GID=$UID
+
 RUN apk add --update --no-cache \
     alpine-sdk \
     nodejs-current \
@@ -8,19 +12,21 @@ RUN apk add --update --no-cache \
     yarn \
     tzdata
 
+RUN addgroup -S $USERNAME -g $GID && adduser -D -S $USERNAME -G $USERNAME -u $UID
+
 WORKDIR /app/
 
-COPY package.json yarn.lock Gemfile Gemfile.lock /app/
+RUN chown -R $UID:$GID .
 
-RUN yarn install --pure-lockfile
+USER $USERNAME
 
-RUN gem install bundler && bundle install
+COPY --chown=$UID:$GID . /app
 
-COPY . /app/
+RUN yarn install
 
-RUN yarn bundle
+RUN gem install bundler
 
-RUN bundle exec rails assets:precompile
+RUN yarn build:web-server
 
 EXPOSE 3000
 

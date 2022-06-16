@@ -1,0 +1,14 @@
+name: Desktop Prod Release
+
+on:
+  push:
+    tags:
+      - '@standardnotes/desktop@!(*alpha*|*beta*)'
+  workflow_dispatch:
+
+jobs:
+  Build:
+    uses: standardnotes/app/.github/workflows/desktop.release.reuse.yml@main
+    secrets: inherit
+    with:
+      channel: prod

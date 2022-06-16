@@ -1,0 +1,70 @@
+.bg-default {
+  background-color: var(--sn-stylekit-background-color);
+}
+
+.bg-contrast {
+  background-color: var(--sn-stylekit-contrast-background-color);
+}
+
+.bg-border {
+  background-color: var(--sn-stylekit-border-color);
+}
+
+.bg-secondary-contrast {
+  background-color: var(--sn-stylekit-secondary-contrast-background-color);
+}
+
+.bg-clip-padding {
+  background-clip: padding-box;
+}
+
+.bg-transparent {
+  background-color: transparent;
+}
+
+@mixin define-color($name, $source: null) {
+  .bg-#{$name} {
+    background-color: var(--sn-stylekit-#{if($source, $source, $name)});
+  }
+
+  .color-#{$name} {
+    color: var(--sn-stylekit-#{if($source, $source, $name)});
+  }
+}
+
+@include define-color('neutral', 'neutral-color');
+@include define-color('text', 'contrast-foreground-color');
+@include define-color('foreground', 'foreground-color');
+@include define-color('danger', 'danger-color');
+@include define-color('info', 'info-color');
+@include define-color('info-contrast', 'info-contrast-color');
+@include define-color('info-dark', 'info-color-darkened');
+@include define-color('success', 'success-color');
+
+@include define-color('passive-0', 'passive-color-0');
+@include define-color('passive-1', 'passive-color-1');
+@include define-color('passive-2', 'passive-color-2');
+@include define-color('passive-3', 'passive-color-3');
+@include define-color('passive-4', 'passive-color-4');
+@include define-color('passive-4-opacity-variant', 'passive-color-4-opacity-variant');
+@include define-color('passive-5', 'passive-color-5');
+@include define-color('passive-6', 'passive-color-6');
+@include define-color('passive-super-light', 'passive-color-super-light');
+
+@for $i from 1 to 7 {
+  @include define-color('accessory-tint-#{$i}', 'accessory-tint-color-#{$i}');
+}
+
+.selected\:bg-color[data-selected],
+.selected\:bg-color[aria-selected='true'] {
+  background-color: var(--sn-stylekit-passive-color-5);
+}
+
+.selected\:fg-color[data-selected],
+.selected\:fg-color[aria-selected='true'] {
+  color: var(--sn-stylekit-contrast-foreground-color);
+}
+
+.fill-current {
+  fill: currentColor;
+}

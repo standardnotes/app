@@ -1,0 +1,784 @@
+@use 'sass:math';
+
+.red {
+  color: var(--sn-stylekit-danger-color);
+}
+
+.tinted {
+  color: var(--sn-stylekit-info-color);
+}
+
+.selectable {
+  user-select: text !important;
+  -ms-user-select: text !important;
+  -moz-user-select: text !important;
+  -webkit-user-select: text !important;
+}
+
+.sk-h1,
+.sk-h2,
+.sk-h3,
+.sk-h4,
+.sk-h5 {
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+}
+
+.sk-h1 {
+  font-weight: 500;
+  font-size: var(--sn-stylekit-font-size-h1);
+  line-height: 1.54375rem;
+}
+
+.sk-h2 {
+  font-size: var(--sn-stylekit-font-size-h2);
+  line-height: 1.4625rem;
+}
+
+.sk-h3 {
+  font-size: var(--sn-stylekit-font-size-h3);
+  line-height: 1.38125rem;
+}
+
+.sk-h4 {
+  font-size: var(--sn-stylekit-font-size-p);
+  line-height: 1.1375rem;
+}
+
+.sk-h5 {
+  font-size: var(--sn-stylekit-font-size-h5);
+}
+
+.sk-bold {
+  font-weight: bold;
+}
+
+.sk-font-small {
+  font-size: var(--sn-stylekit-font-size-h5);
+}
+
+.sk-font-normal {
+  font-size: var(--sn-stylekit-font-size-p);
+}
+
+.sk-font-large {
+  font-size: var(--sn-stylekit-font-size-h3);
+}
+
+a.sk-a {
+  cursor: pointer;
+  user-select: none;
+
+  &.disabled {
+    color: var(--sn-stylekit-neutral-color);
+    opacity: 0.6;
+  }
+
+  &.boxed {
+    border-radius: var(--sn-stylekit-general-border-radius);
+    padding: 0.24375rem 0.325rem;
+
+    &:hover {
+      text-decoration: none;
+    }
+
+    &.neutral {
+      background-color: var(--sn-stylekit-neutral-color);
+      color: var(--sn-stylekit-neutral-contrast-color);
+    }
+
+    &.info {
+      background-color: var(--sn-stylekit-info-color);
+      color: var(--sn-stylekit-info-contrast-color);
+    }
+
+    &.warning {
+      background-color: var(--sn-stylekit-warning-color);
+      color: var(--sn-stylekit-warning-contrast-color);
+    }
+
+    &.danger {
+      background-color: var(--sn-stylekit-danger-color);
+      color: var(--sn-stylekit-danger-contrast-color);
+    }
+
+    &.success {
+      background-color: var(--sn-stylekit-success-color);
+      color: var(--sn-stylekit-success-contrast-color);
+    }
+  }
+}
+
+.wrap {
+  word-wrap: break-word;
+}
+
+* {
+  &.sk-base {
+    color: var(--sn-stylekit-foreground-color);
+  }
+
+  &.contrast {
+    color: var(--sn-stylekit-contrast-foreground-color);
+  }
+
+  &.neutral {
+    color: var(--sn-stylekit-neutral-color);
+  }
+
+  &.info {
+    color: var(--sn-stylekit-info-color);
+  }
+
+  &.info-contrast {
+    color: var(--sn-stylekit-info-contrast-color);
+  }
+
+  &.warning {
+    color: var(--sn-stylekit-warning-color);
+  }
+
+  &.danger {
+    color: var(--sn-stylekit-danger-color);
+  }
+
+  &.success {
+    color: var(--sn-stylekit-success-color);
+  }
+
+  &.info-i {
+    color: var(--sn-stylekit-info-color) !important;
+  }
+
+  &.warning-i {
+    color: var(--sn-stylekit-warning-color) !important;
+  }
+
+  &.danger-i {
+    color: var(--sn-stylekit-danger-color) !important;
+  }
+
+  &.success-i {
+    color: var(--sn-stylekit-success-color) !important;
+  }
+
+  &.clear {
+    background-color: transparent;
+    border: none;
+  }
+}
+
+.center-text {
+  text-align: center !important;
+  justify-content: center !important;
+}
+
+p.sk-p {
+  margin: 0.40625rem 0;
+}
+
+input.sk-input {
+  box-sizing: border-box;
+  padding: 0.56875rem 0.65rem;
+  margin: 0.24375rem 0;
+  border: none;
+
+  font-size: var(--sn-stylekit-font-size-h3);
+  width: 100%;
+  outline: 0;
+  resize: none;
+
+  &.clear {
+    // usually sk-inputs should have ui-rect classes like info, warning, etc. If clear, no text color will be assigned unless we do it explicitely.
+    color: var(--sn-stylekit-foreground-color);
+    background-color: transparent;
+    border: none;
+  }
+
+  &.no-border {
+    border: none;
+  }
+}
+
+.sk-label {
+  font-weight: bold;
+
+  &.no-bold {
+    font-weight: normal;
+  }
+}
+
+label.sk-label {
+  margin: 0.56875rem 0;
+  display: block;
+}
+
+label.sk-label input[type='checkbox'],
+input[type='radio'] {
+  width: auto;
+  margin-right: 0.365625rem; /* Space after checkbox */
+  vertical-align: middle;
+}
+
+.sk-horizontal-group {
+  > * {
+    display: inline-block;
+    vertical-align: middle;
+
+    &:not(:first-child) {
+      margin-left: 0.73125rem;
+    }
+  }
+}
+
+.sk-border-bottom {
+  border-bottom: 1px solid var(--sn-stylekit-border-color);
+}
+
+.sk-input-group {
+  @extend .sk-horizontal-group;
+}
+
+.sk-checkbox-group {
+  padding-top: 0.40625rem;
+  padding-bottom: 0.24375rem;
+}
+
+::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: var(--sn-stylekit-input-placeholder-color);
+}
+
+:-ms-input-placeholder {
+  /* Internet Explorer 10-11 */
+  color: var(--sn-stylekit-input-placeholder-color);
+}
+
+::-ms-input-placeholder {
+  /* Microsoft Edge */
+  color: var(--sn-stylekit-input-placeholder-color);
+}
+
+.sk-button-group {
+  &.stretch {
+    display: flex;
+    width: 100%;
+    .sk-button {
+      display: block;
+      flex-grow: 1;
+      text-align: center;
+    }
+  }
+  .sk-button {
+    display: inline-block;
+    vertical-align: middle;
+    // margin-bottom: 5px;
+    &:not(:last-child) {
+      margin-right: 5px;
+      &.featured {
+        margin-right: 8px;
+      }
+    }
+  }
+}
+
+.sk-segmented-buttons {
+  display: flex;
+  flex-direction: row;
+
+  .sk-button {
+    border-radius: 0;
+    white-space: nowrap;
+    margin: 0;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+
+    &:not(:last-child) {
+      border-right: none;
+      border-radius: 0;
+    }
+
+    &:first-child {
+      border-top-left-radius: var(--sn-stylekit-general-border-radius);
+      border-bottom-left-radius: var(--sn-stylekit-general-border-radius);
+      border-right: none;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    &:last-child {
+      border-top-right-radius: var(--sn-stylekit-general-border-radius);
+      border-bottom-right-radius: var(--sn-stylekit-general-border-radius);
+      border-left: none;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  }
+}
+
+.sk-box-group {
+  .sk-box {
+    display: inline-block;
+    // margin-bottom: 5px;
+    &:not(:last-child) {
+      margin-right: 5px;
+    }
+  }
+}
+
+.sk-a.button {
+  text-decoration: none;
+}
+
+.sk-button {
+  display: table;
+  padding: 0.40625rem 0.56875rem;
+  font-size: var(--sn-stylekit-font-size-h5);
+  cursor: pointer;
+  text-align: center;
+  user-select: none;
+
+  &:after {
+    // uncomment to disable hover borders on buttons
+    // color: transparent !important; // no borders for buttons, looks nicer
+  }
+
+  &.no-hover-border {
+    &:after {
+      color: transparent !important;
+    }
+  }
+
+  &.wide {
+    padding: 0.24375rem 1.38125rem;
+  }
+
+  > .sk-label {
+    font-weight: bold;
+    display: block;
+    text-align: center;
+  }
+
+  &.big {
+    font-size: var(--sn-stylekit-font-size-h3);
+    padding: 0.56875rem 2.03125rem;
+  }
+}
+
+.sk-box {
+  @extend .sk-button;
+  padding: 2.03125rem 1.21875rem;
+}
+
+@mixin ui-rect($color, $contrast-color, $hoverable, $border-color: '') {
+  /*
+    If $border-color is supplied, we use traditional borders for rect.
+    Only sk-notification and sk-input will supply their own border color because inputs don't seem to support inset shadow borders.
+    If not, and we're inerferring border from other colors, we use box-shadow, so that we get rounded borders
+  */
+  color: $contrast-color;
+  position: relative;
+  background-color: $color;
+  overflow: hidden;
+  border-radius: var(--sn-stylekit-general-border-radius);
+  /*
+    We use box-shadow instead of border so that the borders are rounded properly around the rect.
+    We keep border-color as well incase the individual elements want a border in some cases.
+  */
+  @if $border-color != '' {
+    // box-shadow: inset 0 0 0 1px $border-color;
+    border-color: $border-color;
+    border: 1px solid $border-color;
+  } @else {
+    // box-shadow: inset 0 0 0 1px $color;
+    border-color: $color;
+  }
+
+  // Make background separately layer so we can set its color using CSS vars
+  // (as opposed to CSS vars in SASS functions, which is impossible).
+
+  * {
+    // required to correctly position other layers on top of background layer.
+    position: relative;
+  }
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: $color;
+    opacity: 1;
+    border-radius: var(--sn-stylekit-general-border-radius);
+  }
+
+  // Border shadow. Needs to be separate element so that the before element on hover brightness filter doesn't affect border,
+  // and gives contrasting effect
+  &:after {
+    content: '';
+    display: block;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    border-radius: var(--sn-stylekit-general-border-radius);
+    pointer-events: none; // otherwise this rect would block clickable elements
+    // color here refers to shadow color
+    @if $border-color != '' {
+      color: $border-color;
+      border-color: $border-color;
+    } @else {
+      box-shadow: inset 0 0 0 1px;
+      color: $color;
+    }
+  }
+
+  @if $hoverable == true {
+    &:hover {
+      &:before {
+        filter: brightness(130%);
+      }
+    }
+  }
+
+  &.no-bg {
+    background-color: transparent;
+    &:before {
+      content: none;
+    }
+  }
+
+  &.featured {
+    border: none;
+    padding: 0.609375rem 1.015625rem;
+    font-size: var(--sn-stylekit-font-size-h3);
+
+    &:before {
+      opacity: 1;
+    }
+  }
+}
+
+.sk-button.sk-base,
+.sk-box.sk-base,
+.sk-circle.sk-base {
+  @include ui-rect(var(--sn-stylekit-background-color), var(--sn-stylekit-foreground-color), true);
+}
+
+.sk-button.contrast,
+.sk-box.contrast,
+.sk-circle.contrast {
+  @include ui-rect(var(--sn-stylekit-contrast-background-color), var(--sn-stylekit-contrast-foreground-color), true);
+}
+
+.sk-button.sk-secondary,
+.sk-box.sk-secondary,
+.sk-circle.sk-secondary {
+  @include ui-rect(var(--sn-stylekit-secondary-background-color), var(--sn-stylekit-secondary-foreground-color), true);
+}
+
+.sk-button.sk-secondary-contrast,
+.sk-box.sk-secondary-contrast,
+.sk-circle.sk-secondary-contrast {
+  @include ui-rect(
+    var(--sn-stylekit-secondary-contrast-background-color),
+    var(--sn-stylekit-secondary-contrast-foreground-color),
+    true
+  );
+}
+
+.sk-button.neutral,
+.sk-box.neutral,
+.sk-circle.neutral {
+  @include ui-rect(var(--sn-stylekit-neutral-color), var(--sn-stylekit-neutral-contrast-color), true);
+}
+
+.sk-button.info,
+.sk-box.info,
+.sk-circle.info {
+  @include ui-rect(var(--sn-stylekit-info-color), var(--sn-stylekit-info-contrast-color), true);
+}
+
+.sk-button.warning,
+.sk-box.warning,
+.sk-circle.warning {
+  @include ui-rect(var(--sn-stylekit-warning-color), var(--sn-stylekit-warning-contrast-color), true);
+}
+
+.sk-button.danger,
+.sk-box.danger,
+.sk-circle.danger {
+  @include ui-rect(var(--sn-stylekit-danger-color), var(--sn-stylekit-danger-contrast-color), true);
+}
+
+.sk-button.success,
+.sk-box.success,
+.sk-circle.success {
+  @include ui-rect(var(--sn-stylekit-success-color), var(--sn-stylekit-success-contrast-color), true);
+}
+
+.sk-notification.contrast,
+.sk-input.contrast {
+  @include ui-rect(
+    var(--sn-stylekit-contrast-background-color),
+    var(--sn-stylekit-contrast-foreground-color),
+    false,
+    var(--sn-stylekit-contrast-border-color)
+  );
+}
+
+.sk-notification.sk-secondary,
+.sk-input.sk-secondary {
+  @include ui-rect(
+    var(--sn-stylekit-secondary-background-color),
+    var(--sn-stylekit-secondary-foreground-color),
+    false,
+    var(--sn-stylekit-secondary-border-color)
+  );
+}
+
+.sk-notification.sk-secondary-contrast,
+.sk-input.sk-secondary-contrast {
+  @include ui-rect(
+    var(--sn-stylekit-secondary-contrast-background-color),
+    var(--sn-stylekit-secondary-contrast-foreground-color),
+    false,
+    var(--sn-stylekit-secondary-contrast-border-color)
+  );
+}
+
+.sk-notification.sk-base,
+.sk-input.sk-base {
+  @include ui-rect(
+    var(--sn-stylekit-background-color),
+    var(--sn-stylekit-foreground-color),
+    false,
+    var(--sn-stylekit-border-color)
+  );
+}
+
+.sk-notification.neutral,
+.sk-input.neutral {
+  @include ui-rect(var(--sn-stylekit-neutral-color), var(--sn-stylekit-neutral-contrast-color), false);
+}
+
+.sk-notification.info,
+.sk-input.info {
+  @include ui-rect(var(--sn-stylekit-info-color), var(--sn-stylekit-info-contrast-color), false);
+}
+
+.sk-notification.warning,
+.sk-input.warning {
+  @include ui-rect(var(--sn-stylekit-warning-color), var(--sn-stylekit-warning-contrast-color), false);
+}
+
+.sk-notification.danger,
+.sk-input.danger {
+  @include ui-rect(var(--sn-stylekit-danger-color), var(--sn-stylekit-danger-contrast-color), false);
+}
+
+.sk-notification.success,
+.sk-input.success {
+  @include ui-rect(var(--sn-stylekit-success-color), var(--sn-stylekit-success-contrast-color), false);
+}
+
+.sk-notification {
+  padding: 0.89375rem 0.8125rem;
+  margin: 1.1375rem 0;
+  text-align: left;
+  cursor: default;
+
+  &.one-line {
+    padding: 0rem 0.325rem;
+  }
+
+  &.stretch {
+    width: 100%;
+  }
+
+  &.dashed {
+    border-style: dashed;
+    border-width: 2px;
+
+    // represents border element
+    &:after {
+      box-shadow: none;
+    }
+  }
+
+  .sk-notification-title {
+    font-size: var(--sn-stylekit-font-size-h1);
+    font-weight: bold;
+    line-height: 1.54375rem;
+  }
+
+  .sk-notification-text {
+    line-height: 1.21875rem;
+    font-size: var(--sn-stylekit-font-size-p);
+    text-align: left;
+    font-weight: normal;
+  }
+}
+
+.sk-circle {
+  border: 1px solid;
+  cursor: pointer;
+
+  border-color: var(--sn-stylekit-contrast-foreground-color);
+  background-color: var(--sn-stylekit-contrast-background-color);
+
+  padding: 0;
+  border-radius: 50% !important;
+  flex-shrink: 0;
+
+  &:before {
+    border-radius: 50% !important;
+  }
+
+  &:after {
+    border-radius: 50% !important;
+  }
+
+  &.small {
+    width: 11px;
+    height: 11px;
+  }
+}
+
+.sk-spinner {
+  border: 1px solid var(--sn-stylekit-neutral-color);
+  border-radius: 50%;
+  animation: rotate 0.8s infinite linear;
+  border-right-color: transparent;
+
+  &.small {
+    width: 12px;
+    height: 12px;
+  }
+
+  &.info-contrast {
+    border-color: var(--sn-stylekit-info-contrast-color);
+    border-right-color: transparent;
+  }
+
+  &.info {
+    border-color: var(--sn-stylekit-info-color);
+    border-right-color: transparent;
+  }
+
+  &.warning {
+    border-color: var(--sn-stylekit-warning-color);
+    border-right-color: transparent;
+  }
+
+  &.danger {
+    border-color: var(--sn-stylekit-danger-color);
+    border-right-color: transparent;
+  }
+
+  &.success {
+    border-color: var(--sn-stylekit-success-color);
+    border-right-color: transparent;
+  }
+}
+
+.spinner-info {
+  border-color: var(--sn-stylekit-info-color);
+  border-right-color: transparent;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+svg.sk-circular-progress {
+  $pi: 3.14159265358979;
+
+  $circle-size: 18px;
+  $stroke-width: $circle-size * math.div(0.1, 100) * 100 + 1;
+  $radius: math.div($circle-size - $stroke-width, 2);
+  $circumference: ($radius * $pi * 2);
+
+  height: $circle-size;
+  width: $circle-size;
+
+  circle.background {
+    cx: math.div($circle-size, 2);
+    cy: math.div($circle-size, 2);
+    r: $radius;
+    fill: none;
+    stroke: var(--sn-stylekit-contrast-border-color);
+    stroke-width: $stroke-width;
+  }
+
+  circle.progress {
+    cx: math.div($circle-size, 2);
+    cy: math.div($circle-size, 2);
+    r: $radius;
+    fill: none;
+    stroke: var(--sn-stylekit-info-color);
+    stroke-linecap: round;
+    stroke-width: $stroke-width;
+    transition: all 0.5s;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+
+    @mixin set-progress($progress) {
+      $dash: math.div($progress * $circumference, 100);
+      stroke-dasharray: $dash $circumference - $dash;
+    }
+
+    &.p-0 {
+      @include set-progress(0);
+    }
+
+    &.p-10 {
+      @include set-progress(10);
+    }
+
+    &.p-20 {
+      @include set-progress(20);
+    }
+
+    &.p-30 {
+      @include set-progress(30);
+    }
+
+    &.p-40 {
+      @include set-progress(40);
+    }
+
+    &.p-50 {
+      @include set-progress(50);
+    }
+
+    &.p-60 {
+      @include set-progress(60);
+    }
+
+    &.p-70 {
+      @include set-progress(70);
+    }
+
+    &.p-80 {
+      @include set-progress(80);
+    }
+
+    &.p-90 {
+      @include set-progress(90);
+    }
+
+    &.p-100 {
+      @include set-progress(100);
+    }
+  }
+}

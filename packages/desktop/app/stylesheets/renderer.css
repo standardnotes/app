@@ -1,0 +1,83 @@
+:root {
+  --sn-desktop-titlebar-height: 35px;
+  --sn-desktop-titlebar-icon-font-size: 16px;
+}
+
+/* To offset frameless window nav buttons on Mac */
+.mac-desktop #editor-column,
+.mac-desktop #notes-column {
+  transition: 0.15s padding ease;
+}
+
+.mac-desktop #app.collapsed-notes.collapsed-navigation #editor-column {
+  padding-top: 18px;
+}
+
+.mac-desktop #app.collapsed-navigation #notes-column {
+  padding-top: 18px;
+}
+
+panel-resizer {
+  -webkit-app-region: no-drag;
+}
+
+#desktop-title-bar {
+  -webkit-app-region: drag;
+  padding: 0;
+  margin: 0;
+  height: var(--sn-desktop-titlebar-height);
+  line-height: var(--sn-desktop-titlebar-height);
+  vertical-align: middle;
+  background: var(--sn-stylekit-contrast-background-color) !important;
+  border-bottom: 1px solid var(--sn-stylekit-contrast-border-color);
+  display: flex;
+  justify-content: space-between;
+  z-index: 99999;
+  position: absolute;
+  width: 100%;
+  top: 0;
+}
+
+#desktop-title-bar button {
+  -webkit-app-region: no-drag;
+  margin: 0;
+  background: none;
+  border: none;
+  padding: 0 10px;
+  color: var(--sn-stylekit-contrast-foreground-color);
+  vertical-align: middle;
+  height: 100%;
+}
+
+#desktop-title-bar button svg {
+  max-width: var(--sn-desktop-titlebar-icon-font-size);
+}
+
+#desktop-title-bar button:hover svg,
+#desktop-title-bar button:focus svg {
+  color: var(--sn-stylekit-info-color);
+}
+#desktop-title-bar button:focus {
+  box-shadow: none;
+}
+
+#desktop-title-bar .title-bar-left-buttons,
+#desktop-title-bar .title-bar-right-buttons {
+  font-size: 0;
+}
+
+/* Required for BrowserWindow titleBarStyle: 'hiddenInset' */
+.mac-desktop #navigation,
+.mac-desktop #navigation .section-title-bar,
+.mac-desktop #notes-title-bar,
+.mac-desktop #editor-title-bar,
+.mac-desktop #lock-screen {
+  -webkit-app-region: drag;
+}
+
+input,
+#navigation #navigation-content,
+.component-view-container,
+.panel-resizer {
+  -webkit-app-region: no-drag;
+}

@@ -1,0 +1,133 @@
+# frozen_string_literal: true
+
+fastlane_version '2.181.0'
+
+platform :ios do
+  def sign_ios(type = 'appstore')
+    match(
+      git_url: ENV['MATCH_CERTIFICATES_URL'],
+      team_id: ENV['APPLE_TEAM_ID'],
+      keychain_name: 'snkeychain',
+      keychain_password: ENV['MATCH_PASSWORD'],
+      readonly: is_ci,
+      type: type
+    )
+  end
+
+  def build_ios(scheme)
+    increment_version_number(
+      version_number: ENV['PACKAGE_VERSION'],
+      xcodeproj: 'ios/StandardNotes.xcodeproj'
+    )
+    increment_build_number(
+      build_number: ENV['BUILD_NUMBER'],
+      xcodeproj: 'ios/StandardNotes.xcodeproj'
+    )
+    gym(
+      workspace: 'ios/StandardNotes.xcworkspace',
+      scheme: scheme,
+      output_name: scheme,
+      silent: true,
+      xcargs: 'DEBUG_INFORMATION_FORMAT=dwarf-with-dsym'
+    )
+  end
+
+  def deploy_ios(scheme)
+    sign_ios
+    build_ios(scheme)
+    app_store_connect_api_key(
+      key_id: ENV['APPSTORE_CONNECT_KEY_ID'],
+      issuer_id: ENV['APPSTORE_CONNECT_KEY_ISSUER_ID'],
+      key_filepath: 'ios/Authkey.p8',
+      in_house: false # optional but may be required if using match/sigh
+    )
+    upload_to_testflight(
+      apple_id: ENV['APPLE_APP_ID']
+    )
+    # refresh_dsyms
+  end
+
+  desc 'Deploy dev app'
+  lane :dev do
+    deploy_ios 'StandardNotesDev'
+  end
+
+  desc 'Deploy production app'
+  lane :prod do
+    deploy_ios 'StandardNotes'
+  end
+
+  desc 'Setup iOS for running on CI'
+  lane :setup do
+    setup_project
+  end
+
+  private_lane :setup_project do
+    create_keychain(
+      name: 'snkeychain',
+      password: ENV['MATCH_PASSWORD'],
+      default_keychain: true,
+      unlock: true,
+      timeout: 3600,
+      lock_when_sleeps: false
+    )
+  end
+
+  lane :refresh_dsyms do
+    download_dsyms(
+      wait_for_dsym_processing: true,
+      wait_timeout: 900,
+      version: ENV['PACKAGE_VERSION'],
+      build_number: ENV['BUILD_NUMBER']
+    ) # Download dSYM files from iTC
+  end
+end
+
+platform :android do
+  def build_android(variant, versionCode)
+    gradle(
+      task: 'bundle',
+      project_dir: 'android/',
+      build_type: 'Release',
+      flavor: variant,
+      properties: {
+        'versionName' => (ENV['PACKAGE_VERSION']).to_s,
+        'versionCode' => versionCode
+      }
+    )
+  end
+
+  def deploy_android(variant, versionCode, track = 'internal')
+    sh("yarn run android:bundle")
+    build_android(variant, versionCode)
+    upload_to_play_store(
+      track: track,
+      json_key_data: (ENV['GOOGLE_PLAY_JSON_KEY_DATA']).to_s,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+    bundletool(
+      ks_path: 'android/app/keystore.keystore',
+      ks_password: ENV['ANDROID_KEYSTORE_PASSWORD'],
+      ks_key_alias: ENV['ANDROID_KEYSTORE_ALIAS'],
+      ks_key_alias_password: ENV['ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD'],
+      bundletool_version: '1.0.0',
+      aab_path: lane_context[SharedValues::GRADLE_AAB_OUTPUT_PATH],
+      apk_output_path: "android/app/build/outputs/apk/#{variant}/release/app-#{variant}-release.apk",
+      verbose: true
+    )
+  end
+
+  desc 'Deploy dev app'
+  lane :dev do
+    version = 300_023_000 + ENV['BUILD_NUMBER'].to_i
+    deploy_android 'dev', version
+  end
+
+  desc 'Deploy production app'
+  lane :prod do
+    version = 3_002_000 + ENV['BUILD_NUMBER'].to_i
+    deploy_android 'prod', version
+  end
+end

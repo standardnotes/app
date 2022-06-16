@@ -1,5 +1,10 @@
-# git
 .git/
 .gitignore
+.eslintcache
 node_modules
-public/assets
+dist
+packages/web-server/public/assets
+packages/web-server/tmp
+packages/web-server/vendor/bundles
+packages/desktop
+packages/mobile

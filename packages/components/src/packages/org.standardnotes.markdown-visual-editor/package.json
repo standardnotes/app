@@ -1,0 +1,94 @@
+{
+  "name": "@standardnotes/markdown-visual",
+  "version": "1.0.8-alpha.3",
+  "author": "Johnny Almonte <johnny@standardnotes.com>",
+  "description": "A lightweight WYSIWYG markdown editor for Standard Notes, derived from Milkdown.",
+  "keywords": [
+    "Standard Notes",
+    "Standard Notes Extensions"
+  ],
+  "sn": {
+    "main": "build/index.html"
+  },
+  "private": true,
+  "homepage": ".",
+  "scripts": {
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
+    "start": "react-app-rewired start",
+    "components:compile": "react-app-rewired build",
+    "eject": "react-scripts eject",
+    "components:lint": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md"
+  },
+  "devDependencies": {
+    "@codemirror/lang-markdown": "^0.19.6",
+    "@milkdown/core": "5.5.0",
+    "@milkdown/plugin-clipboard": "5.5.0",
+    "@milkdown/plugin-cursor": "5.5.0",
+    "@milkdown/plugin-diagram": "5.5.0",
+    "@milkdown/plugin-history": "5.5.0",
+    "@milkdown/plugin-indent": "5.5.0",
+    "@milkdown/plugin-listener": "5.5.0",
+    "@milkdown/plugin-math": "5.5.0",
+    "@milkdown/plugin-menu": "5.5.0",
+    "@milkdown/plugin-prism": "5.5.0",
+    "@milkdown/plugin-slash": "5.5.0",
+    "@milkdown/plugin-tooltip": "5.5.0",
+    "@milkdown/preset-commonmark": "5.5.0",
+    "@milkdown/preset-gfm": "5.5.0",
+    "@milkdown/prose": "5.5.0",
+    "@milkdown/react": "5.5.0",
+    "@milkdown/theme-nord": "5.5.0",
+    "@standardnotes/editor-kit": "2.2.4",
+    "@testing-library/dom": "^8.11.3",
+    "@testing-library/jest-dom": "^5.16.2",
+    "@testing-library/react": "^12.1.4",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.4.1",
+    "@types/lodash": "^4.14.179",
+    "@types/marked": "^4.0.2",
+    "@types/node": "^17.0.21",
+    "@types/react": "^17.0.40",
+    "@types/react-dom": "^17.0.13",
+    "@uiw/react-codemirror": "4.5.1",
+    "katex": "^0.15.2",
+    "lint-staged": "*",
+    "marked": "^4.0.12",
+    "material-icons": "^1.10.8",
+    "prettier": "*",
+    "react": "^17.0.2",
+    "react-app-rewired": "^2.2.1",
+    "react-dom": "^17.0.2",
+    "react-icons": "^4.3.1",
+    "react-scripts": "^5.0.0",
+    "sass": "*",
+    "sn-stylekit": "5.2.21",
+    "source-map-explorer": "^2.5.2",
+    "typescript": "*"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "lint-staged": {
+    "README.md": [
+      "prettier --write"
+    ],
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --write"
+    ]
+  }
+}

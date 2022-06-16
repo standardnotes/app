@@ -1,0 +1,12 @@
+{
+  "identifier": "org.standardnotes.advanced-checklist-dev",
+  "name": "Advanced Checklist - Dev",
+  "content_type": "SN|Component",
+  "area": "editor-editor",
+  "version": "0.1.0",
+  "description": "A task editor with grouping functionality.",
+  "url": "http://localhost:3000/index.html",
+  "download_url": "",
+  "latest_url": "",
+  "thumbnail_url": ""
+}

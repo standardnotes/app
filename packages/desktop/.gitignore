@@ -1,0 +1,13 @@
+node_modules/
+.DS_Store
+dist/
+npm-debug.log
+test/data/tmp/
+
+/app/dist
+.vscode
+.idea
+.env
+
+codeqldb
+yarn-error.log

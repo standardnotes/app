@@ -1,0 +1,57 @@
+name: Version Bump
+
+on:
+  push:
+    branches: [ develop, main ]
+
+jobs:
+  Build:
+    if: contains(github.event.head_commit.message, 'chore(release)') == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.CI_PAT_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup git config
+        run: |
+          git config --global user.name "standardci"
+          git config --global user.email "ci@standardnotes.com"
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v4
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Get Changed Components Files
+        id: changed-component-files
+        uses: tj-actions/changed-files@v23
+        with:
+          files: packages/components/**
+
+      - name: Compile Components
+        if: steps.changed-component-files.outputs.any_changed == 'true'
+        run: yarn components:clean && yarn components:compile
+        working-directory: packages/components
+      - name: Package and Commit Components
+        if: steps.changed-component-files.outputs.any_changed == 'true'
+        run: |
+          node packages/components/scripts/package.mjs
+          git add .
+          (git commit -m 'chore(release): components') || true
+
+      - name: Bump Prod Version
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: yarn release:prod
+      - name: Bump Beta Version
+        if: ${{ github.ref == 'refs/heads/develop' }}
+        run: yarn release:beta

@@ -5,8 +5,12 @@ queries:
 - uses: ./.github/codeql/custom-queries/javascript
 
 paths:
-- app/assets/javascripts
+- packages/web/src/javascripts
+- packages/desktop/app
 
 paths-ignore:
 - bin
 - node_modules
+- build
+- dist
+- packages/desktop/app/dist

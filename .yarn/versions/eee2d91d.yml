@@ -1,0 +1,17 @@
+undecided:
+  - "@standardnotes/desktop"
+  - "@standardnotes/icons"
+  - "@standardnotes/mobile"
+  - "@standardnotes/styles"
+  - "@standardnotes/toast"
+  - "@standardnotes/web-server"
+  - "@standardnotes/advanced-checklist"
+  - "@standardnotes/markdown-visual"
+  - "@standardnotes/autobiography-theme"
+  - "@standardnotes/dynamic-theme"
+  - "@standardnotes/focus-theme"
+  - "@standardnotes/futura-theme"
+  - "@standardnotes/midnight-theme"
+  - "@standardnotes/solarized-dark-theme"
+  - "@standardnotes/titanium-theme"
+  - standard-notes

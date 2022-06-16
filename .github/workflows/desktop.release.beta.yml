@@ -1,0 +1,15 @@
+name: Desktop Beta Release
+
+on:
+  push:
+    tags:
+      - '@standardnotes/desktop@[0-9]*.[0-9]*.[0-9]*-alpha.[0-9]*'
+      - '@standardnotes/desktop@[0-9]*.[0-9]*.[0-9]*-beta.[0-9]*'
+  workflow_dispatch:
+
+jobs:
+  Build:
+    uses: standardnotes/app/.github/workflows/desktop.release.reuse.yml@develop
+    secrets: inherit
+    with:
+      channel: beta

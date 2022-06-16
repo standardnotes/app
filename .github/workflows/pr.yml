@@ -1,10 +1,12 @@
-name: Pull request
+name: General PR
 
 on:
   pull_request:
     branches:
       - develop
       - main
+    paths:
+      - packages/!(components)/**
 
 jobs:
   test:
@@ -12,11 +14,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
       - name: Install dependencies
-        run: yarn install --pure-lockfile
-      - name: Bundle
-        run: yarn bundle
+        run: yarn install
       - name: ESLint
         run: yarn lint
+      - name: Build
+        run: yarn build:all
+      - name: Build Android
+        run: yarn android:bundle
       - name: Test
         run: yarn test

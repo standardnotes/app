@@ -1,0 +1,16 @@
+.app-column-container {
+  display: grid;
+  grid-template-columns: auto auto 2fr;
+}
+
+.app-column-first {
+  width: 220px;
+}
+
+.app-column-second {
+  width: 350px;
+}
+
+.app-column {
+  overflow: hidden;
+}

@@ -1,0 +1,16 @@
+{
+  "env": {
+    "node": true,
+    "commonjs": true
+  },
+  "extends": ["../../.eslintrc.json"],
+  "rules": {
+    "no-console": "warn",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-var-requires": "off"
+  },
+  "globals": {
+    "zip": true
+  },
+  "ignorePatterns": ["scripts"]
+}

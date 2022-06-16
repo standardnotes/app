@@ -1,0 +1,26 @@
+{
+  "name": "@standardnotes/toast",
+  "version": "1.2.1-alpha.4",
+  "private": true,
+  "main": "./src/index.ts",
+  "scripts": {
+    "start": "tsc -p tsconfig.json --watch",
+    "tsc": "tsc --project tsconfig.json",
+    "lint": "eslint ./src"
+  },
+  "dependencies": {
+    "@nanostores/react": "^0.2.0",
+    "@standardnotes/icons": "workspace:*",
+    "nanoid": "^3.3.4",
+    "nanostores": "^0.5.12",
+    "react": "link:../web/node_modules/react",
+    "react-dom": "link:../web/node_modules/react-dom"
+  },
+  "devDependencies": {
+    "@types/react": "link:../web/node_modules/@types/react",
+    "@types/react-dom": "link:../web/node_modules/@types/react-dom",
+    "eslint": "*",
+    "prettier": "*",
+    "typescript": "*"
+  }
+}

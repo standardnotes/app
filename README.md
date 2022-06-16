@@ -8,7 +8,7 @@ Standard Notes is a simple and private notes app available on most platforms, in
 <div align="center">
 
 [![latest release version](https://img.shields.io/github/v/release/standardnotes/desktop)](https://github.com/standardnotes/desktop/releases)
-[![License](https://img.shields.io/github/license/standardnotes/web?color=blue)](https://github.com/standardnotes/web/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/standardnotes/app?color=blue)](https://github.com/standardnotes/app/blob/main/LICENSE)
 [![Slack](https://img.shields.io/badge/slack-standardnotes-CC2B5E.svg?style=flat&logo=slack)](https://standardnotes.com/slack)
 [![Twitter Follow](https://img.shields.io/badge/follow-%40standardnotes-blue.svg?style=flat&logo=twitter)](https://twitter.com/standardnotes)
 
@@ -58,8 +58,6 @@ Developers can create and publish their own extensions. Visit the [documentation
 
 Questions? Find answers on our [Help page](https://standardnotes.com/help).
 
-🙏
-
 ---
 
 ### Docker setup
@@ -84,14 +82,12 @@ You can then access the app at `http://localhost:3001` (please check Docker cont
 
 ### Running Locally
 
-This repo contains the core code used in the web app, as well as the Electron-based [desktop application](https://github.com/standardnotes/desktop).
-
 **Instructions:**
 
 1. Ensure you have [Yarn](https://classic.yarnpkg.com) installed
-1. Clone the repo
-1. `yarn setup`
-1. `yarn start`
+2. Clone the repo
+3. `yarn install`
+4. `yarn start`
 
 Then open your browser to `http://localhost:3001`.
 
@@ -102,14 +98,6 @@ You can also set the `DEFAULT_SYNC_SERVER` environment variable to set the defau
 ```
 DEFAULT_SYNC_SERVER=https://sync.myserver
 ```
-
----
-
-### Other repositories:
-
-- Desktop app: https://github.com/standardnotes/desktop
-- Mobile (iOS & Android): https://github.com/standardnotes/mobile
-- Extensions: https://github.com/sn-extensions
 
 ## Contributing
 
