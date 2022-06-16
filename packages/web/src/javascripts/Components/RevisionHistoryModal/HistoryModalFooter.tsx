@@ -1,4 +1,5 @@
 import { HistoryModalController } from '@/Controllers/HistoryModalController'
+import { RevisionListEntry } from '@standardnotes/snjs/dist/@types'
 import { observer } from 'mobx-react-lite'
 import { RefObject, useCallback } from 'react'
 import Button from '../Button/Button'
@@ -12,10 +13,11 @@ const HistoryModalFooter = ({ historyModalController, closeButtonRef }: Props) =
   const {
     dismissModal,
     selectedRevision,
-    selectedRemoteEntry,
+    selectedEntry,
     restoreRevision,
     restoreRevisionAsCopy,
     deleteRemoteRevision,
+    isDeletingRevision,
   } = historyModalController
 
   const restoreSelectedRevision = useCallback(() => {
@@ -31,12 +33,12 @@ const HistoryModalFooter = ({ historyModalController, closeButtonRef }: Props) =
   }, [restoreRevisionAsCopy, selectedRevision])
 
   const deleteSelectedRevision = useCallback(() => {
-    if (!selectedRemoteEntry) {
+    if (!selectedEntry) {
       return
     }
 
-    void deleteRemoteRevision(selectedRemoteEntry)
-  }, [deleteRemoteRevision, selectedRemoteEntry])
+    void deleteRemoteRevision(selectedEntry as RevisionListEntry)
+  }, [deleteRemoteRevision, selectedEntry])
 
   return (
     <div className="flex flex-shrink-0 justify-between items-center min-h-6 px-2.5 py-2 border-0 border-t-1px border-solid border-main">
@@ -45,10 +47,9 @@ const HistoryModalFooter = ({ historyModalController, closeButtonRef }: Props) =
       </div>
       {selectedRevision && (
         <div className="flex items-center">
-          {selectedRemoteEntry && (
+          {(selectedEntry as RevisionListEntry).uuid && (
             <Button className="py-1.35 mr-2.5" onClick={deleteSelectedRevision} variant="normal">
-              {/* {isDeletingRevision ? <div className="sk-spinner my-1 w-3 h-3 spinner-info" /> : 'Delete this revision'} */}
-              Delete this revision
+              {isDeletingRevision ? <div className="sk-spinner my-1 w-3 h-3 spinner-info" /> : 'Delete this revision'}
             </Button>
           )}
           <Button className="py-1.35 mr-2.5" label="Restore as a copy" onClick={restoreAsCopy} variant="normal" />

@@ -32,6 +32,8 @@ type LegacyHistory = Action[]
 
 type SelectedRevision = HistoryEntry | LegacyHistoryEntry | undefined
 
+type SelectedEntry = RevisionListEntry | NoteHistoryEntry | Action | undefined
+
 export class HistoryModalController extends AbstractViewController {
   showRevisionHistoryModal = false
 
@@ -42,11 +44,13 @@ export class HistoryModalController extends AbstractViewController {
 
   selectedRevision: SelectedRevision = undefined
   isFetchingSelectedRevision = false
-  selectedRemoteEntry: RevisionListEntry | undefined = undefined
+  selectedEntry: SelectedEntry = undefined
 
   showContentLockedScreen = false
 
   currentTab = RevisionType.Remote
+
+  isDeletingRevision = false
 
   override deinit(): void {
     super.deinit()
@@ -73,8 +77,8 @@ export class HistoryModalController extends AbstractViewController {
       isFetchingSelectedRevision: observable,
       setIsFetchingSelectedRevision: observable,
 
-      selectedRemoteEntry: observable,
-      setSelectedRemoteEntry: action,
+      selectedEntry: observable,
+      setSelectedEntry: action,
 
       remoteHistory: observable,
       setRemoteHistory: action,
@@ -94,6 +98,9 @@ export class HistoryModalController extends AbstractViewController {
 
       showContentLockedScreen: observable,
       setShowContentLockedScreen: action,
+
+      isDeletingRevision: observable,
+      setIsDeletingRevision: action,
     })
   }
 
@@ -101,12 +108,12 @@ export class HistoryModalController extends AbstractViewController {
     this.selectedRevision = revision
   }
 
-  setSelectedRemoteEntry = (remoteEntry: RevisionListEntry | undefined) => {
-    this.selectedRemoteEntry = remoteEntry
+  setSelectedEntry = (entry: SelectedEntry) => {
+    this.selectedEntry = entry
   }
 
   clearSelection = () => {
-    this.setSelectedRemoteEntry(undefined)
+    this.setSelectedEntry(undefined)
     this.setSelectedRevision(undefined)
   }
 
@@ -133,6 +140,10 @@ export class HistoryModalController extends AbstractViewController {
     this.isFetchingSelectedRevision = value
   }
 
+  setIsDeletingRevision = (value: boolean) => {
+    this.isDeletingRevision = value
+  }
+
   dismissModal = () => {
     this.setShowRevisionHistoryModal(false)
     this.clearAllHistory()
@@ -149,7 +160,7 @@ export class HistoryModalController extends AbstractViewController {
       this.clearSelection()
 
       try {
-        this.setSelectedRemoteEntry(entry)
+        this.setSelectedEntry(entry)
         const remoteRevision = await this.application.historyManager.fetchRemoteRevision(note, entry)
         this.setSelectedRevision(remoteRevision)
       } catch (err) {
@@ -179,6 +190,8 @@ export class HistoryModalController extends AbstractViewController {
         throw new Error('Could not find revision action url')
       }
 
+      this.setSelectedEntry(entry)
+
       const response = await this.application.actionsManager.runAction(entry.subactions[0], note)
 
       if (!response) {
@@ -196,6 +209,7 @@ export class HistoryModalController extends AbstractViewController {
 
   selectSessionRevision = (entry: NoteHistoryEntry) => {
     this.clearSelection()
+    this.setSelectedEntry(entry)
     this.setSelectedRevision(entry)
   }
 
@@ -375,6 +389,8 @@ export class HistoryModalController extends AbstractViewController {
       )
       .then((shouldDelete) => {
         if (shouldDelete && this.notesController.firstSelectedNote) {
+          this.setIsDeletingRevision(true)
+
           this.application.historyManager
             .deleteRemoteRevision(this.notesController.firstSelectedNote, revisionEntry)
             .then(async (res) => {
@@ -395,7 +411,9 @@ export class HistoryModalController extends AbstractViewController {
 
               await this.fetchRemoteHistory()
 
-              if (this.selectedRemoteEntry?.uuid !== revisionEntry.uuid) {
+              const selectedEntry = this.selectedEntry as RevisionListEntry
+
+              if (!selectedEntry?.uuid || selectedEntry?.uuid !== revisionEntry.uuid) {
                 return
               }
 
@@ -408,6 +426,9 @@ export class HistoryModalController extends AbstractViewController {
               }
             })
             .catch(console.error)
+            .finally(() => {
+              this.setIsDeletingRevision(false)
+            })
         }
       })
       .catch(console.error)

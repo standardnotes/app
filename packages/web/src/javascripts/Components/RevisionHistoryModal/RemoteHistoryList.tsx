@@ -5,7 +5,7 @@ import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import HistoryListItem from './HistoryListItem'
 import { previewHistoryEntryTitle } from './utils'
 import { HistoryModalController } from '@/Controllers/HistoryModalController'
-import { FeaturesClientInterface } from '@standardnotes/snjs/dist/@types'
+import { FeaturesClientInterface, RevisionListEntry } from '@standardnotes/snjs/dist/@types'
 
 type RemoteHistoryListProps = {
   features: FeaturesClientInterface
@@ -13,7 +13,7 @@ type RemoteHistoryListProps = {
 }
 
 const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({ features, historyModalController }) => {
-  const { remoteHistory, isFetchingRemoteHistory, selectRemoteRevision, selectedRemoteEntry } = historyModalController
+  const { remoteHistory, isFetchingRemoteHistory, selectRemoteRevision, selectedEntry } = historyModalController
 
   const remoteHistoryListRef = useRef<HTMLDivElement>(null)
 
@@ -39,7 +39,7 @@ const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({ features
               {group.entries.map((entry) => (
                 <HistoryListItem
                   key={entry.uuid}
-                  isSelected={selectedRemoteEntry?.uuid === entry.uuid}
+                  isSelected={(selectedEntry as RevisionListEntry)?.uuid === entry.uuid}
                   onClick={() => {
                     selectRemoteRevision(entry)
                   }}

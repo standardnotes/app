@@ -1,5 +1,5 @@
 import { Action } from '@standardnotes/snjs'
-import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { FunctionComponent, useRef } from 'react'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import HistoryListItem from './HistoryListItem'
 import { HistoryModalController } from '@/Controllers/HistoryModalController'
@@ -10,32 +10,11 @@ type Props = {
 }
 
 const LegacyHistoryList: FunctionComponent<Props> = ({ legacyHistory, historyModalController }) => {
-  const { selectLegacyRevision, clearSelection } = historyModalController
+  const { selectLegacyRevision, selectedEntry } = historyModalController
 
   const legacyHistoryListRef = useRef<HTMLDivElement>(null)
 
   useListKeyboardNavigation(legacyHistoryListRef)
-
-  const [selectedItemUrl, setSelectedItemUrl] = useState<string>()
-
-  const firstEntry = useMemo(() => {
-    return legacyHistory?.[0]
-  }, [legacyHistory])
-
-  const selectFirstEntry = useCallback(() => {
-    if (firstEntry) {
-      setSelectedItemUrl(firstEntry.subactions?.[0].url)
-      selectLegacyRevision(firstEntry)
-    }
-  }, [firstEntry, selectLegacyRevision])
-
-  useEffect(() => {
-    if (firstEntry && !selectedItemUrl) {
-      selectFirstEntry()
-    } else if (!firstEntry) {
-      clearSelection()
-    }
-  }, [clearSelection, firstEntry, selectFirstEntry, selectedItemUrl])
 
   return (
     <div
@@ -45,14 +24,14 @@ const LegacyHistoryList: FunctionComponent<Props> = ({ legacyHistory, historyMod
       ref={legacyHistoryListRef}
     >
       {legacyHistory?.map((entry) => {
+        const selectedEntryUrl = (selectedEntry as Action)?.subactions?.[0].url
         const url = entry.subactions?.[0].url
 
         return (
           <HistoryListItem
             key={url}
-            isSelected={selectedItemUrl === url}
+            isSelected={selectedEntryUrl === url}
             onClick={() => {
-              setSelectedItemUrl(url)
               selectLegacyRevision(entry)
             }}
           >
