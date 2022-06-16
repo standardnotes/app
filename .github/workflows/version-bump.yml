@@ -50,6 +50,7 @@ jobs:
           (git commit -m 'chore(release): components') || true
 
       - name: Bump Prod Version Graduate
+        continue-on-error: true
         id: graduateRelease
         if: ${{ github.ref == 'refs/heads/main' }}
         run: yarn release:prod:graduate
