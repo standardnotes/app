@@ -15,7 +15,7 @@
     "lint": "yarn lint:eslint && yarn lint:prettier",
     "lint:eslint": "yarn eslint . --ext .ts,.tsx --fix --quiet",
     "lint:prettier": "prettier ./src --write",
-    "build": "yarn install:pods",
+    "build": "yarn android:bundle && yarn install:pods",
     "tsc": "tsc --noEmit",
     "start": "react-native start",
     "install:pods": "yarn pod-install ios",
