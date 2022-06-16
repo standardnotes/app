@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.23.1-alpha.13](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.23.1-alpha.12...@standardnotes/mobile@3.23.1-alpha.13) (2022-06-16)
+
+### Bug Fixes
+
+* **mobile:** use package version directly ([c4642ce](https://github.com/standardnotes/app/commit/c4642ceb9967a4515dbe20cde5fec5c6f2dedaeb))
+
 ## [3.23.1-alpha.12](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.23.1-alpha.11...@standardnotes/mobile@3.23.1-alpha.12) (2022-06-16)
 
 **Note:** Version bump only for package @standardnotes/mobile
