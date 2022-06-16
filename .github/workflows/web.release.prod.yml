@@ -7,8 +7,9 @@ concurrency:
 on:
   push:
     tags:
-      - '@standardnotes/web-server@!(*alpha*)'
-      - '@standardnotes/web-server@!(*beta*)'
+      - '*standardnotes/*web-server*'
+      - '!*standardnotes/*web-server*beta*'
+      - '!*standardnotes/*web-server*alpha*'
 
 jobs:
   test:
