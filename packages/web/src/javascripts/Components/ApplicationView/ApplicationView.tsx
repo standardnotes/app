@@ -187,8 +187,9 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
           <PreferencesViewWrapper viewControllerManager={viewControllerManager} application={application} />
           <RevisionHistoryModal
             application={application}
-            viewControllerManager={viewControllerManager}
             historyModalController={viewControllerManager.historyModalController}
+            notesController={viewControllerManager.notesController}
+            subscriptionController={viewControllerManager.subscriptionController}
           />
         </>
 
