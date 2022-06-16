@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.22.3-alpha.23 (2022-06-16)
+
+### Bug Fixes
+
+* **desktop:** commit public env config ([fef253c](https://github.com/standardnotes/app/commit/fef253c62f0c51626b2bbcf7fa0cd97eb8d820d3))
+
 ## [3.22.3-alpha.22](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.22.3-alpha.21...@standardnotes/desktop@3.22.3-alpha.22) (2022-06-16)
 
 **Note:** Version bump only for package @standardnotes/desktop
