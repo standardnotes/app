@@ -37,7 +37,7 @@ export enum RevisionContentState {
   Idle,
   Loading,
   Loaded,
-  Locked,
+  NotEntitled,
 }
 
 export class HistoryModalController extends AbstractViewController {
@@ -175,7 +175,7 @@ export class HistoryModalController extends AbstractViewController {
         this.setContentState(RevisionContentState.Loaded)
       }
     } else {
-      this.setContentState(RevisionContentState.Locked)
+      this.setContentState(RevisionContentState.NotEntitled)
       this.setSelectedRevision(undefined)
     }
   }

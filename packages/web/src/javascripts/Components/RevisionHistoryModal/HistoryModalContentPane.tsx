@@ -40,7 +40,7 @@ const HistoryModalContentPane = ({
           historyModalController={historyModalController}
         />
       )
-    case RevisionContentState.Locked:
+    case RevisionContentState.NotEntitled:
       return <RevisionContentLocked subscriptionController={subscriptionController} />
     default:
       return null
