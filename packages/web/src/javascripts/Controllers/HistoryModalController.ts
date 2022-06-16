@@ -160,23 +160,28 @@ export class HistoryModalController extends AbstractViewController {
   }
 
   selectRemoteRevision = async (entry: RevisionListEntry) => {
-    if (this.application.features.hasMinimumRole(entry.required_role) && this.note) {
-      this.setContentState(RevisionContentState.Loading)
-      this.clearSelection()
+    if (!this.note) {
+      return
+    }
 
-      try {
-        this.setSelectedEntry(entry)
-        const remoteRevision = await this.application.historyManager.fetchRemoteRevision(this.note, entry)
-        this.setSelectedRevision(remoteRevision)
-      } catch (err) {
-        this.clearSelection()
-        console.error(err)
-      } finally {
-        this.setContentState(RevisionContentState.Loaded)
-      }
-    } else {
+    if (!this.application.features.hasMinimumRole(entry.required_role)) {
       this.setContentState(RevisionContentState.NotEntitled)
       this.setSelectedRevision(undefined)
+      return
+    }
+
+    this.setContentState(RevisionContentState.Loading)
+    this.clearSelection()
+
+    try {
+      this.setSelectedEntry(entry)
+      const remoteRevision = await this.application.historyManager.fetchRemoteRevision(this.note, entry)
+      this.setSelectedRevision(remoteRevision)
+    } catch (err) {
+      this.clearSelection()
+      console.error(err)
+    } finally {
+      this.setContentState(RevisionContentState.Loaded)
     }
   }
 
