@@ -26,7 +26,7 @@
     "node-sass": "7.0.1",
     "sass": "^1.52.3",
     "typescript": "*",
-    "webpack": "^5.73.0",
+    "webpack": "*",
     "webpack-remove-empty-scripts": "^0.8.0"
   }
 }

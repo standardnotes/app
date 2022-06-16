@@ -5123,6 +5123,8 @@ __metadata:
 "@standardnotes/autobiography-theme@workspace:packages/components/src/packages/org.standardnotes.theme-autobiography":
   version: 0.0.0-use.local
   resolution: "@standardnotes/autobiography-theme@workspace:packages/components/src/packages/org.standardnotes.theme-autobiography"
+  dependencies:
+    webpack: "*"
   languageName: unknown
   linkType: soft
 
@@ -5209,7 +5211,7 @@ __metadata:
     node-sass: 7.0.1
     sass: ^1.52.3
     typescript: "*"
-    webpack: ^5.73.0
+    webpack: "*"
     webpack-remove-empty-scripts: ^0.8.0
   languageName: unknown
   linkType: soft
@@ -5302,6 +5304,8 @@ __metadata:
 "@standardnotes/dynamic-theme@workspace:packages/components/src/packages/org.standardnotes.theme-dynamic":
   version: 0.0.0-use.local
   resolution: "@standardnotes/dynamic-theme@workspace:packages/components/src/packages/org.standardnotes.theme-dynamic"
+  dependencies:
+    webpack: "*"
   languageName: unknown
   linkType: soft
 
@@ -5419,12 +5423,16 @@ __metadata:
 "@standardnotes/focus-theme@workspace:packages/components/src/packages/org.standardnotes.theme-focus":
   version: 0.0.0-use.local
   resolution: "@standardnotes/focus-theme@workspace:packages/components/src/packages/org.standardnotes.theme-focus"
+  dependencies:
+    webpack: "*"
   languageName: unknown
   linkType: soft
 
 "@standardnotes/futura-theme@workspace:packages/components/src/packages/org.standardnotes.theme-futura":
   version: 0.0.0-use.local
   resolution: "@standardnotes/futura-theme@workspace:packages/components/src/packages/org.standardnotes.theme-futura"
+  dependencies:
+    webpack: "*"
   languageName: unknown
   linkType: soft
 
@@ -5649,6 +5657,8 @@ __metadata:
 "@standardnotes/midnight-theme@workspace:packages/components/src/packages/org.standardnotes.theme-midnight":
   version: 0.0.0-use.local
   resolution: "@standardnotes/midnight-theme@workspace:packages/components/src/packages/org.standardnotes.theme-midnight"
+  dependencies:
+    webpack: "*"
   languageName: unknown
   linkType: soft
 
@@ -5933,6 +5943,8 @@ __metadata:
 "@standardnotes/solarized-dark-theme@workspace:packages/components/src/packages/org.standardnotes.theme-solarized-dark":
   version: 0.0.0-use.local
   resolution: "@standardnotes/solarized-dark-theme@workspace:packages/components/src/packages/org.standardnotes.theme-solarized-dark"
+  dependencies:
+    webpack: "*"
   languageName: unknown
   linkType: soft
 
@@ -33377,7 +33389,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:*, webpack@npm:^5.64.4, webpack@npm:^5.72.0, webpack@npm:^5.73.0":
+"webpack@npm:*, webpack@npm:^5.64.4, webpack@npm:^5.72.0":
   version: 5.73.0
   resolution: "webpack@npm:5.73.0"
   dependencies:
