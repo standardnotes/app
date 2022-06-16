@@ -62,7 +62,7 @@ export class HistoryModalController extends AbstractViewController {
   override deinit(): void {
     super.deinit()
     this.clearSelection()
-    this.clearAllHistory()
+    this.resetHistoryState()
     this.note = undefined
     ;(this.selectionController as unknown) = undefined
   }
@@ -95,7 +95,7 @@ export class HistoryModalController extends AbstractViewController {
       legacyHistory: observable,
       setLegacyHistory: action,
 
-      clearAllHistory: action,
+      resetHistoryState: action,
 
       currentTab: observable,
       selectTab: action,
@@ -155,7 +155,7 @@ export class HistoryModalController extends AbstractViewController {
   dismissModal = () => {
     this.setShowRevisionHistoryModal(false)
     this.clearSelection()
-    this.clearAllHistory()
+    this.resetHistoryState()
     this.selectTab(RevisionType.Remote)
   }
 
@@ -309,7 +309,7 @@ export class HistoryModalController extends AbstractViewController {
   }
 
   fetchAllHistory = async () => {
-    this.clearAllHistory()
+    this.resetHistoryState()
 
     if (!this.note) {
       return
@@ -326,7 +326,7 @@ export class HistoryModalController extends AbstractViewController {
     this.selectFirstRevision()
   }
 
-  clearAllHistory = () => {
+  resetHistoryState = () => {
     this.remoteHistory = []
     this.sessionHistory = []
     this.legacyHistory = []
