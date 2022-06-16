@@ -32,10 +32,18 @@ jobs:
       - name: Install Dependencies
         run: yarn install
 
+      - name: Get Changed Components Files
+        id: changed-component-files
+        uses: tj-actions/changed-files@v23
+        with:
+          files: packages/components/**
+
       - name: Compile Components
+        if: steps.changed-component-files.outputs.any_changed == 'true'
         run: yarn components:clean && yarn components:compile
         working-directory: packages/components
       - name: Package and Commit Components
+        if: steps.changed-component-files.outputs.any_changed == 'true'
         run: |
           node packages/components/scripts/package.mjs
           git add .
