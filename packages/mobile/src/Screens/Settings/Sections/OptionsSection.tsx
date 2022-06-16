@@ -271,7 +271,7 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
         return
       }
 
-      await application.deviceInterface.clearRawKeychainValue()
+      await application.deviceInterface.clearNamespacedKeychainValue(descriptor.identifier)
       await appGroup.unloadCurrentAndActivateDescriptor(descriptor)
     },
     [Open, appGroup, application.deviceInterface, getWorkspaceActionConfirmation],
@@ -283,9 +283,11 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
       return
     }
 
-    await application.deviceInterface.clearRawKeychainValue()
+    const activeDescriptor = applicationDescriptors.find(descriptor => descriptor.primary) as ApplicationDescriptor
+    await application.deviceInterface.clearNamespacedKeychainValue(activeDescriptor.identifier)
+
     await appGroup.unloadCurrentAndCreateNewDescriptor()
-  }, [AddAnother, appGroup, application.deviceInterface, getWorkspaceActionConfirmation])
+  }, [AddAnother, appGroup, application.deviceInterface, applicationDescriptors, getWorkspaceActionConfirmation])
 
   const signOutAllWorkspaces = useCallback(async () => {
     try {
