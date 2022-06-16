@@ -184,6 +184,9 @@ export class ViewControllerManager {
     this.navigationController.deinit()
     ;(this.navigationController as unknown) = undefined
 
+    this.historyModalController.deinit()
+    ;(this.historyModalController as unknown) = undefined
+
     destroyAllObjectProperties(this)
   }
 
