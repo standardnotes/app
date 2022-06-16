@@ -1,6 +1,6 @@
 const env = process.env.NODE_ENV ?? 'production'
 require('dotenv').config({
-  path: `.env.${env}`,
+  path: `.env.public.${env}`,
 })
 
 const path = require('path')
