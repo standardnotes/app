@@ -5,6 +5,7 @@
   "workspaces": {
     "packages": [
       "packages/*",
+      "packages/desktop/app",
       "packages/components/src/*"
     ]
   },

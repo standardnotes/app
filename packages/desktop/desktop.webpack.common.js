@@ -94,7 +94,7 @@ module.exports = function ({ onlyTranspileTypescript = false, experimentalFeatur
             from: 'app/node_modules',
             to: 'node_modules',
             globOptions: {
-              ignore: ['**/standard-notes/**'],
+              ignore: ['**/@standardnotes/inner-desktop/**'],
             },
           },
           {

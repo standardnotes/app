@@ -2,7 +2,7 @@
   "name": "@standardnotes/mobile",
   "version": "3.23.1-alpha.8",
   "user-version": "3.23.0",
-  "author": "Standard Notes",
+  "author": "Standard Notes.",
   "private": true,
   "license": "AGPL-3.0-or-later",
   "scripts": {

@@ -1,10 +1,10 @@
 {
-  "name": "standard-notes",
+  "name": "@standardnotes/inner-desktop",
   "productName": "Standard Notes",
   "private": true,
   "description": "An end-to-end encrypted notes app for digitalists and professionals.",
   "author": "Standard Notes <help@standardnotes.com>",
-  "version": "3.20.2",
+  "version": "3.22.3-alpha.18",
   "main": "./dist/index.js",
   "installConfig": {
     "selfReferences": true
