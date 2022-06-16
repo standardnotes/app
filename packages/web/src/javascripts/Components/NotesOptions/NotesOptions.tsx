@@ -260,8 +260,8 @@ const NotesOptions = ({
   }, [application, notes])
 
   const openRevisionHistoryModal = useCallback(() => {
-    historyModalController.setShowRevisionHistoryModal(true)
-  }, [historyModalController])
+    historyModalController.openModal(notesController.firstSelectedNote)
+  }, [historyModalController, notesController.firstSelectedNote])
 
   return (
     <>

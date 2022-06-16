@@ -21,7 +21,6 @@ import {
 } from '@standardnotes/snjs'
 import { action, makeObservable, observable } from 'mobx'
 import { AbstractViewController } from './Abstract/AbstractViewController'
-import { NotesController } from './NotesController'
 import { SelectedItemsController } from './SelectedItemsController'
 
 type RemoteHistory = RemoteRevisionListGroup[]
@@ -44,6 +43,8 @@ export enum RevisionContentState {
 export class HistoryModalController extends AbstractViewController {
   showRevisionHistoryModal = false
 
+  note: SNNote | undefined = undefined
+
   remoteHistory: RemoteHistory = []
   isFetchingRemoteHistory = false
   sessionHistory: SessionHistory = []
@@ -62,14 +63,13 @@ export class HistoryModalController extends AbstractViewController {
     super.deinit()
     this.clearSelection()
     this.clearAllHistory()
-    ;(this.notesController as unknown) = undefined
+    this.note = undefined
     ;(this.selectionController as unknown) = undefined
   }
 
   constructor(
     application: WebApplication,
     eventBus: InternalEventBus,
-    private notesController: NotesController,
     private selectionController: SelectedItemsController,
   ) {
     super(application, eventBus)
@@ -147,6 +147,11 @@ export class HistoryModalController extends AbstractViewController {
     this.contentState = contentState
   }
 
+  openModal = (note: SNNote | undefined) => {
+    this.note = note
+    this.setShowRevisionHistoryModal(true)
+  }
+
   dismissModal = () => {
     this.setShowRevisionHistoryModal(false)
     this.clearSelection()
@@ -155,15 +160,13 @@ export class HistoryModalController extends AbstractViewController {
   }
 
   selectRemoteRevision = async (entry: RevisionListEntry) => {
-    const note = this.notesController.firstSelectedNote
-
-    if (this.application.features.hasMinimumRole(entry.required_role) && note) {
+    if (this.application.features.hasMinimumRole(entry.required_role) && this.note) {
       this.setContentState(RevisionContentState.Loading)
       this.clearSelection()
 
       try {
         this.setSelectedEntry(entry)
-        const remoteRevision = await this.application.historyManager.fetchRemoteRevision(note, entry)
+        const remoteRevision = await this.application.historyManager.fetchRemoteRevision(this.note, entry)
         this.setSelectedRevision(remoteRevision)
       } catch (err) {
         this.clearSelection()
@@ -181,9 +184,7 @@ export class HistoryModalController extends AbstractViewController {
     this.clearSelection()
     this.setContentState(RevisionContentState.Loading)
 
-    const note = this.notesController.firstSelectedNote
-
-    if (!note) {
+    if (!this.note) {
       return
     }
 
@@ -194,7 +195,7 @@ export class HistoryModalController extends AbstractViewController {
 
       this.setSelectedEntry(entry)
 
-      const response = await this.application.actionsManager.runAction(entry.subactions[0], note)
+      const response = await this.application.actionsManager.runAction(entry.subactions[0], this.note)
 
       if (!response) {
         throw new Error('Could not fetch revision')
@@ -256,12 +257,10 @@ export class HistoryModalController extends AbstractViewController {
   fetchRemoteHistory = async () => {
     this.setRemoteHistory([])
 
-    if (this.notesController.firstSelectedNote) {
+    if (this.note) {
       this.setIsFetchingRemoteHistory(true)
       try {
-        const initialRemoteHistory = await this.application.historyManager.remoteHistoryForItem(
-          this.notesController.firstSelectedNote,
-        )
+        const initialRemoteHistory = await this.application.historyManager.remoteHistoryForItem(this.note)
 
         this.setRemoteHistory(sortRevisionListIntoGroups<RevisionListEntry>(initialRemoteHistory))
       } catch (err) {
@@ -280,14 +279,11 @@ export class HistoryModalController extends AbstractViewController {
     const actionExtensions = this.application.actionsManager.getExtensions()
 
     actionExtensions.forEach(async (ext) => {
-      if (!this.notesController.firstSelectedNote) {
+      if (!this.note) {
         return
       }
 
-      const actionExtension = await this.application.actionsManager.loadExtensionInContextOfItem(
-        ext,
-        this.notesController.firstSelectedNote,
-      )
+      const actionExtension = await this.application.actionsManager.loadExtensionInContextOfItem(ext, this.note)
 
       if (!actionExtension) {
         return
@@ -310,15 +306,13 @@ export class HistoryModalController extends AbstractViewController {
   fetchAllHistory = async () => {
     this.clearAllHistory()
 
-    if (!this.notesController.firstSelectedNote) {
+    if (!this.note) {
       return
     }
 
     this.setSessionHistory(
       sortRevisionListIntoGroups<NoteHistoryEntry>(
-        this.application.historyManager.sessionHistoryForItem(
-          this.notesController.firstSelectedNote,
-        ) as NoteHistoryEntry[],
+        this.application.historyManager.sessionHistoryForItem(this.note) as NoteHistoryEntry[],
       ),
     )
     await this.fetchRemoteHistory()
@@ -390,11 +384,11 @@ export class HistoryModalController extends AbstractViewController {
         'Cancel',
       )
       .then((shouldDelete) => {
-        if (shouldDelete && this.notesController.firstSelectedNote) {
+        if (shouldDelete && this.note) {
           this.setIsDeletingRevision(true)
 
           this.application.historyManager
-            .deleteRemoteRevision(this.notesController.firstSelectedNote, revisionEntry)
+            .deleteRemoteRevision(this.note, revisionEntry)
             .then(async (res) => {
               if (res.error?.message) {
                 throw new Error(res.error.message)

@@ -103,12 +103,7 @@ export class ViewControllerManager {
       this.eventBus,
     )
 
-    this.historyModalController = new HistoryModalController(
-      this.application,
-      this.eventBus,
-      this.notesController,
-      this.selectionController,
-    )
+    this.historyModalController = new HistoryModalController(this.application, this.eventBus, this.selectionController)
 
     this.addAppEventObserver()
 
