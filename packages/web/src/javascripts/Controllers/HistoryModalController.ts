@@ -401,24 +401,16 @@ export class HistoryModalController extends AbstractViewController {
                 throw new Error(res.error.message)
               }
 
+              this.clearSelection()
+
               const remoteHistory = this.flattenedRemoteHistory
 
-              if (!remoteHistory) {
-                return
-              }
+              await this.fetchRemoteHistory()
 
               const currentEntryIndex = remoteHistory.findIndex((entry) => entry?.uuid === revisionEntry.uuid)
 
               const previousEntry = remoteHistory[currentEntryIndex - 1]
               const nextEntry = remoteHistory[currentEntryIndex + 1]
-
-              await this.fetchRemoteHistory()
-
-              const selectedEntry = this.selectedEntry as RevisionListEntry
-
-              if (!selectedEntry?.uuid || selectedEntry?.uuid !== revisionEntry.uuid) {
-                return
-              }
 
               if (previousEntry) {
                 void this.selectRemoteRevision(previousEntry)
