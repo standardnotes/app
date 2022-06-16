@@ -130,7 +130,7 @@ export default class AuthEntry extends React.Component {
         <div className="auth-entry">
           {canEdit && (
             <div className="auth-drag-indicator-container">
-              <DragIndicator />
+              <DragIndicator className="grab-cursor" />
             </div>
           )}
           <div className="auth-details">
