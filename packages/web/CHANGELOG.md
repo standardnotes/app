@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.22.3-alpha.8 (2022-06-16)
+
+**Note:** Version bump only for package @standardnotes/web
+
 ## 3.22.3-alpha.7 (2022-06-16)
 
 **Note:** Version bump only for package @standardnotes/web
