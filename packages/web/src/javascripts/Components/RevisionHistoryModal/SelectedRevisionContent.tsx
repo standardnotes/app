@@ -1,23 +1,26 @@
 import { WebApplication } from '@/Application/Application'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { ContentType, SNNote } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useEffect, useMemo } from 'react'
 import ComponentView from '@/Components/ComponentView/ComponentView'
+import { NotesController } from '@/Controllers/NotesController'
+import { HistoryModalController } from '@/Controllers/HistoryModalController'
 
 const ABSOLUTE_CENTER_CLASSNAME = 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
 
 type SelectedRevisionContentProps = {
   application: WebApplication
-  viewControllerManager: ViewControllerManager
+  notesController: NotesController
+  historyModalController: HistoryModalController
 }
 
 const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentProps> = ({
   application,
-  viewControllerManager,
+  notesController,
+  historyModalController,
 }) => {
-  const note = viewControllerManager.notesController.firstSelectedNote
-  const { selectedRevision } = viewControllerManager.historyModalController
+  const note = notesController.firstSelectedNote
+  const { selectedRevision } = historyModalController
 
   const componentViewer = useMemo(() => {
     const editorForCurrentNote = note ? application.componentManager.editorForNote(note) : undefined
@@ -66,12 +69,7 @@ const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentProps> =
       )}
       {componentViewer && (
         <div className="component-view">
-          <ComponentView
-            key={componentViewer.identifier}
-            componentViewer={componentViewer}
-            application={application}
-            viewControllerManager={viewControllerManager}
-          />
+          <ComponentView key={componentViewer.identifier} componentViewer={componentViewer} application={application} />
         </div>
       )}
     </div>

@@ -39,8 +39,9 @@ const RevisionContentPlaceholder: FunctionComponent<RevisionContentPlaceholderPr
 
 const HistoryModalContent: FunctionComponent<RevisionHistoryModalProps> = ({
   application,
-  viewControllerManager,
   historyModalController,
+  notesController,
+  subscriptionController,
 }) => {
   const closeButtonRef = useRef<HTMLButtonElement>(null)
 
@@ -73,10 +74,14 @@ const HistoryModalContent: FunctionComponent<RevisionHistoryModalProps> = ({
                 showContentLockedScreen={showContentLockedScreen}
               />
               {showContentLockedScreen && !selectedRevision && (
-                <RevisionContentLocked subscriptionController={viewControllerManager.subscriptionController} />
+                <RevisionContentLocked subscriptionController={subscriptionController} />
               )}
               {selectedRevision && (
-                <SelectedRevisionContent application={application} viewControllerManager={viewControllerManager} />
+                <SelectedRevisionContent
+                  application={application}
+                  notesController={notesController}
+                  historyModalController={historyModalController}
+                />
               )}
             </div>
           </div>

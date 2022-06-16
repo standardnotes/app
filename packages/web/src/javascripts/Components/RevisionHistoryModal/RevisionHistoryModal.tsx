@@ -5,8 +5,9 @@ import { RevisionHistoryModalProps } from './RevisionHistoryModalProps'
 
 const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = ({
   application,
-  viewControllerManager,
   historyModalController,
+  notesController,
+  subscriptionController,
 }) => {
   if (!historyModalController.showRevisionHistoryModal) {
     return null
@@ -15,8 +16,9 @@ const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = ({
   return (
     <HistoryModalContent
       application={application}
-      viewControllerManager={viewControllerManager}
       historyModalController={historyModalController}
+      notesController={notesController}
+      subscriptionController={subscriptionController}
     />
   )
 }
