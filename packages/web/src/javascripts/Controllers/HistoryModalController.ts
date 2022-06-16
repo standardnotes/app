@@ -125,7 +125,9 @@ export class HistoryModalController extends AbstractViewController {
 
   setShowRevisionHistoryModal = (showRevisionHistoryModal: boolean) => {
     this.showRevisionHistoryModal = showRevisionHistoryModal
-    void this.fetchAllHistory()
+    if (showRevisionHistoryModal) {
+      void this.fetchAllHistory()
+    }
   }
 
   setShowContentLockedScreen = (value: boolean) => {
@@ -146,6 +148,7 @@ export class HistoryModalController extends AbstractViewController {
 
   dismissModal = () => {
     this.setShowRevisionHistoryModal(false)
+    this.clearSelection()
     this.clearAllHistory()
     this.selectTab(RevisionType.Remote)
   }
