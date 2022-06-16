@@ -34,6 +34,13 @@ type SelectedRevision = HistoryEntry | LegacyHistoryEntry | undefined
 
 type SelectedEntry = RevisionListEntry | NoteHistoryEntry | Action | undefined
 
+export enum RevisionContentState {
+  Idle,
+  Loading,
+  Loaded,
+  Locked,
+}
+
 export class HistoryModalController extends AbstractViewController {
   showRevisionHistoryModal = false
 
@@ -43,10 +50,9 @@ export class HistoryModalController extends AbstractViewController {
   legacyHistory: LegacyHistory = []
 
   selectedRevision: SelectedRevision = undefined
-  isFetchingSelectedRevision = false
   selectedEntry: SelectedEntry = undefined
 
-  showContentLockedScreen = false
+  contentState = RevisionContentState.Idle
 
   currentTab = RevisionType.Remote
 
@@ -74,8 +80,6 @@ export class HistoryModalController extends AbstractViewController {
 
       selectedRevision: observable,
       setSelectedRevision: action,
-      isFetchingSelectedRevision: observable,
-      setIsFetchingSelectedRevision: observable,
 
       selectedEntry: observable,
       setSelectedEntry: action,
@@ -96,11 +100,11 @@ export class HistoryModalController extends AbstractViewController {
       currentTab: observable,
       selectTab: action,
 
-      showContentLockedScreen: observable,
-      setShowContentLockedScreen: action,
-
       isDeletingRevision: observable,
       setIsDeletingRevision: action,
+
+      contentState: observable,
+      setContentState: action,
     })
   }
 
@@ -120,6 +124,7 @@ export class HistoryModalController extends AbstractViewController {
   selectTab = (tab: RevisionType) => {
     this.currentTab = tab
     this.clearSelection()
+    this.setContentState(RevisionContentState.Idle)
     this.selectFirstRevision()
   }
 
@@ -130,20 +135,16 @@ export class HistoryModalController extends AbstractViewController {
     }
   }
 
-  setShowContentLockedScreen = (value: boolean) => {
-    this.showContentLockedScreen = value
-  }
-
   setIsFetchingRemoteHistory = (value: boolean) => {
     this.isFetchingRemoteHistory = value
   }
 
-  setIsFetchingSelectedRevision = (value: boolean) => {
-    this.isFetchingSelectedRevision = value
-  }
-
   setIsDeletingRevision = (value: boolean) => {
     this.isDeletingRevision = value
+  }
+
+  setContentState = (contentState: RevisionContentState) => {
+    this.contentState = contentState
   }
 
   dismissModal = () => {
@@ -154,12 +155,10 @@ export class HistoryModalController extends AbstractViewController {
   }
 
   selectRemoteRevision = async (entry: RevisionListEntry) => {
-    this.setShowContentLockedScreen(false)
-
     const note = this.notesController.firstSelectedNote
 
     if (this.application.features.hasMinimumRole(entry.required_role) && note) {
-      this.setIsFetchingSelectedRevision(true)
+      this.setContentState(RevisionContentState.Loading)
       this.clearSelection()
 
       try {
@@ -170,17 +169,17 @@ export class HistoryModalController extends AbstractViewController {
         this.clearSelection()
         console.error(err)
       } finally {
-        this.setIsFetchingSelectedRevision(false)
+        this.setContentState(RevisionContentState.Loaded)
       }
     } else {
-      this.setShowContentLockedScreen(true)
+      this.setContentState(RevisionContentState.Locked)
       this.setSelectedRevision(undefined)
     }
   }
 
   selectLegacyRevision = async (entry: Action) => {
     this.clearSelection()
-    this.setIsFetchingSelectedRevision(true)
+    this.setContentState(RevisionContentState.Loading)
 
     const note = this.notesController.firstSelectedNote
 
@@ -206,7 +205,7 @@ export class HistoryModalController extends AbstractViewController {
       console.error(error)
       this.setSelectedRevision(undefined)
     } finally {
-      this.setIsFetchingSelectedRevision(false)
+      this.setContentState(RevisionContentState.Loaded)
     }
   }
 
