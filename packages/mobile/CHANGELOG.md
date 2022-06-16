@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.23.1-alpha.9 (2022-06-16)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
 ## 3.23.1-alpha.8 (2022-06-15)
 
 **Note:** Version bump only for package @standardnotes/mobile
