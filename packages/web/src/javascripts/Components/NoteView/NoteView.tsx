@@ -1003,7 +1003,6 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                   onLoad={this.onEditorComponentLoad}
                   requestReload={this.editorComponentViewerRequestsReload}
                   application={this.application}
-                  viewControllerManager={this.viewControllerManager}
                 />
               </div>
             )}
@@ -1074,12 +1073,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
               {this.state.stackComponentViewers.map((viewer) => {
                 return (
                   <div className="component-view component-stack-item" key={viewer.identifier}>
-                    <ComponentView
-                      key={viewer.identifier}
-                      componentViewer={viewer}
-                      application={this.application}
-                      viewControllerManager={this.viewControllerManager}
-                    />
+                    <ComponentView key={viewer.identifier} componentViewer={viewer} application={this.application} />
                   </div>
                 )
               })}
