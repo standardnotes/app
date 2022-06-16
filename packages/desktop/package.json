@@ -123,6 +123,7 @@
     "linux": {
       "category": "Office",
       "icon": "build/icon/",
+      "executableName": "Standard Notes",
       "desktop": {
         "StartupWMClass": "standard notes"
       },
