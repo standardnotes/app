@@ -144,7 +144,7 @@ export function setupUpdates(window: BrowserWindow, appState: AppState, backupsM
 }
 
 export function openChangelog(state: UpdateState): void {
-  const url = 'https://github.com/standardnotes/desktop/releases'
+  const url = 'https://github.com/standardnotes/app/releases'
   if (state.latestVersion) {
     void shell.openExternal(`${url}/tag/v${state.latestVersion}`)
   } else {

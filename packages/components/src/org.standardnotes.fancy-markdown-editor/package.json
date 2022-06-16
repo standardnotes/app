@@ -1,11 +1,11 @@
 {
   "name": "@standardnotes/markdown-math",
   "private": true,
-  "version": "1.3.6",
+  "version": "1.3.7-alpha.1",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "compile": "grunt"
+    "components:compile": "grunt"
   },
   "author": "Standard Notes",
   "devDependencies": {

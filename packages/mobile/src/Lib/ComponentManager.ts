@@ -1,5 +1,5 @@
 import { MobileTheme } from '@Root/Style/MobileTheme'
-import FeatureChecksums from '@standardnotes/components/dist/checksums.json'
+import FeatureChecksums from '@standardnotes/components-meta/dist/zips/checksums.json'
 import { FeatureDescription, FeatureIdentifier, GetFeatures } from '@standardnotes/features'
 import {
   ComponentMutator,
@@ -17,7 +17,9 @@ import { Base64 } from 'js-base64'
 import RNFS, { DocumentDirectoryPath } from 'react-native-fs'
 import StaticServer from 'react-native-static-server'
 import { unzip } from 'react-native-zip-archive'
+import { componentsCdn } from '../../package.json'
 import { MobileThemeContent } from '../Style/MobileTheme'
+import { IsDev } from './Utils'
 
 type TFeatureChecksums = {
   [key in FeatureIdentifier]: {
@@ -76,10 +78,19 @@ export class ComponentManager extends SNComponentManager {
     void this.staticServer!.stop()
   }
 
-  public isComponentDownloadable(component: SNComponent): boolean {
+  private downloadUrlForComponent(component: SNComponent): string | undefined {
     const identifier = component.identifier
     const nativeFeature = this.nativeFeatureForIdentifier(identifier)
-    const downloadUrl = nativeFeature?.download_url || component.package_info?.download_url
+    if (nativeFeature) {
+      const cdn = IsDev ? componentsCdn.dev : componentsCdn.prod
+      return `${cdn}/${identifier}.zip`
+    } else {
+      return component.package_info?.download_url
+    }
+  }
+
+  public isComponentDownloadable(component: SNComponent): boolean {
+    const downloadUrl = this.downloadUrlForComponent(component)
     return !!downloadUrl
   }
 
@@ -94,7 +105,7 @@ export class ComponentManager extends SNComponentManager {
   public async doesComponentNeedDownload(component: SNComponent): Promise<boolean> {
     const identifier = component.identifier
     const nativeFeature = this.nativeFeatureForIdentifier(identifier)
-    const downloadUrl = nativeFeature?.download_url || component.package_info?.download_url
+    const downloadUrl = this.downloadUrlForComponent(component)
 
     if (!downloadUrl) {
       throw Error('Attempting to download component with no download url')
@@ -114,8 +125,7 @@ export class ComponentManager extends SNComponentManager {
 
   public async downloadComponentOffline(component: SNComponent): Promise<ComponentLoadingError | undefined> {
     const identifier = component.identifier
-    const nativeFeature = this.nativeFeatureForIdentifier(identifier)
-    const downloadUrl = nativeFeature?.download_url || component.package_info?.download_url
+    const downloadUrl = this.downloadUrlForComponent(component)
 
     if (!downloadUrl) {
       throw Error('Attempting to download component with no download url')

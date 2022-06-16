@@ -1,7 +1,8 @@
 {
   "name": "@standardnotes/advanced-checklist",
-  "version": "0.0.1",
+  "version": "0.0.2-alpha.1",
   "description": "A task editor with grouping functionality.",
+  "author": "Standard Notes.",
   "keywords": [
     "Standard Notes",
     "Standard Notes Extensions"
@@ -14,22 +15,12 @@
   "homepage": ".",
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
-    "start": "react-scripts start",
-    "compile": "react-scripts build",
-    "prepublishOnly": "npm run build",
-    "clean-deploy-cache": "rm -rf node_modules/.cache/gh-pages",
-    "predeploy": "yarn run pretty && yarn run build && yarn clean-deploy-cache",
-    "deploy-build": "yarn run predeploy && gh-pages -b build -d build",
-    "deploy-dev": "yarn run predeploy && gh-pages -b dev -d build",
-    "deploy-stable": "yarn run predeploy && gh-pages -b gh-pages -d build",
-    "custom:test": "react-scripts test --watchAll=false",
+    "start": "react-app-rewired start",
     "test:coverage": "npm run test -- --coverage --watchAll",
     "eject": "react-scripts eject",
-    "serve": "serve -s -p 3000 build",
-    "server-public": "http-server -p 3000 --cors",
-    "server-root": "http-server ./ -p 3000 --cors",
-    "server": "http-server ./build -p 3000 --cors",
-    "compile:lint": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md"
+    "components:compile": "react-app-rewired build",
+    "components:test": "react-app-rewired test --watchAll=false --silent",
+    "components:lint": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md"
   },
   "eslintConfig": {
     "extends": [
@@ -116,6 +107,7 @@
     "node-sass": "*",
     "prettier": "*",
     "react": "17.0.2",
+    "react-app-rewired": "^2.2.1",
     "react-beautiful-dnd": "13.1.0",
     "react-dom": "17.0.2",
     "react-redux": "7.2.8",

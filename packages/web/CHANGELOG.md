@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.22.3-alpha.7 (2022-06-16)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## 3.22.3-alpha.6 (2022-06-15)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.22.3-alpha.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.22.3-alpha.4...@standardnotes/web@3.22.3-alpha.5) (2022-06-15)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.22.3-alpha.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.22.3-alpha.3...@standardnotes/web@3.22.3-alpha.4) (2022-06-15)
+
+**Note:** Version bump only for package @standardnotes/web
+
 ## [3.22.3-alpha.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.22.3-alpha.2...@standardnotes/web@3.22.3-alpha.3) (2022-06-14)
 
 **Note:** Version bump only for package @standardnotes/web

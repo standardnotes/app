@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/markdown-visual",
-  "version": "1.0.7",
+  "version": "1.0.8-alpha.1",
   "author": "Johnny Almonte <johnny@standardnotes.com>",
   "description": "A lightweight WYSIWYG markdown editor for Standard Notes, derived from Milkdown.",
   "keywords": [
@@ -14,10 +14,10 @@
   "homepage": ".",
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
-    "start": "react-scripts start",
-    "compile": "react-scripts build",
+    "start": "react-app-rewired start",
+    "components:compile": "react-app-rewired build",
     "eject": "react-scripts eject",
-    "compile:lint": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md"
+    "components:lint": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md"
   },
   "devDependencies": {
     "@codemirror/lang-markdown": "^0.19.6",
@@ -56,6 +56,7 @@
     "material-icons": "^1.10.8",
     "prettier": "*",
     "react": "^17.0.2",
+    "react-app-rewired": "^2.2.1",
     "react-dom": "^17.0.2",
     "react-icons": "^4.3.1",
     "react-scripts": "^5.0.0",

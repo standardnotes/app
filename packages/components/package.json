@@ -1,7 +1,8 @@
 {
   "name": "@standardnotes/components-meta",
-  "version": "2.1.0-alpha.1",
+  "version": "2.1.0-alpha.13",
   "private": true,
+  "author": "Standard Notes",
   "main": "dist",
   "workspaces": {
     "packages": [
@@ -9,15 +10,18 @@
     ]
   },
   "scripts": {
-    "compile": "yarn compile:lint && yarn compile:all",
-    "compile:lint": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run lint",
-    "compile:all": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run compile"
+    "components:clean": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run components:clean",
+    "components:lint": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run components:lint",
+    "components:test": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run components:test",
+    "components:compile": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run components:compile",
+    "package": "node scripts/package.mjs"
   },
   "devDependencies": {
     "@standardnotes/deterministic-zip": "^1.2.0",
     "@standardnotes/eslint-config-extensions": "^1.0.4",
     "@standardnotes/features": "^1.45.1",
     "mini-css-extract-plugin": "^2.6.0",
+    "minimatch": "^5.1.0",
     "node-sass": "7.0.1",
     "sass": "^1.52.3",
     "webpack": "^5.73.0",

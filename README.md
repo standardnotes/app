@@ -82,14 +82,12 @@ You can then access the app at `http://localhost:3001` (please check Docker cont
 
 ### Running Locally
 
-This repo contains the core code used in the web app, as well as the Electron-based [desktop application](https://github.com/standardnotes/desktop).
-
 **Instructions:**
 
 1. Ensure you have [Yarn](https://classic.yarnpkg.com) installed
-1. Clone the repo
-1. `yarn install`
-1. `yarn start`
+2. Clone the repo
+3. `yarn install`
+4. `yarn start`
 
 Then open your browser to `http://localhost:3001`.
 
@@ -100,14 +98,6 @@ You can also set the `DEFAULT_SYNC_SERVER` environment variable to set the defau
 ```
 DEFAULT_SYNC_SERVER=https://sync.myserver
 ```
-
----
-
-### Other repositories:
-
-- Desktop app: https://github.com/standardnotes/desktop
-- Mobile (iOS & Android): https://github.com/standardnotes/mobile
-- Extensions: https://github.com/sn-extensions
 
 ## Contributing
 

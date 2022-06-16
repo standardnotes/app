@@ -3,6 +3,60 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.1.0-alpha.13 (2022-06-16)
+
+**Note:** Version bump only for package @standardnotes/components-meta
+
+# 2.1.0-alpha.12 (2022-06-15)
+
+**Note:** Version bump only for package @standardnotes/components-meta
+
+# [2.1.0-alpha.11](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.1.0-alpha.10...@standardnotes/components-meta@2.1.0-alpha.11) (2022-06-15)
+
+**Note:** Version bump only for package @standardnotes/components-meta
+
+# [2.1.0-alpha.10](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.1.0-alpha.9...@standardnotes/components-meta@2.1.0-alpha.10) (2022-06-15)
+
+**Note:** Version bump only for package @standardnotes/components-meta
+
+# 2.1.0-alpha.9 (2022-06-15)
+
+**Note:** Version bump only for package @standardnotes/components-meta
+
+# [2.1.0-alpha.8](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.1.0-alpha.7...@standardnotes/components-meta@2.1.0-alpha.8) (2022-06-15)
+
+**Note:** Version bump only for package @standardnotes/components-meta
+
+# [2.1.0-alpha.7](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.1.0-alpha.6...@standardnotes/components-meta@2.1.0-alpha.7) (2022-06-15)
+
+**Note:** Version bump only for package @standardnotes/components-meta
+
+# [2.1.0-alpha.6](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.1.0-alpha.5...@standardnotes/components-meta@2.1.0-alpha.6) (2022-06-15)
+
+### Bug Fixes
+
+* advanced checklist scripts ([#1109](https://github.com/standardnotes/app/issues/1109)) ([f72ac77](https://github.com/standardnotes/app/commit/f72ac77f185020b26a29b558ba7fd15b08e9808b))
+
+# [2.1.0-alpha.5](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.1.0-alpha.4...@standardnotes/components-meta@2.1.0-alpha.5) (2022-06-15)
+
+### Bug Fixes
+
+* tasksLoaded tests ([#1106](https://github.com/standardnotes/app/issues/1106)) ([008452f](https://github.com/standardnotes/app/commit/008452fd86fa78abb7c3e71290ccaad1ac5bc01b))
+
+# [2.1.0-alpha.4](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.1.0-alpha.3...@standardnotes/components-meta@2.1.0-alpha.4) (2022-06-15)
+
+**Note:** Version bump only for package @standardnotes/components-meta
+
+# [2.1.0-alpha.3](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.1.0-alpha.2...@standardnotes/components-meta@2.1.0-alpha.3) (2022-06-15)
+
+**Note:** Version bump only for package @standardnotes/components-meta
+
+# [2.1.0-alpha.2](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.1.0-alpha.1...@standardnotes/components-meta@2.1.0-alpha.2) (2022-06-15)
+
+### Bug Fixes
+
+* override webpack output config for cra based editors ([#1108](https://github.com/standardnotes/app/issues/1108)) ([f076057](https://github.com/standardnotes/app/commit/f076057f4b531bbb2a5ee5d363962026f0be8f90))
+
 # [2.1.0-alpha.1](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.1.0-alpha.0...@standardnotes/components-meta@2.1.0-alpha.1) (2022-06-14)
 
 **Note:** Version bump only for package @standardnotes/components-meta

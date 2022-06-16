@@ -23,6 +23,7 @@ interface AppMenuStrings {
   emailSupport: string
   website: string
   gitHub: string
+  discord: string
   slack: string
   twitter: string
   toggleErrorConsole: string

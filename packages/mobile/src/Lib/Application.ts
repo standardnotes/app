@@ -14,7 +14,7 @@ import {
   SNComponentManager,
 } from '@standardnotes/snjs'
 import { Platform } from 'react-native'
-import VersionInfo from 'react-native-version-info'
+
 import { version } from '../../package.json'
 import { MobileAlertService } from './AlertService'
 import { ApplicationState, UnlockTiming } from './ApplicationState'
@@ -28,6 +28,7 @@ import { PreferencesManager } from './PreferencesManager'
 import { SNReactNativeCrypto } from './ReactNativeCrypto'
 import { ReviewService } from './ReviewService'
 import { StatusManager } from './StatusManager'
+import { IsDev } from './Utils'
 
 type MobileServices = {
   applicationState: ApplicationState
@@ -38,8 +39,6 @@ type MobileServices = {
   statusManager: StatusManager
   filesService: FilesService
 }
-
-const IsDev = VersionInfo.bundleIdentifier?.includes('dev')
 
 export class MobileApplication extends SNApplication {
   private MobileServices!: MobileServices
