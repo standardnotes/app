@@ -1,7 +1,7 @@
 {
   "name": "@standardnotes/markdown-minimal",
   "private": true,
-  "version": "1.3.11",
+  "version": "1.3.12",
   "description": "A minimal Markdown editor for Standard Notes.",
   "main": "dist/dist.js",
   "author": "Standard Notes <hello@standardnotes.org>",

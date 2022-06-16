@@ -1,7 +1,7 @@
 {
   "name": "@standardnotes/spreadsheets",
   "private": true,
-  "version": "1.4.6",
+  "version": "1.4.7",
   "main": "dist/dist.js",
   "scripts": {
     "skip:components:lint": "eslint app/ --ext .js",
