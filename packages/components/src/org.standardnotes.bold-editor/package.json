@@ -1,12 +1,12 @@
 {
   "name": "@standardnotes/bold-editor",
   "private": true,
-  "version": "1.3.5",
+  "version": "1.3.6-alpha.1",
   "main": "dist/dist.js",
   "scripts": {
-    "custom:lint": "eslint app/ --ext .js",
-    "custom:lint:fix": "yarn lint --fix",
-    "compile": "webpack --config webpack.prod.js",
+    "skip:components:lint": "eslint app/ --ext .js",
+    "components:lint:fix": "yarn lint --fix",
+    "components:compile": "webpack --config webpack.prod.js",
     "start": "webpack serve --config webpack.dev.js --progress --hot"
   },
   "sn": {

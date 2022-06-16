@@ -87,14 +87,14 @@ module.exports = function ({ onlyTranspileTypescript = false, experimentalFeatur
             to: 'web',
           },
           {
-            from: '../../node_modules/@standardnotes/components-meta/dist/',
+            from: 'node_modules/@standardnotes/components-meta/dist/',
             to: 'web/components',
           },
           {
             from: 'app/node_modules',
             to: 'node_modules',
             globOptions: {
-              ignore: ['**/standard-notes/**'],
+              ignore: ['**/@standardnotes/inner-desktop/**'],
             },
           },
           {

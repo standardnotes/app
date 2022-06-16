@@ -6,7 +6,7 @@ on:
       - develop
       - main
     paths:
-      - packages/components
+      - packages/components/**
 
 jobs:
   test:
@@ -16,13 +16,23 @@ jobs:
         uses: actions/checkout@v2
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
+
       - name: Install dependencies
         run: yarn install
-      - name: ESLint
-        run: yarn lint
+
+      - name: Lint components
+        run: yarn components:lint
+        working-directory: packages/components
       - name: Compile components
-        run: yarn compile:components
-      - name: Build
+        run: yarn components:compile
+        working-directory: packages/components
+      - name: Test components
+        run: yarn components:test
+        working-directory: packages/components
+
+      - name: Lint all
+        run: yarn lint
+      - name: Build all
         run: yarn build:all
-      - name: Test
+      - name: Test all
         run: yarn test

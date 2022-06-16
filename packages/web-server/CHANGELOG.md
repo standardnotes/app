@@ -3,6 +3,58 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 1.2.7-alpha.20 (2022-06-16)
+
+**Note:** Version bump only for package @standardnotes/web-server
+
+## 1.2.7-alpha.19 (2022-06-15)
+
+**Note:** Version bump only for package @standardnotes/web-server
+
+## [1.2.7-alpha.18](https://github.com/standardnotes/app/compare/@standardnotes/web-server@1.2.7-alpha.17...@standardnotes/web-server@1.2.7-alpha.18) (2022-06-15)
+
+**Note:** Version bump only for package @standardnotes/web-server
+
+## [1.2.7-alpha.17](https://github.com/standardnotes/app/compare/@standardnotes/web-server@1.2.7-alpha.16...@standardnotes/web-server@1.2.7-alpha.17) (2022-06-15)
+
+**Note:** Version bump only for package @standardnotes/web-server
+
+## [1.2.7-alpha.16](https://github.com/standardnotes/app/compare/@standardnotes/web-server@1.2.7-alpha.15...@standardnotes/web-server@1.2.7-alpha.16) (2022-06-15)
+
+**Note:** Version bump only for package @standardnotes/web-server
+
+## [1.2.7-alpha.15](https://github.com/standardnotes/app/compare/@standardnotes/web-server@1.2.7-alpha.14...@standardnotes/web-server@1.2.7-alpha.15) (2022-06-15)
+
+**Note:** Version bump only for package @standardnotes/web-server
+
+## [1.2.7-alpha.14](https://github.com/standardnotes/app/compare/@standardnotes/web-server@1.2.7-alpha.13...@standardnotes/web-server@1.2.7-alpha.14) (2022-06-15)
+
+**Note:** Version bump only for package @standardnotes/web-server
+
+## [1.2.7-alpha.13](https://github.com/standardnotes/app/compare/@standardnotes/web-server@1.2.7-alpha.12...@standardnotes/web-server@1.2.7-alpha.13) (2022-06-15)
+
+**Note:** Version bump only for package @standardnotes/web-server
+
+## [1.2.7-alpha.12](https://github.com/standardnotes/app/compare/@standardnotes/web-server@1.2.7-alpha.11...@standardnotes/web-server@1.2.7-alpha.12) (2022-06-15)
+
+**Note:** Version bump only for package @standardnotes/web-server
+
+## [1.2.7-alpha.11](https://github.com/standardnotes/app/compare/@standardnotes/web-server@1.2.7-alpha.10...@standardnotes/web-server@1.2.7-alpha.11) (2022-06-15)
+
+**Note:** Version bump only for package @standardnotes/web-server
+
+## [1.2.7-alpha.10](https://github.com/standardnotes/app/compare/@standardnotes/web-server@1.2.7-alpha.9...@standardnotes/web-server@1.2.7-alpha.10) (2022-06-15)
+
+**Note:** Version bump only for package @standardnotes/web-server
+
+## [1.2.7-alpha.9](https://github.com/standardnotes/app/compare/@standardnotes/web-server@1.2.7-alpha.8...@standardnotes/web-server@1.2.7-alpha.9) (2022-06-15)
+
+**Note:** Version bump only for package @standardnotes/web-server
+
+## [1.2.7-alpha.8](https://github.com/standardnotes/app/compare/@standardnotes/web-server@1.2.7-alpha.7...@standardnotes/web-server@1.2.7-alpha.8) (2022-06-15)
+
+**Note:** Version bump only for package @standardnotes/web-server
+
 ## [1.2.7-alpha.7](https://github.com/standardnotes/app/compare/@standardnotes/web-server@1.2.7-alpha.6...@standardnotes/web-server@1.2.7-alpha.7) (2022-06-14)
 
 **Note:** Version bump only for package @standardnotes/web-server
