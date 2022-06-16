@@ -53,10 +53,12 @@ jobs:
         id: graduateRelease
         if: ${{ github.ref == 'refs/heads/main' }}
         run: yarn release:prod:graduate
+
       - name: Bump Prod Version Fallback
         if: ${{ always() && github.ref == 'refs/heads/main' && steps.graduateRelease.outcome == 'failure'  }}
         run: |
           echo Falling back to non-graduate release due to https://github.com/lerna/lerna/issues/2532
+          git stash
           yarn release:prod
 
       - name: Bump Beta Version
