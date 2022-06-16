@@ -165,7 +165,7 @@ export const Notes = React.memo(
       let mounted = true
       const removeEditorObserver = application.editorGroup.addActiveControllerChangeObserver(activeEditor => {
         if (mounted) {
-          setSelectedNoteId(activeEditor?.note?.uuid)
+          setSelectedNoteId(activeEditor?.item?.uuid)
         }
       })
 
@@ -361,7 +361,7 @@ export const Notes = React.memo(
             application.getAppState().closeActiveEditor()
           }
         } else {
-          const activeNote = application.getAppState().getActiveNoteController()?.note
+          const activeNote = application.getAppState().getActiveNoteController()?.item
 
           if (activeNote) {
             const isTrashView =
@@ -389,7 +389,7 @@ export const Notes = React.memo(
     const onNoteCreate = useCallback(async () => {
       const title = application.getAppState().isTabletDevice ? `Note ${notes.length + 1}` : undefined
       const noteView = await application.getAppState().createEditor(title)
-      openCompose(true, noteView.note.uuid)
+      openCompose(true, noteView.item.uuid)
       reloadNotes(true)
     }, [application, notes.length, openCompose, reloadNotes])
 

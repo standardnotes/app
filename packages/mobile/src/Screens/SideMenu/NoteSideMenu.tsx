@@ -156,8 +156,8 @@ export const NoteSideMenu = React.memo((props: Props) => {
   useEffect(() => {
     let mounted = true
     if ((!editor || props.drawerOpen) && mounted) {
-      const initialEditor = application.editorGroup.activeNoteViewController
-      const tempNote = initialEditor?.note
+      const initialEditor = application.editorGroup.activeItemViewController as NoteViewController
+      const tempNote = initialEditor?.item
       setEditor(initialEditor)
       setNote(tempNote)
     }
@@ -170,8 +170,8 @@ export const NoteSideMenu = React.memo((props: Props) => {
     let mounted = true
     const removeEditorObserver = application.editorGroup.addActiveControllerChangeObserver(() => {
       if (mounted) {
-        const activeController = application.editorGroup.activeNoteViewController
-        setNote(activeController?.note)
+        const activeController = application.editorGroup.activeItemViewController as NoteViewController
+        setNote(activeController?.item)
         setEditor(activeController)
       }
     })

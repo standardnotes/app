@@ -6,7 +6,7 @@
     "packages": [
       "packages/*",
       "packages/desktop/app",
-      "packages/components/src/*"
+      "packages/components/src/packages/*"
     ]
   },
   "engines": {
@@ -29,7 +29,8 @@
     "release:beta": "lerna version --conventional-prerelease --conventional-commits --yes -m \"chore(release): publish\"",
     "version": "yarn install --no-immutable && git add yarn.lock",
     "postversion": "./scripts/push-tags-one-by-one.sh",
-    "lerna:list": " yarn lerna list -all"
+    "lerna:list": " yarn lerna list -all",
+    "upgrade:snjs": "ncu -u '@standardnotes/*' && yarn workspaces foreach --verbose run ncu -u '@standardnotes/*'"
   },
   "resolutions": {
     "@types/styled-components/@types/react": "17.0.2",
@@ -37,6 +38,9 @@
     "@types/react-native-vector-icons/@types/react": "17.0.2",
     "@types/react-native/@types/react": "17.0.2",
     "@types/hoist-non-react-statics/@types/react": "17.0.2"
+  },
+  "dependencies": {
+    "@standardnotes/snjs": "^2.117.4"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.2",
