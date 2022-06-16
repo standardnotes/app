@@ -271,10 +271,33 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
         return
       }
 
+      await application.deviceInterface.clearRawKeychainValue()
       await appGroup.unloadCurrentAndActivateDescriptor(descriptor)
     },
     [Open, appGroup, application.deviceInterface, getWorkspaceActionConfirmation],
   )
+
+  const addAnotherWorkspace = useCallback(async () => {
+    const confirmed = await getWorkspaceActionConfirmation(AddAnother)
+    if (!confirmed) {
+      return
+    }
+
+    await application.deviceInterface.clearRawKeychainValue()
+    await appGroup.unloadCurrentAndCreateNewDescriptor()
+  }, [AddAnother, appGroup, application.deviceInterface, getWorkspaceActionConfirmation])
+
+  const signOutAllWorkspaces = useCallback(async () => {
+    try {
+      const confirmed = await getWorkspaceActionConfirmation(SignOutAll)
+      if (!confirmed) {
+        return
+      }
+      await appGroup.signOutAllWorkspaces()
+    } catch (error) {
+      console.error(error)
+    }
+  }, [SignOutAll, appGroup, getWorkspaceActionConfirmation])
 
   const getSingleWorkspaceItemOptions = useCallback(
     (descriptor: ApplicationDescriptor) => {
@@ -328,28 +351,6 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
 
     return descriptorItemOptions
   }, [applicationDescriptors, getSingleWorkspaceItemOptions, showActionSheet])
-
-  const addAnotherWorkspace = useCallback(async () => {
-    const confirmed = await getWorkspaceActionConfirmation(AddAnother)
-    if (!confirmed) {
-      return
-    }
-
-    await application.deviceInterface.clearRawKeychainValue()
-    await appGroup.unloadCurrentAndCreateNewDescriptor()
-  }, [AddAnother, appGroup, application.deviceInterface, getWorkspaceActionConfirmation])
-
-  const signOutAllWorkspaces = useCallback(async () => {
-    try {
-      const confirmed = await getWorkspaceActionConfirmation(SignOutAll)
-      if (!confirmed) {
-        return
-      }
-      await appGroup.signOutAllWorkspaces()
-    } catch (error) {
-      console.error(error)
-    }
-  }, [SignOutAll, appGroup, getWorkspaceActionConfirmation])
 
   const handleSwitchWorkspaceClick = useCallback(() => {
     const activeDescriptors = getActiveWorkspaceItems()
