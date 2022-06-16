@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.22.3-alpha.20](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.22.3-alpha.19...@standardnotes/desktop@3.22.3-alpha.20) (2022-06-16)
+
+### Bug Fixes
+
+* desktop output name ([8cf1570](https://github.com/standardnotes/app/commit/8cf1570186fe53f71ae758d268dff9798da82c61))
+
 ## 3.22.3-alpha.19 (2022-06-16)
 
 **Note:** Version bump only for package @standardnotes/desktop
