@@ -84,7 +84,7 @@
   "build": {
     "electronVersion": "17.4.2",
     "appId": "org.standardnotes.standardnotes",
-    "artifactName": "${name}-${version}-${os}-${arch}.${ext}",
+    "artifactName": "standard-notes-${version}-${os}-${arch}.${ext}",
     "afterSign": "scripts/notarizeMac.js",
     "files": [
       "compiled/**/*",
