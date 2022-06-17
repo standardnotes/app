@@ -9,8 +9,10 @@ function sha256(filePath) {
         .on('finish', function () {
           resolve(this.read())
         })
-        .on('error', reject)
-    } catch (error) {}
+        .on('error', resolve(null))
+    } catch (error) {
+      resolve(null)
+    }
   })
 }
 
@@ -71,11 +73,11 @@ process.on('uncaughtException', function (err) {
         }
       }),
     )
+
     hashes = hashes.join('\n')
     await fs.promises.writeFile('dist/SHA256SUMS', hashes)
     console.log(`Successfully wrote SHA256SUMS:\n${hashes}`)
   } catch (err) {
     console.error(err)
-    process.exitCode = 1
   }
 })()
