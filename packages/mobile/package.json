@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/mobile",
-  "version": "3.23.4-alpha.2",
+  "version": "3.23.5",
   "author": "Standard Notes.",
   "private": true,
   "license": "AGPL-3.0-or-later",
@@ -121,8 +121,8 @@
     "preset": "react-native"
   },
   "componentsCdn": {
-    "dev": "https://cdn.jsdelivr.net/gh/standardnotes/app@",
-    "prod": "https://cdn.jsdelivr.net/gh/standardnotes/app@"
+    "dev": "https://app-dev.standardnotes.com/components/zips",
+    "prod": "https://app.standardnotes.com/components/zips"
   },
   "detox": {
     "configurations": {
