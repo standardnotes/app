@@ -19,3 +19,7 @@ export const emptyExistingDir = (dir) => {
     fs.rmSync(dir, { recursive: true })
   }
 }
+
+export const listDirFiles = (dir) => {
+  return fs.readdirSync(dir)
+}

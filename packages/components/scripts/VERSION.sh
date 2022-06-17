@@ -1,3 +1,4 @@
+#!/bin/bash
 
 echo 'Compiling components from' $(pwd)
 
