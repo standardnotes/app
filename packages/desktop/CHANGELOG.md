@@ -10,6 +10,21 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ## [3.22.7](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.22.7-alpha.1...@standardnotes/desktop@3.22.7) (2022-06-17)
 
 **Note:** Version bump only for package @standardnotes/desktop
+## [3.22.7-alpha.4](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.22.7-alpha.3...@standardnotes/desktop@3.22.7-alpha.4) (2022-06-17)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.22.7-alpha.3](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.22.7-alpha.2...@standardnotes/desktop@3.22.7-alpha.3) (2022-06-17)
+
+### Bug Fixes
+
+* **desktop:** provide template version ([66241cb](https://github.com/standardnotes/app/commit/66241cb038753583d61d43bfef44ecdf158ac337))
+
+## [3.22.7-alpha.2](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.22.7-alpha.1...@standardnotes/desktop@3.22.7-alpha.2) (2022-06-17)
+
+### Bug Fixes
+
+* **desktop:** use top level package json for versioning ([93e9701](https://github.com/standardnotes/app/commit/93e97013c113f054b59f5cc27c3ee579448c32cb))
 
 ## [3.22.7-alpha.1](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.22.7-alpha.0...@standardnotes/desktop@3.22.7-alpha.1) (2022-06-17)
 
