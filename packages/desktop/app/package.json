@@ -4,7 +4,6 @@
   "private": true,
   "description": "An end-to-end encrypted notes app for digitalists and professionals.",
   "author": "Standard Notes <help@standardnotes.com>",
-  "version": "3.22.5",
   "main": "./dist/index.js",
   "installConfig": {
     "selfReferences": true

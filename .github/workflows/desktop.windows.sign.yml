@@ -21,7 +21,8 @@ jobs:
       - run: yarn install
       - run: yarn build:desktop
       - run: yarn run webpack --config desktop.webpack.prod.js
-      - run: yarn run electron-builder --windows --x64 --ia32 --publish=never
+      - run: export APP_VERSION=$(node -p "require('./package.json').version")
+      - run: yarn run electron-builder --windows --x64 --ia32 --publish=never --c.extraMetadata.version=$APP_VERSION
 
       - name: Upload
         uses: actions/upload-artifact@v3.0.0
