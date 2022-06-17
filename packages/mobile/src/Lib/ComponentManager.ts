@@ -18,7 +18,7 @@ import { Base64 } from 'js-base64'
 import RNFS, { DocumentDirectoryPath } from 'react-native-fs'
 import StaticServer from 'react-native-static-server'
 import { unzip } from 'react-native-zip-archive'
-import { componentsCdn } from '../../package.json'
+import { componentsCdn, version, name } from '../../package.json'
 import { MobileThemeContent } from '../Style/MobileTheme'
 import { IsDev } from './Utils'
 
@@ -74,12 +74,21 @@ export class ComponentManager extends SNComponentManager {
     void this.staticServer!.stop()
   }
 
+  private cdnUrlForFeature(identifier: FeatureIdentifier): string {
+    const cdn = IsDev ? componentsCdn.dev : componentsCdn.prod
+    const appVersion = version
+    const mobilePackageName = name
+    const tagPath = `${mobilePackageName}@${appVersion}`.replaceAll('@', '%40')
+    const url = `${cdn}${tagPath}/packages/components/dist/zips/${identifier}.zip`
+    this.log('Getting zip from cdn url', url)
+    return url
+  }
+
   private downloadUrlForComponent(component: SNComponent): string | undefined {
     const identifier = component.identifier
     const nativeFeature = this.nativeFeatureForIdentifier(identifier)
     if (nativeFeature) {
-      const cdn = IsDev ? componentsCdn.dev : componentsCdn.prod
-      return `${cdn}/${identifier}.zip`
+      return this.cdnUrlForFeature(identifier)
     } else {
       return component.package_info?.download_url
     }
