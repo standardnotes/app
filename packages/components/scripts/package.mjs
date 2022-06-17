@@ -138,7 +138,7 @@ const packageFeature = async ({ feature, noZip }) => {
 }
 
 await (async () => {
-  const args = process.argv[2]
+  const args = process.argv[2] || ''
   const noZip = args.includes('--no-zip')
 
   const featuresToProcess = GetFeatures().concat(GetDeprecatedFeatures())
