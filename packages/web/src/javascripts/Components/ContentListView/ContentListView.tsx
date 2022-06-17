@@ -75,7 +75,7 @@ const ContentListView: FunctionComponent<Props> = ({ application, viewController
      * use Control modifier as well. These rules don't apply to desktop, but
      * probably better to be consistent.
      */
-    const newNoteKeyObserver = application.io.addKeyObserver({
+    const disposeNewNoteKeyObserver = application.io.addKeyObserver({
       key: 'n',
       modifiers: [KeyboardModifier.Meta, KeyboardModifier.Ctrl],
       onKeyDown: (event) => {
@@ -84,7 +84,7 @@ const ContentListView: FunctionComponent<Props> = ({ application, viewController
       },
     })
 
-    const nextNoteKeyObserver = application.io.addKeyObserver({
+    const disposeNextNoteKeyObserver = application.io.addKeyObserver({
       key: KeyboardKey.Down,
       elements: [document.body, ...(searchBarElement ? [searchBarElement] : [])],
       onKeyDown: () => {
@@ -95,7 +95,7 @@ const ContentListView: FunctionComponent<Props> = ({ application, viewController
       },
     })
 
-    const previousNoteKeyObserver = application.io.addKeyObserver({
+    const disposePreviousNoteKeyObserver = application.io.addKeyObserver({
       key: KeyboardKey.Up,
       element: document.body,
       onKeyDown: () => {
@@ -103,7 +103,7 @@ const ContentListView: FunctionComponent<Props> = ({ application, viewController
       },
     })
 
-    const searchKeyObserver = application.io.addKeyObserver({
+    const disposeSearchKeyObserver = application.io.addKeyObserver({
       key: 'f',
       modifiers: [KeyboardModifier.Meta, KeyboardModifier.Shift],
       onKeyDown: () => {
@@ -113,11 +113,27 @@ const ContentListView: FunctionComponent<Props> = ({ application, viewController
       },
     })
 
+    const disposeSelectAllKeyObserver = application.io.addKeyObserver({
+      key: 'a',
+      modifiers: [KeyboardModifier.Ctrl],
+      onKeyDown: (event) => {
+        const elementsToIgnore = ['INPUT', 'TEXTAREA']
+
+        if (elementsToIgnore.includes((event.target as HTMLElement).tagName)) {
+          return
+        }
+
+        event.preventDefault()
+        selectionController.selectAll()
+      },
+    })
+
     return () => {
-      newNoteKeyObserver()
-      nextNoteKeyObserver()
-      previousNoteKeyObserver()
-      searchKeyObserver()
+      disposeNewNoteKeyObserver()
+      disposeNextNoteKeyObserver()
+      disposePreviousNoteKeyObserver()
+      disposeSearchKeyObserver()
+      disposeSelectAllKeyObserver()
     }
   }, [addNewItem, application.io, createNewNote, searchBarElement, selectNextItem, selectPreviousItem])
 
