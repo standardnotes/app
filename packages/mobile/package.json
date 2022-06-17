@@ -121,8 +121,8 @@
     "preset": "react-native"
   },
   "componentsCdn": {
-    "dev": "https://app-dev.standardnotes.com/components/zips",
-    "prod": "https://app.standardnotes.com/components/zips"
+    "dev": "https://cdn.jsdelivr.net/gh/standardnotes/app@",
+    "prod": "https://cdn.jsdelivr.net/gh/standardnotes/app@"
   },
   "detox": {
     "configurations": {
