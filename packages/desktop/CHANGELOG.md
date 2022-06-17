@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.22.7-alpha.3](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.22.7-alpha.2...@standardnotes/desktop@3.22.7-alpha.3) (2022-06-17)
+
+### Bug Fixes
+
+* **desktop:** provide template version ([66241cb](https://github.com/standardnotes/app/commit/66241cb038753583d61d43bfef44ecdf158ac337))
+
 ## [3.22.7-alpha.2](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.22.7-alpha.1...@standardnotes/desktop@3.22.7-alpha.2) (2022-06-17)
 
 ### Bug Fixes
