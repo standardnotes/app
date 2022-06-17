@@ -154,7 +154,10 @@ jobs:
         with:
           name: assets
           path: packages/desktop/dist
-      - run: node scripts/sums.mjs
+
+      - name: Generate Checksums
+        run: node scripts/sums.mjs
+
       - name: get-npm-version
         id: package-version
         uses: martinbeentjes/npm-get-version-action@main

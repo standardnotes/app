@@ -1,23 +1,38 @@
 import crypto from 'crypto'
 import fs from 'fs'
+import path from 'path'
+
+import { fileURLToPath } from 'url'
+const __filename = fileURLToPath(import.meta.url)
+const ScriptsDir = path.dirname(__filename)
+
+import { doesFileExist } from '../../../scripts/ScriptUtils.mjs'
 
 function sha256(filePath) {
-  return new Promise((resolve, reject) => {
+  if (!doesFileExist(filePath)) {
+    console.log('Attempting to hash non-existing file', filePath)
+    return null
+  }
+
+  return new Promise((resolve) => {
     try {
       fs.createReadStream(filePath)
         .pipe(crypto.createHash('sha256').setEncoding('hex'))
         .on('finish', function () {
           resolve(this.read())
         })
-        .on('error', resolve(null))
+        .on('error', function () {
+          resolve(null)
+        })
     } catch (error) {
+      console.log('Error reading file', error)
       resolve(null)
     }
   })
 }
 
 async function getFileNames() {
-  const packageJson = await fs.promises.readFile('./package.json')
+  const packageJson = await fs.promises.readFile(path.join(ScriptsDir, '../package.json'))
   const version = JSON.parse(packageJson).version
   return [
     `standard-notes-${version}-mac-x64.zip`,
@@ -64,18 +79,20 @@ process.on('uncaughtException', function (err) {
 
     let hashes = await Promise.all(
       files.map(async (fileName) => {
+        const filePath = path.join(ScriptsDir, `../dist/${fileName}`)
         try {
-          const hash = await sha256(`dist/${fileName}`)
-          return `${hash}  ${fileName}`
+          const hash = await sha256(filePath)
+          const entry = `${hash}  ${fileName}`
+          return entry
         } catch (error) {
-          console.error('Unable to hash file', fileName)
+          console.error('Unable to hash file', filePath)
           return null
         }
       }),
     )
 
     hashes = hashes.join('\n')
-    await fs.promises.writeFile('dist/SHA256SUMS', hashes)
+    await fs.promises.writeFile(path.join(ScriptsDir, '../dist/SHA256SUMS'), hashes)
     console.log(`Successfully wrote SHA256SUMS:\n${hashes}`)
   } catch (err) {
     console.error(err)

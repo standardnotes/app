@@ -8,6 +8,8 @@ import zip from '@standardnotes/deterministic-zip'
 import minimatch from 'minimatch'
 
 import { fileURLToPath } from 'url'
+import { ensureDirExists, doesDirExist, emptyExistingDir } from '../../../scripts/ScriptUtils.mjs'
+
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
@@ -63,22 +65,6 @@ const copyFileOrDir = (src, dest, exludedFilesGlob) => {
       return
     }
     fs.copyFileSync(src, dest)
-  }
-}
-
-const doesDirExist = (dir) => {
-  return fs.existsSync(dir)
-}
-
-const ensureDirExists = (dir) => {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true })
-  }
-}
-
-const emptyExistingDir = (dir) => {
-  if (fs.existsSync(dir)) {
-    fs.rmSync(dir, { recursive: true })
   }
 }
 
