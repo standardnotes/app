@@ -15,7 +15,8 @@
     "components:lint": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run components:lint",
     "components:test": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run components:test",
     "components:compile": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run components:compile",
-    "package": "node scripts/package.mjs"
+    "package": "node scripts/package.mjs",
+    "version": "./scripts/VERSION.sh"
   },
   "devDependencies": {
     "@standardnotes/deterministic-zip": "^1.2.0",
