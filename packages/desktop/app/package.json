@@ -1,5 +1,6 @@
 {
   "name": "@standardnotes/inner-desktop",
+  "version": "0.0.1",
   "productName": "Standard Notes",
   "private": true,
   "description": "An end-to-end encrypted notes app for digitalists and professionals.",
