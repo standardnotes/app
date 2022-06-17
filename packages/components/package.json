@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/components-meta",
-  "version": "2.1.2",
+  "version": "2.1.3-alpha.0",
   "private": true,
   "author": "Standard Notes",
   "main": "dist",
