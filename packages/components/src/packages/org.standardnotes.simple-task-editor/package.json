@@ -41,7 +41,7 @@
     "validate-commit-msg": "2.x",
     "webpack": "*",
     "webpack-cli": "*",
-    "webpack-dev-server": "3.11.2",
+    "webpack-dev-server": "*",
     "webpack-merge": "5.7.3"
   }
 }
