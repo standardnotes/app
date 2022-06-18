@@ -15,11 +15,6 @@ const __dirname = path.dirname(__filename)
 
 console.log('Beginning packaging procedure...')
 
-const specificFeatureIdentifier = process.argv[2]
-if (specificFeatureIdentifier) {
-  console.log('Processing only', specificFeatureIdentifier)
-}
-
 const SourceFilesPath = path.join(__dirname, '../src/packages')
 const DistDir = path.join(__dirname, '../dist')
 const TmpDir = path.join(__dirname, '../tmp')
@@ -108,13 +103,18 @@ const computeChecksum = async (zipPath, version) => {
   }
 }
 
-const zipAndChecksumFeature = async (feature) => {
+const packageFeature = async ({ feature, noZip }) => {
   console.log('Processing feature', feature.identifier, '...')
 
   const assetsLocation = `${path.join(AssetsDir, feature.identifier)}`
   const assetsSuccess = await copyComponentAssets(feature, assetsLocation, '**/package.json')
   if (!assetsSuccess) {
     console.log('Failed to copy assets for', feature.identifier)
+    return
+  }
+
+  if (noZip) {
+    console.log('Input arg noZip detected; not zipping asset.')
     return
   }
 
@@ -138,9 +138,10 @@ const zipAndChecksumFeature = async (feature) => {
 }
 
 await (async () => {
-  const featuresToProcess = specificFeatureIdentifier
-    ? [GetFeatures().find((feature) => feature.identifier === specificFeatureIdentifier)]
-    : GetFeatures().concat(GetDeprecatedFeatures())
+  const args = process.argv[2] || ''
+  const noZip = args.includes('--no-zip')
+
+  const featuresToProcess = GetFeatures().concat(GetDeprecatedFeatures())
 
   let index = 0
   for (const feature of featuresToProcess) {
@@ -149,7 +150,7 @@ await (async () => {
     }
 
     if (['SN|Component', 'SN|Theme'].includes(feature.content_type)) {
-      await zipAndChecksumFeature(feature)
+      await packageFeature({ feature, noZip })
     } else {
       console.log('Feature is not component, not packaging', feature.identifier)
     }

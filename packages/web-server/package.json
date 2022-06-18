@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/web-server",
-  "version": "1.2.10-alpha.1",
+  "version": "1.2.12-alpha.0",
   "license": "AGPL-3.0-or-later",
   "private": true,
   "author": "Standard Notes.",
@@ -11,8 +11,8 @@
   "scripts": {
     "start": "bundle exec rails s -b 0.0.0.0",
     "start:no-binding": "bundle exec rails s",
-    "build:components": "cp -r ../../node_modules/@standardnotes/components-meta/dist/. public/components/",
-    "build": "bundle install && yarn build:components && bundle exec rails assets:precompile"
+    "copy:components": "cp -r ../../node_modules/@standardnotes/components-meta/dist/assets/. public/components/assets/",
+    "build": "bundle install && yarn copy:components && bundle exec rails assets:precompile"
   },
   "dependencies": {
     "@standardnotes/components-meta": "workspace:*",
