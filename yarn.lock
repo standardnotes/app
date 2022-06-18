@@ -5438,14 +5438,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/icons@npm:^1.1.8":
-  version: 1.1.8
-  resolution: "@standardnotes/icons@npm:1.1.8"
-  checksum: 9886a74e07743b2e0588d631bacee108cd7fd2be70f322a7e26bf1f473f3496ebbed1fa6b0b246d05c1090c0cb137ef28823d14553b59aa83688ddf6168dd84c
-  languageName: node
-  linkType: hard
-
-"@standardnotes/icons@workspace:*, @standardnotes/icons@workspace:packages/icons":
+"@standardnotes/icons@^1.1.8, @standardnotes/icons@workspace:*, @standardnotes/icons@workspace:packages/icons":
   version: 0.0.0-use.local
   resolution: "@standardnotes/icons@workspace:packages/icons"
   dependencies:

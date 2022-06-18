@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.6](https://github.com/standardnotes/app/compare/@standardnotes/markdown-basic@1.4.6-alpha.0...@standardnotes/markdown-basic@1.4.6) (2022-06-18)
+
+**Note:** Version bump only for package @standardnotes/markdown-basic
+
 ## [1.4.6-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/markdown-basic@1.4.5...@standardnotes/markdown-basic@1.4.6-alpha.0) (2022-06-18)
 
 ### Bug Fixes
