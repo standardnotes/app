@@ -216,34 +216,18 @@ const NotesOptions = ({
     }
   }, [application])
 
-  const noteTitleIndices = useMemo(() => {
-    const indices: Record<string, string[]> = {}
-
-    notes.forEach((note) => {
-      if (!indices[note.title]) {
-        indices[note.title] = [note.uuid]
-      } else {
-        indices[note.title].push(note.uuid)
-      }
-    })
-
-    return indices
-  }, [notes])
-
-  const getIndexedNoteFileName = useCallback(
+  const getNoteFileName = useCallback(
     (note: SNNote): string => {
-      const currentNoteIndex = noteTitleIndices[note.title].indexOf(note.uuid)
-
       const editor = application.componentManager.editorForNote(note)
       const format = editor?.package_info?.file_type || 'txt'
-      return `${note.title}${currentNoteIndex > 0 ? '-' + currentNoteIndex : ''}.${format}`
+      return `${note.title}.${format}`
     },
-    [application.componentManager, noteTitleIndices],
+    [application.componentManager],
   )
 
   const downloadSelectedItems = useCallback(async () => {
     if (notes.length === 1) {
-      application.getArchiveService().downloadData(new Blob([notes[0].text]), getIndexedNoteFileName(notes[0]))
+      application.getArchiveService().downloadData(new Blob([notes[0].text]), getNoteFileName(notes[0]))
       return
     }
 
@@ -255,8 +239,9 @@ const NotesOptions = ({
       await application.getArchiveService().downloadDataAsZip(
         notes.map((note) => {
           return {
-            filename: getIndexedNoteFileName(note),
+            filename: getNoteFileName(note),
             content: new Blob([note.text]),
+            uuid: note.uuid,
           }
         }),
       )
@@ -266,7 +251,7 @@ const NotesOptions = ({
         message: `Exported ${notes.length} notes`,
       })
     }
-  }, [application, getIndexedNoteFileName, notes])
+  }, [application, getNoteFileName, notes])
 
   const duplicateSelectedItems = useCallback(() => {
     notes.forEach((note) => {

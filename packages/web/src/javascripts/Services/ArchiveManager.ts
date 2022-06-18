@@ -22,6 +22,7 @@ function zippableFileName(name: string, suffix = '', format = 'txt'): string {
 type ZippableData = {
   filename: string
   content: Blob
+  uuid: string
 }[]
 
 type ObjectURL = string
@@ -119,9 +120,25 @@ export class ArchiveManager {
     const zip = await import('@zip.js/zip.js')
     const writer = new zip.ZipWriter(new zip.BlobWriter('application/zip'))
 
+    const filenameIndices: Record<string, string[]> = {}
+
     for (let i = 0; i < data.length; i++) {
-      const { name, ext } = parseFileName(data[i].filename)
-      await writer.add(zippableFileName(name, '', ext), new zip.BlobReader(data[i].content))
+      const file = data[i]
+
+      const { name, ext } = parseFileName(file.filename)
+
+      if (!filenameIndices[file.filename]) {
+        filenameIndices[file.filename] = [file.uuid]
+      } else {
+        filenameIndices[file.filename].push(file.uuid)
+      }
+
+      const currentFileNameIndex = filenameIndices[file.filename].indexOf(file.uuid)
+
+      await writer.add(
+        zippableFileName(name, currentFileNameIndex > 0 ? ` - ${currentFileNameIndex}` : '', ext),
+        new zip.BlobReader(file.content),
+      )
     }
 
     const zipFileAsBlob = await writer.close()
