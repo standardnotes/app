@@ -145,7 +145,9 @@ const ContentListView: FunctionComponent<Props> = ({
       key: 'a',
       modifiers: [KeyboardModifier.Ctrl],
       onKeyDown: (event) => {
-        if (!(event.target as HTMLElement).closest(`#${ElementIds.ContentList}`)) {
+        const isTargetInsideContentList = (event.target as HTMLElement).closest(`#${ElementIds.ContentList}`)
+
+        if (!isTargetInsideContentList) {
           return
         }
 
