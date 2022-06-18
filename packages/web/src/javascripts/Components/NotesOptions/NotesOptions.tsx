@@ -222,7 +222,7 @@ const NotesOptions = ({
       const format = editor?.package_info?.file_type || 'txt'
       return `${note.title}.${format}`
     },
-    [application],
+    [application.componentManager],
   )
 
   const downloadSelectedItems = useCallback(async () => {
@@ -239,7 +239,7 @@ const NotesOptions = ({
       await application.getArchiveService().downloadDataAsZip(
         notes.map((note) => {
           return {
-            filename: getNoteFileName(note),
+            name: getNoteFileName(note),
             content: new Blob([note.text]),
           }
         }),
