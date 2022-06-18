@@ -20,7 +20,7 @@ import { SyncStatusController } from '../Controllers/SyncStatusController'
 import { NavigationController } from '../Controllers/Navigation/NavigationController'
 import { FilePreviewModalController } from '../Controllers/FilePreviewModalController'
 import { SelectedItemsController } from '../Controllers/SelectedItemsController'
-import { HistoryModalController } from '../Controllers/HistoryModalController'
+import { HistoryModalController } from '../Controllers/NoteHistory/HistoryModalController'
 
 export class ViewControllerManager {
   readonly enableUnfinishedFeatures: boolean = window?.enabledUnfinishedFeatures
@@ -103,7 +103,7 @@ export class ViewControllerManager {
       this.eventBus,
     )
 
-    this.historyModalController = new HistoryModalController(this.application, this.eventBus, this.selectionController)
+    this.historyModalController = new HistoryModalController(this.application, this.eventBus)
 
     this.addAppEventObserver()
 

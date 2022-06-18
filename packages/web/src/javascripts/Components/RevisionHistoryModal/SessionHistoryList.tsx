@@ -1,15 +1,15 @@
 import { Fragment, FunctionComponent, useMemo, useRef } from 'react'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import HistoryListItem from './HistoryListItem'
-import { HistoryModalController } from '@/Controllers/HistoryModalController'
 import { observer } from 'mobx-react-lite'
+import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
 
 type Props = {
-  historyModalController: HistoryModalController
+  noteHistoryController: NoteHistoryController
 }
 
-const SessionHistoryList: FunctionComponent<Props> = ({ historyModalController }) => {
-  const { sessionHistory, selectedRevision, selectSessionRevision } = historyModalController
+const SessionHistoryList: FunctionComponent<Props> = ({ noteHistoryController }) => {
+  const { sessionHistory, selectedRevision, selectSessionRevision } = noteHistoryController
 
   const sessionHistoryListRef = useRef<HTMLDivElement>(null)
 

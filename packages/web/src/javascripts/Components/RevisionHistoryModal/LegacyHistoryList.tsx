@@ -2,15 +2,15 @@ import { Action } from '@standardnotes/snjs'
 import { FunctionComponent, useRef } from 'react'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import HistoryListItem from './HistoryListItem'
-import { HistoryModalController } from '@/Controllers/HistoryModalController'
+import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
 
 type Props = {
   legacyHistory: Action[] | undefined
-  historyModalController: HistoryModalController
+  noteHistoryController: NoteHistoryController
 }
 
-const LegacyHistoryList: FunctionComponent<Props> = ({ legacyHistory, historyModalController }) => {
-  const { selectLegacyRevision, selectedEntry } = historyModalController
+const LegacyHistoryList: FunctionComponent<Props> = ({ legacyHistory, noteHistoryController }) => {
+  const { selectLegacyRevision, selectedEntry } = noteHistoryController
 
   const legacyHistoryListRef = useRef<HTMLDivElement>(null)
 

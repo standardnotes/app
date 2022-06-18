@@ -13,7 +13,7 @@ import { NavigationController } from '@/Controllers/Navigation/NavigationControl
 import { NotesController } from '@/Controllers/NotesController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import { NoteTagsController } from '@/Controllers/NoteTagsController'
-import { HistoryModalController } from '@/Controllers/HistoryModalController'
+import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalController'
 
 type Props = {
   application: WebApplication

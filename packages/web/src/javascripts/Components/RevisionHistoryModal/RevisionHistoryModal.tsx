@@ -8,9 +8,10 @@ const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = ({
   application,
   historyModalController,
   notesController,
+  selectionController,
   subscriptionController,
 }) => {
-  if (!historyModalController.showRevisionHistoryModal) {
+  if (!historyModalController.note) {
     return null
   }
 
@@ -18,9 +19,10 @@ const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = ({
     <HistoryModalDialog onDismiss={historyModalController.dismissModal}>
       <HistoryModalDialogContent
         application={application}
-        historyModalController={historyModalController}
+        dismissModal={historyModalController.dismissModal}
         note={historyModalController.note}
         notesController={notesController}
+        selectionController={selectionController}
         subscriptionController={subscriptionController}
       />
     </HistoryModalDialog>

@@ -1,25 +1,25 @@
 import RevisionContentLocked from './RevisionContentLocked'
 import SelectedRevisionContent from './SelectedRevisionContent'
-import { HistoryModalController, RevisionContentState } from '@/Controllers/HistoryModalController'
 import { observer } from 'mobx-react-lite'
 import { WebApplication } from '@/Application/Application'
 import { NotesController } from '@/Controllers/NotesController'
 import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
+import { NoteHistoryController, RevisionContentState } from '@/Controllers/NoteHistory/NoteHistoryController'
 
 type Props = {
   application: WebApplication
-  historyModalController: HistoryModalController
+  noteHistoryController: NoteHistoryController
   notesController: NotesController
   subscriptionController: SubscriptionController
 }
 
 const HistoryModalContentPane = ({
   application,
-  historyModalController,
+  noteHistoryController,
   notesController,
   subscriptionController,
 }: Props) => {
-  const { contentState } = historyModalController
+  const { contentState } = noteHistoryController
 
   switch (contentState) {
     case RevisionContentState.Idle:
@@ -37,7 +37,7 @@ const HistoryModalContentPane = ({
         <SelectedRevisionContent
           application={application}
           notesController={notesController}
-          historyModalController={historyModalController}
+          noteHistoryController={noteHistoryController}
         />
       )
     case RevisionContentState.NotEntitled:

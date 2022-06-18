@@ -13,15 +13,13 @@ import {
   ActionVerb,
   ButtonType,
   HistoryEntry,
-  InternalEventBus,
   NoteHistoryEntry,
   PayloadEmitSource,
   RevisionListEntry,
   SNNote,
 } from '@standardnotes/snjs'
-import { action, makeObservable, observable } from 'mobx'
-import { AbstractViewController } from './Abstract/AbstractViewController'
-import { SelectedItemsController } from './SelectedItemsController'
+import { makeObservable, observable, action } from 'mobx'
+import { SelectedItemsController } from '../SelectedItemsController'
 
 type RemoteHistory = RemoteRevisionListGroup[]
 
@@ -40,11 +38,7 @@ export enum RevisionContentState {
   NotEntitled,
 }
 
-export class HistoryModalController extends AbstractViewController {
-  showRevisionHistoryModal = false
-
-  note?: SNNote = undefined
-
+export class NoteHistoryController {
   remoteHistory: RemoteHistory = []
   isFetchingRemoteHistory = false
   sessionHistory: SessionHistory = []
@@ -57,27 +51,14 @@ export class HistoryModalController extends AbstractViewController {
 
   currentTab = RevisionType.Remote
 
-  isDeletingRevision = false
-
-  override deinit(): void {
-    super.deinit()
-    this.clearSelection()
-    this.resetHistoryState()
-    this.note = undefined
-    ;(this.selectionController as unknown) = undefined
-  }
-
   constructor(
-    application: WebApplication,
-    eventBus: InternalEventBus,
+    private application: WebApplication,
+    private note: SNNote,
     private selectionController: SelectedItemsController,
   ) {
-    super(application, eventBus)
+    void this.fetchAllHistory()
 
     makeObservable(this, {
-      showRevisionHistoryModal: observable,
-      setShowRevisionHistoryModal: action,
-
       selectedRevision: observable,
       setSelectedRevision: action,
 
@@ -99,9 +80,6 @@ export class HistoryModalController extends AbstractViewController {
 
       currentTab: observable,
       selectTab: action,
-
-      isDeletingRevision: observable,
-      setIsDeletingRevision: action,
 
       contentState: observable,
       setContentState: action,
@@ -128,35 +106,12 @@ export class HistoryModalController extends AbstractViewController {
     this.selectFirstRevision()
   }
 
-  setShowRevisionHistoryModal = (showRevisionHistoryModal: boolean) => {
-    this.showRevisionHistoryModal = showRevisionHistoryModal
-    if (showRevisionHistoryModal) {
-      void this.fetchAllHistory()
-    }
-  }
-
   setIsFetchingRemoteHistory = (value: boolean) => {
     this.isFetchingRemoteHistory = value
   }
 
-  setIsDeletingRevision = (value: boolean) => {
-    this.isDeletingRevision = value
-  }
-
   setContentState = (contentState: RevisionContentState) => {
     this.contentState = contentState
-  }
-
-  openModal = (note: SNNote | undefined) => {
-    this.note = note
-    this.setShowRevisionHistoryModal(true)
-  }
-
-  dismissModal = () => {
-    this.setShowRevisionHistoryModal(false)
-    this.clearSelection()
-    this.resetHistoryState()
-    this.selectTab(RevisionType.Remote)
   }
 
   selectRemoteRevision = async (entry: RevisionListEntry) => {
@@ -373,7 +328,6 @@ export class HistoryModalController extends AbstractViewController {
         true,
         PayloadEmitSource.RemoteRetrieved,
       )
-      this.dismissModal()
     }
   }
 
@@ -386,8 +340,6 @@ export class HistoryModalController extends AbstractViewController {
     })
 
     this.selectionController.selectItem(duplicatedItem.uuid).catch(console.error)
-
-    this.dismissModal()
   }
 
   deleteRemoteRevision = async (revisionEntry: RevisionListEntry) => {
@@ -403,8 +355,6 @@ export class HistoryModalController extends AbstractViewController {
       return
     }
 
-    this.setIsDeletingRevision(true)
-
     const response = await this.application.historyManager.deleteRemoteRevision(this.note, revisionEntry)
 
     if (response.error?.message) {
@@ -416,7 +366,5 @@ export class HistoryModalController extends AbstractViewController {
     this.selectPrevOrNextRemoteRevision(revisionEntry)
 
     await this.fetchRemoteHistory()
-
-    this.setIsDeletingRevision(false)
   }
 }

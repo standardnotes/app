@@ -10,7 +10,7 @@ import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { NotesController } from '@/Controllers/NotesController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { NoteTagsController } from '@/Controllers/NoteTagsController'
-import { HistoryModalController } from '@/Controllers/HistoryModalController'
+import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalController'
 
 type Props = {
   application: WebApplication

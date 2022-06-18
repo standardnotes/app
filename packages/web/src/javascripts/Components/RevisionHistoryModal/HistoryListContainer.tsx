@@ -1,4 +1,4 @@
-import { HistoryModalController } from '@/Controllers/HistoryModalController'
+import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
 import { FeaturesClientInterface } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
@@ -9,11 +9,11 @@ import SessionHistoryList from './SessionHistoryList'
 
 type Props = {
   features: FeaturesClientInterface
-  historyModalController: HistoryModalController
+  noteHistoryController: NoteHistoryController
 }
 
-const HistoryListContainer: FunctionComponent<Props> = ({ features, historyModalController }) => {
-  const { legacyHistory, currentTab, selectTab } = historyModalController
+const HistoryListContainer: FunctionComponent<Props> = ({ features, noteHistoryController }) => {
+  const { legacyHistory, currentTab, selectTab } = noteHistoryController
 
   const TabButton: FunctionComponent<{
     type: RevisionType
@@ -37,11 +37,11 @@ const HistoryListContainer: FunctionComponent<Props> = ({ features, historyModal
   const CurrentTabList = () => {
     switch (currentTab) {
       case RevisionType.Remote:
-        return <RemoteHistoryList features={features} historyModalController={historyModalController} />
+        return <RemoteHistoryList features={features} noteHistoryController={noteHistoryController} />
       case RevisionType.Session:
-        return <SessionHistoryList historyModalController={historyModalController} />
+        return <SessionHistoryList noteHistoryController={noteHistoryController} />
       case RevisionType.Legacy:
-        return <LegacyHistoryList legacyHistory={legacyHistory} historyModalController={historyModalController} />
+        return <LegacyHistoryList legacyHistory={legacyHistory} noteHistoryController={noteHistoryController} />
     }
   }
 

@@ -4,16 +4,16 @@ import Icon from '@/Components/Icon/Icon'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import HistoryListItem from './HistoryListItem'
 import { previewHistoryEntryTitle } from './utils'
-import { HistoryModalController } from '@/Controllers/HistoryModalController'
 import { FeaturesClientInterface, RevisionListEntry } from '@standardnotes/snjs/dist/@types'
+import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
 
 type RemoteHistoryListProps = {
   features: FeaturesClientInterface
-  historyModalController: HistoryModalController
+  noteHistoryController: NoteHistoryController
 }
 
-const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({ features, historyModalController }) => {
-  const { remoteHistory, isFetchingRemoteHistory, selectRemoteRevision, selectedEntry } = historyModalController
+const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({ features, noteHistoryController }) => {
+  const { remoteHistory, isFetchingRemoteHistory, selectRemoteRevision, selectedEntry } = noteHistoryController
 
   const remoteHistoryListRef = useRef<HTMLDivElement>(null)
 

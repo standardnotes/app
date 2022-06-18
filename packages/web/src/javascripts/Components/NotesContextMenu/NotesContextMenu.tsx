@@ -7,7 +7,7 @@ import { WebApplication } from '@/Application/Application'
 import { NotesController } from '@/Controllers/NotesController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { NoteTagsController } from '@/Controllers/NoteTagsController'
-import { HistoryModalController } from '@/Controllers/HistoryModalController'
+import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalController'
 
 type Props = {
   application: WebApplication

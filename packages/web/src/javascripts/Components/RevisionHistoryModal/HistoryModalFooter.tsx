@@ -1,49 +1,48 @@
-import { HistoryModalController } from '@/Controllers/HistoryModalController'
+import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
 import { RevisionListEntry } from '@standardnotes/snjs/dist/@types'
 import { observer } from 'mobx-react-lite'
-import { RefObject, useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import Button from '../Button/Button'
 
 type Props = {
-  historyModalController: HistoryModalController
-  closeButtonRef: RefObject<HTMLButtonElement>
+  dismissModal: () => void
+  noteHistoryController: NoteHistoryController
 }
 
-const HistoryModalFooter = ({ historyModalController, closeButtonRef }: Props) => {
-  const {
-    dismissModal,
-    selectedRevision,
-    selectedEntry,
-    restoreRevision,
-    restoreRevisionAsCopy,
-    deleteRemoteRevision,
-    isDeletingRevision,
-  } = historyModalController
+const HistoryModalFooter = ({ dismissModal, noteHistoryController }: Props) => {
+  const { selectedRevision, restoreRevision, restoreRevisionAsCopy, selectedEntry, deleteRemoteRevision } =
+    noteHistoryController
+
+  const [isDeletingRevision, setIsDeletingRevision] = useState(false)
 
   const restoreSelectedRevision = useCallback(() => {
     if (selectedRevision) {
       restoreRevision(selectedRevision)
+      dismissModal()
     }
-  }, [restoreRevision, selectedRevision])
+  }, [dismissModal, restoreRevision, selectedRevision])
 
   const restoreAsCopy = useCallback(async () => {
     if (selectedRevision) {
       void restoreRevisionAsCopy(selectedRevision)
+      dismissModal()
     }
-  }, [restoreRevisionAsCopy, selectedRevision])
+  }, [dismissModal, restoreRevisionAsCopy, selectedRevision])
 
-  const deleteSelectedRevision = useCallback(() => {
+  const deleteSelectedRevision = useCallback(async () => {
     if (!selectedEntry) {
       return
     }
 
-    void deleteRemoteRevision(selectedEntry as RevisionListEntry)
+    setIsDeletingRevision(true)
+    await deleteRemoteRevision(selectedEntry as RevisionListEntry)
+    setIsDeletingRevision(false)
   }, [deleteRemoteRevision, selectedEntry])
 
   return (
     <div className="flex flex-shrink-0 justify-between items-center min-h-6 px-2.5 py-2 border-0 border-t-1px border-solid border-main">
       <div>
-        <Button className="py-1.35" label="Close" onClick={dismissModal} ref={closeButtonRef} variant="normal" />
+        <Button className="py-1.35" label="Close" onClick={dismissModal} variant="normal" />
       </div>
       {selectedRevision && (
         <div className="flex items-center">
