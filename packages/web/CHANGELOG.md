@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.22.7-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.22.6...@standardnotes/web@3.22.7-alpha.0) (2022-06-18)
+
+### Bug Fixes
+
+* exporting multiple notes with same title ([#1119](https://github.com/standardnotes/app/issues/1119)) ([dfbd72b](https://github.com/standardnotes/app/commit/dfbd72b1dfd4a4681c452c9113248045e69880cd))
+
 ## [3.22.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.22.6-alpha.0...@standardnotes/web@3.22.6) (2022-06-18)
 
 **Note:** Version bump only for package @standardnotes/web
