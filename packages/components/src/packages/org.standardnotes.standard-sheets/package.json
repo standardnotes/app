@@ -1,7 +1,7 @@
 {
   "name": "@standardnotes/spreadsheets",
   "private": true,
-  "version": "1.4.7",
+  "version": "1.4.8",
   "main": "dist/dist.js",
   "scripts": {
     "skip:components:lint": "eslint app/ --ext .js",
@@ -23,7 +23,7 @@
     "@standardnotes/component-relay": "2.2.0",
     "@standardnotes/eslint-config-extensions": "^1.0.4",
     "babel-loader": "^8.2.2",
-    "copy-webpack-plugin": "^9.0.1",
+    "copy-webpack-plugin": "*",
     "css-loader": "^5.2.6",
     "eslint": "*",
     "eslint-plugin-react": "^7.24.0",
@@ -37,7 +37,7 @@
     "terser-webpack-plugin": "^5.1.4",
     "webpack": "*",
     "webpack-cli": "*",
-    "webpack-dev-server": "3.11.0",
+    "webpack-dev-server": "*",
     "webpack-merge": "^5.8.0"
   }
 }
