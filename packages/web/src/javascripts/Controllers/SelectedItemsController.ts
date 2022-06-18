@@ -162,7 +162,7 @@ export class SelectedItemsController extends AbstractViewController {
   selectAll = () => {
     void this.selectItemsRange({
       startingIndex: 0,
-      endingIndex: this.itemListController.renderedItems.length - 1,
+      endingIndex: this.itemListController.listLength - 1,
     })
   }
 
