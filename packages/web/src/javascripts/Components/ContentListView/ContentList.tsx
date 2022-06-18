@@ -11,6 +11,7 @@ import { FilesController } from '@/Controllers/FilesController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { NotesController } from '@/Controllers/NotesController'
+import { ElementIds } from '@/Constants/ElementIDs'
 
 type Props = {
   application: WebApplication
@@ -66,7 +67,7 @@ const ContentList: FunctionComponent<Props> = ({
   return (
     <div
       className="infinite-scroll focus:shadow-none focus:outline-none"
-      id="notes-scrollable"
+      id={ElementIds.ContentList}
       onScroll={onScroll}
       onKeyDown={onKeyDown}
       tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
