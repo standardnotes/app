@@ -99,8 +99,8 @@ export default class Home extends React.Component {
           throw Error('Service key is missing for an entry.');
         }
 
-        if (!('secret' in entry)) {
-          throw Error('Secret key is missing for an entry.');
+        if (!('secret' in entry) && !('password' in entry)) {
+          throw Error('An entry does not have a secret key or a password.');
         }
       }
 

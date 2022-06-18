@@ -19,11 +19,14 @@ export default class EditEntry extends React.Component {
   constructor(props) {
     super(props);
 
+    const { id, entry } = props
+
     this.state = {
-      id: this.props.id,
-      entry: this.props.entry,
+      id: id,
+      entry,
       showColorPicker: false,
-      qrCodeError: false
+      qrCodeError: false,
+      is2fa: id !== undefined ? !!entry.secret : true
     };
   }
 
@@ -68,8 +71,14 @@ export default class EditEntry extends React.Component {
   };
 
   onSave = () => {
-    const { id, entry } = this.state;
-    this.props.onSave({ id, entry });
+    const { id, entry, is2fa } = this.state;
+    this.props.onSave({
+      id,
+      entry: {
+        ...entry,
+        secret: is2fa ? entry.secret : ''
+      }
+    });
   };
 
   onQRCodeSuccess = otpData => {
@@ -81,7 +90,8 @@ export default class EditEntry extends React.Component {
         service: labelIssuer || queryIssuer || '',
         account,
         secret: this.formatSecret(secret)
-      }
+      },
+      is2fa: true
     });
   };
 
@@ -98,7 +108,7 @@ export default class EditEntry extends React.Component {
   };
 
   render() {
-    const { id, entry, showColorPicker, qrCodeError } = this.state;
+    const { id, entry, showColorPicker, qrCodeError, is2fa } = this.state;
 
     const qrCodeAlert = new SKAlert({
       title: 'Error',
@@ -151,6 +161,12 @@ export default class EditEntry extends React.Component {
       }));
     };
 
+    const handleTypeChange = ({ target }) => {
+      this.setState({
+        is2fa: target.value === "2fa",
+      })
+    }
+
     return (
       <div className="auth-edit sk-panel">
         <div className="sk-panel-content">
@@ -195,29 +211,40 @@ export default class EditEntry extends React.Component {
                   onChange={this.handleInputChange}
                   type="text"
                 />
+                <div className="sk-input-group" onChange={handleTypeChange}>
+                  <label>
+                    <input className="sk-input" type="radio" value="2fa" name="type" defaultChecked={is2fa} /> 2FA
+                  </label>
+                  <label>
+                    <input className="sk-input" type="radio" value="password" name="type" defaultChecked={!is2fa} /> Password only
+                  </label>
+                </div>
+                {is2fa && (
+                  <input
+                    name="secret"
+                    className="sk-input contrast"
+                    placeholder="Secret"
+                    value={entry.secret}
+                    onChange={this.handleInputChange}
+                    type="text"
+                    pattern={secretPattern}
+                    required
+                  />
+                )}
                 <input
-                  name="secret"
+                  name="password"
                   className="sk-input contrast"
-                  placeholder="Secret"
-                  value={entry.secret}
+                  placeholder={`Password ${is2fa ? '(optional)' : ''}`}
+                  value={entry.password}
                   onChange={this.handleInputChange}
                   type="text"
-                  pattern={secretPattern}
-                  required
+                  required={!is2fa}
                 />
                 <input
                   name="notes"
                   className="sk-input contrast"
                   placeholder="Notes"
                   value={entry.notes}
-                  onChange={this.handleInputChange}
-                  type="text"
-                />
-                <input
-                  name="password"
-                  className="sk-input contrast"
-                  placeholder="Password (optional)"
-                  value={entry.password}
                   onChange={this.handleInputChange}
                   type="text"
                 />

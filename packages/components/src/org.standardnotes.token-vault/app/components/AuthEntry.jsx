@@ -29,8 +29,11 @@ export default class AuthEntry extends React.Component {
 
   updateToken = async () => {
     const { secret } = this.props.entry;
-    const token = await totp.gen(secret);
+    if (!secret) {
+      return
+    }
 
+    const token = await totp.gen(secret);
     const timeLeft = this.getTimeLeft();
     this.setState({
       token,
@@ -110,7 +113,7 @@ export default class AuthEntry extends React.Component {
   }
 
   render() {
-    const { service, account, notes, password } = this.props.entry;
+    const { service, account, notes, password, secret } = this.props.entry;
     const { id, onEdit, onRemove, canEdit, style, innerRef, ...divProps } = this.props;
     const { token, timeLeft, entryStyle } = this.state;
 
@@ -146,27 +149,29 @@ export default class AuthEntry extends React.Component {
                 {password && (
                   <div className="auth-password-row">
                     <div className="auth-password" onClick={() => this.copyToClipboard(password)}>
-                      ••••••••••••
+                      {"•".repeat(password.length)}
                     </div>
                   </div>
                 )}
               </div>
             </div>
-            <div className="auth-token-info">
-              <div className="auth-token" onClick={() => this.copyToClipboard(token)}>
-                <div>{token.slice(0, 3)}</div>
-                <div>{token.slice(3, 6)}</div>
+            {secret && (
+              <div className="auth-token-info">
+                <div className="auth-token" onClick={() => this.copyToClipboard(token)}>
+                  <div>{token.slice(0, 3)}</div>
+                  <div>{token.slice(3, 6)}</div>
+                </div>
+                <div className="auth-countdown">
+                  <CountdownPie
+                    token={token}
+                    timeLeft={timeLeft}
+                    total={30}
+                    bgColor={entryStyle.backgroundColor}
+                    fgColor={entryStyle.color}
+                  />
+                </div>
               </div>
-              <div className="auth-countdown">
-                <CountdownPie
-                  token={token}
-                  timeLeft={timeLeft}
-                  total={30}
-                  bgColor={entryStyle.backgroundColor}
-                  fgColor={entryStyle.color}
-                />
-              </div>
-            </div>
+            )}
           </div>
           {canEdit && (
             <div className="auth-options">
