@@ -218,9 +218,7 @@ export class NoteHistoryController {
 
     if (previousEntry) {
       void this.selectRemoteRevision(previousEntry)
-    }
-
-    if (nextEntry) {
+    } else if (nextEntry) {
       void this.selectRemoteRevision(nextEntry)
     }
   }
