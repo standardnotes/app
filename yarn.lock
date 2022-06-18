@@ -5101,6 +5101,7 @@ __metadata:
     node-sass: "*"
     notp: ^2.0.3
     otplib: ^11.0.1
+    prettier: "*"
     prop-types: ^15.7.2
     react: ^17.0.1
     react-beautiful-dnd: ^13.1.0

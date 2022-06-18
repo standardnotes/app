@@ -127,7 +127,6 @@ html {
   }
 }
 
-
 /* entry default styles */
 .auth-entry {
   display: flex;
@@ -291,7 +290,7 @@ html {
   padding: 5px;
   background: var(--sn-stylekit-contrast-background-color);
   border-radius: 1px;
-  box-shadow: 0 0 0 1px rgba(0,0,0,.1);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
   display: inline-block;
   cursor: pointer;
 }
@@ -409,7 +408,7 @@ html {
 }
 
 // Show palette icon on the first 4 color rectangles.
-div.twitter-picker > div:nth-child(3) > span:nth-child(-n+4) > div {
+div.twitter-picker > div:nth-child(3) > span:nth-child(-n + 4) > div {
   background-image: url('../assets/svg/palette.svg') !important;
   background-repeat: no-repeat !important;
   background-position: top 4px right 4px !important;

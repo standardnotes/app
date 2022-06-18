@@ -7,10 +7,19 @@
     "components:compile": "webpack --config webpack.prod.js",
     "start": "webpack serve --config webpack.dev.js --progress --hot",
     "skip:components:lint": "eslint app/ --ext .js",
-    "components:lint:fix": "yarn lint --fix"
+    "components:lint:fix": "eslint --fix",
+    "components:lint": "prettier --write 'app/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md"
   },
   "sn": {
     "main": "dist/index.html"
+  },
+  "lint-staged": {
+    "README.md": [
+      "prettier --write"
+    ],
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --write"
+    ]
   },
   "devDependencies": {
     "@babel/core": "^7.13.10",
@@ -33,6 +42,7 @@
     "node-sass": "*",
     "notp": "^2.0.3",
     "otplib": "^11.0.1",
+    "prettier": "*",
     "prop-types": "^15.7.2",
     "react": "^17.0.1",
     "react-beautiful-dnd": "^13.1.0",

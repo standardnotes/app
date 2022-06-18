@@ -1,12 +1,11 @@
-import React from 'react';
-import update from 'immutability-helper';
-import EditEntry from '@Components/EditEntry';
-import ViewEntries from '@Components/ViewEntries';
-import ConfirmDialog from '@Components/ConfirmDialog';
-import DataErrorAlert from '@Components/DataErrorAlert';
-import EditorKit from '@standardnotes/editor-kit';
-import ReorderIcon from '../assets/svg/reorder-icon.svg';
-import CopyNotification from './CopyNotification';
+import ConfirmDialog from '@Components/ConfirmDialog'
+import DataErrorAlert from '@Components/DataErrorAlert'
+import EditEntry from '@Components/EditEntry'
+import ViewEntries from '@Components/ViewEntries'
+import EditorKit from '@standardnotes/editor-kit'
+import update from 'immutability-helper'
+import ReorderIcon from '../assets/svg/reorder-icon.svg'
+import CopyNotification from './CopyNotification'
 
 const initialState = {
   text: '',
@@ -19,31 +18,31 @@ const initialState = {
   displayCopy: false,
   canEdit: true,
   searchValue: '',
-  lastUpdated: 0
-};
+  lastUpdated: 0,
+}
 
 export default class Home extends React.Component {
   constructor(props) {
-    super(props);
-    this.configureEditorKit();
-    this.state = initialState;
+    super(props)
+    this.configureEditorKit()
+    this.state = initialState
   }
 
   configureEditorKit() {
     const delegate = {
-      setEditorRawText: text => {
-        let parseError = false;
-        let entries = [];
+      setEditorRawText: (text) => {
+        let parseError = false
+        let entries = []
 
         if (text) {
           try {
-            entries = this.parseNote(text);
+            entries = this.parseNote(text)
           } catch (e) {
             // Couldn't parse the content
-            parseError = true;
+            parseError = true
             this.setState({
-              parseError: true
-            });
+              parseError: true,
+            })
           }
         }
 
@@ -51,225 +50,225 @@ export default class Home extends React.Component {
           ...initialState,
           text,
           parseError,
-          entries
-        });
+          entries,
+        })
       },
-      generateCustomPreview: text => {
-        let entries = [];
+      generateCustomPreview: (text) => {
+        let entries = []
         try {
-          entries = this.parseNote(text);
+          entries = this.parseNote(text)
         } finally {
           // eslint-disable-next-line no-unsafe-finally
           return {
             html: `<div><strong>${entries.length}</strong> TokenVault Entries </div>`,
             plain: `${entries.length} TokenVault Entries`,
-          };
+          }
         }
       },
-      clearUndoHistory: () => { },
+      clearUndoHistory: () => {},
       getElementsBySelector: () => [],
       onNoteLockToggle: (isLocked) => {
         this.setState({
-          canEdit: !isLocked
-        });
+          canEdit: !isLocked,
+        })
       },
       onThemesChange: () => {
         this.setState({
           lastUpdated: Date.now(),
-        });
-      }
-    };
+        })
+      },
+    }
 
     this.editorKit = new EditorKit(delegate, {
       mode: 'json',
-      supportsFileSafe: false
-    });
+      supportsFileSafe: false,
+    })
   }
 
   parseNote(text) {
-    const entries = JSON.parse(text);
+    const entries = JSON.parse(text)
 
     if (entries instanceof Array) {
       if (entries.length === 0) {
-        return [];
+        return []
       }
 
       for (const entry of entries) {
         if (!('service' in entry)) {
-          throw Error('Service key is missing for an entry.');
+          throw Error('Service key is missing for an entry.')
         }
 
         if (!('secret' in entry) && !('password' in entry)) {
-          throw Error('An entry does not have a secret key or a password.');
+          throw Error('An entry does not have a secret key or a password.')
         }
       }
 
-      return entries;
+      return entries
     }
 
-    return [];
+    return []
   }
 
   saveNote(entries) {
-    this.editorKit.onEditorValueChanged(JSON.stringify(entries, null, 2));
+    this.editorKit.onEditorValueChanged(JSON.stringify(entries, null, 2))
   }
 
   // Entry operations
-  addEntry = entry => {
-    this.setState(state => {
-      const entries = state.entries.concat([entry]);
-      this.saveNote(entries);
+  addEntry = (entry) => {
+    this.setState((state) => {
+      const entries = state.entries.concat([entry])
+      this.saveNote(entries)
 
       return {
         editMode: false,
         editEntry: null,
-        entries
-      };
-    });
-  };
+        entries,
+      }
+    })
+  }
 
   editEntry = ({ id, entry }) => {
-    this.setState(state => {
-      const entries = update(state.entries, { [id]: { $set: entry } });
-      this.saveNote(entries);
+    this.setState((state) => {
+      const entries = update(state.entries, { [id]: { $set: entry } })
+      this.saveNote(entries)
 
       return {
         editMode: false,
         editEntry: null,
-        entries
-      };
-    });
-  };
+        entries,
+      }
+    })
+  }
 
-  removeEntry = id => {
-    this.setState(state => {
-      const entries = update(state.entries, { $splice: [[id, 1]] });
-      this.saveNote(entries);
+  removeEntry = (id) => {
+    this.setState((state) => {
+      const entries = update(state.entries, { $splice: [[id, 1]] })
+      this.saveNote(entries)
 
       return {
         confirmRemove: false,
         editEntry: null,
-        entries
-      };
-    });
-  };
+        entries,
+      }
+    })
+  }
 
   // Event Handlers
   onAddNew = () => {
     if (!this.state.canEdit) {
-      return;
+      return
     }
     this.setState({
       editMode: true,
-      editEntry: null
-    });
-  };
+      editEntry: null,
+    })
+  }
 
-  onEdit = id => {
+  onEdit = (id) => {
     if (!this.state.canEdit) {
-      return;
+      return
     }
-    this.setState(state => ({
+    this.setState((state) => ({
       editMode: true,
       editEntry: {
         id,
-        entry: state.entries[id]
-      }
-    }));
-  };
+        entry: state.entries[id],
+      },
+    }))
+  }
 
   onCancel = () => {
     this.setState({
       confirmRemove: false,
       confirmReorder: false,
       editMode: false,
-      editEntry: null
-    });
-  };
+      editEntry: null,
+    })
+  }
 
-  onRemove = id => {
+  onRemove = (id) => {
     if (!this.state.canEdit) {
-      return;
+      return
     }
-    this.setState(state => ({
+    this.setState((state) => ({
       confirmRemove: true,
       editEntry: {
         id,
-        entry: state.entries[id]
-      }
-    }));
-  };
+        entry: state.entries[id],
+      },
+    }))
+  }
 
   onSave = ({ id, entry }) => {
     // If there's no ID it's a new note
     if (id != null) {
-      this.editEntry({ id, entry });
+      this.editEntry({ id, entry })
     } else {
-      this.addEntry(entry);
+      this.addEntry(entry)
     }
-  };
+  }
 
   onCopyValue = () => {
     this.setState({
-      displayCopy: true
-    });
+      displayCopy: true,
+    })
 
     if (this.clearTooltipTimer) {
-      clearTimeout(this.clearTooltipTimer);
+      clearTimeout(this.clearTooltipTimer)
     }
 
     this.clearTooltipTimer = setTimeout(() => {
       this.setState({
-        displayCopy: false
-      });
-    }, 2000);
-  };
+        displayCopy: false,
+      })
+    }, 2000)
+  }
 
   updateEntries = (entries) => {
-    this.saveNote(entries);
+    this.saveNote(entries)
     this.setState({
-      entries
-    });
-  };
+      entries,
+    })
+  }
 
   onReorderEntries = () => {
     if (!this.state.canEdit) {
-      return;
+      return
     }
     this.setState({
-      confirmReorder: true
-    });
-  };
+      confirmReorder: true,
+    })
+  }
 
-  onSearchChange = event => {
-    const target = event.target;
+  onSearchChange = (event) => {
+    const target = event.target
     this.setState({
-      searchValue: target.value.toLowerCase()
-    });
-  };
+      searchValue: target.value.toLowerCase(),
+    })
+  }
 
   clearSearchValue = () => {
     this.setState({
-      searchValue: ''
-    });
+      searchValue: '',
+    })
   }
 
   reorderEntries = () => {
-    const { entries } = this.state;
+    const { entries } = this.state
     const orderedEntries = entries.sort((a, b) => {
-      const serviceA = a.service.toLowerCase();
-      const serviceB = b.service.toLowerCase();
-      return (serviceA < serviceB) ? -1 : (serviceA > serviceB) ? 1 : 0;
-    });
-    this.saveNote(orderedEntries);
+      const serviceA = a.service.toLowerCase()
+      const serviceB = b.service.toLowerCase()
+      return serviceA < serviceB ? -1 : serviceA > serviceB ? 1 : 0
+    })
+    this.saveNote(orderedEntries)
     this.setState({
       entries: orderedEntries,
-      confirmReorder: false
-    });
-  };
+      confirmReorder: false,
+    })
+  }
 
   render() {
-    const editEntry = this.state.editEntry || {};
+    const editEntry = this.state.editEntry || {}
     const {
       canEdit,
       displayCopy,
@@ -279,15 +278,15 @@ export default class Home extends React.Component {
       confirmRemove,
       confirmReorder,
       searchValue,
-      lastUpdated
-    } = this.state;
+      lastUpdated,
+    } = this.state
 
     if (parseError) {
       return (
         <div className="sn-component">
           <DataErrorAlert />
         </div>
-      );
+      )
     }
 
     return (
@@ -327,12 +326,7 @@ export default class Home extends React.Component {
         )}
         <div id="content">
           {editMode ? (
-            <EditEntry
-              id={editEntry.id}
-              entry={editEntry.entry}
-              onSave={this.onSave}
-              onCancel={this.onCancel}
-            />
+            <EditEntry id={editEntry.id} entry={editEntry.entry} onSave={this.onSave} onCancel={this.onCancel} />
           ) : (
             <ViewEntries
               entries={entries}
@@ -363,6 +357,6 @@ export default class Home extends React.Component {
           )}
         </div>
       </div>
-    );
+    )
   }
 }
