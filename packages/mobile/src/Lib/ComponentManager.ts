@@ -1,5 +1,6 @@
 import { MobileTheme } from '@Root/Style/MobileTheme'
-import FeatureChecksums from '@standardnotes/components-meta/dist/zips/checksums.json'
+import { ComponentChecksumsType } from '@standardnotes/components-meta'
+import RawComponentChecksumsFile from '@standardnotes/components-meta/dist/zips/checksums.json'
 import { FeatureDescription, FeatureIdentifier, GetFeatures } from '@standardnotes/features'
 import {
   ComponentMutator,
@@ -17,17 +18,12 @@ import { Base64 } from 'js-base64'
 import RNFS, { DocumentDirectoryPath } from 'react-native-fs'
 import StaticServer from 'react-native-static-server'
 import { unzip } from 'react-native-zip-archive'
-import { componentsCdn } from '../../package.json'
+import { componentsCdn, version, name } from '../../package.json'
 import { MobileThemeContent } from '../Style/MobileTheme'
 import { IsDev } from './Utils'
 
-type TFeatureChecksums = {
-  [key in FeatureIdentifier]: {
-    version: string
-    base64: string
-    binary: string
-  }
-}
+const FeatureChecksums = RawComponentChecksumsFile as ComponentChecksumsType
+
 export enum ComponentLoadingError {
   FailedDownload = 'FailedDownload',
   ChecksumMismatch = 'ChecksumMismatch',
@@ -49,7 +45,7 @@ export class ComponentManager extends SNComponentManager {
   private thirdPartyIndexPaths: Record<string, string> = {}
 
   public async initialize(protocolService: EncryptionService) {
-    this.loggingEnabled = false
+    this.loggingEnabled = true
     this.protocolService = protocolService
     await this.createServer()
   }
@@ -78,12 +74,21 @@ export class ComponentManager extends SNComponentManager {
     void this.staticServer!.stop()
   }
 
+  private cdnUrlForFeature(identifier: FeatureIdentifier): string {
+    const cdn = IsDev ? componentsCdn.dev : componentsCdn.prod
+    const appVersion = version
+    const mobilePackageName = name
+    const tagPath = `${mobilePackageName}@${appVersion}`.replaceAll('@', '%40')
+    const url = `${cdn}${tagPath}/packages/components/dist/zips/${identifier}.zip`
+    this.log('Getting zip from cdn url', url)
+    return url
+  }
+
   private downloadUrlForComponent(component: SNComponent): string | undefined {
     const identifier = component.identifier
     const nativeFeature = this.nativeFeatureForIdentifier(identifier)
     if (nativeFeature) {
-      const cdn = IsDev ? componentsCdn.dev : componentsCdn.prod
-      return `${cdn}/${identifier}.zip`
+      return this.cdnUrlForFeature(identifier)
     } else {
       return component.package_info?.download_url
     }
@@ -111,14 +116,20 @@ export class ComponentManager extends SNComponentManager {
       throw Error('Attempting to download component with no download url')
     }
 
-    const version = nativeFeature?.version || component.package_info?.version
+    const currentPackageJson = await this.getDownloadedComponentPackageJsonFile(identifier)
+    const currentVersion = currentPackageJson?.version
+    const newVersion = nativeFeature ? FeatureChecksums[identifier].version : component.package_info?.version
 
-    const existingPackageJson = await this.getDownloadedComponentPackageJsonFile(identifier)
-    const existingVersion = existingPackageJson?.version
-    this.log('Existing package version', existingVersion)
-    this.log('Latest package version', version)
+    if (!newVersion) {
+      this.log('Cannot retrieve new version string for component', identifier)
+      return false
+    }
 
-    const shouldDownload = !existingPackageJson || isRightVersionGreaterThanLeft(existingVersion, version!)
+    this.log('Existing package version', currentVersion)
+    this.log('Latest package version', newVersion)
+
+    const shouldDownload = !currentPackageJson || isRightVersionGreaterThanLeft(currentVersion, newVersion)
+    this.log('Needs upgrade', shouldDownload)
 
     return shouldDownload
   }
@@ -170,15 +181,17 @@ export class ComponentManager extends SNComponentManager {
     const zipContents = await RNFS.readFile(filePath, 'base64')
     const checksum = await this.protocolService.crypto.sha256(zipContents)
 
-    const desiredChecksum = (FeatureChecksums as TFeatureChecksums)[featureIdentifier]?.base64
+    const desiredChecksum = FeatureChecksums[featureIdentifier]?.base64
     if (!desiredChecksum) {
       this.log(`Checksum is missing for ${featureIdentifier}; aborting installation`)
       return false
     }
+
     if (checksum !== desiredChecksum) {
       this.log(`Checksums don't match for ${featureIdentifier}; ${checksum} != ${desiredChecksum}; aborting install`)
       return false
     }
+
     this.log(`Checksum ${checksum} matches ${desiredChecksum} for ${featureIdentifier}`)
 
     return true
@@ -312,7 +325,8 @@ export class ComponentManager extends SNComponentManager {
     const splitPackagePath = componentPath.split(COMPONENTS_PATH)
     const relativePackagePath = splitPackagePath[splitPackagePath.length - 1]
     const relativeMainFilePath = `${relativePackagePath}/${indexFilePath}`
-    return `${this.staticServerUrl}${relativeMainFilePath}`
+    const url = `${this.staticServerUrl}${relativeMainFilePath}`
+    return url
   }
 
   public setMobileActiveTheme(theme: MobileTheme) {

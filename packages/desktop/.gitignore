@@ -8,8 +8,6 @@ test/data/tmp/
 .vscode
 .idea
 .env
-.env.production
-.env.development
 
 codeqldb
 yarn-error.log

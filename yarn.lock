@@ -4985,9 +4985,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/advanced-checklist@workspace:packages/components/src/org.standardnotes.advanced-checklist":
+"@standardnotes/advanced-checklist@workspace:packages/components/src/packages/org.standardnotes.advanced-checklist":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/advanced-checklist@workspace:packages/components/src/org.standardnotes.advanced-checklist"
+  resolution: "@standardnotes/advanced-checklist@workspace:packages/components/src/packages/org.standardnotes.advanced-checklist"
   dependencies:
     "@reach/alert-dialog": 0.16.2
     "@reach/menu-button": 0.16.2
@@ -5032,16 +5032,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/api@npm:^1.1.7, @standardnotes/api@npm:^1.1.9":
-  version: 1.1.9
-  resolution: "@standardnotes/api@npm:1.1.9"
+"@standardnotes/api@npm:^1.1.11":
+  version: 1.1.11
+  resolution: "@standardnotes/api@npm:1.1.11"
   dependencies:
     "@standardnotes/auth": ^3.19.3
     "@standardnotes/common": ^1.23.0
-    "@standardnotes/encryption": ^1.8.16
-    "@standardnotes/responses": ^1.6.34
+    "@standardnotes/encryption": ^1.8.18
+    "@standardnotes/responses": ^1.6.36
     "@standardnotes/utils": ^1.6.11
-  checksum: 4a1f656b6bdce800d422c04beb35cbe4babe8b9101533f432302197c374c079fe60d4b9f9ced1ed2e3b84a7aee935f61b0eb4ea24f2776f6ae067459c5bbe769
+  checksum: a6efc5d1267e422a47cc73ba5f7fb4a2ca75ee993f8bdae0609294e4cb9d7c0c4f4cc14f202403301b19d554e217c134c97536788edea6b744bbd3813fa9248d
   languageName: node
   linkType: hard
 
@@ -5055,6 +5055,7 @@ __metadata:
     "@lerna-lite/list": ^1.5.1
     "@lerna-lite/run": ^1.5.1
     "@standardnotes/config": ^2.4.3
+    "@standardnotes/snjs": ^2.117.4
     "@typescript-eslint/eslint-plugin": ^5.20.0
     "@typescript-eslint/parser": ^5.20.0
     eslint: ^8.17.0
@@ -5067,7 +5068,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/auth@npm:^3.19.2, @standardnotes/auth@npm:^3.19.3":
+"@standardnotes/auth@npm:^3.19.3":
   version: 3.19.3
   resolution: "@standardnotes/auth@npm:3.19.3"
   dependencies:
@@ -5077,9 +5078,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/authenticator@workspace:packages/components/src/org.standardnotes.token-vault":
+"@standardnotes/authenticator@workspace:packages/components/src/packages/org.standardnotes.token-vault":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/authenticator@workspace:packages/components/src/org.standardnotes.token-vault"
+  resolution: "@standardnotes/authenticator@workspace:packages/components/src/packages/org.standardnotes.token-vault"
   dependencies:
     "@babel/core": ^7.13.10
     "@babel/eslint-parser": ^7.13.10
@@ -5120,15 +5121,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/autobiography-theme@workspace:packages/components/src/org.standardnotes.theme-autobiography":
+"@standardnotes/autobiography-theme@workspace:packages/components/src/packages/org.standardnotes.theme-autobiography":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/autobiography-theme@workspace:packages/components/src/org.standardnotes.theme-autobiography"
+  resolution: "@standardnotes/autobiography-theme@workspace:packages/components/src/packages/org.standardnotes.theme-autobiography"
+  dependencies:
+    webpack: "*"
   languageName: unknown
   linkType: soft
 
-"@standardnotes/bold-editor@workspace:packages/components/src/org.standardnotes.bold-editor":
+"@standardnotes/bold-editor@workspace:packages/components/src/packages/org.standardnotes.bold-editor":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/bold-editor@workspace:packages/components/src/org.standardnotes.bold-editor"
+  resolution: "@standardnotes/bold-editor@workspace:packages/components/src/packages/org.standardnotes.bold-editor"
   dependencies:
     "@babel/core": ^7.13.14
     "@babel/eslint-parser": ^7.13.14
@@ -5160,9 +5163,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/classic-code-editor@workspace:packages/components/src/org.standardnotes.code-editor":
+"@standardnotes/classic-code-editor@workspace:packages/components/src/packages/org.standardnotes.code-editor":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/classic-code-editor@workspace:packages/components/src/org.standardnotes.code-editor"
+  resolution: "@standardnotes/classic-code-editor@workspace:packages/components/src/packages/org.standardnotes.code-editor"
   dependencies:
     "@babel/cli": ^7.12.10
     "@babel/core": ^7.12.10
@@ -5183,7 +5186,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/common@npm:^1.19.6, @standardnotes/common@npm:^1.22.0, @standardnotes/common@npm:^1.23.0":
+"@standardnotes/common@npm:^1.19.6, @standardnotes/common@npm:^1.23.0":
   version: 1.23.0
   resolution: "@standardnotes/common@npm:1.23.0"
   checksum: 9c51bf76e7b9b28862e355aa66d0af6658e9baf9701c986d6f3b17d382b90e8da03350a4ab72b10cd16b16f1e739b8200991b3561719456972f3ce273dac3986
@@ -5208,7 +5211,8 @@ __metadata:
     minimatch: ^5.1.0
     node-sass: 7.0.1
     sass: ^1.52.3
-    webpack: ^5.73.0
+    typescript: "*"
+    webpack: "*"
     webpack-remove-empty-scripts: ^0.8.0
   languageName: unknown
   linkType: soft
@@ -5287,20 +5291,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/domain-events@npm:^2.29.3, @standardnotes/domain-events@npm:^2.31.1":
-  version: 2.31.1
-  resolution: "@standardnotes/domain-events@npm:2.31.1"
+"@standardnotes/domain-events@npm:^2.32.2":
+  version: 2.32.2
+  resolution: "@standardnotes/domain-events@npm:2.32.2"
   dependencies:
     "@standardnotes/auth": ^3.19.3
-    "@standardnotes/features": ^1.45.3
+    "@standardnotes/features": ^1.45.5
     "@standardnotes/scheduler": ^1.1.1
-  checksum: cbb7b6fd2a25f96be6473425f61a5cd86fba49a409fc1107c57a43e7f69422e20fa9711e0960f4d2f9f7914d98dd63409994a87922d8c73afd7b84ca3d149046
+  checksum: 54da5fc88539b1cfa44963234d9e6e3cfbf63e20a221edcdc2e0f1d0cbb29803f03c84ddd5d14a19b2827d1b3d6c47cd3ad39a2e02d5773c5bfbebd17883aac1
   languageName: node
   linkType: hard
 
-"@standardnotes/dynamic-theme@workspace:packages/components/src/org.standardnotes.theme-dynamic":
+"@standardnotes/dynamic-theme@workspace:packages/components/src/packages/org.standardnotes.theme-dynamic":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/dynamic-theme@workspace:packages/components/src/org.standardnotes.theme-dynamic"
+  resolution: "@standardnotes/dynamic-theme@workspace:packages/components/src/packages/org.standardnotes.theme-dynamic"
+  dependencies:
+    webpack: "*"
   languageName: unknown
   linkType: soft
 
@@ -5351,14 +5357,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/encryption@npm:^1.8.14, @standardnotes/encryption@npm:^1.8.16":
-  version: 1.8.16
-  resolution: "@standardnotes/encryption@npm:1.8.16"
+"@standardnotes/encryption@npm:^1.8.18":
+  version: 1.8.18
+  resolution: "@standardnotes/encryption@npm:1.8.18"
   dependencies:
-    "@standardnotes/models": ^1.11.8
-    "@standardnotes/responses": ^1.6.34
-    "@standardnotes/services": ^1.13.16
-  checksum: ad8ecea0677040f6752b5cd96ac957e201e1af792ad623cb719f1d1ee4293c428215ba322ad9cfd7435dabf4b536281b0c2fa3e451b154a6b880c0d06621a8b9
+    "@standardnotes/models": ^1.11.10
+    "@standardnotes/responses": ^1.6.36
+    "@standardnotes/services": ^1.13.18
+  checksum: ad6e42f7f810a2e682a9a150393f3944ba7fd3287805e24b95833e9a8f8eeb53d1a169941f97f5f10e95b7ffa694f4702fa8fad803543c46eb51fdba3f35e31e
   languageName: node
   linkType: hard
 
@@ -5380,61 +5386,58 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/features@npm:^1.45.1, @standardnotes/features@npm:^1.45.3":
-  version: 1.45.3
-  resolution: "@standardnotes/features@npm:1.45.3"
+"@standardnotes/features@npm:^1.45.1, @standardnotes/features@npm:^1.45.5":
+  version: 1.45.5
+  resolution: "@standardnotes/features@npm:1.45.5"
   dependencies:
     "@standardnotes/auth": ^3.19.3
     "@standardnotes/common": ^1.23.0
-  checksum: 2aae728afd6a5c4500efa484e10bebb32c8cf9ad96d10a3aeaf7b0073e28cc20d4ae1f388db774af05633c6cfecb8639430aaada6c190ee9102b923cc037cf17
+  checksum: b5914d06b07f99cdf8657c59754a80172417d69547e10e312630099f994880c4ff9b54f3a0e1cbb6e8a236e12c387f4faf5788fc847d9303d93e013f29c8bdcf
   languageName: node
   linkType: hard
 
-"@standardnotes/filepicker@npm:1.16.16, @standardnotes/filepicker@npm:^1.16.14, @standardnotes/filepicker@npm:^1.16.16":
-  version: 1.16.16
-  resolution: "@standardnotes/filepicker@npm:1.16.16"
+"@standardnotes/filepicker@npm:1.16.18, @standardnotes/filepicker@npm:^1.16.18":
+  version: 1.16.18
+  resolution: "@standardnotes/filepicker@npm:1.16.18"
   dependencies:
     "@standardnotes/common": ^1.23.0
-    "@standardnotes/services": ^1.13.16
+    "@standardnotes/services": ^1.13.18
     "@standardnotes/utils": ^1.6.11
-  checksum: 7aedf7846fd2ab8dcb5769915b6fed74344f32f8639c54d381e0ff8b879d45cf0a7501ec9bfced98a1415aaa0d8f8162ee4d69813c00561172c36842712f3f74
+  checksum: b0418e65e64e11a946cf5f9c791abe05f4a868fa95d43b1e19348ebb9e1a062a4bf8d850e0357e586c4e1bf926ad5aa06fe7142db268d527fa12957d95d302b9
   languageName: node
   linkType: hard
 
-"@standardnotes/files@npm:^1.3.14, @standardnotes/files@npm:^1.3.16":
-  version: 1.3.16
-  resolution: "@standardnotes/files@npm:1.3.16"
+"@standardnotes/files@npm:^1.3.18":
+  version: 1.3.18
+  resolution: "@standardnotes/files@npm:1.3.18"
   dependencies:
-    "@standardnotes/encryption": ^1.8.16
-    "@standardnotes/filepicker": ^1.16.16
-    "@standardnotes/models": ^1.11.8
-    "@standardnotes/responses": ^1.6.34
-    "@standardnotes/services": ^1.13.16
+    "@standardnotes/encryption": ^1.8.18
+    "@standardnotes/filepicker": ^1.16.18
+    "@standardnotes/models": ^1.11.10
+    "@standardnotes/responses": ^1.6.36
+    "@standardnotes/services": ^1.13.18
     "@standardnotes/utils": ^1.6.11
-  checksum: b991b38a0564b8ca0903a05ccb6ed53d154e0fc2a5b9e961ce911a5bef6f3c8899728f5a8f11a3cc3dff6c1330da91df20b1fd3e7e6fb8c1108191728539c253
+  checksum: faa26c92bb69d36771cd6b8cd6cc0a4fc10a64cc64cb846d1863366a785fb1b41abe883de976a286fc06a7b85a0817515e75708b2c8548e60fc96fb1c0b9e3cb
   languageName: node
   linkType: hard
 
-"@standardnotes/focus-theme@workspace:packages/components/src/org.standardnotes.theme-focus":
+"@standardnotes/focus-theme@workspace:packages/components/src/packages/org.standardnotes.theme-focus":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/focus-theme@workspace:packages/components/src/org.standardnotes.theme-focus"
+  resolution: "@standardnotes/focus-theme@workspace:packages/components/src/packages/org.standardnotes.theme-focus"
+  dependencies:
+    webpack: "*"
   languageName: unknown
   linkType: soft
 
-"@standardnotes/futura-theme@workspace:packages/components/src/org.standardnotes.theme-futura":
+"@standardnotes/futura-theme@workspace:packages/components/src/packages/org.standardnotes.theme-futura":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/futura-theme@workspace:packages/components/src/org.standardnotes.theme-futura"
+  resolution: "@standardnotes/futura-theme@workspace:packages/components/src/packages/org.standardnotes.theme-futura"
+  dependencies:
+    webpack: "*"
   languageName: unknown
   linkType: soft
 
-"@standardnotes/icons@npm:^1.1.8":
-  version: 1.1.8
-  resolution: "@standardnotes/icons@npm:1.1.8"
-  checksum: 9886a74e07743b2e0588d631bacee108cd7fd2be70f322a7e26bf1f473f3496ebbed1fa6b0b246d05c1090c0cb137ef28823d14553b59aa83688ddf6168dd84c
-  languageName: node
-  linkType: hard
-
-"@standardnotes/icons@workspace:*, @standardnotes/icons@workspace:packages/icons":
+"@standardnotes/icons@^1.1.8, @standardnotes/icons@workspace:*, @standardnotes/icons@workspace:packages/icons":
   version: 0.0.0-use.local
   resolution: "@standardnotes/icons@workspace:packages/icons"
   dependencies:
@@ -5468,9 +5471,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/markdown-basic@workspace:packages/components/src/org.standardnotes.simple-markdown-editor":
+"@standardnotes/markdown-basic@workspace:packages/components/src/packages/org.standardnotes.simple-markdown-editor":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/markdown-basic@workspace:packages/components/src/org.standardnotes.simple-markdown-editor"
+  resolution: "@standardnotes/markdown-basic@workspace:packages/components/src/packages/org.standardnotes.simple-markdown-editor"
   dependencies:
     "@babel/cli": ^7.10.5
     "@babel/core": ^7.11.1
@@ -5511,9 +5514,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/markdown-hybrid@workspace:packages/components/src/org.standardnotes.advanced-markdown-editor":
+"@standardnotes/markdown-hybrid@workspace:packages/components/src/packages/org.standardnotes.advanced-markdown-editor":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/markdown-hybrid@workspace:packages/components/src/org.standardnotes.advanced-markdown-editor"
+  resolution: "@standardnotes/markdown-hybrid@workspace:packages/components/src/packages/org.standardnotes.advanced-markdown-editor"
   dependencies:
     "@babel/cli": ^7.13.10
     "@babel/core": ^7.13.13
@@ -5541,9 +5544,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/markdown-math@workspace:packages/components/src/org.standardnotes.fancy-markdown-editor":
+"@standardnotes/markdown-math@workspace:packages/components/src/packages/org.standardnotes.fancy-markdown-editor":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/markdown-math@workspace:packages/components/src/org.standardnotes.fancy-markdown-editor"
+  resolution: "@standardnotes/markdown-math@workspace:packages/components/src/packages/org.standardnotes.fancy-markdown-editor"
   dependencies:
     "@babel/cli": ^7.7.7
     "@babel/core": ^7.7.7
@@ -5571,9 +5574,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/markdown-minimal@workspace:packages/components/src/org.standardnotes.minimal-markdown-editor":
+"@standardnotes/markdown-minimal@workspace:packages/components/src/packages/org.standardnotes.minimal-markdown-editor":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/markdown-minimal@workspace:packages/components/src/org.standardnotes.minimal-markdown-editor"
+  resolution: "@standardnotes/markdown-minimal@workspace:packages/components/src/packages/org.standardnotes.minimal-markdown-editor"
   dependencies:
     "@babel/core": ^7.11.1
     "@babel/preset-env": ^7.11.0
@@ -5594,9 +5597,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/markdown-visual@workspace:packages/components/src/org.standardnotes.markdown-visual-editor":
+"@standardnotes/markdown-visual@workspace:packages/components/src/packages/org.standardnotes.markdown-visual-editor":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/markdown-visual@workspace:packages/components/src/org.standardnotes.markdown-visual-editor"
+  resolution: "@standardnotes/markdown-visual@workspace:packages/components/src/packages/org.standardnotes.markdown-visual-editor"
   dependencies:
     "@codemirror/lang-markdown": ^0.19.6
     "@milkdown/core": 5.5.0
@@ -5645,9 +5648,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/midnight-theme@workspace:packages/components/src/org.standardnotes.theme-midnight":
+"@standardnotes/midnight-theme@workspace:packages/components/src/packages/org.standardnotes.theme-midnight":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/midnight-theme@workspace:packages/components/src/org.standardnotes.theme-midnight"
+  resolution: "@standardnotes/midnight-theme@workspace:packages/components/src/packages/org.standardnotes.theme-midnight"
+  dependencies:
+    webpack: "*"
   languageName: unknown
   linkType: soft
 
@@ -5668,13 +5673,13 @@ __metadata:
     "@react-navigation/stack": ^6.2.1
     "@standardnotes/components-meta": "workspace:*"
     "@standardnotes/config": ^2.4.3
-    "@standardnotes/filepicker": ^1.16.14
+    "@standardnotes/filepicker": ^1.16.18
     "@standardnotes/icons": "workspace:*"
     "@standardnotes/react-native-aes": ^1.4.3
     "@standardnotes/react-native-textview": 1.0.2
     "@standardnotes/react-native-utils": 1.0.1
     "@standardnotes/sncrypto-common": 1.9.0
-    "@standardnotes/snjs": 2.115.9
+    "@standardnotes/snjs": "*"
     "@standardnotes/stylekit": 5.29.3
     "@types/detox": ^18.1.0
     "@types/faker": ^6.6.9
@@ -5688,7 +5693,6 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^5.20.0
     "@typescript-eslint/parser": ^5.20.0
     babel-jest: ^27.5.1
-    concurrently: ^7.1.0
     detox: ^19.5.7
     eslint: ^8.13.0
     eslint-plugin-flowtype: ^8.0.3
@@ -5749,14 +5753,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/models@npm:^1.11.6, @standardnotes/models@npm:^1.11.8":
-  version: 1.11.8
-  resolution: "@standardnotes/models@npm:1.11.8"
+"@standardnotes/models@npm:^1.11.10":
+  version: 1.11.10
+  resolution: "@standardnotes/models@npm:1.11.10"
   dependencies:
-    "@standardnotes/features": ^1.45.3
-    "@standardnotes/responses": ^1.6.34
+    "@standardnotes/features": ^1.45.5
+    "@standardnotes/responses": ^1.6.36
     "@standardnotes/utils": ^1.6.11
-  checksum: e889f5c05c2fe56afa23b254d84727b573f20b0f6854c013c0b95c8a76f62e0e96d6080646cd285c3603a2227f9f7634d6f9eb834f8d41103781f16db28f56ca
+  checksum: d69fd3940e96a37d655af94c940d6c0197a514ad15b36b42f95edf122873dd6cfc1428137c5aecbbb12ae603ceaf7c7ebd879c92c106f4a28aa8f3adf0528c7d
   languageName: node
   linkType: hard
 
@@ -5784,20 +5788,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/responses@npm:^1.6.32, @standardnotes/responses@npm:^1.6.34":
-  version: 1.6.34
-  resolution: "@standardnotes/responses@npm:1.6.34"
+"@standardnotes/responses@npm:^1.6.36":
+  version: 1.6.36
+  resolution: "@standardnotes/responses@npm:1.6.36"
   dependencies:
     "@standardnotes/auth": ^3.19.3
     "@standardnotes/common": ^1.23.0
-    "@standardnotes/features": ^1.45.3
-  checksum: d285cadeaf67085e36579b22b013f0fc1bc5128e1c80b10edf8eef6c49f136440288e6619d3c80ee3db2e22de3861dd9f6958b443ceff6261ce521be5e9a97d4
+    "@standardnotes/features": ^1.45.5
+  checksum: bb78a2cefadacf48010ce1ed45a1035b67e48acaf2ec746dbe9ff6d8c23340705a4cf66aee90728b233bdc41acf1e0cf89660cbfb03090c86075ed8ccfe78830
   languageName: node
   linkType: hard
 
-"@standardnotes/rich-text@workspace:packages/components/src/org.standardnotes.plus-editor":
+"@standardnotes/rich-text@workspace:packages/components/src/packages/org.standardnotes.plus-editor":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/rich-text@workspace:packages/components/src/org.standardnotes.plus-editor"
+  resolution: "@standardnotes/rich-text@workspace:packages/components/src/packages/org.standardnotes.plus-editor"
   dependencies:
     "@babel/cli": ^7.13.0
     "@babel/core": ^7.13.8
@@ -5833,16 +5837,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/services@npm:^1.13.14, @standardnotes/services@npm:^1.13.16":
-  version: 1.13.16
-  resolution: "@standardnotes/services@npm:1.13.16"
+"@standardnotes/services@npm:^1.13.18":
+  version: 1.13.18
+  resolution: "@standardnotes/services@npm:1.13.18"
   dependencies:
     "@standardnotes/auth": ^3.19.3
     "@standardnotes/common": ^1.23.0
-    "@standardnotes/models": ^1.11.8
-    "@standardnotes/responses": ^1.6.34
+    "@standardnotes/models": ^1.11.10
+    "@standardnotes/responses": ^1.6.36
     "@standardnotes/utils": ^1.6.11
-  checksum: 7dae71b6e3c7e2d6e3ee547ab639d0ae7f31e83d7f377bfdf533c2098bb8ba291c68a5877529927d9427654675e2491bfddd2d11b14c8080e538ab6e0599d45a
+  checksum: bf620905ef03dc1704e706fcdf3c282806a5dc5bec68a915ed3809752aeaaf205383fe91f58fcb8ff2035e9fb052cceb87554f21b9338db2ffa1138dfb72247e
   languageName: node
   linkType: hard
 
@@ -5853,9 +5857,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/simple-task-editor@workspace:packages/components/src/org.standardnotes.simple-task-editor":
+"@standardnotes/simple-task-editor@workspace:packages/components/src/packages/org.standardnotes.simple-task-editor":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/simple-task-editor@workspace:packages/components/src/org.standardnotes.simple-task-editor"
+  resolution: "@standardnotes/simple-task-editor@workspace:packages/components/src/packages/org.standardnotes.simple-task-editor"
   dependencies:
     "@babel/core": ^7.13.10
     "@babel/eslint-parser": ^7.13.10
@@ -5908,79 +5912,39 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/snjs@npm:2.115.9":
-  version: 2.115.9
-  resolution: "@standardnotes/snjs@npm:2.115.9"
+"@standardnotes/snjs@npm:*, @standardnotes/snjs@npm:^2.117.4, @standardnotes/snjs@npm:^2.41.1":
+  version: 2.117.4
+  resolution: "@standardnotes/snjs@npm:2.117.4"
   dependencies:
-    "@standardnotes/api": ^1.1.7
-    "@standardnotes/auth": ^3.19.2
-    "@standardnotes/common": ^1.22.0
-    "@standardnotes/domain-events": ^2.29.3
-    "@standardnotes/encryption": ^1.8.14
-    "@standardnotes/features": ^1.45.1
-    "@standardnotes/filepicker": ^1.16.14
-    "@standardnotes/files": ^1.3.14
-    "@standardnotes/models": ^1.11.6
-    "@standardnotes/responses": ^1.6.32
-    "@standardnotes/services": ^1.13.14
-    "@standardnotes/settings": ^1.14.3
-    "@standardnotes/sncrypto-common": ^1.9.0
-    "@standardnotes/utils": ^1.6.10
-  checksum: 51e8c3b45875f5416f02d2901ec2c733095571037c52a90e6240875005c917c0dfb6a2db9b9a7426f539b70265bac07fc20118e50d92b5836c2a84f20ab91def
-  languageName: node
-  linkType: hard
-
-"@standardnotes/snjs@npm:^2.117.0":
-  version: 2.117.0
-  resolution: "@standardnotes/snjs@npm:2.117.0"
-  dependencies:
-    "@standardnotes/api": ^1.1.9
+    "@standardnotes/api": ^1.1.11
     "@standardnotes/auth": ^3.19.3
     "@standardnotes/common": ^1.23.0
-    "@standardnotes/domain-events": ^2.31.1
-    "@standardnotes/encryption": ^1.8.16
-    "@standardnotes/features": ^1.45.3
-    "@standardnotes/files": ^1.3.16
-    "@standardnotes/models": ^1.11.8
-    "@standardnotes/responses": ^1.6.34
-    "@standardnotes/services": ^1.13.16
+    "@standardnotes/domain-events": ^2.32.2
+    "@standardnotes/encryption": ^1.8.18
+    "@standardnotes/features": ^1.45.5
+    "@standardnotes/files": ^1.3.18
+    "@standardnotes/models": ^1.11.10
+    "@standardnotes/responses": ^1.6.36
+    "@standardnotes/services": ^1.13.18
     "@standardnotes/settings": ^1.14.3
     "@standardnotes/sncrypto-common": ^1.9.0
     "@standardnotes/utils": ^1.6.11
-  checksum: 90ae27ac09b8e7575c69e4fc616ff59c9712b5ae420cefffd38b2471571ea52ae3494b5f50b7958047a7358d016a81049c881cc8ee04c75ef3738004531a611f
+    semver: ^7.3.7
+  checksum: 5895619da1ec96a36fdb6e7bde9016efe96f6c7f8464e121ad3cd4db3f46390936d388cb64a339f85b0944d63ce79f50a0b0c2da831d2096366b68e164d4843c
   languageName: node
   linkType: hard
 
-"@standardnotes/snjs@npm:^2.41.1":
-  version: 2.116.2
-  resolution: "@standardnotes/snjs@npm:2.116.2"
-  dependencies:
-    "@standardnotes/api": ^1.1.9
-    "@standardnotes/auth": ^3.19.3
-    "@standardnotes/common": ^1.23.0
-    "@standardnotes/domain-events": ^2.31.1
-    "@standardnotes/encryption": ^1.8.16
-    "@standardnotes/features": ^1.45.3
-    "@standardnotes/files": ^1.3.16
-    "@standardnotes/models": ^1.11.8
-    "@standardnotes/responses": ^1.6.34
-    "@standardnotes/services": ^1.13.16
-    "@standardnotes/settings": ^1.14.3
-    "@standardnotes/sncrypto-common": ^1.9.0
-    "@standardnotes/utils": ^1.6.11
-  checksum: b6757ea420ce9b1b22b44ab7dae4f02f910a401e09715e0e1f5f24f91e5a3feca67313ecd47e3be990644ab55a01f00934a25afd63930fcd356142be059b4d82
-  languageName: node
-  linkType: hard
-
-"@standardnotes/solarized-dark-theme@workspace:packages/components/src/org.standardnotes.theme-solarized-dark":
+"@standardnotes/solarized-dark-theme@workspace:packages/components/src/packages/org.standardnotes.theme-solarized-dark":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/solarized-dark-theme@workspace:packages/components/src/org.standardnotes.theme-solarized-dark"
+  resolution: "@standardnotes/solarized-dark-theme@workspace:packages/components/src/packages/org.standardnotes.theme-solarized-dark"
+  dependencies:
+    webpack: "*"
   languageName: unknown
   linkType: soft
 
-"@standardnotes/spreadsheets@workspace:packages/components/src/org.standardnotes.standard-sheets":
+"@standardnotes/spreadsheets@workspace:packages/components/src/packages/org.standardnotes.standard-sheets":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/spreadsheets@workspace:packages/components/src/org.standardnotes.standard-sheets"
+  resolution: "@standardnotes/spreadsheets@workspace:packages/components/src/packages/org.standardnotes.standard-sheets"
   dependencies:
     "@babel/core": ^7.14.6
     "@babel/eslint-parser": ^7.14.7
@@ -6061,9 +6025,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/titanium-theme@workspace:packages/components/src/org.standardnotes.theme-titanium":
+"@standardnotes/titanium-theme@workspace:packages/components/src/packages/org.standardnotes.theme-titanium":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/titanium-theme@workspace:packages/components/src/org.standardnotes.theme-titanium"
+  resolution: "@standardnotes/titanium-theme@workspace:packages/components/src/packages/org.standardnotes.theme-titanium"
   languageName: unknown
   linkType: soft
 
@@ -6096,7 +6060,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/utils@npm:^1.6.10, @standardnotes/utils@npm:^1.6.11":
+"@standardnotes/utils@npm:^1.6.11":
   version: 1.6.11
   resolution: "@standardnotes/utils@npm:1.6.11"
   dependencies:
@@ -6132,11 +6096,11 @@ __metadata:
     "@reach/listbox": ^0.16.2
     "@reach/tooltip": ^0.16.2
     "@reach/visually-hidden": ^0.16.0
-    "@standardnotes/filepicker": 1.16.16
+    "@standardnotes/filepicker": 1.16.18
     "@standardnotes/icons": "workspace:*"
-    "@standardnotes/services": ^1.13.16
+    "@standardnotes/services": ^1.13.18
     "@standardnotes/sncrypto-web": 1.10.1
-    "@standardnotes/snjs": ^2.117.0
+    "@standardnotes/snjs": "*"
     "@standardnotes/styles": "workspace:*"
     "@standardnotes/toast": "workspace:*"
     "@types/jest": ^27.4.1
@@ -6619,16 +6583,16 @@ __metadata:
   linkType: hard
 
 "@tsconfig/node12@npm:^1.0.7":
-  version: 1.0.10
-  resolution: "@tsconfig/node12@npm:1.0.10"
-  checksum: 3683668703d5a2b43fe9b3135c5e475c401b5aaf7a586df8bb7eead1184b901d6606b6aee093dbb82e2d23b58f26104da433c86601a2912f512c1c935e4144a0
+  version: 1.0.11
+  resolution: "@tsconfig/node12@npm:1.0.11"
+  checksum: 5ce29a41b13e7897a58b8e2df11269c5395999e588b9a467386f99d1d26f6c77d1af2719e407621412520ea30517d718d5192a32403b8dfcc163bf33e40a338a
   languageName: node
   linkType: hard
 
 "@tsconfig/node14@npm:^1.0.0":
-  version: 1.0.2
-  resolution: "@tsconfig/node14@npm:1.0.2"
-  checksum: 6260dd461728c200921b4848cd9e1df2bfb2c1ee6c1b6dadbc9bf81afadff8ddf11c6312e08c07de89f6c40163916ff8307f6008bf6c76a4d72a2833dae7bf7c
+  version: 1.0.3
+  resolution: "@tsconfig/node14@npm:1.0.3"
+  checksum: 19275fe80c4c8d0ad0abed6a96dbf00642e88b220b090418609c4376e1cef81bf16237bf170ad1b341452feddb8115d8dd2e5acdfdea1b27422071163dc9ba9d
   languageName: node
   linkType: hard
 
@@ -6931,12 +6895,12 @@ __metadata:
   linkType: hard
 
 "@types/jest@npm:*":
-  version: 28.1.1
-  resolution: "@types/jest@npm:28.1.1"
+  version: 28.1.2
+  resolution: "@types/jest@npm:28.1.2"
   dependencies:
-    jest-matcher-utils: ^27.0.0
-    pretty-format: ^27.0.0
-  checksum: 0a8b045a7b660372decc807c390d3f99a2b12bb1659a1cd593afe04557f4b7c235b0576a5e35b1577710d20e42759d3d8755eb8bed6edc8733f47007e75a5509
+    jest-matcher-utils: ^28.0.0
+    pretty-format: ^28.0.0
+  checksum: 53ec95b0b27c61380225b94f8660e661e8c6c6fc69b7130531fb5d72ebf5c8838a4266b8a6d7b3a77b3bcdabed632de0c21c9592a2529c1efe80a0f0a995a3aa
   languageName: node
   linkType: hard
 
@@ -7071,10 +7035,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:>=12, @types/node@npm:^17.0.21":
-  version: 17.0.44
-  resolution: "@types/node@npm:17.0.44"
-  checksum: 8e2786472507575a9c49ec6c4b056cbe1f4fd6766fd03299f8510bbdce558d8522691b2cc24329396742002c2a8c3708cb453053ecbe0ce09c10b9d48887c9d8
+"@types/node@npm:*, @types/node@npm:>=12":
+  version: 18.0.0
+  resolution: "@types/node@npm:18.0.0"
+  checksum: aab2b325727a2599f6d25ebe0dedf58c40fb66a51ce4ca9c0226ceb70fcda2d3afccdca29db5942eb48b158ee8585a274a1e3750c718bbd5399d7f41d62dfdcc
   languageName: node
   linkType: hard
 
@@ -7103,6 +7067,13 @@ __metadata:
   version: 14.18.21
   resolution: "@types/node@npm:14.18.21"
   checksum: 4ed35b76609647a4e36a194702e31cdda9ed42174ddaf7937bc5498984e98a99e8a42ea895ea17dd9c5ec18080112c29ab670c34f90eb9f7a4703b85b31e34fa
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^17.0.21":
+  version: 17.0.45
+  resolution: "@types/node@npm:17.0.45"
+  checksum: aa04366b9103b7d6cfd6b2ef64182e0eaa7d4462c3f817618486ea0422984c51fc69fd0d436eae6c9e696ddfdbec9ccaa27a917f7c2e8c75c5d57827fe3d95e8
   languageName: node
   linkType: hard
 
@@ -7418,13 +7389,13 @@ __metadata:
   linkType: soft
 
 "@types/react@npm:*":
-  version: 18.0.12
-  resolution: "@types/react@npm:18.0.12"
+  version: 18.0.14
+  resolution: "@types/react@npm:18.0.14"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: 526ea13b3adf7fe4b475e55b7426510a7861ef2910664a9014ef42cba0c699d5167dc378eb161e2ec26c07a3b6fde9b6bdcbbb6f4b5580612246bc289395ef03
+  checksum: 608eb57a383eedc54c79949673e5e8314f6b0c61542bff58721c8c47a18c23e2832e77c656050c2c2c004b62cf25582136c7c56fe1b6263a285c065fae31dbcf
   languageName: node
   linkType: hard
 
@@ -7450,13 +7421,13 @@ __metadata:
   linkType: hard
 
 "@types/react@npm:^17, @types/react@npm:^17.0.40, @types/react@npm:^17.0.42":
-  version: 17.0.45
-  resolution: "@types/react@npm:17.0.45"
+  version: 17.0.47
+  resolution: "@types/react@npm:17.0.47"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: 3cc13a02824c13f6fa4807a83abd065ac1d9943359e76bd995cc7cd2b4148c1176ebd54a30a9f4eb8a0f141ff359d712876f256c4fee707e4290607ef8410b3e
+  checksum: 2e7fe0eb630cb77da03b6da308c58728c01b38e878118e9ff5cd8045181c8d4f32dc936e328f46a62cadb56e1fe4c5a911b5113584f93a99e1f35df7f059246b
   languageName: node
   linkType: hard
 
@@ -7595,11 +7566,11 @@ __metadata:
   linkType: hard
 
 "@types/testing-library__jest-dom@npm:^5.9.1":
-  version: 5.14.3
-  resolution: "@types/testing-library__jest-dom@npm:5.14.3"
+  version: 5.14.4
+  resolution: "@types/testing-library__jest-dom@npm:5.14.4"
   dependencies:
     "@types/jest": "*"
-  checksum: 203443d0e7e5929fbc9e441146f92d85efa033b4697e427ed0164df1c40b720b6bb9bbd96a3171ea5fd8d9301b538fd0f49d4f35594d142afd0f6d2ecac25785
+  checksum: 1d67a421757e5e6c32f232f848418b79658dc32d202f5b5f89e79dc49e6e8f24f0415db0f9fafe38c43c843d7f532cac53aa401f0129ae4b45c8d57e5974fbe3
   languageName: node
   linkType: hard
 
@@ -10901,9 +10872,9 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001251, caniuse-lite@npm:^1.0.30001335, caniuse-lite@npm:^1.0.30001349":
-  version: 1.0.30001354
-  resolution: "caniuse-lite@npm:1.0.30001354"
-  checksum: 3c4c213f98c7519474fcb110e8aa6857d724eb39a7c63ce46a558967cf355850f4cb67166afda33c460d91118a81d92679412e9c66abf7a72a0984a530153e66
+  version: 1.0.30001355
+  resolution: "caniuse-lite@npm:1.0.30001355"
+  checksum: 4154cabab0ae87d804007b1fc9109a532914dcd5dc4beeec8e1d3616f22971a0e96ed7fe0b00996c5104a4fe7ea7935c8e2878e06324c0ccfdcd6c69570e4ae1
   languageName: node
   linkType: hard
 
@@ -11822,25 +11793,6 @@ __metadata:
     semver: ^7.3.2
     well-known-symbols: ^2.0.0
   checksum: 749153ba711492feb7c3d2f5bb04c107157440b3e39509bd5dd19ee7b3ac751d1e4cd75796d9f702e0a713312dbc661421c68aa4a2c34d5f6d91f47e3a1c64a6
-  languageName: node
-  linkType: hard
-
-"concurrently@npm:^7.1.0":
-  version: 7.2.2
-  resolution: "concurrently@npm:7.2.2"
-  dependencies:
-    chalk: ^4.1.0
-    date-fns: ^2.16.1
-    lodash: ^4.17.21
-    rxjs: ^7.0.0
-    shell-quote: ^1.7.3
-    spawn-command: ^0.0.2-1
-    supports-color: ^8.1.0
-    tree-kill: ^1.2.2
-    yargs: ^17.3.1
-  bin:
-    concurrently: dist/bin/concurrently.js
-  checksum: ae9604032d971a49a11c6797ed057380e53bde0ec79d1dcbd23bdbe578961867289089e9729e802520297d8f410e3085333719a3f7a4ce1c2ed167b68c740247
   languageName: node
   linkType: hard
 
@@ -13592,13 +13544,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"date-fns@npm:^2.16.1":
-  version: 2.28.0
-  resolution: "date-fns@npm:2.28.0"
-  checksum: a0516b2e4f99b8bffc6cc5193349f185f195398385bdcaf07f17c2c4a24473c99d933eb0018be4142a86a6d46cb0b06be6440ad874f15e795acbedd6fd727a1f
-  languageName: node
-  linkType: hard
-
 "date-time@npm:^3.1.0":
   version: 3.1.0
   resolution: "date-time@npm:3.1.0"
@@ -14134,6 +14079,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"diff-sequences@npm:^28.1.1":
+  version: 28.1.1
+  resolution: "diff-sequences@npm:28.1.1"
+  checksum: e2529036505567c7ca5a2dea86b6bcd1ca0e3ae63bf8ebf529b8a99cfa915bbf194b7021dc1c57361a4017a6d95578d4ceb29fabc3232a4f4cb866a2726c7690
+  languageName: node
+  linkType: hard
+
 "diff@npm:^4.0.1":
   version: 4.0.2
   resolution: "diff@npm:4.0.2"
@@ -14665,9 +14617,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.4.147":
-  version: 1.4.156
-  resolution: "electron-to-chromium@npm:1.4.156"
-  checksum: 90e041838b86277b6b63d2104e086796f012d07e763b95a3866742c0c067a7d1b12931a0d5a7a2fdde0c816007133dbd24672bb56ee38da5c436c173491f496c
+  version: 1.4.160
+  resolution: "electron-to-chromium@npm:1.4.160"
+  checksum: cd1058ddf8c4d1a38d2826938f9e99945bb45f96ea5eca5af96a2df4a40f23eec19e187cda739b4438174352129bcb733950f366a494d0a923385a46868a0d38
   languageName: node
   linkType: hard
 
@@ -19804,6 +19756,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jest-diff@npm:^28.1.1":
+  version: 28.1.1
+  resolution: "jest-diff@npm:28.1.1"
+  dependencies:
+    chalk: ^4.0.0
+    diff-sequences: ^28.1.1
+    jest-get-type: ^28.0.2
+    pretty-format: ^28.1.1
+  checksum: d9e0355880bee8728f7615ac0f03c66dcd4e93113935cca056a5f5a2f20ac2c7812aca6ad68e79bd1b11f2428748bd9123e6b1c7e51c93b4da3dfa5a875339f7
+  languageName: node
+  linkType: hard
+
 "jest-docblock@npm:^27.5.1":
   version: 27.5.1
   resolution: "jest-docblock@npm:27.5.1"
@@ -19866,6 +19830,13 @@ __metadata:
   version: 27.5.1
   resolution: "jest-get-type@npm:27.5.1"
   checksum: 63064ab70195c21007d897c1157bf88ff94a790824a10f8c890392e7d17eda9c3900513cb291ca1c8d5722cad79169764e9a1279f7c8a9c4cd6e9109ff04bbc0
+  languageName: node
+  linkType: hard
+
+"jest-get-type@npm:^28.0.2":
+  version: 28.0.2
+  resolution: "jest-get-type@npm:28.0.2"
+  checksum: 5281d7c89bc8156605f6d15784f45074f4548501195c26e9b188742768f72d40948252d13230ea905b5349038865a1a8eeff0e614cc530ff289dfc41fe843abd
   languageName: node
   linkType: hard
 
@@ -19962,6 +19933,18 @@ __metadata:
     jest-get-type: ^27.5.1
     pretty-format: ^27.5.1
   checksum: bb2135fc48889ff3fe73888f6cc7168ddab9de28b51b3148f820c89fdfd2effdcad005f18be67d0b9be80eda208ad47290f62f03d0a33f848db2dd0273c8217a
+  languageName: node
+  linkType: hard
+
+"jest-matcher-utils@npm:^28.0.0":
+  version: 28.1.1
+  resolution: "jest-matcher-utils@npm:28.1.1"
+  dependencies:
+    chalk: ^4.0.0
+    jest-diff: ^28.1.1
+    jest-get-type: ^28.0.2
+    pretty-format: ^28.1.1
+  checksum: cb73ccd347638cd761ef7e0b606fbd71c115bd8febe29413f7b105fff6855d4356b8094c6b72393c5457db253b9c163498f188f25f9b6308c39c510e4c2886ee
   languageName: node
   linkType: hard
 
@@ -21121,8 +21104,8 @@ __metadata:
   linkType: hard
 
 "lint-staged@npm:*, lint-staged@npm:>=12, lint-staged@npm:^13.0.1":
-  version: 13.0.1
-  resolution: "lint-staged@npm:13.0.1"
+  version: 13.0.2
+  resolution: "lint-staged@npm:13.0.2"
   dependencies:
     cli-truncate: ^3.1.0
     colorette: ^2.0.17
@@ -21139,7 +21122,7 @@ __metadata:
     yaml: ^2.1.1
   bin:
     lint-staged: bin/lint-staged.js
-  checksum: a321b351bbdc7dba09c9f026e385b887dabaaea1258eb478fbbe73dc395e11ebe26c946f8514426c7fc7e3e0efbe0761fe64f70e0d26361f912af79f80bf3e4e
+  checksum: b5ccf8e11b69f6fd8b79b629580c1463524aeca069a8f97a28291de2fafa474c28871428b56f251cf95a02d84e7b0fc0dfd6443532e16fdac3f9cba9228cfc9e
   languageName: node
   linkType: hard
 
@@ -23095,13 +23078,13 @@ __metadata:
   linkType: hard
 
 "mini-css-extract-plugin@npm:^2.0.0, mini-css-extract-plugin@npm:^2.4.5, mini-css-extract-plugin@npm:^2.5.3, mini-css-extract-plugin@npm:^2.6.0":
-  version: 2.6.0
-  resolution: "mini-css-extract-plugin@npm:2.6.0"
+  version: 2.6.1
+  resolution: "mini-css-extract-plugin@npm:2.6.1"
   dependencies:
     schema-utils: ^4.0.0
   peerDependencies:
     webpack: ^5.0.0
-  checksum: ea73bd66558de7a37db094fe68fa130e7a725ab15f880ff8467a75d9c4c2f1576d20720088ea22af9922a94b8600bbfef0c6acaf10d12a32a9bd20a90ba3c35f
+  checksum: df60840404878c4832b4104799fd29c5a89b06b1e377956c8d4a5729efe0ef301a52e5087d6f383871df5e69a8445922a0ae635c11abf412d7645a7096d0e973
   languageName: node
   linkType: hard
 
@@ -25350,11 +25333,11 @@ __metadata:
   linkType: hard
 
 "pod-install@npm:^0.1.33":
-  version: 0.1.36
-  resolution: "pod-install@npm:0.1.36"
+  version: 0.1.37
+  resolution: "pod-install@npm:0.1.37"
   bin:
     pod-install: build/index.js
-  checksum: 3108ddd53807ef575d1b7d85f030dcb572c7248fbfd45772eca979bb6e8125cc76006db045a233956cb7cfe1a867f9ec9f57f4baa66ef98cfde3e9e6635ab677
+  checksum: 104462863162500abd436f23bccb21bc7ca7a194b6abf06df80415d79f9184c66b7e54e09ab3a80a61ff4f7740f60dc16eced0f36100b9362ac3d064ea3cf765
   languageName: node
   linkType: hard
 
@@ -26329,11 +26312,11 @@ __metadata:
   linkType: hard
 
 "prettier@npm:*, prettier@npm:^2.6.0, prettier@npm:^2.6.2":
-  version: 2.7.0
-  resolution: "prettier@npm:2.7.0"
+  version: 2.7.1
+  resolution: "prettier@npm:2.7.1"
   bin:
     prettier: bin-prettier.js
-  checksum: 5b55bb1dced9d16635b83229df8e670d150890fdb343f19e8a66e610094a108e960c0f57352b3e5cdbc4eff4ef00a834406047ffcd9f20bd22a6497ba143c81f
+  checksum: 55a4409182260866ab31284d929b3cb961e5fdb91fe0d2e099dac92eaecec890f36e524b4c19e6ceae839c99c6d7195817579cdffc8e2c80da0cb794463a748b
   languageName: node
   linkType: hard
 
@@ -26377,7 +26360,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pretty-format@npm:^28.1.1":
+"pretty-format@npm:^28.0.0, pretty-format@npm:^28.1.1":
   version: 28.1.1
   resolution: "pretty-format@npm:28.1.1"
   dependencies:
@@ -26968,7 +26951,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc@npm:^1.0.1, rc@npm:^1.1.6, rc@npm:^1.2.7, rc@npm:^1.2.8":
+"rc@npm:1.2.8, rc@npm:^1.0.1, rc@npm:^1.1.6, rc@npm:^1.2.7, rc@npm:^1.2.8":
   version: 1.2.8
   resolution: "rc@npm:1.2.8"
   dependencies:
@@ -28361,11 +28344,11 @@ __metadata:
   linkType: hard
 
 "registry-auth-token@npm:^4.0.0":
-  version: 4.2.1
-  resolution: "registry-auth-token@npm:4.2.1"
+  version: 4.2.2
+  resolution: "registry-auth-token@npm:4.2.2"
   dependencies:
-    rc: ^1.2.8
-  checksum: aa72060b573a50607cfd2dee16d0e51e13ca58b6a80442e74545325dc24d2c38896e6bad229bdcc1fc9759fa81b4066be8693d4d6f45927318e7c793a93e9cd0
+    rc: 1.2.8
+  checksum: c5030198546ecfdcbcb0722cbc3e260c4f5f174d8d07bdfedd4620e79bfdf17a2db735aa230d600bd388fce6edd26c0a9ed2eb7e9b4641ec15213a28a806688b
   languageName: node
   linkType: hard
 
@@ -28976,7 +28959,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rxjs@npm:*, rxjs@npm:^7.0.0, rxjs@npm:^7.5.5":
+"rxjs@npm:*, rxjs@npm:^7.5.5":
   version: 7.5.5
   resolution: "rxjs@npm:7.5.5"
   dependencies:
@@ -30185,13 +30168,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"spawn-command@npm:^0.0.2-1":
-  version: 0.0.2
-  resolution: "spawn-command@npm:0.0.2"
-  checksum: e35c5d28177b4d461d33c88cc11f6f3a5079e2b132c11e1746453bbb7a0c0b8a634f07541a2a234fa4758239d88203b758def509161b651e81958894c0b4b64b
-  languageName: node
-  linkType: hard
-
 "spawn-please@npm:^1.0.0":
   version: 1.0.0
   resolution: "spawn-please@npm:1.0.0"
@@ -31005,7 +30981,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"supports-color@npm:^8.0.0, supports-color@npm:^8.1.0":
+"supports-color@npm:^8.0.0":
   version: 8.1.1
   resolution: "supports-color@npm:8.1.1"
   dependencies:
@@ -31716,15 +31692,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tree-kill@npm:^1.2.2":
-  version: 1.2.2
-  resolution: "tree-kill@npm:1.2.2"
-  bin:
-    tree-kill: cli.js
-  checksum: 49117f5f410d19c84b0464d29afb9642c863bc5ba40fcb9a245d474c6d5cc64d1b177a6e6713129eb346b40aebb9d4631d967517f9fbe8251c35b21b13cd96c7
-  languageName: node
-  linkType: hard
-
 "trim-newlines@npm:^3.0.0":
   version: 3.0.1
   resolution: "trim-newlines@npm:3.0.1"
@@ -32196,11 +32163,11 @@ __metadata:
   linkType: hard
 
 "uglify-js@npm:^3.1.4, uglify-js@npm:^3.15.4":
-  version: 3.16.0
-  resolution: "uglify-js@npm:3.16.0"
+  version: 3.16.1
+  resolution: "uglify-js@npm:3.16.1"
   bin:
     uglifyjs: bin/uglifyjs
-  checksum: be0207e57ef70b13e92196cd0351f28908b80121d809901b511593c0bd1043d9c0b21d22f2a83001da873407a02572b67ccd21ce5e053cf7c787b2ca8a3773fb
+  checksum: e4108b35af7bcc9cf3be5366614bb1df2c78695aa14dee85b48cb9036a4478e60e91afe2375917e3284b61ef056fcab3a1d4bfc7c563e57bc77fd5ac89463a4c
   languageName: node
   linkType: hard
 
@@ -33454,7 +33421,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:*, webpack@npm:^5.64.4, webpack@npm:^5.72.0, webpack@npm:^5.73.0":
+"webpack@npm:*, webpack@npm:^5.64.4, webpack@npm:^5.72.0":
   version: 5.73.0
   resolution: "webpack@npm:5.73.0"
   dependencies:
@@ -34319,7 +34286,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs@npm:^17.0.0, yargs@npm:^17.0.1, yargs@npm:^17.2.1, yargs@npm:^17.3.1, yargs@npm:^17.5.1":
+"yargs@npm:^17.0.0, yargs@npm:^17.0.1, yargs@npm:^17.2.1, yargs@npm:^17.5.1":
   version: 17.5.1
   resolution: "yargs@npm:17.5.1"
   dependencies:

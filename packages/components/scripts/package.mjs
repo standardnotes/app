@@ -8,17 +8,14 @@ import zip from '@standardnotes/deterministic-zip'
 import minimatch from 'minimatch'
 
 import { fileURLToPath } from 'url'
+import { ensureDirExists, doesDirExist, emptyExistingDir } from '../../../scripts/ScriptUtils.mjs'
+
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 console.log('Beginning packaging procedure...')
 
-const specificFeatureIdentifier = process.argv[2]
-if (specificFeatureIdentifier) {
-  console.log('Processing only', specificFeatureIdentifier)
-}
-
-const SourceFilesPath = path.join(__dirname, '../src')
+const SourceFilesPath = path.join(__dirname, '../src/packages')
 const DistDir = path.join(__dirname, '../dist')
 const TmpDir = path.join(__dirname, '../tmp')
 const ZipsDir = path.join(DistDir, '/zips')
@@ -66,24 +63,12 @@ const copyFileOrDir = (src, dest, exludedFilesGlob) => {
   }
 }
 
-const doesDirExist = (dir) => {
-  return fs.existsSync(dir)
-}
-
-const ensureDirExists = (dir) => {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true })
-  }
-}
-
-const emptyExistingDir = (dir) => {
-  if (fs.existsSync(dir)) {
-    fs.rmSync(dir, { recursive: true })
-  }
+const getComponentSrcPath = (feature) => {
+  return path.join(SourceFilesPath, feature.identifier)
 }
 
 const copyComponentAssets = async (feature, destination, exludedFilesGlob) => {
-  const srcComponentPath = path.join(SourceFilesPath, feature.identifier)
+  const srcComponentPath = getComponentSrcPath(feature)
 
   if (!doesDirExist(srcComponentPath)) {
     return false
@@ -118,34 +103,45 @@ const computeChecksum = async (zipPath, version) => {
   }
 }
 
-const zipAndChecksumFeature = async (feature) => {
+const packageFeature = async ({ feature, noZip }) => {
   console.log('Processing feature', feature.identifier, '...')
 
   const assetsLocation = `${path.join(AssetsDir, feature.identifier)}`
   const assetsSuccess = await copyComponentAssets(feature, assetsLocation, '**/package.json')
   if (!assetsSuccess) {
+    console.log('Failed to copy assets for', feature.identifier)
+    return
+  }
+
+  if (noZip) {
+    console.log('Input arg noZip detected; not zipping asset.')
     return
   }
 
   const zipAssetsTmpLocation = `${path.join(TmpDir, feature.identifier)}`
   const zipAssetsSuccess = await copyComponentAssets(feature, zipAssetsTmpLocation)
   if (!zipAssetsSuccess) {
+    console.log('Failed to copy zip assets for', feature.identifier)
     return
   }
 
   const zipDestination = `${ZipsDir}/${feature.identifier}.zip`
   await zipDirectory(zipAssetsTmpLocation, zipDestination)
 
-  const checksum = await computeChecksum(zipDestination, feature.version)
+  const packageJsonFilePath = path.join(getComponentSrcPath(feature), 'package.json')
+  const packageJsonFile = JSON.parse(fs.readFileSync(packageJsonFilePath).toString())
+
+  const checksum = await computeChecksum(zipDestination, packageJsonFile.version)
   Checksums[feature.identifier] = checksum
 
   console.log(`Computed checksums for ${feature.identifier}:`, checksum)
 }
 
 await (async () => {
-  const featuresToProcess = specificFeatureIdentifier
-    ? [GetFeatures().find((feature) => feature.identifier === specificFeatureIdentifier)]
-    : GetFeatures().concat(GetDeprecatedFeatures())
+  const args = process.argv[2] || ''
+  const noZip = args.includes('--no-zip')
+
+  const featuresToProcess = GetFeatures().concat(GetDeprecatedFeatures())
 
   let index = 0
   for (const feature of featuresToProcess) {
@@ -153,10 +149,10 @@ await (async () => {
       console.log('\n---\n')
     }
 
-    if (feature.download_url) {
-      await zipAndChecksumFeature(feature)
+    if (['SN|Component', 'SN|Theme'].includes(feature.content_type)) {
+      await packageFeature({ feature, noZip })
     } else {
-      console.log('Feature does not have download_url, not packaging', feature.identifier)
+      console.log('Feature is not component, not packaging', feature.identifier)
     }
 
     if (index !== featuresToProcess.length - 1) {

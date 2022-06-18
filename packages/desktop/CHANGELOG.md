@@ -3,6 +3,85 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.22.10-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.22.7-alpha.6...@standardnotes/desktop@3.22.10-alpha.0) (2022-06-17)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.22.9](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.22.7-alpha.4...@standardnotes/desktop@3.22.9) (2022-06-17)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.22.8](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.22.7-alpha.1...@standardnotes/desktop@3.22.8) (2022-06-17)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.22.7](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.22.7-alpha.1...@standardnotes/desktop@3.22.7) (2022-06-17)
+
+**Note:** Version bump only for package @standardnotes/desktop
+## [3.22.7-alpha.4](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.22.7-alpha.3...@standardnotes/desktop@3.22.7-alpha.4) (2022-06-17)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.22.7-alpha.3](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.22.7-alpha.2...@standardnotes/desktop@3.22.7-alpha.3) (2022-06-17)
+
+### Bug Fixes
+
+* **desktop:** provide template version ([66241cb](https://github.com/standardnotes/app/commit/66241cb038753583d61d43bfef44ecdf158ac337))
+
+## [3.22.7-alpha.2](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.22.7-alpha.1...@standardnotes/desktop@3.22.7-alpha.2) (2022-06-17)
+
+### Bug Fixes
+
+* **desktop:** use top level package json for versioning ([93e9701](https://github.com/standardnotes/app/commit/93e97013c113f054b59f5cc27c3ee579448c32cb))
+
+## [3.22.7-alpha.1](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.22.7-alpha.0...@standardnotes/desktop@3.22.7-alpha.1) (2022-06-17)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.22.7-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.22.6...@standardnotes/desktop@3.22.7-alpha.0) (2022-06-17)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.22.6](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.22.5...@standardnotes/desktop@3.22.6) (2022-06-17)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## 3.22.5 (2022-06-16)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## 3.22.4 (2022-06-16)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.22.3](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.22.3-alpha.24...@standardnotes/desktop@3.22.3) (2022-06-16)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.22.3-alpha.24](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.22.3-alpha.23...@standardnotes/desktop@3.22.3-alpha.24) (2022-06-16)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## 3.22.3-alpha.23 (2022-06-16)
+
+### Bug Fixes
+
+* **desktop:** commit public env config ([fef253c](https://github.com/standardnotes/app/commit/fef253c62f0c51626b2bbcf7fa0cd97eb8d820d3))
+
+## [3.22.3-alpha.22](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.22.3-alpha.21...@standardnotes/desktop@3.22.3-alpha.22) (2022-06-16)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## 3.22.3-alpha.21 (2022-06-16)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.22.3-alpha.20](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.22.3-alpha.19...@standardnotes/desktop@3.22.3-alpha.20) (2022-06-16)
+
+### Bug Fixes
+
+* desktop output name ([8cf1570](https://github.com/standardnotes/app/commit/8cf1570186fe53f71ae758d268dff9798da82c61))
+
 ## 3.22.3-alpha.19 (2022-06-16)
 
 **Note:** Version bump only for package @standardnotes/desktop

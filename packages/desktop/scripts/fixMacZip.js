@@ -31,7 +31,7 @@ async function getBlockMapInfo(fileName) {
 
 ;(async () => {
   try {
-    const { version } = JSON.parse(await fs.promises.readFile('app/package.json'))
+    const { version } = JSON.parse(await fs.promises.readFile('package.json'))
     const zipName = `standard-notes-${version}-mac-x64.zip`
     const zipPath = `dist/${zipName}`
     console.log(`Removing ${zipPath}`)
