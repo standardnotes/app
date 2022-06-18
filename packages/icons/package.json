@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/icons",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "private": true,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -29,6 +29,6 @@
     "typescript": "*",
     "webpack": "*",
     "webpack-cli": "*",
-    "webpack-dev-server": "^4.9.0"
+    "webpack-dev-server": "*"
   }
 }

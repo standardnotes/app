@@ -53,6 +53,8 @@ export const Root = () => {
     const removeNoteObserver = application?.editorGroup.addActiveControllerChangeObserver(activeController => {
       if (activeController instanceof NoteViewController) {
         setActiveNoteView(activeController)
+      } else {
+        setActiveNoteView(undefined)
       }
     })
 

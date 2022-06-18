@@ -6,7 +6,7 @@ on:
       - develop
       - main
     paths:
-      - packages/!(components)/**
+      - '!packages/components'
 
 jobs:
   test:
