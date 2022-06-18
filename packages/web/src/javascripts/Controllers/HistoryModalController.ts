@@ -347,7 +347,7 @@ export class HistoryModalController extends AbstractViewController {
     this.legacyHistory = []
   }
 
-  restoreRevision = (revision: NonNullable<SelectedRevision>) => {
+  restoreRevision = async (revision: NonNullable<SelectedRevision>) => {
     const originalNote = this.application.items.findItem<SNNote>(revision.payload.uuid)
 
     if (originalNote?.locked) {
@@ -355,30 +355,26 @@ export class HistoryModalController extends AbstractViewController {
       return
     }
 
-    confirmDialog({
+    const didConfirm = await confirmDialog({
       text: "Are you sure you want to replace the current note's contents with what you see in this preview?",
       confirmButtonStyle: 'danger',
     })
-      .then((confirmed) => {
-        if (!originalNote) {
-          throw new Error('Original note not found.')
-        }
 
-        if (confirmed) {
-          this.application.mutator
-            .changeAndSaveItem(
-              originalNote,
-              (mutator) => {
-                mutator.setCustomContent(revision.payload.content)
-              },
-              true,
-              PayloadEmitSource.RemoteRetrieved,
-            )
-            .catch(console.error)
-          this.dismissModal()
-        }
-      })
-      .catch(console.error)
+    if (!originalNote) {
+      throw new Error('Original note not found.')
+    }
+
+    if (didConfirm) {
+      void this.application.mutator.changeAndSaveItem(
+        originalNote,
+        (mutator) => {
+          mutator.setCustomContent(revision.payload.content)
+        },
+        true,
+        PayloadEmitSource.RemoteRetrieved,
+      )
+      this.dismissModal()
+    }
   }
 
   restoreRevisionAsCopy = async (revision: NonNullable<SelectedRevision>) => {
