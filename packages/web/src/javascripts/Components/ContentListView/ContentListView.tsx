@@ -30,6 +30,7 @@ import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 import { NoAccountWarningController } from '@/Controllers/NoAccountWarningController'
 import { NotesController } from '@/Controllers/NotesController'
 import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
+import { ElementIds } from '@/Constants/ElementIDs'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -144,9 +145,7 @@ const ContentListView: FunctionComponent<Props> = ({
       key: 'a',
       modifiers: [KeyboardModifier.Ctrl],
       onKeyDown: (event) => {
-        const elementsToIgnore = ['INPUT', 'TEXTAREA']
-
-        if (elementsToIgnore.includes((event.target as HTMLElement).tagName)) {
+        if (!(event.target as HTMLElement).closest(`#${ElementIds.ContentList}`)) {
           return
         }
 
