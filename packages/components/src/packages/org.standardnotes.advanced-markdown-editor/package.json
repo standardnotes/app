@@ -20,7 +20,7 @@
     "@babel/core": "^7.13.13",
     "@babel/preset-env": "^7.13.12",
     "@standardnotes/component-relay": "2.2.0",
-    "copy-webpack-plugin": "^8.1.0",
+    "copy-webpack-plugin": "*",
     "css-loader": "^5.2.0",
     "dompurify": "^2.2.9",
     "easymde": "2.16.1",
@@ -37,7 +37,7 @@
     "sn-stylekit": "3.0.1",
     "webpack": "*",
     "webpack-cli": "*",
-    "webpack-dev-server": "^3.11.2",
+    "webpack-dev-server": "*",
     "webpack-merge": "^5.7.3"
   }
 }

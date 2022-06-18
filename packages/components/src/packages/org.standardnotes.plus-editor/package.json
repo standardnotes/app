@@ -33,7 +33,7 @@
     "summernote": "^0.8.18",
     "webpack": "*",
     "webpack-cli": "*",
-    "webpack-dev-server": "^3.11.2",
+    "webpack-dev-server": "*",
     "webpack-merge": "^5.7.3",
     "webpack-merge-and-include-globally": "^2.3.3"
   }
