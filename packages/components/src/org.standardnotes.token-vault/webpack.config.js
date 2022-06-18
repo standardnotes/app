@@ -1,6 +1,7 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { ProvidePlugin } = require('webpack')
 
 module.exports = {
   context: __dirname,
@@ -73,6 +74,9 @@ module.exports = {
       title: "TokenVault",
       template: 'editor.index.ejs',
       filename: 'index.html'
+    }),
+    new ProvidePlugin({
+      React: 'react'
     })
   ]
 };

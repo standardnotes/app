@@ -22,5 +22,19 @@
     "react": {
       "version": "detect"
     }
+  },
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "react",
+            "importNames": ["default"],
+            "message": "React default is automatically imported by webpack."
+          }
+        ]
+      }
+    ]
   }
 }
