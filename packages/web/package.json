@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/web",
-  "version": "3.22.5",
+  "version": "3.22.6-alpha.0",
   "license": "AGPL-3.0-or-later",
   "main": "dist/app.js",
   "author": "Standard Notes",
@@ -50,7 +50,7 @@
     "ts-loader": "^9.2.8",
     "typescript": "*",
     "webpack": "*",
-    "webpack-dev-server": "^4.8.1",
+    "webpack-dev-server": "*",
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
