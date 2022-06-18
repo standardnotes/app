@@ -239,9 +239,8 @@ const NotesOptions = ({
       await application.getArchiveService().downloadDataAsZip(
         notes.map((note) => {
           return {
-            filename: getNoteFileName(note),
+            name: getNoteFileName(note),
             content: new Blob([note.text]),
-            uuid: note.uuid,
           }
         }),
       )
