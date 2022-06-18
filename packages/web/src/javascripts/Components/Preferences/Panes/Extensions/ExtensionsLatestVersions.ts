@@ -2,6 +2,9 @@ import { WebApplication } from '@/Application/Application'
 import { ClientDisplayableError, FeatureDescription } from '@standardnotes/snjs'
 import { makeAutoObservable, observable } from 'mobx'
 import { AnyExtension } from './AnyExtension'
+import { ComponentChecksumsType } from '@standardnotes/components-meta'
+import RawComponentChecksumsFile from '@standardnotes/components-meta/dist/zips/checksums.json'
+const ComponentChecksums = RawComponentChecksumsFile as ComponentChecksumsType
 
 export class ExtensionsLatestVersions {
   static async load(application: WebApplication): Promise<ExtensionsLatestVersions | undefined> {
@@ -33,7 +36,8 @@ function collectFeatures(features: FeatureDescription[] | undefined, versionMap:
   if (features == undefined) {
     return
   }
+
   for (const feature of features) {
-    versionMap.set(feature.identifier, feature.version as string)
+    versionMap.set(feature.identifier, ComponentChecksums[feature.identifier].version)
   }
 }

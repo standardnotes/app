@@ -1,9 +1,9 @@
 {
   "name": "@standardnotes/desktop",
   "main": "./app/dist/index.js",
-  "version": "3.22.3-alpha.19",
+  "version": "3.22.10-alpha.0",
   "license": "AGPL-3.0-or-later",
-  "author": "Standard Notes",
+  "author": "Standard Notes.",
   "private": true,
   "repository": {
     "type": "git",
@@ -84,7 +84,7 @@
   "build": {
     "electronVersion": "17.4.2",
     "appId": "org.standardnotes.standardnotes",
-    "artifactName": "${name}-${version}-${os}-${arch}.${ext}",
+    "artifactName": "standard-notes-${version}-${os}-${arch}.${ext}",
     "afterSign": "scripts/notarizeMac.js",
     "files": [
       "compiled/**/*",
@@ -123,6 +123,7 @@
     "linux": {
       "category": "Office",
       "icon": "build/icon/",
+      "executableName": "Standard Notes",
       "desktop": {
         "StartupWMClass": "standard notes"
       },

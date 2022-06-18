@@ -1,7 +1,6 @@
 {
   "name": "@standardnotes/mobile",
-  "version": "3.23.1-alpha.9",
-  "user-version": "3.23.0",
+  "version": "3.23.6-alpha.0",
   "author": "Standard Notes.",
   "private": true,
   "license": "AGPL-3.0-or-later",
@@ -15,12 +14,11 @@
     "lint": "yarn lint:eslint && yarn lint:prettier",
     "lint:eslint": "yarn eslint . --ext .ts,.tsx --fix --quiet",
     "lint:prettier": "prettier ./src --write",
-    "build": "yarn install:pods",
+    "build": "yarn android:bundle && yarn install:pods",
     "tsc": "tsc --noEmit",
     "start": "react-native start",
     "install:pods": "yarn pod-install ios",
-    "android:bundle": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/build/intermediates/res/merged/release/",
-    "upgrade:snjs": "ncu -u '@standardnotes/*' && yarn"
+    "android:bundle": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/build/intermediates/res/merged/release/"
   },
   "installConfig": {
     "hoistingLimits": "workspaces"
@@ -34,13 +32,13 @@
     "@react-navigation/native": "^6.0.10",
     "@react-navigation/stack": "^6.2.1",
     "@standardnotes/components-meta": "workspace:*",
-    "@standardnotes/filepicker": "^1.16.14",
+    "@standardnotes/filepicker": "^1.16.18",
     "@standardnotes/icons": "workspace:*",
     "@standardnotes/react-native-aes": "^1.4.3",
     "@standardnotes/react-native-textview": "1.0.2",
     "@standardnotes/react-native-utils": "1.0.1",
     "@standardnotes/sncrypto-common": "1.9.0",
-    "@standardnotes/snjs": "2.115.9",
+    "@standardnotes/snjs": "*",
     "@standardnotes/stylekit": "5.29.3",
     "@types/styled-components-react-native": "5.1.3",
     "js-base64": "^3.7.2",
@@ -98,7 +96,6 @@
     "@typescript-eslint/eslint-plugin": "^5.20.0",
     "@typescript-eslint/parser": "^5.20.0",
     "babel-jest": "^27.5.1",
-    "concurrently": "^7.1.0",
     "detox": "^19.5.7",
     "eslint": "^8.13.0",
     "eslint-plugin-flowtype": "^8.0.3",
@@ -124,8 +121,8 @@
     "preset": "react-native"
   },
   "componentsCdn": {
-    "dev": "https://app-dev.standardnotes.com/components/zips",
-    "prod": "https://app.standardnotes.com/components/zips"
+    "dev": "https://cdn.jsdelivr.net/gh/standardnotes/app@",
+    "prod": "https://cdn.jsdelivr.net/gh/standardnotes/app@"
   },
   "detox": {
     "configurations": {

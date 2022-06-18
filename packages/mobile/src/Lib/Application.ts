@@ -8,7 +8,7 @@ import {
   DeinitSource,
   Environment,
   IconsController,
-  NoteGroupController,
+  ItemGroupController,
   platformFromString,
   SNApplication,
   SNComponentManager,
@@ -42,7 +42,7 @@ type MobileServices = {
 
 export class MobileApplication extends SNApplication {
   private MobileServices!: MobileServices
-  public editorGroup: NoteGroupController
+  public editorGroup: ItemGroupController
   public iconsController: IconsController
   private startedDeinit = false
 
@@ -71,7 +71,7 @@ export class MobileApplication extends SNApplication {
     })
 
     this.Uuid = Math.random().toString()
-    this.editorGroup = new NoteGroupController(this)
+    this.editorGroup = new ItemGroupController(this)
     this.iconsController = new IconsController()
 
     void this.mobileComponentManager.initialize(this.protocolService)

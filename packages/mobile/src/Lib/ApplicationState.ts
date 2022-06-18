@@ -265,13 +265,13 @@ export class ApplicationState extends ApplicationService {
         : this.selectedTag.uuid
       : undefined
 
-    this.application.editorGroup.closeActiveNoteController()
+    this.application.editorGroup.closeActiveItemController()
 
-    const noteView = await this.application.editorGroup.createNoteController(undefined, title, selectedTagUuid)
+    const noteView = await this.application.editorGroup.createItemController({ title, tag: selectedTagUuid })
 
     const defaultEditor = this.application.componentManager.getDefaultEditor()
     if (defaultEditor) {
-      await associateComponentWithNote(this.application, defaultEditor, this.getActiveNoteController().note)
+      await associateComponentWithNote(this.application, defaultEditor, this.getActiveNoteController().item)
     }
 
     return noteView
@@ -281,10 +281,10 @@ export class ApplicationState extends ApplicationService {
     const note = this.application.items.findItem(noteUuid) as SNNote
     const activeEditor = this.getActiveNoteController()
     if (activeEditor) {
-      this.application.editorGroup.closeActiveNoteController()
+      this.application.editorGroup.closeActiveItemController()
     }
 
-    const noteView = await this.application.editorGroup.createNoteController(noteUuid)
+    const noteView = (await this.application.editorGroup.createItemController(note)) as NoteViewController
 
     if (note && note.conflictOf) {
       void InteractionManager.runAfterInteractions(() => {
@@ -297,32 +297,32 @@ export class ApplicationState extends ApplicationService {
     return noteView
   }
 
-  getActiveNoteController() {
-    return this.application.editorGroup.noteControllers[0]
+  getActiveNoteController(): NoteViewController {
+    return this.application.editorGroup.itemControllers[0] as NoteViewController
   }
 
-  getEditors() {
-    return this.application.editorGroup.noteControllers
+  getEditors(): NoteViewController[] {
+    return this.application.editorGroup.itemControllers as NoteViewController[]
   }
 
   closeEditor(editor: NoteViewController) {
     this.notifyOfStateChange(AppStateType.EditorClosed)
-    this.application.editorGroup.closeNoteController(editor)
+    this.application.editorGroup.closeItemController(editor)
   }
 
   closeActiveEditor() {
     this.notifyOfStateChange(AppStateType.EditorClosed)
-    this.application.editorGroup.closeActiveNoteController()
+    this.application.editorGroup.closeActiveItemController()
   }
 
   closeAllEditors() {
     this.notifyOfStateChange(AppStateType.EditorClosed)
-    this.application.editorGroup.closeAllNoteControllers()
+    this.application.editorGroup.closeAllItemControllers()
   }
 
   editorForNote(uuid: Uuid): NoteViewController | void {
     for (const editor of this.getEditors()) {
-      if (editor.note?.uuid === uuid) {
+      if (editor.item?.uuid === uuid) {
         return editor
       }
     }
@@ -464,7 +464,7 @@ export class ApplicationState extends ApplicationService {
   }
 
   static get version() {
-    return `${pjson['user-version']} (${VersionInfo.buildVersion})`
+    return `${pjson.version} (${VersionInfo.buildVersion})`
   }
 
   get isTabletDevice() {
