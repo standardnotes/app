@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.23.0-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.22.7-alpha.0...@standardnotes/web@3.23.0-alpha.0) (2022-06-19)
+
+### Features
+
+* ctrl+a to select all items ([#1123](https://github.com/standardnotes/app/issues/1123)) ([dcf3724](https://github.com/standardnotes/app/commit/dcf3724e2c951d7bbad276d37b3302c34d7ee78f))
+
 ## [3.22.7-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.22.6...@standardnotes/web@3.22.7-alpha.0) (2022-06-18)
 
 ### Bug Fixes
