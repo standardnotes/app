@@ -7,22 +7,22 @@ import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
 import MenuItemSeparator from '@/Components/Menu/MenuItemSeparator'
 import { MenuItemType } from '@/Components/Menu/MenuItemType'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 
 type Props = {
   application: WebApplication
-  viewControllerManager: ViewControllerManager
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
   closeDisplayOptionsMenu: () => void
   isOpen: boolean
+  navigationController: NavigationController
 }
 
 const ContentListOptionsMenu: FunctionComponent<Props> = ({
   closeDisplayOptionsMenu,
   closeOnBlur,
   application,
-  viewControllerManager,
   isOpen,
+  navigationController,
 }) => {
   const [sortBy, setSortBy] = useState(() => application.getPreference(PrefKey.SortNotesBy, CollectionSort.CreatedAt))
   const [sortReverse, setSortReverse] = useState(() => application.getPreference(PrefKey.SortNotesReverse, false))
@@ -174,7 +174,7 @@ const ContentListOptionsMenu: FunctionComponent<Props> = ({
       </MenuItem>
       <MenuItemSeparator />
       <div className="px-3 py-1 text-xs font-semibold color-text uppercase">View</div>
-      {viewControllerManager.navigationController.selectedUuid !== SystemViewId.Files && (
+      {navigationController.selectedUuid !== SystemViewId.Files && (
         <MenuItem
           type={MenuItemType.SwitchButton}
           className="py-1 hover:bg-contrast focus:bg-info-backdrop"

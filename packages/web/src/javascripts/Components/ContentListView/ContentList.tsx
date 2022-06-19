@@ -1,32 +1,44 @@
 import { WebApplication } from '@/Application/Application'
 import { KeyboardKey } from '@/Services/IOService'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { UuidString } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, KeyboardEventHandler, UIEventHandler, useCallback } from 'react'
 import { FOCUSABLE_BUT_NOT_TABBABLE, NOTES_LIST_SCROLL_THRESHOLD } from '@/Constants/Constants'
 import { ListableContentItem } from './Types/ListableContentItem'
 import ContentListItem from './ContentListItem'
+import { ItemListController } from '@/Controllers/ItemList/ItemListController'
+import { FilesController } from '@/Controllers/FilesController'
+import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
+import { NotesController } from '@/Controllers/NotesController'
+import { ElementIds } from '@/Constants/ElementIDs'
 
 type Props = {
   application: WebApplication
-  viewControllerManager: ViewControllerManager
+  filesController: FilesController
+  itemListController: ItemListController
   items: ListableContentItem[]
+  navigationController: NavigationController
+  notesController: NotesController
+  selectionController: SelectedItemsController
   selectedItems: Record<UuidString, ListableContentItem>
   paginate: () => void
 }
 
 const ContentList: FunctionComponent<Props> = ({
   application,
-  viewControllerManager,
+  filesController,
+  itemListController,
   items,
+  navigationController,
+  notesController,
+  selectionController,
   selectedItems,
   paginate,
 }) => {
-  const { selectPreviousItem, selectNextItem } = viewControllerManager.itemListController
-  const { hideTags, hideDate, hideNotePreview, hideEditorIcon } =
-    viewControllerManager.itemListController.webDisplayOptions
-  const { sortBy } = viewControllerManager.itemListController.displayOptions
+  const { selectPreviousItem, selectNextItem } = itemListController
+  const { hideTags, hideDate, hideNotePreview, hideEditorIcon } = itemListController.webDisplayOptions
+  const { sortBy } = itemListController.displayOptions
 
   const onScroll: UIEventHandler = useCallback(
     (e) => {
@@ -55,7 +67,7 @@ const ContentList: FunctionComponent<Props> = ({
   return (
     <div
       className="infinite-scroll focus:shadow-none focus:outline-none"
-      id="notes-scrollable"
+      id={ElementIds.ContentList}
       onScroll={onScroll}
       onKeyDown={onKeyDown}
       tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
@@ -71,10 +83,10 @@ const ContentList: FunctionComponent<Props> = ({
           hideTags={hideTags}
           hideIcon={hideEditorIcon}
           sortBy={sortBy}
-          filesController={viewControllerManager.filesController}
-          selectionController={viewControllerManager.selectionController}
-          navigationController={viewControllerManager.navigationController}
-          notesController={viewControllerManager.notesController}
+          filesController={filesController}
+          selectionController={selectionController}
+          navigationController={navigationController}
+          notesController={notesController}
         />
       ))}
     </div>

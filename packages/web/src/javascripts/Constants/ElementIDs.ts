@@ -5,4 +5,5 @@ export const ElementIds = {
   FileTextPreview: 'file-text-preview',
   EditorContent: 'editor-content',
   EditorColumn: 'editor-column',
+  ContentList: 'notes-scrollable',
 }
