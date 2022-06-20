@@ -6,13 +6,11 @@ import { SectionedOptionsTableCell } from '@Root/Components/SectionedOptionsTabl
 import { SectionHeader } from '@Root/Components/SectionHeader'
 import { TableSection } from '@Root/Components/TableSection'
 import { useSafeApplicationContext } from '@Root/Hooks/useSafeApplicationContext'
-import { useSafeApplicationGroupContext } from '@Root/Hooks/useSafeApplicationGroupContext'
 import { ModalStackNavigationProp } from '@Root/ModalStack'
-import { SCREEN_INPUT_MODAL_WORKSPACE_NAME, SCREEN_MANAGE_SESSIONS, SCREEN_SETTINGS } from '@Root/Screens/screens'
-import { ApplicationDescriptor, ApplicationGroupEvent, ButtonType, PrefKey } from '@standardnotes/snjs'
-import { CustomActionSheetOption, useCustomActionSheet } from '@Style/CustomActionSheet'
+import { SCREEN_MANAGE_SESSIONS, SCREEN_SETTINGS } from '@Root/Screens/screens'
+import { ButtonType, PrefKey } from '@standardnotes/snjs'
 import moment from 'moment'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { Platform } from 'react-native'
 import DocumentPicker from 'react-native-document-picker'
 import RNFS from 'react-native-fs'
@@ -25,7 +23,6 @@ type Props = {
 export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
   // Context
   const application = useSafeApplicationContext()
-  const appGroup = useSafeApplicationGroupContext()
 
   const [signedIn] = useSignedIn()
   const navigation = useNavigation<ModalStackNavigationProp<typeof SCREEN_SETTINGS>['navigation']>()
@@ -36,26 +33,6 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
   const [lastExportDate, setLastExportDate] = useState<Date | undefined>(() =>
     application?.getLocalPreferences().getValue(PrefKey.MobileLastExportDate, undefined),
   )
-
-  const { showActionSheet } = useCustomActionSheet()
-
-  const [applicationDescriptors, setApplicationDescriptors] = useState<ApplicationDescriptor[]>([])
-
-  useEffect(() => {
-    let descriptors = appGroup.getDescriptors()
-    setApplicationDescriptors(descriptors)
-
-    const removeAppGroupObserver = appGroup.addEventObserver(event => {
-      if (event === ApplicationGroupEvent.DescriptorsDataChanged) {
-        descriptors = appGroup.getDescriptors()
-        setApplicationDescriptors(descriptors)
-      }
-    })
-
-    return () => {
-      removeAppGroupObserver()
-    }
-  }, [appGroup])
 
   const lastExportData = useMemo(() => {
     if (lastExportDate) {
@@ -199,177 +176,6 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
     navigation.push(SCREEN_MANAGE_SESSIONS)
   }, [navigation])
 
-  enum WorkspaceAction {
-    AddAnother = 'Add another workspace',
-    Open = 'Open',
-    Rename = 'Rename',
-    Remove = 'Remove',
-    SignOutAll = 'Sign out all workspaces',
-  }
-
-  const { AddAnother, Open, Rename, Remove, SignOutAll } = WorkspaceAction
-
-  const getWorkspaceActionConfirmation = useCallback(
-    async (action: WorkspaceAction): Promise<boolean> => {
-      const { Info, Danger } = ButtonType
-      let message = ''
-      let buttonText = ''
-      let buttonType = Info
-
-      switch (action) {
-        case Open:
-          message = 'The workspace will be ready for you when you come back.'
-          buttonText = 'Quit App'
-          break
-        case AddAnother:
-          message = 'Your new workspace will be ready for you when you come back.'
-          buttonText = 'Quit App'
-          break
-        case SignOutAll:
-          message = 'Are you sure you want to sign out of all workspaces on this device?'
-          buttonText = 'Sign Out All'
-          break
-        case Remove:
-          message =
-            'This action will remove this workspace and its related data from this device. Your synced data will not be affected.'
-          buttonText = 'Delete Workspace'
-          buttonType = Danger
-          break
-        default:
-          break
-      }
-      return application.alertService.confirm(message, undefined, buttonText, buttonType)
-    },
-    [AddAnother, Open, Remove, SignOutAll, application.alertService],
-  )
-
-  const renameWorkspace = useCallback(
-    async (descriptor: ApplicationDescriptor, newName: string) => {
-      appGroup.renameDescriptor(descriptor, newName)
-    },
-    [appGroup],
-  )
-
-  const signOutWorkspace = useCallback(async () => {
-    const confirmed = await getWorkspaceActionConfirmation(Remove)
-
-    if (!confirmed) {
-      return
-    }
-
-    try {
-      await application.user.signOut()
-    } catch (error) {
-      console.error(error)
-    }
-  }, [Remove, application.user, getWorkspaceActionConfirmation])
-
-  const openWorkspace = useCallback(
-    async (descriptor: ApplicationDescriptor) => {
-      const confirmed = await getWorkspaceActionConfirmation(Open)
-      if (!confirmed) {
-        return
-      }
-
-      await application.deviceInterface.clearNamespacedKeychainValue(descriptor.identifier)
-      await appGroup.unloadCurrentAndActivateDescriptor(descriptor)
-    },
-    [Open, appGroup, application.deviceInterface, getWorkspaceActionConfirmation],
-  )
-
-  const addAnotherWorkspace = useCallback(async () => {
-    const confirmed = await getWorkspaceActionConfirmation(AddAnother)
-    if (!confirmed) {
-      return
-    }
-
-    const activeDescriptor = applicationDescriptors.find(descriptor => descriptor.primary) as ApplicationDescriptor
-    await application.deviceInterface.clearNamespacedKeychainValue(activeDescriptor.identifier)
-
-    await appGroup.unloadCurrentAndCreateNewDescriptor()
-  }, [AddAnother, appGroup, application.deviceInterface, applicationDescriptors, getWorkspaceActionConfirmation])
-
-  const signOutAllWorkspaces = useCallback(async () => {
-    try {
-      const confirmed = await getWorkspaceActionConfirmation(SignOutAll)
-      if (!confirmed) {
-        return
-      }
-      await appGroup.signOutAllWorkspaces()
-    } catch (error) {
-      console.error(error)
-    }
-  }, [SignOutAll, appGroup, getWorkspaceActionConfirmation])
-
-  const getSingleWorkspaceItemOptions = useCallback(
-    (descriptor: ApplicationDescriptor) => {
-      const worskspaceItemOptions: CustomActionSheetOption[] = []
-      if (descriptor.primary) {
-        worskspaceItemOptions.push(
-          {
-            text: Rename,
-            callback: () => {
-              navigation.navigate(SCREEN_INPUT_MODAL_WORKSPACE_NAME, {
-                descriptor,
-                renameWorkspace,
-              })
-            },
-          },
-          {
-            text: Remove,
-            destructive: true,
-            callback: signOutWorkspace,
-          },
-        )
-      } else {
-        worskspaceItemOptions.push({
-          text: Open,
-          callback: () => openWorkspace(descriptor),
-        })
-      }
-
-      return worskspaceItemOptions
-    },
-    [Open, Remove, Rename, navigation, openWorkspace, renameWorkspace, signOutWorkspace],
-  )
-
-  const getActiveWorkspaceItems = useCallback(() => {
-    const descriptorItemOptions: CustomActionSheetOption[] = []
-
-    applicationDescriptors.forEach(descriptor => {
-      descriptorItemOptions.push({
-        text: `${descriptor.label}${descriptor.primary ? ' *' : ''}`,
-
-        callback: async () => {
-          const singleItemOptions = getSingleWorkspaceItemOptions(descriptor)
-
-          showActionSheet({
-            title: '',
-            options: singleItemOptions,
-          })
-        },
-      })
-    })
-
-    return descriptorItemOptions
-  }, [applicationDescriptors, getSingleWorkspaceItemOptions, showActionSheet])
-
-  const handleSwitchWorkspaceClick = useCallback(() => {
-    const activeDescriptors = getActiveWorkspaceItems()
-    const options: CustomActionSheetOption[] = [
-      ...activeDescriptors,
-      {
-        text: AddAnother,
-        callback: addAnotherWorkspace,
-      },
-      {
-        text: SignOutAll,
-        callback: signOutAllWorkspaces,
-      },
-    ]
-    showActionSheet({ title: '', options })
-  }, [AddAnother, SignOutAll, addAnotherWorkspace, getActiveWorkspaceItems, showActionSheet, signOutAllWorkspaces])
-
   const showDataBackupAlert = useCallback(() => {
     void application.alertService.alert(
       'Because you are using the app offline without a sync account, it is your responsibility to keep your data safe and backed up. It is recommended you export a backup of your data at least once a week, or, to sign up for a sync account so that your data is backed up automatically.',
@@ -382,13 +188,6 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
     <TableSection>
       <SectionHeader title={title} />
 
-      <ButtonCell
-        testID="switchWorkspaceButton"
-        leftAligned={true}
-        first={true}
-        title={'Switch workspace'}
-        onPress={handleSwitchWorkspaceClick}
-      />
       {signedIn && (
         <>
           <ButtonCell

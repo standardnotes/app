@@ -14,6 +14,7 @@ import { PreferencesSection } from './Sections/PreferencesSection'
 import { ProtectionsSection } from './Sections/ProtectionsSection'
 import { SecuritySection } from './Sections/SecuritySection'
 import { Container } from './Settings.styled'
+import { WorkspacesSection } from '@Screens/Settings/Sections/WorkspacesSection'
 
 type Props = ModalStackNavigationProp<typeof SCREEN_SETTINGS>
 export const Settings = (props: Props) => {
@@ -54,6 +55,7 @@ export const Settings = (props: Props) => {
     <Container keyboardShouldPersistTaps={'always'} keyboardDismissMode={'interactive'}>
       <AuthSection title="Account" signedIn={signedIn} />
       <OptionsSection encryptionAvailable={!!encryptionAvailable} title="Options" />
+      <WorkspacesSection />
       <PreferencesSection />
       {application.hasAccount() && isEntitledToFiles && <FilesSection />}
       <SecuritySection
