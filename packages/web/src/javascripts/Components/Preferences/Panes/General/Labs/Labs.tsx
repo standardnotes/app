@@ -79,7 +79,6 @@ const LabsPane: FunctionComponent<Props> = ({ application }) => {
             return (
               <Fragment key={identifier}>
                 <LabsFeature
-                  identifier={identifier}
                   name={name}
                   description={description}
                   toggleFeature={toggleFeature}
@@ -91,7 +90,6 @@ const LabsPane: FunctionComponent<Props> = ({ application }) => {
           })}
           <HorizontalSeparator classes="mt-2.5 mb-3" />
           <LabsFeature
-            identifier={StorageKey.FilesNavigationEnabled as string as FeatureIdentifier}
             name="Files navigation"
             description={'Enables a "Files" view which allows for better files navigation. Requires reload.'}
             toggleFeature={toggleFilesNavigation}
