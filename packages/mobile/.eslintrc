@@ -3,7 +3,7 @@
     "node": true,
     "commonjs": true
   },
-  "extends": ["../../.eslintrc.json"],
+  "extends": ["@react-native-community", "plugin:react-hooks/recommended", "../../.eslintrc.json"],
   "rules": {
     "no-console": "warn",
     "@typescript-eslint/no-explicit-any": "warn",
