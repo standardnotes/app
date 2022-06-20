@@ -51,7 +51,11 @@ export const Root = () => {
         }
       })
     const removeNoteObserver = application?.editorGroup.addActiveControllerChangeObserver(activeController => {
-      setActiveNoteView(activeController)
+      if (activeController instanceof NoteViewController) {
+        setActiveNoteView(activeController)
+      } else {
+        setActiveNoteView(undefined)
+      }
     })
 
     return () => {
@@ -112,7 +116,7 @@ export const Root = () => {
       </NotesContainer>
       {activeNoteView && !activeNoteView.dealloced && isInTabletMode && (
         <ComposeContainer>
-          <Compose noteUuid={activeNoteView.note.uuid} />
+          <Compose noteUuid={activeNoteView.item.uuid} />
           <ExpandTouchable style={{ bottom: collapseIconBottomPosition }} onPress={toggleNoteList}>
             <Icon name={collapseIconName} size={24} color={hexToRGBA(theme.stylekitInfoColor, 0.85)} />
           </ExpandTouchable>

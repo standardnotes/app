@@ -3,8 +3,9 @@ name: Desktop Beta Release
 on:
   push:
     tags:
-      - '@standardnotes/desktop@[0-9]*.[0-9]*.[0-9]*-alpha.[0-9]*'
-      - '@standardnotes/desktop@[0-9]*.[0-9]*.[0-9]*-beta.[0-9]*'
+      - '*standardnotes/*desktop*beta*'
+      - '*standardnotes/*desktop*alpha*'
+      - '!*standardnotes/*inner-desktop*'
   workflow_dispatch:
 
 jobs:

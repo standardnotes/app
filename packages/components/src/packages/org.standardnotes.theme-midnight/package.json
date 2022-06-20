@@ -1,0 +1,15 @@
+{
+  "name": "@standardnotes/midnight-theme",
+  "version": "1.2.11",
+  "main": "dist/dist.css",
+  "private": true,
+  "sn": {
+    "main": "dist/dist.css"
+  },
+  "scripts": {
+    "components:compile": "webpack --entry ./src/main.scss --config ./../theme.webpack.config.js"
+  },
+  "devDependencies": {
+    "webpack": "*"
+  }
+}

@@ -1,30 +1,34 @@
 {
   "name": "@standardnotes/components-meta",
-  "version": "2.1.0-alpha.13",
+  "version": "2.1.6",
   "private": true,
   "author": "Standard Notes",
   "main": "dist",
   "workspaces": {
     "packages": [
-      "src/*"
+      "src/packages/*"
     ]
   },
   "scripts": {
+    "build": "tsc --project tsconfig.json",
     "components:clean": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run components:clean",
     "components:lint": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run components:lint",
     "components:test": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run components:test",
     "components:compile": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run components:compile",
-    "package": "node scripts/package.mjs"
+    "package": "node scripts/package.mjs",
+    "version": "./scripts/VERSION.sh"
   },
   "devDependencies": {
     "@standardnotes/deterministic-zip": "^1.2.0",
     "@standardnotes/eslint-config-extensions": "^1.0.4",
     "@standardnotes/features": "^1.45.1",
+    "copy-webpack-plugin": "^11.0.0",
     "mini-css-extract-plugin": "^2.6.0",
     "minimatch": "^5.1.0",
     "node-sass": "7.0.1",
     "sass": "^1.52.3",
-    "webpack": "^5.73.0",
+    "typescript": "*",
+    "webpack": "*",
     "webpack-remove-empty-scripts": "^0.8.0"
   }
 }

@@ -25,14 +25,17 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - run: yarn install
       - run: yarn build:desktop
+      - run: echo APP_VERSION=$(node -p "require('./package.json').version") >> $GITHUB_ENV
+
       - name: Compile Mac
         run: yarn run webpack --config desktop.webpack.prod.js
       - name: MacX64
         run: |
-          yarn run electron-builder --mac --x64 --publish=never
+          yarn run electron-builder --mac --x64 --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
           node scripts/fixMacZip.js
       - name: MacArm64
-        run: yarn run electron-builder --mac --arm64 --publish=never
+        run: yarn run electron-builder --mac --arm64 --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
+
       - name: Upload
         uses: actions/upload-artifact@v3.0.0
         with:
@@ -58,37 +61,41 @@ jobs:
         uses: ruby/setup-ruby@v1
       - name: Install FPM
         run: sudo gem install fpm -f
+
       - run: yarn install
       - run: yarn build:desktop
+
+      - run: echo APP_VERSION=$(node -p "require('./package.json').version") >> $GITHUB_ENV
+
       - name: Compile for AppImage
         run: yarn run webpack --config desktop.webpack.prod.js
       - name: AppImage
-        run: yarn run electron-builder --linux --x64 --ia32 -c.linux.target=AppImage --publish=never
+        run: yarn run electron-builder --linux --x64 --ia32 -c.linux.target=AppImage --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
       - name: AppImageX64
-        run: yarn run electron-builder --linux --x64 -c.linux.target=AppImage --publish=never
+        run: yarn run electron-builder --linux --x64 -c.linux.target=AppImage --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
       - name: AppImageArm64
-        run: yarn run electron-builder --linux --arm64 -c.linux.target=AppImage --publish=never
+        run: yarn run electron-builder --linux --arm64 -c.linux.target=AppImage --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
 
       - name: Deb
         run: |
           yarn run webpack --config desktop.webpack.prod.js --env deb
-          yarn run electron-builder --linux --x64 --ia32 -c.linux.target=deb --publish=never
+          yarn run electron-builder --linux --x64 --ia32 -c.linux.target=deb --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
       - name: DebArm64
         env:
           npm_config_target_arch: 'arm64'
           USE_SYSTEM_FPM: 'true'
         run: |
           yarn run webpack --config desktop.webpack.prod.js --env deb
-          yarn run electron-builder --linux --arm64 -c.linux.target=deb --publish=never
+          yarn run electron-builder --linux --arm64 -c.linux.target=deb --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
 
       - name: Dir
         run: |
           yarn run webpack --config desktop.webpack.prod.js
-          yarn run electron-builder --linux --x64 -c.linux.target=dir --publish=never
+          yarn run electron-builder --linux --x64 -c.linux.target=dir --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
       - name: DirArm64
         run: |
           yarn run webpack --config desktop.webpack.prod.js
-          yarn run electron-builder --linux --arm64 -c.linux.target=dir --publish=never
+          yarn run electron-builder --linux --arm64 -c.linux.target=dir --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
         env:
           npm_config_target_arch: 'arm64'
 
@@ -96,7 +103,7 @@ jobs:
         run: |
           sudo snap install snapcraft --classic
           yarn run webpack --config desktop.webpack.prod.js --env snap
-          yarn run electron-builder --linux --x64 -c.linux.target=snap --publish=never
+          yarn run electron-builder --linux --x64 -c.linux.target=snap --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
 
       - name: Upload
         uses: actions/upload-artifact@v3.0.0
@@ -111,7 +118,6 @@ jobs:
             packages/desktop/dist/*.yaml
 
   Windows:
-    if: ${{ inputs.channel == 'prod' }}
     runs-on: self-hosted
     env:
       WINDOWS_TOKEN_ALIAS: ${{ secrets.WINDOWS_TOKEN_ALIAS }}
@@ -127,7 +133,8 @@ jobs:
       - run: yarn install
       - run: yarn build:desktop
       - run: yarn run webpack --config desktop.webpack.prod.js
-      - run: yarn run electron-builder --windows --x64 --ia32 --publish=never
+      - run: echo APP_VERSION=$(node -p "require('./package.json').version") >> $GITHUB_ENV
+      - run: yarn run electron-builder --windows --x64 --ia32 --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
 
       - name: Upload
         uses: actions/upload-artifact@v3.0.0
@@ -151,11 +158,15 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           registry-url: 'https://registry.npmjs.org'
+
       - uses: actions/download-artifact@v3
         with:
           name: assets
           path: packages/desktop/dist
-      - run: node scripts/sums.mjs
+
+      - name: Generate Checksums
+        run: node scripts/sums.mjs
+
       - name: get-npm-version
         id: package-version
         uses: martinbeentjes/npm-get-version-action@main
@@ -168,7 +179,7 @@ jobs:
           tag_name: "@standardnotes/desktop@${{ steps.package-version.outputs.current-version}}"
           prerelease: true
           draft: true
-          name: "Desktop ${{ inputs.channel == 'beta' && 'Beta' || '' }} ${{ steps.package-version.outputs.current-version}}"
+          name: "Desktop ${{ inputs.channel == 'beta' && 'Beta' || '' }} ${{ steps.package-version.outputs.current-version }}"
           files: packages/desktop/dist/*
       - name: Publish Snap
         continue-on-error: true

@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.4](https://github.com/standardnotes/app/compare/@standardnotes/icons@1.4.4-alpha.0...@standardnotes/icons@1.4.4) (2022-06-18)
+
+**Note:** Version bump only for package @standardnotes/icons
+
+## [1.4.4-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/icons@1.4.3...@standardnotes/icons@1.4.4-alpha.0) (2022-06-18)
+
+### Bug Fixes
+
+* plus editor icons ([#1120](https://github.com/standardnotes/app/issues/1120)) ([ba65948](https://github.com/standardnotes/app/commit/ba65948364a3fca7bfa5005c56802102c73ccd99))
+
+## 1.4.3 (2022-06-16)
+
+**Note:** Version bump only for package @standardnotes/icons
+
+## 1.4.2 (2022-06-16)
+
+**Note:** Version bump only for package @standardnotes/icons
+
+## [1.4.1](https://github.com/standardnotes/app/compare/@standardnotes/icons@1.4.1-alpha.4...@standardnotes/icons@1.4.1) (2022-06-16)
+
+**Note:** Version bump only for package @standardnotes/icons
+
+## 1.4.1-alpha.4 (2022-06-16)
+
+**Note:** Version bump only for package @standardnotes/icons
+
 ## 1.4.1-alpha.3 (2022-06-16)
 
 **Note:** Version bump only for package @standardnotes/icons

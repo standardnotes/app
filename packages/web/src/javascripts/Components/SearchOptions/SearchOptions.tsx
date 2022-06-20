@@ -1,17 +1,15 @@
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { WebApplication } from '@/Application/Application'
 import { observer } from 'mobx-react-lite'
 import Bubble from '@/Components/Bubble/Bubble'
 import { useCallback } from 'react'
+import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 
 type Props = {
-  viewControllerManager: ViewControllerManager
   application: WebApplication
+  searchOptions: SearchOptionsController
 }
 
-const SearchOptions = ({ viewControllerManager }: Props) => {
-  const { searchOptionsController: searchOptions } = viewControllerManager
-
+const SearchOptions = ({ searchOptions }: Props) => {
   const { includeProtectedContents, includeArchived, includeTrashed } = searchOptions
 
   const toggleIncludeProtectedContents = useCallback(async () => {

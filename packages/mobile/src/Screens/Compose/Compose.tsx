@@ -88,7 +88,7 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
     this.context = context
 
     const noteUuid = 'noteUuid' in props ? props.noteUuid : props.route.params.noteUuid
-    const editor = this.context.editorGroup.noteControllers.find(c => c.note.uuid === noteUuid)
+    const editor = this.context.editorGroup.itemControllers.find(c => c.item.uuid === noteUuid) as NoteViewController
     if (!editor) {
       throw 'Unable to to find note controller'
     }
@@ -96,8 +96,8 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
     this.editor = editor
 
     this.state = {
-      title: this.editor.note.title,
-      text: this.editor.note.text,
+      title: this.editor.item.title,
+      text: this.editor.item.text,
       componentViewer: undefined,
       saveError: false,
       webViewError: undefined,
@@ -260,7 +260,7 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
   }
 
   get note() {
-    return this.editor.note
+    return this.editor.item
   }
 
   dismissKeyboard = () => {

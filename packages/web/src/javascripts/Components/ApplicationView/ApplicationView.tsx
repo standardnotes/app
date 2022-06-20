@@ -177,7 +177,18 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
       <div className={platformString + ' main-ui-view sn-component'}>
         <div id="app" className={appClass + ' app app-column-container'}>
           <Navigation application={application} />
-          <ContentListView application={application} viewControllerManager={viewControllerManager} />
+          <ContentListView
+            application={application}
+            accountMenuController={viewControllerManager.accountMenuController}
+            filesController={viewControllerManager.filesController}
+            itemListController={viewControllerManager.itemListController}
+            navigationController={viewControllerManager.navigationController}
+            noAccountWarningController={viewControllerManager.noAccountWarningController}
+            noteTagsController={viewControllerManager.noteTagsController}
+            notesController={viewControllerManager.notesController}
+            searchOptionsController={viewControllerManager.searchOptionsController}
+            selectionController={viewControllerManager.selectionController}
+          />
           <NoteGroupView application={application} />
         </div>
 

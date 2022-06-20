@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/web",
-  "version": "3.22.3-alpha.7",
+  "version": "3.23.0-alpha.0",
   "license": "AGPL-3.0-or-later",
   "main": "dist/app.js",
   "author": "Standard Notes",
@@ -17,8 +17,7 @@
     "lint": "eslint src/javascripts",
     "tsc": "tsc --project tsconfig.json",
     "test": "jest --config jest.config.js --coverage",
-    "postinstall": "yarn run ncu -loglevel verbose --packageFile package.json",
-    "upgrade:snjs": "ncu -u '@standardnotes/*' && yarn"
+    "postinstall": "yarn run ncu -loglevel verbose --packageFile package.json"
   },
   "devDependencies": {
     "@babel/core": "^7.17.9",
@@ -51,7 +50,7 @@
     "ts-loader": "^9.2.8",
     "typescript": "*",
     "webpack": "*",
-    "webpack-dev-server": "^4.8.1",
+    "webpack-dev-server": "*",
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
@@ -63,11 +62,11 @@
     "@reach/listbox": "^0.16.2",
     "@reach/tooltip": "^0.16.2",
     "@reach/visually-hidden": "^0.16.0",
-    "@standardnotes/filepicker": "1.16.16",
+    "@standardnotes/filepicker": "1.16.18",
     "@standardnotes/icons": "workspace:*",
-    "@standardnotes/services": "^1.13.16",
+    "@standardnotes/services": "^1.13.18",
     "@standardnotes/sncrypto-web": "1.10.1",
-    "@standardnotes/snjs": "^2.117.0",
+    "@standardnotes/snjs": "*",
     "@standardnotes/styles": "workspace:*",
     "@standardnotes/toast": "workspace:*",
     "@zip.js/zip.js": "^2.4.10",
