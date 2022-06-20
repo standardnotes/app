@@ -14,7 +14,7 @@ import ChallengeModal from '@/Components/ChallengeModal/ChallengeModal'
 import NotesContextMenu from '@/Components/NotesContextMenu/NotesContextMenu'
 import PurchaseFlowWrapper from '@/Components/PurchaseFlow/PurchaseFlowWrapper'
 import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
-import RevisionHistoryModalWrapper from '@/Components/RevisionHistoryModal/RevisionHistoryModalWrapper'
+import RevisionHistoryModal from '@/Components/RevisionHistoryModal/RevisionHistoryModal'
 import PremiumModalProvider from '@/Hooks/usePremiumModal'
 import ConfirmSignoutContainer from '@/Components/ConfirmSignoutModal/ConfirmSignoutModal'
 import TagsContextMenuWrapper from '@/Components/Tags/TagContextMenu'
@@ -196,7 +196,13 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
           <Footer application={application} applicationGroup={mainApplicationGroup} />
           <SessionsModal application={application} viewControllerManager={viewControllerManager} />
           <PreferencesViewWrapper viewControllerManager={viewControllerManager} application={application} />
-          <RevisionHistoryModalWrapper application={application} viewControllerManager={viewControllerManager} />
+          <RevisionHistoryModal
+            application={application}
+            historyModalController={viewControllerManager.historyModalController}
+            notesController={viewControllerManager.notesController}
+            selectionController={viewControllerManager.selectionController}
+            subscriptionController={viewControllerManager.subscriptionController}
+          />
         </>
 
         {renderChallenges()}
@@ -207,6 +213,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
             navigationController={viewControllerManager.navigationController}
             notesController={viewControllerManager.notesController}
             noteTagsController={viewControllerManager.noteTagsController}
+            historyModalController={viewControllerManager.historyModalController}
           />
           <TagsContextMenuWrapper viewControllerManager={viewControllerManager} />
           <FileContextMenuWrapper

@@ -1,8 +1,8 @@
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
 import { HistoryLockedIllustration } from '@standardnotes/icons'
 import Button from '@/Components/Button/Button'
+import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
 
 const getPlanHistoryDuration = (planName: string | undefined) => {
   switch (planName) {
@@ -20,12 +20,11 @@ const getPremiumContentCopy = (planName: string | undefined) => {
 }
 
 type Props = {
-  viewControllerManager: ViewControllerManager
+  subscriptionController: SubscriptionController
 }
 
-const RevisionContentLocked: FunctionComponent<Props> = ({ viewControllerManager }) => {
-  const { userSubscriptionName, isUserSubscriptionExpired, isUserSubscriptionCanceled } =
-    viewControllerManager.subscriptionController
+const RevisionContentLocked: FunctionComponent<Props> = ({ subscriptionController }) => {
+  const { userSubscriptionName, isUserSubscriptionExpired, isUserSubscriptionCanceled } = subscriptionController
 
   return (
     <div className="flex w-full h-full items-center justify-center">

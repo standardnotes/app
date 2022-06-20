@@ -7,15 +7,23 @@ import { WebApplication } from '@/Application/Application'
 import { NotesController } from '@/Controllers/NotesController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { NoteTagsController } from '@/Controllers/NoteTagsController'
+import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalController'
 
 type Props = {
   application: WebApplication
   navigationController: NavigationController
   notesController: NotesController
   noteTagsController: NoteTagsController
+  historyModalController: HistoryModalController
 }
 
-const NotesContextMenu = ({ application, navigationController, notesController, noteTagsController }: Props) => {
+const NotesContextMenu = ({
+  application,
+  navigationController,
+  notesController,
+  noteTagsController,
+  historyModalController,
+}: Props) => {
   const { contextMenuOpen, contextMenuPosition, contextMenuMaxHeight } = notesController
 
   const contextMenuRef = useRef<HTMLDivElement>(null)
@@ -49,6 +57,7 @@ const NotesContextMenu = ({ application, navigationController, notesController, 
         navigationController={navigationController}
         notesController={notesController}
         noteTagsController={noteTagsController}
+        historyModalController={historyModalController}
       />
     </div>
   ) : null

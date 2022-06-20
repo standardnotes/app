@@ -1,49 +1,25 @@
-import { WebApplication } from '@/Application/Application'
-import { RevisionListEntry } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { Fragment, FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Fragment, FunctionComponent, useMemo, useRef } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import HistoryListItem from './HistoryListItem'
-import { previewHistoryEntryTitle, RemoteRevisionListGroup } from './utils'
+import { previewHistoryEntryTitle } from './utils'
+import { FeaturesClientInterface, RevisionListEntry } from '@standardnotes/snjs/dist/@types'
+import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
 
 type RemoteHistoryListProps = {
-  application: WebApplication
-  remoteHistory: RemoteRevisionListGroup[] | undefined
-  isFetchingRemoteHistory: boolean
-  fetchAndSetRemoteRevision: (revisionListEntry: RevisionListEntry) => Promise<void>
+  features: FeaturesClientInterface
+  noteHistoryController: NoteHistoryController
 }
 
-const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({
-  application,
-  remoteHistory,
-  isFetchingRemoteHistory,
-  fetchAndSetRemoteRevision,
-}) => {
+const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({ features, noteHistoryController }) => {
+  const { remoteHistory, isFetchingRemoteHistory, selectRemoteRevision, selectedEntry } = noteHistoryController
+
   const remoteHistoryListRef = useRef<HTMLDivElement>(null)
 
   useListKeyboardNavigation(remoteHistoryListRef)
 
   const remoteHistoryLength = useMemo(() => remoteHistory?.map((group) => group.entries).flat().length, [remoteHistory])
-
-  const [selectedEntryUuid, setSelectedEntryUuid] = useState('')
-
-  const firstEntry = useMemo(() => {
-    return remoteHistory?.find((group) => group.entries?.length)?.entries?.[0]
-  }, [remoteHistory])
-
-  const selectFirstEntry = useCallback(() => {
-    if (firstEntry) {
-      setSelectedEntryUuid(firstEntry.uuid)
-      fetchAndSetRemoteRevision(firstEntry).catch(console.error)
-    }
-  }, [fetchAndSetRemoteRevision, firstEntry])
-
-  useEffect(() => {
-    if (firstEntry && !selectedEntryUuid.length) {
-      selectFirstEntry()
-    }
-  }, [fetchAndSetRemoteRevision, firstEntry, remoteHistory, selectFirstEntry, selectedEntryUuid.length])
 
   return (
     <div
@@ -63,15 +39,14 @@ const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({
               {group.entries.map((entry) => (
                 <HistoryListItem
                   key={entry.uuid}
-                  isSelected={selectedEntryUuid === entry.uuid}
+                  isSelected={(selectedEntry as RevisionListEntry)?.uuid === entry.uuid}
                   onClick={() => {
-                    setSelectedEntryUuid(entry.uuid)
-                    fetchAndSetRemoteRevision(entry).catch(console.error)
+                    selectRemoteRevision(entry)
                   }}
                 >
                   <div className="flex flex-grow items-center justify-between">
                     <div>{previewHistoryEntryTitle(entry)}</div>
-                    {!application.features.hasMinimumRole(entry.required_role) && <Icon type="premium-feature" />}
+                    {!features.hasMinimumRole(entry.required_role) && <Icon type="premium-feature" />}
                   </div>
                 </HistoryListItem>
               ))}

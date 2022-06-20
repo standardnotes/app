@@ -1,47 +1,20 @@
-import { Action, HistoryEntry, RevisionListEntry } from '@standardnotes/snjs'
-import { Dispatch, FunctionComponent, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Action } from '@standardnotes/snjs'
+import { FunctionComponent, useRef } from 'react'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import HistoryListItem from './HistoryListItem'
-import { LegacyHistoryEntry } from './utils'
+import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
 
 type Props = {
   legacyHistory: Action[] | undefined
-  setSelectedRevision: Dispatch<SetStateAction<HistoryEntry | LegacyHistoryEntry | undefined>>
-  setSelectedRemoteEntry: Dispatch<SetStateAction<RevisionListEntry | undefined>>
-  fetchAndSetLegacyRevision: (revisionListEntry: Action) => Promise<void>
+  noteHistoryController: NoteHistoryController
 }
 
-const LegacyHistoryList: FunctionComponent<Props> = ({
-  legacyHistory,
-  setSelectedRevision,
-  setSelectedRemoteEntry,
-  fetchAndSetLegacyRevision,
-}) => {
+const LegacyHistoryList: FunctionComponent<Props> = ({ legacyHistory, noteHistoryController }) => {
+  const { selectLegacyRevision, selectedEntry } = noteHistoryController
+
   const legacyHistoryListRef = useRef<HTMLDivElement>(null)
 
   useListKeyboardNavigation(legacyHistoryListRef)
-
-  const [selectedItemUrl, setSelectedItemUrl] = useState<string>()
-
-  const firstEntry = useMemo(() => {
-    return legacyHistory?.[0]
-  }, [legacyHistory])
-
-  const selectFirstEntry = useCallback(() => {
-    if (firstEntry) {
-      setSelectedItemUrl(firstEntry.subactions?.[0].url)
-      setSelectedRevision(undefined)
-      fetchAndSetLegacyRevision(firstEntry).catch(console.error)
-    }
-  }, [fetchAndSetLegacyRevision, firstEntry, setSelectedRevision])
-
-  useEffect(() => {
-    if (firstEntry && !selectedItemUrl) {
-      selectFirstEntry()
-    } else if (!firstEntry) {
-      setSelectedRevision(undefined)
-    }
-  }, [firstEntry, selectFirstEntry, selectedItemUrl, setSelectedRevision])
 
   return (
     <div
@@ -51,16 +24,15 @@ const LegacyHistoryList: FunctionComponent<Props> = ({
       ref={legacyHistoryListRef}
     >
       {legacyHistory?.map((entry) => {
+        const selectedEntryUrl = (selectedEntry as Action)?.subactions?.[0].url
         const url = entry.subactions?.[0].url
 
         return (
           <HistoryListItem
             key={url}
-            isSelected={selectedItemUrl === url}
+            isSelected={selectedEntryUrl === url}
             onClick={() => {
-              setSelectedItemUrl(url)
-              setSelectedRemoteEntry(undefined)
-              fetchAndSetLegacyRevision(entry).catch(console.error)
+              selectLegacyRevision(entry)
             }}
           >
             {entry.label}
