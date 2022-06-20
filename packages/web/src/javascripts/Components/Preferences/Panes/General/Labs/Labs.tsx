@@ -1,12 +1,13 @@
-import Switch from '@/Components/Switch/Switch'
-import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
+import { Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/Application/Application'
 import { FeatureIdentifier, FeatureStatus, FindNativeFeature } from '@standardnotes/snjs'
 import { Fragment, FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
+import PreferencesGroup from '../../../PreferencesComponents/PreferencesGroup'
+import PreferencesSegment from '../../../PreferencesComponents/PreferencesSegment'
+import LabsFeature from './LabsFeature'
+import { StorageKey, useLocalStorageItem } from '@/Services/LocalStorage'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
-import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
-import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
 type ExperimentalFeatureItem = {
   identifier: FeatureIdentifier
@@ -17,11 +18,14 @@ type ExperimentalFeatureItem = {
 }
 
 type Props = {
-  application: WebApplication
+  application: {
+    features: WebApplication['features']
+  }
 }
 
 const LabsPane: FunctionComponent<Props> = ({ application }) => {
   const [experimentalFeatures, setExperimentalFeatures] = useState<ExperimentalFeatureItem[]>([])
+  const [isFilesNavigationEnabled, setFilesNavigation] = useLocalStorageItem(StorageKey.FilesNavigationEnabled)
 
   const reloadExperimentalFeatures = useCallback(() => {
     const experimentalFeatures = application.features.getExperimentalFeatures().map((featureIdentifier) => {
@@ -43,12 +47,22 @@ const LabsPane: FunctionComponent<Props> = ({ application }) => {
 
   const premiumModal = usePremiumModal()
 
+  const toggleFilesNavigation = useCallback(() => {
+    const isEntitled = application.features.getFeatureStatus(FeatureIdentifier.Files) === FeatureStatus.Entitled
+
+    if (!isEntitled) {
+      premiumModal.activate('Files navigation')
+    }
+
+    setFilesNavigation(!isFilesNavigationEnabled)
+  }, [application.features, isFilesNavigationEnabled, premiumModal, setFilesNavigation])
+
   return (
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Labs</Title>
         <div>
-          {experimentalFeatures.map(({ identifier, name, description, isEnabled, isEntitled }, index: number) => {
+          {experimentalFeatures.map(({ identifier, name, description, isEnabled, isEntitled }, index) => {
             const toggleFeature = () => {
               if (!isEntitled) {
                 premiumModal.activate(name)
@@ -63,17 +77,25 @@ const LabsPane: FunctionComponent<Props> = ({ application }) => {
 
             return (
               <Fragment key={identifier}>
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <Subtitle>{name}</Subtitle>
-                    <Text>{description}</Text>
-                  </div>
-                  <Switch onChange={toggleFeature} checked={isEnabled} />
-                </div>
+                <LabsFeature
+                  identifier={identifier}
+                  name={name}
+                  description={description}
+                  toggleFeature={toggleFeature}
+                  isEnabled={isEnabled}
+                />
                 {showHorizontalSeparator && <HorizontalSeparator classes="mt-2.5 mb-3" />}
               </Fragment>
             )
           })}
+          <HorizontalSeparator classes="mt-2.5 mb-3" />
+          <LabsFeature
+            identifier={StorageKey.FilesNavigationEnabled as string as FeatureIdentifier}
+            name="Files navigation"
+            description={'Enables a "Files" view which allows for better files navigation. Requires reload.'}
+            toggleFeature={toggleFilesNavigation}
+            isEnabled={!!isFilesNavigationEnabled}
+          />
           {experimentalFeatures.length === 0 && (
             <div className="flex items-center justify-between">
               <div className="flex flex-col">
