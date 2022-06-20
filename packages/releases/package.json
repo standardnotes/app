@@ -1,0 +1,23 @@
+{
+  "name": "@standardnotes/releases",
+  "version": "1.0.0",
+  "license": "AGPL-3.0-or-later",
+  "main": "dist/releases.json",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "Standard Notes",
+  "description": "Standard Notes client release versions",
+  "engines": {
+    "node": ">=12.19.0 <17.0.0"
+  },
+  "scripts": {
+    "build": "node index.mjs",
+    "version": "yarn build"
+  },
+  "devDependencies": {
+    "@types/node": "*",
+    "typescript": "*"
+  }
+}

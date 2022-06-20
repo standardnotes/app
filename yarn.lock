@@ -5789,6 +5789,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standardnotes/releases@workspace:packages/releases":
+  version: 0.0.0-use.local
+  resolution: "@standardnotes/releases@workspace:packages/releases"
+  dependencies:
+    "@types/node": "*"
+    typescript: "*"
+  languageName: unknown
+  linkType: soft
+
 "@standardnotes/responses@npm:^1.6.36":
   version: 1.6.36
   resolution: "@standardnotes/responses@npm:1.6.36"
