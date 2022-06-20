@@ -63,6 +63,7 @@ jobs:
       - name: Merge release into develop
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
+          git config pull.rebase false
           git checkout develop
           git pull origin main
           git push origin develop

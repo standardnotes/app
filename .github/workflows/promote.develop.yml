@@ -29,6 +29,7 @@ jobs:
 
       - name: Merge Develop into Main
         run: |
+          git config pull.rebase false
           git checkout main
           git pull origin develop
           git push origin main
