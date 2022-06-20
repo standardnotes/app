@@ -17,6 +17,10 @@ jobs:
           token: ${{ secrets.CI_PAT_TOKEN }}
           fetch-depth: 0
 
+      - uses: actions/setup-node@v1
+        with:
+          registry-url: 'https://registry.npmjs.org'
+
       - name: Setup git config
         run: |
           git config --global user.name "standardci"
