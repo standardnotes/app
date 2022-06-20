@@ -70,10 +70,8 @@ export default class QRCodeReader extends React.Component {
     return (
       <div className="qr-code-reader-container">
         <div className="sk-button info">
-          <label className="no-style">
-            <input type="file" style={{ display: 'none' }} onChange={this.onImageSelected} />
-            <div className="sk-label">Upload QR Code</div>
-          </label>
+          <div className="sk-label">Upload QR Code</div>
+          <input type="file" style={{ display: 'none' }} onChange={this.onImageSelected} />
         </div>
       </div>
     )
