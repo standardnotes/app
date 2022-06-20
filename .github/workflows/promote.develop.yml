@@ -1,0 +1,37 @@
+name: Promote Develop To Main
+
+on:
+  workflow_dispatch:
+
+jobs:
+  Run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: develop
+          token: ${{ secrets.CI_PAT_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup git config
+        run: |
+          git config --global user.name "standardci"
+          git config --global user.email "ci@standardnotes.com"
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v4
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+
+      - name: Merge Develop into Main
+        run: |
+          git config pull.rebase false
+          git checkout main
+          git pull origin develop
+          git push origin main
+
+
