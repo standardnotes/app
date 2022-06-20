@@ -3,7 +3,7 @@ import { secretPattern } from '@Lib/otp'
 import { contextualColors, defaultBgColor, getAllContextualColors, getEntryColor } from '@Lib/utils'
 import PropTypes from 'prop-types'
 import { TwitterPicker } from 'react-color'
-import { SKAlert } from 'sn-stylekit'
+import { SKAlert } from '@standardnotes/styles'
 
 export default class EditEntry extends React.Component {
   static defaultProps = {

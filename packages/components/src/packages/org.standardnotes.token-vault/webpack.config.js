@@ -61,7 +61,6 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx'],
     alias: {
-      stylekit: require.resolve('sn-stylekit/dist/stylekit.css'),
       '@Components': path.resolve(__dirname, 'app/components'),
       '@Lib': path.resolve(__dirname, 'app/lib')
     }
