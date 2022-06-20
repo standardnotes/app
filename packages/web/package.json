@@ -77,7 +77,8 @@
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dnd-touch-backend": "^16.0.1",
-    "react-dom": "^18.1.0"
+    "react-dom": "^18.1.0",
+    "styled-components": "^5.3.5"
   },
   "lint-staged": {
     "app/**/*.{js,ts,jsx,tsx}": "eslint --cache --fix",
