@@ -15,12 +15,10 @@ import UrlMissing from '@/Components/ComponentView/UrlMissing'
 import IsDeprecated from '@/Components/ComponentView/IsDeprecated'
 import IsExpired from '@/Components/ComponentView/IsExpired'
 import IssueOnLoading from '@/Components/ComponentView/IssueOnLoading'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { openSubscriptionDashboard } from '@/Utils/ManageSubscription'
 
 interface IProps {
   application: WebApplication
-  viewControllerManager: ViewControllerManager
   componentViewer: ComponentViewer
   requestReload?: (viewer: ComponentViewer, force?: boolean) => void
   onLoad?: (component: SNComponent) => void

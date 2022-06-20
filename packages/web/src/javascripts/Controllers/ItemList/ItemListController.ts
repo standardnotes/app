@@ -215,6 +215,10 @@ export class ItemListController extends AbstractViewController implements Intern
     }
   }
 
+  public get listLength() {
+    return this.renderedItems.length
+  }
+
   public getActiveItemController(): NoteViewController | FileViewController | undefined {
     return this.application.itemControllerGroup.activeItemViewController
   }

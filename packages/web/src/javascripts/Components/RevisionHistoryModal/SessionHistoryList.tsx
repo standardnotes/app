@@ -1,59 +1,24 @@
-import { HistoryEntry, NoteHistoryEntry, RevisionListEntry } from '@standardnotes/snjs'
-import {
-  Dispatch,
-  Fragment,
-  FunctionComponent,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import { Fragment, FunctionComponent, useMemo, useRef } from 'react'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import HistoryListItem from './HistoryListItem'
-import { LegacyHistoryEntry, ListGroup } from './utils'
+import { observer } from 'mobx-react-lite'
+import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
 
 type Props = {
-  sessionHistory: ListGroup<NoteHistoryEntry>[]
-  setSelectedRevision: Dispatch<SetStateAction<HistoryEntry | LegacyHistoryEntry | undefined>>
-  setSelectedRemoteEntry: Dispatch<SetStateAction<RevisionListEntry | undefined>>
+  noteHistoryController: NoteHistoryController
 }
 
-const SessionHistoryList: FunctionComponent<Props> = ({
-  sessionHistory,
-  setSelectedRevision,
-  setSelectedRemoteEntry,
-}) => {
+const SessionHistoryList: FunctionComponent<Props> = ({ noteHistoryController }) => {
+  const { sessionHistory, selectedRevision, selectSessionRevision } = noteHistoryController
+
   const sessionHistoryListRef = useRef<HTMLDivElement>(null)
 
   useListKeyboardNavigation(sessionHistoryListRef)
 
   const sessionHistoryLength = useMemo(
-    () => sessionHistory.map((group) => group.entries).flat().length,
+    () => sessionHistory?.map((group) => group.entries).flat().length,
     [sessionHistory],
   )
-
-  const [selectedItemCreatedAt, setSelectedItemCreatedAt] = useState<Date>()
-
-  const firstEntry = useMemo(() => {
-    return sessionHistory?.find((group) => group.entries?.length)?.entries?.[0]
-  }, [sessionHistory])
-
-  const selectFirstEntry = useCallback(() => {
-    if (firstEntry) {
-      setSelectedItemCreatedAt(firstEntry.payload.created_at)
-      setSelectedRevision(firstEntry)
-    }
-  }, [firstEntry, setSelectedRevision])
-
-  useEffect(() => {
-    if (firstEntry && !selectedItemCreatedAt) {
-      selectFirstEntry()
-    } else if (!firstEntry) {
-      setSelectedRevision(undefined)
-    }
-  }, [firstEntry, selectFirstEntry, selectedItemCreatedAt, setSelectedRevision])
 
   return (
     <div
@@ -72,11 +37,9 @@ const SessionHistoryList: FunctionComponent<Props> = ({
               {group.entries.map((entry, index) => (
                 <HistoryListItem
                   key={index}
-                  isSelected={selectedItemCreatedAt === entry.payload.created_at}
+                  isSelected={selectedRevision?.payload.created_at === entry.payload.created_at}
                   onClick={() => {
-                    setSelectedItemCreatedAt(entry.payload.created_at)
-                    setSelectedRevision(entry)
-                    setSelectedRemoteEntry(undefined)
+                    selectSessionRevision(entry)
                   }}
                 >
                   {entry.previewTitle()}
@@ -93,4 +56,4 @@ const SessionHistoryList: FunctionComponent<Props> = ({
   )
 }
 
-export default SessionHistoryList
+export default observer(SessionHistoryList)
