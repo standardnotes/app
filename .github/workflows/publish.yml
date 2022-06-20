@@ -59,3 +59,10 @@ jobs:
         run: |
           yarn release:beta
           yarn publish:beta
+
+      - name: Merge release into develop
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          git checkout develop
+          git pull origin main
+          git push origin develop
