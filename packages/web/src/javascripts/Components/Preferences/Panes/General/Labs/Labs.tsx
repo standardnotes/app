@@ -52,6 +52,7 @@ const LabsPane: FunctionComponent<Props> = ({ application }) => {
 
     if (!isEntitled) {
       premiumModal.activate('Files navigation')
+      return
     }
 
     setFilesNavigation(!isFilesNavigationEnabled)
