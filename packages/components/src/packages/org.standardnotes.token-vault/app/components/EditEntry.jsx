@@ -162,7 +162,22 @@ export default class EditEntry extends React.Component {
         <div className="sk-panel-content">
           <div className="sk-panel-section">
             <div className="sk-panel-section-title sk-panel-row">
-              {id != null ? 'Edit entry' : 'Add new entry'}
+              <div className="sk-panel-row">
+                <div className="left-header">
+                  <div className="sk-panel-section-title pr-4">
+                    {id != null ? 'Edit entry' : 'Add new entry'}
+                  </div>
+                  <div className="sk-input-group" onChange={handleTypeChange}>
+                    <label>
+                      <input className="sk-input" type="radio" value="2fa" name="type" defaultChecked={is2fa} /> 2FA
+                    </label>
+                    <label>
+                      <input className="sk-input" type="radio" value="password" name="type" defaultChecked={!is2fa} />{' '}
+                      Password only
+                    </label>
+                  </div>
+                </div>
+              </div>
               <div className="sk-panel-section-title sk-panel-row">
                 {id == null && <QRCodeReader onSuccess={this.onQRCodeSuccess} onError={this.onQRCodeError} />}
                 <>
@@ -196,15 +211,6 @@ export default class EditEntry extends React.Component {
                   onChange={this.handleInputChange}
                   type="text"
                 />
-                <div className="sk-input-group" onChange={handleTypeChange}>
-                  <label>
-                    <input className="sk-input" type="radio" value="2fa" name="type" defaultChecked={is2fa} /> 2FA
-                  </label>
-                  <label>
-                    <input className="sk-input" type="radio" value="password" name="type" defaultChecked={!is2fa} />{' '}
-                    Password only
-                  </label>
-                </div>
                 {is2fa && (
                   <input
                     name="secret"

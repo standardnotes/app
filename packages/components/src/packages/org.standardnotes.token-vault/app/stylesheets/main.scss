@@ -1,25 +1,24 @@
-@import '~stylekit';
+@import '~@standardnotes/styles/dist/stylekit.css';
 
 body,
 html {
-  font-family: var(--sn-stylekit-sans-serif-font);
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  font-size: var(--sn-stylekit-base-font-size);
-  background-color: transparent;
+  background-color: var(--sn-stylekit-contrast-background-color);
+  padding: 0 !important;
 }
 
 * {
   // To prevent gray flash when focusing input on mobile Safari
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  font-family: var(--sn-stylekit-sans-serif-font);
 }
 
 .sn-component {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+
+  @media screen and (max-width: 420px) {
+    min-height: -webkit-fill-available;
+  }
 
   .sk-panel-content {
     height: inherit !important;
@@ -417,4 +416,24 @@ div.twitter-picker > div:nth-child(3) > span:nth-child(-n + 4) > div {
 
 .grab-cursor {
   cursor: grab;
+}
+
+.left-header {
+  display: flex;
+
+  @media screen and (max-width: 600px) {
+    flex-direction: column;
+    flex-wrap: wrap;
+  }
+
+  .sk-input-group {
+    > * {
+      display: inline-block;
+      vertical-align: middle;
+  
+      &:not(:last-child) {
+        margin-right: 0.73125rem;
+      }
+    }
+  }
 }
