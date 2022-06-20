@@ -30,7 +30,7 @@ export const useSignedIn = (signedInCallback?: () => void, signedOutCallback?: (
       }
     }
     void getSignedIn()
-    const removeSignedInObserver = application.addEventObserver(async event => {
+    const removeSignedInObserver = application.addEventObserver(async (event) => {
       if (event === ApplicationEvent.Launched) {
         void getSignedIn()
       }
@@ -74,7 +74,7 @@ export const useOutOfSync = () => {
   }, [application])
 
   React.useEffect(() => {
-    const removeSignedInObserver = application.addEventObserver(async event => {
+    const removeSignedInObserver = application.addEventObserver(async (event) => {
       if (event === ApplicationEvent.EnteredOutOfSync) {
         setOutOfSync(true)
       } else if (event === ApplicationEvent.ExitedOutOfSync) {
@@ -103,7 +103,7 @@ export const useIsLocked = () => {
 
   useEffect(() => {
     let isMounted = true
-    const removeSignedInObserver = application?.getAppState().addLockStateChangeObserver(event => {
+    const removeSignedInObserver = application?.getAppState().addLockStateChangeObserver((event) => {
       if (isMounted) {
         if (event === LockStateType.Locked) {
           setIsLocked(true)
@@ -131,7 +131,7 @@ export const useHasEditor = () => {
   const [hasEditor, setHasEditor] = React.useState<boolean>(false)
 
   useEffect(() => {
-    const removeEditorObserver = application?.editorGroup.addActiveControllerChangeObserver(newEditor => {
+    const removeEditorObserver = application?.editorGroup.addActiveControllerChangeObserver((newEditor) => {
       setHasEditor(Boolean(newEditor))
     })
     return removeEditorObserver
@@ -207,7 +207,7 @@ export const useSyncStatus = () => {
   }, [application, completedInitialSync, setStatus])
 
   useEffect(() => {
-    const unsubscribeAppEvents = application?.addEventObserver(async eventName => {
+    const unsubscribeAppEvents = application?.addEventObserver(async (eventName) => {
       if (eventName === ApplicationEvent.LocalDataIncrementalLoad) {
         updateLocalDataStatus()
       } else if (eventName === ApplicationEvent.SyncStatusChanged || eventName === ApplicationEvent.FailedSync) {
@@ -340,7 +340,7 @@ export const useProtectionSessionExpiry = () => {
   const [protectionsDisabledUntil, setProtectionsDisabledUntil] = React.useState(getProtectionsDisabledUntil())
 
   useEffect(() => {
-    const removeProtectionLengthSubscriber = application?.addEventObserver(async event => {
+    const removeProtectionLengthSubscriber = application?.addEventObserver(async (event) => {
       if ([ApplicationEvent.UnprotectedSessionBegan, ApplicationEvent.UnprotectedSessionExpired].includes(event)) {
         setProtectionsDisabledUntil(getProtectionsDisabledUntil())
       }
@@ -389,7 +389,7 @@ export const useChangeNote = (note: SNNote | undefined, editor: NoteViewControll
       if (await canChangeNote()) {
         await application?.mutator.changeAndSaveItem(
           note!,
-          mutator => {
+          (mutator) => {
             const noteMutator = mutator as NoteMutator
             mutate(noteMutator)
           },

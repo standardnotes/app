@@ -64,7 +64,7 @@ const useSessions = (): [
         setErrorMessage('An unknown error occurred while revoking the session.')
       }
     } else {
-      setSessions(sessions.filter(session => session.uuid !== uuid))
+      setSessions(sessions.filter((session) => session.uuid !== uuid))
     }
   }
 
@@ -136,7 +136,7 @@ export const ManageSessions: React.FC = () => {
 
   return (
     <FlatList<RemoteSession>
-      keyExtractor={item => item.uuid}
+      keyExtractor={(item) => item.uuid}
       contentContainerStyle={{ paddingBottom: insets.bottom }}
       initialNumToRender={7}
       windowSize={7}

@@ -560,7 +560,7 @@ export const useFiles = ({ note }: Props) => {
             return
           }
           if (shouldAttachToNote(currentTab)) {
-            uploadedFiles.forEach(file => attachFileToNote(file, false))
+            uploadedFiles.forEach((file) => attachFileToNote(file, false))
           }
         },
       },
@@ -587,7 +587,7 @@ export const useFiles = ({ note }: Props) => {
         },
       },
     ]
-    const osSpecificOptions = Platform.OS === 'android' ? options.filter(option => option.key !== 'library') : options
+    const osSpecificOptions = Platform.OS === 'android' ? options.filter((option) => option.key !== 'library') : options
     showActionSheet({
       title: 'Choose action',
       options: osSpecificOptions,
@@ -783,7 +783,7 @@ export const useFiles = ({ note }: Props) => {
         },
       ]
       const osDependentActions =
-        Platform.OS === 'ios' ? actions.filter(action => action.text !== 'Download') : [...actions]
+        Platform.OS === 'ios' ? actions.filter((action) => action.text !== 'Download') : [...actions]
       showActionSheet({
         title: file.name,
         options: osDependentActions,

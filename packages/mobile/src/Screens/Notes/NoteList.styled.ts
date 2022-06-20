@@ -15,7 +15,7 @@ export const styles = StyleSheet.create({
 })
 
 export const Container = styled.View`
-  background-color: ${props => props.theme.stylekitBackgroundColor};
+  background-color: ${(props) => props.theme.stylekitBackgroundColor};
   flex: 1;
 `
 
@@ -32,8 +32,8 @@ interface LoadingTextProps {
 export const LoadingText = styled.Text<LoadingTextProps>`
   position: absolute;
   opacity: 0.5;
-  color: ${props => props.theme.stylekitForegroundColor};
-  text-align: ${props => props.textAlign ?? 'left'};
+  color: ${(props) => props.theme.stylekitForegroundColor};
+  text-align: ${(props) => props.textAlign ?? 'left'};
 `
 
 export const HeaderContainer = styled.View`
@@ -43,7 +43,7 @@ export const HeaderContainer = styled.View`
 `
 
 export const SearchBarContainer = styled.View`
-  background-color: ${props => props.theme.stylekitBackgroundColor};
+  background-color: ${(props) => props.theme.stylekitBackgroundColor};
   z-index: 2;
 `
 

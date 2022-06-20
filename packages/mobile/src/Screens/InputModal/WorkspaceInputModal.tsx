@@ -11,7 +11,7 @@ import { Container, Input } from './InputModal.styled'
 
 type Props = ModalStackNavigationProp<typeof SCREEN_INPUT_MODAL_WORKSPACE_NAME>
 
-export const WorkspaceInputModal: FC<Props> = props => {
+export const WorkspaceInputModal: FC<Props> = (props) => {
   const { descriptor, renameWorkspace } = props.route.params
   const themeService = useContext(ThemeServiceContext)
   const application = useSafeApplicationContext()

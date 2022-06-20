@@ -11,7 +11,7 @@ import { Container, Input } from './InputModal.styled'
 
 type Props = ModalStackNavigationProp<typeof SCREEN_INPUT_MODAL_FILE_NAME>
 
-export const FileInputModal: FC<Props> = props => {
+export const FileInputModal: FC<Props> = (props) => {
   const { file, renameFile } = props.route.params
   const themeService = useContext(ThemeServiceContext)
   const application = useSafeApplicationContext()

@@ -55,7 +55,7 @@ const ButtonLabel = styled.Text<{ primary?: boolean }>`
   color: ${({ theme, primary }) => {
     return primary ? theme.stylekitInfoContrastColor : theme.stylekitForegroundColor
   }};
-  font-size: ${props => props.theme.mainTextFontSize}px;
+  font-size: ${(props) => props.theme.mainTextFontSize}px;
 `
 
 export const Button: React.FC<Props> = ({ onPress, label, primary, fullWidth, last }: Props) => {

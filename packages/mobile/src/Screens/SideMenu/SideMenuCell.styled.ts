@@ -2,7 +2,7 @@ import { Platform } from 'react-native'
 import styled, { css } from 'styled-components/native'
 
 export const Touchable = styled.TouchableOpacity<{ isSubtext: boolean }>`
-  min-height: ${props => (props.isSubtext ? 52 : 42)}px;
+  min-height: ${(props) => (props.isSubtext ? 52 : 42)}px;
 `
 export const CellContent = styled.View<{
   iconSide: 'right' | 'left' | null
@@ -32,7 +32,7 @@ export const TextContainer = styled.View<{
   isSubtext: boolean
   selected?: boolean
 }>`
-  min-height: ${props => (props.isSubtext ? 38 : 24)}px;
+  min-height: ${(props) => (props.isSubtext ? 38 : 24)}px;
   margin-left: 6px;
   flex-shrink: 1;
   ${({ selected, theme }) =>

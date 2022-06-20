@@ -43,7 +43,7 @@ export const NoteHistoryPreview = ({
         } else {
           await application?.mutator.changeAndSaveItem(
             originalNote,
-            mutator => {
+            (mutator) => {
               mutator.setCustomContent(revision.payload.content)
             },
             true,

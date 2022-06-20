@@ -11,7 +11,7 @@ type Props = {
   currentSession: boolean
 }
 
-const Container = styled(SectionedTableCellTouchableHighlight).attrs(props => ({
+const Container = styled(SectionedTableCellTouchableHighlight).attrs((props) => ({
   underlayColor: props.theme.stylekitBorderColor,
 }))<TableCellProps>`
   padding-top: ${12}px;
@@ -21,7 +21,7 @@ const ButtonContainer = styled.View``
 
 type ButtonLabelProps = Pick<Props, 'disabled'>
 const ButtonLabel = styled.Text<ButtonLabelProps>`
-  color: ${props => {
+  color: ${(props) => {
     let color = props.theme.stylekitForegroundColor
     if (props.disabled) {
       color = 'gray'
@@ -29,7 +29,7 @@ const ButtonLabel = styled.Text<ButtonLabelProps>`
     return color
   }};
   font-weight: bold;
-  font-size: ${props => props.theme.mainTextFontSize}px;
+  font-size: ${(props) => props.theme.mainTextFontSize}px;
   ${({ disabled }) =>
     disabled &&
     css`
@@ -46,7 +46,7 @@ export const SubTitleText = styled.Text<{ current: boolean }>`
   line-height: 21px;
 `
 
-export const SessionCell: React.FC<Props> = props => (
+export const SessionCell: React.FC<Props> = (props) => (
   <Container testID={props.testID} disabled={props.disabled} onPress={props.onPress}>
     <ButtonContainer>
       <ButtonLabel disabled={props.disabled}>{props.title}</ButtonLabel>

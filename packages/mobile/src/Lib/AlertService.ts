@@ -10,7 +10,7 @@ export class MobileAlertService extends AlertService {
     return goBack
   }
   alert(text: string, title: string, closeButtonText?: string) {
-    return new Promise<void>(resolve => {
+    return new Promise<void>((resolve) => {
       // On iOS, confirm should go first. On Android, cancel should go first.
       const buttons = [
         {

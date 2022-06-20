@@ -155,7 +155,7 @@ export class ApplicationState extends ApplicationService {
 
     const savedTag =
       (this.application.items.findItem(savedTagUuid) as SNTag) ||
-      this.application.items.getSmartViews().find(tag => tag.uuid === savedTagUuid)
+      this.application.items.getSmartViews().find((tag) => tag.uuid === savedTagUuid)
     if (savedTag) {
       this.setSelectedTag(savedTag, false)
       this.selectedTagRestored = true
@@ -288,7 +288,7 @@ export class ApplicationState extends ApplicationService {
 
     if (note && note.conflictOf) {
       void InteractionManager.runAfterInteractions(() => {
-        void this.application?.mutator.changeAndSaveItem(note, mutator => {
+        void this.application?.mutator.changeAndSaveItem(note, (mutator) => {
           mutator.conflictOf = undefined
         })
       })
@@ -328,7 +328,7 @@ export class ApplicationState extends ApplicationService {
     }
   }
 
-  private keyboardDidShow: KeyboardEventListener = e => {
+  private keyboardDidShow: KeyboardEventListener = (e) => {
     this.keyboardHeight = e.endCoordinates.height
     this.notifyEventObservers(AppStateEventType.KeyboardChangeEvent)
   }
@@ -353,7 +353,7 @@ export class ApplicationState extends ApplicationService {
       [ContentType.Note, ContentType.Tag],
       async ({ changed, inserted, removed, source }) => {
         if (source === PayloadEmitSource.PreSyncSave || source === PayloadEmitSource.RemoteRetrieved) {
-          const removedNotes = removed.filter(i => i.content_type === ContentType.Note)
+          const removedNotes = removed.filter((i) => i.content_type === ContentType.Note)
           for (const removedNote of removedNotes) {
             const editor = this.editorForNote(removedNote.uuid)
             if (editor) {
@@ -361,7 +361,7 @@ export class ApplicationState extends ApplicationService {
             }
           }
 
-          const notes = [...changed, ...inserted].filter(candidate => candidate.content_type === ContentType.Note)
+          const notes = [...changed, ...inserted].filter((candidate) => candidate.content_type === ContentType.Note)
 
           const isBrowswingTrashedNotes =
             this.selectedTag instanceof SmartView && this.selectedTag.uuid === SystemViewId.TrashedNotes
@@ -384,7 +384,7 @@ export class ApplicationState extends ApplicationService {
         }
 
         if (this.selectedTag) {
-          const matchingTag = [...changed, ...inserted].find(candidate => candidate.uuid === this.selectedTag.uuid)
+          const matchingTag = [...changed, ...inserted].find((candidate) => candidate.uuid === this.selectedTag.uuid)
           if (matchingTag) {
             this.selectedTag = matchingTag as SNTag
           }
@@ -397,7 +397,7 @@ export class ApplicationState extends ApplicationService {
    * Registers for MobileApplication events
    */
   private handleApplicationEvents() {
-    this.removeAppEventObserver = this.application.addEventObserver(async eventName => {
+    this.removeAppEventObserver = this.application.addEventObserver(async (eventName) => {
       switch (eventName) {
         case ApplicationEvent.LocalDataIncrementalLoad:
         case ApplicationEvent.LocalDataLoaded: {
@@ -441,7 +441,7 @@ export class ApplicationState extends ApplicationService {
    * @returns tags that are referencing note
    */
   public getNoteTags(note: SNNote) {
-    return this.application.items.itemsReferencingItem(note).filter(ref => {
+    return this.application.items.itemsReferencingItem(note).filter((ref) => {
       return ref.content_type === ContentType.Tag
     }) as SNTag[]
   }
@@ -453,7 +453,7 @@ export class ApplicationState extends ApplicationService {
     if (tag instanceof SmartView) {
       return this.application.items.notesMatchingSmartView(tag)
     } else {
-      return this.application.items.referencesForItem(tag).filter(ref => {
+      return this.application.items.referencesForItem(tag).filter((ref) => {
         return ref.content_type === ContentType.Note
       }) as SNNote[]
     }

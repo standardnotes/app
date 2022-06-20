@@ -26,7 +26,7 @@ export const Root = () => {
   const [keyboardHeight, setKeyboardHeight] = useState<number | undefined>(undefined)
 
   useEffect(() => {
-    const removeStateObserver = application?.getAppState().addStateChangeObserver(state => {
+    const removeStateObserver = application?.getAppState().addStateChangeObserver((state) => {
       if (state === AppStateType.GainingFocus) {
         void application.sync.sync()
       }
@@ -50,7 +50,7 @@ export const Root = () => {
           }
         }
       })
-    const removeNoteObserver = application?.editorGroup.addActiveControllerChangeObserver(activeController => {
+    const removeNoteObserver = application?.editorGroup.addActiveControllerChangeObserver((activeController) => {
       if (activeController instanceof NoteViewController) {
         setActiveNoteView(activeController)
       } else {
@@ -100,7 +100,7 @@ export const Root = () => {
   }
 
   const toggleNoteList = () => {
-    setNoteListCollapsed(value => !value)
+    setNoteListCollapsed((value) => !value)
   }
 
   const collapseIconBottomPosition = (keyboardHeight ?? 0) > (height ?? 0) / 2 ? (keyboardHeight ?? 0) + 40 : '50%'

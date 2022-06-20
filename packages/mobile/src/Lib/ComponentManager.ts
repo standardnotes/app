@@ -18,7 +18,7 @@ import { Base64 } from 'js-base64'
 import RNFS, { DocumentDirectoryPath } from 'react-native-fs'
 import StaticServer from 'react-native-static-server'
 import { unzip } from 'react-native-zip-archive'
-import { componentsCdn, version, name } from '../../package.json'
+import { componentsCdn, name, version } from '../../package.json'
 import { MobileThemeContent } from '../Style/MobileTheme'
 import { IsDev } from './Utils'
 
@@ -356,7 +356,7 @@ export class ComponentManager extends SNComponentManager {
 }
 
 export async function associateComponentWithNote(application: SNApplication, component: SNComponent, note: SNNote) {
-  return application.mutator.changeItem<ComponentMutator>(component, mutator => {
+  return application.mutator.changeItem<ComponentMutator>(component, (mutator) => {
     mutator.removeDisassociatedItemId(note.uuid)
     mutator.associateWithItem(note.uuid)
   })

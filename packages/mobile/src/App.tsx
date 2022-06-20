@@ -69,7 +69,7 @@ const AppComponent: React.FC<{
       setThemeServiceRef(themeServiceInstance)
 
       await application.prepareForLaunch({
-        receiveChallenge: async challenge => {
+        receiveChallenge: async (challenge) => {
           application.promptForChallenge(challenge)
         },
       })
@@ -136,7 +136,7 @@ export const App = (props: { env: TEnvironment }) => {
   const [appGroup, setAppGroup] = useState<ApplicationGroup>(() => createNewAppGroup())
 
   useEffect(() => {
-    const removeAppChangeObserver = appGroup.addEventObserver(event => {
+    const removeAppChangeObserver = appGroup.addEventObserver((event) => {
       if (event === ApplicationGroupEvent.PrimaryApplicationSet) {
         const mobileApplication = appGroup.primaryApplication as MobileApplication
         setApplication(mobileApplication)

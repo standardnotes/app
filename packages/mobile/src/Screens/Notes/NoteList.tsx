@@ -82,7 +82,7 @@ export const NoteList = (props: Props) => {
   })
 
   useEffect(() => {
-    const unsubscribeStateEventObserver = application?.getAppState().addStateEventObserver(state => {
+    const unsubscribeStateEventObserver = application?.getAppState().addStateEventObserver((state) => {
       if (state === AppStateEventType.DrawerOpen) {
         dismissKeyboard()
       }
@@ -99,7 +99,7 @@ export const NoteList = (props: Props) => {
   }, [noteListScrolled, props.notes])
 
   useEffect(() => {
-    const unsubscribeTagChangedEventObserver = application?.getAppState().addStateChangeObserver(event => {
+    const unsubscribeTagChangedEventObserver = application?.getAppState().addStateChangeObserver((event) => {
       if (event === AppStateType.TagChanged) {
         scrollListToTop()
       }
@@ -223,7 +223,7 @@ export const NoteList = (props: Props) => {
       <FlatList
         ref={noteListRef}
         style={styles.list}
-        keyExtractor={item => item?.uuid}
+        keyExtractor={(item) => item?.uuid}
         contentContainerStyle={[{ paddingBottom: insets.bottom }, props.notes.length > 0 ? {} : { height: '100%' }]}
         initialNumToRender={6}
         windowSize={6}

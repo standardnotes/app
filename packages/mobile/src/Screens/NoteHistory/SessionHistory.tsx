@@ -42,7 +42,7 @@ export const SessionHistory: React.FC<Props> = ({ note, onPress }) => {
 
   return (
     <FlatList<NoteHistoryEntry>
-      keyExtractor={item => item.previewTitle()}
+      keyExtractor={(item) => item.previewTitle()}
       contentContainerStyle={{ paddingBottom: insets.bottom }}
       initialNumToRender={10}
       windowSize={10}

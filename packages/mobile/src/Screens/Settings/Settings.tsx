@@ -3,6 +3,7 @@ import { useSafeApplicationContext } from '@Root/Hooks/useSafeApplicationContext
 import { ModalStackNavigationProp } from '@Root/ModalStack'
 import { SCREEN_SETTINGS } from '@Root/Screens/screens'
 import { FilesSection } from '@Screens/Settings/Sections/FilesSection'
+import { WorkspacesSection } from '@Screens/Settings/Sections/WorkspacesSection'
 import { FeatureIdentifier } from '@standardnotes/features'
 import { ApplicationEvent, FeatureStatus } from '@standardnotes/snjs'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -14,7 +15,6 @@ import { PreferencesSection } from './Sections/PreferencesSection'
 import { ProtectionsSection } from './Sections/ProtectionsSection'
 import { SecuritySection } from './Sections/SecuritySection'
 import { Container } from './Settings.styled'
-import { WorkspacesSection } from '@Screens/Settings/Sections/WorkspacesSection'
 
 type Props = ModalStackNavigationProp<typeof SCREEN_SETTINGS>
 export const Settings = (props: Props) => {
@@ -31,7 +31,7 @@ export const Settings = (props: Props) => {
   }, [application])
 
   useEffect(() => {
-    const removeApplicationEventSubscriber = application.addEventObserver(async event => {
+    const removeApplicationEventSubscriber = application.addEventObserver(async (event) => {
       if (event === ApplicationEvent.KeyStatusChanged) {
         setHasPasscode(Boolean(application.hasPasscode()))
         updateProtectionsAvailable()

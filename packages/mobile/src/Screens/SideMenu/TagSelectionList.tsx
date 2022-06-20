@@ -100,7 +100,7 @@ export const TagSelectionList = React.memo(
       let children: SNTag[] = []
 
       if (showFolders && item instanceof SNTag) {
-        const rawChildren = application.items.getTagChildren(item).map(tag => tag.uuid)
+        const rawChildren = application.items.getTagChildren(item).map((tag) => tag.uuid)
         children = (tags as SNTag[]).filter((tag: SNTag) => rawChildren.includes(tag.uuid))
       }
 
@@ -130,7 +130,7 @@ export const TagSelectionList = React.memo(
               windowSize={10}
               maxToRenderPerBatch={10}
               data={children}
-              keyExtractor={childTag => childTag.uuid}
+              keyExtractor={(childTag) => childTag.uuid}
               renderItem={renderItem}
             />
           )}
@@ -147,7 +147,7 @@ export const TagSelectionList = React.memo(
           windowSize={10}
           maxToRenderPerBatch={10}
           data={renderedTags as SNTag[]}
-          keyExtractor={item => item.uuid}
+          keyExtractor={(item) => item.uuid}
           renderItem={renderItem}
         />
         {tags.length === 0 && <EmptyPlaceholder>{emptyPlaceholder}</EmptyPlaceholder>}
