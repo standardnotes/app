@@ -21,6 +21,18 @@ if (__DEV__ === false) {
 }
 /* eslint-enable no-console */
 
+const originalWarn = console.warn
+
+console.warn = function filterWarnings(msg) {
+  const supressedWarnings = [
+    "[react-native-gesture-handler] Seems like you're using an old API with gesture components",
+  ]
+
+  if (!supressedWarnings.some(entry => msg.includes(entry))) {
+    originalWarn.apply(console, arguments)
+  }
+}
+
 enableAndroidFontFix()
 
 AppRegistry.registerComponent(appName, () => App)

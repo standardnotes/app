@@ -1,14 +1,14 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { SectionHeader } from '@Components/SectionHeader'
-import { TableSection } from '@Root/Components/TableSection'
-import { ApplicationDescriptor, ApplicationGroupEvent, ButtonType } from '@standardnotes/snjs'
-import { useSafeApplicationGroupContext } from '@Root/Hooks/useSafeApplicationGroupContext'
 import { SectionedAccessoryTableCell } from '@Components/SectionedAccessoryTableCell'
-import { useSafeApplicationContext } from '@Root/Hooks/useSafeApplicationContext'
-import { CustomActionSheetOption, useCustomActionSheet } from '@Style/CustomActionSheet'
-import { SCREEN_INPUT_MODAL_WORKSPACE_NAME, SCREEN_SETTINGS } from '@Screens/screens'
+import { SectionHeader } from '@Components/SectionHeader'
 import { useNavigation } from '@react-navigation/native'
+import { TableSection } from '@Root/Components/TableSection'
+import { useSafeApplicationContext } from '@Root/Hooks/useSafeApplicationContext'
+import { useSafeApplicationGroupContext } from '@Root/Hooks/useSafeApplicationGroupContext'
 import { ModalStackNavigationProp } from '@Root/ModalStack'
+import { SCREEN_INPUT_MODAL_WORKSPACE_NAME, SCREEN_SETTINGS } from '@Screens/screens'
+import { ApplicationDescriptor, ApplicationGroupEvent, ButtonType } from '@standardnotes/snjs'
+import { CustomActionSheetOption, useCustomActionSheet } from '@Style/CustomActionSheet'
+import React, { useCallback, useEffect, useState } from 'react'
 
 export const WorkspacesSection = () => {
   const application = useSafeApplicationContext()
@@ -29,7 +29,7 @@ export const WorkspacesSection = () => {
     let descriptors = appGroup.getDescriptors()
     setApplicationDescriptors(descriptors)
 
-    const removeAppGroupObserver = appGroup.addEventObserver(event => {
+    const removeAppGroupObserver = appGroup.addEventObserver((event) => {
       if (event === ApplicationGroupEvent.DescriptorsDataChanged) {
         descriptors = appGroup.getDescriptors()
         setApplicationDescriptors(descriptors)
@@ -53,7 +53,7 @@ export const WorkspacesSection = () => {
 
       switch (action) {
         case Activate:
-          message = 'The workspace will be ready for you when you come back.'
+          message = 'Your workspace will be ready for you when you come back.'
           buttonText = 'Quit App'
           break
         case AddAnother:
@@ -61,7 +61,8 @@ export const WorkspacesSection = () => {
           buttonText = 'Quit App'
           break
         case SignOutAll:
-          message = 'Are you sure you want to sign out of all workspaces on this device?'
+          message =
+            'Are you sure you want to sign out of all workspaces on this device? This action will restart the application.'
           buttonText = 'Sign Out All'
           break
         case Remove:
@@ -106,10 +107,9 @@ export const WorkspacesSection = () => {
         return
       }
 
-      await application.deviceInterface.clearNamespacedKeychainValue(descriptor.identifier)
       await appGroup.unloadCurrentAndActivateDescriptor(descriptor)
     },
-    [WorkspaceAction.Activate, appGroup, application.deviceInterface, getWorkspaceActionConfirmation],
+    [WorkspaceAction.Activate, appGroup, getWorkspaceActionConfirmation],
   )
 
   const getSingleWorkspaceItemOptions = useCallback(
@@ -152,17 +152,8 @@ export const WorkspacesSection = () => {
       return
     }
 
-    const activeDescriptor = applicationDescriptors.find(descriptor => descriptor.primary) as ApplicationDescriptor
-    await application.deviceInterface.clearNamespacedKeychainValue(activeDescriptor.identifier)
-
     await appGroup.unloadCurrentAndCreateNewDescriptor()
-  }, [
-    WorkspaceAction.AddAnother,
-    appGroup,
-    application.deviceInterface,
-    applicationDescriptors,
-    getWorkspaceActionConfirmation,
-  ])
+  }, [WorkspaceAction.AddAnother, appGroup, applicationDescriptors, getWorkspaceActionConfirmation])
 
   const signOutAllWorkspaces = useCallback(async () => {
     try {
