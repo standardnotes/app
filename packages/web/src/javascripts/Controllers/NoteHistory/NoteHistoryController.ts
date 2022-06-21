@@ -174,6 +174,7 @@ export class NoteHistoryController {
     this.clearSelection()
     this.setSelectedEntry(entry)
     this.setSelectedRevision(entry)
+    this.setContentState(RevisionContentState.Loaded)
   }
 
   private get flattenedRemoteHistory() {
