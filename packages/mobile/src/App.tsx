@@ -5,6 +5,7 @@ import { ApplicationGroup } from '@Lib/ApplicationGroup'
 import { navigationRef } from '@Lib/NavigationService'
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native'
 import { ApplicationGroupContext } from '@Root/ApplicationGroupContext'
+import { EnvironmentContext } from '@Root/EnvironmentContext'
 import { MobileThemeVariables } from '@Root/Style/Themes/styled-components'
 import { ApplicationGroupEvent, DeinitMode, DeinitSource } from '@standardnotes/snjs'
 import { ThemeService, ThemeServiceContext } from '@Style/ThemeService'
@@ -111,11 +112,13 @@ const AppComponent: React.FC<{
       {themeService.current && (
         <>
           <ThemeProvider theme={activeTheme}>
-            <ActionSheetProvider>
-              <ThemeServiceContext.Provider value={themeService.current}>
-                <MainStackComponent env={env} />
-              </ThemeServiceContext.Provider>
-            </ActionSheetProvider>
+            <EnvironmentContext.Provider value={env}>
+              <ActionSheetProvider>
+                <ThemeServiceContext.Provider value={themeService.current}>
+                  <MainStackComponent env={env} />
+                </ThemeServiceContext.Provider>
+              </ActionSheetProvider>
+            </EnvironmentContext.Provider>
             <ToastWrapper />
           </ThemeProvider>
         </>

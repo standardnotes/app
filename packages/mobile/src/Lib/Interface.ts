@@ -1,3 +1,4 @@
+import { IsDev } from '@Lib/Utils'
 import AsyncStorage from '@react-native-community/async-storage'
 import SNReactNative from '@standardnotes/react-native-utils'
 import {
@@ -315,7 +316,9 @@ export class MobileDeviceInterface implements DeviceInterface {
   }
 
   performSoftReset() {
-    SNReactNative.exitApp()
+    if (IsDev) {
+      SNReactNative.exitApp()
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function

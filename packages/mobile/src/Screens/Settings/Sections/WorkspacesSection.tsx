@@ -67,7 +67,7 @@ export const WorkspacesSection = () => {
           break
         case Remove:
           message =
-            'This action will remove this workspace and its related data from this device. Your synced data will not be affected.'
+            'This action will remove this workspace and its related data from this device. Your synced data will not be affected.\n\nYour app will quit after workspace removal completes.'
           buttonText = 'Delete Workspace'
           buttonType = Danger
           break
