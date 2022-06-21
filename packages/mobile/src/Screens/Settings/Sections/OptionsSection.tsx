@@ -78,7 +78,7 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
   const destroyLocalData = async () => {
     if (
       await application.alertService.confirm(
-        'Signing out will remove all data from this device, including notes and tags. Make sure your data is synced before proceeding.',
+        'Signing out will remove all data from this device, including notes and tags. Make sure your data is synced before proceeding.\n\nYour app will quit after sign out completes.',
         'Sign Out?',
         'Sign Out',
         ButtonType.Danger,
