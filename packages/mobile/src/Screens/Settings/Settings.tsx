@@ -1,7 +1,6 @@
+import { WorkspacesEnabled } from '@Lib/constants'
 import { useSignedIn } from '@Lib/SnjsHelperHooks'
-import { isUnfinishedFeaturesEnabled } from '@Lib/Utils'
 import { useSafeApplicationContext } from '@Root/Hooks/useSafeApplicationContext'
-import { useSafeEnvironmentContext } from '@Root/Hooks/useSafeEnvironmentContext'
 import { ModalStackNavigationProp } from '@Root/ModalStack'
 import { SCREEN_SETTINGS } from '@Root/Screens/screens'
 import { FilesSection } from '@Screens/Settings/Sections/FilesSection'
@@ -22,7 +21,6 @@ type Props = ModalStackNavigationProp<typeof SCREEN_SETTINGS>
 export const Settings = (props: Props) => {
   // Context
   const application = useSafeApplicationContext()
-  const env = useSafeEnvironmentContext()
 
   // State
   const [hasPasscode, setHasPasscode] = useState(() => Boolean(application.hasPasscode()))
@@ -58,7 +56,7 @@ export const Settings = (props: Props) => {
     <Container keyboardShouldPersistTaps={'always'} keyboardDismissMode={'interactive'}>
       <AuthSection title="Account" signedIn={signedIn} />
       <OptionsSection encryptionAvailable={!!encryptionAvailable} title="Options" />
-      {isUnfinishedFeaturesEnabled(env) && <WorkspacesSection />}
+      {WorkspacesEnabled && <WorkspacesSection />}
       <PreferencesSection />
       {application.hasAccount() && isEntitledToFiles && <FilesSection />}
       <SecuritySection

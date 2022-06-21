@@ -1,5 +1,5 @@
+import { WorkspacesEnabled } from '@Lib/constants'
 import { useSignedIn } from '@Lib/SnjsHelperHooks'
-import { isUnfinishedFeaturesEnabled } from '@Lib/Utils'
 import { useNavigation } from '@react-navigation/native'
 import { ButtonCell } from '@Root/Components/ButtonCell'
 import { SectionedAccessoryTableCell } from '@Root/Components/SectionedAccessoryTableCell'
@@ -7,7 +7,6 @@ import { SectionedOptionsTableCell } from '@Root/Components/SectionedOptionsTabl
 import { SectionHeader } from '@Root/Components/SectionHeader'
 import { TableSection } from '@Root/Components/TableSection'
 import { useSafeApplicationContext } from '@Root/Hooks/useSafeApplicationContext'
-import { useSafeEnvironmentContext } from '@Root/Hooks/useSafeEnvironmentContext'
 import { ModalStackNavigationProp } from '@Root/ModalStack'
 import { SCREEN_MANAGE_SESSIONS, SCREEN_SETTINGS } from '@Root/Screens/screens'
 import { ButtonType, PrefKey } from '@standardnotes/snjs'
@@ -28,7 +27,6 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
 
   const [signedIn] = useSignedIn()
   const navigation = useNavigation<ModalStackNavigationProp<typeof SCREEN_SETTINGS>['navigation']>()
-  const env = useSafeEnvironmentContext()
 
   // State
   const [importing, setImporting] = useState(false)
@@ -82,7 +80,7 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
     let signoutText =
       'Signing out will remove all data from this device, including notes and tags. Make sure your data is synced before proceeding.'
 
-    if (isUnfinishedFeaturesEnabled(env)) {
+    if (WorkspacesEnabled) {
       signoutText += '\n\nYour app will quit after sign out completes.'
     }
 
