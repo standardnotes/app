@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.7-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.1.6...@standardnotes/components-meta@2.1.7-alpha.0) (2022-06-21)
+
+### Bug Fixes
+
+* markdown visual font size ([#1127](https://github.com/standardnotes/app/issues/1127)) ([f4b9b5b](https://github.com/standardnotes/app/commit/f4b9b5b566e8d4104de71a87ee041cdc77c3ce6c))
+
 ## [2.1.6](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.1.6-alpha.0...@standardnotes/components-meta@2.1.6) (2022-06-18)
 
 **Note:** Version bump only for package @standardnotes/components-meta
