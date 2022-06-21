@@ -6,7 +6,7 @@
   "main": "dist/dist.js",
   "author": "Standard Notes <hello@standardnotes.org>",
   "scripts": {
-    "build": "grunt"
+    "components:build": "grunt"
   },
   "devDependencies": {
     "@babel/core": "^7.11.1",

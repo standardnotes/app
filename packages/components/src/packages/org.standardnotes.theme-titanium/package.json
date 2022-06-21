@@ -7,6 +7,6 @@
     "main": "dist/dist.css"
   },
   "scripts": {
-    "build": "webpack --entry ./src/main.scss --config ../theme.webpack.config.js"
+    "components:build": "webpack --entry ./src/main.scss --config ../theme.webpack.config.js"
   }
 }

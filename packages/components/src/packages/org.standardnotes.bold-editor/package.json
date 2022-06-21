@@ -4,9 +4,9 @@
   "version": "1.3.9",
   "main": "dist/dist.js",
   "scripts": {
-    "skip:lint": "eslint app/ --ext .js",
-    "lint:fix": "yarn lint --fix",
-    "build": "webpack --config webpack.prod.js",
+    "skip:components:lint": "eslint app/ --ext .js",
+    "components:lint:fix": "yarn lint --fix",
+    "components:build": "webpack --config webpack.prod.js",
     "start": "webpack serve --config webpack.dev.js --progress --hot"
   },
   "sn": {

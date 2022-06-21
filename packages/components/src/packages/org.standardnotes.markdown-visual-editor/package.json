@@ -15,9 +15,9 @@
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
+    "components:build": "react-app-rewired build",
     "eject": "react-scripts eject",
-    "lint": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md"
+    "components:lint": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md"
   },
   "devDependencies": {
     "@codemirror/lang-markdown": "^0.19.6",
