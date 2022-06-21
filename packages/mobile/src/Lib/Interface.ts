@@ -1,4 +1,4 @@
-import { IsDev } from '@Lib/Utils'
+import { WorkspacesEnabled } from '@Lib/constants'
 import AsyncStorage from '@react-native-community/async-storage'
 import SNReactNative from '@standardnotes/react-native-utils'
 import {
@@ -316,7 +316,7 @@ export class MobileDeviceInterface implements DeviceInterface {
   }
 
   performSoftReset() {
-    if (IsDev) {
+    if (WorkspacesEnabled) {
       SNReactNative.exitApp()
     }
   }
