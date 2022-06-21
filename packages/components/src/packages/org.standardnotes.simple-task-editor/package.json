@@ -4,7 +4,7 @@
   "version": "1.3.14",
   "main": "dist/dist.js",
   "scripts": {
-    "components:build": "webpack --config webpack.prod.js",
+    "components:compile": "webpack --config webpack.prod.js",
     "start": "webpack serve --config webpack.dev.js --progress --hot",
     "skip:components:lint": "eslint app/ --ext .js",
     "components:lint:fix": "yarn lint --fix"

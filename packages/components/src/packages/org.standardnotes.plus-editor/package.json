@@ -7,7 +7,7 @@
   "author": "Standard Notes <hello@standardnotes.com>",
   "scripts": {
     "skip:components:lint": "eslint --ext .js .",
-    "components:build": "webpack --config webpack.prod.js",
+    "components:compile": "webpack --config webpack.prod.js",
     "start": "webpack serve --config webpack.dev.js --progress --hot"
   },
   "sn": {

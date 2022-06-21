@@ -11,7 +11,7 @@
   },
   "scripts": {
     "start": "webpack serve --config webpack.dev.js --progress --hot",
-    "components:build": "webpack --config webpack.prod.js",
+    "components:compile": "webpack --config webpack.prod.js",
     "skip:components:lint": "eslint src --ext .js",
     "components:lint:fix": "yarn lint --fix"
   },

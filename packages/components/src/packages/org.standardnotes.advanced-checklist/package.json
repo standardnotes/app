@@ -18,7 +18,7 @@
     "start": "react-app-rewired start",
     "test:coverage": "npm run test -- --coverage --watchAll",
     "eject": "react-scripts eject",
-    "components:build": "react-app-rewired build",
+    "components:compile": "react-app-rewired build",
     "components:test": "react-app-rewired test --watchAll=false --silent",
     "components:lint": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md"
   },

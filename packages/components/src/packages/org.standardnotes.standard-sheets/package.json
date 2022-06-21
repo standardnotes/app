@@ -6,7 +6,7 @@
   "scripts": {
     "skip:components:lint": "eslint app/ --ext .js",
     "components:lint:fix": "npm run lint -- --fix",
-    "components:build": "webpack --config webpack.prod.js",
+    "components:compile": "webpack --config webpack.prod.js",
     "start": "webpack serve --config webpack.dev.js --progress --hot",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 1"
   },
