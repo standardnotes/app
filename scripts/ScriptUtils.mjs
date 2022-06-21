@@ -23,3 +23,8 @@ export const emptyExistingDir = (dir) => {
 export const listDirFiles = (dir) => {
   return fs.readdirSync(dir)
 }
+
+export const writeJson = (data, path) => {
+  const string = JSON.stringify(data, null, 2)
+  return fs.writeFileSync(path, string)
+}

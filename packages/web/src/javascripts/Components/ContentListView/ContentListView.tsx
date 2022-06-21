@@ -1,6 +1,5 @@
 import { KeyboardKey, KeyboardModifier } from '@/Services/IOService'
 import { WebApplication } from '@/Application/Application'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { PANEL_NAME_NOTES } from '@/Constants/Constants'
 import { PrefKey, SystemViewId } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
@@ -15,20 +14,49 @@ import {
   useState,
 } from 'react'
 import ContentList from '@/Components/ContentListView/ContentList'
-import NoAccountWarningWrapper from '@/Components/NoAccountWarning/NoAccountWarning'
+import NoAccountWarning from '@/Components/NoAccountWarning/NoAccountWarning'
 import SearchOptions from '@/Components/SearchOptions/SearchOptions'
 import PanelResizer, { PanelSide, ResizeFinishCallback, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import ContentListOptionsMenu from './ContentListOptionsMenu'
 import Icon from '@/Components/Icon/Icon'
+import { ItemListController } from '@/Controllers/ItemList/ItemListController'
+import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
+import { FilesController } from '@/Controllers/FilesController'
+import { NoteTagsController } from '@/Controllers/NoteTagsController'
+import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
+import { NoAccountWarningController } from '@/Controllers/NoAccountWarningController'
+import { NotesController } from '@/Controllers/NotesController'
+import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
+import { ElementIds } from '@/Constants/ElementIDs'
 
 type Props = {
+  accountMenuController: AccountMenuController
   application: WebApplication
-  viewControllerManager: ViewControllerManager
+  filesController: FilesController
+  itemListController: ItemListController
+  navigationController: NavigationController
+  noAccountWarningController: NoAccountWarningController
+  noteTagsController: NoteTagsController
+  notesController: NotesController
+  searchOptionsController: SearchOptionsController
+  selectionController: SelectedItemsController
 }
 
-const ContentListView: FunctionComponent<Props> = ({ application, viewControllerManager }) => {
+const ContentListView: FunctionComponent<Props> = ({
+  accountMenuController,
+  application,
+  filesController,
+  itemListController,
+  navigationController,
+  noAccountWarningController,
+  noteTagsController,
+  notesController,
+  searchOptionsController,
+  selectionController,
+}) => {
   const itemsViewPanelRef = useRef<HTMLDivElement>(null)
   const displayOptionsMenuRef = useRef<HTMLDivElement>(null)
 
@@ -47,9 +75,9 @@ const ContentListView: FunctionComponent<Props> = ({ application, viewController
     paginate,
     panelWidth,
     createNewNote,
-  } = viewControllerManager.itemListController
+  } = itemListController
 
-  const { selectedItems } = viewControllerManager.selectionController
+  const { selectedItems } = selectionController
 
   const [showDisplayOptionsMenu, setShowDisplayOptionsMenu] = useState(false)
   const [focusedSearch, setFocusedSearch] = useState(false)
@@ -57,17 +85,17 @@ const ContentListView: FunctionComponent<Props> = ({ application, viewController
   const [closeDisplayOptMenuOnBlur] = useCloseOnBlur(displayOptionsMenuRef, setShowDisplayOptionsMenu)
 
   const isFilesSmartView = useMemo(
-    () => viewControllerManager.navigationController.selected?.uuid === SystemViewId.Files,
-    [viewControllerManager.navigationController.selected?.uuid],
+    () => navigationController.selected?.uuid === SystemViewId.Files,
+    [navigationController.selected?.uuid],
   )
 
   const addNewItem = useCallback(() => {
     if (isFilesSmartView) {
-      void viewControllerManager.filesController.uploadNewFile()
+      void filesController.uploadNewFile()
     } else {
       void createNewNote()
     }
-  }, [viewControllerManager.filesController, createNewNote, isFilesSmartView])
+  }, [filesController, createNewNote, isFilesSmartView])
 
   useEffect(() => {
     /**
@@ -75,7 +103,7 @@ const ContentListView: FunctionComponent<Props> = ({ application, viewController
      * use Control modifier as well. These rules don't apply to desktop, but
      * probably better to be consistent.
      */
-    const newNoteKeyObserver = application.io.addKeyObserver({
+    const disposeNewNoteKeyObserver = application.io.addKeyObserver({
       key: 'n',
       modifiers: [KeyboardModifier.Meta, KeyboardModifier.Ctrl],
       onKeyDown: (event) => {
@@ -84,7 +112,7 @@ const ContentListView: FunctionComponent<Props> = ({ application, viewController
       },
     })
 
-    const nextNoteKeyObserver = application.io.addKeyObserver({
+    const disposeNextNoteKeyObserver = application.io.addKeyObserver({
       key: KeyboardKey.Down,
       elements: [document.body, ...(searchBarElement ? [searchBarElement] : [])],
       onKeyDown: () => {
@@ -95,7 +123,7 @@ const ContentListView: FunctionComponent<Props> = ({ application, viewController
       },
     })
 
-    const previousNoteKeyObserver = application.io.addKeyObserver({
+    const disposePreviousNoteKeyObserver = application.io.addKeyObserver({
       key: KeyboardKey.Up,
       element: document.body,
       onKeyDown: () => {
@@ -103,7 +131,7 @@ const ContentListView: FunctionComponent<Props> = ({ application, viewController
       },
     })
 
-    const searchKeyObserver = application.io.addKeyObserver({
+    const disposeSearchKeyObserver = application.io.addKeyObserver({
       key: 'f',
       modifiers: [KeyboardModifier.Meta, KeyboardModifier.Shift],
       onKeyDown: () => {
@@ -113,13 +141,37 @@ const ContentListView: FunctionComponent<Props> = ({ application, viewController
       },
     })
 
+    const disposeSelectAllKeyObserver = application.io.addKeyObserver({
+      key: 'a',
+      modifiers: [KeyboardModifier.Ctrl],
+      onKeyDown: (event) => {
+        const isTargetInsideContentList = (event.target as HTMLElement).closest(`#${ElementIds.ContentList}`)
+
+        if (!isTargetInsideContentList) {
+          return
+        }
+
+        event.preventDefault()
+        selectionController.selectAll()
+      },
+    })
+
     return () => {
-      newNoteKeyObserver()
-      nextNoteKeyObserver()
-      previousNoteKeyObserver()
-      searchKeyObserver()
+      disposeNewNoteKeyObserver()
+      disposeNextNoteKeyObserver()
+      disposePreviousNoteKeyObserver()
+      disposeSearchKeyObserver()
+      disposeSelectAllKeyObserver()
     }
-  }, [addNewItem, application.io, createNewNote, searchBarElement, selectNextItem, selectPreviousItem])
+  }, [
+    addNewItem,
+    application.io,
+    createNewNote,
+    searchBarElement,
+    selectNextItem,
+    selectPreviousItem,
+    selectionController,
+  ])
 
   const onNoteFilterTextChange: ChangeEventHandler<HTMLInputElement> = useCallback(
     (e) => {
@@ -143,15 +195,15 @@ const ContentListView: FunctionComponent<Props> = ({ application, viewController
   const panelResizeFinishCallback: ResizeFinishCallback = useCallback(
     (width, _lastLeft, _isMaxWidth, isCollapsed) => {
       application.setPreference(PrefKey.NotesPanelWidth, width).catch(console.error)
-      viewControllerManager.noteTagsController.reloadTagsContainerMaxWidth()
+      noteTagsController.reloadTagsContainerMaxWidth()
       application.publishPanelDidResizeEvent(PANEL_NAME_NOTES, isCollapsed)
     },
-    [viewControllerManager, application],
+    [application, noteTagsController],
   )
 
   const panelWidthEventCallback = useCallback(() => {
-    viewControllerManager.noteTagsController.reloadTagsContainerMaxWidth()
-  }, [viewControllerManager])
+    noteTagsController.reloadTagsContainerMaxWidth()
+  }, [noteTagsController])
 
   const toggleDisplayOptionsMenu = useCallback(() => {
     setShowDisplayOptionsMenu(!showDisplayOptionsMenu)
@@ -207,11 +259,14 @@ const ContentListView: FunctionComponent<Props> = ({ application, viewController
 
               {(focusedSearch || noteFilterText) && (
                 <div className="animate-fade-from-top">
-                  <SearchOptions application={application} viewControllerManager={viewControllerManager} />
+                  <SearchOptions application={application} searchOptions={searchOptionsController} />
                 </div>
               )}
             </div>
-            <NoAccountWarningWrapper viewControllerManager={viewControllerManager} />
+            <NoAccountWarning
+              accountMenuController={accountMenuController}
+              noAccountWarningController={noAccountWarningController}
+            />
           </div>
           <div id="items-menu-bar" className="sn-component" ref={displayOptionsMenuRef}>
             <div className="sk-app-bar no-edges">
@@ -234,10 +289,10 @@ const ContentListView: FunctionComponent<Props> = ({ application, viewController
                     {showDisplayOptionsMenu && (
                       <ContentListOptionsMenu
                         application={application}
-                        viewControllerManager={viewControllerManager}
                         closeDisplayOptionsMenu={toggleDisplayOptionsMenu}
                         closeOnBlur={closeDisplayOptMenuOnBlur}
                         isOpen={showDisplayOptionsMenu}
+                        navigationController={navigationController}
                       />
                     )}
                   </DisclosurePanel>
@@ -253,8 +308,12 @@ const ContentListView: FunctionComponent<Props> = ({ application, viewController
             items={renderedItems}
             selectedItems={selectedItems}
             application={application}
-            viewControllerManager={viewControllerManager}
             paginate={paginate}
+            filesController={filesController}
+            itemListController={itemListController}
+            navigationController={navigationController}
+            notesController={notesController}
+            selectionController={selectionController}
           />
         ) : null}
       </div>

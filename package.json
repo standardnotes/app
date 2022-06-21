@@ -28,6 +28,8 @@
     "release:prod": "lerna version --conventional-commits --yes -m \"chore(release): publish\"",
     "release:prod:graduate": "lerna version --conventional-graduate --conventional-commits --yes -m \"chore(release): publish\"",
     "release:beta": "lerna version --conventional-prerelease --conventional-commits --yes -m \"chore(release): publish\"",
+    "publish:prod": "lerna publish from-git --yes",
+    "publish:beta": "lerna publish from-git --yes --dist-tag alpha",
     "version": "yarn install --no-immutable && git add yarn.lock",
     "postversion": "./scripts/push-tags-one-by-one.sh",
     "lerna:list": " yarn lerna list -all",
@@ -58,7 +60,8 @@
     "prettier": "^2.6.2",
     "typescript": "^4.7.3",
     "webpack": "^5.72.0",
-    "webpack-cli": "^4.9.2"
+    "webpack-cli": "^4.9.2",
+    "webpack-dev-server": "^4.9.2"
   },
   "packageManager": "yarn@3.2.1"
 }

@@ -174,6 +174,7 @@ const NotesOptions = ({
   navigationController,
   notesController,
   noteTagsController,
+  historyModalController,
   closeOnBlur,
 }: NotesOptionsProps) => {
   const [altKeyDown, setAltKeyDown] = useState(false)
@@ -222,7 +223,7 @@ const NotesOptions = ({
       const format = editor?.package_info?.file_type || 'txt'
       return `${note.title}.${format}`
     },
-    [application],
+    [application.componentManager],
   )
 
   const downloadSelectedItems = useCallback(async () => {
@@ -239,7 +240,7 @@ const NotesOptions = ({
       await application.getArchiveService().downloadDataAsZip(
         notes.map((note) => {
           return {
-            filename: getNoteFileName(note),
+            name: getNoteFileName(note),
             content: new Blob([note.text]),
           }
         }),
@@ -259,8 +260,8 @@ const NotesOptions = ({
   }, [application, notes])
 
   const openRevisionHistoryModal = useCallback(() => {
-    notesController.setShowRevisionHistoryModal(true)
-  }, [notesController])
+    historyModalController.openModal(notesController.firstSelectedNote)
+  }, [historyModalController, notesController.firstSelectedNote])
 
   return (
     <>

@@ -92,6 +92,7 @@ class NoteGroupView extends PureComponent<Props, State> {
             navigationController={this.viewControllerManager.navigationController}
             notesController={this.viewControllerManager.notesController}
             noteTagsController={this.viewControllerManager.noteTagsController}
+            historyModalController={this.viewControllerManager.historyModalController}
           />
         )}
 

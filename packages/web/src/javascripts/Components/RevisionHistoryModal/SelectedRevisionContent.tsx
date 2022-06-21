@@ -1,39 +1,45 @@
 import { WebApplication } from '@/Application/Application'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
-import { HistoryEntry, SNComponent, SNNote } from '@standardnotes/snjs'
+import { ContentType, SNNote } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useEffect, useMemo } from 'react'
 import ComponentView from '@/Components/ComponentView/ComponentView'
-import { LegacyHistoryEntry } from './utils'
+import { NotesController } from '@/Controllers/NotesController'
+import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
 
 const ABSOLUTE_CENTER_CLASSNAME = 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
 
 type SelectedRevisionContentProps = {
   application: WebApplication
-  viewControllerManager: ViewControllerManager
-  selectedRevision: HistoryEntry | LegacyHistoryEntry
-  editorForCurrentNote: SNComponent | undefined
-  templateNoteForRevision: SNNote
+  noteHistoryController: NoteHistoryController
+  notesController: NotesController
 }
 
 const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentProps> = ({
   application,
-  viewControllerManager,
-  selectedRevision,
-  editorForCurrentNote,
-  templateNoteForRevision,
+  noteHistoryController,
+  notesController,
 }) => {
+  const note = notesController.firstSelectedNote
+  const { selectedRevision } = noteHistoryController
+
   const componentViewer = useMemo(() => {
+    const editorForCurrentNote = note ? application.componentManager.editorForNote(note) : undefined
+
     if (!editorForCurrentNote) {
       return undefined
     }
+
+    const templateNoteForRevision = application.mutator.createTemplateItem(
+      ContentType.Note,
+      selectedRevision?.payload.content,
+    ) as SNNote
 
     const componentViewer = application.componentManager.createComponentViewer(editorForCurrentNote)
     componentViewer.setReadonly(true)
     componentViewer.lockReadonly = true
     componentViewer.overrideContextItem = templateNoteForRevision
     return componentViewer
-  }, [application, editorForCurrentNote, templateNoteForRevision])
+  }, [application.componentManager, application.mutator, note, selectedRevision?.payload.content])
 
   useEffect(() => {
     return () => {
@@ -46,17 +52,16 @@ const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentProps> =
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <div className="p-4 text-base font-bold w-full">
-        <div className="title">{selectedRevision.payload.content.title}</div>
+        <div className="title">{selectedRevision?.payload.content.title}</div>
       </div>
       {!componentViewer && (
         <div className="relative flex-grow min-h-0 overflow-hidden">
-          {selectedRevision.payload.content.text.length ? (
+          {selectedRevision?.payload.content.text.length ? (
             <textarea
               readOnly={true}
               className="w-full h-full resize-none p-4 pt-0 border-0 bg-default color-text text-editor font-editor"
-            >
-              {selectedRevision.payload.content.text}
-            </textarea>
+              value={selectedRevision?.payload.content.text}
+            />
           ) : (
             <div className={`color-passive-0 ${ABSOLUTE_CENTER_CLASSNAME}`}>Empty note.</div>
           )}
@@ -64,12 +69,7 @@ const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentProps> =
       )}
       {componentViewer && (
         <div className="component-view">
-          <ComponentView
-            key={componentViewer.identifier}
-            componentViewer={componentViewer}
-            application={application}
-            viewControllerManager={viewControllerManager}
-          />
+          <ComponentView key={componentViewer.identifier} componentViewer={componentViewer} application={application} />
         </div>
       )}
     </div>

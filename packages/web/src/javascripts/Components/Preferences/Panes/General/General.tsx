@@ -5,7 +5,7 @@ import { ExtensionsLatestVersions } from '@/Components/Preferences/Panes/Extensi
 import { observer } from 'mobx-react-lite'
 import Tools from './Tools'
 import Defaults from './Defaults'
-import LabsPane from './Labs'
+import LabsPane from './Labs/Labs'
 import Advanced from '@/Components/Preferences/Panes/Account/Advanced'
 import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 

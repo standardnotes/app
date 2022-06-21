@@ -43,11 +43,22 @@ jobs:
         with:
           lane: 'android dev'
           subdirectory: 'packages/mobile'
-      - name: Upload universal apk to artifacts
-        uses: actions/upload-artifact@v2
+
+      - name: get-npm-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@main
         with:
-          name: dev.apk
-          path: android/app/build/outputs/apk/dev/release/app-dev-release.apk
+          path: packages/mobile
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          token: ${{ secrets.CI_PAT_TOKEN }}
+          tag_name: "@standardnotes/mobile@${{ steps.package-version.outputs.current-version}}"
+          prerelease: true
+          draft: false
+          name: "Mobile Beta ${{ steps.package-version.outputs.current-version }}"
+          files: |
+            packages/mobile/android/app/build/outputs/apk/dev/release/app-dev-release.apk
   ios:
     defaults:
       run:

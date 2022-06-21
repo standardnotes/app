@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.23.8](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.23.8-alpha.0...@standardnotes/mobile@3.23.8) (2022-06-18)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.23.8-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.23.7...@standardnotes/mobile@3.23.8-alpha.0) (2022-06-18)
+
+### Bug Fixes
+
+* **mobile:** white screen issue with switching notes on iPad ([ea37bbe](https://github.com/standardnotes/app/commit/ea37bbe53fb46269bd1d13bd5cf85d328690c232))
+
+## [3.23.7](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.23.7-alpha.0...@standardnotes/mobile@3.23.7) (2022-06-18)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.23.7-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.23.6...@standardnotes/mobile@3.23.7-alpha.0) (2022-06-18)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.23.6](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.23.6-alpha.0...@standardnotes/mobile@3.23.6) (2022-06-17)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
 ## [3.23.6-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.23.4-alpha.3...@standardnotes/mobile@3.23.6-alpha.0) (2022-06-17)
 
 **Note:** Version bump only for package @standardnotes/mobile
