@@ -5143,7 +5143,7 @@ __metadata:
     "@svgr/webpack": ^6.2.1
     babel-loader: ^8.2.5
     css-loader: ^6.7.1
-    eslint: ^8.18.0
+    eslint: "*"
     eslint-plugin-react: ^7.30.0
     html-webpack-plugin: ^5.5.0
     immutability-helper: ^3.1.1
@@ -5158,7 +5158,6 @@ __metadata:
     react-beautiful-dnd: ^13.1.0
     react-color: ^2.19.3
     react-dom: ^18.2.0
-    regenerator-runtime: ^0.13.9
     sass-loader: ^13.0.0
     style-loader: ~3.3.1
     svg-url-loader: ^7.1.1
@@ -15022,7 +15021,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:*, eslint@npm:^8.13.0, eslint@npm:^8.17.0, eslint@npm:^8.18.0, eslint@npm:^8.3.0":
+"eslint@npm:*, eslint@npm:^8.13.0, eslint@npm:^8.17.0, eslint@npm:^8.3.0":
   version: 8.18.0
   resolution: "eslint@npm:8.18.0"
   dependencies:

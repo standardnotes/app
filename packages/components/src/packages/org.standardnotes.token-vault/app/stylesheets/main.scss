@@ -1,4 +1,4 @@
-@import '../../../../styles/src/Styles/main.scss';
+@import '~@standardnotes/styles/src/Styles/main.scss';
 
 body,
 html {
@@ -430,6 +430,10 @@ div.twitter-picker > div:nth-child(3) > span:nth-child(-n + 4) > div {
     > * {
       display: inline-block;
       vertical-align: middle;
+
+      &:not(:first-child) {
+        margin-left: 0 !important;
+      }
 
       &:not(:last-child) {
         margin-right: 0.73125rem;
