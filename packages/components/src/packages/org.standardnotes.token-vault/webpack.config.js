@@ -1,12 +1,11 @@
-const path = require('path');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { ProvidePlugin } = require('webpack')
+const path = require('path')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
   context: __dirname,
   entry: [
-    path.resolve(__dirname, 'app/main.js'),
+    path.resolve(__dirname, 'app/index.js'),
     path.resolve(__dirname, 'app/stylesheets/main.scss')
   ],
   output: {
@@ -31,11 +30,8 @@ module.exports = {
       },
       {
         test: /\.js[x]?$/,
-        include: [
-          path.resolve(__dirname, 'app')
-        ],
         exclude: /node_modules/,
-        use: ['babel-loader']
+        use: ['babel-loader'],
       },
       {
         test: /\.svg$/i,
@@ -73,9 +69,6 @@ module.exports = {
       title: "TokenVault",
       template: 'editor.index.ejs',
       filename: 'index.html'
-    }),
-    new ProvidePlugin({
-      React: 'react'
     })
   ]
-};
+}

@@ -1,6 +1,7 @@
 import { parseKeyUri } from '@Lib/otp'
 import jsQR from 'jsqr'
 import PropTypes from 'prop-types'
+import React from 'react'
 
 const convertToGrayScale = (imageData) => {
   if (!imageData) {

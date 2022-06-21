@@ -4,6 +4,7 @@ import EditEntry from '@Components/EditEntry'
 import ViewEntries from '@Components/ViewEntries'
 import EditorKit from '@standardnotes/editor-kit'
 import update from 'immutability-helper'
+import React from 'react'
 import ReorderIcon from '../assets/svg/reorder-icon.svg'
 import CopyNotification from './CopyNotification'
 

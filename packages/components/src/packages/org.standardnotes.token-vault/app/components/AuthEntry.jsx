@@ -3,6 +3,7 @@ import CountdownPie from '@Components/CountdownPie'
 import { totp } from '@Lib/otp'
 import { getEntryColor, getVarColorForContrast, hexColorToRGB } from '@Lib/utils'
 import PropTypes from 'prop-types'
+import React from 'react'
 import DragIndicator from '../assets/svg/drag-indicator.svg'
 
 export default class AuthEntry extends React.Component {

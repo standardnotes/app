@@ -1,9 +1,10 @@
 import QRCodeReader from '@Components/QRCodeReader'
 import { secretPattern } from '@Lib/otp'
 import { contextualColors, defaultBgColor, getAllContextualColors, getEntryColor } from '@Lib/utils'
-import PropTypes from 'prop-types'
-import { TwitterPicker } from 'react-color'
 import { SKAlert } from '@standardnotes/styles'
+import PropTypes from 'prop-types'
+import React from 'react'
+import { TwitterPicker } from 'react-color'
 
 export default class EditEntry extends React.Component {
   static defaultProps = {
@@ -164,9 +165,7 @@ export default class EditEntry extends React.Component {
             <div className="sk-panel-section-title sk-panel-row">
               <div className="sk-panel-row">
                 <div className="left-header">
-                  <div className="sk-panel-section-title pr-4">
-                    {id != null ? 'Edit entry' : 'Add new entry'}
-                  </div>
+                  <div className="sk-panel-section-title pr-4">{id != null ? 'Edit entry' : 'Add new entry'}</div>
                   <div className="sk-input-group" onChange={handleTypeChange}>
                     <label>
                       <input className="sk-input" type="radio" value="2fa" name="type" defaultChecked={is2fa} /> 2FA
