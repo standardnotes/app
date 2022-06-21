@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.24.0-alpha.2](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.24.0-alpha.1...@standardnotes/mobile@3.24.0-alpha.2) (2022-06-21)
+
+### Bug Fixes
+
+* mobile workspace related fixes ([#1130](https://github.com/standardnotes/app/issues/1130)) ([3b4797c](https://github.com/standardnotes/app/commit/3b4797c243a12d014a830aa88412305e96fadf2f))
+
 # [3.24.0-alpha.1](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.24.0-alpha.0...@standardnotes/mobile@3.24.0-alpha.1) (2022-06-21)
 
 **Note:** Version bump only for package @standardnotes/mobile
