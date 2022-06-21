@@ -1,5 +1,6 @@
 import { Component, createRef, MouseEventHandler } from 'react'
 import { debounce } from '@/Utils'
+import styled from 'styled-components'
 
 export type ResizeFinishCallback = (
   lastWidth: number,
@@ -37,6 +38,55 @@ type State = {
   collapsed: boolean
   pressed: boolean
 }
+
+const StyledPanelResizer = styled.div<{
+  hoverable?: boolean
+  alwaysVisible?: boolean
+  pressed: boolean
+  collapsed: boolean
+}>`
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: var(--z-index-panel-resizer);
+
+  width: 4px;
+  height: 100%;
+
+  cursor: col-resize;
+
+  background-color: var(--panel-resizer-background-color);
+
+  opacity: 0;
+
+  border-top: none;
+  border-bottom: none;
+
+  @keyframes fade {
+    0% {
+      opacity: 0;
+    }
+
+    50% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 0;
+    }
+  }
+
+  &.left {
+    left: 0;
+    right: none;
+  }
+
+  ${(props) => (props.alwaysVisible || props.collapsed || props.pressed) && 'opacity: 1;'}
+
+  &:hover {
+    ${(props) => props.hoverable && 'opacity: 1;'}
+  }
+`
 
 class PanelResizer extends Component<Props, State> {
   private overlay?: HTMLDivElement
@@ -77,6 +127,7 @@ class PanelResizer extends Component<Props, State> {
   }
 
   override componentDidMount() {
+    console.log(this.resizerElementRef.current)
     this.resizerElementRef.current?.addEventListener('dblclick', this.onDblClick)
   }
 
@@ -173,6 +224,8 @@ class PanelResizer extends Component<Props, State> {
   }
 
   onDblClick = () => {
+    console.log('dblclick')
+
     const collapsed = this.isCollapsed()
     if (collapsed) {
       this.setWidth(this.widthBeforeLastDblClick || this.props.defaultWidth || 0)
@@ -306,13 +359,15 @@ class PanelResizer extends Component<Props, State> {
 
   override render() {
     return (
-      <div
-        className={`panel-resizer ${this.props.side} ${this.props.hoverable ? 'hoverable' : ''} ${
-          this.props.alwaysVisible ? 'alwaysVisible' : ''
-        } ${this.state.pressed ? 'dragging' : ''} ${this.state.collapsed ? 'collapsed' : ''}`}
+      <StyledPanelResizer
+        hoverable={this.props.hoverable}
+        alwaysVisible={this.props.alwaysVisible}
+        pressed={this.state.pressed}
+        collapsed={this.state.collapsed}
+        className={this.props.side}
         onMouseDown={this.onMouseDown}
         ref={this.resizerElementRef}
-      ></div>
+      />
     )
   }
 }
