@@ -39,6 +39,7 @@
     "@milkdown/react": "5.5.0",
     "@milkdown/theme-nord": "5.5.0",
     "@standardnotes/editor-kit": "2.2.4",
+    "@standardnotes/styles": "workspace:*",
     "@testing-library/dom": "^8.11.3",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.4",
@@ -61,7 +62,6 @@
     "react-icons": "^4.3.1",
     "react-scripts": "^5.0.0",
     "sass": "*",
-    "sn-stylekit": "5.2.21",
     "source-map-explorer": "^2.5.2",
     "typescript": "*"
   },
