@@ -6154,6 +6154,7 @@ __metadata:
     react-dnd-touch-backend: ^16.0.1
     react-dom: ^18.1.0
     sass-loader: ^12.6.0
+    styled-components: ^5.3.5
     svg-jest: ^1.0.1
     ts-jest: ^27.1.4
     ts-loader: ^9.2.8
@@ -29911,7 +29912,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"styled-components@npm:5.3.5":
+"styled-components@npm:5.3.5, styled-components@npm:^5.3.5":
   version: 5.3.5
   resolution: "styled-components@npm:5.3.5"
   dependencies:
