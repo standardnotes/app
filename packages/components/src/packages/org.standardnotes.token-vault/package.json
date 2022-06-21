@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack --config webpack.prod.js",
     "start": "webpack serve --config webpack.dev.js --progress --hot",
-    "lint": "eslint app/ --ext .js",
+    "skip:lint": "eslint app/ --ext .js",
     "lint:fix": "yarn lint --fix"
   },
   "sn": {
