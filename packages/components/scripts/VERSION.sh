@@ -2,7 +2,7 @@
 
 echo 'Building components from' $(pwd)
 
-yarn clean && yarn compile && yarn build
+yarn clean && yarn build
 
 echo "Packaging component assets and zips..."
 
