@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const faker = require('faker')
 import { by, device, element, expect, waitFor } from 'detox'
 
@@ -13,14 +12,10 @@ export const expectToBeVisible = async (testedElement: Detox.IndexableNativeElem
 
 const checkAfterReinstall = async () => {
   if (device.getPlatform() === 'ios') {
-    const alertElement = element(
-      by.label('Delete Local Data').and(by.type('_UIAlertControllerActionView'))
-    )
+    const alertElement = element(by.label('Delete Local Data').and(by.type('_UIAlertControllerActionView')))
     const alertVisible = await expectToBeVisible(alertElement)
     if (alertVisible) {
-      await element(
-        by.label('Delete Local Data').and(by.type('_UIAlertControllerActionView'))
-      ).tap()
+      await element(by.label('Delete Local Data').and(by.type('_UIAlertControllerActionView'))).tap()
     }
   }
 }

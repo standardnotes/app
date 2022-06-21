@@ -4,7 +4,7 @@ export const Root = styled.View`
   padding-bottom: 6px;
 `
 export const Header = styled.TouchableOpacity<{ collapsed: boolean }>`
-  height: ${props => (props.collapsed ? 50 : 22)}px;
+  height: ${(props) => (props.collapsed ? 50 : 22)}px;
 `
 export const Title = styled.Text`
   color: ${({ theme }) => theme.stylekitInfoColor};

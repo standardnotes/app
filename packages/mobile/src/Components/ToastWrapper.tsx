@@ -12,7 +12,7 @@ export const ToastWrapper: FC = () => {
   const { updateProgressBar, progressBarWidth } = useProgressBar()
 
   const toastStyles: ToastConfig = {
-    info: props => {
+    info: (props) => {
       const percentComplete = props.props?.percentComplete || 0
       updateProgressBar(percentComplete)
 
@@ -35,13 +35,13 @@ export const ToastWrapper: FC = () => {
         </View>
       )
     },
-    success: props => {
+    success: (props) => {
       const percentComplete = props.props?.percentComplete || 0
       updateProgressBar(percentComplete)
 
       return <SuccessToast {...props} style={styles(props.props).success} />
     },
-    error: props => {
+    error: (props) => {
       const percentComplete = props.props?.percentComplete || 0
       updateProgressBar(percentComplete)
 

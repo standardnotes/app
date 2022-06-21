@@ -9,12 +9,12 @@ export type Props = {
 }
 
 export const SectionedTableCell = styled.View<Props>`
-  border-bottom-color: ${props => props.theme.stylekitBorderColor};
+  border-bottom-color: ${(props) => props.theme.stylekitBorderColor};
   border-bottom-width: 1px;
-  padding-left: ${props => props.theme.paddingLeft}px;
-  padding-right: ${props => props.theme.paddingLeft}px;
-  padding-bottom: ${props => (props.textInputCell ? 0 : 12)}px;
-  background-color: ${props => props.theme.stylekitBackgroundColor};
+  padding-left: ${(props) => props.theme.paddingLeft}px;
+  padding-right: ${(props) => props.theme.paddingLeft}px;
+  padding-bottom: ${(props) => (props.textInputCell ? 0 : 12)}px;
+  background-color: ${(props) => props.theme.stylekitBackgroundColor};
   ${({ first, theme }) =>
     first &&
     css`
@@ -34,12 +34,12 @@ export const SectionedTableCell = styled.View<Props>`
 `
 
 export const SectionedTableCellTouchableHighlight = styled.TouchableHighlight<Props>`
-  border-bottom-color: ${props => props.theme.stylekitBorderColor};
+  border-bottom-color: ${(props) => props.theme.stylekitBorderColor};
   border-bottom-width: 1px;
-  padding-left: ${props => props.theme.paddingLeft}px;
-  padding-right: ${props => props.theme.paddingLeft}px;
-  padding-bottom: ${props => (props.textInputCell ? 0 : 12)}px;
-  background-color: ${props => props.theme.stylekitBackgroundColor};
+  padding-left: ${(props) => props.theme.paddingLeft}px;
+  padding-right: ${(props) => props.theme.paddingLeft}px;
+  padding-bottom: ${(props) => (props.textInputCell ? 0 : 12)}px;
+  background-color: ${(props) => props.theme.stylekitBackgroundColor};
   ${({ first, theme }) =>
     first &&
     css`

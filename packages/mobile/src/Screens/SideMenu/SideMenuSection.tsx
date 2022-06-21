@@ -39,7 +39,7 @@ type Props = {
   options?: SideMenuOption[]
 }
 
-export const SideMenuSection: React.FC<Props> = React.memo(props => {
+export const SideMenuSection: React.FC<Props> = React.memo((props) => {
   const [collapsed, setCollapsed] = useState(Boolean(props.collapsed))
   const options = useMemo(() => {
     return props.options || []
@@ -58,7 +58,7 @@ export const SideMenuSection: React.FC<Props> = React.memo(props => {
 
       {!collapsed && (
         <>
-          {options.map(option => {
+          {options.map((option) => {
             return (
               <SideMenuCell
                 text={option.text}

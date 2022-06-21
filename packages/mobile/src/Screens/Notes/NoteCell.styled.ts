@@ -8,7 +8,7 @@ export const Container = styled.View<{ selected: boolean; distance: number }>`
   flex-direction: row;
   align-items: flex-start;
   justify-content: space-between;
-  padding: ${props => props.distance}px 0 0 ${props => props.distance}px;
+  padding: ${(props) => props.distance}px 0 0 ${(props) => props.distance}px;
   background-color: ${({ theme, selected }) => {
     return selected ? theme.stylekitInfoColor : theme.stylekitBackgroundColor
   }};
@@ -16,10 +16,10 @@ export const Container = styled.View<{ selected: boolean; distance: number }>`
 export const NoteDataContainer = styled.View<{ distance: number }>`
   border-bottom-color: ${({ theme }) => hexToRGBA(theme.stylekitBorderColor, 0.75)};
   border-bottom-width: 1px;
-  padding-bottom: ${props => props.distance}px;
+  padding-bottom: ${(props) => props.distance}px;
   flex-grow: 1;
   flex-shrink: 1;
-  padding-right: ${props => props.distance}px;
+  padding-right: ${(props) => props.distance}px;
 `
 export const DeletedText = styled.Text`
   color: ${({ theme }) => theme.stylekitInfoColor};
@@ -54,7 +54,7 @@ export const TagText = styled.Text<{ selected: boolean }>`
   color: ${({ theme, selected }) => {
     return selected ? theme.stylekitInfoContrastColor : theme.stylekitForegroundColor
   }};
-  opacity: ${props => (props.selected ? 0.8 : 0.5)};
+  opacity: ${(props) => (props.selected ? 0.8 : 0.5)};
 `
 export const DetailsText = styled(TagText)`
   margin-right: 0;

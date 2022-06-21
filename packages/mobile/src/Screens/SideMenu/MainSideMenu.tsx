@@ -36,7 +36,7 @@ export const MainSideMenu = React.memo(({ drawerRef }: Props) => {
   const styles = useStyles(theme)
 
   useEffect(() => {
-    const removeTagChangeObserver = application!.getAppState().addStateChangeObserver(state => {
+    const removeTagChangeObserver = application!.getAppState().addStateChangeObserver((state) => {
       if (state === AppStateType.TagChanged) {
         setSelectedTag(application!.getAppState().getSelectedTag())
       }
@@ -160,7 +160,7 @@ export const MainSideMenu = React.memo(({ drawerRef }: Props) => {
   const themeOptions = useMemo(() => {
     const options: SideMenuOption[] = themeService!
       .systemThemes()
-      .map(systemTheme => ({
+      .map((systemTheme) => ({
         text: systemTheme?.name,
         key: systemTheme?.uuid,
         iconDesc: iconDescriptorForTheme(systemTheme),
@@ -172,7 +172,7 @@ export const MainSideMenu = React.memo(({ drawerRef }: Props) => {
       .concat(
         themes
           .sort((a, b) => a.name.localeCompare(b.name))
-          .map(mapTheme => ({
+          .map((mapTheme) => ({
             text: mapTheme.name,
             key: mapTheme.uuid,
             iconDesc: iconDescriptorForTheme(mapTheme),
@@ -207,7 +207,7 @@ export const MainSideMenu = React.memo(({ drawerRef }: Props) => {
   const onTagSelect = useCallback(
     async (tag: SNTag | SmartView) => {
       if (tag.conflictOf) {
-        void application!.mutator.changeAndSaveItem(tag, mutator => {
+        void application!.mutator.changeAndSaveItem(tag, (mutator) => {
           mutator.conflictOf = undefined
         })
       }
@@ -251,7 +251,7 @@ export const MainSideMenu = React.memo(({ drawerRef }: Props) => {
         <SideMenuHero testID="settingsButton" onPress={openSettings} onOutOfSyncPress={outOfSyncPressed} />
         <FlatList
           style={styles.sections}
-          data={['themes-section', 'views-section', 'tags-section'].map(key => ({
+          data={['themes-section', 'views-section', 'tags-section'].map((key) => ({
             key,
             themeOptions,
             onTagSelect,

@@ -83,7 +83,7 @@ export const Notes = React.memo(
           title = selectedTag.title
           if (selectedTag instanceof SNTag && selectedTag.parentId) {
             const parents = application.items.getTagParentChain(selectedTag)
-            const hierarchy = parents.map(tag => tag.title).join(' ⫽ ')
+            const hierarchy = parents.map((tag) => tag.title).join(' ⫽ ')
             subTitle = hierarchy.length > 0 ? `in ${hierarchy}` : undefined
           }
         }
@@ -163,7 +163,7 @@ export const Notes = React.memo(
 
     useEffect(() => {
       let mounted = true
-      const removeEditorObserver = application.editorGroup.addActiveControllerChangeObserver(activeEditor => {
+      const removeEditorObserver = application.editorGroup.addActiveControllerChangeObserver((activeEditor) => {
         if (mounted) {
           setSelectedNoteId(activeEditor?.item?.uuid)
         }
@@ -305,7 +305,7 @@ export const Notes = React.memo(
       toggleIncludeTrashed,
     ])
 
-    const getFirstSelectableNote = useCallback((newNotes: SNNote[]) => newNotes.find(note => !note.protected), [])
+    const getFirstSelectableNote = useCallback((newNotes: SNNote[]) => newNotes.find((note) => !note.protected), [])
 
     const selectFirstNote = useCallback(
       (newNotes: SNNote[]) => {
@@ -475,7 +475,7 @@ export const Notes = React.memo(
     )
 
     useEffect(() => {
-      const removeAppStateChangeHandler = application.getAppState().addStateChangeObserver(state => {
+      const removeAppStateChangeHandler = application.getAppState().addStateChangeObserver((state) => {
         if (state === AppStateType.TagChanged) {
           reloadNotesDisplayOptions()
           reloadNotes(true, true)

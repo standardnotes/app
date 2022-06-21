@@ -44,7 +44,7 @@ export const NoteCellFlags = ({ note, highlight }: { note: SNNote; highlight: bo
 
   return flags.length > 0 ? (
     <FlagsContainer>
-      {flags.map(flag => (
+      {flags.map((flag) => (
         <FlagContainer key={flag.text.concat(flag.color)} color={flag.color} selected={highlight}>
           <FlagLabel selected={highlight}>{flag.text}</FlagLabel>
         </FlagContainer>

@@ -49,12 +49,12 @@ export const useCustomActionSheet = () => {
       },
     ]
     const tempOptions = options.concat(cancelOption)
-    const destructiveIndex = tempOptions.findIndex(item => item.destructive)
+    const destructiveIndex = tempOptions.findIndex((item) => item.destructive)
     const cancelIndex = tempOptions.length - 1
 
     showActionSheetWithOptions(
       {
-        options: tempOptions.map(option => option.text),
+        options: tempOptions.map((option) => option.text),
         destructiveButtonIndex: destructiveIndex,
         cancelButtonIndex: cancelIndex,
         title,
@@ -72,7 +72,7 @@ export const useCustomActionSheet = () => {
         },
         anchor: anchor ? findNodeHandle(anchor) ?? undefined : undefined,
       },
-      buttonIndex => {
+      (buttonIndex) => {
         const option = tempOptions[buttonIndex!]
         option.callback && option.callback(option)
       },

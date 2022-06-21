@@ -29,7 +29,7 @@ export enum Tabs {
 
 type Props = ModalStackNavigationProp<typeof SCREEN_UPLOADED_FILES_LIST>
 
-export const UploadedFilesList: FC<Props> = props => {
+export const UploadedFilesList: FC<Props> = (props) => {
   const { AttachedFiles, AllFiles } = Tabs
   const { note } = props.route.params
 
@@ -54,7 +54,7 @@ export const UploadedFilesList: FC<Props> = props => {
 
   const filteredList = useMemo(() => {
     return searchString
-      ? filesList.filter(file => file.name.toLowerCase().includes(searchString.toLowerCase()))
+      ? filesList.filter((file) => file.name.toLowerCase().includes(searchString.toLowerCase()))
       : filesList
   }, [filesList, searchString])
 
@@ -128,7 +128,7 @@ export const UploadedFilesList: FC<Props> = props => {
             ref={filesListRef}
             data={filteredList}
             renderItem={renderItem}
-            keyExtractor={item => item.uuid}
+            keyExtractor={(item) => item.uuid}
             onScroll={onScroll}
           />
         ) : (

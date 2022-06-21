@@ -61,9 +61,9 @@ export const NoteHistory = (props: Props) => {
           fontStyle={{
             color: theme.stylekitForegroundColor,
           }}
-          values={routes.map(route => route.title)}
+          values={routes.map((route) => route.title)}
           selectedIndex={tabBarProps.navigationState.index}
-          onChange={event => {
+          onChange={(event) => {
             setIndex(event.nativeEvent.selectedSegmentIndex)
           }}
         />

@@ -12,7 +12,7 @@ type Props = {
   subTitle?: string
 }
 
-const Container = styled(SectionedTableCellTouchableHighlight).attrs(props => ({
+const Container = styled(SectionedTableCellTouchableHighlight).attrs((props) => ({
   underlayColor: props.theme.stylekitBorderColor,
 }))<TableCellProps>`
   padding-top: ${12}px;
@@ -22,7 +22,7 @@ const ButtonContainer = styled.View``
 
 type ButtonLabelProps = Pick<Props, 'disabled'>
 const ButtonLabel = styled.Text<ButtonLabelProps>`
-  color: ${props => {
+  color: ${(props) => {
     let color = props.theme.stylekitForegroundColor
     if (props.disabled) {
       color = 'gray'
@@ -30,7 +30,7 @@ const ButtonLabel = styled.Text<ButtonLabelProps>`
     return color
   }};
   font-weight: bold;
-  font-size: ${props => props.theme.mainTextFontSize}px;
+  font-size: ${(props) => props.theme.mainTextFontSize}px;
   ${({ disabled }) =>
     disabled &&
     css`
@@ -45,7 +45,7 @@ export const SubTitleText = styled.Text`
   line-height: 21px;
 `
 
-export const NoteHistoryCell: React.FC<Props> = props => (
+export const NoteHistoryCell: React.FC<Props> = (props) => (
   <Container
     first={props.first}
     last={props.last}

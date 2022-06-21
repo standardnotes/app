@@ -3,7 +3,7 @@ const PREFIX_STANDARD_NOTES = '--sn-stylekit'
 const PREFIX_STANDARD_NOTES_BURN = '--sn-'
 
 function camelCaseToDashed(camel: string) {
-  return camel.replace(/[A-Z]/g, m => '-' + m.toLowerCase())
+  return camel.replace(/[A-Z]/g, (m) => '-' + m.toLowerCase())
 }
 
 export function objectToCss(object: any) {

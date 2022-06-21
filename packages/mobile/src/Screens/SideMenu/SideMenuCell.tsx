@@ -46,7 +46,7 @@ const renderIcon = (desc: SideMenuOption['iconDesc'], color: string) => {
   return <RegularText>*</RegularText>
 }
 
-export const SideMenuCell: React.FC<SideMenuOption> = props => {
+export const SideMenuCell: React.FC<SideMenuOption> = (props) => {
   const theme = useContext(ThemeContext)
   const colorForTextClass = (textClass: SideMenuOption['textClass']) => {
     if (!textClass) {

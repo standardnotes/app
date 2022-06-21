@@ -54,7 +54,7 @@ export const Files: FC<Props> = ({ note }) => {
 
   return (
     <FilesContainer>
-      {attachedFiles.sort(filesService.sortByName).map(file => {
+      {attachedFiles.sort(filesService.sortByName).map((file) => {
         const iconType = application.iconsController.getIconForFileType(file.mimeType)
 
         return (

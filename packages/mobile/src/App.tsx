@@ -4,6 +4,7 @@ import { MobileApplication } from '@Lib/Application'
 import { ApplicationGroup } from '@Lib/ApplicationGroup'
 import { navigationRef } from '@Lib/NavigationService'
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native'
+import { ApplicationGroupContext } from '@Root/ApplicationGroupContext'
 import { MobileThemeVariables } from '@Root/Style/Themes/styled-components'
 import { ApplicationGroupEvent, DeinitMode, DeinitSource } from '@standardnotes/snjs'
 import { ThemeService, ThemeServiceContext } from '@Style/ThemeService'
@@ -68,7 +69,7 @@ const AppComponent: React.FC<{
       setThemeServiceRef(themeServiceInstance)
 
       await application.prepareForLaunch({
-        receiveChallenge: async challenge => {
+        receiveChallenge: async (challenge) => {
           application.promptForChallenge(challenge)
         },
       })
@@ -135,7 +136,7 @@ export const App = (props: { env: TEnvironment }) => {
   const [appGroup, setAppGroup] = useState<ApplicationGroup>(() => createNewAppGroup())
 
   useEffect(() => {
-    const removeAppChangeObserver = appGroup.addEventObserver(event => {
+    const removeAppChangeObserver = appGroup.addEventObserver((event) => {
       if (event === ApplicationGroupEvent.PrimaryApplicationSet) {
         const mobileApplication = appGroup.primaryApplication as MobileApplication
         setApplication(mobileApplication)
@@ -145,15 +146,17 @@ export const App = (props: { env: TEnvironment }) => {
       }
     })
     return removeAppChangeObserver
-  }, [appGroup, appGroup.primaryApplication, setAppGroup, createNewAppGroup])
+  }, [appGroup, appGroup.primaryApplication, createNewAppGroup])
 
   if (!application) {
     return null
   }
 
   return (
-    <ApplicationContext.Provider value={application}>
-      <AppComponent env={props.env} key={application.Uuid} application={application} />
-    </ApplicationContext.Provider>
+    <ApplicationGroupContext.Provider value={appGroup}>
+      <ApplicationContext.Provider value={application}>
+        <AppComponent env={props.env} key={application.Uuid} application={application} />
+      </ApplicationContext.Provider>
+    </ApplicationGroupContext.Provider>
   )
 }

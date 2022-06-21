@@ -78,7 +78,7 @@ export class ThemeService {
   }
 
   private registerObservers() {
-    this.unsubsribeAppEventObserver = this.application?.addEventObserver(async event => {
+    this.unsubsribeAppEventObserver = this.application?.addEventObserver(async (event) => {
       /**
        * If there are any migrations we need to set default theme to start UI
        */
@@ -259,7 +259,7 @@ export class ThemeService {
   private async resolveInitialThemeForMode() {
     try {
       const savedThemeId = await this.getThemeForMode(this.getColorScheme())
-      const matchingThemeId = Object.keys(this.themes).find(themeId => themeId === savedThemeId)
+      const matchingThemeId = Object.keys(this.themes).find((themeId) => themeId === savedThemeId)
       if (matchingThemeId) {
         this.setActiveTheme(matchingThemeId)
         void this.application?.mobileComponentManager.preloadThirdPartyThemeIndexPath()
@@ -278,7 +278,7 @@ export class ThemeService {
 
   systemThemes() {
     return Object.values(this.themes)
-      .filter(theme => theme.mobileContent.isSystemTheme)
+      .filter((theme) => theme.mobileContent.isSystemTheme)
       .sort((a, b) => {
         if (a.name < b.name) {
           return -1
@@ -292,7 +292,7 @@ export class ThemeService {
 
   nonSystemThemes() {
     return Object.values(this.themes)
-      .filter(theme => !theme.mobileContent.isSystemTheme)
+      .filter((theme) => !theme.mobileContent.isSystemTheme)
       .sort((a, b) => {
         if (a.name < b.name) {
           return -1
@@ -465,7 +465,7 @@ export class ThemeService {
   private async loadCachedThemes() {
     const rawValue = (await this.application!.getValue(CACHED_THEMES_KEY, StorageValueModes.Nonwrapped)) || []
 
-    const themes = (rawValue as DecryptedTransferPayload<ComponentContent>[]).map(rawPayload => {
+    const themes = (rawValue as DecryptedTransferPayload<ComponentContent>[]).map((rawPayload) => {
       const payload = new DecryptedPayload<ComponentContent>(rawPayload)
 
       return new MobileTheme(payload)
@@ -480,7 +480,7 @@ export class ThemeService {
     const themes = this.nonSystemThemes()
     return this.application!.setValue(
       CACHED_THEMES_KEY,
-      themes.map(t => t.payloadRepresentation()),
+      themes.map((t) => t.payloadRepresentation()),
       StorageValueModes.Nonwrapped,
     )
   }

@@ -88,7 +88,7 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
     this.context = context
 
     const noteUuid = 'noteUuid' in props ? props.noteUuid : props.route.params.noteUuid
-    const editor = this.context.editorGroup.itemControllers.find(c => c.item.uuid === noteUuid) as NoteViewController
+    const editor = this.context.editorGroup.itemControllers.find((c) => c.item.uuid === noteUuid) as NoteViewController
     if (!editor) {
       throw 'Unable to to find note controller'
     }
@@ -149,7 +149,7 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
       void this.reloadComponentEditorState()
     })
 
-    this.removeAppEventObserver = this.context?.addEventObserver(async eventName => {
+    this.removeAppEventObserver = this.context?.addEventObserver(async (eventName) => {
       if (eventName === ApplicationEvent.CompletedFullSync) {
         /** if we're still dirty, don't change status, a sync is likely upcoming. */
         if (!this.note.dirty && this.state.saveError) {
@@ -169,7 +169,7 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
       }
     })
 
-    this.removeStateEventObserver = this.context?.getAppState().addStateEventObserver(state => {
+    this.removeStateEventObserver = this.context?.getAppState().addStateEventObserver((state) => {
       if (state === AppStateEventType.DrawerOpen) {
         this.dismissKeyboard()
         /**
@@ -352,7 +352,7 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
 
     await this.context.mutator.changeItem(
       this.note,
-      mutator => {
+      (mutator) => {
         const noteMutator = mutator as NoteMutator
 
         if (newTitle != null) {
@@ -483,7 +483,7 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
     return (
       <Container>
         <ThemeContext.Consumer>
-          {theme => (
+          {(theme) => (
             <>
               {this.noteLocked && (
                 <LockedContainer>
@@ -507,7 +507,7 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
                 </LockedContainer>
               )}
               <ThemeServiceContext.Consumer>
-                {themeService => (
+                {(themeService) => (
                   <>
                     <NoteTitleInput
                       testID="noteTitleField"

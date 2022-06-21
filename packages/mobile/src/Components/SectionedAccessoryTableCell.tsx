@@ -22,7 +22,7 @@ type Props = {
   last?: boolean
 }
 
-const TouchableContainer = styled(SectionedTableCellTouchableHighlight).attrs(props => ({
+const TouchableContainer = styled(SectionedTableCellTouchableHighlight).attrs((props) => ({
   underlayColor: props.theme.stylekitBorderColor,
 }))`
   flex-direction: column;
@@ -33,7 +33,7 @@ const TouchableContainer = styled(SectionedTableCellTouchableHighlight).attrs(pr
 `
 const ContentContainer = styled.View<Pick<Props, 'leftAlignIcon'>>`
   flex: 1;
-  justify-content: ${props => {
+  justify-content: ${(props) => {
     return props.leftAlignIcon ? 'flex-start' : 'space-between'
   }};
   flex-direction: row;
@@ -46,7 +46,7 @@ const IconContainer = styled.View`
 type LabelProps = Pick<Props, 'bold' | 'tinted' | 'dimmed' | 'selected' | 'color'>
 const Label = styled.Text<LabelProps>`
   min-width: 80%;
-  color: ${props => {
+  color: ${(props) => {
     let color = props.theme.stylekitForegroundColor
     if (props.tinted) {
       color = props.theme.stylekitInfoColor
@@ -59,7 +59,7 @@ const Label = styled.Text<LabelProps>`
     }
     return color
   }};
-  font-size: ${props => props.theme.mainTextFontSize}px;
+  font-size: ${(props) => props.theme.mainTextFontSize}px;
   ${({ bold, selected }) =>
     ((selected && selected() === true) || bold) &&
     css`
@@ -67,7 +67,7 @@ const Label = styled.Text<LabelProps>`
     `};
 `
 
-export const SectionedAccessoryTableCell: React.FC<Props> = props => {
+export const SectionedAccessoryTableCell: React.FC<Props> = (props) => {
   const themeContext = useContext(ThemeContext)
   const onPress = () => {
     if (props.disabled) {

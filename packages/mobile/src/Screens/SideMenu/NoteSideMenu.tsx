@@ -122,7 +122,7 @@ export const NoteSideMenu = React.memo((props: Props) => {
       }
     },
     () => {
-      void changeNote(mutator => {
+      void changeNote((mutator) => {
         mutator.trashed = true
       }, false)
       props.drawerRef?.closeDrawer()
@@ -225,7 +225,7 @@ export const NoteSideMenu = React.memo((props: Props) => {
   const disassociateComponentWithCurrentNote = useCallback(
     async (component: SNComponent) => {
       if (note) {
-        return application.mutator.changeItem(component, m => {
+        return application.mutator.changeItem(component, (m) => {
           const mutator = m as ComponentMutator
           mutator.removeAssociatedItemId(note.uuid)
           mutator.disassociateWithItem(note.uuid)
@@ -256,7 +256,7 @@ export const NoteSideMenu = React.memo((props: Props) => {
         if (!note?.prefersPlainEditor) {
           await application.mutator.changeItem(
             note,
-            mutator => {
+            (mutator) => {
               const noteMutator = mutator as NoteMutator
               noteMutator.prefersPlainEditor = true
             },
@@ -275,7 +275,7 @@ export const NoteSideMenu = React.memo((props: Props) => {
         if (prefersPlain) {
           await application.mutator.changeItem(
             note,
-            mutator => {
+            (mutator) => {
               const noteMutator = mutator as NoteMutator
               noteMutator.prefersPlainEditor = false
             },
@@ -294,7 +294,7 @@ export const NoteSideMenu = React.memo((props: Props) => {
     async (component?: SNComponent) => {
       const currentDefault = application.componentManager
         .componentsForArea(ComponentArea.Editor)
-        .filter(e => e.isMobileDefault)[0]
+        .filter((e) => e.isMobileDefault)[0]
 
       let isDefault = false
       if (!component) {
@@ -314,14 +314,14 @@ export const NoteSideMenu = React.memo((props: Props) => {
 
       const setAsDefault = () => {
         if (currentDefault) {
-          void application.mutator.changeItem(currentDefault, m => {
+          void application.mutator.changeItem(currentDefault, (m) => {
             const mutator = m as ComponentMutator
             mutator.isMobileDefault = false
           })
         }
 
         if (component) {
-          void application.mutator.changeAndSaveItem(component, m => {
+          void application.mutator.changeAndSaveItem(component, (m) => {
             const mutator = m as ComponentMutator
             mutator.isMobileDefault = true
           })
@@ -329,7 +329,7 @@ export const NoteSideMenu = React.memo((props: Props) => {
       }
 
       const removeAsDefault = () => {
-        void application.mutator.changeItem(currentDefault, m => {
+        void application.mutator.changeItem(currentDefault, (m) => {
           const mutator = m as ComponentMutator
           mutator.isMobileDefault = false
         })
@@ -376,7 +376,7 @@ export const NoteSideMenu = React.memo((props: Props) => {
         },
       },
     ]
-    components.map(component => {
+    components.map((component) => {
       options.push({
         text: FindNativeFeature(component.identifier)?.name || component.name,
         subtext: component.isMobileDefault ? 'Mobile Default' : undefined,
@@ -435,7 +435,7 @@ export const NoteSideMenu = React.memo((props: Props) => {
 
     const pinOption = note.pinned ? 'Unpin' : 'Pin'
     const pinEvent = () =>
-      changeNote(mutator => {
+      changeNote((mutator) => {
         mutator.pinned = !note.pinned
       }, false)
 
@@ -447,7 +447,7 @@ export const NoteSideMenu = React.memo((props: Props) => {
         )
         return
       }
-      void changeNote(mutator => {
+      void changeNote((mutator) => {
         mutator.archived = !note.archived
       }, false)
       leaveEditor()
@@ -455,7 +455,7 @@ export const NoteSideMenu = React.memo((props: Props) => {
 
     const lockOption = note.locked ? 'Enable editing' : 'Prevent editing'
     const lockEvent = () =>
-      changeNote(mutator => {
+      changeNote((mutator) => {
         mutator.locked = !note.locked
       }, false)
 
@@ -506,7 +506,7 @@ export const NoteSideMenu = React.memo((props: Props) => {
       })
     }
 
-    let options: SideMenuOption[] = rawOptions.map(rawOption => ({
+    let options: SideMenuOption[] = rawOptions.map((rawOption) => ({
       text: rawOption.text,
       key: rawOption.icon,
       iconDesc: {
@@ -523,7 +523,7 @@ export const NoteSideMenu = React.memo((props: Props) => {
           text: 'Restore',
           key: 'restore-note',
           onSelect: () => {
-            void changeNote(mutator => {
+            void changeNote((mutator) => {
               mutator.trashed = false
             }, false)
           },
@@ -574,11 +574,11 @@ export const NoteSideMenu = React.memo((props: Props) => {
 
   const onTagSelect = useCallback(
     async (tag: SNTag | SmartView, addTagHierachy: boolean) => {
-      const isSelected = selectedTags.findIndex(selectedTag => selectedTag.uuid === tag.uuid) > -1
+      const isSelected = selectedTags.findIndex((selectedTag) => selectedTag.uuid === tag.uuid) > -1
 
       if (note) {
         if (isSelected) {
-          await application.mutator.changeItem(tag, mutator => {
+          await application.mutator.changeItem(tag, (mutator) => {
             mutator.removeItemAsRelationship(note)
           })
         } else {
@@ -607,7 +607,7 @@ export const NoteSideMenu = React.memo((props: Props) => {
     <SafeAreaContainer edges={['top', 'bottom', 'right']}>
       <FlatList
         style={styles.sections}
-        data={Object.values(MenuSections).map(key => ({
+        data={Object.values(MenuSections).map((key) => ({
           key,
           noteOptions,
           editorComponents: editors,
@@ -650,7 +650,7 @@ export const NoteSideMenu = React.memo((props: Props) => {
                 <TagSelectionList
                   hasBottomPadding={Platform.OS === 'android'}
                   contentType={ContentType.Tag}
-                  onTagSelect={tag => item.onTagSelect(tag, shouldAddTagHierarchy)}
+                  onTagSelect={(tag) => item.onTagSelect(tag, shouldAddTagHierarchy)}
                   selectedTags={item.selectedTags}
                   emptyPlaceholder={'Create a new tag using the tag button in the bottom right corner.'}
                 />
