@@ -28,6 +28,8 @@
     "release:prod": "lerna version --conventional-commits --yes -m \"chore(release): publish\"",
     "release:prod:graduate": "lerna version --conventional-graduate --conventional-commits --yes -m \"chore(release): publish\"",
     "release:beta": "lerna version --conventional-prerelease --conventional-commits --yes -m \"chore(release): publish\"",
+    "publish:prod": "lerna publish from-git --yes",
+    "publish:beta": "lerna publish from-git --yes --dist-tag alpha",
     "version": "yarn install --no-immutable && git add yarn.lock",
     "postversion": "./scripts/push-tags-one-by-one.sh",
     "lerna:list": " yarn lerna list -all",
