@@ -224,8 +224,6 @@ class PanelResizer extends Component<Props, State> {
   }
 
   onDblClick = () => {
-    console.log('dblclick')
-
     const collapsed = this.isCollapsed()
     if (collapsed) {
       this.setWidth(this.widthBeforeLastDblClick || this.props.defaultWidth || 0)
