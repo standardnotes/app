@@ -10,11 +10,10 @@
     ]
   },
   "scripts": {
-    "compile": "tsc --project tsconfig.json",
     "clean": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run components:clean",
     "lint": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run components:lint",
     "test": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run components:test",
-    "build": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run components:compile",
+    "build": "tsc --project tsconfig.json && yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run components:compile",
     "package": "node scripts/package.mjs",
     "version": "./scripts/VERSION.sh"
   },
