@@ -37,7 +37,7 @@ const SessionHistoryList: FunctionComponent<Props> = ({ noteHistoryController })
               {group.entries.map((entry, index) => (
                 <HistoryListItem
                   key={index}
-                  isSelected={selectedRevision?.payload.created_at === entry.payload.created_at}
+                  isSelected={selectedRevision?.payload.updated_at === entry.payload.updated_at}
                   onClick={() => {
                     selectSessionRevision(entry)
                   }}

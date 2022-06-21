@@ -17,15 +17,16 @@ export type ListGroup<EntryType extends RevisionEntry> = {
 export type RemoteRevisionListGroup = ListGroup<RevisionListEntry>
 export type SessionRevisionListGroup = ListGroup<NoteHistoryEntry>
 
-export const formatDateAsMonthYearString = (date: Date) =>
-  date.toLocaleDateString(undefined, {
+export const formatDateAsMonthYearString = (date: Date) => {
+  return date.toLocaleDateString(undefined, {
     month: 'long',
     year: 'numeric',
   })
+}
 
 export const getGroupIndexForEntry = (entry: RevisionEntry, groups: ListGroup<RevisionEntry>[]) => {
   const todayAsDate = new Date()
-  const entryDate = new Date((entry as RevisionListEntry).created_at ?? (entry as NoteHistoryEntry).payload.created_at)
+  const entryDate = new Date((entry as RevisionListEntry).created_at ?? (entry as NoteHistoryEntry).payload.updated_at)
 
   const differenceBetweenDatesInDays = calculateDifferenceBetweenDatesInDays(todayAsDate, entryDate)
 
@@ -78,7 +79,7 @@ export const sortRevisionListIntoGroups = <EntryType extends RevisionEntry>(revi
     } else {
       addBeforeLastGroup({
         title: formatDateAsMonthYearString(
-          new Date((entry as RevisionListEntry).created_at ?? (entry as NoteHistoryEntry).payload.created_at),
+          new Date((entry as RevisionListEntry).created_at ?? (entry as NoteHistoryEntry).payload.updated_at),
         ),
         entries: [entry],
       })
