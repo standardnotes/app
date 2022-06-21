@@ -1,7 +1,7 @@
 import QRCodeReader from '@Components/QRCodeReader'
 import { secretPattern } from '@Lib/otp'
 import { contextualColors, defaultBgColor, getAllContextualColors, getEntryColor } from '@Lib/utils'
-import { SKAlert } from '@standardnotes/styles'
+import { SKAlert } from '../../../../../../styles'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { TwitterPicker } from 'react-color'
