@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.24.0-alpha.7](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.24.0-alpha.6...@standardnotes/mobile@3.24.0-alpha.7) (2022-06-22)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+# [3.24.0-alpha.6](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.24.0-alpha.5...@standardnotes/mobile@3.24.0-alpha.6) (2022-06-22)
+
+### Bug Fixes
+
+* restore top border of "Manage Sessions" row ([#1134](https://github.com/standardnotes/app/issues/1134)) ([0608203](https://github.com/standardnotes/app/commit/0608203db5d6cee25a9245441333d55eae5b7f29))
+
+# [3.24.0-alpha.5](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.24.0-alpha.4...@standardnotes/mobile@3.24.0-alpha.5) (2022-06-22)
+
+### Bug Fixes
+
+* **mobile:** workspaces keychain ([112ef2a](https://github.com/standardnotes/app/commit/112ef2a2c80f6f80a6b0571e89ad5daa50749d5c))
+
 # [3.24.0-alpha.4](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.24.0-alpha.3...@standardnotes/mobile@3.24.0-alpha.4) (2022-06-22)
 
 **Note:** Version bump only for package @standardnotes/mobile

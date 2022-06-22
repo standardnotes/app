@@ -87,7 +87,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:^7.1.0, @babel/core@npm:^7.1.6, @babel/core@npm:^7.11.1, @babel/core@npm:^7.12.10, @babel/core@npm:^7.12.3, @babel/core@npm:^7.13.10, @babel/core@npm:^7.13.13, @babel/core@npm:^7.13.14, @babel/core@npm:^7.13.8, @babel/core@npm:^7.14.0, @babel/core@npm:^7.14.6, @babel/core@npm:^7.15.5, @babel/core@npm:^7.16.0, @babel/core@npm:^7.17.10, @babel/core@npm:^7.17.9, @babel/core@npm:^7.18.2, @babel/core@npm:^7.7.2, @babel/core@npm:^7.7.7, @babel/core@npm:^7.8.0":
+"@babel/core@npm:^7.1.0, @babel/core@npm:^7.1.6, @babel/core@npm:^7.11.1, @babel/core@npm:^7.12.10, @babel/core@npm:^7.12.3, @babel/core@npm:^7.13.10, @babel/core@npm:^7.13.13, @babel/core@npm:^7.13.14, @babel/core@npm:^7.13.8, @babel/core@npm:^7.14.0, @babel/core@npm:^7.14.6, @babel/core@npm:^7.15.5, @babel/core@npm:^7.16.0, @babel/core@npm:^7.17.10, @babel/core@npm:^7.17.9, @babel/core@npm:^7.18.2, @babel/core@npm:^7.18.5, @babel/core@npm:^7.7.2, @babel/core@npm:^7.7.7, @babel/core@npm:^7.8.0":
   version: 7.18.5
   resolution: "@babel/core@npm:7.18.5"
   dependencies:
@@ -110,7 +110,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/eslint-parser@npm:^7.13.10, @babel/eslint-parser@npm:^7.13.14, @babel/eslint-parser@npm:^7.13.4, @babel/eslint-parser@npm:^7.13.8, @babel/eslint-parser@npm:^7.14.7, @babel/eslint-parser@npm:^7.16.3":
+"@babel/eslint-parser@npm:^7.13.10, @babel/eslint-parser@npm:^7.13.14, @babel/eslint-parser@npm:^7.13.4, @babel/eslint-parser@npm:^7.13.8, @babel/eslint-parser@npm:^7.14.7, @babel/eslint-parser@npm:^7.16.3, @babel/eslint-parser@npm:^7.18.2":
   version: 7.18.2
   resolution: "@babel/eslint-parser@npm:7.18.2"
   dependencies:
@@ -1296,7 +1296,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-runtime@npm:^7.0.0, @babel/plugin-transform-runtime@npm:^7.10.1, @babel/plugin-transform-runtime@npm:^7.11.0, @babel/plugin-transform-runtime@npm:^7.13.0, @babel/plugin-transform-runtime@npm:^7.13.10, @babel/plugin-transform-runtime@npm:^7.16.4, @babel/plugin-transform-runtime@npm:^7.18.2":
+"@babel/plugin-transform-runtime@npm:^7.0.0, @babel/plugin-transform-runtime@npm:^7.10.1, @babel/plugin-transform-runtime@npm:^7.11.0, @babel/plugin-transform-runtime@npm:^7.13.0, @babel/plugin-transform-runtime@npm:^7.16.4, @babel/plugin-transform-runtime@npm:^7.18.2, @babel/plugin-transform-runtime@npm:^7.18.5":
   version: 7.18.5
   resolution: "@babel/plugin-transform-runtime@npm:7.18.5"
   dependencies:
@@ -1517,7 +1517,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/preset-react@npm:^7.10.1, @babel/preset-react@npm:^7.10.4, @babel/preset-react@npm:^7.12.12, @babel/preset-react@npm:^7.12.13, @babel/preset-react@npm:^7.12.5, @babel/preset-react@npm:^7.13.13, @babel/preset-react@npm:^7.14.5, @babel/preset-react@npm:^7.16.0":
+"@babel/preset-react@npm:^7.10.1, @babel/preset-react@npm:^7.10.4, @babel/preset-react@npm:^7.12.12, @babel/preset-react@npm:^7.12.13, @babel/preset-react@npm:^7.12.5, @babel/preset-react@npm:^7.13.13, @babel/preset-react@npm:^7.14.5, @babel/preset-react@npm:^7.16.0, @babel/preset-react@npm:^7.17.12":
   version: 7.17.12
   resolution: "@babel/preset-react@npm:7.17.12"
   dependencies:
@@ -3905,6 +3905,54 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@otplib/core@npm:^12.0.1":
+  version: 12.0.1
+  resolution: "@otplib/core@npm:12.0.1"
+  checksum: b3c34bc20b31bc3f49cc0dc3c0eb070491c0101e8c1efa83cec48ca94158bd736aaca8187df667fc0c4a239d4ac52076bc44084bee04a50c80c3630caf77affa
+  languageName: node
+  linkType: hard
+
+"@otplib/plugin-crypto@npm:^12.0.1":
+  version: 12.0.1
+  resolution: "@otplib/plugin-crypto@npm:12.0.1"
+  dependencies:
+    "@otplib/core": ^12.0.1
+  checksum: 6867c74ee8aca6c2db9670362cf51e44f3648602c39318bf537421242e33f0012a172acd43bbed9a21d706e535dc4c66aff965380673391e9fd74cf685b5b13a
+  languageName: node
+  linkType: hard
+
+"@otplib/plugin-thirty-two@npm:^12.0.1":
+  version: 12.0.1
+  resolution: "@otplib/plugin-thirty-two@npm:12.0.1"
+  dependencies:
+    "@otplib/core": ^12.0.1
+    thirty-two: ^1.0.2
+  checksum: 920099e40d3e8c2941291c84c70064c2d86d0d1ed17230d650445d5463340e406bc413ddf2e40c374ddc4ee988ef1e3facacab9b5248b1ff361fd13df52bf88f
+  languageName: node
+  linkType: hard
+
+"@otplib/preset-default@npm:^12.0.1":
+  version: 12.0.1
+  resolution: "@otplib/preset-default@npm:12.0.1"
+  dependencies:
+    "@otplib/core": ^12.0.1
+    "@otplib/plugin-crypto": ^12.0.1
+    "@otplib/plugin-thirty-two": ^12.0.1
+  checksum: 8133231384f6277f77eb8e42ef83bc32a8b01059bef147d1c358d9e9bfd292e1c239f581fe008367a48489dd68952b7ac0948e6c41412fc06079da2c91b71d16
+  languageName: node
+  linkType: hard
+
+"@otplib/preset-v11@npm:^12.0.1":
+  version: 12.0.1
+  resolution: "@otplib/preset-v11@npm:12.0.1"
+  dependencies:
+    "@otplib/core": ^12.0.1
+    "@otplib/plugin-crypto": ^12.0.1
+    "@otplib/plugin-thirty-two": ^12.0.1
+  checksum: 367cb09397e617c21ec748d54e920ab43f1c5dfba70cbfd88edf73aecca399cf0c09fefe32518f79c7ee8a06e7058d14b200da378cc7d46af3cac4e22a153e2f
+  languageName: node
+  linkType: hard
+
 "@pmmmwh/react-refresh-webpack-plugin@npm:^0.5.3":
   version: 0.5.7
   resolution: "@pmmmwh/react-refresh-webpack-plugin@npm:0.5.7"
@@ -4897,6 +4945,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standardnotes/api@npm:^1.1.14":
+  version: 1.1.14
+  resolution: "@standardnotes/api@npm:1.1.14"
+  dependencies:
+    "@standardnotes/auth": ^3.19.3
+    "@standardnotes/common": ^1.23.0
+    "@standardnotes/encryption": ^1.8.20
+    "@standardnotes/responses": ^1.6.36
+    "@standardnotes/services": ^1.13.20
+    "@standardnotes/utils": ^1.6.11
+  checksum: 32b83e3867245a6c5485de45ecce2e88ade6a21fe3ed41a52a9b18ed224981b2256173271731594f430ef66af7fbcb2971717117f90877bd2892fdf5ceabd351
+  languageName: node
+  linkType: hard
+
 "@standardnotes/app-monorepo@workspace:.":
   version: 0.0.0-use.local
   resolution: "@standardnotes/app-monorepo@workspace:."
@@ -4907,7 +4969,7 @@ __metadata:
     "@lerna-lite/list": ^1.5.1
     "@lerna-lite/run": ^1.5.1
     "@standardnotes/config": ^2.4.3
-    "@standardnotes/snjs": ^2.117.4
+    "@standardnotes/snjs": ^2.117.7
     "@typescript-eslint/eslint-plugin": ^5.20.0
     "@typescript-eslint/parser": ^5.20.0
     eslint: ^8.17.0
@@ -4935,41 +4997,41 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/authenticator@workspace:packages/components/src/packages/org.standardnotes.token-vault"
   dependencies:
-    "@babel/core": ^7.13.10
-    "@babel/eslint-parser": ^7.13.10
-    "@babel/plugin-proposal-class-properties": ^7.13.0
-    "@babel/plugin-transform-runtime": ^7.13.10
-    "@babel/preset-env": ^7.13.10
-    "@babel/preset-react": ^7.12.13
-    "@standardnotes/editor-kit": 2.2.1
-    "@standardnotes/eslint-config-extensions": ^1.0.1
-    "@svgr/webpack": ^6.1.2
-    babel-loader: ^8.2.2
-    css-loader: ^5.1.3
-    eslint: ^7.21.0
-    eslint-plugin-react: ^7.22.0
-    html-webpack-plugin: ^5.3.1
-    immutability-helper: ^3.0.1
-    jsqr: ^1.2.0
-    mini-css-extract-plugin: ^1.3.9
+    "@babel/core": ^7.18.5
+    "@babel/eslint-parser": ^7.18.2
+    "@babel/plugin-proposal-class-properties": ^7.17.12
+    "@babel/plugin-transform-runtime": ^7.18.5
+    "@babel/preset-env": ^7.18.2
+    "@babel/preset-react": ^7.17.12
+    "@standardnotes/editor-kit": 2.2.5
+    "@standardnotes/eslint-config-extensions": ^1.0.4
+    "@standardnotes/styles": "workspace:*"
+    "@svgr/webpack": ^6.2.1
+    babel-loader: ^8.2.5
+    css-loader: ^6.7.1
+    eslint: "*"
+    eslint-plugin-react: ^7.30.0
+    html-webpack-plugin: ^5.5.0
+    immutability-helper: ^3.1.1
+    jsqr: ^1.4.0
+    mini-css-extract-plugin: ^2.6.1
     node-sass: "*"
     notp: ^2.0.3
-    otplib: ^11.0.1
-    prop-types: ^15.7.2
-    react: ^17.0.1
+    otplib: ^12.0.1
+    prettier: "*"
+    prop-types: ^15.8.1
+    react: ^18.2.0
     react-beautiful-dnd: ^13.1.0
     react-color: ^2.19.3
-    react-dom: ^17.0.1
-    regenerator-runtime: ^0.13.2
-    sass-loader: ^11.0.1
-    sn-stylekit: 2.1.0
-    style-loader: ~0.13.1
+    react-dom: ^18.2.0
+    sass-loader: ^13.0.0
+    style-loader: ~3.3.1
     svg-url-loader: ^7.1.1
-    terser-webpack-plugin: ^5.1.1
+    terser-webpack-plugin: ^5.3.3
     webpack: "*"
     webpack-cli: "*"
     webpack-dev-server: "*"
-    webpack-merge: ^5.7.3
+    webpack-merge: ^5.8.0
   languageName: unknown
   linkType: soft
 
@@ -5164,13 +5226,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/editor-kit@npm:2.2.1":
-  version: 2.2.1
-  resolution: "@standardnotes/editor-kit@npm:2.2.1"
-  checksum: d856714b8d7c1b7704d1644fc30edab3536b3e1f0f277a009f2b2381e7df07f827e5a68c764b58192d26ea5385e71379c410e5509d71570b317cda04d56c5010
-  languageName: node
-  linkType: hard
-
 "@standardnotes/editor-kit@npm:2.2.3":
   version: 2.2.3
   resolution: "@standardnotes/editor-kit@npm:2.2.3"
@@ -5222,6 +5277,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standardnotes/encryption@npm:^1.8.20":
+  version: 1.8.20
+  resolution: "@standardnotes/encryption@npm:1.8.20"
+  dependencies:
+    "@standardnotes/models": ^1.11.10
+    "@standardnotes/responses": ^1.6.36
+    "@standardnotes/services": ^1.13.20
+  checksum: 7aae7a129dabfe9c611c9b98185ee55e8ca4aa2d0dfbf67dbde1c74ba000fa811114c1e960f8745ffe2b07676915e517319c756a504af0a59d3fa46418ffd847
+  languageName: node
+  linkType: hard
+
 "@standardnotes/eslint-config-extensions@npm:1.0.1":
   version: 1.0.1
   resolution: "@standardnotes/eslint-config-extensions@npm:1.0.1"
@@ -5231,7 +5297,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/eslint-config-extensions@npm:^1.0.0, @standardnotes/eslint-config-extensions@npm:^1.0.1, @standardnotes/eslint-config-extensions@npm:^1.0.2, @standardnotes/eslint-config-extensions@npm:^1.0.4":
+"@standardnotes/eslint-config-extensions@npm:^1.0.0, @standardnotes/eslint-config-extensions@npm:^1.0.2, @standardnotes/eslint-config-extensions@npm:^1.0.4":
   version: 1.0.4
   resolution: "@standardnotes/eslint-config-extensions@npm:1.0.4"
   peerDependencies:
@@ -5250,18 +5316,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/filepicker@npm:1.16.18":
-  version: 1.16.18
-  resolution: "@standardnotes/filepicker@npm:1.16.18"
+"@standardnotes/filepicker@npm:1.16.20, @standardnotes/filepicker@npm:^1.16.20":
+  version: 1.16.20
+  resolution: "@standardnotes/filepicker@npm:1.16.20"
   dependencies:
     "@standardnotes/common": ^1.23.0
-    "@standardnotes/services": ^1.13.18
+    "@standardnotes/services": ^1.13.20
     "@standardnotes/utils": ^1.6.11
-  checksum: b0418e65e64e11a946cf5f9c791abe05f4a868fa95d43b1e19348ebb9e1a062a4bf8d850e0357e586c4e1bf926ad5aa06fe7142db268d527fa12957d95d302b9
+  checksum: 419f36f91ecd390194f31abbfc6dcd179e697a0f346023859cd72138c27bb68c69dc3c7bc1bcbb260bbd77edc423070141e4451409ba95f44e4586f4f0086bb4
   languageName: node
   linkType: hard
 
-"@standardnotes/filepicker@npm:^1.16.18, @standardnotes/filepicker@npm:^1.16.19":
+"@standardnotes/filepicker@npm:^1.16.19":
   version: 1.16.19
   resolution: "@standardnotes/filepicker@npm:1.16.19"
   dependencies:
@@ -5283,6 +5349,20 @@ __metadata:
     "@standardnotes/services": ^1.13.19
     "@standardnotes/utils": ^1.6.11
   checksum: 24f60579a15d09676d971d0c310538e02ffc2eed313076face606e1d3ff244350029e0ebcedb95d10ff349a82a29744886504e4cbd2d7612afef34f70d7ce4af
+  languageName: node
+  linkType: hard
+
+"@standardnotes/files@npm:^1.3.20":
+  version: 1.3.20
+  resolution: "@standardnotes/files@npm:1.3.20"
+  dependencies:
+    "@standardnotes/encryption": ^1.8.20
+    "@standardnotes/filepicker": ^1.16.20
+    "@standardnotes/models": ^1.11.10
+    "@standardnotes/responses": ^1.6.36
+    "@standardnotes/services": ^1.13.20
+    "@standardnotes/utils": ^1.6.11
+  checksum: 13059c19cd8f44b8e9fb6e88a434e5696a8fdeb20f6785dbde80eda4e06b02465ab41ab1242125e71b25c4027bacd6c9b1ebc1e4d2b3aecfb4981f65b1c12d2f
   languageName: node
   linkType: hard
 
@@ -5538,7 +5618,7 @@ __metadata:
     "@react-navigation/stack": ^6.2.1
     "@standardnotes/components-meta": "workspace:*"
     "@standardnotes/config": ^2.4.3
-    "@standardnotes/filepicker": ^1.16.18
+    "@standardnotes/filepicker": ^1.16.20
     "@standardnotes/icons": "workspace:*"
     "@standardnotes/react-native-aes": ^1.4.3
     "@standardnotes/react-native-textview": 1.0.2
@@ -5711,7 +5791,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/services@npm:^1.13.18, @standardnotes/services@npm:^1.13.19":
+"@standardnotes/services@npm:^1.13.19":
   version: 1.13.19
   resolution: "@standardnotes/services@npm:1.13.19"
   dependencies:
@@ -5721,6 +5801,19 @@ __metadata:
     "@standardnotes/responses": ^1.6.36
     "@standardnotes/utils": ^1.6.11
   checksum: c4c239c5e8c717e00ad30bf1f5845024336755c26dcd0600a917cc037ef86caef551c92994d1c5f56f4a0623d1bc0050b174fa15388a034ccbc7dce8dabc71e4
+  languageName: node
+  linkType: hard
+
+"@standardnotes/services@npm:^1.13.20":
+  version: 1.13.20
+  resolution: "@standardnotes/services@npm:1.13.20"
+  dependencies:
+    "@standardnotes/auth": ^3.19.3
+    "@standardnotes/common": ^1.23.0
+    "@standardnotes/models": ^1.11.10
+    "@standardnotes/responses": ^1.6.36
+    "@standardnotes/utils": ^1.6.11
+  checksum: 402344a2aa9ae8581f7f2cfd7ba6ab16fb049472e8b1ce73c2e8ab88adc712ed5f5115ddb8e63d96c8caeb00fdb4a7a2ca3b65a3b6f33a9fad638ba24a8e57fb
   languageName: node
   linkType: hard
 
@@ -5786,7 +5879,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/snjs@npm:*, @standardnotes/snjs@npm:^2.117.4, @standardnotes/snjs@npm:^2.41.1":
+"@standardnotes/snjs@npm:*, @standardnotes/snjs@npm:^2.41.1":
   version: 2.117.5
   resolution: "@standardnotes/snjs@npm:2.117.5"
   dependencies:
@@ -5805,6 +5898,28 @@ __metadata:
     "@standardnotes/utils": ^1.6.11
     semver: ^7.3.7
   checksum: 167e3e5c06a678288a54753425c17ec0219ff6b82cfbf45b3522cebe204404444d4172915c67505e258373137b4af61a5c55bbfc656be3c3252b363437cf3d0d
+  languageName: node
+  linkType: hard
+
+"@standardnotes/snjs@npm:^2.117.7":
+  version: 2.117.7
+  resolution: "@standardnotes/snjs@npm:2.117.7"
+  dependencies:
+    "@standardnotes/api": ^1.1.14
+    "@standardnotes/auth": ^3.19.3
+    "@standardnotes/common": ^1.23.0
+    "@standardnotes/domain-events": ^2.32.2
+    "@standardnotes/encryption": ^1.8.20
+    "@standardnotes/features": ^1.45.5
+    "@standardnotes/files": ^1.3.20
+    "@standardnotes/models": ^1.11.10
+    "@standardnotes/responses": ^1.6.36
+    "@standardnotes/services": ^1.13.20
+    "@standardnotes/settings": ^1.14.3
+    "@standardnotes/sncrypto-common": ^1.9.0
+    "@standardnotes/utils": ^1.6.11
+    semver: ^7.3.7
+  checksum: 6dd9a80392e91649a08174d1d2f7d73da8ce241c78a09e5b839070538c72cc5d2d41ef5381c3529af5fad85292acd63b77ecb610d9a5fa5b28bf4718202d6ef6
   languageName: node
   linkType: hard
 
@@ -5970,9 +6085,9 @@ __metadata:
     "@reach/listbox": ^0.16.2
     "@reach/tooltip": ^0.16.2
     "@reach/visually-hidden": ^0.16.0
-    "@standardnotes/filepicker": 1.16.18
+    "@standardnotes/filepicker": 1.16.20
     "@standardnotes/icons": "workspace:*"
-    "@standardnotes/services": ^1.13.18
+    "@standardnotes/services": ^1.13.20
     "@standardnotes/sncrypto-web": 1.10.1
     "@standardnotes/snjs": "*"
     "@standardnotes/styles": "workspace:*"
@@ -6299,7 +6414,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@svgr/webpack@npm:^6.1.2, @svgr/webpack@npm:^6.2.1":
+"@svgr/webpack@npm:^6.2.1":
   version: 6.2.1
   resolution: "@svgr/webpack@npm:6.2.1"
   dependencies:
@@ -14715,7 +14830,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-react@npm:*, eslint-plugin-react@npm:^7.22.0, eslint-plugin-react@npm:^7.23.1, eslint-plugin-react@npm:^7.24.0, eslint-plugin-react@npm:^7.26.1, eslint-plugin-react@npm:^7.27.1, eslint-plugin-react@npm:^7.29.4":
+"eslint-plugin-react@npm:*, eslint-plugin-react@npm:^7.22.0, eslint-plugin-react@npm:^7.23.1, eslint-plugin-react@npm:^7.24.0, eslint-plugin-react@npm:^7.26.1, eslint-plugin-react@npm:^7.27.1, eslint-plugin-react@npm:^7.29.4, eslint-plugin-react@npm:^7.30.0":
   version: 7.30.0
   resolution: "eslint-plugin-react@npm:7.30.0"
   dependencies:
@@ -14879,7 +14994,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^7.20.0, eslint@npm:^7.21.0":
+"eslint@npm:^7.20.0":
   version: 7.32.0
   resolution: "eslint@npm:7.32.0"
   dependencies:
@@ -17777,7 +17892,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"immutability-helper@npm:^3.0.1":
+"immutability-helper@npm:^3.1.1":
   version: 3.1.1
   resolution: "immutability-helper@npm:3.1.1"
   checksum: 6fdbf6d2123efa567263e904bbaff07aca0e24560d270d34967b03aab8ec20bd3e4057f394d59e50eb6c4718c9415591a6281692bb0aafd522ad72cf4887133f
@@ -19989,7 +20104,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsqr@npm:^1.2.0":
+"jsqr@npm:^1.4.0":
   version: 1.4.0
   resolution: "jsqr@npm:1.4.0"
   checksum: 7c572971f90c42772e30d152bde63b84edf1164bde80c53942e6b2068ea31caf00ad704aa46cacc9e71645f52dbeddebc6e84ba15e883c678ee93cde690de339
@@ -20456,7 +20571,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"loader-utils@npm:^1.0.2, loader-utils@npm:^1.1.0":
+"loader-utils@npm:^1.1.0":
   version: 1.4.0
   resolution: "loader-utils@npm:1.4.0"
   dependencies:
@@ -22275,7 +22390,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mini-css-extract-plugin@npm:^2.0.0, mini-css-extract-plugin@npm:^2.4.5, mini-css-extract-plugin@npm:^2.5.3, mini-css-extract-plugin@npm:^2.6.0":
+"mini-css-extract-plugin@npm:^2.0.0, mini-css-extract-plugin@npm:^2.4.5, mini-css-extract-plugin@npm:^2.5.3, mini-css-extract-plugin@npm:^2.6.0, mini-css-extract-plugin@npm:^2.6.1":
   version: 2.6.1
   resolution: "mini-css-extract-plugin@npm:2.6.1"
   dependencies:
@@ -23625,12 +23740,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"otplib@npm:^11.0.1":
-  version: 11.0.1
-  resolution: "otplib@npm:11.0.1"
+"otplib@npm:^12.0.1":
+  version: 12.0.1
+  resolution: "otplib@npm:12.0.1"
   dependencies:
-    thirty-two: 1.0.2
-  checksum: 42225f1ccc4562fc062dfd0cbe4b0c527f56648775601175b638e54850c44a1dbe1770e5858a2e50216e5111bd4dd2776df3372a92f74a2fb41e7f3975dc0bbd
+    "@otplib/core": ^12.0.1
+    "@otplib/preset-default": ^12.0.1
+    "@otplib/preset-v11": ^12.0.1
+  checksum: 4a1b91cf1b8e920b50ad4bac2ef2a89126630c62daf68e9b32ff15106b2551db905d3b979955cf5f8f114da0a8883cec3d636901d65e793c1745bb4174e2a572
   languageName: node
   linkType: hard
 
@@ -26211,7 +26328,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^18.1.0":
+"react-dom@npm:^18.1.0, react-dom@npm:^18.2.0":
   version: 18.2.0
   resolution: "react-dom@npm:18.2.0"
   dependencies:
@@ -27001,7 +27118,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^18.1.0":
+"react@npm:^18.1.0, react@npm:^18.2.0":
   version: 18.2.0
   resolution: "react@npm:18.2.0"
   dependencies:
@@ -28155,6 +28272,31 @@ __metadata:
     sass-embedded:
       optional: true
   checksum: 5d73a428588150f704016aa27397941bb9246cecd2ee083b573e95d969fc080ac6a16f2fe1cc64aca08f6e70da6f3c586ee68f0efc9f527fecc360e5f1c299ec
+  languageName: node
+  linkType: hard
+
+"sass-loader@npm:^13.0.0":
+  version: 13.0.0
+  resolution: "sass-loader@npm:13.0.0"
+  dependencies:
+    klona: ^2.0.4
+    neo-async: ^2.6.2
+  peerDependencies:
+    fibers: ">= 3.1.0"
+    node-sass: ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0
+    sass: ^1.3.0
+    sass-embedded: "*"
+    webpack: ^5.0.0
+  peerDependenciesMeta:
+    fibers:
+      optional: true
+    node-sass:
+      optional: true
+    sass:
+      optional: true
+    sass-embedded:
+      optional: true
+  checksum: f7af03813dccf0405eb02917cd10c97571ab81f42e9ea1f3da6d9e96991e076521809a452ad319d57c1a63273ce07c23ddfdbda5cd071a56d261dc28913afdaa
   languageName: node
   linkType: hard
 
@@ -29724,15 +29866,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"style-loader@npm:~0.13.1":
-  version: 0.13.2
-  resolution: "style-loader@npm:0.13.2"
-  dependencies:
-    loader-utils: ^1.0.2
-  checksum: 68bdfbf4e759abf6e5195880966ac9407b758ca9f1fd96dc2584554707d25d8dbbe1a9d6524a617513e7d28d9f51bdd754689c1e6ae12ac1c4ff62781f5e7ccc
-  languageName: node
-  linkType: hard
-
 "style-loader@npm:~1.2.1":
   version: 1.2.1
   resolution: "style-loader@npm:1.2.1"
@@ -30202,7 +30335,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"terser-webpack-plugin@npm:^5.1.1, terser-webpack-plugin@npm:^5.1.3, terser-webpack-plugin@npm:^5.1.4, terser-webpack-plugin@npm:^5.2.5, terser-webpack-plugin@npm:^5.3.1":
+"terser-webpack-plugin@npm:^5.1.1, terser-webpack-plugin@npm:^5.1.3, terser-webpack-plugin@npm:^5.1.4, terser-webpack-plugin@npm:^5.2.5, terser-webpack-plugin@npm:^5.3.1, terser-webpack-plugin@npm:^5.3.3":
   version: 5.3.3
   resolution: "terser-webpack-plugin@npm:5.3.3"
   dependencies:
@@ -30263,7 +30396,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"thirty-two@npm:1.0.2":
+"thirty-two@npm:^1.0.2":
   version: 1.0.2
   resolution: "thirty-two@npm:1.0.2"
   checksum: f6700b31d16ef942fdc0d14daed8a2f69ea8b60b0e85db8b83adf58d84bbeafe95a17d343ab55efaae571bb5148b62fc0ee12b04781323bf7af7d7e9693eec76

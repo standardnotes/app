@@ -1,10 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import QRCodeReader from '@Components/QRCodeReader';
-import { secretPattern } from '@Lib/otp';
-import { TwitterPicker } from 'react-color';
-import { SKAlert } from 'sn-stylekit';
-import { contextualColors, defaultBgColor, getAllContextualColors, getEntryColor } from '@Lib/utils';
+import QRCodeReader from '@Components/QRCodeReader'
+import { secretPattern } from '@Lib/otp'
+import { contextualColors, defaultBgColor, getAllContextualColors, getEntryColor } from '@Lib/utils'
+import { SKAlert } from '@standardnotes/styles'
+import PropTypes from 'prop-types'
+import React from 'react'
+import { TwitterPicker } from 'react-color'
 
 export default class EditEntry extends React.Component {
   static defaultProps = {
@@ -12,93 +12,102 @@ export default class EditEntry extends React.Component {
       service: '',
       account: '',
       secret: '',
-      notes: ''
-    }
-  };
+      notes: '',
+    },
+  }
 
   constructor(props) {
-    super(props);
+    super(props)
+
+    const { id, entry } = props
 
     this.state = {
-      id: this.props.id,
-      entry: this.props.entry,
+      id: id,
+      entry,
       showColorPicker: false,
-      qrCodeError: false
-    };
+      qrCodeError: false,
+      is2fa: id !== undefined ? !!entry.secret : true,
+    }
   }
 
   formatSecret(secret) {
-    return secret.replace(/\s/g, '').toUpperCase();
+    return secret.replace(/\s/g, '').toUpperCase()
   }
 
-  handleInputChange = event => {
-    const target = event.target;
-    const name = target.name;
+  handleInputChange = (event) => {
+    const target = event.target
+    const name = target.name
 
-    const value = name === 'secret' ?
-      this.formatSecret(target.value) : target.value;
+    const value = name === 'secret' ? this.formatSecret(target.value) : target.value
 
-    this.setState(state => ({
+    this.setState((state) => ({
       entry: {
         ...state.entry,
-        [name]: value
-      }
-    }));
-  };
+        [name]: value,
+      },
+    }))
+  }
 
   handleSwatchClick = () => {
     this.setState({
-      showColorPicker: !this.state.showColorPicker
-    });
-  };
+      showColorPicker: !this.state.showColorPicker,
+    })
+  }
 
   handleColorPickerClose = () => {
     this.setState({
-      showColorPicker: false
-    });
-  };
+      showColorPicker: false,
+    })
+  }
 
   removeColor = () => {
     this.setState((state) => {
-      delete state.entry.color;
+      delete state.entry.color
       return {
-        entry: state.entry
-      };
-    });
-  };
+        entry: state.entry,
+      }
+    })
+  }
 
   onSave = () => {
-    const { id, entry } = this.state;
-    this.props.onSave({ id, entry });
-  };
+    const { id, entry, is2fa } = this.state
+    this.props.onSave({
+      id,
+      entry: {
+        ...entry,
+        secret: is2fa ? entry.secret : '',
+      },
+    })
+  }
 
-  onQRCodeSuccess = otpData => {
-    const { issuer: labelIssuer, account } = otpData.label;
-    const { issuer: queryIssuer, secret } = otpData.query;
+  onQRCodeSuccess = (otpData) => {
+    const { issuer: labelIssuer, account } = otpData.label
+    const { issuer: queryIssuer, secret } = otpData.query
 
     this.setState({
       entry: {
         service: labelIssuer || queryIssuer || '',
         account,
-        secret: this.formatSecret(secret)
-      }
-    });
-  };
+        secret: this.formatSecret(secret),
+      },
+      is2fa: true,
+    })
+  }
 
-  onQRCodeError = message => {
+  onQRCodeError = (message) => {
     this.setState({
-      qrCodeError: message
-    });
-  };
+      qrCodeError: message,
+    })
+  }
 
   dismissQRCodeError = () => {
     this.setState({
-      qrCodeError: false
-    });
-  };
+      qrCodeError: false,
+    })
+  }
 
   render() {
-    const { id, entry, showColorPicker, qrCodeError } = this.state;
+    const { id, entry, showColorPicker, qrCodeError, is2fa } = this.state
 
     const qrCodeAlert = new SKAlert({
       title: 'Error',
@@ -107,63 +116,69 @@ export default class EditEntry extends React.Component {
         {
           text: 'OK',
           style: 'info',
-          action: this.dismissQRCodeError
-        }
-      ]
-    });
+          action: this.dismissQRCodeError,
+        },
+      ],
+    })
 
     if (qrCodeError) {
-      qrCodeAlert.present();
+      qrCodeAlert.present()
     }
 
-    const entryColor = getEntryColor(document, entry);
+    const entryColor = getEntryColor(document, entry)
     const swatchStyle = {
       width: '36px',
       height: '14px',
       borderRadius: '2px',
       background: `${entryColor ?? defaultBgColor}`,
-    };
+    }
 
-    const themeColors = getAllContextualColors(document);
-    const defaultColorOptions = [
-      ...themeColors,
-      '#658bdb',
-      '#4CBBFC',
-      '#FF794D',
-      '#EF5276',
-      '#91B73D',
-      '#9B7ECF'
-    ];
+    const themeColors = getAllContextualColors(document)
+    const defaultColorOptions = [...themeColors, '#658bdb', '#4CBBFC', '#FF794D', '#EF5276', '#91B73D', '#9B7ECF']
 
     const handleColorChange = (color) => {
-      let selectedColor = color.hex.toUpperCase();
-      const colorIndex = defaultColorOptions.indexOf(selectedColor);
+      let selectedColor = color.hex.toUpperCase()
+      const colorIndex = defaultColorOptions.indexOf(selectedColor)
 
       if (colorIndex > -1 && colorIndex <= themeColors.length - 1) {
-        selectedColor = contextualColors[colorIndex];
+        selectedColor = contextualColors[colorIndex]
       }
 
-      this.setState(state => ({
+      this.setState((state) => ({
         entry: {
           ...state.entry,
-          color: selectedColor
-        }
-      }));
-    };
+          color: selectedColor,
+        },
+      }))
+    }
+
+    const handleTypeChange = ({ target }) => {
+      this.setState({
+        is2fa: target.value === '2fa',
+      })
+    }
 
     return (
       <div className="auth-edit sk-panel">
         <div className="sk-panel-content">
           <div className="sk-panel-section">
             <div className="sk-panel-section-title sk-panel-row">
-              {id != null ? 'Edit entry' : 'Add new entry'}
+              <div className="sk-panel-row">
+                <div className="left-header">
+                  <div className="sk-panel-section-title pr-4">{id != null ? 'Edit entry' : 'Add new entry'}</div>
+                  <div className="sk-input-group" onChange={handleTypeChange}>
+                    <label>
+                      <input className="sk-input" type="radio" value="2fa" name="type" defaultChecked={is2fa} /> 2FA
+                    </label>
+                    <label>
+                      <input className="sk-input" type="radio" value="password" name="type" defaultChecked={!is2fa} />{' '}
+                      Password only
+                    </label>
+                  </div>
+                </div>
+              </div>
               <div className="sk-panel-section-title sk-panel-row">
-                {id == null && (
-                  <QRCodeReader
-                    onSuccess={this.onQRCodeSuccess}
-                    onError={this.onQRCodeError}
-                  />
-                )}
+                {id == null && <QRCodeReader onSuccess={this.onQRCodeSuccess} onError={this.onQRCodeError} />}
                 <>
                   {entryColor && (
                     <div className="sk-button danger" onClick={this.removeColor}>
@@ -195,29 +210,32 @@ export default class EditEntry extends React.Component {
                   onChange={this.handleInputChange}
                   type="text"
                 />
+                {is2fa && (
+                  <input
+                    name="secret"
+                    className="sk-input contrast"
+                    placeholder="Secret"
+                    value={entry.secret}
+                    onChange={this.handleInputChange}
+                    type="text"
+                    pattern={secretPattern}
+                    required
+                  />
+                )}
                 <input
-                  name="secret"
+                  name="password"
                   className="sk-input contrast"
-                  placeholder="Secret"
-                  value={entry.secret}
+                  placeholder={`Password ${is2fa ? '(optional)' : ''}`}
+                  value={entry.password}
                   onChange={this.handleInputChange}
                   type="text"
-                  pattern={secretPattern}
-                  required
+                  required={!is2fa}
                 />
                 <input
                   name="notes"
                   className="sk-input contrast"
                   placeholder="Notes"
                   value={entry.notes}
-                  onChange={this.handleInputChange}
-                  type="text"
-                />
-                <input
-                  name="password"
-                  className="sk-input contrast"
-                  placeholder="Password (optional)"
-                  value={entry.password}
                   onChange={this.handleInputChange}
                   type="text"
                 />
@@ -231,12 +249,9 @@ export default class EditEntry extends React.Component {
                     onChangeComplete={handleColorChange}
                     triangle="top-right"
                     onSwatchHover={(color, event) => {
-                      const hoveredColor = color.hex.toUpperCase();
+                      const hoveredColor = color.hex.toUpperCase()
                       if (themeColors.includes(hoveredColor)) {
-                        event.target.setAttribute(
-                          'title',
-                          'This color will change depending on your active theme.'
-                        );
+                        event.target.setAttribute('title', 'This color will change depending on your active theme.')
                       }
                     }}
                   />
@@ -248,9 +263,7 @@ export default class EditEntry extends React.Component {
                     <div className="sk-label">Cancel</div>
                   </button>
                   <button type="submit" className="sk-button info">
-                    <div className="sk-label">
-                      {id != null ? 'Save' : 'Create'}
-                    </div>
+                    <div className="sk-label">{id != null ? 'Save' : 'Create'}</div>
                   </button>
                 </div>
               </div>
@@ -258,7 +271,7 @@ export default class EditEntry extends React.Component {
           </div>
         </div>
       </div>
-    );
+    )
   }
 }
 
@@ -266,5 +279,5 @@ EditEntry.propTypes = {
   id: PropTypes.number,
   entry: PropTypes.object.isRequired,
   onSave: PropTypes.func.isRequired,
-  onCancel: PropTypes.func.isRequired
-};
+  onCancel: PropTypes.func.isRequired,
+}

@@ -44,6 +44,7 @@ const startApplication: StartApplication = async function startApplication(
   enableUnfinishedFeatures: boolean,
   webSocketUrl: string,
 ) {
+  // eslint-disable-next-line no-console
   SNLog.onLog = console.log
   SNLog.onError = console.error
   let root: Root

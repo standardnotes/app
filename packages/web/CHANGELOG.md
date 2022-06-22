@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.24.0-alpha.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.24.0-alpha.4...@standardnotes/web@3.24.0-alpha.5) (2022-06-22)
+
+**Note:** Version bump only for package @standardnotes/web
+
+# [3.24.0-alpha.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.24.0-alpha.3...@standardnotes/web@3.24.0-alpha.4) (2022-06-22)
+
+**Note:** Version bump only for package @standardnotes/web
+
+# [3.24.0-alpha.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.24.0-alpha.2...@standardnotes/web@3.24.0-alpha.3) (2022-06-22)
+
+### Features
+
+* use styled-components for panel resizer ([#1131](https://github.com/standardnotes/app/issues/1131)) ([3b80c17](https://github.com/standardnotes/app/commit/3b80c170d26918bbb9fcce15799e632fe588debd))
+
 # [3.24.0-alpha.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.24.0-alpha.1...@standardnotes/web@3.24.0-alpha.2) (2022-06-21)
 
 ### Bug Fixes
