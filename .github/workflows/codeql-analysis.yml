@@ -23,6 +23,7 @@ on:
 jobs:
   analyze:
     if: contains(github.event.head_commit.message, 'chore(release)') == false
+    continue-on-error: true
     name: Analyze
     runs-on: ubuntu-latest
 
