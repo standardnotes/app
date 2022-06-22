@@ -503,38 +503,18 @@ export class ItemListController extends AbstractViewController implements Intern
     return this.createNewNote()
   }
 
-  get optionsSubtitle(): string {
-    let base = ''
-
-    if (this.displayOptions.sortBy === CollectionSort.CreatedAt) {
-      base += ' Date Added'
-    } else if (this.displayOptions.sortBy === CollectionSort.UpdatedAt) {
-      base += ' Date Modified'
-    } else if (this.displayOptions.sortBy === CollectionSort.Title) {
-      base += ' Title'
+  get optionsSubtitle(): string | undefined {
+    if (!this.displayOptions.includePinned && !this.displayOptions.includeProtected) {
+      return 'Excluding pinned and protected'
     }
-
-    if (this.displayOptions.includeArchived) {
-      base += ' | + Archived'
-    }
-
-    if (this.displayOptions.includeTrashed) {
-      base += ' | + Trashed'
-    }
-
     if (!this.displayOptions.includePinned) {
-      base += ' | – Pinned'
+      return 'Excluding pinned'
     }
-
     if (!this.displayOptions.includeProtected) {
-      base += ' | – Protected'
+      return 'Excluding protected'
     }
 
-    if (this.displayOptions.sortDirection === 'asc') {
-      base += ' | Reversed'
-    }
-
-    return base
+    return undefined
   }
 
   paginate = () => {
