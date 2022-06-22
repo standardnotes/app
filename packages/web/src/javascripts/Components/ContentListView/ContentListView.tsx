@@ -28,6 +28,7 @@ import { NotesController } from '@/Controllers/NotesController'
 import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
 import { ElementIds } from '@/Constants/ElementIDs'
 import ContentListHeader from './Header/ContentListHeader'
+
 type Props = {
   accountMenuController: AccountMenuController
   application: WebApplication
