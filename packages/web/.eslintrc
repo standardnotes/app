@@ -13,7 +13,7 @@
   "rules": {
     "standard/no-callback-literal": 0, // Disable this as we have too many callbacks relying on literals
     "no-throw-literal": 0,
-    "no-console": "off",
+    "no-console": ["warn", { "allow": ["warn", "error"] }],
     "semi": 1,
     "camelcase": "warn",
     "sort-imports": "off",
