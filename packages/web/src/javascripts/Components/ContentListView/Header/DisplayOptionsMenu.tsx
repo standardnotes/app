@@ -1,5 +1,4 @@
-import { WebApplication } from '@/Application/Application'
-import { CollectionSort, CollectionSortProperty, PrefKey, SystemViewId } from '@standardnotes/snjs'
+import { CollectionSort, CollectionSortProperty, PrefKey } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
@@ -7,22 +6,14 @@ import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
 import MenuItemSeparator from '@/Components/Menu/MenuItemSeparator'
 import { MenuItemType } from '@/Components/Menu/MenuItemType'
-import { NavigationController } from '@/Controllers/Navigation/NavigationController'
+import { DisplayOptionsMenuProps } from './DisplayOptionsMenuProps'
 
-type Props = {
-  application: WebApplication
-  closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
-  closeDisplayOptionsMenu: () => void
-  isOpen: boolean
-  navigationController: NavigationController
-}
-
-const ContentListOptionsMenu: FunctionComponent<Props> = ({
+const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   closeDisplayOptionsMenu,
   closeOnBlur,
   application,
   isOpen,
-  navigationController,
+  isFilesSmartView,
 }) => {
   const [sortBy, setSortBy] = useState(() => application.getPreference(PrefKey.SortNotesBy, CollectionSort.CreatedAt))
   const [sortReverse, setSortReverse] = useState(() => application.getPreference(PrefKey.SortNotesReverse, false))
@@ -109,9 +100,9 @@ const ContentListOptionsMenu: FunctionComponent<Props> = ({
   return (
     <Menu
       className={
-        'sn-dropdown sn-dropdown--animated min-w-70 overflow-y-auto \
+        'py-1 sn-dropdown sn-dropdown--animated min-w-70 overflow-y-auto \
         border-1 border-solid border-main text-sm z-index-dropdown-menu \
-        flex flex-col py-2 top-full left-2 absolute'
+        flex flex-col'
       }
       a11yLabel="Notes list options menu"
       closeMenu={closeDisplayOptionsMenu}
@@ -174,7 +165,7 @@ const ContentListOptionsMenu: FunctionComponent<Props> = ({
       </MenuItem>
       <MenuItemSeparator />
       <div className="px-3 py-1 text-xs font-semibold color-text uppercase">View</div>
-      {navigationController.selectedUuid !== SystemViewId.Files && (
+      {!isFilesSmartView && (
         <MenuItem
           type={MenuItemType.SwitchButton}
           className="py-1 hover:bg-contrast focus:bg-info-backdrop"
@@ -254,4 +245,4 @@ const ContentListOptionsMenu: FunctionComponent<Props> = ({
   )
 }
 
-export default observer(ContentListOptionsMenu)
+export default observer(DisplayOptionsMenu)

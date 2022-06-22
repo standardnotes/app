@@ -17,10 +17,6 @@ import ContentList from '@/Components/ContentListView/ContentList'
 import NoAccountWarning from '@/Components/NoAccountWarning/NoAccountWarning'
 import SearchOptions from '@/Components/SearchOptions/SearchOptions'
 import PanelResizer, { PanelSide, ResizeFinishCallback, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
-import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
-import ContentListOptionsMenu from './ContentListOptionsMenu'
-import Icon from '@/Components/Icon/Icon'
 import { ItemListController } from '@/Controllers/ItemList/ItemListController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
@@ -31,7 +27,7 @@ import { NoAccountWarningController } from '@/Controllers/NoAccountWarningContro
 import { NotesController } from '@/Controllers/NotesController'
 import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
 import { ElementIds } from '@/Constants/ElementIDs'
-
+import ContentListHeader from './Header/ContentListHeader'
 type Props = {
   accountMenuController: AccountMenuController
   application: WebApplication
@@ -58,12 +54,10 @@ const ContentListView: FunctionComponent<Props> = ({
   selectionController,
 }) => {
   const itemsViewPanelRef = useRef<HTMLDivElement>(null)
-  const displayOptionsMenuRef = useRef<HTMLDivElement>(null)
 
   const {
     completedFullSync,
     noteFilterText,
-    optionsSubtitle,
     panelTitle,
     renderedItems,
     setNoteFilterText,
@@ -79,10 +73,7 @@ const ContentListView: FunctionComponent<Props> = ({
 
   const { selectedItems } = selectionController
 
-  const [showDisplayOptionsMenu, setShowDisplayOptionsMenu] = useState(false)
   const [focusedSearch, setFocusedSearch] = useState(false)
-
-  const [closeDisplayOptMenuOnBlur] = useCloseOnBlur(displayOptionsMenuRef, setShowDisplayOptionsMenu)
 
   const isFilesSmartView = useMemo(
     () => navigationController.selected?.uuid === SystemViewId.Files,
@@ -205,10 +196,6 @@ const ContentListView: FunctionComponent<Props> = ({
     noteTagsController.reloadTagsContainerMaxWidth()
   }, [noteTagsController])
 
-  const toggleDisplayOptionsMenu = useCallback(() => {
-    setShowDisplayOptionsMenu(!showDisplayOptionsMenu)
-  }, [showDisplayOptionsMenu])
-
   const addButtonLabel = useMemo(
     () => (isFilesSmartView ? 'Upload file' : 'Create a new note in the selected tag'),
     [isFilesSmartView],
@@ -224,17 +211,13 @@ const ContentListView: FunctionComponent<Props> = ({
       <div className="content">
         <div id="items-title-bar" className="section-title-bar">
           <div id="items-title-bar-container">
-            <div className="section-title-bar-header">
-              <div className="sk-h2 font-semibold title">{panelTitle}</div>
-              <button
-                className="flex items-center px-5 py-1 bg-contrast hover:brightness-130 color-text border-0 cursor-pointer"
-                title={addButtonLabel}
-                aria-label={addButtonLabel}
-                onClick={addNewItem}
-              >
-                <Icon type="add" className="w-3.5 h-3.5" />
-              </button>
-            </div>
+            <ContentListHeader
+              application={application}
+              panelTitle={panelTitle}
+              addButtonLabel={addButtonLabel}
+              addNewItem={addNewItem}
+              isFilesSmartView={isFilesSmartView}
+            />
             <div className="filter-section" role="search">
               <div>
                 <input
@@ -267,38 +250,6 @@ const ContentListView: FunctionComponent<Props> = ({
               accountMenuController={accountMenuController}
               noAccountWarningController={noAccountWarningController}
             />
-          </div>
-          <div id="items-menu-bar" className="sn-component" ref={displayOptionsMenuRef}>
-            <div className="sk-app-bar no-edges">
-              <div className="left">
-                <Disclosure open={showDisplayOptionsMenu} onChange={toggleDisplayOptionsMenu}>
-                  <DisclosureButton
-                    className={`sk-app-bar-item bg-contrast color-text border-0 focus:shadow-none ${
-                      showDisplayOptionsMenu ? 'selected' : ''
-                    }`}
-                    onBlur={closeDisplayOptMenuOnBlur}
-                  >
-                    <div className="sk-app-bar-item-column">
-                      <div className="sk-label">Options</div>
-                    </div>
-                    <div className="sk-app-bar-item-column">
-                      <div className="sk-sublabel">{optionsSubtitle}</div>
-                    </div>
-                  </DisclosureButton>
-                  <DisclosurePanel onBlur={closeDisplayOptMenuOnBlur}>
-                    {showDisplayOptionsMenu && (
-                      <ContentListOptionsMenu
-                        application={application}
-                        closeDisplayOptionsMenu={toggleDisplayOptionsMenu}
-                        closeOnBlur={closeDisplayOptMenuOnBlur}
-                        isOpen={showDisplayOptionsMenu}
-                        navigationController={navigationController}
-                      />
-                    )}
-                  </DisclosurePanel>
-                </Disclosure>
-              </div>
-            </div>
           </div>
         </div>
         {completedFullSync && !renderedItems.length ? <p className="empty-items-list faded">No items.</p> : null}

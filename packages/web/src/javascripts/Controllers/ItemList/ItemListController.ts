@@ -18,7 +18,7 @@ import {
   FileViewController,
   FileItem,
 } from '@standardnotes/snjs'
-import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
+import { action, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { WebDisplayOptions } from './WebDisplayOptions'
@@ -198,8 +198,6 @@ export class ItemListController extends AbstractViewController implements Intern
       setShowDisplayOptionsMenu: action,
       onFilterEnter: action,
       handleFilterTextChanged: action,
-
-      optionsSubtitle: computed,
     })
 
     window.onresize = () => {
@@ -501,40 +499,6 @@ export class ItemListController extends AbstractViewController implements Intern
     }
 
     return this.createNewNote()
-  }
-
-  get optionsSubtitle(): string {
-    let base = ''
-
-    if (this.displayOptions.sortBy === CollectionSort.CreatedAt) {
-      base += ' Date Added'
-    } else if (this.displayOptions.sortBy === CollectionSort.UpdatedAt) {
-      base += ' Date Modified'
-    } else if (this.displayOptions.sortBy === CollectionSort.Title) {
-      base += ' Title'
-    }
-
-    if (this.displayOptions.includeArchived) {
-      base += ' | + Archived'
-    }
-
-    if (this.displayOptions.includeTrashed) {
-      base += ' | + Trashed'
-    }
-
-    if (!this.displayOptions.includePinned) {
-      base += ' | – Pinned'
-    }
-
-    if (!this.displayOptions.includeProtected) {
-      base += ' | – Protected'
-    }
-
-    if (this.displayOptions.sortDirection === 'asc') {
-      base += ' | Reversed'
-    }
-
-    return base
   }
 
   paginate = () => {
