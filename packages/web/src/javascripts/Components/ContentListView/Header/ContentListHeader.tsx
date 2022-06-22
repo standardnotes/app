@@ -48,7 +48,7 @@ const ContentListHeader = ({
     <div className="section-title-bar-header">
       <div className="flex flex-col">
         <div className="text-lg font-semibold title">{panelTitle}</div>
-        {optionsSubtitle && <div className="text-xs">{optionsSubtitle}</div>}
+        {optionsSubtitle && <div className="text-xs color-passive-0">{optionsSubtitle}</div>}
       </div>
       <div className="flex">
         <div className="relative" ref={displayOptionsContainerRef}>
