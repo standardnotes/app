@@ -32,19 +32,19 @@ module.exports = {
       patterns: [
         {
           from: path.resolve(__dirname, 'node_modules/codemirror/lib'),
-          to: path.resolve(__dirname, 'vendor/codemirror/lib'),
+          to: path.resolve(__dirname, 'dist/codemirror/lib'),
         },
         {
           from: path.resolve(__dirname, 'node_modules/codemirror/mode'),
-          to: path.resolve(__dirname, 'vendor/codemirror/mode'),
+          to: path.resolve(__dirname, 'dist/codemirror/mode'),
         },
         {
           from: path.resolve(__dirname, 'node_modules/codemirror/addon'),
-          to: path.resolve(__dirname, 'vendor/codemirror/addon'),
+          to: path.resolve(__dirname, 'dist/codemirror/addon'),
         },
         {
           from: path.resolve(__dirname, 'node_modules/codemirror/keymap/vim.js'),
-          to: path.resolve(__dirname, 'vendor/codemirror/keymap'),
+          to: path.resolve(__dirname, 'dist/codemirror/keymap'),
         },
         {
           from: require.resolve('@standardnotes/component-relay/dist/dist.js'),
