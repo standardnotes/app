@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/authenticator@2.0.14...@standardnotes/authenticator@2.1.0-alpha.0) (2022-06-22)
+
+### Bug Fixes
+
+* components scripts ([#1136](https://github.com/standardnotes/app/issues/1136)) ([e80b4d0](https://github.com/standardnotes/app/commit/e80b4d0ffad495c758b593c30e1c4c754dda9b7e))
+
+### Features
+
+* optional secret field ([#1115](https://github.com/standardnotes/app/issues/1115)) ([7c0938b](https://github.com/standardnotes/app/commit/7c0938b877f21787dd53fbf46e591487ef02a1c8))
+
 ## [2.0.14](https://github.com/standardnotes/app/compare/@standardnotes/authenticator@2.0.14-alpha.0...@standardnotes/authenticator@2.0.14) (2022-06-18)
 
 **Note:** Version bump only for package @standardnotes/authenticator

@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/titanium-theme",
-  "version": "1.2.11",
+  "version": "1.2.12-alpha.0",
   "main": "dist/dist.css",
   "private": true,
   "sn": {
