@@ -1,12 +1,5 @@
-import {
-  base32ToHex,
-  leftpad,
-  decToHex,
-  bufToHex,
-  hextoBuf,
-  hexToBytes
-} from '@Lib/utils';
-export { secretPattern, parseKeyUri } from '@Lib/utils';
+import { base32ToHex, bufToHex, decToHex, hextoBuf, hexToBytes, leftpad } from '@Lib/utils'
+export { parseKeyUri, secretPattern } from '@Lib/utils'
 
 class Hotp {
   /**
@@ -25,25 +18,25 @@ class Hotp {
    *
    */
   async gen(secret, opt) {
-    var key = base32ToHex(secret) || '';
-    opt = opt || {};
-    var counter = opt.counter || 0;
+    var key = base32ToHex(secret) || ''
+    opt = opt || {}
+    var counter = opt.counter || 0
 
-    var hexCounter = leftpad(decToHex(counter), 16, '0');
-    var digest = await this.createHmac('SHA-1', key, hexCounter);
-    var h = hexToBytes(digest);
+    var hexCounter = leftpad(decToHex(counter), 16, '0')
+    var digest = await this.createHmac('SHA-1', key, hexCounter)
+    var h = hexToBytes(digest)
 
     // Truncate
-    var offset = h[h.length - 1] & 0xf;
+    var offset = h[h.length - 1] & 0xf
     var v =
       ((h[offset] & 0x7f) << 24) |
       ((h[offset + 1] & 0xff) << 16) |
       ((h[offset + 2] & 0xff) << 8) |
-      (h[offset + 3] & 0xff);
+      (h[offset + 3] & 0xff)
 
-    v = (v % 1000000) + '';
+    v = (v % 1000000) + ''
 
-    return Array(7 - v.length).join('0') + v;
+    return Array(7 - v.length).join('0') + v
   }
 
   /**
@@ -76,23 +69,23 @@ class Hotp {
    *
    */
   async verify(token, key, opt) {
-    opt = opt || {};
-    var window = opt.window || 50;
-    var counter = opt.counter || 0;
+    opt = opt || {}
+    var window = opt.window || 50
+    var counter = opt.counter || 0
 
     // Now loop through from C to C + W to determine if there is
     // a correct code
     for (var i = counter - window; i <= counter + window; ++i) {
-      opt.counter = i;
+      opt.counter = i
       if ((await this.gen(key, opt)) === token) {
         // We have found a matching code, trigger callback
         // and pass offset
-        return { delta: i - counter };
+        return { delta: i - counter }
       }
     }
 
     // If we get to here then no codes have matched, return null
-    return null;
+    return null
   }
 
   async createHmac(alg, key, str) {
@@ -102,17 +95,17 @@ class Hotp {
       {
         // algorithm details
         name: 'HMAC',
-        hash: { name: alg }
+        hash: { name: alg },
       },
       false, // export = false
-      ['sign'] // what this key can do
-    );
-    const sig = await window.crypto.subtle.sign('HMAC', hmacKey, hextoBuf(str));
-    return bufToHex(sig);
+      ['sign'], // what this key can do
+    )
+    const sig = await window.crypto.subtle.sign('HMAC', hmacKey, hextoBuf(str))
+    return bufToHex(sig)
   }
 }
 
-export const hotp = new Hotp();
+export const hotp = new Hotp()
 
 class Totp {
   /**
@@ -133,15 +126,15 @@ class Totp {
    *
    */
   async gen(key, opt) {
-    opt = opt || {};
-    var time = opt.time || 30;
-    var _t = Date.now();
+    opt = opt || {}
+    var time = opt.time || 30
+    var _t = Date.now()
 
     // Determine the value of the counter, C
     // This is the number of time steps in seconds since T0
-    opt.counter = Math.floor(_t / 1000 / time);
+    opt.counter = Math.floor(_t / 1000 / time)
 
-    return hotp.gen(key, opt);
+    return hotp.gen(key, opt)
   }
 
   /**
@@ -176,16 +169,16 @@ class Totp {
    *
    */
   async verify(token, key, opt) {
-    opt = opt || {};
-    var time = opt.time || 30;
-    var _t = Date.now();
+    opt = opt || {}
+    var time = opt.time || 30
+    var _t = Date.now()
 
     // Determine the value of the counter, C
     // This is the number of time steps in seconds since T0
-    opt.counter = Math.floor(_t / 1000 / time);
+    opt.counter = Math.floor(_t / 1000 / time)
 
-    return hotp.verify(token, key, opt);
+    return hotp.verify(token, key, opt)
   }
 }
 
-export const totp = new Totp();
+export const totp = new Totp()

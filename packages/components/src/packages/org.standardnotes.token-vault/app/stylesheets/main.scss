@@ -1,25 +1,24 @@
-@import '~stylekit';
+@import '~@standardnotes/styles/src/Styles/main.scss';
 
 body,
 html {
-  font-family: var(--sn-stylekit-sans-serif-font);
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  font-size: var(--sn-stylekit-base-font-size);
-  background-color: transparent;
+  background-color: var(--sn-stylekit-contrast-background-color);
+  padding: 0 !important;
 }
 
 * {
   // To prevent gray flash when focusing input on mobile Safari
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  font-family: var(--sn-stylekit-sans-serif-font);
 }
 
 .sn-component {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+
+  @media screen and (max-width: 420px) {
+    min-height: -webkit-fill-available;
+  }
 
   .sk-panel-content {
     height: inherit !important;
@@ -126,7 +125,6 @@ html {
     transition: visibility 0s 500ms, opacity 500ms ease-out;
   }
 }
-
 
 /* entry default styles */
 .auth-entry {
@@ -291,7 +289,7 @@ html {
   padding: 5px;
   background: var(--sn-stylekit-contrast-background-color);
   border-radius: 1px;
-  box-shadow: 0 0 0 1px rgba(0,0,0,.1);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
   display: inline-block;
   cursor: pointer;
 }
@@ -409,9 +407,37 @@ html {
 }
 
 // Show palette icon on the first 4 color rectangles.
-div.twitter-picker > div:nth-child(3) > span:nth-child(-n+4) > div {
+div.twitter-picker > div:nth-child(3) > span:nth-child(-n + 4) > div {
   background-image: url('../assets/svg/palette.svg') !important;
   background-repeat: no-repeat !important;
   background-position: top 4px right 4px !important;
   background-size: 12px 12px !important;
+}
+
+.grab-cursor {
+  cursor: grab;
+}
+
+.left-header {
+  display: flex;
+
+  @media screen and (max-width: 600px) {
+    flex-direction: column;
+    flex-wrap: wrap;
+  }
+
+  .sk-input-group {
+    > * {
+      display: inline-block;
+      vertical-align: middle;
+
+      &:not(:first-child) {
+        margin-left: 0 !important;
+      }
+
+      &:not(:last-child) {
+        margin-right: 0.73125rem;
+      }
+    }
+  }
 }

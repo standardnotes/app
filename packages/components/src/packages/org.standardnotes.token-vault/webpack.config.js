@@ -1,11 +1,11 @@
-const path = require('path');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
   context: __dirname,
   entry: [
-    path.resolve(__dirname, 'app/main.js'),
+    path.resolve(__dirname, 'app/index.js'),
     path.resolve(__dirname, 'app/stylesheets/main.scss')
   ],
   output: {
@@ -30,11 +30,8 @@ module.exports = {
       },
       {
         test: /\.js[x]?$/,
-        include: [
-          path.resolve(__dirname, 'app')
-        ],
         exclude: /node_modules/,
-        use: ['babel-loader']
+        use: ['babel-loader'],
       },
       {
         test: /\.svg$/i,
@@ -60,7 +57,6 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx'],
     alias: {
-      stylekit: require.resolve('sn-stylekit/dist/stylekit.css'),
       '@Components': path.resolve(__dirname, 'app/components'),
       '@Lib': path.resolve(__dirname, 'app/lib')
     }
@@ -75,4 +71,4 @@ module.exports = {
       filename: 'index.html'
     })
   ]
-};
+}
