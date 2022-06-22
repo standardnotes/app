@@ -4,10 +4,11 @@
   "version": "1.3.9",
   "main": "dist/dist.js",
   "scripts": {
-    "skip:components:lint": "eslint app/ --ext .js",
-    "components:lint:fix": "yarn lint --fix",
+    "skip:lint": "eslint app/ --ext .js",
+    "lint:fix": "eslint app/ --ext .js --fix",
     "components:compile": "webpack --config webpack.prod.js",
-    "start": "webpack serve --config webpack.dev.js --progress --hot"
+    "start": "webpack serve --config webpack.dev.js --progress --hot",
+    "test": "echo \"Error: no test specified\" && exit 0"
   },
   "sn": {
     "main": "dist/index.html"

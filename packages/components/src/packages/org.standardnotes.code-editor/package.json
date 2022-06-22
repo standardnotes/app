@@ -9,9 +9,10 @@
   "scripts": {
     "start": "http-server . --cors -p8001 & webpack --progress --config webpack.dev.js",
     "components:compile": "webpack --config webpack.prod.js",
-    "skip:components:lint": "eslint ./src --ext .js",
-    "components:lint:fix": "yarn lint --fix",
-    "components:clean": "rm -rf ./vendor"
+    "skip:lint": "eslint src/ --ext .js",
+    "lint:fix": "eslint src/ --ext .js --fix",
+    "clean": "rm -rf ./vendor",
+    "test": "echo \"Error: no test specified\" && exit 0"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.10",

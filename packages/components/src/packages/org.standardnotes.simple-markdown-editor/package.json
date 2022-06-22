@@ -4,10 +4,12 @@
   "version": "1.4.6",
   "main": "dist/dist.js",
   "scripts": {
-    "skip:components:lint": "eslint --cache --ext .jsx,.js --format=node_modules/eslint-formatter-pretty .",
+    "skip:lint": "eslint --cache --ext .jsx,.js --format=node_modules/eslint-formatter-pretty .",
+    "lint:fix": "eslint --cache --ext .jsx,.js --format=node_modules/eslint-formatter-pretty .",
     "components:compile": "webpack",
     "start": "webpack-dev-server --devtool eval --progress --port 8001 --hot --content-base app",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 1"
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 1",
+    "test": "echo \"Error: no test specified\" && exit 0"
   },
   "sn": {
     "main": "dist/index.html"

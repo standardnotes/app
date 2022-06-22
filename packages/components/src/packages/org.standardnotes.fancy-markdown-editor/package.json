@@ -5,7 +5,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "components:compile": "grunt"
+    "components:compile": "grunt",
+    "test": "echo \"Error: no test specified\" && exit 0"
   },
   "author": "Standard Notes",
   "devDependencies": {
