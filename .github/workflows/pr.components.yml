@@ -23,9 +23,10 @@ jobs:
       - name: Lint components
         run: yarn lint
         working-directory: packages/components
+
       - name: Build components
-        run: yarn build
-        working-directory: packages/components
+        run: yarn build:components
+
       - name: Test components
         run: yarn test
         working-directory: packages/components
