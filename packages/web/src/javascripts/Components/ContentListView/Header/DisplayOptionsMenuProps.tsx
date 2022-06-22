@@ -10,7 +10,6 @@ export type DisplayOptionsMenuProps = {
     getPreference: WebApplication['getPreference']
     setPreference: WebApplication['setPreference']
   }
-  closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
   closeDisplayOptionsMenu: () => void
   isOpen: boolean
   isFilesSmartView: boolean

@@ -10,7 +10,6 @@ import { DisplayOptionsMenuProps } from './DisplayOptionsMenuProps'
 
 const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   closeDisplayOptionsMenu,
-  closeOnBlur,
   application,
   isOpen,
   isFilesSmartView,
@@ -114,7 +113,6 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         type={MenuItemType.RadioButton}
         onClick={toggleSortByDateModified}
         checked={sortBy === CollectionSort.UpdatedAt}
-        onBlur={closeOnBlur}
       >
         <div className="flex flex-grow items-center justify-between ml-2">
           <span>Date modified</span>
@@ -132,7 +130,6 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         type={MenuItemType.RadioButton}
         onClick={toggleSortByCreationDate}
         checked={sortBy === CollectionSort.CreatedAt}
-        onBlur={closeOnBlur}
       >
         <div className="flex flex-grow items-center justify-between ml-2">
           <span>Creation date</span>
@@ -150,7 +147,6 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         type={MenuItemType.RadioButton}
         onClick={toggleSortByTitle}
         checked={sortBy === CollectionSort.Title}
-        onBlur={closeOnBlur}
       >
         <div className="flex flex-grow items-center justify-between ml-2">
           <span>Title</span>
@@ -171,7 +167,6 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
           className="py-1 hover:bg-contrast focus:bg-info-backdrop"
           checked={!hidePreview}
           onChange={toggleHidePreview}
-          onBlur={closeOnBlur}
         >
           <div className="flex flex-col max-w-3/4">Show note preview</div>
         </MenuItem>
@@ -181,7 +176,6 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
         checked={!hideDate}
         onChange={toggleHideDate}
-        onBlur={closeOnBlur}
       >
         Show date
       </MenuItem>
@@ -190,7 +184,6 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
         checked={!hideTags}
         onChange={toggleHideTags}
-        onBlur={closeOnBlur}
       >
         Show tags
       </MenuItem>
@@ -199,7 +192,6 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
         checked={!hideEditorIcon}
         onChange={toggleEditorIcon}
-        onBlur={closeOnBlur}
       >
         Show icon
       </MenuItem>
@@ -210,7 +202,6 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
         checked={!hidePinned}
         onChange={toggleHidePinned}
-        onBlur={closeOnBlur}
       >
         Show pinned
       </MenuItem>
@@ -219,7 +210,6 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
         checked={!hideProtected}
         onChange={toggleHideProtected}
-        onBlur={closeOnBlur}
       >
         Show protected
       </MenuItem>
@@ -228,7 +218,6 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
         checked={showArchived}
         onChange={toggleShowArchived}
-        onBlur={closeOnBlur}
       >
         Show archived
       </MenuItem>
@@ -237,7 +226,6 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
         checked={showTrashed}
         onChange={toggleShowTrashed}
-        onBlur={closeOnBlur}
       >
         Show trashed
       </MenuItem>

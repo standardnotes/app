@@ -1,5 +1,4 @@
 import { WebApplication } from '@/Application/Application'
-import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { memo, useCallback, useRef, useState } from 'react'
 import Icon from '../../Icon/Icon'
@@ -19,12 +18,10 @@ type Props = {
 
 const ContentListHeader = ({ application, panelTitle, addButtonLabel, addNewItem, isFilesSmartView }: Props) => {
   const [displayOptionsMenuPosition, setDisplayOptionsMenuPosition] = useState<DisplayOptionsMenuPositionProps>()
-  const displayOptionsMenuRef = useRef<HTMLDivElement>(null)
+  const displayOptionsContainerRef = useRef<HTMLDivElement>(null)
   const displayOptionsButtonRef = useRef<HTMLButtonElement>(null)
 
   const [showDisplayOptionsMenu, setShowDisplayOptionsMenu] = useState(false)
-
-  const [closeDisplayOptMenuOnBlur] = useCloseOnBlur(displayOptionsMenuRef, setShowDisplayOptionsMenu)
 
   const toggleDisplayOptionsMenu = useCallback(() => {
     if (displayOptionsButtonRef.current) {
@@ -41,7 +38,7 @@ const ContentListHeader = ({ application, panelTitle, addButtonLabel, addNewItem
   return (
     <div className="section-title-bar-header">
       <div className="text-lg font-semibold title">{panelTitle}</div>
-      <div className="relative" ref={displayOptionsMenuRef}>
+      <div className="relative" ref={displayOptionsContainerRef}>
         <Disclosure open={showDisplayOptionsMenu} onChange={toggleDisplayOptionsMenu}>
           <DisclosureButton
             className={`flex justify-center items-center min-w-8 h-8
@@ -49,17 +46,16 @@ const ContentListHeader = ({ application, panelTitle, addButtonLabel, addNewItem
               showDisplayOptionsMenu ? 'bg-contrast' : 'bg-transparent'
             } bg-color-padding hover:bg-contrast focus:bg-contrast color-neutral
             border-1 border-solid border-main rounded-full cursor-pointer`}
-            onBlur={closeDisplayOptMenuOnBlur}
             ref={displayOptionsButtonRef}
           >
             <Icon type="sort-descending" className="w-5 h-5" />
           </DisclosureButton>
-          <DisclosurePanel onBlur={closeDisplayOptMenuOnBlur}>
+          <DisclosurePanel>
             {showDisplayOptionsMenu && displayOptionsMenuPosition && (
               <DisplayOptionsMenuPortal
                 application={application}
                 closeDisplayOptionsMenu={toggleDisplayOptionsMenu}
-                closeOnBlur={closeDisplayOptMenuOnBlur}
+                containerRef={displayOptionsContainerRef}
                 isOpen={showDisplayOptionsMenu}
                 isFilesSmartView={isFilesSmartView}
                 top={displayOptionsMenuPosition.top}
