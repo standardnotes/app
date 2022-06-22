@@ -17,7 +17,7 @@
   @extend .rounded;
   @extend .box-shadow;
 
-  z-index: $z-index-dropdown-menu;
+  z-index: var(--z-index-dropdown-menu);
 
   &.sn-dropdown--anchor-right {
     right: 0;

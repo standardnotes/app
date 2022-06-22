@@ -1,7 +1,6 @@
 $z-index-editor-content: 10;
 
 $z-index-editor-title-bar: 100;
-$z-index-dropdown-menu: 1002;
 
 $z-index-resizer-overlay: 1000;
 
@@ -20,6 +19,7 @@ $z-index-modal: 10000;
 
 :root {
   --z-index-panel-resizer: 1001;
+  --z-index-dropdown-menu: 1002;
 }
 
 html {
