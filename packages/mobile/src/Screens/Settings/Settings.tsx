@@ -1,4 +1,3 @@
-import { WorkspacesEnabled } from '@Lib/constants'
 import { useSignedIn } from '@Lib/SnjsHelperHooks'
 import { useSafeApplicationContext } from '@Root/Hooks/useSafeApplicationContext'
 import { ModalStackNavigationProp } from '@Root/ModalStack'
@@ -56,7 +55,7 @@ export const Settings = (props: Props) => {
     <Container keyboardShouldPersistTaps={'always'} keyboardDismissMode={'interactive'}>
       <AuthSection title="Account" signedIn={signedIn} />
       <OptionsSection encryptionAvailable={!!encryptionAvailable} title="Options" />
-      {WorkspacesEnabled && <WorkspacesSection />}
+      <WorkspacesSection />
       <PreferencesSection />
       {application.hasAccount() && isEntitledToFiles && <FilesSection />}
       <SecuritySection
