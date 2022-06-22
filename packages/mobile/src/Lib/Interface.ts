@@ -5,6 +5,7 @@ import {
   ApplicationIdentifier,
   DeviceInterface,
   Environment,
+  LegacyMobileKeychainStructure,
   LegacyRawKeychainValue,
   NamespacedRootKeyInKeychain,
   RawKeychainValue,
@@ -28,6 +29,12 @@ const LEGACY_IDENTIFIER = 'standardnotes'
  */
 const isLegacyIdentifier = function (identifier: ApplicationIdentifier) {
   return identifier && identifier === LEGACY_IDENTIFIER
+}
+
+function isLegacyMobileKeychain(
+  x: LegacyMobileKeychainStructure | RawKeychainValue,
+): x is LegacyMobileKeychainStructure {
+  return x.ak != undefined
 }
 
 const showLoadFailForItemIds = (failedItemIds: string[]) => {
@@ -227,25 +234,23 @@ export class MobileDeviceInterface implements DeviceInterface {
   ): Promise<NamespacedRootKeyInKeychain | undefined> {
     const keychain = await this.getRawKeychainValue()
 
-    if (isLegacyIdentifier(identifier)) {
-      return keychain as unknown as NamespacedRootKeyInKeychain
-    }
-
     if (!keychain) {
       return
     }
 
-    return keychain[identifier]
+    const namespacedValue = keychain[identifier]
+
+    if (!namespacedValue && isLegacyIdentifier(identifier)) {
+      return keychain as unknown as NamespacedRootKeyInKeychain
+    }
+
+    return namespacedValue
   }
 
   async setNamespacedKeychainValue(
     value: NamespacedRootKeyInKeychain,
     identifier: ApplicationIdentifier,
   ): Promise<void> {
-    if (isLegacyIdentifier(identifier)) {
-      await Keychain.setKeys(value)
-    }
-
     let keychain = await this.getRawKeychainValue()
 
     if (!keychain) {
@@ -259,13 +264,14 @@ export class MobileDeviceInterface implements DeviceInterface {
   }
 
   async clearNamespacedKeychainValue(identifier: ApplicationIdentifier): Promise<void> {
-    if (isLegacyIdentifier(identifier)) {
-      await this.clearRawKeychainValue()
-    }
-
     const keychain = await this.getRawKeychainValue()
 
     if (!keychain) {
+      return
+    }
+
+    if (!keychain[identifier] && isLegacyIdentifier(identifier) && isLegacyMobileKeychain(keychain)) {
+      await this.clearRawKeychainValue()
       return
     }
 

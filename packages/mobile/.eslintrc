@@ -8,7 +8,8 @@
     "no-console": "warn",
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-var-requires": "off",
-    "eqeqeq": ["off"]
+    "eqeqeq": ["off"],
+    "no-void": ["off"]
   },
   "ignorePatterns": ["metro.config.js"]
 }
