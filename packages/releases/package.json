@@ -16,13 +16,11 @@
     "version": "yarn build"
   },
   "devDependencies": {
-    "@types/node": "*",
-    "typescript": "*"
-  },
-  "dependencies": {
     "@standardnotes/components-meta": "workspace:^",
     "@standardnotes/desktop": "workspace:^",
     "@standardnotes/mobile": "workspace:^",
-    "@standardnotes/web": "workspace:^"
+    "@standardnotes/web": "workspace:^",
+    "@types/node": "*",
+    "typescript": "*"
   }
 }
