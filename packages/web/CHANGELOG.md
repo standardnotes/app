@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.24.0-alpha.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.24.0-alpha.6...@standardnotes/web@3.24.0-alpha.7) (2022-06-22)
+
+### Features
+
+* move display options to icon button in header ([#1138](https://github.com/standardnotes/app/issues/1138)) ([b0911b1](https://github.com/standardnotes/app/commit/b0911b1574b4420e086be50404712f281a76a4be))
+
 # [3.24.0-alpha.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.24.0-alpha.5...@standardnotes/web@3.24.0-alpha.6) (2022-06-22)
 
 **Note:** Version bump only for package @standardnotes/web
