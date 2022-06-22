@@ -18,5 +18,11 @@
   "devDependencies": {
     "@types/node": "*",
     "typescript": "*"
+  },
+  "dependencies": {
+    "@standardnotes/components-meta": "workspace:^",
+    "@standardnotes/desktop": "workspace:^",
+    "@standardnotes/mobile": "workspace:^",
+    "@standardnotes/web": "workspace:^"
   }
 }

@@ -5114,7 +5114,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/components-meta@workspace:*, @standardnotes/components-meta@workspace:packages/components":
+"@standardnotes/components-meta@workspace:*, @standardnotes/components-meta@workspace:^, @standardnotes/components-meta@workspace:packages/components":
   version: 0.0.0-use.local
   resolution: "@standardnotes/components-meta@workspace:packages/components"
   dependencies:
@@ -5146,7 +5146,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/desktop@workspace:packages/desktop":
+"@standardnotes/desktop@workspace:^, @standardnotes/desktop@workspace:packages/desktop":
   version: 0.0.0-use.local
   resolution: "@standardnotes/desktop@workspace:packages/desktop"
   dependencies:
@@ -5601,7 +5601,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/mobile@workspace:packages/mobile":
+"@standardnotes/mobile@workspace:^, @standardnotes/mobile@workspace:packages/mobile":
   version: 0.0.0-use.local
   resolution: "@standardnotes/mobile@workspace:packages/mobile"
   dependencies:
@@ -5737,6 +5737,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/releases@workspace:packages/releases"
   dependencies:
+    "@standardnotes/components-meta": "workspace:^"
+    "@standardnotes/desktop": "workspace:^"
+    "@standardnotes/mobile": "workspace:^"
+    "@standardnotes/web": "workspace:^"
     "@types/node": "*"
     typescript: "*"
   languageName: unknown
@@ -6069,7 +6073,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/web@workspace:*, @standardnotes/web@workspace:packages/web":
+"@standardnotes/web@workspace:*, @standardnotes/web@workspace:^, @standardnotes/web@workspace:packages/web":
   version: 0.0.0-use.local
   resolution: "@standardnotes/web@workspace:packages/web"
   dependencies:
