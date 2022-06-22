@@ -67,3 +67,11 @@ jobs:
           git checkout develop
           git pull origin main
           git push origin develop
+
+      - name: Notify Release Update
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.CI_PAT_TOKEN }}
+          repository: ${{ secrets.RELEASES_EVENT_RECEIVING_REPO }
+          event-type: releases-updated-event
