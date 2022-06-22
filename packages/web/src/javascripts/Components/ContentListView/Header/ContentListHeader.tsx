@@ -15,9 +15,17 @@ type Props = {
   addButtonLabel: string
   addNewItem: () => void
   isFilesSmartView: boolean
+  optionsSubtitle?: string
 }
 
-const ContentListHeader = ({ application, panelTitle, addButtonLabel, addNewItem, isFilesSmartView }: Props) => {
+const ContentListHeader = ({
+  application,
+  panelTitle,
+  addButtonLabel,
+  addNewItem,
+  isFilesSmartView,
+  optionsSubtitle,
+}: Props) => {
   const [displayOptionsMenuPosition, setDisplayOptionsMenuPosition] = useState<DisplayOptionsMenuPositionProps>()
   const displayOptionsContainerRef = useRef<HTMLDivElement>(null)
   const displayOptionsButtonRef = useRef<HTMLButtonElement>(null)
@@ -38,35 +46,40 @@ const ContentListHeader = ({ application, panelTitle, addButtonLabel, addNewItem
 
   return (
     <div className="section-title-bar-header">
-      <div className="text-lg font-semibold title">{panelTitle}</div>
-      <div className="relative" ref={displayOptionsContainerRef}>
-        <Disclosure open={showDisplayOptionsMenu} onChange={toggleDisplayOptionsMenu}>
-          <StyledDisplayOptionsButton pressed={showDisplayOptionsMenu} ref={displayOptionsButtonRef}>
-            <Icon type="sort-descending" className="w-5 h-5" />
-          </StyledDisplayOptionsButton>
-          <DisclosurePanel>
-            {showDisplayOptionsMenu && displayOptionsMenuPosition && (
-              <DisplayOptionsMenuPortal
-                application={application}
-                closeDisplayOptionsMenu={toggleDisplayOptionsMenu}
-                containerRef={displayOptionsContainerRef}
-                isOpen={showDisplayOptionsMenu}
-                isFilesSmartView={isFilesSmartView}
-                top={displayOptionsMenuPosition.top}
-                left={displayOptionsMenuPosition.left}
-              />
-            )}
-          </DisclosurePanel>
-        </Disclosure>
+      <div className="flex flex-col">
+        <div className="text-lg font-semibold title">{panelTitle}</div>
+        {optionsSubtitle && <div className="text-xs">{optionsSubtitle}</div>}
       </div>
-      <button
-        className="flex justify-center items-center min-w-8 h-8 ml-2 bg-info hover:brightness-130 color-info-contrast border-1 border-solid border-transparent rounded-full cursor-pointer"
-        title={addButtonLabel}
-        aria-label={addButtonLabel}
-        onClick={addNewItem}
-      >
-        <Icon type="add" className="w-5 h-5" />
-      </button>
+      <div className="flex">
+        <div className="relative" ref={displayOptionsContainerRef}>
+          <Disclosure open={showDisplayOptionsMenu} onChange={toggleDisplayOptionsMenu}>
+            <StyledDisplayOptionsButton pressed={showDisplayOptionsMenu} ref={displayOptionsButtonRef}>
+              <Icon type="sort-descending" className="w-5 h-5" />
+            </StyledDisplayOptionsButton>
+            <DisclosurePanel>
+              {showDisplayOptionsMenu && displayOptionsMenuPosition && (
+                <DisplayOptionsMenuPortal
+                  application={application}
+                  closeDisplayOptionsMenu={toggleDisplayOptionsMenu}
+                  containerRef={displayOptionsContainerRef}
+                  isOpen={showDisplayOptionsMenu}
+                  isFilesSmartView={isFilesSmartView}
+                  top={displayOptionsMenuPosition.top}
+                  left={displayOptionsMenuPosition.left}
+                />
+              )}
+            </DisclosurePanel>
+          </Disclosure>
+        </div>
+        <button
+          className="flex justify-center items-center min-w-8 h-8 ml-3 bg-info hover:brightness-130 color-info-contrast border-1 border-solid border-transparent rounded-full cursor-pointer"
+          title={addButtonLabel}
+          aria-label={addButtonLabel}
+          onClick={addNewItem}
+        >
+          <Icon type="add" className="w-5 h-5" />
+        </button>
+      </div>
     </div>
   )
 }

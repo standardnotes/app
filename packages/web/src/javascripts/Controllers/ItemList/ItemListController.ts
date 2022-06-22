@@ -18,7 +18,7 @@ import {
   FileViewController,
   FileItem,
 } from '@standardnotes/snjs'
-import { action, makeObservable, observable, reaction, runInAction } from 'mobx'
+import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { WebDisplayOptions } from './WebDisplayOptions'
@@ -198,6 +198,8 @@ export class ItemListController extends AbstractViewController implements Intern
       setShowDisplayOptionsMenu: action,
       onFilterEnter: action,
       handleFilterTextChanged: action,
+
+      optionsSubtitle: computed,
     })
 
     window.onresize = () => {
@@ -499,6 +501,20 @@ export class ItemListController extends AbstractViewController implements Intern
     }
 
     return this.createNewNote()
+  }
+
+  get optionsSubtitle(): string | undefined {
+    if (!this.displayOptions.includePinned && !this.displayOptions.includeProtected) {
+      return 'Excluding pinned and protected'
+    }
+    if (!this.displayOptions.includePinned) {
+      return 'Excluding pinned'
+    }
+    if (!this.displayOptions.includeProtected) {
+      return 'Excluding protected'
+    }
+
+    return undefined
   }
 
   paginate = () => {

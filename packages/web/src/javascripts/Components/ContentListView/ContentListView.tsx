@@ -57,19 +57,20 @@ const ContentListView: FunctionComponent<Props> = ({
   const itemsViewPanelRef = useRef<HTMLDivElement>(null)
 
   const {
+    clearFilterText,
     completedFullSync,
+    createNewNote,
     noteFilterText,
+    onFilterEnter,
+    optionsSubtitle,
+    paginate,
     panelTitle,
+    panelWidth,
     renderedItems,
-    setNoteFilterText,
     searchBarElement,
     selectNextItem,
     selectPreviousItem,
-    onFilterEnter,
-    clearFilterText,
-    paginate,
-    panelWidth,
-    createNewNote,
+    setNoteFilterText,
   } = itemListController
 
   const { selectedItems } = selectionController
@@ -218,6 +219,7 @@ const ContentListView: FunctionComponent<Props> = ({
               addButtonLabel={addButtonLabel}
               addNewItem={addNewItem}
               isFilesSmartView={isFilesSmartView}
+              optionsSubtitle={optionsSubtitle}
             />
             <div className="filter-section" role="search">
               <div>
