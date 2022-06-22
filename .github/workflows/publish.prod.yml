@@ -1,12 +1,12 @@
-name: Version Bump
+name: Version Bump Main
 
 on:
   push:
-    branches: [ develop, main ]
+    branches: [ main ]
 
 jobs:
   Build:
-    if: contains(github.event.head_commit.message, 'chore(release)') == false
+    if: contains(github.event.head_commit.message, 'chore(release){{':'}} publish main') == false
     runs-on: ubuntu-latest
     env:
       NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
