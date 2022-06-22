@@ -45,22 +45,17 @@ const StyledPanelResizer = styled.div<{
   pressed: boolean
   collapsed: boolean
 }>`
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: var(--z-index-panel-resizer);
-
-  width: 4px;
-  height: 100%;
-
-  cursor: col-resize;
-
   background-color: var(--panel-resizer-background-color);
-
-  opacity: 0;
-
-  border-top: none;
   border-bottom: none;
+  border-top: none;
+  cursor: col-resize;
+  height: 100%;
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 4px;
+  z-index: var(--z-index-panel-resizer);
 
   @keyframes fade {
     0% {
