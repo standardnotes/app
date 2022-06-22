@@ -62,7 +62,7 @@ export const NoteCell = ({
       await application?.mutator.deleteItem(note)
     },
     () => {
-      void changeNote(mutator => {
+      void changeNote((mutator) => {
         mutator.trashed = true
       }, false)
     },
@@ -105,7 +105,7 @@ export const NoteCell = ({
         text: note.pinned ? 'Unpin' : 'Pin',
         key: 'pin',
         callback: () =>
-          changeNote(mutator => {
+          changeNote((mutator) => {
             mutator.pinned = !note.pinned
           }, false),
       })
@@ -123,7 +123,7 @@ export const NoteCell = ({
             return
           }
 
-          void changeNote(mutator => {
+          void changeNote((mutator) => {
             mutator.archived = !note.archived
           }, false)
         },
@@ -133,7 +133,7 @@ export const NoteCell = ({
         text: note.locked ? 'Enable editing' : 'Prevent editing',
         key: 'lock',
         callback: () =>
-          changeNote(mutator => {
+          changeNote((mutator) => {
             mutator.locked = !note.locked
           }, false),
       })
@@ -157,7 +157,7 @@ export const NoteCell = ({
             text: 'Restore',
             key: 'restore-note',
             callback: () => {
-              void changeNote(mutator => {
+              void changeNote((mutator) => {
                 mutator.trashed = false
               }, false)
             },

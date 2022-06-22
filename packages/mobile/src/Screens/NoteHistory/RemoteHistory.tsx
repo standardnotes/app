@@ -70,7 +70,7 @@ export const RemoteHistory: React.FC<Props> = ({ note, onPress }) => {
 
   return (
     <FlatList<RevisionListEntry>
-      keyExtractor={item => item.uuid}
+      keyExtractor={(item) => item.uuid}
       contentContainerStyle={{ paddingBottom: insets.bottom }}
       initialNumToRender={10}
       windowSize={10}

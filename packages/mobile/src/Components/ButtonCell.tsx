@@ -17,7 +17,7 @@ type Props = {
 }
 
 type ContainerProps = Pick<Props, 'maxHeight'> & TableCellProps
-const Container = styled(SectionedTableCellTouchableHighlight).attrs(props => ({
+const Container = styled(SectionedTableCellTouchableHighlight).attrs((props) => ({
   underlayColor: props.theme.stylekitBorderColor,
 }))<ContainerProps>`
   padding-top: ${12}px;
@@ -32,9 +32,9 @@ const ButtonContainer = styled.View``
 
 type ButtonLabelProps = Pick<Props, 'leftAligned' | 'bold' | 'disabled' | 'important'>
 const ButtonLabel = styled.Text<ButtonLabelProps>`
-  text-align: ${props => (props.leftAligned ? 'left' : 'center')};
+  text-align: ${(props) => (props.leftAligned ? 'left' : 'center')};
   text-align-vertical: center;
-  color: ${props => {
+  color: ${(props) => {
     let color = Platform.OS === 'android' ? props.theme.stylekitForegroundColor : props.theme.stylekitInfoColor
     if (props.disabled) {
       color = 'gray'
@@ -43,7 +43,7 @@ const ButtonLabel = styled.Text<ButtonLabelProps>`
     }
     return color
   }};
-  font-size: ${props => props.theme.mainTextFontSize}px;
+  font-size: ${(props) => props.theme.mainTextFontSize}px;
   ${({ bold }) =>
     bold &&
     css`
@@ -56,7 +56,7 @@ const ButtonLabel = styled.Text<ButtonLabelProps>`
     `}
 `
 
-export const ButtonCell: React.FC<Props> = props => (
+export const ButtonCell: React.FC<Props> = (props) => (
   <Container
     first={props.first}
     last={props.last}

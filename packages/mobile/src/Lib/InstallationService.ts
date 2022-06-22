@@ -1,5 +1,5 @@
 import SNReactNative from '@standardnotes/react-native-utils'
-import { ApplicationService, ButtonType, isNullOrUndefined, StorageValueModes } from '@standardnotes/snjs'
+import { ApplicationService, ButtonType, StorageValueModes } from '@standardnotes/snjs'
 import { MobileDeviceInterface } from './Interface'
 
 const FIRST_RUN_KEY = 'first_run'
@@ -14,7 +14,7 @@ export class InstallationService extends ApplicationService {
   }
 
   async markApplicationAsRan() {
-    return this.application?.setValue(FIRST_RUN_KEY, false, StorageValueModes.Nonwrapped)
+    return this.application.deviceInterface.setRawStorageValue(FIRST_RUN_KEY, 'false')
   }
 
   /**
@@ -22,24 +22,20 @@ export class InstallationService extends ApplicationService {
    * AsyncStorage failures, we want to confirm with the user before deleting anything.
    */
   async needsWipe() {
-    const hasNormalKeys = this.application?.hasAccount() || this.application?.hasPasscode()
-    const deviceInterface = this.application?.deviceInterface as MobileDeviceInterface
-    const keychainKey = await deviceInterface?.getRawKeychainValue()
-    const hasKeychainValue = !(
-      isNullOrUndefined(keychainKey) ||
-      (typeof keychainKey === 'object' && Object.keys(keychainKey).length === 0)
-    )
+    const hasAccountOrPasscode = this.application.hasAccount() || this.application?.hasPasscode()
+    const deviceInterface = this.application.deviceInterface as MobileDeviceInterface
+    const keychainKey = await deviceInterface.getNamespacedKeychainValue(this.application.identifier)
 
-    const firstRunKey = await this.application?.getValue(FIRST_RUN_KEY, StorageValueModes.Nonwrapped)
-    let firstRunKeyMissing = isNullOrUndefined(firstRunKey)
-    /*
-     * Because of migration failure first run key might not be in non wrapped storage
-     */
+    const hasKeychainValue = keychainKey != undefined
+
+    const firstRunKey = await this.application.deviceInterface.getRawStorageValue(FIRST_RUN_KEY)
+    let firstRunKeyMissing = firstRunKey == undefined
     if (firstRunKeyMissing) {
-      const fallbackFirstRunValue = await this.application?.deviceInterface?.getRawStorageValue(FIRST_RUN_KEY)
-      firstRunKeyMissing = isNullOrUndefined(fallbackFirstRunValue)
+      const fallbackFirstRunValue = await this.application.getValue(FIRST_RUN_KEY, StorageValueModes.Nonwrapped)
+      firstRunKeyMissing = fallbackFirstRunValue == undefined
     }
-    return !hasNormalKeys && hasKeychainValue && firstRunKeyMissing
+
+    return !hasAccountOrPasscode && hasKeychainValue && firstRunKeyMissing
   }
 
   /**

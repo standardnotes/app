@@ -1,4 +1,6 @@
+import { WorkspacesEnabled } from '@Lib/constants'
 import AsyncStorage from '@react-native-community/async-storage'
+import SNReactNative from '@standardnotes/react-native-utils'
 import {
   ApplicationIdentifier,
   DeviceInterface,
@@ -32,7 +34,7 @@ const showLoadFailForItemIds = (failedItemIds: string[]) => {
   let text =
     'The following items could not be loaded. This may happen if you are in low-memory conditions, or if the note is very large in size. We recommend breaking up large notes into smaller chunks using the desktop or web app.\n\nItems:\n'
   let index = 0
-  text += failedItemIds.map(id => {
+  text += failedItemIds.map((id) => {
     let result = id
     if (index !== failedItemIds.length - 1) {
       result += '\n'
@@ -79,8 +81,8 @@ export class MobileDeviceInterface implements DeviceInterface {
 
   private async getAllDatabaseKeys(identifier: ApplicationIdentifier) {
     const keys = await AsyncStorage.getAllKeys()
-    const filtered = keys.filter(key => {
-      return key.includes(this.getDatabaseKeyPrefix(identifier))
+    const filtered = keys.filter((key) => {
+      return key.startsWith(this.getDatabaseKeyPrefix(identifier))
     })
     return filtered
   }
@@ -205,7 +207,7 @@ export class MobileDeviceInterface implements DeviceInterface {
       return
     }
     await Promise.all(
-      payloads.map(item => {
+      payloads.map((item) => {
         return AsyncStorage.setItem(this.keyForPayloadId(item.uuid, identifier), JSON.stringify(item))
       }),
     )
@@ -294,7 +296,7 @@ export class MobileDeviceInterface implements DeviceInterface {
     }
 
     Linking.canOpenURL(url)
-      .then(supported => {
+      .then((supported) => {
         if (!supported) {
           showAlert()
           return
@@ -306,15 +308,18 @@ export class MobileDeviceInterface implements DeviceInterface {
   }
 
   async clearAllDataFromDevice(_workspaceIdentifiers: string[]): Promise<{ killsApplication: boolean }> {
-    await this.clearRawKeychainValue()
-
     await this.removeAllRawStorageValues()
+
+    await this.clearRawKeychainValue()
 
     return { killsApplication: false }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  performSoftReset() {}
+  performSoftReset() {
+    if (WorkspacesEnabled) {
+      SNReactNative.exitApp()
+    }
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   performHardReset() {}

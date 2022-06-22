@@ -63,7 +63,7 @@ export const AppStackComponent = (props: ModalStackNavigationProp<'AppStack'>) =
   const noteDrawerRef = useRef<DrawerLayout>(null)
 
   useEffect(() => {
-    const removeObserver = application?.getAppState().addStateChangeObserver(event => {
+    const removeObserver = application?.getAppState().addStateChangeObserver((event) => {
       if (event === AppStateType.EditorClosed) {
         noteDrawerRef.current?.closeDrawer()
         if (!isInTabletMode && props.navigation.canGoBack()) {
@@ -76,7 +76,7 @@ export const AppStackComponent = (props: ModalStackNavigationProp<'AppStack'>) =
   }, [application, props.navigation, isInTabletMode])
 
   useEffect(() => {
-    const removeObserver = application?.getStatusManager().addHeaderStatusObserver(messages => {
+    const removeObserver = application?.getStatusManager().addHeaderStatusObserver((messages) => {
       setNotesStatus(messages[SCREEN_NOTES])
       setComposeStatus(messages[SCREEN_COMPOSE])
     })
@@ -161,7 +161,7 @@ export const AppStackComponent = (props: ModalStackNavigationProp<'AppStack'>) =
                 const screenStatus = isInTabletMode ? composeStatus || notesStatus : notesStatus
 
                 const title = route.params?.title ?? (children || '')
-                const subtitle = [screenStatus?.status, route.params?.subTitle].filter(x => !!x).join(' • ')
+                const subtitle = [screenStatus?.status, route.params?.subTitle].filter((x) => !!x).join(' • ')
 
                 return <HeaderTitleView title={title} subtitle={subtitle} subtitleColor={screenStatus?.color} />
               },

@@ -1,8 +1,10 @@
+import { WorkspacesEnabled } from '@Lib/constants'
 import { useSignedIn } from '@Lib/SnjsHelperHooks'
 import { useSafeApplicationContext } from '@Root/Hooks/useSafeApplicationContext'
 import { ModalStackNavigationProp } from '@Root/ModalStack'
 import { SCREEN_SETTINGS } from '@Root/Screens/screens'
 import { FilesSection } from '@Screens/Settings/Sections/FilesSection'
+import { WorkspacesSection } from '@Screens/Settings/Sections/WorkspacesSection'
 import { FeatureIdentifier } from '@standardnotes/features'
 import { ApplicationEvent, FeatureStatus } from '@standardnotes/snjs'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -30,7 +32,7 @@ export const Settings = (props: Props) => {
   }, [application])
 
   useEffect(() => {
-    const removeApplicationEventSubscriber = application.addEventObserver(async event => {
+    const removeApplicationEventSubscriber = application.addEventObserver(async (event) => {
       if (event === ApplicationEvent.KeyStatusChanged) {
         setHasPasscode(Boolean(application.hasPasscode()))
         updateProtectionsAvailable()
@@ -54,6 +56,7 @@ export const Settings = (props: Props) => {
     <Container keyboardShouldPersistTaps={'always'} keyboardDismissMode={'interactive'}>
       <AuthSection title="Account" signedIn={signedIn} />
       <OptionsSection encryptionAvailable={!!encryptionAvailable} title="Options" />
+      {WorkspacesEnabled && <WorkspacesSection />}
       <PreferencesSection />
       {application.hasAccount() && isEntitledToFiles && <FilesSection />}
       <SecuritySection

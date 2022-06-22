@@ -220,7 +220,7 @@ export const ComponentView = ({
     onLoadStart()
   }
 
-  const onShouldStartLoadWithRequest: OnShouldStartLoadWithRequest = request => {
+  const onShouldStartLoadWithRequest: OnShouldStartLoadWithRequest = (request) => {
     log('Setting last iframe URL to', request.url)
     /** The first request can typically be 'about:blank', which we want to ignore */
     if (!didLoadRootUrl.current) {

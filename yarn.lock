@@ -4024,19 +4024,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reach/auto-id@npm:0.15.3":
-  version: 0.15.3
-  resolution: "@reach/auto-id@npm:0.15.3"
-  dependencies:
-    "@reach/utils": 0.15.3
-    tslib: ^2.3.0
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-    react-dom: ^16.8.0 || 17.x
-  checksum: 52f7915970f8de51b923274964bb18e61adf147845e2cb65ff93f17ebf4179f3cc743d6f791da64801447de5965b10e3a2c48c1debbcb5ab85bb1fd73a5fa61a
-  languageName: node
-  linkType: hard
-
 "@reach/auto-id@npm:0.16.0":
   version: 0.16.0
   resolution: "@reach/auto-id@npm:0.16.0"
@@ -4077,19 +4064,6 @@ __metadata:
     react: ^16.8.0 || 17.x
     react-dom: ^16.8.0 || 17.x
   checksum: 943e82cf951e9cb7453bd36552419e9266ba031c5e597ead4bcaa63296e65928c2ff9ff04f62f77cc329f8195d39e062c0746abec25b3e287e2a0d04706a70e4
-  languageName: node
-  linkType: hard
-
-"@reach/descendants@npm:0.15.3":
-  version: 0.15.3
-  resolution: "@reach/descendants@npm:0.15.3"
-  dependencies:
-    "@reach/utils": 0.15.3
-    tslib: ^2.3.0
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-    react-dom: ^16.8.0 || 17.x
-  checksum: 7fa392107a07bdd2f28cda52f9ffc674cbe14a7b4e2d3a4dc8a76f45883a2cd9ff55f4a367a044e0860c3315f01165c99815d472b32976ec35b3115c59b760f4
   languageName: node
   linkType: hard
 
@@ -4152,22 +4126,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reach/dropdown@npm:0.15.3":
-  version: 0.15.3
-  resolution: "@reach/dropdown@npm:0.15.3"
-  dependencies:
-    "@reach/auto-id": 0.15.3
-    "@reach/descendants": 0.15.3
-    "@reach/popover": 0.15.3
-    "@reach/utils": 0.15.3
-    tslib: ^2.3.0
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-    react-dom: ^16.8.0 || 17.x
-  checksum: a556740202c34dc5633440cf30d38d352cc76f38ba652c4882a501f07534d51c82cc71b69bd21d4862fe156dbe10ba35016ec4eca3232da0998be938aca4e000
-  languageName: node
-  linkType: hard
-
 "@reach/dropdown@npm:0.16.2":
   version: 0.16.2
   resolution: "@reach/dropdown@npm:0.16.2"
@@ -4197,23 +4155,6 @@ __metadata:
     react: ^16.8.0 || 17.x
     react-dom: ^16.8.0 || 17.x
   checksum: 296bc888688368473b38249326a4c7a9e09242b903d1a2577b1ad05ddaeefe2eb593945e87bc840e2e749de3cd209c090de61f81ac8c1ef398001adaf5408d85
-  languageName: node
-  linkType: hard
-
-"@reach/listbox@npm:^0.15.0":
-  version: 0.15.3
-  resolution: "@reach/listbox@npm:0.15.3"
-  dependencies:
-    "@reach/auto-id": 0.15.3
-    "@reach/descendants": 0.15.3
-    "@reach/machine": 0.15.3
-    "@reach/popover": 0.15.3
-    "@reach/utils": 0.15.3
-    prop-types: ^15.7.2
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-    react-dom: ^16.8.0 || 17.x
-  checksum: 3baabcca26240cb726f02be1bfc68f0053e47b6c7f5fe4841a22883e4c2a71d403a954195bb0a51a6a4f72c71621a15afc16c4f59fdd5a1f977a843a768d1e30
   languageName: node
   linkType: hard
 
@@ -4248,20 +4189,6 @@ __metadata:
     react: ^16.8.0 || 17.x
     react-dom: ^16.8.0 || 17.x
   checksum: 654e2d07c506b73885dbfb015b3c26b1cac1b2d40f51226fe924ffa26f7a053f28c17e020775dbf935c005155385b131b8f6348ccbbacbf82e70771dabd990b7
-  languageName: node
-  linkType: hard
-
-"@reach/machine@npm:0.15.3":
-  version: 0.15.3
-  resolution: "@reach/machine@npm:0.15.3"
-  dependencies:
-    "@reach/utils": 0.15.3
-    "@xstate/fsm": 1.4.0
-    tslib: ^2.3.0
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-    react-dom: ^16.8.0 || 17.x
-  checksum: f25a54a397dcdda674207a4477b8166addd82e0f427e088bf677875654659400d7013ec1583db83a6dc881402fc3b6b519a72fad68102cbc610c269636ecea6c
   languageName: node
   linkType: hard
 
@@ -4311,23 +4238,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reach/menu-button@npm:^0.15.1":
-  version: 0.15.3
-  resolution: "@reach/menu-button@npm:0.15.3"
-  dependencies:
-    "@reach/dropdown": 0.15.3
-    "@reach/popover": 0.15.3
-    "@reach/utils": 0.15.3
-    prop-types: ^15.7.2
-    tiny-warning: ^1.0.3
-    tslib: ^2.3.0
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-    react-dom: ^16.8.0 || 17.x
-  checksum: 7088e0f8443a8aaf763f8da38d74f4f9ed87ad1af4a0ac7a64d7ddc1a1b64f7af26fdb05b4fdb131e52933e414505855a7a1afe5155d300d4072651466a3fe05
-  languageName: node
-  linkType: hard
-
 "@reach/menu-button@npm:^0.17.0":
   version: 0.17.0
   resolution: "@reach/menu-button@npm:0.17.0"
@@ -4350,22 +4260,6 @@ __metadata:
   version: 1.2.0
   resolution: "@reach/observe-rect@npm:1.2.0"
   checksum: 7dd903eeaad0e22c6d973bd26265d91eadba56ab5134701ceb3e85214db75339fae94aa7e8b88a65e8daa64bc7cf1b915d4ffcdfd324466b561dc6adc3c6e070
-  languageName: node
-  linkType: hard
-
-"@reach/popover@npm:0.15.3":
-  version: 0.15.3
-  resolution: "@reach/popover@npm:0.15.3"
-  dependencies:
-    "@reach/portal": 0.15.3
-    "@reach/rect": 0.15.3
-    "@reach/utils": 0.15.3
-    tabbable: ^4.0.0
-    tslib: ^2.3.0
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-    react-dom: ^16.8.0 || 17.x
-  checksum: 7bfcef81ac5607bcdc6eefe0cee554a1274a4fa2929402ab6a9f5de109ebe7db26ee19774509e6a5fda2f3697f10fe4dc3c62b5d5dd4e9ec106082a64b9f8fb3
   languageName: node
   linkType: hard
 
@@ -4401,19 +4295,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reach/portal@npm:0.15.3":
-  version: 0.15.3
-  resolution: "@reach/portal@npm:0.15.3"
-  dependencies:
-    "@reach/utils": 0.15.3
-    tslib: ^2.3.0
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-    react-dom: ^16.8.0 || 17.x
-  checksum: bdd75ade0cf4ab1ed4d31db294c7901c308d009bdfd2ff2c9a18c854e1cfad3f484c444d8a770af031f19eecb795117be4f0b0361fd3ab15fe3a6a52afea756e
-  languageName: node
-  linkType: hard
-
 "@reach/portal@npm:0.16.2":
   version: 0.16.2
   resolution: "@reach/portal@npm:0.16.2"
@@ -4439,22 +4320,6 @@ __metadata:
     react: ^16.8.0 || 17.x
     react-dom: ^16.8.0 || 17.x
   checksum: 2e5874cdfd021304d28b527a00d95da84ca98453a5211f816e26b974c2bd1b9837855989f8ab10eeeecfa384b34e21afab43f81dea784aca079aab94bf3f4755
-  languageName: node
-  linkType: hard
-
-"@reach/rect@npm:0.15.3":
-  version: 0.15.3
-  resolution: "@reach/rect@npm:0.15.3"
-  dependencies:
-    "@reach/observe-rect": 1.2.0
-    "@reach/utils": 0.15.3
-    prop-types: ^15.7.2
-    tiny-warning: ^1.0.3
-    tslib: ^2.3.0
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-    react-dom: ^16.8.0 || 17.x
-  checksum: dde47da49c88b9db0967a1906daecce6054e569079a5122c5de7601f52750cbeeb7d4eacaeb9042548b3754ddd624c75c7f2a63d57737e33c7d814f532b65f73
   languageName: node
   linkType: hard
 
@@ -4506,19 +4371,6 @@ __metadata:
     react: ^16.8.0 || 17.x
     react-dom: ^16.8.0 || 17.x
   checksum: 2f58686ba7217aac817aad43bdb905fbfbad528df2ce1bf204ec46aeeb9dd87559be418b65fa8794bc27d11aea08ca1f43d8ded3fc2623592dd52ba2272868d7
-  languageName: node
-  linkType: hard
-
-"@reach/utils@npm:0.15.3":
-  version: 0.15.3
-  resolution: "@reach/utils@npm:0.15.3"
-  dependencies:
-    tiny-warning: ^1.0.3
-    tslib: ^2.3.0
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-    react-dom: ^16.8.0 || 17.x
-  checksum: 387f0ddc5375590ced9d6a90a84d39a30bd11b8d39eaff6cbb005415b44c011861c897111e7734562916172b2ec2114111d3f0952b5795faf43822bc44ae3f14
   languageName: node
   linkType: hard
 
@@ -5255,6 +5107,7 @@ __metadata:
     "@standardnotes/deterministic-zip": ^1.2.0
     "@standardnotes/eslint-config-extensions": ^1.0.4
     "@standardnotes/features": ^1.45.1
+    "@standardnotes/styles": "workspace:*"
     copy-webpack-plugin: ^11.0.0
     mini-css-extract-plugin: ^2.6.0
     minimatch: ^5.1.0
@@ -5673,6 +5526,7 @@ __metadata:
     "@milkdown/react": 5.5.0
     "@milkdown/theme-nord": 5.5.0
     "@standardnotes/editor-kit": 2.2.4
+    "@standardnotes/styles": "workspace:*"
     "@testing-library/dom": ^8.11.3
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.4
@@ -5695,7 +5549,6 @@ __metadata:
     react-icons: ^4.3.1
     react-scripts: ^5.0.0
     sass: "*"
-    sn-stylekit: 5.2.21
     source-map-explorer: ^2.5.2
     typescript: "*"
   languageName: unknown
@@ -6195,6 +6048,7 @@ __metadata:
     react-dnd-touch-backend: ^16.0.1
     react-dom: ^18.1.0
     sass-loader: ^12.6.0
+    styled-components: ^5.3.5
     svg-jest: ^1.0.1
     ts-jest: ^27.1.4
     ts-loader: ^9.2.8
@@ -29064,19 +28918,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sn-stylekit@npm:5.2.21":
-  version: 5.2.21
-  resolution: "sn-stylekit@npm:5.2.21"
-  dependencies:
-    "@reach/listbox": ^0.15.0
-    "@reach/menu-button": ^0.15.1
-    prop-types: ^15.7.2
-  peerDependencies:
-    preact: ^10.5.12
-  checksum: beb7143618c03060794db9d0cb3c6a9d5b7b33b3ada921dc0a5ffa432ed3b01defc5153b990cec8c8f8017ed6380cee4acee51c71a8a7b78fd42fff11c68b77b
-  languageName: node
-  linkType: hard
-
 "sn-stylekit@npm:^2.1.1":
   version: 2.2.1
   resolution: "sn-stylekit@npm:2.2.1"
@@ -29970,7 +29811,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"styled-components@npm:5.3.5":
+"styled-components@npm:5.3.5, styled-components@npm:^5.3.5":
   version: 5.3.5
   resolution: "styled-components@npm:5.3.5"
   dependencies:

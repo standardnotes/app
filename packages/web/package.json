@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/web",
-  "version": "3.24.0-alpha.0",
+  "version": "3.24.0-alpha.2",
   "license": "AGPL-3.0-or-later",
   "main": "dist/app.js",
   "author": "Standard Notes.",
@@ -77,7 +77,8 @@
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dnd-touch-backend": "^16.0.1",
-    "react-dom": "^18.1.0"
+    "react-dom": "^18.1.0",
+    "styled-components": "^5.3.5"
   },
   "lint-staged": {
     "app/**/*.{js,ts,jsx,tsx}": "eslint --cache --fix",

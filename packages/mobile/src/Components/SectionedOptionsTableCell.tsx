@@ -15,11 +15,11 @@ type Props = {
 type ContainerProps = Omit<Props, 'title' | 'onPress' | 'options'>
 
 export const Container = styled.View<ContainerProps>`
-  border-bottom-color: ${props => props.theme.stylekitBorderColor};
+  border-bottom-color: ${(props) => props.theme.stylekitBorderColor};
   border-bottom-width: 1px;
-  padding-left: ${props => props.theme.paddingLeft}px;
-  padding-right: ${props => props.theme.paddingLeft}px;
-  background-color: ${props => props.theme.stylekitBackgroundColor};
+  padding-left: ${(props) => props.theme.paddingLeft}px;
+  padding-right: ${(props) => props.theme.paddingLeft}px;
+  background-color: ${(props) => props.theme.stylekitBackgroundColor};
   ${({ first, theme }) =>
     first &&
     css`
@@ -38,9 +38,9 @@ export const Container = styled.View<ContainerProps>`
 `
 
 const Title = styled.Text<{ leftAligned?: boolean }>`
-  font-size: ${props => props.theme.mainTextFontSize}px;
-  color: ${props => props.theme.stylekitForegroundColor};
-  text-align: ${props => (props.leftAligned ? 'left' : 'center')};
+  font-size: ${(props) => props.theme.mainTextFontSize}px;
+  color: ${(props) => props.theme.stylekitForegroundColor};
+  text-align: ${(props) => (props.leftAligned ? 'left' : 'center')};
   width: 42%;
   min-width: 0px;
 `
@@ -50,13 +50,13 @@ const OptionsContainer = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  background-color: ${props => props.theme.stylekitBackgroundColor};
+  background-color: ${(props) => props.theme.stylekitBackgroundColor};
 `
 
-const ButtonTouchable = styled.TouchableHighlight.attrs(props => ({
+const ButtonTouchable = styled.TouchableHighlight.attrs((props) => ({
   underlayColor: props.theme.stylekitBorderColor,
 }))`
-  border-left-color: ${props => props.theme.stylekitBorderColor};
+  border-left-color: ${(props) => props.theme.stylekitBorderColor};
   border-left-width: 1px;
   flex-grow: 1;
   padding: 10px;
@@ -64,7 +64,7 @@ const ButtonTouchable = styled.TouchableHighlight.attrs(props => ({
 `
 
 const ButtonTitle = styled.Text<{ selected: boolean }>`
-  color: ${props => {
+  color: ${(props) => {
     return props.selected ? props.theme.stylekitInfoColor : props.theme.stylekitNeutralColor
   }};
   font-size: 16px;
@@ -72,11 +72,11 @@ const ButtonTitle = styled.Text<{ selected: boolean }>`
   width: 100%;
 `
 
-export const SectionedOptionsTableCell: React.FC<Props> = props => (
+export const SectionedOptionsTableCell: React.FC<Props> = (props) => (
   <Container first={props.first}>
     <Title leftAligned={props.leftAligned}>{props.title}</Title>
     <OptionsContainer>
-      {props.options.map(option => {
+      {props.options.map((option) => {
         return (
           <ButtonTouchable key={option.title} onPress={() => props.onPress(option)}>
             <ButtonTitle selected={option.selected}>{option.title}</ButtonTitle>

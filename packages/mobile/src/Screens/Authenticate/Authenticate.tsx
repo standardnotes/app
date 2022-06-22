@@ -71,7 +71,7 @@ export const Authenticate = ({
   const [passcodeKeyboardType, setPasscodeKeyboardType] = useState<PasscodeKeyboardType | undefined>(
     PasscodeKeyboardType.Default,
   )
-  const [singleValidation] = useState(() => !(challenge.prompts.filter(prompt => prompt.validates).length > 0))
+  const [singleValidation] = useState(() => !(challenge.prompts.filter((prompt) => prompt.validates).length > 0))
   const [showSwitchKeyboard, setShowSwitchKeyboard] = useState<boolean>(false)
 
   const [{ challengeValues, challengeValueStates }, dispatch] = useReducer(
@@ -217,7 +217,7 @@ export const Authenticate = ({
               onValueChange(newChallengeValue)
               return validateChallengeValue(newChallengeValue)
             })
-            .catch(error => {
+            .catch((error) => {
               FingerprintScanner.release()
               if (error.name === 'DeviceLocked') {
                 onValueLocked(challengeValue)
@@ -250,7 +250,7 @@ export const Authenticate = ({
               onValueChange(newChallengeValue)
               return validateChallengeValue(newChallengeValue)
             })
-            .catch(error_1 => {
+            .catch((error_1) => {
               onValueChange({ ...challengeValue, value: false })
               FingerprintScanner.release()
               if (error_1.name !== 'SystemCancel') {
@@ -340,7 +340,7 @@ export const Authenticate = ({
   )
 
   useEffect(() => {
-    const remove = application?.getAppState().addStateChangeObserver(state => {
+    const remove = application?.getAppState().addStateChangeObserver((state) => {
       if (state === AppStateType.ResumingFromBackground) {
         if (!isAuthenticating.current) {
           beginAuthenticatingForNextChallengeReason()
@@ -440,7 +440,7 @@ export const Authenticate = ({
     Keyboard.dismiss()
 
     const biometricChallengeValue = Object.values(challengeValues).find(
-      value => value.prompt.validation === ChallengeValidation.Biometric,
+      (value) => value.prompt.validation === ChallengeValidation.Biometric,
     )
     const state = challengeValueStates[biometricChallengeValue?.prompt.id as number]
     if (state === AuthenticationValueStateType.Locked || state === AuthenticationValueStateType.Success) {
@@ -506,8 +506,8 @@ export const Authenticate = ({
   const readyToSubmit = useMemo(
     () =>
       Object.values(challengeValues)
-        .map(challengeValue => challengeValue.value)
-        .filter(value => !value).length === 0,
+        .map((challengeValue) => challengeValue.value)
+        .filter((value) => !value).length === 0,
     [challengeValues],
   )
 
@@ -556,7 +556,7 @@ export const Authenticate = ({
                   key={Platform.OS === 'android' ? keyboardType : undefined}
                   ref={Array.of(firstInputRef, secondInputRef, thirdInputRef, fourthInputRef)[index] as any}
                   placeholder={challengeValue.prompt.placeholder}
-                  onChangeText={text => {
+                  onChangeText={(text) => {
                     onValueChange({ ...challengeValue, value: text })
                   }}
                   value={(challengeValue.value || '') as string}
@@ -621,7 +621,7 @@ export const Authenticate = ({
   }
 
   const isPending = useMemo(
-    () => Object.values(challengeValueStates).findIndex(state => state === AuthenticationValueStateType.Pending) >= 0,
+    () => Object.values(challengeValueStates).findIndex((state) => state === AuthenticationValueStateType.Pending) >= 0,
     [challengeValueStates],
   )
 
@@ -644,7 +644,7 @@ export const Authenticate = ({
 
   return (
     <HeaderHeightContext.Consumer>
-      {headerHeight => (
+      {(headerHeight) => (
         <StyledKeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           keyboardVerticalOffset={headerHeight}

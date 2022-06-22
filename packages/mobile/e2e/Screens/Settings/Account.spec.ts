@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const helpers = require('../../Helpers')
 import { by, device, element, expect, waitFor } from 'detox'
 import { openSettingsScreen } from '../../Helpers'
@@ -45,9 +44,7 @@ fdescribe('Account section', () => {
       await element(by.id('passwordField')).typeText(helpers.randomCredentials.password)
       await element(by.id('otherOptionsButton')).tap()
       await element(by.id('syncServerField')).clearText()
-      await element(by.id('syncServerField')).typeText(
-        helpers.randomCredentials.syncServerUrl + '\n'
-      )
+      await element(by.id('syncServerField')).typeText(helpers.randomCredentials.syncServerUrl + '\n')
       // wait for buttons to be visible after closing keyboard on smaller devices
       await waitFor(element(by.id('registerButton')))
         .toBeVisible()
@@ -90,9 +87,7 @@ fdescribe('Account section', () => {
       await element(by.id('passwordField')).typeText(helpers.randomCredentials.password)
       await element(by.id('otherOptionsButton')).tap()
       await element(by.id('syncServerField')).clearText()
-      await element(by.id('syncServerField')).typeText(
-        helpers.randomCredentials.syncServerUrl + '\n'
-      )
+      await element(by.id('syncServerField')).typeText(helpers.randomCredentials.syncServerUrl + '\n')
       // wait for button to be visible after keyboard close
       await waitFor(element(by.id('signInButton')))
         .toBeVisible()

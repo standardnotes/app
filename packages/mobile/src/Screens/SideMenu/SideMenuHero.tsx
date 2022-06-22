@@ -13,7 +13,7 @@ type Props = {
   testID: ViewProps['testID']
 }
 
-export const SideMenuHero: React.FC<Props> = props => {
+export const SideMenuHero: React.FC<Props> = (props) => {
   // Context
   const application = useContext(ApplicationContext)
   const theme = useContext(ThemeContext)
@@ -26,7 +26,7 @@ export const SideMenuHero: React.FC<Props> = props => {
 
   useEffect(() => {
     const observedContentTypes = [ContentType.Note, ContentType.Tag]
-    const removeStreamItems = application?.streamItems(observedContentTypes, _items => {
+    const removeStreamItems = application?.streamItems(observedContentTypes, (_items) => {
       const notesAndTagsCount = application?.items.getItems(observedContentTypes).length ?? 0
 
       if (notesAndTagsCount !== itemsCount) {

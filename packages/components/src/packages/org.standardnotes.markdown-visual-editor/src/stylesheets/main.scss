@@ -1,4 +1,4 @@
-@import '~sn-stylekit/dist/stylekit.css';
+@import '../../../../styles/src/Styles/main.scss';
 @import 'material-icons/iconfont/material-icons.css';
 @import 'katex/dist/katex.min.css';
 @import 'prism/material-light.css';
@@ -9,10 +9,7 @@
 
 body,
 html {
-  background-color: transparent;
-  background-color: var(--sn-stylekit-background-color);
-  font-family: var(--sn-stylekit-sans-serif-font);
-  font-size: var(--sn-stylekit-font-size-editor);
+  background-color: var(--sn-stylekit-secondary-background-color);
   height: 100%;
   margin: 0;
   padding: 0;

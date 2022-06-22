@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.24.0-alpha.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.24.0-alpha.1...@standardnotes/web@3.24.0-alpha.2) (2022-06-21)
+
+### Bug Fixes
+
+* session history ([#1128](https://github.com/standardnotes/app/issues/1128)) ([ee69102](https://github.com/standardnotes/app/commit/ee6910200146ce5b868b3e4297d17ef54bad1b6f))
+
+# [3.24.0-alpha.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.24.0-alpha.0...@standardnotes/web@3.24.0-alpha.1) (2022-06-21)
+
+### Features
+
+* add styled-components ([#1126](https://github.com/standardnotes/app/issues/1126)) ([946d50b](https://github.com/standardnotes/app/commit/946d50b5df5c6cca80f059a8d88b4cf866c8161a))
+
 # [3.24.0-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.23.0...@standardnotes/web@3.24.0-alpha.0) (2022-06-20)
 
 ### Features

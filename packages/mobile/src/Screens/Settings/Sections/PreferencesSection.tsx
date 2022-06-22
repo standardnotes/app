@@ -36,7 +36,7 @@ export const PreferencesSection = () => {
 
   const toggleReverseSort = () => {
     void application.getLocalPreferences().setUserPrefValue(PrefKey.MobileSortNotesReverse, !sortReverse)
-    setSortReverse(value => !value)
+    setSortReverse((value) => !value)
   }
 
   const changeSortOption = (key: CollectionSortProperty) => {
@@ -45,15 +45,15 @@ export const PreferencesSection = () => {
   }
   const toggleNotesPreviewHidden = () => {
     void application.getLocalPreferences().setUserPrefValue(PrefKey.MobileNotesHideNotePreview, !hidePreviews)
-    setHidePreviews(value => !value)
+    setHidePreviews((value) => !value)
   }
   const toggleNotesDateHidden = () => {
     void application.getLocalPreferences().setUserPrefValue(PrefKey.MobileNotesHideDate, !hideDates)
-    setHideDates(value => !value)
+    setHideDates((value) => !value)
   }
   const toggleNotesEditorIconHidden = () => {
     void application.getLocalPreferences().setUserPrefValue(PrefKey.MobileNotesHideEditorIcon, !hideEditorIcon)
-    setHideEditorIcon(value => !value)
+    setHideEditorIcon((value) => !value)
   }
 
   return (

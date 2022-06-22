@@ -102,7 +102,7 @@ export const Listed: FC<TProps> = ({ note }) => {
 
     showActionSheet({
       title: item.display_name,
-      options: item.actions.map(action => ({
+      options: item.actions.map((action) => ({
         text: (action as Action).label,
         callback: async () => {
           setIsActionInProgress(true)

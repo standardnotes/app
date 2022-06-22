@@ -61,13 +61,13 @@ export class BackupsService extends ApplicationService {
   }
 
   private async exportIOS(filename: string, data: string) {
-    return new Promise<boolean>(resolve => {
+    return new Promise<boolean>((resolve) => {
       void (this.application! as MobileApplication).getAppState().performActionWithoutStateChangeImpact(async () => {
         Share.share({
           title: filename,
           message: data,
         })
-          .then(result => {
+          .then((result) => {
             resolve(result.action !== Share.dismissedAction)
           })
           .catch(() => {
@@ -98,7 +98,7 @@ export class BackupsService extends ApplicationService {
         // success
         return true
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('Error opening file', error)
         return false
       })
@@ -119,7 +119,7 @@ export class BackupsService extends ApplicationService {
   }
 
   private async exportViaEmailAndroid(data: string, filename: string) {
-    return new Promise<boolean>(resolve => {
+    return new Promise<boolean>((resolve) => {
       const fileType = '.json' // Android creates a tmp file and expects dot with extension
 
       let resolved = false
