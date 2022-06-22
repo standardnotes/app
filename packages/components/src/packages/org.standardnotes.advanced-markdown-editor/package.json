@@ -12,8 +12,9 @@
   "scripts": {
     "start": "webpack serve --config webpack.dev.js --progress --hot",
     "components:compile": "webpack --config webpack.prod.js",
-    "skip:components:lint": "eslint src --ext .js",
-    "components:lint:fix": "yarn lint --fix"
+    "skip:lint": "eslint src --ext .js",
+    "lint:fix": "yarn lint --fix",
+    "test": "echo \"Error: no test specified\" && exit 0"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.10",

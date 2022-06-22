@@ -6,9 +6,10 @@
   "main": "dist/dist.js",
   "author": "Standard Notes <hello@standardnotes.com>",
   "scripts": {
-    "skip:components:lint": "eslint --ext .js .",
+    "skip:lint": "eslint --ext .js .",
     "components:compile": "webpack --config webpack.prod.js",
-    "start": "webpack serve --config webpack.dev.js --progress --hot"
+    "start": "webpack serve --config webpack.dev.js --progress --hot",
+    "test": "echo \"Error: no test specified\" && exit 0"
   },
   "sn": {
     "main": "dist/index.html"

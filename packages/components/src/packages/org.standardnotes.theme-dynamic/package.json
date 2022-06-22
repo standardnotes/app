@@ -7,7 +7,8 @@
     "main": "dist/dist.css"
   },
   "scripts": {
-    "components:compile": "webpack --entry ./src/main.scss --config ../theme.webpack.config.js"
+    "components:compile": "webpack --entry ./src/main.scss --config ../theme.webpack.config.js",
+    "test": "echo \"Error: no test specified\" && exit 0"
   },
   "devDependencies": {
     "webpack": "*"
