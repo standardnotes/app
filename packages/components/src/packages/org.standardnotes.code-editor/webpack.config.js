@@ -30,14 +30,20 @@ module.exports = {
   plugins: [
     new CopyPlugin({
       patterns: [
-        { from: '../../../../../node_modules/codemirror/lib', to: path.resolve(__dirname, 'vendor/codemirror/lib') },
-        { from: '../../../../../node_modules/codemirror/mode', to: path.resolve(__dirname, 'vendor/codemirror/mode') },
         {
-          from: '../../../../../node_modules/codemirror/addon',
+          from: path.resolve(__dirname, 'node_modules/codemirror/lib'),
+          to: path.resolve(__dirname, 'vendor/codemirror/lib'),
+        },
+        {
+          from: path.resolve(__dirname, 'node_modules/codemirror/mode'),
+          to: path.resolve(__dirname, 'vendor/codemirror/mode'),
+        },
+        {
+          from: path.resolve(__dirname, 'node_modules/codemirror/addon'),
           to: path.resolve(__dirname, 'vendor/codemirror/addon'),
         },
         {
-          from: '../../../../../node_modules/codemirror/keymap/vim.js',
+          from: path.resolve(__dirname, 'node_modules/codemirror/keymap/vim.js'),
           to: path.resolve(__dirname, 'vendor/codemirror/keymap'),
         },
         {
