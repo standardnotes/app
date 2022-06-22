@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.24.0-alpha.10](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.24.0-alpha.9...@standardnotes/mobile@3.24.0-alpha.10) (2022-06-22)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
 # [3.24.0-alpha.9](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.24.0-alpha.8...@standardnotes/mobile@3.24.0-alpha.9) (2022-06-22)
 
 ### Bug Fixes
