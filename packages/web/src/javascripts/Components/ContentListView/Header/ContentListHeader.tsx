@@ -35,8 +35,8 @@ const ContentListHeader = ({ application, panelTitle, addButtonLabel, addNewItem
       })
     }
 
-    setShowDisplayOptionsMenu(!showDisplayOptionsMenu)
-  }, [showDisplayOptionsMenu])
+    setShowDisplayOptionsMenu((show) => !show)
+  }, [])
 
   return (
     <div className="section-title-bar-header">
