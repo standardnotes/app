@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.10](https://github.com/standardnotes/app/compare/@standardnotes/markdown-math@1.3.10-alpha.0...@standardnotes/markdown-math@1.3.10) (2022-06-22)
+
+**Note:** Version bump only for package @standardnotes/markdown-math
+
 ## [1.3.10-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/markdown-math@1.3.9...@standardnotes/markdown-math@1.3.10-alpha.0) (2022-06-22)
 
 ### Bug Fixes

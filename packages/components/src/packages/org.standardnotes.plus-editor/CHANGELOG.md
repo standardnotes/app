@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.6](https://github.com/standardnotes/app/compare/@standardnotes/rich-text@1.6.6-alpha.0...@standardnotes/rich-text@1.6.6) (2022-06-22)
+
+**Note:** Version bump only for package @standardnotes/rich-text
+
 ## [1.6.6-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/rich-text@1.6.5...@standardnotes/rich-text@1.6.6-alpha.0) (2022-06-22)
 
 ### Bug Fixes

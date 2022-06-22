@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.12](https://github.com/standardnotes/app/compare/@standardnotes/titanium-theme@1.2.12-alpha.0...@standardnotes/titanium-theme@1.2.12) (2022-06-22)
+
+**Note:** Version bump only for package @standardnotes/titanium-theme
+
 ## [1.2.12-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/titanium-theme@1.2.11...@standardnotes/titanium-theme@1.2.12-alpha.0) (2022-06-22)
 
 ### Bug Fixes

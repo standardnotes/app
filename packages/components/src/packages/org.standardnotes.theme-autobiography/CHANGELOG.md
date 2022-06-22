@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.8](https://github.com/standardnotes/app/compare/@standardnotes/autobiography-theme@1.0.8-alpha.0...@standardnotes/autobiography-theme@1.0.8) (2022-06-22)
+
+**Note:** Version bump only for package @standardnotes/autobiography-theme
+
 ## [1.0.8-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/autobiography-theme@1.0.7...@standardnotes/autobiography-theme@1.0.8-alpha.0) (2022-06-22)
 
 ### Bug Fixes

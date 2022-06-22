@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.11](https://github.com/standardnotes/app/compare/@standardnotes/solarized-dark-theme@1.2.11-alpha.0...@standardnotes/solarized-dark-theme@1.2.11) (2022-06-22)
+
+**Note:** Version bump only for package @standardnotes/solarized-dark-theme
+
 ## [1.2.11-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/solarized-dark-theme@1.2.10...@standardnotes/solarized-dark-theme@1.2.11-alpha.0) (2022-06-22)
 
 ### Bug Fixes

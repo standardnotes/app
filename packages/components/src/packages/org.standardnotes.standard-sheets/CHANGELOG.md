@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.9](https://github.com/standardnotes/app/compare/@standardnotes/spreadsheets@1.4.9-alpha.0...@standardnotes/spreadsheets@1.4.9) (2022-06-22)
+
+**Note:** Version bump only for package @standardnotes/spreadsheets
+
 ## [1.4.9-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/spreadsheets@1.4.8...@standardnotes/spreadsheets@1.4.9-alpha.0) (2022-06-22)
 
 ### Bug Fixes
