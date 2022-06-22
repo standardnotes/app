@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.24.0-alpha.6](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.24.0-alpha.5...@standardnotes/mobile@3.24.0-alpha.6) (2022-06-22)
+
+### Bug Fixes
+
+* restore top border of "Manage Sessions" row ([#1134](https://github.com/standardnotes/app/issues/1134)) ([0608203](https://github.com/standardnotes/app/commit/0608203db5d6cee25a9245441333d55eae5b7f29))
+
 # [3.24.0-alpha.5](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.24.0-alpha.4...@standardnotes/mobile@3.24.0-alpha.5) (2022-06-22)
 
 ### Bug Fixes
