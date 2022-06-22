@@ -44,7 +44,11 @@ const ContentListHeader = ({ application, panelTitle, addButtonLabel, addNewItem
       <div className="relative" ref={displayOptionsMenuRef}>
         <Disclosure open={showDisplayOptionsMenu} onChange={toggleDisplayOptionsMenu}>
           <DisclosureButton
-            className="flex justify-center items-center min-w-8 h-8 bg-transparent bg-color-padding hover:bg-contrast focus:bg-contrast color-neutral border-1 border-solid border-main rounded-full cursor-pointer"
+            className={`flex justify-center items-center min-w-8 h-8
+            ${
+              showDisplayOptionsMenu ? 'bg-contrast' : 'bg-transparent'
+            } bg-color-padding hover:bg-contrast focus:bg-contrast color-neutral
+            border-1 border-solid border-main rounded-full cursor-pointer`}
             onBlur={closeDisplayOptMenuOnBlur}
             ref={displayOptionsButtonRef}
           >
