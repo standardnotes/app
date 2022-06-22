@@ -17,7 +17,7 @@
     "start": "react-app-rewired start",
     "components:compile": "react-app-rewired build",
     "eject": "react-scripts eject",
-    "lint": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md",
+    "format": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md",
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "devDependencies": {

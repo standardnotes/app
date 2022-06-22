@@ -5,7 +5,7 @@
   "main": "dist/dist.js",
   "scripts": {
     "skip:lint": "eslint app/ --ext .js",
-    "lint:fix": "yarn lint --fix",
+    "lint:fix": "eslint app/ --ext .js --fix",
     "components:compile": "webpack --config webpack.prod.js",
     "start": "webpack serve --config webpack.dev.js --progress --hot",
     "test": "echo \"Error: no test specified\" && exit 0"

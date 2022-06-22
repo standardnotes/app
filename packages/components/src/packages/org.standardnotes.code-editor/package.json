@@ -9,8 +9,8 @@
   "scripts": {
     "start": "http-server . --cors -p8001 & webpack --progress --config webpack.dev.js",
     "components:compile": "webpack --config webpack.prod.js",
-    "skip:lint": "eslint ./src --ext .js",
-    "lint:fix": "yarn lint --fix",
+    "skip:lint": "eslint src/ --ext .js",
+    "lint:fix": "eslint src/ --ext .js --fix",
     "clean": "rm -rf ./vendor",
     "test": "echo \"Error: no test specified\" && exit 0"
   },

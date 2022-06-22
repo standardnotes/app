@@ -7,8 +7,9 @@
     "components:compile": "webpack --config webpack.prod.js",
     "start": "webpack serve --config webpack.dev.js --progress --hot",
     "skip:lint": "eslint app/ --ext .js",
-    "lint:fix": "yarn lint --fix",
-    "test": "echo \"Error: no test specified\" && exit 0"
+    "lint:fix": "eslint app/ --ext .js --fix",
+    "test": "echo \"Error: no test specified\" && exit 0",
+    "format": "prettier --write 'app/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md"
   },
   "sn": {
     "main": "dist/index.html"
