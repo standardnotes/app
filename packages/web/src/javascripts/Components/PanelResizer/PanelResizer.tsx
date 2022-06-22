@@ -122,7 +122,6 @@ class PanelResizer extends Component<Props, State> {
   }
 
   override componentDidMount() {
-    console.log(this.resizerElementRef.current)
     this.resizerElementRef.current?.addEventListener('dblclick', this.onDblClick)
   }
 
