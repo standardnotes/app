@@ -9,7 +9,7 @@
   "scripts": {
     "start": "http-server . --cors -p8001 & webpack --progress --config webpack.dev.js",
     "components:compile": "webpack --config webpack.prod.js",
-    "skip:components:lint": "eslint src --ext .js",
+    "skip:components:lint": "eslint ./src --ext .js",
     "components:lint:fix": "yarn lint --fix",
     "components:clean": "rm -rf ./vendor"
   },

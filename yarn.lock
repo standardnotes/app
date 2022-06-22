@@ -5059,6 +5059,7 @@ __metadata:
     "@standardnotes/deterministic-zip": ^1.2.0
     "@standardnotes/eslint-config-extensions": ^1.0.4
     "@standardnotes/features": ^1.45.1
+    "@standardnotes/styles": "workspace:*"
     copy-webpack-plugin: ^11.0.0
     mini-css-extract-plugin: ^2.6.0
     minimatch: ^5.1.0

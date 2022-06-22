@@ -21,13 +21,13 @@ jobs:
         run: yarn install
 
       - name: Lint components
-        run: yarn components:lint
+        run: yarn lint
         working-directory: packages/components
-      - name: Compile components
-        run: yarn components:compile
+      - name: Build components
+        run: yarn build
         working-directory: packages/components
       - name: Test components
-        run: yarn components:test
+        run: yarn test
         working-directory: packages/components
 
       - name: Lint all

@@ -1,8 +1,8 @@
 #!/bin/bash
 
-echo 'Compiling components from' $(pwd)
+echo 'Building components from' $(pwd)
 
-yarn components:clean && yarn components:compile
+yarn clean && yarn build
 
 echo "Packaging component assets and zips..."
 
