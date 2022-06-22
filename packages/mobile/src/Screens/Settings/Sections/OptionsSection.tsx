@@ -1,4 +1,3 @@
-import { WorkspacesEnabled } from '@Lib/constants'
 import { useSignedIn } from '@Lib/SnjsHelperHooks'
 import { useNavigation } from '@react-navigation/native'
 import { ButtonCell } from '@Root/Components/ButtonCell'
@@ -80,9 +79,7 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
     let signoutText =
       'Signing out will remove all data from this device, including notes and tags. Make sure your data is synced before proceeding.'
 
-    if (WorkspacesEnabled) {
-      signoutText += '\n\nYour app will quit after sign out completes.'
-    }
+    signoutText += '\n\nYour app will quit after sign out completes.'
 
     if (await application.alertService.confirm(signoutText, 'Sign Out?', 'Sign Out', ButtonType.Danger)) {
       await application.user.signOut()

@@ -1,4 +1,3 @@
-import { WorkspacesEnabled } from '@Lib/constants'
 import AsyncStorage from '@react-native-community/async-storage'
 import SNReactNative from '@standardnotes/react-native-utils'
 import {
@@ -322,9 +321,7 @@ export class MobileDeviceInterface implements DeviceInterface {
   }
 
   performSoftReset() {
-    if (WorkspacesEnabled) {
-      SNReactNative.exitApp()
-    }
+    SNReactNative.exitApp()
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
