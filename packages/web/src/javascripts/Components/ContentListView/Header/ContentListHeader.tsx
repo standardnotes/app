@@ -1,9 +1,10 @@
 import { WebApplication } from '@/Application/Application'
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
+import { Disclosure, DisclosurePanel } from '@reach/disclosure'
 import { memo, useCallback, useRef, useState } from 'react'
 import Icon from '../../Icon/Icon'
 import { DisplayOptionsMenuPositionProps } from './DisplayOptionsMenuProps'
 import DisplayOptionsMenuPortal from './DisplayOptionsMenuPortal'
+import StyledDisplayOptionsButton from './StyledDisplayOptionsButton'
 
 type Props = {
   application: {
@@ -40,16 +41,9 @@ const ContentListHeader = ({ application, panelTitle, addButtonLabel, addNewItem
       <div className="text-lg font-semibold title">{panelTitle}</div>
       <div className="relative" ref={displayOptionsContainerRef}>
         <Disclosure open={showDisplayOptionsMenu} onChange={toggleDisplayOptionsMenu}>
-          <DisclosureButton
-            className={`flex justify-center items-center min-w-8 h-8
-            ${
-              showDisplayOptionsMenu ? 'bg-contrast' : 'bg-transparent'
-            } bg-color-padding hover:bg-contrast focus:bg-contrast color-neutral
-            border-1 border-solid border-main rounded-full cursor-pointer`}
-            ref={displayOptionsButtonRef}
-          >
+          <StyledDisplayOptionsButton pressed={showDisplayOptionsMenu} ref={displayOptionsButtonRef}>
             <Icon type="sort-descending" className="w-5 h-5" />
-          </DisclosureButton>
+          </StyledDisplayOptionsButton>
           <DisclosurePanel>
             {showDisplayOptionsMenu && displayOptionsMenuPosition && (
               <DisplayOptionsMenuPortal
