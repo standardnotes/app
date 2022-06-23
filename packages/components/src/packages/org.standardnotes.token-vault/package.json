@@ -2,6 +2,7 @@
   "name": "@standardnotes/authenticator",
   "version": "2.1.0",
   "main": "dist/dist.js",
+  "author": "Standard Notes",
   "private": true,
   "scripts": {
     "components:compile": "webpack --config webpack.prod.js",
