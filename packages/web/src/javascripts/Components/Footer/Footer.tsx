@@ -342,8 +342,11 @@ class Footer extends PureComponent<Props, State> {
   override render() {
     return (
       <div className="sn-component">
-        <div id="footer-bar" className="sk-app-bar no-edges no-bottom-edge z-footer-bar">
-          <div className="left">
+        <div
+          id="footer-bar"
+          className="flex justify-between items-center w-full h-6 px-3 bg-contrast text-text z-footer-bar border-t border-border select-none"
+        >
+          <div className="left flex h-full">
             <div className="sk-app-bar-item z-footer-bar-item relative select-none ml-0">
               <div
                 onClick={this.accountMenuClickHandler}
@@ -352,7 +355,11 @@ class Footer extends PureComponent<Props, State> {
                   ' w-8 h-full flex items-center justify-center cursor-pointer rounded-full'
                 }
               >
-                <div className={this.state.hasError ? 'danger' : (this.user ? 'info' : 'neutral') + ' w-5 h-5'}>
+                <div
+                  className={
+                    this.state.hasError ? 'text-danger' : (this.user ? 'text-info' : 'text-neutral') + ' w-5 h-5'
+                  }
+                >
                   <Icon type="account-circle" className="hover:text-info w-5 h-5 max-h-5" />
                 </div>
               </div>
@@ -405,7 +412,7 @@ class Footer extends PureComponent<Props, State> {
               </div>
             )}
           </div>
-          <div className="right">
+          <div className="right flex h-full">
             {this.state.dataUpgradeAvailable && (
               <div
                 onClick={this.securityUpdateClickHandler}

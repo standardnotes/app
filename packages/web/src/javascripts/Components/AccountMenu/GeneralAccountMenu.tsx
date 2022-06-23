@@ -109,10 +109,10 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
               </div>
             ) : (
               <div className="flex items-start">
-                <Icon type="check-circle" className="mr-2 success" />
+                <Icon type="check-circle" className="mr-2 text-success" />
                 <div>
-                  <div className="font-semibold success">Last synced:</div>
-                  <div className="text-text">{lastSyncDate}</div>
+                  <div className="font-semibold text-success text-sm">Last synced:</div>
+                  <div className="text-text text-sm">{lastSyncDate}</div>
                 </div>
               </div>
             )}
