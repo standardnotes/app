@@ -91,7 +91,7 @@ const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
           {isRenamingFile ? (
             <input
               type="text"
-              className="text-input px-1.5 py-1 mb-1 border-1 border-solid border-main bg-transparent color-foreground"
+              className="text-input px-1.5 py-1 mb-1 border-1 border-solid border-border bg-transparent color-foreground"
               value={fileName}
               ref={fileNameInputRef}
               onInput={handleFileNameInput}
@@ -102,7 +102,7 @@ const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
             <div className="text-sm mb-1 break-word">
               <span className="vertical-middle">{file.name}</span>
               {file.protected && (
-                <Icon type="lock-filled" className="sn-icon--small ml-2 color-neutral vertical-middle" />
+                <Icon type="lock-filled" className="ml-2 color-neutral vertical-middle" size="small" />
               )}
             </div>
           )}

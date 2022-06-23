@@ -67,7 +67,7 @@ const AutocompleteTagHint = ({ viewControllerManager, closeOnBlur }: Props) => {
       >
         <span>Create new tag:</span>
         <span className="bg-contrast rounded text-xs color-text py-1 pl-1 pr-2 flex items-center ml-2">
-          <Icon type="hashtag" className="sn-icon--small color-neutral mr-1" />
+          <Icon type="hashtag" className="color-neutral mr-1" size="small" />
           <span className="max-w-40 whitespace-nowrap overflow-hidden overflow-ellipsis">
             {autocompleteSearchQuery}
           </span>

@@ -19,7 +19,7 @@ const ListItemTags: FunctionComponent<Props> = ({ hideTags, tags }) => {
           className="inline-flex items-center py-1 px-1.5 bg-passive-4-opacity-variant color-foreground rounded-0.5"
           key={tag.uuid}
         >
-          <Icon type="hashtag" className="sn-icon--small color-passive-1 mr-1" />
+          <Icon type="hashtag" className="color-passive-1 mr-1" size="small" />
           <span>{tag.title}</span>
         </span>
       ))}

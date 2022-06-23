@@ -87,7 +87,7 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
         }}
       >
         <div
-          className="flex flex-shrink-0 justify-between items-center min-h-6 px-4 py-3 border-0 border-b-1 border-solid border-main focus:shadow-none"
+          className="flex flex-shrink-0 justify-between items-center min-h-6 px-4 py-3 border-0 border-b-1 border-solid border-border focus:shadow-none"
           tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
           onKeyDown={keyDownHandler}
         >
@@ -97,7 +97,7 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
           </div>
           <div className="flex items-center">
             <button
-              className="flex p-1.5 mr-4 bg-transparent hover:bg-contrast border-solid border-main border-1 cursor-pointer rounded"
+              className="flex p-1.5 mr-4 bg-transparent hover:bg-contrast border-solid border-border border-1 cursor-pointer rounded"
               onClick={() => setShowFileInfoPanel((show) => !show)}
             >
               <Icon type="info" className="color-neutral" />

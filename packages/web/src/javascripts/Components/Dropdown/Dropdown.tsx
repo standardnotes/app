@@ -28,13 +28,13 @@ const CustomDropdownButton: FunctionComponent<ListboxButtonProps> = ({
     <div className="sn-dropdown-button-label">
       {icon ? (
         <div className="flex mr-2">
-          <Icon type={icon} className={`sn-icon--small ${iconClassName}`} />
+          <Icon type={icon} className={iconClassName} size="small" />
         </div>
       ) : null}
       <div className="dropdown-selected-label">{label}</div>
     </div>
     <ListboxArrow className={`sn-dropdown-arrow ${isExpanded ? 'sn-dropdown-arrow-flipped' : ''}`}>
-      <Icon type="menu-arrow-down" className="sn-icon--small color-passive-1" />
+      <Icon type="menu-arrow-down" className="color-passive-1" size="small" />
     </ListboxArrow>
   </>
 )
@@ -80,7 +80,7 @@ const Dropdown: FunctionComponent<DropdownProps> = ({ id, label, items, value, o
                 >
                   {item.icon ? (
                     <div className="flex mr-3">
-                      <Icon type={item.icon} className={`sn-icon--small ${item.iconClassName ?? ''}`} />
+                      <Icon type={item.icon} className={item.iconClassName ?? ''} size="small" />
                     </div>
                   ) : null}
                   <div className="text-input">{item.label}</div>

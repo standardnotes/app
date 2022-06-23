@@ -5,7 +5,7 @@ const baseClass = 'rounded px-4 py-1.75 font-bold text-sm fit-content'
 type ButtonVariant = 'normal' | 'primary'
 
 const getClassName = (variant: ButtonVariant, danger: boolean, disabled: boolean) => {
-  const borders = variant === 'normal' ? 'border-solid border-main border-1' : 'no-border'
+  const borders = variant === 'normal' ? 'border-solid border-border border-1' : 'no-border'
   const cursor = disabled ? 'cursor-not-allowed' : 'cursor-pointer'
 
   let colors = variant === 'normal' ? 'bg-default color-text' : 'bg-info color-info-contrast'

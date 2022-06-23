@@ -10,7 +10,7 @@ const Toggle: FunctionComponent<{
   <IconButton
     className="w-5 h-5 p-0 justify-center sk-circle hover:bg-passive-4 color-neutral"
     icon={isToggled ? 'eye-off' : 'eye'}
-    iconClassName="sn-icon--small"
+    iconClassName="w-3.5 h-3.5"
     title="Show/hide password"
     onClick={() => setIsToggled((isToggled) => !isToggled)}
     focusable={true}

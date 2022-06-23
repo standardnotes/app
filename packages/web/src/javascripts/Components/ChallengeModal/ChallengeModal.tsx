@@ -186,7 +186,7 @@ const ChallengeModal: FunctionComponent<Props> = ({
         aria-label="Challenge modal"
         className={`challenge-modal flex flex-col items-center bg-default p-8 rounded relative ${
           challenge.reason !== ChallengeReason.ApplicationUnlock
-            ? 'shadow-overlay-light border-1 border-solid border-main'
+            ? 'shadow-overlay-light border-1 border-solid border-border'
             : 'focus:shadow-none'
         }`}
       >

@@ -54,7 +54,7 @@ const ContentListHeader = ({
         <div className="relative" ref={displayOptionsContainerRef}>
           <Disclosure open={showDisplayOptionsMenu} onChange={toggleDisplayOptionsMenu}>
             <StyledDisplayOptionsButton pressed={showDisplayOptionsMenu} ref={displayOptionsButtonRef}>
-              <Icon type="sort-descending" className="w-5 h-5" />
+              <Icon type="sort-descending" />
             </StyledDisplayOptionsButton>
             <DisclosurePanel>
               {showDisplayOptionsMenu && displayOptionsMenuPosition && (
@@ -77,7 +77,7 @@ const ContentListHeader = ({
           aria-label={addButtonLabel}
           onClick={addNewItem}
         >
-          <Icon type="add" className="w-5 h-5" />
+          <Icon type="add" />
         </button>
       </div>
     </div>

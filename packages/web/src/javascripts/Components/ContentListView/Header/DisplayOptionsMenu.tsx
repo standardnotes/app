@@ -100,7 +100,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
     <Menu
       className={
         'py-1 sn-dropdown sn-dropdown--animated min-w-70 overflow-y-auto \
-        border-1 border-solid border-main text-sm z-index-dropdown-menu \
+        border-1 border-solid border-border text-sm z-index-dropdown-menu \
         flex flex-col'
       }
       a11yLabel="Notes list options menu"

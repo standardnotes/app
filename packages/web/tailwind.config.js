@@ -21,6 +21,7 @@ module.exports = {
     },
     colors: {
       transparent: 'transparent',
+      current: 'currentColor',
       neutral: 'var(--sn-stylekit-neutral-color)',
       'neutral-contrast': 'var(--sn-stylekit-neutral-contrast-color)',
       info: 'var(--sn-stylekit-info-color)',

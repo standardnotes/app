@@ -124,7 +124,7 @@ const NoteTag = ({ viewControllerManager, tag }: Props) => {
       tabIndex={getTabIndex()}
       title={longTitle}
     >
-      <Icon type="hashtag" className="sn-icon--small color-info mr-1" />
+      <Icon type="hashtag" className="color-info mr-1" size="small" />
       <span className="whitespace-nowrap overflow-hidden overflow-ellipsis max-w-290px">
         {prefixTitle && <span className="color-passive-1">{prefixTitle}</span>}
         {title}
@@ -138,7 +138,7 @@ const NoteTag = ({ viewControllerManager, tag }: Props) => {
           onClick={onDeleteTagClick}
           tabIndex={-1}
         >
-          <Icon type="close" className="sn-icon--small color-neutral hover:color-info" />
+          <Icon type="close" className="color-neutral hover:color-info" size="small" />
         </a>
       )}
     </button>

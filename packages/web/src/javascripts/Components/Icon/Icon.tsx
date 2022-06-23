@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'react'
+import { FunctionComponent, useMemo } from 'react'
 import { IconType } from '@standardnotes/snjs'
 
 import {
@@ -187,16 +187,30 @@ type Props = {
   type: IconType
   className?: string
   ariaLabel?: string
+  size?: 'small' | 'medium' | 'normal'
 }
 
-const Icon: FunctionComponent<Props> = ({ type, className = '', ariaLabel }) => {
+const Icon: FunctionComponent<Props> = ({ type, className = '', ariaLabel, size = 'normal' }) => {
   const IconComponent = ICONS[type as keyof typeof ICONS]
+
+  const dimensions = useMemo(() => {
+    switch (size) {
+      case 'small':
+        return 'w-3.5 h-3.5'
+      case 'medium':
+        return 'w-4 h-4'
+      default:
+        return 'w-5 h-5'
+    }
+  }, [size])
+
   if (!IconComponent) {
     return null
   }
+
   return (
     <IconComponent
-      className={`sn-icon ${className}`}
+      className={`${dimensions} fill-current ${className}`}
       role="img"
       {...(ariaLabel ? { 'aria-label': ariaLabel } : { 'aria-hidden': true })}
     />

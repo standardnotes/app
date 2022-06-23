@@ -46,8 +46,8 @@ const HistoryListContainer: FunctionComponent<Props> = ({ features, noteHistoryC
   }
 
   return (
-    <div className={'flex flex-col min-w-60 border-0 border-r-1px border-solid border-main overflow-auto h-full'}>
-      <div className="flex border-0 border-b-1 border-solid border-main">
+    <div className={'flex flex-col min-w-60 border-0 border-r-1px border-solid border-border overflow-auto h-full'}>
+      <div className="flex border-0 border-b-1 border-solid border-border">
         <TabButton type={RevisionType.Remote} />
         <TabButton type={RevisionType.Session} />
         {legacyHistory && legacyHistory.length > 0 && <TabButton type={RevisionType.Legacy} />}

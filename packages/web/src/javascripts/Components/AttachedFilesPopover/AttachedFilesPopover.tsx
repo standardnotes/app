@@ -78,7 +78,7 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
         border: isDraggingFiles ? '2px dashed var(--sn-stylekit-info-color)' : '',
       }}
     >
-      <div className="flex border-0 border-b-1 border-solid border-main">
+      <div className="flex border-0 border-b-1 border-solid border-border">
         <button
           id={PopoverTabs.AttachedFiles}
           className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:bg-info-backdrop focus:shadow-bottom ${
@@ -107,11 +107,11 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
       </div>
       <div className="min-h-0 max-h-110 overflow-y-auto">
         {filteredList.length > 0 || searchQuery.length > 0 ? (
-          <div className="sticky top-0 left-0 p-3 bg-default border-0 border-b-1 border-solid border-main">
+          <div className="sticky top-0 left-0 p-3 bg-default border-0 border-b-1 border-solid border-border">
             <div className="relative">
               <input
                 type="text"
-                className="color-text w-full rounded py-1.5 px-3 text-input bg-default border-solid border-1 border-main"
+                className="color-text w-full rounded py-1.5 px-3 text-input bg-default border-solid border-1 border-border"
                 placeholder="Search files..."
                 value={searchQuery}
                 onInput={(e) => {
@@ -170,7 +170,7 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
       </div>
       {filteredList.length > 0 && (
         <button
-          className="sn-dropdown-item py-3 border-0 border-t-1px border-solid border-main focus:bg-info-backdrop"
+          className="sn-dropdown-item py-3 border-0 border-t-1px border-solid border-border focus:bg-info-backdrop"
           onClick={handleAttachFilesClick}
           onBlur={closeOnBlur}
         >

@@ -39,7 +39,7 @@ const FloatingLabelInput = forwardRef(
 
     const INPUT_CLASSNAME = `w-full h-full ${
       focused || value ? 'pt-6 pb-2' : 'py-2.5'
-    } px-3 text-input border-1 border-solid border-main rounded placeholder:font-medium text-input focus:ring-info ${
+    } px-3 text-input border-1 border-solid border-border rounded placeholder:font-medium text-input focus:ring-info ${
       isInvalid ? 'border-danger placeholder:color-danger' : ''
     } ${inputClassName}`
 
