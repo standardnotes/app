@@ -13,12 +13,12 @@
     "lint": "prettier --check *.js"
   },
   "devDependencies": {
-    "css-loader": "~6.6.0",
+    "css-loader": "*",
     "eslint": "*",
     "mini-css-extract-plugin": "^2.5.3",
     "node-sass": "*",
     "prettier": "*",
-    "sass-loader": "^12.6.0",
+    "sass-loader": "*",
     "style-loader": "~3.3.1",
     "typescript": "*",
     "webpack": "*"
