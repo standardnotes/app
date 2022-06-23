@@ -10,8 +10,7 @@
     "skip:lint": "eslint --cache --ignore-path .gitignore --ext .jsx,.js --format=node_modules/eslint-formatter-pretty .",
     "test": "echo \"Error: no test specified\" && exit 0",
     "deprecated:compile": "webpack",
-    "start": "webpack-dev-server --devtool eval --progress --hot --content-base app",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 1"
+    "start": "webpack-dev-server --devtool eval --progress --hot --content-base app"
   },
   "sn": {
     "main": "dist/index.html"
