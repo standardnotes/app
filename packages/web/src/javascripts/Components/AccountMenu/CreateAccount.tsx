@@ -109,7 +109,7 @@ const CreateAccount: FunctionComponent<Props> = ({
           onClick={handleClose}
           focusable={true}
         />
-        <div className="sn-account-menu-headline">Create account</div>
+        <div className="font-bold text-base">Create account</div>
       </div>
       <form onSubmit={handleRegisterFormSubmit} className="px-3 mb-1">
         <DecoratedInput

@@ -257,12 +257,12 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
           }}
         >
           <div className="tag-info">
-            <div className="tag-fold" />
+            <div className="flex items-center h-full p-0 min-w-[22px] border-0 bg-transparent" />
             <div className="tag-icon mr-1">
               <Icon type="hashtag" className="color-neutral mr-1" />
             </div>
             <input
-              className="title w-full focus:shadow-none"
+              className="title w-full focus:shadow-none focus:outline-none"
               type="text"
               ref={subtagInputRef}
               onBlur={onSubtagInputBlur}

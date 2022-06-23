@@ -148,7 +148,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
           focusable={true}
           disabled={isSigningIn}
         />
-        <div className="sn-account-menu-headline">Sign in</div>
+        <div className="font-bold text-base">Sign in</div>
       </div>
       <div className="px-3 mb-1">
         <DecoratedInput

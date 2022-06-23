@@ -110,7 +110,7 @@ const ConfirmPassword: FunctionComponent<Props> = ({
           focusable={true}
           disabled={isRegistering}
         />
-        <div className="sn-account-menu-headline">Confirm password</div>
+        <div className="font-bold text-base">Confirm password</div>
       </div>
       <div className="px-3 mb-3 text-sm">
         Because your notes are encrypted using your password,{' '}

@@ -207,7 +207,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
   return (
     <div ref={mainRef} className="sn-component">
       <div
-        className={`sn-quick-settings-menu absolute ${MENU_CLASSNAME} ${
+        className={`z-footer-bar-item-panel bottom-full left-0 cursor-auto absolute ${MENU_CLASSNAME} ${
           shouldAnimateCloseMenu ? 'slide-up-animation' : 'sn-dropdown--animated'
         }`}
         ref={quickSettingsMenuRef}
