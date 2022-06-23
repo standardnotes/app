@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.1.3...@standardnotes/releases@1.2.0-alpha.0) (2022-06-23)
+
+### Features
+
+* release json with download urls ([#1140](https://github.com/standardnotes/app/issues/1140)) ([6fb133f](https://github.com/standardnotes/app/commit/6fb133fb75a270cf8cbf75f5844db2aaa935247c))
+
 ## [1.1.3](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.1.3-alpha.0...@standardnotes/releases@1.1.3) (2022-06-22)
 
 **Note:** Version bump only for package @standardnotes/releases
