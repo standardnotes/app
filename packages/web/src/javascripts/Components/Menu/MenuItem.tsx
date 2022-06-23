@@ -39,7 +39,7 @@ const MenuItem = forwardRef(
       <li className="list-style-none" role="none">
         <button
           ref={ref}
-          className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none justify-between"
+          className="flex items-center justify-between border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none"
           onClick={() => {
             onChange(!checked)
           }}
@@ -58,14 +58,20 @@ const MenuItem = forwardRef(
           ref={ref}
           role={type === MenuItemType.RadioButton ? 'menuitemradio' : 'menuitem'}
           tabIndex={typeof tabIndex === 'number' ? tabIndex : FOCUSABLE_BUT_NOT_TABBABLE}
-          className={`sn-dropdown-item focus:bg-info-backdrop focus:shadow-none ${className}`}
+          className={`flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm ${className}`}
           onClick={onClick}
           onBlur={onBlur}
           {...(type === MenuItemType.RadioButton ? { 'aria-checked': checked } : {})}
         >
           {type === MenuItemType.IconButton && icon ? <Icon type={icon} className={iconClassName} /> : null}
           {type === MenuItemType.RadioButton && typeof checked === 'boolean' ? (
-            <div className={`pseudo-radio-btn ${checked ? 'pseudo-radio-btn--checked' : ''} flex-shrink-0`}></div>
+            <div
+              className={`w-4 h-4 border-2 border-solid rounded-full relative ${
+                checked
+                  ? 'border-info after:bg-info after:absolute after:top-1/2 after:left-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 after:rounded-full'
+                  : 'border-passive-1'
+              } flex-shrink-0`}
+            ></div>
           ) : null}
           {children}
         </button>

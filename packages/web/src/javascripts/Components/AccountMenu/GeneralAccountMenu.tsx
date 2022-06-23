@@ -101,9 +101,9 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
             <div className="my-0.5 font-bold wrap">{user.email}</div>
             <span className="text-neutral">{application.getHost()}</span>
           </div>
-          <div className="flex items-start justify-between px-3 mb-3">
+          <div className="flex items-start justify-between px-3 mb-2">
             {isSyncingInProgress ? (
-              <div className="flex items-center text-info font-semibold">
+              <div className="flex items-center text-info text-sm font-semibold">
                 <div className="sk-spinner w-5 h-5 mr-2 spinner-info"></div>
                 Syncing...
               </div>
@@ -124,13 +124,13 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
       ) : (
         <>
           <div className="px-3 mb-1">
-            <div className="mb-3 text-foreground">
+            <div className="mb-3 text-foreground text-sm">
               You’re offline. Sign in to sync your notes and preferences across all your devices and enable end-to-end
               encryption.
             </div>
             <div className="flex items-center text-passive-1">
               <Icon type="cloud-off" className="mr-2" />
-              <span className="font-semibold">Offline</span>
+              <span className="font-semibold text-sm">Offline</span>
             </div>
           </div>
         </>

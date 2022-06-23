@@ -45,7 +45,7 @@ const WorkspaceSwitcherOption: FunctionComponent<Props> = ({ mainApplicationGrou
     <>
       <button
         ref={buttonRef}
-        className="sn-dropdown-item justify-between focus:bg-info-backdrop focus:shadow-none"
+        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full text-sm justify-between focus:bg-info-backdrop focus:shadow-none"
         tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
         role="menuitem"
         onClick={toggleMenu}
@@ -57,7 +57,11 @@ const WorkspaceSwitcherOption: FunctionComponent<Props> = ({ mainApplicationGrou
         <Icon type="chevron-right" className="text-neutral" />
       </button>
       {isOpen && (
-        <div ref={menuRef} className="sn-dropdown max-h-120 min-w-68 py-2 fixed overflow-y-auto" style={menuStyle}>
+        <div
+          ref={menuRef}
+          className="bg-default rounded shadow max-h-120 min-w-68 py-2 fixed overflow-y-auto"
+          style={menuStyle}
+        >
           <WorkspaceSwitcherMenu
             mainApplicationGroup={mainApplicationGroup}
             viewControllerManager={viewControllerManager}

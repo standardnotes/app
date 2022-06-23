@@ -76,7 +76,7 @@ const WorkspaceMenuItem: FunctionComponent<Props> = ({
           <div>{descriptor.label}</div>
         )}
         {descriptor.primary && !hideOptions && (
-          <div>
+          <div className="flex items-center">
             <a
               role="button"
               className="w-5 h-5 p-0 mr-3 border-0 bg-transparent hover:bg-contrast cursor-pointer"
