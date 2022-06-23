@@ -5580,7 +5580,7 @@ __metadata:
     "@standardnotes/react-native-textview": 1.0.2
     "@standardnotes/react-native-utils": 1.0.1
     "@standardnotes/sncrypto-common": 1.9.0
-    "@standardnotes/snjs": "*"
+    "@standardnotes/snjs": ^2.117.8
     "@standardnotes/stylekit": 5.29.3
     "@types/detox": ^18.1.0
     "@types/faker": ^6.6.9
@@ -5826,28 +5826,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/snjs@npm:*, @standardnotes/snjs@npm:^2.41.1":
-  version: 2.117.7
-  resolution: "@standardnotes/snjs@npm:2.117.7"
-  dependencies:
-    "@standardnotes/api": ^1.1.14
-    "@standardnotes/auth": ^3.19.3
-    "@standardnotes/common": ^1.23.0
-    "@standardnotes/domain-events": ^2.32.2
-    "@standardnotes/encryption": ^1.8.20
-    "@standardnotes/features": ^1.45.5
-    "@standardnotes/files": ^1.3.20
-    "@standardnotes/models": ^1.11.10
-    "@standardnotes/responses": ^1.6.36
-    "@standardnotes/services": ^1.13.20
-    "@standardnotes/settings": ^1.14.3
-    "@standardnotes/sncrypto-common": ^1.9.0
-    "@standardnotes/utils": ^1.6.11
-    semver: ^7.3.7
-  checksum: 6dd9a80392e91649a08174d1d2f7d73da8ce241c78a09e5b839070538c72cc5d2d41ef5381c3529af5fad85292acd63b77ecb610d9a5fa5b28bf4718202d6ef6
-  languageName: node
-  linkType: hard
-
 "@standardnotes/snjs@npm:^2.117.8":
   version: 2.117.8
   resolution: "@standardnotes/snjs@npm:2.117.8"
@@ -5867,6 +5845,28 @@ __metadata:
     "@standardnotes/utils": ^1.6.11
     semver: ^7.3.7
   checksum: 5002405cd6dcf196c6c1bd39b55b0e44e791e81a6b146239cc7b718f0f45cc05807551eb84df4001d1163c8a5f58e2382b4bf6412d03509dfcc6588805428a19
+  languageName: node
+  linkType: hard
+
+"@standardnotes/snjs@npm:^2.41.1":
+  version: 2.117.7
+  resolution: "@standardnotes/snjs@npm:2.117.7"
+  dependencies:
+    "@standardnotes/api": ^1.1.14
+    "@standardnotes/auth": ^3.19.3
+    "@standardnotes/common": ^1.23.0
+    "@standardnotes/domain-events": ^2.32.2
+    "@standardnotes/encryption": ^1.8.20
+    "@standardnotes/features": ^1.45.5
+    "@standardnotes/files": ^1.3.20
+    "@standardnotes/models": ^1.11.10
+    "@standardnotes/responses": ^1.6.36
+    "@standardnotes/services": ^1.13.20
+    "@standardnotes/settings": ^1.14.3
+    "@standardnotes/sncrypto-common": ^1.9.0
+    "@standardnotes/utils": ^1.6.11
+    semver: ^7.3.7
+  checksum: 6dd9a80392e91649a08174d1d2f7d73da8ce241c78a09e5b839070538c72cc5d2d41ef5381c3529af5fad85292acd63b77ecb610d9a5fa5b28bf4718202d6ef6
   languageName: node
   linkType: hard
 
@@ -6036,7 +6036,7 @@ __metadata:
     "@standardnotes/icons": "workspace:*"
     "@standardnotes/services": ^1.13.20
     "@standardnotes/sncrypto-web": 1.10.1
-    "@standardnotes/snjs": "*"
+    "@standardnotes/snjs": ^2.117.8
     "@standardnotes/styles": "workspace:*"
     "@standardnotes/toast": "workspace:*"
     "@types/jest": ^27.4.1
