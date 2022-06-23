@@ -17,6 +17,13 @@
   --sn-stylekit-menu-border: none;
 
   --sn-stylekit-general-border-radius: 2px;
+
+  --sn-stylekit-simplified-chinese-font: 'Microsoft Yahei', '微软雅黑体';
+  --sn-stylekit-monospace-font: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, 'Ubuntu Mono', 'Courier New',
+    monospace;
+  --sn-stylekit-sans-serif-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', var(--sn-stylekit-simplified-chinese-font), sans-serif;
+  --sn-stylekit-editor-font-family: var(--sn-stylekit-sans-serif-font);
 }
 
 .sn-component {
