@@ -17,10 +17,10 @@
     "version": "yarn build"
   },
   "devDependencies": {
-    "@standardnotes/components-meta": "workspace:^",
-    "@standardnotes/desktop": "workspace:^",
-    "@standardnotes/mobile": "workspace:^",
-    "@standardnotes/web": "workspace:^",
+    "@standardnotes/components-meta": "workspace:*",
+    "@standardnotes/desktop": "workspace:*",
+    "@standardnotes/mobile": "workspace:*",
+    "@standardnotes/web": "workspace:*",
     "@types/node": "*",
     "typescript": "*"
   }
