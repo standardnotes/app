@@ -14,7 +14,7 @@
     "lint": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run lint",
     "format": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run format",
     "test": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run test",
-    "build": "tsc --project tsconfig.json && yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run components:compile",
+    "build": "tsc --project tsconfig.json && yarn workspaces foreach --parallel --interlaced --jobs 10 --verbose --exclude @standardnotes/components-meta run components:compile",
     "package": "node scripts/package.mjs",
     "version": "./scripts/VERSION.sh"
   },
