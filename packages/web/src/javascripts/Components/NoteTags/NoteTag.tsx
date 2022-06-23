@@ -116,7 +116,7 @@ const NoteTag = ({ viewControllerManager, tag }: Props) => {
   return (
     <button
       ref={tagRef}
-      className="sn-tag pl-1 pr-2 mr-2"
+      className="h-6 bg-contrast border-0 rounded text-xs color-text flex items-center mt-2 cursor-pointer hover:bg-secondary-contrast focus:bg-secondary-contrast py-2 pl-1 pr-2 mr-2"
       onClick={onTagClick}
       onKeyDown={onKeyDown}
       onFocus={onFocus}
