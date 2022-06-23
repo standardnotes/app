@@ -81,8 +81,8 @@
   },
   "org.standardnotes.token-vault": {
     "version": "2.1.1-alpha.0",
-    "base64": "64c183faae174d14153807db599739c1c82ca7d0f84eb83cb181367c108d3494",
-    "binary": "cf420e3c66588a6ad2bbe4e7ab41d4f20094337b5fa5d442f9e530a07e9c7790"
+    "base64": "dd1546c571edd20f6d1bfb7cca9f164238d3d42685e4b5de94ecb962a3dffc04",
+    "binary": "a1cb02bd4c7f4d14f2ebf9c857dc59a84a07bbdb976f2100665cc84a56807043"
   },
   "org.standardnotes.standard-sheets": {
     "version": "1.4.9",
