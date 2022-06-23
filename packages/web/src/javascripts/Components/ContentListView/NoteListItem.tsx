@@ -46,7 +46,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
   return (
     <div
       className={`content-list-item flex items-stretch w-full cursor-pointer ${
-        selected && 'selected border-0 border-l-2px border-solid border-info'
+        selected && 'selected border-l-2 border-solid border-info'
       }`}
       id={item.uuid}
       onClick={() => {
@@ -64,7 +64,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
       ) : (
         <div className="pr-4" />
       )}
-      <div className="flex-grow min-w-0 py-4 px-0 border-0 border-b-1 border-solid border-border">
+      <div className="flex-grow min-w-0 py-4 px-0 border-b border-solid border-border">
         <div className="flex items-start justify-between font-semibold text-base leading-1.3 overflow-hidden">
           <div className="break-word mr-2">{item.title}</div>
         </div>

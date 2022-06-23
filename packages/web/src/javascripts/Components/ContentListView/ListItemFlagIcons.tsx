@@ -14,7 +14,7 @@ type Props = {
 
 const ListItemFlagIcons: FunctionComponent<Props> = ({ item, hasFiles = false }) => {
   return (
-    <div className="flex items-start p-4 pl-0 border-0 border-b-1 border-solid border-border">
+    <div className="flex items-start p-4 pl-0 border-b border-solid border-border">
       {item.locked && (
         <span className="flex items-center" title="Editing Disabled">
           <Icon ariaLabel="Editing Disabled" type="pencil-off" className="text-info" size="small" />
