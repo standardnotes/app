@@ -5,6 +5,7 @@ import { SwitchProps } from '@/Components/Switch/SwitchProps'
 import { IconType } from '@standardnotes/snjs'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { MenuItemType } from './MenuItemType'
+import RadioIndicator from '../RadioIndicator/RadioIndicator'
 
 type MenuItemProps = {
   type: MenuItemType
@@ -65,13 +66,7 @@ const MenuItem = forwardRef(
         >
           {type === MenuItemType.IconButton && icon ? <Icon type={icon} className={iconClassName} /> : null}
           {type === MenuItemType.RadioButton && typeof checked === 'boolean' ? (
-            <div
-              className={`w-4 h-4 border-2 border-solid rounded-full relative ${
-                checked
-                  ? 'border-info after:bg-info after:absolute after:top-1/2 after:left-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 after:rounded-full'
-                  : 'border-passive-1'
-              } flex-shrink-0`}
-            ></div>
+            <RadioIndicator checked={checked} className="flex-shrink-0" />
           ) : null}
           {children}
         </button>

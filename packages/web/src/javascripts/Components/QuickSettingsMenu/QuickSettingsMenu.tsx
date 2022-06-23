@@ -13,6 +13,7 @@ import ThemesMenuButton from './ThemesMenuButton'
 import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
 import { ThemeItem } from './ThemeItem'
 import { sortThemes } from '@/Utils/SortThemes'
+import RadioIndicator from '../RadioIndicator/RadioIndicator'
 
 const focusModeAnimationDuration = 1255
 
@@ -243,7 +244,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
               onBlur={closeOnBlur}
               ref={defaultThemeButtonRef}
             >
-              <div className={`pseudo-radio-btn ${defaultThemeOn ? 'pseudo-radio-btn--checked' : ''} mr-2`}></div>
+              <RadioIndicator checked={defaultThemeOn} className="mr-2" />
               Default
             </button>
             {themes.map((theme) => (

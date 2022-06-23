@@ -1,5 +1,6 @@
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { FunctionComponent } from 'react'
+import RadioIndicator from '../RadioIndicator/RadioIndicator'
 
 type HistoryListItemProps = {
   isSelected: boolean
@@ -14,7 +15,7 @@ const HistoryListItem: FunctionComponent<HistoryListItemProps> = ({ children, is
       onClick={onClick}
       data-selected={isSelected}
     >
-      <div className={`pseudo-radio-btn ${isSelected ? 'pseudo-radio-btn--checked' : ''} mr-2`}></div>
+      <RadioIndicator checked={isSelected} className="mr-2" />
       {children}
     </button>
   )
