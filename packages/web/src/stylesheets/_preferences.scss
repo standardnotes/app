@@ -1,47 +1,23 @@
 .preferences-menu-item {
-  @extend .border-box;
-  @extend .w-auto;
-  @extend .h-auto;
-  @extend .rounded;
-  @extend .min-w-42;
-
-  @extend .py-2;
-  @extend .px-4;
-
-  @extend .flex;
-  @extend .flex-row;
-  @extend .items-center;
-  @extend .justify-start;
-
-  @extend .text-sm;
-  @extend .cursor-pointer;
-
-  @extend .border-transparent;
-  @extend .border-solid;
-  @extend .border-1;
+  @apply box-border w-auto h-auto rounded min-w-42 py-2 px-4 flex flex-row items-center justify-start text-sm cursor-pointer border-transparent border-solid border;
 
   .icon {
     color: var(--preferences-navigation-icon-color);
-    @extend .text-base;
+    @apply text-base;
   }
 
   &:hover {
-    @extend .border-main;
-    @extend .border-solid;
-    @extend .border-1;
-    @extend .bg-default;
+    @apply border-border border-solid border bg-default;
   }
 }
 
 .preferences-menu-item.selected {
-  @extend .border-info;
-  @extend .color-info;
-  @extend .font-bold;
+  @apply border-info text-info font-bold;
 
   background-color: var(--preferences-navigation-selected-background-color);
 
   .icon {
-    @extend .color-info;
+    @apply text-info;
   }
 }
 
