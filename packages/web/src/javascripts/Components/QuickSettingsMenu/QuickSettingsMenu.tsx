@@ -213,7 +213,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
         ref={quickSettingsMenuRef}
         onKeyDown={handleQuickSettingsKeyDown}
       >
-        <div className="px-3 mt-1 mb-2 font-semibold color-text uppercase">Quick Settings</div>
+        <div className="px-3 mt-1 mb-2 font-semibold text-text uppercase">Quick Settings</div>
         <Disclosure open={themesMenuOpen} onChange={toggleThemesMenu}>
           <DisclosureButton
             onKeyDown={handleBtnKeyDown}
@@ -222,10 +222,10 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
             className="sn-dropdown-item justify-between focus:bg-info-backdrop focus:shadow-none"
           >
             <div className="flex items-center">
-              <Icon type="themes" className="color-neutral mr-2" />
+              <Icon type="themes" className="text-neutral mr-2" />
               Themes
             </div>
-            <Icon type="chevron-right" className="color-neutral" />
+            <Icon type="chevron-right" className="text-neutral" />
           </DisclosureButton>
           <DisclosurePanel
             onBlur={closeOnBlur}
@@ -236,7 +236,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
             }}
             className={`${MENU_CLASSNAME} fixed sn-dropdown--animated`}
           >
-            <div className="px-3 my-1 font-semibold color-text uppercase">Themes</div>
+            <div className="px-3 my-1 font-semibold text-text uppercase">Themes</div>
             <button
               className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
               onClick={toggleDefaultTheme}
@@ -265,7 +265,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
             key={component.uuid}
           >
             <div className="flex items-center">
-              <Icon type="window" className="color-neutral mr-2" />
+              <Icon type="window" className="text-neutral mr-2" />
               {component.displayName}
             </div>
             <Switch checked={component.active} className="px-0" />
@@ -283,7 +283,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
           onClick={openPreferences}
           ref={prefsButtonRef}
         >
-          <Icon type="more" className="color-neutral mr-2" />
+          <Icon type="more" className="text-neutral mr-2" />
           Open Preferences
         </button>
       </div>

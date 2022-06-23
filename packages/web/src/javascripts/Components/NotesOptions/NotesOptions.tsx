@@ -19,15 +19,15 @@ type DeletePermanentlyButtonProps = {
 
 const DeletePermanentlyButton = ({ closeOnBlur, onClick }: DeletePermanentlyButtonProps) => (
   <button onBlur={closeOnBlur} className="sn-dropdown-item" onClick={onClick}>
-    <Icon type="close" className="color-danger mr-2" />
-    <span className="color-danger">Delete permanently</span>
+    <Icon type="close" className="text-danger mr-2" />
+    <span className="text-danger">Delete permanently</span>
   </button>
 )
 
-const iconClass = 'color-neutral mr-2'
-const iconClassDanger = 'color-danger mr-2'
-const iconClassWarning = 'color-warning mr-2'
-const iconClassSuccess = 'color-success mr-2'
+const iconClass = 'text-neutral mr-2'
+const iconClassDanger = 'text-danger mr-2'
+const iconClassWarning = 'text-warning mr-2'
+const iconClassSuccess = 'text-success mr-2'
 
 const getWordCount = (text: string) => {
   if (text.trim().length === 0) {
@@ -96,7 +96,7 @@ const NoteAttributes: FunctionComponent<{
   const format = editor?.package_info?.file_type || 'txt'
 
   return (
-    <div className="px-3 pt-1.5 pb-2.5 text-xs color-neutral font-medium">
+    <div className="px-3 pt-1.5 pb-2.5 text-xs text-neutral font-medium">
       {typeof words === 'number' && (format === 'txt' || format === 'md') ? (
         <>
           <div className="mb-1">
@@ -161,8 +161,8 @@ const NoteSizeWarning: FunctionComponent<{
 }> = ({ note }) => {
   return new Blob([note.text]).size > NOTE_SIZE_WARNING_THRESHOLD ? (
     <div className="flex items-center px-3 py-3.5 relative bg-warning-faded">
-      <Icon type="warning" className="color-accessory-tint-3 flex-shrink-0 mr-3" />
-      <div className="color-warning select-none leading-140% max-w-80%">
+      <Icon type="warning" className="text-accessory-tint-3 flex-shrink-0 mr-3" />
+      <div className="text-warning select-none leading-140% max-w-80%">
         This note may have trouble syncing to the mobile application due to its size.
       </div>
     </div>
@@ -368,7 +368,7 @@ const NotesOptions = ({
           }}
         >
           <Icon type="archive" className={iconClassWarning} />
-          <span className="color-warning">Archive</span>
+          <span className="text-warning">Archive</span>
         </button>
       )}
       {archived && (
@@ -380,7 +380,7 @@ const NotesOptions = ({
           }}
         >
           <Icon type="unarchive" className={iconClassWarning} />
-          <span className="color-warning">Unarchive</span>
+          <span className="text-warning">Unarchive</span>
         </button>
       )}
       {notTrashed &&
@@ -400,7 +400,7 @@ const NotesOptions = ({
             }}
           >
             <Icon type="trash" className={iconClassDanger} />
-            <span className="color-danger">Move to trash</span>
+            <span className="text-danger">Move to trash</span>
           </button>
         ))}
       {trashed && (
@@ -413,7 +413,7 @@ const NotesOptions = ({
             }}
           >
             <Icon type="restore" className={iconClassSuccess} />
-            <span className="color-success">Restore</span>
+            <span className="text-success">Restore</span>
           </button>
           <DeletePermanentlyButton
             closeOnBlur={closeOnBlur}
@@ -429,9 +429,9 @@ const NotesOptions = ({
             }}
           >
             <div className="flex items-start">
-              <Icon type="trash-sweep" className="color-danger mr-2" />
+              <Icon type="trash-sweep" className="text-danger mr-2" />
               <div className="flex-row">
-                <div className="color-danger">Empty Trash</div>
+                <div className="text-danger">Empty Trash</div>
                 <div className="text-xs">{notesController.trashedNotesCount} notes in Trash</div>
               </div>
             </div>

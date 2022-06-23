@@ -21,7 +21,7 @@ const PreferencesMenuItem: FunctionComponent<Props> = ({ iconType, label, select
     <Icon className="icon" type={iconType} />
     <div className="min-w-1" />
     {label}
-    {hasBubble && <span className="ml-1 color-warning">⚠️</span>}
+    {hasBubble && <span className="ml-1 text-warning">⚠️</span>}
   </div>
 )
 

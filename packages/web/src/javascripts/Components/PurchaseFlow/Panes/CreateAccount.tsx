@@ -129,7 +129,7 @@ const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, applic
               disabled={isCreatingAccount}
               isInvalid={isEmailInvalid}
             />
-            {isEmailInvalid ? <div className="color-danger mb-4">Please provide a valid email.</div> : null}
+            {isEmailInvalid ? <div className="text-danger mb-4">Please provide a valid email.</div> : null}
             <FloatingLabelInput
               className="min-w-90 xs:min-w-auto mb-4"
               id="purchase-create-account-password"
@@ -152,7 +152,7 @@ const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, applic
               isInvalid={isPasswordNotMatching}
             />
             {isPasswordNotMatching ? (
-              <div className="color-danger mb-4">Passwords don't match. Please try again.</div>
+              <div className="text-danger mb-4">Passwords don't match. Please try again.</div>
             ) : null}
           </div>
         </form>
@@ -161,14 +161,14 @@ const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, applic
             <button
               onClick={handleSignInInstead}
               disabled={isCreatingAccount}
-              className="flex items-start p-0 mb-2 bg-default border-0 font-medium color-info cursor-pointer hover:underline"
+              className="flex items-start p-0 mb-2 bg-default border-0 font-medium text-info cursor-pointer hover:underline"
             >
               Sign in instead
             </button>
             <button
               onClick={subscribeWithoutAccount}
               disabled={isCreatingAccount}
-              className="flex items-start p-0 bg-default border-0 font-medium color-info cursor-pointer hover:underline"
+              className="flex items-start p-0 bg-default border-0 font-medium text-info cursor-pointer hover:underline"
             >
               Subscribe without account
             </button>

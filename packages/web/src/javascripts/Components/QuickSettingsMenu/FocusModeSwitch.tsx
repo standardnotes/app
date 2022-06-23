@@ -34,7 +34,7 @@ const FocusModeSwitch: FunctionComponent<Props> = ({ application, onToggle, onCl
     <>
       <button className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none justify-between" onClick={toggle}>
         <div className="flex items-center">
-          <Icon type="menu-close" className="color-neutral mr-2" />
+          <Icon type="menu-close" className="text-neutral mr-2" />
           Focused Writing
         </div>
         {isEntitled ? (

@@ -57,7 +57,7 @@ const ListedMenuItem: FunctionComponent<ListedMenuItemProps> = ({
       <div className="flex flex-col">
         <div className="font-semibold">{action.label}</div>
         {action.access_type && (
-          <div className="text-xs mt-0.5 color-passive-0">
+          <div className="text-xs mt-0.5 text-passive-0">
             {'Uses '}
             <strong>{action.access_type}</strong>
             {' access to this note.'}
@@ -172,11 +172,11 @@ const ListedActionsMenu: FunctionComponent<ListedActionsMenuProps> = ({ applicat
           {menuGroups.map((group, index) => (
             <Fragment key={group.account.authorId}>
               <div
-                className={`w-full flex items-center px-2.5 py-2 text-input font-semibold color-text border-0 border-y-1px border-solid border-border ${
+                className={`w-full flex items-center px-2.5 py-2 text-input font-semibold text-text border-0 border-y-1px border-solid border-border ${
                   index === 0 ? 'border-t-0 mb-1' : 'my-1'
                 }`}
               >
-                <Icon type="notes" className="mr-2 color-info" /> {group.name}
+                <Icon type="notes" className="mr-2 text-info" /> {group.name}
               </div>
               {group.actions.length ? (
                 group.actions.map((action) => (
@@ -190,7 +190,7 @@ const ListedActionsMenu: FunctionComponent<ListedActionsMenuProps> = ({ applicat
                   />
                 ))
               ) : (
-                <div className="px-3 py-2 color-passive-0 select-none">No actions available</div>
+                <div className="px-3 py-2 text-passive-0 select-none">No actions available</div>
               )}
             </Fragment>
           ))}
@@ -198,7 +198,7 @@ const ListedActionsMenu: FunctionComponent<ListedActionsMenuProps> = ({ applicat
       ) : null}
       {!isFetchingAccounts && !menuGroups.length ? (
         <div className="w-full flex items-center justify-center px-4 py-6">
-          <div className="color-passive-0 select-none">No Listed accounts found</div>
+          <div className="text-passive-0 select-none">No Listed accounts found</div>
         </div>
       ) : null}
     </>
@@ -251,10 +251,10 @@ const ListedActionsOption: FunctionComponent<Props> = ({ application, note }) =>
       <Disclosure open={isMenuOpen} onChange={toggleListedMenu}>
         <DisclosureButton ref={menuButtonRef} onBlur={closeOnBlur} className="sn-dropdown-item justify-between">
           <div className="flex items-center">
-            <Icon type="listed" className="color-neutral mr-2" />
+            <Icon type="listed" className="text-neutral mr-2" />
             Listed actions
           </div>
-          <Icon type="chevron-right" className="color-neutral" />
+          <Icon type="chevron-right" className="text-neutral" />
         </DisclosureButton>
         <DisclosurePanel
           ref={menuRef}

@@ -22,7 +22,7 @@ type Props = {
   closeMenu: () => void
 }
 
-const iconClassName = 'color-neutral mr-2'
+const iconClassName = 'text-neutral mr-2'
 
 const GeneralAccountMenu: FunctionComponent<Props> = ({
   application,
@@ -91,19 +91,19 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
       <div className="flex items-center justify-between px-3 mt-1 mb-1">
         <div className="font-bold text-base">Account</div>
         <div className="flex cursor-pointer" onClick={closeMenu}>
-          <Icon type="close" className="color-neutral" />
+          <Icon type="close" className="text-neutral" />
         </div>
       </div>
       {user ? (
         <>
-          <div className="px-3 mb-3 color-foreground text-sm">
+          <div className="px-3 mb-3 text-foreground text-sm">
             <div>You're signed in as:</div>
             <div className="my-0.5 font-bold wrap">{user.email}</div>
-            <span className="color-neutral">{application.getHost()}</span>
+            <span className="text-neutral">{application.getHost()}</span>
           </div>
           <div className="flex items-start justify-between px-3 mb-3">
             {isSyncingInProgress ? (
-              <div className="flex items-center color-info font-semibold">
+              <div className="flex items-center text-info font-semibold">
                 <div className="sk-spinner w-5 h-5 mr-2 spinner-info"></div>
                 Syncing...
               </div>
@@ -112,11 +112,11 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
                 <Icon type="check-circle" className="mr-2 success" />
                 <div>
                   <div className="font-semibold success">Last synced:</div>
-                  <div className="color-text">{lastSyncDate}</div>
+                  <div className="text-text">{lastSyncDate}</div>
                 </div>
               </div>
             )}
-            <div className="flex cursor-pointer color-passive-1" onClick={doSynchronization}>
+            <div className="flex cursor-pointer text-passive-1" onClick={doSynchronization}>
               <Icon type="sync" />
             </div>
           </div>
@@ -124,11 +124,11 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
       ) : (
         <>
           <div className="px-3 mb-1">
-            <div className="mb-3 color-foreground">
+            <div className="mb-3 text-foreground">
               You’re offline. Sign in to sync your notes and preferences across all your devices and enable end-to-end
               encryption.
             </div>
-            <div className="flex items-center color-passive-1">
+            <div className="flex items-center text-passive-1">
               <Icon type="cloud-off" className="mr-2" />
               <span className="font-semibold">Offline</span>
             </div>
@@ -169,7 +169,7 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
             <Icon type="help" className={iconClassName} />
             Help &amp; feedback
           </div>
-          <span className="color-neutral">v{application.version}</span>
+          <span className="text-neutral">v{application.version}</span>
         </MenuItem>
         {user ? (
           <>

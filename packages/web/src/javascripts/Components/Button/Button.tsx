@@ -8,7 +8,7 @@ const getClassName = (variant: ButtonVariant, danger: boolean, disabled: boolean
   const borders = variant === 'normal' ? 'border-solid border-border border-1' : 'no-border'
   const cursor = disabled ? 'cursor-not-allowed' : 'cursor-pointer'
 
-  let colors = variant === 'normal' ? 'bg-default color-text' : 'bg-info color-info-contrast'
+  let colors = variant === 'normal' ? 'bg-default text-text' : 'bg-info text-info-contrast'
 
   let focusHoverStates =
     variant === 'normal'
@@ -16,11 +16,11 @@ const getClassName = (variant: ButtonVariant, danger: boolean, disabled: boolean
       : 'hover:brightness-130 focus:outline-none focus:brightness-130'
 
   if (danger) {
-    colors = variant === 'normal' ? 'bg-default color-danger' : 'bg-danger color-info-contrast'
+    colors = variant === 'normal' ? 'bg-default text-danger' : 'bg-danger text-info-contrast'
   }
 
   if (disabled) {
-    colors = variant === 'normal' ? 'bg-default color-passive-2' : 'bg-passive-2 color-info-contrast'
+    colors = variant === 'normal' ? 'bg-default text-passive-2' : 'bg-passive-2 text-info-contrast'
     focusHoverStates =
       variant === 'normal'
         ? 'focus:bg-default focus:outline-none hover:bg-default'

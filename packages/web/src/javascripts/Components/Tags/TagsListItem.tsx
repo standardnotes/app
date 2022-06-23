@@ -212,12 +212,12 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
                 }`}
                 onClick={hasChildren ? toggleChildren : undefined}
               >
-                <Icon className={'color-neutral'} type={showChildren ? 'menu-arrow-down-alt' : 'menu-arrow-right'} />
+                <Icon className={'text-neutral'} type={showChildren ? 'menu-arrow-down-alt' : 'menu-arrow-right'} />
               </a>
             </div>
           )}
           <div className={'tag-icon draggable mr-1'} ref={dragRef}>
-            <Icon type="hashtag" className={`${isSelected ? 'color-info' : 'color-neutral'}`} />
+            <Icon type="hashtag" className={`${isSelected ? 'text-info' : 'text-neutral'}`} />
           </div>
           <input
             className={`title ${isEditing ? 'editing' : ''}`}
@@ -239,7 +239,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
               onClick={toggleContextMenu}
               ref={menuButtonRef}
             >
-              <Icon type="more" className="color-neutral" />
+              <Icon type="more" className="text-neutral" />
             </a>
             <div className="count">{noteCounts.get()}</div>
           </div>
@@ -259,7 +259,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
           <div className="tag-info">
             <div className="flex items-center h-full p-0 min-w-[22px] border-0 bg-transparent" />
             <div className="tag-icon mr-1">
-              <Icon type="hashtag" className="color-neutral mr-1" />
+              <Icon type="hashtag" className="text-neutral mr-1" />
             </div>
             <input
               className="title w-full focus:shadow-none focus:outline-none"

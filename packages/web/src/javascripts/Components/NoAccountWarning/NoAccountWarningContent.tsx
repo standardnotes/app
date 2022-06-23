@@ -34,7 +34,7 @@ const NoAccountWarningContent = ({ accountMenuController, noAccountWarningContro
         title="Ignore warning"
         aria-label="Ignore warning"
         style={{ height: '20px' }}
-        className="border-0 m-0 p-0 bg-transparent cursor-pointer rounded-md col-start-2 row-start-1 color-neutral hover:color-info"
+        className="border-0 m-0 p-0 bg-transparent cursor-pointer rounded-md col-start-2 row-start-1 text-neutral hover:text-info"
       >
         <Icon type="close" className="block" />
       </button>

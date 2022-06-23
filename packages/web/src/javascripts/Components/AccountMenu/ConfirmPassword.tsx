@@ -105,7 +105,7 @@ const ConfirmPassword: FunctionComponent<Props> = ({
         <IconButton
           icon="arrow-left"
           title="Go back"
-          className="flex mr-2 color-neutral p-0"
+          className="flex mr-2 text-neutral p-0"
           onClick={handleGoBack}
           focusable={true}
           disabled={isRegistering}
@@ -114,21 +114,21 @@ const ConfirmPassword: FunctionComponent<Props> = ({
       </div>
       <div className="px-3 mb-3 text-sm">
         Because your notes are encrypted using your password,{' '}
-        <span className="color-danger">Standard Notes does not have a password reset option</span>. If you forget your
+        <span className="text-danger">Standard Notes does not have a password reset option</span>. If you forget your
         password, you will permanently lose access to your data.
       </div>
       <form onSubmit={handleConfirmFormSubmit} className="px-3 mb-1">
         <DecoratedPasswordInput
           className="mb-2"
           disabled={isRegistering}
-          left={[<Icon type="password" className="color-neutral" />]}
+          left={[<Icon type="password" className="text-neutral" />]}
           onChange={handlePasswordChange}
           onKeyDown={handleKeyDown}
           placeholder="Confirm password"
           ref={passwordInputRef}
           value={confirmPassword}
         />
-        {error ? <div className="color-danger my-2">{error}</div> : null}
+        {error ? <div className="text-danger my-2">{error}</div> : null}
         <Button
           className="btn-w-full mt-1 mb-3"
           label={isRegistering ? 'Creating account...' : 'Create account & sign in'}

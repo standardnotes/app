@@ -105,7 +105,7 @@ const CreateAccount: FunctionComponent<Props> = ({
         <IconButton
           icon="arrow-left"
           title="Go back"
-          className="flex mr-2 color-neutral p-0"
+          className="flex mr-2 text-neutral p-0"
           onClick={handleClose}
           focusable={true}
         />
@@ -115,7 +115,7 @@ const CreateAccount: FunctionComponent<Props> = ({
         <DecoratedInput
           className="mb-2"
           disabled={isPrivateWorkspace}
-          left={[<Icon type="email" className="color-neutral" />]}
+          left={[<Icon type="email" className="text-neutral" />]}
           onChange={handleEmailChange}
           onKeyDown={handleKeyDown}
           placeholder="Email"
@@ -125,7 +125,7 @@ const CreateAccount: FunctionComponent<Props> = ({
         />
         <DecoratedPasswordInput
           className="mb-2"
-          left={[<Icon type="password" className="color-neutral" />]}
+          left={[<Icon type="password" className="text-neutral" />]}
           onChange={handlePasswordChange}
           onKeyDown={handleKeyDown}
           placeholder="Password"

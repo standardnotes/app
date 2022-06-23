@@ -51,10 +51,10 @@ const WorkspaceSwitcherOption: FunctionComponent<Props> = ({ mainApplicationGrou
         onClick={toggleMenu}
       >
         <div className="flex items-center">
-          <Icon type="user-switch" className="color-neutral mr-2" />
+          <Icon type="user-switch" className="text-neutral mr-2" />
           Switch workspace
         </div>
-        <Icon type="chevron-right" className="color-neutral" />
+        <Icon type="chevron-right" className="text-neutral" />
       </button>
       {isOpen && (
         <div ref={menuRef} className="sn-dropdown max-h-120 min-w-68 py-2 fixed overflow-y-auto" style={menuStyle}>

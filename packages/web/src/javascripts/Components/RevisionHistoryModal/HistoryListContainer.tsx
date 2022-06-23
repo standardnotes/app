@@ -23,7 +23,7 @@ const HistoryListContainer: FunctionComponent<Props> = ({ features, noteHistoryC
     return (
       <button
         className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:shadow-inner ${
-          isSelected ? 'color-info font-medium shadow-bottom' : 'color-text'
+          isSelected ? 'text-info font-medium shadow-bottom' : 'text-text'
         }`}
         onClick={() => {
           selectTab(type)

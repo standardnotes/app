@@ -51,7 +51,7 @@ const AuthAppInfoTooltip: FunctionComponent = () => {
         />
         <DisclosurePanel>
           <div
-            className={`bg-inverted-default color-inverted-default text-center rounded shadow-overlay
+            className={`bg-inverted-default text-inverted-default text-center rounded shadow-overlay
 py-1.5 px-2 absolute w-103 -top-10 -left-51`}
           >
             Some apps, like Google Authenticator, do not back up and restore your secret keys if you lose your device or

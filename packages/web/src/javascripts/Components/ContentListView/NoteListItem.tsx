@@ -59,7 +59,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
     >
       {!hideIcon ? (
         <div className="flex flex-col items-center justify-between p-4 pr-3 mr-0">
-          <Icon ariaLabel={`Icon for ${editorName}`} type={icon} className={`color-accessory-tint-${tint}`} />
+          <Icon ariaLabel={`Icon for ${editorName}`} type={icon} className={`text-accessory-tint-${tint}`} />
         </div>
       ) : (
         <div className="pr-4" />

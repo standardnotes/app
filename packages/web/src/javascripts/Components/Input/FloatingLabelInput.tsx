@@ -33,14 +33,14 @@ const FloatingLabelInput = forwardRef(
 
     const BASE_CLASSNAME = 'relative bg-default'
 
-    const LABEL_CLASSNAME = `hidden absolute ${!focused ? 'color-neutral' : 'color-info'} ${
+    const LABEL_CLASSNAME = `hidden absolute ${!focused ? 'text-neutral' : 'text-info'} ${
       focused || value ? 'flex top-0 left-2 pt-1.5 px-1' : ''
-    } ${isInvalid ? 'color-danger' : ''} ${labelClassName}`
+    } ${isInvalid ? 'text-danger' : ''} ${labelClassName}`
 
     const INPUT_CLASSNAME = `w-full h-full ${
       focused || value ? 'pt-6 pb-2' : 'py-2.5'
     } px-3 text-input border-1 border-solid border-border rounded placeholder:font-medium text-input focus:ring-info ${
-      isInvalid ? 'border-danger placeholder:color-danger' : ''
+      isInvalid ? 'border-danger placeholder:text-danger' : ''
     } ${inputClassName}`
 
     const handleFocus = () => setFocused(true)

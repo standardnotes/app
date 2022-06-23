@@ -65,19 +65,19 @@ const FileMenuOptions: FunctionComponent<Props> = ({
   return (
     <>
       <button onBlur={closeOnBlur} className="sn-dropdown-item focus:bg-info-backdrop" onClick={onPreview}>
-        <Icon type="file" className="mr-2 color-neutral" />
+        <Icon type="file" className="mr-2 text-neutral" />
         Preview file
       </button>
       {selectedFiles.length === 1 && (
         <>
           {isFileAttachedToNote ? (
             <button onBlur={closeOnBlur} className="sn-dropdown-item focus:bg-info-backdrop" onClick={onDetach}>
-              <Icon type="link-off" className="mr-2 color-neutral" />
+              <Icon type="link-off" className="mr-2 text-neutral" />
               Detach from note
             </button>
           ) : shouldShowAttachOption ? (
             <button onBlur={closeOnBlur} className="sn-dropdown-item focus:bg-info-backdrop" onClick={onAttach}>
-              <Icon type="link" className="mr-2 color-neutral" />
+              <Icon type="link" className="mr-2 text-neutral" />
               Attach to note
             </button>
           ) : null}
@@ -92,7 +92,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
         onBlur={closeOnBlur}
       >
         <span className="flex items-center">
-          <Icon type="password" className="mr-2 color-neutral" />
+          <Icon type="password" className="mr-2 text-neutral" />
           Password protection
         </span>
         <Switch
@@ -109,7 +109,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
           void filesController.downloadFiles(selectionController.selectedFiles)
         }}
       >
-        <Icon type="download" className="mr-2 color-neutral" />
+        <Icon type="download" className="mr-2 text-neutral" />
         Download
       </button>
       {shouldShowRenameOption && (
@@ -120,7 +120,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
             renameToggleCallback?.(true)
           }}
         >
-          <Icon type="pencil" className="mr-2 color-neutral" />
+          <Icon type="pencil" className="mr-2 text-neutral" />
           Rename
         </button>
       )}
@@ -131,11 +131,11 @@ const FileMenuOptions: FunctionComponent<Props> = ({
           void filesController.deleteFilesPermanently(selectionController.selectedFiles)
         }}
       >
-        <Icon type="trash" className="mr-2 color-danger" />
-        <span className="color-danger">Delete permanently</span>
+        <Icon type="trash" className="mr-2 text-danger" />
+        <span className="text-danger">Delete permanently</span>
       </button>
       {selectedFiles.length === 1 && (
-        <div className="px-3 pt-1.5 pb-0.5 text-xs color-neutral font-medium">
+        <div className="px-3 pt-1.5 pb-0.5 text-xs text-neutral font-medium">
           <div>
             <span className="font-semibold">File ID:</span> {selectedFiles[0].uuid}
           </div>

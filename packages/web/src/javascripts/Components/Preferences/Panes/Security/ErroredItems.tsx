@@ -65,7 +65,7 @@ const ErroredItems: FunctionComponent<Props> = ({ viewControllerManager }: Props
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>
-          Error Decrypting Items <span className="ml-1 color-warning">⚠️</span>
+          Error Decrypting Items <span className="ml-1 text-warning">⚠️</span>
         </Title>
         <Text>{`${erroredItems.length} items are errored and could not be decrypted.`}</Text>
         <div className="flex">

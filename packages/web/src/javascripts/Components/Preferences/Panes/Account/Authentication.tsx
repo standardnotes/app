@@ -39,7 +39,7 @@ const Authentication: FunctionComponent<Props> = ({ viewControllerManager }) => 
           <Button variant="primary" label="Create free account" onClick={clickRegister} className="mb-3" />
           <div className="text-input">
             Already have an account?{' '}
-            <button className="border-0 p-0 bg-default color-info underline cursor-pointer" onClick={clickSignIn}>
+            <button className="border-0 p-0 bg-default text-info underline cursor-pointer" onClick={clickSignIn}>
               Sign in
             </button>
           </div>

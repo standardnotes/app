@@ -143,7 +143,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
         <IconButton
           icon="arrow-left"
           title="Go back"
-          className="flex mr-2 color-neutral p-0"
+          className="flex mr-2 text-neutral p-0"
           onClick={() => setMenuPane(AccountMenuPane.GeneralMenu)}
           focusable={true}
           disabled={isSigningIn}
@@ -153,7 +153,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
       <div className="px-3 mb-1">
         <DecoratedInput
           className={`mb-2 ${error ? 'border-danger' : null}`}
-          left={[<Icon type="email" className="color-neutral" />]}
+          left={[<Icon type="email" className="text-neutral" />]}
           type="email"
           placeholder="Email"
           value={email}
@@ -166,7 +166,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
         <DecoratedPasswordInput
           className={`mb-2 ${error ? 'border-danger' : null}`}
           disabled={isSigningIn}
-          left={[<Icon type="password" className="color-neutral" />]}
+          left={[<Icon type="password" className="text-neutral" />]}
           onChange={handlePasswordChange}
           onFocus={resetInvalid}
           onKeyDown={handleKeyDown}
@@ -174,7 +174,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
           ref={passwordInputRef}
           value={password}
         />
-        {error ? <div className="color-danger my-2">{error}</div> : null}
+        {error ? <div className="text-danger my-2">{error}</div> : null}
         <Button
           className="btn-w-full mt-1 mb-3"
           label={isSigningIn ? 'Signing in...' : 'Sign in'}

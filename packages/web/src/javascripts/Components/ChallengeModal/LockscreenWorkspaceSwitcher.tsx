@@ -48,7 +48,7 @@ const LockscreenWorkspaceSwitcher: FunctionComponent<Props> = ({ mainApplication
   return (
     <div ref={containerRef}>
       <Button ref={buttonRef} onClick={toggleMenu} className="flex items-center justify-center min-w-76 mt-2">
-        <Icon type="user-switch" className="color-neutral mr-2" />
+        <Icon type="user-switch" className="text-neutral mr-2" />
         Switch workspace
       </Button>
       {isOpen && (

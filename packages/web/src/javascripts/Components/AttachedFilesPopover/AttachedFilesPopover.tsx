@@ -82,8 +82,8 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
         <button
           id={PopoverTabs.AttachedFiles}
           className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:bg-info-backdrop focus:shadow-bottom ${
-            currentTab === PopoverTabs.AttachedFiles ? 'color-info font-medium shadow-bottom' : 'color-text'
-          } ${attachedTabDisabled ? 'color-neutral cursor-not-allowed' : ''}`}
+            currentTab === PopoverTabs.AttachedFiles ? 'text-info font-medium shadow-bottom' : 'text-text'
+          } ${attachedTabDisabled ? 'text-neutral cursor-not-allowed' : ''}`}
           onClick={() => {
             setCurrentTab(PopoverTabs.AttachedFiles)
           }}
@@ -95,7 +95,7 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
         <button
           id={PopoverTabs.AllFiles}
           className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:bg-info-backdrop focus:shadow-bottom ${
-            currentTab === PopoverTabs.AllFiles ? 'color-info font-medium shadow-bottom' : 'color-text'
+            currentTab === PopoverTabs.AllFiles ? 'text-info font-medium shadow-bottom' : 'text-text'
           }`}
           onClick={() => {
             setCurrentTab(PopoverTabs.AllFiles)
@@ -111,7 +111,7 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
             <div className="relative">
               <input
                 type="text"
-                className="color-text w-full rounded py-1.5 px-3 text-input bg-default border-solid border-1 border-border"
+                className="text-text w-full rounded py-1.5 px-3 text-input bg-default border-solid border-1 border-border"
                 placeholder="Search files..."
                 value={searchQuery}
                 onInput={(e) => {
@@ -129,7 +129,7 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
                   }}
                   onBlur={closeOnBlur}
                 >
-                  <Icon type="clear-circle-filled" className="color-neutral" />
+                  <Icon type="clear-circle-filled" className="text-neutral" />
                 </button>
               )}
             </div>
@@ -164,7 +164,7 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
             <Button variant="normal" onClick={handleAttachFilesClick} onBlur={closeOnBlur}>
               {currentTab === PopoverTabs.AttachedFiles ? 'Attach' : 'Upload'} files
             </Button>
-            <div className="text-xs color-passive-0 mt-3">Or drop your files here</div>
+            <div className="text-xs text-passive-0 mt-3">Or drop your files here</div>
           </div>
         )}
       </div>
@@ -174,7 +174,7 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
           onClick={handleAttachFilesClick}
           onBlur={closeOnBlur}
         >
-          <Icon type="add" className="mr-2 color-neutral" />
+          <Icon type="add" className="mr-2 text-neutral" />
           {currentTab === PopoverTabs.AttachedFiles ? 'Attach' : 'Upload'} files
         </button>
       )}

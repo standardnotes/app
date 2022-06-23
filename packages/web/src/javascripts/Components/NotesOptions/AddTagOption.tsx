@@ -69,10 +69,10 @@ const AddTagOption: FunctionComponent<Props> = ({ navigationController, notesCon
           className="sn-dropdown-item justify-between"
         >
           <div className="flex items-center">
-            <Icon type="hashtag" className="mr-2 color-neutral" />
+            <Icon type="hashtag" className="mr-2 text-neutral" />
             Add tag
           </div>
-          <Icon type="chevron-right" className="color-neutral" />
+          <Icon type="chevron-right" className="text-neutral" />
         </DisclosureButton>
         <DisclosurePanel
           ref={menuRef}

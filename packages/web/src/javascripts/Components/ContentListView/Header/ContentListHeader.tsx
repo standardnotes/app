@@ -48,7 +48,7 @@ const ContentListHeader = ({
     <div className="section-title-bar-header">
       <div className="flex flex-col">
         <div className="text-lg font-semibold title">{panelTitle}</div>
-        {optionsSubtitle && <div className="text-xs color-passive-0">{optionsSubtitle}</div>}
+        {optionsSubtitle && <div className="text-xs text-passive-0">{optionsSubtitle}</div>}
       </div>
       <div className="flex">
         <div className="relative" ref={displayOptionsContainerRef}>
@@ -72,7 +72,7 @@ const ContentListHeader = ({
           </Disclosure>
         </div>
         <button
-          className="flex justify-center items-center min-w-8 h-8 ml-3 bg-info hover:brightness-130 color-info-contrast border-1 border-solid border-transparent rounded-full cursor-pointer"
+          className="flex justify-center items-center min-w-8 h-8 ml-3 bg-info hover:brightness-130 text-info-contrast border-1 border-solid border-transparent rounded-full cursor-pointer"
           title={addButtonLabel}
           aria-label={addButtonLabel}
           onClick={addNewItem}

@@ -70,16 +70,16 @@ const AutocompleteTagResult = ({ viewControllerManager, tagResult, closeOnBlur }
     <button
       ref={tagResultRef}
       type="button"
-      className="sn-dropdown-item focus:bg-info focus:color-info-contrast"
+      className="sn-dropdown-item focus:bg-info focus:text-info-contrast"
       onClick={() => onTagOptionClick(tagResult)}
       onFocus={onFocus}
       onBlur={onBlur}
       onKeyDown={onKeyDown}
       tabIndex={-1}
     >
-      <Icon type="hashtag" className="color-neutral mr-2 min-h-5 min-w-5" />
+      <Icon type="hashtag" className="text-neutral mr-2 min-h-5 min-w-5" />
       <span className="whitespace-nowrap overflow-hidden overflow-ellipsis">
-        {prefixTitle && <span className="color-passive-2">{prefixTitle}</span>}
+        {prefixTitle && <span className="text-passive-2">{prefixTitle}</span>}
         {autocompleteSearchQuery === ''
           ? title
           : splitQueryInString(title, autocompleteSearchQuery).map((substring, index) => (

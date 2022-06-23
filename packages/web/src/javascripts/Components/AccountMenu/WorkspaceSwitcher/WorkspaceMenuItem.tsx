@@ -85,7 +85,7 @@ const WorkspaceMenuItem: FunctionComponent<Props> = ({
                 setIsRenaming((isRenaming) => !isRenaming)
               }}
             >
-              <Icon type="pencil" className="color-neutral" size="medium" />
+              <Icon type="pencil" className="text-neutral" size="medium" />
             </a>
             <a
               role="button"
@@ -95,7 +95,7 @@ const WorkspaceMenuItem: FunctionComponent<Props> = ({
                 onDelete()
               }}
             >
-              <Icon type="trash" className="color-danger" size="medium" />
+              <Icon type="trash" className="text-danger" size="medium" />
             </a>
           </div>
         )}

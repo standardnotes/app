@@ -27,7 +27,7 @@ const ConfirmOtherSessionsSignOut = observer(({ application, viewControllerManag
                   End all other sessions?
                 </AlertDialogLabel>
                 <AlertDialogDescription className="sk-panel-row">
-                  <p className="color-foreground">
+                  <p className="text-foreground">
                     This action will sign out all other devices signed into your account, and remove your data from
                     those devices when they next regain connection to the internet. You may sign back in on those
                     devices at any time.

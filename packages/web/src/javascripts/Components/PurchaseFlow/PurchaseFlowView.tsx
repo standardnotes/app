@@ -45,7 +45,7 @@ const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> = ({ viewContro
         </div>
         <div className="flex justify-end xs:px-4">
           <a
-            className="mr-3 font-medium color-passive-1"
+            className="mr-3 font-medium text-passive-1"
             href="https://standardnotes.com/privacy"
             target="_blank"
             rel="noopener noreferrer"
@@ -53,7 +53,7 @@ const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> = ({ viewContro
             Privacy
           </a>
           <a
-            className="font-medium color-passive-1"
+            className="font-medium text-passive-1"
             href="https://standardnotes.com/help"
             target="_blank"
             rel="noopener noreferrer"

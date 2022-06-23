@@ -68,10 +68,10 @@ const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({ applic
           className="sn-dropdown-item justify-between"
         >
           <div className="flex items-center">
-            <Icon type="dashboard" className="color-neutral mr-2" />
+            <Icon type="dashboard" className="text-neutral mr-2" />
             Change note type
           </div>
-          <Icon type="chevron-right" className="color-neutral" />
+          <Icon type="chevron-right" className="text-neutral" />
         </DisclosureButton>
         <DisclosurePanel
           ref={menuRef}

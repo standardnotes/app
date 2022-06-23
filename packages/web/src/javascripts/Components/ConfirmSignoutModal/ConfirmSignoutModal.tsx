@@ -40,11 +40,11 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewContro
                 <AlertDialogLabel className="sk-h3 sk-panel-section-title">Sign out workspace?</AlertDialogLabel>
                 <AlertDialogDescription className="sk-panel-row">
                   <div>
-                    <p className="color-foreground">{STRING_SIGN_OUT_CONFIRMATION}</p>
+                    <p className="text-foreground">{STRING_SIGN_OUT_CONFIRMATION}</p>
                     {showWorkspaceWarning && (
                       <>
                         <br />
-                        <p className="color-foreground">
+                        <p className="text-foreground">
                           <strong>Note: </strong>
                           Because you have other workspaces signed in, this sign out may leave logs and other metadata
                           of your session on this device. For a more robust sign out that performs a hard clear of all

@@ -41,7 +41,7 @@ const PremiumFeaturesModal: FunctionComponent<Props> = ({
                 onClick={onClose}
                 aria-label="Close modal"
               >
-                <Icon className="color-neutral" type="close" />
+                <Icon className="text-neutral" type="close" />
               </button>
             </div>
             <div className="flex items-center justify-center p-1" aria-hidden={true}>
@@ -49,14 +49,14 @@ const PremiumFeaturesModal: FunctionComponent<Props> = ({
             </div>
             <div className="text-lg text-center font-bold mb-1">Enable Advanced Features</div>
           </AlertDialogLabel>
-          <AlertDialogDescription className="text-sm text-center color-passive-1 px-4.5 mb-2">
+          <AlertDialogDescription className="text-sm text-center text-passive-1 px-4.5 mb-2">
             In order to use <span className="font-semibold">{featureName}</span> and other advanced features, please
             purchase a subscription or upgrade your current plan.
           </AlertDialogDescription>
           <div className="p-4">
             <button
               onClick={handleClick}
-              className="w-full rounded no-border py-2 font-bold bg-info color-info-contrast hover:brightness-130 focus:brightness-130 cursor-pointer"
+              className="w-full rounded no-border py-2 font-bold bg-info text-info-contrast hover:brightness-130 focus:brightness-130 cursor-pointer"
               ref={plansButtonRef}
             >
               {hasSubscription ? 'Upgrade Plan' : 'See Plans'}

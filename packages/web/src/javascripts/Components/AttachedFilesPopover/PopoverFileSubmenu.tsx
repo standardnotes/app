@@ -67,7 +67,7 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
           onBlur={closeOnBlur}
           className="w-7 h-7 p-1 rounded-full border-0 bg-transparent hover:bg-contrast cursor-pointer"
         >
-          <Icon type="more" className="color-neutral" />
+          <Icon type="more" className="text-neutral" />
         </DisclosureButton>
         <DisclosurePanel
           ref={menuRef}
@@ -87,7 +87,7 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
                   closeMenu()
                 }}
               >
-                <Icon type="file" className="mr-2 color-neutral" />
+                <Icon type="file" className="mr-2 text-neutral" />
                 Preview file
               </button>
               {isAttachedToNote ? (
@@ -102,7 +102,7 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
                     closeMenu()
                   }}
                 >
-                  <Icon type="link-off" className="mr-2 color-neutral" />
+                  <Icon type="link-off" className="mr-2 text-neutral" />
                   Detach from note
                 </button>
               ) : (
@@ -117,7 +117,7 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
                     closeMenu()
                   }}
                 >
-                  <Icon type="link" className="mr-2 color-neutral" />
+                  <Icon type="link" className="mr-2 text-neutral" />
                   Attach to note
                 </button>
               )}
@@ -136,7 +136,7 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
                 onBlur={closeOnBlur}
               >
                 <span className="flex items-center">
-                  <Icon type="password" className="mr-2 color-neutral" />
+                  <Icon type="password" className="mr-2 text-neutral" />
                   Password protection
                 </span>
                 <Switch
@@ -157,7 +157,7 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
                   closeMenu()
                 }}
               >
-                <Icon type="download" className="mr-2 color-neutral" />
+                <Icon type="download" className="mr-2 text-neutral" />
                 Download
               </button>
               <button
@@ -167,7 +167,7 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
                   setIsRenamingFile(true)
                 }}
               >
-                <Icon type="pencil" className="mr-2 color-neutral" />
+                <Icon type="pencil" className="mr-2 text-neutral" />
                 Rename
               </button>
               <button
@@ -181,8 +181,8 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
                   closeMenu()
                 }}
               >
-                <Icon type="trash" className="mr-2 color-danger" />
-                <span className="color-danger">Delete permanently</span>
+                <Icon type="trash" className="mr-2 text-danger" />
+                <span className="text-danger">Delete permanently</span>
               </button>
             </>
           )}

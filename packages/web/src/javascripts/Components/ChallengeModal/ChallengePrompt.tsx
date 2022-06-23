@@ -39,7 +39,7 @@ const ChallengeModalPrompt: FunctionComponent<Props> = ({ prompt, values, index,
                 <label
                   key={option.label}
                   className={`cursor-pointer px-2 py-1.5 rounded ${
-                    selected ? 'bg-default color-foreground font-semibold' : 'color-passive-0 hover:bg-passive-3'
+                    selected ? 'bg-default text-foreground font-semibold' : 'text-passive-0 hover:bg-passive-3'
                   }`}
                 >
                   <input
@@ -76,7 +76,7 @@ const ChallengeModalPrompt: FunctionComponent<Props> = ({ prompt, values, index,
           onChange={(value) => onValueChange(value, prompt)}
         />
       )}
-      {isInvalid && <div className="text-sm color-danger mt-2">Invalid authentication, please try again.</div>}
+      {isInvalid && <div className="text-sm text-danger mt-2">Invalid authentication, please try again.</div>}
     </div>
   )
 }

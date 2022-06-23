@@ -100,7 +100,7 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
               className="flex p-1.5 mr-4 bg-transparent hover:bg-contrast border-solid border-border border-1 cursor-pointer rounded"
               onClick={() => setShowFileInfoPanel((show) => !show)}
             >
-              <Icon type="info" className="color-neutral" />
+              <Icon type="info" className="text-neutral" />
             </button>
             <button
               ref={closeButtonRef}
@@ -108,7 +108,7 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
               aria-label="Close modal"
               className="flex p-1 bg-transparent hover:bg-contrast border-0 cursor-pointer rounded"
             >
-              <Icon type="close" className="color-neutral" />
+              <Icon type="close" className="text-neutral" />
             </button>
           </div>
         </div>

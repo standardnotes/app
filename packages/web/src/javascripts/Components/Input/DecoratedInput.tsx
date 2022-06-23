@@ -6,7 +6,7 @@ const getClassNames = (hasLeftDecorations: boolean, hasRightDecorations: boolean
     container: `flex items-stretch position-relative bg-default border-1 border-solid border-border rounded focus-within:ring-info overflow-hidden ${
       !hasLeftDecorations && !hasRightDecorations ? 'px-2 py-1.5' : ''
     }`,
-    input: `w-full border-0 focus:shadow-none bg-transparent color-text ${
+    input: `w-full border-0 focus:shadow-none bg-transparent text-text ${
       !hasLeftDecorations && hasRightDecorations ? 'pl-2' : ''
     } ${hasRightDecorations ? 'pr-2' : ''}`,
     disabled: 'bg-passive-5 cursor-not-allowed',

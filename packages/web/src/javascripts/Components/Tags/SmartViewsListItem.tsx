@@ -114,7 +114,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
       >
         <div className="tag-info">
           <div className={'tag-icon mr-1'}>
-            <Icon type={iconType} className={`${isSelected ? 'color-info' : 'color-neutral'}`} />
+            <Icon type={iconType} className={`${isSelected ? 'text-info' : 'text-neutral'}`} />
           </div>
           <input
             className={`title ${isEditing ? 'editing' : ''}`}

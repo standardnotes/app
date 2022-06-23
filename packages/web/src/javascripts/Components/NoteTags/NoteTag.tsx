@@ -116,7 +116,7 @@ const NoteTag = ({ viewControllerManager, tag }: Props) => {
   return (
     <button
       ref={tagRef}
-      className="h-6 bg-contrast border-0 rounded text-xs color-text flex items-center mt-2 cursor-pointer hover:bg-secondary-contrast focus:bg-secondary-contrast py-2 pl-1 pr-2 mr-2"
+      className="h-6 bg-contrast border-0 rounded text-xs text-text flex items-center mt-2 cursor-pointer hover:bg-secondary-contrast focus:bg-secondary-contrast py-2 pl-1 pr-2 mr-2"
       onClick={onTagClick}
       onKeyDown={onKeyDown}
       onFocus={onFocus}
@@ -124,9 +124,9 @@ const NoteTag = ({ viewControllerManager, tag }: Props) => {
       tabIndex={getTabIndex()}
       title={longTitle}
     >
-      <Icon type="hashtag" className="color-info mr-1" size="small" />
+      <Icon type="hashtag" className="text-info mr-1" size="small" />
       <span className="whitespace-nowrap overflow-hidden overflow-ellipsis max-w-290px">
-        {prefixTitle && <span className="color-passive-1">{prefixTitle}</span>}
+        {prefixTitle && <span className="text-passive-1">{prefixTitle}</span>}
         {title}
       </span>
       {showDeleteButton && (
@@ -138,7 +138,7 @@ const NoteTag = ({ viewControllerManager, tag }: Props) => {
           onClick={onDeleteTagClick}
           tabIndex={-1}
         >
-          <Icon type="close" className="color-neutral hover:color-info" size="small" />
+          <Icon type="close" className="text-neutral hover:text-info" size="small" />
         </a>
       )}
     </button>

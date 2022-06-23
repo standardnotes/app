@@ -111,7 +111,7 @@ const AutocompleteTagInput = ({ viewControllerManager }: Props) => {
           <input
             ref={inputRef}
             className={`${tags.length > 0 ? 'w-80' : 'w-70 mr-10'} bg-transparent text-xs
-            color-text no-border h-7 focus:outline-none focus:shadow-none focus:border-bottom`}
+            text-text no-border h-7 focus:outline-none focus:shadow-none focus:border-bottom`}
             value={autocompleteSearchQuery}
             onChange={onSearchQueryChange}
             type="text"

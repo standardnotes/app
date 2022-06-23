@@ -17,8 +17,8 @@ const EditingDisabledBanner: FunctionComponent<Props> = ({
   lockText,
 }) => {
   const background = showLockedIcon ? 'bg-warning-faded' : 'bg-info-faded'
-  const iconColor = showLockedIcon ? 'color-accessory-tint-3' : 'color-accessory-tint-1'
-  const textColor = showLockedIcon ? 'color-warning' : 'color-accessory-tint-1'
+  const iconColor = showLockedIcon ? 'text-accessory-tint-3' : 'text-accessory-tint-1'
+  const textColor = showLockedIcon ? 'text-warning' : 'text-accessory-tint-1'
 
   return (
     <div

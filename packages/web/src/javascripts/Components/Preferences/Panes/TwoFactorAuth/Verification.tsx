@@ -43,10 +43,10 @@ const Verification: FunctionComponent<Props> = ({ activation: act }) => {
       </ModalDialogDescription>
       <ModalDialogButtons>
         {act.verificationStatus === 'invalid-auth-code' && (
-          <div className="text-sm color-danger flex-grow">Incorrect authentication code, please try again.</div>
+          <div className="text-sm text-danger flex-grow">Incorrect authentication code, please try again.</div>
         )}
         {act.verificationStatus === 'invalid-secret' && (
-          <div className="text-sm color-danger flex-grow">Incorrect secret key, please try again.</div>
+          <div className="text-sm text-danger flex-grow">Incorrect secret key, please try again.</div>
         )}
         <Button className="min-w-20" variant="normal" label="Back" onClick={act.openSaveSecretKey} />
         <Button className="min-w-20" variant="primary" label="Next" onClick={act.enable2FA} />

@@ -353,7 +353,7 @@ class Footer extends PureComponent<Props, State> {
                 }
               >
                 <div className={this.state.hasError ? 'danger' : (this.user ? 'info' : 'neutral') + ' w-5 h-5'}>
-                  <Icon type="account-circle" className="hover:color-info w-5 h-5 max-h-5" />
+                  <Icon type="account-circle" className="hover:text-info w-5 h-5 max-h-5" />
                 </div>
               </div>
               {this.state.showAccountMenu && (
@@ -373,7 +373,7 @@ class Footer extends PureComponent<Props, State> {
                 <div className="h-5">
                   <Icon
                     type="tune"
-                    className={(this.state.showQuickSettingsMenu ? 'color-info' : '') + ' rounded hover:color-info'}
+                    className={(this.state.showQuickSettingsMenu ? 'text-info' : '') + ' rounded hover:text-info'}
                   />
                 </div>
               </div>
@@ -446,7 +446,7 @@ class Footer extends PureComponent<Props, State> {
                   id="lock-item"
                   onClick={this.lockClickHandler}
                   title="Locks application and wipes unencrypted data from memory."
-                  className="sk-app-bar-item z-footer-bar-item relative select-none pl-1 hover:color-info"
+                  className="sk-app-bar-item z-footer-bar-item relative select-none pl-1 hover:text-info"
                 >
                   <Icon type="lock-filled" />
                 </div>

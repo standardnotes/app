@@ -33,7 +33,7 @@ const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({ features
         if (group.entries && group.entries.length) {
           return (
             <Fragment key={group.title}>
-              <div className="px-3 mt-2.5 mb-1 font-semibold color-text uppercase color-passive-0 select-none">
+              <div className="px-3 mt-2.5 mb-1 font-semibold text-text uppercase text-passive-0 select-none">
                 {group.title}
               </div>
               {group.entries.map((entry) => (
@@ -57,7 +57,7 @@ const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({ features
         }
       })}
       {!remoteHistoryLength && !isFetchingRemoteHistory && (
-        <div className="color-passive-0 select-none">No remote history found</div>
+        <div className="text-passive-0 select-none">No remote history found</div>
       )}
     </div>
   )
