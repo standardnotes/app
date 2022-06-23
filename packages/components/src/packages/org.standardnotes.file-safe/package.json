@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/filesafe-bar",
-  "version": "2.0.15",
+  "version": "2.0.16-alpha.0",
   "main": "dist/dist.js",
   "private": true,
   "files": [
