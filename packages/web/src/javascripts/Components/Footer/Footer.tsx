@@ -342,9 +342,9 @@ class Footer extends PureComponent<Props, State> {
   override render() {
     return (
       <div className="sn-component">
-        <div id="footer-bar" className="sk-app-bar no-edges no-bottom-edge">
+        <div id="footer-bar" className="sk-app-bar no-edges no-bottom-edge z-footer-bar">
           <div className="left">
-            <div className="sk-app-bar-item ml-0">
+            <div className="sk-app-bar-item z-footer-bar-item relative select-none ml-0">
               <div
                 onClick={this.accountMenuClickHandler}
                 className={
@@ -365,7 +365,7 @@ class Footer extends PureComponent<Props, State> {
                 />
               )}
             </div>
-            <div className="sk-app-bar-item ml-0-important">
+            <div className="sk-app-bar-item z-footer-bar-item relative select-none ml-0-important">
               <div
                 onClick={this.quickSettingsClickHandler}
                 className="w-8 h-full flex items-center justify-center cursor-pointer"
@@ -387,8 +387,8 @@ class Footer extends PureComponent<Props, State> {
             </div>
             {this.state.showBetaWarning && (
               <Fragment>
-                <div className="sk-app-bar-item border" />
-                <div className="sk-app-bar-item">
+                <div className="sk-app-bar-item z-footer-bar-item relative select-none border" />
+                <div className="sk-app-bar-item z-footer-bar-item relative select-none">
                   <a onClick={this.betaMessageClickHandler} className="no-decoration sk-label title">
                     You are using a beta version of the app
                   </a>
@@ -398,7 +398,7 @@ class Footer extends PureComponent<Props, State> {
           </div>
           <div className="center">
             {this.state.arbitraryStatusMessage && (
-              <div className="sk-app-bar-item">
+              <div className="sk-app-bar-item z-footer-bar-item relative select-none">
                 <div className="sk-app-bar-item-column">
                   <span className="neutral sk-label">{this.state.arbitraryStatusMessage}</span>
                 </div>
@@ -407,17 +407,23 @@ class Footer extends PureComponent<Props, State> {
           </div>
           <div className="right">
             {this.state.dataUpgradeAvailable && (
-              <div onClick={this.securityUpdateClickHandler} className="sk-app-bar-item">
+              <div
+                onClick={this.securityUpdateClickHandler}
+                className="sk-app-bar-item z-footer-bar-item relative select-none"
+              >
                 <span className="success sk-label">Encryption upgrade available.</span>
               </div>
             )}
             {this.state.newUpdateAvailable && (
-              <div onClick={this.newUpdateClickHandler} className="sk-app-bar-item">
+              <div
+                onClick={this.newUpdateClickHandler}
+                className="sk-app-bar-item z-footer-bar-item relative select-none"
+              >
                 <span className="info sk-label">New update available.</span>
               </div>
             )}
             {(this.state.outOfSync || this.state.showSyncResolution) && (
-              <div className="sk-app-bar-item">
+              <div className="sk-app-bar-item z-footer-bar-item relative select-none">
                 {this.state.outOfSync && (
                   <div onClick={this.syncResolutionClickHandler} className="sk-label warning">
                     Potentially Out of Sync
@@ -429,18 +435,18 @@ class Footer extends PureComponent<Props, State> {
               </div>
             )}
             {this.state.offline && (
-              <div className="sk-app-bar-item">
+              <div className="sk-app-bar-item z-footer-bar-item relative select-none">
                 <div className="sk-label">Offline</div>
               </div>
             )}
             {this.state.hasPasscode && (
               <Fragment>
-                <div className="sk-app-bar-item border" />
+                <div className="sk-app-bar-item z-footer-bar-item relative select-none border" />
                 <div
                   id="lock-item"
                   onClick={this.lockClickHandler}
                   title="Locks application and wipes unencrypted data from memory."
-                  className="sk-app-bar-item pl-1 hover:color-info"
+                  className="sk-app-bar-item z-footer-bar-item relative select-none pl-1 hover:color-info"
                 >
                   <Icon type="lock-filled" />
                 </div>

@@ -1,25 +1,17 @@
-$z-index-editor-content: 10;
-
-$z-index-editor-title-bar: 100;
-
-$z-index-resizer-overlay: 1000;
-
-$z-index-component-view: 1000;
-
-$z-index-footer-bar: 2000;
-$z-index-footer-bar-item: 2000;
-$z-index-footer-bar-item-panel: 2000;
-
-$z-index-preferences: 3000;
-
-$z-index-purchase-flow: 4000;
-
-$z-index-lock-screen: 10000;
-$z-index-modal: 10000;
-
 :root {
+  --z-index-editor-content: 10;
+  --z-index-editor-title-bar: 100;
+  --z-index-resizer-overlay: 1000;
+  --z-index-component-view: 1000;
   --z-index-panel-resizer: 1001;
   --z-index-dropdown-menu: 1002;
+  --z-index-footer-bar: 2000;
+  --z-index-footer-bar-item: 2000;
+  --z-index-footer-bar-item-panel: 2000;
+  --z-index-preferences: 3000;
+  --z-index-purchase-flow: 4000;
+  --z-index-lock-screen: 10000;
+  --z-index-modal: 10000;
 }
 
 html {
@@ -32,8 +24,8 @@ body {
 
 html,
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
-    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
+    'Droid Sans', 'Helvetica Neue', sans-serif;
   -moz-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
@@ -118,7 +110,7 @@ $footer-height: 2rem;
   width: 100%;
   height: 100%;
   background-color: transparent;
-  z-index: $z-index-resizer-overlay;
+  z-index: var(--z-index-resizer-overlay);
   opacity: 0;
 }
 
@@ -167,12 +159,4 @@ $footer-height: 2rem;
 
 .icon {
   margin-right: 4px;
-}
-
-.z-index-preferences {
-  z-index: $z-index-preferences;
-}
-
-.z-index-purchase-flow {
-  z-index: $z-index-purchase-flow;
 }

@@ -28,7 +28,7 @@ const PreferencesView: FunctionComponent<PreferencesProps> = (props) => {
   }, [props, menu])
 
   return (
-    <div className="h-full w-full absolute top-left-0 flex flex-col bg-contrast z-index-preferences">
+    <div className="h-full w-full absolute top-left-0 flex flex-col bg-contrast z-preferences">
       <TitleBar className="items-center justify-between">
         <div className="h-8 w-8" />
         <Title className="text-lg">Your preferences for Standard Notes</Title>

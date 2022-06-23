@@ -907,7 +907,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
           )}
 
           {this.note && (
-            <div id="editor-title-bar" className="content-title-bar section-title-bar w-full">
+            <div id="editor-title-bar" className="content-title-bar z-editor-title-bar section-title-bar w-full">
               <div className="flex items-center justify-between h-8">
                 <div className={(this.state.noteLocked ? 'locked' : '') + ' flex-grow'}>
                   <div className="title overflow-auto">
@@ -980,7 +980,11 @@ class NoteView extends PureComponent<NoteViewProps, State> {
             </div>
           )}
 
-          <div id={ElementIds.EditorContent} className={ElementIds.EditorContent} ref={this.editorContentRef}>
+          <div
+            id={ElementIds.EditorContent}
+            className={`${ElementIds.EditorContent} z-editor-content`}
+            ref={this.editorContentRef}
+          >
             {this.state.marginResizersEnabled && this.editorContentRef.current ? (
               <PanelResizer
                 minWidth={300}
