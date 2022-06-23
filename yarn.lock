@@ -6006,6 +6006,7 @@ __metadata:
     "@types/react-dom": ^18.0.5
     "@types/wicg-file-system-access": ^2020.9.5
     "@zip.js/zip.js": ^2.4.10
+    autoprefixer: ^10.4.7
     babel-loader: ^8.2.5
     circular-dependency-plugin: ^5.2.2
     css-loader: ^6.7.1
@@ -6023,6 +6024,8 @@ __metadata:
     mobx-react-lite: ^3.3.0
     node-sass: "*"
     npm-check-updates: ^12.5.9
+    postcss: ^8.4.14
+    postcss-loader: ^7.0.0
     prettier: "*"
     qrcode.react: ^3.0.1
     react: ^18.1.0
@@ -6033,6 +6036,7 @@ __metadata:
     sass-loader: ^12.6.0
     styled-components: ^5.3.5
     svg-jest: ^1.0.1
+    tailwindcss: ^3.1.4
     ts-jest: ^27.1.4
     ts-loader: ^9.2.8
     typescript: "*"
@@ -24800,6 +24804,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"postcss-loader@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "postcss-loader@npm:7.0.0"
+  dependencies:
+    cosmiconfig: ^7.0.0
+    klona: ^2.0.5
+    semver: ^7.3.7
+  peerDependencies:
+    postcss: ^7.0.0 || ^8.0.1
+    webpack: ^5.0.0
+  checksum: b8e51e99898cae8400de8690752b64af2ca1e3eed7c0d696c9e1ec6fc45dd334c958748247632c48109a519fb59f7545d0b8fe4b52479d982ca3ec4eb8e3b0c9
+  languageName: node
+  linkType: hard
+
 "postcss-logical@npm:^5.0.4":
   version: 5.0.4
   resolution: "postcss-logical@npm:5.0.4"
@@ -30062,7 +30080,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tailwindcss@npm:^3.0.2":
+"tailwindcss@npm:^3.0.2, tailwindcss@npm:^3.1.4":
   version: 3.1.4
   resolution: "tailwindcss@npm:3.1.4"
   dependencies:

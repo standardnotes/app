@@ -1,4 +1,8 @@
-@import '../../../styles/src/Styles/main.scss';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import '../../../styles/src/Styles/_colors.scss';
 @import 'theme';
 @import 'main';
 @import 'ui';
@@ -16,13 +20,3 @@
 @import 'sn';
 @import 'columns';
 
-.sn-component {
-  @import './utils/padding';
-  @import './utils/margin';
-  @import './utils/width';
-  @import './utils/height';
-  @import './utils/color';
-  @import './utils/border';
-  @import './utils/position';
-  @import './utils/leading';
-}

@@ -73,6 +73,7 @@ module.exports = (env) => {
             },
             'css-loader',
             'sass-loader',
+            'postcss-loader',
           ],
         },
       ],
