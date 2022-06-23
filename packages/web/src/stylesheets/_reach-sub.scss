@@ -1,5 +1,5 @@
 [data-reach-dialog-overlay] {
-  z-index: $z-index-modal;
+  z-index: var(--z-index-modal);
   background: none;
   display: flex;
   flex-direction: column;
