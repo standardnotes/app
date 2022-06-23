@@ -4935,6 +4935,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standardnotes/api@npm:^1.1.15":
+  version: 1.1.15
+  resolution: "@standardnotes/api@npm:1.1.15"
+  dependencies:
+    "@standardnotes/auth": ^3.19.3
+    "@standardnotes/common": ^1.23.0
+    "@standardnotes/encryption": ^1.8.20
+    "@standardnotes/responses": ^1.6.36
+    "@standardnotes/services": ^1.13.20
+    "@standardnotes/utils": ^1.6.11
+  checksum: 70c54276b98ea423611e3383cbae0a37a52eb6cb984b6035a063d5b99cd86796470b7f9e788fd29f3d72e2445e04508192dcb689d1c26daf3d9a5e160774c0fc
+  languageName: node
+  linkType: hard
+
 "@standardnotes/app-monorepo@workspace:.":
   version: 0.0.0-use.local
   resolution: "@standardnotes/app-monorepo@workspace:."
@@ -4945,7 +4959,7 @@ __metadata:
     "@lerna-lite/list": ^1.5.1
     "@lerna-lite/run": ^1.5.1
     "@standardnotes/config": ^2.4.3
-    "@standardnotes/snjs": ^2.117.7
+    "@standardnotes/snjs": ^2.117.8
     "@typescript-eslint/eslint-plugin": ^5.20.0
     "@typescript-eslint/parser": ^5.20.0
     css-loader: ^6.7.1
@@ -5812,7 +5826,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/snjs@npm:*, @standardnotes/snjs@npm:^2.117.7, @standardnotes/snjs@npm:^2.41.1":
+"@standardnotes/snjs@npm:*, @standardnotes/snjs@npm:^2.41.1":
   version: 2.117.7
   resolution: "@standardnotes/snjs@npm:2.117.7"
   dependencies:
@@ -5831,6 +5845,28 @@ __metadata:
     "@standardnotes/utils": ^1.6.11
     semver: ^7.3.7
   checksum: 6dd9a80392e91649a08174d1d2f7d73da8ce241c78a09e5b839070538c72cc5d2d41ef5381c3529af5fad85292acd63b77ecb610d9a5fa5b28bf4718202d6ef6
+  languageName: node
+  linkType: hard
+
+"@standardnotes/snjs@npm:^2.117.8":
+  version: 2.117.8
+  resolution: "@standardnotes/snjs@npm:2.117.8"
+  dependencies:
+    "@standardnotes/api": ^1.1.15
+    "@standardnotes/auth": ^3.19.3
+    "@standardnotes/common": ^1.23.0
+    "@standardnotes/domain-events": ^2.32.2
+    "@standardnotes/encryption": ^1.8.20
+    "@standardnotes/features": ^1.45.5
+    "@standardnotes/files": ^1.3.20
+    "@standardnotes/models": ^1.11.10
+    "@standardnotes/responses": ^1.6.36
+    "@standardnotes/services": ^1.13.20
+    "@standardnotes/settings": ^1.14.3
+    "@standardnotes/sncrypto-common": ^1.9.0
+    "@standardnotes/utils": ^1.6.11
+    semver: ^7.3.7
+  checksum: 5002405cd6dcf196c6c1bd39b55b0e44e791e81a6b146239cc7b718f0f45cc05807551eb84df4001d1163c8a5f58e2382b4bf6412d03509dfcc6588805428a19
   languageName: node
   linkType: hard
 
