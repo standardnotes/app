@@ -270,12 +270,14 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
             }
           }}
           ref={buttonRef}
-          className={`sn-icon-button border-contrast ${attachedFilesCount > 0 ? 'py-1 px-3' : ''}`}
+          className={`flex justify-center items-center min-w-8 h-8 bg-text-padding hover:bg-contrast focus:bg-contrast text-neutral border border-solid border-border rounded-full cursor-pointer ${
+            attachedFilesCount > 0 ? 'py-1 px-3' : ''
+          }`}
           onBlur={closeOnBlur}
         >
           <VisuallyHidden>Attached files</VisuallyHidden>
           <Icon type="attachment-file" className="block" />
-          {attachedFilesCount > 0 && <span className="ml-2">{attachedFilesCount}</span>}
+          {attachedFilesCount > 0 && <span className="text-sm ml-2">{attachedFilesCount}</span>}
         </DisclosureButton>
         <DisclosurePanel
           onKeyDown={(event) => {

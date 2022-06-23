@@ -71,7 +71,7 @@ const NotesOptionsPanel = ({
         }}
         onBlur={closeOnBlur}
         ref={buttonRef}
-        className="sn-icon-button border-contrast"
+        className="flex justify-center items-center min-w-8 h-8 bg-text-padding hover:bg-contrast focus:bg-contrast text-neutral border border-solid border-border rounded-full cursor-pointer"
       >
         <VisuallyHidden>Actions</VisuallyHidden>
         <Icon type="more" className="block" />
