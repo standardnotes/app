@@ -2173,15 +2173,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@csstools/postcss-cascade-layers@npm:^1.0.2":
-  version: 1.0.3
-  resolution: "@csstools/postcss-cascade-layers@npm:1.0.3"
+"@csstools/postcss-cascade-layers@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "@csstools/postcss-cascade-layers@npm:1.0.4"
   dependencies:
     "@csstools/selector-specificity": ^2.0.0
     postcss-selector-parser: ^6.0.10
   peerDependencies:
-    postcss: ^8.3
-  checksum: 11cd447b6fd278a9d7b3ab1190d22b0b248fd1c5d1b9a1c705c849e38f75ec9bb6afa23d04a3e4bbb7c9a9b27338db08672fdd8ca45ad6eb50473ad604f4bb75
+    postcss: ^8.2
+  checksum: 1edaa13111f316c85b5288da9429829661edef20bd5cb70f5906d94d00d3d9e1033ba48b40363328da346a62597048eb6019ca306276d19a9b8d27dd521c4f7b
   languageName: node
   linkType: hard
 
@@ -2231,15 +2231,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@csstools/postcss-is-pseudo-class@npm:^2.0.4":
-  version: 2.0.5
-  resolution: "@csstools/postcss-is-pseudo-class@npm:2.0.5"
+"@csstools/postcss-is-pseudo-class@npm:^2.0.6":
+  version: 2.0.6
+  resolution: "@csstools/postcss-is-pseudo-class@npm:2.0.6"
   dependencies:
     "@csstools/selector-specificity": ^2.0.0
     postcss-selector-parser: ^6.0.10
   peerDependencies:
-    postcss: ^8.4
-  checksum: 7c7cc17e4b9703fd4e7d673474b7072b4bd87d406139e2e9d46e7cd28c5b9c313e9b9cc340388ef61815d4a9e19210fac68a8e296a1454f27f08ff62a8a35a16
+    postcss: ^8.2
+  checksum: 66206ca4fa40f0fdac2a7bf6650ca8edecbc7dc1053d338c57338e19e543dedb82a324feb38254531026130010b00b663d95c1f95873478c9680fb04fafdc8ff
   languageName: node
   linkType: hard
 
@@ -10041,7 +10041,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browserslist@npm:^4.0.0, browserslist@npm:^4.14.5, browserslist@npm:^4.16.6, browserslist@npm:^4.16.8, browserslist@npm:^4.18.1, browserslist@npm:^4.20.2, browserslist@npm:^4.20.3, browserslist@npm:^4.20.4":
+"browserslist@npm:^4.0.0, browserslist@npm:^4.14.5, browserslist@npm:^4.16.6, browserslist@npm:^4.16.8, browserslist@npm:^4.18.1, browserslist@npm:^4.20.2, browserslist@npm:^4.20.3, browserslist@npm:^4.20.4, browserslist@npm:^4.21.0":
   version: 4.21.0
   resolution: "browserslist@npm:4.21.0"
   dependencies:
@@ -14049,9 +14049,9 @@ __metadata:
   linkType: hard
 
 "electron-log@npm:^4.4.6":
-  version: 4.4.7
-  resolution: "electron-log@npm:4.4.7"
-  checksum: baa5c3cb751ac52e465b116075440365d4664b5e1b0c9754664bd21f63bc70ef9ace3340932465a9b980fd8d39c4288ea599648920135856392a9a893eea2555
+  version: 4.4.8
+  resolution: "electron-log@npm:4.4.8"
+  checksum: 5a7958f8fd9a5c95987e885ffe1c5b88be15bb41d348b65c92e2d8664519faddf17ce0208cd4e7027b0908f92fecedfbef246a45061f53e4a53b5d2201aafbd9
   languageName: node
   linkType: hard
 
@@ -14098,9 +14098,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.4.164":
-  version: 1.4.166
-  resolution: "electron-to-chromium@npm:1.4.166"
-  checksum: 6f0dbc84032d77bda730a78498337fcf3d39ed9502c6fcf26cf42e9baf8c7cbcf945ce2c67182d711101d1411489efc130af71a8f75c756ed899e1277f804f73
+  version: 1.4.167
+  resolution: "electron-to-chromium@npm:1.4.167"
+  checksum: bee148bccefe025fae5c53af8cf121e2e91e94ad4f554539eaed4d0d8a5869c824eef347283b01d55b87bc27b523d26930182f9d25040410541b0398c0b1f8f4
   languageName: node
   linkType: hard
 
@@ -17547,9 +17547,9 @@ __metadata:
   linkType: hard
 
 "http-parser-js@npm:>=0.5.1":
-  version: 0.5.6
-  resolution: "http-parser-js@npm:0.5.6"
-  checksum: 8a92f6782542211c77936104ea1eca3c86a95420eb286b100f6421630f29d8f94fd4cc7a245df8e078791d86cd9a237091094440ffb0cd1b44a3f85bfbf539fa
+  version: 0.5.7
+  resolution: "http-parser-js@npm:0.5.7"
+  checksum: d166f575dd7580f61324e4797d74960b30fdc09cd171782bb6c038636e7cf930f75f461035e15b24de299ef5527d8184dd238ad8488ae359c72e9db0c68d80ab
   languageName: node
   linkType: hard
 
@@ -24512,7 +24512,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-color-hex-alpha@npm:^8.0.3":
+"postcss-color-hex-alpha@npm:^8.0.4":
   version: 8.0.4
   resolution: "postcss-color-hex-alpha@npm:8.0.4"
   dependencies:
@@ -24523,7 +24523,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-color-rebeccapurple@npm:^7.0.2":
+"postcss-color-rebeccapurple@npm:^7.1.0":
   version: 7.1.0
   resolution: "postcss-color-rebeccapurple@npm:7.1.0"
   dependencies:
@@ -24560,7 +24560,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-custom-media@npm:^8.0.1":
+"postcss-custom-media@npm:^8.0.2":
   version: 8.0.2
   resolution: "postcss-custom-media@npm:8.0.2"
   dependencies:
@@ -24571,7 +24571,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-custom-properties@npm:^12.1.7":
+"postcss-custom-properties@npm:^12.1.8":
   version: 12.1.8
   resolution: "postcss-custom-properties@npm:12.1.8"
   dependencies:
@@ -24582,7 +24582,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-custom-selectors@npm:^6.0.2":
+"postcss-custom-selectors@npm:^6.0.3":
   version: 6.0.3
   resolution: "postcss-custom-selectors@npm:6.0.3"
   dependencies:
@@ -24988,15 +24988,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-nesting@npm:^10.1.7":
-  version: 10.1.8
-  resolution: "postcss-nesting@npm:10.1.8"
+"postcss-nesting@npm:^10.1.9":
+  version: 10.1.9
+  resolution: "postcss-nesting@npm:10.1.9"
   dependencies:
     "@csstools/selector-specificity": ^2.0.0
     postcss-selector-parser: ^6.0.10
   peerDependencies:
-    postcss: ^8.4
-  checksum: 6ba0a88c1c9951f78d2c377c43c99a3a6eea8d6e41b80146cfa7ef917dfb5750a595cb74c9b1c01329c530a2aaeaaaa88f6d2a02e04e3a8d209729dc4d28a4a7
+    postcss: ^8.2
+  checksum: a3e972c7878451d75ec005b13dd26acd976e1345aaddd06dda255a3615ef85e5d85ea241bbcf12905c4777b9799807cbf7656316e2e56eea00ffea6d36c7e893
   languageName: node
   linkType: hard
 
@@ -25162,15 +25162,15 @@ __metadata:
   linkType: hard
 
 "postcss-preset-env@npm:^7.0.1":
-  version: 7.7.1
-  resolution: "postcss-preset-env@npm:7.7.1"
+  version: 7.7.2
+  resolution: "postcss-preset-env@npm:7.7.2"
   dependencies:
-    "@csstools/postcss-cascade-layers": ^1.0.2
+    "@csstools/postcss-cascade-layers": ^1.0.4
     "@csstools/postcss-color-function": ^1.1.0
     "@csstools/postcss-font-format-keywords": ^1.0.0
     "@csstools/postcss-hwb-function": ^1.0.1
     "@csstools/postcss-ic-unit": ^1.0.0
-    "@csstools/postcss-is-pseudo-class": ^2.0.4
+    "@csstools/postcss-is-pseudo-class": ^2.0.6
     "@csstools/postcss-normalize-display-values": ^1.0.0
     "@csstools/postcss-oklab-function": ^1.1.0
     "@csstools/postcss-progressive-custom-properties": ^1.3.0
@@ -25178,7 +25178,7 @@ __metadata:
     "@csstools/postcss-trigonometric-functions": ^1.0.1
     "@csstools/postcss-unset-value": ^1.0.1
     autoprefixer: ^10.4.7
-    browserslist: ^4.20.3
+    browserslist: ^4.21.0
     css-blank-pseudo: ^3.0.3
     css-has-pseudo: ^3.0.4
     css-prefers-color-scheme: ^6.0.3
@@ -25186,11 +25186,11 @@ __metadata:
     postcss-attribute-case-insensitive: ^5.0.1
     postcss-clamp: ^4.1.0
     postcss-color-functional-notation: ^4.2.3
-    postcss-color-hex-alpha: ^8.0.3
-    postcss-color-rebeccapurple: ^7.0.2
-    postcss-custom-media: ^8.0.1
-    postcss-custom-properties: ^12.1.7
-    postcss-custom-selectors: ^6.0.2
+    postcss-color-hex-alpha: ^8.0.4
+    postcss-color-rebeccapurple: ^7.1.0
+    postcss-custom-media: ^8.0.2
+    postcss-custom-properties: ^12.1.8
+    postcss-custom-selectors: ^6.0.3
     postcss-dir-pseudo-class: ^6.0.4
     postcss-double-position-gradients: ^3.1.1
     postcss-env-function: ^4.0.6
@@ -25203,29 +25203,29 @@ __metadata:
     postcss-lab-function: ^4.2.0
     postcss-logical: ^5.0.4
     postcss-media-minmax: ^5.0.0
-    postcss-nesting: ^10.1.7
+    postcss-nesting: ^10.1.9
     postcss-opacity-percentage: ^1.1.2
     postcss-overflow-shorthand: ^3.0.3
     postcss-page-break: ^3.0.4
     postcss-place: ^7.0.4
-    postcss-pseudo-class-any-link: ^7.1.4
+    postcss-pseudo-class-any-link: ^7.1.5
     postcss-replace-overflow-wrap: ^4.0.0
     postcss-selector-not: ^6.0.0
     postcss-value-parser: ^4.2.0
   peerDependencies:
-    postcss: ^8.4
-  checksum: 6efa443a8c4dcf3a9f0d37ee33541644ebc0cad2aa00f0f966ce80fa548ae1fe860903f6bbf04506201787c21f11daed760c72edf12c42a719727328976d635a
+    postcss: ^8.2
+  checksum: 15648b4f4efe45e3e8e9d7b7d6c714bf118e529c7728a615d211605fe7be6a5d46d41954676a2b23ea56696bd728dfc189d0a0f867a37404cd7ff820c00d32f5
   languageName: node
   linkType: hard
 
-"postcss-pseudo-class-any-link@npm:^7.1.4":
-  version: 7.1.4
-  resolution: "postcss-pseudo-class-any-link@npm:7.1.4"
+"postcss-pseudo-class-any-link@npm:^7.1.5":
+  version: 7.1.5
+  resolution: "postcss-pseudo-class-any-link@npm:7.1.5"
   dependencies:
     postcss-selector-parser: ^6.0.10
   peerDependencies:
-    postcss: ^8.4
-  checksum: 86e10d56daf57837ccde1d6275425522cafecbae96bd955ef200befc7fd143eedc3b00907e53e8f5207c6290b277600a8ff3f72ec037113867d6031c5d31e7f2
+    postcss: ^8.2
+  checksum: b2aaa1e75d5343c4f6e8765d8a5cc6d9c740cfa9680d559478cafb799492479818c5b232b34396bf5bce8a3d66f19ce848bd049aa9a00bb8b8091dd84e6df729
   languageName: node
   linkType: hard
 
@@ -25672,12 +25672,12 @@ __metadata:
   linkType: hard
 
 "prosemirror-state@npm:^1.0.0, prosemirror-state@npm:^1.2.2, prosemirror-state@npm:^1.3.1, prosemirror-state@npm:^1.3.4":
-  version: 1.4.0
-  resolution: "prosemirror-state@npm:1.4.0"
+  version: 1.4.1
+  resolution: "prosemirror-state@npm:1.4.1"
   dependencies:
     prosemirror-model: ^1.0.0
     prosemirror-transform: ^1.0.0
-  checksum: 1c9ba2899e9dcaec1fea52136e9c0616cbc69e2f9644407c973b6bbc765b878ee899c4a5b2952595b6b12772a06a659c25ce7f2df7b12ead72e21fe4fec675c5
+  checksum: d094a48c3087e5b13cadf9a7416ea65efa14372953b0058eb9c695346cabfe56c85d0281348fb97720d4c941046e159ef282f2aa168abd8b6c4862e59845ef18
   languageName: node
   linkType: hard
 
@@ -31361,8 +31361,8 @@ __metadata:
   linkType: hard
 
 "update-browserslist-db@npm:^1.0.0":
-  version: 1.0.3
-  resolution: "update-browserslist-db@npm:1.0.3"
+  version: 1.0.4
+  resolution: "update-browserslist-db@npm:1.0.4"
   dependencies:
     escalade: ^3.1.1
     picocolors: ^1.0.0
@@ -31370,7 +31370,7 @@ __metadata:
     browserslist: ">= 4.21.0"
   bin:
     browserslist-lint: cli.js
-  checksum: 7ffbb87405efddd34d69f7d5929b44a3c4c7d72751542eb9e494536cafb0d57290d261af25986584dabc5b76ddd719061b5efb4ddf26af092bf35b095f20ce90
+  checksum: 7c7da28d0fc733b17e01c8fa9385ab909eadce64b8ea644e9603867dc368c2e2a6611af8247e72612b23f9e7cb87ac7c7585a05ff94e1759e9d646cbe9bf49a7
   languageName: node
   linkType: hard
 
