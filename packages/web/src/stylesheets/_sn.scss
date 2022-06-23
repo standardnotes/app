@@ -34,7 +34,7 @@
   }
 
   &.sn-dropdown--small {
-    @extend .min-w-40;
+    @apply .min-w-40;
   }
 }
 
@@ -49,26 +49,15 @@
 }
 
 .sn-dropdown-button {
-  @extend .rounded;
-  @extend .px-3\.5;
-  @extend .py-1\.75;
-  @extend .fit-content;
-  @extend .bg-default;
-  @extend .text-input;
-  @extend .color-text;
-  @extend .border-solid;
-  @extend .border-main;
-  @extend .border-1;
-  @extend .min-w-55;
+  @apply rounded px-3.5 py-1.5 w-fit bg-default text-sm text-text border-solid border-border border-1 min-w-55;
 }
 
 .sn-dropdown-button-label {
-  @extend .flex;
-  @extend .items-center;
+  @apply flex items-center;
 }
 
 .sn-dropdown-arrow {
-  @extend .flex;
+  @apply flex;
 
   &.sn-dropdown-arrow-flipped {
     transform: rotate(180deg);
@@ -122,9 +111,8 @@
   @extend .transition-transform;
   @extend .duration-150;
 
+  @apply absolute block bg-default rounded-full w-3.5 h-3.5;
   left: 2px;
-  @extend .w-3\.5;
-  @extend .h-3\.5;
   top: 50%;
   transform: translate(0px, -50%);
 
@@ -138,81 +126,25 @@
 }
 
 .sn-dropdown-item {
-  @extend .flex;
-  @extend .items-center;
-  @extend .border-0;
-  @extend .focus\:shadow-none;
-  @extend .cursor-pointer;
-  @extend .hover\:bg-contrast;
-  @extend .hover\:color-foreground;
-  @extend .color-text;
-  @extend .bg-transparent;
-  @extend .px-3;
-  @extend .py-1\.5;
-  @extend .text-left;
-  @extend .w-full;
+  @apply flex items-center border-0 focus:shadow-none cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full;
 
   &.sn-dropdown-item--no-icon {
-    @extend .py-2;
+    @apply py-2;
   }
 
   .sn-dropdown-popover & {
-    @extend .bg-default;
+    @apply bg-default;
   }
 
   &[data-current-nav] {
     color: var(--sn-stylekit-contrast-foreground-color);
-    @extend .bg-contrast;
-    @extend .hover\:color-text;
+    @apply bg-contrast hover:text-text;
   }
 
   .sn-dropdown-popover &[data-current-selected] {
     background-color: var(--sn-stylekit-info-backdrop-color);
-    @extend .color-info;
+    @apply text-info;
   }
-}
-
-.sn-tag {
-  @extend .h-6;
-  @extend .bg-contrast;
-  @extend .border-0;
-  @extend .rounded;
-  @extend .text-xs;
-  @extend .color-text;
-  @extend .py-1;
-  @extend .py-2;
-  @extend .pr-2;
-  @extend .flex;
-  @extend .items-center;
-  @extend .mt-2;
-  @extend .cursor-pointer;
-  @extend .hover\:bg-secondary-contrast;
-  @extend .focus\:bg-secondary-contrast;
-}
-
-.sn-titlebar {
-  @extend .w-full;
-  @extend .bg-default;
-  @extend .h-14;
-
-  @extend .border-bottom-solid;
-  @extend .border-b-1;
-  @extend .border-main;
-
-  @extend .py-3;
-  @extend .px-3;
-
-  @extend .flex;
-  @extend .flex-row;
-}
-
-.sn-title {
-  @extend .font-bold;
-}
-
-.placeholder-dark-red::placeholder {
-  @extend .color-danger;
-}
 
 .placeholder-medium::placeholder {
   font-weight: 500;
@@ -254,29 +186,17 @@
 }
 
 .pseudo-radio-btn {
-  @extend .w-4;
-  @extend .h-4;
-  @extend .border-2;
-  @extend .border-solid;
-  @extend .rounded-full;
-  @extend .relative;
+  @apply w-4 h-4 border-2 border-solid rounded-full relative;
   border-color: var(--dropdown-menu-radio-button-inactive-color);
 
   &--checked {
-    @extend .border-info;
+    @apply border-info;
   }
 }
 
 .pseudo-radio-btn--checked::after {
   content: '';
-  @extend .bg-info;
-  @extend .absolute;
-  @extend .top-1\/2;
-  @extend .left-1\/2;
-  @extend .-translate-1\/2;
-  @extend .w-2;
-  @extend .h-2;
-  @extend .rounded-full;
+  @apply bg-info absolute top-1/2 left-1/2 -translate-1/2 w-2 h-2 rounded-full;
 }
 
 .list-style-none {
@@ -328,8 +248,7 @@
 
   &.toggled {
     border-color: transparent;
-    @extend .bg-info;
-    @extend .color-info-contrast;
+    @apply bg-info text-info-contrast;
 
     &:focus {
       background-color: var(--sn-stylekit-info-color) !important;
@@ -338,8 +257,7 @@
 
     &:hover {
       background-color: var(--sn-stylekit-contrast-background-color) !important;
-      @extend .color-info;
-      @extend .border-info;
+      @apply text-info border-info;
     }
 
     &:focus:hover {
