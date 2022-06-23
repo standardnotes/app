@@ -2,13 +2,14 @@
   "name": "@standardnotes/filesafe-bar",
   "version": "2.0.15",
   "main": "dist/dist.js",
+  "private": true,
   "files": [
     "dist"
   ],
   "scripts": {
     "skip:lint": "eslint --cache --ignore-path .gitignore --ext .jsx,.js --format=node_modules/eslint-formatter-pretty .",
     "test": "echo \"Error: no test specified\" && exit 0",
-    "deprecated:build": "webpack",
+    "deprecated:compile": "webpack",
     "start": "webpack-dev-server --devtool eval --progress --hot --content-base app",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 1"
   },
