@@ -5090,7 +5090,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/components-meta@workspace:*, @standardnotes/components-meta@workspace:*, @standardnotes/components-meta@workspace:packages/components":
+"@standardnotes/components-meta@workspace:*, @standardnotes/components-meta@workspace:packages/components":
   version: 0.0.0-use.local
   resolution: "@standardnotes/components-meta@workspace:packages/components"
   dependencies:
@@ -5978,7 +5978,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/web@workspace:*, @standardnotes/web@workspace:*, @standardnotes/web@workspace:packages/web":
+"@standardnotes/web@workspace:*, @standardnotes/web@workspace:packages/web":
   version: 0.0.0-use.local
   resolution: "@standardnotes/web@workspace:packages/web"
   dependencies:
