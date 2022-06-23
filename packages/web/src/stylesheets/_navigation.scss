@@ -80,17 +80,6 @@ $content-horizontal-padding: 16px;
         margin: 0 auto;
       }
 
-      .tag-fold {
-        min-width: 22px;
-        display: flex;
-        align-items: center;
-        height: 100%;
-
-        @extend .border-0;
-        @extend .bg-transparent;
-        @extend .p-0;
-      }
-
       > .tag-icon {
         display: flex;
         align-items: center;
@@ -106,8 +95,6 @@ $content-horizontal-padding: 16px;
       }
 
       > .title {
-        @extend .focus\:outline-none;
-        @extend .focus\:shadow-none;
         font-size: 14px;
         line-height: 18px;
 
