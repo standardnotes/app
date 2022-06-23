@@ -93,10 +93,5 @@
     "version": "0.0.5",
     "base64": "19df34cf7ade6ac46060e41618bd3bfabb706e34fed6acde5e3e57b8341d609e",
     "binary": "a334b5fc116ecb96e36b9bab7f469e288079178c60511b0ac1314cefcf8cc659"
-  },
-  "org.standardnotes.file-safe": {
-    "version": "2.0.15",
-    "base64": "9c3a14a0bf6bbd65cd96bff1bc09f11a9e52aae77ca6446e7fd0e6e64a462845",
-    "binary": "829d7a56b1b1205fd3d06c938c53ef2a929cf3d0e7d4cfb9f1d5a70a67fdd4b3"
   }
 }
