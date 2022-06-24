@@ -260,10 +260,12 @@ export class ComponentManager extends SNComponentManager {
     if (!(await RNFS.exists(componentPath))) {
       return undefined
     }
+
     const filePath = `${componentPath}/${relativePath}`
     if (!(await RNFS.exists(filePath))) {
       return undefined
     }
+
     const fileContents = await RNFS.readFile(filePath)
     return fileContents
   }

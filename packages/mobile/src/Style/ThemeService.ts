@@ -372,22 +372,38 @@ export class ThemeService {
   private async downloadTheme(theme: SNTheme): Promise<ThemeVariables | undefined> {
     const componentManager = this.application?.mobileComponentManager
     if (componentManager?.isComponentDownloadable(theme)) {
-      if (await componentManager.doesComponentNeedDownload(theme)) {
-        await componentManager.downloadComponentOffline(theme)
-      }
+      return this.downloadThemeVariablesFromPackage(theme)
+    } else {
+      return this.downloadThemeVariablesFromHostedUrl(theme)
+    }
+  }
 
-      const file = await componentManager.getIndexFile(theme.identifier)
-      if (!file) {
-        console.error(`Did not find local index file for ${theme.identifier}`)
-        return undefined
-      }
-      const variables: ThemeVariables = CSSParser.cssToObject(file)
-      if (!variables || Object.keys(variables).length === 0) {
-        return undefined
-      }
-      return variables
+  private async downloadThemeVariablesFromPackage(
+    theme: SNTheme,
+    forceDownload = false,
+  ): Promise<ThemeVariables | undefined> {
+    const componentManager = this.application!.mobileComponentManager
+    if (forceDownload || (await componentManager.doesComponentNeedDownload(theme))) {
+      await componentManager.downloadComponentOffline(theme)
     }
 
+    const file = await componentManager.getIndexFile(theme.identifier)
+    if (!file) {
+      console.error(`Did not find local index file for ${theme.identifier}`)
+      return undefined
+    }
+
+    const variables: ThemeVariables = CSSParser.cssToObject(file)
+    if (!variables || Object.keys(variables).length === 0) {
+      if (!forceDownload) {
+        return this.downloadThemeVariablesFromPackage(theme, true)
+      }
+    }
+
+    return variables
+  }
+
+  private async downloadThemeVariablesFromHostedUrl(theme: SNTheme): Promise<ThemeVariables | undefined> {
     let url = theme.hosted_url
     if (!url) {
       console.error('Theme download error')
@@ -423,16 +439,19 @@ export class ThemeService {
       this.activateTheme(theme.uuid)
       return
     }
+
     const variables = await this.downloadTheme(theme)
     if (!variables) {
       Alert.alert('Not Available', 'This theme is not available on mobile.')
       return
     }
+
     const appliedVariables = Object.assign(this.templateVariables(), variables)
     const finalVariables = {
       ...appliedVariables,
       ...ThemeService.constants,
     }
+
     const mobileTheme = new MobileTheme(
       theme.payload.copy({
         content: {
@@ -490,17 +509,21 @@ export class ThemeService {
     if (!variables) {
       return false
     }
+
     /** Merge default variables to ensure this theme has all the variables. */
     const appliedVariables = Object.assign(this.templateVariables(), variables)
     const mobileTheme = this.findOrCreateTheme(theme.uuid, {
       ...appliedVariables,
       ...ThemeService.constants,
     })
+
     this.addTheme(mobileTheme)
     void this.cacheThemes()
+
     if (theme.uuid === this.activeThemeId) {
       this.setActiveTheme(theme.uuid)
     }
+
     return true
   }
 
