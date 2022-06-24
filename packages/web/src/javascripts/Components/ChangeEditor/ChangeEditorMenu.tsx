@@ -194,7 +194,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
                       type={MenuItemType.RadioButton}
                       onClick={onClickEditorItem}
                       className={
-                        'sn-dropdown-item py-2 text-input focus:bg-info-backdrop focus:shadow-none flex-row-reverse'
+                        'flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm py-2 text-input focus:bg-info-backdrop focus:shadow-none flex-row-reverse'
                       }
                       onBlur={closeOnBlur}
                       checked={isSelectedEditor(item)}

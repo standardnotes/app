@@ -59,7 +59,7 @@ const WorkspaceSwitcherOption: FunctionComponent<Props> = ({ mainApplicationGrou
       {isOpen && (
         <div
           ref={menuRef}
-          className="bg-default rounded shadow max-h-120 min-w-68 py-2 fixed overflow-y-auto"
+          className="bg-default rounded-md shadow max-h-120 min-w-68 py-2 fixed overflow-y-auto"
           style={menuStyle}
         >
           <WorkspaceSwitcherMenu

@@ -52,7 +52,7 @@ const ListedMenuItem: FunctionComponent<ListedMenuItemProps> = ({
     <button
       key={action.url}
       onClick={handleClick}
-      className="sn-dropdown-item flex justify-between py-2 text-input focus:bg-info-backdrop focus:shadow-none"
+      className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm flex justify-between py-2 text-input focus:bg-info-backdrop focus:shadow-none"
     >
       <div className="flex flex-col">
         <div className="font-semibold">{action.label}</div>
@@ -249,7 +249,7 @@ const ListedActionsOption: FunctionComponent<Props> = ({ application, note }) =>
   return (
     <div ref={menuContainerRef}>
       <Disclosure open={isMenuOpen} onChange={toggleListedMenu}>
-        <DisclosureButton ref={menuButtonRef} onBlur={closeOnBlur} className="sn-dropdown-item justify-between">
+        <DisclosureButton ref={menuButtonRef} onBlur={closeOnBlur} className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm justify-between">
           <div className="flex items-center">
             <Icon type="listed" className="text-neutral mr-2" />
             Listed actions

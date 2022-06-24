@@ -170,7 +170,7 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
       </div>
       {filteredList.length > 0 && (
         <button
-          className="sn-dropdown-item py-3 border-0 border-t-1px border-solid border-border focus:bg-info-backdrop"
+          className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm py-3 border-0 border-t-1px border-solid border-border focus:bg-info-backdrop"
           onClick={handleAttachFilesClick}
           onBlur={closeOnBlur}
         >

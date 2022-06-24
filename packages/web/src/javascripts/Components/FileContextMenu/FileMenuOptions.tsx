@@ -64,19 +64,19 @@ const FileMenuOptions: FunctionComponent<Props> = ({
 
   return (
     <>
-      <button onBlur={closeOnBlur} className="sn-dropdown-item focus:bg-info-backdrop" onClick={onPreview}>
+      <button onBlur={closeOnBlur} className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm focus:bg-info-backdrop" onClick={onPreview}>
         <Icon type="file" className="mr-2 text-neutral" />
         Preview file
       </button>
       {selectedFiles.length === 1 && (
         <>
           {isFileAttachedToNote ? (
-            <button onBlur={closeOnBlur} className="sn-dropdown-item focus:bg-info-backdrop" onClick={onDetach}>
+            <button onBlur={closeOnBlur} className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm focus:bg-info-backdrop" onClick={onDetach}>
               <Icon type="link-off" className="mr-2 text-neutral" />
               Detach from note
             </button>
           ) : shouldShowAttachOption ? (
-            <button onBlur={closeOnBlur} className="sn-dropdown-item focus:bg-info-backdrop" onClick={onAttach}>
+            <button onBlur={closeOnBlur} className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm focus:bg-info-backdrop" onClick={onAttach}>
               <Icon type="link" className="mr-2 text-neutral" />
               Attach to note
             </button>
@@ -85,7 +85,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
       )}
       <div className="min-h-1px my-1 bg-border"></div>
       <button
-        className="sn-dropdown-item justify-between focus:bg-info-backdrop"
+        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm justify-between focus:bg-info-backdrop"
         onClick={() => {
           void filesController.setProtectionForFiles(!hasProtectedFiles, selectionController.selectedFiles)
         }}
@@ -104,7 +104,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
       <div className="min-h-1px my-1 bg-border"></div>
       <button
         onBlur={closeOnBlur}
-        className="sn-dropdown-item focus:bg-info-backdrop"
+        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm focus:bg-info-backdrop"
         onClick={() => {
           void filesController.downloadFiles(selectionController.selectedFiles)
         }}
@@ -115,7 +115,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
       {shouldShowRenameOption && (
         <button
           onBlur={closeOnBlur}
-          className="sn-dropdown-item focus:bg-info-backdrop"
+          className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm focus:bg-info-backdrop"
           onClick={() => {
             renameToggleCallback?.(true)
           }}
@@ -126,7 +126,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
       )}
       <button
         onBlur={closeOnBlur}
-        className="sn-dropdown-item focus:bg-info-backdrop"
+        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm focus:bg-info-backdrop"
         onClick={() => {
           void filesController.deleteFilesPermanently(selectionController.selectedFiles)
         }}

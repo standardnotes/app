@@ -17,8 +17,6 @@ import RadioIndicator from '../RadioIndicator/RadioIndicator'
 
 const focusModeAnimationDuration = 1255
 
-const MENU_CLASSNAME = 'sn-dropdown min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto'
-
 type MenuProps = {
   viewControllerManager: ViewControllerManager
   application: WebApplication
@@ -208,7 +206,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
   return (
     <div ref={mainRef} className="sn-component">
       <div
-        className={`z-footer-bar-item-panel bottom-full left-0 cursor-auto absolute ${MENU_CLASSNAME} ${
+        className={`z-footer-bar-item-panel bottom-full left-0 cursor-auto absolute bg-default rounded-md shadow min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto ${
           shouldAnimateCloseMenu ? 'slide-up-animation' : 'sn-dropdown--animated'
         }`}
         ref={quickSettingsMenuRef}
@@ -220,7 +218,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
             onKeyDown={handleBtnKeyDown}
             onBlur={closeOnBlur}
             ref={themesButtonRef}
-            className="sn-dropdown-item justify-between focus:bg-info-backdrop focus:shadow-none"
+            className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full text-sm justify-between focus:bg-info-backdrop focus:shadow-none"
           >
             <div className="flex items-center">
               <Icon type="themes" className="text-neutral mr-2" />
@@ -235,11 +233,11 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
             style={{
               ...themesMenuPosition,
             }}
-            className={`${MENU_CLASSNAME} fixed sn-dropdown--animated`}
+            className="bg-default rounded-md shadow min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto fixed sn-dropdown--animated"
           >
             <div className="px-3 my-1 font-semibold text-text uppercase">Themes</div>
             <button
-              className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
+              className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full text-sm focus:bg-info-backdrop focus:shadow-none"
               onClick={toggleDefaultTheme}
               onBlur={closeOnBlur}
               ref={defaultThemeButtonRef}
@@ -259,7 +257,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
         </Disclosure>
         {toggleableComponents.map((component) => (
           <button
-            className="sn-dropdown-item justify-between focus:bg-info-backdrop focus:shadow-none"
+            className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full text-sm justify-between focus:bg-info-backdrop focus:shadow-none"
             onClick={() => {
               toggleComponent(component)
             }}
@@ -280,7 +278,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
         />
         <div className="h-1px my-2 bg-border"></div>
         <button
-          className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
+          className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full text-sm focus:bg-info-backdrop focus:shadow-none"
           onClick={openPreferences}
           ref={prefsButtonRef}
         >

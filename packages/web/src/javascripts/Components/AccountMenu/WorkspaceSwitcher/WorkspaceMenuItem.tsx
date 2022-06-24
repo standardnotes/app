@@ -58,7 +58,7 @@ const WorkspaceMenuItem: FunctionComponent<Props> = ({
   return (
     <MenuItem
       type={MenuItemType.RadioButton}
-      className="sn-dropdown-item py-2 focus:bg-info-backdrop focus:shadow-none"
+      className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm py-2 focus:bg-info-backdrop focus:shadow-none"
       onClick={onClick}
       checked={descriptor.primary}
     >

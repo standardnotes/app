@@ -98,7 +98,7 @@ const AdvancedOptions: FunctionComponent<Props> = ({
   return (
     <>
       <button
-        className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none font-bold"
+        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full text-sm focus:bg-info-backdrop focus:shadow-none font-bold"
         onClick={toggleShowAdvanced}
       >
         <div className="flex items-center">

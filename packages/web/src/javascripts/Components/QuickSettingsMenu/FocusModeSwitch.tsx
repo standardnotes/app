@@ -32,7 +32,7 @@ const FocusModeSwitch: FunctionComponent<Props> = ({ application, onToggle, onCl
 
   return (
     <>
-      <button className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none justify-between" onClick={toggle}>
+      <button className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm focus:bg-info-backdrop focus:shadow-none justify-between" onClick={toggle}>
         <div className="flex items-center">
           <Icon type="menu-close" className="text-neutral mr-2" />
           Focused Writing

@@ -81,7 +81,7 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
             <>
               <button
                 onBlur={closeOnBlur}
-                className="sn-dropdown-item focus:bg-info-backdrop"
+                className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:shadow-none text-sm focus:bg-info-backdrop"
                 onClick={() => {
                   previewHandler(file)
                   closeMenu()
@@ -93,7 +93,7 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
               {isAttachedToNote ? (
                 <button
                   onBlur={closeOnBlur}
-                  className="sn-dropdown-item focus:bg-info-backdrop"
+                  className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:shadow-none text-sm focus:bg-info-backdrop"
                   onClick={() => {
                     handleFileAction({
                       type: PopoverFileItemActionType.DetachFileToNote,
@@ -108,7 +108,7 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
               ) : (
                 <button
                   onBlur={closeOnBlur}
-                  className="sn-dropdown-item focus:bg-info-backdrop"
+                  className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:shadow-none text-sm focus:bg-info-backdrop"
                   onClick={() => {
                     handleFileAction({
                       type: PopoverFileItemActionType.AttachFileToNote,
@@ -123,7 +123,7 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
               )}
               <div className="min-h-1px my-1 bg-border"></div>
               <button
-                className="sn-dropdown-item justify-between focus:bg-info-backdrop"
+                className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:shadow-none text-sm justify-between focus:bg-info-backdrop"
                 onClick={() => {
                   handleFileAction({
                     type: PopoverFileItemActionType.ToggleFileProtection,
@@ -148,7 +148,7 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
               <div className="min-h-1px my-1 bg-border"></div>
               <button
                 onBlur={closeOnBlur}
-                className="sn-dropdown-item focus:bg-info-backdrop"
+                className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:shadow-none text-sm focus:bg-info-backdrop"
                 onClick={() => {
                   handleFileAction({
                     type: PopoverFileItemActionType.DownloadFile,
@@ -162,7 +162,7 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
               </button>
               <button
                 onBlur={closeOnBlur}
-                className="sn-dropdown-item focus:bg-info-backdrop"
+                className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:shadow-none text-sm focus:bg-info-backdrop"
                 onClick={() => {
                   setIsRenamingFile(true)
                 }}
@@ -172,7 +172,7 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
               </button>
               <button
                 onBlur={closeOnBlur}
-                className="sn-dropdown-item focus:bg-info-backdrop"
+                className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:shadow-none text-sm focus:bg-info-backdrop"
                 onClick={() => {
                   handleFileAction({
                     type: PopoverFileItemActionType.DeleteFile,

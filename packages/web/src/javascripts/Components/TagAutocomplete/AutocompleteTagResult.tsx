@@ -70,7 +70,7 @@ const AutocompleteTagResult = ({ viewControllerManager, tagResult, closeOnBlur }
     <button
       ref={tagResultRef}
       type="button"
-      className="sn-dropdown-item focus:bg-info focus:text-info-contrast"
+      className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm focus:bg-info focus:text-info-contrast"
       onClick={() => onTagOptionClick(tagResult)}
       onFocus={onFocus}
       onBlur={onBlur}

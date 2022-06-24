@@ -73,7 +73,7 @@ const Dropdown: FunctionComponent<DropdownProps> = ({ id, label, items, value, o
               {items.map((item) => (
                 <ListboxOption
                   key={item.value}
-                  className="sn-dropdown-item"
+                  className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm"
                   value={item.value}
                   label={item.label}
                   disabled={item.disabled}

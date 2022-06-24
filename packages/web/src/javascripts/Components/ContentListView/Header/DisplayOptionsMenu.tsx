@@ -99,7 +99,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   return (
     <Menu
       className={
-        'py-1 sn-dropdown sn-dropdown--animated min-w-70 overflow-y-auto \
+        'py-1 bg-default rounded-md shadow-sm sn-dropdown--animated min-w-70 overflow-y-auto \
         border-1 border-solid border-border text-sm z-index-dropdown-menu \
         flex flex-col'
       }

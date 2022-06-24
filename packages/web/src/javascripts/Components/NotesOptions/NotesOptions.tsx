@@ -18,7 +18,7 @@ type DeletePermanentlyButtonProps = {
 }
 
 const DeletePermanentlyButton = ({ closeOnBlur, onClick }: DeletePermanentlyButtonProps) => (
-  <button onBlur={closeOnBlur} className="sn-dropdown-item" onClick={onClick}>
+  <button onBlur={closeOnBlur} className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm" onClick={onClick}>
     <Icon type="close" className="text-danger mr-2" />
     <span className="text-danger">Delete permanently</span>
   </button>
@@ -135,7 +135,7 @@ const SpellcheckOptions: FunctionComponent<{
   return (
     <div className="flex flex-col">
       <button
-        className="sn-dropdown-item justify-between px-3 py-1"
+        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm justify-between px-3 py-1"
         onClick={() => {
           notesController.toggleGlobalSpellcheckForNote(note).catch(console.error)
         }}
@@ -267,7 +267,7 @@ const NotesOptions = ({
     <>
       {notes.length === 1 && (
         <>
-          <button onBlur={closeOnBlur} className="sn-dropdown-item" onClick={openRevisionHistoryModal}>
+          <button onBlur={closeOnBlur} className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm" onClick={openRevisionHistoryModal}>
             <Icon type="history" className={iconClass} />
             Note history
           </button>
@@ -275,7 +275,7 @@ const NotesOptions = ({
         </>
       )}
       <button
-        className="sn-dropdown-item justify-between"
+        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm justify-between"
         onClick={() => {
           notesController.setLockSelectedNotes(!locked)
         }}
@@ -288,7 +288,7 @@ const NotesOptions = ({
         <Switch className="px-0" checked={locked} />
       </button>
       <button
-        className="sn-dropdown-item justify-between"
+        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm justify-between"
         onClick={() => {
           notesController.setHideSelectedNotePreviews(!hidePreviews)
         }}
@@ -301,7 +301,7 @@ const NotesOptions = ({
         <Switch className="px-0" checked={!hidePreviews} />
       </button>
       <button
-        className="sn-dropdown-item justify-between"
+        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm justify-between"
         onClick={() => {
           notesController.setProtectSelectedNotes(!protect).catch(console.error)
         }}
@@ -330,7 +330,7 @@ const NotesOptions = ({
       {unpinned && (
         <button
           onBlur={closeOnBlur}
-          className="sn-dropdown-item"
+          className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm"
           onClick={() => {
             notesController.setPinSelectedNotes(true)
           }}
@@ -342,7 +342,7 @@ const NotesOptions = ({
       {pinned && (
         <button
           onBlur={closeOnBlur}
-          className="sn-dropdown-item"
+          className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm"
           onClick={() => {
             notesController.setPinSelectedNotes(false)
           }}
@@ -351,18 +351,18 @@ const NotesOptions = ({
           Unpin
         </button>
       )}
-      <button onBlur={closeOnBlur} className="sn-dropdown-item" onClick={downloadSelectedItems}>
+      <button onBlur={closeOnBlur} className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm" onClick={downloadSelectedItems}>
         <Icon type="download" className={iconClass} />
         Export
       </button>
-      <button onBlur={closeOnBlur} className="sn-dropdown-item" onClick={duplicateSelectedItems}>
+      <button onBlur={closeOnBlur} className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm" onClick={duplicateSelectedItems}>
         <Icon type="copy" className={iconClass} />
         Duplicate
       </button>
       {unarchived && (
         <button
           onBlur={closeOnBlur}
-          className="sn-dropdown-item"
+          className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm"
           onClick={() => {
             notesController.setArchiveSelectedNotes(true).catch(console.error)
           }}
@@ -374,7 +374,7 @@ const NotesOptions = ({
       {archived && (
         <button
           onBlur={closeOnBlur}
-          className="sn-dropdown-item"
+          className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm"
           onClick={() => {
             notesController.setArchiveSelectedNotes(false).catch(console.error)
           }}
@@ -394,7 +394,7 @@ const NotesOptions = ({
         ) : (
           <button
             onBlur={closeOnBlur}
-            className="sn-dropdown-item"
+            className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm"
             onClick={async () => {
               await notesController.setTrashSelectedNotes(true)
             }}
@@ -407,7 +407,7 @@ const NotesOptions = ({
         <>
           <button
             onBlur={closeOnBlur}
-            className="sn-dropdown-item"
+            className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm"
             onClick={async () => {
               await notesController.setTrashSelectedNotes(false)
             }}
@@ -423,7 +423,7 @@ const NotesOptions = ({
           />
           <button
             onBlur={closeOnBlur}
-            className="sn-dropdown-item"
+            className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm"
             onClick={async () => {
               await notesController.emptyTrash()
             }}

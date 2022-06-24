@@ -66,7 +66,7 @@ const AddTagOption: FunctionComponent<Props> = ({ navigationController, notesCon
           }}
           onBlur={closeOnBlur}
           ref={menuButtonRef}
-          className="sn-dropdown-item justify-between"
+          className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm justify-between"
         >
           <div className="flex items-center">
             <Icon type="hashtag" className="mr-2 text-neutral" />
@@ -91,7 +91,7 @@ const AddTagOption: FunctionComponent<Props> = ({ navigationController, notesCon
           {navigationController.tags.map((tag) => (
             <button
               key={tag.uuid}
-              className="sn-dropdown-item sn-dropdown-item--no-icon max-w-80"
+              className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm--no-icon max-w-80"
               onBlur={closeOnBlur}
               onClick={() => {
                 notesController.isTagInSelectedNotes(tag)

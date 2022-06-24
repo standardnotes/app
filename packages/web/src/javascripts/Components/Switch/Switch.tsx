@@ -1,5 +1,5 @@
 import { CustomCheckboxContainer, CustomCheckboxInput, CustomCheckboxInputProps } from '@reach/checkbox'
-import '@reach/checkbox/styles.css'
+// import '@reach/checkbox/styles.css'
 import { FunctionComponent, useState } from 'react'
 import { SwitchProps } from './SwitchProps'
 
@@ -25,17 +25,24 @@ const Switch: FunctionComponent<SwitchProps> = (props: SwitchProps) => {
           setChecked(event.target.checked)
           props.onChange?.(event.target.checked)
         }}
-        className={`sn-switch ${isActive ? 'bg-info' : 'bg-neutral'}`}
+        className={`w-8 h-4.5 inline-block relative box-content bg-clip-padding cursor-pointer border-2 border-solid border-transparent rounded-full focus-within:shadow-none focus-within:outline-none focus-within:ring-info focus-within:border-default transition-colors duration-150 ease-out ${
+          isActive ? 'bg-info' : 'bg-neutral'
+        }`}
         disabled={props.disabled}
       >
         <CustomCheckboxInput
           {...({
             ...props,
-            className: undefined,
+            className: 'absolute top-0 left-0 m-0 p-0 w-full h-full opacity-0 z-[1] shadow-none outline-none',
             children: undefined,
           } as CustomCheckboxInputProps)}
         />
-        <span aria-hidden className={`sn-switch-handle ${checked ? 'sn-switch-handle--right' : ''}`} />
+        <span
+          aria-hidden
+          className={`absolute block bg-default rounded-full w-3.5 h-3.5 left-[2px] top-1/2 -translate-y-1/2 transition-transform duration-150 ease-out ${
+            checked ? 'translate-x-[calc(2rem-1.125rem)]' : ''
+          }`}
+        />
       </CustomCheckboxContainer>
     </label>
   )
