@@ -53,7 +53,7 @@ const ContentListHeader = ({
       <div className="flex">
         <div className="relative" ref={displayOptionsContainerRef}>
           <Disclosure open={showDisplayOptionsMenu} onChange={toggleDisplayOptionsMenu}>
-            <StyledDisplayOptionsButton pressed={showDisplayOptionsMenu} ref={displayOptionsButtonRef}>
+            <StyledDisplayOptionsButton $pressed={showDisplayOptionsMenu} ref={displayOptionsButtonRef}>
               <Icon type="sort-descending" />
             </StyledDisplayOptionsButton>
             <DisclosurePanel>
