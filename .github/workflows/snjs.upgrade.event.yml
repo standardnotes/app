@@ -37,6 +37,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
         with:
+          token: ${{ secrets.CI_PAT_TOKEN }}
           title: "${{ 'chore(deps): upgrade snjs' }}"
           commit-message: "${{ 'chore(deps): upgrade snjs' }}"
           delete-branch: true
