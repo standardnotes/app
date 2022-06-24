@@ -13,7 +13,9 @@ const TwoFactorSwitch: FunctionComponent<Props> = ({ auth }) => {
   }
 
   if (auth.status === 'fetching') {
-    return <div className="animate-spin border border-solid border-info border-r-transparent rounded-full normal info" />
+    return (
+      <div className="animate-spin border border-solid border-info border-r-transparent rounded-full normal info" />
+    )
   }
 
   return <Switch checked={!is2FADisabled(auth.status)} onChange={auth.toggle2FA} />

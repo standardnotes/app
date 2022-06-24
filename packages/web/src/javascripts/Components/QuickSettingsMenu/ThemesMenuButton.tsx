@@ -45,7 +45,9 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ application, item, onBlur 
 
   return (
     <button
-      className={'flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm focus:bg-info-backdrop focus:shadow-none justify-between'}
+      className={
+        'flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm focus:bg-info-backdrop focus:shadow-none justify-between'
+      }
       onClick={toggleTheme}
       onBlur={onBlur}
     >

@@ -29,7 +29,9 @@ const ListedAccountItem: FunctionComponent<Props> = ({ account, showSeparator, a
       <Subtitle className="em">{accountInfo?.display_name}</Subtitle>
       <div className="mb-2" />
       <div className="flex">
-        {isLoading ? <div className="animate-spin border border-solid border-info border-r-transparent rounded-full small info"></div> : null}
+        {isLoading ? (
+          <div className="animate-spin border border-solid border-info border-r-transparent rounded-full small info"></div>
+        ) : null}
         {accountInfo && (
           <>
             <LinkButton className="mr-2" label="Open Blog" link={accountInfo.author_url} />
