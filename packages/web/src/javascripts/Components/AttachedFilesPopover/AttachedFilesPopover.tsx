@@ -81,7 +81,7 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
       <div className="flex border-b border-solid border-border">
         <button
           id={PopoverTabs.AttachedFiles}
-          className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:bg-info-backdrop focus:shadow-bottom ${
+          className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:bg-info-backdrop focus:shadow-bottom text-sm ${
             currentTab === PopoverTabs.AttachedFiles ? 'text-info font-medium shadow-bottom' : 'text-text'
           } ${attachedTabDisabled ? 'text-neutral cursor-not-allowed' : ''}`}
           onClick={() => {
@@ -94,7 +94,7 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
         </button>
         <button
           id={PopoverTabs.AllFiles}
-          className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:bg-info-backdrop focus:shadow-bottom ${
+          className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:bg-info-backdrop focus:shadow-bottom text-sm ${
             currentTab === PopoverTabs.AllFiles ? 'text-info font-medium shadow-bottom' : 'text-text'
           }`}
           onClick={() => {
@@ -111,7 +111,7 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
             <div className="relative">
               <input
                 type="text"
-                className="text-text w-full rounded py-1.5 px-3 text-input bg-default border-solid border-1 border-border"
+                className="text-text w-full rounded py-1.5 px-3 text-sm bg-default border-solid border border-border"
                 placeholder="Search files..."
                 value={searchQuery}
                 onInput={(e) => {

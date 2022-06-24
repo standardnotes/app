@@ -27,6 +27,9 @@ module.exports = {
         80: '20rem',
         90: '22.5rem',
       },
+      maxHeight: {
+        110: '27.5rem',
+      },
       zIndex: {
         'editor-content': 'var(--z-index-editor-content)',
         'editor-title-bar': 'var(--z-index-editor-title-bar)',
