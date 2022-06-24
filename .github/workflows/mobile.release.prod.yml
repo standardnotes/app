@@ -48,14 +48,20 @@ jobs:
         uses: martinbeentjes/npm-get-version-action@main
         with:
           path: packages/mobile
+
+      - name: Generate Release Notes
+        run: echo RELEASE_NOTES="$(node ../../scripts/changelog-parser.js mobile)" >> $GITHUB_ENV
+        continue-on-error: true
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.CI_PAT_TOKEN }}
           tag_name: "@standardnotes/mobile@${{ steps.package-version.outputs.current-version}}"
+          name: "Mobile ${{ steps.package-version.outputs.current-version }}"
+          body: ${{ env.RELEASE_NOTES }}
           prerelease: true
           draft: false
-          name: "Mobile ${{ steps.package-version.outputs.current-version }}"
           files: |
             packages/mobile/android/app/build/outputs/bundle/prodRelease/app-prod-release.aab
             packages/mobile/android/app/build/outputs/apk/prod/release/app-prod-release.apk
