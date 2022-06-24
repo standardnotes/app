@@ -89,5 +89,13 @@ module.exports = {
       'accessory-tint-6': 'var(--sn-stylekit-accessory-tint-color-6)',
     },
   },
+  safelist: [
+    'text-accessory-tint-1',
+    'text-accessory-tint-2',
+    'text-accessory-tint-3',
+    'text-accessory-tint-4',
+    'text-accessory-tint-5',
+    'text-accessory-tint-6',
+  ],
   plugins: [],
 }
