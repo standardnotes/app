@@ -7,7 +7,7 @@ const PreferencesPane: FunctionComponent = ({ children }) => (
         {children != undefined && Array.isArray(children) ? children.filter((child) => child != undefined) : children}
       </div>
     </div>
-    <div className="flex-basis-55 flex-shrink" />
+    <div className="basis-[13.75rem] flex-shrink" />
   </div>
 )
 

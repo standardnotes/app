@@ -130,11 +130,14 @@ const ConfirmPassword: FunctionComponent<Props> = ({
         />
         {error ? <div className="text-danger my-2">{error}</div> : null}
         <Button
-          className="w-full mt-1 mb-3"
+          className="mt-1 mb-3"
           label={isRegistering ? 'Creating account...' : 'Create account & sign in'}
           variant="primary"
           onClick={handleConfirmFormSubmit}
           disabled={isRegistering}
+          overrideClassNames={{
+            width: 'w-full',
+          }}
         />
         <Checkbox
           name="is-ephemeral"

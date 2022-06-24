@@ -11,6 +11,7 @@ import DecoratedPasswordInput from '@/Components/Input/DecoratedPasswordInput'
 import Icon from '@/Components/Icon/Icon'
 import IconButton from '@/Components/Button/IconButton'
 import AdvancedOptions from './AdvancedOptions'
+import HorizontalSeparator from '../Shared/HorizontalSeparator'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -176,11 +177,14 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
         />
         {error ? <div className="text-danger my-2">{error}</div> : null}
         <Button
-          className="w-full mt-1 mb-3"
+          className="mt-1 mb-3"
           label={isSigningIn ? 'Signing in...' : 'Sign in'}
           variant="primary"
           onClick={handleSignInFormSubmit}
           disabled={isSigningIn}
+          overrideClassNames={{
+            width: 'w-full',
+          }}
         />
         <Checkbox
           name="is-ephemeral"
@@ -199,7 +203,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
           />
         ) : null}
       </div>
-      <div className="h-1px my-2 bg-border"></div>
+      <HorizontalSeparator classes="my-2" />
       <AdvancedOptions
         viewControllerManager={viewControllerManager}
         application={application}

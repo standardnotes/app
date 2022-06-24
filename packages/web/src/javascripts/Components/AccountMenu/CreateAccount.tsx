@@ -9,6 +9,7 @@ import DecoratedPasswordInput from '@/Components/Input/DecoratedPasswordInput'
 import Icon from '@/Components/Icon/Icon'
 import IconButton from '@/Components/Button/IconButton'
 import AdvancedOptions from './AdvancedOptions'
+import HorizontalSeparator from '../Shared/HorizontalSeparator'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -132,9 +133,17 @@ const CreateAccount: FunctionComponent<Props> = ({
           ref={passwordInputRef}
           value={password}
         />
-        <Button className="w-full mt-1" label="Next" variant="primary" onClick={handleRegisterFormSubmit} />
+        <Button
+          className="mt-1"
+          label="Next"
+          variant="primary"
+          onClick={handleRegisterFormSubmit}
+          overrideClassNames={{
+            width: 'w-full',
+          }}
+        />
       </form>
-      <div className="h-1px my-2 bg-border"></div>
+      <HorizontalSeparator classes="my-2" />
       <AdvancedOptions
         application={application}
         viewControllerManager={viewControllerManager}

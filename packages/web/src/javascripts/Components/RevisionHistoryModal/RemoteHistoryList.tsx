@@ -57,7 +57,7 @@ const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({ features
         }
       })}
       {!remoteHistoryLength && !isFetchingRemoteHistory && (
-        <div className="text-passive-0 select-none">No remote history found</div>
+        <div className="text-sm text-passive-0 select-none">No remote history found</div>
       )}
     </div>
   )

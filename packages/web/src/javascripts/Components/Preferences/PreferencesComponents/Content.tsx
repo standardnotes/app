@@ -2,7 +2,7 @@ import { FunctionComponent } from 'react'
 
 export const Title: FunctionComponent = ({ children }) => (
   <>
-    <h2 className="text-base m-0 mb-1 info">{children}</h2>
+    <h2 className="text-base m-0 mb-1 text-info font-bold">{children}</h2>
     <div className="min-h-2" />
   </>
 )
@@ -21,7 +21,7 @@ export const Text: FunctionComponent<{ className?: string }> = ({ children, clas
 
 const buttonClasses =
   'block bg-default text-text rounded border-solid \
-border-1 px-4 py-1.75 font-bold text-sm fit-content \
+border px-4 py-1.5 font-bold text-sm w-fit \
 focus:bg-contrast hover:bg-contrast border-border'
 
 export const LinkButton: FunctionComponent<{

@@ -51,7 +51,7 @@ const SessionHistoryList: FunctionComponent<Props> = ({ noteHistoryController })
           return null
         }
       })}
-      {!sessionHistoryLength && <div className="text-passive-0 select-none">No session history found</div>}
+      {!sessionHistoryLength && <div className="text-sm text-passive-0 select-none">No session history found</div>}
     </div>
   )
 }

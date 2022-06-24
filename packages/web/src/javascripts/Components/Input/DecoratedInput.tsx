@@ -3,7 +3,7 @@ import { DecoratedInputProps } from './DecoratedInputProps'
 
 const getClassNames = (hasLeftDecorations: boolean, hasRightDecorations: boolean) => {
   return {
-    container: `flex items-stretch position-relative bg-default border-1 border-solid border-border rounded focus-within:ring-info overflow-hidden ${
+    container: `flex items-stretch position-relative bg-default border border-solid border-border rounded focus-within:ring-info overflow-hidden text-sm ${
       !hasLeftDecorations && !hasRightDecorations ? 'px-2 py-1.5' : ''
     }`,
     input: `w-full border-0 focus:shadow-none bg-transparent text-text ${

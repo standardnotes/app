@@ -1,10 +1,18 @@
 import { Ref, forwardRef, ReactNode, ComponentPropsWithoutRef } from 'react'
 
-const baseClass = 'rounded px-4 py-1.5 font-bold text-sm fit-content'
+type OverrideClassNames = {
+  padding?: string
+  width?: string
+}
+
+const baseClass = (overrides?: OverrideClassNames) =>
+  `rounded ${overrides?.padding ? overrides.padding : 'px-4 py-1.5'} font-bold text-sm ${
+    overrides?.width ? overrides.width : 'w-fit'
+  }`
 
 type ButtonVariant = 'normal' | 'primary'
 
-const getClassName = (variant: ButtonVariant, danger: boolean, disabled: boolean) => {
+const getClassName = (variant: ButtonVariant, danger: boolean, disabled: boolean, overrides?: OverrideClassNames) => {
   const borders = variant === 'normal' ? 'border-solid border-border border' : 'no-border'
   const cursor = disabled ? 'cursor-not-allowed' : 'cursor-pointer'
 
@@ -27,7 +35,7 @@ const getClassName = (variant: ButtonVariant, danger: boolean, disabled: boolean
         : 'focus:brightness-100 focus:outline-none hover:brightness-100'
   }
 
-  return `${baseClass} ${colors} ${borders} ${focusHoverStates} ${cursor}`
+  return `${baseClass(overrides)} ${colors} ${borders} ${focusHoverStates} ${cursor}`
 }
 
 interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
@@ -36,6 +44,7 @@ interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
   variant?: ButtonVariant
   dangerStyle?: boolean
   label?: string
+  overrideClassNames?: OverrideClassNames
 }
 
 const Button = forwardRef(
@@ -47,6 +56,7 @@ const Button = forwardRef(
       dangerStyle: danger = false,
       disabled = false,
       children,
+      overrideClassNames,
       ...props
     }: ButtonProps,
     ref: Ref<HTMLButtonElement>,
@@ -54,7 +64,7 @@ const Button = forwardRef(
     return (
       <button
         type="button"
-        className={`${getClassName(variant, danger, disabled)} ${className}`}
+        className={`${getClassName(variant, danger, disabled, overrideClassNames)} ${className}`}
         disabled={disabled}
         ref={ref}
         {...props}

@@ -119,7 +119,7 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application }) => {
           </form>
         </div>
       </div>
-      <HorizontalSeparator classes="mt-8 mb-5" />
+      <HorizontalSeparator classes="mt-5 mb-3" />
     </>
   )
 }

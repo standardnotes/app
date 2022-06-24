@@ -118,9 +118,8 @@ const Extensions: FunctionComponent<Props> = ({ application, extensionsLatestVer
                 setCustomUrl(value)
               }}
             />
-            <div className="min-h-2" />
             <Button
-              className="min-w-20"
+              className="min-w-20 mt-3"
               variant="normal"
               label="Install"
               onClick={() => submitExtensionUrl(customUrl)}

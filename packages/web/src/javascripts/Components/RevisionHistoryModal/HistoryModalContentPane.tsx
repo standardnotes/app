@@ -24,7 +24,7 @@ const HistoryModalContentPane = ({
   switch (contentState) {
     case RevisionContentState.Idle:
       return (
-        <div className="text-passive-0 select-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        <div className="text-sm text-passive-0 select-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
           No revision selected
         </div>
       )
