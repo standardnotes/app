@@ -13,7 +13,7 @@ const getClassName = (variant: ButtonVariant, danger: boolean, disabled: boolean
   let focusHoverStates =
     variant === 'normal'
       ? 'focus:bg-contrast focus:outline-none hover:bg-contrast'
-      : 'hover:brightness-130 focus:outline-none focus:brightness-130'
+      : 'hover:brightness-125 focus:outline-none focus:brightness-125'
 
   if (danger) {
     colors = variant === 'normal' ? 'bg-default text-danger' : 'bg-danger text-info-contrast'

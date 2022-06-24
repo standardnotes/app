@@ -56,7 +56,7 @@ const PremiumFeaturesModal: FunctionComponent<Props> = ({
           <div className="p-4">
             <button
               onClick={handleClick}
-              className="w-full rounded no-border py-2 font-bold bg-info text-info-contrast hover:brightness-130 focus:brightness-130 cursor-pointer"
+              className="w-full rounded no-border py-2 font-bold bg-info text-info-contrast hover:brightness-125 focus:brightness-125 cursor-pointer"
               ref={plansButtonRef}
             >
               {hasSubscription ? 'Upgrade Plan' : 'See Plans'}

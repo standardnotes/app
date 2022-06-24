@@ -14,7 +14,7 @@ const DisclosureIconButton: FunctionComponent<Props> = ({ className = '', icon, 
   <DisclosureButton
     onMouseEnter={onMouseEnter}
     onMouseLeave={onMouseLeave}
-    className={`no-border cursor-pointer bg-transparent hover:brightness-130 p-0 ${className ?? ''}`}
+    className={`no-border cursor-pointer bg-transparent hover:brightness-125 p-0 ${className ?? ''}`}
   >
     <Icon type={icon} />
   </DisclosureButton>

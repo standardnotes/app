@@ -72,7 +72,7 @@ const ContentListHeader = ({
           </Disclosure>
         </div>
         <button
-          className="flex justify-center items-center min-w-8 h-8 ml-3 bg-info hover:brightness-130 text-info-contrast border-1 border-solid border-transparent rounded-full cursor-pointer"
+          className="flex justify-center items-center min-w-8 h-8 ml-3 bg-info hover:brightness-125 text-info-contrast border-1 border-solid border-transparent rounded-full cursor-pointer"
           title={addButtonLabel}
           aria-label={addButtonLabel}
           onClick={addNewItem}
