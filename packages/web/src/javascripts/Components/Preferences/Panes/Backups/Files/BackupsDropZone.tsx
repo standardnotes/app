@@ -187,7 +187,7 @@ const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
                 >
                   {isSavingAsDecrypted && (
                     <div className="flex justify-center w-full">
-                      <div className="sk-spinner w-5 h-5 spinner-info"></div>
+                      <div className="animate-spin border border-solid border-info border-r-transparent rounded-full w-5 h-5 "></div>
                     </div>
                   )}
                 </Button>

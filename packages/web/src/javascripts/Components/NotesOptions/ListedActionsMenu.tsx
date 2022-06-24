@@ -99,7 +99,7 @@ const ListedActionsMenu = ({ application, note, recalculateMenuStyle }: ListedAc
     <>
       {isFetchingAccounts && (
         <div className="w-full flex items-center justify-center p-4">
-          <div className="sk-spinner w-5 h-5 spinner-info" />
+          <div className="animate-spin border border-solid border-info border-r-transparent rounded-full w-5 h-5 " />
         </div>
       )}
       {!isFetchingAccounts && menuGroups.length ? (

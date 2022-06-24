@@ -104,7 +104,7 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
           <div className="flex items-start justify-between px-3 mb-2">
             {isSyncingInProgress ? (
               <div className="flex items-center text-info text-sm font-semibold">
-                <div className="sk-spinner w-5 h-5 mr-2 spinner-info"></div>
+                <div className="animate-spin border border-solid border-info border-r-transparent rounded-full w-5 h-5 mr-2 "></div>
                 Syncing...
               </div>
             ) : (

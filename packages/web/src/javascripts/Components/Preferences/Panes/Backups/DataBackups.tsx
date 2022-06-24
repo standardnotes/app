@@ -185,7 +185,7 @@ const DataBackups = ({ application, viewControllerManager }: Props) => {
           <div className="flex flex-row items-center mt-3">
             <Button variant="normal" label="Import backup" onClick={handleImportFile} />
             <input type="file" ref={fileInputRef} onChange={importFileSelected} className="hidden" />
-            {isImportDataLoading && <div className="sk-spinner normal info ml-4" />}
+            {isImportDataLoading && <div className="animate-spin border border-solid border-info border-r-transparent rounded-full normal info ml-4" />}
           </div>
         </PreferencesSegment>
       </PreferencesGroup>

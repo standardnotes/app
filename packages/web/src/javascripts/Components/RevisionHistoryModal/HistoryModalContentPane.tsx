@@ -30,7 +30,7 @@ const HistoryModalContentPane = ({
       )
     case RevisionContentState.Loading:
       return (
-        <div className="sk-spinner w-5 h-5 spinner-info absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+        <div className="animate-spin border border-solid border-info border-r-transparent rounded-full w-5 h-5  absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
       )
     case RevisionContentState.Loaded:
       return (

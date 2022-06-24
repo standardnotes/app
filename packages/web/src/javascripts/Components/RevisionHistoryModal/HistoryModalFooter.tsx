@@ -48,7 +48,7 @@ const HistoryModalFooter = ({ dismissModal, noteHistoryController }: Props) => {
         <div className="flex items-center">
           {(selectedEntry as RevisionListEntry).uuid && (
             <Button className="mr-2.5" onClick={deleteSelectedRevision} variant="normal">
-              {isDeletingRevision ? <div className="sk-spinner my-1 w-3 h-3 spinner-info" /> : 'Delete this revision'}
+              {isDeletingRevision ? <div className="animate-spin border border-solid border-info border-r-transparent rounded-full my-1 w-3 h-3 " /> : 'Delete this revision'}
             </Button>
           )}
           <Button className="mr-2.5" label="Restore as a copy" onClick={restoreAsCopy} variant="normal" />

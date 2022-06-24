@@ -135,7 +135,7 @@ const CloudLink: FunctionComponent<Props> = ({ application }) => {
                 <Text>Receive a notification email if a cloud backup fails.</Text>
               </div>
               {isLoading ? (
-                <div className={'sk-spinner info small'} />
+                <div className={'animate-spin border border-solid border-info border-r-transparent rounded-full info small'} />
               ) : (
                 <Switch
                   onChange={toggleMuteFailedCloudBackupEmails}

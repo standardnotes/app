@@ -44,7 +44,7 @@ const FilesSection: FunctionComponent<Props> = ({ application }) => {
         <Subtitle>Storage Quota</Subtitle>
         {isLoading ? (
           <div className="mt-2">
-            <div className="sk-spinner spinner-info w-3 h-3"></div>
+            <div className="animate-spin border border-solid border-info border-r-transparent rounded-full  w-3 h-3"></div>
           </div>
         ) : (
           <>

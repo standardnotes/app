@@ -118,7 +118,7 @@ const SessionsModalContent: FunctionComponent<{
               <div className="sk-panel-content overflow-y-auto">
                 {refreshing ? (
                   <>
-                    <div className="sk-spinner small info"></div>
+                    <div className="animate-spin border border-solid border-info border-r-transparent rounded-full small info"></div>
                     <h2 className="sk-p sessions-modal-refreshing">Loading sessions</h2>
                   </>
                 ) : (

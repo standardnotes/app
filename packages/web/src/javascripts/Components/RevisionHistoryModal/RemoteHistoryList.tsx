@@ -28,7 +28,7 @@ const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({ features
       }`}
       ref={remoteHistoryListRef}
     >
-      {isFetchingRemoteHistory && <div className="sk-spinner w-5 h-5 spinner-info"></div>}
+      {isFetchingRemoteHistory && <div className="animate-spin border border-solid border-info border-r-transparent rounded-full w-5 h-5 "></div>}
       {remoteHistory?.map((group) => {
         if (group.entries && group.entries.length) {
           return (

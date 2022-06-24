@@ -65,7 +65,7 @@ export const ListedMenuItem: FunctionComponent<ListedMenuItemProps> = ({
           </div>
         )}
       </div>
-      {isRunning && <div className="sk-spinner spinner-info w-3 h-3" />}
+      {isRunning && <div className="animate-spin border border-solid border-info border-r-transparent rounded-full  w-3 h-3" />}
     </button>
   )
 }
