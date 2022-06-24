@@ -121,6 +121,10 @@
       background-color: var(--item-cell-selected-background-color);
     }
 
+    ul {
+      list-style: disc;
+    }
+
     progress {
       background-color: var(--note-preview-progress-background-color);
       color: var(--note-preview-progress-color);

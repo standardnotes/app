@@ -31,7 +31,7 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewContro
   const showWorkspaceWarning = workspaces.length > 1 && isDesktopApplication()
 
   return (
-    <AlertDialog onDismiss={closeDialog} leastDestructiveRef={cancelRef}>
+    <AlertDialog onDismiss={closeDialog} leastDestructiveRef={cancelRef} className="p-0 max-w-[600px]">
       <div className="sk-modal-content">
         <div className="sn-component">
           <div className="sk-panel">
@@ -82,12 +82,16 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewContro
                   </div>
                 )}
 
-                <div className="flex my-1 mt-4">
-                  <button className="sn-button small neutral" ref={cancelRef} onClick={closeDialog}>
+                <div className="flex my-1 mt-4 gap-2">
+                  <button
+                    className="bg-neutral text-info-contrast font-bold px-2.5 py-2 text-xs"
+                    ref={cancelRef}
+                    onClick={closeDialog}
+                  >
                     Cancel
                   </button>
                   <button
-                    className="sn-button small danger ml-2"
+                    className="bg-danger text-info-contrast font-bold px-2.5 py-2 text-xs"
                     onClick={() => {
                       if (deleteLocalBackups) {
                         application.signOutAndDeleteLocalBackups().catch(console.error)
