@@ -912,7 +912,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                 <div className={(this.state.noteLocked ? 'locked' : '') + ' flex-grow'}>
                   <div className="title overflow-auto">
                     <input
-                      className="input"
+                      className="input text-base"
                       disabled={this.state.noteLocked}
                       id={ElementIds.NoteTitleEditor}
                       onChange={this.onTitleChange}

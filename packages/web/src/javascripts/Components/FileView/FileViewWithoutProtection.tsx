@@ -36,7 +36,7 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
             <div className="flex-grow">
               <form onSubmit={onFormSubmit} className="title overflow-auto">
                 <input
-                  className="input"
+                  className="input text-base"
                   id={ElementIds.FileTitleEditor}
                   onChange={onTitleChange}
                   onFocus={(event) => {

@@ -1,5 +1,4 @@
 import { CustomCheckboxContainer, CustomCheckboxInput, CustomCheckboxInputProps } from '@reach/checkbox'
-// import '@reach/checkbox/styles.css'
 import { FunctionComponent, useState } from 'react'
 import { SwitchProps } from './SwitchProps'
 
@@ -33,7 +32,8 @@ const Switch: FunctionComponent<SwitchProps> = (props: SwitchProps) => {
         <CustomCheckboxInput
           {...({
             ...props,
-            className: 'absolute top-0 left-0 m-0 p-0 w-full h-full opacity-0 z-[1] shadow-none outline-none',
+            className:
+              'absolute top-0 left-0 m-0 p-0 w-full h-full opacity-0 z-[1] shadow-none outline-none cursor-pointer',
             children: undefined,
           } as CustomCheckboxInputProps)}
         />

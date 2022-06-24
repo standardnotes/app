@@ -14,6 +14,14 @@
   --z-index-modal: 10000;
 
   --sn-stylekit-base-font-size: 0.875rem;
+  --sn-stylekit-simplified-chinese-font: 'Microsoft Yahei', '微软雅黑体';
+  --sn-stylekit-monospace-font: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, 'Ubuntu Mono', 'Courier New',
+    monospace;
+  --sn-stylekit-sans-serif-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', var(--sn-stylekit-simplified-chinese-font), sans-serif;
+  --sn-stylekit-editor-font-family: var(--sn-stylekit-sans-serif-font);
+
+  --reach-checkbox: 1;
 }
 
 html {
