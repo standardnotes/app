@@ -4958,8 +4958,8 @@ __metadata:
     "@lerna-lite/cli": ^1.5.1
     "@lerna-lite/list": ^1.5.1
     "@lerna-lite/run": ^1.5.1
-    "@standardnotes/config": ^2.4.2
-    "@standardnotes/snjs": ^2.117.8
+    "@standardnotes/config": ^2.4.3
+    "@standardnotes/snjs": ^2.117.9
     "@typescript-eslint/eslint-plugin": ^5.20.0
     "@typescript-eslint/parser": ^5.20.0
     css-loader: ^6.7.1
@@ -5126,7 +5126,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/config@npm:^2.4.2, @standardnotes/config@npm:^2.4.3":
+"@standardnotes/config@npm:^2.4.3":
   version: 2.4.3
   resolution: "@standardnotes/config@npm:2.4.3"
   dependencies:
@@ -5614,7 +5614,7 @@ __metadata:
     "@standardnotes/react-native-textview": 1.0.2
     "@standardnotes/react-native-utils": 1.0.1
     "@standardnotes/sncrypto-common": 1.9.0
-    "@standardnotes/snjs": ^2.117.8
+    "@standardnotes/snjs": ^2.117.9
     "@standardnotes/stylekit": 5.29.3
     "@types/detox": ^18.1.0
     "@types/faker": ^6.6.9
@@ -5805,6 +5805,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standardnotes/settings@npm:^1.15.0":
+  version: 1.15.0
+  resolution: "@standardnotes/settings@npm:1.15.0"
+  checksum: 4397d453a1a0cd5554012a5bf5ee2025c102ffc6d742841eecd2ab9cd46b0fbfe78da61b401451646274887d92801cafcef4c283bbfc6074b4d152103e15f861
+  languageName: node
+  linkType: hard
+
 "@standardnotes/simple-task-editor@workspace:packages/components/src/packages/org.standardnotes.simple-task-editor":
   version: 0.0.0-use.local
   resolution: "@standardnotes/simple-task-editor@workspace:packages/components/src/packages/org.standardnotes.simple-task-editor"
@@ -5860,9 +5867,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/snjs@npm:^2.117.8":
-  version: 2.117.8
-  resolution: "@standardnotes/snjs@npm:2.117.8"
+"@standardnotes/snjs@npm:^2.117.9":
+  version: 2.117.9
+  resolution: "@standardnotes/snjs@npm:2.117.9"
   dependencies:
     "@standardnotes/api": ^1.1.15
     "@standardnotes/auth": ^3.19.3
@@ -5874,11 +5881,11 @@ __metadata:
     "@standardnotes/models": ^1.11.10
     "@standardnotes/responses": ^1.6.36
     "@standardnotes/services": ^1.13.20
-    "@standardnotes/settings": ^1.14.3
+    "@standardnotes/settings": ^1.15.0
     "@standardnotes/sncrypto-common": ^1.9.0
     "@standardnotes/utils": ^1.6.11
     semver: ^7.3.7
-  checksum: 5002405cd6dcf196c6c1bd39b55b0e44e791e81a6b146239cc7b718f0f45cc05807551eb84df4001d1163c8a5f58e2382b4bf6412d03509dfcc6588805428a19
+  checksum: eada5dfdebfe0e1988fa3547a87044b6a3d962de820b7a694db9fd5939812008ec9907035c5821b475d5d355b17f68ab0a5e38d19be7547603cfbe60023bae59
   languageName: node
   linkType: hard
 
@@ -6070,7 +6077,7 @@ __metadata:
     "@standardnotes/icons": "workspace:*"
     "@standardnotes/services": ^1.13.20
     "@standardnotes/sncrypto-web": 1.10.1
-    "@standardnotes/snjs": ^2.117.8
+    "@standardnotes/snjs": ^2.117.9
     "@standardnotes/styles": "workspace:*"
     "@standardnotes/toast": "workspace:*"
     "@types/jest": ^27.4.1
