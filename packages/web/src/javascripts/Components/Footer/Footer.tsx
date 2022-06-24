@@ -394,9 +394,8 @@ class Footer extends PureComponent<Props, State> {
             </div>
             {this.state.showBetaWarning && (
               <Fragment>
-                <div className="sk-app-bar-item z-footer-bar-item relative select-none border" />
-                <div className="sk-app-bar-item z-footer-bar-item relative select-none">
-                  <a onClick={this.betaMessageClickHandler} className="no-decoration sk-label title">
+                <div className="flex items-center z-footer-bar-item pl-3 ml-3 relative select-none border-l border-solid border-border">
+                  <a onClick={this.betaMessageClickHandler} className="no-decoration text-xs font-bold title">
                     You are using a beta version of the app
                   </a>
                 </div>
@@ -405,10 +404,8 @@ class Footer extends PureComponent<Props, State> {
           </div>
           <div className="center">
             {this.state.arbitraryStatusMessage && (
-              <div className="sk-app-bar-item z-footer-bar-item relative select-none">
-                <div className="sk-app-bar-item-column">
-                  <span className="neutral sk-label">{this.state.arbitraryStatusMessage}</span>
-                </div>
+              <div className="flex items-center z-footer-bar-item relative select-none text-xs text-neutral font-bold">
+                {this.state.arbitraryStatusMessage}
               </div>
             )}
           </div>
