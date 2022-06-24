@@ -43,7 +43,7 @@
     "lint-staged": ">=12",
     "mini-css-extract-plugin": "^2.6.0",
     "node-sass": "*",
-    "npm-check-updates": "^12.5.9",
+    "npm-check-updates": "*",
     "prettier": "*",
     "sass-loader": "*",
     "svg-jest": "^1.0.1",

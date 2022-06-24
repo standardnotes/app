@@ -14,7 +14,6 @@ jobs:
         with:
           ref: main
           token: ${{ secrets.CI_PAT_TOKEN }}
-          fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
           registry-url: 'https://registry.npmjs.org'

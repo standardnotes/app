@@ -108,7 +108,7 @@
     "jest": "^27.5.1",
     "jest-circus": "^27.5.1",
     "metro-react-native-babel-preset": "^0.70.1",
-    "npm-check-updates": "^12.5.9",
+    "npm-check-updates": "*",
     "pod-install": "^0.1.33",
     "prettier": "^2.6.0",
     "prettier-plugin-organize-imports": "^2.3.4",

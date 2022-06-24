@@ -56,6 +56,7 @@
     "eslint": "^8.17.0",
     "husky": "^8.0.0",
     "lint-staged": "^13.0.1",
+    "npm-check-updates": "^14.1.1",
     "prettier": "^2.6.2",
     "sass-loader": "^13.0.0",
     "typescript": "^4.7.3",
