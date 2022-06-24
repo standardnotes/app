@@ -110,3 +110,54 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
 }
+
+.sk-spinner {
+  border: 1px solid var(--sn-stylekit-neutral-color);
+  border-radius: 50%;
+  animation: rotate 0.8s infinite linear;
+  border-right-color: transparent;
+
+  &.small {
+    width: 12px;
+    height: 12px;
+  }
+
+  &.info-contrast {
+    border-color: var(--sn-stylekit-info-contrast-color);
+    border-right-color: transparent;
+  }
+
+  &.info {
+    border-color: var(--sn-stylekit-info-color);
+    border-right-color: transparent;
+  }
+
+  &.warning {
+    border-color: var(--sn-stylekit-warning-color);
+    border-right-color: transparent;
+  }
+
+  &.danger {
+    border-color: var(--sn-stylekit-danger-color);
+    border-right-color: transparent;
+  }
+
+  &.success {
+    border-color: var(--sn-stylekit-success-color);
+    border-right-color: transparent;
+  }
+}
+
+.spinner-info {
+  border-color: var(--sn-stylekit-info-color);
+  border-right-color: transparent;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
