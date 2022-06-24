@@ -933,12 +933,12 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                         className={
                           (this.state.syncTakingTooLong ? 'text-warning font-bold ' : '') +
                           (this.state.saveError ? 'text-danger font-bold ' : '') +
-                          'text-sm message'
+                          'text-xs message'
                         }
                       >
                         {this.state.noteStatus?.message}
                       </div>
-                      {this.state.noteStatus?.desc && <div className="text-sm desc">{this.state.noteStatus.desc}</div>}
+                      {this.state.noteStatus?.desc && <div className="text-xs desc">{this.state.noteStatus.desc}</div>}
                     </div>
                   </div>
                   <div className="mr-3">
