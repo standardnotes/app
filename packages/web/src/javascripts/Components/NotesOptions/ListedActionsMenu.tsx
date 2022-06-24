@@ -2,7 +2,8 @@ import { WebApplication } from '@/Application/Application'
 import { Action, SNNote } from '@standardnotes/snjs'
 import { Fragment, useCallback, useEffect, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
-import { ListedMenuGroup, ListedMenuItem } from './ListedActionsOption'
+import { ListedMenuGroup } from './ListedMenuGroup'
+import ListedMenuItem from './ListedMenuItem'
 
 type ListedActionsMenuProps = {
   application: WebApplication
@@ -107,7 +108,7 @@ const ListedActionsMenu = ({ application, note, recalculateMenuStyle }: ListedAc
           {menuGroups.map((group, index) => (
             <Fragment key={group.account.authorId}>
               <div
-                className={`w-full flex items-center px-2.5 py-2 text-input font-semibold text-text border-0 border-y-1px border-solid border-border ${
+                className={`w-full flex items-center px-2.5 py-2 text-input font-semibold text-text border-y border-solid border-border ${
                   index === 0 ? 'border-t-0 mb-1' : 'my-1'
                 }`}
               >
