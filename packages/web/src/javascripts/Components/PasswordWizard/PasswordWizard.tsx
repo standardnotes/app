@@ -1,6 +1,8 @@
 import { WebApplication } from '@/Application/Application'
-import { ChangeEventHandler, createRef } from 'react'
+import { createRef } from 'react'
 import { PureComponent } from '@/Components/Abstract/PureComponent'
+import Button from '@/Components/Button/Button'
+import DecoratedPasswordInput from '../Input/DecoratedPasswordInput'
 
 interface Props {
   application: WebApplication
@@ -202,21 +204,21 @@ class PasswordWizard extends PureComponent<Props, State> {
     })
   }
 
-  handleCurrentPasswordInputChange: ChangeEventHandler<HTMLInputElement> = ({ currentTarget }) => {
+  handleCurrentPasswordInputChange = (currentPassword: string) => {
     this.setFormDataState({
-      currentPassword: currentTarget.value,
+      currentPassword,
     }).catch(console.error)
   }
 
-  handleNewPasswordInputChange: ChangeEventHandler<HTMLInputElement> = ({ currentTarget }) => {
+  handleNewPasswordInputChange = (newPassword: string) => {
     this.setFormDataState({
-      newPassword: currentTarget.value,
+      newPassword,
     }).catch(console.error)
   }
 
-  handleNewPasswordConfirmationInputChange: ChangeEventHandler<HTMLInputElement> = ({ currentTarget }) => {
+  handleNewPasswordConfirmationInputChange = (newPasswordConfirmation: string) => {
     this.setFormDataState({
-      newPasswordConfirmation: currentTarget.value,
+      newPasswordConfirmation,
     }).catch(console.error)
   }
 
@@ -244,13 +246,12 @@ class PasswordWizard extends PureComponent<Props, State> {
                               Current Password
                             </label>
 
-                            <input
+                            <DecoratedPasswordInput
                               ref={this.currentPasswordInput}
                               id="password-wiz-current-password"
                               value={this.state.formData.currentPassword}
                               onChange={this.handleCurrentPasswordInputChange}
                               type="password"
-                              className="sk-input contrast"
                             />
 
                             <div className="sk-panel-row" />
@@ -259,12 +260,11 @@ class PasswordWizard extends PureComponent<Props, State> {
                               New Password
                             </label>
 
-                            <input
+                            <DecoratedPasswordInput
                               id="password-wiz-new-password"
                               value={this.state.formData.newPassword}
                               onChange={this.handleNewPasswordInputChange}
                               type="password"
-                              className="sk-input contrast"
                             />
                             <div className="sk-panel-row" />
 
@@ -272,12 +272,11 @@ class PasswordWizard extends PureComponent<Props, State> {
                               Confirm New Password
                             </label>
 
-                            <input
+                            <DecoratedPasswordInput
                               id="password-wiz-confirm-new-password"
                               value={this.state.formData.newPasswordConfirmation}
                               onChange={this.handleNewPasswordConfirmationInputChange}
                               type="password"
-                              className="sk-input contrast"
                             />
                           </form>
                         </div>
@@ -286,7 +285,7 @@ class PasswordWizard extends PureComponent<Props, State> {
                   )}
                   {this.state.step === Steps.FinishStep && (
                     <div className="sk-panel-section">
-                      <div className="sk-label sk-bold info">Your password has been successfully changed.</div>
+                      <div className="font-bold text-info mb-1">Your password has been successfully changed.</div>
                       <p className="sk-p">
                         Please ensure you are running the latest version of Standard Notes on all platforms to ensure
                         maximum compatibility.
@@ -295,13 +294,14 @@ class PasswordWizard extends PureComponent<Props, State> {
                   )}
                 </div>
                 <div className="sk-panel-footer">
-                  <button
+                  <Button
+                    variant="primary"
                     onClick={this.nextStep}
                     disabled={this.state.lockContinue}
-                    className="sn-button min-w-20 info"
+                    className="min-w-20"
                   >
                     {this.state.continueTitle}
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>

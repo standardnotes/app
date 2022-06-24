@@ -6,7 +6,7 @@ const getClassNames = (hasLeftDecorations: boolean, hasRightDecorations: boolean
     container: `flex items-stretch position-relative bg-default border border-solid border-border rounded focus-within:ring-2 focus-within:ring-info overflow-hidden text-sm ${
       !hasLeftDecorations && !hasRightDecorations ? 'px-2 py-1.5' : ''
     }`,
-    input: `w-full border-0 focus:shadow-none bg-transparent text-text ${
+    input: `w-full border-0 focus:shadow-none focus:outline-none focus:ring-none bg-transparent text-text ${
       !hasLeftDecorations && hasRightDecorations ? 'pl-2' : ''
     } ${hasRightDecorations ? 'pr-2' : ''}`,
     disabled: 'bg-passive-5 cursor-not-allowed',
@@ -21,6 +21,7 @@ const DecoratedInput = forwardRef(
     {
       type = 'text',
       className = '',
+      id = '',
       disabled = false,
       left,
       right,
@@ -49,6 +50,7 @@ const DecoratedInput = forwardRef(
 
         <input
           type={type}
+          id={id}
           className={`${classNames.input} ${disabled ? classNames.disabled : ''}`}
           disabled={disabled}
           value={value}

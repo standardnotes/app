@@ -100,14 +100,14 @@ const SessionsModalContent: FunctionComponent<{
 
   return (
     <>
-      <Dialog onDismiss={close} className="sessions-modal h-90vh">
+      <Dialog onDismiss={close} className="sessions-modal h-[90vh] p-0" aria-label="Manage active sessions">
         <div className="sk-modal-content">
           <div className="sn-component">
             <div className="sk-panel">
               <div className="sk-panel-header">
                 <div className="sk-panel-header-title">Active Sessions</div>
                 <div className="buttons">
-                  <button className="sk-a close-button info" disabled={refreshing} onClick={refresh}>
+                  <button className="sk-a close-button info mr-3" disabled={refreshing} onClick={refresh}>
                     Refresh
                   </button>
                   <button className="sk-a close-button info" onClick={close}>
@@ -118,7 +118,7 @@ const SessionsModalContent: FunctionComponent<{
               <div className="sk-panel-content overflow-y-auto">
                 {refreshing ? (
                   <>
-                    <div className="animate-spin border border-solid border-info border-r-transparent rounded-full small info"></div>
+                    <div className="w-3 h-3 animate-spin border border-solid border-info border-r-transparent rounded-full"></div>
                     <h2 className="sk-p sessions-modal-refreshing">Loading sessions</h2>
                   </>
                 ) : (
@@ -128,14 +128,14 @@ const SessionsModalContent: FunctionComponent<{
                       <ul>
                         {sessions.map((session) => (
                           <li key={session.uuid}>
-                            <h2>{session.device_info}</h2>
+                            <h2 className="font-bold">{session.device_info}</h2>
                             {session.current ? (
-                              <span className="info bold">Current session</span>
+                              <span className="text-info font-bold">Current session</span>
                             ) : (
                               <>
                                 <p>Signed in on {formatter.format(session.updated_at)}</p>
                                 <button
-                                  className="sn-button small danger sk-label"
+                                  className="bg-danger text-info-contrast font-bold px-2.5 py-2 text-xs"
                                   disabled={session.revoking}
                                   onClick={() => setRevokingSessionUuid(session.uuid)}
                                 >
@@ -160,6 +160,7 @@ const SessionsModalContent: FunctionComponent<{
             setRevokingSessionUuid('')
           }}
           leastDestructiveRef={cancelRevokeRef}
+          className="p-0"
         >
           <div className="sk-modal-content">
             <div className="sn-component">
@@ -174,14 +175,14 @@ const SessionsModalContent: FunctionComponent<{
                     </AlertDialogDescription>
                     <div className="flex my-1 gap-2">
                       <button
-                        className="sn-button small neutral sk-label"
+                        className="bg-neutral text-info-contrast font-bold px-2.5 py-2 text-xs"
                         ref={cancelRevokeRef}
                         onClick={closeRevokeSessionAlert}
                       >
                         <span>{SessionStrings.RevokeCancelButton}</span>
                       </button>
                       <button
-                        className="sn-button small danger sk-label"
+                        className="bg-danger text-info-contrast font-bold px-2.5 py-2 text-xs"
                         onClick={() => {
                           closeRevokeSessionAlert()
                           revokeSession(confirmRevokingSessionUuid).catch(console.error)

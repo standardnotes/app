@@ -23,6 +23,10 @@
   background-color: var(--sn-stylekit-passive-color-5);
 }
 
+[data-reach-dialog-content] {
+  position: relative;
+}
+
 [data-reach-dialog-content] .sk-modal-content,
 [data-reach-dialog-content] .sn-component,
 [data-reach-dialog-content] .sk-panel {

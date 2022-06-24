@@ -7,7 +7,9 @@ type Props = {
 }
 
 const ModalDialogLabel: FunctionComponent<Props> = ({ children, closeDialog, className }) => (
-  <AlertDialogLabel className={`sk-panel-header px-4.5 ${className}`}>
+  <AlertDialogLabel
+    className={`flex-shrink-0 flex justify-between items-center px-4.5 py-3 border-b border-solid border-border bg-contrast text-text ${className}`}
+  >
     <div className="w-full flex flex-row justify-between items-center">
       <div className="flex-grow text-text text-base font-medium">{children}</div>
       <div tabIndex={0} className="font-bold text-info cursor-pointer" onClick={closeDialog}>
