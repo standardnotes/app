@@ -79,6 +79,7 @@ module.exports = {
       contrast: 'var(--sn-stylekit-contrast-background-color)',
       text: 'var(--sn-stylekit-contrast-foreground-color)',
       border: 'var(--sn-stylekit-border-color)',
+      'secondary-border': 'var(--sn-stylekit-secondary-border-color)',
       'passive-0': 'var(--sn-stylekit-passive-color-0)',
       'passive-1': 'var(--sn-stylekit-passive-color-1)',
       'passive-2': 'var(--sn-stylekit-passive-color-2)',
