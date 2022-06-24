@@ -5,6 +5,7 @@ module.exports = {
     extend: {
       spacing: {
         4.5: '1.125rem',
+        70: '17.5rem',
       },
       minWidth: {
         1: '0.25rem',
