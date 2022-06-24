@@ -187,6 +187,14 @@ jobs:
           prerelease: true
           draft: false
           files: packages/desktop/dist/*
+
+      - name: Notify Release Update
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.CI_PAT_TOKEN }}
+          repository: ${{ secrets.RELEASES_EVENT_RECEIVING_REPO }}
+          event-type: releases-updated-event
+
       - name: Publish Snap
         continue-on-error: true
         run: |
