@@ -5,24 +5,6 @@
   max-height: $footer-height;
 }
 
-#footer-bar .sk-app-bar-item {
-  .sk-panel {
-    max-height: 85vh;
-    position: absolute;
-    right: 0px;
-    left: 10px;
-    bottom: 40px;
-    min-width: 300px;
-    z-index: var(--z-index-footer-bar-item-panel);
-    margin-top: 15px;
-
-    &.sk-panel-right {
-      right: 0;
-      left: inherit;
-    }
-  }
-}
-
 #account-panel,
 #sync-resolution-menu {
   width: 400px;
@@ -34,10 +16,6 @@
 
 a.disabled {
   pointer-events: none;
-}
-
-#lock-item {
-  margin-left: 3px;
 }
 
 #footer-lock-icon {
