@@ -46,14 +46,9 @@ const TaskItemList: React.FC<TaskItemListProps> = ({ group }) => {
   return (
     <Container data-testid="task-list">
       <DragDropContext onDragEnd={onDragEnd}>
-        <TasksContainer testId="open-tasks-container" type="open" tasks={openTasks} groupName={group.name} />
+        <TasksContainer testId="open-tasks-container" type="open" tasks={openTasks} group={group} />
 
-        <TasksContainer
-          testId="completed-tasks-container"
-          type="completed"
-          tasks={completedTasks}
-          groupName={group.name}
-        >
+        <TasksContainer testId="completed-tasks-container" type="completed" tasks={completedTasks} group={group}>
           {completedTasks.length > 0 && <CompletedTasksActions groupName={group.name} />}
         </TasksContainer>
       </DragDropContext>

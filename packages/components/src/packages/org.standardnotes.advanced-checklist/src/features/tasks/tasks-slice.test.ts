@@ -538,12 +538,12 @@ it('should handle loading tasks into the tasks store, if an invalid payload is p
   expect(reducer(previousState, tasksLoaded('null'))).toEqual({
     schemaVersion: '1.0.0',
     groups: [],
-    initialized: true
+    initialized: true,
   })
   expect(reducer(previousState, tasksLoaded('undefined'))).toMatchObject({
     ...previousState,
     initialized: false,
-    lastError: expect.stringContaining('An error has occurred while parsing the note\'s content')
+    lastError: expect.stringContaining("An error has occurred while parsing the note's content"),
   })
 })
 
@@ -1286,7 +1286,10 @@ it('should handle collapsing groups', () => {
     ],
   }
 
-  const currentState = reducer(previousState, tasksGroupCollapsed({ groupName: 'Testing', collapsed: true }))
+  const currentState = reducer(
+    previousState,
+    tasksGroupCollapsed({ groupName: 'Testing', type: 'group', collapsed: true }),
+  )
 
   const expectedState = {
     schemaVersion: '1.0.0',
@@ -1304,7 +1307,9 @@ it('should handle collapsing groups', () => {
       },
       {
         name: 'Testing',
-        collapsed: true,
+        collapsed: {
+          group: true
+        },
         tasks: [
           {
             id: 'another-id',

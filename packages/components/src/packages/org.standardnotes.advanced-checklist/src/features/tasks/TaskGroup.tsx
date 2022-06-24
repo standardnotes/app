@@ -58,14 +58,14 @@ const TaskGroup: React.FC<TaskGroupProps> = ({
   const totalTasks = group.tasks.length
   const percentageCompleted = getPercentage(completedTasks, totalTasks)
 
-  const [collapsed, setCollapsed] = useState<boolean>(!!group.collapsed)
+  const [collapsed, setCollapsed] = useState<boolean>(!!group.collapsed?.group)
 
   const canEdit = useAppSelector((state) => state.settings.canEdit)
 
   const allTasksCompleted = totalTasks > 0 && totalTasks === completedTasks
 
   function handleCollapse() {
-    dispatch(tasksGroupCollapsed({ groupName, collapsed: !collapsed }))
+    dispatch(tasksGroupCollapsed({ groupName, type: 'group', collapsed: !collapsed }))
     setCollapsed(!collapsed)
   }
 

@@ -1,6 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { arrayMoveImmutable, isJsonString, parseMarkdownTasks } from '../../common/utils'
 
+const LATEST_SCHEMA_VERSION = '1.0.0'
+
 export type TasksState = {
   schemaVersion: string
   groups: GroupPayload[]
@@ -10,7 +12,7 @@ export type TasksState = {
 }
 
 const initialState: TasksState = {
-  schemaVersion: '1.0.0',
+  schemaVersion: LATEST_SCHEMA_VERSION,
   groups: [],
 }
 
@@ -23,9 +25,15 @@ export type TaskPayload = {
   completedAt?: Date
 }
 
+type CollapsedState = {
+  group?: boolean
+  open?: boolean
+  completed?: boolean
+}
+
 export type GroupPayload = {
   name: string
-  collapsed?: boolean
+  collapsed?: CollapsedState
   draft?: string
   lastActive?: Date
   tasks: TaskPayload[]
@@ -221,15 +229,19 @@ const tasksSlice = createSlice({
       state,
       action: PayloadAction<{
         groupName: string
+        type: keyof CollapsedState
         collapsed: boolean
       }>,
     ) {
-      const { groupName, collapsed } = action.payload
+      const { groupName, type, collapsed } = action.payload
       const group = state.groups.find((item) => item.name === groupName)
       if (!group) {
         return
       }
-      group.collapsed = collapsed
+      group.collapsed = {
+        ...(group.collapsed ?? {}),
+        [type]: collapsed,
+      }
     },
     tasksGroupDraft(
       state,
@@ -295,7 +307,7 @@ const tasksSlice = createSlice({
 
         const parsedState = JSON.parse(payload) as TasksState
         const newState: TasksState = {
-          schemaVersion: parsedState?.schemaVersion ?? '1.0.0',
+          schemaVersion: parsedState?.schemaVersion ?? LATEST_SCHEMA_VERSION,
           groups: parsedState?.groups ?? [],
         }
 

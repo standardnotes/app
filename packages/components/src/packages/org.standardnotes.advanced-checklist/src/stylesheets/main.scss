@@ -28,7 +28,7 @@ html {
     margin-right: 0.75rem;
   }
 
-  .sn-icon.sm {
+  .sn-icon.small {
     height: 0.875rem;
     width: 0.875rem;
   }
@@ -55,6 +55,12 @@ html {
     &:hover {
       background-color: inherit;
       border-width: 1px;
+    }
+
+    &.small {
+      height: 1.25rem;
+      min-width: 1.25rem;
+      width: 1.25rem;
     }
   }
 
