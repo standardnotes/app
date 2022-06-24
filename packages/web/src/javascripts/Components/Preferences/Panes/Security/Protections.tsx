@@ -74,9 +74,9 @@ const Protections: FunctionComponent<Props> = ({ application }) => {
       <PreferencesSegment>
         <Title>Protections</Title>
         {protectionsDisabledUntil ? (
-          <Text className="info">Unprotected access expires at {protectionsDisabledUntil}.</Text>
+          <Text className="text-info">Unprotected access expires at {protectionsDisabledUntil}.</Text>
         ) : (
-          <Text className="info">Protections are enabled.</Text>
+          <Text className="text-info">Protections are enabled.</Text>
         )}
         <Text className="mt-2">
           Actions like viewing or searching protected notes, exporting decrypted backups, or revoking an active session

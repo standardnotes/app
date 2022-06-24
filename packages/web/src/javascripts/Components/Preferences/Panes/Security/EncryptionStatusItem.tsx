@@ -13,7 +13,7 @@ const EncryptionStatusItem: FunctionComponent<Props> = ({ icon, status, checkmar
     <div className="min-w-3 min-h-1" />
     <div className="flex-grow text-text text-sm">{status}</div>
     <div className="min-w-3 min-h-1" />
-    {checkmark && <Icon className="success min-w-4 min-h-4" type="check-bold" />}
+    {checkmark && <Icon className="text-success min-w-4 min-h-4" type="check-bold" />}
   </div>
 )
 

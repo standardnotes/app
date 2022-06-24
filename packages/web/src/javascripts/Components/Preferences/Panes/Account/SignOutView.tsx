@@ -23,8 +23,7 @@ const SignOutView: FunctionComponent<Props> = observer(({ application, viewContr
           <Title>Sign out</Title>
           <Subtitle>Other devices</Subtitle>
           <Text>Want to sign out on all devices except this one?</Text>
-          <div className="min-h-3" />
-          <div className="flex flex-row">
+          <div className="flex flex-row mt-3">
             <Button
               className="mr-3"
               variant="normal"
@@ -44,8 +43,8 @@ const SignOutView: FunctionComponent<Props> = observer(({ application, viewContr
         <PreferencesSegment>
           <Subtitle>This workspace</Subtitle>
           <Text>Remove all data related to the current workspace from the application.</Text>
-          <div className="min-h-3" />
           <Button
+            className="mt-3"
             dangerStyle={true}
             label="Sign out workspace"
             onClick={() => {
