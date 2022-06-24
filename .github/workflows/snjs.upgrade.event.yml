@@ -39,6 +39,7 @@ jobs:
         with:
           token: ${{ secrets.CI_PAT_TOKEN }}
           title: "${{ 'chore(deps): upgrade snjs' }}"
+          body: Updates all packages prefixed with "@standardnotes/" in root workspace, web, and mobile.
           commit-message: "${{ 'chore(deps): upgrade snjs' }}"
           delete-branch: true
           committer: standardci <ci@standardnotes.com>
