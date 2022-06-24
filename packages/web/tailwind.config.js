@@ -45,6 +45,11 @@ module.exports = {
         'lock-screen': 'var(--z-index-lock-screen)',
         modal: 'var(--z-index-modal)',
       },
+      boxShadow: {
+        inner:
+          'var(--sn-stylekit-info-color) 1px 1px 0px 0px inset, var(--sn-stylekit-info-color) -1px -1px 0px 0px inset',
+        bottom: 'currentcolor 0px -1px 0px 0px inset, currentcolor 0px 1px 0px 0px',
+      },
     },
     colors: {
       transparent: 'transparent',

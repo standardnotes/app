@@ -11,7 +11,9 @@ const HistoryListItem: FunctionComponent<HistoryListItemProps> = ({ children, is
   return (
     <button
       tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
-      className={`flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm py-2.5 focus:bg-contrast focus:shadow-none ${isSelected ? 'bg-info-backdrop' : ''}`}
+      className={`flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-2.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm ${
+        isSelected ? 'bg-info-backdrop' : ''
+      }`}
       onClick={onClick}
       data-selected={isSelected}
     >

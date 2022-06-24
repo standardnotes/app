@@ -67,18 +67,6 @@
   }
 }
 
-.shadow-bottom {
-  box-shadow: currentcolor 0px -1px 0px 0px inset, currentcolor 0px 1px 0px 0px;
-}
-
-.focus\:shadow-inner:focus {
-  box-shadow: var(--sn-stylekit-info-color) 1px 1px 0px 0px inset, var(--sn-stylekit-info-color) -1px -1px 0px 0px inset;
-}
-
-.focus\:shadow-bottom:focus {
-  box-shadow: currentcolor 0px -1px 0px 0px inset, currentcolor 0px 1px 0px 0px;
-}
-
 .text-editor {
   font-size: var(--sn-stylekit-font-size-editor);
 }
@@ -89,14 +77,6 @@
 
 .shadow-overlay-light {
   box-shadow: 0px 4px 24px 0px rgba(0, 0, 0, 0.05);
-}
-
-.sn-component .focus\:brightness-default:focus {
-  filter: brightness(100%);
-}
-
-.sn-component .hover\:brightness-default:hover {
-  filter: brightness(100%);
 }
 
 .appearance-none {

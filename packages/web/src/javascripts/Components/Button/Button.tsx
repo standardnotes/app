@@ -1,11 +1,11 @@
 import { Ref, forwardRef, ReactNode, ComponentPropsWithoutRef } from 'react'
 
-const baseClass = 'rounded px-4 py-1.75 font-bold text-sm fit-content'
+const baseClass = 'rounded px-4 py-1.5 font-bold text-sm fit-content'
 
 type ButtonVariant = 'normal' | 'primary'
 
 const getClassName = (variant: ButtonVariant, danger: boolean, disabled: boolean) => {
-  const borders = variant === 'normal' ? 'border-solid border-border border-1' : 'no-border'
+  const borders = variant === 'normal' ? 'border-solid border-border border' : 'no-border'
   const cursor = disabled ? 'cursor-not-allowed' : 'cursor-pointer'
 
   let colors = variant === 'normal' ? 'bg-default text-text' : 'bg-info text-info-contrast'
@@ -24,7 +24,7 @@ const getClassName = (variant: ButtonVariant, danger: boolean, disabled: boolean
     focusHoverStates =
       variant === 'normal'
         ? 'focus:bg-default focus:outline-none hover:bg-default'
-        : 'focus:brightness-default focus:outline-none hover:brightness-default'
+        : 'focus:brightness-100 focus:outline-none hover:brightness-100'
   }
 
   return `${baseClass} ${colors} ${borders} ${focusHoverStates} ${cursor}`
