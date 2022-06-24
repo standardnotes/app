@@ -71,7 +71,7 @@ const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
         <div className="pr-4" />
       )}
       <div className="flex-grow min-w-0 py-4 px-0 border-b border-solid border-border">
-        <div className="flex items-start justify-between font-semibold text-base leading-1.3 overflow-hidden">
+        <div className="flex items-start justify-between font-semibold text-base leading-[1.3] overflow-hidden">
           <div className="break-word mr-2">{item.title}</div>
         </div>
         <ListItemMetadata item={item} hideDate={hideDate} sortBy={sortBy} />

@@ -58,14 +58,14 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
       }}
     >
       {!hideIcon ? (
-        <div className="flex flex-col items-center justify-between p-4 pr-3 mr-0">
+        <div className="flex flex-col items-center justify-between p-4 pr-4 mr-0">
           <Icon ariaLabel={`Icon for ${editorName}`} type={icon} className={`text-accessory-tint-${tint}`} />
         </div>
       ) : (
         <div className="pr-4" />
       )}
       <div className="flex-grow min-w-0 py-4 px-0 border-b border-solid border-border">
-        <div className="flex items-start justify-between font-semibold text-base leading-1.3 overflow-hidden">
+        <div className="flex items-start justify-between font-semibold text-base leading-[1.3] overflow-hidden">
           <div className="break-word mr-2">{item.title}</div>
         </div>
         {!hidePreview && !item.hidePreview && !item.protected && (
