@@ -6,6 +6,7 @@ module.exports = {
       spacing: {
         4.5: '1.125rem',
         18: '4.5rem',
+        30: '7.5rem',
         70: '17.5rem',
         125: '31.25rem',
       },
@@ -31,6 +32,7 @@ module.exports = {
         90: '22.5rem',
       },
       maxWidth: {
+        76: '19rem',
         125: '31.25rem',
       },
       maxHeight: {

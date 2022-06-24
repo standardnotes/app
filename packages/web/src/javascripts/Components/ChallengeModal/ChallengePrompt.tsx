@@ -38,7 +38,7 @@ const ChallengeModalPrompt: FunctionComponent<Props> = ({ prompt, values, index,
               return (
                 <label
                   key={option.label}
-                  className={`cursor-pointer px-2 py-1.5 rounded ${
+                  className={`cursor-pointer px-2 py-1.5 rounded focus-within:ring-2 focus-within:ring-info ${
                     selected ? 'bg-default text-foreground font-semibold' : 'text-passive-0 hover:bg-passive-3'
                   }`}
                 >
