@@ -88,7 +88,9 @@ const NotesOptionsPanel = ({
           ...position,
           maxHeight,
         }}
-        className="sn-dropdown sn-dropdown--animated min-w-80 max-h-120 max-w-xs flex flex-col pt-2 overflow-y-auto fixed"
+        className={`${
+          open ? 'flex' : 'hidden'
+        } flex-col min-w-80 max-h-120 max-w-xs pt-2 fixed bg-default rounded-md shadow-sm transition-transform duration-150 slide-down-animation overflow-y-auto`}
         onBlur={closeOnBlur}
         tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
       >

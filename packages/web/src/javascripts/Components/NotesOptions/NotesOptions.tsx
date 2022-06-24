@@ -11,6 +11,7 @@ import AddTagOption from './AddTagOption'
 import { addToast, dismissToast, ToastType } from '@standardnotes/toast'
 import { NotesOptionsProps } from './NotesOptionsProps'
 import { NotesController } from '@/Controllers/NotesController'
+import HorizontalSeparator from '../Shared/HorizontalSeparator'
 
 type DeletePermanentlyButtonProps = {
   closeOnBlur: NotesOptionsProps['closeOnBlur']
@@ -18,7 +19,11 @@ type DeletePermanentlyButtonProps = {
 }
 
 const DeletePermanentlyButton = ({ closeOnBlur, onClick }: DeletePermanentlyButtonProps) => (
-  <button onBlur={closeOnBlur} className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm" onClick={onClick}>
+  <button
+    onBlur={closeOnBlur}
+    className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm"
+    onClick={onClick}
+  >
     <Icon type="close" className="text-danger mr-2" />
     <span className="text-danger">Delete permanently</span>
   </button>
@@ -135,7 +140,7 @@ const SpellcheckOptions: FunctionComponent<{
   return (
     <div className="flex flex-col">
       <button
-        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm justify-between px-3 py-1"
+        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm justify-between"
         onClick={() => {
           notesController.toggleGlobalSpellcheckForNote(note).catch(console.error)
         }}
@@ -267,11 +272,15 @@ const NotesOptions = ({
     <>
       {notes.length === 1 && (
         <>
-          <button onBlur={closeOnBlur} className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm" onClick={openRevisionHistoryModal}>
+          <button
+            onBlur={closeOnBlur}
+            className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm"
+            onClick={openRevisionHistoryModal}
+          >
             <Icon type="history" className={iconClass} />
             Note history
           </button>
-          <div className="min-h-1px my-2 bg-border"></div>
+          <HorizontalSeparator classes="my-2" />
         </>
       )}
       <button
@@ -315,11 +324,11 @@ const NotesOptions = ({
       </button>
       {notes.length === 1 && (
         <>
-          <div className="min-h-1px my-2 bg-border"></div>
+          <HorizontalSeparator classes="my-2" />
           <ChangeEditorOption application={application} note={notes[0]} />
         </>
       )}
-      <div className="min-h-1px my-2 bg-border"></div>
+      <HorizontalSeparator classes="my-2" />
       {navigationController.tagsCount > 0 && (
         <AddTagOption
           navigationController={navigationController}
@@ -351,11 +360,19 @@ const NotesOptions = ({
           Unpin
         </button>
       )}
-      <button onBlur={closeOnBlur} className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm" onClick={downloadSelectedItems}>
+      <button
+        onBlur={closeOnBlur}
+        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm"
+        onClick={downloadSelectedItems}
+      >
         <Icon type="download" className={iconClass} />
         Export
       </button>
-      <button onBlur={closeOnBlur} className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm" onClick={duplicateSelectedItems}>
+      <button
+        onBlur={closeOnBlur}
+        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm"
+        onClick={duplicateSelectedItems}
+      >
         <Icon type="copy" className={iconClass} />
         Duplicate
       </button>
@@ -440,11 +457,11 @@ const NotesOptions = ({
       )}
       {notes.length === 1 ? (
         <>
-          <div className="min-h-1px my-2 bg-border"></div>
+          <HorizontalSeparator classes="my-2" />
           <ListedActionsOption application={application} note={notes[0]} />
-          <div className="min-h-1px my-2 bg-border"></div>
+          <HorizontalSeparator classes="my-2" />
           <SpellcheckOptions editorForNote={editorForNote} notesController={notesController} note={notes[0]} />
-          <div className="min-h-1px my-2 bg-border"></div>
+          <HorizontalSeparator classes="my-2" />
           <NoteAttributes application={application} note={notes[0]} />
           <NoteSizeWarning note={notes[0]} />
         </>

@@ -6,6 +6,7 @@ import Switch from '@/Components/Switch/Switch'
 import { observer } from 'mobx-react-lite'
 import { FilesController } from '@/Controllers/FilesController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
+import HorizontalSeparator from '../Shared/HorizontalSeparator'
 
 type Props = {
   closeMenu: () => void
@@ -64,28 +65,40 @@ const FileMenuOptions: FunctionComponent<Props> = ({
 
   return (
     <>
-      <button onBlur={closeOnBlur} className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm focus:bg-info-backdrop" onClick={onPreview}>
+      <button
+        onBlur={closeOnBlur}
+        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm"
+        onClick={onPreview}
+      >
         <Icon type="file" className="mr-2 text-neutral" />
         Preview file
       </button>
       {selectedFiles.length === 1 && (
         <>
           {isFileAttachedToNote ? (
-            <button onBlur={closeOnBlur} className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm focus:bg-info-backdrop" onClick={onDetach}>
+            <button
+              onBlur={closeOnBlur}
+              className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm"
+              onClick={onDetach}
+            >
               <Icon type="link-off" className="mr-2 text-neutral" />
               Detach from note
             </button>
           ) : shouldShowAttachOption ? (
-            <button onBlur={closeOnBlur} className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm focus:bg-info-backdrop" onClick={onAttach}>
+            <button
+              onBlur={closeOnBlur}
+              className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm"
+              onClick={onAttach}
+            >
               <Icon type="link" className="mr-2 text-neutral" />
               Attach to note
             </button>
           ) : null}
         </>
       )}
-      <div className="min-h-1px my-1 bg-border"></div>
+      <HorizontalSeparator classes="my-1" />
       <button
-        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm justify-between focus:bg-info-backdrop"
+        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm justify-between"
         onClick={() => {
           void filesController.setProtectionForFiles(!hasProtectedFiles, selectionController.selectedFiles)
         }}
@@ -101,10 +114,10 @@ const FileMenuOptions: FunctionComponent<Props> = ({
           checked={hasProtectedFiles}
         />
       </button>
-      <div className="min-h-1px my-1 bg-border"></div>
+      <HorizontalSeparator classes="my-1" />
       <button
         onBlur={closeOnBlur}
-        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm focus:bg-info-backdrop"
+        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm"
         onClick={() => {
           void filesController.downloadFiles(selectionController.selectedFiles)
         }}
@@ -115,7 +128,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
       {shouldShowRenameOption && (
         <button
           onBlur={closeOnBlur}
-          className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm focus:bg-info-backdrop"
+          className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm"
           onClick={() => {
             renameToggleCallback?.(true)
           }}
@@ -126,7 +139,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
       )}
       <button
         onBlur={closeOnBlur}
-        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm focus:bg-info-backdrop"
+        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm"
         onClick={() => {
           void filesController.deleteFilesPermanently(selectionController.selectedFiles)
         }}

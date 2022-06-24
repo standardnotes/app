@@ -52,7 +52,7 @@ const FilesOptionsPanel = ({ filesController, selectionController }: Props) => {
         }}
         onBlur={closeOnBlur}
         ref={buttonRef}
-        className="sn-icon-button border-contrast"
+        className="flex justify-center items-center min-w-8 h-8 bg-text-padding hover:bg-contrast focus:bg-contrast text-neutral border border-solid border-border rounded-full cursor-pointer"
       >
         <VisuallyHidden>Actions</VisuallyHidden>
         <Icon type="more" className="block" />
@@ -69,7 +69,9 @@ const FilesOptionsPanel = ({ filesController, selectionController }: Props) => {
           ...position,
           maxHeight,
         }}
-        className="sn-dropdown sn-dropdown--animated min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto fixed"
+        className={`${
+          open ? 'flex' : 'hidden'
+        } flex-col min-w-80 max-h-120 max-w-xs py-2 fixed bg-default rounded-md shadow-sm transition-transform duration-150 slide-down-animation overflow-y-auto`}
         onBlur={closeOnBlur}
         tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
       >

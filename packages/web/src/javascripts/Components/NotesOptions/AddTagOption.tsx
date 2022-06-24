@@ -86,12 +86,14 @@ const AddTagOption: FunctionComponent<Props> = ({ navigationController, notesCon
             ...menuStyle,
             position: 'fixed',
           }}
-          className="sn-dropdown min-w-80 flex flex-col py-2 max-h-120 max-w-xs fixed overflow-y-auto"
+          className={`${
+            isMenuOpen ? 'flex' : 'hidden'
+          } flex-col py-2 bg-default rounded-md shadow-sm min-w-80 max-h-120 max-w-xs fixed overflow-y-auto`}
         >
           {navigationController.tags.map((tag) => (
             <button
               key={tag.uuid}
-              className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm--no-icon max-w-80"
+              className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-2 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm max-w-80"
               onBlur={closeOnBlur}
               onClick={() => {
                 notesController.isTagInSelectedNotes(tag)

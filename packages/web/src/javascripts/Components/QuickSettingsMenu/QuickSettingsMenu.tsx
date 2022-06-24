@@ -14,6 +14,7 @@ import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
 import { ThemeItem } from './ThemeItem'
 import { sortThemes } from '@/Utils/SortThemes'
 import RadioIndicator from '../RadioIndicator/RadioIndicator'
+import HorizontalSeparator from '../Shared/HorizontalSeparator'
 
 const focusModeAnimationDuration = 1255
 
@@ -207,12 +208,12 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
     <div ref={mainRef} className="sn-component">
       <div
         className={`z-footer-bar-item-panel bottom-full left-0 cursor-auto absolute bg-default rounded-md shadow min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto ${
-          shouldAnimateCloseMenu ? 'slide-up-animation' : 'sn-dropdown--animated'
+          shouldAnimateCloseMenu ? 'slide-up-animation' : 'transition-transform duration-150 slide-down-animation'
         }`}
         ref={quickSettingsMenuRef}
         onKeyDown={handleQuickSettingsKeyDown}
       >
-        <div className="px-3 mt-1 mb-2 font-semibold text-text uppercase">Quick Settings</div>
+        <div className="px-3 mt-1 mb-2 font-semibold text-text text-sm uppercase">Quick Settings</div>
         <Disclosure open={themesMenuOpen} onChange={toggleThemesMenu}>
           <DisclosureButton
             onKeyDown={handleBtnKeyDown}
@@ -233,9 +234,11 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
             style={{
               ...themesMenuPosition,
             }}
-            className="bg-default rounded-md shadow min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto fixed sn-dropdown--animated"
+            className={`${
+              themesMenuOpen ? 'flex' : 'hidden'
+            } flex-col py-2 bg-default rounded-md shadow min-w-80 max-h-120 max-w-xs overflow-y-auto fixed transition-transform duration-150 slide-down-animation`}
           >
-            <div className="px-3 my-1 font-semibold text-text uppercase">Themes</div>
+            <div className="px-3 my-1 font-semibold text-text text-sm uppercase">Themes</div>
             <button
               className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full text-sm focus:bg-info-backdrop focus:shadow-none"
               onClick={toggleDefaultTheme}
@@ -276,7 +279,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
           onClose={closeQuickSettingsMenu}
           isEnabled={focusModeEnabled}
         />
-        <div className="h-1px my-2 bg-border"></div>
+        <HorizontalSeparator classes="my-2" />
         <button
           className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full text-sm focus:bg-info-backdrop focus:shadow-none"
           onClick={openPreferences}
