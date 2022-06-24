@@ -178,8 +178,8 @@ jobs:
           token: ${{ secrets.CI_PAT_TOKEN }}
           tag_name: "@standardnotes/desktop@${{ steps.package-version.outputs.current-version}}"
           prerelease: true
-          draft: ${{ inputs.channel == 'beta' && true || false }}
-          name: "Desktop ${{ inputs.channel == 'beta' && 'Beta' || '' }} ${{ steps.package-version.outputs.current-version }}"
+          draft: false
+          name: "Desktop ${{ steps.package-version.outputs.current-version }}"
           files: packages/desktop/dist/*
       - name: Publish Snap
         continue-on-error: true
