@@ -1,24 +1,5 @@
-.preferences-menu-item {
-  @apply box-border w-auto h-auto rounded min-w-42 py-2 px-4 flex flex-row items-center justify-start text-sm cursor-pointer border-transparent border-solid border;
-
-  .icon {
-    color: var(--preferences-navigation-icon-color);
-    @apply text-base;
-  }
-
-  &:hover {
-    @apply border-border border-solid border bg-default;
-  }
-}
-
 .preferences-menu-item.selected {
-  @apply border-info text-info font-bold;
-
   background-color: var(--preferences-navigation-selected-background-color);
-
-  .icon {
-    @apply text-info;
-  }
 }
 
 .preferences-extension-pane {
