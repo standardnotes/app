@@ -31,7 +31,7 @@
     "version": "yarn install --no-immutable && git add yarn.lock",
     "postversion": "./scripts/push-tags-one-by-one.sh",
     "lerna:list": " yarn lerna list -all",
-    "upgrade:snjs": "ncu -u '@standardnotes/*' && yarn workspaces foreach --verbose run ncu -u '@standardnotes/*'"
+    "upgrade:snjs": "ncu -u '@standardnotes/*' && yarn workspaces foreach --verbose run upgrade:snjs"
   },
   "resolutions": {
     "@types/styled-components/@types/react": "17.0.2",
