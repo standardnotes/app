@@ -1,12 +1,12 @@
-name: Version Bump Dev
+name: Version Bump Main
 
 on:
   push:
-    branches: [ develop ]
+    branches: [ main ]
 
 jobs:
   Build:
-    if: contains(github.event.head_commit.message, 'chore(release)') == false
+    if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
     runs-on: ubuntu-latest
     env:
       NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -38,38 +38,12 @@ jobs:
       - name: Install Dependencies
         run: yarn install
 
-      - name: Bump Prod Version Graduate
-        continue-on-error: true
-        id: graduateRelease
-        if: ${{ github.ref == 'refs/heads/main' }}
+      - name: Bump Prod Version
         run: |
-          yarn release:prod:graduate
-          yarn publish:prod
-
-      - name: Bump Prod Version Fallback
-        if: ${{ always() && github.ref == 'refs/heads/main' && steps.graduateRelease.outcome == 'failure'  }}
-        run: |
-          echo Falling back to non-graduate release due to https://github.com/lerna/lerna/issues/2532
-          git stash
           yarn release:prod
           yarn publish:prod
 
-      - name: Bump Beta Version
-        if: ${{ github.ref == 'refs/heads/develop' }}
-        run: |
-          yarn release:beta
-          yarn publish:beta
-
-      - name: Merge release into develop
-        if: ${{ github.ref == 'refs/heads/main' }}
-        run: |
-          git config pull.rebase false
-          git checkout develop
-          git pull origin main
-          git push origin develop
-
       - name: Notify Release Update
-        if: ${{ github.ref == 'refs/heads/main' }}
         uses: peter-evans/repository-dispatch@v2
         with:
           token: ${{ secrets.CI_PAT_TOKEN }}

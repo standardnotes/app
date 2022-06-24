@@ -1,4 +1,4 @@
-name: Web Server Prod
+name: Web Server Deploy
 
 concurrency:
   group: prod_environment

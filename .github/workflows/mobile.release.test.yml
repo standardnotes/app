@@ -1,10 +1,6 @@
-name: Mobile Build Development
+name: Mobile TestFlight
 
 on:
-  push:
-    tags:
-      - '*standardnotes/*mobile*beta*'
-      - '*standardnotes/*mobile*alpha*'
   workflow_dispatch:
 
 jobs:
