@@ -166,7 +166,7 @@ const CloudBackupProvider: FunctionComponent<Props> = ({ application, providerNa
 
   const isExpanded = authBegan || successfullyInstalled
   const shouldShowEnableButton = !backupFrequency && !authBegan
-  const additionalClass = isEntitledToCloudBackups ? '' : 'faded cursor-default pointer-events-none'
+  const additionalClass = isEntitledToCloudBackups ? '' : 'opacity-50 cursor-default pointer-events-none'
 
   return (
     <div

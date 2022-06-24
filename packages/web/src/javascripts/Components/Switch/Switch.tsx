@@ -14,7 +14,7 @@ const Switch: FunctionComponent<SwitchProps> = (props: SwitchProps) => {
   return (
     <label
       className={`sn-component flex justify-between items-center cursor-pointer px-3 ${className} ${
-        isDisabled ? 'faded' : ''
+        isDisabled ? 'opacity-50' : ''
       }`}
       {...(props.role ? { role: props.role } : {})}
     >

@@ -106,7 +106,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
   return (
     <>
       <div
-        className={`tag ${isSelected ? 'selected' : ''} ${isFaded ? 'faded' : ''}`}
+        className={`tag ${isSelected ? 'selected' : ''} ${isFaded ? 'opacity-50' : ''}`}
         onClick={selectCurrentTag}
         style={{
           paddingLeft: `${level * PADDING_PER_LEVEL_PX + PADDING_BASE_PX}px`,
@@ -132,7 +132,9 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
 
         {!isSystemView(view) && (
           <div className="meta">
-            {view.conflictOf && <div className="danger small-text font-bold">Conflicted Copy {view.conflictOf}</div>}
+            {view.conflictOf && (
+              <div className="danger text-[0.625rem] font-bold">Conflicted Copy {view.conflictOf}</div>
+            )}
 
             {isSelected && (
               <div className="menu">

@@ -27,7 +27,7 @@ const CloudLink: FunctionComponent<Props> = ({ application }) => {
   const [isEntitledToCloudBackups, setIsEntitledToCloudBackups] = useState(false)
   const [isFailedCloudBackupEmailMuted, setIsFailedCloudBackupEmailMuted] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
-  const additionalClass = isEntitledToCloudBackups ? '' : 'faded cursor-default pointer-events-none'
+  const additionalClass = isEntitledToCloudBackups ? '' : 'opacity-50 cursor-default pointer-events-none'
 
   const loadIsFailedCloudBackupEmailMutedSetting = useCallback(async () => {
     if (!application.getUser()) {
