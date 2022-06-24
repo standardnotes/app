@@ -25,7 +25,7 @@ const CustomDropdownButton: FunctionComponent<ListboxButtonProps> = ({
   iconClassName = '',
 }) => (
   <>
-    <div className="sn-dropdown-button-label">
+    <div className="flex items-center">
       {icon ? (
         <div className="flex mr-2">
           <Icon type={icon} className={iconClassName} size="small" />
@@ -53,7 +53,7 @@ const Dropdown: FunctionComponent<DropdownProps> = ({ id, label, items, value, o
       <VisuallyHidden id={labelId}>{label}</VisuallyHidden>
       <ListboxInput value={value} onChange={handleChange} aria-labelledby={labelId} disabled={disabled}>
         <ListboxButton
-          className="sn-dropdown-button"
+          className="rounded px-3.5 py-1.5 w-fit bg-default text-sm text-text border-solid border-border border-1 min-w-55"
           children={({ value, label, isExpanded }) => {
             const current = items.find((item) => item.value === value)
             const icon = current ? current?.icon : null
