@@ -27,7 +27,7 @@ const NoAccountWarningContent = ({ accountMenuController, noAccountWarningContro
       <h1 className="sk-h3 m-0 font-semibold text-sm">Data not backed up</h1>
       <p className="m-0 mt-1 col-start-1 col-end-3 text-sm">Sign in or register to back up your notes.</p>
       <button
-        className="sn-button small info mt-3 col-start-1 col-end-3 justify-self-start text-sm"
+        className="px-2.5 py-2 bg-info text-info-contrast font-semibold text-xs rounded mt-3 col-start-1 col-end-3 justify-self-start"
         onClick={showAccountMenu}
       >
         Open Account menu
