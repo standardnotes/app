@@ -416,23 +416,23 @@ class Footer extends PureComponent<Props, State> {
             {this.state.dataUpgradeAvailable && (
               <div
                 onClick={this.securityUpdateClickHandler}
-                className="sk-app-bar-item z-footer-bar-item relative select-none"
+                className="flex items-center text-xs text-success font-bold z-footer-bar-item relative select-none"
               >
-                <span className="success sk-label">Encryption upgrade available.</span>
+                Encryption upgrade available.
               </div>
             )}
             {this.state.newUpdateAvailable && (
               <div
                 onClick={this.newUpdateClickHandler}
-                className="sk-app-bar-item z-footer-bar-item relative select-none"
+                className="flex items-center ml-3 text-xs text-info font-bold z-footer-bar-item relative select-none"
               >
-                <span className="info sk-label">New update available.</span>
+                New update available.
               </div>
             )}
             {(this.state.outOfSync || this.state.showSyncResolution) && (
-              <div className="sk-app-bar-item z-footer-bar-item relative select-none">
+              <div className="flex items-center ml-3 z-footer-bar-item relative select-none">
                 {this.state.outOfSync && (
-                  <div onClick={this.syncResolutionClickHandler} className="sk-label warning">
+                  <div onClick={this.syncResolutionClickHandler} className="font-bold text-xs text-warning">
                     Potentially Out of Sync
                   </div>
                 )}
@@ -442,22 +442,19 @@ class Footer extends PureComponent<Props, State> {
               </div>
             )}
             {this.state.offline && (
-              <div className="sk-app-bar-item z-footer-bar-item relative select-none">
-                <div className="sk-label">Offline</div>
+              <div className="flex items-center ml-3 text-xs font-bold z-footer-bar-item relative select-none">
+                Offline
               </div>
             )}
             {this.state.hasPasscode && (
-              <Fragment>
-                <div className="sk-app-bar-item z-footer-bar-item relative select-none border" />
-                <div
-                  id="lock-item"
-                  onClick={this.lockClickHandler}
-                  title="Locks application and wipes unencrypted data from memory."
-                  className="sk-app-bar-item z-footer-bar-item relative select-none pl-1 hover:text-info"
-                >
-                  <Icon type="lock-filled" />
-                </div>
-              </Fragment>
+              <div
+                id="lock-item"
+                onClick={this.lockClickHandler}
+                title="Locks application and wipes unencrypted data from memory."
+                className="flex items-center z-footer-bar-item relative select-none pl-2 ml-3 hover:text-info border-l border-solid border-border"
+              >
+                <Icon type="lock-filled" />
+              </div>
             )}
           </div>
         </div>
