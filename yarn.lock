@@ -4958,7 +4958,7 @@ __metadata:
     "@lerna-lite/cli": ^1.5.1
     "@lerna-lite/list": ^1.5.1
     "@lerna-lite/run": ^1.5.1
-    "@standardnotes/config": ^2.4.3
+    "@standardnotes/config": ^2.4.2
     "@standardnotes/snjs": ^2.117.8
     "@typescript-eslint/eslint-plugin": ^5.20.0
     "@typescript-eslint/parser": ^5.20.0
@@ -5126,7 +5126,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/config@npm:^2.4.3":
+"@standardnotes/config@npm:^2.4.2, @standardnotes/config@npm:^2.4.3":
   version: 2.4.3
   resolution: "@standardnotes/config@npm:2.4.3"
   dependencies:
