@@ -1,0 +1,51 @@
+name: Version Bump Main
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  Build:
+    if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
+    runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.CI_PAT_TOKEN }}
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Setup git config
+        run: |
+          git config --global user.name "standardci"
+          git config --global user.email "ci@standardnotes.com"
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v4
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Bump Prod Version
+        run: |
+          yarn release:prod
+          yarn publish:prod
+
+      - name: Notify Release Update
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.CI_PAT_TOKEN }}
+          repository: ${{ secrets.RELEASES_EVENT_RECEIVING_REPO }}
+          event-type: releases-updated-event

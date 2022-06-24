@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.2](https://github.com/standardnotes/app/compare/@standardnotes/authenticator@2.1.2-alpha.0...@standardnotes/authenticator@2.1.2) (2022-06-23)
+
+**Note:** Version bump only for package @standardnotes/authenticator
+
+## [2.1.2-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/authenticator@2.1.1...@standardnotes/authenticator@2.1.2-alpha.0) (2022-06-23)
+
+### Bug Fixes
+
+* **components:** disable minification in themes build due to limitations in mobile css parser ([#1143](https://github.com/standardnotes/app/issues/1143)) ([2d069fd](https://github.com/standardnotes/app/commit/2d069fd4bdca95d857ba20b5f3c946db1ae1735a))
+
+## [2.1.1](https://github.com/standardnotes/app/compare/@standardnotes/authenticator@2.1.1-alpha.0...@standardnotes/authenticator@2.1.1) (2022-06-23)
+
+**Note:** Version bump only for package @standardnotes/authenticator
+
+## [2.1.1-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/authenticator@2.1.0...@standardnotes/authenticator@2.1.1-alpha.0) (2022-06-23)
+
+**Note:** Version bump only for package @standardnotes/authenticator
+
 # [2.1.0](https://github.com/standardnotes/app/compare/@standardnotes/authenticator@2.1.0-alpha.0...@standardnotes/authenticator@2.1.0) (2022-06-22)
 
 **Note:** Version bump only for package @standardnotes/authenticator

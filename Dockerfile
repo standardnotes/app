@@ -14,13 +14,13 @@ RUN apk add --update --no-cache \
 
 RUN addgroup -S $USERNAME -g $GID && adduser -D -S $USERNAME -G $USERNAME -u $UID
 
-WORKDIR /app/
+WORKDIR /app
 
 RUN chown -R $UID:$GID .
 
 USER $USERNAME
 
-COPY --chown=$UID:$GID . /app
+COPY --chown=$UID:$GID . .
 
 RUN yarn install
 

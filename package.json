@@ -17,7 +17,7 @@
     "test": "yarn workspaces foreach -pt --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run test",
     "clean": "lerna run clean",
     "build:all": "yarn workspaces foreach -pt --verbose --exclude @standardnotes/components-meta run build",
-    "build:components": "yarn workspaces foreach -pt --verbose -R --from @standardnotes/components-meta run build",
+    "build:components": "yarn workspaces foreach -pt --verbose --interlaced -R --from @standardnotes/components-meta run build",
     "build:web": "yarn workspaces foreach -pt --verbose -R --from @standardnotes/web --exclude @standardnotes/components-meta run build",
     "build:desktop": "yarn workspaces foreach -pt --verbose -R --from @standardnotes/desktop --exclude @standardnotes/components-meta run build",
     "build:mobile": "yarn workspaces foreach -pt --verbose -R --from @standardnotes/mobile --exclude @standardnotes/components-meta run build",
@@ -26,15 +26,12 @@
     "start:server:web:localhost": "lerna run start:no-binding --scope=@standardnotes/web-server",
     "prepare": "husky install",
     "reset": "find . -type dir -name node_modules | xargs rm -rf && rm -rf yarn.lock && yarn install",
-    "release:prod": "lerna version --conventional-commits --yes -m \"chore(release): publish main\"",
-    "release:prod:graduate": "lerna version --conventional-graduate --conventional-commits --yes -m \"chore(release): publish main\"",
-    "release:beta": "lerna version --conventional-prerelease --conventional-commits --yes -m \"chore(release): publish\"",
+    "release:prod": "lerna version --conventional-commits --yes -m \"chore(release): publish\"",
     "publish:prod": "lerna publish from-git --yes",
-    "publish:beta": "lerna publish from-git --yes --dist-tag alpha",
     "version": "yarn install --no-immutable && git add yarn.lock",
     "postversion": "./scripts/push-tags-one-by-one.sh",
     "lerna:list": " yarn lerna list -all",
-    "upgrade:snjs": "ncu -u '@standardnotes/*' && yarn workspaces foreach --verbose run ncu -u '@standardnotes/*'"
+    "upgrade:snjs": "ncu -u '@standardnotes/*' && yarn workspaces foreach --verbose run upgrade:snjs"
   },
   "resolutions": {
     "@types/styled-components/@types/react": "17.0.2",
@@ -44,7 +41,7 @@
     "@types/hoist-non-react-statics/@types/react": "17.0.2"
   },
   "dependencies": {
-    "@standardnotes/snjs": "^2.117.7"
+    "@standardnotes/snjs": "^2.117.8"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.2",
@@ -52,13 +49,16 @@
     "@lerna-lite/cli": "^1.5.1",
     "@lerna-lite/list": "^1.5.1",
     "@lerna-lite/run": "^1.5.1",
-    "@standardnotes/config": "^2.4.3",
+    "@standardnotes/config": "^2.4.2",
     "@typescript-eslint/eslint-plugin": "^5.20.0",
     "@typescript-eslint/parser": "^5.20.0",
+    "css-loader": "^6.7.1",
     "eslint": "^8.17.0",
     "husky": "^8.0.0",
     "lint-staged": "^13.0.1",
+    "npm-check-updates": "^14.1.1",
     "prettier": "^2.6.2",
+    "sass-loader": "^13.0.0",
     "typescript": "^4.7.3",
     "webpack": "^5.72.0",
     "webpack-cli": "^4.9.2",

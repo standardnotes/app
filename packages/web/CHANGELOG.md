@@ -3,6 +3,40 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.24.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.24.4...@standardnotes/web@3.24.5) (2022-06-24)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.24.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.24.3...@standardnotes/web@3.24.4) (2022-06-24)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.24.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.24.3-alpha.1...@standardnotes/web@3.24.3) (2022-06-23)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.24.3-alpha.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.24.3-alpha.0...@standardnotes/web@3.24.3-alpha.1) (2022-06-23)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.24.3-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.24.2...@standardnotes/web@3.24.3-alpha.0) (2022-06-23)
+
+### Bug Fixes
+
+* **components:** disable minification in themes build due to limitations in mobile css parser ([#1143](https://github.com/standardnotes/app/issues/1143)) ([2d069fd](https://github.com/standardnotes/app/commit/2d069fd4bdca95d857ba20b5f3c946db1ae1735a))
+
+## [3.24.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.24.2-alpha.1...@standardnotes/web@3.24.2) (2022-06-23)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.24.2-alpha.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.24.2-alpha.0...@standardnotes/web@3.24.2-alpha.1) (2022-06-23)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.24.2-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.24.1...@standardnotes/web@3.24.2-alpha.0) (2022-06-23)
+
+**Note:** Version bump only for package @standardnotes/web
+
 ## [3.24.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.24.1-alpha.0...@standardnotes/web@3.24.1) (2022-06-22)
 
 **Note:** Version bump only for package @standardnotes/web

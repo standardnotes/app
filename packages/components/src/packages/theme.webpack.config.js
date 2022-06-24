@@ -1,5 +1,5 @@
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const RemoveEmptyScriptsPlugin = require('webpack-remove-empty-scripts');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const RemoveEmptyScriptsPlugin = require('webpack-remove-empty-scripts')
 
 module.exports = {
   mode: 'production',
@@ -20,15 +20,23 @@ module.exports = {
               url: false,
             },
           },
-          'sass-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              sassOptions: {
+                outputStyle: 'expanded',
+                minimize: false,
+              },
+            },
+          },
         ],
       },
     ],
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "dist.css"
+      filename: 'dist.css',
     }),
     new RemoveEmptyScriptsPlugin(),
   ],
-};
+}

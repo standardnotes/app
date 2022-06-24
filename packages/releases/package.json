@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/releases",
-  "version": "1.2.0",
+  "version": "1.2.6",
   "license": "AGPL-3.0-or-later",
   "main": "dist/releases.json",
   "types": "dist/index.d.ts",
@@ -17,10 +17,10 @@
     "version": "yarn build"
   },
   "devDependencies": {
-    "@standardnotes/components-meta": "workspace:^",
-    "@standardnotes/desktop": "workspace:^",
-    "@standardnotes/mobile": "workspace:^",
-    "@standardnotes/web": "workspace:^",
+    "@standardnotes/components-meta": "workspace:*",
+    "@standardnotes/desktop": "workspace:*",
+    "@standardnotes/mobile": "workspace:*",
+    "@standardnotes/web": "workspace:*",
     "@types/node": "*",
     "typescript": "*"
   }

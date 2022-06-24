@@ -3,6 +3,64 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.6](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.2.5...@standardnotes/releases@1.2.6) (2022-06-24)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.2.5](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.2.4...@standardnotes/releases@1.2.5) (2022-06-24)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.2.4](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.2.3...@standardnotes/releases@1.2.4) (2022-06-24)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.2.3](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.2.2...@standardnotes/releases@1.2.3) (2022-06-24)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.2.2](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.2.2-alpha.3...@standardnotes/releases@1.2.2) (2022-06-23)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.2.2-alpha.3](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.2.2-alpha.2...@standardnotes/releases@1.2.2-alpha.3) (2022-06-23)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.2.2-alpha.2](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.2.2-alpha.1...@standardnotes/releases@1.2.2-alpha.2) (2022-06-23)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.2.2-alpha.1](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.2.2-alpha.0...@standardnotes/releases@1.2.2-alpha.1) (2022-06-23)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.2.2-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.2.1...@standardnotes/releases@1.2.2-alpha.0) (2022-06-23)
+
+### Bug Fixes
+
+* **releases:** types ([#1142](https://github.com/standardnotes/app/issues/1142)) ([9789fc2](https://github.com/standardnotes/app/commit/9789fc2000618f75a303949f61c6515d8625ad98))
+
+## [1.2.1](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.2.1-alpha.3...@standardnotes/releases@1.2.1) (2022-06-23)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.2.1-alpha.3](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.2.1-alpha.2...@standardnotes/releases@1.2.1-alpha.3) (2022-06-23)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.2.1-alpha.2](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.2.1-alpha.1...@standardnotes/releases@1.2.1-alpha.2) (2022-06-23)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.2.1-alpha.1](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.2.1-alpha.0...@standardnotes/releases@1.2.1-alpha.1) (2022-06-23)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.2.1-alpha.0](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.2.0...@standardnotes/releases@1.2.1-alpha.0) (2022-06-23)
+
+**Note:** Version bump only for package @standardnotes/releases
+
 # [1.2.0](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.2.0-alpha.0...@standardnotes/releases@1.2.0) (2022-06-23)
 
 **Note:** Version bump only for package @standardnotes/releases
