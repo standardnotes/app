@@ -107,11 +107,11 @@ const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, applic
     <div className="flex items-center">
       <CircleIcon className="absolute w-8 h-8 top-40% -left-28" />
       <BlueDotIcon className="absolute w-4 h-4 top-35% -left-10" />
-      <DiamondIcon className="absolute w-26 h-26 -bottom-5 left-0 -translate-x-1/2 -z-index-1" />
+      <DiamondIcon className="absolute w-26 h-26 -bottom-5 left-0 -translate-x-1/2 -z-[1]" />
 
       <CircleIcon className="absolute w-8 h-8 bottom-35% -right-20" />
       <BlueDotIcon className="absolute w-4 h-4 bottom-25% -right-10" />
-      <DiamondIcon className="absolute w-18 h-18 top-0 -right-2 translate-x-1/2 -z-index-1" />
+      <DiamondIcon className="absolute w-18 h-18 top-0 -right-2 translate-x-1/2 -z-[1]" />
 
       <div className="mr-12 md:mr-0">
         <h1 className="mt-0 mb-2 text-2xl">Create your free account</h1>

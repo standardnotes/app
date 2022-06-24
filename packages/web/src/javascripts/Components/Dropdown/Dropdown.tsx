@@ -33,7 +33,7 @@ const CustomDropdownButton: FunctionComponent<ListboxButtonProps> = ({
       ) : null}
       <div className="dropdown-selected-label">{label}</div>
     </div>
-    <ListboxArrow className={`sn-dropdown-arrow ${isExpanded ? 'sn-dropdown-arrow-flipped' : ''}`}>
+    <ListboxArrow className={`flex ${isExpanded ? 'rotate-180' : ''}`}>
       <Icon type="menu-arrow-down" className="text-passive-1" size="small" />
     </ListboxArrow>
   </>

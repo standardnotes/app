@@ -132,7 +132,7 @@ const CreateAccount: FunctionComponent<Props> = ({
           ref={passwordInputRef}
           value={password}
         />
-        <Button className="btn-w-full mt-1" label="Next" variant="primary" onClick={handleRegisterFormSubmit} />
+        <Button className="w-full mt-1" label="Next" variant="primary" onClick={handleRegisterFormSubmit} />
       </form>
       <div className="h-1px my-2 bg-border"></div>
       <AdvancedOptions

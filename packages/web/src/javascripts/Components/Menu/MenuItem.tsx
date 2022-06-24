@@ -37,7 +37,7 @@ const MenuItem = forwardRef(
     ref: Ref<HTMLButtonElement>,
   ) => {
     return type === MenuItemType.SwitchButton && typeof onChange === 'function' ? (
-      <li className="list-style-none" role="none">
+      <li className="list-none" role="none">
         <button
           ref={ref}
           className="flex items-center justify-between border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none"
@@ -54,7 +54,7 @@ const MenuItem = forwardRef(
         </button>
       </li>
     ) : (
-      <li className="list-style-none" role="none">
+      <li className="list-none" role="none">
         <button
           ref={ref}
           role={type === MenuItemType.RadioButton ? 'menuitemradio' : 'menuitem'}

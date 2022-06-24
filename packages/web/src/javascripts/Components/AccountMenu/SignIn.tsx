@@ -176,7 +176,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
         />
         {error ? <div className="text-danger my-2">{error}</div> : null}
         <Button
-          className="btn-w-full mt-1 mb-3"
+          className="w-full mt-1 mb-3"
           label={isSigningIn ? 'Signing in...' : 'Sign in'}
           variant="primary"
           onClick={handleSignInFormSubmit}

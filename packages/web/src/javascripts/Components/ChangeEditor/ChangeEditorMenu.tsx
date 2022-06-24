@@ -183,7 +183,9 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 
           return (
             <Fragment key={groupId}>
-              <div className={`py-1 border-0 border-t-1px border-solid border-border ${index === 0 ? 'border-t-0' : ''}`}>
+              <div
+                className={`py-1 border-0 border-t-1px border-solid border-border ${index === 0 ? 'border-t-0' : ''}`}
+              >
                 {group.items.map((item) => {
                   const onClickEditorItem = () => {
                     selectEditor(item).catch(console.error)
@@ -194,7 +196,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
                       type={MenuItemType.RadioButton}
                       onClick={onClickEditorItem}
                       className={
-                        'flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm py-2 text-input focus:bg-info-backdrop focus:shadow-none flex-row-reverse'
+                        'flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-2 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm text-input flex-row-reverse'
                       }
                       onBlur={closeOnBlur}
                       checked={isSelectedEditor(item)}
