@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 .sn-dropdown-popover {
   z-index: 3001;
   max-height: 40%;
@@ -128,4 +130,87 @@
 
 .bg-info-faded::after {
   @include DimmedBackground(var(--sn-stylekit-info-color), 0.08);
+}
+
+svg.sk-circular-progress {
+  $pi: 3.14159265358979;
+
+  $circle-size: 18px;
+  $stroke-width: $circle-size * math.div(0.1, 100) * 100 + 1;
+  $radius: math.div($circle-size - $stroke-width, 2);
+  $circumference: ($radius * $pi * 2);
+
+  height: $circle-size;
+  width: $circle-size;
+
+  circle.background {
+    cx: math.div($circle-size, 2);
+    cy: math.div($circle-size, 2);
+    r: $radius;
+    fill: none;
+    stroke: var(--sn-stylekit-contrast-border-color);
+    stroke-width: $stroke-width;
+  }
+
+  circle.progress {
+    cx: math.div($circle-size, 2);
+    cy: math.div($circle-size, 2);
+    r: $radius;
+    fill: none;
+    stroke: var(--sn-stylekit-info-color);
+    stroke-linecap: round;
+    stroke-width: $stroke-width;
+    transition: all 0.5s;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+
+    @mixin set-progress($progress) {
+      $dash: math.div($progress * $circumference, 100);
+      stroke-dasharray: $dash $circumference - $dash;
+    }
+
+    &.p-0 {
+      @include set-progress(0);
+    }
+
+    &.p-10 {
+      @include set-progress(10);
+    }
+
+    &.p-20 {
+      @include set-progress(20);
+    }
+
+    &.p-30 {
+      @include set-progress(30);
+    }
+
+    &.p-40 {
+      @include set-progress(40);
+    }
+
+    &.p-50 {
+      @include set-progress(50);
+    }
+
+    &.p-60 {
+      @include set-progress(60);
+    }
+
+    &.p-70 {
+      @include set-progress(70);
+    }
+
+    &.p-80 {
+      @include set-progress(80);
+    }
+
+    &.p-90 {
+      @include set-progress(90);
+    }
+
+    &.p-100 {
+      @include set-progress(100);
+    }
+  }
 }

@@ -53,7 +53,7 @@ const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
 
   return (
     <div
-      className={`content-list-item flex items-stretch w-full cursor-pointer ${
+      className={`content-list-item flex items-stretch w-full cursor-pointer text-text ${
         selected && 'selected border-l-2px border-solid border-info'
       }`}
       id={item.uuid}
