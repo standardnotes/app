@@ -109,7 +109,7 @@ const SignIn: FunctionComponent<Props> = ({ viewControllerManager, application }
         <form onSubmit={handleSignIn}>
           <div className="flex flex-col">
             <FloatingLabelInput
-              className={`min-w-90 xs:min-w-auto ${isEmailInvalid && !otherErrorMessage ? 'mb-2' : 'mb-4'}`}
+              className={`sm:min-w-90 min-w-auto ${isEmailInvalid && !otherErrorMessage ? 'mb-2' : 'mb-4'}`}
               id="purchase-sign-in-email"
               type="email"
               label="Email"
@@ -123,7 +123,7 @@ const SignIn: FunctionComponent<Props> = ({ viewControllerManager, application }
               <div className="text-danger mb-4">Please provide a valid email.</div>
             ) : null}
             <FloatingLabelInput
-              className={`min-w-90 xs:min-w-auto ${otherErrorMessage ? 'mb-2' : 'mb-4'}`}
+              className={`sm:min-w-90 min-w-auto ${otherErrorMessage ? 'mb-2' : 'mb-4'}`}
               id="purchase-sign-in-password"
               type="password"
               label="Password"

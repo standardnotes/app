@@ -119,7 +119,7 @@ const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, applic
         <form onSubmit={handleCreateAccount}>
           <div className="flex flex-col">
             <FloatingLabelInput
-              className={`sm:min-w-90 min-w-auto ${isEmailInvalid ? 'mb-2' : 'mb-4'}`}
+              className={`md:min-w-90 min-w-auto ${isEmailInvalid ? 'mb-2' : 'mb-4'}`}
               id="purchase-sign-in-email"
               type="email"
               label="Email"
@@ -131,7 +131,7 @@ const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, applic
             />
             {isEmailInvalid ? <div className="text-danger mb-4">Please provide a valid email.</div> : null}
             <FloatingLabelInput
-              className="min-w-90 xs:min-w-auto mb-4"
+              className="md:min-w-90 min-w-auto mb-4"
               id="purchase-create-account-password"
               type="password"
               label="Password"
@@ -141,7 +141,7 @@ const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, applic
               disabled={isCreatingAccount}
             />
             <FloatingLabelInput
-              className={`sm:min-w-90 min-w-auto ${isPasswordNotMatching ? 'mb-2' : 'mb-4'}`}
+              className={`md:min-w-90 min-w-auto ${isPasswordNotMatching ? 'mb-2' : 'mb-4'}`}
               id="create-account-confirm"
               type="password"
               label="Repeat password"
@@ -156,7 +156,7 @@ const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, applic
             ) : null}
           </div>
         </form>
-        <div className="flex xs:flex-col-reverse xs:items-start items-center justify-between">
+        <div className="flex flex-col-reverse md:flex-row items-start md:items-center justify-between">
           <div className="flex flex-col">
             <button
               onClick={handleSignInInstead}
@@ -174,7 +174,7 @@ const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, applic
             </button>
           </div>
           <Button
-            className="py-2.5 xs:mb-4"
+            className="py-2.5 mb-4 md:mb-0"
             variant="primary"
             label={isCreatingAccount ? 'Creating account...' : 'Create account'}
             onClick={handleCreateAccount}
