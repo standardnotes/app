@@ -45,8 +45,8 @@ const ContentListHeader = ({
   }, [])
 
   return (
-    <div className="section-title-bar-header">
-      <div className="flex flex-col">
+    <div className="section-title-bar-header gap-1">
+      <div className="flex flex-col flex-grow">
         <div className="text-lg font-semibold title">{panelTitle}</div>
         {optionsSubtitle && <div className="text-xs text-passive-0">{optionsSubtitle}</div>}
       </div>
