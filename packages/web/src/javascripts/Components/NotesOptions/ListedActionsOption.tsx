@@ -75,7 +75,7 @@ const ListedActionsOption: FunctionComponent<Props> = ({ application, note }) =>
           }}
           className={`${
             isMenuOpen ? 'flex' : 'hidden'
-          } flex-col bg-default rounded shadow-menu max-h-120 min-w-68 pb-1 fixed overflow-y-auto`}
+          } flex-col bg-default rounded shadow-main max-h-120 min-w-68 pb-1 fixed overflow-y-auto`}
         >
           {isMenuOpen && (
             <ListedActionsMenu application={application} note={note} recalculateMenuStyle={recalculateMenuStyle} />

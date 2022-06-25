@@ -61,7 +61,7 @@ const TagsContextMenu = observer(({ viewControllerManager, selectedTag }: Contex
   return contextMenuOpen ? (
     <div
       ref={contextMenuRef}
-      className="bg-default rounded shadow-menu min-w-60 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto fixed"
+      className="bg-default rounded shadow-main min-w-60 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto fixed"
       style={{
         ...contextMenuPosition,
         maxHeight: contextMenuMaxHeight,

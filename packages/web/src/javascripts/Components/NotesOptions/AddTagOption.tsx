@@ -88,7 +88,7 @@ const AddTagOption: FunctionComponent<Props> = ({ navigationController, notesCon
           }}
           className={`${
             isMenuOpen ? 'flex' : 'hidden'
-          } flex-col py-2 bg-default rounded shadow-menu min-w-80 max-h-120 max-w-xs fixed overflow-y-auto`}
+          } flex-col py-2 bg-default rounded shadow-main min-w-80 max-h-120 max-w-xs fixed overflow-y-auto`}
         >
           {navigationController.tags.map((tag) => (
             <button

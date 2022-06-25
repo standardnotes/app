@@ -89,7 +89,7 @@ const ChangeEditorButton: FunctionComponent<Props> = ({
             ...position,
             maxHeight,
           }}
-          className="bg-default rounded shadow-menu transition-transform duration-150 slide-down-animation min-w-68 max-h-120 max-w-xs flex flex-col overflow-y-auto fixed"
+          className="bg-default rounded shadow-main transition-transform duration-150 slide-down-animation min-w-68 max-h-120 max-w-xs flex flex-col overflow-y-auto fixed"
           onBlur={closeOnBlur}
         >
           {isOpen && (

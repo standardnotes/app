@@ -33,7 +33,7 @@ const PremiumFeaturesModal: FunctionComponent<Props> = ({
   return showModal ? (
     <AlertDialog leastDestructiveRef={plansButtonRef} className="p-0">
       <div tabIndex={-1} className="sn-component">
-        <div tabIndex={0} className="max-w-89 bg-default rounded shadow-md p-4">
+        <div tabIndex={0} className="max-w-89 bg-default rounded shadow-main p-4">
           <AlertDialogLabel>
             <div className="flex justify-end p-1">
               <button

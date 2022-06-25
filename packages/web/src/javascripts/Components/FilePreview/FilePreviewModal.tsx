@@ -78,7 +78,7 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
     >
       <DialogContent
         aria-label="File preview modal"
-        className="flex flex-col rounded shadow-md p-0 min-w-[90%] min-h-[90%] bg-[color:var(--modal-background-color)] "
+        className="flex flex-col rounded shadow-main p-0 min-w-[90%] min-h-[90%] bg-[color:var(--modal-background-color)] "
       >
         <div
           className="flex flex-shrink-0 justify-between items-center min-h-6 px-4 py-3 border-0 border-b border-solid border-border focus:shadow-none"

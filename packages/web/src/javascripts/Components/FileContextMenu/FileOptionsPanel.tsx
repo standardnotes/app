@@ -71,7 +71,7 @@ const FilesOptionsPanel = ({ filesController, selectionController }: Props) => {
         }}
         className={`${
           open ? 'flex' : 'hidden'
-        } flex-col min-w-80 max-h-120 max-w-xs py-2 fixed bg-default rounded shadow-menu transition-transform duration-150 slide-down-animation overflow-y-auto`}
+        } flex-col min-w-80 max-h-120 max-w-xs py-2 fixed bg-default rounded shadow-main transition-transform duration-150 slide-down-animation overflow-y-auto`}
         onBlur={closeOnBlur}
         tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
       >

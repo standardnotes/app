@@ -125,7 +125,7 @@ const AutocompleteTagInput = ({ viewControllerManager }: Props) => {
             <DisclosurePanel
               className={`${
                 tags.length > 0 ? 'w-80' : 'w-70 mr-10'
-              } bg-default rounded shadow-menu flex flex-col py-2 absolute`}
+              } bg-default rounded shadow-main flex flex-col py-2 absolute`}
               style={{
                 maxHeight: dropdownMaxHeight,
                 maxWidth: tagsContainerMaxWidth,

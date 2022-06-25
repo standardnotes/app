@@ -59,7 +59,7 @@ module.exports = {
         inner:
           'var(--sn-stylekit-info-color) 1px 1px 0px 0px inset, var(--sn-stylekit-info-color) -1px -1px 0px 0px inset',
         bottom: 'currentcolor 0px -1px 0px 0px inset, currentcolor 0px 1px 0px 0px',
-        menu: '0px 4px 8px rgba(0, 0, 0, 0.12), 0px 2px 8px rgba(0, 0, 0, 0.04)',
+        main: '0px 4px 8px rgba(0, 0, 0, 0.12), 0px 2px 8px rgba(0, 0, 0, 0.04)',
       },
       fontSize: {
         'menu-item': '0.813rem',

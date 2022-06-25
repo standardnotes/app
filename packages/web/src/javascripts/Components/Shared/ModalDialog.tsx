@@ -8,7 +8,7 @@ const ModalDialog: FunctionComponent = ({ children }) => {
     <AlertDialogOverlay leastDestructiveRef={ldRef}>
       <AlertDialogContent
         tabIndex={0}
-        className="w-160 flex flex-col bg-default border border-solid border-border shadow-md p-0"
+        className="w-160 flex flex-col bg-default border border-solid border-border shadow-main p-0"
       >
         {children}
       </AlertDialogContent>

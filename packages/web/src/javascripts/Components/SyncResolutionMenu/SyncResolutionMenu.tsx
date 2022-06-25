@@ -20,7 +20,7 @@ class SyncResolutionMenu extends PureComponent<Props> {
       <div className="sn-component">
         <div
           id="sync-resolution-menu"
-          className="flex flex-col mt-4 min-w-[300px] max-h-[85vh] absolute right-0 left-[inherit] bottom-[40px] z-footer-bar-item-panel bg-default border border-solid border-border shadow-md"
+          className="flex flex-col mt-4 min-w-[300px] max-h-[85vh] absolute right-0 left-[inherit] bottom-[40px] z-footer-bar-item-panel bg-default border border-solid border-border shadow-main"
         >
           <div className="flex-shrink-0 flex justify-between items-center px-6 py-3 border-b border-solid border-border bg-contrast text-text">
             <div className="font-medium text-base">Out of Sync</div>
