@@ -58,13 +58,12 @@ const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({ application, ext
     <PreferencesSegment classes={'mb-5'}>
       <ExtensionInfoCell isThirdParty={isThirParty} extensionName={extensionName} changeName={changeExtensionName} />
 
-      <div className="min-h-2" />
+      <div className="my-1" />
 
       {isThirParty && localInstallable && <UseHosted offlineOnly={offlineOnly} toggleOfflineOnly={toggleOfflineOnly} />}
 
       <>
-        <div className="min-h-2" />
-        <div className="flex flex-row">
+        <div className="flex flex-row mt-2">
           <Button
             className="min-w-20"
             variant="normal"

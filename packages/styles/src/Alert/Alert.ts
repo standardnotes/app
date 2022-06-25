@@ -23,7 +23,7 @@ export class SKAlert {
   buttonsString() {
     const genButton = function (buttonDesc: AlertButton, index: number) {
       return `
-        <button id='button-${index}' class='sn-button small ${buttonDesc.style}'>
+        <button id='button-${index}' class='font-bold px-2.5 py-2 text-xs text-info-contrast bg-${buttonDesc.style}'>
           <div class='sk-label'>${buttonDesc.text}</div>
         </button>
       `
