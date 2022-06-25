@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./src/javascripts/**/*.tsx'],
+  content: ['./src/javascripts/**/*.tsx', '../toast/src/**/*.tsx'],
   theme: {
     extend: {
       spacing: {
@@ -55,6 +55,7 @@ module.exports = {
         'purchase-flow': 'var(--z-index-purchase-flow)',
         'lock-screen': 'var(--z-index-lock-screen)',
         modal: 'var(--z-index-modal)',
+        toast: 'var(--z-index-toast)',
       },
       boxShadow: {
         inner:

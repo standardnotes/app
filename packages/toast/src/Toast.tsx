@@ -12,23 +12,23 @@ const prefersReducedMotion = () => {
 const colorForToastType = (type: ToastType) => {
   switch (type) {
     case ToastType.Success:
-      return 'color-success'
+      return 'text-success'
     case ToastType.Error:
-      return 'color-danger'
+      return 'text-danger'
     default:
-      return 'color-info'
+      return 'text-info'
   }
 }
 
 const iconForToastType = (type: ToastType) => {
   switch (type) {
     case ToastType.Success:
-      return <CheckCircleFilledIcon className={colorForToastType(type)} />
+      return <CheckCircleFilledIcon className={`w-5 h-5 ${colorForToastType(type)}`} />
     case ToastType.Error:
-      return <ClearCircleFilledIcon className={colorForToastType(type)} />
+      return <ClearCircleFilledIcon className={`w-5 h-5 ${colorForToastType(type)}`} />
     case ToastType.Progress:
     case ToastType.Loading:
-      return <div className="sk-spinner w-4 h-4 spinner-info" />
+      return <div className="animate-spin border border-solid border-info border-r-transparent rounded-full w-4 h-4" />
     default:
       return null
   }
@@ -92,7 +92,7 @@ export const Toast = forwardRef(({ toast, index }: Props, ref: ForwardedRef<HTML
     >
       <div className={`flex items-center w-full ${hasActions ? 'p-2 pl-3' : hasProgress ? 'px-3 py-2.5' : 'p-3'}`}>
         {icon ? <div className="flex flex-shrink-0 items-center justify-center sn-icon mr-2">{icon}</div> : null}
-        <div className="text-sm">{toast.message}</div>
+        <div className="text-sm text-text">{toast.message}</div>
         {hasActions && (
           <div className="ml-4">
             {toast.actions?.map((action, index) => (
@@ -116,9 +116,9 @@ export const Toast = forwardRef(({ toast, index }: Props, ref: ForwardedRef<HTML
         )}
       </div>
       {hasProgress && (
-        <div className="toast-progress-bar">
+        <div className="rounded w-full bg-default overflow-hidden rounded-tl-none rounded-tr-none">
           <div
-            className="toast-progress-bar__value"
+            className="rounded h-2 bg-info rounded-tl-none transition-[width] duration-100"
             role="progressbar"
             style={{
               width: `${toast.progress}%`,
