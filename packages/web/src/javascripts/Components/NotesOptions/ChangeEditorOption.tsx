@@ -85,7 +85,7 @@ const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({ applic
             ...menuStyle,
             position: 'fixed',
           }}
-          className="bg-default rounded-md shadow-md flex flex-col max-h-120 min-w-68 fixed overflow-y-auto"
+          className="bg-default rounded shadow-menu flex flex-col max-h-120 min-w-68 fixed overflow-y-auto"
         >
           {isOpen && (
             <ChangeEditorMenu

@@ -101,7 +101,9 @@ const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
           ) : (
             <div className="text-sm mb-1 break-word">
               <span className="align-middle">{file.name}</span>
-              {file.protected && <Icon type="lock-filled" className="ml-2 text-neutral align-middle" size="small" />}
+              {file.protected && (
+                <Icon type="lock-filled" className="ml-2 text-neutral inline align-middle" size="small" />
+              )}
             </div>
           )}
           <div className="text-xs text-passive-0">

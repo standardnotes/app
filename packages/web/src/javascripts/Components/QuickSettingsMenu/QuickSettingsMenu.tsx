@@ -207,7 +207,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
   return (
     <div ref={mainRef} className="sn-component">
       <div
-        className={`z-footer-bar-item-panel bottom-full left-0 cursor-auto absolute bg-default rounded-md shadow min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto ${
+        className={`z-footer-bar-item-panel bottom-full left-0 cursor-auto absolute bg-default rounded shadow-menu min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto ${
           shouldAnimateCloseMenu ? 'slide-up-animation' : 'transition-transform duration-150 slide-down-animation'
         }`}
         ref={quickSettingsMenuRef}
@@ -236,7 +236,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
             }}
             className={`${
               themesMenuOpen ? 'flex' : 'hidden'
-            } flex-col py-2 bg-default rounded-md shadow min-w-80 max-h-120 max-w-xs overflow-y-auto fixed transition-transform duration-150 slide-down-animation`}
+            } flex-col py-2 bg-default rounded shadow-menu min-w-80 max-h-120 max-w-xs overflow-y-auto fixed transition-transform duration-150 slide-down-animation`}
           >
             <div className="px-3 my-1 font-semibold text-text text-sm uppercase">Themes</div>
             <button

@@ -2,6 +2,7 @@ import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { useRef, useEffect, useCallback, FocusEventHandler, KeyboardEventHandler } from 'react'
 import Icon from '@/Components/Icon/Icon'
+import HorizontalSeparator from '../Shared/HorizontalSeparator'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -54,11 +55,11 @@ const AutocompleteTagHint = ({ viewControllerManager, closeOnBlur }: Props) => {
 
   return (
     <>
-      {autocompleteTagResults.length > 0 && <div className="h-1px my-2 bg-border"></div>}
+      {autocompleteTagResults.length > 0 && <HorizontalSeparator classes="my-2" />}
       <button
         ref={hintRef}
         type="button"
-        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm focus:bg-info focus:text-info-contrast hover:text-foreground"
+        className="flex items-center border-0 cursor-pointer hover:bg-contrast text-text bg-transparent px-3 py-1.5 text-left w-full focus:shadow-none text-sm focus:bg-info focus:text-info-contrast hover:text-foreground"
         onClick={onTagHintClick}
         onFocus={onFocus}
         onBlur={onBlur}

@@ -78,7 +78,7 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
           }}
           className={`${
             isMenuOpen ? 'flex' : 'hidden'
-          } flex-col bg-default rounded-md shadow-md max-h-120 min-w-60 py-1 fixed overflow-y-auto`}
+          } flex-col bg-default rounded shadow-menu max-h-120 min-w-60 py-1 fixed overflow-y-auto`}
         >
           {isMenuOpen && (
             <>

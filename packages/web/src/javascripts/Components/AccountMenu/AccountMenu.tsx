@@ -58,7 +58,7 @@ const AccountMenu: FunctionComponent<Props> = ({
   return (
     <div ref={ref} id="account-menu" className="sn-component">
       <div
-        className={`z-footer-bar-item-panel bottom-full left-0 cursor-auto bg-default rounded-md shadow ${
+        className={`z-footer-bar-item-panel bottom-full left-0 cursor-auto bg-default rounded shadow-menu ${
           shouldAnimateCloseMenu ? 'slide-up-animation' : 'transition-transform duration-150 slide-down-animation'
         } min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto absolute`}
         onKeyDown={handleKeyDown}
