@@ -4962,6 +4962,7 @@ __metadata:
     "@standardnotes/snjs": ^2.117.8
     "@typescript-eslint/eslint-plugin": ^5.20.0
     "@typescript-eslint/parser": ^5.20.0
+    changelog-parser: ^2.8.1
     css-loader: ^6.7.1
     eslint: ^8.17.0
     husky: ^8.0.0
@@ -10946,6 +10947,18 @@ __metadata:
   version: 5.0.1
   resolution: "chalk@npm:5.0.1"
   checksum: 7b45300372b908f0471fbf7389ce2f5de8d85bb949026fd51a1b95b10d0ed32c7ed5aab36dd5e9d2bf3191867909b4404cef75c5f4d2d1daeeacd301dd280b76
+  languageName: node
+  linkType: hard
+
+"changelog-parser@npm:^2.8.1":
+  version: 2.8.1
+  resolution: "changelog-parser@npm:2.8.1"
+  dependencies:
+    line-reader: ^0.2.4
+    remove-markdown: ^0.2.2
+  bin:
+    changelog-parser: bin/cli.js
+  checksum: 3fc45cdd0c89634a72f7632ef8e80b1ea43e09546c1ae64ecaf68f8e39cbc337d6012401fc3227ad28c2f6c959490ae83e11cb7ecf97358e29478eaea150747a
   languageName: node
   linkType: hard
 
@@ -21091,6 +21104,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"line-reader@npm:^0.2.4":
+  version: 0.2.4
+  resolution: "line-reader@npm:0.2.4"
+  checksum: a7426e505526c0db83d4d240a3ee2d2ba7ccb5c7b461d8325b347c963393e3cfb8e67314f8d4c156e0a05e6e4dc49d27a8c61da380745293dd98b5d8123ae192
+  languageName: node
+  linkType: hard
+
 "lines-and-columns@npm:^1.1.6":
   version: 1.2.4
   resolution: "lines-and-columns@npm:1.2.4"
@@ -28567,6 +28587,13 @@ __metadata:
   version: 3.0.0
   resolution: "remote-git-tags@npm:3.0.0"
   checksum: 04d87e4c98ac414afe03417d3f585c4b782c03fec74561b1fba0bdc5d3a0459f2cfcc14af36fbc153bf601e566d86e9ff6989e289ff57a86f9cfdac6b4f622f2
+  languageName: node
+  linkType: hard
+
+"remove-markdown@npm:^0.2.2":
+  version: 0.2.2
+  resolution: "remove-markdown@npm:0.2.2"
+  checksum: ce645115c0456a9b0132d1e6c3022e13a35e6efe8eff96b3da50f709b928379caf6a773e000a10158fb4b3dccd3262ec880c68fbe0a0d23dc30ec881672dbaa6
   languageName: node
   linkType: hard
 
