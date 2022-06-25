@@ -1,11 +1,11 @@
-import BaseMigration, { PartialSchema } from '../BaseMigration'
+import BaseMigration, { PartialData } from '../BaseMigration'
 
 class Migration1_0_1 extends BaseMigration {
   protected override get version(): string {
     return '1.0.1'
   }
 
-  protected override upgrade(data: PartialSchema): PartialSchema {
+  protected override upgrade(data: PartialData): PartialData {
     const groups = data.groups.map(({ collapsed, ...group }) => ({
       ...group,
       ...(collapsed && {
@@ -20,7 +20,7 @@ class Migration1_0_1 extends BaseMigration {
     }
   }
 
-  protected override downgrade(data: PartialSchema): PartialSchema {
+  protected override downgrade(data: PartialData): PartialData {
     return {
       ...data,
       schemaVersion: this.version,

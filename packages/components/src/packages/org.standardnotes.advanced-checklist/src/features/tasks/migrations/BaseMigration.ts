@@ -1,35 +1,33 @@
+const SemanticVersionParts = ['MAJOR', 'MINOR', 'PATCH']
+
 enum MigrationAction {
   Upgrade = 'up',
   Downgrade = 'down',
   Nothing = 'nothing',
 }
 
-export type PartialSchema = {
+export type PartialData = {
   schemaVersion: string
   groups: any[]
 }
 
-const SemanticVersionParts = ['MAJOR', 'MINOR', 'PATCH']
-
 abstract class BaseMigration {
   protected abstract get version(): string
-  protected abstract upgrade(data: PartialSchema): PartialSchema
-  protected abstract downgrade(data: PartialSchema): PartialSchema
+  protected abstract upgrade(data: PartialData): PartialData
+  protected abstract downgrade(data: PartialData): PartialData
 
   private parseVersion(version: string): number[] {
     const versionScheme = version.split('.')
     if (versionScheme.length !== SemanticVersionParts.length) {
       throw Error(`'${version}' is not in the semantic version scheme: ${SemanticVersionParts.join('.')}`)
     }
-
-    const parsedVersion = versionScheme.map((value, index) => {
+    return versionScheme.map((value, index) => {
       const number = Number(value)
       if (isNaN(number)) {
         throw Error(`${SemanticVersionParts[index]} version should be a number`)
       }
       return number
     })
-    return parsedVersion
   }
 
   protected getAction(schemaVersion: string): MigrationAction {
@@ -47,7 +45,7 @@ abstract class BaseMigration {
     return MigrationAction.Nothing
   }
 
-  public run(data: PartialSchema): PartialSchema {
+  public run(data: PartialData): PartialData {
     const { schemaVersion } = data
     const migrationAction = this.getAction(schemaVersion)
     switch (migrationAction) {

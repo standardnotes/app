@@ -1,4 +1,4 @@
-import { PartialSchema } from './BaseMigration'
+import { PartialData } from './BaseMigration'
 import { MigrationClasses } from './versions'
 
 class MigrationService {
@@ -8,10 +8,9 @@ class MigrationService {
     })
   }
 
-  public performMigrations(data: PartialSchema) {
+  public performMigrations(data: PartialData) {
     this.getMigrationInstances().forEach((migration) => {
-      const result = migration.run(data)
-      data = result
+      data = migration.run(data)
     })
     return data
   }

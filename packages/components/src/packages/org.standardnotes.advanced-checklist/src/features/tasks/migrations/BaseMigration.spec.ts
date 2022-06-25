@@ -1,15 +1,15 @@
-import BaseMigration, { PartialSchema } from './BaseMigration'
+import BaseMigration, { PartialData } from './BaseMigration'
 
 class MockMigration extends BaseMigration {
   override get version() {
     return '0.0.0'
   }
 
-  override upgrade(data: PartialSchema) {
+  override upgrade(data: PartialData) {
     return data
   }
 
-  override downgrade(data: PartialSchema) {
+  override downgrade(data: PartialData) {
     return data
   }
 }
