@@ -7,6 +7,7 @@ import Switch from '@/Components/Switch/Switch'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { PopoverFileSubmenuProps } from './PopoverFileItemProps'
 import { PopoverFileItemActionType } from './PopoverFileItemAction'
+import HorizontalSeparator from '../Shared/HorizontalSeparator'
 
 const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
   file,
@@ -75,7 +76,9 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
             ...menuStyle,
             position: 'fixed',
           }}
-          className="sn-dropdown flex flex-col max-h-120 min-w-60 py-1 fixed overflow-y-auto"
+          className={`${
+            isMenuOpen ? 'flex' : 'hidden'
+          } flex-col bg-default rounded-md shadow-md max-h-120 min-w-60 py-1 fixed overflow-y-auto`}
         >
           {isMenuOpen && (
             <>
@@ -121,7 +124,7 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
                   Attach to note
                 </button>
               )}
-              <div className="min-h-1px my-1 bg-border"></div>
+              <HorizontalSeparator classes="my-1" />
               <button
                 className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:shadow-none text-sm justify-between focus:bg-info-backdrop"
                 onClick={() => {
@@ -145,7 +148,7 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
                   checked={isFileProtected}
                 />
               </button>
-              <div className="min-h-1px my-1 bg-border"></div>
+              <HorizontalSeparator classes="my-1" />
               <button
                 onBlur={closeOnBlur}
                 className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:shadow-none text-sm focus:bg-info-backdrop"
@@ -184,6 +187,11 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
                 <Icon type="trash" className="mr-2 text-danger" />
                 <span className="text-danger">Delete permanently</span>
               </button>
+              <div className="px-3 py-1 text-xs text-neutral font-medium">
+                <div>
+                  <span className="font-semibold">File ID:</span> {file.uuid}
+                </div>
+              </div>
             </>
           )}
         </DisclosurePanel>
