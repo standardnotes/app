@@ -1043,8 +1043,11 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
           <div id="editor-pane-component-stack">
             {this.state.availableStackComponents.length > 0 && (
-              <div id="component-stack-menu-bar" className="sk-app-bar no-edges">
-                <div className="left">
+              <div
+                id="component-stack-menu-bar"
+                className="flex justify-between items-center w-full h-6 px-2 py-0 bg-contrast text-text border-t border-solid border-border"
+              >
+                <div className="flex h-full">
                   {this.state.availableStackComponents.map((component) => {
                     return (
                       <div
@@ -1052,19 +1055,19 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                         onClick={() => {
                           this.toggleStackComponent(component).catch(console.error)
                         }}
-                        className="sk-app-bar-item"
+                        className="flex justify-center items-center flex-grow [&:not(:first-child)]:ml-3 cursor-pointer"
                       >
-                        <div className="sk-app-bar-item-column">
+                        <div className="flex items-center h-full [&:not(:first-child)]:ml-2">
                           <div
                             className={
-                              (this.stackComponentExpanded(component) && component.active ? 'info ' : '') +
-                              (!this.stackComponentExpanded(component) ? 'neutral ' : '') +
-                              ' sk-circle small'
+                              (this.stackComponentExpanded(component) && component.active ? 'bg-info border-info ' : '') +
+                              (!this.stackComponentExpanded(component) ? 'bg-neutral border-neutral ' : '') +
+                              ' border border-solid w-3 h-3 p-0 rounded-full flex-shrink-0'
                             }
                           />
                         </div>
-                        <div className="sk-app-bar-item-column">
-                          <div className="sk-label">{component.name}</div>
+                        <div className="flex items-center h-full [&:not(:first-child)]:ml-2">
+                          <div className="font-bold whitespace-nowrap text-xs">{component.name}</div>
                         </div>
                       </div>
                     )
