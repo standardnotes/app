@@ -15,7 +15,7 @@ type Props = {
 const TwoFactorSuccess: FunctionComponent<Props> = ({ activation: act }) => (
   <ModalDialog>
     <ModalDialogLabel closeDialog={act.finishActivation}>Successfully Enabled</ModalDialogLabel>
-    <ModalDialogDescription>
+    <ModalDialogDescription className="flex flex-row items-center">
       <div className="flex flex-row items-center justify-center pt-2">
         <Subtitle>Two-factor authentication has been successfully enabled for your account.</Subtitle>
       </div>

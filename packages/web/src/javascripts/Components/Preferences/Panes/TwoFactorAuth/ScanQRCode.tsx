@@ -20,7 +20,7 @@ const ScanQRCode: FunctionComponent<Props> = ({ activation: act }) => {
   return (
     <ModalDialog>
       <ModalDialogLabel closeDialog={act.cancelActivation}>Step 1 of 3 - Scan QR code</ModalDialogLabel>
-      <ModalDialogDescription className="h-33">
+      <ModalDialogDescription className="h-33 flex flex-row items-center">
         <div className="w-25 h-25 flex items-center justify-center bg-info">
           <QRCode className="border-neutral-contrast-bg border-solid border-2" value={act.qrCode} size={100} />
         </div>

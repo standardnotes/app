@@ -19,7 +19,7 @@ const Verification: FunctionComponent<Props> = ({ activation: act }) => {
   return (
     <ModalDialog>
       <ModalDialogLabel closeDialog={act.cancelActivation}>Step 3 of 3 - Verification</ModalDialogLabel>
-      <ModalDialogDescription className="h-33">
+      <ModalDialogDescription className="h-33 flex flex-row items-center">
         <div className="flex-grow flex flex-col">
           <div className="flex flex-row items-center mb-4">
             <Bullet />
