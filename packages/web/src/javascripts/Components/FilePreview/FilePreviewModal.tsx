@@ -91,7 +91,7 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
           </div>
           <div className="flex items-center">
             <button
-              className="flex p-1.5 mr-4 bg-transparent hover:bg-contrast border-solid border-border border-1 cursor-pointer rounded"
+              className="flex p-1.5 mr-4 bg-transparent hover:bg-contrast border-solid border-border border cursor-pointer rounded"
               onClick={() => setShowFileInfoPanel((show) => !show)}
             >
               <Icon type="info" className="text-neutral" />

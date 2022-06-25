@@ -91,7 +91,7 @@ const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
           {isRenamingFile ? (
             <input
               type="text"
-              className="text-input px-1.5 py-1 mb-1 border-1 border-solid border-border bg-transparent text-foreground"
+              className="text-input px-1.5 py-1 mb-1 border border-solid border-border bg-transparent text-foreground"
               value={fileName}
               ref={fileNameInputRef}
               onInput={handleFileNameInput}

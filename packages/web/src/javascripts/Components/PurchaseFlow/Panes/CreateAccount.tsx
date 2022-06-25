@@ -105,21 +105,21 @@ const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, applic
 
   return (
     <div className="flex items-center">
-      <CircleIcon className="absolute w-8 h-8 top-40% -left-28" />
-      <BlueDotIcon className="absolute w-4 h-4 top-35% -left-10" />
+      <CircleIcon className="absolute w-8 h-8 top-[40%] -left-28" />
+      <BlueDotIcon className="absolute w-4 h-4 top-[35%] -left-10" />
       <DiamondIcon className="absolute w-26 h-26 -bottom-5 left-0 -translate-x-1/2 -z-[1]" />
 
-      <CircleIcon className="absolute w-8 h-8 bottom-35% -right-20" />
-      <BlueDotIcon className="absolute w-4 h-4 bottom-25% -right-10" />
+      <CircleIcon className="absolute w-8 h-8 bottom-[35%] -right-20" />
+      <BlueDotIcon className="absolute w-4 h-4 bottom-[25%] -right-10" />
       <DiamondIcon className="absolute w-18 h-18 top-0 -right-2 translate-x-1/2 -z-[1]" />
 
-      <div className="mr-12 md:mr-0">
-        <h1 className="mt-0 mb-2 text-2xl">Create your free account</h1>
+      <div className="mr-0 md:mr-12">
+        <h1 className="mt-0 mb-2 font-bold text-2xl">Create your free account</h1>
         <div className="mb-4 font-medium text-sm">to continue to Standard Notes.</div>
         <form onSubmit={handleCreateAccount}>
           <div className="flex flex-col">
             <FloatingLabelInput
-              className={`min-w-90 xs:min-w-auto ${isEmailInvalid ? 'mb-2' : 'mb-4'}`}
+              className={`sm:min-w-90 min-w-auto ${isEmailInvalid ? 'mb-2' : 'mb-4'}`}
               id="purchase-sign-in-email"
               type="email"
               label="Email"
@@ -141,7 +141,7 @@ const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, applic
               disabled={isCreatingAccount}
             />
             <FloatingLabelInput
-              className={`min-w-90 xs:min-w-auto ${isPasswordNotMatching ? 'mb-2' : 'mb-4'}`}
+              className={`sm:min-w-90 min-w-auto ${isPasswordNotMatching ? 'mb-2' : 'mb-4'}`}
               id="create-account-confirm"
               type="password"
               label="Repeat password"
@@ -182,7 +182,7 @@ const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, applic
           />
         </div>
       </div>
-      <CreateAccountIllustration className="md:hidden" />
+      <CreateAccountIllustration className="hidden md:block" />
     </div>
   )
 }
