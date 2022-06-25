@@ -37,7 +37,7 @@ const NotesOptionsPanel = ({
   const [maxHeight, setMaxHeight] = useState<number | 'auto'>('auto')
   const buttonRef = useRef<HTMLButtonElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
-  const [closeOnBlur] = useCloseOnBlur(panelRef, setOpen)
+  const [closeOnBlur] = useCloseOnBlur(panelRef, (setOpen) => setOpen)
 
   return (
     <Disclosure

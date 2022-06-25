@@ -60,6 +60,9 @@ module.exports = {
           'var(--sn-stylekit-info-color) 1px 1px 0px 0px inset, var(--sn-stylekit-info-color) -1px -1px 0px 0px inset',
         bottom: 'currentcolor 0px -1px 0px 0px inset, currentcolor 0px 1px 0px 0px',
       },
+      fontSize: {
+        'menu-item': '0.813rem',
+      },
     },
     colors: {
       transparent: 'transparent',
