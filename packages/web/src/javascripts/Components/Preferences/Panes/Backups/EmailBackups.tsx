@@ -114,7 +114,7 @@ const EmailBackups = ({ application }: Props) => {
           <div className="mt-2">
             {isLoading ? (
               <div
-                className={'animate-spin border border-solid border-info border-r-transparent rounded-full info small'}
+                className={'animate-spin border border-solid border-info border-r-transparent rounded-full w-4 h-4'}
               />
             ) : (
               <Dropdown
@@ -134,7 +134,7 @@ const EmailBackups = ({ application }: Props) => {
             </div>
             {isLoading ? (
               <div
-                className={'animate-spin border border-solid border-info border-r-transparent rounded-full info small'}
+                className={'animate-spin border border-solid border-info border-r-transparent rounded-full w-4 h-4'}
               />
             ) : (
               <Switch onChange={toggleMuteFailedBackupEmails} checked={!isFailedBackupEmailMuted} />

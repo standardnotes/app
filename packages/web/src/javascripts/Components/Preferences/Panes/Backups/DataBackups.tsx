@@ -163,14 +163,14 @@ const DataBackups = ({ application, viewControllerManager }: Props) => {
 
           {isEncryptionEnabled && (
             <form className="sk-panel-form sk-panel-row">
-              <div className="sk-input-group">
-                <label className="sk-horizontal-group tight">
+              <div className="flex items-center gap-2">
+                <label className="flex items-center gap-2">
                   <input type="radio" onChange={() => setIsBackupEncrypted(true)} checked={isBackupEncrypted} />
-                  <Subtitle>Encrypted</Subtitle>
+                  <span className="font-medium text-sm">Encrypted</span>
                 </label>
-                <label className="sk-horizontal-group tight">
+                <label className="flex items-center gap-2">
                   <input type="radio" onChange={() => setIsBackupEncrypted(false)} checked={!isBackupEncrypted} />
-                  <Subtitle>Decrypted</Subtitle>
+                  <span className="font-medium text-sm">Decrypted</span>
                 </label>
               </div>
             </form>

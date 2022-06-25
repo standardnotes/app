@@ -448,7 +448,7 @@ class Footer extends PureComponent<Props, State> {
                 id="lock-item"
                 onClick={this.lockClickHandler}
                 title="Locks application and wipes unencrypted data from memory."
-                className="flex items-center z-footer-bar-item relative select-none pl-2 ml-3 hover:text-info border-l border-solid border-border"
+                className="flex items-center z-footer-bar-item relative select-none pl-2 ml-3 hover:text-info border-l border-solid border-border cursor-pointer"
               >
                 <Icon type="lock-filled" />
               </div>
