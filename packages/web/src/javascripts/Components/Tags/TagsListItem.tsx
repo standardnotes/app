@@ -220,7 +220,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
             <Icon type="hashtag" className={`${isSelected ? 'text-info' : 'text-neutral'}`} />
           </div>
           <input
-            className={`title ${isEditing ? 'editing' : ''}`}
+            className={`title focus:shadow-none focus:outline-none ${isEditing ? 'editing' : ''}`}
             id={`react-tag-${tag.uuid}`}
             disabled={!isEditing}
             onBlur={onBlur}
