@@ -187,7 +187,7 @@ type Props = {
   type: IconType
   className?: string
   ariaLabel?: string
-  size?: 'small' | 'medium' | 'normal'
+  size?: 'small' | 'medium' | 'normal' | 'custom'
 }
 
 const Icon: FunctionComponent<Props> = ({ type, className = '', ariaLabel, size = 'normal' }) => {
@@ -199,6 +199,8 @@ const Icon: FunctionComponent<Props> = ({ type, className = '', ariaLabel, size 
         return 'w-3.5 h-3.5'
       case 'medium':
         return 'w-4 h-4'
+      case 'custom':
+        return ''
       default:
         return 'w-5 h-5'
     }

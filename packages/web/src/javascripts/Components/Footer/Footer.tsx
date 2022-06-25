@@ -360,7 +360,7 @@ class Footer extends PureComponent<Props, State> {
                     this.state.hasError ? 'text-danger' : (this.user ? 'text-info' : 'text-neutral') + ' w-5 h-5'
                   }
                 >
-                  <Icon type="account-circle" className="hover:text-info w-5 h-5 max-h-5" />
+                  <Icon type="account-circle" className="hover:text-info max-h-5" />
                 </div>
               </div>
               {this.state.showAccountMenu && (
@@ -450,7 +450,7 @@ class Footer extends PureComponent<Props, State> {
                 title="Locks application and wipes unencrypted data from memory."
                 className="flex items-center z-footer-bar-item relative select-none pl-2 ml-3 hover:text-info border-l border-solid border-border cursor-pointer"
               >
-                <Icon type="lock-filled" />
+                <Icon type="lock-filled" size="custom" className="w-4.5 h-4.5" />
               </div>
             )}
           </div>
