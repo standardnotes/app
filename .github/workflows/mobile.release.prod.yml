@@ -1,11 +1,9 @@
-name: Mobile Build Production
+name: Mobile Release Production
 
 on:
   push:
     tags:
       - '*standardnotes/mobile*'
-      - '!*standardnotes/mobile*beta*'
-      - '!*standardnotes/mobile*alpha*'
   workflow_dispatch:
 
 jobs:
@@ -50,14 +48,22 @@ jobs:
         uses: martinbeentjes/npm-get-version-action@main
         with:
           path: packages/mobile
+
+      - name: Generate Release Notes
+        id: release-notes
+        run: echo "::set-output name=release-notes::$(node ../../scripts/changelog-parser.js mobile)"
+        shell: bash
+        continue-on-error: true
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.CI_PAT_TOKEN }}
           tag_name: "@standardnotes/mobile@${{ steps.package-version.outputs.current-version}}"
-          prerelease: false
-          draft: false
           name: "Mobile ${{ steps.package-version.outputs.current-version }}"
+          body: ${{ steps.release-notes.outputs.release-notes }}
+          prerelease: true
+          draft: false
           files: |
             packages/mobile/android/app/build/outputs/bundle/prodRelease/app-prod-release.aab
             packages/mobile/android/app/build/outputs/apk/prod/release/app-prod-release.apk

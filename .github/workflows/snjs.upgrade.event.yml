@@ -1,0 +1,46 @@
+name: Update SNJS Packages
+
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [snjs-updated-event]
+
+jobs:
+  SNJSUpdateEvent:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: main
+          token: ${{ secrets.CI_PAT_TOKEN }}
+      - uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+      - name: Setup git config
+        run: |
+          git config --global user.name "standardci"
+          git config --global user.email "ci@standardnotes.com"
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v4
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+
+      - run: yarn install
+      - run: |
+          yarn upgrade:snjs
+          yarn install --no-immutable
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.CI_PAT_TOKEN }}
+          title: "${{ 'chore(deps): upgrade snjs' }}"
+          body: Updates all packages prefixed with "@standardnotes/" in root workspace, web, and mobile.
+          commit-message: "${{ 'chore(deps): upgrade snjs' }}"
+          delete-branch: true
+          committer: standardci <ci@standardnotes.com>
+          author: standardci <ci@standardnotes.com>

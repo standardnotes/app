@@ -172,15 +172,31 @@ jobs:
         uses: martinbeentjes/npm-get-version-action@main
         with:
           path: packages/desktop
+
+      - name: Generate Release Notes
+        id: release-notes
+        run: echo "::set-output name=release-notes::$(node ../../scripts/changelog-parser.js web desktop)"
+        shell: bash
+        continue-on-error: true
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.CI_PAT_TOKEN }}
           tag_name: "@standardnotes/desktop@${{ steps.package-version.outputs.current-version}}"
+          name: "Desktop ${{ steps.package-version.outputs.current-version }}"
+          body: ${{ steps.release-notes.outputs.release-notes }}
           prerelease: true
-          draft: ${{ inputs.channel == 'beta' && true || false }}
-          name: "Desktop ${{ inputs.channel == 'beta' && 'Beta' || '' }} ${{ steps.package-version.outputs.current-version }}"
+          draft: false
           files: packages/desktop/dist/*
+
+      - name: Notify Release Update
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.CI_PAT_TOKEN }}
+          repository: ${{ secrets.RELEASES_EVENT_RECEIVING_REPO }}
+          event-type: releases-updated-event
+
       - name: Publish Snap
         continue-on-error: true
         run: |

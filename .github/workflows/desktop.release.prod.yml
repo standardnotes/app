@@ -1,11 +1,9 @@
-name: Desktop Prod Release
+name: Desktop Release
 
 on:
   push:
     tags:
       - '*standardnotes/*desktop*'
-      - '!*standardnotes/*desktop*beta*'
-      - '!*standardnotes/*desktop*alpha*'
       - '!*standardnotes/*inner-desktop*'
   workflow_dispatch:
 

@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/web",
-  "version": "3.24.3",
+  "version": "3.24.5",
   "license": "AGPL-3.0-or-later",
   "main": "dist/app.js",
   "author": "Standard Notes",
@@ -17,7 +17,8 @@
     "lint": "eslint src/javascripts",
     "tsc": "tsc --project tsconfig.json",
     "test": "jest --config jest.config.js --coverage",
-    "postinstall": "yarn run ncu -loglevel verbose --packageFile package.json"
+    "postinstall": "yarn run ncu -loglevel verbose --packageFile package.json",
+    "upgrade:snjs": "ncu -u '@standardnotes/*'"
   },
   "devDependencies": {
     "@babel/core": "^7.17.9",
@@ -42,7 +43,7 @@
     "lint-staged": ">=12",
     "mini-css-extract-plugin": "^2.6.0",
     "node-sass": "*",
-    "npm-check-updates": "^12.5.9",
+    "npm-check-updates": "*",
     "prettier": "*",
     "sass-loader": "*",
     "svg-jest": "^1.0.1",

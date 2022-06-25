@@ -1,8 +1,8 @@
 {
   "name": "@standardnotes/components-meta",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "private": true,
-  "author": "Standard Notes",
+  "author": "Standard Notes.",
   "main": "dist",
   "workspaces": {
     "packages": [

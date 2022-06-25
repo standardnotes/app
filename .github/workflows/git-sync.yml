@@ -1,3 +1,5 @@
+name: Sync Repo
+
 on: push
 jobs:
   git-sync:
@@ -11,3 +13,23 @@ jobs:
           destination_repo: "standardnotes/internal-app"
           destination_branch: "refs/heads/*"
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.CI_PAT_TOKEN }}
+          repository: standardnotes/internal-app
+          ref: ${{ github.ref }}
+
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+
+      - uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.CI_PAT_TOKEN }}
+          branch: ${{ github.ref }}
+          base: main
+          title: ${{ steps.extract_branch.outputs.branch }}
+          assignees: ${{ github.actor }}
+          reviewers: ${{ github.actor }}
