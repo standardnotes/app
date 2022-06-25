@@ -22,7 +22,7 @@ const EditingDisabledBanner: FunctionComponent<Props> = ({
 
   return (
     <div
-      className={`flex items-center relative ${background} px-3.5 py-2 cursor-pointer`}
+      className={`flex items-center relative ${background} px-3.5 py-2 cursor-pointer text-sm`}
       onMouseLeave={onMouseLeave}
       onMouseOver={onMouseOver}
       onClick={onClick}

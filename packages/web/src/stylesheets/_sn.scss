@@ -110,3 +110,22 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
 }
+
+@mixin DimmedBackground($color, $opacity) {
+  content: '';
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: $color;
+  opacity: $opacity;
+}
+
+.bg-warning-faded::after {
+  @include DimmedBackground(var(--sn-stylekit-warning-color), 0.08);
+}
+
+.bg-info-faded::after {
+  @include DimmedBackground(var(--sn-stylekit-info-color), 0.08);
+}
