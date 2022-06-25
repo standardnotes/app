@@ -1,6 +1,6 @@
-import type { TasksState } from './tasks-slice'
 import reducer, {
   deleteAllCompleted,
+  LATEST_SCHEMA_VERSION,
   openAllCompleted,
   taskAdded,
   taskDeleted,
@@ -15,6 +15,7 @@ import reducer, {
   tasksGroupReordered,
   tasksLoaded,
   tasksReordered,
+  TasksState,
   taskToggled,
 } from './tasks-slice'
 
@@ -23,7 +24,7 @@ it('should return the initial state', () => {
     reducer(undefined, {
       type: undefined,
     }),
-  ).toEqual({ schemaVersion: '1.0.0', groups: [] })
+  ).toEqual({ schemaVersion: LATEST_SCHEMA_VERSION, groups: [] })
 })
 
 it('should handle a task being added to a non-existing group', () => {
@@ -536,7 +537,7 @@ it('should handle loading tasks into the tasks store, if an invalid payload is p
   }
 
   expect(reducer(previousState, tasksLoaded('null'))).toEqual({
-    schemaVersion: '1.0.0',
+    schemaVersion: LATEST_SCHEMA_VERSION,
     groups: [],
     initialized: true,
   })
@@ -566,7 +567,7 @@ it('should initialize the storage with an empty object', () => {
   }
 
   expect(reducer(previousState, tasksLoaded(''))).toEqual({
-    schemaVersion: '1.0.0',
+    schemaVersion: LATEST_SCHEMA_VERSION,
     groups: [],
     initialized: true,
   })
@@ -609,7 +610,7 @@ it('should handle loading tasks into the tasks store, with a valid payload', () 
 
   const serializedPayload = JSON.stringify(tasksPayload)
   expect(reducer(previousState, tasksLoaded(serializedPayload))).toEqual({
-    schemaVersion: '2.0.0',
+    schemaVersion: LATEST_SCHEMA_VERSION,
     groups: [
       {
         name: 'Test',
@@ -1308,7 +1309,7 @@ it('should handle collapsing groups', () => {
       {
         name: 'Testing',
         collapsed: {
-          group: true
+          group: true,
         },
         tasks: [
           {
@@ -1485,7 +1486,7 @@ it('should handle setting a group as last active', () => {
 it('should detect and load legacy content', () => {
   const payload = '- [ ] Foo bar'
   expect(reducer(undefined, tasksLoaded(payload))).toMatchObject<TasksState>({
-    schemaVersion: '1.0.0',
+    schemaVersion: LATEST_SCHEMA_VERSION,
     initialized: false,
     groups: [],
     legacyContent: {

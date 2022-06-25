@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { arrayMoveImmutable, isJsonString, parseMarkdownTasks } from '../../common/utils'
+import MigrationService from './migrations/MigrationService'
 
-const LATEST_SCHEMA_VERSION = '1.0.0'
+export const LATEST_SCHEMA_VERSION = '1.0.1'
 
 export type TasksState = {
   schemaVersion: string
@@ -306,10 +307,13 @@ const tasksSlice = createSlice({
         }
 
         const parsedState = JSON.parse(payload) as TasksState
-        const newState: TasksState = {
+        let newState: TasksState = {
           schemaVersion: parsedState?.schemaVersion ?? LATEST_SCHEMA_VERSION,
           groups: parsedState?.groups ?? [],
         }
+
+        const migrationService = new MigrationService()
+        newState = migrationService.performMigrations(newState)
 
         if (newState !== initialState) {
           state.schemaVersion = newState.schemaVersion
