@@ -195,7 +195,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
       >
         Show icon
       </MenuItem>
-      <div className="h-1px my-2 bg-border"></div>
+      <MenuItemSeparator />
       <div className="px-3 py-1 text-xs font-semibold text-text uppercase">Other</div>
       <MenuItem
         type={MenuItemType.SwitchButton}
