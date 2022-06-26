@@ -1,6 +1,7 @@
 import { WebApplication } from '@/Application/Application'
 import { Action, SNNote } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useState } from 'react'
+import Spinner from '@/Components/Spinner/Spinner'
 import { ListedMenuGroup } from './ListedMenuGroup'
 
 type ListedMenuItemProps = {
@@ -50,9 +51,7 @@ const ListedMenuItem: FunctionComponent<ListedMenuItemProps> = ({
           </div>
         )}
       </div>
-      {isRunning && (
-        <div className="animate-spin border border-solid border-info border-r-transparent rounded-full  w-3 h-3" />
-      )}
+      {isRunning && <Spinner className="w-3 h-3" />}
     </button>
   )
 }

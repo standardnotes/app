@@ -8,6 +8,7 @@ import { StreamingFileApi } from '@standardnotes/filepicker'
 import { WebApplication } from '@/Application/Application'
 import EncryptionStatusItem from '../../Security/EncryptionStatusItem'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
+import Spinner from '@/Components/Spinner/Spinner'
 
 type Props = {
   application: WebApplication
@@ -187,7 +188,7 @@ const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
                 >
                   {isSavingAsDecrypted && (
                     <div className="flex justify-center w-full">
-                      <div className="animate-spin border border-solid border-info border-r-transparent rounded-full w-5 h-5 "></div>
+                      <Spinner className="w-5 h-5" />
                     </div>
                   )}
                 </Button>

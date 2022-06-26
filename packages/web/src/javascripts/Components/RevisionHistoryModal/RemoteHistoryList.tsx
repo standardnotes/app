@@ -6,6 +6,7 @@ import HistoryListItem from './HistoryListItem'
 import { previewHistoryEntryTitle } from './utils'
 import { FeaturesClientInterface, RevisionListEntry } from '@standardnotes/snjs/dist/@types'
 import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
+import Spinner from '@/Components/Spinner/Spinner'
 
 type RemoteHistoryListProps = {
   features: FeaturesClientInterface
@@ -28,9 +29,7 @@ const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({ features
       }`}
       ref={remoteHistoryListRef}
     >
-      {isFetchingRemoteHistory && (
-        <div className="animate-spin border border-solid border-info border-r-transparent rounded-full w-5 h-5 "></div>
-      )}
+      {isFetchingRemoteHistory && <Spinner className="w-5 h-5" />}
       {remoteHistory?.map((group) => {
         if (group.entries && group.entries.length) {
           return (

@@ -5,6 +5,7 @@ import { WebApplication } from '@/Application/Application'
 import { NotesController } from '@/Controllers/NotesController'
 import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
 import { NoteHistoryController, RevisionContentState } from '@/Controllers/NoteHistory/NoteHistoryController'
+import Spinner from '@/Components/Spinner/Spinner'
 
 type Props = {
   application: WebApplication
@@ -29,9 +30,7 @@ const HistoryModalContentPane = ({
         </div>
       )
     case RevisionContentState.Loading:
-      return (
-        <div className="animate-spin border border-solid border-info border-r-transparent rounded-full w-5 h-5  absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-      )
+      return <Spinner className="w-5 h-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
     case RevisionContentState.Loaded:
       return (
         <SelectedRevisionContent

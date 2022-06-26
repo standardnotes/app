@@ -8,6 +8,7 @@ import { observer } from 'mobx-react-lite'
 import ModalDialog from '../Shared/ModalDialog'
 import ModalDialogLabel from '../Shared/ModalDialogLabel'
 import ModalDialogDescription from '../Shared/ModalDialogDescription'
+import Spinner from '@/Components/Spinner/Spinner'
 
 type Session = RemoteSession & {
   revoking?: true
@@ -116,7 +117,7 @@ const SessionsModalContent: FunctionComponent<{
         <ModalDialogDescription className="overflow-y-auto">
           {refreshing ? (
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 animate-spin border border-solid border-info border-r-transparent rounded-full"></div>
+              <Spinner className="w-3 h-3" />
               <h2 className="sk-p sessions-modal-refreshing">Loading sessions</h2>
             </div>
           ) : (

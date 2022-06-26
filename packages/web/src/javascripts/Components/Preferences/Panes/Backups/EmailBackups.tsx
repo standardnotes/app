@@ -11,6 +11,7 @@ import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import { EmailBackupFrequency, MuteFailedBackupsEmailsOption, SettingName } from '@standardnotes/snjs'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
+import Spinner from '@/Components/Spinner/Spinner'
 
 type Props = {
   application: WebApplication
@@ -113,9 +114,7 @@ const EmailBackups = ({ application }: Props) => {
           <Text>How often to receive backups.</Text>
           <div className="mt-2">
             {isLoading ? (
-              <div
-                className={'animate-spin border border-solid border-info border-r-transparent rounded-full w-4 h-4'}
-              />
+              <Spinner className="w-4 h-4" />
             ) : (
               <Dropdown
                 id="def-editor-dropdown"
@@ -133,9 +132,7 @@ const EmailBackups = ({ application }: Props) => {
               <Text>Receive a notification email if an email backup fails.</Text>
             </div>
             {isLoading ? (
-              <div
-                className={'animate-spin border border-solid border-info border-r-transparent rounded-full w-4 h-4'}
-              />
+              <Spinner className="w-4 h-4" />
             ) : (
               <Switch onChange={toggleMuteFailedBackupEmails} checked={!isFailedBackupEmailMuted} />
             )}

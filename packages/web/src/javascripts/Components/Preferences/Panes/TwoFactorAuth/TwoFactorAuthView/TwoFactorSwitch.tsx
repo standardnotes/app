@@ -2,6 +2,7 @@ import { FunctionComponent } from 'react'
 import Switch from '@/Components/Switch/Switch'
 import { observer } from 'mobx-react-lite'
 import { is2FADisabled, TwoFactorAuth } from '../TwoFactorAuth'
+import Spinner from '@/Components/Spinner/Spinner'
 
 type Props = {
   auth: TwoFactorAuth
@@ -13,9 +14,7 @@ const TwoFactorSwitch: FunctionComponent<Props> = ({ auth }) => {
   }
 
   if (auth.status === 'fetching') {
-    return (
-      <div className="animate-spin border border-solid border-info border-r-transparent rounded-full normal info" />
-    )
+    return <Spinner className="w-4 h-4" />
   }
 
   return <Switch checked={!is2FADisabled(auth.status)} onChange={auth.toggle2FA} />

@@ -8,6 +8,7 @@ import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/Constants/Strings'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
+import Spinner from '@/Components/Spinner/Spinner'
 
 type Props = {
   application: WebApplication
@@ -105,11 +106,7 @@ const Privacy: FunctionComponent<Props> = ({ application }: Props) => {
               </Text>
             </div>
             {isLoading ? (
-              <div
-                className={
-                  'animate-spin border border-solid border-info border-r-transparent rounded-full info small flex-shrink-0 ml-2'
-                }
-              />
+              <Spinner className="flex-shrink-0 ml-2" />
             ) : (
               <Switch
                 onChange={toggleMuteSignInEmails}
@@ -128,11 +125,7 @@ const Privacy: FunctionComponent<Props> = ({ application }: Props) => {
               </Text>
             </div>
             {isLoading ? (
-              <div
-                className={
-                  'animate-spin border border-solid border-info border-r-transparent rounded-full info small flex-shrink-0 ml-2'
-                }
-              />
+              <Spinner className="flex-shrink-0 ml-2" />
             ) : (
               <Switch
                 onChange={toggleSessionLogging}

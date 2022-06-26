@@ -16,6 +16,7 @@ import { convertStringifiedBooleanToBoolean } from '@/Utils'
 import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/Constants/Strings'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
+import Spinner from '@/Components/Spinner/Spinner'
 
 const providerData = [{ name: CloudProvider.Dropbox }, { name: CloudProvider.Google }, { name: CloudProvider.OneDrive }]
 
@@ -135,11 +136,7 @@ const CloudLink: FunctionComponent<Props> = ({ application }) => {
                 <Text>Receive a notification email if a cloud backup fails.</Text>
               </div>
               {isLoading ? (
-                <div
-                  className={
-                    'animate-spin border border-solid border-info border-r-transparent rounded-full info small'
-                  }
-                />
+                <Spinner className="w-4 h-4" />
               ) : (
                 <Switch
                   onChange={toggleMuteFailedCloudBackupEmails}

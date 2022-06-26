@@ -4,6 +4,7 @@ import { Fragment, useCallback, useEffect, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { ListedMenuGroup } from './ListedMenuGroup'
 import ListedMenuItem from './ListedMenuItem'
+import Spinner from '@/Components/Spinner/Spinner'
 
 type ListedActionsMenuProps = {
   application: WebApplication
@@ -100,7 +101,7 @@ const ListedActionsMenu = ({ application, note, recalculateMenuStyle }: ListedAc
     <>
       {isFetchingAccounts && (
         <div className="w-full flex items-center justify-center p-4">
-          <div className="animate-spin border border-solid border-info border-r-transparent rounded-full w-5 h-5 " />
+          <Spinner className="w-5 h-5" />
         </div>
       )}
       {!isFetchingAccounts && menuGroups.length ? (

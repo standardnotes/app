@@ -2,7 +2,8 @@ import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryCont
 import { RevisionListEntry } from '@standardnotes/snjs/dist/@types'
 import { observer } from 'mobx-react-lite'
 import { useCallback, useState } from 'react'
-import Button from '../Button/Button'
+import Button from '@/Components/Button/Button'
+import Spinner from '@/Components/Spinner/Spinner'
 
 type Props = {
   dismissModal: () => void
@@ -48,11 +49,7 @@ const HistoryModalFooter = ({ dismissModal, noteHistoryController }: Props) => {
         <div className="flex items-center">
           {(selectedEntry as RevisionListEntry).uuid && (
             <Button className="mr-2.5" onClick={deleteSelectedRevision} variant="normal">
-              {isDeletingRevision ? (
-                <div className="animate-spin border border-solid border-info border-r-transparent rounded-full my-1 w-3 h-3 " />
-              ) : (
-                'Delete this revision'
-              )}
+              {isDeletingRevision ? <Spinner className="w-3 h-3 my-1" /> : 'Delete this revision'}
             </Button>
           )}
           <Button className="mr-2.5" label="Restore as a copy" onClick={restoreAsCopy} variant="normal" />
