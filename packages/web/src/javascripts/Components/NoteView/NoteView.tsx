@@ -1060,7 +1060,9 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                         <div className="flex items-center h-full [&:not(:first-child)]:ml-2">
                           <div
                             className={
-                              (this.stackComponentExpanded(component) && component.active ? 'bg-info border-info ' : '') +
+                              (this.stackComponentExpanded(component) && component.active
+                                ? 'bg-info border-info '
+                                : '') +
                               (!this.stackComponentExpanded(component) ? 'bg-neutral border-neutral ' : '') +
                               ' border border-solid w-3 h-3 p-0 rounded-full flex-shrink-0'
                             }
