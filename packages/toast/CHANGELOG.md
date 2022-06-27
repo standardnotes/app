@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/standardnotes/app/compare/@standardnotes/toast@1.2.4...@standardnotes/toast@1.3.0) (2022-06-27)
+
+### Features
+
+* **web:** tailwind css ([#1147](https://github.com/standardnotes/app/issues/1147)) ([b80038f](https://github.com/standardnotes/app/commit/b80038f607d7411912fa99366abf559a44874ef3))
+
 ## [1.2.4](https://github.com/standardnotes/app/compare/@standardnotes/toast@1.2.4-alpha.0...@standardnotes/toast@1.2.4) (2022-06-18)
 
 **Note:** Version bump only for package @standardnotes/toast

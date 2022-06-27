@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.4.0](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.3.0...@standardnotes/components-meta@2.4.0) (2022-06-27)
+
+### Features
+
+* **web:** tailwind css ([#1147](https://github.com/standardnotes/app/issues/1147)) ([b80038f](https://github.com/standardnotes/app/commit/b80038f607d7411912fa99366abf559a44874ef3))
+
 # [2.3.0](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.2.3...@standardnotes/components-meta@2.3.0) (2022-06-27)
 
 ### Features
