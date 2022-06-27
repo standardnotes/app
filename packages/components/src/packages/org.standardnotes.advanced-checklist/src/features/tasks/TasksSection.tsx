@@ -81,9 +81,11 @@ const TasksSection: React.FC<TasksSectionProps> = ({ groupName, tasks, section, 
           <Wrapper>
             <SectionHeader>
               <SubTitle>{section.name}</SubTitle>
-              <RoundButton onClick={handleCollapse} size="small">
-                {!collapsed ? <ChevronUpIcon /> : <ChevronDownIcon />}
-              </RoundButton>
+              {tasks.length > 0 && (
+                <RoundButton onClick={handleCollapse} size="small">
+                  {!collapsed ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                </RoundButton>
+              )}
             </SectionHeader>
             <InnerTasksContainer
               {...provided.droppableProps}
