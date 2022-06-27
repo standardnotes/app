@@ -133,15 +133,7 @@ const CreateAccount: FunctionComponent<Props> = ({
           ref={passwordInputRef}
           value={password}
         />
-        <Button
-          className="mt-1"
-          label="Next"
-          variant="primary"
-          onClick={handleRegisterFormSubmit}
-          overrideClassNames={{
-            width: 'w-full',
-          }}
-        />
+        <Button className="mt-1" label="Next" variant="primary" onClick={handleRegisterFormSubmit} fullWidth={true} />
       </form>
       <HorizontalSeparator classes="my-2" />
       <AdvancedOptions

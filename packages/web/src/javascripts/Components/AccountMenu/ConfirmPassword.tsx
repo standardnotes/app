@@ -135,9 +135,7 @@ const ConfirmPassword: FunctionComponent<Props> = ({
           variant="primary"
           onClick={handleConfirmFormSubmit}
           disabled={isRegistering}
-          overrideClassNames={{
-            width: 'w-full',
-          }}
+          fullWidth={true}
         />
         <Checkbox
           name="is-ephemeral"

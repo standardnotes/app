@@ -1,20 +1,13 @@
 import { Ref, forwardRef, ReactNode, ComponentPropsWithoutRef } from 'react'
 
-type OverrideClassNames = {
-  padding?: string
-  width?: string
-}
-
-const baseClass = (overrides?: OverrideClassNames) =>
-  `rounded ${overrides?.padding ? overrides.padding : 'px-4 py-1.5'} font-bold text-sm ${
-    overrides?.width ? overrides.width : 'w-fit'
-  }`
+const baseClass = 'rounded px-4 py-1.5 font-bold text-sm'
 
 type ButtonVariant = 'normal' | 'primary'
 
-const getClassName = (variant: ButtonVariant, danger: boolean, disabled: boolean, overrides?: OverrideClassNames) => {
+const getClassName = (variant: ButtonVariant, danger: boolean, disabled: boolean, fullWidth?: boolean) => {
   const borders = variant === 'normal' ? 'border-solid border-border border' : 'no-border'
   const cursor = disabled ? 'cursor-not-allowed' : 'cursor-pointer'
+  const width = fullWidth ? 'w-full' : 'w-fit'
 
   let colors = variant === 'normal' ? 'bg-default text-text' : 'bg-info text-info-contrast'
 
@@ -35,7 +28,7 @@ const getClassName = (variant: ButtonVariant, danger: boolean, disabled: boolean
         : 'focus:brightness-100 focus:outline-none hover:brightness-100'
   }
 
-  return `${baseClass(overrides)} ${colors} ${borders} ${focusHoverStates} ${cursor}`
+  return `${baseClass} ${width} ${colors} ${borders} ${focusHoverStates} ${cursor}`
 }
 
 interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
@@ -44,7 +37,7 @@ interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
   variant?: ButtonVariant
   dangerStyle?: boolean
   label?: string
-  overrideClassNames?: OverrideClassNames
+  fullWidth?: boolean
 }
 
 const Button = forwardRef(
@@ -56,7 +49,7 @@ const Button = forwardRef(
       dangerStyle: danger = false,
       disabled = false,
       children,
-      overrideClassNames,
+      fullWidth,
       ...props
     }: ButtonProps,
     ref: Ref<HTMLButtonElement>,
@@ -64,7 +57,7 @@ const Button = forwardRef(
     return (
       <button
         type="button"
-        className={`${getClassName(variant, danger, disabled, overrideClassNames)} ${className}`}
+        className={`${getClassName(variant, danger, disabled, fullWidth)} ${className}`}
         disabled={disabled}
         ref={ref}
         {...props}

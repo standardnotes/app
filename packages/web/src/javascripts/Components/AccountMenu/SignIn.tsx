@@ -182,9 +182,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
           variant="primary"
           onClick={handleSignInFormSubmit}
           disabled={isSigningIn}
-          overrideClassNames={{
-            width: 'w-full',
-          }}
+          fullWidth={true}
         />
         <Checkbox
           name="is-ephemeral"
