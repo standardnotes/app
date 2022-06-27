@@ -17,7 +17,6 @@
     "lint": "eslint src/javascripts",
     "tsc": "tsc --project tsconfig.json",
     "test": "jest --config jest.config.js --coverage",
-    "postinstall": "yarn run ncu -loglevel verbose --packageFile package.json",
     "upgrade:snjs": "ncu -u '@standardnotes/*'"
   },
   "devDependencies": {
