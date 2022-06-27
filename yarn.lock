@@ -4874,9 +4874,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/advanced-checklist@workspace:packages/components/src/packages/org.standardnotes.advanced-checklist":
+"@standardnotes/advanced-checklist@workspace:packages/components/src/Packages/Editors/org.standardnotes.advanced-checklist":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/advanced-checklist@workspace:packages/components/src/packages/org.standardnotes.advanced-checklist"
+  resolution: "@standardnotes/advanced-checklist@workspace:packages/components/src/Packages/Editors/org.standardnotes.advanced-checklist"
   dependencies:
     "@reach/alert-dialog": 0.16.2
     "@reach/menu-button": 0.16.2
@@ -4935,6 +4935,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standardnotes/api@npm:^1.1.17":
+  version: 1.1.17
+  resolution: "@standardnotes/api@npm:1.1.17"
+  dependencies:
+    "@standardnotes/auth": ^3.19.4
+    "@standardnotes/common": ^1.23.1
+    "@standardnotes/encryption": ^1.8.22
+    "@standardnotes/responses": ^1.6.38
+    "@standardnotes/services": ^1.13.22
+    "@standardnotes/utils": ^1.6.12
+  checksum: 483faa9395e2c4025d90a280b239d32e1c5ef00ef168b61220f9897c4c41431419645cb1a9141abfbfa9c6658a58c0685dc9d618238be20df2c4d8d7ea5ecec7
+  languageName: node
+  linkType: hard
+
 "@standardnotes/app-monorepo@workspace:.":
   version: 0.0.0-use.local
   resolution: "@standardnotes/app-monorepo@workspace:."
@@ -4945,7 +4959,7 @@ __metadata:
     "@lerna-lite/list": ^1.5.1
     "@lerna-lite/run": ^1.5.1
     "@standardnotes/config": ^2.4.3
-    "@standardnotes/snjs": ^2.117.9
+    "@standardnotes/snjs": ^2.118.0
     "@typescript-eslint/eslint-plugin": ^5.20.0
     "@typescript-eslint/parser": ^5.20.0
     changelog-parser: ^2.8.1
@@ -4973,9 +4987,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/authenticator@workspace:packages/components/src/packages/org.standardnotes.token-vault":
+"@standardnotes/auth@npm:^3.19.4":
+  version: 3.19.4
+  resolution: "@standardnotes/auth@npm:3.19.4"
+  dependencies:
+    "@standardnotes/common": ^1.23.1
+    jsonwebtoken: ^8.5.1
+  checksum: 84ac9e669ee393a8ac04c49729cd732280ab7ad9c6ad780e1f8cc7e02bdd1d15b8446d84134e775d805e6fa04e9500d9e62d7f857e6b1f5bb36f10a0c31640ff
+  languageName: node
+  linkType: hard
+
+"@standardnotes/authenticator@workspace:packages/components/src/Packages/Editors/org.standardnotes.token-vault":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/authenticator@workspace:packages/components/src/packages/org.standardnotes.token-vault"
+  resolution: "@standardnotes/authenticator@workspace:packages/components/src/Packages/Editors/org.standardnotes.token-vault"
   dependencies:
     "@babel/core": ^7.18.5
     "@babel/eslint-parser": ^7.18.2
@@ -5015,17 +5039,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/autobiography-theme@workspace:packages/components/src/packages/org.standardnotes.theme-autobiography":
+"@standardnotes/autobiography-theme@workspace:packages/components/src/Packages/Themes/org.standardnotes.theme-autobiography":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/autobiography-theme@workspace:packages/components/src/packages/org.standardnotes.theme-autobiography"
+  resolution: "@standardnotes/autobiography-theme@workspace:packages/components/src/Packages/Themes/org.standardnotes.theme-autobiography"
   dependencies:
     webpack: "*"
   languageName: unknown
   linkType: soft
 
-"@standardnotes/bold-editor@workspace:packages/components/src/packages/org.standardnotes.bold-editor":
+"@standardnotes/bold-editor@workspace:packages/components/src/Packages/Deprecated/org.standardnotes.bold-editor":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/bold-editor@workspace:packages/components/src/packages/org.standardnotes.bold-editor"
+  resolution: "@standardnotes/bold-editor@workspace:packages/components/src/Packages/Deprecated/org.standardnotes.bold-editor"
   dependencies:
     "@babel/core": ^7.13.14
     "@babel/eslint-parser": ^7.13.14
@@ -5057,9 +5081,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/classic-code-editor@workspace:packages/components/src/packages/org.standardnotes.code-editor":
+"@standardnotes/classic-code-editor@workspace:packages/components/src/Packages/Editors/org.standardnotes.code-editor":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/classic-code-editor@workspace:packages/components/src/packages/org.standardnotes.code-editor"
+  resolution: "@standardnotes/classic-code-editor@workspace:packages/components/src/Packages/Editors/org.standardnotes.code-editor"
   dependencies:
     "@babel/cli": ^7.12.10
     "@babel/core": ^7.12.10
@@ -5084,6 +5108,13 @@ __metadata:
   version: 1.23.0
   resolution: "@standardnotes/common@npm:1.23.0"
   checksum: 9c51bf76e7b9b28862e355aa66d0af6658e9baf9701c986d6f3b17d382b90e8da03350a4ab72b10cd16b16f1e739b8200991b3561719456972f3ce273dac3986
+  languageName: node
+  linkType: hard
+
+"@standardnotes/common@npm:^1.23.1":
+  version: 1.23.1
+  resolution: "@standardnotes/common@npm:1.23.1"
+  checksum: f498f4c469f7b9cdfc08b7648077832a2a214d844f012d02d73c2c418fab221af3302570cc6b1957b5ed481b55237f95bc24fc5c231162bfcdf8730333d38405
   languageName: node
   linkType: hard
 
@@ -5198,9 +5229,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/dynamic-theme@workspace:packages/components/src/packages/org.standardnotes.theme-dynamic":
+"@standardnotes/domain-events@npm:^2.32.5":
+  version: 2.32.5
+  resolution: "@standardnotes/domain-events@npm:2.32.5"
+  dependencies:
+    "@standardnotes/auth": ^3.19.4
+    "@standardnotes/features": ^1.46.0
+    "@standardnotes/scheduler": ^1.1.2
+  checksum: 95532b9fdf89ea45363f67c1f9dd2d7c8eff762854f709cd5034400263385692d52103afc8538ed074145754534d3e69b19b68ae325654ab6bba74111e7e05df
+  languageName: node
+  linkType: hard
+
+"@standardnotes/dynamic-theme@workspace:packages/components/src/Packages/Themes/org.standardnotes.theme-dynamic":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/dynamic-theme@workspace:packages/components/src/packages/org.standardnotes.theme-dynamic"
+  resolution: "@standardnotes/dynamic-theme@workspace:packages/components/src/Packages/Themes/org.standardnotes.theme-dynamic"
   dependencies:
     webpack: "*"
   languageName: unknown
@@ -5257,6 +5299,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standardnotes/encryption@npm:^1.8.22":
+  version: 1.8.22
+  resolution: "@standardnotes/encryption@npm:1.8.22"
+  dependencies:
+    "@standardnotes/models": ^1.11.12
+    "@standardnotes/responses": ^1.6.38
+    "@standardnotes/services": ^1.13.22
+  checksum: 7a571c4b257b7469054b37930b4157fa786b81558d0d7887fc5db0527c7eb5acd1d7ecdb90509d50652440017e708eb87d8820cf0df52b3c7a8628940d0e0e72
+  languageName: node
+  linkType: hard
+
 "@standardnotes/eslint-config-extensions@npm:1.0.1":
   version: 1.0.1
   resolution: "@standardnotes/eslint-config-extensions@npm:1.0.1"
@@ -5285,7 +5338,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/filepicker@npm:1.16.20, @standardnotes/filepicker@npm:^1.16.20":
+"@standardnotes/features@npm:^1.46.0":
+  version: 1.46.0
+  resolution: "@standardnotes/features@npm:1.46.0"
+  dependencies:
+    "@standardnotes/auth": ^3.19.4
+    "@standardnotes/common": ^1.23.1
+  checksum: 0653b9b425e86cf0f2e6a80fb68316c841aaf7feb23ca39131e3d09546735d199879532ef9e89f424000b916dd5ac2d7e6ea0e60ac755712ef37c3fecdf48d94
+  languageName: node
+  linkType: hard
+
+"@standardnotes/filepicker@npm:1.16.22, @standardnotes/filepicker@npm:^1.16.22":
+  version: 1.16.22
+  resolution: "@standardnotes/filepicker@npm:1.16.22"
+  dependencies:
+    "@standardnotes/common": ^1.23.1
+    "@standardnotes/services": ^1.13.22
+    "@standardnotes/utils": ^1.6.12
+  checksum: df14eedefd9d9a5ebdff483b611eac2c78a6a17e2039b5893a9041b0abbf88acf85aa36444cbf5b3b0c52a1556a175d20ed15a2879117895d3669b597ee07d60
+  languageName: node
+  linkType: hard
+
+"@standardnotes/filepicker@npm:^1.16.20":
   version: 1.16.20
   resolution: "@standardnotes/filepicker@npm:1.16.20"
   dependencies:
@@ -5310,9 +5384,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/filesafe-bar@workspace:packages/components/src/packages/org.standardnotes.file-safe":
+"@standardnotes/files@npm:^1.3.22":
+  version: 1.3.22
+  resolution: "@standardnotes/files@npm:1.3.22"
+  dependencies:
+    "@standardnotes/encryption": ^1.8.22
+    "@standardnotes/filepicker": ^1.16.22
+    "@standardnotes/models": ^1.11.12
+    "@standardnotes/responses": ^1.6.38
+    "@standardnotes/services": ^1.13.22
+    "@standardnotes/utils": ^1.6.12
+  checksum: 4bd58c1aedf21892dceee7554b2f8003bca8aaa651079b0aad31bc57f160fadc455010241da1544e488c0f3c08e57549d610908b2c2f57b1d8c0991204ff2fb1
+  languageName: node
+  linkType: hard
+
+"@standardnotes/filesafe-bar@workspace:packages/components/src/Packages/Deprecated/org.standardnotes.file-safe":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/filesafe-bar@workspace:packages/components/src/packages/org.standardnotes.file-safe"
+  resolution: "@standardnotes/filesafe-bar@workspace:packages/components/src/Packages/Deprecated/org.standardnotes.file-safe"
   dependencies:
     "@babel/core": ^7.7.0
     "@babel/preset-env": ^7.7.1
@@ -5343,17 +5431,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/focus-theme@workspace:packages/components/src/packages/org.standardnotes.theme-focus":
+"@standardnotes/focus-theme@workspace:packages/components/src/Packages/Themes/org.standardnotes.theme-focus":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/focus-theme@workspace:packages/components/src/packages/org.standardnotes.theme-focus"
+  resolution: "@standardnotes/focus-theme@workspace:packages/components/src/Packages/Themes/org.standardnotes.theme-focus"
   dependencies:
     webpack: "*"
   languageName: unknown
   linkType: soft
 
-"@standardnotes/futura-theme@workspace:packages/components/src/packages/org.standardnotes.theme-futura":
+"@standardnotes/futura-theme@workspace:packages/components/src/Packages/Themes/org.standardnotes.theme-futura":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/futura-theme@workspace:packages/components/src/packages/org.standardnotes.theme-futura"
+  resolution: "@standardnotes/futura-theme@workspace:packages/components/src/Packages/Themes/org.standardnotes.theme-futura"
   dependencies:
     webpack: "*"
   languageName: unknown
@@ -5393,9 +5481,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/markdown-basic@workspace:packages/components/src/packages/org.standardnotes.simple-markdown-editor":
+"@standardnotes/markdown-basic@workspace:packages/components/src/Packages/Deprecated/org.standardnotes.simple-markdown-editor":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/markdown-basic@workspace:packages/components/src/packages/org.standardnotes.simple-markdown-editor"
+  resolution: "@standardnotes/markdown-basic@workspace:packages/components/src/Packages/Deprecated/org.standardnotes.simple-markdown-editor"
   dependencies:
     "@babel/cli": ^7.10.5
     "@babel/core": ^7.11.1
@@ -5436,9 +5524,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/markdown-hybrid@workspace:packages/components/src/packages/org.standardnotes.advanced-markdown-editor":
+"@standardnotes/markdown-hybrid@workspace:packages/components/src/Packages/Deprecated/org.standardnotes.advanced-markdown-editor":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/markdown-hybrid@workspace:packages/components/src/packages/org.standardnotes.advanced-markdown-editor"
+  resolution: "@standardnotes/markdown-hybrid@workspace:packages/components/src/Packages/Deprecated/org.standardnotes.advanced-markdown-editor"
   dependencies:
     "@babel/cli": ^7.13.10
     "@babel/core": ^7.13.13
@@ -5466,9 +5554,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/markdown-math@workspace:packages/components/src/packages/org.standardnotes.fancy-markdown-editor":
+"@standardnotes/markdown-math@workspace:packages/components/src/Packages/Deprecated/org.standardnotes.fancy-markdown-editor":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/markdown-math@workspace:packages/components/src/packages/org.standardnotes.fancy-markdown-editor"
+  resolution: "@standardnotes/markdown-math@workspace:packages/components/src/Packages/Deprecated/org.standardnotes.fancy-markdown-editor"
   dependencies:
     "@babel/cli": ^7.7.7
     "@babel/core": ^7.7.7
@@ -5496,9 +5584,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/markdown-minimal@workspace:packages/components/src/packages/org.standardnotes.minimal-markdown-editor":
+"@standardnotes/markdown-minimal@workspace:packages/components/src/Packages/Deprecated/org.standardnotes.minimal-markdown-editor":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/markdown-minimal@workspace:packages/components/src/packages/org.standardnotes.minimal-markdown-editor"
+  resolution: "@standardnotes/markdown-minimal@workspace:packages/components/src/Packages/Deprecated/org.standardnotes.minimal-markdown-editor"
   dependencies:
     "@babel/core": ^7.11.1
     "@babel/preset-env": ^7.11.0
@@ -5519,9 +5607,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/markdown-visual@workspace:packages/components/src/packages/org.standardnotes.markdown-visual-editor":
+"@standardnotes/markdown-visual@workspace:packages/components/src/Packages/Editors/org.standardnotes.markdown-visual-editor":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/markdown-visual@workspace:packages/components/src/packages/org.standardnotes.markdown-visual-editor"
+  resolution: "@standardnotes/markdown-visual@workspace:packages/components/src/Packages/Editors/org.standardnotes.markdown-visual-editor"
   dependencies:
     "@codemirror/lang-markdown": ^0.19.6
     "@milkdown/core": 5.5.0
@@ -5570,9 +5658,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/midnight-theme@workspace:packages/components/src/packages/org.standardnotes.theme-midnight":
+"@standardnotes/midnight-theme@workspace:packages/components/src/Packages/Themes/org.standardnotes.theme-midnight":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/midnight-theme@workspace:packages/components/src/packages/org.standardnotes.theme-midnight"
+  resolution: "@standardnotes/midnight-theme@workspace:packages/components/src/Packages/Themes/org.standardnotes.theme-midnight"
   dependencies:
     webpack: "*"
   languageName: unknown
@@ -5595,13 +5683,13 @@ __metadata:
     "@react-navigation/stack": ^6.2.1
     "@standardnotes/components-meta": "workspace:*"
     "@standardnotes/config": ^2.4.3
-    "@standardnotes/filepicker": ^1.16.20
+    "@standardnotes/filepicker": ^1.16.22
     "@standardnotes/icons": "workspace:*"
     "@standardnotes/react-native-aes": ^1.4.3
     "@standardnotes/react-native-textview": 1.0.2
     "@standardnotes/react-native-utils": 1.0.1
     "@standardnotes/sncrypto-common": 1.9.0
-    "@standardnotes/snjs": ^2.117.9
+    "@standardnotes/snjs": ^2.118.0
     "@standardnotes/stylekit": 5.29.3
     "@types/detox": ^18.1.0
     "@types/faker": ^6.6.9
@@ -5686,6 +5774,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standardnotes/models@npm:^1.11.12":
+  version: 1.11.12
+  resolution: "@standardnotes/models@npm:1.11.12"
+  dependencies:
+    "@standardnotes/features": ^1.46.0
+    "@standardnotes/responses": ^1.6.38
+    "@standardnotes/utils": ^1.6.12
+  checksum: 636897db975e59989da86bcf2a6f32a4f8e24c45e41f9f9ee7c6960e47f3d04bcc9b74aadb9c4b488d98b61aca284699ed8b2a857d588493300358c62d69e580
+  languageName: node
+  linkType: hard
+
 "@standardnotes/react-native-aes@npm:^1.4.3":
   version: 1.4.3
   resolution: "@standardnotes/react-native-aes@npm:1.4.3"
@@ -5734,9 +5833,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/rich-text@workspace:packages/components/src/packages/org.standardnotes.plus-editor":
+"@standardnotes/responses@npm:^1.6.38":
+  version: 1.6.38
+  resolution: "@standardnotes/responses@npm:1.6.38"
+  dependencies:
+    "@standardnotes/auth": ^3.19.4
+    "@standardnotes/common": ^1.23.1
+    "@standardnotes/features": ^1.46.0
+  checksum: 016a2f294d5dbad12ab04344cfcb2775da5c1ccfd2d0ce4762db298ce929db528a1dd7b7f2ed295ef1237e37f72e9f6dfd747a3ef1c5ea229a84034bf99b05c3
+  languageName: node
+  linkType: hard
+
+"@standardnotes/rich-text@workspace:packages/components/src/Packages/Editors/org.standardnotes.plus-editor":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/rich-text@workspace:packages/components/src/packages/org.standardnotes.plus-editor"
+  resolution: "@standardnotes/rich-text@workspace:packages/components/src/Packages/Editors/org.standardnotes.plus-editor"
   dependencies:
     "@babel/cli": ^7.13.0
     "@babel/core": ^7.13.8
@@ -5772,6 +5882,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standardnotes/scheduler@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "@standardnotes/scheduler@npm:1.1.2"
+  dependencies:
+    "@standardnotes/common": ^1.23.1
+  checksum: 68642a08741aeb4936e4a69e43e2b85e5cbfa3ce60006d292cee517d33093edaf35a6a7af61343d85ab3474d6e980a073a2779f6e0b1f11805ab06a407b15ce7
+  languageName: node
+  linkType: hard
+
 "@standardnotes/services@npm:^1.13.20":
   version: 1.13.20
   resolution: "@standardnotes/services@npm:1.13.20"
@@ -5785,6 +5904,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standardnotes/services@npm:^1.13.22":
+  version: 1.13.22
+  resolution: "@standardnotes/services@npm:1.13.22"
+  dependencies:
+    "@standardnotes/auth": ^3.19.4
+    "@standardnotes/common": ^1.23.1
+    "@standardnotes/models": ^1.11.12
+    "@standardnotes/responses": ^1.6.38
+    "@standardnotes/utils": ^1.6.12
+  checksum: e84f4e43d49c42b1f99b4e54380f1539ca3ff3451290b7f290fc1e480f2207f8567035015f8788c7b9f961f88eb81b43a4cca591328390dbd0622c9e4891063b
+  languageName: node
+  linkType: hard
+
 "@standardnotes/settings@npm:^1.15.0":
   version: 1.15.0
   resolution: "@standardnotes/settings@npm:1.15.0"
@@ -5792,9 +5924,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/simple-task-editor@workspace:packages/components/src/packages/org.standardnotes.simple-task-editor":
+"@standardnotes/simple-task-editor@workspace:packages/components/src/Packages/Editors/org.standardnotes.simple-task-editor":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/simple-task-editor@workspace:packages/components/src/packages/org.standardnotes.simple-task-editor"
+  resolution: "@standardnotes/simple-task-editor@workspace:packages/components/src/Packages/Editors/org.standardnotes.simple-task-editor"
   dependencies:
     "@babel/core": ^7.13.10
     "@babel/eslint-parser": ^7.13.10
@@ -5847,7 +5979,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/snjs@npm:^2.117.9, @standardnotes/snjs@npm:^2.41.1":
+"@standardnotes/snjs@npm:^2.118.0":
+  version: 2.118.0
+  resolution: "@standardnotes/snjs@npm:2.118.0"
+  dependencies:
+    "@standardnotes/api": ^1.1.17
+    "@standardnotes/auth": ^3.19.4
+    "@standardnotes/common": ^1.23.1
+    "@standardnotes/domain-events": ^2.32.5
+    "@standardnotes/encryption": ^1.8.22
+    "@standardnotes/features": ^1.46.0
+    "@standardnotes/files": ^1.3.22
+    "@standardnotes/models": ^1.11.12
+    "@standardnotes/responses": ^1.6.38
+    "@standardnotes/services": ^1.13.22
+    "@standardnotes/settings": ^1.15.0
+    "@standardnotes/sncrypto-common": ^1.9.0
+    "@standardnotes/utils": ^1.6.12
+    semver: ^7.3.7
+  checksum: 46fd930c4305c1cf770c5cf391e85a4c752c1bfb02d37e432635ccc92bf84dd4db28e5aad6000f7f440c65f40489eaac1f07c274b4db496ffc7e7a6c9bb374af
+  languageName: node
+  linkType: hard
+
+"@standardnotes/snjs@npm:^2.41.1":
   version: 2.117.9
   resolution: "@standardnotes/snjs@npm:2.117.9"
   dependencies:
@@ -5869,17 +6023,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/solarized-dark-theme@workspace:packages/components/src/packages/org.standardnotes.theme-solarized-dark":
+"@standardnotes/solarized-dark-theme@workspace:packages/components/src/Packages/Themes/org.standardnotes.theme-solarized-dark":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/solarized-dark-theme@workspace:packages/components/src/packages/org.standardnotes.theme-solarized-dark"
+  resolution: "@standardnotes/solarized-dark-theme@workspace:packages/components/src/Packages/Themes/org.standardnotes.theme-solarized-dark"
   dependencies:
     webpack: "*"
   languageName: unknown
   linkType: soft
 
-"@standardnotes/spreadsheets@workspace:packages/components/src/packages/org.standardnotes.standard-sheets":
+"@standardnotes/spreadsheets@workspace:packages/components/src/Packages/Editors/org.standardnotes.standard-sheets":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/spreadsheets@workspace:packages/components/src/packages/org.standardnotes.standard-sheets"
+  resolution: "@standardnotes/spreadsheets@workspace:packages/components/src/Packages/Editors/org.standardnotes.standard-sheets"
   dependencies:
     "@babel/core": ^7.14.6
     "@babel/eslint-parser": ^7.14.7
@@ -5960,9 +6114,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/titanium-theme@workspace:packages/components/src/packages/org.standardnotes.theme-titanium":
+"@standardnotes/titanium-theme@workspace:packages/components/src/Packages/Themes/org.standardnotes.theme-titanium":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/titanium-theme@workspace:packages/components/src/packages/org.standardnotes.theme-titanium"
+  resolution: "@standardnotes/titanium-theme@workspace:packages/components/src/Packages/Themes/org.standardnotes.theme-titanium"
   languageName: unknown
   linkType: soft
 
@@ -6006,6 +6160,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standardnotes/utils@npm:^1.6.12":
+  version: 1.6.12
+  resolution: "@standardnotes/utils@npm:1.6.12"
+  dependencies:
+    "@standardnotes/common": ^1.23.1
+    dompurify: ^2.3.6
+    lodash: ^4.17.21
+  checksum: e177b1fa518ca2c0bcc5602d2a83d37946461bc4c3d8daa329d7290d61dec9bcfd5b9c1593582672598b0696d994f7ce42b9ca16f82a485fd45cb221411bd4e8
+  languageName: node
+  linkType: hard
+
 "@standardnotes/web-server@workspace:packages/web-server":
   version: 0.0.0-use.local
   resolution: "@standardnotes/web-server@workspace:packages/web-server"
@@ -6031,11 +6196,11 @@ __metadata:
     "@reach/listbox": ^0.16.2
     "@reach/tooltip": ^0.16.2
     "@reach/visually-hidden": ^0.16.0
-    "@standardnotes/filepicker": 1.16.20
+    "@standardnotes/filepicker": 1.16.22
     "@standardnotes/icons": "workspace:*"
-    "@standardnotes/services": ^1.13.20
+    "@standardnotes/services": ^1.13.22
     "@standardnotes/sncrypto-web": 1.10.1
-    "@standardnotes/snjs": ^2.117.9
+    "@standardnotes/snjs": ^2.118.0
     "@standardnotes/styles": "workspace:*"
     "@standardnotes/toast": "workspace:*"
     "@types/jest": ^27.4.1

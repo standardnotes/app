@@ -1,1 +1,2 @@
-export * from './Types/Checksums';
+export * from './Checksums';
+export * from './Components';
