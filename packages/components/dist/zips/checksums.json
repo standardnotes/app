@@ -71,8 +71,8 @@
   },
   "org.standardnotes.markdown-visual-editor": {
     "version": "1.0.12",
-    "base64": "be74ecdf8d56f10bd7954997a3e95f56a114d772f6af5107bd7bceeea9190031",
-    "binary": "f4dc4d3611a47bf0e9cb7f3db9537e986e951ceef074cd32f5f17267e92ecd05"
+    "base64": "2359be50cbff1f7d99b301f377744ae8d68d1456f2023657e163f0ca52b22fd8",
+    "binary": "3605f5e883578e9bb7c406b5eb2d5fe152449a8462c3f3875f4f8602a2b81aad"
   },
   "org.standardnotes.simple-task-editor": {
     "version": "1.3.15",
@@ -81,8 +81,8 @@
   },
   "org.standardnotes.token-vault": {
     "version": "2.1.2",
-    "base64": "945d9970b6420c02626536e7ea146eba92eccb47c40612d4265ca4b6c4bb9400",
-    "binary": "b072131aed309fc0f4d32d81c84c0db6f05a88ec69838a22a0283a8fb10dca64"
+    "base64": "10b62746635c1dc547568b614298f23187a6bf6cef748f8a9baf0c698dc17dd4",
+    "binary": "30684c4bef2c8f6bbc5ad98a936d58cf080baa1a84848ec90144aff3dd2a0ffd"
   },
   "org.standardnotes.standard-sheets": {
     "version": "1.4.9",
@@ -91,8 +91,8 @@
   },
   "org.standardnotes.advanced-checklist": {
     "version": "0.0.5",
-    "base64": "49a66f1c87f91fbb4272592ac2c5c457f228901b8c106b7322132f986b647e7a",
-    "binary": "3ed33530b7988b5c5f025b10ca7a9059770182e5114a6de08752c169e66a8fdf"
+    "base64": "45c811e82d99ca218d96056ea06f4e0b57283e1b702faec4d185284f11c9c09f",
+    "binary": "927f323e8660524709b2e51522ef2b87ef2108964f85af028e41587c34da9f83"
   },
   "org.standardnotes.file-safe": {
     "version": "2.0.16",

@@ -1,7 +1,7 @@
 {
   "files": {
     "main.js": "./static/js/main.js",
-    "main.css": "./static/css/main.6fe23df9.css",
+    "main.css": "./static/css/main.a482786a.css",
     "static/media/material-icons-two-tone.woff": "./static/media/material-icons-two-tone..woff",
     "static/media/material-icons-two-tone.woff2": "./static/media/material-icons-two-tone..woff2",
     "static/media/material-icons-round.woff": "./static/media/material-icons-round..woff",
@@ -74,10 +74,10 @@
     "static/media/KaTeX_Size3-Regular.woff2": "./static/media/KaTeX_Size3-Regular..woff2",
     "index.html": "./index.html",
     "main.js.map": "./static/js/main.js.map",
-    "main.6fe23df9.css.map": "./static/css/main.6fe23df9.css.map"
+    "main.a482786a.css.map": "./static/css/main.a482786a.css.map"
   },
   "entrypoints": [
     "static/js/main.js",
-    "static/css/main.6fe23df9.css"
+    "static/css/main.a482786a.css"
   ]
 }
