@@ -106,8 +106,8 @@ const Themes = [
     static_files: BaseThemeStaticFiles,
   },
   {
-    identifier: 'org.standardnotes.solarized-dark',
-    path: 'Themes/org.standardnotes.solarized-dark',
+    identifier: 'org.standardnotes.theme-solarized-dark',
+    path: 'Themes/org.standardnotes.theme-solarized-dark',
     static_files: BaseThemeStaticFiles,
   },
 ]
