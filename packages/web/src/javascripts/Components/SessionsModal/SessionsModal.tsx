@@ -177,6 +177,7 @@ const SessionsModalContent: FunctionComponent<{
                         primary
                         small
                         colorStyle="neutral"
+                        rounded={false}
                         ref={cancelRevokeRef}
                         onClick={closeRevokeSessionAlert}
                       >
@@ -186,6 +187,7 @@ const SessionsModalContent: FunctionComponent<{
                         primary
                         small
                         colorStyle="danger"
+                        rounded={false}
                         onClick={() => {
                           closeRevokeSessionAlert()
                           revokeSession(confirmRevokingSessionUuid).catch(console.error)

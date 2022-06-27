@@ -46,12 +46,14 @@ const getClassName = (
   disabled: boolean,
   fullWidth?: boolean,
   small?: boolean,
+  isRounded?: boolean,
 ) => {
   const borders = primary ? 'no-border' : 'border-solid border-border border'
   const cursor = disabled ? 'cursor-not-allowed' : 'cursor-pointer'
   const width = fullWidth ? 'w-full' : 'w-fit'
   const padding = small ? 'px-3 py-1.5' : 'px-4 py-1.5'
   const textSize = small ? 'text-xs' : 'text-sm'
+  const rounded = isRounded ? 'rounded' : ''
 
   let colors = primary ? getColorsForPrimaryVariant(style) : getColorsForNormalVariant(style)
 
@@ -66,7 +68,7 @@ const getClassName = (
       : 'focus:bg-default focus:outline-none hover:bg-default'
   }
 
-  return `rounded font-bold ${width} ${padding} ${textSize} ${colors} ${borders} ${focusHoverStates} ${cursor}`
+  return `${rounded} font-bold ${width} ${padding} ${textSize} ${colors} ${borders} ${focusHoverStates} ${cursor}`
 }
 
 interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
@@ -77,6 +79,7 @@ interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
   label?: string
   fullWidth?: boolean
   small?: boolean
+  rounded?: boolean
 }
 
 const Button = forwardRef(
@@ -90,6 +93,7 @@ const Button = forwardRef(
       children,
       fullWidth,
       small,
+      rounded = true,
       ...props
     }: ButtonProps,
     ref: Ref<HTMLButtonElement>,
@@ -97,7 +101,7 @@ const Button = forwardRef(
     return (
       <button
         type="button"
-        className={`${getClassName(primary, colorStyle, disabled, fullWidth, small)} ${className}`}
+        className={`${getClassName(primary, colorStyle, disabled, fullWidth, small, rounded)} ${className}`}
         disabled={disabled}
         ref={ref}
         {...props}

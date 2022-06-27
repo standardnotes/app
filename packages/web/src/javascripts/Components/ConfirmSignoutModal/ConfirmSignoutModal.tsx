@@ -84,13 +84,14 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewContro
                 )}
 
                 <div className="flex my-1 mt-4 gap-2">
-                  <Button primary small colorStyle="neutral" ref={cancelRef} onClick={closeDialog}>
+                  <Button primary small colorStyle="neutral" rounded={false} ref={cancelRef} onClick={closeDialog}>
                     Cancel
                   </Button>
                   <Button
                     primary
                     small
                     colorStyle="danger"
+                    rounded={false}
                     onClick={() => {
                       if (deleteLocalBackups) {
                         application.signOutAndDeleteLocalBackups().catch(console.error)
