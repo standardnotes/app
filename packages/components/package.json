@@ -2,7 +2,7 @@
   "name": "@standardnotes/components-meta",
   "version": "2.4.0",
   "private": true,
-  "author": "Standard Notes.",
+  "author": "Standard Notes",
   "main": "dist",
   "workspaces": {
     "packages": [
