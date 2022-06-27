@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import { GroupPayload, TaskPayload } from '../features/tasks/tasks-slice'
+import { DEFAULT_SECTIONS, GroupModel, TaskModel } from '../features/tasks/tasks-slice'
 
 export function arrayMoveMutable(array: any[], fromIndex: number, toIndex: number) {
   const startIndex = fromIndex < 0 ? array.length + fromIndex : fromIndex
@@ -26,7 +26,7 @@ export function getPercentage(numberA: number, numberB: number): number {
   return Number(percentage.toFixed(2))
 }
 
-export function groupTasksByCompletedStatus(tasks: TaskPayload[]) {
+export function groupTasksByCompletedStatus(tasks: TaskModel[]) {
   const openTasks = tasks.filter((task) => !task.completed)
   const completedTasks = tasks.filter((task) => task.completed)
   return {
@@ -35,8 +35,8 @@ export function groupTasksByCompletedStatus(tasks: TaskPayload[]) {
   }
 }
 
-export function getTaskArrayFromGroupedTasks(groupedTasks: GroupPayload[]): TaskPayload[] {
-  let taskArray: TaskPayload[] = []
+export function getTaskArrayFromGroupedTasks(groupedTasks: GroupModel[]): TaskModel[] {
+  let taskArray: TaskModel[] = []
 
   groupedTasks.forEach((group) => {
     taskArray = taskArray.concat(group.tasks)
@@ -52,14 +52,14 @@ export function truncateText(text: string, limit: number = 50) {
   return text.substring(0, limit) + '...'
 }
 
-export function getPlainPreview(groupedTasks: GroupPayload[]) {
+export function getPlainPreview(groupedTasks: GroupModel[]) {
   const allTasks = getTaskArrayFromGroupedTasks(groupedTasks)
   const { completedTasks } = groupTasksByCompletedStatus(allTasks)
 
   return `${completedTasks.length}/${allTasks.length} tasks completed`
 }
 
-function createTaskFromLine(rawTask: string): TaskPayload | undefined {
+function createTaskFromLine(rawTask: string): TaskModel | undefined {
   const IS_COMPLETED = /^- \[x\] /i
   const OPEN_PREFIX = '- [ ] '
 
@@ -77,7 +77,7 @@ function createTaskFromLine(rawTask: string): TaskPayload | undefined {
   }
 }
 
-export function parseMarkdownTasks(payload?: string): GroupPayload | undefined {
+export function parseMarkdownTasks(payload?: string): GroupModel | undefined {
   if (!payload) {
     return
   }
@@ -88,7 +88,7 @@ export function parseMarkdownTasks(payload?: string): GroupPayload | undefined {
   }
 
   const lines = payload.split('\n')
-  const tasks: TaskPayload[] = []
+  const tasks: TaskModel[] = []
 
   lines
     .filter((line) => line.replace(/ /g, '').length > 0)
@@ -102,6 +102,7 @@ export function parseMarkdownTasks(payload?: string): GroupPayload | undefined {
   return {
     name: 'Checklist',
     tasks,
+    sections: DEFAULT_SECTIONS,
   }
 }
 
@@ -114,7 +115,7 @@ export function isJsonString(rawString: string) {
   return true
 }
 
-export function isLastActiveGroup(allGroups: GroupPayload[], groupName: string): boolean {
+export function isLastActiveGroup(allGroups: GroupModel[], groupName: string): boolean {
   if (allGroups.length === 0) {
     return true
   }

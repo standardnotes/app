@@ -3,7 +3,7 @@ import { RootState } from '../../app/store'
 import { testRender } from '../../testUtils'
 
 import MergeTaskGroups from './MergeTaskGroups'
-import { tasksGroupMerged } from './tasks-slice'
+import { DEFAULT_SECTIONS, tasksGroupMerged } from './tasks-slice'
 
 const handleClose = jest.fn()
 
@@ -23,6 +23,7 @@ it('renders the alert dialog when no groups are available to merge', () => {
               createdAt: new Date(),
             },
           ],
+          sections: DEFAULT_SECTIONS,
         },
       ],
     },
@@ -55,6 +56,7 @@ it('renders the alert dialog when there are groups available to merge', () => {
               createdAt: new Date(),
             },
           ],
+          sections: DEFAULT_SECTIONS,
         },
         {
           name: 'Testing',
@@ -66,6 +68,7 @@ it('renders the alert dialog when there are groups available to merge', () => {
               createdAt: new Date(),
             },
           ],
+          sections: DEFAULT_SECTIONS,
         },
         {
           name: 'Tests',
@@ -77,6 +80,7 @@ it('renders the alert dialog when there are groups available to merge', () => {
               createdAt: new Date(),
             },
           ],
+          sections: DEFAULT_SECTIONS,
         },
       ],
     },
@@ -117,6 +121,7 @@ it('should close the dialog if no group is selected and the Merge button is clic
               createdAt: new Date(),
             },
           ],
+          sections: DEFAULT_SECTIONS,
         },
         {
           name: 'Testing',
@@ -128,6 +133,7 @@ it('should close the dialog if no group is selected and the Merge button is clic
               createdAt: new Date(),
             },
           ],
+          sections: DEFAULT_SECTIONS,
         },
         {
           name: 'Tests',
@@ -139,6 +145,7 @@ it('should close the dialog if no group is selected and the Merge button is clic
               createdAt: new Date(),
             },
           ],
+          sections: DEFAULT_SECTIONS,
         },
       ],
     },
@@ -179,6 +186,7 @@ it('should dispatch the action to merge groups', () => {
               createdAt: new Date(),
             },
           ],
+          sections: DEFAULT_SECTIONS,
         },
         {
           name: 'Testing',
@@ -190,6 +198,7 @@ it('should dispatch the action to merge groups', () => {
               createdAt: new Date(),
             },
           ],
+          sections: DEFAULT_SECTIONS,
         },
         {
           name: 'Tests',
@@ -201,6 +210,7 @@ it('should dispatch the action to merge groups', () => {
               createdAt: new Date(),
             },
           ],
+          sections: DEFAULT_SECTIONS,
         },
       ],
     },

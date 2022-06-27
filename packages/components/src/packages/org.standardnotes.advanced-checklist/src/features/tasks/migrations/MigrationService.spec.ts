@@ -1,3 +1,4 @@
+import { DEFAULT_SECTIONS, TasksState } from '../tasks-slice'
 import MigrationService from './MigrationService'
 
 describe('MigrationService', () => {
@@ -40,20 +41,19 @@ describe('MigrationService', () => {
     const migrationService = new MigrationService()
     const result = migrationService.performMigrations(testData)
 
-    expect(result).toMatchObject(
-      expect.objectContaining({
-        schemaVersion: '1.0.1',
-        groups: [
-          expect.objectContaining({
-            ...testData.groups[0],
-            collapsed: {
-              group: true,
-            },
-          }),
-          testData.groups[1],
-        ],
-      }),
-    )
+    expect(result).toEqual<TasksState>({
+      schemaVersion: '1.0.1',
+      groups: [
+        {
+          ...testData.groups[0],
+          sections: DEFAULT_SECTIONS,
+        },
+        {
+          ...testData.groups[1],
+          sections: DEFAULT_SECTIONS,
+        },
+      ],
+    })
   })
 
   it('should do nothing if latest version', () => {

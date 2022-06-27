@@ -3,10 +3,10 @@ import styled from 'styled-components'
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { getPercentage } from '../../common/utils'
-import { GroupPayload, tasksGroupCollapsed } from './tasks-slice'
+import { GroupModel, tasksGroupCollapsed } from './tasks-slice'
 
 import CreateTask from './CreateTask'
-import TaskItemList from './TaskItemList'
+import TaskSectionList from './TaskSectionList'
 
 import TaskGroupOptions from './TaskGroupOptions'
 
@@ -31,7 +31,7 @@ const CollapsableContainer = styled.div<CollapsableContainerProps>`
 `
 
 type TaskGroupProps = {
-  group: GroupPayload
+  group: GroupModel
   isDragging: boolean
   isLast?: boolean
   style?: React.CSSProperties
@@ -58,7 +58,7 @@ const TaskGroup: React.FC<TaskGroupProps> = ({
   const totalTasks = group.tasks.length
   const percentageCompleted = getPercentage(completedTasks, totalTasks)
 
-  const [collapsed, setCollapsed] = useState<boolean>(!!group.collapsed?.group)
+  const [collapsed, setCollapsed] = useState<boolean>(!!group.collapsed)
 
   const canEdit = useAppSelector((state) => state.settings.canEdit)
 
@@ -117,7 +117,7 @@ const TaskGroup: React.FC<TaskGroupProps> = ({
 
       <CollapsableContainer collapsed={collapsed}>
         <CreateTask group={group} />
-        <TaskItemList group={group} />
+        <TaskSectionList group={group} />
       </CollapsableContainer>
     </TaskGroupContainer>
   )

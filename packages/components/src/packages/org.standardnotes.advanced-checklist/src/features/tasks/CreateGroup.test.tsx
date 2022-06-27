@@ -3,7 +3,7 @@ import { RootState } from '../../app/store'
 
 import { testRender } from '../../testUtils'
 import CreateGroup from './CreateGroup'
-import { tasksGroupAdded } from './tasks-slice'
+import { DEFAULT_SECTIONS, tasksGroupAdded } from './tasks-slice'
 
 const defaultTasksState = {
   tasks: {
@@ -12,6 +12,7 @@ const defaultTasksState = {
       {
         name: 'test',
         tasks: [],
+        sections: DEFAULT_SECTIONS,
       },
     ],
   },

@@ -6,9 +6,9 @@ export const LATEST_SCHEMA_VERSION = '1.0.1'
 
 export type TasksState = {
   schemaVersion: string
-  groups: GroupPayload[]
+  groups: GroupModel[]
   initialized?: boolean
-  legacyContent?: GroupPayload
+  legacyContent?: GroupModel
   lastError?: string
 }
 
@@ -17,7 +17,7 @@ const initialState: TasksState = {
   groups: [],
 }
 
-export type TaskPayload = {
+export type TaskModel = {
   id: string
   description: string
   completed?: boolean
@@ -26,18 +26,30 @@ export type TaskPayload = {
   completedAt?: Date
 }
 
-type CollapsedState = {
-  group?: boolean
-  open?: boolean
-  completed?: boolean
+export type SectionModel = {
+  id: string
+  name: string
+  collapsed?: boolean
 }
 
-export type GroupPayload = {
+export const DEFAULT_SECTIONS = [
+  {
+    id: 'open-tasks',
+    name: 'Open tasks',
+  },
+  {
+    id: 'completed-tasks',
+    name: 'Completed tasks',
+  },
+]
+
+export type GroupModel = {
   name: string
-  collapsed?: CollapsedState
+  collapsed?: boolean
   draft?: string
   lastActive?: Date
-  tasks: TaskPayload[]
+  tasks: TaskModel[]
+  sections: SectionModel[]
 }
 
 const tasksSlice = createSlice({
@@ -165,6 +177,7 @@ const tasksSlice = createSlice({
       state.groups.push({
         name: groupName,
         tasks: [],
+        sections: DEFAULT_SECTIONS,
       })
     },
     tasksGroupReordered(
@@ -230,7 +243,7 @@ const tasksSlice = createSlice({
       state,
       action: PayloadAction<{
         groupName: string
-        type: keyof CollapsedState
+        type: 'group' | 'open-tasks' | 'completed-tasks' | string
         collapsed: boolean
       }>,
     ) {
@@ -239,10 +252,15 @@ const tasksSlice = createSlice({
       if (!group) {
         return
       }
-      group.collapsed = {
-        ...(group.collapsed ?? {}),
-        [type]: collapsed,
+      if (type === 'group') {
+        group.collapsed = collapsed
+        return
       }
+      const section = group.sections.find((item) => item.id === type)
+      if (!section) {
+        return
+      }
+      section.collapsed = collapsed
     },
     tasksGroupDraft(
       state,

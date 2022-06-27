@@ -1,4 +1,4 @@
-import './TasksContainer.scss'
+import './TasksSection.scss'
 
 import React, { useState } from 'react'
 import { Draggable, DraggingStyle, Droppable, NotDraggingStyle } from 'react-beautiful-dnd'
@@ -7,7 +7,7 @@ import styled from 'styled-components'
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { RoundButton, SubTitle } from '../../common/components'
-import { GroupPayload, TaskPayload, tasksGroupCollapsed } from './tasks-slice'
+import { SectionModel, TaskModel, tasksGroupCollapsed } from './tasks-slice'
 
 import { ChevronDownIcon, ChevronUpIcon } from '../../common/components/icons'
 import TaskItem from './TaskItem'
@@ -30,12 +30,12 @@ const InnerTasksContainer = styled.div<{ collapsed: boolean }>`
   }
 `
 
-const OuterContainer = styled.div<{ type: ContainerType; items: number; collapsed: boolean }>`
-  margin-bottom: ${({ type, items, collapsed }) => (type === 'open' && items > 0 && !collapsed ? '10px' : '0')};
+const OuterContainer = styled.div<{ addMargin: boolean; items: number; collapsed: boolean }>`
+  margin-bottom: ${({ addMargin, items, collapsed }) => (addMargin && items > 0 && !collapsed ? '10px' : '0')};
 `
 
-const ChildrenContainer = styled.div<{ type: ContainerType; items: number; collapsed: boolean }>`
-  margin-top: ${({ type, items, collapsed }) => (type === 'completed' && items > 0 ? '15px' : '0')};
+const ChildrenContainer = styled.div<{ addMargin: boolean; items: number }>`
+  margin-top: ${({ addMargin, items }) => (addMargin && items > 0 ? '15px' : '0')};
 `
 
 const Wrapper = styled.div`
@@ -50,43 +50,44 @@ const getItemStyle = (isDragging: boolean, draggableStyle?: DraggingStyle | NotD
   }),
 })
 
-type ContainerType = 'open' | 'completed'
-
-type TasksContainerProps = {
-  group: GroupPayload
-  tasks: TaskPayload[]
-  type: ContainerType
+type TasksSectionProps = {
+  groupName: string
+  tasks: TaskModel[]
+  section: SectionModel
   testId?: string
 }
 
-const TasksContainer: React.FC<TasksContainerProps> = ({ group, tasks, type, testId, children }) => {
+const TasksSection: React.FC<TasksSectionProps> = ({ groupName, tasks, section, testId, children }) => {
   const dispatch = useAppDispatch()
   const canEdit = useAppSelector((state) => state.settings.canEdit)
-  const droppableId = `${type}-tasks-droppable`
+  const droppableId = `${section.id}-droppable`
 
-  const [collapsed, setCollapsed] = useState<boolean>(
-    type === 'open' ? !!group.collapsed?.open : !!group.collapsed?.completed,
-  )
+  const [collapsed, setCollapsed] = useState<boolean>(!!section.collapsed)
 
   const handleCollapse = () => {
-    dispatch(tasksGroupCollapsed({ groupName: group.name, type, collapsed: !collapsed }))
+    dispatch(tasksGroupCollapsed({ groupName, type: section.id, collapsed: !collapsed }))
     setCollapsed(!collapsed)
   }
 
   return (
-    <OuterContainer data-testid={testId} type={type} items={tasks.length} collapsed={collapsed}>
+    <OuterContainer
+      data-testid={testId}
+      addMargin={section.id === 'open-tasks'}
+      items={tasks.length}
+      collapsed={collapsed}
+    >
       <Droppable droppableId={droppableId} isDropDisabled={!canEdit}>
         {(provided) => (
           <Wrapper>
             <SectionHeader>
-              <SubTitle>{type} tasks</SubTitle>
+              <SubTitle>{section.name}</SubTitle>
               <RoundButton onClick={handleCollapse} size="small">
                 {!collapsed ? <ChevronUpIcon /> : <ChevronDownIcon />}
               </RoundButton>
             </SectionHeader>
             <InnerTasksContainer
               {...provided.droppableProps}
-              className={`${type}-tasks-container`}
+              className={`${section.id}-container`}
               collapsed={collapsed}
               ref={provided.innerRef}
             >
@@ -146,7 +147,7 @@ const TasksContainer: React.FC<TasksContainerProps> = ({ group, tasks, type, tes
                               <TaskItem
                                 key={`task-item-${task.id}`}
                                 task={task}
-                                groupName={group.name}
+                                groupName={groupName}
                                 innerRef={innerRef}
                                 {...dragHandleProps}
                               />
@@ -160,7 +161,7 @@ const TasksContainer: React.FC<TasksContainerProps> = ({ group, tasks, type, tes
               </TransitionGroup>
               {provided.placeholder}
             </InnerTasksContainer>
-            <ChildrenContainer type={type} items={tasks.length} collapsed={collapsed}>
+            <ChildrenContainer addMargin={section.id === 'completed-tasks'} items={tasks.length}>
               {children}
             </ChildrenContainer>
           </Wrapper>
@@ -170,4 +171,4 @@ const TasksContainer: React.FC<TasksContainerProps> = ({ group, tasks, type, tes
   )
 }
 
-export default TasksContainer
+export default TasksSection

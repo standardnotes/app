@@ -3,7 +3,7 @@ import { RootState } from '../../app/store'
 import { testRender } from '../../testUtils'
 
 import RenameTaskGroups from './RenameTaskGroups'
-import { tasksGroupRenamed } from './tasks-slice'
+import { DEFAULT_SECTIONS, tasksGroupRenamed } from './tasks-slice'
 
 const handleClose = jest.fn()
 
@@ -23,6 +23,7 @@ it('renders the alert dialog with an input box', () => {
               createdAt: new Date(),
             },
           ],
+          sections: DEFAULT_SECTIONS,
         },
       ],
     },
@@ -55,6 +56,7 @@ it('should dispatch the action to merge groups', () => {
               createdAt: new Date(),
             },
           ],
+          sections: DEFAULT_SECTIONS,
         },
         {
           name: 'Testing',
@@ -66,6 +68,7 @@ it('should dispatch the action to merge groups', () => {
               createdAt: new Date(),
             },
           ],
+          sections: DEFAULT_SECTIONS,
         },
       ],
     },
@@ -118,6 +121,7 @@ it('should dispatch the action to merge groups on Enter press', () => {
               createdAt: new Date(),
             },
           ],
+          sections: DEFAULT_SECTIONS,
         },
         {
           name: 'Testing',
@@ -129,6 +133,7 @@ it('should dispatch the action to merge groups on Enter press', () => {
               createdAt: new Date(),
             },
           ],
+          sections: DEFAULT_SECTIONS,
         },
       ],
     },

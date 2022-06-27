@@ -1,3 +1,4 @@
+import { DEFAULT_SECTIONS } from '../../tasks-slice'
 import BaseMigration, { PartialData } from '../BaseMigration'
 
 class Migration1_0_1 extends BaseMigration {
@@ -6,13 +7,9 @@ class Migration1_0_1 extends BaseMigration {
   }
 
   protected override upgrade(data: PartialData): PartialData {
-    const groups = data.groups.map(({ collapsed, ...group }) => ({
-      ...group,
-      ...(collapsed && {
-        collapsed: {
-          group: Boolean(collapsed),
-        },
-      }),
+    const groups = data.groups.map((item) => ({
+      ...item,
+      sections: DEFAULT_SECTIONS,
     }))
     return {
       schemaVersion: this.version,
