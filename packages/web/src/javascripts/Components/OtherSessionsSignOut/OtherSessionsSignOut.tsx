@@ -3,6 +3,7 @@ import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/al
 import { WebApplication } from '@/Application/Application'
 import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
+import Button from '@/Components/Button/Button'
 
 type Props = {
   application: WebApplication
@@ -34,15 +35,13 @@ const ConfirmOtherSessionsSignOut = observer(({ application, viewControllerManag
                   </p>
                 </AlertDialogDescription>
                 <div className="flex my-1 mt-4 gap-2">
-                  <button
-                    className="bg-neutral text-info-contrast font-bold px-2.5 py-2 text-xs"
-                    ref={cancelRef}
-                    onClick={closeDialog}
-                  >
+                  <Button primary small colorStyle="neutral" ref={cancelRef} onClick={closeDialog}>
                     Cancel
-                  </button>
-                  <button
-                    className="bg-danger text-info-contrast font-bold px-2.5 py-2 text-xs"
+                  </Button>
+                  <Button
+                    primary
+                    small
+                    colorStyle="danger"
                     onClick={() => {
                       application.revokeAllOtherSessions().catch(console.error)
                       closeDialog()
@@ -52,7 +51,7 @@ const ConfirmOtherSessionsSignOut = observer(({ application, viewControllerManag
                     }}
                   >
                     End Sessions
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>

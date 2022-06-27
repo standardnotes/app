@@ -9,6 +9,7 @@ import ModalDialog from '../Shared/ModalDialog'
 import ModalDialogLabel from '../Shared/ModalDialogLabel'
 import ModalDialogDescription from '../Shared/ModalDialogDescription'
 import Spinner from '@/Components/Spinner/Spinner'
+import Button from '@/Components/Button/Button'
 
 type Session = RemoteSession & {
   revoking?: true
@@ -133,13 +134,15 @@ const SessionsModalContent: FunctionComponent<{
                       ) : (
                         <>
                           <p>Signed in on {formatter.format(session.updated_at)}</p>
-                          <button
-                            className="bg-danger text-info-contrast font-bold px-2.5 py-2 text-xs"
+                          <Button
+                            primary
+                            small
+                            colorStyle="danger"
                             disabled={session.revoking}
                             onClick={() => setRevokingSessionUuid(session.uuid)}
                           >
                             <span>Revoke</span>
-                          </button>
+                          </Button>
                         </>
                       )}
                     </li>
@@ -170,22 +173,26 @@ const SessionsModalContent: FunctionComponent<{
                       <p>{SessionStrings.RevokeText}</p>
                     </AlertDialogDescription>
                     <div className="flex my-1 gap-2">
-                      <button
-                        className="bg-neutral text-info-contrast font-bold px-2.5 py-2 text-xs"
+                      <Button
+                        primary
+                        small
+                        colorStyle="neutral"
                         ref={cancelRevokeRef}
                         onClick={closeRevokeSessionAlert}
                       >
                         <span>{SessionStrings.RevokeCancelButton}</span>
-                      </button>
-                      <button
-                        className="bg-danger text-info-contrast font-bold px-2.5 py-2 text-xs"
+                      </Button>
+                      <Button
+                        primary
+                        small
+                        colorStyle="danger"
                         onClick={() => {
                           closeRevokeSessionAlert()
                           revokeSession(confirmRevokingSessionUuid).catch(console.error)
                         }}
                       >
                         <span>{SessionStrings.RevokeConfirmButton}</span>
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 </div>

@@ -20,6 +20,8 @@ const ProtectedItemOverlay = ({ viewControllerManager, onViewItem, hasProtection
       <div className="mt-4 flex gap-3">
         {!hasProtectionSources && (
           <Button
+            primary
+            small
             onClick={() => {
               viewControllerManager.accountMenuController.setShow(true)
             }}
@@ -27,7 +29,9 @@ const ProtectedItemOverlay = ({ viewControllerManager, onViewItem, hasProtection
             Open account menu
           </Button>
         )}
-        <Button onClick={onViewItem}>{hasProtectionSources ? 'Authenticate' : `View ${itemType}`}</Button>
+        <Button small onClick={onViewItem}>
+          {hasProtectionSources ? 'Authenticate' : `View ${itemType}`}
+        </Button>
       </div>
     </div>
   )

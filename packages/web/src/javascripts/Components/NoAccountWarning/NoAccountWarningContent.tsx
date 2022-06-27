@@ -3,6 +3,7 @@ import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuCont
 import { NoAccountWarningController } from '@/Controllers/NoAccountWarningController'
 import { observer } from 'mobx-react-lite'
 import { MouseEventHandler, useCallback } from 'react'
+import Button from '@/Components/Button/Button'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -26,12 +27,9 @@ const NoAccountWarningContent = ({ accountMenuController, noAccountWarningContro
     <div className="mt-4 p-4 rounded-md shadow grid grid-cols-1">
       <h1 className="sk-h3 m-0 font-semibold text-sm">Data not backed up</h1>
       <p className="m-0 mt-1 col-start-1 col-end-3 text-sm">Sign in or register to back up your notes.</p>
-      <button
-        className="px-2.5 py-2 bg-info text-info-contrast font-semibold text-xs rounded mt-3 col-start-1 col-end-3 justify-self-start"
-        onClick={showAccountMenu}
-      >
+      <Button primary small className="mt-3 col-start-1 col-end-3 justify-self-start" onClick={showAccountMenu}>
         Open Account menu
-      </button>
+      </Button>
       <button
         onClick={hideWarning}
         title="Ignore warning"

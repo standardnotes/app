@@ -6,6 +6,7 @@ import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { isDesktopApplication } from '@/Utils'
+import Button from '@/Components/Button/Button'
 
 type Props = {
   application: WebApplication
@@ -83,15 +84,13 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewContro
                 )}
 
                 <div className="flex my-1 mt-4 gap-2">
-                  <button
-                    className="bg-neutral text-info-contrast font-bold px-2.5 py-2 text-xs"
-                    ref={cancelRef}
-                    onClick={closeDialog}
-                  >
+                  <Button primary small colorStyle="neutral" ref={cancelRef} onClick={closeDialog}>
                     Cancel
-                  </button>
-                  <button
-                    className="bg-danger text-info-contrast font-bold px-2.5 py-2 text-xs"
+                  </Button>
+                  <Button
+                    primary
+                    small
+                    colorStyle="danger"
                     onClick={() => {
                       if (deleteLocalBackups) {
                         application.signOutAndDeleteLocalBackups().catch(console.error)
@@ -102,7 +101,7 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewContro
                     }}
                   >
                     {application.hasAccount() ? 'Sign Out' : 'Delete Workspace'}
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
