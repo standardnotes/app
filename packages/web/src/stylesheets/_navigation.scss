@@ -68,6 +68,7 @@ $content-horizontal-padding: 16px;
     cursor: pointer;
     transition: height 0.1s ease-in-out;
     position: relative;
+    width: 100%;
 
     > .tag-info {
       display: flex;
