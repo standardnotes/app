@@ -26,17 +26,12 @@ const SignOutView: FunctionComponent<Props> = observer(({ application, viewContr
           <div className="flex flex-row mt-3">
             <Button
               className="mr-3"
-              variant="normal"
               label="Sign out other sessions"
               onClick={() => {
                 viewControllerManager.accountMenuController.setOtherSessionsSignOut(true)
               }}
             />
-            <Button
-              variant="normal"
-              label="Manage sessions"
-              onClick={() => viewControllerManager.openSessionsModal()}
-            />
+            <Button label="Manage sessions" onClick={() => viewControllerManager.openSessionsModal()} />
           </div>
         </PreferencesSegment>
         <HorizontalSeparator classes="my-4" />
@@ -45,7 +40,7 @@ const SignOutView: FunctionComponent<Props> = observer(({ application, viewContr
           <Text>Remove all data related to the current workspace from the application.</Text>
           <Button
             className="mt-3"
-            dangerStyle={true}
+            colorStyle="danger"
             label="Sign out workspace"
             onClick={() => {
               viewControllerManager.accountMenuController.setSigningOut(true)

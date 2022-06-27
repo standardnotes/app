@@ -22,7 +22,7 @@ const FilePreviewError = ({ file, filesController, isFilePreviewable, tryAgainCa
           </div>
           <div className="flex items-center">
             <Button
-              variant="primary"
+              primary
               className="mr-3"
               onClick={() => {
                 tryAgainCallback()
@@ -31,7 +31,6 @@ const FilePreviewError = ({ file, filesController, isFilePreviewable, tryAgainCa
               Try again
             </Button>
             <Button
-              variant="normal"
               onClick={() => {
                 filesController.downloadFile(file).catch(console.error)
               }}
@@ -46,7 +45,7 @@ const FilePreviewError = ({ file, filesController, isFilePreviewable, tryAgainCa
             To view this file, download it and open it using another application.
           </div>
           <Button
-            variant="primary"
+            primary
             onClick={() => {
               filesController.downloadFile(file).catch(console.error)
             }}

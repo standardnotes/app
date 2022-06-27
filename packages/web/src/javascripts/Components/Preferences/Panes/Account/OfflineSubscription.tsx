@@ -101,7 +101,7 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application }) => {
             )}
             {hasUserPreviouslyStoredCode && (
               <Button
-                dangerStyle={true}
+                colorStyle="danger"
                 label="Remove offline key"
                 onClick={() => {
                   handleRemoveClick().catch(console.error)
@@ -111,7 +111,7 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application }) => {
             {!hasUserPreviouslyStoredCode && !isSuccessfullyActivated && (
               <Button
                 label={'Submit'}
-                variant="primary"
+                primary
                 disabled={activationCode === ''}
                 onClick={(event) => handleSubscriptionCodeSubmit(event)}
               />

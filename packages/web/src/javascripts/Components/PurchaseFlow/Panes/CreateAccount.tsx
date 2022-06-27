@@ -175,7 +175,7 @@ const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, applic
           </div>
           <Button
             className="py-2.5 mb-4 md:mb-0"
-            variant="primary"
+            primary
             label={isCreatingAccount ? 'Creating account...' : 'Create account'}
             onClick={handleCreateAccount}
             disabled={isCreatingAccount}

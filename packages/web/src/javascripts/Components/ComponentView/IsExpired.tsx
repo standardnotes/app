@@ -1,5 +1,7 @@
 import { FeatureStatus } from '@standardnotes/snjs'
 import { FunctionComponent } from 'react'
+import Button from '@/Components/Button/Button'
+import IndicatorCircle from '../IndicatorCircle/IndicatorCircle'
 
 type Props = {
   expiredDate: string
@@ -24,24 +26,20 @@ const statusString = (featureStatus: FeatureStatus, expiredDate: string, compone
 const IsExpired: FunctionComponent<Props> = ({ expiredDate, featureStatus, componentName, manageSubscription }) => {
   return (
     <div className={'sn-component'}>
-      <div className={'sk-app-bar no-edges no-top-edge dynamic-height'}>
+      <div className="flex justify-between items-center w-full min-h-[1.625rem] py-2.5 px-2 bg-contrast text-text border-b border-border select-none">
         <div className={'left'}>
-          <div className={'sk-app-bar-item'}>
-            <div className={'sk-app-bar-item-column'}>
-              <div className={'sk-circle danger small'} />
-            </div>
-            <div className={'sk-app-bar-item-column'}>
-              <div>
-                <strong>{statusString(featureStatus, expiredDate, componentName)}</strong>
-                <div className={'sk-p'}>{componentName} is in a read-only state.</div>
-              </div>
+          <div className="flex items-center">
+            <IndicatorCircle style="danger" />
+            <div className="ml-2">
+              <strong>{statusString(featureStatus, expiredDate, componentName)}</strong>
+              <div className={'sk-p'}>{componentName} is in a read-only state.</div>
             </div>
           </div>
         </div>
         <div className={'right'}>
-          <div className={'sk-app-bar-item'} onClick={() => manageSubscription()}>
-            <button className={'sn-button small success'}>Manage Subscription</button>
-          </div>
+          <Button onClick={manageSubscription} primary colorStyle="success" small>
+            Manage subscription
+          </Button>
         </div>
       </div>
     </div>

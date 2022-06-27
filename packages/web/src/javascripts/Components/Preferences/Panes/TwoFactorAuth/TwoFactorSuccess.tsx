@@ -21,7 +21,7 @@ const TwoFactorSuccess: FunctionComponent<Props> = ({ activation: act }) => (
       </div>
     </ModalDialogDescription>
     <ModalDialogButtons>
-      <Button className="min-w-20" variant="primary" label="Finish" onClick={act.finishActivation} />
+      <Button className="min-w-20" primary label="Finish" onClick={act.finishActivation} />
     </ModalDialogButtons>
   </ModalDialog>
 )

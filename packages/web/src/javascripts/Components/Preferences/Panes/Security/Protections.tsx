@@ -83,7 +83,7 @@ const Protections: FunctionComponent<Props> = ({ application }) => {
           require additional authentication such as entering your account password or application passcode.
         </Text>
         {protectionsDisabledUntil && (
-          <Button className="mt-3" variant="primary" label="End Unprotected Access" onClick={enableProtections} />
+          <Button className="mt-3" primary label="End Unprotected Access" onClick={enableProtections} />
         )}
       </PreferencesSegment>
     </PreferencesGroup>

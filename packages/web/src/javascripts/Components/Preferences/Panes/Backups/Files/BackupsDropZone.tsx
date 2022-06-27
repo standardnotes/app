@@ -164,7 +164,6 @@ const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
               </div>
               <div>
                 <Button
-                  variant="normal"
                   label="Choose"
                   className={'px-1 text-xs min-w-40'}
                   onClick={chooseRelatedBinaryFile}
@@ -180,7 +179,6 @@ const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
 
               <div>
                 <Button
-                  variant="normal"
                   label={isSavingAsDecrypted ? undefined : 'Save'}
                   className={'px-1 text-xs min-w-40'}
                   onClick={downloadBinaryFileAsDecrypted}

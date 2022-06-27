@@ -71,7 +71,6 @@ const ErroredItems: FunctionComponent<Props> = ({ viewControllerManager }: Props
         <div className="flex">
           <Button
             className="min-w-20 mt-3 mr-2"
-            variant="normal"
             label="Export all"
             onClick={() => {
               void app.getArchiveService().downloadEncryptedItems(erroredItems)
@@ -79,8 +78,7 @@ const ErroredItems: FunctionComponent<Props> = ({ viewControllerManager }: Props
           />
           <Button
             className="min-w-20 mt-3 mr-2"
-            variant="normal"
-            dangerStyle={true}
+            colorStyle="danger"
             label="Delete all"
             onClick={() => {
               void deleteItems(erroredItems)
@@ -102,7 +100,6 @@ const ErroredItems: FunctionComponent<Props> = ({ viewControllerManager }: Props
                   <div className="flex">
                     <Button
                       className="min-w-20 mt-3 mr-2"
-                      variant="normal"
                       label="Attempt decryption"
                       onClick={() => {
                         attemptDecryption(item)
@@ -110,7 +107,6 @@ const ErroredItems: FunctionComponent<Props> = ({ viewControllerManager }: Props
                     />
                     <Button
                       className="min-w-20 mt-3 mr-2"
-                      variant="normal"
                       label="Export"
                       onClick={() => {
                         void app.getArchiveService().downloadEncryptedItem(item)
@@ -118,8 +114,7 @@ const ErroredItems: FunctionComponent<Props> = ({ viewControllerManager }: Props
                     />
                     <Button
                       className="min-w-20 mt-3 mr-2"
-                      variant="normal"
-                      dangerStyle={true}
+                      colorStyle="danger"
                       label="Delete"
                       onClick={() => {
                         void deleteItem(item)

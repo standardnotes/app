@@ -48,8 +48,8 @@ const Verification: FunctionComponent<Props> = ({ activation: act }) => {
         {act.verificationStatus === 'invalid-secret' && (
           <div className="text-sm text-danger flex-grow">Incorrect secret key, please try again.</div>
         )}
-        <Button className="min-w-20" variant="normal" label="Back" onClick={act.openSaveSecretKey} />
-        <Button className="min-w-20" variant="primary" label="Next" onClick={act.enable2FA} />
+        <Button className="min-w-20" label="Back" onClick={act.openSaveSecretKey} />
+        <Button className="min-w-20" primary label="Next" onClick={act.enable2FA} />
       </ModalDialogButtons>
     </ModalDialog>
   )

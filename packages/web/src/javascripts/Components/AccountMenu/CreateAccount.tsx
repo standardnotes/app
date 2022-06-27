@@ -133,7 +133,7 @@ const CreateAccount: FunctionComponent<Props> = ({
           ref={passwordInputRef}
           value={password}
         />
-        <Button className="mt-1" label="Next" variant="primary" onClick={handleRegisterFormSubmit} fullWidth={true} />
+        <Button className="mt-1" label="Next" primary onClick={handleRegisterFormSubmit} fullWidth={true} />
       </form>
       <HorizontalSeparator classes="my-2" />
       <AdvancedOptions

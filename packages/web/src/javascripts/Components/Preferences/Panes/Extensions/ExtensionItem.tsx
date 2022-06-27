@@ -66,7 +66,6 @@ const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({ application, ext
         <div className="flex flex-row mt-2">
           <Button
             className="min-w-20"
-            variant="normal"
             label={isThirParty ? 'Uninstall' : 'Reset'}
             onClick={() => uninstall(extension)}
           />

@@ -130,12 +130,12 @@ const ConfirmPassword: FunctionComponent<Props> = ({
         />
         {error ? <div className="text-danger my-2">{error}</div> : null}
         <Button
+          primary
+          fullWidth
           className="mt-1 mb-3"
           label={isRegistering ? 'Creating account...' : 'Create account & sign in'}
-          variant="primary"
           onClick={handleConfirmFormSubmit}
           disabled={isRegistering}
-          fullWidth={true}
         />
         <Checkbox
           name="is-ephemeral"

@@ -40,7 +40,7 @@ const RevisionContentLocked: FunctionComponent<Props> = ({ subscriptionControlle
           . Learn more about our other plans to upgrade your history capacity.
         </div>
         <Button
-          variant="primary"
+          primary
           label="Discover plans"
           onClick={() => {
             if (window.plansUrl) {

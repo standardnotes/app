@@ -224,7 +224,7 @@ const ChallengeModal: FunctionComponent<Props> = ({
             />
           ))}
         </form>
-        <Button variant="primary" disabled={isProcessing} className="min-w-76 mt-1 mb-3.5" onClick={submit}>
+        <Button primary disabled={isProcessing} className="min-w-76 mt-1 mb-3.5" onClick={submit}>
           {isProcessing ? 'Generating Keys...' : 'Submit'}
         </Button>
         {shouldShowForgotPasscode && (

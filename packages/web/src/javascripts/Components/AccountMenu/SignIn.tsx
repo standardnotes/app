@@ -179,7 +179,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
         <Button
           className="mt-1 mb-3"
           label={isSigningIn ? 'Signing in...' : 'Sign in'}
-          variant="primary"
+          primary
           onClick={handleSignInFormSubmit}
           disabled={isSigningIn}
           fullWidth={true}

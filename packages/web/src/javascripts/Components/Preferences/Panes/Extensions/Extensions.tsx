@@ -118,12 +118,7 @@ const Extensions: FunctionComponent<Props> = ({ application, extensionsLatestVer
                 setCustomUrl(value)
               }}
             />
-            <Button
-              className="min-w-20 mt-3"
-              variant="normal"
-              label="Install"
-              onClick={() => submitExtensionUrl(customUrl)}
-            />
+            <Button className="min-w-20 mt-3" label="Install" onClick={() => submitExtensionUrl(customUrl)} />
           </PreferencesSegment>
         )}
         {confirmableExtension && (

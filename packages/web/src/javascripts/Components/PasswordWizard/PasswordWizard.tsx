@@ -294,12 +294,7 @@ class PasswordWizard extends PureComponent<Props, State> {
                   )}
                 </div>
                 <div className="sk-panel-footer">
-                  <Button
-                    variant="primary"
-                    onClick={this.nextStep}
-                    disabled={this.state.lockContinue}
-                    className="min-w-20"
-                  >
+                  <Button primary onClick={this.nextStep} disabled={this.state.lockContinue} className="min-w-20">
                     {this.state.continueTitle}
                   </Button>
                 </div>

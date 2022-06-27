@@ -76,8 +76,8 @@ const SaveSecretKey: FunctionComponent<Props> = ({ activation: act }) => {
         </div>
       </ModalDialogDescription>
       <ModalDialogButtons>
-        <Button className="min-w-20" variant="normal" label="Back" onClick={() => act.openScanQRCode()} />
-        <Button className="min-w-20" variant="primary" label="Next" onClick={() => act.openVerification()} />
+        <Button className="min-w-20" label="Back" onClick={() => act.openScanQRCode()} />
+        <Button className="min-w-20" primary label="Next" onClick={() => act.openVerification()} />
       </ModalDialogButtons>
     </ModalDialog>
   )

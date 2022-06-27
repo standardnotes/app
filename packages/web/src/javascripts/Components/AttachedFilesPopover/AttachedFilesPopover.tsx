@@ -161,7 +161,7 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
                 ? 'No files attached to this note'
                 : 'No files found in this account'}
             </div>
-            <Button variant="normal" onClick={handleAttachFilesClick} onBlur={closeOnBlur}>
+            <Button onClick={handleAttachFilesClick} onBlur={closeOnBlur}>
               {currentTab === PopoverTabs.AttachedFiles ? 'Attach' : 'Upload'} files
             </Button>
             <div className="text-xs text-passive-0 mt-3">Or drop your files here</div>

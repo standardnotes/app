@@ -91,18 +91,8 @@ const FileBackupsDesktop = ({ application, backupsService }: Props) => {
                 />
 
                 <div className="flex flex-row mt-2.5">
-                  <Button
-                    variant="normal"
-                    label="Open Backups Location"
-                    className={'mr-3 text-xs'}
-                    onClick={openBackupsLocation}
-                  />
-                  <Button
-                    variant="normal"
-                    label="Change Backups Location"
-                    className={'mr-3 text-xs'}
-                    onClick={changeBackupsLocation}
-                  />
+                  <Button label="Open Backups Location" className={'mr-3 text-xs'} onClick={openBackupsLocation} />
+                  <Button label="Change Backups Location" className={'mr-3 text-xs'} onClick={changeBackupsLocation} />
                 </div>
               </>
             </PreferencesSegment>

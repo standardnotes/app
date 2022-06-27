@@ -53,8 +53,8 @@ const ScanQRCode: FunctionComponent<Props> = ({ activation: act }) => {
         </div>
       </ModalDialogDescription>
       <ModalDialogButtons>
-        <Button className="min-w-20" variant="normal" label="Cancel" onClick={() => act.cancelActivation()} />
-        <Button className="min-w-20" variant="primary" label="Next" onClick={() => act.openSaveSecretKey()} />
+        <Button className="min-w-20" label="Cancel" onClick={() => act.cancelActivation()} />
+        <Button className="min-w-20" primary label="Next" onClick={() => act.openSaveSecretKey()} />
       </ModalDialogButtons>
     </ModalDialog>
   )

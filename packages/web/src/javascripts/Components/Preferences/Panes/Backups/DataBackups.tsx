@@ -177,14 +177,14 @@ const DataBackups = ({ application, viewControllerManager }: Props) => {
             </form>
           )}
 
-          <Button variant="normal" onClick={downloadDataArchive} label="Download backup" className="mt-2" />
+          <Button onClick={downloadDataArchive} label="Download backup" className="mt-2" />
         </PreferencesSegment>
         <HorizontalSeparator classes="my-4" />
         <PreferencesSegment>
           <Subtitle>Import a previously saved backup file</Subtitle>
 
           <div className="flex flex-row items-center mt-3">
-            <Button variant="normal" label="Import backup" onClick={handleImportFile} />
+            <Button label="Import backup" onClick={handleImportFile} />
             <input type="file" ref={fileInputRef} onChange={importFileSelected} className="hidden" />
             {isImportDataLoading && <Spinner className="ml-4" />}
           </div>

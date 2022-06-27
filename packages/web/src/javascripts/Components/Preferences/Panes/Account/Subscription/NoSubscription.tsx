@@ -34,7 +34,7 @@ const NoSubscription: FunctionComponent<Props> = ({ application }) => {
       <div className="flex">
         <LinkButton className="min-w-20 mt-3 mr-3" label="Learn More" link={window.plansUrl as string} />
         {application.hasAccount() && (
-          <Button className="min-w-20 mt-3" variant="primary" label="Subscribe" onClick={onPurchaseClick} />
+          <Button className="min-w-20 mt-3" primary label="Subscribe" onClick={onPurchaseClick} />
         )}
       </div>
     </>

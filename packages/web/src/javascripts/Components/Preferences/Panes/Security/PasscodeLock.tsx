@@ -184,7 +184,7 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
 
               {keyStorageInfo && <Text className="mb-3">{keyStorageInfo}</Text>}
 
-              {!showPasscodeForm && <Button label="Add passcode" onClick={handleAddPassCode} variant="primary" />}
+              {!showPasscodeForm && <Button label="Add passcode" onClick={handleAddPassCode} primary />}
             </>
           )}
 
@@ -211,8 +211,8 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
                 onChange={handleConfirmPasscodeChange}
                 placeholder="Confirm Passcode"
               />
-              <Button variant="primary" onClick={submitPasscodeForm} label="Set Passcode" className="mr-3 mt-3" />
-              <Button variant="normal" onClick={cancelPasscodeForm} label="Cancel" />
+              <Button primary onClick={submitPasscodeForm} label="Set Passcode" className="mr-3 mt-3" />
+              <Button onClick={cancelPasscodeForm} label="Cancel" />
             </form>
           )}
 
@@ -220,8 +220,8 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
             <>
               <Text>Passcode lock is enabled.</Text>
               <div className="flex flex-row mt-3">
-                <Button variant="normal" label="Change Passcode" onClick={changePasscodePressed} className="mr-3" />
-                <Button dangerStyle={true} label="Remove Passcode" onClick={removePasscodePressed} />
+                <Button label="Change Passcode" onClick={changePasscodePressed} className="mr-3" />
+                <Button colorStyle="danger" label="Remove Passcode" onClick={removePasscodePressed} />
               </div>
             </>
           )}

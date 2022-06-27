@@ -137,7 +137,7 @@ const SignIn: FunctionComponent<Props> = ({ viewControllerManager, application }
           </div>
           <Button
             className={`${isSigningIn ? 'min-w-30' : 'min-w-24'} py-2.5 mb-5`}
-            variant="primary"
+            primary
             label={isSigningIn ? 'Signing in...' : 'Sign in'}
             onClick={handleSignIn}
             disabled={isSigningIn}
