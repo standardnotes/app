@@ -24,11 +24,6 @@ var Editors = [
         static_files: __spreadArray(__spreadArray([], BaseEditorStaticFiles, true), ['vendor'], false),
     },
     {
-        identifier: 'org.standardnotes.advanced-markdown-editor',
-        path: 'Editors/org.standardnotes.advanced-markdown-editor',
-        static_files: __spreadArray([], BaseEditorStaticFiles, true),
-    },
-    {
         identifier: 'org.standardnotes.markdown-visual-editor',
         path: 'Editors/org.standardnotes.markdown-visual-editor',
         static_files: __spreadArray(__spreadArray([], BaseEditorStaticFiles, true), ['build'], false),
@@ -55,6 +50,11 @@ var Editors = [
     },
 ];
 var DeprecatedEditors = [
+    {
+        identifier: 'org.standardnotes.advanced-markdown-editor',
+        path: 'Editors/org.standardnotes.advanced-markdown-editor',
+        static_files: __spreadArray([], BaseEditorStaticFiles, true),
+    },
     {
         identifier: 'org.standardnotes.bold-editor',
         path: 'Deprecated/org.standardnotes.bold-editor',
