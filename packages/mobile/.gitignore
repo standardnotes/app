@@ -50,6 +50,7 @@ android-release.bundle.map
 app-release.aab
 
 *.bundle
+!Web.bundle
 ios-release.bundle.map
 
 # fastlane

@@ -1,3 +1,4 @@
+import { WebAppOptionEnabled } from '@Lib/constants'
 import { useSignedIn } from '@Lib/SnjsHelperHooks'
 import { useNavigation } from '@react-navigation/native'
 import { ButtonCell } from '@Root/Components/ButtonCell'
@@ -7,7 +8,7 @@ import { SectionHeader } from '@Root/Components/SectionHeader'
 import { TableSection } from '@Root/Components/TableSection'
 import { useSafeApplicationContext } from '@Root/Hooks/useSafeApplicationContext'
 import { ModalStackNavigationProp } from '@Root/ModalStack'
-import { SCREEN_MANAGE_SESSIONS, SCREEN_SETTINGS } from '@Root/Screens/screens'
+import { SCREEN_MANAGE_SESSIONS, SCREEN_SETTINGS, SCREEN_WEB_APP } from '@Root/Screens/screens'
 import { ButtonType, PrefKey } from '@standardnotes/snjs'
 import moment from 'moment'
 import React, { useCallback, useMemo, useState } from 'react'
@@ -182,6 +183,10 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
     )
   }, [application.alertService])
 
+  const openWebApp = useCallback(() => {
+    navigation.push(SCREEN_WEB_APP)
+  }, [navigation])
+
   return (
     <TableSection>
       <SectionHeader title={title} />
@@ -220,6 +225,10 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
         title={exporting ? 'Processing...' : 'Export Data'}
         onPress={onExportPress}
       />
+
+      {WebAppOptionEnabled && (
+        <ButtonCell testID="openWebApp" leftAligned title={'Open Web App'} onPress={() => openWebApp()} />
+      )}
 
       {!signedIn && (
         <SectionedAccessoryTableCell
