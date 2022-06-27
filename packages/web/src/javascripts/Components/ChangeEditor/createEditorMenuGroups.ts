@@ -54,7 +54,9 @@ export const createEditorMenuGroups = (application: WebApplication, editors: SNC
     .forEach((editorFeature) => {
       const notInstalled = !editors.find((editor) => editor.identifier === editorFeature.identifier)
       const isExperimental = application.features.isExperimentalFeature(editorFeature.identifier)
-      if (notInstalled && !isExperimental) {
+      const isDeprecated = editorFeature.deprecated
+      const isShowable = notInstalled && !isExperimental && !isDeprecated
+      if (isShowable) {
         editorItems[getEditorGroup(editorFeature)].push({
           name: editorFeature.name as string,
           isEntitled: false,
