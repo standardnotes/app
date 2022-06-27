@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.4.4](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.4.3...@standardnotes/components-meta@2.4.4) (2022-06-27)
+
+### Bug Fixes
+
+* theme path ([7d1b66a](https://github.com/standardnotes/app/commit/7d1b66a036743d918e7be678cd5c6c0611933891))
+
 ## [2.4.3](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.4.2...@standardnotes/components-meta@2.4.3) (2022-06-27)
 
 ### Bug Fixes
