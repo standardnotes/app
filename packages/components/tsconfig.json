@@ -4,8 +4,8 @@
     "baseUrl": ".",
     "rootDir": "src",
     "outDir": "dist",
-    "emitDeclarationOnly": true
+    "module": "node16"
   },
   "include": ["src"],
-  "exclude": ["dist", "node_modules", "src/packages"]
+  "exclude": ["dist", "node_modules", "src/Packages"]
 }

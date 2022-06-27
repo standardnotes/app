@@ -2,11 +2,9 @@ import fs from 'fs'
 import path from 'path'
 import crypto from 'crypto'
 import { spawnSync as spawn } from 'child_process'
-import { GetFeatures } from '@standardnotes/features/dist/Domain/Feature/Features.js'
-import { GetDeprecatedFeatures } from '@standardnotes/features/dist/Domain/Feature/Lists/DeprecatedFeatures.js'
 import zip from '@standardnotes/deterministic-zip'
 import minimatch from 'minimatch'
-
+import { Components } from '../dist/Components.js'
 import { fileURLToPath } from 'url'
 import { ensureDirExists, doesDirExist, emptyExistingDir } from '../../../scripts/ScriptUtils.mjs'
 
@@ -15,7 +13,7 @@ const __dirname = path.dirname(__filename)
 
 console.log('Beginning packaging procedure...')
 
-const SourceFilesPath = path.join(__dirname, '../src/packages')
+const SourceFilesPath = path.join(__dirname, '../src/Packages')
 const DistDir = path.join(__dirname, '../dist')
 const TmpDir = path.join(__dirname, '../tmp')
 const ZipsDir = path.join(DistDir, '/zips')
@@ -64,7 +62,7 @@ const copyFileOrDir = (src, dest, exludedFilesGlob) => {
 }
 
 const getComponentSrcPath = (feature) => {
-  return path.join(SourceFilesPath, feature.identifier)
+  return path.join(SourceFilesPath, feature.path)
 }
 
 const copyComponentAssets = async (feature, destination, exludedFilesGlob) => {
@@ -141,21 +139,15 @@ await (async () => {
   const args = process.argv[2] || ''
   const noZip = args.includes('--no-zip')
 
-  const featuresToProcess = GetFeatures().concat(GetDeprecatedFeatures())
-
   let index = 0
-  for (const feature of featuresToProcess) {
+  for (const feature of Components) {
     if (index === 0) {
       console.log('\n---\n')
     }
 
-    if (['SN|Component', 'SN|Theme'].includes(feature.content_type)) {
-      await packageFeature({ feature, noZip })
-    } else {
-      console.log('Feature is not component, not packaging', feature.identifier)
-    }
+    await packageFeature({ feature, noZip })
 
-    if (index !== featuresToProcess.length - 1) {
+    if (index !== Components.length - 1) {
       console.log('\n---\n')
     }
 
