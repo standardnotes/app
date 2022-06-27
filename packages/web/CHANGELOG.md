@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.26.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.26.0...@standardnotes/web@3.26.1) (2022-06-27)
+
+### Bug Fixes
+
+* don't show deprecated editors; add missing solarized dark theme ([ded2d18](https://github.com/standardnotes/app/commit/ded2d1866a43d3a2ffbacbb725a11e1f70c64067))
+
 # [3.26.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.25.0...@standardnotes/web@3.26.0) (2022-06-27)
 
 ### Features
