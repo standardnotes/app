@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/web",
-  "version": "3.24.5",
+  "version": "3.24.6",
   "license": "AGPL-3.0-or-later",
   "main": "dist/app.js",
   "author": "Standard Notes",
@@ -71,7 +71,7 @@
     "@standardnotes/icons": "workspace:*",
     "@standardnotes/services": "^1.13.20",
     "@standardnotes/sncrypto-web": "1.10.1",
-    "@standardnotes/snjs": "^2.117.8",
+    "@standardnotes/snjs": "^2.117.9",
     "@standardnotes/styles": "workspace:*",
     "@standardnotes/toast": "workspace:*",
     "@zip.js/zip.js": "^2.4.10",
