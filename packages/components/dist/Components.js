@@ -112,6 +112,11 @@ var Themes = [
         path: 'Themes/org.standardnotes.theme-titanium',
         static_files: BaseThemeStaticFiles,
     },
+    {
+        identifier: 'org.standardnotes.solarized-dark',
+        path: 'Themes/org.standardnotes.solarized-dark',
+        static_files: BaseThemeStaticFiles,
+    },
 ];
 var Components = __spreadArray(__spreadArray(__spreadArray([], Editors, true), DeprecatedEditors, true), Themes, true);
 exports.Components = Components;
