@@ -62,17 +62,10 @@ const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({ application, ext
 
       {isThirParty && localInstallable && <UseHosted offlineOnly={offlineOnly} toggleOfflineOnly={toggleOfflineOnly} />}
 
-      <>
-        <div className="min-h-2" />
-        <div className="flex flex-row">
-          <Button
-            className="min-w-20"
-            variant="normal"
-            label={isThirParty ? 'Uninstall' : 'Reset'}
-            onClick={() => uninstall(extension)}
-          />
-        </div>
-      </>
+      <div className="min-h-2" />
+      <div className="flex flex-row">
+        <Button className="min-w-20" variant="normal" label={'Uninstall'} onClick={() => uninstall(extension)} />
+      </div>
     </PreferencesSegment>
   )
 }
