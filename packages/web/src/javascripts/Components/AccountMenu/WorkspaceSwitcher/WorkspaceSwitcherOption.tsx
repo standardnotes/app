@@ -6,6 +6,8 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import WorkspaceSwitcherMenu from './WorkspaceSwitcherMenu'
+import MenuItem from '@/Components/Menu/MenuItem'
+import { MenuItemType } from '@/Components/Menu/MenuItemType'
 
 type Props = {
   mainApplicationGroup: ApplicationGroup
@@ -43,19 +45,19 @@ const WorkspaceSwitcherOption: FunctionComponent<Props> = ({ mainApplicationGrou
 
   return (
     <>
-      <button
-        ref={buttonRef}
-        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full text-sm justify-between focus:bg-info-backdrop focus:shadow-none"
+      <MenuItem
         tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
-        role="menuitem"
+        ref={buttonRef}
+        type={MenuItemType.IconButton}
         onClick={toggleMenu}
+        className="justify-between"
       >
         <div className="flex items-center">
           <Icon type="user-switch" className="text-neutral mr-2" />
           Switch workspace
         </div>
         <Icon type="chevron-right" className="text-neutral" />
-      </button>
+      </MenuItem>
       {isOpen && (
         <div
           ref={menuRef}
