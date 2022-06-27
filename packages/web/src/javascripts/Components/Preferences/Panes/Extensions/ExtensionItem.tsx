@@ -52,25 +52,21 @@ const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({ application, ext
 
   const localInstallable = extension.package_info.download_url
 
-  const isThirParty = 'identifier' in extension && application.features.isThirdPartyFeature(extension.identifier)
+  const isThirdParty = 'identifier' in extension && application.features.isThirdPartyFeature(extension.identifier)
 
   return (
     <PreferencesSegment classes={'mb-5'}>
-      <ExtensionInfoCell isThirdParty={isThirParty} extensionName={extensionName} changeName={changeExtensionName} />
+      <ExtensionInfoCell isThirdParty={isThirdParty} extensionName={extensionName} changeName={changeExtensionName} />
 
       <div className="my-1" />
 
-      {isThirParty && localInstallable && <UseHosted offlineOnly={offlineOnly} toggleOfflineOnly={toggleOfflineOnly} />}
+      {isThirdParty && localInstallable && (
+        <UseHosted offlineOnly={offlineOnly} toggleOfflineOnly={toggleOfflineOnly} />
+      )}
 
-      <>
-        <div className="flex flex-row mt-2">
-          <Button
-            className="min-w-20"
-            label={isThirParty ? 'Uninstall' : 'Reset'}
-            onClick={() => uninstall(extension)}
-          />
-        </div>
-      </>
+      <div className="flex flex-row mt-2">
+        <Button className="min-w-20" label={'Uninstall'} onClick={() => uninstall(extension)} />
+      </div>
     </PreferencesSegment>
   )
 }

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.25.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.24.8...@standardnotes/mobile@3.25.0) (2022-06-27)
+
+### Features
+
+* deprecated editors ([#1166](https://github.com/standardnotes/app/issues/1166)) ([60ca415](https://github.com/standardnotes/app/commit/60ca4150446f9a14bb6a31416686c6d07a7d0cd9))
+
 ## [3.24.8](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.24.7...@standardnotes/mobile@3.24.8) (2022-06-25)
 
 **Note:** Version bump only for package @standardnotes/mobile
