@@ -8,9 +8,9 @@ const Toggle: FunctionComponent<{
   setIsToggled: Dispatch<SetStateAction<boolean>>
 }> = ({ isToggled, setIsToggled }) => (
   <IconButton
-    className="w-5 h-5 p-0 justify-center sk-circle hover:bg-passive-4 color-neutral"
+    className="w-5 h-5 p-0 justify-center rounded-full hover:bg-passive-4 text-neutral"
     icon={isToggled ? 'eye-off' : 'eye'}
-    iconClassName="sn-icon--small"
+    iconClassName="w-3.5 h-3.5"
     title="Show/hide password"
     onClick={() => setIsToggled((isToggled) => !isToggled)}
     focusable={true}

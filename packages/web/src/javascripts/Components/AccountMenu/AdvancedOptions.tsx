@@ -98,12 +98,12 @@ const AdvancedOptions: FunctionComponent<Props> = ({
   return (
     <>
       <button
-        className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none font-bold"
+        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full text-sm focus:bg-info-backdrop focus:shadow-none font-bold"
         onClick={toggleShowAdvanced}
       >
         <div className="flex items-center">
           Advanced options
-          <Icon type="chevron-down" className="color-passive-1 ml-1" />
+          <Icon type="chevron-down" className="text-passive-1 ml-1" />
         </div>
       </button>
       {showAdvanced ? (
@@ -119,7 +119,7 @@ const AdvancedOptions: FunctionComponent<Props> = ({
               onChange={handleIsPrivateWorkspaceChange}
             />
             <a href="https://standardnotes.com/help/80" target="_blank" rel="noopener noreferrer" title="Learn more">
-              <Icon type="info" className="color-neutral" />
+              <Icon type="info" className="text-neutral" />
             </a>
           </div>
 
@@ -127,7 +127,7 @@ const AdvancedOptions: FunctionComponent<Props> = ({
             <>
               <DecoratedInput
                 className={'mb-2'}
-                left={[<Icon type="server" className="color-neutral" />]}
+                left={[<Icon type="server" className="text-neutral" />]}
                 type="text"
                 placeholder="Userphrase"
                 value={privateWorkspaceUserphrase}
@@ -136,7 +136,7 @@ const AdvancedOptions: FunctionComponent<Props> = ({
               />
               <DecoratedInput
                 className={'mb-2'}
-                left={[<Icon type="folder" className="color-neutral" />]}
+                left={[<Icon type="folder" className="text-neutral" />]}
                 type="text"
                 placeholder="Name"
                 value={privateWorkspaceName}
@@ -161,7 +161,7 @@ const AdvancedOptions: FunctionComponent<Props> = ({
                 rel="noopener noreferrer"
                 title="Learn more"
               >
-                <Icon type="info" className="color-neutral" />
+                <Icon type="info" className="text-neutral" />
               </a>
             </div>
           )}
@@ -175,7 +175,7 @@ const AdvancedOptions: FunctionComponent<Props> = ({
           />
           <DecoratedInput
             type="text"
-            left={[<Icon type="server" className="color-neutral" />]}
+            left={[<Icon type="server" className="text-neutral" />]}
             placeholder="https://api.standardnotes.com"
             value={server}
             onChange={handleSyncServerChange}

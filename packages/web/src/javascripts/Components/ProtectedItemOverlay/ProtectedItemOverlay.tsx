@@ -1,4 +1,5 @@
 import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import Button from '@/Components/Button/Button'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -14,22 +15,23 @@ const ProtectedItemOverlay = ({ viewControllerManager, onViewItem, hasProtection
 
   return (
     <div className="flex flex-col items-center justify-center text-center max-w-md">
-      <h1 className="text-2xl m-0 w-full">This {itemType} is protected</h1>
+      <h1 className="text-2xl m-0 w-full font-bold">This {itemType} is protected</h1>
       <p className="text-lg mt-2 w-full">{instructionText}</p>
       <div className="mt-4 flex gap-3">
         {!hasProtectionSources && (
-          <button
-            className="sn-button small info"
+          <Button
+            primary
+            small
             onClick={() => {
               viewControllerManager.accountMenuController.setShow(true)
             }}
           >
             Open account menu
-          </button>
+          </Button>
         )}
-        <button className="sn-button small outlined normal-focus-brightness" onClick={onViewItem}>
+        <Button small onClick={onViewItem}>
           {hasProtectionSources ? 'Authenticate' : `View ${itemType}`}
-        </button>
+        </Button>
       </div>
     </div>
   )

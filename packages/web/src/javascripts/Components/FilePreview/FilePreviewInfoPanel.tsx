@@ -9,7 +9,7 @@ type Props = {
 
 const FilePreviewInfoPanel: FunctionComponent<Props> = ({ file }) => {
   return (
-    <div className="flex flex-col min-w-70 p-4 border-0 border-l-1px border-solid border-main">
+    <div className="flex flex-col min-w-70 p-4 border-0 border-l border-solid border-border">
       <div className="flex items-center mb-4">
         <Icon type="info" className="mr-2" />
         <div className="font-semibold">File information</div>

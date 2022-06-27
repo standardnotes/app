@@ -1,11 +1,15 @@
 import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { SNApplication, SessionStrings, UuidString, isNullOrUndefined, RemoteSession } from '@standardnotes/snjs'
 import { FunctionComponent, useState, useEffect, useRef, useMemo } from 'react'
-import { Dialog } from '@reach/dialog'
 import { Alert } from '@reach/alert'
 import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
 import { WebApplication } from '@/Application/Application'
 import { observer } from 'mobx-react-lite'
+import ModalDialog from '../Shared/ModalDialog'
+import ModalDialogLabel from '../Shared/ModalDialogLabel'
+import ModalDialogDescription from '../Shared/ModalDialogDescription'
+import Spinner from '@/Components/Spinner/Spinner'
+import Button from '@/Components/Button/Button'
 
 type Session = RemoteSession & {
   revoking?: true
@@ -100,66 +104,62 @@ const SessionsModalContent: FunctionComponent<{
 
   return (
     <>
-      <Dialog onDismiss={close} className="sessions-modal h-90vh">
-        <div className="sk-modal-content">
-          <div className="sn-component">
-            <div className="sk-panel">
-              <div className="sk-panel-header">
-                <div className="sk-panel-header-title">Active Sessions</div>
-                <div className="buttons">
-                  <button className="sk-a close-button info" disabled={refreshing} onClick={refresh}>
-                    Refresh
-                  </button>
-                  <button className="sk-a close-button info" onClick={close}>
-                    Close
-                  </button>
-                </div>
-              </div>
-              <div className="sk-panel-content overflow-y-auto">
-                {refreshing ? (
-                  <>
-                    <div className="sk-spinner small info"></div>
-                    <h2 className="sk-p sessions-modal-refreshing">Loading sessions</h2>
-                  </>
-                ) : (
-                  <>
-                    {errorMessage && <Alert className="sk-p bold">{errorMessage}</Alert>}
-                    {sessions.length > 0 && (
-                      <ul>
-                        {sessions.map((session) => (
-                          <li key={session.uuid}>
-                            <h2>{session.device_info}</h2>
-                            {session.current ? (
-                              <span className="info bold">Current session</span>
-                            ) : (
-                              <>
-                                <p>Signed in on {formatter.format(session.updated_at)}</p>
-                                <button
-                                  className="sn-button small danger sk-label"
-                                  disabled={session.revoking}
-                                  onClick={() => setRevokingSessionUuid(session.uuid)}
-                                >
-                                  <span>Revoke</span>
-                                </button>
-                              </>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </>
-                )}
-              </div>
+      <ModalDialog onDismiss={close} className="sessions-modal max-h-[90vh]">
+        <ModalDialogLabel
+          headerButtons={
+            <button className="border-0 font-bold text-info cursor-pointer" onClick={refresh}>
+              Refresh
+            </button>
+          }
+          closeDialog={close}
+        >
+          Active Sessions
+        </ModalDialogLabel>
+        <ModalDialogDescription className="overflow-y-auto">
+          {refreshing ? (
+            <div className="flex items-center gap-2">
+              <Spinner className="w-3 h-3" />
+              <h2 className="sk-p sessions-modal-refreshing">Loading sessions</h2>
             </div>
-          </div>
-        </div>
-      </Dialog>
+          ) : (
+            <>
+              {errorMessage && <Alert className="sk-p bold">{errorMessage}</Alert>}
+              {sessions.length > 0 && (
+                <ul>
+                  {sessions.map((session) => (
+                    <li key={session.uuid}>
+                      <h2 className="text-base font-bold">{session.device_info}</h2>
+                      {session.current ? (
+                        <span className="text-info font-bold">Current session</span>
+                      ) : (
+                        <>
+                          <p>Signed in on {formatter.format(session.updated_at)}</p>
+                          <Button
+                            primary
+                            small
+                            colorStyle="danger"
+                            disabled={session.revoking}
+                            onClick={() => setRevokingSessionUuid(session.uuid)}
+                          >
+                            <span>Revoke</span>
+                          </Button>
+                        </>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </>
+          )}
+        </ModalDialogDescription>
+      </ModalDialog>
       {confirmRevokingSessionUuid && (
         <AlertDialog
           onDismiss={() => {
             setRevokingSessionUuid('')
           }}
           leastDestructiveRef={cancelRevokeRef}
+          className="p-0"
         >
           <div className="sk-modal-content">
             <div className="sn-component">
@@ -173,22 +173,28 @@ const SessionsModalContent: FunctionComponent<{
                       <p>{SessionStrings.RevokeText}</p>
                     </AlertDialogDescription>
                     <div className="flex my-1 gap-2">
-                      <button
-                        className="sn-button small neutral sk-label"
+                      <Button
+                        primary
+                        small
+                        colorStyle="neutral"
+                        rounded={false}
                         ref={cancelRevokeRef}
                         onClick={closeRevokeSessionAlert}
                       >
                         <span>{SessionStrings.RevokeCancelButton}</span>
-                      </button>
-                      <button
-                        className="sn-button small danger sk-label"
+                      </Button>
+                      <Button
+                        primary
+                        small
+                        colorStyle="danger"
+                        rounded={false}
                         onClick={() => {
                           closeRevokeSessionAlert()
                           revokeSession(confirmRevokingSessionUuid).catch(console.error)
                         }}
                       >
                         <span>{SessionStrings.RevokeConfirmButton}</span>
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 </div>

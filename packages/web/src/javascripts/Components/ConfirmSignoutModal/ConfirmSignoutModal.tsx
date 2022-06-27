@@ -6,6 +6,7 @@ import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { isDesktopApplication } from '@/Utils'
+import Button from '@/Components/Button/Button'
 
 type Props = {
   application: WebApplication
@@ -31,7 +32,7 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewContro
   const showWorkspaceWarning = workspaces.length > 1 && isDesktopApplication()
 
   return (
-    <AlertDialog onDismiss={closeDialog} leastDestructiveRef={cancelRef}>
+    <AlertDialog onDismiss={closeDialog} leastDestructiveRef={cancelRef} className="p-0 max-w-[600px]">
       <div className="sk-modal-content">
         <div className="sn-component">
           <div className="sk-panel">
@@ -40,11 +41,11 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewContro
                 <AlertDialogLabel className="sk-h3 sk-panel-section-title">Sign out workspace?</AlertDialogLabel>
                 <AlertDialogDescription className="sk-panel-row">
                   <div>
-                    <p className="color-foreground">{STRING_SIGN_OUT_CONFIRMATION}</p>
+                    <p className="text-foreground">{STRING_SIGN_OUT_CONFIRMATION}</p>
                     {showWorkspaceWarning && (
                       <>
                         <br />
-                        <p className="color-foreground">
+                        <p className="text-foreground">
                           <strong>Note: </strong>
                           Because you have other workspaces signed in, this sign out may leave logs and other metadata
                           of your session on this device. For a more robust sign out that performs a hard clear of all
@@ -82,12 +83,15 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewContro
                   </div>
                 )}
 
-                <div className="flex my-1 mt-4">
-                  <button className="sn-button small neutral" ref={cancelRef} onClick={closeDialog}>
+                <div className="flex my-1 mt-4 gap-2">
+                  <Button primary small colorStyle="neutral" rounded={false} ref={cancelRef} onClick={closeDialog}>
                     Cancel
-                  </button>
-                  <button
-                    className="sn-button small danger ml-2"
+                  </Button>
+                  <Button
+                    primary
+                    small
+                    colorStyle="danger"
+                    rounded={false}
                     onClick={() => {
                       if (deleteLocalBackups) {
                         application.signOutAndDeleteLocalBackups().catch(console.error)
@@ -98,7 +102,7 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewContro
                     }}
                   >
                     {application.hasAccount() ? 'Sign Out' : 'Delete Workspace'}
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>

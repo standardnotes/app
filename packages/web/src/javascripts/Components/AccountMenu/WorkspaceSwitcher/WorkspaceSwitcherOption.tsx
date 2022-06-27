@@ -6,6 +6,8 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import WorkspaceSwitcherMenu from './WorkspaceSwitcherMenu'
+import MenuItem from '@/Components/Menu/MenuItem'
+import { MenuItemType } from '@/Components/Menu/MenuItemType'
 
 type Props = {
   mainApplicationGroup: ApplicationGroup
@@ -43,21 +45,25 @@ const WorkspaceSwitcherOption: FunctionComponent<Props> = ({ mainApplicationGrou
 
   return (
     <>
-      <button
-        ref={buttonRef}
-        className="sn-dropdown-item justify-between focus:bg-info-backdrop focus:shadow-none"
+      <MenuItem
         tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
-        role="menuitem"
+        ref={buttonRef}
+        type={MenuItemType.IconButton}
         onClick={toggleMenu}
+        className="justify-between"
       >
         <div className="flex items-center">
-          <Icon type="user-switch" className="color-neutral mr-2" />
+          <Icon type="user-switch" className="text-neutral mr-2" />
           Switch workspace
         </div>
-        <Icon type="chevron-right" className="color-neutral" />
-      </button>
+        <Icon type="chevron-right" className="text-neutral" />
+      </MenuItem>
       {isOpen && (
-        <div ref={menuRef} className="sn-dropdown max-h-120 min-w-68 py-2 fixed overflow-y-auto" style={menuStyle}>
+        <div
+          ref={menuRef}
+          className="bg-default rounded shadow-main max-h-120 min-w-68 py-2 fixed overflow-y-auto"
+          style={menuStyle}
+        >
           <WorkspaceSwitcherMenu
             mainApplicationGroup={mainApplicationGroup}
             viewControllerManager={viewControllerManager}

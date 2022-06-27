@@ -3,6 +3,7 @@ import { LinkButton, Subtitle } from '@/Components/Preferences/PreferencesCompon
 import { WebApplication } from '@/Application/Application'
 import { ListedAccount, ListedAccountInfo } from '@standardnotes/snjs'
 import { FunctionComponent, useEffect, useState } from 'react'
+import Spinner from '@/Components/Spinner/Spinner'
 
 type Props = {
   account: ListedAccount
@@ -29,7 +30,7 @@ const ListedAccountItem: FunctionComponent<Props> = ({ account, showSeparator, a
       <Subtitle className="em">{accountInfo?.display_name}</Subtitle>
       <div className="mb-2" />
       <div className="flex">
-        {isLoading ? <div className="sk-spinner small info"></div> : null}
+        {isLoading ? <Spinner className="w-4 h-4" /> : null}
         {accountInfo && (
           <>
             <LinkButton className="mr-2" label="Open Blog" link={accountInfo.author_url} />

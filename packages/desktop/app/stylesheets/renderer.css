@@ -69,7 +69,7 @@ panel-resizer {
 /* Required for BrowserWindow titleBarStyle: 'hiddenInset' */
 .mac-desktop #navigation,
 .mac-desktop #navigation .section-title-bar,
-.mac-desktop #notes-title-bar,
+.mac-desktop #items-title-bar,
 .mac-desktop #editor-title-bar,
 .mac-desktop #lock-screen {
   -webkit-app-region: drag;

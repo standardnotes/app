@@ -33,9 +33,9 @@ const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> = ({ viewContro
   const { currentPane } = viewControllerManager.purchaseFlowController
 
   return (
-    <div className="flex items-center justify-center overflow-hidden h-full w-full absolute top-left-0 z-index-purchase-flow bg-passive-super-light">
-      <div className="relative fit-content">
-        <div className="relative p-12 xs:px-8 mb-4 bg-default border-1 border-solid border-main rounded xs:rounded-0">
+    <div className="flex items-center justify-center overflow-hidden h-full w-full absolute top-0 left-0 z-purchase-flow bg-passive-super-light">
+      <div className="relative w-fit">
+        <div className="relative w-full md:p-12 px-8 py-8 mb-4 bg-default border border-solid border-border md:rounded rounded-0">
           <SNLogoFull className="mb-5" />
           <PurchaseFlowPaneSelector
             currentPane={currentPane}
@@ -43,9 +43,9 @@ const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> = ({ viewContro
             application={application}
           />
         </div>
-        <div className="flex justify-end xs:px-4">
+        <div className="flex justify-end px-4 md:px-0">
           <a
-            className="mr-3 font-medium color-passive-1"
+            className="mr-3 font-medium text-passive-1"
             href="https://standardnotes.com/privacy"
             target="_blank"
             rel="noopener noreferrer"
@@ -53,7 +53,7 @@ const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> = ({ viewContro
             Privacy
           </a>
           <a
-            className="font-medium color-passive-1"
+            className="font-medium text-passive-1"
             href="https://standardnotes.com/help"
             target="_blank"
             rel="noopener noreferrer"

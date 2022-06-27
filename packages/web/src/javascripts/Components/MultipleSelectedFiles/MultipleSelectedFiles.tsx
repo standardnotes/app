@@ -40,7 +40,7 @@ const MultipleSelectedFiles = ({
   return (
     <div className="flex flex-col h-full items-center">
       <div className="flex items-center justify-between p-4 w-full">
-        <h1 className="sk-h1 font-bold m-0">{count} selected files</h1>
+        <h1 className="text-lg font-bold m-0">{count} selected files</h1>
         <div className="flex">
           <div className="mr-3">
             <AttachedFilesButton
@@ -58,7 +58,7 @@ const MultipleSelectedFiles = ({
       </div>
       <div className="flex-grow flex flex-col justify-center items-center w-full max-w-md">
         <IlNotesIcon className="block" />
-        <h2 className="text-lg m-0 text-center mt-4">{count} selected files</h2>
+        <h2 className="font-bold text-lg m-0 text-center mt-4">{count} selected files</h2>
         <p className="text-sm mt-2 text-center max-w-60">Actions will be performed on all selected files.</p>
         <Button className="mt-2.5" onClick={cancelMultipleSelection}>
           Cancel multiple selection

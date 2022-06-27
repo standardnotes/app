@@ -1,4 +1,5 @@
 @import 'normalize';
+@import 'colors';
 
 :root {
   --sn-stylekit-base-font-size: 0.8125rem;
@@ -13,53 +14,6 @@
   --sn-stylekit-font-size-h2: 0.975rem;
   --sn-stylekit-font-size-h1: 1.05625rem;
 
-  --sn-stylekit-neutral-color: #989898;
-  --sn-stylekit-neutral-contrast-color: #ffffff;
-
-  --sn-stylekit-info-color: #086DD6;
-  --sn-stylekit-info-color-darkened: #065cb5;
-  --sn-stylekit-info-contrast-color: #ffffff;
-  --sn-stylekit-info-backdrop-color: #2b6fcf0f;
-
-  --sn-stylekit-success-color: #007662;
-  --sn-stylekit-success-contrast-color: #ffffff;
-
-  --sn-stylekit-warning-color: #EBAD00;
-  --sn-stylekit-warning-contrast-color: #ffffff;
-
-  --sn-stylekit-danger-color: #cc2128;
-  --sn-stylekit-danger-contrast-color: #ffffff;
-
-  --sn-stylekit-shadow-color: #c8c8c8;
-  --sn-stylekit-background-color: #ffffff;
-  // For borders inside background-color
-  --sn-stylekit-border-color: #dfe1e4;
-  --sn-stylekit-foreground-color: #000000;
-  // Colors for layers placed on top of non-prefixed background, border, and foreground
-  --sn-stylekit-contrast-background-color: #f6f6f6;
-  --sn-stylekit-contrast-foreground-color: #2e2e2e;
-  --sn-stylekit-contrast-border-color: #e3e3e3; // For borders inside contrast-background-color
-
-  // Alternative set of background and contrast options
-  --sn-stylekit-secondary-background-color: #f6f6f6;
-  --sn-stylekit-secondary-foreground-color: #2e2e2e;
-  --sn-stylekit-secondary-border-color: #e3e3e3;
-
-  --sn-stylekit-secondary-contrast-background-color: #e3e3e3;
-  --sn-stylekit-secondary-contrast-foreground-color: #2e2e2e;
-  --sn-stylekit-secondary-contrast-border-color: #a2a2a2;
-
-  --sn-stylekit-editor-background-color: var(--sn-stylekit-background-color);
-  --sn-stylekit-editor-foreground-color: var(--sn-stylekit-foreground-color);
-
-  --sn-stylekit-paragraph-text-color: #454545;
-
-  --sn-stylekit-input-placeholder-color: #a8a8a8;
-  --sn-stylekit-input-border-color: #e3e3e3;
-
-  --sn-stylekit-scrollbar-thumb-color: #dfdfdf;
-  --sn-stylekit-scrollbar-track-border-color: #e7e7e7;
-
   --sn-stylekit-menu-border: none;
 
   --sn-stylekit-general-border-radius: 2px;
@@ -70,26 +24,6 @@
   --sn-stylekit-sans-serif-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
     'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', var(--sn-stylekit-simplified-chinese-font), sans-serif;
   --sn-stylekit-editor-font-family: var(--sn-stylekit-sans-serif-font);
-
-  --sn-stylekit-theme-type: light;
-  --sn-stylekit-theme-name: sn-light;
-
-  --sn-stylekit-passive-color-0: #515357;
-  --sn-stylekit-passive-color-1: #72767e;
-  --sn-stylekit-passive-color-2: #bbbec4;
-  --sn-stylekit-passive-color-3: #dfe1e4;
-  --sn-stylekit-passive-color-4: #eeeff1;
-  --sn-stylekit-passive-color-4-opacity-variant: #bbbec43d;
-  --sn-stylekit-passive-color-5: #f4f5f7;
-  --sn-stylekit-passive-color-6: #e5e5e5;
-  --sn-stylekit-passive-color-super-light: #f9f9f9;
-
-  --sn-stylekit-accessory-tint-color-1: #086dd6;
-  --sn-stylekit-accessory-tint-color-2: #ea6595;
-  --sn-stylekit-accessory-tint-color-3: #ebad00;
-  --sn-stylekit-accessory-tint-color-4: #7049cf;
-  --sn-stylekit-accessory-tint-color-5: #1aa772;
-  --sn-stylekit-accessory-tint-color-6: #f28c52;
 }
 
 .sn-component {

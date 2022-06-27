@@ -99,15 +99,15 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   return (
     <Menu
       className={
-        'py-1 sn-dropdown sn-dropdown--animated min-w-70 overflow-y-auto \
-        border-1 border-solid border-main text-sm z-index-dropdown-menu \
+        'py-1 bg-default rounded shadow-main transition-transform duration-150 slide-down-animation min-w-70 overflow-y-auto \
+        border border-solid border-border text-sm z-index-dropdown-menu \
         flex flex-col'
       }
       a11yLabel="Notes list options menu"
       closeMenu={closeDisplayOptionsMenu}
       isOpen={isOpen}
     >
-      <div className="px-3 my-1 text-xs font-semibold color-text uppercase">Sort by</div>
+      <div className="px-3 my-1 text-xs font-semibold text-text uppercase">Sort by</div>
       <MenuItem
         className="py-2"
         type={MenuItemType.RadioButton}
@@ -118,9 +118,9 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
           <span>Date modified</span>
           {sortBy === CollectionSort.UpdatedAt ? (
             sortReverse ? (
-              <Icon type="arrows-sort-up" className="color-neutral" />
+              <Icon type="arrows-sort-up" className="text-neutral" />
             ) : (
-              <Icon type="arrows-sort-down" className="color-neutral" />
+              <Icon type="arrows-sort-down" className="text-neutral" />
             )
           ) : null}
         </div>
@@ -135,9 +135,9 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
           <span>Creation date</span>
           {sortBy === CollectionSort.CreatedAt ? (
             sortReverse ? (
-              <Icon type="arrows-sort-up" className="color-neutral" />
+              <Icon type="arrows-sort-up" className="text-neutral" />
             ) : (
-              <Icon type="arrows-sort-down" className="color-neutral" />
+              <Icon type="arrows-sort-down" className="text-neutral" />
             )
           ) : null}
         </div>
@@ -152,15 +152,15 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
           <span>Title</span>
           {sortBy === CollectionSort.Title ? (
             sortReverse ? (
-              <Icon type="arrows-sort-up" className="color-neutral" />
+              <Icon type="arrows-sort-up" className="text-neutral" />
             ) : (
-              <Icon type="arrows-sort-down" className="color-neutral" />
+              <Icon type="arrows-sort-down" className="text-neutral" />
             )
           ) : null}
         </div>
       </MenuItem>
       <MenuItemSeparator />
-      <div className="px-3 py-1 text-xs font-semibold color-text uppercase">View</div>
+      <div className="px-3 py-1 text-xs font-semibold text-text uppercase">View</div>
       {!isFilesSmartView && (
         <MenuItem
           type={MenuItemType.SwitchButton}
@@ -195,8 +195,8 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
       >
         Show icon
       </MenuItem>
-      <div className="h-1px my-2 bg-border"></div>
-      <div className="px-3 py-1 text-xs font-semibold color-text uppercase">Other</div>
+      <MenuItemSeparator />
+      <div className="px-3 py-1 text-xs font-semibold text-text uppercase">Other</div>
       <MenuItem
         type={MenuItemType.SwitchButton}
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"

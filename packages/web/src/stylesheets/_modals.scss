@@ -1,25 +1,9 @@
-#permissions-modal {
-  width: 350px;
-  .sk-panel {
-    border-radius: 0;
-  }
-  .sk-panel-content {
-    padding-top: 0.89375rem;
-  }
-  .sk-panel-footer {
-    padding-bottom: 1.1375rem;
-  }
-}
-
 .challenge-modal {
-  min-width: 0 !important;
+  width: auto;
 
   .prompt,
   .subprompt {
     text-align: center;
-  }
-  .sk-panel .sk-panel-header {
-    justify-content: center;
   }
 }
 
@@ -59,7 +43,7 @@
   right: 0;
   top: 0;
   bottom: 0;
-  z-index: $z-index-modal;
+  z-index: var(--z-index-modal);
   width: 100%;
   height: 100%;
 
@@ -149,7 +133,7 @@
 
   .sn-component {
     min-width: 100%;
-    z-index: $z-index-component-view;
+    z-index: var(--z-index-component-view);
   }
 
   .loading-overlay {

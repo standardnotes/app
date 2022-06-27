@@ -45,16 +45,16 @@ const ContentListHeader = ({
   }, [])
 
   return (
-    <div className="section-title-bar-header">
-      <div className="flex flex-col">
-        <div className="text-lg font-semibold title">{panelTitle}</div>
-        {optionsSubtitle && <div className="text-xs color-passive-0">{optionsSubtitle}</div>}
+    <div className="section-title-bar-header gap-1">
+      <div className="flex flex-col flex-grow">
+        <div className="text-lg font-semibold text-text">{panelTitle}</div>
+        {optionsSubtitle && <div className="text-xs text-passive-0">{optionsSubtitle}</div>}
       </div>
       <div className="flex">
         <div className="relative" ref={displayOptionsContainerRef}>
           <Disclosure open={showDisplayOptionsMenu} onChange={toggleDisplayOptionsMenu}>
-            <StyledDisplayOptionsButton pressed={showDisplayOptionsMenu} ref={displayOptionsButtonRef}>
-              <Icon type="sort-descending" className="w-5 h-5" />
+            <StyledDisplayOptionsButton $pressed={showDisplayOptionsMenu} ref={displayOptionsButtonRef}>
+              <Icon type="sort-descending" />
             </StyledDisplayOptionsButton>
             <DisclosurePanel>
               {showDisplayOptionsMenu && displayOptionsMenuPosition && (
@@ -72,12 +72,12 @@ const ContentListHeader = ({
           </Disclosure>
         </div>
         <button
-          className="flex justify-center items-center min-w-8 h-8 ml-3 bg-info hover:brightness-130 color-info-contrast border-1 border-solid border-transparent rounded-full cursor-pointer"
+          className="flex justify-center items-center min-w-8 h-8 ml-3 bg-info hover:brightness-125 text-info-contrast border border-solid border-transparent rounded-full cursor-pointer"
           title={addButtonLabel}
           aria-label={addButtonLabel}
           onClick={addNewItem}
         >
-          <Icon type="add" className="w-5 h-5" />
+          <Icon type="add" />
         </button>
       </div>
     </div>

@@ -37,7 +37,7 @@ const SaveSecretKey: FunctionComponent<Props> = ({ activation: act }) => {
       >
         Step 2 of 3 - Save secret key
       </ModalDialogLabel>
-      <ModalDialogDescription className="h-33">
+      <ModalDialogDescription className="h-33 flex flex-row items-center">
         <div className="flex-grow flex flex-col">
           <div className="flex flex-row items-center">
             <Bullet />
@@ -76,8 +76,8 @@ const SaveSecretKey: FunctionComponent<Props> = ({ activation: act }) => {
         </div>
       </ModalDialogDescription>
       <ModalDialogButtons>
-        <Button className="min-w-20" variant="normal" label="Back" onClick={() => act.openScanQRCode()} />
-        <Button className="min-w-20" variant="primary" label="Next" onClick={() => act.openVerification()} />
+        <Button className="min-w-20" label="Back" onClick={() => act.openScanQRCode()} />
+        <Button className="min-w-20" primary label="Next" onClick={() => act.openVerification()} />
       </ModalDialogButtons>
     </ModalDialog>
   )

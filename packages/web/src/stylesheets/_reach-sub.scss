@@ -1,5 +1,5 @@
 [data-reach-dialog-overlay] {
-  z-index: $z-index-modal;
+  z-index: var(--z-index-modal);
   background: none;
   display: flex;
   flex-direction: column;
@@ -24,15 +24,7 @@
 }
 
 [data-reach-dialog-content] {
-  width: auto;
-  padding: 0;
-  margin: 0;
   position: relative;
-  overflow: unset;
-  flex-basis: 0;
-  min-width: 400px;
-  max-width: 600px;
-  background: none;
 }
 
 [data-reach-dialog-content] .sk-modal-content,

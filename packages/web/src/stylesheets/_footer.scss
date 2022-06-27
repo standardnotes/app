@@ -3,29 +3,6 @@
   width: 100%;
   height: $footer-height;
   max-height: $footer-height;
-  z-index: $z-index-footer-bar;
-}
-
-#footer-bar .sk-app-bar-item {
-  z-index: $z-index-footer-bar-item;
-  position: relative;
-  user-select: none;
-
-  .sk-panel {
-    max-height: 85vh;
-    position: absolute;
-    right: 0px;
-    left: 10px;
-    bottom: 40px;
-    min-width: 300px;
-    z-index: $z-index-footer-bar-item-panel;
-    margin-top: 15px;
-
-    &.sk-panel-right {
-      right: 0;
-      left: inherit;
-    }
-  }
 }
 
 #account-panel,
@@ -39,10 +16,6 @@
 
 a.disabled {
   pointer-events: none;
-}
-
-#lock-item {
-  margin-left: 3px;
 }
 
 #footer-lock-icon {

@@ -1,3 +1,5 @@
+import DecoratedInput from '@/Components/Input/DecoratedInput'
+import DecoratedPasswordInput from '@/Components/Input/DecoratedPasswordInput'
 import { Dispatch, SetStateAction, FunctionComponent } from 'react'
 
 type Props = {
@@ -7,8 +9,6 @@ type Props = {
 
 const labelClassName = 'block mb-1'
 
-const inputClassName = 'sk-input contrast'
-
 const ChangeEmailForm: FunctionComponent<Props> = ({ setNewEmail, setCurrentPassword }) => {
   return (
     <div className="w-full flex flex-col">
@@ -16,12 +16,11 @@ const ChangeEmailForm: FunctionComponent<Props> = ({ setNewEmail, setCurrentPass
         <label className={labelClassName} htmlFor="change-email-email-input">
           New Email:
         </label>
-        <input
-          id="change-email-email-input"
-          className={inputClassName}
+        <DecoratedInput
           type="email"
-          onChange={({ target }) => {
-            setNewEmail((target as HTMLInputElement).value)
+          id="change-email-email-input"
+          onChange={(newEmail) => {
+            setNewEmail(newEmail)
           }}
         />
       </div>
@@ -29,12 +28,11 @@ const ChangeEmailForm: FunctionComponent<Props> = ({ setNewEmail, setCurrentPass
         <label className={labelClassName} htmlFor="change-email-password-input">
           Current Password:
         </label>
-        <input
+        <DecoratedPasswordInput
           id="change-email-password-input"
-          className={inputClassName}
           type="password"
-          onChange={({ target }) => {
-            setCurrentPassword((target as HTMLInputElement).value)
+          onChange={(currentPassword) => {
+            setCurrentPassword(currentPassword)
           }}
         />
       </div>

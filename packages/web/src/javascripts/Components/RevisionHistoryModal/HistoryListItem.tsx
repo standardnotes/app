@@ -1,5 +1,6 @@
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { FunctionComponent } from 'react'
+import RadioIndicator from '../RadioIndicator/RadioIndicator'
 
 type HistoryListItemProps = {
   isSelected: boolean
@@ -10,11 +11,13 @@ const HistoryListItem: FunctionComponent<HistoryListItemProps> = ({ children, is
   return (
     <button
       tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
-      className={`sn-dropdown-item py-2.5 focus:bg-contrast focus:shadow-none ${isSelected ? 'bg-info-backdrop' : ''}`}
+      className={`flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-2.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm ${
+        isSelected ? 'bg-info-backdrop' : ''
+      }`}
       onClick={onClick}
       data-selected={isSelected}
     >
-      <div className={`pseudo-radio-btn ${isSelected ? 'pseudo-radio-btn--checked' : ''} mr-2`}></div>
+      <RadioIndicator checked={isSelected} className="mr-2" />
       {children}
     </button>
   )

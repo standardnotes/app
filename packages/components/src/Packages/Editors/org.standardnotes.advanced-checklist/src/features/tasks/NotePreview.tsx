@@ -37,7 +37,7 @@ const GroupSummary: React.FC<GroupSummaryProps> = ({ groups }) => {
           return (
             <p data-testid="group-summary" key={`group-${group.name}`} className="mb-1">
               {truncateText(group.name, MAX_GROUP_DESCRIPTION_LENGTH)}
-              <span className="px-2 neutral">
+              <span className="px-2 text-neutral">
                 {totalCompletedTasks}/{totalTasks}
               </span>
             </p>

@@ -44,7 +44,7 @@ const ExtensionInfoCell: FunctionComponent<Props> = ({ extensionName, changeName
         ref={inputRef}
         disabled={!isRenaming || !renameable}
         autoComplete="off"
-        className="flex-grow text-base font-bold no-border bg-default px-0 color-text"
+        className="flex-grow text-base font-bold no-border bg-default px-0 text-text"
         type="text"
         value={newExtensionName}
         onChange={({ target: input }) => setNewExtensionName((input as HTMLInputElement)?.value)}

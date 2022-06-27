@@ -66,13 +66,13 @@ const AddTagOption: FunctionComponent<Props> = ({ navigationController, notesCon
           }}
           onBlur={closeOnBlur}
           ref={menuButtonRef}
-          className="sn-dropdown-item justify-between"
+          className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-menu-item justify-between"
         >
           <div className="flex items-center">
-            <Icon type="hashtag" className="mr-2 color-neutral" />
+            <Icon type="hashtag" className="mr-2 text-neutral" />
             Add tag
           </div>
-          <Icon type="chevron-right" className="color-neutral" />
+          <Icon type="chevron-right" className="text-neutral" />
         </DisclosureButton>
         <DisclosurePanel
           ref={menuRef}
@@ -86,12 +86,14 @@ const AddTagOption: FunctionComponent<Props> = ({ navigationController, notesCon
             ...menuStyle,
             position: 'fixed',
           }}
-          className="sn-dropdown min-w-80 flex flex-col py-2 max-h-120 max-w-xs fixed overflow-y-auto"
+          className={`${
+            isMenuOpen ? 'flex' : 'hidden'
+          } flex-col py-2 bg-default rounded shadow-main min-w-80 max-h-120 max-w-xs fixed overflow-y-auto`}
         >
           {navigationController.tags.map((tag) => (
             <button
               key={tag.uuid}
-              className="sn-dropdown-item sn-dropdown-item--no-icon max-w-80"
+              className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-2 text-left w-full focus:bg-info-backdrop focus:shadow-none text-menu-item max-w-80"
               onBlur={closeOnBlur}
               onClick={() => {
                 notesController.isTagInSelectedNotes(tag)

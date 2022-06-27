@@ -36,6 +36,7 @@ import {
 import { reloadFont } from './FontFunctions'
 import { NoteViewProps } from './NoteViewProps'
 import { WebAppEvent } from '@/Application/WebAppEvent'
+import IndicatorCircle from '../IndicatorCircle/IndicatorCircle'
 
 const MINIMUM_STATUS_DURATION = 400
 const TEXTAREA_DEBOUNCE = 100
@@ -907,12 +908,15 @@ class NoteView extends PureComponent<NoteViewProps, State> {
           )}
 
           {this.note && (
-            <div id="editor-title-bar" className="content-title-bar section-title-bar w-full">
+            <div
+              id="editor-title-bar"
+              className="content-title-bar section-title-bar z-editor-title-bar section-title-bar w-full"
+            >
               <div className="flex items-center justify-between h-8">
                 <div className={(this.state.noteLocked ? 'locked' : '') + ' flex-grow'}>
                   <div className="title overflow-auto">
                     <input
-                      className="input"
+                      className="input text-lg"
                       disabled={this.state.noteLocked}
                       id={ElementIds.NoteTitleEditor}
                       onChange={this.onTitleChange}
@@ -931,14 +935,14 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                     <div id="save-status">
                       <div
                         className={
-                          (this.state.syncTakingTooLong ? 'warning sk-bold ' : '') +
-                          (this.state.saveError ? 'danger sk-bold ' : '') +
-                          ' message'
+                          (this.state.syncTakingTooLong ? 'text-warning font-bold ' : '') +
+                          (this.state.saveError ? 'text-danger font-bold ' : '') +
+                          'text-xs message'
                         }
                       >
                         {this.state.noteStatus?.message}
                       </div>
-                      {this.state.noteStatus?.desc && <div className="desc">{this.state.noteStatus.desc}</div>}
+                      {this.state.noteStatus?.desc && <div className="text-xs desc">{this.state.noteStatus.desc}</div>}
                     </div>
                   </div>
                   <div className="mr-3">
@@ -980,7 +984,11 @@ class NoteView extends PureComponent<NoteViewProps, State> {
             </div>
           )}
 
-          <div id={ElementIds.EditorContent} className={ElementIds.EditorContent} ref={this.editorContentRef}>
+          <div
+            id={ElementIds.EditorContent}
+            className={`${ElementIds.EditorContent} z-editor-content`}
+            ref={this.editorContentRef}
+          >
             {this.state.marginResizersEnabled && this.editorContentRef.current ? (
               <PanelResizer
                 minWidth={300}
@@ -1039,8 +1047,11 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
           <div id="editor-pane-component-stack">
             {this.state.availableStackComponents.length > 0 && (
-              <div id="component-stack-menu-bar" className="sk-app-bar no-edges">
-                <div className="left">
+              <div
+                id="component-stack-menu-bar"
+                className="flex justify-between items-center w-full h-6 px-2 py-0 bg-contrast text-text border-t border-solid border-border"
+              >
+                <div className="flex h-full">
                   {this.state.availableStackComponents.map((component) => {
                     return (
                       <div
@@ -1048,19 +1059,16 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                         onClick={() => {
                           this.toggleStackComponent(component).catch(console.error)
                         }}
-                        className="sk-app-bar-item"
+                        className="flex justify-center items-center flex-grow [&:not(:first-child)]:ml-3 cursor-pointer"
                       >
-                        <div className="sk-app-bar-item-column">
-                          <div
-                            className={
-                              (this.stackComponentExpanded(component) && component.active ? 'info ' : '') +
-                              (!this.stackComponentExpanded(component) ? 'neutral ' : '') +
-                              ' sk-circle small'
-                            }
-                          />
+                        <div className="flex items-center h-full [&:not(:first-child)]:ml-2">
+                          {this.stackComponentExpanded(component) && component.active && (
+                            <IndicatorCircle style="info" />
+                          )}
+                          {!this.stackComponentExpanded(component) && <IndicatorCircle style="neutral" />}
                         </div>
-                        <div className="sk-app-bar-item-column">
-                          <div className="sk-label">{component.name}</div>
+                        <div className="flex items-center h-full [&:not(:first-child)]:ml-2">
+                          <div className="font-bold whitespace-nowrap text-xs">{component.name}</div>
                         </div>
                       </div>
                     )

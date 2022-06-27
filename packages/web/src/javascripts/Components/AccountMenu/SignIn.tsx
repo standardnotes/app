@@ -11,6 +11,7 @@ import DecoratedPasswordInput from '@/Components/Input/DecoratedPasswordInput'
 import Icon from '@/Components/Icon/Icon'
 import IconButton from '@/Components/Button/IconButton'
 import AdvancedOptions from './AdvancedOptions'
+import HorizontalSeparator from '../Shared/HorizontalSeparator'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -143,17 +144,17 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
         <IconButton
           icon="arrow-left"
           title="Go back"
-          className="flex mr-2 color-neutral p-0"
+          className="flex mr-2 text-neutral p-0"
           onClick={() => setMenuPane(AccountMenuPane.GeneralMenu)}
           focusable={true}
           disabled={isSigningIn}
         />
-        <div className="sn-account-menu-headline">Sign in</div>
+        <div className="font-bold text-base">Sign in</div>
       </div>
       <div className="px-3 mb-1">
         <DecoratedInput
           className={`mb-2 ${error ? 'border-danger' : null}`}
-          left={[<Icon type="email" className="color-neutral" />]}
+          left={[<Icon type="email" className="text-neutral" />]}
           type="email"
           placeholder="Email"
           value={email}
@@ -166,7 +167,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
         <DecoratedPasswordInput
           className={`mb-2 ${error ? 'border-danger' : null}`}
           disabled={isSigningIn}
-          left={[<Icon type="password" className="color-neutral" />]}
+          left={[<Icon type="password" className="text-neutral" />]}
           onChange={handlePasswordChange}
           onFocus={resetInvalid}
           onKeyDown={handleKeyDown}
@@ -174,13 +175,14 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
           ref={passwordInputRef}
           value={password}
         />
-        {error ? <div className="color-danger my-2">{error}</div> : null}
+        {error ? <div className="text-danger my-2">{error}</div> : null}
         <Button
-          className="btn-w-full mt-1 mb-3"
+          className="mt-1 mb-3"
           label={isSigningIn ? 'Signing in...' : 'Sign in'}
-          variant="primary"
+          primary
           onClick={handleSignInFormSubmit}
           disabled={isSigningIn}
+          fullWidth={true}
         />
         <Checkbox
           name="is-ephemeral"
@@ -199,7 +201,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
           />
         ) : null}
       </div>
-      <div className="h-1px my-2 bg-border"></div>
+      <HorizontalSeparator classes="my-2" />
       <AdvancedOptions
         viewControllerManager={viewControllerManager}
         application={application}

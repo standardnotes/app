@@ -36,10 +36,10 @@ const Authentication: FunctionComponent<Props> = ({ viewControllerManager }) => 
           <Text className="text-center mb-3">
             Sign in to sync your notes and preferences across all your devices and enable end-to-end encryption.
           </Text>
-          <Button variant="primary" label="Create free account" onClick={clickRegister} className="mb-3" />
-          <div className="text-input">
+          <Button primary label="Create free account" onClick={clickRegister} className="mb-3" />
+          <div className="text-sm">
             Already have an account?{' '}
-            <button className="border-0 p-0 bg-default color-info underline cursor-pointer" onClick={clickSignIn}>
+            <button className="border-0 p-0 bg-default text-info underline cursor-pointer" onClick={clickSignIn}>
               Sign in
             </button>
           </div>

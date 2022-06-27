@@ -31,7 +31,7 @@ const RevisionContentLocked: FunctionComponent<Props> = ({ subscriptionControlle
       <div className="flex flex-col items-center text-center max-w-40%">
         <HistoryLockedIllustration />
         <div className="text-lg font-bold mt-2 mb-1">Can't access this version</div>
-        <div className="mb-4 color-passive-0 leading-140%">
+        <div className="mb-4 text-passive-0 leading-140%">
           {getPremiumContentCopy(
             !isUserSubscriptionCanceled && !isUserSubscriptionExpired && userSubscriptionName
               ? userSubscriptionName
@@ -40,7 +40,7 @@ const RevisionContentLocked: FunctionComponent<Props> = ({ subscriptionControlle
           . Learn more about our other plans to upgrade your history capacity.
         </div>
         <Button
-          variant="primary"
+          primary
           label="Discover plans"
           onClick={() => {
             if (window.plansUrl) {

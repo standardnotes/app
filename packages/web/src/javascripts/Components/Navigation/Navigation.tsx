@@ -52,8 +52,8 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
       <div id="navigation-content" className="content">
         <div className="section-title-bar">
           <div className="section-title-bar-header">
-            <div className="sk-h3 title">
-              <span className="sk-bold">Views</span>
+            <div className="text-sm title">
+              <span className="font-bold">Views</span>
             </div>
           </div>
         </div>

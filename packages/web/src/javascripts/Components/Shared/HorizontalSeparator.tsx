@@ -4,7 +4,7 @@ type Props = {
   classes?: string
 }
 const HorizontalSeparator: FunctionComponent<Props> = ({ classes = '' }) => {
-  return <hr className={`h-1px w-full bg-border no-border ${classes}`} />
+  return <hr className={`min-h-[1px] w-full bg-border border-none ${classes}`} />
 }
 
 export default HorizontalSeparator

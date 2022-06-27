@@ -255,8 +255,8 @@ const ContentListView: FunctionComponent<Props> = ({
             />
           </div>
         </div>
-        {completedFullSync && !renderedItems.length ? <p className="empty-items-list faded">No items.</p> : null}
-        {!completedFullSync && !renderedItems.length ? <p className="empty-items-list faded">Loading...</p> : null}
+        {completedFullSync && !renderedItems.length ? <p className="empty-items-list opacity-50">No items.</p> : null}
+        {!completedFullSync && !renderedItems.length ? <p className="empty-items-list opacity-50">Loading...</p> : null}
         {renderedItems.length ? (
           <ContentList
             items={renderedItems}

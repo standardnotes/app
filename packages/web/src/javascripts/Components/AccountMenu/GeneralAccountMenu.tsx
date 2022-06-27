@@ -13,6 +13,7 @@ import { MenuItemType } from '@/Components/Menu/MenuItemType'
 import WorkspaceSwitcherOption from './WorkspaceSwitcher/WorkspaceSwitcherOption'
 import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { formatLastSyncDate } from '@/Utils/FormatLastSyncDate'
+import Spinner from '@/Components/Spinner/Spinner'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -22,7 +23,7 @@ type Props = {
   closeMenu: () => void
 }
 
-const iconClassName = 'color-neutral mr-2'
+const iconClassName = 'text-neutral mr-2'
 
 const GeneralAccountMenu: FunctionComponent<Props> = ({
   application,
@@ -89,34 +90,34 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
   return (
     <>
       <div className="flex items-center justify-between px-3 mt-1 mb-1">
-        <div className="sn-account-menu-headline">Account</div>
+        <div className="font-bold text-base">Account</div>
         <div className="flex cursor-pointer" onClick={closeMenu}>
-          <Icon type="close" className="color-neutral" />
+          <Icon type="close" className="text-neutral" />
         </div>
       </div>
       {user ? (
         <>
-          <div className="px-3 mb-3 color-foreground text-sm">
+          <div className="px-3 mb-3 text-foreground text-sm">
             <div>You're signed in as:</div>
             <div className="my-0.5 font-bold wrap">{user.email}</div>
-            <span className="color-neutral">{application.getHost()}</span>
+            <span className="text-neutral">{application.getHost()}</span>
           </div>
-          <div className="flex items-start justify-between px-3 mb-3">
+          <div className="flex items-start justify-between px-3 mb-2">
             {isSyncingInProgress ? (
-              <div className="flex items-center color-info font-semibold">
-                <div className="sk-spinner w-5 h-5 mr-2 spinner-info"></div>
+              <div className="flex items-center text-info text-sm font-semibold">
+                <Spinner className="w-5 h-5 mr-2" />
                 Syncing...
               </div>
             ) : (
               <div className="flex items-start">
-                <Icon type="check-circle" className="mr-2 success" />
+                <Icon type="check-circle" className="mr-2 text-success" />
                 <div>
-                  <div className="font-semibold success">Last synced:</div>
-                  <div className="color-text">{lastSyncDate}</div>
+                  <div className="font-semibold text-success text-sm">Last synced:</div>
+                  <div className="text-text text-sm">{lastSyncDate}</div>
                 </div>
               </div>
             )}
-            <div className="flex cursor-pointer color-passive-1" onClick={doSynchronization}>
+            <div className="flex cursor-pointer text-passive-1" onClick={doSynchronization}>
               <Icon type="sync" />
             </div>
           </div>
@@ -124,13 +125,13 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
       ) : (
         <>
           <div className="px-3 mb-1">
-            <div className="mb-3 color-foreground">
+            <div className="mb-3 text-foreground text-sm">
               You’re offline. Sign in to sync your notes and preferences across all your devices and enable end-to-end
               encryption.
             </div>
-            <div className="flex items-center color-passive-1">
+            <div className="flex items-center text-passive-1">
               <Icon type="cloud-off" className="mr-2" />
-              <span className="font-semibold">Offline</span>
+              <span className="font-semibold text-sm">Offline</span>
             </div>
           </div>
         </>
@@ -169,7 +170,7 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
             <Icon type="help" className={iconClassName} />
             Help &amp; feedback
           </div>
-          <span className="color-neutral">v{application.version}</span>
+          <span className="text-neutral">v{application.version}</span>
         </MenuItem>
         {user ? (
           <>

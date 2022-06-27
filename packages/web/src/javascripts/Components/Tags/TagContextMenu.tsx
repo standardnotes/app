@@ -61,7 +61,7 @@ const TagsContextMenu = observer(({ viewControllerManager, selectedTag }: Contex
   return contextMenuOpen ? (
     <div
       ref={contextMenuRef}
-      className="sn-dropdown min-w-60 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto fixed"
+      className="bg-default rounded shadow-main min-w-60 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto fixed"
       style={{
         ...contextMenuPosition,
         maxHeight: contextMenuMaxHeight,
@@ -81,18 +81,18 @@ const TagsContextMenu = observer(({ viewControllerManager, selectedTag }: Contex
           onClick={onClickAddSubtag}
         >
           <div className="flex items-center">
-            <Icon type="add" className="color-neutral mr-2" />
+            <Icon type="add" className="text-neutral mr-2" />
             Add subtag
           </div>
           {!viewControllerManager.featuresController.hasFolders && <Icon type="premium-feature" />}
         </MenuItem>
         <MenuItem type={MenuItemType.IconButton} onBlur={closeOnBlur} className={'py-1.5'} onClick={onClickRename}>
-          <Icon type="pencil-filled" className="color-neutral mr-2" />
+          <Icon type="pencil-filled" className="text-neutral mr-2" />
           Rename
         </MenuItem>
         <MenuItem type={MenuItemType.IconButton} onBlur={closeOnBlur} className={'py-1.5'} onClick={onClickDelete}>
-          <Icon type="trash" className="mr-2 color-danger" />
-          <span className="color-danger">Delete</span>
+          <Icon type="trash" className="mr-2 text-danger" />
+          <span className="text-danger">Delete</span>
         </MenuItem>
       </Menu>
     </div>

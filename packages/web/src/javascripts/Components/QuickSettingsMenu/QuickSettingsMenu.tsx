@@ -13,10 +13,10 @@ import ThemesMenuButton from './ThemesMenuButton'
 import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
 import { ThemeItem } from './ThemeItem'
 import { sortThemes } from '@/Utils/SortThemes'
+import RadioIndicator from '../RadioIndicator/RadioIndicator'
+import HorizontalSeparator from '../Shared/HorizontalSeparator'
 
 const focusModeAnimationDuration = 1255
-
-const MENU_CLASSNAME = 'sn-dropdown min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto'
 
 type MenuProps = {
   viewControllerManager: ViewControllerManager
@@ -207,25 +207,25 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
   return (
     <div ref={mainRef} className="sn-component">
       <div
-        className={`sn-quick-settings-menu absolute ${MENU_CLASSNAME} ${
-          shouldAnimateCloseMenu ? 'slide-up-animation' : 'sn-dropdown--animated'
+        className={`z-footer-bar-item-panel bottom-full left-0 cursor-auto absolute bg-default rounded shadow-main min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto ${
+          shouldAnimateCloseMenu ? 'slide-up-animation' : 'transition-transform duration-150 slide-down-animation'
         }`}
         ref={quickSettingsMenuRef}
         onKeyDown={handleQuickSettingsKeyDown}
       >
-        <div className="px-3 mt-1 mb-2 font-semibold color-text uppercase">Quick Settings</div>
+        <div className="px-3 mt-1 mb-2 font-semibold text-text text-sm uppercase">Quick Settings</div>
         <Disclosure open={themesMenuOpen} onChange={toggleThemesMenu}>
           <DisclosureButton
             onKeyDown={handleBtnKeyDown}
             onBlur={closeOnBlur}
             ref={themesButtonRef}
-            className="sn-dropdown-item justify-between focus:bg-info-backdrop focus:shadow-none"
+            className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full text-sm justify-between focus:bg-info-backdrop focus:shadow-none"
           >
             <div className="flex items-center">
-              <Icon type="themes" className="color-neutral mr-2" />
+              <Icon type="themes" className="text-neutral mr-2" />
               Themes
             </div>
-            <Icon type="chevron-right" className="color-neutral" />
+            <Icon type="chevron-right" className="text-neutral" />
           </DisclosureButton>
           <DisclosurePanel
             onBlur={closeOnBlur}
@@ -234,16 +234,18 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
             style={{
               ...themesMenuPosition,
             }}
-            className={`${MENU_CLASSNAME} fixed sn-dropdown--animated`}
+            className={`${
+              themesMenuOpen ? 'flex' : 'hidden'
+            } flex-col py-2 bg-default rounded shadow-main min-w-80 max-h-120 max-w-xs overflow-y-auto fixed transition-transform duration-150 slide-down-animation`}
           >
-            <div className="px-3 my-1 font-semibold color-text uppercase">Themes</div>
+            <div className="px-3 my-1 font-semibold text-text text-sm uppercase">Themes</div>
             <button
-              className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
+              className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full text-sm focus:bg-info-backdrop focus:shadow-none"
               onClick={toggleDefaultTheme}
               onBlur={closeOnBlur}
               ref={defaultThemeButtonRef}
             >
-              <div className={`pseudo-radio-btn ${defaultThemeOn ? 'pseudo-radio-btn--checked' : ''} mr-2`}></div>
+              <RadioIndicator checked={defaultThemeOn} className="mr-2" />
               Default
             </button>
             {themes.map((theme) => (
@@ -258,14 +260,14 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
         </Disclosure>
         {toggleableComponents.map((component) => (
           <button
-            className="sn-dropdown-item justify-between focus:bg-info-backdrop focus:shadow-none"
+            className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full text-sm justify-between focus:bg-info-backdrop focus:shadow-none"
             onClick={() => {
               toggleComponent(component)
             }}
             key={component.uuid}
           >
             <div className="flex items-center">
-              <Icon type="window" className="color-neutral mr-2" />
+              <Icon type="window" className="text-neutral mr-2" />
               {component.displayName}
             </div>
             <Switch checked={component.active} className="px-0" />
@@ -277,13 +279,13 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
           onClose={closeQuickSettingsMenu}
           isEnabled={focusModeEnabled}
         />
-        <div className="h-1px my-2 bg-border"></div>
+        <HorizontalSeparator classes="my-2" />
         <button
-          className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
+          className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full text-sm focus:bg-info-backdrop focus:shadow-none"
           onClick={openPreferences}
           ref={prefsButtonRef}
         >
-          <Icon type="more" className="color-neutral mr-2" />
+          <Icon type="more" className="text-neutral mr-2" />
           Open Preferences
         </button>
       </div>
