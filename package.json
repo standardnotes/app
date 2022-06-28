@@ -36,7 +36,7 @@
     "publish:prod": "lerna publish from-git --yes",
     "version": "yarn install --no-immutable && git add yarn.lock",
     "postversion": "./scripts/push-tags-one-by-one.sh",
-    "lerna:list": " yarn lerna list -all",
+    "workspace:list": " yarn lerna list -all",
     "upgrade:snjs": "ncu -u '@standardnotes/*' && yarn workspaces foreach --verbose run upgrade:snjs"
   },
   "resolutions": {
