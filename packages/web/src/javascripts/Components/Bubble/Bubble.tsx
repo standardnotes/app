@@ -7,17 +7,13 @@ type Props = {
 }
 
 const styles = {
-  base: 'px-2 py-1 text-center rounded-full cursor-pointer transition border border-solid active:border-info active:bg-info active:text-neutral-contrast',
+  base: 'active:border-info active:bg-info active:text-neutral-contrast flex-grow cursor-pointer rounded-full border border-solid px-2 py-1 text-center transition',
   unselected: 'text-neutral border-secondary-border',
-  selected: 'border-info bg-info text-neutral-contrast',
+  selected: 'text-neutral-contrast border-info bg-info',
 }
 
 const Bubble: FunctionComponent<Props> = ({ label, selected, onSelect }) => (
-  <span
-    role="tab"
-    className={`bubble ${styles.base} ${selected ? styles.selected : styles.unselected}`}
-    onClick={onSelect}
-  >
+  <span role="tab" className={`${styles.base} ${selected ? styles.selected : styles.unselected}`} onClick={onSelect}>
     {label}
   </span>
 )

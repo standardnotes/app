@@ -67,6 +67,7 @@ import {
   PremiumFeatureIcon,
   RestoreIcon,
   RichTextIcon,
+  SearchIcon,
   SecurityIcon,
   ServerIcon,
   SettingsIcon,
@@ -75,6 +76,7 @@ import {
   SortDescendingIcon,
   SpreadsheetsIcon,
   StarIcon,
+  SubtractIcon,
   SyncIcon,
   TasksIcon,
   ThemesIcon,
@@ -89,7 +91,6 @@ import {
   UserSwitch,
   WarningIcon,
   WindowIcon,
-  SubtractIcon,
 } from '@standardnotes/icons'
 
 export const ICONS = {
@@ -122,13 +123,13 @@ export const ICONS = {
   'menu-arrow-down': MenuArrowDownIcon,
   'menu-arrow-right': MenuArrowRightIcon,
   'menu-close': MenuCloseIcon,
-  'sort-descending': SortDescendingIcon,
   'pencil-filled': PencilFilledIcon,
   'pencil-off': PencilOffIcon,
   'pin-filled': PinFilledIcon,
   'plain-text': PlainTextIcon,
   'premium-feature': PremiumFeatureIcon,
   'rich-text': RichTextIcon,
+  'sort-descending': SortDescendingIcon,
   'trash-filled': TrashFilledIcon,
   'trash-sweep': TrashSweepIcon,
   'user-add': UserAddIcon,
@@ -163,6 +164,7 @@ export const ICONS = {
   pencil: PencilIcon,
   pin: PinIcon,
   restore: RestoreIcon,
+  search: SearchIcon,
   security: SecurityIcon,
   server: ServerIcon,
   settings: SettingsIcon,
@@ -170,6 +172,7 @@ export const ICONS = {
   signOut: SignOutIcon,
   spreadsheets: SpreadsheetsIcon,
   star: StarIcon,
+  subtract: SubtractIcon,
   sync: SyncIcon,
   tasks: TasksIcon,
   themes: ThemesIcon,
@@ -180,7 +183,6 @@ export const ICONS = {
   user: UserIcon,
   warning: WarningIcon,
   window: WindowIcon,
-  subtract: SubtractIcon,
 }
 
 type Props = {

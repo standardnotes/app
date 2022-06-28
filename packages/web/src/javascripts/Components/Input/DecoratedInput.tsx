@@ -1,12 +1,12 @@
 import { forwardRef, Fragment, Ref } from 'react'
 import { DecoratedInputProps } from './DecoratedInputProps'
 
-const getClassNames = (hasLeftDecorations: boolean, hasRightDecorations: boolean) => {
+const getClassNames = (hasLeftDecorations: boolean, hasRightDecorations: boolean, roundedFull?: boolean) => {
   return {
-    container: `flex items-stretch position-relative bg-default border border-solid border-border rounded focus-within:ring-2 focus-within:ring-info overflow-hidden text-sm ${
+    container: `position-relative flex items-stretch overflow-hidden border border-solid border-border bg-default text-sm focus-within:ring-2 focus-within:ring-info ${
       !hasLeftDecorations && !hasRightDecorations ? 'px-2 py-1.5' : ''
-    }`,
-    input: `w-full border-0 focus:shadow-none focus:outline-none focus:ring-none bg-transparent text-text ${
+    } ${roundedFull ? 'rounded-full' : 'rounded'}`,
+    input: `focus:ring-none w-full border-0 bg-transparent text-text focus:shadow-none focus:outline-none ${
       !hasLeftDecorations && hasRightDecorations ? 'pl-2' : ''
     } ${hasRightDecorations ? 'pr-2' : ''}`,
     disabled: 'bg-passive-5 cursor-not-allowed',
@@ -19,27 +19,32 @@ const getClassNames = (hasLeftDecorations: boolean, hasRightDecorations: boolean
 const DecoratedInput = forwardRef(
   (
     {
-      type = 'text',
+      autocomplete = false,
       className = '',
-      id = '',
       disabled = false,
+      id,
       left,
-      right,
-      value,
-      placeholder = '',
+      onBlur,
       onChange,
       onFocus,
       onKeyDown,
-      autocomplete = false,
+      onKeyUp,
+      placeholder = '',
+      right,
+      type = 'text',
+      title,
+      value,
+      roundedFull,
     }: DecoratedInputProps,
     ref: Ref<HTMLInputElement>,
   ) => {
     const hasLeftDecorations = Boolean(left?.length)
     const hasRightDecorations = Boolean(right?.length)
-    const classNames = getClassNames(hasLeftDecorations, hasRightDecorations)
+    const classNames = getClassNames(hasLeftDecorations, hasRightDecorations, roundedFull)
 
     return (
       <div className={`${classNames.container} ${disabled ? classNames.disabled : ''} ${className}`}>
+        <div className=""></div>
         {left && (
           <div className="flex items-center px-2 py-1.5">
             {left.map((leftChild, index) => (
@@ -49,18 +54,21 @@ const DecoratedInput = forwardRef(
         )}
 
         <input
-          type={type}
-          id={id}
+          autoComplete={autocomplete ? 'on' : 'off'}
           className={`${classNames.input} ${disabled ? classNames.disabled : ''}`}
+          data-lpignore={type !== 'password' ? true : false}
           disabled={disabled}
-          value={value}
-          placeholder={placeholder}
+          id={id}
+          onBlur={onBlur}
           onChange={(e) => onChange && onChange((e.target as HTMLInputElement).value)}
           onFocus={onFocus}
           onKeyDown={onKeyDown}
-          data-lpignore={type !== 'password' ? true : false}
-          autoComplete={autocomplete ? 'on' : 'off'}
+          onKeyUp={onKeyUp}
+          placeholder={placeholder}
           ref={ref}
+          title={title}
+          type={type}
+          value={value}
         />
 
         {right && (

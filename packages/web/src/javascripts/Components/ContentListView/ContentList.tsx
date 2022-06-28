@@ -66,7 +66,7 @@ const ContentList: FunctionComponent<Props> = ({
 
   return (
     <div
-      className="infinite-scroll border-t border-solid border-border focus:shadow-none focus:outline-none"
+      className="infinite-scroll focus:shadow-none focus:outline-none"
       id={ElementIds.ContentList}
       onScroll={onScroll}
       onKeyDown={onKeyDown}
