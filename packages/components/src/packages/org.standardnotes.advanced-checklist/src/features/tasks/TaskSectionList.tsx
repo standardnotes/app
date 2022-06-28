@@ -2,7 +2,7 @@ import React from 'react'
 import { DragDropContext, DropResult } from 'react-beautiful-dnd'
 import styled from 'styled-components'
 
-import { useAppDispatch } from '../../app/hooks'
+import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { GroupModel, tasksReordered } from './tasks-slice'
 
 import CompletedTasksActions from './CompletedTasksActions'
@@ -18,6 +18,7 @@ type TaskSectionListProps = {
 
 const TaskSectionList: React.FC<TaskSectionListProps> = ({ group }) => {
   const dispatch = useAppDispatch()
+  const defaultSections = useAppSelector((state) => state.tasks.defaultSections)
 
   function onDragEnd(result: DropResult) {
     const droppedOutsideList = !result.destination
@@ -40,9 +41,11 @@ const TaskSectionList: React.FC<TaskSectionListProps> = ({ group }) => {
     )
   }
 
+  const sections = group.sections ?? defaultSections
+
   return (
     <Container data-testid="task-section-list">
-      {group.sections.map((section) => {
+      {sections.map((section) => {
         const tasks = group.tasks.filter((task) =>
           section.id === 'completed-tasks' ? task.completed === true : !task.completed,
         )

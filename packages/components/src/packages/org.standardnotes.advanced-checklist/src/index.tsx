@@ -100,8 +100,8 @@ const TaskEditor: React.FC = () => {
     }
 
     editorKit.current!.saveItemWithPresave(currentNote, () => {
-      const { schemaVersion, groups } = store.getState().tasks
-      currentNote.content.text = JSON.stringify({ schemaVersion, groups }, null, 2)
+      const { schemaVersion, groups, defaultSections } = store.getState().tasks
+      currentNote.content.text = JSON.stringify({ schemaVersion, groups, defaultSections }, null, 2)
 
       currentNote.content.preview_plain = getPlainPreview(groups)
       currentNote.content.preview_html = renderToString(<NotePreview groupedTasks={groups} />)

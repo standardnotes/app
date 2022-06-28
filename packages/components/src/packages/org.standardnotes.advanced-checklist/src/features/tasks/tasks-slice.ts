@@ -1,12 +1,22 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { arrayMoveImmutable, isJsonString, parseMarkdownTasks } from '../../common/utils'
-import MigrationService from './migrations/MigrationService'
+import { arrayDefault, arrayMoveImmutable, isJsonString, parseMarkdownTasks } from '../../common/utils'
 
-export const LATEST_SCHEMA_VERSION = '1.0.1'
+export const LATEST_SCHEMA_VERSION = '1.0.0'
+export const DEFAULT_SECTIONS: SectionModel[] = [
+  {
+    id: 'open-tasks',
+    name: 'Open tasks',
+  },
+  {
+    id: 'completed-tasks',
+    name: 'Completed tasks',
+  },
+]
 
 export type TasksState = {
   schemaVersion: string
   groups: GroupModel[]
+  defaultSections: SectionModel[]
   initialized?: boolean
   legacyContent?: GroupModel
   lastError?: string
@@ -14,6 +24,7 @@ export type TasksState = {
 
 const initialState: TasksState = {
   schemaVersion: LATEST_SCHEMA_VERSION,
+  defaultSections: [],
   groups: [],
 }
 
@@ -32,24 +43,13 @@ export type SectionModel = {
   collapsed?: boolean
 }
 
-export const DEFAULT_SECTIONS = [
-  {
-    id: 'open-tasks',
-    name: 'Open tasks',
-  },
-  {
-    id: 'completed-tasks',
-    name: 'Completed tasks',
-  },
-]
-
 export type GroupModel = {
   name: string
   collapsed?: boolean
   draft?: string
   lastActive?: Date
   tasks: TaskModel[]
-  sections: SectionModel[]
+  sections?: SectionModel[]
 }
 
 const tasksSlice = createSlice({
@@ -177,7 +177,6 @@ const tasksSlice = createSlice({
       state.groups.push({
         name: groupName,
         tasks: [],
-        sections: DEFAULT_SECTIONS,
       })
     },
     tasksGroupReordered(
@@ -256,6 +255,9 @@ const tasksSlice = createSlice({
         group.collapsed = collapsed
         return
       }
+      if (!group.sections) {
+        group.sections = state.defaultSections
+      }
       const section = group.sections.find((item) => item.id === type)
       if (!section) {
         return
@@ -327,15 +329,14 @@ const tasksSlice = createSlice({
         const parsedState = JSON.parse(payload) as TasksState
         let newState: TasksState = {
           schemaVersion: parsedState?.schemaVersion ?? LATEST_SCHEMA_VERSION,
+          defaultSections: arrayDefault({ value: parsedState?.defaultSections, defaultValue: DEFAULT_SECTIONS }),
           groups: parsedState?.groups ?? [],
         }
-
-        const migrationService = new MigrationService()
-        newState = migrationService.performMigrations(newState)
 
         if (newState !== initialState) {
           state.schemaVersion = newState.schemaVersion
           state.groups = newState.groups
+          state.defaultSections = newState.defaultSections
           state.initialized = true
           delete state.lastError
         }

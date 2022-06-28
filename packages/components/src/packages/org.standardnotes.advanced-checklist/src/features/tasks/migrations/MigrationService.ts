@@ -2,8 +2,14 @@ import { PartialData } from './BaseMigration'
 import { MigrationClasses } from './versions'
 
 class MigrationService {
+  private migrationClasses: any[]
+
+  constructor(migrationClasses?: any[]) {
+    this.migrationClasses = migrationClasses ?? MigrationClasses
+  }
+
   private getMigrationInstances() {
-    return MigrationClasses.map((migrationClass) => {
+    return this.migrationClasses.map((migrationClass) => {
       return new migrationClass()
     })
   }

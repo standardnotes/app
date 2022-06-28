@@ -19,19 +19,19 @@ describe('BaseMigration', () => {
 
   it('should throw error if version is not in the semantic version scheme', () => {
     expect(() => {
-      mockMigration.run({ schemaVersion: '0.0.0.0', groups: [] })
+      mockMigration.run({ schemaVersion: '0.0.0.0', groups: [], defaultSections: [] })
     }).toThrowError("'0.0.0.0' is not in the semantic version scheme: MAJOR.MINOR.PATCH")
   })
 
   it('should throw error if version is not a number', () => {
     expect(() => {
-      mockMigration.run({ schemaVersion: 'a.0.0', groups: [] })
+      mockMigration.run({ schemaVersion: 'a.0.0', groups: [], defaultSections: [] })
     }).toThrowError('MAJOR version should be a number')
     expect(() => {
-      mockMigration.run({ schemaVersion: '0.a.0', groups: [] })
+      mockMigration.run({ schemaVersion: '0.a.0', groups: [], defaultSections: [] })
     }).toThrowError('MINOR version should be a number')
     expect(() => {
-      mockMigration.run({ schemaVersion: '0.0.a', groups: [] })
+      mockMigration.run({ schemaVersion: '0.0.a', groups: [], defaultSections: [] })
     }).toThrowError('PATCH version should be a number')
   })
 })

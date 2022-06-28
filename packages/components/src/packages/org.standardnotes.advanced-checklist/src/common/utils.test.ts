@@ -1,5 +1,6 @@
 import { DEFAULT_SECTIONS, GroupModel, TaskModel } from '../features/tasks/tasks-slice'
 import {
+  arrayDefault,
   arrayMoveImmutable,
   arrayMoveMutable,
   getPercentage,
@@ -279,5 +280,17 @@ describe('parseMarkdownTasks', () => {
       ],
       sections: DEFAULT_SECTIONS,
     })
+  })
+})
+
+describe('arrayDefault', () => {
+  it('should fallback to default value', () => {
+    expect(arrayDefault({ defaultValue: [] })).toEqual([])
+    expect(arrayDefault({ value: undefined, defaultValue: [] })).toEqual([])
+    expect(arrayDefault({ value: [], defaultValue: ['test'] })).toEqual(['test'])
+  })
+
+  it('should return value', () => {
+    expect(arrayDefault({ value: ['test'], defaultValue: [] })).toEqual(['test'])
   })
 })

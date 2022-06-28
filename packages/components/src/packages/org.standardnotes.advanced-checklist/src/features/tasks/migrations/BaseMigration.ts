@@ -8,6 +8,7 @@ enum MigrationAction {
 
 export type PartialData = {
   schemaVersion: string
+  defaultSections?: any[]
   groups: any[]
 }
 

@@ -3,7 +3,7 @@ import { RootState } from '../../app/store'
 import { testRender } from '../../testUtils'
 
 import RenameTaskGroups from './RenameTaskGroups'
-import { DEFAULT_SECTIONS, tasksGroupRenamed } from './tasks-slice'
+import { tasksGroupRenamed } from './tasks-slice'
 
 const handleClose = jest.fn()
 
@@ -12,6 +12,7 @@ it('renders the alert dialog with an input box', () => {
   const defaultState: Partial<RootState> = {
     tasks: {
       schemaVersion: '1.0.0',
+      defaultSections: [],
       groups: [
         {
           name: defaultGroup,
@@ -23,7 +24,6 @@ it('renders the alert dialog with an input box', () => {
               createdAt: new Date(),
             },
           ],
-          sections: DEFAULT_SECTIONS,
         },
       ],
     },
@@ -45,6 +45,7 @@ it('should dispatch the action to merge groups', () => {
   const defaultState: Partial<RootState> = {
     tasks: {
       schemaVersion: '1.0.0',
+      defaultSections: [],
       groups: [
         {
           name: defaultGroup,
@@ -56,7 +57,6 @@ it('should dispatch the action to merge groups', () => {
               createdAt: new Date(),
             },
           ],
-          sections: DEFAULT_SECTIONS,
         },
         {
           name: 'Testing',
@@ -68,7 +68,6 @@ it('should dispatch the action to merge groups', () => {
               createdAt: new Date(),
             },
           ],
-          sections: DEFAULT_SECTIONS,
         },
       ],
     },
@@ -110,6 +109,7 @@ it('should dispatch the action to merge groups on Enter press', () => {
   const defaultState: Partial<RootState> = {
     tasks: {
       schemaVersion: '1.0.0',
+      defaultSections: [],
       groups: [
         {
           name: defaultGroup,
@@ -121,7 +121,6 @@ it('should dispatch the action to merge groups on Enter press', () => {
               createdAt: new Date(),
             },
           ],
-          sections: DEFAULT_SECTIONS,
         },
         {
           name: 'Testing',
@@ -133,7 +132,6 @@ it('should dispatch the action to merge groups on Enter press', () => {
               createdAt: new Date(),
             },
           ],
-          sections: DEFAULT_SECTIONS,
         },
       ],
     },

@@ -132,3 +132,13 @@ export function isLastActiveGroup(allGroups: GroupModel[], groupName: string): b
 
   return lastActiveGroup.name === groupName
 }
+
+export function arrayDefault({ value, defaultValue }: { value?: any[], defaultValue: any[] }) {
+  if (!value) {
+    return defaultValue
+  }
+  if (value.length === 0) {
+    return defaultValue
+  }
+  return value
+}
