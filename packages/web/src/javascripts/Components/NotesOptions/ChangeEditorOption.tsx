@@ -50,7 +50,7 @@ const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({ applic
           setMenuStyle(newMenuStyle)
           setIsVisible(true)
         }
-      })
+      }, 5)
     }
   }, [isOpen])
 
@@ -65,13 +65,13 @@ const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({ applic
           }}
           onBlur={closeOnBlur}
           ref={buttonRef}
-          className="sn-dropdown-item justify-between"
+          className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-menu-item justify-between"
         >
           <div className="flex items-center">
-            <Icon type="dashboard" className="color-neutral mr-2" />
+            <Icon type="dashboard" className="text-neutral mr-2" />
             Change note type
           </div>
-          <Icon type="chevron-right" className="color-neutral" />
+          <Icon type="chevron-right" className="text-neutral" />
         </DisclosureButton>
         <DisclosurePanel
           ref={menuRef}
@@ -85,7 +85,7 @@ const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({ applic
             ...menuStyle,
             position: 'fixed',
           }}
-          className="sn-dropdown flex flex-col max-h-120 min-w-68 fixed overflow-y-auto"
+          className="bg-default rounded shadow-main flex flex-col max-h-120 min-w-68 fixed overflow-y-auto"
         >
           {isOpen && (
             <ChangeEditorMenu

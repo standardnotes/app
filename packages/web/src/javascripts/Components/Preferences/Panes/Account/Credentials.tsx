@@ -44,7 +44,6 @@ const Credentials: FunctionComponent<Props> = ({ application }: Props) => {
           </Text>
           <Button
             className="min-w-20 mt-3"
-            variant="normal"
             label="Change email"
             onClick={() => {
               setIsChangeEmailDialogOpen(true)
@@ -55,7 +54,7 @@ const Credentials: FunctionComponent<Props> = ({ application }: Props) => {
           <Text>
             Current password was set on <span className="font-bold">{passwordCreatedOn}</span>
           </Text>
-          <Button className="min-w-20 mt-3" variant="normal" label="Change password" onClick={presentPasswordWizard} />
+          <Button className="min-w-20 mt-3" label="Change password" onClick={presentPasswordWizard} />
           {isChangeEmailDialogOpen && (
             <ChangeEmail onCloseDialog={() => setIsChangeEmailDialogOpen(false)} application={application} />
           )}

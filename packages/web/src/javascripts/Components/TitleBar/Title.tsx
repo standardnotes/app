@@ -5,7 +5,7 @@ type Props = {
 }
 
 const Title: FunctionComponent<Props> = ({ children, className }) => {
-  return <div className={`sn-title ${className ?? ''}`}>{children}</div>
+  return <div className={`font-bold ${className ?? ''}`}>{children}</div>
 }
 
 export default Title

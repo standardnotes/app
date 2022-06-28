@@ -1,4 +1,6 @@
-@import '../../../styles/src/Styles/main.scss';
+@import '../../../styles/src/Styles/_colors.scss';
+@import '../../../styles/src/Styles/_panels.scss';
+@import '../../../styles/src/Styles/utils/_animation.scss';
 @import 'theme';
 @import 'main';
 @import 'ui';
@@ -15,14 +17,8 @@
 @import 'focused';
 @import 'sn';
 @import 'columns';
+@import 'animation';
 
-.sn-component {
-  @import './utils/padding';
-  @import './utils/margin';
-  @import './utils/width';
-  @import './utils/height';
-  @import './utils/color';
-  @import './utils/border';
-  @import './utils/position';
-  @import './utils/leading';
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

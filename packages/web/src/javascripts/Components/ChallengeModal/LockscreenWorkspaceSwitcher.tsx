@@ -48,11 +48,15 @@ const LockscreenWorkspaceSwitcher: FunctionComponent<Props> = ({ mainApplication
   return (
     <div ref={containerRef}>
       <Button ref={buttonRef} onClick={toggleMenu} className="flex items-center justify-center min-w-76 mt-2">
-        <Icon type="user-switch" className="color-neutral mr-2" />
+        <Icon type="user-switch" className="text-neutral mr-2" />
         Switch workspace
       </Button>
       {isOpen && (
-        <div ref={menuRef} className="sn-dropdown max-h-120 min-w-68 py-2 fixed overflow-y-auto" style={menuStyle}>
+        <div
+          ref={menuRef}
+          className="bg-default rounded-md shadow-main max-h-120 min-w-68 py-2 fixed overflow-y-auto"
+          style={menuStyle}
+        >
           <WorkspaceSwitcherMenu
             mainApplicationGroup={mainApplicationGroup}
             viewControllerManager={viewControllerManager}

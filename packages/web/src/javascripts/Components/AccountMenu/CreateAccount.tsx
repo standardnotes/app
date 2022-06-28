@@ -9,6 +9,7 @@ import DecoratedPasswordInput from '@/Components/Input/DecoratedPasswordInput'
 import Icon from '@/Components/Icon/Icon'
 import IconButton from '@/Components/Button/IconButton'
 import AdvancedOptions from './AdvancedOptions'
+import HorizontalSeparator from '../Shared/HorizontalSeparator'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -105,17 +106,17 @@ const CreateAccount: FunctionComponent<Props> = ({
         <IconButton
           icon="arrow-left"
           title="Go back"
-          className="flex mr-2 color-neutral p-0"
+          className="flex mr-2 text-neutral p-0"
           onClick={handleClose}
           focusable={true}
         />
-        <div className="sn-account-menu-headline">Create account</div>
+        <div className="font-bold text-base">Create account</div>
       </div>
       <form onSubmit={handleRegisterFormSubmit} className="px-3 mb-1">
         <DecoratedInput
           className="mb-2"
           disabled={isPrivateWorkspace}
-          left={[<Icon type="email" className="color-neutral" />]}
+          left={[<Icon type="email" className="text-neutral" />]}
           onChange={handleEmailChange}
           onKeyDown={handleKeyDown}
           placeholder="Email"
@@ -125,16 +126,16 @@ const CreateAccount: FunctionComponent<Props> = ({
         />
         <DecoratedPasswordInput
           className="mb-2"
-          left={[<Icon type="password" className="color-neutral" />]}
+          left={[<Icon type="password" className="text-neutral" />]}
           onChange={handlePasswordChange}
           onKeyDown={handleKeyDown}
           placeholder="Password"
           ref={passwordInputRef}
           value={password}
         />
-        <Button className="btn-w-full mt-1" label="Next" variant="primary" onClick={handleRegisterFormSubmit} />
+        <Button className="mt-1" label="Next" primary onClick={handleRegisterFormSubmit} fullWidth={true} />
       </form>
-      <div className="h-1px my-2 bg-border"></div>
+      <HorizontalSeparator classes="my-2" />
       <AdvancedOptions
         application={application}
         viewControllerManager={viewControllerManager}

@@ -1,6 +1,11 @@
 import { WebApplication } from '@/Application/Application'
 import { SNComponent } from '@standardnotes/snjs'
 import { Component } from 'react'
+import Button from '@/Components/Button/Button'
+import ModalDialog from '../Shared/ModalDialog'
+import ModalDialogLabel from '../Shared/ModalDialogLabel'
+import ModalDialogDescription from '../Shared/ModalDialogDescription'
+import ModalDialogButtons from '../Shared/ModalDialogButtons'
 
 interface Props {
   application: WebApplication
@@ -23,50 +28,29 @@ class PermissionsModal extends Component<Props> {
 
   override render() {
     return (
-      <div className="sk-modal">
-        <div onClick={this.deny} className="sk-modal-background" />
-        <div id="permissions-modal" className="sk-modal-content">
-          <div className="sn-component">
-            <div className="sk-panel">
-              <div className="sk-panel-header">
-                <div className="sk-panel-header-title">Activate Component</div>
-                <a onClick={this.deny} className="sk-a info close-button">
-                  Cancel
-                </a>
-              </div>
-              <div className="sk-panel-content">
-                <div className="sk-panel-section">
-                  <div className="sk-panel-row">
-                    <div className="sk-h2">
-                      <strong>{this.props.component.displayName}</strong>
-                      {' would like to interact with your '}
-                      {this.props.permissionsString}
-                    </div>
-                  </div>
-                  <div className="sk-panel-row">
-                    <p className="sk-p">
-                      Components use an offline messaging system to communicate. Learn more at{' '}
-                      <a
-                        href="https://standardnotes.com/permissions"
-                        rel="noopener"
-                        target="_blank"
-                        className="sk-a info"
-                      >
-                        https://standardnotes.com/permissions.
-                      </a>
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="sk-panel-footer">
-                <button onClick={this.accept} className="sn-button info block w-full text-base py-3">
-                  Continue
-                </button>
-              </div>
-            </div>
+      <ModalDialog className="w-[350px]">
+        <ModalDialogLabel closeDialog={this.deny}>Activate Component</ModalDialogLabel>
+        <ModalDialogDescription>
+          <div className="text-base">
+            <strong>{this.props.component.displayName}</strong>
+            {' would like to interact with your '}
+            {this.props.permissionsString}
           </div>
-        </div>
-      </div>
+          <div className="sk-panel-row">
+            <p className="sk-p">
+              Components use an offline messaging system to communicate. Learn more at{' '}
+              <a href="https://standardnotes.com/permissions" rel="noopener" target="_blank" className="sk-a info">
+                https://standardnotes.com/permissions.
+              </a>
+            </p>
+          </div>
+        </ModalDialogDescription>
+        <ModalDialogButtons>
+          <Button primary fullWidth onClick={this.accept} className="block">
+            Continue
+          </Button>
+        </ModalDialogButtons>
+      </ModalDialog>
     )
   }
 }

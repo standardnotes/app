@@ -20,6 +20,7 @@ import Button from '@/Components/Button/Button'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
+import Spinner from '@/Components/Spinner/Spinner'
 
 type Props = {
   application: WebApplication
@@ -163,29 +164,29 @@ const DataBackups = ({ application, viewControllerManager }: Props) => {
 
           {isEncryptionEnabled && (
             <form className="sk-panel-form sk-panel-row">
-              <div className="sk-input-group">
-                <label className="sk-horizontal-group tight">
+              <div className="flex items-center gap-2">
+                <label className="flex items-center gap-2">
                   <input type="radio" onChange={() => setIsBackupEncrypted(true)} checked={isBackupEncrypted} />
-                  <Subtitle>Encrypted</Subtitle>
+                  <span className="font-medium text-sm">Encrypted</span>
                 </label>
-                <label className="sk-horizontal-group tight">
+                <label className="flex items-center gap-2">
                   <input type="radio" onChange={() => setIsBackupEncrypted(false)} checked={!isBackupEncrypted} />
-                  <Subtitle>Decrypted</Subtitle>
+                  <span className="font-medium text-sm">Decrypted</span>
                 </label>
               </div>
             </form>
           )}
 
-          <Button variant="normal" onClick={downloadDataArchive} label="Download backup" className="mt-2" />
+          <Button onClick={downloadDataArchive} label="Download backup" className="mt-2" />
         </PreferencesSegment>
         <HorizontalSeparator classes="my-4" />
         <PreferencesSegment>
           <Subtitle>Import a previously saved backup file</Subtitle>
 
           <div className="flex flex-row items-center mt-3">
-            <Button variant="normal" label="Import backup" onClick={handleImportFile} />
+            <Button label="Import backup" onClick={handleImportFile} />
             <input type="file" ref={fileInputRef} onChange={importFileSelected} className="hidden" />
-            {isImportDataLoading && <div className="sk-spinner normal info ml-4" />}
+            {isImportDataLoading && <Spinner className="ml-4" />}
           </div>
         </PreferencesSegment>
       </PreferencesGroup>

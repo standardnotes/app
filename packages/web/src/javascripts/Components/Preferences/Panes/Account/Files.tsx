@@ -1,4 +1,5 @@
 import { WebApplication } from '@/Application/Application'
+import Spinner from '@/Components/Spinner/Spinner'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { SubscriptionSettingName } from '@standardnotes/snjs'
 import { FunctionComponent, useEffect, useState } from 'react'
@@ -44,7 +45,7 @@ const FilesSection: FunctionComponent<Props> = ({ application }) => {
         <Subtitle>Storage Quota</Subtitle>
         {isLoading ? (
           <div className="mt-2">
-            <div className="sk-spinner spinner-info w-3 h-3"></div>
+            <Spinner className="w-3 h-3" />
           </div>
         ) : (
           <>

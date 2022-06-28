@@ -186,7 +186,7 @@ const ChallengeModal: FunctionComponent<Props> = ({
         aria-label="Challenge modal"
         className={`challenge-modal flex flex-col items-center bg-default p-8 rounded relative ${
           challenge.reason !== ChallengeReason.ApplicationUnlock
-            ? 'shadow-overlay-light border-1 border-solid border-main'
+            ? 'shadow-overlay-light border border-solid border-border'
             : 'focus:shadow-none'
         }`}
       >
@@ -196,7 +196,7 @@ const ChallengeModal: FunctionComponent<Props> = ({
             aria-label="Close modal"
             className="flex p-1 bg-transparent border-0 cursor-pointer absolute top-4 right-4"
           >
-            <Icon type="close" className="color-neutral" />
+            <Icon type="close" className="text-neutral" />
           </button>
         )}
         <ProtectedIllustration className="w-30 h-30 mb-4" />
@@ -224,7 +224,7 @@ const ChallengeModal: FunctionComponent<Props> = ({
             />
           ))}
         </form>
-        <Button variant="primary" disabled={isProcessing} className="min-w-76 mt-1 mb-3.5" onClick={submit}>
+        <Button primary disabled={isProcessing} className="min-w-76 mt-1 mb-3.5" onClick={submit}>
           {isProcessing ? 'Generating Keys...' : 'Submit'}
         </Button>
         {shouldShowForgotPasscode && (
@@ -250,7 +250,7 @@ const ChallengeModal: FunctionComponent<Props> = ({
                 })
             }}
           >
-            <Icon type="help" className="mr-2 color-neutral" />
+            <Icon type="help" className="mr-2 text-neutral" />
             Forgot passcode?
           </Button>
         )}

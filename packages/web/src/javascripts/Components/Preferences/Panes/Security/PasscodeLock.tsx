@@ -11,7 +11,7 @@ import {
 import { WebApplication } from '@/Application/Application'
 import { preventRefreshing } from '@/Utils'
 import { alertDialog } from '@/Services/AlertService'
-import { ChangeEventHandler, FormEvent, useCallback, useEffect, useRef, useState } from 'react'
+import { FormEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { ApplicationEvent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { ViewControllerManager } from '@/Services/ViewControllerManager'
@@ -19,6 +19,7 @@ import { Title, Text } from '@/Components/Preferences/PreferencesComponents/Cont
 import Button from '@/Components/Button/Button'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
+import DecoratedPasswordInput from '@/Components/Input/DecoratedPasswordInput'
 
 type Props = {
   application: WebApplication
@@ -93,13 +94,11 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
     })
   }
 
-  const handlePasscodeChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-    const { value } = event.target
+  const handlePasscodeChange = (value: string) => {
     setPasscode(value)
   }
 
-  const handleConfirmPasscodeChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-    const { value } = event.target
+  const handleConfirmPasscodeChange = (value: string) => {
     setPasscodeConfirmation(value)
   }
 
@@ -185,7 +184,7 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
 
               {keyStorageInfo && <Text className="mb-3">{keyStorageInfo}</Text>}
 
-              {!showPasscodeForm && <Button label="Add passcode" onClick={handleAddPassCode} variant="primary" />}
+              {!showPasscodeForm && <Button label="Add passcode" onClick={handleAddPassCode} primary />}
             </>
           )}
 
@@ -198,25 +197,22 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
 
           {showPasscodeForm && (
             <form className="sk-panel-form" onSubmit={submitPasscodeForm}>
-              <div className="sk-panel-row" />
-              <input
-                className="sk-input contrast"
+              <DecoratedPasswordInput
                 type="password"
                 ref={passcodeInputRef}
                 value={passcode ? passcode : ''}
                 onChange={handlePasscodeChange}
                 placeholder="Passcode"
               />
-              <input
-                className="sk-input contrast"
+              <DecoratedPasswordInput
+                className="mt-2"
                 type="password"
                 value={passcodeConfirmation ? passcodeConfirmation : ''}
                 onChange={handleConfirmPasscodeChange}
                 placeholder="Confirm Passcode"
               />
-              <div className="min-h-2" />
-              <Button variant="primary" onClick={submitPasscodeForm} label="Set Passcode" className="mr-3" />
-              <Button variant="normal" onClick={cancelPasscodeForm} label="Cancel" />
+              <Button primary onClick={submitPasscodeForm} label="Set Passcode" className="mr-3 mt-3" />
+              <Button onClick={cancelPasscodeForm} label="Cancel" />
             </form>
           )}
 
@@ -224,8 +220,8 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
             <>
               <Text>Passcode lock is enabled.</Text>
               <div className="flex flex-row mt-3">
-                <Button variant="normal" label="Change Passcode" onClick={changePasscodePressed} className="mr-3" />
-                <Button dangerStyle={true} label="Remove Passcode" onClick={removePasscodePressed} />
+                <Button label="Change Passcode" onClick={changePasscodePressed} className="mr-3" />
+                <Button colorStyle="danger" label="Remove Passcode" onClick={removePasscodePressed} />
               </div>
             </>
           )}
@@ -244,7 +240,9 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
                   return (
                     <a
                       key={option.value}
-                      className={`sk-a info mr-3 ${option.value === selectedAutoLockInterval ? 'boxed' : ''}`}
+                      className={`mr-3 rounded text-info cursor-pointer ${
+                        option.value === selectedAutoLockInterval ? 'bg-info text-info-contrast px-1.5 py-0.5' : ''
+                      }`}
                       onClick={() => selectAutoLockInterval(option.value)}
                     >
                       {option.label}

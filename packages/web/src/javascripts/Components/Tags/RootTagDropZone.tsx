@@ -34,7 +34,7 @@ const RootTagDropZone: FunctionComponent<Props> = ({ tagsState }) => {
 
   return (
     <div ref={dropRef} className={`root-drop ${canDrop ? 'active' : ''} ${isOver ? 'is-drag-over' : ''}`}>
-      <Icon className="color-neutral" type="link-off" />
+      <Icon className="text-neutral" type="link-off" />
       <p className="content">
         Move the tag here to <br />
         remove it from its folder.

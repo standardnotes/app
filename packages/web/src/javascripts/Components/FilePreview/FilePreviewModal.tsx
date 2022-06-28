@@ -78,16 +78,10 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
     >
       <DialogContent
         aria-label="File preview modal"
-        className="flex flex-col rounded shadow-overlay"
-        style={{
-          width: '90%',
-          maxWidth: '90%',
-          minHeight: '90%',
-          background: 'var(--modal-background-color)',
-        }}
+        className="flex flex-col rounded shadow-main p-0 min-w-[90%] min-h-[90%] bg-[color:var(--modal-background-color)] "
       >
         <div
-          className="flex flex-shrink-0 justify-between items-center min-h-6 px-4 py-3 border-0 border-b-1 border-solid border-main focus:shadow-none"
+          className="flex flex-shrink-0 justify-between items-center min-h-6 px-4 py-3 border-0 border-b border-solid border-border focus:shadow-none"
           tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
           onKeyDown={keyDownHandler}
         >
@@ -97,10 +91,10 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
           </div>
           <div className="flex items-center">
             <button
-              className="flex p-1.5 mr-4 bg-transparent hover:bg-contrast border-solid border-main border-1 cursor-pointer rounded"
+              className="flex p-1.5 mr-4 bg-transparent hover:bg-contrast border-solid border-border border cursor-pointer rounded"
               onClick={() => setShowFileInfoPanel((show) => !show)}
             >
-              <Icon type="info" className="color-neutral" />
+              <Icon type="info" className="text-neutral" />
             </button>
             <button
               ref={closeButtonRef}
@@ -108,7 +102,7 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
               aria-label="Close modal"
               className="flex p-1 bg-transparent hover:bg-contrast border-0 cursor-pointer rounded"
             >
-              <Icon type="close" className="color-neutral" />
+              <Icon type="close" className="text-neutral" />
             </button>
           </div>
         </div>

@@ -36,10 +36,6 @@
     .section-title-bar-header .title {
       width: calc(90% - 45px);
     }
-
-    p {
-      font-size: var(--sn-stylekit-font-size-p);
-    }
   }
 
   #items-menu-bar {
@@ -120,8 +116,13 @@
   }
 
   .content-list-item {
-    &.selected, &:hover {
+    &.selected,
+    &:hover {
       background-color: var(--item-cell-selected-background-color);
+    }
+
+    ul {
+      list-style: disc;
     }
 
     progress {

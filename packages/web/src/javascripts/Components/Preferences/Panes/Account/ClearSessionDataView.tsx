@@ -13,10 +13,9 @@ const ClearSessionDataView: FunctionComponent<{
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Clear workspace</Title>
-        <Text>Remove all data related to the current workspace from the application.</Text>
-        <div className="min-h-3" />
+        <Text className="mb-3">Remove all data related to the current workspace from the application.</Text>
         <Button
-          dangerStyle={true}
+          colorStyle="danger"
           label="Clear workspace"
           onClick={() => {
             viewControllerManager.accountMenuController.setSigningOut(true)

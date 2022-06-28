@@ -1,12 +1,14 @@
 {
   "name": "@standardnotes/components-meta",
-  "version": "2.2.3",
+  "version": "2.5.0",
   "private": true,
   "author": "Standard Notes.",
   "main": "dist",
   "workspaces": {
     "packages": [
-      "src/packages/*"
+      "src/Packages/Deprecated/*",
+      "src/Packages/Editors/*",
+      "src/Packages/Themes/*"
     ]
   },
   "scripts": {
@@ -14,8 +16,9 @@
     "lint": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run lint",
     "format": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run format",
     "test": "yarn workspaces foreach --parallel --jobs 10 --verbose --exclude @standardnotes/components-meta run test",
-    "build": "tsc --project tsconfig.json && yarn workspaces foreach --parallel --interlaced --jobs 10 --verbose --exclude @standardnotes/components-meta run components:compile",
-    "package": "node scripts/package.mjs",
+    "build": "yarn build:ts && yarn workspaces foreach --parallel --interlaced --jobs 10 --verbose --exclude @standardnotes/components-meta run components:compile",
+    "build:ts": "tsc --project tsconfig.json",
+    "package": "yarn build:ts && node scripts/package.mjs",
     "version": "./scripts/VERSION.sh"
   },
   "dependencies": {

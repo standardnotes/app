@@ -2,6 +2,7 @@ import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { useRef, useEffect, useCallback, FocusEventHandler, KeyboardEventHandler } from 'react'
 import Icon from '@/Components/Icon/Icon'
+import HorizontalSeparator from '../Shared/HorizontalSeparator'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -54,11 +55,11 @@ const AutocompleteTagHint = ({ viewControllerManager, closeOnBlur }: Props) => {
 
   return (
     <>
-      {autocompleteTagResults.length > 0 && <div className="h-1px my-2 bg-border"></div>}
+      {autocompleteTagResults.length > 0 && <HorizontalSeparator classes="my-2" />}
       <button
         ref={hintRef}
         type="button"
-        className="sn-dropdown-item focus:bg-info focus:color-info-contrast hover:color-foreground"
+        className="flex items-center border-0 cursor-pointer hover:bg-contrast text-text bg-transparent px-3 py-1.5 text-left w-full focus:shadow-none text-sm focus:bg-info focus:text-info-contrast hover:text-foreground"
         onClick={onTagHintClick}
         onFocus={onFocus}
         onBlur={onBlur}
@@ -66,8 +67,8 @@ const AutocompleteTagHint = ({ viewControllerManager, closeOnBlur }: Props) => {
         tabIndex={-1}
       >
         <span>Create new tag:</span>
-        <span className="bg-contrast rounded text-xs color-text py-1 pl-1 pr-2 flex items-center ml-2">
-          <Icon type="hashtag" className="sn-icon--small color-neutral mr-1" />
+        <span className="bg-contrast rounded text-xs text-text py-1 pl-1 pr-2 flex items-center ml-2">
+          <Icon type="hashtag" className="text-neutral mr-1" size="small" />
           <span className="max-w-40 whitespace-nowrap overflow-hidden overflow-ellipsis">
             {autocompleteSearchQuery}
           </span>

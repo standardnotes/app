@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.23.5](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.4...@standardnotes/desktop@3.23.5) (2022-06-28)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.23.4](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.3...@standardnotes/desktop@3.23.4) (2022-06-27)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.23.3](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.2...@standardnotes/desktop@3.23.3) (2022-06-27)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.23.2](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.1...@standardnotes/desktop@3.23.2) (2022-06-27)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.23.1](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.0...@standardnotes/desktop@3.23.1) (2022-06-27)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+# [3.23.0](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.22.21...@standardnotes/desktop@3.23.0) (2022-06-27)
+
+### Features
+
+* **web:** tailwind css ([#1147](https://github.com/standardnotes/app/issues/1147)) ([b80038f](https://github.com/standardnotes/app/commit/b80038f607d7411912fa99366abf559a44874ef3))
+
+## [3.22.21](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.22.20...@standardnotes/desktop@3.22.21) (2022-06-27)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
 ## [3.22.20](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.22.19...@standardnotes/desktop@3.22.20) (2022-06-25)
 
 **Note:** Version bump only for package @standardnotes/desktop

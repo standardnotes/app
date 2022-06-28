@@ -142,14 +142,14 @@ const ChangeEmail: FunctionComponent<Props> = ({ onCloseDialog, application }) =
     <div>
       <ModalDialog>
         <ModalDialogLabel closeDialog={handleDialogClose}>Change Email</ModalDialogLabel>
-        <ModalDialogDescription className="px-4.5">
+        <ModalDialogDescription className="px-4.5 flex flex-row items-center">
           {currentStep === Steps.InitialStep && (
             <ChangeEmailForm setNewEmail={setNewEmail} setCurrentPassword={setCurrentPassword} />
           )}
           {currentStep === Steps.FinishStep && <ChangeEmailSuccess />}
         </ModalDialogDescription>
         <ModalDialogButtons className="px-4.5">
-          <Button className="min-w-20" variant="primary" label={submitButtonTitle} onClick={handleSubmit} />
+          <Button className="min-w-20" primary label={submitButtonTitle} onClick={handleSubmit} />
         </ModalDialogButtons>
       </ModalDialog>
     </div>

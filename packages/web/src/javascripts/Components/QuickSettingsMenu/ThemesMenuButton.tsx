@@ -5,6 +5,7 @@ import Icon from '@/Components/Icon/Icon'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import Switch from '@/Components/Switch/Switch'
 import { ThemeItem } from './ThemeItem'
+import RadioIndicator from '../RadioIndicator/RadioIndicator'
 
 type Props = {
   item: ThemeItem
@@ -44,7 +45,9 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ application, item, onBlur 
 
   return (
     <button
-      className={'sn-dropdown-item focus:bg-info-backdrop focus:shadow-none justify-between'}
+      className={
+        'flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm focus:bg-info-backdrop focus:shadow-none justify-between'
+      }
       onClick={toggleTheme}
       onBlur={onBlur}
     >
@@ -59,7 +62,7 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ application, item, onBlur 
       ) : (
         <>
           <div className="flex items-center">
-            <div className={`pseudo-radio-btn ${item.component?.active ? 'pseudo-radio-btn--checked' : ''} mr-2`}></div>
+            <RadioIndicator checked={Boolean(item.component?.active)} className="mr-2" />
             <span className={item.component?.active ? 'font-semibold' : undefined}>{item.name}</span>
           </div>
           {item.component && canActivateTheme ? (

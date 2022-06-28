@@ -54,7 +54,9 @@ export const createEditorMenuGroups = (application: WebApplication, editors: SNC
     .forEach((editorFeature) => {
       const notInstalled = !editors.find((editor) => editor.identifier === editorFeature.identifier)
       const isExperimental = application.features.isExperimentalFeature(editorFeature.identifier)
-      if (notInstalled && !isExperimental) {
+      const isDeprecated = editorFeature.deprecated
+      const isShowable = notInstalled && !isExperimental && !isDeprecated
+      if (isShowable) {
         editorItems[getEditorGroup(editorFeature)].push({
           name: editorFeature.name as string,
           isEntitled: false,
@@ -75,49 +77,49 @@ export const createEditorMenuGroups = (application: WebApplication, editors: SNC
   const editorMenuGroups: EditorMenuGroup[] = [
     {
       icon: 'plain-text',
-      iconClassName: 'color-accessory-tint-1',
+      iconClassName: 'text-accessory-tint-1',
       title: 'Plain text',
       items: editorItems.plain,
     },
     {
       icon: 'rich-text',
-      iconClassName: 'color-accessory-tint-1',
+      iconClassName: 'text-accessory-tint-1',
       title: 'Rich text',
       items: editorItems['rich-text'],
     },
     {
       icon: 'markdown',
-      iconClassName: 'color-accessory-tint-2',
+      iconClassName: 'text-accessory-tint-2',
       title: 'Markdown text',
       items: editorItems.markdown,
     },
     {
       icon: 'tasks',
-      iconClassName: 'color-accessory-tint-3',
+      iconClassName: 'text-accessory-tint-3',
       title: 'Todo',
       items: editorItems.task,
     },
     {
       icon: 'code',
-      iconClassName: 'color-accessory-tint-4',
+      iconClassName: 'text-accessory-tint-4',
       title: 'Code',
       items: editorItems.code,
     },
     {
       icon: 'spreadsheets',
-      iconClassName: 'color-accessory-tint-5',
+      iconClassName: 'text-accessory-tint-5',
       title: 'Spreadsheet',
       items: editorItems.spreadsheet,
     },
     {
       icon: 'authenticator',
-      iconClassName: 'color-accessory-tint-6',
+      iconClassName: 'text-accessory-tint-6',
       title: 'Authentication',
       items: editorItems.authentication,
     },
     {
       icon: 'editor',
-      iconClassName: 'color-neutral',
+      iconClassName: 'text-neutral',
       title: 'Others',
       items: editorItems.others,
     },

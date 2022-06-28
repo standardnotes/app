@@ -43,7 +43,6 @@ const Sync: FunctionComponent<Props> = ({ application }: Props) => {
             </Text>
             <Button
               className="min-w-20 mt-3"
-              variant="normal"
               label="Sync now"
               disabled={isSyncingInProgress}
               onClick={doSynchronization}

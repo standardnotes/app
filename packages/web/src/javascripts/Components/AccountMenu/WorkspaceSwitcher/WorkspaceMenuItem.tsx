@@ -58,7 +58,7 @@ const WorkspaceMenuItem: FunctionComponent<Props> = ({
   return (
     <MenuItem
       type={MenuItemType.RadioButton}
-      className="sn-dropdown-item py-2 focus:bg-info-backdrop focus:shadow-none"
+      className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-2 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm"
       onClick={onClick}
       checked={descriptor.primary}
     >
@@ -76,7 +76,7 @@ const WorkspaceMenuItem: FunctionComponent<Props> = ({
           <div>{descriptor.label}</div>
         )}
         {descriptor.primary && !hideOptions && (
-          <div>
+          <div className="flex items-center">
             <a
               role="button"
               className="w-5 h-5 p-0 mr-3 border-0 bg-transparent hover:bg-contrast cursor-pointer"
@@ -85,7 +85,7 @@ const WorkspaceMenuItem: FunctionComponent<Props> = ({
                 setIsRenaming((isRenaming) => !isRenaming)
               }}
             >
-              <Icon type="pencil" className="sn-icon--mid color-neutral" />
+              <Icon type="pencil" className="text-neutral" size="medium" />
             </a>
             <a
               role="button"
@@ -95,7 +95,7 @@ const WorkspaceMenuItem: FunctionComponent<Props> = ({
                 onDelete()
               }}
             >
-              <Icon type="trash" className="sn-icon--mid color-danger" />
+              <Icon type="trash" className="text-danger" size="medium" />
             </a>
           </div>
         )}

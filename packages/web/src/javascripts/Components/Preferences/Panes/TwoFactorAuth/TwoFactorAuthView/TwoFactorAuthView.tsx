@@ -31,7 +31,7 @@ const TwoFactorAuthView: FunctionComponent<Props> = ({ auth }) => {
 
         {auth.errorMessage != null && (
           <PreferencesSegment>
-            <Text className="color-danger">{auth.errorMessage}</Text>
+            <Text className="text-danger">{auth.errorMessage}</Text>
           </PreferencesSegment>
         )}
       </PreferencesGroup>

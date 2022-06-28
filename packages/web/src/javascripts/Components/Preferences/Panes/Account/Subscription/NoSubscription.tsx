@@ -30,11 +30,11 @@ const NoSubscription: FunctionComponent<Props> = ({ application }) => {
     <>
       <Text>You don't have a Standard Notes subscription yet.</Text>
       {isLoadingPurchaseFlow && <Text>Redirecting you to the subscription page...</Text>}
-      {purchaseFlowError && <Text className="color-danger">{purchaseFlowError}</Text>}
+      {purchaseFlowError && <Text className="text-danger">{purchaseFlowError}</Text>}
       <div className="flex">
         <LinkButton className="min-w-20 mt-3 mr-3" label="Learn More" link={window.plansUrl as string} />
         {application.hasAccount() && (
-          <Button className="min-w-20 mt-3" variant="primary" label="Subscribe" onClick={onPurchaseClick} />
+          <Button className="min-w-20 mt-3" primary label="Subscribe" onClick={onPurchaseClick} />
         )}
       </div>
     </>

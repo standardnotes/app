@@ -5,6 +5,7 @@ import { SwitchProps } from '@/Components/Switch/SwitchProps'
 import { IconType } from '@standardnotes/snjs'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { MenuItemType } from './MenuItemType'
+import RadioIndicator from '../RadioIndicator/RadioIndicator'
 
 type MenuItemProps = {
   type: MenuItemType
@@ -36,10 +37,10 @@ const MenuItem = forwardRef(
     ref: Ref<HTMLButtonElement>,
   ) => {
     return type === MenuItemType.SwitchButton && typeof onChange === 'function' ? (
-      <li className="list-style-none" role="none">
+      <li className="list-none" role="none">
         <button
           ref={ref}
-          className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none justify-between"
+          className="flex items-center justify-between border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none"
           onClick={() => {
             onChange(!checked)
           }}
@@ -53,19 +54,19 @@ const MenuItem = forwardRef(
         </button>
       </li>
     ) : (
-      <li className="list-style-none" role="none">
+      <li className="list-none" role="none">
         <button
           ref={ref}
           role={type === MenuItemType.RadioButton ? 'menuitemradio' : 'menuitem'}
           tabIndex={typeof tabIndex === 'number' ? tabIndex : FOCUSABLE_BUT_NOT_TABBABLE}
-          className={`sn-dropdown-item focus:bg-info-backdrop focus:shadow-none ${className}`}
+          className={`flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-menu-item ${className}`}
           onClick={onClick}
           onBlur={onBlur}
           {...(type === MenuItemType.RadioButton ? { 'aria-checked': checked } : {})}
         >
           {type === MenuItemType.IconButton && icon ? <Icon type={icon} className={iconClassName} /> : null}
           {type === MenuItemType.RadioButton && typeof checked === 'boolean' ? (
-            <div className={`pseudo-radio-btn ${checked ? 'pseudo-radio-btn--checked' : ''} flex-shrink-0`}></div>
+            <RadioIndicator checked={checked} className="flex-shrink-0" />
           ) : null}
           {children}
         </button>

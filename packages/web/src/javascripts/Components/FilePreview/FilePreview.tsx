@@ -2,6 +2,7 @@ import { WebApplication } from '@/Application/Application'
 import { concatenateUint8Arrays } from '@/Utils'
 import { FileItem } from '@standardnotes/snjs'
 import { useEffect, useMemo, useState } from 'react'
+import Spinner from '@/Components/Spinner/Spinner'
 import FilePreviewError from './FilePreviewError'
 import { isFileTypePreviewable } from './isFilePreviewable'
 import PreviewComponent from './PreviewComponent'
@@ -59,7 +60,7 @@ const FilePreview = ({ file, application }: Props) => {
   return isDownloading ? (
     <div className="flex flex-col justify-center items-center flex-grow">
       <div className="flex items-center">
-        <div className="sk-spinner w-5 h-5 spinner-info mr-3"></div>
+        <Spinner className="w-5 h-5 mr-3" />
         <div className="text-base font-semibold">{downloadProgress}%</div>
       </div>
       <span className="mt-3">Loading file...</span>

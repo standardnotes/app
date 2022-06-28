@@ -35,8 +35,6 @@ $heading-height: 75px;
   padding-right: 14px;
 
   border-bottom: 1px solid var(--editor-title-bar-border-bottom-color);
-  z-index: $z-index-editor-title-bar;
-
   height: auto;
 
   .title {
@@ -95,7 +93,6 @@ $heading-height: 75px;
 .editor-content,
 #editor-content {
   flex: 1;
-  z-index: $z-index-editor-content;
   overflow-y: hidden;
   height: 100%;
   display: flex;

@@ -6,6 +6,7 @@ import HistoryListItem from './HistoryListItem'
 import { previewHistoryEntryTitle } from './utils'
 import { FeaturesClientInterface, RevisionListEntry } from '@standardnotes/snjs/dist/@types'
 import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
+import Spinner from '@/Components/Spinner/Spinner'
 
 type RemoteHistoryListProps = {
   features: FeaturesClientInterface
@@ -28,12 +29,12 @@ const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({ features
       }`}
       ref={remoteHistoryListRef}
     >
-      {isFetchingRemoteHistory && <div className="sk-spinner w-5 h-5 spinner-info"></div>}
+      {isFetchingRemoteHistory && <Spinner className="w-5 h-5" />}
       {remoteHistory?.map((group) => {
         if (group.entries && group.entries.length) {
           return (
             <Fragment key={group.title}>
-              <div className="px-3 mt-2.5 mb-1 font-semibold color-text uppercase color-passive-0 select-none">
+              <div className="px-3 mt-2.5 mb-1 font-semibold uppercase text-passive-0 text-sm select-none">
                 {group.title}
               </div>
               {group.entries.map((entry) => (
@@ -57,7 +58,7 @@ const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({ features
         }
       })}
       {!remoteHistoryLength && !isFetchingRemoteHistory && (
-        <div className="color-passive-0 select-none">No remote history found</div>
+        <div className="text-sm text-passive-0 select-none">No remote history found</div>
       )}
     </div>
   )

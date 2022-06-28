@@ -71,13 +71,13 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
           label: editor.displayName,
           value: identifier,
           ...(iconType ? { icon: iconType } : null),
-          ...(tint ? { iconClassName: `color-accessory-tint-${tint}` } : null),
+          ...(tint ? { iconClassName: `text-accessory-tint-${tint}` } : null),
         }
       })
       .concat([
         {
           icon: 'plain-text',
-          iconClassName: 'color-accessory-tint-1',
+          iconClassName: 'text-accessory-tint-1',
           label: PLAIN_EDITOR_NAME,
           value: 'plain-editor',
         },

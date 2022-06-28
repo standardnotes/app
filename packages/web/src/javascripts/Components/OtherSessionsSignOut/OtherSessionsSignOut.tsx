@@ -3,6 +3,7 @@ import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/al
 import { WebApplication } from '@/Application/Application'
 import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
+import Button from '@/Components/Button/Button'
 
 type Props = {
   application: WebApplication
@@ -17,7 +18,7 @@ const ConfirmOtherSessionsSignOut = observer(({ application, viewControllerManag
   }, [viewControllerManager])
 
   return (
-    <AlertDialog onDismiss={closeDialog} leastDestructiveRef={cancelRef}>
+    <AlertDialog onDismiss={closeDialog} leastDestructiveRef={cancelRef} className="p-0 max-w-[600px]">
       <div className="sk-modal-content">
         <div className="sn-component">
           <div className="sk-panel">
@@ -27,18 +28,21 @@ const ConfirmOtherSessionsSignOut = observer(({ application, viewControllerManag
                   End all other sessions?
                 </AlertDialogLabel>
                 <AlertDialogDescription className="sk-panel-row">
-                  <p className="color-foreground">
+                  <p className="text-foreground">
                     This action will sign out all other devices signed into your account, and remove your data from
                     those devices when they next regain connection to the internet. You may sign back in on those
                     devices at any time.
                   </p>
                 </AlertDialogDescription>
-                <div className="flex my-1 mt-4">
-                  <button className="sn-button small neutral" ref={cancelRef} onClick={closeDialog}>
+                <div className="flex my-1 mt-4 gap-2">
+                  <Button primary small colorStyle="neutral" rounded={false} ref={cancelRef} onClick={closeDialog}>
                     Cancel
-                  </button>
-                  <button
-                    className="sn-button small danger ml-2"
+                  </Button>
+                  <Button
+                    primary
+                    small
+                    colorStyle="danger"
+                    rounded={false}
                     onClick={() => {
                       application.revokeAllOtherSessions().catch(console.error)
                       closeDialog()
@@ -48,7 +52,7 @@ const ConfirmOtherSessionsSignOut = observer(({ application, viewControllerManag
                     }}
                   >
                     End Sessions
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>

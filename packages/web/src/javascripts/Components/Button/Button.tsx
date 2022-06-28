@@ -1,52 +1,99 @@
 import { Ref, forwardRef, ReactNode, ComponentPropsWithoutRef } from 'react'
 
-const baseClass = 'rounded px-4 py-1.75 font-bold text-sm fit-content'
+type ButtonStyle = 'default' | 'contrast' | 'neutral' | 'info' | 'warning' | 'danger' | 'success'
 
-type ButtonVariant = 'normal' | 'primary'
-
-const getClassName = (variant: ButtonVariant, danger: boolean, disabled: boolean) => {
-  const borders = variant === 'normal' ? 'border-solid border-main border-1' : 'no-border'
-  const cursor = disabled ? 'cursor-not-allowed' : 'cursor-pointer'
-
-  let colors = variant === 'normal' ? 'bg-default color-text' : 'bg-info color-info-contrast'
-
-  let focusHoverStates =
-    variant === 'normal'
-      ? 'focus:bg-contrast focus:outline-none hover:bg-contrast'
-      : 'hover:brightness-130 focus:outline-none focus:brightness-130'
-
-  if (danger) {
-    colors = variant === 'normal' ? 'bg-default color-danger' : 'bg-danger color-info-contrast'
+const getColorsForNormalVariant = (style: ButtonStyle) => {
+  switch (style) {
+    case 'default':
+      return 'bg-default text-text'
+    case 'contrast':
+      return 'bg-default text-contrast'
+    case 'neutral':
+      return 'bg-default text-neutral'
+    case 'info':
+      return 'bg-default text-info'
+    case 'warning':
+      return 'bg-default text-warning'
+    case 'danger':
+      return 'bg-default text-danger'
+    case 'success':
+      return 'bg-default text-success'
   }
+}
+
+const getColorsForPrimaryVariant = (style: ButtonStyle) => {
+  switch (style) {
+    case 'default':
+      return 'bg-default text-foreground'
+    case 'contrast':
+      return 'bg-contrast text-text'
+    case 'neutral':
+      return 'bg-neutral text-neutral-contrast'
+    case 'info':
+      return 'bg-info text-info-contrast'
+    case 'warning':
+      return 'bg-warning text-warning-contrast'
+    case 'danger':
+      return 'bg-danger text-danger-contrast'
+    case 'success':
+      return 'bg-success text-success-contrast'
+  }
+}
+
+const getClassName = (
+  primary: boolean,
+  style: ButtonStyle,
+  disabled: boolean,
+  fullWidth?: boolean,
+  small?: boolean,
+  isRounded?: boolean,
+) => {
+  const borders = primary ? 'no-border' : 'border-solid border-border border'
+  const cursor = disabled ? 'cursor-not-allowed' : 'cursor-pointer'
+  const width = fullWidth ? 'w-full' : 'w-fit'
+  const padding = small ? 'px-3 py-1.5' : 'px-4 py-1.5'
+  const textSize = small ? 'text-xs' : 'text-sm'
+  const rounded = isRounded ? 'rounded' : ''
+
+  let colors = primary ? getColorsForPrimaryVariant(style) : getColorsForNormalVariant(style)
+
+  let focusHoverStates = primary
+    ? 'hover:brightness-125 focus:outline-none focus:brightness-125'
+    : 'focus:bg-contrast focus:outline-none hover:bg-contrast'
 
   if (disabled) {
-    colors = variant === 'normal' ? 'bg-default color-passive-2' : 'bg-passive-2 color-info-contrast'
-    focusHoverStates =
-      variant === 'normal'
-        ? 'focus:bg-default focus:outline-none hover:bg-default'
-        : 'focus:brightness-default focus:outline-none hover:brightness-default'
+    colors = primary ? 'bg-passive-2 text-info-contrast' : 'bg-default text-passive-2'
+    focusHoverStates = primary
+      ? 'focus:brightness-100 focus:outline-none hover:brightness-100'
+      : 'focus:bg-default focus:outline-none hover:bg-default'
   }
 
-  return `${baseClass} ${colors} ${borders} ${focusHoverStates} ${cursor}`
+  return `${rounded} font-bold ${width} ${padding} ${textSize} ${colors} ${borders} ${focusHoverStates} ${cursor}`
 }
 
 interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
   children?: ReactNode
   className?: string
-  variant?: ButtonVariant
-  dangerStyle?: boolean
+  primary?: boolean
+  colorStyle?: ButtonStyle
   label?: string
+  fullWidth?: boolean
+  small?: boolean
+  rounded?: boolean
 }
 
 const Button = forwardRef(
   (
     {
-      variant = 'normal',
+      primary = false,
       label,
       className = '',
-      dangerStyle: danger = false,
+      colorStyle = primary ? 'info' : 'default',
       disabled = false,
       children,
+      fullWidth,
+      small,
+      rounded = true,
       ...props
     }: ButtonProps,
     ref: Ref<HTMLButtonElement>,
@@ -54,7 +101,7 @@ const Button = forwardRef(
     return (
       <button
         type="button"
-        className={`${getClassName(variant, danger, disabled)} ${className}`}
+        className={`${getClassName(primary, colorStyle, disabled, fullWidth, small, rounded)} ${className}`}
         disabled={disabled}
         ref={ref}
         {...props}

@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.26.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.26.0...@standardnotes/web@3.26.1) (2022-06-27)
+
+### Bug Fixes
+
+* don't show deprecated editors; add missing solarized dark theme ([ded2d18](https://github.com/standardnotes/app/commit/ded2d1866a43d3a2ffbacbb725a11e1f70c64067))
+
+# [3.26.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.25.0...@standardnotes/web@3.26.0) (2022-06-27)
+
+### Features
+
+* **web:** tailwind css ([#1147](https://github.com/standardnotes/app/issues/1147)) ([b80038f](https://github.com/standardnotes/app/commit/b80038f607d7411912fa99366abf559a44874ef3))
+
+# [3.25.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.24.6...@standardnotes/web@3.25.0) (2022-06-27)
+
+### Features
+
+* deprecated editors ([#1166](https://github.com/standardnotes/app/issues/1166)) ([60ca415](https://github.com/standardnotes/app/commit/60ca4150446f9a14bb6a31416686c6d07a7d0cd9))
+
 ## [3.24.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.24.5...@standardnotes/web@3.24.6) (2022-06-25)
 
 **Note:** Version bump only for package @standardnotes/web

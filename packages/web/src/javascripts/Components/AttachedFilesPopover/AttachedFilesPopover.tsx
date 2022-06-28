@@ -78,12 +78,12 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
         border: isDraggingFiles ? '2px dashed var(--sn-stylekit-info-color)' : '',
       }}
     >
-      <div className="flex border-0 border-b-1 border-solid border-main">
+      <div className="flex border-b border-solid border-border">
         <button
           id={PopoverTabs.AttachedFiles}
-          className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:bg-info-backdrop focus:shadow-bottom ${
-            currentTab === PopoverTabs.AttachedFiles ? 'color-info font-medium shadow-bottom' : 'color-text'
-          } ${attachedTabDisabled ? 'color-neutral cursor-not-allowed' : ''}`}
+          className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:bg-info-backdrop focus:shadow-bottom text-sm ${
+            currentTab === PopoverTabs.AttachedFiles ? 'text-info font-medium shadow-bottom' : 'text-text'
+          } ${attachedTabDisabled ? 'text-neutral cursor-not-allowed' : ''}`}
           onClick={() => {
             setCurrentTab(PopoverTabs.AttachedFiles)
           }}
@@ -94,8 +94,8 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
         </button>
         <button
           id={PopoverTabs.AllFiles}
-          className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:bg-info-backdrop focus:shadow-bottom ${
-            currentTab === PopoverTabs.AllFiles ? 'color-info font-medium shadow-bottom' : 'color-text'
+          className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:bg-info-backdrop focus:shadow-bottom text-sm ${
+            currentTab === PopoverTabs.AllFiles ? 'text-info font-medium shadow-bottom' : 'text-text'
           }`}
           onClick={() => {
             setCurrentTab(PopoverTabs.AllFiles)
@@ -107,11 +107,11 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
       </div>
       <div className="min-h-0 max-h-110 overflow-y-auto">
         {filteredList.length > 0 || searchQuery.length > 0 ? (
-          <div className="sticky top-0 left-0 p-3 bg-default border-0 border-b-1 border-solid border-main">
+          <div className="sticky top-0 left-0 p-3 bg-default border-b border-solid border-border">
             <div className="relative">
               <input
                 type="text"
-                className="color-text w-full rounded py-1.5 px-3 text-input bg-default border-solid border-1 border-main"
+                className="text-text w-full rounded py-1.5 px-3 text-sm bg-default border-solid border border-border"
                 placeholder="Search files..."
                 value={searchQuery}
                 onInput={(e) => {
@@ -129,7 +129,7 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
                   }}
                   onBlur={closeOnBlur}
                 >
-                  <Icon type="clear-circle-filled" className="color-neutral" />
+                  <Icon type="clear-circle-filled" className="text-neutral" />
                 </button>
               )}
             </div>
@@ -161,20 +161,20 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
                 ? 'No files attached to this note'
                 : 'No files found in this account'}
             </div>
-            <Button variant="normal" onClick={handleAttachFilesClick} onBlur={closeOnBlur}>
+            <Button onClick={handleAttachFilesClick} onBlur={closeOnBlur}>
               {currentTab === PopoverTabs.AttachedFiles ? 'Attach' : 'Upload'} files
             </Button>
-            <div className="text-xs color-passive-0 mt-3">Or drop your files here</div>
+            <div className="text-xs text-passive-0 mt-3">Or drop your files here</div>
           </div>
         )}
       </div>
       {filteredList.length > 0 && (
         <button
-          className="sn-dropdown-item py-3 border-0 border-t-1px border-solid border-main focus:bg-info-backdrop"
+          className="flex items-center cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-3 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm border-0 border-t border-solid border-border"
           onClick={handleAttachFilesClick}
           onBlur={closeOnBlur}
         >
-          <Icon type="add" className="mr-2 color-neutral" />
+          <Icon type="add" className="mr-2 text-neutral" />
           {currentTab === PopoverTabs.AttachedFiles ? 'Attach' : 'Upload'} files
         </button>
       )}

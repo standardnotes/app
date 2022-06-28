@@ -1,42 +1,4 @@
-/* Components and utilities that are good candidates for extraction to StyleKit. */
-
-.hidden {
-  display: none;
-}
-
-.underline {
-  text-decoration: underline;
-}
-
-.hover\:underline:hover {
-  text-decoration: underline;
-}
-
-.sn-dropdown {
-  @extend .bg-default;
-  @extend .rounded;
-  @extend .box-shadow;
-
-  z-index: var(--z-index-dropdown-menu);
-
-  &.sn-dropdown--anchor-right {
-    right: 0;
-  }
-
-  &[data-state='collapsed'] {
-    display: none;
-  }
-
-  &.sn-dropdown--animated {
-    @extend .transition-transform;
-    @extend .duration-150;
-    @extend .slide-down-animation;
-  }
-
-  &.sn-dropdown--small {
-    @extend .min-w-40;
-  }
-}
+@use 'sass:math';
 
 .sn-dropdown-popover {
   z-index: 3001;
@@ -48,38 +10,12 @@
   }
 }
 
-.sn-dropdown-button {
-  @extend .rounded;
-  @extend .px-3\.5;
-  @extend .py-1\.75;
-  @extend .fit-content;
-  @extend .bg-default;
-  @extend .text-input;
-  @extend .color-text;
-  @extend .border-solid;
-  @extend .border-main;
-  @extend .border-1;
-  @extend .min-w-55;
-}
-
-.sn-dropdown-button-label {
-  @extend .flex;
-  @extend .items-center;
-}
-
-.sn-dropdown-arrow {
-  @extend .flex;
-
-  &.sn-dropdown-arrow-flipped {
-    transform: rotate(180deg);
-  }
-}
-
 .sn-accordion-arrow-icon {
   &[data-is-expanded='true'] {
     transform: rotate(180deg);
   }
 }
+
 .accordion-contents-container {
   transition: all 0.23s ease-out;
   transform-origin: top;
@@ -93,243 +29,19 @@
   }
 }
 
-/** Lesser specificity will give priority to reach's styles */
-[data-reach-custom-checkbox-container].sn-switch {
-  @extend .duration-150;
-  @extend .ease-out;
-  @extend .rounded-full;
-  @extend .transition-background;
-  @extend .bg-clip-padding;
-  @extend .cursor-pointer;
-  @extend .border-transparent;
-  @extend .w-8;
-  @extend .h-4\.5;
-  @extend .border-2;
-  @extend .border-solid;
-  @extend .focus-within\:ring-info;
-  @extend .focus-within\:outline-none;
-  @extend .focus-within\:border-background;
-  box-sizing: content-box;
-}
-
-.sn-switch-handle {
-  @extend .absolute;
-  @extend .block;
-  @extend .bg-default;
-  @extend .rounded-full;
-
-  @extend .ease-out;
-  @extend .transition-transform;
-  @extend .duration-150;
-
-  left: 2px;
-  @extend .w-3\.5;
-  @extend .h-3\.5;
-  top: 50%;
-  transform: translate(0px, -50%);
-
-  &.sn-switch-handle--right {
-    transform: translate(calc(2rem - 1.125rem), -50%);
-  }
-}
-
 .sn-component .sk-app-bar .sk-app-bar-item {
   justify-content: flex-start;
 }
 
-.sn-dropdown-item {
-  @extend .flex;
-  @extend .items-center;
-  @extend .border-0;
-  @extend .focus\:shadow-none;
-  @extend .cursor-pointer;
-  @extend .hover\:bg-contrast;
-  @extend .hover\:color-foreground;
-  @extend .color-text;
-  @extend .bg-transparent;
-  @extend .px-3;
-  @extend .py-1\.5;
-  @extend .text-left;
-  @extend .w-full;
-
-  &.sn-dropdown-item--no-icon {
-    @extend .py-2;
-  }
-
-  .sn-dropdown-popover & {
-    @extend .bg-default;
-  }
-
-  &[data-current-nav] {
-    color: var(--sn-stylekit-contrast-foreground-color);
-    @extend .bg-contrast;
-    @extend .hover\:color-text;
-  }
-
-  .sn-dropdown-popover &[data-current-selected] {
-    background-color: var(--sn-stylekit-info-backdrop-color);
-    @extend .color-info;
-  }
-}
-
-.sn-tag {
-  @extend .h-6;
-  @extend .bg-contrast;
-  @extend .border-0;
-  @extend .rounded;
-  @extend .text-xs;
-  @extend .color-text;
-  @extend .py-1;
-  @extend .py-2;
-  @extend .pr-2;
-  @extend .flex;
-  @extend .items-center;
-  @extend .mt-2;
-  @extend .cursor-pointer;
-  @extend .hover\:bg-secondary-contrast;
-  @extend .focus\:bg-secondary-contrast;
-}
-
-.sn-titlebar {
-  @extend .w-full;
-  @extend .bg-default;
-  @extend .h-14;
-
-  @extend .border-bottom-solid;
-  @extend .border-b-1;
-  @extend .border-main;
-
-  @extend .py-3;
-  @extend .px-3;
-
-  @extend .flex;
-  @extend .flex-row;
-}
-
-.sn-title {
-  @extend .font-bold;
-}
-
-.placeholder-dark-red::placeholder {
-  @extend .color-danger;
-}
-
-.placeholder-medium::placeholder {
-  font-weight: 500;
-}
-
-.z-index-1 {
-  z-index: 1;
-}
-
-.-z-index-1 {
-  z-index: -1;
-}
-
-.sn-component .btn-w-full {
-  width: 100%;
-}
-
-.sn-component .cursor-not-allowed {
-  cursor: not-allowed;
-}
-
-@keyframes slide-up {
-  0% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-}
-
-.slide-up-animation {
-  animation: slide-up 0.2s ease;
-}
-
-.cursor-auto {
-  cursor: auto;
-}
-
-.pseudo-radio-btn {
-  @extend .w-4;
-  @extend .h-4;
-  @extend .border-2;
-  @extend .border-solid;
-  @extend .rounded-full;
-  @extend .relative;
-  border-color: var(--dropdown-menu-radio-button-inactive-color);
-
-  &--checked {
-    @extend .border-info;
-  }
-}
-
-.pseudo-radio-btn--checked::after {
-  content: '';
-  @extend .bg-info;
-  @extend .absolute;
-  @extend .top-1\/2;
-  @extend .left-1\/2;
-  @extend .-translate-1\/2;
-  @extend .w-2;
-  @extend .h-2;
-  @extend .rounded-full;
-}
-
-.list-style-none {
-  list-style-type: none;
-}
-
-.rounded-0\.5 {
-  border-radius: 0.125rem;
-}
-
-@media screen and (max-width: 480px) {
-  .sn-component {
-    .xs\:items-start {
-      align-items: flex-start;
-    }
-
-    .xs\:px-4 {
-      padding-left: 1rem;
-      padding-right: 1rem;
-    }
-
-    .xs\:px-8 {
-      padding-left: 2rem;
-      padding-right: 2rem;
-    }
-
-    .xs\:mb-4 {
-      margin-bottom: 1rem;
-    }
-
-    .xs\:min-w-auto {
-      min-width: auto;
-    }
-
-    .xs\:flex-col-reverse {
-      flex-flow: column-reverse;
-    }
-
-    .xs\:rounded-0 {
-      border-radius: 0;
-    }
-  }
-}
-
 .sn-icon-button {
   &:focus {
-    border-color: transparent;
+    border-color: transparent !important;
   }
 
   &.toggled {
-    border-color: transparent;
-    @extend .bg-info;
-    @extend .color-info-contrast;
+    background-color: var(--sn-stylekit-info-color) !important;
+    color: var(--sn-stylekit-info-contrast-color) !important;
+    border-color: transparent !important;
 
     &:focus {
       background-color: var(--sn-stylekit-info-color) !important;
@@ -338,8 +50,8 @@
 
     &:hover {
       background-color: var(--sn-stylekit-contrast-background-color) !important;
-      @extend .color-info;
-      @extend .border-info;
+      color: var(--sn-stylekit-info-color) !important;
+      border-color: var(--sn-stylekit-info-color) !important;
     }
 
     &:focus:hover {
@@ -357,106 +69,16 @@
   }
 }
 
-@media screen and (max-width: $screen-md-min) {
-  .sn-component {
-    .md\:hidden {
-      display: none;
-    }
-
-    .md\:mr-0 {
-      margin-right: 0;
-    }
-  }
-}
-
-.dimmed {
-  opacity: 0.5;
-  cursor: default;
-  pointer-events: none;
-}
-
-.last\:hidden:last-child {
-  display: none;
-}
-
-.shadow-bottom {
-  box-shadow: currentcolor 0px -1px 0px 0px inset, currentcolor 0px 1px 0px 0px;
-}
-
-.focus\:shadow-inner:focus {
-  box-shadow: var(--sn-stylekit-info-color) 1px 1px 0px 0px inset, var(--sn-stylekit-info-color) -1px -1px 0px 0px inset;
-}
-
-.focus\:shadow-bottom:focus {
-  box-shadow: currentcolor 0px -1px 0px 0px inset, currentcolor 0px 1px 0px 0px;
-}
-
-.overflow-x-hidden {
-  overflow-x: hidden;
-}
-
 .text-editor {
   font-size: var(--sn-stylekit-font-size-editor);
-}
-
-.resize-none {
-  resize: none;
-}
-
-.visible {
-  visibility: visible;
-}
-
-.invisible {
-  visibility: hidden;
 }
 
 .break-word {
   word-break: break-word;
 }
 
-.transition {
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow,
-    transform, filter, backdrop-filter;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 100ms;
-}
-
-.animate-fade-from-top {
-  animation: fade-from-top 0.2s ease-out;
-}
-
-@keyframes fade-from-top {
-  0% {
-    opacity: 0;
-    transform: translateY(-20%);
-  }
-  75% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(0%);
-  }
-}
-
-.z-index-1001 {
-  z-index: 1001;
-}
-
-.vertical-middle {
-  vertical-align: middle;
-}
-
 .shadow-overlay-light {
   box-shadow: 0px 4px 24px 0px rgba(0, 0, 0, 0.05);
-}
-
-.sn-component .focus\:brightness-default:focus {
-  filter: brightness(100%);
-}
-
-.sn-component .hover\:brightness-default:hover {
-  filter: brightness(100%);
 }
 
 .appearance-none {
@@ -491,6 +113,108 @@
   -webkit-line-clamp: 1;
 }
 
-.sn-component .flex-row-reverse {
-  flex-flow: row-reverse;
+@mixin DimmedBackground($color, $opacity) {
+  content: '';
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: $color;
+  opacity: $opacity;
+}
+
+.bg-warning-faded::after {
+  @include DimmedBackground(var(--sn-stylekit-warning-color), 0.08);
+}
+
+.bg-info-faded::after {
+  @include DimmedBackground(var(--sn-stylekit-info-color), 0.08);
+}
+
+svg.sk-circular-progress {
+  $pi: 3.14159265358979;
+
+  $circle-size: 18px;
+  $stroke-width: $circle-size * math.div(0.1, 100) * 100 + 1;
+  $radius: math.div($circle-size - $stroke-width, 2);
+  $circumference: ($radius * $pi * 2);
+
+  height: $circle-size;
+  width: $circle-size;
+
+  circle.background {
+    cx: math.div($circle-size, 2);
+    cy: math.div($circle-size, 2);
+    r: $radius;
+    fill: none;
+    stroke: var(--sn-stylekit-contrast-border-color);
+    stroke-width: $stroke-width;
+  }
+
+  circle.progress {
+    cx: math.div($circle-size, 2);
+    cy: math.div($circle-size, 2);
+    r: $radius;
+    fill: none;
+    stroke: var(--sn-stylekit-info-color);
+    stroke-linecap: round;
+    stroke-width: $stroke-width;
+    transition: all 0.5s;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+
+    @mixin set-progress($progress) {
+      $dash: math.div($progress * $circumference, 100);
+      stroke-dasharray: $dash $circumference - $dash;
+    }
+
+    &.p-0 {
+      @include set-progress(0);
+    }
+
+    &.p-10 {
+      @include set-progress(10);
+    }
+
+    &.p-20 {
+      @include set-progress(20);
+    }
+
+    &.p-30 {
+      @include set-progress(30);
+    }
+
+    &.p-40 {
+      @include set-progress(40);
+    }
+
+    &.p-50 {
+      @include set-progress(50);
+    }
+
+    &.p-60 {
+      @include set-progress(60);
+    }
+
+    &.p-70 {
+      @include set-progress(70);
+    }
+
+    &.p-80 {
+      @include set-progress(80);
+    }
+
+    &.p-90 {
+      @include set-progress(90);
+    }
+
+    &.p-100 {
+      @include set-progress(100);
+    }
+  }
+}
+
+.animation-fill-forwards {
+  animation-fill-mode: forwards;
 }

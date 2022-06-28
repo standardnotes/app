@@ -131,7 +131,8 @@
   }
 
   .sk-panel-section-subtitle {
-    @extend .sk-label;
+    font-size: var(--sn-stylekit-font-size-p);
+    font-weight: bold;
     font-size: var(--sn-stylekit-font-size-h5);
     margin-bottom: 2px;
 

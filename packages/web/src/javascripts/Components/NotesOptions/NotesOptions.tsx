@@ -11,6 +11,7 @@ import AddTagOption from './AddTagOption'
 import { addToast, dismissToast, ToastType } from '@standardnotes/toast'
 import { NotesOptionsProps } from './NotesOptionsProps'
 import { NotesController } from '@/Controllers/NotesController'
+import HorizontalSeparator from '../Shared/HorizontalSeparator'
 
 type DeletePermanentlyButtonProps = {
   closeOnBlur: NotesOptionsProps['closeOnBlur']
@@ -18,16 +19,20 @@ type DeletePermanentlyButtonProps = {
 }
 
 const DeletePermanentlyButton = ({ closeOnBlur, onClick }: DeletePermanentlyButtonProps) => (
-  <button onBlur={closeOnBlur} className="sn-dropdown-item" onClick={onClick}>
-    <Icon type="close" className="color-danger mr-2" />
-    <span className="color-danger">Delete permanently</span>
+  <button
+    onBlur={closeOnBlur}
+    className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-menu-item"
+    onClick={onClick}
+  >
+    <Icon type="close" className="text-danger mr-2" />
+    <span className="text-danger">Delete permanently</span>
   </button>
 )
 
-const iconClass = 'color-neutral mr-2'
-const iconClassDanger = 'color-danger mr-2'
-const iconClassWarning = 'color-warning mr-2'
-const iconClassSuccess = 'color-success mr-2'
+const iconClass = 'text-neutral mr-2'
+const iconClassDanger = 'text-danger mr-2'
+const iconClassWarning = 'text-warning mr-2'
+const iconClassSuccess = 'text-success mr-2'
 
 const getWordCount = (text: string) => {
   if (text.trim().length === 0) {
@@ -96,7 +101,7 @@ const NoteAttributes: FunctionComponent<{
   const format = editor?.package_info?.file_type || 'txt'
 
   return (
-    <div className="px-3 pt-1.5 pb-2.5 text-xs color-neutral font-medium">
+    <div className="px-3 pt-1.5 pb-2.5 text-xs text-neutral font-medium">
       {typeof words === 'number' && (format === 'txt' || format === 'md') ? (
         <>
           <div className="mb-1">
@@ -135,7 +140,7 @@ const SpellcheckOptions: FunctionComponent<{
   return (
     <div className="flex flex-col">
       <button
-        className="sn-dropdown-item justify-between px-3 py-1"
+        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1 text-left w-full focus:bg-info-backdrop focus:shadow-none text-menu-item justify-between"
         onClick={() => {
           notesController.toggleGlobalSpellcheckForNote(note).catch(console.error)
         }}
@@ -161,8 +166,8 @@ const NoteSizeWarning: FunctionComponent<{
 }> = ({ note }) => {
   return new Blob([note.text]).size > NOTE_SIZE_WARNING_THRESHOLD ? (
     <div className="flex items-center px-3 py-3.5 relative bg-warning-faded">
-      <Icon type="warning" className="color-accessory-tint-3 flex-shrink-0 mr-3" />
-      <div className="color-warning select-none leading-140% max-w-80%">
+      <Icon type="warning" className="text-accessory-tint-3 flex-shrink-0 mr-3" />
+      <div className="text-warning select-none leading-140% max-w-80%">
         This note may have trouble syncing to the mobile application due to its size.
       </div>
     </div>
@@ -267,15 +272,19 @@ const NotesOptions = ({
     <>
       {notes.length === 1 && (
         <>
-          <button onBlur={closeOnBlur} className="sn-dropdown-item" onClick={openRevisionHistoryModal}>
+          <button
+            onBlur={closeOnBlur}
+            className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-menu-item"
+            onClick={openRevisionHistoryModal}
+          >
             <Icon type="history" className={iconClass} />
             Note history
           </button>
-          <div className="min-h-1px my-2 bg-border"></div>
+          <HorizontalSeparator classes="my-2" />
         </>
       )}
       <button
-        className="sn-dropdown-item justify-between"
+        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-menu-item justify-between"
         onClick={() => {
           notesController.setLockSelectedNotes(!locked)
         }}
@@ -288,7 +297,7 @@ const NotesOptions = ({
         <Switch className="px-0" checked={locked} />
       </button>
       <button
-        className="sn-dropdown-item justify-between"
+        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-menu-item justify-between"
         onClick={() => {
           notesController.setHideSelectedNotePreviews(!hidePreviews)
         }}
@@ -301,7 +310,7 @@ const NotesOptions = ({
         <Switch className="px-0" checked={!hidePreviews} />
       </button>
       <button
-        className="sn-dropdown-item justify-between"
+        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-menu-item justify-between"
         onClick={() => {
           notesController.setProtectSelectedNotes(!protect).catch(console.error)
         }}
@@ -315,11 +324,11 @@ const NotesOptions = ({
       </button>
       {notes.length === 1 && (
         <>
-          <div className="min-h-1px my-2 bg-border"></div>
+          <HorizontalSeparator classes="my-2" />
           <ChangeEditorOption application={application} note={notes[0]} />
         </>
       )}
-      <div className="min-h-1px my-2 bg-border"></div>
+      <HorizontalSeparator classes="my-2" />
       {navigationController.tagsCount > 0 && (
         <AddTagOption
           navigationController={navigationController}
@@ -330,7 +339,7 @@ const NotesOptions = ({
       {unpinned && (
         <button
           onBlur={closeOnBlur}
-          className="sn-dropdown-item"
+          className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-menu-item"
           onClick={() => {
             notesController.setPinSelectedNotes(true)
           }}
@@ -342,7 +351,7 @@ const NotesOptions = ({
       {pinned && (
         <button
           onBlur={closeOnBlur}
-          className="sn-dropdown-item"
+          className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-menu-item"
           onClick={() => {
             notesController.setPinSelectedNotes(false)
           }}
@@ -351,36 +360,44 @@ const NotesOptions = ({
           Unpin
         </button>
       )}
-      <button onBlur={closeOnBlur} className="sn-dropdown-item" onClick={downloadSelectedItems}>
+      <button
+        onBlur={closeOnBlur}
+        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-menu-item"
+        onClick={downloadSelectedItems}
+      >
         <Icon type="download" className={iconClass} />
         Export
       </button>
-      <button onBlur={closeOnBlur} className="sn-dropdown-item" onClick={duplicateSelectedItems}>
+      <button
+        onBlur={closeOnBlur}
+        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-menu-item"
+        onClick={duplicateSelectedItems}
+      >
         <Icon type="copy" className={iconClass} />
         Duplicate
       </button>
       {unarchived && (
         <button
           onBlur={closeOnBlur}
-          className="sn-dropdown-item"
+          className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-menu-item"
           onClick={() => {
             notesController.setArchiveSelectedNotes(true).catch(console.error)
           }}
         >
           <Icon type="archive" className={iconClassWarning} />
-          <span className="color-warning">Archive</span>
+          <span className="text-warning">Archive</span>
         </button>
       )}
       {archived && (
         <button
           onBlur={closeOnBlur}
-          className="sn-dropdown-item"
+          className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-menu-item"
           onClick={() => {
             notesController.setArchiveSelectedNotes(false).catch(console.error)
           }}
         >
           <Icon type="unarchive" className={iconClassWarning} />
-          <span className="color-warning">Unarchive</span>
+          <span className="text-warning">Unarchive</span>
         </button>
       )}
       {notTrashed &&
@@ -394,26 +411,26 @@ const NotesOptions = ({
         ) : (
           <button
             onBlur={closeOnBlur}
-            className="sn-dropdown-item"
+            className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-menu-item"
             onClick={async () => {
               await notesController.setTrashSelectedNotes(true)
             }}
           >
             <Icon type="trash" className={iconClassDanger} />
-            <span className="color-danger">Move to trash</span>
+            <span className="text-danger">Move to trash</span>
           </button>
         ))}
       {trashed && (
         <>
           <button
             onBlur={closeOnBlur}
-            className="sn-dropdown-item"
+            className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-menu-item"
             onClick={async () => {
               await notesController.setTrashSelectedNotes(false)
             }}
           >
             <Icon type="restore" className={iconClassSuccess} />
-            <span className="color-success">Restore</span>
+            <span className="text-success">Restore</span>
           </button>
           <DeletePermanentlyButton
             closeOnBlur={closeOnBlur}
@@ -423,15 +440,15 @@ const NotesOptions = ({
           />
           <button
             onBlur={closeOnBlur}
-            className="sn-dropdown-item"
+            className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-menu-item"
             onClick={async () => {
               await notesController.emptyTrash()
             }}
           >
             <div className="flex items-start">
-              <Icon type="trash-sweep" className="color-danger mr-2" />
+              <Icon type="trash-sweep" className="text-danger mr-2" />
               <div className="flex-row">
-                <div className="color-danger">Empty Trash</div>
+                <div className="text-danger">Empty Trash</div>
                 <div className="text-xs">{notesController.trashedNotesCount} notes in Trash</div>
               </div>
             </div>
@@ -440,11 +457,11 @@ const NotesOptions = ({
       )}
       {notes.length === 1 ? (
         <>
-          <div className="min-h-1px my-2 bg-border"></div>
+          <HorizontalSeparator classes="my-2" />
           <ListedActionsOption application={application} note={notes[0]} />
-          <div className="min-h-1px my-2 bg-border"></div>
+          <HorizontalSeparator classes="my-2" />
           <SpellcheckOptions editorForNote={editorForNote} notesController={notesController} note={notes[0]} />
-          <div className="min-h-1px my-2 bg-border"></div>
+          <HorizontalSeparator classes="my-2" />
           <NoteAttributes application={application} note={notes[0]} />
           <NoteSizeWarning note={notes[0]} />
         </>

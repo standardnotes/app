@@ -56,11 +56,11 @@ const ConfirmCustomExtension: FunctionComponent<{
       <div className="min-h-3" />
 
       <div className="flex flex-row">
-        <Button className="min-w-20" variant="normal" label="Cancel" onClick={() => callback(false)} />
+        <Button className="min-w-20" label="Cancel" onClick={() => callback(false)} />
 
         <div className="min-w-3" />
 
-        <Button className="min-w-20" variant="normal" label="Install" onClick={() => callback(true)} />
+        <Button className="min-w-20" label="Install" onClick={() => callback(true)} />
       </div>
     </PreferencesSegment>
   )

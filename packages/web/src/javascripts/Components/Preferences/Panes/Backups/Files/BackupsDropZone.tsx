@@ -8,6 +8,7 @@ import { StreamingFileApi } from '@standardnotes/filepicker'
 import { WebApplication } from '@/Application/Application'
 import EncryptionStatusItem from '../../Security/EncryptionStatusItem'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
+import Spinner from '@/Components/Spinner/Spinner'
 
 type Props = {
   application: WebApplication
@@ -163,7 +164,6 @@ const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
               </div>
               <div>
                 <Button
-                  variant="normal"
                   label="Choose"
                   className={'px-1 text-xs min-w-40'}
                   onClick={chooseRelatedBinaryFile}
@@ -179,7 +179,6 @@ const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
 
               <div>
                 <Button
-                  variant="normal"
                   label={isSavingAsDecrypted ? undefined : 'Save'}
                   className={'px-1 text-xs min-w-40'}
                   onClick={downloadBinaryFileAsDecrypted}
@@ -187,7 +186,7 @@ const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
                 >
                   {isSavingAsDecrypted && (
                     <div className="flex justify-center w-full">
-                      <div className="sk-spinner w-5 h-5 spinner-info"></div>
+                      <Spinner className="w-5 h-5" />
                     </div>
                   )}
                 </Button>
