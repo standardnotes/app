@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0](https://github.com/standardnotes/app/compare/@standardnotes/markdown-hybrid@1.5.5...@standardnotes/markdown-hybrid@1.6.0) (2022-06-28)
+
+### Bug Fixes
+
+* advanced markdown deprecation handling ([bb43134](https://github.com/standardnotes/app/commit/bb43134e94768f534b201533c96d0a8c166b29a0))
+
+### Features
+
+* deprecated editors ([#1166](https://github.com/standardnotes/app/issues/1166)) ([60ca415](https://github.com/standardnotes/app/commit/60ca4150446f9a14bb6a31416686c6d07a7d0cd9))
+
 ## [1.5.5](https://github.com/standardnotes/app/compare/@standardnotes/markdown-hybrid@1.5.5-alpha.0...@standardnotes/markdown-hybrid@1.5.5) (2022-06-22)
 
 **Note:** Version bump only for package @standardnotes/markdown-hybrid

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.5.2](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.5.1...@standardnotes/components-meta@2.5.2) (2022-06-28)
+
+### Bug Fixes
+
+* advanced markdown deprecation handling ([bb43134](https://github.com/standardnotes/app/commit/bb43134e94768f534b201533c96d0a8c166b29a0))
+
 ## [2.5.1](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.5.0...@standardnotes/components-meta@2.5.1) (2022-06-28)
 
 **Note:** Version bump only for package @standardnotes/components-meta
