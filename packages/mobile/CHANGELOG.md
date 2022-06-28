@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.25.10](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.25.9...@standardnotes/mobile@3.25.10) (2022-06-28)
+
+### Bug Fixes
+
+* **mobile:** turn native textview into uncontrolled component ([#1176](https://github.com/standardnotes/app/issues/1176)) ([d198625](https://github.com/standardnotes/app/commit/d198625cfab1d3fb579b897b748699f021e26578))
+
 ## [3.25.9](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.25.8...@standardnotes/mobile@3.25.9) (2022-06-28)
 
 **Note:** Version bump only for package @standardnotes/mobile

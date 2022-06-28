@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.27.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.27.2...@standardnotes/web@3.27.3) (2022-06-28)
+
+### Bug Fixes
+
+* **mobile:** turn native textview into uncontrolled component ([#1176](https://github.com/standardnotes/app/issues/1176)) ([d198625](https://github.com/standardnotes/app/commit/d198625cfab1d3fb579b897b748699f021e26578))
+
 ## [3.27.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.27.1...@standardnotes/web@3.27.2) (2022-06-28)
 
 ### Bug Fixes
