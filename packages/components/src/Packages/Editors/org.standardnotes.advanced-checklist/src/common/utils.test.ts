@@ -1,5 +1,6 @@
-import { GroupPayload, TaskPayload } from '../features/tasks/tasks-slice'
+import { DEFAULT_SECTIONS, GroupModel, TaskModel } from '../features/tasks/tasks-slice'
 import {
+  arrayDefault,
   arrayMoveImmutable,
   arrayMoveMutable,
   getPercentage,
@@ -86,7 +87,7 @@ describe('getPercentage', () => {
 
 describe('groupTasksByCompletedStatus', () => {
   it('should return open tasks and completed tasks', () => {
-    const tasks: TaskPayload[] = [
+    const tasks: TaskModel[] = [
       {
         id: 'test-1',
         description: 'Testing #1',
@@ -147,13 +148,15 @@ describe('getTaskArrayFromGroupedTasks', () => {
       },
     ]
 
-    const groupedTasks: GroupPayload[] = [
+    const groupedTasks: GroupModel[] = [
       {
         name: 'Work',
+        sections: DEFAULT_SECTIONS,
         tasks: workTasks,
       },
       {
         name: 'Personal',
+        sections: DEFAULT_SECTIONS,
         tasks: personalTasks,
       },
     ]
@@ -216,20 +219,22 @@ describe('getPlainPreview', () => {
       },
     ]
 
-    const groupedTasks: GroupPayload[] = [
+    const groupedTasks: GroupModel[] = [
       {
         name: 'Work',
+        sections: DEFAULT_SECTIONS,
         tasks: workTasks,
       },
       {
         name: 'Personal',
+        sections: DEFAULT_SECTIONS,
         tasks: personalTasks,
       },
     ]
 
     expect(getPlainPreview(groupedTasks)).toBe('2/5 tasks completed')
     expect(getPlainPreview([])).toBe('0/0 tasks completed')
-    expect(getPlainPreview([{ name: 'Test', tasks: [] }])).toBe('0/0 tasks completed')
+    expect(getPlainPreview([{ name: 'Test', tasks: [], sections: [] }])).toBe('0/0 tasks completed')
   })
 })
 
@@ -251,7 +256,7 @@ describe('parseMarkdownTasks', () => {
 - [x] Bar
 - [ ] Foobar`
 
-    expect(parseMarkdownTasks(payload)).toMatchObject<GroupPayload>({
+    expect(parseMarkdownTasks(payload)).toMatchObject<GroupModel>({
       name: 'Checklist',
       tasks: [
         {
@@ -273,6 +278,19 @@ describe('parseMarkdownTasks', () => {
           createdAt: expect.any(Date),
         },
       ],
+      sections: DEFAULT_SECTIONS,
     })
+  })
+})
+
+describe('arrayDefault', () => {
+  it('should fallback to default value', () => {
+    expect(arrayDefault({ defaultValue: [] })).toEqual([])
+    expect(arrayDefault({ value: undefined, defaultValue: [] })).toEqual([])
+    expect(arrayDefault({ value: [], defaultValue: ['test'] })).toEqual(['test'])
+  })
+
+  it('should return value', () => {
+    expect(arrayDefault({ value: ['test'], defaultValue: [] })).toEqual(['test'])
   })
 })

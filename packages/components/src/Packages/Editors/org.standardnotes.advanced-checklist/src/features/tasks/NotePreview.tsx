@@ -4,7 +4,7 @@ import {
   groupTasksByCompletedStatus,
   truncateText,
 } from '../../common/utils'
-import { GroupPayload, TaskPayload } from './tasks-slice'
+import { GroupModel, TaskModel } from './tasks-slice'
 
 const GROUPS_PREVIEW_LIMIT = 3
 const MAX_GROUP_DESCRIPTION_LENGTH = 30
@@ -14,7 +14,7 @@ const Title: React.FC = ({ children }) => {
 }
 
 type GroupSummaryProps = {
-  groups: GroupPayload[]
+  groups: GroupModel[]
 }
 
 const GroupSummary: React.FC<GroupSummaryProps> = ({ groups }) => {
@@ -37,7 +37,7 @@ const GroupSummary: React.FC<GroupSummaryProps> = ({ groups }) => {
           return (
             <p data-testid="group-summary" key={`group-${group.name}`} className="mb-1">
               {truncateText(group.name, MAX_GROUP_DESCRIPTION_LENGTH)}
-              <span className="px-2 text-neutral">
+              <span className="px-2 neutral">
                 {totalCompletedTasks}/{totalTasks}
               </span>
             </p>
@@ -54,11 +54,11 @@ const GroupSummary: React.FC<GroupSummaryProps> = ({ groups }) => {
 }
 
 type NotePreviewProps = {
-  groupedTasks: GroupPayload[]
+  groupedTasks: GroupModel[]
 }
 
 const NotePreview: React.FC<NotePreviewProps> = ({ groupedTasks }) => {
-  const allTasks: TaskPayload[] = getTaskArrayFromGroupedTasks(groupedTasks)
+  const allTasks: TaskModel[] = getTaskArrayFromGroupedTasks(groupedTasks)
   const { completedTasks } = groupTasksByCompletedStatus(allTasks)
   const percentage = getPercentage(allTasks.length, completedTasks.length)
   const roundedPercentage = Math.floor(percentage / 10) * 10

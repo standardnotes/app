@@ -4,7 +4,7 @@ import { ChangeEvent, createRef, KeyboardEvent, useEffect, useState } from 'reac
 import styled from 'styled-components'
 
 import { useAppDispatch, useAppSelector, useDidMount } from '../../app/hooks'
-import { taskDeleted, taskModified, TaskPayload, taskToggled } from './tasks-slice'
+import { taskDeleted, TaskModel, taskModified, taskToggled } from './tasks-slice'
 
 import { CheckBoxInput, TextAreaInput } from '../../common/components'
 
@@ -37,7 +37,7 @@ const Container = styled.div<{ completed?: boolean }>`
 `
 
 export type TaskItemProps = {
-  task: TaskPayload
+  task: TaskModel
   groupName: string
   innerRef?: (element?: HTMLElement | null | undefined) => any
 }
