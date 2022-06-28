@@ -24,7 +24,7 @@ class MockMigration extends BaseMigration {
 
 describe('MigrationService', () => {
   it('should upgrade 1.0.0 to 1.0.123', () => {
-    const testData: Partial<TasksState> = {
+    const testData = {
       schemaVersion: '1.0.0',
       groups: [
         {
@@ -61,7 +61,7 @@ describe('MigrationService', () => {
 
     const migrationClasses = [MockMigration]
     const migrationService = new MigrationService(migrationClasses)
-    const result = migrationService.performMigrations(testData as any)
+    const result = migrationService.performMigrations(testData)
 
     expect(result).toEqual<Partial<TasksState>>({
       ...testData,
@@ -70,7 +70,7 @@ describe('MigrationService', () => {
   })
 
   it('should do nothing if latest version', () => {
-    const testData: Partial<TasksState> = {
+    const testData = {
       schemaVersion: '1.0.123',
       groups: [
         {
@@ -83,7 +83,9 @@ describe('MigrationService', () => {
               createdAt: new Date(),
             },
           ],
-          collapsed: true,
+          collapsed: {
+            group: true,
+          },
         },
         {
           name: 'Test group #2',
@@ -101,13 +103,13 @@ describe('MigrationService', () => {
 
     const migrationClasses = [MockMigration]
     const migrationService = new MigrationService(migrationClasses)
-    const result = migrationService.performMigrations(testData as any)
+    const result = migrationService.performMigrations(testData)
 
     expect(result).toBe(testData)
   })
 
   it('should downgrade if version > 1.0.123', () => {
-    const testData: Partial<TasksState> = {
+    const testData = {
       schemaVersion: '1.0.130',
       groups: [
         {
@@ -120,7 +122,9 @@ describe('MigrationService', () => {
               createdAt: new Date(),
             },
           ],
-          collapsed: true,
+          collapsed: {
+            group: true,
+          },
         },
         {
           name: 'Test group #2',
@@ -138,7 +142,7 @@ describe('MigrationService', () => {
 
     const migrationClasses = [MockMigration]
     const migrationService = new MigrationService(migrationClasses)
-    const result = migrationService.performMigrations(testData as any)
+    const result = migrationService.performMigrations(testData)
 
     expect(result).toMatchObject(
       expect.objectContaining({
