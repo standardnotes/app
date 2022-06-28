@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.27.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.26.4...@standardnotes/web@3.27.0) (2022-06-28)
+
+### Features
+
+* move search bar to navigation panel ([#1170](https://github.com/standardnotes/app/issues/1170)) ([7b51fa4](https://github.com/standardnotes/app/commit/7b51fa4fa839eae838ab264cdc074b3a0735427a))
+
 ## [3.26.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.26.3...@standardnotes/web@3.26.4) (2022-06-28)
 
 **Note:** Version bump only for package @standardnotes/web
