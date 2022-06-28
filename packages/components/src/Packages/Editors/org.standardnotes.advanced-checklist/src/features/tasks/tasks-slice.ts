@@ -256,7 +256,7 @@ const tasksSlice = createSlice({
         return
       }
       if (!group.sections) {
-        group.sections = state.defaultSections
+        group.sections = state.defaultSections.map((section) => ({ id: section.id, name: section.name }))
       }
       const section = group.sections.find((item) => item.id === type)
       if (!section) {
