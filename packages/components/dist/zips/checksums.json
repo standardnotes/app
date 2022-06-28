@@ -75,9 +75,9 @@
     "binary": "a067179688b65ab64516b330661009854ea7522fcdd601c01a683a10c900fce1"
   },
   "org.standardnotes.simple-task-editor": {
-    "version": "1.3.15",
-    "base64": "deb7a0acafe2a65c8b44b448e9608299a019494cfd0bfd0d2a4d2bed953a0943",
-    "binary": "1317540bf6bf8d7f70674de07083d9d0bf1111265d44535df4aa55dbe65fadf6"
+    "version": "1.4.0",
+    "base64": "7a41a934a37f74a079ab92adb90495559250576973166cb6587bf1f6d5e84008",
+    "binary": "a1a6b97e1f761747dbf721857deed04370a3950dcb3e1bb4c4d4baa3680959b3"
   },
   "org.standardnotes.token-vault": {
     "version": "2.1.2",
@@ -90,9 +90,9 @@
     "binary": "5c8ec3876eef0ff3058fd1b2804fa01b53a869a281a0ff3430f4ddd08abc824d"
   },
   "org.standardnotes.advanced-checklist": {
-    "version": "0.1.0",
-    "base64": "bd6b977616729593e51821a371dcd9afdbf7d4bb7e4c95c501853399197edbb4",
-    "binary": "a985a5941e6abc9d4bf661aa4a66fe1903eb26e5ad4904ad4d09d27ec21acfea"
+    "version": "0.1.1",
+    "base64": "1a3b02288a073742d2d9fb6e00f3c563eb1cc611e0f16920aed2b5fb78d3ee40",
+    "binary": "6c6d9c8b9f6edab3d698bab48fda7e5a8f03d77dbf437a2b160d1ffba63b31a7"
   },
   "org.standardnotes.file-safe": {
     "version": "2.0.16",
