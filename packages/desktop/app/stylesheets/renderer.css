@@ -5,7 +5,7 @@
 
 /* To offset frameless window nav buttons on Mac */
 .mac-desktop #editor-column,
-.mac-desktop #notes-column {
+.mac-desktop #items-column {
   transition: 0.15s padding ease;
 }
 
@@ -13,7 +13,7 @@
   padding-top: 18px;
 }
 
-.mac-desktop #app.collapsed-navigation #notes-column {
+.mac-desktop #app.collapsed-navigation #items-column {
   padding-top: 18px;
 }
 
