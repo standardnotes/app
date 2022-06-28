@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { v4 as uuidv4 } from 'uuid'
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
-import { GroupPayload, taskAdded, tasksGroupDraft } from './tasks-slice'
+import { GroupModel, taskAdded, tasksGroupDraft } from './tasks-slice'
 
 import { TextInput } from '../../common/components'
 import { DottedCircleIcon } from '../../common/components/icons'
@@ -21,7 +21,7 @@ const Container = styled.div`
 `
 
 type CreateTaskProps = {
-  group: GroupPayload
+  group: GroupModel
 }
 
 const CreateTask: React.FC<CreateTaskProps> = ({ group }) => {

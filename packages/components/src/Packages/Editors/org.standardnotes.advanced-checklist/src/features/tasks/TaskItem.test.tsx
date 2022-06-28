@@ -2,10 +2,10 @@ import { fireEvent, screen, waitFor } from '@testing-library/react'
 
 import { testRender } from '../../testUtils'
 import TaskItem from './TaskItem'
-import { taskDeleted, taskModified, TaskPayload, taskToggled } from './tasks-slice'
+import { taskDeleted, TaskModel, taskModified, taskToggled } from './tasks-slice'
 
 const groupName = 'default group'
-const task: TaskPayload = {
+const task: TaskModel = {
   id: 'test-1',
   description: 'Testing #1',
   completed: false,

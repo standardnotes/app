@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import NotePreview from './NotePreview'
-import { GroupPayload } from './tasks-slice'
+import { DEFAULT_SECTIONS, GroupModel } from './tasks-slice'
 
 const workTasks = [
   {
@@ -44,7 +44,7 @@ const miscTasks = [
 ]
 
 it('should render without tasks', () => {
-  const groupedTasks: GroupPayload[] = []
+  const groupedTasks: GroupModel[] = []
 
   render(<NotePreview groupedTasks={groupedTasks} />)
 
@@ -71,10 +71,12 @@ it('should render with tasks', () => {
     {
       name: 'Work',
       tasks: workTasks,
+      sections: DEFAULT_SECTIONS,
     },
     {
       name: 'Personal',
       tasks: personalTasks,
+      sections: DEFAULT_SECTIONS,
     },
   ]
 
@@ -103,14 +105,17 @@ it('should render a summary of the remaining group(s)', () => {
     {
       name: 'Work',
       tasks: workTasks,
+      sections: DEFAULT_SECTIONS,
     },
     {
       name: 'Personal',
       tasks: personalTasks,
+      sections: DEFAULT_SECTIONS,
     },
     {
       name: 'Misc',
       tasks: miscTasks,
+      sections: DEFAULT_SECTIONS,
     },
     {
       name: 'Groceries',
@@ -121,6 +126,7 @@ it('should render a summary of the remaining group(s)', () => {
           createdAt: new Date(),
         },
       ],
+      sections: DEFAULT_SECTIONS,
     },
   ]
 

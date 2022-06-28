@@ -12,6 +12,7 @@ it('renders the alert dialog when no groups are available to merge', () => {
   const defaultState: Partial<RootState> = {
     tasks: {
       schemaVersion: '1.0.0',
+      defaultSections: [],
       groups: [
         {
           name: 'Test',
@@ -44,6 +45,7 @@ it('renders the alert dialog when there are groups available to merge', () => {
   const defaultState: Partial<RootState> = {
     tasks: {
       schemaVersion: '1.0.0',
+      defaultSections: [],
       groups: [
         {
           name: 'Test',
@@ -106,6 +108,7 @@ it('should close the dialog if no group is selected and the Merge button is clic
   const defaultState: Partial<RootState> = {
     tasks: {
       schemaVersion: '1.0.0',
+      defaultSections: [],
       groups: [
         {
           name: 'Test',
@@ -168,6 +171,7 @@ it('should dispatch the action to merge groups', () => {
   const defaultState: Partial<RootState> = {
     tasks: {
       schemaVersion: '1.0.0',
+      defaultSections: [],
       groups: [
         {
           name: 'Test',

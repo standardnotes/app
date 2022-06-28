@@ -1,7 +1,7 @@
 export const AddIcon = () => {
   return (
     <svg
-      className="sn-icon sm block"
+      className="sn-icon small block"
       fill="none"
       height="14"
       viewBox="0 0 14 14"
