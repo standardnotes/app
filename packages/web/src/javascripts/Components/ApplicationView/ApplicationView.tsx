@@ -186,7 +186,6 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
             noAccountWarningController={viewControllerManager.noAccountWarningController}
             noteTagsController={viewControllerManager.noteTagsController}
             notesController={viewControllerManager.notesController}
-            searchOptionsController={viewControllerManager.searchOptionsController}
             selectionController={viewControllerManager.selectionController}
           />
           <NoteGroupView application={application} />
