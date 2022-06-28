@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0](https://github.com/standardnotes/app/compare/@standardnotes/advanced-checklist@0.0.5...@standardnotes/advanced-checklist@0.1.0) (2022-06-28)
+
+### Features
+
+* **advanced checklist:** collapsible group sections ([#1167](https://github.com/standardnotes/app/issues/1167)) ([59e5324](https://github.com/standardnotes/app/commit/59e5324a29029d024811bf2bb63e08ae42d3b62b))
+* deprecated editors ([#1166](https://github.com/standardnotes/app/issues/1166)) ([60ca415](https://github.com/standardnotes/app/commit/60ca4150446f9a14bb6a31416686c6d07a7d0cd9))
+* **web:** tailwind css ([#1147](https://github.com/standardnotes/app/issues/1147)) ([b80038f](https://github.com/standardnotes/app/commit/b80038f607d7411912fa99366abf559a44874ef3))
+
 ## [0.0.5](https://github.com/standardnotes/app/compare/@standardnotes/advanced-checklist@0.0.5-alpha.0...@standardnotes/advanced-checklist@0.0.5) (2022-06-22)
 
 **Note:** Version bump only for package @standardnotes/advanced-checklist

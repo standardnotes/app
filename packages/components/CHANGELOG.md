@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.5.0](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.4.4...@standardnotes/components-meta@2.5.0) (2022-06-28)
+
+### Features
+
+* **advanced checklist:** collapsible group sections ([#1167](https://github.com/standardnotes/app/issues/1167)) ([59e5324](https://github.com/standardnotes/app/commit/59e5324a29029d024811bf2bb63e08ae42d3b62b))
+
 ## [2.4.4](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.4.3...@standardnotes/components-meta@2.4.4) (2022-06-27)
 
 ### Bug Fixes
