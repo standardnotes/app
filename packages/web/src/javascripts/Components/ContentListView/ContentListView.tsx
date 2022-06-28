@@ -3,26 +3,15 @@ import { WebApplication } from '@/Application/Application'
 import { PANEL_NAME_NOTES } from '@/Constants/Constants'
 import { PrefKey, SystemViewId } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import {
-  ChangeEventHandler,
-  FunctionComponent,
-  KeyboardEventHandler,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import { FunctionComponent, useCallback, useEffect, useMemo, useRef } from 'react'
 import ContentList from '@/Components/ContentListView/ContentList'
 import NoAccountWarning from '@/Components/NoAccountWarning/NoAccountWarning'
-import SearchOptions from '@/Components/SearchOptions/SearchOptions'
 import PanelResizer, { PanelSide, ResizeFinishCallback, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
 import { ItemListController } from '@/Controllers/ItemList/ItemListController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { FilesController } from '@/Controllers/FilesController'
 import { NoteTagsController } from '@/Controllers/NoteTagsController'
-import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 import { NoAccountWarningController } from '@/Controllers/NoAccountWarningController'
 import { NotesController } from '@/Controllers/NotesController'
 import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
@@ -38,7 +27,6 @@ type Props = {
   noAccountWarningController: NoAccountWarningController
   noteTagsController: NoteTagsController
   notesController: NotesController
-  searchOptionsController: SearchOptionsController
   selectionController: SelectedItemsController
 }
 
@@ -51,17 +39,13 @@ const ContentListView: FunctionComponent<Props> = ({
   noAccountWarningController,
   noteTagsController,
   notesController,
-  searchOptionsController,
   selectionController,
 }) => {
   const itemsViewPanelRef = useRef<HTMLDivElement>(null)
 
   const {
-    clearFilterText,
     completedFullSync,
     createNewNote,
-    noteFilterText,
-    onFilterEnter,
     optionsSubtitle,
     paginate,
     panelTitle,
@@ -70,12 +54,9 @@ const ContentListView: FunctionComponent<Props> = ({
     searchBarElement,
     selectNextItem,
     selectPreviousItem,
-    setNoteFilterText,
   } = itemListController
 
   const { selectedItems } = selectionController
-
-  const [focusedSearch, setFocusedSearch] = useState(false)
 
   const isFilesSmartView = useMemo(
     () => navigationController.selected?.uuid === SystemViewId.Files,
@@ -166,25 +147,6 @@ const ContentListView: FunctionComponent<Props> = ({
     selectionController,
   ])
 
-  const onNoteFilterTextChange: ChangeEventHandler<HTMLInputElement> = useCallback(
-    (e) => {
-      setNoteFilterText(e.target.value)
-    },
-    [setNoteFilterText],
-  )
-
-  const onSearchFocused = useCallback(() => setFocusedSearch(true), [])
-  const onSearchBlurred = useCallback(() => setFocusedSearch(false), [])
-
-  const onNoteFilterKeyUp: KeyboardEventHandler = useCallback(
-    (e) => {
-      if (e.key === KeyboardKey.Enter) {
-        onFilterEnter()
-      }
-    },
-    [onFilterEnter],
-  )
-
   const panelResizeFinishCallback: ResizeFinishCallback = useCallback(
     (width, _lastLeft, _isMaxWidth, isCollapsed) => {
       application.setPreference(PrefKey.NotesPanelWidth, width).catch(console.error)
@@ -221,34 +183,6 @@ const ContentListView: FunctionComponent<Props> = ({
               isFilesSmartView={isFilesSmartView}
               optionsSubtitle={optionsSubtitle}
             />
-            <div className="filter-section" role="search">
-              <div>
-                <input
-                  type="text"
-                  id="search-bar"
-                  className="filter-bar"
-                  placeholder="Search"
-                  title="Searches notes and files in the currently selected tag"
-                  value={noteFilterText}
-                  onChange={onNoteFilterTextChange}
-                  onKeyUp={onNoteFilterKeyUp}
-                  onFocus={onSearchFocused}
-                  onBlur={onSearchBlurred}
-                  autoComplete="off"
-                />
-                {noteFilterText && (
-                  <button onClick={clearFilterText} id="search-clear-button">
-                    ✕
-                  </button>
-                )}
-              </div>
-
-              {(focusedSearch || noteFilterText) && (
-                <div className="animate-fade-from-top">
-                  <SearchOptions application={application} searchOptions={searchOptionsController} />
-                </div>
-              )}
-            </div>
             <NoAccountWarning
               accountMenuController={accountMenuController}
               noAccountWarningController={noAccountWarningController}

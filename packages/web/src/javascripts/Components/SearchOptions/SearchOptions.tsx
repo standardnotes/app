@@ -1,11 +1,9 @@
-import { WebApplication } from '@/Application/Application'
 import { observer } from 'mobx-react-lite'
 import Bubble from '@/Components/Bubble/Bubble'
 import { useCallback } from 'react'
 import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 
 type Props = {
-  application: WebApplication
   searchOptions: SearchOptionsController
 }
 
@@ -17,7 +15,7 @@ const SearchOptions = ({ searchOptions }: Props) => {
   }, [searchOptions])
 
   return (
-    <div role="tablist" className="search-options justify-center" onMouseDown={(e) => e.preventDefault()}>
+    <div role="tablist" className="mt-3 flex flex-wrap gap-2" onMouseDown={(e) => e.preventDefault()}>
       <Bubble
         label="Protected Contents"
         selected={includeProtectedContents}
