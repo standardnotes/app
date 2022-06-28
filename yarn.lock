@@ -4962,7 +4962,7 @@ __metadata:
     "@lerna-lite/list": ^1.5.1
     "@lerna-lite/run": ^1.5.1
     "@standardnotes/config": ^2.4.3
-    "@standardnotes/snjs": ^2.118.1
+    "@standardnotes/snjs": ^2.118.2
     "@typescript-eslint/eslint-plugin": ^5.20.0
     "@typescript-eslint/parser": ^5.20.0
     changelog-parser: ^2.8.1
@@ -5615,10 +5615,10 @@ __metadata:
     "@standardnotes/filepicker": ^1.16.22
     "@standardnotes/icons": "workspace:*"
     "@standardnotes/react-native-aes": ^1.4.3
-    "@standardnotes/react-native-textview": 1.0.2
+    "@standardnotes/react-native-textview": 1.1.0
     "@standardnotes/react-native-utils": 1.0.1
     "@standardnotes/sncrypto-common": 1.9.0
-    "@standardnotes/snjs": ^2.118.1
+    "@standardnotes/snjs": ^2.118.2
     "@standardnotes/stylekit": 5.29.3
     "@types/detox": ^18.1.0
     "@types/faker": ^6.6.9
@@ -5710,13 +5710,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/react-native-textview@npm:1.0.2":
-  version: 1.0.2
-  resolution: "@standardnotes/react-native-textview@npm:1.0.2"
+"@standardnotes/react-native-textview@npm:1.1.0":
+  version: 1.1.0
+  resolution: "@standardnotes/react-native-textview@npm:1.1.0"
   peerDependencies:
     react: ^16.11.0
     react-native: ">=0.60.0-rc.0 <1.0.x"
-  checksum: 8345c2ed957bfc8fc184841ee1737243376d11c3b7b990795f99c6534d178ed9f5b48fa70063e27d05f19e83176d9b8a2e06477f707396083eaa9bf8c55c14ca
+  checksum: 150992e82be4a1cd02bf8fa3c094b203cc6c6b5062d220d984239731efc28a064030f2162946b85a81151672e5d22e4b215a62d1bb9abd156f75605f3d6f1f75
   languageName: node
   linkType: hard
 
@@ -5864,9 +5864,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/snjs@npm:^2.118.1":
-  version: 2.118.1
-  resolution: "@standardnotes/snjs@npm:2.118.1"
+"@standardnotes/snjs@npm:^2.118.2":
+  version: 2.118.2
+  resolution: "@standardnotes/snjs@npm:2.118.2"
   dependencies:
     "@standardnotes/api": ^1.1.18
     "@standardnotes/auth": ^3.19.4
@@ -5882,7 +5882,7 @@ __metadata:
     "@standardnotes/sncrypto-common": ^1.9.0
     "@standardnotes/utils": ^1.6.12
     semver: ^7.3.7
-  checksum: fe3da9c8061994a16e2e9397881b7ace46c26740d1c0573bd97e0bd1fb8675939eb04df27b95d261968ad09e1c5ed9822ae548ab0fb7a5a01dce9f7fbc7d0380
+  checksum: 65ccedcced28af1d9fdc9a9294e72b138f1bc23395dc87add5b442484abf5ce274921f9ec614f841c8f0630aba61c954afe33a03a06992b876a37381fa03bc3e
   languageName: node
   linkType: hard
 
@@ -6074,7 +6074,7 @@ __metadata:
     "@standardnotes/icons": "workspace:*"
     "@standardnotes/services": ^1.13.22
     "@standardnotes/sncrypto-web": 1.10.1
-    "@standardnotes/snjs": ^2.118.1
+    "@standardnotes/snjs": ^2.118.2
     "@standardnotes/styles": "workspace:*"
     "@standardnotes/toast": "workspace:*"
     "@types/jest": ^27.4.1
