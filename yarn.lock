@@ -6067,6 +6067,7 @@ __metadata:
     postcss: ^8.4.14
     postcss-loader: ^7.0.0
     prettier: "*"
+    prettier-plugin-tailwindcss: ^0.1.11
     qrcode.react: ^3.0.1
     react: ^18.1.0
     react-dnd: ^16.0.1
@@ -26370,6 +26371,15 @@ __metadata:
     prettier: ">=2.0"
     typescript: ">=2.9"
   checksum: 2298fcae0f16fd1a095cc3a33ba5d51b679b291518d404ad5eaca56fdcfbd55d35e26c5adffcb8664bfb45c2339b551b385cf03f48888c46d0348843d96024e1
+  languageName: node
+  linkType: hard
+
+"prettier-plugin-tailwindcss@npm:^0.1.11":
+  version: 0.1.11
+  resolution: "prettier-plugin-tailwindcss@npm:0.1.11"
+  peerDependencies:
+    prettier: ">=2.2.0"
+  checksum: b06a81a22242407676de7b69342c1d69078e731e6363c7abd5877b044f2ddd83eba7281b085ea77754a49de88dcde164f394c31ae724a99fd46c0f9a4d4547a0
   languageName: node
   linkType: hard
 

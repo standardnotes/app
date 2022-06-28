@@ -114,7 +114,7 @@ const EmailBackups = ({ application }: Props) => {
           <Text>How often to receive backups.</Text>
           <div className="mt-2">
             {isLoading ? (
-              <Spinner className="w-4 h-4" />
+              <Spinner className="h-4 w-4" />
             ) : (
               <Dropdown
                 id="def-editor-dropdown"
@@ -132,7 +132,7 @@ const EmailBackups = ({ application }: Props) => {
               <Text>Receive a notification email if an email backup fails.</Text>
             </div>
             {isLoading ? (
-              <Spinner className="w-4 h-4" />
+              <Spinner className="h-4 w-4" />
             ) : (
               <Switch onChange={toggleMuteFailedBackupEmails} checked={!isFailedBackupEmailMuted} />
             )}

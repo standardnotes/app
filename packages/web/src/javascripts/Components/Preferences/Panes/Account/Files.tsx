@@ -45,7 +45,7 @@ const FilesSection: FunctionComponent<Props> = ({ application }) => {
         <Subtitle>Storage Quota</Subtitle>
         {isLoading ? (
           <div className="mt-2">
-            <Spinner className="w-3 h-3" />
+            <Spinner className="h-3 w-3" />
           </div>
         ) : (
           <>
@@ -54,7 +54,7 @@ const FilesSection: FunctionComponent<Props> = ({ application }) => {
               <span>{formatSizeToReadableString(filesQuotaTotal)}</span> used
             </div>
             <progress
-              className="w-full progress-bar"
+              className="progress-bar w-full"
               aria-label="Files storage used"
               value={filesQuotaUsed}
               max={filesQuotaTotal}

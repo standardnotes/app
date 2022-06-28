@@ -219,7 +219,7 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
           {hasPasscode && !showPasscodeForm && (
             <>
               <Text>Passcode lock is enabled.</Text>
-              <div className="flex flex-row mt-3">
+              <div className="mt-3 flex flex-row">
                 <Button label="Change Passcode" onClick={changePasscodePressed} className="mr-3" />
                 <Button colorStyle="danger" label="Remove Passcode" onClick={removePasscodePressed} />
               </div>
@@ -240,8 +240,8 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
                   return (
                     <a
                       key={option.value}
-                      className={`mr-3 rounded text-info cursor-pointer ${
-                        option.value === selectedAutoLockInterval ? 'bg-info text-info-contrast px-1.5 py-0.5' : ''
+                      className={`mr-3 cursor-pointer rounded text-info ${
+                        option.value === selectedAutoLockInterval ? 'bg-info px-1.5 py-0.5 text-info-contrast' : ''
                       }`}
                       onClick={() => selectAutoLockInterval(option.value)}
                     >

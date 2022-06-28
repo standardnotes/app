@@ -6,8 +6,8 @@ type Props = {
 
 const ModalDialogButtons: FunctionComponent<Props> = ({ children, className }) => (
   <>
-    <hr className="h-[1px] bg-border border-none m-0" />
-    <div className={`px-4 py-4 flex flex-row items-center ${className}`}>
+    <hr className="m-0 h-[1px] border-none bg-border" />
+    <div className={`flex flex-row items-center px-4 py-4 ${className}`}>
       {children != undefined && Array.isArray(children)
         ? children.map((child, idx, arr) => (
             <>

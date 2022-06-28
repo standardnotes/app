@@ -81,7 +81,7 @@ class NoteGroupView extends PureComponent<Props, State> {
       !this.state.showMultipleSelectedNotes && !this.state.showMultipleSelectedFiles
 
     return (
-      <div id={ElementIds.EditorColumn} className="h-full app-column app-column-third">
+      <div id={ElementIds.EditorColumn} className="app-column app-column-third h-full">
         {this.state.showMultipleSelectedNotes && (
           <MultipleSelectedNotes
             application={this.application}

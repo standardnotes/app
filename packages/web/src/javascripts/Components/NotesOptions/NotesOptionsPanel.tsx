@@ -71,7 +71,7 @@ const NotesOptionsPanel = ({
         }}
         onBlur={closeOnBlur}
         ref={buttonRef}
-        className="flex justify-center items-center min-w-8 h-8 bg-text-padding hover:bg-contrast focus:bg-contrast text-neutral border border-solid border-border rounded-full cursor-pointer"
+        className="bg-text-padding flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border text-neutral hover:bg-contrast focus:bg-contrast"
       >
         <VisuallyHidden>Actions</VisuallyHidden>
         <Icon type="more" className="block" />
@@ -90,7 +90,7 @@ const NotesOptionsPanel = ({
         }}
         className={`${
           open ? 'flex' : 'hidden'
-        } flex-col min-w-80 max-h-120 max-w-xs pt-2 fixed bg-default rounded shadow-main transition-transform duration-150 slide-down-animation overflow-y-auto`}
+        } max-h-120 slide-down-animation fixed min-w-80 max-w-xs flex-col overflow-y-auto rounded bg-default pt-2 shadow-main transition-transform duration-150`}
         onBlur={closeOnBlur}
         tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
       >

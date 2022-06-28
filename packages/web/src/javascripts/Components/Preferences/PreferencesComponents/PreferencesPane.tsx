@@ -1,13 +1,13 @@
 import { FunctionComponent } from 'react'
 
 const PreferencesPane: FunctionComponent = ({ children }) => (
-  <div className="text-foreground flex-grow flex flex-row overflow-y-auto min-h-0">
-    <div className="flex-grow flex flex-col py-6 items-center">
-      <div className="w-125 max-w-125 flex flex-col">
+  <div className="flex min-h-0 flex-grow flex-row overflow-y-auto text-foreground">
+    <div className="flex flex-grow flex-col items-center py-6">
+      <div className="flex w-125 max-w-125 flex-col">
         {children != undefined && Array.isArray(children) ? children.filter((child) => child != undefined) : children}
       </div>
     </div>
-    <div className="basis-[13.75rem] flex-shrink" />
+    <div className="flex-shrink basis-[13.75rem]" />
   </div>
 )
 

@@ -85,13 +85,13 @@ const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
       className="flex items-center justify-between p-3 focus:shadow-none"
       tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
     >
-      <div onClick={handleClick} className="flex items-center cursor-pointer">
+      <div onClick={handleClick} className="flex cursor-pointer items-center">
         {getFileIconComponent(getIconType(file.mimeType), 'w-8 h-8 flex-shrink-0')}
-        <div className="flex flex-col mx-4">
+        <div className="mx-4 flex flex-col">
           {isRenamingFile ? (
             <input
               type="text"
-              className="text-input px-1.5 py-1 mb-1 border border-solid border-border bg-transparent text-foreground"
+              className="text-input mb-1 border border-solid border-border bg-transparent px-1.5 py-1 text-foreground"
               value={fileName}
               ref={fileNameInputRef}
               onInput={handleFileNameInput}
@@ -99,10 +99,10 @@ const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
               onBlur={handleFileNameInputBlur}
             />
           ) : (
-            <div className="text-sm mb-1 break-word">
+            <div className="break-word mb-1 text-sm">
               <span className="align-middle">{file.name}</span>
               {file.protected && (
-                <Icon type="lock-filled" className="ml-2 text-neutral inline align-middle" size="small" />
+                <Icon type="lock-filled" className="ml-2 inline align-middle text-neutral" size="small" />
               )}
             </div>
           )}

@@ -27,11 +27,11 @@ const RevisionContentLocked: FunctionComponent<Props> = ({ subscriptionControlle
   const { userSubscriptionName, isUserSubscriptionExpired, isUserSubscriptionCanceled } = subscriptionController
 
   return (
-    <div className="flex w-full h-full items-center justify-center">
-      <div className="flex flex-col items-center text-center max-w-40%">
+    <div className="flex h-full w-full items-center justify-center">
+      <div className="max-w-40% flex flex-col items-center text-center">
         <HistoryLockedIllustration />
-        <div className="text-lg font-bold mt-2 mb-1">Can't access this version</div>
-        <div className="mb-4 text-passive-0 leading-140%">
+        <div className="mt-2 mb-1 text-lg font-bold">Can't access this version</div>
+        <div className="leading-140% mb-4 text-passive-0">
           {getPremiumContentCopy(
             !isUserSubscriptionCanceled && !isUserSubscriptionExpired && userSubscriptionName
               ? userSubscriptionName

@@ -12,12 +12,12 @@ type Props = {
 
 const FilePreviewError = ({ file, filesController, isFilePreviewable, tryAgainCallback }: Props) => {
   return (
-    <div className="flex flex-col justify-center items-center flex-grow">
-      <NoPreviewIllustration className="w-30 h-30 mb-4" />
-      <div className="font-bold text-base mb-2">This file can't be previewed.</div>
+    <div className="flex flex-grow flex-col items-center justify-center">
+      <NoPreviewIllustration className="mb-4 h-30 w-30" />
+      <div className="mb-2 text-base font-bold">This file can't be previewed.</div>
       {isFilePreviewable ? (
         <>
-          <div className="text-sm text-center text-passive-0 mb-4 max-w-35ch">
+          <div className="max-w-35ch mb-4 text-center text-sm text-passive-0">
             There was an error loading the file. Try again, or download the file and open it using another application.
           </div>
           <div className="flex items-center">
@@ -41,7 +41,7 @@ const FilePreviewError = ({ file, filesController, isFilePreviewable, tryAgainCa
         </>
       ) : (
         <>
-          <div className="text-sm text-center text-passive-0 mb-4 max-w-35ch">
+          <div className="max-w-35ch mb-4 text-center text-sm text-passive-0">
             To view this file, download it and open it using another application.
           </div>
           <Button

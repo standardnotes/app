@@ -167,11 +167,11 @@ const DataBackups = ({ application, viewControllerManager }: Props) => {
               <div className="flex items-center gap-2">
                 <label className="flex items-center gap-2">
                   <input type="radio" onChange={() => setIsBackupEncrypted(true)} checked={isBackupEncrypted} />
-                  <span className="font-medium text-sm">Encrypted</span>
+                  <span className="text-sm font-medium">Encrypted</span>
                 </label>
                 <label className="flex items-center gap-2">
                   <input type="radio" onChange={() => setIsBackupEncrypted(false)} checked={!isBackupEncrypted} />
-                  <span className="font-medium text-sm">Decrypted</span>
+                  <span className="text-sm font-medium">Decrypted</span>
                 </label>
               </div>
             </form>
@@ -183,7 +183,7 @@ const DataBackups = ({ application, viewControllerManager }: Props) => {
         <PreferencesSegment>
           <Subtitle>Import a previously saved backup file</Subtitle>
 
-          <div className="flex flex-row items-center mt-3">
+          <div className="mt-3 flex flex-row items-center">
             <Button label="Import backup" onClick={handleImportFile} />
             <input type="file" ref={fileInputRef} onChange={importFileSelected} className="hidden" />
             {isImportDataLoading && <Spinner className="ml-4" />}

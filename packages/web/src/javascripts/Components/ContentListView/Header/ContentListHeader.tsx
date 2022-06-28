@@ -46,7 +46,7 @@ const ContentListHeader = ({
 
   return (
     <div className="section-title-bar-header gap-1">
-      <div className="flex flex-col flex-grow">
+      <div className="flex flex-grow flex-col">
         <div className="text-lg font-semibold text-text">{panelTitle}</div>
         {optionsSubtitle && <div className="text-xs text-passive-0">{optionsSubtitle}</div>}
       </div>
@@ -72,7 +72,7 @@ const ContentListHeader = ({
           </Disclosure>
         </div>
         <button
-          className="flex justify-center items-center min-w-8 h-8 ml-3 bg-info hover:brightness-125 text-info-contrast border border-solid border-transparent rounded-full cursor-pointer"
+          className="ml-3 flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-transparent bg-info text-info-contrast hover:brightness-125"
           title={addButtonLabel}
           aria-label={addButtonLabel}
           onClick={addNewItem}

@@ -47,6 +47,7 @@
     "postcss": "^8.4.14",
     "postcss-loader": "^7.0.0",
     "prettier": "*",
+    "prettier-plugin-tailwindcss": "^0.1.11",
     "sass-loader": "*",
     "svg-jest": "^1.0.1",
     "tailwindcss": "^3.1.4",

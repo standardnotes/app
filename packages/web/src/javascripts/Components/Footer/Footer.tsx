@@ -344,23 +344,23 @@ class Footer extends PureComponent<Props, State> {
       <div className="sn-component">
         <div
           id="footer-bar"
-          className="flex justify-between items-center w-full h-6 px-3 bg-contrast text-text z-footer-bar border-t border-border select-none"
+          className="z-footer-bar flex h-6 w-full select-none items-center justify-between border-t border-border bg-contrast px-3 text-text"
         >
           <div className="left flex h-full">
-            <div className="sk-app-bar-item z-footer-bar-item relative select-none ml-0">
+            <div className="sk-app-bar-item relative z-footer-bar-item ml-0 select-none">
               <div
                 onClick={this.accountMenuClickHandler}
                 className={
                   (this.state.showAccountMenu ? 'bg-border' : '') +
-                  ' w-8 h-full flex items-center justify-center cursor-pointer rounded-full'
+                  ' flex h-full w-8 cursor-pointer items-center justify-center rounded-full'
                 }
               >
                 <div
                   className={
-                    this.state.hasError ? 'text-danger' : (this.user ? 'text-info' : 'text-neutral') + ' w-5 h-5'
+                    this.state.hasError ? 'text-danger' : (this.user ? 'text-info' : 'text-neutral') + ' h-5 w-5'
                   }
                 >
-                  <Icon type="account-circle" className="hover:text-info max-h-5" />
+                  <Icon type="account-circle" className="max-h-5 hover:text-info" />
                 </div>
               </div>
               {this.state.showAccountMenu && (
@@ -372,10 +372,10 @@ class Footer extends PureComponent<Props, State> {
                 />
               )}
             </div>
-            <div className="sk-app-bar-item z-footer-bar-item relative select-none ml-0-important">
+            <div className="sk-app-bar-item ml-0-important relative z-footer-bar-item select-none">
               <div
                 onClick={this.quickSettingsClickHandler}
-                className="w-8 h-full flex items-center justify-center cursor-pointer"
+                className="flex h-full w-8 cursor-pointer items-center justify-center"
               >
                 <div className="h-5">
                   <Icon
@@ -394,8 +394,8 @@ class Footer extends PureComponent<Props, State> {
             </div>
             {this.state.showBetaWarning && (
               <Fragment>
-                <div className="flex items-center z-footer-bar-item pl-3 ml-3 relative select-none border-l border-solid border-border">
-                  <a onClick={this.betaMessageClickHandler} className="no-decoration text-xs font-bold title">
+                <div className="relative z-footer-bar-item ml-3 flex select-none items-center border-l border-solid border-border pl-3">
+                  <a onClick={this.betaMessageClickHandler} className="no-decoration title text-xs font-bold">
                     You are using a beta version of the app
                   </a>
                 </div>
@@ -404,7 +404,7 @@ class Footer extends PureComponent<Props, State> {
           </div>
           <div className="center">
             {this.state.arbitraryStatusMessage && (
-              <div className="flex items-center z-footer-bar-item relative select-none text-xs text-neutral font-bold">
+              <div className="relative z-footer-bar-item flex select-none items-center text-xs font-bold text-neutral">
                 {this.state.arbitraryStatusMessage}
               </div>
             )}
@@ -413,7 +413,7 @@ class Footer extends PureComponent<Props, State> {
             {this.state.dataUpgradeAvailable && (
               <div
                 onClick={this.securityUpdateClickHandler}
-                className="flex items-center text-xs text-success font-bold z-footer-bar-item relative select-none"
+                className="relative z-footer-bar-item flex select-none items-center text-xs font-bold text-success"
               >
                 Encryption upgrade available.
               </div>
@@ -421,15 +421,15 @@ class Footer extends PureComponent<Props, State> {
             {this.state.newUpdateAvailable && (
               <div
                 onClick={this.newUpdateClickHandler}
-                className="flex items-center ml-3 text-xs text-info font-bold z-footer-bar-item relative select-none"
+                className="relative z-footer-bar-item ml-3 flex select-none items-center text-xs font-bold text-info"
               >
                 New update available.
               </div>
             )}
             {(this.state.outOfSync || this.state.showSyncResolution) && (
-              <div className="flex items-center ml-3 z-footer-bar-item relative select-none">
+              <div className="relative z-footer-bar-item ml-3 flex select-none items-center">
                 {this.state.outOfSync && (
-                  <div onClick={this.syncResolutionClickHandler} className="font-bold text-xs text-warning">
+                  <div onClick={this.syncResolutionClickHandler} className="text-xs font-bold text-warning">
                     Potentially Out of Sync
                   </div>
                 )}
@@ -439,7 +439,7 @@ class Footer extends PureComponent<Props, State> {
               </div>
             )}
             {this.state.offline && (
-              <div className="flex items-center ml-3 text-xs font-bold z-footer-bar-item relative select-none">
+              <div className="relative z-footer-bar-item ml-3 flex select-none items-center text-xs font-bold">
                 Offline
               </div>
             )}
@@ -448,9 +448,9 @@ class Footer extends PureComponent<Props, State> {
                 id="lock-item"
                 onClick={this.lockClickHandler}
                 title="Locks application and wipes unencrypted data from memory."
-                className="flex items-center z-footer-bar-item relative select-none pl-2 ml-3 hover:text-info border-l border-solid border-border cursor-pointer"
+                className="relative z-footer-bar-item ml-3 flex cursor-pointer select-none items-center border-l border-solid border-border pl-2 hover:text-info"
               >
-                <Icon type="lock-filled" size="custom" className="w-4.5 h-4.5" />
+                <Icon type="lock-filled" size="custom" className="h-4.5 w-4.5" />
               </div>
             )}
           </div>

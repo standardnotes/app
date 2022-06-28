@@ -22,7 +22,7 @@ const SessionHistoryList: FunctionComponent<Props> = ({ noteHistoryController })
 
   return (
     <div
-      className={`flex flex-col w-full h-full focus:shadow-none ${
+      className={`flex h-full w-full flex-col focus:shadow-none ${
         !sessionHistoryLength ? 'items-center justify-center' : ''
       }`}
       ref={sessionHistoryListRef}
@@ -31,7 +31,7 @@ const SessionHistoryList: FunctionComponent<Props> = ({ noteHistoryController })
         if (group.entries && group.entries.length) {
           return (
             <Fragment key={group.title}>
-              <div className="px-3 mt-2.5 mb-1 font-semibold uppercase text-passive-0 text-sm select-none">
+              <div className="mt-2.5 mb-1 select-none px-3 text-sm font-semibold uppercase text-passive-0">
                 {group.title}
               </div>
               {group.entries.map((entry, index) => (
@@ -51,7 +51,7 @@ const SessionHistoryList: FunctionComponent<Props> = ({ noteHistoryController })
           return null
         }
       })}
-      {!sessionHistoryLength && <div className="text-sm text-passive-0 select-none">No session history found</div>}
+      {!sessionHistoryLength && <div className="select-none text-sm text-passive-0">No session history found</div>}
     </div>
   )
 }

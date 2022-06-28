@@ -29,7 +29,7 @@ const CustomDropdownButton: FunctionComponent<ListboxButtonProps> = ({
   <>
     <div className="flex items-center">
       {icon ? (
-        <div className="flex mr-2">
+        <div className="mr-2 flex">
           <Icon type={icon} className={iconClassName} size="small" />
         </div>
       ) : null}
@@ -74,7 +74,7 @@ const Dropdown: FunctionComponent<DropdownProps> = ({ id, label, items, value, o
               {items.map((item) => (
                 <StyledListboxOption key={item.value} value={item.value} label={item.label} disabled={item.disabled}>
                   {item.icon ? (
-                    <div className="flex mr-3">
+                    <div className="mr-3 flex">
                       <Icon type={item.icon} className={item.iconClassName ?? ''} size="small" />
                     </div>
                   ) : null}

@@ -20,7 +20,7 @@ const ListItemMetadata: FunctionComponent<Props> = ({ item, hideDate, sortBy }) 
   }
 
   return (
-    <div className="text-xs leading-1.4 mt-1 opacity-50">
+    <div className="leading-1.4 mt-1 text-xs opacity-50">
       {item.protected && <span>Protected {hideDate ? '' : ' • '}</span>}
       {!hideDate && showModifiedDate && <span>Modified {item.updatedAtString || 'Now'}</span>}
       {!hideDate && !showModifiedDate && <span>{item.createdAtString || 'Now'}</span>}

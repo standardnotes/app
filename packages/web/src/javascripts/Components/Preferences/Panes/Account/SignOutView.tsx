@@ -23,7 +23,7 @@ const SignOutView: FunctionComponent<Props> = observer(({ application, viewContr
           <Title>Sign out</Title>
           <Subtitle>Other devices</Subtitle>
           <Text>Want to sign out on all devices except this one?</Text>
-          <div className="flex flex-row mt-3">
+          <div className="mt-3 flex flex-row">
             <Button
               className="mr-3"
               label="Sign out other sessions"

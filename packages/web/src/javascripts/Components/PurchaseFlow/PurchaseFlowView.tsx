@@ -33,9 +33,9 @@ const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> = ({ viewContro
   const { currentPane } = viewControllerManager.purchaseFlowController
 
   return (
-    <div className="flex items-center justify-center overflow-hidden h-full w-full absolute top-0 left-0 z-purchase-flow bg-passive-super-light">
+    <div className="absolute top-0 left-0 z-purchase-flow flex h-full w-full items-center justify-center overflow-hidden bg-passive-super-light">
       <div className="relative w-fit">
-        <div className="relative w-full md:p-12 px-8 py-8 mb-4 bg-default border border-solid border-border md:rounded rounded-0">
+        <div className="rounded-0 relative mb-4 w-full border border-solid border-border bg-default px-8 py-8 md:rounded md:p-12">
           <SNLogoFull className="mb-5" />
           <PurchaseFlowPaneSelector
             currentPane={currentPane}

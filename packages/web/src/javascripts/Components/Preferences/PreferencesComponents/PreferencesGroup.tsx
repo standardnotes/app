@@ -1,7 +1,7 @@
 import { FunctionComponent } from 'react'
 
 const PreferencesGroup: FunctionComponent = ({ children }) => (
-  <div className="bg-default border border-solid rounded border-border p-6 flex flex-col mb-3">{children}</div>
+  <div className="mb-3 flex flex-col rounded border border-solid border-border bg-default p-6">{children}</div>
 )
 
 export default PreferencesGroup

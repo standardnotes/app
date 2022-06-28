@@ -58,11 +58,11 @@ const WorkspaceMenuItem: FunctionComponent<Props> = ({
   return (
     <MenuItem
       type={MenuItemType.RadioButton}
-      className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-2 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm"
+      className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-2 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
       onClick={onClick}
       checked={descriptor.primary}
     >
-      <div className="flex items-center justify-between w-full ml-2">
+      <div className="ml-2 flex w-full items-center justify-between">
         {isRenaming ? (
           <input
             ref={inputRef}
@@ -79,7 +79,7 @@ const WorkspaceMenuItem: FunctionComponent<Props> = ({
           <div className="flex items-center">
             <a
               role="button"
-              className="w-5 h-5 p-0 mr-3 border-0 bg-transparent hover:bg-contrast cursor-pointer"
+              className="mr-3 h-5 w-5 cursor-pointer border-0 bg-transparent p-0 hover:bg-contrast"
               onClick={(e) => {
                 e.stopPropagation()
                 setIsRenaming((isRenaming) => !isRenaming)
@@ -89,7 +89,7 @@ const WorkspaceMenuItem: FunctionComponent<Props> = ({
             </a>
             <a
               role="button"
-              className="w-5 h-5 p-0 border-0 bg-transparent hover:bg-contrast cursor-pointer"
+              className="h-5 w-5 cursor-pointer border-0 bg-transparent p-0 hover:bg-contrast"
               onClick={(e) => {
                 e.stopPropagation()
                 onDelete()

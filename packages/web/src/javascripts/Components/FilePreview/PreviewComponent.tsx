@@ -33,12 +33,12 @@ const PreviewComponent: FunctionComponent<Props> = ({ file, bytes }) => {
   }
 
   if (file.mimeType.startsWith('video/')) {
-    return <video className="w-full h-full" src={objectUrl} controls autoPlay />
+    return <video className="h-full w-full" src={objectUrl} controls autoPlay />
   }
 
   if (file.mimeType.startsWith('audio/')) {
     return (
-      <div className="w-full h-full flex items-center justify-center">
+      <div className="flex h-full w-full items-center justify-center">
         <audio src={objectUrl} controls />
       </div>
     )
@@ -48,7 +48,7 @@ const PreviewComponent: FunctionComponent<Props> = ({ file, bytes }) => {
     return <TextPreview bytes={bytes} />
   }
 
-  return <object className="w-full h-full" data={objectUrl} />
+  return <object className="h-full w-full" data={objectUrl} />
 }
 
 export default PreviewComponent
