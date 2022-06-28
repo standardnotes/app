@@ -22,15 +22,15 @@ const EditingDisabledBanner: FunctionComponent<Props> = ({
 
   return (
     <div
-      className={`flex items-center relative ${background} px-3.5 py-2 cursor-pointer text-sm`}
+      className={`relative flex items-center ${background} cursor-pointer px-3.5 py-2 text-sm`}
       onMouseLeave={onMouseLeave}
       onMouseOver={onMouseOver}
       onClick={onClick}
     >
       {showLockedIcon ? (
-        <Icon type="pencil-off" className={`${iconColor} flex fill-current mr-3`} />
+        <Icon type="pencil-off" className={`${iconColor} mr-3 flex fill-current`} />
       ) : (
-        <Icon type="pencil" className={`${iconColor} flex fill-current mr-3`} />
+        <Icon type="pencil" className={`${iconColor} mr-3 flex fill-current`} />
       )}
       <span className={textColor}>{lockText}</span>
     </div>

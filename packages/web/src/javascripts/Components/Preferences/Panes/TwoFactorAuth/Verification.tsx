@@ -20,8 +20,8 @@ const Verification: FunctionComponent<Props> = ({ activation: act }) => {
     <ModalDialog>
       <ModalDialogLabel closeDialog={act.cancelActivation}>Step 3 of 3 - Verification</ModalDialogLabel>
       <ModalDialogDescription className="h-33 flex flex-row items-center">
-        <div className="flex-grow flex flex-col">
-          <div className="flex flex-row items-center mb-4">
+        <div className="flex flex-grow flex-col">
+          <div className="mb-4 flex flex-row items-center">
             <Bullet />
             <div className="min-w-1" />
             <div className="text-sm">
@@ -43,10 +43,10 @@ const Verification: FunctionComponent<Props> = ({ activation: act }) => {
       </ModalDialogDescription>
       <ModalDialogButtons>
         {act.verificationStatus === 'invalid-auth-code' && (
-          <div className="text-sm text-danger flex-grow">Incorrect authentication code, please try again.</div>
+          <div className="flex-grow text-sm text-danger">Incorrect authentication code, please try again.</div>
         )}
         {act.verificationStatus === 'invalid-secret' && (
-          <div className="text-sm text-danger flex-grow">Incorrect secret key, please try again.</div>
+          <div className="flex-grow text-sm text-danger">Incorrect secret key, please try again.</div>
         )}
         <Button className="min-w-20" label="Back" onClick={act.openSaveSecretKey} />
         <Button className="min-w-20" primary label="Next" onClick={act.enable2FA} />

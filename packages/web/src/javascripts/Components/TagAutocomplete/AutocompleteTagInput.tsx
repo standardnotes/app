@@ -110,8 +110,8 @@ const AutocompleteTagInput = ({ viewControllerManager }: Props) => {
         <Disclosure open={dropdownVisible} onChange={showDropdown}>
           <input
             ref={inputRef}
-            className={`${tags.length > 0 ? 'w-80' : 'w-70 mr-10'} bg-transparent text-xs
-            text-text no-border h-7 focus:outline-none focus:shadow-none focus:border-b-2 focus:border-solid focus:border-info`}
+            className={`${tags.length > 0 ? 'w-80' : 'mr-10 w-70'} no-border h-7
+            bg-transparent text-xs text-text focus:border-b-2 focus:border-solid focus:border-info focus:shadow-none focus:outline-none`}
             value={autocompleteSearchQuery}
             onChange={onSearchQueryChange}
             type="text"
@@ -124,8 +124,8 @@ const AutocompleteTagInput = ({ viewControllerManager }: Props) => {
           {dropdownVisible && (autocompleteTagResults.length > 0 || autocompleteTagHintVisible) && (
             <DisclosurePanel
               className={`${
-                tags.length > 0 ? 'w-80' : 'w-70 mr-10'
-              } bg-default rounded shadow-main flex flex-col py-2 absolute`}
+                tags.length > 0 ? 'w-80' : 'mr-10 w-70'
+              } absolute flex flex-col rounded bg-default py-2 shadow-main`}
               style={{
                 maxHeight: dropdownMaxHeight,
                 maxWidth: tagsContainerMaxWidth,

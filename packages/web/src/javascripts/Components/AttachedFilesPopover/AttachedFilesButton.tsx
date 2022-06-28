@@ -270,14 +270,14 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
             }
           }}
           ref={buttonRef}
-          className={`flex justify-center items-center min-w-8 h-8 bg-text-padding hover:bg-contrast focus:bg-contrast text-neutral border border-solid border-border rounded-full cursor-pointer ${
+          className={`bg-text-padding flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border text-neutral hover:bg-contrast focus:bg-contrast ${
             attachedFilesCount > 0 ? 'py-1 px-3' : ''
           }`}
           onBlur={closeOnBlur}
         >
           <VisuallyHidden>Attached files</VisuallyHidden>
           <Icon type="attachment-file" className="block" />
-          {attachedFilesCount > 0 && <span className="text-sm ml-2">{attachedFilesCount}</span>}
+          {attachedFilesCount > 0 && <span className="ml-2 text-sm">{attachedFilesCount}</span>}
         </DisclosureButton>
         <DisclosurePanel
           onKeyDown={(event) => {
@@ -291,7 +291,7 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
             ...position,
             maxHeight,
           }}
-          className="bg-default rounded shadow-main transition-transform duration-150 slide-down-animation min-w-80 max-h-120 max-w-xs flex flex-col overflow-y-auto fixed"
+          className="slide-down-animation max-h-120 fixed flex min-w-80 max-w-xs flex-col overflow-y-auto rounded bg-default shadow-main transition-transform duration-150"
           onBlur={closeOnBlur}
         >
           {open && (

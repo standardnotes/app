@@ -20,15 +20,15 @@ class SyncResolutionMenu extends PureComponent<Props> {
       <div className="sn-component">
         <div
           id="sync-resolution-menu"
-          className="flex flex-col mt-4 min-w-[300px] max-h-[85vh] absolute right-0 left-[inherit] bottom-[40px] z-footer-bar-item-panel bg-default border border-solid border-border shadow-main"
+          className="absolute right-0 left-[inherit] bottom-[40px] z-footer-bar-item-panel mt-4 flex max-h-[85vh] min-w-[300px] flex-col border border-solid border-border bg-default shadow-main"
         >
-          <div className="flex-shrink-0 flex justify-between items-center px-6 py-3 border-b border-solid border-border bg-contrast text-text">
-            <div className="font-medium text-base">Out of Sync</div>
-            <a onClick={this.close} className="text-info font-bold text-sm">
+          <div className="flex flex-shrink-0 items-center justify-between border-b border-solid border-border bg-contrast px-6 py-3 text-text">
+            <div className="text-base font-medium">Out of Sync</div>
+            <a onClick={this.close} className="text-sm font-bold text-info">
               Close
             </a>
           </div>
-          <div className="flex-grow h-full overflow-scroll overflow-y-auto overflow-x-auto p-6 text-sm leading-tight">
+          <div className="h-full flex-grow overflow-scroll overflow-x-auto overflow-y-auto p-6 text-sm leading-tight">
             <div className="flex flex-col">
               <div className="mb-3.5">
                 We've detected that the data in the current application session may not match the data on the server. An

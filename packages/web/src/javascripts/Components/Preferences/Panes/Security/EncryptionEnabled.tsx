@@ -16,10 +16,10 @@ const EncryptionEnabled: FunctionComponent<Props> = ({ viewControllerManager }) 
   const archived = formatCount(count.archived, 'archived notes')
   const deleted = formatCount(count.deleted, 'trashed notes')
 
-  const noteIcon = <Icon type="rich-text" className="min-w-5 min-h-5" />
-  const tagIcon = <Icon type="hashtag" className="min-w-5 min-h-5" />
-  const archiveIcon = <Icon type="archive" className="min-w-5 min-h-5" />
-  const trashIcon = <Icon type="trash" className="min-w-5 min-h-5" />
+  const noteIcon = <Icon type="rich-text" className="min-h-5 min-w-5" />
+  const tagIcon = <Icon type="hashtag" className="min-h-5 min-w-5" />
+  const archiveIcon = <Icon type="archive" className="min-h-5 min-w-5" />
+  const trashIcon = <Icon type="trash" className="min-h-5 min-w-5" />
   return (
     <>
       <div className="flex flex-row items-start pb-1 pt-1.5">

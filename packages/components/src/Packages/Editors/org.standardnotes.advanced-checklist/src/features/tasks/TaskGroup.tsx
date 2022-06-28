@@ -3,10 +3,10 @@ import styled from 'styled-components'
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { getPercentage } from '../../common/utils'
-import { GroupPayload, tasksGroupCollapsed } from './tasks-slice'
+import { GroupModel, tasksGroupCollapsed } from './tasks-slice'
 
 import CreateTask from './CreateTask'
-import TaskItemList from './TaskItemList'
+import TaskSectionList from './TaskSectionList'
 
 import TaskGroupOptions from './TaskGroupOptions'
 
@@ -31,7 +31,7 @@ const CollapsableContainer = styled.div<CollapsableContainerProps>`
 `
 
 type TaskGroupProps = {
-  group: GroupPayload
+  group: GroupModel
   isDragging: boolean
   isLast?: boolean
   style?: React.CSSProperties
@@ -65,7 +65,7 @@ const TaskGroup: React.FC<TaskGroupProps> = ({
   const allTasksCompleted = totalTasks > 0 && totalTasks === completedTasks
 
   function handleCollapse() {
-    dispatch(tasksGroupCollapsed({ groupName, collapsed: !collapsed }))
+    dispatch(tasksGroupCollapsed({ groupName, type: 'group', collapsed: !collapsed }))
     setCollapsed(!collapsed)
   }
 
@@ -117,7 +117,7 @@ const TaskGroup: React.FC<TaskGroupProps> = ({
 
       <CollapsableContainer collapsed={collapsed}>
         <CreateTask group={group} />
-        <TaskItemList group={group} />
+        <TaskSectionList group={group} />
       </CollapsableContainer>
     </TaskGroupContainer>
   )

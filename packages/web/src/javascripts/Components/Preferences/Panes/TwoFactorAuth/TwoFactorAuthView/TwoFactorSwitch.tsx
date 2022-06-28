@@ -14,7 +14,7 @@ const TwoFactorSwitch: FunctionComponent<Props> = ({ auth }) => {
   }
 
   if (auth.status === 'fetching') {
-    return <Spinner className="w-4 h-4" />
+    return <Spinner className="h-4 w-4" />
   }
 
   return <Switch checked={!is2FADisabled(auth.status)} onChange={auth.toggle2FA} />

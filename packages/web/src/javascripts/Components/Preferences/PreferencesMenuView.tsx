@@ -8,7 +8,7 @@ type Props = {
 }
 
 const PreferencesMenuView: FunctionComponent<Props> = ({ menu }) => (
-  <div className="min-w-55 overflow-y-auto flex flex-col px-3 py-6">
+  <div className="flex min-w-55 flex-col overflow-y-auto px-3 py-6">
     {menu.menuItems.map((pref) => (
       <PreferencesMenuItem
         key={pref.id}

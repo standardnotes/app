@@ -1,20 +1,34 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { arrayMoveImmutable, isJsonString, parseMarkdownTasks } from '../../common/utils'
+import { arrayDefault, arrayMoveImmutable, isJsonString, parseMarkdownTasks } from '../../common/utils'
+
+export const LATEST_SCHEMA_VERSION = '1.0.0'
+export const DEFAULT_SECTIONS: SectionModel[] = [
+  {
+    id: 'open-tasks',
+    name: 'Open tasks',
+  },
+  {
+    id: 'completed-tasks',
+    name: 'Completed tasks',
+  },
+]
 
 export type TasksState = {
   schemaVersion: string
-  groups: GroupPayload[]
+  groups: GroupModel[]
+  defaultSections: SectionModel[]
   initialized?: boolean
-  legacyContent?: GroupPayload
+  legacyContent?: GroupModel
   lastError?: string
 }
 
 const initialState: TasksState = {
-  schemaVersion: '1.0.0',
+  schemaVersion: LATEST_SCHEMA_VERSION,
+  defaultSections: [],
   groups: [],
 }
 
-export type TaskPayload = {
+export type TaskModel = {
   id: string
   description: string
   completed?: boolean
@@ -23,12 +37,19 @@ export type TaskPayload = {
   completedAt?: Date
 }
 
-export type GroupPayload = {
+export type SectionModel = {
+  id: string
+  name: string
+  collapsed?: boolean
+}
+
+export type GroupModel = {
   name: string
   collapsed?: boolean
   draft?: string
   lastActive?: Date
-  tasks: TaskPayload[]
+  tasks: TaskModel[]
+  sections?: SectionModel[]
 }
 
 const tasksSlice = createSlice({
@@ -221,15 +242,27 @@ const tasksSlice = createSlice({
       state,
       action: PayloadAction<{
         groupName: string
+        type: 'group' | 'open-tasks' | 'completed-tasks' | string
         collapsed: boolean
       }>,
     ) {
-      const { groupName, collapsed } = action.payload
+      const { groupName, type, collapsed } = action.payload
       const group = state.groups.find((item) => item.name === groupName)
       if (!group) {
         return
       }
-      group.collapsed = collapsed
+      if (type === 'group') {
+        group.collapsed = collapsed
+        return
+      }
+      if (!group.sections) {
+        group.sections = state.defaultSections.map((section) => ({ id: section.id, name: section.name }))
+      }
+      const section = group.sections.find((item) => item.id === type)
+      if (!section) {
+        return
+      }
+      section.collapsed = collapsed
     },
     tasksGroupDraft(
       state,
@@ -294,14 +327,16 @@ const tasksSlice = createSlice({
         }
 
         const parsedState = JSON.parse(payload) as TasksState
-        const newState: TasksState = {
-          schemaVersion: parsedState?.schemaVersion ?? '1.0.0',
+        let newState: TasksState = {
+          schemaVersion: parsedState?.schemaVersion ?? LATEST_SCHEMA_VERSION,
+          defaultSections: arrayDefault({ value: parsedState?.defaultSections, defaultValue: DEFAULT_SECTIONS }),
           groups: parsedState?.groups ?? [],
         }
 
         if (newState !== initialState) {
           state.schemaVersion = newState.schemaVersion
           state.groups = newState.groups
+          state.defaultSections = newState.defaultSections
           state.initialized = true
           delete state.lastError
         }

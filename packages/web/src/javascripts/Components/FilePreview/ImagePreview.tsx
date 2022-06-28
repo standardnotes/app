@@ -12,8 +12,8 @@ const ImagePreview: FunctionComponent<Props> = ({ objectUrl }) => {
   const [imageZoomPercent, setImageZoomPercent] = useState(100)
 
   return (
-    <div className="flex items-center justify-center w-full h-full min-h-0">
-      <div className="flex items-center justify-center w-full h-full relative overflow-auto">
+    <div className="flex h-full min-h-0 w-full items-center justify-center">
+      <div className="relative flex h-full w-full items-center justify-center overflow-auto">
         <img
           src={objectUrl}
           style={{
@@ -37,10 +37,10 @@ const ImagePreview: FunctionComponent<Props> = ({ objectUrl }) => {
           }}
         />
       </div>
-      <div className="flex items-center absolute left-1/2 -translate-x-1/2 bottom-6 py-1 px-3 bg-default border border-solid border-border rounded">
+      <div className="absolute left-1/2 bottom-6 flex -translate-x-1/2 items-center rounded border border-solid border-border bg-default py-1 px-3">
         <span className="mr-1.5">Zoom:</span>
         <IconButton
-          className="hover:bg-contrast p-1 rounded"
+          className="rounded p-1 hover:bg-contrast"
           icon={'subtract' as IconType}
           title="Zoom Out"
           focusable={true}
@@ -57,7 +57,7 @@ const ImagePreview: FunctionComponent<Props> = ({ objectUrl }) => {
         />
         <span className="mx-2">{imageZoomPercent}%</span>
         <IconButton
-          className="hover:bg-contrast p-1 rounded"
+          className="rounded p-1 hover:bg-contrast"
           icon="add"
           title="Zoom In"
           focusable={true}

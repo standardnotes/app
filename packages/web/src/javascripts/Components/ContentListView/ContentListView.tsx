@@ -173,7 +173,7 @@ const ContentListView: FunctionComponent<Props> = ({
       ref={itemsViewPanelRef}
     >
       <div className="content">
-        <div id="items-title-bar" className="section-title-bar border-border border-b border-solid">
+        <div id="items-title-bar" className="section-title-bar border-b border-solid border-border">
           <div id="items-title-bar-container">
             <ContentListHeader
               application={application}

@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.5.1](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.5.0...@standardnotes/components-meta@2.5.1) (2022-06-28)
+
+**Note:** Version bump only for package @standardnotes/components-meta
+
+# [2.5.0](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.4.4...@standardnotes/components-meta@2.5.0) (2022-06-28)
+
+### Features
+
+* **advanced checklist:** collapsible group sections ([#1167](https://github.com/standardnotes/app/issues/1167)) ([59e5324](https://github.com/standardnotes/app/commit/59e5324a29029d024811bf2bb63e08ae42d3b62b))
+
+## [2.4.4](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.4.3...@standardnotes/components-meta@2.4.4) (2022-06-27)
+
+### Bug Fixes
+
+* theme path ([7d1b66a](https://github.com/standardnotes/app/commit/7d1b66a036743d918e7be678cd5c6c0611933891))
+
+## [2.4.3](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.4.2...@standardnotes/components-meta@2.4.3) (2022-06-27)
+
+### Bug Fixes
+
+* don't show deprecated editors; add missing solarized dark theme ([ded2d18](https://github.com/standardnotes/app/commit/ded2d1866a43d3a2ffbacbb725a11e1f70c64067))
+
 ## [2.4.2](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.4.1...@standardnotes/components-meta@2.4.2) (2022-06-27)
 
 **Note:** Version bump only for package @standardnotes/components-meta

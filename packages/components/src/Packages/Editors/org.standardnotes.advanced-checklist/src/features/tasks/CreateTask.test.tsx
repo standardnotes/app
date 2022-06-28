@@ -3,7 +3,7 @@ import { RootState } from '../../app/store'
 
 import { testRender } from '../../testUtils'
 import CreateTask from './CreateTask'
-import { taskAdded } from './tasks-slice'
+import { DEFAULT_SECTIONS, taskAdded } from './tasks-slice'
 
 jest.mock('uuid', () => {
   return {
@@ -14,6 +14,7 @@ jest.mock('uuid', () => {
 const defaultGroup = {
   name: 'My default group',
   tasks: [],
+  sections: DEFAULT_SECTIONS,
 }
 
 it('renders a button by default', () => {

@@ -18,9 +18,9 @@ const HistoryModalDialogContent = ({
 
   return (
     <>
-      <div className="flex flex-grow min-h-0">
+      <div className="flex min-h-0 flex-grow">
         <HistoryListContainer features={application.features} noteHistoryController={noteHistoryController} />
-        <div className="flex flex-col flex-grow relative">
+        <div className="relative flex flex-grow flex-col">
           <HistoryModalContentPane
             application={application}
             noteHistoryController={noteHistoryController}

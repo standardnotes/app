@@ -32,9 +32,9 @@ const NoSubscription: FunctionComponent<Props> = ({ application }) => {
       {isLoadingPurchaseFlow && <Text>Redirecting you to the subscription page...</Text>}
       {purchaseFlowError && <Text className="text-danger">{purchaseFlowError}</Text>}
       <div className="flex">
-        <LinkButton className="min-w-20 mt-3 mr-3" label="Learn More" link={window.plansUrl as string} />
+        <LinkButton className="mt-3 mr-3 min-w-20" label="Learn More" link={window.plansUrl as string} />
         {application.hasAccount() && (
-          <Button className="min-w-20 mt-3" primary label="Subscribe" onClick={onPurchaseClick} />
+          <Button className="mt-3 min-w-20" primary label="Subscribe" onClick={onPurchaseClick} />
         )}
       </div>
     </>

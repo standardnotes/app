@@ -38,9 +38,9 @@ const MultipleSelectedFiles = ({
   }, [selectionController])
 
   return (
-    <div className="flex flex-col h-full items-center">
-      <div className="flex items-center justify-between p-4 w-full">
-        <h1 className="text-lg font-bold m-0">{count} selected files</h1>
+    <div className="flex h-full flex-col items-center">
+      <div className="flex w-full items-center justify-between p-4">
+        <h1 className="m-0 text-lg font-bold">{count} selected files</h1>
         <div className="flex">
           <div className="mr-3">
             <AttachedFilesButton
@@ -56,10 +56,10 @@ const MultipleSelectedFiles = ({
           <FileOptionsPanel filesController={filesController} selectionController={selectionController} />
         </div>
       </div>
-      <div className="flex-grow flex flex-col justify-center items-center w-full max-w-md">
+      <div className="flex w-full max-w-md flex-grow flex-col items-center justify-center">
         <IlNotesIcon className="block" />
-        <h2 className="font-bold text-lg m-0 text-center mt-4">{count} selected files</h2>
-        <p className="text-sm mt-2 text-center max-w-60">Actions will be performed on all selected files.</p>
+        <h2 className="m-0 mt-4 text-center text-lg font-bold">{count} selected files</h2>
+        <p className="max-w-60 mt-2 text-center text-sm">Actions will be performed on all selected files.</p>
         <Button className="mt-2.5" onClick={cancelMultipleSelection}>
           Cancel multiple selection
         </Button>

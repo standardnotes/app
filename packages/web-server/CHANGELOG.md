@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.32](https://github.com/standardnotes/app/compare/@standardnotes/web-server@1.2.31...@standardnotes/web-server@1.2.32) (2022-06-28)
+
+**Note:** Version bump only for package @standardnotes/web-server
+
+## [1.2.31](https://github.com/standardnotes/app/compare/@standardnotes/web-server@1.2.30...@standardnotes/web-server@1.2.31) (2022-06-28)
+
+**Note:** Version bump only for package @standardnotes/web-server
+
+## [1.2.30](https://github.com/standardnotes/app/compare/@standardnotes/web-server@1.2.29...@standardnotes/web-server@1.2.30) (2022-06-28)
+
+**Note:** Version bump only for package @standardnotes/web-server
+
+## [1.2.29](https://github.com/standardnotes/app/compare/@standardnotes/web-server@1.2.28...@standardnotes/web-server@1.2.29) (2022-06-28)
+
+**Note:** Version bump only for package @standardnotes/web-server
+
+## [1.2.28](https://github.com/standardnotes/app/compare/@standardnotes/web-server@1.2.27...@standardnotes/web-server@1.2.28) (2022-06-27)
+
+**Note:** Version bump only for package @standardnotes/web-server
+
+## [1.2.27](https://github.com/standardnotes/app/compare/@standardnotes/web-server@1.2.26...@standardnotes/web-server@1.2.27) (2022-06-27)
+
+**Note:** Version bump only for package @standardnotes/web-server
+
 ## [1.2.26](https://github.com/standardnotes/app/compare/@standardnotes/web-server@1.2.25...@standardnotes/web-server@1.2.26) (2022-06-27)
 
 **Note:** Version bump only for package @standardnotes/web-server

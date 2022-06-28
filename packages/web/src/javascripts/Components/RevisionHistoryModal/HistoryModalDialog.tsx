@@ -22,8 +22,8 @@ const HistoryModalDialog = ({ children, onDismiss }: Props) => {
       onDismiss={onDismiss}
       aria-label="Note revision history"
     >
-      <StyledDialogContent aria-label="Note revision history" className="rounded-md shadow-lg p-0">
-        <div className="bg-default flex flex-col h-full overflow-hidden">{children}</div>
+      <StyledDialogContent aria-label="Note revision history" className="rounded-md p-0 shadow-lg">
+        <div className="flex h-full flex-col overflow-hidden bg-default">{children}</div>
       </StyledDialogContent>
     </DialogOverlay>
   )

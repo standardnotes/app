@@ -18,7 +18,7 @@ const SubscriptionInformation = ({ subscriptionState, application }: Props) => {
   return (
     <>
       <StatusText subscriptionState={subscriptionState} />
-      <Button className="min-w-20 mt-3 mr-3" label="Manage subscription" onClick={manageSubscription} />
+      <Button className="mt-3 mr-3 min-w-20" label="Manage subscription" onClick={manageSubscription} />
     </>
   )
 }

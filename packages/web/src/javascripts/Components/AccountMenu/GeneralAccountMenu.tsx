@@ -89,31 +89,31 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
 
   return (
     <>
-      <div className="flex items-center justify-between px-3 mt-1 mb-1">
-        <div className="font-bold text-base">Account</div>
+      <div className="mt-1 mb-1 flex items-center justify-between px-3">
+        <div className="text-base font-bold">Account</div>
         <div className="flex cursor-pointer" onClick={closeMenu}>
           <Icon type="close" className="text-neutral" />
         </div>
       </div>
       {user ? (
         <>
-          <div className="px-3 mb-3 text-foreground text-sm">
+          <div className="mb-3 px-3 text-sm text-foreground">
             <div>You're signed in as:</div>
-            <div className="my-0.5 font-bold wrap">{user.email}</div>
+            <div className="wrap my-0.5 font-bold">{user.email}</div>
             <span className="text-neutral">{application.getHost()}</span>
           </div>
-          <div className="flex items-start justify-between px-3 mb-2">
+          <div className="mb-2 flex items-start justify-between px-3">
             {isSyncingInProgress ? (
-              <div className="flex items-center text-info text-sm font-semibold">
-                <Spinner className="w-5 h-5 mr-2" />
+              <div className="flex items-center text-sm font-semibold text-info">
+                <Spinner className="mr-2 h-5 w-5" />
                 Syncing...
               </div>
             ) : (
               <div className="flex items-start">
                 <Icon type="check-circle" className="mr-2 text-success" />
                 <div>
-                  <div className="font-semibold text-success text-sm">Last synced:</div>
-                  <div className="text-text text-sm">{lastSyncDate}</div>
+                  <div className="text-sm font-semibold text-success">Last synced:</div>
+                  <div className="text-sm text-text">{lastSyncDate}</div>
                 </div>
               </div>
             )}
@@ -124,14 +124,14 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
         </>
       ) : (
         <>
-          <div className="px-3 mb-1">
-            <div className="mb-3 text-foreground text-sm">
+          <div className="mb-1 px-3">
+            <div className="mb-3 text-sm text-foreground">
               You’re offline. Sign in to sync your notes and preferences across all your devices and enable end-to-end
               encryption.
             </div>
             <div className="flex items-center text-passive-1">
               <Icon type="cloud-off" className="mr-2" />
-              <span className="font-semibold text-sm">Offline</span>
+              <span className="text-sm font-semibold">Offline</span>
             </div>
           </div>
         </>

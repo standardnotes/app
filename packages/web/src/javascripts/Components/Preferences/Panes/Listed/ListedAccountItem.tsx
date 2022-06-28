@@ -30,7 +30,7 @@ const ListedAccountItem: FunctionComponent<Props> = ({ account, showSeparator, a
       <Subtitle className="em">{accountInfo?.display_name}</Subtitle>
       <div className="mb-2" />
       <div className="flex">
-        {isLoading ? <Spinner className="w-4 h-4" /> : null}
+        {isLoading ? <Spinner className="h-4 w-4" /> : null}
         {accountInfo && (
           <>
             <LinkButton className="mr-2" label="Open Blog" link={accountInfo.author_url} />

@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/standardnotes/app/compare/@standardnotes/solarized-dark-theme@1.2.11...@standardnotes/solarized-dark-theme@1.3.0) (2022-06-27)
+
+### Bug Fixes
+
+* don't show deprecated editors; add missing solarized dark theme ([ded2d18](https://github.com/standardnotes/app/commit/ded2d1866a43d3a2ffbacbb725a11e1f70c64067))
+
+### Features
+
+* deprecated editors ([#1166](https://github.com/standardnotes/app/issues/1166)) ([60ca415](https://github.com/standardnotes/app/commit/60ca4150446f9a14bb6a31416686c6d07a7d0cd9))
+
 ## [1.2.11](https://github.com/standardnotes/app/compare/@standardnotes/solarized-dark-theme@1.2.11-alpha.0...@standardnotes/solarized-dark-theme@1.2.11) (2022-06-22)
 
 **Note:** Version bump only for package @standardnotes/solarized-dark-theme

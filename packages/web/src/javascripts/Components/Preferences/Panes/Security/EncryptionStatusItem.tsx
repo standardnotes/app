@@ -8,12 +8,12 @@ type Props = {
 }
 
 const EncryptionStatusItem: FunctionComponent<Props> = ({ icon, status, checkmark = true }) => (
-  <div className="w-full rounded py-1.5 px-3 text-input my-1 min-h-8 flex flex-row items-center bg-contrast no-border focus-within:ring-info">
+  <div className="text-input min-h-8 no-border my-1 flex w-full flex-row items-center rounded bg-contrast py-1.5 px-3 focus-within:ring-info">
     {icon}
-    <div className="min-w-3 min-h-1" />
-    <div className="flex-grow text-text text-sm">{status}</div>
-    <div className="min-w-3 min-h-1" />
-    {checkmark && <Icon className="text-success min-w-4 min-h-4" type="check-bold" />}
+    <div className="min-h-1 min-w-3" />
+    <div className="flex-grow text-sm text-text">{status}</div>
+    <div className="min-h-1 min-w-3" />
+    {checkmark && <Icon className="min-h-4 min-w-4 text-success" type="check-bold" />}
   </div>
 )
 

@@ -8,6 +8,7 @@ import { tasksGroupAdded } from './tasks-slice'
 const defaultTasksState = {
   tasks: {
     schemaVersion: '1.0.0',
+    defaultSections: [],
     groups: [
       {
         name: 'test',

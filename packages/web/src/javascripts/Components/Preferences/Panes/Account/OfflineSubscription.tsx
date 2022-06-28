@@ -79,7 +79,7 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application }) => {
   return (
     <>
       <div className="flex items-center justify-between">
-        <div className="flex flex-col mt-3 w-full">
+        <div className="mt-3 flex w-full flex-col">
           <Subtitle>{!hasUserPreviouslyStoredCode && 'Activate'} Offline Subscription</Subtitle>
           <form onSubmit={handleSubscriptionCodeSubmit}>
             <div className={'mt-2'}>
@@ -94,7 +94,7 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application }) => {
               )}
             </div>
             {(isSuccessfullyActivated || isSuccessfullyRemoved) && (
-              <div className={'mt-3 mb-3 info'}>
+              <div className={'info mt-3 mb-3'}>
                 Your offline subscription code has been successfully {isSuccessfullyActivated ? 'activated' : 'removed'}
                 .
               </div>

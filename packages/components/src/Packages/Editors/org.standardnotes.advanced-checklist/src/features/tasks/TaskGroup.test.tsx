@@ -3,6 +3,7 @@ import { fireEvent, screen } from '@testing-library/react'
 import { RootState } from '../../app/store'
 import { testRender } from '../../testUtils'
 import TaskGroup from './TaskGroup'
+import { DEFAULT_SECTIONS } from './tasks-slice'
 
 const defaultGroup = {
   name: 'default group',
@@ -20,6 +21,7 @@ const defaultGroup = {
       createdAt: new Date(),
     },
   ],
+  sections: DEFAULT_SECTIONS,
 }
 
 it('renders the group name', () => {
@@ -58,23 +60,23 @@ it('renders the element that is used to create a new task', () => {
 it('renders the element that is used to display the list of tasks', () => {
   testRender(<TaskGroup group={defaultGroup} isDragging={false} />)
 
-  expect(screen.getByTestId('task-list')).toBeInTheDocument()
+  expect(screen.getByTestId('task-section-list')).toBeInTheDocument()
 })
 
 it('collapses the group', () => {
   testRender(<TaskGroup group={defaultGroup} isDragging={false} />)
 
   const createTask = screen.getByTestId('create-task-input')
-  const taskItemList = screen.getByTestId('task-list')
+  const taskSectionList = screen.getByTestId('task-section-list')
 
   expect(createTask).toBeVisible()
-  expect(taskItemList).toBeVisible()
+  expect(taskSectionList).toBeVisible()
 
   const collapseButton = screen.getByTestId('collapse-task-group')
   fireEvent.click(collapseButton)
 
   expect(createTask).not.toBeVisible()
-  expect(taskItemList).not.toBeVisible()
+  expect(taskSectionList).not.toBeVisible()
 })
 
 it('shows group options', () => {

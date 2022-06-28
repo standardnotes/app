@@ -106,7 +106,7 @@ const Privacy: FunctionComponent<Props> = ({ application }: Props) => {
               </Text>
             </div>
             {isLoading ? (
-              <Spinner className="flex-shrink-0 ml-2" />
+              <Spinner className="ml-2 flex-shrink-0" />
             ) : (
               <Switch
                 onChange={toggleMuteSignInEmails}
@@ -125,7 +125,7 @@ const Privacy: FunctionComponent<Props> = ({ application }: Props) => {
               </Text>
             </div>
             {isLoading ? (
-              <Spinner className="flex-shrink-0 ml-2" />
+              <Spinner className="ml-2 flex-shrink-0" />
             ) : (
               <Switch
                 onChange={toggleSessionLogging}

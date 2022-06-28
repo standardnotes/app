@@ -70,15 +70,15 @@ const AutocompleteTagResult = ({ viewControllerManager, tagResult, closeOnBlur }
     <button
       ref={tagResultRef}
       type="button"
-      className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm focus:bg-info focus:text-info-contrast"
+      className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:bg-info focus:text-info-contrast focus:shadow-none"
       onClick={() => onTagOptionClick(tagResult)}
       onFocus={onFocus}
       onBlur={onBlur}
       onKeyDown={onKeyDown}
       tabIndex={-1}
     >
-      <Icon type="hashtag" className="text-neutral mr-2 min-h-5 min-w-5" />
-      <span className="whitespace-nowrap overflow-hidden overflow-ellipsis">
+      <Icon type="hashtag" className="min-h-5 mr-2 min-w-5 text-neutral" />
+      <span className="overflow-hidden overflow-ellipsis whitespace-nowrap">
         {prefixTitle && <span className="text-passive-2">{prefixTitle}</span>}
         {autocompleteSearchQuery === ''
           ? title
@@ -87,7 +87,7 @@ const AutocompleteTagResult = ({ viewControllerManager, tagResult, closeOnBlur }
                 key={index}
                 className={`${
                   substring.toLowerCase() === autocompleteSearchQuery.toLowerCase()
-                    ? 'font-bold whitespace-pre-wrap'
+                    ? 'whitespace-pre-wrap font-bold'
                     : 'whitespace-pre-wrap '
                 }`}
               >

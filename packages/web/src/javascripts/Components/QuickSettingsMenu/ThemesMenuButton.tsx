@@ -46,7 +46,7 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ application, item, onBlur 
   return (
     <button
       className={
-        'flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm focus:bg-info-backdrop focus:shadow-none justify-between'
+        'flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:bg-info-backdrop focus:shadow-none focus:shadow-none'
       }
       onClick={toggleTheme}
       onBlur={onBlur}
@@ -54,7 +54,7 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ application, item, onBlur 
       {item.component?.isLayerable() ? (
         <>
           <div className="flex items-center">
-            <Switch className="px-0 mr-2" checked={item.component?.active} />
+            <Switch className="mr-2 px-0" checked={item.component?.active} />
             {item.name}
           </div>
           {!canActivateTheme && <Icon type="premium-feature" />}
@@ -67,7 +67,7 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ application, item, onBlur 
           </div>
           {item.component && canActivateTheme ? (
             <div
-              className="w-5 h-5 rounded-full"
+              className="h-5 w-5 rounded-full"
               style={{
                 backgroundColor: item.component.package_info?.dock_icon?.background_color,
               }}

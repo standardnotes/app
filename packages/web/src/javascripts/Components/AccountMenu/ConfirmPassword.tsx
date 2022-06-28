@@ -101,23 +101,23 @@ const ConfirmPassword: FunctionComponent<Props> = ({
 
   return (
     <>
-      <div className="flex items-center px-3 mt-1 mb-3">
+      <div className="mt-1 mb-3 flex items-center px-3">
         <IconButton
           icon="arrow-left"
           title="Go back"
-          className="flex mr-2 text-neutral p-0"
+          className="mr-2 flex p-0 text-neutral"
           onClick={handleGoBack}
           focusable={true}
           disabled={isRegistering}
         />
-        <div className="font-bold text-base">Confirm password</div>
+        <div className="text-base font-bold">Confirm password</div>
       </div>
-      <div className="px-3 mb-3 text-sm">
+      <div className="mb-3 px-3 text-sm">
         Because your notes are encrypted using your password,{' '}
         <span className="text-danger">Standard Notes does not have a password reset option</span>. If you forget your
         password, you will permanently lose access to your data.
       </div>
-      <form onSubmit={handleConfirmFormSubmit} className="px-3 mb-1">
+      <form onSubmit={handleConfirmFormSubmit} className="mb-1 px-3">
         <DecoratedPasswordInput
           className="mb-2"
           disabled={isRegistering}
@@ -128,7 +128,7 @@ const ConfirmPassword: FunctionComponent<Props> = ({
           ref={passwordInputRef}
           value={confirmPassword}
         />
-        {error ? <div className="text-danger my-2">{error}</div> : null}
+        {error ? <div className="my-2 text-danger">{error}</div> : null}
         <Button
           primary
           fullWidth

@@ -149,23 +149,23 @@ const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
 
             <EncryptionStatusItem
               status={decryptedFileItem.name}
-              icon={<Icon type="attachment-file" className="min-w-5 min-h-5" />}
+              icon={<Icon type="attachment-file" className="min-h-5 min-w-5" />}
               checkmark={true}
             />
 
             <HorizontalSeparator classes={'mt-3 mb-3'} />
 
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
               <div>
                 <Subtitle>1. Choose related data file</Subtitle>
-                <Text className={`text-xs mr-3 em ${binaryFile ? 'font-bold success' : ''}`}>
+                <Text className={`em mr-3 text-xs ${binaryFile ? 'success font-bold' : ''}`}>
                   {droppedFile.file.uuid}/{FileBackupsConstantsV1.BinaryFileName}
                 </Text>
               </div>
               <div>
                 <Button
                   label="Choose"
-                  className={'px-1 text-xs min-w-40'}
+                  className={'min-w-40 px-1 text-xs'}
                   onClick={chooseRelatedBinaryFile}
                   disabled={!!binaryFile}
                 />
@@ -174,19 +174,19 @@ const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
 
             <HorizontalSeparator classes={'mt-3 mb-3'} />
 
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
               <Subtitle>2. Decrypt and save file to your computer</Subtitle>
 
               <div>
                 <Button
                   label={isSavingAsDecrypted ? undefined : 'Save'}
-                  className={'px-1 text-xs min-w-40'}
+                  className={'min-w-40 px-1 text-xs'}
                   onClick={downloadBinaryFileAsDecrypted}
                   disabled={isSavingAsDecrypted || !binaryFile}
                 >
                   {isSavingAsDecrypted && (
-                    <div className="flex justify-center w-full">
-                      <Spinner className="w-5 h-5" />
+                    <div className="flex w-full justify-center">
+                      <Spinner className="h-5 w-5" />
                     </div>
                   )}
                 </Button>

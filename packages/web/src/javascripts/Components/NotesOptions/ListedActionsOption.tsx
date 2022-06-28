@@ -59,10 +59,10 @@ const ListedActionsOption: FunctionComponent<Props> = ({ application, note }) =>
         <DisclosureButton
           ref={menuButtonRef}
           onBlur={closeOnBlur}
-          className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-menu-item justify-between"
+          className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
         >
           <div className="flex items-center">
-            <Icon type="listed" className="text-neutral mr-2" />
+            <Icon type="listed" className="mr-2 text-neutral" />
             Listed actions
           </div>
           <Icon type="chevron-right" className="text-neutral" />
@@ -75,7 +75,7 @@ const ListedActionsOption: FunctionComponent<Props> = ({ application, note }) =>
           }}
           className={`${
             isMenuOpen ? 'flex' : 'hidden'
-          } flex-col bg-default rounded shadow-main max-h-120 min-w-68 pb-1 fixed overflow-y-auto`}
+          } max-h-120 fixed min-w-68 flex-col overflow-y-auto rounded bg-default pb-1 shadow-main`}
         >
           {isMenuOpen && (
             <ListedActionsMenu application={application} note={note} recalculateMenuStyle={recalculateMenuStyle} />
