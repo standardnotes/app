@@ -44,7 +44,6 @@ const DecoratedInput = forwardRef(
 
     return (
       <div className={`${classNames.container} ${disabled ? classNames.disabled : ''} ${className}`}>
-        <div className=""></div>
         {left && (
           <div className="flex items-center px-2 py-1.5">
             {left.map((leftChild, index) => (
