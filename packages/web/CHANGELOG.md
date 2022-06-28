@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.27.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.27.0...@standardnotes/web@3.27.1) (2022-06-28)
+
+### Bug Fixes
+
+* file deletion in navigation panel ([#1173](https://github.com/standardnotes/app/issues/1173)) ([94be36e](https://github.com/standardnotes/app/commit/94be36ed9cc30cd5c5c7fc111274694dc106335b))
+
 # [3.27.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.26.4...@standardnotes/web@3.27.0) (2022-06-28)
 
 ### Features
