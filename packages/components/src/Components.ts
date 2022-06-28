@@ -44,7 +44,7 @@ const Editors = [
 const DeprecatedEditors = [
   {
     identifier: 'org.standardnotes.advanced-markdown-editor',
-    path: 'Editors/org.standardnotes.advanced-markdown-editor',
+    path: 'Deprecated/org.standardnotes.advanced-markdown-editor',
     static_files: [...BaseEditorStaticFiles],
   },
   {
