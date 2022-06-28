@@ -38,7 +38,7 @@
     "@standardnotes/filepicker": "^1.16.22",
     "@standardnotes/icons": "workspace:*",
     "@standardnotes/react-native-aes": "^1.4.3",
-    "@standardnotes/react-native-textview": "1.0.2",
+    "@standardnotes/react-native-textview": "1.1.0",
     "@standardnotes/react-native-utils": "1.0.1",
     "@standardnotes/sncrypto-common": "1.9.0",
     "@standardnotes/snjs": "^2.118.1",

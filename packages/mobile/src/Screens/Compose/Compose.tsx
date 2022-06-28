@@ -1,6 +1,5 @@
 import { AppStateEventType } from '@Lib/ApplicationState'
 import { ComponentLoadingError, ComponentManager } from '@Lib/ComponentManager'
-import { isNullOrUndefined } from '@Lib/Utils'
 import { ApplicationContext, SafeApplicationContext } from '@Root/ApplicationContext'
 import { AppStackNavigationProp } from '@Root/AppStack'
 import { SCREEN_COMPOSE } from '@Root/Screens/screens'
@@ -47,7 +46,6 @@ const SAVE_TIMEOUT_NO_DEBOUNCE = 100
 
 type State = {
   title: string
-  text: string
   saveError: boolean
   webViewError?: ComponentLoadingError
   webViewErrorDesc?: string
@@ -97,7 +95,6 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
 
     this.state = {
       title: this.controller.item.title,
-      text: this.controller.item.text,
       componentViewer: undefined,
       saveError: false,
       webViewError: undefined,
@@ -111,8 +108,9 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
       if (isPayloadSourceRetrieved(source)) {
         this.setState({
           title: note.title,
-          text: note.text,
         })
+
+        this.editorViewRef.current?.setText(note.text)
       }
 
       const isTemplateNoteInsertedToBeInteractableWithEditor = source === PayloadEmitSource.LocalInserted && note.dirty
@@ -281,6 +279,7 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
     if (!note) {
       return
     }
+
     return this.context?.mutator.changeItem(component, (m: ItemMutator) => {
       const mutator = m as ComponentMutator
       mutator.removeDisassociatedItemId(note.uuid)
@@ -550,13 +549,13 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
                       />
                     )}
 
-                    {!shouldDisplayEditor && !isNullOrUndefined(this.controllerNote) && Platform.OS === 'android' && (
+                    {!shouldDisplayEditor && this.controllerNote != undefined && Platform.OS === 'android' && (
                       <TextContainer>
                         <StyledTextView
                           testID="noteContentField"
                           ref={this.editorViewRef}
                           autoFocus={false}
-                          value={this.state.text}
+                          defaultValue={this.controllerNote.text}
                           selectionColor={lighten(theme.stylekitInfoColor, 0.35)}
                           handlesColor={theme.stylekitInfoColor}
                           onChangeText={this.onContentChange}
@@ -572,7 +571,7 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
                           ref={this.editorViewRef}
                           autoFocus={false}
                           multiline
-                          value={this.state.text}
+                          defaultValue={this.controllerNote.text}
                           keyboardDismissMode={'interactive'}
                           keyboardAppearance={themeService?.keyboardColorForActiveTheme()}
                           selectionColor={lighten(theme.stylekitInfoColor)}

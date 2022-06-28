@@ -5615,7 +5615,7 @@ __metadata:
     "@standardnotes/filepicker": ^1.16.22
     "@standardnotes/icons": "workspace:*"
     "@standardnotes/react-native-aes": ^1.4.3
-    "@standardnotes/react-native-textview": 1.0.2
+    "@standardnotes/react-native-textview": 1.1.0
     "@standardnotes/react-native-utils": 1.0.1
     "@standardnotes/sncrypto-common": 1.9.0
     "@standardnotes/snjs": ^2.118.1
@@ -5710,13 +5710,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/react-native-textview@npm:1.0.2":
-  version: 1.0.2
-  resolution: "@standardnotes/react-native-textview@npm:1.0.2"
+"@standardnotes/react-native-textview@npm:1.1.0":
+  version: 1.1.0
+  resolution: "@standardnotes/react-native-textview@npm:1.1.0"
   peerDependencies:
     react: ^16.11.0
     react-native: ">=0.60.0-rc.0 <1.0.x"
-  checksum: 8345c2ed957bfc8fc184841ee1737243376d11c3b7b990795f99c6534d178ed9f5b48fa70063e27d05f19e83176d9b8a2e06477f707396083eaa9bf8c55c14ca
+  checksum: 150992e82be4a1cd02bf8fa3c094b203cc6c6b5062d220d984239731efc28a064030f2162946b85a81151672e5d22e4b215a62d1bb9abd156f75605f3d6f1f75
   languageName: node
   linkType: hard
 
