@@ -10,14 +10,14 @@ class MockMigration extends BaseMigration {
   override upgrade(data: PartialData) {
     return {
       ...data,
-      schemaVersion: this.version
+      schemaVersion: this.version,
     }
   }
 
   override downgrade(data: PartialData) {
     return {
       ...data,
-      schemaVersion: this.version
+      schemaVersion: this.version,
     }
   }
 }

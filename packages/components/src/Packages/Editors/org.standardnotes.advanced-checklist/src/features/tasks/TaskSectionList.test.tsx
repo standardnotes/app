@@ -80,7 +80,7 @@ it('renders default sections', () => {
       schemaVersion: '1.0.0',
       defaultSections: DEFAULT_SECTIONS,
       groups: [],
-    }
+    },
   }
 
   const group: GroupModel = {
@@ -92,8 +92,8 @@ it('renders default sections', () => {
         description: 'Testing #3',
         completed: true,
         createdAt: new Date(),
-      }
-    ]
+      },
+    ],
   }
 
   testRender(<TaskSectionList group={group} />, {}, defaultState)
