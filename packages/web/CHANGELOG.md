@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.27.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.27.1...@standardnotes/web@3.27.2) (2022-06-28)
+
+### Bug Fixes
+
+* search bar ([#1175](https://github.com/standardnotes/app/issues/1175)) ([5e5cf61](https://github.com/standardnotes/app/commit/5e5cf618c5d11fb40f3dc280f7dda50e6eab7a72))
+
 ## [3.27.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.27.0...@standardnotes/web@3.27.1) (2022-06-28)
 
 ### Bug Fixes
