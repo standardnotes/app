@@ -9,10 +9,10 @@ type Props = {
 const IsDeprecated: FunctionComponent<Props> = ({ deprecationMessage, dismissDeprecationMessage }) => {
   return (
     <div className={'sn-component'}>
-      <div className="flex justify-between items-center w-full min-h-[1.625rem] py-2.5 px-2 bg-contrast text-text border-b border-border select-none">
+      <div className="flex min-h-[1.625rem] w-full select-none items-center justify-between border-b border-border bg-contrast py-2.5 px-2 text-text">
         <div className={'left'}>
           <div className={'sk-app-bar-item'}>
-            <div className="font-bold text-xs text-warning">
+            <div className="text-xs font-bold text-warning">
               {deprecationMessage || 'This extension is deprecated.'}
             </div>
           </div>

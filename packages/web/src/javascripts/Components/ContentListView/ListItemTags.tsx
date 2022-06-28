@@ -13,13 +13,13 @@ const ListItemTags: FunctionComponent<Props> = ({ hideTags, tags }) => {
   }
 
   return (
-    <div className="flex flex-wrap mt-1.5 text-xs gap-2">
+    <div className="mt-1.5 flex flex-wrap gap-2 text-xs">
       {tags.map((tag) => (
         <span
-          className="inline-flex items-center py-1 px-1.5 bg-passive-4-opacity-variant text-foreground rounded-sm"
+          className="inline-flex items-center rounded-sm bg-passive-4-opacity-variant py-1 px-1.5 text-foreground"
           key={tag.uuid}
         >
-          <Icon type="hashtag" className="text-passive-1 mr-1" size="small" />
+          <Icon type="hashtag" className="mr-1 text-passive-1" size="small" />
           <span>{tag.title}</span>
         </span>
       ))}

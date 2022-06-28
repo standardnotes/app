@@ -53,7 +53,7 @@ const WorkspaceSwitcherOption: FunctionComponent<Props> = ({ mainApplicationGrou
         className="justify-between"
       >
         <div className="flex items-center">
-          <Icon type="user-switch" className="text-neutral mr-2" />
+          <Icon type="user-switch" className="mr-2 text-neutral" />
           Switch workspace
         </div>
         <Icon type="chevron-right" className="text-neutral" />
@@ -61,7 +61,7 @@ const WorkspaceSwitcherOption: FunctionComponent<Props> = ({ mainApplicationGrou
       {isOpen && (
         <div
           ref={menuRef}
-          className="bg-default rounded shadow-main max-h-120 min-w-68 py-2 fixed overflow-y-auto"
+          className="max-h-120 fixed min-w-68 overflow-y-auto rounded bg-default py-2 shadow-main"
           style={menuStyle}
         >
           <WorkspaceSwitcherMenu

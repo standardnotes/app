@@ -19,7 +19,7 @@ const RoundIconButton: FunctionComponent<Props> = ({ onClick, type, className, i
   const classes = type === 'primary' ? 'info ' : ''
   return (
     <button
-      className={`text-neutral min-w-8 h-8 flex justify-center items-center border-solid border border-border bg-clip-padding m-0 bg-transparent cursor-pointer rounded-full hover:text-text focus:text-text hover:bg-contrast focus:bg-contrast focus:outline-none focus:ring-info ${classes} ${
+      className={`m-0 flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border bg-transparent bg-clip-padding text-neutral hover:bg-contrast hover:text-text focus:bg-contrast focus:text-text focus:outline-none focus:ring-info ${classes} ${
         className ?? ''
       }`}
       onClick={click}

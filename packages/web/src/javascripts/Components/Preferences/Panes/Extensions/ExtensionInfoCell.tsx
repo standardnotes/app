@@ -39,12 +39,12 @@ const ExtensionInfoCell: FunctionComponent<Props> = ({ extensionName, changeName
   }
 
   return (
-    <div className="flex flex-row mr-3 items-center">
+    <div className="mr-3 flex flex-row items-center">
       <input
         ref={inputRef}
         disabled={!isRenaming || !renameable}
         autoComplete="off"
-        className="flex-grow text-base font-bold no-border bg-default px-0 text-text"
+        className="no-border flex-grow bg-default px-0 text-base font-bold text-text"
         type="text"
         value={newExtensionName}
         onChange={({ target: input }) => setNewExtensionName((input as HTMLInputElement)?.value)}
@@ -54,18 +54,18 @@ const ExtensionInfoCell: FunctionComponent<Props> = ({ extensionName, changeName
 
       {isRenaming && (
         <>
-          <a className="pt-1 cursor-pointer" onClick={confirmRename}>
+          <a className="cursor-pointer pt-1" onClick={confirmRename}>
             Confirm
           </a>
           <div className="min-w-3" />
-          <a className="pt-1 cursor-pointer" onClick={cancelRename}>
+          <a className="cursor-pointer pt-1" onClick={cancelRename}>
             Cancel
           </a>
         </>
       )}
 
       {renameable && !isRenaming && (
-        <a className="pt-1 cursor-pointer" onClick={startRenaming}>
+        <a className="cursor-pointer pt-1" onClick={startRenaming}>
           Rename
         </a>
       )}

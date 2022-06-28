@@ -39,19 +39,19 @@ const ListedMenuItem: FunctionComponent<ListedMenuItemProps> = ({
     <button
       key={action.url}
       onClick={handleClick}
-      className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-2 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm"
+      className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-2 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
     >
       <div className="flex flex-col">
         <div className="font-semibold">{action.label}</div>
         {action.access_type && (
-          <div className="text-xs mt-0.5 text-passive-0">
+          <div className="mt-0.5 text-xs text-passive-0">
             {'Uses '}
             <strong>{action.access_type}</strong>
             {' access to this note.'}
           </div>
         )}
       </div>
-      {isRunning && <Spinner className="w-3 h-3" />}
+      {isRunning && <Spinner className="h-3 w-3" />}
     </button>
   )
 }

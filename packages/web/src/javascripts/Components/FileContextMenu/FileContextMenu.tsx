@@ -86,7 +86,7 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ filesController, s
   return (
     <div
       ref={contextMenuRef}
-      className="bg-default rounded shadow-main min-w-60 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto fixed"
+      className="max-h-120 fixed flex min-w-60 max-w-xs flex-col overflow-y-auto rounded bg-default py-2 shadow-main"
       style={{
         ...contextMenuStyle,
         maxHeight: contextMenuMaxHeight,

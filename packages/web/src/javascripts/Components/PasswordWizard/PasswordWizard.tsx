@@ -242,7 +242,7 @@ class PasswordWizard extends PureComponent<Props, State> {
                       <div className="sk-panel-row">
                         <div className="sk-panel-column stretch">
                           <form className="sk-panel-form">
-                            <label htmlFor="password-wiz-current-password" className="block mb-1">
+                            <label htmlFor="password-wiz-current-password" className="mb-1 block">
                               Current Password
                             </label>
 
@@ -256,7 +256,7 @@ class PasswordWizard extends PureComponent<Props, State> {
 
                             <div className="sk-panel-row" />
 
-                            <label htmlFor="password-wiz-new-password" className="block mb-1">
+                            <label htmlFor="password-wiz-new-password" className="mb-1 block">
                               New Password
                             </label>
 
@@ -268,7 +268,7 @@ class PasswordWizard extends PureComponent<Props, State> {
                             />
                             <div className="sk-panel-row" />
 
-                            <label htmlFor="password-wiz-confirm-new-password" className="block mb-1">
+                            <label htmlFor="password-wiz-confirm-new-password" className="mb-1 block">
                               Confirm New Password
                             </label>
 
@@ -285,7 +285,7 @@ class PasswordWizard extends PureComponent<Props, State> {
                   )}
                   {this.state.step === Steps.FinishStep && (
                     <div className="sk-panel-section">
-                      <div className="font-bold text-info mb-1">Your password has been successfully changed.</div>
+                      <div className="mb-1 font-bold text-info">Your password has been successfully changed.</div>
                       <p className="sk-p">
                         Please ensure you are running the latest version of Standard Notes on all platforms to ensure
                         maximum compatibility.

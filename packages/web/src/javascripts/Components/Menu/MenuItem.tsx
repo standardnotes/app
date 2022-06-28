@@ -40,7 +40,7 @@ const MenuItem = forwardRef(
       <li className="list-none" role="none">
         <button
           ref={ref}
-          className="flex items-center justify-between border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none"
+          className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
           onClick={() => {
             onChange(!checked)
           }}
@@ -59,7 +59,7 @@ const MenuItem = forwardRef(
           ref={ref}
           role={type === MenuItemType.RadioButton ? 'menuitemradio' : 'menuitem'}
           tabIndex={typeof tabIndex === 'number' ? tabIndex : FOCUSABLE_BUT_NOT_TABBABLE}
-          className={`flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-menu-item ${className}`}
+          className={`flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none ${className}`}
           onClick={onClick}
           onBlur={onBlur}
           {...(type === MenuItemType.RadioButton ? { 'aria-checked': checked } : {})}

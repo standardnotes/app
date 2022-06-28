@@ -11,7 +11,7 @@ export const ToastContainer: FunctionComponent = () => {
   }
 
   return (
-    <div className="flex flex-col items-end fixed z-toast bottom-6 right-6">
+    <div className="z-toast fixed bottom-6 right-6 flex flex-col items-end">
       {toasts.map((toast, index) => (
         <ToastTimer toast={toast} index={index} key={toast.id} />
       ))}

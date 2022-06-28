@@ -84,7 +84,7 @@ class ApplicationGroupView extends Component<Props, State> {
           <DialogContent
             aria-label="Switching workspace"
             className={
-              'challenge-modal flex flex-col items-center bg-default p-8 rounded relative shadow-overlay-light border border-solid border-border'
+              'challenge-modal shadow-overlay-light relative flex flex-col items-center rounded border border-solid border-border bg-default p-8'
             }
           >
             {message}

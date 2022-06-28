@@ -45,7 +45,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
 
   return (
     <div
-      className={`content-list-item flex items-stretch w-full cursor-pointer text-text ${
+      className={`content-list-item flex w-full cursor-pointer items-stretch text-text ${
         selected && 'selected border-l-2 border-solid border-info'
       }`}
       id={item.uuid}
@@ -58,14 +58,14 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
       }}
     >
       {!hideIcon ? (
-        <div className="flex flex-col items-center justify-between p-4 pr-4 mr-0">
+        <div className="mr-0 flex flex-col items-center justify-between p-4 pr-4">
           <Icon ariaLabel={`Icon for ${editorName}`} type={icon} className={`text-accessory-tint-${tint}`} />
         </div>
       ) : (
         <div className="pr-4" />
       )}
-      <div className="flex-grow min-w-0 py-4 px-0 border-b border-solid border-border">
-        <div className="flex items-start justify-between font-semibold text-base leading-[1.3] overflow-hidden">
+      <div className="min-w-0 flex-grow border-b border-solid border-border py-4 px-0">
+        <div className="flex items-start justify-between overflow-hidden text-base font-semibold leading-[1.3]">
           <div className="break-word mr-2">{item.title}</div>
         </div>
         {!hidePreview && !item.hidePreview && !item.protected && (
@@ -79,10 +79,10 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
               ></div>
             )}
             {!item.preview_html && item.preview_plain && (
-              <div className="leading-1.3 overflow-hidden line-clamp-1 mt-1">{item.preview_plain}</div>
+              <div className="leading-1.3 line-clamp-1 mt-1 overflow-hidden">{item.preview_plain}</div>
             )}
             {!item.preview_html && !item.preview_plain && item.text && (
-              <div className="leading-1.3 overflow-hidden line-clamp-1 mt-1">{item.text}</div>
+              <div className="leading-1.3 line-clamp-1 mt-1 overflow-hidden">{item.text}</div>
             )}
           </div>
         )}

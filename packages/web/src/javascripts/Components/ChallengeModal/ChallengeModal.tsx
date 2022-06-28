@@ -184,7 +184,7 @@ const ChallengeModal: FunctionComponent<Props> = ({
     >
       <DialogContent
         aria-label="Challenge modal"
-        className={`challenge-modal flex flex-col items-center bg-default p-8 rounded relative ${
+        className={`challenge-modal relative flex flex-col items-center rounded bg-default p-8 ${
           challenge.reason !== ChallengeReason.ApplicationUnlock
             ? 'shadow-overlay-light border border-solid border-border'
             : 'focus:shadow-none'
@@ -194,20 +194,20 @@ const ChallengeModal: FunctionComponent<Props> = ({
           <button
             onClick={cancelChallenge}
             aria-label="Close modal"
-            className="flex p-1 bg-transparent border-0 cursor-pointer absolute top-4 right-4"
+            className="absolute top-4 right-4 flex cursor-pointer border-0 bg-transparent p-1"
           >
             <Icon type="close" className="text-neutral" />
           </button>
         )}
-        <ProtectedIllustration className="w-30 h-30 mb-4" />
-        <div className="font-bold text-lg text-center max-w-76 mb-3">{challenge.heading}</div>
+        <ProtectedIllustration className="mb-4 h-30 w-30" />
+        <div className="mb-3 max-w-76 text-center text-lg font-bold">{challenge.heading}</div>
 
         {challenge.subheading && (
-          <div className="text-center text-sm max-w-76 mb-4 break-word">{challenge.subheading}</div>
+          <div className="break-word mb-4 max-w-76 text-center text-sm">{challenge.subheading}</div>
         )}
 
         <form
-          className="flex flex-col items-center min-w-76"
+          className="flex min-w-76 flex-col items-center"
           onSubmit={(e) => {
             e.preventDefault()
             submit()
@@ -224,12 +224,12 @@ const ChallengeModal: FunctionComponent<Props> = ({
             />
           ))}
         </form>
-        <Button primary disabled={isProcessing} className="min-w-76 mt-1 mb-3.5" onClick={submit}>
+        <Button primary disabled={isProcessing} className="mt-1 mb-3.5 min-w-76" onClick={submit}>
           {isProcessing ? 'Generating Keys...' : 'Submit'}
         </Button>
         {shouldShowForgotPasscode && (
           <Button
-            className="flex items-center justify-center min-w-76"
+            className="flex min-w-76 items-center justify-center"
             onClick={() => {
               setBypassModalFocusLock(true)
               application.alertService

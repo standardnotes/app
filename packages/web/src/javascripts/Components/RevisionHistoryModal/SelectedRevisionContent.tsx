@@ -50,16 +50,16 @@ const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentProps> =
   }, [application, componentViewer])
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
-      <div className="p-4 text-base font-bold w-full">
+    <div className="flex h-full flex-col overflow-hidden">
+      <div className="w-full p-4 text-base font-bold">
         <div className="title">{selectedRevision?.payload.content.title}</div>
       </div>
       {!componentViewer && (
-        <div className="relative flex-grow min-h-0 overflow-hidden">
+        <div className="relative min-h-0 flex-grow overflow-hidden">
           {selectedRevision?.payload.content.text.length ? (
             <textarea
               readOnly={true}
-              className="w-full h-full resize-none p-4 pt-0 border-0 bg-default text-text text-editor font-editor"
+              className="text-editor font-editor h-full w-full resize-none border-0 bg-default p-4 pt-0 text-text"
               value={selectedRevision?.payload.content.text}
             />
           ) : (

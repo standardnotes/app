@@ -65,10 +65,10 @@ const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({ applic
           }}
           onBlur={closeOnBlur}
           ref={buttonRef}
-          className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-menu-item justify-between"
+          className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
         >
           <div className="flex items-center">
-            <Icon type="dashboard" className="text-neutral mr-2" />
+            <Icon type="dashboard" className="mr-2 text-neutral" />
             Change note type
           </div>
           <Icon type="chevron-right" className="text-neutral" />
@@ -85,7 +85,7 @@ const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({ applic
             ...menuStyle,
             position: 'fixed',
           }}
-          className="bg-default rounded shadow-main flex flex-col max-h-120 min-w-68 fixed overflow-y-auto"
+          className="max-h-120 fixed flex min-w-68 flex-col overflow-y-auto rounded bg-default shadow-main"
         >
           {isOpen && (
             <ChangeEditorMenu

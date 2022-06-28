@@ -81,9 +81,9 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
       <div className="flex border-b border-solid border-border">
         <button
           id={PopoverTabs.AttachedFiles}
-          className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:bg-info-backdrop focus:shadow-bottom text-sm ${
-            currentTab === PopoverTabs.AttachedFiles ? 'text-info font-medium shadow-bottom' : 'text-text'
-          } ${attachedTabDisabled ? 'text-neutral cursor-not-allowed' : ''}`}
+          className={`relative cursor-pointer border-0 bg-default px-3 py-2.5 text-sm focus:bg-info-backdrop focus:shadow-bottom ${
+            currentTab === PopoverTabs.AttachedFiles ? 'font-medium text-info shadow-bottom' : 'text-text'
+          } ${attachedTabDisabled ? 'cursor-not-allowed text-neutral' : ''}`}
           onClick={() => {
             setCurrentTab(PopoverTabs.AttachedFiles)
           }}
@@ -94,8 +94,8 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
         </button>
         <button
           id={PopoverTabs.AllFiles}
-          className={`bg-default border-0 cursor-pointer px-3 py-2.5 relative focus:bg-info-backdrop focus:shadow-bottom text-sm ${
-            currentTab === PopoverTabs.AllFiles ? 'text-info font-medium shadow-bottom' : 'text-text'
+          className={`relative cursor-pointer border-0 bg-default px-3 py-2.5 text-sm focus:bg-info-backdrop focus:shadow-bottom ${
+            currentTab === PopoverTabs.AllFiles ? 'font-medium text-info shadow-bottom' : 'text-text'
           }`}
           onClick={() => {
             setCurrentTab(PopoverTabs.AllFiles)
@@ -105,13 +105,13 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
           All files
         </button>
       </div>
-      <div className="min-h-0 max-h-110 overflow-y-auto">
+      <div className="max-h-110 min-h-0 overflow-y-auto">
         {filteredList.length > 0 || searchQuery.length > 0 ? (
-          <div className="sticky top-0 left-0 p-3 bg-default border-b border-solid border-border">
+          <div className="sticky top-0 left-0 border-b border-solid border-border bg-default p-3">
             <div className="relative">
               <input
                 type="text"
-                className="text-text w-full rounded py-1.5 px-3 text-sm bg-default border-solid border border-border"
+                className="w-full rounded border border-solid border-border bg-default py-1.5 px-3 text-sm text-text"
                 placeholder="Search files..."
                 value={searchQuery}
                 onInput={(e) => {
@@ -122,7 +122,7 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
               />
               {searchQuery.length > 0 && (
                 <button
-                  className="flex absolute right-2 p-0 bg-transparent border-0 top-1/2 -translate-y-1/2 cursor-pointer"
+                  className="absolute right-2 top-1/2 flex -translate-y-1/2 cursor-pointer border-0 bg-transparent p-0"
                   onClick={() => {
                     setSearchQuery('')
                     searchInputRef.current?.focus()
@@ -150,11 +150,11 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
             )
           })
         ) : (
-          <div className="flex flex-col items-center justify-center w-full py-8">
-            <div className="w-18 h-18 mb-2">
+          <div className="flex w-full flex-col items-center justify-center py-8">
+            <div className="mb-2 h-18 w-18">
               <FilesIllustration />
             </div>
-            <div className="text-sm font-medium mb-3">
+            <div className="mb-3 text-sm font-medium">
               {searchQuery.length > 0
                 ? 'No result found'
                 : currentTab === PopoverTabs.AttachedFiles
@@ -164,13 +164,13 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
             <Button onClick={handleAttachFilesClick} onBlur={closeOnBlur}>
               {currentTab === PopoverTabs.AttachedFiles ? 'Attach' : 'Upload'} files
             </Button>
-            <div className="text-xs text-passive-0 mt-3">Or drop your files here</div>
+            <div className="mt-3 text-xs text-passive-0">Or drop your files here</div>
           </div>
         )}
       </div>
       {filteredList.length > 0 && (
         <button
-          className="flex items-center cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-3 text-left w-full focus:bg-info-backdrop focus:shadow-none text-sm border-0 border-t border-solid border-border"
+          className="flex w-full cursor-pointer items-center border-0 border-t border-solid border-border bg-transparent px-3 py-3 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
           onClick={handleAttachFilesClick}
           onBlur={closeOnBlur}
         >

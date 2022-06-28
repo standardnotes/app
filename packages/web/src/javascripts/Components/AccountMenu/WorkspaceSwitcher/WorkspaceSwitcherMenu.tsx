@@ -78,13 +78,13 @@ const WorkspaceSwitcherMenu: FunctionComponent<Props> = ({
           void mainApplicationGroup.unloadCurrentAndCreateNewDescriptor()
         }}
       >
-        <Icon type="user-add" className="text-neutral mr-2" />
+        <Icon type="user-add" className="mr-2 text-neutral" />
         Add another workspace
       </MenuItem>
 
       {!hideWorkspaceOptions && (
         <MenuItem type={MenuItemType.IconButton} onClick={signoutAll}>
-          <Icon type="signOut" className="text-neutral mr-2" />
+          <Icon type="signOut" className="mr-2 text-neutral" />
           Sign out all workspaces
         </MenuItem>
       )}

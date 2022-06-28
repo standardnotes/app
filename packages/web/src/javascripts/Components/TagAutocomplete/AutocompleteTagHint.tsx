@@ -59,7 +59,7 @@ const AutocompleteTagHint = ({ viewControllerManager, closeOnBlur }: Props) => {
       <button
         ref={hintRef}
         type="button"
-        className="flex items-center border-0 cursor-pointer hover:bg-contrast text-text bg-transparent px-3 py-1.5 text-left w-full focus:shadow-none text-sm focus:bg-info focus:text-info-contrast hover:text-foreground"
+        className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info focus:text-info-contrast focus:shadow-none"
         onClick={onTagHintClick}
         onFocus={onFocus}
         onBlur={onBlur}
@@ -67,9 +67,9 @@ const AutocompleteTagHint = ({ viewControllerManager, closeOnBlur }: Props) => {
         tabIndex={-1}
       >
         <span>Create new tag:</span>
-        <span className="bg-contrast rounded text-xs text-text py-1 pl-1 pr-2 flex items-center ml-2">
-          <Icon type="hashtag" className="text-neutral mr-1" size="small" />
-          <span className="max-w-40 whitespace-nowrap overflow-hidden overflow-ellipsis">
+        <span className="ml-2 flex items-center rounded bg-contrast py-1 pl-1 pr-2 text-xs text-text">
+          <Icon type="hashtag" className="mr-1 text-neutral" size="small" />
+          <span className="max-w-40 overflow-hidden overflow-ellipsis whitespace-nowrap">
             {autocompleteSearchQuery}
           </span>
         </span>

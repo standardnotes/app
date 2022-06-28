@@ -64,7 +64,7 @@ const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({ application, ext
         <UseHosted offlineOnly={offlineOnly} toggleOfflineOnly={toggleOfflineOnly} />
       )}
 
-      <div className="flex flex-row mt-2">
+      <div className="mt-2 flex flex-row">
         <Button className="min-w-20" label={'Uninstall'} onClick={() => uninstall(extension)} />
       </div>
     </PreferencesSegment>

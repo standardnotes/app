@@ -10,7 +10,7 @@ type CheckboxProps = {
 
 const Checkbox: FunctionComponent<CheckboxProps> = ({ name, checked, onChange, disabled, label }) => {
   return (
-    <label htmlFor={name} className="flex items-center fit-content mb-2 text-sm">
+    <label htmlFor={name} className="fit-content mb-2 flex items-center text-sm">
       <input
         className="mr-2"
         type="checkbox"

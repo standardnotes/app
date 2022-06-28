@@ -107,7 +107,7 @@ const SessionsModalContent: FunctionComponent<{
       <ModalDialog onDismiss={close} className="sessions-modal max-h-[90vh]">
         <ModalDialogLabel
           headerButtons={
-            <button className="border-0 font-bold text-info cursor-pointer" onClick={refresh}>
+            <button className="cursor-pointer border-0 font-bold text-info" onClick={refresh}>
               Refresh
             </button>
           }
@@ -118,7 +118,7 @@ const SessionsModalContent: FunctionComponent<{
         <ModalDialogDescription className="overflow-y-auto">
           {refreshing ? (
             <div className="flex items-center gap-2">
-              <Spinner className="w-3 h-3" />
+              <Spinner className="h-3 w-3" />
               <h2 className="sk-p sessions-modal-refreshing">Loading sessions</h2>
             </div>
           ) : (
@@ -130,7 +130,7 @@ const SessionsModalContent: FunctionComponent<{
                     <li key={session.uuid}>
                       <h2 className="text-base font-bold">{session.device_info}</h2>
                       {session.current ? (
-                        <span className="text-info font-bold">Current session</span>
+                        <span className="font-bold text-info">Current session</span>
                       ) : (
                         <>
                           <p>Signed in on {formatter.format(session.updated_at)}</p>
@@ -172,7 +172,7 @@ const SessionsModalContent: FunctionComponent<{
                     <AlertDialogDescription className="sk-panel-row">
                       <p>{SessionStrings.RevokeText}</p>
                     </AlertDialogDescription>
-                    <div className="flex my-1 gap-2">
+                    <div className="my-1 flex gap-2">
                       <Button
                         primary
                         small

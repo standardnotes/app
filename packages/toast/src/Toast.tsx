@@ -23,12 +23,12 @@ const colorForToastType = (type: ToastType) => {
 const iconForToastType = (type: ToastType) => {
   switch (type) {
     case ToastType.Success:
-      return <CheckCircleFilledIcon className={`w-5 h-5 ${colorForToastType(type)}`} />
+      return <CheckCircleFilledIcon className={`h-5 w-5 ${colorForToastType(type)}`} />
     case ToastType.Error:
-      return <ClearCircleFilledIcon className={`w-5 h-5 ${colorForToastType(type)}`} />
+      return <ClearCircleFilledIcon className={`h-5 w-5 ${colorForToastType(type)}`} />
     case ToastType.Progress:
     case ToastType.Loading:
-      return <div className="animate-spin border border-solid border-info border-r-transparent rounded-full w-4 h-4" />
+      return <div className="border-info h-4 w-4 animate-spin rounded-full border border-solid border-r-transparent" />
     default:
       return null
   }
@@ -77,7 +77,7 @@ export const Toast = forwardRef(({ toast, index }: Props, ref: ForwardedRef<HTML
     <div
       data-index={index}
       role="status"
-      className={`flex flex-col bg-passive-5 rounded opacity-0 animation-fill-forwards select-none min-w-max relative mt-3 ${currentAnimation}`}
+      className={`bg-passive-5 animation-fill-forwards relative mt-3 flex min-w-max select-none flex-col rounded opacity-0 ${currentAnimation}`}
       style={{
         boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.16)',
         transition: shouldReduceMotion ? undefined : 'all 0.2s ease',
@@ -90,9 +90,9 @@ export const Toast = forwardRef(({ toast, index }: Props, ref: ForwardedRef<HTML
       }}
       ref={ref}
     >
-      <div className={`flex items-center w-full ${hasActions ? 'p-2 pl-3' : hasProgress ? 'px-3 py-2.5' : 'p-3'}`}>
-        {icon ? <div className="flex flex-shrink-0 items-center justify-center sn-icon mr-2">{icon}</div> : null}
-        <div className="text-sm text-text">{toast.message}</div>
+      <div className={`flex w-full items-center ${hasActions ? 'p-2 pl-3' : hasProgress ? 'px-3 py-2.5' : 'p-3'}`}>
+        {icon ? <div className="sn-icon mr-2 flex flex-shrink-0 items-center justify-center">{icon}</div> : null}
+        <div className="text-text text-sm">{toast.message}</div>
         {hasActions && (
           <div className="ml-4">
             {toast.actions?.map((action, index) => (
@@ -101,7 +101,7 @@ export const Toast = forwardRef(({ toast, index }: Props, ref: ForwardedRef<HTML
                   paddingLeft: '0.45rem',
                   paddingRight: '0.45rem',
                 }}
-                className={`py-1 border-0 bg-transparent cursor-pointer font-semibold text-sm hover:bg-passive-3 rounded ${colorForToastType(
+                className={`hover:bg-passive-3 cursor-pointer rounded border-0 bg-transparent py-1 text-sm font-semibold ${colorForToastType(
                   toast.type,
                 )} ${index !== 0 ? 'ml-2' : ''}`}
                 onClick={() => {
@@ -116,9 +116,9 @@ export const Toast = forwardRef(({ toast, index }: Props, ref: ForwardedRef<HTML
         )}
       </div>
       {hasProgress && (
-        <div className="rounded w-full bg-default overflow-hidden rounded-tl-none rounded-tr-none">
+        <div className="bg-default w-full overflow-hidden rounded rounded-tl-none rounded-tr-none">
           <div
-            className="rounded h-2 bg-info rounded-tl-none transition-[width] duration-100"
+            className="bg-info h-2 rounded rounded-tl-none transition-[width] duration-100"
             role="progressbar"
             style={{
               width: `${toast.progress}%`,

@@ -61,7 +61,7 @@ const TagsContextMenu = observer(({ viewControllerManager, selectedTag }: Contex
   return contextMenuOpen ? (
     <div
       ref={contextMenuRef}
-      className="bg-default rounded shadow-main min-w-60 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto fixed"
+      className="max-h-120 fixed flex min-w-60 max-w-xs flex-col overflow-y-auto rounded bg-default py-2 shadow-main"
       style={{
         ...contextMenuPosition,
         maxHeight: contextMenuMaxHeight,
@@ -77,17 +77,17 @@ const TagsContextMenu = observer(({ viewControllerManager, selectedTag }: Contex
         <MenuItem
           type={MenuItemType.IconButton}
           onBlur={closeOnBlur}
-          className={'py-1.5 justify-between'}
+          className={'justify-between py-1.5'}
           onClick={onClickAddSubtag}
         >
           <div className="flex items-center">
-            <Icon type="add" className="text-neutral mr-2" />
+            <Icon type="add" className="mr-2 text-neutral" />
             Add subtag
           </div>
           {!viewControllerManager.featuresController.hasFolders && <Icon type="premium-feature" />}
         </MenuItem>
         <MenuItem type={MenuItemType.IconButton} onBlur={closeOnBlur} className={'py-1.5'} onClick={onClickRename}>
-          <Icon type="pencil-filled" className="text-neutral mr-2" />
+          <Icon type="pencil-filled" className="mr-2 text-neutral" />
           Rename
         </MenuItem>
         <MenuItem type={MenuItemType.IconButton} onBlur={closeOnBlur} className={'py-1.5'} onClick={onClickDelete}>

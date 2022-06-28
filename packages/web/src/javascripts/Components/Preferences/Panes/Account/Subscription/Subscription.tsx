@@ -23,7 +23,7 @@ const Subscription: FunctionComponent<Props> = ({ application, viewControllerMan
     <PreferencesGroup>
       <PreferencesSegment>
         <div className="flex flex-row items-center">
-          <div className="flex-grow flex flex-col">
+          <div className="flex flex-grow flex-col">
             <Title>Subscription</Title>
             {userSubscription && userSubscription.endsAt > now ? (
               <SubscriptionInformation subscriptionState={subscriptionState} application={application} />
