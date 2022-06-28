@@ -48,7 +48,7 @@ const SearchBar = ({ itemListController, searchOptionsController }: Props) => {
       <DecoratedInput
         autocomplete={false}
         title="Searches notes and files in the currently selected tag"
-        className="placeholder:color-passive-0 rounded-full bg-clip-padding px-1"
+        className="placeholder:color-passive-0 bg-contrast rounded-full bg-clip-padding px-1"
         placeholder="Search"
         value={noteFilterText}
         ref={searchInputRef}
@@ -56,12 +56,12 @@ const SearchBar = ({ itemListController, searchOptionsController }: Props) => {
         onChange={onNoteFilterTextChange}
         onFocus={onSearchFocus}
         onKeyUp={onNoteFilterKeyUp}
-        left={[<Icon type="search" className="mr-1 h-4.5 w-4.5 flex-shrink-0 text-passive-1" />]}
+        left={[<Icon type="search" className="h-4.5 w-4.5 text-passive-1 mr-1 flex-shrink-0" />]}
         right={[
           noteFilterText && (
             <button
               onClick={onClearSearch}
-              className="flex h-4.5 w-4.5 items-center justify-center rounded-full border-0 bg-neutral text-neutral-contrast"
+              className="h-4.5 w-4.5 bg-neutral text-neutral-contrast flex items-center justify-center rounded-full border-0"
             >
               <Icon type="close" className="h-3.5 w-3.5" />
             </button>
