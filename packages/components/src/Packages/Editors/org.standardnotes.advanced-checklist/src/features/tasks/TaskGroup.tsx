@@ -20,6 +20,10 @@ const TaskGroupContainer = styled.div<{ isLast?: boolean }>`
   box-sizing: border-box;
   padding: 16px;
   margin-bottom: ${({ isLast }) => (!isLast ? '9px' : '0px')};
+
+  @media only screen and (max-width: 600px) {
+    padding: 8px 10px;
+  }
 `
 
 type CollapsableContainerProps = {
