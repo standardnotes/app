@@ -48,13 +48,13 @@ var Editors = [
         path: 'Editors/org.standardnotes.simple-task-editor',
         static_files: __spreadArray([], BaseEditorStaticFiles, true),
     },
-];
-var DeprecatedEditors = [
     {
         identifier: 'org.standardnotes.advanced-markdown-editor',
-        path: 'Deprecated/org.standardnotes.advanced-markdown-editor',
+        path: 'Editors/org.standardnotes.advanced-markdown-editor',
         static_files: __spreadArray([], BaseEditorStaticFiles, true),
     },
+];
+var DeprecatedEditors = [
     {
         identifier: 'org.standardnotes.bold-editor',
         path: 'Deprecated/org.standardnotes.bold-editor',
