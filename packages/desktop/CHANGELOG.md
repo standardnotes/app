@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.23.14](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.13...@standardnotes/desktop@3.23.14) (2022-06-29)
+
+### Bug Fixes
+
+* desktop backups directory change ([#1178](https://github.com/standardnotes/app/issues/1178)) ([b8efd82](https://github.com/standardnotes/app/commit/b8efd823ac7ab5997b92e74d7c99e8487b69c326))
+
 ## [3.23.13](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.12...@standardnotes/desktop@3.23.13) (2022-06-28)
 
 **Note:** Version bump only for package @standardnotes/desktop

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.27.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.27.3...@standardnotes/web@3.27.4) (2022-06-29)
+
+### Bug Fixes
+
+* desktop backups directory change ([#1178](https://github.com/standardnotes/app/issues/1178)) ([b8efd82](https://github.com/standardnotes/app/commit/b8efd823ac7ab5997b92e74d7c99e8487b69c326))
+
 ## [3.27.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.27.2...@standardnotes/web@3.27.3) (2022-06-28)
 
 ### Bug Fixes
