@@ -425,7 +425,7 @@ PODS:
     - React-Core
   - RNSVG (12.3.0):
     - React-Core
-  - RNVectorIcons (9.1.0):
+  - RNVectorIcons (9.2.0):
     - React-Core
   - RNZipArchive (6.0.8):
     - React-Core
@@ -434,7 +434,7 @@ PODS:
   - RNZipArchive/Core (6.0.8):
     - React-Core
     - SSZipArchive (= 2.2.3)
-  - sn-textview (1.0.2):
+  - sn-textview (1.1.0):
     - React-Core
   - SNReactNative (1.0.1):
     - React-Core
@@ -747,9 +747,9 @@ SPEC CHECKSUMS:
   RNShare: 4406f61af043027b695c3a0b8f39e2c2bdacde12
   RNStoreReview: e05edbbf426563070524cec384ac0b8df69be801
   RNSVG: 302bfc9905bd8122f08966dc2ce2d07b7b52b9f8
-  RNVectorIcons: 7923e585eaeb139b9f4531d25a125a1500162a0b
+  RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
   RNZipArchive: 3f89b114cfeb89dac027fc5c7afd7e58d3dc4ebf
-  sn-textview: aaeeb41791e7d1784072adfb6b610db9b764acda
+  sn-textview: 494186ad03660daa52b1d3fd7b50b116b550f925
   SNReactNative: b5e9e529c175c13f3a618e27c76cf3071213d5e1
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
   TrustKit: 073855e3adecd317417bda4ac9e9ac54a2e3b9f2

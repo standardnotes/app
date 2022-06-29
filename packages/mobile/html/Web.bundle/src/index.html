@@ -1,9 +1,26 @@
+<!DOCTYPE html>
 <html>
-    <head>
-        <link rel="stylesheet" href="web-src/app.css"/>
-    </head>
-    <body>
-        <script src="web-src/app.js"></script>
-        <script>alert('in src/index.html')</script>
-    </body>
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <link rel="stylesheet" href="web-src/app.css" />
+</head>
+
+<body>
+
+    <script>
+        window.defaultSyncServer = "https://api.standardnotes.com";
+        window.defaultFilesHost = "https://files.standardnotes.com";
+        window.enabledUnfinishedFeatures = "" === 'true';
+        window.websocketUrl = "";
+        window.purchaseUrl = "https://standardnotes.com/purchase";
+        window.plansUrl = "https://standardnotes.com/plans";
+        window.dashboardUrl = "https://standardnotes.com/dashboard";
+    </script>
+
+    <script src="web-src/app.js"></script>
+</body>
+
 </html>
