@@ -176,6 +176,7 @@ $content-horizontal-padding: 16px;
         }
 
         .count {
+          --navigation-item-count-color: var(--sn-stylekit-foreground-color);
           font-weight: 700;
         }
       }
