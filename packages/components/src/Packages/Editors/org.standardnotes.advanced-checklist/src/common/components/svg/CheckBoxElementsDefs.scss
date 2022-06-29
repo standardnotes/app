@@ -35,6 +35,12 @@ $transition-duration: 750ms;
   width: 22px;
 }
 
+.align-baseline {
+  .checkbox-button {
+    top: -8px !important;
+  }
+}
+
 .checkbox-square,
 .checkbox-mark {
   cursor: pointer;

@@ -1,9 +1,9 @@
 import './TaskItem.scss'
 
-import { ChangeEvent, createRef, KeyboardEvent, useEffect, useState } from 'react'
+import { ChangeEvent, createRef, KeyboardEvent, useState } from 'react'
 import styled from 'styled-components'
 
-import { useAppDispatch, useAppSelector, useDidMount } from '../../app/hooks'
+import { useAppDispatch, useAppSelector, useDidMount, useResize } from '../../app/hooks'
 import { taskDeleted, TaskModel, taskModified, taskToggled } from './tasks-slice'
 
 import { CheckBoxInput, TextAreaInput } from '../../common/components'
@@ -53,22 +53,28 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, groupName, innerRef, ...props
   const [completed, setCompleted] = useState(!!task.completed)
   const [description, setDescription] = useState(task.description)
 
-  function resizeTextArea(textarea: HTMLTextAreaElement | null): void {
+  function resizeTextArea(textarea: HTMLElement): void {
     if (!textarea) {
       return
     }
 
+    const heightOffset = 4
+    const singleLineHeight = 16
     /**
      * Set to 1px first to reset scroll height in case it shrunk.
      */
-    const heightOffset = 4
     textarea.style.height = '1px'
     textarea.style.height = textarea.scrollHeight - heightOffset + 'px'
-  }
 
-  useEffect(() => {
-    resizeTextArea(textAreaRef.current)
-  })
+    const currentHeight = parseFloat(textarea.style.height)
+    if (currentHeight > singleLineHeight) {
+      textarea.parentElement?.classList.add('align-baseline')
+      textarea.parentElement?.classList.remove('align-center')
+    } else {
+      textarea.parentElement?.classList.add('align-center')
+      textarea.parentElement?.classList.remove('align-baseline')
+    }
+  }
 
   function onCheckBoxToggle() {
     const newCompletedState = !completed
@@ -121,6 +127,8 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, groupName, innerRef, ...props
 
     return () => clearTimeout(timeoutId)
   }, [description, groupName])
+
+  useResize(textAreaRef, resizeTextArea)
 
   return (
     <Container data-testid="task-item" completed={completed} ref={innerRef} {...props}>
