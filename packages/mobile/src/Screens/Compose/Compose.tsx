@@ -1,6 +1,5 @@
 import { AppStateEventType } from '@Lib/ApplicationState'
 import { ComponentLoadingError, ComponentManager } from '@Lib/ComponentManager'
-import { isNullOrUndefined } from '@Lib/Utils'
 import { ApplicationContext, SafeApplicationContext } from '@Root/ApplicationContext'
 import { AppStackNavigationProp } from '@Root/AppStack'
 import { SCREEN_COMPOSE } from '@Root/Screens/screens'
@@ -47,7 +46,6 @@ const SAVE_TIMEOUT_NO_DEBOUNCE = 100
 
 type State = {
   title: string
-  text: string
   saveError: boolean
   webViewError?: ComponentLoadingError
   webViewErrorDesc?: string
@@ -67,7 +65,7 @@ const EditingIsDisabledText = 'This note has editing disabled. Please enable edi
 export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRenderingDirectly, State> {
   static override contextType = ApplicationContext
   override context: React.ContextType<typeof ApplicationContext>
-  editor: NoteViewController
+  controller: NoteViewController
   editorViewRef: React.RefObject<SNTextView> = createRef()
   saveTimeout: ReturnType<typeof setTimeout> | undefined
   alreadySaved = false
@@ -93,11 +91,10 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
       throw 'Unable to to find note controller'
     }
 
-    this.editor = editor
+    this.controller = editor
 
     this.state = {
-      title: this.editor.item.title,
-      text: this.editor.item.text,
+      title: this.controller.item.title,
       componentViewer: undefined,
       saveError: false,
       webViewError: undefined,
@@ -107,12 +104,13 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
   }
 
   override componentDidMount() {
-    this.removeNoteInnerValueObserver = this.editor.addNoteInnerValueChangeObserver((note, source) => {
+    this.removeNoteInnerValueObserver = this.controller.addNoteInnerValueChangeObserver((note, source) => {
       if (isPayloadSourceRetrieved(source)) {
         this.setState({
           title: note.title,
-          text: note.text,
         })
+
+        this.editorViewRef.current?.setText(note.text)
       }
 
       const isTemplateNoteInsertedToBeInteractableWithEditor = source === PayloadEmitSource.LocalInserted && note.dirty
@@ -142,7 +140,7 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
         return
       }
 
-      if (!this.note) {
+      if (!this.controllerNote) {
         return
       }
 
@@ -150,9 +148,13 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
     })
 
     this.removeAppEventObserver = this.context?.addEventObserver(async (eventName) => {
+      if (!this.controller || this.controller.dealloced) {
+        return
+      }
+
       if (eventName === ApplicationEvent.CompletedFullSync) {
         /** if we're still dirty, don't change status, a sync is likely upcoming. */
-        if (!this.note.dirty && this.state.saveError) {
+        if (!this.controllerNote.dirty && this.state.saveError) {
           this.showAllChangesSavedStatus()
         }
       } else if (eventName === ApplicationEvent.FailedSync) {
@@ -161,7 +163,7 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
          * Otherwise, it means the originating sync came from somewhere else
          * and we don't want to display an error here.
          */
-        if (this.note.dirty) {
+        if (this.controllerNote.dirty) {
           this.showErrorStatus('Sync Unavailable (changes saved offline)')
         }
       } else if (eventName === ApplicationEvent.LocalDatabaseWriteError) {
@@ -178,7 +180,7 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
       }
     })
 
-    if (this.editor.isTemplateNote && Platform.OS === 'ios') {
+    if (this.controller.isTemplateNote && Platform.OS === 'ios') {
       setTimeout(() => {
         this.editorViewRef?.current?.focus()
       }, 0)
@@ -221,10 +223,10 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
    * on a deleted note.
    */
   get noteLocked() {
-    if (!this.note) {
+    if (!this.controllerNote) {
       return false
     }
-    return this.note.locked
+    return this.controllerNote.locked
   }
 
   setStatus = (status: string, color?: string, wait = true) => {
@@ -259,8 +261,8 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
     this.setStatus(message)
   }
 
-  get note() {
-    return this.editor.item
+  get controllerNote() {
+    return this.controller.item
   }
 
   dismissKeyboard = () => {
@@ -273,10 +275,11 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
   }
 
   async associateComponentWithCurrentNote(component: SNComponent) {
-    const note = this.note
+    const note = this.controllerNote
     if (!note) {
       return
     }
+
     return this.context?.mutator.changeItem(component, (m: ItemMutator) => {
       const mutator = m as ComponentMutator
       mutator.removeDisassociatedItemId(note.uuid)
@@ -291,11 +294,11 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
       webViewError: undefined,
     })
 
-    const associatedEditor = this.componentManager.editorForNote(this.note)
+    const associatedEditor = this.componentManager.editorForNote(this.controllerNote)
 
     /** Editors cannot interact with template notes so the note must be inserted */
-    if (associatedEditor && this.editor.isTemplateNote) {
-      await this.editor.insertTemplatedNote()
+    if (associatedEditor && this.controller.isTemplateNote) {
+      await this.controller.insertTemplatedNote()
       void this.associateComponentWithCurrentNote(associatedEditor)
     }
 
@@ -317,7 +320,7 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
 
   loadComponentViewer(component: SNComponent) {
     this.setState({
-      componentViewer: this.componentManager.createComponentViewer(component, this.note.uuid),
+      componentViewer: this.componentManager.createComponentViewer(component, this.controllerNote.uuid),
     })
   }
 
@@ -332,18 +335,18 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
       webViewError: undefined,
     })
 
-    const associatedEditor = this.componentManager.editorForNote(this.note)
+    const associatedEditor = this.componentManager.editorForNote(this.controllerNote)
     if (associatedEditor) {
       this.loadComponentViewer(associatedEditor)
     }
   }
 
   saveNote = async (params: { newTitle?: string; newText?: string }) => {
-    if (this.editor.isTemplateNote) {
-      await this.editor.insertTemplatedNote()
+    if (this.controller.isTemplateNote) {
+      await this.controller.insertTemplatedNote()
     }
 
-    if (!this.context?.items.findItem(this.note.uuid)) {
+    if (!this.context?.items.findItem(this.controllerNote.uuid)) {
       void this.context?.alertService.alert('Attempting to save this note has failed. The note cannot be found.')
       return
     }
@@ -351,7 +354,7 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
     const { newTitle, newText } = params
 
     await this.context.mutator.changeItem(
-      this.note,
+      this.controllerNote,
       (mutator) => {
         const noteMutator = mutator as NoteMutator
 
@@ -384,7 +387,7 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
   }
 
   onTitleChange = (newTitle: string) => {
-    if (this.note.locked) {
+    if (this.controllerNote.locked) {
       void this.context?.alertService?.alert(EditingIsDisabledText)
       return
     }
@@ -398,7 +401,7 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
   }
 
   onContentChange = (text: string) => {
-    if (this.note.locked) {
+    if (this.controllerNote.locked) {
       void this.context?.alertService?.alert(EditingIsDisabledText)
       return
     }
@@ -478,7 +481,10 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
 
   override render() {
     const shouldDisplayEditor =
-      this.state.componentViewer && Boolean(this.note) && !this.note.prefersPlainEditor && !this.state.webViewError
+      this.state.componentViewer &&
+      Boolean(this.controllerNote) &&
+      !this.controllerNote.prefersPlainEditor &&
+      !this.state.webViewError
 
     return (
       <Container>
@@ -543,13 +549,13 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
                       />
                     )}
 
-                    {!shouldDisplayEditor && !isNullOrUndefined(this.note) && Platform.OS === 'android' && (
+                    {!shouldDisplayEditor && this.controllerNote != undefined && Platform.OS === 'android' && (
                       <TextContainer>
                         <StyledTextView
                           testID="noteContentField"
                           ref={this.editorViewRef}
                           autoFocus={false}
-                          value={this.state.text}
+                          defaultValue={this.controllerNote.text}
                           selectionColor={lighten(theme.stylekitInfoColor, 0.35)}
                           handlesColor={theme.stylekitInfoColor}
                           onChangeText={this.onContentChange}
@@ -559,13 +565,13 @@ export class Compose extends React.Component<PropsWhenNavigating | PropsWhenRend
                     )}
                     {/* Empty wrapping view fixes native textview crashing */}
                     {!shouldDisplayEditor && Platform.OS === 'ios' && (
-                      <View key={this.note.uuid}>
+                      <View key={this.controllerNote.uuid}>
                         <StyledTextView
                           testID="noteContentField"
                           ref={this.editorViewRef}
                           autoFocus={false}
                           multiline
-                          value={this.state.text}
+                          defaultValue={this.controllerNote.text}
                           keyboardDismissMode={'interactive'}
                           keyboardAppearance={themeService?.keyboardColorForActiveTheme()}
                           selectionColor={lighten(theme.stylekitInfoColor)}

@@ -234,9 +234,7 @@ document.addEventListener('DOMContentLoaded', function () {
       callbacks: {
         onInit: function () {},
         onImageUpload: function () {
-          alert('Until we can encrypt image files, uploads are not currently '
-            + 'supported. We recommend using the Image button in the toolbar '
-            + 'and copying an image URL instead.');
+          alert('Embedding encrypted images directly inside the editor is not presently supported. You can attach files to be outside the editor instead. For embedding images directly inside this note, use the Image button in the toolbar and insert the URL of an image hosted externally (outside of Standard Notes). For more information, visit https://standardnotes.com/help/36/how-do-i-attach-encrypted-files-to-my-notes.');
         }
       }
     });

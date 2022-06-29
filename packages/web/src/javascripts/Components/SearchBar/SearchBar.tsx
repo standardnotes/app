@@ -44,7 +44,7 @@ const SearchBar = ({ itemListController, searchOptionsController }: Props) => {
   }, [clearFilterText])
 
   return (
-    <div className="px-2.5 pt-2.5 pb-0.5" role="search">
+    <div className="px-2.5 pt-4 pb-0.5" role="search">
       <DecoratedInput
         autocomplete={false}
         title="Searches notes and files in the currently selected tag"

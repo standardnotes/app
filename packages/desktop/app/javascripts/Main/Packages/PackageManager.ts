@@ -288,12 +288,13 @@ async function installComponent(
   const sendInstalledMessage = (component: Component, error?: { message: string; tag: string }) => {
     if (error) {
       logError(`Error when installing component ${name}: ` + error.message)
-    } else {
-      logMessage(`Installed component ${name} (${version})`)
+      return
     }
+
+    logMessage(`Installed component ${name} (${version})`)
+
     webContents.send(MessageToWebApp.InstallComponentComplete, {
       component,
-      error,
     })
   }
 

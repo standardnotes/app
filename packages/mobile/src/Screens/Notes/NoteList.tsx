@@ -223,7 +223,7 @@ export const NoteList = (props: Props) => {
       <FlatList
         ref={noteListRef}
         style={styles.list}
-        keyExtractor={(item) => item?.uuid}
+        keyExtractor={(item) => item?.uuid || String(new Date().getTime())}
         contentContainerStyle={[{ paddingBottom: insets.bottom }, props.notes.length > 0 ? {} : { height: '100%' }]}
         initialNumToRender={6}
         windowSize={6}

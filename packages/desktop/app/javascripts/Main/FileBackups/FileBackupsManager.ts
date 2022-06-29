@@ -2,9 +2,11 @@ import { FileBackupsDevice, FileBackupsMapping } from '@web/Application/Device/D
 import { AppState } from 'app/application'
 import { shell } from 'electron'
 import { StoreKeys } from '../Store'
+import path from 'path'
 import {
+  deleteFile,
   ensureDirectoryExists,
-  moveDirContents,
+  moveFiles,
   openDirectoryPicker,
   readJSONFile,
   writeFile,
@@ -61,12 +63,37 @@ export class FilesBackupManager implements FileBackupsDevice {
     const oldPath = await this.getFilesBackupsLocation()
 
     if (oldPath) {
-      await moveDirContents(oldPath, newPath)
+      await this.transferFilesBackupsToNewLocation(oldPath, newPath)
+    } else {
+      this.appState.store.set(StoreKeys.FileBackupsLocation, newPath)
     }
+
+    return newPath
+  }
+
+  private async transferFilesBackupsToNewLocation(oldPath: string, newPath: string): Promise<void> {
+    const mapping = await this.getMappingFileFromDisk()
+    if (!mapping) {
+      return
+    }
+
+    const entries = Object.values(mapping.files)
+    const itemFolders = entries.map((entry) => path.join(oldPath, entry.relativePath))
+    await moveFiles(itemFolders, newPath)
+
+    for (const entry of entries) {
+      entry.absolutePath = path.join(newPath, entry.relativePath)
+    }
+
+    const oldMappingFileLocation = this.getMappingFileLocation()
 
     this.appState.store.set(StoreKeys.FileBackupsLocation, newPath)
 
-    return newPath
+    const result = await this.saveFilesBackupsMappingFile(mapping)
+
+    if (result === 'success') {
+      await deleteFile(oldMappingFileLocation)
+    }
   }
 
   public getFilesBackupsLocation(): Promise<string> {
