@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0](https://github.com/standardnotes/app/compare/@standardnotes/autobiography-theme@1.0.8...@standardnotes/autobiography-theme@1.1.0) (2022-06-29)
+
+### Bug Fixes
+
+* **web:** navigation styles ([#1177](https://github.com/standardnotes/app/issues/1177)) ([5cd449f](https://github.com/standardnotes/app/commit/5cd449fe800b8950fab2599968933b120222d5fc))
+
+### Features
+
+* deprecated editors ([#1166](https://github.com/standardnotes/app/issues/1166)) ([60ca415](https://github.com/standardnotes/app/commit/60ca4150446f9a14bb6a31416686c6d07a7d0cd9))
+
 ## [1.0.8](https://github.com/standardnotes/app/compare/@standardnotes/autobiography-theme@1.0.8-alpha.0...@standardnotes/autobiography-theme@1.0.8) (2022-06-22)
 
 **Note:** Version bump only for package @standardnotes/autobiography-theme

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.27.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.27.5...@standardnotes/web@3.27.6) (2022-06-29)
+
+### Bug Fixes
+
+* **web:** navigation styles ([#1177](https://github.com/standardnotes/app/issues/1177)) ([5cd449f](https://github.com/standardnotes/app/commit/5cd449fe800b8950fab2599968933b120222d5fc))
+
 ## [3.27.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.27.4...@standardnotes/web@3.27.5) (2022-06-29)
 
 **Note:** Version bump only for package @standardnotes/web
