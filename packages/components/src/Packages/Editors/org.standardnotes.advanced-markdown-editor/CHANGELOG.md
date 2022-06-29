@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.1](https://github.com/standardnotes/app/compare/@standardnotes/markdown-hybrid@1.6.0...@standardnotes/markdown-hybrid@1.6.1) (2022-06-29)
+
+**Note:** Version bump only for package @standardnotes/markdown-hybrid
+
 # [1.6.0](https://github.com/standardnotes/app/compare/@standardnotes/markdown-hybrid@1.5.5...@standardnotes/markdown-hybrid@1.6.0) (2022-06-28)
 
 ### Bug Fixes
