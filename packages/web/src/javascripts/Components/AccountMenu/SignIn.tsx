@@ -153,7 +153,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
       </div>
       <div className="mb-1 px-3">
         <DecoratedInput
-          className={`mb-2 ${error ? 'border-danger' : null}`}
+          className={{ container: `mb-2 ${error ? 'border-danger' : null}` }}
           left={[<Icon type="email" className="text-neutral" />]}
           type="email"
           placeholder="Email"
@@ -165,7 +165,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
           ref={emailInputRef}
         />
         <DecoratedPasswordInput
-          className={`mb-2 ${error ? 'border-danger' : null}`}
+          className={{ container: `mb-2 ${error ? 'border-danger' : null}` }}
           disabled={isSigningIn}
           left={[<Icon type="password" className="text-neutral" />]}
           onChange={handlePasswordChange}

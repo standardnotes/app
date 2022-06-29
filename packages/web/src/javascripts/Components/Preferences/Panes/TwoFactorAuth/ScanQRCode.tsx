@@ -45,7 +45,7 @@ const ScanQRCode: FunctionComponent<Props> = ({ activation: act }) => {
           </div>
           <div className="min-h-2" />
           <DecoratedInput
-            className="w-92 ml-4"
+            className={{ container: 'w-92 ml-4' }}
             disabled={true}
             value={act.secretKey}
             right={[<CopyButton copyValue={act.secretKey} />]}

@@ -205,7 +205,7 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
                 placeholder="Passcode"
               />
               <DecoratedPasswordInput
-                className="mt-2"
+                className={{ container: 'mt-2' }}
                 type="password"
                 value={passcodeConfirmation ? passcodeConfirmation : ''}
                 onChange={handleConfirmPasscodeChange}

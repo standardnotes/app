@@ -119,7 +119,7 @@ const ConfirmPassword: FunctionComponent<Props> = ({
       </div>
       <form onSubmit={handleConfirmFormSubmit} className="mb-1 px-3">
         <DecoratedPasswordInput
-          className="mb-2"
+          className={{ container: 'mb-2' }}
           disabled={isRegistering}
           left={[<Icon type="password" className="text-neutral" />]}
           onChange={handlePasswordChange}

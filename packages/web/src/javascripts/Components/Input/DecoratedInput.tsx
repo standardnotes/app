@@ -3,7 +3,7 @@ import { DecoratedInputProps } from './DecoratedInputProps'
 
 const getClassNames = (hasLeftDecorations: boolean, hasRightDecorations: boolean, roundedFull?: boolean) => {
   return {
-    container: `position-relative flex items-stretch overflow-hidden border border-solid border-border bg-default text-sm focus-within:ring-2 focus-within:ring-info ${
+    container: `position-relative flex items-stretch overflow-hidden border border-solid border-passive-3 bg-default text-sm focus-within:ring-2 focus-within:ring-info bg-clip-padding ${
       !hasLeftDecorations && !hasRightDecorations ? 'px-2 py-1.5' : ''
     } ${roundedFull ? 'rounded-full' : 'rounded'}`,
     input: `focus:ring-none w-full border-0 bg-transparent text-text focus:shadow-none focus:outline-none ${
@@ -20,7 +20,7 @@ const DecoratedInput = forwardRef(
   (
     {
       autocomplete = false,
-      className = '',
+      className,
       disabled = false,
       id,
       left,
@@ -43,7 +43,7 @@ const DecoratedInput = forwardRef(
     const classNames = getClassNames(hasLeftDecorations, hasRightDecorations, roundedFull)
 
     return (
-      <div className={`${classNames.container} ${disabled ? classNames.disabled : ''} ${className}`}>
+      <div className={`${classNames.container} ${disabled ? classNames.disabled : ''} ${className?.container}`}>
         {left && (
           <div className="flex items-center px-2 py-1.5">
             {left.map((leftChild, index) => (
@@ -54,7 +54,7 @@ const DecoratedInput = forwardRef(
 
         <input
           autoComplete={autocomplete ? 'on' : 'off'}
-          className={`${classNames.input} ${disabled ? classNames.disabled : ''}`}
+          className={`${classNames.input} ${disabled ? classNames.disabled : ''} ${className?.input}`}
           data-lpignore={type !== 'password' ? true : false}
           disabled={disabled}
           id={id}

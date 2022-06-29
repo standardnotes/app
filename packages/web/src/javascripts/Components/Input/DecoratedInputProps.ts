@@ -2,7 +2,10 @@ import { FocusEventHandler, KeyboardEventHandler, ReactNode } from 'react'
 
 export type DecoratedInputProps = {
   autocomplete?: boolean
-  className?: string
+  className?: {
+    container?: string
+    input?: string
+  }
   disabled?: boolean
   id?: string
   left?: ReactNode[]

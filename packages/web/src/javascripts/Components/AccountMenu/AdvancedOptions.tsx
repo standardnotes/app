@@ -126,7 +126,7 @@ const AdvancedOptions: FunctionComponent<Props> = ({
           {isPrivateWorkspace && (
             <>
               <DecoratedInput
-                className={'mb-2'}
+                className={{ container: 'mb-2' }}
                 left={[<Icon type="server" className="text-neutral" />]}
                 type="text"
                 placeholder="Userphrase"
@@ -135,7 +135,7 @@ const AdvancedOptions: FunctionComponent<Props> = ({
                 disabled={disabled}
               />
               <DecoratedInput
-                className={'mb-2'}
+                className={{ container: 'mb-2' }}
                 left={[<Icon type="folder" className="text-neutral" />]}
                 type="text"
                 placeholder="Name"
