@@ -21,6 +21,8 @@ DerivedData
 *.ipa
 *.xcuserstate
 
+html/Web.bundle/src/web-src
+
 .env
 
 # Android/IntelliJ

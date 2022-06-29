@@ -5606,6 +5606,7 @@ __metadata:
     "@standardnotes/sncrypto-common": 1.9.0
     "@standardnotes/snjs": ^2.118.0
     "@standardnotes/stylekit": 5.29.3
+    "@standardnotes/web": "workspace:^"
     "@types/detox": ^18.1.0
     "@types/faker": ^6.6.9
     "@types/jest": ^27.4.1
@@ -6018,7 +6019,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/web@workspace:*, @standardnotes/web@workspace:packages/web":
+"@standardnotes/web@workspace:*, @standardnotes/web@workspace:^, @standardnotes/web@workspace:packages/web":
   version: 0.0.0-use.local
   resolution: "@standardnotes/web@workspace:packages/web"
   dependencies:
