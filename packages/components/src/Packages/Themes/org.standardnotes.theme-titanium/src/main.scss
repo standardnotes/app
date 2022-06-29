@@ -27,7 +27,7 @@
   --sn-stylekit-danger-color: #f80324;
   --sn-stylekit-danger-contrast-color: #ffffff;
 
-  --sn-stylekit-background-color: #d9dbde;
+  --sn-stylekit-background-color: var(--sn-stylekit-passive-color-4);
   --sn-stylekit-foreground-color: #3d3c40;
   --sn-stylekit-border-color: #c9cccf;
 
@@ -35,7 +35,7 @@
   --sn-stylekit-contrast-foreground-color: #3d3c40;
   --sn-stylekit-contrast-border-color: #c9cccf;
 
-  --sn-stylekit-secondary-background-color: var(--sn-stylekit-passive-color-4);
+  --sn-stylekit-secondary-background-color: #d9dbde;
   --sn-stylekit-secondary-foreground-color: #3d3c40;
   --sn-stylekit-secondary-border-color: #c9cccf;
 
