@@ -216,7 +216,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
               </a>
             </div>
           )}
-          <div className={'tag-icon draggable mr-1'} ref={dragRef}>
+          <div className={'tag-icon draggable mr-2'} ref={dragRef}>
             <Icon type="hashtag" className={`${isSelected ? 'text-info' : 'text-neutral'}`} />
           </div>
           <input
