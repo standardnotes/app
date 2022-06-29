@@ -68,7 +68,6 @@ export class DesktopManager
     return component.payloadRepresentation().ejected()
   }
 
-  // All `components` should be installed
   syncComponentsInstallation(components: SNComponent[]) {
     Promise.all(
       components.map((component) => {
@@ -114,7 +113,7 @@ export class DesktopManager
     this.webApplication.notifyWebEvent(WebAppEvent.WindowDidBlur)
   }
 
-  async onComponentInstallationComplete(componentData: DecryptedTransferPayload<ComponentContent>, error: unknown) {
+  async onComponentInstallationComplete(componentData: DecryptedTransferPayload<ComponentContent>) {
     const component = this.application.items.findItem(componentData.uuid)
     if (!component) {
       return
@@ -124,15 +123,11 @@ export class DesktopManager
       component,
       (m) => {
         const mutator = m as ComponentMutator
-        if (error) {
-          mutator.setAppDataItem(AppDataField.ComponentInstallError, error)
-        } else {
-          // eslint-disable-next-line camelcase
-          mutator.local_url = componentData.content.local_url as string
-          // eslint-disable-next-line camelcase
-          mutator.package_info = componentData.content.package_info
-          mutator.setAppDataItem(AppDataField.ComponentInstallError, undefined)
-        }
+        // eslint-disable-next-line camelcase
+        mutator.local_url = componentData.content.local_url as string
+        // eslint-disable-next-line camelcase
+        mutator.package_info = componentData.content.package_info
+        mutator.setAppDataItem(AppDataField.ComponentInstallError, undefined)
       },
       undefined,
     )

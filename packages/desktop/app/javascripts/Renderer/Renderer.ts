@@ -152,7 +152,7 @@ function listenForMessagesSentFromMainToPreloadToUs(device: DesktopDevice) {
     } else if (message === MessageToWebApp.WindowFocused) {
       receiver.windowGainedFocus()
     } else if (message === MessageToWebApp.InstallComponentComplete) {
-      receiver.onComponentInstallationComplete(data.component, data.error)
+      receiver.onComponentInstallationComplete(data.component, undefined)
     } else if (message === MessageToWebApp.UpdateAvailable) {
       receiver.updateAvailable()
     } else if (message === MessageToWebApp.PerformAutomatedBackup) {
