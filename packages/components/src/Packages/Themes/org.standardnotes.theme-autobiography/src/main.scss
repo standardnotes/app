@@ -6,6 +6,13 @@
   --highlight-color: #d68420;
   --highlight-contrast: #e3ae74;
 
+  --sn-stylekit-passive-color-0: #7e582a;
+  --sn-stylekit-passive-color-1: #a37337;
+  --sn-stylekit-passive-color-3: #d9c6b1;
+  --sn-stylekit-passive-color-4: #e3d5c4;
+  --sn-stylekit-passive-color-4-opacity-variant: #c9995e3d;
+  --sn-stylekit-passive-color-5: #e9d9c7;
+
   --sn-stylekit-info-color: #a37337;
   --sn-stylekit-info-contrast-color: #ebcdaa;
 
@@ -33,7 +40,7 @@
   --sn-stylekit-contrast-foreground-color: var(--foreground-color);
   --sn-stylekit-contrast-border-color: var(--border-color);
 
-  --sn-stylekit-secondary-background-color: var(--background-1);
+  --sn-stylekit-secondary-background-color: var(--sn-stylekit-passive-color-4);
   --sn-stylekit-secondary-foreground-color: var(--foreground-color);
   --sn-stylekit-secondary-border-color: var(--border-color);
 
@@ -51,11 +58,6 @@
   --sn-desktop-titlebar-border-color: var(--border-color);
   --sn-desktop-titlebar-ui-color: var(--foreground-color);
   --sn-desktop-titlebar-ui-hover-color: var(--highlight-color);
-
-  --sn-stylekit-passive-color-0: #7e582a;
-  --sn-stylekit-passive-color-1: #a37337;
-  --sn-stylekit-passive-color-4-opacity-variant: #c9995e3d;
-  --sn-stylekit-passive-color-5: #e9d9c7;
 }
 
 #notes-column .note.selected,

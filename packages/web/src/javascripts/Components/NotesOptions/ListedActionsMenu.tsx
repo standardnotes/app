@@ -100,8 +100,8 @@ const ListedActionsMenu = ({ application, note, recalculateMenuStyle }: ListedAc
   return (
     <>
       {isFetchingAccounts && (
-        <div className="w-full flex items-center justify-center p-4">
-          <Spinner className="w-5 h-5" />
+        <div className="flex w-full items-center justify-center p-4">
+          <Spinner className="h-5 w-5" />
         </div>
       )}
       {!isFetchingAccounts && menuGroups.length ? (
@@ -109,8 +109,8 @@ const ListedActionsMenu = ({ application, note, recalculateMenuStyle }: ListedAc
           {menuGroups.map((group, index) => (
             <Fragment key={group.account.authorId}>
               <div
-                className={`w-full flex items-center px-2.5 py-2 text-input font-semibold text-text border-y border-solid border-border ${
-                  index === 0 ? 'border-t-0 mb-1' : 'my-1'
+                className={`text-input flex w-full items-center border-y border-solid border-border px-2.5 py-2 font-semibold text-text ${
+                  index === 0 ? 'mb-1 border-t-0' : 'my-1'
                 }`}
               >
                 <Icon type="notes" className="mr-2 text-info" /> {group.name}
@@ -127,15 +127,15 @@ const ListedActionsMenu = ({ application, note, recalculateMenuStyle }: ListedAc
                   />
                 ))
               ) : (
-                <div className="px-3 py-2 text-sm text-passive-0 select-none">No actions available</div>
+                <div className="select-none px-3 py-2 text-sm text-passive-0">No actions available</div>
               )}
             </Fragment>
           ))}
         </>
       ) : null}
       {!isFetchingAccounts && !menuGroups.length ? (
-        <div className="w-full flex items-center justify-center px-4 py-6">
-          <div className="text-sm text-passive-0 select-none">No Listed accounts found</div>
+        <div className="flex w-full items-center justify-center px-4 py-6">
+          <div className="select-none text-sm text-passive-0">No Listed accounts found</div>
         </div>
       ) : null}
     </>

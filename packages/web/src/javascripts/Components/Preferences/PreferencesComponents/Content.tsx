@@ -2,17 +2,17 @@ import { FunctionComponent } from 'react'
 
 export const Title: FunctionComponent = ({ children }) => (
   <>
-    <h2 className="text-base m-0 mb-1 text-info font-bold">{children}</h2>
+    <h2 className="m-0 mb-1 text-base font-bold text-info">{children}</h2>
     <div className="min-h-2" />
   </>
 )
 
 export const Subtitle: FunctionComponent<{ className?: string }> = ({ children, className = '' }) => (
-  <h4 className={`font-medium text-sm m-0 mb-1 ${className}`}>{children}</h4>
+  <h4 className={`m-0 mb-1 text-sm font-medium ${className}`}>{children}</h4>
 )
 
 export const SubtitleLight: FunctionComponent<{ className?: string }> = ({ children, className = '' }) => (
-  <h4 className={`font-normal text-sm m-0 mb-1 ${className}`}>{children}</h4>
+  <h4 className={`m-0 mb-1 text-sm font-normal ${className}`}>{children}</h4>
 )
 
 export const Text: FunctionComponent<{ className?: string }> = ({ children, className = '' }) => (

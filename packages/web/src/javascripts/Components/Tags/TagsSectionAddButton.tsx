@@ -15,7 +15,7 @@ const TagsSectionAddButton: FunctionComponent<Props> = ({ tags }) => {
       focusable={true}
       icon="add"
       title="Create a new tag"
-      className="text-neutral p-0"
+      className="p-0 text-neutral"
       onClick={() => tags.createNewTemplate()}
     />
   )

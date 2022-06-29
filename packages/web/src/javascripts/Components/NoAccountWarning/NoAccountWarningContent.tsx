@@ -24,10 +24,10 @@ const NoAccountWarningContent = ({ accountMenuController, noAccountWarningContro
   }, [noAccountWarningController])
 
   return (
-    <div className="mt-4 p-4 rounded-md shadow grid grid-cols-1">
-      <h1 className="sk-h3 m-0 font-semibold text-sm">Data not backed up</h1>
-      <p className="m-0 mt-1 col-start-1 col-end-3 text-sm">Sign in or register to back up your notes.</p>
-      <Button primary small className="mt-3 col-start-1 col-end-3 justify-self-start" onClick={showAccountMenu}>
+    <div className="mt-4 grid grid-cols-1 rounded-md p-4 shadow-main">
+      <h1 className="sk-h3 m-0 text-sm font-semibold">Data not backed up</h1>
+      <p className="col-start-1 col-end-3 m-0 mt-1 text-sm">Sign in or register to back up your notes.</p>
+      <Button primary small className="col-start-1 col-end-3 mt-3 justify-self-start" onClick={showAccountMenu}>
         Open Account menu
       </Button>
       <button
@@ -35,7 +35,7 @@ const NoAccountWarningContent = ({ accountMenuController, noAccountWarningContro
         title="Ignore warning"
         aria-label="Ignore warning"
         style={{ height: '20px' }}
-        className="border-0 m-0 p-0 bg-transparent cursor-pointer rounded-md col-start-2 row-start-1 text-neutral hover:text-info"
+        className="col-start-2 row-start-1 m-0 cursor-pointer rounded-md border-0 bg-transparent p-0 text-neutral hover:text-info"
       >
         <Icon type="close" className="block" />
       </button>

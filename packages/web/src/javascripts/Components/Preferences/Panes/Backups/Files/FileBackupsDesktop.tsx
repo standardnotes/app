@@ -57,7 +57,7 @@ const FileBackupsDesktop = ({ application, backupsService }: Props) => {
           <Title>File Backups</Title>
 
           <div className="flex items-center justify-between">
-            <div className="flex flex-col mr-10">
+            <div className="mr-10 flex flex-col">
               <Subtitle>
                 Automatically save encrypted backups of files uploaded on any device to this computer.
               </Subtitle>
@@ -86,11 +86,11 @@ const FileBackupsDesktop = ({ application, backupsService }: Props) => {
 
                 <EncryptionStatusItem
                   status={backupsLocation}
-                  icon={<Icon type="attachment-file" className="min-w-5 min-h-5" />}
+                  icon={<Icon type="attachment-file" className="min-h-5 min-w-5" />}
                   checkmark={false}
                 />
 
-                <div className="flex flex-row mt-2.5">
+                <div className="mt-2.5 flex flex-row">
                   <Button label="Open Backups Location" className={'mr-3 text-xs'} onClick={openBackupsLocation} />
                   <Button label="Change Backups Location" className={'mr-3 text-xs'} onClick={changeBackupsLocation} />
                 </div>

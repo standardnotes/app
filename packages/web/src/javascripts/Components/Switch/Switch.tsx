@@ -12,7 +12,7 @@ const Switch: FunctionComponent<SwitchProps> = (props: SwitchProps) => {
 
   return (
     <label
-      className={`sn-component flex justify-between items-center cursor-pointer px-3 ${className} ${
+      className={`sn-component flex cursor-pointer items-center justify-between px-3 ${className} ${
         isDisabled ? 'opacity-50' : ''
       }`}
       {...(props.role ? { role: props.role } : {})}
@@ -24,7 +24,7 @@ const Switch: FunctionComponent<SwitchProps> = (props: SwitchProps) => {
           setChecked(event.target.checked)
           props.onChange?.(event.target.checked)
         }}
-        className={`w-8 h-4.5 inline-block relative box-content bg-clip-padding cursor-pointer border-2 border-solid border-transparent rounded-full focus-within:shadow-none focus-within:outline-none focus-within:ring-info focus-within:border-default transition-colors duration-150 ease-out ${
+        className={`relative box-content inline-block h-4.5 w-8 cursor-pointer rounded-full border-2 border-solid border-transparent bg-clip-padding transition-colors duration-150 ease-out focus-within:border-default focus-within:shadow-none focus-within:outline-none focus-within:ring-info ${
           isActive ? 'bg-info' : 'bg-neutral'
         }`}
         disabled={props.disabled}
@@ -39,7 +39,7 @@ const Switch: FunctionComponent<SwitchProps> = (props: SwitchProps) => {
         />
         <span
           aria-hidden
-          className={`absolute block bg-default rounded-full w-3.5 h-3.5 left-[2px] top-1/2 -translate-y-1/2 transition-transform duration-150 ease-out ${
+          className={`absolute left-[2px] top-1/2 block h-3.5 w-3.5 -translate-y-1/2 rounded-full bg-default transition-transform duration-150 ease-out ${
             checked ? 'translate-x-[calc(2rem-1.125rem)]' : ''
           }`}
         />

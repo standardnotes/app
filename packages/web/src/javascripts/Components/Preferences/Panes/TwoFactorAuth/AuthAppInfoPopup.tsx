@@ -14,7 +14,7 @@ const DisclosureIconButton: FunctionComponent<Props> = ({ className = '', icon, 
   <DisclosureButton
     onMouseEnter={onMouseEnter}
     onMouseLeave={onMouseLeave}
-    className={`no-border cursor-pointer bg-transparent hover:brightness-125 p-0 ${className ?? ''}`}
+    className={`no-border cursor-pointer bg-transparent p-0 hover:brightness-125 ${className ?? ''}`}
   >
     <Icon type={icon} />
   </DisclosureButton>
@@ -51,8 +51,8 @@ const AuthAppInfoTooltip: FunctionComponent = () => {
         />
         <DisclosurePanel>
           <div
-            className={`bg-inverted-default text-inverted-default text-center rounded shadow-overlay
-py-1.5 px-2 absolute w-103 -top-10 -left-51`}
+            className={`bg-inverted-default text-inverted-default shadow-overlay w-103 -left-51
+absolute -top-10 rounded py-1.5 px-2 text-center`}
           >
             Some apps, like Google Authenticator, do not back up and restore your secret keys if you lose your device or
             get a new one.

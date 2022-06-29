@@ -216,7 +216,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
               </a>
             </div>
           )}
-          <div className={'tag-icon draggable mr-1'} ref={dragRef}>
+          <div className={'tag-icon draggable mr-2'} ref={dragRef}>
             <Icon type="hashtag" className={`${isSelected ? 'text-info' : 'text-neutral'}`} />
           </div>
           <input
@@ -233,7 +233,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
           <div className="flex items-center">
             <a
               role="button"
-              className={`border-0 mr-2 bg-transparent hover:bg-contrast focus:shadow-inner cursor-pointer ${
+              className={`mr-2 cursor-pointer border-0 bg-transparent hover:bg-contrast focus:shadow-inner ${
                 isSelected ? 'visible' : 'invisible'
               }`}
               onClick={toggleContextMenu}
@@ -257,9 +257,9 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
           }}
         >
           <div className="tag-info">
-            <div className="flex items-center h-full p-0 min-w-[22px] border-0 bg-transparent" />
+            <div className="flex h-full min-w-[22px] items-center border-0 bg-transparent p-0" />
             <div className="tag-icon mr-1">
-              <Icon type="hashtag" className="text-neutral mr-1" />
+              <Icon type="hashtag" className="mr-1 text-neutral" />
             </div>
             <input
               className="title w-full focus:shadow-none focus:outline-none"

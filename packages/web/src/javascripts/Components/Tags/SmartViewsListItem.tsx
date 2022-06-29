@@ -23,12 +23,12 @@ type Props = {
 const PADDING_BASE_PX = 14
 const PADDING_PER_LEVEL_PX = 21
 
-const smartViewIconType = (view: SmartView): IconType => {
+const smartViewIconType = (view: SmartView, isSelected: boolean): IconType => {
   if (view.uuid === SystemViewId.AllNotes) {
-    return 'notes'
+    return isSelected ? 'notes-filled' : 'notes'
   }
   if (view.uuid === SystemViewId.Files) {
-    return 'file'
+    return 'folder'
   }
   if (view.uuid === SystemViewId.ArchivedNotes) {
     return 'archive'
@@ -101,7 +101,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
   }, [tagsState, view])
 
   const isFaded = false
-  const iconType = smartViewIconType(view)
+  const iconType = smartViewIconType(view, isSelected)
 
   return (
     <>
@@ -113,7 +113,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
         }}
       >
         <div className="tag-info">
-          <div className={'tag-icon mr-1'}>
+          <div className={'tag-icon mr-2'}>
             <Icon type={iconType} className={`${isSelected ? 'text-info' : 'text-neutral'}`} />
           </div>
           <input

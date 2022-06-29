@@ -136,7 +136,7 @@ $content-horizontal-padding: 16px;
       .count {
         padding-right: 4px;
         padding-top: 1px;
-        font-weight: bold;
+        font-weight: 400;
         color: var(--navigation-item-count-color);
         min-width: 15px;
         text-align: right;
@@ -173,6 +173,11 @@ $content-horizontal-padding: 16px;
       > .tag-info {
         .title {
           cursor: text;
+        }
+
+        .count {
+          --navigation-item-count-color: var(--sn-stylekit-foreground-color);
+          font-weight: 700;
         }
       }
     }

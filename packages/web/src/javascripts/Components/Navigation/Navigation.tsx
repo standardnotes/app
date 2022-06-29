@@ -6,6 +6,7 @@ import { ApplicationEvent, PrefKey } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
 import PanelResizer, { PanelSide, ResizeFinishCallback, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
+import SearchBar from '@/Components/SearchBar/SearchBar'
 
 type Props = {
   application: WebApplication
@@ -50,9 +51,13 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
       ref={setRef}
     >
       <div id="navigation-content" className="content">
+        <SearchBar
+          itemListController={viewControllerManager.itemListController}
+          searchOptionsController={viewControllerManager.searchOptionsController}
+        />
         <div className="section-title-bar">
           <div className="section-title-bar-header">
-            <div className="text-sm title">
+            <div className="title text-sm">
               <span className="font-bold">Views</span>
             </div>
           </div>

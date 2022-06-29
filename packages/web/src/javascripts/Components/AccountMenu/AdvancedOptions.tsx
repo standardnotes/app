@@ -98,19 +98,19 @@ const AdvancedOptions: FunctionComponent<Props> = ({
   return (
     <>
       <button
-        className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full text-sm focus:bg-info-backdrop focus:shadow-none font-bold"
+        className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm font-bold text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
         onClick={toggleShowAdvanced}
       >
         <div className="flex items-center">
           Advanced options
-          <Icon type="chevron-down" className="text-passive-1 ml-1" />
+          <Icon type="chevron-down" className="ml-1 text-passive-1" />
         </div>
       </button>
       {showAdvanced ? (
-        <div className="px-3 my-2">
+        <div className="my-2 px-3">
           {children}
 
-          <div className="flex justify-between items-center mb-1">
+          <div className="mb-1 flex items-center justify-between">
             <Checkbox
               name="private-workspace"
               label="Private workspace"
@@ -126,7 +126,7 @@ const AdvancedOptions: FunctionComponent<Props> = ({
           {isPrivateWorkspace && (
             <>
               <DecoratedInput
-                className={'mb-2'}
+                className={{ container: 'mb-2' }}
                 left={[<Icon type="server" className="text-neutral" />]}
                 type="text"
                 placeholder="Userphrase"
@@ -135,7 +135,7 @@ const AdvancedOptions: FunctionComponent<Props> = ({
                 disabled={disabled}
               />
               <DecoratedInput
-                className={'mb-2'}
+                className={{ container: 'mb-2' }}
                 left={[<Icon type="folder" className="text-neutral" />]}
                 type="text"
                 placeholder="Name"
@@ -147,7 +147,7 @@ const AdvancedOptions: FunctionComponent<Props> = ({
           )}
 
           {onStrictSignInChange && (
-            <div className="flex justify-between items-center mb-1">
+            <div className="mb-1 flex items-center justify-between">
               <Checkbox
                 name="use-strict-signin"
                 label="Use strict sign-in"

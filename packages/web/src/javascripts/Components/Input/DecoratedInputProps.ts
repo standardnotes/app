@@ -1,16 +1,23 @@
 import { FocusEventHandler, KeyboardEventHandler, ReactNode } from 'react'
 
 export type DecoratedInputProps = {
-  type?: 'text' | 'email' | 'password'
-  className?: string
-  id?: string
+  autocomplete?: boolean
+  className?: {
+    container?: string
+    input?: string
+  }
   disabled?: boolean
+  id?: string
   left?: ReactNode[]
-  right?: ReactNode[]
-  value?: string
-  placeholder?: string
+  onBlur?: FocusEventHandler
   onChange?: (text: string) => void
   onFocus?: FocusEventHandler
   onKeyDown?: KeyboardEventHandler
-  autocomplete?: boolean
+  onKeyUp?: KeyboardEventHandler
+  placeholder?: string
+  right?: ReactNode[]
+  title?: string
+  type?: React.HTMLInputTypeAttribute
+  value?: string
+  roundedFull?: boolean
 }

@@ -58,9 +58,9 @@ const FilePreview = ({ file, application }: Props) => {
   }, [application.files, downloadedBytes, file, isFilePreviewable])
 
   return isDownloading ? (
-    <div className="flex flex-col justify-center items-center flex-grow">
+    <div className="flex flex-grow flex-col items-center justify-center">
       <div className="flex items-center">
-        <Spinner className="w-5 h-5 mr-3" />
+        <Spinner className="mr-3 h-5 w-5" />
         <div className="text-base font-semibold">{downloadProgress}%</div>
       </div>
       <span className="mt-3">Loading file...</span>

@@ -66,7 +66,7 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
         <DisclosureButton
           ref={menuButtonRef}
           onBlur={closeOnBlur}
-          className="w-7 h-7 p-1 rounded-full border-0 bg-transparent hover:bg-contrast cursor-pointer"
+          className="h-7 w-7 cursor-pointer rounded-full border-0 bg-transparent p-1 hover:bg-contrast"
         >
           <Icon type="more" className="text-neutral" />
         </DisclosureButton>
@@ -78,13 +78,13 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
           }}
           className={`${
             isMenuOpen ? 'flex' : 'hidden'
-          } flex-col bg-default rounded shadow-main max-h-120 min-w-60 py-1 fixed overflow-y-auto`}
+          } max-h-120 fixed min-w-60 flex-col overflow-y-auto rounded bg-default py-1 shadow-main`}
         >
           {isMenuOpen && (
             <>
               <button
                 onBlur={closeOnBlur}
-                className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:shadow-none text-sm focus:bg-info-backdrop"
+                className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
                 onClick={() => {
                   previewHandler(file)
                   closeMenu()
@@ -96,7 +96,7 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
               {isAttachedToNote ? (
                 <button
                   onBlur={closeOnBlur}
-                  className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:shadow-none text-sm focus:bg-info-backdrop"
+                  className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
                   onClick={() => {
                     handleFileAction({
                       type: PopoverFileItemActionType.DetachFileToNote,
@@ -111,7 +111,7 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
               ) : (
                 <button
                   onBlur={closeOnBlur}
-                  className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:shadow-none text-sm focus:bg-info-backdrop"
+                  className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
                   onClick={() => {
                     handleFileAction({
                       type: PopoverFileItemActionType.AttachFileToNote,
@@ -126,7 +126,7 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
               )}
               <HorizontalSeparator classes="my-1" />
               <button
-                className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:shadow-none text-sm justify-between focus:bg-info-backdrop"
+                className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
                 onClick={() => {
                   handleFileAction({
                     type: PopoverFileItemActionType.ToggleFileProtection,
@@ -143,7 +143,7 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
                   Password protection
                 </span>
                 <Switch
-                  className="px-0 pointer-events-none"
+                  className="pointer-events-none px-0"
                   tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
                   checked={isFileProtected}
                 />
@@ -151,7 +151,7 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
               <HorizontalSeparator classes="my-1" />
               <button
                 onBlur={closeOnBlur}
-                className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:shadow-none text-sm focus:bg-info-backdrop"
+                className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
                 onClick={() => {
                   handleFileAction({
                     type: PopoverFileItemActionType.DownloadFile,
@@ -165,7 +165,7 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
               </button>
               <button
                 onBlur={closeOnBlur}
-                className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:shadow-none text-sm focus:bg-info-backdrop"
+                className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
                 onClick={() => {
                   setIsRenamingFile(true)
                 }}
@@ -175,7 +175,7 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
               </button>
               <button
                 onBlur={closeOnBlur}
-                className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:shadow-none text-sm focus:bg-info-backdrop"
+                className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
                 onClick={() => {
                   handleFileAction({
                     type: PopoverFileItemActionType.DeleteFile,
@@ -187,7 +187,7 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
                 <Icon type="trash" className="mr-2 text-danger" />
                 <span className="text-danger">Delete permanently</span>
               </button>
-              <div className="px-3 py-1 text-xs text-neutral font-medium">
+              <div className="px-3 py-1 text-xs font-medium text-neutral">
                 <div>
                   <span className="font-semibold">File ID:</span> {file.uuid}
                 </div>

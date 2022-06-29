@@ -66,7 +66,7 @@ const AddTagOption: FunctionComponent<Props> = ({ navigationController, notesCon
           }}
           onBlur={closeOnBlur}
           ref={menuButtonRef}
-          className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full focus:bg-info-backdrop focus:shadow-none text-menu-item justify-between"
+          className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
         >
           <div className="flex items-center">
             <Icon type="hashtag" className="mr-2 text-neutral" />
@@ -88,12 +88,12 @@ const AddTagOption: FunctionComponent<Props> = ({ navigationController, notesCon
           }}
           className={`${
             isMenuOpen ? 'flex' : 'hidden'
-          } flex-col py-2 bg-default rounded shadow-main min-w-80 max-h-120 max-w-xs fixed overflow-y-auto`}
+          } max-h-120 fixed min-w-80 max-w-xs flex-col overflow-y-auto rounded bg-default py-2 shadow-main`}
         >
           {navigationController.tags.map((tag) => (
             <button
               key={tag.uuid}
-              className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-2 text-left w-full focus:bg-info-backdrop focus:shadow-none text-menu-item max-w-80"
+              className="max-w-80 flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-2 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
               onBlur={closeOnBlur}
               onClick={() => {
                 notesController.isTagInSelectedNotes(tag)
@@ -102,7 +102,7 @@ const AddTagOption: FunctionComponent<Props> = ({ navigationController, notesCon
               }}
             >
               <span
-                className={`whitespace-nowrap overflow-hidden overflow-ellipsis
+                className={`overflow-hidden overflow-ellipsis whitespace-nowrap
                       ${notesController.isTagInSelectedNotes(tag) ? 'font-bold' : ''}`}
               >
                 {noteTagsController.getLongTitle(tag)}

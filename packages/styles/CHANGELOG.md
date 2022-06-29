@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.1](https://github.com/standardnotes/app/compare/@standardnotes/styles@1.4.0...@standardnotes/styles@1.4.1) (2022-06-29)
+
+### Bug Fixes
+
+* **web:** navigation styles ([#1177](https://github.com/standardnotes/app/issues/1177)) ([5cd449f](https://github.com/standardnotes/app/commit/5cd449fe800b8950fab2599968933b120222d5fc))
+
 # [1.4.0](https://github.com/standardnotes/app/compare/@standardnotes/styles@1.3.1...@standardnotes/styles@1.4.0) (2022-06-27)
 
 ### Features

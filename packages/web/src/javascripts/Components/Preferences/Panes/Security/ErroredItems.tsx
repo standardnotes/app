@@ -70,14 +70,14 @@ const ErroredItems: FunctionComponent<Props> = ({ viewControllerManager }: Props
         <Text>{`${erroredItems.length} items are errored and could not be decrypted.`}</Text>
         <div className="flex">
           <Button
-            className="min-w-20 mt-3 mr-2"
+            className="mt-3 mr-2 min-w-20"
             label="Export all"
             onClick={() => {
               void app.getArchiveService().downloadEncryptedItems(erroredItems)
             }}
           />
           <Button
-            className="min-w-20 mt-3 mr-2"
+            className="mt-3 mr-2 min-w-20"
             colorStyle="danger"
             label="Delete all"
             onClick={() => {
@@ -99,21 +99,21 @@ const ErroredItems: FunctionComponent<Props> = ({ viewControllerManager }: Props
                   </Text>
                   <div className="flex">
                     <Button
-                      className="min-w-20 mt-3 mr-2"
+                      className="mt-3 mr-2 min-w-20"
                       label="Attempt decryption"
                       onClick={() => {
                         attemptDecryption(item)
                       }}
                     />
                     <Button
-                      className="min-w-20 mt-3 mr-2"
+                      className="mt-3 mr-2 min-w-20"
                       label="Export"
                       onClick={() => {
                         void app.getArchiveService().downloadEncryptedItem(item)
                       }}
                     />
                     <Button
-                      className="min-w-20 mt-3 mr-2"
+                      className="mt-3 mr-2 min-w-20"
                       colorStyle="danger"
                       label="Delete"
                       onClick={() => {

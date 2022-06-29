@@ -9,7 +9,7 @@ type Props = {
 const IssueOnLoading: FunctionComponent<Props> = ({ componentName, reloadIframe }) => {
   return (
     <div className={'sn-component'}>
-      <div className="flex justify-between items-center w-full min-h-[1.625rem] py-2.5 px-2 bg-contrast text-text border-b border-border select-none">
+      <div className="flex min-h-[1.625rem] w-full select-none items-center justify-between border-b border-border bg-contrast py-2.5 px-2 text-text">
         <div className={'left'}>
           <div className={'sk-app-bar-item'}>
             <div className={'sk-label.warning'}>There was an issue loading {componentName}.</div>

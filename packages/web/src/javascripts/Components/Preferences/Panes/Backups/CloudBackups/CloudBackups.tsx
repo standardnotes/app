@@ -131,12 +131,12 @@ const CloudLink: FunctionComponent<Props> = ({ application }) => {
 
           <div className={additionalClass}>
             <Subtitle>Email preferences</Subtitle>
-            <div className="flex items-center justify-between mt-1">
+            <div className="mt-1 flex items-center justify-between">
               <div className="flex flex-col">
                 <Text>Receive a notification email if a cloud backup fails.</Text>
               </div>
               {isLoading ? (
-                <Spinner className="w-4 h-4" />
+                <Spinner className="h-4 w-4" />
               ) : (
                 <Switch
                   onChange={toggleMuteFailedCloudBackupEmails}

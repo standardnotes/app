@@ -36,13 +36,13 @@ const Sync: FunctionComponent<Props> = ({ application }: Props) => {
     <PreferencesGroup>
       <PreferencesSegment>
         <div className="flex flex-row items-center">
-          <div className="flex-grow flex flex-col">
+          <div className="flex flex-grow flex-col">
             <Title>Sync</Title>
             <Text>
               Last synced <span className="font-bold">on {lastSyncDate}</span>
             </Text>
             <Button
-              className="min-w-20 mt-3"
+              className="mt-3 min-w-20"
               label="Sync now"
               disabled={isSyncingInProgress}
               onClick={doSynchronization}

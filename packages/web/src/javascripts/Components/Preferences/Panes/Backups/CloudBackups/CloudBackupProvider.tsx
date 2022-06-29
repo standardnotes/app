@@ -171,7 +171,7 @@ const CloudBackupProvider: FunctionComponent<Props> = ({ application, providerNa
   return (
     <div
       className={`mr-1 ${isExpanded ? 'expanded' : ' '} ${
-        shouldShowEnableButton || backupFrequency ? 'flex justify-between items-center' : ''
+        shouldShowEnableButton || backupFrequency ? 'flex items-center justify-between' : ''
       }`}
     >
       <div>
@@ -200,7 +200,7 @@ const CloudBackupProvider: FunctionComponent<Props> = ({ application, providerNa
         <div>
           <Button
             label="Enable"
-            className={`px-1 text-xs min-w-40 ${additionalClass}`}
+            className={`min-w-40 px-1 text-xs ${additionalClass}`}
             onClick={installIntegration}
             disabled={!isEntitledToCloudBackups}
           />
@@ -209,7 +209,7 @@ const CloudBackupProvider: FunctionComponent<Props> = ({ application, providerNa
 
       {backupFrequency && (
         <div className={'flex flex-col items-end'}>
-          <Button className={`min-w-40 mb-2 ${additionalClass}`} label="Perform Backup" onClick={performBackupNow} />
+          <Button className={`mb-2 min-w-40 ${additionalClass}`} label="Perform Backup" onClick={performBackupNow} />
           <Button className="min-w-40" label="Disable" onClick={disable} />
         </div>
       )}

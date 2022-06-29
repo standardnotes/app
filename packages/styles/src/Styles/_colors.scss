@@ -1,5 +1,5 @@
 :root {
-  --sn-stylekit-neutral-color: #989898;
+  --sn-stylekit-neutral-color: #72767e;
   --sn-stylekit-neutral-contrast-color: #ffffff;
 
   --sn-stylekit-info-color: #086dd6;
@@ -20,14 +20,14 @@
   --sn-stylekit-background-color: #ffffff;
   // For borders inside background-color
   --sn-stylekit-border-color: #dfe1e4;
-  --sn-stylekit-foreground-color: #000000;
+  --sn-stylekit-foreground-color: #19191C;
   // Colors for layers placed on top of non-prefixed background, border, and foreground
-  --sn-stylekit-contrast-background-color: #f6f6f6;
+  --sn-stylekit-contrast-background-color: rgba(244, 245, 247, 0.72);
   --sn-stylekit-contrast-foreground-color: #2e2e2e;
   --sn-stylekit-contrast-border-color: #e3e3e3; // For borders inside contrast-background-color
 
   // Alternative set of background and contrast options
-  --sn-stylekit-secondary-background-color: #f6f6f6;
+  --sn-stylekit-secondary-background-color: #EEEFF1;
   --sn-stylekit-secondary-foreground-color: #2e2e2e;
   --sn-stylekit-secondary-border-color: #e3e3e3;
 

@@ -30,7 +30,7 @@ const IconButton: FunctionComponent<Props> = ({
     <button
       type="button"
       title={title}
-      className={`no-border cursor-pointer bg-transparent flex flex-row items-center ${focusableClass} ${className}`}
+      className={`no-border flex cursor-pointer flex-row items-center bg-transparent ${focusableClass} ${className}`}
       onClick={click}
       disabled={disabled}
       aria-label={title}

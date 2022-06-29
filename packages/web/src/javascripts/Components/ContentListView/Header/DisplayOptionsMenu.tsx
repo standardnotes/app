@@ -99,22 +99,20 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   return (
     <Menu
       className={
-        'py-1 bg-default rounded shadow-main transition-transform duration-150 slide-down-animation min-w-70 overflow-y-auto \
-        border border-solid border-border text-sm z-index-dropdown-menu \
-        flex flex-col'
+        'slide-down-animation z-index-dropdown-menu flex min-w-70 flex-col overflow-y-auto rounded border border-solid         border-border bg-default py-1 text-sm shadow-main         transition-transform duration-150'
       }
       a11yLabel="Notes list options menu"
       closeMenu={closeDisplayOptionsMenu}
       isOpen={isOpen}
     >
-      <div className="px-3 my-1 text-xs font-semibold text-text uppercase">Sort by</div>
+      <div className="my-1 px-3 text-xs font-semibold uppercase text-text">Sort by</div>
       <MenuItem
         className="py-2"
         type={MenuItemType.RadioButton}
         onClick={toggleSortByDateModified}
         checked={sortBy === CollectionSort.UpdatedAt}
       >
-        <div className="flex flex-grow items-center justify-between ml-2">
+        <div className="ml-2 flex flex-grow items-center justify-between">
           <span>Date modified</span>
           {sortBy === CollectionSort.UpdatedAt ? (
             sortReverse ? (
@@ -131,7 +129,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         onClick={toggleSortByCreationDate}
         checked={sortBy === CollectionSort.CreatedAt}
       >
-        <div className="flex flex-grow items-center justify-between ml-2">
+        <div className="ml-2 flex flex-grow items-center justify-between">
           <span>Creation date</span>
           {sortBy === CollectionSort.CreatedAt ? (
             sortReverse ? (
@@ -148,7 +146,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         onClick={toggleSortByTitle}
         checked={sortBy === CollectionSort.Title}
       >
-        <div className="flex flex-grow items-center justify-between ml-2">
+        <div className="ml-2 flex flex-grow items-center justify-between">
           <span>Title</span>
           {sortBy === CollectionSort.Title ? (
             sortReverse ? (
@@ -160,7 +158,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         </div>
       </MenuItem>
       <MenuItemSeparator />
-      <div className="px-3 py-1 text-xs font-semibold text-text uppercase">View</div>
+      <div className="px-3 py-1 text-xs font-semibold uppercase text-text">View</div>
       {!isFilesSmartView && (
         <MenuItem
           type={MenuItemType.SwitchButton}
@@ -168,7 +166,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
           checked={!hidePreview}
           onChange={toggleHidePreview}
         >
-          <div className="flex flex-col max-w-3/4">Show note preview</div>
+          <div className="max-w-3/4 flex flex-col">Show note preview</div>
         </MenuItem>
       )}
       <MenuItem
@@ -196,7 +194,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         Show icon
       </MenuItem>
       <MenuItemSeparator />
-      <div className="px-3 py-1 text-xs font-semibold text-text uppercase">Other</div>
+      <div className="px-3 py-1 text-xs font-semibold uppercase text-text">Other</div>
       <MenuItem
         type={MenuItemType.SwitchButton}
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"

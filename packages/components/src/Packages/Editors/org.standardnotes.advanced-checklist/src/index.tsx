@@ -23,6 +23,10 @@ import { getPlainPreview } from './common/utils'
 const MainContainer = styled.div`
   margin: 16px;
   padding-bottom: 60px;
+
+  @media only screen and (max-width: 600px) {
+    margin: 8px;
+  }
 `
 
 const FloatingContainer = styled.div`

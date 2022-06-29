@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import useResizeObserver from '@react-hook/resize-observer'
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 import type { AppDispatch, RootState } from './store'
 
@@ -15,4 +16,19 @@ export const useDidMount = (effect: React.EffectCallback, deps?: React.Dependenc
       setDidMount(true)
     }
   }, [deps, didMount, effect])
+}
+
+export const useResize = (ref: React.RefObject<HTMLElement>, effect: (target: HTMLElement) => void) => {
+  const [size, setSize] = useState<DOMRect>()
+
+  function isDeepEqual(prevSize?: DOMRect, nextSize?: DOMRect) {
+    return JSON.stringify(prevSize) === JSON.stringify(nextSize)
+  }
+
+  useResizeObserver(ref, ({ contentRect, target }) => {
+    if (!isDeepEqual(size, contentRect)) {
+      setSize(contentRect)
+      effect(target as HTMLElement)
+    }
+  })
 }

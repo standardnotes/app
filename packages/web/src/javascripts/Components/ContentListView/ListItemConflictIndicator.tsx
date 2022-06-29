@@ -9,9 +9,9 @@ type Props = {
 
 const ListItemConflictIndicator: FunctionComponent<Props> = ({ item }) => {
   return item.conflictOf ? (
-    <div className="flex flex-wrap items-center mt-0.5">
-      <div className={'py-1 px-1.5 rounded mr-1 mt-2 bg-danger text-danger-contrast'}>
-        <div className="text-xs font-bold text-center">Conflicted Copy</div>
+    <div className="mt-0.5 flex flex-wrap items-center">
+      <div className={'mr-1 mt-2 rounded bg-danger py-1 px-1.5 text-danger-contrast'}>
+        <div className="text-center text-xs font-bold">Conflicted Copy</div>
       </div>
     </div>
   ) : null

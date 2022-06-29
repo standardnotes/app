@@ -207,22 +207,22 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
   return (
     <div ref={mainRef} className="sn-component">
       <div
-        className={`z-footer-bar-item-panel bottom-full left-0 cursor-auto absolute bg-default rounded shadow-main min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto ${
-          shouldAnimateCloseMenu ? 'slide-up-animation' : 'transition-transform duration-150 slide-down-animation'
+        className={`max-h-120 absolute bottom-full left-0 z-footer-bar-item-panel flex min-w-80 max-w-xs cursor-auto flex-col overflow-y-auto rounded bg-default py-2 shadow-main ${
+          shouldAnimateCloseMenu ? 'slide-up-animation' : 'slide-down-animation transition-transform duration-150'
         }`}
         ref={quickSettingsMenuRef}
         onKeyDown={handleQuickSettingsKeyDown}
       >
-        <div className="px-3 mt-1 mb-2 font-semibold text-text text-sm uppercase">Quick Settings</div>
+        <div className="mt-1 mb-2 px-3 text-sm font-semibold uppercase text-text">Quick Settings</div>
         <Disclosure open={themesMenuOpen} onChange={toggleThemesMenu}>
           <DisclosureButton
             onKeyDown={handleBtnKeyDown}
             onBlur={closeOnBlur}
             ref={themesButtonRef}
-            className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full text-sm justify-between focus:bg-info-backdrop focus:shadow-none"
+            className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
           >
             <div className="flex items-center">
-              <Icon type="themes" className="text-neutral mr-2" />
+              <Icon type="themes" className="mr-2 text-neutral" />
               Themes
             </div>
             <Icon type="chevron-right" className="text-neutral" />
@@ -236,11 +236,11 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
             }}
             className={`${
               themesMenuOpen ? 'flex' : 'hidden'
-            } flex-col py-2 bg-default rounded shadow-main min-w-80 max-h-120 max-w-xs overflow-y-auto fixed transition-transform duration-150 slide-down-animation`}
+            } max-h-120 slide-down-animation fixed min-w-80 max-w-xs flex-col overflow-y-auto rounded bg-default py-2 shadow-main transition-transform duration-150`}
           >
-            <div className="px-3 my-1 font-semibold text-text text-sm uppercase">Themes</div>
+            <div className="my-1 px-3 text-sm font-semibold uppercase text-text">Themes</div>
             <button
-              className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full text-sm focus:bg-info-backdrop focus:shadow-none"
+              className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
               onClick={toggleDefaultTheme}
               onBlur={closeOnBlur}
               ref={defaultThemeButtonRef}
@@ -260,14 +260,14 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
         </Disclosure>
         {toggleableComponents.map((component) => (
           <button
-            className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full text-sm justify-between focus:bg-info-backdrop focus:shadow-none"
+            className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
             onClick={() => {
               toggleComponent(component)
             }}
             key={component.uuid}
           >
             <div className="flex items-center">
-              <Icon type="window" className="text-neutral mr-2" />
+              <Icon type="window" className="mr-2 text-neutral" />
               {component.displayName}
             </div>
             <Switch checked={component.active} className="px-0" />
@@ -281,11 +281,11 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
         />
         <HorizontalSeparator classes="my-2" />
         <button
-          className="flex items-center border-0 cursor-pointer hover:bg-contrast hover:text-foreground text-text bg-transparent px-3 py-1.5 text-left w-full text-sm focus:bg-info-backdrop focus:shadow-none"
+          className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
           onClick={openPreferences}
           ref={prefsButtonRef}
         >
-          <Icon type="more" className="text-neutral mr-2" />
+          <Icon type="more" className="mr-2 text-neutral" />
           Open Preferences
         </button>
       </div>

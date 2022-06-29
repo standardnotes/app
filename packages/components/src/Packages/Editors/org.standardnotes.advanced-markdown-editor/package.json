@@ -1,7 +1,7 @@
 {
   "name": "@standardnotes/markdown-hybrid",
   "private": true,
-  "version": "1.5.5",
+  "version": "1.6.1",
   "description": "A Standard Notes derived editor that offers full support for Markdown editing.",
   "main": "dist/dist.js",
   "author": "Standard Notes <hello@standardnotes.com>",
@@ -13,9 +13,9 @@
     "start": "webpack serve --config webpack.dev.js --progress --hot",
     "components:compile": "webpack --config webpack.prod.js",
     "skip:lint": "eslint src --ext .js",
-    "lint:fix": "eslint src --ext .js --fix",
-    "test": "echo \"Error: no test specified\" && exit 0",
-    "format": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md"
+    "skip:lint:fix": "eslint src --ext .js --fix",
+    "skip:test": "echo \"Error: no test specified\" && exit 0",
+    "skip:format": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.10",

@@ -95,21 +95,21 @@ const SignIn: FunctionComponent<Props> = ({ viewControllerManager, application }
 
   return (
     <div className="flex items-center">
-      <CircleIcon className="absolute w-8 h-8 top-[35%] -left-56" />
-      <BlueDotIcon className="absolute w-4 h-4 top-[30%] -left-40" />
-      <DiamondIcon className="absolute w-26 h-26 -bottom-5 left-0 -translate-x-1/2 -z-[1]" />
+      <CircleIcon className="absolute top-[35%] -left-56 h-8 w-8" />
+      <BlueDotIcon className="absolute top-[30%] -left-40 h-4 w-4" />
+      <DiamondIcon className="absolute -bottom-5 left-0 -z-[1] h-26 w-26 -translate-x-1/2" />
 
-      <CircleIcon className="absolute w-8 h-8 bottom-[30%] -right-56" />
-      <BlueDotIcon className="absolute w-4 h-4 bottom-[20%] -right-44" />
-      <DiamondIcon className="absolute w-18 h-18 top-0 -right-2 translate-x-1/2 -z-[1]" />
+      <CircleIcon className="absolute bottom-[30%] -right-56 h-8 w-8" />
+      <BlueDotIcon className="absolute bottom-[20%] -right-44 h-4 w-4" />
+      <DiamondIcon className="absolute top-0 -right-2 -z-[1] h-18 w-18 translate-x-1/2" />
 
       <div>
         <h1 className="mt-0 mb-2 text-2xl font-bold">Sign in</h1>
-        <div className="mb-4 font-medium text-sm">to continue to Standard Notes.</div>
+        <div className="mb-4 text-sm font-medium">to continue to Standard Notes.</div>
         <form onSubmit={handleSignIn}>
           <div className="flex flex-col">
             <FloatingLabelInput
-              className={`sm:min-w-90 min-w-auto ${isEmailInvalid && !otherErrorMessage ? 'mb-2' : 'mb-4'}`}
+              className={`min-w-auto sm:min-w-90 ${isEmailInvalid && !otherErrorMessage ? 'mb-2' : 'mb-4'}`}
               id="purchase-sign-in-email"
               type="email"
               label="Email"
@@ -120,10 +120,10 @@ const SignIn: FunctionComponent<Props> = ({ viewControllerManager, application }
               isInvalid={isEmailInvalid}
             />
             {isEmailInvalid && !otherErrorMessage ? (
-              <div className="text-danger mb-4">Please provide a valid email.</div>
+              <div className="mb-4 text-danger">Please provide a valid email.</div>
             ) : null}
             <FloatingLabelInput
-              className={`sm:min-w-90 min-w-auto ${otherErrorMessage ? 'mb-2' : 'mb-4'}`}
+              className={`min-w-auto sm:min-w-90 ${otherErrorMessage ? 'mb-2' : 'mb-4'}`}
               id="purchase-sign-in-password"
               type="password"
               label="Password"
@@ -133,10 +133,10 @@ const SignIn: FunctionComponent<Props> = ({ viewControllerManager, application }
               disabled={isSigningIn}
               isInvalid={isPasswordInvalid}
             />
-            {otherErrorMessage ? <div className="text-danger mb-4">{otherErrorMessage}</div> : null}
+            {otherErrorMessage ? <div className="mb-4 text-danger">{otherErrorMessage}</div> : null}
           </div>
           <Button
-            className={`${isSigningIn ? 'min-w-30' : 'min-w-24'} py-2.5 mb-5`}
+            className={`${isSigningIn ? 'min-w-30' : 'min-w-24'} mb-5 py-2.5`}
             primary
             label={isSigningIn ? 'Signing in...' : 'Sign in'}
             onClick={handleSignIn}

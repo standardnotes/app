@@ -32,7 +32,7 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewContro
   const showWorkspaceWarning = workspaces.length > 1 && isDesktopApplication()
 
   return (
-    <AlertDialog onDismiss={closeDialog} leastDestructiveRef={cancelRef} className="p-0 max-w-[600px]">
+    <AlertDialog onDismiss={closeDialog} leastDestructiveRef={cancelRef} className="max-w-[600px] p-0">
       <div className="sk-modal-content">
         <div className="sn-component">
           <div className="sk-panel">
@@ -73,7 +73,7 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewContro
                       </span>
                     </label>
                     <button
-                      className="capitalize sk-a ml-1.5 p-0 rounded cursor-pointer"
+                      className="sk-a ml-1.5 cursor-pointer rounded p-0 capitalize"
                       onClick={() => {
                         application.desktopDevice?.viewlocalBackups()
                       }}
@@ -83,7 +83,7 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewContro
                   </div>
                 )}
 
-                <div className="flex my-1 mt-4 gap-2">
+                <div className="my-1 mt-4 flex gap-2">
                   <Button primary small colorStyle="neutral" rounded={false} ref={cancelRef} onClick={closeDialog}>
                     Cancel
                   </Button>

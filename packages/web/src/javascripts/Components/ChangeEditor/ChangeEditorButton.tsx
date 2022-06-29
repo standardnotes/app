@@ -72,7 +72,7 @@ const ChangeEditorButton: FunctionComponent<Props> = ({
           }}
           onBlur={closeOnBlur}
           ref={buttonRef}
-          className="flex justify-center items-center min-w-8 h-8 hover:bg-contrast focus:bg-contrast text-neutral border border-solid border-border rounded-full cursor-pointer"
+          className="flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border text-neutral hover:bg-contrast focus:bg-contrast"
         >
           <VisuallyHidden>Change note type</VisuallyHidden>
           <Icon type="dashboard" className="block" />
@@ -89,7 +89,7 @@ const ChangeEditorButton: FunctionComponent<Props> = ({
             ...position,
             maxHeight,
           }}
-          className="bg-default rounded shadow-main transition-transform duration-150 slide-down-animation min-w-68 max-h-120 max-w-xs flex flex-col overflow-y-auto fixed"
+          className="slide-down-animation max-h-120 fixed flex min-w-68 max-w-xs flex-col overflow-y-auto rounded bg-default shadow-main transition-transform duration-150"
           onBlur={closeOnBlur}
         >
           {isOpen && (

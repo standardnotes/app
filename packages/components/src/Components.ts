@@ -27,26 +27,24 @@ const Editors = [
     path: 'Editors/org.standardnotes.standard-sheets',
     static_files: [...BaseEditorStaticFiles],
   },
-
   {
     identifier: 'org.standardnotes.token-vault',
     path: 'Editors/org.standardnotes.token-vault',
     static_files: [...BaseEditorStaticFiles],
   },
-
   {
     identifier: 'org.standardnotes.simple-task-editor',
     path: 'Editors/org.standardnotes.simple-task-editor',
     static_files: [...BaseEditorStaticFiles],
   },
-]
-
-const DeprecatedEditors = [
   {
     identifier: 'org.standardnotes.advanced-markdown-editor',
     path: 'Editors/org.standardnotes.advanced-markdown-editor',
     static_files: [...BaseEditorStaticFiles],
   },
+]
+
+const DeprecatedEditors = [
   {
     identifier: 'org.standardnotes.bold-editor',
     path: 'Deprecated/org.standardnotes.bold-editor',

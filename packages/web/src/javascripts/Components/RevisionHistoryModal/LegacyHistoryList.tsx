@@ -18,7 +18,7 @@ const LegacyHistoryList: FunctionComponent<Props> = ({ legacyHistory, noteHistor
 
   return (
     <div
-      className={`flex flex-col w-full h-full focus:shadow-none ${
+      className={`flex h-full w-full flex-col focus:shadow-none ${
         !legacyHistory?.length ? 'items-center justify-center' : ''
       }`}
       ref={legacyHistoryListRef}
@@ -39,7 +39,7 @@ const LegacyHistoryList: FunctionComponent<Props> = ({ legacyHistory, noteHistor
           </HistoryListItem>
         )
       })}
-      {!legacyHistory?.length && <div className="text-sm text-passive-0 select-none">No legacy history found</div>}
+      {!legacyHistory?.length && <div className="select-none text-sm text-passive-0">No legacy history found</div>}
     </div>
   )
 }

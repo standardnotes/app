@@ -406,7 +406,8 @@ export class FilesController extends AbstractViewController {
         confirmButtonStyle: 'danger',
       })
     ) {
-      await Promise.all(files.map((file) => this.application.mutator.deleteItem(file)))
+      await Promise.all(files.map((file) => this.application.files.deleteFile(file)))
+      void this.application.sync.sync()
     }
   }
 

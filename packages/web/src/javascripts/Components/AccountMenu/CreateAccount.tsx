@@ -102,19 +102,19 @@ const CreateAccount: FunctionComponent<Props> = ({
 
   return (
     <>
-      <div className="flex items-center px-3 mt-1 mb-3">
+      <div className="mt-1 mb-3 flex items-center px-3">
         <IconButton
           icon="arrow-left"
           title="Go back"
-          className="flex mr-2 text-neutral p-0"
+          className="mr-2 flex p-0 text-neutral"
           onClick={handleClose}
           focusable={true}
         />
-        <div className="font-bold text-base">Create account</div>
+        <div className="text-base font-bold">Create account</div>
       </div>
-      <form onSubmit={handleRegisterFormSubmit} className="px-3 mb-1">
+      <form onSubmit={handleRegisterFormSubmit} className="mb-1 px-3">
         <DecoratedInput
-          className="mb-2"
+          className={{ container: 'mb-2' }}
           disabled={isPrivateWorkspace}
           left={[<Icon type="email" className="text-neutral" />]}
           onChange={handleEmailChange}
@@ -125,7 +125,7 @@ const CreateAccount: FunctionComponent<Props> = ({
           value={email}
         />
         <DecoratedPasswordInput
-          className="mb-2"
+          className={{ container: 'mb-2' }}
           left={[<Icon type="password" className="text-neutral" />]}
           onChange={handlePasswordChange}
           onKeyDown={handleKeyDown}

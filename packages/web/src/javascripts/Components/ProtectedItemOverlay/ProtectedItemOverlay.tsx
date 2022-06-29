@@ -14,9 +14,9 @@ const ProtectedItemOverlay = ({ viewControllerManager, onViewItem, hasProtection
     : `Add a passcode or create an account to require authentication to view this ${itemType}.`
 
   return (
-    <div className="flex flex-col items-center justify-center text-center max-w-md">
-      <h1 className="text-2xl m-0 w-full font-bold">This {itemType} is protected</h1>
-      <p className="text-lg mt-2 w-full">{instructionText}</p>
+    <div className="flex max-w-md flex-col items-center justify-center text-center">
+      <h1 className="m-0 w-full text-2xl font-bold">This {itemType} is protected</h1>
+      <p className="mt-2 w-full text-lg">{instructionText}</p>
       <div className="mt-4 flex gap-3">
         {!hasProtectionSources && (
           <Button

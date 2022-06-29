@@ -78,20 +78,20 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
     >
       <DialogContent
         aria-label="File preview modal"
-        className="flex flex-col rounded shadow-main p-0 min-w-[90%] min-h-[90%] bg-[color:var(--modal-background-color)] "
+        className="flex min-h-[90%] min-w-[90%] flex-col rounded bg-[color:var(--modal-background-color)] p-0 shadow-main "
       >
         <div
-          className="flex flex-shrink-0 justify-between items-center min-h-6 px-4 py-3 border-0 border-b border-solid border-border focus:shadow-none"
+          className="min-h-6 flex flex-shrink-0 items-center justify-between border-0 border-b border-solid border-border px-4 py-3 focus:shadow-none"
           tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
           onKeyDown={keyDownHandler}
         >
           <div className="flex items-center">
-            <div className="w-6 h-6">{IconComponent}</div>
+            <div className="h-6 w-6">{IconComponent}</div>
             <span className="ml-3 font-medium">{currentFile.name}</span>
           </div>
           <div className="flex items-center">
             <button
-              className="flex p-1.5 mr-4 bg-transparent hover:bg-contrast border-solid border-border border cursor-pointer rounded"
+              className="mr-4 flex cursor-pointer rounded border border-solid border-border bg-transparent p-1.5 hover:bg-contrast"
               onClick={() => setShowFileInfoPanel((show) => !show)}
             >
               <Icon type="info" className="text-neutral" />
@@ -100,14 +100,14 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
               ref={closeButtonRef}
               onClick={dismiss}
               aria-label="Close modal"
-              className="flex p-1 bg-transparent hover:bg-contrast border-0 cursor-pointer rounded"
+              className="flex cursor-pointer rounded border-0 bg-transparent p-1 hover:bg-contrast"
             >
               <Icon type="close" className="text-neutral" />
             </button>
           </div>
         </div>
-        <div className="flex flex-grow min-h-0">
-          <div className="flex flex-grow items-center justify-center relative max-w-full">
+        <div className="flex min-h-0 flex-grow">
+          <div className="relative flex max-w-full flex-grow items-center justify-center">
             <FilePreview file={currentFile} application={application} key={currentFile.uuid} />
           </div>
           {showFileInfoPanel && <FilePreviewInfoPanel file={currentFile} />}

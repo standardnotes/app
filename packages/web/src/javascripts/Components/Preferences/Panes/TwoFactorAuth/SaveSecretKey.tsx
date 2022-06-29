@@ -38,7 +38,7 @@ const SaveSecretKey: FunctionComponent<Props> = ({ activation: act }) => {
         Step 2 of 3 - Save secret key
       </ModalDialogLabel>
       <ModalDialogDescription className="h-33 flex flex-row items-center">
-        <div className="flex-grow flex flex-col">
+        <div className="flex flex-grow flex-col">
           <div className="flex flex-row items-center">
             <Bullet />
             <div className="min-w-1" />

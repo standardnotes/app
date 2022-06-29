@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.5.6](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.5.5...@standardnotes/components-meta@2.5.6) (2022-06-29)
+
+### Bug Fixes
+
+* **web:** navigation styles ([#1177](https://github.com/standardnotes/app/issues/1177)) ([5cd449f](https://github.com/standardnotes/app/commit/5cd449fe800b8950fab2599968933b120222d5fc))
+
+## [2.5.5](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.5.4...@standardnotes/components-meta@2.5.5) (2022-06-29)
+
+### Bug Fixes
+
+* **advanced checklist:** style and layout improvements ([#1182](https://github.com/standardnotes/app/issues/1182)) ([6c19adb](https://github.com/standardnotes/app/commit/6c19adba1902ef054f501d57f6e284fbf44ca28b))
+
+## [2.5.4](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.5.3...@standardnotes/components-meta@2.5.4) (2022-06-29)
+
+**Note:** Version bump only for package @standardnotes/components-meta
+
+## [2.5.3](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.5.2...@standardnotes/components-meta@2.5.3) (2022-06-29)
+
+**Note:** Version bump only for package @standardnotes/components-meta
+
+## [2.5.2](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.5.1...@standardnotes/components-meta@2.5.2) (2022-06-28)
+
+### Bug Fixes
+
+* advanced markdown deprecation handling ([bb43134](https://github.com/standardnotes/app/commit/bb43134e94768f534b201533c96d0a8c166b29a0))
+
+## [2.5.1](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.5.0...@standardnotes/components-meta@2.5.1) (2022-06-28)
+
+**Note:** Version bump only for package @standardnotes/components-meta
+
 # [2.5.0](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.4.4...@standardnotes/components-meta@2.5.0) (2022-06-28)
 
 ### Features

@@ -25,12 +25,12 @@ const HistoryModalContentPane = ({
   switch (contentState) {
     case RevisionContentState.Idle:
       return (
-        <div className="text-sm text-passive-0 select-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none text-sm text-passive-0">
           No revision selected
         </div>
       )
     case RevisionContentState.Loading:
-      return <Spinner className="w-5 h-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+      return <Spinner className="absolute top-1/2 left-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2" />
     case RevisionContentState.Loaded:
       return (
         <SelectedRevisionContent

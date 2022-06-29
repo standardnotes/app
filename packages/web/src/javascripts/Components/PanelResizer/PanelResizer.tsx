@@ -356,7 +356,7 @@ class PanelResizer extends Component<Props, State> {
         alwaysVisible={this.props.alwaysVisible}
         pressed={this.state.pressed}
         collapsed={this.state.collapsed}
-        className={this.props.side}
+        className={`panel-resizer ${this.props.side}`}
         onMouseDown={this.onMouseDown}
         ref={this.resizerElementRef}
       />

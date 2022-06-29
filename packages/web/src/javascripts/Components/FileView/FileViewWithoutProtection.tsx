@@ -32,10 +32,10 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
     <div className="sn-component section editor" aria-label="File">
       <div className="flex flex-col">
         <div
-          className="content-title-bar section-title-bar z-editor-title-bar section-title-bar w-full"
+          className="content-title-bar section-title-bar section-title-bar z-editor-title-bar w-full"
           id="file-title-bar"
         >
-          <div className="flex items-center justify-between h-8">
+          <div className="flex h-8 items-center justify-between">
             <div className="flex-grow">
               <form onSubmit={onFormSubmit} className="title overflow-auto">
                 <input

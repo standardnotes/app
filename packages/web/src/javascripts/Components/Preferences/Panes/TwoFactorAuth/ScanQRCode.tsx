@@ -22,10 +22,10 @@ const ScanQRCode: FunctionComponent<Props> = ({ activation: act }) => {
       <ModalDialogLabel closeDialog={act.cancelActivation}>Step 1 of 3 - Scan QR code</ModalDialogLabel>
       <ModalDialogDescription className="h-33 flex flex-row items-center">
         <div className="w-25 h-25 flex items-center justify-center bg-info">
-          <QRCode className="border-neutral-contrast-bg border-solid border-2" value={act.qrCode} size={100} />
+          <QRCode className="border-neutral-contrast-bg border-2 border-solid" value={act.qrCode} size={100} />
         </div>
         <div className="min-w-5" />
-        <div className="flex-grow flex flex-col">
+        <div className="flex flex-grow flex-col">
           <div className="flex flex-row items-center">
             <Bullet />
             <div className="min-w-1" />
@@ -37,15 +37,15 @@ const ScanQRCode: FunctionComponent<Props> = ({ activation: act }) => {
           </div>
           <div className="min-h-2" />
           <div className="flex flex-row items-center">
-            <Bullet className="self-start mt-2" />
+            <Bullet className="mt-2 self-start" />
             <div className="min-w-1" />
-            <div className="text-sm flex-grow">
+            <div className="flex-grow text-sm">
               <b>Scan this QR code</b> or <b>add this secret key</b>:
             </div>
           </div>
           <div className="min-h-2" />
           <DecoratedInput
-            className="ml-4 w-92"
+            className={{ container: 'w-92 ml-4' }}
             disabled={true}
             value={act.secretKey}
             right={[<CopyButton copyValue={act.secretKey} />]}
