@@ -5,6 +5,13 @@
   --border-color: #20222c;
 
   // StyleKit Vars
+
+  --sn-stylekit-passive-color-0: #a4a5b3;
+  --sn-stylekit-passive-color-3: #3a3a48;
+  --sn-stylekit-passive-color-4: #2c2c39;
+  --sn-stylekit-passive-color-4-opacity-variant: #292937;
+  --sn-stylekit-passive-color-5: #2e2e3e;
+
   --sn-stylekit-shadow-color: var(--border-color);
 
   --sn-stylekit-info-color: var(--highlight-color);
@@ -33,7 +40,7 @@
   --sn-stylekit-contrast-foreground-color: #a9aabe;
   --sn-stylekit-contrast-border-color: #0f1116;
 
-  --sn-stylekit-secondary-background-color: #20202b;
+  --sn-stylekit-secondary-background-color: var(--sn-stylekit-passive-color-4);
   --sn-stylekit-secondary-foreground-color: #a9aabe;
   --sn-stylekit-secondary-border-color: #20222c;
 
@@ -52,10 +59,4 @@
   --sn-desktop-titlebar-ui-hover-color: var(--highlight-color);
 
   --sn-stylekit-menu-border: 1px solid #434b60;
-
-  --sn-stylekit-passive-color-0: #a4a5b3;
-  --sn-stylekit-passive-color-3: #3a3a48;
-  --sn-stylekit-passive-color-4: #2c2c39;
-  --sn-stylekit-passive-color-4-opacity-variant: #292937;
-  --sn-stylekit-passive-color-5: #2e2e3e;
 }

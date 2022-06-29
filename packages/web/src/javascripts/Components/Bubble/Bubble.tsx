@@ -8,7 +8,7 @@ type Props = {
 
 const styles = {
   base: 'active:border-info active:bg-info active:text-neutral-contrast flex-grow cursor-pointer rounded-full border border-solid px-2 py-1 text-center transition',
-  unselected: 'text-neutral border-secondary-border',
+  unselected: 'text-neutral border-secondary-border bg-default',
   selected: 'text-neutral-contrast border-info bg-info',
 }
 

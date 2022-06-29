@@ -65,14 +65,14 @@ const ChallengeModalPrompt: FunctionComponent<Props> = ({ prompt, values, index,
         <DecoratedPasswordInput
           ref={inputRef}
           placeholder={prompt.placeholder}
-          className={`w-full max-w-76 ${isInvalid ? 'border-danger' : ''}`}
+          className={{ container: `w-full max-w-76 ${isInvalid ? 'border-danger' : ''}` }}
           onChange={(value) => onValueChange(value, prompt)}
         />
       ) : (
         <DecoratedInput
           ref={inputRef}
           placeholder={prompt.placeholder}
-          className={`w-full max-w-76 ${isInvalid ? 'border-danger' : ''}`}
+          className={{ container: `w-full max-w-76 ${isInvalid ? 'border-danger' : ''}` }}
           onChange={(value) => onValueChange(value, prompt)}
         />
       )}

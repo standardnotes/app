@@ -89,7 +89,7 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application }) => {
                   placeholder={'Offline Subscription Code'}
                   value={activationCode}
                   disabled={isSuccessfullyActivated}
-                  className={'mb-3'}
+                  className={{ container: 'mb-3' }}
                 />
               )}
             </div>

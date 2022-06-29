@@ -26,6 +26,13 @@
   --sn-desktop-titlebar-ui-hover-color: var(--sn-stylekit-info-color);
 
   // StyleKit Vars
+
+  --sn-stylekit-passive-color-0: #94979e;
+  --sn-stylekit-passive-color-3: #2c2c39;
+  --sn-stylekit-passive-color-4: #313142;
+  --sn-stylekit-passive-color-4-opacity-variant: #292937;
+  --sn-stylekit-passive-color-5: #313142;
+
   --sn-stylekit-shadow-color: #20202b;
 
   --sn-stylekit-background-color: #20202b;
@@ -36,7 +43,7 @@
   --sn-stylekit-contrast-foreground-color: var(--ui-text-color);
   --sn-stylekit-contrast-border-color: var(--border-color);
 
-  --sn-stylekit-secondary-background-color: #292937;
+  --sn-stylekit-secondary-background-color: var(--sn-stylekit-passive-color-4);
   --sn-stylekit-secondary-foreground-color: var(--ui-text-color);
   --sn-stylekit-secondary-border-color: var(--border-color);
 
@@ -53,10 +60,4 @@
   --sn-stylekit-scrollbar-thumb-color: var(--sn-stylekit-info-color);
 
   --sn-stylekit-menu-border: 1px solid #494965;
-
-  --sn-stylekit-passive-color-0: #94979e;
-  --sn-stylekit-passive-color-3: #2c2c39;
-  --sn-stylekit-passive-color-4: #313142;
-  --sn-stylekit-passive-color-4-opacity-variant: #292937;
-  --sn-stylekit-passive-color-5: #313142;
 }

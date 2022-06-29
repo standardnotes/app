@@ -48,7 +48,10 @@ const SearchBar = ({ itemListController, searchOptionsController }: Props) => {
       <DecoratedInput
         autocomplete={false}
         title="Searches notes and files in the currently selected tag"
-        className="placeholder:color-passive-0 rounded-full bg-contrast bg-clip-padding px-1"
+        className={{
+          container: 'px-1',
+          input: 'placeholder:text-passive-0',
+        }}
         placeholder="Search"
         value={noteFilterText}
         ref={searchInputRef}

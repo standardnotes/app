@@ -114,7 +114,7 @@ const CreateAccount: FunctionComponent<Props> = ({
       </div>
       <form onSubmit={handleRegisterFormSubmit} className="mb-1 px-3">
         <DecoratedInput
-          className="mb-2"
+          className={{ container: 'mb-2' }}
           disabled={isPrivateWorkspace}
           left={[<Icon type="email" className="text-neutral" />]}
           onChange={handleEmailChange}
@@ -125,7 +125,7 @@ const CreateAccount: FunctionComponent<Props> = ({
           value={email}
         />
         <DecoratedPasswordInput
-          className="mb-2"
+          className={{ container: 'mb-2' }}
           left={[<Icon type="password" className="text-neutral" />]}
           onChange={handlePasswordChange}
           onKeyDown={handleKeyDown}
