@@ -33,7 +33,7 @@ const Container = styled.div<{ completed?: boolean }>`
   `}
 
   min-width: 10%;
-  max-width: 85%;
+  max-width: 90%;
 `
 
 export type TaskItemProps = {
@@ -59,14 +59,15 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, groupName, innerRef, ...props
     }
 
     const heightOffset = 4
-    const singleLineHeight = 16
     /**
      * Set to 1px first to reset scroll height in case it shrunk.
      */
     textarea.style.height = '1px'
     textarea.style.height = textarea.scrollHeight - heightOffset + 'px'
 
+    const singleLineHeight = 20
     const currentHeight = parseFloat(textarea.style.height)
+
     if (currentHeight > singleLineHeight) {
       textarea.parentElement?.classList.add('align-baseline')
       textarea.parentElement?.classList.remove('align-center')
