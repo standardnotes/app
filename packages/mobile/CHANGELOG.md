@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.26.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.25.15...@standardnotes/mobile@3.26.0) (2022-06-30)
+
+### Features
+
+* **dev:** option to render web app inside the mobile app ([#1164](https://github.com/standardnotes/app/issues/1164)) ([4f5d092](https://github.com/standardnotes/app/commit/4f5d092f89a5488dc4c9f74730a110845230f2b3))
+
 ## [3.25.15](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.25.14...@standardnotes/mobile@3.25.15) (2022-06-30)
 
 **Note:** Version bump only for package @standardnotes/mobile
