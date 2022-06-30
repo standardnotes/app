@@ -16,3 +16,5 @@ export const SCREEN_MANAGE_SESSIONS = 'ManageSessions' as const
 export const MODAL_BLOCKING_ALERT = 'ModalBlockingAlert' as const
 
 export const SCREEN_VIEW_PROTECTED_NOTE = 'ViewProtectedNote' as const
+
+export const SCREEN_WEB_APP = 'WebApp' as const

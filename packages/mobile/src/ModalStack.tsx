@@ -18,6 +18,7 @@ import {
   SCREEN_MANAGE_SESSIONS,
   SCREEN_SETTINGS,
   SCREEN_UPLOADED_FILES_LIST,
+  SCREEN_WEB_APP,
 } from '@Root/Screens/screens'
 import { Settings } from '@Root/Screens/Settings/Settings'
 import { UploadedFilesList } from '@Root/Screens/UploadedFilesList/UploadedFilesList'
@@ -29,6 +30,7 @@ import React, { memo, useContext } from 'react'
 import { Platform } from 'react-native'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
 import { ThemeContext } from 'styled-components'
+import { MobileWebAppContainer } from '../MobileWebAppContainer'
 import { HeaderTitleParams, TEnvironment } from './App'
 import { ApplicationContext } from './ApplicationContext'
 import { AppStackComponent } from './AppStack'
@@ -63,6 +65,7 @@ export type ModalStackNavigatorParamList = {
     title?: string
     text: string
   }
+  [SCREEN_WEB_APP]: undefined
 }
 
 export type ModalStackNavigationProp<T extends keyof ModalStackNavigatorParamList> = {
@@ -303,6 +306,7 @@ export const MainStackComponent = ({ env }: { env: TEnvironment }) => {
         })}
         component={WorkspaceInputModal}
       />
+      <MainStack.Screen name={SCREEN_WEB_APP} options={() => ({ title: 'App' })} component={MobileWebAppContainer} />
     </MainStack.Navigator>
   )
 }

@@ -26,6 +26,8 @@
 		CD7D8400277FF8CB00915D89 /* Red@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7D83FD277FF8CB00915D89 /* Red@3x.png */; };
 		CD7D8401277FF8CB00915D89 /* Red.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7D83FE277FF8CB00915D89 /* Red.png */; };
 		CD7D8402277FF8CB00915D89 /* Red@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7D83FF277FF8CB00915D89 /* Red@2x.png */; };
+		D261494528699DCE00B17102 /* Web.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D261494428699DCE00B17102 /* Web.bundle */; };
+		D261494628699DCE00B17102 /* Web.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D261494428699DCE00B17102 /* Web.bundle */; };
 		DD3D1CE428EC1C8BA0C49211 /* libPods-StandardNotes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41388EB4F886116157DA092C /* libPods-StandardNotes.a */; };
 /* End PBXBuildFile section */
 
@@ -67,6 +69,7 @@
 		CD7D83FD277FF8CB00915D89 /* Red@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Red@3x.png"; sourceTree = "<group>"; };
 		CD7D83FE277FF8CB00915D89 /* Red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Red.png; sourceTree = "<group>"; };
 		CD7D83FF277FF8CB00915D89 /* Red@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Red@2x.png"; sourceTree = "<group>"; };
+		D261494428699DCE00B17102 /* Web.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Web.bundle; path = ../html/Web.bundle; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -132,6 +135,7 @@
 		13B07FAE1A68108700A75B9A /* StandardNotes */ = {
 			isa = PBXGroup;
 			children = (
+				D261494428699DCE00B17102 /* Web.bundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				CD7D5EE527801F10005FE1BF /* StandardNotes.entitlements */,
@@ -308,6 +312,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D261494528699DCE00B17102 /* Web.bundle in Resources */,
 				CD7D8401277FF8CB00915D89 /* Red.png in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				CD7D8402277FF8CB00915D89 /* Red@2x.png in Resources */,
@@ -321,6 +326,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD7D5ED4278015D2005FE1BF /* Red.png in Resources */,
+				D261494628699DCE00B17102 /* Web.bundle in Resources */,
 				CD7D5EE3278016E3005FE1BF /* Dev.xcassets in Resources */,
 				CD7D5ED5278015D2005FE1BF /* Images.xcassets in Resources */,
 				CD7D5ED6278015D2005FE1BF /* Red@2x.png in Resources */,
