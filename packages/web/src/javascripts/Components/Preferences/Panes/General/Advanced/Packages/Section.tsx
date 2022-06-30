@@ -3,13 +3,13 @@ import Button from '@/Components/Button/Button'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import { WebApplication } from '@/Application/Application'
 import { FunctionComponent, useEffect, useRef, useState } from 'react'
-import { Title } from '@/Components/Preferences/PreferencesComponents/Content'
+import { Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
 import { observer } from 'mobx-react-lite'
 import { PackageProvider } from './Provider/PackageProvider'
 import PackageEntry from './PackageEntry'
 import ConfirmCustomPackage from './ConfirmCustomPackage'
 import { AnyPackageType } from './Types/AnyPackageType'
-import PreferencesSegment from '../../../PreferencesComponents/PreferencesSegment'
+import PreferencesSegment from '../../../../PreferencesComponents/PreferencesSegment'
 
 const loadExtensions = (application: WebApplication) =>
   application.items.getItems([
@@ -118,15 +118,23 @@ const PackagesPreferencesSection: FunctionComponent<Props> = ({
       <div>
         {!confirmableExtension && (
           <PreferencesSegment>
-            <Title>Install Custom Extension</Title>
-            <DecoratedInput
-              placeholder={'Enter Extension URL'}
-              value={customUrl}
-              onChange={(value) => {
-                setCustomUrl(value)
-              }}
+            <Subtitle>Install External Package</Subtitle>
+            <div className={'mt-2'}>
+              <DecoratedInput
+                placeholder={'Enter Package URL'}
+                value={customUrl}
+                onChange={(value) => {
+                  setCustomUrl(value)
+                }}
+              />
+            </div>
+            <Button
+              disabled={customUrl.length === 0}
+              className="mt-3 min-w-20"
+              primary
+              label="Install"
+              onClick={() => submitExtensionUrl(customUrl)}
             />
-            <Button className="mt-3 min-w-20" label="Install" onClick={() => submitExtensionUrl(customUrl)} />
           </PreferencesSegment>
         )}
         {confirmableExtension && (

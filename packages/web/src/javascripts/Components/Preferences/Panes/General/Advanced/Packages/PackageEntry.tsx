@@ -4,7 +4,7 @@ import { SubtitleLight } from '@/Components/Preferences/PreferencesComponents/Co
 import Switch from '@/Components/Switch/Switch'
 import Button from '@/Components/Button/Button'
 import PackageEntrySubInfo from './PackageEntrySubInfo'
-import PreferencesSegment from '../../../PreferencesComponents/PreferencesSegment'
+import PreferencesSegment from '../../../../PreferencesComponents/PreferencesSegment'
 import { WebApplication } from '@/Application/Application'
 import { AnyPackageType } from './Types/AnyPackageType'
 

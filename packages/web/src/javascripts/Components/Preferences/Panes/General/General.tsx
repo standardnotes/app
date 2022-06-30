@@ -1,12 +1,12 @@
 import { WebApplication } from '@/Application/Application'
 import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { FunctionComponent } from 'react'
-import { PackageProvider } from '@/Components/Preferences/Panes/General/Packages/Provider/PackageProvider'
+import { PackageProvider } from '@/Components/Preferences/Panes/General/Advanced/Packages/Provider/PackageProvider'
 import { observer } from 'mobx-react-lite'
 import Tools from './Tools'
 import Defaults from './Defaults'
 import LabsPane from './Labs/Labs'
-import Advanced from '@/Components/Preferences/Panes/General/Packages/Wrapper'
+import Advanced from '@/Components/Preferences/Panes/General/Advanced/AdvancedSection'
 import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 
 type Props = {

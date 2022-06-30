@@ -1,7 +1,7 @@
 import { action, makeAutoObservable, observable } from 'mobx'
 import { IconType } from '@standardnotes/snjs'
 import { WebApplication } from '@/Application/Application'
-import { PackageProvider } from './Panes/General/Packages/Provider/PackageProvider'
+import { PackageProvider } from './Panes/General/Advanced/Packages/Provider/PackageProvider'
 import { securityPrefsHasBubble } from './Panes/Security/securityPrefsHasBubble'
 
 const PREFERENCE_IDS = [
