@@ -1,6 +1,9 @@
 name: Mobile TestFlight
 
 on:
+  push:
+    tags:
+      - '*standardnotes/mobile*'
   workflow_dispatch:
 
 jobs:
