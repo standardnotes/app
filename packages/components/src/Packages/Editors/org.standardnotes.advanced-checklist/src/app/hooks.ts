@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import useResizeObserver from '@react-hook/resize-observer'
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 import type { AppDispatch, RootState } from './store'
@@ -31,4 +31,14 @@ export const useResize = (ref: React.RefObject<HTMLElement>, effect: (target: HT
       effect(target as HTMLElement)
     }
   })
+}
+
+export const useDebouncedCallback = (callback: () => void, waitMs: number = 500) => {
+  const timeout = useRef<any>()
+
+  clearTimeout(timeout.current)
+
+  timeout.current = setTimeout(() => {
+    callback()
+  }, waitMs)
 }

@@ -3,7 +3,7 @@ import './TaskItem.scss'
 import { ChangeEvent, createRef, KeyboardEvent, useState } from 'react'
 import styled from 'styled-components'
 
-import { useAppDispatch, useAppSelector, useDidMount, useResize } from '../../app/hooks'
+import { useAppDispatch, useAppSelector, useDebouncedCallback, useResize } from '../../app/hooks'
 import { taskDeleted, TaskModel, taskModified, taskToggled } from './tasks-slice'
 
 import { CheckBoxInput, TextAreaInput } from '../../common/components'
@@ -116,18 +116,11 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, groupName, innerRef, ...props
     }
   }
 
-  /**
-   * Save the task after the user has stopped typing.
-   */
-  useDidMount(() => {
-    const timeoutId = setTimeout(() => {
-      if (description !== task.description) {
-        dispatch(taskModified({ task: { id: task.id, description }, groupName }))
-      }
-    }, 500)
-
-    return () => clearTimeout(timeoutId)
-  }, [description, groupName])
+  useDebouncedCallback(() => {
+    if (description !== task.description) {
+      dispatch(taskModified({ task: { id: task.id, description }, groupName }))
+    }
+  })
 
   useResize(textAreaRef, resizeTextArea)
 
