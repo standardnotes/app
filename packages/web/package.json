@@ -15,6 +15,7 @@
     "prebuild": "yarn clean",
     "build": "webpack --config web.webpack.prod.js && yarn tsc",
     "lint": "eslint src/javascripts",
+    "format": "prettier --write src/javascripts",
     "tsc": "tsc --project tsconfig.json",
     "test": "jest --config jest.config.js --coverage",
     "upgrade:snjs": "ncu -u '@standardnotes/*'"
