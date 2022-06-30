@@ -3,9 +3,10 @@ import { ComponentMutator, SNComponent } from '@standardnotes/snjs'
 import { SubtitleLight } from '@/Components/Preferences/PreferencesComponents/Content'
 import Switch from '@/Components/Switch/Switch'
 import Button from '@/Components/Button/Button'
-import ExtensionInfoCell from './ExtensionInfoCell'
-import { ExtensionItemProps } from './ExtensionItemProps'
+import PackageEntrySubInfo from './PackageEntrySubInfo'
 import PreferencesSegment from '../../../PreferencesComponents/PreferencesSegment'
+import { WebApplication } from '@/Application/Application'
+import { AnyPackageType } from './Types/AnyPackageType'
 
 const UseHosted: FunctionComponent<{
   offlineOnly: boolean
@@ -17,7 +18,16 @@ const UseHosted: FunctionComponent<{
   </div>
 )
 
-const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({ application, extension, uninstall }) => {
+interface PackageEntryProps {
+  application: WebApplication
+  extension: AnyPackageType
+  first: boolean
+  latestVersion: string | undefined
+  uninstall: (extension: AnyPackageType) => void
+  toggleActivate?: (extension: AnyPackageType) => void
+}
+
+const PackageEntry: FunctionComponent<PackageEntryProps> = ({ application, extension, uninstall }) => {
   const [offlineOnly, setOfflineOnly] = useState(extension instanceof SNComponent ? extension.offlineOnly : false)
   const [extensionName, setExtensionName] = useState(extension.displayName)
 
@@ -56,7 +66,7 @@ const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({ application, ext
 
   return (
     <PreferencesSegment classes={'mb-5'}>
-      <ExtensionInfoCell isThirdParty={isThirdParty} extensionName={extensionName} changeName={changeExtensionName} />
+      <PackageEntrySubInfo isThirdParty={isThirdParty} extensionName={extensionName} changeName={changeExtensionName} />
 
       <div className="my-1" />
 
@@ -71,4 +81,4 @@ const ExtensionItem: FunctionComponent<ExtensionItemProps> = ({ application, ext
   )
 }
 
-export default ExtensionItem
+export default PackageEntry

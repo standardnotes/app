@@ -3,8 +3,8 @@ import OfflineSubscription from '@/Components/Preferences/Panes/Account/OfflineS
 import { WebApplication } from '@/Application/Application'
 import { observer } from 'mobx-react-lite'
 import { ViewControllerManager } from '@/Services/ViewControllerManager'
-import Extensions from '@/Components/Preferences/Panes/General/Extensions/Extensions'
-import { ExtensionsLatestVersions } from '@/Components/Preferences/Panes/General/Extensions/ExtensionsLatestVersions'
+import PackagesPreferencesSection from '@/Components/Preferences/Panes/General/Packages/PackagesPreferencesSection'
+import { PackageProvider } from '@/Components/Preferences/Panes/General/Packages/Provider/PackageProvider'
 import AccordionItem from '@/Components/Shared/AccordionItem'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
@@ -12,7 +12,7 @@ import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 type Props = {
   application: WebApplication
   viewControllerManager: ViewControllerManager
-  extensionsLatestVersions: ExtensionsLatestVersions
+  extensionsLatestVersions: PackageProvider
 }
 
 const Advanced: FunctionComponent<Props> = ({ application, viewControllerManager, extensionsLatestVersions }) => {
@@ -23,7 +23,7 @@ const Advanced: FunctionComponent<Props> = ({ application, viewControllerManager
           <div className="flex flex-row items-center">
             <div className="flex flex-grow flex-col">
               <OfflineSubscription application={application} viewControllerManager={viewControllerManager} />
-              <Extensions
+              <PackagesPreferencesSection
                 className={'mt-3'}
                 application={application}
                 extensionsLatestVersions={extensionsLatestVersions}

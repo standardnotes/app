@@ -1,7 +1,7 @@
 import { WebApplication } from '@/Application/Application'
 import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { FunctionComponent } from 'react'
-import { ExtensionsLatestVersions } from '@/Components/Preferences/Panes/General/Extensions/ExtensionsLatestVersions'
+import { PackageProvider } from '@/Components/Preferences/Panes/General/Packages/Provider/PackageProvider'
 import { observer } from 'mobx-react-lite'
 import Tools from './Tools'
 import Defaults from './Defaults'
@@ -12,7 +12,7 @@ import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 type Props = {
   viewControllerManager: ViewControllerManager
   application: WebApplication
-  extensionsLatestVersions: ExtensionsLatestVersions
+  extensionsLatestVersions: PackageProvider
 }
 
 const General: FunctionComponent<Props> = ({ viewControllerManager, application, extensionsLatestVersions }) => (

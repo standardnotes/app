@@ -5,24 +5,32 @@ import { WebApplication } from '@/Application/Application'
 import { FunctionComponent, useEffect, useRef, useState } from 'react'
 import { Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { observer } from 'mobx-react-lite'
-import { ExtensionsLatestVersions } from './ExtensionsLatestVersions'
-import ExtensionItem from './ExtensionItem'
-import ConfirmCustomExtension from './ConfirmCustomExtension'
-import { AnyExtension } from './AnyExtension'
+import { PackageProvider } from './Provider/PackageProvider'
+import PackageEntry from './PackageEntry'
+import ConfirmCustomPackage from './ConfirmCustomPackage'
+import { AnyPackageType } from './Types/AnyPackageType'
 import PreferencesSegment from '../../../PreferencesComponents/PreferencesSegment'
 
 const loadExtensions = (application: WebApplication) =>
-  application.items.getItems([ContentType.ActionsExtension, ContentType.Component, ContentType.Theme]) as AnyExtension[]
+  application.items.getItems([
+    ContentType.ActionsExtension,
+    ContentType.Component,
+    ContentType.Theme,
+  ]) as AnyPackageType[]
 
 type Props = {
   application: WebApplication
-  extensionsLatestVersions: ExtensionsLatestVersions
+  extensionsLatestVersions: PackageProvider
   className?: string
 }
 
-const Extensions: FunctionComponent<Props> = ({ application, extensionsLatestVersions, className = '' }) => {
+const PackagesPreferencesSection: FunctionComponent<Props> = ({
+  application,
+  extensionsLatestVersions,
+  className = '',
+}) => {
   const [customUrl, setCustomUrl] = useState('')
-  const [confirmableExtension, setConfirmableExtension] = useState<AnyExtension | undefined>(undefined)
+  const [confirmableExtension, setConfirmableExtension] = useState<AnyPackageType | undefined>(undefined)
   const [extensions, setExtensions] = useState(loadExtensions(application))
 
   const confirmableEnd = useRef<HTMLDivElement>(null)
@@ -33,7 +41,7 @@ const Extensions: FunctionComponent<Props> = ({ application, extensionsLatestVer
     }
   }, [confirmableExtension, confirmableEnd])
 
-  const uninstallExtension = async (extension: AnyExtension) => {
+  const uninstallExtension = async (extension: AnyPackageType) => {
     application.alertService
       .confirm(
         'Are you sure you want to uninstall this extension? Note that extensions managed by your subscription will automatically be re-installed on application restart.',
@@ -69,7 +77,7 @@ const Extensions: FunctionComponent<Props> = ({ application, extensionsLatestVer
   }
 
   const confirmExtension = async () => {
-    await application.mutator.insertItem(confirmableExtension as AnyExtension)
+    await application.mutator.insertItem(confirmableExtension as AnyPackageType)
     application.sync.sync().catch(console.error)
     setExtensions(loadExtensions(application))
   }
@@ -95,7 +103,7 @@ const Extensions: FunctionComponent<Props> = ({ application, extensionsLatestVer
           {visibleExtensions
             .sort((e1, e2) => e1.displayName?.toLowerCase().localeCompare(e2.displayName?.toLowerCase()))
             .map((extension, i) => (
-              <ExtensionItem
+              <PackageEntry
                 key={extension.uuid}
                 application={application}
                 extension={extension}
@@ -123,7 +131,7 @@ const Extensions: FunctionComponent<Props> = ({ application, extensionsLatestVer
         )}
         {confirmableExtension && (
           <PreferencesSegment>
-            <ConfirmCustomExtension component={confirmableExtension} callback={handleConfirmExtensionSubmit} />
+            <ConfirmCustomPackage component={confirmableExtension} callback={handleConfirmExtensionSubmit} />
             <div ref={confirmableEnd} />
           </PreferencesSegment>
         )}
@@ -132,4 +140,4 @@ const Extensions: FunctionComponent<Props> = ({ application, extensionsLatestVer
   )
 }
 
-export default observer(Extensions)
+export default observer(PackagesPreferencesSection)

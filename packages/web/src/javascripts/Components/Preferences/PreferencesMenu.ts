@@ -1,7 +1,7 @@
 import { action, makeAutoObservable, observable } from 'mobx'
 import { IconType } from '@standardnotes/snjs'
 import { WebApplication } from '@/Application/Application'
-import { ExtensionsLatestVersions } from './Panes/General/Extensions/ExtensionsLatestVersions'
+import { PackageProvider } from './Panes/General/Packages/Provider/PackageProvider'
 import { securityPrefsHasBubble } from './Panes/Security/securityPrefsHasBubble'
 
 const PREFERENCE_IDS = [
@@ -59,7 +59,7 @@ const READY_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
 export class PreferencesMenu {
   private _selectedPane: PreferenceId = 'account'
   private _menu: PreferencesMenuItem[]
-  private _extensionLatestVersions: ExtensionsLatestVersions = new ExtensionsLatestVersions(new Map())
+  private _extensionLatestVersions: PackageProvider = new PackageProvider(new Map())
 
   constructor(private application: WebApplication, private readonly _enableUnfinishedFeatures: boolean) {
     this._menu = this._enableUnfinishedFeatures ? PREFERENCES_MENU_ITEMS : READY_PREFERENCES_MENU_ITEMS
@@ -79,7 +79,7 @@ export class PreferencesMenu {
   }
 
   private loadLatestVersions(): void {
-    ExtensionsLatestVersions.load(this.application)
+    PackageProvider.load(this.application)
       .then((versions) => {
         if (versions) {
           this._extensionLatestVersions = versions
@@ -88,7 +88,7 @@ export class PreferencesMenu {
       .catch(console.error)
   }
 
-  get extensionsLatestVersions(): ExtensionsLatestVersions {
+  get extensionsLatestVersions(): PackageProvider {
     return this._extensionLatestVersions
   }
 
