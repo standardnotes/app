@@ -65,7 +65,7 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
   return contextMenuOpen ? (
     <div
       ref={contextMenuRef}
-      className="max-h-120 fixed z-dropdown-menu flex min-w-60 max-w-xs flex-col overflow-y-auto rounded bg-default py-2 shadow-main"
+      className="max-h-120 fixed z-dropdown-menu flex min-w-60 flex-col overflow-y-auto rounded bg-default py-2 shadow-main"
       style={{
         ...contextMenuPosition,
         maxHeight: contextMenuMaxHeight,
