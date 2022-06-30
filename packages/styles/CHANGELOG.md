@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.2](https://github.com/standardnotes/app/compare/@standardnotes/styles@1.4.1...@standardnotes/styles@1.4.2) (2022-06-30)
+
+### Bug Fixes
+
+* **styles:** preferences opacity ([ddeaf52](https://github.com/standardnotes/app/commit/ddeaf523a8ece97b7ad9372c4d84e07775221a65))
+
 ## [1.4.1](https://github.com/standardnotes/app/compare/@standardnotes/styles@1.4.0...@standardnotes/styles@1.4.1) (2022-06-29)
 
 ### Bug Fixes
