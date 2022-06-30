@@ -65,7 +65,7 @@ export type ModalStackNavigatorParamList = {
     title?: string
     text: string
   }
-  [SCREEN_WEB_APP]: undefined
+  [SCREEN_WEB_APP]: HeaderTitleParams
 }
 
 export type ModalStackNavigationProp<T extends keyof ModalStackNavigatorParamList> = {
@@ -306,13 +306,7 @@ export const MainStackComponent = ({ env }: { env: TEnvironment }) => {
         })}
         component={WorkspaceInputModal}
       />
-      <MainStack.Screen
-        name={SCREEN_WEB_APP}
-        options={() => ({
-          headerShown: false,
-        })}
-        component={EmbeddedWebApp}
-      />
+      <MainStack.Screen name={SCREEN_WEB_APP} options={() => ({ title: 'App' })} component={EmbeddedWebApp} />
     </MainStack.Navigator>
   )
 }
