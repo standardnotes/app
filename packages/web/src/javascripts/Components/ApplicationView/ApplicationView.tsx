@@ -17,13 +17,13 @@ import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 're
 import RevisionHistoryModal from '@/Components/RevisionHistoryModal/RevisionHistoryModal'
 import PremiumModalProvider from '@/Hooks/usePremiumModal'
 import ConfirmSignoutContainer from '@/Components/ConfirmSignoutModal/ConfirmSignoutModal'
-import TagsContextMenuWrapper from '@/Components/Tags/TagContextMenu'
 import { ToastContainer } from '@standardnotes/toast'
 import FilePreviewModalWrapper from '@/Components/FilePreview/FilePreviewModal'
 import ContentListView from '@/Components/ContentListView/ContentListView'
 import FileContextMenuWrapper from '@/Components/FileContextMenu/FileContextMenu'
 import PermissionsModalWrapper from '@/Components/PermissionsModal/PermissionsModalWrapper'
 import { PanelResizedData } from '@/Types/PanelResizedData'
+import TagContextMenuWrapper from '@/Components/Tags/TagContextMenuWrapper'
 
 type Props = {
   application: WebApplication
@@ -214,7 +214,10 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
             noteTagsController={viewControllerManager.noteTagsController}
             historyModalController={viewControllerManager.historyModalController}
           />
-          <TagsContextMenuWrapper viewControllerManager={viewControllerManager} />
+          <TagContextMenuWrapper
+            navigationController={viewControllerManager.navigationController}
+            featuresController={viewControllerManager.featuresController}
+          />
           <FileContextMenuWrapper
             filesController={viewControllerManager.filesController}
             selectionController={viewControllerManager.selectionController}
