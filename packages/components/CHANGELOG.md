@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.5.8](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.5.7...@standardnotes/components-meta@2.5.8) (2022-06-30)
+
+### Bug Fixes
+
+* debounce saving task description/draft ([#1187](https://github.com/standardnotes/app/issues/1187)) ([47a0551](https://github.com/standardnotes/app/commit/47a0551967ca420a957e2123d56bd7f0c8a95c53))
+
 ## [2.5.7](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.5.6...@standardnotes/components-meta@2.5.7) (2022-06-30)
 
 **Note:** Version bump only for package @standardnotes/components-meta
