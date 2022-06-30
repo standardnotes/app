@@ -65,7 +65,7 @@ export type ModalStackNavigatorParamList = {
     title?: string
     text: string
   }
-  [SCREEN_WEB_APP]: HeaderTitleParams
+  [SCREEN_WEB_APP]: undefined
 }
 
 export type ModalStackNavigationProp<T extends keyof ModalStackNavigatorParamList> = {
