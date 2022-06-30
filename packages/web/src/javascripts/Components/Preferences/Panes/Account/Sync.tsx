@@ -5,7 +5,7 @@ import { STRING_GENERIC_SYNC_ERROR } from '@/Constants/Strings'
 import { observer } from 'mobx-react-lite'
 import { WebApplication } from '@/Application/Application'
 import { FunctionComponent, useState } from 'react'
-import { formatLastSyncDate } from '@/Utils/FormatLastSyncDate'
+import { formatLastSyncDate } from '@/Utils/DateUtils'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
