@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useMemo } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
@@ -8,6 +8,8 @@ import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { SNTag } from '@standardnotes/snjs'
 import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
+import HorizontalSeparator from '../Shared/HorizontalSeparator'
+import { formatDateForContextMenu } from '@/Utils/DateUtils'
 
 type ContextMenuProps = {
   navigationController: NavigationController
@@ -53,6 +55,13 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
     navigationController.remove(selectedTag, true).catch(console.error)
   }, [navigationController, selectedTag])
 
+  const tagLastModified = useMemo(
+    () => formatDateForContextMenu(selectedTag.userModifiedDate),
+    [selectedTag.userModifiedDate],
+  )
+
+  const tagCreatedAt = useMemo(() => formatDateForContextMenu(selectedTag.created_at), [selectedTag.created_at])
+
   return contextMenuOpen ? (
     <div
       ref={contextMenuRef}
@@ -85,7 +94,14 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
           <span className="text-danger">Delete</span>
         </MenuItem>
       </Menu>
-      <div className="px-3 pt-2 text-xs font-medium text-neutral">
+      <HorizontalSeparator classes="my-2" />
+      <div className="px-3 pt-1 pb-1.5 text-xs font-medium text-neutral">
+        <div className="mb-1">
+          <span className="font-semibold">Last modified:</span> {tagLastModified}
+        </div>
+        <div className="mb-1">
+          <span className="font-semibold">Created:</span> {tagCreatedAt}
+        </div>
         <div>
           <span className="font-semibold">Tag ID:</span> {selectedTag.uuid}
         </div>
