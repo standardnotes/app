@@ -93,11 +93,7 @@ function onRequestError(error: Error | { code: string }, response: ServerRespons
   response.end(message)
 }
 
-export function createExtensionsServer(window: Electron.BrowserWindow): string {
-  void window.webContents.session.clearCache(() => {
-    console.log('Cache cleared')
-  })
-
+export function createExtensionsServer(): string {
   const port = 45653
   const ip = '127.0.0.1'
   const host = `${Protocol}://${ip}:${port}`

@@ -124,7 +124,7 @@ async function finishApplicationInitialization({ app, shell, state }: { app: App
     await windowState.window.webContents.session.clearCache()
   }
 
-  const host = createExtensionsServer(windowState.window)
+  const host = createExtensionsServer()
   state.store.set(StoreKeys.ExtServerHost, host)
 
   /**
