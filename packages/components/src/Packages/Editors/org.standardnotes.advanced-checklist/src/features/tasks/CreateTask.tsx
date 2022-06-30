@@ -2,7 +2,7 @@ import { ChangeEvent, createRef, KeyboardEvent, useState } from 'react'
 import styled from 'styled-components'
 import { v4 as uuidv4 } from 'uuid'
 
-import { useAppDispatch, useAppSelector } from '../../app/hooks'
+import { useAppDispatch, useAppSelector, useDebouncedCallback } from '../../app/hooks'
 import { GroupModel, taskAdded, tasksGroupDraft } from './tasks-slice'
 
 import { TextInput } from '../../common/components'
@@ -37,9 +37,7 @@ const CreateTask: React.FC<CreateTaskProps> = ({ group }) => {
   const [taskDraft, setTaskDraft] = useState<string>(group.draft ?? '')
 
   function onTextChange(event: ChangeEvent<HTMLInputElement>) {
-    const draft = event.target.value
-    dispatch(tasksGroupDraft({ groupName, draft }))
-    setTaskDraft(draft)
+    setTaskDraft(event.target.value)
   }
 
   function handleKeyPress(event: KeyboardEvent<HTMLInputElement>) {
@@ -53,6 +51,12 @@ const CreateTask: React.FC<CreateTaskProps> = ({ group }) => {
       setTaskDraft('')
     }
   }
+
+  useDebouncedCallback(() => {
+    if (group.draft !== undefined && taskDraft !== group.draft) {
+      dispatch(tasksGroupDraft({ groupName, draft: taskDraft }))
+    }
+  })
 
   if (!canEdit) {
     return <></>
