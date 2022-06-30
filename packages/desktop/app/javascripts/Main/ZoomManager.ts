@@ -1,5 +1,6 @@
 import { BrowserWindow } from 'electron'
-import { Store, StoreKeys } from './Store'
+import { Store } from './Store/Store'
+import { StoreKeys } from './Store/StoreKeys'
 
 export function initializeZoomManager(window: BrowserWindow, store: Store): void {
   window.webContents.on('dom-ready', () => {

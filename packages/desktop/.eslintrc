@@ -5,7 +5,7 @@
   },
   "extends": ["../../.eslintrc.json"],
   "rules": {
-    "no-console": "warn",
+    "no-console": "off",
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-var-requires": "off"
   },

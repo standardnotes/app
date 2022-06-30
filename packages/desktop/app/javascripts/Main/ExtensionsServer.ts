@@ -6,6 +6,7 @@ import { URL } from 'url'
 import { extensions as str } from './Strings'
 import { Paths } from './Types/Paths'
 import { FileDoesNotExist } from './Utils/FileUtils'
+import { app } from 'electron'
 
 const Protocol = 'http'
 
@@ -61,7 +62,8 @@ async function handleRequest(request: IncomingMessage, response: ServerResponse)
     const mimeType = mime.lookup(path.parse(filePath).ext)
 
     response.setHeader('Access-Control-Allow-Origin', '*')
-    response.setHeader('Cache-Control', 'max-age=604800')
+    response.setHeader('Cache-Control', 'no-cache')
+    response.setHeader('ETag', app.getVersion())
     response.setHeader('Content-Type', `${mimeType}; charset=utf-8`)
 
     const data = fs.readFileSync(filePath)

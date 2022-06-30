@@ -1,6 +1,7 @@
 import { Menu, Tray } from 'electron'
 import path from 'path'
-import { Store, StoreKeys } from './Store'
+import { Store } from './Store/Store'
+import { StoreKeys } from './Store/StoreKeys'
 import { AppName, tray as str } from './Strings'
 import { isLinux, isWindows } from './Types/Platforms'
 import { isDev } from './Utils/Utils'
