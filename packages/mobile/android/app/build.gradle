@@ -220,7 +220,7 @@ android {
         }
     }
     sourceSets {
-        main { assets.srcDirs = ['src/main/assets', '../../html'] } // TODO: check on Android if this works
+        main { assets.srcDirs = ['src/main/assets', '../../html'] }
     }
 }
 
