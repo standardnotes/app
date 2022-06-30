@@ -6,6 +6,7 @@ import NoteView from '@/Components/NoteView/NoteView'
 import MultipleSelectedFiles from '../MultipleSelectedFiles/MultipleSelectedFiles'
 import { ElementIds } from '@/Constants/ElementIDs'
 import FileView from '@/Components/FileView/FileView'
+import Icon from '../Icon/Icon'
 
 type State = {
   showMultipleSelectedNotes: boolean
@@ -16,6 +17,8 @@ type State = {
 
 type Props = {
   application: WebApplication
+  isSelectedSection: boolean
+  setSelectedSection: React.Dispatch<React.SetStateAction<'navigation' | 'items' | 'editor'>>
 }
 
 class NoteGroupView extends PureComponent<Props, State> {
@@ -81,49 +84,61 @@ class NoteGroupView extends PureComponent<Props, State> {
       !this.state.showMultipleSelectedNotes && !this.state.showMultipleSelectedFiles
 
     return (
-      <div id={ElementIds.EditorColumn} className="app-column app-column-third h-full">
-        {this.state.showMultipleSelectedNotes && (
-          <MultipleSelectedNotes
-            application={this.application}
-            filesController={this.viewControllerManager.filesController}
-            selectionController={this.viewControllerManager.selectionController}
-            featuresController={this.viewControllerManager.featuresController}
-            filePreviewModalController={this.viewControllerManager.filePreviewModalController}
-            navigationController={this.viewControllerManager.navigationController}
-            notesController={this.viewControllerManager.notesController}
-            noteTagsController={this.viewControllerManager.noteTagsController}
-            historyModalController={this.viewControllerManager.historyModalController}
-          />
-        )}
-
-        {this.state.showMultipleSelectedFiles && (
-          <MultipleSelectedFiles
-            application={this.application}
-            filesController={this.viewControllerManager.filesController}
-            selectionController={this.viewControllerManager.selectionController}
-            featuresController={this.viewControllerManager.featuresController}
-            filePreviewModalController={this.viewControllerManager.filePreviewModalController}
-            navigationController={this.viewControllerManager.navigationController}
-            notesController={this.viewControllerManager.notesController}
-          />
-        )}
-
-        {shouldNotShowMultipleSelectedItems && this.state.controllers.length > 0 && (
-          <>
-            {this.state.controllers.map((controller) => {
-              return controller instanceof NoteViewController ? (
-                <NoteView key={controller.item.uuid} application={this.application} controller={controller} />
-              ) : (
-                <FileView
-                  key={controller.item.uuid}
-                  application={this.application}
-                  viewControllerManager={this.viewControllerManager}
-                  file={controller.item}
-                />
-              )
-            })}
-          </>
-        )}
+      <div
+        id={ElementIds.EditorColumn}
+        className={`app-column app-column-third h-full ${this.props.isSelectedSection && 'selected'}`}
+      >
+        <button
+          className={`flex w-full items-center justify-between border-b border-solid border-border px-4 py-2 md:hidden ${
+            this.props.isSelectedSection ? 'bg-contrast' : 'bg-default'
+          }`}
+          onClick={() => this.props.setSelectedSection('editor')}
+        >
+          <span>Editor</span>
+          <Icon type="chevron-down" />
+        </button>
+        <div className="content">
+          {this.state.showMultipleSelectedNotes && (
+            <MultipleSelectedNotes
+              application={this.application}
+              filesController={this.viewControllerManager.filesController}
+              selectionController={this.viewControllerManager.selectionController}
+              featuresController={this.viewControllerManager.featuresController}
+              filePreviewModalController={this.viewControllerManager.filePreviewModalController}
+              navigationController={this.viewControllerManager.navigationController}
+              notesController={this.viewControllerManager.notesController}
+              noteTagsController={this.viewControllerManager.noteTagsController}
+              historyModalController={this.viewControllerManager.historyModalController}
+            />
+          )}
+          {this.state.showMultipleSelectedFiles && (
+            <MultipleSelectedFiles
+              application={this.application}
+              filesController={this.viewControllerManager.filesController}
+              selectionController={this.viewControllerManager.selectionController}
+              featuresController={this.viewControllerManager.featuresController}
+              filePreviewModalController={this.viewControllerManager.filePreviewModalController}
+              navigationController={this.viewControllerManager.navigationController}
+              notesController={this.viewControllerManager.notesController}
+            />
+          )}
+          {shouldNotShowMultipleSelectedItems && this.state.controllers.length > 0 && (
+            <>
+              {this.state.controllers.map((controller) => {
+                return controller instanceof NoteViewController ? (
+                  <NoteView key={controller.item.uuid} application={this.application} controller={controller} />
+                ) : (
+                  <FileView
+                    key={controller.item.uuid}
+                    application={this.application}
+                    viewControllerManager={this.viewControllerManager}
+                    file={controller.item}
+                  />
+                )
+              })}
+            </>
+          )}
+        </div>
       </div>
     )
   }

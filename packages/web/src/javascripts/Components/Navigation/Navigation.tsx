@@ -7,12 +7,15 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
 import PanelResizer, { PanelSide, ResizeFinishCallback, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
 import SearchBar from '@/Components/SearchBar/SearchBar'
+import Icon from '../Icon/Icon'
 
 type Props = {
   application: WebApplication
+  isSelectedSection: boolean
+  setSelectedSection: React.Dispatch<React.SetStateAction<'navigation' | 'items' | 'editor'>>
 }
 
-const Navigation: FunctionComponent<Props> = ({ application }) => {
+const Navigation: FunctionComponent<Props> = ({ application, isSelectedSection, setSelectedSection }) => {
   const viewControllerManager = useMemo(() => application.getViewControllerManager(), [application])
   const [ref, setRef] = useState<HTMLDivElement | null>()
   const [panelWidth, setPanelWidth] = useState<number>(0)
@@ -46,10 +49,19 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
   return (
     <div
       id="navigation"
-      className="sn-component section app-column app-column-first"
+      className={`sn-component section app-column app-column-first ${isSelectedSection && 'selected'}`}
       data-aria-label="Navigation"
       ref={setRef}
     >
+      <button
+        className={`flex w-full items-center justify-between border-b border-solid border-border px-4 py-2 md:hidden ${
+          isSelectedSection ? 'bg-contrast' : 'bg-default'
+        }`}
+        onClick={() => setSelectedSection('navigation')}
+      >
+        <span>Navigation</span>
+        <Icon type="chevron-down" />
+      </button>
       <div id="navigation-content" className="content">
         <SearchBar
           itemListController={viewControllerManager.itemListController}

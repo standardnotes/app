@@ -168,6 +168,8 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
     )
   }, [viewControllerManager, challenges, mainApplicationGroup, removeChallenge, application])
 
+  const [selectedSection, setSelectedSection] = useState<'navigation' | 'items' | 'editor'>('editor')
+
   if (!renderAppContents) {
     return renderChallenges()
   }
@@ -176,7 +178,11 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
     <PremiumModalProvider application={application} viewControllerManager={viewControllerManager}>
       <div className={platformString + ' main-ui-view sn-component'}>
         <div id="app" className={appClass + ' app app-column-container'}>
-          <Navigation application={application} />
+          <Navigation
+            application={application}
+            isSelectedSection={selectedSection === 'navigation'}
+            setSelectedSection={setSelectedSection}
+          />
           <ContentListView
             application={application}
             accountMenuController={viewControllerManager.accountMenuController}
@@ -187,8 +193,14 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
             noteTagsController={viewControllerManager.noteTagsController}
             notesController={viewControllerManager.notesController}
             selectionController={viewControllerManager.selectionController}
+            isSelectedSection={selectedSection === 'items'}
+            setSelectedSection={setSelectedSection}
           />
-          <NoteGroupView application={application} />
+          <NoteGroupView
+            application={application}
+            isSelectedSection={selectedSection === 'editor'}
+            setSelectedSection={setSelectedSection}
+          />
         </div>
 
         <>

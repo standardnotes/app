@@ -17,6 +17,7 @@ import { NotesController } from '@/Controllers/NotesController'
 import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
 import { ElementIds } from '@/Constants/ElementIDs'
 import ContentListHeader from './Header/ContentListHeader'
+import Icon from '../Icon/Icon'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -28,6 +29,8 @@ type Props = {
   noteTagsController: NoteTagsController
   notesController: NotesController
   selectionController: SelectedItemsController
+  isSelectedSection: boolean
+  setSelectedSection: React.Dispatch<React.SetStateAction<'navigation' | 'items' | 'editor'>>
 }
 
 const ContentListView: FunctionComponent<Props> = ({
@@ -40,6 +43,8 @@ const ContentListView: FunctionComponent<Props> = ({
   noteTagsController,
   notesController,
   selectionController,
+  isSelectedSection,
+  setSelectedSection,
 }) => {
   const itemsViewPanelRef = useRef<HTMLDivElement>(null)
 
@@ -168,10 +173,19 @@ const ContentListView: FunctionComponent<Props> = ({
   return (
     <div
       id="items-column"
-      className="sn-component section app-column app-column-second"
+      className={`sn-component section app-column app-column-second ${isSelectedSection && 'selected'}`}
       aria-label={'Notes & Files'}
       ref={itemsViewPanelRef}
     >
+      <button
+        className={`flex w-full items-center justify-between border-b border-solid border-border px-4 py-2 md:hidden ${
+          isSelectedSection ? 'bg-contrast' : 'bg-default'
+        }`}
+        onClick={() => setSelectedSection('items')}
+      >
+        <span>Items</span>
+        <Icon type="chevron-down" />
+      </button>
       <div className="content">
         <div id="items-title-bar" className="section-title-bar border-b border-solid border-border">
           <div id="items-title-bar-container">

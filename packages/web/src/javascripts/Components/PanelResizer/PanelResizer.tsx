@@ -57,6 +57,10 @@ const StyledPanelResizer = styled.div<{
   width: 4px;
   z-index: var(--z-index-panel-resizer);
 
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
+
   @keyframes fade {
     0% {
       opacity: 0;
