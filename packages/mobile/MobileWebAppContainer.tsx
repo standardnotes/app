@@ -2,7 +2,7 @@ import React from 'react'
 import { Platform } from 'react-native'
 import { WebView } from 'react-native-webview'
 
-export const MobileTopLevelWebViewRenderer = () => {
+export const MobileWebAppContainer = () => {
   const sourceUri = (Platform.OS === 'android' ? 'file:///android_asset/' : '') + 'Web.bundle/loader.html'
   const params = 'platform=' + Platform.OS
   const injectedJS = `

@@ -22,7 +22,6 @@ import {
 } from '@Root/Screens/screens'
 import { Settings } from '@Root/Screens/Settings/Settings'
 import { UploadedFilesList } from '@Root/Screens/UploadedFilesList/UploadedFilesList'
-import { EmbeddedWebApp } from '@Screens/EmbeddedWebApp/EmbeddedWebApp'
 import { WorkspaceInputModal } from '@Screens/InputModal/WorkspaceInputModal'
 import { ApplicationDescriptor, Challenge, DeinitMode, DeinitSource, FileItem, SNNote } from '@standardnotes/snjs'
 import { ICON_CHECKMARK, ICON_CLOSE } from '@Style/Icons'
@@ -31,6 +30,7 @@ import React, { memo, useContext } from 'react'
 import { Platform } from 'react-native'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
 import { ThemeContext } from 'styled-components'
+import { MobileWebAppContainer } from '../MobileWebAppContainer'
 import { HeaderTitleParams, TEnvironment } from './App'
 import { ApplicationContext } from './ApplicationContext'
 import { AppStackComponent } from './AppStack'
@@ -306,7 +306,7 @@ export const MainStackComponent = ({ env }: { env: TEnvironment }) => {
         })}
         component={WorkspaceInputModal}
       />
-      <MainStack.Screen name={SCREEN_WEB_APP} options={() => ({ title: 'App' })} component={EmbeddedWebApp} />
+      <MainStack.Screen name={SCREEN_WEB_APP} options={() => ({ title: 'App' })} component={MobileWebAppContainer} />
     </MainStack.Navigator>
   )
 }
