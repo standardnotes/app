@@ -23,7 +23,7 @@ import ContentListView from '@/Components/ContentListView/ContentListView'
 import FileContextMenuWrapper from '@/Components/FileContextMenu/FileContextMenu'
 import PermissionsModalWrapper from '@/Components/PermissionsModal/PermissionsModalWrapper'
 import { PanelResizedData } from '@/Types/PanelResizedData'
-import TagContextMenu from '@/Components/Tags/TagContextMenu'
+import TagContextMenuWrapper from '@/Components/Tags/TagContextMenuWrapper'
 
 type Props = {
   application: WebApplication
@@ -214,7 +214,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
             noteTagsController={viewControllerManager.noteTagsController}
             historyModalController={viewControllerManager.historyModalController}
           />
-          <TagContextMenu
+          <TagContextMenuWrapper
             navigationController={viewControllerManager.navigationController}
             featuresController={viewControllerManager.featuresController}
           />
