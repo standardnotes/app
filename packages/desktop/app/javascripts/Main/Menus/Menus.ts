@@ -1,4 +1,4 @@
-import { AppState } from 'app/application'
+import { AppState } from 'app/AppState'
 import {
   app,
   BrowserWindow,
@@ -10,7 +10,8 @@ import {
   WebContents,
 } from 'electron'
 import { autorun } from 'mobx'
-import { Store, StoreKeys } from '../Store'
+import { Store } from '../Store/Store'
+import { StoreKeys } from '../Store/StoreKeys'
 import { appMenu as str, contextMenu } from '../Strings'
 import { TrayManager } from '../TrayManager'
 import { autoUpdatingAvailable } from '../Types/Constants'

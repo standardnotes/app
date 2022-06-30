@@ -1,5 +1,6 @@
 /* eslint-disable no-inline-comments */
-import { Store, StoreKeys } from './Store'
+import { Store } from './Store/Store'
+import { StoreKeys } from './Store/StoreKeys'
 import { isMac } from './Types/Platforms'
 import { isDev } from './Utils/Utils'
 
