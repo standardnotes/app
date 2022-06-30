@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.23.20](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.19...@standardnotes/desktop@3.23.20) (2022-06-30)
+
+### Bug Fixes
+
+* clear desktop web cache on first version launch ([#1184](https://github.com/standardnotes/app/issues/1184)) ([7851e12](https://github.com/standardnotes/app/commit/7851e12e9e9c52dba36ad2c2f3c362a07b95288b))
+
 ## [3.23.19](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.18...@standardnotes/desktop@3.23.19) (2022-06-30)
 
 **Note:** Version bump only for package @standardnotes/desktop
