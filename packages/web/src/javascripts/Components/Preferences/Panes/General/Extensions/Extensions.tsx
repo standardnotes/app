@@ -9,7 +9,7 @@ import { ExtensionsLatestVersions } from './ExtensionsLatestVersions'
 import ExtensionItem from './ExtensionItem'
 import ConfirmCustomExtension from './ConfirmCustomExtension'
 import { AnyExtension } from './AnyExtension'
-import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
+import PreferencesSegment from '../../../PreferencesComponents/PreferencesSegment'
 
 const loadExtensions = (application: WebApplication) =>
   application.items.getItems([ContentType.ActionsExtension, ContentType.Component, ContentType.Theme]) as AnyExtension[]

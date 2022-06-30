@@ -3,7 +3,7 @@ import Button from '@/Components/Button/Button'
 import { Fragment, FunctionComponent } from 'react'
 import { Title, Text, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
 import { AnyExtension } from './AnyExtension'
-import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
+import PreferencesSegment from '../../../PreferencesComponents/PreferencesSegment'
 
 const ConfirmCustomExtension: FunctionComponent<{
   component: AnyExtension

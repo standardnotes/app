@@ -1,7 +1,7 @@
 import { WebApplication } from '@/Application/Application'
 import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { FunctionComponent } from 'react'
-import { ExtensionsLatestVersions } from '@/Components/Preferences/Panes/Extensions/ExtensionsLatestVersions'
+import { ExtensionsLatestVersions } from '@/Components/Preferences/Panes/General/Extensions/ExtensionsLatestVersions'
 import { observer } from 'mobx-react-lite'
 import Tools from './Tools'
 import Defaults from './Defaults'

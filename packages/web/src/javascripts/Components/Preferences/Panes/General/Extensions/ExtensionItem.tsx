@@ -5,7 +5,7 @@ import Switch from '@/Components/Switch/Switch'
 import Button from '@/Components/Button/Button'
 import ExtensionInfoCell from './ExtensionInfoCell'
 import { ExtensionItemProps } from './ExtensionItemProps'
-import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
+import PreferencesSegment from '../../../PreferencesComponents/PreferencesSegment'
 
 const UseHosted: FunctionComponent<{
   offlineOnly: boolean
