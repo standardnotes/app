@@ -1,7 +1,7 @@
 # Standard Notes
 ### A safe and private place for your life's work.
 
-Standard Notes is a simple and private notes app available on most platforms, including Web, Mac, Windows, Linux, iOS, and Android. It focuses on simplicity, and encrypts data locally before it ever touches a cloud. This means no one can read your notes but you (not even us).
+Standard Notes is an end-to-end encrypted note-taking app for digitalists and professionals. Capture your notes, files, and life’s work all in one secure place.
 
 ![](https://standardnotes.com/assets/homepage-hero.png)
 
@@ -16,43 +16,37 @@ Standard Notes is a simple and private notes app available on most platforms, in
 
 ### Why Standard Notes?
 
-- Simple and easy to use
-- Fast and encrypted cross-platform sync
-- Free sync on unlimited devices
-- Extensible with editors (such as Markdown and Code), themes, and components. [Learn more](https://standardnotes.com/features).
-- Open-source and the option to self-host your notes server. You can [host your own Standard Server](https://docs.standardnotes.com/self-hosting/getting-started) in a few easy steps.
+- End-to-end encrypted sync. Only you can read your notes.
+- Fast, free, and encrypted cross-platform sync on unlimited devices.
+- Open-source with ability to self-host your own server in a [few easy steps](https://docs.standardnotes.com/self-hosting/getting-started).
 - A strong focus on longevity and sustainability. [Learn more](https://standardnotes.com/longevity).
 
 ### Creating your private notes account
 
 1. Launch the web app at [app.standardnotes.com](https://app.standardnotes.com).
 2. Click Register to create your private notes account.
-3. Download Standard Notes on all your devices.
-	- [Mac](https://standardnotes.com/download/mac)
-	- [Windows](https://standardnotes.com/download/windows)
-	- [Linux](https://standardnotes.com/download/linux)
+3. Download Standard Notes on your devices.
+	- [Mac](https://standardnotes.com/download)
+	- [Windows](https://standardnotes.com/download)
+	- [Linux](https://standardnotes.com/download)
 	- [iOS](https://standardnotes.com/download/https://itunes.apple.com/us/app/standard-notes/id1285392450?mt=8)
 	- [Android](https://play.google.com/store/apps/details?id=com.standardnotes)
-4. You're all set to begin enjoying a new, more freeing notes life. Standard Notes comes out of the box with end-to-end encrypted sync on all your devices.
-
-### Do More
-
-If you're looking to power up your experience with extensions, and help support future development, [learn more about our paid plans](https://standardnotes.com/plans). Our paid plans offer:
-
-- Powerful editors, including the Plus Editor, Simple Markdown, Advanced Markdown, Code Editor, Vim Editor, and the popular Simple Task Editor.
-- Beautiful themes to help you find inspiration in any mood, like Midnight, Focused, Futura, Titanium, and Solarized Dark.
-- Powerful data care options, including daily encrypted backups delivered directly to your email inbox, as well as automated Dropbox, Google Drive, and OneDrive backups. You'll also be able to configure two-factor authentication to add an additional layer of security to your account.
-- Productivity-enhancing components like Folders, Autocomplete Tags, the ever-handy Action Bar, and GitHub Push.
+4. You're all set. Standard Notes comes out of the box with end-to-end encrypted sync on all your devices.
 
 ### Publish a Blog
 
-It's no secret we love to write. Standard Notes has become a dependable environment to do your most important work, and this includes publishing your ideas to the world. That's why we created Listed. Listed allows you to create an online publication with automatic email newsletters delivered to your readers, directly from Standard Notes.
+Standard Notes is a dependable environment to do your most important work, including publishing your ideas to the world. Listed allows you to create an online publication with automatic email newsletters delivered to your readers, directly from Standard Notes.
 
 [Learn more about Listed.](https://listed.to/)
 
-### Plug In
+### Community
 
-Plug in to the community of note-lovers and privacy-enthusiasts. Join us on [Slack](https://standardnotes.com/slack), on our [GitHub forum](https://forum.standardnotes.org), and follow new updates on [Twitter](https://twitter.com/StandardNotes).
+Join us on
+
+- [Discord](https://standardnotes.com/discord)
+- [Twitter](https://twitter.com/StandardNotes).
+- [Forum](https://forum.standardnotes.org)
+- [Slack](https://standardnotes.com/slack)
 
 Developers can create and publish their own extensions. Visit the [documentation hub](https://docs.standardnotes.com/) to learn more.
 
@@ -62,53 +56,26 @@ Questions? Find answers on our [Help page](https://standardnotes.com/help).
 
 ### Docker setup
 
-Docker is the quick and easy way to try out Standard Notes. We highly recommend using our official [Docker hub image](https://hub.docker.com/repository/docker/standardnotes/web).
+Docker is the quickest way to try out Standard Notes. We recommend using our official [Docker hub image](https://hub.docker.com/repository/docker/standardnotes/web).
 
-### Standalone instance
-
-Before you start make sure you have a `.env` file copied from the sample `.env.sample` and configured with your parameters.
-
-If your intention is not contributing but just running the app we recommend using our official image from Docker hub like this:
 ```
-docker run -d -p 3001:3001 --env-file=your-env-file standardnotes/web:stable
+docker run -d -p 3001:3001 --env-file=.env.sample standardnotes/web:stable
 ```
 
-Or if you want to use the `develop` branch that is in a work-in-progress state please use:
-```
-docker run -d -p 3001:3001 --env-file=your-env-file standardnotes/web:latest
-```
-
-You can then access the app at `http://localhost:3001` (please check Docker container logs if the server has started already and is listening on connections).
+You can then access the app at `http://localhost:3001`. It may take a minute for the server to start up.
 
 ### Running Locally
 
-**Instructions:**
-
-1. Ensure you have [Yarn](https://classic.yarnpkg.com) installed
 2. Clone the repo
 3. `yarn install`
-4. `yarn start`
-
-Then open your browser to `http://localhost:3001`.
+4. `yarn build:web-server`
+5. `yarn start:server:web`
+6. Open your browser to `http://localhost:3001`.
 
 ---
 
-You can also set the `DEFAULT_SYNC_SERVER` environment variable to set the default server for login and registration.
+You can configure the `DEFAULT_SYNC_SERVER` environment variable to set the default server for login and registration.
 
 ```
 DEFAULT_SYNC_SERVER=https://sync.myserver
 ```
-
-## Contributing
-
-For contributing we highly recommend you use our docker-compose setup that is provided in this repository.
-
-### Docker compose setup
-
-Use the included [docker-compose.yml](docker-compose.yml) file to build Standard Notes with `docker-compose`. Once your `.env` file has been copied and configured, simply run:
-
-```
-docker-compose up -d
-```
-
-This should load the app container and run the necessary scripts. You should then be able to reach the app at `http://localhost:3001`
