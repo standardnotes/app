@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.29.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.29.0...@standardnotes/web@3.29.1) (2022-07-01)
+
+### Bug Fixes
+
+* **web:** file protected overlay not toggling off correctly ([#1190](https://github.com/standardnotes/app/issues/1190)) ([7c3c59d](https://github.com/standardnotes/app/commit/7c3c59dd926ac5561b147dd025f0c5479286a1bb))
+
 # [3.29.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.28.1...@standardnotes/web@3.29.0) (2022-07-01)
 
 ### Features
