@@ -24,6 +24,7 @@ import FileContextMenuWrapper from '@/Components/FileContextMenu/FileContextMenu
 import PermissionsModalWrapper from '@/Components/PermissionsModal/PermissionsModalWrapper'
 import { PanelResizedData } from '@/Types/PanelResizedData'
 import TagContextMenuWrapper from '@/Components/Tags/TagContextMenuWrapper'
+import FileDragNDropProvider from '../FileDragNDropProvider/FileDragNDropProvider'
 
 type Props = {
   application: WebApplication
@@ -176,19 +177,25 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
     <PremiumModalProvider application={application} viewControllerManager={viewControllerManager}>
       <div className={platformString + ' main-ui-view sn-component'}>
         <div id="app" className={appClass + ' app app-column-container'}>
-          <Navigation application={application} />
-          <ContentListView
+          <FileDragNDropProvider
             application={application}
-            accountMenuController={viewControllerManager.accountMenuController}
+            featuresController={viewControllerManager.featuresController}
             filesController={viewControllerManager.filesController}
-            itemListController={viewControllerManager.itemListController}
-            navigationController={viewControllerManager.navigationController}
-            noAccountWarningController={viewControllerManager.noAccountWarningController}
-            noteTagsController={viewControllerManager.noteTagsController}
-            notesController={viewControllerManager.notesController}
-            selectionController={viewControllerManager.selectionController}
-          />
-          <NoteGroupView application={application} />
+          >
+            <Navigation application={application} />
+            <ContentListView
+              application={application}
+              accountMenuController={viewControllerManager.accountMenuController}
+              filesController={viewControllerManager.filesController}
+              itemListController={viewControllerManager.itemListController}
+              navigationController={viewControllerManager.navigationController}
+              noAccountWarningController={viewControllerManager.noAccountWarningController}
+              noteTagsController={viewControllerManager.noteTagsController}
+              notesController={viewControllerManager.notesController}
+              selectionController={viewControllerManager.selectionController}
+            />
+            <NoteGroupView application={application} />
+          </FileDragNDropProvider>
         </div>
 
         <>
