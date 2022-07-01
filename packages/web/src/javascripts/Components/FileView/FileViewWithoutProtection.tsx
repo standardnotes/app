@@ -1,31 +1,32 @@
 import { ElementIds } from '@/Constants/ElementIDs'
 import { observer } from 'mobx-react-lite'
-import { ChangeEventHandler, FormEventHandler, useCallback, useEffect, useState } from 'react'
+import { ChangeEventHandler, useCallback, useRef } from 'react'
 import AttachedFilesButton from '@/Components/AttachedFilesPopover/AttachedFilesButton'
 import FileOptionsPanel from '@/Components/FileContextMenu/FileOptionsPanel'
 import FilePreview from '@/Components/FilePreview/FilePreview'
 import { FileViewProps } from './FileViewProps'
 
+const SyncTimeoutNoDebounceMs = 100
+const SyncTimeoutDebounceMs = 350
+
 const FileViewWithoutProtection = ({ application, viewControllerManager, file }: FileViewProps) => {
-  const [name, setName] = useState(file.name)
+  const syncTimeoutRef = useRef<number>()
 
-  useEffect(() => {
-    setName(file.name)
-  }, [file.name])
-
-  const onTitleChange: ChangeEventHandler<HTMLInputElement> = useCallback(async (event) => {
-    setName(event.target.value)
-  }, [])
-
-  const onFormSubmit: FormEventHandler = useCallback(
+  const onTitleChange: ChangeEventHandler<HTMLInputElement> = useCallback(
     async (event) => {
-      event.preventDefault()
+      if (syncTimeoutRef.current) {
+        clearTimeout(syncTimeoutRef.current)
+      }
 
-      await application.items.renameFile(file, name)
+      const shouldNotDebounce = application.noAccount()
+      const syncDebounceMs = shouldNotDebounce ? SyncTimeoutNoDebounceMs : SyncTimeoutDebounceMs
 
-      void application.sync.sync()
+      syncTimeoutRef.current = window.setTimeout(async () => {
+        await application.items.renameFile(file, event.target.value)
+        void application.sync.sync()
+      }, syncDebounceMs)
     },
-    [application.items, application.sync, file, name],
+    [application, file],
   )
 
   return (
@@ -37,7 +38,7 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
         >
           <div className="flex h-8 items-center justify-between">
             <div className="flex-grow">
-              <form onSubmit={onFormSubmit} className="title overflow-auto">
+              <div className="title overflow-auto">
                 <input
                   className="input text-lg"
                   id={ElementIds.FileTitleEditor}
@@ -46,10 +47,10 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
                     event.target.select()
                   }}
                   spellCheck={false}
-                  value={name}
+                  defaultValue={file.name}
                   autoComplete="off"
                 />
-              </form>
+              </div>
             </div>
             <div className="flex items-center">
               <div className="mr-3">
