@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.29.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.29.1...@standardnotes/web@3.29.2) (2022-07-01)
+
+### Bug Fixes
+
+* **web:** selected navigation item color ([#1191](https://github.com/standardnotes/app/issues/1191)) ([0193ba3](https://github.com/standardnotes/app/commit/0193ba3e7bffa59a3359c984359138e9be34c4e1))
+
 ## [3.29.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.29.0...@standardnotes/web@3.29.1) (2022-07-01)
 
 ### Bug Fixes

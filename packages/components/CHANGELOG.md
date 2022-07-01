@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.5.9](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.5.8...@standardnotes/components-meta@2.5.9) (2022-07-01)
+
+### Bug Fixes
+
+* **web:** selected navigation item color ([#1191](https://github.com/standardnotes/app/issues/1191)) ([0193ba3](https://github.com/standardnotes/app/commit/0193ba3e7bffa59a3359c984359138e9be34c4e1))
+
 ## [2.5.8](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.5.7...@standardnotes/components-meta@2.5.8) (2022-06-30)
 
 ### Bug Fixes
