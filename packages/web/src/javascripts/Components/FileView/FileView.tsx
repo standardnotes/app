@@ -5,9 +5,11 @@ import FileViewWithoutProtection from './FileViewWithoutProtection'
 import { FileViewProps } from './FileViewProps'
 
 const FileView = ({ application, viewControllerManager, file }: FileViewProps) => {
-  const [shouldShowProtectedOverlay, setShouldShowProtectedOverlay] = useState(
-    file.protected && !application.hasProtectionSources(),
-  )
+  const [shouldShowProtectedOverlay, setShouldShowProtectedOverlay] = useState(false)
+
+  useEffect(() => {
+    viewControllerManager.filesController.setShowProtectedOverlay(file.protected && !application.hasProtectionSources())
+  }, [application, file.protected, viewControllerManager.filesController])
 
   useEffect(() => {
     setShouldShowProtectedOverlay(viewControllerManager.filesController.showProtectedOverlay)
