@@ -5,17 +5,27 @@ import FileViewWithoutProtection from './FileViewWithoutProtection'
 import { FileViewProps } from './FileViewProps'
 
 const FileView = ({ application, viewControllerManager, file }: FileViewProps) => {
-  const [shouldShowProtectedOverlay, setShouldShowProtectedOverlay] = useState(
-    file.protected && !application.hasProtectionSources(),
-  )
+  const [shouldShowProtectedOverlay, setShouldShowProtectedOverlay] = useState(false)
+
+  useEffect(() => {
+    viewControllerManager.filesController.setShowProtectedOverlay(file.protected && !application.hasProtectionSources())
+  }, [application, file.protected, viewControllerManager.filesController])
 
   useEffect(() => {
     setShouldShowProtectedOverlay(viewControllerManager.filesController.showProtectedOverlay)
   }, [viewControllerManager.filesController.showProtectedOverlay])
 
-  const dismissProtectedWarning = useCallback(() => {
-    void viewControllerManager.filesController.toggleFileProtection(file)
-  }, [file, viewControllerManager.filesController])
+  const dismissProtectedOverlay = useCallback(async () => {
+    let showFileContents = true
+
+    if (application.hasProtectionSources()) {
+      showFileContents = await application.protections.authorizeItemAccess(file)
+    }
+
+    if (showFileContents) {
+      setShouldShowProtectedOverlay(false)
+    }
+  }, [application, file])
 
   return shouldShowProtectedOverlay ? (
     <div aria-label="Note" className="section editor sn-component">
@@ -23,7 +33,7 @@ const FileView = ({ application, viewControllerManager, file }: FileViewProps) =
         <ProtectedItemOverlay
           viewControllerManager={viewControllerManager}
           hasProtectionSources={application.hasProtectionSources()}
-          onViewItem={dismissProtectedWarning}
+          onViewItem={dismissProtectedOverlay}
           itemType={'note'}
         />
       </div>
