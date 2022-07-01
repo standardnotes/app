@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.29.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.28.1...@standardnotes/web@3.29.0) (2022-07-01)
+
+### Features
+
+* allow previewing CSV files as plaintext ([#1188](https://github.com/standardnotes/app/issues/1188)) ([87213e9](https://github.com/standardnotes/app/commit/87213e9f5d3b4ecc9864b9b7b501262379644d47))
+
 ## [3.28.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.28.0...@standardnotes/web@3.28.1) (2022-06-30)
 
 **Note:** Version bump only for package @standardnotes/web
