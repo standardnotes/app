@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.30.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.29.2...@standardnotes/web@3.30.0) (2022-07-01)
+
+### Features
+
+* **web:** file view auto-rename on title change([#1192](https://github.com/standardnotes/app/issues/1192)) ([febca55](https://github.com/standardnotes/app/commit/febca55f25e748af2fd1f36dd91f67bd57812ce5))
+
 ## [3.29.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.29.1...@standardnotes/web@3.29.2) (2022-07-01)
 
 ### Bug Fixes
