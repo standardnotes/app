@@ -33,7 +33,7 @@
     "prepare": "husky install",
     "reset": "find . -type dir -name node_modules | xargs rm -rf && rm -rf yarn.lock && yarn install",
     "release:prod": "lerna version --conventional-commits --yes -m \"chore(release): publish\"",
-    "publish:prod": "lerna publish from-git --yes",
+    "publish:prod": "lerna publish from-git --yes --no-verify-access",
     "version": "yarn install --no-immutable && git add yarn.lock",
     "postversion": "./scripts/push-tags-one-by-one.sh",
     "workspace:list": " yarn lerna list -all",
