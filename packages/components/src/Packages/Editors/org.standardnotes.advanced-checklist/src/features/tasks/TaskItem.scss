@@ -33,3 +33,7 @@ $transition-duration: 750ms;
   animation-delay: 0s;
   animation-fill-mode: forwards;
 }
+
+.task-item.hide {
+  display: none;
+}

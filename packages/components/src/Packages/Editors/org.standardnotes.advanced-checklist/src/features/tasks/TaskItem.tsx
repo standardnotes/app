@@ -8,18 +8,6 @@ import { taskDeleted, TaskModel, taskModified, taskToggled } from './tasks-slice
 
 import { CheckBoxInput, TextAreaInput } from '../../common/components'
 
-/**
- * A delay in the dispatch function, when a task is opened.
- * Necessary to allow for transitions to occur.
- */
-const DISPATCH_OPENED_DELAY_MS = 1_250
-
-/**
- * A delay in the dispatch function, when a task is completed.
- * Necessary to allow for transitions to occur.
- */
-const DISPATCH_COMPLETED_DELAY_MS = 1_850
-
 const Container = styled.div<{ completed?: boolean }>`
   align-content: center;
   align-items: center;
@@ -39,10 +27,9 @@ const Container = styled.div<{ completed?: boolean }>`
 export type TaskItemProps = {
   task: TaskModel
   groupName: string
-  innerRef?: (element?: HTMLElement | null | undefined) => any
 }
 
-const TaskItem: React.FC<TaskItemProps> = ({ task, groupName, innerRef, ...props }) => {
+const TaskItem: React.FC<TaskItemProps> = ({ task, groupName }) => {
   const textAreaRef = createRef<HTMLTextAreaElement>()
 
   const dispatch = useAppDispatch()
@@ -85,11 +72,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, groupName, innerRef, ...props
       ? textAreaRef.current!.classList.add('cross-out')
       : textAreaRef.current!.classList.add('no-text-decoration')
 
-    const dispatchDelay = newCompletedState ? DISPATCH_COMPLETED_DELAY_MS : DISPATCH_OPENED_DELAY_MS
-
-    setTimeout(() => {
-      dispatch(taskToggled({ id: task.id, groupName }))
-    }, dispatchDelay)
+    dispatch(taskToggled({ id: task.id, groupName }))
   }
 
   function onTextChange(event: ChangeEvent<HTMLTextAreaElement>) {
@@ -125,7 +108,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, groupName, innerRef, ...props
   useResize(textAreaRef, resizeTextArea)
 
   return (
-    <Container data-testid="task-item" completed={completed} ref={innerRef} {...props}>
+    <Container data-testid="task-item" completed={completed}>
       <CheckBoxInput testId="check-box-input" checked={completed} disabled={!canEdit} onChange={onCheckBoxToggle} />
       <TextAreaInput
         testId="text-area-input"
