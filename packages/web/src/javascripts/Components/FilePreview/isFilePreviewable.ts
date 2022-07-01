@@ -1,4 +1,4 @@
-export const PreviewableTextFileTypes = ['text/plain', 'application/json']
+export const PreviewableTextFileTypes = ['text/plain', 'text/csv', 'application/json']
 
 export const isFileTypePreviewable = (fileType: string) => {
   const isImage = fileType.startsWith('image/')
