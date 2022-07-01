@@ -145,8 +145,10 @@ export function setupUpdates(window: BrowserWindow, appState: AppState, backupsM
 
 export function openChangelog(state: UpdateState): void {
   const url = 'https://github.com/standardnotes/app/releases'
-  if (state.latestVersion) {
-    void shell.openExternal(`${url}/tag/v${state.latestVersion}`)
+  const latestVersion = state.latestVersion
+  if (latestVersion) {
+    const tagPath = `tag/%40standardnotes%2Fdesktop%40${latestVersion}`
+    void shell.openExternal(`${url}/${tagPath}`)
   } else {
     void shell.openExternal(url)
   }

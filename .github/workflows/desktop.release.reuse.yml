@@ -159,6 +159,8 @@ jobs:
         with:
           registry-url: 'https://registry.npmjs.org'
 
+      - run: yarn install
+
       - uses: actions/download-artifact@v3
         with:
           name: assets
