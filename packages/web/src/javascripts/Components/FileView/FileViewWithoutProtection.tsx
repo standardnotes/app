@@ -1,7 +1,6 @@
 import { ElementIds } from '@/Constants/ElementIDs'
 import { observer } from 'mobx-react-lite'
 import { ChangeEventHandler, useCallback, useRef } from 'react'
-import AttachedFilesButton from '@/Components/AttachedFilesPopover/AttachedFilesButton'
 import FileOptionsPanel from '@/Components/FileContextMenu/FileOptionsPanel'
 import FilePreview from '@/Components/FilePreview/FilePreview'
 import { FileViewProps } from './FileViewProps'
@@ -53,17 +52,6 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
               </div>
             </div>
             <div className="flex items-center">
-              <div className="mr-3">
-                <AttachedFilesButton
-                  application={application}
-                  featuresController={viewControllerManager.featuresController}
-                  filePreviewModalController={viewControllerManager.filePreviewModalController}
-                  filesController={viewControllerManager.filesController}
-                  navigationController={viewControllerManager.navigationController}
-                  notesController={viewControllerManager.notesController}
-                  selectionController={viewControllerManager.selectionController}
-                />
-              </div>
               <FileOptionsPanel
                 filesController={viewControllerManager.filesController}
                 selectionController={viewControllerManager.selectionController}
