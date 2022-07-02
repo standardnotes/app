@@ -42,6 +42,21 @@ const Wrapper = styled.div`
   color: var(--sn-stylekit-foreground-color);
 `
 
+const COMPLETED_TASK_TIMEOUT_MS = 1_800
+const OPEN_TASK_TIMEOUT_MS = 1_200
+
+type TransitionTimeout = {
+  enter: number
+  exit: number
+}
+
+function getTimeout(completed?: boolean): TransitionTimeout {
+  return {
+    enter: completed ? COMPLETED_TASK_TIMEOUT_MS : OPEN_TASK_TIMEOUT_MS,
+    exit: !completed ? COMPLETED_TASK_TIMEOUT_MS : OPEN_TASK_TIMEOUT_MS,
+  }
+}
+
 const getItemStyle = (isDragging: boolean, draggableStyle?: DraggingStyle | NotDraggingStyle) => ({
   ...draggableStyle,
   ...(isDragging && {
@@ -64,7 +79,7 @@ const TasksSection: React.FC<TasksSectionProps> = ({ groupName, tasks, section, 
 
   const [collapsed, setCollapsed] = useState<boolean>(!!section.collapsed)
 
-  const handleCollapse = () => {
+  function handleCollapse() {
     setCollapsed(!collapsed)
   }
 
@@ -100,7 +115,7 @@ const TasksSection: React.FC<TasksSectionProps> = ({ groupName, tasks, section, 
                   {tasks.map((task, index) => (
                     <CSSTransition
                       key={task.id}
-                      timeout={1_900}
+                      timeout={getTimeout(task.completed)}
                       classNames={{
                         enter: 'hide',
                         enterDone: 'fade-in',
