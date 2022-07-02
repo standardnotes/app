@@ -111,7 +111,7 @@ class NoteGroupView extends PureComponent<Props, State> {
 
         {this.viewControllerManager.navigationController.isInFilesView && fileDragNDropContext?.isDraggingFiles && (
           <div className="absolute bottom-8 left-1/2 z-dropdown-menu -translate-x-1/2 rounded bg-info px-5 py-3 text-info-contrast shadow-main">
-            Drop your files to upload them to Standard Notes
+            Drop your files to upload them
           </div>
         )}
 

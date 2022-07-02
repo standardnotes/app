@@ -44,7 +44,6 @@ const PermissionsModalWrapper: FunctionComponent<Props> = ({ application }) => {
 
   return dialog ? (
     <PermissionsModal
-      application={application}
       callback={dialog.callback}
       dismiss={dismissPermissionsDialog}
       component={dialog.component}
