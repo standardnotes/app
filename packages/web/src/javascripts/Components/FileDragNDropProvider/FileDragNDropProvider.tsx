@@ -17,7 +17,7 @@ type FileDnDContextData = {
   addFilesDropCallback: (callback: FilesDropCallback) => void
 }
 
-const FileDnDContext = createContext<FileDnDContextData | null>(null)
+export const FileDnDContext = createContext<FileDnDContextData | null>(null)
 
 export const useFileDragNDrop = () => {
   const value = useContext(FileDnDContext)

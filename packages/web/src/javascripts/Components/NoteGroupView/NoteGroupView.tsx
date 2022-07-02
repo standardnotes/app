@@ -6,6 +6,7 @@ import NoteView from '@/Components/NoteView/NoteView'
 import MultipleSelectedFiles from '../MultipleSelectedFiles/MultipleSelectedFiles'
 import { ElementIds } from '@/Constants/ElementIDs'
 import FileView from '@/Components/FileView/FileView'
+import { FileDnDContext } from '@/Components/FileDragNDropProvider/FileDragNDropProvider'
 
 type State = {
   showMultipleSelectedNotes: boolean
@@ -19,6 +20,9 @@ type Props = {
 }
 
 class NoteGroupView extends PureComponent<Props, State> {
+  static override contextType = FileDnDContext
+  declare context: React.ContextType<typeof FileDnDContext>
+
   private removeChangeObserver!: () => void
 
   constructor(props: Props) {
@@ -77,6 +81,8 @@ class NoteGroupView extends PureComponent<Props, State> {
   }
 
   override render() {
+    const fileDragNDropContext = this.context
+
     const shouldNotShowMultipleSelectedItems =
       !this.state.showMultipleSelectedNotes && !this.state.showMultipleSelectedFiles
 
@@ -101,6 +107,12 @@ class NoteGroupView extends PureComponent<Props, State> {
             filesController={this.viewControllerManager.filesController}
             selectionController={this.viewControllerManager.selectionController}
           />
+        )}
+
+        {this.viewControllerManager.navigationController.isInFilesView && fileDragNDropContext?.isDraggingFiles && (
+          <div className="absolute bottom-8 left-1/2 z-dropdown-menu -translate-x-1/2 rounded bg-info px-5 py-3 text-info-contrast shadow-main">
+            Drop your files to upload them to Standard Notes
+          </div>
         )}
 
         {shouldNotShowMultipleSelectedItems && this.state.controllers.length > 0 && (
