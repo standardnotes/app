@@ -113,6 +113,7 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
   const handleDrop = useCallback(
     (event: DragEvent) => {
       if (!isHandlingFileDrag(event, application)) {
+        setIsDraggingFiles(false)
         return
       }
 
