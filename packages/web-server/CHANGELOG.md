@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.51](https://github.com/standardnotes/app/compare/@standardnotes/web-server@1.2.50...@standardnotes/web-server@1.2.51) (2022-07-02)
+
+**Note:** Version bump only for package @standardnotes/web-server
+
 ## [1.2.50](https://github.com/standardnotes/app/compare/@standardnotes/web-server@1.2.49...@standardnotes/web-server@1.2.50) (2022-07-01)
 
 **Note:** Version bump only for package @standardnotes/web-server

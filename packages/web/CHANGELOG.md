@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.31.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.30.0...@standardnotes/web@3.31.0) (2022-07-02)
+
+### Features
+
+* remove attached files button from files view ([#1193](https://github.com/standardnotes/app/issues/1193)) ([f3a6aaa](https://github.com/standardnotes/app/commit/f3a6aaaf2e2ad49cd805c73383269e5ed3f4cd31))
+
 # [3.30.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.29.2...@standardnotes/web@3.30.0) (2022-07-01)
 
 ### Features
