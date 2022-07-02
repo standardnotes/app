@@ -98,13 +98,8 @@ class NoteGroupView extends PureComponent<Props, State> {
 
         {this.state.showMultipleSelectedFiles && (
           <MultipleSelectedFiles
-            application={this.application}
             filesController={this.viewControllerManager.filesController}
             selectionController={this.viewControllerManager.selectionController}
-            featuresController={this.viewControllerManager.featuresController}
-            filePreviewModalController={this.viewControllerManager.filePreviewModalController}
-            navigationController={this.viewControllerManager.navigationController}
-            notesController={this.viewControllerManager.notesController}
           />
         )}
 
