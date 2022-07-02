@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.31.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.31.0...@standardnotes/web@3.31.1) (2022-07-02)
+
+### Bug Fixes
+
+* permissions modal width ([#1195](https://github.com/standardnotes/app/issues/1195)) ([dd23135](https://github.com/standardnotes/app/commit/dd23135d6ddd78bb3f5499256576b26ce6466b12))
+
 # [3.31.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.30.0...@standardnotes/web@3.31.0) (2022-07-02)
 
 ### Features
