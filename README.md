@@ -1,14 +1,10 @@
 # Standard Notes
-### A safe and private place for your life's work.
 
 Standard Notes is an end-to-end encrypted note-taking app for digitalists and professionals. Capture your notes, files, and life’s work all in one secure place.
 
-![](https://standardnotes.com/assets/homepage-hero.png)
-
 <div align="center">
 
-[![latest release version](https://img.shields.io/github/v/release/standardnotes/desktop)](https://github.com/standardnotes/desktop/releases)
-[![License](https://img.shields.io/github/license/standardnotes/app?color=blue)](https://github.com/standardnotes/app/blob/main/LICENSE)
+[![latest release version](https://img.shields.io/github/v/release/standardnotes/app)](https://github.com/standardnotes/app/releases)
 [![Slack](https://img.shields.io/badge/slack-standardnotes-CC2B5E.svg?style=flat&logo=slack)](https://standardnotes.com/slack)
 [![Twitter Follow](https://img.shields.io/badge/follow-%40standardnotes-blue.svg?style=flat&logo=twitter)](https://twitter.com/standardnotes)
 
@@ -44,7 +40,7 @@ Standard Notes is a dependable environment to do your most important work, inclu
 Join us on
 
 - [Discord](https://standardnotes.com/discord)
-- [Twitter](https://twitter.com/StandardNotes).
+- [Twitter](https://twitter.com/StandardNotes)
 - [Forum](https://forum.standardnotes.org)
 - [Slack](https://standardnotes.com/slack)
 
@@ -64,12 +60,12 @@ docker run -d -p 3001:3001 --env-file=.env.sample standardnotes/web:stable
 
 You can then access the app at `http://localhost:3001`. It may take a minute for the server to start up.
 
-### Running Locally
+### Running Web App in Development Mode
 
 2. Clone the repo
 3. `yarn install`
-4. `yarn build:web-server`
-5. `yarn start:server:web`
+4. `yarn build:web`
+5. `cd packages/web && yarn start`
 6. Open your browser to `http://localhost:3001`.
 
 ---
