@@ -1,0 +1,26 @@
+name: Release Notes
+description: Runs scripts/changelog-parser for package
+
+inputs:
+  package:
+    description: Package name
+    required: true
+
+outputs:
+  result:
+    description: Outputs release notes
+    value: ${{ steps.set.outputs.result }}
+
+runs:
+  using: composite
+  steps:
+    - id: set
+      shell: bash
+      env:
+        text: ${{ inputs.text }}
+      run: |
+        RELEASE_NOTES="$(node scripts/changelog-parser.js ${{ inputs.package }})"
+        RELEASE_NOTES="${RELEASE_NOTES//'%'/'%25'}"
+        RELEASE_NOTES="${RELEASE_NOTES//$'\n'/'%0A'}"
+        RELEASE_NOTES="${RELEASE_NOTES//$'\r'/'%0D'}"
+        echo "::set-output name=result::$RELEASE_NOTES"
