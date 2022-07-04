@@ -5,11 +5,11 @@
     "node": ">=16.0.0 <17.0.0"
   },
   "description": "Payload encryption used in SNJS library",
-  "main": "dist/src/index.js",
+  "main": "dist/index.js",
   "author": "Standard Notes",
-  "types": "dist/src/index.d.ts",
+  "types": "dist/index.d.ts",
   "files": [
-    "dist/src"
+    "dist"
   ],
   "publishConfig": {
     "access": "public"
