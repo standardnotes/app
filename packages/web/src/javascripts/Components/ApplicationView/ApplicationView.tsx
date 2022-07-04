@@ -202,7 +202,11 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
               isSelectedSection={selectedSection === 'items'}
               setSelectedSection={setSelectedSection}
             />
-            <NoteGroupView application={application} />
+            <NoteGroupView
+              application={application}
+              isSelectedSection={selectedSection === 'editor'}
+              setSelectedSection={setSelectedSection}
+            />
           </FileDragNDropProvider>
         </div>
 
