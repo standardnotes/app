@@ -34,7 +34,10 @@ const ResponsivePaneContent = ({
         <span>{AppPaneTitles[paneId]}</span>
         <Icon type="chevron-down" />
       </button>
-      <div id={contentElementId} className={classNames('content', !isSelectedPane && 'hidden', contentClassName)}>
+      <div
+        id={contentElementId}
+        className={classNames('content', !isSelectedPane && 'hidden flex-col md:flex', contentClassName)}
+      >
         {children}
       </div>
     </>
