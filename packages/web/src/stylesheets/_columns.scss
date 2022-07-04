@@ -28,6 +28,10 @@
 .app-column {
   overflow: hidden;
 
+  .content {
+    height: 100%;
+  }
+
   @media screen and (max-width: 768px) {
     &.selected {
       flex-grow: 1;
