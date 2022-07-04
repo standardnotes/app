@@ -30,9 +30,9 @@ jobs:
         run: yarn test
         working-directory: packages/components
 
-      - name: Lint all
-        run: yarn lint
       - name: Build all
         run: yarn build:all
+      - name: Lint all
+        run: yarn lint
       - name: Test all
         run: yarn test
