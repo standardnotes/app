@@ -6239,6 +6239,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standardnotes/docs@workspace:docs":
+  version: 0.0.0-use.local
+  resolution: "@standardnotes/docs@workspace:docs"
+  dependencies:
+    "@docusaurus/core": 2.0.0-alpha.73
+    "@docusaurus/plugin-client-redirects": ^2.0.0-alpha.73
+    "@docusaurus/preset-classic": 2.0.0-alpha.73
+    clsx: ^1.1.1
+    docusaurus-plugin-sass: ^0.1.12
+    prettier: ^2.2.1
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    rehype-katex: ^4.0.0
+    remark-math: ^3.0.1
+  languageName: unknown
+  linkType: soft
+
 "@standardnotes/domain-events@npm:^2.32.5":
   version: 2.32.5
   resolution: "@standardnotes/domain-events@npm:2.32.5"
@@ -34417,23 +34434,6 @@ __metadata:
   checksum: f4fbddfc09121d91e587b60de4beb4941108e967d71ad3a171812dc839b010ca374d064ad0a296295fed13acd103609d99a4224a25b4e67de13cae131f1901ee
   languageName: node
   linkType: hard
-
-"standard-notes-docs@workspace:docs":
-  version: 0.0.0-use.local
-  resolution: "standard-notes-docs@workspace:docs"
-  dependencies:
-    "@docusaurus/core": 2.0.0-alpha.73
-    "@docusaurus/plugin-client-redirects": ^2.0.0-alpha.73
-    "@docusaurus/preset-classic": 2.0.0-alpha.73
-    clsx: ^1.1.1
-    docusaurus-plugin-sass: ^0.1.12
-    prettier: ^2.2.1
-    react: ^17.0.2
-    react-dom: ^17.0.2
-    rehype-katex: ^4.0.0
-    remark-math: ^3.0.1
-  languageName: unknown
-  linkType: soft
 
 "stat-mode@npm:^1.0.0":
   version: 1.0.0
