@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.32.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.31.1...@standardnotes/web@3.32.0) (2022-07-04)
+
+### Features
+
+* initial implementation of responsive app panes ([#1198](https://github.com/standardnotes/app/issues/1198)) ([21ea2ec](https://github.com/standardnotes/app/commit/21ea2ec7a1391638bf0cfb2661ccb78a186d8d8f))
+
 ## [3.31.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.31.0...@standardnotes/web@3.31.1) (2022-07-02)
 
 ### Bug Fixes
