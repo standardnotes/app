@@ -173,12 +173,14 @@ const ContentListView: FunctionComponent<Props> = ({
   return (
     <div
       id="items-column"
-      className={`sn-component section app-column app-column-second ${isSelectedSection && 'selected'}`}
+      className={`sn-component section app-column app-column-second ${
+        isSelectedSection && 'selected border-b border-solid border-border'
+      }`}
       aria-label={'Notes & Files'}
       ref={itemsViewPanelRef}
     >
       <button
-        className={`flex w-full items-center justify-between border-b border-solid border-border px-4 py-2 md:hidden ${
+        className={`flex w-full items-center justify-between border-b border-solid border-border px-4 py-2 focus:shadow-none focus:outline-none md:hidden ${
           isSelectedSection ? 'bg-contrast' : 'bg-default'
         }`}
         onClick={() => setSelectedSection('items')}

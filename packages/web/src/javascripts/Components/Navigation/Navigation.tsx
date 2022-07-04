@@ -49,7 +49,9 @@ const Navigation: FunctionComponent<Props> = ({ application, isSelectedSection, 
   return (
     <div
       id="navigation"
-      className={`sn-component section app-column app-column-first ${isSelectedSection && 'selected'}`}
+      className={`sn-component section app-column app-column-first ${
+        isSelectedSection && 'selected border-b border-solid border-border'
+      }`}
       data-aria-label="Navigation"
       ref={setRef}
     >
