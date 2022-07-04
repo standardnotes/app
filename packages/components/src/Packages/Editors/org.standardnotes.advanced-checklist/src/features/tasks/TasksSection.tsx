@@ -5,7 +5,7 @@ import { Draggable, DraggingStyle, Droppable, NotDraggingStyle } from 'react-bea
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import styled from 'styled-components'
 
-import { useAppDispatch, useAppSelector } from '../../app/hooks'
+import { useAppDispatch, useAppSelector, usePrevious } from '../../app/hooks'
 import { RoundButton, SubTitle } from '../../common/components'
 import { SectionModel, TaskModel, tasksGroupCollapsed } from './tasks-slice'
 
@@ -69,10 +69,11 @@ type TasksSectionProps = {
   groupName: string
   tasks: TaskModel[]
   section: SectionModel
+  allTasks?: TaskModel[]
   testId?: string
 }
 
-const TasksSection: React.FC<TasksSectionProps> = ({ groupName, tasks, section, testId, children }) => {
+const TasksSection: React.FC<TasksSectionProps> = ({ groupName, tasks, section, allTasks, testId, children }) => {
   const dispatch = useAppDispatch()
   const canEdit = useAppSelector((state) => state.settings.canEdit)
   const droppableId = `${section.id}-droppable`
@@ -82,6 +83,8 @@ const TasksSection: React.FC<TasksSectionProps> = ({ groupName, tasks, section, 
   function handleCollapse() {
     setCollapsed(!collapsed)
   }
+
+  const prevTasks: TaskModel[] = usePrevious(allTasks)
 
   useEffect(() => {
     dispatch(tasksGroupCollapsed({ groupName, type: section.id, collapsed }))
@@ -112,44 +115,56 @@ const TasksSection: React.FC<TasksSectionProps> = ({ groupName, tasks, section, 
                 ref={provided.innerRef}
               >
                 <TransitionGroup component={null}>
-                  {tasks.map((task, index) => (
-                    <CSSTransition
-                      key={task.id}
-                      timeout={getTimeout(task.completed)}
-                      classNames={{
-                        enter: 'hide',
-                        enterDone: 'fade-in',
-                        exitDone: 'fade-out',
-                      }}
-                      onEnter={(node: HTMLElement) => {
-                        const completed = !!task.completed
-                        completed && node.classList.add('explode')
-                        !completed && node.classList.remove('explode')
-                      }}
-                    >
-                      <Draggable
-                        key={`draggable-${task.id}`}
-                        draggableId={`draggable-${task.id}`}
-                        index={index}
-                        isDragDisabled={!canEdit}
-                      >
-                        {({ innerRef, draggableProps, dragHandleProps }, { isDragging }) => {
-                          const { style, ...restDraggableProps } = draggableProps
-                          return (
-                            <div
-                              className="task-item"
-                              style={getItemStyle(isDragging, style)}
-                              ref={innerRef}
-                              {...restDraggableProps}
-                              {...dragHandleProps}
-                            >
-                              <TaskItem key={`task-item-${task.id}`} task={task} groupName={groupName} />
-                            </div>
-                          )
+                  {tasks.map((task, index) => {
+                    const timeout = getTimeout(task.completed)
+                    return (
+                      <CSSTransition
+                        key={task.id}
+                        timeout={timeout}
+                        classNames={{
+                          enter: 'fade-in',
+                          enterActive: 'fade-in',
+                          enterDone: 'fade-in',
+                          exit: 'fade-out',
+                          exitActive: 'fade-out',
+                          exitDone: 'fade-out',
                         }}
-                      </Draggable>
-                    </CSSTransition>
-                  ))}
+                        onEnter={(node: HTMLElement) => {
+                          const exists = prevTasks.find((t) => t.id === task.id)
+                          exists && node.classList.add('hide')
+
+                          const completed = !!task.completed
+                          completed && node.classList.add('explode')
+                          !completed && node.classList.remove('explode')
+                        }}
+                        onEntered={(node: HTMLElement) => {
+                          node.classList.remove('hide')
+                          setTimeout(() => node.classList.remove(...['fade-in', 'explode']), timeout.enter)
+                        }}
+                      >
+                        <Draggable
+                          key={`draggable-${task.id}`}
+                          draggableId={`draggable-${task.id}`}
+                          index={index}
+                          isDragDisabled={!canEdit}
+                        >
+                          {({ innerRef, draggableProps, dragHandleProps }, { isDragging }) => {
+                            const { style, ...restDraggableProps } = draggableProps
+                            return (
+                              <div
+                                style={getItemStyle(isDragging, style)}
+                                ref={innerRef}
+                                {...restDraggableProps}
+                                {...dragHandleProps}
+                              >
+                                <TaskItem key={`task-item-${task.id}`} task={task} groupName={groupName} />
+                              </div>
+                            )
+                          }}
+                        </Draggable>
+                      </CSSTransition>
+                    )
+                  })}
                 </TransitionGroup>
 
                 {provided.placeholder}

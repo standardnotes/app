@@ -7,7 +7,7 @@ $transition-duration: 750ms;
   }
   0% {
     opacity: 1;
-    max-height: 25px;
+    max-height: 100px;
   }
 }
 
@@ -18,22 +18,30 @@ $transition-duration: 750ms;
   }
   100% {
     opacity: 1;
-    max-height: 25px;
+    max-height: 100px;
   }
 }
 
-.task-item.fade-out {
+.fade-out {
   animation: fadeOut ease $transition-duration;
-  animation-delay: $transition-duration;
+  animation-delay: 0s;
   animation-fill-mode: forwards;
 }
 
-.task-item.fade-in {
+.fade-in {
   animation: fadeIn ease $transition-duration;
   animation-delay: 0s;
   animation-fill-mode: forwards;
 }
 
-.task-item.hide {
+.completed {
+  animation-delay: 1.8s;
+}
+
+.opened {
+  animation-delay: 1.2s;
+}
+
+.hide {
   display: none;
 }

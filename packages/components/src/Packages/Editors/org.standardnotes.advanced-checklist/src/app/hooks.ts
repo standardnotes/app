@@ -42,3 +42,13 @@ export const useDebouncedCallback = (callback: () => void, waitMs: number = 500)
     callback()
   }, waitMs)
 }
+
+export const usePrevious = (value: any) => {
+  const ref = useRef<typeof value>()
+
+  useEffect(() => {
+    ref.current = value
+  }, [value])
+
+  return ref.current
+}
