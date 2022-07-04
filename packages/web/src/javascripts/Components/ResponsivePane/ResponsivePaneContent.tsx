@@ -2,24 +2,18 @@ import { useMemo, ReactNode } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { AppPaneIcons, AppPaneId, AppPaneTitles } from './AppPaneMetadata'
 import { classNames } from '@/Utils/ConcatenateClassNames'
+import { useResponsiveAppPane } from './ResponsivePaneProvider'
 
 type Props = {
   children: ReactNode
   contentClassName?: string
   contentElementId?: string
   paneId: AppPaneId
-  selectedPane: AppPaneId
-  togglePane: (pane: AppPaneId) => void
 }
 
-const ResponsivePaneContent = ({
-  children,
-  contentClassName,
-  contentElementId,
-  paneId,
-  selectedPane,
-  togglePane,
-}: Props) => {
+const ResponsivePaneContent = ({ children, contentClassName, contentElementId, paneId }: Props) => {
+  const { selectedPane, toggleAppPane: togglePane } = useResponsiveAppPane()
+
   const isSelectedPane = useMemo(() => selectedPane === paneId, [paneId, selectedPane])
 
   return (
@@ -39,7 +33,7 @@ const ResponsivePaneContent = ({
       </button>
       <div
         id={contentElementId}
-        className={classNames('content', !isSelectedPane && 'hidden flex-col md:flex', contentClassName)}
+        className={classNames('content', isSelectedPane ? 'h-full' : 'hidden flex-col md:flex', contentClassName)}
       >
         {children}
       </div>

@@ -25,7 +25,7 @@ import PermissionsModalWrapper from '@/Components/PermissionsModal/PermissionsMo
 import { PanelResizedData } from '@/Types/PanelResizedData'
 import TagContextMenuWrapper from '@/Components/Tags/TagContextMenuWrapper'
 import FileDragNDropProvider from '../FileDragNDropProvider/FileDragNDropProvider'
-import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
+import ResponsivePaneProvider from '../ResponsivePane/ResponsivePaneProvider'
 
 type Props = {
   application: WebApplication
@@ -170,22 +170,6 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
     )
   }, [viewControllerManager, challenges, mainApplicationGroup, removeChallenge, application])
 
-  const [currentSelectedPane, setCurrentSelectedPane] = useState<AppPaneId>(AppPaneId.Editor)
-  const [previousSelectedPane, setPreviousSelectedPane] = useState<AppPaneId>(AppPaneId.Editor)
-
-  const togglePane = useCallback(
-    (paneId: AppPaneId) => {
-      if (paneId === currentSelectedPane) {
-        setCurrentSelectedPane(previousSelectedPane ? previousSelectedPane : AppPaneId.Editor)
-        setPreviousSelectedPane(paneId)
-      } else {
-        setPreviousSelectedPane(currentSelectedPane)
-        setCurrentSelectedPane(paneId)
-      }
-    },
-    [currentSelectedPane, previousSelectedPane],
-  )
-
   if (!renderAppContents) {
     return renderChallenges()
   }
@@ -199,21 +183,21 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
             featuresController={viewControllerManager.featuresController}
             filesController={viewControllerManager.filesController}
           >
-            <Navigation application={application} selectedPane={currentSelectedPane} togglePane={togglePane} />
-            <ContentListView
-              application={application}
-              accountMenuController={viewControllerManager.accountMenuController}
-              filesController={viewControllerManager.filesController}
-              itemListController={viewControllerManager.itemListController}
-              navigationController={viewControllerManager.navigationController}
-              noAccountWarningController={viewControllerManager.noAccountWarningController}
-              noteTagsController={viewControllerManager.noteTagsController}
-              notesController={viewControllerManager.notesController}
-              selectionController={viewControllerManager.selectionController}
-              selectedPane={currentSelectedPane}
-              togglePane={togglePane}
-            />
-            <NoteGroupView application={application} selectedPane={currentSelectedPane} togglePane={togglePane} />
+            <ResponsivePaneProvider>
+              <Navigation application={application} />
+              <ContentListView
+                application={application}
+                accountMenuController={viewControllerManager.accountMenuController}
+                filesController={viewControllerManager.filesController}
+                itemListController={viewControllerManager.itemListController}
+                navigationController={viewControllerManager.navigationController}
+                noAccountWarningController={viewControllerManager.noAccountWarningController}
+                noteTagsController={viewControllerManager.noteTagsController}
+                notesController={viewControllerManager.notesController}
+                selectionController={viewControllerManager.selectionController}
+              />
+              <NoteGroupView application={application} />
+            </ResponsivePaneProvider>
           </FileDragNDropProvider>
         </div>
 

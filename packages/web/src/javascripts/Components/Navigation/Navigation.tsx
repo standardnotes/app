@@ -9,15 +9,12 @@ import PanelResizer, { PanelSide, ResizeFinishCallback, PanelResizeType } from '
 import SearchBar from '@/Components/SearchBar/SearchBar'
 import ResponsivePaneContent from '@/Components/ResponsivePane/ResponsivePaneContent'
 import { AppPaneId } from '@/Components/ResponsivePane/AppPaneMetadata'
-import { classNames } from '@/Utils/ConcatenateClassNames'
 
 type Props = {
   application: WebApplication
-  selectedPane: AppPaneId
-  togglePane: (paneId: AppPaneId) => void
 }
 
-const Navigation: FunctionComponent<Props> = ({ application, selectedPane, togglePane }) => {
+const Navigation: FunctionComponent<Props> = ({ application }) => {
   const viewControllerManager = useMemo(() => application.getViewControllerManager(), [application])
   const ref = useRef<HTMLDivElement>(null)
   const [panelWidth, setPanelWidth] = useState<number>(0)
@@ -49,20 +46,8 @@ const Navigation: FunctionComponent<Props> = ({ application, selectedPane, toggl
   }, [viewControllerManager])
 
   return (
-    <div
-      id="navigation"
-      className={classNames(
-        'sn-component section app-column app-column-first',
-        selectedPane === AppPaneId.Navigation && 'selected border-b border-solid border-border',
-      )}
-      ref={ref}
-    >
-      <ResponsivePaneContent
-        paneId={AppPaneId.Navigation}
-        selectedPane={selectedPane}
-        togglePane={togglePane}
-        contentElementId="navigation-content"
-      >
+    <div id="navigation" className="sn-component section app-column app-column-first" ref={ref}>
+      <ResponsivePaneContent paneId={AppPaneId.Navigation} contentElementId="navigation-content">
         <SearchBar
           itemListController={viewControllerManager.itemListController}
           searchOptionsController={viewControllerManager.searchOptionsController}

@@ -19,7 +19,6 @@ import { ElementIds } from '@/Constants/ElementIDs'
 import ContentListHeader from './Header/ContentListHeader'
 import ResponsivePaneContent from '../ResponsivePane/ResponsivePaneContent'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
-import { classNames } from '@/Utils/ConcatenateClassNames'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -31,8 +30,6 @@ type Props = {
   noteTagsController: NoteTagsController
   notesController: NotesController
   selectionController: SelectedItemsController
-  selectedPane: AppPaneId
-  togglePane: (paneId: AppPaneId) => void
 }
 
 const ContentListView: FunctionComponent<Props> = ({
@@ -45,8 +42,6 @@ const ContentListView: FunctionComponent<Props> = ({
   noteTagsController,
   notesController,
   selectionController,
-  selectedPane,
-  togglePane,
 }) => {
   const itemsViewPanelRef = useRef<HTMLDivElement>(null)
 
@@ -175,14 +170,11 @@ const ContentListView: FunctionComponent<Props> = ({
   return (
     <div
       id="items-column"
-      className={classNames(
-        'sn-component section app-column app-column-second',
-        selectedPane === AppPaneId.Items && 'selected border-b border-solid border-border',
-      )}
+      className="sn-component section app-column app-column-second border-b border-solid border-border"
       aria-label={'Notes & Files'}
       ref={itemsViewPanelRef}
     >
-      <ResponsivePaneContent paneId={AppPaneId.Items} selectedPane={selectedPane} togglePane={togglePane}>
+      <ResponsivePaneContent paneId={AppPaneId.Items}>
         <div id="items-title-bar" className="section-title-bar border-b border-solid border-border">
           <div id="items-title-bar-container">
             <ContentListHeader

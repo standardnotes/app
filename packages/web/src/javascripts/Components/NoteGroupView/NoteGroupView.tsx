@@ -19,8 +19,6 @@ type State = {
 
 type Props = {
   application: WebApplication
-  selectedPane: AppPaneId
-  togglePane: (paneId: AppPaneId) => void
 }
 
 class NoteGroupView extends PureComponent<Props, State> {
@@ -91,15 +89,8 @@ class NoteGroupView extends PureComponent<Props, State> {
       !this.state.showMultipleSelectedNotes && !this.state.showMultipleSelectedFiles
 
     return (
-      <div
-        id={ElementIds.EditorColumn}
-        className={`app-column app-column-third h-full ${this.props.selectedPane === AppPaneId.Editor && 'selected'}`}
-      >
-        <ResponsivePaneContent
-          paneId={AppPaneId.Editor}
-          selectedPane={this.props.selectedPane}
-          togglePane={this.props.togglePane}
-        >
+      <div id={ElementIds.EditorColumn} className="app-column app-column-third h-full">
+        <ResponsivePaneContent paneId={AppPaneId.Editor}>
           {this.state.showMultipleSelectedNotes && (
             <MultipleSelectedNotes
               application={this.application}

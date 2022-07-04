@@ -20,6 +20,8 @@ import {
 } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import { DropItem, DropProps, ItemTypes } from './DragNDrop'
+import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
+import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 
 type Props = {
   tag: SNTag
@@ -33,6 +35,8 @@ const PADDING_BASE_PX = 14
 const PADDING_PER_LEVEL_PX = 21
 
 export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features, tagsState, level, onContextMenu }) => {
+  const { toggleAppPane } = useResponsiveAppPane()
+
   const [title, setTitle] = useState(tag.title || '')
   const [subtagTitle, setSubtagTitle] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
@@ -77,9 +81,10 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
     [setShowChildren, tag, tagsState],
   )
 
-  const selectCurrentTag = useCallback(() => {
-    void tagsState.setSelectedTag(tag)
-  }, [tagsState, tag])
+  const selectCurrentTag = useCallback(async () => {
+    await tagsState.setSelectedTag(tag)
+    toggleAppPane(AppPaneId.Items)
+  }, [tagsState, tag, toggleAppPane])
 
   const onBlur = useCallback(() => {
     tagsState.save(tag, title).catch(console.error)

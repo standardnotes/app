@@ -1,13 +1,15 @@
 import { PLAIN_EDITOR_NAME } from '@/Constants/Constants'
 import { sanitizeHtmlString, SNNote } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'react'
+import { FunctionComponent, useCallback } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import ListItemConflictIndicator from './ListItemConflictIndicator'
 import ListItemFlagIcons from './ListItemFlagIcons'
 import ListItemTags from './ListItemTags'
 import ListItemMetadata from './ListItemMetadata'
 import { DisplayableListItemProps } from './Types/DisplayableListItemProps'
+import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
+import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 
 const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
   application,
@@ -22,6 +24,8 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
   sortBy,
   tags,
 }) => {
+  const { toggleAppPane } = useResponsiveAppPane()
+
   const editorForNote = application.componentManager.editorForNote(item as SNNote)
   const editorName = editorForNote?.name ?? PLAIN_EDITOR_NAME
   const [icon, tint] = application.iconsController.getIconAndTintForNoteType(editorForNote?.package_info.note_type)
@@ -43,15 +47,20 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
     }
   }
 
+  const onClick = useCallback(async () => {
+    const { didSelect } = await selectionController.selectItem(item.uuid, true)
+    if (didSelect) {
+      toggleAppPane(AppPaneId.Editor)
+    }
+  }, [item.uuid, selectionController, toggleAppPane])
+
   return (
     <div
       className={`content-list-item flex w-full cursor-pointer items-stretch text-text ${
         selected && 'selected border-l-2 border-solid border-info'
       }`}
       id={item.uuid}
-      onClick={() => {
-        void selectionController.selectItem(item.uuid, true)
-      }}
+      onClick={onClick}
       onContextMenu={(event) => {
         event.preventDefault()
         void openContextMenu(event.clientX, event.clientY)
