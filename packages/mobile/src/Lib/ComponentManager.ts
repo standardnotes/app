@@ -1,6 +1,7 @@
 import { MobileTheme } from '@Root/Style/MobileTheme'
 import { ComponentChecksumsType } from '@standardnotes/components-meta'
 import RawComponentChecksumsFile from '@standardnotes/components-meta/dist/zips/checksums.json'
+import { EncryptionService } from '@standardnotes/encryption'
 import { FeatureDescription, FeatureIdentifier, GetFeatures } from '@standardnotes/features'
 import {
   ComponentMutator,
@@ -12,7 +13,6 @@ import {
   SNLog,
   SNNote,
 } from '@standardnotes/snjs'
-import { EncryptionService } from '@standardnotes/encryption'
 import { objectToCss } from '@Style/CssParser'
 import { Base64 } from 'js-base64'
 import RNFS, { DocumentDirectoryPath } from 'react-native-fs'
