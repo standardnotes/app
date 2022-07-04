@@ -1,0 +1,115 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. */
+:root {
+  --ifm-color-primary: #086dd6;
+  --ifm-color-primary-dark: #0762c1;
+  --ifm-color-primary-darker: #075db6;
+  --ifm-color-primary-darkest: #064c96;
+  --ifm-color-primary-light: #0978eb;
+  --ifm-color-primary-lighter: #097df6;
+  --ifm-color-primary-lightest: #2a8ef7;
+  --ifm-code-font-size: 90%;
+}
+
+.docusaurus-highlight-code-line {
+  background-color: rgb(72, 77, 91);
+  display: block;
+  margin: 0 calc(-1 * var(--ifm-pre-padding));
+  padding: 0 var(--ifm-pre-padding);
+}
+
+/* Adjust dark theme colors */
+html[data-theme='dark'] {
+  --ifm-background-color: #20232a;
+}
+/* Adjust font sizes */
+@media screen and (max-width: 996px) {
+  :root {
+    --ifm-font-size-base: 18px;
+  }
+}
+
+@media screen and (min-width: 997px) {
+  :root {
+    --ifm-font-size-base: 17px;
+  }
+}
+
+article header h1[class^='docTitle'] {
+  font-size: 2rem;
+}
+
+// Don't make headers so big
+.markdown > h2,
+h3,
+h4,
+h5,
+h6 {
+  --ifm-h2-font-size: inherit !important;
+  --ifm-h3-font-size: inherit !important;
+  --ifm-h4-font-size: inherit !important;
+  --ifm-h5-font-size: inherit !important;
+  --ifm-h6-font-size: inherit !important;
+}
+
+/* Announcement Bar */
+div[class^='announcementBar'],
+button[class^='announcementBar'] {
+  background-color: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+}
+
+div[class^='announcementBar'] a {
+  color: var(--ifm-link-color);
+  text-decoration: inherit;
+}
+
+div[class^='announcementBar'] a:hover {
+  color: var(--ifm-link-color);
+  text-decoration: underline;
+}
+
+/* Adjust navbar width */
+.navbar .navbar__inner {
+  max-width: 1360px;
+  margin: 0 auto;
+}
+
+/* Header Dropdown Menu */
+.dropdown__link {
+  font-size: inherit;
+}
+
+/* Remove shadow on the left */
+:root {
+  --ifm-global-shadow-md: 0px;
+}
+
+/* Adjust main wrapper width */
+@media (min-width: 1416px) {
+  .main-wrapper {
+    max-width: 1400px;
+    width: 1400px;
+    align-self: center;
+  }
+}
+
+/* Footer */
+.footer {
+  .container {
+    max-width: 900px;
+  }
+}
+#__docusaurus > footer > div > div.text--center > div > a {
+  color: unset;
+}
+
+#__docusaurus > footer > div > div.text--center > div > a:hover {
+  color: var(--ifm-link-color);
+  text-decoration: underline;
+}
