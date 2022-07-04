@@ -6239,9 +6239,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/docs@workspace:docs":
+"@standardnotes/docs@workspace:packages/docs":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/docs@workspace:docs"
+  resolution: "@standardnotes/docs@workspace:packages/docs"
   dependencies:
     "@docusaurus/core": 2.0.0-alpha.73
     "@docusaurus/plugin-client-redirects": ^2.0.0-alpha.73
