@@ -50,9 +50,10 @@ jobs:
           path: packages/mobile
 
       - name: Generate Release Notes
+        uses: ./actions/release-notes
+        with:
+          package: mobile
         id: release-notes
-        run: echo "::set-output name=release-notes::$(node ../../scripts/changelog-parser.js mobile)"
-        shell: bash
         continue-on-error: true
 
       - name: Release
@@ -61,7 +62,7 @@ jobs:
           token: ${{ secrets.CI_PAT_TOKEN }}
           tag_name: "@standardnotes/mobile@${{ steps.package-version.outputs.current-version}}"
           name: "Mobile ${{ steps.package-version.outputs.current-version }}"
-          body: ${{ steps.release-notes.outputs.release-notes }}
+          body: ${{ steps.release-notes.outputs.result }}
           prerelease: true
           draft: false
           files: |

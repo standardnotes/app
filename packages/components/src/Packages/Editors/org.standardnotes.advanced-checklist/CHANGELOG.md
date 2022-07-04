@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.3](https://github.com/standardnotes/app/compare/@standardnotes/advanced-checklist@0.1.2...@standardnotes/advanced-checklist@0.1.3) (2022-06-30)
+
+### Bug Fixes
+
+* debounce saving task description/draft ([#1187](https://github.com/standardnotes/app/issues/1187)) ([47a0551](https://github.com/standardnotes/app/commit/47a0551967ca420a957e2123d56bd7f0c8a95c53))
+
 ## [0.1.2](https://github.com/standardnotes/app/compare/@standardnotes/advanced-checklist@0.1.1...@standardnotes/advanced-checklist@0.1.2) (2022-06-29)
 
 ### Bug Fixes

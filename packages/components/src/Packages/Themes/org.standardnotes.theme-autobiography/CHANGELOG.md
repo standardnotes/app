@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.1](https://github.com/standardnotes/app/compare/@standardnotes/autobiography-theme@1.1.0...@standardnotes/autobiography-theme@1.1.1) (2022-07-01)
+
+### Bug Fixes
+
+* **web:** selected navigation item color ([#1191](https://github.com/standardnotes/app/issues/1191)) ([0193ba3](https://github.com/standardnotes/app/commit/0193ba3e7bffa59a3359c984359138e9be34c4e1))
+
 # [1.1.0](https://github.com/standardnotes/app/compare/@standardnotes/autobiography-theme@1.0.8...@standardnotes/autobiography-theme@1.1.0) (2022-06-29)
 
 ### Bug Fixes

@@ -6,19 +6,18 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
-import { FileItem, SNNote } from '@standardnotes/snjs'
-import { addToast, ToastType } from '@standardnotes/toast'
-import { StreamingFileReader } from '@standardnotes/filepicker'
 import AttachedFilesPopover from './AttachedFilesPopover'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { PopoverTabs } from './PopoverTabs'
-import { isHandlingFileDrag } from '@/Utils/DragTypeCheck'
 import { NotesController } from '@/Controllers/NotesController'
 import { FilePreviewModalController } from '@/Controllers/FilePreviewModalController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { FilesController } from '@/Controllers/FilesController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
+import { useFileDragNDrop } from '@/Components/FileDragNDropProvider/FileDragNDropProvider'
+import { FileItem, SNNote } from '@standardnotes/snjs'
+import { addToast, ToastType } from '@standardnotes/toast'
 
 type Props = {
   application: WebApplication
@@ -120,7 +119,7 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
       if (!note) {
         addToast({
           type: ToastType.Error,
-          message: 'Could not attach file because selected note was deleted',
+          message: 'Could not attach file because selected note was unselected or deleted',
         })
         return
       }
@@ -130,135 +129,36 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
     [application.items, note],
   )
 
-  const [isDraggingFiles, setIsDraggingFiles] = useState(false)
-  const dragCounter = useRef(0)
+  const { isDraggingFiles, addFilesDragInCallback, addFilesDropCallback } = useFileDragNDrop()
 
-  const handleDrag = useCallback(
-    (event: DragEvent) => {
-      if (isHandlingFileDrag(event, application)) {
-        event.preventDefault()
-        event.stopPropagation()
-      }
-    },
-    [application],
-  )
+  useEffect(() => {
+    if (isDraggingFiles && !open) {
+      void toggleAttachedFilesMenu()
+    }
+  }, [isDraggingFiles, open, toggleAttachedFilesMenu])
 
-  const handleDragIn = useCallback(
-    (event: DragEvent) => {
-      if (!isHandlingFileDrag(event, application)) {
-        return
-      }
+  const filesDragInCallback = useCallback((tab: PopoverTabs) => {
+    setCurrentTab(tab)
+  }, [])
 
-      event.preventDefault()
-      event.stopPropagation()
+  useEffect(() => {
+    addFilesDragInCallback(filesDragInCallback)
+  }, [addFilesDragInCallback, filesDragInCallback])
 
-      switch ((event.target as HTMLElement).id) {
-        case PopoverTabs.AllFiles:
-          setCurrentTab(PopoverTabs.AllFiles)
-          break
-        case PopoverTabs.AttachedFiles:
-          setCurrentTab(PopoverTabs.AttachedFiles)
-          break
-      }
-
-      dragCounter.current = dragCounter.current + 1
-
-      if (event.dataTransfer?.items.length) {
-        setIsDraggingFiles(true)
-        if (!open) {
-          toggleAttachedFilesMenu().catch(console.error)
-        }
-      }
-    },
-    [open, toggleAttachedFilesMenu, application],
-  )
-
-  const handleDragOut = useCallback(
-    (event: DragEvent) => {
-      if (!isHandlingFileDrag(event, application)) {
-        return
-      }
-
-      event.preventDefault()
-      event.stopPropagation()
-
-      dragCounter.current = dragCounter.current - 1
-
-      if (dragCounter.current > 0) {
-        return
-      }
-
-      setIsDraggingFiles(false)
-    },
-    [application],
-  )
-
-  const handleDrop = useCallback(
-    (event: DragEvent) => {
-      if (!isHandlingFileDrag(event, application)) {
-        return
-      }
-
-      event.preventDefault()
-      event.stopPropagation()
-
-      setIsDraggingFiles(false)
-
-      if (!featuresController.hasFiles) {
-        prospectivelyShowFilesPremiumModal()
-        return
-      }
-
-      if (event.dataTransfer?.items.length) {
-        Array.from(event.dataTransfer.items).forEach(async (item) => {
-          const fileOrHandle = StreamingFileReader.available()
-            ? ((await item.getAsFileSystemHandle()) as FileSystemFileHandle)
-            : item.getAsFile()
-
-          if (!fileOrHandle) {
-            return
-          }
-
-          const uploadedFiles = await filesController.uploadNewFile(fileOrHandle)
-
-          if (!uploadedFiles) {
-            return
-          }
-
-          if (currentTab === PopoverTabs.AttachedFiles) {
-            uploadedFiles.forEach((file) => {
-              attachFileToNote(file).catch(console.error)
-            })
-          }
+  const filesDropCallback = useCallback(
+    (uploadedFiles: FileItem[]) => {
+      if (currentTab === PopoverTabs.AttachedFiles) {
+        uploadedFiles.forEach((file) => {
+          attachFileToNote(file).catch(console.error)
         })
-
-        event.dataTransfer.clearData()
-        dragCounter.current = 0
       }
     },
-    [
-      filesController,
-      featuresController.hasFiles,
-      attachFileToNote,
-      currentTab,
-      application,
-      prospectivelyShowFilesPremiumModal,
-    ],
+    [attachFileToNote, currentTab],
   )
 
   useEffect(() => {
-    window.addEventListener('dragenter', handleDragIn)
-    window.addEventListener('dragleave', handleDragOut)
-    window.addEventListener('dragover', handleDrag)
-    window.addEventListener('drop', handleDrop)
-
-    return () => {
-      window.removeEventListener('dragenter', handleDragIn)
-      window.removeEventListener('dragleave', handleDragOut)
-      window.removeEventListener('dragover', handleDrag)
-      window.removeEventListener('drop', handleDrop)
-    }
-  }, [handleDragIn, handleDrop, handleDrag, handleDragOut])
+    addFilesDropCallback(filesDropCallback)
+  }, [addFilesDropCallback, filesDropCallback])
 
   return (
     <div ref={containerRef}>

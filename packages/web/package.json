@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/web",
-  "version": "3.27.7",
+  "version": "3.31.1",
   "license": "AGPL-3.0-or-later",
   "main": "dist/app.js",
   "author": "Standard Notes",
@@ -15,6 +15,7 @@
     "prebuild": "yarn clean",
     "build": "webpack --config web.webpack.prod.js && yarn tsc",
     "lint": "eslint src/javascripts",
+    "format": "prettier --write src/javascripts",
     "tsc": "tsc --project tsconfig.json",
     "test": "jest --config jest.config.js --coverage",
     "upgrade:snjs": "ncu -u '@standardnotes/*'"

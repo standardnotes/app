@@ -2,11 +2,11 @@ import { DisplayStringForContentType } from '@standardnotes/snjs'
 import Button from '@/Components/Button/Button'
 import { Fragment, FunctionComponent } from 'react'
 import { Title, Text, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
-import { AnyExtension } from './AnyExtension'
-import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
+import { AnyPackageType } from './Types/AnyPackageType'
+import PreferencesSegment from '../../../../PreferencesComponents/PreferencesSegment'
 
-const ConfirmCustomExtension: FunctionComponent<{
-  component: AnyExtension
+const ConfirmCustomPackage: FunctionComponent<{
+  component: AnyPackageType
   callback: (confirmed: boolean) => void
 }> = ({ component, callback }) => {
   const fields = [
@@ -47,15 +47,12 @@ const ConfirmCustomExtension: FunctionComponent<{
         return (
           <Fragment key={field.value}>
             <Subtitle>{field.label}</Subtitle>
-            <Text className={'wrap'}>{field.value}</Text>
-            <div className="min-h-2" />
+            <Text className="wrap mb-2">{field.value}</Text>
           </Fragment>
         )
       })}
 
-      <div className="min-h-3" />
-
-      <div className="flex flex-row">
+      <div className="mt-3 flex flex-row">
         <Button className="min-w-20" label="Cancel" onClick={() => callback(false)} />
 
         <div className="min-w-3" />
@@ -66,4 +63,4 @@ const ConfirmCustomExtension: FunctionComponent<{
   )
 }
 
-export default ConfirmCustomExtension
+export default ConfirmCustomPackage

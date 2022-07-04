@@ -1,13 +1,13 @@
 import { WebApplication } from '@/Application/Application'
 import { ClientDisplayableError, FeatureDescription } from '@standardnotes/snjs'
 import { makeAutoObservable, observable } from 'mobx'
-import { AnyExtension } from './AnyExtension'
+import { AnyPackageType } from '../Types/AnyPackageType'
 import { ComponentChecksumsType } from '@standardnotes/components-meta'
 import RawComponentChecksumsFile from '@standardnotes/components-meta/dist/zips/checksums.json'
 const ComponentChecksums = RawComponentChecksumsFile as ComponentChecksumsType
 
-export class ExtensionsLatestVersions {
-  static async load(application: WebApplication): Promise<ExtensionsLatestVersions | undefined> {
+export class PackageProvider {
+  static async load(application: WebApplication): Promise<PackageProvider | undefined> {
     const response = await application.getAvailableSubscriptions()
 
     if (response instanceof ClientDisplayableError) {
@@ -18,16 +18,16 @@ export class ExtensionsLatestVersions {
     collectFeatures(response.PLUS_PLAN?.features as FeatureDescription[], versionMap)
     collectFeatures(response.PRO_PLAN?.features as FeatureDescription[], versionMap)
 
-    return new ExtensionsLatestVersions(versionMap)
+    return new PackageProvider(versionMap)
   }
 
   constructor(private readonly latestVersionsMap: Map<string, string>) {
-    makeAutoObservable<ExtensionsLatestVersions, 'latestVersionsMap'>(this, {
+    makeAutoObservable<PackageProvider, 'latestVersionsMap'>(this, {
       latestVersionsMap: observable.ref,
     })
   }
 
-  getVersion(extension: AnyExtension): string | undefined {
+  getVersion(extension: AnyPackageType): string | undefined {
     return this.latestVersionsMap.get(extension.package_info.identifier)
   }
 }

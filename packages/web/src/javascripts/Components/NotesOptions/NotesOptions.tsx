@@ -12,6 +12,7 @@ import { addToast, dismissToast, ToastType } from '@standardnotes/toast'
 import { NotesOptionsProps } from './NotesOptionsProps'
 import { NotesController } from '@/Controllers/NotesController'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
+import { formatDateForContextMenu } from '@/Utils/DateUtils'
 
 type DeletePermanentlyButtonProps = {
   closeOnBlur: NotesOptionsProps['closeOnBlur']
@@ -78,13 +79,6 @@ const calculateReadTime = (words: number) => {
   }
 }
 
-const formatDate = (date: Date | undefined) => {
-  if (!date) {
-    return
-  }
-  return `${date.toDateString()} ${date.toLocaleTimeString()}`
-}
-
 const NoteAttributes: FunctionComponent<{
   application: SNApplication
   note: SNNote
@@ -93,9 +87,9 @@ const NoteAttributes: FunctionComponent<{
 
   const readTime = useMemo(() => (typeof words === 'number' ? calculateReadTime(words) : 'N/A'), [words])
 
-  const dateLastModified = useMemo(() => formatDate(note.userModifiedDate), [note.userModifiedDate])
+  const dateLastModified = useMemo(() => formatDateForContextMenu(note.userModifiedDate), [note.userModifiedDate])
 
-  const dateCreated = useMemo(() => formatDate(note.created_at), [note.created_at])
+  const dateCreated = useMemo(() => formatDateForContextMenu(note.created_at), [note.created_at])
 
   const editor = application.componentManager.editorForNote(note)
   const format = editor?.package_info?.file_type || 'txt'

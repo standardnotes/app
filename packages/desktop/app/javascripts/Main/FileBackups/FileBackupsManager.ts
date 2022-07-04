@@ -1,7 +1,7 @@
 import { FileBackupsDevice, FileBackupsMapping } from '@web/Application/Device/DesktopSnjsExports'
-import { AppState } from 'app/application'
+import { AppState } from 'app/AppState'
 import { shell } from 'electron'
-import { StoreKeys } from '../Store'
+import { StoreKeys } from '../Store/StoreKeys'
 import path from 'path'
 import {
   deleteFile,

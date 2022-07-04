@@ -1,4 +1,5 @@
 const parseChangelog = require('changelog-parser')
+const path = require('path')
 
 const scopes = ['mobile', 'web', 'desktop', 'components']
 
@@ -6,7 +7,7 @@ async function parsePackages(packageNames) {
   let result = ''
   let index = 0
   for (const package of packageNames) {
-    const parsed = await parseChangelog(`packages/${package}/CHANGELOG.md`)
+    const parsed = await parseChangelog(path.join(__dirname, `../packages/${package}/CHANGELOG.md`))
     const latest = parsed.versions[0]
     if (packageNames.length > 1) {
       result += `## ${capitalizeFirstLetter(package)} Changes\n`

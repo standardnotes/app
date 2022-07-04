@@ -12,7 +12,7 @@ import MenuItemSeparator from '@/Components/Menu/MenuItemSeparator'
 import { MenuItemType } from '@/Components/Menu/MenuItemType'
 import WorkspaceSwitcherOption from './WorkspaceSwitcher/WorkspaceSwitcherOption'
 import { ApplicationGroup } from '@/Application/ApplicationGroup'
-import { formatLastSyncDate } from '@/Utils/FormatLastSyncDate'
+import { formatLastSyncDate } from '@/Utils/DateUtils'
 import Spinner from '@/Components/Spinner/Spinner'
 
 type Props = {

@@ -9,7 +9,7 @@ jobs:
     if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
     runs-on: ubuntu-latest
     env:
-      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      NODE_AUTH_TOKEN: ${{ secrets.CI_NPM_TOKEN }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2

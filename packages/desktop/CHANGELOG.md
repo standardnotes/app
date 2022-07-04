@@ -3,6 +3,54 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.23.30](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.29...@standardnotes/desktop@3.23.30) (2022-07-02)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.23.29](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.28...@standardnotes/desktop@3.23.29) (2022-07-02)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.23.28](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.27...@standardnotes/desktop@3.23.28) (2022-07-01)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.23.27](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.26...@standardnotes/desktop@3.23.27) (2022-07-01)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.23.26](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.25...@standardnotes/desktop@3.23.26) (2022-07-01)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.23.25](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.24...@standardnotes/desktop@3.23.25) (2022-07-01)
+
+### Bug Fixes
+
+* **desktop:** release notes ([44d6bdf](https://github.com/standardnotes/app/commit/44d6bdf147d26701683cc9f0819a1f68faed7a17))
+
+## [3.23.24](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.23...@standardnotes/desktop@3.23.24) (2022-07-01)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.23.23](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.22...@standardnotes/desktop@3.23.23) (2022-06-30)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.23.22](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.21...@standardnotes/desktop@3.23.22) (2022-06-30)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.23.21](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.20...@standardnotes/desktop@3.23.21) (2022-06-30)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.23.20](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.19...@standardnotes/desktop@3.23.20) (2022-06-30)
+
+### Bug Fixes
+
+* clear desktop web cache on first version launch ([#1184](https://github.com/standardnotes/app/issues/1184)) ([7851e12](https://github.com/standardnotes/app/commit/7851e12e9e9c52dba36ad2c2f3c362a07b95288b))
+
 ## [3.23.19](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.18...@standardnotes/desktop@3.23.19) (2022-06-30)
 
 **Note:** Version bump only for package @standardnotes/desktop

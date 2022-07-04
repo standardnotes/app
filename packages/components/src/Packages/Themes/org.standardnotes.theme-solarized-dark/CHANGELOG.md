@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.2](https://github.com/standardnotes/app/compare/@standardnotes/solarized-dark-theme@1.3.1...@standardnotes/solarized-dark-theme@1.3.2) (2022-07-01)
+
+### Bug Fixes
+
+* **web:** selected navigation item color ([#1191](https://github.com/standardnotes/app/issues/1191)) ([0193ba3](https://github.com/standardnotes/app/commit/0193ba3e7bffa59a3359c984359138e9be34c4e1))
+
 ## [1.3.1](https://github.com/standardnotes/app/compare/@standardnotes/solarized-dark-theme@1.3.0...@standardnotes/solarized-dark-theme@1.3.1) (2022-06-29)
 
 ### Bug Fixes

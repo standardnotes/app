@@ -423,6 +423,7 @@ export class FilesController extends AbstractViewController {
         this.setShowProtectedOverlay(false)
       }
     }
+    void this.application.sync.sync()
   }
 
   downloadFiles = async (files: FileItem[]) => {

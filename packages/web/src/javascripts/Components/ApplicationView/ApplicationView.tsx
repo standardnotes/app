@@ -17,13 +17,14 @@ import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 're
 import RevisionHistoryModal from '@/Components/RevisionHistoryModal/RevisionHistoryModal'
 import PremiumModalProvider from '@/Hooks/usePremiumModal'
 import ConfirmSignoutContainer from '@/Components/ConfirmSignoutModal/ConfirmSignoutModal'
-import TagsContextMenuWrapper from '@/Components/Tags/TagContextMenu'
 import { ToastContainer } from '@standardnotes/toast'
 import FilePreviewModalWrapper from '@/Components/FilePreview/FilePreviewModal'
 import ContentListView from '@/Components/ContentListView/ContentListView'
 import FileContextMenuWrapper from '@/Components/FileContextMenu/FileContextMenu'
 import PermissionsModalWrapper from '@/Components/PermissionsModal/PermissionsModalWrapper'
 import { PanelResizedData } from '@/Types/PanelResizedData'
+import TagContextMenuWrapper from '@/Components/Tags/TagContextMenuWrapper'
+import FileDragNDropProvider from '../FileDragNDropProvider/FileDragNDropProvider'
 
 type Props = {
   application: WebApplication
@@ -178,29 +179,31 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
     <PremiumModalProvider application={application} viewControllerManager={viewControllerManager}>
       <div className={platformString + ' main-ui-view sn-component'}>
         <div id="app" className={appClass + ' app app-column-container'}>
-          <Navigation
+          <FileDragNDropProvider
             application={application}
-            isSelectedSection={selectedSection === 'navigation'}
-            setSelectedSection={setSelectedSection}
-          />
-          <ContentListView
-            application={application}
-            accountMenuController={viewControllerManager.accountMenuController}
+            featuresController={viewControllerManager.featuresController}
             filesController={viewControllerManager.filesController}
-            itemListController={viewControllerManager.itemListController}
-            navigationController={viewControllerManager.navigationController}
-            noAccountWarningController={viewControllerManager.noAccountWarningController}
-            noteTagsController={viewControllerManager.noteTagsController}
-            notesController={viewControllerManager.notesController}
-            selectionController={viewControllerManager.selectionController}
-            isSelectedSection={selectedSection === 'items'}
-            setSelectedSection={setSelectedSection}
-          />
-          <NoteGroupView
-            application={application}
-            isSelectedSection={selectedSection === 'editor'}
-            setSelectedSection={setSelectedSection}
-          />
+          >
+            <Navigation
+              application={application}
+              isSelectedSection={selectedSection === 'navigation'}
+              setSelectedSection={setSelectedSection}
+            />
+            <ContentListView
+              application={application}
+              accountMenuController={viewControllerManager.accountMenuController}
+              filesController={viewControllerManager.filesController}
+              itemListController={viewControllerManager.itemListController}
+              navigationController={viewControllerManager.navigationController}
+              noAccountWarningController={viewControllerManager.noAccountWarningController}
+              noteTagsController={viewControllerManager.noteTagsController}
+              notesController={viewControllerManager.notesController}
+              selectionController={viewControllerManager.selectionController}
+              isSelectedSection={selectedSection === 'items'}
+              setSelectedSection={setSelectedSection}
+            />
+            <NoteGroupView application={application} />
+          </FileDragNDropProvider>
         </div>
 
         <>
@@ -226,7 +229,10 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
             noteTagsController={viewControllerManager.noteTagsController}
             historyModalController={viewControllerManager.historyModalController}
           />
-          <TagsContextMenuWrapper viewControllerManager={viewControllerManager} />
+          <TagContextMenuWrapper
+            navigationController={viewControllerManager.navigationController}
+            featuresController={viewControllerManager.featuresController}
+          />
           <FileContextMenuWrapper
             filesController={viewControllerManager.filesController}
             selectionController={viewControllerManager.selectionController}

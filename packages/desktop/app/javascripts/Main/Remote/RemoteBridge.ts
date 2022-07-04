@@ -1,5 +1,6 @@
 import { CrossProcessBridge } from '../../Renderer/CrossProcessBridge'
-import { Store, StoreKeys } from '../Store'
+import { Store } from '../Store/Store'
+import { StoreKeys } from '../Store/StoreKeys'
 
 const path = require('path')
 const rendererPath = path.join('file://', __dirname, '/renderer.js')

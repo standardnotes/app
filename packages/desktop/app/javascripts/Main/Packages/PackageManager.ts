@@ -19,11 +19,11 @@ import { downloadFile, getJSON } from './Networking'
 import { Component, MappingFile, PackageInfo, PackageManagerInterface, SyncTask } from './PackageManagerInterface'
 
 function logMessage(...message: any) {
-  log.info('PackageManager:', ...message)
+  log.info('PackageManager[Info]:', ...message)
 }
 
 function logError(...message: any) {
-  console.error('PackageManager:', ...message)
+  console.error('PackageManager[Error]:', ...message)
 }
 
 /**
@@ -357,10 +357,13 @@ async function installComponent(
 
 function pathsForComponent(component: Pick<Component, 'content'>) {
   const relativePath = path.join(Paths.extensionsDirRelative, component.content!.package_info.identifier)
+  const absolutePath = path.join(Paths.userDataDir, relativePath)
+  const downloadPath = path.join(Paths.tempDir, AppName, 'downloads', component.content!.name + '.zip')
+
   return {
     relativePath,
-    absolutePath: path.join(Paths.userDataDir, relativePath),
-    downloadPath: path.join(Paths.tempDir, AppName, 'downloads', component.content!.name + '.zip'),
+    absolutePath,
+    downloadPath,
   }
 }
 

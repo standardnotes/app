@@ -58,6 +58,10 @@
   --sn-desktop-titlebar-border-color: var(--border-color);
   --sn-desktop-titlebar-ui-color: var(--foreground-color);
   --sn-desktop-titlebar-ui-hover-color: var(--highlight-color);
+
+  // Theme
+
+  --navigation-item-selected-background-color: var(--sn-stylekit-background-color);
 }
 
 #notes-column .note.selected,

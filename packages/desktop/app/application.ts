@@ -1,51 +1,14 @@
 import { App, Shell } from 'electron'
-import { action, makeObservable, observable } from 'mobx'
-import { MessageType } from '../test/TestIpcMessage'
+import { AppState } from './AppState'
 import { createExtensionsServer } from './javascripts/Main/ExtensionsServer'
 import { Keychain } from './javascripts/Main/Keychain/Keychain'
-import { Store, StoreKeys } from './javascripts/Main/Store'
+import { StoreKeys } from './javascripts/Main/Store/StoreKeys'
 import { AppName, initializeStrings } from './javascripts/Main/Strings'
-import { Paths, Urls } from './javascripts/Main/Types/Paths'
 import { isLinux, isMac, isWindows } from './javascripts/Main/Types/Platforms'
-import { UpdateState } from './javascripts/Main/UpdateManager'
-import { handleTestMessage } from './javascripts/Main/Utils/Testing'
-import { isDev, isTesting } from './javascripts/Main/Utils/Utils'
-import { createWindowState, WindowState } from './javascripts/Main/Window'
+import { isDev } from './javascripts/Main/Utils/Utils'
+import { createWindowState } from './javascripts/Main/Window'
 
 const deepLinkScheme = 'standardnotes'
-
-export class AppState {
-  readonly version: string
-  readonly store: Store
-  readonly startUrl = Urls.indexHtml
-  readonly isPrimaryInstance: boolean
-  public willQuitApp = false
-  public lastBackupDate: number | null = null
-  public windowState?: WindowState
-  public deepLinkUrl?: string
-  public readonly updates: UpdateState
-
-  constructor(app: Electron.App) {
-    this.version = app.getVersion()
-    this.store = new Store(Paths.userDataDir)
-    this.isPrimaryInstance = app.requestSingleInstanceLock()
-    makeObservable(this, {
-      lastBackupDate: observable,
-      setBackupCreationDate: action,
-    })
-    this.updates = new UpdateState(this)
-
-    if (isTesting()) {
-      handleTestMessage(MessageType.AppStateCall, (method, ...args) => {
-        ;(this as any)[method](...args)
-      })
-    }
-  }
-
-  setBackupCreationDate(date: number | null): void {
-    this.lastBackupDate = date
-  }
-}
 
 export function initializeApplication(args: { app: Electron.App; ipcMain: Electron.IpcMain; shell: Shell }): void {
   const { app } = args
@@ -146,7 +109,6 @@ async function finishApplicationInitialization({ app, shell, state }: { app: App
   const keychainWindow = await Keychain.ensureKeychainAccess(state.store)
 
   initializeStrings(app.getLocale())
-  initializeExtensionsServer(state.store)
 
   const windowState = await createWindowState({
     shell,
@@ -156,6 +118,14 @@ async function finishApplicationInitialization({ app, shell, state }: { app: App
       state.windowState = undefined
     },
   })
+
+  if (state.isRunningVersionForFirstTime()) {
+    console.log('Clearing window cache')
+    await windowState.window.webContents.session.clearCache()
+  }
+
+  const host = createExtensionsServer()
+  state.store.set(StoreKeys.ExtServerHost, host)
 
   /**
    * Close the keychain window after the main window is created, otherwise the
@@ -170,10 +140,4 @@ async function finishApplicationInitialization({ app, shell, state }: { app: App
   }
 
   void windowState.window.loadURL(state.startUrl)
-}
-
-function initializeExtensionsServer(store: Store) {
-  const host = createExtensionsServer()
-
-  store.set(StoreKeys.ExtServerHost, host)
 }
