@@ -12,7 +12,8 @@
       "packages/*",
       "packages/components/src/Packages/Deprecated/*",
       "packages/components/src/Packages/Editors/*",
-      "packages/components/src/Packages/Themes/*"
+      "packages/components/src/Packages/Themes/*",
+      "docs"
     ]
   },
   "engines": {
