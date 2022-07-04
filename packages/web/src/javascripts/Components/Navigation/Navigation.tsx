@@ -14,10 +14,10 @@ import { classNames } from '@/Utils/ConcatenateClassNames'
 type Props = {
   application: WebApplication
   selectedPane: AppPaneId
-  setSelectedPane: React.Dispatch<React.SetStateAction<AppPaneId>>
+  togglePane: (paneId: AppPaneId) => void
 }
 
-const Navigation: FunctionComponent<Props> = ({ application, selectedPane, setSelectedPane }) => {
+const Navigation: FunctionComponent<Props> = ({ application, selectedPane, togglePane }) => {
   const viewControllerManager = useMemo(() => application.getViewControllerManager(), [application])
   const ref = useRef<HTMLDivElement>(null)
   const [panelWidth, setPanelWidth] = useState<number>(0)
@@ -60,7 +60,7 @@ const Navigation: FunctionComponent<Props> = ({ application, selectedPane, setSe
       <ResponsivePaneContent
         paneId={AppPaneId.Navigation}
         selectedPane={selectedPane}
-        setSelectedPane={setSelectedPane}
+        togglePane={togglePane}
         contentElementId="navigation-content"
       >
         <SearchBar

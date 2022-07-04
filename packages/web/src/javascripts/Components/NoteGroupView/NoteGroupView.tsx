@@ -20,7 +20,7 @@ type State = {
 type Props = {
   application: WebApplication
   selectedPane: AppPaneId
-  setSelectedPane: React.Dispatch<React.SetStateAction<AppPaneId>>
+  togglePane: (paneId: AppPaneId) => void
 }
 
 class NoteGroupView extends PureComponent<Props, State> {
@@ -98,7 +98,7 @@ class NoteGroupView extends PureComponent<Props, State> {
         <ResponsivePaneContent
           paneId={AppPaneId.Editor}
           selectedPane={this.props.selectedPane}
-          setSelectedPane={this.props.setSelectedPane}
+          togglePane={this.props.togglePane}
         >
           {this.state.showMultipleSelectedNotes && (
             <MultipleSelectedNotes

@@ -32,7 +32,7 @@ type Props = {
   notesController: NotesController
   selectionController: SelectedItemsController
   selectedPane: AppPaneId
-  setSelectedPane: React.Dispatch<React.SetStateAction<AppPaneId>>
+  togglePane: (paneId: AppPaneId) => void
 }
 
 const ContentListView: FunctionComponent<Props> = ({
@@ -46,7 +46,7 @@ const ContentListView: FunctionComponent<Props> = ({
   notesController,
   selectionController,
   selectedPane,
-  setSelectedPane,
+  togglePane,
 }) => {
   const itemsViewPanelRef = useRef<HTMLDivElement>(null)
 
@@ -182,7 +182,7 @@ const ContentListView: FunctionComponent<Props> = ({
       aria-label={'Notes & Files'}
       ref={itemsViewPanelRef}
     >
-      <ResponsivePaneContent paneId={AppPaneId.Items} selectedPane={selectedPane} setSelectedPane={setSelectedPane}>
+      <ResponsivePaneContent paneId={AppPaneId.Items} selectedPane={selectedPane} togglePane={togglePane}>
         <div id="items-title-bar" className="section-title-bar border-b border-solid border-border">
           <div id="items-title-bar-container">
             <ContentListHeader

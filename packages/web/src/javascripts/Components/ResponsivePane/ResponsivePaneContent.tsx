@@ -1,4 +1,4 @@
-import { useMemo, Dispatch, ReactNode, SetStateAction } from 'react'
+import { useMemo, ReactNode } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { AppPaneId, AppPaneTitles } from './PaneId'
 import { classNames } from '@/Utils/ConcatenateClassNames'
@@ -9,7 +9,7 @@ type Props = {
   contentElementId?: string
   paneId: AppPaneId
   selectedPane: AppPaneId
-  setSelectedPane: Dispatch<SetStateAction<AppPaneId>>
+  togglePane: (pane: AppPaneId) => void
 }
 
 const ResponsivePaneContent = ({
@@ -18,7 +18,7 @@ const ResponsivePaneContent = ({
   contentElementId,
   paneId,
   selectedPane,
-  setSelectedPane,
+  togglePane,
 }: Props) => {
   const isSelectedPane = useMemo(() => selectedPane === paneId, [paneId, selectedPane])
 
@@ -29,7 +29,7 @@ const ResponsivePaneContent = ({
           'flex w-full items-center justify-between border-b border-solid border-border px-4 py-2 md:hidden',
           isSelectedPane ? 'bg-contrast' : 'bg-default',
         )}
-        onClick={() => setSelectedPane(paneId)}
+        onClick={() => togglePane(paneId)}
       >
         <span>{AppPaneTitles[paneId]}</span>
         <Icon type="chevron-down" />

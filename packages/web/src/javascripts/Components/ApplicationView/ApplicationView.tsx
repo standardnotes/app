@@ -170,7 +170,21 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
     )
   }, [viewControllerManager, challenges, mainApplicationGroup, removeChallenge, application])
 
-  const [selectedPane, setSelectedPane] = useState<AppPaneId>(AppPaneId.Editor)
+  const [currentSelectedPane, setCurrentSelectedPane] = useState<AppPaneId>(AppPaneId.Editor)
+  const [previousSelectedPane, setPreviousSelectedPane] = useState<AppPaneId>(AppPaneId.Editor)
+
+  const togglePane = useCallback(
+    (paneId: AppPaneId) => {
+      if (paneId === currentSelectedPane) {
+        setCurrentSelectedPane(previousSelectedPane ? previousSelectedPane : AppPaneId.Editor)
+        setPreviousSelectedPane(paneId)
+      } else {
+        setPreviousSelectedPane(currentSelectedPane)
+        setCurrentSelectedPane(paneId)
+      }
+    },
+    [currentSelectedPane, previousSelectedPane],
+  )
 
   if (!renderAppContents) {
     return renderChallenges()
@@ -185,7 +199,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
             featuresController={viewControllerManager.featuresController}
             filesController={viewControllerManager.filesController}
           >
-            <Navigation application={application} selectedPane={selectedPane} setSelectedPane={setSelectedPane} />
+            <Navigation application={application} selectedPane={currentSelectedPane} togglePane={togglePane} />
             <ContentListView
               application={application}
               accountMenuController={viewControllerManager.accountMenuController}
@@ -196,10 +210,10 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
               noteTagsController={viewControllerManager.noteTagsController}
               notesController={viewControllerManager.notesController}
               selectionController={viewControllerManager.selectionController}
-              selectedPane={selectedPane}
-              setSelectedPane={setSelectedPane}
+              selectedPane={currentSelectedPane}
+              togglePane={togglePane}
             />
-            <NoteGroupView application={application} selectedPane={selectedPane} setSelectedPane={setSelectedPane} />
+            <NoteGroupView application={application} selectedPane={currentSelectedPane} togglePane={togglePane} />
           </FileDragNDropProvider>
         </div>
 
