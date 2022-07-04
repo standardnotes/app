@@ -6326,7 +6326,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/encryption@^1.8.22, @standardnotes/encryption@^1.8.23, @standardnotes/encryption@workspace:^, @standardnotes/encryption@workspace:packages/encryption":
+"@standardnotes/encryption@^1.8.22, @standardnotes/encryption@^1.8.23, @standardnotes/encryption@workspace:*, @standardnotes/encryption@workspace:^, @standardnotes/encryption@workspace:packages/encryption":
   version: 0.0.0-use.local
   resolution: "@standardnotes/encryption@workspace:packages/encryption"
   dependencies:
@@ -7215,6 +7215,7 @@ __metadata:
     "@reach/listbox": ^0.16.2
     "@reach/tooltip": ^0.16.2
     "@reach/visually-hidden": ^0.16.0
+    "@standardnotes/encryption": "workspace:*"
     "@standardnotes/filepicker": 1.16.23
     "@standardnotes/icons": "workspace:*"
     "@standardnotes/services": ^1.13.23

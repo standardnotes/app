@@ -10,7 +10,7 @@ import {
   STRING_LOCAL_ENC_ENABLED,
   STRING_ENC_NOT_ENABLED,
 } from '@/Constants/Strings'
-import { BackupFile } from '@standardnotes/snjs'
+import { BackupFile } from '@standardnotes/encryption'
 import { ChangeEventHandler, MouseEventHandler, useCallback, useEffect, useRef, useState } from 'react'
 import { WebApplication } from '@/Application/Application'
 import { ViewControllerManager } from '@/Services/ViewControllerManager'
