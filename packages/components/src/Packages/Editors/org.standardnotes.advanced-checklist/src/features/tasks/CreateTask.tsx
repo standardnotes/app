@@ -53,7 +53,8 @@ const CreateTask: React.FC<CreateTaskProps> = ({ group }) => {
   }
 
   useDebouncedCallback(() => {
-    if (group.draft !== undefined && taskDraft !== group.draft) {
+    const currentDraft = group.draft ?? ''
+    if (currentDraft !== taskDraft) {
       dispatch(tasksGroupDraft({ groupName, draft: taskDraft }))
     }
   })

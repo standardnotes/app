@@ -51,7 +51,13 @@ const TaskSectionList: React.FC<TaskSectionListProps> = ({ group }) => {
         )
         return (
           <DragDropContext key={`${section.id}-section-dnd`} onDragEnd={onDragEnd}>
-            <TasksSection testId={`${section.id}-section`} groupName={group.name} section={section} tasks={tasks}>
+            <TasksSection
+              testId={`${section.id}-section`}
+              groupName={group.name}
+              section={section}
+              tasks={tasks}
+              allTasks={group.tasks}
+            >
               {section.id === 'completed-tasks' && tasks.length > 0 && <CompletedTasksActions groupName={group.name} />}
             </TasksSection>
           </DragDropContext>

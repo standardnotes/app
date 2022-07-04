@@ -1,6 +1,6 @@
 import './TaskItem.scss'
 
-import { ChangeEvent, createRef, KeyboardEvent, useState } from 'react'
+import { ChangeEvent, KeyboardEvent, MouseEvent, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import { useAppDispatch, useAppSelector, useDebouncedCallback, useResize } from '../../app/hooks'
@@ -8,30 +8,11 @@ import { taskDeleted, TaskModel, taskModified, taskToggled } from './tasks-slice
 
 import { CheckBoxInput, TextAreaInput } from '../../common/components'
 
-/**
- * A delay in the dispatch function, when a task is opened.
- * Necessary to allow for transitions to occur.
- */
-const DISPATCH_OPENED_DELAY_MS = 1_250
-
-/**
- * A delay in the dispatch function, when a task is completed.
- * Necessary to allow for transitions to occur.
- */
-const DISPATCH_COMPLETED_DELAY_MS = 1_850
-
-const Container = styled.div<{ completed?: boolean }>`
+const Container = styled.div`
   align-content: center;
   align-items: center;
   display: flex;
   flex-direction: row;
-
-  ${({ completed }) =>
-    completed &&
-    `
-    color: var(--sn-stylekit-info-color);
-  `}
-
   min-width: 10%;
   max-width: 90%;
 `
@@ -39,11 +20,11 @@ const Container = styled.div<{ completed?: boolean }>`
 export type TaskItemProps = {
   task: TaskModel
   groupName: string
-  innerRef?: (element?: HTMLElement | null | undefined) => any
 }
 
-const TaskItem: React.FC<TaskItemProps> = ({ task, groupName, innerRef, ...props }) => {
-  const textAreaRef = createRef<HTMLTextAreaElement>()
+const TaskItem: React.FC<TaskItemProps> = ({ task, groupName }) => {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const textAreaRef = useRef<HTMLTextAreaElement>(null)
 
   const dispatch = useAppDispatch()
 
@@ -68,12 +49,14 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, groupName, innerRef, ...props
     const singleLineHeight = 20
     const currentHeight = parseFloat(textarea.style.height)
 
+    const containerElement = containerRef.current
+
     if (currentHeight > singleLineHeight) {
-      textarea.parentElement?.classList.add('align-baseline')
-      textarea.parentElement?.classList.remove('align-center')
+      containerElement?.classList.add('align-baseline')
+      containerElement?.classList.remove('align-center')
     } else {
-      textarea.parentElement?.classList.add('align-center')
-      textarea.parentElement?.classList.remove('align-baseline')
+      containerElement?.classList.add('align-center')
+      containerElement?.classList.remove('align-baseline')
     }
   }
 
@@ -81,15 +64,27 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, groupName, innerRef, ...props
     const newCompletedState = !completed
     setCompleted(newCompletedState)
 
-    newCompletedState
-      ? textAreaRef.current!.classList.add('cross-out')
-      : textAreaRef.current!.classList.add('no-text-decoration')
+    const textarea = textAreaRef.current
 
-    const dispatchDelay = newCompletedState ? DISPATCH_COMPLETED_DELAY_MS : DISPATCH_OPENED_DELAY_MS
+    if (newCompletedState) {
+      textarea?.classList.add(...['cross-out', 'info-color'])
+    } else {
+      textarea?.classList.add('no-text-decoration')
+    }
 
-    setTimeout(() => {
-      dispatch(taskToggled({ id: task.id, groupName }))
-    }, dispatchDelay)
+    dispatch(taskToggled({ id: task.id, groupName }))
+  }
+
+  function onCheckBoxClick({ currentTarget }: MouseEvent<SVGElement>) {
+    const parentElement = containerRef.current?.parentElement
+
+    if (task.completed) {
+      currentTarget.classList.remove('explode')
+      parentElement?.classList.add('completed')
+    } else {
+      currentTarget.classList.add('explode')
+      parentElement?.classList.add('opened')
+    }
   }
 
   function onTextChange(event: ChangeEvent<HTMLTextAreaElement>) {
@@ -125,8 +120,14 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, groupName, innerRef, ...props
   useResize(textAreaRef, resizeTextArea)
 
   return (
-    <Container data-testid="task-item" completed={completed} ref={innerRef} {...props}>
-      <CheckBoxInput testId="check-box-input" checked={completed} disabled={!canEdit} onChange={onCheckBoxToggle} />
+    <Container className="task-item" data-testid="task-item" ref={containerRef}>
+      <CheckBoxInput
+        testId="check-box-input"
+        checked={completed}
+        disabled={!canEdit}
+        onChange={onCheckBoxToggle}
+        onClick={onCheckBoxClick}
+      />
       <TextAreaInput
         testId="text-area-input"
         className="text-area-input"

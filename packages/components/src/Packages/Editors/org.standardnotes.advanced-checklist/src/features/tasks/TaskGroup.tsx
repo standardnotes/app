@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import styled from 'styled-components'
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
@@ -10,6 +9,7 @@ import TaskSectionList from './TaskSectionList'
 
 import TaskGroupOptions from './TaskGroupOptions'
 
+import { useEffect, useState } from 'react'
 import { CircularProgressBar, GenericInlineText, MainTitle, RoundButton } from '../../common/components'
 import { ChevronDownIcon, ChevronUpIcon, ReorderIcon } from '../../common/components/icons'
 
@@ -24,14 +24,6 @@ const TaskGroupContainer = styled.div<{ isLast?: boolean }>`
   @media only screen and (max-width: 600px) {
     padding: 8px 10px;
   }
-`
-
-type CollapsableContainerProps = {
-  collapsed: boolean
-}
-
-const CollapsableContainer = styled.div<CollapsableContainerProps>`
-  display: ${({ collapsed }) => (collapsed ? 'none' : 'block')};
 `
 
 type TaskGroupProps = {
@@ -69,7 +61,6 @@ const TaskGroup: React.FC<TaskGroupProps> = ({
   const allTasksCompleted = totalTasks > 0 && totalTasks === completedTasks
 
   function handleCollapse() {
-    dispatch(tasksGroupCollapsed({ groupName, type: 'group', collapsed: !collapsed }))
     setCollapsed(!collapsed)
   }
 
@@ -79,6 +70,10 @@ const TaskGroup: React.FC<TaskGroupProps> = ({
     }
     setCollapsed(false)
   }
+
+  useEffect(() => {
+    dispatch(tasksGroupCollapsed({ groupName, type: 'group', collapsed }))
+  }, [collapsed, dispatch, groupName])
 
   return (
     <TaskGroupContainer
@@ -119,10 +114,12 @@ const TaskGroup: React.FC<TaskGroupProps> = ({
         )}
       </div>
 
-      <CollapsableContainer collapsed={collapsed}>
-        <CreateTask group={group} />
-        <TaskSectionList group={group} />
-      </CollapsableContainer>
+      {!collapsed && (
+        <>
+          <CreateTask group={group} />
+          <TaskSectionList group={group} />
+        </>
+      )}
     </TaskGroupContainer>
   )
 }

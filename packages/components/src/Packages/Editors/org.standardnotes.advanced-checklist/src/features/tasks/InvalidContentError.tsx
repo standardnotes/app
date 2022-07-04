@@ -13,7 +13,11 @@ const Container = styled.div`
 
 const InvalidContentError: React.FC = () => {
   const lastError = useAppSelector((state) => state.tasks.lastError)
-  return <Container>{lastError || 'An unknown error has occurred, and the content cannot be displayed.'}</Container>
+  if (!lastError) {
+    return <></>
+  }
+
+  return <Container>{lastError}</Container>
 }
 
 export default InvalidContentError
