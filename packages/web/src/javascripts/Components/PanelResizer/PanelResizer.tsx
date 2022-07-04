@@ -1,6 +1,6 @@
 import { Component, createRef, MouseEventHandler } from 'react'
 import { debounce } from '@/Utils'
-import styled from 'styled-components'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 
 export type ResizeFinishCallback = (
   lastWidth: number,
@@ -38,50 +38,6 @@ type State = {
   collapsed: boolean
   pressed: boolean
 }
-
-const StyledPanelResizer = styled.div<{
-  hoverable?: boolean
-  alwaysVisible?: boolean
-  pressed: boolean
-  collapsed: boolean
-}>`
-  background-color: var(--panel-resizer-background-color);
-  border-bottom: none;
-  border-top: none;
-  cursor: col-resize;
-  height: 100%;
-  opacity: 0;
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 4px;
-  z-index: var(--z-index-panel-resizer);
-
-  @keyframes fade {
-    0% {
-      opacity: 0;
-    }
-
-    50% {
-      opacity: 1;
-    }
-
-    100% {
-      opacity: 0;
-    }
-  }
-
-  &.left {
-    left: 0;
-    right: none;
-  }
-
-  ${(props) => (props.alwaysVisible || props.collapsed || props.pressed) && 'opacity: 1;'}
-
-  &:hover {
-    ${(props) => props.hoverable && 'opacity: 1;'}
-  }
-`
 
 class PanelResizer extends Component<Props, State> {
   private overlay?: HTMLDivElement
@@ -351,13 +307,14 @@ class PanelResizer extends Component<Props, State> {
 
   override render() {
     return (
-      <StyledPanelResizer
-        hoverable={this.props.hoverable}
-        alwaysVisible={this.props.alwaysVisible}
-        pressed={this.state.pressed}
-        collapsed={this.state.collapsed}
-        className={`panel-resizer ${this.props.side}`}
-        onMouseDown={this.onMouseDown}
+      <div
+        className={classNames(
+          'absolute right-0 top-0 z-panel-resizer',
+          'hidden h-full w-[4px] cursor-col-resize border-y-0 bg-[color:var(--panel-resizer-background-color)] md:block',
+          this.props.alwaysVisible || this.state.collapsed || this.state.pressed ? ' opacity-100' : 'opacity-0',
+          this.props.hoverable && 'hover:opacity-100',
+          this.props.side === PanelSide.Left && 'left-0 right-auto',
+        )}
         ref={this.resizerElementRef}
       />
     )

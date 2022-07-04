@@ -1,16 +1,50 @@
 .app-column-container {
-  display: grid;
-  grid-template-columns: auto auto 2fr;
+  display: flex;
+  flex-direction: column;
+
+  @media screen and (min-width: 768px) {
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: auto auto 2fr;
+  }
 }
 
 .app-column-first {
   width: 220px;
+
+  @media screen and (max-width: 768px) {
+    width: 100% !important;
+  }
 }
 
 .app-column-second {
   width: 350px;
+
+  @media screen and (max-width: 768px) {
+    width: 100% !important;
+  }
 }
 
 .app-column {
   overflow: hidden;
+
+  .content {
+    height: 100%;
+  }
+
+  @media screen and (max-width: 768px) {
+    &.selected {
+      flex-grow: 1;
+
+      .content {
+        height: 100%;
+        overflow-y: auto;
+      }
+    }
+
+    &:not(.selected) {
+      height: auto;
+      border-bottom: 1px solid var(--sn-stylekit-border-color);
+    }
+  }
 }

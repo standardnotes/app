@@ -2,10 +2,13 @@
 
 #items-column {
   background-color: var(--items-column-background-color);
-  border-left: 1px solid var(--items-column-border-left-color);
-  border-right: 1px solid var(--items-column-border-right-color);
   font-size: var(--sn-stylekit-font-size-h2);
   user-select: none;
+
+  @media screen and (min-width: 768px) {
+    border-left: 1px solid var(--items-column-border-left-color);
+    border-right: 1px solid var(--items-column-border-right-color);
+  }
 
   -moz-user-select: none;
   -khtml-user-select: none;
@@ -18,11 +21,6 @@
     justify-content: center;
     align-items: center;
     font-size: var(--sn-stylekit-font-size-h3);
-  }
-
-  .content {
-    display: flex;
-    flex-direction: column;
   }
 
   #items-title-bar-container {

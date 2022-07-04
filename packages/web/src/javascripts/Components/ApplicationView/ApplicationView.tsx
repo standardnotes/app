@@ -25,6 +25,7 @@ import PermissionsModalWrapper from '@/Components/PermissionsModal/PermissionsMo
 import { PanelResizedData } from '@/Types/PanelResizedData'
 import TagContextMenuWrapper from '@/Components/Tags/TagContextMenuWrapper'
 import FileDragNDropProvider from '../FileDragNDropProvider/FileDragNDropProvider'
+import ResponsivePaneProvider from '../ResponsivePane/ResponsivePaneProvider'
 
 type Props = {
   application: WebApplication
@@ -182,19 +183,21 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
             featuresController={viewControllerManager.featuresController}
             filesController={viewControllerManager.filesController}
           >
-            <Navigation application={application} />
-            <ContentListView
-              application={application}
-              accountMenuController={viewControllerManager.accountMenuController}
-              filesController={viewControllerManager.filesController}
-              itemListController={viewControllerManager.itemListController}
-              navigationController={viewControllerManager.navigationController}
-              noAccountWarningController={viewControllerManager.noAccountWarningController}
-              noteTagsController={viewControllerManager.noteTagsController}
-              notesController={viewControllerManager.notesController}
-              selectionController={viewControllerManager.selectionController}
-            />
-            <NoteGroupView application={application} />
+            <ResponsivePaneProvider>
+              <Navigation application={application} />
+              <ContentListView
+                application={application}
+                accountMenuController={viewControllerManager.accountMenuController}
+                filesController={viewControllerManager.filesController}
+                itemListController={viewControllerManager.itemListController}
+                navigationController={viewControllerManager.navigationController}
+                noAccountWarningController={viewControllerManager.noAccountWarningController}
+                noteTagsController={viewControllerManager.noteTagsController}
+                notesController={viewControllerManager.notesController}
+                selectionController={viewControllerManager.selectionController}
+              />
+              <NoteGroupView application={application} />
+            </ResponsivePaneProvider>
           </FileDragNDropProvider>
         </div>
 

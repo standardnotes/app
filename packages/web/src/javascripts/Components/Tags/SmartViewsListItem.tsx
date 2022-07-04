@@ -13,6 +13,8 @@ import {
   useRef,
   useState,
 } from 'react'
+import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
+import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 
 type Props = {
   view: SmartView
@@ -44,6 +46,8 @@ const smartViewIconType = (view: SmartView, isSelected: boolean): IconType => {
 }
 
 const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
+  const { toggleAppPane } = useResponsiveAppPane()
+
   const [title, setTitle] = useState(view.title || '')
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -55,9 +59,10 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
     setTitle(view.title || '')
   }, [setTitle, view])
 
-  const selectCurrentTag = useCallback(() => {
-    void tagsState.setSelectedTag(view)
-  }, [tagsState, view])
+  const selectCurrentTag = useCallback(async () => {
+    await tagsState.setSelectedTag(view)
+    toggleAppPane(AppPaneId.Items)
+  }, [tagsState, toggleAppPane, view])
 
   const onBlur = useCallback(() => {
     tagsState.save(view, title).catch(console.error)

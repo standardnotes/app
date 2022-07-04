@@ -17,6 +17,8 @@ import { NotesController } from '@/Controllers/NotesController'
 import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
 import { ElementIds } from '@/Constants/ElementIDs'
 import ContentListHeader from './Header/ContentListHeader'
+import ResponsivePaneContent from '../ResponsivePane/ResponsivePaneContent'
+import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -168,11 +170,11 @@ const ContentListView: FunctionComponent<Props> = ({
   return (
     <div
       id="items-column"
-      className="sn-component section app-column app-column-second"
+      className="sn-component section app-column app-column-second border-b border-solid border-border"
       aria-label={'Notes & Files'}
       ref={itemsViewPanelRef}
     >
-      <div className="content">
+      <ResponsivePaneContent paneId={AppPaneId.Items}>
         <div id="items-title-bar" className="section-title-bar border-b border-solid border-border">
           <div id="items-title-bar-container">
             <ContentListHeader
@@ -204,7 +206,7 @@ const ContentListView: FunctionComponent<Props> = ({
             selectionController={selectionController}
           />
         ) : null}
-      </div>
+      </ResponsivePaneContent>
       {itemsViewPanelRef.current && (
         <PanelResizer
           collapsable={true}

@@ -1,9 +1,11 @@
 export const ElementIds = {
+  ContentList: 'notes-scrollable',
+  EditorColumn: 'editor-column',
+  EditorContent: 'editor-content',
+  FileTextPreview: 'file-text-preview',
+  FileTitleEditor: 'file-title-editor',
+  ItemsColumn: 'items-column',
+  NavigationColumn: 'navigation',
   NoteTextEditor: 'note-text-editor',
   NoteTitleEditor: 'note-title-editor',
-  FileTitleEditor: 'file-title-editor',
-  FileTextPreview: 'file-text-preview',
-  EditorContent: 'editor-content',
-  EditorColumn: 'editor-column',
-  ContentList: 'notes-scrollable',
 }
