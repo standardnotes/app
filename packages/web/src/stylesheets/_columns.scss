@@ -45,10 +45,6 @@
     &:not(.selected) {
       height: auto;
       border-bottom: 1px solid var(--sn-stylekit-border-color);
-
-      .content {
-        display: none !important;
-      }
     }
   }
 }
