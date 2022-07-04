@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.5.10](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.5.9...@standardnotes/components-meta@2.5.10) (2022-07-04)
+
+### Bug Fixes
+
+* **advanced checklist:** animations and error handling ([#1200](https://github.com/standardnotes/app/issues/1200)) ([a0205a5](https://github.com/standardnotes/app/commit/a0205a5c7dd72184cb575195ced3132091072239))
+
 ## [2.5.9](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.5.8...@standardnotes/components-meta@2.5.9) (2022-07-01)
 
 ### Bug Fixes
