@@ -17,7 +17,7 @@ const NoteTagsContainer = ({ viewControllerManager }: Props) => {
 
   return (
     <div
-      className="-mt-1 -mr-2 flex min-w-80 flex-wrap bg-transparent"
+      className="flex min-w-80 flex-wrap bg-transparent md:-mr-2"
       style={{
         maxWidth: tagsContainerMaxWidth,
       }}
