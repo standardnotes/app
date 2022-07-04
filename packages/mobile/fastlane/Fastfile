@@ -42,7 +42,10 @@ platform :ios do
       in_house: false # optional but may be required if using match/sigh
     )
     upload_to_testflight(
-      apple_id: ENV['APPLE_APP_ID']
+      apple_id: ENV['APPLE_APP_ID'],
+      distribute_external: true,
+      notify_external_testers: true,
+      submit_beta_review: true
     )
     # refresh_dsyms
   end
@@ -97,7 +100,7 @@ platform :android do
     )
   end
 
-  def deploy_android(variant, versionCode, track = 'internal')
+  def deploy_android(variant, versionCode, track = 'beta')
     sh("yarn run android:bundle")
     build_android(variant, versionCode)
     upload_to_play_store(
