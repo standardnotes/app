@@ -8,7 +8,7 @@ import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } 
 import PanelResizer, { PanelSide, ResizeFinishCallback, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
 import SearchBar from '@/Components/SearchBar/SearchBar'
 import ResponsivePaneContent from '@/Components/ResponsivePane/ResponsivePaneContent'
-import { AppPaneId } from '@/Components/ResponsivePane/PaneId'
+import { AppPaneId } from '@/Components/ResponsivePane/AppPaneMetadata'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 
 type Props = {

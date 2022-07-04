@@ -25,7 +25,7 @@ import PermissionsModalWrapper from '@/Components/PermissionsModal/PermissionsMo
 import { PanelResizedData } from '@/Types/PanelResizedData'
 import TagContextMenuWrapper from '@/Components/Tags/TagContextMenuWrapper'
 import FileDragNDropProvider from '../FileDragNDropProvider/FileDragNDropProvider'
-import { AppPaneId } from '../ResponsivePane/PaneId'
+import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 
 type Props = {
   application: WebApplication

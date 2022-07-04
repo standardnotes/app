@@ -7,7 +7,7 @@ import MultipleSelectedFiles from '../MultipleSelectedFiles/MultipleSelectedFile
 import { ElementIds } from '@/Constants/ElementIDs'
 import FileView from '@/Components/FileView/FileView'
 import { FileDnDContext } from '@/Components/FileDragNDropProvider/FileDragNDropProvider'
-import { AppPaneId } from '../ResponsivePane/PaneId'
+import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import ResponsivePaneContent from '../ResponsivePane/ResponsivePaneContent'
 
 type State = {

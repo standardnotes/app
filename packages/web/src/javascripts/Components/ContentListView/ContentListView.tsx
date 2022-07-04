@@ -18,7 +18,7 @@ import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuCont
 import { ElementIds } from '@/Constants/ElementIDs'
 import ContentListHeader from './Header/ContentListHeader'
 import ResponsivePaneContent from '../ResponsivePane/ResponsivePaneContent'
-import { AppPaneId } from '../ResponsivePane/PaneId'
+import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 
 type Props = {
