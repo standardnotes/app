@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/docs",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "license": "AGPL-3.0-or-later",
   "private": true,
   "scripts": {
