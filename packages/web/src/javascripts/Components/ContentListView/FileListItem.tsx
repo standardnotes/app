@@ -7,6 +7,8 @@ import ListItemFlagIcons from './ListItemFlagIcons'
 import ListItemTags from './ListItemTags'
 import ListItemMetadata from './ListItemMetadata'
 import { DisplayableListItemProps } from './Types/DisplayableListItemProps'
+import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
+import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 
 const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
   application,
@@ -20,6 +22,8 @@ const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
   sortBy,
   tags,
 }) => {
+  const { toggleAppPane } = useResponsiveAppPane()
+
   const openFileContextMenu = useCallback(
     (posX: number, posY: number) => {
       filesController.setFileContextMenuLocation({
@@ -41,9 +45,12 @@ const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
     [selectionController, item.uuid, openFileContextMenu],
   )
 
-  const onClick = useCallback(() => {
-    void selectionController.selectItem(item.uuid, true)
-  }, [item.uuid, selectionController])
+  const onClick = useCallback(async () => {
+    const { didSelect } = await selectionController.selectItem(item.uuid, true)
+    if (didSelect) {
+      toggleAppPane(AppPaneId.Editor)
+    }
+  }, [item.uuid, selectionController, toggleAppPane])
 
   const IconComponent = () =>
     getFileIconComponent(

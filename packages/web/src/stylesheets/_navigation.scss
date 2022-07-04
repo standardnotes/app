@@ -12,11 +12,11 @@ $content-horizontal-padding: 16px;
   -moz-user-select: none;
   -khtml-user-select: none;
   -webkit-user-select: none;
+  display: flex;
+  flex-direction: column;
 
   &,
   #navigation-content {
-    display: flex;
-    flex-direction: column;
     background-color: var(--navigation-column-background-color);
   }
 

@@ -6,6 +6,9 @@ import NoteView from '@/Components/NoteView/NoteView'
 import MultipleSelectedFiles from '../MultipleSelectedFiles/MultipleSelectedFiles'
 import { ElementIds } from '@/Constants/ElementIDs'
 import FileView from '@/Components/FileView/FileView'
+import { FileDnDContext } from '@/Components/FileDragNDropProvider/FileDragNDropProvider'
+import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
+import ResponsivePaneContent from '../ResponsivePane/ResponsivePaneContent'
 
 type State = {
   showMultipleSelectedNotes: boolean
@@ -19,6 +22,9 @@ type Props = {
 }
 
 class NoteGroupView extends PureComponent<Props, State> {
+  static override contextType = FileDnDContext
+  declare context: React.ContextType<typeof FileDnDContext>
+
   private removeChangeObserver!: () => void
 
   constructor(props: Props) {
@@ -77,53 +83,55 @@ class NoteGroupView extends PureComponent<Props, State> {
   }
 
   override render() {
+    const fileDragNDropContext = this.context
+
     const shouldNotShowMultipleSelectedItems =
       !this.state.showMultipleSelectedNotes && !this.state.showMultipleSelectedFiles
 
     return (
       <div id={ElementIds.EditorColumn} className="app-column app-column-third h-full">
-        {this.state.showMultipleSelectedNotes && (
-          <MultipleSelectedNotes
-            application={this.application}
-            filesController={this.viewControllerManager.filesController}
-            selectionController={this.viewControllerManager.selectionController}
-            featuresController={this.viewControllerManager.featuresController}
-            filePreviewModalController={this.viewControllerManager.filePreviewModalController}
-            navigationController={this.viewControllerManager.navigationController}
-            notesController={this.viewControllerManager.notesController}
-            noteTagsController={this.viewControllerManager.noteTagsController}
-            historyModalController={this.viewControllerManager.historyModalController}
-          />
-        )}
-
-        {this.state.showMultipleSelectedFiles && (
-          <MultipleSelectedFiles
-            application={this.application}
-            filesController={this.viewControllerManager.filesController}
-            selectionController={this.viewControllerManager.selectionController}
-            featuresController={this.viewControllerManager.featuresController}
-            filePreviewModalController={this.viewControllerManager.filePreviewModalController}
-            navigationController={this.viewControllerManager.navigationController}
-            notesController={this.viewControllerManager.notesController}
-          />
-        )}
-
-        {shouldNotShowMultipleSelectedItems && this.state.controllers.length > 0 && (
-          <>
-            {this.state.controllers.map((controller) => {
-              return controller instanceof NoteViewController ? (
-                <NoteView key={controller.item.uuid} application={this.application} controller={controller} />
-              ) : (
-                <FileView
-                  key={controller.item.uuid}
-                  application={this.application}
-                  viewControllerManager={this.viewControllerManager}
-                  file={controller.item}
-                />
-              )
-            })}
-          </>
-        )}
+        <ResponsivePaneContent paneId={AppPaneId.Editor}>
+          {this.state.showMultipleSelectedNotes && (
+            <MultipleSelectedNotes
+              application={this.application}
+              filesController={this.viewControllerManager.filesController}
+              selectionController={this.viewControllerManager.selectionController}
+              featuresController={this.viewControllerManager.featuresController}
+              filePreviewModalController={this.viewControllerManager.filePreviewModalController}
+              navigationController={this.viewControllerManager.navigationController}
+              notesController={this.viewControllerManager.notesController}
+              noteTagsController={this.viewControllerManager.noteTagsController}
+              historyModalController={this.viewControllerManager.historyModalController}
+            />
+          )}
+          {this.state.showMultipleSelectedFiles && (
+            <MultipleSelectedFiles
+              filesController={this.viewControllerManager.filesController}
+              selectionController={this.viewControllerManager.selectionController}
+            />
+          )}
+          {this.viewControllerManager.navigationController.isInFilesView && fileDragNDropContext?.isDraggingFiles && (
+            <div className="absolute bottom-8 left-1/2 z-dropdown-menu -translate-x-1/2 rounded bg-info px-5 py-3 text-info-contrast shadow-main">
+              Drop your files to upload them
+            </div>
+          )}
+          {shouldNotShowMultipleSelectedItems && this.state.controllers.length > 0 && (
+            <>
+              {this.state.controllers.map((controller) => {
+                return controller instanceof NoteViewController ? (
+                  <NoteView key={controller.item.uuid} application={this.application} controller={controller} />
+                ) : (
+                  <FileView
+                    key={controller.item.uuid}
+                    application={this.application}
+                    viewControllerManager={this.viewControllerManager}
+                    file={controller.item}
+                  />
+                )
+              })}
+            </>
+          )}
+        </ResponsivePaneContent>
       </div>
     )
   }

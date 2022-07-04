@@ -47,15 +47,12 @@ const ConfirmCustomPackage: FunctionComponent<{
         return (
           <Fragment key={field.value}>
             <Subtitle>{field.label}</Subtitle>
-            <Text className={'wrap'}>{field.value}</Text>
-            <div className="min-h-2" />
+            <Text className="wrap mb-2">{field.value}</Text>
           </Fragment>
         )
       })}
 
-      <div className="min-h-3" />
-
-      <div className="flex flex-row">
+      <div className="mt-3 flex flex-row">
         <Button className="min-w-20" label="Cancel" onClick={() => callback(false)} />
 
         <div className="min-w-3" />

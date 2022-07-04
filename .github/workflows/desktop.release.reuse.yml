@@ -159,6 +159,8 @@ jobs:
         with:
           registry-url: 'https://registry.npmjs.org'
 
+      - run: yarn install
+
       - uses: actions/download-artifact@v3
         with:
           name: assets
@@ -174,9 +176,10 @@ jobs:
           path: packages/desktop
 
       - name: Generate Release Notes
+        uses: ./actions/release-notes
+        with:
+          package: web desktop
         id: release-notes
-        run: echo "::set-output name=release-notes::$(node ../../scripts/changelog-parser.js web desktop)"
-        shell: bash
         continue-on-error: true
 
       - name: Release
@@ -185,7 +188,7 @@ jobs:
           token: ${{ secrets.CI_PAT_TOKEN }}
           tag_name: "@standardnotes/desktop@${{ steps.package-version.outputs.current-version}}"
           name: "Desktop ${{ steps.package-version.outputs.current-version }}"
-          body: ${{ steps.release-notes.outputs.release-notes }}
+          body: ${{ steps.release-notes.outputs.result }}
           prerelease: true
           draft: false
           files: packages/desktop/dist/*

@@ -908,11 +908,8 @@ class NoteView extends PureComponent<NoteViewProps, State> {
           )}
 
           {this.note && (
-            <div
-              id="editor-title-bar"
-              className="content-title-bar section-title-bar section-title-bar z-editor-title-bar w-full"
-            >
-              <div className="flex h-8 items-center justify-between">
+            <div id="editor-title-bar" className="content-title-bar section-title-bar z-editor-title-bar w-full">
+              <div className="mb-2 flex flex-wrap items-center justify-between gap-2 md:mb-0 md:flex-nowrap md:gap-0">
                 <div className={(this.state.noteLocked ? 'locked' : '') + ' flex-grow'}>
                   <div className="title overflow-auto">
                     <input
@@ -930,22 +927,26 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                     />
                   </div>
                 </div>
-                <div className="flex items-center">
-                  <div id="save-status-container">
-                    <div id="save-status">
-                      <div
-                        className={
-                          (this.state.syncTakingTooLong ? 'font-bold text-warning ' : '') +
-                          (this.state.saveError ? 'font-bold text-danger ' : '') +
-                          'message text-xs'
-                        }
-                      >
-                        {this.state.noteStatus?.message}
+                <div className="flex flex-col flex-wrap items-start gap-3 md:flex-row md:flex-nowrap md:items-center">
+                  {this.state.noteStatus?.message?.length && (
+                    <div id="save-status-container">
+                      <div id="save-status">
+                        <div
+                          className={
+                            (this.state.syncTakingTooLong ? 'font-bold text-warning ' : '') +
+                            (this.state.saveError ? 'font-bold text-danger ' : '') +
+                            'message text-xs'
+                          }
+                        >
+                          {this.state.noteStatus?.message}
+                        </div>
+                        {this.state.noteStatus?.desc && (
+                          <div className="desc text-xs">{this.state.noteStatus.desc}</div>
+                        )}
                       </div>
-                      {this.state.noteStatus?.desc && <div className="desc text-xs">{this.state.noteStatus.desc}</div>}
                     </div>
-                  </div>
-                  <div className="mr-3">
+                  )}
+                  <div className="flex items-center gap-3">
                     <AttachedFilesButton
                       application={this.application}
                       onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
@@ -956,28 +957,24 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                       notesController={this.viewControllerManager.notesController}
                       selectionController={this.viewControllerManager.selectionController}
                     />
-                  </div>
-                  <div className="mr-3">
                     <ChangeEditorButton
                       application={this.application}
                       viewControllerManager={this.viewControllerManager}
                       onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                     />
-                  </div>
-                  <div className="mr-3">
                     <PinNoteButton
                       notesController={this.viewControllerManager.notesController}
                       onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                     />
+                    <NotesOptionsPanel
+                      application={this.application}
+                      navigationController={this.viewControllerManager.navigationController}
+                      notesController={this.viewControllerManager.notesController}
+                      noteTagsController={this.viewControllerManager.noteTagsController}
+                      historyModalController={this.viewControllerManager.historyModalController}
+                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                    />
                   </div>
-                  <NotesOptionsPanel
-                    application={this.application}
-                    navigationController={this.viewControllerManager.navigationController}
-                    notesController={this.viewControllerManager.notesController}
-                    noteTagsController={this.viewControllerManager.noteTagsController}
-                    historyModalController={this.viewControllerManager.historyModalController}
-                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                  />
                 </div>
               </div>
               <NoteTagsContainer viewControllerManager={this.viewControllerManager} />

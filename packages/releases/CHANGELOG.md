@@ -3,6 +3,42 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.44](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.2.43...@standardnotes/releases@1.2.44) (2022-07-04)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.2.43](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.2.42...@standardnotes/releases@1.2.43) (2022-07-02)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.2.42](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.2.41...@standardnotes/releases@1.2.42) (2022-07-02)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.2.41](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.2.40...@standardnotes/releases@1.2.41) (2022-07-01)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.2.40](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.2.39...@standardnotes/releases@1.2.40) (2022-07-01)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.2.39](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.2.38...@standardnotes/releases@1.2.39) (2022-07-01)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.2.38](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.2.37...@standardnotes/releases@1.2.38) (2022-07-01)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.2.37](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.2.36...@standardnotes/releases@1.2.37) (2022-07-01)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.2.36](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.2.35...@standardnotes/releases@1.2.36) (2022-06-30)
+
+**Note:** Version bump only for package @standardnotes/releases
+
 ## [1.2.35](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.2.34...@standardnotes/releases@1.2.35) (2022-06-30)
 
 **Note:** Version bump only for package @standardnotes/releases

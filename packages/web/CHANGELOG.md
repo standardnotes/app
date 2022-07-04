@@ -3,6 +3,48 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.32.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.31.1...@standardnotes/web@3.32.0) (2022-07-04)
+
+### Features
+
+* initial implementation of responsive app panes ([#1198](https://github.com/standardnotes/app/issues/1198)) ([21ea2ec](https://github.com/standardnotes/app/commit/21ea2ec7a1391638bf0cfb2661ccb78a186d8d8f))
+
+## [3.31.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.31.0...@standardnotes/web@3.31.1) (2022-07-02)
+
+### Bug Fixes
+
+* permissions modal width ([#1195](https://github.com/standardnotes/app/issues/1195)) ([dd23135](https://github.com/standardnotes/app/commit/dd23135d6ddd78bb3f5499256576b26ce6466b12))
+
+# [3.31.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.30.0...@standardnotes/web@3.31.0) (2022-07-02)
+
+### Features
+
+* remove attached files button from files view ([#1193](https://github.com/standardnotes/app/issues/1193)) ([f3a6aaa](https://github.com/standardnotes/app/commit/f3a6aaaf2e2ad49cd805c73383269e5ed3f4cd31))
+
+# [3.30.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.29.2...@standardnotes/web@3.30.0) (2022-07-01)
+
+### Features
+
+* **web:** file view auto-rename on title change([#1192](https://github.com/standardnotes/app/issues/1192)) ([febca55](https://github.com/standardnotes/app/commit/febca55f25e748af2fd1f36dd91f67bd57812ce5))
+
+## [3.29.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.29.1...@standardnotes/web@3.29.2) (2022-07-01)
+
+### Bug Fixes
+
+* **web:** selected navigation item color ([#1191](https://github.com/standardnotes/app/issues/1191)) ([0193ba3](https://github.com/standardnotes/app/commit/0193ba3e7bffa59a3359c984359138e9be34c4e1))
+
+## [3.29.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.29.0...@standardnotes/web@3.29.1) (2022-07-01)
+
+### Bug Fixes
+
+* **web:** file protected overlay not toggling off correctly ([#1190](https://github.com/standardnotes/app/issues/1190)) ([7c3c59d](https://github.com/standardnotes/app/commit/7c3c59dd926ac5561b147dd025f0c5479286a1bb))
+
+# [3.29.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.28.1...@standardnotes/web@3.29.0) (2022-07-01)
+
+### Features
+
+* allow previewing CSV files as plaintext ([#1188](https://github.com/standardnotes/app/issues/1188)) ([87213e9](https://github.com/standardnotes/app/commit/87213e9f5d3b4ecc9864b9b7b501262379644d47))
+
 ## [3.28.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.28.0...@standardnotes/web@3.28.1) (2022-06-30)
 
 **Note:** Version bump only for package @standardnotes/web
