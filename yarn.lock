@@ -6326,7 +6326,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/encryption@^1.8.22, @standardnotes/encryption@^1.8.23, @standardnotes/encryption@workspace:packages/encryption":
+"@standardnotes/encryption@^1.8.22, @standardnotes/encryption@^1.8.23, @standardnotes/encryption@workspace:^, @standardnotes/encryption@workspace:packages/encryption":
   version: 0.0.0-use.local
   resolution: "@standardnotes/encryption@workspace:packages/encryption"
   dependencies:
@@ -6720,6 +6720,7 @@ __metadata:
     "@react-navigation/stack": ^6.2.1
     "@standardnotes/components-meta": "workspace:*"
     "@standardnotes/config": ^2.4.3
+    "@standardnotes/encryption": "workspace:^"
     "@standardnotes/filepicker": ^1.16.23
     "@standardnotes/icons": "workspace:*"
     "@standardnotes/react-native-aes": ^1.4.3
