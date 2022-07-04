@@ -25,6 +25,7 @@ import PermissionsModalWrapper from '@/Components/PermissionsModal/PermissionsMo
 import { PanelResizedData } from '@/Types/PanelResizedData'
 import TagContextMenuWrapper from '@/Components/Tags/TagContextMenuWrapper'
 import FileDragNDropProvider from '../FileDragNDropProvider/FileDragNDropProvider'
+import { AppPaneId } from '../ResponsivePane/PaneId'
 
 type Props = {
   application: WebApplication
@@ -169,7 +170,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
     )
   }, [viewControllerManager, challenges, mainApplicationGroup, removeChallenge, application])
 
-  const [selectedSection, setSelectedSection] = useState<'navigation' | 'items' | 'editor'>('editor')
+  const [selectedPane, setSelectedPane] = useState<AppPaneId>(AppPaneId.Editor)
 
   if (!renderAppContents) {
     return renderChallenges()
@@ -184,11 +185,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
             featuresController={viewControllerManager.featuresController}
             filesController={viewControllerManager.filesController}
           >
-            <Navigation
-              application={application}
-              isSelectedSection={selectedSection === 'navigation'}
-              setSelectedSection={setSelectedSection}
-            />
+            <Navigation application={application} selectedPane={selectedPane} setSelectedPane={setSelectedPane} />
             <ContentListView
               application={application}
               accountMenuController={viewControllerManager.accountMenuController}
@@ -199,14 +196,10 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
               noteTagsController={viewControllerManager.noteTagsController}
               notesController={viewControllerManager.notesController}
               selectionController={viewControllerManager.selectionController}
-              isSelectedSection={selectedSection === 'items'}
-              setSelectedSection={setSelectedSection}
+              selectedPane={selectedPane}
+              setSelectedPane={setSelectedPane}
             />
-            <NoteGroupView
-              application={application}
-              isSelectedSection={selectedSection === 'editor'}
-              setSelectedSection={setSelectedSection}
-            />
+            <NoteGroupView application={application} selectedPane={selectedPane} setSelectedPane={setSelectedPane} />
           </FileDragNDropProvider>
         </div>
 

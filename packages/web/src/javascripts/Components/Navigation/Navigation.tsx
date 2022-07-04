@@ -4,20 +4,22 @@ import { WebApplication } from '@/Application/Application'
 import { PANEL_NAME_NAVIGATION } from '@/Constants/Constants'
 import { ApplicationEvent, PrefKey } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import PanelResizer, { PanelSide, ResizeFinishCallback, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
 import SearchBar from '@/Components/SearchBar/SearchBar'
-import Icon from '../Icon/Icon'
+import ResponsivePaneContent from '@/Components/ResponsivePane/ResponsivePaneContent'
+import { AppPaneId } from '@/Components/ResponsivePane/PaneId'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 
 type Props = {
   application: WebApplication
-  isSelectedSection: boolean
-  setSelectedSection: React.Dispatch<React.SetStateAction<'navigation' | 'items' | 'editor'>>
+  selectedPane: AppPaneId
+  setSelectedPane: React.Dispatch<React.SetStateAction<AppPaneId>>
 }
 
-const Navigation: FunctionComponent<Props> = ({ application, isSelectedSection, setSelectedSection }) => {
+const Navigation: FunctionComponent<Props> = ({ application, selectedPane, setSelectedPane }) => {
   const viewControllerManager = useMemo(() => application.getViewControllerManager(), [application])
-  const [ref, setRef] = useState<HTMLDivElement | null>()
+  const ref = useRef<HTMLDivElement>(null)
   const [panelWidth, setPanelWidth] = useState<number>(0)
 
   useEffect(() => {
@@ -49,22 +51,18 @@ const Navigation: FunctionComponent<Props> = ({ application, isSelectedSection, 
   return (
     <div
       id="navigation"
-      className={`sn-component section app-column app-column-first ${
-        isSelectedSection && 'selected border-b border-solid border-border'
-      }`}
-      data-aria-label="Navigation"
-      ref={setRef}
+      className={classNames(
+        'sn-component section app-column app-column-first',
+        selectedPane === AppPaneId.Navigation && 'selected border-b border-solid border-border',
+      )}
+      ref={ref}
     >
-      <button
-        className={`flex w-full items-center justify-between border-b border-solid border-border px-4 py-2 md:hidden ${
-          isSelectedSection ? 'bg-contrast' : 'bg-default'
-        }`}
-        onClick={() => setSelectedSection('navigation')}
+      <ResponsivePaneContent
+        paneId={AppPaneId.Navigation}
+        selectedPane={selectedPane}
+        setSelectedPane={setSelectedPane}
+        contentElementId="navigation-content"
       >
-        <span>Navigation</span>
-        <Icon type="chevron-down" />
-      </button>
-      <div id="navigation-content" className="content">
         <SearchBar
           itemListController={viewControllerManager.itemListController}
           searchOptionsController={viewControllerManager.searchOptionsController}
@@ -80,12 +78,12 @@ const Navigation: FunctionComponent<Props> = ({ application, isSelectedSection, 
           <SmartViewsSection viewControllerManager={viewControllerManager} />
           <TagsSection viewControllerManager={viewControllerManager} />
         </div>
-      </div>
-      {ref && (
+      </ResponsivePaneContent>
+      {ref.current && (
         <PanelResizer
           collapsable={true}
           defaultWidth={150}
-          panel={ref}
+          panel={ref.current}
           hoverable={true}
           side={PanelSide.Right}
           type={PanelResizeType.WidthOnly}

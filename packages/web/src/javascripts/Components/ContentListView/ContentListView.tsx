@@ -17,7 +17,9 @@ import { NotesController } from '@/Controllers/NotesController'
 import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
 import { ElementIds } from '@/Constants/ElementIDs'
 import ContentListHeader from './Header/ContentListHeader'
-import Icon from '../Icon/Icon'
+import ResponsivePaneContent from '../ResponsivePane/ResponsivePaneContent'
+import { AppPaneId } from '../ResponsivePane/PaneId'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -29,8 +31,8 @@ type Props = {
   noteTagsController: NoteTagsController
   notesController: NotesController
   selectionController: SelectedItemsController
-  isSelectedSection: boolean
-  setSelectedSection: React.Dispatch<React.SetStateAction<'navigation' | 'items' | 'editor'>>
+  selectedPane: AppPaneId
+  setSelectedPane: React.Dispatch<React.SetStateAction<AppPaneId>>
 }
 
 const ContentListView: FunctionComponent<Props> = ({
@@ -43,8 +45,8 @@ const ContentListView: FunctionComponent<Props> = ({
   noteTagsController,
   notesController,
   selectionController,
-  isSelectedSection,
-  setSelectedSection,
+  selectedPane,
+  setSelectedPane,
 }) => {
   const itemsViewPanelRef = useRef<HTMLDivElement>(null)
 
@@ -173,22 +175,14 @@ const ContentListView: FunctionComponent<Props> = ({
   return (
     <div
       id="items-column"
-      className={`sn-component section app-column app-column-second ${
-        isSelectedSection && 'selected border-b border-solid border-border'
-      }`}
+      className={classNames(
+        'sn-component section app-column app-column-second',
+        selectedPane === AppPaneId.Items && 'selected border-b border-solid border-border',
+      )}
       aria-label={'Notes & Files'}
       ref={itemsViewPanelRef}
     >
-      <button
-        className={`flex w-full items-center justify-between border-b border-solid border-border px-4 py-2 focus:shadow-none focus:outline-none md:hidden ${
-          isSelectedSection ? 'bg-contrast' : 'bg-default'
-        }`}
-        onClick={() => setSelectedSection('items')}
-      >
-        <span>Items</span>
-        <Icon type="chevron-down" />
-      </button>
-      <div className="content">
+      <ResponsivePaneContent paneId={AppPaneId.Items} selectedPane={selectedPane} setSelectedPane={setSelectedPane}>
         <div id="items-title-bar" className="section-title-bar border-b border-solid border-border">
           <div id="items-title-bar-container">
             <ContentListHeader
@@ -220,7 +214,7 @@ const ContentListView: FunctionComponent<Props> = ({
             selectionController={selectionController}
           />
         ) : null}
-      </div>
+      </ResponsivePaneContent>
       {itemsViewPanelRef.current && (
         <PanelResizer
           collapsable={true}

@@ -6,8 +6,9 @@ import NoteView from '@/Components/NoteView/NoteView'
 import MultipleSelectedFiles from '../MultipleSelectedFiles/MultipleSelectedFiles'
 import { ElementIds } from '@/Constants/ElementIDs'
 import FileView from '@/Components/FileView/FileView'
-import Icon from '../Icon/Icon'
 import { FileDnDContext } from '@/Components/FileDragNDropProvider/FileDragNDropProvider'
+import { AppPaneId } from '../ResponsivePane/PaneId'
+import ResponsivePaneContent from '../ResponsivePane/ResponsivePaneContent'
 
 type State = {
   showMultipleSelectedNotes: boolean
@@ -18,8 +19,8 @@ type State = {
 
 type Props = {
   application: WebApplication
-  isSelectedSection: boolean
-  setSelectedSection: React.Dispatch<React.SetStateAction<'navigation' | 'items' | 'editor'>>
+  selectedPane: AppPaneId
+  setSelectedPane: React.Dispatch<React.SetStateAction<AppPaneId>>
 }
 
 class NoteGroupView extends PureComponent<Props, State> {
@@ -92,18 +93,13 @@ class NoteGroupView extends PureComponent<Props, State> {
     return (
       <div
         id={ElementIds.EditorColumn}
-        className={`app-column app-column-third h-full ${this.props.isSelectedSection && 'selected'}`}
+        className={`app-column app-column-third h-full ${this.props.selectedPane === AppPaneId.Editor && 'selected'}`}
       >
-        <button
-          className={`flex w-full items-center justify-between border-b border-solid border-border px-4 py-2 md:hidden ${
-            this.props.isSelectedSection ? 'bg-contrast' : 'bg-default'
-          }`}
-          onClick={() => this.props.setSelectedSection('editor')}
+        <ResponsivePaneContent
+          paneId={AppPaneId.Editor}
+          selectedPane={this.props.selectedPane}
+          setSelectedPane={this.props.setSelectedPane}
         >
-          <span>Editor</span>
-          <Icon type="chevron-down" />
-        </button>
-        <div className="content">
           {this.state.showMultipleSelectedNotes && (
             <MultipleSelectedNotes
               application={this.application}
@@ -144,7 +140,7 @@ class NoteGroupView extends PureComponent<Props, State> {
               })}
             </>
           )}
-        </div>
+        </ResponsivePaneContent>
       </div>
     )
   }
