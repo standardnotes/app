@@ -2,28 +2,10 @@ import { Uuid } from '@standardnotes/common'
 import {
   DecryptedPayloadInterface,
   EncryptedPayloadInterface,
-  ItemsKeyInterface,
   PayloadInterface,
-  RootKeyInterface,
 } from '@standardnotes/models'
+import { AbstractKeySplit } from './AbstractKeySplit'
 import { EncryptionTypeSplit } from './EncryptionTypeSplit'
-
-export interface AbstractKeySplit<T = EncryptedPayloadInterface | DecryptedPayloadInterface> {
-  usesRootKey?: {
-    items: T[]
-    key: RootKeyInterface
-  }
-  usesItemsKey?: {
-    items: T[]
-    key: ItemsKeyInterface
-  }
-  usesRootKeyWithKeyLookup?: {
-    items: T[]
-  }
-  usesItemsKeyWithKeyLookup?: {
-    items: T[]
-  }
-}
 
 export type KeyedEncryptionSplit = AbstractKeySplit<DecryptedPayloadInterface>
 export type KeyedDecryptionSplit = AbstractKeySplit<EncryptedPayloadInterface>
