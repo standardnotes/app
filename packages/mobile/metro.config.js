@@ -24,6 +24,7 @@ module.exports = (async () => {
       path.resolve(__dirname, '../icons'),
       path.resolve(__dirname, '../styles'),
       '../components',
+      '../features',
     ],
     transformer: {
       getTransformOptions: async () => ({
