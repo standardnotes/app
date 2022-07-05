@@ -1,9 +1,5 @@
 import { Uuid } from '@standardnotes/common'
-import {
-  DecryptedPayloadInterface,
-  EncryptedPayloadInterface,
-  PayloadInterface,
-} from '@standardnotes/models'
+import { DecryptedPayloadInterface, EncryptedPayloadInterface, PayloadInterface } from '@standardnotes/models'
 import { EncryptionTypeSplit } from './EncryptionTypeSplit'
 import { KeyedDecryptionSplit } from './KeyedDecryptionSplit'
 import { KeyedEncryptionSplit } from './KeyedEncryptionSplit'

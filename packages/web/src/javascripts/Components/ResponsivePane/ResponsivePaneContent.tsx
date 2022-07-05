@@ -33,7 +33,7 @@ const ResponsivePaneContent = ({ children, contentClassName, contentElementId, p
       </button>
       <div
         id={contentElementId}
-        className={classNames('content', isSelectedPane ? 'h-full' : 'hidden flex-col md:flex', contentClassName)}
+        className={classNames('content flex flex-col', isSelectedPane ? 'h-full' : 'hidden md:flex', contentClassName)}
       >
         {children}
       </div>

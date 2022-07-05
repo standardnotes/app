@@ -9,6 +9,7 @@ import PanelResizer, { PanelSide, ResizeFinishCallback, PanelResizeType } from '
 import SearchBar from '@/Components/SearchBar/SearchBar'
 import ResponsivePaneContent from '@/Components/ResponsivePane/ResponsivePaneContent'
 import { AppPaneId } from '@/Components/ResponsivePane/AppPaneMetadata'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 
 type Props = {
   application: WebApplication
@@ -59,7 +60,13 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
             </div>
           </div>
         </div>
-        <div className="scrollable">
+        <div
+          className={classNames(
+            'h-full overflow-y-auto overflow-x-hidden',
+            'md:overflow-y-hidden md:hover:overflow-y-auto',
+            'md:hover:[overflow-y:_overlay]',
+          )}
+        >
           <SmartViewsSection viewControllerManager={viewControllerManager} />
           <TagsSection viewControllerManager={viewControllerManager} />
         </div>

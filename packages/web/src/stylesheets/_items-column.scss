@@ -108,8 +108,6 @@
   }
 
   .infinite-scroll {
-    @include minimal_scrollbar();
-    height: inherit;
     background-color: var(--items-column-items-background-color);
   }
 

@@ -1,11 +1,9 @@
 import { ViewControllerManager } from '@/Services/ViewControllerManager'
-import { isMobile } from '@/Utils'
 import { SNTag } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback } from 'react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
-import { TouchBackend } from 'react-dnd-touch-backend'
 import RootTagDropZone from './RootTagDropZone'
 import { TagsListItem } from './TagsListItem'
 
@@ -17,7 +15,7 @@ const TagsList: FunctionComponent<Props> = ({ viewControllerManager }: Props) =>
   const tagsState = viewControllerManager.navigationController
   const allTags = tagsState.allLocalRootTags
 
-  const backend = isMobile({ tablet: true }) ? TouchBackend : HTML5Backend
+  const backend = HTML5Backend
 
   const openTagContextMenu = useCallback(
     (posX: number, posY: number) => {

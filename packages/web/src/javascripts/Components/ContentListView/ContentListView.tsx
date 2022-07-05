@@ -19,6 +19,7 @@ import { ElementIds } from '@/Constants/ElementIDs'
 import ContentListHeader from './Header/ContentListHeader'
 import ResponsivePaneContent from '../ResponsivePane/ResponsivePaneContent'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
+import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -43,6 +44,8 @@ const ContentListView: FunctionComponent<Props> = ({
   notesController,
   selectionController,
 }) => {
+  const { toggleAppPane } = useResponsiveAppPane()
+
   const itemsViewPanelRef = useRef<HTMLDivElement>(null)
 
   const {
@@ -65,13 +68,14 @@ const ContentListView: FunctionComponent<Props> = ({
     [navigationController.selected?.uuid],
   )
 
-  const addNewItem = useCallback(() => {
+  const addNewItem = useCallback(async () => {
     if (isFilesSmartView) {
       void filesController.uploadNewFile()
     } else {
-      void createNewNote()
+      await createNewNote()
+      toggleAppPane(AppPaneId.Editor)
     }
-  }, [filesController, createNewNote, isFilesSmartView])
+  }, [isFilesSmartView, filesController, createNewNote, toggleAppPane])
 
   useEffect(() => {
     /**
@@ -84,7 +88,7 @@ const ContentListView: FunctionComponent<Props> = ({
       modifiers: [KeyboardModifier.Meta, KeyboardModifier.Ctrl],
       onKeyDown: (event) => {
         event.preventDefault()
-        addNewItem()
+        void addNewItem()
       },
     })
 
@@ -170,7 +174,7 @@ const ContentListView: FunctionComponent<Props> = ({
   return (
     <div
       id="items-column"
-      className="sn-component section app-column app-column-second border-b border-solid border-border"
+      className="sn-component section app-column app-column-second flex flex-col border-b border-solid border-border"
       aria-label={'Notes & Files'}
       ref={itemsViewPanelRef}
     >
