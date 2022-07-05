@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.33.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.33.6...@standardnotes/web@3.33.7) (2022-07-05)
+
+### Bug Fixes
+
+* **web:** content & navigation list scroll on mobile ([#1207](https://github.com/standardnotes/app/issues/1207)) ([37d765a](https://github.com/standardnotes/app/commit/37d765ab218ae50e3fd4705973f7bed06c1f4eb5))
+
 ## [3.33.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.33.5...@standardnotes/web@3.33.6) (2022-07-05)
 
 **Note:** Version bump only for package @standardnotes/web
