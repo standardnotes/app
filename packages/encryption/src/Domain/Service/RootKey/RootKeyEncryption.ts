@@ -15,7 +15,7 @@ import {
   ErrorDecryptingParameters,
   isErrorDecryptingParameters,
 } from '../../Types/EncryptedParameters'
-import { ItemsKeyMutator } from '../../Keys/ItemsKey'
+import { ItemsKeyMutator } from '../../Keys/ItemsKey/ItemsKeyMutator'
 import { CreateNewRootKey } from '../../Keys/RootKey/Functions'
 import {
   DecryptedPayload,
