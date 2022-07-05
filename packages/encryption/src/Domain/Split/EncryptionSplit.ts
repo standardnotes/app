@@ -4,11 +4,9 @@ import {
   EncryptedPayloadInterface,
   PayloadInterface,
 } from '@standardnotes/models'
-import { AbstractKeySplit } from './AbstractKeySplit'
 import { EncryptionTypeSplit } from './EncryptionTypeSplit'
-
-export type KeyedEncryptionSplit = AbstractKeySplit<DecryptedPayloadInterface>
-export type KeyedDecryptionSplit = AbstractKeySplit<EncryptedPayloadInterface>
+import { KeyedDecryptionSplit } from './KeyedDecryptionSplit'
+import { KeyedEncryptionSplit } from './KeyedEncryptionSplit'
 
 export function CreateEncryptionSplitWithKeyLookup(
   payloadSplit: EncryptionTypeSplit<DecryptedPayloadInterface>,
