@@ -3,24 +3,16 @@
 .vscode
 .idea
 node_modules
-
-packages/web/dist
-
 .sass-cache
-
 .env
 .ssh
 dump.rdb
 .vscode
-/dist
 yarn-error.log
 package-lock.json
 codeqldb
 coverage
 lerna-debug.log
-
-packages/encryption/dist
-packages/features/dist
 
 **/.pnp.*
 **/.yarn/*
