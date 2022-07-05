@@ -44,6 +44,10 @@ class ApplicationGroupView extends Component<Props, State> {
     window.mainApplicationGroup = this.group
 
     this.applicationObserverRemover = this.group.addEventObserver((event, data) => {
+      alert('(inside event observer) window.application is' + (window as any).application)
+      // TODO: remove this (if done correctly, this should call the Mobile's `getAllRawDatabasePayloads` method inside WebView instead of Web's one)
+      void this.application?.deviceInterface.getAllRawDatabasePayloads(this.application?.identifier)
+
       if (event === ApplicationGroupEvent.PrimaryApplicationSet) {
         const castData = data as ApplicationGroupEventData[ApplicationGroupEvent.PrimaryApplicationSet]
 

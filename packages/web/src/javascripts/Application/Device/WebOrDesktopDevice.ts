@@ -109,6 +109,7 @@ export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface 
   }
 
   async getAllRawDatabasePayloads(identifier: ApplicationIdentifier) {
+    alert('in web getAllRawDatabasePayloads...')
     return this.databaseForIdentifier(identifier).getAllPayloads()
   }
 

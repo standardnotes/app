@@ -200,6 +200,7 @@ export class MobileDeviceInterface implements DeviceInterface {
   async getAllRawDatabasePayloads<T extends TransferPayload = TransferPayload>(
     identifier: ApplicationIdentifier,
   ): Promise<T[]> {
+    console.log('in mobile getAllRawDatabasePayloads...')
     const keys = await this.getAllDatabaseKeys(identifier)
     return this.getDatabaseKeyValues(keys) as Promise<T[]>
   }

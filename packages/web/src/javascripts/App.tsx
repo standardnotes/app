@@ -49,7 +49,17 @@ const startApplication: StartApplication = async function startApplication(
   SNLog.onError = console.error
   let root: Root
 
+  setTimeout(() => {
+    alert('mobileApplication is... ' + (window as any).mobileApplication)
+  }, 2000)
+
+  const messageListener = (msg: MessageEvent) => {
+    alert('message received' + JSON.stringify(msg))
+  }
+
   const onDestroy = () => {
+    window.removeEventListener('message', messageListener)
+
     const rootElement = document.getElementById(RootId) as HTMLElement
     root.unmount()
     rootElement.remove()
@@ -75,6 +85,8 @@ const startApplication: StartApplication = async function startApplication(
   }
 
   const domReady = document.readyState === 'complete' || document.readyState === 'interactive'
+
+  window.addEventListener('message', messageListener)
 
   if (domReady) {
     renderApp()
