@@ -1,0 +1,45 @@
+{
+  "name": "@standardnotes/encryption",
+  "version": "1.9.0",
+  "engines": {
+    "node": ">=16.0.0 <17.0.0"
+  },
+  "description": "Payload encryption used in SNJS library",
+  "main": "dist/index.js",
+  "author": "Standard Notes",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "AGPL-3.0-or-later",
+  "scripts": {
+    "clean": "rm -fr dist",
+    "prestart": "yarn clean",
+    "start": "tsc -p tsconfig.json --watch",
+    "prebuild": "yarn clean",
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint . --ext .ts",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@standardnotes/config": "2.4.3",
+    "@types/jest": "^27.4.1",
+    "@types/node": "^18.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.30.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "jest": "^27.5.1",
+    "ts-jest": "^27.1.3"
+  },
+  "dependencies": {
+    "@standardnotes/common": "^1.23.1",
+    "@standardnotes/models": "^1.11.13",
+    "@standardnotes/responses": "^1.6.39",
+    "@standardnotes/services": "^1.13.23",
+    "@standardnotes/sncrypto-common": "^1.9.0",
+    "@standardnotes/utils": "^1.6.12",
+    "reflect-metadata": "^0.1.13"
+  }
+}

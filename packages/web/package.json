@@ -68,6 +68,7 @@
     "@reach/listbox": "^0.16.2",
     "@reach/tooltip": "^0.16.2",
     "@reach/visually-hidden": "^0.16.0",
+    "@standardnotes/encryption": "workspace:*",
     "@standardnotes/filepicker": "1.16.23",
     "@standardnotes/icons": "workspace:*",
     "@standardnotes/services": "^1.13.23",

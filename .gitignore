@@ -19,6 +19,8 @@ codeqldb
 coverage
 lerna-debug.log
 
+packages/encryption/dist
+
 **/.pnp.*
 **/.yarn/*
 !.yarn/patches

@@ -36,6 +36,7 @@
     "@react-navigation/native": "^6.0.10",
     "@react-navigation/stack": "^6.2.1",
     "@standardnotes/components-meta": "workspace:*",
+    "@standardnotes/encryption": "workspace:^",
     "@standardnotes/filepicker": "^1.16.23",
     "@standardnotes/icons": "workspace:*",
     "@standardnotes/react-native-aes": "^1.4.3",
