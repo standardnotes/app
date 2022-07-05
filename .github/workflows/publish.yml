@@ -7,7 +7,7 @@ on:
 jobs:
   Build:
     if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
-
+    continue-on-error: true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
