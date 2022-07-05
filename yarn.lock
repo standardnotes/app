@@ -6585,7 +6585,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/files@^1.3.23, @standardnotes/files@workspace:packages/files":
+"@standardnotes/files@^1.3.23, @standardnotes/files@workspace:*, @standardnotes/files@workspace:packages/files":
   version: 0.0.0-use.local
   resolution: "@standardnotes/files@workspace:packages/files"
   dependencies:
@@ -6894,6 +6894,7 @@ __metadata:
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/features": "workspace:*"
     "@standardnotes/filepicker": "workspace:*"
+    "@standardnotes/files": "workspace:*"
     "@standardnotes/icons": "workspace:*"
     "@standardnotes/react-native-aes": ^1.4.3
     "@standardnotes/react-native-textview": 1.1.0
@@ -7346,6 +7347,7 @@ __metadata:
     "@reach/visually-hidden": ^0.16.0
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/filepicker": "workspace:*"
+    "@standardnotes/files": "workspace:*"
     "@standardnotes/icons": "workspace:*"
     "@standardnotes/services": "workspace:*"
     "@standardnotes/sncrypto-web": 1.10.1

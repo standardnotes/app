@@ -70,6 +70,7 @@
     "@reach/visually-hidden": "^0.16.0",
     "@standardnotes/encryption": "workspace:*",
     "@standardnotes/filepicker": "workspace:*",
+    "@standardnotes/files": "workspace:*",
     "@standardnotes/icons": "workspace:*",
     "@standardnotes/services": "workspace:*",
     "@standardnotes/sncrypto-web": "1.10.1",
