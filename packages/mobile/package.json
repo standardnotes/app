@@ -38,7 +38,7 @@
     "@standardnotes/components-meta": "workspace:*",
     "@standardnotes/encryption": "workspace:*",
     "@standardnotes/features": "workspace:*",
-    "@standardnotes/filepicker": "^1.16.23",
+    "@standardnotes/filepicker": "workspace:*",
     "@standardnotes/icons": "workspace:*",
     "@standardnotes/react-native-aes": "^1.4.3",
     "@standardnotes/react-native-textview": "1.1.0",

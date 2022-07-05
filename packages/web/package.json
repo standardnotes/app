@@ -69,7 +69,7 @@
     "@reach/tooltip": "^0.16.2",
     "@reach/visually-hidden": "^0.16.0",
     "@standardnotes/encryption": "workspace:*",
-    "@standardnotes/filepicker": "1.16.23",
+    "@standardnotes/filepicker": "workspace:*",
     "@standardnotes/icons": "workspace:*",
     "@standardnotes/services": "^1.13.23",
     "@standardnotes/sncrypto-web": "1.10.1",

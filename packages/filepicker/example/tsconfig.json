@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "target": "es2015",
+    "module": "es2015",
+    "moduleResolution": "node",
+    "baseUrl": ".",
+  },
+  "exclude": ["dist", "node_modules"]
+}

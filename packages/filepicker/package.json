@@ -1,0 +1,42 @@
+{
+  "name": "@standardnotes/filepicker",
+  "version": "1.17.0",
+  "engines": {
+    "node": ">=16.0.0 <17.0.0"
+  },
+  "description": "Web filepicker for Standard Notes projects",
+  "main": "dist/index.js",
+  "author": "Standard Notes",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "AGPL-3.0-or-later",
+  "scripts": {
+    "clean": "rm -fr dist",
+    "prestart": "yarn clean",
+    "start": "tsc -p tsconfig.json --watch",
+    "prebuild": "yarn clean",
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint . --ext .ts",
+    "test:unit": "jest"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.4.1",
+    "@types/wicg-file-system-access": "^2020.9.5",
+    "@typescript-eslint/eslint-plugin": "^5.30.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "jest": "^27.5.1",
+    "ts-jest": "^27.1.3",
+    "ts-node": "^10.5.0"
+  },
+  "dependencies": {
+    "@standardnotes/common": "^1.23.1",
+    "@standardnotes/services": "^1.13.23",
+    "@standardnotes/utils": "^1.6.12",
+    "reflect-metadata": "^0.1.13"
+  }
+}
