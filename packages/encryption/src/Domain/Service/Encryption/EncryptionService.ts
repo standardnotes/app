@@ -40,7 +40,7 @@ import {
   isEncryptedPayload,
   RootKeyInterface,
 } from '@standardnotes/models'
-import { SplitPayloadsByEncryptionType } from '../../Split/EncryptionTypeSplit'
+import { SplitPayloadsByEncryptionType } from '../../Split/Functions'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { isNotUndefined } from '@standardnotes/utils'
 import { DiagnosticInfo } from '@standardnotes/services'
