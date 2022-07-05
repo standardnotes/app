@@ -20,6 +20,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
