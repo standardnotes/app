@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 1.14.0 (2022-07-05)
+
+### Features
+
+* add models package ([b614c71](https://github.com/standardnotes/app/commit/b614c71e79959a24379567a3b5cb3a3e66fde6ed))
+
 # [1.12.0](https://github.com/standardnotes/snjs/compare/@standardnotes/models@1.11.14...@standardnotes/models@1.12.0) (2022-07-05)
 
 ### Features

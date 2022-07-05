@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 1.15.0 (2022-07-05)
+
+### Features
+
+* add services package ([fbfed0a](https://github.com/standardnotes/app/commit/fbfed0a05cd5eb6ec4d5579012971e4495e04a30))
+
 ## [1.13.25](https://github.com/standardnotes/snjs/compare/@standardnotes/services@1.13.24...@standardnotes/services@1.13.25) (2022-07-05)
 
 **Note:** Version bump only for package @standardnotes/services

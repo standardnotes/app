@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.28.1](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.28.0...@standardnotes/mobile@3.28.1) (2022-07-05)
+
+### Bug Fixes
+
+* mobile metro config for files and services ([f4cde8f](https://github.com/standardnotes/app/commit/f4cde8f75264d5d4342dd4f0f80dbd2e77061df1))
+
 # [3.28.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.27.13...@standardnotes/mobile@3.28.0) (2022-07-05)
 
 ### Features

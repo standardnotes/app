@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0](https://github.com/standardnotes/app/compare/@standardnotes/files@1.6.0...@standardnotes/files@1.7.0) (2022-07-05)
+
+### Features
+
+* add models package ([b614c71](https://github.com/standardnotes/app/commit/b614c71e79959a24379567a3b5cb3a3e66fde6ed))
+* add services package ([fbfed0a](https://github.com/standardnotes/app/commit/fbfed0a05cd5eb6ec4d5579012971e4495e04a30))
+
 # 1.6.0 (2022-07-05)
 
 ### Features

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.35.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.34.0...@standardnotes/web@3.35.0) (2022-07-05)
+
+### Features
+
+* add services package ([fbfed0a](https://github.com/standardnotes/app/commit/fbfed0a05cd5eb6ec4d5579012971e4495e04a30))
+
 # [3.34.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.33.8...@standardnotes/web@3.34.0) (2022-07-05)
 
 ### Features
