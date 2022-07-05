@@ -17,10 +17,10 @@ jobs:
         uses: ruby/setup-ruby@v1
       - name: Install dependencies
         run: yarn install
-      - name: ESLint
-        run: yarn lint
       - name: Build
         run: yarn build:web-server
+      - name: ESLint
+        run: yarn lint
       - name: Test
         run: yarn test
 
