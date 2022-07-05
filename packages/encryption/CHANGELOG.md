@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.10.3](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.10.2...@standardnotes/encryption@1.10.3) (2022-07-05)
+
+### Bug Fixes
+
+* extraction abstract key split ([85ab5b9](https://github.com/standardnotes/app/commit/85ab5b914a0fe178c52b130644fb8f36648f1b93))
+
 ## [1.10.2](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.10.1...@standardnotes/encryption@1.10.2) (2022-07-05)
 
 ### Bug Fixes
