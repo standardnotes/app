@@ -5,7 +5,8 @@ import {
   leftVersionGreaterThanOrEqualToRight,
   compareVersions,
 } from '@standardnotes/common'
-import { BackupFile, BackupFileType } from './BackupFile'
+import { BackupFile } from './BackupFile'
+import { BackupFileType } from './BackupFileType'
 import { extendArray } from '@standardnotes/utils'
 import { EncryptionService } from '../Service/Encryption/EncryptionService'
 import {
@@ -28,7 +29,7 @@ import { CreateAnyKeyParams } from '../Keys/RootKey/KeyParamsFunctions'
 import { SNRootKeyParams } from '../Keys/RootKey/RootKeyParams'
 import { SNRootKey } from '../Keys/RootKey/RootKey'
 import { ContentTypeUsesRootKeyEncryption } from '../Keys/RootKey/Functions'
-import { isItemsKey, SNItemsKey } from '../Keys/ItemsKey'
+import { isItemsKey, SNItemsKey } from '../Keys/ItemsKey/ItemsKey'
 
 export async function DecryptBackupFile(
   file: BackupFile,

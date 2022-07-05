@@ -20,7 +20,7 @@ import { DecryptedParameters, EncryptedParameters, ErrorDecryptingParameters } f
 import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
 import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
-import { isItemsKey } from '../../Keys/ItemsKey'
+import { isItemsKey } from '../../Keys/ItemsKey/ItemsKey'
 import { CreateNewRootKey } from '../../Keys/RootKey/Functions'
 
 const NO_IV = '00000000000000000000000000000000'
