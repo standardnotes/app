@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.5](https://github.com/standardnotes/app/compare/@standardnotes/advanced-checklist@0.1.4...@standardnotes/advanced-checklist@0.1.5) (2022-07-05)
+
+### Bug Fixes
+
+* **advanced checklist:** UI changes ([#1208](https://github.com/standardnotes/app/issues/1208)) ([1ce4cb3](https://github.com/standardnotes/app/commit/1ce4cb3c5c8f4e590fd67fdbd684b36ac6383bd9))
+
 ## [0.1.4](https://github.com/standardnotes/app/compare/@standardnotes/advanced-checklist@0.1.3...@standardnotes/advanced-checklist@0.1.4) (2022-07-04)
 
 ### Bug Fixes
