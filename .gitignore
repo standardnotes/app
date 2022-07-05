@@ -15,6 +15,7 @@ coverage
 lerna-debug.log
 
 packages/**/dist
+!packages/components/dist
 
 **/.pnp.*
 **/.yarn/*
