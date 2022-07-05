@@ -11,12 +11,12 @@ import TaskGroupOptions from './TaskGroupOptions'
 
 import { useEffect, useState } from 'react'
 import { CircularProgressBar, GenericInlineText, MainTitle, RoundButton } from '../../common/components'
-import { ChevronDownIcon, ChevronUpIcon, ReorderIcon } from '../../common/components/icons'
+import { ChevronDownIcon, ChevronUpIcon } from '../../common/components/icons'
 
 const TaskGroupContainer = styled.div<{ isLast?: boolean }>`
   background-color: var(--sn-stylekit-background-color);
   border: 1px solid var(--sn-stylekit-border-color);
-  border-radius: 8px;
+  border-radius: 4px;
   box-sizing: border-box;
   padding: 16px;
   margin-bottom: ${({ isLast }) => (!isLast ? '9px' : '0px')};
@@ -85,12 +85,7 @@ const TaskGroup: React.FC<TaskGroupProps> = ({
     >
       <div className="flex items-center justify-between h-8 mt-1 mb-1">
         <div className="flex flex-grow items-center" onClick={handleClick}>
-          {canEdit && (
-            <div className="mr-3 pt-1px" {...props}>
-              <ReorderIcon highlight={isDragging} />
-            </div>
-          )}
-          <MainTitle crossed={allTasksCompleted && collapsed} highlight={isDragging}>
+          <MainTitle crossed={allTasksCompleted && collapsed} highlight={isDragging} {...props}>
             {groupName}
           </MainTitle>
           <CircularProgressBar size={18} percentage={percentageCompleted} />

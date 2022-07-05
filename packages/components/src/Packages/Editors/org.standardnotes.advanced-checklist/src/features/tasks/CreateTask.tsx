@@ -6,18 +6,12 @@ import { useAppDispatch, useAppSelector, useDebouncedCallback } from '../../app/
 import { GroupModel, taskAdded, tasksGroupDraft } from './tasks-slice'
 
 import { TextInput } from '../../common/components'
-import { DottedCircleIcon } from '../../common/components/icons'
 import { isLastActiveGroup } from '../../common/utils'
 
 const Container = styled.div`
   align-items: center;
   display: flex;
   margin-bottom: 8px;
-
-  & > *:first-child {
-    margin-left: 1px;
-    margin-right: 9px;
-  }
 `
 
 type CreateTaskProps = {
@@ -67,7 +61,6 @@ const CreateTask: React.FC<CreateTaskProps> = ({ group }) => {
 
   return (
     <Container>
-      <DottedCircleIcon />
       <TextInput
         testId="create-task-input"
         disabled={!canEdit}

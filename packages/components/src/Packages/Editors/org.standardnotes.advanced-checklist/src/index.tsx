@@ -21,12 +21,8 @@ import { CheckBoxElementsDefs } from './common/components/svg'
 import { getPlainPreview } from './common/utils'
 
 const MainContainer = styled.div`
-  margin: 16px;
+  margin: 6px;
   padding-bottom: 60px;
-
-  @media only screen and (max-width: 600px) {
-    margin: 8px;
-  }
 `
 
 const FloatingContainer = styled.div`
