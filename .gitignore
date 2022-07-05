@@ -20,6 +20,7 @@ coverage
 lerna-debug.log
 
 packages/encryption/dist
+packages/features/dist
 
 **/.pnp.*
 **/.yarn/*
