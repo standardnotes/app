@@ -5,7 +5,8 @@ import {
   leftVersionGreaterThanOrEqualToRight,
   compareVersions,
 } from '@standardnotes/common'
-import { BackupFile, BackupFileType } from './BackupFile'
+import { BackupFile } from './BackupFile'
+import { BackupFileType } from './BackupFileType'
 import { extendArray } from '@standardnotes/utils'
 import { EncryptionService } from '../Service/Encryption/EncryptionService'
 import {
