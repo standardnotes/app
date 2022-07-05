@@ -1,0 +1,27 @@
+/* istanbul ignore file */
+
+export enum ChallengeReason {
+  AccessProtectedFile,
+  AccessProtectedNote,
+  AddPasscode,
+  ApplicationUnlock,
+  ChangeAutolockInterval,
+  ChangePasscode,
+  CreateDecryptedBackupWithProtectedItems,
+  Custom,
+  DecryptEncryptedFile,
+  DisableBiometrics,
+  DisableMfa,
+  ExportBackup,
+  ImportFile,
+  Migration,
+  ProtocolUpgrade,
+  RemovePasscode,
+  ResaveRootKey,
+  RevokeSession,
+  SearchProtectedNotesText,
+  SelectProtectedNote,
+  UnprotectFile,
+  UnprotectNote,
+  DeleteAccount,
+}

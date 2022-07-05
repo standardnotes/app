@@ -6549,7 +6549,7 @@ __metadata:
     "@standardnotes/config": 2.4.3
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": ^1.6.39
-    "@standardnotes/services": ^1.13.23
+    "@standardnotes/services": "workspace:*"
     "@standardnotes/sncrypto-common": ^1.9.0
     "@standardnotes/utils": ^1.6.12
     "@types/jest": ^27.4.1
@@ -6604,7 +6604,7 @@ __metadata:
   resolution: "@standardnotes/filepicker@workspace:packages/filepicker"
   dependencies:
     "@standardnotes/common": ^1.23.1
-    "@standardnotes/services": ^1.13.23
+    "@standardnotes/services": "workspace:*"
     "@standardnotes/utils": ^1.6.12
     "@types/jest": ^27.4.1
     "@types/wicg-file-system-access": ^2020.9.5
@@ -6626,7 +6626,7 @@ __metadata:
     "@standardnotes/filepicker": "workspace:*"
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": ^1.6.39
-    "@standardnotes/services": ^1.13.23
+    "@standardnotes/services": "workspace:*"
     "@standardnotes/sncrypto-common": ^1.9.0
     "@standardnotes/utils": ^1.6.12
     "@types/jest": ^27.4.1
@@ -7122,31 +7122,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/services@npm:^1.13.22":
-  version: 1.13.22
-  resolution: "@standardnotes/services@npm:1.13.22"
+"@standardnotes/services@^1.13.22, @standardnotes/services@^1.13.23, @standardnotes/services@workspace:*, @standardnotes/services@workspace:packages/services":
+  version: 0.0.0-use.local
+  resolution: "@standardnotes/services@workspace:packages/services"
   dependencies:
     "@standardnotes/auth": ^3.19.4
     "@standardnotes/common": ^1.23.1
-    "@standardnotes/models": ^1.11.12
-    "@standardnotes/responses": ^1.6.38
-    "@standardnotes/utils": ^1.6.12
-  checksum: e84f4e43d49c42b1f99b4e54380f1539ca3ff3451290b7f290fc1e480f2207f8567035015f8788c7b9f961f88eb81b43a4cca591328390dbd0622c9e4891063b
-  languageName: node
-  linkType: hard
-
-"@standardnotes/services@npm:^1.13.23":
-  version: 1.13.23
-  resolution: "@standardnotes/services@npm:1.13.23"
-  dependencies:
-    "@standardnotes/auth": ^3.19.4
-    "@standardnotes/common": ^1.23.1
-    "@standardnotes/models": ^1.11.13
+    "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": ^1.6.39
     "@standardnotes/utils": ^1.6.12
-  checksum: 7e67af13c4eb845c6bcbbac46897b94fe4754a728dba04605ccfbd96da49a0b305299fd3db9778a29488c5b29cf1ac4db08c28844e3ed95a2a872595376e1dc6
-  languageName: node
-  linkType: hard
+    "@types/jest": ^27.4.1
+    "@typescript-eslint/eslint-plugin": ^5.30.0
+    "@typescript-eslint/parser": ^5.12.1
+    eslint-plugin-prettier: ^4.2.1
+    jest: ^27.5.1
+    reflect-metadata: ^0.1.13
+    ts-jest: ^27.1.3
+  languageName: unknown
+  linkType: soft
 
 "@standardnotes/settings@npm:^1.15.0":
   version: 1.15.0
@@ -7419,7 +7412,7 @@ __metadata:
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/filepicker": "workspace:*"
     "@standardnotes/icons": "workspace:*"
-    "@standardnotes/services": ^1.13.23
+    "@standardnotes/services": "workspace:*"
     "@standardnotes/sncrypto-web": 1.10.1
     "@standardnotes/snjs": ^2.118.3
     "@standardnotes/styles": "workspace:*"

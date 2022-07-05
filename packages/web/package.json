@@ -71,7 +71,7 @@
     "@standardnotes/encryption": "workspace:*",
     "@standardnotes/filepicker": "workspace:*",
     "@standardnotes/icons": "workspace:*",
-    "@standardnotes/services": "^1.13.23",
+    "@standardnotes/services": "workspace:*",
     "@standardnotes/sncrypto-web": "1.10.1",
     "@standardnotes/snjs": "^2.118.3",
     "@standardnotes/styles": "workspace:*",
