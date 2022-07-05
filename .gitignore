@@ -18,6 +18,7 @@ packages/web/dist
 packages/filepicker/dist
 packages/features/dist
 packages/encryption/dist
+packages/files/dist
 
 **/.pnp.*
 **/.yarn/*
