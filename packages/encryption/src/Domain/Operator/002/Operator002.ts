@@ -11,7 +11,7 @@ import { DecryptedParameters, EncryptedParameters, ErrorDecryptingParameters } f
 import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
 import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
-import { isItemsKey } from '../../Keys/ItemsKey'
+import { isItemsKey } from '../../Keys/ItemsKey/ItemsKey'
 import { CreateNewRootKey } from '../../Keys/RootKey/Functions'
 import { ItemContent, PayloadTimestampDefaults } from '@standardnotes/models'
 

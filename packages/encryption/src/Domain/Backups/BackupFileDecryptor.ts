@@ -29,7 +29,7 @@ import { CreateAnyKeyParams } from '../Keys/RootKey/KeyParamsFunctions'
 import { SNRootKeyParams } from '../Keys/RootKey/RootKeyParams'
 import { SNRootKey } from '../Keys/RootKey/RootKey'
 import { ContentTypeUsesRootKeyEncryption } from '../Keys/RootKey/Functions'
-import { isItemsKey, SNItemsKey } from '../Keys/ItemsKey'
+import { isItemsKey, SNItemsKey } from '../Keys/ItemsKey/ItemsKey'
 
 export async function DecryptBackupFile(
   file: BackupFile,

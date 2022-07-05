@@ -1,7 +1,7 @@
 import { ContentType, ProtocolVersion } from '@standardnotes/common'
 import { DecryptedPayload, ItemContent, ItemsKeyContent, PayloadTimestampDefaults } from '@standardnotes/models'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import { SNItemsKey } from '../../Keys/ItemsKey'
+import { SNItemsKey } from '../../Keys/ItemsKey/ItemsKey'
 import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { SNProtocolOperator004 } from './Operator004'
 
