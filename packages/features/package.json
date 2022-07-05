@@ -1,0 +1,39 @@
+{
+  "name": "@standardnotes/features",
+  "version": "1.47.1",
+  "engines": {
+    "node": ">=16.0.0 <17.0.0"
+  },
+  "description": "Features SDK for Standard Notes projects",
+  "main": "dist/index.js",
+  "author": "Standard Notes",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "AGPL-3.0-or-later",
+  "scripts": {
+    "clean": "rm -fr dist",
+    "prestart": "yarn clean",
+    "start": "tsc -p tsconfig.json --watch",
+    "prebuild": "yarn clean",
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint . --ext .ts",
+    "test:unit": "jest"
+  },
+  "dependencies": {
+    "@standardnotes/auth": "^3.19.4",
+    "@standardnotes/common": "^1.23.1",
+    "reflect-metadata": "^0.1.13"
+  },
+  "devDependencies": {
+    "@types/jest": "^28.1.4",
+    "@typescript-eslint/eslint-plugin": "^5.30.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "jest": "^28.1.2",
+    "ts-jest": "^28.0.5"
+  }
+}
