@@ -14,8 +14,10 @@ codeqldb
 coverage
 lerna-debug.log
 
-packages/**/dist
-!packages/components/dist/**
+packages/web/dist
+packages/filepicker/dist
+packages/features/dist
+packages/encryption/dist
 
 **/.pnp.*
 **/.yarn/*
