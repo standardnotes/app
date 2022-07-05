@@ -22,12 +22,12 @@
     "version": "./scripts/VERSION.sh"
   },
   "dependencies": {
+    "@standardnotes/features": "workspace:*",
     "@standardnotes/styles": "workspace:*"
   },
   "devDependencies": {
     "@standardnotes/deterministic-zip": "^1.2.0",
     "@standardnotes/eslint-config-extensions": "^1.0.4",
-    "@standardnotes/features": "workspace:*",
     "copy-webpack-plugin": "^11.0.0",
     "mini-css-extract-plugin": "^2.6.0",
     "minimatch": "^5.1.0",
