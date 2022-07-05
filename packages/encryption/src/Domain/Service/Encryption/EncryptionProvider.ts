@@ -8,7 +8,8 @@ import {
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { BackupFile } from '../../Backups/BackupFile'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
-import { KeyedDecryptionSplit, KeyedEncryptionSplit } from '../../Split/EncryptionSplit'
+import { KeyedDecryptionSplit } from '../../Split/KeyedDecryptionSplit'
+import { KeyedEncryptionSplit } from '../../Split/KeyedEncryptionSplit'
 
 export interface EncryptionProvider {
   encryptSplitSingle(split: KeyedEncryptionSplit): Promise<EncryptedPayloadInterface>
