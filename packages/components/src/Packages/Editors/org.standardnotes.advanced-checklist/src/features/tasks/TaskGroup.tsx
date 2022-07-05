@@ -16,7 +16,7 @@ import { ChevronDownIcon, ChevronUpIcon, ReorderIcon } from '../../common/compon
 const TaskGroupContainer = styled.div<{ isLast?: boolean }>`
   background-color: var(--sn-stylekit-background-color);
   border: 1px solid var(--sn-stylekit-border-color);
-  border-radius: 8px;
+  border-radius: 4px;
   box-sizing: border-box;
   padding: 16px;
   margin-bottom: ${({ isLast }) => (!isLast ? '9px' : '0px')};
