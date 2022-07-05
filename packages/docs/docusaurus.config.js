@@ -9,7 +9,6 @@ module.exports = {
   favicon: 'img/favicon.png',
   organizationName: 'standardnotes',
   projectName: 'docs',
-  deploymentBranch: 'gh-pages',
   themeConfig: {
     algolia: {
       apiKey: 'f2899fea0369aeea336963e48a0e46dc',
