@@ -1,5 +1,5 @@
 import { ByteChunker, FileSelectionResponse, OnChunkCallback } from '@standardnotes/filepicker'
-import { FileDownloadProgress } from '@standardnotes/files/dist/Domain/Types/FileDownloadProgress'
+import { FileDownloadProgress } from '@standardnotes/files'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { ApplicationService, FileItem } from '@standardnotes/snjs'
 import { Buffer } from 'buffer'

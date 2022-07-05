@@ -9,7 +9,7 @@ import {
   UploadedFileItemActionType,
 } from '@Root/Screens/UploadedFilesList/UploadedFileItemAction'
 import { Tabs } from '@Screens/UploadedFilesList/UploadedFilesList'
-import { FileDownloadProgress } from '@standardnotes/files/dist/Domain/Types/FileDownloadProgress'
+import { FileDownloadProgress } from '@standardnotes/files'
 import { ButtonType, ChallengeReason, ClientDisplayableError, ContentType, FileItem, SNNote } from '@standardnotes/snjs'
 import { CustomActionSheetOption, useCustomActionSheet } from '@Style/CustomActionSheet'
 import { useCallback, useEffect, useState } from 'react'

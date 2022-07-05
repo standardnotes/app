@@ -19,7 +19,7 @@ module.exports = (async () => {
   } = await getDefaultConfig()
 
   return {
-    watchFolders: [__dirname, '../icons', '../styles', '../components', '../features', '../encryption', '../filepicker'],
+    watchFolders: [__dirname, '../icons', '../styles', '../components', '../features', '../encryption', '../filepicker', '../services', '../files'],
     transformer: {
       getTransformOptions: async () => ({
         transform: {
