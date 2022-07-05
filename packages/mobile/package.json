@@ -16,7 +16,7 @@
     "format": "prettier ./src",
     "format:fix": "yarn format --write",
     "build": "yarn web:bundle && yarn install:pods && yarn android:bundle",
-    "web:bundle": "cp -r ../web/dist/. html/Web.bundle/src/web-src/",
+    "web:bundle": "mkdir -p html/Web.bundle/src/web-src/ && cp -r ../web/dist/. html/Web.bundle/src/web-src/",
     "pods": "yarn install:pods",
     "tsc": "tsc --noEmit",
     "start": "react-native start",
