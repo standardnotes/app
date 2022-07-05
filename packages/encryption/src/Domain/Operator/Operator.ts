@@ -1,12 +1,12 @@
-import { ItemsKeyInterface, RootKeyInterface } from '@standardnotes/models'
+import { KeyParamsOrigination } from '@standardnotes/common'
 import * as Models from '@standardnotes/models'
+import { ItemsKeyInterface, RootKeyInterface } from '@standardnotes/models'
 import { SNRootKey } from '../Keys/RootKey/RootKey'
 import { SNRootKeyParams } from '../Keys/RootKey/RootKeyParams'
-import { KeyParamsOrigination } from '@standardnotes/common'
 import { DecryptedParameters, EncryptedParameters, ErrorDecryptingParameters } from '../Types/EncryptedParameters'
-import { RootKeyEncryptedAuthenticatedData } from '../Types/RootKeyEncryptedAuthenticatedData'
 import { ItemAuthenticatedData } from '../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../Types/LegacyAttachedData'
+import { RootKeyEncryptedAuthenticatedData } from '../Types/RootKeyEncryptedAuthenticatedData'
 
 /**w
  * An operator is responsible for performing crypto operations, such as generating keys

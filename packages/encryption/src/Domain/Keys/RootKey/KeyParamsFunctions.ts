@@ -1,13 +1,13 @@
-import { KeyParamsResponse } from '@standardnotes/responses'
 import {
+  AnyKeyParamsContent,
   KeyParamsContent001,
   KeyParamsContent002,
   KeyParamsContent003,
   KeyParamsContent004,
-  AnyKeyParamsContent,
 } from '@standardnotes/common'
-import { SNRootKeyParams } from './RootKeyParams'
+import { KeyParamsResponse } from '@standardnotes/responses'
 import { ProtocolVersionForKeyParams } from './ProtocolVersionForKeyParams'
+import { SNRootKeyParams } from './RootKeyParams'
 
 /**
  *  001, 002:

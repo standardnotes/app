@@ -1,4 +1,4 @@
-import { Uuid, ProtocolVersion } from '@standardnotes/common'
+import { ProtocolVersion, Uuid } from '@standardnotes/common'
 
 export type ItemAuthenticatedData = {
   u: Uuid

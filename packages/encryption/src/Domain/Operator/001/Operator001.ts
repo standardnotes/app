@@ -1,27 +1,27 @@
 import { ContentType, KeyParamsOrigination, ProtocolVersion, ProtocolVersionLength } from '@standardnotes/common'
-import { Create001KeyParams } from '../../Keys/RootKey/KeyParamsFunctions'
-import { firstHalfOfString, secondHalfOfString, splitString, UuidGenerator } from '@standardnotes/utils'
-import { AsynchronousOperator } from '../Operator'
 import {
   CreateDecryptedItemFromPayload,
-  ItemsKeyContent,
-  ItemsKeyInterface,
-  FillItemContent,
-  ItemContent,
   DecryptedPayload,
   DecryptedPayloadInterface,
+  FillItemContent,
+  ItemContent,
+  ItemsKeyContent,
+  ItemsKeyInterface,
   PayloadTimestampDefaults,
 } from '@standardnotes/models'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import { SNRootKey } from '../../Keys/RootKey/RootKey'
-import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
+import { firstHalfOfString, secondHalfOfString, splitString, UuidGenerator } from '@standardnotes/utils'
 import { V001Algorithm } from '../../Algorithm'
-import { DecryptedParameters, EncryptedParameters, ErrorDecryptingParameters } from '../../Types/EncryptedParameters'
-import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
-import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
-import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
 import { isItemsKey } from '../../Keys/ItemsKey/ItemsKey'
 import { CreateNewRootKey } from '../../Keys/RootKey/Functions'
+import { Create001KeyParams } from '../../Keys/RootKey/KeyParamsFunctions'
+import { SNRootKey } from '../../Keys/RootKey/RootKey'
+import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
+import { DecryptedParameters, EncryptedParameters, ErrorDecryptingParameters } from '../../Types/EncryptedParameters'
+import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
+import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
+import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
+import { AsynchronousOperator } from '../Operator'
 
 const NO_IV = '00000000000000000000000000000000'
 

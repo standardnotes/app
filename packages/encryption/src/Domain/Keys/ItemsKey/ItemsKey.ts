@@ -1,14 +1,14 @@
+import { ContentType, ProtocolVersion } from '@standardnotes/common'
 import {
   ConflictStrategy,
-  ItemsKeyContent,
   DecryptedItem,
-  DecryptedPayloadInterface,
   DecryptedItemInterface,
+  DecryptedPayloadInterface,
   HistoryEntryInterface,
+  ItemsKeyContent,
   ItemsKeyInterface,
   RootKeyInterface,
 } from '@standardnotes/models'
-import { ContentType, ProtocolVersion } from '@standardnotes/common'
 
 export function isItemsKey(x: ItemsKeyInterface | RootKeyInterface): x is ItemsKeyInterface {
   return x.content_type === ContentType.ItemsKey

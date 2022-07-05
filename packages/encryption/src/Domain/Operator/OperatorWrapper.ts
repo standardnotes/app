@@ -1,5 +1,3 @@
-import { isAsyncOperator } from './Functions'
-import { OperatorManager } from './OperatorManager'
 import * as Models from '@standardnotes/models'
 import {
   DecryptedParameters,
@@ -7,6 +5,8 @@ import {
   encryptedParametersFromPayload,
   ErrorDecryptingParameters,
 } from '../Types/EncryptedParameters'
+import { isAsyncOperator } from './Functions'
+import { OperatorManager } from './OperatorManager'
 
 export async function encryptPayload(
   payload: Models.DecryptedPayloadInterface,

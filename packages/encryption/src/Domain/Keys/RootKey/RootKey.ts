@@ -1,14 +1,14 @@
-import { SNRootKeyParams } from './RootKeyParams'
+import { ProtocolVersion } from '@standardnotes/common'
 import {
-  RootKeyInterface,
-  RootKeyContent,
   DecryptedItem,
   DecryptedPayloadInterface,
-  RootKeyContentInStorage,
   NamespacedRootKeyInKeychain,
+  RootKeyContent,
+  RootKeyContentInStorage,
+  RootKeyInterface,
 } from '@standardnotes/models'
-import { ProtocolVersion } from '@standardnotes/common'
 import { timingSafeEqual } from '@standardnotes/sncrypto-common'
+import { SNRootKeyParams } from './RootKeyParams'
 
 /**
  * A root key is a local only construct that houses the key used for the encryption

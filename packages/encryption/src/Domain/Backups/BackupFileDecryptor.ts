@@ -1,35 +1,35 @@
 import {
   AnyKeyParamsContent,
-  ContentType,
-  ProtocolVersion,
-  leftVersionGreaterThanOrEqualToRight,
   compareVersions,
+  ContentType,
+  leftVersionGreaterThanOrEqualToRight,
+  ProtocolVersion,
 } from '@standardnotes/common'
-import { BackupFile } from './BackupFile'
-import { BackupFileType } from './BackupFileType'
-import { extendArray } from '@standardnotes/utils'
-import { EncryptionService } from '../Service/Encryption/EncryptionService'
 import {
-  PayloadInterface,
-  DecryptedPayloadInterface,
-  ItemsKeyContent,
-  EncryptedPayloadInterface,
-  isEncryptedPayload,
-  isDecryptedPayload,
-  isEncryptedTransferPayload,
-  EncryptedPayload,
-  DecryptedPayload,
-  isDecryptedTransferPayload,
   CreateDecryptedItemFromPayload,
-  ItemsKeyInterface,
   CreatePayloadSplit,
+  DecryptedPayload,
+  DecryptedPayloadInterface,
+  EncryptedPayload,
+  EncryptedPayloadInterface,
+  isDecryptedPayload,
+  isDecryptedTransferPayload,
+  isEncryptedPayload,
+  isEncryptedTransferPayload,
+  ItemsKeyContent,
+  ItemsKeyInterface,
+  PayloadInterface,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
-import { CreateAnyKeyParams } from '../Keys/RootKey/KeyParamsFunctions'
-import { SNRootKeyParams } from '../Keys/RootKey/RootKeyParams'
-import { SNRootKey } from '../Keys/RootKey/RootKey'
-import { ContentTypeUsesRootKeyEncryption } from '../Keys/RootKey/Functions'
+import { extendArray } from '@standardnotes/utils'
 import { isItemsKey, SNItemsKey } from '../Keys/ItemsKey/ItemsKey'
+import { ContentTypeUsesRootKeyEncryption } from '../Keys/RootKey/Functions'
+import { CreateAnyKeyParams } from '../Keys/RootKey/KeyParamsFunctions'
+import { SNRootKey } from '../Keys/RootKey/RootKey'
+import { SNRootKeyParams } from '../Keys/RootKey/RootKeyParams'
+import { EncryptionService } from '../Service/Encryption/EncryptionService'
+import { BackupFile } from './BackupFile'
+import { BackupFileType } from './BackupFileType'
 
 export async function DecryptBackupFile(
   file: BackupFile,

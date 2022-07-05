@@ -1,5 +1,5 @@
-import { BackupFileDecryptedContextualPayload, BackupFileEncryptedContextualPayload } from '@standardnotes/models'
 import { AnyKeyParamsContent, ProtocolVersion } from '@standardnotes/common'
+import { BackupFileDecryptedContextualPayload, BackupFileEncryptedContextualPayload } from '@standardnotes/models'
 
 export type BackupFile = {
   version?: ProtocolVersion

@@ -1,11 +1,11 @@
 import {
+  AnyKeyParamsContent,
   KeyParamsContent001,
   KeyParamsContent002,
   KeyParamsContent003,
   KeyParamsContent004,
-  AnyKeyParamsContent,
-  ProtocolVersion,
   KeyParamsOrigination,
+  ProtocolVersion,
 } from '@standardnotes/common'
 import { RootKeyParamsInterface } from '@standardnotes/models'
 import { pickByCopy } from '@standardnotes/utils'

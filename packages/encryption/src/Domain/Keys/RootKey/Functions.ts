@@ -1,4 +1,4 @@
-import { SNRootKey } from './RootKey'
+import { ContentType, ProtocolVersion } from '@standardnotes/common'
 import {
   DecryptedPayload,
   FillItemContentSpecialized,
@@ -7,7 +7,7 @@ import {
   RootKeyContentSpecialized,
 } from '@standardnotes/models'
 import { UuidGenerator } from '@standardnotes/utils'
-import { ContentType, ProtocolVersion } from '@standardnotes/common'
+import { SNRootKey } from './RootKey'
 
 export function CreateNewRootKey(content: RootKeyContentSpecialized): SNRootKey {
   const uuid = UuidGenerator.GenerateUuid()

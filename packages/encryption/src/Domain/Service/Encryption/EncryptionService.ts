@@ -1,35 +1,5 @@
-import { BackupFile } from '../../Backups/BackupFile'
-import { CreateAnyKeyParams } from '../../Keys/RootKey/KeyParamsFunctions'
-import { DecryptBackupFile } from '../../Backups/BackupFileDecryptor'
-import { EncryptionProvider } from './EncryptionProvider'
-import { findDefaultItemsKey } from '../Functions'
-import { ItemsEncryptionService } from '../Items/ItemsEncryption'
-import { KeyMode } from '../RootKey/KeyMode'
-import { OperatorManager } from '../../Operator/OperatorManager'
-import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import { SNRootKey } from '../../Keys/RootKey/RootKey'
-import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
-import { V001Algorithm, V002Algorithm } from '../../Algorithm'
 import * as Common from '@standardnotes/common'
-import {
-  CreateEncryptionSplitWithKeyLookup,
-  FindPayloadInDecryptionSplit,
-  FindPayloadInEncryptionSplit,
-} from '../../Split/EncryptionSplit'
 import * as Models from '@standardnotes/models'
-import * as RootKeyEncryption from '../RootKey/RootKeyEncryption'
-import * as Services from '@standardnotes/services'
-import * as Utils from '@standardnotes/utils'
-import {
-  DecryptedParameters,
-  EncryptedParameters,
-  ErrorDecryptingParameters,
-  isErrorDecryptingParameters,
-  encryptedParametersFromPayload,
-} from '../../Types/EncryptedParameters'
-import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
-import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
-import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
 import {
   CreateDecryptedBackupFileContextPayload,
   CreateEncryptedBackupFileContextPayload,
@@ -38,12 +8,42 @@ import {
   isEncryptedPayload,
   RootKeyInterface,
 } from '@standardnotes/models'
-import { SplitPayloadsByEncryptionType } from '../../Split/Functions'
 import { ClientDisplayableError } from '@standardnotes/responses'
-import { isNotUndefined } from '@standardnotes/utils'
+import * as Services from '@standardnotes/services'
 import { DiagnosticInfo } from '@standardnotes/services'
-import { KeyedEncryptionSplit } from '../../Split/KeyedEncryptionSplit'
+import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
+import * as Utils from '@standardnotes/utils'
+import { isNotUndefined } from '@standardnotes/utils'
+import { V001Algorithm, V002Algorithm } from '../../Algorithm'
+import { BackupFile } from '../../Backups/BackupFile'
+import { DecryptBackupFile } from '../../Backups/BackupFileDecryptor'
+import { CreateAnyKeyParams } from '../../Keys/RootKey/KeyParamsFunctions'
+import { SNRootKey } from '../../Keys/RootKey/RootKey'
+import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
+import { OperatorManager } from '../../Operator/OperatorManager'
+import {
+  CreateEncryptionSplitWithKeyLookup,
+  FindPayloadInDecryptionSplit,
+  FindPayloadInEncryptionSplit,
+} from '../../Split/EncryptionSplit'
+import { SplitPayloadsByEncryptionType } from '../../Split/Functions'
 import { KeyedDecryptionSplit } from '../../Split/KeyedDecryptionSplit'
+import { KeyedEncryptionSplit } from '../../Split/KeyedEncryptionSplit'
+import {
+  DecryptedParameters,
+  EncryptedParameters,
+  encryptedParametersFromPayload,
+  ErrorDecryptingParameters,
+  isErrorDecryptingParameters,
+} from '../../Types/EncryptedParameters'
+import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
+import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
+import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
+import { findDefaultItemsKey } from '../Functions'
+import { ItemsEncryptionService } from '../Items/ItemsEncryption'
+import { KeyMode } from '../RootKey/KeyMode'
+import * as RootKeyEncryption from '../RootKey/RootKeyEncryption'
+import { EncryptionProvider } from './EncryptionProvider'
 
 export enum EncryptionServiceEvent {
   RootKeyStatusChanged = 'RootKeyStatusChanged',

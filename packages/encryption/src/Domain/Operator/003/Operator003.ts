@@ -1,19 +1,19 @@
-import { splitString, UuidGenerator } from '@standardnotes/utils'
+import { ContentType, KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
 import {
   CreateDecryptedItemFromPayload,
   DecryptedPayload,
+  FillItemContent,
   ItemsKeyContent,
   ItemsKeyInterface,
-  FillItemContent,
   PayloadTimestampDefaults,
 } from '@standardnotes/models'
-import { SNRootKey } from '../../Keys/RootKey/RootKey'
+import { splitString, UuidGenerator } from '@standardnotes/utils'
 import { V003Algorithm } from '../../Algorithm'
-import { Create003KeyParams } from '../../Keys/RootKey/KeyParamsFunctions'
-import { SNProtocolOperator002 } from '../002/Operator002'
-import { ContentType, KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
-import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
 import { CreateNewRootKey } from '../../Keys/RootKey/Functions'
+import { Create003KeyParams } from '../../Keys/RootKey/KeyParamsFunctions'
+import { SNRootKey } from '../../Keys/RootKey/RootKey'
+import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
+import { SNProtocolOperator002 } from '../002/Operator002'
 
 /**
  * @legacy

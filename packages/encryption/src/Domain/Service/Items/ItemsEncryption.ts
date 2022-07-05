@@ -1,19 +1,19 @@
 import { ContentType, ProtocolVersion } from '@standardnotes/common'
-import { findDefaultItemsKey } from '../Functions'
-import { OperatorManager } from '../../Operator/OperatorManager'
-import { StandardException } from '../../StandardException'
-import * as OperatorWrapper from '../../Operator/OperatorWrapper'
 import * as Models from '@standardnotes/models'
+import { isEncryptedPayload } from '@standardnotes/models'
 import * as Services from '@standardnotes/services'
+import { DiagnosticInfo } from '@standardnotes/services'
+import { Uuids } from '@standardnotes/utils'
+import { OperatorManager } from '../../Operator/OperatorManager'
+import * as OperatorWrapper from '../../Operator/OperatorWrapper'
+import { StandardException } from '../../StandardException'
 import {
   DecryptedParameters,
   EncryptedParameters,
   ErrorDecryptingParameters,
   isErrorDecryptingParameters,
 } from '../../Types/EncryptedParameters'
-import { isEncryptedPayload } from '@standardnotes/models'
-import { DiagnosticInfo } from '@standardnotes/services'
-import { Uuids } from '@standardnotes/utils'
+import { findDefaultItemsKey } from '../Functions'
 
 export class ItemsEncryptionService extends Services.AbstractService {
   private removeItemsObserver!: () => void

@@ -1,5 +1,5 @@
 import { ContentType } from '@standardnotes/common'
-import { RegisterItemClass, DecryptedItemMutator, ItemsKeyContent } from '@standardnotes/models'
+import { DecryptedItemMutator, ItemsKeyContent, RegisterItemClass } from '@standardnotes/models'
 import { SNItemsKey } from './ItemsKey'
 import { ItemsKeyMutator } from './ItemsKeyMutator'
 

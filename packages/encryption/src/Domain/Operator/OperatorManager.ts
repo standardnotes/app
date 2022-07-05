@@ -1,5 +1,5 @@
-import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { ProtocolVersion, ProtocolVersionLatest } from '@standardnotes/common'
+import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { createOperatorForVersion } from './Functions'
 import { AsynchronousOperator, SynchronousOperator } from './Operator'
 

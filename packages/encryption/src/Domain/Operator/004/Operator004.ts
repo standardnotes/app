@@ -1,6 +1,5 @@
 import { ContentType, KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
-import { Create004KeyParams } from '../../Keys/RootKey/KeyParamsFunctions'
-import { SynchronousOperator } from '../Operator'
+import * as Models from '@standardnotes/models'
 import {
   CreateDecryptedItemFromPayload,
   FillItemContent,
@@ -10,17 +9,18 @@ import {
   PayloadTimestampDefaults,
 } from '@standardnotes/models'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
+import * as Utils from '@standardnotes/utils'
+import { V004Algorithm } from '../../Algorithm'
+import { isItemsKey } from '../../Keys/ItemsKey/ItemsKey'
+import { ContentTypeUsesRootKeyEncryption, CreateNewRootKey } from '../../Keys/RootKey/Functions'
+import { Create004KeyParams } from '../../Keys/RootKey/KeyParamsFunctions'
 import { SNRootKey } from '../../Keys/RootKey/RootKey'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
-import { V004Algorithm } from '../../Algorithm'
-import * as Models from '@standardnotes/models'
-import * as Utils from '@standardnotes/utils'
-import { ContentTypeUsesRootKeyEncryption, CreateNewRootKey } from '../../Keys/RootKey/Functions'
 import { DecryptedParameters, EncryptedParameters, ErrorDecryptingParameters } from '../../Types/EncryptedParameters'
-import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
 import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
-import { isItemsKey } from '../../Keys/ItemsKey/ItemsKey'
+import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
+import { SynchronousOperator } from '../Operator'
 
 type V004StringComponents = [version: string, nonce: string, ciphertext: string, authenticatedData: string]
 

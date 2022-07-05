@@ -1,32 +1,32 @@
-import { CreateAnyKeyParams } from '../../Keys/RootKey/KeyParamsFunctions'
-import { findDefaultItemsKey } from '../Functions'
-import { KeyMode } from './KeyMode'
-import { OperatorManager } from '../../Operator/OperatorManager'
-import { SNRootKey } from '../../Keys/RootKey/RootKey'
-import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
-import { UuidGenerator } from '@standardnotes/utils'
 import * as Common from '@standardnotes/common'
 import * as Models from '@standardnotes/models'
-import * as OperatorWrapper from '../../Operator/OperatorWrapper'
+import {
+  DecryptedPayload,
+  FillItemContentSpecialized,
+  ItemsKeyContent,
+  ItemsKeyContentSpecialized,
+  NamespacedRootKeyInKeychain,
+  PayloadTimestampDefaults,
+  RootKeyContent,
+  RootKeyInterface,
+} from '@standardnotes/models'
 import * as Services from '@standardnotes/services'
+import { UuidGenerator } from '@standardnotes/utils'
+import { ItemsKeyMutator } from '../../Keys/ItemsKey/ItemsKeyMutator'
+import { CreateNewRootKey } from '../../Keys/RootKey/Functions'
+import { CreateAnyKeyParams } from '../../Keys/RootKey/KeyParamsFunctions'
+import { SNRootKey } from '../../Keys/RootKey/RootKey'
+import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
+import { OperatorManager } from '../../Operator/OperatorManager'
+import * as OperatorWrapper from '../../Operator/OperatorWrapper'
 import {
   DecryptedParameters,
   EncryptedParameters,
   ErrorDecryptingParameters,
   isErrorDecryptingParameters,
 } from '../../Types/EncryptedParameters'
-import { ItemsKeyMutator } from '../../Keys/ItemsKey/ItemsKeyMutator'
-import { CreateNewRootKey } from '../../Keys/RootKey/Functions'
-import {
-  DecryptedPayload,
-  FillItemContentSpecialized,
-  ItemsKeyContent,
-  ItemsKeyContentSpecialized,
-  PayloadTimestampDefaults,
-  RootKeyContent,
-  RootKeyInterface,
-  NamespacedRootKeyInKeychain,
-} from '@standardnotes/models'
+import { findDefaultItemsKey } from '../Functions'
+import { KeyMode } from './KeyMode'
 
 export enum RootKeyServiceEvent {
   RootKeyStatusChanged = 'RootKeyStatusChanged',
