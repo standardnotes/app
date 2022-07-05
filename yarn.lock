@@ -6547,7 +6547,7 @@ __metadata:
   dependencies:
     "@standardnotes/common": ^1.23.1
     "@standardnotes/config": 2.4.3
-    "@standardnotes/models": ^1.11.13
+    "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": ^1.6.39
     "@standardnotes/services": ^1.13.23
     "@standardnotes/sncrypto-common": ^1.9.0
@@ -6624,7 +6624,7 @@ __metadata:
     "@standardnotes/common": ^1.23.1
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/filepicker": "workspace:*"
-    "@standardnotes/models": ^1.11.13
+    "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": ^1.6.39
     "@standardnotes/services": ^1.13.23
     "@standardnotes/sncrypto-common": ^1.9.0
@@ -7006,27 +7006,24 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/models@npm:^1.11.12":
-  version: 1.11.12
-  resolution: "@standardnotes/models@npm:1.11.12"
+"@standardnotes/models@^1.11.12, @standardnotes/models@^1.11.13, @standardnotes/models@workspace:*, @standardnotes/models@workspace:packages/models":
+  version: 0.0.0-use.local
+  resolution: "@standardnotes/models@workspace:packages/models"
   dependencies:
-    "@standardnotes/features": ^1.46.0
-    "@standardnotes/responses": ^1.6.38
-    "@standardnotes/utils": ^1.6.12
-  checksum: 636897db975e59989da86bcf2a6f32a4f8e24c45e41f9f9ee7c6960e47f3d04bcc9b74aadb9c4b488d98b61aca284699ed8b2a857d588493300358c62d69e580
-  languageName: node
-  linkType: hard
-
-"@standardnotes/models@npm:^1.11.13":
-  version: 1.11.13
-  resolution: "@standardnotes/models@npm:1.11.13"
-  dependencies:
-    "@standardnotes/features": ^1.47.0
+    "@standardnotes/common": ^1.23.1
+    "@standardnotes/features": "workspace:*"
     "@standardnotes/responses": ^1.6.39
     "@standardnotes/utils": ^1.6.12
-  checksum: 063f4382b8559f23a81db0a3aab7eca023c926f2069182f364da6dbfb0d312c300bc9dd29a1d389ba5fa1e7c04d8375c625bfc4eb073cad938511493e2976b5a
-  languageName: node
-  linkType: hard
+    "@types/jest": ^27.4.1
+    "@types/lodash": ^4.14.182
+    "@typescript-eslint/eslint-plugin": ^5.30.0
+    eslint-plugin-prettier: ^4.2.1
+    jest: ^27.5.1
+    lodash: ^4.17.21
+    reflect-metadata: ^0.1.13
+    ts-jest: ^27.1.3
+  languageName: unknown
+  linkType: soft
 
 "@standardnotes/react-native-aes@npm:^1.4.3":
   version: 1.4.3

@@ -1,10 +1,10 @@
 {
-  "name": "@standardnotes/files",
-  "version": "1.6.0",
+  "name": "@standardnotes/models",
+  "version": "1.13.0",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
-  "description": "Client-side files library",
+  "description": "Models used in SNJS library",
   "main": "dist/index.js",
   "author": "Standard Notes",
   "types": "dist/index.d.ts",
@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@types/jest": "^27.4.1",
+    "@types/lodash": "^4.14.182",
     "@typescript-eslint/eslint-plugin": "^5.30.0",
     "eslint-plugin-prettier": "^4.2.1",
     "jest": "^27.5.1",
@@ -33,13 +34,10 @@
   },
   "dependencies": {
     "@standardnotes/common": "^1.23.1",
-    "@standardnotes/encryption": "workspace:*",
-    "@standardnotes/filepicker": "workspace:*",
-    "@standardnotes/models": "workspace:*",
+    "@standardnotes/features": "workspace:*",
     "@standardnotes/responses": "^1.6.39",
-    "@standardnotes/services": "^1.13.23",
-    "@standardnotes/sncrypto-common": "^1.9.0",
     "@standardnotes/utils": "^1.6.12",
+    "lodash": "^4.17.21",
     "reflect-metadata": "^0.1.13"
   }
 }
