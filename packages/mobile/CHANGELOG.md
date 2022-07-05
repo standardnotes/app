@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.27.9](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.27.8...@standardnotes/mobile@3.27.9) (2022-07-05)
+
+### Bug Fixes
+
+* add missing features package on mobile ([7ab2f7a](https://github.com/standardnotes/app/commit/7ab2f7a32d1dc202e8d52678a5f3c97c2b6c0b44))
+* workspace dependencies on mobile ([9c7f713](https://github.com/standardnotes/app/commit/9c7f713baace7d7beff96d997922f200c2004dc2))
+
 ## [3.27.8](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.27.7...@standardnotes/mobile@3.27.8) (2022-07-05)
 
 **Note:** Version bump only for package @standardnotes/mobile

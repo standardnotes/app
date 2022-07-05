@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.49.1](https://github.com/standardnotes/app/compare/@standardnotes/features@1.48.1...@standardnotes/features@1.49.1) (2022-07-05)
+
+### Bug Fixes
+
+* bump features version ([4a92b1d](https://github.com/standardnotes/app/commit/4a92b1d7bdeb84f05df40c2d50f5b6862584d97c))
+
 ## [1.48.1](https://github.com/standardnotes/app/compare/@standardnotes/features@1.48.0...@standardnotes/features@1.48.1) (2022-07-05)
 
 ### Bug Fixes
