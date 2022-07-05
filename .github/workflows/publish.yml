@@ -1,4 +1,4 @@
-name: Version Bump Main
+name: Publish Packages
 
 on:
   push:
@@ -7,19 +7,22 @@ on:
 jobs:
   Build:
     if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
+
     runs-on: ubuntu-latest
-    env:
-      NODE_AUTH_TOKEN: ${{ secrets.CI_NPM_TOKEN }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           token: ${{ secrets.CI_PAT_TOKEN }}
           fetch-depth: 0
 
-      - uses: actions/setup-node@v3
+      - name: Set up Node
+        uses: actions/setup-node@v3
         with:
-          registry-url: 'https://registry.npmjs.org'
+          node-version: 16
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
 
       - name: Setup git config
         run: |
@@ -32,13 +35,14 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           git_user_signingkey: true
           git_commit_gpgsign: true
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
 
       - name: Install Dependencies
-        run: yarn install
+        run: yarn install --immutable
 
-      - name: Bump Prod Version
-        run: |
-          yarn release:prod
-          yarn publish:prod
+      - name: Bump version
+        run: yarn release:prod
+
+      - name: Publish
+        run: yarn publish:prod
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.CI_NPM_TOKEN }}
