@@ -39,7 +39,7 @@ jobs:
       - name: Install Dependencies
         run: yarn install --immutable
 
-      - name: Install Dependencies
+      - name: Build packages
         run: yarn build:all
 
       - name: Bump version
