@@ -98,29 +98,3 @@ it('hides group options if can not edit', () => {
 
   expect(screen.queryByTestId('task-group-options')).not.toBeInTheDocument()
 })
-
-it('shows a reorder icon when on mobile', () => {
-  let defaultState: Partial<RootState> = {
-    settings: {
-      canEdit: false,
-      isRunningOnMobile: true,
-      spellCheckerEnabled: true,
-    },
-  }
-
-  testRender(<TaskGroup group={defaultGroup} isDragging={false} />, {}, defaultState)
-
-  expect(screen.queryByTestId('reorder-icon')).not.toBeInTheDocument()
-
-  defaultState = {
-    settings: {
-      canEdit: true,
-      isRunningOnMobile: true,
-      spellCheckerEnabled: true,
-    },
-  }
-
-  testRender(<TaskGroup group={defaultGroup} isDragging={false} />, {}, defaultState)
-
-  expect(screen.getByTestId('reorder-icon')).toBeInTheDocument()
-})
