@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.28.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.27.13...@standardnotes/mobile@3.28.0) (2022-07-05)
+
+### Features
+
+* add filepicker package ([d4188a3](https://github.com/standardnotes/app/commit/d4188a3fa2914a48fd28d80d45269a3eb9a358a8))
+
 ## [3.27.13](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.27.12...@standardnotes/mobile@3.27.13) (2022-07-05)
 
 **Note:** Version bump only for package @standardnotes/mobile

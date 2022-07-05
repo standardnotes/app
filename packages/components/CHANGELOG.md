@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.6.6](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.6.5...@standardnotes/components-meta@2.6.6) (2022-07-05)
+
+### Bug Fixes
+
+* **advanced checklist:** remove test for reorder icon ([#1209](https://github.com/standardnotes/app/issues/1209)) ([296aa9a](https://github.com/standardnotes/app/commit/296aa9aab2072d4aad68485c31c000ad2c3bf013))
+
 ## [2.6.5](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.6.4...@standardnotes/components-meta@2.6.5) (2022-07-05)
 
 ### Bug Fixes

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.50.0](https://github.com/standardnotes/app/compare/@standardnotes/features@1.49.3...@standardnotes/features@1.50.0) (2022-07-05)
+
+### Features
+
+* add filepicker package ([d4188a3](https://github.com/standardnotes/app/commit/d4188a3fa2914a48fd28d80d45269a3eb9a358a8))
+
 ## [1.49.3](https://github.com/standardnotes/app/compare/@standardnotes/features@1.49.2...@standardnotes/features@1.49.3) (2022-07-05)
 
 **Note:** Version bump only for package @standardnotes/features

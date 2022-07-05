@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 1.18.0 (2022-07-05)
+
+### Features
+
+* add filepicker package ([d4188a3](https://github.com/standardnotes/app/commit/d4188a3fa2914a48fd28d80d45269a3eb9a358a8))
+
 ## [1.16.25](https://github.com/standardnotes/snjs/compare/@standardnotes/filepicker@1.16.24...@standardnotes/filepicker@1.16.25) (2022-07-05)
 
 **Note:** Version bump only for package @standardnotes/filepicker
