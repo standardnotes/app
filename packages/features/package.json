@@ -6,7 +6,7 @@
   },
   "description": "Features SDK for Standard Notes projects",
   "main": "dist/index.js",
-  "author": "Standard Notes",
+  "author": "Standard Notes.",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
