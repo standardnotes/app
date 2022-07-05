@@ -315,6 +315,7 @@ class PanelResizer extends Component<Props, State> {
           this.props.hoverable && 'hover:opacity-100',
           this.props.side === PanelSide.Left && 'left-0 right-auto',
         )}
+        onMouseDown={this.onMouseDown}
         ref={this.resizerElementRef}
       />
     )
