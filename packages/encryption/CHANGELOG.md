@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 1.10.0 (2022-07-05)
+
+### Features
+
+* add @standardnotes/encryption package ([#1199](https://github.com/standardnotes/app/issues/1199)) ([e5771fc](https://github.com/standardnotes/app/commit/e5771fcbde827afd178edde3b7bd872734cd3338))
+
 ## [1.8.24](https://github.com/standardnotes/snjs/compare/@standardnotes/encryption@1.8.23...@standardnotes/encryption@1.8.24) (2022-07-04)
 
 ### Bug Fixes

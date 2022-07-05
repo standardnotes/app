@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.33.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.32.0...@standardnotes/web@3.33.0) (2022-07-05)
+
+### Features
+
+* add @standardnotes/encryption package ([#1199](https://github.com/standardnotes/app/issues/1199)) ([e5771fc](https://github.com/standardnotes/app/commit/e5771fcbde827afd178edde3b7bd872734cd3338))
+
 # [3.32.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.31.1...@standardnotes/web@3.32.0) (2022-07-04)
 
 ### Features
