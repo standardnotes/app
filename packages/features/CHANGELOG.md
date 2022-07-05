@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 1.48.0 (2022-07-05)
+
+### Features
+
+* add features package ([44d3e96](https://github.com/standardnotes/app/commit/44d3e9646809e0199b2747ed9a5d31d4e86bca02))
+
 ## [1.47.1](https://github.com/standardnotes/snjs/compare/@standardnotes/features@1.47.0...@standardnotes/features@1.47.1) (2022-07-04)
 
 ### Bug Fixes
