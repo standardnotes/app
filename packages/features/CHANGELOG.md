@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.48.1](https://github.com/standardnotes/app/compare/@standardnotes/features@1.48.0...@standardnotes/features@1.48.1) (2022-07-05)
+
+### Bug Fixes
+
+* add typescript dev dependency on features package ([fa54cfe](https://github.com/standardnotes/app/commit/fa54cfe8136ee54a0414d9072a5a1aa9a5cf54b4))
+
 # 1.48.0 (2022-07-05)
 
 ### Features
