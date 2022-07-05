@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.10.1](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.10.0...@standardnotes/encryption@1.10.1) (2022-07-05)
+
+### Bug Fixes
+
+* encryption exports ([#1205](https://github.com/standardnotes/app/issues/1205)) ([945248d](https://github.com/standardnotes/app/commit/945248d7d3f0ac0fa153aeedd8ad18d64f30d6be))
+
 # 1.10.0 (2022-07-05)
 
 ### Features
