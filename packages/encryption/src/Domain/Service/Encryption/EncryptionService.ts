@@ -15,8 +15,6 @@ import {
   CreateEncryptionSplitWithKeyLookup,
   FindPayloadInDecryptionSplit,
   FindPayloadInEncryptionSplit,
-  KeyedDecryptionSplit,
-  KeyedEncryptionSplit,
 } from '../../Split/EncryptionSplit'
 import * as Models from '@standardnotes/models'
 import * as RootKeyEncryption from '../RootKey/RootKeyEncryption'
@@ -44,6 +42,8 @@ import { SplitPayloadsByEncryptionType } from '../../Split/Functions'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { isNotUndefined } from '@standardnotes/utils'
 import { DiagnosticInfo } from '@standardnotes/services'
+import { KeyedEncryptionSplit } from '../../Split/KeyedEncryptionSplit'
+import { KeyedDecryptionSplit } from '../../Split/KeyedDecryptionSplit'
 
 export enum EncryptionServiceEvent {
   RootKeyStatusChanged = 'RootKeyStatusChanged',

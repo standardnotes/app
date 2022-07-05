@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.6.1](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.6.0...@standardnotes/components-meta@2.6.1) (2022-07-05)
+
+**Note:** Version bump only for package @standardnotes/components-meta
+
+# [2.6.0](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.5.10...@standardnotes/components-meta@2.6.0) (2022-07-05)
+
+### Features
+
+* add features package ([44d3e96](https://github.com/standardnotes/app/commit/44d3e9646809e0199b2747ed9a5d31d4e86bca02))
+
 ## [2.5.10](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.5.9...@standardnotes/components-meta@2.5.10) (2022-07-04)
 
 ### Bug Fixes
