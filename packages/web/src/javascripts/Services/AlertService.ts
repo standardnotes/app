@@ -1,4 +1,5 @@
-import { AlertService, ButtonType, sanitizeHtmlString } from '@standardnotes/snjs'
+import { AlertService, ButtonType } from '@standardnotes/services'
+import { sanitizeHtmlString } from '@standardnotes/utils'
 import { SKAlert } from '@standardnotes/styles'
 
 /** @returns a promise resolving to true if the user confirmed, false if they canceled */
