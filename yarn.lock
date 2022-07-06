@@ -6332,6 +6332,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@standardnotes/common@npm:1.25.0":
+  version: 1.25.0
+  resolution: "@standardnotes/common@npm:1.25.0"
+  dependencies:
+    reflect-metadata: ^0.1.13
+  checksum: aec9d4bcda5e5354539589c536eb9260fa90a80e63cd44e6217a4484ad301cd837084b611a7b78e24b7eb7a8a1a673fb413500aaed12937638c3355a8e746bd5
+  languageName: node
+  linkType: hard
+
 "@standardnotes/common@npm:^1.23.1":
   version: 1.23.1
   resolution: "@standardnotes/common@npm:1.23.1"
@@ -6563,6 +6572,7 @@ __metadata:
   dependencies:
     "@standardnotes/auth": ^3.19.4
     "@standardnotes/common": ^1.23.1
+    "@standardnotes/security": ^1.2.0
     "@types/jest": ^28.1.4
     "@typescript-eslint/eslint-plugin": ^5.30.0
     eslint-plugin-prettier: ^4.2.1
@@ -7103,6 +7113,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standardnotes/security@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "@standardnotes/security@npm:1.2.0"
+  dependencies:
+    "@standardnotes/common": 1.25.0
+    jsonwebtoken: ^8.5.1
+    reflect-metadata: ^0.1.13
+  checksum: 3fb92e2be0c432230d11f3ba76e696f50dd3d885ce365fbb4d12e308b7b1d49d54fbca6d931f04334de8cdcdfcde381c01d1497c18a1c15204f8ec14d2b8825b
+  languageName: node
+  linkType: hard
+
 "@standardnotes/services@^1.13.23, @standardnotes/services@workspace:*, @standardnotes/services@workspace:packages/services":
   version: 0.0.0-use.local
   resolution: "@standardnotes/services@workspace:packages/services"
@@ -7111,6 +7132,7 @@ __metadata:
     "@standardnotes/common": ^1.23.1
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": ^1.6.39
+    "@standardnotes/security": ^1.2.0
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^27.4.1
     "@typescript-eslint/eslint-plugin": ^5.30.0
