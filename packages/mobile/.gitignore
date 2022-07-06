@@ -21,8 +21,6 @@ DerivedData
 *.ipa
 *.xcuserstate
 
-html/Web.bundle/src/web-src
-
 .env
 
 # Android/IntelliJ
@@ -52,6 +50,8 @@ android-release.bundle.map
 app-release.aab
 
 *.bundle
+!Web.bundle
+html/Web.bundle/src/web-src
 ios-release.bundle.map
 
 # fastlane
