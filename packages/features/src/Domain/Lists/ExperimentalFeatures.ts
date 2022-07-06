@@ -8,7 +8,7 @@ import { FillEditorComponentDefaults } from './Utilities/FillEditorComponentDefa
 export function experimentalFeatures(): FeatureDescription[] {
   const advancedChecklist: EditorFeatureDescription = FillEditorComponentDefaults({
     availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
-    name: 'Advanced Checklist [Alpha]',
+    name: 'Advanced Checklist [Beta]',
     identifier: FeatureIdentifier.AdvancedChecklist,
     note_type: NoteType.Task,
     spellcheckControl: true,
