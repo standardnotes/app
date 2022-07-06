@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.1](https://github.com/standardnotes/app/compare/@standardnotes/api@1.4.0...@standardnotes/api@1.4.1) (2022-07-06)
+
+### Bug Fixes
+
+* add missing utils dependency on api ([bc666aa](https://github.com/standardnotes/app/commit/bc666aa98301ece42e259be2ed60b9201665988f))
+
 # 1.4.0 (2022-07-06)
 
 ### Features
