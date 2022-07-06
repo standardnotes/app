@@ -1,6 +1,12 @@
 name: Sync Repo
 
-on: push
+on:
+  push:
+    branches:
+      - '*'
+      - '*/*'
+      - '**'
+
 jobs:
   git-sync:
     runs-on: ubuntu-latest
