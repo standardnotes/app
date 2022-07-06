@@ -26,12 +26,12 @@
   },
   "dependencies": {
     "@standardnotes/common": "^1.23.1",
-    "@types/dompurify": "^2.3.3",
-    "dompurify": "^2.3.6",
+    "dompurify": "^2.3.8",
     "lodash": "^4.17.21",
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
+    "@types/dompurify": "^2.3.3",
     "@types/jest": "^27.4.1",
     "@types/jsdom": "^16.2.14",
     "@types/lodash": "^4.14.179",

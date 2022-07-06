@@ -7376,7 +7376,7 @@ __metadata:
     "@types/lodash": ^4.14.179
     "@types/node": ^18.0.0
     "@typescript-eslint/eslint-plugin": ^5.30.0
-    dompurify: ^2.3.6
+    dompurify: ^2.3.8
     eslint-plugin-prettier: ^4.2.1
     jest: ^27.5.1
     jsdom: ^20.0.0
@@ -16609,7 +16609,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:^2.2.9, dompurify@npm:^2.3.6":
+"dompurify@npm:^2.2.9, dompurify@npm:^2.3.8":
   version: 2.3.8
   resolution: "dompurify@npm:2.3.8"
   checksum: dc7b32ee57a03fe5166a850071200897cc13fa069287a709e3b2138052d73ec09a87026b9e28c8d2f254a74eaa52ef30644e98e54294c30acbca2a53f1bbc5f4
