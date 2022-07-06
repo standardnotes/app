@@ -35,7 +35,7 @@
   "dependencies": {
     "@standardnotes/common": "^1.23.1",
     "@standardnotes/features": "workspace:*",
-    "@standardnotes/responses": "^1.9.0",
+    "@standardnotes/responses": "workspace:*",
     "@standardnotes/utils": "workspace:*",
     "lodash": "^4.17.21",
     "reflect-metadata": "^0.1.13"

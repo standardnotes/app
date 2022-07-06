@@ -48,7 +48,7 @@
     "@types/hoist-non-react-statics/@types/react": "17.0.2"
   },
   "dependencies": {
-    "@standardnotes/snjs": "^2.118.3"
+    "@standardnotes/snjs": "workspace:*"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.2",

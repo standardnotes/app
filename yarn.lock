@@ -6209,7 +6209,7 @@ __metadata:
     "@standardnotes/common": ^1.23.1
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/models": "workspace:*"
-    "@standardnotes/responses": ^1.9.0
+    "@standardnotes/responses": "workspace:*"
     "@standardnotes/security": ^1.1.0
     "@standardnotes/services": "workspace:*"
     "@standardnotes/utils": "workspace:*"
@@ -6233,7 +6233,7 @@ __metadata:
     "@lerna-lite/list": ^1.6.0
     "@lerna-lite/run": ^1.6.0
     "@standardnotes/config": ^2.4.3
-    "@standardnotes/snjs": ^2.118.3
+    "@standardnotes/snjs": "workspace:*"
     "@typescript-eslint/eslint-plugin": ^5.20.0
     "@typescript-eslint/parser": ^5.20.0
     changelog-parser: ^2.8.1
@@ -6569,7 +6569,7 @@ __metadata:
     "@standardnotes/common": ^1.23.1
     "@standardnotes/config": 2.4.3
     "@standardnotes/models": "workspace:*"
-    "@standardnotes/responses": ^1.9.0
+    "@standardnotes/responses": "workspace:*"
     "@standardnotes/services": "workspace:*"
     "@standardnotes/sncrypto-common": "workspace:*"
     "@standardnotes/utils": "workspace:*"
@@ -6647,7 +6647,7 @@ __metadata:
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/filepicker": "workspace:*"
     "@standardnotes/models": "workspace:*"
-    "@standardnotes/responses": ^1.9.0
+    "@standardnotes/responses": "workspace:*"
     "@standardnotes/services": "workspace:*"
     "@standardnotes/sncrypto-common": "workspace:*"
     "@standardnotes/utils": "workspace:*"
@@ -7034,7 +7034,7 @@ __metadata:
   dependencies:
     "@standardnotes/common": ^1.23.1
     "@standardnotes/features": "workspace:*"
-    "@standardnotes/responses": ^1.9.0
+    "@standardnotes/responses": "workspace:*"
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^27.4.1
     "@types/lodash": ^4.14.182
@@ -7094,7 +7094,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/responses@^1.9.0, @standardnotes/responses@workspace:*, @standardnotes/responses@workspace:packages/responses":
+"@standardnotes/responses@workspace:*, @standardnotes/responses@workspace:packages/responses":
   version: 0.0.0-use.local
   resolution: "@standardnotes/responses@workspace:packages/responses"
   dependencies:
@@ -7168,7 +7168,7 @@ __metadata:
     "@standardnotes/auth": ^3.19.4
     "@standardnotes/common": ^1.23.1
     "@standardnotes/models": "workspace:*"
-    "@standardnotes/responses": ^1.9.0
+    "@standardnotes/responses": "workspace:*"
     "@standardnotes/security": ^1.2.0
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^27.4.1
@@ -7267,7 +7267,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/snjs@^2.118.3, @standardnotes/snjs@^2.41.1, @standardnotes/snjs@workspace:*, @standardnotes/snjs@workspace:packages/snjs":
+"@standardnotes/snjs@^2.41.1, @standardnotes/snjs@workspace:*, @standardnotes/snjs@workspace:packages/snjs":
   version: 0.0.0-use.local
   resolution: "@standardnotes/snjs@workspace:packages/snjs"
   dependencies:
