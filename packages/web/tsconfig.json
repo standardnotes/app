@@ -16,7 +16,7 @@
     "declarationDir": "dist/@types",
     "baseUrl": ".",
     "jsx": "react-jsx",
-    "typeRoots": ["./src/javascripts/Types/External", "../../node_modules/@types"],
+    "typeRoots": ["./src/javascripts/Types/External", "../../node_modules/@types", "node_modules/@types"],
     "paths": {
       "@/*": ["./src/javascripts/*"],
       "@Controllers/*": ["src/javascripts/Controllers/*"],

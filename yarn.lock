@@ -7504,7 +7504,7 @@ __metadata:
     "@standardnotes/snjs": "workspace:*"
     "@standardnotes/styles": "workspace:*"
     "@standardnotes/toast": "workspace:*"
-    "@types/jest": ^27.4.1
+    "@types/jest": ^27.5.1
     "@types/react": ^17.0.42
     "@types/react-dom": ^18.0.5
     "@types/wicg-file-system-access": ^2020.9.5
@@ -7521,6 +7521,7 @@ __metadata:
     html-webpack-plugin: ^5.5.0
     identity-obj-proxy: ^3.0.0
     jest: ^27.5.1
+    jest-environment-jsdom: ^27.5.1
     lint-staged: ">=12"
     mini-css-extract-plugin: ^2.6.0
     mobx: ^6.5.0
@@ -8386,7 +8387,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:^27.4.1":
+"@types/jest@npm:^27.4.1, @types/jest@npm:^27.5.1":
   version: 27.5.2
   resolution: "@types/jest@npm:27.5.2"
   dependencies:
