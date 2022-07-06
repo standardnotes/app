@@ -23,7 +23,8 @@
   },
   "dependencies": {
     "@standardnotes/features": "workspace:*",
-    "@standardnotes/styles": "workspace:*"
+    "@standardnotes/styles": "workspace:*",
+    "@standardnotes/utils": "workspace:*"
   },
   "devDependencies": {
     "@standardnotes/deterministic-zip": "^1.2.0",

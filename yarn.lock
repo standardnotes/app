@@ -6403,6 +6403,7 @@ __metadata:
     "@standardnotes/eslint-config-extensions": ^1.0.4
     "@standardnotes/features": "workspace:*"
     "@standardnotes/styles": "workspace:*"
+    "@standardnotes/utils": "workspace:*"
     copy-webpack-plugin: ^11.0.0
     mini-css-extract-plugin: ^2.6.0
     minimatch: ^5.1.0

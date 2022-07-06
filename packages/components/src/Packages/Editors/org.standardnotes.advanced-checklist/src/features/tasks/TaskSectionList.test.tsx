@@ -60,7 +60,7 @@ it('renders the completed tasks section', () => {
 
   const completedTasksSection = screen.getByTestId('completed-tasks-section')
   expect(completedTasksSection).toBeInTheDocument()
-  expect(completedTasksSection).toHaveTextContent('Completed tasks')
+  expect(completedTasksSection).toHaveTextContent('Completed')
 
   const taskItems = within(completedTasksSection).getAllByTestId('task-item')
   expect(taskItems).toHaveLength(1)
@@ -100,7 +100,7 @@ it('renders default sections', () => {
 
   const completedTasksSection = screen.getByTestId('completed-tasks-section')
   expect(completedTasksSection).toBeInTheDocument()
-  expect(completedTasksSection).toHaveTextContent('Completed tasks')
+  expect(completedTasksSection).toHaveTextContent('Completed')
 
   const taskItems = within(completedTasksSection).getAllByTestId('task-item')
   expect(taskItems).toHaveLength(1)

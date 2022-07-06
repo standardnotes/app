@@ -6,10 +6,9 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import styled from 'styled-components'
 
 import { useAppDispatch, useAppSelector, usePrevious } from '../../app/hooks'
-import { RoundButton, SubTitle } from '../../common/components'
+import { SubTitle } from '../../common/components'
 import { SectionModel, TaskModel, tasksGroupCollapsed } from './tasks-slice'
 
-import { ChevronDownIcon, ChevronUpIcon } from '../../common/components/icons'
 import TaskItem from './TaskItem'
 
 const SectionHeader = styled.div`
@@ -26,7 +25,7 @@ const InnerTasksContainer = styled.div`
   flex-direction: column;
 
   & > *:not(:last-child) {
-    margin-bottom: 7px;
+    margin-bottom: 9px;
   }
 `
 
@@ -101,12 +100,7 @@ const TasksSection: React.FC<TasksSectionProps> = ({ groupName, tasks, section, 
         {(provided) => (
           <Wrapper>
             <SectionHeader>
-              <SubTitle>{section.name}</SubTitle>
-              {tasks.length > 0 && (
-                <RoundButton onClick={handleCollapse} size="small">
-                  {!collapsed ? <ChevronUpIcon /> : <ChevronDownIcon />}
-                </RoundButton>
-              )}
+              <SubTitle onClick={handleCollapse}>{section.name}</SubTitle>
             </SectionHeader>
             {!collapsed && (
               <InnerTasksContainer

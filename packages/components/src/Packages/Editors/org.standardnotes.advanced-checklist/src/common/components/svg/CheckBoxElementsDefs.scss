@@ -2,7 +2,7 @@ $transition-duration: 750ms;
 
 .checkbox-container {
   display: block;
-  padding-left: 20px;
+  padding-left: 22px;
   position: relative;
 
   &:last-child {
@@ -22,17 +22,16 @@ $transition-duration: 750ms;
 .checkbox-button {
   bottom: 0;
   cursor: pointer;
-  fill: none;
-  height: 19px;
+  fill: var(--sn-stylekit-contrast-background-color);
+  height: 18px;
   left: 0;
   margin: auto;
   position: absolute;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-width: 2;
-  stroke: var(--sn-stylekit-neutral-color);
+  stroke-width: 1;
   top: 0;
-  width: 19px;
+  width: 18px;
 }
 
 .align-baseline {
@@ -60,8 +59,9 @@ $transition-duration: 750ms;
 .checkbox-square {
   stroke-dasharray: 56.1053, 56.1053;
   stroke-dashoffset: 0;
-  stroke: var(--sn-stylekit-neutral-color);
+  stroke: var(--sn-stylekit-shadow-color);
   transition-delay: $transition-duration * 0.2;
+  fill: var(--sn-stylekit-contrast-background-color);
 }
 
 .checkbox-mark {

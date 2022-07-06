@@ -30,7 +30,7 @@ const MigrateLegacyContent: React.FC = () => {
                   Are you sure you want to migrate legacy content to the new format?
                 </AlertDialogLabel>
 
-                <div className="flex my-1 mt-4">
+                <div className="flex my-1">
                   <button className="sn-button small neutral" onClick={handleCancel} ref={cancelRef}>
                     Cancel
                   </button>
