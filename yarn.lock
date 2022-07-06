@@ -6945,8 +6945,6 @@ __metadata:
     "@react-navigation/stack": ^6.2.1
     "@standardnotes/components-meta": "workspace:*"
     "@standardnotes/config": ^2.4.3
-    "@standardnotes/encryption": "workspace:*"
-    "@standardnotes/features": "workspace:*"
     "@standardnotes/filepicker": "workspace:*"
     "@standardnotes/files": "workspace:*"
     "@standardnotes/icons": "workspace:*"
@@ -6956,7 +6954,6 @@ __metadata:
     "@standardnotes/sncrypto-common": "workspace:*"
     "@standardnotes/snjs": "workspace:*"
     "@standardnotes/stylekit": 5.29.3
-    "@standardnotes/utils": "workspace:*"
     "@standardnotes/web": "workspace:*"
     "@types/detox": ^18.1.0
     "@types/faker": ^6.6.9
@@ -7494,11 +7491,9 @@ __metadata:
     "@reach/listbox": ^0.16.2
     "@reach/tooltip": ^0.16.2
     "@reach/visually-hidden": ^0.16.0
-    "@standardnotes/encryption": "workspace:*"
     "@standardnotes/filepicker": "workspace:*"
     "@standardnotes/files": "workspace:*"
     "@standardnotes/icons": "workspace:*"
-    "@standardnotes/services": "workspace:*"
     "@standardnotes/sncrypto-web": "workspace:*"
     "@standardnotes/snjs": "workspace:*"
     "@standardnotes/styles": "workspace:*"
