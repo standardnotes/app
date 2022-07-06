@@ -79,6 +79,9 @@
       "^.+\\.module\\.(css|sass|scss)$"
     ]
   },
+  "dependencies": {
+    "@standardnotes/utils": "workspace:*"
+  },
   "devDependencies": {
     "@reach/alert-dialog": "0.16.2",
     "@reach/menu-button": "0.16.2",
@@ -87,7 +90,6 @@
     "@reduxjs/toolkit": "1.8.0",
     "@standardnotes/editor-kit": "2.2.5",
     "@standardnotes/stylekit": "5.23.0",
-    "@standardnotes/utils": "workspace:*",
     "@testing-library/dom": "8.11.3",
     "@testing-library/jest-dom": "5.16.2",
     "@testing-library/react": "12.1.4",
