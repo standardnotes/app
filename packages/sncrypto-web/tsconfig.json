@@ -9,7 +9,6 @@
     "esModuleInterop": true,
     "declaration": true,
     "outDir": "./dist",
-    "composite": true,
     "inlineSourceMap": true,
     "types": ["node"],
     "typeRoots": ["node_modules/@types", "typings"]
