@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.37.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.37.3...@standardnotes/web@3.37.4) (2022-07-06)
+
+### Bug Fixes
+
+* **web:** update modal styles ([#1220](https://github.com/standardnotes/app/issues/1220)) ([6fa6374](https://github.com/standardnotes/app/commit/6fa6374cf2a283070977b43b0ac4542d054aee96))
+
 ## [3.37.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.37.2...@standardnotes/web@3.37.3) (2022-07-06)
 
 ### Bug Fixes
