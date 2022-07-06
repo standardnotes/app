@@ -21,6 +21,7 @@ packages/encryption/dist
 packages/files/dist
 packages/models/dist
 packages/services/dist
+packages/utils/dist
 
 **/.pnp.*
 **/.yarn/*
