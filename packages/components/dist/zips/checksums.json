@@ -30,9 +30,9 @@
     "binary": "5a00749f8930a41541589f704fff2b6e1d84224305750c7880e941085a8fef62"
   },
   "org.standardnotes.theme-dynamic": {
-    "version": "1.0.8",
-    "base64": "0f0232ab1bd65f562619fbd68ae593522e6127f359b5843956aaf99c9436c583",
-    "binary": "6f726e05c26f0e9feee775656513a034c6a437b22510e75fba863acc6342af24"
+    "version": "1.1.0",
+    "base64": "1214db7ca8962d7f56937c16463ca3131f2073a718f993e47c1dfcf233eefab8",
+    "binary": "6da8d19f03e724b058950eb6869e4fe9c6ba5e57d995e268aecc823a235af43d"
   },
   "org.standardnotes.code-editor": {
     "version": "1.3.17",

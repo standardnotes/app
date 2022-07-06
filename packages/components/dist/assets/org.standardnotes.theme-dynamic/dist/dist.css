@@ -1,29 +1,23 @@
-#navigation.section,
-.section.tags,
-navigation {
+#navigation {
   flex: none !important;
-  width: 190px !important;
+  width: 10px !important;
   transition: width 0.25s;
 }
 
-#navigation.section:hover,
-.section.tags:hover,
-navigation:hover {
+#navigation:hover {
   flex: initial;
-  width: 250px !important;
+  width: 200px !important;
   transition: width 0.25s;
 }
 
-.section.notes,
-notes-view {
+#items-column {
   flex: none !important;
   width: 270px !important;
   transition: width 0.25s;
 }
 
-.section.notes:hover,
-notes-view:hover {
+#items-column:hover {
   flex: initial;
-  width: 420px !important;
+  width: 380px !important;
   transition: width 0.25s;
 }
