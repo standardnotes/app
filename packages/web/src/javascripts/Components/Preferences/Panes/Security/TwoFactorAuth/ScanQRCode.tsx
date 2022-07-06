@@ -25,7 +25,7 @@ const ScanQRCode: FunctionComponent<Props> = ({ activation: act }) => {
           <QRCode className="border-neutral-contrast-bg border-2 border-solid" value={act.qrCode} size={100} />
         </div>
         <div className="min-w-5" />
-        <div className="flex flex-grow flex-col">
+        <div className="flex flex-grow flex-col gap-2">
           <div className="flex flex-row items-center">
             <Bullet />
             <div className="min-w-1" />
@@ -35,7 +35,6 @@ const ScanQRCode: FunctionComponent<Props> = ({ activation: act }) => {
             <div className="min-w-2" />
             <AuthAppInfoTooltip />
           </div>
-          <div className="min-h-2" />
           <div className="flex flex-row items-center">
             <Bullet className="mt-2 self-start" />
             <div className="min-w-1" />
@@ -43,7 +42,6 @@ const ScanQRCode: FunctionComponent<Props> = ({ activation: act }) => {
               <b>Scan this QR code</b> or <b>add this secret key</b>:
             </div>
           </div>
-          <div className="min-h-2" />
           <DecoratedInput
             className={{ container: 'w-92 ml-4' }}
             disabled={true}

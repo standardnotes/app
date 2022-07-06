@@ -5,7 +5,7 @@ type Props = {
 }
 
 const Bullet: FunctionComponent<Props> = ({ className = '' }) => (
-  <div className={`min-h-1 bg-inverted-default min-w-1 rounded-full ${className} mr-2`} />
+  <div className={`min-h-1 min-w-1 rounded-full bg-text ${className} mr-2`} />
 )
 
 export default Bullet
