@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0](https://github.com/standardnotes/app/compare/@standardnotes/dynamic-theme@1.0.8...@standardnotes/dynamic-theme@1.1.0) (2022-07-06)
+
+### Bug Fixes
+
+* **components:** dynamic panels theme ([d1df0d3](https://github.com/standardnotes/app/commit/d1df0d371a8afc60c17c79f35a1416804eedb9ec))
+
+### Features
+
+* deprecated editors ([#1166](https://github.com/standardnotes/app/issues/1166)) ([60ca415](https://github.com/standardnotes/app/commit/60ca4150446f9a14bb6a31416686c6d07a7d0cd9))
+
 ## [1.0.8](https://github.com/standardnotes/app/compare/@standardnotes/dynamic-theme@1.0.8-alpha.0...@standardnotes/dynamic-theme@1.0.8) (2022-06-22)
 
 **Note:** Version bump only for package @standardnotes/dynamic-theme

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.7.2](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.7.1...@standardnotes/components-meta@2.7.2) (2022-07-06)
+
+### Bug Fixes
+
+* **components:** dynamic panels theme ([d1df0d3](https://github.com/standardnotes/app/commit/d1df0d371a8afc60c17c79f35a1416804eedb9ec))
+
 ## [2.7.1](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.7.0...@standardnotes/components-meta@2.7.1) (2022-07-06)
 
 **Note:** Version bump only for package @standardnotes/components-meta
