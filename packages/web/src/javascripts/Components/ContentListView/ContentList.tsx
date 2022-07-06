@@ -37,7 +37,7 @@ const ContentList: FunctionComponent<Props> = ({
   selectedItems,
   paginate,
 }) => {
-  const { selectPreviousItem, selectNextItem } = itemListController
+  const { selectPreviousItem, selectNextItem } = selectionController
   const { hideTags, hideDate, hideNotePreview, hideEditorIcon } = itemListController.webDisplayOptions
   const { sortBy } = itemListController.displayOptions
 

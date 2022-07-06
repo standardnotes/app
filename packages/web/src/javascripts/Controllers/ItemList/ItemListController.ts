@@ -370,7 +370,7 @@ export class ItemListController extends AbstractViewController implements Intern
       await this.selectFirstItem()
     } else if (this.shouldCloseActiveItem(activeItem) && activeController) {
       this.closeItemController(activeController)
-      this.selectNextItem()
+      this.selectionController.selectNextItem()
     } else if (this.shouldSelectNextItemOrCreateNewNote(activeItem)) {
       await this.selectNextItemOrCreateNewNote()
     } else if (this.shouldSelectActiveItem(activeItem) && activeItem) {
@@ -547,27 +547,11 @@ export class ItemListController extends AbstractViewController implements Intern
     return document.getElementById(ElementIdScrollContainer)
   }
 
-  selectItemWithScrollHandling = async (
-    item: {
-      uuid: ListableContentItem['uuid']
-    },
-    { userTriggered = false, scrollIntoView = true },
-  ): Promise<void> => {
-    await this.selectionController.selectItem(item.uuid, userTriggered)
-
-    if (scrollIntoView) {
-      const itemElement = document.getElementById(item.uuid)
-      itemElement?.scrollIntoView({
-        behavior: 'smooth',
-      })
-    }
-  }
-
   selectFirstItem = async () => {
     const item = this.getFirstNonProtectedItem()
 
     if (item) {
-      await this.selectItemWithScrollHandling(item, {
+      await this.selectionController.selectItemWithScrollHandling(item, {
         userTriggered: false,
         scrollIntoView: false,
       })
@@ -576,74 +560,18 @@ export class ItemListController extends AbstractViewController implements Intern
     }
   }
 
-  selectNextItem = () => {
-    const displayableItems = this.items
-
-    const currentIndex = displayableItems.findIndex((candidate) => {
-      return candidate.uuid === this.selectionController.lastSelectedItem?.uuid
-    })
-
-    let nextIndex = currentIndex + 1
-
-    while (nextIndex < displayableItems.length) {
-      const nextItem = displayableItems[nextIndex]
-
-      nextIndex++
-
-      if (nextItem.protected) {
-        continue
-      }
-
-      this.selectItemWithScrollHandling(nextItem, { userTriggered: true }).catch(console.error)
-
-      const nextNoteElement = document.getElementById(nextItem.uuid)
-
-      nextNoteElement?.focus()
-
-      return
-    }
-  }
-
   selectNextItemOrCreateNewNote = async () => {
     const item = this.getFirstNonProtectedItem()
 
     if (item) {
-      await this.selectItemWithScrollHandling(item, {
-        userTriggered: false,
-        scrollIntoView: false,
-      }).catch(console.error)
+      await this.selectionController
+        .selectItemWithScrollHandling(item, {
+          userTriggered: false,
+          scrollIntoView: false,
+        })
+        .catch(console.error)
     } else {
       await this.createNewNote()
-    }
-  }
-
-  selectPreviousItem = () => {
-    const displayableItems = this.items
-
-    if (!this.selectionController.lastSelectedItem) {
-      return
-    }
-
-    const currentIndex = displayableItems.indexOf(this.selectionController.lastSelectedItem)
-
-    let previousIndex = currentIndex - 1
-
-    while (previousIndex >= 0) {
-      const previousItem = displayableItems[previousIndex]
-
-      previousIndex--
-
-      if (previousItem.protected) {
-        continue
-      }
-
-      this.selectItemWithScrollHandling(previousItem, { userTriggered: true }).catch(console.error)
-
-      const previousNoteElement = document.getElementById(previousItem.uuid)
-
-      previousNoteElement?.focus()
-
-      return
     }
   }
 

@@ -57,11 +57,9 @@ const ContentListView: FunctionComponent<Props> = ({
     panelWidth,
     renderedItems,
     searchBarElement,
-    selectNextItem,
-    selectPreviousItem,
   } = itemListController
 
-  const { selectedItems } = selectionController
+  const { selectedItems, selectNextItem, selectPreviousItem } = selectionController
 
   const isFilesSmartView = useMemo(
     () => navigationController.selected?.uuid === SystemViewId.Files,

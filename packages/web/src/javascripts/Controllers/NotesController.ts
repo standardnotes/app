@@ -201,7 +201,6 @@ export class NotesController extends AbstractViewController {
       const notesDeleted = await this.deleteNotes(false)
       if (notesDeleted) {
         runInAction(() => {
-          this.unselectNotes()
           this.contextMenuOpen = false
         })
       }
@@ -210,7 +209,6 @@ export class NotesController extends AbstractViewController {
         mutator.trashed = trashed
       })
       runInAction(() => {
-        this.unselectNotes()
         this.contextMenuOpen = false
       })
     }
@@ -242,10 +240,10 @@ export class NotesController extends AbstractViewController {
         confirmButtonStyle: 'danger',
       })
     ) {
+      this.selectionController.selectNextItem()
       if (permanently) {
         for (const note of this.getSelectedNotesList()) {
           await this.application.mutator.deleteItem(note)
-          this.selectionController.deselectItem(note)
         }
       } else {
         await this.changeSelectedNotes((mutator) => {
