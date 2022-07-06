@@ -50,6 +50,7 @@
     "@standardnotes/utils": "workspace:*",
     "@standardnotes/web": "workspace:*",
     "@types/styled-components-react-native": "5.1.3",
+    "dompurify": "^2.3.8",
     "js-base64": "^3.7.2",
     "moment": "^2.29.2",
     "react": "17.0.2",

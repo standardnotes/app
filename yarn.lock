@@ -6933,6 +6933,7 @@ __metadata:
     "@typescript-eslint/parser": ^5.20.0
     babel-jest: ^27.5.1
     detox: ^19.5.7
+    dompurify: ^2.3.8
     eslint: ^8.13.0
     eslint-plugin-flowtype: ^8.0.3
     eslint-plugin-prettier: ^4.0.0
