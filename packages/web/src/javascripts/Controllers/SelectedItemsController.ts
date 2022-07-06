@@ -221,4 +221,78 @@ export class SelectedItemsController extends AbstractViewController {
       didSelect: this.selectedItems[uuid] != undefined,
     }
   }
+
+  selectItemWithScrollHandling = async (
+    item: {
+      uuid: ListableContentItem['uuid']
+    },
+    { userTriggered = false, scrollIntoView = true },
+  ): Promise<void> => {
+    const { didSelect } = await this.selectItem(item.uuid, userTriggered)
+
+    if (didSelect && scrollIntoView) {
+      const itemElement = document.getElementById(item.uuid)
+      itemElement?.scrollIntoView({
+        behavior: 'smooth',
+      })
+    }
+  }
+
+  selectNextItem = () => {
+    const displayableItems = this.itemListController.items
+
+    const currentIndex = displayableItems.findIndex((candidate) => {
+      return candidate.uuid === this.lastSelectedItem?.uuid
+    })
+
+    let nextIndex = currentIndex + 1
+
+    while (nextIndex < displayableItems.length) {
+      const nextItem = displayableItems[nextIndex]
+
+      nextIndex++
+
+      if (nextItem.protected) {
+        continue
+      }
+
+      this.selectItemWithScrollHandling(nextItem, { userTriggered: true }).catch(console.error)
+
+      const nextNoteElement = document.getElementById(nextItem.uuid)
+
+      nextNoteElement?.focus()
+
+      return
+    }
+  }
+
+  selectPreviousItem = () => {
+    const displayableItems = this.itemListController.items
+
+    if (!this.lastSelectedItem) {
+      return
+    }
+
+    const currentIndex = displayableItems.indexOf(this.lastSelectedItem)
+
+    let previousIndex = currentIndex - 1
+
+    while (previousIndex >= 0) {
+      const previousItem = displayableItems[previousIndex]
+
+      previousIndex--
+
+      if (previousItem.protected) {
+        continue
+      }
+
+      this.selectItemWithScrollHandling(previousItem, { userTriggered: true }).catch(console.error)
+
+      const previousNoteElement = document.getElementById(previousItem.uuid)
+
+      previousNoteElement?.focus()
+
+      return
+    }
+  }
 }

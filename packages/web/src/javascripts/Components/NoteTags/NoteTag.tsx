@@ -80,7 +80,7 @@ const NoteTag = ({ viewControllerManager, tag }: Props) => {
     if (autocompleteInputFocused) {
       return -1
     }
-    return tags[0].uuid === tag.uuid ? 0 : -1
+    return tags[0]?.uuid === tag.uuid ? 0 : -1
   }, [autocompleteInputFocused, tags, tag, focusedTagUuid])
 
   const onKeyDown: KeyboardEventHandler = useCallback(
