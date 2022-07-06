@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.30.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.29.0...@standardnotes/mobile@3.30.0) (2022-07-06)
+
+### Bug Fixes
+
+* deps on weba and mobile ([d380711](https://github.com/standardnotes/app/commit/d38071168ac343a952643647996fca5f1018f2b1))
+
+### Features
+
+* add snjs package ([0e40469](https://github.com/standardnotes/app/commit/0e40469e2fe868b88860f0f2541364696d8f7957))
+
 # [3.29.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.28.3...@standardnotes/mobile@3.29.0) (2022-07-06)
 
 ### Bug Fixes

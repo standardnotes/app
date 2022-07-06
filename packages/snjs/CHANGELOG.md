@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.123.0 (2022-07-06)
+
+### Features
+
+* add snjs package ([0e40469](https://github.com/standardnotes/app/commit/0e40469e2fe868b88860f0f2541364696d8f7957))
+
 # [2.121.0](https://github.com/standardnotes/snjs/compare/@standardnotes/snjs@2.120.0...@standardnotes/snjs@2.121.0) (2022-07-06)
 
 ### Bug Fixes
