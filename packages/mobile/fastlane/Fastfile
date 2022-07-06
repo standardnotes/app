@@ -45,7 +45,8 @@ platform :ios do
       apple_id: ENV['APPLE_APP_ID'],
       distribute_external: true,
       notify_external_testers: true,
-      submit_beta_review: true
+      submit_beta_review: true,
+      changelog: 'Fixes and improvements.'
     )
     # refresh_dsyms
   end
