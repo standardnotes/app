@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.37.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.37.2...@standardnotes/web@3.37.3) (2022-07-06)
+
+### Bug Fixes
+
+* select next item when trashing or deleting item ([#1218](https://github.com/standardnotes/app/issues/1218)) ([2ee7912](https://github.com/standardnotes/app/commit/2ee791259dca709d03db2ebded7972ce7c3b788e))
+
 ## [3.37.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.37.1...@standardnotes/web@3.37.2) (2022-07-06)
 
 **Note:** Version bump only for package @standardnotes/web
