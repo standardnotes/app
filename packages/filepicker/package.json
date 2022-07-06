@@ -26,7 +26,6 @@
   },
   "devDependencies": {
     "@types/jest": "^27.4.1",
-    "@types/wicg-file-system-access": "^2020.9.5",
     "@typescript-eslint/eslint-plugin": "^5.30.0",
     "eslint-plugin-prettier": "^4.2.1",
     "jest": "^27.5.1",
@@ -37,6 +36,7 @@
     "@standardnotes/common": "^1.23.1",
     "@standardnotes/services": "workspace:*",
     "@standardnotes/utils": "^1.6.12",
+    "@types/wicg-file-system-access": "^2020.9.5",
     "reflect-metadata": "^0.1.13"
   }
 }
