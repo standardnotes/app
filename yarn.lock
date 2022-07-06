@@ -6902,6 +6902,7 @@ __metadata:
     "@standardnotes/sncrypto-common": 1.9.0
     "@standardnotes/snjs": ^2.118.3
     "@standardnotes/stylekit": 5.29.3
+    "@standardnotes/utils": "workspace:*"
     "@standardnotes/web": "workspace:*"
     "@types/detox": ^18.1.0
     "@types/faker": ^6.6.9
