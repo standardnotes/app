@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.19.1](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.19.0...@standardnotes/filepicker@1.19.1) (2022-07-06)
+
+### Bug Fixes
+
+* files system access api dependency on filepicker ([c4e16e4](https://github.com/standardnotes/app/commit/c4e16e4346cb4cc5892ce31a2be7c05331c4dedc))
+
 # [1.19.0](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.18.0...@standardnotes/filepicker@1.19.0) (2022-07-05)
 
 ### Features
