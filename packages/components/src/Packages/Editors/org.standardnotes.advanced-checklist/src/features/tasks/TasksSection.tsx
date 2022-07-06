@@ -6,10 +6,9 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import styled from 'styled-components'
 
 import { useAppDispatch, useAppSelector, usePrevious } from '../../app/hooks'
-import { RoundButton, SubTitle } from '../../common/components'
+import { SubTitle } from '../../common/components'
 import { SectionModel, TaskModel, tasksGroupCollapsed } from './tasks-slice'
 
-import { ChevronDownIcon, ChevronUpIcon } from '../../common/components/icons'
 import TaskItem from './TaskItem'
 
 const SectionHeader = styled.div`
