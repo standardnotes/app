@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.7.3](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.7.2...@standardnotes/components-meta@2.7.3) (2022-07-06)
+
+### Bug Fixes
+
+* **advanced checklist:** improve editor styles ([#1221](https://github.com/standardnotes/app/issues/1221)) ([f7ba658](https://github.com/standardnotes/app/commit/f7ba6588a7d062e3ec82e6413042ce5d8cd075f7))
+
 ## [2.7.2](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.7.1...@standardnotes/components-meta@2.7.2) (2022-07-06)
 
 ### Bug Fixes

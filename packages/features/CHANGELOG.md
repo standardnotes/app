@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.50.3](https://github.com/standardnotes/app/compare/@standardnotes/features@1.50.2...@standardnotes/features@1.50.3) (2022-07-06)
+
+### Bug Fixes
+
+* **advanced checklist:** improve editor styles ([#1221](https://github.com/standardnotes/app/issues/1221)) ([f7ba658](https://github.com/standardnotes/app/commit/f7ba6588a7d062e3ec82e6413042ce5d8cd075f7))
+
 ## [1.50.2](https://github.com/standardnotes/app/compare/@standardnotes/features@1.50.1...@standardnotes/features@1.50.2) (2022-07-06)
 
 **Note:** Version bump only for package @standardnotes/features
