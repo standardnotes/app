@@ -287,7 +287,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:^7.1.0, @babel/core@npm:^7.1.6, @babel/core@npm:^7.11.1, @babel/core@npm:^7.11.6, @babel/core@npm:^7.12.10, @babel/core@npm:^7.12.16, @babel/core@npm:^7.12.3, @babel/core@npm:^7.13.10, @babel/core@npm:^7.13.13, @babel/core@npm:^7.13.14, @babel/core@npm:^7.13.8, @babel/core@npm:^7.14.0, @babel/core@npm:^7.14.6, @babel/core@npm:^7.15.5, @babel/core@npm:^7.16.0, @babel/core@npm:^7.17.10, @babel/core@npm:^7.17.9, @babel/core@npm:^7.18.2, @babel/core@npm:^7.18.5, @babel/core@npm:^7.7.0, @babel/core@npm:^7.7.2, @babel/core@npm:^7.7.7, @babel/core@npm:^7.8.0":
+"@babel/core@npm:^7.1.0, @babel/core@npm:^7.1.6, @babel/core@npm:^7.11.1, @babel/core@npm:^7.11.6, @babel/core@npm:^7.12.10, @babel/core@npm:^7.12.16, @babel/core@npm:^7.12.3, @babel/core@npm:^7.13.10, @babel/core@npm:^7.13.13, @babel/core@npm:^7.13.14, @babel/core@npm:^7.13.8, @babel/core@npm:^7.14.0, @babel/core@npm:^7.14.6, @babel/core@npm:^7.15.5, @babel/core@npm:^7.16.0, @babel/core@npm:^7.17.10, @babel/core@npm:^7.17.9, @babel/core@npm:^7.18.2, @babel/core@npm:^7.18.5, @babel/core@npm:^7.18.6, @babel/core@npm:^7.7.0, @babel/core@npm:^7.7.2, @babel/core@npm:^7.7.7, @babel/core@npm:^7.8.0":
   version: 7.18.6
   resolution: "@babel/core@npm:7.18.6"
   dependencies:
@@ -1638,7 +1638,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/preset-env@npm:^7.11.0, @babel/preset-env@npm:^7.12.1, @babel/preset-env@npm:^7.12.11, @babel/preset-env@npm:^7.12.16, @babel/preset-env@npm:^7.13.10, @babel/preset-env@npm:^7.13.12, @babel/preset-env@npm:^7.13.8, @babel/preset-env@npm:^7.14.7, @babel/preset-env@npm:^7.15.6, @babel/preset-env@npm:^7.16.11, @babel/preset-env@npm:^7.16.4, @babel/preset-env@npm:^7.17.10, @babel/preset-env@npm:^7.18.2, @babel/preset-env@npm:^7.7.1, @babel/preset-env@npm:^7.7.7":
+"@babel/preset-env@npm:^7.11.0, @babel/preset-env@npm:^7.12.1, @babel/preset-env@npm:^7.12.11, @babel/preset-env@npm:^7.12.16, @babel/preset-env@npm:^7.13.10, @babel/preset-env@npm:^7.13.12, @babel/preset-env@npm:^7.13.8, @babel/preset-env@npm:^7.14.7, @babel/preset-env@npm:^7.15.6, @babel/preset-env@npm:^7.16.11, @babel/preset-env@npm:^7.16.4, @babel/preset-env@npm:^7.17.10, @babel/preset-env@npm:^7.18.2, @babel/preset-env@npm:^7.18.6, @babel/preset-env@npm:^7.7.1, @babel/preset-env@npm:^7.7.7":
   version: 7.18.6
   resolution: "@babel/preset-env@npm:7.18.6"
   dependencies:
@@ -6524,7 +6524,7 @@ __metadata:
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": ^1.6.39
     "@standardnotes/services": "workspace:*"
-    "@standardnotes/sncrypto-common": ^1.9.0
+    "@standardnotes/sncrypto-common": "workspace:*"
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^27.4.1
     "@types/node": ^18.0.0
@@ -6601,7 +6601,7 @@ __metadata:
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": ^1.6.39
     "@standardnotes/services": "workspace:*"
-    "@standardnotes/sncrypto-common": ^1.9.0
+    "@standardnotes/sncrypto-common": "workspace:*"
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^27.4.1
     "@typescript-eslint/eslint-plugin": ^5.30.0
@@ -6905,7 +6905,7 @@ __metadata:
     "@standardnotes/react-native-aes": ^1.4.3
     "@standardnotes/react-native-textview": 1.1.0
     "@standardnotes/react-native-utils": 1.0.1
-    "@standardnotes/sncrypto-common": 1.9.0
+    "@standardnotes/sncrypto-common": "workspace:*"
     "@standardnotes/snjs": ^2.118.3
     "@standardnotes/stylekit": 5.29.3
     "@standardnotes/utils": "workspace:*"
@@ -7166,23 +7166,45 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/sncrypto-common@npm:1.9.0, @standardnotes/sncrypto-common@npm:^1.7.1, @standardnotes/sncrypto-common@npm:^1.9.0":
-  version: 1.9.0
-  resolution: "@standardnotes/sncrypto-common@npm:1.9.0"
-  checksum: 42252d71984b52756dff44ec3721961858e9f4227ca6555c0d60551852cb5f0a938b2b4969177c23c85d34e7f182369393f8b795afc65cff65b1c30b139f8f68
-  languageName: node
-  linkType: hard
-
-"@standardnotes/sncrypto-web@npm:1.10.1, @standardnotes/sncrypto-web@npm:^1.6.1":
-  version: 1.10.1
-  resolution: "@standardnotes/sncrypto-web@npm:1.10.1"
+"@standardnotes/sncrypto-common@^1.7.1, @standardnotes/sncrypto-common@^1.9.0, @standardnotes/sncrypto-common@workspace:*, @standardnotes/sncrypto-common@workspace:packages/sncrypto-common":
+  version: 0.0.0-use.local
+  resolution: "@standardnotes/sncrypto-common@workspace:packages/sncrypto-common"
   dependencies:
-    "@standardnotes/sncrypto-common": ^1.9.0
+    "@typescript-eslint/eslint-plugin": ^5.30.0
+    "@typescript-eslint/parser": ^5.12.1
+    eslint-plugin-prettier: ^4.2.1
+    reflect-metadata: ^0.1.13
+  languageName: unknown
+  linkType: soft
+
+"@standardnotes/sncrypto-web@^1.6.1, @standardnotes/sncrypto-web@workspace:*, @standardnotes/sncrypto-web@workspace:packages/sncrypto-web":
+  version: 0.0.0-use.local
+  resolution: "@standardnotes/sncrypto-web@workspace:packages/sncrypto-web"
+  dependencies:
+    "@babel/core": ^7.18.6
+    "@babel/plugin-syntax-dynamic-import": ^7.8.3
+    "@babel/preset-env": ^7.18.6
+    "@standardnotes/sncrypto-common": "workspace:*"
+    "@types/libsodium-wrappers": ^0.7.9
+    "@types/node": ^18.0.0
+    "@types/uuid": ^8.3.4
+    "@typescript-eslint/eslint-plugin": ^5.30.0
+    babel-loader: ^8.2.3
     buffer: ^6.0.3
-    libsodium-wrappers: ^0.7.9
-  checksum: bce6e92e15303a1f3640615a87d50c618aebec1f960ff1aeaacb2097d5d535148256b620767ff002fc626785c68ec9329639f868647f74410c8b6b857a6443bd
-  languageName: node
-  linkType: hard
+    chai: ^4.3.6
+    connect: ^3.7.0
+    eslint-plugin-prettier: ^4.2.1
+    libsodium-wrappers: ^0.7.10
+    reflect-metadata: ^0.1.13
+    regenerator-runtime: ^0.13.9
+    serve-static: ^1.14.2
+    ts-loader: ^9.2.6
+    typedarray-to-buffer: ^4.0.0
+    uuid: ^8.3.2
+    webpack: ^5.69.1
+    webpack-cli: ^4.9.2
+  languageName: unknown
+  linkType: soft
 
 "@standardnotes/snjs@npm:^2.118.3, @standardnotes/snjs@npm:^2.41.1":
   version: 2.118.3
@@ -7372,7 +7394,7 @@ __metadata:
     "@standardnotes/files": "workspace:*"
     "@standardnotes/icons": "workspace:*"
     "@standardnotes/services": "workspace:*"
-    "@standardnotes/sncrypto-web": 1.10.1
+    "@standardnotes/sncrypto-web": "workspace:*"
     "@standardnotes/snjs": ^2.118.3
     "@standardnotes/styles": "workspace:*"
     "@standardnotes/toast": "workspace:*"
@@ -8318,6 +8340,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/libsodium-wrappers@npm:^0.7.9":
+  version: 0.7.9
+  resolution: "@types/libsodium-wrappers@npm:0.7.9"
+  checksum: 5ddf61b8047e38f00c1509369ad868a724235a67940971cc671b070ab9d6b2e6872407253be1163b174f742ecbb0986fda7b91aa0b7069437359b4671bfc529b
+  languageName: node
+  linkType: hard
+
 "@types/lodash@npm:4.14.179":
   version: 4.14.179
   resolution: "@types/lodash@npm:4.14.179"
@@ -9012,7 +9041,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/uuid@npm:8.3.4":
+"@types/uuid@npm:8.3.4, @types/uuid@npm:^8.3.4":
   version: 8.3.4
   resolution: "@types/uuid@npm:8.3.4"
   checksum: 6f11f3ff70f30210edaa8071422d405e9c1d4e53abbe50fdce365150d3c698fe7bbff65c1e71ae080cbfb8fded860dbb5e174da96fdbbdfcaa3fb3daa474d20f
@@ -10576,6 +10605,13 @@ __metadata:
     object-assign: ^4.1.1
     util: 0.10.3
   checksum: 9be48435f726029ae7020c5888a3566bf4d617687aab280827f2e4029644b6515a9519ea10d018b342147c02faf73d9e9419e780e8937b3786ee4945a0ca71e5
+  languageName: node
+  linkType: hard
+
+"assertion-error@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "assertion-error@npm:1.1.0"
+  checksum: fd9429d3a3d4fd61782eb3962ae76b6d08aa7383123fca0596020013b3ebd6647891a85b05ce821c47d1471ed1271f00b0545cf6a4326cf2fc91efcc3b0fbecf
   languageName: node
   linkType: hard
 
@@ -12652,6 +12688,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"chai@npm:^4.3.6":
+  version: 4.3.6
+  resolution: "chai@npm:4.3.6"
+  dependencies:
+    assertion-error: ^1.1.0
+    check-error: ^1.0.2
+    deep-eql: ^3.0.1
+    get-func-name: ^2.0.0
+    loupe: ^2.3.1
+    pathval: ^1.1.1
+    type-detect: ^4.0.5
+  checksum: acff93fd537f96d4a4d62dd83810285dffcfccb5089e1bf2a1205b28ec82d93dff551368722893cf85004282df10ee68802737c33c90c5493957ed449ed7ce71
+  languageName: node
+  linkType: hard
+
 "chalk@npm:2.4.2, chalk@npm:^2.0.0, chalk@npm:^2.0.1, chalk@npm:^2.4.1, chalk@npm:^2.4.2":
   version: 2.4.2
   resolution: "chalk@npm:2.4.2"
@@ -12775,6 +12826,13 @@ __metadata:
   version: 0.7.0
   resolution: "chardet@npm:0.7.0"
   checksum: 6fd5da1f5d18ff5712c1e0aed41da200d7c51c28f11b36ee3c7b483f3696dabc08927fc6b227735eb8f0e1215c9a8abd8154637f3eff8cada5959df7f58b024d
+  languageName: node
+  linkType: hard
+
+"check-error@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "check-error@npm:1.0.2"
+  checksum: d9d106504404b8addd1ee3f63f8c0eaa7cd962a1a28eb9c519b1c4a1dc7098be38007fc0060f045ee00f075fbb7a2a4f42abcf61d68323677e11ab98dc16042e
   languageName: node
   linkType: hard
 
@@ -13737,7 +13795,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"connect@npm:^3.6.5":
+"connect@npm:^3.6.5, connect@npm:^3.7.0":
   version: 3.7.0
   resolution: "connect@npm:3.7.0"
   dependencies:
@@ -15793,6 +15851,15 @@ __metadata:
   dependencies:
     is-obj: ^1.0.0
   checksum: 9041ccc72ae1980f014d4b745d6135d8f0e71d60ac433397550789c27e6b4d14bc0de2af69777e09f97e1d0da3007a8d78de36f7bf9df931c9968b68fc9546ab
+  languageName: node
+  linkType: hard
+
+"deep-eql@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "deep-eql@npm:3.0.1"
+  dependencies:
+    type-detect: ^4.0.0
+  checksum: 4f4c9fb79eb994fb6e81d4aa8b063adc40c00f831588aa65e20857d5d52f15fb23034a6576ecf886f7ff6222d5ae42e71e9b7d57113e0715b1df7ea1e812b125
   languageName: node
   linkType: hard
 
@@ -19270,6 +19337,13 @@ __metadata:
   version: 2.0.5
   resolution: "get-caller-file@npm:2.0.5"
   checksum: b9769a836d2a98c3ee734a88ba712e62703f1df31b94b784762c433c27a386dd6029ff55c2a920c392e33657d80191edbf18c61487e198844844516f843496b9
+  languageName: node
+  linkType: hard
+
+"get-func-name@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "get-func-name@npm:2.0.0"
+  checksum: 8d82e69f3e7fab9e27c547945dfe5cc0c57fc0adf08ce135dddb01081d75684a03e7a0487466f478872b341d52ac763ae49e660d01ab83741f74932085f693c3
   languageName: node
   linkType: hard
 
@@ -24335,7 +24409,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"libsodium-wrappers@npm:^0.7.9":
+"libsodium-wrappers@npm:^0.7.10":
   version: 0.7.10
   resolution: "libsodium-wrappers@npm:0.7.10"
   dependencies:
@@ -24916,6 +24990,15 @@ __metadata:
   bin:
     loose-envify: cli.js
   checksum: 6517e24e0cad87ec9888f500c5b5947032cdfe6ef65e1c1936a0c48a524b81e65542c9c3edc91c97d5bddc806ee2a985dbc79be89215d613b1de5db6d1cfe6f4
+  languageName: node
+  linkType: hard
+
+"loupe@npm:^2.3.1":
+  version: 2.3.4
+  resolution: "loupe@npm:2.3.4"
+  dependencies:
+    get-func-name: ^2.0.0
+  checksum: 5af91db61aa18530f1749a64735ee194ac263e65e9f4d1562bf3036c591f1baa948289c193e0e34c7b5e2c1b75d3c1dc4fce87f5edb3cee10b0c0df46bc9ffb3
   languageName: node
   linkType: hard
 
@@ -28936,6 +29019,13 @@ __metadata:
     process: ^0.11.1
     util: ^0.10.3
   checksum: 5dedb71e78fc008fcba797defc0b4e1cf06c1f18e0a631e03ba5bb505136f587ff017afc14f9a3d481cbe77aeedff7dc0c1d2ce4d820c1ebf3c4281ca49423a1
+  languageName: node
+  linkType: hard
+
+"pathval@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "pathval@npm:1.1.1"
+  checksum: 090e3147716647fb7fb5b4b8c8e5b55e5d0a6086d085b6cd23f3d3c01fcf0ff56fd3cc22f2f4a033bd2e46ed55d61ed8379e123b42afe7d531a2a5fc8bb556d6
   languageName: node
   linkType: hard
 
@@ -34543,7 +34633,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"serve-static@npm:1.15.0, serve-static@npm:^1.13.1":
+"serve-static@npm:1.15.0, serve-static@npm:^1.13.1, serve-static@npm:^1.14.2":
   version: 1.15.0
   resolution: "serve-static@npm:1.15.0"
   dependencies:
@@ -37059,7 +37149,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-loader@npm:^9.2.8, ts-loader@npm:^9.3.0":
+"ts-loader@npm:^9.2.6, ts-loader@npm:^9.2.8, ts-loader@npm:^9.3.0":
   version: 9.3.1
   resolution: "ts-loader@npm:9.3.1"
   dependencies:
@@ -37214,7 +37304,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"type-detect@npm:4.0.8":
+"type-detect@npm:4.0.8, type-detect@npm:^4.0.0, type-detect@npm:^4.0.5":
   version: 4.0.8
   resolution: "type-detect@npm:4.0.8"
   checksum: 62b5628bff67c0eb0b66afa371bd73e230399a8d2ad30d852716efcc4656a7516904570cd8631a49a3ce57c10225adf5d0cbdcb47f6b0255fe6557c453925a15
@@ -37326,6 +37416,13 @@ __metadata:
   dependencies:
     is-typedarray: ^1.0.0
   checksum: 99c11aaa8f45189fcfba6b8a4825fd684a321caa9bd7a76a27cf0c7732c174d198b99f449c52c3818107430b5f41c0ccbbfb75cb2ee3ca4a9451710986d61a60
+  languageName: node
+  linkType: hard
+
+"typedarray-to-buffer@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "typedarray-to-buffer@npm:4.0.0"
+  checksum: c1e4dc6597c98de417c3363da88263d92aefd23569a892b2d8a9b9385858b2c7323f6cae010ecb73fa63cae403d20763b8cad9a25a77f5597a9fb3da506ac7df
   languageName: node
   linkType: hard
 
@@ -38943,7 +39040,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:*, webpack@npm:^5.64.4, webpack@npm:^5.72.0, webpack@npm:^5.72.1":
+"webpack@npm:*, webpack@npm:^5.64.4, webpack@npm:^5.69.1, webpack@npm:^5.72.0, webpack@npm:^5.72.1":
   version: 5.73.0
   resolution: "webpack@npm:5.73.0"
   dependencies:

@@ -44,7 +44,7 @@
     "@standardnotes/react-native-aes": "^1.4.3",
     "@standardnotes/react-native-textview": "1.1.0",
     "@standardnotes/react-native-utils": "1.0.1",
-    "@standardnotes/sncrypto-common": "1.9.0",
+    "@standardnotes/sncrypto-common": "workspace:*",
     "@standardnotes/snjs": "^2.118.3",
     "@standardnotes/stylekit": "5.29.3",
     "@standardnotes/utils": "workspace:*",

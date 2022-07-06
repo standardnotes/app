@@ -38,7 +38,7 @@
     "@standardnotes/models": "workspace:*",
     "@standardnotes/responses": "^1.6.39",
     "@standardnotes/services": "workspace:*",
-    "@standardnotes/sncrypto-common": "^1.9.0",
+    "@standardnotes/sncrypto-common": "workspace:*",
     "@standardnotes/utils": "workspace:*",
     "reflect-metadata": "^0.1.13"
   }
