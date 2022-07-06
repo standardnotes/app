@@ -19,7 +19,7 @@ platform :ios do
       version_number: ENV['PACKAGE_VERSION'],
       xcodeproj: 'ios/StandardNotes.xcodeproj'
     )
-    increment_build_number(
+    build_number = increment_build_number(
       build_number: ENV['BUILD_NUMBER'],
       xcodeproj: 'ios/StandardNotes.xcodeproj'
     )
@@ -30,11 +30,13 @@ platform :ios do
       silent: true,
       xcargs: 'DEBUG_INFORMATION_FORMAT=dwarf-with-dsym'
     )
+
+    build_number
   end
 
   def deploy_ios(scheme)
     sign_ios
-    build_ios(scheme)
+    build_number = build_ios(scheme)
     app_store_connect_api_key(
       key_id: ENV['APPSTORE_CONNECT_KEY_ID'],
       issuer_id: ENV['APPSTORE_CONNECT_KEY_ISSUER_ID'],
@@ -47,11 +49,25 @@ platform :ios do
     upload_to_testflight(
       apple_id: ENV['APPLE_APP_ID'],
       distribute_external: is_prod,
+      groups: ['Public'],
       notify_external_testers: is_prod,
       submit_beta_review: is_prod,
       changelog: 'Fixes and improvements.'
     )
-    # refresh_dsyms
+
+    upload_to_app_store(
+      apple_id: ENV['APPLE_APP_ID'],
+      build_number: build_number,
+      submit_for_review: true,
+      automatic_release: false,
+      force: true, # Skip HTMl report verification
+      skip_metadata: true,
+      skip_screenshots: true,
+      skip_binary_upload: true,
+      release_notes: {
+        'default': "Fixes and improvements.",
+      }
+    )
   end
 
   desc 'Deploy dev app'
