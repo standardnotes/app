@@ -210,4 +210,4 @@ jobs:
           sudo snap install snapcraft --classic
           echo "${{ secrets.SNAPCRAFT_LOGIN_FILE }}" >> snapauth.txt
           snapcraft login --with=snapauth.txt
-          snapcraft upload dist/standard-notes-${{ steps.package-version.outputs.current-version}}-linux-amd64.snap
+          snapcraft upload dist/standard-notes-${{ steps.package-version.outputs.current-version}}-linux-amd64.snap --release stable,candidate,beta,edge
