@@ -1,10 +1,12 @@
 import { MobileTheme } from '@Root/Style/MobileTheme'
 import { ComponentChecksumsType } from '@standardnotes/components-meta'
 import RawComponentChecksumsFile from '@standardnotes/components-meta/dist/zips/checksums.json'
-import { EncryptionService } from '@standardnotes/encryption'
-import { FeatureDescription, FeatureIdentifier, GetFeatures } from '@standardnotes/features'
 import {
   ComponentMutator,
+  EncryptionService,
+  FeatureDescription,
+  FeatureIdentifier,
+  GetFeatures,
   isRightVersionGreaterThanLeft,
   PermissionDialog,
   SNApplication,
