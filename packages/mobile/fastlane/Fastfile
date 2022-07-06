@@ -55,19 +55,20 @@ platform :ios do
       changelog: 'Fixes and improvements.'
     )
 
-    upload_to_app_store(
-      apple_id: ENV['APPLE_APP_ID'],
-      build_number: build_number,
-      submit_for_review: true,
-      automatic_release: false,
-      force: true, # Skip HTMl report verification
-      skip_metadata: true,
-      skip_screenshots: true,
-      skip_binary_upload: true,
-      release_notes: {
-        'default': "Fixes and improvements.",
-      }
-    )
+    if is_prod
+      upload_to_app_store(
+        build_number: build_number,
+        submit_for_review: true,
+        automatic_release: false,
+        force: true, # Skip HTMl report verification
+        skip_metadata: true,
+        skip_screenshots: true,
+        skip_binary_upload: true,
+        release_notes: {
+          'default': "Fixes and improvements.",
+        }
+      )
+    end
   end
 
   desc 'Deploy dev app'
