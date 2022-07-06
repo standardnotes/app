@@ -61,6 +61,7 @@ $transition-duration: 750ms;
   stroke-dashoffset: 0;
   stroke: var(--sn-stylekit-shadow-color);
   transition-delay: $transition-duration * 0.2;
+  fill: var(--sn-stylekit-contrast-background-color);
 }
 
 .checkbox-mark {
