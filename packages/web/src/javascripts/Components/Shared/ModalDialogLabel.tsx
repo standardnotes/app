@@ -1,5 +1,7 @@
 import { FunctionComponent, ReactNode } from 'react'
 import { AlertDialogLabel } from '@reach/alert-dialog'
+import Icon from '@/Components/Icon/Icon'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 
 type Props = {
   closeDialog: () => void
@@ -9,15 +11,18 @@ type Props = {
 
 const ModalDialogLabel: FunctionComponent<Props> = ({ children, closeDialog, className, headerButtons }) => (
   <AlertDialogLabel
-    className={`flex flex-shrink-0 items-center justify-between border-b border-solid border-border bg-contrast px-4.5 py-3 text-text ${className}`}
+    className={classNames(
+      'flex flex-shrink-0 items-center justify-between rounded-t border-b border-solid border-border bg-default px-4.5 py-3 text-text',
+      className,
+    )}
   >
     <div className="flex w-full flex-row items-center justify-between">
-      <div className="flex-grow text-base font-medium text-text">{children}</div>
+      <div className="flex-grow text-lg font-semibold text-text">{children}</div>
       <div className="flex items-center gap-2">
         {headerButtons}
-        <div tabIndex={0} className="cursor-pointer font-bold text-info" onClick={closeDialog}>
-          Close
-        </div>
+        <button tabIndex={0} className="rounded p-1 font-bold hover:bg-contrast" onClick={closeDialog}>
+          <Icon type="close" />
+        </button>
       </div>
     </div>
     <hr className="h-1px no-border m-0 bg-border" />
