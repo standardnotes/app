@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.37.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.37.4...@standardnotes/web@3.37.5) (2022-07-06)
+
+### Bug Fixes
+
+* **web:** scrollbar styles ([#1219](https://github.com/standardnotes/app/issues/1219)) ([34719c4](https://github.com/standardnotes/app/commit/34719c49357bee36ffc904d02511b66f34399e86))
+
 ## [3.37.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.37.3...@standardnotes/web@3.37.4) (2022-07-06)
 
 ### Bug Fixes
