@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 1.11.0 (2022-07-06)
+
+### Features
+
+* add sncrypto client side packages ([6ec6679](https://github.com/standardnotes/app/commit/6ec66795d21bdfa5abfa08c3b79b19b5c4cd0449))
+
 ## [1.9.1](https://github.com/standardnotes/snjs/compare/@standardnotes/sncrypto-common@1.9.0...@standardnotes/sncrypto-common@1.9.1) (2022-07-04)
 
 ### Bug Fixes

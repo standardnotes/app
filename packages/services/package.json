@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/services",
-  "version": "1.15.0",
+  "version": "1.16.0",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -28,7 +28,7 @@
     "@standardnotes/auth": "^3.19.4",
     "@standardnotes/common": "^1.23.1",
     "@standardnotes/models": "workspace:*",
-    "@standardnotes/responses": "^1.6.39",
+    "@standardnotes/responses": "^1.9.0",
     "@standardnotes/security": "^1.2.0",
     "@standardnotes/utils": "workspace:*",
     "reflect-metadata": "^0.1.13"

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.20.0](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.19.1...@standardnotes/filepicker@1.20.0) (2022-07-06)
+
+### Features
+
+* add responses package ([9d1f704](https://github.com/standardnotes/app/commit/9d1f7043e55cc8072e669606438e932183770f30))
+* add sncrypto client side packages ([6ec6679](https://github.com/standardnotes/app/commit/6ec66795d21bdfa5abfa08c3b79b19b5c4cd0449))
+* add utils package ([aef4ceb](https://github.com/standardnotes/app/commit/aef4ceb7f85948f1f08b8b09a4db5d187daa371b))
+
 ## [1.19.1](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.19.0...@standardnotes/filepicker@1.19.1) (2022-07-06)
 
 ### Bug Fixes

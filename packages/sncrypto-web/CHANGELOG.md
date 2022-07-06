@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 1.12.0 (2022-07-06)
+
+### Bug Fixes
+
+* composite option for sncrypto-web ([93679df](https://github.com/standardnotes/app/commit/93679df645f87d9fe795945a08d28061f092e178))
+
+### Features
+
+* add sncrypto client side packages ([6ec6679](https://github.com/standardnotes/app/commit/6ec66795d21bdfa5abfa08c3b79b19b5c4cd0449))
+
 ## [1.10.2](https://github.com/standardnotes/snjs/compare/@standardnotes/sncrypto-web@1.10.1...@standardnotes/sncrypto-web@1.10.2) (2022-07-04)
 
 ### Bug Fixes

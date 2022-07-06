@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 1.4.0 (2022-07-06)
+
+### Features
+
+* add api package ([9d7d18e](https://github.com/standardnotes/app/commit/9d7d18e7f20b3023aac078017efb16bbbc3da226))
+* add responses package ([9d1f704](https://github.com/standardnotes/app/commit/9d1f7043e55cc8072e669606438e932183770f30))
+
 # [1.3.0](https://github.com/standardnotes/snjs/compare/@standardnotes/api@1.2.1...@standardnotes/api@1.3.0) (2022-07-06)
 
 ### Features

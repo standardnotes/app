@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.7.0](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.6.6...@standardnotes/components-meta@2.7.0) (2022-07-06)
+
+### Features
+
+* add utils package ([aef4ceb](https://github.com/standardnotes/app/commit/aef4ceb7f85948f1f08b8b09a4db5d187daa371b))
+
 ## [2.6.6](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.6.5...@standardnotes/components-meta@2.6.6) (2022-07-05)
 
 ### Bug Fixes

@@ -6174,7 +6174,7 @@ __metadata:
     "@standardnotes/common": ^1.23.1
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/models": "workspace:*"
-    "@standardnotes/responses": ^1.6.39
+    "@standardnotes/responses": ^1.9.0
     "@standardnotes/security": ^1.1.0
     "@standardnotes/services": "workspace:*"
     "@types/jest": ^27.4.1
@@ -6531,7 +6531,7 @@ __metadata:
     "@standardnotes/common": ^1.23.1
     "@standardnotes/config": 2.4.3
     "@standardnotes/models": "workspace:*"
-    "@standardnotes/responses": ^1.6.39
+    "@standardnotes/responses": ^1.9.0
     "@standardnotes/services": "workspace:*"
     "@standardnotes/sncrypto-common": "workspace:*"
     "@standardnotes/utils": "workspace:*"
@@ -6609,7 +6609,7 @@ __metadata:
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/filepicker": "workspace:*"
     "@standardnotes/models": "workspace:*"
-    "@standardnotes/responses": ^1.6.39
+    "@standardnotes/responses": ^1.9.0
     "@standardnotes/services": "workspace:*"
     "@standardnotes/sncrypto-common": "workspace:*"
     "@standardnotes/utils": "workspace:*"
@@ -6999,7 +6999,7 @@ __metadata:
   dependencies:
     "@standardnotes/common": ^1.23.1
     "@standardnotes/features": "workspace:*"
-    "@standardnotes/responses": ^1.6.39
+    "@standardnotes/responses": ^1.9.0
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^27.4.1
     "@types/lodash": ^4.14.182
@@ -7049,7 +7049,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/responses@^1.6.39, @standardnotes/responses@workspace:packages/responses":
+"@standardnotes/responses@^1.6.39, @standardnotes/responses@^1.9.0, @standardnotes/responses@workspace:packages/responses":
   version: 0.0.0-use.local
   resolution: "@standardnotes/responses@workspace:packages/responses"
   dependencies:
@@ -7132,7 +7132,7 @@ __metadata:
     "@standardnotes/auth": ^3.19.4
     "@standardnotes/common": ^1.23.1
     "@standardnotes/models": "workspace:*"
-    "@standardnotes/responses": ^1.6.39
+    "@standardnotes/responses": ^1.9.0
     "@standardnotes/security": ^1.2.0
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^27.4.1

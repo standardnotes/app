@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.13.0](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.12.0...@standardnotes/encryption@1.13.0) (2022-07-06)
+
+### Features
+
+* add sncrypto client side packages ([6ec6679](https://github.com/standardnotes/app/commit/6ec66795d21bdfa5abfa08c3b79b19b5c4cd0449))
+* add utils package ([aef4ceb](https://github.com/standardnotes/app/commit/aef4ceb7f85948f1f08b8b09a4db5d187daa371b))
+
 # [1.12.0](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.11.0...@standardnotes/encryption@1.12.0) (2022-07-05)
 
 ### Features

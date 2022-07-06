@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.50.1](https://github.com/standardnotes/app/compare/@standardnotes/features@1.50.0...@standardnotes/features@1.50.1) (2022-07-06)
+
+### Bug Fixes
+
+* not supported auth dependency ([46fe662](https://github.com/standardnotes/app/commit/46fe66256b4cddd70c5401958d29e879a42e431d))
+
 # [1.50.0](https://github.com/standardnotes/app/compare/@standardnotes/features@1.49.3...@standardnotes/features@1.50.0) (2022-07-05)
 
 ### Features

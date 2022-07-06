@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 1.8.0 (2022-07-06)
+
+### Bug Fixes
+
+* dompurify dep on utils ([67b0918](https://github.com/standardnotes/app/commit/67b0918ba8bdc93b40234bdec70ba56cc836315b))
+* dompurify deps on utils ([6751f30](https://github.com/standardnotes/app/commit/6751f30db6f6ba0b844ae7007e5704251d8d356f))
+* import from dompurify on utils ([5751092](https://github.com/standardnotes/app/commit/57510921c2bbe79cc33afc43db7f970d7d78a17e))
+
+### Features
+
+* add utils package ([aef4ceb](https://github.com/standardnotes/app/commit/aef4ceb7f85948f1f08b8b09a4db5d187daa371b))
+
 ## [1.6.13](https://github.com/standardnotes/snjs/compare/@standardnotes/utils@1.6.12...@standardnotes/utils@1.6.13) (2022-07-04)
 
 ### Bug Fixes

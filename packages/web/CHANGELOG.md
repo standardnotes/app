@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.36.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.35.2...@standardnotes/web@3.36.0) (2022-07-06)
+
+### Features
+
+* add sncrypto client side packages ([6ec6679](https://github.com/standardnotes/app/commit/6ec66795d21bdfa5abfa08c3b79b19b5c4cd0449))
+
 ## [3.35.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.35.1...@standardnotes/web@3.35.2) (2022-07-06)
 
 **Note:** Version bump only for package @standardnotes/web

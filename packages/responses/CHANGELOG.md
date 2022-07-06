@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 1.9.0 (2022-07-06)
+
+### Features
+
+* add responses package ([9d1f704](https://github.com/standardnotes/app/commit/9d1f7043e55cc8072e669606438e932183770f30))
+
 # [1.7.0](https://github.com/standardnotes/snjs/compare/@standardnotes/responses@1.6.40...@standardnotes/responses@1.7.0) (2022-07-05)
 
 ### Features
