@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/filepicker",
-  "version": "1.19.0",
+  "version": "1.21.1",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -11,9 +11,7 @@
   "files": [
     "dist"
   ],
-  "publishConfig": {
-    "access": "public"
-  },
+  "private": true,
   "license": "AGPL-3.0-or-later",
   "scripts": {
     "clean": "rm -fr dist",
@@ -26,9 +24,8 @@
   },
   "devDependencies": {
     "@types/jest": "^27.4.1",
-    "@types/wicg-file-system-access": "^2020.9.5",
     "@typescript-eslint/eslint-plugin": "^5.30.0",
-    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-prettier": "*",
     "jest": "^27.5.1",
     "ts-jest": "^27.1.3",
     "ts-node": "^10.5.0"
@@ -36,7 +33,8 @@
   "dependencies": {
     "@standardnotes/common": "^1.23.1",
     "@standardnotes/services": "workspace:*",
-    "@standardnotes/utils": "^1.6.12",
+    "@standardnotes/utils": "workspace:*",
+    "@types/wicg-file-system-access": "^2020.9.5",
     "reflect-metadata": "^0.1.13"
   }
 }

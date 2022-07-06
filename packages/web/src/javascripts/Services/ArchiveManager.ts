@@ -1,12 +1,12 @@
 import { WebApplication } from '@/Application/Application'
 import { parseFileName } from '@standardnotes/filepicker'
 import {
+  BackupFile,
   ContentType,
   BackupFileDecryptedContextualPayload,
   NoteContent,
   EncryptedItemInterface,
 } from '@standardnotes/snjs'
-import { BackupFile } from '@standardnotes/encryption'
 
 function sanitizeFileName(name: string): string {
   return name.trim().replace(/[.\\/:"?*|<>]/g, '_')

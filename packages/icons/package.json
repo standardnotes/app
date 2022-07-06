@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/icons",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "private": true,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -11,10 +11,10 @@
     "tsc": "tsc --project ./tsconfig.json"
   },
   "devDependencies": {
-    "@babel/core": "^7.18.2",
+    "@babel/core": "*",
     "@babel/plugin-transform-react-jsx": "^7.17.12",
     "@babel/plugin-transform-runtime": "^7.18.2",
-    "@babel/preset-env": "^7.18.2",
+    "@babel/preset-env": "*",
     "@babel/preset-react": "^7.12.12",
     "@babel/preset-typescript": "^7.17.12",
     "@babel/runtime": "^7.18.2",

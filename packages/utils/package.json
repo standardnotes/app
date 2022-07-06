@@ -1,0 +1,45 @@
+{
+  "name": "@standardnotes/utils",
+  "version": "1.8.1",
+  "engines": {
+    "node": ">=16.0.0 <17.0.0"
+  },
+  "description": "Common utilities for Standard Notes projects",
+  "main": "dist/index.js",
+  "author": "Standard Notes",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "AGPL-3.0-or-later",
+  "scripts": {
+    "clean": "rm -fr dist",
+    "prestart": "yarn clean",
+    "start": "tsc -p tsconfig.json --watch",
+    "prebuild": "yarn clean",
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint . --ext .ts",
+    "test:unit": "jest spec"
+  },
+  "dependencies": {
+    "@standardnotes/common": "^1.23.1",
+    "dompurify": "^2.3.8",
+    "lodash": "^4.17.21",
+    "reflect-metadata": "^0.1.13"
+  },
+  "devDependencies": {
+    "@types/dompurify": "^2.3.3",
+    "@types/jest": "^27.4.1",
+    "@types/jsdom": "^16.2.14",
+    "@types/lodash": "^4.14.179",
+    "@types/node": "^18.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.30.0",
+    "eslint-plugin-prettier": "*",
+    "jest": "^27.5.1",
+    "jsdom": "^20.0.0",
+    "ts-jest": "^27.1.3"
+  }
+}

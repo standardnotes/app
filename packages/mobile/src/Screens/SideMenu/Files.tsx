@@ -17,8 +17,7 @@ import {
 import { SideMenuOptionIconDescriptionType } from '@Root/Screens/SideMenu/SideMenuSection'
 import { SideMenuCell } from '@Screens/SideMenu/SideMenuCell'
 import { UploadedFileItemActionType } from '@Screens/UploadedFilesList/UploadedFileItemAction'
-import { FeatureIdentifier } from '@standardnotes/features'
-import { FeatureStatus, SNNote } from '@standardnotes/snjs'
+import { FeatureIdentifier, FeatureStatus, SNNote } from '@standardnotes/snjs'
 import React, { FC } from 'react'
 
 type Props = {

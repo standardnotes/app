@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/services",
-  "version": "1.15.0",
+  "version": "1.16.2",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -11,9 +11,7 @@
   "files": [
     "dist"
   ],
-  "publishConfig": {
-    "access": "public"
-  },
+  "private": true,
   "license": "AGPL-3.0-or-later",
   "scripts": {
     "clean": "rm -fr dist",
@@ -28,15 +26,16 @@
     "@standardnotes/auth": "^3.19.4",
     "@standardnotes/common": "^1.23.1",
     "@standardnotes/models": "workspace:*",
-    "@standardnotes/responses": "^1.6.39",
-    "@standardnotes/utils": "^1.6.12",
+    "@standardnotes/responses": "workspace:*",
+    "@standardnotes/security": "^1.2.0",
+    "@standardnotes/utils": "workspace:*",
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
     "@types/jest": "^27.4.1",
     "@typescript-eslint/eslint-plugin": "^5.30.0",
     "@typescript-eslint/parser": "^5.12.1",
-    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-prettier": "*",
     "jest": "^27.5.1",
     "ts-jest": "^27.1.3"
   }

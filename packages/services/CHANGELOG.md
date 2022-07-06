@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.16.2](https://github.com/standardnotes/app/compare/@standardnotes/services@1.16.1...@standardnotes/services@1.16.2) (2022-07-06)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.16.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.16.0...@standardnotes/services@1.16.1) (2022-07-06)
+
+**Note:** Version bump only for package @standardnotes/services
+
+# [1.16.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.15.0...@standardnotes/services@1.16.0) (2022-07-06)
+
+### Bug Fixes
+
+* not supported auth dependency ([46fe662](https://github.com/standardnotes/app/commit/46fe66256b4cddd70c5401958d29e879a42e431d))
+
+### Features
+
+* add utils package ([aef4ceb](https://github.com/standardnotes/app/commit/aef4ceb7f85948f1f08b8b09a4db5d187daa371b))
+
 # 1.15.0 (2022-07-05)
 
 ### Features

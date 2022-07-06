@@ -21,6 +21,12 @@ packages/encryption/dist
 packages/files/dist
 packages/models/dist
 packages/services/dist
+packages/utils/dist
+packages/api/dist
+packages/responses/dist
+packages/sncrypto-common/dist
+packages/sncrypto-web/dist
+packages/snjs/dist
 
 **/.pnp.*
 **/.yarn/*

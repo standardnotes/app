@@ -1,0 +1,28 @@
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Mocha Tests</title>
+  <link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />
+  <script src="https://unpkg.com/chai/chai.js"></script>
+  <script src="https://unpkg.com/mocha/mocha.js"></script>
+  <script src="../../../node_modules/regenerator-runtime/runtime.js"></script>
+  <script src="../dist/sncrypto-web.js"></script>
+  <script>
+    Object.assign(window, SNCrypto);
+    mocha.setup('bdd');
+  </script>
+  <script type="module" src="utils.test.js"></script>
+  <script type="module" src="memory.test.js"></script>
+  <script type="module" src="crypto.test.js"></script>
+  <script type="module">
+    mocha.checkLeaks();
+    mocha.run();
+  </script>
+</head>
+
+<body>
+  <div id="mocha"></div>
+</body>
+
+</html>

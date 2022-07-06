@@ -1,0 +1,49 @@
+<html>
+
+<body>
+    <script>
+        const SHUFFLE = false;
+        const SEED = (Math.random() * 100) / 100;
+        if (SHUFFLE) {
+            console.warn("Shuffling tests with seed:", SEED);
+        }
+
+        const run = Mocha.prototype.run;
+        const each = Mocha.Suite.prototype.eachTest;
+
+        Mocha.prototype.run = function () {
+            shuffle(this.files);
+            return run.apply(this, arguments);
+        };
+
+        Mocha.Suite.prototype.eachTest = function () {
+            shuffle(this.tests);
+            shuffle(this.suites);
+            return each.apply(this, arguments);
+        };
+
+        function random() {
+            var x = Math.sin(SEED++) * 10000;
+            return x - Math.floor(x);
+        }
+
+        function shuffle(array) {
+            if (!SHUFFLE) {
+                return array;
+            }
+            if (array == null || !array.length) return;
+
+            let index = -1;
+            const length = array.length;
+            const lastIndex = length - 1;
+            while (++index < length) {
+                const rand = index + Math.floor(random() * (lastIndex - index + 1));
+                const value = array[rand];
+                array[rand] = array[index];
+                array[index] = value;
+            }
+        }
+    </script>
+</body>
+
+</html>

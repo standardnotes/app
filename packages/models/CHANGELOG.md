@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.15.2](https://github.com/standardnotes/app/compare/@standardnotes/models@1.15.1...@standardnotes/models@1.15.2) (2022-07-06)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.15.1](https://github.com/standardnotes/app/compare/@standardnotes/models@1.15.0...@standardnotes/models@1.15.1) (2022-07-06)
+
+**Note:** Version bump only for package @standardnotes/models
+
+# [1.15.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.14.0...@standardnotes/models@1.15.0) (2022-07-06)
+
+### Features
+
+* add utils package ([aef4ceb](https://github.com/standardnotes/app/commit/aef4ceb7f85948f1f08b8b09a4db5d187daa371b))
+
 # 1.14.0 (2022-07-05)
 
 ### Features

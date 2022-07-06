@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/web",
-  "version": "3.35.1",
+  "version": "3.37.1",
   "license": "AGPL-3.0-or-later",
   "main": "dist/app.js",
   "author": "Standard Notes.",
@@ -21,9 +21,9 @@
     "upgrade:snjs": "ncu -u '@standardnotes/*'"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.9",
+    "@babel/core": "*",
     "@babel/plugin-transform-react-jsx": "^7.17.3",
-    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-env": "*",
     "@babel/preset-typescript": "^7.16.7",
     "@types/jest": "^27.4.1",
     "@types/react": "^17.0.42",
@@ -57,7 +57,7 @@
     "typescript": "*",
     "webpack": "*",
     "webpack-dev-server": "*",
-    "webpack-merge": "^5.8.0"
+    "webpack-merge": "*"
   },
   "dependencies": {
     "@reach/alert": "^0.16.0",
@@ -68,13 +68,11 @@
     "@reach/listbox": "^0.16.2",
     "@reach/tooltip": "^0.16.2",
     "@reach/visually-hidden": "^0.16.0",
-    "@standardnotes/encryption": "workspace:*",
     "@standardnotes/filepicker": "workspace:*",
     "@standardnotes/files": "workspace:*",
     "@standardnotes/icons": "workspace:*",
-    "@standardnotes/services": "workspace:*",
-    "@standardnotes/sncrypto-web": "1.10.1",
-    "@standardnotes/snjs": "^2.118.3",
+    "@standardnotes/sncrypto-web": "workspace:*",
+    "@standardnotes/snjs": "workspace:*",
     "@standardnotes/styles": "workspace:*",
     "@standardnotes/toast": "workspace:*",
     "@zip.js/zip.js": "^2.4.10",

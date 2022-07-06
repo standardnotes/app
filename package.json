@@ -28,6 +28,7 @@
     "build:desktop": "yarn workspaces foreach -pt --verbose -R --from @standardnotes/desktop --exclude @standardnotes/components-meta run build",
     "build:mobile": "yarn workspaces foreach -pt --verbose -R --from @standardnotes/mobile --exclude @standardnotes/components-meta run build",
     "build:web-server": "yarn workspaces foreach -pt --verbose -R --from @standardnotes/web-server --exclude @standardnotes/components-meta run build",
+    "build:snjs": "yarn workspaces foreach -pt --verbose -R --from @standardnotes/snjs --exclude @standardnotes/components-meta run build",
     "start:server:web": "lerna run start --scope=@standardnotes/web-server",
     "start:server:web:localhost": "lerna run start:no-binding --scope=@standardnotes/web-server",
     "prepare": "husky install",
@@ -47,9 +48,11 @@
     "@types/hoist-non-react-statics/@types/react": "17.0.2"
   },
   "dependencies": {
-    "@standardnotes/snjs": "^2.118.3"
+    "@standardnotes/snjs": "workspace:*"
   },
   "devDependencies": {
+    "@babel/core": "^7.18.6",
+    "@babel/preset-env": "^7.18.6",
     "@commitlint/cli": "^17.0.2",
     "@commitlint/config-conventional": "^17.0.2",
     "@lerna-lite/cli": "^1.6.0",
@@ -61,6 +64,7 @@
     "changelog-parser": "^2.8.1",
     "css-loader": "^6.7.1",
     "eslint": "^8.17.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "husky": "^8.0.0",
     "lint-staged": "^13.0.1",
     "npm-check-updates": "^14.1.1",
@@ -69,7 +73,8 @@
     "typescript": "^4.7.3",
     "webpack": "^5.72.0",
     "webpack-cli": "^4.9.2",
-    "webpack-dev-server": "^4.9.2"
+    "webpack-dev-server": "^4.9.2",
+    "webpack-merge": "^5.8.0"
   },
   "packageManager": "yarn@3.2.1"
 }

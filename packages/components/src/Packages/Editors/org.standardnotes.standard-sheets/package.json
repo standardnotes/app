@@ -1,7 +1,7 @@
 {
   "name": "@standardnotes/spreadsheets",
   "private": true,
-  "version": "1.4.9",
+  "version": "1.5.0",
   "main": "dist/dist.js",
   "scripts": {
     "skip:lint": "eslint app/ --ext .js",
@@ -39,6 +39,6 @@
     "webpack": "*",
     "webpack-cli": "*",
     "webpack-dev-server": "*",
-    "webpack-merge": "^5.8.0"
+    "webpack-merge": "*"
   }
 }

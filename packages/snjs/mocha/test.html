@@ -1,0 +1,103 @@
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Mocha Tests</title>
+  <link href="assets/mocha.css" rel="stylesheet" />
+  <script src="../../../.yarn/unplugged/chai-npm-4.3.6-dba90e4b0b/node_modules/chai/chai.js"></script>
+  <script src="./vendor/chai-as-promised-built.js"></script>
+  <script src="../../../.yarn/unplugged/regenerator-runtime-npm-0.13.9-6d02340eec/node_modules/regenerator-runtime/runtime.js"></script>
+  <script src="../../../.yarn/unplugged/mocha-npm-9.2.2-f7735febb8/node_modules/mocha/mocha.js"></script>
+  <script src="../../../.yarn/unplugged/chai-subset-npm-1.6.0-3cee47a65d/node_modules/chai-subset/lib/chai-subset.js"></script>
+  <script src="../../sncrypto-web/dist//sncrypto-web.js"></script>
+  <script src="../../../.yarn/unplugged/sinon-npm-13.0.2-8544b59862/node_modules/sinon/pkg/sinon.js"></script>
+  <script src="../dist/snjs.js"></script>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const syncServerHostName = urlParams.get('sync_server_host_name') ?? 'syncing-server-proxy';
+    const bail = urlParams.get('bail') === 'false' ? false : true;
+
+    window._default_sync_server = `http://${syncServerHostName}:3123`;
+
+    Object.assign(window, SNCrypto);
+
+    Object.assign(window, SNLibrary);
+
+    SNLog.onLog = (message) => {
+      console.log(message);
+    };
+
+    SNLog.onError = (error) => {
+      console.error(error);
+    };
+
+    mocha.setup('bdd');
+    mocha.timeout(5000);
+    mocha.bail(bail);
+  </script>
+  <script type="module" src="memory.test.js"></script>
+  <script type="module" src="protocol.test.js"></script>
+  <script type="module" src="utils.test.js"></script>
+  <script type="module" src="000.test.js"></script>
+  <script type="module" src="001.test.js"></script>
+  <script type="module" src="002.test.js"></script>
+  <script type="module" src="003.test.js"></script>
+  <script type="module" src="004.test.js"></script>
+  <script type="module" src="workspaces.test.js"></script>
+  <script type="module" src="app-group.test.js"></script>
+  <script type="module" src="application.test.js"></script>
+  <script type="module" src="payload.test.js"></script>
+  <script type="module" src="payload_encryption.test.js"></script>
+  <script type="module" src="item.test.js"></script>
+  <script type="module" src="item_manager.test.js"></script>
+  <script type="module" src="features.test.js"></script>
+  <script type="module" src="settings.test.js"></script>
+  <script type="module" src="mfa_service.test.js"></script>
+  <script type="module" src="mutator.test.js"></script>
+  <script type="module" src="payload_manager.test.js"></script>
+  <script type="module" src="collections.test.js"></script>
+  <script type="module" src="note_display_criteria.test.js"></script>
+  <script type="module" src="keys.test.js"></script>
+  <script type="module" src="key_params.test.js"></script>
+  <script type="module" src="key_recovery_service.test.js"></script>
+  <script type="module" src="backups.test.js"></script>
+  <script type="module" src="upgrading.test.js"></script>
+  <script type="module" src="model_tests/importing.test.js"></script>
+  <script type="module" src="model_tests/appmodels.test.js"></script>
+  <script type="module" src="model_tests/items.test.js"></script>
+  <script type="module" src="model_tests/mapping.test.js"></script>
+  <script type="module" src="model_tests/notes_smart_tags.test.js"></script>
+  <script type="module" src="model_tests/notes_tags.test.js"></script>
+  <script type="module" src="model_tests/notes_tags_folders.test.js"></script>
+  <script type="module" src="model_tests/performance.test.js"></script>
+  <script type="module" src="sync_tests/offline.test.js"></script>
+  <script type="module" src="sync_tests/notes_tags.test.js"></script>
+  <script type="module" src="sync_tests/online.test.js"></script>
+  <script type="module" src="sync_tests/conflicting.test.js"></script>
+  <script type="module" src="sync_tests/integrity.test.js"></script>
+  <script type="module" src="auth-fringe-cases.test.js"></script>
+  <script type="module" src="auth.test.js"></script>
+  <script type="module" src="device_auth.test.js"></script>
+  <script type="module" src="storage.test.js"></script>
+  <script type="module" src="protection.test.js"></script>
+  <script type="module" src="singletons.test.js"></script>
+  <script type="module" src="migrations/migration.test.js"></script>
+  <script type="module" src="migrations/2020-01-15-web.test.js"></script>
+  <script type="module" src="migrations/2020-01-15-mobile.test.js"></script>
+  <script type="module" src="migrations/tags-to-folders.test.js"></script>
+  <script type="module" src="history.test.js"></script>
+  <script type="module" src="actions.test.js"></script>
+  <script type="module" src="preferences.test.js"></script>
+  <script type="module" src="session-sharing.test.js"></script>
+  <script type="module" src="files.test.js"></script>
+  <script type="module" src="session.test.js"></script>
+  <script type="module">
+    mocha.run();
+  </script>
+</head>
+
+<body>
+  <div id="mocha"></div>
+</body>
+
+</html>

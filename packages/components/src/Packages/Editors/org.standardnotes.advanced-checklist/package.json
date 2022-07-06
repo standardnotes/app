@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/advanced-checklist",
-  "version": "0.1.6",
+  "version": "0.2.1",
   "description": "A task editor with grouping functionality.",
   "author": "Standard Notes.",
   "keywords": [
@@ -87,7 +87,7 @@
     "@reduxjs/toolkit": "1.8.0",
     "@standardnotes/editor-kit": "2.2.5",
     "@standardnotes/stylekit": "5.23.0",
-    "@standardnotes/utils": "1.6.2",
+    "@standardnotes/utils": "workspace:*",
     "@testing-library/dom": "8.11.3",
     "@testing-library/jest-dom": "5.16.2",
     "@testing-library/react": "12.1.4",

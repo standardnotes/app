@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/features",
-  "version": "1.50.0",
+  "version": "1.50.2",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -27,12 +27,13 @@
   "dependencies": {
     "@standardnotes/auth": "^3.19.4",
     "@standardnotes/common": "^1.23.1",
+    "@standardnotes/security": "^1.2.0",
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
     "@types/jest": "^28.1.4",
     "@typescript-eslint/eslint-plugin": "^5.30.0",
-    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-prettier": "*",
     "jest": "^28.1.2",
     "ts-jest": "^28.0.5",
     "typescript": "^4.7.4"

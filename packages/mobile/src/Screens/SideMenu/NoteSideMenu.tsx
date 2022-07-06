@@ -6,14 +6,15 @@ import { useSafeApplicationContext } from '@Root/Hooks/useSafeApplicationContext
 import { SCREEN_COMPOSE, SCREEN_INPUT_MODAL_TAG, SCREEN_NOTE_HISTORY } from '@Root/Screens/screens'
 import { Files } from '@Root/Screens/SideMenu/Files'
 import { Listed } from '@Root/Screens/SideMenu/Listed'
-import { FeatureIdentifier, FindNativeFeature } from '@standardnotes/features'
 import {
   ApplicationEvent,
   ButtonType,
   ComponentArea,
   ComponentMutator,
   ContentType,
+  FeatureIdentifier,
   FeatureStatus,
+  FindNativeFeature,
   NoteMutator,
   NoteViewController,
   PayloadEmitSource,

@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/encryption",
-  "version": "1.12.0",
+  "version": "1.13.2",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -11,9 +11,7 @@
   "files": [
     "dist"
   ],
-  "publishConfig": {
-    "access": "public"
-  },
+  "private": true,
   "license": "AGPL-3.0-or-later",
   "scripts": {
     "clean": "rm -fr dist",
@@ -31,7 +29,7 @@
     "@types/node": "^18.0.0",
     "@typescript-eslint/eslint-plugin": "*",
     "eslint": "*",
-    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-prettier": "*",
     "jest": "^27.5.1",
     "prettier": "*",
     "ts-jest": "^27.1.3",
@@ -40,10 +38,10 @@
   "dependencies": {
     "@standardnotes/common": "^1.23.1",
     "@standardnotes/models": "workspace:*",
-    "@standardnotes/responses": "^1.6.39",
+    "@standardnotes/responses": "workspace:*",
     "@standardnotes/services": "workspace:*",
-    "@standardnotes/sncrypto-common": "^1.9.0",
-    "@standardnotes/utils": "^1.6.12",
+    "@standardnotes/sncrypto-common": "workspace:*",
+    "@standardnotes/utils": "workspace:*",
     "reflect-metadata": "^0.1.13"
   }
 }

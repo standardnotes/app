@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.21.1](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.21.0...@standardnotes/filepicker@1.21.1) (2022-07-06)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+# [1.21.0](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.20.0...@standardnotes/filepicker@1.21.0) (2022-07-06)
+
+### Features
+
+* add snjs package ([0e40469](https://github.com/standardnotes/app/commit/0e40469e2fe868b88860f0f2541364696d8f7957))
+
+# [1.20.0](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.19.1...@standardnotes/filepicker@1.20.0) (2022-07-06)
+
+### Features
+
+* add responses package ([9d1f704](https://github.com/standardnotes/app/commit/9d1f7043e55cc8072e669606438e932183770f30))
+* add sncrypto client side packages ([6ec6679](https://github.com/standardnotes/app/commit/6ec66795d21bdfa5abfa08c3b79b19b5c4cd0449))
+* add utils package ([aef4ceb](https://github.com/standardnotes/app/commit/aef4ceb7f85948f1f08b8b09a4db5d187daa371b))
+
+## [1.19.1](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.19.0...@standardnotes/filepicker@1.19.1) (2022-07-06)
+
+### Bug Fixes
+
+* files system access api dependency on filepicker ([c4e16e4](https://github.com/standardnotes/app/commit/c4e16e4346cb4cc5892ce31a2be7c05331c4dedc))
+
 # [1.19.0](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.18.0...@standardnotes/filepicker@1.19.0) (2022-07-05)
 
 ### Features
