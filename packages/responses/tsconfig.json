@@ -1,0 +1,13 @@
+{
+  "extends": "../../node_modules/@standardnotes/config/src/tsconfig.json",
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "rootDir": "./src",
+    "outDir": "./dist",
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "references": [],
+  "exclude": ["**/*.spec.ts", "dist", "node_modules"]
+}

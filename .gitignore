@@ -23,6 +23,7 @@ packages/models/dist
 packages/services/dist
 packages/utils/dist
 packages/api/dist
+packages/responses/dist
 
 **/.pnp.*
 **/.yarn/*
