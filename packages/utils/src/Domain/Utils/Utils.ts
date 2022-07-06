@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as DOMPurify from 'dompurify'
+import { sanitize } from 'dompurify'
 import { find, isArray, mergeWith, remove, uniq, uniqWith } from 'lodash'
 import { AnyRecord } from '@standardnotes/common'
 
@@ -605,7 +605,7 @@ export function convertTimestampToMilliseconds(timestamp: number): number {
 }
 
 export function sanitizeHtmlString(html: string): string {
-  return DOMPurify.sanitize(html)
+  return sanitize(html)
 }
 
 let sharedDateFormatter: unknown
