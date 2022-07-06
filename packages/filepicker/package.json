@@ -11,9 +11,7 @@
   "files": [
     "dist"
   ],
-  "publishConfig": {
-    "access": "public"
-  },
+  "private": true,
   "license": "AGPL-3.0-or-later",
   "scripts": {
     "clean": "rm -fr dist",
