@@ -12,7 +12,7 @@ const labelClassName = 'block mb-1'
 const ChangeEmailForm: FunctionComponent<Props> = ({ setNewEmail, setCurrentPassword }) => {
   return (
     <div className="flex w-full flex-col">
-      <div className="mt-2 mb-3">
+      <div className="mb-3">
         <label className={labelClassName} htmlFor="change-email-email-input">
           New Email:
         </label>

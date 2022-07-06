@@ -1,3 +1,4 @@
+import { classNames } from '@/Utils/ConcatenateClassNames'
 import { FunctionComponent } from 'react'
 
 type Props = {
@@ -7,7 +8,7 @@ type Props = {
 const ModalDialogButtons: FunctionComponent<Props> = ({ children, className }) => (
   <>
     <hr className="m-0 h-[1px] border-none bg-border" />
-    <div className={`flex flex-row items-center px-4 py-4 ${className}`}>
+    <div className={classNames('flex items-center justify-end px-4 py-4', className)}>
       {children != undefined && Array.isArray(children)
         ? children.map((child, idx, arr) => (
             <>
