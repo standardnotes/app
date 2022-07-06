@@ -26,7 +26,7 @@ const InnerTasksContainer = styled.div`
   flex-direction: column;
 
   & > *:not(:last-child) {
-    margin-bottom: 7px;
+    margin-bottom: 9px;
   }
 `
 
@@ -101,12 +101,7 @@ const TasksSection: React.FC<TasksSectionProps> = ({ groupName, tasks, section, 
         {(provided) => (
           <Wrapper>
             <SectionHeader>
-              <SubTitle>{section.name}</SubTitle>
-              {tasks.length > 0 && (
-                <RoundButton onClick={handleCollapse} size="small">
-                  {!collapsed ? <ChevronUpIcon /> : <ChevronDownIcon />}
-                </RoundButton>
-              )}
+              <SubTitle onClick={handleCollapse}>{section.name}</SubTitle>
             </SectionHeader>
             {!collapsed && (
               <InnerTasksContainer

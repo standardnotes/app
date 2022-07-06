@@ -18,7 +18,7 @@ const TaskGroupContainer = styled.div<{ isLast?: boolean }>`
   border: 1px solid var(--sn-stylekit-border-color);
   border-radius: 4px;
   box-sizing: border-box;
-  padding: 16px;
+  padding: 16px 18px;
   margin-bottom: ${({ isLast }) => (!isLast ? '9px' : '0px')};
 
   @media only screen and (max-width: 600px) {
@@ -83,7 +83,7 @@ const TaskGroup: React.FC<TaskGroupProps> = ({
       onTransitionEnd={onTransitionEnd}
       isLast={isLast}
     >
-      <div className="flex items-center justify-between h-8 mt-1 mb-1">
+      <div className="flex items-center justify-between h-8">
         <div className="flex flex-grow items-center" onClick={handleClick}>
           <MainTitle crossed={allTasksCompleted && collapsed} highlight={isDragging} {...props}>
             {groupName}

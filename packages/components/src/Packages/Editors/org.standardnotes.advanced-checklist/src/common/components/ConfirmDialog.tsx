@@ -45,7 +45,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
                   <p className="color-foreground">{children}</p>
                 </AlertDialogDescription>
 
-                <div className="flex my-1 mt-4">
+                <div className="flex my-1">
                   <button
                     data-testid="cancel-dialog-button"
                     className="sn-button small neutral"

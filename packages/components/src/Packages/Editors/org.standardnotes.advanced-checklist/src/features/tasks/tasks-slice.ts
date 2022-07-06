@@ -5,11 +5,11 @@ export const LATEST_SCHEMA_VERSION = '1.0.0'
 export const DEFAULT_SECTIONS: SectionModel[] = [
   {
     id: 'open-tasks',
-    name: 'Open tasks',
+    name: 'Open',
   },
   {
     id: 'completed-tasks',
-    name: 'Completed tasks',
+    name: 'Completed',
   },
 ]
 
