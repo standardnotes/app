@@ -28,6 +28,7 @@
     "build:desktop": "yarn workspaces foreach -pt --verbose -R --from @standardnotes/desktop --exclude @standardnotes/components-meta run build",
     "build:mobile": "yarn workspaces foreach -pt --verbose -R --from @standardnotes/mobile --exclude @standardnotes/components-meta run build",
     "build:web-server": "yarn workspaces foreach -pt --verbose -R --from @standardnotes/web-server --exclude @standardnotes/components-meta run build",
+    "build:snjs": "yarn workspaces foreach -pt --verbose -R --from @standardnotes/snjs --exclude @standardnotes/components-meta run build",
     "start:server:web": "lerna run start --scope=@standardnotes/web-server",
     "start:server:web:localhost": "lerna run start:no-binding --scope=@standardnotes/web-server",
     "prepare": "husky install",

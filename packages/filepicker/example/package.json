@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@standardnotes/sncrypto-web": "workspace:*",
-    "@standardnotes/snjs": "^2.61.3",
+    "@standardnotes/snjs": "workspace:*",
     "regenerator-runtime": "^0.13.9"
   }
 }

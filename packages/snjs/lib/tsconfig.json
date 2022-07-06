@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "alwaysStrict": true,
+    "baseUrl": ".",
+    "declaration": true,
+    "declarationDir": "../dist/@types",
+    "emitDeclarationOnly": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "moduleResolution": "node",
+    "newLine": "lf",
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "skipLibCheck": true,
+    "outDir": "../dist/@types",
+    "strict": true,
+    "strictNullChecks": true,
+    "target": "esnext",
+    "paths": {
+      "@Lib/*": ["*"],
+      "@Services/*": ["Services/*"]
+    }
+  },
+  "exclude": ["../package.json"]
+}

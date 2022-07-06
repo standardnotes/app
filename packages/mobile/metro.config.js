@@ -30,7 +30,8 @@ module.exports = (async () => {
       '../services',
       '../files',
       '../utils',
-      '../sncrypto-common'
+      '../sncrypto-common',
+      '../snjs',
     ],
     transformer: {
       getTransformOptions: async () => ({

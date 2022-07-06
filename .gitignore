@@ -26,6 +26,7 @@ packages/api/dist
 packages/responses/dist
 packages/sncrypto-common/dist
 packages/sncrypto-web/dist
+packages/snjs/dist
 
 **/.pnp.*
 **/.yarn/*
