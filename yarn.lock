@@ -263,6 +263,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/core@npm:*, @babel/core@npm:^7.1.0, @babel/core@npm:^7.1.6, @babel/core@npm:^7.11.1, @babel/core@npm:^7.11.6, @babel/core@npm:^7.12.10, @babel/core@npm:^7.12.16, @babel/core@npm:^7.12.3, @babel/core@npm:^7.13.10, @babel/core@npm:^7.13.13, @babel/core@npm:^7.13.14, @babel/core@npm:^7.13.8, @babel/core@npm:^7.14.0, @babel/core@npm:^7.14.6, @babel/core@npm:^7.15.5, @babel/core@npm:^7.16.0, @babel/core@npm:^7.18.2, @babel/core@npm:^7.18.5, @babel/core@npm:^7.18.6, @babel/core@npm:^7.7.0, @babel/core@npm:^7.7.2, @babel/core@npm:^7.7.7, @babel/core@npm:^7.8.0":
+  version: 7.18.6
+  resolution: "@babel/core@npm:7.18.6"
+  dependencies:
+    "@ampproject/remapping": ^2.1.0
+    "@babel/code-frame": ^7.18.6
+    "@babel/generator": ^7.18.6
+    "@babel/helper-compilation-targets": ^7.18.6
+    "@babel/helper-module-transforms": ^7.18.6
+    "@babel/helpers": ^7.18.6
+    "@babel/parser": ^7.18.6
+    "@babel/template": ^7.18.6
+    "@babel/traverse": ^7.18.6
+    "@babel/types": ^7.18.6
+    convert-source-map: ^1.7.0
+    debug: ^4.1.0
+    gensync: ^1.0.0-beta.2
+    json5: ^2.2.1
+    semver: ^6.3.0
+  checksum: 711459ebf7afab7b8eff88b7155c3f4a62690545f1c8c2eb6ba5ebaed01abeecb984cf9657847a2151ad24a5645efce765832aa343ce0f0386f311b67b59589a
+  languageName: node
+  linkType: hard
+
 "@babel/core@npm:7.12.9":
   version: 7.12.9
   resolution: "@babel/core@npm:7.12.9"
@@ -284,29 +307,6 @@ __metadata:
     semver: ^5.4.1
     source-map: ^0.5.0
   checksum: 4d34eca4688214a4eb6bd5dde906b69a7824f17b931f52cd03628a8ac94d8fbe15565aebffdde106e974c8738cd64ac62c6a6060baa7139a06db1f18c4ff872d
-  languageName: node
-  linkType: hard
-
-"@babel/core@npm:^7.1.0, @babel/core@npm:^7.1.6, @babel/core@npm:^7.11.1, @babel/core@npm:^7.11.6, @babel/core@npm:^7.12.10, @babel/core@npm:^7.12.16, @babel/core@npm:^7.12.3, @babel/core@npm:^7.13.10, @babel/core@npm:^7.13.13, @babel/core@npm:^7.13.14, @babel/core@npm:^7.13.8, @babel/core@npm:^7.14.0, @babel/core@npm:^7.14.6, @babel/core@npm:^7.15.5, @babel/core@npm:^7.16.0, @babel/core@npm:^7.17.10, @babel/core@npm:^7.17.5, @babel/core@npm:^7.17.9, @babel/core@npm:^7.18.2, @babel/core@npm:^7.18.5, @babel/core@npm:^7.18.6, @babel/core@npm:^7.7.0, @babel/core@npm:^7.7.2, @babel/core@npm:^7.7.7, @babel/core@npm:^7.8.0":
-  version: 7.18.6
-  resolution: "@babel/core@npm:7.18.6"
-  dependencies:
-    "@ampproject/remapping": ^2.1.0
-    "@babel/code-frame": ^7.18.6
-    "@babel/generator": ^7.18.6
-    "@babel/helper-compilation-targets": ^7.18.6
-    "@babel/helper-module-transforms": ^7.18.6
-    "@babel/helpers": ^7.18.6
-    "@babel/parser": ^7.18.6
-    "@babel/template": ^7.18.6
-    "@babel/traverse": ^7.18.6
-    "@babel/types": ^7.18.6
-    convert-source-map: ^1.7.0
-    debug: ^4.1.0
-    gensync: ^1.0.0-beta.2
-    json5: ^2.2.1
-    semver: ^6.3.0
-  checksum: 711459ebf7afab7b8eff88b7155c3f4a62690545f1c8c2eb6ba5ebaed01abeecb984cf9657847a2151ad24a5645efce765832aa343ce0f0386f311b67b59589a
   languageName: node
   linkType: hard
 
@@ -1638,7 +1638,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/preset-env@npm:^7.11.0, @babel/preset-env@npm:^7.12.1, @babel/preset-env@npm:^7.12.11, @babel/preset-env@npm:^7.12.16, @babel/preset-env@npm:^7.13.10, @babel/preset-env@npm:^7.13.12, @babel/preset-env@npm:^7.13.8, @babel/preset-env@npm:^7.14.7, @babel/preset-env@npm:^7.15.6, @babel/preset-env@npm:^7.16.11, @babel/preset-env@npm:^7.16.4, @babel/preset-env@npm:^7.17.10, @babel/preset-env@npm:^7.18.2, @babel/preset-env@npm:^7.18.6, @babel/preset-env@npm:^7.7.1, @babel/preset-env@npm:^7.7.7":
+"@babel/preset-env@npm:*, @babel/preset-env@npm:^7.11.0, @babel/preset-env@npm:^7.12.1, @babel/preset-env@npm:^7.12.11, @babel/preset-env@npm:^7.12.16, @babel/preset-env@npm:^7.13.10, @babel/preset-env@npm:^7.13.12, @babel/preset-env@npm:^7.13.8, @babel/preset-env@npm:^7.14.7, @babel/preset-env@npm:^7.15.6, @babel/preset-env@npm:^7.16.4, @babel/preset-env@npm:^7.18.2, @babel/preset-env@npm:^7.18.6, @babel/preset-env@npm:^7.7.1, @babel/preset-env@npm:^7.7.7":
   version: 7.18.6
   resolution: "@babel/preset-env@npm:7.18.6"
   dependencies:
@@ -6216,7 +6216,7 @@ __metadata:
     "@types/jest": ^27.4.1
     "@types/lodash": ^4.14.182
     "@typescript-eslint/eslint-plugin": ^5.30.0
-    eslint-plugin-prettier: ^4.2.1
+    eslint-plugin-prettier: "*"
     jest: ^27.5.1
     reflect-metadata: ^0.1.13
     ts-jest: ^27.1.3
@@ -6227,6 +6227,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/app-monorepo@workspace:."
   dependencies:
+    "@babel/core": ^7.18.6
+    "@babel/preset-env": ^7.18.6
     "@commitlint/cli": ^17.0.2
     "@commitlint/config-conventional": ^17.0.2
     "@lerna-lite/cli": ^1.6.0
@@ -6239,6 +6241,7 @@ __metadata:
     changelog-parser: ^2.8.1
     css-loader: ^6.7.1
     eslint: ^8.17.0
+    eslint-plugin-prettier: ^4.2.1
     husky: ^8.0.0
     lint-staged: ^13.0.1
     npm-check-updates: ^14.1.1
@@ -6248,6 +6251,7 @@ __metadata:
     webpack: ^5.72.0
     webpack-cli: ^4.9.2
     webpack-dev-server: ^4.9.2
+    webpack-merge: ^5.8.0
   languageName: unknown
   linkType: soft
 
@@ -6299,7 +6303,7 @@ __metadata:
     webpack: "*"
     webpack-cli: "*"
     webpack-dev-server: "*"
-    webpack-merge: ^5.8.0
+    webpack-merge: "*"
   languageName: unknown
   linkType: soft
 
@@ -6427,8 +6431,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/desktop@workspace:packages/desktop"
   dependencies:
-    "@babel/core": ^7.17.10
-    "@babel/preset-env": ^7.17.10
+    "@babel/core": "*"
+    "@babel/preset-env": "*"
     "@electron/remote": ^2.0.8
     "@standardnotes/components-meta": "workspace:*"
     "@standardnotes/electron-clear-data": 1.1.1
@@ -6469,7 +6473,7 @@ __metadata:
     ts-node: ^10.7.0
     typescript: "*"
     webpack: "*"
-    webpack-merge: ^5.8.0
+    webpack-merge: "*"
   languageName: unknown
   linkType: soft
 
@@ -6577,7 +6581,7 @@ __metadata:
     "@types/node": ^18.0.0
     "@typescript-eslint/eslint-plugin": "*"
     eslint: "*"
-    eslint-plugin-prettier: ^4.2.1
+    eslint-plugin-prettier: "*"
     jest: ^27.5.1
     prettier: "*"
     reflect-metadata: ^0.1.13
@@ -6613,7 +6617,7 @@ __metadata:
     "@standardnotes/security": ^1.2.0
     "@types/jest": ^28.1.4
     "@typescript-eslint/eslint-plugin": ^5.30.0
-    eslint-plugin-prettier: ^4.2.1
+    eslint-plugin-prettier: "*"
     jest: ^28.1.2
     reflect-metadata: ^0.1.13
     ts-jest: ^28.0.5
@@ -6631,7 +6635,7 @@ __metadata:
     "@types/jest": ^27.4.1
     "@types/wicg-file-system-access": ^2020.9.5
     "@typescript-eslint/eslint-plugin": ^5.30.0
-    eslint-plugin-prettier: ^4.2.1
+    eslint-plugin-prettier: "*"
     jest: ^27.5.1
     reflect-metadata: ^0.1.13
     ts-jest: ^27.1.3
@@ -6653,7 +6657,7 @@ __metadata:
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^27.4.1
     "@typescript-eslint/eslint-plugin": ^5.30.0
-    eslint-plugin-prettier: ^4.2.1
+    eslint-plugin-prettier: "*"
     jest: ^27.5.1
     reflect-metadata: ^0.1.13
     ts-jest: ^27.1.3
@@ -6713,10 +6717,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/icons@workspace:packages/icons"
   dependencies:
-    "@babel/core": ^7.18.2
+    "@babel/core": "*"
     "@babel/plugin-transform-react-jsx": ^7.17.12
     "@babel/plugin-transform-runtime": ^7.18.2
-    "@babel/preset-env": ^7.18.2
+    "@babel/preset-env": "*"
     "@babel/preset-react": ^7.12.12
     "@babel/preset-typescript": ^7.17.12
     "@babel/runtime": ^7.18.2
@@ -6932,7 +6936,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/mobile@workspace:packages/mobile"
   dependencies:
-    "@babel/core": ^7.17.9
+    "@babel/core": "*"
     "@babel/preset-typescript": ^7.16.7
     "@babel/runtime": ^7.18.3
     "@expo/react-native-action-sheet": ^3.13.0
@@ -7039,7 +7043,7 @@ __metadata:
     "@types/jest": ^27.4.1
     "@types/lodash": ^4.14.182
     "@typescript-eslint/eslint-plugin": ^5.30.0
-    eslint-plugin-prettier: ^4.2.1
+    eslint-plugin-prettier: "*"
     jest: ^27.5.1
     lodash: ^4.17.21
     reflect-metadata: ^0.1.13
@@ -7103,7 +7107,7 @@ __metadata:
     "@standardnotes/security": ^1.1.0
     "@types/jest": ^27.4.1
     "@typescript-eslint/eslint-plugin": ^5.30.0
-    eslint-plugin-prettier: ^4.2.1
+    eslint-plugin-prettier: "*"
     jest: ^27.5.1
     reflect-metadata: ^0.1.13
     ts-jest: ^27.1.3
@@ -7174,7 +7178,7 @@ __metadata:
     "@types/jest": ^27.4.1
     "@typescript-eslint/eslint-plugin": ^5.30.0
     "@typescript-eslint/parser": ^5.12.1
-    eslint-plugin-prettier: ^4.2.1
+    eslint-plugin-prettier: "*"
     jest: ^27.5.1
     reflect-metadata: ^0.1.13
     ts-jest: ^27.1.3
@@ -7242,9 +7246,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/sncrypto-web@workspace:packages/sncrypto-web"
   dependencies:
-    "@babel/core": ^7.18.6
+    "@babel/core": "*"
     "@babel/plugin-syntax-dynamic-import": ^7.8.3
-    "@babel/preset-env": ^7.18.6
+    "@babel/preset-env": "*"
     "@standardnotes/sncrypto-common": "workspace:*"
     "@types/libsodium-wrappers": ^0.7.9
     "@types/node": ^18.0.0
@@ -7254,7 +7258,7 @@ __metadata:
     buffer: ^6.0.3
     chai: ^4.3.6
     connect: ^3.7.0
-    eslint-plugin-prettier: ^4.2.1
+    eslint-plugin-prettier: "*"
     libsodium-wrappers: ^0.7.10
     reflect-metadata: ^0.1.13
     regenerator-runtime: ^0.13.9
@@ -7262,8 +7266,8 @@ __metadata:
     ts-loader: ^9.2.6
     typedarray-to-buffer: ^4.0.0
     uuid: ^8.3.2
-    webpack: ^5.69.1
-    webpack-cli: ^4.9.2
+    webpack: "*"
+    webpack-cli: "*"
   languageName: unknown
   linkType: soft
 
@@ -7271,8 +7275,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/snjs@workspace:packages/snjs"
   dependencies:
-    "@babel/core": ^7.17.5
-    "@babel/preset-env": ^7.16.11
+    "@babel/core": "*"
+    "@babel/preset-env": "*"
     "@standardnotes/api": "workspace:*"
     "@standardnotes/common": ^1.25.0
     "@standardnotes/domain-events": ^2.39.0
@@ -7303,7 +7307,8 @@ __metadata:
     crypto-js: ^4.1.1
     docdash: ^1.2.0
     dom-storage: ^2.1.0
-    eslint-plugin-prettier: ^4.2.1
+    eslint: "*"
+    eslint-plugin-prettier: "*"
     exports-loader: ^3.1.0
     jest: ^28.1.2
     jest-environment-jsdom: ^28.1.2
@@ -7323,10 +7328,11 @@ __metadata:
     ts-loader: ^9.2.6
     ts-node: ^10.8.1
     tscpaths: 0.0.9
+    typescript: "*"
     uuid: ^8.3.2
-    webpack: ^5.69.1
-    webpack-cli: ^4.9.2
-    webpack-merge: ^5.8.0
+    webpack: "*"
+    webpack-cli: "*"
+    webpack-merge: "*"
   languageName: unknown
   linkType: soft
 
@@ -7366,7 +7372,7 @@ __metadata:
     webpack: "*"
     webpack-cli: "*"
     webpack-dev-server: "*"
-    webpack-merge: ^5.8.0
+    webpack-merge: "*"
   languageName: unknown
   linkType: soft
 
@@ -7457,7 +7463,7 @@ __metadata:
     "@types/node": ^18.0.0
     "@typescript-eslint/eslint-plugin": ^5.30.0
     dompurify: ^2.3.8
-    eslint-plugin-prettier: ^4.2.1
+    eslint-plugin-prettier: "*"
     jest: ^27.5.1
     jsdom: ^20.0.0
     lodash: ^4.17.21
@@ -7479,9 +7485,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/web@workspace:packages/web"
   dependencies:
-    "@babel/core": ^7.17.9
+    "@babel/core": "*"
     "@babel/plugin-transform-react-jsx": ^7.17.3
-    "@babel/preset-env": ^7.16.11
+    "@babel/preset-env": "*"
     "@babel/preset-typescript": ^7.16.7
     "@reach/alert": ^0.16.0
     "@reach/alert-dialog": ^0.16.2
@@ -7540,7 +7546,7 @@ __metadata:
     typescript: "*"
     webpack: "*"
     webpack-dev-server: "*"
-    webpack-merge: ^5.8.0
+    webpack-merge: "*"
   languageName: unknown
   linkType: soft
 
@@ -17756,7 +17762,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-prettier@npm:^4.0.0, eslint-plugin-prettier@npm:^4.2.1":
+"eslint-plugin-prettier@npm:*, eslint-plugin-prettier@npm:^4.0.0, eslint-plugin-prettier@npm:^4.2.1":
   version: 4.2.1
   resolution: "eslint-plugin-prettier@npm:4.2.1"
   dependencies:
@@ -39539,6 +39545,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"webpack-merge@npm:*, webpack-merge@npm:^5.7.3, webpack-merge@npm:^5.8.0":
+  version: 5.8.0
+  resolution: "webpack-merge@npm:5.8.0"
+  dependencies:
+    clone-deep: ^4.0.1
+    wildcard: ^2.0.0
+  checksum: 88786ab91013f1bd2a683834ff381be81c245a4b0f63304a5103e90f6653f44dab496a0768287f8531761f8ad957d1f9f3ccb2cb55df0de1bd9ee343e079da26
+  languageName: node
+  linkType: hard
+
 "webpack-merge@npm:5.7.3":
   version: 5.7.3
   resolution: "webpack-merge@npm:5.7.3"
@@ -39555,16 +39571,6 @@ __metadata:
   dependencies:
     lodash: ^4.17.15
   checksum: ce58bc8ab53a3dd5d9a0df65684571349eef53372bf8f224521072110485391335b26ab097c5f07829b88d0c146056944149566e5a953f05997b0fe2cbaf8dd6
-  languageName: node
-  linkType: hard
-
-"webpack-merge@npm:^5.7.3, webpack-merge@npm:^5.8.0":
-  version: 5.8.0
-  resolution: "webpack-merge@npm:5.8.0"
-  dependencies:
-    clone-deep: ^4.0.1
-    wildcard: ^2.0.0
-  checksum: 88786ab91013f1bd2a683834ff381be81c245a4b0f63304a5103e90f6653f44dab496a0768287f8531761f8ad957d1f9f3ccb2cb55df0de1bd9ee343e079da26
   languageName: node
   linkType: hard
 
@@ -39606,7 +39612,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:*, webpack@npm:^5.64.4, webpack@npm:^5.69.1, webpack@npm:^5.72.0, webpack@npm:^5.72.1":
+"webpack@npm:*, webpack@npm:^5.64.4, webpack@npm:^5.72.0, webpack@npm:^5.72.1":
   version: 5.73.0
   resolution: "webpack@npm:5.73.0"
   dependencies:

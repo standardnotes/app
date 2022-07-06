@@ -51,8 +51,8 @@
     "mobx": "^6.5.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.10",
-    "@babel/preset-env": "^7.17.10",
+    "@babel/core": "*",
+    "@babel/preset-env": "*",
     "@types/lodash": "^4.14.182",
     "@types/mime-types": "^2.1.1",
     "@types/node": "15",
@@ -79,7 +79,7 @@
     "ts-node": "^10.7.0",
     "typescript": "*",
     "webpack": "*",
-    "webpack-merge": "^5.8.0"
+    "webpack-merge": "*"
   },
   "build": {
     "electronVersion": "17.4.2",

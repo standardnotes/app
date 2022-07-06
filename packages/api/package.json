@@ -28,7 +28,7 @@
     "@types/jest": "^27.4.1",
     "@types/lodash": "^4.14.182",
     "@typescript-eslint/eslint-plugin": "^5.30.0",
-    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-prettier": "*",
     "jest": "^27.5.1",
     "ts-jest": "^27.1.3"
   },

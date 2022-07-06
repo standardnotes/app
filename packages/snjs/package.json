@@ -11,9 +11,7 @@
     "dist"
   ],
   "license": "AGPL-3.0-or-later",
-  "publishConfig": {
-    "access": "public"
-  },
+  "private": true,
   "scripts": {
     "start": "webpack -w --config webpack.dev.js",
     "clean": "rm -fr dist",
@@ -28,8 +26,8 @@
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.5",
-    "@babel/preset-env": "^7.16.11",
+    "@babel/core": "*",
+    "@babel/preset-env": "*",
     "@types/crypto-js": "^4.1.1",
     "@types/jest": "^28.1.4",
     "@types/jsdom": "^16.2.14",
@@ -46,7 +44,8 @@
     "crypto-js": "^4.1.1",
     "docdash": "^1.2.0",
     "dom-storage": "^2.1.0",
-    "eslint-plugin-prettier": "^4.2.1",
+    "eslint": "*",
+    "eslint-plugin-prettier": "*",
     "exports-loader": "^3.1.0",
     "jest": "^28.1.2",
     "jest-environment-jsdom": "^28.1.2",
@@ -64,10 +63,11 @@
     "ts-loader": "^9.2.6",
     "ts-node": "^10.8.1",
     "tscpaths": "0.0.9",
+    "typescript": "*",
     "uuid": "^8.3.2",
-    "webpack": "^5.69.1",
-    "webpack-cli": "^4.9.2",
-    "webpack-merge": "^5.8.0"
+    "webpack": "*",
+    "webpack-cli": "*",
+    "webpack-merge": "*"
   },
   "dependencies": {
     "@standardnotes/api": "workspace:*",

@@ -21,9 +21,9 @@
     "upgrade:snjs": "ncu -u '@standardnotes/*'"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.9",
+    "@babel/core": "*",
     "@babel/plugin-transform-react-jsx": "^7.17.3",
-    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-env": "*",
     "@babel/preset-typescript": "^7.16.7",
     "@types/jest": "^27.4.1",
     "@types/react": "^17.0.42",
@@ -57,7 +57,7 @@
     "typescript": "*",
     "webpack": "*",
     "webpack-dev-server": "*",
-    "webpack-merge": "^5.8.0"
+    "webpack-merge": "*"
   },
   "dependencies": {
     "@reach/alert": "^0.16.0",
