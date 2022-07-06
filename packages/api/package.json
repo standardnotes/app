@@ -1,0 +1,44 @@
+{
+  "name": "@standardnotes/api",
+  "version": "1.3.0",
+  "engines": {
+    "node": ">=16.0.0 <17.0.0"
+  },
+  "description": "Interfaces for dealing with SN server-side API",
+  "main": "dist/src/index.js",
+  "author": "Standard Notes",
+  "types": "dist/src/index.d.ts",
+  "files": [
+    "dist/src"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "AGPL-3.0-or-later",
+  "scripts": {
+    "clean": "rm -fr dist",
+    "prestart": "yarn clean",
+    "start": "tsc -p tsconfig.json --watch",
+    "prebuild": "yarn clean",
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint . --ext .ts",
+    "test:unit": "jest spec --coverage"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.4.1",
+    "@types/lodash": "^4.14.182",
+    "@typescript-eslint/eslint-plugin": "^5.30.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "jest": "^27.5.1",
+    "ts-jest": "^27.1.3"
+  },
+  "dependencies": {
+    "@standardnotes/common": "^1.23.1",
+    "@standardnotes/encryption": "workspace:*",
+    "@standardnotes/models": "workspace:*",
+    "@standardnotes/responses": "^1.6.39",
+    "@standardnotes/security": "^1.1.0",
+    "@standardnotes/services": "workspace:*",
+    "reflect-metadata": "^0.1.13"
+  }
+}
