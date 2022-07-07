@@ -52,6 +52,7 @@ app-release.aab
 *.bundle
 !Web.bundle
 html/Web.bundle/src/web-src
+html/Web.bundle/src/components
 ios-release.bundle.map
 
 # fastlane

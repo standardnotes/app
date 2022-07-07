@@ -285,7 +285,7 @@ export class SNComponentManager extends AbstractService<ComponentManagerEvent, E
       if (!isWeb) {
         throw Error('Mobile must override urlForComponent to handle native paths')
       }
-      return `${window.location.origin}/components/assets/${component.identifier}/${nativeFeature.index_path}`
+      return `components/assets/${component.identifier}/${nativeFeature.index_path}`
     }
 
     let url = component.hosted_url || component.legacy_url

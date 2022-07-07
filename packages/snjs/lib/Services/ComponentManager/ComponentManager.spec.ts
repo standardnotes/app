@@ -292,7 +292,7 @@ describe('featuresService', () => {
         const component = nativeComponent()
         const url = manager.urlForComponent(component)
         const feature = FindNativeFeature(component.identifier) as FeatureDescription
-        expect(url).toEqual(`http://localhost/components/assets/${component.identifier}/${feature.index_path}`)
+        expect(url).toEqual(`components/assets/${component.identifier}/${feature.index_path}`)
       })
 
       it('returns hosted path for third party component', () => {

@@ -127,6 +127,7 @@ export const MobileWebAppContainer = () => {
       onHttpError={() => console.error('An HTTP error occurred')}
       onMessage={onMessage}
       allowFileAccess={true}
+      allowUniversalAccessFromFileURLs={true}
       injectedJavaScript={injectedJS}
     />
   )
