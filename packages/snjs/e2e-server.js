@@ -8,7 +8,7 @@ const port = isDev ? 9002 : 9001;
 connect()
   .use(serveStatic(__dirname))
   .listen(port, () => {
-    const url = `http://localhost:${port}/packages/snjs/mocha/test.html`;
+    const url = `http://localhost:${port}/mocha/test.html`;
     console.log(`Test Server Started on ${url}`);
     if (!isDev) {
       const start =
