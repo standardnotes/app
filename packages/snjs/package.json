@@ -9,6 +9,7 @@
   "types": "dist/@types",
   "files": [
     "dist",
+    "mocha",
     "e2e-server.js"
   ],
   "license": "AGPL-3.0-or-later",
