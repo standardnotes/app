@@ -8,7 +8,8 @@
   "author": "Standard Notes",
   "types": "dist/@types",
   "files": [
-    "dist"
+    "dist",
+    "e2e-server.js"
   ],
   "license": "AGPL-3.0-or-later",
   "private": true,

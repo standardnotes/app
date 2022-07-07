@@ -22,6 +22,4 @@ COPY --from=builder /workspace ./
 # docker-build plugin runs `yarn pack` in all workspace dependencies and copies them to `packs` folder.
 COPY packs ./
 
-ENTRYPOINT [ "/workspace/packages/snjs/docker/entrypoint.sh" ]
-
-CMD [ "start-web" ]
+CMD [ "yarn", "start:test-server" ]
