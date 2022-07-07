@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.38.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.37.7...@standardnotes/web@3.38.0) (2022-07-07)
+
+### Features
+
+* add selected file size in context menu ([#1224](https://github.com/standardnotes/app/issues/1224)) ([50c024e](https://github.com/standardnotes/app/commit/50c024e643b4c34b4d5700ee678cf1c92d1bd3cc))
+
 ## [3.37.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.37.6...@standardnotes/web@3.37.7) (2022-07-06)
 
 **Note:** Version bump only for package @standardnotes/web
