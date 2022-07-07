@@ -36,11 +36,44 @@ jobs:
           git_user_signingkey: true
           git_commit_gpgsign: true
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: yarn install --immutable
 
-      - name: Build packages
+      - name: Build
         run: yarn build:all
+
+      - name: ESLint
+        run: yarn lint
+
+      - name: Build Android
+        run: yarn android:bundle
+
+      - name: Test
+        run: yarn test
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Publish SNJS Docker image for E2E testing
+        run: |
+          yarn docker build @standardnotes/snjs -t standardnotes/snjs:${{ github.sha }}
+          docker push standardnotes/snjs:${{ github.sha }}
+
+      - name: Run E2E test suite
+        uses: convictional/trigger-workflow-and-wait@v1.6.1
+        with:
+          owner: standardnotes
+          repo: e2e
+          github_token: ${{ secrets.CI_PAT_TOKEN }}
+          workflow_file_name: testing-with-stable-server.yml
+          wait_interval: 30
+          client_payload: '{"image_tag": "${{ github.sha }}"}'
+          propagate_failure: true
+          trigger_workflow: true
+          wait_workflow: true
 
       - name: Bump version
         run: yarn release:prod
@@ -49,3 +82,8 @@ jobs:
         run: yarn publish:prod
         env:
           NODE_AUTH_TOKEN: ${{ secrets.CI_NPM_TOKEN }}
+
+      - name: Publish SNJS Docker image as stable
+        run: |
+          docker tag standardnotes/snjs:${{ github.sha }} standardnotes/snjs:latest
+          docker push standardnotes/snjs:latest
