@@ -41,7 +41,7 @@ platform :ios do
       key_id: ENV['APPSTORE_CONNECT_KEY_ID'],
       issuer_id: ENV['APPSTORE_CONNECT_KEY_ISSUER_ID'],
       key_filepath: 'ios/Authkey.p8',
-      in_house: false # optional but may be required if using match/sigh
+      in_house: false
     )
 
     is_prod = scheme == 'StandardNotes'
@@ -52,6 +52,7 @@ platform :ios do
       groups: ['Public'],
       notify_external_testers: is_prod,
       submit_beta_review: is_prod,
+      reject_build_waiting_for_review: is_prod,
       changelog: 'Fixes and improvements.'
     )
 
@@ -60,7 +61,7 @@ platform :ios do
         build_number: build_number,
         submit_for_review: true,
         automatic_release: false,
-        force: true, # Skip HTMl report verification
+        force: true,
         skip_metadata: true,
         skip_screenshots: true,
         skip_binary_upload: true,
