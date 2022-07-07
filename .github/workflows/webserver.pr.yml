@@ -1,0 +1,20 @@
+name: Web Server PR
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'packages/web-server/**'
+
+jobs:
+  TestDockerBuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+      - name: Copy default configuration
+        run: yarn workspace @standardnotes/web-server run sample:env
+      - name: Test build of the image
+        run: docker build -t standardnotes/web:test-build .
