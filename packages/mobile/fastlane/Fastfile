@@ -46,25 +46,14 @@ platform :ios do
 
     is_prod = scheme == 'StandardNotes'
 
-    begin
-      upload_to_testflight(
-        apple_id: ENV['APPLE_APP_ID'],
-        distribute_external: is_prod,
-        groups: ['Public'],
-        notify_external_testers: is_prod,
-        submit_beta_review: is_prod,
-        reject_build_waiting_for_review: is_prod,
-        changelog: 'Fixes and improvements.'
-      )
-
-    # https://github.com/fastlane/fastlane/issues/18408
-    rescue Exception => e
-      if e.message.include? 'Another build is in review'
-        UI.important('Another build is already in external beta review. Skipping external beta review submission')
-      else
-        raise
-      end
-    end
+    upload_to_testflight(
+      apple_id: ENV['APPLE_APP_ID'],
+      distribute_external: is_prod,
+      groups: ['Public'],
+      notify_external_testers: is_prod,
+      submit_beta_review: is_prod,
+      changelog: 'Fixes and improvements.'
+    )
 
     if is_prod
       upload_to_app_store(
