@@ -8,6 +8,7 @@ import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { PopoverFileSubmenuProps } from './PopoverFileItemProps'
 import { PopoverFileItemActionType } from './PopoverFileItemAction'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
+import { formatSizeToReadableString } from '@standardnotes/filepicker'
 
 const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
   file,
@@ -188,8 +189,11 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
                 <span className="text-danger">Delete permanently</span>
               </button>
               <div className="px-3 py-1 text-xs font-medium text-neutral">
-                <div>
+                <div className="mb-1">
                   <span className="font-semibold">File ID:</span> {file.uuid}
+                </div>
+                <div>
+                  <span className="font-semibold">Size:</span> {formatSizeToReadableString(file.decryptedSize)}
                 </div>
               </div>
             </>
