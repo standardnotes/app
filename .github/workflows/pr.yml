@@ -37,3 +37,14 @@ jobs:
           docker push standardnotes/snjs:${{ github.sha }}
           docker tag standardnotes/snjs:${{ github.sha }} standardnotes/snjs:test
           docker push standardnotes/snjs:test
+      - name: Run E2E test suite
+        uses: convictional/trigger-workflow-and-wait@v1.6.1
+        with:
+          owner: standardnotes
+          repo: e2e
+          github_token: ${{ secrets.CI_PAT_TOKEN }}
+          workflow_file_name: testing-with-stable-server.yml
+          wait_interval: 30
+          propagate_failure: true
+          trigger_workflow: true
+          wait_workflow: true
