@@ -45,6 +45,7 @@ jobs:
           github_token: ${{ secrets.CI_PAT_TOKEN }}
           workflow_file_name: testing-with-stable-server.yml
           wait_interval: 30
+          client_payload: '{"image_tag": "${{ github.sha }}"}'
           propagate_failure: true
           trigger_workflow: true
           wait_workflow: true
