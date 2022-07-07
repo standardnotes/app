@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.84](https://github.com/standardnotes/app/compare/@standardnotes/web-server@1.2.83...@standardnotes/web-server@1.2.84) (2022-07-07)
+
+### Reverts
+
+* Revert "chore: deps (#1222)" ([7017032](https://github.com/standardnotes/app/commit/701703289330baee4a5082df42bb787694fe7509)), closes [#1222](https://github.com/standardnotes/app/issues/1222)
+
 ## [1.2.83](https://github.com/standardnotes/app/compare/@standardnotes/web-server@1.2.82...@standardnotes/web-server@1.2.83) (2022-07-07)
 
 **Note:** Version bump only for package @standardnotes/web-server
