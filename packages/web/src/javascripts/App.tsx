@@ -15,6 +15,7 @@ declare global {
     electronAppVersion?: string
     webClient?: DesktopManagerInterface
     electronRemoteBridge?: unknown
+    reactNativeDevice?: WebDevice
 
     application?: WebApplication
     mainApplicationGroup?: ApplicationGroup
@@ -88,12 +89,14 @@ const startApplication: StartApplication = async function startApplication(
 }
 
 if (IsWebPlatform) {
-  startApplication(
-    window.defaultSyncServer,
-    new WebDevice(WebAppVersion),
-    window.enabledUnfinishedFeatures,
-    window.websocketUrl,
-  ).catch(console.error)
+  const ReactNativeWebViewInitializationTimeout = 0
+
+  setTimeout(() => {
+    const device = window.reactNativeDevice || new WebDevice(WebAppVersion)
+    startApplication(window.defaultSyncServer, device, window.enabledUnfinishedFeatures, window.websocketUrl).catch(
+      console.error,
+    )
+  }, ReactNativeWebViewInitializationTimeout)
 } else {
   window.startApplication = startApplication
 }

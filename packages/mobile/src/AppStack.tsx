@@ -1,16 +1,17 @@
 import { AppStateEventType, AppStateType, TabletModeChangeData } from '@Lib/ApplicationState'
 import { useHasEditor, useIsLocked } from '@Lib/SnjsHelperHooks'
 import { ScreenStatus } from '@Lib/StatusManager'
+import { IsDev } from '@Lib/Utils'
 import { CompositeNavigationProp, RouteProp } from '@react-navigation/native'
 import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack'
 import { HeaderTitleView } from '@Root/Components/HeaderTitleView'
 import { IoniconsHeaderButton } from '@Root/Components/IoniconsHeaderButton'
 import { Compose } from '@Root/Screens/Compose/Compose'
-import { Root } from '@Root/Screens/Root'
 import { SCREEN_COMPOSE, SCREEN_NOTES, SCREEN_VIEW_PROTECTED_NOTE } from '@Root/Screens/screens'
 import { MainSideMenu } from '@Root/Screens/SideMenu/MainSideMenu'
 import { NoteSideMenu } from '@Root/Screens/SideMenu/NoteSideMenu'
 import { ViewProtectedNote } from '@Root/Screens/ViewProtectedNote/ViewProtectedNote'
+import { Root } from '@Screens/Root'
 import { UuidString } from '@standardnotes/snjs'
 import { ICON_MENU } from '@Style/Icons'
 import { ThemeService } from '@Style/ThemeService'
@@ -20,9 +21,13 @@ import { Dimensions, Keyboard, ScaledSize } from 'react-native'
 import DrawerLayout, { DrawerState } from 'react-native-gesture-handler/DrawerLayout'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
 import { ThemeContext } from 'styled-components'
+import { MobileWebAppContainer } from '../MobileWebAppContainer'
 import { HeaderTitleParams } from './App'
 import { ApplicationContext } from './ApplicationContext'
 import { ModalStackNavigationProp } from './ModalStack'
+
+const IS_DEBUGGING_WEB_APP = false
+const DEFAULT_TO_WEB_APP = IsDev && IS_DEBUGGING_WEB_APP
 
 export type AppStackNavigatorParamList = {
   [SCREEN_NOTES]: HeaderTitleParams
@@ -196,7 +201,7 @@ export const AppStackComponent = (props: ModalStackNavigationProp<'AppStack'>) =
                   </HeaderButtons>
                 ),
             })}
-            component={Root}
+            component={DEFAULT_TO_WEB_APP ? MobileWebAppContainer : Root}
           />
           <AppStack.Screen
             name={SCREEN_COMPOSE}
