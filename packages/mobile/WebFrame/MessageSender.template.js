@@ -2,10 +2,11 @@
 class WebProcessMessageSender {
   constructor() {
     this.pendingMessages = []
-    window.addEventListener('message', this.handleMessageFromReactNative)
+    window.addEventListener('message', this.handleMessageFromReactNative.bind(this))
   }
 
-  handleMessageFromReactNative(message) {
+  handleMessageFromReactNative(event) {
+    const message = event.data
     try {
       const parsed = JSON.parse(message)
       const { messageId, returnValue } = parsed
@@ -13,13 +14,13 @@ class WebProcessMessageSender {
       pendingMessage.resolve(returnValue)
       this.pendingMessages.splice(this.pendingMessages.indexOf(pendingMessage), 1)
     } catch (error) {
-      console.log('Error parsing message from React Native')
+      console.log('Error parsing message from React Native', message, error)
     }
   }
 
   sendMessage(functionName, args) {
     const messageId = Math.random()
-    window.ReactNativeWebView.postMessage({ functionName: functionName, args: args, messageId })
+    window.ReactNativeWebView.postMessage(JSON.stringify({ functionName: functionName, args: args, messageId }))
     return new Promise((resolve) => {
       this.pendingMessages.push({
         messageId,
