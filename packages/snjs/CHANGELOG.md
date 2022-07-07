@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.123.6](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.123.5...@standardnotes/snjs@2.123.6) (2022-07-07)
+
+### Bug Fixes
+
+* **web:** themes inside editors urls ([3d49b95](https://github.com/standardnotes/app/commit/3d49b95bc593d67e949b2eec4a086ff25275eadf))
+
 ## [2.123.5](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.123.4...@standardnotes/snjs@2.123.5) (2022-07-07)
 
 ### Bug Fixes
