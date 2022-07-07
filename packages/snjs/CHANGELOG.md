@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.123.5](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.123.4...@standardnotes/snjs@2.123.5) (2022-07-07)
+
+### Bug Fixes
+
+* **mobile:** component viewer in mobile web ([d901461](https://github.com/standardnotes/app/commit/d9014615f0a146733fbf7d494d0d201068817086))
+
 ## [2.123.4](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.123.3...@standardnotes/snjs@2.123.4) (2022-07-07)
 
 **Note:** Version bump only for package @standardnotes/snjs
