@@ -7,6 +7,7 @@ import { observer } from 'mobx-react-lite'
 import { FilesController } from '@/Controllers/FilesController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
+import { formatSizeToReadableString } from '@standardnotes/filepicker'
 
 type Props = {
   closeMenu: () => void
@@ -149,8 +150,11 @@ const FileMenuOptions: FunctionComponent<Props> = ({
       </button>
       {selectedFiles.length === 1 && (
         <div className="px-3 pt-1.5 pb-0.5 text-xs font-medium text-neutral">
-          <div>
+          <div className="mb-1">
             <span className="font-semibold">File ID:</span> {selectedFiles[0].uuid}
+          </div>
+          <div>
+            <span className="font-semibold">Size:</span> {formatSizeToReadableString(selectedFiles[0].decryptedSize)}
           </div>
         </div>
       )}
