@@ -21,9 +21,9 @@ import { Dimensions, Keyboard, ScaledSize } from 'react-native'
 import DrawerLayout, { DrawerState } from 'react-native-gesture-handler/DrawerLayout'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
 import { ThemeContext } from 'styled-components'
-import { MobileWebAppContainer } from '../MobileWebAppContainer'
 import { HeaderTitleParams } from './App'
 import { ApplicationContext } from './ApplicationContext'
+import { MobileWebAppContainer } from './MobileWebAppContainer'
 import { ModalStackNavigationProp } from './ModalStack'
 
 const IS_DEBUGGING_WEB_APP = false

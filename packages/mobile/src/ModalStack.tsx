@@ -30,11 +30,11 @@ import React, { memo, useContext } from 'react'
 import { Platform } from 'react-native'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
 import { ThemeContext } from 'styled-components'
-import { MobileWebAppContainer } from '../MobileWebAppContainer'
 import { HeaderTitleParams, TEnvironment } from './App'
 import { ApplicationContext } from './ApplicationContext'
 import { AppStackComponent } from './AppStack'
 import { HistoryStack } from './HistoryStack'
+import { MobileWebAppContainer } from './MobileWebAppContainer'
 
 export type ModalStackNavigatorParamList = {
   AppStack: undefined
