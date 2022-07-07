@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-fastlane_version '2.181.0'
+fastlane_version '2.207.0'
 
 platform :ios do
   def sign_ios(type = 'appstore')
