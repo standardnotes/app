@@ -21,7 +21,6 @@ jobs:
       - name: Build
         run: yarn build:all
       - name: ESLint
-        continue-on-error: true
         run: yarn lint
       - name: Build Android
         run: yarn android:bundle
