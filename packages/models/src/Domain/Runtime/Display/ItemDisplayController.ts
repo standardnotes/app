@@ -1,5 +1,6 @@
 import { ContentType } from '@standardnotes/common'
 import { compareValues } from '@standardnotes/utils'
+import { isEqual } from 'lodash'
 import { isDeletedItem, isEncryptedItem } from '../../Abstract/Item'
 import { ItemDelta } from '../Index/ItemDelta'
 import { DisplayControllerOptions } from './DisplayOptions'
@@ -82,7 +83,12 @@ export class ItemDisplayController<I extends DisplayItem> {
           /** If the pinned status of the element has changed, it needs to be resorted */
           const pinChanged = previousElement.pinned !== element.pinned
 
-          if (!compareValues(previousValue, newValue) || pinChanged) {
+          const haveReferencesChanged = isEqual(
+            previousElement.payload.content.references,
+            element.payload.content.references,
+          )
+
+          if (!compareValues(previousValue, newValue) || pinChanged || haveReferencesChanged) {
             /** Needs resort because its re-sort value has changed,
              * and thus its position might change */
             this.needsSort = true
