@@ -202,7 +202,7 @@ The following steps will install a self-hosted version of Standard Notes using D
     ./server.sh status
     ```
 
-    This will output something like
+    This will output something like:
 
     ```plaintext
     Services State:
@@ -218,15 +218,6 @@ The following steps will install a self-hosted version of Standard Notes using D
     ```
 
     Your Standard Notes server is ready once all the services have a `STATUS` of `Up`. This process took about 11 minutes on a Ubuntu 20.04 server with 2GB RAM and 1 CPU.
-
-    ```plaintext
-    Services State:
-    NAME                                  COMMAND                  SERVICE                    STATUS              PORTS
-    api-gateway-standalone                "./wait-for.sh auth …"   api-gateway                Up                  0.0.0.0:3000->3000/tcp, :::3000->3000/tcp
-    auth-standalone                       "./wait-for.sh db 33…"   auth                       Up 
-    
-    ...
-    ```
 
 1. You should be able now to check that the syncing server is running by checking `http://localhost:3000/healthcheck`. You must do this on the server:
 
