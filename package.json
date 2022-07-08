@@ -31,6 +31,7 @@
     "build:snjs": "yarn workspaces foreach -pt --verbose -R --from @standardnotes/snjs --exclude @standardnotes/components-meta run build",
     "start:server:web": "lerna run start --scope=@standardnotes/web-server",
     "start:server:web:localhost": "lerna run start:no-binding --scope=@standardnotes/web-server",
+    "start:server:e2e": "lerna run start:test-server --scope=@standardnotes/snjs",
     "prepare": "husky install",
     "reset": "find . -type dir -name node_modules | xargs rm -rf && rm -rf yarn.lock && yarn install",
     "release:prod": "lerna version --conventional-commits --yes -m \"chore(release): publish\"",

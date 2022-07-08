@@ -71,3 +71,18 @@ You can configure the `DEFAULT_SYNC_SERVER` environment variable to set the defa
 ```
 DEFAULT_SYNC_SERVER=https://sync.myserver
 ```
+
+## Running E2E tests
+
+In order to run a stable server environment for E2E tests that will is up to date with what we have on production please checkout locally the [e2e repository](https://github.com/standardnotes/e2e).
+
+To start the server type in the e2e repository:
+```
+yarn install --immutable
+yarn test:stable-server
+```
+
+Then once the whole server infra is up and ready for your tests you can run the e2e suite in the local browser by typing (make sure you have built all the packages beforehand):
+```
+yarn start:server:e2e
+```
