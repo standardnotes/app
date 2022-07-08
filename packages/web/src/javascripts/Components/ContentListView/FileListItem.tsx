@@ -37,12 +37,20 @@ const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
 
   const openContextMenu = useCallback(
     async (posX: number, posY: number) => {
-      const { didSelect } = await selectionController.selectItem(item.uuid)
-      if (didSelect) {
+      let shouldOpenContextMenu = selected
+
+      if (!selected) {
+        const { didSelect } = await selectionController.selectItem(item.uuid)
+        if (didSelect) {
+          shouldOpenContextMenu = true
+        }
+      }
+
+      if (shouldOpenContextMenu) {
         openFileContextMenu(posX, posY)
       }
     },
-    [selectionController, item.uuid, openFileContextMenu],
+    [selected, selectionController, item.uuid, openFileContextMenu],
   )
 
   const onClick = useCallback(async () => {
