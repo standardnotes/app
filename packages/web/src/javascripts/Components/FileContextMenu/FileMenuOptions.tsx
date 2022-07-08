@@ -148,16 +148,18 @@ const FileMenuOptions: FunctionComponent<Props> = ({
         <Icon type="trash" className="mr-2 text-danger" />
         <span className="text-danger">Delete permanently</span>
       </button>
-      <HorizontalSeparator classes="my-2" />
       {selectedFiles.length === 1 && (
-        <div className="px-3 pt-1 pb-0.5 text-xs font-medium text-neutral">
-          <div className="mb-1">
-            <span className="font-semibold">File ID:</span> {selectedFiles[0].uuid}
+        <>
+          <HorizontalSeparator classes="my-2" />
+          <div className="px-3 pt-1 pb-0.5 text-xs font-medium text-neutral">
+            <div className="mb-1">
+              <span className="font-semibold">File ID:</span> {selectedFiles[0].uuid}
+            </div>
+            <div>
+              <span className="font-semibold">Size:</span> {formatSizeToReadableString(selectedFiles[0].decryptedSize)}
+            </div>
           </div>
-          <div>
-            <span className="font-semibold">Size:</span> {formatSizeToReadableString(selectedFiles[0].decryptedSize)}
-          </div>
-        </div>
+        </>
       )}
     </>
   )
