@@ -117,7 +117,7 @@ export class PreferencesMenu {
     return 'account'
   }
 
-  selectPane(key: PreferenceId): void {
+  selectPane = (key: PreferenceId) => {
     this._selectedPane = key
   }
 

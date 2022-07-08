@@ -30,7 +30,7 @@ const Authentication: FunctionComponent<Props> = ({ viewControllerManager }) => 
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <div className="flex flex-col items-center px-12">
+        <div className="flex flex-col items-center px-4 md:px-12">
           <AccountIllustration className="mb-3" />
           <Title>You're not signed in</Title>
           <Text className="mb-3 text-center">

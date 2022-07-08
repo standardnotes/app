@@ -1,9 +1,9 @@
 import { FunctionComponent } from 'react'
 
 const PreferencesPane: FunctionComponent = ({ children }) => (
-  <div className="flex min-h-0 flex-grow flex-row overflow-y-auto text-foreground">
-    <div className="flex flex-grow flex-col items-center py-6">
-      <div className="flex w-125 max-w-125 flex-col">
+  <div className="flex min-h-0 flex-grow flex-col overflow-y-auto text-foreground md:flex-row">
+    <div className="flex flex-grow flex-col items-center px-3 py-6 md:px-0">
+      <div className="flex flex-col md:w-125 md:max-w-125">
         {children != undefined && Array.isArray(children) ? children.filter((child) => child != undefined) : children}
       </div>
     </div>
