@@ -45,7 +45,7 @@ const NotesContextMenu = ({
   return contextMenuOpen ? (
     <div
       ref={contextMenuRef}
-      className="max-h-120 fixed z-dropdown-menu flex min-w-80 max-w-xs flex-col overflow-y-auto rounded bg-default pt-2 shadow-main"
+      className="max-h-120 fixed z-dropdown-menu flex min-w-80 max-w-xs flex-col overflow-y-auto rounded bg-default py-2 shadow-main"
       style={{
         ...contextMenuPosition,
         maxHeight: contextMenuMaxHeight,
