@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.39.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.38.6...@standardnotes/web@3.39.0) (2022-07-08)
+
+### Features
+
+* **web:** mobile-friendly (responsive) preferences UI ([#1234](https://github.com/standardnotes/app/issues/1234)) ([66f97f0](https://github.com/standardnotes/app/commit/66f97f06123b1be087ea5a23140b6bd18e0c004f))
+
 ## [3.38.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.38.5...@standardnotes/web@3.38.6) (2022-07-08)
 
 ### Bug Fixes
