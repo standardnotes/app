@@ -1,7 +1,9 @@
 import { ListboxButton } from '@reach/listbox'
 import styled from 'styled-components'
 
-const StyledListboxButton = styled(ListboxButton)`
+const StyledListboxButton = styled(ListboxButton).attrs(() => ({
+  className: 'w-full md:w-fit',
+}))`
   &[data-reach-listbox-button] {
     background-color: var(--sn-stylekit-background-color);
     border-radius: 0.25rem;
@@ -14,7 +16,6 @@ const StyledListboxButton = styled(ListboxButton)`
     padding-left: 0.875rem;
     padding-right: 0.875rem;
     padding-top: 0.375rem;
-    width: fit-content;
   }
 `
 

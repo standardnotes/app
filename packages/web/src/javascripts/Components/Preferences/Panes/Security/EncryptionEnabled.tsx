@@ -20,14 +20,15 @@ const EncryptionEnabled: FunctionComponent<Props> = ({ viewControllerManager }) 
   const tagIcon = <Icon type="hashtag" className="min-h-5 min-w-5" />
   const archiveIcon = <Icon type="archive" className="min-h-5 min-w-5" />
   const trashIcon = <Icon type="trash" className="min-h-5 min-w-5" />
+
   return (
     <>
-      <div className="flex flex-row items-start pb-1 pt-1.5">
+      <div className="flex flex-row flex-wrap items-start pt-1.5 md:pb-1">
         <EncryptionStatusItem status={notes} icon={noteIcon} />
         <div className="min-w-3" />
         <EncryptionStatusItem status={tags} icon={tagIcon} />
       </div>
-      <div className="flex flex-row items-start">
+      <div className="flex flex-row flex-wrap items-start">
         <EncryptionStatusItem status={archived} icon={archiveIcon} />
         <div className="min-w-3" />
         <EncryptionStatusItem status={deleted} icon={trashIcon} />

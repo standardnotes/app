@@ -5,6 +5,8 @@ const CircularDependencyPlugin = require('circular-dependency-plugin')
 const mergeWithEnvDefaults = require('./web.webpack-defaults')
 require('dotenv').config()
 
+const isDevelopment = process.env.NODE_ENV !== 'production'
+
 module.exports = (env) => {
   mergeWithEnvDefaults(env)
   return {

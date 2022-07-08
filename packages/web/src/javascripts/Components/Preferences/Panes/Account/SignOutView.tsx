@@ -23,9 +23,8 @@ const SignOutView: FunctionComponent<Props> = observer(({ application, viewContr
           <Title>Sign out</Title>
           <Subtitle>Other devices</Subtitle>
           <Text>Want to sign out on all devices except this one?</Text>
-          <div className="mt-3 flex flex-row">
+          <div className="mt-3 flex flex-row flex-wrap gap-3">
             <Button
-              className="mr-3"
               label="Sign out other sessions"
               onClick={() => {
                 viewControllerManager.accountMenuController.setOtherSessionsSignOut(true)

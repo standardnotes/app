@@ -5117,7 +5117,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pmmmwh/react-refresh-webpack-plugin@npm:^0.5.3":
+"@pmmmwh/react-refresh-webpack-plugin@npm:^0.5.3, @pmmmwh/react-refresh-webpack-plugin@npm:^0.5.7":
   version: 0.5.7
   resolution: "@pmmmwh/react-refresh-webpack-plugin@npm:0.5.7"
   dependencies:
@@ -7466,6 +7466,7 @@ __metadata:
     "@babel/plugin-transform-react-jsx": ^7.17.3
     "@babel/preset-env": "*"
     "@babel/preset-typescript": ^7.16.7
+    "@pmmmwh/react-refresh-webpack-plugin": ^0.5.7
     "@reach/alert": ^0.16.0
     "@reach/alert-dialog": ^0.16.2
     "@reach/checkbox": ^0.16.0
@@ -7515,6 +7516,7 @@ __metadata:
     react-dnd-html5-backend: ^16.0.1
     react-dnd-touch-backend: ^16.0.1
     react-dom: ^18.1.0
+    react-refresh: ^0.14.0
     sass-loader: "*"
     styled-components: ^5.3.5
     svg-jest: ^1.0.1
@@ -32585,6 +32587,13 @@ __metadata:
   version: 0.11.0
   resolution: "react-refresh@npm:0.11.0"
   checksum: 112178a05b1e0ffeaf5d9fb4e56b4410a34a73adeb04dbf13abdc50d9ac9df2ada83e81485156cca0b3fa296aa3612751b3d6cd13be4464642a43679b819cbc7
+  languageName: node
+  linkType: hard
+
+"react-refresh@npm:^0.14.0":
+  version: 0.14.0
+  resolution: "react-refresh@npm:0.14.0"
+  checksum: dc69fa8c993df512f42dd0f1b604978ae89bd747c0ed5ec595c0cc50d535fb2696619ccd98ae28775cc01d0a7c146a532f0f7fb81dc22e1977c242a4912312f4
   languageName: node
   linkType: hard
 
