@@ -34,6 +34,12 @@ const FileMenuOptions: FunctionComponent<Props> = ({
   const { handleFileAction } = filesController
 
   const hasProtectedFiles = useMemo(() => selectedFiles.some((file) => file.protected), [selectedFiles])
+  const hasSelectedMultipleFiles = useMemo(() => selectedFiles.length > 1, [selectedFiles.length])
+
+  const totalFileSize = useMemo(
+    () => selectedFiles.map((file) => file.decryptedSize).reduce((prev, next) => prev + next, 0),
+    [selectedFiles],
+  )
 
   const onPreview = useCallback(() => {
     void handleFileAction({
@@ -148,19 +154,18 @@ const FileMenuOptions: FunctionComponent<Props> = ({
         <Icon type="trash" className="mr-2 text-danger" />
         <span className="text-danger">Delete permanently</span>
       </button>
-      {selectedFiles.length === 1 && (
-        <>
-          <HorizontalSeparator classes="my-2" />
-          <div className="px-3 pt-1 pb-0.5 text-xs font-medium text-neutral">
-            <div className="mb-1">
-              <span className="font-semibold">File ID:</span> {selectedFiles[0].uuid}
-            </div>
-            <div>
-              <span className="font-semibold">Size:</span> {formatSizeToReadableString(selectedFiles[0].decryptedSize)}
-            </div>
+      <HorizontalSeparator classes="my-2" />
+      <div className="px-3 pt-1 pb-0.5 text-xs font-medium text-neutral">
+        {!hasSelectedMultipleFiles && (
+          <div className="mb-1">
+            <span className="font-semibold">File ID:</span> {selectedFiles[0].uuid}
           </div>
-        </>
-      )}
+        )}
+        <div>
+          <span className="font-semibold">{hasSelectedMultipleFiles ? 'Total Size:' : 'Size:'}</span>{' '}
+          {formatSizeToReadableString(totalFileSize)}
+        </div>
+      </div>
     </>
   )
 }
