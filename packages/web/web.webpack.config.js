@@ -55,12 +55,7 @@ module.exports = (env) => {
           test: /\.(js|tsx?)$/,
           exclude: /(node_modules)/,
           use: [
-            {
-              loader: 'babel-loader',
-              options: {
-                plugins: isDevelopment ? ['react-refresh/babel'] : [],
-              },
-            },
+            'babel-loader',
             {
               loader: 'ts-loader',
               options: {
