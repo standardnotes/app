@@ -5,6 +5,8 @@ const CircularDependencyPlugin = require('circular-dependency-plugin')
 const mergeWithEnvDefaults = require('./web.webpack-defaults')
 require('dotenv').config()
 
+const isDevelopment = process.env.NODE_ENV !== 'production'
+
 module.exports = (env) => {
   mergeWithEnvDefaults(env)
   return {
@@ -53,7 +55,12 @@ module.exports = (env) => {
           test: /\.(js|tsx?)$/,
           exclude: /(node_modules)/,
           use: [
-            'babel-loader',
+            {
+              loader: 'babel-loader',
+              options: {
+                plugins: [isDevelopment && 'react-refresh/babel'],
+              },
+            },
             {
               loader: 'ts-loader',
               options: {
