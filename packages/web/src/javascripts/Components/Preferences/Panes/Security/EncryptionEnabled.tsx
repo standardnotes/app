@@ -23,7 +23,7 @@ const EncryptionEnabled: FunctionComponent<Props> = ({ viewControllerManager }) 
 
   return (
     <>
-      <div className="flex flex-row flex-wrap items-start pb-1 pt-1.5">
+      <div className="flex flex-row flex-wrap items-start pt-1.5 md:pb-1">
         <EncryptionStatusItem status={notes} icon={noteIcon} />
         <div className="min-w-3" />
         <EncryptionStatusItem status={tags} icon={tagIcon} />
