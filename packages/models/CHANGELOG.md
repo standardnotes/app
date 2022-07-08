@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.15.4](https://github.com/standardnotes/app/compare/@standardnotes/models@1.15.3...@standardnotes/models@1.15.4) (2022-07-08)
+
+### Bug Fixes
+
+* subtag duplication ([#1227](https://github.com/standardnotes/app/issues/1227)) ([f349744](https://github.com/standardnotes/app/commit/f349744fdb51849778e88b643adb518b7ed82811))
+
 ## [1.15.3](https://github.com/standardnotes/app/compare/@standardnotes/models@1.15.2...@standardnotes/models@1.15.3) (2022-07-06)
 
 **Note:** Version bump only for package @standardnotes/models

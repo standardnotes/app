@@ -56,7 +56,7 @@ export class NavigationController extends AbstractViewController {
     this.smartViews = this.application.items.getSmartViews()
 
     makeObservable(this, {
-      tags: observable.ref,
+      tags: observable,
       smartViews: observable.ref,
       hasAtLeastOneFolder: computed,
       allNotesCount_: observable,
