@@ -26,7 +26,6 @@ import { makeObservable, observable } from 'mobx'
 import { PanelResizedData } from '@/Types/PanelResizedData'
 import { WebAppEvent } from './WebAppEvent'
 import { isDesktopApplication } from '@/Utils'
-import { storage, StorageKey } from '@/Services/LocalStorage'
 
 type WebServices = {
   viewControllerManager: ViewControllerManager
@@ -63,7 +62,7 @@ export class WebApplication extends SNApplication {
       defaultHost: defaultSyncServerHost,
       appVersion: deviceInterface.appVersion,
       webSocketUrl: webSocketUrl,
-      supportsFileNavigation: storage.get(StorageKey.FilesNavigationEnabled) || false,
+      supportsFileNavigation: true,
     })
 
     makeObservable(this, {
