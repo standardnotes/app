@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.124.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.123.6...@standardnotes/snjs@2.124.0) (2022-07-08)
+
+### Features
+
+* add building of SNJS Docker image for e2e testing purposes ([#1225](https://github.com/standardnotes/app/issues/1225)) ([3e4e7fd](https://github.com/standardnotes/app/commit/3e4e7fd0e0b06a9412b9e30833d98eb992a3806a))
+
 ## [2.123.6](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.123.5...@standardnotes/snjs@2.123.6) (2022-07-07)
 
 ### Bug Fixes
