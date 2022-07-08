@@ -52,6 +52,7 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
         <SearchBar
           itemListController={viewControllerManager.itemListController}
           searchOptionsController={viewControllerManager.searchOptionsController}
+          selectedViewTitle={viewControllerManager.navigationController.selected?.title}
         />
         <div className="section-title-bar">
           <div className="section-title-bar-header">

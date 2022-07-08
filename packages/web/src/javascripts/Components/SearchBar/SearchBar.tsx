@@ -8,11 +8,12 @@ import DecoratedInput from '../Input/DecoratedInput'
 import { observer } from 'mobx-react-lite'
 
 type Props = {
+  selectedViewTitle?: string
   itemListController: ItemListController
   searchOptionsController: SearchOptionsController
 }
 
-const SearchBar = ({ itemListController, searchOptionsController }: Props) => {
+const SearchBar = ({ itemListController, searchOptionsController, selectedViewTitle = 'Notes' }: Props) => {
   const searchInputRef = useRef<HTMLInputElement>(null)
 
   const { noteFilterText, setNoteFilterText, clearFilterText, onFilterEnter } = itemListController
@@ -52,7 +53,7 @@ const SearchBar = ({ itemListController, searchOptionsController }: Props) => {
           container: 'px-1',
           input: 'placeholder:text-passive-0',
         }}
-        placeholder="Search"
+        placeholder={`Search in ${selectedViewTitle}`}
         value={noteFilterText}
         ref={searchInputRef}
         onBlur={onSearchBlur}
