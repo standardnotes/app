@@ -17,113 +17,232 @@ hide_title: false
 hide_table_of_contents: false
 ---
 
-## Requirements
+This guide walks you through the process of installing a self-hosted version of Standard Notes. In this example, we used a server running Ubuntu 20.04, with 2GB RAM and 1 CPU. Due to mounted volumes, we recommend running the setup as a root user. If you wish to run it as a non-root user, please remember about the [post-installation steps for Linux](https://docs.docker.com/engine/install/linux-postinstall#manage-docker-as-a-non-root-user).
 
-These instructions make the following assumptions:
+## Prerequisities
 
-- The machine you will be running the infrastructure on has at least 2GB of memory.
-- You've just finished setting up a Linux server (say, Ubuntu 20.04 64-bit) and have installed [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) on it.
-- Due to mounted volumes we recommend running the setup as a root user. If you wish to run it as non-root user please remember about the [post-installation steps for Linux](https://docs.docker.com/engine/install/linux-postinstall#manage-docker-as-a-non-root-user).
-- You've configured your security groups to allow for incoming SSH connections from your local IP.
-- You've configured your security groups to allow for incoming TCP connections on port 80 and 443 from at least your local IP.
-- You've configured a domain name (or subdomain) to point to your server's IP address.
+You must have Docker and Docker Compose installed. To install these applications on Ubuntu, follow these steps.
 
-## Getting started
+1. Update your `apt` repositories and upgrade any out-of-date packages:
 
-> **Note** If you are a user with an already existing legacy database of the Syncing Server, we've prepared a [Migrating from Legacy guide](./legacy-migration.md).
+    ```shell
+    sudo apt update -y && sudo apt upgrade -y
+    ```
 
-SSH into your server and follow the steps below:
+1. Install Docker Engine:
 
-1. Make sure you are in your home directory and clone the [Standard Notes Standalone Infrastructure](https://github.com/standardnotes/standalone) project:
+    ```shell
+    # Remove any old Docker installations.
+    sudo apt-get remove docker docker-engine docker.io containerd runc
 
-   ```bash
-   $ cd ~
-   $ git clone --single-branch --branch main https://github.com/standardnotes/standalone.git
-   $ cd standalone
-   ```
+    # Install dependencies.
+    sudo apt install git ca-certificates curl gnupg lsb-release -y
 
-1. Initialize default configuration files by typing:
+    # Add Docker's GPG key.
+    sudo mkdir -p /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 
-   ```bash
-   $ ./server.sh setup
-   ```
+    # Set the Docker repo.
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-1. Customize your configuration
+    # Install Docker Engine.
+    sudo apt update -y
+    sudo apt install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y
+    ```
 
-  There are 5 environment variables that need to be filled in with generated secret keys:
+1. Verify that Docker is installed:
 
-   - `AUTH_JWT_SECRET` in the `.env` file
-   - `JWT_SECRET`, `LEGACY_JWT_SECRET`, `PSEUDO_KEY_PARAMS_KEY`, and `ENCRYPTION_SERVER_KEY` in the `docker/auth.env` file
+    ```shell
+    sudo docker run hello-world
+    ```
 
-  You can generate values for them by using:
+    This should output something like:
 
-  ```bash
-   $ openssl rand -hex 32
-   ```
+    ```plaintext
+    ...
 
-  > **Note** The server must be restarted any time environment variables are changed.
+    Unable to find image 'hello-world:latest' locally
+    latest: Pulling from library/hello-world
+    2db29710123e: Pull complete
+    Digest: sha256:13e367d31ae85359f42d637adf6da428f76d75dc9afeb3c21faea0d976f5c651
+    Status: Downloaded newer image for hello-world:latest
 
-1. (Optional) Customize the port
+    Hello from Docker!
+    This message shows that your installation appears to be working correctly.
 
-  By default the syncing server will run on port 3000. If you have a different service running on that port, you can customize the port on which you want to run the infrastructure on. To do so, edit the `EXPOSED_PORT` variable in the `.env` file.
+    ...
+    ```
 
-2. Simply run:
+1. Verify that Docker Compose is correctly installed:
 
-   ```bash
-   $ ./server.sh start
-   ```
+    ```shell
+    docker compose version
+    ```
 
-   This should load all the microservices that the infrastructure consists of.
+    This should output something like:
 
-  > **Note** The first run might take a few minutes as there are Docker images that need be pulled and built as well as migrations to be run for initializing the database.
+    ```plaintext
+    Docker Compose version v2.6.0
+    ```
 
-3. Wait for the infrastructure to bootstrap
+1. Enable the `ufw` firewall:
 
-   It takes a moment for the infrastructure to bootstrap and all the microservices to start. You can observe the process by typing:
+    ```shell
+    sudo ufw enable
+    ```
 
-   ```bash
-   $ ./server.sh logs
-   ```
+    Enter `y` when prompted.
 
-  > **Note** You can safely escape from logs with CTRL+C
+1. Enable SSH connections:
 
-  > **Note** Microservices depend on each other and start sequentially in our setup. In the logs you will likely observe that one service is waiting for another to start with lines like: "XYZ is unavailable yet - waiting for it to start" where XYZ is the dependent service name. This is expected.
+    ```shell
+    sudo ufw allow ssh
+    ```
 
-   Everything should be up and running once you observe that the `API Gateway` service has started by seeing the following line as one of the last ones in logs:
+    This should output something like:
 
-   ```
-   api-gateway_1 | {"message":"Server started on port 3000","level":"info"}
-   ```
+    ```plaintext
+    Skipping adding existing rule
+    Skipping adding existing rule (v6)
+    ```
 
-   You can also check the state of all services via:
+1. Allow incoming TPC connections on ports `80` and `443`:
 
-   ```bash
-   $ ./server.sh status
-   ```
+    ```shell
+    sudo ufw allow http
+    sudo ufw allow https
+    ```
 
-   All services should be in `Up` state at this stage.
+1. Check the status of your `ufw` settings:
 
-4. Test your access to the server locally:
+    ```shell
+    ufw status verbose
+    ```
 
-   You should be able now to check that the syncing server is running by checking `http://localhost:3000/healthcheck`:
+    This should output something like:
 
-   ```bash
-   $ curl http://localhost:3000/healthcheck
-   OK
-   ```
+    ```plaintext
+    Status: active
+    Logging: on (low)
+    Default: deny (incoming), allow (outgoing), deny (routed)
+    New profiles: skip
 
-   > **Note** If you changed the `EXPOSED_PORT` variable you will have to check `http://localhost:{EXPOSED_PORT}/healthcheck`.
+    To                         Action      From
+    --                         ------      ----
+    22/tcp                     ALLOW IN    Anywhere
+    80/tcp                     ALLOW IN    Anywhere
+    443/tcp                    ALLOW IN    Anywhere
+    22/tcp (v6)                ALLOW IN    Anywhere (v6)
+    80/tcp (v6)                ALLOW IN    Anywhere (v6)
+    443/tcp (v6)               ALLOW IN    Anywhere (v6)
+    ```
 
-5. You're done!
+1. Configure a domain name (or subdomain) to point to your server's IP address. Consult your domain registration provider for how to configure your domain name.
 
-## Securing Your Server
+## Install Standard Notes
 
-In order to start using your new server with the Standard Notes app at https://app.standardnotes.com you will have to configure an HTTPS reverse proxy.
+The following steps will install a self-hosted version of Standard Notes using Docker.
 
-Unless you already have an HTTP/HTTPS server running that will serve as a reverse proxy to the standalone infrastructure, head over to [Securing HTTP traffic of your Sync server](./https-support.md).
+1. Clone the SN repo:
+
+    ```shell
+    cd ~
+    git clone --single-branch --branch main https://github.com/standardnotes/standalone.git
+    cd standalone
+    ```
+
+1. Initialize default configuration files:
+
+    ```shell
+    ./server.sh setup 
+    ```
+
+    This will output something like:
+
+    ```plaintext
+    Initializing default configuration
+    Default configuration files created as .env and docker/*.env files. Feel free to modify values if needed.
+    ```
+
+1. Generate random variables for a bunch of environment vars:
+
+    ```shell
+    sed -i "s/auth_jwt_secret/$(openssl rand -hex 32)/g" .env
+    sed -i "s/secret/$(openssl rand -hex 32)/g" docker/auth.env
+    sed -i "s/legacy_jwt_secret/$(openssl rand -hex 32)/g" docker/auth.env
+    sed -i "s/secret_key/$(openssl rand -hex 32)/g" docker/auth.env
+    sed -i "s/server_key/$(openssl rand -hex 32)/g" docker/auth.env
+    ```
+
+1. Restart the server:
+
+    ```shell
+    reboot
+    ```
+
+1. This step is optional. By default, the syncing server will run on port `3000`. If you have a different service running on that port, you can customize the port on which you want to run the infrastructure by editing the `EXPOSED_PORT` variable in the `.env` file.
+1. Once the server has finished rebooting, log back into the server and start the Standard Notes server process:
+
+    ```shell
+    cd standalone
+    ./server.sh start
+    ```
+
+    Docker will start outputting lots of information about the containers it is pulling in and installing. This process took about 8 minutes on a Ubuntu 20.04 server with 2GB RAM and 1 CPU.
+
+1. Once Docker has finished installing, the Standard Notes install script will output:
+
+    ```plaintext
+    Infrastructure started. Give it a moment to warm up. If you wish, please run the './server.sh logs' command to see details.
+    ```
+
+1. Check the status of your server:
+
+    ```shell
+    ./server.sh status
+    ```
+
+    This will output something like
+
+    ```plaintext
+    Services State:
+    NAME                                  COMMAND                  SERVICE                    STATUS              PORTS
+    api-gateway-standalone                "./wait-for.sh auth …"   api-gateway                running             0.0.0.0:3000->3000/tcp, :::3000->3000/tcp
+    auth-standalone                       "./wait-for.sh db 33…"   auth                       running
+    auth-worker-standalone                "./wait-for.sh db 33…"   auth-worker                running
+    cache-standalone                      "docker-entrypoint.s…"   cache                      running             6379/tcp
+    db-standalone                         "docker-entrypoint.s…"   db                         running             3306/tcp
+    files-standalone                      "./wait-for.sh db 33…"   files                      running             0.0.0.0:3125->3000/tcp, :::3125->3000/tcp
+    syncing-server-js-standalone          "./wait-for.sh db 33…"   syncing-server-js          running
+    syncing-server-js-worker-standalone   "./wait-for.sh db 33…"   syncing-server-js-worker   running
+    ```
+
+    Your Standard Notes server is ready once all the services have a `STATUS` of `Up`. This process took about 11 minutes on a Ubuntu 20.04 server with 2GB RAM and 1 CPU.
+
+    ```plaintext
+    Services State:
+    NAME                                  COMMAND                  SERVICE                    STATUS              PORTS
+    api-gateway-standalone                "./wait-for.sh auth …"   api-gateway                Up                  0.0.0.0:3000->3000/tcp, :::3000->3000/tcp
+    auth-standalone                       "./wait-for.sh db 33…"   auth                       Up 
+    
+    ...
+    ```
+
+1. You should be able now to check that the syncing server is running by checking `http://localhost:3000/healthcheck`. You must do this on the server:
+
+    ```bash
+    curl http://localhost:3000/healthcheck
+    OK
+    ```
+
+    If you changed the `EXPOSED_PORT` variable, check `http://localhost:{EXPOSED_PORT}/healthcheck`.
+
+1. You're done!
+
+## Securing your server
+
+To start using your new server with the Standard Notes app at `app.standardnotes.com,` you have to configure an HTTPS reverse proxy. Head over to [Securing HTTP traffic of your Sync server](./https-support.md) for more information on how to set up a reverse proxy.
 
 ## Using your new server
 
-In the account menu, choose `Advanced options` and enter the address of your new server in `Custom sync server`.
-
-Then, register for a new account or log into an existing account and begin using your private new secure Standard Notes server!
+In the account menu, choose `Advanced options` and enter the address of your new server in `Custom sync server`. Then, register for a new account or log in to an existing account and begin using your private new secure Standard Notes server!
