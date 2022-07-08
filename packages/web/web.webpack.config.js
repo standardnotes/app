@@ -58,7 +58,7 @@ module.exports = (env) => {
             {
               loader: 'babel-loader',
               options: {
-                plugins: [isDevelopment && 'react-refresh/babel'],
+                plugins: isDevelopment ? ['react-refresh/babel'] : [],
               },
             },
             {
