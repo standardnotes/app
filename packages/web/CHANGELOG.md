@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.39.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.39.0...@standardnotes/web@3.39.1) (2022-07-08)
+
+### Bug Fixes
+
+* **desktop:** don't shift sections on macOS if window is small ([#1235](https://github.com/standardnotes/app/issues/1235)) ([c6932ba](https://github.com/standardnotes/app/commit/c6932ba733e0a67220ce56bec72431240518f7d8))
+
 # [3.39.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.38.6...@standardnotes/web@3.39.0) (2022-07-08)
 
 ### Features

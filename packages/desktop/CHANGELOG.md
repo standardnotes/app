@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.23.69](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.68...@standardnotes/desktop@3.23.69) (2022-07-08)
+
+### Bug Fixes
+
+* **desktop:** don't shift sections on macOS if window is small ([#1235](https://github.com/standardnotes/app/issues/1235)) ([c6932ba](https://github.com/standardnotes/app/commit/c6932ba733e0a67220ce56bec72431240518f7d8))
+
 ## [3.23.68](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.67...@standardnotes/desktop@3.23.68) (2022-07-08)
 
 **Note:** Version bump only for package @standardnotes/desktop
