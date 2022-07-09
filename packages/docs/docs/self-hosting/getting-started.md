@@ -16,57 +16,57 @@ hide_title: false
 hide_table_of_contents: false
 ---
 
-Our self-hosted server infrastructure consists of several different microservices responsible for different functionality sets. The self-hosted server works as the _backend_ that processes and stores your data; it does not include the web application. The web application is an optional process that you must spin up separately. However, you can use the [existing web app](https://app.standardnotes.com) or the official Standard Notes desktop app with your self-hosted server.
+Our self-hosted server infrastructure consists of different microservices responsible for varying functionality. The self-hosted server works as the _backend_ that processes and stores your data; it does not include the web application.
+
+The web application is an optional process that you must spin up separately. However, you can use the [existing web app](https://app.standardnotes.com) or the official Standard Notes desktop app with your self-hosted server.
 
 :::tip Quick start
 
-The fastest and easiest way to get up and running is to use our automated Docker scripts. All you need is a Linux server and the latest version of [Docker](https://docs.docker.com/get-started) along with [Docker-Compose](https://docs.docker.com/compose/install) installed. [Check out the Docker page for more details →](./docker.md)
+The fastest and easiest way to get up and running is to use our automated Docker setup. All you need is a Linux server and the latest version of [Docker](https://docs.docker.com/get-started).
+
+[Check out our Docker instructions page to get started →](./docker.md)
 
 :::
 
 ## Infrastructure overview
 
-The Syncing Server infrastructure consists of several different microservices, each responsible for various functionalities.
+### API Gateway
 
-![Docusaurus themed image](./images/infrastructure-overview-light.png#gh-light-mode-only)![Docusaurus themed image](./images/infrastructure-overview-dark.png#gh-dark-mode-only)
+The main entry point of the architecture. The API Gateway is a router and proxy for all services which are otherwise inaccessible directly. All requests from client applications go through the API Gateway to reach a target underlying service. This service is configured with your reverse proxy for public HTTPS support.
 
-### Syncing Server JS
+### Syncing Server
 
-Syncing Server JS is a [TypeScript](https://www.typescriptlang.org/) implementation of our [Syncing Server](https://github.com/standardnotes/app/tree/main/packages/snjs). This service is the core of the Standard Notes business logic and is responsible for all operations on user data.
+Responsible for user data and syncing operations.
 
-### Syncing Server JS Worker
+### Syncing Server Worker
 
-Syncing Server JS Worker is responsible for all asynchronous tasks that the Syncing Server JS may offload for background processing. This service includes processing email backups, resolving issues with duplicate notes, sending notes to extensions, and much more.
+Responsible for asynchronous tasks the Syncing Server may offload for background processing, including email backups, revision history, and more.
 
 ### Auth
 
-This server is responsible for all authorization and authentication mechanisms within Standard Notes. This service is also where all account-related metadata is handled and processed.
+Responsible for authorization and authentication mechanisms within Standard Notes.
 
 ### Auth Worker
 
-Similar to Syncing Server JS Worker, the Auth Worker is responsible for all asynchronous tasks related to the domain of authentication and authorization. Processing account deletion requests and users' post-registration tasks are processes handled by the Auth Worker.
-
-### API Gateway
-
-This service is the main entry point of the entire architecture. The API Gateway is a router and proxy for all services inaccessible directly. All requests from client applications will have to go through API Gateway to reach a specific underlying service. This service is paired with your reverse proxy for HTTPS support.
+Responsible for asynchronous tasks related to the domain of authentication and authorization, including account deletion requests and post-registration tasks.
 
 ### Database
 
-A MySQL server handles the database and is where all data is stored. Encrypted, obviously.
+The database is where data is stored.
 
 ### Cache
 
-Standard Notes uses a Redis cache node to store all temporary data for performance optimization and auto-expiring features. In self-host mode, Redis is used by default as a communication queue between services and their workers.
+A Redis cache node is used to store temporary data for performance optimization and auto-expiring features. In self-hosted mode, Redis is used as a communication queue between services and workers.
 
 ## Troubleshooting
 
-If you run into any issues setting up your server, please [open an issue on GitHub](https://github.com/standardnotes/standalone/issues) or reach out on the [Standard Notes Slack](https://standardnotes.com/slack).
+If you run into any issues setting up your server, please [open an issue on GitHub](https://github.com/standardnotes/standalone/issues) or reach out on the [Standard Notes Discord](https://standardnotes.com/discord).
 
 ## Web application
 
 If you would like to self-host the actual Standard Notes web application, visit the [repository for the Standard Notes web app on GitHub](https://github.com/standardnotes/app/tree/main/packages/web).
 
-## Building from source
+## Self-hosting without Docker?
 
-Dealing with the entire architecture of Standard Notes can be challenging without full knowledge of how the syncing server and its microservices function. Because of this, we do not offer any support for this method of self-hosting. [The only supported self-hosting method is to use the Docker scripts →](./docker.md)
+Configuring the full Standard Notes architecture manually can be challenging without detailed study. We do not offer support for this method of self-hosting. [The only supported self-hosting method is to use Docker →](./docker.md)
 
