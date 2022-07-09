@@ -16,28 +16,57 @@ hide_title: false
 hide_table_of_contents: false
 ---
 
-Our self-hosted server infrastructure consists of several different microservices that are responsible for different sets of functionality. Our self-hosted server is only intended as the backend that processes and stores your data; it does not include self-hosting the web application, which is an optional process that must be done separately. You will be able to use our existing [web](https://app.standardnotes.com) and desktop app with your self-hosted server.
+Our self-hosted server infrastructure consists of several different microservices responsible for different functionality sets. The self-hosted server works as the _backend_ that processes and stores your data; it does not include the web application. The web application is an optional process that you must spin up separately. However, you can use the [existing web app](https://app.standardnotes.com) or the official Standard Notes desktop app with your self-hosted server.
 
-## Get Started
+:::tip Quick start
 
-👉 **[Using our automated docker-compose setup with accompanying scripts](./docker.md)** 👈
+The fastest and easiest way to get up and running is to use our automated Docker scripts. All you need is a Linux server and the latest version of [Docker](https://docs.docker.com/get-started) along with [Docker-Compose](https://docs.docker.com/compose/install) installed. [Check out the Docker page for more details →](./docker.md)
 
-If you'd like to learn more about each of the particular services, head over to [Infrastructure Overview](./infrastructure-overview.md).
+:::
 
-> **Note** Our setup also provides a running MySQL database and a Redis cache node. You do not have to provision these services on your own. For users that have been self-hosting a legacy version of our server, we've prepared a [Migrating from Legacy guide](./legacy-migration.md).
+## Infrastructure overview
 
-### Recommendations
+The Syncing Server infrastructure consists of several different microservices, each responsible for various functionalities.
 
-We highly recommend you use our Docker setup to host your syncing server. Docker containers are isolated software environments that you can control and manage.
+![Docusaurus themed image](./images/infrastructure-overview-light.png#gh-light-mode-only)![Docusaurus themed image](./images/infrastructure-overview-dark.png#gh-dark-mode-only)
 
-If you are new to Docker, please see the [official Docker documentation](https://docs.docker.com/get-started) on how to get started. Ensure you [install Docker-Compose](https://docs.docker.com/compose/install/) following the documentation. Your Linux distribution may not have the most up to date docker-compose and will fail to load.
+### Syncing Server JS
 
-We recommend avoiding setting up your syncing server from scratch with Nginx unless you are proficient with Nginx. Setting up the full architecture can be challenging without full knowledge of how the syncing server and its microservices function.
+Syncing Server JS is a [TypeScript](https://www.typescriptlang.org/) implementation of our [Syncing Server](https://github.com/standardnotes/app/tree/main/packages/snjs). This service is the core of the Standard Notes business logic and is responsible for all operations on user data.
 
-### Issues
+### Syncing Server JS Worker
 
-If you have any issues with setting up your syncing server, please [open an issue on GitHub](https://github.com/standardnotes/standalone/issues).
+Syncing Server JS Worker is responsible for all asynchronous tasks that the Syncing Server JS may offload for background processing. This service includes processing email backups, resolving issues with duplicate notes, sending notes to extensions, and much more.
+
+### Auth
+
+This server is responsible for all authorization and authentication mechanisms within Standard Notes. This service is also where all account-related metadata is handled and processed.
+
+### Auth Worker
+
+Similar to Syncing Server JS Worker, the Auth Worker is responsible for all asynchronous tasks related to the domain of authentication and authorization. Processing account deletion requests and users' post-registration tasks are processes handled by the Auth Worker.
+
+### API Gateway
+
+This service is the main entry point of the entire architecture. The API Gateway is a router and proxy for all services inaccessible directly. All requests from client applications will have to go through API Gateway to reach a specific underlying service. This service is paired with your reverse proxy for HTTPS support.
+
+### Database
+
+A MySQL server handles the database and is where all data is stored. Encrypted, obviously.
+
+### Cache
+
+Standard Notes uses a Redis cache node to store all temporary data for performance optimization and auto-expiring features. In self-host mode, Redis is used by default as a communication queue between services and their workers.
+
+## Troubleshooting
+
+If you run into any issues setting up your server, please [open an issue on GitHub](https://github.com/standardnotes/standalone/issues) or reach out on the [Standard Notes Slack](https://standardnotes.com/slack).
 
 ## Web application
 
-If you would like to self-host the actual Standard Notes web application, visit the [repository for the web app on GitHub](https://github.com/standardnotes/web).
+If you would like to self-host the actual Standard Notes web application, visit the [repository for the Standard Notes web app on GitHub](https://github.com/standardnotes/app/tree/main/packages/web).
+
+## Building from source
+
+Dealing with the entire architecture of Standard Notes can be challenging without full knowledge of how the syncing server and its microservices function. Because of this, we do not offer any support for this method of self-hosting. [The only supported self-hosting method is to use the Docker scripts →](./docker.md)
+
