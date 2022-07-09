@@ -17,11 +17,11 @@ hide_title: false
 hide_table_of_contents: false
 ---
 
-This guide walks you through the process of installing a self-hosted version of Standard Notes. In this example, we used a server running Ubuntu 20.04, with 2GB RAM and 1 CPU. Due to mounted volumes, we recommend running the setup as a root user. If you wish to run it as a non-root user, please remember about the [post-installation steps for Linux](https://docs.docker.com/engine/install/linux-postinstall#manage-docker-as-a-non-root-user).
+This guide walks you through the process of installing the self-hosted backend of Standard Notes. In this example, we used a server running Ubuntu 20.04, with 2GB RAM and 1 CPU.
+
+Due to mounted volumes, we recommend running the setup as a root user. If you wish to run it as a non-root user, please see Docker's [post-installation steps for Linux](https://docs.docker.com/engine/install/linux-postinstall#manage-docker-as-a-non-root-user).
 
 ## Prerequisities
-
-You must have Docker and Docker Compose installed. To install these applications on Ubuntu, follow these steps.
 
 1. Update your `apt` repositories and upgrade any out-of-date packages:
 
@@ -29,7 +29,7 @@ You must have Docker and Docker Compose installed. To install these applications
     sudo apt update -y && sudo apt upgrade -y
     ```
 
-1. Install Docker Engine:
+2. Install Docker Engine:
 
     ```shell
     # Remove any old Docker installations.
@@ -50,7 +50,7 @@ You must have Docker and Docker Compose installed. To install these applications
     sudo apt install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y
     ```
 
-1. Verify that Docker is installed:
+3. Verify that Docker is installed:
 
     ```shell
     sudo docker run hello-world
@@ -73,7 +73,7 @@ You must have Docker and Docker Compose installed. To install these applications
     ...
     ```
 
-1. Verify that Docker Compose is correctly installed:
+4. Verify that Docker Compose is correctly installed:
 
     ```shell
     docker compose version
@@ -85,7 +85,7 @@ You must have Docker and Docker Compose installed. To install these applications
     Docker Compose version v2.6.0
     ```
 
-1. Enable the `ufw` firewall:
+5. Enable the `ufw` firewall:
 
     ```shell
     sudo ufw enable
@@ -93,7 +93,7 @@ You must have Docker and Docker Compose installed. To install these applications
 
     Enter `y` when prompted.
 
-1. Enable SSH connections:
+6. Enable SSH connections:
 
     ```shell
     sudo ufw allow ssh
@@ -106,14 +106,14 @@ You must have Docker and Docker Compose installed. To install these applications
     Skipping adding existing rule (v6)
     ```
 
-1. Allow incoming TPC connections on ports `80` and `443`:
+7. Allow incoming TPC connections on ports `80` and `443`:
 
     ```shell
     sudo ufw allow http
     sudo ufw allow https
     ```
 
-1. Check the status of your `ufw` settings:
+8. Check the status of your `ufw` settings:
 
     ```shell
     ufw status verbose
@@ -137,13 +137,11 @@ You must have Docker and Docker Compose installed. To install these applications
     443/tcp (v6)               ALLOW IN    Anywhere (v6)
     ```
 
-1. Configure a domain name (or subdomain) to point to your server's IP address. Consult your domain registration provider for how to configure your domain name.
+9. Configure a domain name (or subdomain) to point to your server's IP address. Consult your domain registration provider for how to configure your domain name.
 
 ## Install Standard Notes
 
-The following steps will install a self-hosted version of Standard Notes using Docker.
-
-1. Clone the SN repo:
+1. Clone the `standalone` repo:
 
     ```shell
     cd ~
@@ -154,7 +152,7 @@ The following steps will install a self-hosted version of Standard Notes using D
 1. Initialize default configuration files:
 
     ```shell
-    ./server.sh setup 
+    ./server.sh setup
     ```
 
     This will output something like:
@@ -164,7 +162,7 @@ The following steps will install a self-hosted version of Standard Notes using D
     Default configuration files created as .env and docker/*.env files. Feel free to modify values if needed.
     ```
 
-1. Generate random variables for a bunch of environment vars:
+1. Generate random values for the necessary environment variables:
 
     ```shell
     sed -i "s/auth_jwt_secret/$(openssl rand -hex 32)/g" .env
@@ -174,13 +172,15 @@ The following steps will install a self-hosted version of Standard Notes using D
     sed -i "s/server_key/$(openssl rand -hex 32)/g" docker/auth.env
     ```
 
-1. Restart the server:
+    **Note:** If you are running `sed` on macOS or BSD, change instances of `sed -i` to `sed -i ''`.
+
+1. (Optional) Restart the server:
 
     ```shell
     reboot
     ```
 
-1. This step is optional. By default, the syncing server will run on port `3000`. If you have a different service running on that port, you can customize the port on which you want to run the infrastructure by editing the `EXPOSED_PORT` variable in the `.env` file.
+1. (Optional) By default, the syncing server will run on port `3000`. If you have a different service running on that port, you can customize the port on which you want to run the infrastructure by editing the `EXPOSED_PORT` variable in the `.env` file.
 1. Once the server has finished rebooting, log back into the server and start the Standard Notes server process:
 
     ```shell
