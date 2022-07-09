@@ -95,7 +95,7 @@ const NoteAttributes: FunctionComponent<{
   const format = editor?.package_info?.file_type || 'txt'
 
   return (
-    <div className="px-3 pt-1.5 pb-2.5 text-xs font-medium text-neutral">
+    <div className="px-3 py-1.5 text-xs font-medium text-neutral">
       {typeof words === 'number' && (format === 'txt' || format === 'md') ? (
         <>
           <div className="mb-1">
@@ -159,12 +159,15 @@ const NoteSizeWarning: FunctionComponent<{
   note: SNNote
 }> = ({ note }) => {
   return new Blob([note.text]).size > NOTE_SIZE_WARNING_THRESHOLD ? (
-    <div className="bg-warning-faded relative flex items-center px-3 py-3.5">
-      <Icon type="warning" className="mr-3 flex-shrink-0 text-accessory-tint-3" />
-      <div className="leading-140% max-w-80% select-none text-warning">
-        This note may have trouble syncing to the mobile application due to its size.
+    <>
+      <HorizontalSeparator classes="my-2" />
+      <div className="bg-warning-faded relative flex items-center px-3 py-3.5">
+        <Icon type="warning" className="mr-3 flex-shrink-0 text-accessory-tint-3" />
+        <div className="leading-140% max-w-80% select-none text-warning">
+          This note may have trouble syncing to the mobile application due to its size.
+        </div>
       </div>
-    </div>
+    </>
   ) : null
 }
 

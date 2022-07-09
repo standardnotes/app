@@ -41,8 +41,16 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
   }
 
   const openContextMenu = async (posX: number, posY: number) => {
-    const { didSelect } = await selectionController.selectItem(item.uuid, true)
-    if (didSelect) {
+    let shouldOpenContextMenu = selected
+
+    if (!selected) {
+      const { didSelect } = await selectionController.selectItem(item.uuid)
+      if (didSelect) {
+        shouldOpenContextMenu = true
+      }
+    }
+
+    if (shouldOpenContextMenu) {
       openNoteContextMenu(posX, posY)
     }
   }

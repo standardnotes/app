@@ -28,6 +28,7 @@ const ImagePreview: FunctionComponent<Props> = ({ objectUrl }) => {
                   top: 0,
                   left: 0,
                   margin: 'auto',
+                  maxWidth: 'none',
                 }),
           }}
           ref={(imgElement) => {

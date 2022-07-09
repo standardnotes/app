@@ -90,7 +90,7 @@ const NotesOptionsPanel = ({
         }}
         className={`${
           open ? 'flex' : 'hidden'
-        } max-h-120 slide-down-animation fixed min-w-80 max-w-xs flex-col overflow-y-auto rounded bg-default pt-2 shadow-main transition-transform duration-150`}
+        } max-h-120 slide-down-animation fixed min-w-80 max-w-xs flex-col overflow-y-auto rounded bg-default py-2 shadow-main transition-transform duration-150`}
         onBlur={closeOnBlur}
         tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
       >
