@@ -6222,6 +6222,8 @@ __metadata:
     "@typescript-eslint/parser": ^5.20.0
     changelog-parser: ^2.8.1
     css-loader: ^6.7.1
+    cz-git: ^1.3.9
+    czg: ^1.3.9
     eslint: ^8.17.0
     eslint-plugin-prettier: ^4.2.1
     husky: ^8.0.0
@@ -15091,6 +15093,22 @@ __metadata:
   version: 1.0.1
   resolution: "cyclist@npm:1.0.1"
   checksum: 3cc2fdeb358599ca0ea96f5ecf2fc530ccab7ed1f8aa1a894aebfacd2009281bd7380cb9b30db02a18cdd00b3ed1d7ce81a3b11fe56e33a6a0fe4424dc592fbe
+  languageName: node
+  linkType: hard
+
+"cz-git@npm:^1.3.9":
+  version: 1.3.9
+  resolution: "cz-git@npm:1.3.9"
+  checksum: f32007393d54e93c47dbdc290060461b3e97563037f9d03e9a1d9063b7c234619f32f1b5c981ba6b289388fc822bc08aa822430926ca2276429b87d706465ec6
+  languageName: node
+  linkType: hard
+
+"czg@npm:^1.3.9":
+  version: 1.3.9
+  resolution: "czg@npm:1.3.9"
+  bin:
+    czg: bin/index.js
+  checksum: 4cd293d85bbd96a4891a631b99c6e287d14d8451f449057576138e7d5b25cdee2c24a1c7217c7e03c1a2edfb5f02f243f9c6ad2b81fceca95109dfc232cbf9b2
   languageName: node
   linkType: hard
 
