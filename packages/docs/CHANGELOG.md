@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.3](https://github.com/standardnotes/app/compare/@standardnotes/docs@0.0.2...@standardnotes/docs@0.0.3) (2022-07-09)
+
+### Bug Fixes
+
+* **docs:** improve getting started self host page ([#1238](https://github.com/standardnotes/app/issues/1238)) ([4ad21c4](https://github.com/standardnotes/app/commit/4ad21c4f61e26dfe3284c5def1baebb7a497d200))
+
 ## [0.0.2](https://github.com/standardnotes/app/compare/@standardnotes/docs@0.0.1...@standardnotes/docs@0.0.2) (2022-07-05)
 
 **Note:** Version bump only for package @standardnotes/docs
