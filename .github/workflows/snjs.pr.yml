@@ -1,0 +1,51 @@
+name: SNJS PR — E2E Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'packages/api/**'
+      - 'packages/encryption/**'
+      - 'packages/features/**'
+      - 'packages/filepicker/**'
+      - 'packages/files/**'
+      - 'packages/models/**'
+      - 'packages/responses/**'
+      - 'packages/services/**'
+      - 'packages/sncrypto-common/**'
+      - 'packages/sncrypto-web/**'
+      - 'packages/snjs/**'
+      - 'packages/utils/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: yarn install --immutable
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Publish SNJS Docker image for E2E testing
+        run: |
+          yarn docker build @standardnotes/snjs -t standardnotes/snjs:${{ github.sha }}
+          docker push standardnotes/snjs:${{ github.sha }}
+          docker tag standardnotes/snjs:${{ github.sha }} standardnotes/snjs:test
+          docker push standardnotes/snjs:test
+      - name: Run E2E test suite
+        uses: convictional/trigger-workflow-and-wait@v1.6.1
+        with:
+          owner: standardnotes
+          repo: e2e
+          github_token: ${{ secrets.CI_PAT_TOKEN }}
+          workflow_file_name: testing-with-stable-server.yml
+          wait_interval: 30
+          client_payload: '{"image_tag": "${{ github.sha }}"}'
+          propagate_failure: true
+          trigger_workflow: true
+          wait_workflow: true
