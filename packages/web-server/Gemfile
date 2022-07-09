@@ -1,53 +1,16 @@
 source 'https://rubygems.org'
 
-# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
+gem 'dotenv-rails'
+gem 'lograge', '~> 0.11.2'
+gem 'newrelic_rpm', '~> 7.0'
+gem 'non-stupid-digest-assets'
+gem 'rack-cors', require: 'rack/cors'
 gem 'rails', '5.1.7'
-
-gem 'sass'
-
-gem "non-stupid-digest-assets"
-
 gem 'secure_headers'
 
-gem 'uglifier'
-
-gem 'rack-cors', :require => 'rack/cors'
-
-gem 'dotenv-rails'
-
-# bundle exec rake doc:rails generates the API under doc/api.
-gem 'sdoc', '~> 0.4.0', group: :doc
-
-# Used for 'respond_to' feature
-gem 'responders', '~> 2.0'
-
-gem 'tzinfo-data'
-
 group :development, :test do
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
-
-  # Access an IRB console on exception pages or by using <%= console %> in views
-  gem 'web-console', '3.5.1'
-
-  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  gem 'spring'
-
   gem 'puma'
-
-  gem 'haml'
-
-  # Deployment tools
-  gem 'capistrano'
-  gem 'capistrano-bundler'
-  gem 'capistrano-passenger', '>= 0.2.0'
-  gem 'capistrano-rails'
-  gem 'capistrano-rvm'
-  gem 'capistrano-sidekiq'
-  gem 'capistrano-git-with-submodules', '~> 2.0'
+  gem 'spring'
+  gem 'web-console', '3.5.1'
 end
-
-
-gem "lograge", "~> 0.11.2"
-
-gem "newrelic_rpm", "~> 7.0"

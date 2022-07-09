@@ -1,5 +1,4 @@
 require_relative 'boot'
-# require 'rails/all'
 
 require "active_model/railtie"
 require "action_controller/railtie"
@@ -23,10 +22,6 @@ module Web
         resource '*', :headers => :any, :methods => [:get, :post, :put, :patch, :delete, :options], :expose => ['Access-Token', 'Client', 'UID']
       end
     end
-
-    # config.action_dispatch.default_headers = {
-    #   'X-Frame-Options' => 'ALLOWALL'
-    # }
 
     SecureHeaders::Configuration.default do |config|
       # Handled by server
@@ -59,8 +54,6 @@ module Web
       }
     end
 
-    # config.middleware.use Rack::Deflater
-
     config.middleware.insert_before(Rack::Sendfile, Rack::Deflater)
 
     # Disable auto creation of additional resources with "rails generate"
@@ -74,18 +67,5 @@ module Web
     end
 
     config.action_mailer.default_url_options = { host: ENV['APP_HOST'] }
-
-    # SMTP settings
-    config.action_mailer.delivery_method = :smtp
-    config.action_mailer.smtp_settings = {
-      :address => ENV['SMTP_HOST'],
-      :port => ENV['SMTP_PORT'],
-      :domain => ENV['SMTP_DOMAIN'],
-      :user_name => ENV['SMTP_USERNAME'],
-      :password => ENV['SMTP_PASSWORD'],
-      :authentication => 'login',
-      :enable_starttls_auto => true # detects and uses STARTTLS
-    }
-
   end
 end
