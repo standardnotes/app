@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.40.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.40.0...@standardnotes/web@3.40.1) (2022-07-11)
+
+### Bug Fixes
+
+* focus mode & dynamic panels on small screens ([#1246](https://github.com/standardnotes/app/issues/1246)) ([9d230d4](https://github.com/standardnotes/app/commit/9d230d4b81c92b826ef9e8b89cd7192f5b4c8b13))
+
 # [3.40.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.39.1...@standardnotes/web@3.40.0) (2022-07-09)
 
 ### Features

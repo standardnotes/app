@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.7.4](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.7.3...@standardnotes/components-meta@2.7.4) (2022-07-11)
+
+### Bug Fixes
+
+* focus mode & dynamic panels on small screens ([#1246](https://github.com/standardnotes/app/issues/1246)) ([9d230d4](https://github.com/standardnotes/app/commit/9d230d4b81c92b826ef9e8b89cd7192f5b4c8b13))
+
 ## [2.7.3](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.7.2...@standardnotes/components-meta@2.7.3) (2022-07-06)
 
 ### Bug Fixes

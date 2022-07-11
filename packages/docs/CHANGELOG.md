@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0](https://github.com/standardnotes/app/compare/@standardnotes/docs@0.0.3...@standardnotes/docs@0.1.0) (2022-07-11)
+
+### Features
+
+* **docs:** improve docker page ([#1240](https://github.com/standardnotes/app/issues/1240)) ([b025e39](https://github.com/standardnotes/app/commit/b025e394c129a53f41cb5835943901cf40fc92b6))
+
 ## [0.0.3](https://github.com/standardnotes/app/compare/@standardnotes/docs@0.0.2...@standardnotes/docs@0.0.3) (2022-07-09)
 
 ### Bug Fixes
