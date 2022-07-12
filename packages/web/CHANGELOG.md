@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.40.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.40.1...@standardnotes/web@3.40.2) (2022-07-12)
+
+### Bug Fixes
+
+* **web:** responsive autocomplete tag dropdown ([#1250](https://github.com/standardnotes/app/issues/1250)) ([0a2c90f](https://github.com/standardnotes/app/commit/0a2c90f2c140f7ab1a15ef24b90f02566e8c6a25))
+
 ## [3.40.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.40.0...@standardnotes/web@3.40.1) (2022-07-11)
 
 ### Bug Fixes
