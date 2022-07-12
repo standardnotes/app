@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "@standardnotes/config": "2.4.3",
-    "@types/jest": "^27.4.1",
+    "@types/jest": "^28.1.4",
     "@types/node": "^18.0.0",
     "@typescript-eslint/eslint-plugin": "*",
     "eslint": "*",
