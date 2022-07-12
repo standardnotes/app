@@ -114,7 +114,7 @@
     "react-beautiful-dnd": "13.1.0",
     "react-dom": "17.0.2",
     "react-redux": "7.2.8",
-    "react-scripts": "5.0.0",
+    "react-scripts": "5.0.1",
     "react-transition-group": "4.4.2",
     "redux": "4.1.2",
     "redux-mock-store": "1.5.4",
