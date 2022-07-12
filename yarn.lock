@@ -6152,7 +6152,7 @@ __metadata:
     "@testing-library/jest-dom": 5.16.2
     "@testing-library/react": 12.1.4
     "@testing-library/user-event": 13.5.0
-    "@types/jest": 27.4.1
+    "@types/jest": ^28.1.4
     "@types/lodash": 4.14.179
     "@types/node": 17.0.21
     "@types/react": 17.0.40
@@ -6195,11 +6195,11 @@ __metadata:
     "@standardnotes/security": ^1.1.0
     "@standardnotes/services": "workspace:*"
     "@standardnotes/utils": "workspace:*"
-    "@types/jest": ^27.4.1
+    "@types/jest": ^28.1.4
     "@types/lodash": ^4.14.182
     "@typescript-eslint/eslint-plugin": ^5.30.0
     eslint-plugin-prettier: "*"
-    jest: ^27.5.1
+    jest: ^28.1.2
     reflect-metadata: ^0.1.13
     ts-jest: ^27.1.3
   languageName: unknown
@@ -6560,12 +6560,12 @@ __metadata:
     "@standardnotes/services": "workspace:*"
     "@standardnotes/sncrypto-common": "workspace:*"
     "@standardnotes/utils": "workspace:*"
-    "@types/jest": ^27.4.1
+    "@types/jest": ^28.1.4
     "@types/node": ^18.0.0
     "@typescript-eslint/eslint-plugin": "*"
     eslint: "*"
     eslint-plugin-prettier: "*"
-    jest: ^27.5.1
+    jest: ^28.1.2
     prettier: "*"
     reflect-metadata: ^0.1.13
     ts-jest: ^27.1.3
@@ -6615,11 +6615,11 @@ __metadata:
     "@standardnotes/common": ^1.23.1
     "@standardnotes/services": "workspace:*"
     "@standardnotes/utils": "workspace:*"
-    "@types/jest": ^27.4.1
+    "@types/jest": ^28.1.4
     "@types/wicg-file-system-access": ^2020.9.5
     "@typescript-eslint/eslint-plugin": ^5.30.0
     eslint-plugin-prettier: "*"
-    jest: ^27.5.1
+    jest: ^28.1.2
     reflect-metadata: ^0.1.13
     ts-jest: ^27.1.3
     ts-node: ^10.5.0
@@ -6638,10 +6638,10 @@ __metadata:
     "@standardnotes/services": "workspace:*"
     "@standardnotes/sncrypto-common": "workspace:*"
     "@standardnotes/utils": "workspace:*"
-    "@types/jest": ^27.4.1
+    "@types/jest": ^28.1.4
     "@typescript-eslint/eslint-plugin": ^5.30.0
     eslint-plugin-prettier: "*"
-    jest: ^27.5.1
+    jest: ^28.1.2
     reflect-metadata: ^0.1.13
     ts-jest: ^27.1.3
   languageName: unknown
@@ -6884,7 +6884,7 @@ __metadata:
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.4
     "@testing-library/user-event": ^13.5.0
-    "@types/jest": ^27.4.1
+    "@types/jest": ^28.1.4
     "@types/lodash": ^4.14.179
     "@types/marked": ^4.0.2
     "@types/node": ^17.0.21
@@ -6944,7 +6944,7 @@ __metadata:
     "@standardnotes/web": "workspace:*"
     "@types/detox": ^18.1.0
     "@types/faker": ^6.6.9
-    "@types/jest": ^27.4.1
+    "@types/jest": ^28.1.4
     "@types/js-base64": ^3.3.1
     "@types/react": 17.0.2
     "@types/react-native": ^0.67.3
@@ -6961,7 +6961,7 @@ __metadata:
     eslint-plugin-prettier: ^4.0.0
     faker: ^6.6.6
     get-yarn-workspaces: ^1.0.2
-    jest: ^27.5.1
+    jest: ^28.1.2
     jest-circus: ^27.5.1
     js-base64: ^3.7.2
     metro-react-native-babel-preset: ^0.70.1
@@ -7023,11 +7023,11 @@ __metadata:
     "@standardnotes/features": "workspace:*"
     "@standardnotes/responses": "workspace:*"
     "@standardnotes/utils": "workspace:*"
-    "@types/jest": ^27.4.1
+    "@types/jest": ^28.1.4
     "@types/lodash": ^4.14.182
     "@typescript-eslint/eslint-plugin": ^5.30.0
     eslint-plugin-prettier: "*"
-    jest: ^27.5.1
+    jest: ^28.1.2
     lodash: ^4.17.21
     reflect-metadata: ^0.1.13
     ts-jest: ^27.1.3
@@ -7089,10 +7089,10 @@ __metadata:
     "@standardnotes/common": ^1.23.1
     "@standardnotes/features": "workspace:*"
     "@standardnotes/security": ^1.1.0
-    "@types/jest": ^27.4.1
+    "@types/jest": ^28.1.4
     "@typescript-eslint/eslint-plugin": ^5.30.0
     eslint-plugin-prettier: "*"
-    jest: ^27.5.1
+    jest: ^28.1.2
     reflect-metadata: ^0.1.13
     ts-jest: ^27.1.3
   languageName: unknown
@@ -7159,11 +7159,11 @@ __metadata:
     "@standardnotes/responses": "workspace:*"
     "@standardnotes/security": ^1.2.0
     "@standardnotes/utils": "workspace:*"
-    "@types/jest": ^27.4.1
+    "@types/jest": ^28.1.4
     "@typescript-eslint/eslint-plugin": ^5.30.0
     "@typescript-eslint/parser": ^5.12.1
     eslint-plugin-prettier: "*"
-    jest: ^27.5.1
+    jest: ^28.1.2
     reflect-metadata: ^0.1.13
     ts-jest: ^27.1.3
   languageName: unknown
@@ -7434,14 +7434,14 @@ __metadata:
   dependencies:
     "@standardnotes/common": ^1.23.1
     "@types/dompurify": ^2.3.3
-    "@types/jest": ^27.4.1
+    "@types/jest": ^28.1.4
     "@types/jsdom": ^16.2.14
     "@types/lodash": ^4.14.179
     "@types/node": ^18.0.0
     "@typescript-eslint/eslint-plugin": ^5.30.0
     dompurify: ^2.3.8
     eslint-plugin-prettier: "*"
-    jest: ^27.5.1
+    jest: ^28.1.2
     jsdom: ^20.0.0
     lodash: ^4.17.21
     reflect-metadata: ^0.1.13
@@ -7482,7 +7482,7 @@ __metadata:
     "@standardnotes/snjs": "workspace:*"
     "@standardnotes/styles": "workspace:*"
     "@standardnotes/toast": "workspace:*"
-    "@types/jest": ^27.5.1
+    "@types/jest": ^28.1.4
     "@types/react": ^17.0.42
     "@types/react-dom": ^18.0.5
     "@types/wicg-file-system-access": ^2020.9.5
@@ -7498,7 +7498,7 @@ __metadata:
     eslint-plugin-react-hooks: ^4.4.0
     html-webpack-plugin: ^5.5.0
     identity-obj-proxy: ^3.0.0
-    jest: ^27.5.1
+    jest: ^28.1.2
     jest-environment-jsdom: ^27.5.1
     lint-staged: ">=12"
     mini-css-extract-plugin: ^2.6.0
@@ -8353,26 +8353,6 @@ __metadata:
     jest-matcher-utils: ^28.0.0
     pretty-format: ^28.0.0
   checksum: 97e22c600397bb4f30e39b595f8285ae92e4eb29a1ef6d1689749e4a4da683d88ecfe717b64492f6adc4c17c1c989520c3546f938c84a7d435c6ac3acf1a2bdc
-  languageName: node
-  linkType: hard
-
-"@types/jest@npm:27.4.1":
-  version: 27.4.1
-  resolution: "@types/jest@npm:27.4.1"
-  dependencies:
-    jest-matcher-utils: ^27.0.0
-    pretty-format: ^27.0.0
-  checksum: 5184f3eef4832d01ee8f59bed15eec45ccc8e29c724a5e6ce37bf74396b37bdf04f557000f45ba4fc38ae6075cf9cfcce3d7a75abc981023c61ceb27230a93e4
-  languageName: node
-  linkType: hard
-
-"@types/jest@npm:^27.4.1, @types/jest@npm:^27.5.1":
-  version: 27.5.2
-  resolution: "@types/jest@npm:27.5.2"
-  dependencies:
-    jest-matcher-utils: ^27.0.0
-    pretty-format: ^27.0.0
-  checksum: 7e11c6826aa429ad990dc262e4e4b54aa36573287fddf15773e4137f07d11d3105f0dd9f1baff73252160a057df23f5529bb83b1bf83cd3f45f9460a5ca5c22e
   languageName: node
   linkType: hard
 
@@ -23246,7 +23226,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-matcher-utils@npm:^27.0.0, jest-matcher-utils@npm:^27.5.1":
+"jest-matcher-utils@npm:^27.5.1":
   version: 27.5.1
   resolution: "jest-matcher-utils@npm:27.5.1"
   dependencies:
@@ -23777,7 +23757,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest@npm:^27.4.3, jest@npm:^27.5.1":
+"jest@npm:^27.4.3":
   version: 27.5.1
   resolution: "jest@npm:27.5.1"
   dependencies:
@@ -30960,7 +30940,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pretty-format@npm:^27.0.0, pretty-format@npm:^27.0.2, pretty-format@npm:^27.5.1":
+"pretty-format@npm:^27.0.2, pretty-format@npm:^27.5.1":
   version: 27.5.1
   resolution: "pretty-format@npm:27.5.1"
   dependencies:
