@@ -6178,7 +6178,7 @@ __metadata:
     redux-mock-store: 1.5.4
     source-map-explorer: 2.5.2
     styled-components: 5.3.5
-    ts-jest: 27.1.4
+    ts-jest: ^28.0.5
     typescript: 4.6.2
     uuid: 8.3.2
   languageName: unknown
@@ -6201,7 +6201,7 @@ __metadata:
     eslint-plugin-prettier: "*"
     jest: ^28.1.2
     reflect-metadata: ^0.1.13
-    ts-jest: ^27.1.3
+    ts-jest: ^28.0.5
   languageName: unknown
   linkType: soft
 
@@ -6568,7 +6568,7 @@ __metadata:
     jest: ^28.1.2
     prettier: "*"
     reflect-metadata: ^0.1.13
-    ts-jest: ^27.1.3
+    ts-jest: ^28.0.5
     typescript: "*"
   languageName: unknown
   linkType: soft
@@ -6621,7 +6621,7 @@ __metadata:
     eslint-plugin-prettier: "*"
     jest: ^28.1.2
     reflect-metadata: ^0.1.13
-    ts-jest: ^27.1.3
+    ts-jest: ^28.0.5
     ts-node: ^10.5.0
   languageName: unknown
   linkType: soft
@@ -6643,7 +6643,7 @@ __metadata:
     eslint-plugin-prettier: "*"
     jest: ^28.1.2
     reflect-metadata: ^0.1.13
-    ts-jest: ^27.1.3
+    ts-jest: ^28.0.5
   languageName: unknown
   linkType: soft
 
@@ -6713,7 +6713,7 @@ __metadata:
     prettier: "*"
     react: ^18.1.0
     react-dom: ^18.1.0
-    ts-jest: ^28.0.3
+    ts-jest: ^28.0.5
     ts-loader: ^9.3.0
     typescript: "*"
     webpack: "*"
@@ -7030,7 +7030,7 @@ __metadata:
     jest: ^28.1.2
     lodash: ^4.17.21
     reflect-metadata: ^0.1.13
-    ts-jest: ^27.1.3
+    ts-jest: ^28.0.5
     typescript: "*"
   languageName: unknown
   linkType: soft
@@ -7094,7 +7094,7 @@ __metadata:
     eslint-plugin-prettier: "*"
     jest: ^28.1.2
     reflect-metadata: ^0.1.13
-    ts-jest: ^27.1.3
+    ts-jest: ^28.0.5
   languageName: unknown
   linkType: soft
 
@@ -7165,7 +7165,7 @@ __metadata:
     eslint-plugin-prettier: "*"
     jest: ^28.1.2
     reflect-metadata: ^0.1.13
-    ts-jest: ^27.1.3
+    ts-jest: ^28.0.5
   languageName: unknown
   linkType: soft
 
@@ -7445,7 +7445,7 @@ __metadata:
     jsdom: ^20.0.0
     lodash: ^4.17.21
     reflect-metadata: ^0.1.13
-    ts-jest: ^27.1.3
+    ts-jest: ^28.0.5
   languageName: unknown
   linkType: soft
 
@@ -7521,7 +7521,7 @@ __metadata:
     styled-components: ^5.3.5
     svg-jest: ^1.0.1
     tailwindcss: ^3.1.4
-    ts-jest: ^27.1.4
+    ts-jest: ^28.0.5
     ts-loader: ^9.2.8
     typescript: "*"
     webpack: "*"
@@ -23606,7 +23606,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-util@npm:^27.0.0, jest-util@npm:^27.5.1":
+"jest-util@npm:^27.5.1":
   version: 27.5.1
   resolution: "jest-util@npm:27.5.1"
   dependencies:
@@ -24163,15 +24163,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json5@npm:2.x, json5@npm:^2.1.2, json5@npm:^2.2.0, json5@npm:^2.2.1":
-  version: 2.2.1
-  resolution: "json5@npm:2.2.1"
-  bin:
-    json5: lib/cli.js
-  checksum: 74b8a23b102a6f2bf2d224797ae553a75488b5adbaee9c9b6e5ab8b510a2fc6e38f876d4c77dea672d4014a44b2399e15f2051ac2b37b87f74c0c7602003543b
-  languageName: node
-  linkType: hard
-
 "json5@npm:^0.5.1":
   version: 0.5.1
   resolution: "json5@npm:0.5.1"
@@ -24189,6 +24180,15 @@ __metadata:
   bin:
     json5: lib/cli.js
   checksum: e76ea23dbb8fc1348c143da628134a98adf4c5a4e8ea2adaa74a80c455fc2cdf0e2e13e6398ef819bfe92306b610ebb2002668ed9fc1af386d593691ef346fc3
+  languageName: node
+  linkType: hard
+
+"json5@npm:^2.1.2, json5@npm:^2.2.0, json5@npm:^2.2.1":
+  version: 2.2.1
+  resolution: "json5@npm:2.2.1"
+  bin:
+    json5: lib/cli.js
+  checksum: 74b8a23b102a6f2bf2d224797ae553a75488b5adbaee9c9b6e5ab8b510a2fc6e38f876d4c77dea672d4014a44b2399e15f2051ac2b37b87f74c0c7602003543b
   languageName: node
   linkType: hard
 
@@ -37300,73 +37300,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-jest@npm:27.1.4":
-  version: 27.1.4
-  resolution: "ts-jest@npm:27.1.4"
-  dependencies:
-    bs-logger: 0.x
-    fast-json-stable-stringify: 2.x
-    jest-util: ^27.0.0
-    json5: 2.x
-    lodash.memoize: 4.x
-    make-error: 1.x
-    semver: 7.x
-    yargs-parser: 20.x
-  peerDependencies:
-    "@babel/core": ">=7.0.0-beta.0 <8"
-    "@types/jest": ^27.0.0
-    babel-jest: ">=27.0.0 <28"
-    jest: ^27.0.0
-    typescript: ">=3.8 <5.0"
-  peerDependenciesMeta:
-    "@babel/core":
-      optional: true
-    "@types/jest":
-      optional: true
-    babel-jest:
-      optional: true
-    esbuild:
-      optional: true
-  bin:
-    ts-jest: cli.js
-  checksum: d2cc2719ed2884a880ab50d2c14c311834be9c88bc79d0064fa0189afce5c296d7676314d26cc3f7e82ddd52df272c2d4137a832c89616f30cbe8f43e30f9a29
-  languageName: node
-  linkType: hard
-
-"ts-jest@npm:^27.1.3, ts-jest@npm:^27.1.4":
-  version: 27.1.5
-  resolution: "ts-jest@npm:27.1.5"
-  dependencies:
-    bs-logger: 0.x
-    fast-json-stable-stringify: 2.x
-    jest-util: ^27.0.0
-    json5: 2.x
-    lodash.memoize: 4.x
-    make-error: 1.x
-    semver: 7.x
-    yargs-parser: 20.x
-  peerDependencies:
-    "@babel/core": ">=7.0.0-beta.0 <8"
-    "@types/jest": ^27.0.0
-    babel-jest: ">=27.0.0 <28"
-    jest: ^27.0.0
-    typescript: ">=3.8 <5.0"
-  peerDependenciesMeta:
-    "@babel/core":
-      optional: true
-    "@types/jest":
-      optional: true
-    babel-jest:
-      optional: true
-    esbuild:
-      optional: true
-  bin:
-    ts-jest: cli.js
-  checksum: 3ef51c538b82f49b3f529331c1a017871a2f90e7a9a6e69333304755036d121818c6b120e2ce32dd161ff8bb2487efec0c790753ecd39b46a9ed1ce0d241464c
-  languageName: node
-  linkType: hard
-
-"ts-jest@npm:^28.0.3, ts-jest@npm:^28.0.5":
+"ts-jest@npm:^28.0.5":
   version: 28.0.5
   resolution: "ts-jest@npm:28.0.5"
   dependencies:
@@ -40163,13 +40097,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs-parser@npm:20.x, yargs-parser@npm:^20.2.2, yargs-parser@npm:^20.2.3":
-  version: 20.2.9
-  resolution: "yargs-parser@npm:20.2.9"
-  checksum: 8bb69015f2b0ff9e17b2c8e6bfe224ab463dd00ca211eece72a4cd8a906224d2703fb8a326d36fdd0e68701e201b2a60ed7cf81ce0fd9b3799f9fe7745977ae3
-  languageName: node
-  linkType: hard
-
 "yargs-parser@npm:^13.1.2":
   version: 13.1.2
   resolution: "yargs-parser@npm:13.1.2"
@@ -40187,6 +40114,13 @@ __metadata:
     camelcase: ^5.0.0
     decamelize: ^1.2.0
   checksum: 60e8c7d1b85814594d3719300ecad4e6ae3796748b0926137bfec1f3042581b8646d67e83c6fc80a692ef08b8390f21ddcacb9464476c39bbdf52e34961dd4d9
+  languageName: node
+  linkType: hard
+
+"yargs-parser@npm:^20.2.2, yargs-parser@npm:^20.2.3":
+  version: 20.2.9
+  resolution: "yargs-parser@npm:20.2.9"
+  checksum: 8bb69015f2b0ff9e17b2c8e6bfe224ab463dd00ca211eece72a4cd8a906224d2703fb8a326d36fdd0e68701e201b2a60ed7cf81ce0fd9b3799f9fe7745977ae3
   languageName: node
   linkType: hard
 
