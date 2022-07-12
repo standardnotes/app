@@ -1,0 +1,198 @@
+# To get started with Dependabot version updates, you'll need to specify which
+# package ecosystems to update and where the package manifests are located.
+# Please see the documentation for all configuration options:
+# https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "moughxyz"
+      - "karolsojko"
+
+  - package-ecosystem: "npm"
+    directory: "/packages/api"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "moughxyz"
+      - "karolsojko"
+
+  - package-ecosystem: "npm"
+    directory: "/packages/components"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "moughxyz"
+      - "karolsojko"
+
+  - package-ecosystem: "npm"
+    directory: "/packages/desktop"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "moughxyz"
+      - "karolsojko"
+
+  - package-ecosystem: "npm"
+    directory: "/packages/docs"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "moughxyz"
+      - "karolsojko"
+
+  - package-ecosystem: "npm"
+    directory: "/packages/encryption"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "moughxyz"
+      - "karolsojko"
+
+  - package-ecosystem: "npm"
+    directory: "/packages/features"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "moughxyz"
+      - "karolsojko"
+
+  - package-ecosystem: "npm"
+    directory: "/packages/filepicker"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "moughxyz"
+      - "karolsojko"
+
+  - package-ecosystem: "npm"
+    directory: "/packages/files"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "moughxyz"
+      - "karolsojko"
+
+  - package-ecosystem: "npm"
+    directory: "/packages/icons"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "moughxyz"
+      - "karolsojko"
+
+  - package-ecosystem: "npm"
+    directory: "/packages/mobile"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "moughxyz"
+      - "karolsojko"
+
+  - package-ecosystem: "npm"
+    directory: "/packages/models"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "moughxyz"
+      - "karolsojko"
+
+  - package-ecosystem: "npm"
+    directory: "/packages/releases"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "moughxyz"
+      - "karolsojko"
+
+  - package-ecosystem: "npm"
+    directory: "/packages/responses"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "moughxyz"
+      - "karolsojko"
+
+  - package-ecosystem: "npm"
+    directory: "/packages/services"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "moughxyz"
+      - "karolsojko"
+
+  - package-ecosystem: "npm"
+    directory: "/packages/sncrypto-common"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "moughxyz"
+      - "karolsojko"
+
+  - package-ecosystem: "npm"
+    directory: "/packages/sncrypto-web"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "moughxyz"
+      - "karolsojko"
+
+  - package-ecosystem: "npm"
+    directory: "/packages/snjs"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "moughxyz"
+      - "karolsojko"
+
+  - package-ecosystem: "npm"
+    directory: "/packages/styles"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "moughxyz"
+      - "karolsojko"
+
+  - package-ecosystem: "npm"
+    directory: "/packages/toast"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "moughxyz"
+      - "karolsojko"
+
+  - package-ecosystem: "npm"
+    directory: "/packages/utils"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "moughxyz"
+      - "karolsojko"
+
+  - package-ecosystem: "npm"
+    directory: "/packages/web"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "moughxyz"
+      - "karolsojko"
+
+  - package-ecosystem: "bundler"
+    directory: "/packages/web-server"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "moughxyz"
+      - "karolsojko"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    reviewers:
+      - "moughxyz"
+      - "karolsojko"
