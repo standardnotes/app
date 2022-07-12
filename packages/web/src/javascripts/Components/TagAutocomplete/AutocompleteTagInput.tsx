@@ -132,7 +132,7 @@ const AutocompleteTagInput = ({ viewControllerManager }: Props) => {
               }}
               onBlur={closeOnBlur}
             >
-              <div className="overflow-y-auto">
+              <div className="md:overflow-y-auto">
                 {autocompleteTagResults.map((tagResult: SNTag) => (
                   <AutocompleteTagResult
                     key={tagResult.uuid}
