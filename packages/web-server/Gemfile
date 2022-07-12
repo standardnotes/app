@@ -5,7 +5,7 @@ gem 'lograge', '~> 0.11.2'
 gem 'newrelic_rpm', '~> 7.0'
 gem 'non-stupid-digest-assets'
 gem 'rack-cors', require: 'rack/cors'
-gem 'rails', '5.1.7'
+gem 'rails', '7.0.3'
 gem 'secure_headers'
 
 group :development, :test do
