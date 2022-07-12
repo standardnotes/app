@@ -64,7 +64,7 @@
   },
   "dependencies": {
     "@reach/alert": "^0.16.0",
-    "@reach/alert-dialog": "^0.16.2",
+    "@reach/alert-dialog": "^0.17.0",
     "@reach/checkbox": "^0.16.0",
     "@reach/dialog": "^0.16.2",
     "@reach/disclosure": "^0.16.2",
