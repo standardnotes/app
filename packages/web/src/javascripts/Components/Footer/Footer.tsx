@@ -342,7 +342,7 @@ class Footer extends PureComponent<Props, State> {
   override render() {
     return (
       <div className="sn-component">
-        <div
+        <footer
           id="footer-bar"
           className="z-footer-bar flex h-6 w-full select-none items-center justify-between border-t border-border bg-contrast px-3 text-text"
         >
@@ -454,7 +454,7 @@ class Footer extends PureComponent<Props, State> {
               </div>
             )}
           </div>
-        </div>
+        </footer>
       </div>
     )
   }
