@@ -26,18 +26,18 @@ const NotesOptionsPanel = ({
   historyModalController,
   onClickPreprocessing,
 }: Props) => {
-  const [open, setOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
   // const panelRef = useRef<HTMLDivElement>(null)
   // const [closeOnBlur] = useCloseOnBlur(panelRef, setOpen)
 
   const toggleMenu = useCallback(async () => {
-    const willMenuOpen = !open
+    const willMenuOpen = !isOpen
     if (willMenuOpen && onClickPreprocessing) {
       await onClickPreprocessing()
     }
-    setOpen(willMenuOpen)
-  }, [onClickPreprocessing, open])
+    setIsOpen(willMenuOpen)
+  }, [onClickPreprocessing, isOpen])
 
   return (
     <>
@@ -50,7 +50,7 @@ const NotesOptionsPanel = ({
       >
         <Icon type="more" />
       </button>
-      <Popover buttonRef={buttonRef} open={open} side="bottom" align="end">
+      <Popover buttonRef={buttonRef} open={isOpen} side="bottom" align="end">
         <NotesOptions
           application={application}
           navigationController={navigationController}
