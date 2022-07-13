@@ -30,6 +30,6 @@
     "sn-stylekit": "^2.1.1",
     "webpack": "*",
     "webpack-cli": "*",
-    "webpack-merge": "^5.7.3"
+    "webpack-merge": "^5.8.0"
   }
 }

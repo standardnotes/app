@@ -60,7 +60,7 @@
     "typescript": "*",
     "webpack": "*",
     "webpack-dev-server": "*",
-    "webpack-merge": "*"
+    "webpack-merge": "^5.8.0"
   },
   "dependencies": {
     "@reach/alert": "^0.16.0",

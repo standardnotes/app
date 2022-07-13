@@ -63,7 +63,7 @@
     "uuid": "^8.3.2",
     "webpack": "*",
     "webpack-cli": "*",
-    "webpack-merge": "*"
+    "webpack-merge": "^5.8.0"
   },
   "dependencies": {
     "@standardnotes/api": "workspace:*",

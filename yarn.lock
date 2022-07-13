@@ -6285,7 +6285,7 @@ __metadata:
     webpack: "*"
     webpack-cli: "*"
     webpack-dev-server: "*"
-    webpack-merge: "*"
+    webpack-merge: ^5.8.0
   languageName: unknown
   linkType: soft
 
@@ -6326,7 +6326,7 @@ __metadata:
     webpack: "*"
     webpack-cli: "*"
     webpack-dev-server: "*"
-    webpack-merge: ^5.7.3
+    webpack-merge: ^5.8.0
     webpack-merge-and-include-globally: ^2.3.4
   languageName: unknown
   linkType: soft
@@ -6350,7 +6350,7 @@ __metadata:
     sn-stylekit: ^2.1.1
     webpack: "*"
     webpack-cli: "*"
-    webpack-merge: ^5.7.3
+    webpack-merge: ^5.8.0
   languageName: unknown
   linkType: soft
 
@@ -6456,7 +6456,7 @@ __metadata:
     ts-node: ^10.7.0
     typescript: "*"
     webpack: "*"
-    webpack-merge: "*"
+    webpack-merge: ^5.8.0
   languageName: unknown
   linkType: soft
 
@@ -6799,7 +6799,7 @@ __metadata:
     webpack: "*"
     webpack-cli: "*"
     webpack-dev-server: "*"
-    webpack-merge: ^5.7.3
+    webpack-merge: ^5.8.0
   languageName: unknown
   linkType: soft
 
@@ -7122,7 +7122,7 @@ __metadata:
     webpack: "*"
     webpack-cli: "*"
     webpack-dev-server: "*"
-    webpack-merge: ^5.7.3
+    webpack-merge: ^5.8.0
     webpack-merge-and-include-globally: ^2.3.3
   languageName: unknown
   linkType: soft
@@ -7211,7 +7211,7 @@ __metadata:
     webpack: "*"
     webpack-cli: "*"
     webpack-dev-server: "*"
-    webpack-merge: 5.7.3
+    webpack-merge: ^5.8.0
   languageName: unknown
   linkType: soft
 
@@ -7309,7 +7309,7 @@ __metadata:
     uuid: ^8.3.2
     webpack: "*"
     webpack-cli: "*"
-    webpack-merge: "*"
+    webpack-merge: ^5.8.0
   languageName: unknown
   linkType: soft
 
@@ -7349,7 +7349,7 @@ __metadata:
     webpack: "*"
     webpack-cli: "*"
     webpack-dev-server: "*"
-    webpack-merge: "*"
+    webpack-merge: ^5.8.0
   languageName: unknown
   linkType: soft
 
@@ -7526,7 +7526,7 @@ __metadata:
     typescript: "*"
     webpack: "*"
     webpack-dev-server: "*"
-    webpack-merge: "*"
+    webpack-merge: ^5.8.0
   languageName: unknown
   linkType: soft
 
@@ -39176,32 +39176,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack-merge@npm:*, webpack-merge@npm:^5.7.3, webpack-merge@npm:^5.8.0":
-  version: 5.8.0
-  resolution: "webpack-merge@npm:5.8.0"
-  dependencies:
-    clone-deep: ^4.0.1
-    wildcard: ^2.0.0
-  checksum: 88786ab91013f1bd2a683834ff381be81c245a4b0f63304a5103e90f6653f44dab496a0768287f8531761f8ad957d1f9f3ccb2cb55df0de1bd9ee343e079da26
-  languageName: node
-  linkType: hard
-
-"webpack-merge@npm:5.7.3":
-  version: 5.7.3
-  resolution: "webpack-merge@npm:5.7.3"
-  dependencies:
-    clone-deep: ^4.0.1
-    wildcard: ^2.0.0
-  checksum: 09608c3a4928246e9c1c09c22b5f867c38d0ab0fb027ebcc3b15d42659f06a10cfa7f7e2cf2a0ace6f2d571c1cd744ec23e7b2069d34a70378e163e8e035c290
-  languageName: node
-  linkType: hard
-
 "webpack-merge@npm:^4.2.2":
   version: 4.2.2
   resolution: "webpack-merge@npm:4.2.2"
   dependencies:
     lodash: ^4.17.15
   checksum: ce58bc8ab53a3dd5d9a0df65684571349eef53372bf8f224521072110485391335b26ab097c5f07829b88d0c146056944149566e5a953f05997b0fe2cbaf8dd6
+  languageName: node
+  linkType: hard
+
+"webpack-merge@npm:^5.7.3, webpack-merge@npm:^5.8.0":
+  version: 5.8.0
+  resolution: "webpack-merge@npm:5.8.0"
+  dependencies:
+    clone-deep: ^4.0.1
+    wildcard: ^2.0.0
+  checksum: 88786ab91013f1bd2a683834ff381be81c245a4b0f63304a5103e90f6653f44dab496a0768287f8531761f8ad957d1f9f3ccb2cb55df0de1bd9ee343e079da26
   languageName: node
   linkType: hard
 
