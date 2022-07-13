@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0](https://github.com/standardnotes/app/compare/@standardnotes/classic-code-editor@1.3.17...@standardnotes/classic-code-editor@1.4.0) (2022-07-13)
+
+### Features
+
+* deprecated editors ([#1166](https://github.com/standardnotes/app/issues/1166)) ([60ca415](https://github.com/standardnotes/app/commit/60ca4150446f9a14bb6a31416686c6d07a7d0cd9))
+
 ## [1.3.17](https://github.com/standardnotes/app/compare/@standardnotes/classic-code-editor@1.3.17-alpha.2...@standardnotes/classic-code-editor@1.3.17) (2022-06-22)
 
 **Note:** Version bump only for package @standardnotes/classic-code-editor
