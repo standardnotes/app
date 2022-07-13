@@ -23,7 +23,7 @@ export const getPositionedPopoverStyles = ({
   popoverRect,
   button,
   side = 'bottom',
-  align = 'center',
+  align = 'end',
 }: Options): CSSProperties | null => {
   if (!popoverRect || !button) {
     return null
