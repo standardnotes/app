@@ -6152,7 +6152,7 @@ __metadata:
     "@testing-library/jest-dom": 5.16.2
     "@testing-library/react": 12.1.4
     "@testing-library/user-event": 13.5.0
-    "@types/jest": ^28.1.4
+    "@types/jest": ^28.1.5
     "@types/lodash": 4.14.179
     "@types/node": 17.0.21
     "@types/react": 17.0.40
@@ -6195,7 +6195,7 @@ __metadata:
     "@standardnotes/security": ^1.1.0
     "@standardnotes/services": "workspace:*"
     "@standardnotes/utils": "workspace:*"
-    "@types/jest": ^28.1.4
+    "@types/jest": ^28.1.5
     "@types/lodash": ^4.14.182
     "@typescript-eslint/eslint-plugin": ^5.30.0
     eslint-plugin-prettier: "*"
@@ -6560,7 +6560,7 @@ __metadata:
     "@standardnotes/services": "workspace:*"
     "@standardnotes/sncrypto-common": "workspace:*"
     "@standardnotes/utils": "workspace:*"
-    "@types/jest": ^28.1.4
+    "@types/jest": ^28.1.5
     "@types/node": ^18.0.0
     "@typescript-eslint/eslint-plugin": "*"
     eslint: "*"
@@ -6598,7 +6598,7 @@ __metadata:
     "@standardnotes/auth": ^3.19.4
     "@standardnotes/common": ^1.23.1
     "@standardnotes/security": ^1.2.0
-    "@types/jest": ^28.1.4
+    "@types/jest": ^28.1.5
     "@typescript-eslint/eslint-plugin": ^5.30.0
     eslint-plugin-prettier: "*"
     jest: ^28.1.2
@@ -6615,7 +6615,7 @@ __metadata:
     "@standardnotes/common": ^1.23.1
     "@standardnotes/services": "workspace:*"
     "@standardnotes/utils": "workspace:*"
-    "@types/jest": ^28.1.4
+    "@types/jest": ^28.1.5
     "@types/wicg-file-system-access": ^2020.9.5
     "@typescript-eslint/eslint-plugin": ^5.30.0
     eslint-plugin-prettier: "*"
@@ -6638,7 +6638,7 @@ __metadata:
     "@standardnotes/services": "workspace:*"
     "@standardnotes/sncrypto-common": "workspace:*"
     "@standardnotes/utils": "workspace:*"
-    "@types/jest": ^28.1.4
+    "@types/jest": ^28.1.5
     "@typescript-eslint/eslint-plugin": ^5.30.0
     eslint-plugin-prettier: "*"
     jest: ^28.1.2
@@ -6884,7 +6884,7 @@ __metadata:
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.4
     "@testing-library/user-event": ^13.5.0
-    "@types/jest": ^28.1.4
+    "@types/jest": ^28.1.5
     "@types/lodash": ^4.14.179
     "@types/marked": ^4.0.2
     "@types/node": ^17.0.21
@@ -6944,7 +6944,7 @@ __metadata:
     "@standardnotes/web": "workspace:*"
     "@types/detox": ^18.1.0
     "@types/faker": ^6.6.9
-    "@types/jest": ^28.1.4
+    "@types/jest": ^28.1.5
     "@types/js-base64": ^3.3.1
     "@types/react": 17.0.2
     "@types/react-native": ^0.67.3
@@ -7023,7 +7023,7 @@ __metadata:
     "@standardnotes/features": "workspace:*"
     "@standardnotes/responses": "workspace:*"
     "@standardnotes/utils": "workspace:*"
-    "@types/jest": ^28.1.4
+    "@types/jest": ^28.1.5
     "@types/lodash": ^4.14.182
     "@typescript-eslint/eslint-plugin": ^5.30.0
     eslint-plugin-prettier: "*"
@@ -7089,7 +7089,7 @@ __metadata:
     "@standardnotes/common": ^1.23.1
     "@standardnotes/features": "workspace:*"
     "@standardnotes/security": ^1.1.0
-    "@types/jest": ^28.1.4
+    "@types/jest": ^28.1.5
     "@typescript-eslint/eslint-plugin": ^5.30.0
     eslint-plugin-prettier: "*"
     jest: ^28.1.2
@@ -7159,7 +7159,7 @@ __metadata:
     "@standardnotes/responses": "workspace:*"
     "@standardnotes/security": ^1.2.0
     "@standardnotes/utils": "workspace:*"
-    "@types/jest": ^28.1.4
+    "@types/jest": ^28.1.5
     "@typescript-eslint/eslint-plugin": ^5.30.0
     "@typescript-eslint/parser": ^5.12.1
     eslint-plugin-prettier: "*"
@@ -7276,7 +7276,7 @@ __metadata:
     "@standardnotes/sncrypto-web": "workspace:*"
     "@standardnotes/utils": "workspace:*"
     "@types/crypto-js": ^4.1.1
-    "@types/jest": ^28.1.4
+    "@types/jest": ^28.1.5
     "@types/jsdom": ^16.2.14
     "@types/libsodium-wrappers": ^0.7.9
     "@types/lodash": ^4.14.179
@@ -7434,7 +7434,7 @@ __metadata:
   dependencies:
     "@standardnotes/common": ^1.23.1
     "@types/dompurify": ^2.3.3
-    "@types/jest": ^28.1.4
+    "@types/jest": ^28.1.5
     "@types/jsdom": ^16.2.14
     "@types/lodash": ^4.14.179
     "@types/node": ^18.0.0
@@ -7482,7 +7482,7 @@ __metadata:
     "@standardnotes/snjs": "workspace:*"
     "@standardnotes/styles": "workspace:*"
     "@standardnotes/toast": "workspace:*"
-    "@types/jest": ^28.1.4
+    "@types/jest": ^28.1.5
     "@types/react": ^17.0.42
     "@types/react-dom": ^18.0.5
     "@types/wicg-file-system-access": ^2020.9.5
@@ -8346,13 +8346,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:*, @types/jest@npm:^28.1.4":
+"@types/jest@npm:*":
   version: 28.1.4
   resolution: "@types/jest@npm:28.1.4"
   dependencies:
     jest-matcher-utils: ^28.0.0
     pretty-format: ^28.0.0
   checksum: 97e22c600397bb4f30e39b595f8285ae92e4eb29a1ef6d1689749e4a4da683d88ecfe717b64492f6adc4c17c1c989520c3546f938c84a7d435c6ac3acf1a2bdc
+  languageName: node
+  linkType: hard
+
+"@types/jest@npm:^28.1.5":
+  version: 28.1.5
+  resolution: "@types/jest@npm:28.1.5"
+  dependencies:
+    jest-matcher-utils: ^28.0.0
+    pretty-format: ^28.0.0
+  checksum: 994bfc25a5e767ec1506a2a7d94e60a7a5645b2e4e8444c56ae902f3a3e27ae54e821e41c1b4e7c8d7f5022bf5abfdd0460ead223ba6f2d0a194e5b2bed1ad76
   languageName: node
   linkType: hard
 

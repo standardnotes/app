@@ -32,7 +32,7 @@
     "@babel/core": "*",
     "@babel/preset-env": "*",
     "@types/crypto-js": "^4.1.1",
-    "@types/jest": "^28.1.4",
+    "@types/jest": "^28.1.5",
     "@types/jsdom": "^16.2.14",
     "@types/libsodium-wrappers": "^0.7.9",
     "@types/lodash": "^4.14.179",

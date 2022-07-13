@@ -23,7 +23,7 @@
     "test:unit": "jest"
   },
   "devDependencies": {
-    "@types/jest": "^28.1.4",
+    "@types/jest": "^28.1.5",
     "@types/lodash": "^4.14.182",
     "@typescript-eslint/eslint-plugin": "^5.30.0",
     "eslint-plugin-prettier": "*",
