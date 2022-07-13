@@ -1,5 +1,6 @@
 import { useAutoElementRect } from '@/Hooks/useElementRect'
 import { useState } from 'react'
+import Portal from '../Portal/Portal'
 import { getPositionedPopoverStyles } from './getPositionedPopoverStyles'
 import { CommonPopoverProps } from './types'
 
@@ -17,15 +18,17 @@ const PositionedPopoverContent = ({ align, buttonRef, children, side }: Props) =
   })
 
   return (
-    <div
-      className="absolute z-footer-bar-item-panel flex min-w-80 max-w-xs cursor-auto flex-col overflow-y-auto rounded bg-default py-2 shadow-main"
-      style={styles ? styles : {}}
-      ref={(node) => {
-        setPopoverElement(node)
-      }}
-    >
-      {children}
-    </div>
+    <Portal>
+      <div
+        className="absolute z-footer-bar-item-panel flex min-w-80 max-w-xs cursor-auto flex-col overflow-y-auto rounded bg-default py-2 shadow-main"
+        style={styles ? styles : {}}
+        ref={(node) => {
+          setPopoverElement(node)
+        }}
+      >
+        {children}
+      </div>
+    </Portal>
   )
 }
 
