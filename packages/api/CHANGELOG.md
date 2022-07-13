@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.6](https://github.com/standardnotes/app/compare/@standardnotes/api@1.4.5...@standardnotes/api@1.4.6) (2022-07-13)
+
+### Bug Fixes
+
+* upgrade jest with types to latest version ([09e08ca](https://github.com/standardnotes/app/commit/09e08ca899ba8694cf43292e918c4c204c0d2cb9))
+* upgrade ts-jest in packages ([71e792d](https://github.com/standardnotes/app/commit/71e792da354ff90335b92758e196075a0f88d060))
+
 ## [1.4.5](https://github.com/standardnotes/app/compare/@standardnotes/api@1.4.4...@standardnotes/api@1.4.5) (2022-07-08)
 
 **Note:** Version bump only for package @standardnotes/api

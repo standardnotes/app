@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/web",
-  "version": "3.40.0",
+  "version": "3.40.4",
   "license": "AGPL-3.0-or-later",
   "main": "dist/app.js",
   "author": "Standard Notes.",
@@ -26,7 +26,7 @@
     "@babel/preset-env": "*",
     "@babel/preset-typescript": "^7.16.7",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
-    "@types/jest": "^27.5.1",
+    "@types/jest": "^28.1.5",
     "@types/react": "^17.0.42",
     "@types/react-dom": "^18.0.5",
     "@types/wicg-file-system-access": "^2020.9.5",
@@ -41,8 +41,8 @@
     "eslint-plugin-react-hooks": "^4.4.0",
     "html-webpack-plugin": "^5.5.0",
     "identity-obj-proxy": "^3.0.0",
-    "jest": "^27.5.1",
-    "jest-environment-jsdom": "^27.5.1",
+    "jest": "^28.1.2",
+    "jest-environment-jsdom": "^28.1.2",
     "lint-staged": ">=12",
     "mini-css-extract-plugin": "^2.6.0",
     "node-sass": "*",
@@ -55,12 +55,12 @@
     "sass-loader": "*",
     "svg-jest": "^1.0.1",
     "tailwindcss": "^3.1.4",
-    "ts-jest": "^27.1.4",
+    "ts-jest": "^28.0.5",
     "ts-loader": "^9.2.8",
     "typescript": "*",
     "webpack": "*",
     "webpack-dev-server": "*",
-    "webpack-merge": "*"
+    "webpack-merge": "^5.8.0"
   },
   "dependencies": {
     "@reach/alert": "^0.16.0",

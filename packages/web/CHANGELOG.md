@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.40.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.40.3...@standardnotes/web@3.40.4) (2022-07-13)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.40.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.40.2...@standardnotes/web@3.40.3) (2022-07-13)
+
+### Bug Fixes
+
+* upgrade jest with types to latest version ([09e08ca](https://github.com/standardnotes/app/commit/09e08ca899ba8694cf43292e918c4c204c0d2cb9))
+* upgrade jest-environment-jsdom ([7624f95](https://github.com/standardnotes/app/commit/7624f954625dae2858bc97cb46293d16ba185fa4))
+* upgrade ts-jest in packages ([71e792d](https://github.com/standardnotes/app/commit/71e792da354ff90335b92758e196075a0f88d060))
+
+## [3.40.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.40.1...@standardnotes/web@3.40.2) (2022-07-12)
+
+### Bug Fixes
+
+* **web:** responsive autocomplete tag dropdown ([#1250](https://github.com/standardnotes/app/issues/1250)) ([0a2c90f](https://github.com/standardnotes/app/commit/0a2c90f2c140f7ab1a15ef24b90f02566e8c6a25))
+
+## [3.40.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.40.0...@standardnotes/web@3.40.1) (2022-07-11)
+
+### Bug Fixes
+
+* focus mode & dynamic panels on small screens ([#1246](https://github.com/standardnotes/app/issues/1246)) ([9d230d4](https://github.com/standardnotes/app/commit/9d230d4b81c92b826ef9e8b89cd7192f5b4c8b13))
+
 # [3.40.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.39.1...@standardnotes/web@3.40.0) (2022-07-09)
 
 ### Features

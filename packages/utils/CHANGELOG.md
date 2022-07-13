@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.8.2](https://github.com/standardnotes/app/compare/@standardnotes/utils@1.8.1...@standardnotes/utils@1.8.2) (2022-07-13)
+
+### Bug Fixes
+
+* upgrade jest with types to latest version ([09e08ca](https://github.com/standardnotes/app/commit/09e08ca899ba8694cf43292e918c4c204c0d2cb9))
+* upgrade ts-jest in packages ([71e792d](https://github.com/standardnotes/app/commit/71e792da354ff90335b92758e196075a0f88d060))
+
 ## [1.8.1](https://github.com/standardnotes/app/compare/@standardnotes/utils@1.8.0...@standardnotes/utils@1.8.1) (2022-07-06)
 
 **Note:** Version bump only for package @standardnotes/utils
