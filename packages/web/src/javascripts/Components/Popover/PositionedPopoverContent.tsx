@@ -10,10 +10,10 @@ const PositionedPopoverContent = ({ align, buttonRef, children, side }: Props) =
   const popoverRect = useAutoElementRect(popoverElement)
 
   const styles = getPositionedPopoverStyles({
-    popover: popoverRect ?? popoverElement?.getBoundingClientRect(),
-    button: buttonRef.current,
-    side,
     align,
+    button: buttonRef.current,
+    popoverRect: popoverRect ?? popoverElement?.getBoundingClientRect(),
+    side,
   })
 
   return (
