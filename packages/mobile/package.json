@@ -120,7 +120,7 @@
     "react-devtools-core": "^4.24.6",
     "react-native-monorepo-tools": "^1.1.4",
     "react-native-pager-view": "^5.4.15",
-    "react-test-renderer": "17.0.2",
+    "react-test-renderer": "18.2.0",
     "replace-in-file": "^6.3.2",
     "typescript": "^4.6.3"
   },
