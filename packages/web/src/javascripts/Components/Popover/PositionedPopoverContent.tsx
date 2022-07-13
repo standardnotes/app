@@ -1,14 +1,16 @@
+import { useAutoElementRect } from '@/Hooks/useElementRect'
 import { useState } from 'react'
 import { getPositionedPopoverStyles } from './getPositionedPopoverStyles'
 import { CommonPopoverProps } from './types'
 
 type Props = CommonPopoverProps
 
-const PopoverContent = ({ align, buttonRef, children, side }: Props) => {
+const PositionedPopoverContent = ({ align, buttonRef, children, side }: Props) => {
   const [popoverElement, setPopoverElement] = useState<HTMLDivElement | null>(null)
+  const popoverRect = useAutoElementRect(popoverElement)
 
   const styles = getPositionedPopoverStyles({
-    popper: popoverElement,
+    popover: popoverRect ?? popoverElement?.getBoundingClientRect(),
     button: buttonRef.current,
     side,
     align,
@@ -27,4 +29,4 @@ const PopoverContent = ({ align, buttonRef, children, side }: Props) => {
   )
 }
 
-export default PopoverContent
+export default PositionedPopoverContent

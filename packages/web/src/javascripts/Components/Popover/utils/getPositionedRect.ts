@@ -1,17 +1,14 @@
-import { PopoverSide, PopoverElement, PopoverAlignment } from '../types'
+import { PopoverSide, PopoverAlignment } from '../types'
 
 export const getPositionedPopoverRect = (
-  popper: PopoverElement,
+  popoverRect: DOMRect,
   buttonRect: DOMRect,
   side: PopoverSide,
   align: PopoverAlignment,
 ): DOMRect => {
-  const { width, height } = popper.getBoundingClientRect()
+  const { width, height } = popoverRect
 
-  const positionPopoverRect = DOMRect.fromRect({
-    width,
-    height,
-  })
+  const positionPopoverRect = DOMRect.fromRect(popoverRect)
 
   switch (side) {
     case 'top': {

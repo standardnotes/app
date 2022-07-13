@@ -1,4 +1,4 @@
-import PopoverContent from './PopoverContent'
+import PositionedPopoverContent from './PositionedPopoverContent'
 import { CommonPopoverProps } from './types'
 
 type Props = CommonPopoverProps & {
@@ -7,9 +7,9 @@ type Props = CommonPopoverProps & {
 
 const Popover = ({ open, buttonRef, side, align, children }: Props) => {
   return open ? (
-    <PopoverContent buttonRef={buttonRef} side={side} align={align}>
+    <PositionedPopoverContent buttonRef={buttonRef} side={side} align={align}>
       {children}
-    </PopoverContent>
+    </PositionedPopoverContent>
   ) : null
 }
 
