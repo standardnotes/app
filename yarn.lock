@@ -7293,7 +7293,7 @@ __metadata:
     exports-loader: ^3.1.0
     jest: ^28.1.2
     jest-environment-jsdom: ^28.1.2
-    jsdom: ^19.0.0
+    jsdom: ^20.0.0
     libsodium-wrappers: ^0.7.9
     lodash: ^4.17.21
     nock: ^13.2.4
