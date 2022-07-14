@@ -10,6 +10,7 @@ import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { formatDateForContextMenu } from '@/Utils/DateUtils'
+import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 
 type ContextMenuProps = {
   navigationController: NavigationController
@@ -83,7 +84,7 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
             <Icon type="add" className="mr-2 text-neutral" />
             Add subtag
           </div>
-          {!isEntitledToFolders && <Icon type="premium-feature" />}
+          {!isEntitledToFolders && <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />}
         </MenuItem>
         <MenuItem type={MenuItemType.IconButton} className={'py-1.5'} onClick={onClickRename}>
           <Icon type="pencil-filled" className="mr-2 text-neutral" />

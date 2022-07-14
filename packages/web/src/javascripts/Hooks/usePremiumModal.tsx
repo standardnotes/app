@@ -40,6 +40,8 @@ const PremiumModalProvider: FunctionComponent<Props> = observer(
         !viewControllerManager.subscriptionController.isUserSubscriptionCanceled,
     )
 
+    const hasAccount = application.hasAccount()
+
     const activate = useCallback(
       (feature: string) => {
         viewControllerManager.featuresController.showPremiumAlert(feature).catch(console.error)
@@ -58,6 +60,7 @@ const PremiumModalProvider: FunctionComponent<Props> = observer(
             application={application}
             featureName={featureName}
             hasSubscription={hasSubscription}
+            hasAccount={hasAccount}
             onClose={close}
             showModal={!!featureName}
           />

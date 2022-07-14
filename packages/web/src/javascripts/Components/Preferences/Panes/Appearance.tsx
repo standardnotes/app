@@ -12,6 +12,7 @@ import { sortThemes } from '@/Utils/SortThemes'
 import PreferencesPane from '../PreferencesComponents/PreferencesPane'
 import PreferencesGroup from '../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../PreferencesComponents/PreferencesSegment'
+import { PremiumFeatureIconName } from '@/Components/Icon/PremiumFeatureIcon'
 
 type Props = {
   application: WebApplication
@@ -57,7 +58,7 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
           themesAsItems.push({
             label: theme.name as string,
             value: theme.identifier,
-            icon: 'premium-feature',
+            icon: PremiumFeatureIconName,
           })
         }
       })
@@ -86,7 +87,7 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
   }
 
   const changeAutoLightTheme = (value: string, item: DropdownItem) => {
-    if (item.icon === 'premium-feature') {
+    if (item.icon === PremiumFeatureIconName) {
       premiumModal.activate(`${item.label} theme`)
     } else {
       application.setPreference(PrefKey.AutoLightThemeIdentifier, value as FeatureIdentifier).catch(console.error)
@@ -95,7 +96,7 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
   }
 
   const changeAutoDarkTheme = (value: string, item: DropdownItem) => {
-    if (item.icon === 'premium-feature') {
+    if (item.icon === PremiumFeatureIconName) {
       premiumModal.activate(`${item.label} theme`)
     } else {
       application.setPreference(PrefKey.AutoDarkThemeIdentifier, value as FeatureIdentifier).catch(console.error)
