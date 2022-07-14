@@ -4,6 +4,7 @@ import { FunctionComponent, MouseEventHandler, useCallback } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import Switch from '@/Components/Switch/Switch'
+import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 
 type Props = {
   application: WebApplication
@@ -44,7 +45,7 @@ const FocusModeSwitch: FunctionComponent<Props> = ({ application, onToggle, onCl
           <Switch className="px-0" checked={isEnabled} />
         ) : (
           <div title="Premium feature">
-            <Icon type="premium-feature" />
+            <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />
           </div>
         )}
       </button>

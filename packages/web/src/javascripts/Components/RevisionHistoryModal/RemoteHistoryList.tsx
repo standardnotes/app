@@ -7,6 +7,7 @@ import { previewHistoryEntryTitle } from './utils'
 import { FeaturesClientInterface, RevisionListEntry } from '@standardnotes/snjs/dist/@types'
 import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
 import Spinner from '@/Components/Spinner/Spinner'
+import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 
 type RemoteHistoryListProps = {
   features: FeaturesClientInterface
@@ -47,7 +48,9 @@ const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({ features
                 >
                   <div className="flex flex-grow items-center justify-between">
                     <div>{previewHistoryEntryTitle(entry)}</div>
-                    {!features.hasMinimumRole(entry.required_role) && <Icon type="premium-feature" />}
+                    {!features.hasMinimumRole(entry.required_role) && (
+                      <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />
+                    )}
                   </div>
                 </HistoryListItem>
               ))}

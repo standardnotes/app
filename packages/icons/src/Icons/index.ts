@@ -47,6 +47,7 @@ import CopyIcon from './ic-copy.svg'
 import CreateAccountIllustration from './create-account-illustration.svg'
 import DashboardIcon from './ic-dashboard.svg'
 import DiamondIcon from './diamond-with-horizontal-lines.svg'
+import DiamondFilledIcon from './ic-diamond-filled.svg'
 import DownloadIcon from './ic-download.svg'
 import DragIcon from './ic-drag.svg'
 import DrawIcon from './ic-draw.svg'
@@ -167,6 +168,7 @@ import SNLogoIcon from './ic-standard-notes.svg'
 import SortDescendingIcon from './ic-sort-descending.svg'
 import SpreadsheetsIcon from './ic-spreadsheets.svg'
 import StarFilledIcon from './ic-star-filled.svg'
+import StarCircleFilled from './ic-star-circle-filled.svg'
 import StarIcon from './ic-star.svg'
 import StarVariantFilledIcon from './ic-star-variant-filled.svg'
 import StrikethroughIcon from './ic-strikethrough.svg'
@@ -245,6 +247,7 @@ export {
   CopyIcon,
   CreateAccountIllustration,
   DashboardIcon,
+  DiamondFilledIcon,
   DiamondIcon,
   DownloadIcon,
   DragIcon,
@@ -365,6 +368,7 @@ export {
   SNLogoIcon,
   SortDescendingIcon,
   SpreadsheetsIcon,
+  StarCircleFilled,
   StarFilledIcon,
   StarIcon,
   StarVariantFilledIcon,
