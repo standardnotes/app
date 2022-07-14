@@ -362,7 +362,6 @@ class Footer extends PureComponent<Props, State> {
             <div className="relative z-footer-bar-item select-none">
               <QuickSettingsButton
                 isOpen={this.state.showQuickSettingsMenu}
-                onClickOutside={this.clickOutsideQuickSettingsMenu}
                 toggleMenu={this.quickSettingsClickHandler}
                 application={this.application}
                 preferencesController={this.viewControllerManager.preferencesController}

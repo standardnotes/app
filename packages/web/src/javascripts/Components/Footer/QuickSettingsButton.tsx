@@ -8,7 +8,6 @@ import QuickSettingsMenu from '../QuickSettingsMenu/QuickSettingsMenu'
 
 type Props = {
   isOpen: boolean
-  onClickOutside: () => void
   toggleMenu: () => void
   application: WebApplication
   preferencesController: PreferencesController
@@ -19,7 +18,6 @@ const QuickSettingsButton = ({
   application,
   isOpen,
   toggleMenu,
-  onClickOutside,
   preferencesController,
   quickSettingsMenuController,
 }: Props) => {
@@ -38,7 +36,6 @@ const QuickSettingsButton = ({
       </button>
       <Popover togglePopover={toggleMenu} buttonRef={buttonRef} open={isOpen} side="top" align="start">
         <QuickSettingsMenu
-          onClickOutside={onClickOutside}
           preferencesController={preferencesController}
           quickSettingsMenuController={quickSettingsMenuController}
           application={application}
