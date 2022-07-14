@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-const DEBOUNCE_TIME = 150
+const DEBOUNCE_TIME = 75
 
 export const useDocumentRect = (): DOMRect => {
   const [documentRect, setDocumentRect] = useState<DOMRect>(document.documentElement.getBoundingClientRect())
