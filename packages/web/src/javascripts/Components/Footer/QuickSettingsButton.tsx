@@ -1,7 +1,7 @@
 import { WebApplication } from '@/Application/Application'
 import { PreferencesController } from '@/Controllers/PreferencesController'
 import { QuickSettingsController } from '@/Controllers/QuickSettingsController'
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import Icon from '../Icon/Icon'
 import Popover from '../Popover/Popover'
 import QuickSettingsMenu from '../QuickSettingsMenu/QuickSettingsMenu'
@@ -17,17 +17,12 @@ type Props = {
 
 const QuickSettingsButton = ({
   application,
-  // isOpen,
+  isOpen,
+  toggleMenu,
   onClickOutside,
   preferencesController,
   quickSettingsMenuController,
 }: Props) => {
-  const [isOpen, setIsOpen] = useState(false)
-
-  const toggleMenu = () => {
-    setIsOpen((isOpen) => !isOpen)
-  }
-
   const buttonRef = useRef<HTMLButtonElement>(null)
 
   return (
@@ -41,7 +36,7 @@ const QuickSettingsButton = ({
           <Icon type="tune" className={(isOpen ? 'text-info' : '') + ' rounded hover:text-info'} />
         </div>
       </button>
-      <Popover buttonRef={buttonRef} open={isOpen} side="top" align="start">
+      <Popover togglePopover={toggleMenu} buttonRef={buttonRef} open={isOpen} side="top" align="start">
         <QuickSettingsMenu
           onClickOutside={onClickOutside}
           preferencesController={preferencesController}

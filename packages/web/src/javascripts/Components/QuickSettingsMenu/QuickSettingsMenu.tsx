@@ -212,7 +212,13 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({
         </div>
         <Icon type="chevron-right" className="text-neutral" />
       </button>
-      <Popover buttonRef={themesButtonRef} open={themesMenuOpen} side="right" align="end">
+      <Popover
+        togglePopover={toggleThemesMenu}
+        buttonRef={themesButtonRef}
+        open={themesMenuOpen}
+        side="right"
+        align="end"
+      >
         <div className="my-1 px-3 text-sm font-semibold uppercase text-text">Themes</div>
         <button
           className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"

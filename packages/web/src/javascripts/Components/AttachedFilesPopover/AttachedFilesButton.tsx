@@ -159,7 +159,7 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
         <Icon type="attachment-file" />
         {attachedFilesCount > 0 && <span className="ml-2 text-sm">{attachedFilesCount}</span>}
       </button>
-      <Popover buttonRef={buttonRef} open={isOpen}>
+      <Popover togglePopover={toggleAttachedFilesMenuWithEntitlementCheck} buttonRef={buttonRef} open={isOpen}>
         <AttachedFilesPopover
           application={application}
           filesController={filesController}

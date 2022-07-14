@@ -43,7 +43,7 @@ const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({ applic
         </div>
         <Icon type="chevron-right" className="text-neutral" />
       </button>
-      <Popover buttonRef={buttonRef} open={isOpen} side="right" align="start">
+      <Popover togglePopover={toggleMenu} buttonRef={buttonRef} open={isOpen} side="right" align="start">
         <ChangeEditorMenu
           application={application}
           closeOnBlur={closeOnBlur}

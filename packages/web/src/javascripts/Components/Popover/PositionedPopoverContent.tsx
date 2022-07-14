@@ -20,7 +20,7 @@ const PositionedPopoverContent = ({ align, buttonRef, children, side }: Props) =
   return (
     <Portal>
       <div
-        className="absolute z-footer-bar-item-panel flex min-w-80 max-w-xs cursor-auto flex-col overflow-y-auto rounded bg-default py-2 shadow-main"
+        className="absolute z-footer-bar-item-panel hidden min-w-80 max-w-xs cursor-auto flex-col overflow-y-auto rounded bg-default py-2 shadow-main md:flex"
         style={styles ? styles : {}}
         ref={(node) => {
           setPopoverElement(node)
