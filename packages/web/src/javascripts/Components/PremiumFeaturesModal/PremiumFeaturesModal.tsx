@@ -3,7 +3,6 @@ import { FunctionComponent, useCallback, useRef } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { WebApplication } from '@/Application/Application'
 import { openSubscriptionDashboard } from '@/Utils/ManageSubscription'
-import styled from 'styled-components'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 import { loadPurchaseFlowUrl } from '../PurchaseFlow/PurchaseFlowFunctions'
 
@@ -15,22 +14,6 @@ type Props = {
   onClose: () => void
   showModal: boolean
 }
-
-const StyledPremiumIconContainer = styled.div`
-  background-color: var(--sn-stylekit-contrast-background-color);
-  border-radius: 50%;
-  height: 100px;
-  width: 100px;
-  margin-left: auto;
-  margin-right: auto;
-`
-
-const StyledPremiumIcon = styled(Icon).attrs(() => ({
-  className: PremiumFeatureIconClass,
-}))`
-  height: 50px;
-  width: 50px;
-`
 
 const PremiumFeaturesModal: FunctionComponent<Props> = ({
   application,
@@ -66,9 +49,12 @@ const PremiumFeaturesModal: FunctionComponent<Props> = ({
                 <Icon className="text-neutral" type="close" />
               </button>
             </div>
-            <StyledPremiumIconContainer className="mb-5 flex items-center justify-center" aria-hidden={true}>
-              <StyledPremiumIcon type={PremiumFeatureIconName} />
-            </StyledPremiumIconContainer>
+            <div
+              className="mx-auto mb-5 flex h-24 w-24 items-center justify-center rounded-[50%] bg-contrast"
+              aria-hidden={true}
+            >
+              <Icon className={`h-12 w-12 ${PremiumFeatureIconClass}`} type={PremiumFeatureIconName} />
+            </div>
             <div className="mb-1 text-center text-lg font-bold">Enable Advanced Features</div>
           </AlertDialogLabel>
           <AlertDialogDescription className="mb-2 px-4.5 text-center text-sm text-passive-1">
