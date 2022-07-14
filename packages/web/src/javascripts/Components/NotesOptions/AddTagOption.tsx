@@ -21,14 +21,14 @@ const AddTagOption: FunctionComponent<Props> = ({ navigationController, notesCon
   const [isOpen, setIsOpen] = useState(false)
   const [closeOnBlur] = useCloseOnBlur(menuContainerRef, setIsOpen)
 
-  const toggleTagsMenu = useCallback(() => {
+  const toggleMenu = useCallback(() => {
     setIsOpen((isOpen) => !isOpen)
   }, [])
 
   return (
     <div ref={menuContainerRef}>
       <button
-        onClick={toggleTagsMenu}
+        onClick={toggleMenu}
         onKeyDown={(event) => {
           if (event.key === KeyboardKey.Escape) {
             setIsOpen(false)
