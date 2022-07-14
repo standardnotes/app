@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.7.7](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.7.6...@standardnotes/components-meta@2.7.7) (2022-07-14)
+
+### Bug Fixes
+
+* **ste:** revert border radius change ([b174493](https://github.com/standardnotes/app/commit/b174493b4ea3ca164cf5754ab791022b17b612ac))
+
 ## [2.7.6](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.7.5...@standardnotes/components-meta@2.7.6) (2022-07-13)
 
 **Note:** Version bump only for package @standardnotes/components-meta
