@@ -1,7 +1,4 @@
 import { WebApplication } from '@/Application/Application'
-import { MENU_MARGIN_FROM_APP_BORDER } from '@/Constants/Constants'
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
-import VisuallyHidden from '@reach/visually-hidden'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
@@ -18,6 +15,8 @@ import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import { useFileDragNDrop } from '@/Components/FileDragNDropProvider/FileDragNDropProvider'
 import { FileItem, SNNote } from '@standardnotes/snjs'
 import { addToast, ToastType } from '@standardnotes/toast'
+import { classNames } from '@/Utils/ConcatenateClassNames'
+import Popover from '../Popover/Popover'
 
 type Props = {
   application: WebApplication
@@ -46,16 +45,10 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
   const premiumModal = usePremiumModal()
   const note: SNNote | undefined = notesController.firstSelectedNote
 
-  const [open, setOpen] = useState(false)
-  const [position, setPosition] = useState({
-    top: 0,
-    right: 0,
-  })
-  const [maxHeight, setMaxHeight] = useState<number | 'auto'>('auto')
+  const [isOpen, setIsOpen] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
-  const panelRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-  const [closeOnBlur, keepMenuOpen] = useCloseOnBlur(containerRef, setOpen)
+  const [closeOnBlur, keepMenuOpen] = useCloseOnBlur(containerRef, setIsOpen)
 
   useEffect(() => {
     if (filePreviewModalController.isOpen) {
@@ -78,29 +71,14 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
   }, [currentTab, isAttachedTabDisabled])
 
   const toggleAttachedFilesMenu = useCallback(async () => {
-    const rect = buttonRef.current?.getBoundingClientRect()
-    if (rect) {
-      const { clientHeight } = document.documentElement
-      const footerElementRect = document.getElementById('footer-bar')?.getBoundingClientRect()
-      const footerHeightInPx = footerElementRect?.height
+    const newOpenState = !isOpen
 
-      if (footerHeightInPx) {
-        setMaxHeight(clientHeight - rect.bottom - footerHeightInPx - MENU_MARGIN_FROM_APP_BORDER)
-      }
-
-      setPosition({
-        top: rect.bottom,
-        right: document.body.clientWidth - rect.right,
-      })
-
-      const newOpenState = !open
-      if (newOpenState && onClickPreprocessing) {
-        await onClickPreprocessing()
-      }
-
-      setOpen(newOpenState)
+    if (newOpenState && onClickPreprocessing) {
+      await onClickPreprocessing()
     }
-  }, [onClickPreprocessing, open])
+
+    setIsOpen(newOpenState)
+  }, [onClickPreprocessing, isOpen])
 
   const prospectivelyShowFilesPremiumModal = useCallback(() => {
     if (!featuresController.hasFiles) {
@@ -132,10 +110,10 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
   const { isDraggingFiles, addFilesDragInCallback, addFilesDropCallback } = useFileDragNDrop()
 
   useEffect(() => {
-    if (isDraggingFiles && !open) {
+    if (isDraggingFiles && !isOpen) {
       void toggleAttachedFilesMenu()
     }
-  }, [isDraggingFiles, open, toggleAttachedFilesMenu])
+  }, [isDraggingFiles, isOpen, toggleAttachedFilesMenu])
 
   const filesDragInCallback = useCallback((tab: PopoverTabs) => {
     setCurrentTab(tab)
@@ -162,53 +140,38 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
 
   return (
     <div ref={containerRef}>
-      <Disclosure open={open} onChange={toggleAttachedFilesMenuWithEntitlementCheck}>
-        <DisclosureButton
-          onKeyDown={(event) => {
-            if (event.key === 'Escape') {
-              setOpen(false)
-            }
-          }}
-          ref={buttonRef}
-          className={`bg-text-padding flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border text-neutral hover:bg-contrast focus:bg-contrast ${
-            attachedFilesCount > 0 ? 'py-1 px-3' : ''
-          }`}
-          onBlur={closeOnBlur}
-        >
-          <VisuallyHidden>Attached files</VisuallyHidden>
-          <Icon type="attachment-file" className="block" />
-          {attachedFilesCount > 0 && <span className="ml-2 text-sm">{attachedFilesCount}</span>}
-        </DisclosureButton>
-        <DisclosurePanel
-          onKeyDown={(event) => {
-            if (event.key === 'Escape') {
-              setOpen(false)
-              buttonRef.current?.focus()
-            }
-          }}
-          ref={panelRef}
-          style={{
-            ...position,
-            maxHeight,
-          }}
-          className="slide-down-animation max-h-120 fixed flex min-w-80 max-w-xs flex-col overflow-y-auto rounded bg-default shadow-main transition-transform duration-150"
-          onBlur={closeOnBlur}
-        >
-          {open && (
-            <AttachedFilesPopover
-              application={application}
-              filesController={filesController}
-              attachedFiles={attachedFiles}
-              allFiles={allFiles}
-              closeOnBlur={closeOnBlur}
-              currentTab={currentTab}
-              isDraggingFiles={isDraggingFiles}
-              setCurrentTab={setCurrentTab}
-              attachedTabDisabled={isAttachedTabDisabled}
-            />
-          )}
-        </DisclosurePanel>
-      </Disclosure>
+      <button
+        className={classNames(
+          'bg-text-padding flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border text-neutral hover:bg-contrast focus:bg-contrast',
+          attachedFilesCount > 0 ? 'py-1 px-3' : '',
+        )}
+        title="Attached files"
+        aria-label="Attached files"
+        onClick={toggleAttachedFilesMenuWithEntitlementCheck}
+        ref={buttonRef}
+        onBlur={closeOnBlur}
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') {
+            setIsOpen(false)
+          }
+        }}
+      >
+        <Icon type="attachment-file" />
+        {attachedFilesCount > 0 && <span className="ml-2 text-sm">{attachedFilesCount}</span>}
+      </button>
+      <Popover buttonRef={buttonRef} open={isOpen}>
+        <AttachedFilesPopover
+          application={application}
+          filesController={filesController}
+          attachedFiles={attachedFiles}
+          allFiles={allFiles}
+          closeOnBlur={closeOnBlur}
+          currentTab={currentTab}
+          isDraggingFiles={isDraggingFiles}
+          setCurrentTab={setCurrentTab}
+          attachedTabDisabled={isAttachedTabDisabled}
+        />
+      </Popover>
     </div>
   )
 }
