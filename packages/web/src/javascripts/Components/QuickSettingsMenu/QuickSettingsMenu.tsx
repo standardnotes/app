@@ -1,5 +1,4 @@
 import { WebApplication } from '@/Application/Application'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
 import { ComponentArea, ContentType, FeatureIdentifier, GetFeatures, SNComponent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, KeyboardEventHandler, useCallback, useEffect, useRef, useState } from 'react'
@@ -15,12 +14,14 @@ import { sortThemes } from '@/Utils/SortThemes'
 import RadioIndicator from '../RadioIndicator/RadioIndicator'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import Popover from '../Popover/Popover'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { PreferencesController } from '@/Controllers/PreferencesController'
+import { QuickSettingsController } from '@/Controllers/QuickSettingsController'
 
 const focusModeAnimationDuration = 1255
 
 type MenuProps = {
-  viewControllerManager: ViewControllerManager
+  preferencesController: PreferencesController
+  quickSettingsMenuController: QuickSettingsController
   application: WebApplication
   onClickOutside: () => void
 }
@@ -39,9 +40,13 @@ const toggleFocusMode = (enabled: boolean) => {
   }
 }
 
-const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewControllerManager, onClickOutside }) => {
-  const { closeQuickSettingsMenu, shouldAnimateCloseMenu, focusModeEnabled, setFocusModeEnabled } =
-    viewControllerManager.quickSettingsMenuController
+const QuickSettingsMenu: FunctionComponent<MenuProps> = ({
+  application,
+  preferencesController,
+  quickSettingsMenuController,
+  onClickOutside,
+}) => {
+  const { closeQuickSettingsMenu, focusModeEnabled, setFocusModeEnabled } = quickSettingsMenuController
   const [themes, setThemes] = useState<ThemeItem[]>([])
   const [toggleableComponents, setToggleableComponents] = useState<SNComponent[]>([])
   const [themesMenuOpen, setThemesMenuOpen] = useState(false)
@@ -147,8 +152,8 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
 
   const openPreferences = useCallback(() => {
     closeQuickSettingsMenu()
-    viewControllerManager.preferencesController.openPreferences()
-  }, [viewControllerManager, closeQuickSettingsMenu])
+    preferencesController.openPreferences()
+  }, [closeQuickSettingsMenu, preferencesController])
 
   const toggleComponent = useCallback(
     (component: SNComponent) => {
@@ -192,80 +197,71 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
   }, [application, themes])
 
   return (
-    <div ref={mainRef} className="sn-component">
-      <div
-        className={classNames(
-          'max-h-120 absolute bottom-full left-0 z-footer-bar-item-panel flex min-w-80 max-w-xs cursor-auto flex-col overflow-y-auto rounded bg-default py-2 shadow-main',
-          shouldAnimateCloseMenu ? 'slide-up-animation' : 'slide-down-animation transition-transform duration-150',
-        )}
-        ref={quickSettingsMenuRef}
-        onKeyDown={handleQuickSettingsKeyDown}
+    <div ref={mainRef} onKeyDown={handleQuickSettingsKeyDown}>
+      <div className="mt-1 mb-2 px-3 text-sm font-semibold uppercase text-text">Quick Settings</div>
+      <button
+        onClick={toggleThemesMenu}
+        onKeyDown={handleBtnKeyDown}
+        onBlur={closeOnBlur}
+        ref={themesButtonRef}
+        className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
       >
-        <div className="mt-1 mb-2 px-3 text-sm font-semibold uppercase text-text">Quick Settings</div>
-        <button
-          onClick={toggleThemesMenu}
-          onKeyDown={handleBtnKeyDown}
-          onBlur={closeOnBlur}
-          ref={themesButtonRef}
-          className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
-        >
-          <div className="flex items-center">
-            <Icon type="themes" className="mr-2 text-neutral" />
-            Themes
-          </div>
-          <Icon type="chevron-right" className="text-neutral" />
-        </button>
-        <Popover buttonRef={themesButtonRef} open={themesMenuOpen} side="right" align="end">
-          <div className="my-1 px-3 text-sm font-semibold uppercase text-text">Themes</div>
-          <button
-            className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
-            onClick={toggleDefaultTheme}
-            onBlur={closeOnBlur}
-            ref={defaultThemeButtonRef}
-          >
-            <RadioIndicator checked={defaultThemeOn} className="mr-2" />
-            Default
-          </button>
-          {themes.map((theme) => (
-            <ThemesMenuButton
-              item={theme}
-              application={application}
-              key={theme.component?.uuid ?? theme.identifier}
-              onBlur={closeOnBlur}
-            />
-          ))}
-        </Popover>
-        {toggleableComponents.map((component) => (
-          <button
-            className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
-            onClick={() => {
-              toggleComponent(component)
-            }}
-            key={component.uuid}
-          >
-            <div className="flex items-center">
-              <Icon type="window" className="mr-2 text-neutral" />
-              {component.displayName}
-            </div>
-            <Switch checked={component.active} className="px-0" />
-          </button>
-        ))}
-        <FocusModeSwitch
-          application={application}
-          onToggle={setFocusModeEnabled}
-          onClose={closeQuickSettingsMenu}
-          isEnabled={focusModeEnabled}
-        />
-        <HorizontalSeparator classes="my-2" />
+        <div className="flex items-center">
+          <Icon type="themes" className="mr-2 text-neutral" />
+          Themes
+        </div>
+        <Icon type="chevron-right" className="text-neutral" />
+      </button>
+      <Popover buttonRef={themesButtonRef} open={themesMenuOpen} side="right" align="end">
+        <div className="my-1 px-3 text-sm font-semibold uppercase text-text">Themes</div>
         <button
           className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
-          onClick={openPreferences}
-          ref={prefsButtonRef}
+          onClick={toggleDefaultTheme}
+          onBlur={closeOnBlur}
+          ref={defaultThemeButtonRef}
         >
-          <Icon type="more" className="mr-2 text-neutral" />
-          Open Preferences
+          <RadioIndicator checked={defaultThemeOn} className="mr-2" />
+          Default
         </button>
-      </div>
+        {themes.map((theme) => (
+          <ThemesMenuButton
+            item={theme}
+            application={application}
+            key={theme.component?.uuid ?? theme.identifier}
+            onBlur={closeOnBlur}
+          />
+        ))}
+      </Popover>
+      {toggleableComponents.map((component) => (
+        <button
+          className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+          onClick={() => {
+            toggleComponent(component)
+          }}
+          key={component.uuid}
+        >
+          <div className="flex items-center">
+            <Icon type="window" className="mr-2 text-neutral" />
+            {component.displayName}
+          </div>
+          <Switch checked={component.active} className="px-0" />
+        </button>
+      ))}
+      <FocusModeSwitch
+        application={application}
+        onToggle={setFocusModeEnabled}
+        onClose={closeQuickSettingsMenu}
+        isEnabled={focusModeEnabled}
+      />
+      <HorizontalSeparator classes="my-2" />
+      <button
+        className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+        onClick={openPreferences}
+        ref={prefsButtonRef}
+      >
+        <Icon type="more" className="mr-2 text-neutral" />
+        Open Preferences
+      </button>
     </div>
   )
 }

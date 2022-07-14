@@ -14,11 +14,11 @@ import {
 import { alertDialog, confirmDialog } from '@/Services/AlertService'
 import AccountMenu from '@/Components/AccountMenu/AccountMenu'
 import Icon from '@/Components/Icon/Icon'
-import QuickSettingsMenu from '@/Components/QuickSettingsMenu/QuickSettingsMenu'
 import SyncResolutionMenu from '@/Components/SyncResolutionMenu/SyncResolutionMenu'
 import { Fragment } from 'react'
 import { AccountMenuPane } from '../AccountMenu/AccountMenuPane'
 import { EditorEventSource } from '@/Types/EditorEventSource'
+import QuickSettingsButton from './QuickSettingsButton'
 
 type Props = {
   application: WebApplication
@@ -372,25 +372,15 @@ class Footer extends PureComponent<Props, State> {
                 />
               )}
             </div>
-            <div className="sk-app-bar-item ml-0-important relative z-footer-bar-item select-none">
-              <div
-                onClick={this.quickSettingsClickHandler}
-                className="flex h-full w-8 cursor-pointer items-center justify-center"
-              >
-                <div className="h-5">
-                  <Icon
-                    type="tune"
-                    className={(this.state.showQuickSettingsMenu ? 'text-info' : '') + ' rounded hover:text-info'}
-                  />
-                </div>
-              </div>
-              {this.state.showQuickSettingsMenu && (
-                <QuickSettingsMenu
-                  onClickOutside={this.clickOutsideQuickSettingsMenu}
-                  viewControllerManager={this.viewControllerManager}
-                  application={this.application}
-                />
-              )}
+            <div className="relative z-footer-bar-item select-none">
+              <QuickSettingsButton
+                isOpen={this.state.showQuickSettingsMenu}
+                onClickOutside={this.clickOutsideQuickSettingsMenu}
+                toggleMenu={this.quickSettingsClickHandler}
+                application={this.application}
+                preferencesController={this.viewControllerManager.preferencesController}
+                quickSettingsMenuController={this.viewControllerManager.quickSettingsMenuController}
+              />
             </div>
             {this.state.showBetaWarning && (
               <Fragment>
