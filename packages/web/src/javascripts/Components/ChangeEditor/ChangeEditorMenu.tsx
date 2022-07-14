@@ -24,6 +24,7 @@ import {
   transactionForDisassociateComponentWithCurrentNote,
 } from '../NoteView/TransactionFunctions'
 import { reloadFont } from '../NoteView/FontFunctions'
+import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 
 type ChangeEditorMenuProps = {
   application: WebApplication
@@ -202,7 +203,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
                           {group.icon && <Icon type={group.icon} className={`mr-2 ${group.iconClassName}`} />}
                           {item.name}
                         </div>
-                        {!item.isEntitled && <Icon type="premium-feature" />}
+                        {!item.isEntitled && <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />}
                       </div>
                     </MenuItem>
                   )

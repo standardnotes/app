@@ -6,6 +6,7 @@ import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import Switch from '@/Components/Switch/Switch'
 import { ThemeItem } from './ThemeItem'
 import RadioIndicator from '../RadioIndicator/RadioIndicator'
+import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 
 type Props = {
   item: ThemeItem
@@ -55,7 +56,7 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ application, item }) => {
             <Switch className="mr-2 px-0" checked={item.component?.active} />
             {item.name}
           </div>
-          {!canActivateTheme && <Icon type="premium-feature" />}
+          {!canActivateTheme && <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />}
         </>
       ) : (
         <>
@@ -71,7 +72,7 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ application, item }) => {
               }}
             ></div>
           ) : (
-            <Icon type="premium-feature" />
+            <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />
           )}
         </>
       )}

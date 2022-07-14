@@ -65,6 +65,7 @@ platform :ios do
         skip_screenshots: true,
         skip_binary_upload: true,
         run_precheck_before_submit: false,
+        submission_information: { add_id_info_uses_idfa: false },
         release_notes: {
           'default': 'Fixes and improvements.'
         }
