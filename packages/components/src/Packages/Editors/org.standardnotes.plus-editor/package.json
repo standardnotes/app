@@ -1,7 +1,7 @@
 {
   "name": "@standardnotes/rich-text",
   "private": true,
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "A rich text editor for Standard Notes",
   "main": "dist/dist.js",
   "author": "Standard Notes <hello@standardnotes.com>",
@@ -36,7 +36,7 @@
     "webpack": "*",
     "webpack-cli": "*",
     "webpack-dev-server": "*",
-    "webpack-merge": "^5.7.3",
+    "webpack-merge": "^5.8.0",
     "webpack-merge-and-include-globally": "^2.3.3"
   }
 }

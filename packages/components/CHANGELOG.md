@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.7.6](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.7.5...@standardnotes/components-meta@2.7.6) (2022-07-13)
+
+**Note:** Version bump only for package @standardnotes/components-meta
+
+## [2.7.5](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.7.4...@standardnotes/components-meta@2.7.5) (2022-07-13)
+
+### Bug Fixes
+
+* **components:** additional output in the versioning script ([b3c8d6e](https://github.com/standardnotes/app/commit/b3c8d6e976a96417539c609e59d92877475c557e))
+* upgrade jest with types to latest version ([09e08ca](https://github.com/standardnotes/app/commit/09e08ca899ba8694cf43292e918c4c204c0d2cb9))
+* upgrade ts-jest in packages ([71e792d](https://github.com/standardnotes/app/commit/71e792da354ff90335b92758e196075a0f88d060))
+
 ## [2.7.4](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.7.3...@standardnotes/components-meta@2.7.4) (2022-07-11)
 
 ### Bug Fixes

@@ -3,7 +3,7 @@
 echo 'Building components from' $(pwd)
 
 # Exit immediately after an error in any command
-set -e
+set -xe
 
 yarn clean && yarn build:components
 

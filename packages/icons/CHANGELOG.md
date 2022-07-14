@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.6](https://github.com/standardnotes/app/compare/@standardnotes/icons@1.4.5...@standardnotes/icons@1.4.6) (2022-07-13)
+
+### Bug Fixes
+
+* upgrade ts-jest in packages ([71e792d](https://github.com/standardnotes/app/commit/71e792da354ff90335b92758e196075a0f88d060))
+
 ## [1.4.5](https://github.com/standardnotes/app/compare/@standardnotes/icons@1.4.4...@standardnotes/icons@1.4.5) (2022-07-06)
 
 **Note:** Version bump only for package @standardnotes/icons

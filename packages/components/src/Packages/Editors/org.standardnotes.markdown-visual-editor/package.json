@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/markdown-visual",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "author": "Johnny Almonte <johnny@standardnotes.com>",
   "description": "A lightweight WYSIWYG markdown editor for Standard Notes, derived from Milkdown.",
   "keywords": [
@@ -45,7 +45,7 @@
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.4.1",
+    "@types/jest": "^28.1.5",
     "@types/lodash": "^4.14.179",
     "@types/marked": "^4.0.2",
     "@types/node": "^17.0.21",

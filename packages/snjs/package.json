@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/snjs",
-  "version": "2.124.1",
+  "version": "2.124.3",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -32,7 +32,7 @@
     "@babel/core": "*",
     "@babel/preset-env": "*",
     "@types/crypto-js": "^4.1.1",
-    "@types/jest": "^28.1.4",
+    "@types/jest": "^28.1.5",
     "@types/jsdom": "^16.2.14",
     "@types/libsodium-wrappers": "^0.7.9",
     "@types/lodash": "^4.14.179",
@@ -49,7 +49,7 @@
     "exports-loader": "^3.1.0",
     "jest": "^28.1.2",
     "jest-environment-jsdom": "^28.1.2",
-    "jsdom": "^19.0.0",
+    "jsdom": "^20.0.0",
     "libsodium-wrappers": "^0.7.9",
     "lodash": "^4.17.21",
     "nock": "^13.2.4",
@@ -63,7 +63,7 @@
     "uuid": "^8.3.2",
     "webpack": "*",
     "webpack-cli": "*",
-    "webpack-merge": "*"
+    "webpack-merge": "^5.8.0"
   },
   "dependencies": {
     "@standardnotes/api": "workspace:*",

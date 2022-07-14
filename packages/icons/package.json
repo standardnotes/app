@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/icons",
-  "version": "1.4.5",
+  "version": "1.4.6",
   "private": true,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -24,7 +24,7 @@
     "prettier": "*",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
-    "ts-jest": "^28.0.3",
+    "ts-jest": "^28.0.5",
     "ts-loader": "^9.3.0",
     "typescript": "*",
     "webpack": "*",
