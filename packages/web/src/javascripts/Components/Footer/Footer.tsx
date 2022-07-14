@@ -12,13 +12,13 @@ import {
   STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON,
 } from '@/Constants/Strings'
 import { alertDialog, confirmDialog } from '@/Services/AlertService'
-import AccountMenu from '@/Components/AccountMenu/AccountMenu'
 import Icon from '@/Components/Icon/Icon'
 import SyncResolutionMenu from '@/Components/SyncResolutionMenu/SyncResolutionMenu'
 import { Fragment } from 'react'
 import { AccountMenuPane } from '../AccountMenu/AccountMenuPane'
 import { EditorEventSource } from '@/Types/EditorEventSource'
 import QuickSettingsButton from './QuickSettingsButton'
+import AccountMenuButton from './AccountMenuButton'
 
 type Props = {
   application: WebApplication
@@ -348,29 +348,16 @@ class Footer extends PureComponent<Props, State> {
         >
           <div className="left flex h-full">
             <div className="sk-app-bar-item relative z-footer-bar-item ml-0 select-none">
-              <div
-                onClick={this.accountMenuClickHandler}
-                className={
-                  (this.state.showAccountMenu ? 'bg-border' : '') +
-                  ' flex h-full w-8 cursor-pointer items-center justify-center rounded-full'
-                }
-              >
-                <div
-                  className={
-                    this.state.hasError ? 'text-danger' : (this.user ? 'text-info' : 'text-neutral') + ' h-5 w-5'
-                  }
-                >
-                  <Icon type="account-circle" className="max-h-5 hover:text-info" />
-                </div>
-              </div>
-              {this.state.showAccountMenu && (
-                <AccountMenu
-                  onClickOutside={this.clickOutsideAccountMenu}
-                  viewControllerManager={this.viewControllerManager}
-                  application={this.application}
-                  mainApplicationGroup={this.props.applicationGroup}
-                />
-              )}
+              <AccountMenuButton
+                application={this.application}
+                hasError={this.state.hasError}
+                isOpen={this.state.showAccountMenu}
+                mainApplicationGroup={this.props.applicationGroup}
+                onClickOutside={this.clickOutsideAccountMenu}
+                toggleMenu={this.accountMenuClickHandler}
+                user={this.user}
+                viewControllerManager={this.viewControllerManager}
+              />
             </div>
             <div className="relative z-footer-bar-item select-none">
               <QuickSettingsButton
