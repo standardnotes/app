@@ -1,3 +1,4 @@
+import { useDocumentRect } from '@/Hooks/useDocumentRect'
 import { useAutoElementRect } from '@/Hooks/useElementRect'
 import { useState } from 'react'
 import Portal from '../Portal/Portal'
@@ -9,10 +10,12 @@ type Props = CommonPopoverProps
 const PositionedPopoverContent = ({ align, buttonRef, children, side }: Props) => {
   const [popoverElement, setPopoverElement] = useState<HTMLDivElement | null>(null)
   const popoverRect = useAutoElementRect(popoverElement)
+  const documentRect = useDocumentRect()
 
   const styles = getPositionedPopoverStyles({
     align,
     button: buttonRef.current,
+    documentRect,
     popoverRect: popoverRect ?? popoverElement?.getBoundingClientRect(),
     side,
   })

@@ -7,15 +7,14 @@ export const OppositeSide: Record<PopoverSide, PopoverSide> = {
   right: 'left',
 }
 
-export const checkCollisions = (popoverRect: DOMRect): RectCollisions => {
+export const checkCollisions = (popoverRect: DOMRect, containerRect: DOMRect): RectCollisions => {
   const footerRect = document.querySelector('footer')?.getBoundingClientRect()
-  const documentRect = document.documentElement.getBoundingClientRect()
   const appRect = footerRect
     ? DOMRect.fromRect({
-        width: documentRect.width,
-        height: documentRect.height - footerRect.height,
+        width: containerRect.width,
+        height: containerRect.height - footerRect.height,
       })
-    : documentRect
+    : containerRect
 
   return {
     top: popoverRect.top < appRect.top,
