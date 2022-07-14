@@ -1,13 +1,12 @@
 import { WebApplication } from '@/Application/Application'
 import { ViewControllerManager } from '@/Services/ViewControllerManager'
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { ComponentArea, ContentType, FeatureIdentifier, GetFeatures, SNComponent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, KeyboardEventHandler, useCallback, useEffect, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import Switch from '@/Components/Switch/Switch'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
-import { quickSettingsKeyDownHandler, themesMenuKeyDownHandler } from './EventHandlers'
+import { quickSettingsKeyDownHandler } from './EventHandlers'
 import FocusModeSwitch from './FocusModeSwitch'
 import ThemesMenuButton from './ThemesMenuButton'
 import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
@@ -15,6 +14,8 @@ import { ThemeItem } from './ThemeItem'
 import { sortThemes } from '@/Utils/SortThemes'
 import RadioIndicator from '../RadioIndicator/RadioIndicator'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
+import Popover from '../Popover/Popover'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 
 const focusModeAnimationDuration = 1255
 
@@ -44,7 +45,6 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
   const [themes, setThemes] = useState<ThemeItem[]>([])
   const [toggleableComponents, setToggleableComponents] = useState<SNComponent[]>([])
   const [themesMenuOpen, setThemesMenuOpen] = useState(false)
-  const [themesMenuPosition, setThemesMenuPosition] = useState({})
   const [defaultThemeOn, setDefaultThemeOn] = useState(false)
 
   const themesMenuRef = useRef<HTMLDivElement>(null)
@@ -142,17 +142,8 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
   const [closeOnBlur] = useCloseOnBlur(themesMenuRef, setThemesMenuOpen)
 
   const toggleThemesMenu = useCallback(() => {
-    if (!themesMenuOpen && themesButtonRef.current) {
-      const themesButtonRect = themesButtonRef.current.getBoundingClientRect()
-      setThemesMenuPosition({
-        left: themesButtonRect.right,
-        bottom: document.documentElement.clientHeight - themesButtonRect.bottom,
-      })
-      setThemesMenuOpen(true)
-    } else {
-      setThemesMenuOpen(false)
-    }
-  }, [themesMenuOpen])
+    setThemesMenuOpen((isOpen) => !isOpen)
+  }, [])
 
   const openPreferences = useCallback(() => {
     closeQuickSettingsMenu()
@@ -193,10 +184,6 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
     [closeQuickSettingsMenu, themesMenuOpen],
   )
 
-  const handlePanelKeyDown: React.KeyboardEventHandler<HTMLDivElement> = useCallback((event) => {
-    themesMenuKeyDownHandler(event, themesMenuRef, setThemesMenuOpen, themesButtonRef)
-  }, [])
-
   const toggleDefaultTheme = useCallback(() => {
     const activeTheme = themes.map((item) => item.component).find((theme) => theme?.active && !theme.isLayerable())
     if (activeTheme) {
@@ -207,57 +194,47 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, viewCont
   return (
     <div ref={mainRef} className="sn-component">
       <div
-        className={`max-h-120 absolute bottom-full left-0 z-footer-bar-item-panel flex min-w-80 max-w-xs cursor-auto flex-col overflow-y-auto rounded bg-default py-2 shadow-main ${
-          shouldAnimateCloseMenu ? 'slide-up-animation' : 'slide-down-animation transition-transform duration-150'
-        }`}
+        className={classNames(
+          'max-h-120 absolute bottom-full left-0 z-footer-bar-item-panel flex min-w-80 max-w-xs cursor-auto flex-col overflow-y-auto rounded bg-default py-2 shadow-main',
+          shouldAnimateCloseMenu ? 'slide-up-animation' : 'slide-down-animation transition-transform duration-150',
+        )}
         ref={quickSettingsMenuRef}
         onKeyDown={handleQuickSettingsKeyDown}
       >
         <div className="mt-1 mb-2 px-3 text-sm font-semibold uppercase text-text">Quick Settings</div>
-        <Disclosure open={themesMenuOpen} onChange={toggleThemesMenu}>
-          <DisclosureButton
-            onKeyDown={handleBtnKeyDown}
+        <button
+          onClick={toggleThemesMenu}
+          onKeyDown={handleBtnKeyDown}
+          onBlur={closeOnBlur}
+          ref={themesButtonRef}
+          className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+        >
+          <div className="flex items-center">
+            <Icon type="themes" className="mr-2 text-neutral" />
+            Themes
+          </div>
+          <Icon type="chevron-right" className="text-neutral" />
+        </button>
+        <Popover buttonRef={themesButtonRef} open={themesMenuOpen} side="right" align="end">
+          <div className="my-1 px-3 text-sm font-semibold uppercase text-text">Themes</div>
+          <button
+            className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+            onClick={toggleDefaultTheme}
             onBlur={closeOnBlur}
-            ref={themesButtonRef}
-            className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+            ref={defaultThemeButtonRef}
           >
-            <div className="flex items-center">
-              <Icon type="themes" className="mr-2 text-neutral" />
-              Themes
-            </div>
-            <Icon type="chevron-right" className="text-neutral" />
-          </DisclosureButton>
-          <DisclosurePanel
-            onBlur={closeOnBlur}
-            ref={themesMenuRef}
-            onKeyDown={handlePanelKeyDown}
-            style={{
-              ...themesMenuPosition,
-            }}
-            className={`${
-              themesMenuOpen ? 'flex' : 'hidden'
-            } max-h-120 slide-down-animation fixed min-w-80 max-w-xs flex-col overflow-y-auto rounded bg-default py-2 shadow-main transition-transform duration-150`}
-          >
-            <div className="my-1 px-3 text-sm font-semibold uppercase text-text">Themes</div>
-            <button
-              className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
-              onClick={toggleDefaultTheme}
+            <RadioIndicator checked={defaultThemeOn} className="mr-2" />
+            Default
+          </button>
+          {themes.map((theme) => (
+            <ThemesMenuButton
+              item={theme}
+              application={application}
+              key={theme.component?.uuid ?? theme.identifier}
               onBlur={closeOnBlur}
-              ref={defaultThemeButtonRef}
-            >
-              <RadioIndicator checked={defaultThemeOn} className="mr-2" />
-              Default
-            </button>
-            {themes.map((theme) => (
-              <ThemesMenuButton
-                item={theme}
-                application={application}
-                key={theme.component?.uuid ?? theme.identifier}
-                onBlur={closeOnBlur}
-              />
-            ))}
-          </DisclosurePanel>
-        </Disclosure>
+            />
+          ))}
+        </Popover>
         {toggleableComponents.map((component) => (
           <button
             className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
