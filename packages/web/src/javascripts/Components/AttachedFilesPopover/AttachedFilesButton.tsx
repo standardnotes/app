@@ -2,7 +2,6 @@ import { WebApplication } from '@/Application/Application'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
-import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import AttachedFilesPopover from './AttachedFilesPopover'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { PopoverTabs } from './PopoverTabs'
@@ -33,7 +32,6 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
   application,
   featuresController,
   filesController,
-  filePreviewModalController,
   navigationController,
   notesController,
   selectionController,
@@ -48,15 +46,6 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
   const [isOpen, setIsOpen] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-  const [closeOnBlur, keepMenuOpen] = useCloseOnBlur(containerRef, setIsOpen)
-
-  useEffect(() => {
-    if (filePreviewModalController.isOpen) {
-      keepMenuOpen(true)
-    } else {
-      keepMenuOpen(false)
-    }
-  }, [filePreviewModalController.isOpen, keepMenuOpen])
 
   const [currentTab, setCurrentTab] = useState(
     navigationController.isInFilesView ? PopoverTabs.AllFiles : PopoverTabs.AttachedFiles,
@@ -149,7 +138,6 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
         aria-label="Attached files"
         onClick={toggleAttachedFilesMenuWithEntitlementCheck}
         ref={buttonRef}
-        onBlur={closeOnBlur}
         onKeyDown={(event) => {
           if (event.key === 'Escape') {
             setIsOpen(false)
@@ -165,7 +153,9 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
           filesController={filesController}
           attachedFiles={attachedFiles}
           allFiles={allFiles}
-          closeOnBlur={closeOnBlur}
+          closeOnBlur={() => {
+            //
+          }}
           currentTab={currentTab}
           isDraggingFiles={isDraggingFiles}
           setCurrentTab={setCurrentTab}
