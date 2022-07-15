@@ -14,7 +14,7 @@ jobs:
       run:
         working-directory: packages/desktop
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           registry-url: 'https://registry.npmjs.org'
@@ -42,7 +42,7 @@ jobs:
       run:
         working-directory: packages/desktop
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           registry-url: 'https://registry.npmjs.org'
