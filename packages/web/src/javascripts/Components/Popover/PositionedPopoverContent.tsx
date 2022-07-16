@@ -7,14 +7,15 @@ import { CommonPopoverProps } from './types'
 
 type Props = CommonPopoverProps
 
-const PositionedPopoverContent = ({ align, buttonRef, children, side }: Props) => {
+const PositionedPopoverContent = ({ align = 'end', buttonRef, children, side = 'bottom' }: Props) => {
   const [popoverElement, setPopoverElement] = useState<HTMLDivElement | null>(null)
   const popoverRect = useAutoElementRect(popoverElement)
+  const buttonRect = useAutoElementRect(buttonRef.current)
   const documentRect = useDocumentRect()
 
   const styles = getPositionedPopoverStyles({
     align,
-    button: buttonRef.current,
+    buttonRect,
     documentRect,
     popoverRect: popoverRect ?? popoverElement?.getBoundingClientRect(),
     side,
@@ -24,7 +25,7 @@ const PositionedPopoverContent = ({ align, buttonRef, children, side }: Props) =
     <Portal>
       <div
         className="absolute z-modal hidden min-w-80 max-w-xs cursor-auto flex-col overflow-y-auto rounded bg-default py-2 shadow-main md:flex"
-        style={styles ? styles : {}}
+        style={Object.assign({}, styles)}
         ref={(node) => {
           setPopoverElement(node)
         }}

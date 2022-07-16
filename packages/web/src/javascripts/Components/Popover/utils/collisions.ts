@@ -1,4 +1,5 @@
 import { PopoverSide, PopoverAlignment, RectCollisions } from '../types'
+import { getAppRect } from './rect'
 
 export const OppositeSide: Record<PopoverSide, PopoverSide> = {
   top: 'bottom',
@@ -8,13 +9,7 @@ export const OppositeSide: Record<PopoverSide, PopoverSide> = {
 }
 
 export const checkCollisions = (popoverRect: DOMRect, containerRect: DOMRect): RectCollisions => {
-  const footerRect = document.querySelector('footer')?.getBoundingClientRect()
-  const appRect = footerRect
-    ? DOMRect.fromRect({
-        width: containerRect.width,
-        height: containerRect.height - footerRect.height,
-      })
-    : containerRect
+  const appRect = getAppRect(containerRect)
 
   return {
     top: popoverRect.top < appRect.top,
@@ -29,9 +24,9 @@ export const getNonCollidingSide = (
   preferredSideCollisions: RectCollisions,
   oppositeSideCollisions: RectCollisions,
 ): PopoverSide => {
-  return !preferredSideCollisions[preferredSide] && !oppositeSideCollisions[preferredSide]
-    ? OppositeSide[preferredSide]
-    : preferredSide
+  const oppositeSide = OppositeSide[preferredSide]
+
+  return preferredSideCollisions[preferredSide] && !oppositeSideCollisions[oppositeSide] ? oppositeSide : preferredSide
 }
 
 export const getNonCollidingAlignment = (

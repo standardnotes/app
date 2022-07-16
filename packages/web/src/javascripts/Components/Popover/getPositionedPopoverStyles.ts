@@ -1,7 +1,7 @@
 import { CSSProperties } from 'react'
 import { PopoverAlignment, PopoverSide } from './types'
 import { OppositeSide, checkCollisions, getNonCollidingSide, getNonCollidingAlignment } from './utils/collisions'
-import { getPositionedPopoverRect } from './utils/getPositionedRect'
+import { getAppRect, getPopoverMaxHeight, getPositionedPopoverRect } from './utils/rect'
 
 const getStylesFromRect = (rect: DOMRect): CSSProperties => {
   return {
@@ -13,25 +13,23 @@ const getStylesFromRect = (rect: DOMRect): CSSProperties => {
 }
 
 type Options = {
-  align?: PopoverAlignment
-  button: HTMLButtonElement | null
+  align: PopoverAlignment
+  buttonRect?: DOMRect
   documentRect: DOMRect
   popoverRect?: DOMRect
-  side?: PopoverSide
+  side: PopoverSide
 }
 
 export const getPositionedPopoverStyles = ({
-  align = 'end',
-  button,
+  align,
+  buttonRect,
   documentRect,
   popoverRect,
-  side = 'bottom',
+  side,
 }: Options): CSSProperties | null => {
-  if (!popoverRect || !button) {
+  if (!popoverRect || !buttonRect) {
     return null
   }
-
-  const buttonRect = button.getBoundingClientRect()
 
   const rectForPreferredSide = getPositionedPopoverRect(popoverRect, buttonRect, side, align)
   const preferredSideRectCollisions = checkCollisions(rectForPreferredSide, documentRect)
@@ -44,5 +42,7 @@ export const getPositionedPopoverStyles = ({
   const finalAlignment = getNonCollidingAlignment(finalSide, align, preferredSideRectCollisions)
   const finalPositionedRect = getPositionedPopoverRect(popoverRect, buttonRect, finalSide, finalAlignment)
 
-  return getStylesFromRect(finalPositionedRect)
+  return Object.assign({}, getStylesFromRect(finalPositionedRect), {
+    maxHeight: getPopoverMaxHeight(getAppRect(documentRect), popoverRect, side, align),
+  })
 }

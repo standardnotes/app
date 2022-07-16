@@ -1,5 +1,60 @@
 import { PopoverSide, PopoverAlignment } from '../types'
 
+export const getPopoverMaxHeight = (
+  appRect: DOMRect,
+  popoverRect: DOMRect | undefined,
+  side: PopoverSide,
+  alignment: PopoverAlignment,
+) => {
+  const MarginFromAppBorderInPX = 10
+
+  let constraint = 0
+
+  if (popoverRect) {
+    if (side === 'bottom') {
+      constraint = popoverRect.top
+    }
+    if (side === 'top') {
+      constraint = appRect.height - popoverRect.bottom
+    }
+    if (side === 'left') {
+      switch (alignment) {
+        case "start":
+          break
+        case "center":
+          break
+        case "end":
+          break
+      }
+    }
+  }
+
+  return appRect.height - constraint - MarginFromAppBorderInPX
+}
+
+export const getMaxHeightAdjustedRect = (rect: DOMRect, maxHeight: number) => {
+  return DOMRect.fromRect({
+    width: rect.width,
+    height: rect.height < maxHeight ? rect.height : maxHeight,
+    x: rect.x,
+    y: rect.y,
+  })
+}
+
+export const getAppRect = (updatedDocumentRect?: DOMRect) => {
+  const footerRect = document.querySelector('footer')?.getBoundingClientRect()
+  const documentRect = updatedDocumentRect ? updatedDocumentRect : document.documentElement.getBoundingClientRect()
+
+  const appRect = footerRect
+    ? DOMRect.fromRect({
+        width: documentRect.width,
+        height: documentRect.height - footerRect.height,
+      })
+    : documentRect
+
+  return appRect
+}
+
 export const getPositionedPopoverRect = (
   popoverRect: DOMRect,
   buttonRect: DOMRect,
