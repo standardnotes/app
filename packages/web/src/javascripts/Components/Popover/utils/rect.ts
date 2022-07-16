@@ -11,21 +11,24 @@ export const getPopoverMaxHeight = (
   let constraint = 0
 
   if (buttonRect) {
-    if (side === 'bottom') {
-      constraint = buttonRect.bottom
-    }
-    if (side === 'top') {
-      constraint = appRect.height - buttonRect.top
-    }
-    if (side === 'left') {
-      switch (alignment) {
-        case "start":
-          break
-        case "center":
-          break
-        case "end":
-          break
-      }
+    switch (side) {
+      case 'top':
+        constraint = appRect.height - buttonRect.top
+        break
+      case 'bottom':
+        constraint = buttonRect.bottom
+        break
+      case 'left':
+      case 'right':
+        switch (alignment) {
+          case 'start':
+            constraint = buttonRect.top
+            break
+          case 'end':
+            constraint = appRect.height - buttonRect.bottom
+            break
+        }
+        break
     }
   }
 

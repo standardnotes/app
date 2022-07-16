@@ -14,7 +14,7 @@ const PositionedPopoverContent = ({ align = 'end', buttonRef, children, side = '
   const buttonRect = useAutoElementRect(buttonRef.current)
   const documentRect = useDocumentRect()
 
-  const styles = getPositionedPopoverStyles({
+  const [styles, positionedSide, positionedAlignment] = getPositionedPopoverStyles({
     align,
     buttonRect,
     documentRect,
@@ -27,7 +27,7 @@ const PositionedPopoverContent = ({ align = 'end', buttonRef, children, side = '
       <div
         className="absolute z-modal hidden min-w-80 max-w-xs cursor-auto flex-col overflow-y-auto rounded bg-default py-2 shadow-main md:flex"
         style={Object.assign({}, styles, {
-          maxHeight: getPopoverMaxHeight(getAppRect(documentRect), buttonRect, side, align),
+          maxHeight: getPopoverMaxHeight(getAppRect(documentRect), buttonRect, positionedSide, positionedAlignment),
         })}
         ref={(node) => {
           setPopoverElement(node)

@@ -1,5 +1,5 @@
 import { PopoverSide, PopoverAlignment, RectCollisions } from '../types'
-import { getAppRect } from './rect'
+import { getAppRect, getPositionedPopoverRect } from './rect'
 
 export const OppositeSide: Record<PopoverSide, PopoverSide> = {
   top: 'bottom',
@@ -33,19 +33,50 @@ export const getNonCollidingAlignment = (
   finalSide: PopoverSide,
   preferredAlignment: PopoverAlignment,
   collisions: RectCollisions,
+  {
+    popoverRect,
+    buttonRect,
+    documentRect,
+  }: {
+    popoverRect: DOMRect
+    buttonRect: DOMRect
+    documentRect: DOMRect
+  },
 ): PopoverAlignment => {
   const isHorizontalSide = finalSide === 'top' || finalSide === 'bottom'
   const boundToCheckForStart = isHorizontalSide ? 'right' : 'bottom'
   const boundToCheckForEnd = isHorizontalSide ? 'left' : 'top'
 
-  const prefersAligningAtStart = preferredAlignment === 'start' || preferredAlignment === 'center'
+  const prefersAligningAtStart = preferredAlignment === 'start'
   if (prefersAligningAtStart && collisions[boundToCheckForStart]) {
-    return 'end'
+    const oppositeAlignmentCollisions = checkCollisions(
+      getPositionedPopoverRect(popoverRect, buttonRect, finalSide, 'end'),
+      documentRect,
+    )
+    if (!oppositeAlignmentCollisions[boundToCheckForEnd]) {
+      return 'end'
+    }
   }
 
-  const prefersAligningAtEnd = preferredAlignment === 'end' || preferredAlignment === 'center'
+  const prefersAligningAtEnd = preferredAlignment === 'end'
   if (prefersAligningAtEnd && collisions[boundToCheckForEnd]) {
-    return 'start'
+    const oppositeAlignmentCollisions = checkCollisions(
+      getPositionedPopoverRect(popoverRect, buttonRect, finalSide, 'start'),
+      documentRect,
+    )
+    if (!oppositeAlignmentCollisions[boundToCheckForStart]) {
+      return 'start'
+    }
+  }
+
+  const prefersAligningAtCenter = preferredAlignment === 'center'
+  if (prefersAligningAtCenter) {
+    if (collisions[boundToCheckForStart]) {
+      return 'end'
+    }
+    if (collisions[boundToCheckForEnd]) {
+      return 'start'
+    }
   }
 
   return preferredAlignment
