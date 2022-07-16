@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Portal from '../Portal/Portal'
 import { getPositionedPopoverStyles } from './getPositionedPopoverStyles'
 import { CommonPopoverProps } from './types'
+import { getPopoverMaxHeight, getAppRect } from './utils/rect'
 
 type Props = CommonPopoverProps
 
@@ -25,7 +26,9 @@ const PositionedPopoverContent = ({ align = 'end', buttonRef, children, side = '
     <Portal>
       <div
         className="absolute z-modal hidden min-w-80 max-w-xs cursor-auto flex-col overflow-y-auto rounded bg-default py-2 shadow-main md:flex"
-        style={Object.assign({}, styles)}
+        style={Object.assign({}, styles, {
+          maxHeight: getPopoverMaxHeight(getAppRect(documentRect), buttonRect, side, align),
+        })}
         ref={(node) => {
           setPopoverElement(node)
         }}

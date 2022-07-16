@@ -2,7 +2,7 @@ import { PopoverSide, PopoverAlignment } from '../types'
 
 export const getPopoverMaxHeight = (
   appRect: DOMRect,
-  popoverRect: DOMRect | undefined,
+  buttonRect: DOMRect | undefined,
   side: PopoverSide,
   alignment: PopoverAlignment,
 ) => {
@@ -10,12 +10,12 @@ export const getPopoverMaxHeight = (
 
   let constraint = 0
 
-  if (popoverRect) {
+  if (buttonRect) {
     if (side === 'bottom') {
-      constraint = popoverRect.top
+      constraint = buttonRect.bottom
     }
     if (side === 'top') {
-      constraint = appRect.height - popoverRect.bottom
+      constraint = appRect.height - buttonRect.top
     }
     if (side === 'left') {
       switch (alignment) {
