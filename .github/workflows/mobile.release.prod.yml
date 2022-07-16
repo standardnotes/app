@@ -15,7 +15,7 @@ jobs:
     timeout-minutes: 45
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Export version from package.json
         run:
           echo "PACKAGE_VERSION=$(grep '"version"' package.json | cut -d '"' -f 4 | cut -d "-" -f 1)" >> $GITHUB_ENV
@@ -77,7 +77,7 @@ jobs:
     timeout-minutes: 90
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Export version from package.json
         run:
           echo "PACKAGE_VERSION=$(grep '"version"' package.json | cut -d '"' -f 4 | cut -d "-" -f 1)" >> $GITHUB_ENV
