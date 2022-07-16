@@ -29,7 +29,7 @@ export const getNonCollidingSide = (
   preferredSideCollisions: RectCollisions,
   oppositeSideCollisions: RectCollisions,
 ): PopoverSide => {
-  return preferredSideCollisions[preferredSide] && !oppositeSideCollisions[preferredSide]
+  return !preferredSideCollisions[preferredSide] && !oppositeSideCollisions[preferredSide]
     ? OppositeSide[preferredSide]
     : preferredSide
 }
