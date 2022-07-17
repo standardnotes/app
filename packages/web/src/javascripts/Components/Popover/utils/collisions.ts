@@ -29,6 +29,11 @@ export const getNonCollidingSide = (
   return preferredSideCollisions[preferredSide] && !oppositeSideCollisions[oppositeSide] ? oppositeSide : preferredSide
 }
 
+const OppositeAlignment: Record<Exclude<PopoverAlignment, 'center'>, PopoverAlignment> = {
+  start: 'end',
+  end: 'start',
+}
+
 export const getNonCollidingAlignment = (
   finalSide: PopoverSide,
   preferredAlignment: PopoverAlignment,
@@ -48,33 +53,31 @@ export const getNonCollidingAlignment = (
   const boundToCheckForEnd = isHorizontalSide ? 'left' : 'top'
 
   const prefersAligningAtStart = preferredAlignment === 'start'
-  if (prefersAligningAtStart && collisions[boundToCheckForStart]) {
-    const oppositeAlignmentCollisions = checkCollisions(
-      getPositionedPopoverRect(popoverRect, buttonRect, finalSide, 'end'),
-      documentRect,
-    )
-    if (!oppositeAlignmentCollisions[boundToCheckForEnd]) {
-      return 'end'
-    }
-  }
-
-  const prefersAligningAtEnd = preferredAlignment === 'end'
-  if (prefersAligningAtEnd && collisions[boundToCheckForEnd]) {
-    const oppositeAlignmentCollisions = checkCollisions(
-      getPositionedPopoverRect(popoverRect, buttonRect, finalSide, 'start'),
-      documentRect,
-    )
-    if (!oppositeAlignmentCollisions[boundToCheckForStart]) {
-      return 'start'
-    }
-  }
-
   const prefersAligningAtCenter = preferredAlignment === 'center'
+  const prefersAligningAtEnd = preferredAlignment === 'end'
+
   if (prefersAligningAtCenter) {
     if (collisions[boundToCheckForStart]) {
       return 'end'
     }
     if (collisions[boundToCheckForEnd]) {
+      return 'start'
+    }
+  } else {
+    const oppositeAlignmentCollisions = checkCollisions(
+      getPositionedPopoverRect(popoverRect, buttonRect, finalSide, OppositeAlignment[preferredAlignment]),
+      documentRect,
+    )
+
+    if (
+      prefersAligningAtStart &&
+      collisions[boundToCheckForStart] &&
+      !oppositeAlignmentCollisions[boundToCheckForEnd]
+    ) {
+      return 'end'
+    }
+
+    if (prefersAligningAtEnd && collisions[boundToCheckForEnd] && !oppositeAlignmentCollisions[boundToCheckForStart]) {
       return 'start'
     }
   }
