@@ -47,7 +47,7 @@ export const useAutoElementRect = (
       setRect(undefined)
       return
     }
-  }, [element])
+  }, [element, updateOnWindowResize])
 
   return rect
 }
