@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.2.99...@standardnotes/releases@1.3.0) (2022-07-18)
+
+### Features
+
+* **releases:** add mobile urls ([98fc870](https://github.com/standardnotes/app/commit/98fc870d761b50dadc00ebb4e41abba987bbcfb0))
+
 ## [1.2.99](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.2.98...@standardnotes/releases@1.2.99) (2022-07-14)
 
 **Note:** Version bump only for package @standardnotes/releases
