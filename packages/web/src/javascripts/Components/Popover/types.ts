@@ -20,4 +20,5 @@ export type CommonPopoverProps = {
   buttonRef: RefObject<HTMLButtonElement>
   children: ReactNode
   side?: PopoverSide
+  overrideZIndex?: string
 }

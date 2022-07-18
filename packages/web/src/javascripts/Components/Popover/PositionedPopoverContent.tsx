@@ -1,5 +1,6 @@
 import { useDocumentRect } from '@/Hooks/useDocumentRect'
 import { useAutoElementRect } from '@/Hooks/useElementRect'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 import { useState } from 'react'
 import Portal from '../Portal/Portal'
 import { getPositionedPopoverStyles } from './getPositionedPopoverStyles'
@@ -8,7 +9,7 @@ import { getPopoverMaxHeight, getAppRect } from './utils/rect'
 
 type Props = CommonPopoverProps
 
-const PositionedPopoverContent = ({ align = 'end', buttonRef, children, side = 'bottom' }: Props) => {
+const PositionedPopoverContent = ({ align = 'end', buttonRef, children, side = 'bottom', overrideZIndex }: Props) => {
   const [popoverElement, setPopoverElement] = useState<HTMLDivElement | null>(null)
   const popoverRect = useAutoElementRect(popoverElement)
   const buttonRect = useAutoElementRect(buttonRef.current)
@@ -25,7 +26,10 @@ const PositionedPopoverContent = ({ align = 'end', buttonRef, children, side = '
   return (
     <Portal>
       <div
-        className="absolute z-modal hidden min-w-80 max-w-xs cursor-auto flex-col overflow-y-auto rounded bg-default py-2 shadow-main md:flex"
+        className={classNames(
+          'absolute hidden min-w-80 max-w-xs cursor-auto flex-col overflow-y-auto rounded bg-default py-2 shadow-main md:flex',
+          overrideZIndex ? overrideZIndex : 'z-dropdown-menu',
+        )}
         style={Object.assign({}, styles, {
           maxHeight: getPopoverMaxHeight(getAppRect(documentRect), buttonRect, positionedSide, positionedAlignment),
         })}

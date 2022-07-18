@@ -9,10 +9,10 @@ type Props = CommonPopoverProps & {
   togglePopover: () => void
 }
 
-const Popover = ({ open, buttonRef, side, align, children, togglePopover }: Props) => {
+const Popover = ({ open, buttonRef, side, align, children, togglePopover, overrideZIndex }: Props) => {
   return open ? (
     <>
-      <PositionedPopoverContent buttonRef={buttonRef} side={side} align={align}>
+      <PositionedPopoverContent buttonRef={buttonRef} side={side} align={align} overrideZIndex={overrideZIndex}>
         {children}
       </PositionedPopoverContent>
       <Portal>

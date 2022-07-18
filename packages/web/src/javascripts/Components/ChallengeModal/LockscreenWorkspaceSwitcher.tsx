@@ -26,7 +26,14 @@ const LockscreenWorkspaceSwitcher: FunctionComponent<Props> = ({ mainApplication
         <Icon type="user-switch" className="mr-2 text-neutral" />
         Switch workspace
       </Button>
-      <Popover buttonRef={buttonRef} open={isOpen} togglePopover={toggleMenu} side="right" align="center">
+      <Popover
+        buttonRef={buttonRef}
+        open={isOpen}
+        togglePopover={toggleMenu}
+        side="right"
+        align="center"
+        overrideZIndex="z-modal"
+      >
         <WorkspaceSwitcherMenu
           mainApplicationGroup={mainApplicationGroup}
           viewControllerManager={viewControllerManager}
