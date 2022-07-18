@@ -32,6 +32,9 @@ const Downloads = {
   WinIa32Exe: `${ReleaseUrl}-win-ia32.exe`,
   WinX64Exe: `${ReleaseUrl}-win-x64.exe`,
   WinExe: `${ReleaseUrl}-win.exe`,
+  AppStoreiOS: 'https://itunes.apple.com/us/app/standard-notes/id1285392450?mt=8',
+  GooglePlay: 'https://play.google.com/store/apps/details?id=com.standardnotes',
+  WebApp: 'https://app.standardnotes.com',
 }
 
 ensureDirExists('dist')
