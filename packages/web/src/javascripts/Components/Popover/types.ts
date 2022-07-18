@@ -21,4 +21,5 @@ export type CommonPopoverProps = {
   children: ReactNode
   side?: PopoverSide
   overrideZIndex?: string
+  togglePopover: () => void
 }

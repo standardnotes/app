@@ -5,7 +5,13 @@ export const getPopoverMaxHeight = (
   buttonRect: DOMRect | undefined,
   side: PopoverSide,
   alignment: PopoverAlignment,
-) => {
+): number | 'none' => {
+  const matchesMediumBreakpoint = matchMedia('(min-width: 768px)').matches
+
+  if (!matchesMediumBreakpoint) {
+    return 'none'
+  }
+
   const MarginFromAppBorderInPX = 10
 
   let constraint = 0

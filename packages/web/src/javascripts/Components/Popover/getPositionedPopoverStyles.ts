@@ -5,8 +5,6 @@ import { getPositionedPopoverRect } from './utils/rect'
 
 const getStylesFromRect = (rect: DOMRect): CSSProperties => {
   return {
-    top: 0,
-    left: 0,
     willChange: 'transform',
     transform: `translate(${rect.x}px, ${rect.y}px)`,
   }
@@ -28,6 +26,12 @@ export const getPositionedPopoverStyles = ({
   side,
 }: Options): [CSSProperties | null, PopoverSide, PopoverAlignment] => {
   if (!popoverRect || !buttonRect) {
+    return [null, side, align]
+  }
+
+  const matchesMediumBreakpoint = matchMedia('(min-width: 768px)').matches
+
+  if (!matchesMediumBreakpoint) {
     return [null, side, align]
   }
 
