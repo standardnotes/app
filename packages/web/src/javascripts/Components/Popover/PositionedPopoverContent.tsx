@@ -16,7 +16,7 @@ const PositionedPopoverContent = ({ align = 'end', buttonRef, children, side = '
 
   const [styles, positionedSide, positionedAlignment] = getPositionedPopoverStyles({
     align,
-    buttonRect,
+    buttonElement: buttonRef.current,
     documentRect,
     popoverRect: popoverRect ?? popoverElement?.getBoundingClientRect(),
     side,
