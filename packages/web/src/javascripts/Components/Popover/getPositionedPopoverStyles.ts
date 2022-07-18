@@ -14,7 +14,7 @@ const getStylesFromRect = (rect: DOMRect): CSSProperties => {
 
 type Options = {
   align: PopoverAlignment
-  buttonElement: HTMLButtonElement | null
+  buttonRect?: DOMRect
   documentRect: DOMRect
   popoverRect?: DOMRect
   side: PopoverSide
@@ -22,16 +22,14 @@ type Options = {
 
 export const getPositionedPopoverStyles = ({
   align,
-  buttonElement,
+  buttonRect,
   documentRect,
   popoverRect,
   side,
 }: Options): [CSSProperties | null, PopoverSide, PopoverAlignment] => {
-  if (!popoverRect || !buttonElement) {
+  if (!popoverRect || !buttonRect) {
     return [null, side, align]
   }
-
-  const buttonRect = buttonElement.getBoundingClientRect()
 
   const rectForPreferredSide = getPositionedPopoverRect(popoverRect, buttonRect, side, align)
   const preferredSideRectCollisions = checkCollisions(rectForPreferredSide, documentRect)

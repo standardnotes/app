@@ -12,12 +12,14 @@ type Props = CommonPopoverProps
 const PositionedPopoverContent = ({ align = 'end', buttonRef, children, side = 'bottom', overrideZIndex }: Props) => {
   const [popoverElement, setPopoverElement] = useState<HTMLDivElement | null>(null)
   const popoverRect = useAutoElementRect(popoverElement)
-  const buttonRect = useAutoElementRect(buttonRef.current)
+  const buttonRect = useAutoElementRect(buttonRef.current, {
+    updateOnWindowResize: true,
+  })
   const documentRect = useDocumentRect()
 
   const [styles, positionedSide, positionedAlignment] = getPositionedPopoverStyles({
     align,
-    buttonElement: buttonRef.current,
+    buttonRect,
     documentRect,
     popoverRect: popoverRect ?? popoverElement?.getBoundingClientRect(),
     side,
@@ -30,9 +32,10 @@ const PositionedPopoverContent = ({ align = 'end', buttonRef, children, side = '
           'absolute hidden min-w-80 max-w-xs cursor-auto flex-col overflow-y-auto rounded bg-default py-2 shadow-main md:flex',
           overrideZIndex ? overrideZIndex : 'z-dropdown-menu',
         )}
-        style={Object.assign({}, styles, {
+        style={{
+          ...styles,
           maxHeight: getPopoverMaxHeight(getAppRect(documentRect), buttonRect, positionedSide, positionedAlignment),
-        })}
+        }}
         ref={(node) => {
           setPopoverElement(node)
         }}
