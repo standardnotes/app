@@ -50,7 +50,7 @@ const NotesOptionsPanel = ({
       >
         <Icon type="more" />
       </button>
-      <Popover togglePopover={toggleMenu} buttonRef={buttonRef} open={isOpen}>
+      <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen}>
         <NotesOptions
           application={application}
           navigationController={navigationController}

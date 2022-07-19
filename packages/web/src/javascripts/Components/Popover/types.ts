@@ -1,4 +1,4 @@
-import { RefObject, ReactNode } from 'react'
+import { ReactNode } from 'react'
 
 export type PopoverState = 'closed' | 'positioning' | 'open'
 
@@ -15,11 +15,34 @@ export type PopoverOptions = {
 
 export type RectCollisions = Record<PopoverSide, boolean>
 
-export type CommonPopoverProps = {
+type Point = {
+  x: number
+  y: number
+}
+
+type PopoverAnchorElementProps = {
+  anchorElement: HTMLElement | null
+  anchorPoint?: never
+}
+
+type PopoverAnchorPointProps = {
+  anchorPoint: Point
+  anchorElement?: never
+}
+
+type CommonPopoverProps = {
   align?: PopoverAlignment
-  buttonRef: RefObject<HTMLButtonElement>
   children: ReactNode
   side?: PopoverSide
   overrideZIndex?: string
   togglePopover: () => void
 }
+
+export type PopoverContentProps = CommonPopoverProps & {
+  anchorElement?: HTMLElement | null
+  anchorPoint?: Point
+}
+
+export type PopoverProps =
+  | (CommonPopoverProps & PopoverAnchorElementProps)
+  | (CommonPopoverProps & PopoverAnchorPointProps)

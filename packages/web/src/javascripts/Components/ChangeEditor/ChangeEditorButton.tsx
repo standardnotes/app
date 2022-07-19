@@ -43,7 +43,7 @@ const ChangeEditorButton: FunctionComponent<Props> = ({
       >
         <Icon type="dashboard" />
       </button>
-      <Popover togglePopover={toggleMenu} buttonRef={buttonRef} open={isOpen}>
+      <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen}>
         <ChangeEditorMenu
           closeOnBlur={closeOnBlur}
           application={application}

@@ -37,7 +37,7 @@ const WorkspaceSwitcherOption: FunctionComponent<Props> = ({ mainApplicationGrou
         </div>
         <Icon type="chevron-right" className="text-neutral" />
       </MenuItem>
-      <Popover togglePopover={toggleMenu} buttonRef={buttonRef} open={isOpen} side="right" align="end">
+      <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen} side="right" align="end">
         <WorkspaceSwitcherMenu
           mainApplicationGroup={mainApplicationGroup}
           viewControllerManager={viewControllerManager}

@@ -27,7 +27,7 @@ const LockscreenWorkspaceSwitcher: FunctionComponent<Props> = ({ mainApplication
         Switch workspace
       </Button>
       <Popover
-        buttonRef={buttonRef}
+        anchorElement={buttonRef.current}
         open={isOpen}
         togglePopover={toggleMenu}
         side="right"

@@ -11,7 +11,7 @@ type Options = {
  * Can optionally be auto-update on window resize.
  */
 export const useAutoElementRect = (
-  element: HTMLElement | null,
+  element: HTMLElement | null | undefined,
   { updateOnWindowResize }: Options = { updateOnWindowResize: false },
 ) => {
   const [rect, setRect] = useState<DOMRect>()

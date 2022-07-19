@@ -6,29 +6,33 @@ import Icon from '../Icon/Icon'
 import Portal from '../Portal/Portal'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { getPositionedPopoverStyles } from './getPositionedPopoverStyles'
-import { CommonPopoverProps } from './types'
+import { PopoverContentProps } from './types'
 import { getPopoverMaxHeight, getAppRect } from './utils/rect'
-
-type Props = CommonPopoverProps
 
 const PositionedPopoverContent = ({
   align = 'end',
-  buttonRef,
+  anchorElement,
+  anchorPoint,
   children,
   overrideZIndex,
   side = 'bottom',
   togglePopover,
-}: Props) => {
+}: PopoverContentProps) => {
   const [popoverElement, setPopoverElement] = useState<HTMLDivElement | null>(null)
   const popoverRect = useAutoElementRect(popoverElement)
-  const buttonRect = useAutoElementRect(buttonRef.current, {
+  const anchorElementRect = useAutoElementRect(anchorElement, {
     updateOnWindowResize: true,
   })
+  const anchorPointRect = DOMRect.fromRect({
+    x: anchorPoint?.x,
+    y: anchorPoint?.y,
+  })
+  const anchorRect = anchorPoint ? anchorPointRect : anchorElementRect
   const documentRect = useDocumentRect()
 
   const [styles, positionedSide, positionedAlignment] = getPositionedPopoverStyles({
     align,
-    buttonRect,
+    anchorRect,
     documentRect,
     popoverRect: popoverRect ?? popoverElement?.getBoundingClientRect(),
     side,
@@ -43,7 +47,7 @@ const PositionedPopoverContent = ({
         )}
         style={{
           ...styles,
-          maxHeight: getPopoverMaxHeight(getAppRect(documentRect), buttonRect, positionedSide, positionedAlignment),
+          maxHeight: getPopoverMaxHeight(getAppRect(documentRect), anchorRect, positionedSide, positionedAlignment),
         }}
         ref={(node) => {
           setPopoverElement(node)

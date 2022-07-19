@@ -43,7 +43,7 @@ const AddTagOption: FunctionComponent<Props> = ({ navigationController, notesCon
         </div>
         <Icon type="chevron-right" className="text-neutral" />
       </button>
-      <Popover togglePopover={toggleMenu} buttonRef={buttonRef} open={isOpen} side="right" align="start">
+      <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen} side="right" align="start">
         {navigationController.tags.map((tag) => (
           <button
             key={tag.uuid}

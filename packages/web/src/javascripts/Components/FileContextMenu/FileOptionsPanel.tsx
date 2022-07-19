@@ -28,7 +28,7 @@ const FilesOptionsPanel = ({ filesController, selectionController }: Props) => {
       >
         <Icon type="more" />
       </button>
-      <Popover togglePopover={toggleMenu} buttonRef={buttonRef} open={isOpen}>
+      <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen}>
         <FileMenuOptions
           filesController={filesController}
           selectionController={selectionController}

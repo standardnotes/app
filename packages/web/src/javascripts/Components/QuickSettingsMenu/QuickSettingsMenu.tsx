@@ -203,7 +203,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({
       </button>
       <Popover
         togglePopover={toggleThemesMenu}
-        buttonRef={themesButtonRef}
+        anchorElement={themesButtonRef.current}
         open={themesMenuOpen}
         side="right"
         align="end"

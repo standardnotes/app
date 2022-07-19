@@ -12,7 +12,7 @@ const getStylesFromRect = (rect: DOMRect): CSSProperties => {
 
 type Options = {
   align: PopoverAlignment
-  buttonRect?: DOMRect
+  anchorRect?: DOMRect
   documentRect: DOMRect
   popoverRect?: DOMRect
   side: PopoverSide
@@ -20,12 +20,12 @@ type Options = {
 
 export const getPositionedPopoverStyles = ({
   align,
-  buttonRect,
+  anchorRect,
   documentRect,
   popoverRect,
   side,
 }: Options): [CSSProperties | null, PopoverSide, PopoverAlignment] => {
-  if (!popoverRect || !buttonRect) {
+  if (!popoverRect || !anchorRect) {
     return [null, side, align]
   }
 
@@ -35,20 +35,20 @@ export const getPositionedPopoverStyles = ({
     return [null, side, align]
   }
 
-  const rectForPreferredSide = getPositionedPopoverRect(popoverRect, buttonRect, side, align)
+  const rectForPreferredSide = getPositionedPopoverRect(popoverRect, anchorRect, side, align)
   const preferredSideRectCollisions = checkCollisions(rectForPreferredSide, documentRect)
 
   const oppositeSide = OppositeSide[side]
-  const rectForOppositeSide = getPositionedPopoverRect(popoverRect, buttonRect, oppositeSide, align)
+  const rectForOppositeSide = getPositionedPopoverRect(popoverRect, anchorRect, oppositeSide, align)
   const oppositeSideRectCollisions = checkCollisions(rectForOppositeSide, documentRect)
 
   const finalSide = getNonCollidingSide(side, preferredSideRectCollisions, oppositeSideRectCollisions)
   const finalAlignment = getNonCollidingAlignment(finalSide, align, preferredSideRectCollisions, {
     popoverRect,
-    buttonRect,
+    buttonRect: anchorRect,
     documentRect,
   })
-  const finalPositionedRect = getPositionedPopoverRect(popoverRect, buttonRect, finalSide, finalAlignment)
+  const finalPositionedRect = getPositionedPopoverRect(popoverRect, anchorRect, finalSide, finalAlignment)
 
   return [Object.assign({}, getStylesFromRect(finalPositionedRect)), finalSide, finalAlignment]
 }

@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { useCallback, useEffect, useRef, useMemo } from 'react'
+import { useCallback, useRef, useMemo } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
@@ -11,6 +11,7 @@ import { NavigationController } from '@/Controllers/Navigation/NavigationControl
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
+import Popover from '../Popover/Popover'
 
 type ContextMenuProps = {
   navigationController: NavigationController
@@ -21,21 +22,10 @@ type ContextMenuProps = {
 const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag }: ContextMenuProps) => {
   const premiumModal = usePremiumModal()
 
-  const { contextMenuOpen, contextMenuPosition, contextMenuMaxHeight } = navigationController
+  const { contextMenuOpen, contextMenuClickLocation } = navigationController
 
   const contextMenuRef = useRef<HTMLDivElement>(null)
   useCloseOnClickOutside(contextMenuRef, () => navigationController.setContextMenuOpen(false))
-
-  const reloadContextMenuLayout = useCallback(() => {
-    navigationController.reloadContextMenuLayout()
-  }, [navigationController])
-
-  useEffect(() => {
-    window.addEventListener('resize', reloadContextMenuLayout)
-    return () => {
-      window.removeEventListener('resize', reloadContextMenuLayout)
-    }
-  }, [reloadContextMenuLayout])
 
   const onClickAddSubtag = useCallback(() => {
     if (!isEntitledToFolders) {
@@ -63,52 +53,45 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
 
   const tagCreatedAt = useMemo(() => formatDateForContextMenu(selectedTag.created_at), [selectedTag.created_at])
 
-  return contextMenuOpen ? (
-    <div
-      ref={contextMenuRef}
-      className="max-h-120 fixed z-dropdown-menu flex min-w-60 flex-col overflow-y-auto rounded bg-default py-2 shadow-main"
-      style={{
-        ...contextMenuPosition,
-        maxHeight: contextMenuMaxHeight,
-      }}
+  return (
+    <Popover
+      open={contextMenuOpen}
+      anchorPoint={contextMenuClickLocation}
+      togglePopover={() => navigationController.setContextMenuOpen(!contextMenuOpen)}
     >
-      <Menu
-        a11yLabel="Tag context menu"
-        isOpen={contextMenuOpen}
-        closeMenu={() => {
-          navigationController.setContextMenuOpen(false)
-        }}
-      >
-        <MenuItem type={MenuItemType.IconButton} className={'justify-between py-1.5'} onClick={onClickAddSubtag}>
-          <div className="flex items-center">
-            <Icon type="add" className="mr-2 text-neutral" />
-            Add subtag
+      <div ref={contextMenuRef}>
+        <Menu a11yLabel="Tag context menu" isOpen={contextMenuOpen}>
+          <MenuItem type={MenuItemType.IconButton} className={'justify-between py-1.5'} onClick={onClickAddSubtag}>
+            <div className="flex items-center">
+              <Icon type="add" className="mr-2 text-neutral" />
+              Add subtag
+            </div>
+            {!isEntitledToFolders && <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />}
+          </MenuItem>
+          <MenuItem type={MenuItemType.IconButton} className={'py-1.5'} onClick={onClickRename}>
+            <Icon type="pencil-filled" className="mr-2 text-neutral" />
+            Rename
+          </MenuItem>
+          <MenuItem type={MenuItemType.IconButton} className={'py-1.5'} onClick={onClickDelete}>
+            <Icon type="trash" className="mr-2 text-danger" />
+            <span className="text-danger">Delete</span>
+          </MenuItem>
+        </Menu>
+        <HorizontalSeparator classes="my-2" />
+        <div className="px-3 pt-1 pb-1.5 text-xs font-medium text-neutral">
+          <div className="mb-1">
+            <span className="font-semibold">Last modified:</span> {tagLastModified}
           </div>
-          {!isEntitledToFolders && <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />}
-        </MenuItem>
-        <MenuItem type={MenuItemType.IconButton} className={'py-1.5'} onClick={onClickRename}>
-          <Icon type="pencil-filled" className="mr-2 text-neutral" />
-          Rename
-        </MenuItem>
-        <MenuItem type={MenuItemType.IconButton} className={'py-1.5'} onClick={onClickDelete}>
-          <Icon type="trash" className="mr-2 text-danger" />
-          <span className="text-danger">Delete</span>
-        </MenuItem>
-      </Menu>
-      <HorizontalSeparator classes="my-2" />
-      <div className="px-3 pt-1 pb-1.5 text-xs font-medium text-neutral">
-        <div className="mb-1">
-          <span className="font-semibold">Last modified:</span> {tagLastModified}
-        </div>
-        <div className="mb-1">
-          <span className="font-semibold">Created:</span> {tagCreatedAt}
-        </div>
-        <div>
-          <span className="font-semibold">Tag ID:</span> {selectedTag.uuid}
+          <div className="mb-1">
+            <span className="font-semibold">Created:</span> {tagCreatedAt}
+          </div>
+          <div>
+            <span className="font-semibold">Tag ID:</span> {selectedTag.uuid}
+          </div>
         </div>
       </div>
-    </div>
-  ) : null
+    </Popover>
+  )
 }
 
 export default observer(TagContextMenu)

@@ -1,16 +1,17 @@
 import PositionedPopoverContent from './PositionedPopoverContent'
-import { CommonPopoverProps } from './types'
+import { PopoverProps } from './types'
 
-type Props = CommonPopoverProps & {
+type Props = PopoverProps & {
   open: boolean
 }
 
-const Popover = ({ open, buttonRef, side, align, children, togglePopover, overrideZIndex }: Props) => {
+const Popover = ({ open, anchorElement, anchorPoint, side, align, children, togglePopover, overrideZIndex }: Props) => {
   return open ? (
     <>
       <PositionedPopoverContent
         align={align}
-        buttonRef={buttonRef}
+        anchorElement={anchorElement}
+        anchorPoint={anchorPoint}
         overrideZIndex={overrideZIndex}
         side={side}
         togglePopover={togglePopover}
