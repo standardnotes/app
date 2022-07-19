@@ -4,7 +4,6 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import ChangeEditorMenu from './ChangeEditorMenu'
-import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import Popover from '../Popover/Popover'
 
 type Props = {
@@ -22,7 +21,6 @@ const ChangeEditorButton: FunctionComponent<Props> = ({
   const [isOpen, setIsOpen] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-  const [closeOnBlur] = useCloseOnBlur(containerRef, setIsOpen)
 
   const toggleMenu = useCallback(async () => {
     const willMenuOpen = !isOpen
@@ -45,7 +43,6 @@ const ChangeEditorButton: FunctionComponent<Props> = ({
       </button>
       <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen}>
         <ChangeEditorMenu
-          closeOnBlur={closeOnBlur}
           application={application}
           isVisible={isOpen}
           note={note}

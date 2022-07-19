@@ -4,7 +4,6 @@ import { SNNote } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import ChangeEditorMenu from '@/Components/ChangeEditor/ChangeEditorMenu'
-import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import Popover from '../Popover/Popover'
 
 type ChangeEditorOptionProps = {
@@ -16,10 +15,6 @@ const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({ applic
   const [isOpen, setIsOpen] = useState(false)
   const menuContainerRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
-
-  const [closeOnBlur] = useCloseOnBlur(menuContainerRef, (open: boolean) => {
-    setIsOpen(open)
-  })
 
   const toggleMenu = useCallback(async () => {
     setIsOpen((isOpen) => !isOpen)
@@ -46,7 +41,6 @@ const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({ applic
       <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen} side="right" align="start">
         <ChangeEditorMenu
           application={application}
-          closeOnBlur={closeOnBlur}
           note={note}
           isVisible={isOpen}
           closeMenu={() => {
