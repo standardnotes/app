@@ -1,10 +1,9 @@
 import { WebApplication } from '@/Application/Application'
-import { Disclosure, DisclosurePanel } from '@reach/disclosure'
 import { memo, useCallback, useRef, useState } from 'react'
 import Icon from '../../Icon/Icon'
-import { DisplayOptionsMenuPositionProps } from './DisplayOptionsMenuProps'
-import DisplayOptionsMenuPortal from './DisplayOptionsMenuPortal'
-import StyledDisplayOptionsButton from './StyledDisplayOptionsButton'
+import { classNames } from '@/Utils/ConcatenateClassNames'
+import Popover from '@/Components/Popover/Popover'
+import DisplayOptionsMenu from './DisplayOptionsMenu'
 
 type Props = {
   application: {
@@ -26,21 +25,12 @@ const ContentListHeader = ({
   isFilesSmartView,
   optionsSubtitle,
 }: Props) => {
-  const [displayOptionsMenuPosition, setDisplayOptionsMenuPosition] = useState<DisplayOptionsMenuPositionProps>()
   const displayOptionsContainerRef = useRef<HTMLDivElement>(null)
   const displayOptionsButtonRef = useRef<HTMLButtonElement>(null)
 
   const [showDisplayOptionsMenu, setShowDisplayOptionsMenu] = useState(false)
 
   const toggleDisplayOptionsMenu = useCallback(() => {
-    if (displayOptionsButtonRef.current) {
-      const buttonBoundingRect = displayOptionsButtonRef.current.getBoundingClientRect()
-      setDisplayOptionsMenuPosition({
-        top: buttonBoundingRect.bottom,
-        left: buttonBoundingRect.right - buttonBoundingRect.width,
-      })
-    }
-
     setShowDisplayOptionsMenu((show) => !show)
   }, [])
 
@@ -52,24 +42,29 @@ const ContentListHeader = ({
       </div>
       <div className="flex">
         <div className="relative" ref={displayOptionsContainerRef}>
-          <Disclosure open={showDisplayOptionsMenu} onChange={toggleDisplayOptionsMenu}>
-            <StyledDisplayOptionsButton $pressed={showDisplayOptionsMenu} ref={displayOptionsButtonRef}>
-              <Icon type="sort-descending" />
-            </StyledDisplayOptionsButton>
-            <DisclosurePanel>
-              {showDisplayOptionsMenu && displayOptionsMenuPosition && (
-                <DisplayOptionsMenuPortal
-                  application={application}
-                  closeDisplayOptionsMenu={toggleDisplayOptionsMenu}
-                  containerRef={displayOptionsContainerRef}
-                  isOpen={showDisplayOptionsMenu}
-                  isFilesSmartView={isFilesSmartView}
-                  top={displayOptionsMenuPosition.top}
-                  left={displayOptionsMenuPosition.left}
-                />
-              )}
-            </DisclosurePanel>
-          </Disclosure>
+          <button
+            className={classNames(
+              'bg-text-padding flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border text-neutral hover:bg-contrast focus:bg-contrast',
+              showDisplayOptionsMenu && 'bg-contrast',
+            )}
+            onClick={toggleDisplayOptionsMenu}
+            ref={displayOptionsButtonRef}
+          >
+            <Icon type="sort-descending" />
+          </button>
+          <Popover
+            open={showDisplayOptionsMenu}
+            anchorElement={displayOptionsButtonRef.current}
+            togglePopover={toggleDisplayOptionsMenu}
+            align="start"
+          >
+            <DisplayOptionsMenu
+              application={application}
+              closeDisplayOptionsMenu={toggleDisplayOptionsMenu}
+              isFilesSmartView={isFilesSmartView}
+              isOpen={showDisplayOptionsMenu}
+            />
+          </Popover>
         </div>
         <button
           className="ml-3 flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-transparent bg-info text-info-contrast hover:brightness-125"

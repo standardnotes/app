@@ -97,14 +97,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   }, [application, hideEditorIcon])
 
   return (
-    <Menu
-      className={
-        'slide-down-animation z-index-dropdown-menu flex min-w-70 flex-col overflow-y-auto rounded border border-solid         border-border bg-default py-1 text-sm shadow-main         transition-transform duration-150'
-      }
-      a11yLabel="Notes list options menu"
-      closeMenu={closeDisplayOptionsMenu}
-      isOpen={isOpen}
-    >
+    <Menu className="text-sm" a11yLabel="Notes list options menu" closeMenu={closeDisplayOptionsMenu} isOpen={isOpen}>
       <div className="my-1 px-3 text-xs font-semibold uppercase text-text">Sort by</div>
       <MenuItem
         className="py-2"
