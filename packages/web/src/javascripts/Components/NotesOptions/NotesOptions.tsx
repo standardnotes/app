@@ -15,13 +15,11 @@ import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { formatDateForContextMenu } from '@/Utils/DateUtils'
 
 type DeletePermanentlyButtonProps = {
-  closeOnBlur: NotesOptionsProps['closeOnBlur']
   onClick: () => void
 }
 
-const DeletePermanentlyButton = ({ closeOnBlur, onClick }: DeletePermanentlyButtonProps) => (
+const DeletePermanentlyButton = ({ onClick }: DeletePermanentlyButtonProps) => (
   <button
-    onBlur={closeOnBlur}
     className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
     onClick={onClick}
   >
@@ -177,7 +175,6 @@ const NotesOptions = ({
   notesController,
   noteTagsController,
   historyModalController,
-  closeOnBlur,
 }: NotesOptionsProps) => {
   const [altKeyDown, setAltKeyDown] = useState(false)
 
@@ -270,7 +267,6 @@ const NotesOptions = ({
       {notes.length === 1 && (
         <>
           <button
-            onBlur={closeOnBlur}
             className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
             onClick={openRevisionHistoryModal}
           >
@@ -285,7 +281,6 @@ const NotesOptions = ({
         onClick={() => {
           notesController.setLockSelectedNotes(!locked)
         }}
-        onBlur={closeOnBlur}
       >
         <span className="flex items-center">
           <Icon type="pencil-off" className={iconClass} />
@@ -298,7 +293,6 @@ const NotesOptions = ({
         onClick={() => {
           notesController.setHideSelectedNotePreviews(!hidePreviews)
         }}
-        onBlur={closeOnBlur}
       >
         <span className="flex items-center">
           <Icon type="rich-text" className={iconClass} />
@@ -311,7 +305,6 @@ const NotesOptions = ({
         onClick={() => {
           notesController.setProtectSelectedNotes(!protect).catch(console.error)
         }}
-        onBlur={closeOnBlur}
       >
         <span className="flex items-center">
           <Icon type="password" className={iconClass} />
@@ -335,7 +328,6 @@ const NotesOptions = ({
       )}
       {unpinned && (
         <button
-          onBlur={closeOnBlur}
           className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
           onClick={() => {
             notesController.setPinSelectedNotes(true)
@@ -347,7 +339,6 @@ const NotesOptions = ({
       )}
       {pinned && (
         <button
-          onBlur={closeOnBlur}
           className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
           onClick={() => {
             notesController.setPinSelectedNotes(false)
@@ -358,7 +349,6 @@ const NotesOptions = ({
         </button>
       )}
       <button
-        onBlur={closeOnBlur}
         className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
         onClick={downloadSelectedItems}
       >
@@ -366,7 +356,6 @@ const NotesOptions = ({
         Export
       </button>
       <button
-        onBlur={closeOnBlur}
         className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
         onClick={duplicateSelectedItems}
       >
@@ -375,7 +364,6 @@ const NotesOptions = ({
       </button>
       {unarchived && (
         <button
-          onBlur={closeOnBlur}
           className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
           onClick={() => {
             notesController.setArchiveSelectedNotes(true).catch(console.error)
@@ -387,7 +375,6 @@ const NotesOptions = ({
       )}
       {archived && (
         <button
-          onBlur={closeOnBlur}
           className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
           onClick={() => {
             notesController.setArchiveSelectedNotes(false).catch(console.error)
@@ -400,14 +387,12 @@ const NotesOptions = ({
       {notTrashed &&
         (altKeyDown ? (
           <DeletePermanentlyButton
-            closeOnBlur={closeOnBlur}
             onClick={async () => {
               await notesController.deleteNotesPermanently()
             }}
           />
         ) : (
           <button
-            onBlur={closeOnBlur}
             className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
             onClick={async () => {
               await notesController.setTrashSelectedNotes(true)
@@ -420,7 +405,6 @@ const NotesOptions = ({
       {trashed && (
         <>
           <button
-            onBlur={closeOnBlur}
             className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
             onClick={async () => {
               await notesController.setTrashSelectedNotes(false)
@@ -430,13 +414,11 @@ const NotesOptions = ({
             <span className="text-success">Restore</span>
           </button>
           <DeletePermanentlyButton
-            closeOnBlur={closeOnBlur}
             onClick={async () => {
               await notesController.deleteNotesPermanently()
             }}
           />
           <button
-            onBlur={closeOnBlur}
             className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
             onClick={async () => {
               await notesController.emptyTrash()

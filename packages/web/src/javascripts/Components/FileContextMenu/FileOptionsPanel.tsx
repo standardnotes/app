@@ -32,9 +32,6 @@ const FilesOptionsPanel = ({ filesController, selectionController }: Props) => {
         <FileMenuOptions
           filesController={filesController}
           selectionController={selectionController}
-          closeOnBlur={() => {
-            //
-          }}
           closeMenu={() => {
             setIsOpen(false)
           }}

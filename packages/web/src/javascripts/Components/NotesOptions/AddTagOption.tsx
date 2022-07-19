@@ -1,7 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
-import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { NotesController } from '@/Controllers/NotesController'
 import { NoteTagsController } from '@/Controllers/NoteTagsController'
@@ -19,7 +18,6 @@ const AddTagOption: FunctionComponent<Props> = ({ navigationController, notesCon
   const buttonRef = useRef<HTMLButtonElement>(null)
 
   const [isOpen, setIsOpen] = useState(false)
-  const [closeOnBlur] = useCloseOnBlur(menuContainerRef, setIsOpen)
 
   const toggleMenu = useCallback(() => {
     setIsOpen((isOpen) => !isOpen)
@@ -48,7 +46,6 @@ const AddTagOption: FunctionComponent<Props> = ({ navigationController, notesCon
           <button
             key={tag.uuid}
             className="max-w-80 flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-2 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
-            onBlur={closeOnBlur}
             onClick={() => {
               notesController.isTagInSelectedNotes(tag)
                 ? notesController.removeTagFromSelectedNotes(tag).catch(console.error)

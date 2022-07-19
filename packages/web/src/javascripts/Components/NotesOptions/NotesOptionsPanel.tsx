@@ -28,8 +28,6 @@ const NotesOptionsPanel = ({
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
-  // const panelRef = useRef<HTMLDivElement>(null)
-  // const [closeOnBlur] = useCloseOnBlur(panelRef, setOpen)
 
   const toggleMenu = useCallback(async () => {
     const willMenuOpen = !isOpen
@@ -57,9 +55,6 @@ const NotesOptionsPanel = ({
           notesController={notesController}
           noteTagsController={noteTagsController}
           historyModalController={historyModalController}
-          closeOnBlur={() => {
-            //
-          }}
         />
       </Popover>
     </>

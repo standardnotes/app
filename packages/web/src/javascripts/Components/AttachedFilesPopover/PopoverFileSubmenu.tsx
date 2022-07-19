@@ -2,7 +2,6 @@ import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { FunctionComponent, useCallback, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import Switch from '@/Components/Switch/Switch'
-import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { PopoverFileSubmenuProps } from './PopoverFileItemProps'
 import { PopoverFileItemActionType } from './PopoverFileItemAction'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
@@ -21,7 +20,6 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
 
   const [isOpen, setIsOpen] = useState(false)
   const [isFileProtected, setIsFileProtected] = useState(file.protected)
-  const [closeOnBlur] = useCloseOnBlur(menuContainerRef, setIsOpen)
 
   const closeMenu = useCallback(() => {
     setIsOpen(false)
@@ -35,7 +33,6 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
     <div ref={menuContainerRef}>
       <button
         ref={menuButtonRef}
-        onBlur={closeOnBlur}
         onClick={toggleMenu}
         className="h-7 w-7 cursor-pointer rounded-full border-0 bg-transparent p-1 hover:bg-contrast"
       >
@@ -43,7 +40,6 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
       </button>
       <Popover anchorElement={menuButtonRef.current} open={isOpen} togglePopover={toggleMenu}>
         <button
-          onBlur={closeOnBlur}
           className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
           onClick={() => {
             previewHandler(file)
@@ -55,7 +51,6 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
         </button>
         {isAttachedToNote ? (
           <button
-            onBlur={closeOnBlur}
             className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
             onClick={() => {
               handleFileAction({
@@ -70,7 +65,6 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
           </button>
         ) : (
           <button
-            onBlur={closeOnBlur}
             className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
             onClick={() => {
               handleFileAction({
@@ -96,7 +90,6 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
               },
             }).catch(console.error)
           }}
-          onBlur={closeOnBlur}
         >
           <span className="flex items-center">
             <Icon type="password" className="mr-2 text-neutral" />
@@ -110,7 +103,6 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
         </button>
         <HorizontalSeparator classes="my-1" />
         <button
-          onBlur={closeOnBlur}
           className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
           onClick={() => {
             handleFileAction({
@@ -124,7 +116,6 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
           Download
         </button>
         <button
-          onBlur={closeOnBlur}
           className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
           onClick={() => {
             setIsRenamingFile(true)
@@ -134,7 +125,6 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
           Rename
         </button>
         <button
-          onBlur={closeOnBlur}
           className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
           onClick={() => {
             handleFileAction({

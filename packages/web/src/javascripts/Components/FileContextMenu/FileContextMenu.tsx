@@ -1,7 +1,5 @@
 import { FilesController } from '@/Controllers/FilesController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
-import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
-import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useRef } from 'react'
 import Popover from '../Popover/Popover'
@@ -16,8 +14,6 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ filesController, s
   const { showFileContextMenu, setShowFileContextMenu, fileContextMenuLocation } = filesController
 
   const contextMenuRef = useRef<HTMLDivElement>(null)
-  const [closeOnBlur] = useCloseOnBlur(contextMenuRef, (open: boolean) => setShowFileContextMenu(open))
-  useCloseOnClickOutside(contextMenuRef, () => filesController.setShowFileContextMenu(false))
 
   return (
     <Popover
@@ -31,7 +27,6 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ filesController, s
         <FileMenuOptions
           filesController={filesController}
           selectionController={selectionController}
-          closeOnBlur={closeOnBlur}
           closeMenu={() => setShowFileContextMenu(false)}
           shouldShowRenameOption={false}
           shouldShowAttachOption={false}

@@ -1,5 +1,3 @@
-import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
-import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
 import { observer } from 'mobx-react-lite'
 import NotesOptions from '@/Components/NotesOptions/NotesOptions'
 import { useRef } from 'react'
@@ -28,9 +26,6 @@ const NotesContextMenu = ({
   const { contextMenuOpen, contextMenuClickLocation } = notesController
 
   const contextMenuRef = useRef<HTMLDivElement>(null)
-  const [closeOnBlur] = useCloseOnBlur(contextMenuRef, (open: boolean) => notesController.setContextMenuOpen(open))
-
-  useCloseOnClickOutside(contextMenuRef, () => notesController.setContextMenuOpen(false))
 
   return (
     <Popover
@@ -46,7 +41,6 @@ const NotesContextMenu = ({
       <div ref={contextMenuRef}>
         <NotesOptions
           application={application}
-          closeOnBlur={closeOnBlur}
           navigationController={navigationController}
           notesController={notesController}
           noteTagsController={noteTagsController}
