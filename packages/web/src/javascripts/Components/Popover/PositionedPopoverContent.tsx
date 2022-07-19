@@ -8,7 +8,7 @@ import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { getPositionedPopoverStyles } from './getPositionedPopoverStyles'
 import { PopoverContentProps } from './types'
 import { getPopoverMaxHeight, getAppRect } from './utils/rect'
-import { usePopoverCloseIfClickOutside } from './utils/usePopoverCloseIfClickOutside'
+import { usePopoverCloseOnClickOutside } from './utils/usePopoverCloseOnClickOutside'
 
 const PositionedPopoverContent = ({
   align = 'end',
@@ -39,7 +39,7 @@ const PositionedPopoverContent = ({
     side,
   })
 
-  usePopoverCloseIfClickOutside({
+  usePopoverCloseOnClickOutside({
     popoverElement,
     anchorElement,
     togglePopover,

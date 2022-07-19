@@ -6,7 +6,7 @@ type Options = {
   togglePopover: () => void
 }
 
-export const usePopoverCloseIfClickOutside = ({ popoverElement, anchorElement, togglePopover }: Options) => {
+export const usePopoverCloseOnClickOutside = ({ popoverElement, anchorElement, togglePopover }: Options) => {
   useEffect(() => {
     const closeIfClickedOutside = (event: MouseEvent) => {
       const matchesMediumBreakpoint = matchMedia('(min-width: 768px)').matches
