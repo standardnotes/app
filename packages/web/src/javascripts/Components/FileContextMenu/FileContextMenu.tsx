@@ -24,6 +24,8 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ filesController, s
       open={showFileContextMenu}
       anchorPoint={fileContextMenuLocation}
       togglePopover={() => setShowFileContextMenu(!showFileContextMenu)}
+      side="right"
+      align="start"
     >
       <div ref={contextMenuRef}>
         <FileMenuOptions

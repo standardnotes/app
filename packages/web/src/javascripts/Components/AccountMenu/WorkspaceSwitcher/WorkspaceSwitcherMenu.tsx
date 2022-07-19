@@ -23,7 +23,9 @@ const WorkspaceSwitcherMenu: FunctionComponent<Props> = ({
   isOpen,
   hideWorkspaceOptions = false,
 }: Props) => {
-  const [applicationDescriptors, setApplicationDescriptors] = useState<ApplicationDescriptor[]>([])
+  const [applicationDescriptors, setApplicationDescriptors] = useState<ApplicationDescriptor[]>(
+    mainApplicationGroup.getDescriptors(),
+  )
 
   useEffect(() => {
     const applicationDescriptors = mainApplicationGroup.getDescriptors()
