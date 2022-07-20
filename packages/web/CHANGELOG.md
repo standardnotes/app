@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.41.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.40.7...@standardnotes/web@3.41.0) (2022-07-20)
+
+### Features
+
+* responsive popovers & menus ([#1323](https://github.com/standardnotes/app/issues/1323)) ([2573407](https://github.com/standardnotes/app/commit/2573407851c1ee3e9392ce504f020db68b7856b2))
+
 ## [3.40.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.40.6...@standardnotes/web@3.40.7) (2022-07-18)
 
 **Note:** Version bump only for package @standardnotes/web
