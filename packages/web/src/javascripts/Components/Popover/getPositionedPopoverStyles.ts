@@ -50,5 +50,5 @@ export const getPositionedPopoverStyles = ({
   })
   const finalPositionedRect = getPositionedPopoverRect(popoverRect, anchorRect, finalSide, finalAlignment)
 
-  return [Object.assign({}, getStylesFromRect(finalPositionedRect)), finalSide, finalAlignment]
+  return [getStylesFromRect(finalPositionedRect), finalSide, finalAlignment]
 }
