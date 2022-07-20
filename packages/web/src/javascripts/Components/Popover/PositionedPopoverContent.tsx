@@ -6,9 +6,9 @@ import Icon from '../Icon/Icon'
 import Portal from '../Portal/Portal'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { getPositionedPopoverStyles } from './getPositionedPopoverStyles'
-import { PopoverContentProps } from './types'
-import { getPopoverMaxHeight, getAppRect } from './utils/rect'
-import { usePopoverCloseOnClickOutside } from './utils/usePopoverCloseOnClickOutside'
+import { PopoverContentProps } from './Types'
+import { getPopoverMaxHeight, getAppRect } from './Utils/Rect'
+import { usePopoverCloseOnClickOutside } from './Utils/usePopoverCloseOnClickOutside'
 
 const PositionedPopoverContent = ({
   align = 'end',

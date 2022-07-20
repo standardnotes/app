@@ -1,4 +1,4 @@
-import { PopoverSide, PopoverAlignment } from '../types'
+import { PopoverSide, PopoverAlignment } from '../Types'
 
 export const getPopoverMaxHeight = (
   appRect: DOMRect,

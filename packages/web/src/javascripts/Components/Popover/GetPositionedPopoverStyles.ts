@@ -1,7 +1,7 @@
 import { CSSProperties } from 'react'
-import { PopoverAlignment, PopoverSide } from './types'
-import { OppositeSide, checkCollisions, getNonCollidingSide, getNonCollidingAlignment } from './utils/collisions'
-import { getPositionedPopoverRect } from './utils/rect'
+import { PopoverAlignment, PopoverSide } from './Types'
+import { OppositeSide, checkCollisions, getNonCollidingSide, getNonCollidingAlignment } from './Utils/Collisions'
+import { getPositionedPopoverRect } from './Utils/Rect'
 
 const getStylesFromRect = (rect: DOMRect): CSSProperties => {
   return {

@@ -1,5 +1,5 @@
 import PositionedPopoverContent from './PositionedPopoverContent'
-import { PopoverProps } from './types'
+import { PopoverProps } from './Types'
 
 type Props = PopoverProps & {
   open: boolean

@@ -1,5 +1,5 @@
-import { PopoverSide, PopoverAlignment, RectCollisions } from '../types'
-import { getAppRect, getPositionedPopoverRect } from './rect'
+import { PopoverSide, PopoverAlignment, RectCollisions } from '../Types'
+import { getAppRect, getPositionedPopoverRect } from './Rect'
 
 export const OppositeSide: Record<PopoverSide, PopoverSide> = {
   top: 'bottom',
