@@ -15,12 +15,13 @@ export const usePopoverCloseOnClickOutside = ({ popoverElement, anchorElement, t
         return
       }
 
-      const isDescendantOfMenu = popoverElement?.contains(event.target as Node)
-      const isAnchorElement = anchorElement
-        ? (event.target as Node).isSameNode(anchorElement) || anchorElement.contains(event.target as Node)
-        : false
+      const target = event.target as Element
 
-      if (!isDescendantOfMenu && !isAnchorElement) {
+      const isDescendantOfMenu = popoverElement?.contains(target)
+      const isAnchorElement = anchorElement ? anchorElement === event.target || anchorElement.contains(target) : false
+      const isDescendantOfPopover = target.closest('[data-popover]')
+
+      if (!isDescendantOfMenu && !isAnchorElement && !isDescendantOfPopover) {
         togglePopover()
       }
     }

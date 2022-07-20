@@ -59,6 +59,7 @@ const PositionedPopoverContent = ({
         ref={(node) => {
           setPopoverElement(node)
         }}
+        data-popover
       >
         <div className="md:hidden">
           <div className="flex items-center justify-end px-3">
