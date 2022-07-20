@@ -5,8 +5,7 @@ type Props = {
   children: ReactNode
 }
 
-// Use better random id implementation
-const randomPortalId = () => Math.random() * 69 + 420
+const randomPortalId = () => Math.random()
 
 const Portal = ({ children }: Props) => {
   const [container, setContainer] = useState<HTMLElement>()
