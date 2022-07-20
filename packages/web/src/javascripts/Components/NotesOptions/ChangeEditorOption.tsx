@@ -38,7 +38,14 @@ const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({ applic
         </div>
         <Icon type="chevron-right" className="text-neutral" />
       </button>
-      <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen} side="right" align="start">
+      <Popover
+        align="start"
+        anchorElement={buttonRef.current}
+        className="pt-2 md:pt-0"
+        open={isOpen}
+        side="right"
+        togglePopover={toggleMenu}
+      >
         <ChangeEditorMenu
           application={application}
           note={note}

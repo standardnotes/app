@@ -151,6 +151,7 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
         togglePopover={toggleAttachedFilesMenuWithEntitlementCheck}
         anchorElement={buttonRef.current}
         open={isOpen}
+        className="pt-2 md:pt-0"
       >
         <AttachedFilesPopover
           application={application}

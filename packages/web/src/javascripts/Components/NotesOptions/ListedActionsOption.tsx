@@ -39,7 +39,14 @@ const ListedActionsOption: FunctionComponent<Props> = ({ application, note }) =>
         </div>
         <Icon type="chevron-right" className="text-neutral" />
       </button>
-      <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen} side="right" align="end">
+      <Popover
+        togglePopover={toggleMenu}
+        anchorElement={buttonRef.current}
+        open={isOpen}
+        side="right"
+        align="end"
+        className="pt-2 md:pt-0"
+      >
         <ListedActionsMenu application={application} note={note} />
       </Popover>
     </div>
