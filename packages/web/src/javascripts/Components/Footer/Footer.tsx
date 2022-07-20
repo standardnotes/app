@@ -287,12 +287,10 @@ class Footer extends PureComponent<Props, State> {
   }
 
   accountMenuClickHandler = () => {
-    this.viewControllerManager.quickSettingsMenuController.closeQuickSettingsMenu()
     this.viewControllerManager.accountMenuController.toggleShow()
   }
 
   quickSettingsClickHandler = () => {
-    this.viewControllerManager.accountMenuController.closeAccountMenu()
     this.viewControllerManager.quickSettingsMenuController.toggle()
   }
 
