@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-const DEBOUNCE_TIME = 75
+const DebounceTimeInMs = 100
 
 export const useDocumentRect = (): DOMRect => {
   const [documentRect, setDocumentRect] = useState<DOMRect>(document.documentElement.getBoundingClientRect())
@@ -13,7 +13,7 @@ export const useDocumentRect = (): DOMRect => {
 
       window.setTimeout(() => {
         setDocumentRect(document.documentElement.getBoundingClientRect())
-      }, DEBOUNCE_TIME)
+      }, DebounceTimeInMs)
     }
 
     window.addEventListener('resize', handleWindowResize)
