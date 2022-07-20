@@ -36,6 +36,7 @@ type CommonPopoverProps = {
   side?: PopoverSide
   overrideZIndex?: string
   togglePopover: () => void
+  className?: string
 }
 
 export type PopoverContentProps = CommonPopoverProps & {

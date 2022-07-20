@@ -37,7 +37,14 @@ const WorkspaceSwitcherOption: FunctionComponent<Props> = ({ mainApplicationGrou
         </div>
         <Icon type="chevron-right" className="text-neutral" />
       </MenuItem>
-      <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen} side="right" align="end">
+      <Popover
+        align="end"
+        anchorElement={buttonRef.current}
+        className="py-2"
+        open={isOpen}
+        side="right"
+        togglePopover={toggleMenu}
+      >
         <WorkspaceSwitcherMenu
           mainApplicationGroup={mainApplicationGroup}
           viewControllerManager={viewControllerManager}

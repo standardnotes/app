@@ -57,6 +57,7 @@ const ContentListHeader = ({
             anchorElement={displayOptionsButtonRef.current}
             togglePopover={toggleDisplayOptionsMenu}
             align="start"
+            className="py-2"
           >
             <DisplayOptionsMenu
               application={application}

@@ -38,7 +38,7 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
       >
         <Icon type="more" className="text-neutral" />
       </button>
-      <Popover anchorElement={menuButtonRef.current} open={isOpen} togglePopover={toggleMenu}>
+      <Popover anchorElement={menuButtonRef.current} open={isOpen} togglePopover={toggleMenu} className="py-2">
         <button
           className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
           onClick={() => {

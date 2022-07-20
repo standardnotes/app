@@ -29,14 +29,15 @@ const NotesContextMenu = ({
 
   return (
     <Popover
-      open={contextMenuOpen}
-      togglePopover={() => notesController.setContextMenuOpen(!contextMenuOpen)}
+      align="start"
       anchorPoint={{
         x: contextMenuClickLocation.x,
         y: contextMenuClickLocation.y,
       }}
+      className="py-2"
+      open={contextMenuOpen}
       side="right"
-      align="start"
+      togglePopover={() => notesController.setContextMenuOpen(!contextMenuOpen)}
     >
       <div ref={contextMenuRef}>
         <NotesOptions

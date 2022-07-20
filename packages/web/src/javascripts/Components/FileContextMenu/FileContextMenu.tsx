@@ -22,6 +22,7 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ filesController, s
       togglePopover={() => setShowFileContextMenu(!showFileContextMenu)}
       side="right"
       align="start"
+      className="py-2"
     >
       <div ref={contextMenuRef}>
         <FileMenuOptions

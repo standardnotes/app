@@ -48,7 +48,7 @@ const NotesOptionsPanel = ({
       >
         <Icon type="more" />
       </button>
-      <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen}>
+      <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen} className="py-2">
         <NotesOptions
           application={application}
           navigationController={navigationController}

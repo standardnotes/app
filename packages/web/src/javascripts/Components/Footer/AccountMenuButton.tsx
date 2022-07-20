@@ -37,7 +37,7 @@ const AccountMenuButton = ({
           <Icon type="account-circle" className="max-h-5 hover:text-info" />
         </div>
       </button>
-      <Popover anchorElement={buttonRef.current} open={isOpen} togglePopover={toggleMenu} side="top">
+      <Popover anchorElement={buttonRef.current} open={isOpen} togglePopover={toggleMenu} side="top" className="py-2">
         <AccountMenu
           onClickOutside={onClickOutside}
           viewControllerManager={viewControllerManager}

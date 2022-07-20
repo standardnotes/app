@@ -15,6 +15,7 @@ const PositionedPopoverContent = ({
   anchorElement,
   anchorPoint,
   children,
+  className,
   overrideZIndex,
   side = 'bottom',
   togglePopover,
@@ -49,8 +50,9 @@ const PositionedPopoverContent = ({
     <Portal>
       <div
         className={classNames(
-          'absolute top-0 left-0 flex h-full w-full min-w-80 cursor-auto flex-col overflow-y-auto rounded bg-default py-2 shadow-main md:h-auto md:max-w-xs',
+          'absolute top-0 left-0 flex h-full w-full min-w-80 cursor-auto flex-col overflow-y-auto rounded bg-default shadow-main md:h-auto md:max-w-xs',
           overrideZIndex ? overrideZIndex : 'z-dropdown-menu',
+          className,
         )}
         style={{
           ...styles,

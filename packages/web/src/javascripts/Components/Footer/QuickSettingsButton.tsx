@@ -34,7 +34,14 @@ const QuickSettingsButton = ({
           <Icon type="tune" className={(isOpen ? 'text-info' : '') + ' rounded hover:text-info'} />
         </div>
       </button>
-      <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen} side="top" align="start">
+      <Popover
+        togglePopover={toggleMenu}
+        anchorElement={buttonRef.current}
+        open={isOpen}
+        side="top"
+        align="start"
+        className="py-2"
+      >
         <QuickSettingsMenu
           preferencesController={preferencesController}
           quickSettingsMenuController={quickSettingsMenuController}

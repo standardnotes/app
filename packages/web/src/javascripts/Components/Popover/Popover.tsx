@@ -5,13 +5,24 @@ type Props = PopoverProps & {
   open: boolean
 }
 
-const Popover = ({ open, anchorElement, anchorPoint, side, align, children, togglePopover, overrideZIndex }: Props) => {
+const Popover = ({
+  align,
+  anchorElement,
+  anchorPoint,
+  children,
+  className,
+  open,
+  overrideZIndex,
+  side,
+  togglePopover,
+}: Props) => {
   return open ? (
     <>
       <PositionedPopoverContent
         align={align}
         anchorElement={anchorElement}
         anchorPoint={anchorPoint}
+        className={className}
         overrideZIndex={overrideZIndex}
         side={side}
         togglePopover={togglePopover}

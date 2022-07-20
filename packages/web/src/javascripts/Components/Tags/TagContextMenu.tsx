@@ -58,6 +58,7 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
       open={contextMenuOpen}
       anchorPoint={contextMenuClickLocation}
       togglePopover={() => navigationController.setContextMenuOpen(!contextMenuOpen)}
+      className="py-2"
     >
       <div ref={contextMenuRef}>
         <Menu a11yLabel="Tag context menu" isOpen={contextMenuOpen}>

@@ -207,6 +207,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({
         open={themesMenuOpen}
         side="right"
         align="end"
+        className="py-2"
       >
         <div className="my-1 px-3 text-sm font-semibold uppercase text-text">Themes</div>
         <button

@@ -27,12 +27,13 @@ const LockscreenWorkspaceSwitcher: FunctionComponent<Props> = ({ mainApplication
         Switch workspace
       </Button>
       <Popover
-        anchorElement={buttonRef.current}
-        open={isOpen}
-        togglePopover={toggleMenu}
-        side="right"
         align="center"
+        anchorElement={buttonRef.current}
+        className="py-2"
+        open={isOpen}
         overrideZIndex="z-modal"
+        side="right"
+        togglePopover={toggleMenu}
       >
         <WorkspaceSwitcherMenu
           mainApplicationGroup={mainApplicationGroup}
