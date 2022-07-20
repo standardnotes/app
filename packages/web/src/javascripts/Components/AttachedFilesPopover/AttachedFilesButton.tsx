@@ -157,9 +157,6 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
           filesController={filesController}
           attachedFiles={attachedFiles}
           allFiles={allFiles}
-          closeOnBlur={() => {
-            //
-          }}
           currentTab={currentTab}
           isDraggingFiles={isDraggingFiles}
           setCurrentTab={setCurrentTab}
