@@ -14,7 +14,7 @@ import {
   SNNote,
   TransactionalMutation,
 } from '@standardnotes/snjs'
-import { Fragment, FunctionComponent, useCallback, useEffect, useState } from 'react'
+import { Fragment, FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
 import { EditorMenuGroup } from '@/Components/NotesOptions/EditorMenuGroup'
 import { EditorMenuItem } from '@/Components/NotesOptions/EditorMenuItem'
 import { createEditorMenuGroups } from './createEditorMenuGroups'
@@ -28,7 +28,6 @@ import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/Premium
 
 type ChangeEditorMenuProps = {
   application: WebApplication
-  closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
   closeMenu: () => void
   isVisible: boolean
   note: SNNote | undefined
@@ -36,24 +35,16 @@ type ChangeEditorMenuProps = {
 
 const getGroupId = (group: EditorMenuGroup) => group.title.toLowerCase().replace(/\s/, '-')
 
-const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
-  application,
-  closeOnBlur,
-  closeMenu,
-  isVisible,
-  note,
-}) => {
-  const [editors] = useState<SNComponent[]>(() =>
-    application.componentManager.componentsForArea(ComponentArea.Editor).sort((a, b) => {
-      return a.displayName.toLowerCase() < b.displayName.toLowerCase() ? -1 : 1
-    }),
+const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({ application, closeMenu, isVisible, note }) => {
+  const editors = useMemo(
+    () =>
+      application.componentManager.componentsForArea(ComponentArea.Editor).sort((a, b) => {
+        return a.displayName.toLowerCase() < b.displayName.toLowerCase() ? -1 : 1
+      }),
+    [application.componentManager],
   )
-  const [groups, setGroups] = useState<EditorMenuGroup[]>([])
+  const groups = useMemo(() => createEditorMenuGroups(application, editors), [application, editors])
   const [currentEditor, setCurrentEditor] = useState<SNComponent>()
-
-  useEffect(() => {
-    setGroups(createEditorMenuGroups(application, editors))
-  }, [application, editors])
 
   useEffect(() => {
     if (note) {
@@ -195,7 +186,6 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
                       type={MenuItemType.RadioButton}
                       onClick={onClickEditorItem}
                       className={'flex-row-reverse py-2'}
-                      onBlur={closeOnBlur}
                       checked={item.isEntitled ? isSelectedEditor(item) : undefined}
                     >
                       <div className="flex flex-grow items-center justify-between">

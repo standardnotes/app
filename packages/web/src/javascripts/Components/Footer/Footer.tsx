@@ -12,13 +12,13 @@ import {
   STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON,
 } from '@/Constants/Strings'
 import { alertDialog, confirmDialog } from '@/Services/AlertService'
-import AccountMenu from '@/Components/AccountMenu/AccountMenu'
 import Icon from '@/Components/Icon/Icon'
-import QuickSettingsMenu from '@/Components/QuickSettingsMenu/QuickSettingsMenu'
 import SyncResolutionMenu from '@/Components/SyncResolutionMenu/SyncResolutionMenu'
 import { Fragment } from 'react'
 import { AccountMenuPane } from '../AccountMenu/AccountMenuPane'
 import { EditorEventSource } from '@/Types/EditorEventSource'
+import QuickSettingsButton from './QuickSettingsButton'
+import AccountMenuButton from './AccountMenuButton'
 
 type Props = {
   application: WebApplication
@@ -287,12 +287,10 @@ class Footer extends PureComponent<Props, State> {
   }
 
   accountMenuClickHandler = () => {
-    this.viewControllerManager.quickSettingsMenuController.closeQuickSettingsMenu()
     this.viewControllerManager.accountMenuController.toggleShow()
   }
 
   quickSettingsClickHandler = () => {
-    this.viewControllerManager.accountMenuController.closeAccountMenu()
     this.viewControllerManager.quickSettingsMenuController.toggle()
   }
 
@@ -342,55 +340,31 @@ class Footer extends PureComponent<Props, State> {
   override render() {
     return (
       <div className="sn-component">
-        <div
+        <footer
           id="footer-bar"
           className="z-footer-bar flex h-6 w-full select-none items-center justify-between border-t border-border bg-contrast px-3 text-text"
         >
           <div className="left flex h-full">
             <div className="sk-app-bar-item relative z-footer-bar-item ml-0 select-none">
-              <div
-                onClick={this.accountMenuClickHandler}
-                className={
-                  (this.state.showAccountMenu ? 'bg-border' : '') +
-                  ' flex h-full w-8 cursor-pointer items-center justify-center rounded-full'
-                }
-              >
-                <div
-                  className={
-                    this.state.hasError ? 'text-danger' : (this.user ? 'text-info' : 'text-neutral') + ' h-5 w-5'
-                  }
-                >
-                  <Icon type="account-circle" className="max-h-5 hover:text-info" />
-                </div>
-              </div>
-              {this.state.showAccountMenu && (
-                <AccountMenu
-                  onClickOutside={this.clickOutsideAccountMenu}
-                  viewControllerManager={this.viewControllerManager}
-                  application={this.application}
-                  mainApplicationGroup={this.props.applicationGroup}
-                />
-              )}
+              <AccountMenuButton
+                application={this.application}
+                hasError={this.state.hasError}
+                isOpen={this.state.showAccountMenu}
+                mainApplicationGroup={this.props.applicationGroup}
+                onClickOutside={this.clickOutsideAccountMenu}
+                toggleMenu={this.accountMenuClickHandler}
+                user={this.user}
+                viewControllerManager={this.viewControllerManager}
+              />
             </div>
-            <div className="sk-app-bar-item ml-0-important relative z-footer-bar-item select-none">
-              <div
-                onClick={this.quickSettingsClickHandler}
-                className="flex h-full w-8 cursor-pointer items-center justify-center"
-              >
-                <div className="h-5">
-                  <Icon
-                    type="tune"
-                    className={(this.state.showQuickSettingsMenu ? 'text-info' : '') + ' rounded hover:text-info'}
-                  />
-                </div>
-              </div>
-              {this.state.showQuickSettingsMenu && (
-                <QuickSettingsMenu
-                  onClickOutside={this.clickOutsideQuickSettingsMenu}
-                  viewControllerManager={this.viewControllerManager}
-                  application={this.application}
-                />
-              )}
+            <div className="relative z-footer-bar-item select-none">
+              <QuickSettingsButton
+                isOpen={this.state.showQuickSettingsMenu}
+                toggleMenu={this.quickSettingsClickHandler}
+                application={this.application}
+                preferencesController={this.viewControllerManager.preferencesController}
+                quickSettingsMenuController={this.viewControllerManager.quickSettingsMenuController}
+              />
             </div>
             {this.state.showBetaWarning && (
               <Fragment>
@@ -454,7 +428,7 @@ class Footer extends PureComponent<Props, State> {
               </div>
             )}
           </div>
-        </div>
+        </footer>
       </div>
     )
   }

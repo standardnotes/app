@@ -8,7 +8,6 @@ type CommonProps = {
   handleFileAction: (action: PopoverFileItemAction) => Promise<{
     didHandleAction: boolean
   }>
-  closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
   previewHandler: (file: FileItem) => void
 }
 

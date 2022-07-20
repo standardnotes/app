@@ -22,7 +22,6 @@ const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
   isAttachedToNote,
   handleFileAction,
   getIconType,
-  closeOnBlur,
   previewHandler,
 }) => {
   const [fileName, setFileName] = useState(file.name)
@@ -116,7 +115,6 @@ const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
         isAttachedToNote={isAttachedToNote}
         handleFileAction={handleFileAction}
         setIsRenamingFile={setIsRenamingFile}
-        closeOnBlur={closeOnBlur}
         previewHandler={previewHandler}
       />
     </div>

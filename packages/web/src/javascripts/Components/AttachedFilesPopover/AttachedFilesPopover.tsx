@@ -16,7 +16,6 @@ type Props = {
   filesController: FilesController
   allFiles: FileItem[]
   attachedFiles: FileItem[]
-  closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
   currentTab: PopoverTabs
   isDraggingFiles: boolean
   setCurrentTab: Dispatch<SetStateAction<PopoverTabs>>
@@ -28,7 +27,6 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
   filesController,
   allFiles,
   attachedFiles,
-  closeOnBlur,
   currentTab,
   isDraggingFiles,
   setCurrentTab,
@@ -87,7 +85,6 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
           onClick={() => {
             setCurrentTab(PopoverTabs.AttachedFiles)
           }}
-          onBlur={closeOnBlur}
           disabled={attachedTabDisabled}
         >
           Attached
@@ -100,7 +97,6 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
           onClick={() => {
             setCurrentTab(PopoverTabs.AllFiles)
           }}
-          onBlur={closeOnBlur}
         >
           All files
         </button>
@@ -117,7 +113,6 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
                 onInput={(e) => {
                   setSearchQuery((e.target as HTMLInputElement).value)
                 }}
-                onBlur={closeOnBlur}
                 ref={searchInputRef}
               />
               {searchQuery.length > 0 && (
@@ -127,7 +122,6 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
                     setSearchQuery('')
                     searchInputRef.current?.focus()
                   }}
-                  onBlur={closeOnBlur}
                 >
                   <Icon type="clear-circle-filled" className="text-neutral" />
                 </button>
@@ -144,7 +138,6 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
                 isAttachedToNote={attachedFiles.includes(file)}
                 handleFileAction={filesController.handleFileAction}
                 getIconType={application.iconsController.getIconForFileType}
-                closeOnBlur={closeOnBlur}
                 previewHandler={previewHandler}
               />
             )
@@ -161,7 +154,7 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
                 ? 'No files attached to this note'
                 : 'No files found in this account'}
             </div>
-            <Button onClick={handleAttachFilesClick} onBlur={closeOnBlur}>
+            <Button onClick={handleAttachFilesClick}>
               {currentTab === PopoverTabs.AttachedFiles ? 'Attach' : 'Upload'} files
             </Button>
             <div className="mt-3 text-xs text-passive-0">Or drop your files here</div>
@@ -172,7 +165,6 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
         <button
           className="flex w-full cursor-pointer items-center border-0 border-t border-solid border-border bg-transparent px-3 py-3 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
           onClick={handleAttachFilesClick}
-          onBlur={closeOnBlur}
         >
           <Icon type="add" className="mr-2 text-neutral" />
           {currentTab === PopoverTabs.AttachedFiles ? 'Attach' : 'Upload'} files

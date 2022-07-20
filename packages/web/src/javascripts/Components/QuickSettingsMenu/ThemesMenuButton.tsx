@@ -11,10 +11,9 @@ import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/Premium
 type Props = {
   item: ThemeItem
   application: WebApplication
-  onBlur: (event: { relatedTarget: EventTarget | null }) => void
 }
 
-const ThemesMenuButton: FunctionComponent<Props> = ({ application, item, onBlur }) => {
+const ThemesMenuButton: FunctionComponent<Props> = ({ application, item }) => {
   const premiumModal = usePremiumModal()
 
   const isThirdPartyTheme = useMemo(
@@ -50,7 +49,6 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ application, item, onBlur 
         'flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:bg-info-backdrop focus:shadow-none focus:shadow-none'
       }
       onClick={toggleTheme}
-      onBlur={onBlur}
     >
       {item.component?.isLayerable() ? (
         <>

@@ -9,10 +9,9 @@ import Spinner from '@/Components/Spinner/Spinner'
 type ListedActionsMenuProps = {
   application: WebApplication
   note: SNNote
-  recalculateMenuStyle: () => void
 }
 
-const ListedActionsMenu = ({ application, note, recalculateMenuStyle }: ListedActionsMenuProps) => {
+const ListedActionsMenu = ({ application, note }: ListedActionsMenuProps) => {
   const [menuGroups, setMenuGroups] = useState<ListedMenuGroup[]>([])
   const [isFetchingAccounts, setIsFetchingAccounts] = useState(true)
 
@@ -88,14 +87,11 @@ const ListedActionsMenu = ({ application, note, recalculateMenuStyle }: ListedAc
         console.error(err)
       } finally {
         setIsFetchingAccounts(false)
-        setTimeout(() => {
-          recalculateMenuStyle()
-        })
       }
     }
 
     void fetchListedAccounts()
-  }, [application, note.uuid, recalculateMenuStyle])
+  }, [application, note.uuid])
 
   return (
     <>

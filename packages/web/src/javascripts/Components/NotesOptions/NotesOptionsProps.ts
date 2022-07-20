@@ -10,5 +10,4 @@ export type NotesOptionsProps = {
   notesController: NotesController
   noteTagsController: NoteTagsController
   historyModalController: HistoryModalController
-  closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
 }
