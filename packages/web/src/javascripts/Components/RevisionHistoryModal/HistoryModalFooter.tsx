@@ -41,20 +41,18 @@ const HistoryModalFooter = ({ dismissModal, noteHistoryController }: Props) => {
   }, [deleteRemoteRevision, selectedEntry])
 
   return (
-    <div className="min-h-6 flex flex-shrink-0 items-center justify-between border-t border-solid border-border px-2.5 py-2">
-      <div>
-        <Button className="py-1.35" label="Close" onClick={dismissModal} />
-      </div>
+    <div className="min-h-6 flex flex-shrink-0 flex-wrap items-center gap-2.5 border-t border-solid border-border px-2.5 py-2 md:justify-between">
+      <Button className="py-1.35" label="Close" onClick={dismissModal} />
       {selectedRevision && (
-        <div className="flex items-center">
+        <>
           {(selectedEntry as RevisionListEntry).uuid && (
-            <Button className="mr-2.5" onClick={deleteSelectedRevision}>
+            <Button className="md:ml-auto" onClick={deleteSelectedRevision}>
               {isDeletingRevision ? <Spinner className="my-1 h-3 w-3" /> : 'Delete this revision'}
             </Button>
           )}
-          <Button className="mr-2.5" label="Restore as a copy" onClick={restoreAsCopy} />
+          <Button className="" label="Restore as a copy" onClick={restoreAsCopy} />
           <Button className="" label="Restore version" onClick={restoreSelectedRevision} primary />
-        </div>
+        </>
       )}
     </div>
   )
