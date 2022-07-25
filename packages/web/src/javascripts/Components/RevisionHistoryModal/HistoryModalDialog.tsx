@@ -1,7 +1,6 @@
 import { getPlatformString } from '@/Utils'
 import { DialogOverlay, DialogContent } from '@reach/dialog'
 import { ReactNode } from 'react'
-import Icon from '@/Components/Icon/Icon'
 
 type Props = {
   children: ReactNode
