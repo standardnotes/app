@@ -172,7 +172,7 @@ const ContentListView: FunctionComponent<Props> = ({
   return (
     <div
       id="items-column"
-      className="sn-component section app-column app-column-second flex flex-col border-b border-solid border-border"
+      className="sn-component section app-column app-column-second flex w-full flex-col border-b border-solid border-border md:w-52 xl:w-87.5"
       aria-label={'Notes & Files'}
       ref={itemsViewPanelRef}
     >
