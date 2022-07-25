@@ -50,7 +50,11 @@ const HistoryModalFooter = ({ dismissModal, noteHistoryController }: Props) => {
               {isDeletingRevision ? <Spinner className="my-1 h-3 w-3" /> : 'Delete this revision'}
             </Button>
           )}
-          <Button className="" label="Restore as a copy" onClick={restoreAsCopy} />
+          <Button
+            className={!(selectedEntry as RevisionListEntry).uuid ? 'md:ml-auto' : ''}
+            label="Restore as a copy"
+            onClick={restoreAsCopy}
+          />
           <Button className="" label="Restore version" onClick={restoreSelectedRevision} primary />
         </>
       )}
