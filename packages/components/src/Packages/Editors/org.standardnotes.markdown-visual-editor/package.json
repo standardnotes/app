@@ -37,7 +37,7 @@
     "@milkdown/preset-commonmark": "5.5.0",
     "@milkdown/preset-gfm": "5.5.0",
     "@milkdown/prose": "5.5.0",
-    "@milkdown/react": "5.5.0",
+    "@milkdown/react": "6.3.1",
     "@milkdown/theme-nord": "5.5.0",
     "@standardnotes/editor-kit": "2.2.4",
     "@standardnotes/styles": "workspace:*",
