@@ -25,7 +25,7 @@ const PermissionsModal = ({ callback, component, dismiss, permissionsString }: P
   }, [callback, dismiss])
 
   return (
-    <ModalDialog className="!w-[350px]">
+    <ModalDialog className="w-full md:!w-[350px]">
       <ModalDialogLabel closeDialog={deny}>Activate Component</ModalDialogLabel>
       <ModalDialogDescription>
         <div className="text-base">
@@ -33,7 +33,7 @@ const PermissionsModal = ({ callback, component, dismiss, permissionsString }: P
           {' would like to interact with your '}
           {permissionsString}
         </div>
-        <div className="sk-panel-row">
+        <div className="sk-panel-row [word-break:break-word]">
           <p className="sk-p">
             Components use an offline messaging system to communicate. Learn more at{' '}
             <a href="https://standardnotes.com/permissions" rel="noopener" target="_blank" className="sk-a info">
