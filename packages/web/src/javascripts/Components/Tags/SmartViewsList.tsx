@@ -5,9 +5,10 @@ import SmartViewsListItem from './SmartViewsListItem'
 
 type Props = {
   viewControllerManager: ViewControllerManager
+  showTitles: boolean
 }
 
-const SmartViewsList: FunctionComponent<Props> = ({ viewControllerManager }: Props) => {
+const SmartViewsList: FunctionComponent<Props> = ({ viewControllerManager, showTitles }: Props) => {
   const allViews = viewControllerManager.navigationController.smartViews
 
   return (
@@ -19,6 +20,7 @@ const SmartViewsList: FunctionComponent<Props> = ({ viewControllerManager }: Pro
             view={view}
             tagsState={viewControllerManager.navigationController}
             features={viewControllerManager.featuresController}
+            showTitles={showTitles}
           />
         )
       })}

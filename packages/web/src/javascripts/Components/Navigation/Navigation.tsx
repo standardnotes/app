@@ -19,6 +19,7 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
   const viewControllerManager = useMemo(() => application.getViewControllerManager(), [application])
   const ref = useRef<HTMLDivElement>(null)
   const [panelWidth, setPanelWidth] = useState<number>(0)
+  const [isPanelExpanded, setIsPanelExpanded] = useState(true)
 
   useEffect(() => {
     const removeObserver = application.addEventObserver(async () => {
@@ -47,14 +48,23 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
   }, [viewControllerManager])
 
   return (
-    <div id="navigation" className="sn-component section app-column app-column-first" ref={ref}>
+    <div
+      id="navigation"
+      className={`sn-component section app-column smallest:!w-full ${
+        isPanelExpanded ? 'md-only:!w-[220px] lg-only:!w-[220px]' : 'md-only:!w-18 lg-only:!w-18'
+      } xl:!w-[220px] md-only:transition-width lg-only:transition-width`}
+      ref={ref}
+    >
       <ResponsivePaneContent paneId={AppPaneId.Navigation} contentElementId="navigation-content">
         <SearchBar
           itemListController={viewControllerManager.itemListController}
           searchOptionsController={viewControllerManager.searchOptionsController}
           selectedViewTitle={viewControllerManager.navigationController.selected?.title}
         />
-        <div className="section-title-bar">
+        <div className={'hidden md:block xl:hidden'} onClick={() => setIsPanelExpanded(!isPanelExpanded)}>
+          {isPanelExpanded ? 'Collapse' : 'Expand'}
+        </div>
+        <div className="section-title-bar block md:hidden xl:block">
           <div className="section-title-bar-header">
             <div className="title text-sm">
               <span className="font-bold">Views</span>
@@ -68,7 +78,7 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
             'md:hover:[overflow-y:_overlay]',
           )}
         >
-          <SmartViewsSection viewControllerManager={viewControllerManager} />
+          <SmartViewsSection viewControllerManager={viewControllerManager} showTitles={isPanelExpanded} />
           <TagsSection viewControllerManager={viewControllerManager} />
         </div>
       </ResponsivePaneContent>

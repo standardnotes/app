@@ -5,12 +5,13 @@ import SmartViewsList from './SmartViewsList'
 
 type Props = {
   viewControllerManager: ViewControllerManager
+  showTitles: boolean
 }
 
-const SmartViewsSection: FunctionComponent<Props> = ({ viewControllerManager }) => {
+const SmartViewsSection: FunctionComponent<Props> = ({ viewControllerManager, showTitles }) => {
   return (
     <section>
-      <SmartViewsList viewControllerManager={viewControllerManager} />
+      <SmartViewsList viewControllerManager={viewControllerManager} showTitles={showTitles} />
     </section>
   )
 }
