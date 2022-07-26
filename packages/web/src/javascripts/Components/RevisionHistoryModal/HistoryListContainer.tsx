@@ -46,7 +46,7 @@ const HistoryListContainer: FunctionComponent<Props> = ({ features, noteHistoryC
   }
 
   return (
-    <div className={'flex h-full min-w-60 flex-col overflow-auto border-r border-solid border-border'}>
+    <div className={'flex h-full flex-grow flex-col overflow-auto border-r border-solid border-border'}>
       <div className="flex border-b border-solid border-border">
         <TabButton type={RevisionType.Remote} />
         <TabButton type={RevisionType.Session} />

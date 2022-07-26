@@ -39,9 +39,8 @@ const SaveSecretKey: FunctionComponent<Props> = ({ activation: act }) => {
       </ModalDialogLabel>
       <ModalDialogDescription className="h-33 flex flex-row items-center">
         <div className="flex flex-grow flex-col">
-          <div className="flex flex-row items-center">
+          <div className="flex flex-row flex-wrap items-center gap-1">
             <Bullet />
-            <div className="min-w-1" />
             <div className="text-sm">
               <b>Save your secret key</b>{' '}
               <a
@@ -52,11 +51,11 @@ const SaveSecretKey: FunctionComponent<Props> = ({ activation: act }) => {
               </a>
               :
             </div>
-            <div className="min-w-2" />
             <DecoratedInput
               disabled={true}
               right={[<CopyButton copyValue={act.secretKey} />, download]}
               value={act.secretKey}
+              className={{ container: 'ml-2' }}
             />
           </div>
           <div className="h-2" />
