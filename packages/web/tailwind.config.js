@@ -1,14 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 
-const defaultTheme = require('tailwindcss/defaultTheme')
-
 module.exports = {
   content: ['./src/javascripts/**/*.tsx', '../toast/src/**/*.tsx'],
   theme: {
-    screens: {
-      smallest: '0px',
-      ...defaultTheme.screens,
-    },
     extend: {
       colors: {
         transparent: 'transparent',
@@ -117,6 +111,7 @@ module.exports = {
         'menu-item': '0.813rem',
       },
       screens: {
+        'xsm-only': { min: '320px', max: '640px' },
         'sm-only': { min: '640px', max: '767px' },
         'md-only': { min: '768px', max: '1023px' },
         'lg-only': { min: '1024px', max: '1279px' },

@@ -51,9 +51,9 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
   return (
     <div
       id="navigation"
-      className={`sn-component section app-column smallest:!w-full ${
+      className={`sn-component section app-column xsm-only:!w-full sm-only:!w-full ${
         isPanelExpanded ? 'md-only:!w-[220px] lg-only:!w-[220px]' : 'md-only:!w-18 lg-only:!w-18'
-      } xl:!w-[220px] md-only:transition-width lg-only:transition-width`}
+      } xl:w-[220px] md-only:transition-width lg-only:transition-width`}
       ref={ref}
     >
       <ResponsivePaneContent paneId={AppPaneId.Navigation} contentElementId="navigation-content">
