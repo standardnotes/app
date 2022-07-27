@@ -8,9 +8,10 @@ import TagsSectionTitle from './TagsSectionTitle'
 
 type Props = {
   viewControllerManager: ViewControllerManager
+  isCollapsed: boolean
 }
 
-const TagsSection: FunctionComponent<Props> = ({ viewControllerManager }) => {
+const TagsSection: FunctionComponent<Props> = ({ viewControllerManager, isCollapsed }) => {
   const [hasMigration, setHasMigration] = useState<boolean>(false)
 
   const checkIfMigrationNeeded = useCallback(() => {
@@ -53,7 +54,7 @@ const TagsSection: FunctionComponent<Props> = ({ viewControllerManager }) => {
 
   return (
     <section>
-      <div className="section-title-bar">
+      <div className={`section-title-bar ${isCollapsed ? 'md-only:hidden lg-only:hidden' : ''}`}>
         <div className="section-title-bar-header">
           <TagsSectionTitle
             features={viewControllerManager.featuresController}
@@ -66,7 +67,14 @@ const TagsSection: FunctionComponent<Props> = ({ viewControllerManager }) => {
           />
         </div>
       </div>
-      <TagsList viewControllerManager={viewControllerManager} />
+      <div
+        className={`hidden ${
+          isCollapsed
+            ? 'mt-7 mb-2 border-[1px] border-[color:var(--sn-stylekit-border-color)] md-only:block lg-only:block'
+            : ''
+        }`}
+      />
+      <TagsList viewControllerManager={viewControllerManager} isCollapsed={isCollapsed} />
     </section>
   )
 }

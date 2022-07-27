@@ -84,8 +84,8 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
             'md:hover:[overflow-y:_overlay]',
           )}
         >
-          <SmartViewsSection viewControllerManager={viewControllerManager} showTitles={isPanelExpanded} />
-          <TagsSection viewControllerManager={viewControllerManager} />
+          <SmartViewsSection viewControllerManager={viewControllerManager} isCollapsed={!isPanelExpanded} />
+          <TagsSection viewControllerManager={viewControllerManager} isCollapsed={!isPanelExpanded} />
         </div>
       </ResponsivePaneContent>
       {ref.current && (

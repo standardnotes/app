@@ -20,7 +20,7 @@ type Props = {
   view: SmartView
   tagsState: NavigationController
   features: FeaturesController
-  showTitles: boolean
+  isCollapsed: boolean
 }
 
 const PADDING_BASE_PX = 14
@@ -46,7 +46,7 @@ const smartViewIconType = (view: SmartView, isSelected: boolean): IconType => {
   return 'hashtag'
 }
 
-const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, showTitles }) => {
+const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, isCollapsed }) => {
   const { toggleAppPane } = useResponsiveAppPane()
 
   const [title, setTitle] = useState(view.title || '')
@@ -112,7 +112,12 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, showTit
   return (
     <>
       <div
-        className={`tag ${isSelected ? 'selected' : ''} ${isFaded ? 'opacity-50' : ''}`}
+        className={`tag ${isSelected ? 'selected' : ''} ${isFaded ? 'opacity-50' : ''} 
+        ${
+          isCollapsed && isSelected
+            ? 'md-only:!bg-[color:var(--sn-stylekit-info-color)]/12 md-only:w-fit md-only:rounded-full md-only:p-1'
+            : ''
+        }`}
         onClick={selectCurrentTag}
         style={{
           paddingLeft: `${level * PADDING_PER_LEVEL_PX + PADDING_BASE_PX}px`,
@@ -123,7 +128,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, showTit
             <Icon type={iconType} className={`${isSelected ? 'text-info' : 'text-neutral'} `} />
           </div>
           <input
-            className={`title ${isEditing ? 'editing' : ''} ${showTitles ? 'block' : 'hidden'}`}
+            className={`title ${isEditing ? 'editing' : ''} ${isCollapsed ? 'hidden' : 'block'}`}
             disabled={!isEditing}
             id={`react-tag-${view.uuid}`}
             onBlur={onBlur}

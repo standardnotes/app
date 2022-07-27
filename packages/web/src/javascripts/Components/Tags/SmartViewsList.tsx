@@ -5,10 +5,10 @@ import SmartViewsListItem from './SmartViewsListItem'
 
 type Props = {
   viewControllerManager: ViewControllerManager
-  showTitles: boolean
+  isCollapsed: boolean
 }
 
-const SmartViewsList: FunctionComponent<Props> = ({ viewControllerManager, showTitles }: Props) => {
+const SmartViewsList: FunctionComponent<Props> = ({ viewControllerManager, isCollapsed }: Props) => {
   const allViews = viewControllerManager.navigationController.smartViews
 
   return (
@@ -20,7 +20,7 @@ const SmartViewsList: FunctionComponent<Props> = ({ viewControllerManager, showT
             view={view}
             tagsState={viewControllerManager.navigationController}
             features={viewControllerManager.featuresController}
-            showTitles={showTitles}
+            isCollapsed={isCollapsed}
           />
         )
       })}
