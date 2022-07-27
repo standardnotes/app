@@ -27,9 +27,9 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
 
   const keyDownHandler: KeyboardEventHandler = useCallback(
     (event) => {
-      const hasNotPressedLeftOrRightKeys = event.key !== KeyboardKey.Left && event.key !== KeyboardKey.Right
+      const KeysToHandle: string[] = [KeyboardKey.Left, KeyboardKey.Right, KeyboardKey.Escape]
 
-      if (hasNotPressedLeftOrRightKeys) {
+      if (!KeysToHandle.includes(event.key)) {
         return
       }
 
@@ -54,9 +54,12 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
           }
           break
         }
+        case KeyboardKey.Escape:
+          dismiss()
+          break
       }
     },
-    [currentFile.uuid, otherFiles, setCurrentFile],
+    [currentFile.uuid, dismiss, otherFiles, setCurrentFile],
   )
 
   const IconComponent = useMemo(
@@ -81,36 +84,38 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
         className="flex min-h-[90%] min-w-[90%] flex-col rounded bg-[color:var(--modal-background-color)] p-0 shadow-main "
       >
         <div
-          className="min-h-6 flex flex-shrink-0 items-center justify-between border-0 border-b border-solid border-border px-4 py-3 focus:shadow-none"
+          className="flex h-full w-full flex-col focus:shadow-none focus:outline-none"
           tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
           onKeyDown={keyDownHandler}
         >
-          <div className="flex items-center">
-            <div className="h-6 w-6">{IconComponent}</div>
-            <span className="ml-3 font-medium">{currentFile.name}</span>
+          <div className="min-h-6 flex flex-shrink-0 items-center justify-between border-0 border-b border-solid border-border px-4 py-3 focus:shadow-none">
+            <div className="flex items-center">
+              <div className="h-6 w-6">{IconComponent}</div>
+              <span className="ml-3 font-medium">{currentFile.name}</span>
+            </div>
+            <div className="flex items-center">
+              <button
+                className="mr-4 flex cursor-pointer rounded border border-solid border-border bg-transparent p-1.5 hover:bg-contrast"
+                onClick={() => setShowFileInfoPanel((show) => !show)}
+              >
+                <Icon type="info" className="text-neutral" />
+              </button>
+              <button
+                ref={closeButtonRef}
+                onClick={dismiss}
+                aria-label="Close modal"
+                className="flex cursor-pointer rounded border-0 bg-transparent p-1 hover:bg-contrast"
+              >
+                <Icon type="close" className="text-neutral" />
+              </button>
+            </div>
           </div>
-          <div className="flex items-center">
-            <button
-              className="mr-4 flex cursor-pointer rounded border border-solid border-border bg-transparent p-1.5 hover:bg-contrast"
-              onClick={() => setShowFileInfoPanel((show) => !show)}
-            >
-              <Icon type="info" className="text-neutral" />
-            </button>
-            <button
-              ref={closeButtonRef}
-              onClick={dismiss}
-              aria-label="Close modal"
-              className="flex cursor-pointer rounded border-0 bg-transparent p-1 hover:bg-contrast"
-            >
-              <Icon type="close" className="text-neutral" />
-            </button>
+          <div className="flex min-h-0 flex-grow">
+            <div className="relative flex max-w-full flex-grow items-center justify-center">
+              <FilePreview file={currentFile} application={application} key={currentFile.uuid} />
+            </div>
+            {showFileInfoPanel && <FilePreviewInfoPanel file={currentFile} />}
           </div>
-        </div>
-        <div className="flex min-h-0 flex-grow">
-          <div className="relative flex max-w-full flex-grow items-center justify-center">
-            <FilePreview file={currentFile} application={application} key={currentFile.uuid} />
-          </div>
-          {showFileInfoPanel && <FilePreviewInfoPanel file={currentFile} />}
         </div>
       </DialogContent>
     </DialogOverlay>

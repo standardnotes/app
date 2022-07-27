@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.41.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.41.1...@standardnotes/web@3.41.2) (2022-07-26)
+
+### Bug Fixes
+
+* preview modal keyboard handling ([#1345](https://github.com/standardnotes/app/issues/1345)) ([9bc7533](https://github.com/standardnotes/app/commit/9bc7533010662732d671fd1a93e2fb498e9d14dc))
+
 ## [3.41.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.41.0...@standardnotes/web@3.41.1) (2022-07-25)
 
 ### Bug Fixes
