@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.41.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.41.2...@standardnotes/web@3.41.3) (2022-07-27)
+
+### Bug Fixes
+
+* popover behaviour when clicking outside of popover ([#1355](https://github.com/standardnotes/app/issues/1355)) ([58e751f](https://github.com/standardnotes/app/commit/58e751f986564cf74cbfd869d2c43e626030b701))
+
 ## [3.41.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.41.1...@standardnotes/web@3.41.2) (2022-07-26)
 
 ### Bug Fixes
