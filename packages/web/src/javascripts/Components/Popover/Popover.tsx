@@ -10,6 +10,20 @@ type PopoverContextData = {
 
 const PopoverContext = createContext<PopoverContextData | null>(null)
 
+const useRegisterPopoverToParent = (popoverId: string) => {
+  const parentPopoverContext = useContext(PopoverContext)
+
+  useEffect(() => {
+    const currentId = popoverId
+
+    parentPopoverContext?.registerChildPopover(currentId)
+
+    return () => {
+      parentPopoverContext?.unregisterChildPopover(currentId)
+    }
+  }, [parentPopoverContext, popoverId])
+}
+
 type Props = PopoverProps & {
   open: boolean
 }
@@ -27,17 +41,7 @@ const Popover = ({
 }: Props) => {
   const popoverId = useRef(UuidGenerator.GenerateUuid())
 
-  const parentPopoverContext = useContext(PopoverContext)
-
-  useEffect(() => {
-    const currentId = popoverId.current
-
-    parentPopoverContext?.registerChildPopover(currentId)
-
-    return () => {
-      parentPopoverContext?.unregisterChildPopover(currentId)
-    }
-  }, [parentPopoverContext])
+  useRegisterPopoverToParent(popoverId.current)
 
   const [childPopovers, setChildPopovers] = useState<Set<string>>(new Set())
 
