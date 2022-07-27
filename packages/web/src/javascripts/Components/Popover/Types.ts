@@ -42,6 +42,8 @@ type CommonPopoverProps = {
 export type PopoverContentProps = CommonPopoverProps & {
   anchorElement?: HTMLElement | null
   anchorPoint?: Point
+  childPopovers: Set<string>
+  id: string
 }
 
 export type PopoverProps =
