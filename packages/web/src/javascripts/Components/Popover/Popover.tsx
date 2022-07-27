@@ -43,10 +43,6 @@ const Popover = ({
 
   const [childPopovers, setChildPopovers] = useState<Set<string>>(new Set())
 
-  useEffect(() => {
-    console.log(childPopovers)
-  }, [childPopovers])
-
   const registerChildPopover = useCallback((id: string) => {
     setChildPopovers((childPopovers) => new Set(childPopovers.add(id)))
   }, [])
@@ -72,7 +68,9 @@ const Popover = ({
         align={align}
         anchorElement={anchorElement}
         anchorPoint={anchorPoint}
+        childPopovers={childPopovers}
         className={className}
+        id={popoverId.current}
         overrideZIndex={overrideZIndex}
         side={side}
         togglePopover={togglePopover}

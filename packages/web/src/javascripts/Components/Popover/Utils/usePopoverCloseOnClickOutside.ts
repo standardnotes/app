@@ -4,9 +4,15 @@ type Options = {
   popoverElement: HTMLElement | null
   anchorElement: HTMLElement | null | undefined
   togglePopover: () => void
+  childPopovers: Set<string>
 }
 
-export const usePopoverCloseOnClickOutside = ({ popoverElement, anchorElement, togglePopover }: Options) => {
+export const usePopoverCloseOnClickOutside = ({
+  popoverElement,
+  anchorElement,
+  togglePopover,
+  childPopovers,
+}: Options) => {
   useEffect(() => {
     const closeIfClickedOutside = (event: MouseEvent) => {
       const matchesMediumBreakpoint = matchMedia('(min-width: 768px)').matches
@@ -19,9 +25,10 @@ export const usePopoverCloseOnClickOutside = ({ popoverElement, anchorElement, t
 
       const isDescendantOfMenu = popoverElement?.contains(target)
       const isAnchorElement = anchorElement ? anchorElement === event.target || anchorElement.contains(target) : false
-      const isDescendantOfPopover = target.closest('[data-popover]')
+      const closestPopoverId = target.closest('[data-popover]')?.getAttribute('data-popover')
+      const isDescendantOfChildPopover = closestPopoverId && childPopovers.has(closestPopoverId)
 
-      if (!isDescendantOfMenu && !isAnchorElement && !isDescendantOfPopover) {
+      if (!isDescendantOfMenu && !isAnchorElement && !isDescendantOfChildPopover) {
         togglePopover()
       }
     }
@@ -32,5 +39,5 @@ export const usePopoverCloseOnClickOutside = ({ popoverElement, anchorElement, t
         capture: true,
       })
     }
-  }, [anchorElement, popoverElement, togglePopover])
+  }, [anchorElement, childPopovers, popoverElement, togglePopover])
 }
