@@ -32,9 +32,7 @@ const Popover = ({
   useEffect(() => {
     const currentId = popoverId.current
 
-    if (parentPopoverContext) {
-      parentPopoverContext.registerChildPopover(currentId)
-    }
+    parentPopoverContext?.registerChildPopover(currentId)
 
     return () => {
       parentPopoverContext?.unregisterChildPopover(currentId)
