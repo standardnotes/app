@@ -10,6 +10,7 @@ import SearchBar from '@/Components/SearchBar/SearchBar'
 import ResponsivePaneContent from '@/Components/ResponsivePane/ResponsivePaneContent'
 import { AppPaneId } from '@/Components/ResponsivePane/AppPaneMetadata'
 import { classNames } from '@/Utils/ConcatenateClassNames'
+import Icon from '@/Components/Icon/Icon'
 
 type Props = {
   application: WebApplication
@@ -61,8 +62,13 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
           searchOptionsController={viewControllerManager.searchOptionsController}
           selectedViewTitle={viewControllerManager.navigationController.selected?.title}
         />
-        <div className={'hidden md:block xl:hidden'} onClick={() => setIsPanelExpanded(!isPanelExpanded)}>
-          {isPanelExpanded ? 'Collapse' : 'Expand'}
+        <div
+          className={`hidden w-fit items-end ${
+            isPanelExpanded ? 'self-end' : 'self-end'
+          } my-2 mr-2 rounded-full bg-white p-1 md:flex xl:hidden`}
+          onClick={() => setIsPanelExpanded(!isPanelExpanded)}
+        >
+          <Icon type="chevron-down" className={`${isPanelExpanded ? 'rotate-90' : '-rotate-90'}`} />
         </div>
         <div className="section-title-bar block md:hidden xl:block">
           <div className="section-title-bar-header">
