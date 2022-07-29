@@ -7475,6 +7475,7 @@ __metadata:
     "@reach/listbox": ^0.16.2
     "@reach/tooltip": ^0.16.2
     "@reach/visually-hidden": ^0.16.0
+    "@standardnotes/components-meta": "workspace:*"
     "@standardnotes/filepicker": "workspace:*"
     "@standardnotes/files": "workspace:*"
     "@standardnotes/icons": "workspace:*"
@@ -7490,6 +7491,7 @@ __metadata:
     autoprefixer: ^10.4.7
     babel-loader: ^8.2.5
     circular-dependency-plugin: ^5.2.2
+    copy-webpack-plugin: ^11.0.0
     css-loader: "*"
     dotenv: ^16.0.0
     eslint: "*"

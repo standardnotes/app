@@ -1,0 +1,35 @@
+name: Static Web Deploy
+
+concurrency:
+  group: static_environment
+  cancel-in-progress: true
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'packages/web/**'
+
+jobs:
+  test_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        run: yarn install --immutable
+      - name: Build
+        run: yarn build:web
+      - name: ESLint
+        run: yarn lint
+      - name: Test
+        run: yarn test
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Deploy static site to S3 bucket
+        run: aws s3 sync packages/web/dist/ s3://app-static.standardnotes.com --delete
