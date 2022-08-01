@@ -149,7 +149,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, isColla
           </div>
         </div>
 
-        {!isSystemView(view) && (
+        {!isSystemView(view) && !isCollapsed && (
           <div className="meta">
             {view.conflictOf && (
               <div className="danger text-[0.625rem] font-bold">Conflicted Copy {view.conflictOf}</div>
