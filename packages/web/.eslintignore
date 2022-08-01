@@ -1,0 +1,11 @@
+node_modules
+dist
+.eslintrc
+*.webpack.*.js
+web.webpack-defaults.js
+*.config.js
+__mocks__
+
+src/components
+src/favicon
+src/vendor

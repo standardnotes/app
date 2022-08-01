@@ -9,7 +9,6 @@
     "../../node_modules/@standardnotes/config/src/.eslintrc"
   ],
   "plugins": ["@typescript-eslint", "react", "react-hooks"],
-  "ignorePatterns": [".eslintrc.js", "*.webpack.*.js", "webpack-defaults.js", "jest.config.js", "__mocks__"],
   "rules": {
     "standard/no-callback-literal": 0, // Disable this as we have too many callbacks relying on literals
     "no-throw-literal": 0,
