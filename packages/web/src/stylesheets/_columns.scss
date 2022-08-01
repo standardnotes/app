@@ -9,19 +9,13 @@
   }
 }
 
-.app-column-first {
-  width: 220px;
-
-  @media screen and (max-width: 768px) {
-    width: 100% !important;
+@media screen and (min-width: 768px) {
+  .app-column-first {
+    width: 220px;
   }
-}
 
-.app-column-second {
-  width: 350px;
-
-  @media screen and (max-width: 768px) {
-    width: 100% !important;
+  .app-column-second {
+    width: 350px;
   }
 }
 
