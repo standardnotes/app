@@ -1,6 +1,7 @@
 import { Component, createRef, MouseEventHandler } from 'react'
 import { debounce } from '@/Utils'
 import { classNames } from '@/Utils/ConcatenateClassNames'
+import { MediaQuery } from '@/Constants/MediaQueries'
 
 export type ResizeFinishCallback = (
   lastWidth: number,
@@ -75,6 +76,7 @@ class PanelResizer extends Component<Props, State> {
     if (this.props.type === PanelResizeType.OffsetAndWidth) {
       window.addEventListener('resize', this.debouncedResizeHandler)
     }
+    window.matchMedia(MediaQuery.md).addEventListener('change', this.handleMediaQuery)
   }
 
   override componentDidMount() {
@@ -101,6 +103,7 @@ class PanelResizer extends Component<Props, State> {
     document.removeEventListener('mouseup', this.onMouseUp)
     document.removeEventListener('mousemove', this.onMouseMove)
     window.removeEventListener('resize', this.debouncedResizeHandler)
+    window.matchMedia(MediaQuery.md).removeEventListener('change', this.handleMediaQuery)
   }
 
   get appFrame() {
@@ -302,6 +305,16 @@ class PanelResizer extends Component<Props, State> {
     if (this.overlay) {
       this.overlay.remove()
       this.overlay = undefined
+    }
+  }
+
+  handleMediaQuery = (event: MediaQueryListEvent) => {
+    if (!event.matches) {
+      this.props.panel.style.width = ''
+      this.props.panel.style.left = ''
+    } else {
+      this.setWidth(this.lastWidth, true)
+      this.setLeft(this.lastLeft)
     }
   }
 
