@@ -39,7 +39,7 @@ module.exports = (env) => {
       }),
       new CopyWebpackPlugin({
         patterns: [
-          { from: 'src/favicon' },
+          { from: 'src/favicon', to: 'favicon' },
           { from: 'src/vendor', to: 'dist' },
           { from: 'src/components', to: 'components' },
           { from: 'src/404.html' },
