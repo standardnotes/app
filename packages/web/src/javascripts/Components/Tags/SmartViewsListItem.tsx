@@ -112,7 +112,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, isColla
   return (
     <>
       <div
-        className={`tag ${isSelected && !isCollapsed ? 'selected' : ''} ${isFaded ? 'opacity-50' : ''} ${
+        className={`tag ${isSelected ? 'selected' : ''} ${isFaded ? 'opacity-50' : ''} ${
           isCollapsed ? '!bg-transparent' : ''
         }`}
         onClick={selectCurrentTag}
