@@ -1,3 +1,4 @@
+import { MediaQuery } from '@/Constants/MediaQueries'
 import { PopoverSide, PopoverAlignment } from '../Types'
 
 export const getPopoverMaxHeight = (
@@ -6,7 +7,7 @@ export const getPopoverMaxHeight = (
   side: PopoverSide,
   alignment: PopoverAlignment,
 ): number | 'none' => {
-  const matchesMediumBreakpoint = matchMedia('(min-width: 768px)').matches
+  const matchesMediumBreakpoint = matchMedia(MediaQuery.md).matches
 
   if (!matchesMediumBreakpoint) {
     return 'none'

@@ -1,3 +1,4 @@
+import { MediaQuery } from '@/Constants/MediaQueries'
 import { useEffect } from 'react'
 
 type Options = {
@@ -15,7 +16,7 @@ export const usePopoverCloseOnClickOutside = ({
 }: Options) => {
   useEffect(() => {
     const closeIfClickedOutside = (event: MouseEvent) => {
-      const matchesMediumBreakpoint = matchMedia('(min-width: 768px)').matches
+      const matchesMediumBreakpoint = matchMedia(MediaQuery.md).matches
 
       if (!matchesMediumBreakpoint) {
         return
