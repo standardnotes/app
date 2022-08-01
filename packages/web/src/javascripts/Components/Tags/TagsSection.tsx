@@ -70,7 +70,7 @@ const TagsSection: FunctionComponent<Props> = ({ viewControllerManager, isCollap
       <div
         className={`hidden ${
           isCollapsed
-            ? 'mt-7 mb-2 border-[1px] border-[color:var(--sn-stylekit-border-color)] md-only:block lg-only:block'
+            ? 'mt-6 mb-7 border-[1px] border-[color:var(--sn-stylekit-border-color)] md-only:block lg-only:block'
             : ''
         }`}
       />
