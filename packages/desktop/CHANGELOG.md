@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.23.83](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.82...@standardnotes/desktop@3.23.83) (2022-08-01)
+
+### Bug Fixes
+
+* popover header getting hidden on desktop by titlebar ([#1359](https://github.com/standardnotes/app/issues/1359)) ([5b3cfdd](https://github.com/standardnotes/app/commit/5b3cfddc50aabb4d03761e7e46c3ab1d1bb2c952))
+
 ## [3.23.82](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.81...@standardnotes/desktop@3.23.82) (2022-07-27)
 
 **Note:** Version bump only for package @standardnotes/desktop
