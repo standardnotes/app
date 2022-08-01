@@ -15,7 +15,9 @@ const PositionedPopoverContent = ({
   anchorElement,
   anchorPoint,
   children,
+  childPopovers,
   className,
+  id,
   overrideZIndex,
   side = 'bottom',
   togglePopover,
@@ -44,6 +46,7 @@ const PositionedPopoverContent = ({
     popoverElement,
     anchorElement,
     togglePopover,
+    childPopovers,
   })
 
   return (
@@ -61,7 +64,7 @@ const PositionedPopoverContent = ({
         ref={(node) => {
           setPopoverElement(node)
         }}
-        data-popover
+        data-popover={id}
       >
         <div className="md:hidden">
           <div className="flex items-center justify-end px-3">
