@@ -62,7 +62,7 @@
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.5",
     "copy-webpack-plugin": "^10.2.4",
-    "electron-builder": "23.0.3",
+    "electron-builder": "23.3.3",
     "electron-notarize": "^1.2.1",
     "eslint": "*",
     "eslint-config-prettier": "^8.5.0",
