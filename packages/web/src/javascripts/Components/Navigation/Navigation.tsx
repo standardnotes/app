@@ -57,11 +57,13 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
       ref={ref}
     >
       <ResponsivePaneContent paneId={AppPaneId.Navigation} contentElementId="navigation-content">
-        <SearchBar
-          itemListController={viewControllerManager.itemListController}
-          searchOptionsController={viewControllerManager.searchOptionsController}
-          selectedViewTitle={viewControllerManager.navigationController.selected?.title}
-        />
+        {isPanelExpanded && (
+          <SearchBar
+            itemListController={viewControllerManager.itemListController}
+            searchOptionsController={viewControllerManager.searchOptionsController}
+            selectedViewTitle={viewControllerManager.navigationController.selected?.title}
+          />
+        )}
         <div className={'flex justify-end'}>
           <div className={`section-title-bar block w-full xl:block ${isPanelExpanded ? '' : 'hidden'}`}>
             <div className="section-title-bar-header">
