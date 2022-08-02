@@ -7449,15 +7449,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/web-server@workspace:packages/web-server":
-  version: 0.0.0-use.local
-  resolution: "@standardnotes/web-server@workspace:packages/web-server"
-  dependencies:
-    "@standardnotes/components-meta": "workspace:*"
-    "@standardnotes/web": "workspace:*"
-  languageName: unknown
-  linkType: soft
-
 "@standardnotes/web@workspace:*, @standardnotes/web@workspace:packages/web":
   version: 0.0.0-use.local
   resolution: "@standardnotes/web@workspace:packages/web"
