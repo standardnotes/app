@@ -74,7 +74,7 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
           </div>
           <div
             className={`hidden items-end self-end ${
-              isPanelExpanded ? 'mb-1 w-fit' : 'mt-2 mb-3 ml-3 w-full'
+              isPanelExpanded ? 'mb-1 w-fit' : 'mt-4.5 mb-3 ml-3 w-full'
             } rounded-full rounded-tr-none rounded-br-none bg-white p-1 md:flex xl:hidden`}
             onClick={() => setIsPanelExpanded(!isPanelExpanded)}
           >
