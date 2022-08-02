@@ -62,19 +62,21 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
           searchOptionsController={viewControllerManager.searchOptionsController}
           selectedViewTitle={viewControllerManager.navigationController.selected?.title}
         />
-        <div
-          className={`hidden w-fit items-end ${
-            isPanelExpanded ? 'self-end' : 'self-end'
-          } my-2 mr-2 rounded-full bg-white p-1 md:flex xl:hidden`}
-          onClick={() => setIsPanelExpanded(!isPanelExpanded)}
-        >
-          <Icon type="chevron-down" className={`${isPanelExpanded ? 'rotate-90' : '-rotate-90'}`} />
-        </div>
-        <div className="section-title-bar block md:hidden xl:block">
-          <div className="section-title-bar-header">
-            <div className="title text-sm">
-              <span className="font-bold">Views</span>
+        <div className={'flex justify-end'}>
+          <div className={`section-title-bar block w-full xl:block ${isPanelExpanded ? '' : 'hidden'}`}>
+            <div className="section-title-bar-header">
+              <div className="title text-sm">
+                <span className="font-bold">Views</span>
+              </div>
             </div>
+          </div>
+          <div
+            className={`hidden items-end self-end ${
+              isPanelExpanded ? 'mb-1 w-fit' : 'mt-2 mb-3 ml-3 w-full'
+            } rounded-full rounded-tr-none rounded-br-none bg-white p-1 md:flex xl:hidden`}
+            onClick={() => setIsPanelExpanded(!isPanelExpanded)}
+          >
+            <Icon type="chevron-down" className={`${isPanelExpanded ? 'rotate-90' : '-rotate-90'}`} />
           </div>
         </div>
         <div
