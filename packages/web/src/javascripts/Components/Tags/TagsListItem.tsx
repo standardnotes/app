@@ -33,6 +33,7 @@ type Props = {
 }
 
 const PADDING_BASE_PX = 14
+const PADDING_BASE_WHEN_COLLAPSED_PX = 6
 const PADDING_PER_LEVEL_PX = 21
 const PADDING_PER_LEVEL_WHEN_COLLAPSED_PX = 10
 
@@ -204,7 +205,9 @@ export const TagsListItem: FunctionComponent<Props> = observer(
           ref={dragRef}
           style={{
             paddingLeft: `${
-              level * (isCollapsed ? PADDING_PER_LEVEL_WHEN_COLLAPSED_PX : PADDING_PER_LEVEL_PX) + PADDING_BASE_PX
+              isCollapsed
+                ? level * PADDING_PER_LEVEL_WHEN_COLLAPSED_PX + PADDING_BASE_WHEN_COLLAPSED_PX
+                : level * PADDING_PER_LEVEL_PX + PADDING_BASE_PX
             }px`,
           }}
           onContextMenu={(e) => {
@@ -213,9 +216,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
           }}
         >
           <div className="tag-info" title={title} ref={dropRef}>
-            {/*<div className={`tag-info ${isCollapsed ? 'md-only:!w-min' : ''}`} title={title} ref={dropRef}>*/}
             {hasAtLeastOneFolder && (
-              // {hasAtLeastOneFolder && !isCollapsed && (
               <div className="tag-fold-container">
                 <a
                   role="button"
