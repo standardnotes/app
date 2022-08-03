@@ -72,7 +72,7 @@
     "@reach/dialog": "^0.16.2",
     "@reach/disclosure": "^0.16.2",
     "@reach/listbox": "^0.16.2",
-    "@reach/tooltip": "^0.16.2",
+    "@reach/tooltip": "^0.17.0",
     "@reach/visually-hidden": "^0.16.0",
     "@standardnotes/components-meta": "workspace:*",
     "@standardnotes/filepicker": "workspace:*",
