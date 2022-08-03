@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.42.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.41.3...@standardnotes/web@3.42.0) (2022-08-03)
+
+### Bug Fixes
+
+* **web:** eslint ignore setup ([966c157](https://github.com/standardnotes/app/commit/966c15701f599a2fe171d18b92079a451e48849d))
+
+### Features
+
+* **web:** remove web-server and change web to a static website deployment ([#1360](https://github.com/standardnotes/app/issues/1360)) ([483cac9](https://github.com/standardnotes/app/commit/483cac90cfddb13854be1998e7b96b50aee86464))
+
 ## [3.41.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.41.2...@standardnotes/web@3.41.3) (2022-07-27)
 
 ### Bug Fixes
