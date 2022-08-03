@@ -115,9 +115,9 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, isColla
       <div
         className={classNames(
           'tag',
-          isSelected ? 'selected' : '',
-          isFaded ? 'opacity-50' : '',
-          isCollapsed ? '!bg-transparent' : '',
+          isSelected && 'selected',
+          isFaded && 'opacity-50',
+          isCollapsed && '!bg-transparent',
         )}
         onClick={selectCurrentTag}
         style={{
@@ -135,7 +135,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, isColla
                 : 'tag-icon mr-2',
             )}
           >
-            <Icon type={iconType} className={`${isSelected ? 'text-info' : 'text-neutral'} `} />
+            <Icon type={iconType} className={isSelected ? 'text-info' : 'text-neutral'} />
           </div>
           <input
             className={classNames('title', isEditing ? 'editing' : '', isCollapsed ? 'hidden' : 'block')}

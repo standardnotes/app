@@ -66,7 +66,7 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
           />
         )}
         <div className={'flex justify-end'}>
-          <div className={classNames('section-title-bar block w-full xl:block', isPanelExpanded ? '' : 'hidden')}>
+          <div className={classNames('section-title-bar block w-full xl:block', !isPanelExpanded && 'hidden')}>
             <div className="section-title-bar-header">
               <div className="title text-sm">
                 <span className="font-bold">Views</span>
@@ -80,7 +80,7 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
             )}
             onClick={() => setIsPanelExpanded(!isPanelExpanded)}
           >
-            <Icon type="chevron-down" className={`${isPanelExpanded ? 'rotate-90' : '-rotate-90'}`} />
+            <Icon type="chevron-down" className={isPanelExpanded ? 'rotate-90' : '-rotate-90'} />
           </div>
         </div>
         <div
