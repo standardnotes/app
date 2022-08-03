@@ -5,6 +5,7 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import TagsSectionAddButton from './TagsSectionAddButton'
 import TagsSectionTitle from './TagsSectionTitle'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -54,7 +55,7 @@ const TagsSection: FunctionComponent<Props> = ({ viewControllerManager, isCollap
 
   return (
     <section>
-      <div className={`section-title-bar ${isCollapsed ? 'md-only:hidden lg-only:hidden' : ''}`}>
+      <div className={classNames('section-title-bar', isCollapsed ? 'md-only:hidden lg-only:hidden' : '')}>
         <div className="section-title-bar-header">
           <TagsSectionTitle
             features={viewControllerManager.featuresController}

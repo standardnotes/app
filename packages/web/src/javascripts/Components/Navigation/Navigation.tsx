@@ -51,9 +51,10 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
   return (
     <div
       id="navigation"
-      className={`sn-component section app-column xsm-only:!w-full sm-only:!w-full ${
-        isPanelExpanded ? 'md-only:!w-[220px] lg-only:!w-[220px]' : 'md-only:!w-18 lg-only:!w-18'
-      } xl:w-[220px] md-only:transition-width lg-only:transition-width`}
+      className={classNames(
+        'sn-component section app-column xl:w-[220px] xsm-only:!w-full sm-only:!w-full md-only:transition-width lg-only:transition-width',
+        isPanelExpanded ? 'md-only:!w-[220px] lg-only:!w-[220px]' : 'md-only:!w-18 lg-only:!w-18',
+      )}
       ref={ref}
     >
       <ResponsivePaneContent paneId={AppPaneId.Navigation} contentElementId="navigation-content">
@@ -65,7 +66,7 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
           />
         )}
         <div className={'flex justify-end'}>
-          <div className={`section-title-bar block w-full xl:block ${isPanelExpanded ? '' : 'hidden'}`}>
+          <div className={classNames('section-title-bar block w-full xl:block', isPanelExpanded ? '' : 'hidden')}>
             <div className="section-title-bar-header">
               <div className="title text-sm">
                 <span className="font-bold">Views</span>
@@ -73,9 +74,10 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
             </div>
           </div>
           <div
-            className={`hidden items-end self-end ${
-              isPanelExpanded ? 'mb-1 w-fit' : 'mt-4.5 mb-3 ml-3 w-full'
-            } rounded-full rounded-tr-none rounded-br-none bg-white p-1 md:flex xl:hidden`}
+            className={classNames(
+              'hidden items-end self-end rounded-full rounded-tr-none rounded-br-none bg-white p-1 md:flex xl:hidden',
+              isPanelExpanded ? 'mb-1 w-fit' : 'mt-4.5 mb-3 ml-3 w-full',
+            )}
             onClick={() => setIsPanelExpanded(!isPanelExpanded)}
           >
             <Icon type="chevron-down" className={`${isPanelExpanded ? 'rotate-90' : '-rotate-90'}`} />

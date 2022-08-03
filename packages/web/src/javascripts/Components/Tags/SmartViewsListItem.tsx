@@ -15,6 +15,7 @@ import {
 } from 'react'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 
 type Props = {
   view: SmartView
@@ -112,9 +113,12 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, isColla
   return (
     <>
       <div
-        className={`tag ${isSelected ? 'selected' : ''} ${isFaded ? 'opacity-50' : ''} ${
-          isCollapsed ? '!bg-transparent' : ''
-        }`}
+        className={classNames(
+          'tag',
+          isSelected ? 'selected' : '',
+          isFaded ? 'opacity-50' : '',
+          isCollapsed ? '!bg-transparent' : '',
+        )}
         onClick={selectCurrentTag}
         style={{
           paddingLeft: `${level * PADDING_PER_LEVEL_PX + PADDING_BASE_PX}px`,
@@ -123,18 +127,18 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, isColla
         <div className="tag-info relative">
           {/* TODO: couldn't use BG variable with opacity, so used its hex code directly - try to find a way to use var name instead */}
           <div
-            className={`${
+            className={classNames(
               isCollapsed
                 ? `flex h-[40px] w-[40px] items-center justify-center ${
                     isSelected ? 'rounded-full bg-[#086DD6]/[.12]' : ''
                   } hover:rounded-full hover:bg-[#086DD6]/[.12]`
-                : 'tag-icon mr-2'
-            }`}
+                : 'tag-icon mr-2',
+            )}
           >
             <Icon type={iconType} className={`${isSelected ? 'text-info' : 'text-neutral'} `} />
           </div>
           <input
-            className={`title ${isEditing ? 'editing' : ''} ${isCollapsed ? 'hidden' : 'block'}`}
+            className={classNames('title', isEditing ? 'editing' : '', isCollapsed ? 'hidden' : 'block')}
             disabled={!isEditing}
             id={`react-tag-${view.uuid}`}
             onBlur={onBlur}
@@ -144,7 +148,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, isColla
             spellCheck={false}
             ref={inputRef}
           />
-          <div className={`count ${isCollapsed ? 'absolute top-0 right-0' : ''}`}>
+          <div className={classNames('count', isCollapsed ? 'absolute top-0 right-0' : '')}>
             {view.uuid === SystemViewId.AllNotes && tagsState.allNotesCount}
           </div>
         </div>

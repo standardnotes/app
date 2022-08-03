@@ -22,6 +22,7 @@ import { useDrag, useDrop } from 'react-dnd'
 import { DropItem, DropProps, ItemTypes } from './DragNDrop'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 
 type Props = {
   tag: SNTag
@@ -230,15 +231,17 @@ export const TagsListItem: FunctionComponent<Props> = observer(
               </div>
             )}
             <div
-              className={`tag-icon draggable mr-2 ${isCollapsed ? 'md-only:!hidden lg-only:!hidden' : ''}`}
+              className={classNames('tag-icon draggable mr-2', isCollapsed ? 'md-only:!hidden lg-only:!hidden' : '')}
               ref={dragRef}
             >
               <Icon type="hashtag" className={`${isSelected ? 'text-info' : 'text-neutral'}`} />
             </div>
             <input
-              className={`title focus:shadow-none focus:outline-none ${isEditing ? 'editing' : ''} ${
-                isCollapsed ? 'md-only:!w-min lg-only:!w-min' : ''
-              }`}
+              className={classNames(
+                'title focus:shadow-none focus:outline-none',
+                isEditing ? 'editing' : '',
+                isCollapsed ? 'md-only:!w-min lg-only:!w-min' : '',
+              )}
               id={`react-tag-${tag.uuid}`}
               disabled={!isEditing}
               onBlur={onBlur}
