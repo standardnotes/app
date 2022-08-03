@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.31.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.30.38...@standardnotes/mobile@3.31.0) (2022-08-03)
+
+### Features
+
+* **web:** remove web-server and change web to a static website deployment ([#1360](https://github.com/standardnotes/app/issues/1360)) ([483cac9](https://github.com/standardnotes/app/commit/483cac90cfddb13854be1998e7b96b50aee86464))
+
 ## [3.30.38](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.30.37...@standardnotes/mobile@3.30.38) (2022-07-27)
 
 **Note:** Version bump only for package @standardnotes/mobile

@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/web",
-  "version": "3.41.3",
+  "version": "3.42.0",
   "license": "AGPL-3.0-or-later",
   "main": "dist/app.js",
   "author": "Standard Notes.",
@@ -9,16 +9,18 @@
     "dist"
   ],
   "scripts": {
-    "build": "webpack --config web.webpack.prod.js && yarn tsc",
-    "clean": "rm -fr dist",
+    "build": "yarn clean && yarn copy:components && webpack --config web.webpack.prod.js && yarn tsc",
+    "clean": "rm -fr dist && rm -rf src/components",
     "format": "prettier --write src/javascripts",
     "lint": "eslint src/javascripts",
-    "prebuild": "yarn clean",
     "start": "webpack-dev-server --config web.webpack.dev.js",
     "test": "jest --config jest.config.js --coverage",
     "tsc": "tsc --project tsconfig.json",
     "upgrade:snjs": "ncu -u '@standardnotes/*'",
-    "watch": "webpack -w --config web.webpack.dev.js"
+    "watch": "webpack -w --config web.webpack.dev.js",
+    "copy:components": "yarn copy:components-assets && yarn copy:components-zips",
+    "copy:components-assets": "mkdir -p src/components/assets && cp -r ../../node_modules/@standardnotes/components-meta/dist/assets/. src/components/assets",
+    "copy:components-zips": "mkdir -p src/components/zips && cp -r ../../node_modules/@standardnotes/components-meta/dist/zips/. ./src/components/zips"
   },
   "devDependencies": {
     "@babel/core": "*",
@@ -33,6 +35,7 @@
     "autoprefixer": "^10.4.7",
     "babel-loader": "^8.2.5",
     "circular-dependency-plugin": "^5.2.2",
+    "copy-webpack-plugin": "^11.0.0",
     "css-loader": "*",
     "dotenv": "^16.0.0",
     "eslint": "*",
@@ -71,6 +74,7 @@
     "@reach/listbox": "^0.16.2",
     "@reach/tooltip": "^0.16.2",
     "@reach/visually-hidden": "^0.16.0",
+    "@standardnotes/components-meta": "workspace:*",
     "@standardnotes/filepicker": "workspace:*",
     "@standardnotes/files": "workspace:*",
     "@standardnotes/icons": "workspace:*",

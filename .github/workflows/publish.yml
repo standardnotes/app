@@ -21,9 +21,6 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
           node-version-file: '.nvmrc'
 
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-
       - name: Setup git config
         run: |
           git config --global user.name "standardci"

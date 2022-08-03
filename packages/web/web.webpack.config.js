@@ -2,6 +2,7 @@ const path = require('path')
 const webpack = require('webpack')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CircularDependencyPlugin = require('circular-dependency-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 const mergeWithEnvDefaults = require('./web.webpack-defaults')
 require('dotenv').config()
 
@@ -36,6 +37,19 @@ module.exports = (env) => {
         filename: './app.css',
         ignoreOrder: true, // Enable to remove warnings about conflicting order
       }),
+      new CopyWebpackPlugin({
+        patterns: [
+          { from: 'src/favicon', to: 'favicon' },
+          { from: 'src/vendor', to: 'dist' },
+          { from: 'src/components', to: 'components' },
+          { from: 'src/404.html' },
+          { from: 'src/422.html' },
+          { from: 'src/500.html' },
+          { from: 'src/index.html' },
+          { from: 'src/manifest.webmanifest' },
+          { from: 'src/robots.txt' }
+        ]
+      })
     ],
     resolve: {
       extensions: ['.ts', '.tsx', '.js'],
