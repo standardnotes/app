@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.42.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.42.0...@standardnotes/web@3.42.1) (2022-08-03)
+
+### Bug Fixes
+
+* **web:** upgrade eslint ([1216b44](https://github.com/standardnotes/app/commit/1216b441fb4575b5aca1ca3869b06828adeb75b4))
+
 # [3.42.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.41.3...@standardnotes/web@3.42.0) (2022-08-03)
 
 ### Bug Fixes
