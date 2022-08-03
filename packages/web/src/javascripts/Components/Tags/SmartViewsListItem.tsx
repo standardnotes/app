@@ -125,13 +125,11 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, isColla
         }}
       >
         <div className="tag-info relative">
-          {/* TODO: couldn't use BG variable with opacity, so used its hex code directly - try to find a way to use var name instead */}
           <div
             className={classNames(
               isCollapsed
-                ? `flex h-[40px] w-[40px] items-center justify-center ${
-                    isSelected ? 'rounded-full bg-[#086DD6]/[.12]' : ''
-                  } hover:rounded-full hover:bg-[#086DD6]/[.12]`
+                ? `group-hover:transparent-info-color-background relative flex h-[40px] w-[40px] items-center justify-center
+                  ${isSelected ? 'transparent-info-color-background after:rounded-full' : ''}`
                 : 'tag-icon mr-2',
             )}
           >
