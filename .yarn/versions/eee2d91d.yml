@@ -4,7 +4,6 @@ undecided:
   - "@standardnotes/mobile"
   - "@standardnotes/styles"
   - "@standardnotes/toast"
-  - "@standardnotes/web-server"
   - "@standardnotes/advanced-checklist"
   - "@standardnotes/markdown-visual"
   - "@standardnotes/autobiography-theme"

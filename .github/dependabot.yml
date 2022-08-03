@@ -181,14 +181,6 @@ updates:
       - "moughxyz"
       - "karolsojko"
 
-  - package-ecosystem: "bundler"
-    directory: "/packages/web-server"
-    schedule:
-      interval: "daily"
-    reviewers:
-      - "moughxyz"
-      - "karolsojko"
-
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

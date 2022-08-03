@@ -10,6 +10,5 @@
     "@typescript-eslint/no-var-requires": "off",
     "eqeqeq": ["off"],
     "no-void": ["off"]
-  },
-  "ignorePatterns": ["metro.config.js"]
+  }
 }
