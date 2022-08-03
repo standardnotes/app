@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "build": "yarn clean && yarn copy:components && webpack --config web.webpack.prod.js && yarn tsc",
-    "clean": "rm -fr dist",
+    "clean": "rm -fr dist && rm -rf src/components",
     "format": "prettier --write src/javascripts",
     "lint": "eslint src/javascripts",
     "start": "webpack-dev-server --config web.webpack.dev.js",
@@ -18,7 +18,9 @@
     "tsc": "tsc --project tsconfig.json",
     "upgrade:snjs": "ncu -u '@standardnotes/*'",
     "watch": "webpack -w --config web.webpack.dev.js",
-    "copy:components": "cp -r ../../node_modules/@standardnotes/components-meta/dist/assets src/components/assets && cp -r ../../node_modules/@standardnotes/components-meta/dist/zips src/components/zips"
+    "copy:components": "yarn copy:components-assets && yarn copy:components-zips",
+    "copy:components-assets": "mkdir -p src/components/assets && cp -r ../../node_modules/@standardnotes/components-meta/dist/assets/. src/components/assets",
+    "copy:components-zips": "mkdir -p src/components/zips && cp -r ../../node_modules/@standardnotes/components-meta/dist/zips/. ./src/components/zips"
   },
   "devDependencies": {
     "@babel/core": "*",
