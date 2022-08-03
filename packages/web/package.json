@@ -18,7 +18,7 @@
     "tsc": "tsc --project tsconfig.json",
     "upgrade:snjs": "ncu -u '@standardnotes/*'",
     "watch": "webpack -w --config web.webpack.dev.js",
-    "copy:components": "cp -r ../../node_modules/@standardnotes/components-meta/dist/. src/components/"
+    "copy:components": "cp -r ../../node_modules/@standardnotes/components-meta/dist/assets src/components/assets && cp -r ../../node_modules/@standardnotes/components-meta/dist/zips src/components/zips"
   },
   "devDependencies": {
     "@babel/core": "*",
