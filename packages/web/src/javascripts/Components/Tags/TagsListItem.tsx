@@ -229,7 +229,6 @@ export const TagsListItem: FunctionComponent<Props> = observer(
                 </a>
               </div>
             )}
-            {/*<div className={'tag-icon draggable mr-2'} ref={dragRef}>*/}
             <div
               className={`tag-icon draggable mr-2 ${isCollapsed ? 'md-only:!hidden lg-only:!hidden' : ''}`}
               ref={dragRef}
@@ -237,7 +236,6 @@ export const TagsListItem: FunctionComponent<Props> = observer(
               <Icon type="hashtag" className={`${isSelected ? 'text-info' : 'text-neutral'}`} />
             </div>
             <input
-              // className={`title focus:shadow-none focus:outline-none ${isEditing ? 'editing' : ''}`}
               className={`title focus:shadow-none focus:outline-none ${isEditing ? 'editing' : ''} ${
                 isCollapsed ? 'md-only:!w-min lg-only:!w-min' : ''
               }`}
