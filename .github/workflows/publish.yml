@@ -76,7 +76,7 @@ jobs:
         run: yarn test
 
   e2e:
-    needs: test
+    needs: [ test, android, lint ]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
