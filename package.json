@@ -19,7 +19,7 @@
     "node": ">=12.19.0 <17.0.0"
   },
   "scripts": {
-    "lint": "yarn workspaces foreach -t --jobs 10 --verbose --exclude @standardnotes/components-meta run lint",
+    "lint": "yarn workspaces foreach -t --verbose --exclude @standardnotes/components-meta run lint",
     "test": "yarn workspaces foreach -pt --jobs 10 --verbose --exclude @standardnotes/components-meta run test",
     "clean": "lerna run clean",
     "build:all": "yarn workspaces foreach -pt --verbose --exclude '{@standardnotes/docs}' run build",
