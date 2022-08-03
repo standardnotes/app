@@ -69,11 +69,10 @@ const TagsSection: FunctionComponent<Props> = ({ viewControllerManager, isCollap
         </div>
       </div>
       <div
-        className={`hidden ${
-          isCollapsed
-            ? 'mt-6 mb-7 border-[1px] border-[color:var(--sn-stylekit-border-color)] md-only:block lg-only:block'
-            : ''
-        }`}
+        className={classNames(
+          'hidden',
+          isCollapsed ? 'mt-6 mb-7 border border-border md-only:block lg-only:block' : '',
+        )}
       />
       <TagsList viewControllerManager={viewControllerManager} isCollapsed={isCollapsed} />
     </section>
