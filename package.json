@@ -22,7 +22,7 @@
     "lint": "yarn workspaces foreach -t --jobs 10 --verbose --exclude @standardnotes/components-meta run lint",
     "test": "yarn workspaces foreach -pt --jobs 10 --verbose --exclude @standardnotes/components-meta run test",
     "clean": "lerna run clean",
-    "build:all": "yarn workspaces foreach -pt --verbose --exclude '{@standardnotes/components-meta,@standardnotes/docs}' run build",
+    "build:all": "yarn workspaces foreach -pt --verbose --exclude '{@standardnotes/docs}' run build",
     "build:components": "yarn workspaces foreach -pt --verbose --interlaced -R --from @standardnotes/components-meta run build",
     "build:web": "yarn workspaces foreach -pt --verbose -R --from @standardnotes/web --exclude @standardnotes/components-meta run build",
     "build:desktop": "yarn workspaces foreach -pt --verbose -R --from @standardnotes/desktop --exclude @standardnotes/components-meta run build",
