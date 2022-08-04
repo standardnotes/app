@@ -44,7 +44,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Deploy static site to S3 bucket
-        run: aws s3 sync packages/web/dist/ s3://app-static.standardnotes.com --delete
+        run: aws s3 sync packages/web/dist/ s3://app.standardnotes.com --delete
       - name: Invalidate CloudFront Cache
         uses: chetan/invalidate-cloudfront-action@master
         env:
