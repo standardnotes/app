@@ -38,7 +38,7 @@ jobs:
         run: yarn run electron-builder --mac --arm64 --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
 
       - name: Upload
-        uses: actions/upload-artifact@v3.0.0
+        uses: actions/upload-artifact@v3.1.0
         with:
           name: assets
           path: |
@@ -108,7 +108,7 @@ jobs:
           yarn run electron-builder --linux --x64 -c.linux.target=snap --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
 
       - name: Upload
-        uses: actions/upload-artifact@v3.0.0
+        uses: actions/upload-artifact@v3.1.0
         with:
           name: assets
           path: |
@@ -140,7 +140,7 @@ jobs:
       - run: yarn run electron-builder --windows --x64 --ia32 --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
 
       - name: Upload
-        uses: actions/upload-artifact@v3.0.0
+        uses: actions/upload-artifact@v3.1.0
         with:
           name: assets
           path: |
