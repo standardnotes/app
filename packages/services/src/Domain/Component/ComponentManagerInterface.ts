@@ -20,4 +20,5 @@ export interface ComponentManagerInterface {
     urlOverride?: string,
   ): ComponentViewerInterface
   presentPermissionsDialog(_dialog: PermissionDialog): void
+  getDefaultEditor(): SNComponent
 }

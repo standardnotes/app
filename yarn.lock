@@ -6653,7 +6653,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/files@workspace:*, @standardnotes/files@workspace:packages/files":
+"@standardnotes/files@workspace:*, @standardnotes/files@workspace:^, @standardnotes/files@workspace:packages/files":
   version: 0.0.0-use.local
   resolution: "@standardnotes/files@workspace:packages/files"
   dependencies:
@@ -6662,7 +6662,6 @@ __metadata:
     "@standardnotes/filepicker": "workspace:*"
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
-    "@standardnotes/services": "workspace:*"
     "@standardnotes/sncrypto-common": "workspace:*"
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^28.1.5
@@ -7182,6 +7181,7 @@ __metadata:
   dependencies:
     "@standardnotes/auth": ^3.19.4
     "@standardnotes/common": ^1.30.0
+    "@standardnotes/files": "workspace:^"
     "@standardnotes/models": "workspace:^"
     "@standardnotes/responses": "workspace:*"
     "@standardnotes/security": ^1.2.0

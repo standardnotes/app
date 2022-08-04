@@ -1,8 +1,9 @@
 import { FileContent } from '@standardnotes/models'
-import { FileSystemApi, FileHandleRead } from '@standardnotes/services'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { OrderedByteChunker } from '@standardnotes/filepicker'
 import { FileDecryptor } from '../UseCase/FileDecryptor'
+import { FileSystemApi } from '../Api/FileSystemApi'
+import { FileHandleRead } from '../Api/FileHandleRead'
 
 export async function readAndDecryptBackupFile(
   fileHandle: FileHandleRead,

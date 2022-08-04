@@ -1,4 +1,4 @@
-import { FilesApiInterface } from '@standardnotes/services'
+import { FilesApiInterface } from '../Api/FilesApiInterface'
 
 export class FileUploader {
   constructor(private apiService: FilesApiInterface) {}

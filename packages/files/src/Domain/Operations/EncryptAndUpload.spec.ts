@@ -1,7 +1,8 @@
 import { EncryptAndUploadFileOperation } from './EncryptAndUpload'
 import { PureCryptoInterface, StreamEncryptor } from '@standardnotes/sncrypto-common'
-import { FilesApiInterface } from '@standardnotes/services'
 import { FileContent } from '@standardnotes/models'
+
+import { FilesApiInterface } from '../Api/FilesApiInterface'
 
 describe('encrypt and upload', () => {
   let apiService: FilesApiInterface

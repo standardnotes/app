@@ -1,5 +1,5 @@
 import { FileContent } from '@standardnotes/models'
-import { FilesApiInterface } from '@standardnotes/services'
+import { FilesApiInterface } from '../Api/FilesApiInterface'
 import { FileDownloader } from './FileDownloader'
 
 describe('file downloader', () => {

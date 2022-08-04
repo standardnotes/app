@@ -1,10 +1,10 @@
 import { FileUploadProgress } from '../Types/FileUploadProgress'
 import { FileUploadResult } from '../Types/FileUploadResult'
-import { FilesApiInterface } from '@standardnotes/services'
 import { FileUploader } from '../UseCase/FileUploader'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { FileEncryptor } from '../UseCase/FileEncryptor'
 import { FileContent } from '@standardnotes/models'
+import { FilesApiInterface } from '../Api/FilesApiInterface'
 
 export class EncryptAndUploadFileOperation {
   public readonly encryptedChunkSizes: number[] = []

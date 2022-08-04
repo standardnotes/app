@@ -1,7 +1,7 @@
 import { AbstractService } from '../Service/AbstractService'
 import { Uuid } from '@standardnotes/common'
 import { Role } from '@standardnotes/auth'
-import { FilesApiInterface } from '../Files/FilesApiInterface'
+import { FilesApiInterface } from '@standardnotes/files'
 
 /* istanbul ignore file */
 

@@ -1,8 +1,6 @@
 import { DecryptedBytes, EncryptedBytes, FileMemoryCache, OrderedByteChunker } from '@standardnotes/filepicker'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { ContentType } from '@standardnotes/common'
-import { DownloadAndDecryptFileOperation } from '../Operations/DownloadAndDecrypt'
-import { EncryptAndUploadFileOperation } from '../Operations/EncryptAndUpload'
 import {
   FileItem,
   FileProtocolV1Constants,
@@ -29,11 +27,15 @@ import {
   ChallengeServiceInterface,
   FileBackupsConstantsV1,
 } from '@standardnotes/services'
-import { FilesClientInterface } from './FilesClientInterface'
-import { FileDownloadProgress } from '../Types/FileDownloadProgress'
-import { readAndDecryptBackupFile } from './ReadAndDecryptBackupFile'
 import { DecryptItemsKeyWithUserFallback, EncryptionProvider, SNItemsKey } from '@standardnotes/encryption'
-import { FileDecryptor } from '../UseCase/FileDecryptor'
+import {
+  DownloadAndDecryptFileOperation,
+  EncryptAndUploadFileOperation,
+  FileDecryptor,
+  FileDownloadProgress,
+  FilesClientInterface,
+  readAndDecryptBackupFile,
+} from '@standardnotes/files'
 
 const OneHundredMb = 100 * 1_000_000
 

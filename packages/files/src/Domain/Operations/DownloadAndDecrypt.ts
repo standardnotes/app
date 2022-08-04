@@ -2,10 +2,10 @@ import { ClientDisplayableError } from '@standardnotes/responses'
 import { AbortFunction, FileDownloader } from '../UseCase/FileDownloader'
 import { FileDecryptor } from '../UseCase/FileDecryptor'
 import { FileDownloadProgress } from '../Types/FileDownloadProgress'
-import { FilesApiInterface } from '@standardnotes/services'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { FileContent } from '@standardnotes/models'
 import { DecryptedBytes, EncryptedBytes } from '@standardnotes/filepicker'
+import { FilesApiInterface } from '../Api/FilesApiInterface'
 
 export type DownloadAndDecryptResult = { success: boolean; error?: ClientDisplayableError; aborted?: boolean }
 

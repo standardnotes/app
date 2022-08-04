@@ -1,16 +1,8 @@
-export interface DirectoryHandle {
-  nativeHandle: unknown
-}
-export interface FileHandleReadWrite {
-  nativeHandle: unknown
-  writableStream: unknown
-}
-export interface FileHandleRead {
-  nativeHandle: unknown
-}
-
-export type FileSystemResult = 'aborted' | 'success' | 'failed'
-export type FileSystemNoSelection = 'aborted' | 'failed'
+import { DirectoryHandle } from './DirectoryHandle'
+import { FileHandleRead } from './FileHandleRead'
+import { FileHandleReadWrite } from './FileHandleReadWrite'
+import { FileSystemNoSelection } from './FileSystemNoSelection'
+import { FileSystemResult } from './FileSystemResult'
 
 export interface FileSystemApi {
   selectDirectory(): Promise<DirectoryHandle | FileSystemNoSelection>

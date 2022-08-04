@@ -2,16 +2,12 @@ import { ContentType, Uuid } from '@standardnotes/common'
 import { EncryptionProvider } from '@standardnotes/encryption'
 import { PayloadEmitSource, FileItem, CreateEncryptedBackupFileContextPayload } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
-import {
-  ItemManagerInterface,
-  FileBackupsDevice,
-  FileBackupsMapping,
-  AbstractService,
-  InternalEventBusInterface,
-  StatusServiceInterface,
-  FileBackupMetadataFile,
-  FilesApiInterface,
-} from '@standardnotes/services'
+import { FileBackupMetadataFile, FileBackupsDevice, FileBackupsMapping } from '../Device/FileBackupsDevice'
+import { FilesApiInterface } from '@standardnotes/files'
+import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
+import { ItemManagerInterface } from '../Item/ItemManagerInterface'
+import { AbstractService } from '../Service/AbstractService'
+import { StatusServiceInterface } from '../Status/StatusServiceInterface'
 
 export class FilesBackupService extends AbstractService {
   private itemsObserverDisposer: () => void
