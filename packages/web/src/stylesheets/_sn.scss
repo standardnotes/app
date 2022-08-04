@@ -132,8 +132,19 @@
   @include DimmedBackground(var(--sn-stylekit-info-color), 0.08);
 }
 
-.transparent-info-color-background::after {
-  @include DimmedBackground(var(--sn-stylekit-info-color), .12);
+.transparent-info-color-background {
+  &::after {
+    @include DimmedBackground(var(--sn-stylekit-info-color), .12);
+    border-radius: 100px;
+  }
+}
+
+.transparent-info-color-background-hover {
+  &:hover {
+    &::after {
+      @extend .transparent-info-color-background
+    }
+  }
 }
 
 svg.sk-circular-progress {

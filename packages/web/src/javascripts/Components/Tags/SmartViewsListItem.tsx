@@ -128,8 +128,8 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, isColla
           <div
             className={classNames(
               isCollapsed
-                ? `group-hover:transparent-info-color-background relative flex h-[40px] w-[40px] items-center justify-center
-                  ${isSelected ? 'transparent-info-color-background after:rounded-full' : ''}`
+                ? `relative flex h-[40px] w-[40px] items-center justify-center
+                  ${isSelected ? 'transparent-info-color-background' : 'transparent-info-color-background-hover'}`
                 : 'tag-icon mr-2',
             )}
           >
