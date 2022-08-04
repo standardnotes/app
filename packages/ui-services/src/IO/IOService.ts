@@ -1,4 +1,4 @@
-import { removeFromArray } from '@standardnotes/snjs'
+import { removeFromArray } from '@standardnotes/utils'
 
 export enum KeyboardKey {
   Tab = 'Tab',

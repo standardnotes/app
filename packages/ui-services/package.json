@@ -23,9 +23,9 @@
     "test:unit": "jest spec --coverage"
   },
   "dependencies": {
+    "@standardnotes/common": "^1.30.0",
     "@standardnotes/filepicker": "workspace:^",
     "@standardnotes/services": "workspace:^",
-    "@standardnotes/snjs": "workspace:^",
     "@standardnotes/styles": "workspace:^",
     "@standardnotes/toast": "workspace:^",
     "@standardnotes/utils": "workspace:^"

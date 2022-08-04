@@ -1,7 +1,6 @@
 import { ByteChunker, FileSelectionResponse, OnChunkCallback } from '@standardnotes/filepicker'
-import { FileDownloadProgress } from '@standardnotes/files'
 import { ClientDisplayableError } from '@standardnotes/responses'
-import { ApplicationService, FileItem } from '@standardnotes/snjs'
+import { ApplicationService, FileDownloadProgress, FileItem } from '@standardnotes/snjs'
 import { Buffer } from 'buffer'
 import { Base64 } from 'js-base64'
 import { PermissionsAndroid, Platform } from 'react-native'

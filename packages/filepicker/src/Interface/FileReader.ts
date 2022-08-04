@@ -1,4 +1,6 @@
-import { OnChunkCallback, FileSelectionResponse } from '../types'
+import { OnChunkCallback } from '@standardnotes/files'
+
+import { FileSelectionResponse } from '../types'
 
 export interface FileReaderInterface {
   selectFiles(): Promise<File[]>

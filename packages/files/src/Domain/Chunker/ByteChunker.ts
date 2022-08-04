@@ -1,4 +1,4 @@
-import { OnChunkCallback } from '../types'
+import { OnChunkCallback } from './OnChunkCallback'
 
 export class ByteChunker {
   public loggingEnabled = false

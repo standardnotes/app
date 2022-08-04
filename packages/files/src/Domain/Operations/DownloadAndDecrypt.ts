@@ -4,8 +4,9 @@ import { FileDecryptor } from '../UseCase/FileDecryptor'
 import { FileDownloadProgress } from '../Types/FileDownloadProgress'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { FileContent } from '@standardnotes/models'
-import { DecryptedBytes, EncryptedBytes } from '@standardnotes/filepicker'
 import { FilesApiInterface } from '../Api/FilesApiInterface'
+import { DecryptedBytes } from '../Types/DecryptedBytes'
+import { EncryptedBytes } from '../Types/EncryptedBytes'
 
 export type DownloadAndDecryptResult = { success: boolean; error?: ClientDisplayableError; aborted?: boolean }
 

@@ -37,7 +37,6 @@
     "@react-navigation/stack": "^6.2.1",
     "@standardnotes/components-meta": "workspace:*",
     "@standardnotes/filepicker": "workspace:*",
-    "@standardnotes/files": "workspace:*",
     "@standardnotes/icons": "workspace:*",
     "@standardnotes/react-native-aes": "^1.4.3",
     "@standardnotes/react-native-textview": "1.1.0",

@@ -32,7 +32,6 @@
   "dependencies": {
     "@standardnotes/common": "^1.23.1",
     "@standardnotes/encryption": "workspace:*",
-    "@standardnotes/filepicker": "workspace:*",
     "@standardnotes/models": "workspace:*",
     "@standardnotes/responses": "workspace:*",
     "@standardnotes/sncrypto-common": "workspace:*",

@@ -9,8 +9,15 @@ import {
   UploadedFileItemActionType,
 } from '@Root/Screens/UploadedFilesList/UploadedFileItemAction'
 import { Tabs } from '@Screens/UploadedFilesList/UploadedFilesList'
-import { FileDownloadProgress } from '@standardnotes/files'
-import { ButtonType, ChallengeReason, ClientDisplayableError, ContentType, FileItem, SNNote } from '@standardnotes/snjs'
+import {
+  ButtonType,
+  ChallengeReason,
+  ClientDisplayableError,
+  ContentType,
+  FileDownloadProgress,
+  FileItem,
+  SNNote,
+} from '@standardnotes/snjs'
 import { CustomActionSheetOption, useCustomActionSheet } from '@Style/CustomActionSheet'
 import { useCallback, useEffect, useState } from 'react'
 import { Platform } from 'react-native'

@@ -22,7 +22,8 @@ import { makeObservable, observable } from 'mobx'
 import { PanelResizedData } from '@/Types/PanelResizedData'
 import { isDesktopApplication } from '@/Utils'
 import { DesktopManager } from './Device/DesktopManager'
-import { ArchiveManager, AutolockService, IOService, ThemeManager, WebAlertService } from '@standardnotes/ui-services'
+import { ArchiveManager, AutolockService, IOService, WebAlertService } from '@standardnotes/ui-services'
+import { ThemeManager } from '@/Theme/ThemeManager'
 
 type WebServices = {
   viewControllerManager: ViewControllerManager

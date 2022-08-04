@@ -1,6 +1,6 @@
 import { removeFromArray } from '@standardnotes/utils'
 import { Uuid } from '@standardnotes/common'
-import { EncryptedBytes } from '../TypedBytes'
+import { EncryptedBytes } from '@standardnotes/files'
 
 export class FileMemoryCache {
   private cache: Record<Uuid, EncryptedBytes> = {}

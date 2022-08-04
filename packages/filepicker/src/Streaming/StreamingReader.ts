@@ -1,6 +1,7 @@
+import { ByteChunker, OnChunkCallback } from '@standardnotes/files'
+
 import { FileReaderInterface } from './../Interface/FileReader'
-import { ByteChunker } from '../Chunker/ByteChunker'
-import { OnChunkCallback, FileSelectionResponse } from '../types'
+import { FileSelectionResponse } from '../types'
 
 interface StreamingFileReaderInterface {
   getFilesFromHandles(handles: FileSystemFileHandle[]): Promise<File[]>

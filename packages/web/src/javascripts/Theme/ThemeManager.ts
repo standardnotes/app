@@ -1,27 +1,21 @@
-import {
-  StorageValueModes,
-  ApplicationService,
-  SNTheme,
-  removeFromArray,
-  ApplicationEvent,
-  ContentType,
-  UuidString,
-  FeatureStatus,
-  PrefKey,
-  CreateDecryptedLocalStorageContextPayload,
-  InternalEventBus,
-  PayloadEmitSource,
-  LocalStorageDecryptedContextualPayload,
-  WebApplicationInterface,
-} from '@standardnotes/snjs'
 import { dismissToast, ToastType, addTimedToast } from '@standardnotes/toast'
+import { ContentType, Uuid } from '@standardnotes/common'
+import {
+  CreateDecryptedLocalStorageContextPayload,
+  LocalStorageDecryptedContextualPayload,
+  PayloadEmitSource,
+  PrefKey,
+  SNTheme,
+} from '@standardnotes/models'
+import { removeFromArray } from '@standardnotes/utils'
+import { ApplicationEvent, ApplicationService, FeatureStatus, InternalEventBus, StorageValueModes, WebApplicationInterface } from '@standardnotes/snjs'
 
 const CachedThemesKey = 'cachedThemes'
 const TimeBeforeApplyingColorScheme = 5
 const DefaultThemeIdentifier = 'Default'
 
 export class ThemeManager extends ApplicationService {
-  private activeThemes: UuidString[] = []
+  private activeThemes: Uuid[] = []
   private unregisterDesktop?: () => void
   private unregisterStream!: () => void
   private lastUseDeviceThemeSettings = false

@@ -1,12 +1,12 @@
 import { parseFileName } from '@standardnotes/filepicker'
 import {
   BackupFile,
-  ContentType,
   BackupFileDecryptedContextualPayload,
-  NoteContent,
   EncryptedItemInterface,
-  SNApplication,
-} from '@standardnotes/snjs'
+  NoteContent,
+} from '@standardnotes/models'
+import { ContentType } from '@standardnotes/common'
+import { ApplicationInterface } from '@standardnotes/services'
 
 function sanitizeFileName(name: string): string {
   return name.trim().replace(/[.\\/:"?*|<>]/g, '_')
@@ -27,10 +27,10 @@ type ZippableData = {
 type ObjectURL = string
 
 export class ArchiveManager {
-  private readonly application: SNApplication
+  private readonly application: ApplicationInterface
   private textFile?: string
 
-  constructor(application: SNApplication) {
+  constructor(application: ApplicationInterface) {
     this.application = application
   }
 

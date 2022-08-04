@@ -6640,7 +6640,7 @@ __metadata:
   resolution: "@standardnotes/filepicker@workspace:packages/filepicker"
   dependencies:
     "@standardnotes/common": ^1.23.1
-    "@standardnotes/services": "workspace:*"
+    "@standardnotes/files": "workspace:*"
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^28.1.5
     "@types/wicg-file-system-access": ^2020.9.5
@@ -6659,7 +6659,6 @@ __metadata:
   dependencies:
     "@standardnotes/common": ^1.23.1
     "@standardnotes/encryption": "workspace:*"
-    "@standardnotes/filepicker": "workspace:*"
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
     "@standardnotes/sncrypto-common": "workspace:*"
@@ -6959,7 +6958,6 @@ __metadata:
     "@standardnotes/components-meta": "workspace:*"
     "@standardnotes/config": ^2.4.3
     "@standardnotes/filepicker": "workspace:*"
-    "@standardnotes/files": "workspace:*"
     "@standardnotes/icons": "workspace:*"
     "@standardnotes/react-native-aes": ^1.4.3
     "@standardnotes/react-native-textview": 1.1.0
@@ -7282,7 +7280,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/snjs@^2.41.1, @standardnotes/snjs@workspace:*, @standardnotes/snjs@workspace:^, @standardnotes/snjs@workspace:packages/snjs":
+"@standardnotes/snjs@^2.41.1, @standardnotes/snjs@workspace:*, @standardnotes/snjs@workspace:packages/snjs":
   version: 0.0.0-use.local
   resolution: "@standardnotes/snjs@workspace:packages/snjs"
   dependencies:
@@ -7459,9 +7457,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/ui-services@workspace:packages/ui-services"
   dependencies:
+    "@standardnotes/common": ^1.30.0
     "@standardnotes/filepicker": "workspace:^"
     "@standardnotes/services": "workspace:^"
-    "@standardnotes/snjs": "workspace:^"
     "@standardnotes/styles": "workspace:^"
     "@standardnotes/toast": "workspace:^"
     "@standardnotes/utils": "workspace:^"
@@ -7514,7 +7512,6 @@ __metadata:
     "@reach/visually-hidden": ^0.16.0
     "@standardnotes/components-meta": "workspace:*"
     "@standardnotes/filepicker": "workspace:*"
-    "@standardnotes/files": "workspace:*"
     "@standardnotes/icons": "workspace:*"
     "@standardnotes/sncrypto-web": "workspace:*"
     "@standardnotes/snjs": "workspace:*"
