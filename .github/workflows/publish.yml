@@ -5,101 +5,62 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  Build:
     if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.CI_PAT_TOKEN }}
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+
+      - name: Setup git config
+        run: |
+          git config --global user.name "standardci"
+          git config --global user.email "ci@standardnotes.com"
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v4
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+
       - name: Install dependencies
         run: yarn install --immutable
+
       - name: Build
         run: yarn build:all
-      - uses: actions/upload-artifact@v3
-        with:
-          name: built-packages
-          path: packages
-      - uses: actions/upload-artifact@v3
-        with:
-          name: node_modules
-          path: node_modules
 
-  lint:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - uses: actions/download-artifact@v3
-        with:
-          name: built-packages
-          path: packages
-      - uses: actions/download-artifact@v3
-        with:
-          name: node_modules
-          path: node_modules
       - name: ESLint
         run: yarn lint
 
-  android:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - uses: actions/download-artifact@v3
-        with:
-          name: built-packages
-          path: packages
-      - uses: actions/download-artifact@v3
-        with:
-          name: node_modules
-          path: node_modules
       - name: Build Android
         run: yarn android:bundle
 
-  test:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - uses: actions/download-artifact@v3
-        with:
-          name: built-packages
-          path: packages
-      - uses: actions/download-artifact@v3
-        with:
-          name: node_modules
-          path: node_modules
       - name: Test
         run: yarn test
 
-  e2e:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - uses: actions/download-artifact@v3
-        with:
-          name: built-packages
-          path: packages
-      - uses: actions/download-artifact@v3
-        with:
-          name: node_modules
-          path: node_modules
       - name: Login to Docker Hub
         if: "${{ contains(github.event.head_commit.message, 'skip e2e') == false }}"
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+
       - name: Publish SNJS Docker image for E2E testing
         if: "${{ contains(github.event.head_commit.message, 'skip e2e') == false }}"
         run: |
           yarn docker build @standardnotes/snjs -t standardnotes/snjs:${{ github.sha }}
           docker push standardnotes/snjs:${{ github.sha }}
+
       - name: Run E2E test suite
         if: "${{ contains(github.event.head_commit.message, 'skip e2e') == false }}"
         uses: convictional/trigger-workflow-and-wait@v1.6.1
@@ -114,48 +75,16 @@ jobs:
           trigger_workflow: true
           wait_workflow: true
 
-  publish:
-    needs: e2e
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.CI_PAT_TOKEN }}
-          fetch-depth: 0
-      - uses: actions/download-artifact@v3
-        with:
-          name: built-packages
-          path: packages
-      - uses: actions/download-artifact@v3
-        with:
-          name: node_modules
-          path: node_modules
-      - name: Set up Node
-        uses: actions/setup-node@v3
-        with:
-          registry-url: 'https://registry.npmjs.org'
-          node-version-file: '.nvmrc'
-      - name: Setup git config
-        run: |
-          git config --global user.name "standardci"
-          git config --global user.email "ci@standardnotes.com"
-      - name: Import GPG key
-        uses: crazy-max/ghaction-import-gpg@v4
-        with:
-          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.PASSPHRASE }}
-          git_user_signingkey: true
-          git_commit_gpgsign: true
       - name: Bump version
         run: yarn release:prod
+
       - name: Publish
         run: yarn publish:prod
         env:
           NODE_AUTH_TOKEN: ${{ secrets.CI_NPM_TOKEN }}
+
       - name: Publish SNJS Docker image as stable
         if: "${{ contains(github.event.head_commit.message, 'skip e2e') == false }}"
         run: |
-          yarn docker build @standardnotes/snjs -t standardnotes/snjs:${{ github.sha }}
           docker tag standardnotes/snjs:${{ github.sha }} standardnotes/snjs:latest
           docker push standardnotes/snjs:latest
