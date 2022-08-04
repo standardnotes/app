@@ -1,5 +1,5 @@
 import TagsList from '@/Components/Tags/TagsList'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { ApplicationEvent } from '@/__mocks__/@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'

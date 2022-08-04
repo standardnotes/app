@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { WebApplication } from '@/Application/Application'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import Authentication from './Authentication'
 import Credentials from './Credentials'
 import Sync from './Sync'

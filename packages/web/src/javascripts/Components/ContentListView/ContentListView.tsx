@@ -1,4 +1,4 @@
-import { KeyboardKey, KeyboardModifier } from '@/Services/IOService'
+import { KeyboardKey, KeyboardModifier } from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
 import { PANEL_NAME_NOTES } from '@/Constants/Constants'
 import { PrefKey, SystemViewId } from '@standardnotes/snjs'

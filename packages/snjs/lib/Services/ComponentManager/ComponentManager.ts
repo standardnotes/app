@@ -3,21 +3,28 @@ import { SNPreferencesService } from '../Preferences/PreferencesService'
 import { SNFeaturesService } from '@Lib/Services/Features/FeaturesService'
 import { ContentType, DisplayStringForContentType } from '@standardnotes/common'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
-import { SNNote, SNTheme, SNComponent, ComponentMutator, PayloadEmitSource } from '@standardnotes/models'
+import {
+  ActionObserver,
+  SNNote,
+  SNTheme,
+  SNComponent,
+  ComponentMutator,
+  PayloadEmitSource,
+  PermissionDialog,
+} from '@standardnotes/models'
 import { SNSyncService } from '@Lib/Services/Sync/SyncService'
 import find from 'lodash/find'
 import uniq from 'lodash/uniq'
 import { ComponentArea, ComponentAction, ComponentPermission, FindNativeFeature } from '@standardnotes/features'
 import { Copy, filterFromArray, removeFromArray, sleep, assert } from '@standardnotes/utils'
 import { UuidString } from '@Lib/Types/UuidString'
-import {
-  PermissionDialog,
-  DesktopManagerInterface,
-  AllowedBatchContentTypes,
-} from '@Lib/Services/ComponentManager/Types'
-import { ActionObserver, ComponentViewer } from '@Lib/Services/ComponentManager/ComponentViewer'
+import { AllowedBatchContentTypes } from '@Lib/Services/ComponentManager/Types'
+import { ComponentViewer } from '@Lib/Services/ComponentManager/ComponentViewer'
 import {
   AbstractService,
+  ComponentManagerInterface,
+  ComponentViewerInterface,
+  DesktopManagerInterface,
   InternalEventBusInterface,
   Environment,
   Platform,
@@ -42,7 +49,7 @@ export enum ComponentManagerEvent {
 }
 
 export type EventData = {
-  componentViewer?: ComponentViewer
+  componentViewer?: ComponentViewerInterface
 }
 
 /**
@@ -50,9 +57,12 @@ export type EventData = {
  * and other components. The component manager primarily deals with iframes, and orchestrates
  * sending and receiving messages to and from frames via the postMessage API.
  */
-export class SNComponentManager extends AbstractService<ComponentManagerEvent, EventData> {
+export class SNComponentManager
+  extends AbstractService<ComponentManagerEvent, EventData>
+  implements ComponentManagerInterface
+{
   private desktopManager?: DesktopManagerInterface
-  private viewers: ComponentViewer[] = []
+  private viewers: ComponentViewerInterface[] = []
   private removeItemObserver!: () => void
   private permissionDialogs: PermissionDialog[] = []
 
@@ -137,7 +147,7 @@ export class SNComponentManager extends AbstractService<ComponentManagerEvent, E
     contextItem?: UuidString,
     actionObserver?: ActionObserver,
     urlOverride?: string,
-  ): ComponentViewer {
+  ): ComponentViewerInterface {
     const viewer = new ComponentViewer(
       component,
       this.itemManager,
@@ -159,7 +169,7 @@ export class SNComponentManager extends AbstractService<ComponentManagerEvent, E
     return viewer
   }
 
-  public destroyComponentViewer(viewer: ComponentViewer): void {
+  public destroyComponentViewer(viewer: ComponentViewerInterface): void {
     viewer.destroy()
     removeFromArray(this.viewers, viewer)
   }
@@ -316,11 +326,11 @@ export class SNComponentManager extends AbstractService<ComponentManagerEvent, E
     return this.itemManager.findItem<SNComponent>(uuid)
   }
 
-  findComponentViewer(identifier: string): ComponentViewer | undefined {
+  findComponentViewer(identifier: string): ComponentViewerInterface | undefined {
     return this.viewers.find((viewer) => viewer.identifier === identifier)
   }
 
-  componentViewerForSessionKey(key: string): ComponentViewer | undefined {
+  componentViewerForSessionKey(key: string): ComponentViewerInterface | undefined {
     return this.viewers.find((viewer) => viewer.sessionKey === key)
   }
 

@@ -10,7 +10,6 @@ import {
 } from '@standardnotes/utils'
 import { ClientDisplayableError, UserFeaturesResponse } from '@standardnotes/responses'
 import { ContentType, RoleName } from '@standardnotes/common'
-import { FeaturesClientInterface } from './ClientInterface'
 import { FillItemContent, PayloadEmitSource } from '@standardnotes/models'
 import { ItemManager } from '../Items/ItemManager'
 import { LEGACY_PROD_EXT_ORIGIN, PROD_OFFLINE_FEATURES_URL } from '../../Hosts'
@@ -27,20 +26,30 @@ import { UuidString } from '@Lib/Types/UuidString'
 import * as FeaturesImports from '@standardnotes/features'
 import * as Messages from '@Lib/Services/Api/Messages'
 import * as Models from '@standardnotes/models'
-import * as Services from '@standardnotes/services'
 import {
+  AbstractService,
+  AlertService,
+  ApiServiceEvent,
+  ApplicationStage,
+  ButtonType,
+  DiagnosticInfo,
+  FeaturesClientInterface,
   FeaturesEvent,
   FeatureStatus,
+  InternalEventBusInterface,
+  InternalEventHandlerInterface,
+  InternalEventInterface,
+  MetaReceivedData,
   OfflineSubscriptionEntitlements,
   SetOfflineFeaturesFunctionResponse,
-} from './Types'
-import { DiagnosticInfo } from '@standardnotes/services'
+  StorageKey,
+} from '@standardnotes/services'
 
 type GetOfflineSubscriptionDetailsResponse = OfflineSubscriptionEntitlements | ClientDisplayableError
 
 export class SNFeaturesService
-  extends Services.AbstractService<FeaturesEvent>
-  implements FeaturesClientInterface, Services.InternalEventHandlerInterface
+  extends AbstractService<FeaturesEvent>
+  implements FeaturesClientInterface, InternalEventHandlerInterface
 {
   private deinited = false
   private roles: RoleName[] = []
@@ -60,10 +69,10 @@ export class SNFeaturesService
     private settingsService: SNSettingsService,
     private userService: UserService,
     private syncService: SNSyncService,
-    private alertService: Services.AlertService,
+    private alertService: AlertService,
     private sessionManager: SNSessionManager,
     private crypto: PureCryptoInterface,
-    protected override internalEventBus: Services.InternalEventBusInterface,
+    protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
 
@@ -109,8 +118,8 @@ export class SNFeaturesService
     })
   }
 
-  async handleEvent(event: Services.InternalEventInterface): Promise<void> {
-    if (event.type === Services.ApiServiceEvent.MetaReceived) {
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === ApiServiceEvent.MetaReceived) {
       if (!this.syncService) {
         this.log('[Features Service] Handling events interrupted. Sync service is not yet initialized.', event)
 
@@ -126,7 +135,7 @@ export class SNFeaturesService
         return
       }
 
-      const { userUuid, userRoles } = event.payload as Services.MetaReceivedData
+      const { userUuid, userRoles } = event.payload as MetaReceivedData
       await this.updateRolesAndFetchFeatures(
         userUuid,
         userRoles.map((role) => role.name),
@@ -134,9 +143,9 @@ export class SNFeaturesService
     }
   }
 
-  override async handleApplicationStage(stage: Services.ApplicationStage): Promise<void> {
+  override async handleApplicationStage(stage: ApplicationStage): Promise<void> {
     await super.handleApplicationStage(stage)
-    if (stage === Services.ApplicationStage.FullSyncCompleted_13) {
+    if (stage === ApplicationStage.FullSyncCompleted_13) {
       if (!this.hasOnlineSubscription()) {
         const offlineRepo = this.getOfflineRepo()
         if (offlineRepo) {
@@ -154,7 +163,7 @@ export class SNFeaturesService
 
     this.enabledExperimentalFeatures.push(identifier)
 
-    void this.storageService.setValue(Services.StorageKey.ExperimentalFeatures, this.enabledExperimentalFeatures)
+    void this.storageService.setValue(StorageKey.ExperimentalFeatures, this.enabledExperimentalFeatures)
 
     void this.mapRemoteNativeFeaturesToItems([feature])
     void this.notifyEvent(FeaturesEvent.FeaturesUpdated)
@@ -168,7 +177,7 @@ export class SNFeaturesService
 
     removeFromArray(this.enabledExperimentalFeatures, identifier)
 
-    void this.storageService.setValue(Services.StorageKey.ExperimentalFeatures, this.enabledExperimentalFeatures)
+    void this.storageService.setValue(StorageKey.ExperimentalFeatures, this.enabledExperimentalFeatures)
 
     const component = this.itemManager
       .getItems<Models.SNComponent | Models.SNTheme>([ContentType.Component, ContentType.Theme])
@@ -248,7 +257,7 @@ export class SNFeaturesService
       await this.itemManager.setItemToBeDeleted(repo)
       void this.syncService.sync()
     }
-    await this.storageService.removeValue(Services.StorageKey.UserFeatures)
+    await this.storageService.removeValue(StorageKey.UserFeatures)
   }
 
   private parseOfflineEntitlementsCode(code: string): GetOfflineSubscriptionDetailsResponse | ClientDisplayableError {
@@ -322,15 +331,11 @@ export class SNFeaturesService
   }
 
   public initializeFromDisk(): void {
-    this.roles = this.storageService.getValue<RoleName[]>(Services.StorageKey.UserRoles, undefined, [])
+    this.roles = this.storageService.getValue<RoleName[]>(StorageKey.UserRoles, undefined, [])
 
-    this.features = this.storageService.getValue(Services.StorageKey.UserFeatures, undefined, [])
+    this.features = this.storageService.getValue(StorageKey.UserFeatures, undefined, [])
 
-    this.enabledExperimentalFeatures = this.storageService.getValue(
-      Services.StorageKey.ExperimentalFeatures,
-      undefined,
-      [],
-    )
+    this.enabledExperimentalFeatures = this.storageService.getValue(StorageKey.ExperimentalFeatures, undefined, [])
   }
 
   public async updateRolesAndFetchFeatures(userUuid: UuidString, roles: RoleName[]): Promise<void> {
@@ -361,7 +366,7 @@ export class SNFeaturesService
     if (!arraysEqual(this.roles, roles)) {
       void this.notifyEvent(FeaturesEvent.UserRolesChanged)
     }
-    await this.storageService.setValue(Services.StorageKey.UserRoles, this.roles)
+    await this.storageService.setValue(StorageKey.UserRoles, this.roles)
   }
 
   public async didDownloadFeatures(features: FeaturesImports.FeatureDescription[]): Promise<void> {
@@ -372,7 +377,7 @@ export class SNFeaturesService
     this.features = features
     this.completedSuccessfulFeaturesRetrieval = true
     void this.notifyEvent(FeaturesEvent.FeaturesUpdated)
-    void this.storageService.setValue(Services.StorageKey.UserFeatures, this.features)
+    void this.storageService.setValue(StorageKey.UserFeatures, this.features)
 
     await this.mapRemoteNativeFeaturesToItems(features)
   }
@@ -607,7 +612,7 @@ export class SNFeaturesService
           Messages.API_MESSAGE_UNTRUSTED_EXTENSIONS_WARNING,
           'Install extension from an untrusted source?',
           'Proceed to install',
-          Services.ButtonType.Danger,
+          ButtonType.Danger,
           'Cancel',
         )
         if (didConfirm) {

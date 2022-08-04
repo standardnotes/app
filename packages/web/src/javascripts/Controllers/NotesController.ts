@@ -1,5 +1,5 @@
 import { destroyAllObjectProperties } from '@/Utils'
-import { confirmDialog } from '@/Services/AlertService'
+import { confirmDialog } from '@standardnotes/ui-services'
 import { StringEmptyTrash, Strings, StringUtils } from '@/Constants/Strings'
 import { MENU_MARGIN_FROM_APP_BORDER } from '@/Constants/Constants'
 import { SNNote, NoteMutator, ContentType, SNTag, TagMutator, InternalEventBus } from '@standardnotes/snjs'

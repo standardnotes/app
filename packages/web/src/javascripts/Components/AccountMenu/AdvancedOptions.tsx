@@ -1,5 +1,5 @@
 import { WebApplication } from '@/Application/Application'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { ChangeEventHandler, FunctionComponent, useCallback, useEffect, useState } from 'react'
 import Checkbox from '@/Components/Checkbox/Checkbox'

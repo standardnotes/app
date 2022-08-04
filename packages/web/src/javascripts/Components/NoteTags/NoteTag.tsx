@@ -8,7 +8,7 @@ import {
   useRef,
   useState,
 } from 'react'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { SNTag } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 

@@ -5,8 +5,8 @@ import { getFileIconComponent } from '@/Components/AttachedFilesPopover/getFileI
 import Icon from '@/Components/Icon/Icon'
 import FilePreviewInfoPanel from './FilePreviewInfoPanel'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
-import { KeyboardKey } from '@/Services/IOService'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { KeyboardKey } from '@standardnotes/ui-services'
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import FilePreview from './FilePreview'
 

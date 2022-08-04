@@ -17,6 +17,7 @@ import {
   InternalEventInterface,
   FileViewController,
   FileItem,
+  WebAppEvent,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
@@ -28,7 +29,6 @@ import { SearchOptionsController } from '../SearchOptionsController'
 import { SelectedItemsController } from '../SelectedItemsController'
 import { NotesController } from '../NotesController'
 import { NoteTagsController } from '../NoteTagsController'
-import { WebAppEvent } from '@/Application/WebAppEvent'
 
 const MinNoteCellHeight = 51.0
 const DefaultListNumNotes = 20

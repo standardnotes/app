@@ -1,4 +1,4 @@
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { Fragment, FunctionComponent, useState } from 'react'
 import { Text, Title, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'

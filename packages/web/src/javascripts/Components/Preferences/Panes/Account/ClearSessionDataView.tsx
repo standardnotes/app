@@ -1,5 +1,5 @@
 import Button from '@/Components/Button/Button'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
 import { Title, Text } from '../../PreferencesComponents/Content'

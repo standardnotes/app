@@ -6,6 +6,7 @@ import {
   ProtocolVersion,
 } from '@standardnotes/common'
 import {
+  BackupFile,
   CreateDecryptedItemFromPayload,
   CreatePayloadSplit,
   DecryptedPayload,
@@ -28,7 +29,6 @@ import { CreateAnyKeyParams } from '../Keys/RootKey/KeyParamsFunctions'
 import { SNRootKey } from '../Keys/RootKey/RootKey'
 import { SNRootKeyParams } from '../Keys/RootKey/RootKeyParams'
 import { EncryptionService } from '../Service/Encryption/EncryptionService'
-import { BackupFile } from './BackupFile'
 import { BackupFileType } from './BackupFileType'
 
 export async function DecryptBackupFile(

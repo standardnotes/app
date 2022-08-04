@@ -1,4 +1,3 @@
-import { ApplicationEvent } from '../../Application/Event'
 import { BaseMigration } from '@Lib/Migrations/Base'
 import { compareSemVersions } from '@Lib/Version'
 import { lastElement } from '@standardnotes/utils'
@@ -7,6 +6,7 @@ import { MigrationServices } from '../../Migrations/MigrationServices'
 import {
   RawStorageKey,
   namespacedKey,
+  ApplicationEvent,
   ApplicationStage,
   AbstractService,
   DiagnosticInfo,

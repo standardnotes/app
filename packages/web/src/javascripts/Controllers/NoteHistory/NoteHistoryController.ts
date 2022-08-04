@@ -7,7 +7,7 @@ import {
   sortRevisionListIntoGroups,
 } from '@/Components/RevisionHistoryModal/utils'
 import { STRING_RESTORE_LOCKED_ATTEMPT } from '@/Constants/Strings'
-import { confirmDialog } from '@/Services/AlertService'
+import { confirmDialog } from '@standardnotes/ui-services'
 import {
   Action,
   ActionVerb,

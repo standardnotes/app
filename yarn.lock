@@ -6388,6 +6388,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standardnotes/common@npm:^1.30.0":
+  version: 1.30.0
+  resolution: "@standardnotes/common@npm:1.30.0"
+  dependencies:
+    reflect-metadata: ^0.1.13
+  checksum: 833b6e7f3ee4cfbf306769d7387073073204a3dd5cd9adaf11bb10914338a4b16420e5ef196d28974427b491d7630d887a7a9e3dcbfb070f30c491437213b329
+  languageName: node
+  linkType: hard
+
 "@standardnotes/component-relay@npm:2.2.0":
   version: 2.2.0
   resolution: "@standardnotes/component-relay@npm:2.2.0"
@@ -6626,7 +6635,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/filepicker@workspace:*, @standardnotes/filepicker@workspace:packages/filepicker":
+"@standardnotes/filepicker@workspace:*, @standardnotes/filepicker@workspace:^, @standardnotes/filepicker@workspace:packages/filepicker":
   version: 0.0.0-use.local
   resolution: "@standardnotes/filepicker@workspace:packages/filepicker"
   dependencies:
@@ -7033,7 +7042,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/models@workspace:*, @standardnotes/models@workspace:packages/models":
+"@standardnotes/models@workspace:*, @standardnotes/models@workspace:^, @standardnotes/models@workspace:packages/models":
   version: 0.0.0-use.local
   resolution: "@standardnotes/models@workspace:packages/models"
   dependencies:
@@ -7167,13 +7176,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/services@workspace:*, @standardnotes/services@workspace:packages/services":
+"@standardnotes/services@workspace:*, @standardnotes/services@workspace:^, @standardnotes/services@workspace:packages/services":
   version: 0.0.0-use.local
   resolution: "@standardnotes/services@workspace:packages/services"
   dependencies:
     "@standardnotes/auth": ^3.19.4
-    "@standardnotes/common": ^1.23.1
-    "@standardnotes/models": "workspace:*"
+    "@standardnotes/common": ^1.30.0
+    "@standardnotes/models": "workspace:^"
     "@standardnotes/responses": "workspace:*"
     "@standardnotes/security": ^1.2.0
     "@standardnotes/utils": "workspace:*"
@@ -7273,7 +7282,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/snjs@^2.41.1, @standardnotes/snjs@workspace:*, @standardnotes/snjs@workspace:packages/snjs":
+"@standardnotes/snjs@^2.41.1, @standardnotes/snjs@workspace:*, @standardnotes/snjs@workspace:^, @standardnotes/snjs@workspace:packages/snjs":
   version: 0.0.0-use.local
   resolution: "@standardnotes/snjs@workspace:packages/snjs"
   dependencies:
@@ -7406,7 +7415,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/styles@workspace:*, @standardnotes/styles@workspace:packages/styles":
+"@standardnotes/styles@workspace:*, @standardnotes/styles@workspace:^, @standardnotes/styles@workspace:packages/styles":
   version: 0.0.0-use.local
   resolution: "@standardnotes/styles@workspace:packages/styles"
   dependencies:
@@ -7428,7 +7437,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/toast@workspace:*, @standardnotes/toast@workspace:packages/toast":
+"@standardnotes/toast@workspace:*, @standardnotes/toast@workspace:^, @standardnotes/toast@workspace:packages/toast":
   version: 0.0.0-use.local
   resolution: "@standardnotes/toast@workspace:packages/toast"
   dependencies:
@@ -7446,7 +7455,26 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/utils@workspace:*, @standardnotes/utils@workspace:packages/utils":
+"@standardnotes/ui-services@workspace:^, @standardnotes/ui-services@workspace:packages/ui-services":
+  version: 0.0.0-use.local
+  resolution: "@standardnotes/ui-services@workspace:packages/ui-services"
+  dependencies:
+    "@standardnotes/filepicker": "workspace:^"
+    "@standardnotes/services": "workspace:^"
+    "@standardnotes/snjs": "workspace:^"
+    "@standardnotes/styles": "workspace:^"
+    "@standardnotes/toast": "workspace:^"
+    "@standardnotes/utils": "workspace:^"
+    "@types/jest": ^28.1.5
+    "@typescript-eslint/eslint-plugin": ^5.30.0
+    "@typescript-eslint/parser": ^5.12.1
+    eslint-plugin-prettier: "*"
+    jest: ^28.1.2
+    ts-jest: ^28.0.5
+  languageName: unknown
+  linkType: soft
+
+"@standardnotes/utils@workspace:*, @standardnotes/utils@workspace:^, @standardnotes/utils@workspace:packages/utils":
   version: 0.0.0-use.local
   resolution: "@standardnotes/utils@workspace:packages/utils"
   dependencies:
@@ -7492,6 +7520,7 @@ __metadata:
     "@standardnotes/snjs": "workspace:*"
     "@standardnotes/styles": "workspace:*"
     "@standardnotes/toast": "workspace:*"
+    "@standardnotes/ui-services": "workspace:^"
     "@types/jest": ^28.1.5
     "@types/react": ^17.0.42
     "@types/react-dom": ^18.0.5

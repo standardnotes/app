@@ -1,9 +1,8 @@
 import { WebApplication } from '@/Application/Application'
-import { WebAppEvent } from '@/Application/WebAppEvent'
 import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { PureComponent } from '@/Components/Abstract/PureComponent'
 import { destroyAllObjectProperties, preventRefreshing } from '@/Utils'
-import { ApplicationEvent, ApplicationDescriptor } from '@standardnotes/snjs'
+import { ApplicationEvent, ApplicationDescriptor, WebAppEvent } from '@standardnotes/snjs'
 import {
   STRING_NEW_UPDATE_READY,
   STRING_CONFIRM_APP_QUIT_DURING_UPGRADE,
@@ -11,7 +10,7 @@ import {
   STRING_UPGRADE_ACCOUNT_CONFIRM_TITLE,
   STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON,
 } from '@/Constants/Strings'
-import { alertDialog, confirmDialog } from '@/Services/AlertService'
+import { alertDialog, confirmDialog } from '@standardnotes/ui-services'
 import Icon from '@/Components/Icon/Icon'
 import SyncResolutionMenu from '@/Components/SyncResolutionMenu/SyncResolutionMenu'
 import { Fragment } from 'react'

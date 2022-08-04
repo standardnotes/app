@@ -15,7 +15,7 @@ import Icon from '@/Components/Icon/Icon'
 import ChallengeModalPrompt from './ChallengePrompt'
 import LockscreenWorkspaceSwitcher from './LockscreenWorkspaceSwitcher'
 import { ApplicationGroup } from '@/Application/ApplicationGroup'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { ChallengeModalValues } from './ChallengeModalValues'
 
 type Props = {

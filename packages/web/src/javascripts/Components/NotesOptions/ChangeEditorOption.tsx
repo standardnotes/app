@@ -1,4 +1,4 @@
-import { KeyboardKey } from '@/Services/IOService'
+import { KeyboardKey } from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
 import { SNNote } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useRef, useState } from 'react'

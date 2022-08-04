@@ -1,4 +1,4 @@
-import { storage, StorageKey } from '@/Services/LocalStorage'
+import { storage, StorageKey } from '@standardnotes/ui-services'
 import { ApplicationEvent, InternalEventBus } from '@standardnotes/snjs'
 import { runInAction, makeObservable, observable, action } from 'mobx'
 import { WebApplication } from '../Application/Application'

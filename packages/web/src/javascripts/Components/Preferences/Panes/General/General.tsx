@@ -1,5 +1,5 @@
 import { WebApplication } from '@/Application/Application'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { FunctionComponent } from 'react'
 import { PackageProvider } from '@/Components/Preferences/Panes/General/Advanced/Packages/Provider/PackageProvider'
 import { observer } from 'mobx-react-lite'

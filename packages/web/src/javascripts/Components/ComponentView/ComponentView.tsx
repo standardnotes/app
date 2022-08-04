@@ -3,7 +3,7 @@ import {
   FeatureStatus,
   SNComponent,
   dateToLocalizedString,
-  ComponentViewer,
+  ComponentViewerInterface,
   ComponentViewerEvent,
   ComponentViewerError,
 } from '@standardnotes/snjs'
@@ -19,8 +19,8 @@ import { openSubscriptionDashboard } from '@/Utils/ManageSubscription'
 
 interface IProps {
   application: WebApplication
-  componentViewer: ComponentViewer
-  requestReload?: (viewer: ComponentViewer, force?: boolean) => void
+  componentViewer: ComponentViewerInterface
+  requestReload?: (viewer: ComponentViewerInterface, force?: boolean) => void
   onLoad?: (component: SNComponent) => void
 }
 

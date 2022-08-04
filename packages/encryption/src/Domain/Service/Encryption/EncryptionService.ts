@@ -1,6 +1,7 @@
 import * as Common from '@standardnotes/common'
 import * as Models from '@standardnotes/models'
 import {
+  BackupFile,
   CreateDecryptedBackupFileContextPayload,
   CreateEncryptedBackupFileContextPayload,
   EncryptedPayload,
@@ -15,7 +16,6 @@ import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import * as Utils from '@standardnotes/utils'
 import { isNotUndefined } from '@standardnotes/utils'
 import { V001Algorithm, V002Algorithm } from '../../Algorithm'
-import { BackupFile } from '../../Backups/BackupFile'
 import { DecryptBackupFile } from '../../Backups/BackupFileDecryptor'
 import { CreateAnyKeyParams } from '../../Keys/RootKey/KeyParamsFunctions'
 import { SNRootKey } from '../../Keys/RootKey/RootKey'

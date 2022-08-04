@@ -1,5 +1,5 @@
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
-import { KeyboardKey } from '@/Services/IOService'
+import { KeyboardKey } from '@standardnotes/ui-services'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { FileItem } from '@standardnotes/snjs'
 import {

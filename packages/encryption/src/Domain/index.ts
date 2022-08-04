@@ -1,5 +1,4 @@
 export * from './Algorithm'
-export * from './Backups/BackupFile'
 export * from './Backups/BackupFileDecryptor'
 export * from './Backups/BackupFileType'
 export * from './Keys/ItemsKey/ItemsKey'

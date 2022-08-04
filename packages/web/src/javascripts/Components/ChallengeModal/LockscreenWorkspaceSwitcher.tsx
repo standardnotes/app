@@ -1,5 +1,5 @@
 import { ApplicationGroup } from '@/Application/ApplicationGroup'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { FunctionComponent, useCallback, useRef, useState } from 'react'
 import WorkspaceSwitcherMenu from '@/Components/AccountMenu/WorkspaceSwitcher/WorkspaceSwitcherMenu'
 import Button from '@/Components/Button/Button'

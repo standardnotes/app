@@ -1,4 +1,4 @@
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { SNApplication, SessionStrings, UuidString, isNullOrUndefined, RemoteSession } from '@standardnotes/snjs'
 import { FunctionComponent, useState, useEffect, useRef, useMemo } from 'react'
 import { Alert } from '@reach/alert'

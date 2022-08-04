@@ -4,7 +4,7 @@ import Icon from '@/Components/Icon/Icon'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { NotesController } from '@/Controllers/NotesController'
 import { NoteTagsController } from '@/Controllers/NoteTagsController'
-import { KeyboardKey } from '@/Services/IOService'
+import { KeyboardKey } from '@standardnotes/ui-services'
 import Popover from '../Popover/Popover'
 
 type Props = {

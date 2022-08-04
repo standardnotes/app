@@ -1,11 +1,17 @@
-import { ApplicationEvent } from '@Lib/Application/Event'
-import { AbstractService, InternalEventBusInterface } from '@standardnotes/services'
-import { SNApplication } from '../../Application/Application'
+import {
+  AbstractService,
+  ApplicationEvent,
+  ApplicationInterface,
+  InternalEventBusInterface,
+} from '@standardnotes/services'
 
 export class ApplicationService extends AbstractService {
   private unsubApp!: () => void
 
-  constructor(protected application: SNApplication, protected override internalEventBus: InternalEventBusInterface) {
+  constructor(
+    protected application: ApplicationInterface,
+    protected override internalEventBus: InternalEventBusInterface,
+  ) {
     super(internalEventBus)
     this.addAppEventObserverAfterSubclassesFinishConstructing()
   }

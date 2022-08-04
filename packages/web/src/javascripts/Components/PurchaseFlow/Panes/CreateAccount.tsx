@@ -1,6 +1,6 @@
 import Button from '@/Components/Button/Button'
 import { WebApplication } from '@/Application/Application'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { PurchaseFlowPane } from '@/Controllers/PurchaseFlow/PurchaseFlowPane'
 import { observer } from 'mobx-react-lite'
 import { ChangeEventHandler, FunctionComponent, useEffect, useRef, useState } from 'react'

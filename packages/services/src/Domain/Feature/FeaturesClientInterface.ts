@@ -1,7 +1,9 @@
-import { FeatureStatus, SetOfflineFeaturesFunctionResponse } from './Types'
 import { FeatureDescription, FeatureIdentifier } from '@standardnotes/features'
 import { SNComponent } from '@standardnotes/models'
 import { RoleName } from '@standardnotes/common'
+
+import { FeatureStatus } from './FeatureStatus'
+import { SetOfflineFeaturesFunctionResponse } from './SetOfflineFeaturesFunctionResponse'
 
 export interface FeaturesClientInterface {
   downloadExternalFeature(urlOrCode: string): Promise<SNComponent | undefined>

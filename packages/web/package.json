@@ -82,6 +82,7 @@
     "@standardnotes/snjs": "workspace:*",
     "@standardnotes/styles": "workspace:*",
     "@standardnotes/toast": "workspace:*",
+    "@standardnotes/ui-services": "workspace:^",
     "@zip.js/zip.js": "^2.4.10",
     "mobx": "^6.5.0",
     "mobx-react-lite": "^3.3.0",

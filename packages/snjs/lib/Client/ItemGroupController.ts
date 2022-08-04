@@ -1,7 +1,9 @@
-import { ApplicationEvent } from '../Application/Event'
 import { FileItem, PrefKey, SNNote } from '@standardnotes/models'
 import { removeFromArray } from '@standardnotes/utils'
+import { ApplicationEvent } from '@standardnotes/services'
+
 import { SNApplication } from '../Application/Application'
+
 import { NoteViewController } from './NoteViewController'
 import { FileViewController } from './FileViewController'
 import { TemplateNoteViewControllerOptions } from './TemplateNoteViewControllerOptions'

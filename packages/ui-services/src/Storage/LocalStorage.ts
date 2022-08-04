@@ -1,5 +1,3 @@
-import { useCallback, useState } from 'react'
-
 export enum StorageKey {
   AnonymousUserId = 'AnonymousUserId',
   ShowBetaWarning = 'ShowBetaWarning',
@@ -25,20 +23,4 @@ export const storage = {
   remove(key: StorageKey): void {
     localStorage.removeItem(key)
   },
-}
-
-type LocalStorageHookReturnType<Key extends StorageKey> = [StorageValue[Key] | null, (value: StorageValue[Key]) => void]
-
-export const useLocalStorageItem = <Key extends StorageKey>(key: Key): LocalStorageHookReturnType<Key> => {
-  const [value, setValue] = useState(() => storage.get(key))
-
-  const set = useCallback(
-    (value: StorageValue[Key]) => {
-      storage.set(key, value)
-      setValue(value)
-    },
-    [key],
-  )
-
-  return [value, set]
 }

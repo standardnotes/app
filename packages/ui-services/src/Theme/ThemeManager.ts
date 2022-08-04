@@ -1,4 +1,3 @@
-import { WebApplication } from '@/Application/Application'
 import {
   StorageValueModes,
   ApplicationService,
@@ -13,6 +12,7 @@ import {
   InternalEventBus,
   PayloadEmitSource,
   LocalStorageDecryptedContextualPayload,
+  WebApplicationInterface,
 } from '@standardnotes/snjs'
 import { dismissToast, ToastType, addTimedToast } from '@standardnotes/toast'
 
@@ -26,7 +26,7 @@ export class ThemeManager extends ApplicationService {
   private unregisterStream!: () => void
   private lastUseDeviceThemeSettings = false
 
-  constructor(application: WebApplication) {
+  constructor(application: WebApplicationInterface) {
     super(application, new InternalEventBus())
     this.colorSchemeEventHandler = this.colorSchemeEventHandler.bind(this)
   }
@@ -80,7 +80,7 @@ export class ThemeManager extends ApplicationService {
   }
 
   get webApplication() {
-    return this.application as WebApplication
+    return this.application as WebApplicationInterface
   }
 
   override deinit() {

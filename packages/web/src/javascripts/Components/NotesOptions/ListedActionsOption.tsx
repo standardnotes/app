@@ -3,7 +3,7 @@ import { SNNote } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import ListedActionsMenu from './ListedActionsMenu'
-import { KeyboardKey } from '@/Services/IOService'
+import { KeyboardKey } from '@standardnotes/ui-services'
 import Popover from '../Popover/Popover'
 
 type Props = {

@@ -1,5 +1,5 @@
 import { WebApplication } from '@/Application/Application'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { FunctionComponent } from 'react'
 import PreferencesPane from '@/Components/Preferences/PreferencesComponents/PreferencesPane'
 import CloudLink from './CloudBackups/CloudBackups'

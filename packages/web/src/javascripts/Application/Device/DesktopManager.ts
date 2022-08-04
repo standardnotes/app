@@ -12,9 +12,9 @@ import {
   assert,
   DesktopClientRequiresWebMethods,
   DesktopDeviceInterface,
+  WebApplicationInterface,
+  WebAppEvent,
 } from '@standardnotes/snjs'
-import { WebApplication } from '@/Application/Application'
-import { WebAppEvent } from '@/Application/WebAppEvent'
 
 export class DesktopManager
   extends ApplicationService
@@ -27,12 +27,12 @@ export class DesktopManager
   dataLoaded = false
   lastSearchedText?: string
 
-  constructor(application: WebApplication, private device: DesktopDeviceInterface) {
+  constructor(application: WebApplicationInterface, private device: DesktopDeviceInterface) {
     super(application, new InternalEventBus())
   }
 
   get webApplication() {
-    return this.application as WebApplication
+    return this.application as WebApplicationInterface
   }
 
   override deinit() {
@@ -80,7 +80,7 @@ export class DesktopManager
       .catch(console.error)
   }
 
-  registerUpdateObserver(callback: (component: SNComponent) => void) {
+  registerUpdateObserver(callback: (component: SNComponent) => void): () => void {
     const observer = {
       callback: callback,
     }

@@ -3,7 +3,7 @@ import { Subtitle } from '@/Components/Preferences/PreferencesComponents/Content
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import Button from '@/Components/Button/Button'
 import { WebApplication } from '@/Application/Application'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { STRING_REMOVE_OFFLINE_KEY_CONFIRMATION } from '@/Constants/Strings'
 import { ButtonType, ClientDisplayableError } from '@standardnotes/snjs'

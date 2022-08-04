@@ -6,14 +6,12 @@ import {
   InternalEventBus,
   isDesktopDevice,
 } from '@standardnotes/snjs'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { ArchiveManager, IOService, AutolockService, ThemeManager } from '@standardnotes/ui-services'
+
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { getPlatform, isDesktopApplication } from '@/Utils'
-import { ArchiveManager } from '@/Services/ArchiveManager'
-import { DesktopManager } from '@/Services/DesktopManager'
-import { IOService } from '@/Services/IOService'
-import { AutolockService } from '@/Services/AutolockService'
-import { ThemeManager } from '@/Services/ThemeManager'
 import { WebOrDesktopDevice } from '@/Application/Device/WebOrDesktopDevice'
+import { DesktopManager } from './Device/DesktopManager'
 
 const createApplication = (
   descriptor: ApplicationDescriptor,

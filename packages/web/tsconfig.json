@@ -19,8 +19,7 @@
     "typeRoots": ["./src/javascripts/Types/External", "../../node_modules/@types", "node_modules/@types"],
     "paths": {
       "@/*": ["./src/javascripts/*"],
-      "@Controllers/*": ["src/javascripts/Controllers/*"],
-      "@Services/*": ["src/javascripts/Services/*"]
+      "@Controllers/*": ["src/javascripts/Controllers/*"]
     }
   },
   "exclude": ["node_modules", "dist", "coverage"]

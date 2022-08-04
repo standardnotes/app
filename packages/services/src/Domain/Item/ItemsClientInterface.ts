@@ -1,5 +1,4 @@
-import { SNItemsKey } from '@standardnotes/encryption'
-import { ContentType } from '@standardnotes/common'
+import { ContentType, Uuid } from '@standardnotes/common'
 import {
   SNNote,
   FileItem,
@@ -14,8 +13,8 @@ import {
   SNComponent,
   SNTheme,
   DisplayOptions,
+  ItemsKeyInterface,
 } from '@standardnotes/models'
-import { UuidString } from '@Lib/Types'
 
 export interface ItemsClientInterface {
   get invalidItems(): EncryptedItemInterface[]
@@ -43,7 +42,7 @@ export interface ItemsClientInterface {
 
   getDisplayableTags(): SNTag[]
 
-  getDisplayableItemsKeys(): SNItemsKey[]
+  getDisplayableItemsKeys(): ItemsKeyInterface[]
 
   getDisplayableFiles(): FileItem[]
 
@@ -116,14 +115,14 @@ export interface ItemsClientInterface {
   /**
    * Finds an item by UUID.
    */
-  findItem<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: UuidString): T | undefined
+  findItem<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: Uuid): T | undefined
 
   /**
    * Finds an item by predicate.
    */
-  findItems<T extends DecryptedItemInterface>(uuids: UuidString[]): T[]
+  findItems<T extends DecryptedItemInterface>(uuids: Uuid[]): T[]
 
-  findSureItem<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: UuidString): T
+  findSureItem<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: Uuid): T
 
   /**
    * Finds an item by predicate.
