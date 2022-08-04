@@ -24,7 +24,8 @@ jobs:
         with:
           registry-url: 'https://registry.npmjs.org'
           node-version-file: '.nvmrc'
-      - run: yarn install
+          cache: 'yarn'
+      - run: yarn install --immutable
       - run: yarn build:desktop
       - run: echo APP_VERSION=$(node -p "require('./package.json').version") >> $GITHUB_ENV
 
@@ -59,12 +60,13 @@ jobs:
         with:
           registry-url: 'https://registry.npmjs.org'
           node-version-file: '.nvmrc'
+          cache: 'yarn'
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
       - name: Install FPM
         run: sudo gem install fpm -f
 
-      - run: yarn install
+      - run: yarn install --immutable
       - run: yarn build:desktop
 
       - run: echo APP_VERSION=$(node -p "require('./package.json').version") >> $GITHUB_ENV
@@ -133,7 +135,8 @@ jobs:
         with:
           registry-url: 'https://registry.npmjs.org'
           node-version-file: '.nvmrc'
-      - run: yarn install
+          cache: 'yarn'
+      - run: yarn install --immutable
       - run: yarn build:desktop
       - run: yarn run webpack --config desktop.webpack.prod.js
       - run: echo APP_VERSION=$(node -p "require('./package.json').version") >> $GITHUB_ENV
@@ -162,8 +165,9 @@ jobs:
         with:
           registry-url: 'https://registry.npmjs.org'
           node-version-file: '.nvmrc'
+          cache: 'yarn'
 
-      - run: yarn install
+      - run: yarn install --immutable
 
       - uses: actions/download-artifact@v3
         with:

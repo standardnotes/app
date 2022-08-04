@@ -20,6 +20,7 @@ jobs:
         with:
           registry-url: 'https://registry.npmjs.org'
           node-version-file: '.nvmrc'
+          cache: 'yarn'
 
       - name: Setup git config
         run: |
