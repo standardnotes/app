@@ -1,4 +1,9 @@
-import { AbstractService, ApplicationEvent, ApplicationInterface, InternalEventBusInterface } from '@standardnotes/services'
+import {
+  AbstractService,
+  ApplicationEvent,
+  ApplicationInterface,
+  InternalEventBusInterface
+} from '@standardnotes/services'
 
 const MILLISECONDS_PER_SECOND = 1000
 const POLL_INTERVAL = 50
