@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.9.0](https://github.com/standardnotes/app/compare/@standardnotes/files@1.8.7...@standardnotes/files@1.9.0) (2022-08-05)
+
+### Bug Fixes
+
+* **files:** filepicker circular dependency ([183f68c](https://github.com/standardnotes/app/commit/183f68c9c1005567ec50bd1a66ca34f775e393dc))
+
+### Features
+
+* **encryption:** refactor circular dependencies on services ([ffb2193](https://github.com/standardnotes/app/commit/ffb21939246eb81eba3230ff8c0d68e7a6cb2bcb))
+* **files:** refactor circular deps ([696b82b](https://github.com/standardnotes/app/commit/696b82b9d392e146db5894462aeb56d91ac2a92c))
+
 ## [1.8.7](https://github.com/standardnotes/app/compare/@standardnotes/files@1.8.6...@standardnotes/files@1.8.7) (2022-07-13)
 
 ### Bug Fixes

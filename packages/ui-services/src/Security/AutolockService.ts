@@ -1,4 +1,9 @@
-import { ApplicationService } from '@standardnotes/snjs'
+import {
+  AbstractService,
+  ApplicationEvent,
+  ApplicationInterface,
+  InternalEventBusInterface,
+} from '@standardnotes/services'
 
 const MILLISECONDS_PER_SECOND = 1000
 const POLL_INTERVAL = 50
@@ -13,14 +18,23 @@ const LockInterval = {
 
 const STORAGE_KEY_AUTOLOCK_INTERVAL = 'AutoLockIntervalKey'
 
-export class AutolockService extends ApplicationService {
+export class AutolockService extends AbstractService {
+  private unsubApp!: () => void
+
   private pollInterval: any
   private lastFocusState?: 'hidden' | 'visible'
   private lockAfterDate?: Date
 
-  override onAppLaunch() {
+  constructor(
+    protected application: ApplicationInterface,
+    protected override internalEventBus: InternalEventBusInterface,
+  ) {
+    super(internalEventBus)
+    this.addAppEventObserverAfterSubclassesFinishConstructing()
+  }
+
+  onAppLaunch() {
     this.beginPolling()
-    return super.onAppLaunch()
   }
 
   override deinit() {
@@ -28,7 +42,31 @@ export class AutolockService extends ApplicationService {
     if (this.pollInterval) {
       clearInterval(this.pollInterval)
     }
+
+    ;(this.application as unknown) = undefined
+
+    this.unsubApp()
+    ;(this.unsubApp as unknown) = undefined
+
     super.deinit()
+  }
+
+  addAppEventObserverAfterSubclassesFinishConstructing() {
+    setTimeout(() => {
+      this.addAppEventObserver()
+    }, 0)
+  }
+
+  addAppEventObserver() {
+    if (this.application.isLaunched()) {
+      void this.onAppLaunch()
+    }
+
+    this.unsubApp = this.application.addEventObserver(async (event: ApplicationEvent) => {
+      if (event === ApplicationEvent.Launched) {
+        void this.onAppLaunch()
+      }
+    })
   }
 
   private lockApplication() {

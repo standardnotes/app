@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.31.2](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.31.1...@standardnotes/mobile@3.31.2) (2022-08-05)
+
+### Bug Fixes
+
+* **files:** filepicker circular dependency ([183f68c](https://github.com/standardnotes/app/commit/183f68c9c1005567ec50bd1a66ca34f775e393dc))
+* **mobile:** add common to metro config ([8a1293f](https://github.com/standardnotes/app/commit/8a1293f66d4d9b17494969db4c7b182ad7338951))
+* **mobile:** add models to metro config ([c2159e7](https://github.com/standardnotes/app/commit/c2159e77f7f8ed5a52121696d49c3850acd78e51))
+* **mobile:** add responses to metro config ([94772bb](https://github.com/standardnotes/app/commit/94772bb7b68f2ee8fee730bb22fd560b60fc64e7))
+* **mobile:** bring back responses and models to metro resolution ([10f40f6](https://github.com/standardnotes/app/commit/10f40f662e6a92202e3fe694d4d0ce1dd2478540))
+* **mobile:** imports only from snjs ([3ce621e](https://github.com/standardnotes/app/commit/3ce621e24c564fe026786ea1269c8bc15bc67ebe))
+* **mobile:** replace component viewer usage with interface ([0825ced](https://github.com/standardnotes/app/commit/0825cedfbeeca1b37b1259b762754a1e3530f498))
+
 ## [3.31.1](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.31.0...@standardnotes/mobile@3.31.1) (2022-08-03)
 
 **Note:** Version bump only for package @standardnotes/mobile
