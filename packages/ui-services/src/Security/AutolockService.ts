@@ -2,7 +2,7 @@ import {
   AbstractService,
   ApplicationEvent,
   ApplicationInterface,
-  InternalEventBusInterface
+  InternalEventBusInterface,
 } from '@standardnotes/services'
 
 const MILLISECONDS_PER_SECOND = 1000
