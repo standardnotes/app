@@ -12,54 +12,27 @@ on:
       - '!*standardnotes/*web*alpha*'
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Set up Node
-        uses: actions/setup-node@v3
-        with:
-          registry-url: 'https://registry.npmjs.org'
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-      - name: Install dependencies
-        run: yarn install --immutable
-      - name: ESLint
-        run: yarn lint
-
   test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Set up Node
-        uses: actions/setup-node@v3
-        with:
-          registry-url: 'https://registry.npmjs.org'
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
       - name: Install dependencies
         run: yarn install --immutable
       - name: Build
         run: yarn build:web
+      - name: ESLint
+        run: yarn lint
       - name: Test
         run: yarn test
-
   deploy:
-    needs: [lint, test]
+    needs: test
 
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Set up Node
-        uses: actions/setup-node@v3
-        with:
-          registry-url: 'https://registry.npmjs.org'
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
       - name: Install dependencies
         run: yarn install --immutable
       - name: Build
