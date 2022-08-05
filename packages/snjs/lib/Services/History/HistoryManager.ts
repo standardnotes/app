@@ -1,5 +1,4 @@
 import { ContentType, Uuid } from '@standardnotes/common'
-import { EncryptionService } from '@standardnotes/encryption'
 import { isNullOrUndefined, removeFromArray } from '@standardnotes/utils'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import { SNApiService } from '@Lib/Services/Api/ApiService'
@@ -7,8 +6,8 @@ import { DiskStorageService } from '@Lib/Services/Storage/DiskStorageService'
 import { UuidString } from '../../Types/UuidString'
 import * as Models from '@standardnotes/models'
 import * as Responses from '@standardnotes/responses'
-import * as Services from '@standardnotes/services'
 import { isErrorDecryptingPayload, PayloadTimestampDefaults, SNNote } from '@standardnotes/models'
+import { AbstractService, EncryptionService, DeviceInterface, InternalEventBusInterface } from '@standardnotes/services'
 
 /** The amount of revisions per item above which should call for an optimization. */
 const DefaultItemRevisionsThreshold = 20
@@ -28,7 +27,7 @@ const LargeEntryDeltaThreshold = 25
  * 2. Remote server history. Entries are automatically added by the server and must be
  *    retrieved per item via an API call.
  */
-export class SNHistoryManager extends Services.AbstractService {
+export class SNHistoryManager extends AbstractService {
   private removeChangeObserver: () => void
 
   /**
@@ -49,8 +48,8 @@ export class SNHistoryManager extends Services.AbstractService {
     private storageService: DiskStorageService,
     private apiService: SNApiService,
     private protocolService: EncryptionService,
-    public deviceInterface: Services.DeviceInterface,
-    protected override internalEventBus: Services.InternalEventBusInterface,
+    public deviceInterface: DeviceInterface,
+    protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
     this.removeChangeObserver = this.itemManager.addObserver(ContentType.Note, ({ changed, inserted }) => {

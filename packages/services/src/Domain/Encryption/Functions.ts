@@ -5,15 +5,11 @@ import {
   ItemsKeyContent,
   RootKeyInterface,
 } from '@standardnotes/models'
-import {
-  ChallengePrompt,
-  ChallengeReason,
-  ChallengeServiceInterface,
-  ChallengeValidation,
-} from '@standardnotes/services'
-import { EncryptionProvider } from '../../Service/Encryption/EncryptionProvider'
-import { SNRootKeyParams } from '../RootKey/RootKeyParams'
-import { KeyRecoveryStrings } from './KeyRecoveryStrings'
+import { EncryptionProvider, KeyRecoveryStrings, SNRootKeyParams } from '@standardnotes/encryption'
+import { ChallengeServiceInterface } from '../Challenge/ChallengeServiceInterface'
+import { ChallengePrompt } from '../Challenge/Prompt/ChallengePrompt'
+import { ChallengeReason } from '../Challenge/Types/ChallengeReason'
+import { ChallengeValidation } from '../Challenge/Types/ChallengeValidation'
 
 export async function DecryptItemsKeyWithUserFallback(
   itemsKey: EncryptedPayloadInterface,

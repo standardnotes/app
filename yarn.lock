@@ -6576,7 +6576,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/encryption@workspace:*, @standardnotes/encryption@workspace:packages/encryption":
+"@standardnotes/encryption@workspace:*, @standardnotes/encryption@workspace:^, @standardnotes/encryption@workspace:packages/encryption":
   version: 0.0.0-use.local
   resolution: "@standardnotes/encryption@workspace:packages/encryption"
   dependencies:
@@ -6584,7 +6584,6 @@ __metadata:
     "@standardnotes/config": 2.4.3
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
-    "@standardnotes/services": "workspace:*"
     "@standardnotes/sncrypto-common": "workspace:*"
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^28.1.5
@@ -7179,6 +7178,7 @@ __metadata:
   dependencies:
     "@standardnotes/auth": ^3.19.4
     "@standardnotes/common": ^1.30.0
+    "@standardnotes/encryption": "workspace:^"
     "@standardnotes/files": "workspace:^"
     "@standardnotes/models": "workspace:^"
     "@standardnotes/responses": "workspace:*"

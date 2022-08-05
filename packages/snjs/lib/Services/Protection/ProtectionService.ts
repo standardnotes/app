@@ -2,7 +2,6 @@ import { Challenge } from './../Challenge/Challenge'
 import { ChallengeService } from './../Challenge/ChallengeService'
 import { SNLog } from '@Lib/Log'
 import { DecryptedItem } from '@standardnotes/models'
-import { EncryptionService } from '@standardnotes/encryption'
 import { DiskStorageService } from '@Lib/Services/Storage/DiskStorageService'
 import { isNullOrUndefined } from '@standardnotes/utils'
 import {
@@ -15,6 +14,7 @@ import {
   ChallengeReason,
   ChallengePrompt,
   ChallengeValidation,
+  EncryptionService,
 } from '@standardnotes/services'
 import { ProtectionsClientInterface } from './ClientInterface'
 import { ContentType } from '@standardnotes/common'

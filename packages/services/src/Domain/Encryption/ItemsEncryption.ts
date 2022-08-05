@@ -1,30 +1,45 @@
 import { ContentType, ProtocolVersion } from '@standardnotes/common'
-import * as Models from '@standardnotes/models'
-import { isEncryptedPayload } from '@standardnotes/models'
-import * as Services from '@standardnotes/services'
-import { DiagnosticInfo } from '@standardnotes/services'
-import { Uuids } from '@standardnotes/utils'
-import { OperatorManager } from '../../Operator/OperatorManager'
-import * as OperatorWrapper from '../../Operator/OperatorWrapper'
-import { StandardException } from '../../StandardException'
 import {
   DecryptedParameters,
   EncryptedParameters,
   ErrorDecryptingParameters,
+  findDefaultItemsKey,
   isErrorDecryptingParameters,
-} from '../../Types/EncryptedParameters'
-import { findDefaultItemsKey } from '../Functions'
+  OperatorManager,
+  StandardException,
+  encryptPayload,
+  decryptPayload,
+} from '@standardnotes/encryption'
+import {
+  DecryptedPayload,
+  DecryptedPayloadInterface,
+  EncryptedPayload,
+  EncryptedPayloadInterface,
+  isEncryptedPayload,
+  ItemContent,
+  ItemsKeyInterface,
+  PayloadEmitSource,
+  SureFindPayload,
+} from '@standardnotes/models'
+import { Uuids } from '@standardnotes/utils'
 
-export class ItemsEncryptionService extends Services.AbstractService {
+import { DiagnosticInfo } from '../Diagnostics/ServiceDiagnostics'
+import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
+import { ItemManagerInterface } from '../Item/ItemManagerInterface'
+import { PayloadManagerInterface } from '../Payloads/PayloadManagerInterface'
+import { AbstractService } from '../Service/AbstractService'
+import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
+
+export class ItemsEncryptionService extends AbstractService {
   private removeItemsObserver!: () => void
   public userVersion?: ProtocolVersion
 
   constructor(
-    private itemManager: Services.ItemManagerInterface,
-    private payloadManager: Services.PayloadManagerInterface,
-    private storageService: Services.StorageServiceInterface,
+    private itemManager: ItemManagerInterface,
+    private payloadManager: PayloadManagerInterface,
+    private storageService: StorageServiceInterface,
     private operatorManager: OperatorManager,
-    protected override internalEventBus: Services.InternalEventBusInterface,
+    protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
 
@@ -59,19 +74,19 @@ export class ItemsEncryptionService extends Services.AbstractService {
     return this.itemManager.getDisplayableItemsKeys()
   }
 
-  public itemsKeyForPayload(payload: Models.EncryptedPayloadInterface): Models.ItemsKeyInterface | undefined {
+  public itemsKeyForPayload(payload: EncryptedPayloadInterface): ItemsKeyInterface | undefined {
     return this.getItemsKeys().find(
       (key) => key.uuid === payload.items_key_id || key.duplicateOf === payload.items_key_id,
     )
   }
 
-  public getDefaultItemsKey(): Models.ItemsKeyInterface | undefined {
+  public getDefaultItemsKey(): ItemsKeyInterface | undefined {
     return findDefaultItemsKey(this.getItemsKeys())
   }
 
-  private keyToUseForItemEncryption(): Models.ItemsKeyInterface | StandardException {
+  private keyToUseForItemEncryption(): ItemsKeyInterface | StandardException {
     const defaultKey = this.getDefaultItemsKey()
-    let result: Models.ItemsKeyInterface | undefined = undefined
+    let result: ItemsKeyInterface | undefined = undefined
 
     if (this.userVersion && this.userVersion !== defaultKey?.keyVersion) {
       /**
@@ -92,9 +107,7 @@ export class ItemsEncryptionService extends Services.AbstractService {
     return result
   }
 
-  private keyToUseForDecryptionOfPayload(
-    payload: Models.EncryptedPayloadInterface,
-  ): Models.ItemsKeyInterface | undefined {
+  private keyToUseForDecryptionOfPayload(payload: EncryptedPayloadInterface): ItemsKeyInterface | undefined {
     if (payload.items_key_id) {
       const itemsKey = this.itemsKeyForPayload(payload)
       return itemsKey
@@ -104,7 +117,7 @@ export class ItemsEncryptionService extends Services.AbstractService {
     return defaultKey
   }
 
-  public async encryptPayloadWithKeyLookup(payload: Models.DecryptedPayloadInterface): Promise<EncryptedParameters> {
+  public async encryptPayloadWithKeyLookup(payload: DecryptedPayloadInterface): Promise<EncryptedParameters> {
     const key = this.keyToUseForItemEncryption()
 
     if (key instanceof StandardException) {
@@ -115,8 +128,8 @@ export class ItemsEncryptionService extends Services.AbstractService {
   }
 
   public async encryptPayload(
-    payload: Models.DecryptedPayloadInterface,
-    key: Models.ItemsKeyInterface,
+    payload: DecryptedPayloadInterface,
+    key: ItemsKeyInterface,
   ): Promise<EncryptedParameters> {
     if (isEncryptedPayload(payload)) {
       throw Error('Attempting to encrypt already encrypted payload.')
@@ -128,24 +141,22 @@ export class ItemsEncryptionService extends Services.AbstractService {
       throw Error('Attempting to encrypt payload with no UuidGenerator.')
     }
 
-    return OperatorWrapper.encryptPayload(payload, key, this.operatorManager)
+    return encryptPayload(payload, key, this.operatorManager)
   }
 
   public async encryptPayloads(
-    payloads: Models.DecryptedPayloadInterface[],
-    key: Models.ItemsKeyInterface,
+    payloads: DecryptedPayloadInterface[],
+    key: ItemsKeyInterface,
   ): Promise<EncryptedParameters[]> {
     return Promise.all(payloads.map((payload) => this.encryptPayload(payload, key)))
   }
 
-  public async encryptPayloadsWithKeyLookup(
-    payloads: Models.DecryptedPayloadInterface[],
-  ): Promise<EncryptedParameters[]> {
+  public async encryptPayloadsWithKeyLookup(payloads: DecryptedPayloadInterface[]): Promise<EncryptedParameters[]> {
     return Promise.all(payloads.map((payload) => this.encryptPayloadWithKeyLookup(payload)))
   }
 
-  public async decryptPayloadWithKeyLookup<C extends Models.ItemContent = Models.ItemContent>(
-    payload: Models.EncryptedPayloadInterface,
+  public async decryptPayloadWithKeyLookup<C extends ItemContent = ItemContent>(
+    payload: EncryptedPayloadInterface,
   ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters> {
     const key = this.keyToUseForDecryptionOfPayload(payload)
 
@@ -160,9 +171,9 @@ export class ItemsEncryptionService extends Services.AbstractService {
     return this.decryptPayload(payload, key)
   }
 
-  public async decryptPayload<C extends Models.ItemContent = Models.ItemContent>(
-    payload: Models.EncryptedPayloadInterface,
-    key: Models.ItemsKeyInterface,
+  public async decryptPayload<C extends ItemContent = ItemContent>(
+    payload: EncryptedPayloadInterface,
+    key: ItemsKeyInterface,
   ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters> {
     if (!payload.content) {
       return {
@@ -171,18 +182,18 @@ export class ItemsEncryptionService extends Services.AbstractService {
       }
     }
 
-    return OperatorWrapper.decryptPayload(payload, key, this.operatorManager)
+    return decryptPayload(payload, key, this.operatorManager)
   }
 
-  public async decryptPayloadsWithKeyLookup<C extends Models.ItemContent = Models.ItemContent>(
-    payloads: Models.EncryptedPayloadInterface[],
+  public async decryptPayloadsWithKeyLookup<C extends ItemContent = ItemContent>(
+    payloads: EncryptedPayloadInterface[],
   ): Promise<(DecryptedParameters<C> | ErrorDecryptingParameters)[]> {
     return Promise.all(payloads.map((payload) => this.decryptPayloadWithKeyLookup<C>(payload)))
   }
 
-  public async decryptPayloads<C extends Models.ItemContent = Models.ItemContent>(
-    payloads: Models.EncryptedPayloadInterface[],
-    key: Models.ItemsKeyInterface,
+  public async decryptPayloads<C extends ItemContent = ItemContent>(
+    payloads: EncryptedPayloadInterface[],
+    key: ItemsKeyInterface,
   ): Promise<(DecryptedParameters<C> | ErrorDecryptingParameters)[]> {
     return Promise.all(payloads.map((payload) => this.decryptPayload<C>(payload, key)))
   }
@@ -196,21 +207,21 @@ export class ItemsEncryptionService extends Services.AbstractService {
     const resultParams = await this.decryptPayloadsWithKeyLookup(payloads)
 
     const decryptedPayloads = resultParams.map((params) => {
-      const original = Models.SureFindPayload(payloads, params.uuid)
+      const original = SureFindPayload(payloads, params.uuid)
       if (isErrorDecryptingParameters(params)) {
-        return new Models.EncryptedPayload({
+        return new EncryptedPayload({
           ...original.ejected(),
           ...params,
         })
       } else {
-        return new Models.DecryptedPayload({
+        return new DecryptedPayload({
           ...original.ejected(),
           ...params,
         })
       }
     })
 
-    await this.payloadManager.emitPayloads(decryptedPayloads, Models.PayloadEmitSource.LocalChanged)
+    await this.payloadManager.emitPayloads(decryptedPayloads, PayloadEmitSource.LocalChanged)
   }
 
   /**
@@ -222,8 +233,8 @@ export class ItemsEncryptionService extends Services.AbstractService {
    */
   public defaultItemsKeyForItemVersion(
     version: ProtocolVersion,
-    fromKeys?: Models.ItemsKeyInterface[],
-  ): Models.ItemsKeyInterface | undefined {
+    fromKeys?: ItemsKeyInterface[],
+  ): ItemsKeyInterface | undefined {
     /** Try to find one marked default first */
     const searchKeys = fromKeys || this.getItemsKeys()
     const priorityKey = searchKeys.find((key) => {

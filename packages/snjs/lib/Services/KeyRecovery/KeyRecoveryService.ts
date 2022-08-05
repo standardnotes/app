@@ -1,11 +1,5 @@
 import { KeyRecoveryOperation } from './KeyRecoveryOperation'
-import {
-  SNRootKeyParams,
-  EncryptionService,
-  SNRootKey,
-  KeyParamsFromApiResponse,
-  KeyRecoveryStrings,
-} from '@standardnotes/encryption'
+import { SNRootKeyParams, SNRootKey, KeyParamsFromApiResponse, KeyRecoveryStrings } from '@standardnotes/encryption'
 import { UserService } from '../User/UserService'
 import {
   isErrorDecryptingPayload,
@@ -37,6 +31,7 @@ import {
   ChallengeValidation,
   ChallengeReason,
   ChallengePrompt,
+  EncryptionService,
 } from '@standardnotes/services'
 import {
   UndecryptableItemsStorage,

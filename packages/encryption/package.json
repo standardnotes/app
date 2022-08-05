@@ -39,7 +39,6 @@
     "@standardnotes/common": "^1.23.1",
     "@standardnotes/models": "workspace:*",
     "@standardnotes/responses": "workspace:*",
-    "@standardnotes/services": "workspace:*",
     "@standardnotes/sncrypto-common": "workspace:*",
     "@standardnotes/utils": "workspace:*",
     "reflect-metadata": "^0.1.13"

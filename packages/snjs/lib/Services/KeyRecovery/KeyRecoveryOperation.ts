@@ -1,10 +1,10 @@
 import { ContentType } from '@standardnotes/common'
 import { ItemsKeyInterface } from '@standardnotes/models'
 import { dateSorted } from '@standardnotes/utils'
-import { SNRootKeyParams, DecryptItemsKeyByPromptingUser, EncryptionProvider } from '@standardnotes/encryption'
+import { SNRootKeyParams, EncryptionProvider } from '@standardnotes/encryption'
 import { DecryptionQueueItem, KeyRecoveryOperationResult } from './Types'
 import { serverKeyParamsAreSafe } from './Utils'
-import { ChallengeServiceInterface } from '@standardnotes/services'
+import { ChallengeServiceInterface, DecryptItemsKeyByPromptingUser } from '@standardnotes/services'
 import { ItemManager } from '../Items'
 
 export class KeyRecoveryOperation {

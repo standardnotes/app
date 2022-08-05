@@ -1,53 +1,77 @@
-import * as Common from '@standardnotes/common'
-import * as Models from '@standardnotes/models'
+import {
+  CreateAnyKeyParams,
+  CreateEncryptionSplitWithKeyLookup,
+  DecryptedParameters,
+  EncryptedParameters,
+  encryptedParametersFromPayload,
+  EncryptionProvider,
+  ErrorDecryptingParameters,
+  findDefaultItemsKey,
+  FindPayloadInDecryptionSplit,
+  FindPayloadInEncryptionSplit,
+  isErrorDecryptingParameters,
+  ItemAuthenticatedData,
+  KeyedDecryptionSplit,
+  KeyedEncryptionSplit,
+  KeyMode,
+  LegacyAttachedData,
+  OperatorManager,
+  RootKeyEncryptedAuthenticatedData,
+  RootKeyServiceEvent,
+  SNRootKey,
+  SNRootKeyParams,
+  SplitPayloadsByEncryptionType,
+  V001Algorithm,
+  V002Algorithm,
+} from '@standardnotes/encryption'
 import {
   BackupFile,
   CreateDecryptedBackupFileContextPayload,
   CreateEncryptedBackupFileContextPayload,
+  DecryptedPayload,
+  DecryptedPayloadInterface,
   EncryptedPayload,
+  EncryptedPayloadInterface,
   isDecryptedPayload,
   isEncryptedPayload,
+  ItemContent,
+  ItemsKeyInterface,
   RootKeyInterface,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
-import * as Services from '@standardnotes/services'
-import { DiagnosticInfo } from '@standardnotes/services'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import * as Utils from '@standardnotes/utils'
-import { isNotUndefined } from '@standardnotes/utils'
-import { V001Algorithm, V002Algorithm } from '../../Algorithm'
-import { DecryptBackupFile } from '../../Backups/BackupFileDecryptor'
-import { CreateAnyKeyParams } from '../../Keys/RootKey/KeyParamsFunctions'
-import { SNRootKey } from '../../Keys/RootKey/RootKey'
-import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
-import { OperatorManager } from '../../Operator/OperatorManager'
 import {
-  CreateEncryptionSplitWithKeyLookup,
-  FindPayloadInDecryptionSplit,
-  FindPayloadInEncryptionSplit,
-} from '../../Split/EncryptionSplit'
-import { SplitPayloadsByEncryptionType } from '../../Split/Functions'
-import { KeyedDecryptionSplit } from '../../Split/KeyedDecryptionSplit'
-import { KeyedEncryptionSplit } from '../../Split/KeyedEncryptionSplit'
+  extendArray,
+  isNotUndefined,
+  isNullOrUndefined,
+  isReactNativeEnvironment,
+  isWebCryptoAvailable,
+  UuidGenerator,
+} from '@standardnotes/utils'
 import {
-  DecryptedParameters,
-  EncryptedParameters,
-  encryptedParametersFromPayload,
-  ErrorDecryptingParameters,
-  isErrorDecryptingParameters,
-} from '../../Types/EncryptedParameters'
-import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
-import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
-import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
-import { findDefaultItemsKey } from '../Functions'
-import { ItemsEncryptionService } from '../Items/ItemsEncryption'
-import { KeyMode } from '../RootKey/KeyMode'
-import * as RootKeyEncryption from '../RootKey/RootKeyEncryption'
-import { EncryptionProvider } from './EncryptionProvider'
+  AnyKeyParamsContent,
+  ApplicationIdentifier,
+  compareVersions,
+  ContentType,
+  isVersionLessThanOrEqualTo,
+  KeyParamsOrigination,
+  ProtocolVersion,
+  ProtocolVersionLastNonrootItemsKey,
+  ProtocolVersionLatest,
+} from '@standardnotes/common'
 
-export enum EncryptionServiceEvent {
-  RootKeyStatusChanged = 'RootKeyStatusChanged',
-}
+import { AbstractService } from '../Service/AbstractService'
+import { ItemsEncryptionService } from './ItemsEncryption'
+import { ItemManagerInterface } from '../Item/ItemManagerInterface'
+import { PayloadManagerInterface } from '../Payloads/PayloadManagerInterface'
+import { DeviceInterface } from '../Device/DeviceInterface'
+import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
+import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
+import { SyncEvent } from '../Event/SyncEvent'
+import { DiagnosticInfo } from '../Diagnostics/ServiceDiagnostics'
+import { RootKeyEncryptionService } from './RootKeyEncryption'
+import { DecryptBackupFile } from './BackupFileDecryptor'
+import { EncryptionServiceEvent } from './EncryptionServiceEvent'
 
 /**
  * The encryption service is responsible for the encryption and decryption of payloads, and
@@ -76,20 +100,20 @@ export enum EncryptionServiceEvent {
  * It also exposes public methods that allows consumers to retrieve an items key
  * for a particular payload, and also retrieve all available items keys.
 */
-export class EncryptionService extends Services.AbstractService<EncryptionServiceEvent> implements EncryptionProvider {
+export class EncryptionService extends AbstractService<EncryptionServiceEvent> implements EncryptionProvider {
   private operatorManager: OperatorManager
   private readonly itemsEncryption: ItemsEncryptionService
-  private readonly rootKeyEncryption: RootKeyEncryption.RootKeyEncryptionService
+  private readonly rootKeyEncryption: RootKeyEncryptionService
   private rootKeyObserverDisposer: () => void
 
   constructor(
-    private itemManager: Services.ItemManagerInterface,
-    private payloadManager: Services.PayloadManagerInterface,
-    public deviceInterface: Services.DeviceInterface,
-    private storageService: Services.StorageServiceInterface,
-    private identifier: Common.ApplicationIdentifier,
+    private itemManager: ItemManagerInterface,
+    private payloadManager: PayloadManagerInterface,
+    public deviceInterface: DeviceInterface,
+    private storageService: StorageServiceInterface,
+    private identifier: ApplicationIdentifier,
     public crypto: PureCryptoInterface,
-    protected override internalEventBus: Services.InternalEventBusInterface,
+    protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
     this.crypto = crypto
@@ -104,7 +128,7 @@ export class EncryptionService extends Services.AbstractService<EncryptionServic
       internalEventBus,
     )
 
-    this.rootKeyEncryption = new RootKeyEncryption.RootKeyEncryptionService(
+    this.rootKeyEncryption = new RootKeyEncryptionService(
       this.itemManager,
       this.operatorManager,
       this.deviceInterface,
@@ -114,12 +138,12 @@ export class EncryptionService extends Services.AbstractService<EncryptionServic
     )
     this.rootKeyObserverDisposer = this.rootKeyEncryption.addEventObserver((event) => {
       this.itemsEncryption.userVersion = this.getUserVersion()
-      if (event === RootKeyEncryption.RootKeyServiceEvent.RootKeyStatusChanged) {
+      if (event === RootKeyServiceEvent.RootKeyStatusChanged) {
         void this.notifyEvent(EncryptionServiceEvent.RootKeyStatusChanged)
       }
     })
 
-    Utils.UuidGenerator.SetGenerator(this.crypto.generateUUID)
+    UuidGenerator.SetGenerator(this.crypto.generateUUID)
   }
 
   public override deinit(): void {
@@ -160,7 +184,7 @@ export class EncryptionService extends Services.AbstractService<EncryptionServic
   }
 
   public getLatestVersion() {
-    return Common.ProtocolVersionLatest
+    return ProtocolVersionLatest
   }
 
   public hasAccount() {
@@ -171,7 +195,7 @@ export class EncryptionService extends Services.AbstractService<EncryptionServic
     return this.rootKeyEncryption.hasRootKeyEncryptionSource()
   }
 
-  public getUserVersion(): Common.ProtocolVersion | undefined {
+  public getUserVersion(): ProtocolVersion | undefined {
     return this.rootKeyEncryption.getUserVersion()
   }
 
@@ -181,8 +205,8 @@ export class EncryptionService extends Services.AbstractService<EncryptionServic
     return accountUpgradeAvailable || passcodeUpgradeAvailable
   }
 
-  public getSureDefaultItemsKey(): Models.ItemsKeyInterface {
-    return this.itemsEncryption.getDefaultItemsKey() as Models.ItemsKeyInterface
+  public getSureDefaultItemsKey(): ItemsKeyInterface {
+    return this.itemsEncryption.getDefaultItemsKey() as ItemsKeyInterface
   }
 
   async repersistAllItems(): Promise<void> {
@@ -201,22 +225,22 @@ export class EncryptionService extends Services.AbstractService<EncryptionServic
     await this.itemsEncryption.decryptErroredPayloads()
   }
 
-  public itemsKeyForPayload(payload: Models.EncryptedPayloadInterface): Models.ItemsKeyInterface | undefined {
+  public itemsKeyForPayload(payload: EncryptedPayloadInterface): ItemsKeyInterface | undefined {
     return this.itemsEncryption.itemsKeyForPayload(payload)
   }
 
   public defaultItemsKeyForItemVersion(
-    version: Common.ProtocolVersion,
-    fromKeys?: Models.ItemsKeyInterface[],
-  ): Models.ItemsKeyInterface | undefined {
+    version: ProtocolVersion,
+    fromKeys?: ItemsKeyInterface[],
+  ): ItemsKeyInterface | undefined {
     return this.itemsEncryption.defaultItemsKeyForItemVersion(version, fromKeys)
   }
 
-  public async encryptSplitSingle(split: KeyedEncryptionSplit): Promise<Models.EncryptedPayloadInterface> {
+  public async encryptSplitSingle(split: KeyedEncryptionSplit): Promise<EncryptedPayloadInterface> {
     return (await this.encryptSplit(split))[0]
   }
 
-  public async encryptSplit(split: KeyedEncryptionSplit): Promise<Models.EncryptedPayloadInterface[]> {
+  public async encryptSplit(split: KeyedEncryptionSplit): Promise<EncryptedPayloadInterface[]> {
     const allEncryptedParams: EncryptedParameters[] = []
 
     if (split.usesRootKey) {
@@ -224,7 +248,7 @@ export class EncryptionService extends Services.AbstractService<EncryptionServic
         split.usesRootKey.items,
         split.usesRootKey.key,
       )
-      Utils.extendArray(allEncryptedParams, rootKeyEncrypted)
+      extendArray(allEncryptedParams, rootKeyEncrypted)
     }
 
     if (split.usesItemsKey) {
@@ -232,21 +256,21 @@ export class EncryptionService extends Services.AbstractService<EncryptionServic
         split.usesItemsKey.items,
         split.usesItemsKey.key,
       )
-      Utils.extendArray(allEncryptedParams, itemsKeyEncrypted)
+      extendArray(allEncryptedParams, itemsKeyEncrypted)
     }
 
     if (split.usesRootKeyWithKeyLookup) {
       const rootKeyEncrypted = await this.rootKeyEncryption.encryptPayloadsWithKeyLookup(
         split.usesRootKeyWithKeyLookup.items,
       )
-      Utils.extendArray(allEncryptedParams, rootKeyEncrypted)
+      extendArray(allEncryptedParams, rootKeyEncrypted)
     }
 
     if (split.usesItemsKeyWithKeyLookup) {
       const itemsKeyEncrypted = await this.itemsEncryption.encryptPayloadsWithKeyLookup(
         split.usesItemsKeyWithKeyLookup.items,
       )
-      Utils.extendArray(allEncryptedParams, itemsKeyEncrypted)
+      extendArray(allEncryptedParams, itemsKeyEncrypted)
     }
 
     const packagedEncrypted = allEncryptedParams.map((encryptedParams) => {
@@ -263,17 +287,17 @@ export class EncryptionService extends Services.AbstractService<EncryptionServic
   }
 
   public async decryptSplitSingle<
-    C extends Models.ItemContent = Models.ItemContent,
-    P extends Models.DecryptedPayloadInterface<C> = Models.DecryptedPayloadInterface<C>,
-  >(split: KeyedDecryptionSplit): Promise<P | Models.EncryptedPayloadInterface> {
+    C extends ItemContent = ItemContent,
+    P extends DecryptedPayloadInterface<C> = DecryptedPayloadInterface<C>,
+  >(split: KeyedDecryptionSplit): Promise<P | EncryptedPayloadInterface> {
     const results = await this.decryptSplit<C, P>(split)
     return results[0]
   }
 
   public async decryptSplit<
-    C extends Models.ItemContent = Models.ItemContent,
-    P extends Models.DecryptedPayloadInterface<C> = Models.DecryptedPayloadInterface<C>,
-  >(split: KeyedDecryptionSplit): Promise<(P | Models.EncryptedPayloadInterface)[]> {
+    C extends ItemContent = ItemContent,
+    P extends DecryptedPayloadInterface<C> = DecryptedPayloadInterface<C>,
+  >(split: KeyedDecryptionSplit): Promise<(P | EncryptedPayloadInterface)[]> {
     const resultParams: (DecryptedParameters<C> | ErrorDecryptingParameters)[] = []
 
     if (split.usesRootKey) {
@@ -281,14 +305,14 @@ export class EncryptionService extends Services.AbstractService<EncryptionServic
         split.usesRootKey.items,
         split.usesRootKey.key,
       )
-      Utils.extendArray(resultParams, rootKeyDecrypted)
+      extendArray(resultParams, rootKeyDecrypted)
     }
 
     if (split.usesRootKeyWithKeyLookup) {
       const rootKeyDecrypted = await this.rootKeyEncryption.decryptPayloadsWithKeyLookup<C>(
         split.usesRootKeyWithKeyLookup.items,
       )
-      Utils.extendArray(resultParams, rootKeyDecrypted)
+      extendArray(resultParams, rootKeyDecrypted)
     }
 
     if (split.usesItemsKey) {
@@ -296,26 +320,26 @@ export class EncryptionService extends Services.AbstractService<EncryptionServic
         split.usesItemsKey.items,
         split.usesItemsKey.key,
       )
-      Utils.extendArray(resultParams, itemsKeyDecrypted)
+      extendArray(resultParams, itemsKeyDecrypted)
     }
 
     if (split.usesItemsKeyWithKeyLookup) {
       const itemsKeyDecrypted = await this.itemsEncryption.decryptPayloadsWithKeyLookup<C>(
         split.usesItemsKeyWithKeyLookup.items,
       )
-      Utils.extendArray(resultParams, itemsKeyDecrypted)
+      extendArray(resultParams, itemsKeyDecrypted)
     }
 
     const packagedResults = resultParams.map((params) => {
       const original = FindPayloadInDecryptionSplit(params.uuid, split)
 
       if (isErrorDecryptingParameters(params)) {
-        return new Models.EncryptedPayload({
+        return new EncryptedPayload({
           ...original.ejected(),
           ...params,
         })
       } else {
-        return new Models.DecryptedPayload<C>({
+        return new DecryptedPayload<C>({
           ...original.ejected(),
           ...params,
         }) as P
@@ -333,7 +357,7 @@ export class EncryptionService extends Services.AbstractService<EncryptionServic
     if (!userVersion) {
       return false
     }
-    return userVersion !== Common.ProtocolVersionLatest
+    return userVersion !== ProtocolVersionLatest
   }
 
   /**
@@ -354,29 +378,24 @@ export class EncryptionService extends Services.AbstractService<EncryptionServic
      *
      * Versions 004 and above are always supported.
      */
-    if (Common.compareVersions(keyParams.version, Common.ProtocolVersion.V004) >= 0) {
+    if (compareVersions(keyParams.version, ProtocolVersion.V004) >= 0) {
       /* keyParams.version >= 004 */
       return true
     } else {
-      return !!Utils.isWebCryptoAvailable() || Utils.isReactNativeEnvironment()
+      return !!isWebCryptoAvailable() || isReactNativeEnvironment()
     }
   }
 
-  public supportedVersions(): Common.ProtocolVersion[] {
-    return [
-      Common.ProtocolVersion.V001,
-      Common.ProtocolVersion.V002,
-      Common.ProtocolVersion.V003,
-      Common.ProtocolVersion.V004,
-    ]
+  public supportedVersions(): ProtocolVersion[] {
+    return [ProtocolVersion.V001, ProtocolVersion.V002, ProtocolVersion.V003, ProtocolVersion.V004]
   }
 
   /**
    * Determines whether the input version is greater than the latest supported library version.
    */
-  public isVersionNewerThanLibraryVersion(version: Common.ProtocolVersion) {
-    const libraryVersion = Common.ProtocolVersionLatest
-    return Common.compareVersions(version, libraryVersion) === 1
+  public isVersionNewerThanLibraryVersion(version: ProtocolVersion) {
+    const libraryVersion = ProtocolVersionLatest
+    return compareVersions(version, libraryVersion) === 1
   }
 
   /**
@@ -384,13 +403,13 @@ export class EncryptionService extends Services.AbstractService<EncryptionServic
    * This function returns the client-enforced minimum cost, to prevent the server from
    * overwhelmingly under-reporting the cost.
    */
-  public costMinimumForVersion(version: Common.ProtocolVersion) {
-    if (Common.compareVersions(version, Common.ProtocolVersion.V003) >= 0) {
+  public costMinimumForVersion(version: ProtocolVersion) {
+    if (compareVersions(version, ProtocolVersion.V003) >= 0) {
       throw 'Cost minimums only apply to versions <= 002'
     }
-    if (version === Common.ProtocolVersion.V001) {
+    if (version === ProtocolVersion.V001) {
       return V001Algorithm.PbkdfMinCost
-    } else if (version === Common.ProtocolVersion.V002) {
+    } else if (version === ProtocolVersion.V002) {
       return V002Algorithm.PbkdfMinCost
     } else {
       throw `Invalid version for cost minimum: ${version}`
@@ -411,8 +430,8 @@ export class EncryptionService extends Services.AbstractService<EncryptionServic
   public async createRootKey(
     identifier: string,
     password: string,
-    origination: Common.KeyParamsOrigination,
-    version?: Common.ProtocolVersion,
+    origination: KeyParamsOrigination,
+    version?: ProtocolVersion,
   ) {
     return this.rootKeyEncryption.createRootKey(identifier, password, origination, version)
   }
@@ -420,9 +439,7 @@ export class EncryptionService extends Services.AbstractService<EncryptionServic
   public async decryptBackupFile(
     file: BackupFile,
     password?: string,
-  ): Promise<
-    ClientDisplayableError | (Models.EncryptedPayloadInterface | Models.DecryptedPayloadInterface<Models.ItemContent>)[]
-  > {
+  ): Promise<ClientDisplayableError | (EncryptedPayloadInterface | DecryptedPayloadInterface<ItemContent>)[]> {
     const result = await DecryptBackupFile(file, this, password)
     return result
   }
@@ -431,7 +448,7 @@ export class EncryptionService extends Services.AbstractService<EncryptionServic
    * Creates a key params object from a raw object
    * @param keyParams - The raw key params object to create a KeyParams object from
    */
-  public createKeyParams(keyParams: Common.AnyKeyParamsContent) {
+  public createKeyParams(keyParams: AnyKeyParamsContent) {
     return CreateAnyKeyParams(keyParams)
   }
 
@@ -447,7 +464,7 @@ export class EncryptionService extends Services.AbstractService<EncryptionServic
     const ejected = result.map((payload) => CreateEncryptedBackupFileContextPayload(payload))
 
     const data: BackupFile = {
-      version: Common.ProtocolVersionLatest,
+      version: ProtocolVersionLatest,
       items: ejected,
     }
 
@@ -457,12 +474,10 @@ export class EncryptionService extends Services.AbstractService<EncryptionServic
   }
 
   public createDecryptedBackupFile(): BackupFile {
-    const payloads = this.payloadManager.nonDeletedItems.filter(
-      (item) => item.content_type !== Common.ContentType.ItemsKey,
-    )
+    const payloads = this.payloadManager.nonDeletedItems.filter((item) => item.content_type !== ContentType.ItemsKey)
 
     const data: BackupFile = {
-      version: Common.ProtocolVersionLatest,
+      version: ProtocolVersionLatest,
       items: payloads
         .map((payload) => {
           if (isDecryptedPayload(payload)) {
@@ -557,7 +572,7 @@ export class EncryptionService extends Services.AbstractService<EncryptionServic
   }
 
   public getEmbeddedPayloadAuthenticatedData(
-    payload: Models.EncryptedPayloadInterface,
+    payload: EncryptedPayloadInterface,
   ): RootKeyEncryptedAuthenticatedData | ItemAuthenticatedData | LegacyAttachedData | undefined {
     const version = payload.version
     if (!version) {
@@ -569,12 +584,12 @@ export class EncryptionService extends Services.AbstractService<EncryptionServic
   }
 
   /** Returns the key params attached to this key's encrypted payload */
-  public getKeyEmbeddedKeyParams(key: Models.EncryptedPayloadInterface): SNRootKeyParams | undefined {
+  public getKeyEmbeddedKeyParams(key: EncryptedPayloadInterface): SNRootKeyParams | undefined {
     const authenticatedData = this.getEmbeddedPayloadAuthenticatedData(key)
     if (!authenticatedData) {
       return undefined
     }
-    if (Common.isVersionLessThanOrEqualTo(key.version, Common.ProtocolVersion.V003)) {
+    if (isVersionLessThanOrEqualTo(key.version, ProtocolVersion.V003)) {
       const rawKeyParams = authenticatedData as LegacyAttachedData
       return this.createKeyParams(rawKeyParams)
     } else {
@@ -597,7 +612,7 @@ export class EncryptionService extends Services.AbstractService<EncryptionServic
       return false
     }
 
-    if (Common.compareVersions(rootKey.keyVersion, Common.ProtocolVersionLastNonrootItemsKey) > 0) {
+    if (compareVersions(rootKey.keyVersion, ProtocolVersionLastNonrootItemsKey) > 0) {
       /** Is >= 004, not needed */
       return false
     }
@@ -616,7 +631,7 @@ export class EncryptionService extends Services.AbstractService<EncryptionServic
     return defaultItemsKey.itemsKey !== rootKey.itemsKey
   }
 
-  public async createNewDefaultItemsKey(): Promise<Models.ItemsKeyInterface> {
+  public async createNewDefaultItemsKey(): Promise<ItemsKeyInterface> {
     return this.rootKeyEncryption.createNewDefaultItemsKey()
   }
 
@@ -625,11 +640,11 @@ export class EncryptionService extends Services.AbstractService<EncryptionServic
     return rootKey ? rootKey.keyParams.createdDate : undefined
   }
 
-  public async onSyncEvent(eventName: Services.SyncEvent) {
-    if (eventName === Services.SyncEvent.SyncCompletedWithAllItemsUploaded) {
+  public async onSyncEvent(eventName: SyncEvent) {
+    if (eventName === SyncEvent.SyncCompletedWithAllItemsUploaded) {
       await this.handleFullSyncCompletion()
     }
-    if (eventName === Services.SyncEvent.DownloadFirstSyncCompleted) {
+    if (eventName === SyncEvent.DownloadFirstSyncCompleted) {
       await this.handleDownloadFirstSyncCompletion()
     }
   }
@@ -665,7 +680,7 @@ export class EncryptionService extends Services.AbstractService<EncryptionServic
       return key.isDefault
     })
 
-    const hasSyncedItemsKey = !Utils.isNullOrUndefined(defaultSyncedKey)
+    const hasSyncedItemsKey = !isNullOrUndefined(defaultSyncedKey)
     if (hasSyncedItemsKey) {
       /** Delete all never synced keys */
       await this.itemManager.setItemsToBeDeleted(neverSyncedKeys)
@@ -695,7 +710,7 @@ export class EncryptionService extends Services.AbstractService<EncryptionServic
     /** If we do not have an items key for our current account version, create one */
     const userVersion = this.getUserVersion()
     const accountVersionedKey = this.itemsEncryption.getItemsKeys().find((key) => key.keyVersion === userVersion)
-    if (Utils.isNullOrUndefined(accountVersionedKey)) {
+    if (isNullOrUndefined(accountVersionedKey)) {
       await this.rootKeyEncryption.createNewDefaultItemsKey()
     }
 

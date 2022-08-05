@@ -8,31 +8,40 @@ import {
   SNTheme,
 } from '@standardnotes/models'
 import { removeFromArray } from '@standardnotes/utils'
-import { ApplicationEvent, ApplicationService, FeatureStatus, InternalEventBus, StorageValueModes, WebApplicationInterface } from '@standardnotes/snjs'
+import {
+  AbstractService,
+  WebApplicationInterface,
+  InternalEventBusInterface,
+  ApplicationEvent,
+  StorageValueModes,
+  FeatureStatus,
+} from '@standardnotes/services'
 
 const CachedThemesKey = 'cachedThemes'
 const TimeBeforeApplyingColorScheme = 5
 const DefaultThemeIdentifier = 'Default'
 
-export class ThemeManager extends ApplicationService {
+export class ThemeManager extends AbstractService {
   private activeThemes: Uuid[] = []
   private unregisterDesktop?: () => void
   private unregisterStream!: () => void
   private lastUseDeviceThemeSettings = false
+  private unsubApp!: () => void
 
-  constructor(application: WebApplicationInterface) {
-    super(application, new InternalEventBus())
+  constructor(
+    protected application: WebApplicationInterface,
+    protected override internalEventBus: InternalEventBusInterface,
+  ) {
+    super(internalEventBus)
+    this.addAppEventObserverAfterSubclassesFinishConstructing()
     this.colorSchemeEventHandler = this.colorSchemeEventHandler.bind(this)
   }
 
-  override async onAppStart() {
-    super.onAppStart().catch(console.error)
+  async onAppStart() {
     this.registerObservers()
   }
 
-  override async onAppEvent(event: ApplicationEvent) {
-    super.onAppEvent(event).catch(console.error)
-
+  async onAppEvent(event: ApplicationEvent) {
     switch (event) {
       case ApplicationEvent.SignedOut: {
         this.deactivateAllThemes()
@@ -57,6 +66,25 @@ export class ThemeManager extends ApplicationService {
         break
       }
     }
+  }
+
+  addAppEventObserverAfterSubclassesFinishConstructing() {
+    setTimeout(() => {
+      this.addAppEventObserver()
+    }, 0)
+  }
+
+  addAppEventObserver() {
+    if (this.application.isStarted()) {
+      void this.onAppStart()
+    }
+
+    this.unsubApp = this.application.addEventObserver(async (event: ApplicationEvent) => {
+      await this.onAppEvent(event)
+      if (event === ApplicationEvent.Started) {
+        void this.onAppStart()
+      }
+    })
   }
 
   private handlePreferencesChangeEvent(): void {
@@ -86,6 +114,10 @@ export class ThemeManager extends ApplicationService {
     ;(this.unregisterStream as unknown) = undefined
 
     window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', this.colorSchemeEventHandler)
+    ;(this.application as unknown) = undefined
+
+    this.unsubApp()
+    ;(this.unsubApp as unknown) = undefined
 
     super.deinit()
   }

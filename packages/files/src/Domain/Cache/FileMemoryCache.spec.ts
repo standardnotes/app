@@ -1,5 +1,4 @@
-import { EncryptedBytes } from '@standardnotes/files'
-
+import { EncryptedBytes } from '../Types/EncryptedBytes'
 import { FileMemoryCache } from './FileMemoryCache'
 
 describe('file memory cache', () => {

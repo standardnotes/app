@@ -12,9 +12,10 @@ import {
   ApiServiceEvent,
   MetaReceivedData,
   DiagnosticInfo,
-  FilesApiInterface,
   KeyValueStoreInterface,
 } from '@standardnotes/services'
+import { FilesApiInterface } from '@standardnotes/files'
+
 import { ServerSyncPushContextualPayload, SNFeatureRepo, FileContent } from '@standardnotes/models'
 import * as Responses from '@standardnotes/responses'
 import { API_MESSAGE_FAILED_OFFLINE_ACTIVATION } from '@Lib/Services/Api/Messages'

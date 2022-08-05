@@ -9,19 +9,14 @@ import {
   ChallengeKeyboardType,
   ChallengeReason,
   ChallengePromptTitle,
+  EncryptionService,
 } from '@standardnotes/services'
 import { Base64String } from '@standardnotes/sncrypto-common'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { CopyPayloadWithContentOverride } from '@standardnotes/models'
 import { isNullOrUndefined } from '@standardnotes/utils'
 import { JwtSession } from './Sessions/JwtSession'
-import {
-  KeyParamsFromApiResponse,
-  SNRootKeyParams,
-  SNRootKey,
-  EncryptionService,
-  CreateNewRootKey,
-} from '@standardnotes/encryption'
+import { KeyParamsFromApiResponse, SNRootKeyParams, SNRootKey, CreateNewRootKey } from '@standardnotes/encryption'
 import { SessionStrings, SignInStrings } from '../Api/Messages'
 import { RemoteSession, RawStorageValue } from './Sessions/Types'
 import { Session } from './Sessions/Session'

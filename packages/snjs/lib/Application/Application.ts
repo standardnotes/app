@@ -1,4 +1,3 @@
-import { SnjsVersion } from './../Version'
 import {
   HttpService,
   HttpServiceInterface,
@@ -10,13 +9,11 @@ import {
 } from '@standardnotes/api'
 import * as Common from '@standardnotes/common'
 import * as ExternalServices from '@standardnotes/services'
-import * as Encryption from '@standardnotes/encryption'
 import * as Models from '@standardnotes/models'
 import * as Responses from '@standardnotes/responses'
 import * as InternalServices from '../Services'
 import * as Utils from '@standardnotes/utils'
 import * as Settings from '@standardnotes/settings'
-import * as Files from '@standardnotes/files'
 import { Subscription } from '@standardnotes/security'
 import { UuidString, ApplicationEventPayload } from '../Types'
 import { applicationEventForSyncEvent } from '@Lib/Application/Event'
@@ -36,11 +33,19 @@ import {
   DeinitSource,
   AppGroupManagedApplication,
   ApplicationInterface,
+  EncryptionService,
+  EncryptionServiceEvent,
+  FilesBackupService,
+  FileService,
 } from '@standardnotes/services'
-import { SNLog } from '../Log'
+import { FilesClientInterface } from '@standardnotes/files'
+import { ComputePrivateWorkspaceIdentifier } from '@standardnotes/encryption'
 import { useBoolean } from '@standardnotes/utils'
 import { BackupFile, DecryptedItemInterface, EncryptedItemInterface, ItemStream } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
+
+import { SnjsVersion } from './../Version'
+import { SNLog } from '../Log'
 import { Challenge, ChallengeResponse } from '../Services'
 import { ApplicationConstructorOptions, FullyResolvedApplicationOptions } from './Options/ApplicationOptions'
 import { ApplicationOptionsDefaults } from './Options/Defaults'
@@ -78,7 +83,7 @@ export class SNApplication
   private deprecatedHttpService!: InternalServices.SNHttpService
   private declare httpService: HttpServiceInterface
   private payloadManager!: InternalServices.PayloadManager
-  public protocolService!: Encryption.EncryptionService
+  public protocolService!: EncryptionService
   private diskStorageService!: InternalServices.DiskStorageService
   private inMemoryStore!: ExternalServices.KeyValueStoreInterface<string>
   /**
@@ -104,11 +109,11 @@ export class SNApplication
   private settingsService!: InternalServices.SNSettingsService
   private mfaService!: InternalServices.SNMfaService
   private listedService!: InternalServices.ListedService
-  private fileService!: Files.FileService
+  private fileService!: FileService
   private mutatorService!: InternalServices.MutatorService
   private integrityService!: ExternalServices.IntegrityService
   private statusService!: ExternalServices.StatusService
-  private filesBackupService?: Files.FilesBackupService
+  private filesBackupService?: FilesBackupService
 
   private internalEventBus!: ExternalServices.InternalEventBusInterface
 
@@ -182,7 +187,7 @@ export class SNApplication
     this.defineInternalEventHandlers()
   }
 
-  public get files(): Files.FilesClientInterface {
+  public get files(): FilesClientInterface {
     return this.fileService
   }
 
@@ -222,7 +227,7 @@ export class SNApplication
     return this.statusService
   }
 
-  public get fileBackups(): Files.FilesBackupService | undefined {
+  public get fileBackups(): FilesBackupService | undefined {
     return this.filesBackupService
   }
 
@@ -231,7 +236,7 @@ export class SNApplication
   }
 
   public computePrivateWorkspaceIdentifier(userphrase: string, name: string): Promise<string | undefined> {
-    return Encryption.ComputePrivateWorkspaceIdentifier(this.options.crypto, userphrase, name)
+    return ComputePrivateWorkspaceIdentifier(this.options.crypto, userphrase, name)
   }
 
   /**
@@ -1117,7 +1122,7 @@ export class SNApplication
   }
 
   private createFileService() {
-    this.fileService = new Files.FileService(
+    this.fileService = new FileService(
       this.apiService,
       this.itemManager,
       this.syncService,
@@ -1328,7 +1333,7 @@ export class SNApplication
   }
 
   private createProtocolService() {
-    this.protocolService = new Encryption.EncryptionService(
+    this.protocolService = new EncryptionService(
       this.itemManager,
       this.payloadManager,
       this.deviceInterface,
@@ -1339,7 +1344,7 @@ export class SNApplication
     )
     this.serviceObservers.push(
       this.protocolService.addEventObserver(async (event) => {
-        if (event === Encryption.EncryptionServiceEvent.RootKeyStatusChanged) {
+        if (event === EncryptionServiceEvent.RootKeyStatusChanged) {
           await this.notifyEvent(ApplicationEvent.KeyStatusChanged)
         }
       }),
@@ -1539,7 +1544,7 @@ export class SNApplication
   }
 
   private createFilesBackupService(device: ExternalServices.DesktopDeviceInterface): void {
-    this.filesBackupService = new Files.FilesBackupService(
+    this.filesBackupService = new FilesBackupService(
       this.itemManager,
       this.apiService,
       this.protocolService,

@@ -1,4 +1,3 @@
-import { DecryptedBytes, EncryptedBytes, FileMemoryCache, OrderedByteChunker } from '@standardnotes/filepicker'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { ContentType } from '@standardnotes/common'
 import {
@@ -13,21 +12,7 @@ import {
 } from '@standardnotes/models'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { UuidGenerator } from '@standardnotes/utils'
-import {
-  AbstractService,
-  InternalEventBusInterface,
-  ItemManagerInterface,
-  SyncServiceInterface,
-  AlertService,
-  FileSystemApi,
-  FilesApiInterface,
-  FileBackupMetadataFile,
-  FileHandleRead,
-  FileSystemNoSelection,
-  ChallengeServiceInterface,
-  FileBackupsConstantsV1,
-} from '@standardnotes/services'
-import { DecryptItemsKeyWithUserFallback, EncryptionProvider, SNItemsKey } from '@standardnotes/encryption'
+import { EncryptionProvider, SNItemsKey } from '@standardnotes/encryption'
 import {
   DownloadAndDecryptFileOperation,
   EncryptAndUploadFileOperation,
@@ -35,7 +20,25 @@ import {
   FileDownloadProgress,
   FilesClientInterface,
   readAndDecryptBackupFile,
+  FilesApiInterface,
+  FileBackupsConstantsV1,
+  FileBackupMetadataFile,
+  FileSystemApi,
+  FileHandleRead,
+  FileSystemNoSelection,
+  EncryptedBytes,
+  DecryptedBytes,
+  OrderedByteChunker,
+  FileMemoryCache,
 } from '@standardnotes/files'
+
+import { AlertService } from '../Alert/AlertService'
+import { ChallengeServiceInterface } from '../Challenge'
+import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
+import { ItemManagerInterface } from '../Item/ItemManagerInterface'
+import { AbstractService } from '../Service/AbstractService'
+import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
+import { DecryptItemsKeyWithUserFallback } from '../Encryption/Functions'
 
 const OneHundredMb = 100 * 1_000_000
 

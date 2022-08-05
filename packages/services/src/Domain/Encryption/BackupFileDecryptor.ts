@@ -6,6 +6,15 @@ import {
   ProtocolVersion,
 } from '@standardnotes/common'
 import {
+  BackupFileType,
+  ContentTypeUsesRootKeyEncryption,
+  CreateAnyKeyParams,
+  isItemsKey,
+  SNItemsKey,
+  SNRootKey,
+  SNRootKeyParams,
+} from '@standardnotes/encryption'
+import {
   BackupFile,
   CreateDecryptedItemFromPayload,
   CreatePayloadSplit,
@@ -23,13 +32,7 @@ import {
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { extendArray } from '@standardnotes/utils'
-import { isItemsKey, SNItemsKey } from '../Keys/ItemsKey/ItemsKey'
-import { ContentTypeUsesRootKeyEncryption } from '../Keys/RootKey/Functions'
-import { CreateAnyKeyParams } from '../Keys/RootKey/KeyParamsFunctions'
-import { SNRootKey } from '../Keys/RootKey/RootKey'
-import { SNRootKeyParams } from '../Keys/RootKey/RootKeyParams'
-import { EncryptionService } from '../Service/Encryption/EncryptionService'
-import { BackupFileType } from './BackupFileType'
+import { EncryptionService } from './EncryptionService'
 
 export async function DecryptBackupFile(
   file: BackupFile,

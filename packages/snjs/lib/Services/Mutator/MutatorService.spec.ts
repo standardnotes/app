@@ -1,8 +1,7 @@
 import { SNHistoryManager } from './../History/HistoryManager'
 import { NoteContent, SNNote, FillItemContent, DecryptedPayload, PayloadTimestampDefaults } from '@standardnotes/models'
-import { EncryptionService } from '@standardnotes/encryption'
 import { ContentType } from '@standardnotes/common'
-import { InternalEventBusInterface } from '@standardnotes/services'
+import { EncryptionService, InternalEventBusInterface } from '@standardnotes/services'
 import {
   ChallengeService,
   MutatorService,
