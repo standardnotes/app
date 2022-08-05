@@ -29,6 +29,7 @@ module.exports = (async () => {
       '../filepicker',
       '../services',
       '../files',
+      '../models',
       '../utils',
       '../sncrypto-common',
       '../snjs',
