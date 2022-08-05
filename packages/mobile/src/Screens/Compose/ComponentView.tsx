@@ -3,7 +3,7 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { ApplicationContext } from '@Root/ApplicationContext'
 import { AppStackNavigationProp } from '@Root/AppStack'
 import { SCREEN_NOTES } from '@Root/Screens/screens'
-import { ButtonType, ComponentViewer, PrefKey } from '@standardnotes/snjs'
+import { ButtonType, ComponentViewerInterface, PrefKey } from '@standardnotes/snjs'
 import { ThemeServiceContext } from '@Style/ThemeService'
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { Platform } from 'react-native'
@@ -25,7 +25,7 @@ import {
 } from './ComponentView.styled'
 
 type Props = {
-  componentViewer: ComponentViewer
+  componentViewer: ComponentViewerInterface
   onLoadEnd: () => void
   onLoadStart: () => void
   onLoadError: (error: ComponentLoadingError, desc?: string) => void

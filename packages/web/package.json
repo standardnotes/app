@@ -12,7 +12,7 @@
     "build": "yarn clean && yarn copy:components && webpack --config web.webpack.prod.js && yarn tsc",
     "clean": "rm -fr dist && rm -rf src/components",
     "format": "prettier --write src/javascripts",
-    "lint": "NODE_OPTIONS=\"--max-old-space-size=4096\" eslint --debug src/javascripts",
+    "lint": "NODE_OPTIONS=\"--max-old-space-size=4096\" eslint src/javascripts",
     "start": "webpack-dev-server --config web.webpack.dev.js",
     "test": "jest --config jest.config.js --coverage",
     "tsc": "tsc --project tsconfig.json",

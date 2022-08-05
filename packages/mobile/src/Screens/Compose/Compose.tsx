@@ -7,7 +7,7 @@ import SNTextView from '@standardnotes/react-native-textview'
 import {
   ApplicationEvent,
   ComponentMutator,
-  ComponentViewer,
+  ComponentViewerInterface,
   ContentType,
   isPayloadSourceInternalChange,
   isPayloadSourceRetrieved,
@@ -51,7 +51,7 @@ type State = {
   webViewErrorDesc?: string
   loadingWebview: boolean
   downloadingEditor: boolean
-  componentViewer?: ComponentViewer
+  componentViewer?: ComponentViewerInterface
 }
 
 type PropsWhenNavigating = AppStackNavigationProp<typeof SCREEN_COMPOSE>
