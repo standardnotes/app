@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.22.0](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.21.6...@standardnotes/filepicker@1.22.0) (2022-08-05)
+
+### Bug Fixes
+
+* **files:** filepicker circular dependency ([183f68c](https://github.com/standardnotes/app/commit/183f68c9c1005567ec50bd1a66ca34f775e393dc))
+
+### Features
+
+* **encryption:** refactor circular dependencies on services ([ffb2193](https://github.com/standardnotes/app/commit/ffb21939246eb81eba3230ff8c0d68e7a6cb2bcb))
+
 ## [1.21.6](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.21.5...@standardnotes/filepicker@1.21.6) (2022-07-13)
 
 ### Bug Fixes
