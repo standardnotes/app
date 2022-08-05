@@ -108,8 +108,12 @@ p {
 }
 
 .main-ui-view {
+  // Fallbacks
   min-height: 100vh;
   height: 100vh;
+  // Mobile-corrected viewport height
+  min-height: var(--viewport-height);
+  height: var(--viewport-height);
   position: relative;
   overflow: auto;
   background-color: var(--editor-header-bar-background-color);

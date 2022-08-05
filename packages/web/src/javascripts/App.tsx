@@ -39,6 +39,10 @@ const getKey = () => {
 
 const RootId = 'app-group-root'
 
+const setViewportHeight = () => {
+  document.documentElement.style.setProperty('--viewport-height', `${window.innerHeight}px`)
+}
+
 const startApplication: StartApplication = async function startApplication(
   defaultSyncServerHost: string,
   device: WebOrDesktopDevice,
@@ -54,6 +58,8 @@ const startApplication: StartApplication = async function startApplication(
     const rootElement = document.getElementById(RootId) as HTMLElement
     root.unmount()
     rootElement.remove()
+    window.removeEventListener('resize', setViewportHeight)
+    window.removeEventListener('orientationchange', setViewportHeight)
     renderApp()
   }
 
@@ -62,6 +68,10 @@ const startApplication: StartApplication = async function startApplication(
     rootElement.id = RootId
     const appendedRootNode = document.body.appendChild(rootElement)
     root = createRoot(appendedRootNode)
+
+    setViewportHeight()
+    window.addEventListener('resize', setViewportHeight)
+    window.addEventListener('orientationchange', setViewportHeight)
 
     root.render(
       <ApplicationGroupView
