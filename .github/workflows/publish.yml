@@ -5,8 +5,29 @@ on:
     branches: [ main ]
 
 jobs:
+  Lint:
+    if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: ESLint
+        run: yarn lint
+
   Build:
     if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
+    needs: Lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -39,9 +60,6 @@ jobs:
 
       - name: Build
         run: yarn build:all
-
-      - name: ESLint
-        run: yarn lint
 
       - name: Build Android
         run: yarn android:bundle
