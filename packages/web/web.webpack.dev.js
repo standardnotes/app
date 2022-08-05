@@ -12,16 +12,7 @@ module.exports = (env, argv) => {
     optimization: {
       minimize: false,
     },
-    plugins: [
-      new HtmlWebpackPlugin({
-        template: './index.html',
-        inject: true,
-        templateParameters: {
-          env: process.env,
-        },
-      }),
-      new ReactRefreshWebpackPlugin(),
-    ],
+    plugins: [new ReactRefreshWebpackPlugin()],
     devServer: {
       hot: true,
       static: './dist',
