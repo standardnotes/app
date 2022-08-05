@@ -1,5 +1,5 @@
 import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
-import { RevisionListEntry } from '@standardnotes/snjs/dist/@types'
+import { RevisionListEntry } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { useCallback, useState } from 'react'
 import Button from '@/Components/Button/Button'

@@ -1,5 +1,4 @@
-import { InternalEventBus } from '@standardnotes/services'
-import { ApplicationDescriptor, DeviceInterface, SNApplicationGroup } from '@standardnotes/snjs'
+import { ApplicationDescriptor, DeviceInterface, InternalEventBus, SNApplicationGroup } from '@standardnotes/snjs'
 import { MobileApplication } from './Application'
 import { ApplicationState } from './ApplicationState'
 import { BackupsService } from './BackupsService'
