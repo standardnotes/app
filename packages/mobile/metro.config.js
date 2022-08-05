@@ -31,6 +31,7 @@ module.exports = (async () => {
       '../files',
       '../models',
       '../responses',
+      '../common',
       '../utils',
       '../sncrypto-common',
       '../snjs',
