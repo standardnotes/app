@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+
 module.exports = {
   content: ['./src/javascripts/**/*.tsx', '../toast/src/**/*.tsx'],
   theme: {
@@ -9,6 +10,7 @@ module.exports = {
         26: '6.5rem',
         30: '7.5rem',
         70: '17.5rem',
+        87.5: '21.875rem',
         125: '31.25rem',
         160: '40rem',
       },
@@ -69,6 +71,15 @@ module.exports = {
       },
       fontSize: {
         'menu-item': '0.813rem',
+      },
+      screens: {
+        'xsm-only': { min: '320px', max: '639px' },
+        'sm-only': { min: '640px', max: '767px' },
+        'md-only': { min: '768px', max: '1023px' },
+        'lg-only': { min: '1024px', max: '1279px' },
+      },
+      transitionProperty: {
+        width: 'width',
       },
     },
     colors: {

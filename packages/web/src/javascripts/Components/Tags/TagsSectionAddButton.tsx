@@ -7,15 +7,16 @@ import { FunctionComponent } from 'react'
 type Props = {
   tags: NavigationController
   features: FeaturesController
+  className?: string
 }
 
-const TagsSectionAddButton: FunctionComponent<Props> = ({ tags }) => {
+const TagsSectionAddButton: FunctionComponent<Props> = ({ tags, className = '' }) => {
   return (
     <IconButton
       focusable={true}
       icon="add"
       title="Create a new tag"
-      className="p-0 text-neutral"
+      className={`p-0 text-neutral ${className}`}
       onClick={() => tags.createNewTemplate()}
     />
   )
