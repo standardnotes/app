@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.44.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.43.1...@standardnotes/web@3.44.0) (2022-08-08)
+
+### Bug Fixes
+
+* **web:** cannonical link rel ([8332a70](https://github.com/standardnotes/app/commit/8332a7038405378faf4bdb7c5740d543758d69b1))
+
+### Features
+
+* tablet responsiveness ([#1369](https://github.com/standardnotes/app/issues/1369)) ([f555fbc](https://github.com/standardnotes/app/commit/f555fbcaaab1203c8460e7a69c3d7723d09f45d7))
+
 ## [3.43.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.43.0...@standardnotes/web@3.43.1) (2022-08-06)
 
 **Note:** Version bump only for package @standardnotes/web
