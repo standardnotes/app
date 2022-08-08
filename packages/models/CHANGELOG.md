@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.16.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.15.5...@standardnotes/models@1.16.0) (2022-08-05)
+
+### Features
+
+* **web:** extract ui-services package ([7e25126](https://github.com/standardnotes/app/commit/7e251262d770cfc9d791115b9c18b862c49e4e03))
+
 ## [1.15.5](https://github.com/standardnotes/app/compare/@standardnotes/models@1.15.4...@standardnotes/models@1.15.5) (2022-07-13)
 
 ### Bug Fixes

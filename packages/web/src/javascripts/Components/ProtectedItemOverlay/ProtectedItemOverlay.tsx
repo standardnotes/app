@@ -1,4 +1,4 @@
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import Button from '@/Components/Button/Button'
 
 type Props = {

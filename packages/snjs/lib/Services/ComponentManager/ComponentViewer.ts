@@ -1,8 +1,19 @@
 import { SNPreferencesService } from '../Preferences/PreferencesService'
-import { FeatureStatus, FeaturesEvent } from '@Lib/Services/Features'
-import { Environment, Platform, AlertService } from '@standardnotes/services'
+import {
+  ComponentViewerInterface,
+  ComponentViewerError,
+  Environment,
+  FeatureStatus,
+  FeaturesEvent,
+  Platform,
+  AlertService,
+} from '@standardnotes/services'
 import { SNFeaturesService } from '@Lib/Services'
 import {
+  ActionObserver,
+  ComponentEventObserver,
+  ComponentViewerEvent,
+  ComponentMessage,
   SNComponent,
   PrefKey,
   NoteContent,
@@ -21,6 +32,8 @@ import {
   ComponentDataDomain,
   PayloadEmitSource,
   PayloadTimestampDefaults,
+  IncomingComponentItemPayload,
+  MessageData,
 } from '@standardnotes/models'
 import find from 'lodash/find'
 import uniq from 'lodash/uniq'
@@ -28,12 +41,10 @@ import remove from 'lodash/remove'
 import { SNSyncService } from '@Lib/Services/Sync/SyncService'
 import { environmentToString, platformToString } from '@Lib/Application/Platforms'
 import {
-  ComponentMessage,
   OutgoingItemMessagePayload,
   MessageReply,
   StreamItemsMessageData,
   AllowedBatchContentTypes,
-  IncomingComponentItemPayload,
   DeleteItemsMessageData,
   MessageReplyData,
 } from './Types'
@@ -53,7 +64,6 @@ import {
   sureSearchArray,
   isNotUndefined,
 } from '@standardnotes/utils'
-import { MessageData } from '..'
 
 type RunWithPermissionsCallback = (
   componentUuid: UuidString,
@@ -76,21 +86,9 @@ const ReadwriteActions = [
   ComponentAction.SetComponentData,
 ]
 
-export type ActionObserver = (action: ComponentAction, messageData: MessageData) => void
-
-export enum ComponentViewerEvent {
-  FeatureStatusUpdated = 'FeatureStatusUpdated',
-}
-type EventObserver = (event: ComponentViewerEvent) => void
-
-export enum ComponentViewerError {
-  OfflineRestricted = 'OfflineRestricted',
-  MissingUrl = 'MissingUrl',
-}
-
 type Writeable<T> = { -readonly [P in keyof T]: T[P] }
 
-export class ComponentViewer {
+export class ComponentViewer implements ComponentViewerInterface {
   private streamItems?: ContentType[]
   private streamContextItemOriginalMessage?: ComponentMessage
   private streamItemsOriginalMessage?: ComponentMessage
@@ -101,7 +99,7 @@ export class ComponentViewer {
   public overrideContextItem?: DecryptedItemInterface
   private featureStatus: FeatureStatus
   private removeFeaturesObserver: () => void
-  private eventObservers: EventObserver[] = []
+  private eventObservers: ComponentEventObserver[] = []
   private dealloced = false
 
   private window?: Window
@@ -189,7 +187,7 @@ export class ComponentViewer {
     ;(this.removeItemObserver as unknown) = undefined
   }
 
-  public addEventObserver(observer: EventObserver): () => void {
+  public addEventObserver(observer: ComponentEventObserver): () => void {
     this.eventObservers.push(observer)
 
     const thislessChangeObservers = this.eventObservers

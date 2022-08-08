@@ -1,6 +1,6 @@
 import { Challenge } from '../Challenge'
 import { ChallengeService } from '../Challenge/ChallengeService'
-import { EncryptionService, SNRootKey, SNRootKeyParams } from '@standardnotes/encryption'
+import { SNRootKey, SNRootKeyParams } from '@standardnotes/encryption'
 import { HttpResponse, SignInResponse, User } from '@standardnotes/responses'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import { KeyParamsOrigination } from '@standardnotes/common'
@@ -14,6 +14,7 @@ import {
   InternalEventBusInterface,
   UserClientInterface,
   StoragePersistencePolicies,
+  EncryptionService,
 } from '@standardnotes/services'
 import { SNApiService } from './../Api/ApiService'
 import { SNProtectionService } from '../Protection/ProtectionService'

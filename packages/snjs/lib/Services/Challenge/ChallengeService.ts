@@ -1,5 +1,4 @@
 import { RootKeyInterface } from '@standardnotes/models'
-import { EncryptionService } from '@standardnotes/encryption'
 import { DiskStorageService } from '../Storage/DiskStorageService'
 import { removeFromArray } from '@standardnotes/utils'
 import { isValidProtectionSessionLength } from '../Protection/ProtectionService'
@@ -14,6 +13,7 @@ import {
   ChallengeInterface,
   ChallengePromptInterface,
   ChallengePrompt,
+  EncryptionService,
 } from '@standardnotes/services'
 import { ChallengeResponse } from './ChallengeResponse'
 import { ChallengeOperation } from './ChallengeOperation'

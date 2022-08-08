@@ -1,11 +1,5 @@
 import { WebCrypto } from '@/Application/Crypto'
-import { WebAlertService } from '@/Services/AlertService'
-import { ArchiveManager } from '@/Services/ArchiveManager'
-import { AutolockService } from '@/Services/AutolockService'
-import { DesktopManager } from '@/Services/DesktopManager'
-import { IOService } from '@/Services/IOService'
-import { ThemeManager } from '@/Services/ThemeManager'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { WebOrDesktopDevice } from '@/Application/Device/WebOrDesktopDevice'
 import {
   DeinitSource,
@@ -21,11 +15,14 @@ import {
   SNTag,
   ContentType,
   DecryptedItemInterface,
+  WebAppEvent,
+  WebApplicationInterface,
 } from '@standardnotes/snjs'
 import { makeObservable, observable } from 'mobx'
 import { PanelResizedData } from '@/Types/PanelResizedData'
-import { WebAppEvent } from './WebAppEvent'
 import { isDesktopApplication } from '@/Utils'
+import { DesktopManager } from './Device/DesktopManager'
+import { ArchiveManager, AutolockService, IOService, WebAlertService, ThemeManager } from '@standardnotes/ui-services'
 
 type WebServices = {
   viewControllerManager: ViewControllerManager
@@ -38,7 +35,7 @@ type WebServices = {
 
 export type WebEventObserver = (event: WebAppEvent, data?: unknown) => void
 
-export class WebApplication extends SNApplication {
+export class WebApplication extends SNApplication implements WebApplicationInterface {
   private webServices!: WebServices
   private webEventObservers: WebEventObserver[] = []
   public itemControllerGroup: ItemGroupController

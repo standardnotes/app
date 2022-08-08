@@ -6388,6 +6388,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standardnotes/common@npm:^1.30.0":
+  version: 1.30.0
+  resolution: "@standardnotes/common@npm:1.30.0"
+  dependencies:
+    reflect-metadata: ^0.1.13
+  checksum: 833b6e7f3ee4cfbf306769d7387073073204a3dd5cd9adaf11bb10914338a4b16420e5ef196d28974427b491d7630d887a7a9e3dcbfb070f30c491437213b329
+  languageName: node
+  linkType: hard
+
 "@standardnotes/component-relay@npm:2.2.0":
   version: 2.2.0
   resolution: "@standardnotes/component-relay@npm:2.2.0"
@@ -6567,7 +6576,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/encryption@workspace:*, @standardnotes/encryption@workspace:packages/encryption":
+"@standardnotes/encryption@workspace:*, @standardnotes/encryption@workspace:^, @standardnotes/encryption@workspace:packages/encryption":
   version: 0.0.0-use.local
   resolution: "@standardnotes/encryption@workspace:packages/encryption"
   dependencies:
@@ -6575,7 +6584,6 @@ __metadata:
     "@standardnotes/config": 2.4.3
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
-    "@standardnotes/services": "workspace:*"
     "@standardnotes/sncrypto-common": "workspace:*"
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^28.1.5
@@ -6626,12 +6634,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/filepicker@workspace:*, @standardnotes/filepicker@workspace:packages/filepicker":
+"@standardnotes/filepicker@workspace:*, @standardnotes/filepicker@workspace:^, @standardnotes/filepicker@workspace:packages/filepicker":
   version: 0.0.0-use.local
   resolution: "@standardnotes/filepicker@workspace:packages/filepicker"
   dependencies:
     "@standardnotes/common": ^1.23.1
-    "@standardnotes/services": "workspace:*"
+    "@standardnotes/files": "workspace:*"
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^28.1.5
     "@types/wicg-file-system-access": ^2020.9.5
@@ -6644,16 +6652,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/files@workspace:*, @standardnotes/files@workspace:packages/files":
+"@standardnotes/files@workspace:*, @standardnotes/files@workspace:^, @standardnotes/files@workspace:packages/files":
   version: 0.0.0-use.local
   resolution: "@standardnotes/files@workspace:packages/files"
   dependencies:
     "@standardnotes/common": ^1.23.1
     "@standardnotes/encryption": "workspace:*"
-    "@standardnotes/filepicker": "workspace:*"
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
-    "@standardnotes/services": "workspace:*"
     "@standardnotes/sncrypto-common": "workspace:*"
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^28.1.5
@@ -6951,7 +6957,6 @@ __metadata:
     "@standardnotes/components-meta": "workspace:*"
     "@standardnotes/config": ^2.4.3
     "@standardnotes/filepicker": "workspace:*"
-    "@standardnotes/files": "workspace:*"
     "@standardnotes/icons": "workspace:*"
     "@standardnotes/react-native-aes": ^1.4.3
     "@standardnotes/react-native-textview": 1.1.0
@@ -7033,7 +7038,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/models@workspace:*, @standardnotes/models@workspace:packages/models":
+"@standardnotes/models@workspace:*, @standardnotes/models@workspace:^, @standardnotes/models@workspace:packages/models":
   version: 0.0.0-use.local
   resolution: "@standardnotes/models@workspace:packages/models"
   dependencies:
@@ -7167,13 +7172,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/services@workspace:*, @standardnotes/services@workspace:packages/services":
+"@standardnotes/services@workspace:*, @standardnotes/services@workspace:^, @standardnotes/services@workspace:packages/services":
   version: 0.0.0-use.local
   resolution: "@standardnotes/services@workspace:packages/services"
   dependencies:
     "@standardnotes/auth": ^3.19.4
-    "@standardnotes/common": ^1.23.1
-    "@standardnotes/models": "workspace:*"
+    "@standardnotes/common": ^1.30.0
+    "@standardnotes/encryption": "workspace:^"
+    "@standardnotes/files": "workspace:^"
+    "@standardnotes/models": "workspace:^"
     "@standardnotes/responses": "workspace:*"
     "@standardnotes/security": ^1.2.0
     "@standardnotes/utils": "workspace:*"
@@ -7406,7 +7413,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/styles@workspace:*, @standardnotes/styles@workspace:packages/styles":
+"@standardnotes/styles@workspace:*, @standardnotes/styles@workspace:^, @standardnotes/styles@workspace:packages/styles":
   version: 0.0.0-use.local
   resolution: "@standardnotes/styles@workspace:packages/styles"
   dependencies:
@@ -7428,7 +7435,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/toast@workspace:*, @standardnotes/toast@workspace:packages/toast":
+"@standardnotes/toast@workspace:*, @standardnotes/toast@workspace:^, @standardnotes/toast@workspace:packages/toast":
   version: 0.0.0-use.local
   resolution: "@standardnotes/toast@workspace:packages/toast"
   dependencies:
@@ -7446,7 +7453,26 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/utils@workspace:*, @standardnotes/utils@workspace:packages/utils":
+"@standardnotes/ui-services@workspace:^, @standardnotes/ui-services@workspace:packages/ui-services":
+  version: 0.0.0-use.local
+  resolution: "@standardnotes/ui-services@workspace:packages/ui-services"
+  dependencies:
+    "@standardnotes/common": ^1.30.0
+    "@standardnotes/filepicker": "workspace:^"
+    "@standardnotes/services": "workspace:^"
+    "@standardnotes/styles": "workspace:^"
+    "@standardnotes/toast": "workspace:^"
+    "@standardnotes/utils": "workspace:^"
+    "@types/jest": ^28.1.5
+    "@typescript-eslint/eslint-plugin": ^5.30.0
+    "@typescript-eslint/parser": ^5.12.1
+    eslint-plugin-prettier: "*"
+    jest: ^28.1.2
+    ts-jest: ^28.0.5
+  languageName: unknown
+  linkType: soft
+
+"@standardnotes/utils@workspace:*, @standardnotes/utils@workspace:^, @standardnotes/utils@workspace:packages/utils":
   version: 0.0.0-use.local
   resolution: "@standardnotes/utils@workspace:packages/utils"
   dependencies:
@@ -7486,12 +7512,12 @@ __metadata:
     "@reach/visually-hidden": ^0.16.0
     "@standardnotes/components-meta": "workspace:*"
     "@standardnotes/filepicker": "workspace:*"
-    "@standardnotes/files": "workspace:*"
     "@standardnotes/icons": "workspace:*"
     "@standardnotes/sncrypto-web": "workspace:*"
     "@standardnotes/snjs": "workspace:*"
     "@standardnotes/styles": "workspace:*"
     "@standardnotes/toast": "workspace:*"
+    "@standardnotes/ui-services": "workspace:^"
     "@types/jest": ^28.1.5
     "@types/react": ^17.0.42
     "@types/react-dom": ^18.0.5

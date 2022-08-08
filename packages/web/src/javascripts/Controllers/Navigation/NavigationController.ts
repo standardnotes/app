@@ -1,4 +1,4 @@
-import { confirmDialog } from '@/Services/AlertService'
+import { confirmDialog } from '@standardnotes/ui-services'
 import { STRING_DELETE_TAG } from '@/Constants/Strings'
 import { MAX_MENU_SIZE_MULTIPLIER, MENU_MARGIN_FROM_APP_BORDER, SMART_TAGS_FEATURE_NAME } from '@/Constants/Constants'
 import {

@@ -1,12 +1,12 @@
 import { ProtocolVersion } from '@standardnotes/common'
 import {
+  BackupFile,
   DecryptedPayloadInterface,
   EncryptedPayloadInterface,
   ItemContent,
   RootKeyInterface,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
-import { BackupFile } from '../../Backups/BackupFile'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
 import { KeyedDecryptionSplit } from '../../Split/KeyedDecryptionSplit'
 import { KeyedEncryptionSplit } from '../../Split/KeyedEncryptionSplit'

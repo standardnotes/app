@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/files",
-  "version": "1.8.7",
+  "version": "1.9.0",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -32,10 +32,8 @@
   "dependencies": {
     "@standardnotes/common": "^1.23.1",
     "@standardnotes/encryption": "workspace:*",
-    "@standardnotes/filepicker": "workspace:*",
     "@standardnotes/models": "workspace:*",
     "@standardnotes/responses": "workspace:*",
-    "@standardnotes/services": "workspace:*",
     "@standardnotes/sncrypto-common": "workspace:*",
     "@standardnotes/utils": "workspace:*",
     "reflect-metadata": "^0.1.13"

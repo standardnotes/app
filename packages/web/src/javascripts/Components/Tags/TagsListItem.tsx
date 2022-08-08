@@ -1,7 +1,7 @@
 import Icon from '@/Components/Icon/Icon'
 import { TAG_FOLDERS_FEATURE_NAME } from '@/Constants/Constants'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
-import { KeyboardKey } from '@/Services/IOService'
+import { KeyboardKey } from '@standardnotes/ui-services'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import '@reach/tooltip/styles.css'

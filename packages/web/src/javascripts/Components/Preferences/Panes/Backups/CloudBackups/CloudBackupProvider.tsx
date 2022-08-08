@@ -19,7 +19,7 @@ import { WebApplication } from '@/Application/Application'
 import Button from '@/Components/Button/Button'
 import { isDev, openInNewTab } from '@/Utils'
 import { Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
-import { KeyboardKey } from '@/Services/IOService'
+import { KeyboardKey } from '@standardnotes/ui-services'
 
 type Props = {
   application: WebApplication

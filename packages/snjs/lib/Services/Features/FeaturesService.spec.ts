@@ -10,14 +10,14 @@ import {
   DiskStorageService,
   StorageKey,
 } from '@Lib/index'
-import { FeatureStatus, SNFeaturesService } from '@Lib/Services/Features'
+import { SNFeaturesService } from '@Lib/Services/Features'
 import { ContentType, RoleName } from '@standardnotes/common'
 import { FeatureDescription, FeatureIdentifier, GetFeatures } from '@standardnotes/features'
 import { SNWebSocketsService } from '../Api/WebsocketsService'
 import { SNSettingsService } from '../Settings'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { convertTimestampToMilliseconds } from '@standardnotes/utils'
-import { InternalEventBusInterface } from '@standardnotes/services'
+import { FeatureStatus, InternalEventBusInterface } from '@standardnotes/services'
 
 describe('featuresService', () => {
   let storageService: DiskStorageService

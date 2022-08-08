@@ -1,5 +1,5 @@
 import { isDesktopApplication } from '@/Utils'
-import { alertDialog } from '@/Services/AlertService'
+import { alertDialog } from '@standardnotes/ui-services'
 import {
   STRING_IMPORT_SUCCESS,
   STRING_INVALID_IMPORT_FILE,
@@ -13,7 +13,7 @@ import {
 import { BackupFile } from '@standardnotes/snjs'
 import { ChangeEventHandler, MouseEventHandler, useCallback, useEffect, useRef, useState } from 'react'
 import { WebApplication } from '@/Application/Application'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { Title, Text, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
 import Button from '@/Components/Button/Button'

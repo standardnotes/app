@@ -1,4 +1,3 @@
-import { SnjsVersion } from './../Version'
 import {
   HttpService,
   HttpServiceInterface,
@@ -10,18 +9,19 @@ import {
 } from '@standardnotes/api'
 import * as Common from '@standardnotes/common'
 import * as ExternalServices from '@standardnotes/services'
-import * as Encryption from '@standardnotes/encryption'
 import * as Models from '@standardnotes/models'
 import * as Responses from '@standardnotes/responses'
 import * as InternalServices from '../Services'
 import * as Utils from '@standardnotes/utils'
 import * as Settings from '@standardnotes/settings'
-import * as Files from '@standardnotes/files'
 import { Subscription } from '@standardnotes/security'
 import { UuidString, ApplicationEventPayload } from '../Types'
-import { ApplicationEvent, applicationEventForSyncEvent } from '@Lib/Application/Event'
+import { applicationEventForSyncEvent } from '@Lib/Application/Event'
 import {
+  ApplicationEvent,
+  ApplicationEventCallback,
   ChallengeValidation,
+  ComponentManagerInterface,
   DiagnosticInfo,
   Environment,
   isDesktopDevice,
@@ -33,11 +33,19 @@ import {
   DeinitSource,
   AppGroupManagedApplication,
   ApplicationInterface,
+  EncryptionService,
+  EncryptionServiceEvent,
+  FilesBackupService,
+  FileService,
 } from '@standardnotes/services'
-import { SNLog } from '../Log'
+import { FilesClientInterface } from '@standardnotes/files'
+import { ComputePrivateWorkspaceIdentifier } from '@standardnotes/encryption'
 import { useBoolean } from '@standardnotes/utils'
-import { DecryptedItemInterface, EncryptedItemInterface } from '@standardnotes/models'
+import { BackupFile, DecryptedItemInterface, EncryptedItemInterface, ItemStream } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
+
+import { SnjsVersion } from './../Version'
+import { SNLog } from '../Log'
 import { Challenge, ChallengeResponse } from '../Services'
 import { ApplicationConstructorOptions, FullyResolvedApplicationOptions } from './Options/ApplicationOptions'
 import { ApplicationOptionsDefaults } from './Options/Defaults'
@@ -49,19 +57,10 @@ type LaunchCallback = {
   receiveChallenge: (challenge: Challenge) => void
 }
 
-type ApplicationEventCallback = (event: ApplicationEvent, data?: unknown) => Promise<void>
-
 type ApplicationObserver = {
   singleEvent?: ApplicationEvent
   callback: ApplicationEventCallback
 }
-
-type ItemStream<I extends DecryptedItemInterface> = (data: {
-  changed: I[]
-  inserted: I[]
-  removed: (Models.DeletedItemInterface | Models.EncryptedItemInterface)[]
-  source: Models.PayloadEmitSource
-}) => void
 
 type ObserverRemover = () => void
 
@@ -84,7 +83,7 @@ export class SNApplication
   private deprecatedHttpService!: InternalServices.SNHttpService
   private declare httpService: HttpServiceInterface
   private payloadManager!: InternalServices.PayloadManager
-  public protocolService!: Encryption.EncryptionService
+  public protocolService!: EncryptionService
   private diskStorageService!: InternalServices.DiskStorageService
   private inMemoryStore!: ExternalServices.KeyValueStoreInterface<string>
   /**
@@ -97,7 +96,7 @@ export class SNApplication
   private syncService!: InternalServices.SNSyncService
   private challengeService!: InternalServices.ChallengeService
   public singletonManager!: InternalServices.SNSingletonManager
-  public componentManager!: InternalServices.SNComponentManager
+  public componentManagerService!: InternalServices.SNComponentManager
   public protectionService!: InternalServices.SNProtectionService
   public actionsManager!: InternalServices.SNActionsService
   public historyManager!: InternalServices.SNHistoryManager
@@ -110,11 +109,11 @@ export class SNApplication
   private settingsService!: InternalServices.SNSettingsService
   private mfaService!: InternalServices.SNMfaService
   private listedService!: InternalServices.ListedService
-  private fileService!: Files.FileService
+  private fileService!: FileService
   private mutatorService!: InternalServices.MutatorService
   private integrityService!: ExternalServices.IntegrityService
   private statusService!: ExternalServices.StatusService
-  private filesBackupService?: Files.FilesBackupService
+  private filesBackupService?: FilesBackupService
 
   private internalEventBus!: ExternalServices.InternalEventBusInterface
 
@@ -188,15 +187,15 @@ export class SNApplication
     this.defineInternalEventHandlers()
   }
 
-  public get files(): Files.FilesClientInterface {
+  public get files(): FilesClientInterface {
     return this.fileService
   }
 
-  public get features(): InternalServices.FeaturesClientInterface {
+  public get features(): ExternalServices.FeaturesClientInterface {
     return this.featuresService
   }
 
-  public get items(): InternalServices.ItemsClientInterface {
+  public get items(): ExternalServices.ItemsClientInterface {
     return this.itemManager
   }
 
@@ -216,7 +215,7 @@ export class SNApplication
     return this.settingsService
   }
 
-  public get mutator(): InternalServices.MutatorClientInterface {
+  public get mutator(): ExternalServices.MutatorClientInterface {
     return this.mutatorService
   }
 
@@ -228,12 +227,16 @@ export class SNApplication
     return this.statusService
   }
 
-  public get fileBackups(): Files.FilesBackupService | undefined {
+  public get fileBackups(): FilesBackupService | undefined {
     return this.filesBackupService
   }
 
+  public get componentManager(): ComponentManagerInterface {
+    return this.componentManagerService
+  }
+
   public computePrivateWorkspaceIdentifier(userphrase: string, name: string): Promise<string | undefined> {
-    return Encryption.ComputePrivateWorkspaceIdentifier(this.options.crypto, userphrase, name)
+    return ComputePrivateWorkspaceIdentifier(this.options.crypto, userphrase, name)
   }
 
   /**
@@ -659,11 +662,11 @@ export class SNApplication
     return this.listedService.getListedAccountInfo(account, inContextOfItem)
   }
 
-  public async createEncryptedBackupFileForAutomatedDesktopBackups(): Promise<Encryption.BackupFile | undefined> {
+  public async createEncryptedBackupFileForAutomatedDesktopBackups(): Promise<BackupFile | undefined> {
     return this.protocolService.createEncryptedBackupFile()
   }
 
-  public async createEncryptedBackupFile(): Promise<Encryption.BackupFile | undefined> {
+  public async createEncryptedBackupFile(): Promise<BackupFile | undefined> {
     if (!(await this.protectionService.authorizeBackupCreation())) {
       return
     }
@@ -671,7 +674,7 @@ export class SNApplication
     return this.protocolService.createEncryptedBackupFile()
   }
 
-  public async createDecryptedBackupFile(): Promise<Encryption.BackupFile | undefined> {
+  public async createDecryptedBackupFile(): Promise<BackupFile | undefined> {
     if (!(await this.protectionService.authorizeBackupCreation())) {
       return
     }
@@ -1070,7 +1073,7 @@ export class SNApplication
     ;(this.syncService as unknown) = undefined
     ;(this.challengeService as unknown) = undefined
     ;(this.singletonManager as unknown) = undefined
-    ;(this.componentManager as unknown) = undefined
+    ;(this.componentManagerService as unknown) = undefined
     ;(this.protectionService as unknown) = undefined
     ;(this.actionsManager as unknown) = undefined
     ;(this.historyManager as unknown) = undefined
@@ -1119,7 +1122,7 @@ export class SNApplication
   }
 
   private createFileService() {
-    this.fileService = new Files.FileService(
+    this.fileService = new FileService(
       this.apiService,
       this.itemManager,
       this.syncService,
@@ -1161,11 +1164,11 @@ export class SNApplication
     this.serviceObservers.push(
       this.featuresService.addEventObserver((event) => {
         switch (event) {
-          case InternalServices.FeaturesEvent.UserRolesChanged: {
+          case ExternalServices.FeaturesEvent.UserRolesChanged: {
             void this.notifyEvent(ApplicationEvent.UserRolesChanged)
             break
           }
-          case InternalServices.FeaturesEvent.FeaturesUpdated: {
+          case ExternalServices.FeaturesEvent.FeaturesUpdated: {
             void this.notifyEvent(ApplicationEvent.FeaturesUpdated)
             break
           }
@@ -1268,7 +1271,7 @@ export class SNApplication
     const MaybeSwappedComponentManager = this.getClass<typeof InternalServices.SNComponentManager>(
       InternalServices.SNComponentManager,
     )
-    this.componentManager = new MaybeSwappedComponentManager(
+    this.componentManagerService = new MaybeSwappedComponentManager(
       this.itemManager,
       this.syncService,
       this.featuresService,
@@ -1278,7 +1281,7 @@ export class SNApplication
       this.platform,
       this.internalEventBus,
     )
-    this.services.push(this.componentManager)
+    this.services.push(this.componentManagerService)
   }
 
   private createHttpManager() {
@@ -1330,7 +1333,7 @@ export class SNApplication
   }
 
   private createProtocolService() {
-    this.protocolService = new Encryption.EncryptionService(
+    this.protocolService = new EncryptionService(
       this.itemManager,
       this.payloadManager,
       this.deviceInterface,
@@ -1341,7 +1344,7 @@ export class SNApplication
     )
     this.serviceObservers.push(
       this.protocolService.addEventObserver(async (event) => {
-        if (event === Encryption.EncryptionServiceEvent.RootKeyStatusChanged) {
+        if (event === EncryptionServiceEvent.RootKeyStatusChanged) {
           await this.notifyEvent(ApplicationEvent.KeyStatusChanged)
         }
       }),
@@ -1533,7 +1536,7 @@ export class SNApplication
       this.protocolService,
       this.payloadManager,
       this.challengeService,
-      this.componentManager,
+      this.componentManagerService,
       this.historyManager,
       this.internalEventBus,
     )
@@ -1541,7 +1544,7 @@ export class SNApplication
   }
 
   private createFilesBackupService(device: ExternalServices.DesktopDeviceInterface): void {
-    this.filesBackupService = new Files.FilesBackupService(
+    this.filesBackupService = new FilesBackupService(
       this.itemManager,
       this.apiService,
       this.protocolService,

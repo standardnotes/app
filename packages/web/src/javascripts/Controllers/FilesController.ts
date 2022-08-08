@@ -4,7 +4,7 @@ import {
   PopoverFileItemActionType,
 } from '@/Components/AttachedFilesPopover/PopoverFileItemAction'
 import { BYTES_IN_ONE_MEGABYTE } from '@/Constants/Constants'
-import { confirmDialog } from '@/Services/AlertService'
+import { confirmDialog } from '@standardnotes/ui-services'
 import { Strings, StringUtils } from '@/Constants/Strings'
 import { concatenateUint8Arrays } from '@/Utils/ConcatenateUint8Arrays'
 import {

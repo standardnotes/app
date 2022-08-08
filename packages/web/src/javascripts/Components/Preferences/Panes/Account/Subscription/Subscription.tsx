@@ -4,7 +4,7 @@ import SubscriptionInformation from './SubscriptionInformation'
 import NoSubscription from './NoSubscription'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 

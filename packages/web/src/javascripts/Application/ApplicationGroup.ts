@@ -6,14 +6,12 @@ import {
   InternalEventBus,
   isDesktopDevice,
 } from '@standardnotes/snjs'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { ArchiveManager, IOService, AutolockService, ThemeManager } from '@standardnotes/ui-services'
+
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { getPlatform, isDesktopApplication } from '@/Utils'
-import { ArchiveManager } from '@/Services/ArchiveManager'
-import { DesktopManager } from '@/Services/DesktopManager'
-import { IOService } from '@/Services/IOService'
-import { AutolockService } from '@/Services/AutolockService'
-import { ThemeManager } from '@/Services/ThemeManager'
 import { WebOrDesktopDevice } from '@/Application/Device/WebOrDesktopDevice'
+import { DesktopManager } from './Device/DesktopManager'
 
 const createApplication = (
   descriptor: ApplicationDescriptor,
@@ -35,8 +33,9 @@ const createApplication = (
   const viewControllerManager = new ViewControllerManager(application, device)
   const archiveService = new ArchiveManager(application)
   const io = new IOService(platform === Platform.MacWeb || platform === Platform.MacDesktop)
-  const autolockService = new AutolockService(application, new InternalEventBus())
-  const themeService = new ThemeManager(application)
+  const internalEventBus = new InternalEventBus()
+  const autolockService = new AutolockService(application, internalEventBus)
+  const themeService = new ThemeManager(application, internalEventBus)
 
   application.setWebServices({
     viewControllerManager,

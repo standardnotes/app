@@ -10,10 +10,15 @@ import {
   FindNativeFeature,
   FeatureIdentifier,
 } from '@standardnotes/features'
-import { DesktopManagerInterface } from '@Lib/Services/ComponentManager/Types'
 import { ContentType } from '@standardnotes/common'
 import { GenericItem, SNComponent } from '@standardnotes/models'
-import { InternalEventBusInterface, Environment, Platform, AlertService } from '@standardnotes/services'
+import {
+  DesktopManagerInterface,
+  InternalEventBusInterface,
+  Environment,
+  Platform,
+  AlertService,
+} from '@standardnotes/services'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import { SNFeaturesService } from '@Lib/Services/Features/FeaturesService'
 import { SNComponentManager } from './ComponentManager'
@@ -34,7 +39,10 @@ describe('featuresService', () => {
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       syncComponentsInstallation() {},
       // eslint-disable-next-line @typescript-eslint/no-empty-function
-      registerUpdateObserver() {},
+      registerUpdateObserver(_callback: (component: SNComponent) => void) {
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        return () => {}
+      },
       getExtServerHost() {
         return desktopExtHost
       },

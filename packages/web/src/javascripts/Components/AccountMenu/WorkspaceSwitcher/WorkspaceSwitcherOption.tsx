@@ -1,6 +1,6 @@
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { ApplicationGroup } from '@/Application/ApplicationGroup'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'

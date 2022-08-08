@@ -1,8 +1,12 @@
 import { ChallengeService } from '../Challenge'
-import { EncryptionService } from '@standardnotes/encryption'
 import { DiskStorageService } from '../Storage/DiskStorageService'
 import { SNProtectionService } from './ProtectionService'
-import { InternalEventBus, InternalEventBusInterface, ChallengeReason } from '@standardnotes/services'
+import {
+  InternalEventBus,
+  InternalEventBusInterface,
+  ChallengeReason,
+  EncryptionService,
+} from '@standardnotes/services'
 import { UuidGenerator } from '@standardnotes/utils'
 import {
   DecryptedPayload,

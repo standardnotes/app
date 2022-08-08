@@ -1,5 +1,5 @@
 import { ItemListController } from '@/Controllers/ItemList/ItemListController'
-import { KeyboardKey } from '@/Services/IOService'
+import { KeyboardKey } from '@standardnotes/ui-services'
 import { useState, useCallback, KeyboardEventHandler, useRef } from 'react'
 import SearchOptions from '@/Components/SearchOptions/SearchOptions'
 import { SearchOptionsController } from '@/Controllers/SearchOptionsController'

@@ -1,4 +1,4 @@
-import { FilesApiInterface } from '@standardnotes/services'
+import { FilesApiInterface } from '../Api/FilesApiInterface'
 import { FileUploader } from './FileUploader'
 
 describe('file uploader', () => {

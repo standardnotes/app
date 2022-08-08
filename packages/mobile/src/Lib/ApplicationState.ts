@@ -1,4 +1,3 @@
-import { InternalEventBus } from '@standardnotes/services'
 import {
   ApplicationEvent,
   ApplicationService,
@@ -7,6 +6,7 @@ import {
   ChallengeReason,
   ChallengeValidation,
   ContentType,
+  InternalEventBus,
   isNullOrUndefined,
   NoteViewController,
   PayloadEmitSource,

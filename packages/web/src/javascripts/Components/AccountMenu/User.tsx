@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { WebApplication } from '@/Application/Application'
 import { User as UserType } from '@standardnotes/snjs'
 

@@ -1,6 +1,6 @@
 import { WebApplication } from '@/Application/Application'
 import { ApplicationGroup } from '@/Application/ApplicationGroup'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useState } from 'react'
 import { AccountMenuPane } from './AccountMenuPane'

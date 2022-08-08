@@ -1,5 +1,5 @@
 import Icon from '@/Components/Icon/Icon'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
 import EncryptionStatusItem from './EncryptionStatusItem'

@@ -3,13 +3,11 @@ import { assert, naturalSort, removeFromArray, UuidGenerator, Uuids } from '@sta
 import { ItemsKeyMutator, SNItemsKey } from '@standardnotes/encryption'
 import { PayloadManager } from '../Payloads/PayloadManager'
 import { TagsToFoldersMigrationApplicator } from '../../Migrations/Applicators/TagsToFolders'
-import { TransactionalMutation } from './TransactionalMutation'
 import { UuidString } from '../../Types/UuidString'
 import * as Models from '@standardnotes/models'
 import * as Services from '@standardnotes/services'
-import { ItemsClientInterface } from './ItemsClientInterface'
 import { PayloadManagerChangeData } from '../Payloads'
-import { DiagnosticInfo } from '@standardnotes/services'
+import { DiagnosticInfo, ItemsClientInterface } from '@standardnotes/services'
 import { ApplicationDisplayOptions } from '@Lib/Application/Options/OptionalOptions'
 import { CollectionSort } from '@standardnotes/models'
 
@@ -578,7 +576,7 @@ export class ItemManager
    * runs the same mutation on all items.
    */
   public async runTransactionalMutations(
-    transactions: TransactionalMutation[],
+    transactions: Models.TransactionalMutation[],
     emitSource = Models.PayloadEmitSource.LocalChanged,
     payloadSourceKey?: string,
   ): Promise<(Models.DecryptedItemInterface | undefined)[]> {
@@ -607,7 +605,7 @@ export class ItemManager
   }
 
   public async runTransactionalMutation(
-    transaction: TransactionalMutation,
+    transaction: Models.TransactionalMutation,
     emitSource = Models.PayloadEmitSource.LocalChanged,
     payloadSourceKey?: string,
   ): Promise<Models.DecryptedItemInterface | undefined> {

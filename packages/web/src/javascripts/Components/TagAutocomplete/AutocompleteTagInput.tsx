@@ -9,7 +9,7 @@ import {
 } from 'react'
 import { Disclosure, DisclosurePanel } from '@reach/disclosure'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import AutocompleteTagResult from './AutocompleteTagResult'
 import AutocompleteTagHint from './AutocompleteTagHint'
 import { observer } from 'mobx-react-lite'

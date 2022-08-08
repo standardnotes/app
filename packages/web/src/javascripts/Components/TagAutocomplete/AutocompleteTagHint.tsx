@@ -1,4 +1,4 @@
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { useRef, useEffect, useCallback, FocusEventHandler, KeyboardEventHandler } from 'react'
 import Icon from '@/Components/Icon/Icon'

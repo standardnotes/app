@@ -1,8 +1,8 @@
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { FileDownloadProgress } from '../Types/FileDownloadProgress'
-import { FilesApiInterface } from '@standardnotes/services'
 import { Deferred } from '@standardnotes/utils'
 import { FileContent } from '@standardnotes/models'
+import { FilesApiInterface } from '../Api/FilesApiInterface'
 
 export type AbortSignal = 'aborted'
 export type AbortFunction = () => void

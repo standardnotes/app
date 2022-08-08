@@ -1,4 +1,4 @@
-import { KeyboardKey } from '@/Services/IOService'
+import { KeyboardKey } from '@standardnotes/ui-services'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { useCallback, useState, useEffect, RefObject } from 'react'
 

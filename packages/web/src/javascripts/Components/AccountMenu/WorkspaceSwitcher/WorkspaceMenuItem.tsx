@@ -1,7 +1,7 @@
 import Icon from '@/Components/Icon/Icon'
 import MenuItem from '@/Components/Menu/MenuItem'
 import { MenuItemType } from '@/Components/Menu/MenuItemType'
-import { KeyboardKey } from '@/Services/IOService'
+import { KeyboardKey } from '@standardnotes/ui-services'
 import { ApplicationDescriptor } from '@standardnotes/snjs'
 import {
   ChangeEventHandler,

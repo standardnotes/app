@@ -8,16 +8,16 @@ import {
   SNNote,
   ComponentArea,
   PrefKey,
-  ComponentViewer,
+  ComponentViewerInterface,
   ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
   NoteViewController,
   PayloadEmitSource,
+  WebAppEvent,
 } from '@standardnotes/snjs'
 import { debounce, isDesktopApplication } from '@/Utils'
 import { EditorEventSource } from '../../Types/EditorEventSource'
-import { KeyboardModifier, KeyboardKey } from '@/Services/IOService'
+import { confirmDialog, KeyboardModifier, KeyboardKey } from '@standardnotes/ui-services'
 import { STRING_DELETE_PLACEHOLDER_ATTEMPT, STRING_DELETE_LOCKED_ATTEMPT, StringDeleteNote } from '@/Constants/Strings'
-import { confirmDialog } from '@/Services/AlertService'
 import { PureComponent } from '@/Components/Abstract/PureComponent'
 import ProtectedItemOverlay from '@/Components/ProtectedItemOverlay/ProtectedItemOverlay'
 import PinNoteButton from '@/Components/PinNoteButton/PinNoteButton'
@@ -35,7 +35,6 @@ import {
 } from './TransactionFunctions'
 import { reloadFont } from './FontFunctions'
 import { NoteViewProps } from './NoteViewProps'
-import { WebAppEvent } from '@/Application/WebAppEvent'
 import IndicatorCircle from '../IndicatorCircle/IndicatorCircle'
 
 const MINIMUM_STATUS_DURATION = 400
@@ -53,7 +52,7 @@ function sortAlphabetically(array: SNComponent[]): SNComponent[] {
 
 type State = {
   availableStackComponents: SNComponent[]
-  editorComponentViewer?: ComponentViewer
+  editorComponentViewer?: ComponentViewerInterface
   editorComponentViewerDidAlreadyReload?: boolean
   editorStateDidLoad: boolean
   editorTitle: string
@@ -68,7 +67,7 @@ type State = {
   showLockedIcon: boolean
   showProtectedWarning: boolean
   spellcheck: boolean
-  stackComponentViewers: ComponentViewer[]
+  stackComponentViewers: ComponentViewerInterface[]
   syncTakingTooLong: boolean
   /** Setting to true then false will allow the main content textarea to be destroyed
    * then re-initialized. Used when reloading spellcheck status. */
@@ -404,7 +403,10 @@ class NoteView extends PureComponent<NoteViewProps, State> {
     return viewer
   }
 
-  public editorComponentViewerRequestsReload = async (viewer: ComponentViewer, force?: boolean): Promise<void> => {
+  public editorComponentViewerRequestsReload = async (
+    viewer: ComponentViewerInterface,
+    force?: boolean,
+  ): Promise<void> => {
     if (this.state.editorComponentViewerDidAlreadyReload && !force) {
       return
     }
@@ -726,7 +728,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
       return !viewerComponentExistsInEnabledComponents
     })
 
-    const newViewers: ComponentViewer[] = []
+    const newViewers: ComponentViewerInterface[] = []
     for (const component of needsNewViewer) {
       newViewers.push(this.application.componentManager.createComponentViewer(component, this.note.uuid))
     }

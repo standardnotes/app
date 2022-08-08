@@ -7,7 +7,7 @@ import {
   useEffect,
   useRef,
 } from 'react'
-import { KeyboardKey } from '@/Services/IOService'
+import { KeyboardKey } from '@standardnotes/ui-services'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 
 type MenuProps = {

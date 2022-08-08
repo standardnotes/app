@@ -2,7 +2,10 @@ import { EncryptAndUploadFileOperation } from '../Operations/EncryptAndUpload'
 import { FileItem, FileMetadata } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { FileDownloadProgress } from '../Types/FileDownloadProgress'
-import { FileSystemApi, FileBackupMetadataFile, FileHandleRead, FileSystemNoSelection } from '@standardnotes/services'
+import { FileSystemApi } from '../Api/FileSystemApi'
+import { FileHandleRead } from '../Api/FileHandleRead'
+import { FileSystemNoSelection } from '../Api/FileSystemNoSelection'
+import { FileBackupMetadataFile } from '../Device/FileBackupMetadataFile'
 
 export interface FilesClientInterface {
   beginNewFileUpload(sizeInBytes: number): Promise<EncryptAndUploadFileOperation | ClientDisplayableError>

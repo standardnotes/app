@@ -26,7 +26,6 @@ import { ServerSyncResponse } from '@Lib/Services/Sync/Account/Response'
 import { ServerSyncResponseResolver } from '@Lib/Services/Sync/Account/ResponseResolver'
 import { SyncSignal, SyncStats } from '@Lib/Services/Sync/Signals'
 import { UuidString } from '../../Types/UuidString'
-import * as Encryption from '@standardnotes/encryption'
 import {
   PayloadSource,
   CreateDecryptedItemFromPayload,
@@ -73,9 +72,15 @@ import {
   SyncQueueStrategy,
   SyncServiceInterface,
   DiagnosticInfo,
+  EncryptionService,
 } from '@standardnotes/services'
 import { OfflineSyncResponse } from './Offline/Response'
-import { KeyedDecryptionSplit, SplitPayloadsByEncryptionType } from '@standardnotes/encryption'
+import {
+  CreateDecryptionSplitWithKeyLookup,
+  CreateEncryptionSplitWithKeyLookup,
+  KeyedDecryptionSplit,
+  SplitPayloadsByEncryptionType,
+} from '@standardnotes/encryption'
 import { CreatePayloadFromRawServerItem } from './Account/Utilities'
 import { ApplicationSyncOptions } from '@Lib/Application/Options/OptionalOptions'
 
@@ -131,7 +136,7 @@ export class SNSyncService
   constructor(
     private itemManager: ItemManager,
     private sessionManager: SNSessionManager,
-    private protocolService: Encryption.EncryptionService,
+    private protocolService: EncryptionService,
     private storageService: DiskStorageService,
     private payloadManager: PayloadManager,
     private apiService: SNApiService,
@@ -226,7 +231,7 @@ export class SNSyncService
       isDecryptedPayload,
     ) as DecryptedPayloadInterface<ItemsKeyContent>[]
 
-    const itemsKeysSplit: Encryption.KeyedDecryptionSplit = {
+    const itemsKeysSplit: KeyedDecryptionSplit = {
       usesRootKeyWithKeyLookup: {
         items: encryptedItemsKeysPayloads,
       },
@@ -301,7 +306,7 @@ export class SNSyncService
         }
       }
 
-      const split: Encryption.KeyedDecryptionSplit = {
+      const split: KeyedDecryptionSplit = {
         usesItemsKeyWithKeyLookup: {
           items: encrypted,
         },
@@ -440,9 +445,9 @@ export class SNSyncService
   ): Promise<ServerSyncPushContextualPayload[]> {
     const payloadSplit = CreatePayloadSplit(payloads)
 
-    const encryptionSplit = Encryption.SplitPayloadsByEncryptionType(payloadSplit.decrypted)
+    const encryptionSplit = SplitPayloadsByEncryptionType(payloadSplit.decrypted)
 
-    const keyLookupSplit = Encryption.CreateEncryptionSplitWithKeyLookup(encryptionSplit)
+    const keyLookupSplit = CreateEncryptionSplitWithKeyLookup(encryptionSplit)
 
     const encryptedResults = await this.protocolService.encryptSplit(keyLookupSplit)
 
@@ -973,7 +978,7 @@ export class SNSyncService
           ? (CreateDecryptedItemFromPayload(previouslyProcessedItemsKey) as ItemsKeyInterface)
           : undefined
 
-        const keyedSplit: Encryption.KeyedDecryptionSplit = {}
+        const keyedSplit: KeyedDecryptionSplit = {}
         if (itemsKey) {
           keyedSplit.usesItemsKey = {
             items: [encrypted],
@@ -1162,9 +1167,9 @@ export class SNSyncService
 
     const payloadSplit = CreateNonDecryptedPayloadSplit(receivedPayloads)
 
-    const encryptionSplit = Encryption.SplitPayloadsByEncryptionType(payloadSplit.encrypted)
+    const encryptionSplit = SplitPayloadsByEncryptionType(payloadSplit.encrypted)
 
-    const keyedSplit = Encryption.CreateDecryptionSplitWithKeyLookup(encryptionSplit)
+    const keyedSplit = CreateDecryptionSplitWithKeyLookup(encryptionSplit)
 
     const decryptionResults = await this.protocolService.decryptSplit(keyedSplit)
 

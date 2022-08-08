@@ -5,7 +5,7 @@ import {
   FileHandleRead,
   FileSystemNoSelection,
   FileSystemResult,
-} from '@standardnotes/services'
+} from '@standardnotes/files'
 
 interface WebDirectoryHandle extends DirectoryHandle {
   nativeHandle: FileSystemDirectoryHandle

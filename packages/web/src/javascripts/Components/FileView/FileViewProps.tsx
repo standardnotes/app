@@ -1,6 +1,6 @@
 import { WebApplication } from '@/Application/Application'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
-import { FileItem } from '@standardnotes/snjs/dist/@types'
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
+import { FileItem } from '@standardnotes/snjs'
 
 export type FileViewProps = {
   application: WebApplication

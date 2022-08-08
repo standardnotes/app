@@ -1,0 +1,41 @@
+{
+  "name": "@standardnotes/ui-services",
+  "version": "1.1.0",
+  "engines": {
+    "node": ">=16.0.0 <17.0.0"
+  },
+  "description": "UI Services for Standard Notes clients",
+  "main": "dist/index.js",
+  "author": "Standard Notes",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "private": true,
+  "license": "AGPL-3.0-or-later",
+  "scripts": {
+    "clean": "rm -fr dist",
+    "prestart": "yarn clean",
+    "start": "tsc -p tsconfig.json --watch",
+    "prebuild": "yarn clean",
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint . --ext .ts",
+    "test:unit": "jest spec --coverage"
+  },
+  "dependencies": {
+    "@standardnotes/common": "^1.30.0",
+    "@standardnotes/filepicker": "workspace:^",
+    "@standardnotes/services": "workspace:^",
+    "@standardnotes/styles": "workspace:^",
+    "@standardnotes/toast": "workspace:^",
+    "@standardnotes/utils": "workspace:^"
+  },
+  "devDependencies": {
+    "@types/jest": "^28.1.5",
+    "@typescript-eslint/eslint-plugin": "^5.30.0",
+    "@typescript-eslint/parser": "^5.12.1",
+    "eslint-plugin-prettier": "*",
+    "jest": "^28.1.2",
+    "ts-jest": "^28.0.5"
+  }
+}

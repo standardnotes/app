@@ -1,5 +1,5 @@
 import { WebApplication } from '@/Application/Application'
-import { ViewControllerManager } from '@/Services/ViewControllerManager'
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { FunctionComponent } from 'react'
 import TwoFactorAuthWrapper from './TwoFactorAuth/TwoFactorAuthWrapper'
 import { MfaProps } from './TwoFactorAuth/MfaProps'

@@ -1,5 +1,5 @@
-import { ByteChunker } from './../Chunker/ByteChunker'
-import { OnChunkCallback, FileSelectionResponse } from '../types'
+import { ByteChunker, OnChunkCallback } from '@standardnotes/files'
+import { FileSelectionResponse } from '../types'
 import { readFile as utilsReadFile } from '../utils'
 import { FileReaderInterface } from '../Interface/FileReader'
 
