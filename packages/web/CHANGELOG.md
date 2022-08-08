@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.44.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.44.0...@standardnotes/web@3.44.1) (2022-08-08)
+
+### Bug Fixes
+
+* viewport height on mobile Chrome & Safari ([#1376](https://github.com/standardnotes/app/issues/1376)) ([887402f](https://github.com/standardnotes/app/commit/887402f75fe7d03a376e42446661f6b43a2c372c))
+
 # [3.44.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.43.1...@standardnotes/web@3.44.0) (2022-08-08)
 
 ### Bug Fixes
