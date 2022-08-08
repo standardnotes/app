@@ -9,9 +9,10 @@ import { TagsListItem } from './TagsListItem'
 
 type Props = {
   viewControllerManager: ViewControllerManager
+  isCollapsed: boolean
 }
 
-const TagsList: FunctionComponent<Props> = ({ viewControllerManager }: Props) => {
+const TagsList: FunctionComponent<Props> = ({ viewControllerManager, isCollapsed }: Props) => {
   const tagsState = viewControllerManager.navigationController
   const allTags = tagsState.allLocalRootTags
 
@@ -52,6 +53,7 @@ const TagsList: FunctionComponent<Props> = ({ viewControllerManager }: Props) =>
                 tagsState={tagsState}
                 features={viewControllerManager.featuresController}
                 onContextMenu={onContextMenu}
+                isCollapsed={isCollapsed}
               />
             )
           })}

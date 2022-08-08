@@ -15,11 +15,13 @@ import {
 } from 'react'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 
 type Props = {
   view: SmartView
   tagsState: NavigationController
   features: FeaturesController
+  isCollapsed: boolean
 }
 
 const PADDING_BASE_PX = 14
@@ -45,7 +47,7 @@ const smartViewIconType = (view: SmartView, isSelected: boolean): IconType => {
   return 'hashtag'
 }
 
-const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
+const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, isCollapsed }) => {
   const { toggleAppPane } = useResponsiveAppPane()
 
   const [title, setTitle] = useState(view.title || '')
@@ -111,18 +113,30 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
   return (
     <>
       <div
-        className={`tag ${isSelected ? 'selected' : ''} ${isFaded ? 'opacity-50' : ''}`}
+        className={classNames(
+          'tag',
+          isSelected && 'selected',
+          isFaded && 'opacity-50',
+          isCollapsed && '!bg-transparent',
+        )}
         onClick={selectCurrentTag}
         style={{
           paddingLeft: `${level * PADDING_PER_LEVEL_PX + PADDING_BASE_PX}px`,
         }}
       >
-        <div className="tag-info">
-          <div className={'tag-icon mr-2'}>
-            <Icon type={iconType} className={`${isSelected ? 'text-info' : 'text-neutral'}`} />
+        <div className="tag-info relative">
+          <div
+            className={classNames(
+              isCollapsed
+                ? `relative flex h-[40px] w-[40px] items-center justify-center
+                  ${isSelected ? 'transparent-info-color-background' : 'transparent-info-color-background-hover'}`
+                : 'tag-icon mr-2',
+            )}
+          >
+            <Icon type={iconType} className={isSelected ? 'text-info' : 'text-neutral'} />
           </div>
           <input
-            className={`title ${isEditing ? 'editing' : ''}`}
+            className={classNames('title', isEditing ? 'editing' : '', isCollapsed ? 'hidden' : 'block')}
             disabled={!isEditing}
             id={`react-tag-${view.uuid}`}
             onBlur={onBlur}
@@ -132,10 +146,12 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
             spellCheck={false}
             ref={inputRef}
           />
-          <div className="count">{view.uuid === SystemViewId.AllNotes && tagsState.allNotesCount}</div>
+          <div className={classNames('count', isCollapsed ? 'absolute top-0 right-0' : '')}>
+            {view.uuid === SystemViewId.AllNotes && tagsState.allNotesCount}
+          </div>
         </div>
 
-        {!isSystemView(view) && (
+        {!isSystemView(view) && !isCollapsed && (
           <div className="meta">
             {view.conflictOf && (
               <div className="danger text-[0.625rem] font-bold">Conflicted Copy {view.conflictOf}</div>

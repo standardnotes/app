@@ -9,22 +9,6 @@
   }
 }
 
-.app-column-first {
-  width: 220px;
-
-  @media screen and (max-width: 768px) {
-    width: 100% !important;
-  }
-}
-
-.app-column-second {
-  width: 350px;
-
-  @media screen and (max-width: 768px) {
-    width: 100% !important;
-  }
-}
-
 .app-column {
   overflow: hidden;
 

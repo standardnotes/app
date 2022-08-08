@@ -5,12 +5,14 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import TagsSectionAddButton from './TagsSectionAddButton'
 import TagsSectionTitle from './TagsSectionTitle'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 
 type Props = {
   viewControllerManager: ViewControllerManager
+  isCollapsed: boolean
 }
 
-const TagsSection: FunctionComponent<Props> = ({ viewControllerManager }) => {
+const TagsSection: FunctionComponent<Props> = ({ viewControllerManager, isCollapsed }) => {
   const [hasMigration, setHasMigration] = useState<boolean>(false)
 
   const checkIfMigrationNeeded = useCallback(() => {
@@ -53,7 +55,7 @@ const TagsSection: FunctionComponent<Props> = ({ viewControllerManager }) => {
 
   return (
     <section>
-      <div className="section-title-bar">
+      <div className={classNames('section-title-bar', isCollapsed ? 'md-only:hidden lg-only:hidden' : '')}>
         <div className="section-title-bar-header">
           <TagsSectionTitle
             features={viewControllerManager.featuresController}
@@ -66,7 +68,13 @@ const TagsSection: FunctionComponent<Props> = ({ viewControllerManager }) => {
           />
         </div>
       </div>
-      <TagsList viewControllerManager={viewControllerManager} />
+      <div
+        className={classNames(
+          'hidden',
+          isCollapsed ? 'mt-6 mb-7 border border-border md-only:block lg-only:block' : '',
+        )}
+      />
+      <TagsList viewControllerManager={viewControllerManager} isCollapsed={isCollapsed} />
     </section>
   )
 }
