@@ -73,7 +73,7 @@ module.exports = {
         'menu-item': '0.813rem',
       },
       screens: {
-        'xsm-only': { min: '320px', max: '640px' },
+        'xsm-only': { min: '320px', max: '639px' },
         'sm-only': { min: '640px', max: '767px' },
         'md-only': { min: '768px', max: '1023px' },
         'lg-only': { min: '1024px', max: '1279px' },
