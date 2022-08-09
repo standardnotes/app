@@ -175,22 +175,22 @@ export const convertStringifiedBooleanToBoolean = (value: string) => {
 // https://stackoverflow.com/a/57527009/2504429
 export const disableIosTextFieldZoom = () => {
   const addMaximumScaleToMetaViewport = () => {
-    const el = document.querySelector('meta[name=viewport]')
+    const viewportMetaElement = document.querySelector('meta[name=viewport]')
 
-    if (el !== null) {
-      let content = el.getAttribute('content')
+    if (viewportMetaElement !== null) {
+      let content = viewportMetaElement.getAttribute('content')
       if (!content) {
         return
       }
-      const re = /maximum-scale=[0-9.]+/g
+      const maximumScaleRegex = /maximum-scale=[0-9.]+/g
 
-      if (re.test(content)) {
-        content = content.replace(re, 'maximum-scale=1.0')
+      if (maximumScaleRegex.test(content)) {
+        content = content.replace(maximumScaleRegex, 'maximum-scale=1.0')
       } else {
         content = [content, 'maximum-scale=1.0'].join(', ')
       }
 
-      el.setAttribute('content', content)
+      viewportMetaElement.setAttribute('content', content)
     }
   }
 
