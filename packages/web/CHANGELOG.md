@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.44.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.44.1...@standardnotes/web@3.44.2) (2022-08-09)
+
+### Bug Fixes
+
+* disable zoom on input focusing on ios ([#1386](https://github.com/standardnotes/app/issues/1386)) ([d048800](https://github.com/standardnotes/app/commit/d048800b9d17ff6214a98fd9b49bfb205459f73e))
+
 ## [3.44.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.44.0...@standardnotes/web@3.44.1) (2022-08-08)
 
 ### Bug Fixes
