@@ -1,5 +1,7 @@
 'use strict'
 
+import { disableIosTextFieldZoom } from '@/Utils'
+
 declare global {
   interface Window {
     dashboardUrl?: string
@@ -19,6 +21,7 @@ declare global {
 
     application?: WebApplication
     mainApplicationGroup?: ApplicationGroup
+    MSStream?: Record<string, unknown>
   }
 }
 
@@ -72,6 +75,8 @@ const startApplication: StartApplication = async function startApplication(
     setViewportHeight()
     window.addEventListener('resize', setViewportHeight)
     window.addEventListener('orientationchange', setViewportHeight)
+
+    disableIosTextFieldZoom()
 
     root.render(
       <ApplicationGroupView
