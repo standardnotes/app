@@ -135,17 +135,25 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, isColla
           >
             <Icon type={iconType} className={isSelected ? 'text-info' : 'text-neutral'} />
           </div>
-          <input
-            className={classNames('title', isEditing ? 'editing' : '', isCollapsed ? 'hidden' : 'block')}
-            disabled={!isEditing}
-            id={`react-tag-${view.uuid}`}
-            onBlur={onBlur}
-            onInput={onInput}
-            value={title}
-            onKeyUp={onKeyUp}
-            spellCheck={false}
-            ref={inputRef}
-          />
+          {isEditing ? (
+            <input
+              className={classNames('title editing', isCollapsed ? 'hidden' : 'block')}
+              id={`react-tag-${view.uuid}`}
+              onBlur={onBlur}
+              onInput={onInput}
+              value={title}
+              onKeyUp={onKeyUp}
+              spellCheck={false}
+              ref={inputRef}
+            />
+          ) : (
+            <div
+              className={classNames('title overflow-hidden text-left', isCollapsed ? 'hidden' : 'block')}
+              id={`react-tag-${view.uuid}`}
+            >
+              {title}
+            </div>
+          )}
           <div className={classNames('count', isCollapsed ? 'absolute top-0 right-0' : '')}>
             {view.uuid === SystemViewId.AllNotes && tagsState.allNotesCount}
           </div>
