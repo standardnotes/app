@@ -183,20 +183,26 @@ export const TagsListItem: FunctionComponent<Props> = observer(
 
     const readyToDrop = isOver && canDrop
 
-    const toggleContextMenu = useCallback(() => {
-      if (!menuButtonRef.current) {
-        return
-      }
+    const toggleContextMenu: MouseEventHandler<HTMLAnchorElement> = useCallback(
+      (event) => {
+        event.preventDefault()
+        event.stopPropagation()
 
-      const contextMenuOpen = tagsState.contextMenuOpen
-      const menuButtonRect = menuButtonRef.current?.getBoundingClientRect()
+        if (!menuButtonRef.current) {
+          return
+        }
 
-      if (contextMenuOpen) {
-        tagsState.setContextMenuOpen(false)
-      } else {
-        onContextMenu(tag, menuButtonRect.right, menuButtonRect.top)
-      }
-    }, [onContextMenu, tagsState, tag])
+        const contextMenuOpen = tagsState.contextMenuOpen
+        const menuButtonRect = menuButtonRef.current?.getBoundingClientRect()
+
+        if (contextMenuOpen) {
+          tagsState.setContextMenuOpen(false)
+        } else {
+          onContextMenu(tag, menuButtonRect.right, menuButtonRect.top)
+        }
+      },
+      [onContextMenu, tagsState, tag],
+    )
 
     return (
       <>
