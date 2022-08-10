@@ -243,7 +243,6 @@ export const TagsListItem: FunctionComponent<Props> = observer(
                   isCollapsed ? 'md-only:!w-min lg-only:!w-min' : '',
                 )}
                 id={`react-tag-${tag.uuid}`}
-                disabled={!isEditing}
                 onBlur={onBlur}
                 onInput={onInput}
                 value={title}

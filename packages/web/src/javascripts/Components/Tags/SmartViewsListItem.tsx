@@ -137,8 +137,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, isColla
           </div>
           {isEditing ? (
             <input
-              className={classNames('title', isEditing ? 'editing' : '', isCollapsed ? 'hidden' : 'block')}
-              disabled={!isEditing}
+              className={classNames('title editing', isCollapsed ? 'hidden' : 'block')}
               id={`react-tag-${view.uuid}`}
               onBlur={onBlur}
               onInput={onInput}
