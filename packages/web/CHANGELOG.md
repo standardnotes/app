@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.44.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.44.2...@standardnotes/web@3.44.3) (2022-08-10)
+
+### Bug Fixes
+
+* tag context menu button opening notes list veiw ([#1390](https://github.com/standardnotes/app/issues/1390)) ([82a8bcc](https://github.com/standardnotes/app/commit/82a8bcc4407fce2e255b06a0c31c5fd244f5973f))
+* tags being dimmed on safari ([#1389](https://github.com/standardnotes/app/issues/1389)) ([77cbb6b](https://github.com/standardnotes/app/commit/77cbb6b06e901de9e0eccee98219f946b014fe21))
+
 ## [3.44.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.44.1...@standardnotes/web@3.44.2) (2022-08-09)
 
 ### Bug Fixes
