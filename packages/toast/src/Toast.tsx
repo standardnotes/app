@@ -12,20 +12,20 @@ const prefersReducedMotion = () => {
 const colorForToastType = (type: ToastType) => {
   switch (type) {
     case ToastType.Success:
-      return 'text-success'
+      return 'bg-success text-info-contrast md:text-success'
     case ToastType.Error:
-      return 'text-danger'
+      return 'bg-danger text-info-contrast md:text-danger'
     default:
-      return 'text-info'
+      return 'bg-info text-info-contrast md:text-info'
   }
 }
 
 const iconForToastType = (type: ToastType) => {
   switch (type) {
     case ToastType.Success:
-      return <CheckCircleFilledIcon className={`h-5 w-5 ${colorForToastType(type)}`} />
+      return <CheckCircleFilledIcon className="text-success h-5 w-5" />
     case ToastType.Error:
-      return <ClearCircleFilledIcon className={`h-5 w-5 ${colorForToastType(type)}`} />
+      return <ClearCircleFilledIcon className="text-danger h-5 w-5" />
     case ToastType.Progress:
     case ToastType.Loading:
       return <div className="border-info h-4 w-4 animate-spin rounded-full border border-solid border-r-transparent" />
@@ -77,7 +77,7 @@ export const Toast = forwardRef(({ toast, index }: Props, ref: ForwardedRef<HTML
     <div
       data-index={index}
       role="status"
-      className={`bg-passive-5 animation-fill-forwards relative mt-3 flex min-w-max select-none flex-col rounded opacity-0 ${currentAnimation}`}
+      className={`bg-passive-5 animation-fill-forwards relative mt-3 flex min-w-full select-none flex-col rounded opacity-0 md:min-w-max ${currentAnimation}`}
       style={{
         boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.16)',
         transition: shouldReduceMotion ? undefined : 'all 0.2s ease',
@@ -90,18 +90,18 @@ export const Toast = forwardRef(({ toast, index }: Props, ref: ForwardedRef<HTML
       }}
       ref={ref}
     >
-      <div className={`flex w-full items-center ${hasActions ? 'p-2 pl-3' : hasProgress ? 'px-3 py-2.5' : 'p-3'}`}>
-        {icon ? <div className="sn-icon mr-2 flex flex-shrink-0 items-center justify-center">{icon}</div> : null}
-        <div className="text-text text-sm">{toast.message}</div>
+      <div
+        className={`flex w-full flex-wrap items-center gap-2 ${
+          hasActions ? 'p-2 pl-3' : hasProgress ? 'px-3 py-2.5' : 'p-3'
+        }`}
+      >
+        {icon ? <div className="sn-icon flex flex-shrink-0 items-center justify-center">{icon}</div> : null}
+        <div className="text-text text-sm [word-wrap:anywhere]">{toast.message}</div>
         {hasActions && (
-          <div className="ml-4">
+          <>
             {toast.actions?.map((action, index) => (
               <button
-                style={{
-                  paddingLeft: '0.45rem',
-                  paddingRight: '0.45rem',
-                }}
-                className={`hover:bg-passive-3 cursor-pointer rounded border-0 bg-transparent py-1 text-sm font-semibold ${colorForToastType(
+                className={`hover:bg-passive-3 cursor-pointer rounded border-0 py-1 px-[0.45rem] text-sm font-semibold md:bg-transparent ${colorForToastType(
                   toast.type,
                 )} ${index !== 0 ? 'ml-2' : ''}`}
                 onClick={() => {
@@ -112,7 +112,7 @@ export const Toast = forwardRef(({ toast, index }: Props, ref: ForwardedRef<HTML
                 {action.label}
               </button>
             ))}
-          </div>
+          </>
         )}
       </div>
       {hasProgress && (
