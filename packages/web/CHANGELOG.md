@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.44.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.44.3...@standardnotes/web@3.44.4) (2022-08-11)
+
+### Bug Fixes
+
+* optimize toasts for mobile ([#1392](https://github.com/standardnotes/app/issues/1392)) ([40d9392](https://github.com/standardnotes/app/commit/40d9392599e871225abcabcddd51de6cc99a0fe9))
+
 ## [3.44.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.44.2...@standardnotes/web@3.44.3) (2022-08-10)
 
 ### Bug Fixes
