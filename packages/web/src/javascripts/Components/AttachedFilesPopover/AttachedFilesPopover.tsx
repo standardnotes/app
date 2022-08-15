@@ -181,7 +181,9 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
         onChange={async (event) => {
           const files = event.currentTarget.files
 
-          if (!files) return
+          if (!files) {
+            return
+          }
 
           for (const file of files) {
             const uploadedFiles = await filesController.uploadNewFile(file)

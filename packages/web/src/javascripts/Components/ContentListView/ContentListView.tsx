@@ -194,7 +194,9 @@ const ContentListView: FunctionComponent<Props> = ({
               onChange={(event) => {
                 const files = event.currentTarget.files
 
-                if (!files) return
+                if (!files) {
+                  return
+                }
 
                 for (const file of files) {
                   void filesController.uploadNewFile(file)
