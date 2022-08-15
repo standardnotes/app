@@ -302,7 +302,7 @@ export class FilesController extends AbstractViewController {
       const selectedFiles =
         fileOrHandle instanceof File
           ? [fileOrHandle]
-          : StreamingFileReader.available() && fileOrHandle instanceof FileSystemFileHandle
+          : shouldUseStreamingReader && fileOrHandle instanceof FileSystemFileHandle
           ? await StreamingFileReader.getFilesFromHandles([fileOrHandle])
           : await picker.selectFiles()
 
