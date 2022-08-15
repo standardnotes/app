@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.44.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.44.4...@standardnotes/web@3.44.5) (2022-08-15)
+
+### Bug Fixes
+
+* selecting from "Photo Library" on iOS doesn't upload ([#1401](https://github.com/standardnotes/app/issues/1401)) ([54ae436](https://github.com/standardnotes/app/commit/54ae4365a344cc3c6c796a3afb6d3020f5493a6b))
+
 ## [3.44.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.44.3...@standardnotes/web@3.44.4) (2022-08-11)
 
 ### Bug Fixes
