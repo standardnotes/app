@@ -20,6 +20,7 @@ import ContentListHeader from './Header/ContentListHeader'
 import ResponsivePaneContent from '../ResponsivePane/ResponsivePaneContent'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
+import { StreamingFileReader } from '@standardnotes/filepicker'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -46,6 +47,7 @@ const ContentListView: FunctionComponent<Props> = ({
 }) => {
   const { toggleAppPane } = useResponsiveAppPane()
 
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const itemsViewPanelRef = useRef<HTMLDivElement>(null)
 
   const {
@@ -68,7 +70,12 @@ const ContentListView: FunctionComponent<Props> = ({
 
   const addNewItem = useCallback(async () => {
     if (isFilesSmartView) {
-      void filesController.uploadNewFile()
+      if (StreamingFileReader.available()) {
+        void filesController.uploadNewFile()
+        return
+      }
+
+      fileInputRef.current?.click()
     } else {
       await createNewNote()
       toggleAppPane(AppPaneId.Editor)
@@ -179,6 +186,21 @@ const ContentListView: FunctionComponent<Props> = ({
       <ResponsivePaneContent paneId={AppPaneId.Items}>
         <div id="items-title-bar" className="section-title-bar border-b border-solid border-border">
           <div id="items-title-bar-container">
+            <input
+              type="file"
+              className="absolute top-0 left-0 opacity-0"
+              multiple
+              ref={fileInputRef}
+              onChange={(event) => {
+                const files = event.currentTarget.files
+
+                if (!files) return
+
+                for (const file of files) {
+                  void filesController.uploadNewFile(file)
+                }
+              }}
+            />
             <ContentListHeader
               application={application}
               panelTitle={panelTitle}

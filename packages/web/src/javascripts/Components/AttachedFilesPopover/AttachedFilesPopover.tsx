@@ -10,6 +10,7 @@ import PopoverFileItem from './PopoverFileItem'
 import { PopoverFileItemActionType } from './PopoverFileItemAction'
 import { PopoverTabs } from './PopoverTabs'
 import { FilesController } from '@/Controllers/FilesController'
+import { StreamingFileReader } from '@standardnotes/filepicker'
 
 type Props = {
   application: WebApplication
@@ -32,6 +33,8 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
   setCurrentTab,
   attachedTabDisabled,
 }) => {
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
   const [searchQuery, setSearchQuery] = useState('')
   const searchInputRef = useRef<HTMLInputElement>(null)
 
@@ -42,13 +45,9 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
       ? filesList.filter((file) => file.name.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1)
       : filesList
 
-  const handleAttachFilesClick = async () => {
-    const uploadedFiles = await filesController.uploadNewFile()
-    if (!uploadedFiles) {
-      return
-    }
+  const attachFilesIfRequired = (files: FileItem[]) => {
     if (currentTab === PopoverTabs.AttachedFiles) {
-      uploadedFiles.forEach((file) => {
+      files.forEach((file) => {
         filesController
           .handleFileAction({
             type: PopoverFileItemActionType.AttachFileToNote,
@@ -57,6 +56,19 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
           .catch(console.error)
       })
     }
+  }
+
+  const handleAttachFilesClick = async () => {
+    if (!StreamingFileReader.available()) {
+      fileInputRef.current?.click()
+      return
+    }
+
+    const uploadedFiles = await filesController.uploadNewFile()
+    if (!uploadedFiles) {
+      return
+    }
+    attachFilesIfRequired(uploadedFiles)
   }
 
   const previewHandler = (file: FileItem) => {
@@ -161,6 +173,24 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
           </div>
         )}
       </div>
+      <input
+        type="file"
+        className="absolute top-0 left-0 opacity-0"
+        multiple
+        ref={fileInputRef}
+        onChange={async (event) => {
+          const files = event.currentTarget.files
+
+          if (!files) return
+
+          for (const file of files) {
+            const uploadedFiles = await filesController.uploadNewFile(file)
+            if (uploadedFiles) {
+              attachFilesIfRequired(uploadedFiles)
+            }
+          }
+        }}
+      />
       {filteredList.length > 0 && (
         <button
           className="flex w-full cursor-pointer items-center border-0 border-t border-solid border-border bg-transparent px-3 py-3 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
