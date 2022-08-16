@@ -1,6 +1,6 @@
 import { FileItem } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useCallback } from 'react'
+import { FunctionComponent, useCallback, useEffect, useRef } from 'react'
 import { getFileIconComponent } from '../AttachedFilesPopover/getFileIconComponent'
 import ListItemConflictIndicator from './ListItemConflictIndicator'
 import ListItemFlagIcons from './ListItemFlagIcons'
@@ -9,6 +9,8 @@ import ListItemMetadata from './ListItemMetadata'
 import { DisplayableListItemProps } from './Types/DisplayableListItemProps'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
+import { useLongPressEvent } from '@/Hooks/useLongPress'
+import { isIOS } from '@/Utils'
 
 const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
   application,
@@ -24,8 +26,11 @@ const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
 }) => {
   const { toggleAppPane } = useResponsiveAppPane()
 
+  const listItemRef = useRef<HTMLDivElement>(null)
+
   const openFileContextMenu = useCallback(
     (posX: number, posY: number) => {
+      filesController.setShowFileContextMenu(false)
       filesController.setFileContextMenuLocation({
         x: posX,
         y: posY,
@@ -53,6 +58,24 @@ const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
     [selected, selectionController, item.uuid, openFileContextMenu],
   )
 
+  const { attachEvents, cleanupEvents } = useLongPressEvent(listItemRef, () => {
+    void openContextMenu(0, 0)
+  })
+
+  useEffect(() => {
+    const shouldUseLongPress = isIOS()
+
+    if (shouldUseLongPress) {
+      attachEvents()
+    }
+
+    return () => {
+      if (shouldUseLongPress) {
+        cleanupEvents()
+      }
+    }
+  }, [attachEvents, cleanupEvents])
+
   const onClick = useCallback(async () => {
     const { didSelect } = await selectionController.selectItem(item.uuid, true)
     if (didSelect) {
@@ -68,6 +91,7 @@ const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
 
   return (
     <div
+      ref={listItemRef}
       className={`content-list-item flex w-full cursor-pointer items-stretch text-text ${
         selected && 'selected border-l-2px border-solid border-info'
       }`}

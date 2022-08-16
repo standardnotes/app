@@ -1,7 +1,7 @@
 import { PLAIN_EDITOR_NAME } from '@/Constants/Constants'
 import { sanitizeHtmlString, SNNote } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useCallback } from 'react'
+import { FunctionComponent, useCallback, useEffect, useRef } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import ListItemConflictIndicator from './ListItemConflictIndicator'
 import ListItemFlagIcons from './ListItemFlagIcons'
@@ -10,6 +10,8 @@ import ListItemMetadata from './ListItemMetadata'
 import { DisplayableListItemProps } from './Types/DisplayableListItemProps'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
+import { useLongPressEvent } from '@/Hooks/useLongPress'
+import { isIOS } from '@/Utils'
 
 const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
   application,
@@ -26,12 +28,15 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
 }) => {
   const { toggleAppPane } = useResponsiveAppPane()
 
+  const listItemRef = useRef<HTMLDivElement>(null)
+
   const editorForNote = application.componentManager.editorForNote(item as SNNote)
   const editorName = editorForNote?.name ?? PLAIN_EDITOR_NAME
   const [icon, tint] = application.iconsController.getIconAndTintForNoteType(editorForNote?.package_info.note_type)
   const hasFiles = application.items.getFilesForNote(item as SNNote).length > 0
 
   const openNoteContextMenu = (posX: number, posY: number) => {
+    notesController.setContextMenuOpen(false)
     notesController.setContextMenuClickLocation({
       x: posX,
       y: posY,
@@ -55,6 +60,24 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
     }
   }
 
+  const { attachEvents, cleanupEvents } = useLongPressEvent(listItemRef, () => {
+    void openContextMenu(0, 0)
+  })
+
+  useEffect(() => {
+    const shouldUseLongPress = isIOS()
+
+    if (shouldUseLongPress) {
+      attachEvents()
+    }
+
+    return () => {
+      if (shouldUseLongPress) {
+        cleanupEvents()
+      }
+    }
+  }, [attachEvents, cleanupEvents])
+
   const onClick = useCallback(async () => {
     const { didSelect } = await selectionController.selectItem(item.uuid, true)
     if (didSelect) {
@@ -64,6 +87,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
 
   return (
     <div
+      ref={listItemRef}
       className={`content-list-item flex w-full cursor-pointer items-stretch text-text ${
         selected && 'selected border-l-2 border-solid border-info'
       }`}
