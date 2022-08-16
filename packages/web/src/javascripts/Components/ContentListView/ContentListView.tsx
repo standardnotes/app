@@ -21,6 +21,8 @@ import ResponsivePaneContent from '../ResponsivePane/ResponsivePaneContent'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { StreamingFileReader } from '@standardnotes/filepicker'
+import SearchBar from '../SearchBar/SearchBar'
+import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -32,6 +34,7 @@ type Props = {
   noteTagsController: NoteTagsController
   notesController: NotesController
   selectionController: SelectedItemsController
+  searchOptionsController: SearchOptionsController
 }
 
 const ContentListView: FunctionComponent<Props> = ({
@@ -44,6 +47,7 @@ const ContentListView: FunctionComponent<Props> = ({
   noteTagsController,
   notesController,
   selectionController,
+  searchOptionsController,
 }) => {
   const { toggleAppPane } = useResponsiveAppPane()
 
@@ -211,6 +215,7 @@ const ContentListView: FunctionComponent<Props> = ({
               isFilesSmartView={isFilesSmartView}
               optionsSubtitle={optionsSubtitle}
             />
+            <SearchBar itemListController={itemListController} searchOptionsController={searchOptionsController} />
             <NoAccountWarning
               accountMenuController={accountMenuController}
               noAccountWarningController={noAccountWarningController}
