@@ -60,7 +60,7 @@ const NoteTag = ({ viewControllerManager, tag }: Props) => {
         tagRef.current?.focus()
       }
     },
-    [viewControllerManager, tagClicked, tag],
+    [viewControllerManager, tagClicked, tag, toggleAppPane],
   )
 
   const onFocus = useCallback(() => {
