@@ -1,6 +1,6 @@
 import { FileItem } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useCallback, useEffect, useRef } from 'react'
+import { FunctionComponent, useCallback, useRef } from 'react'
 import { getFileIconComponent } from '../AttachedFilesPopover/getFileIconComponent'
 import ListItemConflictIndicator from './ListItemConflictIndicator'
 import ListItemFlagIcons from './ListItemFlagIcons'
@@ -9,8 +9,7 @@ import ListItemMetadata from './ListItemMetadata'
 import { DisplayableListItemProps } from './Types/DisplayableListItemProps'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
-import { useLongPressEvent } from '@/Hooks/useLongPress'
-import { isIOS } from '@/Utils'
+import { useContextMenuEvent } from '@/Hooks/useContextMenuEvent'
 
 const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
   application,
@@ -58,24 +57,6 @@ const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
     [selected, selectionController, item.uuid, openFileContextMenu],
   )
 
-  const { attachEvents, cleanupEvents } = useLongPressEvent(listItemRef, () => {
-    void openContextMenu(0, 0)
-  })
-
-  useEffect(() => {
-    const shouldUseLongPress = isIOS()
-
-    if (shouldUseLongPress) {
-      attachEvents()
-    }
-
-    return () => {
-      if (shouldUseLongPress) {
-        cleanupEvents()
-      }
-    }
-  }, [attachEvents, cleanupEvents])
-
   const onClick = useCallback(async () => {
     const { didSelect } = await selectionController.selectItem(item.uuid, true)
     if (didSelect) {
@@ -89,6 +70,8 @@ const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
       'w-5 h-5 flex-shrink-0',
     )
 
+  useContextMenuEvent(listItemRef, openContextMenu)
+
   return (
     <div
       ref={listItemRef}
@@ -97,10 +80,6 @@ const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
       }`}
       id={item.uuid}
       onClick={onClick}
-      onContextMenu={(event) => {
-        event.preventDefault()
-        void openContextMenu(event.clientX, event.clientY)
-      }}
     >
       {!hideIcon ? (
         <div className="mr-0 flex flex-col items-center justify-between p-4.5 pr-3">

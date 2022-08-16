@@ -1,10 +1,11 @@
 import { RefObject, useCallback, useMemo, useRef } from 'react'
 
-const ReactNativeLongpressDelay = 400
+// According to https://reactnative.dev/docs/touchablewithoutfeedback#onlongpress
+const ReactNativeLongpressDelay = 370
 
 export const useLongPressEvent = (
   elementRef: RefObject<HTMLElement>,
-  listener: () => void,
+  listener: (x: number, y: number) => void,
   delay = ReactNativeLongpressDelay,
 ) => {
   const longPressTimeout = useRef<number>()
@@ -15,10 +16,18 @@ export const useLongPressEvent = (
     }
   }, [])
 
-  const createLongPressTimeout = useCallback(() => {
-    clearLongPressTimeout()
-    longPressTimeout.current = window.setTimeout(listener, delay)
-  }, [clearLongPressTimeout, delay, listener])
+  const createLongPressTimeout = useCallback(
+    (event: PointerEvent) => {
+      clearLongPressTimeout()
+      longPressTimeout.current = window.setTimeout(() => {
+        const x = event.clientX
+        const y = event.clientY
+
+        listener(x, y)
+      }, delay)
+    },
+    [clearLongPressTimeout, delay, listener],
+  )
 
   const attachEvents = useCallback(() => {
     if (!elementRef.current) {
