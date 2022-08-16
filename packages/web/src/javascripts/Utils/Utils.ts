@@ -172,6 +172,9 @@ export const convertStringifiedBooleanToBoolean = (value: string) => {
   return value !== 'false'
 }
 
+// https://stackoverflow.com/questions/9038625/detect-if-device-is-ios/9039885#9039885
+export const isIOS = () => /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream
+
 // https://stackoverflow.com/a/57527009/2504429
 export const disableIosTextFieldZoom = () => {
   const addMaximumScaleToMetaViewport = () => {
@@ -194,10 +197,7 @@ export const disableIosTextFieldZoom = () => {
     }
   }
 
-  // https://stackoverflow.com/questions/9038625/detect-if-device-is-ios/9039885#9039885
-  const checkIsIOS = () => /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream
-
-  if (checkIsIOS()) {
+  if (isIOS()) {
     addMaximumScaleToMetaViewport()
   }
 }
