@@ -11,6 +11,8 @@ import {
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { SNTag } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
+import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
+import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -18,6 +20,8 @@ type Props = {
 }
 
 const NoteTag = ({ viewControllerManager, tag }: Props) => {
+  const { toggleAppPane } = useResponsiveAppPane()
+
   const noteTags = viewControllerManager.noteTagsController
 
   const { autocompleteInputFocused, focusedTagUuid, tags } = noteTags
@@ -46,15 +50,17 @@ const NoteTag = ({ viewControllerManager, tag }: Props) => {
   )
 
   const onTagClick: MouseEventHandler = useCallback(
-    (event) => {
+    async (event) => {
       if (tagClicked && event.target !== deleteTagRef.current) {
         setTagClicked(false)
-        void viewControllerManager.navigationController.setSelectedTag(tag)
+        await viewControllerManager.navigationController.setSelectedTag(tag)
+        toggleAppPane(AppPaneId.Items)
       } else {
         setTagClicked(true)
+        tagRef.current?.focus()
       }
     },
-    [viewControllerManager, tagClicked, tag],
+    [viewControllerManager, tagClicked, tag, toggleAppPane],
   )
 
   const onFocus = useCallback(() => {
@@ -132,7 +138,7 @@ const NoteTag = ({ viewControllerManager, tag }: Props) => {
       {showDeleteButton && (
         <a
           ref={deleteTagRef}
-          type="button"
+          role="button"
           className="ml-2 -mr-1 flex cursor-pointer border-0 bg-transparent p-0"
           onBlur={onBlur}
           onClick={onDeleteTagClick}
