@@ -43,7 +43,7 @@ const getKey = () => {
 const RootId = 'app-group-root'
 
 const setViewportHeight = () => {
-  document.documentElement.style.setProperty('--viewport-height', `${window.innerHeight}px`)
+  document.documentElement.style.setProperty('--viewport-height', `${visualViewport.height}px`)
 }
 
 const startApplication: StartApplication = async function startApplication(
@@ -56,13 +56,15 @@ const startApplication: StartApplication = async function startApplication(
   SNLog.onLog = console.log
   SNLog.onError = console.error
   let root: Root
+  let viewportHeightInterval: number
 
   const onDestroy = () => {
     const rootElement = document.getElementById(RootId) as HTMLElement
     root.unmount()
     rootElement.remove()
-    window.removeEventListener('resize', setViewportHeight)
-    window.removeEventListener('orientationchange', setViewportHeight)
+    if (viewportHeightInterval) {
+      clearInterval(viewportHeightInterval)
+    }
     renderApp()
   }
 
@@ -73,8 +75,12 @@ const startApplication: StartApplication = async function startApplication(
     root = createRoot(appendedRootNode)
 
     setViewportHeight()
-    window.addEventListener('resize', setViewportHeight)
-    window.addEventListener('orientationchange', setViewportHeight)
+    viewportHeightInterval = window.setInterval(() => {
+      setViewportHeight()
+      document.querySelector('.main-ui-view')?.scrollIntoView({
+        inline: 'end',
+      })
+    }, 250)
 
     disableIosTextFieldZoom()
 
