@@ -44,7 +44,6 @@ docs
 │   ├── katex
 │   ├── .nojekyll
 │   ├── CNAME
-│   └── matomo.js
 ├── .gitignore
 ├── .prettierrc
 ├── docusaurus.config.js
