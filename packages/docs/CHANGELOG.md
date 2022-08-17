@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0](https://github.com/standardnotes/app/compare/@standardnotes/docs@0.1.0...@standardnotes/docs@0.2.0) (2022-08-17)
+
+### Features
+
+* **docs:** remove matomo in favour of plausible ([6d7bcd7](https://github.com/standardnotes/app/commit/6d7bcd7a8d2dfffb6dc69899406af57e41c071df))
+
 # [0.1.0](https://github.com/standardnotes/app/compare/@standardnotes/docs@0.0.3...@standardnotes/docs@0.1.0) (2022-07-11)
 
 ### Features

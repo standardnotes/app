@@ -9,10 +9,9 @@ type Props = {
   features: FeaturesController
   hasMigration: boolean
   onClickMigration: () => void
-  className?: string
 }
 
-const TagsSectionTitle: FunctionComponent<Props> = ({ features, hasMigration, onClickMigration, className = '' }) => {
+const TagsSectionTitle: FunctionComponent<Props> = ({ features, hasMigration, onClickMigration }) => {
   const entitledToFolders = features.hasFolders
   const modal = usePremiumModal()
 
@@ -23,7 +22,7 @@ const TagsSectionTitle: FunctionComponent<Props> = ({ features, hasMigration, on
   if (entitledToFolders) {
     return (
       <>
-        <div className={`title text-sm ${className}`}>
+        <div className="title text-sm">
           <span className="font-bold">Folders</span>
           {hasMigration && (
             <label className="ml-1 cursor-pointer font-bold text-info" onClick={onClickMigration}>
@@ -37,7 +36,7 @@ const TagsSectionTitle: FunctionComponent<Props> = ({ features, hasMigration, on
 
   return (
     <>
-      <div className={`title text-sm ${className}`}>
+      <div className="title text-sm">
         <span className="font-bold">Tags</span>
         <Tooltip label={TAG_FOLDERS_FEATURE_TOOLTIP}>
           <label className="ml-1 cursor-pointer font-bold text-passive-2" onClick={showPremiumAlert}>

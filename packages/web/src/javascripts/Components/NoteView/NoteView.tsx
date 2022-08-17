@@ -36,6 +36,7 @@ import {
 import { reloadFont } from './FontFunctions'
 import { NoteViewProps } from './NoteViewProps'
 import IndicatorCircle from '../IndicatorCircle/IndicatorCircle'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 
 const MINIMUM_STATUS_DURATION = 400
 const TEXTAREA_DEBOUNCE = 100
@@ -911,7 +912,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
           {this.note && (
             <div id="editor-title-bar" className="content-title-bar section-title-bar z-editor-title-bar w-full">
-              <div className="mb-2 flex flex-wrap items-center justify-between gap-2 md:mb-0 md:flex-nowrap md:gap-0">
+              <div className="mb-2 flex flex-wrap items-start justify-between gap-2 md:mb-0 md:flex-nowrap md:gap-0 xl:items-center">
                 <div className={(this.state.noteLocked ? 'locked' : '') + ' flex-grow'}>
                   <div className="title overflow-auto">
                     <input
@@ -929,9 +930,14 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                     />
                   </div>
                 </div>
-                <div className="flex flex-col flex-wrap items-start gap-3 md:flex-row md:flex-nowrap md:items-center">
+                <div
+                  className={classNames(
+                    'flex flex-col flex-wrap items-start gap-3 md:flex-col-reverse md:items-end',
+                    'xl:flex-row xl:flex-nowrap xl:items-center',
+                  )}
+                >
                   {this.state.noteStatus?.message?.length && (
-                    <div id="save-status-container">
+                    <div id="save-status-container" className={'xl:mr-5 xl:max-w-[16ch]'}>
                       <div id="save-status">
                         <div
                           className={

@@ -5,13 +5,12 @@ import SmartViewsList from './SmartViewsList'
 
 type Props = {
   viewControllerManager: ViewControllerManager
-  isCollapsed: boolean
 }
 
-const SmartViewsSection: FunctionComponent<Props> = ({ viewControllerManager, isCollapsed }) => {
+const SmartViewsSection: FunctionComponent<Props> = ({ viewControllerManager }) => {
   return (
     <section>
-      <SmartViewsList viewControllerManager={viewControllerManager} isCollapsed={isCollapsed} />
+      <SmartViewsList viewControllerManager={viewControllerManager} />
     </section>
   )
 }

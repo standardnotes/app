@@ -156,8 +156,8 @@ module.exports = {
   ],
   scripts: [
     {
-      src: `/matomo.js`,
-      async: true,
+      src: 'https://plausible.standardnotes.com/js/plausible.js',
+      "data-domain": 'docs.standardnotes.com',
       defer: true,
     },
   ],

@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.44.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.44.6...@standardnotes/web@3.44.7) (2022-08-17)
+
+### Bug Fixes
+
+* remove tablet specific responsive UI ([#1411](https://github.com/standardnotes/app/issues/1411)) ([a25923f](https://github.com/standardnotes/app/commit/a25923f0843bfa18e21883a040f95636f23e45ab))
+
+## [3.44.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.44.5...@standardnotes/web@3.44.6) (2022-08-16)
+
+### Bug Fixes
+
+* note tag delete button not showing on iOS ([#1403](https://github.com/standardnotes/app/issues/1403)) ([2ea9f86](https://github.com/standardnotes/app/commit/2ea9f862feb77a826af8b6ccf7cc2de1a1e50733))
+
 ## [3.44.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.44.4...@standardnotes/web@3.44.5) (2022-08-15)
 
 ### Bug Fixes
