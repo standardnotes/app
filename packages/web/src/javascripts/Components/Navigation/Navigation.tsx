@@ -10,7 +10,6 @@ import SearchBar from '@/Components/SearchBar/SearchBar'
 import ResponsivePaneContent from '@/Components/ResponsivePane/ResponsivePaneContent'
 import { AppPaneId } from '@/Components/ResponsivePane/AppPaneMetadata'
 import { classNames } from '@/Utils/ConcatenateClassNames'
-import Icon from '@/Components/Icon/Icon'
 
 type Props = {
   application: WebApplication
@@ -20,7 +19,6 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
   const viewControllerManager = useMemo(() => application.getViewControllerManager(), [application])
   const ref = useRef<HTMLDivElement>(null)
   const [panelWidth, setPanelWidth] = useState<number>(0)
-  const [isPanelExpanded, setIsPanelExpanded] = useState(true)
 
   useEffect(() => {
     const removeObserver = application.addEventObserver(async () => {
@@ -51,36 +49,20 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
   return (
     <div
       id="navigation"
-      className={classNames(
-        'sn-component section app-column xl:w-[220px] xsm-only:!w-full sm-only:!w-full md-only:transition-width lg-only:transition-width',
-        isPanelExpanded ? 'md-only:!w-[220px] lg-only:!w-[220px]' : 'md-only:!w-18 lg-only:!w-18',
-      )}
+      className={'sn-component section app-column w-[220px] xsm-only:!w-full sm-only:!w-full'}
       ref={ref}
     >
       <ResponsivePaneContent paneId={AppPaneId.Navigation} contentElementId="navigation-content">
-        {isPanelExpanded && (
-          <SearchBar
-            itemListController={viewControllerManager.itemListController}
-            searchOptionsController={viewControllerManager.searchOptionsController}
-            selectedViewTitle={viewControllerManager.navigationController.selected?.title}
-          />
-        )}
-        <div className={'flex justify-end'}>
-          <div className={classNames('section-title-bar block w-full xl:block', !isPanelExpanded && 'hidden')}>
-            <div className="section-title-bar-header">
-              <div className="title text-sm">
-                <span className="font-bold">Views</span>
-              </div>
+        <SearchBar
+          itemListController={viewControllerManager.itemListController}
+          searchOptionsController={viewControllerManager.searchOptionsController}
+          selectedViewTitle={viewControllerManager.navigationController.selected?.title}
+        />
+        <div className={'section-title-bar'}>
+          <div className="section-title-bar-header">
+            <div className="title text-sm">
+              <span className="font-bold">Views</span>
             </div>
-          </div>
-          <div
-            className={classNames(
-              'hidden items-end self-end rounded-full rounded-tr-none rounded-br-none bg-default p-1 text-foreground md:flex xl:hidden',
-              isPanelExpanded ? 'mb-1 w-fit' : 'mt-4.5 mb-3 ml-3 w-full',
-            )}
-            onClick={() => setIsPanelExpanded(!isPanelExpanded)}
-          >
-            <Icon type="chevron-down" className={isPanelExpanded ? 'rotate-90' : '-rotate-90'} />
           </div>
         </div>
         <div
@@ -90,8 +72,8 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
             'md:hover:[overflow-y:_overlay]',
           )}
         >
-          <SmartViewsSection viewControllerManager={viewControllerManager} isCollapsed={!isPanelExpanded} />
-          <TagsSection viewControllerManager={viewControllerManager} isCollapsed={!isPanelExpanded} />
+          <SmartViewsSection viewControllerManager={viewControllerManager} />
+          <TagsSection viewControllerManager={viewControllerManager} />
         </div>
       </ResponsivePaneContent>
       {ref.current && (

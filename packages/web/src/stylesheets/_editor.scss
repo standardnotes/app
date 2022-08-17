@@ -67,11 +67,6 @@ $heading-height: 75px;
     position: relative;
     min-width: 16ch;
     overflow: visible;
-    margin-right: 20px;
-
-    @media screen and (min-width: 768px) {
-      max-width: 16ch;
-    }
   }
 
   #save-status {
