@@ -8,12 +8,11 @@ import DecoratedInput from '../Input/DecoratedInput'
 import { observer } from 'mobx-react-lite'
 
 type Props = {
-  selectedViewTitle?: string
   itemListController: ItemListController
   searchOptionsController: SearchOptionsController
 }
 
-const SearchBar = ({ itemListController, searchOptionsController, selectedViewTitle = 'Notes' }: Props) => {
+const SearchBar = ({ itemListController, searchOptionsController }: Props) => {
   const searchInputRef = useRef<HTMLInputElement>(null)
 
   const { noteFilterText, setNoteFilterText, clearFilterText, onFilterEnter } = itemListController
@@ -45,15 +44,14 @@ const SearchBar = ({ itemListController, searchOptionsController, selectedViewTi
   }, [clearFilterText])
 
   return (
-    <div className="px-2.5 pt-4 pb-0.5" role="search">
+    <div className="pt-3 pb-0.5" role="search">
       <DecoratedInput
         autocomplete={false}
-        title="Searches notes and files in the currently selected tag"
         className={{
           container: 'px-1',
           input: 'placeholder:text-passive-0',
         }}
-        placeholder={`Search in ${selectedViewTitle}`}
+        placeholder={'Search...'}
         value={noteFilterText}
         ref={searchInputRef}
         onBlur={onSearchBlur}
