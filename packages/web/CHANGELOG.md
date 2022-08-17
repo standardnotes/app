@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.45.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.44.7...@standardnotes/web@3.45.0) (2022-08-17)
+
+### Features
+
+* move search bar back to notes column ([#1408](https://github.com/standardnotes/app/issues/1408)) ([3d1dc8f](https://github.com/standardnotes/app/commit/3d1dc8f38a883685b6c107bece2e75afe8119bf5))
+
 ## [3.44.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.44.6...@standardnotes/web@3.44.7) (2022-08-17)
 
 ### Bug Fixes
