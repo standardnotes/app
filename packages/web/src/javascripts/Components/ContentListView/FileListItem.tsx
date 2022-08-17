@@ -1,6 +1,6 @@
 import { FileItem } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useCallback } from 'react'
+import { FunctionComponent, useCallback, useRef } from 'react'
 import { getFileIconComponent } from '../AttachedFilesPopover/getFileIconComponent'
 import ListItemConflictIndicator from './ListItemConflictIndicator'
 import ListItemFlagIcons from './ListItemFlagIcons'
@@ -9,6 +9,7 @@ import ListItemMetadata from './ListItemMetadata'
 import { DisplayableListItemProps } from './Types/DisplayableListItemProps'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
+import { useContextMenuEvent } from '@/Hooks/useContextMenuEvent'
 
 const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
   application,
@@ -24,8 +25,11 @@ const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
 }) => {
   const { toggleAppPane } = useResponsiveAppPane()
 
+  const listItemRef = useRef<HTMLDivElement>(null)
+
   const openFileContextMenu = useCallback(
     (posX: number, posY: number) => {
+      filesController.setShowFileContextMenu(false)
       filesController.setFileContextMenuLocation({
         x: posX,
         y: posY,
@@ -66,17 +70,16 @@ const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
       'w-5 h-5 flex-shrink-0',
     )
 
+  useContextMenuEvent(listItemRef, openContextMenu)
+
   return (
     <div
+      ref={listItemRef}
       className={`content-list-item flex w-full cursor-pointer items-stretch text-text ${
         selected && 'selected border-l-2px border-solid border-info'
       }`}
       id={item.uuid}
       onClick={onClick}
-      onContextMenu={(event) => {
-        event.preventDefault()
-        void openContextMenu(event.clientX, event.clientY)
-      }}
     >
       {!hideIcon ? (
         <div className="mr-0 flex flex-col items-center justify-between p-4.5 pr-3">
