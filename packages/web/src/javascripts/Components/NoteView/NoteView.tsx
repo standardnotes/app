@@ -933,7 +933,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                 <div
                   className={classNames(
                     'flex flex-col flex-wrap items-start gap-3 md:flex-col-reverse md:items-end',
-                    'xl:flex-row xl:flex-col xl:flex-nowrap xl:items-start',
+                    'xl:flex-row xl:flex-nowrap xl:items-center',
                   )}
                 >
                   {this.state.noteStatus?.message?.length && (

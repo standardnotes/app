@@ -21,6 +21,7 @@ import ResponsivePaneContent from '../ResponsivePane/ResponsivePaneContent'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { StreamingFileReader } from '@standardnotes/filepicker'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -179,7 +180,10 @@ const ContentListView: FunctionComponent<Props> = ({
   return (
     <div
       id="items-column"
-      className="sn-component section app-column flex flex-col border-b border-solid border-border xl:w-87.5 xsm-only:!w-full sm-only:!w-full"
+      className={classNames(
+        'sn-component section app-column flex flex-col border-b border-solid border-border ',
+        'xl:w-87.5 xsm-only:!w-full sm-only:!w-full md-only:!w-52 lg-only:!w-52',
+      )}
       aria-label={'Notes & Files'}
       ref={itemsViewPanelRef}
     >
