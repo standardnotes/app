@@ -1,6 +1,6 @@
 'use strict'
 
-import { disableIosTextFieldZoom } from '@/Utils'
+import { disableIosTextFieldZoom, isIOS } from '@/Utils'
 
 declare global {
   interface Window {
@@ -42,8 +42,28 @@ const getKey = () => {
 
 const RootId = 'app-group-root'
 
+let currentViewportHeight = visualViewport.height
 const setViewportHeight = () => {
-  document.documentElement.style.setProperty('--viewport-height', `${visualViewport.height}px`)
+  const oldViewportHeight = currentViewportHeight
+  currentViewportHeight = visualViewport.height
+  document.documentElement.style.setProperty('--viewport-height', `${currentViewportHeight}px`)
+
+  if (isIOS()) {
+    // Required on iOS as otherwise the UI gets pushed upwards when the keyboard is opened.
+    document.querySelector('.main-ui-view')?.scrollIntoView({
+      inline: 'end',
+    })
+
+    setTimeout(() => {
+      // Required on iOS to make sure the textarea is scrolled to position of the cursor
+      // instead of the content staying under the keyboard.
+      if (document.activeElement?.tagName === 'TEXTAREA' && oldViewportHeight !== currentViewportHeight) {
+        let element = document.activeElement as HTMLTextAreaElement
+        element.blur()
+        element.focus()
+      }
+    })
+  }
 }
 
 const startApplication: StartApplication = async function startApplication(
@@ -77,9 +97,6 @@ const startApplication: StartApplication = async function startApplication(
     setViewportHeight()
     viewportHeightInterval = window.setInterval(() => {
       setViewportHeight()
-      document.querySelector('.main-ui-view')?.scrollIntoView({
-        inline: 'end',
-      })
     }, 250)
 
     disableIosTextFieldZoom()
