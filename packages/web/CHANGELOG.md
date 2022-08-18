@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.45.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.45.1...@standardnotes/web@3.45.2) (2022-08-18)
+
+### Bug Fixes
+
+* hidden file input being clickable ([#1414](https://github.com/standardnotes/app/issues/1414)) ([779596b](https://github.com/standardnotes/app/commit/779596b9ae2df7d70dac9cdd17c85647d85e16b2))
+
+## [3.45.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.45.0...@standardnotes/web@3.45.1) (2022-08-17)
+
+### Bug Fixes
+
+* context menu on longpress on ios safari ([#1405](https://github.com/standardnotes/app/issues/1405)) ([818c306](https://github.com/standardnotes/app/commit/818c3066ccd92156dfc8c797074672cfb08de7bd))
+
+# [3.45.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.44.7...@standardnotes/web@3.45.0) (2022-08-17)
+
+### Features
+
+* move search bar back to notes column ([#1408](https://github.com/standardnotes/app/issues/1408)) ([3d1dc8f](https://github.com/standardnotes/app/commit/3d1dc8f38a883685b6c107bece2e75afe8119bf5))
+
 ## [3.44.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.44.6...@standardnotes/web@3.44.7) (2022-08-17)
 
 ### Bug Fixes

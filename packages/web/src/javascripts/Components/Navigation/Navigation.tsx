@@ -6,7 +6,6 @@ import { ApplicationEvent, PrefKey } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import PanelResizer, { PanelSide, ResizeFinishCallback, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
-import SearchBar from '@/Components/SearchBar/SearchBar'
 import ResponsivePaneContent from '@/Components/ResponsivePane/ResponsivePaneContent'
 import { AppPaneId } from '@/Components/ResponsivePane/AppPaneMetadata'
 import { classNames } from '@/Utils/ConcatenateClassNames'
@@ -53,11 +52,6 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
       ref={ref}
     >
       <ResponsivePaneContent paneId={AppPaneId.Navigation} contentElementId="navigation-content">
-        <SearchBar
-          itemListController={viewControllerManager.itemListController}
-          searchOptionsController={viewControllerManager.searchOptionsController}
-          selectedViewTitle={viewControllerManager.navigationController.selected?.title}
-        />
         <div className={'section-title-bar'}>
           <div className="section-title-bar-header">
             <div className="title text-sm">
