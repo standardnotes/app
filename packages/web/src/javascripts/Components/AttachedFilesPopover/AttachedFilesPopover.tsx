@@ -175,7 +175,7 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
       </div>
       <input
         type="file"
-        className="absolute top-0 left-0 opacity-0"
+        className="absolute top-0 left-0 -z-50 h-px w-px opacity-0"
         multiple
         ref={fileInputRef}
         onChange={async (event) => {
