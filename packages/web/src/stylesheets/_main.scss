@@ -116,10 +116,30 @@ p {
   margin: 0;
 }
 
+html,
+body,
+.main-ui-view,
+#app,
+#app-group-root,
+#app-group-root > *,
+#editor-content textarea,
+#editor-content iframe {
+  height: max-content;
+  min-height: 0;
+  max-height: none;
+
+  display: block;
+}
+
 .main-ui-view {
   position: relative;
   overflow: auto;
   background-color: var(--editor-header-bar-background-color);
+
+  @media screen and (min-width: 768px) {
+    min-height: 100vh;
+    height: 100vh;
+  }
 }
 
 $footer-height: 2rem;
@@ -142,8 +162,8 @@ $footer-height: 2rem;
 
   .section {
     padding-bottom: 0px;
-    height: 100%;
-    max-height: calc(100vh - #{$footer-height});
+    // height: 100%;
+    // max-height: calc(100vh - #{$footer-height});
     position: relative;
     overflow: hidden;
 

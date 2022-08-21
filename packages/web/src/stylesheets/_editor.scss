@@ -95,8 +95,8 @@ $heading-height: 75px;
 .editor-content,
 #editor-content {
   flex: 1;
-  overflow-y: hidden;
-  height: 100%;
+  // overflow-y: hidden;
+  // height: 100%;
   display: flex;
   tab-size: 2;
   background-color: var(--editor-pane-background-color);

@@ -790,6 +790,10 @@ class NoteView extends PureComponent<NoteViewProps, State> {
   }
 
   onSystemEditorLoad = (ref: HTMLTextAreaElement | null) => {
+    if (ref) {
+      ref.style.height = `${ref.scrollHeight}px`
+    }
+
     if (this.removeTabObserver || !ref) {
       return
     }
@@ -889,7 +893,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
     return (
       <div aria-label="Note" className="section editor sn-component">
-        <div className="flex flex-grow flex-col">
+        <div /* className="flex flex-grow flex-col" */>
           {this.state.noteLocked && (
             <EditingDisabledBanner
               onMouseLeave={() => {
@@ -1023,7 +1027,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
             {this.state.editorStateDidLoad && !this.state.editorComponentViewer && !this.state.textareaUnloading && (
               <textarea
                 autoComplete="off"
-                className="editable font-editor"
+                className="editable font-editor min-h-[50vh]"
                 dir="auto"
                 id={ElementIds.NoteTextEditor}
                 onChange={this.onTextAreaChange}
