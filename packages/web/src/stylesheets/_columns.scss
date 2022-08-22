@@ -21,7 +21,7 @@
       flex-grow: 1;
 
       .content {
-        height: 100%;
+        min-height: max-content;
         overflow-y: auto;
       }
     }
