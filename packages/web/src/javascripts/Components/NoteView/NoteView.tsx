@@ -790,7 +790,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
   }
 
   autoResizeTextareaToContent = (ref: HTMLTextAreaElement) => {
-    const isBigScreen = window.matchMedia('min-width: 768px')
+    const isBigScreen = window.matchMedia('(min-width: 768px)')
 
     if (!isBigScreen.matches) {
       ref.style.height = `${ref.scrollHeight}px`
