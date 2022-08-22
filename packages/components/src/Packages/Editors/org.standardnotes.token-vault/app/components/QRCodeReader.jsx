@@ -28,6 +28,12 @@ const convertToGrayScale = (imageData) => {
 }
 
 export default class QRCodeReader extends React.Component {
+  constructor() {
+    super()
+
+    this.fileInputRef = React.createRef(null)
+  }
+
   onImageSelected = (evt) => {
     const file = evt.target.files[0]
     const url = URL.createObjectURL(file)
@@ -70,9 +76,9 @@ export default class QRCodeReader extends React.Component {
   render() {
     return (
       <div className="qr-code-reader-container">
-        <div className="sk-button info">
+        <div className="sk-button info" onClick={() => this.fileInputRef.current.click()}>
           <div className="sk-label">Upload QR Code</div>
-          <input type="file" style={{ display: 'none' }} onChange={this.onImageSelected} />
+          <input type="file" style={{ display: 'none' }} ref={this.fileInputRef} onChange={this.onImageSelected} />
         </div>
       </div>
     )
