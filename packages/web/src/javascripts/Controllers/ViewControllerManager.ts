@@ -2,7 +2,14 @@ import { storage, StorageKey } from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
 import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
 import { destroyAllObjectProperties } from '@/Utils'
-import { ApplicationEvent, DeinitSource, WebOrDesktopDeviceInterface, InternalEventBus } from '@standardnotes/snjs'
+import {
+  ApplicationEvent,
+  DeinitSource,
+  WebOrDesktopDeviceInterface,
+  InternalEventBus,
+  ItemCounterInterface,
+  ItemCounter,
+} from '@standardnotes/snjs'
 import { action, makeObservable, observable } from 'mobx'
 import { ActionsMenuController } from './ActionsMenuController'
 import { FeaturesController } from './FeaturesController'
@@ -52,9 +59,12 @@ export class ViewControllerManager {
 
   private appEventObserverRemovers: (() => void)[] = []
   private eventBus: InternalEventBus
+  private itemCounter: ItemCounterInterface
 
   constructor(public application: WebApplication, private device: WebOrDesktopDeviceInterface) {
     this.eventBus = new InternalEventBus()
+
+    this.itemCounter = new ItemCounter()
 
     this.selectionController = new SelectedItemsController(application, this.eventBus)
 
@@ -90,7 +100,7 @@ export class ViewControllerManager {
 
     this.noAccountWarningController = new NoAccountWarningController(application, this.eventBus)
 
-    this.accountMenuController = new AccountMenuController(application, this.eventBus)
+    this.accountMenuController = new AccountMenuController(application, this.eventBus, this.itemCounter)
 
     this.subscriptionController = new SubscriptionController(application, this.eventBus)
 

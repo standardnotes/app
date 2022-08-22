@@ -1,10 +1,17 @@
 import { destroyAllObjectProperties, isDev } from '@/Utils'
 import { action, computed, makeObservable, observable, runInAction } from 'mobx'
-import { ApplicationEvent, ContentType, InternalEventBus, SNNote, SNTag } from '@standardnotes/snjs'
+import {
+  ApplicationEvent,
+  ContentType,
+  InternalEventBus,
+  SNNote,
+  SNTag,
+  ItemCounterInterface,
+  ItemCounts,
+} from '@standardnotes/snjs'
 import { WebApplication } from '@/Application/Application'
 import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
-import { StructuredItemsCount } from './StructuredItemsCount'
 
 export class AccountMenuController extends AbstractViewController {
   show = false
@@ -28,7 +35,7 @@ export class AccountMenuController extends AbstractViewController {
     destroyAllObjectProperties(this)
   }
 
-  constructor(application: WebApplication, eventBus: InternalEventBus) {
+  constructor(application: WebApplication, eventBus: InternalEventBus, private itemCounter: ItemCounterInterface) {
     super(application, eventBus)
 
     makeObservable(this, {
@@ -152,30 +159,7 @@ export class AccountMenuController extends AbstractViewController {
     return this.notesAndTags.length
   }
 
-  get structuredNotesAndTagsCount(): StructuredItemsCount {
-    const count: StructuredItemsCount = {
-      notes: 0,
-      archived: 0,
-      deleted: 0,
-      tags: 0,
-    }
-    for (const item of this.notesAndTags) {
-      if (item.archived) {
-        count.archived++
-      }
-
-      if (item.trashed) {
-        count.deleted++
-      }
-
-      if (item.content_type === ContentType.Note) {
-        count.notes++
-      }
-
-      if (item.content_type === ContentType.Tag) {
-        count.tags++
-      }
-    }
-    return count
+  get structuredNotesAndTagsCount(): ItemCounts {
+    return this.itemCounter.countNotesAndTags(this.notesAndTags)
   }
 }
