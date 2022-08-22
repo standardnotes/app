@@ -64,9 +64,9 @@ const PositionedPopoverContent = ({
         ref={(node) => {
           setPopoverElement(node)
 
-          const isBigScreen = window.matchMedia('(min-width: 768px)')
+          const isMobile = !window.matchMedia('(min-width: 768px)').matches
 
-          if (node && !isBigScreen.matches) {
+          if (node && isMobile) {
             setTimeout(() => {
               node.scrollIntoView({
                 block: 'start',
