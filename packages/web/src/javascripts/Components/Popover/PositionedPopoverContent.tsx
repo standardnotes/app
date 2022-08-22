@@ -63,6 +63,21 @@ const PositionedPopoverContent = ({
         }}
         ref={(node) => {
           setPopoverElement(node)
+
+          const isBigScreen = window.matchMedia('(min-width: 768px)')
+
+          if (node && !isBigScreen.matches) {
+            setTimeout(() => {
+              node.scrollIntoView({
+                block: 'start',
+              })
+            })
+            document.body.style.height = '100%'
+            document.body.style.overflow = 'hidden'
+          } else {
+            document.body.style.height = ''
+            document.body.style.overflow = ''
+          }
         }}
         data-popover={id}
       >

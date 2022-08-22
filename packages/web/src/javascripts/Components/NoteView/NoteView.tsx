@@ -1035,7 +1035,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
             {this.state.editorStateDidLoad && !this.state.editorComponentViewer && !this.state.textareaUnloading && (
               <textarea
                 autoComplete="off"
-                className="editable font-editor min-h-[50vh]"
+                className="editable font-editor min-h-[65vh] md:min-h-0"
                 dir="auto"
                 id={ElementIds.NoteTextEditor}
                 onChange={this.onTextAreaChange}
