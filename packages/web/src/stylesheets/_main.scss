@@ -45,17 +45,6 @@ body {
   margin: 0;
 }
 
-html,
-body,
-.main-ui-view {
-  // Fallbacks
-  min-height: 100vh;
-  height: 100vh;
-  // Mobile-corrected viewport height
-  min-height: var(--viewport-height);
-  height: var(--viewport-height);
-}
-
 * {
   box-sizing: border-box;
 }
@@ -118,17 +107,17 @@ p {
 
 html,
 body,
-.main-ui-view,
-#app,
-#app-group-root,
-#app-group-root > *,
-#editor-content textarea,
-#editor-content iframe {
+.main-ui-view {
   height: max-content;
   min-height: 0;
   max-height: none;
 
   display: block;
+
+  @media screen and (min-width: 768px) {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .main-ui-view {

@@ -1,6 +1,6 @@
 'use strict'
 
-import { disableIosTextFieldZoom, isIOS } from '@/Utils'
+import { disableIosTextFieldZoom } from '@/Utils'
 
 declare global {
   interface Window {

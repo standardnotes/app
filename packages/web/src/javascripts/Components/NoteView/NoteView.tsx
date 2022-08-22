@@ -789,9 +789,17 @@ class NoteView extends PureComponent<NoteViewProps, State> {
     editor.scrollTop = this.scrollPosition
   }
 
+  autoResizeTextareaToContent = (ref: HTMLTextAreaElement) => {
+    const isBigScreen = window.matchMedia('min-width: 768px')
+
+    if (!isBigScreen.matches) {
+      ref.style.height = `${ref.scrollHeight}px`
+    }
+  }
+
   onSystemEditorLoad = (ref: HTMLTextAreaElement | null) => {
     if (ref) {
-      ref.style.height = `${ref.scrollHeight}px`
+      this.autoResizeTextareaToContent(ref)
     }
 
     if (this.removeTabObserver || !ref) {
@@ -893,7 +901,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
     return (
       <div aria-label="Note" className="section editor sn-component">
-        <div /* className="flex flex-grow flex-col" */>
+        <div className="flex-grow flex-col md:flex">
           {this.state.noteLocked && (
             <EditingDisabledBanner
               onMouseLeave={() => {
