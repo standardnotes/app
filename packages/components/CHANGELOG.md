@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.7.8](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.7.7...@standardnotes/components-meta@2.7.8) (2022-08-22)
+
+### Bug Fixes
+
+* trigger the `onChange` event of qr code uploading input when clicking on the button ([#1421](https://github.com/standardnotes/app/issues/1421)) ([2a976a0](https://github.com/standardnotes/app/commit/2a976a0de499ba33186a52a6bd2c10a709b86fee))
+
 ## [2.7.7](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.7.6...@standardnotes/components-meta@2.7.7) (2022-07-14)
 
 ### Bug Fixes
