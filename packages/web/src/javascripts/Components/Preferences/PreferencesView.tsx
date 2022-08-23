@@ -5,6 +5,7 @@ import { PreferencesMenu } from './PreferencesMenu'
 import PreferencesCanvas from './PreferencesCanvas'
 import { PreferencesProps } from './PreferencesProps'
 import { ElementIds } from '@/Constants/ElementIDs'
+import { isMobileScreen } from '@/Utils'
 
 const PreferencesView: FunctionComponent<PreferencesProps> = (props) => {
   const menu = useMemo(
@@ -30,10 +31,9 @@ const PreferencesView: FunctionComponent<PreferencesProps> = (props) => {
     <div
       className="absolute top-0 left-0 z-preferences flex h-full max-h-screen w-full flex-col bg-contrast"
       ref={(node) => {
-        const isMobile = !window.matchMedia('(min-width: 768px)').matches
         const appGroupRoot = document.getElementById(ElementIds.RootId)
 
-        if (node && isMobile) {
+        if (node && isMobileScreen()) {
           setTimeout(() => {
             node.scrollIntoView({
               block: 'start',

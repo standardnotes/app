@@ -2,8 +2,6 @@ import { Platform, platformFromString } from '@standardnotes/snjs'
 import { IsDesktopPlatform, IsWebPlatform } from '@/Constants/Version'
 import { EMAIL_REGEX } from '../Constants/Constants'
 
-export { isMobile } from './IsMobile'
-
 declare const process: {
   env: {
     NODE_ENV: string | null | undefined
@@ -203,3 +201,5 @@ export const disableIosTextFieldZoom = () => {
     addMaximumScaleToMetaViewport()
   }
 }
+
+export const isMobileScreen = () => !window.matchMedia('(min-width: 768px)').matches

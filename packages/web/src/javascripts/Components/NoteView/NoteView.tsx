@@ -14,7 +14,7 @@ import {
   PayloadEmitSource,
   WebAppEvent,
 } from '@standardnotes/snjs'
-import { debounce, isDesktopApplication } from '@/Utils'
+import { debounce, isDesktopApplication, isMobileScreen } from '@/Utils'
 import { EditorEventSource } from '../../Types/EditorEventSource'
 import { confirmDialog, KeyboardModifier, KeyboardKey } from '@standardnotes/ui-services'
 import { STRING_DELETE_PLACEHOLDER_ATTEMPT, STRING_DELETE_LOCKED_ATTEMPT, StringDeleteNote } from '@/Constants/Strings'
@@ -790,9 +790,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
   }
 
   autoResizeTextareaToContent = (ref: HTMLTextAreaElement) => {
-    const isMobile = !window.matchMedia('(min-width: 768px)').matches
-
-    if (isMobile) {
+    if (isMobileScreen()) {
       ref.style.height = `${ref.scrollHeight}px`
 
       if (ref.scrollHeight === 0) {

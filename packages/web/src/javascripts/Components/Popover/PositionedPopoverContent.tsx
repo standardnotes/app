@@ -1,5 +1,6 @@
 import { useDocumentRect } from '@/Hooks/useDocumentRect'
 import { useAutoElementRect } from '@/Hooks/useElementRect'
+import { isMobileScreen } from '@/Utils'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { useState } from 'react'
 import Icon from '../Icon/Icon'
@@ -64,9 +65,7 @@ const PositionedPopoverContent = ({
         ref={(node) => {
           setPopoverElement(node)
 
-          const isMobile = !window.matchMedia('(min-width: 768px)').matches
-
-          if (node && isMobile) {
+          if (node && isMobileScreen()) {
             setTimeout(() => {
               node.scrollIntoView({
                 block: 'start',
