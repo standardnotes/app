@@ -34,13 +34,12 @@ import { ApplicationGroup } from './Application/ApplicationGroup'
 import { WebOrDesktopDevice } from './Application/Device/WebOrDesktopDevice'
 import { WebApplication } from './Application/Application'
 import { createRoot, Root } from 'react-dom/client'
+import { ElementIds } from './Constants/ElementIDs'
 
 let keyCount = 0
 const getKey = () => {
   return keyCount++
 }
-
-const RootId = 'app-group-root'
 
 const startApplication: StartApplication = async function startApplication(
   defaultSyncServerHost: string,
@@ -54,7 +53,7 @@ const startApplication: StartApplication = async function startApplication(
   let root: Root
 
   const onDestroy = () => {
-    const rootElement = document.getElementById(RootId) as HTMLElement
+    const rootElement = document.getElementById(ElementIds.RootId) as HTMLElement
     root.unmount()
     rootElement.remove()
     renderApp()
@@ -62,7 +61,7 @@ const startApplication: StartApplication = async function startApplication(
 
   const renderApp = () => {
     const rootElement = document.createElement('div')
-    rootElement.id = RootId
+    rootElement.id = ElementIds.RootId
     const appendedRootNode = document.body.appendChild(rootElement)
     root = createRoot(appendedRootNode)
 
