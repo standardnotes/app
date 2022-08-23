@@ -14,7 +14,7 @@ import {
   PayloadEmitSource,
   WebAppEvent,
 } from '@standardnotes/snjs'
-import { debounce, isDesktopApplication, isMobileScreen } from '@/Utils'
+import { debounce, isDesktopApplication } from '@/Utils'
 import { EditorEventSource } from '../../Types/EditorEventSource'
 import { confirmDialog, KeyboardModifier, KeyboardKey } from '@standardnotes/ui-services'
 import { STRING_DELETE_PLACEHOLDER_ATTEMPT, STRING_DELETE_LOCKED_ATTEMPT, StringDeleteNote } from '@/Constants/Strings'
@@ -37,6 +37,7 @@ import { reloadFont } from './FontFunctions'
 import { NoteViewProps } from './NoteViewProps'
 import IndicatorCircle from '../IndicatorCircle/IndicatorCircle'
 import { classNames } from '@/Utils/ConcatenateClassNames'
+import AutoresizingNoteViewTextarea from './AutoresizingTextarea'
 
 const MINIMUM_STATUS_DURATION = 400
 const TEXTAREA_DEBOUNCE = 100
@@ -789,23 +790,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
     editor.scrollTop = this.scrollPosition
   }
 
-  autoResizeTextareaToContent = (ref: HTMLTextAreaElement) => {
-    if (isMobileScreen()) {
-      if (ref.scrollHeight === 0 && !ref.style.height) {
-        setTimeout(() => {
-          this.autoResizeTextareaToContent(ref)
-        })
-      } else {
-        ref.style.height = `${ref.scrollHeight}px`
-      }
-    }
-  }
-
   onSystemEditorLoad = (ref: HTMLTextAreaElement | null) => {
-    if (ref) {
-      this.autoResizeTextareaToContent(ref)
-    }
-
     if (this.removeTabObserver || !ref) {
       return
     }
@@ -1037,9 +1022,8 @@ class NoteView extends PureComponent<NoteViewProps, State> {
             )}
 
             {this.state.editorStateDidLoad && !this.state.editorComponentViewer && !this.state.textareaUnloading && (
-              <textarea
+              <AutoresizingNoteViewTextarea
                 autoComplete="off"
-                className="editable font-editor min-h-[65vh] md:min-h-0"
                 dir="auto"
                 id={ElementIds.NoteTextEditor}
                 onChange={this.onTextAreaChange}
@@ -1048,7 +1032,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                 onFocus={this.onContentFocus}
                 spellCheck={this.state.spellcheck}
                 ref={(ref) => ref && this.onSystemEditorLoad(ref)}
-              ></textarea>
+              />
             )}
 
             {this.state.marginResizersEnabled && this.editorContentRef.current ? (
