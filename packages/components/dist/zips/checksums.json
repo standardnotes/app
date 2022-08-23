@@ -80,9 +80,9 @@
     "binary": "7c6f499b8107f80ec5fd84e591c2c33291d1fc6db85f098df4f8308a0cda901d"
   },
   "org.standardnotes.token-vault": {
-    "version": "2.2.3",
-    "base64": "bf5c3a2aae3f119043ee744ab5535de4705eeed67d5ecf9e1d7b95817f92bc19",
-    "binary": "8ef8a1eaf19d22b0ac279ad0c4d27b29c057b0f9b0d5c5f4cd6183eb506feaa3"
+    "version": "2.2.4",
+    "base64": "fb004e8cae73b351fdb225ef910102a1b7c9b616b92de52f99d2c82d7b4dd5a1",
+    "binary": "9b00f950c868e20e059a5fe7dbd0dd14eac5d94b31817b8bf3c58c88ab5ce236"
   },
   "org.standardnotes.standard-sheets": {
     "version": "1.5.1",
