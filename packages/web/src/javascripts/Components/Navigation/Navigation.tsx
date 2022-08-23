@@ -51,7 +51,11 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
       className={'sn-component section app-column w-[220px] xsm-only:!w-full sm-only:!w-full'}
       ref={ref}
     >
-      <ResponsivePaneContent paneId={AppPaneId.Navigation} contentElementId="navigation-content">
+      <ResponsivePaneContent
+        paneId={AppPaneId.Navigation}
+        contentElementId="navigation-content"
+        contentClassName="min-h-[85vh]"
+      >
         <div className={'section-title-bar'}>
           <div className="section-title-bar-header">
             <div className="title text-sm">
