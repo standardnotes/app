@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.45.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.45.3...@standardnotes/web@3.45.4) (2022-08-23)
+
+### Bug Fixes
+
+* **web:** archived and deleted counts on encryption panel ([#1423](https://github.com/standardnotes/app/issues/1423)) ([2bdd931](https://github.com/standardnotes/app/commit/2bdd931f6dcd876b1659c5d7d045effa26e18a20))
+
 ## [3.45.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.45.2...@standardnotes/web@3.45.3) (2022-08-22)
 
 **Note:** Version bump only for package @standardnotes/web
