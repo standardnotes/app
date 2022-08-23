@@ -1,15 +1,15 @@
-import {
-  InternalEventBusInterface,
-  SyncServiceInterface,
-  ItemManagerInterface,
-  AlertService,
-  ApiServiceInterface,
-  ChallengeServiceInterface,
-} from '@standardnotes/services'
-import { FileService } from './FileService'
 import { PureCryptoInterface, StreamEncryptor } from '@standardnotes/sncrypto-common'
 import { FileItem } from '@standardnotes/models'
 import { EncryptionProvider } from '@standardnotes/encryption'
+
+import { ItemManagerInterface } from '../Item/ItemManagerInterface'
+import { ChallengeServiceInterface } from '../Challenge'
+import { InternalEventBusInterface } from '..'
+import { AlertService } from '../Alert/AlertService'
+import { ApiServiceInterface } from '../Api/ApiServiceInterface'
+import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
+
+import { FileService } from './FileService'
 
 describe('fileService', () => {
   let apiService: ApiServiceInterface

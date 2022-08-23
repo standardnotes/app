@@ -22,7 +22,7 @@
     "prebuild": "yarn clean",
     "build": "tsc -p tsconfig.json",
     "lint": "eslint . --ext .ts",
-    "test:unit": "jest"
+    "test": "jest"
   },
   "dependencies": {
     "@standardnotes/auth": "^3.19.4",

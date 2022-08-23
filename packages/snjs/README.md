@@ -58,5 +58,5 @@ yarn start:server:e2e
 From the root of the repository, run:
 
 ```
-yarn run test:unit
+yarn run test
 ```

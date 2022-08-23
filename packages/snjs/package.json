@@ -25,7 +25,7 @@
     "lint": "yarn lint:tsc && yarn lint:eslint",
     "lint:eslint": "eslint --ext .ts lib/",
     "lint:tsc": "tsc --noEmit --emitDeclarationOnly false --project lib/tsconfig.json",
-    "test:unit": "jest spec --coverage",
+    "test": "jest spec --coverage",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand"
   },
   "devDependencies": {
