@@ -791,12 +791,12 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
   autoResizeTextareaToContent = (ref: HTMLTextAreaElement) => {
     if (isMobileScreen()) {
-      ref.style.height = `${ref.scrollHeight}px`
-
-      if (ref.scrollHeight === 0) {
+      if (ref.scrollHeight === 0 && !ref.style.height) {
         setTimeout(() => {
           this.autoResizeTextareaToContent(ref)
         })
+      } else {
+        ref.style.height = `${ref.scrollHeight}px`
       }
     }
   }
