@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.17.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.17.0...@standardnotes/services@1.17.1) (2022-08-23)
+
+### Bug Fixes
+
+* **web:** archived and deleted counts on encryption panel ([#1423](https://github.com/standardnotes/app/issues/1423)) ([2bdd931](https://github.com/standardnotes/app/commit/2bdd931f6dcd876b1659c5d7d045effa26e18a20))
+
 # [1.17.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.16.5...@standardnotes/services@1.17.0) (2022-08-05)
 
 ### Features
