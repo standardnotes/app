@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.125.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.125.2...@standardnotes/snjs@2.125.3) (2022-08-24)
+
+### Bug Fixes
+
+* **snjs:** showing archived notes on trashed smart view ([#1426](https://github.com/standardnotes/app/issues/1426)) ([2c69a51](https://github.com/standardnotes/app/commit/2c69a514a8a2c3cfe713e118bb6997f21e41ebe8))
+
 ## [2.125.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.125.1...@standardnotes/snjs@2.125.2) (2022-08-23)
 
 **Note:** Version bump only for package @standardnotes/snjs
