@@ -3,10 +3,7 @@ import { ComponentPropsWithoutRef, ForwardedRef, forwardRef } from 'react'
 
 // Based on: https://css-tricks.com/auto-growing-inputs-textareas/#aa-other-ideas
 const AutoresizingNoteViewTextarea = forwardRef(
-  (
-    { value, className, ...textareaProps }: ComponentPropsWithoutRef<'textarea'>,
-    ref: ForwardedRef<HTMLTextAreaElement>,
-  ) => {
+  ({ value, ...textareaProps }: ComponentPropsWithoutRef<'textarea'>, ref: ForwardedRef<HTMLTextAreaElement>) => {
     return (
       <div className="relative inline-grid min-h-[75vh] w-full grid-rows-1 items-stretch md:block md:flex-grow">
         <pre
