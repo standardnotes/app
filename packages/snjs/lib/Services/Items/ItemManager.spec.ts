@@ -11,6 +11,8 @@ import {
   FillItemContent,
   PayloadTimestampDefaults,
   NoteContent,
+  SmartView,
+  SystemViewId,
 } from '@standardnotes/models'
 
 const setupRandomUuid = () => {
@@ -178,6 +180,39 @@ describe('itemManager', () => {
 
       const notes = itemManager.getDisplayableNotes()
       expect(notes).toHaveLength(1)
+    })
+
+    it('viewing trashed notes smart view should include archived notes', async () => {
+      itemManager = createService()
+
+      const archivedNote = createNote('archived')
+      const trashedNote = createNote('trashed')
+      const archivedAndTrashedNote = createNote('archived&trashed')
+
+      await itemManager.insertItems([archivedNote, trashedNote, archivedAndTrashedNote])
+
+      await itemManager.changeItem<Models.NoteMutator>(archivedNote, (m) => {
+        m.archived = true
+      })
+      await itemManager.changeItem<Models.NoteMutator>(trashedNote, (m) => {
+        m.trashed = true
+      })
+      await itemManager.changeItem<Models.NoteMutator>(archivedAndTrashedNote, (m) => {
+        m.trashed = true
+        m.archived = true
+      })
+
+      itemManager.setPrimaryItemDisplayOptions({
+        sortBy: 'title',
+        sortDirection: 'asc',
+        includeArchived: false,
+        includeTrashed: false,
+        views: [{ uuid: SystemViewId.TrashedNotes } as jest.Mocked<SmartView>],
+      })
+
+      const notes = itemManager.getDisplayableNotes()
+
+      expect(notes).toHaveLength(2)
     })
   })
 
