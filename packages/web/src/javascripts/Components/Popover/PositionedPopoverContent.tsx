@@ -1,6 +1,5 @@
 import { useDocumentRect } from '@/Hooks/useDocumentRect'
 import { useAutoElementRect } from '@/Hooks/useElementRect'
-import { isMobileScreen } from '@/Utils'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { useState } from 'react'
 import Icon from '../Icon/Icon'
@@ -10,6 +9,8 @@ import { getPositionedPopoverStyles } from './GetPositionedPopoverStyles'
 import { PopoverContentProps } from './Types'
 import { getPopoverMaxHeight, getAppRect } from './Utils/Rect'
 import { usePopoverCloseOnClickOutside } from './Utils/usePopoverCloseOnClickOutside'
+import { RemoveScroll } from 'react-remove-scroll'
+import { isMobileScreen } from '@/Utils'
 
 const PositionedPopoverContent = ({
   align = 'end',
@@ -52,44 +53,38 @@ const PositionedPopoverContent = ({
 
   return (
     <Portal>
-      <div
-        className={classNames(
-          'absolute top-0 left-0 flex h-full w-full min-w-80 cursor-auto flex-col overflow-y-auto rounded bg-default shadow-main md:h-auto md:max-w-xs',
-          overrideZIndex ? overrideZIndex : 'z-dropdown-menu',
-          className,
-        )}
-        style={{
-          ...styles,
-          maxHeight: getPopoverMaxHeight(getAppRect(documentRect), anchorRect, positionedSide, positionedAlignment),
-        }}
-        ref={(node) => {
-          setPopoverElement(node)
-
-          if (node && isMobileScreen()) {
-            setTimeout(() => {
-              node.scrollIntoView({
+      <RemoveScroll enabled={isMobileScreen()}>
+        <div
+          className={classNames(
+            'absolute top-0 left-0 flex h-full w-full min-w-80 cursor-auto flex-col overflow-y-auto rounded bg-default shadow-main md:h-auto md:max-w-xs',
+            overrideZIndex ? overrideZIndex : 'z-dropdown-menu',
+            className,
+          )}
+          style={{
+            ...styles,
+            maxHeight: getPopoverMaxHeight(getAppRect(documentRect), anchorRect, positionedSide, positionedAlignment),
+          }}
+          ref={(node) => {
+            setPopoverElement(node)
+            if (isMobileScreen()) {
+              node?.scrollIntoView({
                 block: 'start',
               })
-            })
-            document.body.style.height = '100%'
-            document.body.style.overflow = 'hidden'
-          } else {
-            document.body.style.height = ''
-            document.body.style.overflow = ''
-          }
-        }}
-        data-popover={id}
-      >
-        <div className="md:hidden">
-          <div className="flex items-center justify-end px-3">
-            <button className="rounded-full border border-border p-1" onClick={togglePopover}>
-              <Icon type="close" className="h-4 w-4" />
-            </button>
+            }
+          }}
+          data-popover={id}
+        >
+          <div className="md:hidden">
+            <div className="flex items-center justify-end px-3">
+              <button className="rounded-full border border-border p-1" onClick={togglePopover}>
+                <Icon type="close" className="h-4 w-4" />
+              </button>
+            </div>
+            <HorizontalSeparator classes="my-2" />
           </div>
-          <HorizontalSeparator classes="my-2" />
+          {children}
         </div>
-        {children}
-      </div>
+      </RemoveScroll>
     </Portal>
   )
 }
