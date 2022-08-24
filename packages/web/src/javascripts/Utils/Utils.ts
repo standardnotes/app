@@ -208,9 +208,7 @@ export const fitNodeToMobileScreen = (node: HTMLElement | null) => {
   if (!node || !isMobileScreen()) {
     return
   }
-  if (isMobileScreen()) {
   node.style.height = `${visualViewport.height}px`
   node.style.position = 'absolute'
   node.style.top = `${document.documentElement.scrollTop}px`
-  }
 }
