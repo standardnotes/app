@@ -203,3 +203,14 @@ export const disableIosTextFieldZoom = () => {
 }
 
 export const isMobileScreen = () => !window.matchMedia('(min-width: 768px)').matches
+
+export const fitNodeToMobileScreen = (node: HTMLElement | null) => {
+  if (!node) {
+    return
+  }
+  if (isMobileScreen()) {
+    node.style.height = `${visualViewport.height}px`
+    node.style.position = 'absolute'
+    node.style.top = `${document.documentElement.scrollTop}px`
+  }
+}

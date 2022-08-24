@@ -10,7 +10,7 @@ import { PopoverContentProps } from './Types'
 import { getPopoverMaxHeight, getAppRect } from './Utils/Rect'
 import { usePopoverCloseOnClickOutside } from './Utils/usePopoverCloseOnClickOutside'
 import { RemoveScroll } from 'react-remove-scroll'
-import { isMobileScreen } from '@/Utils'
+import { fitNodeToMobileScreen, isMobileScreen } from '@/Utils'
 
 const PositionedPopoverContent = ({
   align = 'end',
@@ -66,11 +66,7 @@ const PositionedPopoverContent = ({
           }}
           ref={(node) => {
             setPopoverElement(node)
-            if (isMobileScreen()) {
-              node?.scrollIntoView({
-                block: 'start',
-              })
-            }
+            fitNodeToMobileScreen(node)
           }}
           data-popover={id}
         >
