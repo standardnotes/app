@@ -127,20 +127,20 @@ export class ItemManager
     const override: Models.FilterDisplayOptions = {}
 
     if (options.views && options.views.find((view) => view.uuid === Models.SystemViewId.AllNotes)) {
-      if (options.includeArchived == undefined) {
+      if (options.includeArchived === undefined) {
         override.includeArchived = false
       }
-      if (options.includeTrashed == undefined) {
+      if (options.includeTrashed === undefined) {
         override.includeTrashed = false
       }
     }
     if (options.views && options.views.find((view) => view.uuid === Models.SystemViewId.ArchivedNotes)) {
-      if (options.includeTrashed == undefined) {
+      if (options.includeTrashed === undefined) {
         override.includeTrashed = false
       }
     }
     if (options.views && options.views.find((view) => view.uuid === Models.SystemViewId.TrashedNotes)) {
-      if (options.includeArchived == undefined) {
+      if (!options.includeArchived) {
         override.includeArchived = true
       }
     }

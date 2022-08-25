@@ -13,13 +13,13 @@ export class ItemCounter implements ItemCounterInterface {
     }
 
     for (const item of items) {
-      if (item.archived) {
-        counts.archived++
+      if (item.trashed) {
+        counts.deleted++
 
         continue
       }
-      if (item.trashed) {
-        counts.deleted++
+      if (item.archived) {
+        counts.archived++
 
         continue
       }

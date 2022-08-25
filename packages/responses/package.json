@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/responses",
-  "version": "1.9.3",
+  "version": "1.9.4",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -21,7 +21,7 @@
     "prebuild": "yarn clean",
     "build": "tsc -p tsconfig.json",
     "lint": "eslint . --ext .ts",
-    "test:unit": "jest spec --coverage --passWithNoTests"
+    "test": "jest spec --coverage --passWithNoTests"
   },
   "devDependencies": {
     "@types/jest": "^28.1.5",

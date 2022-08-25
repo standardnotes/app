@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/api",
-  "version": "1.4.8",
+  "version": "1.4.9",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -22,7 +22,7 @@
     "prebuild": "yarn clean",
     "build": "tsc -p tsconfig.json",
     "lint": "eslint . --ext .ts",
-    "test:unit": "jest spec --coverage"
+    "test": "jest spec --coverage"
   },
   "devDependencies": {
     "@types/jest": "^28.1.5",

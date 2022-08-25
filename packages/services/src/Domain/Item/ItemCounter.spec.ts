@@ -14,6 +14,10 @@ describe('ItemCounter', () => {
         trashed: true,
       } as jest.Mocked<SNNote>,
       {
+        archived: true,
+        trashed: true,
+      } as jest.Mocked<SNNote>,
+      {
         content_type: ContentType.Note,
       } as jest.Mocked<SNNote>,
       {
@@ -23,7 +27,7 @@ describe('ItemCounter', () => {
 
     expect(createCounter().countNotesAndTags(items)).toEqual({
       archived: 1,
-      deleted: 1,
+      deleted: 2,
       notes: 1,
       tags: 1,
     })

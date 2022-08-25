@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/files",
-  "version": "1.9.1",
+  "version": "1.9.2",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -20,7 +20,7 @@
     "prebuild": "yarn clean",
     "build": "tsc -p tsconfig.json",
     "lint": "eslint . --ext .ts",
-    "test:unit": "jest"
+    "test": "jest"
   },
   "devDependencies": {
     "@types/jest": "^28.1.5",
