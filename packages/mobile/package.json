@@ -59,7 +59,7 @@
     "react-native-fingerprint-scanner": "standardnotes/react-native-fingerprint-scanner#0f9c1f6712ee0c1a2908fe7e589c72151d143c48",
     "react-native-flag-secure-android": "standardnotes/react-native-flag-secure-android#cb08e74583c22a5d912842459b35ebbbb4bcd852",
     "react-native-fs": "^2.19.0",
-    "react-native-gesture-handler": "2.3.2",
+    "react-native-gesture-handler": "2.6.0",
     "react-native-image-picker": "^4.7.3",
     "react-native-keychain": "standardnotes/react-native-keychain#d277d360494cbd02be4accb4a360772a8e0e97b6",
     "react-native-mail": "standardnotes/react-native-mail#fd26119e67a2ffc5eaa95a9c17049743e39ce2d3",
