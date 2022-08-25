@@ -8,6 +8,7 @@ import {
   ContentType,
   InternalEventBus,
   isNullOrUndefined,
+  MobileUnlockTiming,
   NoteViewController,
   PayloadEmitSource,
   PrefKey,
@@ -66,11 +67,6 @@ export type TabletModeChangeData = {
   old_isInTabletMode: boolean
 }
 
-export enum UnlockTiming {
-  Immediately = 'immediately',
-  OnQuit = 'on-quit',
-}
-
 export enum PasscodeKeyboardType {
   Default = 'default',
   Numeric = 'numeric',
@@ -103,8 +99,8 @@ export class ApplicationState extends ApplicationService {
   authenticationInProgress = false
   multiEditorEnabled = false
   screenshotPrivacyEnabled?: boolean
-  passcodeTiming?: UnlockTiming
-  biometricsTiming?: UnlockTiming
+  passcodeTiming?: MobileUnlockTiming
+  biometricsTiming?: MobileUnlockTiming
   removeHandleReactNativeAppStateChangeListener: NativeEventSubscription
   removeItemChangesListener?: () => void
   removePreferencesLoadedListener?: () => void
@@ -490,13 +486,13 @@ export class ApplicationState extends ApplicationService {
     return [
       {
         title: 'Immediately',
-        key: UnlockTiming.Immediately,
-        selected: this.passcodeTiming === UnlockTiming.Immediately,
+        key: MobileUnlockTiming.Immediately,
+        selected: this.passcodeTiming === MobileUnlockTiming.Immediately,
       },
       {
         title: 'On Quit',
-        key: UnlockTiming.OnQuit,
-        selected: this.passcodeTiming === UnlockTiming.OnQuit,
+        key: MobileUnlockTiming.OnQuit,
+        selected: this.passcodeTiming === MobileUnlockTiming.OnQuit,
       },
     ]
   }
@@ -505,13 +501,13 @@ export class ApplicationState extends ApplicationService {
     return [
       {
         title: 'Immediately',
-        key: UnlockTiming.Immediately,
-        selected: this.biometricsTiming === UnlockTiming.Immediately,
+        key: MobileUnlockTiming.Immediately,
+        selected: this.biometricsTiming === MobileUnlockTiming.Immediately,
       },
       {
         title: 'On Quit',
-        key: UnlockTiming.OnQuit,
-        selected: this.biometricsTiming === UnlockTiming.OnQuit,
+        key: MobileUnlockTiming.OnQuit,
+        selected: this.biometricsTiming === MobileUnlockTiming.OnQuit,
       },
     ]
   }
@@ -521,9 +517,9 @@ export class ApplicationState extends ApplicationService {
     if (!isLocked) {
       const hasBiometrics = await this.application.hasBiometrics()
       const hasPasscode = this.application.hasPasscode()
-      if (hasPasscode && this.passcodeTiming === UnlockTiming.Immediately) {
+      if (hasPasscode && this.passcodeTiming === MobileUnlockTiming.Immediately) {
         await this.application.lock()
-      } else if (hasBiometrics && this.biometricsTiming === UnlockTiming.Immediately && !this.locked) {
+      } else if (hasBiometrics && this.biometricsTiming === MobileUnlockTiming.Immediately && !this.locked) {
         const challenge = new Challenge(
           [new ChallengePrompt(ChallengeValidation.Biometric)],
           ChallengeReason.ApplicationUnlock,
@@ -609,15 +605,15 @@ export class ApplicationState extends ApplicationService {
     >
   }
 
-  private async getPasscodeTiming(): Promise<UnlockTiming | undefined> {
+  private async getPasscodeTiming(): Promise<MobileUnlockTiming | undefined> {
     return this.application.getValue(StorageKey.MobilePasscodeTiming, StorageValueModes.Nonwrapped) as Promise<
-      UnlockTiming | undefined
+      MobileUnlockTiming | undefined
     >
   }
 
-  private async getBiometricsTiming(): Promise<UnlockTiming | undefined> {
+  private async getBiometricsTiming(): Promise<MobileUnlockTiming | undefined> {
     return this.application.getValue(StorageKey.MobileBiometricsTiming, StorageValueModes.Nonwrapped) as Promise<
-      UnlockTiming | undefined
+      MobileUnlockTiming | undefined
     >
   }
 
@@ -627,12 +623,12 @@ export class ApplicationState extends ApplicationService {
     void this.setAndroidScreenshotPrivacy(enabled)
   }
 
-  public async setPasscodeTiming(timing: UnlockTiming) {
+  public async setPasscodeTiming(timing: MobileUnlockTiming) {
     await this.application.setValue(StorageKey.MobilePasscodeTiming, timing, StorageValueModes.Nonwrapped)
     this.passcodeTiming = timing
   }
 
-  public async setBiometricsTiming(timing: UnlockTiming) {
+  public async setBiometricsTiming(timing: MobileUnlockTiming) {
     await this.application.setValue(StorageKey.MobileBiometricsTiming, timing, StorageValueModes.Nonwrapped)
     this.biometricsTiming = timing
   }

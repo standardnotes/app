@@ -9,6 +9,7 @@ import {
   Environment,
   IconsController,
   ItemGroupController,
+  MobileUnlockTiming,
   platformFromString,
   SNApplication,
   SNComponentManager,
@@ -17,7 +18,7 @@ import { Platform } from 'react-native'
 
 import { version } from '../../package.json'
 import { MobileAlertService } from './AlertService'
-import { ApplicationState, UnlockTiming } from './ApplicationState'
+import { ApplicationState } from './ApplicationState'
 import { BackupsService } from './BackupsService'
 import { ComponentManager } from './ComponentManager'
 import { FilesService } from './FilesService'
@@ -122,7 +123,7 @@ export class MobileApplication extends SNApplication {
     const previouslyLaunched = MobileApplication.getPreviouslyLaunched()
     const biometricsTiming = this.getAppState().biometricsTiming
 
-    if (previouslyLaunched && biometricsTiming === UnlockTiming.OnQuit) {
+    if (previouslyLaunched && biometricsTiming === MobileUnlockTiming.OnQuit) {
       const filteredPrompts = challenge.prompts.filter(
         (prompt: ChallengePrompt) => prompt.validation !== ChallengeValidation.Biometric,
       )

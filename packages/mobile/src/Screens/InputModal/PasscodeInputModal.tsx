@@ -1,4 +1,4 @@
-import { PasscodeKeyboardType, UnlockTiming } from '@Lib/ApplicationState'
+import { PasscodeKeyboardType } from '@Lib/ApplicationState'
 import { ApplicationContext } from '@Root/ApplicationContext'
 import { ButtonCell } from '@Root/Components/ButtonCell'
 import { Option, SectionedOptionsTableCell } from '@Root/Components/SectionedOptionsTableCell'
@@ -6,6 +6,7 @@ import { SectionedTableCell } from '@Root/Components/SectionedTableCell'
 import { TableSection } from '@Root/Components/TableSection'
 import { ModalStackNavigationProp } from '@Root/ModalStack'
 import { SCREEN_INPUT_MODAL_PASSCODE } from '@Root/Screens/screens'
+import { MobileUnlockTiming } from '@standardnotes/snjs'
 import { ThemeServiceContext } from '@Style/ThemeService'
 import React, { useContext, useMemo, useRef, useState } from 'react'
 import { Keyboard, KeyboardType, Platform, TextInput } from 'react-native'
@@ -50,7 +51,7 @@ export const PasscodeInputModal = (props: Props) => {
     } else {
       await application?.addPasscode(text)
       await application?.getAppState().setPasscodeKeyboardType(keyboardType as PasscodeKeyboardType)
-      await application?.getAppState().setPasscodeTiming(UnlockTiming.OnQuit)
+      await application?.getAppState().setPasscodeTiming(MobileUnlockTiming.OnQuit)
       setSettingPassocode(false)
       props.navigation.goBack()
     }

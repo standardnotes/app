@@ -24,6 +24,11 @@ export enum ProtectionEvent {
   UnprotectedSessionExpired = 'UnprotectedSessionExpired',
 }
 
+export enum MobileUnlockTiming {
+  Immediately = 'immediately',
+  OnQuit = 'on-quit',
+}
+
 export const ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction = 30
 
 export enum UnprotectedAccessSecondsDuration {
@@ -63,6 +68,8 @@ export const ProtectionSessionDurations = [
  */
 export class SNProtectionService extends AbstractService<ProtectionEvent> implements ProtectionsClientInterface {
   private sessionExpiryTimeout = -1
+  private mobilePasscodeTiming: MobileUnlockTiming | undefined = MobileUnlockTiming.Immediately // TODO: just an initial value, check if doesn't introduce any issue
+  private mobileBiometricsTiming: MobileUnlockTiming | undefined = MobileUnlockTiming.Immediately // TODO: just an initial value, check if doesn't introduce any issue
 
   constructor(
     private protocolService: EncryptionService,
@@ -89,6 +96,7 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
   }
 
   public hasProtectionSources(): boolean {
+    console.log('this.hasBiometricsEnabled (1) is ', this.hasBiometricsEnabled())
     return this.protocolService.hasAccount() || this.protocolService.hasPasscode() || this.hasBiometricsEnabled()
   }
 
@@ -121,10 +129,13 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
       return false
     }
 
+    console.log(1111)
     if (await this.validateOrRenewSession(ChallengeReason.DisableBiometrics)) {
+      console.log(222)
       this.storageService.setValue(StorageKey.BiometricsState, false, StorageValueModes.Nonwrapped)
       return true
     } else {
+      console.log(333, '(false)')
       return false
     }
   }
@@ -224,6 +235,72 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
     })
   }
 
+  getPasscodeTimingOptions() {
+    return [
+      {
+        title: 'Immediately',
+        key: MobileUnlockTiming.Immediately,
+        selected: this.mobilePasscodeTiming === MobileUnlockTiming.Immediately,
+      },
+      {
+        title: 'On Quit',
+        key: MobileUnlockTiming.OnQuit,
+        selected: this.mobilePasscodeTiming === MobileUnlockTiming.OnQuit,
+      },
+    ]
+  }
+
+  getBiometricsTimingOptions() {
+    return [
+      {
+        title: 'Immediately',
+        key: MobileUnlockTiming.Immediately,
+        selected: this.mobileBiometricsTiming === MobileUnlockTiming.Immediately,
+      },
+      {
+        title: 'On Quit',
+        key: MobileUnlockTiming.OnQuit,
+        selected: this.mobileBiometricsTiming === MobileUnlockTiming.OnQuit,
+      },
+    ]
+  }
+
+  private async getBiometricsTiming(): Promise<MobileUnlockTiming | undefined> {
+    /*return this.storageService.getValue(StorageKey.MobileBiometricsTiming, StorageValueModes.Nonwrapped) as Promise<
+      UnlockTiming | undefined
+    >*/
+    return this.storageService.getValue<Promise<MobileUnlockTiming | undefined>>(
+      StorageKey.MobileBiometricsTiming,
+      StorageValueModes.Nonwrapped,
+    )
+  }
+
+  private async getPasscodeTiming(): Promise<MobileUnlockTiming | undefined> {
+    return this.storageService.getValue<Promise<MobileUnlockTiming | undefined>>(
+      StorageKey.MobilePasscodeTiming,
+      StorageValueModes.Nonwrapped,
+    )
+  }
+
+  async setBiometricsTiming(timing: MobileUnlockTiming) {
+    await this.storageService.setValue(StorageKey.MobileBiometricsTiming, timing, StorageValueModes.Nonwrapped)
+    this.mobileBiometricsTiming = timing
+  }
+
+  // private async loadUnlockTiming() {
+  // TODO: Important: this function is called in `onAppStart()` in mobile/ApplicationState, need to do the same for NativeMobileWeb
+  //  (added corresponding TODO item to `web/.../ApplicationView`)
+  async loadMobileUnlockTiming() {
+    this.mobilePasscodeTiming = await this.getPasscodeTiming()
+    this.mobileBiometricsTiming = await this.getBiometricsTiming()
+    alert(
+      'mobilePasscodeTiming is ' +
+        this.mobilePasscodeTiming +
+        ', mobileBiometricsTiming is: ' +
+        this.mobileBiometricsTiming,
+    )
+  }
+
   private async validateOrRenewSession(
     reason: ChallengeReason,
     { fallBackToAccountPassword = true, requireAccountPassword = false } = {},
@@ -234,14 +311,17 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
 
     const prompts: ChallengePrompt[] = []
 
+    console.log('this.hasBiometricsEnabled (2) is ', this.hasBiometricsEnabled())
     if (this.hasBiometricsEnabled()) {
       prompts.push(new ChallengePrompt(ChallengeValidation.Biometric))
     }
 
+    console.log('this.protocolService.hasPasscode() ? ', this.protocolService.hasPasscode())
     if (this.protocolService.hasPasscode()) {
       prompts.push(new ChallengePrompt(ChallengeValidation.LocalPasscode))
     }
 
+    console.log('requireAccountPassword ? ', requireAccountPassword)
     if (requireAccountPassword) {
       if (!this.protocolService.hasAccount()) {
         throw Error('Requiring account password for challenge with no account')
@@ -249,6 +329,7 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
       prompts.push(new ChallengePrompt(ChallengeValidation.AccountPassword))
     }
 
+    console.log('prompts.length is ', prompts.length)
     if (prompts.length === 0) {
       if (fallBackToAccountPassword && this.protocolService.hasAccount()) {
         prompts.push(new ChallengePrompt(ChallengeValidation.AccountPassword))
@@ -256,6 +337,7 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
         return true
       }
     }
+    console.log('prompts[0].title is ', prompts[0].title)
     const lastSessionLength = this.getLastSessionLength()
     const chosenSessionLength = isValidProtectionSessionLength(lastSessionLength)
       ? lastSessionLength
@@ -270,7 +352,9 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
         chosenSessionLength,
       ),
     )
+    console.log('going to show prompt...')
     const response = await this.challengeService.promptForChallengeResponse(new Challenge(prompts, reason, true))
+    console.log('response is ', response)
     if (response) {
       const length = response.values.find(
         (value) => value.prompt.validation === ChallengeValidation.ProtectionSessionDuration,

@@ -909,6 +909,22 @@ export class SNApplication
     return this.deinit(this.getDeinitMode(), DeinitSource.Lock)
   }
 
+  async setBiometricsTiming(timing: InternalServices.MobileUnlockTiming) {
+    return this.protectionService.setBiometricsTiming(timing)
+  }
+
+  /*async loadMobileUnlockTiming() {
+    return this.protectionService.loadMobileUnlockTiming()
+  }*/
+
+  getBiometricsTimingOptions() {
+    return this.protectionService.getBiometricsTimingOptions()
+  }
+
+  isNativeMobileWeb() {
+    return this.environment === Environment.NativeMobileWeb
+  }
+
   getDeinitMode(): DeinitMode {
     const value = this.getValue(StorageKey.DeinitMode)
     if (value === 'hard') {

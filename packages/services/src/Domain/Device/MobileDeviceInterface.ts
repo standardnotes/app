@@ -6,4 +6,5 @@ export interface MobileDeviceInterface extends DeviceInterface {
   environment: Environment.Mobile
 
   getRawKeychainValue(): Promise<RawKeychainValue | undefined>
+  getDeviceBiometricsAvailability(): Promise<boolean>
 }
