@@ -9,6 +9,8 @@ import { getPositionedPopoverStyles } from './GetPositionedPopoverStyles'
 import { PopoverContentProps } from './Types'
 import { getPopoverMaxHeight, getAppRect } from './Utils/Rect'
 import { usePopoverCloseOnClickOutside } from './Utils/usePopoverCloseOnClickOutside'
+import { fitNodeToMobileScreen } from '@/Utils'
+import { useDisableBodyScrollOnMobile } from '@/Hooks/useDisableBodyScrollOnMobile'
 
 const PositionedPopoverContent = ({
   align = 'end',
@@ -49,6 +51,8 @@ const PositionedPopoverContent = ({
     childPopovers,
   })
 
+  useDisableBodyScrollOnMobile()
+
   return (
     <Portal>
       <div
@@ -63,6 +67,7 @@ const PositionedPopoverContent = ({
         }}
         ref={(node) => {
           setPopoverElement(node)
+          fitNodeToMobileScreen(node)
         }}
         data-popover={id}
       >

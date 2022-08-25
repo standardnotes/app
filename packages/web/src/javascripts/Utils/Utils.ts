@@ -2,8 +2,6 @@ import { Platform, platformFromString } from '@standardnotes/snjs'
 import { IsDesktopPlatform, IsWebPlatform } from '@/Constants/Version'
 import { EMAIL_REGEX } from '../Constants/Constants'
 
-export { isMobile } from './IsMobile'
-
 declare const process: {
   env: {
     NODE_ENV: string | null | undefined
@@ -202,4 +200,15 @@ export const disableIosTextFieldZoom = () => {
   if (isIOS()) {
     addMaximumScaleToMetaViewport()
   }
+}
+
+export const isMobileScreen = () => !window.matchMedia('(min-width: 768px)').matches
+
+export const fitNodeToMobileScreen = (node: HTMLElement | null) => {
+  if (!node || !isMobileScreen()) {
+    return
+  }
+  node.style.height = `${visualViewport.height}px`
+  node.style.position = 'absolute'
+  node.style.top = `${document.documentElement.scrollTop}px`
 }

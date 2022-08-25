@@ -33,7 +33,7 @@ const VisibilityChangeKey = 'visibilitychange'
 const MSToWaitAfterIframeLoadToAvoidFlicker = 35
 
 const ComponentView: FunctionComponent<IProps> = ({ application, onLoad, componentViewer, requestReload }) => {
-  const iframeRef = useRef<HTMLIFrameElement>(null)
+  const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const [loadTimeout, setLoadTimeout] = useState<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   const [hasIssueLoading, setHasIssueLoading] = useState(false)
@@ -200,6 +200,7 @@ const ComponentView: FunctionComponent<IProps> = ({ application, onLoad, compone
       {error === ComponentViewerError.MissingUrl && <UrlMissing componentName={component.displayName} />}
       {component.uuid && isComponentValid && (
         <iframe
+          className="min-h-[40rem]"
           ref={iframeRef}
           onLoad={onIframeLoad}
           data-component-viewer-id={componentViewer.identifier}
