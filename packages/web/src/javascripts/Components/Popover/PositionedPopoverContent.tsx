@@ -9,8 +9,8 @@ import { getPositionedPopoverStyles } from './GetPositionedPopoverStyles'
 import { PopoverContentProps } from './Types'
 import { getPopoverMaxHeight, getAppRect } from './Utils/Rect'
 import { usePopoverCloseOnClickOutside } from './Utils/usePopoverCloseOnClickOutside'
-import { RemoveScroll } from 'react-remove-scroll'
-import { fitNodeToMobileScreen, isMobileScreen } from '@/Utils'
+import { fitNodeToMobileScreen } from '@/Utils'
+import { useDisableBodyScrollOnMobile } from '@/Hooks/useDisableBodyScrollOnMobile'
 
 const PositionedPopoverContent = ({
   align = 'end',
@@ -51,36 +51,36 @@ const PositionedPopoverContent = ({
     childPopovers,
   })
 
+  useDisableBodyScrollOnMobile()
+
   return (
     <Portal>
-      <RemoveScroll enabled={isMobileScreen()}>
-        <div
-          className={classNames(
-            'absolute top-0 left-0 flex h-full w-full min-w-80 cursor-auto flex-col overflow-y-auto rounded bg-default shadow-main md:h-auto md:max-w-xs',
-            overrideZIndex ? overrideZIndex : 'z-dropdown-menu',
-            className,
-          )}
-          style={{
-            ...styles,
-            maxHeight: getPopoverMaxHeight(getAppRect(documentRect), anchorRect, positionedSide, positionedAlignment),
-          }}
-          ref={(node) => {
-            setPopoverElement(node)
-            fitNodeToMobileScreen(node)
-          }}
-          data-popover={id}
-        >
-          <div className="md:hidden">
-            <div className="flex items-center justify-end px-3">
-              <button className="rounded-full border border-border p-1" onClick={togglePopover}>
-                <Icon type="close" className="h-4 w-4" />
-              </button>
-            </div>
-            <HorizontalSeparator classes="my-2" />
+      <div
+        className={classNames(
+          'absolute top-0 left-0 flex h-full w-full min-w-80 cursor-auto flex-col overflow-y-auto rounded bg-default shadow-main md:h-auto md:max-w-xs',
+          overrideZIndex ? overrideZIndex : 'z-dropdown-menu',
+          className,
+        )}
+        style={{
+          ...styles,
+          maxHeight: getPopoverMaxHeight(getAppRect(documentRect), anchorRect, positionedSide, positionedAlignment),
+        }}
+        ref={(node) => {
+          setPopoverElement(node)
+          fitNodeToMobileScreen(node)
+        }}
+        data-popover={id}
+      >
+        <div className="md:hidden">
+          <div className="flex items-center justify-end px-3">
+            <button className="rounded-full border border-border p-1" onClick={togglePopover}>
+              <Icon type="close" className="h-4 w-4" />
+            </button>
           </div>
-          {children}
+          <HorizontalSeparator classes="my-2" />
         </div>
-      </RemoveScroll>
+        {children}
+      </div>
     </Portal>
   )
 }

@@ -7554,7 +7554,6 @@ __metadata:
     react-dnd-touch-backend: ^16.0.1
     react-dom: ^18.1.0
     react-refresh: ^0.14.0
-    react-remove-scroll: ^2.5.5
     sass-loader: "*"
     styled-components: ^5.3.5
     svg-jest: ^1.0.1
@@ -32724,7 +32723,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-remove-scroll@npm:^2.4.3, react-remove-scroll@npm:^2.5.5":
+"react-remove-scroll@npm:^2.4.3":
   version: 2.5.5
   resolution: "react-remove-scroll@npm:2.5.5"
   dependencies:

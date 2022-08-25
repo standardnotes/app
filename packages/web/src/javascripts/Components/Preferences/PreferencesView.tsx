@@ -4,8 +4,8 @@ import { observer } from 'mobx-react-lite'
 import { PreferencesMenu } from './PreferencesMenu'
 import PreferencesCanvas from './PreferencesCanvas'
 import { PreferencesProps } from './PreferencesProps'
-import { RemoveScroll } from 'react-remove-scroll'
-import { fitNodeToMobileScreen, isMobileScreen } from '@/Utils'
+import { fitNodeToMobileScreen } from '@/Utils'
+import { useDisableBodyScrollOnMobile } from '@/Hooks/useDisableBodyScrollOnMobile'
 
 const PreferencesView: FunctionComponent<PreferencesProps> = (props) => {
   const menu = useMemo(
@@ -27,26 +27,26 @@ const PreferencesView: FunctionComponent<PreferencesProps> = (props) => {
     }
   }, [props, menu])
 
+  useDisableBodyScrollOnMobile()
+
   return (
-    <RemoveScroll enabled={isMobileScreen()}>
-      <div
-        className="absolute top-0 left-0 z-preferences flex h-full max-h-screen w-full flex-col bg-contrast"
-        ref={fitNodeToMobileScreen}
-      >
-        <div className="flex w-full flex-row items-center justify-between border-b border-solid border-border bg-default px-3 py-2 md:p-3">
-          <div className="hidden h-8 w-8 md:block" />
-          <h1 className="text-base font-bold md:text-lg">Your preferences for Standard Notes</h1>
-          <RoundIconButton
-            onClick={() => {
-              props.closePreferences()
-            }}
-            type="normal"
-            icon="close"
-          />
-        </div>
-        <PreferencesCanvas {...props} menu={menu} />
+    <div
+      className="absolute top-0 left-0 z-preferences flex h-full max-h-screen w-full flex-col bg-contrast"
+      ref={fitNodeToMobileScreen}
+    >
+      <div className="flex w-full flex-row items-center justify-between border-b border-solid border-border bg-default px-3 py-2 md:p-3">
+        <div className="hidden h-8 w-8 md:block" />
+        <h1 className="text-base font-bold md:text-lg">Your preferences for Standard Notes</h1>
+        <RoundIconButton
+          onClick={() => {
+            props.closePreferences()
+          }}
+          type="normal"
+          icon="close"
+        />
       </div>
-    </RemoveScroll>
+      <PreferencesCanvas {...props} menu={menu} />
+    </div>
   )
 }
 
