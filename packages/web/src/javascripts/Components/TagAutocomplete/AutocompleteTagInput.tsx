@@ -14,6 +14,8 @@ import AutocompleteTagResult from './AutocompleteTagResult'
 import AutocompleteTagHint from './AutocompleteTagHint'
 import { observer } from 'mobx-react-lite'
 import { SNTag } from '@standardnotes/snjs'
+import { classNames } from '@/Utils/ConcatenateClassNames'
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -123,14 +125,16 @@ const AutocompleteTagInput = ({ viewControllerManager }: Props) => {
           />
           {dropdownVisible && (autocompleteTagResults.length > 0 || autocompleteTagHintVisible) && (
             <DisclosurePanel
-              className={`${
-                tags.length > 0 ? 'w-80' : 'mr-10 w-70'
-              } absolute flex flex-col rounded bg-default py-2 shadow-main`}
+              className={classNames(
+                tags.length > 0 ? 'w-80' : 'mr-10 w-70',
+                'absolute z-dropdown-menu flex flex-col rounded bg-default py-2 shadow-main',
+              )}
               style={{
                 maxHeight: dropdownMaxHeight,
                 maxWidth: tagsContainerMaxWidth,
               }}
               onBlur={closeOnBlur}
+              tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
             >
               <div className="md:overflow-y-auto">
                 {autocompleteTagResults.map((tagResult: SNTag) => (
