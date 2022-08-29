@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.45.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.45.6...@standardnotes/web@3.45.7) (2022-08-25)
+
+### Bug Fixes
+
+* editor content being hidden under keyboard on mobile ([#1410](https://github.com/standardnotes/app/issues/1410)) ([520b3ad](https://github.com/standardnotes/app/commit/520b3add0f8597c79706812c4819fb23a551becc))
+
 ## [3.45.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.45.5...@standardnotes/web@3.45.6) (2022-08-24)
 
 **Note:** Version bump only for package @standardnotes/web

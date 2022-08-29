@@ -41,8 +41,6 @@ body {
   -moz-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
-  min-height: 100%;
-  height: 100%;
   line-height: normal;
   margin: 0;
 }
@@ -107,16 +105,30 @@ p {
   margin: 0;
 }
 
+html,
+body,
 .main-ui-view {
-  // Fallbacks
-  min-height: 100vh;
-  height: 100vh;
-  // Mobile-corrected viewport height
-  min-height: var(--viewport-height);
-  height: var(--viewport-height);
+  height: max-content;
+  min-height: 0;
+  max-height: none;
+
+  display: block;
+
+  @media screen and (min-width: 768px) {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.main-ui-view {
   position: relative;
   overflow: auto;
   background-color: var(--editor-header-bar-background-color);
+
+  @media screen and (min-width: 768px) {
+    min-height: 100vh;
+    height: 100vh;
+  }
 }
 
 $footer-height: 2rem;
@@ -139,8 +151,6 @@ $footer-height: 2rem;
 
   .section {
     padding-bottom: 0px;
-    height: 100%;
-    max-height: calc(100vh - #{$footer-height});
     position: relative;
     overflow: hidden;
 

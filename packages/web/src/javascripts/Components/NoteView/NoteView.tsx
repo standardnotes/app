@@ -37,6 +37,7 @@ import { reloadFont } from './FontFunctions'
 import { NoteViewProps } from './NoteViewProps'
 import IndicatorCircle from '../IndicatorCircle/IndicatorCircle'
 import { classNames } from '@/Utils/ConcatenateClassNames'
+import AutoresizingNoteViewTextarea from './AutoresizingTextarea'
 
 const MINIMUM_STATUS_DURATION = 400
 const TEXTAREA_DEBOUNCE = 100
@@ -889,7 +890,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
     return (
       <div aria-label="Note" className="section editor sn-component">
-        <div className="flex flex-grow flex-col">
+        <div className="flex-grow flex-col md:flex">
           {this.state.noteLocked && (
             <EditingDisabledBanner
               onMouseLeave={() => {
@@ -1021,9 +1022,8 @@ class NoteView extends PureComponent<NoteViewProps, State> {
             )}
 
             {this.state.editorStateDidLoad && !this.state.editorComponentViewer && !this.state.textareaUnloading && (
-              <textarea
+              <AutoresizingNoteViewTextarea
                 autoComplete="off"
-                className="editable font-editor"
                 dir="auto"
                 id={ElementIds.NoteTextEditor}
                 onChange={this.onTextAreaChange}
@@ -1032,7 +1032,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                 onFocus={this.onContentFocus}
                 spellCheck={this.state.spellcheck}
                 ref={(ref) => ref && this.onSystemEditorLoad(ref)}
-              ></textarea>
+              />
             )}
 
             {this.state.marginResizersEnabled && this.editorContentRef.current ? (

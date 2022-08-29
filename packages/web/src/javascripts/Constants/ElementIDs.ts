@@ -8,4 +8,5 @@ export const ElementIds = {
   NavigationColumn: 'navigation',
   NoteTextEditor: 'note-text-editor',
   NoteTitleEditor: 'note-title-editor',
-}
+  RootId: 'app-group-root',
+} as const

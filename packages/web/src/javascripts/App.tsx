@@ -34,16 +34,11 @@ import { ApplicationGroup } from './Application/ApplicationGroup'
 import { WebOrDesktopDevice } from './Application/Device/WebOrDesktopDevice'
 import { WebApplication } from './Application/Application'
 import { createRoot, Root } from 'react-dom/client'
+import { ElementIds } from './Constants/ElementIDs'
 
 let keyCount = 0
 const getKey = () => {
   return keyCount++
-}
-
-const RootId = 'app-group-root'
-
-const setViewportHeight = () => {
-  document.documentElement.style.setProperty('--viewport-height', `${window.innerHeight}px`)
 }
 
 const startApplication: StartApplication = async function startApplication(
@@ -58,23 +53,17 @@ const startApplication: StartApplication = async function startApplication(
   let root: Root
 
   const onDestroy = () => {
-    const rootElement = document.getElementById(RootId) as HTMLElement
+    const rootElement = document.getElementById(ElementIds.RootId) as HTMLElement
     root.unmount()
     rootElement.remove()
-    window.removeEventListener('resize', setViewportHeight)
-    window.removeEventListener('orientationchange', setViewportHeight)
     renderApp()
   }
 
   const renderApp = () => {
     const rootElement = document.createElement('div')
-    rootElement.id = RootId
+    rootElement.id = ElementIds.RootId
     const appendedRootNode = document.body.appendChild(rootElement)
     root = createRoot(appendedRootNode)
-
-    setViewportHeight()
-    window.addEventListener('resize', setViewportHeight)
-    window.addEventListener('orientationchange', setViewportHeight)
 
     disableIosTextFieldZoom()
 
