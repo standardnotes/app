@@ -913,9 +913,17 @@ export class SNApplication
     return this.protectionService.setBiometricsTiming(timing)
   }
 
-  /*async loadMobileUnlockTiming() {
+  async getMobileScreenshotPrivacyEnabled(): Promise<boolean | undefined> {
+    return this.protectionService.getMobileScreenshotPrivacyEnabled()
+  }
+
+  async setMobileScreenshotPrivacyEnabled(isEnabled: boolean) {
+    return this.protectionService.setMobileScreenshotPrivacyEnabled(isEnabled)
+  }
+
+  async loadMobileUnlockTiming() {
     return this.protectionService.loadMobileUnlockTiming()
-  }*/
+  }
 
   getBiometricsTimingOptions() {
     return this.protectionService.getBiometricsTimingOptions()

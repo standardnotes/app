@@ -287,6 +287,17 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
     this.mobileBiometricsTiming = timing
   }
 
+  async setMobileScreenshotPrivacyEnabled(isEnabled: boolean) {
+    await this.storageService.setValue(StorageKey.MobileScreenshotPrivacyEnabled, isEnabled, StorageValueModes.Default)
+    // TODO: `screenshotPrivacyEnabled` variable should go to somewhere as a global variable (comes from "mobile/.../ApplicationState")
+    //  (or maybe we could simply call `getMobileScreenshotPrivacyEnabled()` wherever needed?)
+    // this.screenshotPrivacyEnabled = isEnabled
+  }
+
+  async getMobileScreenshotPrivacyEnabled(): Promise<boolean | undefined> {
+    return this.storageService.getValue(StorageKey.MobileScreenshotPrivacyEnabled, StorageValueModes.Default)
+  }
+
   // private async loadUnlockTiming() {
   // TODO: Important: this function is called in `onAppStart()` in mobile/ApplicationState, need to do the same for NativeMobileWeb
   //  (added corresponding TODO item to `web/.../ApplicationView`)

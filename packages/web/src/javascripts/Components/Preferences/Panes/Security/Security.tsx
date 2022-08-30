@@ -10,6 +10,7 @@ import Protections from './Protections'
 import ErroredItems from './ErroredItems'
 import PreferencesPane from '@/Components/Preferences/PreferencesComponents/PreferencesPane'
 import BiometricsLock from '@/Components/Preferences/Panes/Security/BiometricsLock'
+import MultitaskingPrivacy from '@/Components/Preferences/Panes/Security/MultitaskingPrivacy'
 
 interface SecurityProps extends MfaProps {
   viewControllerManager: ViewControllerManager
@@ -18,6 +19,7 @@ interface SecurityProps extends MfaProps {
 
 const Security: FunctionComponent<SecurityProps> = (props) => {
   alert('environment in Prefs: ' + props.application.environment)
+  const isNativeMobileWeb = props.application.isNativeMobileWeb()
 
   return (
     <PreferencesPane>
@@ -27,10 +29,9 @@ const Security: FunctionComponent<SecurityProps> = (props) => {
       )}
       <Protections application={props.application} />
       <TwoFactorAuthWrapper mfaProvider={props.mfaProvider} userProvider={props.userProvider} />
+      {isNativeMobileWeb && <MultitaskingPrivacy application={props.application} />}
       <PasscodeLock viewControllerManager={props.viewControllerManager} application={props.application} />
-      {props.application.isNativeMobileWeb() && (
-        <BiometricsLock application={props.application} />
-      )}
+      {isNativeMobileWeb && <BiometricsLock application={props.application} />}
       {props.application.getUser() && <Privacy application={props.application} />}
     </PreferencesPane>
   )

@@ -68,6 +68,7 @@ export const SecuritySection = (props: Props) => {
     }
   }, [application])
 
+  // TODO: this should also be moved to web
   useFocusEffect(
     useCallback(() => {
       if (props.hasPasscode) {
@@ -164,9 +165,9 @@ export const SecuritySection = (props: Props) => {
   }
 
   const disableBiometrics = useCallback(async () => {
-    console.log(1111);
+    console.log(1111)
     if (await application?.disableBiometrics()) {
-      console.log(222);
+      console.log(222)
       setHasBiometrics(false)
       props.updateProtectionsAvailable()
     }

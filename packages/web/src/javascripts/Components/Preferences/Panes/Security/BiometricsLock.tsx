@@ -26,6 +26,9 @@ const BiometricsLock = ({ application }: Props) => {
   const [_protectionsAvailable, setProtectionsAvailable] = useState(application.hasProtectionSources())
 
   useEffect(() => {
+    // TODO: (GENERAL NOTE) This effect will run only on this page, but this logic seems needs to run on top-level since it's more general.
+    //  Look at the source where this logic is copied from, so it would become more clear.
+
     const removeOnAppStartObserver = application.addEventObserver(async () => {
       // TODO: trying to implement "await this.loadUnlockTiming()" call from 'mobile/ApplicationState.ts' - doesn't recognize 'loadMobileUnlockTiming'
       alert('loading mobile unlock timing')
