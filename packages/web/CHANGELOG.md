@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.45.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.45.7...@standardnotes/web@3.45.8) (2022-08-29)
+
+### Bug Fixes
+
+* tag autocomplete result not clickable on iOS ([#1455](https://github.com/standardnotes/app/issues/1455)) ([876c0e8](https://github.com/standardnotes/app/commit/876c0e83ca52d918854601b4929259711cc9a5eb))
+
 ## [3.45.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.45.6...@standardnotes/web@3.45.7) (2022-08-25)
 
 ### Bug Fixes
