@@ -8,6 +8,7 @@ import { MobileUnlockTiming } from '@standardnotes/snjs'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 import { Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
+import Button from '@/Components/Button/Button'
 
 type Props = {
   application: WebApplication
@@ -50,11 +51,6 @@ const BiometricsLock = ({ application }: Props) => {
         // ).getDeviceBiometricsAvailability()
         .getDeviceBiometricsAvailability?.()
       // if (mounted) {
-      alert(
-        'hasBiometricsAvailable (2) ' +
-          (application.deviceInterface as MobileDeviceInterface).getDeviceBiometricsAvailability,
-      )
-      // alert('hasBiometricsAvailable ' + hasBiometricsAvailable)
       setSupportsBiometrics(hasBiometricsAvailable)
       // }
     }
@@ -62,7 +58,7 @@ const BiometricsLock = ({ application }: Props) => {
     void hasBiometricsSupport()
   }, [application])
 
-  const setBiometricsTiming = async (timing: MobileUnlockTiming) => {
+  const setBiometricsTimingValue = async (timing: MobileUnlockTiming) => {
     await application.setBiometricsTiming(timing)
     setBiometricsTimingOptions(() => application.getBiometricsTimingOptions())
   }
@@ -125,59 +121,43 @@ const BiometricsLock = ({ application }: Props) => {
     } else {
       setHasBiometrics(true)
       await application.enableBiometrics()
-      await setBiometricsTiming(MobileUnlockTiming.OnQuit)
+      await setBiometricsTimingValue(MobileUnlockTiming.OnQuit)
       updateProtectionsAvailable()
     }
   }
 
   const biometricTitle = hasBiometrics ? 'Disable Biometrics Lock' : 'Enable Biometrics Lock'
 
-  // return <div>{/*<div className={!supportsBiometrics && ''}>asdf</div>*/}</div>
-  // TODO: find better class name for `SOME-DISABLED-CLASS`
+  if (!supportsBiometrics) {
+    return null
+  }
+
   return (
     <div>
-      <div className={supportsBiometrics ? 'SOME-DISABLED-CLASS' : ''} onClick={onBiometricsPress}>
-        {biometricTitle}
-      </div>
-
-      {hasBiometrics && (
-        <>
-          {/*<SectionedOptionsTableCell
-            leftAligned
-            title={'Require Biometrics'}
-            options={biometricsTimingOptions}
-            onPress={(option: Option) => setBiometricsTiming(option.key as UnlockTiming)}
-          />*/}
-          <PreferencesGroup>
-            <PreferencesSegment>
-              <Title>Require Biometrics</Title>
-              {/*<Text className="mb-3">The autolock timer begins when the window or tab loses focus.</Text>*/}
-              <div className="flex flex-row items-center">
-                {biometricsTimingOptions.map((option) => {
-                  return (
-                    <a
-                      key={option.key}
-                      /*className={`mr-3 cursor-pointer rounded text-info ${
-                        option.value === selectedAutoLockInterval ? 'bg-info px-1.5 py-0.5 text-info-contrast' : ''
-                      }`}*/
-                      className={'mr-3 cursor-pointer rounded text-info'}
-                      // onClick={(option: Option) => setBiometricsTiming(option.key as MobileUnlockTiming)}
-
-                      // onClick={() => setBiometricsTiming(option.key as MobileUnlockTiming)}
-                      onClick={() => {
-                        alert('setting option to ' + option.key)
-                        void setBiometricsTiming(option.key as MobileUnlockTiming)
-                      }}
-                    >
-                      {option.title}
-                    </a>
-                  )
-                })}
-              </div>
-            </PreferencesSegment>
-          </PreferencesGroup>
-        </>
-      )}
+      <PreferencesGroup>
+        <PreferencesSegment>
+          <Title>Biometrics Lock</Title>
+          <Button className={'mt-1'} label={biometricTitle} onClick={onBiometricsPress} primary />
+          {hasBiometrics && (
+            <div className="mt-2 flex flex-row items-center">
+              <div className={'mr-3'}>Require Biometrics</div>
+              {biometricsTimingOptions.map((option) => {
+                return (
+                  <a
+                    key={option.key}
+                    className={'mr-3 cursor-pointer rounded text-info'}
+                    onClick={() => {
+                      void setBiometricsTimingValue(option.key as MobileUnlockTiming)
+                    }}
+                  >
+                    {option.title}
+                  </a>
+                )
+              })}
+            </div>
+          )}
+        </PreferencesSegment>
+      </PreferencesGroup>
     </div>
   )
 }
