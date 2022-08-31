@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0](https://github.com/standardnotes/app/compare/@standardnotes/api@1.5.0...@standardnotes/api@1.6.0) (2022-08-31)
+
+### Features
+
+* **api:** add client methods for listing and canceling subscription invites ([#1471](https://github.com/standardnotes/app/issues/1471)) ([91f5694](https://github.com/standardnotes/app/commit/91f5694a025a26e9b7878fc4c78a22c7f2f1dcef))
+
 # [1.5.0](https://github.com/standardnotes/app/compare/@standardnotes/api@1.4.9...@standardnotes/api@1.5.0) (2022-08-31)
 
 ### Features
