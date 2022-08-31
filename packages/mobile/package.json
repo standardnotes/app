@@ -50,7 +50,7 @@
     "js-base64": "^3.7.2",
     "moment": "^2.29.2",
     "react": "17.0.2",
-    "react-native": "0.67.4",
+    "react-native": "0.69.5",
     "react-native-alternate-icons": "standardnotes/react-native-alternate-icons#1d335d13bb518ed4d26cb00bcd1f6b1c4d60a052",
     "react-native-default-preference": "^1.4.3",
     "react-native-document-picker": "^8.1.0",
