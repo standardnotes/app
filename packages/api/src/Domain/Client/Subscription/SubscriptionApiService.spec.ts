@@ -21,7 +21,7 @@ describe('SubscriptionApiService', () => {
     expect(response).toEqual({
       data: {
         success: true,
-        sharedSubscriptionInvitationUuid: '1-2-3'
+        sharedSubscriptionInvitationUuid: '1-2-3',
       },
     })
     expect(subscriptionServer.invite).toHaveBeenCalledWith({
