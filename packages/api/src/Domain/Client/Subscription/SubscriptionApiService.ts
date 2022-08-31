@@ -2,10 +2,12 @@ import { ErrorMessage } from '../../Error/ErrorMessage'
 import { ApiCallError } from '../../Error/ApiCallError'
 import { ApiVersion } from '../../Api/ApiVersion'
 import { ApiEndpointParam } from '../../Request/ApiEndpointParam'
-import { SubscriptionApiServiceInterface } from './SubscriptionApiServiceInterface'
 import { SubscriptionServerInterface } from '../../Server/Subscription/SubscriptionServerInterface'
 import { SubscriptionInviteResponse } from '../../Response/Subscription/SubscriptionInviteResponse'
-import { SubscriptionInviteListResponse, SubscriptionInviteCancelResponse } from '../../Response'
+import { SubscriptionInviteListResponse } from '../../Response/Subscription/SubscriptionInviteListResponse'
+import { SubscriptionInviteCancelResponse } from '../../Response/Subscription/SubscriptionInviteCancelResponse'
+
+import { SubscriptionApiServiceInterface } from './SubscriptionApiServiceInterface'
 import { SubscriptionApiOperations } from './SubscriptionApiOperations'
 
 export class SubscriptionApiService implements SubscriptionApiServiceInterface {

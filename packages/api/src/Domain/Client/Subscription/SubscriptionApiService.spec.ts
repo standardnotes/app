@@ -1,10 +1,11 @@
 import { Invitation } from '@standardnotes/models'
 
-import { SubscriptionInviteCancelResponse, SubscriptionInviteListResponse } from '../../Response'
+import { SubscriptionInviteCancelResponse } from '../../Response/Subscription/SubscriptionInviteCancelResponse'
+import { SubscriptionInviteListResponse } from '../../Response/Subscription/SubscriptionInviteListResponse'
 import { SubscriptionInviteResponse } from '../../Response/Subscription/SubscriptionInviteResponse'
 import { SubscriptionServerInterface } from '../../Server/Subscription/SubscriptionServerInterface'
-import { SubscriptionApiOperations } from './SubscriptionApiOperations'
 
+import { SubscriptionApiOperations } from './SubscriptionApiOperations'
 import { SubscriptionApiService } from './SubscriptionApiService'
 
 describe('SubscriptionApiService', () => {
