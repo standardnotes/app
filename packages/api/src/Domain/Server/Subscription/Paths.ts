@@ -1,4 +1,4 @@
-import { Uuid } from "@standardnotes/common"
+import { Uuid } from '@standardnotes/common'
 
 const SharingPaths = {
   invite: '/v1/subscription-invites',
