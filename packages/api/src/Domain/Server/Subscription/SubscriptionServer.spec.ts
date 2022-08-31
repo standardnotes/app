@@ -99,7 +99,7 @@ describe('SubscriptionServer', () => {
 
     expect(response).toEqual({
       data: {
-        invitations: [ {} as jest.Mocked<Invitation> ],
+        invitations: [{} as jest.Mocked<Invitation>],
       },
     })
   })
