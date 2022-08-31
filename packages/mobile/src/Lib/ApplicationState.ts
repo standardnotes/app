@@ -39,6 +39,7 @@ import VersionInfo from 'react-native-version-info'
 import pjson from '../../package.json'
 import { MobileApplication } from './Application'
 import { associateComponentWithNote } from './ComponentManager'
+
 const { PlatformConstants } = NativeModules
 
 export enum AppStateType {
@@ -169,6 +170,7 @@ export class ApplicationState extends ApplicationService {
   override async onAppLaunch() {
     MobileApplication.setPreviouslyLaunched()
     this.screenshotPrivacyEnabled = (await this.getScreenshotPrivacyEnabled()) ?? true
+    // this.screenshotPrivacyEnabled = (await this.application.getMobileScreenshotPrivacyEnabled()) ?? true
     void this.setAndroidScreenshotPrivacy(this.screenshotPrivacyEnabled)
   }
 
@@ -600,9 +602,8 @@ export class ApplicationState extends ApplicationService {
   }
 
   private async getScreenshotPrivacyEnabled(): Promise<boolean | undefined> {
-    return this.application.getValue(StorageKey.MobileScreenshotPrivacyEnabled, StorageValueModes.Default) as Promise<
-      boolean | undefined
-    >
+    // return this.application.getValue(StorageKey.MobileScreenshotPrivacyEnabled, StorageValueModes.Default) as Promise<boolean | undefined>
+    return this.application.getMobileScreenshotPrivacyEnabled()
   }
 
   private async getPasscodeTiming(): Promise<MobileUnlockTiming | undefined> {
