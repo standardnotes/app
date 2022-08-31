@@ -7,6 +7,7 @@ import { SubscriptionInviteAcceptResponse } from '../../Response/Subscription/Su
 import { SubscriptionInviteCancelResponse } from '../../Response/Subscription/SubscriptionInviteCancelResponse'
 import { SubscriptionInviteDeclineResponse } from '../../Response/Subscription/SubscriptionInviteDeclineResponse'
 import { SubscriptionInviteListResponse } from '../../Response/Subscription/SubscriptionInviteListResponse'
+
 import { SubscriptionServer } from './SubscriptionServer'
 
 describe('SubscriptionServer', () => {
