@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.5.0](https://github.com/standardnotes/app/compare/@standardnotes/api@1.4.9...@standardnotes/api@1.5.0) (2022-08-31)
+
+### Features
+
+* **api:** add subscription server and client services and interfaces ([#1470](https://github.com/standardnotes/app/issues/1470)) ([089d3a2](https://github.com/standardnotes/app/commit/089d3a2e669f5a24bb4a38fc7582b423980d2d22))
+
 ## [1.4.9](https://github.com/standardnotes/app/compare/@standardnotes/api@1.4.8...@standardnotes/api@1.4.9) (2022-08-23)
 
 **Note:** Version bump only for package @standardnotes/api
