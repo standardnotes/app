@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.14.4](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.14.3...@standardnotes/encryption@1.14.4) (2022-09-01)
+
+### Bug Fixes
+
+* **encryption:** make package public for resolution on @standardnotes/api package ([8792771](https://github.com/standardnotes/app/commit/8792771d27ba926b83bc7b89749c4b1982871c1b))
+
 ## [1.14.3](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.14.2...@standardnotes/encryption@1.14.3) (2022-08-31)
 
 **Note:** Version bump only for package @standardnotes/encryption
