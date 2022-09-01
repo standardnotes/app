@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/api",
-  "version": "1.4.9",
+  "version": "1.6.0",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -22,12 +22,14 @@
     "prebuild": "yarn clean",
     "build": "tsc -p tsconfig.json",
     "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
     "test": "jest spec --coverage"
   },
   "devDependencies": {
     "@types/jest": "^28.1.5",
     "@types/lodash": "^4.14.182",
     "@typescript-eslint/eslint-plugin": "^5.30.0",
+    "eslint": "^8.23.0",
     "eslint-plugin-prettier": "*",
     "jest": "^28.1.2",
     "ts-jest": "^28.0.5"

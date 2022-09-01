@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.17.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.16.2...@standardnotes/models@1.17.0) (2022-08-31)
+
+### Features
+
+* **api:** add subscription server and client services and interfaces ([#1470](https://github.com/standardnotes/app/issues/1470)) ([089d3a2](https://github.com/standardnotes/app/commit/089d3a2e669f5a24bb4a38fc7582b423980d2d22))
+
 ## [1.16.2](https://github.com/standardnotes/app/compare/@standardnotes/models@1.16.1...@standardnotes/models@1.16.2) (2022-08-23)
 
 **Note:** Version bump only for package @standardnotes/models
