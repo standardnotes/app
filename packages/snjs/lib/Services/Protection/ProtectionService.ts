@@ -96,7 +96,6 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
   }
 
   public hasProtectionSources(): boolean {
-    console.log('this.hasBiometricsEnabled (1) is ', this.hasBiometricsEnabled())
     return this.protocolService.hasAccount() || this.protocolService.hasPasscode() || this.hasBiometricsEnabled()
   }
 
@@ -288,14 +287,15 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
   }
 
   async setMobileScreenshotPrivacyEnabled(isEnabled: boolean) {
-    await this.storageService.setValue(StorageKey.MobileScreenshotPrivacyEnabled, isEnabled, StorageValueModes.Default)
-    // TODO: `screenshotPrivacyEnabled` variable should go to somewhere as a global variable (comes from "mobile/.../ApplicationState")
-    //  (or maybe we could simply call `getMobileScreenshotPrivacyEnabled()` wherever needed?)
-    // this.screenshotPrivacyEnabled = isEnabled
+    await this.storageService.setValue(
+      StorageKey.MobileScreenshotPrivacyEnabled,
+      isEnabled,
+      StorageValueModes.Nonwrapped,
+    )
   }
 
   async getMobileScreenshotPrivacyEnabled(): Promise<boolean | undefined> {
-    return this.storageService.getValue(StorageKey.MobileScreenshotPrivacyEnabled, StorageValueModes.Default)
+    return this.storageService.getValue(StorageKey.MobileScreenshotPrivacyEnabled, StorageValueModes.Nonwrapped)
   }
 
   // private async loadUnlockTiming() {

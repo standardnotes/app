@@ -15,18 +15,10 @@ type Props = {
 const MultitaskingPrivacy = ({ application }: Props) => {
   const [hasScreenshotPrivacy, setHasScreenshotPrivacy] = useState<boolean | undefined>(false)
 
-  /*useEffect(() => {
-    const isEnabled = (await application.getScreenshotPrivacyEnabled()) ?? true
-    // TODO: run this effect on `onAppLaunch` (as per mobile/ApplicationState.ts => onAppLaunch())
-  }, [])*/
-
   useEffect(() => {
-    // let mounted = true
     const getHasScreenshotPrivacy = async () => {
-      const hasScreenshotPrivacyEnabled = await application.getMobileScreenshotPrivacyEnabled()
-      // if (mounted) {
+      const hasScreenshotPrivacyEnabled = (await application.getMobileScreenshotPrivacyEnabled()) ?? true
       setHasScreenshotPrivacy(hasScreenshotPrivacyEnabled)
-      // }
     }
     void getHasScreenshotPrivacy()
   }, [application])

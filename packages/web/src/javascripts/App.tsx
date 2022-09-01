@@ -96,8 +96,6 @@ if (IsWebPlatform) {
   const ReactNativeWebViewInitializationTimeout = 0
   // const ReactNativeWebViewInitializationTimeout = 100
 
-  alert('its WebPlatform')
-
   setTimeout(() => {
     const device = window.reactNativeDevice || new WebDevice(WebAppVersion)
     alert('in web, window.reactNativeDevice is: ' + window.reactNativeDevice)

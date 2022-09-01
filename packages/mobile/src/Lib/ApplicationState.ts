@@ -170,7 +170,6 @@ export class ApplicationState extends ApplicationService {
   override async onAppLaunch() {
     MobileApplication.setPreviouslyLaunched()
     this.screenshotPrivacyEnabled = (await this.getScreenshotPrivacyEnabled()) ?? true
-    // this.screenshotPrivacyEnabled = (await this.application.getMobileScreenshotPrivacyEnabled()) ?? true
     void this.setAndroidScreenshotPrivacy(this.screenshotPrivacyEnabled)
   }
 
@@ -619,7 +618,7 @@ export class ApplicationState extends ApplicationService {
   }
 
   public async setScreenshotPrivacyEnabled(enabled: boolean) {
-    await this.application.setValue(StorageKey.MobileScreenshotPrivacyEnabled, enabled, StorageValueModes.Default)
+    await this.application.setValue(StorageKey.MobileScreenshotPrivacyEnabled, enabled, StorageValueModes.Nonwrapped)
     this.screenshotPrivacyEnabled = enabled
     void this.setAndroidScreenshotPrivacy(enabled)
   }
