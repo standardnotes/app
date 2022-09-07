@@ -30,11 +30,11 @@ const AccountMenuButton = ({
         onClick={toggleMenu}
         className={classNames(
           isOpen ? 'bg-border' : '',
-          'flex h-full w-8 cursor-pointer items-center justify-center rounded-full',
+          'flex h-full w-12 cursor-pointer items-center justify-center rounded-full md:w-8',
         )}
       >
-        <div className={hasError ? 'text-danger' : (user ? 'text-info' : 'text-neutral') + ' h-5 w-5'}>
-          <Icon type="account-circle" className="max-h-5 hover:text-info" />
+        <div className={hasError ? 'text-danger' : user ? 'text-info' : 'text-neutral'}>
+          <Icon type="account-circle" className="h-6 w-6 hover:text-info md:h-5 md:w-5" />
         </div>
       </button>
       <Popover anchorElement={buttonRef.current} open={isOpen} togglePopover={toggleMenu} side="top" className="py-2">
