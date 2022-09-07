@@ -104,6 +104,5 @@ if (IsWebPlatform) {
     )
   }, ReactNativeWebViewInitializationTimeout)
 } else {
-  console.log('its NOT web platform')
   window.startApplication = startApplication
 }

@@ -153,7 +153,6 @@ export const SecuritySection = (props: Props) => {
   }
 
   const onBiometricsPress = async () => {
-    console.log('`onBiometricsPress (mobile)`: hasBiometrics is ', hasBiometrics)
     if (hasBiometrics) {
       void disableAuthentication('biometrics')
     } else {
@@ -165,9 +164,7 @@ export const SecuritySection = (props: Props) => {
   }
 
   const disableBiometrics = useCallback(async () => {
-    console.log(1111)
     if (await application?.disableBiometrics()) {
-      console.log(222)
       setHasBiometrics(false)
       props.updateProtectionsAvailable()
     }

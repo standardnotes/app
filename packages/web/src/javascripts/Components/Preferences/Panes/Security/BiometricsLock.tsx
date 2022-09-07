@@ -1,9 +1,7 @@
-// TODO: reached here - try not to include logic that will go to other file (such as Passcode protection related)
-
 import { observer } from 'mobx-react-lite'
 import { useCallback, useEffect, useState } from 'react'
 import { WebApplication } from '@/Application/Application'
-import { ApplicationEvent, MobileDeviceInterface } from '@standardnotes/services'
+import { MobileDeviceInterface } from '@standardnotes/services'
 import { MobileUnlockTiming } from '@standardnotes/snjs'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 import { Title } from '@/Components/Preferences/PreferencesComponents/Content'
@@ -17,45 +15,21 @@ type Props = {
 const BiometricsLock = ({ application }: Props) => {
   const [hasBiometrics, setHasBiometrics] = useState(false)
   const [supportsBiometrics, setSupportsBiometrics] = useState(false)
-  const [biometricsTimingOptions, setBiometricsTimingOptions] = useState(() =>
-    // TODO: remove all initial unserscores from "useState" variables and make sure no unused variables are there
-    // const [_biometricsTimingOptions, setBiometricsTimingOptions] = useState(() =>
-    application.getBiometricsTimingOptions(),
-  )
-  // const [protectionsAvailable, setProtectionsAvailable] = useState(application.hasProtectionSources())
+  const [biometricsTimingOptions, setBiometricsTimingOptions] = useState(() => application.getBiometricsTimingOptions())
+  // TODO: remove all initial underscores from "useState" variables and make sure no unused variables are there
   const [_protectionsAvailable, setProtectionsAvailable] = useState(application.hasProtectionSources())
-
-  useEffect(() => {
-    // TODO: (GENERAL NOTE) This effect will run only on this page, but this logic seems needs to run on top-level since it's more general.
-    //  Look at the source where this logic is copied from, so it would become more clear.
-
-    const removeOnAppStartObserver = application.addEventObserver(async () => {
-      // TODO: trying to implement "await this.loadUnlockTiming()" call from 'mobile/ApplicationState.ts' - doesn't recognize 'loadMobileUnlockTiming'
-      alert('loading mobile unlock timing')
-      await application.loadMobileUnlockTiming()
-    }, ApplicationEvent.Started)
-
-    return () => {
-      removeOnAppStartObserver()
-    }
-  }, [application])
 
   useEffect(() => {
     const getHasBiometrics = async () => {
       const appHasBiometrics = await application.hasBiometrics()
-      console.log('appHasBiometrics ', appHasBiometrics)
-      // if (mounted) {
       setHasBiometrics(appHasBiometrics)
-      // }
     }
 
     const hasBiometricsSupport = async () => {
-      const hasBiometricsAvailable = await (application.deviceInterface as MobileDeviceInterface)
-        // ).getDeviceBiometricsAvailability()
-        .getDeviceBiometricsAvailability?.()
-      // if (mounted) {
+      const hasBiometricsAvailable = await (
+        application.deviceInterface as MobileDeviceInterface
+      ).getDeviceBiometricsAvailability?.()
       setSupportsBiometrics(hasBiometricsAvailable)
-      // }
     }
     void getHasBiometrics()
     void hasBiometricsSupport()
@@ -77,50 +51,9 @@ const BiometricsLock = ({ application }: Props) => {
     }
   }, [application, updateProtectionsAvailable])
 
-  const disablePasscode = useCallback(async () => {
-    const hasAccount = Boolean(application.hasAccount())
-    let message
-    if (hasAccount) {
-      message =
-        'Are you sure you want to disable your local passcode? This will not affect your encryption status, as your data is currently being encrypted through your sync account keys.'
-    } else {
-      message = 'Are you sure you want to disable your local passcode? This will disable encryption on your data.'
-    }
-
-    const confirmed = await application.alertService?.confirm(
-      message,
-      'Disable Passcode',
-      'Disable Passcode',
-      undefined,
-    )
-    if (confirmed) {
-      await application.removePasscode()
-    }
-  }, [application])
-
-  const disableAuthentication = useCallback(
-    async (authenticationMethod: 'passcode' | 'biometrics') => {
-      switch (authenticationMethod) {
-        case 'biometrics': {
-          // void disableBiometrics()
-          await disableBiometrics()
-          break
-        }
-        case 'passcode': {
-          // void disablePasscode()
-          await disablePasscode()
-          break
-        }
-      }
-    },
-    [disableBiometrics, disablePasscode],
-  )
-
   const onBiometricsPress = async () => {
-    console.log('`onBiometricsPress`: hasBiometrics is ', hasBiometrics)
     if (hasBiometrics) {
-      // void disableAuthentication('biometrics')
-      await disableAuthentication('biometrics')
+      await disableBiometrics()
     } else {
       setHasBiometrics(true)
       await application.enableBiometrics()

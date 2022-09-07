@@ -128,13 +128,10 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
       return false
     }
 
-    console.log(1111)
     if (await this.validateOrRenewSession(ChallengeReason.DisableBiometrics)) {
-      console.log(222)
       this.storageService.setValue(StorageKey.BiometricsState, false, StorageValueModes.Nonwrapped)
       return true
     } else {
-      console.log(333, '(false)')
       return false
     }
   }
@@ -304,12 +301,6 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
   async loadMobileUnlockTiming() {
     this.mobilePasscodeTiming = await this.getPasscodeTiming()
     this.mobileBiometricsTiming = await this.getBiometricsTiming()
-    alert(
-      'mobilePasscodeTiming is ' +
-        this.mobilePasscodeTiming +
-        ', mobileBiometricsTiming is: ' +
-        this.mobileBiometricsTiming,
-    )
   }
 
   private async validateOrRenewSession(
@@ -322,17 +313,14 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
 
     const prompts: ChallengePrompt[] = []
 
-    console.log('this.hasBiometricsEnabled (2) is ', this.hasBiometricsEnabled())
     if (this.hasBiometricsEnabled()) {
       prompts.push(new ChallengePrompt(ChallengeValidation.Biometric))
     }
 
-    console.log('this.protocolService.hasPasscode() ? ', this.protocolService.hasPasscode())
     if (this.protocolService.hasPasscode()) {
       prompts.push(new ChallengePrompt(ChallengeValidation.LocalPasscode))
     }
 
-    console.log('requireAccountPassword ? ', requireAccountPassword)
     if (requireAccountPassword) {
       if (!this.protocolService.hasAccount()) {
         throw Error('Requiring account password for challenge with no account')
@@ -340,7 +328,6 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
       prompts.push(new ChallengePrompt(ChallengeValidation.AccountPassword))
     }
 
-    console.log('prompts.length is ', prompts.length)
     if (prompts.length === 0) {
       if (fallBackToAccountPassword && this.protocolService.hasAccount()) {
         prompts.push(new ChallengePrompt(ChallengeValidation.AccountPassword))
@@ -348,7 +335,6 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
         return true
       }
     }
-    console.log('prompts[0].title is ', prompts[0].title)
     const lastSessionLength = this.getLastSessionLength()
     const chosenSessionLength = isValidProtectionSessionLength(lastSessionLength)
       ? lastSessionLength
@@ -363,9 +349,9 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
         chosenSessionLength,
       ),
     )
-    console.log('going to show prompt...')
+
     const response = await this.challengeService.promptForChallengeResponse(new Challenge(prompts, reason, true))
-    console.log('response is ', response)
+
     if (response) {
       const length = response.values.find(
         (value) => value.prompt.validation === ChallengeValidation.ProtectionSessionDuration,

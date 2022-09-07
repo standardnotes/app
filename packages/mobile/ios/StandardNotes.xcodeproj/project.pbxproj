@@ -11,7 +11,7 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		1C2EEB3B45F4EB07AC795C77 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		1C2EEB3B45F4EB07AC795C77 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
 		33BB1B14071EBE5978EBF3A8 /* libPods-StandardNotes-StandardNotesTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 04FCB5A3A3387CA3CFC82AA3 /* libPods-StandardNotes-StandardNotesTests.a */; };
 		BC8DEA834BF198E8511F04FF /* libPods-StandardNotesDev.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F2D747BE02C2A1BCFEEFD1 /* libPods-StandardNotesDev.a */; };
 		CD7D5ECA27800609005FE1BF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD7D5EC927800608005FE1BF /* LaunchScreen.storyboard */; };
@@ -26,8 +26,6 @@
 		CD7D8400277FF8CB00915D89 /* Red@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7D83FD277FF8CB00915D89 /* Red@3x.png */; };
 		CD7D8401277FF8CB00915D89 /* Red.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7D83FE277FF8CB00915D89 /* Red.png */; };
 		CD7D8402277FF8CB00915D89 /* Red@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7D83FF277FF8CB00915D89 /* Red@2x.png */; };
-		D261494528699DCE00B17102 /* Web.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D261494428699DCE00B17102 /* Web.bundle */; };
-		D261494628699DCE00B17102 /* Web.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D261494428699DCE00B17102 /* Web.bundle */; };
 		DD3D1CE428EC1C8BA0C49211 /* libPods-StandardNotes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41388EB4F886116157DA092C /* libPods-StandardNotes.a */; };
 /* End PBXBuildFile section */
 
@@ -69,7 +67,6 @@
 		CD7D83FD277FF8CB00915D89 /* Red@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Red@3x.png"; sourceTree = "<group>"; };
 		CD7D83FE277FF8CB00915D89 /* Red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Red.png; sourceTree = "<group>"; };
 		CD7D83FF277FF8CB00915D89 /* Red@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Red@2x.png"; sourceTree = "<group>"; };
-		D261494428699DCE00B17102 /* Web.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Web.bundle; path = ../html/Web.bundle; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -86,7 +83,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1C2EEB3B45F4EB07AC795C77 /* (null) in Frameworks */,
+				1C2EEB3B45F4EB07AC795C77 /* BuildFile in Frameworks */,
 				DD3D1CE428EC1C8BA0C49211 /* libPods-StandardNotes.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -135,7 +132,6 @@
 		13B07FAE1A68108700A75B9A /* StandardNotes */ = {
 			isa = PBXGroup;
 			children = (
-				D261494428699DCE00B17102 /* Web.bundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				CD7D5EE527801F10005FE1BF /* StandardNotes.entitlements */,
@@ -312,7 +308,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D261494528699DCE00B17102 /* Web.bundle in Resources */,
 				CD7D8401277FF8CB00915D89 /* Red.png in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				CD7D8402277FF8CB00915D89 /* Red@2x.png in Resources */,
@@ -326,7 +321,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD7D5ED4278015D2005FE1BF /* Red.png in Resources */,
-				D261494628699DCE00B17102 /* Web.bundle in Resources */,
 				CD7D5EE3278016E3005FE1BF /* Dev.xcassets in Resources */,
 				CD7D5ED5278015D2005FE1BF /* Images.xcassets in Resources */,
 				CD7D5ED6278015D2005FE1BF /* Red@2x.png in Resources */,
@@ -834,10 +828,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 55V9XMQD5T;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "StandardNotesDev-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -850,9 +841,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.standardnotes.standardnotes.dev-vv";
+				PRODUCT_BUNDLE_IDENTIFIER = com.standardnotes.standardnotes.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

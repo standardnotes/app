@@ -18,7 +18,6 @@ interface SecurityProps extends MfaProps {
 }
 
 const Security: FunctionComponent<SecurityProps> = (props) => {
-  alert('environment in Prefs: ' + props.application.environment)
   const isNativeMobileWeb = props.application.isNativeMobileWeb()
 
   return (
