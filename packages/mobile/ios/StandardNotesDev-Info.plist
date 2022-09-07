@@ -68,14 +68,14 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Camera is required to scan QR codes with the TokenVault extension.</string>
+	<key>NSMicrophoneUsageDescription</key>
+    <string>Microphone is optionally used to capture videos.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Face ID is required to unlock your notes.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Not used by application; required in configuration because API exists in build dependencies.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Not used by application; required in configuration because API exists in build dependencies.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Microphone is optionally used to capture videos.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Photo library is required to select QR code images from your photo library.</string>
 	<key>UIAppFonts</key>
