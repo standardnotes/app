@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.45.13](https://github.com/standardnotes/app/compare/@standardnotes/web@3.45.12...@standardnotes/web@3.45.13) (2022-09-07)
+
+### Bug Fixes
+
+* file preview & selected items panel size on mobile ([#1492](https://github.com/standardnotes/app/issues/1492)) ([ecd870c](https://github.com/standardnotes/app/commit/ecd870cdaa86c7ec71a0db58643390fe5d597146))
+* footer and prefs dropdown cutoff by screen on some phones ([#1491](https://github.com/standardnotes/app/issues/1491)) ([4617afe](https://github.com/standardnotes/app/commit/4617afe14ea1931ba150be5597656c22e2116e73))
+
 ## [3.45.12](https://github.com/standardnotes/app/compare/@standardnotes/web@3.45.11...@standardnotes/web@3.45.12) (2022-09-07)
 
 **Note:** Version bump only for package @standardnotes/web
