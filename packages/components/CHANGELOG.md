@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.7.10](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.7.9...@standardnotes/components-meta@2.7.10) (2022-09-07)
+
+### Bug Fixes
+
+* add min-height to task textarea ([#1490](https://github.com/standardnotes/app/issues/1490)) ([0e86b13](https://github.com/standardnotes/app/commit/0e86b13a8f3b11ed99cdc49b3a44665396bfca98))
+
 ## [2.7.9](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.7.8...@standardnotes/components-meta@2.7.9) (2022-08-23)
 
 **Note:** Version bump only for package @standardnotes/components-meta
