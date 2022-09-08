@@ -9,7 +9,7 @@ import { TableSection } from '@Root/Components/TableSection'
 import { useSafeApplicationContext } from '@Root/Hooks/useSafeApplicationContext'
 import { ModalStackNavigationProp } from '@Root/ModalStack'
 import { SCREEN_MANAGE_SESSIONS, SCREEN_SETTINGS, SCREEN_WEB_APP } from '@Root/Screens/screens'
-import { ButtonType, PrefKey } from '@standardnotes/snjs'
+import { ButtonType, PrefKey, StorageValueModes } from '@standardnotes/snjs'
 import moment from 'moment'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Platform } from 'react-native'
@@ -187,12 +187,13 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
 
   useEffect(() => {
     const getSetting = async () => {
-      const alwaysOpenWebAppOnLaunch =
-        Boolean(await application.deviceInterface.getJsonParsedRawStorageValue(AlwaysOpenWebAppOnLaunchKey)) ?? false
-      setShouldAlwaysOpenWebAppOnLaunch(alwaysOpenWebAppOnLaunch)
+      const value = (await application.getValue(AlwaysOpenWebAppOnLaunchKey, StorageValueModes.Nonwrapped)) as
+        | string
+        | undefined
+      setShouldAlwaysOpenWebAppOnLaunch(JSON.parse(value ?? 'false'))
     }
     void getSetting()
-  }, [])
+  }, [application])
 
   const openWebApp = useCallback(() => {
     navigation.push(SCREEN_WEB_APP)
@@ -244,11 +245,15 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
             onPress={() => {
               const newValue = !shouldAlwaysOpenWebAppOnLaunch
               setShouldAlwaysOpenWebAppOnLaunch(newValue)
-              application.deviceInterface.setRawStorageValue(AlwaysOpenWebAppOnLaunchKey, JSON.stringify(newValue))
+              void application.setValue(
+                AlwaysOpenWebAppOnLaunchKey,
+                JSON.stringify(newValue),
+                StorageValueModes.Nonwrapped,
+              )
             }}
             text="Always Open Web App On Launch"
             selected={() => shouldAlwaysOpenWebAppOnLaunch}
-          ></SectionedAccessoryTableCell>
+          />
         </>
       )}
 

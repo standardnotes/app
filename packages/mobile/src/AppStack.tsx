@@ -13,7 +13,7 @@ import { MainSideMenu } from '@Root/Screens/SideMenu/MainSideMenu'
 import { NoteSideMenu } from '@Root/Screens/SideMenu/NoteSideMenu'
 import { ViewProtectedNote } from '@Root/Screens/ViewProtectedNote/ViewProtectedNote'
 import { Root } from '@Screens/Root'
-import { ApplicationEvent, UuidString } from '@standardnotes/snjs'
+import { ApplicationEvent, StorageValueModes, UuidString } from '@standardnotes/snjs'
 import { ICON_MENU } from '@Style/Icons'
 import { ThemeService } from '@Style/ThemeService'
 import { getDefaultDrawerWidth } from '@Style/Utils'
@@ -133,8 +133,10 @@ export const AppStackComponent = (props: ModalStackNavigationProp<'AppStack'>) =
 
     const removeObserver = application.addEventObserver(async (event) => {
       if (event === ApplicationEvent.Launched) {
-        const shouldAlwaysOpenWebAppOnLaunch =
-          Boolean(await application.deviceInterface.getJsonParsedRawStorageValue(AlwaysOpenWebAppOnLaunchKey)) ?? false
+        const value = (await application.getValue(AlwaysOpenWebAppOnLaunchKey, StorageValueModes.Nonwrapped)) as
+          | string
+          | undefined
+        const shouldAlwaysOpenWebAppOnLaunch = JSON.parse(value ?? 'false')
         if (shouldAlwaysOpenWebAppOnLaunch) {
           navigation.push(SCREEN_WEB_APP)
         }
