@@ -127,7 +127,9 @@ export const AppStackComponent = (props: ModalStackNavigationProp<'AppStack'>) =
   const navigation = useNavigation<ModalStackNavigationProp<'AppStack'>['navigation']>()
 
   useEffect(() => {
-    if (!application) return
+    if (!application) {
+      return
+    }
 
     const removeObserver = application.addEventObserver(async (event) => {
       if (event === ApplicationEvent.Launched) {
@@ -140,7 +142,7 @@ export const AppStackComponent = (props: ModalStackNavigationProp<'AppStack'>) =
     })
 
     return removeObserver
-  }, [application])
+  }, [application, navigation])
 
   return (
     <DrawerLayout
