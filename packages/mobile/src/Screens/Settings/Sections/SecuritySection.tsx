@@ -68,7 +68,6 @@ export const SecuritySection = (props: Props) => {
     }
   }, [application])
 
-  // TODO: this should also be moved to web
   useFocusEffect(
     useCallback(() => {
       if (props.hasPasscode) {

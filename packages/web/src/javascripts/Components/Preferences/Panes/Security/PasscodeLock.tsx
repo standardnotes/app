@@ -240,8 +240,10 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
                   return (
                     <a
                       key={option.value}
-                      className={`mr-3 cursor-pointer rounded text-info ${
-                        option.value === selectedAutoLockInterval ? 'bg-info px-1.5 py-0.5 text-info-contrast' : ''
+                      className={`mr-3 cursor-pointer rounded ${
+                        option.value === selectedAutoLockInterval
+                          ? 'bg-info px-1.5 py-0.5 text-info-contrast'
+                          : 'text-info'
                       }`}
                       onClick={() => selectAutoLockInterval(option.value)}
                     >

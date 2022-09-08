@@ -7,6 +7,7 @@ import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/P
 import { Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
 import Button from '@/Components/Button/Button'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 
 type Props = {
   application: WebApplication
@@ -81,7 +82,10 @@ const BiometricsLock = ({ application }: Props) => {
                 return (
                   <a
                     key={option.key}
-                    className={'mr-3 cursor-pointer rounded text-info'}
+                    className={classNames(
+                      'mr-3 cursor-pointer rounded px-1.5 py-0.5',
+                      option.selected ? 'bg-info text-info-contrast' : 'text-info',
+                    )}
                     onClick={() => {
                       void setBiometricsTimingValue(option.key as MobileUnlockTiming)
                     }}
