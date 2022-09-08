@@ -1,4 +1,4 @@
-import { WebAppOptionEnabled } from '@Lib/constants'
+import { AlwaysOpenWebAppOnLaunchKey, WebAppOptionEnabled } from '@Lib/constants'
 import { useSignedIn } from '@Lib/SnjsHelperHooks'
 import { useNavigation } from '@react-navigation/native'
 import { ButtonCell } from '@Root/Components/ButtonCell'
@@ -11,7 +11,7 @@ import { ModalStackNavigationProp } from '@Root/ModalStack'
 import { SCREEN_MANAGE_SESSIONS, SCREEN_SETTINGS, SCREEN_WEB_APP } from '@Root/Screens/screens'
 import { ButtonType, PrefKey } from '@standardnotes/snjs'
 import moment from 'moment'
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Platform } from 'react-native'
 import DocumentPicker from 'react-native-document-picker'
 import RNFS from 'react-native-fs'
@@ -183,6 +183,17 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
     )
   }, [application.alertService])
 
+  const [shouldAlwaysOpenWebAppOnLaunch, setShouldAlwaysOpenWebAppOnLaunch] = useState(false)
+
+  useEffect(() => {
+    const getSetting = async () => {
+      const alwaysOpenWebAppOnLaunch =
+        Boolean(await application.deviceInterface.getJsonParsedRawStorageValue(AlwaysOpenWebAppOnLaunchKey)) ?? false
+      setShouldAlwaysOpenWebAppOnLaunch(alwaysOpenWebAppOnLaunch)
+    }
+    void getSetting()
+  }, [])
+
   const openWebApp = useCallback(() => {
     navigation.push(SCREEN_WEB_APP)
   }, [navigation])
@@ -227,7 +238,18 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
       />
 
       {WebAppOptionEnabled && (
-        <ButtonCell testID="openWebApp" leftAligned title={'Open Web App'} onPress={() => openWebApp()} />
+        <>
+          <ButtonCell testID="openWebApp" leftAligned title="Open Web App" onPress={() => openWebApp()} />
+          <SectionedAccessoryTableCell
+            onPress={() => {
+              const newValue = !shouldAlwaysOpenWebAppOnLaunch
+              setShouldAlwaysOpenWebAppOnLaunch(newValue)
+              application.deviceInterface.setRawStorageValue(AlwaysOpenWebAppOnLaunchKey, JSON.stringify(newValue))
+            }}
+            text="Always Open Web App On Launch"
+            selected={() => shouldAlwaysOpenWebAppOnLaunch}
+          ></SectionedAccessoryTableCell>
+        </>
       )}
 
       {!signedIn && (

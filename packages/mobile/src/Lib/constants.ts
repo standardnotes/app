@@ -5,3 +5,5 @@ export enum ErrorMessage {
 }
 
 export const WebAppOptionEnabled = IsDev
+
+export const AlwaysOpenWebAppOnLaunchKey = 'AlwaysOpenWebAppOnLaunch'
