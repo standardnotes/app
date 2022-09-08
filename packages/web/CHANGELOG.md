@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.45.14](https://github.com/standardnotes/app/compare/@standardnotes/web@3.45.13...@standardnotes/web@3.45.14) (2022-09-08)
+
+### Bug Fixes
+
+* note panel resizing ([#1497](https://github.com/standardnotes/app/issues/1497)) ([9267e58](https://github.com/standardnotes/app/commit/9267e580b56fc815a5eb289c225af55f5cf7a4b1))
+
 ## [3.45.13](https://github.com/standardnotes/app/compare/@standardnotes/web@3.45.12...@standardnotes/web@3.45.13) (2022-09-07)
 
 ### Bug Fixes
