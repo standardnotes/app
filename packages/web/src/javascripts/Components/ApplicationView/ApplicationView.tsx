@@ -72,8 +72,6 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
   )
 
   const onAppStart = useCallback(() => {
-    // TODO: probably need to check if `getPasscodeTiming()` and `getBiometricsTiming()` are set in case of NativeMobileWeb
-    //  (defined in snjs/ProtectionService)
     setNeedsUnlock(application.hasPasscode())
   }, [application])
 

@@ -68,8 +68,8 @@ export const ProtectionSessionDurations = [
  */
 export class SNProtectionService extends AbstractService<ProtectionEvent> implements ProtectionsClientInterface {
   private sessionExpiryTimeout = -1
-  private mobilePasscodeTiming: MobileUnlockTiming | undefined = MobileUnlockTiming.Immediately // TODO: just an initial value, check if doesn't introduce any issue
-  private mobileBiometricsTiming: MobileUnlockTiming | undefined = MobileUnlockTiming.Immediately // TODO: just an initial value, check if doesn't introduce any issue
+  private mobilePasscodeTiming: MobileUnlockTiming | undefined = MobileUnlockTiming.Immediately
+  private mobileBiometricsTiming: MobileUnlockTiming | undefined = MobileUnlockTiming.Immediately
 
   constructor(
     private protocolService: EncryptionService,
@@ -262,9 +262,6 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
   }
 
   private async getBiometricsTiming(): Promise<MobileUnlockTiming | undefined> {
-    /*return this.storageService.getValue(StorageKey.MobileBiometricsTiming, StorageValueModes.Nonwrapped) as Promise<
-      UnlockTiming | undefined
-    >*/
     return this.storageService.getValue<Promise<MobileUnlockTiming | undefined>>(
       StorageKey.MobileBiometricsTiming,
       StorageValueModes.Nonwrapped,
@@ -295,9 +292,6 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
     return this.storageService.getValue(StorageKey.MobileScreenshotPrivacyEnabled, StorageValueModes.Nonwrapped)
   }
 
-  // private async loadUnlockTiming() {
-  // TODO: Important: this function is called in `onAppStart()` in mobile/ApplicationState, need to do the same for NativeMobileWeb
-  //  (added corresponding TODO item to `web/.../ApplicationView`)
   async loadMobileUnlockTiming() {
     this.mobilePasscodeTiming = await this.getPasscodeTiming()
     this.mobileBiometricsTiming = await this.getBiometricsTiming()

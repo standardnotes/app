@@ -17,7 +17,7 @@ const BiometricsLock = ({ application }: Props) => {
   const [hasBiometrics, setHasBiometrics] = useState(false)
   const [supportsBiometrics, setSupportsBiometrics] = useState(false)
   const [biometricsTimingOptions, setBiometricsTimingOptions] = useState(() => application.getBiometricsTimingOptions())
-  // TODO: remove all initial underscores from "useState" variables and make sure no unused variables are there
+  // TODO: finalize this logic, maybe `protectionsAvailable` and its setter are not needed at all
   const [_protectionsAvailable, setProtectionsAvailable] = useState(application.hasProtectionSources())
 
   useEffect(() => {

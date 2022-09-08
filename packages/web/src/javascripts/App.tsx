@@ -94,11 +94,10 @@ const startApplication: StartApplication = async function startApplication(
 
 if (IsWebPlatform) {
   const ReactNativeWebViewInitializationTimeout = 0
-  // const ReactNativeWebViewInitializationTimeout = 100
 
   setTimeout(() => {
     const device = window.reactNativeDevice || new WebDevice(WebAppVersion)
-    alert('in web, window.reactNativeDevice is: ' + window.reactNativeDevice)
+
     startApplication(window.defaultSyncServer, device, window.enabledUnfinishedFeatures, window.websocketUrl).catch(
       console.error,
     )
