@@ -3,6 +3,7 @@ class WebProcessMessageSender {
   constructor() {
     this.pendingMessages = []
     window.addEventListener('message', this.handleMessageFromReactNative.bind(this))
+    document.addEventListener('message', this.handleMessageFromReactNative.bind(this))
   }
 
   handleMessageFromReactNative(event) {
