@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.45.15](https://github.com/standardnotes/app/compare/@standardnotes/web@3.45.14...@standardnotes/web@3.45.15) (2022-09-08)
+
+### Bug Fixes
+
+* **web:** autolock option style when selected ([#1501](https://github.com/standardnotes/app/issues/1501)) ([91d5980](https://github.com/standardnotes/app/commit/91d5980a7e5d7bdada74175474d6d8c1a0ecba7e))
+
 ## [3.45.14](https://github.com/standardnotes/app/compare/@standardnotes/web@3.45.13...@standardnotes/web@3.45.14) (2022-09-08)
 
 ### Bug Fixes
