@@ -1,5 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 
+const plugin = require('tailwindcss/plugin')
+
 module.exports = {
   content: ['./src/javascripts/**/*.tsx', '../toast/src/**/*.tsx'],
   theme: {
@@ -129,5 +131,9 @@ module.exports = {
     'text-accessory-tint-5',
     'text-accessory-tint-6',
   ],
-  plugins: [],
+  plugins: [
+    plugin(function ({ addVariant }) {
+      addVariant('pointer-coarse', '@media (pointer: coarse)')
+    }),
+  ],
 }
