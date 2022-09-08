@@ -134,9 +134,9 @@ export const AppStackComponent = (props: ModalStackNavigationProp<'AppStack'>) =
     const removeObserver = application.addEventObserver(async (event) => {
       if (event === ApplicationEvent.Launched) {
         const value = (await application.getValue(AlwaysOpenWebAppOnLaunchKey, StorageValueModes.Nonwrapped)) as
-          | string
+          | boolean
           | undefined
-        const shouldAlwaysOpenWebAppOnLaunch = JSON.parse(value ?? 'false')
+        const shouldAlwaysOpenWebAppOnLaunch = value ?? false
         if (shouldAlwaysOpenWebAppOnLaunch) {
           navigation.push(SCREEN_WEB_APP)
         }

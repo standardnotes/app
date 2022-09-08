@@ -188,9 +188,9 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
   useEffect(() => {
     const getSetting = async () => {
       const value = (await application.getValue(AlwaysOpenWebAppOnLaunchKey, StorageValueModes.Nonwrapped)) as
-        | string
+        | boolean
         | undefined
-      setShouldAlwaysOpenWebAppOnLaunch(JSON.parse(value ?? 'false'))
+      setShouldAlwaysOpenWebAppOnLaunch(value ?? false)
     }
     void getSetting()
   }, [application])
@@ -245,11 +245,7 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
             onPress={() => {
               const newValue = !shouldAlwaysOpenWebAppOnLaunch
               setShouldAlwaysOpenWebAppOnLaunch(newValue)
-              void application.setValue(
-                AlwaysOpenWebAppOnLaunchKey,
-                JSON.stringify(newValue),
-                StorageValueModes.Nonwrapped,
-              )
+              void application.setValue(AlwaysOpenWebAppOnLaunchKey, newValue, StorageValueModes.Nonwrapped)
             }}
             text="Always Open Web App On Launch"
             selected={() => shouldAlwaysOpenWebAppOnLaunch}
