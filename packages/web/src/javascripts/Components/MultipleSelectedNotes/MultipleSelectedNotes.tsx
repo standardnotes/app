@@ -72,7 +72,7 @@ const MultipleSelectedNotes = ({
           />
         </div>
       </div>
-      <div className="flex w-full max-w-md flex-grow flex-col items-center justify-center">
+      <div className="flex min-h-screen w-full max-w-md flex-grow flex-col items-center justify-center md:min-h-0">
         <IlNotesIcon className="block" />
         <h2 className="m-0 mt-4 text-center text-lg font-bold">{count} selected notes</h2>
         <p className="max-w-60 mt-2 text-center text-sm">Actions will be performed on all selected notes.</p>

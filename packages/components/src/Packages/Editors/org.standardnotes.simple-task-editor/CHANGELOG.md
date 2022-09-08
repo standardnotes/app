@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.4](https://github.com/standardnotes/app/compare/@standardnotes/simple-task-editor@1.4.3...@standardnotes/simple-task-editor@1.4.4) (2022-09-07)
+
+### Bug Fixes
+
+* add min-height to task textarea ([#1490](https://github.com/standardnotes/app/issues/1490)) ([0e86b13](https://github.com/standardnotes/app/commit/0e86b13a8f3b11ed99cdc49b3a44665396bfca98))
+
 ## [1.4.3](https://github.com/standardnotes/app/compare/@standardnotes/simple-task-editor@1.4.2...@standardnotes/simple-task-editor@1.4.3) (2022-07-14)
 
 ### Bug Fixes
