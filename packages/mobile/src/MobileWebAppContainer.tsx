@@ -57,6 +57,7 @@ export const MobileWebAppContainer = () => {
     constructor() {
       this.pendingMessages = []
       window.addEventListener('message', this.handleMessageFromReactNative.bind(this))
+      document.addEventListener('message', this.handleMessageFromReactNative.bind(this))
     }
 
     handleMessageFromReactNative(event) {
@@ -128,7 +129,7 @@ export const MobileWebAppContainer = () => {
       onMessage={onMessage}
       allowFileAccess={true}
       allowUniversalAccessFromFileURLs={true}
-      injectedJavaScript={injectedJS}
+      injectedJavaScriptBeforeContentLoaded={injectedJS}
     />
   )
   /* eslint-enable @typescript-eslint/no-empty-function */

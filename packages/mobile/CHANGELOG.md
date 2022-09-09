@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.31.28](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.31.27...@standardnotes/mobile@3.31.28) (2022-09-08)
+
+### Bug Fixes
+
+* let Android to correctly recognize the NativeMobileWeb environment when opening WebView on Android ([#1503](https://github.com/standardnotes/app/issues/1503)) ([461ebc2](https://github.com/standardnotes/app/commit/461ebc27689a6e7dff65ae7345fc8eebf1daf703))
+
 ## [3.31.27](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.31.26...@standardnotes/mobile@3.31.27) (2022-09-08)
 
 **Note:** Version bump only for package @standardnotes/mobile
