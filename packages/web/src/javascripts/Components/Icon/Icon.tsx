@@ -33,6 +33,7 @@ export const ICONS = {
   'menu-arrow-down': icons.MenuArrowDownIcon,
   'menu-arrow-right': icons.MenuArrowRightIcon,
   'menu-close': icons.MenuCloseIcon,
+  'menu-variant': icons.MenuVariantIcon,
   'notes-filled': icons.NotesFilledIcon,
   'pencil-filled': icons.PencilFilledIcon,
   'pencil-off': icons.PencilOffIcon,
