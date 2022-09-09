@@ -1,4 +1,4 @@
-import { AlwaysOpenWebAppOnLaunchKey, WebAppOptionEnabled } from '@Lib/constants'
+import { AlwaysOpenWebAppOnLaunchKey } from '@Lib/constants'
 import { useSignedIn } from '@Lib/SnjsHelperHooks'
 import { useNavigation } from '@react-navigation/native'
 import { ButtonCell } from '@Root/Components/ButtonCell'
@@ -238,20 +238,16 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
         onPress={onExportPress}
       />
 
-      {WebAppOptionEnabled && (
-        <>
-          <ButtonCell testID="openWebApp" leftAligned title="Open Web App" onPress={() => openWebApp()} />
-          <SectionedAccessoryTableCell
-            onPress={() => {
-              const newValue = !shouldAlwaysOpenWebAppOnLaunch
-              setShouldAlwaysOpenWebAppOnLaunch(newValue)
-              void application.setValue(AlwaysOpenWebAppOnLaunchKey, newValue, StorageValueModes.Nonwrapped)
-            }}
-            text="Always Open Web App On Launch"
-            selected={() => shouldAlwaysOpenWebAppOnLaunch}
-          />
-        </>
-      )}
+      <ButtonCell testID="openWebApp" leftAligned title="Open Web App" onPress={() => openWebApp()} />
+      <SectionedAccessoryTableCell
+        onPress={() => {
+          const newValue = !shouldAlwaysOpenWebAppOnLaunch
+          setShouldAlwaysOpenWebAppOnLaunch(newValue)
+          void application.setValue(AlwaysOpenWebAppOnLaunchKey, newValue, StorageValueModes.Nonwrapped)
+        }}
+        text="Always Open Web App On Launch"
+        selected={() => shouldAlwaysOpenWebAppOnLaunch}
+      />
 
       {!signedIn && (
         <SectionedAccessoryTableCell
