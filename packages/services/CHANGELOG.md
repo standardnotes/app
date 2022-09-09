@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.18.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.17.4...@standardnotes/services@1.18.0) (2022-09-09)
+
+### Features
+
+* **mobile:** add setting to always open web view on launch ([#1500](https://github.com/standardnotes/app/issues/1500)) ([320fc3f](https://github.com/standardnotes/app/commit/320fc3fd9630731aabc9ecf30999afa7b74c277f))
+
 ## [1.17.4](https://github.com/standardnotes/app/compare/@standardnotes/services@1.17.3...@standardnotes/services@1.17.4) (2022-09-01)
 
 **Note:** Version bump only for package @standardnotes/services

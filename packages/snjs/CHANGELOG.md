@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.126.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.125.6...@standardnotes/snjs@2.126.0) (2022-09-09)
+
+### Features
+
+* **mobile:** add setting to always open web view on launch ([#1500](https://github.com/standardnotes/app/issues/1500)) ([320fc3f](https://github.com/standardnotes/app/commit/320fc3fd9630731aabc9ecf30999afa7b74c277f))
+
 ## [2.125.6](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.125.5...@standardnotes/snjs@2.125.6) (2022-09-01)
 
 **Note:** Version bump only for package @standardnotes/snjs
