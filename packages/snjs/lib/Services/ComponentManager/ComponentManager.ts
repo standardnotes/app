@@ -291,11 +291,15 @@ export class SNComponentManager
     }
 
     const isWeb = this.environment === Environment.Web
+    const isMobileWebView = this.environment === Environment.NativeMobileWeb
     if (nativeFeature) {
-      if (!isWeb) {
+      if (!isWeb && !isMobileWebView) {
         throw Error('Mobile must override urlForComponent to handle native paths')
       }
-      const baseUrlRequiredForThemesInsideEditors = window.location.origin
+      let baseUrlRequiredForThemesInsideEditors = window.location.origin
+      if (isMobileWebView) {
+        baseUrlRequiredForThemesInsideEditors = window.location.href.split('/index.html')[0]
+      }
       return `${baseUrlRequiredForThemesInsideEditors}/components/assets/${component.identifier}/${nativeFeature.index_path}`
     }
 

@@ -33,6 +33,7 @@ export function environmentFromString(string: string) {
     web: Environment.Web,
     desktop: Environment.Desktop,
     mobile: Environment.Mobile,
+    nativeMobileWeb: Environment.NativeMobileWeb,
   }
   return map[string]
 }
@@ -42,6 +43,7 @@ export function environmentToString(environment: Environment) {
     [Environment.Web]: 'web',
     [Environment.Desktop]: 'desktop',
     [Environment.Mobile]: 'mobile',
+    [Environment.NativeMobileWeb]: 'native-mobile-web',
   }
   return map[environment]
 }
