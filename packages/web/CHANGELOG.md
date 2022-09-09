@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.45.16](https://github.com/standardnotes/app/compare/@standardnotes/web@3.45.15...@standardnotes/web@3.45.16) (2022-09-09)
+
+### Bug Fixes
+
+* note/file list item longpress on iOS ([#1506](https://github.com/standardnotes/app/issues/1506)) ([1efc352](https://github.com/standardnotes/app/commit/1efc352da5b0f449196b56bdf607e40d6e228cd4))
+
 ## [3.45.15](https://github.com/standardnotes/app/compare/@standardnotes/web@3.45.14...@standardnotes/web@3.45.15) (2022-09-08)
 
 ### Bug Fixes
