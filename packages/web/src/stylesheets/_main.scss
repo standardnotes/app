@@ -168,7 +168,6 @@ $footer-height: 2rem;
       .section-title-bar-header {
         display: flex;
         justify-content: space-between;
-        align-items: center;
         // This was causing problems with tags + button cutting off on right when the panel is a certain size
         // overflow: hidden;
 

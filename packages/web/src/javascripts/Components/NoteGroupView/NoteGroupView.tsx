@@ -9,6 +9,27 @@ import FileView from '@/Components/FileView/FileView'
 import { FileDnDContext } from '@/Components/FileDragNDropProvider/FileDragNDropProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import ResponsivePaneContent from '../ResponsivePane/ResponsivePaneContent'
+import Icon from '../Icon/Icon'
+import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
+
+const MobileItemsListButton = () => {
+  const { toggleAppPane } = useResponsiveAppPane()
+
+  return (
+    <div className="px-3.5 pt-2.5 md:hidden">
+      <button
+        className="bg-text-padding flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border text-neutral hover:bg-contrast focus:bg-contrast"
+        onClick={() => {
+          toggleAppPane(AppPaneId.Items)
+        }}
+        title="Go to items list"
+        aria-label="Go to items list"
+      >
+        <Icon type="chevron-left" />
+      </button>
+    </div>
+  )
+}
 
 type State = {
   showMultipleSelectedNotes: boolean
@@ -91,6 +112,7 @@ class NoteGroupView extends PureComponent<Props, State> {
     return (
       <div id={ElementIds.EditorColumn} className="app-column app-column-third h-full">
         <ResponsivePaneContent paneId={AppPaneId.Editor}>
+          <MobileItemsListButton />
           {this.state.showMultipleSelectedNotes && (
             <MultipleSelectedNotes
               application={this.application}

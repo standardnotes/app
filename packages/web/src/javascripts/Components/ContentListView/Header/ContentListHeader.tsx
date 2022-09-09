@@ -4,6 +4,7 @@ import Icon from '../../Icon/Icon'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import Popover from '@/Components/Popover/Popover'
 import DisplayOptionsMenu from './DisplayOptionsMenu'
+import { NavigationMenuButton } from '@/Components/NavigationMenu/NavigationMenu'
 
 type Props = {
   application: {
@@ -35,7 +36,8 @@ const ContentListHeader = ({
   }, [])
 
   return (
-    <div className="section-title-bar-header gap-1">
+    <div className="section-title-bar-header items-start gap-1">
+      <NavigationMenuButton />
       <div className="flex flex-grow flex-col">
         <div className="text-lg font-semibold text-text">{panelTitle}</div>
         {optionsSubtitle && <div className="text-xs text-passive-0">{optionsSubtitle}</div>}
