@@ -11,6 +11,7 @@ export const ICONS = {
   'check-bold': icons.CheckBoldIcon,
   'check-circle': icons.CheckCircleIcon,
   'chevron-down': icons.ChevronDownIcon,
+  'chevron-left': icons.ChevronLeftIcon,
   'chevron-right': icons.ChevronRightIcon,
   'clear-circle-filled': icons.ClearCircleFilledIcon,
   'cloud-off': icons.CloudOffIcon,
