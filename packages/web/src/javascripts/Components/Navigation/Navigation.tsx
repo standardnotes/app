@@ -48,7 +48,10 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
   return (
     <div
       id="navigation"
-      className={'sn-component section app-column w-[220px] xsm-only:!w-full sm-only:!w-full'}
+      className={classNames(
+        'sn-component section app-column w-[220px] xsm-only:!w-full sm-only:!w-full',
+        'h-screen min-h-screen md:h-full md:min-h-0',
+      )}
       ref={ref}
     >
       <ResponsivePaneContent
