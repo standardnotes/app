@@ -110,8 +110,11 @@ class NoteGroupView extends PureComponent<Props, State> {
       !this.state.showMultipleSelectedNotes && !this.state.showMultipleSelectedFiles
 
     return (
-      <div id={ElementIds.EditorColumn} className="app-column app-column-third h-full">
-        <ResponsivePaneContent paneId={AppPaneId.Editor}>
+      <div
+        id={ElementIds.EditorColumn}
+        className="app-column app-column-third flex min-h-screen flex-col md:h-full md:min-h-0"
+      >
+        <ResponsivePaneContent paneId={AppPaneId.Editor} contentClassName="flex-grow">
           <MobileItemsListButton />
           {this.state.showMultipleSelectedNotes && (
             <MultipleSelectedNotes

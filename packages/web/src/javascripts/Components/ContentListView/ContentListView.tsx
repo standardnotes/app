@@ -185,9 +185,8 @@ const ContentListView: FunctionComponent<Props> = ({
     <div
       id="items-column"
       className={classNames(
-        'sn-component section app-column flex flex-col border-b border-solid border-border',
+        'sn-component section app-column flex h-screen flex-col md:h-full',
         'xl:w-87.5 xsm-only:!w-full sm-only:!w-full pointer-coarse:md-only:!w-52 pointer-coarse:lg-only:!w-52',
-        'h-screen md:h-full',
       )}
       aria-label={'Notes & Files'}
       ref={itemsViewPanelRef}
