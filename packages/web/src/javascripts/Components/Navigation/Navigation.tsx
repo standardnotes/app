@@ -51,14 +51,13 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
       className={classNames(
         'sn-component section app-column w-[220px] xsm-only:!w-full sm-only:!w-full',
         'h-screen min-h-screen md:h-full md:min-h-0',
+        'overflow-y-auto overflow-x-hidden',
+        'md:overflow-y-hidden md:hover:overflow-y-auto',
+        'md:hover:[overflow-y:_overlay]',
       )}
       ref={ref}
     >
-      <ResponsivePaneContent
-        paneId={AppPaneId.Navigation}
-        contentElementId="navigation-content"
-        contentClassName="min-h-[85vh]"
-      >
+      <ResponsivePaneContent paneId={AppPaneId.Navigation} contentElementId="navigation-content">
         <div className={'section-title-bar'}>
           <div className="section-title-bar-header">
             <div className="title text-sm">
@@ -66,16 +65,8 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
             </div>
           </div>
         </div>
-        <div
-          className={classNames(
-            'h-full overflow-y-auto overflow-x-hidden',
-            'md:overflow-y-hidden md:hover:overflow-y-auto',
-            'md:hover:[overflow-y:_overlay]',
-          )}
-        >
-          <SmartViewsSection viewControllerManager={viewControllerManager} />
-          <TagsSection viewControllerManager={viewControllerManager} />
-        </div>
+        <SmartViewsSection viewControllerManager={viewControllerManager} />
+        <TagsSection viewControllerManager={viewControllerManager} />
       </ResponsivePaneContent>
       {ref.current && (
         <PanelResizer
