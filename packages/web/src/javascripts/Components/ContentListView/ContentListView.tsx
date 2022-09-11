@@ -191,7 +191,7 @@ const ContentListView: FunctionComponent<Props> = ({
       aria-label={'Notes & Files'}
       ref={itemsViewPanelRef}
     >
-      <ResponsivePaneContent paneId={AppPaneId.Items} contentClassName="min-h-[85vh]">
+      <ResponsivePaneContent paneId={AppPaneId.Items} className="min-h-[85vh]">
         <div id="items-title-bar" className="section-title-bar border-b border-solid border-border">
           <div id="items-title-bar-container">
             <input

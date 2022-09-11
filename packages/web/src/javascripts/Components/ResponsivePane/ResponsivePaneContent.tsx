@@ -5,12 +5,12 @@ import { useResponsiveAppPane } from './ResponsivePaneProvider'
 
 type Props = {
   children: ReactNode
-  contentClassName?: string
+  className?: string
   contentElementId?: string
   paneId: AppPaneId
 }
 
-const ResponsivePaneContent = ({ children, contentClassName, contentElementId, paneId }: Props) => {
+const ResponsivePaneContent = ({ children, className, contentElementId, paneId }: Props) => {
   const { selectedPane } = useResponsiveAppPane()
 
   const isSelectedPane = useMemo(() => selectedPane === paneId, [paneId, selectedPane])
@@ -18,7 +18,7 @@ const ResponsivePaneContent = ({ children, contentClassName, contentElementId, p
   return (
     <div
       id={contentElementId}
-      className={classNames('content flex flex-col', isSelectedPane ? 'h-full' : 'hidden md:flex', contentClassName)}
+      className={classNames('content flex flex-col', isSelectedPane ? 'h-full' : 'hidden md:flex', className)}
     >
       {children}
     </div>

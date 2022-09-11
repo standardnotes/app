@@ -28,6 +28,7 @@
     &:not(.selected) {
       min-height: 0;
       height: auto;
+      padding: 0;
     }
   }
 }
