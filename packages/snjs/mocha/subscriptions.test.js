@@ -87,4 +87,24 @@ describe('subscriptions', function () {
 
     expect(existingInvites.filter(invite => invite.status === 'canceled').length).to.equal(1)
   })
+
+  it('should invite a user by email if the limit of shared subscription is restored', async () => {
+    await subscriptionManager.inviteToSubscription('test1@test.te')
+    await subscriptionManager.inviteToSubscription('test2@test.te')
+    await subscriptionManager.inviteToSubscription('test3@test.te')
+    await subscriptionManager.inviteToSubscription('test4@test.te')
+    await subscriptionManager.inviteToSubscription('test5@test.te')
+
+    let existingInvites = await subscriptionManager.listSubscriptionInvitations()
+
+    expect(existingInvites.length).to.equal(5)
+
+    await subscriptionManager.cancelInvitation(existingInvites[0].uuid)
+
+    expect(await subscriptionManager.inviteToSubscription('test6@test.te')).to.equal(true)
+
+    existingInvites = await subscriptionManager.listSubscriptionInvitations()
+
+    expect(existingInvites.find(invite => invite.inviteeIdentifier === 'test6@test.te')).not.to.equal(undefined)
+  })
 })
