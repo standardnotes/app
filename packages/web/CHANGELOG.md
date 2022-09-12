@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.45.18](https://github.com/standardnotes/app/compare/@standardnotes/web@3.45.17...@standardnotes/web@3.45.18) (2022-09-12)
+
+### Bug Fixes
+
+* ability to open a new tab on iOS Safari ([#1516](https://github.com/standardnotes/app/issues/1516)) ([73ef93c](https://github.com/standardnotes/app/commit/73ef93c1db0c1d073ddd110459848740ba2f8543))
+
 ## [3.45.17](https://github.com/standardnotes/app/compare/@standardnotes/web@3.45.16...@standardnotes/web@3.45.17) (2022-09-09)
 
 **Note:** Version bump only for package @standardnotes/web
