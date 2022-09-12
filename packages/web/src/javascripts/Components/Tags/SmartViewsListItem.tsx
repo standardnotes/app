@@ -112,7 +112,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
   return (
     <>
       <div
-        className={classNames('tag', isSelected && 'selected', isFaded && 'opacity-50')}
+        className={classNames('tag py-2 px-3.5 md:py-1', isSelected && 'selected', isFaded && 'opacity-50')}
         onClick={selectCurrentTag}
         style={{
           paddingLeft: `${level * PADDING_PER_LEVEL_PX + PADDING_BASE_PX}px`,
