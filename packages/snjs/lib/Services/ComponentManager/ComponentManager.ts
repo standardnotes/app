@@ -11,6 +11,8 @@ import {
   ComponentMutator,
   PayloadEmitSource,
   PermissionDialog,
+  Environment,
+  Platform,
 } from '@standardnotes/models'
 import { SNSyncService } from '@Lib/Services/Sync/SyncService'
 import find from 'lodash/find'
@@ -26,8 +28,6 @@ import {
   ComponentViewerInterface,
   DesktopManagerInterface,
   InternalEventBusInterface,
-  Environment,
-  Platform,
   AlertService,
 } from '@standardnotes/services'
 

@@ -1,6 +1,7 @@
+import { Environment } from '@standardnotes/models'
+
 import { WebClientRequiresDesktopMethods } from './DesktopWebCommunication'
 import { DeviceInterface } from './DeviceInterface'
-import { Environment } from './Environments'
 import { WebOrDesktopDeviceInterface } from './WebOrDesktopDeviceInterface'
 
 /* istanbul ignore file */

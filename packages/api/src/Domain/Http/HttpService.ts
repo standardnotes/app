@@ -1,5 +1,5 @@
 import { isString, joinPaths } from '@standardnotes/utils'
-import { Environment } from '@standardnotes/services'
+import { Environment } from '@standardnotes/models'
 import { HttpRequestParams } from './HttpRequestParams'
 import { HttpVerb } from './HttpVerb'
 import { HttpRequest } from './HttpRequest'

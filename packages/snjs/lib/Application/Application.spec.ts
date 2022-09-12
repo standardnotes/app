@@ -3,11 +3,10 @@ import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import {
   AlertService,
   DeviceInterface,
-  Environment,
   namespacedKey,
-  Platform,
   RawStorageKey,
 } from '@standardnotes/services'
+import { Environment, Platform } from '@standardnotes/models'
 import { SNApplication } from './Application'
 
 describe('application', () => {

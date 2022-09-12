@@ -2,10 +2,8 @@ import { SNPreferencesService } from '../Preferences/PreferencesService'
 import {
   ComponentViewerInterface,
   ComponentViewerError,
-  Environment,
   FeatureStatus,
   FeaturesEvent,
-  Platform,
   AlertService,
 } from '@standardnotes/services'
 import { SNFeaturesService } from '@Lib/Services'
@@ -34,6 +32,8 @@ import {
   PayloadTimestampDefaults,
   IncomingComponentItemPayload,
   MessageData,
+  Environment,
+  Platform,
 } from '@standardnotes/models'
 import find from 'lodash/find'
 import uniq from 'lodash/uniq'

@@ -11,12 +11,10 @@ import {
   FeatureIdentifier,
 } from '@standardnotes/features'
 import { ContentType } from '@standardnotes/common'
-import { GenericItem, SNComponent } from '@standardnotes/models'
+import { GenericItem, SNComponent, Environment, Platform } from '@standardnotes/models'
 import {
   DesktopManagerInterface,
   InternalEventBusInterface,
-  Environment,
-  Platform,
   AlertService,
 } from '@standardnotes/services'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'

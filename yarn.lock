@@ -6226,16 +6226,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/api@workspace:*, @standardnotes/api@workspace:packages/api":
+"@standardnotes/api@workspace:*, @standardnotes/api@workspace:^, @standardnotes/api@workspace:packages/api":
   version: 0.0.0-use.local
   resolution: "@standardnotes/api@workspace:packages/api"
   dependencies:
-    "@standardnotes/common": ^1.23.1
+    "@standardnotes/common": ^1.32.0
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
     "@standardnotes/security": ^1.1.0
-    "@standardnotes/services": "workspace:*"
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^28.1.5
     "@types/lodash": ^4.14.182
@@ -6397,7 +6396,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/common@npm:1.25.0, @standardnotes/common@npm:^1.25.0":
+"@standardnotes/common@npm:1.25.0":
   version: 1.25.0
   resolution: "@standardnotes/common@npm:1.25.0"
   dependencies:
@@ -6413,12 +6412,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/common@npm:^1.30.0":
-  version: 1.30.0
-  resolution: "@standardnotes/common@npm:1.30.0"
+"@standardnotes/common@npm:^1.32.0":
+  version: 1.32.0
+  resolution: "@standardnotes/common@npm:1.32.0"
   dependencies:
     reflect-metadata: ^0.1.13
-  checksum: 833b6e7f3ee4cfbf306769d7387073073204a3dd5cd9adaf11bb10914338a4b16420e5ef196d28974427b491d7630d887a7a9e3dcbfb070f30c491437213b329
+  checksum: 52d33f385e4cc26ac8d2f723c3a5e12bb8a2c4a17f08700ca5843810583ca722475a83b71f86bb1402fda7c7c66e8149beb3f70848efc90da4aafef663d7ffbe
   languageName: node
   linkType: hard
 
@@ -6605,7 +6604,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/encryption@workspace:packages/encryption"
   dependencies:
-    "@standardnotes/common": ^1.23.1
+    "@standardnotes/common": ^1.32.0
     "@standardnotes/config": 2.4.3
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
@@ -6647,7 +6646,7 @@ __metadata:
   resolution: "@standardnotes/features@workspace:packages/features"
   dependencies:
     "@standardnotes/auth": ^3.19.4
-    "@standardnotes/common": ^1.23.1
+    "@standardnotes/common": ^1.32.0
     "@standardnotes/security": ^1.2.0
     "@types/jest": ^28.1.5
     "@typescript-eslint/eslint-plugin": ^5.30.0
@@ -6663,7 +6662,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/filepicker@workspace:packages/filepicker"
   dependencies:
-    "@standardnotes/common": ^1.23.1
+    "@standardnotes/common": ^1.32.0
     "@standardnotes/files": "workspace:*"
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^28.1.5
@@ -6681,7 +6680,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/files@workspace:packages/files"
   dependencies:
-    "@standardnotes/common": ^1.23.1
+    "@standardnotes/common": ^1.32.0
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
@@ -7067,7 +7066,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/models@workspace:packages/models"
   dependencies:
-    "@standardnotes/common": ^1.23.1
+    "@standardnotes/common": ^1.32.0
     "@standardnotes/features": "workspace:*"
     "@standardnotes/responses": "workspace:*"
     "@standardnotes/utils": "workspace:*"
@@ -7134,7 +7133,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/responses@workspace:packages/responses"
   dependencies:
-    "@standardnotes/common": ^1.23.1
+    "@standardnotes/common": ^1.32.0
     "@standardnotes/features": "workspace:*"
     "@standardnotes/security": ^1.1.0
     "@types/jest": ^28.1.5
@@ -7201,8 +7200,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/services@workspace:packages/services"
   dependencies:
+    "@standardnotes/api": "workspace:^"
     "@standardnotes/auth": ^3.19.4
-    "@standardnotes/common": ^1.30.0
+    "@standardnotes/common": ^1.32.0
     "@standardnotes/encryption": "workspace:^"
     "@standardnotes/files": "workspace:^"
     "@standardnotes/models": "workspace:^"
@@ -7312,7 +7312,7 @@ __metadata:
     "@babel/core": "*"
     "@babel/preset-env": "*"
     "@standardnotes/api": "workspace:*"
-    "@standardnotes/common": ^1.25.0
+    "@standardnotes/common": ^1.32.0
     "@standardnotes/domain-events": ^2.39.0
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/features": "workspace:*"
@@ -7482,7 +7482,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/ui-services@workspace:packages/ui-services"
   dependencies:
-    "@standardnotes/common": ^1.30.0
+    "@standardnotes/common": ^1.32.0
     "@standardnotes/filepicker": "workspace:^"
     "@standardnotes/services": "workspace:^"
     "@standardnotes/styles": "workspace:^"
@@ -7501,7 +7501,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/utils@workspace:packages/utils"
   dependencies:
-    "@standardnotes/common": ^1.23.1
+    "@standardnotes/common": ^1.32.0
     "@types/dompurify": ^2.3.3
     "@types/jest": ^28.1.5
     "@types/jsdom": ^16.2.14

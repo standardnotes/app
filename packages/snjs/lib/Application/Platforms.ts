@@ -1,4 +1,4 @@
-import { Environment, Platform } from '@standardnotes/services'
+import { Environment, Platform } from '@standardnotes/models'
 
 export function platformFromString(string: string) {
   const map: Record<string, Platform> = {

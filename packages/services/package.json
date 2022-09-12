@@ -23,8 +23,9 @@
     "test": "jest spec --coverage"
   },
   "dependencies": {
+    "@standardnotes/api": "workspace:^",
     "@standardnotes/auth": "^3.19.4",
-    "@standardnotes/common": "^1.30.0",
+    "@standardnotes/common": "^1.32.0",
     "@standardnotes/encryption": "workspace:^",
     "@standardnotes/files": "workspace:^",
     "@standardnotes/models": "workspace:^",
