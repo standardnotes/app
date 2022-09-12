@@ -3,6 +3,7 @@ import { HttpResponse } from './HttpResponse'
 
 export interface HttpServiceInterface {
   setHost(host: string): void
+  setAuthorizationToken(authorizationToken: string): void
   get(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse>
   post(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse>
   put(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse>

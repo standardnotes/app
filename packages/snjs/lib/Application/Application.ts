@@ -1409,6 +1409,7 @@ export class SNApplication
       this.protocolService,
       this.challengeService,
       this.webSocketsService,
+      this.httpService,
       this.internalEventBus,
     )
     this.serviceObservers.push(
