@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.32.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.31.29...@standardnotes/mobile@3.32.0) (2022-09-09)
+
+### Features
+
+* **mobile:** add setting to always open web view on launch ([#1500](https://github.com/standardnotes/app/issues/1500)) ([320fc3f](https://github.com/standardnotes/app/commit/320fc3fd9630731aabc9ecf30999afa7b74c277f))
+
+## [3.31.29](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.31.28...@standardnotes/mobile@3.31.29) (2022-09-09)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.31.28](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.31.27...@standardnotes/mobile@3.31.28) (2022-09-08)
+
+### Bug Fixes
+
+* let Android to correctly recognize the NativeMobileWeb environment when opening WebView on Android ([#1503](https://github.com/standardnotes/app/issues/1503)) ([461ebc2](https://github.com/standardnotes/app/commit/461ebc27689a6e7dff65ae7345fc8eebf1daf703))
+
+## [3.31.27](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.31.26...@standardnotes/mobile@3.31.27) (2022-09-08)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.31.26](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.31.25...@standardnotes/mobile@3.31.26) (2022-09-08)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
 ## [3.31.25](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.31.24...@standardnotes/mobile@3.31.25) (2022-09-07)
 
 **Note:** Version bump only for package @standardnotes/mobile

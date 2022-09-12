@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/web",
-  "version": "3.45.13",
+  "version": "3.45.17",
   "license": "AGPL-3.0-or-later",
   "main": "dist/app.js",
   "author": "Standard Notes.",
@@ -14,6 +14,7 @@
     "format": "prettier --write src/javascripts",
     "lint": "NODE_OPTIONS=\"--max-old-space-size=4096\" eslint src/javascripts",
     "start": "webpack-dev-server --config web.webpack.dev.js",
+    "start-secure": "yarn start --server-type https",
     "test": "jest --config jest.config.js --coverage",
     "tsc": "tsc --project tsconfig.json",
     "upgrade:snjs": "ncu -u '@standardnotes/*'",

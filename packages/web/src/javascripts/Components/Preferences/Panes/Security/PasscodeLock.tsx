@@ -20,6 +20,7 @@ import Button from '@/Components/Button/Button'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import DecoratedPasswordInput from '@/Components/Input/DecoratedPasswordInput'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 
 type Props = {
   application: WebApplication
@@ -240,11 +241,12 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
                   return (
                     <a
                       key={option.value}
-                      className={`mr-3 cursor-pointer rounded ${
+                      className={classNames(
+                        'mr-3 cursor-pointer rounded',
                         option.value === selectedAutoLockInterval
                           ? 'bg-info px-1.5 py-0.5 text-info-contrast'
-                          : 'text-info'
-                      }`}
+                          : 'text-info',
+                      )}
                       onClick={() => selectAutoLockInterval(option.value)}
                     >
                       {option.label}

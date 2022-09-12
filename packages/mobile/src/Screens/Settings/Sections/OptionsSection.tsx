@@ -1,4 +1,4 @@
-import { WebAppOptionEnabled } from '@Lib/constants'
+import { AlwaysOpenWebAppOnLaunchKey } from '@Lib/constants'
 import { useSignedIn } from '@Lib/SnjsHelperHooks'
 import { useNavigation } from '@react-navigation/native'
 import { ButtonCell } from '@Root/Components/ButtonCell'
@@ -9,9 +9,9 @@ import { TableSection } from '@Root/Components/TableSection'
 import { useSafeApplicationContext } from '@Root/Hooks/useSafeApplicationContext'
 import { ModalStackNavigationProp } from '@Root/ModalStack'
 import { SCREEN_MANAGE_SESSIONS, SCREEN_SETTINGS, SCREEN_WEB_APP } from '@Root/Screens/screens'
-import { ButtonType, PrefKey } from '@standardnotes/snjs'
+import { ButtonType, PrefKey, StorageValueModes } from '@standardnotes/snjs'
 import moment from 'moment'
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Platform } from 'react-native'
 import DocumentPicker from 'react-native-document-picker'
 import RNFS from 'react-native-fs'
@@ -183,6 +183,18 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
     )
   }, [application.alertService])
 
+  const [shouldAlwaysOpenWebAppOnLaunch, setShouldAlwaysOpenWebAppOnLaunch] = useState(false)
+
+  useEffect(() => {
+    const getSetting = async () => {
+      const value = (await application.getValue(AlwaysOpenWebAppOnLaunchKey, StorageValueModes.Nonwrapped)) as
+        | boolean
+        | undefined
+      setShouldAlwaysOpenWebAppOnLaunch(value ?? false)
+    }
+    void getSetting()
+  }, [application])
+
   const openWebApp = useCallback(() => {
     navigation.push(SCREEN_WEB_APP)
   }, [navigation])
@@ -226,9 +238,16 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
         onPress={onExportPress}
       />
 
-      {WebAppOptionEnabled && (
-        <ButtonCell testID="openWebApp" leftAligned title={'Open Web App'} onPress={() => openWebApp()} />
-      )}
+      <ButtonCell testID="openWebApp" leftAligned title="Open Web App" onPress={() => openWebApp()} />
+      <SectionedAccessoryTableCell
+        onPress={() => {
+          const newValue = !shouldAlwaysOpenWebAppOnLaunch
+          setShouldAlwaysOpenWebAppOnLaunch(newValue)
+          void application.setValue(AlwaysOpenWebAppOnLaunchKey, newValue, StorageValueModes.Nonwrapped)
+        }}
+        text="Always Open Web App On Launch"
+        selected={() => shouldAlwaysOpenWebAppOnLaunch}
+      />
 
       {!signedIn && (
         <SectionedAccessoryTableCell

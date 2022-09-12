@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.45.17](https://github.com/standardnotes/app/compare/@standardnotes/web@3.45.16...@standardnotes/web@3.45.17) (2022-09-09)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.45.16](https://github.com/standardnotes/app/compare/@standardnotes/web@3.45.15...@standardnotes/web@3.45.16) (2022-09-09)
+
+### Bug Fixes
+
+* note/file list item longpress on iOS ([#1506](https://github.com/standardnotes/app/issues/1506)) ([1efc352](https://github.com/standardnotes/app/commit/1efc352da5b0f449196b56bdf607e40d6e228cd4))
+
+## [3.45.15](https://github.com/standardnotes/app/compare/@standardnotes/web@3.45.14...@standardnotes/web@3.45.15) (2022-09-08)
+
+### Bug Fixes
+
+* **web:** autolock option style when selected ([#1501](https://github.com/standardnotes/app/issues/1501)) ([91d5980](https://github.com/standardnotes/app/commit/91d5980a7e5d7bdada74175474d6d8c1a0ecba7e))
+
+## [3.45.14](https://github.com/standardnotes/app/compare/@standardnotes/web@3.45.13...@standardnotes/web@3.45.14) (2022-09-08)
+
+### Bug Fixes
+
+* note panel resizing ([#1497](https://github.com/standardnotes/app/issues/1497)) ([9267e58](https://github.com/standardnotes/app/commit/9267e580b56fc815a5eb289c225af55f5cf7a4b1))
+
 ## [3.45.13](https://github.com/standardnotes/app/compare/@standardnotes/web@3.45.12...@standardnotes/web@3.45.13) (2022-09-07)
 
 ### Bug Fixes

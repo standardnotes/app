@@ -36,6 +36,7 @@ export const useLongPressEvent = (
 
     elementRef.current.addEventListener('pointerdown', createLongPressTimeout)
     elementRef.current.addEventListener('pointercancel', clearLongPressTimeout)
+    elementRef.current.addEventListener('pointerup', clearLongPressTimeout)
   }, [clearLongPressTimeout, createLongPressTimeout, elementRef])
 
   const cleanupEvents = useCallback(() => {
@@ -45,6 +46,7 @@ export const useLongPressEvent = (
 
     elementRef.current.removeEventListener('pointerdown', createLongPressTimeout)
     elementRef.current.removeEventListener('pointercancel', clearLongPressTimeout)
+    elementRef.current.removeEventListener('pointerup', clearLongPressTimeout)
   }, [clearLongPressTimeout, createLongPressTimeout, elementRef])
 
   const memoizedReturn = useMemo(

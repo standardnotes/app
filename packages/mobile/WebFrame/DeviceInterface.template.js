@@ -7,6 +7,7 @@ class WebProcessDeviceInterface {
     this.messageSender = messageSender
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setApplication() {}
 
   sendMessage(functionName, args) {
