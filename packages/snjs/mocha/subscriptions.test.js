@@ -81,6 +81,8 @@ describe('subscriptions', function () {
 
     await subscriptionManager.cancelInvitation(newlyCreatedInvite.uuid)
 
+    await Factory.sleep(0.25)
+
     existingInvites = await subscriptionManager.listSubscriptionInvitations()
 
     expect (existingInvites.length).to.equal(1)
