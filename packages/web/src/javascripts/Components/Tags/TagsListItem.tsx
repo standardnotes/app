@@ -22,6 +22,7 @@ import { useDrag, useDrop } from 'react-dnd'
 import { DropItem, DropProps, ItemTypes } from './DragNDrop'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 
 type Props = {
   tag: SNTag
@@ -202,7 +203,11 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
   return (
     <>
       <button
-        className={`tag focus:shadow-inner ${isSelected ? 'selected' : ''} ${readyToDrop ? 'is-drag-over' : ''}`}
+        className={classNames(
+          'tag py-2 px-3.5 focus:shadow-inner md:py-1',
+          isSelected && 'selected',
+          readyToDrop && 'is-drag-over',
+        )}
         onClick={selectCurrentTag}
         ref={dragRef}
         style={{

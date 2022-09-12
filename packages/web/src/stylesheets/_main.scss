@@ -150,15 +150,8 @@ $footer-height: 2rem;
   width: 100%;
 
   .section {
-    padding-bottom: 0px;
     position: relative;
     overflow: hidden;
-
-    > .content {
-      height: 100%;
-      max-height: 100%;
-      position: relative;
-    }
 
     .section-title-bar {
       .add-button {
@@ -168,7 +161,6 @@ $footer-height: 2rem;
       .section-title-bar-header {
         display: flex;
         justify-content: space-between;
-        align-items: center;
         // This was causing problems with tags + button cutting off on right when the panel is a certain size
         // overflow: hidden;
 

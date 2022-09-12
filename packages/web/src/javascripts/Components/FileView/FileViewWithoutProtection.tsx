@@ -60,7 +60,7 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
           </div>
         </div>
       </div>
-      <div className="flex min-h-screen flex-col md:min-h-full md:flex-grow">
+      <div className="flex min-h-0 flex-grow flex-col">
         <FilePreview file={file} application={application} key={file.uuid} />
       </div>
     </div>
