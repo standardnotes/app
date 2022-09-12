@@ -85,7 +85,7 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
           <button
             className="ml-auto flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border bg-default text-neutral hover:bg-contrast focus:bg-contrast"
             onClick={() => {
-              toggleAppPane(AppPaneId.Items)
+              viewControllerManager.accountMenuController.toggleShow()
             }}
             title="Go to items list"
             aria-label="Go to items list"
@@ -95,7 +95,7 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
           <button
             className="ml-2.5 flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border bg-default text-neutral hover:bg-contrast focus:bg-contrast"
             onClick={() => {
-              toggleAppPane(AppPaneId.Items)
+              viewControllerManager.quickSettingsMenuController.toggle()
             }}
             title="Go to items list"
             aria-label="Go to items list"
