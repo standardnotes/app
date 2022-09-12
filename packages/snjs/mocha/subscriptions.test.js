@@ -81,12 +81,10 @@ describe('subscriptions', function () {
 
     await subscriptionManager.cancelInvitation(newlyCreatedInvite.uuid)
 
-    await Factory.sleep(0.25)
-
     existingInvites = await subscriptionManager.listSubscriptionInvitations()
 
-    expect (existingInvites.length).to.equal(1)
+    expect (existingInvites.length).to.equal(2)
 
-    expect(existingInvites.find(invite => invite.inviteeIdentifier === 'test@test.te')).to.equal(undefined)
+    expect(existingInvites.filter(invite => invite.status === 'canceled').length).to.equal(1)
   })
 })
