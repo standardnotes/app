@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.46.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.45.18...@standardnotes/web@3.46.0) (2022-09-12)
+
+### Features
+
+* update mobile design ([#1526](https://github.com/standardnotes/app/issues/1526)) ([39d0ee9](https://github.com/standardnotes/app/commit/39d0ee9181255ad71500f4322f63b962af92b861))
+
 ## [3.45.18](https://github.com/standardnotes/app/compare/@standardnotes/web@3.45.17...@standardnotes/web@3.45.18) (2022-09-12)
 
 ### Bug Fixes
