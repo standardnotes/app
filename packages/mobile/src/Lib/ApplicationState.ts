@@ -617,7 +617,7 @@ export class ApplicationState extends ApplicationService {
   }
 
   public async setScreenshotPrivacyEnabled(enabled: boolean) {
-    await this.application.setValue(StorageKey.MobileScreenshotPrivacyEnabled, enabled, StorageValueModes.Default)
+    await this.application.setMobileScreenshotPrivacyEnabled(enabled)
     this.screenshotPrivacyEnabled = enabled
     void this.setAndroidScreenshotPrivacy(enabled)
   }
