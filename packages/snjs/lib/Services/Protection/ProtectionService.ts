@@ -281,15 +281,11 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
   }
 
   async setMobileScreenshotPrivacyEnabled(isEnabled: boolean) {
-    await this.storageService.setValue(
-      StorageKey.MobileScreenshotPrivacyEnabled,
-      isEnabled,
-      StorageValueModes.Nonwrapped,
-    )
+    await this.storageService.setValue(StorageKey.MobileScreenshotPrivacyEnabled, isEnabled, StorageValueModes.Default)
   }
 
   async getMobileScreenshotPrivacyEnabled(): Promise<boolean | undefined> {
-    return this.storageService.getValue(StorageKey.MobileScreenshotPrivacyEnabled, StorageValueModes.Nonwrapped)
+    return this.storageService.getValue(StorageKey.MobileScreenshotPrivacyEnabled, StorageValueModes.Default)
   }
 
   async loadMobileUnlockTiming() {
