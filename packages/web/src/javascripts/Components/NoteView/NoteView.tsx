@@ -890,207 +890,201 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
     return (
       <div aria-label="Note" className="section editor sn-component">
-        <div className="flex-grow flex-col md:flex">
-          {this.state.noteLocked && (
-            <EditingDisabledBanner
-              onMouseLeave={() => {
-                this.setState({
-                  lockText: NOTE_EDITING_DISABLED_TEXT,
-                  showLockedIcon: true,
-                })
-              }}
-              onMouseOver={() => {
-                this.setState({
-                  lockText: 'Enable editing',
-                  showLockedIcon: false,
-                })
-              }}
-              onClick={() => this.viewControllerManager.notesController.setLockSelectedNotes(!this.state.noteLocked)}
-              showLockedIcon={this.state.showLockedIcon}
-              lockText={this.state.lockText}
+        {this.state.noteLocked && (
+          <EditingDisabledBanner
+            onMouseLeave={() => {
+              this.setState({
+                lockText: NOTE_EDITING_DISABLED_TEXT,
+                showLockedIcon: true,
+              })
+            }}
+            onMouseOver={() => {
+              this.setState({
+                lockText: 'Enable editing',
+                showLockedIcon: false,
+              })
+            }}
+            onClick={() => this.viewControllerManager.notesController.setLockSelectedNotes(!this.state.noteLocked)}
+            showLockedIcon={this.state.showLockedIcon}
+            lockText={this.state.lockText}
+          />
+        )}
+
+        {this.note && (
+          <div id="editor-title-bar" className="content-title-bar section-title-bar z-editor-title-bar w-full">
+            <div className="mb-2 flex flex-wrap items-start justify-between gap-2 md:mb-0 md:flex-nowrap md:gap-0 xl:items-center">
+              <div className={(this.state.noteLocked ? 'locked' : '') + ' flex-grow'}>
+                <div className="title overflow-auto">
+                  <input
+                    className="input text-lg"
+                    disabled={this.state.noteLocked}
+                    id={ElementIds.NoteTitleEditor}
+                    onChange={this.onTitleChange}
+                    onFocus={(event) => {
+                      event.target.select()
+                    }}
+                    onKeyUp={this.onTitleEnter}
+                    spellCheck={false}
+                    value={this.state.editorTitle}
+                    autoComplete="off"
+                  />
+                </div>
+              </div>
+              <div
+                className={classNames(
+                  'flex flex-col flex-wrap items-start gap-3 md:flex-col-reverse md:items-end',
+                  'xl:flex-row xl:flex-nowrap xl:items-center',
+                )}
+              >
+                {this.state.noteStatus?.message?.length && (
+                  <div id="save-status-container" className={'xl:mr-5 xl:max-w-[16ch]'}>
+                    <div id="save-status">
+                      <div
+                        className={
+                          (this.state.syncTakingTooLong ? 'font-bold text-warning ' : '') +
+                          (this.state.saveError ? 'font-bold text-danger ' : '') +
+                          'message text-xs'
+                        }
+                      >
+                        {this.state.noteStatus?.message}
+                      </div>
+                      {this.state.noteStatus?.desc && <div className="desc text-xs">{this.state.noteStatus.desc}</div>}
+                    </div>
+                  </div>
+                )}
+                <div className="flex items-center gap-3">
+                  <AttachedFilesButton
+                    application={this.application}
+                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                    featuresController={this.viewControllerManager.featuresController}
+                    filePreviewModalController={this.viewControllerManager.filePreviewModalController}
+                    filesController={this.viewControllerManager.filesController}
+                    navigationController={this.viewControllerManager.navigationController}
+                    notesController={this.viewControllerManager.notesController}
+                    selectionController={this.viewControllerManager.selectionController}
+                  />
+                  <ChangeEditorButton
+                    application={this.application}
+                    viewControllerManager={this.viewControllerManager}
+                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                  />
+                  <PinNoteButton
+                    notesController={this.viewControllerManager.notesController}
+                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                  />
+                  <NotesOptionsPanel
+                    application={this.application}
+                    navigationController={this.viewControllerManager.navigationController}
+                    notesController={this.viewControllerManager.notesController}
+                    noteTagsController={this.viewControllerManager.noteTagsController}
+                    historyModalController={this.viewControllerManager.historyModalController}
+                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                  />
+                </div>
+              </div>
+            </div>
+            <NoteTagsContainer viewControllerManager={this.viewControllerManager} />
+          </div>
+        )}
+
+        <div
+          id={ElementIds.EditorContent}
+          className={`${ElementIds.EditorContent} z-editor-content`}
+          ref={this.editorContentRef}
+        >
+          {this.state.marginResizersEnabled && this.editorContentRef.current ? (
+            <PanelResizer
+              minWidth={300}
+              hoverable={true}
+              collapsable={false}
+              panel={this.editorContentRef.current}
+              side={PanelSide.Left}
+              type={PanelResizeType.OffsetAndWidth}
+              left={this.state.leftResizerOffset}
+              width={this.state.leftResizerWidth}
+              resizeFinishCallback={this.onPanelResizeFinish}
+            />
+          ) : null}
+
+          {this.state.editorComponentViewer && (
+            <div className="component-view">
+              <ComponentView
+                key={this.state.editorComponentViewer.identifier}
+                componentViewer={this.state.editorComponentViewer}
+                onLoad={this.onEditorComponentLoad}
+                requestReload={this.editorComponentViewerRequestsReload}
+                application={this.application}
+              />
+            </div>
+          )}
+
+          {this.state.editorStateDidLoad && !this.state.editorComponentViewer && !this.state.textareaUnloading && (
+            <AutoresizingNoteViewTextarea
+              autoComplete="off"
+              dir="auto"
+              id={ElementIds.NoteTextEditor}
+              onChange={this.onTextAreaChange}
+              value={this.state.editorText}
+              readOnly={this.state.noteLocked}
+              onFocus={this.onContentFocus}
+              spellCheck={this.state.spellcheck}
+              ref={(ref) => ref && this.onSystemEditorLoad(ref)}
             />
           )}
 
-          {this.note && (
-            <div id="editor-title-bar" className="content-title-bar section-title-bar z-editor-title-bar w-full">
-              <div className="mb-2 flex flex-wrap items-start justify-between gap-2 md:mb-0 md:flex-nowrap md:gap-0 xl:items-center">
-                <div className={(this.state.noteLocked ? 'locked' : '') + ' flex-grow'}>
-                  <div className="title overflow-auto">
-                    <input
-                      className="input text-lg"
-                      disabled={this.state.noteLocked}
-                      id={ElementIds.NoteTitleEditor}
-                      onChange={this.onTitleChange}
-                      onFocus={(event) => {
-                        event.target.select()
+          {this.state.marginResizersEnabled && this.editorContentRef.current ? (
+            <PanelResizer
+              minWidth={300}
+              hoverable={true}
+              collapsable={false}
+              panel={this.editorContentRef.current}
+              side={PanelSide.Right}
+              type={PanelResizeType.OffsetAndWidth}
+              left={this.state.rightResizerOffset}
+              width={this.state.rightResizerWidth}
+              resizeFinishCallback={this.onPanelResizeFinish}
+            />
+          ) : null}
+        </div>
+
+        <div id="editor-pane-component-stack">
+          {this.state.availableStackComponents.length > 0 && (
+            <div
+              id="component-stack-menu-bar"
+              className="flex h-6 w-full items-center justify-between border-t border-solid border-border bg-contrast px-2 py-0 text-text"
+            >
+              <div className="flex h-full">
+                {this.state.availableStackComponents.map((component) => {
+                  return (
+                    <div
+                      key={component.uuid}
+                      onClick={() => {
+                        this.toggleStackComponent(component).catch(console.error)
                       }}
-                      onKeyUp={this.onTitleEnter}
-                      spellCheck={false}
-                      value={this.state.editorTitle}
-                      autoComplete="off"
-                    />
-                  </div>
-                </div>
-                <div
-                  className={classNames(
-                    'flex flex-col flex-wrap items-start gap-3 md:flex-col-reverse md:items-end',
-                    'xl:flex-row xl:flex-nowrap xl:items-center',
-                  )}
-                >
-                  {this.state.noteStatus?.message?.length && (
-                    <div id="save-status-container" className={'xl:mr-5 xl:max-w-[16ch]'}>
-                      <div id="save-status">
-                        <div
-                          className={
-                            (this.state.syncTakingTooLong ? 'font-bold text-warning ' : '') +
-                            (this.state.saveError ? 'font-bold text-danger ' : '') +
-                            'message text-xs'
-                          }
-                        >
-                          {this.state.noteStatus?.message}
-                        </div>
-                        {this.state.noteStatus?.desc && (
-                          <div className="desc text-xs">{this.state.noteStatus.desc}</div>
-                        )}
+                      className="flex flex-grow cursor-pointer items-center justify-center [&:not(:first-child)]:ml-3"
+                    >
+                      <div className="flex h-full items-center [&:not(:first-child)]:ml-2">
+                        {this.stackComponentExpanded(component) && component.active && <IndicatorCircle style="info" />}
+                        {!this.stackComponentExpanded(component) && <IndicatorCircle style="neutral" />}
+                      </div>
+                      <div className="flex h-full items-center [&:not(:first-child)]:ml-2">
+                        <div className="whitespace-nowrap text-xs font-bold">{component.name}</div>
                       </div>
                     </div>
-                  )}
-                  <div className="flex items-center gap-3">
-                    <AttachedFilesButton
-                      application={this.application}
-                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                      featuresController={this.viewControllerManager.featuresController}
-                      filePreviewModalController={this.viewControllerManager.filePreviewModalController}
-                      filesController={this.viewControllerManager.filesController}
-                      navigationController={this.viewControllerManager.navigationController}
-                      notesController={this.viewControllerManager.notesController}
-                      selectionController={this.viewControllerManager.selectionController}
-                    />
-                    <ChangeEditorButton
-                      application={this.application}
-                      viewControllerManager={this.viewControllerManager}
-                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                    />
-                    <PinNoteButton
-                      notesController={this.viewControllerManager.notesController}
-                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                    />
-                    <NotesOptionsPanel
-                      application={this.application}
-                      navigationController={this.viewControllerManager.navigationController}
-                      notesController={this.viewControllerManager.notesController}
-                      noteTagsController={this.viewControllerManager.noteTagsController}
-                      historyModalController={this.viewControllerManager.historyModalController}
-                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                    />
-                  </div>
-                </div>
+                  )
+                })}
               </div>
-              <NoteTagsContainer viewControllerManager={this.viewControllerManager} />
             </div>
           )}
 
-          <div
-            id={ElementIds.EditorContent}
-            className={`${ElementIds.EditorContent} z-editor-content`}
-            ref={this.editorContentRef}
-          >
-            {this.state.marginResizersEnabled && this.editorContentRef.current ? (
-              <PanelResizer
-                minWidth={300}
-                hoverable={true}
-                collapsable={false}
-                panel={this.editorContentRef.current}
-                side={PanelSide.Left}
-                type={PanelResizeType.OffsetAndWidth}
-                left={this.state.leftResizerOffset}
-                width={this.state.leftResizerWidth}
-                resizeFinishCallback={this.onPanelResizeFinish}
-              />
-            ) : null}
-
-            {this.state.editorComponentViewer && (
-              <div className="component-view">
-                <ComponentView
-                  key={this.state.editorComponentViewer.identifier}
-                  componentViewer={this.state.editorComponentViewer}
-                  onLoad={this.onEditorComponentLoad}
-                  requestReload={this.editorComponentViewerRequestsReload}
-                  application={this.application}
-                />
-              </div>
-            )}
-
-            {this.state.editorStateDidLoad && !this.state.editorComponentViewer && !this.state.textareaUnloading && (
-              <AutoresizingNoteViewTextarea
-                autoComplete="off"
-                dir="auto"
-                id={ElementIds.NoteTextEditor}
-                onChange={this.onTextAreaChange}
-                value={this.state.editorText}
-                readOnly={this.state.noteLocked}
-                onFocus={this.onContentFocus}
-                spellCheck={this.state.spellcheck}
-                ref={(ref) => ref && this.onSystemEditorLoad(ref)}
-              />
-            )}
-
-            {this.state.marginResizersEnabled && this.editorContentRef.current ? (
-              <PanelResizer
-                minWidth={300}
-                hoverable={true}
-                collapsable={false}
-                panel={this.editorContentRef.current}
-                side={PanelSide.Right}
-                type={PanelResizeType.OffsetAndWidth}
-                left={this.state.rightResizerOffset}
-                width={this.state.rightResizerWidth}
-                resizeFinishCallback={this.onPanelResizeFinish}
-              />
-            ) : null}
-          </div>
-
-          <div id="editor-pane-component-stack">
-            {this.state.availableStackComponents.length > 0 && (
-              <div
-                id="component-stack-menu-bar"
-                className="flex h-6 w-full items-center justify-between border-t border-solid border-border bg-contrast px-2 py-0 text-text"
-              >
-                <div className="flex h-full">
-                  {this.state.availableStackComponents.map((component) => {
-                    return (
-                      <div
-                        key={component.uuid}
-                        onClick={() => {
-                          this.toggleStackComponent(component).catch(console.error)
-                        }}
-                        className="flex flex-grow cursor-pointer items-center justify-center [&:not(:first-child)]:ml-3"
-                      >
-                        <div className="flex h-full items-center [&:not(:first-child)]:ml-2">
-                          {this.stackComponentExpanded(component) && component.active && (
-                            <IndicatorCircle style="info" />
-                          )}
-                          {!this.stackComponentExpanded(component) && <IndicatorCircle style="neutral" />}
-                        </div>
-                        <div className="flex h-full items-center [&:not(:first-child)]:ml-2">
-                          <div className="whitespace-nowrap text-xs font-bold">{component.name}</div>
-                        </div>
-                      </div>
-                    )
-                  })}
+          <div className="sn-component">
+            {this.state.stackComponentViewers.map((viewer) => {
+              return (
+                <div className="component-view component-stack-item" key={viewer.identifier}>
+                  <ComponentView key={viewer.identifier} componentViewer={viewer} application={this.application} />
                 </div>
-              </div>
-            )}
-
-            <div className="sn-component">
-              {this.state.stackComponentViewers.map((viewer) => {
-                return (
-                  <div className="component-view component-stack-item" key={viewer.identifier}>
-                    <ComponentView key={viewer.identifier} componentViewer={viewer} application={this.application} />
-                  </div>
-                )
-              })}
-            </div>
+              )
+            })}
           </div>
         </div>
       </div>

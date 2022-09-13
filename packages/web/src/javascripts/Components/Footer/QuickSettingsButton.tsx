@@ -28,7 +28,7 @@ const QuickSettingsButton = ({
     <>
       <button
         onClick={toggleMenu}
-        className="flex h-full w-12 cursor-pointer items-center justify-center md:w-8"
+        className="flex h-full w-8 cursor-pointer items-center justify-center"
         ref={buttonRef}
       >
         <div className="h-5">

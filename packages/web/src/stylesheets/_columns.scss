@@ -26,8 +26,9 @@
     }
 
     &:not(.selected) {
+      min-height: 0;
       height: auto;
-      border-bottom: 1px solid var(--sn-stylekit-border-color);
+      padding: 0;
     }
   }
 }

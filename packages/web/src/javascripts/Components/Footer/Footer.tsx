@@ -341,7 +341,7 @@ class Footer extends PureComponent<Props, State> {
       <div className="sn-component">
         <footer
           id="footer-bar"
-          className="z-footer-bar flex h-12 w-full select-none items-center justify-between border-t border-border bg-contrast pl-3.5 pr-6 text-text md:h-8 md:px-3"
+          className="z-footer-bar hidden h-8 w-full select-none items-center justify-between border-t border-border bg-contrast px-3 text-text md:flex"
         >
           <div className="left flex h-full">
             <div className="sk-app-bar-item relative z-footer-bar-item ml-0 select-none">
