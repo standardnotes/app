@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.52.0](https://github.com/standardnotes/app/compare/@standardnotes/features@1.51.0...@standardnotes/features@1.52.0) (2022-09-13)
+
+### Features
+
+* **features:** add subscription sharing ([66d364f](https://github.com/standardnotes/app/commit/66d364ff369afa0dcd11ac835512a7af9b25c8d2))
+
 # [1.51.0](https://github.com/standardnotes/app/compare/@standardnotes/features@1.50.5...@standardnotes/features@1.51.0) (2022-09-13)
 
 ### Features
