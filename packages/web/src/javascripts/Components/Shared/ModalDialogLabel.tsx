@@ -7,6 +7,7 @@ type Props = {
   closeDialog: () => void
   className?: string
   headerButtons?: ReactNode
+  children?: ReactNode
 }
 
 const ModalDialogLabel: FunctionComponent<Props> = ({ children, closeDialog, className, headerButtons }) => (

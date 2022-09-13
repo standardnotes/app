@@ -1,10 +1,11 @@
-import { FunctionComponent, useRef, useState } from 'react'
+import { FunctionComponent, ReactNode, useRef, useState } from 'react'
 import { ArrowDownCheckmarkIcon } from '@standardnotes/icons'
 import { Title } from '@/Components/Preferences/PreferencesComponents/Content'
 
 type Props = {
   title: string | JSX.Element
   className?: string
+  children?: ReactNode
 }
 
 const AccordionItem: FunctionComponent<Props> = ({ title, className = '', children }) => {

@@ -1,8 +1,9 @@
-import { FunctionComponent } from 'react'
+import { FunctionComponent, ReactNode } from 'react'
 import { AlertDialogDescription } from '@reach/alert-dialog'
 
 type Props = {
   className?: string
+  children?: ReactNode
 }
 
 const ModalDialogDescription: FunctionComponent<Props> = ({ children, className = '' }) => (

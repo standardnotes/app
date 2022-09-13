@@ -1,7 +1,7 @@
 import { WebApplication } from '@/Application/Application'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
-import { ChangeEventHandler, FunctionComponent, useCallback, useEffect, useState } from 'react'
+import { ChangeEventHandler, FunctionComponent, ReactNode, useCallback, useEffect, useState } from 'react'
 import Checkbox from '@/Components/Checkbox/Checkbox'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import Icon from '@/Components/Icon/Icon'
@@ -12,6 +12,7 @@ type Props = {
   disabled?: boolean
   onPrivateWorkspaceChange?: (isPrivate: boolean, identifier?: string) => void
   onStrictSignInChange?: (isStrictSignIn: boolean) => void
+  children?: ReactNode
 }
 
 const AdvancedOptions: FunctionComponent<Props> = ({
