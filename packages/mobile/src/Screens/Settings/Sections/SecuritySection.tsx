@@ -1,4 +1,3 @@
-// import { UnlockTiming } from '@Lib/ApplicationState'
 import { MobileDeviceInterface } from '@Lib/Interface'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { ApplicationContext } from '@Root/ApplicationContext'
