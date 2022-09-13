@@ -31,23 +31,48 @@ export class HttpService implements HttpServiceInterface {
   }
 
   async get(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse> {
-    return this.runHttp({ url: joinPaths(this.host, path), params, verb: HttpVerb.Get, authentication: authentication ?? this.authorizationToken })
+    return this.runHttp({
+      url: joinPaths(this.host, path),
+      params,
+      verb: HttpVerb.Get,
+      authentication: authentication ?? this.authorizationToken,
+    })
   }
 
   async post(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse> {
-    return this.runHttp({ url: joinPaths(this.host, path), params, verb: HttpVerb.Post, authentication: authentication ?? this.authorizationToken })
+    return this.runHttp({
+      url: joinPaths(this.host, path),
+      params,
+      verb: HttpVerb.Post,
+      authentication: authentication ?? this.authorizationToken,
+    })
   }
 
   async put(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse> {
-    return this.runHttp({ url: joinPaths(this.host, path), params, verb: HttpVerb.Put, authentication: authentication ?? this.authorizationToken })
+    return this.runHttp({
+      url: joinPaths(this.host, path),
+      params,
+      verb: HttpVerb.Put,
+      authentication: authentication ?? this.authorizationToken,
+    })
   }
 
   async patch(path: string, params: HttpRequestParams, authentication?: string): Promise<HttpResponse> {
-    return this.runHttp({ url: joinPaths(this.host, path), params, verb: HttpVerb.Patch, authentication: authentication ?? this.authorizationToken })
+    return this.runHttp({
+      url: joinPaths(this.host, path),
+      params,
+      verb: HttpVerb.Patch,
+      authentication: authentication ?? this.authorizationToken,
+    })
   }
 
   async delete(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse> {
-    return this.runHttp({ url: joinPaths(this.host, path), params, verb: HttpVerb.Delete, authentication: authentication ?? this.authorizationToken })
+    return this.runHttp({
+      url: joinPaths(this.host, path),
+      params,
+      verb: HttpVerb.Delete,
+      authentication: authentication ?? this.authorizationToken,
+    })
   }
 
   private async runHttp(httpRequest: HttpRequest): Promise<HttpResponse> {

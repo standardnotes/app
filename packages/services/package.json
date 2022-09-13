@@ -20,6 +20,7 @@
     "prebuild": "yarn clean",
     "build": "tsc -p tsconfig.json",
     "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
     "test": "jest spec --coverage"
   },
   "dependencies": {
@@ -38,6 +39,7 @@
     "@types/jest": "^28.1.5",
     "@typescript-eslint/eslint-plugin": "^5.30.0",
     "@typescript-eslint/parser": "^5.12.1",
+    "eslint": "^8.23.1",
     "eslint-plugin-prettier": "*",
     "jest": "^28.1.2",
     "ts-jest": "^28.0.5"

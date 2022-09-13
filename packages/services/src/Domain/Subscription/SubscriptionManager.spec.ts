@@ -19,13 +19,13 @@ describe('SubscriptionManager', () => {
   })
 
   it('should invite user by email to a shared subscription', async () => {
-    subscriptionApiService.invite = jest.fn().mockReturnValue({ data: { success: true }})
+    subscriptionApiService.invite = jest.fn().mockReturnValue({ data: { success: true } })
 
     expect(await createManager().inviteToSubscription('test@test.te')).toBeTruthy()
   })
 
   it('should not invite user by email if the api fails to do so', async () => {
-    subscriptionApiService.invite = jest.fn().mockReturnValue({ data: { error: 'foobar' }})
+    subscriptionApiService.invite = jest.fn().mockReturnValue({ data: { error: 'foobar' } })
 
     expect(await createManager().inviteToSubscription('test@test.te')).toBeFalsy()
   })
@@ -39,13 +39,13 @@ describe('SubscriptionManager', () => {
   })
 
   it('should cancel invite to a shared subscription', async () => {
-    subscriptionApiService.cancelInvite = jest.fn().mockReturnValue({ data: { success: true }})
+    subscriptionApiService.cancelInvite = jest.fn().mockReturnValue({ data: { success: true } })
 
     expect(await createManager().cancelInvitation('1-2-3')).toBeTruthy()
   })
 
   it('should not cancel invite if the api fails to do so', async () => {
-    subscriptionApiService.cancelInvite = jest.fn().mockReturnValue({ data: { error: 'foobar' }})
+    subscriptionApiService.cancelInvite = jest.fn().mockReturnValue({ data: { error: 'foobar' } })
 
     expect(await createManager().cancelInvitation('1-2-3')).toBeFalsy()
   })
@@ -62,13 +62,13 @@ describe('SubscriptionManager', () => {
     const invitation = {
       uuid: '1-2-3',
     } as jest.Mocked<Invitation>
-    subscriptionApiService.listInvites = jest.fn().mockReturnValue({ data: { invitations: [invitation] }})
+    subscriptionApiService.listInvites = jest.fn().mockReturnValue({ data: { invitations: [invitation] } })
 
-    expect(await createManager().listSubscriptionInvitations()).toEqual([ invitation ])
+    expect(await createManager().listSubscriptionInvitations()).toEqual([invitation])
   })
 
   it('should return an empty list of invites if the api fails to fetch them', async () => {
-    subscriptionApiService.listInvites = jest.fn().mockReturnValue({ data: { error: 'foobar' }})
+    subscriptionApiService.listInvites = jest.fn().mockReturnValue({ data: { error: 'foobar' } })
 
     expect(await createManager().listSubscriptionInvitations()).toEqual([])
   })

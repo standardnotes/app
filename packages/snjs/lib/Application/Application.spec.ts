@@ -1,11 +1,6 @@
 import { SNLog } from './../Log'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import {
-  AlertService,
-  DeviceInterface,
-  namespacedKey,
-  RawStorageKey,
-} from '@standardnotes/services'
+import { AlertService, DeviceInterface, namespacedKey, RawStorageKey } from '@standardnotes/services'
 import { Environment, Platform } from '@standardnotes/models'
 import { SNApplication } from './Application'
 

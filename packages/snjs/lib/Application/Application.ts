@@ -45,7 +45,14 @@ import {
 import { FilesClientInterface } from '@standardnotes/files'
 import { ComputePrivateWorkspaceIdentifier } from '@standardnotes/encryption'
 import { useBoolean } from '@standardnotes/utils'
-import { BackupFile, DecryptedItemInterface, EncryptedItemInterface, Environment, ItemStream, Platform } from '@standardnotes/models'
+import {
+  BackupFile,
+  DecryptedItemInterface,
+  EncryptedItemInterface,
+  Environment,
+  ItemStream,
+  Platform,
+} from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 
 import { SnjsVersion } from './../Version'
@@ -1288,10 +1295,7 @@ export class SNApplication
   }
 
   private createSubscriptionManager() {
-    this.subscriptionManager = new SubscriptionManager(
-      this.subscriptionApiService,
-      this.internalEventBus,
-    )
+    this.subscriptionManager = new SubscriptionManager(this.subscriptionApiService, this.internalEventBus)
   }
 
   private createItemManager() {
