@@ -116,7 +116,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
     }
   }, [inputRef, isEditing])
 
-  const onSubtagInput = useCallback((e) => {
+  const onSubtagInput: FormEventHandler<HTMLInputElement> = useCallback((e) => {
     const value = (e.target as HTMLInputElement).value
     setSubtagTitle(value)
   }, [])

@@ -2,7 +2,15 @@ import { STRING_NON_MATCHING_PASSWORDS } from '@/Constants/Strings'
 import { WebApplication } from '@/Application/Application'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, KeyboardEventHandler, useCallback, useEffect, useRef, useState } from 'react'
+import {
+  FormEventHandler,
+  FunctionComponent,
+  KeyboardEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { AccountMenuPane } from './AccountMenuPane'
 import Button from '@/Components/Button/Button'
 import Checkbox from '@/Components/Checkbox/Checkbox'
@@ -50,7 +58,7 @@ const ConfirmPassword: FunctionComponent<Props> = ({
     setShouldMergeLocal(!shouldMergeLocal)
   }, [shouldMergeLocal])
 
-  const handleConfirmFormSubmit = useCallback(
+  const handleConfirmFormSubmit: FormEventHandler = useCallback(
     (e) => {
       e.preventDefault()
 

@@ -1,9 +1,10 @@
 import { WebApplication } from '@/Application/Application'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'react'
+import { FunctionComponent, ReactNode } from 'react'
 
 type Props = {
   application: WebApplication
+  children?: ReactNode
 }
 
 const DeallocateHandler: FunctionComponent<Props> = ({ application, children }) => {

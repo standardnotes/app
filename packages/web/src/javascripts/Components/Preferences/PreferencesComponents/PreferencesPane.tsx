@@ -1,6 +1,6 @@
-import { FunctionComponent } from 'react'
+import { FunctionComponent, ReactNode } from 'react'
 
-const PreferencesPane: FunctionComponent = ({ children }) => (
+const PreferencesPane: FunctionComponent<{ children?: ReactNode }> = ({ children }) => (
   <div className="flex min-h-0 flex-grow flex-col overflow-y-auto text-foreground md:flex-row">
     <div className="flex flex-grow flex-col items-center px-3 py-6 md:px-0">
       <div className="flex flex-col md:w-125 md:max-w-125">

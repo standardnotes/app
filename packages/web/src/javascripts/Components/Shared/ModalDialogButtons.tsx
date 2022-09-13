@@ -1,8 +1,9 @@
 import { classNames } from '@/Utils/ConcatenateClassNames'
-import { Fragment, FunctionComponent } from 'react'
+import { Fragment, FunctionComponent, ReactNode } from 'react'
 
 type Props = {
   className?: string
+  children?: ReactNode
 }
 
 const ModalDialogButtons: FunctionComponent<Props> = ({ children, className }) => (
