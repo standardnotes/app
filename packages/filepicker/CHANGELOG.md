@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.23.0](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.22.4...@standardnotes/filepicker@1.23.0) (2022-09-13)
+
+### Features
+
+* add subscription manager to handle subscription sharing ([#1517](https://github.com/standardnotes/app/issues/1517)) ([55b1409](https://github.com/standardnotes/app/commit/55b1409a805c21ada70bf482a02cfe718a4c6576))
+
 ## [1.22.4](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.22.3...@standardnotes/filepicker@1.22.4) (2022-09-01)
 
 **Note:** Version bump only for package @standardnotes/filepicker
