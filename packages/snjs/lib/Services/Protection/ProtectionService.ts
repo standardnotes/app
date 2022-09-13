@@ -281,7 +281,7 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
   }
 
   async setMobileScreenshotPrivacyEnabled(isEnabled: boolean) {
-    await this.storageService.setValue(StorageKey.MobileScreenshotPrivacyEnabled, isEnabled, StorageValueModes.Default)
+    return this.storageService.setValue(StorageKey.MobileScreenshotPrivacyEnabled, isEnabled, StorageValueModes.Default)
   }
 
   async getMobileScreenshotPrivacyEnabled(): Promise<boolean | undefined> {

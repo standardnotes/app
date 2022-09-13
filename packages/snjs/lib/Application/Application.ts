@@ -929,6 +929,10 @@ export class SNApplication
     return this.protectionService.getBiometricsTimingOptions()
   }
 
+  getPasscodeTimingOptions() {
+    return this.protectionService.getPasscodeTimingOptions()
+  }
+
   isNativeMobileWeb() {
     return this.environment === Environment.NativeMobileWeb
   }

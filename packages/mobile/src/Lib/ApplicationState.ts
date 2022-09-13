@@ -1,3 +1,4 @@
+import { MobileDeviceInterface } from '@Lib/Interface'
 import {
   ApplicationEvent,
   ApplicationService,
@@ -31,9 +32,7 @@ import {
   KeyboardEventListener,
   NativeEventSubscription,
   NativeModules,
-  Platform,
 } from 'react-native'
-import FlagSecure from 'react-native-flag-secure-android'
 import { hide, show } from 'react-native-privacy-snapshot'
 import VersionInfo from 'react-native-version-info'
 import pjson from '../../package.json'
@@ -170,7 +169,9 @@ export class ApplicationState extends ApplicationService {
   override async onAppLaunch() {
     MobileApplication.setPreviouslyLaunched()
     this.screenshotPrivacyEnabled = (await this.getScreenshotPrivacyEnabled()) ?? true
-    void this.setAndroidScreenshotPrivacy(this.screenshotPrivacyEnabled)
+    await (this.application.deviceInterface as MobileDeviceInterface).setAndroidScreenshotPrivacy(
+      this.screenshotPrivacyEnabled,
+    )
   }
 
   /**
@@ -243,12 +244,6 @@ export class ApplicationState extends ApplicationService {
   private async loadUnlockTiming() {
     this.passcodeTiming = await this.getPasscodeTiming()
     this.biometricsTiming = await this.getBiometricsTiming()
-  }
-
-  public async setAndroidScreenshotPrivacy(enable: boolean) {
-    if (Platform.OS === 'android') {
-      enable ? FlagSecure.activate() : FlagSecure.deactivate()
-    }
   }
 
   /**
@@ -483,36 +478,6 @@ export class ApplicationState extends ApplicationService {
     }
   }
 
-  getPasscodeTimingOptions() {
-    return [
-      {
-        title: 'Immediately',
-        key: MobileUnlockTiming.Immediately,
-        selected: this.passcodeTiming === MobileUnlockTiming.Immediately,
-      },
-      {
-        title: 'On Quit',
-        key: MobileUnlockTiming.OnQuit,
-        selected: this.passcodeTiming === MobileUnlockTiming.OnQuit,
-      },
-    ]
-  }
-
-  getBiometricsTimingOptions() {
-    return [
-      {
-        title: 'Immediately',
-        key: MobileUnlockTiming.Immediately,
-        selected: this.biometricsTiming === MobileUnlockTiming.Immediately,
-      },
-      {
-        title: 'On Quit',
-        key: MobileUnlockTiming.OnQuit,
-        selected: this.biometricsTiming === MobileUnlockTiming.OnQuit,
-      },
-    ]
-  }
-
   private async checkAndLockApplication() {
     const isLocked = await this.application.isLocked()
     if (!isLocked) {
@@ -619,7 +584,7 @@ export class ApplicationState extends ApplicationService {
   public async setScreenshotPrivacyEnabled(enabled: boolean) {
     await this.application.setMobileScreenshotPrivacyEnabled(enabled)
     this.screenshotPrivacyEnabled = enabled
-    void this.setAndroidScreenshotPrivacy(enabled)
+    await (this.application.deviceInterface as MobileDeviceInterface).setAndroidScreenshotPrivacy(enabled)
   }
 
   public async setPasscodeTiming(timing: MobileUnlockTiming) {

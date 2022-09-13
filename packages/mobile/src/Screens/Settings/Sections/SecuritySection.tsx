@@ -31,16 +31,14 @@ export const SecuritySection = (props: Props) => {
   const [hasBiometrics, setHasBiometrics] = useState(false)
   const [supportsBiometrics, setSupportsBiometrics] = useState(false)
   const [biometricsTimingOptions, setBiometricsTimingOptions] = useState(() =>
-    application!.getAppState().getBiometricsTimingOptions(),
+    application!.getBiometricsTimingOptions(),
   )
-  const [passcodeTimingOptions, setPasscodeTimingOptions] = useState(() =>
-    application!.getAppState().getPasscodeTimingOptions(),
-  )
+  const [passcodeTimingOptions, setPasscodeTimingOptions] = useState(() => application!.getPasscodeTimingOptions())
 
   useEffect(() => {
     let mounted = true
     const getHasScreenshotPrivacy = async () => {
-      const hasScreenshotPrivacyEnabled = await application?.getAppState().screenshotPrivacyEnabled
+      const hasScreenshotPrivacyEnabled = (await application?.getMobileScreenshotPrivacyEnabled()) ?? true
       if (mounted) {
         setHasScreenshotPrivacy(hasScreenshotPrivacyEnabled)
       }
@@ -70,7 +68,7 @@ export const SecuritySection = (props: Props) => {
   useFocusEffect(
     useCallback(() => {
       if (props.hasPasscode) {
-        setPasscodeTimingOptions(() => application!.getAppState().getPasscodeTimingOptions())
+        setPasscodeTimingOptions(() => application!.getPasscodeTimingOptions())
       }
     }, [application, props.hasPasscode]),
   )
@@ -128,12 +126,12 @@ export const SecuritySection = (props: Props) => {
 
   const setBiometricsTiming = async (timing: MobileUnlockTiming) => {
     await application?.getAppState().setBiometricsTiming(timing)
-    setBiometricsTimingOptions(() => application!.getAppState().getBiometricsTimingOptions())
+    setBiometricsTimingOptions(() => application!.getBiometricsTimingOptions())
   }
 
   const setPasscodeTiming = async (timing: MobileUnlockTiming) => {
     await application?.getAppState().setPasscodeTiming(timing)
-    setPasscodeTimingOptions(() => application!.getAppState().getPasscodeTimingOptions())
+    setPasscodeTimingOptions(() => application!.getPasscodeTimingOptions())
   }
 
   const onScreenshotPrivacyPress = async () => {
