@@ -1,10 +1,10 @@
-import { Environment } from './Environments'
 import { ApplicationIdentifier } from '@standardnotes/common'
 import {
   FullyFormedTransferPayload,
   TransferPayload,
   LegacyRawKeychainValue,
   NamespacedRootKeyInKeychain,
+  Environment,
 } from '@standardnotes/models'
 
 /**

@@ -90,9 +90,9 @@
     "binary": "54a01414a21e46c67fa59c69189a3d34a6548de7539699f2cf0248f9c5059d37"
   },
   "org.standardnotes.advanced-checklist": {
-    "version": "0.2.4",
-    "base64": "eaa8225677b18448cf6e8191cbf8a23c012590054d60434730cad20fd5b056f0",
-    "binary": "22db0aba7937234f8e0617a508a46de6a517c3e34be7deee87bc80533065f36c"
+    "version": "0.2.5",
+    "base64": "077a56ef75958105bc9dc16376bcea2e89aee57b512b43f9e1b33e1d32ea8358",
+    "binary": "e903a5c592bd03ca28d205d09dcbc7e4329c7cd57fb74b4e0e5fa724c2321a61"
   },
   "org.standardnotes.file-safe": {
     "version": "2.0.16",

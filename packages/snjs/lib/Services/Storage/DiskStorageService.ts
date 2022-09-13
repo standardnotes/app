@@ -4,7 +4,7 @@ import { SNLog } from '../../Log'
 import { isErrorDecryptingParameters, SNRootKey } from '@standardnotes/encryption'
 import * as Encryption from '@standardnotes/encryption'
 import * as Services from '@standardnotes/services'
-import { DiagnosticInfo, Environment } from '@standardnotes/services'
+import { DiagnosticInfo } from '@standardnotes/services'
 import {
   CreateDecryptedLocalStorageContextPayload,
   CreateDeletedLocalStorageContextPayload,
@@ -19,6 +19,7 @@ import {
   DeletedPayloadInterface,
   PayloadTimestampDefaults,
   LocalStorageEncryptedContextualPayload,
+  Environment,
 } from '@standardnotes/models'
 
 /**

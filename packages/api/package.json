@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/api",
-  "version": "1.6.2",
+  "version": "1.7.1",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -35,12 +35,11 @@
     "ts-jest": "^28.0.5"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.23.1",
+    "@standardnotes/common": "^1.32.0",
     "@standardnotes/encryption": "workspace:*",
     "@standardnotes/models": "workspace:*",
     "@standardnotes/responses": "workspace:*",
     "@standardnotes/security": "^1.1.0",
-    "@standardnotes/services": "workspace:*",
     "@standardnotes/utils": "workspace:*",
     "reflect-metadata": "^0.1.13"
   }

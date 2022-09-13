@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/services",
-  "version": "1.18.0",
+  "version": "1.19.1",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -20,11 +20,13 @@
     "prebuild": "yarn clean",
     "build": "tsc -p tsconfig.json",
     "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
     "test": "jest spec --coverage"
   },
   "dependencies": {
+    "@standardnotes/api": "workspace:^",
     "@standardnotes/auth": "^3.19.4",
-    "@standardnotes/common": "^1.30.0",
+    "@standardnotes/common": "^1.32.0",
     "@standardnotes/encryption": "workspace:^",
     "@standardnotes/files": "workspace:^",
     "@standardnotes/models": "workspace:^",
@@ -37,6 +39,7 @@
     "@types/jest": "^28.1.5",
     "@typescript-eslint/eslint-plugin": "^5.30.0",
     "@typescript-eslint/parser": "^5.12.1",
+    "eslint": "^8.23.1",
     "eslint-plugin-prettier": "*",
     "jest": "^28.1.2",
     "ts-jest": "^28.0.5"

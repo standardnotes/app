@@ -11,14 +11,8 @@ import {
   FeatureIdentifier,
 } from '@standardnotes/features'
 import { ContentType } from '@standardnotes/common'
-import { GenericItem, SNComponent } from '@standardnotes/models'
-import {
-  DesktopManagerInterface,
-  InternalEventBusInterface,
-  Environment,
-  Platform,
-  AlertService,
-} from '@standardnotes/services'
+import { GenericItem, SNComponent, Environment, Platform } from '@standardnotes/models'
+import { DesktopManagerInterface, InternalEventBusInterface, AlertService } from '@standardnotes/services'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import { SNFeaturesService } from '@Lib/Services/Features/FeaturesService'
 import { SNComponentManager } from './ComponentManager'

@@ -1,6 +1,5 @@
 import { DeviceInterface } from './DeviceInterface'
-import { Environment } from './Environments'
-import { RawKeychainValue } from '@standardnotes/models'
+import { Environment, RawKeychainValue } from '@standardnotes/models'
 
 export interface MobileDeviceInterface extends DeviceInterface {
   environment: Environment.Mobile

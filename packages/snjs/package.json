@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/snjs",
-  "version": "2.126.0",
+  "version": "2.127.1",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -24,6 +24,7 @@
     "tsc": "tsc --project lib/tsconfig.json && tscpaths -p lib/tsconfig.json -s lib -o dist/@types",
     "lint": "yarn lint:tsc && yarn lint:eslint",
     "lint:eslint": "eslint --ext .ts lib/",
+    "lint:fix": "eslint --fix --ext .ts lib/",
     "lint:tsc": "tsc --noEmit --emitDeclarationOnly false --project lib/tsconfig.json",
     "test": "jest spec --coverage",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand"
@@ -67,7 +68,7 @@
   },
   "dependencies": {
     "@standardnotes/api": "workspace:*",
-    "@standardnotes/common": "^1.25.0",
+    "@standardnotes/common": "^1.32.0",
     "@standardnotes/domain-events": "^2.39.0",
     "@standardnotes/encryption": "workspace:*",
     "@standardnotes/features": "workspace:*",

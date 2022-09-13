@@ -60,5 +60,10 @@ export function serverFeatures(): ServerFeatureDescription[] {
       identifier: FeatureIdentifier.FilesLowStorageTier,
       permission_name: PermissionName.FilesLowStorageTier,
     },
+    {
+      availableInSubscriptions: [SubscriptionName.ProPlan],
+      identifier: FeatureIdentifier.SubscriptionSharing,
+      permission_name: PermissionName.SubscriptionSharing,
+    },
   ]
 }

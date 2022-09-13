@@ -1,13 +1,13 @@
 import { ApplicationIdentifier, ContentType } from '@standardnotes/common'
-import { BackupFile, DecryptedItemInterface, ItemStream, PrefKey, PrefValue } from '@standardnotes/models'
+import { BackupFile, DecryptedItemInterface, ItemStream, Platform, PrefKey, PrefValue } from '@standardnotes/models'
 import { FilesClientInterface } from '@standardnotes/files'
 import { AlertService } from '../Alert/AlertService'
 
 import { ComponentManagerInterface } from '../Component/ComponentManagerInterface'
-import { Platform } from '../Device/Environments'
 import { ApplicationEvent } from '../Event/ApplicationEvent'
 import { ApplicationEventCallback } from '../Event/ApplicationEventCallback'
 import { FeaturesClientInterface } from '../Feature/FeaturesClientInterface'
+import { SubscriptionClientInterface } from '../Subscription/SubscriptionClientInterface'
 import { ItemsClientInterface } from '../Item/ItemsClientInterface'
 import { MutatorClientInterface } from '../Mutator/MutatorClientInterface'
 import { StorageValueModes } from '../Storage/StorageTypes'
@@ -48,6 +48,7 @@ export interface ApplicationInterface {
   get mutator(): MutatorClientInterface
   get user(): UserClientInterface
   get files(): FilesClientInterface
+  get subscriptions(): SubscriptionClientInterface
   readonly identifier: ApplicationIdentifier
   readonly platform: Platform
   deviceInterface: DeviceInterface

@@ -1,6 +1,6 @@
-import { Environment } from './Environments'
 import { MobileDeviceInterface } from './MobileDeviceInterface'
 import { DeviceInterface } from './DeviceInterface'
+import { Environment } from '@standardnotes/models'
 
 /* istanbul ignore file */
 

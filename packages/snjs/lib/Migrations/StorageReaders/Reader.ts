@@ -1,5 +1,6 @@
+import { Environment } from '@standardnotes/models'
 import { ApplicationIdentifier } from '@standardnotes/common'
-import { DeviceInterface, Environment } from '@standardnotes/services'
+import { DeviceInterface } from '@standardnotes/services'
 
 /**
  * A storage reader reads storage via a device interface
