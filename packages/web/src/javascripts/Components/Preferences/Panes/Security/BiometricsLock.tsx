@@ -17,8 +17,6 @@ const BiometricsLock = ({ application }: Props) => {
   const [hasBiometrics, setHasBiometrics] = useState(false)
   const [supportsBiometrics, setSupportsBiometrics] = useState(false)
   const [biometricsTimingOptions, setBiometricsTimingOptions] = useState(() => application.getBiometricsTimingOptions())
-  // TODO: finalize this logic, maybe `protectionsAvailable` and its setter are not needed at all
-  const [_protectionsAvailable, setProtectionsAvailable] = useState(application.hasProtectionSources())
 
   useEffect(() => {
     const getHasBiometrics = async () => {
@@ -41,16 +39,11 @@ const BiometricsLock = ({ application }: Props) => {
     setBiometricsTimingOptions(() => application.getBiometricsTimingOptions())
   }
 
-  const updateProtectionsAvailable = useCallback(() => {
-    setProtectionsAvailable(application.hasProtectionSources())
-  }, [application])
-
   const disableBiometrics = useCallback(async () => {
     if (await application.disableBiometrics()) {
       setHasBiometrics(false)
-      updateProtectionsAvailable()
     }
-  }, [application, updateProtectionsAvailable])
+  }, [application])
 
   const onBiometricsPress = async () => {
     if (hasBiometrics) {
@@ -59,7 +52,6 @@ const BiometricsLock = ({ application }: Props) => {
       setHasBiometrics(true)
       await application.enableBiometrics()
       await setBiometricsTimingValue(MobileUnlockTiming.OnQuit)
-      updateProtectionsAvailable()
     }
   }
 
