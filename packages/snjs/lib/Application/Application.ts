@@ -1,6 +1,10 @@
 import {
   HttpService,
   HttpServiceInterface,
+  SubscriptionApiService,
+  SubscriptionApiServiceInterface,
+  SubscriptionServer,
+  SubscriptionServerInterface,
   UserApiService,
   UserApiServiceInterface,
   UserRegistrationResponseBody,
@@ -23,9 +27,7 @@ import {
   ChallengeValidation,
   ComponentManagerInterface,
   DiagnosticInfo,
-  Environment,
   isDesktopDevice,
-  Platform,
   ChallengeValue,
   StorageKey,
   ChallengeReason,
@@ -37,11 +39,20 @@ import {
   EncryptionServiceEvent,
   FilesBackupService,
   FileService,
+  SubscriptionClientInterface,
+  SubscriptionManager,
 } from '@standardnotes/services'
 import { FilesClientInterface } from '@standardnotes/files'
 import { ComputePrivateWorkspaceIdentifier } from '@standardnotes/encryption'
 import { useBoolean } from '@standardnotes/utils'
-import { BackupFile, DecryptedItemInterface, EncryptedItemInterface, ItemStream } from '@standardnotes/models'
+import {
+  BackupFile,
+  DecryptedItemInterface,
+  EncryptedItemInterface,
+  Environment,
+  ItemStream,
+  Platform,
+} from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 
 import { SnjsVersion } from './../Version'
@@ -92,6 +103,9 @@ export class SNApplication
   private apiService!: InternalServices.SNApiService
   private declare userApiService: UserApiServiceInterface
   private declare userServer: UserServerInterface
+  private declare subscriptionApiService: SubscriptionApiServiceInterface
+  private declare subscriptionServer: SubscriptionServerInterface
+  private declare subscriptionManager: SubscriptionClientInterface
   private sessionManager!: InternalServices.SNSessionManager
   private syncService!: InternalServices.SNSyncService
   private challengeService!: InternalServices.ChallengeService
@@ -185,6 +199,10 @@ export class SNApplication
     this.constructServices()
 
     this.defineInternalEventHandlers()
+  }
+
+  get subscriptions(): ExternalServices.SubscriptionClientInterface {
+    return this.subscriptionManager
   }
 
   public get files(): FilesClientInterface {
@@ -1031,6 +1049,9 @@ export class SNApplication
     this.createHttpService()
     this.createUserServer()
     this.createUserApiService()
+    this.createSubscriptionServer()
+    this.createSubscriptionApiService()
+    this.createSubscriptionManager()
     this.createWebSocketsService()
     this.createSessionManager()
     this.createHistoryManager()
@@ -1069,6 +1090,9 @@ export class SNApplication
     ;(this.apiService as unknown) = undefined
     ;(this.userApiService as unknown) = undefined
     ;(this.userServer as unknown) = undefined
+    ;(this.subscriptionApiService as unknown) = undefined
+    ;(this.subscriptionServer as unknown) = undefined
+    ;(this.subscriptionManager as unknown) = undefined
     ;(this.sessionManager as unknown) = undefined
     ;(this.syncService as unknown) = undefined
     ;(this.challengeService as unknown) = undefined
@@ -1262,6 +1286,18 @@ export class SNApplication
     this.userServer = new UserServer(this.httpService)
   }
 
+  private createSubscriptionApiService() {
+    this.subscriptionApiService = new SubscriptionApiService(this.subscriptionServer)
+  }
+
+  private createSubscriptionServer() {
+    this.subscriptionServer = new SubscriptionServer(this.httpService)
+  }
+
+  private createSubscriptionManager() {
+    this.subscriptionManager = new SubscriptionManager(this.subscriptionApiService, this.internalEventBus)
+  }
+
   private createItemManager() {
     this.itemManager = new InternalServices.ItemManager(this.payloadManager, this.options, this.internalEventBus)
     this.services.push(this.itemManager)
@@ -1377,6 +1413,7 @@ export class SNApplication
       this.protocolService,
       this.challengeService,
       this.webSocketsService,
+      this.httpService,
       this.internalEventBus,
     )
     this.serviceObservers.push(

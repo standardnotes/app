@@ -29,6 +29,7 @@
     "build:mobile": "yarn workspaces foreach -pt --verbose -R --from @standardnotes/mobile --exclude @standardnotes/components-meta run build",
     "build:snjs": "yarn workspaces foreach -pt --verbose -R --from @standardnotes/snjs --exclude @standardnotes/components-meta run build",
     "build:services": "yarn workspaces foreach -pt --verbose -R --from @standardnotes/services --exclude @standardnotes/components-meta run build",
+    "build:api": "yarn workspaces foreach -pt --verbose -R --from @standardnotes/api --exclude @standardnotes/components-meta run build",
     "start:server:web": "lerna run start --scope=@standardnotes/web",
     "start:server:e2e": "lerna run start:test-server --scope=@standardnotes/snjs",
     "prepare": "husky install",

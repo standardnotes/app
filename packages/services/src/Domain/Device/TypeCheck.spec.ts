@@ -1,5 +1,6 @@
+import { Environment } from '@standardnotes/models'
+
 import { DeviceInterface } from './DeviceInterface'
-import { Environment } from './Environments'
 import { MobileDeviceInterface } from './MobileDeviceInterface'
 import { isMobileDevice } from './TypeCheck'
 

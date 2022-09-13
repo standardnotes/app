@@ -38,6 +38,7 @@ import {
   ApiCallError,
   ErrorMessage,
   HttpErrorResponseBody,
+  HttpServiceInterface,
   UserApiServiceInterface,
   UserRegistrationResponseBody,
 } from '@standardnotes/api'
@@ -77,6 +78,7 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
     private protocolService: EncryptionService,
     private challengeService: ChallengeService,
     private webSocketsService: SNWebSocketsService,
+    private httpService: HttpServiceInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -616,6 +618,10 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
     this.diskStorageService.setValue(StorageKey.User, user)
 
     void this.apiService.setHost(host)
+
+    this.httpService.setHost(host)
+
+    this.httpService.setAuthorizationToken(session.authorizationValue)
 
     await this.setSession(session)
 
