@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.47.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.47.1...@standardnotes/web@3.47.2) (2022-09-14)
+
+### Bug Fixes
+
+* move mobile nav button next to note/file title ([#1568](https://github.com/standardnotes/app/issues/1568)) ([110c5ff](https://github.com/standardnotes/app/commit/110c5ff47fec68d7b86ebdc3dc7b404395d251fb))
+
 ## [3.47.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.47.0...@standardnotes/web@3.47.1) (2022-09-14)
 
 ### Bug Fixes
