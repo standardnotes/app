@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.47.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.46.3...@standardnotes/web@3.47.0) (2022-09-14)
+
+### Features
+
+* mobile security prefs ([#1496](https://github.com/standardnotes/app/issues/1496)) ([d7aca2c](https://github.com/standardnotes/app/commit/d7aca2c13a99b81c2ee9d36a09f670b0a4c61bd1))
+
 ## [3.46.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.46.2...@standardnotes/web@3.46.3) (2022-09-13)
 
 **Note:** Version bump only for package @standardnotes/web

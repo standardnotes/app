@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.20.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.19.1...@standardnotes/services@1.20.0) (2022-09-14)
+
+### Features
+
+* mobile security prefs ([#1496](https://github.com/standardnotes/app/issues/1496)) ([d7aca2c](https://github.com/standardnotes/app/commit/d7aca2c13a99b81c2ee9d36a09f670b0a4c61bd1))
+
 ## [1.19.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.19.0...@standardnotes/services@1.19.1) (2022-09-13)
 
 **Note:** Version bump only for package @standardnotes/services
