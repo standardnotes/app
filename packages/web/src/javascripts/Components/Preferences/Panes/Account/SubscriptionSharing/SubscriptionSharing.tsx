@@ -9,11 +9,11 @@ import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/Pre
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 
-import SubscriptionSharingInformation from './SubscriptionSharingInformation'
 import NoProSubscription from './NoProSubscription'
 import InvitationsList from './InvitationsList'
 import Invite from './Invite/Invite'
 import Button from '@/Components/Button/Button'
+import SharingStatusText from './SharingStatusText'
 
 type Props = {
   application: WebApplication
@@ -33,21 +33,14 @@ const SubscriptionSharing: FunctionComponent<Props> = ({ application, viewContro
       <PreferencesSegment>
         <div className="flex flex-row items-center">
           <div className="flex flex-grow flex-col">
-            <Title>Subscription Sharing</Title>
+            <Title className="mb-2">Subscription Sharing</Title>
             {isSubscriptionSharingFeatureAvailable ? (
               <div>
-                <SubscriptionSharingInformation subscriptionState={subscriptionState} />
+                <SharingStatusText subscriptionState={subscriptionState} />
                 <HorizontalSeparator classes="my-4" />
                 <InvitationsList subscriptionState={subscriptionState} application={application} />
-                <HorizontalSeparator classes="my-4" />
                 {!subscriptionState.allInvitationsUsed && (
-                  <Button
-                    className="mt-3 min-w-20"
-                    label="Invite"
-                    onClick={() => {
-                      setIsInviteDialogOpen(true)
-                    }}
-                  />
+                  <Button className="mt-3 min-w-20" label="Invite" onClick={() => setIsInviteDialogOpen(true)} />
                 )}
                 {isInviteDialogOpen && (
                   <Invite
