@@ -4,6 +4,10 @@ import {
   ClientDisplayableError,
   convertTimestampToMilliseconds,
   InternalEventBus,
+  Invitation,
+  InvitationStatus,
+  SubscriptionClientInterface,
+  Uuid,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable } from 'mobx'
 import { WebApplication } from '../../Application/Application'
@@ -12,28 +16,35 @@ import { AvailableSubscriptions } from './AvailableSubscriptionsType'
 import { Subscription } from './SubscriptionType'
 
 export class SubscriptionController extends AbstractViewController {
+  private readonly ALLOWED_SUBSCRIPTION_INVITATIONS = 5
+
   userSubscription: Subscription | undefined = undefined
   availableSubscriptions: AvailableSubscriptions | undefined = undefined
+  subscriptionInvitations: Invitation[] | undefined = undefined
 
   override deinit() {
     super.deinit()
     ;(this.userSubscription as unknown) = undefined
     ;(this.availableSubscriptions as unknown) = undefined
+    ;(this.subscriptionInvitations as unknown) = undefined
 
     destroyAllObjectProperties(this)
   }
 
-  constructor(application: WebApplication, eventBus: InternalEventBus) {
+  constructor(application: WebApplication, eventBus: InternalEventBus, private subscriptionManager: SubscriptionClientInterface) {
     super(application, eventBus)
 
     makeObservable(this, {
       userSubscription: observable,
       availableSubscriptions: observable,
+      subscriptionInvitations: observable,
 
       userSubscriptionName: computed,
       userSubscriptionExpirationDate: computed,
       isUserSubscriptionExpired: computed,
       isUserSubscriptionCanceled: computed,
+      usedInvitationsCount: computed,
+      allowedInvitationsCount: computed,
 
       setUserSubscription: action,
       setAvailableSubscriptions: action,
@@ -43,6 +54,7 @@ export class SubscriptionController extends AbstractViewController {
       application.addEventObserver(async () => {
         if (application.hasAccount()) {
           this.getSubscriptionInfo().catch(console.error)
+          this.reloadSubscriptionInvitations().catch(console.error)
         }
       }, ApplicationEvent.Launched),
     )
@@ -91,12 +103,31 @@ export class SubscriptionController extends AbstractViewController {
     return Boolean(this.userSubscription?.cancelled)
   }
 
+  get usedInvitationsCount(): number {
+    return this.subscriptionInvitations?.filter(
+      invitation =>
+        [InvitationStatus.Accepted, InvitationStatus.Sent].includes(invitation.status)
+      ).length ?? 0
+  }
+
+  get allowedInvitationsCount(): number {
+    return this.ALLOWED_SUBSCRIPTION_INVITATIONS
+  }
+
   public setUserSubscription(subscription: Subscription): void {
     this.userSubscription = subscription
   }
 
   public setAvailableSubscriptions(subscriptions: AvailableSubscriptions): void {
     this.availableSubscriptions = subscriptions
+  }
+
+  async sendSubscriptionInvitation(inviteeEmail: string): Promise<boolean> {
+    return this.subscriptionManager.inviteToSubscription(inviteeEmail)
+  }
+
+  async cancelSubscriptionInvitation(invitationUuid: Uuid): Promise<boolean> {
+    return this.subscriptionManager.cancelInvitation(invitationUuid)
   }
 
   private async getAvailableSubscriptions() {
@@ -124,5 +155,9 @@ export class SubscriptionController extends AbstractViewController {
   private async getSubscriptionInfo() {
     await this.getSubscription()
     await this.getAvailableSubscriptions()
+  }
+
+  private async reloadSubscriptionInvitations(): Promise<void> {
+    this.subscriptionInvitations = await this.subscriptionManager.listSubscriptionInvitations()
   }
 }
