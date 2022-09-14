@@ -28,7 +28,7 @@ const NoProSubscription: FunctionComponent<Props> = ({ application }) => {
 
   return (
     <>
-      <Text>Subscription sharing is available only on the Professional plan. Please upgrade in order to share subscription.</Text>
+      <Text>Subscription sharing is available only on the <span className='font-bold'>Professional</span> plan. Please upgrade in order to share subscription.</Text>
       {isLoadingPurchaseFlow && <Text>Redirecting you to the subscription page...</Text>}
       {purchaseFlowError && <Text className="text-danger">{purchaseFlowError}</Text>}
       <div className="flex">

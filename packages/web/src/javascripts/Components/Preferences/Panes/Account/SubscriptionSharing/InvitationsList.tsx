@@ -53,10 +53,10 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
 
   return (
     <div>
-      <SubtitleLight>Active Invitations:</SubtitleLight>
+      <SubtitleLight className='text-info'>Active Invitations:</SubtitleLight>
       {activeSubscriptions?.map(invitation => (
         <div key={invitation.uuid}>
-          <Text className="mt-1">{invitation.inviteeIdentifier} ({invitation.status})</Text>
+          <Text className="mt-1">{invitation.inviteeIdentifier} <span className='text-info'>({invitation.status})</span></Text>
           {invitation.status !== InvitationStatus.Canceled && <Button
             className="mt-3 min-w-20"
             label="Cancel"
@@ -64,10 +64,10 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
           />}
         </div>
       ))}
-      <SubtitleLight>Non Active Invitations:</SubtitleLight>
+      <SubtitleLight className='text-info'>Non Active Invitations:</SubtitleLight>
       {nonActiveSubscriptions?.map(invitation => (
         <div key={invitation.uuid}>
-          <Text className="mt-1">{invitation.inviteeIdentifier} ({invitation.status})</Text>
+          <Text className="mt-1">{invitation.inviteeIdentifier} <span className='text-info'>({invitation.status})</span></Text>
         </div>
       ))}
     </div>
