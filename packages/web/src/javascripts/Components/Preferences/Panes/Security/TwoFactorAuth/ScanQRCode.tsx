@@ -22,7 +22,7 @@ const ScanQRCode: FunctionComponent<Props> = ({ activation: act }) => {
       <ModalDialogLabel closeDialog={act.cancelActivation}>Step 1 of 3 - Scan QR code</ModalDialogLabel>
       <ModalDialogDescription className="h-33 flex flex-col items-center gap-5 md:flex-row">
         <div className="w-25 h-25 flex items-center justify-center bg-info">
-          <QRCode className="border-neutral-contrast-bg border-2 border-solid" value={act.qrCode} size={100} />
+          <QRCode className="border-2 border-solid border-neutral-contrast" value={act.qrCode} size={100} />
         </div>
         <div className="flex flex-grow flex-col gap-2">
           <div className="flex flex-row items-center">
