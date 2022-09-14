@@ -40,7 +40,7 @@ const SubscriptionSharing: FunctionComponent<Props> = ({ application, viewContro
                 <HorizontalSeparator classes="my-4" />
                 <InvitationsList subscriptionState={subscriptionState} application={application} />
                 {!subscriptionState.allInvitationsUsed && (
-                  <Button className="mt-3 min-w-20" label="Invite" onClick={() => setIsInviteDialogOpen(true)} />
+                  <Button className="min-w-20" label="Invite" onClick={() => setIsInviteDialogOpen(true)} />
                 )}
                 {isInviteDialogOpen && (
                   <Invite

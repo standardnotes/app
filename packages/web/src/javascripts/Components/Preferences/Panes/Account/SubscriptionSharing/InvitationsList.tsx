@@ -6,6 +6,7 @@ import { SubtitleLight, Text } from '@/Components/Preferences/PreferencesCompone
 import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
 import Button from '@/Components/Button/Button'
 import { WebApplication } from '@/Application/Application'
+import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 
 type Props = {
   subscriptionState: SubscriptionController
@@ -22,7 +23,7 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
   const activeSubscriptions = subscriptionInvitations?.filter((invitation) =>
     [InvitationStatus.Sent, InvitationStatus.Accepted].includes(invitation.status),
   )
-  const nonActiveSubscriptions = subscriptionInvitations?.filter((invitation) =>
+  const inActiveSubscriptions = subscriptionInvitations?.filter((invitation) =>
     [InvitationStatus.Declined, InvitationStatus.Canceled].includes(invitation.status),
   )
 
@@ -47,30 +48,37 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
   }
 
   if (usedInvitationsCount === 0) {
-    return <Text className="mt-1">Make your first subscription invitation below.</Text>
+    return <Text className="mt-1 mb-3">Make your first subscription invitation below.</Text>
   }
 
   return (
     <div>
-      <SubtitleLight className="text-info">Active Invitations:</SubtitleLight>
+      <SubtitleLight className="mb-2 text-info">Active Invitations:</SubtitleLight>
       {activeSubscriptions?.map((invitation) => (
-        <div key={invitation.uuid}>
-          <Text className="mt-1">
+        <div key={invitation.uuid} className="mt-1 mb-4">
+          <Text>
             {invitation.inviteeIdentifier} <span className="text-info">({invitation.status})</span>
           </Text>
           {invitation.status !== InvitationStatus.Canceled && (
-            <Button className="mt-3 min-w-20" label="Cancel" onClick={() => handleCancel(invitation.uuid)} />
+            <Button className="mt-2 min-w-20" label="Cancel" onClick={() => handleCancel(invitation.uuid)} />
           )}
         </div>
       ))}
-      <SubtitleLight className="text-info">Non Active Invitations:</SubtitleLight>
-      {nonActiveSubscriptions?.map((invitation) => (
-        <div key={invitation.uuid}>
-          <Text className="mt-1">
-            {invitation.inviteeIdentifier} <span className="text-info">({invitation.status})</span>
-          </Text>
-        </div>
-      ))}
+      {!!inActiveSubscriptions?.length && (
+        <>
+          <SubtitleLight className="mb-2 text-info">Inactive Invitations:</SubtitleLight>
+          <div>
+            {inActiveSubscriptions?.map((invitation) => (
+              <div key={invitation.uuid} className="mb-3 first:mt-2">
+                <Text className="mt-1">
+                  {invitation.inviteeIdentifier} <span className="text-info">({invitation.status})</span>
+                </Text>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+      <HorizontalSeparator classes="my-4" />
     </div>
   )
 }
