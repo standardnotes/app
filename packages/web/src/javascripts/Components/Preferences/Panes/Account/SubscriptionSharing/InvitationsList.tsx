@@ -78,7 +78,7 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
           </div>
         </>
       )}
-      <HorizontalSeparator classes="my-4" />
+      {!subscriptionState.allInvitationsUsed && <HorizontalSeparator classes="my-4" />}
     </div>
   )
 }
