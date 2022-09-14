@@ -45,6 +45,7 @@ export class SubscriptionController extends AbstractViewController {
       isUserSubscriptionCanceled: computed,
       usedInvitationsCount: computed,
       allowedInvitationsCount: computed,
+      allInvitationsUsed: computed,
 
       setUserSubscription: action,
       setAvailableSubscriptions: action,
@@ -114,6 +115,10 @@ export class SubscriptionController extends AbstractViewController {
 
   get allowedInvitationsCount(): number {
     return this.ALLOWED_SUBSCRIPTION_INVITATIONS
+  }
+
+  get allInvitationsUsed(): boolean {
+    return this.usedInvitationsCount === this.ALLOWED_SUBSCRIPTION_INVITATIONS
   }
 
   public setUserSubscription(subscription: Subscription): void {

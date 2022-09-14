@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 
-import { Text } from '@/Components/Preferences/PreferencesComponents/Content'
+import { SubtitleLight, Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
 
 type Props = { subscriptionState: SubscriptionController }
@@ -8,6 +8,7 @@ type Props = { subscriptionState: SubscriptionController }
 const InvitationsList = ({ subscriptionState }: Props) => {
   const {
     usedInvitationsCount,
+    subscriptionInvitations,
   } = subscriptionState
 
   if (usedInvitationsCount === 0) {
@@ -20,7 +21,10 @@ const InvitationsList = ({ subscriptionState }: Props) => {
 
   return (
     <div>
-
+      <SubtitleLight>Invitations:</SubtitleLight>
+      {subscriptionInvitations?.map(invitation => (
+        <Text className="mt-1">{invitation.inviteeIdentifier} ({invitation.status})</Text>
+      ))}
     </div>
   )
 }
