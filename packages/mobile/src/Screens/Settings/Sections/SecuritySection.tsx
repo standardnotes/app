@@ -1,4 +1,3 @@
-import { UnlockTiming } from '@Lib/ApplicationState'
 import { MobileDeviceInterface } from '@Lib/Interface'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { ApplicationContext } from '@Root/ApplicationContext'
@@ -8,7 +7,7 @@ import { SectionHeader } from '@Root/Components/SectionHeader'
 import { TableSection } from '@Root/Components/TableSection'
 import { ModalStackNavigationProp } from '@Root/ModalStack'
 import { SCREEN_INPUT_MODAL_PASSCODE, SCREEN_SETTINGS } from '@Root/Screens/screens'
-import { StorageEncryptionPolicy } from '@standardnotes/snjs'
+import { MobileUnlockTiming, StorageEncryptionPolicy } from '@standardnotes/snjs'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Platform } from 'react-native'
 import { Title } from './SecuritySection.styled'
@@ -32,16 +31,14 @@ export const SecuritySection = (props: Props) => {
   const [hasBiometrics, setHasBiometrics] = useState(false)
   const [supportsBiometrics, setSupportsBiometrics] = useState(false)
   const [biometricsTimingOptions, setBiometricsTimingOptions] = useState(() =>
-    application!.getAppState().getBiometricsTimingOptions(),
+    application!.getBiometricsTimingOptions(),
   )
-  const [passcodeTimingOptions, setPasscodeTimingOptions] = useState(() =>
-    application!.getAppState().getPasscodeTimingOptions(),
-  )
+  const [passcodeTimingOptions, setPasscodeTimingOptions] = useState(() => application!.getPasscodeTimingOptions())
 
   useEffect(() => {
     let mounted = true
     const getHasScreenshotPrivacy = async () => {
-      const hasScreenshotPrivacyEnabled = await application?.getAppState().screenshotPrivacyEnabled
+      const hasScreenshotPrivacyEnabled = (await application?.getMobileScreenshotPrivacyEnabled()) ?? true
       if (mounted) {
         setHasScreenshotPrivacy(hasScreenshotPrivacyEnabled)
       }
@@ -71,7 +68,7 @@ export const SecuritySection = (props: Props) => {
   useFocusEffect(
     useCallback(() => {
       if (props.hasPasscode) {
-        setPasscodeTimingOptions(() => application!.getAppState().getPasscodeTimingOptions())
+        setPasscodeTimingOptions(() => application!.getPasscodeTimingOptions())
       }
     }, [application, props.hasPasscode]),
   )
@@ -127,14 +124,14 @@ export const SecuritySection = (props: Props) => {
 
   const biometricTitle = hasBiometrics ? 'Disable Biometrics Lock' : 'Enable Biometrics Lock'
 
-  const setBiometricsTiming = async (timing: UnlockTiming) => {
+  const setBiometricsTiming = async (timing: MobileUnlockTiming) => {
     await application?.getAppState().setBiometricsTiming(timing)
-    setBiometricsTimingOptions(() => application!.getAppState().getBiometricsTimingOptions())
+    setBiometricsTimingOptions(() => application!.getBiometricsTimingOptions())
   }
 
-  const setPasscodeTiming = async (timing: UnlockTiming) => {
+  const setPasscodeTiming = async (timing: MobileUnlockTiming) => {
     await application?.getAppState().setPasscodeTiming(timing)
-    setPasscodeTimingOptions(() => application!.getAppState().getPasscodeTimingOptions())
+    setPasscodeTimingOptions(() => application!.getPasscodeTimingOptions())
   }
 
   const onScreenshotPrivacyPress = async () => {
@@ -157,7 +154,7 @@ export const SecuritySection = (props: Props) => {
     } else {
       setHasBiometrics(true)
       await application?.enableBiometrics()
-      await setBiometricsTiming(UnlockTiming.OnQuit)
+      await setBiometricsTiming(MobileUnlockTiming.OnQuit)
       props.updateProtectionsAvailable()
     }
   }
@@ -231,7 +228,7 @@ export const SecuritySection = (props: Props) => {
           leftAligned
           title={'Require Passcode'}
           options={passcodeTimingOptions}
-          onPress={(option: Option) => setPasscodeTiming(option.key as UnlockTiming)}
+          onPress={(option: Option) => setPasscodeTiming(option.key as MobileUnlockTiming)}
         />
       )}
 
@@ -240,7 +237,7 @@ export const SecuritySection = (props: Props) => {
           leftAligned
           title={'Require Biometrics'}
           options={biometricsTimingOptions}
-          onPress={(option: Option) => setBiometricsTiming(option.key as UnlockTiming)}
+          onPress={(option: Option) => setBiometricsTiming(option.key as MobileUnlockTiming)}
         />
       )}
     </TableSection>

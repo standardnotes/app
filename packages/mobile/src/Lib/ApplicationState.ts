@@ -1,3 +1,4 @@
+import { MobileDeviceInterface } from '@Lib/Interface'
 import {
   ApplicationEvent,
   ApplicationService,
@@ -8,6 +9,7 @@ import {
   ContentType,
   InternalEventBus,
   isNullOrUndefined,
+  MobileUnlockTiming,
   NoteViewController,
   PayloadEmitSource,
   PrefKey,
@@ -30,14 +32,13 @@ import {
   KeyboardEventListener,
   NativeEventSubscription,
   NativeModules,
-  Platform,
 } from 'react-native'
-import FlagSecure from 'react-native-flag-secure-android'
 import { hide, show } from 'react-native-privacy-snapshot'
 import VersionInfo from 'react-native-version-info'
 import pjson from '../../package.json'
 import { MobileApplication } from './Application'
 import { associateComponentWithNote } from './ComponentManager'
+
 const { PlatformConstants } = NativeModules
 
 export enum AppStateType {
@@ -64,11 +65,6 @@ export enum AppStateEventType {
 export type TabletModeChangeData = {
   new_isInTabletMode: boolean
   old_isInTabletMode: boolean
-}
-
-export enum UnlockTiming {
-  Immediately = 'immediately',
-  OnQuit = 'on-quit',
 }
 
 export enum PasscodeKeyboardType {
@@ -103,8 +99,8 @@ export class ApplicationState extends ApplicationService {
   authenticationInProgress = false
   multiEditorEnabled = false
   screenshotPrivacyEnabled?: boolean
-  passcodeTiming?: UnlockTiming
-  biometricsTiming?: UnlockTiming
+  passcodeTiming?: MobileUnlockTiming
+  biometricsTiming?: MobileUnlockTiming
   removeHandleReactNativeAppStateChangeListener: NativeEventSubscription
   removeItemChangesListener?: () => void
   removePreferencesLoadedListener?: () => void
@@ -173,7 +169,9 @@ export class ApplicationState extends ApplicationService {
   override async onAppLaunch() {
     MobileApplication.setPreviouslyLaunched()
     this.screenshotPrivacyEnabled = (await this.getScreenshotPrivacyEnabled()) ?? true
-    void this.setAndroidScreenshotPrivacy(this.screenshotPrivacyEnabled)
+    await (this.application.deviceInterface as MobileDeviceInterface).setAndroidScreenshotPrivacy(
+      this.screenshotPrivacyEnabled,
+    )
   }
 
   /**
@@ -246,12 +244,6 @@ export class ApplicationState extends ApplicationService {
   private async loadUnlockTiming() {
     this.passcodeTiming = await this.getPasscodeTiming()
     this.biometricsTiming = await this.getBiometricsTiming()
-  }
-
-  public async setAndroidScreenshotPrivacy(enable: boolean) {
-    if (Platform.OS === 'android') {
-      enable ? FlagSecure.activate() : FlagSecure.deactivate()
-    }
   }
 
   /**
@@ -486,44 +478,14 @@ export class ApplicationState extends ApplicationService {
     }
   }
 
-  getPasscodeTimingOptions() {
-    return [
-      {
-        title: 'Immediately',
-        key: UnlockTiming.Immediately,
-        selected: this.passcodeTiming === UnlockTiming.Immediately,
-      },
-      {
-        title: 'On Quit',
-        key: UnlockTiming.OnQuit,
-        selected: this.passcodeTiming === UnlockTiming.OnQuit,
-      },
-    ]
-  }
-
-  getBiometricsTimingOptions() {
-    return [
-      {
-        title: 'Immediately',
-        key: UnlockTiming.Immediately,
-        selected: this.biometricsTiming === UnlockTiming.Immediately,
-      },
-      {
-        title: 'On Quit',
-        key: UnlockTiming.OnQuit,
-        selected: this.biometricsTiming === UnlockTiming.OnQuit,
-      },
-    ]
-  }
-
   private async checkAndLockApplication() {
     const isLocked = await this.application.isLocked()
     if (!isLocked) {
       const hasBiometrics = await this.application.hasBiometrics()
       const hasPasscode = this.application.hasPasscode()
-      if (hasPasscode && this.passcodeTiming === UnlockTiming.Immediately) {
+      if (hasPasscode && this.passcodeTiming === MobileUnlockTiming.Immediately) {
         await this.application.lock()
-      } else if (hasBiometrics && this.biometricsTiming === UnlockTiming.Immediately && !this.locked) {
+      } else if (hasBiometrics && this.biometricsTiming === MobileUnlockTiming.Immediately && !this.locked) {
         const challenge = new Challenge(
           [new ChallengePrompt(ChallengeValidation.Biometric)],
           ChallengeReason.ApplicationUnlock,
@@ -604,35 +566,33 @@ export class ApplicationState extends ApplicationService {
   }
 
   private async getScreenshotPrivacyEnabled(): Promise<boolean | undefined> {
-    return this.application.getValue(StorageKey.MobileScreenshotPrivacyEnabled, StorageValueModes.Default) as Promise<
-      boolean | undefined
-    >
+    return this.application.getMobileScreenshotPrivacyEnabled()
   }
 
-  private async getPasscodeTiming(): Promise<UnlockTiming | undefined> {
+  private async getPasscodeTiming(): Promise<MobileUnlockTiming | undefined> {
     return this.application.getValue(StorageKey.MobilePasscodeTiming, StorageValueModes.Nonwrapped) as Promise<
-      UnlockTiming | undefined
+      MobileUnlockTiming | undefined
     >
   }
 
-  private async getBiometricsTiming(): Promise<UnlockTiming | undefined> {
+  private async getBiometricsTiming(): Promise<MobileUnlockTiming | undefined> {
     return this.application.getValue(StorageKey.MobileBiometricsTiming, StorageValueModes.Nonwrapped) as Promise<
-      UnlockTiming | undefined
+      MobileUnlockTiming | undefined
     >
   }
 
   public async setScreenshotPrivacyEnabled(enabled: boolean) {
-    await this.application.setValue(StorageKey.MobileScreenshotPrivacyEnabled, enabled, StorageValueModes.Default)
+    await this.application.setMobileScreenshotPrivacyEnabled(enabled)
     this.screenshotPrivacyEnabled = enabled
-    void this.setAndroidScreenshotPrivacy(enabled)
+    await (this.application.deviceInterface as MobileDeviceInterface).setAndroidScreenshotPrivacy(enabled)
   }
 
-  public async setPasscodeTiming(timing: UnlockTiming) {
+  public async setPasscodeTiming(timing: MobileUnlockTiming) {
     await this.application.setValue(StorageKey.MobilePasscodeTiming, timing, StorageValueModes.Nonwrapped)
     this.passcodeTiming = timing
   }
 
-  public async setBiometricsTiming(timing: UnlockTiming) {
+  public async setBiometricsTiming(timing: MobileUnlockTiming) {
     await this.application.setValue(StorageKey.MobileBiometricsTiming, timing, StorageValueModes.Nonwrapped)
     this.biometricsTiming = timing
   }

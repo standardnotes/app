@@ -98,6 +98,7 @@ if (IsWebPlatform) {
 
   setTimeout(() => {
     const device = window.reactNativeDevice || new WebDevice(WebAppVersion)
+
     startApplication(window.defaultSyncServer, device, window.enabledUnfinishedFeatures, window.websocketUrl).catch(
       console.error,
     )

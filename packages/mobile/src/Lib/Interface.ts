@@ -12,6 +12,7 @@ import {
 } from '@standardnotes/snjs'
 import { Alert, Linking, Platform } from 'react-native'
 import FingerprintScanner from 'react-native-fingerprint-scanner'
+import FlagSecure from 'react-native-flag-secure-android'
 import Keychain from './Keychain'
 
 export type BiometricsType = 'Fingerprint' | 'Face ID' | 'Biometrics' | 'Touch ID'
@@ -293,6 +294,12 @@ export class MobileDeviceInterface implements DeviceInterface {
 
   async clearRawKeychainValue(): Promise<void> {
     await Keychain.clearKeys()
+  }
+
+  async setAndroidScreenshotPrivacy(enable: boolean): Promise<void> {
+    if (Platform.OS === 'android') {
+      enable ? FlagSecure.activate() : FlagSecure.deactivate()
+    }
   }
 
   openUrl(url: string) {

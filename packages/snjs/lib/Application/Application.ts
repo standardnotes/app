@@ -927,6 +927,34 @@ export class SNApplication
     return this.deinit(this.getDeinitMode(), DeinitSource.Lock)
   }
 
+  async setBiometricsTiming(timing: InternalServices.MobileUnlockTiming) {
+    return this.protectionService.setBiometricsTiming(timing)
+  }
+
+  async getMobileScreenshotPrivacyEnabled(): Promise<boolean | undefined> {
+    return this.protectionService.getMobileScreenshotPrivacyEnabled()
+  }
+
+  async setMobileScreenshotPrivacyEnabled(isEnabled: boolean) {
+    return this.protectionService.setMobileScreenshotPrivacyEnabled(isEnabled)
+  }
+
+  async loadMobileUnlockTiming() {
+    return this.protectionService.loadMobileUnlockTiming()
+  }
+
+  getBiometricsTimingOptions() {
+    return this.protectionService.getBiometricsTimingOptions()
+  }
+
+  getPasscodeTimingOptions() {
+    return this.protectionService.getPasscodeTimingOptions()
+  }
+
+  isNativeMobileWeb() {
+    return this.environment === Environment.NativeMobileWeb
+  }
+
   getDeinitMode(): DeinitMode {
     const value = this.getValue(StorageKey.DeinitMode)
     if (value === 'hard') {
