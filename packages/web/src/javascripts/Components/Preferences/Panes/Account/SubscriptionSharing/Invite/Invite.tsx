@@ -98,6 +98,10 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application }) => {
 
     const success = await processInvite()
     if (!success) {
+      applicationAlertService
+        .alert('We could not send the invitation. Please try again or contact support if the issue persists.')
+        .catch(console.error)
+
       resetProgressState()
 
       return
