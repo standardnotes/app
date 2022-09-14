@@ -119,9 +119,7 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
       <ModalDialog>
         <ModalDialogLabel closeDialog={handleDialogClose}>Invite</ModalDialogLabel>
         <ModalDialogDescription className="flex flex-row items-center px-4.5">
-          {currentStep === Steps.InitialStep && (
-            <InviteForm setInviteeEmail={setInviteeEmail} />
-          )}
+          {currentStep === Steps.InitialStep && <InviteForm setInviteeEmail={setInviteeEmail} />}
           {currentStep === Steps.FinishStep && <InviteSuccess />}
         </ModalDialogDescription>
         <ModalDialogButtons className="px-4.5">

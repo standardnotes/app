@@ -13,6 +13,7 @@
     "clean": "rm -fr dist && rm -rf src/components",
     "format": "prettier --write src/javascripts",
     "lint": "NODE_OPTIONS=\"--max-old-space-size=4096\" eslint src/javascripts",
+    "lint:fix": "NODE_OPTIONS=\"--max-old-space-size=4096\" eslint src/javascripts --fix",
     "start": "webpack-dev-server --config web.webpack.dev.js",
     "start-secure": "yarn start --server-type https",
     "test": "jest --config jest.config.js --coverage",

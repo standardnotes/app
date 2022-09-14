@@ -15,7 +15,6 @@ import InvitationsList from './InvitationsList'
 import Invite from './Invite/Invite'
 import Button from '@/Components/Button/Button'
 
-
 type Props = {
   application: WebApplication
   viewControllerManager: ViewControllerManager
@@ -26,7 +25,8 @@ const SubscriptionSharing: FunctionComponent<Props> = ({ application, viewContro
 
   const subscriptionState = viewControllerManager.subscriptionController
 
-  const isSubscriptionSharingFeatureAvailable = application.features.getFeatureStatus(FeatureIdentifier.TwoFactorAuth) === FeatureStatus.Entitled
+  const isSubscriptionSharingFeatureAvailable =
+    application.features.getFeatureStatus(FeatureIdentifier.TwoFactorAuth) === FeatureStatus.Entitled
 
   return (
     <PreferencesGroup>
@@ -40,13 +40,21 @@ const SubscriptionSharing: FunctionComponent<Props> = ({ application, viewContro
                 <HorizontalSeparator classes="my-4" />
                 <InvitationsList subscriptionState={subscriptionState} application={application} />
                 <HorizontalSeparator classes="my-4" />
-                {!subscriptionState.allInvitationsUsed && <Button
-                  className="mt-3 min-w-20"
-                  label="Invite"
-                  onClick={() => { setIsInviteDialogOpen(true) }}
-                />}
+                {!subscriptionState.allInvitationsUsed && (
+                  <Button
+                    className="mt-3 min-w-20"
+                    label="Invite"
+                    onClick={() => {
+                      setIsInviteDialogOpen(true)
+                    }}
+                  />
+                )}
                 {isInviteDialogOpen && (
-                  <Invite onCloseDialog={() => setIsInviteDialogOpen(false)} application={application} subscriptionState={subscriptionState} />
+                  <Invite
+                    onCloseDialog={() => setIsInviteDialogOpen(false)}
+                    application={application}
+                    subscriptionState={subscriptionState}
+                  />
                 )}
               </div>
             ) : (

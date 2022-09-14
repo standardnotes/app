@@ -31,7 +31,11 @@ export class SubscriptionController extends AbstractViewController {
     destroyAllObjectProperties(this)
   }
 
-  constructor(application: WebApplication, eventBus: InternalEventBus, private subscriptionManager: SubscriptionClientInterface) {
+  constructor(
+    application: WebApplication,
+    eventBus: InternalEventBus,
+    private subscriptionManager: SubscriptionClientInterface,
+  ) {
     super(application, eventBus)
 
     makeObservable(this, {
@@ -107,10 +111,11 @@ export class SubscriptionController extends AbstractViewController {
   }
 
   get usedInvitationsCount(): number {
-    return this.subscriptionInvitations?.filter(
-      invitation =>
-        [InvitationStatus.Accepted, InvitationStatus.Sent].includes(invitation.status)
+    return (
+      this.subscriptionInvitations?.filter((invitation) =>
+        [InvitationStatus.Accepted, InvitationStatus.Sent].includes(invitation.status),
       ).length ?? 0
+    )
   }
 
   get allowedInvitationsCount(): number {

@@ -17,13 +17,14 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
 
   const applicationAlertService = application.alertService
 
-  const {
-    usedInvitationsCount,
-    subscriptionInvitations,
-  } = subscriptionState
+  const { usedInvitationsCount, subscriptionInvitations } = subscriptionState
 
-  const activeSubscriptions = subscriptionInvitations?.filter(invitation => [InvitationStatus.Sent, InvitationStatus.Accepted].includes(invitation.status))
-  const nonActiveSubscriptions = subscriptionInvitations?.filter(invitation => [InvitationStatus.Declined, InvitationStatus.Canceled].includes(invitation.status))
+  const activeSubscriptions = subscriptionInvitations?.filter((invitation) =>
+    [InvitationStatus.Sent, InvitationStatus.Accepted].includes(invitation.status),
+  )
+  const nonActiveSubscriptions = subscriptionInvitations?.filter((invitation) =>
+    [InvitationStatus.Declined, InvitationStatus.Canceled].includes(invitation.status),
+  )
 
   const handleCancel = async (invitationUuid: Uuid) => {
     if (lockContinue) {
@@ -39,35 +40,35 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
     setLockContinue(false)
 
     if (!success) {
-      applicationAlertService.alert('Could not cancel invitation. Please try again or contact support if the issue persists.').catch(console.error)
+      applicationAlertService
+        .alert('Could not cancel invitation. Please try again or contact support if the issue persists.')
+        .catch(console.error)
     }
   }
 
   if (usedInvitationsCount === 0) {
-    return (
-      <Text className="mt-1">
-        Make your first subscription invitation below.
-      </Text>
-    )
+    return <Text className="mt-1">Make your first subscription invitation below.</Text>
   }
 
   return (
     <div>
-      <SubtitleLight className='text-info'>Active Invitations:</SubtitleLight>
-      {activeSubscriptions?.map(invitation => (
+      <SubtitleLight className="text-info">Active Invitations:</SubtitleLight>
+      {activeSubscriptions?.map((invitation) => (
         <div key={invitation.uuid}>
-          <Text className="mt-1">{invitation.inviteeIdentifier} <span className='text-info'>({invitation.status})</span></Text>
-          {invitation.status !== InvitationStatus.Canceled && <Button
-            className="mt-3 min-w-20"
-            label="Cancel"
-            onClick={() => { handleCancel(invitation.uuid) }}
-          />}
+          <Text className="mt-1">
+            {invitation.inviteeIdentifier} <span className="text-info">({invitation.status})</span>
+          </Text>
+          {invitation.status !== InvitationStatus.Canceled && (
+            <Button className="mt-3 min-w-20" label="Cancel" onClick={handleCancel(invitation.uuid)} />
+          )}
         </div>
       ))}
-      <SubtitleLight className='text-info'>Non Active Invitations:</SubtitleLight>
-      {nonActiveSubscriptions?.map(invitation => (
+      <SubtitleLight className="text-info">Non Active Invitations:</SubtitleLight>
+      {nonActiveSubscriptions?.map((invitation) => (
         <div key={invitation.uuid}>
-          <Text className="mt-1">{invitation.inviteeIdentifier} <span className='text-info'>({invitation.status})</span></Text>
+          <Text className="mt-1">
+            {invitation.inviteeIdentifier} <span className="text-info">({invitation.status})</span>
+          </Text>
         </div>
       ))}
     </div>

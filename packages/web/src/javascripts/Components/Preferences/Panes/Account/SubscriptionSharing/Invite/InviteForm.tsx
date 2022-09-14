@@ -10,7 +10,7 @@ const InviteForm: FunctionComponent<Props> = ({ setInviteeEmail }) => {
   return (
     <div className="flex w-full flex-col">
       <div className="mb-3">
-        <label className="block mb-1" htmlFor="invite-email-input">
+        <label className="mb-1 block" htmlFor="invite-email-input">
           Invitee Email:
         </label>
         <DecoratedInput
