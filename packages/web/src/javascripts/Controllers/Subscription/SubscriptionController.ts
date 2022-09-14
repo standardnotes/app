@@ -62,12 +62,14 @@ export class SubscriptionController extends AbstractViewController {
     this.disposers.push(
       application.addEventObserver(async () => {
         this.getSubscriptionInfo().catch(console.error)
+        this.reloadSubscriptionInvitations().catch(console.error)
       }, ApplicationEvent.SignedIn),
     )
 
     this.disposers.push(
       application.addEventObserver(async () => {
         this.getSubscriptionInfo().catch(console.error)
+        this.reloadSubscriptionInvitations().catch(console.error)
       }, ApplicationEvent.UserRolesChanged),
     )
   }
