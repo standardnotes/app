@@ -59,7 +59,7 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
             {invitation.inviteeIdentifier} <span className="text-info">({invitation.status})</span>
           </Text>
           {invitation.status !== InvitationStatus.Canceled && (
-            <Button className="mt-3 min-w-20" label="Cancel" onClick={handleCancel(invitation.uuid)} />
+            <Button className="mt-3 min-w-20" label="Cancel" onClick={() => handleCancel(invitation.uuid)} />
           )}
         </div>
       ))}
