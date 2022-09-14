@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.47.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.47.0...@standardnotes/web@3.47.1) (2022-09-14)
+
+### Bug Fixes
+
+* display QR codes with correctly colored border so that scanner apps successfully recognize them ([#1566](https://github.com/standardnotes/app/issues/1566)) ([b4bdbfe](https://github.com/standardnotes/app/commit/b4bdbfe96a265e2d0cd7d8c1af9259dcce8e18d9))
+
 # [3.47.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.46.3...@standardnotes/web@3.47.0) (2022-09-14)
 
 ### Features
