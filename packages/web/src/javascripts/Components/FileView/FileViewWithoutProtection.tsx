@@ -4,6 +4,7 @@ import { ChangeEventHandler, useCallback, useRef } from 'react'
 import FileOptionsPanel from '@/Components/FileContextMenu/FileOptionsPanel'
 import FilePreview from '@/Components/FilePreview/FilePreview'
 import { FileViewProps } from './FileViewProps'
+import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
 
 const SyncTimeoutNoDebounceMs = 100
 const SyncTimeoutDebounceMs = 350
@@ -36,7 +37,8 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
           id="file-title-bar"
         >
           <div className="flex h-8 items-center justify-between">
-            <div className="flex-grow">
+            <div className="flex flex-grow items-center">
+              <MobileItemsListButton />
               <div className="title overflow-auto">
                 <input
                   className="input text-lg"

@@ -38,6 +38,7 @@ import { NoteViewProps } from './NoteViewProps'
 import IndicatorCircle from '../IndicatorCircle/IndicatorCircle'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import AutoresizingNoteViewTextarea from './AutoresizingTextarea'
+import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
 
 const MINIMUM_STATUS_DURATION = 400
 const TEXTAREA_DEBOUNCE = 100
@@ -913,7 +914,8 @@ class NoteView extends PureComponent<NoteViewProps, State> {
         {this.note && (
           <div id="editor-title-bar" className="content-title-bar section-title-bar z-editor-title-bar w-full">
             <div className="mb-2 flex flex-wrap items-start justify-between gap-2 md:mb-0 md:flex-nowrap md:gap-0 xl:items-center">
-              <div className={(this.state.noteLocked ? 'locked' : '') + ' flex-grow'}>
+              <div className={classNames(this.state.noteLocked && 'locked', 'flex flex-grow items-center')}>
+                <MobileItemsListButton />
                 <div className="title overflow-auto">
                   <input
                     className="input text-lg"
