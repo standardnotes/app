@@ -130,11 +130,23 @@ export class SubscriptionController extends AbstractViewController {
   }
 
   async sendSubscriptionInvitation(inviteeEmail: string): Promise<boolean> {
-    return this.subscriptionManager.inviteToSubscription(inviteeEmail)
+    const success = await this.subscriptionManager.inviteToSubscription(inviteeEmail)
+
+    if (success) {
+      await this.reloadSubscriptionInvitations()
+    }
+
+    return success
   }
 
   async cancelSubscriptionInvitation(invitationUuid: Uuid): Promise<boolean> {
-    return this.subscriptionManager.cancelInvitation(invitationUuid)
+    const success = await this.subscriptionManager.cancelInvitation(invitationUuid)
+
+    if (success) {
+      await this.reloadSubscriptionInvitations()
+    }
+
+    return success
   }
 
   private async getAvailableSubscriptions() {

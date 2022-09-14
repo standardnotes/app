@@ -38,7 +38,7 @@ const SubscriptionSharing: FunctionComponent<Props> = ({ application, viewContro
               <div>
                 <SubscriptionSharingInformation subscriptionState={subscriptionState} />
                 <HorizontalSeparator classes="my-4" />
-                <InvitationsList subscriptionState={subscriptionState} />
+                <InvitationsList subscriptionState={subscriptionState} application={application} />
                 <HorizontalSeparator classes="my-4" />
                 {!subscriptionState.allInvitationsUsed && <Button
                   className="mt-3 min-w-20"
@@ -46,7 +46,7 @@ const SubscriptionSharing: FunctionComponent<Props> = ({ application, viewContro
                   onClick={() => { setIsInviteDialogOpen(true) }}
                 />}
                 {isInviteDialogOpen && (
-                  <Invite onCloseDialog={() => setIsInviteDialogOpen(false)} application={application} />
+                  <Invite onCloseDialog={() => setIsInviteDialogOpen(false)} application={application} subscriptionState={subscriptionState} />
                 )}
               </div>
             ) : (

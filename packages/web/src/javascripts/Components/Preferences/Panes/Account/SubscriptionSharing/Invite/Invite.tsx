@@ -8,6 +8,7 @@ import Button from '@/Components/Button/Button'
 import { WebApplication } from '@/Application/Application'
 import { useBeforeUnload } from '@/Hooks/useBeforeUnload'
 import { isEmailValid } from '@/Utils'
+import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
 
 import InviteForm from './InviteForm'
 import InviteSuccess from './InviteSuccess'
@@ -26,9 +27,10 @@ enum Steps {
 type Props = {
   onCloseDialog: () => void
   application: WebApplication
+  subscriptionState: SubscriptionController
 }
 
-const Invite: FunctionComponent<Props> = ({ onCloseDialog, application }) => {
+const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscriptionState }) => {
   const [submitButtonTitle, setSubmitButtonTitle] = useState(SubmitButtonTitles.Default)
   const [inviteeEmail, setInviteeEmail] = useState('')
   const [isContinuing, setIsContinuing] = useState(false)
@@ -67,7 +69,7 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application }) => {
   const processInvite = async () => {
     setLockContinue(true)
 
-    const success = await application.subscriptions.inviteToSubscription(inviteeEmail)
+    const success = await subscriptionState.sendSubscriptionInvitation(inviteeEmail)
 
     setLockContinue(false)
 
