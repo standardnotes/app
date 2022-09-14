@@ -1,20 +1,28 @@
-import { FunctionComponent } from 'react'
+import { FunctionComponent, ReactNode } from 'react'
 
-export const Title: FunctionComponent = ({ children }) => (
+type ChildrenProp = {
+  children: ReactNode
+}
+
+export const Title: FunctionComponent<ChildrenProp> = ({ children }) => (
   <>
     <h2 className="m-0 mb-1 text-lg font-bold text-info md:text-base">{children}</h2>
   </>
 )
 
-export const Subtitle: FunctionComponent<{ className?: string }> = ({ children, className = '' }) => (
+type Props = {
+  className?: string
+} & ChildrenProp
+
+export const Subtitle: FunctionComponent<Props> = ({ children, className = '' }) => (
   <h4 className={`m-0 mb-1 text-sm font-medium ${className}`}>{children}</h4>
 )
 
-export const SubtitleLight: FunctionComponent<{ className?: string }> = ({ children, className = '' }) => (
+export const SubtitleLight: FunctionComponent<Props> = ({ children, className = '' }) => (
   <h4 className={`m-0 mb-1 text-sm font-normal ${className}`}>{children}</h4>
 )
 
-export const Text: FunctionComponent<{ className?: string }> = ({ children, className = '' }) => (
+export const Text: FunctionComponent<Props> = ({ children, className = '' }) => (
   <p className={`${className} text-sm md:text-xs`}>{children}</p>
 )
 

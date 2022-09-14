@@ -1,7 +1,15 @@
 import { WebApplication } from '@/Application/Application'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, KeyboardEventHandler, useCallback, useEffect, useRef, useState } from 'react'
+import {
+  FormEventHandler,
+  FunctionComponent,
+  KeyboardEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { AccountMenuPane } from './AccountMenuPane'
 import Button from '@/Components/Button/Button'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
@@ -54,7 +62,7 @@ const CreateAccount: FunctionComponent<Props> = ({
     [setPassword],
   )
 
-  const handleRegisterFormSubmit = useCallback(
+  const handleRegisterFormSubmit: FormEventHandler = useCallback(
     (e) => {
       e.preventDefault()
 
