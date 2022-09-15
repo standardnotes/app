@@ -5,6 +5,7 @@ import {
   Challenge,
   ChallengePrompt,
   ChallengeReason,
+  ChallengeValidation,
   ChallengeValue,
   removeFromArray,
 } from '@standardnotes/snjs'
@@ -17,6 +18,7 @@ import LockscreenWorkspaceSwitcher from './LockscreenWorkspaceSwitcher'
 import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { ChallengeModalValues } from './ChallengeModalValues'
+import { InputValue } from './InputValue'
 
 type Props = {
   application: WebApplication
@@ -64,9 +66,11 @@ const ChallengeModal: FunctionComponent<Props> = ({
   const [isProcessing, setIsProcessing] = useState(false)
   const [, setProcessingPrompts] = useState<ChallengePrompt[]>([])
   const [bypassModalFocusLock, setBypassModalFocusLock] = useState(false)
+
   const shouldShowForgotPasscode = [ChallengeReason.ApplicationUnlock, ChallengeReason.Migration].includes(
     challenge.reason,
   )
+
   const shouldShowWorkspaceSwitcher = challenge.reason === ChallengeReason.ApplicationUnlock
 
   const submit = useCallback(() => {
@@ -106,7 +110,7 @@ const ChallengeModal: FunctionComponent<Props> = ({
   }, [application, challenge, isProcessing, isSubmitting, values])
 
   const onValueChange = useCallback(
-    (value: string | number, prompt: ChallengePrompt) => {
+    (value: InputValue['value'], prompt: ChallengePrompt) => {
       const newValues = { ...values }
       newValues[prompt.id].invalid = false
       newValues[prompt.id].value = value
@@ -169,6 +173,17 @@ const ChallengeModal: FunctionComponent<Props> = ({
     }
   }, [application, challenge, onDismiss])
 
+  const biometricPrompt = challenge.prompts.find((prompt) => prompt.validation === ChallengeValidation.Biometric)
+  const hasOnlyBiometricPrompt = challenge.prompts.length === 1 && !!biometricPrompt
+  const hasBiometricPromptValue = biometricPrompt && values[biometricPrompt.id].value
+
+  useEffect(() => {
+    const shouldAutoSubmit = hasOnlyBiometricPrompt && hasBiometricPromptValue
+    if (shouldAutoSubmit) {
+      submit()
+    }
+  }, [hasBiometricPromptValue, hasOnlyBiometricPrompt, submit])
+
   if (!challenge.prompts) {
     return null
   }
@@ -201,11 +216,9 @@ const ChallengeModal: FunctionComponent<Props> = ({
         )}
         <ProtectedIllustration className="mb-4 h-30 w-30" />
         <div className="mb-3 max-w-76 text-center text-lg font-bold">{challenge.heading}</div>
-
         {challenge.subheading && (
           <div className="break-word mb-4 max-w-76 text-center text-sm">{challenge.subheading}</div>
         )}
-
         <form
           className="flex min-w-76 flex-col items-center"
           onSubmit={(e) => {
@@ -215,6 +228,7 @@ const ChallengeModal: FunctionComponent<Props> = ({
         >
           {challenge.prompts.map((prompt, index) => (
             <ChallengeModalPrompt
+              application={application}
               key={prompt.id}
               prompt={prompt}
               values={values}

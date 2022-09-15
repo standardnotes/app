@@ -1,25 +1,50 @@
-import { ChallengePrompt, ChallengeValidation, ProtectionSessionDurations } from '@standardnotes/snjs'
+import {
+  ChallengePrompt,
+  ChallengeValidation,
+  MobileDeviceInterface,
+  ProtectionSessionDurations,
+} from '@standardnotes/snjs'
 import { FunctionComponent, useEffect, useRef } from 'react'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import DecoratedPasswordInput from '@/Components/Input/DecoratedPasswordInput'
 import { ChallengeModalValues } from './ChallengeModalValues'
+import Button from '../Button/Button'
+import { WebApplication } from '@/Application/Application'
+import { InputValue } from './InputValue'
 
 type Props = {
+  application: WebApplication
   prompt: ChallengePrompt
   values: ChallengeModalValues
   index: number
-  onValueChange: (value: string | number, prompt: ChallengePrompt) => void
+  onValueChange: (value: InputValue['value'], prompt: ChallengePrompt) => void
   isInvalid: boolean
 }
 
-const ChallengeModalPrompt: FunctionComponent<Props> = ({ prompt, values, index, onValueChange, isInvalid }) => {
+const ChallengeModalPrompt: FunctionComponent<Props> = ({
+  application,
+  prompt,
+  values,
+  index,
+  onValueChange,
+  isInvalid,
+}) => {
   const inputRef = useRef<HTMLInputElement>(null)
+  const biometricsButtonRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
-    if (index === 0) {
+    const isNotFirstPrompt = index !== 0
+
+    if (isNotFirstPrompt) {
+      return
+    }
+
+    if (prompt.validation === ChallengeValidation.Biometric) {
+      biometricsButtonRef.current?.click()
+    } else {
       inputRef.current?.focus()
     }
-  }, [index])
+  }, [index, prompt.validation])
 
   useEffect(() => {
     if (isInvalid) {
@@ -60,6 +85,22 @@ const ChallengeModalPrompt: FunctionComponent<Props> = ({ prompt, values, index,
               )
             })}
           </div>
+        </div>
+      ) : prompt.validation === ChallengeValidation.Biometric ? (
+        <div className="min-w-76">
+          <Button
+            primary
+            fullWidth
+            onClick={async () => {
+              const authenticated = await (
+                application.deviceInterface as MobileDeviceInterface
+              ).authenticateWithBiometrics()
+              onValueChange(authenticated, prompt)
+            }}
+            ref={biometricsButtonRef}
+          >
+            Tap to use biometrics
+          </Button>
         </div>
       ) : prompt.secureTextEntry ? (
         <DecoratedPasswordInput
