@@ -67,10 +67,9 @@ const ChallengeModal: FunctionComponent<Props> = ({
   const [, setProcessingPrompts] = useState<ChallengePrompt[]>([])
   const [bypassModalFocusLock, setBypassModalFocusLock] = useState(false)
 
-  const isBiometricValidation = challenge.prompts[0].validation === ChallengeValidation.Biometric
-  const shouldShowForgotPasscode =
-    [ChallengeReason.ApplicationUnlock, ChallengeReason.Migration].includes(challenge.reason) && !isBiometricValidation
-  const hasValues = Object.values(values).some((inputValue) => !!inputValue.value)
+  const shouldShowForgotPasscode = [ChallengeReason.ApplicationUnlock, ChallengeReason.Migration].includes(
+    challenge.reason,
+  )
 
   const shouldShowWorkspaceSwitcher = challenge.reason === ChallengeReason.ApplicationUnlock
 
@@ -174,12 +173,6 @@ const ChallengeModal: FunctionComponent<Props> = ({
     }
   }, [application, challenge, onDismiss])
 
-  useEffect(() => {
-    if (hasValues && isBiometricValidation) {
-      submit()
-    }
-  }, [hasValues, isBiometricValidation, submit])
-
   if (!challenge.prompts) {
     return null
   }
@@ -234,11 +227,9 @@ const ChallengeModal: FunctionComponent<Props> = ({
             />
           ))}
         </form>
-        {!isBiometricValidation && (
-          <Button primary disabled={isProcessing} className="mt-1 mb-3.5 min-w-76" onClick={submit}>
-            {isProcessing ? 'Generating Keys...' : 'Submit'}
-          </Button>
-        )}
+        <Button primary disabled={isProcessing} className="mt-1 mb-3.5 min-w-76" onClick={submit}>
+          {isProcessing ? 'Generating Keys...' : 'Submit'}
+        </Button>
         {shouldShowForgotPasscode && (
           <Button
             className="flex min-w-76 items-center justify-center"
