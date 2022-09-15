@@ -6,7 +6,6 @@ import ModalDialogDescription from '@/Components/Shared/ModalDialogDescription'
 import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
 import Button from '@/Components/Button/Button'
 import { WebApplication } from '@/Application/Application'
-import { useBeforeUnload } from '@/Hooks/useBeforeUnload'
 import { isEmailValid } from '@/Utils'
 import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
 
@@ -36,8 +35,6 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
   const [isContinuing, setIsContinuing] = useState(false)
   const [lockContinue, setLockContinue] = useState(false)
   const [currentStep, setCurrentStep] = useState(Steps.InitialStep)
-
-  useBeforeUnload()
 
   const validateInviteeEmail = async () => {
     if (!isEmailValid(inviteeEmail)) {
