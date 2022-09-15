@@ -5,7 +5,6 @@ import {
   Challenge,
   ChallengePrompt,
   ChallengeReason,
-  ChallengeValidation,
   ChallengeValue,
   removeFromArray,
 } from '@standardnotes/snjs'
