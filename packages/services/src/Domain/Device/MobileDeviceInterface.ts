@@ -9,4 +9,5 @@ export interface MobileDeviceInterface extends DeviceInterface {
   setAndroidScreenshotPrivacy(enable: boolean): Promise<void>
   getMobileScreenshotPrivacyEnabled(): Promise<boolean | undefined>
   setMobileScreenshotPrivacyEnabled(isEnabled: boolean): Promise<void>
+  authenticateWithBiometrics(): Promise<boolean>
 }

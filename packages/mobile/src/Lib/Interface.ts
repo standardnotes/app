@@ -288,6 +288,53 @@ export class MobileDeviceInterface implements DeviceInterface {
     }
   }
 
+  authenticateWithBiometrics() {
+    return new Promise<boolean>((resolve) => {
+      if (Platform.OS === 'android') {
+        FingerprintScanner.authenticate({
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore ts type does not exist for deviceCredentialAllowed
+          deviceCredentialAllowed: true,
+          description: 'Biometrics are required to access your notes.',
+        })
+          .then(() => {
+            FingerprintScanner.release()
+            resolve(true)
+          })
+          .catch((error) => {
+            FingerprintScanner.release()
+            if (error.name === 'DeviceLocked') {
+              Alert.alert('Unsuccessful', 'Authentication failed. Wait 30 seconds to try again.')
+            } else {
+              Alert.alert('Unsuccessful', 'Authentication failed. Tap to try again.')
+            }
+            resolve(false)
+          })
+      } else {
+        // iOS
+        FingerprintScanner.authenticate({
+          fallbackEnabled: true,
+          description: 'This is required to access your notes.',
+        })
+          .then(() => {
+            FingerprintScanner.release()
+            resolve(true)
+          })
+          .catch((error_1) => {
+            FingerprintScanner.release()
+            if (error_1.name !== 'SystemCancel') {
+              if (error_1.name !== 'UserCancel') {
+                Alert.alert('Unsuccessful')
+              } else {
+                Alert.alert('Unsuccessful', 'Authentication failed. Tap to try again.')
+              }
+            }
+            resolve(false)
+          })
+      }
+    })
+  }
+
   getRawKeychainValue(): Promise<RawKeychainValue | null | undefined> {
     return Keychain.getKeys()
   }
