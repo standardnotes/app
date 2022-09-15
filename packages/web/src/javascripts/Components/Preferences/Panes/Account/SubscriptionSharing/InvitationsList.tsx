@@ -16,8 +16,6 @@ type Props = {
 const InvitationsList = ({ subscriptionState, application }: Props) => {
   const [lockContinue, setLockContinue] = useState(false)
 
-  const applicationAlertService = application.alertService
-
   const { usedInvitationsCount, subscriptionInvitations } = subscriptionState
 
   const activeSubscriptions = subscriptionInvitations?.filter((invitation) =>
@@ -29,7 +27,7 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
 
   const handleCancel = async (invitationUuid: Uuid) => {
     if (lockContinue) {
-      applicationAlertService.alert('Cancelation already in progress.').catch(console.error)
+      application.alertService.alert('Cancelation already in progress.').catch(console.error)
 
       return
     }
@@ -41,7 +39,7 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
     setLockContinue(false)
 
     if (!success) {
-      applicationAlertService
+      application.alertService
         .alert('Could not cancel invitation. Please try again or contact support if the issue persists.')
         .catch(console.error)
     }

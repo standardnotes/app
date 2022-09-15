@@ -39,11 +39,9 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
 
   useBeforeUnload()
 
-  const applicationAlertService = application.alertService
-
   const validateInviteeEmail = async () => {
     if (!isEmailValid(inviteeEmail)) {
-      applicationAlertService
+      application.alertService
         .alert('The email you entered has an invalid format. Please review your input and try again.')
         .catch(console.error)
 
@@ -55,7 +53,7 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
 
   const handleDialogClose = () => {
     if (lockContinue) {
-      applicationAlertService.alert('Cannot close window until pending tasks are complete.').catch(console.error)
+      application.alertService.alert('Cannot close window until pending tasks are complete.').catch(console.error)
     } else {
       onCloseDialog()
     }
@@ -100,7 +98,7 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
 
     const success = await processInvite()
     if (!success) {
-      applicationAlertService
+      application.alertService
         .alert('We could not send the invitation. Please try again or contact support if the issue persists.')
         .catch(console.error)
 
