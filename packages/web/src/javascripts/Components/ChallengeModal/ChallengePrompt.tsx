@@ -33,7 +33,9 @@ const ChallengeModalPrompt: FunctionComponent<Props> = ({
   const biometricsButtonRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
-    if (index !== 0) {
+    const isNotFirstPrompt = index !== 0
+
+    if (isNotFirstPrompt) {
       return
     }
 
