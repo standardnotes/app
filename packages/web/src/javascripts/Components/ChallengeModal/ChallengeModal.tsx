@@ -5,6 +5,7 @@ import {
   Challenge,
   ChallengePrompt,
   ChallengeReason,
+  ChallengeValidation,
   ChallengeValue,
   removeFromArray,
 } from '@standardnotes/snjs'
@@ -171,6 +172,17 @@ const ChallengeModal: FunctionComponent<Props> = ({
       removeChallengeObserver()
     }
   }, [application, challenge, onDismiss])
+
+  const biometricPrompt = challenge.prompts.find((prompt) => prompt.validation === ChallengeValidation.Biometric)
+  const hasOnlyBiometricPrompt = challenge.prompts.length === 1 && !!biometricPrompt
+  const hasBiometricPromptValue = biometricPrompt && values[biometricPrompt.id].value
+
+  useEffect(() => {
+    const shouldAutoSubmit = hasOnlyBiometricPrompt && hasBiometricPromptValue
+    if (shouldAutoSubmit) {
+      submit()
+    }
+  }, [hasOnlyBiometricPrompt, hasBiometricPromptValue])
 
   if (!challenge.prompts) {
     return null
