@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.48.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.47.3...@standardnotes/web@3.48.0) (2022-09-15)
+
+### Features
+
+* sharing subscriptions UI ([#1567](https://github.com/standardnotes/app/issues/1567)) ([2d0ee10](https://github.com/standardnotes/app/commit/2d0ee10226687df1d24926b9408ce270557a5b57))
+
 ## [3.47.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.47.2...@standardnotes/web@3.47.3) (2022-09-15)
 
 **Note:** Version bump only for package @standardnotes/web
