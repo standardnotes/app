@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.18.2](https://github.com/standardnotes/app/compare/@standardnotes/models@1.18.1...@standardnotes/models@1.18.2) (2022-09-15)
+
+### Bug Fixes
+
+* **models:** make @standardnotes/models publishable as it is required on the server side ([174b384](https://github.com/standardnotes/app/commit/174b3845d184c9ee983cfc965f229bd7a5945ab2))
+
 ## [1.18.1](https://github.com/standardnotes/app/compare/@standardnotes/models@1.18.0...@standardnotes/models@1.18.1) (2022-09-13)
 
 **Note:** Version bump only for package @standardnotes/models

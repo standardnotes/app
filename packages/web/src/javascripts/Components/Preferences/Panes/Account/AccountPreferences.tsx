@@ -8,6 +8,7 @@ import Subscription from './Subscription/Subscription'
 import SignOutWrapper from './SignOutView'
 import FilesSection from './Files'
 import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
+import SubscriptionSharing from './SubscriptionSharing/SubscriptionSharing'
 
 type Props = {
   application: WebApplication
@@ -25,6 +26,7 @@ const AccountPreferences = ({ application, viewControllerManager }: Props) => (
       </>
     )}
     <Subscription application={application} viewControllerManager={viewControllerManager} />
+    <SubscriptionSharing application={application} viewControllerManager={viewControllerManager} />
     {application.hasAccount() && viewControllerManager.featuresController.hasFiles && (
       <FilesSection application={application} />
     )}

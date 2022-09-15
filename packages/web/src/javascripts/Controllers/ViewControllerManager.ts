@@ -9,6 +9,7 @@ import {
   InternalEventBus,
   ItemCounterInterface,
   ItemCounter,
+  SubscriptionClientInterface,
 } from '@standardnotes/snjs'
 import { action, makeObservable, observable } from 'mobx'
 import { ActionsMenuController } from './ActionsMenuController'
@@ -60,11 +61,14 @@ export class ViewControllerManager {
   private appEventObserverRemovers: (() => void)[] = []
   private eventBus: InternalEventBus
   private itemCounter: ItemCounterInterface
+  private subscriptionManager: SubscriptionClientInterface
 
   constructor(public application: WebApplication, private device: WebOrDesktopDeviceInterface) {
     this.eventBus = new InternalEventBus()
 
     this.itemCounter = new ItemCounter()
+
+    this.subscriptionManager = application.subscriptions
 
     this.selectionController = new SelectedItemsController(application, this.eventBus)
 
@@ -102,7 +106,7 @@ export class ViewControllerManager {
 
     this.accountMenuController = new AccountMenuController(application, this.eventBus, this.itemCounter)
 
-    this.subscriptionController = new SubscriptionController(application, this.eventBus)
+    this.subscriptionController = new SubscriptionController(application, this.eventBus, this.subscriptionManager)
 
     this.purchaseFlowController = new PurchaseFlowController(application, this.eventBus)
 

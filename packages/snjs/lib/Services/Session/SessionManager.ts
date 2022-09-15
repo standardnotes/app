@@ -126,6 +126,8 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
   }
 
   private setSession(session: Session, persist = true): void {
+    this.httpService.setAuthorizationToken(session.authorizationValue)
+
     this.apiService.setSession(session, persist)
   }
 
@@ -620,8 +622,6 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
     void this.apiService.setHost(host)
 
     this.httpService.setHost(host)
-
-    this.httpService.setAuthorizationToken(session.authorizationValue)
 
     await this.setSession(session)
 

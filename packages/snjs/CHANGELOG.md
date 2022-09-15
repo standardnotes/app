@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.129.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.128.1...@standardnotes/snjs@2.129.0) (2022-09-15)
+
+### Features
+
+* sharing subscriptions UI ([#1567](https://github.com/standardnotes/app/issues/1567)) ([2d0ee10](https://github.com/standardnotes/app/commit/2d0ee10226687df1d24926b9408ce270557a5b57))
+
+## [2.128.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.128.0...@standardnotes/snjs@2.128.1) (2022-09-15)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
 # [2.128.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.127.1...@standardnotes/snjs@2.128.0) (2022-09-14)
 
 ### Features

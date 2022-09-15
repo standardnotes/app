@@ -1,29 +1,25 @@
+import { classNames } from '@/Utils/ConcatenateClassNames'
 import { FunctionComponent, ReactNode } from 'react'
-
-type ChildrenProp = {
-  children: ReactNode
-}
-
-export const Title: FunctionComponent<ChildrenProp> = ({ children }) => (
-  <>
-    <h2 className="m-0 mb-1 text-lg font-bold text-info md:text-base">{children}</h2>
-  </>
-)
 
 type Props = {
   className?: string
-} & ChildrenProp
+  children: ReactNode
+}
 
-export const Subtitle: FunctionComponent<Props> = ({ children, className = '' }) => (
-  <h4 className={`m-0 mb-1 text-sm font-medium ${className}`}>{children}</h4>
+export const Title: FunctionComponent<Props> = ({ children, className }) => (
+  <h2 className={classNames('m-0 mb-1 text-lg font-bold text-info md:text-base', className)}>{children}</h2>
 )
 
-export const SubtitleLight: FunctionComponent<Props> = ({ children, className = '' }) => (
-  <h4 className={`m-0 mb-1 text-sm font-normal ${className}`}>{children}</h4>
+export const Subtitle: FunctionComponent<Props> = ({ children, className }) => (
+  <h4 className={classNames('m-0 mb-1 text-sm font-medium', className)}>{children}</h4>
 )
 
-export const Text: FunctionComponent<Props> = ({ children, className = '' }) => (
-  <p className={`${className} text-sm md:text-xs`}>{children}</p>
+export const SubtitleLight: FunctionComponent<Props> = ({ children, className }) => (
+  <h4 className={classNames('m-0 mb-1 text-sm font-normal', className)}>{children}</h4>
+)
+
+export const Text: FunctionComponent<Props> = ({ children, className }) => (
+  <p className={classNames('text-sm md:text-xs', className)}>{children}</p>
 )
 
 const buttonClasses =

@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.23.2](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.23.1...@standardnotes/filepicker@1.23.2) (2022-09-15)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
 ## [1.23.1](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.23.0...@standardnotes/filepicker@1.23.1) (2022-09-13)
 
 **Note:** Version bump only for package @standardnotes/filepicker
