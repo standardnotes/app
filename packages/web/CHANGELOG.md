@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.48.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.48.0...@standardnotes/web@3.48.1) (2022-09-15)
+
+### Bug Fixes
+
+* biometrics input on mobile webview challenge modal ([#1572](https://github.com/standardnotes/app/issues/1572)) ([3a15142](https://github.com/standardnotes/app/commit/3a15142940ef9391868442e1997c3d9d5eec33be))
+
 # [3.48.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.47.3...@standardnotes/web@3.48.0) (2022-09-15)
 
 ### Features
