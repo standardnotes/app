@@ -182,7 +182,7 @@ const ChallengeModal: FunctionComponent<Props> = ({
     if (shouldAutoSubmit) {
       submit()
     }
-  }, [hasOnlyBiometricPrompt, hasBiometricPromptValue])
+  }, [hasBiometricPromptValue, hasOnlyBiometricPrompt, submit])
 
   if (!challenge.prompts) {
     return null
