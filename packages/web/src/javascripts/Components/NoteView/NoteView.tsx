@@ -916,7 +916,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
             <div className="mb-2 flex flex-wrap items-start justify-between gap-2 md:mb-0 md:flex-nowrap md:gap-0 xl:items-center">
               <div className={classNames(this.state.noteLocked && 'locked', 'flex flex-grow items-center')}>
                 <MobileItemsListButton />
-                <div className="title overflow-auto">
+                <div className="title flex-grow overflow-auto">
                   <input
                     className="input text-lg"
                     disabled={this.state.noteLocked}

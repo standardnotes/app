@@ -39,7 +39,7 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
           <div className="flex h-8 items-center justify-between">
             <div className="flex flex-grow items-center">
               <MobileItemsListButton />
-              <div className="title overflow-auto">
+              <div className="title flex-grow overflow-auto">
                 <input
                   className="input text-lg"
                   id={ElementIds.FileTitleEditor}
