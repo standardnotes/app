@@ -122,8 +122,8 @@ export const MobileWebAppContainer = () => {
     <WebView
       ref={webViewRef}
       source={{ uri: sourceUri }}
-      style={{ marginTop: 40 }}
       originWhitelist={['*']}
+      contentInset={{ top: 30, bottom: 10 }}
       onLoad={() => {}}
       onError={(err) => console.error('An error has occurred', err)}
       onHttpError={() => console.error('An HTTP error occurred')}
