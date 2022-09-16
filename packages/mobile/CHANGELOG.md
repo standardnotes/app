@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.34.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.33.7...@standardnotes/mobile@3.34.0) (2022-09-16)
+
+### Features
+
+* add settings to fully switch between native/webview ([#1587](https://github.com/standardnotes/app/issues/1587)) ([85c90e0](https://github.com/standardnotes/app/commit/85c90e07fc8b1ce66eaa88df09f2728ac0fecf1c))
+
 ## [3.33.7](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.33.6...@standardnotes/mobile@3.33.7) (2022-09-16)
 
 **Note:** Version bump only for package @standardnotes/mobile
