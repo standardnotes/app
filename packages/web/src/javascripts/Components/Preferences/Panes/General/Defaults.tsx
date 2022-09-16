@@ -1,6 +1,13 @@
 import Dropdown from '@/Components/Dropdown/Dropdown'
 import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
-import { FeatureIdentifier, PrefKey, ComponentArea, ComponentMutator, SNComponent } from '@standardnotes/snjs'
+import {
+  FeatureIdentifier,
+  PrefKey,
+  ComponentArea,
+  ComponentMutator,
+  SNComponent,
+  StorageValueModes,
+} from '@standardnotes/snjs'
 import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/Application/Application'
 import { FunctionComponent, useEffect, useState } from 'react'
@@ -9,6 +16,7 @@ import Switch from '@/Components/Switch/Switch'
 import { PLAIN_EDITOR_NAME } from '@/Constants/Constants'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
+import Button from '@/Components/Button/Button'
 
 type Props = {
   application: WebApplication
@@ -42,6 +50,8 @@ const removeEditorDefault = (application: WebApplication, component: SNComponent
 const getDefaultEditor = (application: WebApplication) => {
   return application.componentManager.componentsForArea(ComponentArea.Editor).filter((e) => e.isDefaultEditor())[0]
 }
+
+const AlwaysOpenWebAppOnLaunchKey = 'AlwaysOpenWebAppOnLaunch'
 
 const Defaults: FunctionComponent<Props> = ({ application }) => {
   const [editorItems, setEditorItems] = useState<DropdownItem[]>([])
@@ -102,10 +112,30 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
     }
   }
 
+  const switchToNativeView = async () => {
+    application.setValue(AlwaysOpenWebAppOnLaunchKey, false, StorageValueModes.Nonwrapped)
+    setTimeout(() => {
+      application.deviceInterface.performSoftReset()
+    }, 1000)
+  }
+
   return (
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Defaults</Title>
+        {application.isNativeMobileWeb() && (
+          <>
+            <div className="flex flex-col">
+              <Subtitle>Switch to Native View</Subtitle>
+              <Text>
+                This will close the app and fully switch to the native view next time you open it. You will be able to
+                switch back from the settings.
+              </Text>
+              <Button className="mt-3 min-w-20" label="Switch" onClick={switchToNativeView} />
+            </div>
+            <HorizontalSeparator classes="my-4" />
+          </>
+        )}
         <div>
           <Subtitle>Default Note Type</Subtitle>
           <Text>New notes will be created using this type.</Text>

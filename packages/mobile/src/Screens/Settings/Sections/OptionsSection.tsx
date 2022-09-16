@@ -8,10 +8,10 @@ import { SectionHeader } from '@Root/Components/SectionHeader'
 import { TableSection } from '@Root/Components/TableSection'
 import { useSafeApplicationContext } from '@Root/Hooks/useSafeApplicationContext'
 import { ModalStackNavigationProp } from '@Root/ModalStack'
-import { SCREEN_MANAGE_SESSIONS, SCREEN_SETTINGS, SCREEN_WEB_APP } from '@Root/Screens/screens'
+import { SCREEN_MANAGE_SESSIONS, SCREEN_SETTINGS } from '@Root/Screens/screens'
 import { ButtonType, PrefKey, StorageValueModes } from '@standardnotes/snjs'
 import moment from 'moment'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { Platform } from 'react-native'
 import DocumentPicker from 'react-native-document-picker'
 import RNFS from 'react-native-fs'
@@ -183,22 +183,6 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
     )
   }, [application.alertService])
 
-  const [shouldAlwaysOpenWebAppOnLaunch, setShouldAlwaysOpenWebAppOnLaunch] = useState(false)
-
-  useEffect(() => {
-    const getSetting = async () => {
-      const value = (await application.getValue(AlwaysOpenWebAppOnLaunchKey, StorageValueModes.Nonwrapped)) as
-        | boolean
-        | undefined
-      setShouldAlwaysOpenWebAppOnLaunch(value ?? false)
-    }
-    void getSetting()
-  }, [application])
-
-  const openWebApp = useCallback(() => {
-    navigation.push(SCREEN_WEB_APP)
-  }, [navigation])
-
   return (
     <TableSection>
       <SectionHeader title={title} />
@@ -238,15 +222,19 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
         onPress={onExportPress}
       />
 
-      <ButtonCell testID="openWebApp" leftAligned title="Open Web App" onPress={() => openWebApp()} />
-      <SectionedAccessoryTableCell
-        onPress={() => {
-          const newValue = !shouldAlwaysOpenWebAppOnLaunch
-          setShouldAlwaysOpenWebAppOnLaunch(newValue)
-          void application.setValue(AlwaysOpenWebAppOnLaunchKey, newValue, StorageValueModes.Nonwrapped)
+      <ButtonCell
+        onPress={async () => {
+          const confirmationText =
+            'This will close the app and fully switch to the web view next time you open it. You will be able to switch back from the settings.'
+
+          if (
+            await application.alertService.confirm(confirmationText, 'Switch To Web View?', 'Switch', ButtonType.Info)
+          ) {
+            application.setValue(AlwaysOpenWebAppOnLaunchKey, true, StorageValueModes.Nonwrapped)
+            setTimeout(() => application.deviceInterface.performSoftReset(), 1000)
+          }
         }}
-        text="Always Open Web App On Launch"
-        selected={() => shouldAlwaysOpenWebAppOnLaunch}
+        title="Switch to Web View"
       />
 
       {!signedIn && (

@@ -3,22 +3,22 @@ import { AlwaysOpenWebAppOnLaunchKey } from '@Lib/constants'
 import { useHasEditor, useIsLocked } from '@Lib/SnjsHelperHooks'
 import { ScreenStatus } from '@Lib/StatusManager'
 import { IsDev } from '@Lib/Utils'
-import { CompositeNavigationProp, RouteProp, useNavigation } from '@react-navigation/native'
+import { CompositeNavigationProp, RouteProp } from '@react-navigation/native'
 import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack'
 import { HeaderTitleView } from '@Root/Components/HeaderTitleView'
 import { IoniconsHeaderButton } from '@Root/Components/IoniconsHeaderButton'
 import { Compose } from '@Root/Screens/Compose/Compose'
-import { SCREEN_COMPOSE, SCREEN_NOTES, SCREEN_VIEW_PROTECTED_NOTE, SCREEN_WEB_APP } from '@Root/Screens/screens'
+import { SCREEN_COMPOSE, SCREEN_NOTES, SCREEN_VIEW_PROTECTED_NOTE } from '@Root/Screens/screens'
 import { MainSideMenu } from '@Root/Screens/SideMenu/MainSideMenu'
 import { NoteSideMenu } from '@Root/Screens/SideMenu/NoteSideMenu'
 import { ViewProtectedNote } from '@Root/Screens/ViewProtectedNote/ViewProtectedNote'
 import { Root } from '@Screens/Root'
-import { ApplicationEvent, StorageValueModes, UuidString } from '@standardnotes/snjs'
+import { StorageValueModes, UuidString } from '@standardnotes/snjs'
 import { ICON_MENU } from '@Style/Icons'
 import { ThemeService } from '@Style/ThemeService'
 import { getDefaultDrawerWidth } from '@Style/Utils'
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { Dimensions, Keyboard, ScaledSize } from 'react-native'
+import { Dimensions, Keyboard, ScaledSize, StatusBar } from 'react-native'
 import DrawerLayout, { DrawerState } from 'react-native-gesture-handler/DrawerLayout'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
 import { ThemeContext } from 'styled-components'
@@ -26,9 +26,6 @@ import { HeaderTitleParams } from './App'
 import { ApplicationContext } from './ApplicationContext'
 import { MobileWebAppContainer } from './MobileWebAppContainer'
 import { ModalStackNavigationProp } from './ModalStack'
-
-const IS_DEBUGGING_WEB_APP = false
-const DEFAULT_TO_WEB_APP = IsDev && IS_DEBUGGING_WEB_APP
 
 export type AppStackNavigatorParamList = {
   [SCREEN_NOTES]: HeaderTitleParams
@@ -124,28 +121,6 @@ export const AppStackComponent = (props: ModalStackNavigationProp<'AppStack'>) =
     [application],
   )
 
-  const navigation = useNavigation<ModalStackNavigationProp<'AppStack'>['navigation']>()
-
-  useEffect(() => {
-    if (!application) {
-      return
-    }
-
-    const removeObserver = application.addEventObserver(async (event) => {
-      if (event === ApplicationEvent.Launched) {
-        const value = (await application.getValue(AlwaysOpenWebAppOnLaunchKey, StorageValueModes.Nonwrapped)) as
-          | boolean
-          | undefined
-        const shouldAlwaysOpenWebAppOnLaunch = value ?? false
-        if (shouldAlwaysOpenWebAppOnLaunch) {
-          navigation.push(SCREEN_WEB_APP)
-        }
-      }
-    })
-
-    return removeObserver
-  }, [application, navigation])
-
   if (IsDev) {
     return (
       <AppStack.Navigator
@@ -154,10 +129,16 @@ export const AppStackComponent = (props: ModalStackNavigationProp<'AppStack'>) =
         })}
         initialRouteName={SCREEN_NOTES}
       >
-        <AppStack.Screen name={SCREEN_NOTES} component={IsDev ? MobileWebAppContainer : Root} />
+        <AppStack.Screen name={SCREEN_NOTES} component={MobileWebAppContainer} />
       </AppStack.Navigator>
     )
   }
+
+  if (!application) {
+    return null
+  }
+
+  const shouldOpenWebApp = application.getValue(AlwaysOpenWebAppOnLaunchKey, StorageValueModes.Nonwrapped) as boolean
 
   return (
     <DrawerLayout
@@ -169,6 +150,7 @@ export const AppStackComponent = (props: ModalStackNavigationProp<'AppStack'>) =
       onDrawerStateChanged={handleDrawerStateChange}
       renderNavigationView={() => !isLocked && <MainSideMenu drawerRef={drawerRef.current} />}
     >
+      <StatusBar translucent={!shouldOpenWebApp} />
       <DrawerLayout
         ref={noteDrawerRef}
         drawerWidth={getDefaultDrawerWidth(dimensions)}
@@ -198,6 +180,7 @@ export const AppStackComponent = (props: ModalStackNavigationProp<'AppStack'>) =
             name={SCREEN_NOTES}
             options={({ route }) => ({
               title: 'All notes',
+              headerShown: !shouldOpenWebApp,
               headerTitle: ({ children }) => {
                 const screenStatus = isInTabletMode ? composeStatus || notesStatus : notesStatus
 
@@ -237,7 +220,7 @@ export const AppStackComponent = (props: ModalStackNavigationProp<'AppStack'>) =
                   </HeaderButtons>
                 ),
             })}
-            component={DEFAULT_TO_WEB_APP ? MobileWebAppContainer : Root}
+            component={shouldOpenWebApp ? MobileWebAppContainer : Root}
           />
           <AppStack.Screen
             name={SCREEN_COMPOSE}

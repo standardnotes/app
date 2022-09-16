@@ -17,9 +17,6 @@ interface SecurityProps extends MfaProps {
   application: WebApplication
 }
 
-const SHOW_MULTITASKING_PRIVACY = false
-const SHOW_BIOMETRICS_LOCK = false
-
 const Security: FunctionComponent<SecurityProps> = (props) => {
   const isNativeMobileWeb = props.application.isNativeMobileWeb()
 
@@ -31,9 +28,9 @@ const Security: FunctionComponent<SecurityProps> = (props) => {
       )}
       <Protections application={props.application} />
       <TwoFactorAuthWrapper mfaProvider={props.mfaProvider} userProvider={props.userProvider} />
-      {SHOW_MULTITASKING_PRIVACY && isNativeMobileWeb && <MultitaskingPrivacy application={props.application} />}
+      {isNativeMobileWeb && <MultitaskingPrivacy application={props.application} />}
       <PasscodeLock viewControllerManager={props.viewControllerManager} application={props.application} />
-      {SHOW_BIOMETRICS_LOCK && isNativeMobileWeb && <BiometricsLock application={props.application} />}
+      {isNativeMobileWeb && <BiometricsLock application={props.application} />}
       {props.application.getUser() && <Privacy application={props.application} />}
     </PreferencesPane>
   )
