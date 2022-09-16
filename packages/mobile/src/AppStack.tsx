@@ -27,8 +27,6 @@ import { ApplicationContext } from './ApplicationContext'
 import { MobileWebAppContainer } from './MobileWebAppContainer'
 import { ModalStackNavigationProp } from './ModalStack'
 
-const IS_DEBUGGING_WEB_APP = false
-
 export type AppStackNavigatorParamList = {
   [SCREEN_NOTES]: HeaderTitleParams
   [SCREEN_COMPOSE]: HeaderTitleParams & {
