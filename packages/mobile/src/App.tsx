@@ -9,7 +9,6 @@ import { MobileThemeVariables } from '@Root/Style/Themes/styled-components'
 import { ApplicationGroupEvent, DeinitMode, DeinitSource } from '@standardnotes/snjs'
 import { ThemeService, ThemeServiceContext } from '@Style/ThemeService'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { StatusBar } from 'react-native'
 import { ThemeProvider } from 'styled-components/native'
 import { ApplicationContext } from './ApplicationContext'
 import { MainStackComponent } from './ModalStack'
@@ -107,7 +106,6 @@ const AppComponent: React.FC<{
       }}
       ref={navigationRef}
     >
-      <StatusBar translucent />
       {themeService.current && (
         <>
           <ThemeProvider theme={activeTheme}>
