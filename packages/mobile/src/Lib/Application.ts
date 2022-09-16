@@ -135,6 +135,10 @@ export class MobileApplication extends SNApplication {
   }
 
   promptForChallenge(challenge: Challenge) {
+    if (IsDev) {
+      return
+    }
+
     push(SCREEN_AUTHENTICATE, { challenge, title: challenge.modalTitle })
   }
 
