@@ -1,3 +1,8 @@
 metro.config.js
-packages/mobile/html/Web.bundle/src/components
-packages/mobile/html/Web.bundle/src/web-src
+html/**/*
+node_modules
+ios
+e2e
+android
+fastlane
+WebFrame
