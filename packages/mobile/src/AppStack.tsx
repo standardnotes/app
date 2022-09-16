@@ -146,6 +146,19 @@ export const AppStackComponent = (props: ModalStackNavigationProp<'AppStack'>) =
     return removeObserver
   }, [application, navigation])
 
+  if (IsDev) {
+    return (
+      <AppStack.Navigator
+        screenOptions={() => ({
+          headerShown: false,
+        })}
+        initialRouteName={SCREEN_NOTES}
+      >
+        <AppStack.Screen name={SCREEN_NOTES} component={IsDev ? MobileWebAppContainer : Root} />
+      </AppStack.Navigator>
+    )
+  }
+
   return (
     <DrawerLayout
       ref={drawerRef}
