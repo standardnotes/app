@@ -8,7 +8,7 @@ import { SectionHeader } from '@Root/Components/SectionHeader'
 import { TableSection } from '@Root/Components/TableSection'
 import { useSafeApplicationContext } from '@Root/Hooks/useSafeApplicationContext'
 import { ModalStackNavigationProp } from '@Root/ModalStack'
-import { SCREEN_MANAGE_SESSIONS, SCREEN_SETTINGS, SCREEN_WEB_APP } from '@Root/Screens/screens'
+import { SCREEN_MANAGE_SESSIONS, SCREEN_SETTINGS } from '@Root/Screens/screens'
 import { ButtonType, PrefKey, StorageValueModes } from '@standardnotes/snjs'
 import moment from 'moment'
 import React, { useCallback, useMemo, useState } from 'react'
@@ -183,10 +183,6 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
     )
   }, [application.alertService])
 
-  const openWebApp = useCallback(() => {
-    navigation.push(SCREEN_WEB_APP)
-  }, [navigation])
-
   return (
     <TableSection>
       <SectionHeader title={title} />
@@ -226,7 +222,6 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
         onPress={onExportPress}
       />
 
-      <ButtonCell testID="openWebApp" leftAligned title="Try out Web View" onPress={openWebApp} />
       <ButtonCell
         onPress={async () => {
           const confirmationText =
