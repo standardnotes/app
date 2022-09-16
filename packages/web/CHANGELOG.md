@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.48.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.48.1...@standardnotes/web@3.48.2) (2022-09-16)
+
+### Bug Fixes
+
+* long titles on non-mobile view ([#1575](https://github.com/standardnotes/app/issues/1575)) ([7807fa3](https://github.com/standardnotes/app/commit/7807fa34f30f47ef3d7025bc4c804dbb9079c15a))
+
 ## [3.48.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.48.0...@standardnotes/web@3.48.1) (2022-09-15)
 
 ### Bug Fixes
