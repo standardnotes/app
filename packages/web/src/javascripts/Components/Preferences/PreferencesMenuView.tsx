@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useMemo } from 'react'
+import styled from 'styled-components'
 import Dropdown from '../Dropdown/Dropdown'
 import { DropdownItem } from '../Dropdown/DropdownItem'
 import PreferencesMenuItem from './PreferencesComponents/MenuItem'
@@ -8,6 +9,12 @@ import { PreferenceId, PreferencesMenu } from './PreferencesMenu'
 type Props = {
   menu: PreferencesMenu
 }
+
+const StyledDropdown = styled(Dropdown)`
+  [data-reach-listbox-button] {
+    background: var(--sn-stylekit-contrast-background-color);
+  }
+`
 
 const PreferencesMenuView: FunctionComponent<Props> = ({ menu }) => {
   const { selectedPaneId, selectPane, menuItems } = menu
@@ -23,7 +30,7 @@ const PreferencesMenuView: FunctionComponent<Props> = ({ menu }) => {
   )
 
   return (
-    <div className="px-5 pt-2 pb-4 md:px-0 md:py-0">
+    <div className="border-t border-border bg-default px-5 pt-2 pb-6 md:border-0 md:bg-transparent md:px-0 md:py-0">
       <div className="hidden min-w-55 flex-col overflow-y-auto px-3 py-6 md:flex">
         {menuItems.map((pref) => (
           <PreferencesMenuItem
@@ -37,7 +44,7 @@ const PreferencesMenuView: FunctionComponent<Props> = ({ menu }) => {
         ))}
       </div>
       <div className="md:hidden">
-        <Dropdown
+        <StyledDropdown
           id="preferences-menu"
           items={dropdownMenuItems}
           label="Preferences Menu"

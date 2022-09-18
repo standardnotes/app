@@ -41,7 +41,7 @@ const CustomDropdownButton: FunctionComponent<ListboxButtonProps> = ({
   </>
 )
 
-const Dropdown: FunctionComponent<DropdownProps> = ({ id, label, items, value, onChange, disabled }) => {
+const Dropdown: FunctionComponent<DropdownProps> = ({ id, label, items, value, onChange, disabled, ...props }) => {
   const labelId = `${id}-label`
 
   const handleChange = (value: string) => {
@@ -51,7 +51,7 @@ const Dropdown: FunctionComponent<DropdownProps> = ({ id, label, items, value, o
   }
 
   return (
-    <>
+    <div {...props}>
       <VisuallyHidden id={labelId}>{label}</VisuallyHidden>
       <ListboxInput value={value} onChange={handleChange} aria-labelledby={labelId} disabled={disabled}>
         <StyledListboxButton
@@ -85,7 +85,7 @@ const Dropdown: FunctionComponent<DropdownProps> = ({ id, label, items, value, o
           </div>
         </ListboxPopover>
       </ListboxInput>
-    </>
+    </div>
   )
 }
 
