@@ -932,12 +932,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                   />
                 </div>
               </div>
-              <div
-                className={classNames(
-                  'flex flex-col flex-wrap items-start gap-3 md:flex-col-reverse md:items-end',
-                  'xl:flex-row xl:flex-nowrap xl:items-center',
-                )}
-              >
+              <div className="flex flex-row-reverse items-center gap-3 md:flex-col-reverse md:items-end xl:flex-row xl:flex-nowrap xl:items-center">
                 {this.state.noteStatus?.message?.length && (
                   <div id="save-status-container" className={'xl:mr-5 xl:max-w-[16ch]'}>
                     <div id="save-status">
