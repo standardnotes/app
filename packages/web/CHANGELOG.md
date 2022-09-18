@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.49.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.49.0...@standardnotes/web@3.49.1) (2022-09-18)
+
+### Bug Fixes
+
+* move save status next to note actions on mobile ([#1590](https://github.com/standardnotes/app/issues/1590)) ([efe0c38](https://github.com/standardnotes/app/commit/efe0c38462bb5d75fc94a6ba966bc26a6973890f))
+
 # [3.49.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.48.3...@standardnotes/web@3.49.0) (2022-09-16)
 
 ### Features
