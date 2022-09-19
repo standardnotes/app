@@ -12,7 +12,7 @@ import React, { useContext } from 'react'
 import { Platform } from 'react-native'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
 import { ThemeContext } from 'styled-components'
-import { HeaderTitleParams } from './App'
+import { HeaderTitleParams } from './NativeApp'
 
 type HistoryStackNavigatorParamList = {
   [SCREEN_NOTE_HISTORY]: (HeaderTitleParams & { noteUuid: string }) | (undefined & { noteUuid: string })

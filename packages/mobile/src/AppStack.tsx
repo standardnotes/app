@@ -2,7 +2,7 @@ import { AppStateEventType, AppStateType, TabletModeChangeData } from '@Lib/Appl
 import { AlwaysOpenWebAppOnLaunchKey } from '@Lib/constants'
 import { useHasEditor, useIsLocked } from '@Lib/SnjsHelperHooks'
 import { ScreenStatus } from '@Lib/StatusManager'
-import { IsDev, IsMobileWeb } from '@Lib/Utils'
+import { IsMobileWeb } from '@Lib/Utils'
 import { CompositeNavigationProp, RouteProp } from '@react-navigation/native'
 import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack'
 import { HeaderTitleView } from '@Root/Components/HeaderTitleView'
@@ -22,10 +22,10 @@ import { Dimensions, Keyboard, ScaledSize, StatusBar } from 'react-native'
 import DrawerLayout, { DrawerState } from 'react-native-gesture-handler/DrawerLayout'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
 import { ThemeContext } from 'styled-components'
-import { HeaderTitleParams } from './App'
 import { ApplicationContext } from './ApplicationContext'
 import { MobileWebAppContainer } from './MobileWebAppContainer'
 import { ModalStackNavigationProp } from './ModalStack'
+import { HeaderTitleParams } from './NativeApp'
 
 export type AppStackNavigatorParamList = {
   [SCREEN_NOTES]: HeaderTitleParams

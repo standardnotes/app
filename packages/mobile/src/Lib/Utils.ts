@@ -1,4 +1,4 @@
-import { TEnvironment } from '@Root/App'
+import { TEnvironment } from '@Root/NativeApp'
 import VersionInfo from 'react-native-version-info'
 
 export const IsDev = VersionInfo.bundleIdentifier?.includes('dev')

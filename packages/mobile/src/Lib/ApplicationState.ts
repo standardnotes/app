@@ -38,7 +38,6 @@ import VersionInfo from 'react-native-version-info'
 import pjson from '../../package.json'
 import { MobileApplication } from './Application'
 import { associateComponentWithNote } from './ComponentManager'
-import { IsMobileWeb } from './Utils'
 
 const { PlatformConstants } = NativeModules
 
