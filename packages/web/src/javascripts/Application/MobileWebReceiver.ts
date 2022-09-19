@@ -12,8 +12,10 @@ export class MobileWebReceiver {
   }
 
   listenForNativeMobileEvents() {
-    window.addEventListener('message', this.handleNativeMobileWindowMessage)
-    document.addEventListener('message', this.handleNativeMobileWindowMessage)
+    const iOSEventRecipient = window
+    const androidEventRecipient = document
+    iOSEventRecipient.addEventListener('message', this.handleNativeMobileWindowMessage)
+    androidEventRecipient.addEventListener('message', this.handleNativeMobileWindowMessage)
   }
 
   handleNativeMobileWindowMessage = (event: Event | MessageEvent) => {
