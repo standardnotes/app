@@ -45,7 +45,9 @@ const WorkspaceSwitcherMenu: FunctionComponent<Props> = ({
 
   const signoutAll = useCallback(async () => {
     const confirmed = await viewControllerManager.application.alertService.confirm(
-      'Are you sure you want to sign out of all workspaces on this device?',
+      `Are you sure you want to sign out of all workspaces on this device?${
+        viewControllerManager.application.isNativeMobileWeb() && '<b> Your app will quit after sign out completes.</b>'
+      }`,
       undefined,
       'Sign out all',
       ButtonType.Danger,
@@ -60,6 +62,47 @@ const WorkspaceSwitcherMenu: FunctionComponent<Props> = ({
     viewControllerManager.accountMenuController.setSigningOut(true)
   }, [viewControllerManager])
 
+  const activateWorkspace = useCallback(
+    async (descriptor: ApplicationDescriptor) => {
+      if (viewControllerManager.application.isNativeMobileWeb()) {
+        const confirmed = await viewControllerManager.application.alertService.confirm(
+          '<b>Your workspace will be activated after the app quits</b>',
+          undefined,
+          'Quit app and activate workspace',
+          ButtonType.Danger,
+        )
+
+        if (confirmed) {
+          void mainApplicationGroup.unloadCurrentAndActivateDescriptor(descriptor)
+        }
+
+        return
+      }
+
+      void mainApplicationGroup.unloadCurrentAndActivateDescriptor(descriptor)
+    },
+    [mainApplicationGroup, viewControllerManager.application],
+  )
+
+  const addAnotherWorkspace = useCallback(async () => {
+    if (viewControllerManager.application.isNativeMobileWeb()) {
+      const confirmed = await viewControllerManager.application.alertService.confirm(
+        '<b>Your new workspace will be ready for you after the app quits</b>',
+        undefined,
+        'Quit app and add new workspace',
+        ButtonType.Danger,
+      )
+
+      if (confirmed) {
+        void mainApplicationGroup.unloadCurrentAndCreateNewDescriptor()
+      }
+
+      return
+    }
+
+    void mainApplicationGroup.unloadCurrentAndCreateNewDescriptor()
+  }, [mainApplicationGroup, viewControllerManager.application])
+
   return (
     <Menu a11yLabel="Workspace switcher menu" className="px-0 focus:shadow-none" isOpen={isOpen}>
       {applicationDescriptors.map((descriptor) => (
@@ -68,18 +111,13 @@ const WorkspaceSwitcherMenu: FunctionComponent<Props> = ({
           descriptor={descriptor}
           hideOptions={hideWorkspaceOptions}
           onDelete={destroyWorkspace}
-          onClick={() => void mainApplicationGroup.unloadCurrentAndActivateDescriptor(descriptor)}
+          onClick={() => activateWorkspace(descriptor)}
           renameDescriptor={(label: string) => mainApplicationGroup.renameDescriptor(descriptor, label)}
         />
       ))}
       <MenuItemSeparator />
 
-      <MenuItem
-        type={MenuItemType.IconButton}
-        onClick={() => {
-          void mainApplicationGroup.unloadCurrentAndCreateNewDescriptor()
-        }}
-      >
+      <MenuItem type={MenuItemType.IconButton} onClick={addAnotherWorkspace}>
         <Icon type="user-add" className="mr-2 text-neutral" />
         Add another workspace
       </MenuItem>

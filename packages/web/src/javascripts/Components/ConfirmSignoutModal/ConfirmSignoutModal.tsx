@@ -41,7 +41,15 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewContro
                 <AlertDialogLabel className="sk-h3 sk-panel-section-title">Sign out workspace?</AlertDialogLabel>
                 <AlertDialogDescription className="sk-panel-row">
                   <div>
-                    <p className="text-foreground">{STRING_SIGN_OUT_CONFIRMATION}</p>
+                    <p className="text-foreground">
+                      {STRING_SIGN_OUT_CONFIRMATION}
+                      {application.isNativeMobileWeb() && (
+                        <div className="font-bold">
+                          <br />
+                          Your app will quit after sign out completes.
+                        </div>
+                      )}
+                    </p>
                     {showWorkspaceWarning && (
                       <>
                         <br />
