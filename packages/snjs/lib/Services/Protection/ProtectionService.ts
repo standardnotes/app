@@ -18,15 +18,11 @@ import {
 } from '@standardnotes/services'
 import { ProtectionsClientInterface } from './ClientInterface'
 import { ContentType } from '@standardnotes/common'
+import { MobileUnlockTiming } from './MobileUnlockTiming'
 
 export enum ProtectionEvent {
   UnprotectedSessionBegan = 'UnprotectedSessionBegan',
   UnprotectedSessionExpired = 'UnprotectedSessionExpired',
-}
-
-export enum MobileUnlockTiming {
-  Immediately = 'immediately',
-  OnQuit = 'on-quit',
 }
 
 export const ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction = 30

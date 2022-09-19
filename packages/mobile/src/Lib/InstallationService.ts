@@ -1,6 +1,6 @@
 import SNReactNative from '@standardnotes/react-native-utils'
 import { ApplicationService, ButtonType, StorageValueModes } from '@standardnotes/snjs'
-import { MobileDeviceInterface } from './Interface'
+import { MobileDevice } from './Interface'
 
 const FIRST_RUN_KEY = 'first_run'
 
@@ -23,7 +23,7 @@ export class InstallationService extends ApplicationService {
    */
   async needsWipe() {
     const hasAccountOrPasscode = this.application.hasAccount() || this.application?.hasPasscode()
-    const deviceInterface = this.application.deviceInterface as MobileDeviceInterface
+    const deviceInterface = this.application.deviceInterface as MobileDevice
     const keychainKey = await deviceInterface.getNamespacedKeychainValue(this.application.identifier)
 
     const hasKeychainValue = keychainKey != undefined

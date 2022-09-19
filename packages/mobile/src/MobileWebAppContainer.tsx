@@ -1,13 +1,50 @@
-import { MobileDeviceInterface } from '@Lib/Interface'
-import React, { useMemo, useRef } from 'react'
+import { MobileDevice, MobileDeviceEvent } from '@Lib/Interface'
+import { ReactNativeToWebEvent } from '@standardnotes/snjs'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Platform } from 'react-native'
 import { WebView, WebViewMessageEvent } from 'react-native-webview'
+import { AppStateObserverService } from './AppStateObserverService'
+
+const LoggingEnabled = false
 
 export const MobileWebAppContainer = () => {
-  const sourceUri = (Platform.OS === 'android' ? 'file:///android_asset/' : '') + 'Web.bundle/src/index.html'
-  const webViewRef = useRef<WebView>(null)
+  const [identifier, setIdentifier] = useState(Math.random())
 
-  const device = useMemo(() => new MobileDeviceInterface(), [])
+  const destroyAndReload = useCallback(() => {
+    setIdentifier(Math.random())
+  }, [])
+
+  return <MobileWebAppContents key={`${identifier}`} destroyAndReload={destroyAndReload} />
+}
+
+const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => void }) => {
+  const webViewRef = useRef<WebView>(null)
+  const sourceUri = (Platform.OS === 'android' ? 'file:///android_asset/' : '') + 'Web.bundle/src/index.html'
+  const stateService = useMemo(() => new AppStateObserverService(), [])
+  const device = useMemo(() => new MobileDevice(stateService), [stateService])
+
+  useEffect(() => {
+    const removeListener = stateService.addEventObserver((event: ReactNativeToWebEvent) => {
+      webViewRef.current?.postMessage(JSON.stringify({ reactNativeEvent: event, messageType: 'event' }))
+    })
+
+    return () => {
+      removeListener()
+    }
+  }, [webViewRef, stateService])
+
+  useEffect(() => {
+    const observer = device.addMobileWebEventReceiver((event) => {
+      if (event === MobileDeviceEvent.RequestsWebViewReload) {
+        destroyAndReload()
+      }
+    })
+
+    return () => {
+      observer()
+    }
+  }, [device, destroyAndReload])
+
   const functions = Object.getOwnPropertyNames(Object.getPrototypeOf(device))
 
   const baselineFunctions: Record<string, any> = {
@@ -28,7 +65,7 @@ export const MobileWebAppContainer = () => {
 
     stringFunctions += `
     ${functionName}(...args) {
-      return this.sendMessage('${functionName}', args);
+      return this.askReactNativeToInvokeInterfaceMethod('${functionName}', args);
     }
     `
   }
@@ -44,8 +81,8 @@ export const MobileWebAppContainer = () => {
 
     setApplication() {}
 
-    sendMessage(functionName, args) {
-      return this.messageSender.sendMessage(functionName, args)
+    askReactNativeToInvokeInterfaceMethod(functionName, args) {
+      return this.messageSender.askReactNativeToInvokeInterfaceMethod(functionName, args)
     }
 
     ${stringFunctions}
@@ -56,26 +93,18 @@ export const MobileWebAppContainer = () => {
   class WebProcessMessageSender {
     constructor() {
       this.pendingMessages = []
-      window.addEventListener('message', this.handleMessageFromReactNative.bind(this))
-      document.addEventListener('message', this.handleMessageFromReactNative.bind(this))
     }
 
-    handleMessageFromReactNative(event) {
-      const message = event.data
-      try {
-        const parsed = JSON.parse(message)
-        const { messageId, returnValue } = parsed
-        const pendingMessage = this.pendingMessages.find((m) => m.messageId === messageId)
-        pendingMessage.resolve(returnValue)
-        this.pendingMessages.splice(this.pendingMessages.indexOf(pendingMessage), 1)
-      } catch (error) {
-        console.log('Error parsing message from React Native', message, error)
-      }
+    handleReplyFromReactNative( messageId, returnValue) {
+      const pendingMessage = this.pendingMessages.find((m) => m.messageId === messageId)
+      pendingMessage.resolve(returnValue)
+      this.pendingMessages.splice(this.pendingMessages.indexOf(pendingMessage), 1)
     }
 
-    sendMessage(functionName, args) {
+    askReactNativeToInvokeInterfaceMethod(functionName, args) {
       const messageId = Math.random()
       window.ReactNativeWebView.postMessage(JSON.stringify({ functionName: functionName, args: args, messageId }))
+
       return new Promise((resolve) => {
         this.pendingMessages.push({
           messageId,
@@ -98,6 +127,25 @@ export const MobileWebAppContainer = () => {
   const messageSender = new WebProcessMessageSender();
   window.reactNativeDevice = new WebProcessDeviceInterface(messageSender);
 
+  const handleMessageFromReactNative = (event) => {
+    const message = event.data
+
+    try {
+      const parsed = JSON.parse(message)
+      const { messageId, returnValue, messageType } = parsed
+
+      if (messageType === 'reply') {
+        messageSender.handleReplyFromReactNative(messageId, returnValue)
+      }
+
+    } catch (error) {
+      console.log('Error parsing message from React Native', message, error)
+    }
+  }
+
+  window.addEventListener('message', handleMessageFromReactNative)
+  document.addEventListener('message', handleMessageFromReactNative)
+
   true;
     `
 
@@ -107,14 +155,18 @@ export const MobileWebAppContainer = () => {
       const functionData = JSON.parse(message)
       void onFunctionMessage(functionData.functionName, functionData.messageId, functionData.args)
     } catch (error) {
-      console.log('onGeneralMessage', JSON.stringify(message))
+      if (LoggingEnabled) {
+        console.log('onGeneralMessage', JSON.stringify(message))
+      }
     }
   }
 
   const onFunctionMessage = async (functionName: string, messageId: string, args: any) => {
     const returnValue = await (device as any)[functionName](...args)
-    console.log(`Native device function ${functionName} called`)
-    webViewRef.current?.postMessage(JSON.stringify({ messageId, returnValue }))
+    if (LoggingEnabled) {
+      console.log(`Native device function ${functionName} called`)
+    }
+    webViewRef.current?.postMessage(JSON.stringify({ messageId, returnValue, messageType: 'reply' }))
   }
 
   /* eslint-disable @typescript-eslint/no-empty-function */

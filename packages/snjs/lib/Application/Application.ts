@@ -41,6 +41,7 @@ import {
   FileService,
   SubscriptionClientInterface,
   SubscriptionManager,
+  StorageValueModes,
 } from '@standardnotes/services'
 import { FilesClientInterface } from '@standardnotes/files'
 import { ComputePrivateWorkspaceIdentifier } from '@standardnotes/encryption'
@@ -60,6 +61,7 @@ import { SNLog } from '../Log'
 import { Challenge, ChallengeResponse } from '../Services'
 import { ApplicationConstructorOptions, FullyResolvedApplicationOptions } from './Options/ApplicationOptions'
 import { ApplicationOptionsDefaults } from './Options/Defaults'
+import { MobileUnlockTiming } from '@Lib/Services/Protection/MobileUnlockTiming'
 
 /** How often to automatically sync, in milliseconds */
 const DEFAULT_AUTO_SYNC_INTERVAL = 30_000
@@ -927,12 +929,24 @@ export class SNApplication
     return this.deinit(this.getDeinitMode(), DeinitSource.Lock)
   }
 
-  async setBiometricsTiming(timing: InternalServices.MobileUnlockTiming) {
+  async setBiometricsTiming(timing: MobileUnlockTiming) {
     return this.protectionService.setBiometricsTiming(timing)
   }
 
   async getMobileScreenshotPrivacyEnabled(): Promise<boolean | undefined> {
     return this.protectionService.getMobileScreenshotPrivacyEnabled()
+  }
+
+  async getMobilePasscodeTiming(): Promise<MobileUnlockTiming | undefined> {
+    return this.getValue(StorageKey.MobilePasscodeTiming, StorageValueModes.Nonwrapped) as Promise<
+      MobileUnlockTiming | undefined
+    >
+  }
+
+  async getMobileBiometricsTiming(): Promise<MobileUnlockTiming | undefined> {
+    return this.getValue(StorageKey.MobileBiometricsTiming, StorageValueModes.Nonwrapped) as Promise<
+      MobileUnlockTiming | undefined
+    >
   }
 
   async setMobileScreenshotPrivacyEnabled(isEnabled: boolean) {

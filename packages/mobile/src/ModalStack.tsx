@@ -30,11 +30,11 @@ import React, { memo, useContext } from 'react'
 import { Platform } from 'react-native'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
 import { ThemeContext } from 'styled-components'
-import { HeaderTitleParams, TEnvironment } from './App'
 import { ApplicationContext } from './ApplicationContext'
 import { AppStackComponent } from './AppStack'
 import { HistoryStack } from './HistoryStack'
 import { MobileWebAppContainer } from './MobileWebAppContainer'
+import { HeaderTitleParams, TEnvironment } from './NativeApp'
 
 export type ModalStackNavigatorParamList = {
   AppStack: undefined
@@ -75,7 +75,31 @@ export type ModalStackNavigationProp<T extends keyof ModalStackNavigatorParamLis
 
 const MainStack = createStackNavigator<ModalStackNavigatorParamList>()
 
-export const MainStackComponent = ({ env }: { env: TEnvironment }) => {
+export const MobileWebMainStackComponent = () => {
+  const MemoizedAppStackComponent = memo((props: ModalStackNavigationProp<'AppStack'>) => (
+    <AppStackComponent {...props} />
+  ))
+
+  return (
+    <MainStack.Navigator
+      screenOptions={{
+        gestureEnabled: false,
+        presentation: 'modal',
+      }}
+      initialRouteName="AppStack"
+    >
+      <MainStack.Screen
+        name={'AppStack'}
+        options={{
+          headerShown: false,
+        }}
+        component={MemoizedAppStackComponent}
+      />
+    </MainStack.Navigator>
+  )
+}
+
+export const NativeMainStackComponent = ({ env }: { env: TEnvironment }) => {
   const application = useContext(ApplicationContext)
   const theme = useContext(ThemeContext)
 

@@ -23,13 +23,13 @@ import { BackupsService } from './BackupsService'
 import { ComponentManager } from './ComponentManager'
 import { FilesService } from './FilesService'
 import { InstallationService } from './InstallationService'
-import { MobileDeviceInterface } from './Interface'
+import { MobileDevice } from './Interface'
 import { push } from './NavigationService'
 import { PreferencesManager } from './PreferencesManager'
 import { SNReactNativeCrypto } from './ReactNativeCrypto'
 import { ReviewService } from './ReviewService'
 import { StatusManager } from './StatusManager'
-import { IsDev } from './Utils'
+import { IsDev, IsMobileWeb } from './Utils'
 
 type MobileServices = {
   applicationState: ApplicationState
@@ -52,7 +52,7 @@ export class MobileApplication extends SNApplication {
 
   static previouslyLaunched = false
 
-  constructor(deviceInterface: MobileDeviceInterface, identifier: string) {
+  constructor(deviceInterface: MobileDevice, identifier: string) {
     super({
       environment: Environment.Mobile,
       platform: platformFromString(Platform.OS),
@@ -135,7 +135,7 @@ export class MobileApplication extends SNApplication {
   }
 
   promptForChallenge(challenge: Challenge) {
-    if (IsDev) {
+    if (IsMobileWeb) {
       return
     }
 

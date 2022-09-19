@@ -11,7 +11,7 @@ import { ThemeService, ThemeServiceContext } from '@Style/ThemeService'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { ThemeProvider } from 'styled-components/native'
 import { ApplicationContext } from './ApplicationContext'
-import { MainStackComponent } from './ModalStack'
+import { NativeMainStackComponent } from './ModalStack'
 
 export type HeaderTitleParams = {
   title?: string
@@ -111,7 +111,7 @@ const AppComponent: React.FC<{
           <ThemeProvider theme={activeTheme}>
             <ActionSheetProvider>
               <ThemeServiceContext.Provider value={themeService.current}>
-                <MainStackComponent env={env} />
+                <NativeMainStackComponent env={env} />
               </ThemeServiceContext.Provider>
             </ActionSheetProvider>
             <ToastWrapper />
@@ -122,7 +122,7 @@ const AppComponent: React.FC<{
   )
 }
 
-export const App = (props: { env: TEnvironment }) => {
+export const NativeApp = (props: { env: TEnvironment }) => {
   const [application, setApplication] = useState<MobileApplication | undefined>()
 
   const createNewAppGroup = useCallback(() => {
