@@ -13,6 +13,13 @@ type Props = {
 const StyledDropdown = styled(Dropdown)`
   [data-reach-listbox-button] {
     background: var(--sn-stylekit-contrast-background-color);
+    border: 1px solid var(--sn-stylekit-info-color);
+    color: var(--sn-stylekit-info-color);
+    font-weight: bold;
+
+    [data-reach-listbox-arrow] svg {
+      fill: var(--sn-stylekit-info-color);
+    }
   }
 `
 
