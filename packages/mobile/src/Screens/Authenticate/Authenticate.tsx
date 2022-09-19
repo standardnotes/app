@@ -1,5 +1,5 @@
 import { AppStateType, PasscodeKeyboardType } from '@Lib/ApplicationState'
-import { MobileDeviceInterface } from '@Lib/Interface'
+import { MobileDevice } from '@Lib/Interface'
 import { HeaderHeightContext } from '@react-navigation/elements'
 import { useFocusEffect } from '@react-navigation/native'
 import { ApplicationContext } from '@Root/ApplicationContext'
@@ -164,7 +164,7 @@ export const Authenticate = ({
   }, [])
 
   const checkForBiometrics = useCallback(
-    async () => (application?.deviceInterface as MobileDeviceInterface).getDeviceBiometricsAvailability(),
+    async () => (application?.deviceInterface as MobileDevice).getDeviceBiometricsAvailability(),
     [application],
   )
 

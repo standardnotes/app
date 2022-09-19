@@ -1,4 +1,4 @@
-import { MobileDeviceInterface } from '@Lib/Interface'
+import { MobileDevice } from '@Lib/Interface'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { ApplicationContext } from '@Root/ApplicationContext'
 import { ButtonCell } from '@Root/Components/ButtonCell'
@@ -53,7 +53,7 @@ export const SecuritySection = (props: Props) => {
     void getHasBiometrics()
     const hasBiometricsSupport = async () => {
       const hasBiometricsAvailable = await (
-        application?.deviceInterface as MobileDeviceInterface
+        application?.deviceInterface as MobileDevice
       ).getDeviceBiometricsAvailability()
       if (mounted) {
         setSupportsBiometrics(hasBiometricsAvailable)

@@ -4,14 +4,14 @@ import { ApplicationState } from './ApplicationState'
 import { BackupsService } from './BackupsService'
 import { FilesService } from './FilesService'
 import { InstallationService } from './InstallationService'
-import { MobileDeviceInterface } from './Interface'
+import { MobileDevice } from './Interface'
 import { PreferencesManager } from './PreferencesManager'
 import { ReviewService } from './ReviewService'
 import { StatusManager } from './StatusManager'
 
 export class ApplicationGroup extends SNApplicationGroup {
   constructor() {
-    super(new MobileDeviceInterface())
+    super(new MobileDevice())
   }
 
   override async initialize(_callback?: any): Promise<void> {
@@ -21,7 +21,7 @@ export class ApplicationGroup extends SNApplicationGroup {
   }
 
   private createApplication = async (descriptor: ApplicationDescriptor, deviceInterface: DeviceInterface) => {
-    const application = new MobileApplication(deviceInterface as MobileDeviceInterface, descriptor.identifier)
+    const application = new MobileApplication(deviceInterface as MobileDevice, descriptor.identifier)
     const internalEventBus = new InternalEventBus()
     const applicationState = new ApplicationState(application)
     const reviewService = new ReviewService(application, internalEventBus)

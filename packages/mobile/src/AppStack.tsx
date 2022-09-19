@@ -2,7 +2,7 @@ import { AppStateEventType, AppStateType, TabletModeChangeData } from '@Lib/Appl
 import { AlwaysOpenWebAppOnLaunchKey } from '@Lib/constants'
 import { useHasEditor, useIsLocked } from '@Lib/SnjsHelperHooks'
 import { ScreenStatus } from '@Lib/StatusManager'
-import { IsDev } from '@Lib/Utils'
+import { IsDev, IsMobileWeb } from '@Lib/Utils'
 import { CompositeNavigationProp, RouteProp } from '@react-navigation/native'
 import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack'
 import { HeaderTitleView } from '@Root/Components/HeaderTitleView'
@@ -121,7 +121,7 @@ export const AppStackComponent = (props: ModalStackNavigationProp<'AppStack'>) =
     [application],
   )
 
-  if (IsDev) {
+  if (IsMobileWeb) {
     return (
       <AppStack.Navigator
         screenOptions={() => ({
