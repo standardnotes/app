@@ -53,7 +53,7 @@ describe('files', function () {
   })
 
   const uploadFile = async (fileService, buffer, name, ext, chunkSize) => {
-    const operation = await fileService.beginNewFileUpload()
+    const operation = await fileService.beginNewFileUpload(buffer.byteLength)
 
     let chunkId = 1
     for (let i = 0; i < buffer.length; i += chunkSize) {
