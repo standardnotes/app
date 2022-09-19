@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.49.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.49.2...@standardnotes/web@3.49.3) (2022-09-19)
+
+### Bug Fixes
+
+* preferences dropdown contrast and color ([#1591](https://github.com/standardnotes/app/issues/1591)) ([ecaa2a6](https://github.com/standardnotes/app/commit/ecaa2a629f7c7bac58c26d7258469711b7c05785))
+
 ## [3.49.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.49.1...@standardnotes/web@3.49.2) (2022-09-19)
 
 **Note:** Version bump only for package @standardnotes/web
