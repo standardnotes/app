@@ -66,7 +66,7 @@ const WorkspaceSwitcherMenu: FunctionComponent<Props> = ({
     async (descriptor: ApplicationDescriptor) => {
       if (viewControllerManager.application.isNativeMobileWeb()) {
         const confirmed = await viewControllerManager.application.alertService.confirm(
-          '<b>Your workspace will be activated after the app quits</b>',
+          '<b>The app needs to be restarted to activate the workspace</b>',
           undefined,
           'Quit app and activate workspace',
           ButtonType.Danger,
@@ -87,7 +87,7 @@ const WorkspaceSwitcherMenu: FunctionComponent<Props> = ({
   const addAnotherWorkspace = useCallback(async () => {
     if (viewControllerManager.application.isNativeMobileWeb()) {
       const confirmed = await viewControllerManager.application.alertService.confirm(
-        '<b>Your new workspace will be ready for you after the app quits</b>',
+        '<b>The app needs to be restarted to add another workspace</b>',
         undefined,
         'Quit app and add new workspace',
         ButtonType.Danger,
