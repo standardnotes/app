@@ -16,7 +16,6 @@ export class MobileWebReceiver {
 
   handleNativeMobileWindowMessage = (event: MessageEvent) => {
     const message = event.data
-    console.log('handleNativeMobileWindowMessage', message)
 
     try {
       const parsed = JSON.parse(message)
@@ -34,16 +33,16 @@ export class MobileWebReceiver {
   handleNativeEvent(event: ReactNativeToWebEvent) {
     switch (event) {
       case ReactNativeToWebEvent.EnteringBackground:
-        this.application.handleMobileEnteringBackgroundEvent()
+        void this.application.handleMobileEnteringBackgroundEvent()
         break
       case ReactNativeToWebEvent.GainingFocus:
-        this.application.handleMobileGainingFocusEvent()
+        void this.application.handleMobileGainingFocusEvent()
         break
       case ReactNativeToWebEvent.LosingFocus:
-        this.application.handleMobileLosingFocusEvent()
+        void this.application.handleMobileLosingFocusEvent()
         break
       case ReactNativeToWebEvent.ResumingFromBackground:
-        this.application.handleMobileResumingFromBackgroundEvent()
+        void this.application.handleMobileResumingFromBackgroundEvent()
         break
 
       default:
