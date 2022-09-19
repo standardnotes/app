@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.129.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.129.1...@standardnotes/snjs@2.129.2) (2022-09-19)
+
+### Bug Fixes
+
+* **snjs:** pass unencrypted file size to comply with file service interface ([#1595](https://github.com/standardnotes/app/issues/1595)) ([038320b](https://github.com/standardnotes/app/commit/038320b2fda8348810db586c70b0998647519fd6))
+
 ## [2.129.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.129.0...@standardnotes/snjs@2.129.1) (2022-09-15)
 
 **Note:** Version bump only for package @standardnotes/snjs
