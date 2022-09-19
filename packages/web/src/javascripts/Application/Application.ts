@@ -73,7 +73,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     deviceInterface.setApplication(this)
     this.itemControllerGroup = new ItemGroupController(this)
     this.iconsController = new IconsController()
-    this.mobileWebReceiver = new MobileWebReceiver(this)
+
+    if (this.isNativeMobileWeb()) {
+      this.mobileWebReceiver = new MobileWebReceiver(this)
+    }
 
     this.onVisibilityChange = () => {
       const visible = document.visibilityState === 'visible'

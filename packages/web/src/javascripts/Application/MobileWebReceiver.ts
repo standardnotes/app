@@ -8,14 +8,16 @@ export class MobileWebReceiver {
   deinit() {
     ;(this.application as unknown) = undefined
     window.removeEventListener('message', this.handleNativeMobileWindowMessage)
+    document.removeEventListener('message', this.handleNativeMobileWindowMessage)
   }
 
   listenForNativeMobileEvents() {
     window.addEventListener('message', this.handleNativeMobileWindowMessage)
+    document.addEventListener('message', this.handleNativeMobileWindowMessage)
   }
 
-  handleNativeMobileWindowMessage = (event: MessageEvent) => {
-    const message = event.data
+  handleNativeMobileWindowMessage = (event: Event | MessageEvent) => {
+    const message = (event as MessageEvent).data
 
     try {
       const parsed = JSON.parse(message)
