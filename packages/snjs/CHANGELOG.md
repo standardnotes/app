@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.130.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.129.2...@standardnotes/snjs@2.130.0) (2022-09-19)
+
+### Features
+
+* mobile web bridge ([#1597](https://github.com/standardnotes/app/issues/1597)) ([c4d7761](https://github.com/standardnotes/app/commit/c4d776149677269bc766f24da6adc5ec816dbcfb))
+
 ## [2.129.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.129.1...@standardnotes/snjs@2.129.2) (2022-09-19)
 
 ### Bug Fixes

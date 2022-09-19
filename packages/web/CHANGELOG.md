@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.50.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.49.3...@standardnotes/web@3.50.0) (2022-09-19)
+
+### Bug Fixes
+
+* show warning on mobile webview before app quits ([#1598](https://github.com/standardnotes/app/issues/1598)) ([e3be17c](https://github.com/standardnotes/app/commit/e3be17c7f8345c1eed5b2cc6f98b38e24647b212))
+
+### Features
+
+* mobile web bridge ([#1597](https://github.com/standardnotes/app/issues/1597)) ([c4d7761](https://github.com/standardnotes/app/commit/c4d776149677269bc766f24da6adc5ec816dbcfb))
+
 ## [3.49.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.49.2...@standardnotes/web@3.49.3) (2022-09-19)
 
 ### Bug Fixes

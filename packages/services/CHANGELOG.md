@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.21.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.20.2...@standardnotes/services@1.21.0) (2022-09-19)
+
+### Features
+
+* mobile web bridge ([#1597](https://github.com/standardnotes/app/issues/1597)) ([c4d7761](https://github.com/standardnotes/app/commit/c4d776149677269bc766f24da6adc5ec816dbcfb))
+
 ## [1.20.2](https://github.com/standardnotes/app/compare/@standardnotes/services@1.20.1...@standardnotes/services@1.20.2) (2022-09-15)
 
 ### Bug Fixes
