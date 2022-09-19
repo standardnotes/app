@@ -17,12 +17,15 @@ import {
   DecryptedItemInterface,
   WebAppEvent,
   WebApplicationInterface,
+  MobileDeviceInterface,
+  MobileUnlockTiming,
 } from '@standardnotes/snjs'
 import { makeObservable, observable } from 'mobx'
 import { PanelResizedData } from '@/Types/PanelResizedData'
 import { isDesktopApplication } from '@/Utils'
 import { DesktopManager } from './Device/DesktopManager'
 import { ArchiveManager, AutolockService, IOService, WebAlertService, ThemeManager } from '@standardnotes/ui-services'
+import { MobileWebReceiver } from './MobileWebReceiver'
 
 type WebServices = {
   viewControllerManager: ViewControllerManager
@@ -41,6 +44,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   public itemControllerGroup: ItemGroupController
   public iconsController: IconsController
   private onVisibilityChange: () => void
+  private mobileWebReceiver?: MobileWebReceiver
 
   constructor(
     deviceInterface: WebOrDesktopDevice,
@@ -69,6 +73,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     deviceInterface.setApplication(this)
     this.itemControllerGroup = new ItemGroupController(this)
     this.iconsController = new IconsController()
+
+    if (this.isNativeMobileWeb()) {
+      this.mobileWebReceiver = new MobileWebReceiver(this)
+    }
 
     this.onVisibilityChange = () => {
       const visible = document.visibilityState === 'visible'
@@ -101,6 +109,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
       this.itemControllerGroup.deinit()
       ;(this.itemControllerGroup as unknown) = undefined
+      ;(this.mobileWebReceiver as unknown) = undefined
 
       this.webEventObservers.length = 0
 
@@ -161,6 +170,13 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return undefined
   }
 
+  get mobileDevice(): MobileDeviceInterface {
+    if (!this.isNativeMobileWeb()) {
+      throw Error('Attempting to access device as mobile device on non mobile platform')
+    }
+    return this.deviceInterface as MobileDeviceInterface
+  }
+
   public getThemeService() {
     return this.webServices.themeService
   }
@@ -202,5 +218,45 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   async toggleGlobalSpellcheck() {
     const currentValue = this.isGlobalSpellcheckEnabled()
     return this.setPreference(PrefKey.EditorSpellcheck, !currentValue)
+  }
+
+  async handleMobileEnteringBackgroundEvent(): Promise<void> {
+    await this.lockApplicationAfterMobileEventIfApplicable()
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  async handleMobileGainingFocusEvent(): Promise<void> {}
+
+  async handleMobileLosingFocusEvent(): Promise<void> {
+    if (await this.getMobileScreenshotPrivacyEnabled()) {
+      this.mobileDevice.stopHidingMobileInterfaceFromScreenshots()
+    }
+
+    await this.lockApplicationAfterMobileEventIfApplicable()
+  }
+
+  async handleMobileResumingFromBackgroundEvent(): Promise<void> {
+    if (await this.getMobileScreenshotPrivacyEnabled()) {
+      this.mobileDevice.hideMobileInterfaceFromScreenshots()
+    }
+  }
+
+  private async lockApplicationAfterMobileEventIfApplicable(): Promise<void> {
+    const isLocked = await this.isLocked()
+    if (isLocked) {
+      return
+    }
+
+    const hasBiometrics = this.hasBiometrics()
+    const hasPasscode = this.hasPasscode()
+    const passcodeTiming = await this.getMobilePasscodeTiming()
+    const biometricsTiming = await this.getMobileBiometricsTiming()
+
+    const passcodeLockImmediately = hasPasscode && passcodeTiming === MobileUnlockTiming.Immediately
+    const biometricsLockImmediately = hasBiometrics && biometricsTiming === MobileUnlockTiming.Immediately
+
+    if (passcodeLockImmediately || biometricsLockImmediately) {
+      await this.lock()
+    }
   }
 }

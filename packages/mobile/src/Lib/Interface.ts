@@ -2,20 +2,30 @@ import AsyncStorage from '@react-native-community/async-storage'
 import SNReactNative from '@standardnotes/react-native-utils'
 import {
   ApplicationIdentifier,
-  DeviceInterface,
   Environment,
   LegacyMobileKeychainStructure,
   LegacyRawKeychainValue,
+  MobileDeviceInterface,
   NamespacedRootKeyInKeychain,
   RawKeychainValue,
+  removeFromArray,
   TransferPayload,
 } from '@standardnotes/snjs'
 import { Alert, Linking, Platform } from 'react-native'
 import FingerprintScanner from 'react-native-fingerprint-scanner'
 import FlagSecure from 'react-native-flag-secure-android'
+import { hide, show } from 'react-native-privacy-snapshot'
+import { AppStateObserverService } from './../AppStateObserverService'
 import Keychain from './Keychain'
+import { IsMobileWeb } from './Utils'
 
 export type BiometricsType = 'Fingerprint' | 'Face ID' | 'Biometrics' | 'Touch ID'
+
+export enum MobileDeviceEvent {
+  RequestsWebViewReload = 0,
+}
+
+type MobileDeviceEventHandler = (event: MobileDeviceEvent) => void
 
 /**
  * This identifier was the database name used in Standard Notes web/desktop.
@@ -52,11 +62,16 @@ const showLoadFailForItemIds = (failedItemIds: string[]) => {
   Alert.alert('Unable to load item(s)', text)
 }
 
-export class MobileDeviceInterface implements DeviceInterface {
+export class MobileDevice implements MobileDeviceInterface {
   environment: Environment.Mobile = Environment.Mobile
+  private eventObservers: MobileDeviceEventHandler[] = []
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  deinit() {}
+  constructor(private stateObserverService?: AppStateObserverService) {}
+
+  deinit() {
+    this.stateObserverService?.deinit()
+    ;(this.stateObserverService as unknown) = undefined
+  }
 
   async setLegacyRawKeychainValue(value: LegacyRawKeychainValue): Promise<void> {
     await Keychain.setKeys(value)
@@ -177,6 +192,14 @@ export class MobileDeviceInterface implements DeviceInterface {
     }
   }
 
+  hideMobileInterfaceFromScreenshots(): void {
+    hide()
+  }
+
+  stopHidingMobileInterfaceFromScreenshots(): void {
+    show()
+  }
+
   async getAllRawStorageKeyValues() {
     const keys = await AsyncStorage.getAllKeys()
     return this.getRawStorageKeyValues(keys)
@@ -288,8 +311,10 @@ export class MobileDeviceInterface implements DeviceInterface {
     }
   }
 
-  authenticateWithBiometrics() {
-    return new Promise<boolean>((resolve) => {
+  async authenticateWithBiometrics() {
+    this.stateObserverService?.beginIgnoringStateChanges()
+
+    const result = await new Promise<boolean>((resolve) => {
       if (Platform.OS === 'android') {
         FingerprintScanner.authenticate({
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -333,10 +358,20 @@ export class MobileDeviceInterface implements DeviceInterface {
           })
       }
     })
+
+    this.stateObserverService?.stopIgnoringStateChanges()
+
+    return result
   }
 
-  getRawKeychainValue(): Promise<RawKeychainValue | null | undefined> {
-    return Keychain.getKeys()
+  async getRawKeychainValue(): Promise<RawKeychainValue | undefined> {
+    const result = await Keychain.getKeys()
+
+    if (result === null) {
+      return undefined
+    }
+
+    return result
   }
 
   async clearRawKeychainValue(): Promise<void> {
@@ -375,7 +410,27 @@ export class MobileDeviceInterface implements DeviceInterface {
   }
 
   performSoftReset() {
-    SNReactNative.exitApp()
+    if (IsMobileWeb) {
+      this.notifyEvent(MobileDeviceEvent.RequestsWebViewReload)
+    } else {
+      SNReactNative.exitApp()
+    }
+  }
+
+  addMobileWebEventReceiver(handler: MobileDeviceEventHandler): () => void {
+    this.eventObservers.push(handler)
+
+    const thislessObservers = this.eventObservers
+
+    return () => {
+      removeFromArray(thislessObservers, handler)
+    }
+  }
+
+  private notifyEvent(event: MobileDeviceEvent): void {
+    for (const handler of this.eventObservers) {
+      handler(event)
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function

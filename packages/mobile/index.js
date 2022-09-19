@@ -1,10 +1,12 @@
+import { IsMobileWeb } from '@Lib/Utils'
+import { MobileWebApp } from '@Root/MobileWebApp'
 import { SNLog } from '@standardnotes/snjs'
 import { AppRegistry } from 'react-native'
 import 'react-native-gesture-handler'
 import { enableScreens } from 'react-native-screens'
 import 'react-native-url-polyfill/auto'
 import { name as appName } from './app.json'
-import { App } from './src/App'
+import { NativeApp } from './src/NativeApp'
 import { enableAndroidFontFix } from './src/Style/android_text_fix'
 
 enableScreens()
@@ -28,11 +30,11 @@ console.warn = function filterWarnings(msg) {
     "[react-native-gesture-handler] Seems like you're using an old API with gesture components",
   ]
 
-  if (!supressedWarnings.some(entry => msg.includes(entry))) {
+  if (!supressedWarnings.some((entry) => msg.includes(entry))) {
     originalWarn.apply(console, arguments)
   }
 }
 
 enableAndroidFontFix()
 
-AppRegistry.registerComponent(appName, () => App)
+AppRegistry.registerComponent(appName, () => (IsMobileWeb ? MobileWebApp : NativeApp))

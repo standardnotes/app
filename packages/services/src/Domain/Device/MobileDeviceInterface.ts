@@ -7,7 +7,7 @@ export interface MobileDeviceInterface extends DeviceInterface {
   getRawKeychainValue(): Promise<RawKeychainValue | undefined>
   getDeviceBiometricsAvailability(): Promise<boolean>
   setAndroidScreenshotPrivacy(enable: boolean): Promise<void>
-  getMobileScreenshotPrivacyEnabled(): Promise<boolean | undefined>
-  setMobileScreenshotPrivacyEnabled(isEnabled: boolean): Promise<void>
   authenticateWithBiometrics(): Promise<boolean>
+  hideMobileInterfaceFromScreenshots(): void
+  stopHidingMobileInterfaceFromScreenshots(): void
 }

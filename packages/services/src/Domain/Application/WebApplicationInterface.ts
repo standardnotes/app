@@ -5,4 +5,8 @@ import { ApplicationInterface } from './ApplicationInterface'
 export interface WebApplicationInterface extends ApplicationInterface {
   notifyWebEvent(event: WebAppEvent, data?: unknown): void
   getDesktopService(): DesktopManagerInterface | undefined
+  handleMobileEnteringBackgroundEvent(): Promise<void>
+  handleMobileGainingFocusEvent(): Promise<void>
+  handleMobileLosingFocusEvent(): Promise<void>
+  handleMobileResumingFromBackgroundEvent(): Promise<void>
 }
