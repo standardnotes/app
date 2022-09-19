@@ -35,7 +35,7 @@ export class MobileWebReceiver {
         this.handleNativeEvent(nativeEvent)
       }
     } catch (error) {
-      console.log('Error parsing message from React Native', message, error)
+      console.log('Error parsing message from React Native', error)
     }
   }
 
