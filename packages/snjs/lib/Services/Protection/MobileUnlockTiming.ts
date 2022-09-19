@@ -1,5 +1,4 @@
-
 export enum MobileUnlockTiming {
   Immediately = 'immediately',
-  OnQuit = 'on-quit'
+  OnQuit = 'on-quit',
 }
