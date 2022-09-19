@@ -8,17 +8,22 @@ export class MobileWebReceiver {
   deinit() {
     ;(this.application as unknown) = undefined
     window.removeEventListener('message', this.handleNativeMobileWindowMessage)
-    document.removeEventListener('message', this.handleNativeMobileWindowMessage)
+    document.removeEventListener('message', this.handleNativeMobileWindowMessage as never)
   }
 
   listenForNativeMobileEvents() {
     const iOSEventRecipient = window
     const androidEventRecipient = document
     iOSEventRecipient.addEventListener('message', this.handleNativeMobileWindowMessage)
-    androidEventRecipient.addEventListener('message', this.handleNativeMobileWindowMessage)
+    androidEventRecipient.addEventListener('message', this.handleNativeMobileWindowMessage as never)
   }
 
-  handleNativeMobileWindowMessage = (event: Event | MessageEvent) => {
+  handleNativeMobileWindowMessage = (event: MessageEvent) => {
+    const nullOrigin = event.origin === '' || event.origin == null
+    if (!nullOrigin) {
+      return
+    }
+
     const message = (event as MessageEvent).data
 
     try {
