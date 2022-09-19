@@ -44,7 +44,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   public itemControllerGroup: ItemGroupController
   public iconsController: IconsController
   private onVisibilityChange: () => void
-  private mobileWebReceiver: MobileWebReceiver
+  private mobileWebReceiver?: MobileWebReceiver
 
   constructor(
     deviceInterface: WebOrDesktopDevice,
