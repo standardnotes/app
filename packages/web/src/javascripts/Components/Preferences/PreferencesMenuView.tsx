@@ -16,6 +16,7 @@ const StyledDropdown = styled(Dropdown)`
     border: 1px solid var(--sn-stylekit-info-color);
     color: var(--sn-stylekit-info-color);
     font-weight: bold;
+    padding: 0.55rem 0.875rem;
 
     [data-reach-listbox-arrow] svg {
       fill: var(--sn-stylekit-info-color);
