@@ -55,6 +55,7 @@ const NotesOptionsPanel = ({
           notesController={notesController}
           noteTagsController={noteTagsController}
           historyModalController={historyModalController}
+          closeMenu={toggleMenu}
         />
       </Popover>
     </>

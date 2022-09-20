@@ -8,6 +8,8 @@ import { FilesController } from '@/Controllers/FilesController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
+import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
+import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 
 type Props = {
   closeMenu: () => void
@@ -30,6 +32,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
 }) => {
   const { selectedFiles } = selectionController
   const { handleFileAction } = filesController
+  const { toggleAppPane } = useResponsiveAppPane()
 
   const hasProtectedFiles = useMemo(() => selectedFiles.some((file) => file.protected), [selectedFiles])
   const hasSelectedMultipleFiles = useMemo(() => selectedFiles.length > 1, [selectedFiles.length])
@@ -67,6 +70,11 @@ const FileMenuOptions: FunctionComponent<Props> = ({
     })
     closeMenu()
   }, [closeMenu, handleFileAction, selectedFiles])
+
+  const closeMenuAndToggleFilesList = useCallback(() => {
+    toggleAppPane(AppPaneId.Items)
+    closeMenu()
+  }, [closeMenu, toggleAppPane])
 
   return (
     <>
@@ -139,6 +147,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
       <button
         className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
         onClick={() => {
+          closeMenuAndToggleFilesList()
           void filesController.deleteFilesPermanently(selectionController.selectedFiles)
         }}
       >

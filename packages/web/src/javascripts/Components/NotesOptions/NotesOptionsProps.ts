@@ -10,4 +10,5 @@ export type NotesOptionsProps = {
   notesController: NotesController
   noteTagsController: NoteTagsController
   historyModalController: HistoryModalController
+  closeMenu: () => void
 }

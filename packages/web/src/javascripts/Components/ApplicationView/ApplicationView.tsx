@@ -175,14 +175,14 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
 
   return (
     <PremiumModalProvider application={application} viewControllerManager={viewControllerManager}>
-      <div className={platformString + ' main-ui-view sn-component'}>
-        <div id="app" className={appClass + ' app app-column-container'}>
-          <FileDragNDropProvider
-            application={application}
-            featuresController={viewControllerManager.featuresController}
-            filesController={viewControllerManager.filesController}
-          >
-            <ResponsivePaneProvider>
+      <ResponsivePaneProvider>
+        <div className={platformString + ' main-ui-view sn-component'}>
+          <div id="app" className={appClass + ' app app-column-container'}>
+            <FileDragNDropProvider
+              application={application}
+              featuresController={viewControllerManager.featuresController}
+              filesController={viewControllerManager.filesController}
+            >
               <Navigation application={application} />
               <ContentListView
                 application={application}
@@ -197,52 +197,52 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                 searchOptionsController={viewControllerManager.searchOptionsController}
               />
               <NoteGroupView application={application} />
-            </ResponsivePaneProvider>
-          </FileDragNDropProvider>
+            </FileDragNDropProvider>
+          </div>
+
+          <>
+            <Footer application={application} applicationGroup={mainApplicationGroup} />
+            <SessionsModal application={application} viewControllerManager={viewControllerManager} />
+            <PreferencesViewWrapper viewControllerManager={viewControllerManager} application={application} />
+            <RevisionHistoryModal
+              application={application}
+              historyModalController={viewControllerManager.historyModalController}
+              notesController={viewControllerManager.notesController}
+              selectionController={viewControllerManager.selectionController}
+              subscriptionController={viewControllerManager.subscriptionController}
+            />
+          </>
+
+          {renderChallenges()}
+
+          <>
+            <NotesContextMenu
+              application={application}
+              navigationController={viewControllerManager.navigationController}
+              notesController={viewControllerManager.notesController}
+              noteTagsController={viewControllerManager.noteTagsController}
+              historyModalController={viewControllerManager.historyModalController}
+            />
+            <TagContextMenuWrapper
+              navigationController={viewControllerManager.navigationController}
+              featuresController={viewControllerManager.featuresController}
+            />
+            <FileContextMenuWrapper
+              filesController={viewControllerManager.filesController}
+              selectionController={viewControllerManager.selectionController}
+            />
+            <PurchaseFlowWrapper application={application} viewControllerManager={viewControllerManager} />
+            <ConfirmSignoutContainer
+              applicationGroup={mainApplicationGroup}
+              viewControllerManager={viewControllerManager}
+              application={application}
+            />
+            <ToastContainer />
+            <FilePreviewModalWrapper application={application} viewControllerManager={viewControllerManager} />
+            <PermissionsModalWrapper application={application} />
+          </>
         </div>
-
-        <>
-          <Footer application={application} applicationGroup={mainApplicationGroup} />
-          <SessionsModal application={application} viewControllerManager={viewControllerManager} />
-          <PreferencesViewWrapper viewControllerManager={viewControllerManager} application={application} />
-          <RevisionHistoryModal
-            application={application}
-            historyModalController={viewControllerManager.historyModalController}
-            notesController={viewControllerManager.notesController}
-            selectionController={viewControllerManager.selectionController}
-            subscriptionController={viewControllerManager.subscriptionController}
-          />
-        </>
-
-        {renderChallenges()}
-
-        <>
-          <NotesContextMenu
-            application={application}
-            navigationController={viewControllerManager.navigationController}
-            notesController={viewControllerManager.notesController}
-            noteTagsController={viewControllerManager.noteTagsController}
-            historyModalController={viewControllerManager.historyModalController}
-          />
-          <TagContextMenuWrapper
-            navigationController={viewControllerManager.navigationController}
-            featuresController={viewControllerManager.featuresController}
-          />
-          <FileContextMenuWrapper
-            filesController={viewControllerManager.filesController}
-            selectionController={viewControllerManager.selectionController}
-          />
-          <PurchaseFlowWrapper application={application} viewControllerManager={viewControllerManager} />
-          <ConfirmSignoutContainer
-            applicationGroup={mainApplicationGroup}
-            viewControllerManager={viewControllerManager}
-            application={application}
-          />
-          <ToastContainer />
-          <FilePreviewModalWrapper application={application} viewControllerManager={viewControllerManager} />
-          <PermissionsModalWrapper application={application} />
-        </>
-      </div>
+      </ResponsivePaneProvider>
     </PremiumModalProvider>
   )
 }
