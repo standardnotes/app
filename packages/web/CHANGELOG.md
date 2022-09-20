@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.50.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.50.2...@standardnotes/web@3.50.3) (2022-09-20)
+
+### Bug Fixes
+
+* close menu & toggle notes list when note action occurs ([#1601](https://github.com/standardnotes/app/issues/1601)) ([91d9364](https://github.com/standardnotes/app/commit/91d9364e950bc5e613b449427fa32761feb30365))
+
 ## [3.50.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.50.1...@standardnotes/web@3.50.2) (2022-09-20)
 
 ### Bug Fixes
