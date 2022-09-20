@@ -1,6 +1,7 @@
 import { UserRolesChangedEvent } from '@standardnotes/domain-events'
 import { DiskStorageService } from '../Storage/DiskStorageService'
 import { AbstractService, InternalEventBusInterface, StorageKey } from '@standardnotes/services'
+import { WebSocketApiServiceInterface } from '@Lib/../../api/dist'
 
 export enum WebSocketsServiceEvent {
   UserRoleMessageReceived = 'WebSocketMessageReceived',
@@ -12,6 +13,7 @@ export class SNWebSocketsService extends AbstractService<WebSocketsServiceEvent,
   constructor(
     private storageService: DiskStorageService,
     private webSocketUrl: string | undefined,
+    private webSocketApiService: WebSocketApiServiceInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -34,10 +36,14 @@ export class SNWebSocketsService extends AbstractService<WebSocketsServiceEvent,
       )._websocket_url
   }
 
-  public startWebSocketConnection(authToken: string): void {
+  async startWebSocketConnection(authToken: string): Promise<void> {
+    const webSocketConectionToken = await this.createWebSocketConnectionToken()
+
+    const authorizationToken = webSocketConectionToken ?? `Bearer+${authToken}`
+
     if (this.webSocketUrl) {
       try {
-        this.webSocket = new WebSocket(`${this.webSocketUrl}?authToken=Bearer+${authToken}`)
+        this.webSocket = new WebSocket(`${this.webSocketUrl}?authToken=${authorizationToken}`)
         this.webSocket.onmessage = this.onWebSocketMessage.bind(this)
         this.webSocket.onclose = this.onWebSocketClose.bind(this)
       } catch (e) {
@@ -59,9 +65,22 @@ export class SNWebSocketsService extends AbstractService<WebSocketsServiceEvent,
     this.webSocket = undefined
   }
 
+  private async createWebSocketConnectionToken(): Promise<string | undefined> {
+    try {
+      const response = await this.webSocketApiService.createConnectionToken()
+
+      return response.data.token
+    } catch (error) {
+      console.error((error as Error).message)
+
+      return undefined
+    }
+  }
+
   override deinit(): void {
     super.deinit()
     ;(this.storageService as unknown) = undefined
+    ;(this.webSocketApiService as unknown) = undefined
     this.closeWebSocketConnection()
   }
 }
