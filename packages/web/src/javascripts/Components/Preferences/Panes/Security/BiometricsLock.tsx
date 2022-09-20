@@ -20,7 +20,7 @@ const BiometricsLock = ({ application }: Props) => {
 
   useEffect(() => {
     const getHasBiometrics = async () => {
-      const appHasBiometrics = await application.hasBiometrics()
+      const appHasBiometrics = application.hasBiometrics()
       setHasBiometrics(appHasBiometrics)
     }
 
@@ -50,7 +50,7 @@ const BiometricsLock = ({ application }: Props) => {
       await disableBiometrics()
     } else {
       setHasBiometrics(true)
-      await application.enableBiometrics()
+      application.enableBiometrics()
       await setBiometricsTimingValue(MobileUnlockTiming.OnQuit)
     }
   }

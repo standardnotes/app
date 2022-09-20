@@ -112,14 +112,10 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     const value = await this.deviceInterface.getRawStorageValue(this.getPersistenceKey())
     const values = value ? JSON.parse(value as string) : undefined
 
-    this.setInitialValues(values)
+    await this.setInitialValues(values)
   }
 
-  /**
-   * Called by platforms with the value they load from disk,
-   * after they handle initializeFromDisk
-   */
-  private setInitialValues(values?: Services.StorageValuesObject) {
+  private async setInitialValues(values?: Services.StorageValuesObject) {
     const sureValues = values || this.defaultValuesObject()
 
     if (!sureValues[Services.ValueModesKeys.Unwrapped]) {
@@ -127,6 +123,13 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     }
 
     this.values = sureValues
+
+    if (!this.isStorageWrapped()) {
+      this.values[Services.ValueModesKeys.Unwrapped] = {
+        ...(this.values[Services.ValueModesKeys.Wrapped].content as object),
+        ...this.values[Services.ValueModesKeys.Unwrapped],
+      }
+    }
   }
 
   public isStorageWrapped(): boolean {
@@ -370,7 +373,7 @@ export class DiskStorageService extends Services.AbstractService implements Serv
    * Clears simple values from storage only. Does not affect payloads.
    */
   async clearValues() {
-    this.setInitialValues()
+    await this.setInitialValues()
     await this.immediatelyPersistValuesToDisk()
   }
 

@@ -76,6 +76,11 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
     if (this.isNativeMobileWeb()) {
       this.mobileWebReceiver = new MobileWebReceiver(this)
+
+      // eslint-disable-next-line no-console
+      console.log = (...args) => {
+        this.mobileDevice.consoleLog(...args)
+      }
     }
 
     this.onVisibilityChange = () => {
@@ -228,7 +233,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   async handleMobileGainingFocusEvent(): Promise<void> {}
 
   async handleMobileLosingFocusEvent(): Promise<void> {
-    if (await this.getMobileScreenshotPrivacyEnabled()) {
+    if (this.getMobileScreenshotPrivacyEnabled()) {
       this.mobileDevice.stopHidingMobileInterfaceFromScreenshots()
     }
 
@@ -236,7 +241,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   async handleMobileResumingFromBackgroundEvent(): Promise<void> {
-    if (await this.getMobileScreenshotPrivacyEnabled()) {
+    if (this.getMobileScreenshotPrivacyEnabled()) {
       this.mobileDevice.hideMobileInterfaceFromScreenshots()
     }
   }

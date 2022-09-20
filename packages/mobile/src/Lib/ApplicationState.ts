@@ -570,7 +570,7 @@ export class ApplicationState extends ApplicationService {
     ).includes(state)
   }
 
-  private async getScreenshotPrivacyEnabled(): Promise<boolean | undefined> {
+  private async getScreenshotPrivacyEnabled(): Promise<boolean> {
     return this.application.getMobileScreenshotPrivacyEnabled()
   }
 
