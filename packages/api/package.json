@@ -32,7 +32,8 @@
     "eslint": "^8.23.0",
     "eslint-plugin-prettier": "*",
     "jest": "^28.1.2",
-    "ts-jest": "^28.0.5"
+    "ts-jest": "^28.0.5",
+    "typescript": "*"
   },
   "dependencies": {
     "@standardnotes/common": "^1.32.0",
