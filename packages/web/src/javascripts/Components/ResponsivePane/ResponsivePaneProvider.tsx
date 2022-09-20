@@ -1,6 +1,6 @@
 import { ElementIds } from '@/Constants/ElementIDs'
 import { isMobileScreen } from '@/Utils'
-import { useEffect, ReactNode, useMemo, createContext, useCallback, useContext, useState } from 'react'
+import { useEffect, ReactNode, useMemo, createContext, useCallback, useContext, useState, memo } from 'react'
 import { AppPaneId } from './AppPaneMetadata'
 
 type ResponsivePaneData = {
@@ -23,6 +23,8 @@ export const useResponsiveAppPane = () => {
 type Props = {
   children: ReactNode
 }
+
+const MemoizedChildren = memo(({ children }: Props) => <div>{children}</div>)
 
 const ResponsivePaneProvider = ({ children }: Props) => {
   const [currentSelectedPane, setCurrentSelectedPane] = useState<AppPaneId>(
@@ -63,7 +65,11 @@ const ResponsivePaneProvider = ({ children }: Props) => {
     [currentSelectedPane, toggleAppPane],
   )
 
-  return <ResponsivePaneContext.Provider value={contextValue}>{children}</ResponsivePaneContext.Provider>
+  return (
+    <ResponsivePaneContext.Provider value={contextValue}>
+      <MemoizedChildren children={children} />
+    </ResponsivePaneContext.Provider>
+  )
 }
 
 export default ResponsivePaneProvider

@@ -23,9 +23,11 @@ const NotesContextMenu = ({
   noteTagsController,
   historyModalController,
 }: Props) => {
-  const { contextMenuOpen, contextMenuClickLocation } = notesController
+  const { contextMenuOpen, contextMenuClickLocation, setContextMenuOpen } = notesController
 
   const contextMenuRef = useRef<HTMLDivElement>(null)
+
+  const closeMenu = () => setContextMenuOpen(!contextMenuOpen)
 
   return (
     <Popover
@@ -37,7 +39,7 @@ const NotesContextMenu = ({
       className="py-2"
       open={contextMenuOpen}
       side="right"
-      togglePopover={() => notesController.setContextMenuOpen(!contextMenuOpen)}
+      togglePopover={closeMenu}
     >
       <div ref={contextMenuRef}>
         <NotesOptions
@@ -46,6 +48,7 @@ const NotesContextMenu = ({
           notesController={notesController}
           noteTagsController={noteTagsController}
           historyModalController={historyModalController}
+          closeMenu={closeMenu}
         />
       </div>
     </Popover>

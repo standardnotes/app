@@ -13,6 +13,8 @@ import { NotesOptionsProps } from './NotesOptionsProps'
 import { NotesController } from '@/Controllers/NotesController'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { formatDateForContextMenu } from '@/Utils/DateUtils'
+import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
+import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 
 type DeletePermanentlyButtonProps = {
   onClick: () => void
@@ -175,8 +177,10 @@ const NotesOptions = ({
   notesController,
   noteTagsController,
   historyModalController,
+  closeMenu,
 }: NotesOptionsProps) => {
   const [altKeyDown, setAltKeyDown] = useState(false)
+  const { toggleAppPane } = useResponsiveAppPane()
 
   const toggleOn = (condition: (note: SNNote) => boolean) => {
     const notesMatchingAttribute = notes.filter(condition)
@@ -252,10 +256,14 @@ const NotesOptions = ({
     }
   }, [application, getNoteFileName, notes])
 
-  const duplicateSelectedItems = useCallback(() => {
-    notes.forEach((note) => {
-      application.mutator.duplicateItem(note).catch(console.error)
-    })
+  const closeMenuAndToggleNotesList = useCallback(() => {
+    toggleAppPane(AppPaneId.Items)
+    closeMenu()
+  }, [])
+
+  const duplicateSelectedItems = useCallback(async () => {
+    await Promise.all(notes.map((note) => application.mutator.duplicateItem(note).catch(console.error)))
+    closeMenuAndToggleNotesList()
   }, [application, notes])
 
   const openRevisionHistoryModal = useCallback(() => {
@@ -365,8 +373,9 @@ const NotesOptions = ({
       {unarchived && (
         <button
           className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
-          onClick={() => {
-            notesController.setArchiveSelectedNotes(true).catch(console.error)
+          onClick={async () => {
+            await notesController.setArchiveSelectedNotes(true).catch(console.error)
+            closeMenuAndToggleNotesList()
           }}
         >
           <Icon type="archive" className={iconClassWarning} />
@@ -376,8 +385,9 @@ const NotesOptions = ({
       {archived && (
         <button
           className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
-          onClick={() => {
-            notesController.setArchiveSelectedNotes(false).catch(console.error)
+          onClick={async () => {
+            await notesController.setArchiveSelectedNotes(false).catch(console.error)
+            closeMenuAndToggleNotesList()
           }}
         >
           <Icon type="unarchive" className={iconClassWarning} />
@@ -389,6 +399,7 @@ const NotesOptions = ({
           <DeletePermanentlyButton
             onClick={async () => {
               await notesController.deleteNotesPermanently()
+              closeMenuAndToggleNotesList()
             }}
           />
         ) : (
@@ -396,6 +407,7 @@ const NotesOptions = ({
             className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
             onClick={async () => {
               await notesController.setTrashSelectedNotes(true)
+              closeMenuAndToggleNotesList()
             }}
           >
             <Icon type="trash" className={iconClassDanger} />
@@ -408,6 +420,7 @@ const NotesOptions = ({
             className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
             onClick={async () => {
               await notesController.setTrashSelectedNotes(false)
+              closeMenuAndToggleNotesList()
             }}
           >
             <Icon type="restore" className={iconClassSuccess} />
@@ -416,12 +429,14 @@ const NotesOptions = ({
           <DeletePermanentlyButton
             onClick={async () => {
               await notesController.deleteNotesPermanently()
+              closeMenuAndToggleNotesList()
             }}
           />
           <button
             className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
             onClick={async () => {
               await notesController.emptyTrash()
+              closeMenuAndToggleNotesList()
             }}
           >
             <div className="flex items-start">
