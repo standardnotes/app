@@ -1,4 +1,5 @@
 import { ElementIds } from '@/Constants/ElementIDs'
+import { isMobileScreen } from '@/Utils'
 import { useEffect, ReactNode, useMemo, createContext, useCallback, useContext, useState } from 'react'
 import { AppPaneId } from './AppPaneMetadata'
 
@@ -24,8 +25,12 @@ type Props = {
 }
 
 const ResponsivePaneProvider = ({ children }: Props) => {
-  const [currentSelectedPane, setCurrentSelectedPane] = useState<AppPaneId>(AppPaneId.Editor)
-  const [previousSelectedPane, setPreviousSelectedPane] = useState<AppPaneId>(AppPaneId.Editor)
+  const [currentSelectedPane, setCurrentSelectedPane] = useState<AppPaneId>(
+    isMobileScreen() ? AppPaneId.Items : AppPaneId.Editor,
+  )
+  const [previousSelectedPane, setPreviousSelectedPane] = useState<AppPaneId>(
+    isMobileScreen() ? AppPaneId.Items : AppPaneId.Editor,
+  )
 
   const toggleAppPane = useCallback(
     (paneId: AppPaneId) => {
