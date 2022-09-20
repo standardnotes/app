@@ -3,7 +3,7 @@ import { DiskStorageService } from './DiskStorageService'
 import { InternalEventBus, DeviceInterface, InternalEventBusInterface } from '@standardnotes/services'
 import { Environment } from '@standardnotes/models'
 
-describe.only('diskStorageService', () => {
+describe('diskStorageService', () => {
   let storageService: DiskStorageService
   let internalEventBus: InternalEventBusInterface
   let device: DeviceInterface
