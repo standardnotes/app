@@ -259,12 +259,12 @@ const NotesOptions = ({
   const closeMenuAndToggleNotesList = useCallback(() => {
     toggleAppPane(AppPaneId.Items)
     closeMenu()
-  }, [])
+  }, [closeMenu, toggleAppPane])
 
   const duplicateSelectedItems = useCallback(async () => {
     await Promise.all(notes.map((note) => application.mutator.duplicateItem(note).catch(console.error)))
     closeMenuAndToggleNotesList()
-  }, [application, notes])
+  }, [application.mutator, closeMenuAndToggleNotesList, notes])
 
   const openRevisionHistoryModal = useCallback(() => {
     historyModalController.openModal(notesController.firstSelectedNote)
