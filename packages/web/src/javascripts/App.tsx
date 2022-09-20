@@ -66,7 +66,10 @@ const startApplication: StartApplication = async function startApplication(
     root = createRoot(appendedRootNode)
 
     disableIosTextFieldZoom()
-    document.documentElement.style.setProperty('--viewport-height', `${window.innerHeight}px`)
+    document.documentElement.style.setProperty(
+      '--viewport-height',
+      `${visualViewport ? visualViewport.height : window.innerHeight}px`,
+    )
 
     root.render(
       <ApplicationGroupView
