@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.50.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.50.0...@standardnotes/web@3.50.1) (2022-09-20)
+
+### Bug Fixes
+
+* default to notes list on launch on mobile ([#1599](https://github.com/standardnotes/app/issues/1599)) ([571919c](https://github.com/standardnotes/app/commit/571919c9696212d4389692ccdf53e60a2bc06e16))
+
 # [3.50.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.49.3...@standardnotes/web@3.50.0) (2022-09-19)
 
 ### Bug Fixes
