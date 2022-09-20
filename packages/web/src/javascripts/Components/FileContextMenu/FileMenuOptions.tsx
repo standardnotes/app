@@ -74,7 +74,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
   const closeMenuAndToggleFilesList = useCallback(() => {
     toggleAppPane(AppPaneId.Items)
     closeMenu()
-  }, [])
+  }, [closeMenu, toggleAppPane])
 
   return (
     <>
