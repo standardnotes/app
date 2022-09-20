@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0](https://github.com/standardnotes/app/compare/@standardnotes/api@1.7.2...@standardnotes/api@1.8.0) (2022-09-20)
+
+### Features
+
+* **api:** add websocket api definitions ([4a773fa](https://github.com/standardnotes/app/commit/4a773fa53796e17ce5df325ed7d40ba2cb686476))
+
 ## [1.7.2](https://github.com/standardnotes/app/compare/@standardnotes/api@1.7.1...@standardnotes/api@1.7.2) (2022-09-15)
 
 **Note:** Version bump only for package @standardnotes/api
