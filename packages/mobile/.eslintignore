@@ -6,3 +6,4 @@ e2e
 android
 fastlane
 WebFrame
+__tests__

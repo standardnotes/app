@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ['../.eslintrc.js'],
+  extends: ['../.eslintrc'],
   globals: {
     chai: true,
     chaiAsPromised: true,

@@ -38,14 +38,14 @@ export const SecuritySection = (props: Props) => {
   useEffect(() => {
     let mounted = true
     const getHasScreenshotPrivacy = async () => {
-      const hasScreenshotPrivacyEnabled = (await application?.getMobileScreenshotPrivacyEnabled()) ?? true
+      const hasScreenshotPrivacyEnabled = application?.getMobileScreenshotPrivacyEnabled()
       if (mounted) {
         setHasScreenshotPrivacy(hasScreenshotPrivacyEnabled)
       }
     }
     void getHasScreenshotPrivacy()
     const getHasBiometrics = async () => {
-      const appHasBiometrics = await application!.hasBiometrics()
+      const appHasBiometrics = application!.hasBiometrics()
       if (mounted) {
         setHasBiometrics(appHasBiometrics)
       }

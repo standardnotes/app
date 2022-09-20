@@ -19,7 +19,9 @@
     "__mocks__",
     "src/components",
     "src/favicon",
-    "src/vendor"
+    "src/vendor",
+    "coverage",
+    "*.config.js"
   ],
   "rules": {
     "standard/no-callback-literal": 0, // Disable this as we have too many callbacks relying on literals

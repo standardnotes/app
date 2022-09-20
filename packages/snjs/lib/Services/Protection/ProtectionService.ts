@@ -257,36 +257,36 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
     ]
   }
 
-  private async getBiometricsTiming(): Promise<MobileUnlockTiming | undefined> {
-    return this.storageService.getValue<Promise<MobileUnlockTiming | undefined>>(
+  private getBiometricsTiming(): MobileUnlockTiming | undefined {
+    return this.storageService.getValue<MobileUnlockTiming | undefined>(
       StorageKey.MobileBiometricsTiming,
       StorageValueModes.Nonwrapped,
     )
   }
 
-  private async getPasscodeTiming(): Promise<MobileUnlockTiming | undefined> {
-    return this.storageService.getValue<Promise<MobileUnlockTiming | undefined>>(
+  private getPasscodeTiming(): MobileUnlockTiming | undefined {
+    return this.storageService.getValue<MobileUnlockTiming | undefined>(
       StorageKey.MobilePasscodeTiming,
       StorageValueModes.Nonwrapped,
     )
   }
 
   async setBiometricsTiming(timing: MobileUnlockTiming) {
-    await this.storageService.setValue(StorageKey.MobileBiometricsTiming, timing, StorageValueModes.Nonwrapped)
+    this.storageService.setValue(StorageKey.MobileBiometricsTiming, timing, StorageValueModes.Nonwrapped)
     this.mobileBiometricsTiming = timing
   }
 
-  async setMobileScreenshotPrivacyEnabled(isEnabled: boolean) {
+  setMobileScreenshotPrivacyEnabled(isEnabled: boolean) {
     return this.storageService.setValue(StorageKey.MobileScreenshotPrivacyEnabled, isEnabled, StorageValueModes.Default)
   }
 
-  async getMobileScreenshotPrivacyEnabled(): Promise<boolean | undefined> {
-    return this.storageService.getValue(StorageKey.MobileScreenshotPrivacyEnabled, StorageValueModes.Default)
+  getMobileScreenshotPrivacyEnabled(): boolean {
+    return this.storageService.getValue(StorageKey.MobileScreenshotPrivacyEnabled, StorageValueModes.Default, false)
   }
 
-  async loadMobileUnlockTiming() {
-    this.mobilePasscodeTiming = await this.getPasscodeTiming()
-    this.mobileBiometricsTiming = await this.getBiometricsTiming()
+  loadMobileUnlockTiming(): void {
+    this.mobilePasscodeTiming = this.getPasscodeTiming()
+    this.mobileBiometricsTiming = this.getBiometricsTiming()
   }
 
   private async validateOrRenewSession(

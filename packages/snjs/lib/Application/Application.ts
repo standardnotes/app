@@ -324,6 +324,7 @@ export class SNApplication
         )
       }
     }
+
     await this.handleStage(ExternalServices.ApplicationStage.StorageDecrypted_09)
 
     this.apiService.loadHost()
@@ -929,28 +930,28 @@ export class SNApplication
     return this.deinit(this.getDeinitMode(), DeinitSource.Lock)
   }
 
-  async setBiometricsTiming(timing: MobileUnlockTiming) {
+  setBiometricsTiming(timing: MobileUnlockTiming) {
     return this.protectionService.setBiometricsTiming(timing)
   }
 
-  async getMobileScreenshotPrivacyEnabled(): Promise<boolean | undefined> {
+  getMobileScreenshotPrivacyEnabled(): boolean {
     return this.protectionService.getMobileScreenshotPrivacyEnabled()
   }
 
-  async getMobilePasscodeTiming(): Promise<MobileUnlockTiming | undefined> {
-    return this.getValue(StorageKey.MobilePasscodeTiming, StorageValueModes.Nonwrapped) as Promise<
-      MobileUnlockTiming | undefined
-    >
-  }
-
-  async getMobileBiometricsTiming(): Promise<MobileUnlockTiming | undefined> {
-    return this.getValue(StorageKey.MobileBiometricsTiming, StorageValueModes.Nonwrapped) as Promise<
-      MobileUnlockTiming | undefined
-    >
-  }
-
-  async setMobileScreenshotPrivacyEnabled(isEnabled: boolean) {
+  setMobileScreenshotPrivacyEnabled(isEnabled: boolean) {
     return this.protectionService.setMobileScreenshotPrivacyEnabled(isEnabled)
+  }
+
+  getMobilePasscodeTiming(): MobileUnlockTiming | undefined {
+    return this.getValue(StorageKey.MobilePasscodeTiming, StorageValueModes.Nonwrapped) as
+      | MobileUnlockTiming
+      | undefined
+  }
+
+  getMobileBiometricsTiming(): MobileUnlockTiming | undefined {
+    return this.getValue(StorageKey.MobileBiometricsTiming, StorageValueModes.Nonwrapped) as
+      | MobileUnlockTiming
+      | undefined
   }
 
   async loadMobileUnlockTiming() {

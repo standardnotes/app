@@ -73,6 +73,11 @@ export class MobileDevice implements MobileDeviceInterface {
     ;(this.stateObserverService as unknown) = undefined
   }
 
+  consoleLog(...args: any[]): void {
+    // eslint-disable-next-line no-console
+    console.log(args)
+  }
+
   async setLegacyRawKeychainValue(value: LegacyRawKeychainValue): Promise<void> {
     await Keychain.setKeys(value)
   }
@@ -378,7 +383,7 @@ export class MobileDevice implements MobileDeviceInterface {
     await Keychain.clearKeys()
   }
 
-  async setAndroidScreenshotPrivacy(enable: boolean): Promise<void> {
+  setAndroidScreenshotPrivacy(enable: boolean): void {
     if (Platform.OS === 'android') {
       enable ? FlagSecure.activate() : FlagSecure.deactivate()
     }
