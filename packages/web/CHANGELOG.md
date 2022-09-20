@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.50.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.50.3...@standardnotes/web@3.50.4) (2022-09-20)
+
+### Bug Fixes
+
+* move wrapped storage to unwrapped if not encrypted ([#1603](https://github.com/standardnotes/app/issues/1603)) ([c5e225d](https://github.com/standardnotes/app/commit/c5e225d335537257f44168b8ad05222afccb508a))
+
 ## [3.50.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.50.2...@standardnotes/web@3.50.3) (2022-09-20)
 
 ### Bug Fixes

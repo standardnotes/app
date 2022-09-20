@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.130.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.130.1...@standardnotes/snjs@2.130.2) (2022-09-20)
+
+### Bug Fixes
+
+* move wrapped storage to unwrapped if not encrypted ([#1603](https://github.com/standardnotes/app/issues/1603)) ([c5e225d](https://github.com/standardnotes/app/commit/c5e225d335537257f44168b8ad05222afccb508a))
+
 ## [2.130.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.130.0...@standardnotes/snjs@2.130.1) (2022-09-20)
 
 **Note:** Version bump only for package @standardnotes/snjs
