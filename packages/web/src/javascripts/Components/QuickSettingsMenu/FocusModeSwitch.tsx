@@ -5,6 +5,7 @@ import Icon from '@/Components/Icon/Icon'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import Switch from '@/Components/Switch/Switch'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
+import { isMobileScreen } from '@/Utils'
 
 type Props = {
   application: WebApplication
@@ -34,11 +35,12 @@ const FocusModeSwitch: FunctionComponent<Props> = ({ application, onToggle, onCl
   return (
     <>
       <button
-        className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+        className="group flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none disabled:bg-default disabled:text-passive-2"
         onClick={toggle}
+        disabled={application.isNativeMobileWeb() || isMobileScreen()}
       >
         <div className="flex items-center">
-          <Icon type="menu-close" className="mr-2 text-neutral" />
+          <Icon type="menu-close" className="mr-2 text-neutral group-disabled:text-passive-2" />
           Focused Writing
         </div>
         {isEntitled ? (
