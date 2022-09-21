@@ -34,7 +34,7 @@ const FocusModeSwitch: FunctionComponent<Props> = ({ application, onToggle, onCl
   return (
     <>
       <button
-        className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+        className="hidden w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none md:flex"
         onClick={toggle}
       >
         <div className="flex items-center">
