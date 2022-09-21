@@ -12,9 +12,14 @@ import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/Premium
 type RemoteHistoryListProps = {
   features: FeaturesClientInterface
   noteHistoryController: NoteHistoryController
+  onSelectRevision: () => void
 }
 
-const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({ features, noteHistoryController }) => {
+const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({
+  features,
+  noteHistoryController,
+  onSelectRevision,
+}) => {
   const { remoteHistory, isFetchingRemoteHistory, selectRemoteRevision, selectedEntry } = noteHistoryController
 
   const remoteHistoryListRef = useRef<HTMLDivElement>(null)
@@ -44,6 +49,7 @@ const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({ features
                   isSelected={(selectedEntry as RevisionListEntry)?.uuid === entry.uuid}
                   onClick={() => {
                     selectRemoteRevision(entry)
+                    onSelectRevision()
                   }}
                 >
                   <div className="flex flex-grow items-center justify-between">

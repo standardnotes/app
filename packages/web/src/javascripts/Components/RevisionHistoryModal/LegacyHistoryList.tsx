@@ -7,9 +7,10 @@ import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryCont
 type Props = {
   legacyHistory: Action[] | undefined
   noteHistoryController: NoteHistoryController
+  onSelectRevision: () => void
 }
 
-const LegacyHistoryList: FunctionComponent<Props> = ({ legacyHistory, noteHistoryController }) => {
+const LegacyHistoryList: FunctionComponent<Props> = ({ legacyHistory, noteHistoryController, onSelectRevision }) => {
   const { selectLegacyRevision, selectedEntry } = noteHistoryController
 
   const legacyHistoryListRef = useRef<HTMLDivElement>(null)
@@ -33,6 +34,7 @@ const LegacyHistoryList: FunctionComponent<Props> = ({ legacyHistory, noteHistor
             isSelected={selectedEntryUrl === url}
             onClick={() => {
               selectLegacyRevision(entry)
+              onSelectRevision()
             }}
           >
             {entry.label}

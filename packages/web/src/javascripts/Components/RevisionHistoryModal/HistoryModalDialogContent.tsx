@@ -7,6 +7,7 @@ import HistoryModalContentPane from './HistoryModalContentPane'
 import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
 import Icon from '../Icon/Icon'
 import { classNames } from '@/Utils/ConcatenateClassNames'
+import { HistoryModalMobileTab } from './utils'
 
 const HistoryModalDialogContent = ({
   application,
@@ -18,7 +19,7 @@ const HistoryModalDialogContent = ({
 }: RevisionHistoryModalContentProps) => {
   const [noteHistoryController] = useState(() => new NoteHistoryController(application, note, selectionController))
 
-  const [selectedMobileTab, setSelectedMobileTab] = useState<'List' | 'Content'>('Content')
+  const [selectedMobileTab, setSelectedMobileTab] = useState<HistoryModalMobileTab>('Content')
 
   return (
     <>
@@ -56,7 +57,11 @@ const HistoryModalDialogContent = ({
             selectedMobileTab === 'List' ? 'flex' : 'hidden',
           )}
         >
-          <HistoryListContainer features={application.features} noteHistoryController={noteHistoryController} />
+          <HistoryListContainer
+            features={application.features}
+            noteHistoryController={noteHistoryController}
+            selectMobileModalTab={setSelectedMobileTab}
+          />
         </div>
         <div
           className={classNames(
