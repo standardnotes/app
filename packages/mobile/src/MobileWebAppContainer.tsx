@@ -1,11 +1,19 @@
 import { MobileDevice, MobileDeviceEvent } from '@Lib/Interface'
+import { IsDev } from '@Lib/Utils'
 import { ReactNativeToWebEvent } from '@standardnotes/snjs'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Platform } from 'react-native'
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { Platform, SafeAreaView } from 'react-native'
 import { WebView, WebViewMessageEvent } from 'react-native-webview'
+import { ThemeContext } from 'styled-components'
+import styled from 'styled-components/native'
 import { AppStateObserverService } from './AppStateObserverService'
 
-const LoggingEnabled = false
+const LoggingEnabled = IsDev
+
+const StyledSafeAreaView = styled(SafeAreaView)`
+  flex: 1;
+  ${(props) => `background-color: ${props.theme.stylekitBackgroundColor}`}
+`
 
 export const MobileWebAppContainer = () => {
   const [identifier, setIdentifier] = useState(Math.random())
@@ -18,6 +26,7 @@ export const MobileWebAppContainer = () => {
 }
 
 const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => void }) => {
+  const theme = useContext(ThemeContext)
   const webViewRef = useRef<WebView>(null)
   const sourceUri = (Platform.OS === 'android' ? 'file:///android_asset/' : '') + 'Web.bundle/src/index.html'
   const stateService = useMemo(() => new AppStateObserverService(), [])
@@ -171,19 +180,20 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
 
   /* eslint-disable @typescript-eslint/no-empty-function */
   return (
-    <WebView
-      ref={webViewRef}
-      source={{ uri: sourceUri }}
-      originWhitelist={['*']}
-      contentInset={{ top: 30, bottom: 10 }}
-      onLoad={() => {}}
-      onError={(err) => console.error('An error has occurred', err)}
-      onHttpError={() => console.error('An HTTP error occurred')}
-      onMessage={onMessage}
-      allowFileAccess={true}
-      allowUniversalAccessFromFileURLs={true}
-      injectedJavaScriptBeforeContentLoaded={injectedJS}
-    />
+    <StyledSafeAreaView theme={theme}>
+      <WebView
+        ref={webViewRef}
+        source={{ uri: sourceUri }}
+        originWhitelist={['*']}
+        onLoad={() => {}}
+        onError={(err) => console.error('An error has occurred', err)}
+        onHttpError={() => console.error('An HTTP error occurred')}
+        onMessage={onMessage}
+        allowFileAccess={true}
+        allowUniversalAccessFromFileURLs={true}
+        injectedJavaScriptBeforeContentLoaded={injectedJS}
+      />
+    </StyledSafeAreaView>
   )
   /* eslint-enable @typescript-eslint/no-empty-function */
 }
