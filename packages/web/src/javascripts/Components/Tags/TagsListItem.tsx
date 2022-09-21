@@ -202,7 +202,9 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
 
   return (
     <>
-      <button
+      <div
+        role="button"
+        tabIndex={0}
         className={classNames(
           'tag py-2 px-3.5 focus:shadow-inner md:py-1',
           isSelected && 'selected',
@@ -272,7 +274,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
         <div className={`meta ${hasAtLeastOneFolder ? 'with-folders' : ''}`}>
           {tag.conflictOf && <div className="danger text-[0.625rem] font-bold">Conflicted Copy {tag.conflictOf}</div>}
         </div>
-      </button>
+      </div>
       {isAddingSubtag && (
         <div
           className="tag overflow-hidden"
