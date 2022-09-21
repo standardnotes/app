@@ -13,7 +13,7 @@ import InviteForm from './InviteForm'
 import InviteSuccess from './InviteSuccess'
 
 enum SubmitButtonTitles {
-  Default = 'Send Invitation',
+  Default = 'Send Invite',
   Sending = 'Sending...',
   Finish = 'Finish',
 }
@@ -96,7 +96,7 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
     const success = await processInvite()
     if (!success) {
       application.alertService
-        .alert('We could not send the invitation. Please try again or contact support if the issue persists.')
+        .alert('An error occurred while sending the invite. Please try again or contact support if the issue persists.')
         .catch(console.error)
 
       resetProgressState()
@@ -112,7 +112,7 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
   return (
     <div>
       <ModalDialog>
-        <ModalDialogLabel closeDialog={handleDialogClose}>Invite</ModalDialogLabel>
+        <ModalDialogLabel closeDialog={handleDialogClose}>Share your Subscription</ModalDialogLabel>
         <ModalDialogDescription className="flex flex-row items-center px-4.5">
           {currentStep === Steps.InitialStep && <InviteForm setInviteeEmail={setInviteeEmail} />}
           {currentStep === Steps.FinishStep && <InviteSuccess />}

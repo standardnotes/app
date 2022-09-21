@@ -51,7 +51,7 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
 
   return (
     <div>
-      <SubtitleLight className="mb-2 text-info">Active Invitations:</SubtitleLight>
+      <SubtitleLight className="mb-2 text-info">Active Invites:</SubtitleLight>
       {activeSubscriptions?.map((invitation) => (
         <div key={invitation.uuid} className="mt-1 mb-4">
           <Text>
@@ -64,7 +64,7 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
       ))}
       {!!inActiveSubscriptions?.length && (
         <>
-          <SubtitleLight className="mb-2 text-info">Inactive Invitations:</SubtitleLight>
+          <SubtitleLight className="mb-2 text-info">Inactive Invites:</SubtitleLight>
           <div>
             {inActiveSubscriptions?.map((invitation) => (
               <div key={invitation.uuid} className="mb-3 first:mt-2">

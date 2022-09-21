@@ -9,8 +9,8 @@ const SharingStatusText = ({ subscriptionState }: Props) => {
 
   return (
     <Text className="mt-1">
-      You have have used <span className="font-bold">{usedInvitationsCount}</span> out of {allowedInvitationsCount}{' '}
-      subscription invitations.
+      You've used <span className="font-bold">{usedInvitationsCount}</span> out of {allowedInvitationsCount}{' '}
+      subscription invites.
     </Text>
   )
 }
