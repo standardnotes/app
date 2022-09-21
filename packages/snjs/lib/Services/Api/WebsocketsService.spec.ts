@@ -1,4 +1,6 @@
 import { InternalEventBusInterface } from '@standardnotes/services'
+import { WebSocketApiServiceInterface } from '@standardnotes/api'
+
 import { StorageKey, DiskStorageService } from '@Lib/index'
 import { SNWebSocketsService } from './WebsocketsService'
 
@@ -6,10 +8,11 @@ describe('webSocketsService', () => {
   const webSocketUrl = ''
 
   let storageService: DiskStorageService
+  let webSocketApiService: WebSocketApiServiceInterface
   let internalEventBus: InternalEventBusInterface
 
   const createService = () => {
-    return new SNWebSocketsService(storageService, webSocketUrl, internalEventBus)
+    return new SNWebSocketsService(storageService, webSocketUrl, webSocketApiService, internalEventBus)
   }
 
   beforeEach(() => {
@@ -18,6 +21,9 @@ describe('webSocketsService', () => {
 
     internalEventBus = {} as jest.Mocked<InternalEventBusInterface>
     internalEventBus.publish = jest.fn()
+
+    webSocketApiService = {} as jest.Mocked<WebSocketApiServiceInterface>
+    webSocketApiService.createConnectionToken = jest.fn().mockReturnValue({ token: 'foobar' })
   })
 
   describe('setWebSocketUrl()', () => {

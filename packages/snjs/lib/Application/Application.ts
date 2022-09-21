@@ -10,6 +10,10 @@ import {
   UserRegistrationResponseBody,
   UserServer,
   UserServerInterface,
+  WebSocketApiService,
+  WebSocketApiServiceInterface,
+  WebSocketServer,
+  WebSocketServerInterface,
 } from '@standardnotes/api'
 import * as Common from '@standardnotes/common'
 import * as ExternalServices from '@standardnotes/services'
@@ -108,6 +112,8 @@ export class SNApplication
   private declare subscriptionApiService: SubscriptionApiServiceInterface
   private declare subscriptionServer: SubscriptionServerInterface
   private declare subscriptionManager: SubscriptionClientInterface
+  private declare webSocketApiService: WebSocketApiServiceInterface
+  private declare webSocketServer: WebSocketServerInterface
   private sessionManager!: InternalServices.SNSessionManager
   private syncService!: InternalServices.SNSyncService
   private challengeService!: InternalServices.ChallengeService
@@ -329,7 +335,7 @@ export class SNApplication
 
     this.apiService.loadHost()
     this.webSocketsService.loadWebSocketUrl()
-    this.sessionManager.initializeFromDisk()
+    await this.sessionManager.initializeFromDisk()
 
     this.settingsService.initializeFromDisk()
 
@@ -1094,6 +1100,8 @@ export class SNApplication
     this.createUserApiService()
     this.createSubscriptionServer()
     this.createSubscriptionApiService()
+    this.createWebSocketServer()
+    this.createWebSocketApiService()
     this.createSubscriptionManager()
     this.createWebSocketsService()
     this.createSessionManager()
@@ -1135,6 +1143,8 @@ export class SNApplication
     ;(this.userServer as unknown) = undefined
     ;(this.subscriptionApiService as unknown) = undefined
     ;(this.subscriptionServer as unknown) = undefined
+    ;(this.webSocketApiService as unknown) = undefined
+    ;(this.webSocketServer as unknown) = undefined
     ;(this.subscriptionManager as unknown) = undefined
     ;(this.sessionManager as unknown) = undefined
     ;(this.syncService as unknown) = undefined
@@ -1252,6 +1262,7 @@ export class SNApplication
     this.webSocketsService = new InternalServices.SNWebSocketsService(
       this.diskStorageService,
       this.options.webSocketUrl,
+      this.webSocketApiService,
       this.internalEventBus,
     )
     this.services.push(this.webSocketsService)
@@ -1335,6 +1346,14 @@ export class SNApplication
 
   private createSubscriptionServer() {
     this.subscriptionServer = new SubscriptionServer(this.httpService)
+  }
+
+  private createWebSocketApiService() {
+    this.webSocketApiService = new WebSocketApiService(this.webSocketServer)
+  }
+
+  private createWebSocketServer() {
+    this.webSocketServer = new WebSocketServer(this.httpService)
   }
 
   private createSubscriptionManager() {

@@ -107,7 +107,7 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
     this.apiService.setUser(user)
   }
 
-  public initializeFromDisk() {
+  async initializeFromDisk() {
     this.setUser(this.diskStorageService.getValue(StorageKey.User))
 
     if (!this.user) {
@@ -121,7 +121,7 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
     if (rawSession) {
       const session = SessionFromRawStorageValue(rawSession)
       this.setSession(session, false)
-      this.webSocketsService.startWebSocketConnection(session.authorizationValue)
+      await this.webSocketsService.startWebSocketConnection()
     }
   }
 
@@ -623,9 +623,9 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
 
     this.httpService.setHost(host)
 
-    await this.setSession(session)
+    this.setSession(session)
 
-    this.webSocketsService.startWebSocketConnection(session.authorizationValue)
+    await this.webSocketsService.startWebSocketConnection()
   }
 
   private async handleAuthResponse(body: UserRegistrationResponseBody, rootKey: SNRootKey, wrappingKey?: SNRootKey) {
