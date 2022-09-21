@@ -43,16 +43,16 @@ module.exports = {
         125: '31.25rem',
       },
       height: {
-        screen: 'var(--viewport-height)',
+        screen: 'var(--safe-viewport-height)',
       },
       minHeight: {
         1: '0.25rem',
         2: '0.5rem',
-        screen: 'var(--viewport-height)',
+        screen: 'var(--safe-viewport-height)',
       },
       maxHeight: {
         110: '27.5rem',
-        screen: 'var(--viewport-height)',
+        screen: 'var(--safe-viewport-height)',
       },
       zIndex: {
         'editor-content': 'var(--z-index-editor-content)',
