@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.35.6](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.35.5...@standardnotes/mobile@3.35.6) (2022-09-21)
+
+### Bug Fixes
+
+* iOS webview window size and padding ([#1605](https://github.com/standardnotes/app/issues/1605)) ([1ae64dc](https://github.com/standardnotes/app/commit/1ae64dcac4cc714f8931b2301fce1cb802570862))
+
 ## [3.35.5](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.35.4...@standardnotes/mobile@3.35.5) (2022-09-21)
 
 **Note:** Version bump only for package @standardnotes/mobile
