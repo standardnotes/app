@@ -18,7 +18,7 @@ import { ICON_MENU } from '@Style/Icons'
 import { ThemeService } from '@Style/ThemeService'
 import { getDefaultDrawerWidth } from '@Style/Utils'
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { Dimensions, Keyboard, ScaledSize, StatusBar } from 'react-native'
+import { Dimensions, Keyboard, ScaledSize } from 'react-native'
 import DrawerLayout, { DrawerState } from 'react-native-gesture-handler/DrawerLayout'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
 import { ThemeContext } from 'styled-components'
@@ -150,7 +150,6 @@ export const AppStackComponent = (props: ModalStackNavigationProp<'AppStack'>) =
       onDrawerStateChanged={handleDrawerStateChange}
       renderNavigationView={() => !isLocked && <MainSideMenu drawerRef={drawerRef.current} />}
     >
-      <StatusBar translucent={!shouldOpenWebApp} />
       <DrawerLayout
         ref={noteDrawerRef}
         drawerWidth={getDefaultDrawerWidth(dimensions)}
