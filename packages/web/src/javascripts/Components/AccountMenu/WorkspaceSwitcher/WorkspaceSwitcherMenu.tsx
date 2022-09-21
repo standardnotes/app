@@ -45,9 +45,7 @@ const WorkspaceSwitcherMenu: FunctionComponent<Props> = ({
 
   const signoutAll = useCallback(async () => {
     const confirmed = await viewControllerManager.application.alertService.confirm(
-      `Are you sure you want to sign out of all workspaces on this device?${
-        viewControllerManager.application.isNativeMobileWeb() && '<b> Your app will quit after sign out completes.</b>'
-      }`,
+      'Are you sure you want to sign out of all workspaces on this device?',
       undefined,
       'Sign out all',
       ButtonType.Danger,
@@ -64,44 +62,14 @@ const WorkspaceSwitcherMenu: FunctionComponent<Props> = ({
 
   const activateWorkspace = useCallback(
     async (descriptor: ApplicationDescriptor) => {
-      if (viewControllerManager.application.isNativeMobileWeb()) {
-        const confirmed = await viewControllerManager.application.alertService.confirm(
-          '<b>The app needs to be restarted to activate the workspace</b>',
-          undefined,
-          'Quit app and activate workspace',
-          ButtonType.Danger,
-        )
-
-        if (confirmed) {
-          void mainApplicationGroup.unloadCurrentAndActivateDescriptor(descriptor)
-        }
-
-        return
-      }
-
       void mainApplicationGroup.unloadCurrentAndActivateDescriptor(descriptor)
     },
-    [mainApplicationGroup, viewControllerManager.application],
+    [mainApplicationGroup],
   )
 
   const addAnotherWorkspace = useCallback(async () => {
-    if (viewControllerManager.application.isNativeMobileWeb()) {
-      const confirmed = await viewControllerManager.application.alertService.confirm(
-        '<b>The app needs to be restarted to add another workspace</b>',
-        undefined,
-        'Quit app and add new workspace',
-        ButtonType.Danger,
-      )
-
-      if (confirmed) {
-        void mainApplicationGroup.unloadCurrentAndCreateNewDescriptor()
-      }
-
-      return
-    }
-
     void mainApplicationGroup.unloadCurrentAndCreateNewDescriptor()
-  }, [mainApplicationGroup, viewControllerManager.application])
+  }, [mainApplicationGroup])
 
   return (
     <Menu a11yLabel="Workspace switcher menu" className="px-0 focus:shadow-none" isOpen={isOpen}>
