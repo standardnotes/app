@@ -23,6 +23,15 @@
   --sn-stylekit-editor-font-family: var(--sn-stylekit-sans-serif-font);
 
   --reach-checkbox: 1;
+
+  --safe-area-inset-top: env(safe-area-inset-top, 0);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0);
+  --safe-area-inset-left: env(safe-area-inset-left, 0);
+  --safe-area-inset-right: env(safe-area-inset-right, 0);
+
+  --safe-viewport-height: calc(
+    var(--viewport-height) - calc(var(--safe-area-inset-top) + var(--safe-area-inset-bottom))
+  );
 }
 
 html {
@@ -31,7 +40,14 @@ html {
 
 body {
   font-size: var(--sn-stylekit-base-font-size);
+  background-color: var(--sn-stylekit-background-color);
   color: var(--sn-stylekit-foreground-color);
+}
+
+body,
+.safe-area-padding {
+  padding: var(--safe-area-inset-top) var(--safe-area-inset-right) var(--safe-area-inset-bottom)
+    var(--safe-area-inset-left);
 }
 
 html,

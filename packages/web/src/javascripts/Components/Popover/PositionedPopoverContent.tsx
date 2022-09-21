@@ -57,9 +57,8 @@ const PositionedPopoverContent = ({
     <Portal>
       <div
         className={classNames(
-          'absolute top-0 left-0 flex h-full w-full min-w-80 cursor-auto flex-col overflow-y-auto rounded bg-default shadow-main md:h-auto md:max-w-xs',
+          'safe-area-padding absolute top-0 left-0 flex h-full w-full min-w-80 cursor-auto flex-col overflow-y-auto rounded bg-default shadow-main md:h-auto md:max-w-xs',
           overrideZIndex ? overrideZIndex : 'z-dropdown-menu',
-          className,
         )}
         style={{
           ...styles,
@@ -71,15 +70,17 @@ const PositionedPopoverContent = ({
         }}
         data-popover={id}
       >
-        <div className="md:hidden">
-          <div className="flex items-center justify-end px-3">
-            <button className="rounded-full border border-border p-1" onClick={togglePopover}>
-              <Icon type="close" className="h-4 w-4" />
-            </button>
+        <div className={className}>
+          <div className="md:hidden">
+            <div className="flex items-center justify-end px-3">
+              <button className="rounded-full border border-border p-1" onClick={togglePopover}>
+                <Icon type="close" className="h-4 w-4" />
+              </button>
+            </div>
+            <HorizontalSeparator classes="my-2" />
           </div>
-          <HorizontalSeparator classes="my-2" />
+          {children}
         </div>
-        {children}
       </div>
     </Portal>
   )
