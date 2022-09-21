@@ -112,6 +112,8 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
   return (
     <>
       <div
+        role="button"
+        tabIndex={0}
         className={classNames('tag py-2 px-3.5 md:py-1', isSelected && 'selected', isFaded && 'opacity-50')}
         onClick={selectCurrentTag}
         style={{
