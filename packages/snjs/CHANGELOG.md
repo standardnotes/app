@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.131.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.130.2...@standardnotes/snjs@2.131.0) (2022-09-21)
+
+### Features
+
+* **snjs:** add retrieving web sockets token for establishing connection ([#1602](https://github.com/standardnotes/app/issues/1602)) ([e809328](https://github.com/standardnotes/app/commit/e809328fa86d49f76d24bc0d95db010e483c1853))
+
 ## [2.130.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.130.1...@standardnotes/snjs@2.130.2) (2022-09-20)
 
 ### Bug Fixes
