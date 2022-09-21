@@ -7,7 +7,7 @@ import Switch from '@/Components/Switch/Switch'
 import { ThemeItem } from './ThemeItem'
 import RadioIndicator from '../RadioIndicator/RadioIndicator'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { isMobileScreen } from '@/Utils'
 
 type Props = {
   item: ThemeItem
@@ -44,12 +44,14 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ application, item }) => {
     [application, canActivateTheme, item, premiumModal],
   )
 
+  const isMobile = application.isNativeMobileWeb() || isMobileScreen()
+
   return (
     <button
-      className={classNames(
-        'flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none',
-        item.identifier === FeatureIdentifier.DynamicTheme && 'hidden md:flex',
-      )}
+      className={
+        'group flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none disabled:bg-default disabled:text-passive-2'
+      }
+      disabled={item.identifier === FeatureIdentifier.DynamicTheme && isMobile}
       onClick={toggleTheme}
     >
       {item.component?.isLayerable() ? (
