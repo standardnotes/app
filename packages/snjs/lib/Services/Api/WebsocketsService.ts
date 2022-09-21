@@ -39,7 +39,7 @@ export class SNWebSocketsService extends AbstractService<WebSocketsServiceEvent,
 
   async startWebSocketConnection(): Promise<void> {
     const webSocketConectionToken = await this.createWebSocketConnectionToken()
-    if(webSocketConectionToken === undefined) {
+    if (webSocketConectionToken === undefined) {
       return
     }
 
