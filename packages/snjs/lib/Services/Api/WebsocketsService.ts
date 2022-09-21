@@ -37,14 +37,15 @@ export class SNWebSocketsService extends AbstractService<WebSocketsServiceEvent,
       )._websocket_url
   }
 
-  async startWebSocketConnection(authToken: string): Promise<void> {
+  async startWebSocketConnection(): Promise<void> {
     const webSocketConectionToken = await this.createWebSocketConnectionToken()
-
-    const authorizationToken = webSocketConectionToken ?? `Bearer+${authToken}`
+    if(webSocketConectionToken === undefined) {
+      return
+    }
 
     if (this.webSocketUrl) {
       try {
-        this.webSocket = new WebSocket(`${this.webSocketUrl}?authToken=${authorizationToken}`)
+        this.webSocket = new WebSocket(`${this.webSocketUrl}?authToken=${webSocketConectionToken}`)
         this.webSocket.onmessage = this.onWebSocketMessage.bind(this)
         this.webSocket.onclose = this.onWebSocketClose.bind(this)
       } catch (e) {
