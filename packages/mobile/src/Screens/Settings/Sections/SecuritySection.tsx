@@ -38,7 +38,7 @@ export const SecuritySection = (props: Props) => {
   useEffect(() => {
     let mounted = true
     const getHasScreenshotPrivacy = async () => {
-      const hasScreenshotPrivacyEnabled = application?.getMobileScreenshotPrivacyEnabled()
+      const hasScreenshotPrivacyEnabled = application?.getMobileScreenshotPrivacyEnabled() ?? true
       if (mounted) {
         setHasScreenshotPrivacy(hasScreenshotPrivacyEnabled)
       }
