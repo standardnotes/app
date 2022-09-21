@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.50.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.50.5...@standardnotes/web@3.50.6) (2022-09-21)
+
+### Bug Fixes
+
+* revert webview alert changes ([#1606](https://github.com/standardnotes/app/issues/1606)) ([ee0d444](https://github.com/standardnotes/app/commit/ee0d44405d14505e043aae2c63848bae1c14f1c3))
+* tag input auto-submitting when pressing space ([#1608](https://github.com/standardnotes/app/issues/1608)) ([581a08c](https://github.com/standardnotes/app/commit/581a08cd09e02354676d9c14058475e71be05175))
+
 ## [3.50.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.50.4...@standardnotes/web@3.50.5) (2022-09-21)
 
 ### Bug Fixes
