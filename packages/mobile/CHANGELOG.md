@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.35.7](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.35.6...@standardnotes/mobile@3.35.7) (2022-09-21)
+
+### Bug Fixes
+
+* iOS safe area using CSS ([#1610](https://github.com/standardnotes/app/issues/1610)) ([8fa5663](https://github.com/standardnotes/app/commit/8fa566336ceef8a3d7b559b1aaf342f7c51f21cd))
+
 ## [3.35.6](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.35.5...@standardnotes/mobile@3.35.6) (2022-09-21)
 
 ### Bug Fixes

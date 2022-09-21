@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.51.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.50.6...@standardnotes/web@3.51.0) (2022-09-21)
+
+### Bug Fixes
+
+* disable focus mode and dynamic panel switches on mobile ([#1607](https://github.com/standardnotes/app/issues/1607)) ([9dfeac7](https://github.com/standardnotes/app/commit/9dfeac74897594628c0bf657226f3e5e586267dc))
+* iOS safe area using CSS ([#1610](https://github.com/standardnotes/app/issues/1610)) ([8fa5663](https://github.com/standardnotes/app/commit/8fa566336ceef8a3d7b559b1aaf342f7c51f21cd))
+
+### Features
+
+* add lock button to navigation panel on mobile ([#1609](https://github.com/standardnotes/app/issues/1609)) ([d1b7186](https://github.com/standardnotes/app/commit/d1b71861ecf5c8093cbf3d37813ad7ab514edc42))
+
 ## [3.50.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.50.5...@standardnotes/web@3.50.6) (2022-09-21)
 
 ### Bug Fixes
