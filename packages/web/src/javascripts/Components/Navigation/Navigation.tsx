@@ -22,6 +22,15 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
   const [panelWidth, setPanelWidth] = useState<number>(0)
   const { toggleAppPane } = useResponsiveAppPane()
 
+  const [hasPasscode, setHasPasscode] = useState(() => application.hasPasscode())
+  useEffect(() => {
+    const removeObserver = application.addEventObserver(async () => {
+      setHasPasscode(application.hasPasscode())
+    }, ApplicationEvent.KeyStatusChanged)
+
+    return removeObserver
+  }, [application])
+
   useEffect(() => {
     const removeObserver = application.addEventObserver(async () => {
       const width = application.getPreference(PrefKey.TagsPanelWidth)
@@ -87,18 +96,29 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
             onClick={() => {
               viewControllerManager.accountMenuController.toggleShow()
             }}
-            title="Go to items list"
-            aria-label="Go to items list"
+            title="Go to account menu"
+            aria-label="Go to account menu"
           >
             <Icon type="account-circle" />
           </button>
+          {hasPasscode && (
+            <button
+              id="lock-item"
+              onClick={() => application.lock()}
+              title="Locks application and wipes unencrypted data from memory."
+              aria-label="Locks application and wipes unencrypted data from memory."
+              className="ml-2.5 flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border bg-default text-neutral hover:bg-contrast focus:bg-contrast"
+            >
+              <Icon type="lock-filled" size="custom" className="h-4.5 w-4.5" />
+            </button>
+          )}
           <button
             className="ml-2.5 flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border bg-default text-neutral hover:bg-contrast focus:bg-contrast"
             onClick={() => {
               viewControllerManager.quickSettingsMenuController.toggle()
             }}
-            title="Go to items list"
-            aria-label="Go to items list"
+            title="Go to quick settings menu"
+            aria-label="Go to quick settings menu"
           >
             <Icon type="tune" />
           </button>
