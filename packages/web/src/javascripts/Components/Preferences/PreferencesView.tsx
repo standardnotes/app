@@ -6,6 +6,8 @@ import PreferencesCanvas from './PreferencesCanvas'
 import { PreferencesProps } from './PreferencesProps'
 import { fitNodeToMobileScreen } from '@/Utils'
 import { useDisableBodyScrollOnMobile } from '@/Hooks/useDisableBodyScrollOnMobile'
+import { classNames } from '@/Utils/ConcatenateClassNames'
+import { Platform } from '@standardnotes/snjs/dist/@types'
 
 const PreferencesView: FunctionComponent<PreferencesProps> = (props) => {
   const menu = useMemo(
@@ -31,7 +33,10 @@ const PreferencesView: FunctionComponent<PreferencesProps> = (props) => {
 
   return (
     <div
-      className="absolute top-0 left-0 z-preferences flex h-full max-h-screen w-full flex-col bg-default pt-safe-top pb-[calc(var(--safe-area-inset-bottom)_+_0.625rem)]"
+      className={classNames(
+        'absolute top-0 left-0 z-preferences flex h-full max-h-screen w-full flex-col bg-default pt-safe-top',
+        props.application.platform === Platform.Ios ? 'pb-safe-bottom' : 'pb-2',
+      )}
       ref={fitNodeToMobileScreen}
     >
       <div className="flex w-full flex-row items-center justify-between border-b border-solid border-border bg-default px-3 py-2 md:p-3">

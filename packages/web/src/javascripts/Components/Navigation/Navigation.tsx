@@ -2,7 +2,7 @@ import SmartViewsSection from '@/Components/Tags/SmartViewsSection'
 import TagsSection from '@/Components/Tags/TagsSection'
 import { WebApplication } from '@/Application/Application'
 import { PANEL_NAME_NAVIGATION } from '@/Constants/Constants'
-import { ApplicationEvent, PrefKey } from '@standardnotes/snjs'
+import { ApplicationEvent, Platform, PrefKey } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import PanelResizer, { PanelSide, ResizeFinishCallback, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
@@ -60,7 +60,10 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
   return (
     <div
       id="navigation"
-      className="sn-component section app-column h-screen max-h-screen w-[220px] overflow-hidden pt-safe-top pb-[calc(var(--safe-area-inset-bottom)_+_0.625rem)] md:h-full md:min-h-0 md:py-0 xsm-only:!w-full sm-only:!w-full"
+      className={classNames(
+        'sn-component section app-column h-screen max-h-screen w-[220px] overflow-hidden pt-safe-top md:h-full md:min-h-0 md:py-0 xsm-only:!w-full sm-only:!w-full',
+        application.platform === Platform.Ios ? 'pb-safe-bottom' : 'pb-2.5',
+      )}
       ref={ref}
     >
       <ResponsivePaneContent paneId={AppPaneId.Navigation} contentElementId="navigation-content">
