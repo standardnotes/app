@@ -2,7 +2,7 @@ import SmartViewsSection from '@/Components/Tags/SmartViewsSection'
 import TagsSection from '@/Components/Tags/TagsSection'
 import { WebApplication } from '@/Application/Application'
 import { PANEL_NAME_NAVIGATION } from '@/Constants/Constants'
-import { ApplicationEvent, Platform, PrefKey } from '@standardnotes/snjs'
+import { ApplicationEvent, PrefKey } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import PanelResizer, { PanelSide, ResizeFinishCallback, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
@@ -11,6 +11,7 @@ import { AppPaneId } from '@/Components/ResponsivePane/AppPaneMetadata'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import Icon from '../Icon/Icon'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
+import { isIOS } from '@/Utils'
 
 type Props = {
   application: WebApplication
@@ -62,7 +63,7 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
       id="navigation"
       className={classNames(
         'sn-component section app-column h-screen max-h-screen w-[220px] overflow-hidden pt-safe-top md:h-full md:min-h-0 md:py-0 xsm-only:!w-full sm-only:!w-full',
-        application.platform === Platform.Ios ? 'pb-safe-bottom' : 'pb-2.5',
+        isIOS() ? 'pb-safe-bottom' : 'pb-2.5',
       )}
       ref={ref}
     >

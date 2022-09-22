@@ -4,10 +4,9 @@ import { observer } from 'mobx-react-lite'
 import { PreferencesMenu } from './PreferencesMenu'
 import PreferencesCanvas from './PreferencesCanvas'
 import { PreferencesProps } from './PreferencesProps'
-import { fitNodeToMobileScreen } from '@/Utils'
+import { fitNodeToMobileScreen, isIOS } from '@/Utils'
 import { useDisableBodyScrollOnMobile } from '@/Hooks/useDisableBodyScrollOnMobile'
 import { classNames } from '@/Utils/ConcatenateClassNames'
-import { Platform } from '@standardnotes/snjs'
 
 const PreferencesView: FunctionComponent<PreferencesProps> = (props) => {
   const menu = useMemo(
@@ -35,7 +34,7 @@ const PreferencesView: FunctionComponent<PreferencesProps> = (props) => {
     <div
       className={classNames(
         'absolute top-0 left-0 z-preferences flex h-full max-h-screen w-full flex-col bg-default pt-safe-top',
-        props.application.platform === Platform.Ios ? 'pb-safe-bottom' : 'pb-2',
+        isIOS() ? 'pb-safe-bottom' : 'pb-2',
       )}
       ref={fitNodeToMobileScreen}
     >
