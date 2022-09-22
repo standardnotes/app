@@ -135,6 +135,12 @@ module.exports = {
     'text-accessory-tint-4',
     'text-accessory-tint-5',
     'text-accessory-tint-6',
+    'border-accessory-tint-1',
+    'border-accessory-tint-2',
+    'border-accessory-tint-3',
+    'border-accessory-tint-4',
+    'border-accessory-tint-5',
+    'border-accessory-tint-6',
   ],
   plugins: [
     plugin(function ({ addVariant }) {

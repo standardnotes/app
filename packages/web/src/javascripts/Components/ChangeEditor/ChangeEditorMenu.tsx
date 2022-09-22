@@ -31,11 +31,18 @@ type ChangeEditorMenuProps = {
   closeMenu: () => void
   isVisible: boolean
   note: SNNote | undefined
+  onSelect?: (component: SNComponent | undefined) => void
 }
 
 const getGroupId = (group: EditorMenuGroup) => group.title.toLowerCase().replace(/\s/, '-')
 
-const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({ application, closeMenu, isVisible, note }) => {
+const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
+  application,
+  closeMenu,
+  isVisible,
+  note,
+  onSelect,
+}) => {
   const editors = useMemo(
     () =>
       application.componentManager.componentsForArea(ComponentArea.Editor).sort((a, b) => {
@@ -162,8 +169,12 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({ applicatio
       }
 
       closeMenu()
+
+      if (onSelect) {
+        onSelect(itemToBeSelected.component)
+      }
     },
-    [application.componentManager, closeMenu, currentEditor, note, premiumModal, selectComponent],
+    [application.componentManager, closeMenu, currentEditor, note, onSelect, premiumModal, selectComponent],
   )
 
   return (

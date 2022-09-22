@@ -5,6 +5,7 @@ import { FunctionComponent, useCallback, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import ChangeEditorMenu from './ChangeEditorMenu'
 import Popover from '../Popover/Popover'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 
 type Props = {
   application: WebApplication
@@ -21,6 +22,12 @@ const ChangeEditorButton: FunctionComponent<Props> = ({
   const [isOpen, setIsOpen] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const [selectedEditor, setSelectedEditor] = useState(() => {
+    return note ? application.componentManager.editorForNote(note) : undefined
+  })
+  const [selectedEditorIcon, selectedEditorIconTint] = application.iconsController.getIconAndTintForNoteType(
+    selectedEditor?.package_info.note_type,
+  )
 
   const toggleMenu = useCallback(async () => {
     const willMenuOpen = !isOpen
@@ -33,13 +40,16 @@ const ChangeEditorButton: FunctionComponent<Props> = ({
   return (
     <div ref={containerRef}>
       <button
-        className="bg-text-padding flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border text-neutral hover:bg-contrast focus:bg-contrast"
+        className={classNames(
+          'bg-text-padding flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid text-neutral hover:bg-contrast focus:bg-contrast',
+          `border-accessory-tint-${selectedEditorIconTint}`,
+        )}
         title="Change note type"
         aria-label="Change note type"
         onClick={toggleMenu}
         ref={buttonRef}
       >
-        <Icon type="dashboard" />
+        <Icon type={selectedEditorIcon} className={`text-accessory-tint-${selectedEditorIconTint}`} />
       </button>
       <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen} className="pt-2 md:pt-0">
         <ChangeEditorMenu
@@ -48,6 +58,9 @@ const ChangeEditorButton: FunctionComponent<Props> = ({
           note={note}
           closeMenu={() => {
             setIsOpen(false)
+          }}
+          onSelect={(component) => {
+            setSelectedEditor(component)
           }}
         />
       </Popover>
