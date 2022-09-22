@@ -11,7 +11,6 @@ import {
   ListedAuthorSecretsData,
   LogSessionUserAgentOption,
   SettingName,
-  MuteMarketingEmailsOption,
 } from '@standardnotes/settings'
 
 type SettingType =
@@ -24,7 +23,6 @@ type SettingType =
   | MuteFailedBackupsEmailsOption
   | MuteFailedCloudBackupsEmailsOption
   | MuteSignInEmailsOption
-  | MuteMarketingEmailsOption
   | OneDriveBackupFrequency
 
 export class SettingsList {

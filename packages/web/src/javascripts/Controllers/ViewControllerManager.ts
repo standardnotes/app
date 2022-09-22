@@ -29,8 +29,6 @@ import { NavigationController } from './Navigation/NavigationController'
 import { FilePreviewModalController } from './FilePreviewModalController'
 import { SelectedItemsController } from './SelectedItemsController'
 import { HistoryModalController } from './NoteHistory/HistoryModalController'
-import { PreferenceId } from '@/Components/Preferences/PreferencesMenu'
-import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
 
 export class ViewControllerManager {
   readonly enableUnfinishedFeatures: boolean = window?.enabledUnfinishedFeatures
@@ -211,30 +209,10 @@ export class ViewControllerManager {
 
   addAppEventObserver() {
     this.unsubAppEventObserver = this.application.addEventObserver(async (eventName) => {
-      const urlSearchParams = new URLSearchParams(window.location.search)
-
       switch (eventName) {
         case ApplicationEvent.Launched:
-          if (urlSearchParams.get('purchase')) {
+          if (window.location.search.includes('purchase=true')) {
             this.purchaseFlowController.openPurchaseFlow()
-          }
-          if (urlSearchParams.get('settings')) {
-            const user = this.application.getUser()
-            if (user === undefined) {
-              this.accountMenuController.setShow(true)
-              this.accountMenuController.setCurrentPane(AccountMenuPane.SignIn)
-
-              break
-            }
-
-            this.preferencesController.openPreferences()
-            this.preferencesController.setCurrentPane(urlSearchParams.get('settings') as PreferenceId)
-          }
-          break
-        case ApplicationEvent.SignedIn:
-          if (urlSearchParams.get('settings')) {
-            this.preferencesController.openPreferences()
-            this.preferencesController.setCurrentPane(urlSearchParams.get('settings') as PreferenceId)
           }
           break
         case ApplicationEvent.SyncStatusChanged:
