@@ -6,9 +6,10 @@ import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryCont
 
 type Props = {
   noteHistoryController: NoteHistoryController
+  onSelectRevision: () => void
 }
 
-const SessionHistoryList: FunctionComponent<Props> = ({ noteHistoryController }) => {
+const SessionHistoryList: FunctionComponent<Props> = ({ noteHistoryController, onSelectRevision }) => {
   const { sessionHistory, selectedRevision, selectSessionRevision } = noteHistoryController
 
   const sessionHistoryListRef = useRef<HTMLDivElement>(null)
@@ -40,6 +41,7 @@ const SessionHistoryList: FunctionComponent<Props> = ({ noteHistoryController })
                   isSelected={selectedRevision?.payload.updated_at === entry.payload.updated_at}
                   onClick={() => {
                     selectSessionRevision(entry)
+                    onSelectRevision()
                   }}
                 >
                   {entry.previewTitle()}

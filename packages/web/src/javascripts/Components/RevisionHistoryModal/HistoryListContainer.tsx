@@ -1,18 +1,20 @@
 import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
 import { FeaturesClientInterface } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'react'
+import { FunctionComponent, useCallback } from 'react'
 import LegacyHistoryList from './LegacyHistoryList'
 import RemoteHistoryList from './RemoteHistoryList'
 import { RevisionType } from './RevisionType'
 import SessionHistoryList from './SessionHistoryList'
+import { HistoryModalMobileTab } from './utils'
 
 type Props = {
   features: FeaturesClientInterface
   noteHistoryController: NoteHistoryController
+  selectMobileModalTab: (tab: HistoryModalMobileTab) => void
 }
 
-const HistoryListContainer: FunctionComponent<Props> = ({ features, noteHistoryController }) => {
+const HistoryListContainer: FunctionComponent<Props> = ({ features, noteHistoryController, selectMobileModalTab }) => {
   const { legacyHistory, currentTab, selectTab } = noteHistoryController
 
   const TabButton: FunctionComponent<{
@@ -34,14 +36,30 @@ const HistoryListContainer: FunctionComponent<Props> = ({ features, noteHistoryC
     )
   }
 
+  const onSelectRevision = useCallback(() => {
+    selectMobileModalTab('Content')
+  }, [selectMobileModalTab])
+
   const CurrentTabList = () => {
     switch (currentTab) {
       case RevisionType.Remote:
-        return <RemoteHistoryList features={features} noteHistoryController={noteHistoryController} />
+        return (
+          <RemoteHistoryList
+            onSelectRevision={onSelectRevision}
+            features={features}
+            noteHistoryController={noteHistoryController}
+          />
+        )
       case RevisionType.Session:
-        return <SessionHistoryList noteHistoryController={noteHistoryController} />
+        return <SessionHistoryList onSelectRevision={onSelectRevision} noteHistoryController={noteHistoryController} />
       case RevisionType.Legacy:
-        return <LegacyHistoryList legacyHistory={legacyHistory} noteHistoryController={noteHistoryController} />
+        return (
+          <LegacyHistoryList
+            onSelectRevision={onSelectRevision}
+            legacyHistory={legacyHistory}
+            noteHistoryController={noteHistoryController}
+          />
+        )
     }
   }
 

@@ -2,6 +2,8 @@ import { DAYS_IN_A_WEEK, DAYS_IN_A_YEAR } from '@/Constants/Constants'
 import { HistoryEntry, NoteHistoryEntry, RevisionListEntry } from '@standardnotes/snjs'
 import { calculateDifferenceBetweenDatesInDays } from '../../Utils/CalculateDifferenceBetweenDatesInDays'
 
+export type HistoryModalMobileTab = 'Content' | 'List'
+
 export type LegacyHistoryEntry = {
   payload: HistoryEntry['payload']
   created_at: string
