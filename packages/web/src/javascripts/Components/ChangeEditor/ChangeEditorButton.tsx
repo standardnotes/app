@@ -22,7 +22,9 @@ const ChangeEditorButton: FunctionComponent<Props> = ({
   const buttonRef = useRef<HTMLButtonElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const selectedEditor = note ? application.componentManager.editorForNote(note) : undefined
-  const [selectedEditorIcon, selectedEditorIconTint] = application.iconsController.getIconAndTintForNoteType(selectedEditor?.package_info.note_type)
+  const [selectedEditorIcon, selectedEditorIconTint] = application.iconsController.getIconAndTintForNoteType(
+    selectedEditor?.package_info.note_type,
+  )
 
   const toggleMenu = useCallback(async () => {
     const willMenuOpen = !isOpen
@@ -41,7 +43,7 @@ const ChangeEditorButton: FunctionComponent<Props> = ({
         onClick={toggleMenu}
         ref={buttonRef}
       >
-        <Icon type={selectedEditorIcon ?? "dashboard"} className={`text-accessory-tint-${selectedEditorIconTint}`} />
+        <Icon type={selectedEditorIcon ?? 'dashboard'} className={`text-accessory-tint-${selectedEditorIconTint}`} />
       </button>
       <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen} className="pt-2 md:pt-0">
         <ChangeEditorMenu
