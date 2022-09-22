@@ -10,6 +10,7 @@ export async function openSubscriptionDashboard(application: SNApplication) {
 
   if (application.deviceInterface.environment === Environment.NativeMobileWeb) {
     application.deviceInterface.openUrl(url)
+    return
   }
 
   const windowProxy = window.open('', '_blank')
