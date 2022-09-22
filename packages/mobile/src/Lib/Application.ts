@@ -13,6 +13,7 @@ import {
   platformFromString,
   SNApplication,
   SNComponentManager,
+  StorageValueModes,
 } from '@standardnotes/snjs'
 import { Platform } from 'react-native'
 
@@ -21,6 +22,7 @@ import { MobileAlertService } from './AlertService'
 import { ApplicationState } from './ApplicationState'
 import { BackupsService } from './BackupsService'
 import { ComponentManager } from './ComponentManager'
+import { AlwaysOpenWebAppOnLaunchKey } from './constants'
 import { FilesService } from './FilesService'
 import { InstallationService } from './InstallationService'
 import { MobileDevice } from './Interface'
@@ -135,7 +137,8 @@ export class MobileApplication extends SNApplication {
   }
 
   promptForChallenge(challenge: Challenge) {
-    if (IsMobileWeb) {
+    const optedIntoWebPreview = this.getValue(AlwaysOpenWebAppOnLaunchKey, StorageValueModes.Nonwrapped) as boolean
+    if (IsMobileWeb || optedIntoWebPreview) {
       return
     }
 
