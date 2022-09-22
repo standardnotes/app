@@ -9,6 +9,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { AuthSection } from './Sections/AuthSection'
 import { CompanySection } from './Sections/CompanySection'
 import { EncryptionSection } from './Sections/EncryptionSection'
+import { NewMobileSection } from './Sections/NewMobilePreview'
 import { OptionsSection } from './Sections/OptionsSection'
 import { PreferencesSection } from './Sections/PreferencesSection'
 import { ProtectionsSection } from './Sections/ProtectionsSection'
@@ -54,6 +55,7 @@ export const Settings = (props: Props) => {
     <Container keyboardShouldPersistTaps={'always'} keyboardDismissMode={'interactive'}>
       <AuthSection title="Account" signedIn={signedIn} />
       <OptionsSection encryptionAvailable={!!encryptionAvailable} title="Options" />
+      <NewMobileSection />
       <WorkspacesSection />
       <PreferencesSection />
       {application.hasAccount() && isEntitledToFiles && <FilesSection />}
