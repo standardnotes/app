@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.52.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.51.0...@standardnotes/web@3.52.0) (2022-09-22)
+
+### Features
+
+* on mobile goto content tab after selecting revision ([#1611](https://github.com/standardnotes/app/issues/1611)) ([f281041](https://github.com/standardnotes/app/commit/f2810412217afdaa05d5012db37276c843d360b4))
+
 # [3.51.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.50.6...@standardnotes/web@3.51.0) (2022-09-21)
 
 ### Bug Fixes
