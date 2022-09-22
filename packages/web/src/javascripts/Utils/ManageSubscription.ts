@@ -1,14 +1,18 @@
-import { SNApplication } from '@standardnotes/snjs'
+import { Environment, SNApplication } from '@standardnotes/snjs'
 
-export function openSubscriptionDashboard(application: SNApplication): void {
+export async function openSubscriptionDashboard(application: SNApplication) {
+  const token = await application.getNewSubscriptionToken()
+  if (!token) {
+    return
+  }
+
+  const url = `${window.dashboardUrl}?subscription_token=${token}`
+
+  if (application.deviceInterface.environment === Environment.NativeMobileWeb) {
+    application.deviceInterface.openUrl(url)
+    return
+  }
+
   const windowProxy = window.open('', '_blank')
-  application
-    .getNewSubscriptionToken()
-    .then((token) => {
-      if (!token) {
-        return
-      }
-      ;(windowProxy as WindowProxy).location = `${window.dashboardUrl}?subscription_token=${token}`
-    })
-    .catch(console.error)
+  ;(windowProxy as WindowProxy).location = url
 }
