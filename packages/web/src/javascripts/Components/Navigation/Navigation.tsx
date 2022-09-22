@@ -11,6 +11,7 @@ import { AppPaneId } from '@/Components/ResponsivePane/AppPaneMetadata'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import Icon from '../Icon/Icon'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
+import { isIOS } from '@/Utils'
 
 type Props = {
   application: WebApplication
@@ -60,7 +61,10 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
   return (
     <div
       id="navigation"
-      className="sn-component section app-column h-screen max-h-screen w-[220px] overflow-hidden pb-8 md:h-full md:min-h-0 md:py-0 xsm-only:!w-full sm-only:!w-full"
+      className={classNames(
+        'sn-component section app-column h-screen max-h-screen w-[220px] overflow-hidden pt-safe-top md:h-full md:min-h-0 md:py-0 xsm-only:!w-full sm-only:!w-full',
+        isIOS() ? 'pb-safe-bottom' : 'pb-2.5',
+      )}
       ref={ref}
     >
       <ResponsivePaneContent paneId={AppPaneId.Navigation} contentElementId="navigation-content">
