@@ -15,12 +15,8 @@ type Props = {
 }
 
 const Email: FunctionComponent<Props> = ({ application }: Props) => {
-  const [signInEmailsMutedValue, setSignInEmailsMutedValue] = useState(
-    MuteSignInEmailsOption.NotMuted,
-  )
-  const [marketingEmailsMutedValue, setMarketingEmailsMutedValue] = useState(
-    MuteMarketingEmailsOption.NotMuted,
-  )
+  const [signInEmailsMutedValue, setSignInEmailsMutedValue] = useState(MuteSignInEmailsOption.NotMuted)
+  const [marketingEmailsMutedValue, setMarketingEmailsMutedValue] = useState(MuteMarketingEmailsOption.NotMuted)
   const [isLoading, setIsLoading] = useState(true)
 
   const updateSetting = async (settingName: SettingName, payload: string): Promise<boolean> => {
@@ -47,12 +43,12 @@ const Email: FunctionComponent<Props> = ({ application }: Props) => {
           MuteSignInEmailsOption.NotMuted,
         ),
       ),
-      setMarketingEmailsMutedValue(
-        userSettings.getSettingValue<MuteMarketingEmailsOption>(
-          SettingName.MuteMarketingEmails,
-          MuteMarketingEmailsOption.NotMuted,
-        ),
-      )
+        setMarketingEmailsMutedValue(
+          userSettings.getSettingValue<MuteMarketingEmailsOption>(
+            SettingName.MuteMarketingEmails,
+            MuteMarketingEmailsOption.NotMuted,
+          ),
+        )
     } catch (error) {
       console.error(error)
     } finally {
@@ -80,7 +76,9 @@ const Email: FunctionComponent<Props> = ({ application }: Props) => {
   const toggleMuteMarketingEmails = async () => {
     const previousValue = marketingEmailsMutedValue
     const newValue =
-      previousValue === MuteMarketingEmailsOption.Muted ? MuteMarketingEmailsOption.NotMuted : MuteMarketingEmailsOption.Muted
+      previousValue === MuteMarketingEmailsOption.Muted
+        ? MuteMarketingEmailsOption.NotMuted
+        : MuteMarketingEmailsOption.Muted
     setMarketingEmailsMutedValue(newValue)
 
     const updateResult = await updateSetting(SettingName.MuteMarketingEmails, newValue)
@@ -116,9 +114,7 @@ const Email: FunctionComponent<Props> = ({ application }: Props) => {
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
               <Subtitle>Disable marketing notification emails</Subtitle>
-              <Text>
-                Disables email notifications with special deals and promotions.
-              </Text>
+              <Text>Disables email notifications with special deals and promotions.</Text>
             </div>
             {isLoading ? (
               <Spinner className="ml-2 flex-shrink-0" />
