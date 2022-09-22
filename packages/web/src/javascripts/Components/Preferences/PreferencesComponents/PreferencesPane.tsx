@@ -7,7 +7,7 @@ const PreferencesPane: FunctionComponent<{ children?: ReactNode }> = ({ children
         {children != undefined && Array.isArray(children) ? children.filter((child) => child != undefined) : children}
       </div>
     </div>
-    <div className="flex-shrink basis-[13.75rem]" />
+    <div className="hidden flex-shrink basis-[13.75rem] md:block" />
   </div>
 )
 
