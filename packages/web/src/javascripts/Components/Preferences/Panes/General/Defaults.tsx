@@ -126,10 +126,10 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
         {application.isNativeMobileWeb() && (
           <>
             <div className="flex flex-col">
-              <Subtitle>Switch to Native View</Subtitle>
+              <Subtitle>Switch to Classic Mobile Experience</Subtitle>
               <Text>
-                This will close the app and fully switch to the native view next time you open it. You will be able to
-                switch back from the settings.
+                This will close the app and switch back to the soon-to-be removed classic mobile experience. You can opt
+                back in to new experience from the app settings.
               </Text>
               <Button className="mt-3 min-w-20" label="Switch" onClick={switchToNativeView} />
             </div>

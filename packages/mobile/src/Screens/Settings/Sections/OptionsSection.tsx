@@ -1,4 +1,3 @@
-import { AlwaysOpenWebAppOnLaunchKey } from '@Lib/constants'
 import { useSignedIn } from '@Lib/SnjsHelperHooks'
 import { useNavigation } from '@react-navigation/native'
 import { ButtonCell } from '@Root/Components/ButtonCell'
@@ -9,7 +8,7 @@ import { TableSection } from '@Root/Components/TableSection'
 import { useSafeApplicationContext } from '@Root/Hooks/useSafeApplicationContext'
 import { ModalStackNavigationProp } from '@Root/ModalStack'
 import { SCREEN_MANAGE_SESSIONS, SCREEN_SETTINGS } from '@Root/Screens/screens'
-import { ButtonType, PrefKey, StorageValueModes } from '@standardnotes/snjs'
+import { ButtonType, PrefKey } from '@standardnotes/snjs'
 import moment from 'moment'
 import React, { useCallback, useMemo, useState } from 'react'
 import { Platform } from 'react-native'
@@ -220,21 +219,6 @@ export const OptionsSection = ({ title, encryptionAvailable }: Props) => {
         options={exportOptions}
         title={exporting ? 'Processing...' : 'Export Data'}
         onPress={onExportPress}
-      />
-
-      <ButtonCell
-        onPress={async () => {
-          const confirmationText =
-            'This will close the app and fully switch to the web view next time you open it. You will be able to switch back from the settings.'
-
-          if (
-            await application.alertService.confirm(confirmationText, 'Switch To Web View?', 'Switch', ButtonType.Info)
-          ) {
-            application.setValue(AlwaysOpenWebAppOnLaunchKey, true, StorageValueModes.Nonwrapped)
-            setTimeout(() => application.deviceInterface.performSoftReset(), 1000)
-          }
-        }}
-        title="Switch to Web View"
       />
 
       {!signedIn && (
