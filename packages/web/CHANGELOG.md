@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.54.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.54.2...@standardnotes/web@3.54.3) (2022-09-22)
+
+### Bug Fixes
+
+* better safe area padding on iOS ([#1618](https://github.com/standardnotes/app/issues/1618)) ([86251b4](https://github.com/standardnotes/app/commit/86251b49d3b4965571da1a3c039ec4c6043f733c))
+
 ## [3.54.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.54.1...@standardnotes/web@3.54.2) (2022-09-22)
 
 ### Reverts
