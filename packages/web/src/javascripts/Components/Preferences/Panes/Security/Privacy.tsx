@@ -2,7 +2,7 @@ import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Switch from '@/Components/Switch/Switch'
 import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/Application/Application'
-import { LogSessionUserAgentOption, SettingName } from '@standardnotes/snjs'
+import { MuteSignInEmailsOption, LogSessionUserAgentOption, SettingName } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/Constants/Strings'
@@ -15,6 +15,9 @@ type Props = {
 }
 
 const Privacy: FunctionComponent<Props> = ({ application }: Props) => {
+  const [signInEmailsMutedValue, setSignInEmailsMutedValue] = useState<MuteSignInEmailsOption>(
+    MuteSignInEmailsOption.NotMuted,
+  )
   const [sessionUaLoggingValue, setSessionUaLoggingValue] = useState<LogSessionUserAgentOption>(
     LogSessionUserAgentOption.Enabled,
   )
@@ -38,6 +41,12 @@ const Privacy: FunctionComponent<Props> = ({ application }: Props) => {
 
     try {
       const userSettings = await application.settings.listSettings()
+      setSignInEmailsMutedValue(
+        userSettings.getSettingValue<MuteSignInEmailsOption>(
+          SettingName.MuteSignInEmails,
+          MuteSignInEmailsOption.NotMuted,
+        ),
+      )
       setSessionUaLoggingValue(
         userSettings.getSettingValue<LogSessionUserAgentOption>(
           SettingName.LogSessionUserAgent,
@@ -54,6 +63,19 @@ const Privacy: FunctionComponent<Props> = ({ application }: Props) => {
   useEffect(() => {
     loadSettings().catch(console.error)
   }, [loadSettings])
+
+  const toggleMuteSignInEmails = async () => {
+    const previousValue = signInEmailsMutedValue
+    const newValue =
+      previousValue === MuteSignInEmailsOption.Muted ? MuteSignInEmailsOption.NotMuted : MuteSignInEmailsOption.Muted
+    setSignInEmailsMutedValue(newValue)
+
+    const updateResult = await updateSetting(SettingName.MuteSignInEmails, newValue)
+
+    if (!updateResult) {
+      setSignInEmailsMutedValue(previousValue)
+    }
+  }
 
   const toggleSessionLogging = async () => {
     const previousValue = sessionUaLoggingValue
@@ -75,6 +97,23 @@ const Privacy: FunctionComponent<Props> = ({ application }: Props) => {
       <PreferencesSegment>
         <Title>Privacy</Title>
         <div>
+          <div className="flex items-center justify-between">
+            <div className="flex flex-col">
+              <Subtitle>Disable sign-in notification emails</Subtitle>
+              <Text>
+                Disables email notifications when a new sign-in occurs on your account. (Email notifications are
+                available to paid subscribers).
+              </Text>
+            </div>
+            {isLoading ? (
+              <Spinner className="ml-2 flex-shrink-0" />
+            ) : (
+              <Switch
+                onChange={toggleMuteSignInEmails}
+                checked={signInEmailsMutedValue === MuteSignInEmailsOption.Muted}
+              />
+            )}
+          </div>
           <HorizontalSeparator classes="my-4" />
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
