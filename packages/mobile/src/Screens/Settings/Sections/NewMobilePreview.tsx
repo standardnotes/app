@@ -48,8 +48,8 @@ export const NewMobileSection = () => {
           <Title>🎉 New Mobile Experience Preview</Title>
           <Label>
             The new mobile experience (MX) brings the desktop experience you've come to love right here on your mobile
-            device. This mode will replace the existing classic mobile experience soon. You can opt in below to begin using the new MX
-            now.
+            device. This mode will replace the existing classic mobile experience soon. You can opt in below to begin
+            using the new MX now.
           </Label>
         </BaseView>
       </StyledSectionedTableCell>
