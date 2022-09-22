@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.132.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.132.1...@standardnotes/snjs@2.132.2) (2022-09-22)
+
+### Reverts
+
+* Revert "Revert "feat(web): move emails notifications to one pane and enable opening settings via url (#1614)" (#1617)" (#1619) ([e50f4eb](https://github.com/standardnotes/app/commit/e50f4eb92efd65b0b8fa3a5001b8dfb611f60180)), closes [#1614](https://github.com/standardnotes/app/issues/1614) [#1617](https://github.com/standardnotes/app/issues/1617) [#1619](https://github.com/standardnotes/app/issues/1619)
+
 ## [2.132.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.132.0...@standardnotes/snjs@2.132.1) (2022-09-22)
 
 ### Reverts
