@@ -14,11 +14,11 @@ type Props = {
   application: WebApplication
 }
 
-const Notifications: FunctionComponent<Props> = ({ application }: Props) => {
-  const [signInEmailsMutedValue, setSignInEmailsMutedValue] = useState<MuteSignInEmailsOption>(
+const Email: FunctionComponent<Props> = ({ application }: Props) => {
+  const [signInEmailsMutedValue, setSignInEmailsMutedValue] = useState(
     MuteSignInEmailsOption.NotMuted,
   )
-  const [marketingEmailsMutedValue, setMarketingEmailsMutedValue] = useState<MuteMarketingEmailsOption>(
+  const [marketingEmailsMutedValue, setMarketingEmailsMutedValue] = useState(
     MuteMarketingEmailsOption.NotMuted,
   )
   const [isLoading, setIsLoading] = useState(true)
@@ -93,7 +93,7 @@ const Notifications: FunctionComponent<Props> = ({ application }: Props) => {
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <Title>Notifications</Title>
+        <Title>Email</Title>
         <div>
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
@@ -135,4 +135,4 @@ const Notifications: FunctionComponent<Props> = ({ application }: Props) => {
   )
 }
 
-export default observer(Notifications)
+export default observer(Email)

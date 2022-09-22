@@ -8,7 +8,7 @@ import Defaults from './Defaults'
 import LabsPane from './Labs/Labs'
 import Advanced from '@/Components/Preferences/Panes/General/Advanced/AdvancedSection'
 import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
-import Notifications from './Notifications'
+import Email from './Email'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -20,7 +20,7 @@ const General: FunctionComponent<Props> = ({ viewControllerManager, application,
   <PreferencesPane>
     <Tools application={application} />
     <Defaults application={application} />
-    <Notifications application={application} />
+    <Email application={application} />
     <LabsPane application={application} />
     <Advanced
       application={application}
