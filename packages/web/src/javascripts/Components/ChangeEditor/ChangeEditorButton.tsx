@@ -21,7 +21,9 @@ const ChangeEditorButton: FunctionComponent<Props> = ({
   const [isOpen, setIsOpen] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-  const selectedEditor = note ? application.componentManager.editorForNote(note) : undefined
+  const [selectedEditor, setSelectedEditor] = useState(() => {
+    return note ? application.componentManager.editorForNote(note) : undefined
+  })
   const [selectedEditorIcon, selectedEditorIconTint] = application.iconsController.getIconAndTintForNoteType(
     selectedEditor?.package_info.note_type,
   )
@@ -52,6 +54,9 @@ const ChangeEditorButton: FunctionComponent<Props> = ({
           note={note}
           closeMenu={() => {
             setIsOpen(false)
+          }}
+          onSelect={(component) => {
+            setSelectedEditor(component)
           }}
         />
       </Popover>
