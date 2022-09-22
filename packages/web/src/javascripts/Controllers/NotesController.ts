@@ -116,7 +116,7 @@ export class NotesController extends AbstractViewController {
     return this.application.items.trashedItems.length
   }
 
-  setContextMenuOpen(open: boolean): void {
+  setContextMenuOpen = (open: boolean) => {
     this.contextMenuOpen = open
   }
 
