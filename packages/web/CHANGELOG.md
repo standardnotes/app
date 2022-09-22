@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.54.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.53.0...@standardnotes/web@3.54.0) (2022-09-22)
+
+### Features
+
+* show selected editor icon in change editor button ([#1615](https://github.com/standardnotes/app/issues/1615)) ([ce252de](https://github.com/standardnotes/app/commit/ce252def332c99d8d8be6a3ce5d76b66e2ea325f))
+
 # [3.53.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.52.1...@standardnotes/web@3.53.0) (2022-09-22)
 
 ### Features
