@@ -60,7 +60,7 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
   return (
     <div
       id="navigation"
-      className="sn-component section app-column h-screen max-h-screen w-[220px] overflow-hidden pb-8 md:h-full md:min-h-0 md:py-0 xsm-only:!w-full sm-only:!w-full"
+      className="sn-component section app-column h-screen max-h-screen w-[220px] overflow-hidden pt-safe-top pt-safe-bottom md:h-full md:min-h-0 md:py-0 xsm-only:!w-full sm-only:!w-full"
       ref={ref}
     >
       <ResponsivePaneContent paneId={AppPaneId.Navigation} contentElementId="navigation-content">

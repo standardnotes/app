@@ -15,6 +15,10 @@ module.exports = {
         87.5: '21.875rem',
         125: '31.25rem',
         160: '40rem',
+        'safe-top': 'var(--safe-area-inset-top)',
+        'safe-bottom': 'var(--safe-area-inset-bottom)',
+        'safe-left': 'var(--safe-area-inset-left)',
+        'safe-right': 'var(--safe-area-inset-right)',
       },
       minWidth: {
         1: '0.25rem',
@@ -43,16 +47,16 @@ module.exports = {
         125: '31.25rem',
       },
       height: {
-        screen: 'var(--safe-viewport-height)',
+        screen: 'var(--viewport-height)',
       },
       minHeight: {
         1: '0.25rem',
         2: '0.5rem',
-        screen: 'var(--safe-viewport-height)',
+        screen: 'var(--viewport-height)',
       },
       maxHeight: {
         110: '27.5rem',
-        screen: 'var(--safe-viewport-height)',
+        screen: 'var(--viewport-height)',
       },
       zIndex: {
         'editor-content': 'var(--z-index-editor-content)',
