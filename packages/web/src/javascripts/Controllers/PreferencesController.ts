@@ -29,9 +29,18 @@ export class PreferencesController {
   closePreferences = (): void => {
     this._open = false
     this.currentPane = DEFAULT_PANE
+    this.removePreferencesToggleFromURLQueryParameters()
   }
 
   get isOpen(): boolean {
     return this._open
+  }
+
+  private removePreferencesToggleFromURLQueryParameters() {
+    const urlSearchParams = new URLSearchParams(window.location.search)
+    urlSearchParams.delete('settings')
+
+    const newUrl = `${window.location.origin}${window.location.pathname}${urlSearchParams.toString()}`
+    window.history.replaceState(null, document.title, newUrl)
   }
 }
