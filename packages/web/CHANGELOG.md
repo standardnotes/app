@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.52.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.52.0...@standardnotes/web@3.52.1) (2022-09-22)
+
+### Bug Fixes
+
+* manage subscription button on mobile webview ([#1613](https://github.com/standardnotes/app/issues/1613)) ([db4ceca](https://github.com/standardnotes/app/commit/db4ceca10e4b41707cae2a4daa9718646d808c19))
+
 # [3.52.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.51.0...@standardnotes/web@3.52.0) (2022-09-22)
 
 ### Features
