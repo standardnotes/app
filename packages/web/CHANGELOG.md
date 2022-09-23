@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.54.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.54.5...@standardnotes/web@3.54.6) (2022-09-23)
+
+### Bug Fixes
+
+* biometrics timing loading ([#1622](https://github.com/standardnotes/app/issues/1622)) ([3c0d4fa](https://github.com/standardnotes/app/commit/3c0d4fac766c3a31bdbebe4f7e88f83ba1ea58da))
+
 ## [3.54.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.54.4...@standardnotes/web@3.54.5) (2022-09-23)
 
 ### Bug Fixes

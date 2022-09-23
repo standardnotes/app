@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.132.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.132.2...@standardnotes/snjs@2.132.3) (2022-09-23)
+
+### Bug Fixes
+
+* biometrics timing loading ([#1622](https://github.com/standardnotes/app/issues/1622)) ([3c0d4fa](https://github.com/standardnotes/app/commit/3c0d4fac766c3a31bdbebe4f7e88f83ba1ea58da))
+
 ## [2.132.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.132.1...@standardnotes/snjs@2.132.2) (2022-09-22)
 
 ### Reverts
