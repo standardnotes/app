@@ -134,7 +134,7 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
             title="Go to quick settings menu"
             aria-label="Go to quick settings menu"
           >
-            <Icon type="more" />
+            <Icon type="themes" />
           </button>
         </div>
       </ResponsivePaneContent>
