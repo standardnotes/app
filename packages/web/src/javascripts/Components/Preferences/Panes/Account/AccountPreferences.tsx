@@ -9,6 +9,7 @@ import SignOutWrapper from './SignOutView'
 import FilesSection from './Files'
 import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 import SubscriptionSharing from './SubscriptionSharing/SubscriptionSharing'
+import Email from './Email'
 
 type Props = {
   application: WebApplication
@@ -30,6 +31,7 @@ const AccountPreferences = ({ application, viewControllerManager }: Props) => (
     {application.hasAccount() && viewControllerManager.featuresController.hasFiles && (
       <FilesSection application={application} />
     )}
+    <Email application={application} />
     <SignOutWrapper application={application} viewControllerManager={viewControllerManager} />
   </PreferencesPane>
 )
