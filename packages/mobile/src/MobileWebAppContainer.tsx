@@ -193,6 +193,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       allowFileAccess={true}
       allowUniversalAccessFromFileURLs={true}
       injectedJavaScriptBeforeContentLoaded={injectedJS}
+      bounces={false}
     />
   )
   /* eslint-enable @typescript-eslint/no-empty-function */
