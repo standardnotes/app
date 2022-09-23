@@ -65,6 +65,7 @@ const showLoadFailForItemIds = (failedItemIds: string[]) => {
 export class MobileDevice implements MobileDeviceInterface {
   environment: Environment.Mobile = Environment.Mobile
   private eventObservers: MobileDeviceEventHandler[] = []
+  public isDarkMode: boolean = false
 
   constructor(private stateObserverService?: AppStateObserverService) {}
 
@@ -433,7 +434,13 @@ export class MobileDevice implements MobileDeviceInterface {
   }
 
   handleThemeSchemeChange(isDark: boolean): void {
-    StatusBar.setBarStyle(isDark ? 'light-content' : 'dark-content', true)
+    this.isDarkMode = isDark
+
+    this.reloadStatusBarStyle()
+  }
+
+  reloadStatusBarStyle(animated = true) {
+    StatusBar.setBarStyle(this.isDarkMode ? 'light-content' : 'dark-content', animated)
   }
 
   private notifyEvent(event: MobileDeviceEvent): void {
