@@ -960,10 +960,6 @@ export class SNApplication
       | undefined
   }
 
-  async loadMobileUnlockTiming() {
-    return this.protectionService.loadMobileUnlockTiming()
-  }
-
   getBiometricsTimingOptions() {
     return this.protectionService.getBiometricsTimingOptions()
   }

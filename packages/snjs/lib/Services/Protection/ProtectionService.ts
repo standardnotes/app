@@ -87,6 +87,8 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
   override handleApplicationStage(stage: ApplicationStage): Promise<void> {
     if (stage === ApplicationStage.LoadedDatabase_12) {
       this.updateSessionExpiryTimer(this.getSessionExpiryDate())
+      this.mobilePasscodeTiming = this.getPasscodeTiming()
+      this.mobileBiometricsTiming = this.getBiometricsTiming()
     }
     return Promise.resolve()
   }
@@ -282,11 +284,6 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
 
   getMobileScreenshotPrivacyEnabled(): boolean {
     return this.storageService.getValue(StorageKey.MobileScreenshotPrivacyEnabled, StorageValueModes.Default, false)
-  }
-
-  loadMobileUnlockTiming(): void {
-    this.mobilePasscodeTiming = this.getPasscodeTiming()
-    this.mobileBiometricsTiming = this.getBiometricsTiming()
   }
 
   private async validateOrRenewSession(
