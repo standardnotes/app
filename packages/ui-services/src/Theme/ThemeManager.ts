@@ -310,20 +310,6 @@ export class ThemeManager extends AbstractService {
     themeColorMetaElement.setAttribute('content', bgColor ? bgColor.trim() : '#ffffff')
   }
 
-  /**
-   * Syncs the active theme's background color to the 'theme-color' meta tag
-   * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta/name/theme-color
-   */
-  private syncThemeColorMetadata() {
-    const themeColorMetaElement = document.querySelector('meta[name="theme-color"]')
-    if (!themeColorMetaElement) {
-      return
-    }
-
-    const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--sn-stylekit-background-color')
-    themeColorMetaElement.setAttribute('content', bgColor ? bgColor.trim() : '#ffffff')
-  }
-
   private deactivateTheme(uuid: string) {
     if (!this.activeThemes.includes(uuid)) {
       return
