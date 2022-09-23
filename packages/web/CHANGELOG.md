@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.55.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.55.0...@standardnotes/web@3.55.1) (2022-09-23)
+
+### Bug Fixes
+
+* prefs view on desktop ([#1628](https://github.com/standardnotes/app/issues/1628)) ([a548883](https://github.com/standardnotes/app/commit/a548883863b4e0ec949fa63a8581cc2984614993))
+
 # [3.55.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.54.6...@standardnotes/web@3.55.0) (2022-09-23)
 
 ### Features
