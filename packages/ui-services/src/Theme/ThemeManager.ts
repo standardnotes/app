@@ -248,13 +248,14 @@ export class ThemeManager extends AbstractService {
           this.deactivateTheme(theme.uuid)
         }
       }
+
       if (source !== PayloadEmitSource.LocalRetrieved) {
         this.cacheThemeState().catch(console.error)
       }
     })
   }
 
-  public deactivateAllThemes() {
+  private deactivateAllThemes() {
     const activeThemes = this.activeThemes.slice()
 
     for (const uuid of activeThemes) {
@@ -289,6 +290,10 @@ export class ThemeManager extends AbstractService {
     link.id = theme.uuid
     link.onload = this.syncThemeColorMetadata
     document.getElementsByTagName('head')[0].appendChild(link)
+
+    if (this.application.isNativeMobileWeb()) {
+      this.application.mobileDevice.handleThemeSchemeChange(theme.package_info.isDark ?? false)
+    }
   }
 
   /**
@@ -306,6 +311,10 @@ export class ThemeManager extends AbstractService {
   }
 
   private deactivateTheme(uuid: string) {
+    if (!this.activeThemes.includes(uuid)) {
+      return
+    }
+
     const element = document.getElementById(uuid) as HTMLLinkElement
     if (element) {
       element.disabled = true
@@ -313,6 +322,10 @@ export class ThemeManager extends AbstractService {
     }
 
     removeFromArray(this.activeThemes, uuid)
+
+    if (this.activeThemes.length === 0) {
+      this.application.mobileDevice.handleThemeSchemeChange(false)
+    }
   }
 
   private async cacheThemeState() {

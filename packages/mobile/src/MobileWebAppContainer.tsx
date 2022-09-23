@@ -2,7 +2,7 @@ import { MobileDevice, MobileDeviceEvent } from '@Lib/Interface'
 import { IsDev } from '@Lib/Utils'
 import { ReactNativeToWebEvent } from '@standardnotes/snjs'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Platform } from 'react-native'
+import { Keyboard, Platform } from 'react-native'
 import { WebView, WebViewMessageEvent } from 'react-native-webview'
 import { AppStateObserverService } from './AppStateObserverService'
 
@@ -29,8 +29,18 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       webViewRef.current?.postMessage(JSON.stringify({ reactNativeEvent: event, messageType: 'event' }))
     })
 
+    const keyboardShowListener = Keyboard.addListener('keyboardWillShow', () => {
+      device.reloadStatusBarStyle(false)
+    })
+
+    const keyboardHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      device.reloadStatusBarStyle(false)
+    })
+
     return () => {
       removeListener()
+      keyboardShowListener.remove()
+      keyboardHideListener.remove()
     }
   }, [webViewRef, stateService])
 
@@ -183,6 +193,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       allowFileAccess={true}
       allowUniversalAccessFromFileURLs={true}
       injectedJavaScriptBeforeContentLoaded={injectedJS}
+      bounces={false}
     />
   )
   /* eslint-enable @typescript-eslint/no-empty-function */
