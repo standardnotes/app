@@ -18,6 +18,7 @@ import {
   FileViewController,
   FileItem,
   WebAppEvent,
+  NewNoteTitleFormat,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
@@ -485,7 +486,21 @@ export class ItemListController extends AbstractViewController implements Intern
       await this.navigationController.selectHomeNavigationView()
     }
 
-    let title = `Note ${this.notes.length + 1}`
+    const titleFormat = this.application.getPreference(
+      PrefKey.NewNoteTitleFormat,
+      NewNoteTitleFormat.CurrentDateAndTime,
+    )
+
+    let title = new Date().toLocaleString()
+
+    if (titleFormat === NewNoteTitleFormat.CurrentNoteCount) {
+      title = `Note ${this.notes.length + 1}`
+    }
+
+    if (titleFormat === NewNoteTitleFormat.Empty) {
+      title = ''
+    }
+
     if (this.isFiltering) {
       title = this.noteFilterText
     }

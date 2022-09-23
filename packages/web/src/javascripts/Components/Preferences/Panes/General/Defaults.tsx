@@ -7,6 +7,7 @@ import {
   ComponentMutator,
   SNComponent,
   StorageValueModes,
+  NewNoteTitleFormat,
 } from '@standardnotes/snjs'
 import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/Application/Application'
@@ -60,6 +61,14 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
   )
 
   const [spellcheck, setSpellcheck] = useState(() => application.getPreference(PrefKey.EditorSpellcheck, true))
+
+  const [newNoteTitleFormat, setNewNoteTitleFormat] = useState(() =>
+    application.getPreference(PrefKey.NewNoteTitleFormat, NewNoteTitleFormat.CurrentDateAndTime),
+  )
+  const handleNewNoteTitleFormatChange = (value: string) => {
+    setNewNoteTitleFormat(value as NewNoteTitleFormat)
+    application.setPreference(PrefKey.NewNoteTitleFormat, value as NewNoteTitleFormat)
+  }
 
   const [addNoteToParentFolders, setAddNoteToParentFolders] = useState(() =>
     application.getPreference(PrefKey.NoteAddToParentFolders, true),
@@ -138,7 +147,7 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
         )}
         <div>
           <Subtitle>Default Note Type</Subtitle>
-          <Text>New notes will be created using this type.</Text>
+          <Text>New notes will be created using this type</Text>
           <div className="mt-2">
             <Dropdown
               id="def-editor-dropdown"
@@ -146,6 +155,33 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
               items={editorItems}
               value={defaultEditorValue}
               onChange={setDefaultEditor}
+            />
+          </div>
+        </div>
+        <HorizontalSeparator classes="my-4" />
+        <div>
+          <Subtitle>Default Note Title Format</Subtitle>
+          <Text>New notes will be created with a title in this format</Text>
+          <div className="mt-2">
+            <Dropdown
+              id="def-new-note-title-format"
+              label="Select the default note type"
+              items={[
+                {
+                  label: 'Current date and time',
+                  value: NewNoteTitleFormat.CurrentDateAndTime,
+                },
+                {
+                  label: 'Current note count',
+                  value: NewNoteTitleFormat.CurrentNoteCount,
+                },
+                {
+                  label: 'Empty',
+                  value: NewNoteTitleFormat.Empty,
+                },
+              ]}
+              value={newNoteTitleFormat}
+              onChange={handleNewNoteTitleFormatChange}
             />
           </div>
         </div>
