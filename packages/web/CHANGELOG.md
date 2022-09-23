@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.54.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.54.3...@standardnotes/web@3.54.4) (2022-09-23)
+
+### Bug Fixes
+
+* **web:** move email notification preferences to account pane ([#1620](https://github.com/standardnotes/app/issues/1620)) ([de64f1b](https://github.com/standardnotes/app/commit/de64f1bfce6d343fe698c55d6eaf307d200df3ee))
+
 ## [3.54.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.54.2...@standardnotes/web@3.54.3) (2022-09-22)
 
 ### Bug Fixes
