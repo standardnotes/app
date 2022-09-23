@@ -19,10 +19,8 @@ const BiometricsLock = ({ application }: Props) => {
   const [biometricsTimingOptions, setBiometricsTimingOptions] = useState(() => application.getBiometricsTimingOptions())
 
   useEffect(() => {
-    const getHasBiometrics = async () => {
-      const appHasBiometrics = application.hasBiometrics()
-      setHasBiometrics(appHasBiometrics)
-    }
+    const appHasBiometrics = application.hasBiometrics()
+    setHasBiometrics(appHasBiometrics)
 
     const hasBiometricsSupport = async () => {
       const hasBiometricsAvailable = await (
@@ -30,7 +28,6 @@ const BiometricsLock = ({ application }: Props) => {
       ).getDeviceBiometricsAvailability?.()
       setSupportsBiometrics(hasBiometricsAvailable)
     }
-    void getHasBiometrics()
     void hasBiometricsSupport()
   }, [application])
 
