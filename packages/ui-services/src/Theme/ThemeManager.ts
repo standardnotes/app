@@ -110,14 +110,14 @@ export class ThemeManager extends AbstractService {
 
     this.unregisterDesktop?.()
     this.unregisterStream()
-      ; (this.unregisterDesktop as unknown) = undefined
-      ; (this.unregisterStream as unknown) = undefined
+    ;(this.unregisterDesktop as unknown) = undefined
+    ;(this.unregisterStream as unknown) = undefined
 
     window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', this.colorSchemeEventHandler)
-      ; (this.application as unknown) = undefined
+    ;(this.application as unknown) = undefined
 
     this.unsubApp()
-      ; (this.unsubApp as unknown) = undefined
+    ;(this.unsubApp as unknown) = undefined
 
     super.deinit()
   }
@@ -294,7 +294,7 @@ export class ThemeManager extends AbstractService {
       }
 
       const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--sn-stylekit-background-color')
-      themeColorMetaElement.setAttribute('content', bgColor ? bgColor.trim() : "#ffffff")
+      themeColorMetaElement.setAttribute('content', bgColor ? bgColor.trim() : '#ffffff')
     }
     document.getElementsByTagName('head')[0].appendChild(link)
   }
