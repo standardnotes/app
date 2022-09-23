@@ -65,7 +65,7 @@ const showLoadFailForItemIds = (failedItemIds: string[]) => {
 export class MobileDevice implements MobileDeviceInterface {
   environment: Environment.Mobile = Environment.Mobile
   private eventObservers: MobileDeviceEventHandler[] = []
-  public isDarkMode: boolean = false
+  public isDarkMode = false
 
   constructor(private stateObserverService?: AppStateObserverService) {}
 
