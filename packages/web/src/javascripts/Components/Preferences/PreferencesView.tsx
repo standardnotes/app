@@ -34,7 +34,7 @@ const PreferencesView: FunctionComponent<PreferencesProps> = (props) => {
     <div
       className={classNames(
         'absolute top-0 left-0 z-preferences flex h-full max-h-screen w-full flex-col bg-default pt-safe-top',
-        isIOS() ? 'pb-safe-bottom' : 'pb-2',
+        isIOS() ? 'pb-safe-bottom' : 'pb-2 md:pb-0',
       )}
       ref={fitNodeToMobileScreen}
     >
