@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.2.7...@standardnotes/ui-services@1.3.0) (2022-09-23)
+
+### Features
+
+* sync page theme color metadata with active theme bg ([#1623](https://github.com/standardnotes/app/issues/1623)) ([5de6f45](https://github.com/standardnotes/app/commit/5de6f459c106127f294693389f62fa1c3ed57798))
+
 ## [1.2.7](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.2.6...@standardnotes/ui-services@1.2.7) (2022-09-20)
 
 **Note:** Version bump only for package @standardnotes/ui-services

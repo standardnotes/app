@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.36.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.35.16...@standardnotes/mobile@3.36.0) (2022-09-23)
+
+### Features
+
+* sync page theme color metadata with active theme bg ([#1623](https://github.com/standardnotes/app/issues/1623)) ([5de6f45](https://github.com/standardnotes/app/commit/5de6f459c106127f294693389f62fa1c3ed57798))
+
 ## [3.35.16](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.35.15...@standardnotes/mobile@3.35.16) (2022-09-23)
 
 **Note:** Version bump only for package @standardnotes/mobile
