@@ -287,16 +287,22 @@ export class ThemeManager extends AbstractService {
     link.rel = 'stylesheet'
     link.media = 'screen,print'
     link.id = theme.uuid
-    link.onload = () => {
-      const themeColorMetaElement = document.querySelector('meta[name="theme-color"]')
-      if (!themeColorMetaElement) {
-        return
-      }
-
-      const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--sn-stylekit-background-color')
-      themeColorMetaElement.setAttribute('content', bgColor ? bgColor.trim() : '#ffffff')
-    }
+    link.onload = this.syncThemeColorMetadata
     document.getElementsByTagName('head')[0].appendChild(link)
+  }
+
+  /**
+   * Syncs the active theme's background color to the 'theme-color' meta tag
+   * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta/name/theme-color
+   */
+  private syncThemeColorMetadata() {
+    const themeColorMetaElement = document.querySelector('meta[name="theme-color"]')
+    if (!themeColorMetaElement) {
+      return
+    }
+
+    const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--sn-stylekit-background-color')
+    themeColorMetaElement.setAttribute('content', bgColor ? bgColor.trim() : '#ffffff')
   }
 
   private deactivateTheme(uuid: string) {
