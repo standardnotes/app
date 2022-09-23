@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.55.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.54.6...@standardnotes/web@3.55.0) (2022-09-23)
+
+### Features
+
+* add prefs button to navigation panel on mobile ([#1625](https://github.com/standardnotes/app/issues/1625)) ([0af7201](https://github.com/standardnotes/app/commit/0af720146c412316fcb24999ff73c91337f19fb9))
+
 ## [3.54.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.54.5...@standardnotes/web@3.54.6) (2022-09-23)
 
 ### Bug Fixes
