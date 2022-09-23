@@ -11,7 +11,7 @@ import {
   removeFromArray,
   TransferPayload,
 } from '@standardnotes/snjs'
-import { Alert, Linking, Platform } from 'react-native'
+import { Alert, Linking, Platform, StatusBar } from 'react-native'
 import FingerprintScanner from 'react-native-fingerprint-scanner'
 import FlagSecure from 'react-native-flag-secure-android'
 import { hide, show } from 'react-native-privacy-snapshot'
@@ -430,6 +430,10 @@ export class MobileDevice implements MobileDeviceInterface {
     return () => {
       removeFromArray(thislessObservers, handler)
     }
+  }
+
+  handleThemeSchemeChange(isDark: boolean): void {
+    StatusBar.setBarStyle(isDark ? 'light-content' : 'dark-content', true)
   }
 
   private notifyEvent(event: MobileDeviceEvent): void {

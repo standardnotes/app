@@ -6,11 +6,13 @@ import { HistoryEntryInterface } from '../../Runtime/History'
 import { DecryptedItemInterface, ItemInterface } from '../../Abstract/Item'
 import { ContentType } from '@standardnotes/common'
 import { useBoolean } from '@standardnotes/utils'
+import { ThemePackageInfo } from '../Component/PackageInfo'
 
 export const isTheme = (x: ItemInterface): x is SNTheme => x.content_type === ContentType.Theme
 
 export class SNTheme extends SNComponent {
   public override area: ComponentArea = ComponentArea.Themes
+  public override readonly package_info!: ThemePackageInfo
 
   isLayerable(): boolean {
     return useBoolean(this.package_info && this.package_info.layerable, false)

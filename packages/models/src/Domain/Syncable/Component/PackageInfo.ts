@@ -1,4 +1,4 @@
-import { FeatureDescription } from '@standardnotes/features'
+import { FeatureDescription, ThemeFeatureDescription } from '@standardnotes/features'
 
 type ThirdPartyPackageInfo = {
   version: string
@@ -6,3 +6,4 @@ type ThirdPartyPackageInfo = {
 }
 
 export type ComponentPackageInfo = FeatureDescription & Partial<ThirdPartyPackageInfo>
+export type ThemePackageInfo = FeatureDescription & Partial<ThirdPartyPackageInfo> & ThemeFeatureDescription
