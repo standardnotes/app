@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.54.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.54.4...@standardnotes/web@3.54.5) (2022-09-23)
+
+### Bug Fixes
+
+* protected overlay on mobile ([#1621](https://github.com/standardnotes/app/issues/1621)) ([51e5043](https://github.com/standardnotes/app/commit/51e50433d3e1a3a682bcb7a774129a904a39b12e))
+
 ## [3.54.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.54.3...@standardnotes/web@3.54.4) (2022-09-23)
 
 ### Bug Fixes
