@@ -28,16 +28,12 @@ const FileView = ({ application, viewControllerManager, file }: FileViewProps) =
   }, [application, file])
 
   return shouldShowProtectedOverlay ? (
-    <div aria-label="Note" className="section editor sn-component">
-      <div className="flex h-full items-center justify-center">
-        <ProtectedItemOverlay
-          viewControllerManager={viewControllerManager}
-          hasProtectionSources={application.hasProtectionSources()}
-          onViewItem={dismissProtectedOverlay}
-          itemType={'note'}
-        />
-      </div>
-    </div>
+    <ProtectedItemOverlay
+      viewControllerManager={viewControllerManager}
+      hasProtectionSources={application.hasProtectionSources()}
+      onViewItem={dismissProtectedOverlay}
+      itemType={'file'}
+    />
   ) : (
     <FileViewWithoutProtection application={application} viewControllerManager={viewControllerManager} file={file} />
   )

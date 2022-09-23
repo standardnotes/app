@@ -874,18 +874,12 @@ class NoteView extends PureComponent<NoteViewProps, State> {
   override render() {
     if (this.state.showProtectedWarning) {
       return (
-        <div aria-label="Note" className="section editor sn-component">
-          {this.state.showProtectedWarning && (
-            <div className="flex h-full items-center justify-center">
-              <ProtectedItemOverlay
-                viewControllerManager={this.viewControllerManager}
-                hasProtectionSources={this.application.hasProtectionSources()}
-                onViewItem={this.dismissProtectedWarning}
-                itemType={'note'}
-              />
-            </div>
-          )}
-        </div>
+        <ProtectedItemOverlay
+          viewControllerManager={this.viewControllerManager}
+          hasProtectionSources={this.application.hasProtectionSources()}
+          onViewItem={this.dismissProtectedWarning}
+          itemType={'note'}
+        />
       )
     }
 
