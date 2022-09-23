@@ -119,12 +119,22 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
           <button
             className="ml-2.5 flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border bg-default text-neutral hover:bg-contrast focus:bg-contrast"
             onClick={() => {
+              viewControllerManager.preferencesController.openPreferences()
+            }}
+            title="Go to preferences"
+            aria-label="Go to preferences"
+          >
+            <Icon type="tune" />
+          </button>
+          <button
+            className="ml-2.5 flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border bg-default text-neutral hover:bg-contrast focus:bg-contrast"
+            onClick={() => {
               viewControllerManager.quickSettingsMenuController.toggle()
             }}
             title="Go to quick settings menu"
             aria-label="Go to quick settings menu"
           >
-            <Icon type="tune" />
+            <Icon type="themes" />
           </button>
         </div>
       </ResponsivePaneContent>
