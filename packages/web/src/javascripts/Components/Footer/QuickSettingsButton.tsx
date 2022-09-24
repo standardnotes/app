@@ -1,40 +1,35 @@
 import { WebApplication } from '@/Application/Application'
-import { PreferencesController } from '@/Controllers/PreferencesController'
 import { QuickSettingsController } from '@/Controllers/QuickSettingsController'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { useRef } from 'react'
 import Icon from '../Icon/Icon'
 import Popover from '../Popover/Popover'
 import QuickSettingsMenu from '../QuickSettingsMenu/QuickSettingsMenu'
+import StyledTooltip from '../StyledTooltip/StyledTooltip'
 
 type Props = {
   isOpen: boolean
   toggleMenu: () => void
   application: WebApplication
-  preferencesController: PreferencesController
   quickSettingsMenuController: QuickSettingsController
 }
 
-const QuickSettingsButton = ({
-  application,
-  isOpen,
-  toggleMenu,
-  preferencesController,
-  quickSettingsMenuController,
-}: Props) => {
+const QuickSettingsButton = ({ application, isOpen, toggleMenu, quickSettingsMenuController }: Props) => {
   const buttonRef = useRef<HTMLButtonElement>(null)
 
   return (
     <>
-      <button
-        onClick={toggleMenu}
-        className="flex h-full w-8 cursor-pointer items-center justify-center"
-        ref={buttonRef}
-      >
-        <div className="h-5">
-          <Icon type="tune" className={classNames(isOpen && 'text-info', 'rounded hover:text-info')} />
-        </div>
-      </button>
+      <StyledTooltip label="Open quick settings menu">
+        <button
+          onClick={toggleMenu}
+          className="flex h-full w-8 cursor-pointer items-center justify-center"
+          ref={buttonRef}
+        >
+          <div className="h-5">
+            <Icon type="themes" className={classNames(isOpen && 'text-info', 'rounded hover:text-info')} />
+          </div>
+        </button>
+      </StyledTooltip>
       <Popover
         togglePopover={toggleMenu}
         anchorElement={buttonRef.current}
@@ -43,11 +38,7 @@ const QuickSettingsButton = ({
         align="start"
         className="py-2"
       >
-        <QuickSettingsMenu
-          preferencesController={preferencesController}
-          quickSettingsMenuController={quickSettingsMenuController}
-          application={application}
-        />
+        <QuickSettingsMenu quickSettingsMenuController={quickSettingsMenuController} application={application} />
       </Popover>
     </>
   )
