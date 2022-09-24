@@ -14,6 +14,11 @@ export const formatDateForContextMenu = (date: Date | undefined) => {
 
 export const formatDateAndTimeForNote = (date: Date) => {
   return `${date.toLocaleDateString(undefined, {
-    dateStyle: 'full',
-  })} ${date.toLocaleTimeString()}`
+    weekday: 'long',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  })} at ${date.toLocaleTimeString(undefined, {
+    timeStyle: 'short',
+  })}`
 }
