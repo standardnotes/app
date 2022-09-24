@@ -3,7 +3,9 @@ import { IsDev } from '@Lib/Utils'
 import { ReactNativeToWebEvent } from '@standardnotes/snjs'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Keyboard, Platform } from 'react-native'
+import VersionInfo from 'react-native-version-info'
 import { WebView, WebViewMessageEvent } from 'react-native-webview'
+import pjson from '../package.json'
 import { AppStateObserverService } from './AppStateObserverService'
 
 const LoggingEnabled = IsDev
@@ -84,7 +86,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
   const WebProcessDeviceInterface = `
   class WebProcessDeviceInterface {
     constructor(messageSender) {
-      this.appVersion = '1.2.3'
+      this.appVersion = '${pjson.version} (${VersionInfo.buildVersion})'
       this.environment = 4
       this.databases = []
       this.messageSender = messageSender
