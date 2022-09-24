@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.57.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.57.1...@standardnotes/web@3.57.2) (2022-09-24)
+
+### Bug Fixes
+
+* move prefs button next to account menu button in footer ([#1639](https://github.com/standardnotes/app/issues/1639)) ([a3611c8](https://github.com/standardnotes/app/commit/a3611c802f08817d2ba73adf6b9d48465738b1b6))
+
 ## [3.57.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.57.0...@standardnotes/web@3.57.1) (2022-09-24)
 
 ### Bug Fixes
