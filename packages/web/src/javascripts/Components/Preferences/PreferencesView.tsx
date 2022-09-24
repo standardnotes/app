@@ -4,11 +4,14 @@ import { observer } from 'mobx-react-lite'
 import { PreferencesMenu } from './PreferencesMenu'
 import PreferencesCanvas from './PreferencesCanvas'
 import { PreferencesProps } from './PreferencesProps'
-import { fitNodeToMobileScreen, isIOS } from '@/Utils'
+import { isIOS } from '@/Utils'
 import { useDisableBodyScrollOnMobile } from '@/Hooks/useDisableBodyScrollOnMobile'
 import { classNames } from '@/Utils/ConcatenateClassNames'
+import { MediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 
 const PreferencesView: FunctionComponent<PreferencesProps> = (props) => {
+  const isDesktopScreen = useMediaQuery(MediaQueryBreakpoints.md)
+
   const menu = useMemo(
     () => new PreferencesMenu(props.application, props.viewControllerManager.enableUnfinishedFeatures),
     [props.viewControllerManager.enableUnfinishedFeatures, props.application],
@@ -33,10 +36,12 @@ const PreferencesView: FunctionComponent<PreferencesProps> = (props) => {
   return (
     <div
       className={classNames(
-        'absolute top-0 left-0 z-preferences flex h-full max-h-screen w-full flex-col bg-default pt-safe-top',
+        'absolute top-0 left-0 z-preferences flex h-screen max-h-screen w-full flex-col bg-default pt-safe-top md:h-full md:max-h-full',
         isIOS() ? 'pb-safe-bottom' : 'pb-2 md:pb-0',
       )}
-      ref={fitNodeToMobileScreen}
+      style={{
+        top: !isDesktopScreen ? `${document.documentElement.scrollTop}px` : '',
+      }}
     >
       <div className="flex w-full flex-row items-center justify-between border-b border-solid border-border bg-default px-3 py-2 md:p-3">
         <div className="hidden h-8 w-8 md:block" />
