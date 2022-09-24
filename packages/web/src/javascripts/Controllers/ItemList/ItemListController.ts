@@ -30,6 +30,7 @@ import { SearchOptionsController } from '../SearchOptionsController'
 import { SelectedItemsController } from '../SelectedItemsController'
 import { NotesController } from '../NotesController'
 import { NoteTagsController } from '../NoteTagsController'
+import { formatDateAndTimeForNote } from '@/Utils/DateUtils'
 
 const MinNoteCellHeight = 51.0
 const DefaultListNumNotes = 20
@@ -491,13 +492,11 @@ export class ItemListController extends AbstractViewController implements Intern
       NewNoteTitleFormat.CurrentDateAndTime,
     )
 
-    let title = new Date().toLocaleString()
+    let title = formatDateAndTimeForNote(new Date())
 
     if (titleFormat === NewNoteTitleFormat.CurrentNoteCount) {
       title = `Note ${this.notes.length + 1}`
-    }
-
-    if (titleFormat === NewNoteTitleFormat.Empty) {
+    } else if (titleFormat === NewNoteTitleFormat.Empty) {
       title = ''
     }
 
