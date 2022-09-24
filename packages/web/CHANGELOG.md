@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.57.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.57.0...@standardnotes/web@3.57.1) (2022-09-24)
+
+### Bug Fixes
+
+* responsiveness when resizing window on web/desktop ([#1637](https://github.com/standardnotes/app/issues/1637)) ([e4b1b64](https://github.com/standardnotes/app/commit/e4b1b641194cede65b8f0413bb1c805a84585dfe))
+
 # [3.57.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.56.0...@standardnotes/web@3.57.0) (2022-09-24)
 
 ### Features
