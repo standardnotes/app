@@ -1,5 +1,4 @@
 import { WebApplication } from '@/Application/Application'
-import { PreferencesController } from '@/Controllers/PreferencesController'
 import { QuickSettingsController } from '@/Controllers/QuickSettingsController'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { useRef } from 'react'
@@ -11,17 +10,10 @@ type Props = {
   isOpen: boolean
   toggleMenu: () => void
   application: WebApplication
-  preferencesController: PreferencesController
   quickSettingsMenuController: QuickSettingsController
 }
 
-const QuickSettingsButton = ({
-  application,
-  isOpen,
-  toggleMenu,
-  preferencesController,
-  quickSettingsMenuController,
-}: Props) => {
+const QuickSettingsButton = ({ application, isOpen, toggleMenu, quickSettingsMenuController }: Props) => {
   const buttonRef = useRef<HTMLButtonElement>(null)
 
   return (
@@ -32,7 +24,7 @@ const QuickSettingsButton = ({
         ref={buttonRef}
       >
         <div className="h-5">
-          <Icon type="tune" className={classNames(isOpen && 'text-info', 'rounded hover:text-info')} />
+          <Icon type="themes" className={classNames(isOpen && 'text-info', 'rounded hover:text-info')} />
         </div>
       </button>
       <Popover
@@ -43,11 +35,7 @@ const QuickSettingsButton = ({
         align="start"
         className="py-2"
       >
-        <QuickSettingsMenu
-          preferencesController={preferencesController}
-          quickSettingsMenuController={quickSettingsMenuController}
-          application={application}
-        />
+        <QuickSettingsMenu quickSettingsMenuController={quickSettingsMenuController} application={application} />
       </Popover>
     </>
   )

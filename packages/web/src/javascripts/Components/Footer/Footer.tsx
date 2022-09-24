@@ -336,6 +336,11 @@ class Footer extends PureComponent<Props, State> {
     this.viewControllerManager.quickSettingsMenuController.closeQuickSettingsMenu()
   }
 
+  openPreferences = () => {
+    this.clickOutsideQuickSettingsMenu()
+    this.viewControllerManager.preferencesController.openPreferences()
+  }
+
   override render() {
     return (
       <div className="sn-component">
@@ -361,9 +366,18 @@ class Footer extends PureComponent<Props, State> {
                 isOpen={this.state.showQuickSettingsMenu}
                 toggleMenu={this.quickSettingsClickHandler}
                 application={this.application}
-                preferencesController={this.viewControllerManager.preferencesController}
                 quickSettingsMenuController={this.viewControllerManager.quickSettingsMenuController}
               />
+            </div>
+            <div className="relative z-footer-bar-item select-none">
+              <button
+                onClick={this.openPreferences}
+                className="flex h-full w-8 cursor-pointer items-center justify-center"
+              >
+                <div className="h-5">
+                  <Icon type="tune" className="rounded hover:text-info" />
+                </div>
+              </button>
             </div>
             {this.state.showBetaWarning && (
               <Fragment>
