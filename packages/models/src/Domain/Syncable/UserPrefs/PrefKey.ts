@@ -32,6 +32,13 @@ export enum PrefKey {
   MobileDoNotShowAgainUnsupportedEditors = 'mobileDoNotShowAgainUnsupportedEditors',
   MobileSelectedTagUuid = 'mobileSelectedTagUuid',
   MobileNotesHideEditorIcon = 'mobileHideEditorIcon',
+  NewNoteTitleFormat = 'newNoteTitleFormat',
+}
+
+export enum NewNoteTitleFormat {
+  CurrentDateAndTime = 'CurrentDateAndTime',
+  CurrentNoteCount = 'CurrentNoteCount',
+  Empty = 'Empty',
 }
 
 export type PrefValue = {
@@ -65,4 +72,5 @@ export type PrefValue = {
   [PrefKey.MobileDoNotShowAgainUnsupportedEditors]: boolean
   [PrefKey.MobileSelectedTagUuid]: string | undefined
   [PrefKey.MobileNotesHideEditorIcon]: boolean
+  [PrefKey.NewNoteTitleFormat]: NewNoteTitleFormat
 }
