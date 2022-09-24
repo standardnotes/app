@@ -363,14 +363,6 @@ class Footer extends PureComponent<Props, State> {
               />
             </div>
             <div className="relative z-footer-bar-item select-none">
-              <QuickSettingsButton
-                isOpen={this.state.showQuickSettingsMenu}
-                toggleMenu={this.quickSettingsClickHandler}
-                application={this.application}
-                quickSettingsMenuController={this.viewControllerManager.quickSettingsMenuController}
-              />
-            </div>
-            <div className="relative z-footer-bar-item select-none">
               <StyledTooltip label="Open preferences">
                 <button
                   onClick={this.openPreferences}
@@ -381,6 +373,14 @@ class Footer extends PureComponent<Props, State> {
                   </div>
                 </button>
               </StyledTooltip>
+            </div>
+            <div className="relative z-footer-bar-item select-none">
+              <QuickSettingsButton
+                isOpen={this.state.showQuickSettingsMenu}
+                toggleMenu={this.quickSettingsClickHandler}
+                application={this.application}
+                quickSettingsMenuController={this.viewControllerManager.quickSettingsMenuController}
+              />
             </div>
             {this.state.showBetaWarning && (
               <Fragment>
