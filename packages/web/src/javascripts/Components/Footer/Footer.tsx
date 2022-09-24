@@ -434,14 +434,16 @@ class Footer extends PureComponent<Props, State> {
               </div>
             )}
             {this.state.hasPasscode && (
-              <div
-                id="lock-item"
-                onClick={this.lockClickHandler}
-                title="Locks application and wipes unencrypted data from memory."
-                className="relative z-footer-bar-item ml-3 flex cursor-pointer select-none items-center border-l border-solid border-border pl-2 hover:text-info"
-              >
-                <Icon type="lock-filled" size="custom" className="h-4.5 w-4.5" />
-              </div>
+              <StyledTooltip label="Lock application">
+                <div
+                  id="lock-item"
+                  onClick={this.lockClickHandler}
+                  title="Locks application and wipes unencrypted data from memory."
+                  className="relative z-footer-bar-item ml-3 flex cursor-pointer select-none items-center border-l border-solid border-border pl-2 hover:text-info"
+                >
+                  <Icon type="lock-filled" size="custom" className="h-4.5 w-4.5" />
+                </div>
+              </StyledTooltip>
             )}
           </div>
         </footer>
