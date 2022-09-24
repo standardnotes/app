@@ -5,6 +5,7 @@ import { useRef } from 'react'
 import Icon from '../Icon/Icon'
 import Popover from '../Popover/Popover'
 import QuickSettingsMenu from '../QuickSettingsMenu/QuickSettingsMenu'
+import StyledTooltip from '../StyledTooltip/StyledTooltip'
 
 type Props = {
   isOpen: boolean
@@ -18,15 +19,17 @@ const QuickSettingsButton = ({ application, isOpen, toggleMenu, quickSettingsMen
 
   return (
     <>
-      <button
-        onClick={toggleMenu}
-        className="flex h-full w-8 cursor-pointer items-center justify-center"
-        ref={buttonRef}
-      >
-        <div className="h-5">
-          <Icon type="themes" className={classNames(isOpen && 'text-info', 'rounded hover:text-info')} />
-        </div>
-      </button>
+      <StyledTooltip label="Open quick settings menu">
+        <button
+          onClick={toggleMenu}
+          className="flex h-full w-8 cursor-pointer items-center justify-center"
+          ref={buttonRef}
+        >
+          <div className="h-5">
+            <Icon type="themes" className={classNames(isOpen && 'text-info', 'rounded hover:text-info')} />
+          </div>
+        </button>
+      </StyledTooltip>
       <Popover
         togglePopover={toggleMenu}
         anchorElement={buttonRef.current}

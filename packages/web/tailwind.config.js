@@ -73,6 +73,7 @@ module.exports = {
         'lock-screen': 'var(--z-index-lock-screen)',
         modal: 'var(--z-index-modal)',
         toast: 'var(--z-index-toast)',
+        tooltip: 'var(--z-index-tooltip)',
       },
       boxShadow: {
         inner:

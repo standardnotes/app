@@ -18,6 +18,7 @@ import { AccountMenuPane } from '../AccountMenu/AccountMenuPane'
 import { EditorEventSource } from '@/Types/EditorEventSource'
 import QuickSettingsButton from './QuickSettingsButton'
 import AccountMenuButton from './AccountMenuButton'
+import StyledTooltip from '../StyledTooltip/StyledTooltip'
 
 type Props = {
   application: WebApplication
@@ -370,14 +371,16 @@ class Footer extends PureComponent<Props, State> {
               />
             </div>
             <div className="relative z-footer-bar-item select-none">
-              <button
-                onClick={this.openPreferences}
-                className="flex h-full w-8 cursor-pointer items-center justify-center"
-              >
-                <div className="h-5">
-                  <Icon type="tune" className="rounded hover:text-info" />
-                </div>
-              </button>
+              <StyledTooltip label="Open preferences">
+                <button
+                  onClick={this.openPreferences}
+                  className="flex h-full w-8 cursor-pointer items-center justify-center"
+                >
+                  <div className="h-5">
+                    <Icon type="tune" className="rounded hover:text-info" />
+                  </div>
+                </button>
+              </StyledTooltip>
             </div>
             {this.state.showBetaWarning && (
               <Fragment>
