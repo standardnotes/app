@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.57.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.57.2...@standardnotes/web@3.57.3) (2022-09-24)
+
+### Bug Fixes
+
+* improve new note title format ([#1640](https://github.com/standardnotes/app/issues/1640)) ([59e814b](https://github.com/standardnotes/app/commit/59e814bcec8c3633b1b2baeae3e435fa2a19777d))
+
 ## [3.57.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.57.1...@standardnotes/web@3.57.2) (2022-09-24)
 
 ### Bug Fixes
