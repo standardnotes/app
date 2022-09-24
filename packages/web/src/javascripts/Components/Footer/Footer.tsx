@@ -18,6 +18,7 @@ import { AccountMenuPane } from '../AccountMenu/AccountMenuPane'
 import { EditorEventSource } from '@/Types/EditorEventSource'
 import QuickSettingsButton from './QuickSettingsButton'
 import AccountMenuButton from './AccountMenuButton'
+import StyledTooltip from '../StyledTooltip/StyledTooltip'
 
 type Props = {
   application: WebApplication
@@ -336,6 +337,11 @@ class Footer extends PureComponent<Props, State> {
     this.viewControllerManager.quickSettingsMenuController.closeQuickSettingsMenu()
   }
 
+  openPreferences = () => {
+    this.clickOutsideQuickSettingsMenu()
+    this.viewControllerManager.preferencesController.openPreferences()
+  }
+
   override render() {
     return (
       <div className="sn-component">
@@ -361,9 +367,20 @@ class Footer extends PureComponent<Props, State> {
                 isOpen={this.state.showQuickSettingsMenu}
                 toggleMenu={this.quickSettingsClickHandler}
                 application={this.application}
-                preferencesController={this.viewControllerManager.preferencesController}
                 quickSettingsMenuController={this.viewControllerManager.quickSettingsMenuController}
               />
+            </div>
+            <div className="relative z-footer-bar-item select-none">
+              <StyledTooltip label="Open preferences">
+                <button
+                  onClick={this.openPreferences}
+                  className="flex h-full w-8 cursor-pointer items-center justify-center"
+                >
+                  <div className="h-5">
+                    <Icon type="tune" className="rounded hover:text-info" />
+                  </div>
+                </button>
+              </StyledTooltip>
             </div>
             {this.state.showBetaWarning && (
               <Fragment>
@@ -417,14 +434,16 @@ class Footer extends PureComponent<Props, State> {
               </div>
             )}
             {this.state.hasPasscode && (
-              <div
-                id="lock-item"
-                onClick={this.lockClickHandler}
-                title="Locks application and wipes unencrypted data from memory."
-                className="relative z-footer-bar-item ml-3 flex cursor-pointer select-none items-center border-l border-solid border-border pl-2 hover:text-info"
-              >
-                <Icon type="lock-filled" size="custom" className="h-4.5 w-4.5" />
-              </div>
+              <StyledTooltip label="Lock application">
+                <div
+                  id="lock-item"
+                  onClick={this.lockClickHandler}
+                  title="Locks application and wipes unencrypted data from memory."
+                  className="relative z-footer-bar-item ml-3 flex cursor-pointer select-none items-center border-l border-solid border-border pl-2 hover:text-info"
+                >
+                  <Icon type="lock-filled" size="custom" className="h-4.5 w-4.5" />
+                </div>
+              </StyledTooltip>
             )}
           </div>
         </footer>

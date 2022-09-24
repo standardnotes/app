@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.56.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.55.2...@standardnotes/web@3.56.0) (2022-09-24)
+
+### Features
+
+* flatten quick settings menu and add separate prefs button ([#1631](https://github.com/standardnotes/app/issues/1631)) ([97835e6](https://github.com/standardnotes/app/commit/97835e64ac0ebea829a923af082880b269a2965e))
+
 ## [3.55.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.55.1...@standardnotes/web@3.55.2) (2022-09-23)
 
 **Note:** Version bump only for package @standardnotes/web
