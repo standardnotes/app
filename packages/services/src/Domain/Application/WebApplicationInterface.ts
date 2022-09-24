@@ -1,3 +1,4 @@
+import { MobileDeviceInterface } from './../Device/MobileDeviceInterface'
 import { DesktopManagerInterface } from '../Device/DesktopManagerInterface'
 import { WebAppEvent } from '../Event/WebAppEvent'
 import { ApplicationInterface } from './ApplicationInterface'
@@ -9,4 +10,6 @@ export interface WebApplicationInterface extends ApplicationInterface {
   handleMobileGainingFocusEvent(): Promise<void>
   handleMobileLosingFocusEvent(): Promise<void>
   handleMobileResumingFromBackgroundEvent(): Promise<void>
+  isNativeMobileWeb(): boolean
+  get mobileDevice(): MobileDeviceInterface
 }

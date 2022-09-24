@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.18.4](https://github.com/standardnotes/app/compare/@standardnotes/models@1.18.3...@standardnotes/models@1.18.4) (2022-09-23)
+
+### Bug Fixes
+
+* **mobile:** adjust status bar color to match current theme ([#1624](https://github.com/standardnotes/app/issues/1624)) ([4d5429c](https://github.com/standardnotes/app/commit/4d5429cc89c15f870825f20e97844825102c6aec))
+
 ## [1.18.3](https://github.com/standardnotes/app/compare/@standardnotes/models@1.18.2...@standardnotes/models@1.18.3) (2022-09-20)
 
 **Note:** Version bump only for package @standardnotes/models

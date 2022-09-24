@@ -11,4 +11,5 @@ export interface MobileDeviceInterface extends DeviceInterface {
   hideMobileInterfaceFromScreenshots(): void
   stopHidingMobileInterfaceFromScreenshots(): void
   consoleLog(...args: any[]): void
+  handleThemeSchemeChange(isDark: boolean): void
 }

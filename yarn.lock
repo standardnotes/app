@@ -7650,6 +7650,7 @@ __metadata:
     eslint-plugin-prettier: "*"
     jest: ^28.1.2
     ts-jest: ^28.0.5
+    typescript: "*"
   languageName: unknown
   linkType: soft
 

@@ -72,6 +72,7 @@ export type ThemeFeatureDescription = ComponentFeatureDescription & {
   /** Some themes can be layered on top of other themes */
   layerable?: boolean
   dock_icon?: ThemeDockIcon
+  isDark?: boolean
 }
 
 export type FeatureDescription = BaseFeatureDescription &

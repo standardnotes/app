@@ -12,6 +12,7 @@ export function themes(): ThemeFeatureDescription[] {
     permission_name: PermissionName.MidnightTheme,
     description: 'Elegant utilitarianism.',
     thumbnail_url: 'https://s3.amazonaws.com/standard-notes/screenshots/models/themes/midnight-with-mobile.jpg',
+    isDark: true,
     dock_icon: {
       type: 'circle',
       background_color: '#086DD6',
@@ -27,6 +28,7 @@ export function themes(): ThemeFeatureDescription[] {
     permission_name: PermissionName.FuturaTheme,
     description: 'Calm and relaxed. Take some time off.',
     thumbnail_url: 'https://s3.amazonaws.com/standard-notes/screenshots/models/themes/futura-with-mobile.jpg',
+    isDark: true,
     dock_icon: {
       type: 'circle',
       background_color: '#fca429',
@@ -42,6 +44,7 @@ export function themes(): ThemeFeatureDescription[] {
     permission_name: PermissionName.SolarizedDarkTheme,
     description: 'The perfect theme for any time.',
     thumbnail_url: 'https://s3.amazonaws.com/standard-notes/screenshots/models/themes/solarized-dark.jpg',
+    isDark: true,
     dock_icon: {
       type: 'circle',
       background_color: '#2AA198',
@@ -72,6 +75,7 @@ export function themes(): ThemeFeatureDescription[] {
     permission_name: PermissionName.FocusedTheme,
     description: 'For when you need to go in.',
     thumbnail_url: 'https://s3.amazonaws.com/standard-notes/screenshots/models/themes/focus-with-mobile.jpg',
+    isDark: true,
     dock_icon: {
       type: 'circle',
       background_color: '#a464c2',

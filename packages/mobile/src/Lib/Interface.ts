@@ -11,7 +11,7 @@ import {
   removeFromArray,
   TransferPayload,
 } from '@standardnotes/snjs'
-import { Alert, Linking, Platform } from 'react-native'
+import { Alert, Linking, Platform, StatusBar } from 'react-native'
 import FingerprintScanner from 'react-native-fingerprint-scanner'
 import FlagSecure from 'react-native-flag-secure-android'
 import { hide, show } from 'react-native-privacy-snapshot'
@@ -65,6 +65,7 @@ const showLoadFailForItemIds = (failedItemIds: string[]) => {
 export class MobileDevice implements MobileDeviceInterface {
   environment: Environment.Mobile = Environment.Mobile
   private eventObservers: MobileDeviceEventHandler[] = []
+  public isDarkMode = false
 
   constructor(private stateObserverService?: AppStateObserverService) {}
 
@@ -430,6 +431,16 @@ export class MobileDevice implements MobileDeviceInterface {
     return () => {
       removeFromArray(thislessObservers, handler)
     }
+  }
+
+  handleThemeSchemeChange(isDark: boolean): void {
+    this.isDarkMode = isDark
+
+    this.reloadStatusBarStyle()
+  }
+
+  reloadStatusBarStyle(animated = true) {
+    StatusBar.setBarStyle(this.isDarkMode ? 'light-content' : 'dark-content', animated)
   }
 
   private notifyEvent(event: MobileDeviceEvent): void {
