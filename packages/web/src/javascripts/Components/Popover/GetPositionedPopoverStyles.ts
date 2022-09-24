@@ -1,3 +1,4 @@
+import { MediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 import { CSSProperties } from 'react'
 import { PopoverAlignment, PopoverSide } from './Types'
 import { OppositeSide, checkCollisions, getNonCollidingSide, getNonCollidingAlignment } from './Utils/Collisions'
@@ -29,7 +30,7 @@ export const getPositionedPopoverStyles = ({
     return [null, side, align]
   }
 
-  const matchesMediumBreakpoint = matchMedia('(min-width: 768px)').matches
+  const matchesMediumBreakpoint = matchMedia(MediaQueryBreakpoints.md).matches
 
   if (!matchesMediumBreakpoint) {
     return [null, side, align]

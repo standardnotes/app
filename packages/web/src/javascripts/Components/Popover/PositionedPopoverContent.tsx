@@ -9,8 +9,8 @@ import { getPositionedPopoverStyles } from './GetPositionedPopoverStyles'
 import { PopoverContentProps } from './Types'
 import { getPopoverMaxHeight, getAppRect } from './Utils/Rect'
 import { usePopoverCloseOnClickOutside } from './Utils/usePopoverCloseOnClickOutside'
-import { fitNodeToMobileScreen } from '@/Utils'
 import { useDisableBodyScrollOnMobile } from '@/Hooks/useDisableBodyScrollOnMobile'
+import { MediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 
 const PositionedPopoverContent = ({
   align = 'end',
@@ -35,6 +35,7 @@ const PositionedPopoverContent = ({
   })
   const anchorRect = anchorPoint ? anchorPointRect : anchorElementRect
   const documentRect = useDocumentRect()
+  const isDesktopScreen = useMediaQuery(MediaQueryBreakpoints.md)
 
   const [styles, positionedSide, positionedAlignment] = getPositionedPopoverStyles({
     align,
@@ -63,10 +64,10 @@ const PositionedPopoverContent = ({
         style={{
           ...styles,
           maxHeight: getPopoverMaxHeight(getAppRect(documentRect), anchorRect, positionedSide, positionedAlignment),
+          top: !isDesktopScreen ? `${document.documentElement.scrollTop}px` : '',
         }}
         ref={(node) => {
           setPopoverElement(node)
-          fitNodeToMobileScreen(node)
         }}
         data-popover={id}
       >
