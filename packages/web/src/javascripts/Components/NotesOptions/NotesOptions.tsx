@@ -2,7 +2,7 @@ import Icon from '@/Components/Icon/Icon'
 import Switch from '@/Components/Switch/Switch'
 import { observer } from 'mobx-react-lite'
 import { useState, useEffect, useMemo, useCallback, FunctionComponent } from 'react'
-import { SNApplication, SNComponent, SNNote } from '@standardnotes/snjs'
+import { Platform, SNApplication, SNComponent, SNNote } from '@standardnotes/snjs'
 import { KeyboardModifier } from '@standardnotes/ui-services'
 import ChangeEditorOption from './ChangeEditorOption'
 import { BYTES_IN_ONE_MEGABYTE } from '@/Constants/Constants'
@@ -402,9 +402,18 @@ const NotesOptions = ({
         className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
         onClick={downloadSelectedItems}
       >
-        <Icon type="download" className={iconClass} />
-        Export
+        <Icon type={application.platform === Platform.Android ? 'share' : 'download'} className={iconClass} />
+        {application.platform === Platform.Android ? 'Share' : 'Export'}
       </button>
+      {application.platform === Platform.Android && (
+        <button
+          className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+          onClick={downloadSelectedItems}
+        >
+          <Icon type="download" className={iconClass} />
+          Export
+        </button>
+      )}
       <button
         className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
         onClick={duplicateSelectedItems}
