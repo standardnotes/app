@@ -121,7 +121,13 @@ export const AppStackComponent = (props: ModalStackNavigationProp<'AppStack'>) =
     [application],
   )
 
-  if (IsMobileWeb) {
+  if (!application) {
+    return null
+  }
+
+  const shouldOpenWebApp = application.getValue(AlwaysOpenWebAppOnLaunchKey, StorageValueModes.Nonwrapped) as boolean
+
+  if (IsMobileWeb || shouldOpenWebApp) {
     return (
       <AppStack.Navigator
         screenOptions={() => ({
@@ -133,12 +139,6 @@ export const AppStackComponent = (props: ModalStackNavigationProp<'AppStack'>) =
       </AppStack.Navigator>
     )
   }
-
-  if (!application) {
-    return null
-  }
-
-  const shouldOpenWebApp = application.getValue(AlwaysOpenWebAppOnLaunchKey, StorageValueModes.Nonwrapped) as boolean
 
   return (
     <DrawerLayout
