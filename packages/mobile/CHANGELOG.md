@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.36.10](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.36.9...@standardnotes/mobile@3.36.10) (2022-09-25)
+
+### Bug Fixes
+
+* **mobile:** hide drawer on new mobile experience ([#1642](https://github.com/standardnotes/app/issues/1642)) ([8614a63](https://github.com/standardnotes/app/commit/8614a638a4bfc8fdf97020bf1fc147c62998cf3b))
+
 ## [3.36.9](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.36.8...@standardnotes/mobile@3.36.9) (2022-09-24)
 
 **Note:** Version bump only for package @standardnotes/mobile
