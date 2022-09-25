@@ -11,19 +11,14 @@ type Props = {
 }
 
 const NoteTagsContainer = ({ noteTagsController, navigationController }: Props) => {
-  const { tags, tagsContainerMaxWidth } = noteTagsController
+  const { tags } = noteTagsController
 
   useEffect(() => {
     noteTagsController.reloadTagsContainerMaxWidth()
   }, [noteTagsController])
 
   return (
-    <div
-      className="hidden min-w-80 flex-wrap bg-transparent md:-mr-2 md:flex"
-      style={{
-        maxWidth: tagsContainerMaxWidth,
-      }}
-    >
+    <div className="hidden min-w-80 max-w-full flex-wrap bg-transparent md:-mr-2 md:flex">
       {tags.map((tag) => (
         <NoteTag
           key={tag.uuid}
