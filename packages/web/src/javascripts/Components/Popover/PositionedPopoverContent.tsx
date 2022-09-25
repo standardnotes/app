@@ -71,17 +71,15 @@ const PositionedPopoverContent = ({
         }}
         data-popover={id}
       >
-        <div className={className}>
-          <div className="md:hidden">
-            <div className="flex items-center justify-end px-3">
-              <button className="rounded-full border border-border p-1" onClick={togglePopover}>
-                <Icon type="close" className="h-4 w-4" />
-              </button>
-            </div>
-            <HorizontalSeparator classes="my-2" />
+        <div className="md:hidden">
+          <div className="flex items-center justify-end px-3 pt-2">
+            <button className="rounded-full border border-border p-1" onClick={togglePopover}>
+              <Icon type="close" className="h-4 w-4" />
+            </button>
           </div>
-          {children}
+          <HorizontalSeparator classes="my-2" />
         </div>
+        <div className={className}>{children}</div>
       </div>
     </Portal>
   )
