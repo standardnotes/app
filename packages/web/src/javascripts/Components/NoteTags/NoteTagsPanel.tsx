@@ -34,8 +34,8 @@ const NoteTagsPanel = ({ noteTagsController, onClickPreprocessing }: Props) => {
       >
         <Icon type="hashtag" />
       </button>
-      <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen} className="py-2">
-        <div className="border-b border-border px-2.5 pb-2.5">
+      <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen} className="pb-2">
+        <div className="sticky top-0 border-b border-border bg-default px-2.5 py-2.5">
           <input
             type="text"
             className="w-full rounded border border-solid border-border bg-default py-1.5 px-3 text-sm text-text"
