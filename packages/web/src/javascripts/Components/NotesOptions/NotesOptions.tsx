@@ -271,6 +271,7 @@ const NotesOptions = ({
       if (application.isNativeMobileWeb()) {
         const base64 = await getBase64FromBlob(blob)
         application.mobileDevice.shareBase64AsFile(base64, note.title)
+        return
       }
       application.getArchiveService().downloadData(blob, getNoteFileName(note))
       return
