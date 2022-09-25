@@ -7,6 +7,7 @@ import {
   LegacyRawKeychainValue,
   MobileDeviceInterface,
   NamespacedRootKeyInKeychain,
+  Platform as SNPlatform,
   RawKeychainValue,
   removeFromArray,
   TransferPayload,
@@ -65,6 +66,7 @@ const showLoadFailForItemIds = (failedItemIds: string[]) => {
 
 export class MobileDevice implements MobileDeviceInterface {
   environment: Environment.Mobile = Environment.Mobile
+  platform: SNPlatform.Ios | SNPlatform.Android = Platform.OS === 'ios' ? SNPlatform.Ios : SNPlatform.Android
   private eventObservers: MobileDeviceEventHandler[] = []
   public isDarkMode = false
 
@@ -458,6 +460,7 @@ export class MobileDevice implements MobileDeviceInterface {
   }
 
   async shareBase64AsFile(base64: string, filename: string) {
+    this.consoleLog(base64)
     try {
       await Share.open({
         url: base64,

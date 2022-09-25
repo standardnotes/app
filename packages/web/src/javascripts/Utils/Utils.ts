@@ -1,4 +1,4 @@
-import { Platform, platformFromString } from '@standardnotes/snjs'
+import { DeviceInterface, MobileDeviceInterface, Platform, platformFromString } from '@standardnotes/snjs'
 import { IsDesktopPlatform, IsWebPlatform } from '@/Constants/Version'
 import { EMAIL_REGEX } from '../Constants/Constants'
 import { MediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
@@ -31,7 +31,11 @@ export function getPlatformString() {
   }
 }
 
-export function getPlatform(): Platform {
+export function getPlatform(device: DeviceInterface | MobileDeviceInterface): Platform {
+  if ('platform' in device) {
+    return device.platform
+  }
+
   return platformFromString(getPlatformString())
 }
 

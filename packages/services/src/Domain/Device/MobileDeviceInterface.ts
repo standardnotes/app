@@ -1,8 +1,9 @@
 import { DeviceInterface } from './DeviceInterface'
-import { Environment, RawKeychainValue } from '@standardnotes/models'
+import { Environment, Platform, RawKeychainValue } from '@standardnotes/models'
 
 export interface MobileDeviceInterface extends DeviceInterface {
   environment: Environment.Mobile
+  platform: Platform.Ios | Platform.Android
 
   getRawKeychainValue(): Promise<RawKeychainValue | undefined>
   getDeviceBiometricsAvailability(): Promise<boolean>
