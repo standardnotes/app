@@ -264,15 +264,43 @@ const NotesOptions = ({
     [getNoteFormat],
   )
 
+  const shareSelectedItems = useCallback(async () => {
+    if (!application.isNativeMobileWeb()) {
+      return
+    }
+    if (notes.length === 1) {
+      const note = notes[0]
+      const blob = getNoteBlob(note)
+      const base64 = await getBase64FromBlob(blob)
+      application.mobileDevice.shareBase64AsFile(base64, note.title)
+      return
+    }
+    if (notes.length > 1) {
+      const zippedDataBlob = await application.getArchiveService().zipData(
+        notes.map((note) => {
+          return {
+            name: getNoteFileName(note),
+            content: getNoteBlob(note),
+          }
+        }),
+      )
+      const zippedDataAsBase64 = await getBase64FromBlob(zippedDataBlob)
+      application.mobileDevice.shareBase64AsFile(
+        zippedDataAsBase64,
+        `Standard Notes Export - ${application.getArchiveService().formattedDateForExports()}.zip`,
+      )
+    }
+  }, [application, getNoteBlob, getNoteFileName, notes])
+
   const downloadSelectedItems = useCallback(async () => {
     if (notes.length === 1) {
       const note = notes[0]
       const blob = getNoteBlob(note)
-      if (application.isNativeMobileWeb()) {
+      /* if (application.isNativeMobileWeb()) {
         const base64 = await getBase64FromBlob(blob)
-        application.mobileDevice.shareBase64AsFile(base64, note.title)
+        application.mobileDevice.openUrl(base64)
         return
-      }
+      } */
       application.getArchiveService().downloadData(blob, getNoteFileName(note))
       return
     }
@@ -400,7 +428,7 @@ const NotesOptions = ({
       )}
       <button
         className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
-        onClick={downloadSelectedItems}
+        onClick={application.isNativeMobileWeb() ? shareSelectedItems : downloadSelectedItems}
       >
         <Icon type={application.platform === Platform.Android ? 'share' : 'download'} className={iconClass} />
         {application.platform === Platform.Android ? 'Share' : 'Export'}
