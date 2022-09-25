@@ -1,36 +1,36 @@
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
+import { NoteTagsController } from '@/Controllers/NoteTagsController'
 import { observer } from 'mobx-react-lite'
 import { useRef, useEffect, useCallback, FocusEventHandler, KeyboardEventHandler } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
 
 type Props = {
-  viewControllerManager: ViewControllerManager
+  noteTagsController: NoteTagsController
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void
 }
 
-const AutocompleteTagHint = ({ viewControllerManager, closeOnBlur }: Props) => {
-  const { autocompleteTagHintFocused } = viewControllerManager.noteTagsController
+const AutocompleteTagHint = ({ noteTagsController, closeOnBlur }: Props) => {
+  const { autocompleteTagHintFocused } = noteTagsController
 
   const hintRef = useRef<HTMLButtonElement>(null)
 
-  const { autocompleteSearchQuery, autocompleteTagResults } = viewControllerManager.noteTagsController
+  const { autocompleteSearchQuery, autocompleteTagResults } = noteTagsController
 
   const onTagHintClick = useCallback(async () => {
-    await viewControllerManager.noteTagsController.createAndAddNewTag()
-    viewControllerManager.noteTagsController.setAutocompleteInputFocused(true)
-  }, [viewControllerManager])
+    await noteTagsController.createAndAddNewTag()
+    noteTagsController.setAutocompleteInputFocused(true)
+  }, [noteTagsController])
 
   const onFocus = useCallback(() => {
-    viewControllerManager.noteTagsController.setAutocompleteTagHintFocused(true)
-  }, [viewControllerManager])
+    noteTagsController.setAutocompleteTagHintFocused(true)
+  }, [noteTagsController])
 
   const onBlur: FocusEventHandler = useCallback(
     (event) => {
       closeOnBlur(event)
-      viewControllerManager.noteTagsController.setAutocompleteTagHintFocused(false)
+      noteTagsController.setAutocompleteTagHintFocused(false)
     },
-    [viewControllerManager, closeOnBlur],
+    [noteTagsController, closeOnBlur],
   )
 
   const onKeyDown: KeyboardEventHandler = useCallback(
@@ -38,20 +38,20 @@ const AutocompleteTagHint = ({ viewControllerManager, closeOnBlur }: Props) => {
       if (event.key === 'ArrowUp') {
         if (autocompleteTagResults.length > 0) {
           const lastTagResult = autocompleteTagResults[autocompleteTagResults.length - 1]
-          viewControllerManager.noteTagsController.setFocusedTagResultUuid(lastTagResult.uuid)
+          noteTagsController.setFocusedTagResultUuid(lastTagResult.uuid)
         } else {
-          viewControllerManager.noteTagsController.setAutocompleteInputFocused(true)
+          noteTagsController.setAutocompleteInputFocused(true)
         }
       }
     },
-    [viewControllerManager, autocompleteTagResults],
+    [noteTagsController, autocompleteTagResults],
   )
 
   useEffect(() => {
     if (autocompleteTagHintFocused) {
       hintRef.current?.focus()
     }
-  }, [viewControllerManager, autocompleteTagHintFocused])
+  }, [noteTagsController, autocompleteTagHintFocused])
 
   return (
     <>

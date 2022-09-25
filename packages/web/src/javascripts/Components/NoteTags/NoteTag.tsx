@@ -8,21 +8,23 @@ import {
   useRef,
   useState,
 } from 'react'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { SNTag } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
+import { NoteTagsController } from '@/Controllers/NoteTagsController'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 
 type Props = {
-  viewControllerManager: ViewControllerManager
+  noteTagsController: NoteTagsController
+  navigationController: NavigationController
   tag: SNTag
 }
 
-const NoteTag = ({ viewControllerManager, tag }: Props) => {
+const NoteTag = ({ noteTagsController, navigationController, tag }: Props) => {
   const { toggleAppPane } = useResponsiveAppPane()
 
-  const noteTags = viewControllerManager.noteTagsController
+  const noteTags = noteTagsController
 
   const { autocompleteInputFocused, focusedTagUuid, tags } = noteTags
 
@@ -37,9 +39,9 @@ const NoteTag = ({ viewControllerManager, tag }: Props) => {
   const longTitle = noteTags.getLongTitle(tag)
 
   const deleteTag = useCallback(() => {
-    viewControllerManager.noteTagsController.focusPreviousTag(tag)
-    viewControllerManager.noteTagsController.removeTagFromActiveNote(tag).catch(console.error)
-  }, [viewControllerManager, tag])
+    noteTagsController.focusPreviousTag(tag)
+    noteTagsController.removeTagFromActiveNote(tag).catch(console.error)
+  }, [noteTagsController, tag])
 
   const onDeleteTagClick: MouseEventHandler = useCallback(
     (event) => {
@@ -53,30 +55,30 @@ const NoteTag = ({ viewControllerManager, tag }: Props) => {
     async (event) => {
       if (tagClicked && event.target !== deleteTagRef.current) {
         setTagClicked(false)
-        await viewControllerManager.navigationController.setSelectedTag(tag)
+        await navigationController.setSelectedTag(tag)
         toggleAppPane(AppPaneId.Items)
       } else {
         setTagClicked(true)
         tagRef.current?.focus()
       }
     },
-    [viewControllerManager, tagClicked, tag, toggleAppPane],
+    [tagClicked, navigationController, tag, toggleAppPane],
   )
 
   const onFocus = useCallback(() => {
-    viewControllerManager.noteTagsController.setFocusedTagUuid(tag.uuid)
+    noteTagsController.setFocusedTagUuid(tag.uuid)
     setShowDeleteButton(true)
-  }, [viewControllerManager, tag])
+  }, [noteTagsController, tag])
 
   const onBlur: FocusEventHandler = useCallback(
     (event) => {
       const relatedTarget = event.relatedTarget as Node
       if (relatedTarget !== deleteTagRef.current) {
-        viewControllerManager.noteTagsController.setFocusedTagUuid(undefined)
+        noteTagsController.setFocusedTagUuid(undefined)
         setShowDeleteButton(false)
       }
     },
-    [viewControllerManager],
+    [noteTagsController],
   )
 
   const getTabIndex = useCallback(() => {
@@ -91,33 +93,33 @@ const NoteTag = ({ viewControllerManager, tag }: Props) => {
 
   const onKeyDown: KeyboardEventHandler = useCallback(
     (event) => {
-      const tagIndex = viewControllerManager.noteTagsController.getTagIndex(tag, tags)
+      const tagIndex = noteTagsController.getTagIndex(tag, tags)
       switch (event.key) {
         case 'Backspace':
           deleteTag()
           break
         case 'ArrowLeft':
-          viewControllerManager.noteTagsController.focusPreviousTag(tag)
+          noteTagsController.focusPreviousTag(tag)
           break
         case 'ArrowRight':
           if (tagIndex === tags.length - 1) {
-            viewControllerManager.noteTagsController.setAutocompleteInputFocused(true)
+            noteTagsController.setAutocompleteInputFocused(true)
           } else {
-            viewControllerManager.noteTagsController.focusNextTag(tag)
+            noteTagsController.focusNextTag(tag)
           }
           break
         default:
           return
       }
     },
-    [viewControllerManager, deleteTag, tag, tags],
+    [noteTagsController, deleteTag, tag, tags],
   )
 
   useEffect(() => {
     if (focusedTagUuid === tag.uuid) {
       tagRef.current?.focus()
     }
-  }, [viewControllerManager, focusedTagUuid, tag])
+  }, [noteTagsController, focusedTagUuid, tag])
 
   return (
     <button
