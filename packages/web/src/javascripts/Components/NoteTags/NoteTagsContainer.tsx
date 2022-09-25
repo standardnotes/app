@@ -19,7 +19,7 @@ const NoteTagsContainer = ({ noteTagsController, navigationController }: Props) 
 
   return (
     <div
-      className="flex min-w-80 flex-wrap bg-transparent md:-mr-2"
+      className="hidden min-w-80 flex-wrap bg-transparent md:-mr-2 md:flex"
       style={{
         maxWidth: tagsContainerMaxWidth,
       }}
