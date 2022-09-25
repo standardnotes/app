@@ -12,4 +12,5 @@ export interface MobileDeviceInterface extends DeviceInterface {
   stopHidingMobileInterfaceFromScreenshots(): void
   consoleLog(...args: any[]): void
   handleThemeSchemeChange(isDark: boolean): void
+  shareBase64AsFile(base64: string, filename: string): void
 }

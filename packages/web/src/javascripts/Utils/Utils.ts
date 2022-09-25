@@ -204,3 +204,17 @@ export const disableIosTextFieldZoom = () => {
 }
 
 export const isMobileScreen = () => !window.matchMedia(MediaQueryBreakpoints.md).matches
+
+export const getBase64FromBlob = (blob: Blob) => {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      if (reader.result) {
+        resolve(reader.result.toString())
+      } else {
+        reject()
+      }
+    }
+    reader.readAsDataURL(blob)
+  })
+}

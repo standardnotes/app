@@ -15,6 +15,7 @@ import { Alert, Linking, Platform, StatusBar } from 'react-native'
 import FingerprintScanner from 'react-native-fingerprint-scanner'
 import FlagSecure from 'react-native-flag-secure-android'
 import { hide, show } from 'react-native-privacy-snapshot'
+import Share from 'react-native-share'
 import { AppStateObserverService } from './../AppStateObserverService'
 import Keychain from './Keychain'
 import { IsMobileWeb } from './Utils'
@@ -454,5 +455,17 @@ export class MobileDevice implements MobileDeviceInterface {
 
   isDeviceDestroyed() {
     return false
+  }
+
+  async shareBase64AsFile(base64: string, filename: string) {
+    try {
+      await Share.open({
+        url: base64,
+        filename,
+        failOnCancel: false,
+      })
+    } catch (error) {
+      this.consoleLog(`${error}`)
+    }
   }
 }

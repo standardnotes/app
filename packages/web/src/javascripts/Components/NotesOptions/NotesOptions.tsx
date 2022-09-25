@@ -15,6 +15,7 @@ import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
+import { getBase64FromBlob } from '@/Utils'
 
 type DeletePermanentlyButtonProps = {
   onClick: () => void
@@ -220,18 +221,58 @@ const NotesOptions = ({
     }
   }, [application])
 
-  const getNoteFileName = useCallback(
-    (note: SNNote): string => {
+  const getNoteFormat = useCallback(
+    (note: SNNote) => {
       const editor = application.componentManager.editorForNote(note)
       const format = editor?.package_info?.file_type || 'txt'
-      return `${note.title}.${format}`
+      return format
     },
     [application.componentManager],
   )
 
+  const getNoteFileName = useCallback(
+    (note: SNNote): string => {
+      const format = getNoteFormat(note)
+      return `${note.title}.${format}`
+    },
+    [getNoteFormat],
+  )
+
+  const getNoteBlob = useCallback(
+    (note: SNNote) => {
+      const format = getNoteFormat(note)
+      let type: string
+      switch (format) {
+        case 'html':
+          type = 'text/html'
+          break
+        case 'json':
+          type = 'application/json'
+          break
+        case 'md':
+          type = 'text/markdown'
+          break
+        default:
+          type = 'text/plain'
+          break
+      }
+      const blob = new Blob([note.text], {
+        type,
+      })
+      return blob
+    },
+    [getNoteFormat],
+  )
+
   const downloadSelectedItems = useCallback(async () => {
     if (notes.length === 1) {
-      application.getArchiveService().downloadData(new Blob([notes[0].text]), getNoteFileName(notes[0]))
+      const note = notes[0]
+      const blob = getNoteBlob(note)
+      if (application.isNativeMobileWeb()) {
+        const base64 = await getBase64FromBlob(blob)
+        application.mobileDevice.shareBase64AsFile(base64, note.title)
+      }
+      application.getArchiveService().downloadData(blob, getNoteFileName(note))
       return
     }
 
@@ -244,7 +285,7 @@ const NotesOptions = ({
         notes.map((note) => {
           return {
             name: getNoteFileName(note),
-            content: new Blob([note.text]),
+            content: getNoteBlob(note),
           }
         }),
       )
@@ -254,7 +295,7 @@ const NotesOptions = ({
         message: `Exported ${notes.length} notes`,
       })
     }
-  }, [application, getNoteFileName, notes])
+  }, [application, getNoteBlob, getNoteFileName, notes])
 
   const closeMenuAndToggleNotesList = useCallback(() => {
     toggleAppPane(AppPaneId.Items)
