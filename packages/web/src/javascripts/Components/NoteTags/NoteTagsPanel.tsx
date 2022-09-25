@@ -1,17 +1,73 @@
 import { NoteTagsController } from '@/Controllers/NoteTagsController'
 import { MediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { splitQueryInString } from '@/Utils'
+import { SNTag } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { ChangeEventHandler, FormEventHandler, useCallback, useEffect, useRef, useState } from 'react'
 import Icon from '../Icon/Icon'
 import Popover from '../Popover/Popover'
 
-type Props = {
+const ListItem = ({
+  tag,
+  isSearching,
+  noteTagsController,
+  autocompleteSearchQuery,
+}: {
+  tag: SNTag
+  isSearching: boolean
   noteTagsController: NoteTagsController
-  onClickPreprocessing?: () => Promise<void>
+  autocompleteSearchQuery: string
+}) => {
+  const handleSearchResultClick = useCallback(async () => {
+    await noteTagsController.addTagToActiveNote(tag)
+    noteTagsController.clearAutocompleteSearch()
+    noteTagsController.setAutocompleteInputFocused(true)
+  }, [noteTagsController, tag])
+
+  const handleNoteTagRemove = useCallback(() => {
+    noteTagsController.removeTagFromActiveNote(tag).catch(console.error)
+  }, [noteTagsController, tag])
+
+  const longTitle = noteTagsController.getLongTitle(tag)
+
+  return isSearching ? (
+    <button
+      onClick={handleSearchResultClick}
+      className="max-w-80 flex w-full items-center border-0 bg-transparent px-3 py-2 text-left text-menu-item text-text hover:bg-info-backdrop focus:bg-info-backdrop"
+    >
+      {splitQueryInString(longTitle, autocompleteSearchQuery).map((substring, index) => (
+        <span
+          key={index}
+          className={
+            substring.toLowerCase() === autocompleteSearchQuery.toLowerCase()
+              ? 'whitespace-pre-wrap font-bold'
+              : 'whitespace-pre-wrap'
+          }
+        >
+          {substring}
+        </span>
+      ))}
+    </button>
+  ) : (
+    <div className="max-w-80 flex w-full items-center justify-between border-0 bg-transparent px-3 py-2 text-left text-menu-item text-text">
+      <span className="overflow-hidden overflow-ellipsis whitespace-nowrap">{longTitle}</span>
+      <button
+        onClick={handleNoteTagRemove}
+        className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full text-danger hover:bg-info-backdrop focus:bg-info-backdrop"
+      >
+        <Icon type="trash" size="small" />
+      </button>
+    </div>
+  )
 }
 
-const NoteTagsPanel = ({ noteTagsController, onClickPreprocessing }: Props) => {
+const NoteTagsPanel = ({
+  noteTagsController,
+  onClickPreprocessing,
+}: {
+  noteTagsController: NoteTagsController
+  onClickPreprocessing?: () => Promise<void>
+}) => {
   const isDesktopScreen = useMediaQuery(MediaQueryBreakpoints.md)
 
   const [isOpen, setIsOpen] = useState(false)
@@ -80,51 +136,15 @@ const NoteTagsPanel = ({ noteTagsController, onClickPreprocessing }: Props) => {
           />
         </form>
         <div className="pt-2.5">
-          {visibleTagsList.map((tag) => {
-            return isSearching ? (
-              <button
-                key={tag.uuid}
-                onClick={async () => {
-                  await noteTagsController.addTagToActiveNote(tag)
-                  noteTagsController.clearAutocompleteSearch()
-                  noteTagsController.setAutocompleteInputFocused(true)
-                }}
-                className="max-w-80 flex w-full items-center border-0 bg-transparent px-3 py-2 text-left text-menu-item text-text hover:bg-info-backdrop focus:bg-info-backdrop"
-              >
-                {splitQueryInString(noteTagsController.getLongTitle(tag), autocompleteSearchQuery).map(
-                  (substring, index) => (
-                    <span
-                      key={index}
-                      className={`${
-                        substring.toLowerCase() === autocompleteSearchQuery.toLowerCase()
-                          ? 'whitespace-pre-wrap font-bold'
-                          : 'whitespace-pre-wrap '
-                      }`}
-                    >
-                      {substring}
-                    </span>
-                  ),
-                )}
-              </button>
-            ) : (
-              <div
-                key={tag.uuid}
-                className="max-w-80 flex w-full items-center justify-between border-0 bg-transparent px-3 py-2 text-left text-menu-item text-text"
-              >
-                <span className="overflow-hidden overflow-ellipsis whitespace-nowrap">
-                  {noteTagsController.getLongTitle(tag)}
-                </span>
-                <button
-                  onClick={() => {
-                    noteTagsController.removeTagFromActiveNote(tag).catch(console.error)
-                  }}
-                  className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full text-danger hover:bg-info-backdrop focus:bg-info-backdrop"
-                >
-                  <Icon type="trash" size="small" />
-                </button>
-              </div>
-            )
-          })}
+          {visibleTagsList.map((tag) => (
+            <ListItem
+              key={tag.uuid}
+              tag={tag}
+              isSearching={isSearching}
+              noteTagsController={noteTagsController}
+              autocompleteSearchQuery={autocompleteSearchQuery}
+            />
+          ))}
           {autocompleteTagHintVisible && (
             <button
               onClick={async () => {
