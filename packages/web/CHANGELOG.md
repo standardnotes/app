@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.58.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.57.3...@standardnotes/web@3.58.0) (2022-09-25)
+
+### Features
+
+* note tags button for mobile ([#1641](https://github.com/standardnotes/app/issues/1641)) ([fe2ce9f](https://github.com/standardnotes/app/commit/fe2ce9f1e8b0c027c30bcd892606e914f71d4634))
+
 ## [3.57.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.57.2...@standardnotes/web@3.57.3) (2022-09-24)
 
 ### Bug Fixes
