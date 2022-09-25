@@ -39,6 +39,7 @@ import IndicatorCircle from '../IndicatorCircle/IndicatorCircle'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import AutoresizingNoteViewTextarea from './AutoresizingTextarea'
 import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
+import NoteTagsPanel from '../NoteTags/NoteTagsPanel'
 
 const MINIMUM_STATUS_DURATION = 400
 const TEXTAREA_DEBOUNCE = 100
@@ -944,6 +945,10 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                   </div>
                 )}
                 <div className="flex items-center gap-3">
+                  <NoteTagsPanel
+                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                    noteTagsController={this.viewControllerManager.noteTagsController}
+                  />
                   <AttachedFilesButton
                     application={this.application}
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
@@ -974,7 +979,10 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                 </div>
               </div>
             </div>
-            <NoteTagsContainer viewControllerManager={this.viewControllerManager} />
+            <NoteTagsContainer
+              noteTagsController={this.viewControllerManager.noteTagsController}
+              navigationController={this.viewControllerManager.navigationController}
+            />
           </div>
         )}
 
