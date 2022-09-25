@@ -69,7 +69,7 @@
     "react-native-screens": "3.13.1",
     "react-native-search-bar": "standardnotes/react-native-search-bar#7d2139daf9b7663b570403f21f520deceba9bb09",
     "react-native-search-box": "standardnotes/react-native-search-box#8c46369912cba78dca718588aca9c16926953ff7",
-    "react-native-share": "^7.3.7",
+    "react-native-share": "^7.9.0",
     "react-native-sodium-jsi": "1.2.0",
     "react-native-static-server": "standardnotes/react-native-static-server#28ef0175dbee3db9aadfab57498497067556a836",
     "react-native-store-review": "^0.2.0",
