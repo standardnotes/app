@@ -83,6 +83,7 @@ const NoteTagsPanel = ({ noteTagsController, onClickPreprocessing }: Props) => {
           {visibleTagsList.map((tag) => {
             return isSearching ? (
               <button
+                key={tag.uuid}
                 onClick={async () => {
                   await noteTagsController.addTagToActiveNote(tag)
                   noteTagsController.clearAutocompleteSearch()
