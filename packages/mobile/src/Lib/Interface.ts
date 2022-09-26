@@ -475,18 +475,22 @@ export class MobileDevice implements MobileDeviceInterface {
   }
 
   async shareBase64AsFile(base64: string, filename: string) {
+    let downloadedTempFilePath: string | undefined
     try {
-      const downloadedFilePath = await this.downloadBase64AsFile(base64, filename, true)
-      if (!downloadedFilePath) {
+      downloadedTempFilePath = await this.downloadBase64AsFile(base64, filename, true)
+      if (!downloadedTempFilePath) {
         return
       }
       await Share.open({
-        url: `file://${downloadedFilePath}`,
+        url: `file://${downloadedTempFilePath}`,
         failOnCancel: false,
       })
-      void this.deleteFileAtPathIfExists(downloadedFilePath)
     } catch (error) {
       this.consoleLog(`${error}`)
+    } finally {
+      if (downloadedTempFilePath) {
+        void this.deleteFileAtPathIfExists(downloadedTempFilePath)
+      }
     }
   }
 
