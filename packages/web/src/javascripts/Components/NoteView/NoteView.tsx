@@ -116,7 +116,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
     this.textAreaChangeDebounceSave = debounce(this.textAreaChangeDebounceSave, TextareaDebounce)
 
-    this.handleWindowScroll = debounce(this.handleWindowScroll, 100)
+    this.handleWindowScroll = debounce(this.handleWindowScroll, 10)
 
     this.state = {
       availableStackComponents: [],
