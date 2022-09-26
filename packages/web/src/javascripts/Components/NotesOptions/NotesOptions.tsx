@@ -3,7 +3,7 @@ import Switch from '@/Components/Switch/Switch'
 import { observer } from 'mobx-react-lite'
 import { useState, useEffect, useMemo, useCallback, FunctionComponent } from 'react'
 import { Platform, SNApplication, SNComponent, SNNote } from '@standardnotes/snjs'
-import { KeyboardModifier, sanitizeFileName } from '@standardnotes/ui-services'
+import { KeyboardModifier } from '@standardnotes/ui-services'
 import ChangeEditorOption from './ChangeEditorOption'
 import { BYTES_IN_ONE_MEGABYTE } from '@/Constants/Constants'
 import ListedActionsOption from './ListedActionsOption'
@@ -15,8 +15,9 @@ import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
-import { getBase64FromBlob } from '@/Utils'
-import { parseFileName } from '@standardnotes/filepicker'
+import { getNoteBlob, getNoteFileName } from '@/Utils/NoteExportUtils'
+import { shareSelectedItems } from '@/NativeMobileWeb/ShareSelectedItems'
+import { downloadSelectedItemsOnAndroid } from '@/NativeMobileWeb/DownloadSelectedItemsOnAndroid'
 
 type DeletePermanentlyButtonProps = {
   onClick: () => void
@@ -222,122 +223,11 @@ const NotesOptions = ({
     }
   }, [application])
 
-  const getNoteFormat = useCallback(
-    (note: SNNote) => {
-      const editor = application.componentManager.editorForNote(note)
-      const format = editor?.package_info?.file_type || 'txt'
-      return format
-    },
-    [application.componentManager],
-  )
-
-  const getNoteFileName = useCallback(
-    (note: SNNote): string => {
-      const format = getNoteFormat(note)
-      return `${note.title}.${format}`
-    },
-    [getNoteFormat],
-  )
-
-  const getNoteBlob = useCallback(
-    (note: SNNote) => {
-      const format = getNoteFormat(note)
-      let type: string
-      switch (format) {
-        case 'html':
-          type = 'text/html'
-          break
-        case 'json':
-          type = 'application/json'
-          break
-        case 'md':
-          type = 'text/markdown'
-          break
-        default:
-          type = 'text/plain'
-          break
-      }
-      const blob = new Blob([note.text], {
-        type,
-      })
-      return blob
-    },
-    [getNoteFormat],
-  )
-
-  const shareSelectedItems = useCallback(async () => {
-    if (!application.isNativeMobileWeb()) {
-      return
-    }
-    if (notes.length === 1) {
-      const note = notes[0]
-      const blob = getNoteBlob(note)
-      const base64 = await getBase64FromBlob(blob)
-      application.mobileDevice.shareBase64AsFile(base64, note.title)
-      return
-    }
-    if (notes.length > 1) {
-      const zippedDataBlob = await application.getArchiveService().zipData(
-        notes.map((note) => {
-          return {
-            name: getNoteFileName(note),
-            content: getNoteBlob(note),
-          }
-        }),
-      )
-      const zippedDataAsBase64 = await getBase64FromBlob(zippedDataBlob)
-      application.mobileDevice.shareBase64AsFile(
-        zippedDataAsBase64,
-        `Standard Notes Export - ${application.getArchiveService().formattedDateForExports()}.zip`,
-      )
-    }
-  }, [application, getNoteBlob, getNoteFileName, notes])
-
-  const downloadSelectedItemsOnAndroid = useCallback(async () => {
-    if (!application.isNativeMobileWeb() || application.platform !== Platform.Android) {
-      return
-    }
-    if (notes.length === 1) {
-      const note = notes[0]
-      const blob = getNoteBlob(note)
-      const base64 = await getBase64FromBlob(blob)
-      const { name, ext } = parseFileName(getNoteFileName(note))
-      const filename = `${sanitizeFileName(name)}.${ext}`
-      const downloaded = await application.mobileDevice.downloadBase64AsFileOnAndroid(base64, filename)
-      if (downloaded) {
-        addToast({
-          type: ToastType.Success,
-          message: `Exported ${filename}`,
-        })
-      }
-      return
-    }
-    if (notes.length > 1) {
-      const zippedDataBlob = await application.getArchiveService().zipData(
-        notes.map((note) => {
-          return {
-            name: getNoteFileName(note),
-            content: getNoteBlob(note),
-          }
-        }),
-      )
-      const zippedDataAsBase64 = await getBase64FromBlob(zippedDataBlob)
-      const filename = `Standard Notes Export - ${application.getArchiveService().formattedDateForExports()}.zip`
-      const downloaded = await application.mobileDevice.downloadBase64AsFileOnAndroid(zippedDataAsBase64, filename)
-      if (downloaded) {
-        addToast({
-          type: ToastType.Success,
-          message: `Exported ${filename}`,
-        })
-      }
-    }
-  }, [application, getNoteBlob, getNoteFileName, notes])
-
   const downloadSelectedItems = useCallback(async () => {
     if (notes.length === 1) {
       const note = notes[0]
-      const blob = getNoteBlob(note)
-      application.getArchiveService().downloadData(blob, getNoteFileName(note))
+      const blob = getNoteBlob(application, note)
+      application.getArchiveService().downloadData(blob, getNoteFileName(application, note))
       return
     }
 
@@ -349,8 +239,8 @@ const NotesOptions = ({
       await application.getArchiveService().downloadDataAsZip(
         notes.map((note) => {
           return {
-            name: getNoteFileName(note),
-            content: getNoteBlob(note),
+            name: getNoteFileName(application, note),
+            content: getNoteBlob(application, note),
           }
         }),
       )
@@ -360,7 +250,7 @@ const NotesOptions = ({
         message: `Exported ${notes.length} notes`,
       })
     }
-  }, [application, getNoteBlob, getNoteFileName, notes])
+  }, [application, notes])
 
   const closeMenuAndToggleNotesList = useCallback(() => {
     toggleAppPane(AppPaneId.Items)
@@ -464,7 +354,9 @@ const NotesOptions = ({
       )}
       <button
         className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
-        onClick={application.isNativeMobileWeb() ? shareSelectedItems : downloadSelectedItems}
+        onClick={() => {
+          application.isNativeMobileWeb() ? shareSelectedItems(application, notes) : downloadSelectedItems()
+        }}
       >
         <Icon type={application.platform === Platform.Android ? 'share' : 'download'} className={iconClass} />
         {application.platform === Platform.Android ? 'Share' : 'Export'}
@@ -472,7 +364,7 @@ const NotesOptions = ({
       {application.platform === Platform.Android && (
         <button
           className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
-          onClick={downloadSelectedItemsOnAndroid}
+          onClick={() => downloadSelectedItemsOnAndroid(application, notes)}
         >
           <Icon type="download" className={iconClass} />
           Export
