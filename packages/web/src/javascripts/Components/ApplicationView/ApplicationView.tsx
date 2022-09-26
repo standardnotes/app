@@ -25,6 +25,7 @@ import { PanelResizedData } from '@/Types/PanelResizedData'
 import TagContextMenuWrapper from '@/Components/Tags/TagContextMenuWrapper'
 import FileDragNDropProvider from '../FileDragNDropProvider/FileDragNDropProvider'
 import ResponsivePaneProvider from '../ResponsivePane/ResponsivePaneProvider'
+import ConfirmDeleteAccountContainer from '@/Components/ConfirmDeleteAccountModal/ConfirmDeleteAccountModal'
 
 type Props = {
   application: WebApplication
@@ -240,6 +241,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
             <ToastContainer />
             <FilePreviewModalWrapper application={application} viewControllerManager={viewControllerManager} />
             <PermissionsModalWrapper application={application} />
+            <ConfirmDeleteAccountContainer application={application} viewControllerManager={viewControllerManager} />
           </>
         </div>
       </ResponsivePaneProvider>
