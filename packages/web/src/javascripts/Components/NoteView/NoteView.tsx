@@ -926,7 +926,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
             id="editor-title-bar"
             className={classNames(
               'content-title-bar section-title-bar z-editor-title-bar w-full bg-default',
-              this.state.shouldStickyHeader && 'fixed top-0',
+              this.state.shouldStickyHeader && 'fixed top-0 pt-safe-top',
             )}
           >
             <div className="mb-2 flex flex-wrap items-start justify-between gap-2 md:mb-0 md:flex-nowrap md:gap-0 xl:items-center">
