@@ -12,7 +12,6 @@ import {
   removeFromArray,
   TransferPayload,
 } from '@standardnotes/snjs'
-import { atobPolyfill } from 'js-base64'
 import { Alert, Linking, PermissionsAndroid, Platform, StatusBar } from 'react-native'
 import FingerprintScanner from 'react-native-fingerprint-scanner'
 import FlagSecure from 'react-native-flag-secure-android'
@@ -28,6 +27,7 @@ import { hide, show } from 'react-native-privacy-snapshot'
 import Share from 'react-native-share'
 import { AppStateObserverService } from './../AppStateObserverService'
 import Keychain from './Keychain'
+import { SNReactNativeCrypto } from './ReactNativeCrypto'
 import { IsMobileWeb } from './Utils'
 
 export type BiometricsType = 'Fingerprint' | 'Face ID' | 'Biometrics' | 'Touch ID'
@@ -78,8 +78,11 @@ export class MobileDevice implements MobileDeviceInterface {
   platform: SNPlatform.Ios | SNPlatform.Android = Platform.OS === 'ios' ? SNPlatform.Ios : SNPlatform.Android
   private eventObservers: MobileDeviceEventHandler[] = []
   public isDarkMode = false
+  private crypto: SNReactNativeCrypto
 
-  constructor(private stateObserverService?: AppStateObserverService) {}
+  constructor(private stateObserverService?: AppStateObserverService) {
+    this.crypto = new SNReactNativeCrypto()
+  }
 
   deinit() {
     this.stateObserverService?.deinit()
@@ -495,7 +498,6 @@ export class MobileDevice implements MobileDeviceInterface {
   }
 
   getFileDestinationPath(filename: string, saveInTempLocation: boolean): string {
-    this.consoleLog(filename)
     let directory = DocumentDirectoryPath
 
     if (Platform.OS === 'android') {
@@ -533,7 +535,7 @@ export class MobileDevice implements MobileDeviceInterface {
     try {
       const path = this.getFileDestinationPath(filename, saveInTempLocation)
       void this.deleteFileAtPathIfExists(path)
-      const decodedContents = atobPolyfill(base64.replace(/data.*base64,/, ''))
+      const decodedContents = this.crypto.base64Decode(base64.replace(/data.*base64,/, ''))
       await writeFile(path, decodedContents)
       return path
     } catch (error) {
