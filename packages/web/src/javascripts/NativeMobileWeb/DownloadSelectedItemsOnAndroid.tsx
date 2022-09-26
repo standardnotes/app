@@ -20,7 +20,7 @@ export const downloadSelectedItemsOnAndroid = async (application: WebApplication
       type: ToastType.Loading,
       message: `Exporting ${filename}..`,
     })
-    const downloaded = await application.mobileDevice.downloadBase64AsFileOnAndroid(base64, filename)
+    const downloaded = await application.mobileDevice.downloadBase64AsFile(base64, filename)
     if (downloaded) {
       dismissToast(loadingToastId)
       addToast({
@@ -50,7 +50,7 @@ export const downloadSelectedItemsOnAndroid = async (application: WebApplication
       type: ToastType.Loading,
       message: `Exporting ${filename}..`,
     })
-    const downloaded = await application.mobileDevice.downloadBase64AsFileOnAndroid(zippedDataAsBase64, filename)
+    const downloaded = await application.mobileDevice.downloadBase64AsFile(zippedDataAsBase64, filename)
     if (downloaded) {
       dismissToast(loadingToastId)
       addToast({
