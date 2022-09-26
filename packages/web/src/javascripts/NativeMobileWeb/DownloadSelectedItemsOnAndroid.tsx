@@ -8,7 +8,7 @@ import { sanitizeFileName } from '@standardnotes/ui-services'
 
 export const downloadSelectedItemsOnAndroid = async (application: WebApplication, notes: SNNote[]) => {
   if (!application.isNativeMobileWeb() || application.platform !== Platform.Android) {
-    return
+    throw new Error('Function being used on non-android platform')
   }
   if (notes.length === 1) {
     const note = notes[0]
