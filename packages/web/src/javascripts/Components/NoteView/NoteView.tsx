@@ -14,7 +14,7 @@ import {
   PayloadEmitSource,
   WebAppEvent,
 } from '@standardnotes/snjs'
-import { debounce, isDesktopApplication } from '@/Utils'
+import { debounce, isDesktopApplication, isIOS } from '@/Utils'
 import { EditorEventSource } from '../../Types/EditorEventSource'
 import { confirmDialog, KeyboardModifier, KeyboardKey } from '@standardnotes/ui-services'
 import { STRING_DELETE_PLACEHOLDER_ATTEMPT, STRING_DELETE_LOCKED_ATTEMPT, StringDeleteNote } from '@/Constants/Strings'
@@ -926,7 +926,8 @@ class NoteView extends PureComponent<NoteViewProps, State> {
             id="editor-title-bar"
             className={classNames(
               'content-title-bar section-title-bar z-editor-title-bar w-full bg-default',
-              this.state.shouldStickyHeader && 'fixed top-0 pt-safe-top',
+              this.state.shouldStickyHeader && 'fixed top-0',
+              this.state.shouldStickyHeader ? (isIOS() ? 'pt-safe-top' : 'pt-4') : '',
             )}
           >
             <div className="mb-2 flex flex-wrap items-start justify-between gap-2 md:mb-0 md:flex-nowrap md:gap-0 xl:items-center">
