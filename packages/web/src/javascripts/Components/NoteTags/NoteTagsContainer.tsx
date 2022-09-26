@@ -1,31 +1,33 @@
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import AutocompleteTagInput from '@/Components/TagAutocomplete/AutocompleteTagInput'
 import NoteTag from './NoteTag'
 import { useEffect } from 'react'
+import { NoteTagsController } from '@/Controllers/NoteTagsController'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 
 type Props = {
-  viewControllerManager: ViewControllerManager
+  noteTagsController: NoteTagsController
+  navigationController: NavigationController
 }
 
-const NoteTagsContainer = ({ viewControllerManager }: Props) => {
-  const { tags, tagsContainerMaxWidth } = viewControllerManager.noteTagsController
+const NoteTagsContainer = ({ noteTagsController, navigationController }: Props) => {
+  const { tags } = noteTagsController
 
   useEffect(() => {
-    viewControllerManager.noteTagsController.reloadTagsContainerMaxWidth()
-  }, [viewControllerManager])
+    noteTagsController.reloadTagsContainerMaxWidth()
+  }, [noteTagsController])
 
   return (
-    <div
-      className="flex min-w-80 flex-wrap bg-transparent md:-mr-2"
-      style={{
-        maxWidth: tagsContainerMaxWidth,
-      }}
-    >
+    <div className="hidden min-w-80 max-w-full flex-wrap bg-transparent md:-mr-2 md:flex">
       {tags.map((tag) => (
-        <NoteTag key={tag.uuid} viewControllerManager={viewControllerManager} tag={tag} />
+        <NoteTag
+          key={tag.uuid}
+          noteTagsController={noteTagsController}
+          navigationController={navigationController}
+          tag={tag}
+        />
       ))}
-      <AutocompleteTagInput viewControllerManager={viewControllerManager} />
+      <AutocompleteTagInput noteTagsController={noteTagsController} />
     </div>
   )
 }
