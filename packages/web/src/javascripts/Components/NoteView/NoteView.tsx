@@ -22,7 +22,6 @@ import { PureComponent } from '@/Components/Abstract/PureComponent'
 import ProtectedItemOverlay from '@/Components/ProtectedItemOverlay/ProtectedItemOverlay'
 import PinNoteButton from '@/Components/PinNoteButton/PinNoteButton'
 import NotesOptionsPanel from '@/Components/NotesOptions/NotesOptionsPanel'
-import NoteTagsContainer from '@/Components/NoteTags/NoteTagsContainer'
 import ComponentView from '@/Components/ComponentView/ComponentView'
 import PanelResizer, { PanelSide, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
 import { ElementIds } from '@/Constants/ElementIDs'
@@ -39,6 +38,7 @@ import IndicatorCircle from '../IndicatorCircle/IndicatorCircle'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import AutoresizingNoteViewTextarea from './AutoresizingTextarea'
 import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
+import NoteTagsPanel from '../NoteTags/NoteTagsPanel'
 
 const MinimumStatusDuration = 400
 const TextareaDebounce = 100
@@ -969,6 +969,10 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                     </div>
                   )}
                   <div className="flex items-center gap-3">
+                    <NoteTagsPanel
+                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                      noteTagsController={this.viewControllerManager.noteTagsController}
+                    />
                     <AttachedFilesButton
                       application={this.application}
                       onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
@@ -1000,7 +1004,6 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                 </div>
               )}
             </div>
-            {!this.state.shouldStickyHeader && <NoteTagsContainer viewControllerManager={this.viewControllerManager} />}
           </div>
         )}
 

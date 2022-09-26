@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.58.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.58.0...@standardnotes/web@3.58.1) (2022-09-26)
+
+### Bug Fixes
+
+* **web:** check for proper feature in the subscription sharing section ([507823d](https://github.com/standardnotes/app/commit/507823dc4f1a2c1db47635ac26a686d4d8f2f4e8))
+
+# [3.58.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.57.3...@standardnotes/web@3.58.0) (2022-09-25)
+
+### Features
+
+* note tags button for mobile ([#1641](https://github.com/standardnotes/app/issues/1641)) ([fe2ce9f](https://github.com/standardnotes/app/commit/fe2ce9f1e8b0c027c30bcd892606e914f71d4634))
+
+## [3.57.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.57.2...@standardnotes/web@3.57.3) (2022-09-24)
+
+### Bug Fixes
+
+* improve new note title format ([#1640](https://github.com/standardnotes/app/issues/1640)) ([59e814b](https://github.com/standardnotes/app/commit/59e814bcec8c3633b1b2baeae3e435fa2a19777d))
+
+## [3.57.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.57.1...@standardnotes/web@3.57.2) (2022-09-24)
+
+### Bug Fixes
+
+* move prefs button next to account menu button in footer ([#1639](https://github.com/standardnotes/app/issues/1639)) ([a3611c8](https://github.com/standardnotes/app/commit/a3611c802f08817d2ba73adf6b9d48465738b1b6))
+
 ## [3.57.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.57.0...@standardnotes/web@3.57.1) (2022-09-24)
 
 ### Bug Fixes
