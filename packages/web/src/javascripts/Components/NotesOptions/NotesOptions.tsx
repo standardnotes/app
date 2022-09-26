@@ -98,7 +98,7 @@ const NoteAttributes: FunctionComponent<{
   const format = editor?.package_info?.file_type || 'txt'
 
   return (
-    <div className="px-3 py-1.5 text-xs font-medium text-neutral">
+    <div className="select-text px-3 py-1.5 text-xs font-medium text-neutral">
       {typeof words === 'number' && (format === 'txt' || format === 'md') ? (
         <>
           <div className="mb-1">
