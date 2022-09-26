@@ -13,10 +13,17 @@ import {
   TransferPayload,
 } from '@standardnotes/snjs'
 import { atobPolyfill } from 'js-base64'
-import { Alert, Linking, Platform, StatusBar } from 'react-native'
+import { Alert, Linking, PermissionsAndroid, Platform, StatusBar } from 'react-native'
 import FingerprintScanner from 'react-native-fingerprint-scanner'
 import FlagSecure from 'react-native-flag-secure-android'
-import { DownloadDirectoryPath, exists, writeFile } from 'react-native-fs'
+import {
+  CachesDirectoryPath,
+  DocumentDirectoryPath,
+  DownloadDirectoryPath,
+  exists,
+  unlink,
+  writeFile,
+} from 'react-native-fs'
 import { hide, show } from 'react-native-privacy-snapshot'
 import Share from 'react-native-share'
 import { AppStateObserverService } from './../AppStateObserverService'
@@ -461,30 +468,72 @@ export class MobileDevice implements MobileDeviceInterface {
     return false
   }
 
+  async deleteFileAtPathIfExists(path: string) {
+    if (await exists(path)) {
+      await unlink(path)
+    }
+  }
+
   async shareBase64AsFile(base64: string, filename: string) {
     try {
+      const downloadedFilePath = await this.downloadBase64AsFile(base64, filename, true)
+      if (!downloadedFilePath) {
+        return
+      }
       await Share.open({
-        url: base64,
-        filename,
+        url: `file://${downloadedFilePath}`,
         failOnCancel: false,
       })
+      void this.deleteFileAtPathIfExists(downloadedFilePath)
     } catch (error) {
       this.consoleLog(`${error}`)
     }
   }
 
-  async downloadBase64AsFileOnAndroid(base64: string, filename: string) {
+  getFileDestinationPath(filename: string, saveInTempLocation: boolean): string {
+    this.consoleLog(filename)
+    let directory = DocumentDirectoryPath
+
+    if (Platform.OS === 'android') {
+      directory = saveInTempLocation ? CachesDirectoryPath : DownloadDirectoryPath
+    }
+
+    return `${directory}/${filename}`
+  }
+
+  async hasStoragePermissionOnAndroid(): Promise<boolean> {
+    if (Platform.OS !== 'android') {
+      return true
+    }
+    const grantedStatus = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE)
+    if (grantedStatus === PermissionsAndroid.RESULTS.GRANTED) {
+      return true
+    }
+    Alert.alert(
+      'Storage permissions are required in order to download files. Please accept the permissions prompt and try again.',
+    )
+    return false
+  }
+
+  async downloadBase64AsFile(
+    base64: string,
+    filename: string,
+    saveInTempLocation = false,
+  ): Promise<string | undefined> {
+    const isGrantedStoragePermissionOnAndroid = await this.hasStoragePermissionOnAndroid()
+
+    if (!isGrantedStoragePermissionOnAndroid) {
+      return
+    }
+
     try {
-      let path = `${DownloadDirectoryPath}/${filename}`
-      if (await exists(path)) {
-        path = `${path} (1)`
-      }
+      const path = this.getFileDestinationPath(filename, saveInTempLocation)
+      void this.deleteFileAtPathIfExists(path)
       const decodedContents = atobPolyfill(base64.replace(/data.*base64,/, ''))
       await writeFile(path, decodedContents)
-      return true
+      return path
     } catch (error) {
       this.consoleLog(`${error}`)
-      return false
     }
   }
 }

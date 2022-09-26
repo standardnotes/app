@@ -1,7 +1,9 @@
 import { WebApplication } from '@/Application/Application'
 import { getBase64FromBlob } from '@/Utils'
 import { getNoteBlob, getNoteFileName } from '@/Utils/NoteExportUtils'
+import { parseFileName } from '@standardnotes/filepicker'
 import { SNNote } from '@standardnotes/snjs'
+import { sanitizeFileName } from '@standardnotes/ui-services'
 
 export const shareSelectedItems = async (application: WebApplication, notes: SNNote[]) => {
   if (!application.isNativeMobileWeb()) {
@@ -11,7 +13,9 @@ export const shareSelectedItems = async (application: WebApplication, notes: SNN
     const note = notes[0]
     const blob = getNoteBlob(application, note)
     const base64 = await getBase64FromBlob(blob)
-    application.mobileDevice.shareBase64AsFile(base64, note.title)
+    const { name, ext } = parseFileName(getNoteFileName(application, note))
+    const filename = `${sanitizeFileName(name)}.${ext}`
+    application.mobileDevice.shareBase64AsFile(base64, filename)
     return
   }
   if (notes.length > 1) {
