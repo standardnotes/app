@@ -14,7 +14,7 @@ import {
   PayloadEmitSource,
   WebAppEvent,
 } from '@standardnotes/snjs'
-import { debounce, isDesktopApplication } from '@/Utils'
+import { debounce, isDesktopApplication, isIOS } from '@/Utils'
 import { EditorEventSource } from '../../Types/EditorEventSource'
 import { confirmDialog, KeyboardModifier, KeyboardKey } from '@standardnotes/ui-services'
 import { STRING_DELETE_PLACEHOLDER_ATTEMPT, STRING_DELETE_LOCKED_ATTEMPT, StringDeleteNote } from '@/Constants/Strings'
@@ -22,7 +22,6 @@ import { PureComponent } from '@/Components/Abstract/PureComponent'
 import ProtectedItemOverlay from '@/Components/ProtectedItemOverlay/ProtectedItemOverlay'
 import PinNoteButton from '@/Components/PinNoteButton/PinNoteButton'
 import NotesOptionsPanel from '@/Components/NotesOptions/NotesOptionsPanel'
-import NoteTagsContainer from '@/Components/NoteTags/NoteTagsContainer'
 import ComponentView from '@/Components/ComponentView/ComponentView'
 import PanelResizer, { PanelSide, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
 import { ElementIds } from '@/Constants/ElementIDs'
@@ -41,9 +40,10 @@ import AutoresizingNoteViewTextarea from './AutoresizingTextarea'
 import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
 import NoteTagsPanel from '../NoteTags/NoteTagsPanel'
 
-const MINIMUM_STATUS_DURATION = 400
-const TEXTAREA_DEBOUNCE = 100
-const NOTE_EDITING_DISABLED_TEXT = 'Note editing disabled.'
+const MinimumStatusDuration = 400
+const TextareaDebounce = 100
+const NoteEditingDisabledText = 'Note editing disabled.'
+const StickyHeaderScrollThresholdInPx = 20
 
 type NoteStatus = {
   message?: string
@@ -81,6 +81,8 @@ type State = {
   leftResizerOffset: number
   rightResizerWidth: number
   rightResizerOffset: number
+
+  shouldStickyHeader: boolean
 }
 
 class NoteView extends PureComponent<NoteViewProps, State> {
@@ -112,7 +114,9 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
     this.debounceReloadEditorComponent = debounce(this.debounceReloadEditorComponent.bind(this), 25)
 
-    this.textAreaChangeDebounceSave = debounce(this.textAreaChangeDebounceSave, TEXTAREA_DEBOUNCE)
+    this.textAreaChangeDebounceSave = debounce(this.textAreaChangeDebounceSave, TextareaDebounce)
+
+    this.handleWindowScroll = debounce(this.handleWindowScroll, 10)
 
     this.state = {
       availableStackComponents: [],
@@ -120,7 +124,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
       editorText: '',
       editorTitle: '',
       isDesktop: isDesktopApplication(),
-      lockText: NOTE_EDITING_DISABLED_TEXT,
+      lockText: NoteEditingDisabledText,
       noteStatus: undefined,
       noteLocked: this.controller.item.locked,
       showLockedIcon: true,
@@ -133,12 +137,17 @@ class NoteView extends PureComponent<NoteViewProps, State> {
       leftResizerOffset: 0,
       rightResizerWidth: 0,
       rightResizerOffset: 0,
+      shouldStickyHeader: false,
     }
 
     this.editorContentRef = createRef<HTMLDivElement>()
+
+    window.addEventListener('scroll', this.handleWindowScroll)
   }
 
   override deinit() {
+    window.removeEventListener('scroll', this.handleWindowScroll)
+
     this.removeComponentStreamObserver?.()
     ;(this.removeComponentStreamObserver as unknown) = undefined
 
@@ -522,7 +531,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
         this.setState({
           noteStatus: status,
         })
-      }, MINIMUM_STATUS_DURATION)
+      }, MinimumStatusDuration)
     } else {
       this.setState({
         noteStatus: status,
@@ -872,6 +881,12 @@ class NoteView extends PureComponent<NoteViewProps, State> {
     }
   }
 
+  handleWindowScroll = () => {
+    this.setState({
+      shouldStickyHeader: window.scrollY > StickyHeaderScrollThresholdInPx,
+    })
+  }
+
   override render() {
     if (this.state.showProtectedWarning) {
       return (
@@ -890,7 +905,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
           <EditingDisabledBanner
             onMouseLeave={() => {
               this.setState({
-                lockText: NOTE_EDITING_DISABLED_TEXT,
+                lockText: NoteEditingDisabledText,
                 showLockedIcon: true,
               })
             }}
@@ -907,7 +922,14 @@ class NoteView extends PureComponent<NoteViewProps, State> {
         )}
 
         {this.note && (
-          <div id="editor-title-bar" className="content-title-bar section-title-bar z-editor-title-bar w-full">
+          <div
+            id="editor-title-bar"
+            className={classNames(
+              'content-title-bar section-title-bar z-editor-title-bar w-full bg-default',
+              this.state.shouldStickyHeader && 'fixed top-0',
+              this.state.shouldStickyHeader ? (isIOS() ? 'pt-safe-top' : 'pt-4') : '',
+            )}
+          >
             <div className="mb-2 flex flex-wrap items-start justify-between gap-2 md:mb-0 md:flex-nowrap md:gap-0 xl:items-center">
               <div className={classNames(this.state.noteLocked && 'locked', 'flex flex-grow items-center')}>
                 <MobileItemsListButton />
@@ -927,62 +949,62 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                   />
                 </div>
               </div>
-              <div className="flex flex-row-reverse items-center gap-3 md:flex-col-reverse md:items-end xl:flex-row xl:flex-nowrap xl:items-center">
-                {this.state.noteStatus?.message?.length && (
-                  <div id="save-status-container" className={'xl:mr-5 xl:max-w-[16ch]'}>
-                    <div id="save-status">
-                      <div
-                        className={
-                          (this.state.syncTakingTooLong ? 'font-bold text-warning ' : '') +
-                          (this.state.saveError ? 'font-bold text-danger ' : '') +
-                          'message text-xs'
-                        }
-                      >
-                        {this.state.noteStatus?.message}
+              {!this.state.shouldStickyHeader && (
+                <div className="flex flex-row-reverse items-center gap-3 md:flex-col-reverse md:items-end xl:flex-row xl:flex-nowrap xl:items-center">
+                  {this.state.noteStatus?.message?.length && (
+                    <div id="save-status-container" className={'xl:mr-5 xl:max-w-[16ch]'}>
+                      <div id="save-status">
+                        <div
+                          className={
+                            (this.state.syncTakingTooLong ? 'font-bold text-warning ' : '') +
+                            (this.state.saveError ? 'font-bold text-danger ' : '') +
+                            'message text-xs'
+                          }
+                        >
+                          {this.state.noteStatus?.message}
+                        </div>
+                        {this.state.noteStatus?.desc && (
+                          <div className="desc text-xs">{this.state.noteStatus.desc}</div>
+                        )}
                       </div>
-                      {this.state.noteStatus?.desc && <div className="desc text-xs">{this.state.noteStatus.desc}</div>}
                     </div>
+                  )}
+                  <div className="flex items-center gap-3">
+                    <NoteTagsPanel
+                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                      noteTagsController={this.viewControllerManager.noteTagsController}
+                    />
+                    <AttachedFilesButton
+                      application={this.application}
+                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                      featuresController={this.viewControllerManager.featuresController}
+                      filePreviewModalController={this.viewControllerManager.filePreviewModalController}
+                      filesController={this.viewControllerManager.filesController}
+                      navigationController={this.viewControllerManager.navigationController}
+                      notesController={this.viewControllerManager.notesController}
+                      selectionController={this.viewControllerManager.selectionController}
+                    />
+                    <ChangeEditorButton
+                      application={this.application}
+                      viewControllerManager={this.viewControllerManager}
+                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                    />
+                    <PinNoteButton
+                      notesController={this.viewControllerManager.notesController}
+                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                    />
+                    <NotesOptionsPanel
+                      application={this.application}
+                      navigationController={this.viewControllerManager.navigationController}
+                      notesController={this.viewControllerManager.notesController}
+                      noteTagsController={this.viewControllerManager.noteTagsController}
+                      historyModalController={this.viewControllerManager.historyModalController}
+                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                    />
                   </div>
-                )}
-                <div className="flex items-center gap-3">
-                  <NoteTagsPanel
-                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                    noteTagsController={this.viewControllerManager.noteTagsController}
-                  />
-                  <AttachedFilesButton
-                    application={this.application}
-                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                    featuresController={this.viewControllerManager.featuresController}
-                    filePreviewModalController={this.viewControllerManager.filePreviewModalController}
-                    filesController={this.viewControllerManager.filesController}
-                    navigationController={this.viewControllerManager.navigationController}
-                    notesController={this.viewControllerManager.notesController}
-                    selectionController={this.viewControllerManager.selectionController}
-                  />
-                  <ChangeEditorButton
-                    application={this.application}
-                    viewControllerManager={this.viewControllerManager}
-                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                  />
-                  <PinNoteButton
-                    notesController={this.viewControllerManager.notesController}
-                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                  />
-                  <NotesOptionsPanel
-                    application={this.application}
-                    navigationController={this.viewControllerManager.navigationController}
-                    notesController={this.viewControllerManager.notesController}
-                    noteTagsController={this.viewControllerManager.noteTagsController}
-                    historyModalController={this.viewControllerManager.historyModalController}
-                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                  />
                 </div>
-              </div>
+              )}
             </div>
-            <NoteTagsContainer
-              noteTagsController={this.viewControllerManager.noteTagsController}
-              navigationController={this.viewControllerManager.navigationController}
-            />
           </div>
         )}
 
