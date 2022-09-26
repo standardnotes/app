@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.58.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.58.0...@standardnotes/web@3.58.1) (2022-09-26)
+
+### Bug Fixes
+
+* **web:** check for proper feature in the subscription sharing section ([507823d](https://github.com/standardnotes/app/commit/507823dc4f1a2c1db47635ac26a686d4d8f2f4e8))
+
 # [3.58.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.57.3...@standardnotes/web@3.58.0) (2022-09-25)
 
 ### Features
