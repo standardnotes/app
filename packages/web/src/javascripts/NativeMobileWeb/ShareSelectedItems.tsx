@@ -5,7 +5,7 @@ import { SNNote } from '@standardnotes/snjs'
 
 export const shareSelectedItems = async (application: WebApplication, notes: SNNote[]) => {
   if (!application.isNativeMobileWeb()) {
-    return
+    throw new Error('Share function being used outside mobile webview')
   }
   if (notes.length === 1) {
     const note = notes[0]
