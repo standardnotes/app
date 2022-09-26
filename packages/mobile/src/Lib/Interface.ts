@@ -12,9 +12,11 @@ import {
   removeFromArray,
   TransferPayload,
 } from '@standardnotes/snjs'
+import { atobPolyfill } from 'js-base64'
 import { Alert, Linking, Platform, StatusBar } from 'react-native'
 import FingerprintScanner from 'react-native-fingerprint-scanner'
 import FlagSecure from 'react-native-flag-secure-android'
+import { DownloadDirectoryPath, exists, writeFile } from 'react-native-fs'
 import { hide, show } from 'react-native-privacy-snapshot'
 import Share from 'react-native-share'
 import { AppStateObserverService } from './../AppStateObserverService'
@@ -468,6 +470,21 @@ export class MobileDevice implements MobileDeviceInterface {
       })
     } catch (error) {
       this.consoleLog(`${error}`)
+    }
+  }
+
+  async downloadBase64AsFileOnAndroid(base64: string, filename: string) {
+    try {
+      let path = `${DownloadDirectoryPath}/${filename}`
+      if (await exists(path)) {
+        path = `${path} (1)`
+      }
+      const decodedContents = atobPolyfill(base64.replace(/data.*base64,/, ''))
+      await writeFile(path, decodedContents)
+      return true
+    } catch (error) {
+      this.consoleLog(`${error}`)
+      return false
     }
   }
 }

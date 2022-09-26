@@ -3,7 +3,7 @@ import Switch from '@/Components/Switch/Switch'
 import { observer } from 'mobx-react-lite'
 import { useState, useEffect, useMemo, useCallback, FunctionComponent } from 'react'
 import { Platform, SNApplication, SNComponent, SNNote } from '@standardnotes/snjs'
-import { KeyboardModifier } from '@standardnotes/ui-services'
+import { KeyboardModifier, sanitizeFileName } from '@standardnotes/ui-services'
 import ChangeEditorOption from './ChangeEditorOption'
 import { BYTES_IN_ONE_MEGABYTE } from '@/Constants/Constants'
 import ListedActionsOption from './ListedActionsOption'
@@ -16,6 +16,7 @@ import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import { getBase64FromBlob } from '@/Utils'
+import { parseFileName } from '@standardnotes/filepicker'
 
 type DeletePermanentlyButtonProps = {
   onClick: () => void
@@ -292,15 +293,50 @@ const NotesOptions = ({
     }
   }, [application, getNoteBlob, getNoteFileName, notes])
 
+  const downloadSelectedItemsOnAndroid = useCallback(async () => {
+    if (!application.isNativeMobileWeb() || application.platform !== Platform.Android) {
+      return
+    }
+    if (notes.length === 1) {
+      const note = notes[0]
+      const blob = getNoteBlob(note)
+      const base64 = await getBase64FromBlob(blob)
+      const { name, ext } = parseFileName(getNoteFileName(note))
+      const filename = `${sanitizeFileName(name)}.${ext}`
+      const downloaded = await application.mobileDevice.downloadBase64AsFileOnAndroid(base64, filename)
+      if (downloaded) {
+        addToast({
+          type: ToastType.Success,
+          message: `Exported ${filename}`,
+        })
+      }
+      return
+    }
+    if (notes.length > 1) {
+      const zippedDataBlob = await application.getArchiveService().zipData(
+        notes.map((note) => {
+          return {
+            name: getNoteFileName(note),
+            content: getNoteBlob(note),
+          }
+        }),
+      )
+      const zippedDataAsBase64 = await getBase64FromBlob(zippedDataBlob)
+      const filename = `Standard Notes Export - ${application.getArchiveService().formattedDateForExports()}.zip`
+      const downloaded = await application.mobileDevice.downloadBase64AsFileOnAndroid(zippedDataAsBase64, filename)
+      if (downloaded) {
+        addToast({
+          type: ToastType.Success,
+          message: `Exported ${filename}`,
+        })
+      }
+    }
+  }, [application, getNoteBlob, getNoteFileName, notes])
+
   const downloadSelectedItems = useCallback(async () => {
     if (notes.length === 1) {
       const note = notes[0]
       const blob = getNoteBlob(note)
-      /* if (application.isNativeMobileWeb()) {
-        const base64 = await getBase64FromBlob(blob)
-        application.mobileDevice.openUrl(base64)
-        return
-      } */
       application.getArchiveService().downloadData(blob, getNoteFileName(note))
       return
     }
@@ -436,7 +472,7 @@ const NotesOptions = ({
       {application.platform === Platform.Android && (
         <button
           className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
-          onClick={downloadSelectedItems}
+          onClick={downloadSelectedItemsOnAndroid}
         >
           <Icon type="download" className={iconClass} />
           Export

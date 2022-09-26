@@ -8,7 +8,7 @@ import {
 import { ContentType } from '@standardnotes/common'
 import { ApplicationInterface } from '@standardnotes/services'
 
-function sanitizeFileName(name: string): string {
+export function sanitizeFileName(name: string): string {
   return name.trim().replace(/[.\\/:"?*|<>]/g, '_')
 }
 
