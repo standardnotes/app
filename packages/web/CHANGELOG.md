@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.60.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.59.3...@standardnotes/web@3.60.0) (2022-09-27)
+
+### Features
+
+* upgrade cta ([#1655](https://github.com/standardnotes/app/issues/1655)) ([ec52e56](https://github.com/standardnotes/app/commit/ec52e5684da2c7caaa24929275727cdbc23c28e1))
+
 ## [3.59.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.59.2...@standardnotes/web@3.59.3) (2022-09-27)
 
 **Note:** Version bump only for package @standardnotes/web
