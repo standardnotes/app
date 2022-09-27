@@ -88,6 +88,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
     constructor(messageSender) {
       this.appVersion = '${pjson.version} (${VersionInfo.buildVersion})'
       this.environment = 4
+      this.platform = ${device.platform}
       this.databases = []
       this.messageSender = messageSender
     }

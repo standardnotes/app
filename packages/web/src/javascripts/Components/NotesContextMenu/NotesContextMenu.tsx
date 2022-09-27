@@ -41,7 +41,7 @@ const NotesContextMenu = ({
       side="right"
       togglePopover={closeMenu}
     >
-      <div ref={contextMenuRef}>
+      <div className="select-none" ref={contextMenuRef}>
         <NotesOptions
           application={application}
           navigationController={navigationController}

@@ -86,6 +86,7 @@ export const ICONS = {
   security: icons.SecurityIcon,
   server: icons.ServerIcon,
   settings: icons.SettingsIcon,
+  share: icons.ShareIcon,
   signIn: icons.SignInIcon,
   signOut: icons.SignOutIcon,
   spreadsheets: icons.SpreadsheetsIcon,

@@ -26,7 +26,7 @@ const SubscriptionSharing: FunctionComponent<Props> = ({ application, viewContro
   const subscriptionState = viewControllerManager.subscriptionController
 
   const isSubscriptionSharingFeatureAvailable =
-    application.features.getFeatureStatus(FeatureIdentifier.TwoFactorAuth) === FeatureStatus.Entitled
+    application.features.getFeatureStatus(FeatureIdentifier.SubscriptionSharing) === FeatureStatus.Entitled
 
   return (
     <PreferencesGroup>
