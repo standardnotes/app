@@ -1,5 +1,5 @@
-import { WebApplication } from '@/Application/Application'
 import { ElementIds } from '@/Constants/ElementIDs'
+import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
 import { isMobileScreen } from '@/Utils'
 import {
   useEffect,
@@ -37,10 +37,6 @@ type ChildrenProps = {
   children: ReactNode
 }
 
-type ProviderProps = {
-  application: WebApplication
-} & ChildrenProps
-
 function useStateRef<State>(state: State): MutableRefObject<State> {
   const ref = useRef<State>(state)
 
@@ -53,7 +49,7 @@ function useStateRef<State>(state: State): MutableRefObject<State> {
 
 const MemoizedChildren = memo(({ children }: ChildrenProps) => <div>{children}</div>)
 
-const ResponsivePaneProvider = ({ application, children }: ProviderProps) => {
+const ResponsivePaneProvider = ({ children }: ChildrenProps) => {
   const [currentSelectedPane, setCurrentSelectedPane] = useState<AppPaneId>(
     isMobileScreen() ? AppPaneId.Items : AppPaneId.Editor,
   )
@@ -85,28 +81,25 @@ const ResponsivePaneProvider = ({ application, children }: ProviderProps) => {
     currentPaneElement?.classList.add('selected')
   }, [currentSelectedPane, previousSelectedPane])
 
-  useEffect(() => {
-    let removeListener: (() => void) | undefined
-    if (application.isNativeMobileWeb()) {
-      removeListener = application.addBackHandlerEventListener(() => {
-        if (
-          currentSelectedPaneRef.current === AppPaneId.Editor ||
-          currentSelectedPaneRef.current === AppPaneId.Navigation
-        ) {
-          toggleAppPane(AppPaneId.Items)
-        } else {
-          application.mobileDevice.performSoftReset()
-        }
+  const addAndroidBackHandler = useAndroidBackHandler()
 
-        return true
-      })
-    }
+  useEffect(() => {
+    const removeListener = addAndroidBackHandler(() => {
+      if (
+        currentSelectedPaneRef.current === AppPaneId.Editor ||
+        currentSelectedPaneRef.current === AppPaneId.Navigation
+      ) {
+        toggleAppPane(AppPaneId.Items)
+      }
+
+      return true
+    })
     return () => {
       if (removeListener) {
         removeListener()
       }
     }
-  }, [application, currentSelectedPaneRef, toggleAppPane])
+  }, [addAndroidBackHandler, currentSelectedPaneRef, toggleAppPane])
 
   const contextValue = useMemo(
     () => ({
