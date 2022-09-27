@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.59.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.59.0...@standardnotes/web@3.59.1) (2022-09-27)
+
+### Bug Fixes
+
+* export/sharing notes on mobile webview ([#1644](https://github.com/standardnotes/app/issues/1644)) ([6d5ebde](https://github.com/standardnotes/app/commit/6d5ebdeaa1777f31878b6e7d4dfc33fe83abc9fc))
+
 # [3.59.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.58.1...@standardnotes/web@3.59.0) (2022-09-26)
 
 ### Features
