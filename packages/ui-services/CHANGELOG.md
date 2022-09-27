@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.4](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.3.3...@standardnotes/ui-services@1.3.4) (2022-09-27)
+
+### Bug Fixes
+
+* **web:** incorrect native access ([b9a07d8](https://github.com/standardnotes/app/commit/b9a07d8b5abb9ae6e7fb00b0edc1fa87a2b209e0))
+
 ## [1.3.3](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.3.2...@standardnotes/ui-services@1.3.3) (2022-09-27)
 
 ### Bug Fixes
