@@ -12,4 +12,6 @@ export interface WebApplicationInterface extends ApplicationInterface {
   handleMobileResumingFromBackgroundEvent(): Promise<void>
   isNativeMobileWeb(): boolean
   get mobileDevice(): MobileDeviceInterface
+  notifyBackHandler(): void
+  addBackHandlerEventListener(listener: () => boolean): (() => void) | undefined
 }

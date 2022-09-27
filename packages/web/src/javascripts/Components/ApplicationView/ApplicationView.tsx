@@ -175,7 +175,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
 
   return (
     <PremiumModalProvider application={application} viewControllerManager={viewControllerManager}>
-      <ResponsivePaneProvider>
+      <ResponsivePaneProvider application={application}>
         <div className={platformString + ' main-ui-view sn-component'}>
           <div id="app" className={appClass + ' app app-column-container'}>
             <FileDragNDropProvider
