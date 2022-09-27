@@ -12,6 +12,7 @@ import { classNames } from '@/Utils/ConcatenateClassNames'
 import Icon from '../Icon/Icon'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { isIOS } from '@/Utils'
+import UpgradeNow from '../Footer/UpgradeNow'
 
 type Props = {
   application: WebApplication
@@ -86,7 +87,7 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
         </div>
         <div className="flex items-center border-t border-border px-3.5 pt-2.5 md:hidden">
           <button
-            className="flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border bg-default text-neutral hover:bg-contrast focus:bg-contrast"
+            className="mr-auto flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border bg-default text-neutral hover:bg-contrast focus:bg-contrast"
             onClick={() => {
               toggleAppPane(AppPaneId.Items)
             }}
@@ -95,8 +96,9 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
           >
             <Icon type="chevron-left" />
           </button>
+          <UpgradeNow application={application} featuresController={viewControllerManager.featuresController} />
           <button
-            className="ml-auto flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border bg-default text-neutral hover:bg-contrast focus:bg-contrast"
+            className="ml-2.5 flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border bg-default text-neutral hover:bg-contrast focus:bg-contrast"
             onClick={() => {
               viewControllerManager.accountMenuController.toggleShow()
             }}

@@ -19,6 +19,7 @@ import { EditorEventSource } from '@/Types/EditorEventSource'
 import QuickSettingsButton from './QuickSettingsButton'
 import AccountMenuButton from './AccountMenuButton'
 import StyledTooltip from '../StyledTooltip/StyledTooltip'
+import UpgradeNow from './UpgradeNow'
 
 type Props = {
   application: WebApplication
@@ -382,6 +383,10 @@ class Footer extends PureComponent<Props, State> {
                 quickSettingsMenuController={this.viewControllerManager.quickSettingsMenuController}
               />
             </div>
+            <UpgradeNow
+              application={this.application}
+              featuresController={this.viewControllerManager.featuresController}
+            />
             {this.state.showBetaWarning && (
               <Fragment>
                 <div className="relative z-footer-bar-item ml-3 flex select-none items-center border-l border-solid border-border pl-3">
