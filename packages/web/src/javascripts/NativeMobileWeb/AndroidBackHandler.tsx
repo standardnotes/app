@@ -1,7 +1,7 @@
 type Listener = () => boolean
 type RemoveListener = () => void
 
-export class AndroidBackButtonHandler {
+export class AndroidBackHandler {
   private listeners = new Set<Listener>()
 
   constructor() {

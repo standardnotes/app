@@ -26,7 +26,7 @@ import { isDesktopApplication } from '@/Utils'
 import { DesktopManager } from './Device/DesktopManager'
 import { ArchiveManager, AutolockService, IOService, WebAlertService, ThemeManager } from '@standardnotes/ui-services'
 import { MobileWebReceiver } from './MobileWebReceiver'
-import { AndroidBackButtonHandler } from '@/NativeMobileWeb/AndroidBackButtonHandler'
+import { AndroidBackHandler } from '@/NativeMobileWeb/AndroidBackHandler'
 
 type WebServices = {
   viewControllerManager: ViewControllerManager
@@ -46,7 +46,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   public iconsController: IconsController
   private onVisibilityChange: () => void
   private mobileWebReceiver?: MobileWebReceiver
-  private androidBackHandler?: AndroidBackButtonHandler
+  private androidBackHandler?: AndroidBackHandler
 
   constructor(
     deviceInterface: WebOrDesktopDevice,
@@ -78,7 +78,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
     if (this.isNativeMobileWeb()) {
       this.mobileWebReceiver = new MobileWebReceiver(this)
-      this.androidBackHandler = new AndroidBackButtonHandler()
+      this.androidBackHandler = new AndroidBackHandler()
 
       // eslint-disable-next-line no-console
       console.log = (...args) => {
