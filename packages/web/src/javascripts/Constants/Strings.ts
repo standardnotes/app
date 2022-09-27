@@ -99,8 +99,7 @@ export const STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON = 'Upgrade'
 
 export const STRING_REMOVE_OFFLINE_KEY_CONFIRMATION = 'This will delete the previously saved offline key.'
 
-export const STRING_DELETE_ACCOUNT_CONFIRMATION =
-  'For safety reasons, we need you to confirm your password before continuing.'
+export const STRING_DELETE_ACCOUNT_CONFIRMATION = 'Are you sure you want to permanently delete your account?'
 
 export const STRING_FAILED_TO_UPDATE_USER_SETTING =
   'There was an error while trying to update your settings. Please try again.'
