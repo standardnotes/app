@@ -13,5 +13,5 @@ export interface WebApplicationInterface extends ApplicationInterface {
   isNativeMobileWeb(): boolean
   get mobileDevice(): MobileDeviceInterface
   notifyBackHandler(): void
-  addBackHandlerEventListener(listener: () => boolean): (() => void) | undefined
+  addBackHandlerEventListener(listener: () => void): (() => void) | undefined
 }

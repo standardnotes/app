@@ -91,8 +91,6 @@ const ResponsivePaneProvider = ({ children }: ChildrenProps) => {
       ) {
         toggleAppPane(AppPaneId.Items)
       }
-
-      return true
     })
     return () => {
       if (removeListener) {
