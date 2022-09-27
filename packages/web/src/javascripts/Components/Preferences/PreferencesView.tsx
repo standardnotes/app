@@ -8,30 +8,50 @@ import { isIOS } from '@/Utils'
 import { useDisableBodyScrollOnMobile } from '@/Hooks/useDisableBodyScrollOnMobile'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { MediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
+import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
 
-const PreferencesView: FunctionComponent<PreferencesProps> = (props) => {
+const PreferencesView: FunctionComponent<PreferencesProps> = ({
+  application,
+  viewControllerManager,
+  closePreferences,
+  userProvider,
+  mfaProvider,
+}) => {
   const isDesktopScreen = useMediaQuery(MediaQueryBreakpoints.md)
 
   const menu = useMemo(
-    () => new PreferencesMenu(props.application, props.viewControllerManager.enableUnfinishedFeatures),
-    [props.viewControllerManager.enableUnfinishedFeatures, props.application],
+    () => new PreferencesMenu(application, viewControllerManager.enableUnfinishedFeatures),
+    [viewControllerManager.enableUnfinishedFeatures, application],
   )
 
   useEffect(() => {
-    menu.selectPane(props.viewControllerManager.preferencesController.currentPane)
-    const removeEscKeyObserver = props.application.io.addKeyObserver({
+    menu.selectPane(viewControllerManager.preferencesController.currentPane)
+    const removeEscKeyObserver = application.io.addKeyObserver({
       key: 'Escape',
       onKeyDown: (event) => {
         event.preventDefault()
-        props.closePreferences()
+        closePreferences()
       },
     })
     return () => {
       removeEscKeyObserver()
     }
-  }, [props, menu])
+  }, [menu, viewControllerManager.preferencesController.currentPane, application.io, closePreferences])
 
   useDisableBodyScrollOnMobile()
+
+  const addAndroidBackHandler = useAndroidBackHandler()
+
+  useEffect(() => {
+    const removeListener = addAndroidBackHandler(() => {
+      closePreferences()
+    })
+    return () => {
+      if (removeListener) {
+        removeListener()
+      }
+    }
+  }, [addAndroidBackHandler, closePreferences])
 
   return (
     <div
@@ -48,13 +68,20 @@ const PreferencesView: FunctionComponent<PreferencesProps> = (props) => {
         <h1 className="text-base font-bold md:text-lg">Your preferences for Standard Notes</h1>
         <RoundIconButton
           onClick={() => {
-            props.closePreferences()
+            closePreferences()
           }}
           type="normal"
           icon="close"
         />
       </div>
-      <PreferencesCanvas {...props} menu={menu} />
+      <PreferencesCanvas
+        menu={menu}
+        application={application}
+        viewControllerManager={viewControllerManager}
+        closePreferences={closePreferences}
+        userProvider={userProvider}
+        mfaProvider={mfaProvider}
+      />
     </div>
   )
 }
