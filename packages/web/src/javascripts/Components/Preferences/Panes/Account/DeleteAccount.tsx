@@ -19,12 +19,16 @@ const DeleteAccount = ({ application, viewControllerManager }: Props) => {
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Delete account</Title>
-        <Text>This action is irreversible. This will also delete all local items and preferences.</Text>
+        <Text>
+          This action is irreversible. After deletion completes, you will be signed out on all devices. If you have an
+          active paid subscription, cancel the subscription first. Otherwise, if you'd like to keep the subscription,
+          you can re-register with the same email after deletion, and your subscription will be linked back up with your
+          account.
+        </Text>
         <div className="mt-3 flex flex-row flex-wrap gap-3">
           <Button
-            className="mt-3"
             colorStyle="danger"
-            label="Delete my account for good"
+            label="Delete my account"
             onClick={() => {
               viewControllerManager.accountMenuController.setDeletingAccount(true)
             }}
