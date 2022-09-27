@@ -26,6 +26,7 @@ import TagContextMenuWrapper from '@/Components/Tags/TagContextMenuWrapper'
 import FileDragNDropProvider from '../FileDragNDropProvider/FileDragNDropProvider'
 import ResponsivePaneProvider from '../ResponsivePane/ResponsivePaneProvider'
 import AndroidBackHandlerProvider from '@/NativeMobileWeb/useAndroidBackHandler'
+import ConfirmDeleteAccountContainer from '@/Components/ConfirmDeleteAccountModal/ConfirmDeleteAccountModal'
 
 type Props = {
   application: WebApplication
@@ -201,6 +202,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                 <NoteGroupView application={application} />
               </FileDragNDropProvider>
             </div>
+
             <>
               <Footer application={application} applicationGroup={mainApplicationGroup} />
               <SessionsModal application={application} viewControllerManager={viewControllerManager} />
@@ -213,7 +215,9 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                 subscriptionController={viewControllerManager.subscriptionController}
               />
             </>
+
             {renderChallenges()}
+
             <>
               <NotesContextMenu
                 application={application}
@@ -239,6 +243,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
               <ToastContainer />
               <FilePreviewModalWrapper application={application} viewControllerManager={viewControllerManager} />
               <PermissionsModalWrapper application={application} />
+              <ConfirmDeleteAccountContainer application={application} viewControllerManager={viewControllerManager} />
             </>
           </div>
         </PremiumModalProvider>
