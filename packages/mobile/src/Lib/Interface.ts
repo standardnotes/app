@@ -548,4 +548,29 @@ export class MobileDevice implements MobileDeviceInterface {
       this.consoleLog(`${error}`)
     }
   }
+
+  confirmAndExit() {
+    Alert.alert(
+      'Close app',
+      'Do you want to close the app?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          onPress: async () => {},
+        },
+        {
+          text: 'Close',
+          style: 'destructive',
+          onPress: async () => {
+            SNReactNative.exitApp()
+          },
+        },
+      ],
+      {
+        cancelable: true,
+      },
+    )
+  }
 }
