@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.21.5](https://github.com/standardnotes/app/compare/@standardnotes/services@1.21.4...@standardnotes/services@1.21.5) (2022-09-27)
+
+### Bug Fixes
+
+* export/sharing notes on mobile webview ([#1644](https://github.com/standardnotes/app/issues/1644)) ([6d5ebde](https://github.com/standardnotes/app/commit/6d5ebdeaa1777f31878b6e7d4dfc33fe83abc9fc))
+
 ## [1.21.4](https://github.com/standardnotes/app/compare/@standardnotes/services@1.21.3...@standardnotes/services@1.21.4) (2022-09-24)
 
 **Note:** Version bump only for package @standardnotes/services

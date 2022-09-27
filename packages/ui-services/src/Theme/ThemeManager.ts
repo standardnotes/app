@@ -323,7 +323,7 @@ export class ThemeManager extends AbstractService {
 
     removeFromArray(this.activeThemes, uuid)
 
-    if (this.activeThemes.length === 0) {
+    if (this.activeThemes.length === 0 && this.application.isNativeMobileWeb()) {
       this.application.mobileDevice.handleThemeSchemeChange(false)
     }
   }
