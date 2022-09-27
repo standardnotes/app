@@ -10,6 +10,7 @@ import FilesSection from './Files'
 import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 import SubscriptionSharing from './SubscriptionSharing/SubscriptionSharing'
 import Email from './Email'
+import DeleteAccount from '@/Components/Preferences/Panes/Account/DeleteAccount'
 
 type Props = {
   application: WebApplication
@@ -33,6 +34,7 @@ const AccountPreferences = ({ application, viewControllerManager }: Props) => (
     )}
     <Email application={application} />
     <SignOutWrapper application={application} viewControllerManager={viewControllerManager} />
+    <DeleteAccount application={application} viewControllerManager={viewControllerManager} />
   </PreferencesPane>
 )
 

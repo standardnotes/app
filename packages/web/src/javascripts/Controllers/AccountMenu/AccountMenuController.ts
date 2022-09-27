@@ -24,6 +24,7 @@ export class AccountMenuController extends AbstractViewController {
   encryptionStatusString = ''
   isBackupEncrypted = false
   showSignIn = false
+  deletingAccount = false
   showRegister = false
   shouldAnimateCloseMenu = false
   currentPane = AccountMenuPane.GeneralMenu
@@ -49,6 +50,7 @@ export class AccountMenuController extends AbstractViewController {
       encryptionStatusString: observable,
       isBackupEncrypted: observable,
       showSignIn: observable,
+      deletingAccount: observable,
       showRegister: observable,
       currentPane: observable,
       shouldAnimateCloseMenu: observable,
@@ -64,6 +66,7 @@ export class AccountMenuController extends AbstractViewController {
       setCurrentPane: action,
       setEnableServerOption: action,
       setServer: action,
+      setDeletingAccount: action,
 
       notesAndTagsCount: computed,
     })
@@ -153,6 +156,10 @@ export class AccountMenuController extends AbstractViewController {
 
   setCurrentPane = (pane: AccountMenuPane): void => {
     this.currentPane = pane
+  }
+
+  setDeletingAccount = (deletingAccount: boolean): void => {
+    this.deletingAccount = deletingAccount
   }
 
   get notesAndTagsCount(): number {
