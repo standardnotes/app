@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.61.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.60.0...@standardnotes/web@3.61.0) (2022-09-27)
+
+### Features
+
+* delete account ([#1653](https://github.com/standardnotes/app/issues/1653)) ([5db47e8](https://github.com/standardnotes/app/commit/5db47e83e82993bb9d210cb264d05f59ea1db5f3))
+
 # [3.60.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.59.3...@standardnotes/web@3.60.0) (2022-09-27)
 
 ### Features
