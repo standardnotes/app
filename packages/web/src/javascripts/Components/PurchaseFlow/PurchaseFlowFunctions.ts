@@ -20,7 +20,14 @@ export const loadPurchaseFlowUrl = async (application: WebApplication): Promise<
   const period = params.get('period') ? `&period=${params.get('period')}` : ''
   const plan = params.get('plan') ? `&plan=${params.get('plan')}` : ''
   if (url) {
-    window.location.assign(`${url}${period}${plan}`)
+    const finalUrl = `${url}${period}${plan}`
+
+    if (application.isNativeMobileWeb()) {
+      application.mobileDevice.openUrl(finalUrl)
+    } else {
+      window.location.assign(finalUrl)
+    }
+
     return true
   }
   return false
