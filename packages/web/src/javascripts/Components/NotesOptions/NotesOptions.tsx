@@ -2,7 +2,7 @@ import Icon from '@/Components/Icon/Icon'
 import Switch from '@/Components/Switch/Switch'
 import { observer } from 'mobx-react-lite'
 import { useState, useEffect, useMemo, useCallback, FunctionComponent } from 'react'
-import { SNApplication, SNComponent, SNNote } from '@standardnotes/snjs'
+import { Platform, SNApplication, SNComponent, SNNote } from '@standardnotes/snjs'
 import { KeyboardModifier } from '@standardnotes/ui-services'
 import ChangeEditorOption from './ChangeEditorOption'
 import { BYTES_IN_ONE_MEGABYTE } from '@/Constants/Constants'
@@ -15,6 +15,9 @@ import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
+import { getNoteBlob, getNoteFileName } from '@/Utils/NoteExportUtils'
+import { shareSelectedItems } from '@/NativeMobileWeb/ShareSelectedItems'
+import { downloadSelectedItemsOnAndroid } from '@/NativeMobileWeb/DownloadSelectedItemsOnAndroid'
 
 type DeletePermanentlyButtonProps = {
   onClick: () => void
@@ -95,7 +98,7 @@ const NoteAttributes: FunctionComponent<{
   const format = editor?.package_info?.file_type || 'txt'
 
   return (
-    <div className="px-3 py-1.5 text-xs font-medium text-neutral">
+    <div className="select-text px-3 py-1.5 text-xs font-medium text-neutral">
       {typeof words === 'number' && (format === 'txt' || format === 'md') ? (
         <>
           <div className="mb-1">
@@ -220,18 +223,11 @@ const NotesOptions = ({
     }
   }, [application])
 
-  const getNoteFileName = useCallback(
-    (note: SNNote): string => {
-      const editor = application.componentManager.editorForNote(note)
-      const format = editor?.package_info?.file_type || 'txt'
-      return `${note.title}.${format}`
-    },
-    [application.componentManager],
-  )
-
   const downloadSelectedItems = useCallback(async () => {
     if (notes.length === 1) {
-      application.getArchiveService().downloadData(new Blob([notes[0].text]), getNoteFileName(notes[0]))
+      const note = notes[0]
+      const blob = getNoteBlob(application, note)
+      application.getArchiveService().downloadData(blob, getNoteFileName(application, note))
       return
     }
 
@@ -243,8 +239,8 @@ const NotesOptions = ({
       await application.getArchiveService().downloadDataAsZip(
         notes.map((note) => {
           return {
-            name: getNoteFileName(note),
-            content: new Blob([note.text]),
+            name: getNoteFileName(application, note),
+            content: getNoteBlob(application, note),
           }
         }),
       )
@@ -254,7 +250,7 @@ const NotesOptions = ({
         message: `Exported ${notes.length} notes`,
       })
     }
-  }, [application, getNoteFileName, notes])
+  }, [application, notes])
 
   const closeMenuAndToggleNotesList = useCallback(() => {
     toggleAppPane(AppPaneId.Items)
@@ -358,11 +354,22 @@ const NotesOptions = ({
       )}
       <button
         className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
-        onClick={downloadSelectedItems}
+        onClick={() => {
+          application.isNativeMobileWeb() ? shareSelectedItems(application, notes) : downloadSelectedItems()
+        }}
       >
-        <Icon type="download" className={iconClass} />
-        Export
+        <Icon type={application.platform === Platform.Android ? 'share' : 'download'} className={iconClass} />
+        {application.platform === Platform.Android ? 'Share' : 'Export'}
       </button>
+      {application.platform === Platform.Android && (
+        <button
+          className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+          onClick={() => downloadSelectedItemsOnAndroid(application, notes)}
+        >
+          <Icon type="download" className={iconClass} />
+          Export
+        </button>
+      )}
       <button
         className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
         onClick={duplicateSelectedItems}

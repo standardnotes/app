@@ -7,16 +7,27 @@ import {
   LegacyRawKeychainValue,
   MobileDeviceInterface,
   NamespacedRootKeyInKeychain,
+  Platform as SNPlatform,
   RawKeychainValue,
   removeFromArray,
   TransferPayload,
 } from '@standardnotes/snjs'
-import { Alert, Linking, Platform, StatusBar } from 'react-native'
+import { Alert, Linking, PermissionsAndroid, Platform, StatusBar } from 'react-native'
 import FingerprintScanner from 'react-native-fingerprint-scanner'
 import FlagSecure from 'react-native-flag-secure-android'
+import {
+  CachesDirectoryPath,
+  DocumentDirectoryPath,
+  DownloadDirectoryPath,
+  exists,
+  unlink,
+  writeFile,
+} from 'react-native-fs'
 import { hide, show } from 'react-native-privacy-snapshot'
+import Share from 'react-native-share'
 import { AppStateObserverService } from './../AppStateObserverService'
 import Keychain from './Keychain'
+import { SNReactNativeCrypto } from './ReactNativeCrypto'
 import { IsMobileWeb } from './Utils'
 
 export type BiometricsType = 'Fingerprint' | 'Face ID' | 'Biometrics' | 'Touch ID'
@@ -64,10 +75,14 @@ const showLoadFailForItemIds = (failedItemIds: string[]) => {
 
 export class MobileDevice implements MobileDeviceInterface {
   environment: Environment.Mobile = Environment.Mobile
+  platform: SNPlatform.Ios | SNPlatform.Android = Platform.OS === 'ios' ? SNPlatform.Ios : SNPlatform.Android
   private eventObservers: MobileDeviceEventHandler[] = []
   public isDarkMode = false
+  private crypto: SNReactNativeCrypto
 
-  constructor(private stateObserverService?: AppStateObserverService) {}
+  constructor(private stateObserverService?: AppStateObserverService) {
+    this.crypto = new SNReactNativeCrypto()
+  }
 
   deinit() {
     this.stateObserverService?.deinit()
@@ -454,5 +469,77 @@ export class MobileDevice implements MobileDeviceInterface {
 
   isDeviceDestroyed() {
     return false
+  }
+
+  async deleteFileAtPathIfExists(path: string) {
+    if (await exists(path)) {
+      await unlink(path)
+    }
+  }
+
+  async shareBase64AsFile(base64: string, filename: string) {
+    let downloadedTempFilePath: string | undefined
+    try {
+      downloadedTempFilePath = await this.downloadBase64AsFile(base64, filename, true)
+      if (!downloadedTempFilePath) {
+        return
+      }
+      await Share.open({
+        url: `file://${downloadedTempFilePath}`,
+        failOnCancel: false,
+      })
+    } catch (error) {
+      this.consoleLog(`${error}`)
+    } finally {
+      if (downloadedTempFilePath) {
+        void this.deleteFileAtPathIfExists(downloadedTempFilePath)
+      }
+    }
+  }
+
+  getFileDestinationPath(filename: string, saveInTempLocation: boolean): string {
+    let directory = DocumentDirectoryPath
+
+    if (Platform.OS === 'android') {
+      directory = saveInTempLocation ? CachesDirectoryPath : DownloadDirectoryPath
+    }
+
+    return `${directory}/${filename}`
+  }
+
+  async hasStoragePermissionOnAndroid(): Promise<boolean> {
+    if (Platform.OS !== 'android') {
+      return true
+    }
+    const grantedStatus = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE)
+    if (grantedStatus === PermissionsAndroid.RESULTS.GRANTED) {
+      return true
+    }
+    Alert.alert(
+      'Storage permissions are required in order to download files. Please accept the permissions prompt and try again.',
+    )
+    return false
+  }
+
+  async downloadBase64AsFile(
+    base64: string,
+    filename: string,
+    saveInTempLocation = false,
+  ): Promise<string | undefined> {
+    const isGrantedStoragePermissionOnAndroid = await this.hasStoragePermissionOnAndroid()
+
+    if (!isGrantedStoragePermissionOnAndroid) {
+      return
+    }
+
+    try {
+      const path = this.getFileDestinationPath(filename, saveInTempLocation)
+      void this.deleteFileAtPathIfExists(path)
+      const decodedContents = this.crypto.base64Decode(base64.replace(/data.*base64,/, ''))
+      await writeFile(path, decodedContents)
+      return path
+    } catch (error) {
+      this.consoleLog(`${error}`)
+    }
   }
 }

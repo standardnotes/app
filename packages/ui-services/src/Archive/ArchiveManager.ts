@@ -8,7 +8,7 @@ import {
 import { ContentType } from '@standardnotes/common'
 import { ApplicationInterface } from '@standardnotes/services'
 
-function sanitizeFileName(name: string): string {
+export function sanitizeFileName(name: string): string {
   return name.trim().replace(/[.\\/:"?*|<>]/g, '_')
 }
 
@@ -52,13 +52,16 @@ export class ArchiveManager {
     })
 
     if (encrypted) {
-      this.downloadData(blobData, `Standard Notes Encrypted Backup and Import File - ${this.formattedDate()}.txt`)
+      this.downloadData(
+        blobData,
+        `Standard Notes Encrypted Backup and Import File - ${this.formattedDateForExports()}.txt`,
+      )
     } else {
       this.downloadZippedDecryptedItems(data).catch(console.error)
     }
   }
 
-  private formattedDate() {
+  formattedDateForExports() {
     const string = `${new Date()}`
     // Match up to the first parenthesis, i.e do not include '(Central Standard Time)'
     const matches = string.match(/^(.*?) \(/)
@@ -108,7 +111,7 @@ export class ArchiveManager {
         await nextFile()
       } else {
         const finalBlob = await zipWriter.close()
-        this.downloadData(finalBlob, `Standard Notes Backup - ${this.formattedDate()}.zip`)
+        this.downloadData(finalBlob, `Standard Notes Backup - ${this.formattedDateForExports()}.zip`)
       }
     }
 
@@ -143,7 +146,7 @@ export class ArchiveManager {
 
   async downloadDataAsZip(data: ZippableData) {
     const zipFileAsBlob = await this.zipData(data)
-    this.downloadData(zipFileAsBlob, `Standard Notes Export - ${this.formattedDate()}.zip`)
+    this.downloadData(zipFileAsBlob, `Standard Notes Export - ${this.formattedDateForExports()}.zip`)
   }
 
   private hrefForData(data: Blob) {

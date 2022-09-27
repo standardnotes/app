@@ -121,11 +121,7 @@ export const AppStackComponent = (props: ModalStackNavigationProp<'AppStack'>) =
     [application],
   )
 
-  if (!application) {
-    return null
-  }
-
-  const shouldOpenWebApp = application.getValue(AlwaysOpenWebAppOnLaunchKey, StorageValueModes.Nonwrapped) as boolean
+  const shouldOpenWebApp = application?.getValue(AlwaysOpenWebAppOnLaunchKey, StorageValueModes.Nonwrapped) as boolean
 
   if (IsMobileWeb || shouldOpenWebApp) {
     return (

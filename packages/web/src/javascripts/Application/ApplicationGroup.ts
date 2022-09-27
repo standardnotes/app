@@ -20,7 +20,7 @@ const createApplication = (
   device: WebOrDesktopDevice,
   webSocketUrl: string,
 ) => {
-  const platform = getPlatform()
+  const platform = getPlatform(device)
 
   const application = new WebApplication(
     deviceInterface,
