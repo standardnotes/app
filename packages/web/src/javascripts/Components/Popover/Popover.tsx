@@ -73,6 +73,7 @@ const Popover = ({
     if (open) {
       removeListener = addAndroidBackHandler(() => {
         togglePopover()
+        return true
       })
     }
 

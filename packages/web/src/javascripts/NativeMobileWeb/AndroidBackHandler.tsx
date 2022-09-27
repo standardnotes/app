@@ -1,4 +1,4 @@
-type Listener = () => void
+type Listener = () => boolean
 type RemoveListener = () => void
 
 export class AndroidBackHandler {
@@ -17,7 +17,10 @@ export class AndroidBackHandler {
   }
 
   notifyEvent() {
-    const latestListener = Array.from(this.listeners)[this.listeners.size - 1]
-    latestListener()
+    for (const listener of Array.from(this.listeners).reverse()) {
+      if (listener()) {
+        return
+      }
+    }
   }
 }

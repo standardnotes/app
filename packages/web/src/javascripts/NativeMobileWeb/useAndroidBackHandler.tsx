@@ -1,6 +1,6 @@
 import { WebApplication } from '@/Application/Application'
 import { observer } from 'mobx-react-lite'
-import { createContext, memo, ReactNode, useContext } from 'react'
+import { createContext, memo, ReactNode, useContext, useEffect } from 'react'
 
 type BackHandlerContextData = WebApplication['addBackHandlerEventListener']
 
@@ -27,8 +27,22 @@ type ProviderProps = {
 const MemoizedChildren = memo(({ children }: ChildrenProps) => <div>{children}</div>)
 
 const AndroidBackHandlerProvider = ({ application, children }: ProviderProps) => {
+  const addAndroidBackHandler = application.addBackHandlerEventListener.bind(application)
+
+  useEffect(() => {
+    const removeListener = addAndroidBackHandler(() => {
+      application.mobileDevice.performSoftReset()
+      return true
+    })
+    return () => {
+      if (removeListener) {
+        removeListener()
+      }
+    }
+  }, [addAndroidBackHandler, application.mobileDevice])
+
   return (
-    <BackHandlerContext.Provider value={application.addBackHandlerEventListener.bind(application)}>
+    <BackHandlerContext.Provider value={addAndroidBackHandler}>
       <MemoizedChildren children={children} />
     </BackHandlerContext.Provider>
   )

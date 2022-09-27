@@ -274,7 +274,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     }
   }
 
-  addBackHandlerEventListener(listener: () => void) {
+  addBackHandlerEventListener(listener: () => boolean) {
     if (typeof this.androidBackHandler !== 'undefined') {
       return this.androidBackHandler.addEventListener(listener)
     }

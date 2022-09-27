@@ -22,6 +22,7 @@ const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = ({
     if (isOpen) {
       removeListener = addAndroidBackHandler(() => {
         historyModalController.dismissModal()
+        return true
       })
     }
 

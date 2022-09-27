@@ -17,6 +17,7 @@ const ModalDialogLabel: FunctionComponent<Props> = ({ children, closeDialog, cla
   useEffect(() => {
     const removeListener = addAndroidBackHandler(() => {
       closeDialog()
+      return true
     })
     return () => {
       if (removeListener) {

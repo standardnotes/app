@@ -90,6 +90,9 @@ const ResponsivePaneProvider = ({ children }: ChildrenProps) => {
         currentSelectedPaneRef.current === AppPaneId.Navigation
       ) {
         toggleAppPane(AppPaneId.Items)
+        return true
+      } else {
+        return false
       }
     })
     return () => {

@@ -45,6 +45,7 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({
   useEffect(() => {
     const removeListener = addAndroidBackHandler(() => {
       closePreferences()
+      return true
     })
     return () => {
       if (removeListener) {
