@@ -39,6 +39,7 @@ import { classNames } from '@/Utils/ConcatenateClassNames'
 import AutoresizingNoteViewTextarea from './AutoresizingTextarea'
 import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
 import NoteTagsPanel from '../NoteTags/NoteTagsPanel'
+import NoteTagsContainer from '../NoteTags/NoteTagsContainer'
 
 const MinimumStatusDuration = 400
 const TextareaDebounce = 100
@@ -1005,6 +1006,12 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                 </div>
               )}
             </div>
+            {!this.state.shouldStickyHeader && (
+              <NoteTagsContainer
+                noteTagsController={this.viewControllerManager.noteTagsController}
+                navigationController={this.viewControllerManager.navigationController}
+              />
+            )}
           </div>
         )}
 
