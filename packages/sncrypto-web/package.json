@@ -20,7 +20,7 @@
     "build": "webpack --mode production && tsc",
     "watch": "webpack --mode production --watch",
     "lint": "eslint . --ext .ts",
-    "test:e2e": "node test-server.js"
+    "start:test-server": "yarn node test-server.js"
   },
   "dependencies": {
     "@standardnotes/sncrypto-common": "workspace:*",
