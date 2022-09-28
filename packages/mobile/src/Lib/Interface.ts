@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-community/async-storage'
+import { AndroidBackHandlerService } from '@Root/AndroidBackHandlerService'
 import SNReactNative from '@standardnotes/react-native-utils'
 import {
   ApplicationIdentifier,
@@ -80,13 +81,18 @@ export class MobileDevice implements MobileDeviceInterface {
   public isDarkMode = false
   private crypto: SNReactNativeCrypto
 
-  constructor(private stateObserverService?: AppStateObserverService) {
+  constructor(
+    private stateObserverService?: AppStateObserverService,
+    private androidBackHandlerService?: AndroidBackHandlerService,
+  ) {
     this.crypto = new SNReactNativeCrypto()
   }
 
   deinit() {
     this.stateObserverService?.deinit()
     ;(this.stateObserverService as unknown) = undefined
+    this.androidBackHandlerService?.deinit()
+    ;(this.androidBackHandlerService as unknown) = undefined
   }
 
   consoleLog(...args: any[]): void {
@@ -541,5 +547,30 @@ export class MobileDevice implements MobileDeviceInterface {
     } catch (error) {
       this.consoleLog(`${error}`)
     }
+  }
+
+  confirmAndExit() {
+    Alert.alert(
+      'Close app',
+      'Do you want to close the app?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          onPress: async () => {},
+        },
+        {
+          text: 'Close',
+          style: 'destructive',
+          onPress: async () => {
+            SNReactNative.exitApp()
+          },
+        },
+      ],
+      {
+        cancelable: true,
+      },
+    )
   }
 }

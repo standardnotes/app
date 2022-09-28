@@ -1,6 +1,19 @@
 import { ElementIds } from '@/Constants/ElementIDs'
+import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
 import { isMobileScreen } from '@/Utils'
-import { useEffect, ReactNode, useMemo, createContext, useCallback, useContext, useState, memo } from 'react'
+import {
+  useEffect,
+  ReactNode,
+  useMemo,
+  createContext,
+  useCallback,
+  useContext,
+  useState,
+  memo,
+  useRef,
+  useLayoutEffect,
+  MutableRefObject,
+} from 'react'
 import { AppPaneId } from './AppPaneMetadata'
 
 type ResponsivePaneData = {
@@ -20,16 +33,27 @@ export const useResponsiveAppPane = () => {
   return value
 }
 
-type Props = {
+type ChildrenProps = {
   children: ReactNode
 }
 
-const MemoizedChildren = memo(({ children }: Props) => <div>{children}</div>)
+function useStateRef<State>(state: State): MutableRefObject<State> {
+  const ref = useRef<State>(state)
 
-const ResponsivePaneProvider = ({ children }: Props) => {
+  useLayoutEffect(() => {
+    ref.current = state
+  }, [state])
+
+  return ref
+}
+
+const MemoizedChildren = memo(({ children }: ChildrenProps) => <div>{children}</div>)
+
+const ResponsivePaneProvider = ({ children }: ChildrenProps) => {
   const [currentSelectedPane, setCurrentSelectedPane] = useState<AppPaneId>(
     isMobileScreen() ? AppPaneId.Items : AppPaneId.Editor,
   )
+  const currentSelectedPaneRef = useStateRef<AppPaneId>(currentSelectedPane)
   const [previousSelectedPane, setPreviousSelectedPane] = useState<AppPaneId>(
     isMobileScreen() ? AppPaneId.Items : AppPaneId.Editor,
   )
@@ -56,6 +80,27 @@ const ResponsivePaneProvider = ({ children }: Props) => {
     const currentPaneElement = document.getElementById(ElementIds[currentSelectedPane])
     currentPaneElement?.classList.add('selected')
   }, [currentSelectedPane, previousSelectedPane])
+
+  const addAndroidBackHandler = useAndroidBackHandler()
+
+  useEffect(() => {
+    const removeListener = addAndroidBackHandler(() => {
+      if (
+        currentSelectedPaneRef.current === AppPaneId.Editor ||
+        currentSelectedPaneRef.current === AppPaneId.Navigation
+      ) {
+        toggleAppPane(AppPaneId.Items)
+        return true
+      } else {
+        return false
+      }
+    })
+    return () => {
+      if (removeListener) {
+        removeListener()
+      }
+    }
+  }, [addAndroidBackHandler, currentSelectedPaneRef, toggleAppPane])
 
   const contextValue = useMemo(
     () => ({
