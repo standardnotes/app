@@ -41,6 +41,13 @@ const getKey = () => {
   return keyCount++
 }
 
+const setViewportHeight = () => {
+  document.documentElement.style.setProperty(
+    '--viewport-height',
+    `${visualViewport ? visualViewport.height : window.innerHeight}px`,
+  )
+}
+
 const startApplication: StartApplication = async function startApplication(
   defaultSyncServerHost: string,
   device: WebOrDesktopDevice,
@@ -53,6 +60,7 @@ const startApplication: StartApplication = async function startApplication(
   let root: Root
 
   const onDestroy = () => {
+    window.removeEventListener('orientationchange', setViewportHeight)
     const rootElement = document.getElementById(ElementIds.RootId) as HTMLElement
     root.unmount()
     rootElement.remove()
@@ -66,10 +74,8 @@ const startApplication: StartApplication = async function startApplication(
     root = createRoot(appendedRootNode)
 
     disableIosTextFieldZoom()
-    document.documentElement.style.setProperty(
-      '--viewport-height',
-      `${visualViewport ? visualViewport.height : window.innerHeight}px`,
-    )
+    setViewportHeight()
+    window.addEventListener('orientationchange', setViewportHeight)
 
     root.render(
       <ApplicationGroupView
