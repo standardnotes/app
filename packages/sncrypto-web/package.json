@@ -39,11 +39,13 @@
     "babel-loader": "^8.2.3",
     "chai": "^4.3.6",
     "connect": "^3.7.0",
+    "eslint": "*",
     "eslint-plugin-prettier": "*",
     "regenerator-runtime": "^0.13.9",
     "serve-static": "^1.14.2",
     "ts-loader": "^9.2.6",
     "typedarray-to-buffer": "^4.0.0",
+    "typescript": "*",
     "uuid": "^8.3.2",
     "webpack": "*",
     "webpack-cli": "*"
