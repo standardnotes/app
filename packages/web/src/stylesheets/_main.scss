@@ -41,11 +41,6 @@ body {
   color: var(--sn-stylekit-foreground-color);
 }
 
-.safe-area-padding {
-  padding: var(--safe-area-inset-top) var(--safe-area-inset-right) var(--safe-area-inset-bottom)
-    var(--safe-area-inset-left);
-}
-
 html,
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
