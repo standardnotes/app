@@ -15,5 +15,4 @@ export interface MobileDeviceInterface extends DeviceInterface {
   handleThemeSchemeChange(isDark: boolean): void
   shareBase64AsFile(base64: string, filename: string): Promise<void>
   downloadBase64AsFile(base64: string, filename: string, saveInTempLocation?: boolean): Promise<string | undefined>
-  confirmAndExit(): void
 }

@@ -3,5 +3,4 @@ export enum ReactNativeToWebEvent {
   ResumingFromBackground = 'ResumingFromBackground',
   GainingFocus = 'GainingFocus',
   LosingFocus = 'LosingFocus',
-  AndroidBackButtonPressed = 'AndroidBackButtonPressed',
 }

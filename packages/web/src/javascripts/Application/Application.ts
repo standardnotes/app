@@ -26,7 +26,6 @@ import { isDesktopApplication } from '@/Utils'
 import { DesktopManager } from './Device/DesktopManager'
 import { ArchiveManager, AutolockService, IOService, WebAlertService, ThemeManager } from '@standardnotes/ui-services'
 import { MobileWebReceiver } from './MobileWebReceiver'
-import { AndroidBackHandler } from '@/NativeMobileWeb/AndroidBackHandler'
 
 type WebServices = {
   viewControllerManager: ViewControllerManager
@@ -46,7 +45,6 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   public iconsController: IconsController
   private onVisibilityChange: () => void
   private mobileWebReceiver?: MobileWebReceiver
-  private androidBackHandler?: AndroidBackHandler
 
   constructor(
     deviceInterface: WebOrDesktopDevice,
@@ -78,7 +76,6 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
     if (this.isNativeMobileWeb()) {
       this.mobileWebReceiver = new MobileWebReceiver(this)
-      this.androidBackHandler = new AndroidBackHandler()
 
       // eslint-disable-next-line no-console
       console.log = (...args) => {
@@ -266,18 +263,5 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     if (passcodeLockImmediately || biometricsLockImmediately) {
       await this.lock()
     }
-  }
-
-  handleAndroidBackButtonPressed(): void {
-    if (typeof this.androidBackHandler !== 'undefined') {
-      this.androidBackHandler.notifyEvent()
-    }
-  }
-
-  addAndroidBackHandlerEventListener(listener: () => boolean) {
-    if (typeof this.androidBackHandler !== 'undefined') {
-      return this.androidBackHandler.addEventListener(listener)
-    }
-    return
   }
 }

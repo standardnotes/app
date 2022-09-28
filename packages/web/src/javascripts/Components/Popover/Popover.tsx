@@ -1,4 +1,3 @@
-import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
 import { UuidGenerator } from '@standardnotes/snjs'
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import PositionedPopoverContent from './PositionedPopoverContent'
@@ -42,8 +41,6 @@ const Popover = ({
 }: Props) => {
   const popoverId = useRef(UuidGenerator.GenerateUuid())
 
-  const addAndroidBackHandler = useAndroidBackHandler()
-
   useRegisterPopoverToParent(popoverId.current)
 
   const [childPopovers, setChildPopovers] = useState<Set<string>>(new Set())
@@ -66,23 +63,6 @@ const Popover = ({
     }),
     [registerChildPopover, unregisterChildPopover],
   )
-
-  useEffect(() => {
-    let removeListener: (() => void) | undefined
-
-    if (open) {
-      removeListener = addAndroidBackHandler(() => {
-        togglePopover()
-        return true
-      })
-    }
-
-    return () => {
-      if (removeListener) {
-        removeListener()
-      }
-    }
-  }, [addAndroidBackHandler, open, togglePopover])
 
   return open ? (
     <PopoverContext.Provider value={contextValue}>

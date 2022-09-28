@@ -1,9 +1,8 @@
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useEffect } from 'react'
+import { FunctionComponent } from 'react'
 import HistoryModalDialogContent from './HistoryModalDialogContent'
 import HistoryModalDialog from './HistoryModalDialog'
 import { RevisionHistoryModalProps } from './RevisionHistoryModalProps'
-import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
 
 const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = ({
   application,
@@ -12,27 +11,6 @@ const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = ({
   selectionController,
   subscriptionController,
 }) => {
-  const addAndroidBackHandler = useAndroidBackHandler()
-
-  const isOpen = !!historyModalController.note
-
-  useEffect(() => {
-    let removeListener: (() => void) | undefined
-
-    if (isOpen) {
-      removeListener = addAndroidBackHandler(() => {
-        historyModalController.dismissModal()
-        return true
-      })
-    }
-
-    return () => {
-      if (removeListener) {
-        removeListener()
-      }
-    }
-  }, [addAndroidBackHandler, historyModalController, isOpen])
-
   if (!historyModalController.note) {
     return null
   }
