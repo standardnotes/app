@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.62.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.62.3...@standardnotes/web@3.62.4) (2022-09-28)
+
+### Bug Fixes
+
+* improve biometrics input on mobile webview ([#1658](https://github.com/standardnotes/app/issues/1658)) ([3f9d3ce](https://github.com/standardnotes/app/commit/3f9d3ceffac206645ff9e5b66e68bf2e7b9cd0e2))
+
 ## [3.62.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.62.2...@standardnotes/web@3.62.3) (2022-09-28)
 
 ### Bug Fixes
