@@ -72,7 +72,7 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
       <ResponsivePaneContent paneId={AppPaneId.Navigation} contentElementId="navigation-content">
         <div
           className={classNames(
-            'flex-grow overflow-y-auto overflow-x-hidden md:overflow-y-hidden md:hover:overflow-y-auto',
+            'flex-grow overflow-y-auto overflow-x-hidden md:overflow-y-hidden md:hover:overflow-y-auto pointer-coarse:md:overflow-y-auto',
             'md:hover:[overflow-y:_overlay]',
           )}
         >

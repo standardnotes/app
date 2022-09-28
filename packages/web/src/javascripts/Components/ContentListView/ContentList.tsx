@@ -69,7 +69,7 @@ const ContentList: FunctionComponent<Props> = ({
     <div
       className={classNames(
         'infinite-scroll overflow-y-auto overflow-x-hidden focus:shadow-none focus:outline-none',
-        'md:max-h-full md:overflow-y-hidden md:hover:overflow-y-auto',
+        'md:max-h-full md:overflow-y-hidden md:hover:overflow-y-auto pointer-coarse:md:overflow-y-auto',
         'md:hover:[overflow-y:_overlay]',
       )}
       id={ElementIds.ContentList}
