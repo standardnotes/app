@@ -67,7 +67,7 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
         'w-[220px] xl:w-87.5 xsm-only:!w-full sm-only:!w-full',
         selectedPane === AppPaneId.Navigation
           ? 'pointer-coarse:md-only:!w-48 pointer-coarse:lg-only:!w-48'
-          : 'pointer-coarse:md-only:w-0 pointer-coarse:lg-only:!w-48',
+          : 'pointer-coarse:md-only:!w-0 pointer-coarse:lg-only:!w-0',
         isIOS() ? 'pb-safe-bottom' : 'pb-2.5',
       )}
       ref={ref}
