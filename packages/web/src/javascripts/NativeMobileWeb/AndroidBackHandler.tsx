@@ -4,10 +4,6 @@ type RemoveListener = () => void
 export class AndroidBackHandler {
   private listeners = new Set<Listener>()
 
-  constructor() {
-    //
-  }
-
   addEventListener(listener: Listener): RemoveListener {
     this.listeners.add(listener)
 
