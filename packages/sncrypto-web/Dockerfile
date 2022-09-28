@@ -22,4 +22,4 @@ COPY --from=builder /workspace ./
 # docker-build plugin runs `yarn pack` in all workspace dependencies and copies them to `packs` folder.
 COPY packs ./
 
-CMD [ "yarn", "start:test-server" ]
+CMD [ "yarn", "workspace", "@standardnotes/sncrypto-web", "start:test-server" ]

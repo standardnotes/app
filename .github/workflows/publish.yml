@@ -76,6 +76,25 @@ jobs:
           trigger_workflow: true
           wait_workflow: true
 
+      - name: Publish SNCrypto Web Docker image for E2E testing
+        if: "${{ contains(github.event.head_commit.message, 'skip e2e') == false }}"
+        run: |
+          yarn docker build @standardnotes/sncrypto-web -t standardnotes/sncrypto-web:${{ github.sha }}
+          docker push standardnotes/sncrypto-web:${{ github.sha }}
+
+      - name: Run SNCrypto Web test suite
+        uses: convictional/trigger-workflow-and-wait@v1.6.1
+        with:
+          owner: standardnotes
+          repo: e2e
+          github_token: ${{ secrets.CI_PAT_TOKEN }}
+          workflow_file_name: sncrypto-web.yml
+          wait_interval: 30
+          client_payload: '{"image_tag": "${{ github.sha }}"}'
+          propagate_failure: true
+          trigger_workflow: true
+          wait_workflow: true
+
       - name: Bump version
         run: yarn release:prod
 
