@@ -155,7 +155,7 @@ $footer-height: 2rem;
 }
 
 .app {
-  height: calc(100% - #{$footer-height});
+  height: calc(var(--viewport-height) - #{$footer-height});
   overflow: hidden;
   position: relative;
   vertical-align: top;
