@@ -188,6 +188,7 @@ export class ItemListController extends AbstractViewController implements Intern
       notes: observable,
       notesToDisplay: observable,
       panelTitle: observable,
+      panelWidth: observable,
       renderedItems: observable,
       showDisplayOptionsMenu: observable,
 
