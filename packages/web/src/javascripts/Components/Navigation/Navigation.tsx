@@ -63,7 +63,8 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
     <div
       id="navigation"
       className={classNames(
-        'sn-component section app-column h-screen max-h-screen w-[220px] overflow-hidden pt-safe-top md:h-full md:max-h-full md:min-h-0 md:pb-0 xsm-only:!w-full sm-only:!w-full',
+        'sn-component section app-column h-screen max-h-screen overflow-hidden pt-safe-top md:h-full md:max-h-full md:min-h-0 md:pb-0',
+        'w-[220px] xl:w-87.5 xsm-only:!w-full sm-only:!w-full pointer-coarse:md-only:!w-48 pointer-coarse:lg-only:!w-48',
         isIOS() ? 'pb-safe-bottom' : 'pb-2.5',
       )}
       ref={ref}
