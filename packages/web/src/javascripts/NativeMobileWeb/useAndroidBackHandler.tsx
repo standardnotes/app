@@ -42,7 +42,7 @@ const AndroidBackHandlerProvider = ({ application, children }: ProviderProps) =>
         removeListener()
       }
     }
-  }, [addAndroidBackHandler, application.mobileDevice])
+  }, [addAndroidBackHandler, application])
 
   return (
     <BackHandlerContext.Provider value={addAndroidBackHandler}>
