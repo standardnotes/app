@@ -54,7 +54,7 @@ export class MobileWebReceiver {
         void this.application.handleMobileResumingFromBackgroundEvent()
         break
       case ReactNativeToWebEvent.AndroidBackButtonPressed:
-        void this.application.notifyBackHandler()
+        void this.application.handleAndroidBackButtonPressed()
         break
 
       default:

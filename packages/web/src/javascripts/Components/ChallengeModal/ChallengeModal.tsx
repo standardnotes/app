@@ -185,7 +185,7 @@ const ChallengeModal: FunctionComponent<Props> = ({
   }, [hasBiometricPromptValue, hasOnlyBiometricPrompt, submit])
 
   useEffect(() => {
-    const removeListener = application.addBackHandlerEventListener(() => {
+    const removeListener = application.addAndroidBackHandlerEventListener(() => {
       if (challenge.cancelable) {
         cancelChallenge()
       }
