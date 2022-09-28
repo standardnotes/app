@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.22.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.21.5...@standardnotes/services@1.22.0) (2022-09-28)
+
+### Features
+
+* handle android back button on android ([#1656](https://github.com/standardnotes/app/issues/1656)) ([981d8a7](https://github.com/standardnotes/app/commit/981d8a7497ea2600e1535ad9170cb5559550ca4d))
+
 ## [1.21.5](https://github.com/standardnotes/app/compare/@standardnotes/services@1.21.4...@standardnotes/services@1.21.5) (2022-09-27)
 
 ### Bug Fixes

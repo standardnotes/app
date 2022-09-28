@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.37.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.36.18...@standardnotes/mobile@3.37.0) (2022-09-28)
+
+### Features
+
+* handle android back button on android ([#1656](https://github.com/standardnotes/app/issues/1656)) ([981d8a7](https://github.com/standardnotes/app/commit/981d8a7497ea2600e1535ad9170cb5559550ca4d))
+
 ## [3.36.18](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.36.17...@standardnotes/mobile@3.36.18) (2022-09-27)
 
 **Note:** Version bump only for package @standardnotes/mobile

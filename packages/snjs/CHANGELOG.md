@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.133.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.132.6...@standardnotes/snjs@2.133.0) (2022-09-28)
+
+### Features
+
+* handle android back button on android ([#1656](https://github.com/standardnotes/app/issues/1656)) ([981d8a7](https://github.com/standardnotes/app/commit/981d8a7497ea2600e1535ad9170cb5559550ca4d))
+
 ## [2.132.6](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.132.5...@standardnotes/snjs@2.132.6) (2022-09-27)
 
 **Note:** Version bump only for package @standardnotes/snjs
