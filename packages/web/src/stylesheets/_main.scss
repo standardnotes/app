@@ -190,3 +190,12 @@ $footer-height: 2rem;
 .icon {
   margin-right: 4px;
 }
+
+input,
+textarea,
+button,
+select,
+label,
+a {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
