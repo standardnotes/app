@@ -454,16 +454,20 @@ export class ItemListController extends AbstractViewController implements Intern
     this.displayOptions = newDisplayOptions
     this.webDisplayOptions = newWebDisplayOptions
 
+    const newWidth = this.application.getPreference(PrefKey.NotesPanelWidth)
+    if (newWidth && newWidth !== this.panelWidth) {
+      this.panelWidth = newWidth
+    }
+
+    if (!displayOptionsChanged) {
+      return
+    }
+
     if (displayOptionsChanged) {
       this.reloadNotesDisplayOptions()
     }
 
     await this.reloadItems(ItemsReloadSource.DisplayOptionsChange)
-
-    const width = this.application.getPreference(PrefKey.NotesPanelWidth)
-    if (width) {
-      this.panelWidth = width
-    }
 
     if (newDisplayOptions.sortBy !== currentSortBy) {
       await this.selectFirstItem()
