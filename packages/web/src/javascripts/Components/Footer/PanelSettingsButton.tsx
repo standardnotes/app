@@ -1,7 +1,7 @@
 import { WebApplication } from '@/Application/Application'
 import { classNames } from '@/Utils/ConcatenateClassNames'
-import { useRef, useState } from 'react'
-import { PrefKey } from '@standardnotes/snjs'
+import { memo, useEffect, useRef, useState } from 'react'
+import { ApplicationEvent, PrefKey } from '@standardnotes/snjs'
 import Icon from '../Icon/Icon'
 import MenuItem from '../Menu/MenuItem'
 import { MenuItemType } from '../Menu/MenuItemType'
@@ -19,11 +19,17 @@ const MinimumNotesPanelWidth = 350
 
 const PanelSettingsButton = ({ application }: Props) => {
   const buttonRef = useRef<HTMLButtonElement>(null)
-  const currentNavPanelWidth = application.getPreference(PrefKey.TagsPanelWidth, MinimumNavPanelWidth)
-  const currentItemsPanelWidth = application.getPreference(PrefKey.NotesPanelWidth, MinimumNotesPanelWidth)
-  const [isOpen, setIsOpen] = useState(false)
 
+  const [isOpen, setIsOpen] = useState(false)
   const toggleMenu = () => setIsOpen((open) => !open)
+
+  const [currentNavPanelWidth, setCurrentNavPanelWidth] = useState(
+    application.getPreference(PrefKey.TagsPanelWidth, MinimumNavPanelWidth),
+  )
+
+  const [currentItemsPanelWidth, setCurrentItemsPanelWidth] = useState(
+    application.getPreference(PrefKey.NotesPanelWidth, MinimumNotesPanelWidth),
+  )
 
   const toggleNavigationPanel = () => {
     const isCollapsed = currentNavPanelWidth <= WidthForCollapsedPanel
@@ -44,6 +50,15 @@ const PanelSettingsButton = ({ application }: Props) => {
     }
     application.publishPanelDidResizeEvent(PANEL_NAME_NOTES, !isCollapsed)
   }
+
+  useEffect(() => {
+    const removeObserver = application.addEventObserver(async () => {
+      setCurrentNavPanelWidth(application.getPreference(PrefKey.TagsPanelWidth, MinimumNavPanelWidth))
+      setCurrentItemsPanelWidth(application.getPreference(PrefKey.NotesPanelWidth, MinimumNotesPanelWidth))
+    }, ApplicationEvent.PreferencesChanged)
+
+    return removeObserver
+  }, [application])
 
   return (
     <>
@@ -88,4 +103,4 @@ const PanelSettingsButton = ({ application }: Props) => {
     </>
   )
 }
-export default PanelSettingsButton
+export default memo(PanelSettingsButton)
