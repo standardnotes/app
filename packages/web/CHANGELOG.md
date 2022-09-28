@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.62.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.62.2...@standardnotes/web@3.62.3) (2022-09-28)
+
+### Bug Fixes
+
+* grey flash on textarea focus on safari/webkit ([#1661](https://github.com/standardnotes/app/issues/1661)) ([eafa65e](https://github.com/standardnotes/app/commit/eafa65e93487e60a4b9ee37f8cc9932bbbd8917c))
+
 ## [3.62.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.62.1...@standardnotes/web@3.62.2) (2022-09-28)
 
 ### Bug Fixes

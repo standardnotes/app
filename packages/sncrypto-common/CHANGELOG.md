@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.12.0](https://github.com/standardnotes/app/compare/@standardnotes/sncrypto-common@1.11.1...@standardnotes/sncrypto-common@1.12.0) (2022-09-28)
+
+### Features
+
+* **crypto:** pkc algos for key generation, encrypt, and decrypt ([#1663](https://github.com/standardnotes/app/issues/1663)) ([a83003e](https://github.com/standardnotes/app/commit/a83003ee69d144c8e80eaee20bc7be2533d92c63))
+
 ## [1.11.1](https://github.com/standardnotes/app/compare/@standardnotes/sncrypto-common@1.11.0...@standardnotes/sncrypto-common@1.11.1) (2022-08-23)
 
 **Note:** Version bump only for package @standardnotes/sncrypto-common
