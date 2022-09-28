@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.62.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.62.1...@standardnotes/web@3.62.2) (2022-09-28)
+
+### Bug Fixes
+
+* sticky header behavior on iOS ([#1662](https://github.com/standardnotes/app/issues/1662)) ([c0af596](https://github.com/standardnotes/app/commit/c0af596f2d69654b50dffc36250137998dc629fb))
+
 ## [3.62.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.62.0...@standardnotes/web@3.62.1) (2022-09-28)
 
 ### Bug Fixes
