@@ -152,7 +152,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
 
   const renderChallenges = useCallback(() => {
     return (
-      <>
+      <AndroidBackHandlerProvider application={application}>
         {challenges.map((challenge) => {
           return (
             <div className="sk-modal" key={`${challenge.id}${application.ephemeralIdentifier}`}>
@@ -167,7 +167,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
             </div>
           )
         })}
-      </>
+      </AndroidBackHandlerProvider>
     )
   }, [viewControllerManager, challenges, mainApplicationGroup, removeChallenge, application])
 
