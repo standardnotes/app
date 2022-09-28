@@ -20,6 +20,7 @@ import QuickSettingsButton from './QuickSettingsButton'
 import AccountMenuButton from './AccountMenuButton'
 import StyledTooltip from '../StyledTooltip/StyledTooltip'
 import UpgradeNow from './UpgradeNow'
+import PanelSettingsButton from './PanelSettingsButton'
 
 type Props = {
   application: WebApplication
@@ -382,6 +383,9 @@ class Footer extends PureComponent<Props, State> {
                 application={this.application}
                 quickSettingsMenuController={this.viewControllerManager.quickSettingsMenuController}
               />
+            </div>
+            <div className="relative z-footer-bar-item select-none">
+              <PanelSettingsButton application={this.application} />
             </div>
             <UpgradeNow
               application={this.application}
