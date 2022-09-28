@@ -6,6 +6,7 @@ import { Keyboard, Platform } from 'react-native'
 import VersionInfo from 'react-native-version-info'
 import { WebView, WebViewMessageEvent } from 'react-native-webview'
 import pjson from '../package.json'
+import { AndroidBackHandlerService } from './AndroidBackHandlerService'
 import { AppStateObserverService } from './AppStateObserverService'
 
 const LoggingEnabled = IsDev
@@ -24,12 +25,22 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
   const webViewRef = useRef<WebView>(null)
   const sourceUri = (Platform.OS === 'android' ? 'file:///android_asset/' : '') + 'Web.bundle/src/index.html'
   const stateService = useMemo(() => new AppStateObserverService(), [])
-  const device = useMemo(() => new MobileDevice(stateService), [stateService])
+  const androidBackHandlerService = useMemo(() => new AndroidBackHandlerService(), [])
+  const device = useMemo(
+    () => new MobileDevice(stateService, androidBackHandlerService),
+    [androidBackHandlerService, stateService],
+  )
 
   useEffect(() => {
-    const removeListener = stateService.addEventObserver((event: ReactNativeToWebEvent) => {
+    const removeStateServiceListener = stateService.addEventObserver((event: ReactNativeToWebEvent) => {
       webViewRef.current?.postMessage(JSON.stringify({ reactNativeEvent: event, messageType: 'event' }))
     })
+
+    const removeBackHandlerServiceListener = androidBackHandlerService.addEventObserver(
+      (event: ReactNativeToWebEvent) => {
+        webViewRef.current?.postMessage(JSON.stringify({ reactNativeEvent: event, messageType: 'event' }))
+      },
+    )
 
     const keyboardShowListener = Keyboard.addListener('keyboardWillShow', () => {
       device.reloadStatusBarStyle(false)
@@ -40,11 +51,12 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
     })
 
     return () => {
-      removeListener()
+      removeStateServiceListener()
+      removeBackHandlerServiceListener()
       keyboardShowListener.remove()
       keyboardHideListener.remove()
     }
-  }, [webViewRef, stateService])
+  }, [webViewRef, stateService, device, androidBackHandlerService])
 
   useEffect(() => {
     const observer = device.addMobileWebEventReceiver((event) => {
