@@ -42,7 +42,7 @@ describe('utils', async function () {
 
   it('base64URLEncode', async function () {
     const str = 'hello world'
-    const b64 = await base64Encode(str)
+    const b64 = await base64URLEncode(str)
     expect(b64).to.equal('aGVsbG8gd29ybGQ')
   })
 

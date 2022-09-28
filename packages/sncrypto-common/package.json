@@ -26,7 +26,8 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.30.0",
     "@typescript-eslint/parser": "^5.12.1",
-    "eslint-plugin-prettier": "^4.2.1"
+    "eslint-plugin-prettier": "^4.2.1",
+    "typescript": "*"
   },
   "dependencies": {
     "reflect-metadata": "^0.1.13"
