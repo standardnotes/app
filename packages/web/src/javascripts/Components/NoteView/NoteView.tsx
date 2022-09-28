@@ -13,6 +13,7 @@ import {
   NoteViewController,
   PayloadEmitSource,
   WebAppEvent,
+  Platform,
 } from '@standardnotes/snjs'
 import { debounce, isDesktopApplication, isIOS } from '@/Utils'
 import { EditorEventSource } from '../../Types/EditorEventSource'
@@ -928,7 +929,11 @@ class NoteView extends PureComponent<NoteViewProps, State> {
             className={classNames(
               'content-title-bar section-title-bar z-editor-title-bar w-full bg-default',
               this.state.shouldStickyHeader && 'fixed top-0',
-              this.state.shouldStickyHeader ? (isIOS() ? 'pt-safe-top' : 'pt-4') : '',
+              this.state.shouldStickyHeader
+                ? isIOS() || this.application.platform === Platform.Ios
+                  ? 'pt-safe-top'
+                  : 'pt-4'
+                : '',
             )}
           >
             <div className="mb-2 flex flex-wrap items-start justify-between gap-2 md:mb-0 md:flex-nowrap md:gap-0 xl:items-center">
