@@ -9,6 +9,7 @@ import {
   PureCryptoInterface,
   Utf8String,
   timingSafeEqual,
+  PkcKeyPair,
 } from '@standardnotes/sncrypto-common'
 import * as Utils from './utils'
 import * as sodium from './libsodium'
@@ -83,7 +84,7 @@ export class SNWebCrypto implements PureCryptoInterface {
     iterations: number,
     length: number,
   ): Promise<HexString | null> {
-    const keyData = await Utils.stringToArrayBuffer(password)
+    const keyData = Utils.stringToArrayBuffer(password)
     const key = await this.webCryptoImportKey(keyData, WebCryptoAlgs.Pbkdf2, [WebCryptoActions.DeriveBits])
     if (!key) {
       console.error('Key is null, unable to continue')
@@ -99,21 +100,21 @@ export class SNWebCrypto implements PureCryptoInterface {
   }
 
   public async aes256CbcEncrypt(plaintext: Utf8String, iv: HexString, key: HexString): Promise<Base64String> {
-    const keyData = await Utils.hexStringToArrayBuffer(key)
-    const ivData = await Utils.hexStringToArrayBuffer(iv)
+    const keyData = Utils.hexStringToArrayBuffer(key)
+    const ivData = Utils.hexStringToArrayBuffer(iv)
     const alg = { name: WebCryptoAlgs.AesCbc, iv: ivData }
     const importedKeyData = await this.webCryptoImportKey(keyData, alg.name, [WebCryptoActions.Encrypt])
-    const textData = await Utils.stringToArrayBuffer(plaintext)
+    const textData = Utils.stringToArrayBuffer(plaintext)
     const result = await crypto.subtle.encrypt(alg, importedKeyData, textData)
     return Utils.arrayBufferToBase64(result)
   }
 
   public async aes256CbcDecrypt(ciphertext: Base64String, iv: HexString, key: HexString): Promise<Utf8String | null> {
-    const keyData = await Utils.hexStringToArrayBuffer(key)
-    const ivData = await Utils.hexStringToArrayBuffer(iv)
+    const keyData = Utils.hexStringToArrayBuffer(key)
+    const ivData = Utils.hexStringToArrayBuffer(iv)
     const alg = { name: WebCryptoAlgs.AesCbc, iv: ivData }
     const importedKeyData = await this.webCryptoImportKey(keyData, alg.name, [WebCryptoActions.Decrypt])
-    const textData = await Utils.base64ToArrayBuffer(ciphertext)
+    const textData = Utils.base64ToArrayBuffer(ciphertext)
 
     try {
       const result = await crypto.subtle.decrypt(alg, importedKeyData, textData)
@@ -150,11 +151,11 @@ export class SNWebCrypto implements PureCryptoInterface {
   }
 
   public async hmac1(message: Utf8String, key: HexString): Promise<HexString | null> {
-    const keyHexData = await Utils.hexStringToArrayBuffer(key)
+    const keyHexData = Utils.hexStringToArrayBuffer(key)
     const keyData = await this.webCryptoImportKey(keyHexData, WebCryptoAlgs.Hmac, [WebCryptoActions.Sign], {
       name: WebCryptoAlgs.Sha1,
     })
-    const messageData = await Utils.stringToArrayBuffer(message)
+    const messageData = Utils.stringToArrayBuffer(message)
     const funcParams = { name: WebCryptoAlgs.Hmac }
 
     try {
@@ -169,15 +170,14 @@ export class SNWebCrypto implements PureCryptoInterface {
   }
 
   public async unsafeSha1(text: string): Promise<string> {
-    const textData = await Utils.stringToArrayBuffer(text)
+    const textData = Utils.stringToArrayBuffer(text)
     const digest = await crypto.subtle.digest(WebCryptoAlgs.Sha1, textData)
     return Utils.arrayBufferToHexString(digest)
   }
 
   /**
    * Converts a raw string key to a WebCrypto CryptoKey object.
-   * @param rawKey
-   *    A plain utf8 string or an array buffer
+   * @param keyData
    * @param alg
    *    The name of the algorithm this key will be used for (i.e 'AES-CBC' or 'HMAC')
    * @param actions
@@ -220,7 +220,7 @@ export class SNWebCrypto implements PureCryptoInterface {
   ): Promise<HexString> {
     const params = {
       name: WebCryptoAlgs.Pbkdf2,
-      salt: await Utils.stringToArrayBuffer(salt),
+      salt: Utils.stringToArrayBuffer(salt),
       iterations: iterations,
       hash: { name: WebCryptoAlgs.Sha512 },
     }
@@ -298,13 +298,13 @@ export class SNWebCrypto implements PureCryptoInterface {
   public xchacha20StreamEncryptorPush(
     encryptor: StreamEncryptor,
     plainBuffer: Uint8Array,
-    assocData: Utf8String,
+    assocData?: Utf8String,
     tag: SodiumConstant = SodiumConstant.CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_TAG_PUSH,
   ): Uint8Array {
     const encryptedBuffer = sodium.crypto_secretstream_xchacha20poly1305_push(
       encryptor.state as sodium.StateAddress,
       plainBuffer,
-      assocData.length > 0 ? Utils.stringToArrayBuffer(assocData) : null,
+      assocData && assocData.length > 0 ? Utils.stringToArrayBuffer(assocData) : null,
       tag,
     )
     return encryptedBuffer
@@ -325,7 +325,7 @@ export class SNWebCrypto implements PureCryptoInterface {
   public xchacha20StreamDecryptorPush(
     decryptor: StreamDecryptor,
     encryptedBuffer: Uint8Array,
-    assocData: Utf8String,
+    assocData?: Utf8String,
   ): StreamDecryptorResult | false {
     if (encryptedBuffer.length < SodiumConstant.CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_ABYTES) {
       throw new Error('Invalid ciphertext size')
@@ -334,7 +334,7 @@ export class SNWebCrypto implements PureCryptoInterface {
     const result = sodium.crypto_secretstream_xchacha20poly1305_pull(
       decryptor.state as sodium.StateAddress,
       encryptedBuffer,
-      assocData.length > 0 ? Utils.stringToArrayBuffer(assocData) : null,
+      assocData && assocData.length > 0 ? Utils.stringToArrayBuffer(assocData) : null,
     )
 
     if ((result as unknown) === false) {
@@ -342,6 +342,51 @@ export class SNWebCrypto implements PureCryptoInterface {
     }
 
     return result
+  }
+
+  /**
+   * https://doc.libsodium.org/public-key_cryptography/authenticated_encryption
+   */
+  public sodiumCryptoBoxEasyEncrypt(
+    message: Utf8String,
+    nonce: HexString,
+    senderSecretKey: HexString,
+    recipientPublicKey: HexString,
+  ): Base64String {
+    const result = sodium.crypto_box_easy(
+      message,
+      Utils.hexStringToArrayBuffer(nonce),
+      Utils.hexStringToArrayBuffer(recipientPublicKey),
+      Utils.hexStringToArrayBuffer(senderSecretKey),
+    )
+
+    return Utils.arrayBufferToBase64(result)
+  }
+
+  public sodiumCryptoBoxEasyDecrypt(
+    ciphertext: Base64String,
+    nonce: HexString,
+    senderPublicKey: HexString,
+    recipientSecretKey: HexString,
+  ): Base64String {
+    const result = sodium.crypto_box_open_easy(
+      Utils.base64ToArrayBuffer(ciphertext),
+      Utils.hexStringToArrayBuffer(nonce),
+      Utils.hexStringToArrayBuffer(senderPublicKey),
+      Utils.hexStringToArrayBuffer(recipientSecretKey),
+      'text',
+    )
+
+    return result
+  }
+
+  public sodiumCryptoBoxGenerateKeypair(): PkcKeyPair {
+    const result = sodium.crypto_box_keypair()
+
+    const publicKey = Utils.arrayBufferToHexString(result.publicKey)
+    const privateKey = Utils.arrayBufferToHexString(result.privateKey)
+
+    return { publicKey, privateKey, keyType: result.keyType }
   }
 
   /**
