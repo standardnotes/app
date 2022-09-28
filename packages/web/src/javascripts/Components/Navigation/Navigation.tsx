@@ -22,7 +22,7 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
   const viewControllerManager = useMemo(() => application.getViewControllerManager(), [application])
   const ref = useRef<HTMLDivElement>(null)
   const [panelWidth, setPanelWidth] = useState<number>(0)
-  const { toggleAppPane } = useResponsiveAppPane()
+  const { selectedPane, toggleAppPane } = useResponsiveAppPane()
 
   const [hasPasscode, setHasPasscode] = useState(() => application.hasPasscode())
   useEffect(() => {
@@ -64,7 +64,10 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
       id="navigation"
       className={classNames(
         'sn-component section app-column h-screen max-h-screen overflow-hidden pt-safe-top md:h-full md:max-h-full md:min-h-0 md:pb-0',
-        'w-[220px] xl:w-87.5 xsm-only:!w-full sm-only:!w-full pointer-coarse:md-only:!w-48 pointer-coarse:lg-only:!w-48',
+        'w-[220px] xl:w-87.5 xsm-only:!w-full sm-only:!w-full',
+        selectedPane === AppPaneId.Navigation
+          ? 'pointer-coarse:md-only:!w-48 pointer-coarse:lg-only:!w-48'
+          : 'pointer-coarse:md-only:w-0 pointer-coarse:lg-only:!w-48',
         isIOS() ? 'pb-safe-bottom' : 'pb-2.5',
       )}
       ref={ref}

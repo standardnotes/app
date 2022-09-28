@@ -150,11 +150,15 @@ $footer-height: 2rem;
 }
 
 .app {
-  height: calc(var(--viewport-height) - #{$footer-height});
+  height: 100%;
   overflow: hidden;
   position: relative;
   vertical-align: top;
   width: 100%;
+
+  @media screen and (min-width: 768px) {
+    height: calc(var(--viewport-height) - #{$footer-height});
+  }
 
   .section {
     position: relative;

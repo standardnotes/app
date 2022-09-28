@@ -60,15 +60,10 @@ const ResponsivePaneProvider = ({ children }: ChildrenProps) => {
 
   const toggleAppPane = useCallback(
     (paneId: AppPaneId) => {
-      if (paneId === currentSelectedPane) {
-        setCurrentSelectedPane(previousSelectedPane ? previousSelectedPane : AppPaneId.Editor)
-        setPreviousSelectedPane(paneId)
-      } else {
-        setPreviousSelectedPane(currentSelectedPane)
-        setCurrentSelectedPane(paneId)
-      }
+      setPreviousSelectedPane(currentSelectedPane)
+      setCurrentSelectedPane(paneId)
     },
-    [currentSelectedPane, previousSelectedPane],
+    [currentSelectedPane],
   )
 
   useEffect(() => {
