@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.65.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.64.0...@standardnotes/web@3.65.0) (2022-09-29)
+
+### Bug Fixes
+
+* disable spellcheck on custom note title format ([f28ed36](https://github.com/standardnotes/app/commit/f28ed3613642e498805fbc5adf3b7e79a9dfdb3d))
+* navigation panel resizer not showing ([#1682](https://github.com/standardnotes/app/issues/1682)) ([88f35b3](https://github.com/standardnotes/app/commit/88f35b39fbd254b80ad9d8b9e4c47b1bc896a576))
+* **web:** change component keys to use id tied to controller lifecycle instead of item id ([#1681](https://github.com/standardnotes/app/issues/1681)) ([492c9ba](https://github.com/standardnotes/app/commit/492c9bacbf7a5a0dc811b6535484dc6bd40193f3))
+
+### Features
+
+* new note status indicator ([#1679](https://github.com/standardnotes/app/issues/1679)) ([e0ec53f](https://github.com/standardnotes/app/commit/e0ec53f85a0103069ad004e1eec04d2ce33273bd))
+
 # [3.64.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.63.3...@standardnotes/web@3.64.0) (2022-09-29)
 
 ### Features
