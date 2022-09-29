@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.66.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.65.0...@standardnotes/web@3.66.0) (2022-09-29)
+
+### Features
+
+* add line height & font size settings for plaintext editor ([#1700](https://github.com/standardnotes/app/issues/1700)) ([3c699ea](https://github.com/standardnotes/app/commit/3c699eaa4a92a47774d4762eeddd45e34925e53f))
+
 # [3.65.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.64.0...@standardnotes/web@3.65.0) (2022-09-29)
 
 ### Bug Fixes
