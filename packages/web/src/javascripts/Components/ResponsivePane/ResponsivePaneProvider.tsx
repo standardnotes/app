@@ -19,6 +19,8 @@ import { AppPaneId } from './AppPaneMetadata'
 type ResponsivePaneData = {
   selectedPane: AppPaneId
   toggleAppPane: (paneId: AppPaneId) => void
+  isNotesListVisibleOnTablets: boolean
+  toggleNotesListOnTablets: () => void
 }
 
 const ResponsivePaneContext = createContext<ResponsivePaneData | undefined>(undefined)
@@ -97,12 +99,20 @@ const ResponsivePaneProvider = ({ children }: ChildrenProps) => {
     }
   }, [addAndroidBackHandler, currentSelectedPaneRef, toggleAppPane])
 
+  const [isNotesListVisibleOnTablets, setNotesListVisibleOnTablets] = useState(true)
+
+  const toggleNotesListOnTablets = useCallback(() => {
+    setNotesListVisibleOnTablets((visible) => !visible)
+  }, [])
+
   const contextValue = useMemo(
     () => ({
       selectedPane: currentSelectedPane,
       toggleAppPane,
+      isNotesListVisibleOnTablets,
+      toggleNotesListOnTablets,
     }),
-    [currentSelectedPane, toggleAppPane],
+    [currentSelectedPane, isNotesListVisibleOnTablets, toggleAppPane, toggleNotesListOnTablets],
   )
 
   return (

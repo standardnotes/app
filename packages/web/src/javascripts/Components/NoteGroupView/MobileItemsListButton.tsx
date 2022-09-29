@@ -1,20 +1,36 @@
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import Icon from '../Icon/Icon'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
+import { useMediaQuery, MediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
+import { IconType } from '@standardnotes/snjs'
 
 const MobileItemsListButton = () => {
-  const { toggleAppPane } = useResponsiveAppPane()
+  const { toggleAppPane, isNotesListVisibleOnTablets, toggleNotesListOnTablets } = useResponsiveAppPane()
+  const matchesMediumBreakpoint = useMediaQuery(MediaQueryBreakpoints.md)
+  const matchesXLBreakpoint = useMediaQuery(MediaQueryBreakpoints.xl)
+  const isTabletScreenSize = matchesMediumBreakpoint && !matchesXLBreakpoint
+
+  const iconType: IconType = isTabletScreenSize && !isNotesListVisibleOnTablets ? 'chevron-right' : 'chevron-left'
+  const label = isTabletScreenSize
+    ? isNotesListVisibleOnTablets
+      ? 'Hide items list'
+      : 'Show items list'
+    : 'Go to items list'
 
   return (
     <button
-      className="bg-text-padding mr-3 flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border text-neutral hover:bg-contrast focus:bg-contrast md:hidden"
+      className="bg-text-padding mr-3 flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border text-neutral hover:bg-contrast focus:bg-contrast md:hidden pointer-coarse:md-only:flex pointer-coarse:lg-only:flex"
       onClick={() => {
-        toggleAppPane(AppPaneId.Items)
+        if (isTabletScreenSize) {
+          toggleNotesListOnTablets()
+        } else {
+          toggleAppPane(AppPaneId.Items)
+        }
       }}
-      title="Go to items list"
-      aria-label="Go to items list"
+      title={label}
+      aria-label={label}
     >
-      <Icon type="chevron-left" />
+      <Icon type={iconType} />
     </button>
   )
 }

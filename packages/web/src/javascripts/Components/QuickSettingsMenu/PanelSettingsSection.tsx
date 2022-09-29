@@ -53,7 +53,7 @@ const PanelSettingsSection = ({ application }: Props) => {
   }, [application])
 
   return (
-    <div className="hidden text-sm md:block">
+    <div className="hidden text-sm md:block pointer-coarse:md-only:hidden pointer-coarse:lg-only:hidden">
       <HorizontalSeparator classes="my-2" />
       <div className="my-1 px-3 text-sm font-semibold uppercase text-text">Panel Settings</div>
       <MenuItem
