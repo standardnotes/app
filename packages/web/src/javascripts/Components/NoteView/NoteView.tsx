@@ -85,8 +85,8 @@ type State = {
   shouldStickyHeader: boolean
 
   monospaceFont?: boolean
-  lineHeight: EditorLineHeight
-  fontSize: EditorFontSize
+  lineHeight?: EditorLineHeight
+  fontSize?: EditorFontSize
 }
 
 const PlaintextFontSizeMapping: Record<EditorFontSize, string> = {
@@ -150,8 +150,6 @@ class NoteView extends PureComponent<NoteViewProps, State> {
       rightResizerWidth: 0,
       rightResizerOffset: 0,
       shouldStickyHeader: false,
-      lineHeight: PrefDefaults[PrefKey.EditorLineHeight],
-      fontSize: PrefDefaults[PrefKey.EditorFontSize],
     }
 
     this.editorContentRef = createRef<HTMLDivElement>()
@@ -1068,8 +1066,8 @@ class NoteView extends PureComponent<NoteViewProps, State> {
             <AutoresizingNoteViewTextarea
               autoComplete="off"
               className={classNames(
-                `leading-${this.state.lineHeight.toLowerCase()}`,
-                PlaintextFontSizeMapping[this.state.fontSize],
+                this.state.lineHeight && `leading-${this.state.lineHeight.toLowerCase()}`,
+                this.state.fontSize && PlaintextFontSizeMapping[this.state.fontSize],
               )}
               dir="auto"
               id={ElementIds.NoteTextEditor}
