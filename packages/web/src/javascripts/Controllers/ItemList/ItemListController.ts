@@ -32,6 +32,7 @@ import { NotesController } from '../NotesController'
 import { NoteTagsController } from '../NoteTagsController'
 import { formatDateAndTimeForNote } from '@/Utils/DateUtils'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
+import dayjs from 'dayjs'
 
 const MinNoteCellHeight = 51.0
 const DefaultListNumNotes = 20
@@ -528,6 +529,12 @@ export class ItemListController extends AbstractViewController implements Intern
 
     if (titleFormat === NewNoteTitleFormat.CurrentNoteCount) {
       title = `Note ${this.notes.length + 1}`
+    } else if (titleFormat === NewNoteTitleFormat.CustomFormat) {
+      const customFormat = this.application.getPreference(
+        PrefKey.CustomNoteTitleFormat,
+        PrefDefaults[PrefKey.CustomNoteTitleFormat],
+      )
+      title = dayjs().format(customFormat)
     } else if (titleFormat === NewNoteTitleFormat.Empty) {
       title = ''
     }
