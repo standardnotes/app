@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.63.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.63.0...@standardnotes/web@3.63.1) (2022-09-29)
+
+### Bug Fixes
+
+* ipad web view ui improvements ([#1664](https://github.com/standardnotes/app/issues/1664)) ([20e4208](https://github.com/standardnotes/app/commit/20e420820d45e2556f60604de41a1bee96c98fe1))
+
 # [3.63.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.62.4...@standardnotes/web@3.63.0) (2022-09-29)
 
 ### Features
