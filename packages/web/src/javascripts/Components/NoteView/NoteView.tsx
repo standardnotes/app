@@ -42,6 +42,7 @@ import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
 import NoteTagsPanel from '../NoteTags/NoteTagsPanel'
 import NoteTagsContainer from '../NoteTags/NoteTagsContainer'
 import NoteStatusIndicator, { NoteStatus } from './NoteStatusIndicator'
+import { PrefDefaults } from '@/Constants/PrefDefaults'
 
 const MinimumStatusDuration = 400
 const TextareaDebounce = 100
@@ -685,9 +686,15 @@ class NoteView extends PureComponent<NoteViewProps, State> {
   }
 
   async reloadPreferences() {
-    const monospaceFont = this.application.getPreference(PrefKey.EditorMonospaceEnabled, true)
+    const monospaceFont = this.application.getPreference(
+      PrefKey.EditorMonospaceEnabled,
+      PrefDefaults[PrefKey.EditorMonospaceEnabled],
+    )
 
-    const marginResizersEnabled = this.application.getPreference(PrefKey.EditorResizersEnabled, true)
+    const marginResizersEnabled = this.application.getPreference(
+      PrefKey.EditorResizersEnabled,
+      PrefDefaults[PrefKey.EditorResizersEnabled],
+    )
 
     await this.reloadSpellcheck()
 
@@ -699,14 +706,14 @@ class NoteView extends PureComponent<NoteViewProps, State> {
     reloadFont(monospaceFont)
 
     if (marginResizersEnabled) {
-      const width = this.application.getPreference(PrefKey.EditorWidth, null)
+      const width = this.application.getPreference(PrefKey.EditorWidth, PrefDefaults[PrefKey.EditorWidth])
       if (width != null) {
         this.setState({
           leftResizerWidth: width,
           rightResizerWidth: width,
         })
       }
-      const left = this.application.getPreference(PrefKey.EditorLeft, null)
+      const left = this.application.getPreference(PrefKey.EditorLeft, PrefDefaults[PrefKey.EditorLeft])
       if (left != null) {
         this.setState({
           leftResizerOffset: left,

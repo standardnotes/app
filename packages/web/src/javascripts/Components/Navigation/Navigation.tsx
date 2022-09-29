@@ -64,7 +64,7 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
       id="navigation"
       className={classNames(
         'sn-component section app-column h-screen max-h-screen overflow-hidden pt-safe-top md:h-full md:max-h-full md:min-h-0 md:pb-0',
-        'w-[220px] xl:w-87.5 xsm-only:!w-full sm-only:!w-full',
+        'w-[220px] xl:w-[220px] xsm-only:!w-full sm-only:!w-full',
         selectedPane === AppPaneId.Navigation
           ? 'pointer-coarse:md-only:!w-48 pointer-coarse:lg-only:!w-48'
           : 'pointer-coarse:md-only:!w-0 pointer-coarse:lg-only:!w-0',
