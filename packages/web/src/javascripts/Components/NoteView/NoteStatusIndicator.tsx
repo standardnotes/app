@@ -46,8 +46,7 @@ const NoteStatusIndicator = ({ status, syncTakingTooLong }: Props) => {
         id={ElementIds.NoteStatusTooltip}
         className={classNames(
           shouldShowTooltip ? '' : 'hidden',
-          'peer-hover:block peer-focus:block',
-          'absolute top-full right-0 min-w-max translate-x-2 translate-y-1 rounded border border-border bg-default py-1.5 px-3 text-left',
+          'absolute top-full right-0 min-w-max translate-x-2 translate-y-1 select-none rounded border border-border bg-default py-1.5 px-3 text-left peer-hover:block peer-focus:block',
         )}
       >
         <div
