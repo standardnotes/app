@@ -40,11 +40,6 @@ body {
   color: var(--sn-stylekit-foreground-color);
 }
 
-.safe-area-padding {
-  padding: var(--safe-area-inset-top) var(--safe-area-inset-right) var(--safe-area-inset-bottom)
-    var(--safe-area-inset-left);
-}
-
 html,
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
@@ -154,11 +149,15 @@ $footer-height: 2rem;
 }
 
 .app {
-  height: calc(100% - #{$footer-height});
+  height: 100%;
   overflow: hidden;
   position: relative;
   vertical-align: top;
   width: 100%;
+
+  @media screen and (min-width: 768px) {
+    height: calc(var(--viewport-height) - #{$footer-height});
+  }
 
   .section {
     position: relative;
