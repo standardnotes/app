@@ -31,6 +31,7 @@ import { SelectedItemsController } from '../SelectedItemsController'
 import { NotesController } from '../NotesController'
 import { NoteTagsController } from '../NoteTagsController'
 import { formatDateAndTimeForNote } from '@/Utils/DateUtils'
+import { PrefDefaults } from '@/Constants/PrefDefaults'
 
 const MinNoteCellHeight = 51.0
 const DefaultListNumNotes = 20
@@ -351,7 +352,7 @@ export class ItemListController extends AbstractViewController implements Intern
     const shouldShowArchivedNotes =
       this.navigationController.isInSystemView(SystemViewId.ArchivedNotes) ||
       this.searchOptionsController.includeArchived ||
-      this.application.getPreference(PrefKey.NotesShowArchived, false)
+      this.application.getPreference(PrefKey.NotesShowArchived, PrefDefaults[PrefKey.NotesShowArchived])
 
     return (activeItem?.trashed && !shouldShowTrashedNotes) || (activeItem?.archived && !shouldShowArchivedNotes)
   }
@@ -421,23 +422,49 @@ export class ItemListController extends AbstractViewController implements Intern
 
     const currentSortBy = this.displayOptions.sortBy
 
-    let sortBy = this.application.getPreference(PrefKey.SortNotesBy, CollectionSort.CreatedAt)
+    let sortBy = this.application.getPreference(PrefKey.SortNotesBy, PrefDefaults[PrefKey.SortNotesBy])
     if (sortBy === CollectionSort.UpdatedAt || (sortBy as string) === 'client_updated_at') {
       sortBy = CollectionSort.UpdatedAt
     }
 
     newDisplayOptions.sortBy = sortBy
     newDisplayOptions.sortDirection =
-      this.application.getPreference(PrefKey.SortNotesReverse, false) === false ? 'dsc' : 'asc'
-    newDisplayOptions.includeArchived = this.application.getPreference(PrefKey.NotesShowArchived, false)
-    newDisplayOptions.includeTrashed = this.application.getPreference(PrefKey.NotesShowTrashed, false) as boolean
-    newDisplayOptions.includePinned = !this.application.getPreference(PrefKey.NotesHidePinned, false)
-    newDisplayOptions.includeProtected = !this.application.getPreference(PrefKey.NotesHideProtected, false)
+      this.application.getPreference(PrefKey.SortNotesReverse, PrefDefaults[PrefKey.SortNotesReverse]) === false
+        ? 'dsc'
+        : 'asc'
+    newDisplayOptions.includeArchived = this.application.getPreference(
+      PrefKey.NotesShowArchived,
+      PrefDefaults[PrefKey.NotesShowArchived],
+    )
+    newDisplayOptions.includeTrashed = this.application.getPreference(
+      PrefKey.NotesShowTrashed,
+      PrefDefaults[PrefKey.NotesShowTrashed],
+    ) as boolean
+    newDisplayOptions.includePinned = !this.application.getPreference(
+      PrefKey.NotesHidePinned,
+      PrefDefaults[PrefKey.NotesHidePinned],
+    )
+    newDisplayOptions.includeProtected = !this.application.getPreference(
+      PrefKey.NotesHideProtected,
+      PrefDefaults[PrefKey.NotesHideProtected],
+    )
 
-    newWebDisplayOptions.hideNotePreview = this.application.getPreference(PrefKey.NotesHideNotePreview, false)
-    newWebDisplayOptions.hideDate = this.application.getPreference(PrefKey.NotesHideDate, false)
-    newWebDisplayOptions.hideTags = this.application.getPreference(PrefKey.NotesHideTags, true)
-    newWebDisplayOptions.hideEditorIcon = this.application.getPreference(PrefKey.NotesHideEditorIcon, false)
+    newWebDisplayOptions.hideNotePreview = this.application.getPreference(
+      PrefKey.NotesHideNotePreview,
+      PrefDefaults[PrefKey.NotesHideNotePreview],
+    )
+    newWebDisplayOptions.hideDate = this.application.getPreference(
+      PrefKey.NotesHideDate,
+      PrefDefaults[PrefKey.NotesHideDate],
+    )
+    newWebDisplayOptions.hideTags = this.application.getPreference(
+      PrefKey.NotesHideTags,
+      PrefDefaults[PrefKey.NotesHideTags],
+    )
+    newWebDisplayOptions.hideEditorIcon = this.application.getPreference(
+      PrefKey.NotesHideEditorIcon,
+      PrefDefaults[PrefKey.NotesHideEditorIcon],
+    )
 
     const displayOptionsChanged =
       newDisplayOptions.sortBy !== this.displayOptions.sortBy ||
@@ -494,7 +521,7 @@ export class ItemListController extends AbstractViewController implements Intern
 
     const titleFormat = this.application.getPreference(
       PrefKey.NewNoteTitleFormat,
-      NewNoteTitleFormat.CurrentDateAndTime,
+      PrefDefaults[PrefKey.NewNoteTitleFormat],
     )
 
     let title = formatDateAndTimeForNote(new Date())

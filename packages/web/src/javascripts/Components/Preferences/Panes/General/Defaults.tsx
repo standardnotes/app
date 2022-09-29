@@ -19,6 +19,7 @@ import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import Button from '@/Components/Button/Button'
 import CustomNoteTitleFormat from './Defaults/CustomNoteTitleFormat'
+import { PrefDefaults } from '@/Constants/PrefDefaults'
 
 type Props = {
   application: WebApplication
@@ -61,10 +62,12 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
     () => getDefaultEditor(application)?.package_info?.identifier || 'plain-editor',
   )
 
-  const [spellcheck, setSpellcheck] = useState(() => application.getPreference(PrefKey.EditorSpellcheck, true))
+  const [spellcheck, setSpellcheck] = useState(() =>
+    application.getPreference(PrefKey.EditorSpellcheck, PrefDefaults[PrefKey.EditorSpellcheck]),
+  )
 
   const [newNoteTitleFormat, setNewNoteTitleFormat] = useState(() =>
-    application.getPreference(PrefKey.NewNoteTitleFormat, NewNoteTitleFormat.CurrentDateAndTime),
+    application.getPreference(PrefKey.NewNoteTitleFormat, PrefDefaults[PrefKey.NewNoteTitleFormat]),
   )
   const handleNewNoteTitleFormatChange = (value: string) => {
     setNewNoteTitleFormat(value as NewNoteTitleFormat)
@@ -72,7 +75,7 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
   }
 
   const [addNoteToParentFolders, setAddNoteToParentFolders] = useState(() =>
-    application.getPreference(PrefKey.NoteAddToParentFolders, true),
+    application.getPreference(PrefKey.NoteAddToParentFolders, PrefDefaults[PrefKey.NoteAddToParentFolders]),
   )
 
   const toggleSpellcheck = () => {

@@ -1,6 +1,7 @@
 import { WebApplication } from '@/Application/Application'
 import { Text, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
+import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { PrefKey } from '@standardnotes/snjs'
 import { ChangeEventHandler, useRef, useState } from 'react'
 
@@ -12,7 +13,7 @@ const PrefChangeDebounceTimeInMs = 25
 
 const CustomNoteTitleFormat = ({ application }: Props) => {
   const [customNoteTitleFormat, setCustomNoteTitleFormat] = useState(() =>
-    application.getPreference(PrefKey.CustomNoteTitleFormat, 'YYYY-MM-DD'),
+    application.getPreference(PrefKey.CustomNoteTitleFormat, PrefDefaults[PrefKey.CustomNoteTitleFormat]),
   )
 
   const setCustomNoteTitleFormatPreference = () => {
