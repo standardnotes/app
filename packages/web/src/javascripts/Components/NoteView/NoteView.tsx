@@ -14,6 +14,7 @@ import {
   PayloadEmitSource,
   WebAppEvent,
   Platform,
+  EditorLineHeight,
 } from '@standardnotes/snjs'
 import { debounce, isDesktopApplication, isIOS } from '@/Utils'
 import { EditorEventSource } from '../../Types/EditorEventSource'
@@ -67,7 +68,6 @@ type State = {
   isDesktop?: boolean
   lockText: string
   marginResizersEnabled?: boolean
-  monospaceFont?: boolean
   noteLocked: boolean
   noteStatus?: NoteStatus
   saveError?: boolean
@@ -86,6 +86,9 @@ type State = {
   rightResizerOffset: number
 
   shouldStickyHeader: boolean
+
+  monospaceFont?: boolean
+  lineHeight: EditorLineHeight
 }
 
 class NoteView extends PureComponent<NoteViewProps, State> {
@@ -141,6 +144,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
       rightResizerWidth: 0,
       rightResizerOffset: 0,
       shouldStickyHeader: false,
+      lineHeight: PrefDefaults[PrefKey.EditorLineHeight],
     }
 
     this.editorContentRef = createRef<HTMLDivElement>()
@@ -697,11 +701,14 @@ class NoteView extends PureComponent<NoteViewProps, State> {
       PrefDefaults[PrefKey.EditorResizersEnabled],
     )
 
+    const lineHeight = this.application.getPreference(PrefKey.EditorLineHeight, PrefDefaults[PrefKey.EditorLineHeight])
+
     await this.reloadSpellcheck()
 
     this.setState({
       monospaceFont,
       marginResizersEnabled,
+      lineHeight,
     })
 
     reloadFont(monospaceFont)
@@ -1061,14 +1068,15 @@ class NoteView extends PureComponent<NoteViewProps, State> {
           {this.state.editorStateDidLoad && !this.state.editorComponentViewer && !this.state.textareaUnloading && (
             <AutoresizingNoteViewTextarea
               autoComplete="off"
+              className={`leading-${this.state.lineHeight.toLowerCase()}`}
               dir="auto"
               id={ElementIds.NoteTextEditor}
               onChange={this.onTextAreaChange}
-              value={this.state.editorText}
-              readOnly={this.state.noteLocked}
               onFocus={this.onContentFocus}
-              spellCheck={this.state.spellcheck}
+              readOnly={this.state.noteLocked}
               ref={(ref) => ref && this.onSystemEditorLoad(ref)}
+              spellCheck={this.state.spellcheck}
+              value={this.state.editorText}
             />
           )}
 

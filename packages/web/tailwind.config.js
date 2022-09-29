@@ -146,6 +146,12 @@ module.exports = {
     'border-accessory-tint-4',
     'border-accessory-tint-5',
     'border-accessory-tint-6',
+    'leading-none',
+    'leading-tight',
+    'leading-snug',
+    'leading-normal',
+    'leading-relaxed',
+    'leading-loose',
   ],
   plugins: [
     plugin(function ({ addVariant }) {

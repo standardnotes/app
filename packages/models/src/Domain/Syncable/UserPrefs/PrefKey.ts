@@ -9,6 +9,7 @@ export enum PrefKey {
   EditorMonospaceEnabled = 'monospaceFont',
   EditorSpellcheck = 'spellcheck',
   EditorResizersEnabled = 'marginResizersEnabled',
+  EditorLineHeight = 'editorLineHeight',
   SortNotesBy = 'sortBy',
   SortNotesReverse = 'sortReverse',
   NotesShowArchived = 'showArchived',
@@ -41,6 +42,15 @@ export enum NewNoteTitleFormat {
   CurrentNoteCount = 'CurrentNoteCount',
   CustomFormat = 'CustomFormat',
   Empty = 'Empty',
+}
+
+export enum EditorLineHeight {
+  None = 'None',
+  Tight = 'Tight',
+  Snug = 'Snug',
+  Normal = 'Normal',
+  Relaxed = 'Relaxed',
+  Loose = 'Loose',
 }
 
 export type PrefValue = {
@@ -76,4 +86,5 @@ export type PrefValue = {
   [PrefKey.MobileNotesHideEditorIcon]: boolean
   [PrefKey.NewNoteTitleFormat]: NewNoteTitleFormat
   [PrefKey.CustomNoteTitleFormat]: string
+  [PrefKey.EditorLineHeight]: EditorLineHeight
 }
