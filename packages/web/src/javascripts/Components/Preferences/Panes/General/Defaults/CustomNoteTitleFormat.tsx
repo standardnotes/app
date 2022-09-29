@@ -12,6 +12,8 @@ type Props = {
 
 const PrefChangeDebounceTimeInMs = 25
 
+const HelpPageUrl = 'https://day.js.org/docs/en/display/format#list-of-all-available-formats'
+
 const CustomNoteTitleFormat = ({ application }: Props) => {
   const [customNoteTitleFormat, setCustomNoteTitleFormat] = useState(() =>
     application.getPreference(PrefKey.CustomNoteTitleFormat, PrefDefaults[PrefKey.CustomNoteTitleFormat]),
@@ -42,7 +44,17 @@ const CustomNoteTitleFormat = ({ application }: Props) => {
         <Subtitle>Custom Note Title Format</Subtitle>
         <Text>
           All available date-time formatting options can be found{' '}
-          <a className="underline" href="https://day.js.org/docs/en/display/format#list-of-all-available-formats">
+          <a
+            className="underline"
+            href={HelpPageUrl}
+            target="_blank"
+            onClick={(event) => {
+              if (application.isNativeMobileWeb()) {
+                event.preventDefault()
+                application.mobileDevice.openUrl(HelpPageUrl)
+              }
+            }}
+          >
             here
           </a>
           . Use square brackets (<code>[]</code>) to escape date-time formatting.
@@ -54,6 +66,7 @@ const CustomNoteTitleFormat = ({ application }: Props) => {
             value={customNoteTitleFormat}
             onChange={handleInputChange}
             onBlur={setCustomNoteTitleFormatPreference}
+            spellCheck={false}
           />
         </div>
         <div className="mt-2">
