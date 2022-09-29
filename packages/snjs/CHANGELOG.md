@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.134.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.133.2...@standardnotes/snjs@2.134.0) (2022-09-29)
+
+### Features
+
+* **snjs:** add e2e test for subsequent subscriptions settings persistance ([5ffffbf](https://github.com/standardnotes/app/commit/5ffffbff202ab037b22a72c64fe34673fe49ecaf))
+
 ## [2.133.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.133.1...@standardnotes/snjs@2.133.2) (2022-09-29)
 
 ### Bug Fixes
