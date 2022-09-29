@@ -1,5 +1,7 @@
 import * as Factory from './lib/factory.js'
 import * as Utils from './lib/Utils.js'
+import * as Files from './lib/Files.js'
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
@@ -51,38 +53,6 @@ describe('files', function () {
     await Factory.safeDeinit(application)
     localStorage.clear()
   })
-
-  const uploadFile = async (fileService, buffer, name, ext, chunkSize) => {
-    const operation = await fileService.beginNewFileUpload(buffer.byteLength)
-
-    let chunkId = 1
-    for (let i = 0; i < buffer.length; i += chunkSize) {
-      const readUntil = i + chunkSize > buffer.length ? buffer.length : i + chunkSize
-      const chunk = buffer.slice(i, readUntil)
-      const isFinalChunk = readUntil === buffer.length
-
-      const error = await fileService.pushBytesForUpload(operation, chunk, chunkId++, isFinalChunk)
-      if (error) {
-        throw new Error('Could not upload file chunk')
-      }
-    }
-
-    const file = await fileService.finishUpload(operation, name, ext)
-
-    return file
-  }
-
-  const downloadFile = async (fileService, itemManager, remoteIdentifier) => {
-    const file = itemManager.getItems(ContentType.File).find((file) => file.remoteIdentifier === remoteIdentifier)
-
-    let receivedBytes = new Uint8Array()
-
-    await fileService.downloadFile(file, (decryptedBytes) => {
-      receivedBytes = new Uint8Array([...receivedBytes, ...decryptedBytes])
-    })
-
-    return receivedBytes
-  }
 
   it('should create valet token from server', async function () {
     await setup({ fakeCrypto: true, subscription: true })
@@ -141,9 +111,9 @@ describe('files', function () {
     const response = await fetch('/packages/snjs/mocha/assets/small_file.md')
     const buffer = new Uint8Array(await response.arrayBuffer())
 
-    const file = await uploadFile(fileService, buffer, 'my-file', 'md', 1000)
+    const file = await Files.uploadFile(fileService, buffer, 'my-file', 'md', 1000)
 
-    const downloadedBytes = await downloadFile(fileService, itemManager, file.remoteIdentifier)
+    const downloadedBytes = await Files.downloadFile(fileService, itemManager, file.remoteIdentifier)
 
     expect(downloadedBytes).to.eql(buffer)
   })
@@ -154,9 +124,9 @@ describe('files', function () {
     const response = await fetch('/packages/snjs/mocha/assets/two_mb_file.md')
     const buffer = new Uint8Array(await response.arrayBuffer())
 
-    const file = await uploadFile(fileService, buffer, 'my-file', 'md', 100000)
+    const file = await Files.uploadFile(fileService, buffer, 'my-file', 'md', 100000)
 
-    const downloadedBytes = await downloadFile(fileService, itemManager, file.remoteIdentifier)
+    const downloadedBytes = await Files.downloadFile(fileService, itemManager, file.remoteIdentifier)
 
     expect(downloadedBytes).to.eql(buffer)
   })
@@ -167,7 +137,7 @@ describe('files', function () {
     const response = await fetch('/packages/snjs/mocha/assets/small_file.md')
     const buffer = new Uint8Array(await response.arrayBuffer())
 
-    const file = await uploadFile(fileService, buffer, 'my-file', 'md', 1000)
+    const file = await Files.uploadFile(fileService, buffer, 'my-file', 'md', 1000)
 
     const error = await fileService.deleteFile(file)
 
