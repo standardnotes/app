@@ -11,13 +11,14 @@ import {
 } from '@standardnotes/snjs'
 import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/Application/Application'
-import { FunctionComponent, useEffect, useState } from 'react'
+import { FunctionComponent, useEffect, useMemo, useState } from 'react'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Switch from '@/Components/Switch/Switch'
 import { PLAIN_EDITOR_NAME } from '@/Constants/Constants'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import Button from '@/Components/Button/Button'
+import CustomNoteTitleFormat from './Defaults/CustomNoteTitleFormat'
 
 type Props = {
   application: WebApplication
@@ -128,6 +129,28 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
     }, 1000)
   }
 
+  const noteTitleFormatOptions = useMemo(
+    () => [
+      {
+        label: 'Current date and time',
+        value: NewNoteTitleFormat.CurrentDateAndTime,
+      },
+      {
+        label: 'Current note count',
+        value: NewNoteTitleFormat.CurrentNoteCount,
+      },
+      {
+        label: 'Custom format',
+        value: NewNoteTitleFormat.CustomFormat,
+      },
+      {
+        label: 'Empty',
+        value: NewNoteTitleFormat.Empty,
+      },
+    ],
+    [],
+  )
+
   return (
     <PreferencesGroup>
       <PreferencesSegment>
@@ -166,25 +189,13 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
             <Dropdown
               id="def-new-note-title-format"
               label="Select the default note type"
-              items={[
-                {
-                  label: 'Current date and time',
-                  value: NewNoteTitleFormat.CurrentDateAndTime,
-                },
-                {
-                  label: 'Current note count',
-                  value: NewNoteTitleFormat.CurrentNoteCount,
-                },
-                {
-                  label: 'Empty',
-                  value: NewNoteTitleFormat.Empty,
-                },
-              ]}
+              items={noteTitleFormatOptions}
               value={newNoteTitleFormat}
               onChange={handleNewNoteTitleFormatChange}
             />
           </div>
         </div>
+        {newNoteTitleFormat === NewNoteTitleFormat.CustomFormat && <CustomNoteTitleFormat application={application} />}
         <HorizontalSeparator classes="my-4" />
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
