@@ -11,6 +11,7 @@ import { sortThemes } from '@/Utils/SortThemes'
 import RadioIndicator from '../RadioIndicator/RadioIndicator'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { QuickSettingsController } from '@/Controllers/QuickSettingsController'
+import PanelSettingsSection from './PanelSettingsSection'
 
 const focusModeAnimationDuration = 1255
 
@@ -174,6 +175,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
         onClose={closeQuickSettingsMenu}
         isEnabled={focusModeEnabled}
       />
+      <PanelSettingsSection application={application} />
     </div>
   )
 }
