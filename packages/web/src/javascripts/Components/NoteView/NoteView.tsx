@@ -150,7 +150,6 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
   override deinit() {
     super.deinit()
-
     ;(this.controller as unknown) = undefined
 
     window.removeEventListener('scroll', this.handleWindowScroll)
