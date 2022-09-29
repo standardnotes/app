@@ -8,6 +8,7 @@ import Defaults from './Defaults'
 import LabsPane from './Labs/Labs'
 import Advanced from '@/Components/Preferences/Panes/General/Advanced/AdvancedSection'
 import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
+import PlaintextDefaults from './PlaintextDefaults'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -17,8 +18,9 @@ type Props = {
 
 const General: FunctionComponent<Props> = ({ viewControllerManager, application, extensionsLatestVersions }) => (
   <PreferencesPane>
-    <Tools application={application} />
+    <PlaintextDefaults application={application} />
     <Defaults application={application} />
+    <Tools application={application} />
     <LabsPane application={application} />
     <Advanced
       application={application}

@@ -14,6 +14,8 @@ import {
   PayloadEmitSource,
   WebAppEvent,
   Platform,
+  EditorLineHeight,
+  EditorFontSize,
 } from '@standardnotes/snjs'
 import { debounce, isDesktopApplication, isIOS } from '@/Utils'
 import { EditorEventSource } from '../../Types/EditorEventSource'
@@ -63,7 +65,6 @@ type State = {
   isDesktop?: boolean
   lockText: string
   marginResizersEnabled?: boolean
-  monospaceFont?: boolean
   noteLocked: boolean
   noteStatus?: NoteStatus
   saveError?: boolean
@@ -82,6 +83,18 @@ type State = {
   rightResizerOffset: number
 
   shouldStickyHeader: boolean
+
+  monospaceFont?: boolean
+  lineHeight?: EditorLineHeight
+  fontSize?: EditorFontSize
+}
+
+const PlaintextFontSizeMapping: Record<EditorFontSize, string> = {
+  ExtraSmall: 'text-xs',
+  Small: 'text-sm',
+  Normal: 'text-editor',
+  Medium: 'text-lg',
+  Large: 'text-xl',
 }
 
 class NoteView extends PureComponent<NoteViewProps, State> {
@@ -701,11 +714,17 @@ class NoteView extends PureComponent<NoteViewProps, State> {
       PrefDefaults[PrefKey.EditorResizersEnabled],
     )
 
+    const lineHeight = this.application.getPreference(PrefKey.EditorLineHeight, PrefDefaults[PrefKey.EditorLineHeight])
+
+    const fontSize = this.application.getPreference(PrefKey.EditorFontSize, PrefDefaults[PrefKey.EditorFontSize])
+
     await this.reloadSpellcheck()
 
     this.setState({
       monospaceFont,
       marginResizersEnabled,
+      lineHeight,
+      fontSize,
     })
 
     reloadFont(monospaceFont)
@@ -1046,14 +1065,18 @@ class NoteView extends PureComponent<NoteViewProps, State> {
           {this.state.editorStateDidLoad && !this.state.editorComponentViewer && !this.state.textareaUnloading && (
             <AutoresizingNoteViewTextarea
               autoComplete="off"
+              className={classNames(
+                this.state.lineHeight && `leading-${this.state.lineHeight.toLowerCase()}`,
+                this.state.fontSize && PlaintextFontSizeMapping[this.state.fontSize],
+              )}
               dir="auto"
               id={ElementIds.NoteTextEditor}
               onChange={this.onTextAreaChange}
-              value={this.state.editorText}
-              readOnly={this.state.noteLocked}
               onFocus={this.onContentFocus}
-              spellCheck={this.state.spellcheck}
+              readOnly={this.state.noteLocked}
               ref={(ref) => ref && this.onSystemEditorLoad(ref)}
+              spellCheck={this.state.spellcheck}
+              value={this.state.editorText}
             />
           )}
 
