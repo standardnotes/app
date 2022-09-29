@@ -4,7 +4,7 @@ import { WebApplication } from '@/Application/Application'
 import { PANEL_NAME_NAVIGATION } from '@/Constants/Constants'
 import { ApplicationEvent, PrefKey } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
 import PanelResizer, { PanelSide, ResizeFinishCallback, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
 import ResponsivePaneContent from '@/Components/ResponsivePane/ResponsivePaneContent'
 import { AppPaneId } from '@/Components/ResponsivePane/AppPaneMetadata'
@@ -20,7 +20,7 @@ type Props = {
 
 const Navigation: FunctionComponent<Props> = ({ application }) => {
   const viewControllerManager = useMemo(() => application.getViewControllerManager(), [application])
-  const ref = useRef<HTMLDivElement>(null)
+  const [panelElement, setPanelElement] = useState<HTMLDivElement>()
   const [panelWidth, setPanelWidth] = useState<number>(0)
   const { selectedPane, toggleAppPane } = useResponsiveAppPane()
 
@@ -70,7 +70,11 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
           : 'pointer-coarse:md-only:!w-0 pointer-coarse:lg-only:!w-0',
         isIOS() ? 'pb-safe-bottom' : 'pb-2.5',
       )}
-      ref={ref}
+      ref={(element) => {
+        if (element) {
+          setPanelElement(element)
+        }
+      }}
     >
       <ResponsivePaneContent paneId={AppPaneId.Navigation} contentElementId="navigation-content">
         <div
@@ -144,11 +148,11 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
           </button>
         </div>
       </ResponsivePaneContent>
-      {ref.current && (
+      {panelElement && (
         <PanelResizer
           collapsable={true}
           defaultWidth={150}
-          panel={ref.current}
+          panel={panelElement}
           hoverable={true}
           side={PanelSide.Right}
           type={PanelResizeType.WidthOnly}
