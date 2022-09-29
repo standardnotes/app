@@ -26,13 +26,10 @@ const NoteStatusIndicator = ({ status, syncTakingTooLong }: Props) => {
       <button
         className={classNames(
           'peer flex h-5 w-5 items-center justify-center rounded-full',
-          status.type === 'saving'
-            ? syncTakingTooLong
-              ? 'bg-warning text-warning-contrast'
-              : 'bg-info text-info-contrast'
-            : '',
+          status.type === 'saving' && 'bg-contrast',
           status.type === 'saved' && 'bg-success text-success-contrast',
           status.type === 'error' && 'bg-danger text-danger-contrast',
+          syncTakingTooLong && 'bg-warning text-warning-contrast',
         )}
         onClick={() => setShouldShowTooltip((show) => !show)}
         onBlur={() => setShouldShowTooltip(false)}
