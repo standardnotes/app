@@ -148,6 +148,10 @@ class NoteView extends PureComponent<NoteViewProps, State> {
   }
 
   override deinit() {
+    super.deinit()
+
+    ;(this.controller as unknown) = undefined
+
     window.removeEventListener('scroll', this.handleWindowScroll)
 
     this.removeComponentStreamObserver?.()
@@ -164,7 +168,6 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
     this.clearNoteProtectionInactivityTimer()
     ;(this.ensureNoteIsInsertedBeforeUIAction as unknown) = undefined
-    ;(this.controller as unknown) = undefined
 
     this.removeTabObserver?.()
     this.removeTabObserver = undefined
@@ -172,7 +175,6 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
     this.statusTimeout = undefined
     ;(this.onPanelResizeFinish as unknown) = undefined
-    super.deinit()
     ;(this.dismissProtectedWarning as unknown) = undefined
     ;(this.editorComponentViewerRequestsReload as unknown) = undefined
     ;(this.onTextAreaChange as unknown) = undefined
@@ -312,6 +314,10 @@ class NoteView extends PureComponent<NoteViewProps, State> {
   }
 
   override async onAppEvent(eventName: ApplicationEvent) {
+    if (this.controller?.dealloced) {
+      return
+    }
+
     switch (eventName) {
       case ApplicationEvent.PreferencesChanged:
         this.reloadPreferences().catch(console.error)
