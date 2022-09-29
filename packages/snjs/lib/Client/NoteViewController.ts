@@ -35,6 +35,7 @@ export class NoteViewController implements ItemViewControllerInterface {
   private saveTimeout?: ReturnType<typeof setTimeout>
   private defaultTitle: string | undefined
   private defaultTag: UuidString | undefined
+  public runtimeId = `${Math.random()}`
 
   constructor(
     private application: SNApplication,
