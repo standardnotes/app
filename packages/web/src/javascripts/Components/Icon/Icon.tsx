@@ -100,6 +100,7 @@ export const ICONS = {
   unarchive: icons.UnarchiveIcon,
   unpin: icons.UnpinIcon,
   user: icons.UserIcon,
+  view: icons.ViewIcon,
   warning: icons.WarningIcon,
   window: icons.WindowIcon,
 }
