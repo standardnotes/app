@@ -956,24 +956,6 @@ class NoteView extends PureComponent<NoteViewProps, State> {
               </div>
               {!this.state.shouldStickyHeader && (
                 <div className="flex flex-row-reverse items-center gap-3 md:flex-col-reverse md:items-end xl:flex-row xl:flex-nowrap xl:items-center">
-                  {this.state.noteStatus?.message?.length && (
-                    <div id="save-status-container" className={'xl:mr-5 xl:max-w-[16ch]'}>
-                      <div id="save-status">
-                        <div
-                          className={
-                            (this.state.syncTakingTooLong ? 'font-bold text-warning ' : '') +
-                            (this.state.saveError ? 'font-bold text-danger ' : '') +
-                            'message text-xs'
-                          }
-                        >
-                          {this.state.noteStatus?.message}
-                        </div>
-                        {this.state.noteStatus?.desc && (
-                          <div className="desc text-xs">{this.state.noteStatus.desc}</div>
-                        )}
-                      </div>
-                    </div>
-                  )}
                   <NoteStatusIndicator
                     status={this.state.noteStatus}
                     syncTakingTooLong={this.state.syncTakingTooLong}

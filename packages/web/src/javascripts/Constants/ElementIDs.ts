@@ -9,4 +9,5 @@ export const ElementIds = {
   NoteTextEditor: 'note-text-editor',
   NoteTitleEditor: 'note-title-editor',
   RootId: 'app-group-root',
+  NoteStatusTooltip: 'note-status-tooltip',
 } as const
