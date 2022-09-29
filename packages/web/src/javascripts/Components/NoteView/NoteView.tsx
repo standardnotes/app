@@ -41,17 +41,13 @@ import AutoresizingNoteViewTextarea from './AutoresizingTextarea'
 import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
 import NoteTagsPanel from '../NoteTags/NoteTagsPanel'
 import NoteTagsContainer from '../NoteTags/NoteTagsContainer'
+import NoteStatusIndicator, { NoteStatus } from './NoteStatusIndicator'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 
 const MinimumStatusDuration = 400
 const TextareaDebounce = 100
 const NoteEditingDisabledText = 'Note editing disabled.'
 const StickyHeaderScrollThresholdInPx = 20
-
-type NoteStatus = {
-  message?: string
-  desc?: string
-}
 
 function sortAlphabetically(array: SNComponent[]): SNComponent[] {
   return array.sort((a, b) => (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1))
@@ -346,6 +342,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
         break
       case ApplicationEvent.LocalDatabaseWriteError:
         this.showErrorStatus({
+          type: 'error',
           message: 'Offline Saving Issue',
           desc: 'Changes not saved',
         })
@@ -503,7 +500,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
   }
 
   showSavingStatus() {
-    this.setStatus({ message: 'Saving…' }, false)
+    this.setStatus({ type: 'saving', message: 'Saving…' }, false)
   }
 
   showAllChangesSavedStatus() {
@@ -512,6 +509,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
       syncTakingTooLong: false,
     })
     this.setStatus({
+      type: 'saved',
       message: 'All changes saved' + (this.application.noAccount() ? ' offline' : ''),
     })
   }
@@ -519,6 +517,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
   showErrorStatus(error?: NoteStatus) {
     if (!error) {
       error = {
+        type: 'error',
         message: 'Sync Unreachable',
         desc: 'Changes saved offline',
       }
@@ -948,7 +947,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                 : '',
             )}
           >
-            <div className="mb-2 flex flex-wrap items-start justify-between gap-2 md:mb-0 md:flex-nowrap md:gap-0 xl:items-center">
+            <div className="mb-2 flex flex-wrap items-start justify-between gap-2 md:mb-0 md:flex-nowrap md:gap-4 xl:items-center">
               <div className={classNames(this.state.noteLocked && 'locked', 'flex flex-grow items-center')}>
                 <MobileItemsListButton />
                 <div className="title flex-grow overflow-auto">
@@ -966,60 +965,41 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                     autoComplete="off"
                   />
                 </div>
+                <NoteStatusIndicator status={this.state.noteStatus} syncTakingTooLong={this.state.syncTakingTooLong} />
               </div>
               {!this.state.shouldStickyHeader && (
-                <div className="flex flex-row-reverse items-center gap-3 md:flex-col-reverse md:items-end xl:flex-row xl:flex-nowrap xl:items-center">
-                  {this.state.noteStatus?.message?.length && (
-                    <div id="save-status-container" className={'xl:mr-5 xl:max-w-[16ch]'}>
-                      <div id="save-status">
-                        <div
-                          className={
-                            (this.state.syncTakingTooLong ? 'font-bold text-warning ' : '') +
-                            (this.state.saveError ? 'font-bold text-danger ' : '') +
-                            'message text-xs'
-                          }
-                        >
-                          {this.state.noteStatus?.message}
-                        </div>
-                        {this.state.noteStatus?.desc && (
-                          <div className="desc text-xs">{this.state.noteStatus.desc}</div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                  <div className="flex items-center gap-3">
-                    <NoteTagsPanel
-                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                      noteTagsController={this.viewControllerManager.noteTagsController}
-                    />
-                    <AttachedFilesButton
-                      application={this.application}
-                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                      featuresController={this.viewControllerManager.featuresController}
-                      filePreviewModalController={this.viewControllerManager.filePreviewModalController}
-                      filesController={this.viewControllerManager.filesController}
-                      navigationController={this.viewControllerManager.navigationController}
-                      notesController={this.viewControllerManager.notesController}
-                      selectionController={this.viewControllerManager.selectionController}
-                    />
-                    <ChangeEditorButton
-                      application={this.application}
-                      viewControllerManager={this.viewControllerManager}
-                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                    />
-                    <PinNoteButton
-                      notesController={this.viewControllerManager.notesController}
-                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                    />
-                    <NotesOptionsPanel
-                      application={this.application}
-                      navigationController={this.viewControllerManager.navigationController}
-                      notesController={this.viewControllerManager.notesController}
-                      noteTagsController={this.viewControllerManager.noteTagsController}
-                      historyModalController={this.viewControllerManager.historyModalController}
-                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                    />
-                  </div>
+                <div className="flex items-center gap-3">
+                  <NoteTagsPanel
+                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                    noteTagsController={this.viewControllerManager.noteTagsController}
+                  />
+                  <AttachedFilesButton
+                    application={this.application}
+                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                    featuresController={this.viewControllerManager.featuresController}
+                    filePreviewModalController={this.viewControllerManager.filePreviewModalController}
+                    filesController={this.viewControllerManager.filesController}
+                    navigationController={this.viewControllerManager.navigationController}
+                    notesController={this.viewControllerManager.notesController}
+                    selectionController={this.viewControllerManager.selectionController}
+                  />
+                  <ChangeEditorButton
+                    application={this.application}
+                    viewControllerManager={this.viewControllerManager}
+                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                  />
+                  <PinNoteButton
+                    notesController={this.viewControllerManager.notesController}
+                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                  />
+                  <NotesOptionsPanel
+                    application={this.application}
+                    navigationController={this.viewControllerManager.navigationController}
+                    notesController={this.viewControllerManager.notesController}
+                    noteTagsController={this.viewControllerManager.noteTagsController}
+                    historyModalController={this.viewControllerManager.historyModalController}
+                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                  />
                 </div>
               )}
             </div>
