@@ -4,6 +4,7 @@ import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { PrefKey } from '@standardnotes/snjs'
 import { ChangeEventHandler, useRef, useState } from 'react'
+import dayjs from 'dayjs'
 
 type Props = {
   application: WebApplication
@@ -39,7 +40,14 @@ const CustomNoteTitleFormat = ({ application }: Props) => {
       <HorizontalSeparator classes="my-4" />
       <div>
         <Subtitle>Custom Note Title Format</Subtitle>
-        <Text>New notes will be created with a title in this format</Text>
+        <Text>
+          All available date-time formatting options can be found{' '}
+          <a className="underline" href="https://day.js.org/docs/en/display/format#list-of-all-available-formats">
+            here
+          </a>
+          . Use square brackets (<code>[]</code>) to escape date-time formatting.{' '}
+          <span className="font-medium">Note:</span> Date-time formatting is not localized.
+        </Text>
         <div className="mt-2">
           <input
             className="min-w-55 rounded border border-solid border-passive-3 bg-default px-2 py-1.5 text-sm focus-within:ring-2 focus-within:ring-info"
@@ -48,6 +56,9 @@ const CustomNoteTitleFormat = ({ application }: Props) => {
             onChange={handleInputChange}
             onBlur={setCustomNoteTitleFormatPreference}
           />
+        </div>
+        <div className="mt-2">
+          <span className="font-bold">Preview:</span> {dayjs().format(customNoteTitleFormat)}
         </div>
       </div>
     </>
