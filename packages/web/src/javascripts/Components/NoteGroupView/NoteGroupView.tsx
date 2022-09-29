@@ -122,10 +122,10 @@ class NoteGroupView extends PureComponent<Props, State> {
             <>
               {this.state.controllers.map((controller) => {
                 return controller instanceof NoteViewController ? (
-                  <NoteView key={controller.item.uuid} application={this.application} controller={controller} />
+                  <NoteView key={controller.runtimeId} application={this.application} controller={controller} />
                 ) : (
                   <FileView
-                    key={controller.item.uuid}
+                    key={controller.runtimeId}
                     application={this.application}
                     viewControllerManager={this.viewControllerManager}
                     file={controller.item}
