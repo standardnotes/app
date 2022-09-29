@@ -35,7 +35,6 @@ const NoteStatusIndicator = ({ status, syncTakingTooLong }: Props) => {
           status.type === 'error' && 'bg-danger text-danger-contrast',
         )}
         onClick={() => setShouldShowTooltip((show) => !show)}
-        onFocus={() => setShouldShowTooltip(true)}
         onBlur={() => setShouldShowTooltip(false)}
         aria-describedby={ElementIds.NoteStatusTooltip}
       >
@@ -50,7 +49,7 @@ const NoteStatusIndicator = ({ status, syncTakingTooLong }: Props) => {
         id={ElementIds.NoteStatusTooltip}
         className={classNames(
           shouldShowTooltip ? '' : 'hidden',
-          'peer-hover:block',
+          'peer-hover:block peer-focus:block',
           'absolute top-full right-0 min-w-max translate-x-2 translate-y-1 rounded border border-border bg-default py-1.5 px-3 text-left',
         )}
       >
