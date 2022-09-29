@@ -1,4 +1,4 @@
-import { PrefKey, CollectionSort, NewNoteTitleFormat } from '@standardnotes/snjs'
+import { PrefKey, CollectionSort, NewNoteTitleFormat } from '@standardnotes/models'
 
 export const PrefDefaults = {
   [PrefKey.TagsPanelWidth]: 220,
