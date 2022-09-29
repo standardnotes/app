@@ -15,6 +15,7 @@ import {
   WebAppEvent,
   Platform,
   EditorLineHeight,
+  EditorFontSize,
 } from '@standardnotes/snjs'
 import { debounce, isDesktopApplication, isIOS } from '@/Utils'
 import { EditorEventSource } from '../../Types/EditorEventSource'
@@ -89,6 +90,15 @@ type State = {
 
   monospaceFont?: boolean
   lineHeight: EditorLineHeight
+  fontSize: EditorFontSize
+}
+
+const PlaintextFontSizeMapping: Record<EditorFontSize, string> = {
+  ExtraSmall: 'text-xs',
+  Small: 'text-sm',
+  Normal: 'text-editor',
+  Medium: 'text-lg',
+  Large: 'text-xl',
 }
 
 class NoteView extends PureComponent<NoteViewProps, State> {
@@ -145,6 +155,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
       rightResizerOffset: 0,
       shouldStickyHeader: false,
       lineHeight: PrefDefaults[PrefKey.EditorLineHeight],
+      fontSize: PrefDefaults[PrefKey.EditorFontSize],
     }
 
     this.editorContentRef = createRef<HTMLDivElement>()
@@ -703,12 +714,15 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
     const lineHeight = this.application.getPreference(PrefKey.EditorLineHeight, PrefDefaults[PrefKey.EditorLineHeight])
 
+    const fontSize = this.application.getPreference(PrefKey.EditorFontSize, PrefDefaults[PrefKey.EditorFontSize])
+
     await this.reloadSpellcheck()
 
     this.setState({
       monospaceFont,
       marginResizersEnabled,
       lineHeight,
+      fontSize,
     })
 
     reloadFont(monospaceFont)
@@ -1068,7 +1082,10 @@ class NoteView extends PureComponent<NoteViewProps, State> {
           {this.state.editorStateDidLoad && !this.state.editorComponentViewer && !this.state.textareaUnloading && (
             <AutoresizingNoteViewTextarea
               autoComplete="off"
-              className={`leading-${this.state.lineHeight.toLowerCase()}`}
+              className={classNames(
+                `leading-${this.state.lineHeight.toLowerCase()}`,
+                PlaintextFontSizeMapping[this.state.fontSize],
+              )}
               dir="auto"
               id={ElementIds.NoteTextEditor}
               onChange={this.onTextAreaChange}

@@ -1,4 +1,4 @@
-import { PrefKey, CollectionSort, NewNoteTitleFormat, EditorLineHeight } from '@standardnotes/models'
+import { PrefKey, CollectionSort, NewNoteTitleFormat, EditorLineHeight, EditorFontSize } from '@standardnotes/models'
 
 export const PrefDefaults = {
   [PrefKey.TagsPanelWidth]: 220,
@@ -9,6 +9,7 @@ export const PrefDefaults = {
   [PrefKey.EditorSpellcheck]: true,
   [PrefKey.EditorResizersEnabled]: true,
   [PrefKey.EditorLineHeight]: EditorLineHeight.Normal,
+  [PrefKey.EditorFontSize]: EditorFontSize.Normal,
   [PrefKey.SortNotesBy]: CollectionSort.CreatedAt,
   [PrefKey.SortNotesReverse]: false,
   [PrefKey.NotesShowArchived]: false,

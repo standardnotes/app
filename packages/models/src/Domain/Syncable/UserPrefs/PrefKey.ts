@@ -10,6 +10,7 @@ export enum PrefKey {
   EditorSpellcheck = 'spellcheck',
   EditorResizersEnabled = 'marginResizersEnabled',
   EditorLineHeight = 'editorLineHeight',
+  EditorFontSize = 'editorFontSize',
   SortNotesBy = 'sortBy',
   SortNotesReverse = 'sortReverse',
   NotesShowArchived = 'showArchived',
@@ -53,6 +54,14 @@ export enum EditorLineHeight {
   Loose = 'Loose',
 }
 
+export enum EditorFontSize {
+  ExtraSmall = 'ExtraSmall',
+  Small = 'Small',
+  Normal = 'Normal',
+  Medium = 'Medium',
+  Large = 'Large',
+}
+
 export type PrefValue = {
   [PrefKey.TagsPanelWidth]: number
   [PrefKey.NotesPanelWidth]: number
@@ -87,4 +96,5 @@ export type PrefValue = {
   [PrefKey.NewNoteTitleFormat]: NewNoteTitleFormat
   [PrefKey.CustomNoteTitleFormat]: string
   [PrefKey.EditorLineHeight]: EditorLineHeight
+  [PrefKey.EditorFontSize]: EditorFontSize
 }

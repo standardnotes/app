@@ -3,7 +3,7 @@ import Dropdown from '@/Components/Dropdown/Dropdown'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Switch from '@/Components/Switch/Switch'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
-import { EditorLineHeight, PrefKey } from '@standardnotes/snjs'
+import { EditorFontSize, EditorLineHeight, PrefKey } from '@standardnotes/snjs'
 import { useMemo, useState } from 'react'
 import { Subtitle, Title, Text } from '../../PreferencesComponents/Content'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
@@ -41,6 +41,24 @@ const PlaintextDefaults = ({ application }: Props) => {
     [],
   )
 
+  const [fontSize, setFontSize] = useState(() =>
+    application.getPreference(PrefKey.EditorFontSize, PrefDefaults[PrefKey.EditorFontSize]),
+  )
+
+  const handleFontSizeChange = (value: string) => {
+    setFontSize(value as EditorFontSize)
+    application.setPreference(PrefKey.EditorFontSize, value as EditorFontSize)
+  }
+
+  const fontSizeDropdownOptions = useMemo(
+    () =>
+      Object.values(EditorFontSize).map((fontSize) => ({
+        label: fontSize,
+        value: fontSize,
+      })),
+    [],
+  )
+
   return (
     <PreferencesGroup>
       <PreferencesSegment>
@@ -59,11 +77,25 @@ const PlaintextDefaults = ({ application }: Props) => {
             <Text>Sets the line height (leading) in plaintext notes</Text>
             <div className="mt-2">
               <Dropdown
-                id="def-new-note-title-format"
+                id="def-line-height"
                 label="Select the line height for plaintext notes"
                 items={lineHeightDropdownOptions}
                 value={lineHeight}
                 onChange={handleLineHeightChange}
+              />
+            </div>
+          </div>
+          <HorizontalSeparator classes="my-4" />
+          <div>
+            <Subtitle>Font size</Subtitle>
+            <Text>Sets the font size in plaintext notes</Text>
+            <div className="mt-2">
+              <Dropdown
+                id="def-font-size"
+                label="Select the font size for plaintext notes"
+                items={fontSizeDropdownOptions}
+                value={fontSize}
+                onChange={handleFontSizeChange}
               />
             </div>
           </div>

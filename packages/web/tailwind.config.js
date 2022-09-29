@@ -83,6 +83,7 @@ module.exports = {
       },
       fontSize: {
         'menu-item': '0.813rem',
+        editor: 'var(--sn-stylekit-font-size-editor)',
       },
       screens: {
         'xsm-only': { min: '320px', max: '639px' },
