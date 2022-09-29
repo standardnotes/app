@@ -5,14 +5,15 @@ import MenuItem from '../Menu/MenuItem'
 import { MenuItemType } from '../Menu/MenuItemType'
 import { PANEL_NAME_NAVIGATION, PANEL_NAME_NOTES } from '@/Constants/Constants'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
+import { PrefDefaults } from '@/Constants/PrefDefaults'
 
 type Props = {
   application: WebApplication
 }
 
 const WidthForCollapsedPanel = 5
-const MinimumNavPanelWidth = 220
-const MinimumNotesPanelWidth = 350
+const MinimumNavPanelWidth = PrefDefaults[PrefKey.TagsPanelWidth]
+const MinimumNotesPanelWidth = PrefDefaults[PrefKey.NotesPanelWidth]
 
 const PanelSettingsSection = ({ application }: Props) => {
   const [currentNavPanelWidth, setCurrentNavPanelWidth] = useState(

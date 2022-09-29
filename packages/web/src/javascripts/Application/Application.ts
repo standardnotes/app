@@ -27,6 +27,7 @@ import { DesktopManager } from './Device/DesktopManager'
 import { ArchiveManager, AutolockService, IOService, WebAlertService, ThemeManager } from '@standardnotes/ui-services'
 import { MobileWebReceiver } from './MobileWebReceiver'
 import { AndroidBackHandler } from '@/NativeMobileWeb/AndroidBackHandler'
+import { PrefDefaults } from '@/Constants/PrefDefaults'
 
 type WebServices = {
   viewControllerManager: ViewControllerManager
@@ -210,7 +211,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   isGlobalSpellcheckEnabled(): boolean {
-    return this.getPreference(PrefKey.EditorSpellcheck, true)
+    return this.getPreference(PrefKey.EditorSpellcheck, PrefDefaults[PrefKey.EditorSpellcheck])
   }
 
   public getItemTags(item: DecryptedItemInterface) {

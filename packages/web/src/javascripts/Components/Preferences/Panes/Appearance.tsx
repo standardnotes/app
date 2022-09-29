@@ -13,6 +13,7 @@ import PreferencesPane from '../PreferencesComponents/PreferencesPane'
 import PreferencesGroup from '../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../PreferencesComponents/PreferencesSegment'
 import { PremiumFeatureIconName } from '@/Components/Icon/PremiumFeatureIcon'
+import { PrefDefaults } from '@/Constants/PrefDefaults'
 
 type Props = {
   application: WebApplication
@@ -24,18 +25,17 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
     application.features.getFeatureStatus(FeatureIdentifier.MidnightTheme) === FeatureStatus.Entitled
 
   const [themeItems, setThemeItems] = useState<DropdownItem[]>([])
-  const [autoLightTheme, setAutoLightTheme] = useState<string>(
-    () => application.getPreference(PrefKey.AutoLightThemeIdentifier, 'Default') as string,
+  const [autoLightTheme, setAutoLightTheme] = useState<string>(() =>
+    application.getPreference(PrefKey.AutoLightThemeIdentifier, PrefDefaults[PrefKey.AutoLightThemeIdentifier]),
   )
-  const [autoDarkTheme, setAutoDarkTheme] = useState<string>(
-    () =>
-      application.getPreference(
-        PrefKey.AutoDarkThemeIdentifier,
-        isEntitledToMidnightTheme ? FeatureIdentifier.MidnightTheme : 'Default',
-      ) as string,
+  const [autoDarkTheme, setAutoDarkTheme] = useState<string>(() =>
+    application.getPreference(
+      PrefKey.AutoDarkThemeIdentifier,
+      isEntitledToMidnightTheme ? FeatureIdentifier.MidnightTheme : PrefDefaults[PrefKey.AutoDarkThemeIdentifier],
+    ),
   )
-  const [useDeviceSettings, setUseDeviceSettings] = useState(
-    () => application.getPreference(PrefKey.UseSystemColorScheme, false) as boolean,
+  const [useDeviceSettings, setUseDeviceSettings] = useState(() =>
+    application.getPreference(PrefKey.UseSystemColorScheme, PrefDefaults[PrefKey.UseSystemColorScheme]),
   )
 
   useEffect(() => {
