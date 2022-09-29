@@ -45,8 +45,7 @@ const CustomNoteTitleFormat = ({ application }: Props) => {
           <a className="underline" href="https://day.js.org/docs/en/display/format#list-of-all-available-formats">
             here
           </a>
-          . Use square brackets (<code>[]</code>) to escape date-time formatting.{' '}
-          <span className="font-medium">Note:</span> Date-time formatting is not localized.
+          . Use square brackets (<code>[]</code>) to escape date-time formatting.
         </Text>
         <div className="mt-2">
           <input
