@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.64.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.63.3...@standardnotes/web@3.64.0) (2022-09-29)
+
+### Features
+
+* add custom note title format pref ([#1678](https://github.com/standardnotes/app/issues/1678)) ([11dd39c](https://github.com/standardnotes/app/commit/11dd39c126019c4295c03fb59b05ea5aa3adcd27))
+
 ## [3.63.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.63.2...@standardnotes/web@3.63.3) (2022-09-29)
 
 **Note:** Version bump only for package @standardnotes/web
