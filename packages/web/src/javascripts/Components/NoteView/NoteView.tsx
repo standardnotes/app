@@ -41,16 +41,12 @@ import AutoresizingNoteViewTextarea from './AutoresizingTextarea'
 import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
 import NoteTagsPanel from '../NoteTags/NoteTagsPanel'
 import NoteTagsContainer from '../NoteTags/NoteTagsContainer'
+import NoteStatusIndicator, { NoteStatus } from './NoteStatusIndicator'
 
 const MinimumStatusDuration = 400
 const TextareaDebounce = 100
 const NoteEditingDisabledText = 'Note editing disabled.'
 const StickyHeaderScrollThresholdInPx = 20
-
-type NoteStatus = {
-  message?: string
-  desc?: string
-}
 
 function sortAlphabetically(array: SNComponent[]): SNComponent[] {
   return array.sort((a, b) => (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1))
@@ -340,6 +336,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
         break
       case ApplicationEvent.LocalDatabaseWriteError:
         this.showErrorStatus({
+          type: 'error',
           message: 'Offline Saving Issue',
           desc: 'Changes not saved',
         })
@@ -497,7 +494,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
   }
 
   showSavingStatus() {
-    this.setStatus({ message: 'Saving…' }, false)
+    this.setStatus({ type: 'saving', message: 'Saving…' }, false)
   }
 
   showAllChangesSavedStatus() {
@@ -506,6 +503,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
       syncTakingTooLong: false,
     })
     this.setStatus({
+      type: 'saved',
       message: 'All changes saved' + (this.application.noAccount() ? ' offline' : ''),
     })
   }
@@ -513,6 +511,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
   showErrorStatus(error?: NoteStatus) {
     if (!error) {
       error = {
+        type: 'error',
         message: 'Sync Unreachable',
         desc: 'Changes saved offline',
       }
@@ -975,6 +974,10 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                       </div>
                     </div>
                   )}
+                  <NoteStatusIndicator
+                    status={this.state.noteStatus}
+                    syncTakingTooLong={this.state.syncTakingTooLong}
+                  />
                   <div className="flex items-center gap-3">
                     <NoteTagsPanel
                       onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
