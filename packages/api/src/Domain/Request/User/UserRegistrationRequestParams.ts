@@ -8,4 +8,6 @@ export type UserRegistrationRequestParams = AnyKeyParamsContent & {
   email: string
   ephemeral: boolean
   [additionalParam: string]: unknown
+  pkcPublicKey?: string
+  pkcEncryptedPrivateKey?: string
 }
