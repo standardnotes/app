@@ -15,12 +15,12 @@ export class UserApiService implements UserApiServiceInterface {
     this.registering = false
   }
 
-  async register(
-    email: string,
-    serverPassword: string,
-    keyParams: RootKeyParamsInterface,
-    ephemeral: boolean,
-  ): Promise<UserRegistrationResponse> {
+  async register(registerDTO: {
+    email: string
+    serverPassword: string
+    keyParams: RootKeyParamsInterface
+    ephemeral: boolean
+  }): Promise<UserRegistrationResponse> {
     if (this.registering) {
       throw new ApiCallError(ErrorMessage.RegistrationInProgress)
     }
@@ -29,10 +29,10 @@ export class UserApiService implements UserApiServiceInterface {
     try {
       const response = await this.userServer.register({
         [ApiEndpointParam.ApiVersion]: ApiVersion.v0,
-        password: serverPassword,
-        email,
-        ephemeral,
-        ...keyParams.getPortableValue(),
+        password: registerDTO.serverPassword,
+        email: registerDTO.email,
+        ephemeral: registerDTO.ephemeral,
+        ...registerDTO.keyParams.getPortableValue(),
       })
 
       this.registering = false
