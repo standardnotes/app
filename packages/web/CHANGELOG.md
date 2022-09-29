@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.63.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.62.4...@standardnotes/web@3.63.0) (2022-09-29)
+
+### Features
+
+* add panel settings section in quick settings ([#1669](https://github.com/standardnotes/app/issues/1669)) ([0ed692f](https://github.com/standardnotes/app/commit/0ed692ff9b056d00dde73040482e6b1bdc404d04))
+
 ## [3.62.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.62.3...@standardnotes/web@3.62.4) (2022-09-28)
 
 ### Bug Fixes
