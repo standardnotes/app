@@ -23,5 +23,5 @@ export const PrefDefaults = {
   [PrefKey.AutoDarkThemeIdentifier]: 'Default',
   [PrefKey.NoteAddToParentFolders]: true,
   [PrefKey.NewNoteTitleFormat]: NewNoteTitleFormat.CurrentDateAndTime,
-  [PrefKey.CustomNoteTitleFormat]: 'YYYY-MM-DD',
+  [PrefKey.CustomNoteTitleFormat]: 'YYYY-MM-DD [at] hh:mm A',
 } as const
