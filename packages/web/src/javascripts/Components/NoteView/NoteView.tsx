@@ -935,7 +935,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                 : '',
             )}
           >
-            <div className="mb-2 flex flex-wrap items-start justify-between gap-2 md:mb-0 md:flex-nowrap md:gap-0 xl:items-center">
+            <div className="mb-2 flex flex-wrap items-start justify-between gap-2 md:mb-0 md:flex-nowrap md:gap-4 xl:items-center">
               <div className={classNames(this.state.noteLocked && 'locked', 'flex flex-grow items-center')}>
                 <MobileItemsListButton />
                 <div className="title flex-grow overflow-auto">
@@ -953,46 +953,41 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                     autoComplete="off"
                   />
                 </div>
+                <NoteStatusIndicator status={this.state.noteStatus} syncTakingTooLong={this.state.syncTakingTooLong} />
               </div>
               {!this.state.shouldStickyHeader && (
-                <div className="flex flex-row-reverse items-center gap-3 md:flex-col-reverse md:items-end xl:flex-row xl:flex-nowrap xl:items-center">
-                  <NoteStatusIndicator
-                    status={this.state.noteStatus}
-                    syncTakingTooLong={this.state.syncTakingTooLong}
+                <div className="flex items-center gap-3">
+                  <NoteTagsPanel
+                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                    noteTagsController={this.viewControllerManager.noteTagsController}
                   />
-                  <div className="flex items-center gap-3">
-                    <NoteTagsPanel
-                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                      noteTagsController={this.viewControllerManager.noteTagsController}
-                    />
-                    <AttachedFilesButton
-                      application={this.application}
-                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                      featuresController={this.viewControllerManager.featuresController}
-                      filePreviewModalController={this.viewControllerManager.filePreviewModalController}
-                      filesController={this.viewControllerManager.filesController}
-                      navigationController={this.viewControllerManager.navigationController}
-                      notesController={this.viewControllerManager.notesController}
-                      selectionController={this.viewControllerManager.selectionController}
-                    />
-                    <ChangeEditorButton
-                      application={this.application}
-                      viewControllerManager={this.viewControllerManager}
-                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                    />
-                    <PinNoteButton
-                      notesController={this.viewControllerManager.notesController}
-                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                    />
-                    <NotesOptionsPanel
-                      application={this.application}
-                      navigationController={this.viewControllerManager.navigationController}
-                      notesController={this.viewControllerManager.notesController}
-                      noteTagsController={this.viewControllerManager.noteTagsController}
-                      historyModalController={this.viewControllerManager.historyModalController}
-                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                    />
-                  </div>
+                  <AttachedFilesButton
+                    application={this.application}
+                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                    featuresController={this.viewControllerManager.featuresController}
+                    filePreviewModalController={this.viewControllerManager.filePreviewModalController}
+                    filesController={this.viewControllerManager.filesController}
+                    navigationController={this.viewControllerManager.navigationController}
+                    notesController={this.viewControllerManager.notesController}
+                    selectionController={this.viewControllerManager.selectionController}
+                  />
+                  <ChangeEditorButton
+                    application={this.application}
+                    viewControllerManager={this.viewControllerManager}
+                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                  />
+                  <PinNoteButton
+                    notesController={this.viewControllerManager.notesController}
+                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                  />
+                  <NotesOptionsPanel
+                    application={this.application}
+                    navigationController={this.viewControllerManager.navigationController}
+                    notesController={this.viewControllerManager.notesController}
+                    noteTagsController={this.viewControllerManager.noteTagsController}
+                    historyModalController={this.viewControllerManager.historyModalController}
+                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                  />
                 </div>
               )}
             </div>
