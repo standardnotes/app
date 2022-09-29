@@ -144,7 +144,11 @@ export async function registerOldUser({ application, email, password, version })
   const operator = application.protocolService.operatorManager.operatorForVersion(version)
   const accountKey = await operator.createRootKey(email, password, KeyParamsOrigination.Registration)
 
-  const response = await application.userApiService.register(email, accountKey.serverPassword, accountKey.keyParams)
+  const response = await application.userApiService.register({
+    email: email,
+    serverPassword: accountKey.serverPassword,
+    keyParams: accountKey.keyParams,
+  })
   /** Mark all existing items as dirty. */
   await application.itemManager.changeItems(application.itemManager.items, (m) => {
     m.dirty = true
