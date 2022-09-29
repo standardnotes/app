@@ -11,13 +11,15 @@ import {
 } from '@standardnotes/snjs'
 import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/Application/Application'
-import { FunctionComponent, useEffect, useState } from 'react'
+import { FunctionComponent, useEffect, useMemo, useState } from 'react'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Switch from '@/Components/Switch/Switch'
 import { PLAIN_EDITOR_NAME } from '@/Constants/Constants'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import Button from '@/Components/Button/Button'
+import CustomNoteTitleFormat from './Defaults/CustomNoteTitleFormat'
+import { PrefDefaults } from '@/Constants/PrefDefaults'
 
 type Props = {
   application: WebApplication
@@ -60,10 +62,12 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
     () => getDefaultEditor(application)?.package_info?.identifier || 'plain-editor',
   )
 
-  const [spellcheck, setSpellcheck] = useState(() => application.getPreference(PrefKey.EditorSpellcheck, true))
+  const [spellcheck, setSpellcheck] = useState(() =>
+    application.getPreference(PrefKey.EditorSpellcheck, PrefDefaults[PrefKey.EditorSpellcheck]),
+  )
 
   const [newNoteTitleFormat, setNewNoteTitleFormat] = useState(() =>
-    application.getPreference(PrefKey.NewNoteTitleFormat, NewNoteTitleFormat.CurrentDateAndTime),
+    application.getPreference(PrefKey.NewNoteTitleFormat, PrefDefaults[PrefKey.NewNoteTitleFormat]),
   )
   const handleNewNoteTitleFormatChange = (value: string) => {
     setNewNoteTitleFormat(value as NewNoteTitleFormat)
@@ -71,7 +75,7 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
   }
 
   const [addNoteToParentFolders, setAddNoteToParentFolders] = useState(() =>
-    application.getPreference(PrefKey.NoteAddToParentFolders, true),
+    application.getPreference(PrefKey.NoteAddToParentFolders, PrefDefaults[PrefKey.NoteAddToParentFolders]),
   )
 
   const toggleSpellcheck = () => {
@@ -128,6 +132,28 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
     }, 1000)
   }
 
+  const noteTitleFormatOptions = useMemo(
+    () => [
+      {
+        label: 'Current date and time',
+        value: NewNoteTitleFormat.CurrentDateAndTime,
+      },
+      {
+        label: 'Current note count',
+        value: NewNoteTitleFormat.CurrentNoteCount,
+      },
+      {
+        label: 'Custom format',
+        value: NewNoteTitleFormat.CustomFormat,
+      },
+      {
+        label: 'Empty',
+        value: NewNoteTitleFormat.Empty,
+      },
+    ],
+    [],
+  )
+
   return (
     <PreferencesGroup>
       <PreferencesSegment>
@@ -166,25 +192,13 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
             <Dropdown
               id="def-new-note-title-format"
               label="Select the default note type"
-              items={[
-                {
-                  label: 'Current date and time',
-                  value: NewNoteTitleFormat.CurrentDateAndTime,
-                },
-                {
-                  label: 'Current note count',
-                  value: NewNoteTitleFormat.CurrentNoteCount,
-                },
-                {
-                  label: 'Empty',
-                  value: NewNoteTitleFormat.Empty,
-                },
-              ]}
+              items={noteTitleFormatOptions}
               value={newNoteTitleFormat}
               onChange={handleNewNoteTitleFormatChange}
             />
           </div>
         </div>
+        {newNoteTitleFormat === NewNoteTitleFormat.CustomFormat && <CustomNoteTitleFormat application={application} />}
         <HorizontalSeparator classes="my-4" />
         <div className="flex items-center justify-between">
           <div className="flex flex-col">

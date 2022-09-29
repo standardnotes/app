@@ -7,6 +7,7 @@ import MenuItem from '@/Components/Menu/MenuItem'
 import MenuItemSeparator from '@/Components/Menu/MenuItemSeparator'
 import { MenuItemType } from '@/Components/Menu/MenuItemType'
 import { DisplayOptionsMenuProps } from './DisplayOptionsMenuProps'
+import { PrefDefaults } from '@/Constants/PrefDefaults'
 
 const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   closeDisplayOptionsMenu,
@@ -14,17 +15,35 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   isOpen,
   isFilesSmartView,
 }) => {
-  const [sortBy, setSortBy] = useState(() => application.getPreference(PrefKey.SortNotesBy, CollectionSort.CreatedAt))
-  const [sortReverse, setSortReverse] = useState(() => application.getPreference(PrefKey.SortNotesReverse, false))
-  const [hidePreview, setHidePreview] = useState(() => application.getPreference(PrefKey.NotesHideNotePreview, false))
-  const [hideDate, setHideDate] = useState(() => application.getPreference(PrefKey.NotesHideDate, false))
-  const [hideTags, setHideTags] = useState(() => application.getPreference(PrefKey.NotesHideTags, true))
-  const [hidePinned, setHidePinned] = useState(() => application.getPreference(PrefKey.NotesHidePinned, false))
-  const [showArchived, setShowArchived] = useState(() => application.getPreference(PrefKey.NotesShowArchived, false))
-  const [showTrashed, setShowTrashed] = useState(() => application.getPreference(PrefKey.NotesShowTrashed, false))
-  const [hideProtected, setHideProtected] = useState(() => application.getPreference(PrefKey.NotesHideProtected, false))
+  const [sortBy, setSortBy] = useState(() =>
+    application.getPreference(PrefKey.SortNotesBy, PrefDefaults[PrefKey.SortNotesBy]),
+  )
+  const [sortReverse, setSortReverse] = useState(() =>
+    application.getPreference(PrefKey.SortNotesReverse, PrefDefaults[PrefKey.SortNotesReverse]),
+  )
+  const [hidePreview, setHidePreview] = useState(() =>
+    application.getPreference(PrefKey.NotesHideNotePreview, PrefDefaults[PrefKey.NotesHideNotePreview]),
+  )
+  const [hideDate, setHideDate] = useState(() =>
+    application.getPreference(PrefKey.NotesHideDate, PrefDefaults[PrefKey.NotesHideDate]),
+  )
+  const [hideTags, setHideTags] = useState(() =>
+    application.getPreference(PrefKey.NotesHideTags, PrefDefaults[PrefKey.NotesHideTags]),
+  )
+  const [hidePinned, setHidePinned] = useState(() =>
+    application.getPreference(PrefKey.NotesHidePinned, PrefDefaults[PrefKey.NotesHidePinned]),
+  )
+  const [showArchived, setShowArchived] = useState(() =>
+    application.getPreference(PrefKey.NotesShowArchived, PrefDefaults[PrefKey.NotesShowArchived]),
+  )
+  const [showTrashed, setShowTrashed] = useState(() =>
+    application.getPreference(PrefKey.NotesShowTrashed, PrefDefaults[PrefKey.NotesShowTrashed]),
+  )
+  const [hideProtected, setHideProtected] = useState(() =>
+    application.getPreference(PrefKey.NotesHideProtected, PrefDefaults[PrefKey.NotesHideProtected]),
+  )
   const [hideEditorIcon, setHideEditorIcon] = useState(() =>
-    application.getPreference(PrefKey.NotesHideEditorIcon, false),
+    application.getPreference(PrefKey.NotesHideEditorIcon, PrefDefaults[PrefKey.NotesHideEditorIcon]),
   )
 
   const toggleSortReverse = useCallback(() => {

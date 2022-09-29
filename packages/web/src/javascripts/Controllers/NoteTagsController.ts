@@ -1,4 +1,5 @@
 import { ElementIds } from '@/Constants/ElementIDs'
+import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { destroyAllObjectProperties } from '@/Utils'
 import {
   ApplicationEvent,
@@ -60,7 +61,10 @@ export class NoteTagsController extends AbstractViewController {
       setTagsContainerMaxWidth: action,
     })
 
-    this.addNoteToParentFolders = application.getPreference(PrefKey.NoteAddToParentFolders, true)
+    this.addNoteToParentFolders = application.getPreference(
+      PrefKey.NoteAddToParentFolders,
+      PrefDefaults[PrefKey.NoteAddToParentFolders],
+    )
   }
 
   public setServicesPostConstruction(itemListController: ItemListController) {
@@ -71,7 +75,10 @@ export class NoteTagsController extends AbstractViewController {
         this.reloadTagsForCurrentNote()
       }),
       this.application.addSingleEventObserver(ApplicationEvent.PreferencesChanged, async () => {
-        this.addNoteToParentFolders = this.application.getPreference(PrefKey.NoteAddToParentFolders, true)
+        this.addNoteToParentFolders = this.application.getPreference(
+          PrefKey.NoteAddToParentFolders,
+          PrefDefaults[PrefKey.NoteAddToParentFolders],
+        )
       }),
     )
   }

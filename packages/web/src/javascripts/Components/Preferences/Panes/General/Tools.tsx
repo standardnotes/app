@@ -7,6 +7,7 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useState } from 'react'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
+import { PrefDefaults } from '@/Constants/PrefDefaults'
 
 type Props = {
   application: WebApplication
@@ -14,10 +15,10 @@ type Props = {
 
 const Tools: FunctionComponent<Props> = ({ application }: Props) => {
   const [monospaceFont, setMonospaceFont] = useState(() =>
-    application.getPreference(PrefKey.EditorMonospaceEnabled, true),
+    application.getPreference(PrefKey.EditorMonospaceEnabled, PrefDefaults[PrefKey.EditorMonospaceEnabled]),
   )
   const [marginResizers, setMarginResizers] = useState(() =>
-    application.getPreference(PrefKey.EditorResizersEnabled, true),
+    application.getPreference(PrefKey.EditorResizersEnabled, PrefDefaults[PrefKey.EditorResizersEnabled]),
   )
 
   const toggleMonospaceFont = () => {

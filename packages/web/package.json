@@ -85,6 +85,7 @@
     "@standardnotes/toast": "workspace:*",
     "@standardnotes/ui-services": "workspace:^",
     "@zip.js/zip.js": "^2.6.26",
+    "dayjs": "^1.11.5",
     "mobx": "^6.6.2",
     "mobx-react-lite": "^3.4.0",
     "qrcode.react": "^3.1.0",
