@@ -16,8 +16,8 @@ import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import { getNoteBlob, getNoteFileName } from '@/Utils/NoteExportUtils'
-import { shareSelectedItems } from '@/NativeMobileWeb/ShareSelectedItems'
-import { downloadSelectedItemsOnAndroid } from '@/NativeMobileWeb/DownloadSelectedItemsOnAndroid'
+import { shareSelectedNotes } from '@/NativeMobileWeb/ShareSelectedNotes'
+import { downloadSelectedNotesOnAndroid } from '@/NativeMobileWeb/DownloadSelectedNotesOnAndroid'
 
 type DeletePermanentlyButtonProps = {
   onClick: () => void
@@ -355,7 +355,7 @@ const NotesOptions = ({
       <button
         className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
         onClick={() => {
-          application.isNativeMobileWeb() ? shareSelectedItems(application, notes) : downloadSelectedItems()
+          application.isNativeMobileWeb() ? shareSelectedNotes(application, notes) : downloadSelectedItems()
         }}
       >
         <Icon type={application.platform === Platform.Android ? 'share' : 'download'} className={iconClass} />
@@ -364,7 +364,7 @@ const NotesOptions = ({
       {application.platform === Platform.Android && (
         <button
           className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
-          onClick={() => downloadSelectedItemsOnAndroid(application, notes)}
+          onClick={() => downloadSelectedNotesOnAndroid(application, notes)}
         >
           <Icon type="download" className={iconClass} />
           Export

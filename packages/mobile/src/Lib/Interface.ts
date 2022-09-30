@@ -28,7 +28,6 @@ import { hide, show } from 'react-native-privacy-snapshot'
 import Share from 'react-native-share'
 import { AppStateObserverService } from './../AppStateObserverService'
 import Keychain from './Keychain'
-import { SNReactNativeCrypto } from './ReactNativeCrypto'
 import { IsMobileWeb } from './Utils'
 
 export type BiometricsType = 'Fingerprint' | 'Face ID' | 'Biometrics' | 'Touch ID'
@@ -79,14 +78,11 @@ export class MobileDevice implements MobileDeviceInterface {
   platform: SNPlatform.Ios | SNPlatform.Android = Platform.OS === 'ios' ? SNPlatform.Ios : SNPlatform.Android
   private eventObservers: MobileDeviceEventHandler[] = []
   public isDarkMode = false
-  private crypto: SNReactNativeCrypto
 
   constructor(
     private stateObserverService?: AppStateObserverService,
     private androidBackHandlerService?: AndroidBackHandlerService,
-  ) {
-    this.crypto = new SNReactNativeCrypto()
-  }
+  ) {}
 
   deinit() {
     this.stateObserverService?.deinit()
@@ -541,8 +537,7 @@ export class MobileDevice implements MobileDeviceInterface {
     try {
       const path = this.getFileDestinationPath(filename, saveInTempLocation)
       void this.deleteFileAtPathIfExists(path)
-      const decodedContents = this.crypto.base64Decode(base64.replace(/data.*base64,/, ''))
-      await writeFile(path, decodedContents)
+      await writeFile(path, base64.replace(/data.*base64,/, ''), 'base64')
       return path
     } catch (error) {
       this.consoleLog(`${error}`)

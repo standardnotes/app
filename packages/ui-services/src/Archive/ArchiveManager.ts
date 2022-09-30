@@ -71,7 +71,7 @@ export class ArchiveManager {
     return string
   }
 
-  private async downloadZippedDecryptedItems(data: BackupFile) {
+  async getZippedDecryptedItemsBlob(data: BackupFile) {
     const zip = await import('@zip.js/zip.js')
     const zipWriter = new zip.ZipWriter(new zip.BlobWriter('application/zip'))
     const items = data.items
@@ -83,8 +83,7 @@ export class ArchiveManager {
     const fileName = zippableFileName('Standard Notes Backup and Import File')
     await zipWriter.add(fileName, new zip.BlobReader(blob))
 
-    let index = 0
-    const nextFile = async () => {
+    for (let index = 0; index < items.length; index++) {
       const item = items[index]
       let name, contents
 
@@ -105,17 +104,14 @@ export class ArchiveManager {
       const fileName =
         `Items/${sanitizeFileName(item.content_type)}/` + zippableFileName(name, `-${item.uuid.split('-')[0]}`)
       await zipWriter.add(fileName, new zip.BlobReader(blob))
-
-      index++
-      if (index < items.length) {
-        await nextFile()
-      } else {
-        const finalBlob = await zipWriter.close()
-        this.downloadData(finalBlob, `Standard Notes Backup - ${this.formattedDateForExports()}.zip`)
-      }
     }
 
-    await nextFile()
+    return await zipWriter.close()
+  }
+
+  private async downloadZippedDecryptedItems(data: BackupFile) {
+    const zippedDecryptedItemsBlob = await this.getZippedDecryptedItemsBlob(data)
+    this.downloadData(zippedDecryptedItemsBlob, `Standard Notes Backup - ${this.formattedDateForExports()}.zip`)
   }
 
   async zipData(data: ZippableData): Promise<Blob> {
