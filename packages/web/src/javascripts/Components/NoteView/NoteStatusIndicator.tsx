@@ -1,6 +1,8 @@
 import { ElementIds } from '@/Constants/ElementIDs'
+import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { classNames } from '@/Utils/ConcatenateClassNames'
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
+import { IconType, PrefKey } from '@standardnotes/snjs'
 import Icon from '../Icon/Icon'
 
 export type NoteStatus = {
@@ -9,58 +11,131 @@ export type NoteStatus = {
   desc?: string
 }
 
+const IndicatorWithTooltip = ({
+  className,
+  onClick,
+  onBlur,
+  icon,
+  isTooltipVisible,
+  children,
+  animateIcon = false,
+}: {
+  className: string
+  onClick: () => void
+  onBlur: () => void
+  icon: IconType
+  isTooltipVisible: boolean
+  children: ReactNode
+  animateIcon?: boolean
+}) => (
+  <div className="relative">
+    <button
+      className={classNames('peer flex h-5 w-5 items-center justify-center rounded-full', className)}
+      onClick={onClick}
+      onBlur={onBlur}
+      aria-describedby={ElementIds.NoteStatusTooltip}
+    >
+      <Icon className={animateIcon ? 'animate-spin' : ''} type={icon} size="small" />
+      <span className="sr-only">Note sync status</span>
+    </button>
+    <div
+      id={ElementIds.NoteStatusTooltip}
+      className={classNames(
+        isTooltipVisible ? '' : 'hidden',
+        'absolute top-full right-0 min-w-[90vw] translate-x-2 translate-y-1 select-none rounded border border-border bg-default py-1.5 px-3 text-left peer-hover:block peer-focus:block md:min-w-max',
+      )}
+    >
+      {children}
+    </div>
+  </div>
+)
+
 type Props = {
   status: NoteStatus | undefined
   syncTakingTooLong: boolean
+  updateSavingIndicator?: boolean
 }
 
-const NoteStatusIndicator = ({ status, syncTakingTooLong }: Props) => {
-  const [shouldShowTooltip, setShouldShowTooltip] = useState(false)
+const NoteStatusIndicator = ({
+  status,
+  syncTakingTooLong,
+  updateSavingIndicator = PrefDefaults[PrefKey.UpdateSavingStatusIndicator],
+}: Props) => {
+  const [isTooltipVisible, setIsTooltipVisible] = useState(false)
 
-  if (!status) {
+  const onClick = () => setIsTooltipVisible((show) => !show)
+  const onBlur = () => setIsTooltipVisible(false)
+
+  if (updateSavingIndicator && !status) {
     return null
   }
 
-  return (
-    <div className="relative">
-      <button
+  if (status && status.type === 'error') {
+    return (
+      <IndicatorWithTooltip
+        className="bg-danger text-danger-contrast"
+        onClick={onClick}
+        onBlur={onBlur}
+        icon="warning"
+        isTooltipVisible={isTooltipVisible}
+      >
+        <div className="text-sm font-bold text-danger">{status.message}</div>
+        {status.desc && <div className="mt-0.5">{status.desc}</div>}
+      </IndicatorWithTooltip>
+    )
+  }
+
+  if (syncTakingTooLong) {
+    return (
+      <IndicatorWithTooltip
+        className="bg-warning text-warning-contrast"
+        onClick={onClick}
+        onBlur={onBlur}
+        icon={status && status.type === 'saving' ? 'sync' : 'warning'}
+        isTooltipVisible={isTooltipVisible}
+      >
+        {status ? (
+          <>
+            <div className="text-sm font-bold text-warning">{status.message}</div>
+            {status.desc && <div className="mt-0.5">{status.desc}</div>}
+          </>
+        ) : (
+          <div className="text-sm font-bold text-warning">Sync taking too long</div>
+        )}
+      </IndicatorWithTooltip>
+    )
+  }
+
+  if (updateSavingIndicator && status) {
+    return (
+      <IndicatorWithTooltip
         className={classNames(
-          'peer flex h-5 w-5 items-center justify-center rounded-full',
           status.type === 'saving' && 'bg-contrast',
           status.type === 'saved' && 'bg-success text-success-contrast',
-          status.type === 'error' && 'bg-danger text-danger-contrast',
-          syncTakingTooLong && 'bg-warning text-warning-contrast',
         )}
-        onClick={() => setShouldShowTooltip((show) => !show)}
-        onBlur={() => setShouldShowTooltip(false)}
-        aria-describedby={ElementIds.NoteStatusTooltip}
+        onClick={onClick}
+        onBlur={onBlur}
+        icon={status.type === 'saving' ? 'sync' : 'check'}
+        animateIcon={status.type === 'saving'}
+        isTooltipVisible={isTooltipVisible}
       >
-        <Icon
-          className={status.type === 'saving' ? 'animate-spin' : ''}
-          type={status.type === 'saved' ? 'check' : status.type === 'error' ? 'warning' : 'sync'}
-          size="small"
-        />
-        <span className="sr-only">Note sync status</span>
-      </button>
-      <div
-        id={ElementIds.NoteStatusTooltip}
-        className={classNames(
-          shouldShowTooltip ? '' : 'hidden',
-          'absolute top-full right-0 min-w-max translate-x-2 translate-y-1 select-none rounded border border-border bg-default py-1.5 px-3 text-left peer-hover:block peer-focus:block',
-        )}
-      >
-        <div
-          className={classNames(
-            'text-sm font-bold',
-            status.type === 'error' && 'text-danger',
-            syncTakingTooLong && 'text-warning',
-          )}
-        >
-          {status.message}
-        </div>
+        <div className="text-sm font-bold">{status.message}</div>
         {status.desc && <div className="mt-0.5">{status.desc}</div>}
-      </div>
-    </div>
+      </IndicatorWithTooltip>
+    )
+  }
+
+  return (
+    <IndicatorWithTooltip
+      className="bg-contrast text-passive-1"
+      onClick={onClick}
+      onBlur={onBlur}
+      icon="info"
+      isTooltipVisible={isTooltipVisible}
+    >
+      <div className="text-sm font-bold">Note status updates are disabled</div>
+      <div className="mt-0.5">They can be re-enabled in the Preferences under General &gt; Tools</div>
+    </IndicatorWithTooltip>
   )
 }
 

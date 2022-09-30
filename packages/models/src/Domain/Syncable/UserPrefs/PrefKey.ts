@@ -36,6 +36,7 @@ export enum PrefKey {
   MobileNotesHideEditorIcon = 'mobileHideEditorIcon',
   NewNoteTitleFormat = 'newNoteTitleFormat',
   CustomNoteTitleFormat = 'customNoteTitleFormat',
+  UpdateSavingStatusIndicator = 'updateSavingStatusIndicator',
 }
 
 export enum NewNoteTitleFormat {
@@ -97,4 +98,5 @@ export type PrefValue = {
   [PrefKey.CustomNoteTitleFormat]: string
   [PrefKey.EditorLineHeight]: EditorLineHeight
   [PrefKey.EditorFontSize]: EditorFontSize
+  [PrefKey.UpdateSavingStatusIndicator]: boolean
 }
