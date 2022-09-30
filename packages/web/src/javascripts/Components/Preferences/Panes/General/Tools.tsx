@@ -7,6 +7,7 @@ import { FunctionComponent, useState } from 'react'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
+import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 
 type Props = {
   application: WebApplication
@@ -22,6 +23,15 @@ const Tools: FunctionComponent<Props> = ({ application }: Props) => {
     application.setPreference(PrefKey.EditorResizersEnabled, !marginResizers).catch(console.error)
   }
 
+  const [updateSavingIndicator, setUpdateSavingIndicator] = useState(() =>
+    application.getPreference(PrefKey.UpdateSavingStatusIndicator, PrefDefaults[PrefKey.UpdateSavingStatusIndicator]),
+  )
+
+  const toggleSavingIndicatorUpdates = () => {
+    setUpdateSavingIndicator(!updateSavingIndicator)
+    application.setPreference(PrefKey.UpdateSavingStatusIndicator, !updateSavingIndicator).catch(console.error)
+  }
+
   return (
     <PreferencesGroup>
       <PreferencesSegment>
@@ -33,6 +43,17 @@ const Tools: FunctionComponent<Props> = ({ application }: Props) => {
               <Text>Allows left and right editor margins to be resized.</Text>
             </div>
             <Switch onChange={toggleMarginResizers} checked={marginResizers} />
+          </div>
+          <HorizontalSeparator classes="my-4" />
+          <div className="flex items-center justify-between">
+            <div className="flex flex-col">
+              <Subtitle>Show note saving status while editing</Subtitle>
+              <Text>
+                Control whether the animated saving status is shown while editing. Error statuses are always shown
+                regardless of preference.
+              </Text>
+            </div>
+            <Switch onChange={toggleSavingIndicatorUpdates} checked={updateSavingIndicator} />
           </div>
         </div>
       </PreferencesSegment>
