@@ -77,7 +77,7 @@ const NoteStatusIndicator = ({
         icon="warning"
         isTooltipVisible={isTooltipVisible}
       >
-        <div className="error text-sm font-bold">{status.message}</div>
+        <div className="text-sm font-bold text-danger">{status.message}</div>
         {status.desc && <div className="mt-0.5">{status.desc}</div>}
       </IndicatorWithTooltip>
     )
@@ -94,11 +94,11 @@ const NoteStatusIndicator = ({
       >
         {status ? (
           <>
-            <div className="error text-sm font-bold">{status.message}</div>
+            <div className="text-sm font-bold text-danger">{status.message}</div>
             {status.desc && <div className="mt-0.5">{status.desc}</div>}
           </>
         ) : (
-          <div className="error text-sm font-bold">Sync taking too long</div>
+          <div className="text-sm font-bold text-danger">Sync taking too long</div>
         )}
       </IndicatorWithTooltip>
     )
@@ -116,7 +116,7 @@ const NoteStatusIndicator = ({
         icon={status.type === 'saving' ? 'sync' : 'check'}
         isTooltipVisible={isTooltipVisible}
       >
-        <div className="error text-sm font-bold">{status.message}</div>
+        <div className="text-sm font-bold">{status.message}</div>
         {status.desc && <div className="mt-0.5">{status.desc}</div>}
       </IndicatorWithTooltip>
     )
@@ -130,7 +130,7 @@ const NoteStatusIndicator = ({
       icon="eye-off"
       isTooltipVisible={isTooltipVisible}
     >
-      <div className="error text-sm font-bold">Note status updates are disabled</div>
+      <div className="text-sm font-bold">Note status updates are disabled</div>
       <div className="mt-0.5">They can be turned in the Preferences under General &gt; Tools</div>
     </IndicatorWithTooltip>
   )
