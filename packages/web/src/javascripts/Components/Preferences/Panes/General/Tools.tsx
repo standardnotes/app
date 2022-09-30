@@ -47,7 +47,7 @@ const Tools: FunctionComponent<Props> = ({ application }: Props) => {
           <HorizontalSeparator classes="my-4" />
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
-              <Subtitle>Show updates to note saving status in indicator</Subtitle>
+              <Subtitle>Show note saving status while editing</Subtitle>
               <Text>Toggles updates to the note status indicator. Errors are shown regardless.</Text>
             </div>
             <Switch onChange={toggleSavingIndicatorUpdates} checked={updateSavingIndicator} />

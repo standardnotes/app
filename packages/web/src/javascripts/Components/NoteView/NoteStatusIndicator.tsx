@@ -131,7 +131,7 @@ const NoteStatusIndicator = ({
       isTooltipVisible={isTooltipVisible}
     >
       <div className="text-sm font-bold">Note status updates are disabled</div>
-      <div className="mt-0.5">They can be turned in the Preferences under General &gt; Tools</div>
+      <div className="mt-0.5">They can be re-enabled in the Preferences under General &gt; Tools</div>
     </IndicatorWithTooltip>
   )
 }
