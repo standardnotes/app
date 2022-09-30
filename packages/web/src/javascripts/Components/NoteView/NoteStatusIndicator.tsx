@@ -43,16 +43,6 @@ const IndicatorWithTooltip = ({
         'absolute top-full right-0 min-w-max translate-x-2 translate-y-1 select-none rounded border border-border bg-default py-1.5 px-3 text-left peer-hover:block peer-focus:block',
       )}
     >
-      {/* <div
-        className={classNames(
-          'text-sm font-bold',
-          status.type === 'error' && 'text-danger',
-          syncTakingTooLong && 'text-warning',
-        )}
-      >
-        {status.message}
-      </div>
-      {status.desc && <div className="mt-0.5">{status.desc}</div>} */}
       {children}
     </div>
   </div>
