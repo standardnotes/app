@@ -94,11 +94,11 @@ const NoteStatusIndicator = ({
       >
         {status ? (
           <>
-            <div className="text-sm font-bold text-danger">{status.message}</div>
+            <div className="text-sm font-bold text-warning">{status.message}</div>
             {status.desc && <div className="mt-0.5">{status.desc}</div>}
           </>
         ) : (
-          <div className="text-sm font-bold text-danger">Sync taking too long</div>
+          <div className="text-sm font-bold text-warning">Sync taking too long</div>
         )}
       </IndicatorWithTooltip>
     )
