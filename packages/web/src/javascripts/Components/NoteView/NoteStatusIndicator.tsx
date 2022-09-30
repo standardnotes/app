@@ -127,7 +127,7 @@ const NoteStatusIndicator = ({
 
   return (
     <IndicatorWithTooltip
-      className="bg-contrast"
+      className="bg-contrast text-passive-1"
       onClick={onClick}
       onBlur={onBlur}
       icon="sync"
