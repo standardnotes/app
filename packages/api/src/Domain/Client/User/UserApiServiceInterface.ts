@@ -7,5 +7,7 @@ export interface UserApiServiceInterface {
     serverPassword: string
     keyParams: RootKeyParamsInterface
     ephemeral: boolean
+    pkcPublicKey: string
+    pkcEncryptedPrivateKey: string
   }): Promise<UserRegistrationResponse>
 }

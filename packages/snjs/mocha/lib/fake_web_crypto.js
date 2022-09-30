@@ -69,7 +69,8 @@ export default class FakeWebCrypto {
   }
 
   generateRandomKey(bits) {
-    const length = bits / 8
+    const bitsPerHexChar = 4
+    const length = bits / bitsPerHexChar
     return this.randomString(length)
   }
 
@@ -107,7 +108,13 @@ export default class FakeWebCrypto {
   }
 
   argon2(password, salt, iterations, bytes, length) {
-    return btoa(password)
+    const bitsPerHexChar = 4
+    const bitsInByte = 8
+    const encoded = btoa(password)
+    const desiredLength = length * (bitsInByte / bitsPerHexChar)
+    const missingLength = desiredLength - encoded.length
+    const result = `${encoded}${'a'.repeat(missingLength)}`
+    return result
   }
 
   xchacha20Encrypt(plaintext, nonce, key, assocData) {
@@ -126,6 +133,33 @@ export default class FakeWebCrypto {
       return undefined
     }
     return data.plaintext
+  }
+
+  sodiumCryptoBoxEasyEncrypt(message, nonce, senderSecretKey, recipientPublicKey) {
+    const data = {
+      message,
+      nonce,
+      senderSecretKey,
+      recipientPublicKey,
+    }
+    return btoa(JSON.stringify(data))
+  }
+
+  sodiumCryptoBoxEasyDecrypt(ciphertext, nonce, senderPublicKey, recipientSecretKey) {
+    const data = JSON.parse(atob(ciphertext))
+    if (
+      data.senderPublicKey !== senderPublicKey ||
+      data.recipientSecretKey !== recipientSecretKey ||
+      data.nonce !== nonce ||
+      data.assocData !== assocData
+    ) {
+      return undefined
+    }
+    return data.message
+  }
+
+  sodiumCryptoBoxGenerateKeypair() {
+    return { publicKey: this.randomString(64), privateKey: this.randomString(64), keyType: 'x25519' }
   }
 
   generateOtpSecret() {

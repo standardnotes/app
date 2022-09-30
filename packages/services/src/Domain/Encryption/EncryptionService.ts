@@ -4,7 +4,7 @@ import {
   DecryptedParameters,
   EncryptedParameters,
   encryptedParametersFromPayload,
-  EncryptionProvider,
+  EncryptionProviderInterface,
   ErrorDecryptingParameters,
   findDefaultItemsKey,
   FindPayloadInDecryptionSplit,
@@ -23,6 +23,7 @@ import {
   SplitPayloadsByEncryptionType,
   V001Algorithm,
   V002Algorithm,
+  PkcOperatorV1,
 } from '@standardnotes/encryption'
 import {
   BackupFile,
@@ -39,7 +40,7 @@ import {
   RootKeyInterface,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
-import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
+import { HexString, PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import {
   extendArray,
   isNotUndefined,
@@ -100,7 +101,7 @@ import { EncryptionServiceEvent } from './EncryptionServiceEvent'
  * It also exposes public methods that allows consumers to retrieve an items key
  * for a particular payload, and also retrieve all available items keys.
 */
-export class EncryptionService extends AbstractService<EncryptionServiceEvent> implements EncryptionProvider {
+export class EncryptionService extends AbstractService<EncryptionServiceEvent> implements EncryptionProviderInterface {
   private operatorManager: OperatorManager
   private readonly itemsEncryption: ItemsEncryptionService
   private readonly rootKeyEncryption: RootKeyEncryptionService
@@ -714,7 +715,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       await this.rootKeyEncryption.createNewDefaultItemsKey()
     }
 
-    this.syncUnsycnedItemsKeys()
+    this.syncUnsyncedItemsKeys()
   }
 
   private async handleFullSyncCompletion() {
@@ -734,7 +735,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
    * items key never syncing to the account even though it is being used to encrypt synced items.
    * Until we can determine its cause, this corrective function will find any such keys and sync them.
    */
-  private syncUnsycnedItemsKeys(): void {
+  private syncUnsyncedItemsKeys(): void {
     if (!this.hasAccount()) {
       return
     }
@@ -743,6 +744,18 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     if (unsyncedKeys.length > 0) {
       void this.itemManager.setItemsDirty(unsyncedKeys)
     }
+  }
+
+  public generateRandomAsymmetricKeyPair(): PkcKeyPair {
+    return new PkcOperatorV1(this.crypto).generateKeyPair()
+  }
+
+  encryptPrivateKey(privateKey: HexString, symmetricKey: HexString): string {
+    return new PkcOperatorV1(this.crypto).encryptPrivateKey(privateKey, symmetricKey)
+  }
+
+  decryptPrivateKey(encryptedPrivateKey: string, symmetricKey: HexString): HexString | null {
+    return new PkcOperatorV1(this.crypto).decryptPrivateKey(encryptedPrivateKey, symmetricKey)
   }
 
   override async getDiagnostics(): Promise<DiagnosticInfo | undefined> {
