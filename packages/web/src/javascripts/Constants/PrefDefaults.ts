@@ -26,4 +26,5 @@ export const PrefDefaults = {
   [PrefKey.NoteAddToParentFolders]: true,
   [PrefKey.NewNoteTitleFormat]: NewNoteTitleFormat.CurrentDateAndTime,
   [PrefKey.CustomNoteTitleFormat]: 'YYYY-MM-DD [at] hh:mm A',
+  [PrefKey.UpdateSavingStatusIndicator]: true,
 } as const

@@ -87,6 +87,7 @@ type State = {
   monospaceFont?: boolean
   lineHeight?: EditorLineHeight
   fontSize?: EditorFontSize
+  updateSavingIndicator?: boolean
 }
 
 const PlaintextFontSizeMapping: Record<EditorFontSize, string> = {
@@ -718,6 +719,11 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
     const fontSize = this.application.getPreference(PrefKey.EditorFontSize, PrefDefaults[PrefKey.EditorFontSize])
 
+    const updateSavingIndicator = this.application.getPreference(
+      PrefKey.UpdateSavingStatusIndicator,
+      PrefDefaults[PrefKey.UpdateSavingStatusIndicator],
+    )
+
     await this.reloadSpellcheck()
 
     this.setState({
@@ -725,6 +731,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
       marginResizersEnabled,
       lineHeight,
       fontSize,
+      updateSavingIndicator,
     })
 
     reloadFont(monospaceFont)
@@ -984,7 +991,11 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                     autoComplete="off"
                   />
                 </div>
-                <NoteStatusIndicator status={this.state.noteStatus} syncTakingTooLong={this.state.syncTakingTooLong} />
+                <NoteStatusIndicator
+                  status={this.state.noteStatus}
+                  syncTakingTooLong={this.state.syncTakingTooLong}
+                  updateSavingIndicator={this.state.updateSavingIndicator}
+                />
               </div>
               {!this.state.shouldStickyHeader && (
                 <div className="flex items-center gap-3">
