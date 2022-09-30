@@ -76,11 +76,14 @@ const DataBackups = ({ application, viewControllerManager }: Props) => {
     if (isBackupEncrypted) {
       const filename = `Standard Notes Encrypted Backup and Import File - ${application
         .getArchiveService()
-        .formattedDateForExports()}.txt`
-      const sanitizedFilename = sanitizeFileName(filename)
+        .formattedDateForExports()}`
+      const sanitizedFilename = sanitizeFileName(filename) + '.txt'
       downloadOrShareBlobBasedOnPlatform(application, blobData, sanitizedFilename)
     } else {
-      // downloadZippedDecryptedItems(data).catch(console.error)
+      const zippedDecryptedItemsBlob = await application.getArchiveService().getZippedDecryptedItemsBlob(data)
+      const filename = `Standard Notes Backup - ${application.getArchiveService().formattedDateForExports()}`
+      const sanitizedFilename = sanitizeFileName(filename) + '.zip'
+      downloadOrShareBlobBasedOnPlatform(application, zippedDecryptedItemsBlob, sanitizedFilename)
     }
   }
 
