@@ -3,6 +3,56 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.66.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.65.0...@standardnotes/web@3.66.0) (2022-09-29)
+
+### Features
+
+* add line height & font size settings for plaintext editor ([#1700](https://github.com/standardnotes/app/issues/1700)) ([3c699ea](https://github.com/standardnotes/app/commit/3c699eaa4a92a47774d4762eeddd45e34925e53f))
+
+# [3.65.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.64.0...@standardnotes/web@3.65.0) (2022-09-29)
+
+### Bug Fixes
+
+* disable spellcheck on custom note title format ([f28ed36](https://github.com/standardnotes/app/commit/f28ed3613642e498805fbc5adf3b7e79a9dfdb3d))
+* navigation panel resizer not showing ([#1682](https://github.com/standardnotes/app/issues/1682)) ([88f35b3](https://github.com/standardnotes/app/commit/88f35b39fbd254b80ad9d8b9e4c47b1bc896a576))
+* **web:** change component keys to use id tied to controller lifecycle instead of item id ([#1681](https://github.com/standardnotes/app/issues/1681)) ([492c9ba](https://github.com/standardnotes/app/commit/492c9bacbf7a5a0dc811b6535484dc6bd40193f3))
+
+### Features
+
+* new note status indicator ([#1679](https://github.com/standardnotes/app/issues/1679)) ([e0ec53f](https://github.com/standardnotes/app/commit/e0ec53f85a0103069ad004e1eec04d2ce33273bd))
+
+# [3.64.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.63.3...@standardnotes/web@3.64.0) (2022-09-29)
+
+### Features
+
+* add custom note title format pref ([#1678](https://github.com/standardnotes/app/issues/1678)) ([11dd39c](https://github.com/standardnotes/app/commit/11dd39c126019c4295c03fb59b05ea5aa3adcd27))
+
+## [3.63.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.63.2...@standardnotes/web@3.63.3) (2022-09-29)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.63.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.63.1...@standardnotes/web@3.63.2) (2022-09-29)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.63.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.63.0...@standardnotes/web@3.63.1) (2022-09-29)
+
+### Bug Fixes
+
+* ipad web view ui improvements ([#1664](https://github.com/standardnotes/app/issues/1664)) ([20e4208](https://github.com/standardnotes/app/commit/20e420820d45e2556f60604de41a1bee96c98fe1))
+
+# [3.63.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.62.4...@standardnotes/web@3.63.0) (2022-09-29)
+
+### Features
+
+* add panel settings section in quick settings ([#1669](https://github.com/standardnotes/app/issues/1669)) ([0ed692f](https://github.com/standardnotes/app/commit/0ed692ff9b056d00dde73040482e6b1bdc404d04))
+
+## [3.62.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.62.3...@standardnotes/web@3.62.4) (2022-09-28)
+
+### Bug Fixes
+
+* improve biometrics input on mobile webview ([#1658](https://github.com/standardnotes/app/issues/1658)) ([3f9d3ce](https://github.com/standardnotes/app/commit/3f9d3ceffac206645ff9e5b66e68bf2e7b9cd0e2))
+
 ## [3.62.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.62.2...@standardnotes/web@3.62.3) (2022-09-28)
 
 ### Bug Fixes

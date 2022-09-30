@@ -44,13 +44,19 @@ To run a stable server environment for E2E tests that is up to date with product
 
 ```
 yarn install --immutable
-yarn test:stable-server
+yarn start:local-server
 ```
+Wait for the `All services are up!` message.
 
 Once the server infrastructure is ready, and you've built all packages, you can run the test suite in the browser via:
 
 ```
 yarn start:server:e2e
+```
+
+Once you are finished you can close the running local server on E2E repo by typing:
+```
+yarn stop:local-server
 ```
 
 ### Unit Tests

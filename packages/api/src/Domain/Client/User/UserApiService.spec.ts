@@ -24,7 +24,12 @@ describe('UserApiService', () => {
   })
 
   it('should register a user', async () => {
-    const response = await createService().register('test@test.te', 'testpasswd', keyParams, false)
+    const response = await createService().register({
+      email: 'test@test.te',
+      serverPassword: 'testpasswd',
+      keyParams,
+      ephemeral: false,
+    })
 
     expect(response).toEqual({
       data: {
@@ -52,7 +57,7 @@ describe('UserApiService', () => {
 
     let error = null
     try {
-      await service.register('test@test.te', 'testpasswd', keyParams, false)
+      await service.register({ email: 'test@test.te', serverPassword: 'testpasswd', keyParams, ephemeral: false })
     } catch (caughtError) {
       error = caughtError
     }
@@ -67,7 +72,12 @@ describe('UserApiService', () => {
 
     let error = null
     try {
-      await createService().register('test@test.te', 'testpasswd', keyParams, false)
+      await createService().register({
+        email: 'test@test.te',
+        serverPassword: 'testpasswd',
+        keyParams,
+        ephemeral: false,
+      })
     } catch (caughtError) {
       error = caughtError
     }

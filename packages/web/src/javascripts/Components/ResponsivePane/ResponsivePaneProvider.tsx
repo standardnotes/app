@@ -19,6 +19,8 @@ import { AppPaneId } from './AppPaneMetadata'
 type ResponsivePaneData = {
   selectedPane: AppPaneId
   toggleAppPane: (paneId: AppPaneId) => void
+  isNotesListVisibleOnTablets: boolean
+  toggleNotesListOnTablets: () => void
 }
 
 const ResponsivePaneContext = createContext<ResponsivePaneData | undefined>(undefined)
@@ -60,15 +62,10 @@ const ResponsivePaneProvider = ({ children }: ChildrenProps) => {
 
   const toggleAppPane = useCallback(
     (paneId: AppPaneId) => {
-      if (paneId === currentSelectedPane) {
-        setCurrentSelectedPane(previousSelectedPane ? previousSelectedPane : AppPaneId.Editor)
-        setPreviousSelectedPane(paneId)
-      } else {
-        setPreviousSelectedPane(currentSelectedPane)
-        setCurrentSelectedPane(paneId)
-      }
+      setPreviousSelectedPane(currentSelectedPane)
+      setCurrentSelectedPane(paneId)
     },
-    [currentSelectedPane, previousSelectedPane],
+    [currentSelectedPane],
   )
 
   useEffect(() => {
@@ -102,12 +99,20 @@ const ResponsivePaneProvider = ({ children }: ChildrenProps) => {
     }
   }, [addAndroidBackHandler, currentSelectedPaneRef, toggleAppPane])
 
+  const [isNotesListVisibleOnTablets, setNotesListVisibleOnTablets] = useState(true)
+
+  const toggleNotesListOnTablets = useCallback(() => {
+    setNotesListVisibleOnTablets((visible) => !visible)
+  }, [])
+
   const contextValue = useMemo(
     () => ({
       selectedPane: currentSelectedPane,
       toggleAppPane,
+      isNotesListVisibleOnTablets,
+      toggleNotesListOnTablets,
     }),
-    [currentSelectedPane, toggleAppPane],
+    [currentSelectedPane, isNotesListVisibleOnTablets, toggleAppPane, toggleNotesListOnTablets],
   )
 
   return (

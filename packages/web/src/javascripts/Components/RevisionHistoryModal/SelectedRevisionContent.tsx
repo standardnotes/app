@@ -59,7 +59,7 @@ const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentProps> =
           {selectedRevision?.payload.content.text.length ? (
             <textarea
               readOnly={true}
-              className="text-editor font-editor h-full w-full resize-none border-0 bg-default p-4 pt-0 text-text"
+              className="font-editor h-full w-full resize-none border-0 bg-default p-4 pt-0 text-editor text-text"
               value={selectedRevision?.payload.content.text}
             />
           ) : (

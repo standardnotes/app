@@ -14,6 +14,8 @@ import {
   PayloadEmitSource,
   WebAppEvent,
   Platform,
+  EditorLineHeight,
+  EditorFontSize,
 } from '@standardnotes/snjs'
 import { debounce, isDesktopApplication, isIOS } from '@/Utils'
 import { EditorEventSource } from '../../Types/EditorEventSource'
@@ -41,16 +43,13 @@ import AutoresizingNoteViewTextarea from './AutoresizingTextarea'
 import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
 import NoteTagsPanel from '../NoteTags/NoteTagsPanel'
 import NoteTagsContainer from '../NoteTags/NoteTagsContainer'
+import NoteStatusIndicator, { NoteStatus } from './NoteStatusIndicator'
+import { PrefDefaults } from '@/Constants/PrefDefaults'
 
 const MinimumStatusDuration = 400
 const TextareaDebounce = 100
 const NoteEditingDisabledText = 'Note editing disabled.'
 const StickyHeaderScrollThresholdInPx = 20
-
-type NoteStatus = {
-  message?: string
-  desc?: string
-}
 
 function sortAlphabetically(array: SNComponent[]): SNComponent[] {
   return array.sort((a, b) => (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1))
@@ -66,7 +65,6 @@ type State = {
   isDesktop?: boolean
   lockText: string
   marginResizersEnabled?: boolean
-  monospaceFont?: boolean
   noteLocked: boolean
   noteStatus?: NoteStatus
   saveError?: boolean
@@ -85,6 +83,18 @@ type State = {
   rightResizerOffset: number
 
   shouldStickyHeader: boolean
+
+  monospaceFont?: boolean
+  lineHeight?: EditorLineHeight
+  fontSize?: EditorFontSize
+}
+
+const PlaintextFontSizeMapping: Record<EditorFontSize, string> = {
+  ExtraSmall: 'text-xs',
+  Small: 'text-sm',
+  Normal: 'text-editor',
+  Medium: 'text-lg',
+  Large: 'text-xl',
 }
 
 class NoteView extends PureComponent<NoteViewProps, State> {
@@ -148,6 +158,9 @@ class NoteView extends PureComponent<NoteViewProps, State> {
   }
 
   override deinit() {
+    super.deinit()
+    ;(this.controller as unknown) = undefined
+
     window.removeEventListener('scroll', this.handleWindowScroll)
 
     this.removeComponentStreamObserver?.()
@@ -164,7 +177,6 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
     this.clearNoteProtectionInactivityTimer()
     ;(this.ensureNoteIsInsertedBeforeUIAction as unknown) = undefined
-    ;(this.controller as unknown) = undefined
 
     this.removeTabObserver?.()
     this.removeTabObserver = undefined
@@ -172,7 +184,6 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
     this.statusTimeout = undefined
     ;(this.onPanelResizeFinish as unknown) = undefined
-    super.deinit()
     ;(this.dismissProtectedWarning as unknown) = undefined
     ;(this.editorComponentViewerRequestsReload as unknown) = undefined
     ;(this.onTextAreaChange as unknown) = undefined
@@ -312,6 +323,10 @@ class NoteView extends PureComponent<NoteViewProps, State> {
   }
 
   override async onAppEvent(eventName: ApplicationEvent) {
+    if (this.controller?.dealloced) {
+      return
+    }
+
     switch (eventName) {
       case ApplicationEvent.PreferencesChanged:
         this.reloadPreferences().catch(console.error)
@@ -340,6 +355,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
         break
       case ApplicationEvent.LocalDatabaseWriteError:
         this.showErrorStatus({
+          type: 'error',
           message: 'Offline Saving Issue',
           desc: 'Changes not saved',
         })
@@ -497,7 +513,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
   }
 
   showSavingStatus() {
-    this.setStatus({ message: 'Saving…' }, false)
+    this.setStatus({ type: 'saving', message: 'Saving…' }, false)
   }
 
   showAllChangesSavedStatus() {
@@ -506,6 +522,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
       syncTakingTooLong: false,
     })
     this.setStatus({
+      type: 'saved',
       message: 'All changes saved' + (this.application.noAccount() ? ' offline' : ''),
     })
   }
@@ -513,6 +530,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
   showErrorStatus(error?: NoteStatus) {
     if (!error) {
       error = {
+        type: 'error',
         message: 'Sync Unreachable',
         desc: 'Changes saved offline',
       }
@@ -686,28 +704,40 @@ class NoteView extends PureComponent<NoteViewProps, State> {
   }
 
   async reloadPreferences() {
-    const monospaceFont = this.application.getPreference(PrefKey.EditorMonospaceEnabled, true)
+    const monospaceFont = this.application.getPreference(
+      PrefKey.EditorMonospaceEnabled,
+      PrefDefaults[PrefKey.EditorMonospaceEnabled],
+    )
 
-    const marginResizersEnabled = this.application.getPreference(PrefKey.EditorResizersEnabled, true)
+    const marginResizersEnabled = this.application.getPreference(
+      PrefKey.EditorResizersEnabled,
+      PrefDefaults[PrefKey.EditorResizersEnabled],
+    )
+
+    const lineHeight = this.application.getPreference(PrefKey.EditorLineHeight, PrefDefaults[PrefKey.EditorLineHeight])
+
+    const fontSize = this.application.getPreference(PrefKey.EditorFontSize, PrefDefaults[PrefKey.EditorFontSize])
 
     await this.reloadSpellcheck()
 
     this.setState({
       monospaceFont,
       marginResizersEnabled,
+      lineHeight,
+      fontSize,
     })
 
     reloadFont(monospaceFont)
 
     if (marginResizersEnabled) {
-      const width = this.application.getPreference(PrefKey.EditorWidth, null)
+      const width = this.application.getPreference(PrefKey.EditorWidth, PrefDefaults[PrefKey.EditorWidth])
       if (width != null) {
         this.setState({
           leftResizerWidth: width,
           rightResizerWidth: width,
         })
       }
-      const left = this.application.getPreference(PrefKey.EditorLeft, null)
+      const left = this.application.getPreference(PrefKey.EditorLeft, PrefDefaults[PrefKey.EditorLeft])
       if (left != null) {
         this.setState({
           leftResizerOffset: left,
@@ -936,7 +966,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                 : '',
             )}
           >
-            <div className="mb-2 flex flex-wrap items-start justify-between gap-2 md:mb-0 md:flex-nowrap md:gap-0 xl:items-center">
+            <div className="mb-2 flex flex-wrap items-start justify-between gap-2 md:mb-0 md:flex-nowrap md:gap-4 xl:items-center">
               <div className={classNames(this.state.noteLocked && 'locked', 'flex flex-grow items-center')}>
                 <MobileItemsListButton />
                 <div className="title flex-grow overflow-auto">
@@ -954,60 +984,41 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                     autoComplete="off"
                   />
                 </div>
+                <NoteStatusIndicator status={this.state.noteStatus} syncTakingTooLong={this.state.syncTakingTooLong} />
               </div>
               {!this.state.shouldStickyHeader && (
-                <div className="flex flex-row-reverse items-center gap-3 md:flex-col-reverse md:items-end xl:flex-row xl:flex-nowrap xl:items-center">
-                  {this.state.noteStatus?.message?.length && (
-                    <div id="save-status-container" className={'xl:mr-5 xl:max-w-[16ch]'}>
-                      <div id="save-status">
-                        <div
-                          className={
-                            (this.state.syncTakingTooLong ? 'font-bold text-warning ' : '') +
-                            (this.state.saveError ? 'font-bold text-danger ' : '') +
-                            'message text-xs'
-                          }
-                        >
-                          {this.state.noteStatus?.message}
-                        </div>
-                        {this.state.noteStatus?.desc && (
-                          <div className="desc text-xs">{this.state.noteStatus.desc}</div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                  <div className="flex items-center gap-3">
-                    <NoteTagsPanel
-                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                      noteTagsController={this.viewControllerManager.noteTagsController}
-                    />
-                    <AttachedFilesButton
-                      application={this.application}
-                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                      featuresController={this.viewControllerManager.featuresController}
-                      filePreviewModalController={this.viewControllerManager.filePreviewModalController}
-                      filesController={this.viewControllerManager.filesController}
-                      navigationController={this.viewControllerManager.navigationController}
-                      notesController={this.viewControllerManager.notesController}
-                      selectionController={this.viewControllerManager.selectionController}
-                    />
-                    <ChangeEditorButton
-                      application={this.application}
-                      viewControllerManager={this.viewControllerManager}
-                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                    />
-                    <PinNoteButton
-                      notesController={this.viewControllerManager.notesController}
-                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                    />
-                    <NotesOptionsPanel
-                      application={this.application}
-                      navigationController={this.viewControllerManager.navigationController}
-                      notesController={this.viewControllerManager.notesController}
-                      noteTagsController={this.viewControllerManager.noteTagsController}
-                      historyModalController={this.viewControllerManager.historyModalController}
-                      onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                    />
-                  </div>
+                <div className="flex items-center gap-3">
+                  <NoteTagsPanel
+                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                    noteTagsController={this.viewControllerManager.noteTagsController}
+                  />
+                  <AttachedFilesButton
+                    application={this.application}
+                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                    featuresController={this.viewControllerManager.featuresController}
+                    filePreviewModalController={this.viewControllerManager.filePreviewModalController}
+                    filesController={this.viewControllerManager.filesController}
+                    navigationController={this.viewControllerManager.navigationController}
+                    notesController={this.viewControllerManager.notesController}
+                    selectionController={this.viewControllerManager.selectionController}
+                  />
+                  <ChangeEditorButton
+                    application={this.application}
+                    viewControllerManager={this.viewControllerManager}
+                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                  />
+                  <PinNoteButton
+                    notesController={this.viewControllerManager.notesController}
+                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                  />
+                  <NotesOptionsPanel
+                    application={this.application}
+                    navigationController={this.viewControllerManager.navigationController}
+                    notesController={this.viewControllerManager.notesController}
+                    noteTagsController={this.viewControllerManager.noteTagsController}
+                    historyModalController={this.viewControllerManager.historyModalController}
+                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                  />
                 </div>
               )}
             </div>
@@ -1054,14 +1065,18 @@ class NoteView extends PureComponent<NoteViewProps, State> {
           {this.state.editorStateDidLoad && !this.state.editorComponentViewer && !this.state.textareaUnloading && (
             <AutoresizingNoteViewTextarea
               autoComplete="off"
+              className={classNames(
+                this.state.lineHeight && `leading-${this.state.lineHeight.toLowerCase()}`,
+                this.state.fontSize && PlaintextFontSizeMapping[this.state.fontSize],
+              )}
               dir="auto"
               id={ElementIds.NoteTextEditor}
               onChange={this.onTextAreaChange}
-              value={this.state.editorText}
-              readOnly={this.state.noteLocked}
               onFocus={this.onContentFocus}
-              spellCheck={this.state.spellcheck}
+              readOnly={this.state.noteLocked}
               ref={(ref) => ref && this.onSystemEditorLoad(ref)}
+              spellCheck={this.state.spellcheck}
+              value={this.state.editorText}
             />
           )}
 

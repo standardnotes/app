@@ -3,6 +3,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.134.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.134.2...@standardnotes/snjs@2.134.3) (2022-09-29)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.134.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.134.1...@standardnotes/snjs@2.134.2) (2022-09-29)
+
+### Bug Fixes
+
+* **web:** change component keys to use id tied to controller lifecycle instead of item id ([#1681](https://github.com/standardnotes/app/issues/1681)) ([492c9ba](https://github.com/standardnotes/app/commit/492c9bacbf7a5a0dc811b6535484dc6bd40193f3))
+
+## [2.134.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.134.0...@standardnotes/snjs@2.134.1) (2022-09-29)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+# [2.134.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.133.2...@standardnotes/snjs@2.134.0) (2022-09-29)
+
+### Features
+
+* **snjs:** add e2e test for subsequent subscriptions settings persistance ([5ffffbf](https://github.com/standardnotes/app/commit/5ffffbff202ab037b22a72c64fe34673fe49ecaf))
+
+## [2.133.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.133.1...@standardnotes/snjs@2.133.2) (2022-09-29)
+
+### Bug Fixes
+
+* **snjs:** increase wait time in retrieving settings test for processing replaceable settings ([3322600](https://github.com/standardnotes/app/commit/33226000f58f5b7f97882479e62de3b24a6b217d))
+* **snjs:** instructions on running e2e locally ([c841ac9](https://github.com/standardnotes/app/commit/c841ac99d2e51ecca05f4a349efa1a0acb09a86d))
+
 ## [2.133.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.133.0...@standardnotes/snjs@2.133.1) (2022-09-28)
 
 **Note:** Version bump only for package @standardnotes/snjs

@@ -24,6 +24,7 @@ import { StreamingFileReader } from '@standardnotes/filepicker'
 import SearchBar from '../SearchBar/SearchBar'
 import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 import { classNames } from '@/Utils/ConcatenateClassNames'
+import { MediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -50,7 +51,7 @@ const ContentListView: FunctionComponent<Props> = ({
   selectionController,
   searchOptionsController,
 }) => {
-  const { toggleAppPane } = useResponsiveAppPane()
+  const { isNotesListVisibleOnTablets, toggleAppPane } = useResponsiveAppPane()
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const itemsViewPanelRef = useRef<HTMLDivElement>(null)
@@ -181,12 +182,19 @@ const ContentListView: FunctionComponent<Props> = ({
     [isFilesSmartView],
   )
 
+  const matchesMediumBreakpoint = useMediaQuery(MediaQueryBreakpoints.md)
+  const matchesXLBreakpoint = useMediaQuery(MediaQueryBreakpoints.xl)
+  const isTabletScreenSize = matchesMediumBreakpoint && !matchesXLBreakpoint
+
   return (
     <div
       id="items-column"
       className={classNames(
         'sn-component section app-column flex h-screen flex-col pt-safe-top md:h-full',
-        'xl:w-87.5 xsm-only:!w-full sm-only:!w-full pointer-coarse:md-only:!w-52 pointer-coarse:lg-only:!w-52',
+        'xl:w-87.5 xsm-only:!w-full sm-only:!w-full',
+        isTabletScreenSize && !isNotesListVisibleOnTablets
+          ? 'pointer-coarse:md-only:!w-0 pointer-coarse:lg-only:!w-0'
+          : 'pointer-coarse:md-only:!w-60 pointer-coarse:lg-only:!w-60',
       )}
       aria-label={'Notes & Files'}
       ref={itemsViewPanelRef}

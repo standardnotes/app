@@ -6,6 +6,7 @@ import { ItemViewControllerInterface } from './ItemViewControllerInterface'
 export class FileViewController implements ItemViewControllerInterface {
   public dealloced = false
   private removeStreamObserver?: () => void
+  public runtimeId = `${Math.random()}`
 
   constructor(private application: SNApplication, public item: FileItem) {}
 

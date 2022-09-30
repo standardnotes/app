@@ -1,16 +1,11 @@
-import {
-  ChallengePrompt,
-  ChallengeValidation,
-  MobileDeviceInterface,
-  ProtectionSessionDurations,
-} from '@standardnotes/snjs'
+import { ChallengePrompt, ChallengeValidation, ProtectionSessionDurations } from '@standardnotes/snjs'
 import { FunctionComponent, useEffect, useRef } from 'react'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import DecoratedPasswordInput from '@/Components/Input/DecoratedPasswordInput'
 import { ChallengeModalValues } from './ChallengeModalValues'
-import Button from '../Button/Button'
 import { WebApplication } from '@/Application/Application'
 import { InputValue } from './InputValue'
+import BiometricsPrompt from './BiometricsPrompt'
 
 type Props = {
   application: WebApplication
@@ -87,21 +82,12 @@ const ChallengeModalPrompt: FunctionComponent<Props> = ({
           </div>
         </div>
       ) : prompt.validation === ChallengeValidation.Biometric ? (
-        <div className="min-w-76">
-          <Button
-            primary
-            fullWidth
-            onClick={async () => {
-              const authenticated = await (
-                application.deviceInterface as MobileDeviceInterface
-              ).authenticateWithBiometrics()
-              onValueChange(authenticated, prompt)
-            }}
-            ref={biometricsButtonRef}
-          >
-            Tap to use biometrics
-          </Button>
-        </div>
+        <BiometricsPrompt
+          application={application}
+          onValueChange={onValueChange}
+          prompt={prompt}
+          buttonRef={biometricsButtonRef}
+        />
       ) : prompt.secureTextEntry ? (
         <DecoratedPasswordInput
           ref={inputRef}
