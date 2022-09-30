@@ -288,12 +288,24 @@ export class ThemeManager extends AbstractService {
     link.rel = 'stylesheet'
     link.media = 'screen,print'
     link.id = theme.uuid
-    link.onload = this.syncThemeColorMetadata
-    document.getElementsByTagName('head')[0].appendChild(link)
+    link.onload = () => {
+      this.syncThemeColorMetadata()
 
-    if (this.application.isNativeMobileWeb()) {
-      this.application.mobileDevice.handleThemeSchemeChange(theme.package_info.isDark ?? false)
+      if (this.application.isNativeMobileWeb()) {
+        setTimeout(() => {
+          this.application.mobileDevice.handleThemeSchemeChange(
+            theme.package_info.isDark ?? false,
+            this.getBackgroundColor(),
+          )
+        })
+      }
     }
+    document.getElementsByTagName('head')[0].appendChild(link)
+  }
+
+  private getBackgroundColor() {
+    const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--sn-stylekit-background-color').trim()
+    return bgColor.length ? bgColor : '#ffffff'
   }
 
   /**
@@ -306,8 +318,7 @@ export class ThemeManager extends AbstractService {
       return
     }
 
-    const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--sn-stylekit-background-color')
-    themeColorMetaElement.setAttribute('content', bgColor ? bgColor.trim() : '#ffffff')
+    themeColorMetaElement.setAttribute('content', this.getBackgroundColor())
   }
 
   private deactivateTheme(uuid: string) {
@@ -324,7 +335,7 @@ export class ThemeManager extends AbstractService {
     removeFromArray(this.activeThemes, uuid)
 
     if (this.activeThemes.length === 0 && this.application.isNativeMobileWeb()) {
-      this.application.mobileDevice.handleThemeSchemeChange(false)
+      this.application.mobileDevice.handleThemeSchemeChange(false, '#ffffff')
     }
   }
 
