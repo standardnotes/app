@@ -541,8 +541,7 @@ export class MobileDevice implements MobileDeviceInterface {
     try {
       const path = this.getFileDestinationPath(filename, saveInTempLocation)
       void this.deleteFileAtPathIfExists(path)
-      const decodedContents = this.crypto.base64Decode(base64.replace(/data.*base64,/, ''))
-      await writeFile(path, decodedContents)
+      await writeFile(path, base64.replace(/data.*base64,/, ''), 'base64')
       return path
     } catch (error) {
       this.consoleLog(`${error}`)
