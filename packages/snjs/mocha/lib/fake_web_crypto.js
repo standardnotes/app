@@ -113,7 +113,7 @@ export default class FakeWebCrypto {
     const encoded = btoa(password)
     const desiredLength = length * (bitsInByte / bitsPerHexChar)
     const missingLength = desiredLength - encoded.length
-    const result = `${encoded}${'a'.repeat(missingLength)}`
+    const result = `${encoded}${encoded.repeat(Math.ceil(missingLength / encoded.length))}`.slice(0, desiredLength)
     return result
   }
 
