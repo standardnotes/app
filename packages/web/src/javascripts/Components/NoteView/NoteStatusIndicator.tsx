@@ -42,7 +42,7 @@ const IndicatorWithTooltip = ({
       id={ElementIds.NoteStatusTooltip}
       className={classNames(
         isTooltipVisible ? '' : 'hidden',
-        'absolute top-full right-0 min-w-max translate-x-2 translate-y-1 select-none rounded border border-border bg-default py-1.5 px-3 text-left peer-hover:block peer-focus:block',
+        'absolute top-full right-0 min-w-[90vw] translate-x-2 translate-y-1 select-none rounded border border-border bg-default py-1.5 px-3 text-left peer-hover:block peer-focus:block md:min-w-max',
       )}
     >
       {children}
