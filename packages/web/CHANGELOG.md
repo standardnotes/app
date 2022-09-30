@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.67.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.66.0...@standardnotes/web@3.67.0) (2022-09-30)
+
+### Features
+
+* add pref to disable note status updates ([#1702](https://github.com/standardnotes/app/issues/1702)) ([08b7096](https://github.com/standardnotes/app/commit/08b70968f255d5a72562610f08fe727ebcffa8bb))
+
 # [3.66.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.65.0...@standardnotes/web@3.66.0) (2022-09-29)
 
 ### Features
