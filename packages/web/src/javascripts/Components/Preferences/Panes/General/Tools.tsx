@@ -48,7 +48,10 @@ const Tools: FunctionComponent<Props> = ({ application }: Props) => {
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
               <Subtitle>Show note saving status while editing</Subtitle>
-              <Text>Toggles updates to the note status indicator. Errors are shown regardless.</Text>
+              <Text>
+                Control whether the animated saving status is shown while editing. Error statuses are always shown
+                regardless of preference.
+              </Text>
             </div>
             <Switch onChange={toggleSavingIndicatorUpdates} checked={updateSavingIndicator} />
           </div>
