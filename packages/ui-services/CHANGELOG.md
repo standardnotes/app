@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.10](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.3.9...@standardnotes/ui-services@1.3.10) (2022-09-30)
+
+### Bug Fixes
+
+* downloading backups in mobile webview ([#1703](https://github.com/standardnotes/app/issues/1703)) ([5f24e72](https://github.com/standardnotes/app/commit/5f24e7285e941b44e05cec5be32bee4589f4963c))
+
 ## [1.3.9](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.3.8...@standardnotes/ui-services@1.3.9) (2022-09-30)
 
 **Note:** Version bump only for package @standardnotes/ui-services

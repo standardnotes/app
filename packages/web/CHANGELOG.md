@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.67.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.67.0...@standardnotes/web@3.67.1) (2022-09-30)
+
+### Bug Fixes
+
+* downloading backups in mobile webview ([#1703](https://github.com/standardnotes/app/issues/1703)) ([5f24e72](https://github.com/standardnotes/app/commit/5f24e7285e941b44e05cec5be32bee4589f4963c))
+
 # [3.67.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.66.0...@standardnotes/web@3.67.0) (2022-09-30)
 
 ### Features
