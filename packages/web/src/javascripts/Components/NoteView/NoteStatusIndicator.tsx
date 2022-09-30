@@ -18,6 +18,7 @@ const IndicatorWithTooltip = ({
   icon,
   isTooltipVisible,
   children,
+  animateIcon = false,
 }: {
   className: string
   onClick: () => void
@@ -25,6 +26,7 @@ const IndicatorWithTooltip = ({
   icon: IconType
   isTooltipVisible: boolean
   children: ReactNode
+  animateIcon?: boolean
 }) => (
   <div className="relative">
     <button
@@ -33,7 +35,7 @@ const IndicatorWithTooltip = ({
       onBlur={onBlur}
       aria-describedby={ElementIds.NoteStatusTooltip}
     >
-      <Icon className={icon === 'sync' ? 'animate-spin' : ''} type={icon} size="small" />
+      <Icon className={animateIcon ? 'animate-spin' : ''} type={icon} size="small" />
       <span className="sr-only">Note sync status</span>
     </button>
     <div
@@ -114,6 +116,7 @@ const NoteStatusIndicator = ({
         onClick={onClick}
         onBlur={onBlur}
         icon={status.type === 'saving' ? 'sync' : 'check'}
+        animateIcon={status.type === 'saving'}
         isTooltipVisible={isTooltipVisible}
       >
         <div className="text-sm font-bold">{status.message}</div>
@@ -127,7 +130,7 @@ const NoteStatusIndicator = ({
       className="bg-contrast"
       onClick={onClick}
       onBlur={onBlur}
-      icon="eye-off"
+      icon="sync"
       isTooltipVisible={isTooltipVisible}
     >
       <div className="text-sm font-bold">Note status updates are disabled</div>
