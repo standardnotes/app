@@ -3,7 +3,12 @@ import { downloadBlobOnAndroid } from '@/NativeMobileWeb/DownloadBlobOnAndroid'
 import { shareBlobOnMobile } from '@/NativeMobileWeb/ShareBlobOnMobile'
 import { Platform } from '@standardnotes/snjs'
 
-export const downloadOrShareBlobBasedOnPlatform = async (application: WebApplication, blob: Blob, filename: string) => {
+export const downloadOrShareBlobBasedOnPlatform = async (
+  application: WebApplication,
+  blob: Blob,
+  filename: string,
+  showToastOnAndroid = true,
+) => {
   if (!application.isNativeMobileWeb()) {
     application.getArchiveService().downloadData(blob, filename)
     return
@@ -15,7 +20,7 @@ export const downloadOrShareBlobBasedOnPlatform = async (application: WebApplica
   }
 
   if (application.platform === Platform.Android) {
-    downloadBlobOnAndroid(application, blob, filename)
+    downloadBlobOnAndroid(application, blob, filename, showToastOnAndroid)
     return
   }
 }
