@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.38.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.37.14...@standardnotes/mobile@3.38.0) (2022-09-30)
+
+### Features
+
+* sync android status bar bg with theme bg color ([#1727](https://github.com/standardnotes/app/issues/1727)) ([47106fd](https://github.com/standardnotes/app/commit/47106fdf83ec89e67444e84a94350870645993cf))
+
 ## [3.37.14](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.37.13...@standardnotes/mobile@3.37.14) (2022-09-30)
 
 **Note:** Version bump only for package @standardnotes/mobile

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.23.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.22.4...@standardnotes/services@1.23.0) (2022-09-30)
+
+### Features
+
+* sync android status bar bg with theme bg color ([#1727](https://github.com/standardnotes/app/issues/1727)) ([47106fd](https://github.com/standardnotes/app/commit/47106fdf83ec89e67444e84a94350870645993cf))
+
 ## [1.22.4](https://github.com/standardnotes/app/compare/@standardnotes/services@1.22.3...@standardnotes/services@1.22.4) (2022-09-30)
 
 **Note:** Version bump only for package @standardnotes/services
