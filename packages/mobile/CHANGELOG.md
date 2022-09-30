@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.37.13](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.37.12...@standardnotes/mobile@3.37.13) (2022-09-30)
+
+### Bug Fixes
+
+* downloading backups in mobile webview ([#1703](https://github.com/standardnotes/app/issues/1703)) ([5f24e72](https://github.com/standardnotes/app/commit/5f24e7285e941b44e05cec5be32bee4589f4963c))
+
 ## [3.37.12](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.37.11...@standardnotes/mobile@3.37.12) (2022-09-30)
 
 **Note:** Version bump only for package @standardnotes/mobile
