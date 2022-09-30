@@ -130,7 +130,7 @@ const NoteStatusIndicator = ({
       className="bg-contrast text-passive-1"
       onClick={onClick}
       onBlur={onBlur}
-      icon="sync"
+      icon="info"
       isTooltipVisible={isTooltipVisible}
     >
       <div className="text-sm font-bold">Note status updates are disabled</div>
