@@ -78,6 +78,7 @@ export class MobileDevice implements MobileDeviceInterface {
   platform: SNPlatform.Ios | SNPlatform.Android = Platform.OS === 'ios' ? SNPlatform.Ios : SNPlatform.Android
   private eventObservers: MobileDeviceEventHandler[] = []
   public isDarkMode = false
+  public statusBarBgColor: string | undefined
 
   constructor(
     private stateObserverService?: AppStateObserverService,
@@ -450,13 +451,17 @@ export class MobileDevice implements MobileDeviceInterface {
     }
   }
 
-  handleThemeSchemeChange(isDark: boolean): void {
+  handleThemeSchemeChange(isDark: boolean, bgColor: string): void {
     this.isDarkMode = isDark
+    this.statusBarBgColor = bgColor
 
     this.reloadStatusBarStyle()
   }
 
   reloadStatusBarStyle(animated = true) {
+    if (this.statusBarBgColor) {
+      StatusBar.setBackgroundColor(this.statusBarBgColor, animated)
+    }
     StatusBar.setBarStyle(this.isDarkMode ? 'light-content' : 'dark-content', animated)
   }
 
