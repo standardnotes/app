@@ -87,7 +87,7 @@ export class LinkingController extends AbstractViewController {
     this.notes = this.application.items.getDisplayableNotes().slice(0, 3)
   }
 
-  getItemTitle = (item: LinkableItem) => {
+  getLinkedItemTitle = (item: LinkableItem) => {
     if (item instanceof SNTag) {
       const prefixTitle = this.application.items.getTagPrefixTitle(item)
       return (
@@ -101,15 +101,30 @@ export class LinkingController extends AbstractViewController {
     return <>{item.title}</>
   }
 
-  getItemIcon = (item: LinkableItem): IconType => {
-    switch (item.content_type) {
-      case ContentType.Note:
-        return 'notes'
-      case ContentType.File:
-        return 'file'
-      default:
-        return 'hashtag'
+  getLinkedItemIcon = (item: LinkableItem, generic = false): [IconType, string] => {
+    if (item instanceof SNNote) {
+      if (!generic) {
+        const editorForNote = this.application.componentManager.editorForNote(item)
+        const [icon, tint] = this.application.iconsController.getIconAndTintForNoteType(
+          editorForNote?.package_info.note_type,
+        )
+        const className = `text-accessory-tint-${tint}`
+        return [icon, className]
+      }
+
+      return ['notes', 'text-info']
     }
+
+    if (item instanceof FileItem) {
+      if (!generic) {
+        const icon = this.application.iconsController.getIconForFileType(item.mimeType)
+        return [icon, 'text-info']
+      }
+
+      return ['file', 'text-info']
+    }
+
+    return ['hashtag', 'text-info']
   }
 
   activateItem = async (item: LinkableItem): Promise<AppPaneId | undefined> => {

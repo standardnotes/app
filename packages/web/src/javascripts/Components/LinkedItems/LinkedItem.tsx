@@ -1,21 +1,20 @@
-import { WebApplication } from '@/Application/Application'
 import { LinkableItem } from '@/Controllers/LinkingController'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 import { IconType } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { forwardRef, MouseEventHandler, Ref, useRef, useState } from 'react'
 import Icon from '../Icon/Icon'
 
 type Props = {
-  application: WebApplication
   item: LinkableItem
-  getItemIcon: (item: LinkableItem) => IconType
+  getItemIcon: (item: LinkableItem) => [IconType, string]
   getItemTitle: (item: LinkableItem) => JSX.Element
   activateItem: (item: LinkableItem) => Promise<void>
   unlinkItem: (item: LinkableItem) => void
 }
 
 const LinkedItem = forwardRef(
-  ({ application, item, getItemIcon, getItemTitle, activateItem, unlinkItem }: Props, ref: Ref<HTMLButtonElement>) => {
+  ({ item, getItemIcon, getItemTitle, activateItem, unlinkItem }: Props, ref: Ref<HTMLButtonElement>) => {
     const [showUnlinkButton, setShowUnlinkButton] = useState(false)
     const unlinkButtonRef = useRef<HTMLAnchorElement | null>(null)
 
@@ -43,6 +42,8 @@ const LinkedItem = forwardRef(
       unlinkItem(item)
     }
 
+    const [icon, iconClassName] = getItemIcon(item)
+
     return (
       <button
         ref={ref}
@@ -54,14 +55,13 @@ const LinkedItem = forwardRef(
       tabIndex={getTabIndex()}
       title={longTitle} */
       >
-        <Icon type={getItemIcon(item)} className="mr-1 text-info" size="small" />
+        <Icon type={icon} className={classNames('mr-1', iconClassName)} size="small" />
         <span className="max-w-290px overflow-hidden overflow-ellipsis whitespace-nowrap">{getItemTitle(item)}</span>
         {showUnlinkButton && (
           <a
             ref={unlinkButtonRef}
             role="button"
             className="ml-2 -mr-1 flex cursor-pointer border-0 bg-transparent p-0"
-            // onBlur={onBlur}
             onClick={onUnlinkClick}
           >
             <Icon type="close" className="text-neutral hover:text-info" size="small" />

@@ -3,19 +3,23 @@ import AutocompleteTagInput from '@/Components/TagAutocomplete/AutocompleteTagIn
 import { NoteTagsController } from '@/Controllers/NoteTagsController'
 import { LinkableItem, LinkingController } from '@/Controllers/LinkingController'
 import LinkedItem from './LinkedItem'
-import { WebApplication } from '@/Application/Application'
 import { useCallback } from 'react'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 
 type Props = {
-  application: WebApplication
   noteTagsController: NoteTagsController
   linkingController: LinkingController
 }
 
-const LinkedItemsContainer = ({ application, noteTagsController, linkingController }: Props) => {
+const LinkedItemsContainer = ({ noteTagsController, linkingController }: Props) => {
   const { toggleAppPane } = useResponsiveAppPane()
-  const { allLinkedItems, unlinkItem, getItemTitle, getItemIcon, activateItem } = linkingController
+  const {
+    allLinkedItems,
+    unlinkItem,
+    getLinkedItemTitle: getItemTitle,
+    getLinkedItemIcon: getItemIcon,
+    activateItem,
+  } = linkingController
 
   const activateItemAndTogglePane = useCallback(
     async (item: LinkableItem) => {
@@ -31,7 +35,6 @@ const LinkedItemsContainer = ({ application, noteTagsController, linkingControll
     <div className="flex min-w-80 max-w-full flex-wrap bg-transparent md:-mr-2 md:flex">
       {allLinkedItems.map((item) => (
         <LinkedItem
-          application={application}
           item={item}
           key={item.uuid}
           getItemIcon={getItemIcon}
