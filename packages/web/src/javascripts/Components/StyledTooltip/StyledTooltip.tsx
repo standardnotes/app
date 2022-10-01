@@ -9,5 +9,6 @@ export default styled(Tooltip)`
     background-color: var(--sn-stylekit-contrast-background-color);
     color: var(--sn-stylekit-foreground-color);
     border-color: var(--sn-stylekit-border-color);
+    z-index: var(--z-index-tooltip);
   }
 `

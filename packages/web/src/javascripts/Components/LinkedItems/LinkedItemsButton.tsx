@@ -4,6 +4,7 @@ import { IconType } from '@standardnotes/snjs/dist/@types'
 import { useState, useRef, useCallback } from 'react'
 import Icon from '../Icon/Icon'
 import Popover from '../Popover/Popover'
+import StyledTooltip from '../StyledTooltip/StyledTooltip'
 
 const LinkedItem = ({
   item,
@@ -19,7 +20,7 @@ const LinkedItem = ({
   return (
     <div className="flex items-center justify-between gap-4 py-1 px-3">
       <Icon type={icon} className={classNames('flex-shrink-0', className)} />
-      <div className="flex-grow text-left">{getItemTitle(item)}</div>
+      <div className="flex-grow text-left text-sm">{getItemTitle(item)}</div>
       <button className="h-7 w-7 cursor-pointer rounded-full border-0 bg-transparent p-1 hover:bg-contrast">
         <Icon type="more" className="text-neutral" />
       </button>
@@ -48,15 +49,16 @@ const LinkedItemsButton = ({ linkingController, onClickPreprocessing }: Props) =
 
   return (
     <>
-      <button
-        className="bg-text-padding flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border text-neutral hover:bg-contrast focus:bg-contrast"
-        title="Linked items panel"
-        aria-label="Linked items panel"
-        onClick={toggleMenu}
-        ref={buttonRef}
-      >
-        <Icon type="link" />
-      </button>
+      <StyledTooltip label="Linked items panel">
+        <button
+          className="bg-text-padding flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border text-neutral hover:bg-contrast focus:bg-contrast"
+          aria-label="Linked items panel"
+          onClick={toggleMenu}
+          ref={buttonRef}
+        >
+          <Icon type="link" />
+        </button>
+      </StyledTooltip>
       <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen} className="py-2">
         <div className="my-1 px-3 text-menu-item font-semibold uppercase text-text">Linked Tags</div>
         <div className="my-1">
