@@ -16,7 +16,7 @@ const LinkedItemsContainer = ({ noteTagsController, linkingController }: Props) 
   const {
     allLinkedItems,
     unlinkItem,
-    getLinkedItemTitle: getItemTitle,
+    getTitleForLinkedTag,
     getLinkedItemIcon: getItemIcon,
     activateItem,
   } = linkingController
@@ -38,7 +38,7 @@ const LinkedItemsContainer = ({ noteTagsController, linkingController }: Props) 
           item={item}
           key={item.uuid}
           getItemIcon={getItemIcon}
-          getItemTitle={getItemTitle}
+          getItemTitle={getTitleForLinkedTag}
           activateItem={activateItemAndTogglePane}
           unlinkItem={unlinkItem}
         />

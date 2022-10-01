@@ -87,41 +87,34 @@ export class LinkingController extends AbstractViewController {
     this.notes = this.application.items.getDisplayableNotes().slice(0, 3)
   }
 
-  getLinkedItemTitle = (item: LinkableItem) => {
-    if (item instanceof SNTag) {
-      const prefixTitle = this.application.items.getTagPrefixTitle(item)
-      return (
-        <>
-          {prefixTitle && <span className="text-passive-1">{prefixTitle}</span>}
-          {item.title}
-        </>
-      )
+  getTitleForLinkedTag = (item: LinkableItem) => {
+    const isTag = item instanceof SNTag
+
+    if (!isTag) {
+      return
     }
 
-    return <>{item.title}</>
+    const titlePrefix = this.application.items.getTagPrefixTitle(item)
+    const longTitle = this.application.items.getTagLongTitle(item)
+    return {
+      titlePrefix,
+      longTitle,
+    }
   }
 
-  getLinkedItemIcon = (item: LinkableItem, generic = false): [IconType, string] => {
+  getLinkedItemIcon = (item: LinkableItem): [IconType, string] => {
     if (item instanceof SNNote) {
-      if (!generic) {
-        const editorForNote = this.application.componentManager.editorForNote(item)
-        const [icon, tint] = this.application.iconsController.getIconAndTintForNoteType(
-          editorForNote?.package_info.note_type,
-        )
-        const className = `text-accessory-tint-${tint}`
-        return [icon, className]
-      }
-
-      return ['notes', 'text-info']
+      const editorForNote = this.application.componentManager.editorForNote(item)
+      const [icon, tint] = this.application.iconsController.getIconAndTintForNoteType(
+        editorForNote?.package_info.note_type,
+      )
+      const className = `text-accessory-tint-${tint}`
+      return [icon, className]
     }
 
     if (item instanceof FileItem) {
-      if (!generic) {
-        const icon = this.application.iconsController.getIconForFileType(item.mimeType)
-        return [icon, 'text-info']
-      }
-
-      return ['file', 'text-info']
+      const icon = this.application.iconsController.getIconForFileType(item.mimeType)
+      return [icon, 'text-info']
     }
 
     return ['hashtag', 'text-info']

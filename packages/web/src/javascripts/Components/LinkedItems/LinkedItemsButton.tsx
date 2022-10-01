@@ -1,6 +1,7 @@
 import { LinkableItem, LinkingController } from '@/Controllers/LinkingController'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { IconType } from '@standardnotes/snjs/dist/@types'
+import { observer } from 'mobx-react-lite'
 import { useState, useRef, useCallback } from 'react'
 import Icon from '../Icon/Icon'
 import Popover from '../Popover/Popover'
@@ -13,14 +14,23 @@ const LinkedItem = ({
 }: {
   item: LinkableItem
   getItemIcon: (item: LinkableItem) => [IconType, string]
-  getItemTitle: (item: LinkableItem) => JSX.Element
+  getItemTitle: (item: LinkableItem) =>
+    | {
+        titlePrefix: string | undefined
+        longTitle: string
+      }
+    | undefined
 }) => {
   const [icon, className] = getItemIcon(item)
+  const tagTitle = getItemTitle(item)
 
   return (
     <div className="flex items-center justify-between gap-4 py-1 px-3">
       <Icon type={icon} className={classNames('flex-shrink-0', className)} />
-      <div className="flex-grow text-left text-sm">{getItemTitle(item)}</div>
+      <div className="flex-grow text-left text-sm">
+        {tagTitle && <span className="text-passive-1">{tagTitle.titlePrefix}</span>}
+        {item.title}
+      </div>
       <button className="h-7 w-7 cursor-pointer rounded-full border-0 bg-transparent p-1 hover:bg-contrast">
         <Icon type="more" className="text-neutral" />
       </button>
@@ -37,7 +47,7 @@ const LinkedItemsButton = ({ linkingController, onClickPreprocessing }: Props) =
   const [isOpen, setIsOpen] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
-  const { tags, files, notes, getLinkedItemTitle, getLinkedItemIcon } = linkingController
+  const { tags, files, notes, getTitleForLinkedTag: getLinkedItemTitle, getLinkedItemIcon } = linkingController
 
   const toggleMenu = useCallback(async () => {
     const willMenuOpen = !isOpen
@@ -83,4 +93,4 @@ const LinkedItemsButton = ({ linkingController, onClickPreprocessing }: Props) =
   )
 }
 
-export default LinkedItemsButton
+export default observer(LinkedItemsButton)

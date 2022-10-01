@@ -8,7 +8,12 @@ import Icon from '../Icon/Icon'
 type Props = {
   item: LinkableItem
   getItemIcon: (item: LinkableItem) => [IconType, string]
-  getItemTitle: (item: LinkableItem) => JSX.Element
+  getItemTitle: (item: LinkableItem) =>
+    | {
+        titlePrefix: string | undefined
+        longTitle: string
+      }
+    | undefined
   activateItem: (item: LinkableItem) => Promise<void>
   unlinkItem: (item: LinkableItem) => void
 }
@@ -43,6 +48,7 @@ const LinkedItem = forwardRef(
     }
 
     const [icon, iconClassName] = getItemIcon(item)
+    const tagTitle = getItemTitle(item)
 
     return (
       <button
@@ -51,12 +57,15 @@ const LinkedItem = forwardRef(
         onFocus={onFocus}
         onBlur={onBlur}
         onClick={onClick}
+        title={tagTitle ? tagTitle.longTitle : item.title}
         /* onKeyDown={onKeyDown}
-      tabIndex={getTabIndex()}
-      title={longTitle} */
+      tabIndex={getTabIndex()}*/
       >
-        <Icon type={icon} className={classNames('mr-1', iconClassName)} size="small" />
-        <span className="max-w-290px overflow-hidden overflow-ellipsis whitespace-nowrap">{getItemTitle(item)}</span>
+        <Icon type={icon} className={classNames('mr-1 flex-shrink-0', iconClassName)} size="small" />
+        <span className="max-w-290px overflow-hidden overflow-ellipsis whitespace-nowrap">
+          {tagTitle && <span className="text-passive-1">{tagTitle.titlePrefix}</span>}
+          {item.title}
+        </span>
         {showUnlinkButton && (
           <a
             ref={unlinkButtonRef}
