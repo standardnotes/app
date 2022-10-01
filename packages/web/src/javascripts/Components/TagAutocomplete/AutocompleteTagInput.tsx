@@ -117,7 +117,7 @@ const AutocompleteTagInput = ({ noteTagsController }: Props) => {
             value={autocompleteSearchQuery}
             onChange={onSearchQueryChange}
             type="text"
-            placeholder="Add tag"
+            placeholder="Add tags, notes, files..."
             onBlur={onBlur}
             onFocus={onFocus}
             onKeyDown={onKeyDown}

@@ -31,6 +31,7 @@ import { SelectedItemsController } from './SelectedItemsController'
 import { HistoryModalController } from './NoteHistory/HistoryModalController'
 import { PreferenceId } from '@/Components/Preferences/PreferencesMenu'
 import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
+import { LinkingController } from './LinkingController'
 
 export class ViewControllerManager {
   readonly enableUnfinishedFeatures: boolean = window?.enabledUnfinishedFeatures
@@ -57,6 +58,7 @@ export class ViewControllerManager {
   readonly navigationController: NavigationController
   readonly selectionController: SelectedItemsController
   readonly historyModalController: HistoryModalController
+  readonly linkingController: LinkingController
 
   public isSessionsModalVisible = false
 
@@ -120,6 +122,14 @@ export class ViewControllerManager {
     )
 
     this.historyModalController = new HistoryModalController(this.application, this.eventBus)
+
+    this.linkingController = new LinkingController(
+      application,
+      this.notesController,
+      this.noteTagsController,
+      this.filesController,
+      this.eventBus,
+    )
 
     this.addAppEventObserver()
 

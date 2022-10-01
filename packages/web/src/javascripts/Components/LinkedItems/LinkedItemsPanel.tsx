@@ -112,7 +112,7 @@ const NoteTagsPanel = ({
   return (
     <>
       <button
-        className="bg-text-padding flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border text-neutral hover:bg-contrast focus:bg-contrast md:hidden"
+        className="bg-text-padding flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border text-neutral hover:bg-contrast focus:bg-contrast"
         title="Note options menu"
         aria-label="Note options menu"
         onClick={toggleMenu}
