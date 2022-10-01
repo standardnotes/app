@@ -70,24 +70,51 @@ const LinkedItemsButton = ({ linkingController, onClickPreprocessing }: Props) =
         </button>
       </StyledTooltip>
       <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen} className="py-2">
-        <div className="my-1 px-3 text-menu-item font-semibold uppercase text-text">Linked Tags</div>
-        <div className="my-1">
-          {tags.map((tag) => (
-            <LinkedItem item={tag} getItemIcon={getLinkedItemIcon} getItemTitle={getLinkedItemTitle} key={tag.uuid} />
-          ))}
-        </div>
-        <div className="my-1 px-3 text-menu-item font-semibold uppercase text-text">Linked Files</div>
-        <div className="my-1">
-          {files.map((file) => (
-            <LinkedItem item={file} getItemIcon={getLinkedItemIcon} getItemTitle={getLinkedItemTitle} key={file.uuid} />
-          ))}
-        </div>
-        <div className="my-1 px-3 text-menu-item font-semibold uppercase text-text">Linked Notes</div>
-        <div className="my-1">
-          {notes.map((note) => (
-            <LinkedItem item={note} getItemIcon={getLinkedItemIcon} getItemTitle={getLinkedItemTitle} key={note.uuid} />
-          ))}
-        </div>
+        {tags.length > 0 && (
+          <>
+            <div className="my-1 px-3 text-menu-item font-semibold uppercase text-text">Linked Tags</div>
+            <div className="my-1">
+              {tags.map((tag) => (
+                <LinkedItem
+                  item={tag}
+                  getItemIcon={getLinkedItemIcon}
+                  getItemTitle={getLinkedItemTitle}
+                  key={tag.uuid}
+                />
+              ))}
+            </div>
+          </>
+        )}
+        {files.length > 0 && (
+          <>
+            <div className="my-1 px-3 text-menu-item font-semibold uppercase text-text">Linked Files</div>
+            <div className="my-1">
+              {files.map((file) => (
+                <LinkedItem
+                  item={file}
+                  getItemIcon={getLinkedItemIcon}
+                  getItemTitle={getLinkedItemTitle}
+                  key={file.uuid}
+                />
+              ))}
+            </div>
+          </>
+        )}
+        {notes.length > 0 && (
+          <>
+            <div className="my-1 px-3 text-menu-item font-semibold uppercase text-text">Linked Notes</div>
+            <div className="my-1">
+              {notes.map((note) => (
+                <LinkedItem
+                  item={note}
+                  getItemIcon={getLinkedItemIcon}
+                  getItemTitle={getLinkedItemTitle}
+                  key={note.uuid}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </Popover>
     </>
   )
