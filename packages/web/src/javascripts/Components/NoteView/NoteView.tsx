@@ -1036,9 +1036,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
             {!this.state.shouldStickyHeader && (
               <LinkedItemsContainer
                 noteTagsController={this.viewControllerManager.noteTagsController}
-                navigationController={this.viewControllerManager.navigationController}
                 linkingController={this.viewControllerManager.linkingController}
-                selectionController={this.viewControllerManager.selectionController}
                 application={this.application}
               />
             )}
