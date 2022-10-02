@@ -6,6 +6,9 @@ import { useRef, useState } from 'react'
 import ClearInputButton from '../ClearInputButton/ClearInputButton'
 import Icon from '../Icon/Icon'
 import DecoratedInput from '../Input/DecoratedInput'
+import MenuItem from '../Menu/MenuItem'
+import { MenuItemType } from '../Menu/MenuItemType'
+import Popover from '../Popover/Popover'
 
 const LinkedItemMeta = ({
   item,
@@ -46,18 +49,75 @@ const LinkedItemMeta = ({
   )
 }
 
+const LinkedItemsSectionItem = ({
+  item,
+  getItemIcon,
+  getTitleForLinkedTag,
+  searchQuery,
+  unlinkItem,
+}: {
+  item: LinkableItem
+  getItemIcon: LinkingController['getLinkedItemIcon']
+  getTitleForLinkedTag: LinkingController['getTitleForLinkedTag']
+  searchQuery?: string
+  unlinkItem: LinkingController['unlinkItem']
+}) => {
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const toggleMenu = () => setIsMenuOpen((open) => !open)
+
+  return (
+    <div className="flex items-center justify-between gap-4 py-1 px-3" key={item.uuid}>
+      <LinkedItemMeta
+        item={item}
+        getItemIcon={getItemIcon}
+        getTitleForLinkedTag={getTitleForLinkedTag}
+        searchQuery={searchQuery}
+      />
+      <button
+        className="h-7 w-7 cursor-pointer rounded-full border-0 bg-transparent p-1 hover:bg-contrast"
+        onClick={toggleMenu}
+        ref={menuButtonRef}
+      >
+        <Icon type="more" className="text-neutral" />
+      </button>
+      <Popover
+        open={isMenuOpen}
+        togglePopover={toggleMenu}
+        anchorElement={menuButtonRef.current}
+        side="bottom"
+        align="end"
+      >
+        <MenuItem
+          type={MenuItemType.IconButton}
+          onClick={() => {
+            unlinkItem(item)
+            toggleMenu()
+          }}
+        >
+          <Icon type="link-off" className="mr-2 text-danger" />
+          Unlink
+        </MenuItem>
+      </Popover>
+    </div>
+  )
+}
+
 const LinkedItemsSection = ({
   label,
   items,
   getItemIcon,
   getTitleForLinkedTag,
   searchQuery,
+  unlinkItem,
 }: {
   label: string
   items: LinkableItem[]
   getItemIcon: LinkingController['getLinkedItemIcon']
   getTitleForLinkedTag: LinkingController['getTitleForLinkedTag']
   searchQuery?: string
+  unlinkItem: LinkingController['unlinkItem']
 }) => {
   if (!items.length) {
     return null
@@ -68,17 +128,13 @@ const LinkedItemsSection = ({
       <div className="my-1 px-3 text-menu-item font-semibold uppercase text-text">{label}</div>
       <div className="my-1">
         {items.map((item) => (
-          <div className="flex items-center justify-between gap-4 py-1 px-3" key={item.uuid}>
-            <LinkedItemMeta
-              item={item}
-              getItemIcon={getItemIcon}
-              getTitleForLinkedTag={getTitleForLinkedTag}
-              searchQuery={searchQuery}
-            />
-            <button className="h-7 w-7 cursor-pointer rounded-full border-0 bg-transparent p-1 hover:bg-contrast">
-              <Icon type="more" className="text-neutral" />
-            </button>
-          </div>
+          <LinkedItemsSectionItem
+            item={item}
+            getItemIcon={getItemIcon}
+            getTitleForLinkedTag={getTitleForLinkedTag}
+            searchQuery={searchQuery}
+            unlinkItem={unlinkItem}
+          />
         ))}
       </div>
     </>
@@ -94,6 +150,7 @@ const LinkedItemsPanel = ({ linkingController }: { linkingController: LinkingCon
     getLinkedItemIcon,
     getSearchResults,
     linkItem,
+    unlinkItem,
     createAndAddNewTag,
   } = linkingController
 
@@ -169,6 +226,7 @@ const LinkedItemsPanel = ({ linkingController }: { linkingController: LinkingCon
             getItemIcon={getLinkedItemIcon}
             getTitleForLinkedTag={getTitleForLinkedTag}
             searchQuery={searchQuery}
+            unlinkItem={unlinkItem}
           />
         </>
       ) : (
@@ -178,18 +236,21 @@ const LinkedItemsPanel = ({ linkingController }: { linkingController: LinkingCon
             items={tags}
             getItemIcon={getLinkedItemIcon}
             getTitleForLinkedTag={getTitleForLinkedTag}
+            unlinkItem={unlinkItem}
           />
           <LinkedItemsSection
             label="Linked Files"
             items={files}
             getItemIcon={getLinkedItemIcon}
             getTitleForLinkedTag={getTitleForLinkedTag}
+            unlinkItem={unlinkItem}
           />
           <LinkedItemsSection
             label="Linked Notes"
             items={notes}
             getItemIcon={getLinkedItemIcon}
             getTitleForLinkedTag={getTitleForLinkedTag}
+            unlinkItem={unlinkItem}
           />
         </>
       )}
