@@ -201,9 +201,9 @@ export class LinkingController extends AbstractViewController {
       'title',
     )
     const linkedResults = naturalSort(searchResults.filter(isAlreadyLinked), 'title')
-    const shouldShowCreateTag = !linkedResults.find(
-      (result) => result.content_type === ContentType.Tag && result.title === searchQuery,
-    )
+    const isResultExistingTag = (result: LinkableItem) =>
+      result.content_type === ContentType.Tag && result.title === searchQuery
+    const shouldShowCreateTag = !linkedResults.find(isResultExistingTag) && !unlinkedResults.find(isResultExistingTag)
 
     return {
       unlinkedResults,
