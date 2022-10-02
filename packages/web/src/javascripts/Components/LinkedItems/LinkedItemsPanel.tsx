@@ -5,7 +5,7 @@ import { observer } from 'mobx-react-lite'
 import { useRef, useState } from 'react'
 import Icon from '../Icon/Icon'
 
-const LinkedItem = ({
+const LinkedItemMeta = ({
   item,
   getItemIcon,
   getTitleForLinkedTag,
@@ -21,7 +21,7 @@ const LinkedItem = ({
   const title = item.title ?? ''
 
   return (
-    <div className="flex items-center justify-between gap-4 py-1 px-3">
+    <>
       <Icon type={icon} className={classNames('flex-shrink-0', className)} />
       <div className="min-w-0 flex-grow break-words text-left text-sm">
         {tagTitle && <span className="text-passive-1">{tagTitle.titlePrefix}</span>}
@@ -40,6 +40,29 @@ const LinkedItem = ({
             ))
           : title}
       </div>
+    </>
+  )
+}
+
+const LinkedItem = ({
+  item,
+  getItemIcon,
+  getTitleForLinkedTag,
+  searchQuery,
+}: {
+  item: LinkableItem
+  getItemIcon: LinkingController['getLinkedItemIcon']
+  getTitleForLinkedTag: LinkingController['getTitleForLinkedTag']
+  searchQuery?: string
+}) => {
+  return (
+    <div className="flex items-center justify-between gap-4 py-1 px-3">
+      <LinkedItemMeta
+        item={item}
+        getItemIcon={getItemIcon}
+        getTitleForLinkedTag={getTitleForLinkedTag}
+        searchQuery={searchQuery}
+      />
       <button className="h-7 w-7 cursor-pointer rounded-full border-0 bg-transparent p-1 hover:bg-contrast">
         <Icon type="more" className="text-neutral" />
       </button>
@@ -125,32 +148,17 @@ const LinkedItemsPanel = ({ linkingController }: { linkingController: LinkingCon
           <div className="my-1 px-3 text-menu-item font-semibold uppercase text-text">Unlinked</div>
           <div className="my-1">
             {unlinkedResults.map((result) => {
-              const [icon, className] = getLinkedItemIcon(result)
-              const tagTitle = getTitleForLinkedTag(result)
-
-              const title = result.title ?? ''
-
               return (
                 <button
                   className="flex w-full items-center justify-between gap-4 overflow-hidden py-2 px-3 hover:bg-contrast hover:text-foreground focus:bg-info-backdrop"
                   onClick={() => linkItem(result)}
                 >
-                  <Icon type={icon} className={classNames('flex-shrink-0', className)} />
-                  <div className="min-w-0 flex-grow break-words text-left text-sm">
-                    {tagTitle && <span className="text-passive-1">{tagTitle.titlePrefix}</span>}
-                    {splitQueryInString(title, searchQuery).map((substring, index) => (
-                      <span
-                        key={index}
-                        className={`${
-                          substring.toLowerCase() === searchQuery.toLowerCase()
-                            ? 'whitespace-pre-wrap font-bold'
-                            : 'whitespace-pre-wrap '
-                        }`}
-                      >
-                        {substring}
-                      </span>
-                    ))}
-                  </div>
+                  <LinkedItemMeta
+                    item={result}
+                    getItemIcon={getLinkedItemIcon}
+                    getTitleForLinkedTag={getTitleForLinkedTag}
+                    searchQuery={searchQuery}
+                  />
                 </button>
               )
             })}
