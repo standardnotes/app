@@ -44,32 +44,6 @@ const LinkedItemMeta = ({
   )
 }
 
-const LinkedItem = ({
-  item,
-  getItemIcon,
-  getTitleForLinkedTag,
-  searchQuery,
-}: {
-  item: LinkableItem
-  getItemIcon: LinkingController['getLinkedItemIcon']
-  getTitleForLinkedTag: LinkingController['getTitleForLinkedTag']
-  searchQuery?: string
-}) => {
-  return (
-    <div className="flex items-center justify-between gap-4 py-1 px-3">
-      <LinkedItemMeta
-        item={item}
-        getItemIcon={getItemIcon}
-        getTitleForLinkedTag={getTitleForLinkedTag}
-        searchQuery={searchQuery}
-      />
-      <button className="h-7 w-7 cursor-pointer rounded-full border-0 bg-transparent p-1 hover:bg-contrast">
-        <Icon type="more" className="text-neutral" />
-      </button>
-    </div>
-  )
-}
-
 const LinkedItemsSection = ({
   label,
   items,
@@ -92,13 +66,17 @@ const LinkedItemsSection = ({
       <div className="my-1 px-3 text-menu-item font-semibold uppercase text-text">{label}</div>
       <div className="my-1">
         {items.map((item) => (
-          <LinkedItem
-            item={item}
-            getItemIcon={getItemIcon}
-            getTitleForLinkedTag={getTitleForLinkedTag}
-            key={item.uuid}
-            searchQuery={searchQuery}
-          />
+          <div className="flex items-center justify-between gap-4 py-1 px-3">
+            <LinkedItemMeta
+              item={item}
+              getItemIcon={getItemIcon}
+              getTitleForLinkedTag={getTitleForLinkedTag}
+              searchQuery={searchQuery}
+            />
+            <button className="h-7 w-7 cursor-pointer rounded-full border-0 bg-transparent p-1 hover:bg-contrast">
+              <Icon type="more" className="text-neutral" />
+            </button>
+          </div>
         ))}
       </div>
     </>
