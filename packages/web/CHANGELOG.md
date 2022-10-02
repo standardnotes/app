@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.68.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.67.4...@standardnotes/web@3.68.0) (2022-10-02)
+
+### Features
+
+* use native preview for pdf in mobile webview ([#1728](https://github.com/standardnotes/app/issues/1728)) ([a90e4a5](https://github.com/standardnotes/app/commit/a90e4a50e820aa13b6af1f76ee9b2f935d12f211))
+
 ## [3.67.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.67.3...@standardnotes/web@3.67.4) (2022-10-02)
 
 ### Bug Fixes

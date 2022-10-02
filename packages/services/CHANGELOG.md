@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.24.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.23.0...@standardnotes/services@1.24.0) (2022-10-02)
+
+### Features
+
+* use native preview for pdf in mobile webview ([#1728](https://github.com/standardnotes/app/issues/1728)) ([a90e4a5](https://github.com/standardnotes/app/commit/a90e4a50e820aa13b6af1f76ee9b2f935d12f211))
+
 # [1.23.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.22.4...@standardnotes/services@1.23.0) (2022-09-30)
 
 ### Features
