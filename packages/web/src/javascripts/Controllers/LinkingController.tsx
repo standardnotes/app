@@ -1,6 +1,16 @@
 import { WebApplication } from '@/Application/Application'
 import { AppPaneId } from '@/Components/ResponsivePane/AppPaneMetadata'
-import { ContentType, FileItem, IconType, InternalEventBus, SNNote, SNTag } from '@standardnotes/snjs'
+import {
+  ContentType,
+  DecryptedItemInterface,
+  FileItem,
+  IconType,
+  InternalEventBus,
+  ItemContent,
+  naturalSort,
+  SNNote,
+  SNTag,
+} from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction } from 'mobx'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { FilesController } from './FilesController'
@@ -9,7 +19,7 @@ import { NotesController } from './NotesController'
 import { NoteTagsController } from './NoteTagsController'
 import { SelectedItemsController } from './SelectedItemsController'
 
-export type LinkableItem = SNTag | SNNote | FileItem
+export type LinkableItem = DecryptedItemInterface<ItemContent>
 
 export class LinkingController extends AbstractViewController {
   tags: SNTag[] = []
@@ -141,6 +151,50 @@ export class LinkingController extends AbstractViewController {
 
     if (item instanceof FileItem) {
       void this.filesController.detachFileFromNote(item)
+    }
+  }
+
+  linkItem = (item: LinkableItem) => {
+    if (item instanceof SNTag) {
+      void this.noteTagsController.addTagToActiveNote(item)
+    }
+
+    if (item instanceof FileItem) {
+      void this.filesController.attachFileToNote(item)
+    }
+  }
+
+  getSearchResults = (searchQuery: string) => {
+    const activeNote = this.notesController.firstSelectedNote
+
+    if (!activeNote) {
+      throw new Error('Cannot search if no note is selected.')
+    }
+
+    const searchResults = this.application.items
+      .getItems([ContentType.Note, ContentType.File, ContentType.Tag])
+      .filter((item) => {
+        const title = item instanceof SNTag ? this.application.items.getTagLongTitle(item) : item.title
+        const matchesQuery = title?.toLowerCase().includes(searchQuery.toLowerCase())
+        return matchesQuery
+      })
+
+    const isAlreadyLinked = (item: LinkableItem) => {
+      const isAlreadyLinkedToNote = this.application.items
+        .itemsReferencingItem(activeNote)
+        .some((linkedItem) => linkedItem.uuid === item.uuid)
+      return isAlreadyLinkedToNote
+    }
+
+    const unlinkedResults = naturalSort(
+      searchResults.filter((item) => !isAlreadyLinked(item)),
+      'title',
+    )
+    const linkedResults = naturalSort(searchResults.filter(isAlreadyLinked), 'title')
+
+    return {
+      unlinkedResults,
+      linkedResults,
     }
   }
 }

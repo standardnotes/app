@@ -1,25 +1,19 @@
-import { LinkableItem } from '@/Controllers/LinkingController'
+import { LinkableItem, LinkingController } from '@/Controllers/LinkingController'
 import { classNames } from '@/Utils/ConcatenateClassNames'
-import { IconType } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { forwardRef, MouseEventHandler, Ref, useRef, useState } from 'react'
 import Icon from '../Icon/Icon'
 
 type Props = {
   item: LinkableItem
-  getItemIcon: (item: LinkableItem) => [IconType, string]
-  getItemTitle: (item: LinkableItem) =>
-    | {
-        titlePrefix: string | undefined
-        longTitle: string
-      }
-    | undefined
+  getItemIcon: LinkingController['getLinkedItemIcon']
+  getTitleForLinkedTag: LinkingController['getTitleForLinkedTag']
   activateItem: (item: LinkableItem) => Promise<void>
   unlinkItem: (item: LinkableItem) => void
 }
 
 const LinkedItem = forwardRef(
-  ({ item, getItemIcon, getItemTitle, activateItem, unlinkItem }: Props, ref: Ref<HTMLButtonElement>) => {
+  ({ item, getItemIcon, getTitleForLinkedTag, activateItem, unlinkItem }: Props, ref: Ref<HTMLButtonElement>) => {
     const [showUnlinkButton, setShowUnlinkButton] = useState(false)
     const unlinkButtonRef = useRef<HTMLAnchorElement | null>(null)
 
@@ -48,7 +42,7 @@ const LinkedItem = forwardRef(
     }
 
     const [icon, iconClassName] = getItemIcon(item)
-    const tagTitle = getItemTitle(item)
+    const tagTitle = getTitleForLinkedTag(item)
 
     return (
       <button
