@@ -22,7 +22,7 @@ const BiometricsPrompt = ({ application, onValueChange, prompt, buttonRef }: Pro
         fullWidth
         colorStyle={authenticated ? 'success' : 'info'}
         onClick={async () => {
-          const authenticated = await application.mobileDevice.authenticateWithBiometrics()
+          const authenticated = await application.mobileDevice().authenticateWithBiometrics()
           setAuthenticated(authenticated)
           onValueChange(authenticated, prompt)
         }}

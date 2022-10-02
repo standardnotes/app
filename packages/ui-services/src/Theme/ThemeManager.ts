@@ -293,10 +293,9 @@ export class ThemeManager extends AbstractService {
 
       if (this.application.isNativeMobileWeb()) {
         setTimeout(() => {
-          this.application.mobileDevice.handleThemeSchemeChange(
-            theme.package_info.isDark ?? false,
-            this.getBackgroundColor(),
-          )
+          this.application
+            .mobileDevice()
+            .handleThemeSchemeChange(theme.package_info.isDark ?? false, this.getBackgroundColor())
         })
       }
     }
@@ -335,7 +334,7 @@ export class ThemeManager extends AbstractService {
     removeFromArray(this.activeThemes, uuid)
 
     if (this.activeThemes.length === 0 && this.application.isNativeMobileWeb()) {
-      this.application.mobileDevice.handleThemeSchemeChange(false, '#ffffff')
+      this.application.mobileDevice().handleThemeSchemeChange(false, '#ffffff')
     }
   }
 

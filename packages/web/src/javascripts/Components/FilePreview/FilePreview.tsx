@@ -66,7 +66,7 @@ const FilePreview = ({ file, application }: Props) => {
       <span className="mt-3">Loading file...</span>
     </div>
   ) : downloadedBytes ? (
-    <PreviewComponent file={file} bytes={downloadedBytes} />
+    <PreviewComponent application={application} file={file} bytes={downloadedBytes} />
   ) : (
     <FilePreviewError
       file={file}

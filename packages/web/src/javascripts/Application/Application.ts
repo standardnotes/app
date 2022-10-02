@@ -83,7 +83,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
       // eslint-disable-next-line no-console
       console.log = (...args) => {
-        this.mobileDevice.consoleLog(...args)
+        this.mobileDevice().consoleLog(...args)
       }
     }
 
@@ -179,7 +179,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return undefined
   }
 
-  get mobileDevice(): MobileDeviceInterface {
+  mobileDevice(): MobileDeviceInterface {
     if (!this.isNativeMobileWeb()) {
       throw Error('Attempting to access device as mobile device on non mobile platform')
     }
@@ -238,7 +238,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   async handleMobileLosingFocusEvent(): Promise<void> {
     if (this.getMobileScreenshotPrivacyEnabled()) {
-      this.mobileDevice.stopHidingMobileInterfaceFromScreenshots()
+      this.mobileDevice().stopHidingMobileInterfaceFromScreenshots()
     }
 
     await this.lockApplicationAfterMobileEventIfApplicable()
@@ -246,7 +246,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   async handleMobileResumingFromBackgroundEvent(): Promise<void> {
     if (this.getMobileScreenshotPrivacyEnabled()) {
-      this.mobileDevice.hideMobileInterfaceFromScreenshots()
+      this.mobileDevice().hideMobileInterfaceFromScreenshots()
     }
   }
 

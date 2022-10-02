@@ -23,7 +23,7 @@ export const loadPurchaseFlowUrl = async (application: WebApplication): Promise<
     const finalUrl = `${url}${period}${plan}`
 
     if (application.isNativeMobileWeb()) {
-      application.mobileDevice.openUrl(finalUrl)
+      application.mobileDevice().openUrl(finalUrl)
     } else {
       window.location.assign(finalUrl)
     }
