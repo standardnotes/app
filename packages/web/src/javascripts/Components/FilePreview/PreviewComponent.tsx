@@ -50,8 +50,8 @@ const PreviewComponent: FunctionComponent<Props> = ({ application, file, bytes }
       }),
     )
 
-    application.mobileDevice.previewFile(fileBase64, file.name)
-  }, [application.mobileDevice, bytes, file.mimeType, file.name, isNativeMobileWeb])
+    application.mobileDevice().previewFile(fileBase64, file.name)
+  }, [application, bytes, file.mimeType, file.name, isNativeMobileWeb])
 
   useEffect(() => {
     const shouldOpenNativePreviewOnLoad =

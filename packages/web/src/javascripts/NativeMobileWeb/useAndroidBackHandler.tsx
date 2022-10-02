@@ -34,7 +34,7 @@ const AndroidBackHandlerProvider = ({ application, children }: ProviderProps) =>
 
   useEffect(() => {
     const removeListener = addAndroidBackHandler(() => {
-      application.mobileDevice.confirmAndExit()
+      application.mobileDevice().confirmAndExit()
       return true
     })
     return () => {
