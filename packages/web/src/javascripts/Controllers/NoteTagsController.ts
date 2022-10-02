@@ -127,8 +127,8 @@ export class NoteTagsController extends AbstractViewController {
     this.setAutocompleteTagResults([])
   }
 
-  async createAndAddNewTag(): Promise<void> {
-    const newTag = await this.application.mutator.findOrCreateTag(this.autocompleteSearchQuery)
+  async createAndAddNewTag(title = this.autocompleteSearchQuery): Promise<void> {
+    const newTag = await this.application.mutator.findOrCreateTag(title)
     await this.addTagToActiveNote(newTag)
     this.clearAutocompleteSearch()
   }

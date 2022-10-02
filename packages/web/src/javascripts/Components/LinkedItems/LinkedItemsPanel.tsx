@@ -86,17 +86,21 @@ const LinkedItemsSection = ({
 }
 
 const LinkedItemsPanel = ({ linkingController }: { linkingController: LinkingController }) => {
-  const { tags, files, notes, getTitleForLinkedTag, getLinkedItemIcon, getSearchResults, linkItem } = linkingController
+  const {
+    tags,
+    files,
+    notes,
+    getTitleForLinkedTag,
+    getLinkedItemIcon,
+    getSearchResults,
+    linkItem,
+    createAndAddNewTag,
+  } = linkingController
 
   const searchInputRef = useRef<HTMLInputElement | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const isSearching = !!searchQuery.length
-  const { linkedResults, unlinkedResults } = isSearching
-    ? getSearchResults(searchQuery)
-    : {
-        linkedResults: [],
-        unlinkedResults: [],
-      }
+  const { linkedResults, unlinkedResults, shouldShowCreateTag } = getSearchResults(searchQuery)
 
   return (
     <div>
@@ -122,7 +126,9 @@ const LinkedItemsPanel = ({ linkingController }: { linkingController: LinkingCon
       </form>
       {isSearching ? (
         <>
-          <div className="my-1 px-3 text-menu-item font-semibold uppercase text-text">Unlinked</div>
+          {(!!unlinkedResults.length || shouldShowCreateTag) && (
+            <div className="my-1 px-3 text-menu-item font-semibold uppercase text-text">Unlinked</div>
+          )}
           <div className="my-1">
             {unlinkedResults.map((result) => {
               return (
@@ -139,6 +145,22 @@ const LinkedItemsPanel = ({ linkingController }: { linkingController: LinkingCon
                 </button>
               )
             })}
+            {shouldShowCreateTag && (
+              <button
+                className="group flex w-full items-center gap-2 overflow-hidden py-2 px-3 hover:bg-contrast hover:text-foreground focus:bg-info-backdrop"
+                onClick={() => createAndAddNewTag(searchQuery)}
+              >
+                <span className="flex-shrink-0 align-middle">Create &amp; add tag</span>{' '}
+                <span className="inline-flex min-w-0 items-center gap-1 rounded bg-contrast py-1 pl-1 pr-2 align-middle text-xs text-text group-hover:bg-info group-hover:text-info-contrast">
+                  <Icon
+                    type="hashtag"
+                    className="flex-shrink-0 text-info group-hover:text-info-contrast"
+                    size="small"
+                  />
+                  <span className="min-w-0 overflow-hidden text-ellipsis">{searchQuery}</span>
+                </span>
+              </button>
+            )}
           </div>
           <LinkedItemsSection
             label="Linked"

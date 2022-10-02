@@ -164,7 +164,17 @@ export class LinkingController extends AbstractViewController {
     }
   }
 
+  createAndAddNewTag = (title: string) => this.noteTagsController.createAndAddNewTag(title)
+
   getSearchResults = (searchQuery: string) => {
+    if (!searchQuery.length) {
+      return {
+        linkedResults: [],
+        unlinkedResults: [],
+        shouldShowCreateTag: false,
+      }
+    }
+
     const activeNote = this.notesController.firstSelectedNote
 
     if (!activeNote) {
@@ -191,10 +201,14 @@ export class LinkingController extends AbstractViewController {
       'title',
     )
     const linkedResults = naturalSort(searchResults.filter(isAlreadyLinked), 'title')
+    const shouldShowCreateTag = !linkedResults.find(
+      (result) => result.content_type === ContentType.Tag && result.title === searchQuery,
+    )
 
     return {
       unlinkedResults,
       linkedResults,
+      shouldShowCreateTag,
     }
   }
 }
