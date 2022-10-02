@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.67.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.67.3...@standardnotes/web@3.67.4) (2022-10-02)
+
+### Bug Fixes
+
+* text wrapping in notes list panel title ([52962ed](https://github.com/standardnotes/app/commit/52962ed65d9e8f64916e6bc0e8c032642a67fcc8))
+
 ## [3.67.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.67.2...@standardnotes/web@3.67.3) (2022-09-30)
 
 **Note:** Version bump only for package @standardnotes/web
