@@ -3,7 +3,9 @@ import { splitQueryInString } from '@/Utils'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { observer } from 'mobx-react-lite'
 import { useRef, useState } from 'react'
+import ClearInputButton from '../ClearInputButton/ClearInputButton'
 import Icon from '../Icon/Icon'
+import DecoratedInput from '../Input/DecoratedInput'
 
 const LinkedItemMeta = ({
   item,
@@ -99,27 +101,24 @@ const LinkedItemsPanel = ({ linkingController }: { linkingController: LinkingCon
   return (
     <div>
       <form className="sticky top-0 mb-3 border-b border-border bg-default px-2.5 py-2.5">
-        <div className="relative">
-          <input
-            type="text"
-            className="w-full rounded border border-solid border-border bg-default py-1.5 px-3 text-sm text-text"
-            placeholder="Search items..."
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.currentTarget.value)}
-            ref={searchInputRef}
-          />
-          {isSearching && (
-            <button
-              onClick={() => {
-                setSearchQuery('')
-                searchInputRef.current?.focus()
-              }}
-              className="absolute right-2 top-1/2 flex h-4.5 w-4.5 -translate-y-1/2 items-center justify-center rounded-full border-0 bg-neutral text-neutral-contrast"
-            >
-              <Icon type="close" className="h-3.5 w-3.5" />
-            </button>
-          )}
-        </div>
+        <DecoratedInput
+          type="text"
+          className={{ container: !isSearching ? 'py-1.5 px-0.5' : 'py-0' }}
+          placeholder="Search items..."
+          value={searchQuery}
+          onChange={setSearchQuery}
+          ref={searchInputRef}
+          right={[
+            isSearching && (
+              <ClearInputButton
+                onClick={() => {
+                  setSearchQuery('')
+                  searchInputRef.current?.focus()
+                }}
+              />
+            ),
+          ]}
+        />
       </form>
       {isSearching ? (
         <>
