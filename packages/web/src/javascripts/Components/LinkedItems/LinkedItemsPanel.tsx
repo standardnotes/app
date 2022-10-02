@@ -1,4 +1,5 @@
 import { LinkableItem, LinkingController } from '@/Controllers/LinkingController'
+import { splitQueryInString } from '@/Utils'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { observer } from 'mobx-react-lite'
 import { useRef, useState } from 'react'
@@ -8,20 +9,36 @@ const LinkedItem = ({
   item,
   getItemIcon,
   getTitleForLinkedTag,
+  searchQuery,
 }: {
   item: LinkableItem
   getItemIcon: LinkingController['getLinkedItemIcon']
   getTitleForLinkedTag: LinkingController['getTitleForLinkedTag']
+  searchQuery?: string
 }) => {
   const [icon, className] = getItemIcon(item)
   const tagTitle = getTitleForLinkedTag(item)
+  const title = item.title ?? ''
 
   return (
     <div className="flex items-center justify-between gap-4 py-1 px-3">
       <Icon type={icon} className={classNames('flex-shrink-0', className)} />
       <div className="min-w-0 flex-grow break-words text-left text-sm">
         {tagTitle && <span className="text-passive-1">{tagTitle.titlePrefix}</span>}
-        {item.title}
+        {searchQuery
+          ? splitQueryInString(title, searchQuery).map((substring, index) => (
+              <span
+                key={index}
+                className={`${
+                  substring.toLowerCase() === searchQuery.toLowerCase()
+                    ? 'whitespace-pre-wrap font-bold'
+                    : 'whitespace-pre-wrap '
+                }`}
+              >
+                {substring}
+              </span>
+            ))
+          : title}
       </div>
       <button className="h-7 w-7 cursor-pointer rounded-full border-0 bg-transparent p-1 hover:bg-contrast">
         <Icon type="more" className="text-neutral" />
@@ -35,11 +52,13 @@ const LinkedItemsSection = ({
   items,
   getItemIcon,
   getTitleForLinkedTag,
+  searchQuery,
 }: {
   label: string
   items: LinkableItem[]
   getItemIcon: LinkingController['getLinkedItemIcon']
   getTitleForLinkedTag: LinkingController['getTitleForLinkedTag']
+  searchQuery?: string
 }) => {
   if (!items.length) {
     return null
@@ -55,6 +74,7 @@ const LinkedItemsSection = ({
             getItemIcon={getItemIcon}
             getTitleForLinkedTag={getTitleForLinkedTag}
             key={item.uuid}
+            searchQuery={searchQuery}
           />
         ))}
       </div>
@@ -108,6 +128,8 @@ const LinkedItemsPanel = ({ linkingController }: { linkingController: LinkingCon
               const [icon, className] = getLinkedItemIcon(result)
               const tagTitle = getTitleForLinkedTag(result)
 
+              const title = result.title ?? ''
+
               return (
                 <button
                   className="flex w-full items-center justify-between gap-4 overflow-hidden py-2 px-3 hover:bg-contrast hover:text-foreground focus:bg-info-backdrop"
@@ -116,7 +138,18 @@ const LinkedItemsPanel = ({ linkingController }: { linkingController: LinkingCon
                   <Icon type={icon} className={classNames('flex-shrink-0', className)} />
                   <div className="min-w-0 flex-grow break-words text-left text-sm">
                     {tagTitle && <span className="text-passive-1">{tagTitle.titlePrefix}</span>}
-                    {result.title}
+                    {splitQueryInString(title, searchQuery).map((substring, index) => (
+                      <span
+                        key={index}
+                        className={`${
+                          substring.toLowerCase() === searchQuery.toLowerCase()
+                            ? 'whitespace-pre-wrap font-bold'
+                            : 'whitespace-pre-wrap '
+                        }`}
+                      >
+                        {substring}
+                      </span>
+                    ))}
                   </div>
                 </button>
               )
@@ -127,6 +160,7 @@ const LinkedItemsPanel = ({ linkingController }: { linkingController: LinkingCon
             items={linkedResults}
             getItemIcon={getLinkedItemIcon}
             getTitleForLinkedTag={getTitleForLinkedTag}
+            searchQuery={searchQuery}
           />
         </>
       ) : (
