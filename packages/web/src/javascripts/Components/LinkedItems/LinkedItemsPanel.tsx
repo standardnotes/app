@@ -68,7 +68,7 @@ const LinkedItemsSection = ({
       <div className="my-1 px-3 text-menu-item font-semibold uppercase text-text">{label}</div>
       <div className="my-1">
         {items.map((item) => (
-          <div className="flex items-center justify-between gap-4 py-1 px-3">
+          <div className="flex items-center justify-between gap-4 py-1 px-3" key={item.uuid}>
             <LinkedItemMeta
               item={item}
               getItemIcon={getItemIcon}
@@ -133,6 +133,7 @@ const LinkedItemsPanel = ({ linkingController }: { linkingController: LinkingCon
             {unlinkedResults.map((result) => {
               return (
                 <button
+                  key={result.uuid}
                   className="flex w-full items-center justify-between gap-4 overflow-hidden py-2 px-3 hover:bg-contrast hover:text-foreground focus:bg-info-backdrop"
                   onClick={() => linkItem(result)}
                 >
