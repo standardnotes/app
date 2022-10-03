@@ -65,7 +65,7 @@ const ItemLinkAutocompleteInput = ({ linkingController }: Props) => {
 
   return (
     <div ref={containerRef}>
-      <form onSubmit={onFormSubmit} className={`${tags.length > 0 ? 'mt-2' : ''}`}>
+      <form onSubmit={onFormSubmit}>
         <Disclosure open={dropdownVisible} onChange={showDropdown}>
           <input
             ref={inputRef}

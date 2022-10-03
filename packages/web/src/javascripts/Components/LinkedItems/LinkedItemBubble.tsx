@@ -12,7 +12,7 @@ type Props = {
   unlinkItem: (item: LinkableItem) => void
 }
 
-const LinkedItem = forwardRef(
+const LinkedItemBubble = forwardRef(
   ({ item, getItemIcon, getTitleForLinkedTag, activateItem, unlinkItem }: Props, ref: Ref<HTMLButtonElement>) => {
     const [showUnlinkButton, setShowUnlinkButton] = useState(false)
     const unlinkButtonRef = useRef<HTMLAnchorElement | null>(null)
@@ -47,13 +47,11 @@ const LinkedItem = forwardRef(
     return (
       <button
         ref={ref}
-        className="mt-2 mr-2 flex h-6 cursor-pointer items-center rounded border-0 bg-passive-4-opacity-variant py-2 pl-1 pr-2 text-xs text-text hover:bg-contrast focus:bg-contrast"
+        className="flex h-6 cursor-pointer items-center rounded border-0 bg-passive-4-opacity-variant py-2 pl-1 pr-2 text-xs text-text hover:bg-contrast focus:bg-contrast"
         onFocus={onFocus}
         onBlur={onBlur}
         onClick={onClick}
         title={tagTitle ? tagTitle.longTitle : item.title}
-        /* onKeyDown={onKeyDown}
-      tabIndex={getTabIndex()}*/
       >
         <Icon type={icon} className={classNames('mr-1 flex-shrink-0', iconClassName)} size="small" />
         <span className="max-w-290px overflow-hidden overflow-ellipsis whitespace-nowrap">
@@ -75,4 +73,4 @@ const LinkedItem = forwardRef(
   },
 )
 
-export default observer(LinkedItem)
+export default observer(LinkedItemBubble)

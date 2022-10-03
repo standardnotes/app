@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import ItemLinkAutocompleteInput from './ItemLinkAutocompleteInput'
 import { LinkableItem, LinkingController } from '@/Controllers/LinkingController'
-import LinkedItem from './LinkedItem'
+import LinkedItemBubble from './LinkedItemBubble'
 import { useCallback } from 'react'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 
@@ -30,9 +30,9 @@ const LinkedItemsContainer = ({ linkingController }: Props) => {
   )
 
   return (
-    <div className="hidden min-w-80 max-w-full flex-wrap bg-transparent md:-mr-2 md:flex">
+    <div className="mt-0.5 hidden min-w-80 max-w-full flex-wrap items-center gap-2 bg-transparent md:-mr-2 md:flex">
       {allLinkedItems.map((item) => (
-        <LinkedItem
+        <LinkedItemBubble
           item={item}
           key={item.uuid}
           getItemIcon={getItemIcon}
