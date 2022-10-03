@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.9.0](https://github.com/standardnotes/app/compare/@standardnotes/api@1.8.7...@standardnotes/api@1.9.0) (2022-10-03)
+
+### Features
+
+* **api:** add http status code for gone resource ([d54e696](https://github.com/standardnotes/app/commit/d54e6965c188e9f12371b32868e8de1c2f627f30))
+
 ## [1.8.7](https://github.com/standardnotes/app/compare/@standardnotes/api@1.8.6...@standardnotes/api@1.8.7) (2022-09-30)
 
 **Note:** Version bump only for package @standardnotes/api
