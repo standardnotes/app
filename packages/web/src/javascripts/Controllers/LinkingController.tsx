@@ -176,7 +176,7 @@ export class LinkingController extends AbstractViewController {
       return
     }
 
-    await this.application.items.unlinkItemFromAnother(itemToUnlink, selectedItem)
+    await this.application.items.unlinkItem(itemToUnlink, selectedItem)
   }
 
   linkItemToSelectedItem = async (itemToLink: LinkableItem) => {

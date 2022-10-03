@@ -99,6 +99,7 @@ const ItemLinkAutocompleteInput = ({ linkingController }: Props) => {
                 results={unlinkedResults}
                 searchQuery={searchQuery}
                 shouldShowCreateTag={shouldShowCreateTag}
+                onClickCallback={() => setSearchQuery('')}
               />
             </DisclosurePanel>
           )}

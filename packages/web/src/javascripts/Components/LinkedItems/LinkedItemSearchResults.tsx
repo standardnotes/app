@@ -11,6 +11,7 @@ type Props = {
   results: LinkableItem[]
   searchQuery: string
   shouldShowCreateTag: boolean
+  onClickCallback?: () => void
 }
 
 const LinkedItemSearchResults = ({
@@ -21,6 +22,7 @@ const LinkedItemSearchResults = ({
   results,
   searchQuery,
   shouldShowCreateTag,
+  onClickCallback,
 }: Props) => {
   return (
     <div className="my-1">
@@ -29,7 +31,10 @@ const LinkedItemSearchResults = ({
           <button
             key={result.uuid}
             className="flex w-full items-center justify-between gap-4 overflow-hidden py-2 px-3 hover:bg-contrast hover:text-foreground focus:bg-info-backdrop"
-            onClick={() => linkItemToSelectedItem(result)}
+            onClick={() => {
+              linkItemToSelectedItem(result)
+              onClickCallback?.()
+            }}
           >
             <LinkedItemMeta
               item={result}
@@ -43,7 +48,10 @@ const LinkedItemSearchResults = ({
       {shouldShowCreateTag && (
         <button
           className="group flex w-full items-center gap-2 overflow-hidden py-2 px-3 hover:bg-contrast hover:text-foreground focus:bg-info-backdrop"
-          onClick={() => createAndAddNewTag(searchQuery)}
+          onClick={() => {
+            createAndAddNewTag(searchQuery)
+            onClickCallback?.()
+          }}
         >
           <span className="flex-shrink-0 align-middle">Create &amp; add tag</span>{' '}
           <span className="inline-flex min-w-0 items-center gap-1 rounded bg-contrast py-1 pl-1 pr-2 align-middle text-xs text-text group-hover:bg-info group-hover:text-info-contrast">
