@@ -5,6 +5,7 @@ import { ContextPayload } from './ContextPayload'
 
 export interface OfflineSyncPushContextualPayload extends ContextPayload {
   content: ItemContent | undefined
+  contentKey: string | undefined
   created_at_timestamp: number
   created_at: Date
   duplicate_of?: Uuid
@@ -17,6 +18,7 @@ export function CreateOfflineSyncPushContextPayload(
 ): OfflineSyncPushContextualPayload {
   const base: OfflineSyncPushContextualPayload = {
     content: undefined,
+    contentKey: fromPayload.contentKey,
     content_type: fromPayload.content_type,
     created_at_timestamp: fromPayload.created_at_timestamp,
     created_at: fromPayload.created_at,

@@ -5,6 +5,7 @@ export interface TransferPayload<C extends ItemContent = ItemContent> {
   uuid: Uuid
   content_type: ContentType
   content: C | string | undefined
+  contentKey: string | undefined
   deleted?: boolean
 
   updated_at: Date

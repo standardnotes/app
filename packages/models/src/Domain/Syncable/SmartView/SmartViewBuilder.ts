@@ -31,6 +31,7 @@ export function BuildSmartViews(
       uuid: SystemViewId.Files,
       content_type: ContentType.SmartView,
       ...PayloadTimestampDefaults(),
+      contentKey: undefined,
       content: FillItemContent<SmartViewContent>({
         title: 'Files',
         predicate: filesPredicate(options).toJson(),

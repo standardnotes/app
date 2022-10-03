@@ -66,6 +66,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
       uuid: Utils.UuidGenerator.GenerateUuid(),
       content_type: ContentType.ItemsKey,
       content: this.generateNewItemsKeyContent(),
+      contentKey: undefined,
       ...PayloadTimestampDefaults(),
     })
     return CreateDecryptedItemFromPayload(payload)
@@ -233,7 +234,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     payload: Models.DecryptedPayloadInterface,
     key: ItemsKeyInterface | SNRootKey,
   ): EncryptedParameters {
-    const itemKey = this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
+    const itemKey = payload.contentKey || this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
 
     const contentPlaintext = JSON.stringify(payload.content)
     const authenticatedData = this.generateAuthenticatedDataForPayload(payload, key)
@@ -254,21 +255,21 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     encrypted: EncryptedParameters,
     key: ItemsKeyInterface | SNRootKey,
   ): DecryptedParameters<C> | ErrorDecryptingParameters {
-    const itemKeyComponents = this.deconstructEncryptedPayloadString(encrypted.enc_item_key)
-    const authenticatedData = this.stringToAuthenticatedData(itemKeyComponents.authenticatedData, {
+    const contentKeyComponents = this.deconstructEncryptedPayloadString(encrypted.enc_item_key)
+    const authenticatedData = this.stringToAuthenticatedData(contentKeyComponents.authenticatedData, {
       u: encrypted.uuid,
       v: encrypted.version,
     })
 
     const useAuthenticatedString = this.authenticatedDataToString(authenticatedData)
-    const itemKey = this.decryptString004(
-      itemKeyComponents.ciphertext,
+    const contentKey = this.decryptString004(
+      contentKeyComponents.ciphertext,
       key.itemsKey,
-      itemKeyComponents.nonce,
+      contentKeyComponents.nonce,
       useAuthenticatedString,
     )
 
-    if (!itemKey) {
+    if (!contentKey) {
       console.error('Error decrypting itemKey parameters', encrypted)
       return {
         uuid: encrypted.uuid,
@@ -279,10 +280,11 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     const contentComponents = this.deconstructEncryptedPayloadString(encrypted.content)
     const content = this.decryptString004(
       contentComponents.ciphertext,
-      itemKey,
+      contentKey,
       contentComponents.nonce,
       useAuthenticatedString,
     )
+
     if (!content) {
       return {
         uuid: encrypted.uuid,
@@ -292,6 +294,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
       return {
         uuid: encrypted.uuid,
         content: JSON.parse(content),
+        contentKey: contentKey,
       }
     }
   }
@@ -305,6 +308,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
       V004Algorithm.ArgonMemLimit,
       V004Algorithm.ArgonOutputKeyBytes,
     )
+
     const partitions = Utils.splitString(derivedKey, 2)
     const masterKey = partitions[0]
     const serverPassword = partitions[1]
