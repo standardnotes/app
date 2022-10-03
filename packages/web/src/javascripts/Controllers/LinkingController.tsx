@@ -228,7 +228,7 @@ export class LinkingController extends AbstractViewController {
         await this.application.items.associateFileWithNote(itemToLink, selectedItem)
       }
       if (itemToLink instanceof SNNote) {
-        await this.application.items.linkNoteToNote(itemToLink, selectedItem)
+        await this.application.items.linkNoteToNote(selectedItem, itemToLink)
       }
     }
 
