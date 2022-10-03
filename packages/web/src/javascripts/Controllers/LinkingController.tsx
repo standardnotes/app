@@ -270,10 +270,14 @@ export class LinkingController extends AbstractViewController {
       return isAlreadyLinkedToItem
     }
 
+    const prioritizeTagResult = (item: DecryptedItemInterface<ItemContent>) => {
+      return item.content_type === ContentType.Tag ? -1 : 0
+    }
+
     const unlinkedResults = naturalSort(
       searchResults.filter((item) => !isAlreadyLinked(item)),
       'title',
-    )
+    ).sort(prioritizeTagResult)
     const linkedResults = naturalSort(searchResults.filter(isAlreadyLinked), 'title')
     const isResultExistingTag = (result: LinkableItem) =>
       result.content_type === ContentType.Tag && result.title === searchQuery
