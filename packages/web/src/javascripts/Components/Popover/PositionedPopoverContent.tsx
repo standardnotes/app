@@ -64,7 +64,9 @@ const PositionedPopoverContent = ({
         )}
         style={{
           ...styles,
-          maxHeight: getPopoverMaxHeight(getAppRect(documentRect), anchorRect, positionedSide, positionedAlignment),
+          maxHeight: styles
+            ? getPopoverMaxHeight(getAppRect(documentRect), anchorRect, positionedSide, positionedAlignment)
+            : '',
           top: !isDesktopScreen ? `${document.documentElement.scrollTop}px` : '',
         }}
         ref={(node) => {
