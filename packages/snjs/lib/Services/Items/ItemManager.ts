@@ -1157,6 +1157,12 @@ export class ItemManager
     )
   }
 
+  public async linkNoteToNote(note: Models.SNNote, anotherNote: Models.SNNote): Promise<Models.SNNote> {
+    return this.changeItem<Models.NoteMutator, Models.SNNote>(note, (mutator) => {
+      mutator.addNote(anotherNote)
+    })
+  }
+
   public async unlinkItemFromAnother(
     item: DecryptedItemInterface<ItemContent>,
     itemToUnlink: DecryptedItemInterface<ItemContent>,

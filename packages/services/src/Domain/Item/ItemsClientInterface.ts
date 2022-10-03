@@ -73,6 +73,8 @@ export interface ItemsClientInterface {
 
   itemsReferencingItem(itemToLookupUuidFor: DecryptedItemInterface, contentType?: ContentType): DecryptedItemInterface[]
 
+  linkNoteToNote(note: SNNote, anotherNote: SNNote): Promise<SNNote>
+
   unlinkItemFromAnother(
     item: DecryptedItemInterface<ItemContent>,
     itemToUnlink: DecryptedItemInterface<ItemContent>,
