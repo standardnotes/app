@@ -1,5 +1,6 @@
 import { FilesController } from '@/Controllers/FilesController'
 import { LinkableItem, LinkingController } from '@/Controllers/LinkingController'
+import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { FileItem } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
@@ -79,7 +80,10 @@ const LinkedItemsSectionItem = ({
         )}
         <div className="mt-1 px-3 py-1 text-xs font-medium text-neutral">
           <div className="mb-1">
-            <span className="font-semibold">Created at:</span> {item.created_at.toLocaleString()}
+            <span className="font-semibold">Created at:</span> {formatDateForContextMenu(item.created_at)}
+          </div>
+          <div className="mb-1">
+            <span className="font-semibold">Modified at:</span> {formatDateForContextMenu(item.userModifiedDate)}
           </div>
           <div className="mb-1">
             <span className="font-semibold">ID:</span> {item.uuid}
