@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.68.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.68.1...@standardnotes/web@3.68.2) (2022-10-03)
+
+### Bug Fixes
+
+* resizing in desktop app ([b9b84c7](https://github.com/standardnotes/app/commit/b9b84c79d5baf9b711618224c98e296bd26482ec))
+
 ## [3.68.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.68.0...@standardnotes/web@3.68.1) (2022-10-03)
 
 **Note:** Version bump only for package @standardnotes/web
