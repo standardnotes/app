@@ -223,11 +223,9 @@ export class LinkingController extends AbstractViewController {
     if (selectedItem instanceof SNNote) {
       if (itemToLink instanceof SNTag) {
         await this.application.items.addTagToNote(selectedItem, itemToLink, this.shouldLinkToParentFolders)
-      }
-      if (itemToLink instanceof FileItem) {
+      } else if (itemToLink instanceof FileItem) {
         await this.application.items.associateFileWithNote(itemToLink, selectedItem)
-      }
-      if (itemToLink instanceof SNNote) {
+      } else if (itemToLink instanceof SNNote) {
         await this.application.items.linkNoteToNote(selectedItem, itemToLink)
       }
     }
@@ -235,11 +233,9 @@ export class LinkingController extends AbstractViewController {
     if (selectedItem instanceof FileItem) {
       if (itemToLink instanceof SNTag) {
         await this.application.items.addTagToFile(selectedItem, itemToLink, this.shouldLinkToParentFolders)
-      }
-      if (itemToLink instanceof SNNote) {
+      } else if (itemToLink instanceof SNNote) {
         await this.application.items.associateFileWithNote(selectedItem, itemToLink)
-      }
-      if (itemToLink instanceof FileItem) {
+      } else if (itemToLink instanceof FileItem) {
         await this.application.items.linkFileToFile(itemToLink, selectedItem)
       }
     }
