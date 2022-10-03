@@ -26,7 +26,7 @@ declare global {
 }
 
 import { IsWebPlatform, WebAppVersion } from '@/Constants/Version'
-import { DesktopManagerInterface, SNLog } from '@standardnotes/snjs'
+import { DesktopManagerInterface, Environment, SNLog } from '@standardnotes/snjs'
 import ApplicationGroupView from './Components/ApplicationGroupView/ApplicationGroupView'
 import { WebDevice } from './Application/Device/WebDevice'
 import { StartApplication } from './Application/Device/StartApplication'
@@ -60,6 +60,9 @@ const startApplication: StartApplication = async function startApplication(
   let root: Root
 
   const onDestroy = () => {
+    if (device.environment === Environment.Desktop) {
+      window.removeEventListener('resize', setViewportHeight)
+    }
     window.removeEventListener('orientationchange', setViewportHeight)
     const rootElement = document.getElementById(ElementIds.RootId) as HTMLElement
     root.unmount()
@@ -76,6 +79,9 @@ const startApplication: StartApplication = async function startApplication(
     disableIosTextFieldZoom()
     setViewportHeight()
     window.addEventListener('orientationchange', setViewportHeight)
+    if (device.environment === Environment.Desktop) {
+      window.addEventListener('resize', setViewportHeight)
+    }
 
     root.render(
       <ApplicationGroupView
