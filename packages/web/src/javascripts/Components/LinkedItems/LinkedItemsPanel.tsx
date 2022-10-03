@@ -11,6 +11,7 @@ import DecoratedInput from '../Input/DecoratedInput'
 import MenuItem from '../Menu/MenuItem'
 import { MenuItemType } from '../Menu/MenuItemType'
 import Popover from '../Popover/Popover'
+import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import LinkedFileMenuOptions from './LinkedFileMenuOptions'
 import LinkedItemMeta from './LinkedItemMeta'
 import LinkedItemSearchResults from './LinkedItemSearchResults'
@@ -42,6 +43,10 @@ const LinkedItemsSectionItem = ({
       <button
         className="flex flex-grow items-center justify-between gap-4 py-2 pl-3 pr-12 text-sm hover:bg-info-backdrop focus:bg-info-backdrop"
         onClick={() => activateItem(item)}
+        onContextMenu={(event) => {
+          event.preventDefault()
+          toggleMenu()
+        }}
       >
         <LinkedItemMeta
           item={item}
@@ -78,6 +83,7 @@ const LinkedItemsSectionItem = ({
         {item instanceof FileItem && (
           <LinkedFileMenuOptions file={item} closeMenu={toggleMenu} handleFileAction={handleFileAction} />
         )}
+        <HorizontalSeparator classes="my-2" />
         <div className="mt-1 px-3 py-1 text-xs font-medium text-neutral">
           <div className="mb-1">
             <span className="font-semibold">Created at:</span> {formatDateForContextMenu(item.created_at)}
