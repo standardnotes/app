@@ -27,7 +27,8 @@ export type LinkableItem = DecryptedItemInterface<ItemContent>
 export class LinkingController extends AbstractViewController {
   tags: SNTag[] = []
   files: FileItem[] = []
-  notes: SNNote[] = []
+  notesLinkedToItem: SNNote[] = []
+  notesLinkingToItem: SNNote[] = []
   shouldLinkToParentFolders: boolean
   isLinkingPanelOpen = false
 
@@ -44,7 +45,8 @@ export class LinkingController extends AbstractViewController {
     makeObservable(this, {
       tags: observable,
       files: observable,
-      notes: observable,
+      notesLinkedToItem: observable,
+      notesLinkingToItem: observable,
       isLinkingPanelOpen: observable,
 
       allLinkedItems: computed,
@@ -53,6 +55,7 @@ export class LinkingController extends AbstractViewController {
       reloadLinkedFiles: action,
       reloadLinkedTags: action,
       reloadLinkedNotes: action,
+      reloadNotesLinkingToItem: action,
     })
 
     this.shouldLinkToParentFolders = application.getPreference(
@@ -78,6 +81,7 @@ export class LinkingController extends AbstractViewController {
       }),
       application.streamItems(ContentType.Note, () => {
         this.reloadLinkedNotes()
+        this.reloadNotesLinkingToItem()
       }),
     )
 
@@ -88,6 +92,7 @@ export class LinkingController extends AbstractViewController {
           this.reloadLinkedFiles()
           this.reloadLinkedTags()
           this.reloadLinkedNotes()
+          this.reloadNotesLinkingToItem()
         },
       ),
     )
@@ -98,7 +103,7 @@ export class LinkingController extends AbstractViewController {
   }
 
   get allLinkedItems() {
-    return [...this.tags, ...this.files, ...this.notes]
+    return [...this.tags, ...this.files, ...this.notesLinkedToItem]
   }
 
   reloadLinkedFiles() {
@@ -122,8 +127,17 @@ export class LinkingController extends AbstractViewController {
     const activeItem = this.selectionController.firstSelectedItem
 
     if (activeItem) {
-      const notes = this.application.items.getSortedNotesForItem(activeItem)
-      this.notes = notes
+      const notes = this.application.items.getSortedLinkedNotesForItem(activeItem)
+      this.notesLinkedToItem = notes
+    }
+  }
+
+  reloadNotesLinkingToItem() {
+    const activeItem = this.selectionController.firstSelectedItem
+
+    if (activeItem) {
+      const notes = this.application.items.getSortedNotesLinkingToItem(activeItem)
+      this.notesLinkingToItem = notes
     }
   }
 

@@ -76,12 +76,13 @@ const LinkedItemsPanel = ({ linkingController, isOpen }: { linkingController: Li
   const {
     tags,
     files,
-    notes,
+    notesLinkedToItem,
+    notesLinkingToItem,
     getTitleForLinkedTag,
     getLinkedItemIcon,
     getSearchResults,
     linkItemToSelectedItem,
-    unlinkItemFromSelectedItem: unlinkItem,
+    unlinkItemFromSelectedItem,
     activateItem,
     createAndAddNewTag,
   } = linkingController
@@ -144,7 +145,7 @@ const LinkedItemsPanel = ({ linkingController, isOpen }: { linkingController: Li
                     getItemIcon={getLinkedItemIcon}
                     getTitleForLinkedTag={getTitleForLinkedTag}
                     searchQuery={searchQuery}
-                    unlinkItem={unlinkItem}
+                    unlinkItem={unlinkItemFromSelectedItem}
                     activateItem={activateItem}
                   />
                 ))}
@@ -165,7 +166,7 @@ const LinkedItemsPanel = ({ linkingController, isOpen }: { linkingController: Li
                     getItemIcon={getLinkedItemIcon}
                     getTitleForLinkedTag={getTitleForLinkedTag}
                     searchQuery={searchQuery}
-                    unlinkItem={unlinkItem}
+                    unlinkItem={unlinkItemFromSelectedItem}
                     activateItem={activateItem}
                   />
                 ))}
@@ -183,25 +184,45 @@ const LinkedItemsPanel = ({ linkingController, isOpen }: { linkingController: Li
                     getItemIcon={getLinkedItemIcon}
                     getTitleForLinkedTag={getTitleForLinkedTag}
                     searchQuery={searchQuery}
-                    unlinkItem={unlinkItem}
+                    unlinkItem={unlinkItemFromSelectedItem}
                     activateItem={activateItem}
                   />
                 ))}
               </div>
             </>
           )}
-          {!!notes.length && (
+          {!!notesLinkedToItem.length && (
             <>
               <div className="my-1 px-3 text-menu-item font-semibold uppercase text-text">Linked Notes</div>
               <div className="my-1">
-                {notes.map((item) => (
+                {notesLinkedToItem.map((item) => (
                   <LinkedItemsSectionItem
                     key={item.uuid}
                     item={item}
                     getItemIcon={getLinkedItemIcon}
                     getTitleForLinkedTag={getTitleForLinkedTag}
                     searchQuery={searchQuery}
-                    unlinkItem={unlinkItem}
+                    unlinkItem={unlinkItemFromSelectedItem}
+                    activateItem={activateItem}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+          {!!notesLinkingToItem.length && (
+            <>
+              <div className="my-1 px-3 text-menu-item font-semibold uppercase text-text">
+                Notes Linking To This Note
+              </div>
+              <div className="my-1">
+                {notesLinkingToItem.map((item) => (
+                  <LinkedItemsSectionItem
+                    key={item.uuid}
+                    item={item}
+                    getItemIcon={getLinkedItemIcon}
+                    getTitleForLinkedTag={getTitleForLinkedTag}
+                    searchQuery={searchQuery}
+                    unlinkItem={unlinkItemFromSelectedItem}
                     activateItem={activateItem}
                   />
                 ))}

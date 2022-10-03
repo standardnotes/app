@@ -114,8 +114,10 @@ export interface ItemsClientInterface {
    * @returns Array containing tags associated with an item
    */
   getSortedTagsForItem(item: DecryptedItemInterface<ItemContent>): SNTag[]
-  getSortedNotesForItem(item: DecryptedItemInterface<ItemContent>): SNNote[]
   getSortedFilesForItem(item: DecryptedItemInterface<ItemContent>): FileItem[]
+
+  getSortedLinkedNotesForItem(item: DecryptedItemInterface<ItemContent>): SNNote[]
+  getSortedNotesLinkingToItem(item: DecryptedItemInterface<ItemContent>): SNNote[]
 
   isSmartViewTitle(title: string): boolean
 

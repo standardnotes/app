@@ -1209,15 +1209,20 @@ export class ItemManager
     return naturalSort(filesReferencingItem.concat(filesReferencedByItem), 'title')
   }
 
-  public getSortedNotesForItem(item: DecryptedItemInterface<ItemContent>): Models.SNNote[] {
-    const notesReferencingItem = this.itemsReferencingItem(item).filter(
-      (ref) => ref.content_type === ContentType.Note,
-    ) as Models.SNNote[]
+  public getSortedLinkedNotesForItem(item: DecryptedItemInterface<ItemContent>): Models.SNNote[] {
     const notesReferencedByItem = this.referencesForItem(item).filter(
       (ref) => ref.content_type === ContentType.Note,
     ) as Models.SNNote[]
 
-    return naturalSort(notesReferencingItem.concat(notesReferencedByItem), 'title')
+    return naturalSort(notesReferencedByItem, 'title')
+  }
+
+  public getSortedNotesLinkingToItem(item: Models.DecryptedItemInterface<Models.ItemContent>): Models.SNNote[] {
+    const notesReferencingItem = this.itemsReferencingItem(item).filter(
+      (ref) => ref.content_type === ContentType.Note,
+    ) as Models.SNNote[]
+
+    return naturalSort(notesReferencingItem, 'title')
   }
 
   public async createTag(title: string, parentItemToLookupUuidFor?: Models.SNTag): Promise<Models.SNTag> {
