@@ -97,7 +97,7 @@ const LinkedItemsPanel = ({ linkingController }: { linkingController: LinkingCon
         <DecoratedInput
           type="text"
           className={{ container: !isSearching ? 'py-1.5 px-0.5' : 'py-0' }}
-          placeholder="Search items..."
+          placeholder="Search items to link..."
           value={searchQuery}
           onChange={setSearchQuery}
           ref={searchInputRef}
