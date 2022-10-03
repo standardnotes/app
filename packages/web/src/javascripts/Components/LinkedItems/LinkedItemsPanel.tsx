@@ -33,7 +33,7 @@ const LinkedItemsSectionItem = ({
   return (
     <div className="relative flex items-center justify-between">
       <button
-        className="flex flex-grow items-center justify-between gap-4 py-2 pl-3 pr-11 text-sm hover:bg-info-backdrop focus:bg-info-backdrop"
+        className="flex flex-grow items-center justify-between gap-4 py-2 pl-3 pr-12 text-sm hover:bg-info-backdrop focus:bg-info-backdrop"
         onClick={() => activateItem(item)}
       >
         <LinkedItemMeta
@@ -55,7 +55,7 @@ const LinkedItemsSectionItem = ({
         togglePopover={toggleMenu}
         anchorElement={menuButtonRef.current}
         side="bottom"
-        align="end"
+        align="center"
       >
         <MenuItem
           type={MenuItemType.IconButton}
