@@ -41,7 +41,6 @@ import IndicatorCircle from '../IndicatorCircle/IndicatorCircle'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import AutoresizingNoteViewTextarea from './AutoresizingTextarea'
 import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
-import NoteTagsPanel from '../LinkedItems/NoteTagsPanel'
 import LinkedItemsContainer from '../LinkedItems/LinkedItemsContainer'
 import NoteStatusIndicator, { NoteStatus } from './NoteStatusIndicator'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
@@ -1003,10 +1002,6 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                   <LinkedItemsButton
                     linkingController={this.viewControllerManager.linkingController}
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                  />
-                  <NoteTagsPanel
-                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                    noteTagsController={this.viewControllerManager.noteTagsController}
                   />
                   <AttachedFilesButton
                     application={this.application}
