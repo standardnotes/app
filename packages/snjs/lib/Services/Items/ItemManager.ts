@@ -1194,10 +1194,14 @@ export class ItemManager
   }
 
   public getSortedNotesForItem(item: DecryptedItemInterface<ItemContent>): Models.SNNote[] {
-    return naturalSort(
-      this.itemsReferencingItem(item).filter((ref) => ref.content_type === ContentType.Note) as Models.SNNote[],
-      'title',
-    )
+    const notesReferencingItem = this.itemsReferencingItem(item).filter(
+      (ref) => ref.content_type === ContentType.Note,
+    ) as Models.SNNote[]
+    const notesReferencedByItem = this.referencesForItem(item).filter(
+      (ref) => ref.content_type === ContentType.Note,
+    ) as Models.SNNote[]
+
+    return naturalSort(notesReferencingItem.concat(notesReferencedByItem), 'title')
   }
 
   public async createTag(title: string, parentItemToLookupUuidFor?: Models.SNTag): Promise<Models.SNTag> {
