@@ -156,6 +156,11 @@ export class LinkingController extends AbstractViewController {
       return AppPaneId.Items
     }
 
+    if (item.content_type === ContentType.Note) {
+      await this.navigationController.selectHomeNavigationView()
+    } else {
+      await this.navigationController.selectFilesView()
+    }
     const { didSelect } = await this.selectionController.selectItem(item.uuid, true)
     if (didSelect) {
       return AppPaneId.Editor
