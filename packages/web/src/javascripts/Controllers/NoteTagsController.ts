@@ -181,7 +181,7 @@ export class NoteTagsController extends AbstractViewController {
     const activeNote = this.itemListController.activeControllerNote
 
     if (activeNote) {
-      const tags = this.application.items.getSortedTagsForNote(activeNote)
+      const tags = this.application.items.getSortedTagsForItem(activeNote)
       this.setTags(tags)
     }
   }
@@ -207,16 +207,14 @@ export class NoteTagsController extends AbstractViewController {
     const activeNote = this.itemListController.activeControllerNote
 
     if (activeNote) {
-      await this.application.mutator.changeItem(tag, (mutator) => {
-        mutator.removeItemAsRelationship(activeNote)
-      })
+      await this.application.items.unlinkItemFromAnother(tag, activeNote)
       this.application.sync.sync().catch(console.error)
       this.reloadTagsForCurrentNote()
     }
   }
 
   getSortedTagsForNote(note: SNNote): SNTag[] {
-    const tags = this.application.items.getSortedTagsForNote(note)
+    const tags = this.application.items.getSortedTagsForItem(note)
 
     const sortFunction = (tagA: SNTag, tagB: SNTag): number => {
       const a = this.getLongTitle(tagA)

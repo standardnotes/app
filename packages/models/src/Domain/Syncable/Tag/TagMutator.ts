@@ -4,7 +4,7 @@ import { FileItem } from '../File'
 import { SNNote } from '../Note'
 import { isTagToParentTagReference } from '../../Abstract/Reference/Functions'
 import { TagToParentTagReference } from '../../Abstract/Reference/TagToParentTagReference'
-import { ContenteReferenceType } from '../../Abstract/Reference/ContenteReferenceType'
+import { ContentReferenceType } from '../../Abstract/Reference/ContenteReferenceType'
 import { DecryptedItemMutator } from '../../Abstract/Item/Mutator/DecryptedItemMutator'
 import { TagToFileReference } from '../../Abstract/Reference/TagToFileReference'
 
@@ -21,7 +21,7 @@ export class TagMutator extends DecryptedItemMutator<TagContent> {
     const references = this.immutableItem.references.filter((ref) => !isTagToParentTagReference(ref))
 
     const reference: TagToParentTagReference = {
-      reference_type: ContenteReferenceType.TagToParentTag,
+      reference_type: ContentReferenceType.TagToParentTag,
       content_type: ContentType.Tag,
       uuid: tag.uuid,
     }
@@ -41,7 +41,7 @@ export class TagMutator extends DecryptedItemMutator<TagContent> {
     }
 
     const reference: TagToFileReference = {
-      reference_type: ContenteReferenceType.TagToFile,
+      reference_type: ContentReferenceType.TagToFile,
       content_type: ContentType.File,
       uuid: file.uuid,
     }

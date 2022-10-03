@@ -417,7 +417,7 @@ describe('itemManager', () => {
 
       await itemManager.addTagToNote(note, childTag, true)
 
-      const tags = itemManager.getSortedTagsForNote(note)
+      const tags = itemManager.getSortedTagsForItem(note)
 
       expect(tags).toHaveLength(2)
       expect(tags[0].uuid).toEqual(childTag.uuid)
@@ -435,7 +435,7 @@ describe('itemManager', () => {
 
       await itemManager.addTagToNote(note, childTag, false)
 
-      const tags = itemManager.getSortedTagsForNote(note)
+      const tags = itemManager.getSortedTagsForItem(note)
 
       expect(tags).toHaveLength(1)
       expect(tags[0].uuid).toEqual(childTag.uuid)
@@ -738,7 +738,7 @@ describe('itemManager', () => {
 
       await itemManager.associateFileWithNote(file, note)
 
-      const filesAssociatedWithNote = itemManager.getFilesForNote(note)
+      const filesAssociatedWithNote = itemManager.getSortedFilesForItem(note)
 
       expect(filesAssociatedWithNote).toHaveLength(1)
       expect(filesAssociatedWithNote[0].uuid).toBe(file.uuid)

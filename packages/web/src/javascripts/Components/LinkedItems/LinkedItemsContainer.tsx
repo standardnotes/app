@@ -15,7 +15,7 @@ const LinkedItemsContainer = ({ noteTagsController, linkingController }: Props) 
   const { toggleAppPane } = useResponsiveAppPane()
   const {
     allLinkedItems,
-    unlinkItem,
+    unlinkItemFromSelectedItem: unlinkItem,
     getTitleForLinkedTag,
     getLinkedItemIcon: getItemIcon,
     activateItem,

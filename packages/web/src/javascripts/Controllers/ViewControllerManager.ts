@@ -125,9 +125,7 @@ export class ViewControllerManager {
 
     this.linkingController = new LinkingController(
       application,
-      this.notesController,
       this.noteTagsController,
-      this.filesController,
       this.navigationController,
       this.selectionController,
       this.eventBus,

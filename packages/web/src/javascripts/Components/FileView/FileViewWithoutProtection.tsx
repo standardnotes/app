@@ -5,6 +5,7 @@ import FileOptionsPanel from '@/Components/FileContextMenu/FileOptionsPanel'
 import FilePreview from '@/Components/FilePreview/FilePreview'
 import { FileViewProps } from './FileViewProps'
 import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
+import LinkedItemsButton from '../LinkedItems/LinkedItemsButton'
 
 const SyncTimeoutNoDebounceMs = 100
 const SyncTimeoutDebounceMs = 350
@@ -53,7 +54,8 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
                 />
               </div>
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center gap-3">
+              <LinkedItemsButton linkingController={viewControllerManager.linkingController} />
               <FileOptionsPanel
                 filesController={viewControllerManager.filesController}
                 selectionController={viewControllerManager.selectionController}

@@ -34,6 +34,7 @@ export class SelectedItemsController extends AbstractViewController {
       selectedItemsCount: computed,
       selectedFiles: computed,
       selectedFilesCount: computed,
+      firstSelectedItem: computed,
 
       selectItem: action,
       setSelectedItems: action,
@@ -77,6 +78,10 @@ export class SelectedItemsController extends AbstractViewController {
 
   get selectedFilesCount(): number {
     return this.selectedFiles.length
+  }
+
+  get firstSelectedItem() {
+    return this.getSelectedItems()[0]
   }
 
   getSelectedItems = <T extends ListableContentItem = ListableContentItem>(contentType?: ContentType): T[] => {

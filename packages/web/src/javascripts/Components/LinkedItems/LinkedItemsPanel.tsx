@@ -60,7 +60,7 @@ const LinkedItemsSectionItem = ({
   getItemIcon: LinkingController['getLinkedItemIcon']
   getTitleForLinkedTag: LinkingController['getTitleForLinkedTag']
   searchQuery?: string
-  unlinkItem: LinkingController['unlinkItem']
+  unlinkItem: LinkingController['unlinkItemFromSelectedItem']
 }) => {
   const menuButtonRef = useRef<HTMLButtonElement>(null)
 
@@ -68,7 +68,7 @@ const LinkedItemsSectionItem = ({
   const toggleMenu = () => setIsMenuOpen((open) => !open)
 
   return (
-    <div className="flex items-center justify-between gap-4 py-1 px-3" key={item.uuid}>
+    <div className="flex items-center justify-between gap-4 py-1 px-3">
       <LinkedItemMeta
         item={item}
         getItemIcon={getItemIcon}
@@ -117,7 +117,7 @@ const LinkedItemsSection = ({
   getItemIcon: LinkingController['getLinkedItemIcon']
   getTitleForLinkedTag: LinkingController['getTitleForLinkedTag']
   searchQuery?: string
-  unlinkItem: LinkingController['unlinkItem']
+  unlinkItem: LinkingController['unlinkItemFromSelectedItem']
 }) => {
   if (!items.length) {
     return null
@@ -129,6 +129,7 @@ const LinkedItemsSection = ({
       <div className="my-1">
         {items.map((item) => (
           <LinkedItemsSectionItem
+            key={item.uuid}
             item={item}
             getItemIcon={getItemIcon}
             getTitleForLinkedTag={getTitleForLinkedTag}
@@ -149,8 +150,8 @@ const LinkedItemsPanel = ({ linkingController }: { linkingController: LinkingCon
     getTitleForLinkedTag,
     getLinkedItemIcon,
     getSearchResults,
-    linkItem,
-    unlinkItem,
+    linkItemToSelectedItem,
+    unlinkItemFromSelectedItem: unlinkItem,
     createAndAddNewTag,
   } = linkingController
 
@@ -192,7 +193,7 @@ const LinkedItemsPanel = ({ linkingController }: { linkingController: LinkingCon
                 <button
                   key={result.uuid}
                   className="flex w-full items-center justify-between gap-4 overflow-hidden py-2 px-3 hover:bg-contrast hover:text-foreground focus:bg-info-backdrop"
-                  onClick={() => linkItem(result)}
+                  onClick={() => linkItemToSelectedItem(result)}
                 >
                   <LinkedItemMeta
                     item={result}

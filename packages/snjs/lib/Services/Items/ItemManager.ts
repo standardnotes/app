@@ -9,7 +9,7 @@ import * as Services from '@standardnotes/services'
 import { PayloadManagerChangeData } from '../Payloads'
 import { DiagnosticInfo, ItemsClientInterface } from '@standardnotes/services'
 import { ApplicationDisplayOptions } from '@Lib/Application/Options/OptionalOptions'
-import { CollectionSort } from '@standardnotes/models'
+import { CollectionSort, DecryptedItemInterface, ItemContent } from '@standardnotes/models'
 
 type ItemsChangeObserver<I extends Models.DecryptedItemInterface = Models.DecryptedItemInterface> = {
   contentType: ContentType[]
@@ -1140,16 +1140,56 @@ export class ItemManager
     )
   }
 
+  public async addTagToFile(file: Models.FileItem, tag: Models.SNTag, addHierarchy: boolean): Promise<Models.SNTag[]> {
+    let tagsToAdd = [tag]
+
+    if (addHierarchy) {
+      const parentChainTags = this.getTagParentChain(tag)
+      tagsToAdd = [...parentChainTags, tag]
+    }
+
+    return Promise.all(
+      tagsToAdd.map((tagToAdd) => {
+        return this.changeTag(tagToAdd, (mutator) => {
+          mutator.addFile(file)
+        }) as Promise<Models.SNTag>
+      }),
+    )
+  }
+
+  public async unlinkItemFromAnother(
+    item: DecryptedItemInterface<ItemContent>,
+    itemToUnlink: DecryptedItemInterface<ItemContent>,
+  ) {
+    return this.changeItem(item, (mutator) => {
+      mutator.removeItemAsRelationship(itemToUnlink)
+    })
+  }
+
   /**
    * Get tags for a note sorted in natural order
-   * @param note - The note whose tags will be returned
-   * @returns Array containing tags associated with a note
+   * @param item - The item whose tags will be returned
+   * @returns Array containing tags associated with an item
    */
-  public getSortedTagsForNote(note: Models.SNNote): Models.SNTag[] {
+  public getSortedTagsForItem(item: DecryptedItemInterface<ItemContent>): Models.SNTag[] {
     return naturalSort(
-      this.itemsReferencingItem(note).filter((ref) => {
+      this.itemsReferencingItem(item).filter((ref) => {
         return ref?.content_type === ContentType.Tag
       }) as Models.SNTag[],
+      'title',
+    )
+  }
+
+  public getSortedFilesForItem(item: DecryptedItemInterface<ItemContent>): Models.FileItem[] {
+    return naturalSort(
+      this.itemsReferencingItem(item).filter((ref) => ref.content_type === ContentType.File) as Models.FileItem[],
+      'name',
+    )
+  }
+
+  public getSortedNotesForItem(item: DecryptedItemInterface<ItemContent>): Models.SNNote[] {
+    return naturalSort(
+      this.itemsReferencingItem(item).filter((ref) => ref.content_type === ContentType.Note) as Models.SNNote[],
       'title',
     )
   }
@@ -1310,12 +1350,6 @@ export class ItemManager
         controller.onCollectionChange(delta)
       }
     }
-  }
-
-  public getFilesForNote(note: Models.SNNote): Models.FileItem[] {
-    return (
-      this.itemsReferencingItem(note).filter((ref) => ref.content_type === ContentType.File) as Models.FileItem[]
-    ).sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1))
   }
 
   public renameFile(file: Models.FileItem, name: string): Promise<Models.FileItem> {
