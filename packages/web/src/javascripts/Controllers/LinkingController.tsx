@@ -27,6 +27,7 @@ export class LinkingController extends AbstractViewController {
   files: FileItem[] = []
   notes: SNNote[] = []
   shouldLinkToParentFolders: boolean
+  isLinkingPanelOpen = false
 
   constructor(
     application: WebApplication,
@@ -41,9 +42,11 @@ export class LinkingController extends AbstractViewController {
       tags: observable,
       files: observable,
       notes: observable,
+      isLinkingPanelOpen: observable,
 
       allLinkedItems: computed,
 
+      setIsLinkingPanelOpen: action,
       reloadLinkedFiles: action,
       reloadLinkedTags: action,
       reloadLinkedNotes: action,
@@ -85,6 +88,10 @@ export class LinkingController extends AbstractViewController {
         },
       ),
     )
+  }
+
+  setIsLinkingPanelOpen = (open: boolean) => {
+    this.isLinkingPanelOpen = open
   }
 
   get allLinkedItems() {
@@ -151,6 +158,8 @@ export class LinkingController extends AbstractViewController {
   }
 
   activateItem = async (item: LinkableItem): Promise<AppPaneId | undefined> => {
+    this.setIsLinkingPanelOpen(false)
+
     if (item instanceof SNTag) {
       await this.navigationController.setSelectedTag(item)
       return AppPaneId.Items
@@ -161,6 +170,7 @@ export class LinkingController extends AbstractViewController {
     } else {
       await this.navigationController.selectFilesView()
     }
+
     const { didSelect } = await this.selectionController.selectItem(item.uuid, true)
     if (didSelect) {
       return AppPaneId.Editor

@@ -1,6 +1,6 @@
 import { LinkingController } from '@/Controllers/LinkingController'
 import { observer } from 'mobx-react-lite'
-import { useState, useRef, useCallback } from 'react'
+import { useRef, useCallback } from 'react'
 import Icon from '../Icon/Icon'
 import Popover from '../Popover/Popover'
 import StyledTooltip from '../StyledTooltip/StyledTooltip'
@@ -12,16 +12,16 @@ type Props = {
 }
 
 const LinkedItemsButton = ({ linkingController, onClickPreprocessing }: Props) => {
-  const [isOpen, setIsOpen] = useState(false)
+  const { isLinkingPanelOpen, setIsLinkingPanelOpen } = linkingController
   const buttonRef = useRef<HTMLButtonElement>(null)
 
   const toggleMenu = useCallback(async () => {
-    const willMenuOpen = !isOpen
+    const willMenuOpen = !isLinkingPanelOpen
     if (willMenuOpen && onClickPreprocessing) {
       await onClickPreprocessing()
     }
-    setIsOpen(willMenuOpen)
-  }, [onClickPreprocessing, isOpen])
+    setIsLinkingPanelOpen(willMenuOpen)
+  }, [isLinkingPanelOpen, onClickPreprocessing, setIsLinkingPanelOpen])
 
   return (
     <>
@@ -35,7 +35,7 @@ const LinkedItemsButton = ({ linkingController, onClickPreprocessing }: Props) =
           <Icon type="link" />
         </button>
       </StyledTooltip>
-      <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen} className="pb-2">
+      <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isLinkingPanelOpen} className="pb-2">
         <LinkedItemsPanel linkingController={linkingController} />
       </Popover>
     </>

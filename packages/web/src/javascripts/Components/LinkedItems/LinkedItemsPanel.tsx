@@ -11,15 +11,17 @@ import LinkedItemMeta from './LinkedItemMeta'
 import LinkedItemSearchResults from './LinkedItemSearchResults'
 
 const LinkedItemsSectionItem = ({
-  item,
+  activateItem,
   getItemIcon,
   getTitleForLinkedTag,
+  item,
   searchQuery,
   unlinkItem,
 }: {
-  item: LinkableItem
+  activateItem: LinkingController['activateItem']
   getItemIcon: LinkingController['getLinkedItemIcon']
   getTitleForLinkedTag: LinkingController['getTitleForLinkedTag']
+  item: LinkableItem
   searchQuery?: string
   unlinkItem: LinkingController['unlinkItemFromSelectedItem']
 }) => {
@@ -29,15 +31,20 @@ const LinkedItemsSectionItem = ({
   const toggleMenu = () => setIsMenuOpen((open) => !open)
 
   return (
-    <div className="flex items-center justify-between gap-4 py-1 px-3">
-      <LinkedItemMeta
-        item={item}
-        getItemIcon={getItemIcon}
-        getTitleForLinkedTag={getTitleForLinkedTag}
-        searchQuery={searchQuery}
-      />
+    <div className="relative flex items-center justify-between">
       <button
-        className="h-7 w-7 cursor-pointer rounded-full border-0 bg-transparent p-1 hover:bg-contrast"
+        className="flex flex-grow items-center justify-between gap-4 py-2 pl-3 pr-11 text-sm hover:bg-info-backdrop focus:bg-info-backdrop"
+        onClick={() => activateItem(item)}
+      >
+        <LinkedItemMeta
+          item={item}
+          getItemIcon={getItemIcon}
+          getTitleForLinkedTag={getTitleForLinkedTag}
+          searchQuery={searchQuery}
+        />
+      </button>
+      <button
+        className="absolute right-3 top-1/2 h-7 w-7 -translate-y-1/2 cursor-pointer rounded-full border-0 bg-transparent p-1 hover:bg-contrast"
         onClick={toggleMenu}
         ref={menuButtonRef}
       >
@@ -65,44 +72,6 @@ const LinkedItemsSectionItem = ({
   )
 }
 
-const LinkedItemsSection = ({
-  label,
-  items,
-  getItemIcon,
-  getTitleForLinkedTag,
-  searchQuery,
-  unlinkItem,
-}: {
-  label: string
-  items: LinkableItem[]
-  getItemIcon: LinkingController['getLinkedItemIcon']
-  getTitleForLinkedTag: LinkingController['getTitleForLinkedTag']
-  searchQuery?: string
-  unlinkItem: LinkingController['unlinkItemFromSelectedItem']
-}) => {
-  if (!items.length) {
-    return null
-  }
-
-  return (
-    <>
-      <div className="my-1 px-3 text-menu-item font-semibold uppercase text-text">{label}</div>
-      <div className="my-1">
-        {items.map((item) => (
-          <LinkedItemsSectionItem
-            key={item.uuid}
-            item={item}
-            getItemIcon={getItemIcon}
-            getTitleForLinkedTag={getTitleForLinkedTag}
-            searchQuery={searchQuery}
-            unlinkItem={unlinkItem}
-          />
-        ))}
-      </div>
-    </>
-  )
-}
-
 const LinkedItemsPanel = ({ linkingController }: { linkingController: LinkingController }) => {
   const {
     tags,
@@ -113,6 +82,7 @@ const LinkedItemsPanel = ({ linkingController }: { linkingController: LinkingCon
     getSearchResults,
     linkItemToSelectedItem,
     unlinkItemFromSelectedItem: unlinkItem,
+    activateItem,
     createAndAddNewTag,
   } = linkingController
 
@@ -157,38 +127,81 @@ const LinkedItemsPanel = ({ linkingController }: { linkingController: LinkingCon
             searchQuery={searchQuery}
             shouldShowCreateTag={shouldShowCreateTag}
           />
-          <LinkedItemsSection
-            label="Linked"
-            items={linkedResults}
-            getItemIcon={getLinkedItemIcon}
-            getTitleForLinkedTag={getTitleForLinkedTag}
-            searchQuery={searchQuery}
-            unlinkItem={unlinkItem}
-          />
+          {!!linkedResults.length && (
+            <>
+              <div className="my-1 px-3 text-menu-item font-semibold uppercase text-text">Linked</div>
+              <div className="my-1">
+                {linkedResults.map((item) => (
+                  <LinkedItemsSectionItem
+                    key={item.uuid}
+                    item={item}
+                    getItemIcon={getLinkedItemIcon}
+                    getTitleForLinkedTag={getTitleForLinkedTag}
+                    searchQuery={searchQuery}
+                    unlinkItem={unlinkItem}
+                    activateItem={activateItem}
+                  />
+                ))}
+              </div>
+            </>
+          )}
         </>
       ) : (
         <>
-          <LinkedItemsSection
-            label="Linked Tags"
-            items={tags}
-            getItemIcon={getLinkedItemIcon}
-            getTitleForLinkedTag={getTitleForLinkedTag}
-            unlinkItem={unlinkItem}
-          />
-          <LinkedItemsSection
-            label="Linked Files"
-            items={files}
-            getItemIcon={getLinkedItemIcon}
-            getTitleForLinkedTag={getTitleForLinkedTag}
-            unlinkItem={unlinkItem}
-          />
-          <LinkedItemsSection
-            label="Linked Notes"
-            items={notes}
-            getItemIcon={getLinkedItemIcon}
-            getTitleForLinkedTag={getTitleForLinkedTag}
-            unlinkItem={unlinkItem}
-          />
+          {!!tags.length && (
+            <>
+              <div className="my-1 px-3 text-menu-item font-semibold uppercase text-text">Linked Tags</div>
+              <div className="my-1">
+                {tags.map((item) => (
+                  <LinkedItemsSectionItem
+                    key={item.uuid}
+                    item={item}
+                    getItemIcon={getLinkedItemIcon}
+                    getTitleForLinkedTag={getTitleForLinkedTag}
+                    searchQuery={searchQuery}
+                    unlinkItem={unlinkItem}
+                    activateItem={activateItem}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+          {!!files.length && (
+            <>
+              <div className="my-1 px-3 text-menu-item font-semibold uppercase text-text">Linked Files</div>
+              <div className="my-1">
+                {files.map((item) => (
+                  <LinkedItemsSectionItem
+                    key={item.uuid}
+                    item={item}
+                    getItemIcon={getLinkedItemIcon}
+                    getTitleForLinkedTag={getTitleForLinkedTag}
+                    searchQuery={searchQuery}
+                    unlinkItem={unlinkItem}
+                    activateItem={activateItem}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+          {!!notes.length && (
+            <>
+              <div className="my-1 px-3 text-menu-item font-semibold uppercase text-text">Linked Notes</div>
+              <div className="my-1">
+                {notes.map((item) => (
+                  <LinkedItemsSectionItem
+                    key={item.uuid}
+                    item={item}
+                    getItemIcon={getLinkedItemIcon}
+                    getTitleForLinkedTag={getTitleForLinkedTag}
+                    searchQuery={searchQuery}
+                    unlinkItem={unlinkItem}
+                    activateItem={activateItem}
+                  />
+                ))}
+              </div>
+            </>
+          )}
         </>
       )}
     </div>
