@@ -36,7 +36,7 @@ const LinkedItemsButton = ({ linkingController, onClickPreprocessing }: Props) =
         </button>
       </StyledTooltip>
       <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isLinkingPanelOpen} className="pb-2">
-        <LinkedItemsPanel linkingController={linkingController} />
+        <LinkedItemsPanel isOpen={isLinkingPanelOpen} linkingController={linkingController} />
       </Popover>
     </>
   )

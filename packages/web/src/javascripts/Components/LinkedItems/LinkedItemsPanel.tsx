@@ -1,6 +1,6 @@
 import { LinkableItem, LinkingController } from '@/Controllers/LinkingController'
 import { observer } from 'mobx-react-lite'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import ClearInputButton from '../ClearInputButton/ClearInputButton'
 import Icon from '../Icon/Icon'
 import DecoratedInput from '../Input/DecoratedInput'
@@ -72,7 +72,7 @@ const LinkedItemsSectionItem = ({
   )
 }
 
-const LinkedItemsPanel = ({ linkingController }: { linkingController: LinkingController }) => {
+const LinkedItemsPanel = ({ linkingController, isOpen }: { linkingController: LinkingController; isOpen: boolean }) => {
   const {
     tags,
     files,
@@ -90,6 +90,12 @@ const LinkedItemsPanel = ({ linkingController }: { linkingController: LinkingCon
   const [searchQuery, setSearchQuery] = useState('')
   const isSearching = !!searchQuery.length
   const { linkedResults, unlinkedResults, shouldShowCreateTag } = getSearchResults(searchQuery)
+
+  useEffect(() => {
+    if (isOpen && searchInputRef.current) {
+      searchInputRef.current.focus()
+    }
+  }, [isOpen])
 
   return (
     <div>
