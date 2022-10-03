@@ -191,7 +191,7 @@ describe('crypto operations', async function () {
 
     const decryptedPlain = arrayBufferToString(decryptedBuffer)
     expect(decryptedPlain).to.equal(plaintext)
-  })
+  }).timeout(10000)
 
   it('xchacha20 should fail with nonmatching aad', async function () {
     const key = await webCrypto.generateRandomKey(256)
