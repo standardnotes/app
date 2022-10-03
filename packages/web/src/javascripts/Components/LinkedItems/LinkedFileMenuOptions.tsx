@@ -1,6 +1,5 @@
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { FilesController } from '@/Controllers/FilesController'
-import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { FileItem } from '@standardnotes/snjs'
 import { useState } from 'react'
 import { PopoverFileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
@@ -90,17 +89,6 @@ const LinkedFileMenuOptions = ({ file, closeMenu, handleFileAction }: Props) => 
         <Icon type="trash" className="mr-2 text-danger" />
         <span className="text-danger">Delete permanently</span>
       </button>
-      <div className="mt-1 px-3 py-1 text-xs font-medium text-neutral">
-        <div className="mb-1">
-          <span className="font-semibold">Created at:</span> {file.created_at.toLocaleString()}
-        </div>
-        <div className="mb-1">
-          <span className="font-semibold">File ID:</span> {file.uuid}
-        </div>
-        <div>
-          <span className="font-semibold">Size:</span> {formatSizeToReadableString(file.decryptedSize)}
-        </div>
-      </div>
     </>
   )
 }

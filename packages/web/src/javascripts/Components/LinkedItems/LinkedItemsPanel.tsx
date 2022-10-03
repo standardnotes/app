@@ -1,5 +1,6 @@
 import { FilesController } from '@/Controllers/FilesController'
 import { LinkableItem, LinkingController } from '@/Controllers/LinkingController'
+import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { FileItem } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { useEffect, useRef, useState } from 'react'
@@ -76,6 +77,19 @@ const LinkedItemsSectionItem = ({
         {item instanceof FileItem && (
           <LinkedFileMenuOptions file={item} closeMenu={toggleMenu} handleFileAction={handleFileAction} />
         )}
+        <div className="mt-1 px-3 py-1 text-xs font-medium text-neutral">
+          <div className="mb-1">
+            <span className="font-semibold">Created at:</span> {item.created_at.toLocaleString()}
+          </div>
+          <div className="mb-1">
+            <span className="font-semibold">ID:</span> {item.uuid}
+          </div>
+          {item instanceof FileItem && (
+            <div>
+              <span className="font-semibold">Size:</span> {formatSizeToReadableString(item.decryptedSize)}
+            </div>
+          )}
+        </div>
       </Popover>
     </div>
   )
