@@ -56,7 +56,10 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <LinkedItemsButton linkingController={viewControllerManager.linkingController} />
+              <LinkedItemsButton
+                filesController={viewControllerManager.filesController}
+                linkingController={viewControllerManager.linkingController}
+              />
               <FileOptionsPanel
                 filesController={viewControllerManager.filesController}
                 selectionController={viewControllerManager.selectionController}

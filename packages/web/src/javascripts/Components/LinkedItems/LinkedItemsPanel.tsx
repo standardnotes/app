@@ -1,4 +1,6 @@
+import { FilesController } from '@/Controllers/FilesController'
 import { LinkableItem, LinkingController } from '@/Controllers/LinkingController'
+import { FileItem } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { useEffect, useRef, useState } from 'react'
 import ClearInputButton from '../ClearInputButton/ClearInputButton'
@@ -7,6 +9,7 @@ import DecoratedInput from '../Input/DecoratedInput'
 import MenuItem from '../Menu/MenuItem'
 import { MenuItemType } from '../Menu/MenuItemType'
 import Popover from '../Popover/Popover'
+import LinkedFileMenuOptions from './LinkedFileMenuOptions'
 import LinkedItemMeta from './LinkedItemMeta'
 import LinkedItemSearchResults from './LinkedItemSearchResults'
 
@@ -17,6 +20,7 @@ const LinkedItemsSectionItem = ({
   item,
   searchQuery,
   unlinkItem,
+  handleFileAction,
 }: {
   activateItem: LinkingController['activateItem']
   getItemIcon: LinkingController['getLinkedItemIcon']
@@ -24,6 +28,7 @@ const LinkedItemsSectionItem = ({
   item: LinkableItem
   searchQuery?: string
   unlinkItem: LinkingController['unlinkItemFromSelectedItem']
+  handleFileAction: FilesController['handleFileAction']
 }) => {
   const menuButtonRef = useRef<HTMLButtonElement>(null)
 
@@ -56,6 +61,7 @@ const LinkedItemsSectionItem = ({
         anchorElement={menuButtonRef.current}
         side="bottom"
         align="center"
+        className="py-2"
       >
         <MenuItem
           type={MenuItemType.IconButton}
@@ -67,12 +73,23 @@ const LinkedItemsSectionItem = ({
           <Icon type="link-off" className="mr-2 text-danger" />
           Unlink
         </MenuItem>
+        {item instanceof FileItem && (
+          <LinkedFileMenuOptions file={item} closeMenu={toggleMenu} handleFileAction={handleFileAction} />
+        )}
       </Popover>
     </div>
   )
 }
 
-const LinkedItemsPanel = ({ linkingController, isOpen }: { linkingController: LinkingController; isOpen: boolean }) => {
+const LinkedItemsPanel = ({
+  linkingController,
+  filesController,
+  isOpen,
+}: {
+  linkingController: LinkingController
+  filesController: FilesController
+  isOpen: boolean
+}) => {
   const {
     tags,
     files,
@@ -149,6 +166,7 @@ const LinkedItemsPanel = ({ linkingController, isOpen }: { linkingController: Li
                     searchQuery={searchQuery}
                     unlinkItem={unlinkItemFromSelectedItem}
                     activateItem={activateItem}
+                    handleFileAction={filesController.handleFileAction}
                   />
                 ))}
               </div>
@@ -170,6 +188,7 @@ const LinkedItemsPanel = ({ linkingController, isOpen }: { linkingController: Li
                     searchQuery={searchQuery}
                     unlinkItem={unlinkItemFromSelectedItem}
                     activateItem={activateItem}
+                    handleFileAction={filesController.handleFileAction}
                   />
                 ))}
               </div>
@@ -188,6 +207,7 @@ const LinkedItemsPanel = ({ linkingController, isOpen }: { linkingController: Li
                     searchQuery={searchQuery}
                     unlinkItem={unlinkItemFromSelectedItem}
                     activateItem={activateItem}
+                    handleFileAction={filesController.handleFileAction}
                   />
                 ))}
               </div>
@@ -206,6 +226,7 @@ const LinkedItemsPanel = ({ linkingController, isOpen }: { linkingController: Li
                     searchQuery={searchQuery}
                     unlinkItem={unlinkItemFromSelectedItem}
                     activateItem={activateItem}
+                    handleFileAction={filesController.handleFileAction}
                   />
                 ))}
               </div>
@@ -226,6 +247,7 @@ const LinkedItemsPanel = ({ linkingController, isOpen }: { linkingController: Li
                     searchQuery={searchQuery}
                     unlinkItem={unlinkItemFromSelectedItem}
                     activateItem={activateItem}
+                    handleFileAction={filesController.handleFileAction}
                   />
                 ))}
               </div>

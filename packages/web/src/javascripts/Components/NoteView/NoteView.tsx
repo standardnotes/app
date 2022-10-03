@@ -1000,6 +1000,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
               {!this.state.shouldStickyHeader && (
                 <div className="flex items-center gap-3">
                   <LinkedItemsButton
+                    filesController={this.viewControllerManager.filesController}
                     linkingController={this.viewControllerManager.linkingController}
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                   />
