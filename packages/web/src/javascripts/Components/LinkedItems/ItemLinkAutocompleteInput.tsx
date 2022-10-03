@@ -74,7 +74,7 @@ const ItemLinkAutocompleteInput = ({ linkingController }: Props) => {
             value={searchQuery}
             onChange={onSearchQueryChange}
             type="text"
-            placeholder="Add tags, notes, files..."
+            placeholder="Link tags, notes, files..."
             onBlur={onBlur}
             onFocus={onFocus}
             tabIndex={tags.length === 0 ? 0 : -1}
