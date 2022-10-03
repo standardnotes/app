@@ -99,8 +99,8 @@ const LinkedItemsPanel = ({ linkingController, isOpen }: { linkingController: Li
   }, [isOpen])
 
   return (
-    <div>
-      <form className="sticky top-0 mb-3 border-b border-border bg-default px-2.5 py-2.5">
+    <div className="divide-y divide-border">
+      <form className="sticky top-0 px-2.5 py-2.5">
         <DecoratedInput
           type="text"
           className={{ container: !isSearching ? 'py-1.5 px-0.5' : 'py-0' }}
@@ -123,20 +123,22 @@ const LinkedItemsPanel = ({ linkingController, isOpen }: { linkingController: Li
       {isSearching ? (
         <>
           {(!!unlinkedResults.length || shouldShowCreateTag) && (
-            <div className="my-1 px-3 text-menu-item font-semibold uppercase text-text">Unlinked</div>
+            <div>
+              <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Unlinked</div>
+              <LinkedItemSearchResults
+                createAndAddNewTag={createAndAddNewTag}
+                getLinkedItemIcon={getLinkedItemIcon}
+                getTitleForLinkedTag={getTitleForLinkedTag}
+                linkItemToSelectedItem={linkItemToSelectedItem}
+                results={unlinkedResults}
+                searchQuery={searchQuery}
+                shouldShowCreateTag={shouldShowCreateTag}
+              />
+            </div>
           )}
-          <LinkedItemSearchResults
-            createAndAddNewTag={createAndAddNewTag}
-            getLinkedItemIcon={getLinkedItemIcon}
-            getTitleForLinkedTag={getTitleForLinkedTag}
-            linkItemToSelectedItem={linkItemToSelectedItem}
-            results={unlinkedResults}
-            searchQuery={searchQuery}
-            shouldShowCreateTag={shouldShowCreateTag}
-          />
           {!!linkedResults.length && (
-            <>
-              <div className="my-1 px-3 text-menu-item font-semibold uppercase text-text">Linked</div>
+            <div>
+              <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked</div>
               <div className="my-1">
                 {linkedResults.map((item) => (
                   <LinkedItemsSectionItem
@@ -150,14 +152,14 @@ const LinkedItemsPanel = ({ linkingController, isOpen }: { linkingController: Li
                   />
                 ))}
               </div>
-            </>
+            </div>
           )}
         </>
       ) : (
         <>
           {!!tags.length && (
-            <>
-              <div className="my-1 px-3 text-menu-item font-semibold uppercase text-text">Linked Tags</div>
+            <div>
+              <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked Tags</div>
               <div className="my-1">
                 {tags.map((item) => (
                   <LinkedItemsSectionItem
@@ -171,11 +173,11 @@ const LinkedItemsPanel = ({ linkingController, isOpen }: { linkingController: Li
                   />
                 ))}
               </div>
-            </>
+            </div>
           )}
           {!!files.length && (
-            <>
-              <div className="my-1 px-3 text-menu-item font-semibold uppercase text-text">Linked Files</div>
+            <div>
+              <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked Files</div>
               <div className="my-1">
                 {files.map((item) => (
                   <LinkedItemsSectionItem
@@ -189,11 +191,11 @@ const LinkedItemsPanel = ({ linkingController, isOpen }: { linkingController: Li
                   />
                 ))}
               </div>
-            </>
+            </div>
           )}
           {!!notesLinkedToItem.length && (
-            <>
-              <div className="my-1 px-3 text-menu-item font-semibold uppercase text-text">Linked Notes</div>
+            <div>
+              <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked Notes</div>
               <div className="my-1">
                 {notesLinkedToItem.map((item) => (
                   <LinkedItemsSectionItem
@@ -207,11 +209,11 @@ const LinkedItemsPanel = ({ linkingController, isOpen }: { linkingController: Li
                   />
                 ))}
               </div>
-            </>
+            </div>
           )}
           {!!notesLinkingToItem.length && (
-            <>
-              <div className="my-1 px-3 text-menu-item font-semibold uppercase text-text">
+            <div>
+              <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">
                 Notes Linking To This Note
               </div>
               <div className="my-1">
@@ -227,7 +229,7 @@ const LinkedItemsPanel = ({ linkingController, isOpen }: { linkingController: Li
                   />
                 ))}
               </div>
-            </>
+            </div>
           )}
         </>
       )}
