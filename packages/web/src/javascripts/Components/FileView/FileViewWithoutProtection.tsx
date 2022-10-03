@@ -6,6 +6,7 @@ import FilePreview from '@/Components/FilePreview/FilePreview'
 import { FileViewProps } from './FileViewProps'
 import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
 import LinkedItemsButton from '../LinkedItems/LinkedItemsButton'
+import LinkedItemsContainer from '../LinkedItems/LinkedItemsContainer'
 
 const SyncTimeoutNoDebounceMs = 100
 const SyncTimeoutDebounceMs = 350
@@ -62,6 +63,10 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
               />
             </div>
           </div>
+          <LinkedItemsContainer
+            noteTagsController={viewControllerManager.noteTagsController}
+            linkingController={viewControllerManager.linkingController}
+          />
         </div>
       </div>
       <div className="flex min-h-0 flex-grow flex-col">

@@ -32,7 +32,7 @@ const LinkedItemsContainer = ({ noteTagsController, linkingController }: Props) 
   )
 
   return (
-    <div className="flex min-w-80 max-w-full flex-wrap bg-transparent md:-mr-2 md:flex">
+    <div className="hidden min-w-80 max-w-full flex-wrap bg-transparent md:-mr-2 md:flex">
       {allLinkedItems.map((item) => (
         <LinkedItem
           item={item}
