@@ -1,17 +1,15 @@
 import { observer } from 'mobx-react-lite'
-import AutocompleteTagInput from '@/Components/TagAutocomplete/AutocompleteTagInput'
-import { NoteTagsController } from '@/Controllers/NoteTagsController'
+import ItemLinkAutocompleteInput from './ItemLinkAutocompleteInput'
 import { LinkableItem, LinkingController } from '@/Controllers/LinkingController'
 import LinkedItem from './LinkedItem'
 import { useCallback } from 'react'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 
 type Props = {
-  noteTagsController: NoteTagsController
   linkingController: LinkingController
 }
 
-const LinkedItemsContainer = ({ noteTagsController, linkingController }: Props) => {
+const LinkedItemsContainer = ({ linkingController }: Props) => {
   const { toggleAppPane } = useResponsiveAppPane()
   const {
     allLinkedItems,
@@ -43,7 +41,7 @@ const LinkedItemsContainer = ({ noteTagsController, linkingController }: Props) 
           unlinkItem={unlinkItem}
         />
       ))}
-      <AutocompleteTagInput noteTagsController={noteTagsController} />
+      <ItemLinkAutocompleteInput linkingController={linkingController} />
     </div>
   )
 }

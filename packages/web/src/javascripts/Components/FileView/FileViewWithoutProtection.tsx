@@ -63,10 +63,7 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
               />
             </div>
           </div>
-          <LinkedItemsContainer
-            noteTagsController={viewControllerManager.noteTagsController}
-            linkingController={viewControllerManager.linkingController}
-          />
+          <LinkedItemsContainer linkingController={viewControllerManager.linkingController} />
         </div>
       </div>
       <div className="flex min-h-0 flex-grow flex-col">

@@ -1,6 +1,4 @@
 import { LinkableItem, LinkingController } from '@/Controllers/LinkingController'
-import { splitQueryInString } from '@/Utils'
-import { classNames } from '@/Utils/ConcatenateClassNames'
 import { observer } from 'mobx-react-lite'
 import { useRef, useState } from 'react'
 import ClearInputButton from '../ClearInputButton/ClearInputButton'
@@ -9,45 +7,8 @@ import DecoratedInput from '../Input/DecoratedInput'
 import MenuItem from '../Menu/MenuItem'
 import { MenuItemType } from '../Menu/MenuItemType'
 import Popover from '../Popover/Popover'
-
-const LinkedItemMeta = ({
-  item,
-  getItemIcon,
-  getTitleForLinkedTag,
-  searchQuery,
-}: {
-  item: LinkableItem
-  getItemIcon: LinkingController['getLinkedItemIcon']
-  getTitleForLinkedTag: LinkingController['getTitleForLinkedTag']
-  searchQuery?: string
-}) => {
-  const [icon, className] = getItemIcon(item)
-  const tagTitle = getTitleForLinkedTag(item)
-  const title = item.title ?? ''
-
-  return (
-    <>
-      <Icon type={icon} className={classNames('flex-shrink-0', className)} />
-      <div className="min-w-0 flex-grow break-words text-left text-sm">
-        {tagTitle && <span className="text-passive-1">{tagTitle.titlePrefix}</span>}
-        {searchQuery
-          ? splitQueryInString(title, searchQuery).map((substring, index) => (
-              <span
-                key={index}
-                className={`${
-                  substring.toLowerCase() === searchQuery.toLowerCase()
-                    ? 'whitespace-pre-wrap font-bold'
-                    : 'whitespace-pre-wrap '
-                }`}
-              >
-                {substring}
-              </span>
-            ))
-          : title}
-      </div>
-    </>
-  )
-}
+import LinkedItemMeta from './LinkedItemMeta'
+import LinkedItemSearchResults from './LinkedItemSearchResults'
 
 const LinkedItemsSectionItem = ({
   item,
@@ -187,40 +148,15 @@ const LinkedItemsPanel = ({ linkingController }: { linkingController: LinkingCon
           {(!!unlinkedResults.length || shouldShowCreateTag) && (
             <div className="my-1 px-3 text-menu-item font-semibold uppercase text-text">Unlinked</div>
           )}
-          <div className="my-1">
-            {unlinkedResults.map((result) => {
-              return (
-                <button
-                  key={result.uuid}
-                  className="flex w-full items-center justify-between gap-4 overflow-hidden py-2 px-3 hover:bg-contrast hover:text-foreground focus:bg-info-backdrop"
-                  onClick={() => linkItemToSelectedItem(result)}
-                >
-                  <LinkedItemMeta
-                    item={result}
-                    getItemIcon={getLinkedItemIcon}
-                    getTitleForLinkedTag={getTitleForLinkedTag}
-                    searchQuery={searchQuery}
-                  />
-                </button>
-              )
-            })}
-            {shouldShowCreateTag && (
-              <button
-                className="group flex w-full items-center gap-2 overflow-hidden py-2 px-3 hover:bg-contrast hover:text-foreground focus:bg-info-backdrop"
-                onClick={() => createAndAddNewTag(searchQuery)}
-              >
-                <span className="flex-shrink-0 align-middle">Create &amp; add tag</span>{' '}
-                <span className="inline-flex min-w-0 items-center gap-1 rounded bg-contrast py-1 pl-1 pr-2 align-middle text-xs text-text group-hover:bg-info group-hover:text-info-contrast">
-                  <Icon
-                    type="hashtag"
-                    className="flex-shrink-0 text-info group-hover:text-info-contrast"
-                    size="small"
-                  />
-                  <span className="min-w-0 overflow-hidden text-ellipsis">{searchQuery}</span>
-                </span>
-              </button>
-            )}
-          </div>
+          <LinkedItemSearchResults
+            createAndAddNewTag={createAndAddNewTag}
+            getLinkedItemIcon={getLinkedItemIcon}
+            getTitleForLinkedTag={getTitleForLinkedTag}
+            linkItemToSelectedItem={linkItemToSelectedItem}
+            results={unlinkedResults}
+            searchQuery={searchQuery}
+            shouldShowCreateTag={shouldShowCreateTag}
+          />
           <LinkedItemsSection
             label="Linked"
             items={linkedResults}
