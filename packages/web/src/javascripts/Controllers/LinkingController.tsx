@@ -1,4 +1,5 @@
 import { WebApplication } from '@/Application/Application'
+import { PopoverFileItemActionType } from '@/Components/AttachedFilesPopover/PopoverFileItemAction'
 import { AppPaneId } from '@/Components/ResponsivePane/AppPaneMetadata'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import {
@@ -16,6 +17,7 @@ import {
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction } from 'mobx'
 import { AbstractViewController } from './Abstract/AbstractViewController'
+import { FilesController } from './FilesController'
 import { NavigationController } from './Navigation/NavigationController'
 import { NoteTagsController } from './NoteTagsController'
 import { SelectedItemsController } from './SelectedItemsController'
@@ -34,6 +36,7 @@ export class LinkingController extends AbstractViewController {
     private noteTagsController: NoteTagsController,
     private navigationController: NavigationController,
     private selectionController: SelectedItemsController,
+    private filesController: FilesController,
     eventBus: InternalEventBus,
   ) {
     super(application, eventBus)
@@ -165,15 +168,22 @@ export class LinkingController extends AbstractViewController {
       return AppPaneId.Items
     }
 
-    if (item.content_type === ContentType.Note) {
+    if (item instanceof SNNote) {
       await this.navigationController.selectHomeNavigationView()
-    } else {
-      await this.navigationController.selectFilesView()
+      const { didSelect } = await this.selectionController.selectItem(item.uuid, true)
+      if (didSelect) {
+        return AppPaneId.Editor
+      }
     }
 
-    const { didSelect } = await this.selectionController.selectItem(item.uuid, true)
-    if (didSelect) {
-      return AppPaneId.Editor
+    if (item instanceof FileItem) {
+      await this.filesController.handleFileAction({
+        type: PopoverFileItemActionType.PreviewFile,
+        payload: {
+          file: item,
+          otherFiles: [],
+        },
+      })
     }
 
     return undefined

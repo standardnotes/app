@@ -128,6 +128,7 @@ export class ViewControllerManager {
       this.noteTagsController,
       this.navigationController,
       this.selectionController,
+      this.filesController,
       this.eventBus,
     )
 
