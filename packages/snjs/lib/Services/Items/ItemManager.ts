@@ -1157,19 +1157,19 @@ export class ItemManager
     )
   }
 
-  public async linkNoteToNote(note: Models.SNNote, anotherNote: Models.SNNote): Promise<Models.SNNote> {
+  public async linkNoteToNote(note: Models.SNNote, otherNote: Models.SNNote): Promise<Models.SNNote> {
     return this.changeItem<Models.NoteMutator, Models.SNNote>(note, (mutator) => {
-      mutator.addNote(anotherNote)
+      mutator.addNote(otherNote)
     })
   }
 
-  public async linkFileToFile(file: Models.FileItem, anotherFile: Models.FileItem): Promise<Models.FileItem> {
+  public async linkFileToFile(file: Models.FileItem, otherFile: Models.FileItem): Promise<Models.FileItem> {
     return this.changeItem<Models.FileMutator, Models.FileItem>(file, (mutator) => {
-      mutator.addFile(anotherFile)
+      mutator.addFile(otherFile)
     })
   }
 
-  public async unlinkItemFromAnother(
+  public async unlinkItem(
     item: DecryptedItemInterface<ItemContent>,
     itemToUnlink: DecryptedItemInterface<ItemContent>,
   ) {

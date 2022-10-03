@@ -73,10 +73,10 @@ export interface ItemsClientInterface {
 
   itemsReferencingItem(itemToLookupUuidFor: DecryptedItemInterface, contentType?: ContentType): DecryptedItemInterface[]
 
-  linkNoteToNote(note: SNNote, anotherNote: SNNote): Promise<SNNote>
-  linkFileToFile(file: FileItem, anotherFile: FileItem): Promise<FileItem>
+  linkNoteToNote(note: SNNote, otherNote: SNNote): Promise<SNNote>
+  linkFileToFile(file: FileItem, otherFile: FileItem): Promise<FileItem>
 
-  unlinkItemFromAnother(
+  unlinkItem(
     item: DecryptedItemInterface<ItemContent>,
     itemToUnlink: DecryptedItemInterface<ItemContent>,
   ): Promise<DecryptedItemInterface<ItemContent>>
