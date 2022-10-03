@@ -236,10 +236,14 @@ export class LinkingController extends AbstractViewController {
       })
 
     const isAlreadyLinked = (item: LinkableItem) => {
-      const isAlreadyLinkedToNote = this.application.items
+      const isActiveItemReferencedByItem = this.application.items
         .itemsReferencingItem(activeItem)
         .some((linkedItem) => linkedItem.uuid === item.uuid)
-      return isAlreadyLinkedToNote
+      const isItemReferencedByActiveItem = this.application.items
+        .itemsReferencingItem(item)
+        .some((linkedItem) => linkedItem.uuid === activeItem.uuid)
+      const isAlreadyLinkedToItem = isActiveItemReferencedByItem || isItemReferencedByActiveItem
+      return isAlreadyLinkedToItem
     }
 
     const unlinkedResults = naturalSort(
