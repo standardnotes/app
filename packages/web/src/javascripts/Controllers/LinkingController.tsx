@@ -205,6 +205,9 @@ export class LinkingController extends AbstractViewController {
       if (itemToLink instanceof SNNote) {
         await this.application.items.associateFileWithNote(selectedItem, itemToLink)
       }
+      if (itemToLink instanceof FileItem) {
+        await this.application.items.linkFileToFile(itemToLink, selectedItem)
+      }
     }
 
     void this.application.sync.sync()
@@ -232,7 +235,8 @@ export class LinkingController extends AbstractViewController {
       .filter((item) => {
         const title = item instanceof SNTag ? this.application.items.getTagLongTitle(item) : item.title
         const matchesQuery = title?.toLowerCase().includes(searchQuery.toLowerCase())
-        return matchesQuery
+        const isNotActiveItem = activeItem.uuid !== item.uuid
+        return matchesQuery && isNotActiveItem
       })
 
     const isAlreadyLinked = (item: LinkableItem) => {

@@ -1,6 +1,7 @@
 export enum ContentReferenceType {
   TagToParentTag = 'TagToParentTag',
-  FileToNote = 'FileToNote',
   TagToFile = 'TagToFile',
+  FileToNote = 'FileToNote',
+  FileToFile = 'FileToFile',
   NoteToNote = 'NoteToNote',
 }

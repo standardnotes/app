@@ -1163,6 +1163,12 @@ export class ItemManager
     })
   }
 
+  public async linkFileToFile(file: Models.FileItem, anotherFile: Models.FileItem): Promise<Models.FileItem> {
+    return this.changeItem<Models.FileMutator, Models.FileItem>(file, (mutator) => {
+      mutator.addFile(anotherFile)
+    })
+  }
+
   public async unlinkItemFromAnother(
     item: DecryptedItemInterface<ItemContent>,
     itemToUnlink: DecryptedItemInterface<ItemContent>,
@@ -1193,10 +1199,14 @@ export class ItemManager
   }
 
   public getSortedFilesForItem(item: DecryptedItemInterface<ItemContent>): Models.FileItem[] {
-    return naturalSort(
-      this.itemsReferencingItem(item).filter((ref) => ref.content_type === ContentType.File) as Models.FileItem[],
-      'name',
-    )
+    const filesReferencingItem = this.itemsReferencingItem(item).filter(
+      (ref) => ref.content_type === ContentType.File,
+    ) as Models.FileItem[]
+    const filesReferencedByItem = this.referencesForItem(item).filter(
+      (ref) => ref.content_type === ContentType.File,
+    ) as Models.FileItem[]
+
+    return naturalSort(filesReferencingItem.concat(filesReferencedByItem), 'title')
   }
 
   public getSortedNotesForItem(item: DecryptedItemInterface<ItemContent>): Models.SNNote[] {
