@@ -92,6 +92,9 @@ const LinkedFileMenuOptions = ({ file, closeMenu, handleFileAction }: Props) => 
       </button>
       <div className="mt-1 px-3 py-1 text-xs font-medium text-neutral">
         <div className="mb-1">
+          <span className="font-semibold">Created at:</span> {file.created_at.toLocaleString()}
+        </div>
+        <div className="mb-1">
           <span className="font-semibold">File ID:</span> {file.uuid}
         </div>
         <div>
