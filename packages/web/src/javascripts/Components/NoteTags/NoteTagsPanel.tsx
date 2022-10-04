@@ -33,7 +33,7 @@ const ListItem = ({
   return isSearching ? (
     <button
       onClick={handleSearchResultClick}
-      className="max-w-80 flex w-full items-center border-0 bg-transparent px-3 py-2 text-left text-menu-item text-text hover:bg-info-backdrop focus:bg-info-backdrop"
+      className="max-w-80 flex w-full items-center border-0 bg-transparent px-3 py-2 text-left text-mobile-menu-item text-text hover:bg-info-backdrop focus:bg-info-backdrop md:text-menu-item"
     >
       {splitQueryInString(longTitle, autocompleteSearchQuery).map((substring, index) => (
         <span
@@ -49,7 +49,7 @@ const ListItem = ({
       ))}
     </button>
   ) : (
-    <div className="max-w-80 flex w-full items-center justify-between border-0 bg-transparent px-3 py-2 text-left text-menu-item text-text">
+    <div className="max-w-80 flex w-full items-center justify-between border-0 bg-transparent px-3 py-2 text-left text-mobile-menu-item text-text md:text-menu-item">
       <span className="overflow-hidden overflow-ellipsis whitespace-nowrap">{longTitle}</span>
       <button
         onClick={handleNoteTagRemove}
@@ -150,7 +150,7 @@ const NoteTagsPanel = ({
               onClick={async () => {
                 await noteTagsController.createAndAddNewTag()
               }}
-              className="max-w-80 flex w-full items-center border-0 bg-transparent px-3 py-2 text-left text-menu-item text-text hover:bg-info-backdrop focus:bg-info-backdrop"
+              className="max-w-80 flex w-full items-center border-0 bg-transparent px-3 py-2 text-left text-mobile-menu-item text-text hover:bg-info-backdrop focus:bg-info-backdrop md:text-menu-item"
             >
               <span>Create new tag:</span>
               <span className="ml-2 flex items-center rounded bg-contrast py-1 pl-1 pr-2 text-xs text-text">

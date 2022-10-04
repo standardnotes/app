@@ -49,7 +49,7 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ application, item }) => {
   return (
     <button
       className={
-        'group flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none disabled:bg-default disabled:text-passive-2'
+        'group flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-mobile-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none disabled:bg-default disabled:text-passive-2 md:text-sm'
       }
       disabled={item.identifier === FeatureIdentifier.DynamicTheme && isMobile}
       onClick={toggleTheme}
