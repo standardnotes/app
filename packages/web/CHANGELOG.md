@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.68.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.68.3...@standardnotes/web@3.68.4) (2022-10-04)
+
+### Bug Fixes
+
+* android monospace font ([#1735](https://github.com/standardnotes/app/issues/1735)) ([927938c](https://github.com/standardnotes/app/commit/927938cb561d3c4622ce09a6f56ecf8ef88a0a7c))
+* attached file renaming on mobile ([b4eacd0](https://github.com/standardnotes/app/commit/b4eacd0f2ae4a9896150830fa8e8b153a34422d7))
+
 ## [3.68.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.68.2...@standardnotes/web@3.68.3) (2022-10-04)
 
 ### Bug Fixes
