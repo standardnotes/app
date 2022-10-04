@@ -31,7 +31,7 @@ const ListedActionsOption: FunctionComponent<Props> = ({ application, note }) =>
           }
         }}
         ref={buttonRef}
-        className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+        className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-mobile-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none md:text-menu-item"
       >
         <div className="flex items-center">
           <Icon type="listed" className="mr-2 text-neutral" />

@@ -142,7 +142,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
     <div ref={mainRef}>
       <div className="my-1 px-3 text-sm font-semibold uppercase text-text">Themes</div>
       <button
-        className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+        className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-mobile-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none md:text-sm"
         onClick={toggleDefaultTheme}
         ref={defaultThemeButtonRef}
       >
@@ -156,7 +156,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
       <div className="my-1 px-3 text-sm font-semibold uppercase text-text">Tools</div>
       {toggleableComponents.map((component) => (
         <button
-          className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+          className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-mobile-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none md:text-sm"
           onClick={() => {
             toggleComponent(component)
           }}
