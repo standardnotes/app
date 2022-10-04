@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.68.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.68.4...@standardnotes/web@3.68.5) (2022-10-04)
+
+### Bug Fixes
+
+* increase context menu item font size on mobile ([#1738](https://github.com/standardnotes/app/issues/1738)) ([1c60316](https://github.com/standardnotes/app/commit/1c603161a518b7f3ccc5bc049f3827746bb43cff))
+
 ## [3.68.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.68.3...@standardnotes/web@3.68.4) (2022-10-04)
 
 ### Bug Fixes
