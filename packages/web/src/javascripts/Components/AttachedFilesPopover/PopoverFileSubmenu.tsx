@@ -119,6 +119,7 @@ const PopoverFileSubmenu: FunctionComponent<PopoverFileSubmenuProps> = ({
           className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
           onClick={() => {
             setIsRenamingFile(true)
+            closeMenu()
           }}
         >
           <Icon type="pencil" className="mr-2 text-neutral" />
