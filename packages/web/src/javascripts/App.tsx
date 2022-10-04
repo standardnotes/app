@@ -26,7 +26,7 @@ declare global {
 }
 
 import { IsWebPlatform, WebAppVersion } from '@/Constants/Version'
-import { DesktopManagerInterface, Environment, SNLog } from '@standardnotes/snjs'
+import { DesktopManagerInterface, Environment, Platform, SNLog } from '@standardnotes/snjs'
 import ApplicationGroupView from './Components/ApplicationGroupView/ApplicationGroupView'
 import { WebDevice } from './Application/Device/WebDevice'
 import { StartApplication } from './Application/Device/StartApplication'
@@ -46,6 +46,15 @@ const setViewportHeight = () => {
     '--viewport-height',
     `${visualViewport ? visualViewport.height : window.innerHeight}px`,
   )
+}
+
+const setDefaultMonospaceFont = (platform?: Platform) => {
+  if (platform === Platform.Android) {
+    document.documentElement.style.setProperty(
+      '--sn-stylekit-monospace-font',
+      '"Roboto Mono", "Droid Sans Mono", monospace',
+    )
+  }
 }
 
 const startApplication: StartApplication = async function startApplication(
@@ -77,11 +86,14 @@ const startApplication: StartApplication = async function startApplication(
     root = createRoot(appendedRootNode)
 
     disableIosTextFieldZoom()
+
     setViewportHeight()
     window.addEventListener('orientationchange', setViewportHeight)
     if (device.environment === Environment.Desktop) {
       window.addEventListener('resize', setViewportHeight)
     }
+
+    setDefaultMonospaceFont(device.platform)
 
     root.render(
       <ApplicationGroupView

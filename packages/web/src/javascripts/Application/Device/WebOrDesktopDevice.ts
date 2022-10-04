@@ -8,10 +8,13 @@ import {
   NamespacedRootKeyInKeychain,
   extendArray,
   WebOrDesktopDeviceInterface,
+  Platform,
 } from '@standardnotes/snjs'
 import { Database } from '../Database'
 
 export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface {
+  platform?: Platform
+
   constructor(public appVersion: string) {}
 
   private databases: Database[] = []
