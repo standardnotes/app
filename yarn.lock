@@ -7374,6 +7374,7 @@ __metadata:
     "@types/jest": ^29.0.2
     "@types/react": ^18.0.20
     "@types/react-dom": ^18.0.6
+    "@types/styled-components": ^5.1.26
     "@types/wicg-file-system-access": ^2020.9.5
     "@zip.js/zip.js": ^2.6.26
     autoprefixer: ^10.4.10
@@ -8854,6 +8855,17 @@ __metadata:
     "@types/react": "*"
     csstype: ^3.0.2
   checksum: 60ce64f13283b01da54fd3a4c5703769d8575c979d5ec6b67ad124c2d4df980c9b96bb91af87e03f6447a816a5d2b0270c63eefad60cfa885091b594984525f5
+  languageName: node
+  linkType: hard
+
+"@types/styled-components@npm:^5.1.26":
+  version: 5.1.26
+  resolution: "@types/styled-components@npm:5.1.26"
+  dependencies:
+    "@types/hoist-non-react-statics": "*"
+    "@types/react": "*"
+    csstype: ^3.0.2
+  checksum: 84f53b3101739b20d1731554fb7735bc2f3f5d050a8b392e9845403c8c8bbd729737d033978649f9195a97b557875b010d46e35a4538564a2d0dbcce661dbf76
   languageName: node
   linkType: hard
 
