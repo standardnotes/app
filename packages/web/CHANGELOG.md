@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.70.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.69.1...@standardnotes/web@3.70.0) (2022-10-05)
+
+### Bug Fixes
+
+* **mobile:** passcode timing options ([#1744](https://github.com/standardnotes/app/issues/1744)) ([6c26b96](https://github.com/standardnotes/app/commit/6c26b96cdce0d69a4a459104709880850a401a92))
+
+### Features
+
+* add free dark mode ([#1748](https://github.com/standardnotes/app/issues/1748)) ([09b994f](https://github.com/standardnotes/app/commit/09b994f8f938ae0536f42742f7a221df536c4c4a))
+
 ## [3.69.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.69.0...@standardnotes/web@3.69.1) (2022-10-05)
 
 ### Bug Fixes

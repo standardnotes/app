@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.39.9](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.39.8...@standardnotes/mobile@3.39.9) (2022-10-05)
+
+### Bug Fixes
+
+* **mobile:** passcode timing options ([#1744](https://github.com/standardnotes/app/issues/1744)) ([6c26b96](https://github.com/standardnotes/app/commit/6c26b96cdce0d69a4a459104709880850a401a92))
+
 ## [3.39.8](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.39.7...@standardnotes/mobile@3.39.8) (2022-10-05)
 
 ### Bug Fixes
