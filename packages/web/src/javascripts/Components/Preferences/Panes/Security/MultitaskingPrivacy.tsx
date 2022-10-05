@@ -16,7 +16,7 @@ const MultitaskingPrivacy = ({ application }: Props) => {
   const [hasScreenshotPrivacy, setHasScreenshotPrivacy] = useState<boolean>(false)
 
   useEffect(() => {
-    const hasScreenshotPrivacyEnabled = application.getMobileScreenshotPrivacyEnabled()
+    const hasScreenshotPrivacyEnabled = application.protections.getMobileScreenshotPrivacyEnabled()
     setHasScreenshotPrivacy(hasScreenshotPrivacyEnabled)
   }, [application])
 
@@ -24,7 +24,7 @@ const MultitaskingPrivacy = ({ application }: Props) => {
     const enable = !hasScreenshotPrivacy
     setHasScreenshotPrivacy(enable)
 
-    application.setMobileScreenshotPrivacyEnabled(enable)
+    application.protections.setMobileScreenshotPrivacyEnabled(enable)
     ;(application.deviceInterface as MobileDeviceInterface).setAndroidScreenshotPrivacy(enable)
   }
 

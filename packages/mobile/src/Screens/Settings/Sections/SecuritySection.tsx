@@ -31,21 +31,23 @@ export const SecuritySection = (props: Props) => {
   const [hasBiometrics, setHasBiometrics] = useState(false)
   const [supportsBiometrics, setSupportsBiometrics] = useState(false)
   const [biometricsTimingOptions, setBiometricsTimingOptions] = useState(() =>
-    application!.getBiometricsTimingOptions(),
+    application!.protections.getMobileBiometricsTimingOptions(),
   )
-  const [passcodeTimingOptions, setPasscodeTimingOptions] = useState(() => application!.getPasscodeTimingOptions())
+  const [passcodeTimingOptions, setPasscodeTimingOptions] = useState(() =>
+    application!.protections.getMobilePasscodeTimingOptions(),
+  )
 
   useEffect(() => {
     let mounted = true
     const getHasScreenshotPrivacy = async () => {
-      const hasScreenshotPrivacyEnabled = application?.getMobileScreenshotPrivacyEnabled()
+      const hasScreenshotPrivacyEnabled = application?.protections.getMobileScreenshotPrivacyEnabled()
       if (mounted) {
         setHasScreenshotPrivacy(hasScreenshotPrivacyEnabled)
       }
     }
     void getHasScreenshotPrivacy()
     const getHasBiometrics = async () => {
-      const appHasBiometrics = application!.hasBiometrics()
+      const appHasBiometrics = application!.protections.hasBiometricsEnabled()
       if (mounted) {
         setHasBiometrics(appHasBiometrics)
       }
@@ -68,7 +70,7 @@ export const SecuritySection = (props: Props) => {
   useFocusEffect(
     useCallback(() => {
       if (props.hasPasscode) {
-        setPasscodeTimingOptions(() => application!.getPasscodeTimingOptions())
+        setPasscodeTimingOptions(() => application!.protections.getMobilePasscodeTimingOptions())
       }
     }, [application, props.hasPasscode]),
   )
@@ -126,12 +128,12 @@ export const SecuritySection = (props: Props) => {
 
   const setBiometricsTiming = async (timing: MobileUnlockTiming) => {
     await application?.getAppState().setBiometricsTiming(timing)
-    setBiometricsTimingOptions(() => application!.getBiometricsTimingOptions())
+    setBiometricsTimingOptions(() => application!.protections.getMobileBiometricsTimingOptions())
   }
 
   const setPasscodeTiming = async (timing: MobileUnlockTiming) => {
     await application?.getAppState().setPasscodeTiming(timing)
-    setPasscodeTimingOptions(() => application!.getPasscodeTimingOptions())
+    setPasscodeTimingOptions(() => application!.protections.getMobilePasscodeTimingOptions())
   }
 
   const onScreenshotPrivacyPress = async () => {
@@ -153,14 +155,14 @@ export const SecuritySection = (props: Props) => {
       void disableAuthentication('biometrics')
     } else {
       setHasBiometrics(true)
-      await application?.enableBiometrics()
+      await application?.protections.enableBiometrics()
       await setBiometricsTiming(MobileUnlockTiming.OnQuit)
       props.updateProtectionsAvailable()
     }
   }
 
   const disableBiometrics = useCallback(async () => {
-    if (await application?.disableBiometrics()) {
+    if (await application?.protections.disableBiometrics()) {
       setHasBiometrics(false)
       props.updateProtectionsAvailable()
     }

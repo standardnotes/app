@@ -483,7 +483,7 @@ export class ApplicationState extends ApplicationService {
       return
     }
 
-    const hasBiometrics = this.application.hasBiometrics()
+    const hasBiometrics = this.application.protections.hasBiometricsEnabled()
     const hasPasscode = this.application.hasPasscode()
     const passcodeLockImmediately = hasPasscode && this.passcodeTiming === MobileUnlockTiming.Immediately
     const biometricsLockImmediately =
@@ -571,19 +571,19 @@ export class ApplicationState extends ApplicationService {
   }
 
   private async getScreenshotPrivacyEnabled(): Promise<boolean> {
-    return this.application.getMobileScreenshotPrivacyEnabled()
+    return this.application.protections.getMobileScreenshotPrivacyEnabled()
   }
 
   private async getPasscodeTiming(): Promise<MobileUnlockTiming | undefined> {
-    return this.application.getMobilePasscodeTiming()
+    return this.application.protections.getMobilePasscodeTiming()
   }
 
   private async getBiometricsTiming(): Promise<MobileUnlockTiming | undefined> {
-    return this.application.getMobileBiometricsTiming()
+    return this.application.protections.getMobileBiometricsTiming()
   }
 
   public async setScreenshotPrivacyEnabled(enabled: boolean) {
-    await this.application.setMobileScreenshotPrivacyEnabled(enabled)
+    await this.application.protections.setMobileScreenshotPrivacyEnabled(enabled)
     this.screenshotPrivacyEnabled = enabled
     await (this.application.deviceInterface as MobileDevice).setAndroidScreenshotPrivacy(enabled)
   }
