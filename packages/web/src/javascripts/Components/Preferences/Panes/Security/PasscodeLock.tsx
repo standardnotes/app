@@ -157,7 +157,7 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
     if (!isNativeMobileWeb) {
       reloadDesktopAutoLockInterval().catch(console.error)
     }
-  }, [reloadDesktopAutoLockInterval])
+  }, [reloadDesktopAutoLockInterval, isNativeMobileWeb])
 
   useEffect(() => {
     if (isPasscodeFocused) {
