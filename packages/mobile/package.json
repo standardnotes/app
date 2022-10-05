@@ -9,7 +9,7 @@
     "android-prod-debug": "react-native run-android --variant prodDebug",
     "android-prod-release": "yarn run android:bundle && react-native run-android --variant prodRelease",
     "android:bundle": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/build/intermediates/res/merged/release/",
-    "build": "yarn web:bundle && yarn install:pods && yarn android:bundle",
+    "build": "yarn bundle:web && yarn install:pods && yarn android:bundle",
     "clear-cache": "watchman watch-del-all && rm -rf $TMPDIR/react-native-packager-cache-* && rm -rf $TMPDIR/metro-bundler-cache-*",
     "format:fix": "yarn format --write",
     "format": "prettier ./src",
@@ -22,7 +22,7 @@
     "start": "react-native start",
     "tsc": "tsc --noEmit",
     "upgrade:snjs": "ncu -u '@standardnotes/*'",
-    "web:bundle": "mkdir -p html/Web.bundle/src/web-src/ && cp -r ../web/dist/. html/Web.bundle/src/web-src/ && mkdir -p html/Web.bundle/src/components/assets && cp -r ../components/dist/assets/. html/Web.bundle/src/components/assets/"
+    "bundle:web": "mkdir -p html/Web.bundle/src/web-src/ && cp -r ../web/dist/. html/Web.bundle/src/web-src/ && mkdir -p html/Web.bundle/src/components/assets && cp -r ../components/dist/assets/. html/Web.bundle/src/components/assets/"
   },
   "installConfig": {
     "hoistingLimits": "workspaces"
