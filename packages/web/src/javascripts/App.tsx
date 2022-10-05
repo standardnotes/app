@@ -44,7 +44,7 @@ const getKey = () => {
 const setViewportHeight = () => {
   document.documentElement.style.setProperty(
     '--viewport-height',
-    `${visualViewport ? visualViewport.height : window.innerHeight}px`,
+    `${visualViewport && visualViewport.height > 0 ? visualViewport.height : window.innerHeight}px`,
   )
 }
 
