@@ -62,7 +62,7 @@ describe('device authentication', function () {
     const passcode = 'foobar'
     const wrongPasscode = 'barfoo'
     await application.addPasscode(passcode)
-    await application.protectionService.enableBiometrics()
+    await application.protections.enableBiometrics()
     expect(await application.hasPasscode()).to.equal(true)
     expect((await application.protectionService.createLaunchChallenge()).prompts.length).to.equal(2)
     expect(application.protocolService.rootKeyEncryption.keyMode).to.equal(KeyMode.WrapperOnly)
