@@ -42,10 +42,14 @@ const getKey = () => {
 }
 
 const setViewportHeight = () => {
-  document.documentElement.style.setProperty(
-    '--viewport-height',
-    `${visualViewport && visualViewport.height > 0 ? visualViewport.height : window.innerHeight}px`,
-  )
+  const currentValue = parseInt(document.documentElement.style.getPropertyValue('--viewport-height'))
+  const newValue = visualViewport && visualViewport.height > 0 ? visualViewport.height : window.innerHeight
+
+  if (currentValue && !newValue) {
+    return
+  }
+
+  document.documentElement.style.setProperty('--viewport-height', `${newValue}px`)
 }
 
 const setDefaultMonospaceFont = (platform?: Platform) => {
