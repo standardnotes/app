@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.7.15](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.7.14...@standardnotes/components-meta@2.7.15) (2022-10-05)
+
+**Note:** Version bump only for package @standardnotes/components-meta
+
 ## [2.7.14](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.7.13...@standardnotes/components-meta@2.7.14) (2022-09-23)
 
 **Note:** Version bump only for package @standardnotes/components-meta
