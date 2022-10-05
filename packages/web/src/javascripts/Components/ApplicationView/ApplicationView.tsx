@@ -27,6 +27,7 @@ import FileDragNDropProvider from '../FileDragNDropProvider/FileDragNDropProvide
 import ResponsivePaneProvider from '../ResponsivePane/ResponsivePaneProvider'
 import AndroidBackHandlerProvider from '@/NativeMobileWeb/useAndroidBackHandler'
 import ConfirmDeleteAccountContainer from '@/Components/ConfirmDeleteAccountModal/ConfirmDeleteAccountModal'
+import DarkModeHandler from '../DarkModeHandler/DarkModeHandler'
 
 type Props = {
   application: WebApplication
@@ -190,6 +191,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
 
   return (
     <AndroidBackHandlerProvider application={application}>
+      <DarkModeHandler application={application} />
       <ResponsivePaneProvider>
         <PremiumModalProvider application={application} viewControllerManager={viewControllerManager}>
           <div className={platformString + ' main-ui-view sn-component'}>
