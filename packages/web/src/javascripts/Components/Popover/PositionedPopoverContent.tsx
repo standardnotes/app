@@ -61,9 +61,10 @@ const PositionedPopoverContent = ({
           'absolute top-0 left-0 flex h-full w-full min-w-80 cursor-auto flex-col overflow-y-auto rounded bg-default shadow-main md:h-auto md:max-w-xs',
           overrideZIndex ? overrideZIndex : 'z-dropdown-menu',
           !isDesktopScreen ? 'pt-safe-top pb-safe-bottom' : '',
+          !styles && 'md:invisible',
         )}
         style={{
-          ...(styles ? { ...styles } : { visibility: 'hidden' }),
+          ...styles,
           maxHeight: getPopoverMaxHeight(getAppRect(documentRect), anchorRect, positionedSide, positionedAlignment),
           top: !isDesktopScreen ? `${document.documentElement.scrollTop}px` : '',
         }}
