@@ -163,8 +163,10 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
   }, [application, deactivateAnyNonLayerableTheme])
 
   const toggleDarkMode = useCallback(() => {
-    deactivateAnyNonLayerableTheme()
-    application.setPreference(PrefKey.DarkMode, !isDarkModeOn)
+    if (!isDarkModeOn) {
+      deactivateAnyNonLayerableTheme()
+      application.setPreference(PrefKey.DarkMode, true)
+    }
   }, [application, isDarkModeOn, deactivateAnyNonLayerableTheme])
 
   return (
