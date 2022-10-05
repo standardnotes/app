@@ -109,7 +109,7 @@
     "faker": "^6.6.6",
     "get-yarn-workspaces": "^1.0.2",
     "jest": "^28.1.2",
-    "jest-circus": "^27.5.1",
+    "jest-circus": "^29.1.2",
     "metro-react-native-babel-preset": "^0.70.1",
     "npm-check-updates": "*",
     "pod-install": "^0.1.33",
