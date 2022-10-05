@@ -89,11 +89,6 @@
     "base64": "0ae54799c28a336447a63ddabfe43d0c6e18f8c2cd29cfdb1c0174ab96fde248",
     "binary": "54a01414a21e46c67fa59c69189a3d34a6548de7539699f2cf0248f9c5059d37"
   },
-  "org.standardnotes.advanced-checklist": {
-    "version": "0.2.5",
-    "base64": "077a56ef75958105bc9dc16376bcea2e89aee57b512b43f9e1b33e1d32ea8358",
-    "binary": "e903a5c592bd03ca28d205d09dcbc7e4329c7cd57fb74b4e0e5fa724c2321a61"
-  },
   "org.standardnotes.file-safe": {
     "version": "2.0.16",
     "base64": "2bb641344613fc86c340fb29636a68678a13e453d04fb36228af6045e06664db",
