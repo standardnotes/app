@@ -1,16 +1,25 @@
 import { ElementIds } from '@/Constants/ElementIDs'
 import { observer } from 'mobx-react-lite'
-import { ChangeEventHandler, useCallback, useRef } from 'react'
+import { ChangeEventHandler, useCallback, useRef, useState } from 'react'
 import FileOptionsPanel from '@/Components/FileContextMenu/FileOptionsPanel'
 import FilePreview from '@/Components/FilePreview/FilePreview'
 import { FileViewProps } from './FileViewProps'
 import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
+import Icon from '../Icon/Icon'
+import Popover from '../Popover/Popover'
+import FilePreviewInfoPanel from '../FilePreview/FilePreviewInfoPanel'
 
 const SyncTimeoutNoDebounceMs = 100
 const SyncTimeoutDebounceMs = 350
 
 const FileViewWithoutProtection = ({ application, viewControllerManager, file }: FileViewProps) => {
   const syncTimeoutRef = useRef<number>()
+  const fileInfoButtonRef = useRef<HTMLButtonElement>(null)
+
+  const [isFileInfoPanelOpen, setIsFileInfoPanelOpen] = useState(false)
+  const toggleFileInfoPanel = () => {
+    setIsFileInfoPanelOpen((show) => !show)
+  }
 
   const onTitleChange: ChangeEventHandler<HTMLInputElement> = useCallback(
     async (event) => {
@@ -53,7 +62,25 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
                 />
               </div>
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center gap-3">
+              <button
+                className="bg-text-padding flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border text-neutral hover:bg-contrast focus:bg-contrast"
+                title="File information panel"
+                aria-label="File information panel"
+                onClick={toggleFileInfoPanel}
+                ref={fileInfoButtonRef}
+              >
+                <Icon type="info" />
+              </button>
+              <Popover
+                open={isFileInfoPanelOpen}
+                togglePopover={toggleFileInfoPanel}
+                anchorElement={fileInfoButtonRef.current}
+                side="bottom"
+                align="center"
+              >
+                <FilePreviewInfoPanel file={file} />
+              </Popover>
               <FileOptionsPanel
                 filesController={viewControllerManager.filesController}
                 selectionController={viewControllerManager.selectionController}

@@ -42,17 +42,6 @@ const FileMenuOptions: FunctionComponent<Props> = ({
     [selectedFiles],
   )
 
-  const onPreview = useCallback(() => {
-    void handleFileAction({
-      type: PopoverFileItemActionType.PreviewFile,
-      payload: {
-        file: selectedFiles[0],
-        otherFiles: selectedFiles.length > 1 ? selectedFiles : filesController.allFiles,
-      },
-    })
-    closeMenu()
-  }, [closeMenu, filesController.allFiles, handleFileAction, selectedFiles])
-
   const onDetach = useCallback(() => {
     const file = selectedFiles[0]
     void handleFileAction({
@@ -78,10 +67,6 @@ const FileMenuOptions: FunctionComponent<Props> = ({
 
   return (
     <>
-      <MenuItem onClick={onPreview}>
-        <Icon type="file" className="mr-2 text-neutral" />
-        Preview file
-      </MenuItem>
       {selectedFiles.length === 1 && (
         <>
           {isFileAttachedToNote ? (
@@ -97,7 +82,6 @@ const FileMenuOptions: FunctionComponent<Props> = ({
           ) : null}
         </>
       )}
-      <HorizontalSeparator classes="my-1" />
       <MenuItem
         type={MenuItemType.SwitchButton}
         checked={hasProtectedFiles}
