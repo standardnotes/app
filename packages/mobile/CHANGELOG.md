@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.39.8](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.39.7...@standardnotes/mobile@3.39.8) (2022-10-05)
+
+### Bug Fixes
+
+* prevent overflow bouncing on desktop and mobile ([#1743](https://github.com/standardnotes/app/issues/1743)) ([6bd5534](https://github.com/standardnotes/app/commit/6bd5534f749a35b5ddc35cb09115358ce9ee4115))
+
 ## [3.39.7](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.39.6...@standardnotes/mobile@3.39.7) (2022-10-05)
 
 **Note:** Version bump only for package @standardnotes/mobile

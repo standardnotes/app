@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.1](https://github.com/standardnotes/app/compare/@standardnotes/docs@0.2.0...@standardnotes/docs@0.2.1) (2022-10-05)
+
+### Bug Fixes
+
+* **docs:** Change order of sed commands ([#1742](https://github.com/standardnotes/app/issues/1742)) ([de0f91c](https://github.com/standardnotes/app/commit/de0f91c9e38883613f942ba85d9f3d0bc360dba3))
+
 # [0.2.0](https://github.com/standardnotes/app/compare/@standardnotes/docs@0.1.0...@standardnotes/docs@0.2.0) (2022-08-17)
 
 ### Features
