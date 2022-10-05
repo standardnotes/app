@@ -229,6 +229,7 @@ export class ThemeManager extends AbstractService {
         if (theme && !theme.active) {
           this.application.mutator.toggleTheme(theme).catch(console.error)
         }
+        void this.application.setPreference(PrefKey.DarkMode, false)
       }
     }
 
