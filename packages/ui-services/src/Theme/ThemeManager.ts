@@ -20,6 +20,7 @@ import {
 const CachedThemesKey = 'cachedThemes'
 const TimeBeforeApplyingColorScheme = 5
 const DefaultThemeIdentifier = 'Default'
+const DarkThemeIdentifier = 'Dark'
 
 export class ThemeManager extends AbstractService {
   private activeThemes: Uuid[] = []
@@ -90,11 +91,13 @@ export class ThemeManager extends AbstractService {
   private handlePreferencesChangeEvent(): void {
     const useDeviceThemeSettings = this.application.getPreference(PrefKey.UseSystemColorScheme, false)
 
-    if (useDeviceThemeSettings !== this.lastUseDeviceThemeSettings) {
+    const hasPreferenceChanged = useDeviceThemeSettings !== this.lastUseDeviceThemeSettings
+
+    if (hasPreferenceChanged) {
       this.lastUseDeviceThemeSettings = useDeviceThemeSettings
     }
 
-    if (useDeviceThemeSettings) {
+    if (hasPreferenceChanged && useDeviceThemeSettings) {
       const prefersDarkColorScheme = window.matchMedia('(prefers-color-scheme: dark)')
 
       this.setThemeAsPerColorScheme(prefersDarkColorScheme.matches)
@@ -192,19 +195,33 @@ export class ThemeManager extends AbstractService {
 
   private setThemeAsPerColorScheme(prefersDarkColorScheme: boolean) {
     const preference = prefersDarkColorScheme ? PrefKey.AutoDarkThemeIdentifier : PrefKey.AutoLightThemeIdentifier
+    const preferenceDefault =
+      preference === PrefKey.AutoDarkThemeIdentifier ? DarkThemeIdentifier : DefaultThemeIdentifier
 
     const themes = this.application.items
       .getDisplayableComponents()
       .filter((component) => component.isTheme()) as SNTheme[]
 
     const activeTheme = themes.find((theme) => theme.active && !theme.isLayerable())
-    const activeThemeIdentifier = activeTheme ? activeTheme.identifier : DefaultThemeIdentifier
+    const activeThemeIdentifier = activeTheme
+      ? activeTheme.identifier
+      : this.application.getPreference(PrefKey.DarkMode, false)
+      ? DarkThemeIdentifier
+      : DefaultThemeIdentifier
 
-    const themeIdentifier = this.application.getPreference(preference, DefaultThemeIdentifier) as string
+    const themeIdentifier = this.application.getPreference(preference, preferenceDefault) as string
 
     const setTheme = () => {
-      if (themeIdentifier === DefaultThemeIdentifier && activeTheme) {
-        this.application.mutator.toggleTheme(activeTheme).catch(console.error)
+      if (themeIdentifier === DefaultThemeIdentifier) {
+        if (activeTheme) {
+          void this.application.mutator.toggleTheme(activeTheme)
+        }
+        void this.application.setPreference(PrefKey.DarkMode, false)
+      } else if (themeIdentifier === DarkThemeIdentifier) {
+        if (activeTheme) {
+          void this.application.mutator.toggleTheme(activeTheme)
+        }
+        void this.application.setPreference(PrefKey.DarkMode, true)
       } else {
         const theme = themes.find((theme) => theme.package_info.identifier === themeIdentifier)
         if (theme && !theme.active) {

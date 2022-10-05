@@ -83,8 +83,8 @@ export type PrefValue = {
   [PrefKey.NotesHideTags]: boolean
   [PrefKey.NotesHideEditorIcon]: boolean
   [PrefKey.UseSystemColorScheme]: boolean
-  [PrefKey.AutoLightThemeIdentifier]: FeatureIdentifier | 'Default'
-  [PrefKey.AutoDarkThemeIdentifier]: FeatureIdentifier | 'Default'
+  [PrefKey.AutoLightThemeIdentifier]: FeatureIdentifier | 'Default' | 'Dark'
+  [PrefKey.AutoDarkThemeIdentifier]: FeatureIdentifier | 'Default' | 'Dark'
   [PrefKey.NoteAddToParentFolders]: boolean
   [PrefKey.MobileSortNotesBy]: CollectionSortProperty
   [PrefKey.MobileSortNotesReverse]: boolean

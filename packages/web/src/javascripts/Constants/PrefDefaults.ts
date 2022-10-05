@@ -22,7 +22,7 @@ export const PrefDefaults = {
   [PrefKey.NotesHideEditorIcon]: false,
   [PrefKey.UseSystemColorScheme]: false,
   [PrefKey.AutoLightThemeIdentifier]: 'Default',
-  [PrefKey.AutoDarkThemeIdentifier]: 'Default',
+  [PrefKey.AutoDarkThemeIdentifier]: 'Dark',
   [PrefKey.NoteAddToParentFolders]: true,
   [PrefKey.NewNoteTitleFormat]: NewNoteTitleFormat.CurrentDateAndTime,
   [PrefKey.CustomNoteTitleFormat]: 'YYYY-MM-DD [at] hh:mm A',
