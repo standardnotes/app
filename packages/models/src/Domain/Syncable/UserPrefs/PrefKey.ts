@@ -37,6 +37,7 @@ export enum PrefKey {
   NewNoteTitleFormat = 'newNoteTitleFormat',
   CustomNoteTitleFormat = 'customNoteTitleFormat',
   UpdateSavingStatusIndicator = 'updateSavingStatusIndicator',
+  DarkMode = 'darkMode',
 }
 
 export enum NewNoteTitleFormat {
@@ -99,4 +100,5 @@ export type PrefValue = {
   [PrefKey.EditorLineHeight]: EditorLineHeight
   [PrefKey.EditorFontSize]: EditorFontSize
   [PrefKey.UpdateSavingStatusIndicator]: boolean
+  [PrefKey.DarkMode]: boolean
 }
