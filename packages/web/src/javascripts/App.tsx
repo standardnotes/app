@@ -49,6 +49,10 @@ const setViewportHeight = () => {
     return
   }
 
+  if (!currentValue && !newValue) {
+    document.documentElement.style.setProperty('--viewport-height', '100vh')
+  }
+
   document.documentElement.style.setProperty('--viewport-height', `${newValue}px`)
 }
 
