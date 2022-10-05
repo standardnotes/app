@@ -162,7 +162,11 @@ export class ThemeManager extends AbstractService {
   }
 
   private colorSchemeEventHandler(event: MediaQueryListEvent) {
-    this.setThemeAsPerColorScheme(event.matches)
+    const shouldChangeTheme = this.application.getPreference(PrefKey.UseSystemColorScheme, false)
+
+    if (shouldChangeTheme) {
+      this.setThemeAsPerColorScheme(event.matches)
+    }
   }
 
   private showColorSchemeToast(setThemeCallback: () => void) {
