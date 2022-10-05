@@ -37,6 +37,7 @@ export enum PrefKey {
   NewNoteTitleFormat = 'newNoteTitleFormat',
   CustomNoteTitleFormat = 'customNoteTitleFormat',
   UpdateSavingStatusIndicator = 'updateSavingStatusIndicator',
+  DarkMode = 'darkMode',
 }
 
 export enum NewNoteTitleFormat {
@@ -82,8 +83,8 @@ export type PrefValue = {
   [PrefKey.NotesHideTags]: boolean
   [PrefKey.NotesHideEditorIcon]: boolean
   [PrefKey.UseSystemColorScheme]: boolean
-  [PrefKey.AutoLightThemeIdentifier]: FeatureIdentifier | 'Default'
-  [PrefKey.AutoDarkThemeIdentifier]: FeatureIdentifier | 'Default'
+  [PrefKey.AutoLightThemeIdentifier]: FeatureIdentifier | 'Default' | 'Dark'
+  [PrefKey.AutoDarkThemeIdentifier]: FeatureIdentifier | 'Default' | 'Dark'
   [PrefKey.NoteAddToParentFolders]: boolean
   [PrefKey.MobileSortNotesBy]: CollectionSortProperty
   [PrefKey.MobileSortNotesReverse]: boolean
@@ -99,4 +100,5 @@ export type PrefValue = {
   [PrefKey.EditorLineHeight]: EditorLineHeight
   [PrefKey.EditorFontSize]: EditorFontSize
   [PrefKey.UpdateSavingStatusIndicator]: boolean
+  [PrefKey.DarkMode]: boolean
 }
