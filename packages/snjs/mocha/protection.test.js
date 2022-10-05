@@ -311,7 +311,7 @@ describe('protections', function () {
 
     it('no account, no passcode, biometrics', async function () {
       application = await Factory.createInitAppWithFakeCrypto()
-      await application.protections.enableBiometrics()
+      await application.enableBiometrics()
       expect(application.hasProtectionSources()).to.be.true
     })
 
@@ -324,7 +324,7 @@ describe('protections', function () {
     it('no account, passcode, biometrics', async function () {
       application = await Factory.createInitAppWithFakeCrypto()
       await application.addPasscode('passcode')
-      await application.protections.enableBiometrics()
+      await application.enableBiometrics()
       expect(application.hasProtectionSources()).to.be.true
     })
 
@@ -345,7 +345,7 @@ describe('protections', function () {
         email: UuidGenerator.GenerateUuid(),
         password: UuidGenerator.GenerateUuid(),
       })
-      await application.protections.enableBiometrics()
+      await application.enableBiometrics()
       expect(application.hasProtectionSources()).to.be.true
     })
 
@@ -372,7 +372,7 @@ describe('protections', function () {
       })
       Factory.handlePasswordChallenges(application, password)
       await application.addPasscode('passcode')
-      await application.protections.enableBiometrics()
+      await application.enableBiometrics()
       expect(application.hasProtectionSources()).to.be.true
     })
   })
