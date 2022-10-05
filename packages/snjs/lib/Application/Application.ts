@@ -45,7 +45,6 @@ import {
   FileService,
   SubscriptionClientInterface,
   SubscriptionManager,
-  StorageValueModes,
 } from '@standardnotes/services'
 import { FilesClientInterface } from '@standardnotes/files'
 import { ComputePrivateWorkspaceIdentifier } from '@standardnotes/encryption'
@@ -65,7 +64,6 @@ import { SNLog } from '../Log'
 import { Challenge, ChallengeResponse } from '../Services'
 import { ApplicationConstructorOptions, FullyResolvedApplicationOptions } from './Options/ApplicationOptions'
 import { ApplicationOptionsDefaults } from './Options/Defaults'
-import { MobileUnlockTiming } from '@Lib/Services/Protection/MobileUnlockTiming'
 
 /** How often to automatically sync, in milliseconds */
 const DEFAULT_AUTO_SYNC_INTERVAL = 30_000
@@ -899,24 +897,6 @@ export class SNApplication
     return this.launched
   }
 
-  public hasBiometrics(): boolean {
-    return this.protectionService.hasBiometricsEnabled()
-  }
-
-  /**
-   * @returns whether the operation was successful or not
-   */
-  public enableBiometrics(): boolean {
-    return this.protectionService.enableBiometrics()
-  }
-
-  /**
-   * @returns whether the operation was successful or not
-   */
-  public disableBiometrics(): Promise<boolean> {
-    return this.protectionService.disableBiometrics()
-  }
-
   public hasPasscode(): boolean {
     return this.protocolService.hasPasscode()
   }
@@ -934,38 +914,6 @@ export class SNApplication
     const MaximumWaitTime = 500
     await this.prepareForDeinit(MaximumWaitTime)
     return this.deinit(this.getDeinitMode(), DeinitSource.Lock)
-  }
-
-  setBiometricsTiming(timing: MobileUnlockTiming) {
-    return this.protectionService.setBiometricsTiming(timing)
-  }
-
-  getMobileScreenshotPrivacyEnabled(): boolean {
-    return this.protectionService.getMobileScreenshotPrivacyEnabled()
-  }
-
-  setMobileScreenshotPrivacyEnabled(isEnabled: boolean) {
-    return this.protectionService.setMobileScreenshotPrivacyEnabled(isEnabled)
-  }
-
-  getMobilePasscodeTiming(): MobileUnlockTiming | undefined {
-    return this.getValue(StorageKey.MobilePasscodeTiming, StorageValueModes.Nonwrapped) as
-      | MobileUnlockTiming
-      | undefined
-  }
-
-  getMobileBiometricsTiming(): MobileUnlockTiming | undefined {
-    return this.getValue(StorageKey.MobileBiometricsTiming, StorageValueModes.Nonwrapped) as
-      | MobileUnlockTiming
-      | undefined
-  }
-
-  getBiometricsTimingOptions() {
-    return this.protectionService.getBiometricsTimingOptions()
-  }
-
-  getPasscodeTimingOptions() {
-    return this.protectionService.getPasscodeTimingOptions()
   }
 
   isNativeMobileWeb() {

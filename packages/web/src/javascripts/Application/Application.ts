@@ -32,7 +32,7 @@ import { PrefDefaults } from '@/Constants/PrefDefaults'
 type WebServices = {
   viewControllerManager: ViewControllerManager
   desktopService?: DesktopManager
-  autolockService: AutolockService
+  autolockService?: AutolockService
   archiveService: ArchiveManager
   themeService: ThemeManager
   io: IOService
@@ -237,7 +237,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   async handleMobileGainingFocusEvent(): Promise<void> {}
 
   async handleMobileLosingFocusEvent(): Promise<void> {
-    if (this.getMobileScreenshotPrivacyEnabled()) {
+    if (this.protections.getMobileScreenshotPrivacyEnabled()) {
       this.mobileDevice().stopHidingMobileInterfaceFromScreenshots()
     }
 
@@ -245,7 +245,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   async handleMobileResumingFromBackgroundEvent(): Promise<void> {
-    if (this.getMobileScreenshotPrivacyEnabled()) {
+    if (this.protections.getMobileScreenshotPrivacyEnabled()) {
       this.mobileDevice().hideMobileInterfaceFromScreenshots()
     }
   }
@@ -256,10 +256,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       return
     }
 
-    const hasBiometrics = this.hasBiometrics()
+    const hasBiometrics = this.protections.hasBiometricsEnabled()
     const hasPasscode = this.hasPasscode()
-    const passcodeTiming = await this.getMobilePasscodeTiming()
-    const biometricsTiming = await this.getMobileBiometricsTiming()
+    const passcodeTiming = this.protections.getMobilePasscodeTiming()
+    const biometricsTiming = this.protections.getMobileBiometricsTiming()
 
     const passcodeLockImmediately = hasPasscode && passcodeTiming === MobileUnlockTiming.Immediately
     const biometricsLockImmediately = hasBiometrics && biometricsTiming === MobileUnlockTiming.Immediately

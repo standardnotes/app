@@ -16,10 +16,12 @@ type Props = {
 const BiometricsLock = ({ application }: Props) => {
   const [hasBiometrics, setHasBiometrics] = useState(false)
   const [supportsBiometrics, setSupportsBiometrics] = useState(false)
-  const [biometricsTimingOptions, setBiometricsTimingOptions] = useState(() => application.getBiometricsTimingOptions())
+  const [biometricsTimingOptions, setBiometricsTimingOptions] = useState(() =>
+    application.protections.getMobileBiometricsTimingOptions(),
+  )
 
   useEffect(() => {
-    const appHasBiometrics = application.hasBiometrics()
+    const appHasBiometrics = application.protections.hasBiometricsEnabled()
     setHasBiometrics(appHasBiometrics)
 
     const hasBiometricsSupport = async () => {
@@ -32,12 +34,12 @@ const BiometricsLock = ({ application }: Props) => {
   }, [application])
 
   const setBiometricsTimingValue = async (timing: MobileUnlockTiming) => {
-    await application.setBiometricsTiming(timing)
-    setBiometricsTimingOptions(() => application.getBiometricsTimingOptions())
+    application.protections.setMobileBiometricsTiming(timing)
+    setBiometricsTimingOptions(() => application.protections.getMobileBiometricsTimingOptions())
   }
 
   const disableBiometrics = useCallback(async () => {
-    if (await application.disableBiometrics()) {
+    if (await application.protections.disableBiometrics()) {
       setHasBiometrics(false)
     }
   }, [application])
@@ -47,7 +49,7 @@ const BiometricsLock = ({ application }: Props) => {
       await disableBiometrics()
     } else {
       setHasBiometrics(true)
-      application.enableBiometrics()
+      application.protections.enableBiometrics()
       await setBiometricsTimingValue(MobileUnlockTiming.OnQuit)
     }
   }
