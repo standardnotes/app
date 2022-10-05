@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.69.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.68.6...@standardnotes/web@3.69.0) (2022-10-05)
+
+### Features
+
+* add file info panel button to file view ([#1741](https://github.com/standardnotes/app/issues/1741)) ([376810e](https://github.com/standardnotes/app/commit/376810e657b5dace6cc342b7298bb00abd311587))
+
 ## [3.68.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.68.5...@standardnotes/web@3.68.6) (2022-10-05)
 
 **Note:** Version bump only for package @standardnotes/web
