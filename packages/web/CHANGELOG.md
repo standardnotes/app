@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.70.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.70.1...@standardnotes/web@3.70.2) (2022-10-06)
+
+### Bug Fixes
+
+* increase default editor font size on mobile ([c944eb9](https://github.com/standardnotes/app/commit/c944eb9365e5835494724724d04c7dc3e20b8f61))
+
 ## [3.70.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.70.0...@standardnotes/web@3.70.1) (2022-10-06)
 
 ### Bug Fixes
