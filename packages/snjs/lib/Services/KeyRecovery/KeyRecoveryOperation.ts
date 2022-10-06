@@ -1,7 +1,7 @@
 import { ContentType } from '@standardnotes/common'
 import { ItemsKeyInterface } from '@standardnotes/models'
 import { dateSorted } from '@standardnotes/utils'
-import { SNRootKeyParams, EncryptionProvider } from '@standardnotes/encryption'
+import { SNRootKeyParams, EncryptionProviderInterface } from '@standardnotes/encryption'
 import { DecryptionQueueItem, KeyRecoveryOperationResult } from './Types'
 import { serverKeyParamsAreSafe } from './Utils'
 import { ChallengeServiceInterface, DecryptItemsKeyByPromptingUser } from '@standardnotes/services'
@@ -11,7 +11,7 @@ export class KeyRecoveryOperation {
   constructor(
     private queueItem: DecryptionQueueItem,
     private itemManager: ItemManager,
-    private protocolService: EncryptionProvider,
+    private protocolService: EncryptionProviderInterface,
     private challengeService: ChallengeServiceInterface,
     private clientParams: SNRootKeyParams | undefined,
     private serverParams: SNRootKeyParams | undefined,

@@ -8,7 +8,7 @@ import {
   ChallengeReason,
   MutatorClientInterface,
 } from '@standardnotes/services'
-import { EncryptionProvider } from '@standardnotes/encryption'
+import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { ContentType, ProtocolVersion, compareVersions } from '@standardnotes/common'
 import { ItemManager } from '../Items'
@@ -49,7 +49,7 @@ export class MutatorService extends AbstractService implements MutatorClientInte
     private itemManager: ItemManager,
     private syncService: SNSyncService,
     private protectionService: SNProtectionService,
-    private encryption: EncryptionProvider,
+    private encryption: EncryptionProviderInterface,
     private payloadManager: PayloadManager,
     private challengeService: ChallengeService,
     private componentManager: SNComponentManager,

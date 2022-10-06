@@ -1,6 +1,7 @@
 import {
   Base64String,
   HexString,
+  PkcKeyPair,
   PureCryptoInterface,
   SodiumConstant,
   StreamDecryptorResult,
@@ -127,6 +128,28 @@ export class SNReactNativeCrypto implements PureCryptoInterface {
       message: new Uint8Array(result.message),
       tag: result.tag,
     }
+  }
+
+  public sodiumCryptoBoxEasyEncrypt(
+    _message: Utf8String,
+    _nonce: HexString,
+    _senderSecretKey: HexString,
+    _recipientPublicKey: HexString,
+  ): Base64String {
+    throw new Error('Not implemented')
+  }
+
+  public sodiumCryptoBoxEasyDecrypt(
+    _ciphertext: Base64String,
+    _nonce: HexString,
+    _senderPublicKey: HexString,
+    _recipientSecretKey: HexString,
+  ): Utf8String {
+    throw new Error('Not implemented')
+  }
+
+  public sodiumCryptoBoxGenerateKeypair(): PkcKeyPair {
+    throw new Error('Not implemented')
   }
 
   public generateUUID() {

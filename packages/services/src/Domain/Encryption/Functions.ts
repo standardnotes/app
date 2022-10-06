@@ -5,7 +5,7 @@ import {
   ItemsKeyContent,
   RootKeyInterface,
 } from '@standardnotes/models'
-import { EncryptionProvider, KeyRecoveryStrings, SNRootKeyParams } from '@standardnotes/encryption'
+import { EncryptionProviderInterface, KeyRecoveryStrings, SNRootKeyParams } from '@standardnotes/encryption'
 import { ChallengeServiceInterface } from '../Challenge/ChallengeServiceInterface'
 import { ChallengePrompt } from '../Challenge/Prompt/ChallengePrompt'
 import { ChallengeReason } from '../Challenge/Types/ChallengeReason'
@@ -13,7 +13,7 @@ import { ChallengeValidation } from '../Challenge/Types/ChallengeValidation'
 
 export async function DecryptItemsKeyWithUserFallback(
   itemsKey: EncryptedPayloadInterface,
-  encryptor: EncryptionProvider,
+  encryptor: EncryptionProviderInterface,
   challengor: ChallengeServiceInterface,
 ): Promise<DecryptedPayloadInterface<ItemsKeyContent> | 'failed' | 'aborted'> {
   const decryptionResult = await encryptor.decryptSplitSingle<ItemsKeyContent>({
@@ -37,7 +37,7 @@ export async function DecryptItemsKeyWithUserFallback(
 
 export async function DecryptItemsKeyByPromptingUser(
   itemsKey: EncryptedPayloadInterface,
-  encryptor: EncryptionProvider,
+  encryptor: EncryptionProviderInterface,
   challengor: ChallengeServiceInterface,
   keyParams?: SNRootKeyParams,
 ): Promise<
