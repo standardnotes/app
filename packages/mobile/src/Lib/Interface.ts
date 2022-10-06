@@ -460,7 +460,7 @@ export class MobileDevice implements MobileDeviceInterface {
   }
 
   reloadStatusBarStyle(animated = true) {
-    if (this.statusBarBgColor) {
+    if (this.statusBarBgColor && Platform.OS === 'android') {
       StatusBar.setBackgroundColor(this.statusBarBgColor, animated)
     }
     StatusBar.setBarStyle(this.isDarkMode ? 'light-content' : 'dark-content', animated)
