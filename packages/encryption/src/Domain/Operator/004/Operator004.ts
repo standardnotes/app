@@ -66,7 +66,6 @@ export class SNProtocolOperator004 implements SynchronousOperator {
       uuid: Utils.UuidGenerator.GenerateUuid(),
       content_type: ContentType.ItemsKey,
       content: this.generateNewItemsKeyContent(),
-      contentKey: undefined,
       ...PayloadTimestampDefaults(),
     })
     return CreateDecryptedItemFromPayload(payload)
@@ -234,7 +233,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     payload: Models.DecryptedPayloadInterface,
     key: ItemsKeyInterface | SNRootKey,
   ): EncryptedParameters {
-    const itemKey = payload.contentKey || this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
+    const itemKey = this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
 
     const contentPlaintext = JSON.stringify(payload.content)
     const authenticatedData = this.generateAuthenticatedDataForPayload(payload, key)
@@ -294,7 +293,6 @@ export class SNProtocolOperator004 implements SynchronousOperator {
       return {
         uuid: encrypted.uuid,
         content: JSON.parse(content),
-        contentKey: contentKey,
       }
     }
   }

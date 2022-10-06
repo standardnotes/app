@@ -4,7 +4,6 @@ import { ContextPayload } from './ContextPayload'
 
 export interface BackupFileDecryptedContextualPayload<C extends ItemContent = ItemContent> extends ContextPayload {
   content: C
-  contentKey: string | undefined
   created_at_timestamp: number
   created_at: Date
   duplicate_of?: Uuid

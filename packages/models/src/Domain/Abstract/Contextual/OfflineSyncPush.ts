@@ -18,7 +18,6 @@ export function CreateOfflineSyncPushContextPayload(
 ): OfflineSyncPushContextualPayload {
   const base: OfflineSyncPushContextualPayload = {
     content: undefined,
-    contentKey: fromPayload.contentKey,
     content_type: fromPayload.content_type,
     created_at_timestamp: fromPayload.created_at_timestamp,
     created_at: fromPayload.created_at,

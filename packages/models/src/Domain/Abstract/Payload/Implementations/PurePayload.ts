@@ -20,7 +20,6 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
   readonly content_type: ContentType
   readonly deleted: boolean
   readonly content: C | string | undefined
-  readonly contentKey: string | undefined
 
   readonly created_at: Date
   readonly updated_at: Date
@@ -47,7 +46,6 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
     }
 
     this.content = rawPayload.content
-    this.contentKey = rawPayload.contentKey
     this.content_type = rawPayload.content_type
     this.deleted = useBoolean(rawPayload.deleted, false)
     this.dirty = rawPayload.dirty

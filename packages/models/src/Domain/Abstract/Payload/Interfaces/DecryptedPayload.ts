@@ -7,7 +7,6 @@ import { PayloadInterface } from './PayloadInterface'
 export interface DecryptedPayloadInterface<C extends ItemContent = ItemContent>
   extends PayloadInterface<DecryptedTransferPayload> {
   readonly content: C
-  readonly contentKey: string | undefined
   deleted: false
 
   ejected(): DecryptedTransferPayload<C>

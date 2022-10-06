@@ -9,7 +9,6 @@ export interface PayloadInterface<T extends TransferPayload = TransferPayload, C
   readonly uuid: Uuid
   readonly content_type: ContentType
   content: C | string | undefined
-  readonly contentKey: string | undefined
   deleted: boolean
 
   /** updated_at is set by the server only, and not the client.*/

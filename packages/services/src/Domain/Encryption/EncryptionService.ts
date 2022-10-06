@@ -23,7 +23,7 @@ import {
   SplitPayloadsByEncryptionType,
   V001Algorithm,
   V002Algorithm,
-  PkcOperatorV1,
+  ProtocolOperator005,
 } from '@standardnotes/encryption'
 import {
   BackupFile,
@@ -747,15 +747,15 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
   }
 
   public generateRandomAsymmetricKeyPair(): PkcKeyPair {
-    return new PkcOperatorV1(this.crypto).generateKeyPair()
+    return new ProtocolOperator005(this.crypto).generateKeyPair()
   }
 
   encryptPrivateKey(privateKey: HexString, symmetricKey: HexString): string {
-    return new PkcOperatorV1(this.crypto).encryptPrivateKey(privateKey, symmetricKey)
+    return new ProtocolOperator005(this.crypto).symmetricEncryptPrivateKey(privateKey, symmetricKey)
   }
 
   decryptPrivateKey(encryptedPrivateKey: string, symmetricKey: HexString): HexString | null {
-    return new PkcOperatorV1(this.crypto).decryptPrivateKey(encryptedPrivateKey, symmetricKey)
+    return new ProtocolOperator005(this.crypto).symmetricDecryptPrivateKey(encryptedPrivateKey, symmetricKey)
   }
 
   override async getDiagnostics(): Promise<DiagnosticInfo | undefined> {

@@ -30,7 +30,6 @@ export interface LocalStorageEncryptedContextualPayload extends ContextPayload {
 
 export interface LocalStorageDecryptedContextualPayload<C extends ItemContent = ItemContent> extends ContextPayload {
   content: C
-  contentKey: string | undefined
   created_at_timestamp: number
   created_at: Date
   deleted: false
@@ -79,7 +78,6 @@ export function CreateDecryptedLocalStorageContextPayload(
   return {
     content_type: fromPayload.content_type,
     content: fromPayload.content,
-    contentKey: fromPayload.contentKey,
     created_at_timestamp: fromPayload.created_at_timestamp,
     created_at: fromPayload.created_at,
     deleted: false,

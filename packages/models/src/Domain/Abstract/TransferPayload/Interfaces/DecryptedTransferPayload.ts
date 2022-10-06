@@ -3,5 +3,4 @@ import { TransferPayload } from './TransferPayload'
 
 export interface DecryptedTransferPayload<C extends ItemContent = ItemContent> extends TransferPayload {
   content: C
-  contentKey: string | undefined
 }
