@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.70.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.70.0...@standardnotes/web@3.70.1) (2022-10-06)
+
+### Bug Fixes
+
+* add fallback for initial window size ([#1749](https://github.com/standardnotes/app/issues/1749)) ([05aff27](https://github.com/standardnotes/app/commit/05aff2776ba84f2988ebc7b3fca5ab9a18a58430))
+
 # [3.70.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.69.1...@standardnotes/web@3.70.0) (2022-10-05)
 
 ### Bug Fixes
