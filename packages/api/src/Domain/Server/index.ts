@@ -1,4 +1,3 @@
-export * from './Sharing/SharingServerInterface'
 export * from './Subscription/SubscriptionServer'
 export * from './Subscription/SubscriptionServerInterface'
 export * from './User/UserServer'

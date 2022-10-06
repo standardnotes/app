@@ -1,9 +1,9 @@
-import { PkcOperatorV1 } from './PkcOperatorV1'
+import { ProtocolOperator005 } from './Operator005'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 
 describe('operator 005', () => {
   let crypto: PureCryptoInterface
-  let operator: PkcOperatorV1
+  let operator: ProtocolOperator005
 
   beforeEach(() => {
     crypto = {} as jest.Mocked<PureCryptoInterface>
@@ -26,7 +26,7 @@ describe('operator 005', () => {
       return text.split('<e>')[1]
     })
 
-    operator = new PkcOperatorV1(crypto)
+    operator = new ProtocolOperator005(crypto)
   })
 
   it('should generateKeyPair', () => {
@@ -35,40 +35,40 @@ describe('operator 005', () => {
     expect(result).toEqual({ privateKey: 'private-key', publicKey: 'public-key', keyType: 'x25519' })
   })
 
-  it('should encryptText', () => {
+  it('should asymmetricEncryptKey', () => {
     const senderKeypair = operator.generateKeyPair()
     const recipientKeypair = operator.generateKeyPair()
 
     const plaintext = 'foo'
 
-    const result = operator.encryptText(plaintext, senderKeypair.privateKey, recipientKeypair.publicKey)
+    const result = operator.asymmetricEncryptKey(plaintext, senderKeypair.privateKey, recipientKeypair.publicKey)
 
-    expect(result).toEqual(`${'PkcV1_Asym'}:random-string:<e>foo<e>`)
+    expect(result).toEqual(`${'005_KeyAsym'}:random-string:<e>foo<e>`)
   })
 
-  it('should encryptText', () => {
+  it('should asymmetricDecryptKey', () => {
     const senderKeypair = operator.generateKeyPair()
     const recipientKeypair = operator.generateKeyPair()
     const plaintext = 'foo'
-    const ciphertext = operator.encryptText(plaintext, senderKeypair.privateKey, recipientKeypair.publicKey)
-    const decrypted = operator.decryptText(ciphertext, senderKeypair.publicKey, recipientKeypair.privateKey)
+    const ciphertext = operator.asymmetricEncryptKey(plaintext, senderKeypair.privateKey, recipientKeypair.publicKey)
+    const decrypted = operator.asymmetricDecryptKey(ciphertext, senderKeypair.publicKey, recipientKeypair.privateKey)
 
     expect(decrypted).toEqual('foo')
   })
 
-  it('should encryptPrivateKey', () => {
+  it('should symmetricEncryptPrivateKey', () => {
     const keypair = operator.generateKeyPair()
     const symmetricKey = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-    const encryptedKey = operator.encryptPrivateKey(keypair.privateKey, symmetricKey)
+    const encryptedKey = operator.symmetricEncryptPrivateKey(keypair.privateKey, symmetricKey)
 
-    expect(encryptedKey).toEqual(`${'PkcV1_Sym'}:random-string:<e>${keypair.privateKey}<e>`)
+    expect(encryptedKey).toEqual(`${'005_KeySym'}:random-string:<e>${keypair.privateKey}<e>`)
   })
 
-  it('should decryptPrivateKey', () => {
+  it('should symmetricDecryptPrivateKey', () => {
     const keypair = operator.generateKeyPair()
     const symmetricKey = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-    const encryptedKey = operator.encryptPrivateKey(keypair.privateKey, symmetricKey)
-    const decryptedKey = operator.decryptPrivateKey(encryptedKey, symmetricKey)
+    const encryptedKey = operator.symmetricEncryptPrivateKey(keypair.privateKey, symmetricKey)
+    const decryptedKey = operator.symmetricDecryptPrivateKey(encryptedKey, symmetricKey)
 
     expect(decryptedKey).toEqual(keypair.privateKey)
   })

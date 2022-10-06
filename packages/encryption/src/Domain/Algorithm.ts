@@ -44,3 +44,15 @@ export enum V004Algorithm {
   EncryptionKeyLength = 256,
   EncryptionNonceLength = 192,
 }
+
+export enum V005Algorithm {
+  ArgonSaltSeedLength = 256,
+  ArgonSaltLength = 128,
+  ArgonIterations = 5,
+  ArgonMemLimit = 67108864,
+  ArgonOutputKeyBytes = 64,
+  EncryptionKeyLength = 256,
+  AsymmetricEncryptionNonceLength = 192,
+  SymmetricEncryptionNonceLength = 192,
+}
+
