@@ -131,19 +131,19 @@ export class SNReactNativeCrypto implements PureCryptoInterface {
   }
 
   public sodiumCryptoBoxEasyEncrypt(
-    message: Utf8String,
-    nonce: HexString,
-    senderSecretKey: HexString,
-    recipientPublicKey: HexString,
+    _message: Utf8String,
+    _nonce: HexString,
+    _senderSecretKey: HexString,
+    _recipientPublicKey: HexString,
   ): Base64String {
     throw new Error('Not implemented')
   }
 
   public sodiumCryptoBoxEasyDecrypt(
-    ciphertext: Base64String,
-    nonce: HexString,
-    senderPublicKey: HexString,
-    recipientSecretKey: HexString,
+    _ciphertext: Base64String,
+    _nonce: HexString,
+    _senderPublicKey: HexString,
+    _recipientSecretKey: HexString,
   ): Utf8String {
     throw new Error('Not implemented')
   }
