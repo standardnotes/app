@@ -140,8 +140,8 @@ const LinkedItemsPanel = ({
   }, [isOpen])
 
   return (
-    <div className="divide-y divide-border">
-      <form className="sticky top-0 px-2.5 py-2.5">
+    <div>
+      <form className="sticky top-0 z-10 border-b border-border bg-default px-2.5 py-2.5">
         <DecoratedInput
           type="text"
           className={{ container: !isSearching ? 'py-1.5 px-0.5' : 'py-0' }}
@@ -161,124 +161,126 @@ const LinkedItemsPanel = ({
           ]}
         />
       </form>
-      {isSearching ? (
-        <>
-          {(!!unlinkedResults.length || shouldShowCreateTag) && (
-            <div>
-              <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Unlinked</div>
-              <LinkedItemSearchResults
-                createAndAddNewTag={createAndAddNewTag}
-                getLinkedItemIcon={getLinkedItemIcon}
-                getTitleForLinkedTag={getTitleForLinkedTag}
-                linkItemToSelectedItem={linkItemToSelectedItem}
-                results={unlinkedResults}
-                searchQuery={searchQuery}
-                shouldShowCreateTag={shouldShowCreateTag}
-              />
-            </div>
-          )}
-          {!!linkedResults.length && (
-            <div>
-              <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked</div>
-              <div className="my-1">
-                {linkedResults.map((item) => (
-                  <LinkedItemsSectionItem
-                    key={item.uuid}
-                    item={item}
-                    getItemIcon={getLinkedItemIcon}
-                    getTitleForLinkedTag={getTitleForLinkedTag}
-                    searchQuery={searchQuery}
-                    unlinkItem={unlinkItemFromSelectedItem}
-                    activateItem={activateItem}
-                    handleFileAction={filesController.handleFileAction}
-                  />
-                ))}
+      <div className="divide-y divide-border">
+        {isSearching ? (
+          <>
+            {(!!unlinkedResults.length || shouldShowCreateTag) && (
+              <div>
+                <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Unlinked</div>
+                <LinkedItemSearchResults
+                  createAndAddNewTag={createAndAddNewTag}
+                  getLinkedItemIcon={getLinkedItemIcon}
+                  getTitleForLinkedTag={getTitleForLinkedTag}
+                  linkItemToSelectedItem={linkItemToSelectedItem}
+                  results={unlinkedResults}
+                  searchQuery={searchQuery}
+                  shouldShowCreateTag={shouldShowCreateTag}
+                />
               </div>
-            </div>
-          )}
-        </>
-      ) : (
-        <>
-          {!!tags.length && (
-            <div>
-              <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked Tags</div>
-              <div className="my-1">
-                {tags.map((item) => (
-                  <LinkedItemsSectionItem
-                    key={item.uuid}
-                    item={item}
-                    getItemIcon={getLinkedItemIcon}
-                    getTitleForLinkedTag={getTitleForLinkedTag}
-                    searchQuery={searchQuery}
-                    unlinkItem={unlinkItemFromSelectedItem}
-                    activateItem={activateItem}
-                    handleFileAction={filesController.handleFileAction}
-                  />
-                ))}
+            )}
+            {!!linkedResults.length && (
+              <div>
+                <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked</div>
+                <div className="my-1">
+                  {linkedResults.map((item) => (
+                    <LinkedItemsSectionItem
+                      key={item.uuid}
+                      item={item}
+                      getItemIcon={getLinkedItemIcon}
+                      getTitleForLinkedTag={getTitleForLinkedTag}
+                      searchQuery={searchQuery}
+                      unlinkItem={unlinkItemFromSelectedItem}
+                      activateItem={activateItem}
+                      handleFileAction={filesController.handleFileAction}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
-          {!!files.length && (
-            <div>
-              <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked Files</div>
-              <div className="my-1">
-                {files.map((item) => (
-                  <LinkedItemsSectionItem
-                    key={item.uuid}
-                    item={item}
-                    getItemIcon={getLinkedItemIcon}
-                    getTitleForLinkedTag={getTitleForLinkedTag}
-                    searchQuery={searchQuery}
-                    unlinkItem={unlinkItemFromSelectedItem}
-                    activateItem={activateItem}
-                    handleFileAction={filesController.handleFileAction}
-                  />
-                ))}
+            )}
+          </>
+        ) : (
+          <>
+            {!!tags.length && (
+              <div>
+                <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked Tags</div>
+                <div className="my-1">
+                  {tags.map((item) => (
+                    <LinkedItemsSectionItem
+                      key={item.uuid}
+                      item={item}
+                      getItemIcon={getLinkedItemIcon}
+                      getTitleForLinkedTag={getTitleForLinkedTag}
+                      searchQuery={searchQuery}
+                      unlinkItem={unlinkItemFromSelectedItem}
+                      activateItem={activateItem}
+                      handleFileAction={filesController.handleFileAction}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
-          {!!notesLinkedToItem.length && (
-            <div>
-              <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked Notes</div>
-              <div className="my-1">
-                {notesLinkedToItem.map((item) => (
-                  <LinkedItemsSectionItem
-                    key={item.uuid}
-                    item={item}
-                    getItemIcon={getLinkedItemIcon}
-                    getTitleForLinkedTag={getTitleForLinkedTag}
-                    searchQuery={searchQuery}
-                    unlinkItem={unlinkItemFromSelectedItem}
-                    activateItem={activateItem}
-                    handleFileAction={filesController.handleFileAction}
-                  />
-                ))}
+            )}
+            {!!files.length && (
+              <div>
+                <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked Files</div>
+                <div className="my-1">
+                  {files.map((item) => (
+                    <LinkedItemsSectionItem
+                      key={item.uuid}
+                      item={item}
+                      getItemIcon={getLinkedItemIcon}
+                      getTitleForLinkedTag={getTitleForLinkedTag}
+                      searchQuery={searchQuery}
+                      unlinkItem={unlinkItemFromSelectedItem}
+                      activateItem={activateItem}
+                      handleFileAction={filesController.handleFileAction}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
-          {!!notesLinkingToItem.length && (
-            <div>
-              <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">
-                Notes Linking To This Note
+            )}
+            {!!notesLinkedToItem.length && (
+              <div>
+                <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked Notes</div>
+                <div className="my-1">
+                  {notesLinkedToItem.map((item) => (
+                    <LinkedItemsSectionItem
+                      key={item.uuid}
+                      item={item}
+                      getItemIcon={getLinkedItemIcon}
+                      getTitleForLinkedTag={getTitleForLinkedTag}
+                      searchQuery={searchQuery}
+                      unlinkItem={unlinkItemFromSelectedItem}
+                      activateItem={activateItem}
+                      handleFileAction={filesController.handleFileAction}
+                    />
+                  ))}
+                </div>
               </div>
-              <div className="my-1">
-                {notesLinkingToItem.map((item) => (
-                  <LinkedItemsSectionItem
-                    key={item.uuid}
-                    item={item}
-                    getItemIcon={getLinkedItemIcon}
-                    getTitleForLinkedTag={getTitleForLinkedTag}
-                    searchQuery={searchQuery}
-                    unlinkItem={unlinkItemFromSelectedItem}
-                    activateItem={activateItem}
-                    handleFileAction={filesController.handleFileAction}
-                  />
-                ))}
+            )}
+            {!!notesLinkingToItem.length && (
+              <div>
+                <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">
+                  Notes Linking To This Note
+                </div>
+                <div className="my-1">
+                  {notesLinkingToItem.map((item) => (
+                    <LinkedItemsSectionItem
+                      key={item.uuid}
+                      item={item}
+                      getItemIcon={getLinkedItemIcon}
+                      getTitleForLinkedTag={getTitleForLinkedTag}
+                      searchQuery={searchQuery}
+                      unlinkItem={unlinkItemFromSelectedItem}
+                      activateItem={activateItem}
+                      handleFileAction={filesController.handleFileAction}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
-        </>
-      )}
+            )}
+          </>
+        )}
+      </div>
     </div>
   )
 }
