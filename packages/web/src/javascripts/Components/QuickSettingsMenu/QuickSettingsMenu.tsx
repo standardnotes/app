@@ -48,17 +48,23 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
   const [themes, setThemes] = useState<ThemeItem[]>([])
   const [toggleableComponents, setToggleableComponents] = useState<SNComponent[]>([])
 
-  const [isDarkModeOn, setDarkModeOn] = useState(
+  const [isDarkModeOn, setDarkModeOn] = useState(() =>
     application.getPreference(PrefKey.DarkMode, PrefDefaults[PrefKey.DarkMode]),
   )
   const defaultThemeOn =
     !themes.map((item) => item?.component).find((theme) => theme?.active && !theme.isLayerable()) && !isDarkModeOn
 
   useEffect(() => {
-    application.addSingleEventObserver(ApplicationEvent.PreferencesChanged, async () => {
+    const removeObserver = application.addEventObserver(async (event) => {
+      if (event !== ApplicationEvent.PreferencesChanged) {
+        return
+      }
+
       const isDarkModeOn = application.getPreference(PrefKey.DarkMode, PrefDefaults[PrefKey.DarkMode])
       setDarkModeOn(isDarkModeOn)
     })
+
+    return removeObserver
   }, [application])
 
   const prefsButtonRef = useRef<HTMLButtonElement>(null)

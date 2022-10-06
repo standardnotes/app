@@ -233,7 +233,6 @@ export class ThemeManager extends AbstractService {
         if (theme && !theme.active) {
           this.application.mutator.toggleTheme(theme).catch(console.error)
         }
-        void this.application.setPreference(PrefKey.DarkMode, false)
       }
     }
 
@@ -324,6 +323,8 @@ export class ThemeManager extends AbstractService {
       }
     }
     document.getElementsByTagName('head')[0].appendChild(link)
+
+    void this.application.setPreference(PrefKey.DarkMode, false)
   }
 
   private getBackgroundColor() {
