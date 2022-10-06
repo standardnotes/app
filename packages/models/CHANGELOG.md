@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.23.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.22.1...@standardnotes/models@1.23.0) (2022-10-05)
+
+### Features
+
+* add free dark mode ([#1748](https://github.com/standardnotes/app/issues/1748)) ([09b994f](https://github.com/standardnotes/app/commit/09b994f8f938ae0536f42742f7a221df536c4c4a))
+
+## [1.22.1](https://github.com/standardnotes/app/compare/@standardnotes/models@1.22.0...@standardnotes/models@1.22.1) (2022-10-05)
+
+**Note:** Version bump only for package @standardnotes/models
+
 # [1.22.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.21.0...@standardnotes/models@1.22.0) (2022-09-30)
 
 ### Features

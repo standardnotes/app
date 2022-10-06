@@ -20,14 +20,14 @@
   --sn-stylekit-background-color: #ffffff;
   // For borders inside background-color
   --sn-stylekit-border-color: #dfe1e4;
-  --sn-stylekit-foreground-color: #19191C;
+  --sn-stylekit-foreground-color: #19191c;
   // Colors for layers placed on top of non-prefixed background, border, and foreground
-  --sn-stylekit-contrast-background-color: rgba(244, 245, 247, 1.0);
+  --sn-stylekit-contrast-background-color: rgba(244, 245, 247, 1);
   --sn-stylekit-contrast-foreground-color: #2e2e2e;
   --sn-stylekit-contrast-border-color: #e3e3e3; // For borders inside contrast-background-color
 
   // Alternative set of background and contrast options
-  --sn-stylekit-secondary-background-color: #EEEFF1;
+  --sn-stylekit-secondary-background-color: #eeeff1;
   --sn-stylekit-secondary-foreground-color: #2e2e2e;
   --sn-stylekit-secondary-border-color: #e3e3e3;
 

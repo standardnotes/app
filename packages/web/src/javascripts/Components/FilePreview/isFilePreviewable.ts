@@ -1,5 +1,7 @@
 export const PreviewableTextFileTypes = ['text/plain', 'text/csv', 'application/json']
 
+export const RequiresNativeFilePreview = ['application/pdf']
+
 export const isFileTypePreviewable = (fileType: string) => {
   const isImage = fileType.startsWith('image/')
   const isVideo = fileType.startsWith('video/')

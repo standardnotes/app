@@ -18,7 +18,7 @@ import {
 } from '@standardnotes/services'
 import { ProtectionsClientInterface } from './ClientInterface'
 import { ContentType } from '@standardnotes/common'
-import { MobileUnlockTiming } from './MobileUnlockTiming'
+import { MobileUnlockTiming, TimingDisplayOption } from './MobileUnlockTiming'
 
 export enum ProtectionEvent {
   UnprotectedSessionBegan = 'UnprotectedSessionBegan',
@@ -64,8 +64,8 @@ export const ProtectionSessionDurations = [
  */
 export class SNProtectionService extends AbstractService<ProtectionEvent> implements ProtectionsClientInterface {
   private sessionExpiryTimeout = -1
-  private mobilePasscodeTiming: MobileUnlockTiming | undefined = MobileUnlockTiming.Immediately
-  private mobileBiometricsTiming: MobileUnlockTiming | undefined = MobileUnlockTiming.Immediately
+  private mobilePasscodeTiming: MobileUnlockTiming | undefined = MobileUnlockTiming.OnQuit
+  private mobileBiometricsTiming: MobileUnlockTiming | undefined = MobileUnlockTiming.OnQuit
 
   constructor(
     private protocolService: EncryptionService,
@@ -87,8 +87,8 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
   override handleApplicationStage(stage: ApplicationStage): Promise<void> {
     if (stage === ApplicationStage.LoadedDatabase_12) {
       this.updateSessionExpiryTimer(this.getSessionExpiryDate())
-      this.mobilePasscodeTiming = this.getPasscodeTiming()
-      this.mobileBiometricsTiming = this.getBiometricsTiming()
+      this.mobilePasscodeTiming = this.getMobilePasscodeTiming()
+      this.mobileBiometricsTiming = this.getMobileBiometricsTiming()
     }
     return Promise.resolve()
   }
@@ -229,7 +229,7 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
     })
   }
 
-  getPasscodeTimingOptions() {
+  getMobilePasscodeTimingOptions(): TimingDisplayOption[] {
     return [
       {
         title: 'Immediately',
@@ -244,7 +244,7 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
     ]
   }
 
-  getBiometricsTimingOptions() {
+  getMobileBiometricsTimingOptions(): TimingDisplayOption[] {
     return [
       {
         title: 'Immediately',
@@ -259,23 +259,30 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
     ]
   }
 
-  private getBiometricsTiming(): MobileUnlockTiming | undefined {
+  getMobileBiometricsTiming(): MobileUnlockTiming | undefined {
     return this.storageService.getValue<MobileUnlockTiming | undefined>(
       StorageKey.MobileBiometricsTiming,
       StorageValueModes.Nonwrapped,
+      MobileUnlockTiming.OnQuit,
     )
   }
 
-  private getPasscodeTiming(): MobileUnlockTiming | undefined {
+  getMobilePasscodeTiming(): MobileUnlockTiming | undefined {
     return this.storageService.getValue<MobileUnlockTiming | undefined>(
       StorageKey.MobilePasscodeTiming,
       StorageValueModes.Nonwrapped,
+      MobileUnlockTiming.OnQuit,
     )
   }
 
-  async setBiometricsTiming(timing: MobileUnlockTiming) {
+  setMobileBiometricsTiming(timing: MobileUnlockTiming): void {
     this.storageService.setValue(StorageKey.MobileBiometricsTiming, timing, StorageValueModes.Nonwrapped)
     this.mobileBiometricsTiming = timing
+  }
+
+  setMobilePasscodeTiming(timing: MobileUnlockTiming): void {
+    this.storageService.setValue(StorageKey.MobilePasscodeTiming, timing, StorageValueModes.Nonwrapped)
+    this.mobilePasscodeTiming = timing
   }
 
   setMobileScreenshotPrivacyEnabled(isEnabled: boolean) {

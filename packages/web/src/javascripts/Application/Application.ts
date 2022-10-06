@@ -32,7 +32,7 @@ import { PrefDefaults } from '@/Constants/PrefDefaults'
 type WebServices = {
   viewControllerManager: ViewControllerManager
   desktopService?: DesktopManager
-  autolockService: AutolockService
+  autolockService?: AutolockService
   archiveService: ArchiveManager
   themeService: ThemeManager
   io: IOService
@@ -83,7 +83,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
       // eslint-disable-next-line no-console
       console.log = (...args) => {
-        this.mobileDevice.consoleLog(...args)
+        this.mobileDevice().consoleLog(...args)
       }
     }
 
@@ -179,7 +179,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return undefined
   }
 
-  get mobileDevice(): MobileDeviceInterface {
+  mobileDevice(): MobileDeviceInterface {
     if (!this.isNativeMobileWeb()) {
       throw Error('Attempting to access device as mobile device on non mobile platform')
     }
@@ -237,16 +237,16 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   async handleMobileGainingFocusEvent(): Promise<void> {}
 
   async handleMobileLosingFocusEvent(): Promise<void> {
-    if (this.getMobileScreenshotPrivacyEnabled()) {
-      this.mobileDevice.stopHidingMobileInterfaceFromScreenshots()
+    if (this.protections.getMobileScreenshotPrivacyEnabled()) {
+      this.mobileDevice().stopHidingMobileInterfaceFromScreenshots()
     }
 
     await this.lockApplicationAfterMobileEventIfApplicable()
   }
 
   async handleMobileResumingFromBackgroundEvent(): Promise<void> {
-    if (this.getMobileScreenshotPrivacyEnabled()) {
-      this.mobileDevice.hideMobileInterfaceFromScreenshots()
+    if (this.protections.getMobileScreenshotPrivacyEnabled()) {
+      this.mobileDevice().hideMobileInterfaceFromScreenshots()
     }
   }
 
@@ -256,10 +256,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       return
     }
 
-    const hasBiometrics = this.hasBiometrics()
+    const hasBiometrics = this.protections.hasBiometricsEnabled()
     const hasPasscode = this.hasPasscode()
-    const passcodeTiming = await this.getMobilePasscodeTiming()
-    const biometricsTiming = await this.getMobileBiometricsTiming()
+    const passcodeTiming = this.protections.getMobilePasscodeTiming()
+    const biometricsTiming = this.protections.getMobileBiometricsTiming()
 
     const passcodeLockImmediately = hasPasscode && passcodeTiming === MobileUnlockTiming.Immediately
     const biometricsLockImmediately = hasBiometrics && biometricsTiming === MobileUnlockTiming.Immediately

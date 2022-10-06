@@ -98,7 +98,7 @@ const PopoverFileItem: FunctionComponent<PopoverFileItemProps> = ({
               onBlur={handleFileNameInputBlur}
             />
           ) : (
-            <div className="break-word mb-1 text-sm">
+            <div className="break-word mb-1 text-mobile-menu-item md:text-sm">
               <span className="align-middle">{file.name}</span>
               {file.protected && (
                 <Icon type="lock-filled" className="ml-2 inline align-middle text-neutral" size="small" />

@@ -28,7 +28,6 @@ export enum FeatureIdentifier {
   SolarizedDarkTheme = 'org.standardnotes.theme-solarized-dark',
   TitaniumTheme = 'org.standardnotes.theme-titanium',
 
-  AdvancedChecklist = 'org.standardnotes.advanced-checklist',
   CodeEditor = 'org.standardnotes.code-editor',
   MarkdownProEditor = 'org.standardnotes.advanced-markdown-editor',
   MarkdownVisualEditor = 'org.standardnotes.markdown-visual-editor',
@@ -51,4 +50,4 @@ export enum FeatureIdentifier {
  */
 export const LegacyFileSafeIdentifier = 'org.standardnotes.legacy.file-safe'
 
-export const ExperimentalFeatures = [FeatureIdentifier.AdvancedChecklist]
+export const ExperimentalFeatures = []

@@ -14,11 +14,6 @@ var BaseEditorStaticFiles = ['index.html', 'dist', 'package.json'];
 var BaseThemeStaticFiles = ['dist', 'package.json'];
 var Editors = [
     {
-        identifier: 'org.standardnotes.advanced-checklist',
-        path: 'Editors/org.standardnotes.advanced-checklist',
-        static_files: __spreadArray(__spreadArray([], BaseEditorStaticFiles, true), ['build'], false),
-    },
-    {
         identifier: 'org.standardnotes.code-editor',
         path: 'Editors/org.standardnotes.code-editor',
         static_files: __spreadArray(__spreadArray([], BaseEditorStaticFiles, true), ['vendor'], false),

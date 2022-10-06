@@ -20,6 +20,7 @@ import {
 const CachedThemesKey = 'cachedThemes'
 const TimeBeforeApplyingColorScheme = 5
 const DefaultThemeIdentifier = 'Default'
+const DarkThemeIdentifier = 'Dark'
 
 export class ThemeManager extends AbstractService {
   private activeThemes: Uuid[] = []
@@ -90,11 +91,13 @@ export class ThemeManager extends AbstractService {
   private handlePreferencesChangeEvent(): void {
     const useDeviceThemeSettings = this.application.getPreference(PrefKey.UseSystemColorScheme, false)
 
-    if (useDeviceThemeSettings !== this.lastUseDeviceThemeSettings) {
+    const hasPreferenceChanged = useDeviceThemeSettings !== this.lastUseDeviceThemeSettings
+
+    if (hasPreferenceChanged) {
       this.lastUseDeviceThemeSettings = useDeviceThemeSettings
     }
 
-    if (useDeviceThemeSettings) {
+    if (hasPreferenceChanged && useDeviceThemeSettings) {
       const prefersDarkColorScheme = window.matchMedia('(prefers-color-scheme: dark)')
 
       this.setThemeAsPerColorScheme(prefersDarkColorScheme.matches)
@@ -159,7 +162,11 @@ export class ThemeManager extends AbstractService {
   }
 
   private colorSchemeEventHandler(event: MediaQueryListEvent) {
-    this.setThemeAsPerColorScheme(event.matches)
+    const shouldChangeTheme = this.application.getPreference(PrefKey.UseSystemColorScheme, false)
+
+    if (shouldChangeTheme) {
+      this.setThemeAsPerColorScheme(event.matches)
+    }
   }
 
   private showColorSchemeToast(setThemeCallback: () => void) {
@@ -192,19 +199,35 @@ export class ThemeManager extends AbstractService {
 
   private setThemeAsPerColorScheme(prefersDarkColorScheme: boolean) {
     const preference = prefersDarkColorScheme ? PrefKey.AutoDarkThemeIdentifier : PrefKey.AutoLightThemeIdentifier
+    const preferenceDefault =
+      preference === PrefKey.AutoDarkThemeIdentifier ? DarkThemeIdentifier : DefaultThemeIdentifier
 
     const themes = this.application.items
       .getDisplayableComponents()
       .filter((component) => component.isTheme()) as SNTheme[]
 
     const activeTheme = themes.find((theme) => theme.active && !theme.isLayerable())
-    const activeThemeIdentifier = activeTheme ? activeTheme.identifier : DefaultThemeIdentifier
+    const activeThemeIdentifier = activeTheme
+      ? activeTheme.identifier
+      : this.application.getPreference(PrefKey.DarkMode, false)
+      ? DarkThemeIdentifier
+      : DefaultThemeIdentifier
 
-    const themeIdentifier = this.application.getPreference(preference, DefaultThemeIdentifier) as string
+    const themeIdentifier = this.application.getPreference(preference, preferenceDefault) as string
+
+    const toggleActiveTheme = () => {
+      if (activeTheme) {
+        void this.application.mutator.toggleTheme(activeTheme)
+      }
+    }
 
     const setTheme = () => {
-      if (themeIdentifier === DefaultThemeIdentifier && activeTheme) {
-        this.application.mutator.toggleTheme(activeTheme).catch(console.error)
+      if (themeIdentifier === DefaultThemeIdentifier) {
+        toggleActiveTheme()
+        void this.application.setPreference(PrefKey.DarkMode, false)
+      } else if (themeIdentifier === DarkThemeIdentifier) {
+        toggleActiveTheme()
+        void this.application.setPreference(PrefKey.DarkMode, true)
       } else {
         const theme = themes.find((theme) => theme.package_info.identifier === themeIdentifier)
         if (theme && !theme.active) {
@@ -293,14 +316,15 @@ export class ThemeManager extends AbstractService {
 
       if (this.application.isNativeMobileWeb()) {
         setTimeout(() => {
-          this.application.mobileDevice.handleThemeSchemeChange(
-            theme.package_info.isDark ?? false,
-            this.getBackgroundColor(),
-          )
+          this.application
+            .mobileDevice()
+            .handleThemeSchemeChange(theme.package_info.isDark ?? false, this.getBackgroundColor())
         })
       }
     }
     document.getElementsByTagName('head')[0].appendChild(link)
+
+    void this.application.setPreference(PrefKey.DarkMode, false)
   }
 
   private getBackgroundColor() {
@@ -335,7 +359,7 @@ export class ThemeManager extends AbstractService {
     removeFromArray(this.activeThemes, uuid)
 
     if (this.activeThemes.length === 0 && this.application.isNativeMobileWeb()) {
-      this.application.mobileDevice.handleThemeSchemeChange(false, '#ffffff')
+      this.application.mobileDevice().handleThemeSchemeChange(false, '#ffffff')
     }
   }
 

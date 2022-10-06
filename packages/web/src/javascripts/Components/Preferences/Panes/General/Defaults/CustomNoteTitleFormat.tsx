@@ -51,7 +51,7 @@ const CustomNoteTitleFormat = ({ application }: Props) => {
             onClick={(event) => {
               if (application.isNativeMobileWeb()) {
                 event.preventDefault()
-                application.mobileDevice.openUrl(HelpPageUrl)
+                application.mobileDevice().openUrl(HelpPageUrl)
               }
             }}
           >

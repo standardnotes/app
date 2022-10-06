@@ -14,6 +14,7 @@ import {
   TransferPayload,
 } from '@standardnotes/snjs'
 import { Alert, Linking, PermissionsAndroid, Platform, StatusBar } from 'react-native'
+import FileViewer from 'react-native-file-viewer'
 import FingerprintScanner from 'react-native-fingerprint-scanner'
 import FlagSecure from 'react-native-flag-secure-android'
 import {
@@ -459,7 +460,7 @@ export class MobileDevice implements MobileDeviceInterface {
   }
 
   reloadStatusBarStyle(animated = true) {
-    if (this.statusBarBgColor) {
+    if (this.statusBarBgColor && Platform.OS === 'android') {
       StatusBar.setBackgroundColor(this.statusBarBgColor, animated)
     }
     StatusBar.setBarStyle(this.isDarkMode ? 'light-content' : 'dark-content', animated)
@@ -541,12 +542,34 @@ export class MobileDevice implements MobileDeviceInterface {
 
     try {
       const path = this.getFileDestinationPath(filename, saveInTempLocation)
-      void this.deleteFileAtPathIfExists(path)
+      await this.deleteFileAtPathIfExists(path)
       await writeFile(path, base64.replace(/data.*base64,/, ''), 'base64')
       return path
     } catch (error) {
       this.consoleLog(`${error}`)
     }
+  }
+
+  async previewFile(base64: string, filename: string): Promise<boolean> {
+    const tempLocation = await this.downloadBase64AsFile(base64, filename, true)
+
+    if (!tempLocation) {
+      this.consoleLog('Error: Could not download file to preview')
+      return false
+    }
+
+    try {
+      await FileViewer.open(tempLocation, {
+        onDismiss: async () => {
+          await this.deleteFileAtPathIfExists(tempLocation)
+        },
+      })
+    } catch (error) {
+      this.consoleLog(error)
+      return false
+    }
+
+    return true
   }
 
   confirmAndExit() {

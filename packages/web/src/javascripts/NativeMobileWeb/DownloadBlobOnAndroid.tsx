@@ -20,7 +20,7 @@ export const downloadBlobOnAndroid = async (
     })
   }
   const base64 = await getBase64FromBlob(blob)
-  const downloaded = await application.mobileDevice.downloadBase64AsFile(base64, filename)
+  const downloaded = await application.mobileDevice().downloadBase64AsFile(base64, filename)
   if (loadingToastId) {
     dismissToast(loadingToastId)
   }

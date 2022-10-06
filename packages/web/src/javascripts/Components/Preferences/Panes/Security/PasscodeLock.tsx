@@ -12,7 +12,7 @@ import { WebApplication } from '@/Application/Application'
 import { preventRefreshing } from '@/Utils'
 import { alertDialog } from '@standardnotes/ui-services'
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react'
-import { ApplicationEvent } from '@standardnotes/snjs'
+import { ApplicationEvent, MobileUnlockTiming } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { Title, Text } from '@/Components/Preferences/PreferencesComponents/Content'
@@ -28,8 +28,8 @@ type Props = {
 }
 
 const PasscodeLock = ({ application, viewControllerManager }: Props) => {
+  const isNativeMobileWeb = application.isNativeMobileWeb()
   const keyStorageInfo = StringUtils.keyStorageInfo(application)
-  const passcodeAutoLockOptions = application.getAutolockService().getAutoLockIntervalOptions()
 
   const { setIsEncryptionEnabled, setIsBackupEncrypted, setEncryptionStatusString } =
     viewControllerManager.accountMenuController
@@ -44,6 +44,10 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
   const [canAddPasscode, setCanAddPasscode] = useState(!application.isEphemeralSession())
   const [hasPasscode, setHasPasscode] = useState(application.hasPasscode())
 
+  const [mobilePasscodeTimingOptions, setMobilePasscodeTimingOptions] = useState(() =>
+    application.protections.getMobilePasscodeTimingOptions(),
+  )
+
   const handleAddPassCode = () => {
     setShowPasscodeForm(true)
     setIsPasscodeFocused(true)
@@ -53,8 +57,8 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
     handleAddPassCode()
   }
 
-  const reloadAutoLockInterval = useCallback(async () => {
-    const interval = await application.getAutolockService().getAutoLockInterval()
+  const reloadDesktopAutoLockInterval = useCallback(async () => {
+    const interval = await application.getAutolockService()!.getAutoLockInterval()
     setSelectedAutoLockInterval(interval)
   }, [application])
 
@@ -77,19 +81,27 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
     setIsBackupEncrypted(encryptionEnabled)
   }, [application, setEncryptionStatusString, setIsBackupEncrypted, setIsEncryptionEnabled])
 
-  const selectAutoLockInterval = async (interval: number) => {
+  const selectDesktopAutoLockInterval = async (interval: number) => {
     if (!(await application.authorizeAutolockIntervalChange())) {
       return
     }
-    await application.getAutolockService().setAutoLockInterval(interval)
-    reloadAutoLockInterval().catch(console.error)
+
+    await application.getAutolockService()!.setAutoLockInterval(interval)
+    reloadDesktopAutoLockInterval().catch(console.error)
+  }
+
+  const setMobilePasscodeTiming = (timing: MobileUnlockTiming) => {
+    application.protections.setMobilePasscodeTiming(timing)
+    setMobilePasscodeTimingOptions(application.protections.getMobilePasscodeTimingOptions())
   }
 
   const removePasscodePressed = async () => {
     await preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL, async () => {
       if (await application.removePasscode()) {
-        await application.getAutolockService().deleteAutolockPreference()
-        await reloadAutoLockInterval()
+        if (!isNativeMobileWeb) {
+          await application.getAutolockService()?.deleteAutolockPreference()
+          await reloadDesktopAutoLockInterval()
+        }
         refreshEncryptionStatus()
       }
     })
@@ -141,11 +153,11 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
     refreshEncryptionStatus()
   }, [refreshEncryptionStatus])
 
-  // `reloadAutoLockInterval` gets interval asynchronously, therefore we call `useEffect` to set initial
-  // value of `selectedAutoLockInterval`
   useEffect(() => {
-    reloadAutoLockInterval().catch(console.error)
-  }, [reloadAutoLockInterval])
+    if (!isNativeMobileWeb) {
+      reloadDesktopAutoLockInterval().catch(console.error)
+    }
+  }, [reloadDesktopAutoLockInterval, isNativeMobileWeb])
 
   useEffect(() => {
     if (isPasscodeFocused) {
@@ -154,7 +166,6 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
     }
   }, [isPasscodeFocused])
 
-  // Add the required event observers
   useEffect(() => {
     const removeKeyStatusChangedObserver = application.addEventObserver(async () => {
       setCanAddPasscode(!application.isEphemeralSession())
@@ -229,7 +240,7 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
         </PreferencesSegment>
       </PreferencesGroup>
 
-      {hasPasscode && (
+      {hasPasscode && !isNativeMobileWeb && (
         <>
           <div className="min-h-3" />
           <PreferencesGroup>
@@ -237,22 +248,57 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
               <Title>Autolock</Title>
               <Text className="mb-3">The autolock timer begins when the window or tab loses focus.</Text>
               <div className="flex flex-row items-center">
-                {passcodeAutoLockOptions.map((option) => {
-                  return (
-                    <a
-                      key={option.value}
-                      className={classNames(
-                        'mr-3 cursor-pointer rounded',
-                        option.value === selectedAutoLockInterval
-                          ? 'bg-info px-1.5 py-0.5 text-info-contrast'
-                          : 'text-info',
-                      )}
-                      onClick={() => selectAutoLockInterval(option.value)}
-                    >
-                      {option.label}
-                    </a>
-                  )
-                })}
+                {application
+                  .getAutolockService()!
+                  .getAutoLockIntervalOptions()
+                  .map((option) => {
+                    return (
+                      <a
+                        key={option.value}
+                        className={classNames(
+                          'mr-3 cursor-pointer rounded',
+                          option.value === selectedAutoLockInterval
+                            ? 'bg-info px-1.5 py-0.5 text-info-contrast'
+                            : 'text-info',
+                        )}
+                        onClick={() => selectDesktopAutoLockInterval(option.value)}
+                      >
+                        {option.label}
+                      </a>
+                    )
+                  })}
+              </div>
+            </PreferencesSegment>
+          </PreferencesGroup>
+        </>
+      )}
+
+      {hasPasscode && isNativeMobileWeb && (
+        <>
+          <div className="min-h-3" />
+          <PreferencesGroup>
+            <PreferencesSegment>
+              <Title>Passcode Autolock</Title>
+              <div className="flex flex-row items-center">
+                <div className="mt-2 flex flex-row items-center">
+                  <div className={'mr-3'}>Require Passcode</div>
+                  {mobilePasscodeTimingOptions.map((option) => {
+                    return (
+                      <a
+                        key={option.key}
+                        className={classNames(
+                          'mr-3 cursor-pointer rounded px-1.5 py-0.5',
+                          option.selected ? 'bg-info text-info-contrast' : 'text-info',
+                        )}
+                        onClick={() => {
+                          void setMobilePasscodeTiming(option.key as MobileUnlockTiming)
+                        }}
+                      >
+                        {option.title}
+                      </a>
+                    )
+                  })}
+                </div>
               </div>
             </PreferencesSegment>
           </PreferencesGroup>

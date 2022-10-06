@@ -166,10 +166,10 @@ Due to mounted volumes, we recommend running the setup as a root user. If you wi
 
     ```shell
     sed -i "s/auth_jwt_secret/$(openssl rand -hex 32)/g" .env
-    sed -i "s/secret/$(openssl rand -hex 32)/g" docker/auth.env
     sed -i "s/legacy_jwt_secret/$(openssl rand -hex 32)/g" docker/auth.env
     sed -i "s/secret_key/$(openssl rand -hex 32)/g" docker/auth.env
     sed -i "s/server_key/$(openssl rand -hex 32)/g" docker/auth.env
+    sed -i "s/secret/$(openssl rand -hex 32)/g" docker/auth.env
     ```
 
     **Note:** If you are running `sed` on macOS or BSD, change instances of `sed -i` to `sed -i ''`.
