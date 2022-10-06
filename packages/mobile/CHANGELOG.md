@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.39.11](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.39.10...@standardnotes/mobile@3.39.11) (2022-10-06)
+
+### Bug Fixes
+
+* add android platform check for status bar color sync ([1602d81](https://github.com/standardnotes/app/commit/1602d8157f9e61c6ad842bcce28f3aaf6a8f7154))
+
 ## [3.39.10](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.39.9...@standardnotes/mobile@3.39.10) (2022-10-06)
 
 **Note:** Version bump only for package @standardnotes/mobile
