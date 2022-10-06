@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.135.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.134.9...@standardnotes/snjs@2.135.0) (2022-10-06)
+
+### Features
+
+* experimental 005 operator ([#1753](https://github.com/standardnotes/app/issues/1753)) ([cbbe913](https://github.com/standardnotes/app/commit/cbbe913cd6eb694dd27997927bd5c45e8a64cc09))
+
 ## [2.134.9](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.134.8...@standardnotes/snjs@2.134.9) (2022-10-05)
 
 ### Bug Fixes

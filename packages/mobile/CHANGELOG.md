@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.40.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.39.12...@standardnotes/mobile@3.40.0) (2022-10-06)
+
+### Features
+
+* experimental 005 operator ([#1753](https://github.com/standardnotes/app/issues/1753)) ([cbbe913](https://github.com/standardnotes/app/commit/cbbe913cd6eb694dd27997927bd5c45e8a64cc09))
+
 ## [3.39.12](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.39.11...@standardnotes/mobile@3.39.12) (2022-10-06)
 
 **Note:** Version bump only for package @standardnotes/mobile

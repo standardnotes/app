@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.1](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.6.0...@standardnotes/ui-services@1.6.1) (2022-10-06)
+
+### Bug Fixes
+
+* dark mode toggling ([1377846](https://github.com/standardnotes/app/commit/1377846f3f3a23a405c96b8a733d439947abfefe))
+
 # [1.6.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.5.2...@standardnotes/ui-services@1.6.0) (2022-10-05)
 
 ### Features
