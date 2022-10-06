@@ -30,6 +30,10 @@
   --safe-area-inset-right: env(safe-area-inset-right, 0);
 
   --sn-stylekit-font-size-editor: 0.9375rem;
+
+  @media screen and (max-width: 768px) {
+    --sn-stylekit-font-size-editor: 1rem;
+  }
 }
 
 html {
