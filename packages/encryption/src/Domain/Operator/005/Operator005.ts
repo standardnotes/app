@@ -10,6 +10,10 @@ const AsymmetricCiphertextPrefix = `${VersionString}_KeyAsym`
 export type AsymmetricallyEncryptedKey = Base64String
 export type SymmetricallyEncryptedPrivateKey = Base64String
 
+/**
+ * @experimental
+ * @unreleased
+ */
 export class ProtocolOperator005 extends SNProtocolOperator004 {
   public override getEncryptionDisplayName(): string {
     return 'XChaCha20-Poly1305'

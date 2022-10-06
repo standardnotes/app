@@ -58,7 +58,7 @@ describe('operator 005', () => {
 
   it('should symmetricEncryptPrivateKey', () => {
     const keypair = operator.generateKeyPair()
-    const symmetricKey = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+    const symmetricKey = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
     const encryptedKey = operator.symmetricEncryptPrivateKey(keypair.privateKey, symmetricKey)
 
     expect(encryptedKey).toEqual(`${'005_KeySym'}:random-string:<e>${keypair.privateKey}<e>`)
@@ -66,7 +66,7 @@ describe('operator 005', () => {
 
   it('should symmetricDecryptPrivateKey', () => {
     const keypair = operator.generateKeyPair()
-    const symmetricKey = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+    const symmetricKey = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
     const encryptedKey = operator.symmetricEncryptPrivateKey(keypair.privateKey, symmetricKey)
     const decryptedKey = operator.symmetricDecryptPrivateKey(encryptedKey, symmetricKey)
 
