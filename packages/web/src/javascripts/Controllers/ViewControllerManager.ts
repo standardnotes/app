@@ -129,6 +129,7 @@ export class ViewControllerManager {
       this.navigationController,
       this.selectionController,
       this.filesController,
+      this.subscriptionController,
       this.eventBus,
     )
 

@@ -1,6 +1,9 @@
 import { LinkableItem, LinkingController } from '@/Controllers/LinkingController'
+import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { observer } from 'mobx-react-lite'
+import { SNNote } from '@standardnotes/snjs'
 import Icon from '../Icon/Icon'
+import { PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 import LinkedItemMeta from './LinkedItemMeta'
 
 type Props = {
@@ -12,6 +15,7 @@ type Props = {
   searchQuery: string
   shouldShowCreateTag: boolean
   onClickCallback?: () => void
+  isEntitledToNoteLinking: boolean
 }
 
 const LinkedItemSearchResults = ({
@@ -23,7 +27,10 @@ const LinkedItemSearchResults = ({
   searchQuery,
   shouldShowCreateTag,
   onClickCallback,
+  isEntitledToNoteLinking,
 }: Props) => {
+  const premiumModal = usePremiumModal()
+
   return (
     <div className="my-1">
       {results.map((result) => {
@@ -32,8 +39,12 @@ const LinkedItemSearchResults = ({
             key={result.uuid}
             className="flex w-full items-center justify-between gap-4 overflow-hidden py-2 px-3 hover:bg-contrast hover:text-foreground focus:bg-info-backdrop"
             onClick={() => {
-              linkItemToSelectedItem(result)
-              onClickCallback?.()
+              if (isEntitledToNoteLinking) {
+                linkItemToSelectedItem(result)
+                onClickCallback?.()
+              } else {
+                premiumModal.activate('Note linking')
+              }
             }}
           >
             <LinkedItemMeta
@@ -42,6 +53,9 @@ const LinkedItemSearchResults = ({
               getTitleForLinkedTag={getTitleForLinkedTag}
               searchQuery={searchQuery}
             />
+            {!isEntitledToNoteLinking && result instanceof SNNote && (
+              <Icon type={PremiumFeatureIconName} className="ml-auto flex-shrink-0 text-info" />
+            )}
           </button>
         )
       })}

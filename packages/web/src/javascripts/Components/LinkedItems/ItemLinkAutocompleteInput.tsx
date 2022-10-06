@@ -19,6 +19,7 @@ const ItemLinkAutocompleteInput = ({ linkingController }: Props) => {
     getSearchResults,
     linkItemToSelectedItem,
     createAndAddNewTag,
+    isEntitledToNoteLinking,
   } = linkingController
 
   const [searchQuery, setSearchQuery] = useState('')
@@ -100,6 +101,7 @@ const ItemLinkAutocompleteInput = ({ linkingController }: Props) => {
                 searchQuery={searchQuery}
                 shouldShowCreateTag={shouldShowCreateTag}
                 onClickCallback={() => setSearchQuery('')}
+                isEntitledToNoteLinking={isEntitledToNoteLinking}
               />
             </DisclosurePanel>
           )}

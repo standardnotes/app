@@ -1,5 +1,6 @@
 import { FilesController } from '@/Controllers/FilesController'
 import { LinkableItem, LinkingController } from '@/Controllers/LinkingController'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { FileItem } from '@standardnotes/snjs'
@@ -119,6 +120,7 @@ const LinkedItemsPanel = ({
     files,
     notesLinkedToItem,
     notesLinkingToItem,
+    allLinkedItems,
     getTitleForLinkedTag,
     getLinkedItemIcon,
     getSearchResults,
@@ -126,6 +128,7 @@ const LinkedItemsPanel = ({
     unlinkItemFromSelectedItem,
     activateItem,
     createAndAddNewTag,
+    isEntitledToNoteLinking,
   } = linkingController
 
   const searchInputRef = useRef<HTMLInputElement | null>(null)
@@ -141,10 +144,17 @@ const LinkedItemsPanel = ({
 
   return (
     <div>
-      <form className="sticky top-0 z-10 border-b border-border bg-default px-2.5 py-2.5">
+      <form
+        className={classNames(
+          'sticky top-0 z-10 bg-default px-2.5 pt-2.5',
+          allLinkedItems.length > 0 || linkedResults.length > 0 || unlinkedResults.length > 0
+            ? 'border-b border-border pb-2.5'
+            : 'pb-1',
+        )}
+      >
         <DecoratedInput
           type="text"
-          className={{ container: !isSearching ? 'py-1.5 px-0.5' : 'py-0' }}
+          className={{ container: !isSearching ? 'py-1.5 px-0.5' : 'py-0', input: 'placeholder:text-passive-0' }}
           placeholder="Search items to link..."
           value={searchQuery}
           onChange={setSearchQuery}
@@ -175,6 +185,11 @@ const LinkedItemsPanel = ({
                   results={unlinkedResults}
                   searchQuery={searchQuery}
                   shouldShowCreateTag={shouldShowCreateTag}
+                  isEntitledToNoteLinking={isEntitledToNoteLinking}
+                  onClickCallback={() => {
+                    setSearchQuery('')
+                    searchInputRef.current?.focus()
+                  }}
                 />
               </div>
             )}

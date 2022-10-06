@@ -21,6 +21,7 @@ import { FilesController } from './FilesController'
 import { NavigationController } from './Navigation/NavigationController'
 import { NoteTagsController } from './NoteTagsController'
 import { SelectedItemsController } from './SelectedItemsController'
+import { SubscriptionController } from './Subscription/SubscriptionController'
 
 export type LinkableItem = DecryptedItemInterface<ItemContent>
 
@@ -38,6 +39,7 @@ export class LinkingController extends AbstractViewController {
     private navigationController: NavigationController,
     private selectionController: SelectedItemsController,
     private filesController: FilesController,
+    private subscriptionController: SubscriptionController,
     eventBus: InternalEventBus,
   ) {
     super(application, eventBus)
@@ -50,6 +52,7 @@ export class LinkingController extends AbstractViewController {
       isLinkingPanelOpen: observable,
 
       allLinkedItems: computed,
+      isEntitledToNoteLinking: computed,
 
       setIsLinkingPanelOpen: action,
       reloadLinkedFiles: action,
@@ -96,6 +99,10 @@ export class LinkingController extends AbstractViewController {
         },
       ),
     )
+  }
+
+  get isEntitledToNoteLinking() {
+    return !!this.subscriptionController.userSubscription
   }
 
   setIsLinkingPanelOpen = (open: boolean) => {
@@ -225,7 +232,7 @@ export class LinkingController extends AbstractViewController {
         await this.application.items.addTagToNote(selectedItem, itemToLink, this.shouldLinkToParentFolders)
       } else if (itemToLink instanceof FileItem) {
         await this.application.items.associateFileWithNote(itemToLink, selectedItem)
-      } else if (itemToLink instanceof SNNote) {
+      } else if (itemToLink instanceof SNNote && this.isEntitledToNoteLinking) {
         await this.application.items.linkNoteToNote(selectedItem, itemToLink)
       }
     }
