@@ -5,7 +5,6 @@ import { ContextPayload } from './ContextPayload'
 
 export interface OfflineSyncPushContextualPayload extends ContextPayload {
   content: ItemContent | undefined
-  contentKey: string | undefined
   created_at_timestamp: number
   created_at: Date
   duplicate_of?: Uuid

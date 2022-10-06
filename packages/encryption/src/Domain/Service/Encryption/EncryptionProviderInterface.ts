@@ -7,7 +7,6 @@ import {
   RootKeyInterface,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
-import { HexString, PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
 import { KeyedDecryptionSplit } from '../../Split/KeyedDecryptionSplit'
 import { KeyedEncryptionSplit } from '../../Split/KeyedEncryptionSplit'
@@ -43,12 +42,6 @@ export interface EncryptionProviderInterface {
   supportedVersions(): ProtocolVersion[]
 
   getUserVersion(): ProtocolVersion | undefined
-
-  generateRandomAsymmetricKeyPair(): PkcKeyPair
-
-  encryptPrivateKey(privateKey: HexString, symmetricKey: HexString): string
-
-  decryptPrivateKey(encryptedPrivateKey: string, symmetricKey: HexString): HexString | null
 
   /**
    * Decrypts a backup file using user-inputted password

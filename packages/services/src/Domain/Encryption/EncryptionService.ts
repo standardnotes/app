@@ -23,7 +23,6 @@ import {
   SplitPayloadsByEncryptionType,
   V001Algorithm,
   V002Algorithm,
-  ProtocolOperator005,
 } from '@standardnotes/encryption'
 import {
   BackupFile,
@@ -40,7 +39,7 @@ import {
   RootKeyInterface,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
-import { HexString, PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
+import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import {
   extendArray,
   isNotUndefined,
@@ -744,18 +743,6 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     if (unsyncedKeys.length > 0) {
       void this.itemManager.setItemsDirty(unsyncedKeys)
     }
-  }
-
-  public generateRandomAsymmetricKeyPair(): PkcKeyPair {
-    return new ProtocolOperator005(this.crypto).generateKeyPair()
-  }
-
-  encryptPrivateKey(privateKey: HexString, symmetricKey: HexString): string {
-    return new ProtocolOperator005(this.crypto).symmetricEncryptPrivateKey(privateKey, symmetricKey)
-  }
-
-  decryptPrivateKey(encryptedPrivateKey: string, symmetricKey: HexString): HexString | null {
-    return new ProtocolOperator005(this.crypto).symmetricDecryptPrivateKey(encryptedPrivateKey, symmetricKey)
   }
 
   override async getDiagnostics(): Promise<DiagnosticInfo | undefined> {

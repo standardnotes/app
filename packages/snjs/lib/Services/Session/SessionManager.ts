@@ -286,12 +286,7 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
     const serverPassword = rootKey.serverPassword as string
     const keyParams = rootKey.keyParams
 
-    const registerResponse = await this.userApiService.register({
-      email,
-      serverPassword,
-      keyParams,
-      ephemeral,
-    })
+    const registerResponse = await this.userApiService.register({ email, serverPassword, keyParams, ephemeral })
 
     if ('error' in registerResponse.data) {
       throw new ApiCallError((registerResponse.data as HttpErrorResponseBody).error.message)
