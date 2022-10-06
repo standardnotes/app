@@ -147,7 +147,7 @@ const LinkedItemsPanel = ({
       <form
         className={classNames(
           'sticky top-0 z-10 bg-default px-2.5 pt-2.5',
-          allLinkedItems.length > 0 || linkedResults.length > 0 || unlinkedResults.length > 0
+          allLinkedItems.length || linkedResults.length || unlinkedResults.length || notesLinkingToItem.length
             ? 'border-b border-border pb-2.5'
             : 'pb-1',
         )}
