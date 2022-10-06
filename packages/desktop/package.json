@@ -38,7 +38,7 @@
     "@standardnotes/components-meta": "workspace:*",
     "@standardnotes/electron-clear-data": "1.1.1",
     "@standardnotes/web": "workspace:*",
-    "axios": "^0.27.2",
+    "axios": "^1.1.0",
     "compare-versions": "^4.1.3",
     "decrypt": "github:standardnotes/decrypt#master",
     "dotenv": "^16.0.2",
