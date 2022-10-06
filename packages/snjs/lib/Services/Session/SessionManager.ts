@@ -286,16 +286,11 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
     const serverPassword = rootKey.serverPassword as string
     const keyParams = rootKey.keyParams
 
-    const keypair = this.protocolService.generateRandomAsymmetricKeyPair()
-    const encryptedPrivateKey = this.protocolService.encryptPrivateKey(keypair.privateKey, rootKey.masterKey)
-
     const registerResponse = await this.userApiService.register({
       email,
       serverPassword,
       keyParams,
       ephemeral,
-      pkcPublicKey: keypair.publicKey,
-      pkcEncryptedPrivateKey: encryptedPrivateKey,
     })
 
     if ('error' in registerResponse.data) {

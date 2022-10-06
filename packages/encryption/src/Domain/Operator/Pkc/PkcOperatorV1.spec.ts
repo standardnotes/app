@@ -1,7 +1,7 @@
 import { PkcOperatorV1 } from './PkcOperatorV1'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 
-describe('operator 004', () => {
+describe('operator 005', () => {
   let crypto: PureCryptoInterface
   let operator: PkcOperatorV1
 

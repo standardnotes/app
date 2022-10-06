@@ -1,5 +1,4 @@
 import { RootKeyParamsInterface } from '@standardnotes/models'
-
 import { ErrorMessage } from '../../Error/ErrorMessage'
 import { ApiCallError } from '../../Error/ApiCallError'
 import { UserRegistrationResponse } from '../../Response/User/UserRegistrationResponse'
@@ -20,8 +19,6 @@ export class UserApiService implements UserApiServiceInterface {
     serverPassword: string
     keyParams: RootKeyParamsInterface
     ephemeral: boolean
-    pkcPublicKey: string
-    pkcEncryptedPrivateKey: string
   }): Promise<UserRegistrationResponse> {
     if (this.registering) {
       throw new ApiCallError(ErrorMessage.RegistrationInProgress)
@@ -35,8 +32,6 @@ export class UserApiService implements UserApiServiceInterface {
         email: registerDTO.email,
         ephemeral: registerDTO.ephemeral,
         ...registerDTO.keyParams.getPortableValue(),
-        pkcPublicKey: registerDTO.pkcPublicKey,
-        pkcEncryptedPrivateKey: registerDTO.pkcEncryptedPrivateKey,
       })
 
       this.registering = false

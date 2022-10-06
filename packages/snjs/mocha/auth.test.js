@@ -518,25 +518,4 @@ describe('basic auth', function () {
       expect(application.hasAccount()).to.be.false
     }).timeout(Factory.TenSecondTimeout)
   })
-
-  describe('public key crypto', function () {
-    it('should generate and upload pkc keys during registration', async function () {
-      this.application = await Factory.createInitAppWithRealCrypto()
-
-      const registerSpy = sinon.spy(this.application.userApiService, 'register')
-
-      await Factory.registerUserToApplication({
-        application: this.application,
-        email: this.email,
-        password: this.password,
-      })
-
-      expect(registerSpy.callCount).to.equal(1)
-
-      const registerDto = registerSpy.getCall(0).args[0]
-
-      expect(registerDto.pkcPublicKey.length).to.equal(64)
-      expect(registerDto.pkcEncryptedPrivateKey.length).to.equal(167)
-    })
-  })
 })
