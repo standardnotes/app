@@ -280,8 +280,17 @@ export class LinkingController extends AbstractViewController {
       return isAlreadyLinkedToItem
     }
 
-    const prioritizeTagResult = (item: DecryptedItemInterface<ItemContent>) => {
-      return item.content_type === ContentType.Tag ? -1 : 0
+    const prioritizeTagResult = (
+      itemA: DecryptedItemInterface<ItemContent>,
+      itemB: DecryptedItemInterface<ItemContent>,
+    ) => {
+      if (itemA.content_type === ContentType.Tag && itemB.content_type !== ContentType.Tag) {
+        return -1
+      }
+      if (itemB.content_type === ContentType.Tag && itemA.content_type !== ContentType.Tag) {
+        return 1
+      }
+      return 0
     }
 
     const unlinkedResults = naturalSort(
