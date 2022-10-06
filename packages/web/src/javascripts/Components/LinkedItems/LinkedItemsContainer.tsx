@@ -30,7 +30,7 @@ const LinkedItemsContainer = ({ linkingController }: Props) => {
   )
 
   return (
-    <div className="mt-0.5 hidden min-w-80 max-w-full flex-wrap items-center gap-2 bg-transparent md:-mr-2 md:flex">
+    <div className="mt-2 hidden min-w-80 max-w-full flex-wrap items-center gap-2 bg-transparent md:-mr-2 md:flex">
       {allLinkedItems.map((item) => (
         <LinkedItemBubble
           item={item}
