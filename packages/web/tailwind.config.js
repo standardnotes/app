@@ -83,6 +83,7 @@ module.exports = {
       },
       fontSize: {
         'menu-item': '0.813rem',
+        'mobile-menu-item': '0.9rem',
         editor: 'var(--sn-stylekit-font-size-editor)',
       },
       screens: {

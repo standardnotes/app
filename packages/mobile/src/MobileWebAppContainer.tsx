@@ -195,13 +195,12 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
     webViewRef.current?.postMessage(JSON.stringify({ messageId, returnValue, messageType: 'reply' }))
   }
 
-  /* eslint-disable @typescript-eslint/no-empty-function */
   return (
     <WebView
       ref={webViewRef}
       source={{ uri: sourceUri }}
+      style={{ backgroundColor: 'black' }}
       originWhitelist={['*']}
-      onLoad={() => {}}
       onError={(err) => console.error('An error has occurred', err)}
       onHttpError={() => console.error('An HTTP error occurred')}
       onMessage={onMessage}
@@ -211,5 +210,4 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       bounces={false}
     />
   )
-  /* eslint-enable @typescript-eslint/no-empty-function */
 }

@@ -3,6 +3,101 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.70.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.70.0...@standardnotes/web@3.70.1) (2022-10-06)
+
+### Bug Fixes
+
+* add fallback for initial window size ([#1749](https://github.com/standardnotes/app/issues/1749)) ([05aff27](https://github.com/standardnotes/app/commit/05aff2776ba84f2988ebc7b3fca5ab9a18a58430))
+
+# [3.70.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.69.1...@standardnotes/web@3.70.0) (2022-10-05)
+
+### Bug Fixes
+
+* **mobile:** passcode timing options ([#1744](https://github.com/standardnotes/app/issues/1744)) ([6c26b96](https://github.com/standardnotes/app/commit/6c26b96cdce0d69a4a459104709880850a401a92))
+
+### Features
+
+* add free dark mode ([#1748](https://github.com/standardnotes/app/issues/1748)) ([09b994f](https://github.com/standardnotes/app/commit/09b994f8f938ae0536f42742f7a221df536c4c4a))
+
+## [3.69.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.69.0...@standardnotes/web@3.69.1) (2022-10-05)
+
+### Bug Fixes
+
+* prevent overflow bouncing on desktop and mobile ([#1743](https://github.com/standardnotes/app/issues/1743)) ([6bd5534](https://github.com/standardnotes/app/commit/6bd5534f749a35b5ddc35cb09115358ce9ee4115))
+
+# [3.69.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.68.6...@standardnotes/web@3.69.0) (2022-10-05)
+
+### Features
+
+* add file info panel button to file view ([#1741](https://github.com/standardnotes/app/issues/1741)) ([376810e](https://github.com/standardnotes/app/commit/376810e657b5dace6cc342b7298bb00abd311587))
+
+## [3.68.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.68.5...@standardnotes/web@3.68.6) (2022-10-05)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.68.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.68.4...@standardnotes/web@3.68.5) (2022-10-04)
+
+### Bug Fixes
+
+* increase context menu item font size on mobile ([#1738](https://github.com/standardnotes/app/issues/1738)) ([1c60316](https://github.com/standardnotes/app/commit/1c603161a518b7f3ccc5bc049f3827746bb43cff))
+
+## [3.68.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.68.3...@standardnotes/web@3.68.4) (2022-10-04)
+
+### Bug Fixes
+
+* android monospace font ([#1735](https://github.com/standardnotes/app/issues/1735)) ([927938c](https://github.com/standardnotes/app/commit/927938cb561d3c4622ce09a6f56ecf8ef88a0a7c))
+* attached file renaming on mobile ([b4eacd0](https://github.com/standardnotes/app/commit/b4eacd0f2ae4a9896150830fa8e8b153a34422d7))
+
+## [3.68.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.68.2...@standardnotes/web@3.68.3) (2022-10-04)
+
+### Bug Fixes
+
+* preferences on mobile webview when zoomed in ([#1731](https://github.com/standardnotes/app/issues/1731)) ([782cbee](https://github.com/standardnotes/app/commit/782cbee97e2b2ec9e0e5a930d883e2fc1c7d3f1c))
+
+## [3.68.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.68.1...@standardnotes/web@3.68.2) (2022-10-03)
+
+### Bug Fixes
+
+* resizing in desktop app ([b9b84c7](https://github.com/standardnotes/app/commit/b9b84c79d5baf9b711618224c98e296bd26482ec))
+
+## [3.68.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.68.0...@standardnotes/web@3.68.1) (2022-10-03)
+
+**Note:** Version bump only for package @standardnotes/web
+
+# [3.68.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.67.4...@standardnotes/web@3.68.0) (2022-10-02)
+
+### Features
+
+* use native preview for pdf in mobile webview ([#1728](https://github.com/standardnotes/app/issues/1728)) ([a90e4a5](https://github.com/standardnotes/app/commit/a90e4a50e820aa13b6af1f76ee9b2f935d12f211))
+
+## [3.67.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.67.3...@standardnotes/web@3.67.4) (2022-10-02)
+
+### Bug Fixes
+
+* text wrapping in notes list panel title ([52962ed](https://github.com/standardnotes/app/commit/52962ed65d9e8f64916e6bc0e8c032642a67fcc8))
+
+## [3.67.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.67.2...@standardnotes/web@3.67.3) (2022-09-30)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.67.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.67.1...@standardnotes/web@3.67.2) (2022-09-30)
+
+### Bug Fixes
+
+* files download in mobile webview ([#1726](https://github.com/standardnotes/app/issues/1726)) ([b15d80e](https://github.com/standardnotes/app/commit/b15d80eb2949eedef59722bc6c7e9cb6b7847db2))
+
+## [3.67.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.67.0...@standardnotes/web@3.67.1) (2022-09-30)
+
+### Bug Fixes
+
+* downloading backups in mobile webview ([#1703](https://github.com/standardnotes/app/issues/1703)) ([5f24e72](https://github.com/standardnotes/app/commit/5f24e7285e941b44e05cec5be32bee4589f4963c))
+
+# [3.67.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.66.0...@standardnotes/web@3.67.0) (2022-09-30)
+
+### Features
+
+* add pref to disable note status updates ([#1702](https://github.com/standardnotes/app/issues/1702)) ([08b7096](https://github.com/standardnotes/app/commit/08b70968f255d5a72562610f08fe727ebcffa8bb))
+
 # [3.66.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.65.0...@standardnotes/web@3.66.0) (2022-09-29)
 
 ### Features

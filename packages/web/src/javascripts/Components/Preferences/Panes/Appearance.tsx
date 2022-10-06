@@ -4,7 +4,7 @@ import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Switch from '@/Components/Switch/Switch'
 import { WebApplication } from '@/Application/Application'
-import { ContentType, FeatureIdentifier, FeatureStatus, PrefKey, GetFeatures, SNTheme } from '@standardnotes/snjs'
+import { ContentType, FeatureIdentifier, PrefKey, GetFeatures, SNTheme } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useEffect, useState } from 'react'
 import { Subtitle, Title, Text } from '@/Components/Preferences/PreferencesComponents/Content'
@@ -21,18 +21,13 @@ type Props = {
 
 const Appearance: FunctionComponent<Props> = ({ application }) => {
   const premiumModal = usePremiumModal()
-  const isEntitledToMidnightTheme =
-    application.features.getFeatureStatus(FeatureIdentifier.MidnightTheme) === FeatureStatus.Entitled
 
   const [themeItems, setThemeItems] = useState<DropdownItem[]>([])
   const [autoLightTheme, setAutoLightTheme] = useState<string>(() =>
     application.getPreference(PrefKey.AutoLightThemeIdentifier, PrefDefaults[PrefKey.AutoLightThemeIdentifier]),
   )
   const [autoDarkTheme, setAutoDarkTheme] = useState<string>(() =>
-    application.getPreference(
-      PrefKey.AutoDarkThemeIdentifier,
-      isEntitledToMidnightTheme ? FeatureIdentifier.MidnightTheme : PrefDefaults[PrefKey.AutoDarkThemeIdentifier],
-    ),
+    application.getPreference(PrefKey.AutoDarkThemeIdentifier, PrefDefaults[PrefKey.AutoDarkThemeIdentifier]),
   )
   const [useDeviceSettings, setUseDeviceSettings] = useState(() =>
     application.getPreference(PrefKey.UseSystemColorScheme, PrefDefaults[PrefKey.UseSystemColorScheme]),
@@ -62,6 +57,11 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
           })
         }
       })
+
+    themesAsItems.unshift({
+      label: 'Dark',
+      value: 'Dark',
+    })
 
     themesAsItems.unshift({
       label: 'Default',

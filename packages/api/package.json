@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/api",
-  "version": "1.8.6",
+  "version": "1.9.2",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },

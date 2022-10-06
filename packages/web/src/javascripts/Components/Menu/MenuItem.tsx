@@ -8,8 +8,8 @@ import { MenuItemType } from './MenuItemType'
 import RadioIndicator from '../RadioIndicator/RadioIndicator'
 
 type MenuItemProps = {
-  type: MenuItemType
   children: ReactNode
+  type?: MenuItemType
   onClick?: MouseEventHandler<HTMLButtonElement>
   onChange?: SwitchProps['onChange']
   onBlur?: (event: { relatedTarget: EventTarget | null }) => void
@@ -28,7 +28,7 @@ const MenuItem = forwardRef(
       onChange,
       onBlur,
       className = '',
-      type,
+      type = MenuItemType.IconButton,
       checked,
       icon,
       iconClassName,
@@ -59,7 +59,7 @@ const MenuItem = forwardRef(
           ref={ref}
           role={type === MenuItemType.RadioButton ? 'menuitemradio' : 'menuitem'}
           tabIndex={typeof tabIndex === 'number' ? tabIndex : FOCUSABLE_BUT_NOT_TABBABLE}
-          className={`flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none ${className}`}
+          className={`flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-mobile-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none md:text-menu-item ${className}`}
           onClick={onClick}
           onBlur={onBlur}
           {...(type === MenuItemType.RadioButton ? { 'aria-checked': checked } : {})}

@@ -14,6 +14,7 @@ import {
   TransferPayload,
 } from '@standardnotes/snjs'
 import { Alert, Linking, PermissionsAndroid, Platform, StatusBar } from 'react-native'
+import FileViewer from 'react-native-file-viewer'
 import FingerprintScanner from 'react-native-fingerprint-scanner'
 import FlagSecure from 'react-native-flag-secure-android'
 import {
@@ -28,7 +29,6 @@ import { hide, show } from 'react-native-privacy-snapshot'
 import Share from 'react-native-share'
 import { AppStateObserverService } from './../AppStateObserverService'
 import Keychain from './Keychain'
-import { SNReactNativeCrypto } from './ReactNativeCrypto'
 import { IsMobileWeb } from './Utils'
 
 export type BiometricsType = 'Fingerprint' | 'Face ID' | 'Biometrics' | 'Touch ID'
@@ -79,14 +79,12 @@ export class MobileDevice implements MobileDeviceInterface {
   platform: SNPlatform.Ios | SNPlatform.Android = Platform.OS === 'ios' ? SNPlatform.Ios : SNPlatform.Android
   private eventObservers: MobileDeviceEventHandler[] = []
   public isDarkMode = false
-  private crypto: SNReactNativeCrypto
+  public statusBarBgColor: string | undefined
 
   constructor(
     private stateObserverService?: AppStateObserverService,
     private androidBackHandlerService?: AndroidBackHandlerService,
-  ) {
-    this.crypto = new SNReactNativeCrypto()
-  }
+  ) {}
 
   deinit() {
     this.stateObserverService?.deinit()
@@ -454,13 +452,17 @@ export class MobileDevice implements MobileDeviceInterface {
     }
   }
 
-  handleThemeSchemeChange(isDark: boolean): void {
+  handleThemeSchemeChange(isDark: boolean, bgColor: string): void {
     this.isDarkMode = isDark
+    this.statusBarBgColor = bgColor
 
     this.reloadStatusBarStyle()
   }
 
   reloadStatusBarStyle(animated = true) {
+    if (this.statusBarBgColor && Platform.OS === 'android') {
+      StatusBar.setBackgroundColor(this.statusBarBgColor, animated)
+    }
     StatusBar.setBarStyle(this.isDarkMode ? 'light-content' : 'dark-content', animated)
   }
 
@@ -540,13 +542,34 @@ export class MobileDevice implements MobileDeviceInterface {
 
     try {
       const path = this.getFileDestinationPath(filename, saveInTempLocation)
-      void this.deleteFileAtPathIfExists(path)
-      const decodedContents = this.crypto.base64Decode(base64.replace(/data.*base64,/, ''))
-      await writeFile(path, decodedContents)
+      await this.deleteFileAtPathIfExists(path)
+      await writeFile(path, base64.replace(/data.*base64,/, ''), 'base64')
       return path
     } catch (error) {
       this.consoleLog(`${error}`)
     }
+  }
+
+  async previewFile(base64: string, filename: string): Promise<boolean> {
+    const tempLocation = await this.downloadBase64AsFile(base64, filename, true)
+
+    if (!tempLocation) {
+      this.consoleLog('Error: Could not download file to preview')
+      return false
+    }
+
+    try {
+      await FileViewer.open(tempLocation, {
+        onDismiss: async () => {
+          await this.deleteFileAtPathIfExists(tempLocation)
+        },
+      })
+    } catch (error) {
+      this.consoleLog(error)
+      return false
+    }
+
+    return true
   }
 
   confirmAndExit() {

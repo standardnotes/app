@@ -1,5 +1,13 @@
 import { WebApplication } from '@/Application/Application'
-import { ComponentArea, ContentType, FeatureIdentifier, GetFeatures, SNComponent } from '@standardnotes/snjs'
+import {
+  ApplicationEvent,
+  ComponentArea,
+  ContentType,
+  FeatureIdentifier,
+  GetFeatures,
+  PrefKey,
+  SNComponent,
+} from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
@@ -12,6 +20,7 @@ import RadioIndicator from '../RadioIndicator/RadioIndicator'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { QuickSettingsController } from '@/Controllers/QuickSettingsController'
 import PanelSettingsSection from './PanelSettingsSection'
+import { PrefDefaults } from '@/Constants/PrefDefaults'
 
 const focusModeAnimationDuration = 1255
 
@@ -38,7 +47,19 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
   const { closeQuickSettingsMenu, focusModeEnabled, setFocusModeEnabled } = quickSettingsMenuController
   const [themes, setThemes] = useState<ThemeItem[]>([])
   const [toggleableComponents, setToggleableComponents] = useState<SNComponent[]>([])
-  const [defaultThemeOn, setDefaultThemeOn] = useState(false)
+
+  const [isDarkModeOn, setDarkModeOn] = useState(
+    application.getPreference(PrefKey.DarkMode, PrefDefaults[PrefKey.DarkMode]),
+  )
+  const defaultThemeOn =
+    !themes.map((item) => item?.component).find((theme) => theme?.active && !theme.isLayerable()) && !isDarkModeOn
+
+  useEffect(() => {
+    application.addSingleEventObserver(ApplicationEvent.PreferencesChanged, async () => {
+      const isDarkModeOn = application.getPreference(PrefKey.DarkMode, PrefDefaults[PrefKey.DarkMode])
+      setDarkModeOn(isDarkModeOn)
+    })
+  }, [application])
 
   const prefsButtonRef = useRef<HTMLButtonElement>(null)
   const defaultThemeButtonRef = useRef<HTMLButtonElement>(null)
@@ -73,8 +94,6 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
       })
 
     setThemes(themes.sort(sortThemes))
-
-    setDefaultThemeOn(!themes.map((item) => item?.component).find((theme) => theme?.active && !theme.isLayerable()))
   }, [application])
 
   const reloadToggleableComponents = useCallback(() => {
@@ -131,23 +150,42 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
     [application],
   )
 
-  const toggleDefaultTheme = useCallback(() => {
+  const deactivateAnyNonLayerableTheme = useCallback(() => {
     const activeTheme = themes.map((item) => item.component).find((theme) => theme?.active && !theme.isLayerable())
     if (activeTheme) {
       application.mutator.toggleTheme(activeTheme).catch(console.error)
     }
   }, [application, themes])
 
+  const toggleDefaultTheme = useCallback(() => {
+    deactivateAnyNonLayerableTheme()
+    application.setPreference(PrefKey.DarkMode, false)
+  }, [application, deactivateAnyNonLayerableTheme])
+
+  const toggleDarkMode = useCallback(() => {
+    if (!isDarkModeOn) {
+      deactivateAnyNonLayerableTheme()
+      application.setPreference(PrefKey.DarkMode, true)
+    }
+  }, [application, isDarkModeOn, deactivateAnyNonLayerableTheme])
+
   return (
     <div ref={mainRef}>
       <div className="my-1 px-3 text-sm font-semibold uppercase text-text">Themes</div>
       <button
-        className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+        className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-mobile-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none md:text-sm"
         onClick={toggleDefaultTheme}
         ref={defaultThemeButtonRef}
       >
         <RadioIndicator checked={defaultThemeOn} className="mr-2" />
         Default
+      </button>
+      <button
+        className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-mobile-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none md:text-sm"
+        onClick={toggleDarkMode}
+      >
+        <RadioIndicator checked={isDarkModeOn} className="mr-2" />
+        Dark
       </button>
       {themes.map((theme) => (
         <ThemesMenuButton item={theme} application={application} key={theme.component?.uuid ?? theme.identifier} />
@@ -156,7 +194,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
       <div className="my-1 px-3 text-sm font-semibold uppercase text-text">Tools</div>
       {toggleableComponents.map((component) => (
         <button
-          className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+          className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-mobile-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none md:text-sm"
           onClick={() => {
             toggleComponent(component)
           }}

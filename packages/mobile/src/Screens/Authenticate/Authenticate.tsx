@@ -197,7 +197,7 @@ export const Authenticate = ({
         state: AuthenticationValueStateType.Pending,
       })
 
-      if (await application?.getMobileScreenshotPrivacyEnabled()) {
+      if (application?.protections.getMobileScreenshotPrivacyEnabled()) {
         hide()
       }
 

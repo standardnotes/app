@@ -5,5 +5,6 @@ export enum HttpStatusCode {
   BadRequest = 400,
   Unauthorized = 401,
   Forbidden = 403,
+  Gone = 410,
   ExpiredAccessToken = 498,
 }

@@ -3,11 +3,6 @@ const BaseThemeStaticFiles = ['dist', 'package.json']
 
 const Editors = [
   {
-    identifier: 'org.standardnotes.advanced-checklist',
-    path: 'Editors/org.standardnotes.advanced-checklist',
-    static_files: [...BaseEditorStaticFiles, 'build'],
-  },
-  {
     identifier: 'org.standardnotes.code-editor',
     path: 'Editors/org.standardnotes.code-editor',
     static_files: [...BaseEditorStaticFiles, 'vendor'],

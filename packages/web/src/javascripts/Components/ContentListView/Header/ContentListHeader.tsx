@@ -36,9 +36,9 @@ const ContentListHeader = ({
   }, [])
 
   return (
-    <div className="section-title-bar-header items-start gap-1">
+    <div className="section-title-bar-header items-start gap-1 overflow-hidden">
       <NavigationMenuButton />
-      <div className="flex flex-grow flex-col">
+      <div className="flex min-w-0 flex-grow flex-col break-words">
         <div className="text-lg font-semibold text-text">{panelTitle}</div>
         {optionsSubtitle && <div className="text-xs text-passive-0">{optionsSubtitle}</div>}
       </div>

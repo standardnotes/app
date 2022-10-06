@@ -18,7 +18,7 @@ const UpgradeNow = ({ application, featuresController }: Props) => {
     }
 
     if (application.isNativeMobileWeb()) {
-      application.mobileDevice.openUrl(window.plansUrl)
+      application.mobileDevice().openUrl(window.plansUrl)
     } else {
       window.location.assign(window.plansUrl)
     }

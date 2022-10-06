@@ -1,5 +1,5 @@
 import { isDesktopApplication } from '@/Utils'
-import { alertDialog } from '@standardnotes/ui-services'
+import { alertDialog, sanitizeFileName } from '@standardnotes/ui-services'
 import {
   STRING_IMPORT_SUCCESS,
   STRING_INVALID_IMPORT_FILE,
@@ -21,6 +21,7 @@ import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Spinner from '@/Components/Spinner/Spinner'
+import { downloadOrShareBlobBasedOnPlatform } from '@/Utils/DownloadOrShareBasedOnPlatform'
 
 type Props = {
   application: WebApplication
@@ -59,8 +60,31 @@ const DataBackups = ({ application, viewControllerManager }: Props) => {
     refreshEncryptionStatus()
   }, [refreshEncryptionStatus])
 
-  const downloadDataArchive = () => {
-    application.getArchiveService().downloadBackup(isBackupEncrypted).catch(console.error)
+  const downloadDataArchive = async () => {
+    const data = isBackupEncrypted
+      ? await application.createEncryptedBackupFile()
+      : await application.createDecryptedBackupFile()
+
+    if (!data) {
+      return
+    }
+
+    const blobData = new Blob([JSON.stringify(data, null, 2)], {
+      type: 'text/json',
+    })
+
+    if (isBackupEncrypted) {
+      const filename = `Standard Notes Encrypted Backup and Import File - ${application
+        .getArchiveService()
+        .formattedDateForExports()}`
+      const sanitizedFilename = sanitizeFileName(filename) + '.txt'
+      downloadOrShareBlobBasedOnPlatform(application, blobData, sanitizedFilename)
+    } else {
+      const zippedDecryptedItemsBlob = await application.getArchiveService().getZippedDecryptedItemsBlob(data)
+      const filename = `Standard Notes Backup - ${application.getArchiveService().formattedDateForExports()}`
+      const sanitizedFilename = sanitizeFileName(filename) + '.zip'
+      downloadOrShareBlobBasedOnPlatform(application, zippedDecryptedItemsBlob, sanitizedFilename)
+    }
   }
 
   const readFile = async (file: File): Promise<any> => {

@@ -34,7 +34,6 @@ const createApplication = (
   const archiveService = new ArchiveManager(application)
   const io = new IOService(platform === Platform.MacWeb || platform === Platform.MacDesktop)
   const internalEventBus = new InternalEventBus()
-  const autolockService = new AutolockService(application, internalEventBus)
   const themeService = new ThemeManager(application, internalEventBus)
 
   application.setWebServices({
@@ -42,7 +41,7 @@ const createApplication = (
     archiveService,
     desktopService: isDesktopDevice(device) ? new DesktopManager(application, device) : undefined,
     io,
-    autolockService,
+    autolockService: application.isNativeMobileWeb() ? undefined : new AutolockService(application, internalEventBus),
     themeService,
   })
 

@@ -12,8 +12,9 @@ export interface MobileDeviceInterface extends DeviceInterface {
   hideMobileInterfaceFromScreenshots(): void
   stopHidingMobileInterfaceFromScreenshots(): void
   consoleLog(...args: any[]): void
-  handleThemeSchemeChange(isDark: boolean): void
+  handleThemeSchemeChange(isDark: boolean, bgColor: string): void
   shareBase64AsFile(base64: string, filename: string): Promise<void>
   downloadBase64AsFile(base64: string, filename: string, saveInTempLocation?: boolean): Promise<string | undefined>
+  previewFile(base64: string, filename: string): Promise<boolean>
   confirmAndExit(): void
 }

@@ -1,5 +1,5 @@
 import { WebApplication } from '@/Application/Application'
-import { FeatureIdentifier, FeatureStatus } from '@standardnotes/snjs'
+import { FeatureIdentifier, FeatureStatus, PrefKey } from '@standardnotes/snjs'
 import { FunctionComponent, MouseEventHandler, useCallback, useMemo } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
@@ -32,10 +32,15 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ application, item }) => {
       e.preventDefault()
 
       if (item.component && canActivateTheme) {
-        const themeIsLayerableOrNotActive = item.component.isLayerable() || !item.component.active
+        const isThemeLayerable = item.component.isLayerable()
+        const themeIsLayerableOrNotActive = isThemeLayerable || !item.component.active
 
         if (themeIsLayerableOrNotActive) {
           application.mutator.toggleTheme(item.component).catch(console.error)
+
+          if (!isThemeLayerable) {
+            application.setPreference(PrefKey.DarkMode, false)
+          }
         }
       } else {
         premiumModal.activate(`${item.name} theme`)
@@ -49,7 +54,7 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ application, item }) => {
   return (
     <button
       className={
-        'group flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none disabled:bg-default disabled:text-passive-2'
+        'group flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-mobile-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none disabled:bg-default disabled:text-passive-2 md:text-sm'
       }
       disabled={item.identifier === FeatureIdentifier.DynamicTheme && isMobile}
       onClick={toggleTheme}

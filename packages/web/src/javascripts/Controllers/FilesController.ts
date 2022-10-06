@@ -20,6 +20,7 @@ import { action, makeObservable, observable, reaction } from 'mobx'
 import { WebApplication } from '../Application/Application'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { NotesController } from './NotesController'
+import { downloadOrShareBlobBasedOnPlatform } from '@/Utils/DownloadOrShareBasedOnPlatform'
 
 const UnprotectedFileActions = [PopoverFileItemActionType.ToggleFileProtection]
 const NonMutatingFileActions = [PopoverFileItemActionType.DownloadFile, PopoverFileItemActionType.PreviewFile]
@@ -267,7 +268,10 @@ export class FilesController extends AbstractViewController {
         await saver.finish()
       } else {
         const finalBytes = concatenateUint8Arrays(decryptedBytesArray)
-        saver.saveFile(file.name, finalBytes)
+        const blob = new Blob([finalBytes], {
+          type: file.mimeType,
+        })
+        await downloadOrShareBlobBasedOnPlatform(this.application, blob, file.name, false)
       }
 
       addToast({

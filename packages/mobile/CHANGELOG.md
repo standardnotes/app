@@ -3,6 +3,86 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.39.11](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.39.10...@standardnotes/mobile@3.39.11) (2022-10-06)
+
+### Bug Fixes
+
+* add android platform check for status bar color sync ([1602d81](https://github.com/standardnotes/app/commit/1602d8157f9e61c6ad842bcce28f3aaf6a8f7154))
+
+## [3.39.10](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.39.9...@standardnotes/mobile@3.39.10) (2022-10-06)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.39.9](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.39.8...@standardnotes/mobile@3.39.9) (2022-10-05)
+
+### Bug Fixes
+
+* **mobile:** passcode timing options ([#1744](https://github.com/standardnotes/app/issues/1744)) ([6c26b96](https://github.com/standardnotes/app/commit/6c26b96cdce0d69a4a459104709880850a401a92))
+
+## [3.39.8](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.39.7...@standardnotes/mobile@3.39.8) (2022-10-05)
+
+### Bug Fixes
+
+* prevent overflow bouncing on desktop and mobile ([#1743](https://github.com/standardnotes/app/issues/1743)) ([6bd5534](https://github.com/standardnotes/app/commit/6bd5534f749a35b5ddc35cb09115358ce9ee4115))
+
+## [3.39.7](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.39.6...@standardnotes/mobile@3.39.7) (2022-10-05)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.39.6](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.39.5...@standardnotes/mobile@3.39.6) (2022-10-05)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.39.5](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.39.4...@standardnotes/mobile@3.39.5) (2022-10-04)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.39.4](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.39.3...@standardnotes/mobile@3.39.4) (2022-10-04)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.39.3](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.39.2...@standardnotes/mobile@3.39.3) (2022-10-04)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.39.2](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.39.1...@standardnotes/mobile@3.39.2) (2022-10-03)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.39.1](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.39.0...@standardnotes/mobile@3.39.1) (2022-10-03)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+# [3.39.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.38.1...@standardnotes/mobile@3.39.0) (2022-10-02)
+
+### Features
+
+* use native preview for pdf in mobile webview ([#1728](https://github.com/standardnotes/app/issues/1728)) ([a90e4a5](https://github.com/standardnotes/app/commit/a90e4a50e820aa13b6af1f76ee9b2f935d12f211))
+
+## [3.38.1](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.38.0...@standardnotes/mobile@3.38.1) (2022-10-02)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+# [3.38.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.37.14...@standardnotes/mobile@3.38.0) (2022-09-30)
+
+### Features
+
+* sync android status bar bg with theme bg color ([#1727](https://github.com/standardnotes/app/issues/1727)) ([47106fd](https://github.com/standardnotes/app/commit/47106fdf83ec89e67444e84a94350870645993cf))
+
+## [3.37.14](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.37.13...@standardnotes/mobile@3.37.14) (2022-09-30)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.37.13](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.37.12...@standardnotes/mobile@3.37.13) (2022-09-30)
+
+### Bug Fixes
+
+* downloading backups in mobile webview ([#1703](https://github.com/standardnotes/app/issues/1703)) ([5f24e72](https://github.com/standardnotes/app/commit/5f24e7285e941b44e05cec5be32bee4589f4963c))
+
+## [3.37.12](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.37.11...@standardnotes/mobile@3.37.12) (2022-09-30)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
 ## [3.37.11](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.37.10...@standardnotes/mobile@3.37.11) (2022-09-29)
 
 **Note:** Version bump only for package @standardnotes/mobile

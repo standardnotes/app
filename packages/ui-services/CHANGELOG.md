@@ -3,6 +3,42 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.5.2...@standardnotes/ui-services@1.6.0) (2022-10-05)
+
+### Features
+
+* add free dark mode ([#1748](https://github.com/standardnotes/app/issues/1748)) ([09b994f](https://github.com/standardnotes/app/commit/09b994f8f938ae0536f42742f7a221df536c4c4a))
+
+## [1.5.2](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.5.1...@standardnotes/ui-services@1.5.2) (2022-10-05)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.5.1](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.5.0...@standardnotes/ui-services@1.5.1) (2022-10-03)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+# [1.5.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.4.0...@standardnotes/ui-services@1.5.0) (2022-10-02)
+
+### Features
+
+* use native preview for pdf in mobile webview ([#1728](https://github.com/standardnotes/app/issues/1728)) ([a90e4a5](https://github.com/standardnotes/app/commit/a90e4a50e820aa13b6af1f76ee9b2f935d12f211))
+
+# [1.4.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.3.10...@standardnotes/ui-services@1.4.0) (2022-09-30)
+
+### Features
+
+* sync android status bar bg with theme bg color ([#1727](https://github.com/standardnotes/app/issues/1727)) ([47106fd](https://github.com/standardnotes/app/commit/47106fdf83ec89e67444e84a94350870645993cf))
+
+## [1.3.10](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.3.9...@standardnotes/ui-services@1.3.10) (2022-09-30)
+
+### Bug Fixes
+
+* downloading backups in mobile webview ([#1703](https://github.com/standardnotes/app/issues/1703)) ([5f24e72](https://github.com/standardnotes/app/commit/5f24e7285e941b44e05cec5be32bee4589f4963c))
+
+## [1.3.9](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.3.8...@standardnotes/ui-services@1.3.9) (2022-09-30)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
 ## [1.3.8](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.3.7...@standardnotes/ui-services@1.3.8) (2022-09-29)
 
 **Note:** Version bump only for package @standardnotes/ui-services
