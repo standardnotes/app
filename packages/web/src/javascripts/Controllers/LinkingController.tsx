@@ -277,13 +277,10 @@ export class LinkingController extends AbstractViewController {
       })
 
     const isAlreadyLinked = (item: LinkableItem) => {
-      const isActiveItemReferencedByItem = this.application.items
-        .itemsReferencingItem(activeItem)
-        .some((linkedItem) => linkedItem.uuid === item.uuid)
       const isItemReferencedByActiveItem = this.application.items
         .itemsReferencingItem(item)
         .some((linkedItem) => linkedItem.uuid === activeItem.uuid)
-      const isAlreadyLinkedToItem = isActiveItemReferencedByItem || isItemReferencedByActiveItem
+      const isAlreadyLinkedToItem = isItemReferencedByActiveItem
       return isAlreadyLinkedToItem
     }
 
