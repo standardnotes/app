@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.70.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.70.4...@standardnotes/web@3.70.5) (2022-10-07)
+
+### Bug Fixes
+
+* add fallback for viewport height on mobile ([#1766](https://github.com/standardnotes/app/issues/1766)) ([1e3acd5](https://github.com/standardnotes/app/commit/1e3acd50e941051636ae2c92d143c649913b3c1a))
+
 ## [3.70.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.70.3...@standardnotes/web@3.70.4) (2022-10-07)
 
 **Note:** Version bump only for package @standardnotes/web
