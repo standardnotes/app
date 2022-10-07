@@ -58,10 +58,10 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ application, item }) => {
       {item.component?.isLayerable() ? (
         <>
           <div className="flex items-center">
-            <Switch className="mr-2 px-0" checked={item.component?.active} />
+            {!canActivateTheme && <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />}
             {item.name}
           </div>
-          {!canActivateTheme && <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />}
+          <Switch className="px-0" checked={item.component?.active} />
         </>
       ) : (
         <>

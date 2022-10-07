@@ -4,7 +4,6 @@ import { ApplicationEvent, PrefKey } from '@standardnotes/snjs'
 import MenuItem from '../Menu/MenuItem'
 import { MenuItemType } from '../Menu/MenuItemType'
 import { PANEL_NAME_NAVIGATION, PANEL_NAME_NOTES } from '@/Constants/Constants'
-import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 
 type Props = {
@@ -55,8 +54,6 @@ const PanelSettingsSection = ({ application }: Props) => {
 
   return (
     <div className="hidden text-sm md:block pointer-coarse:md-only:hidden pointer-coarse:lg-only:hidden">
-      <HorizontalSeparator classes="my-2" />
-      <div className="my-1 px-3 text-sm font-semibold uppercase text-text">Panel Settings</div>
       <MenuItem
         type={MenuItemType.SwitchButton}
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
@@ -71,7 +68,7 @@ const PanelSettingsSection = ({ application }: Props) => {
         checked={currentItemsPanelWidth > WidthForCollapsedPanel}
         onChange={toggleItemsListPanel}
       >
-        Show items list panel
+        Show list panel
       </MenuItem>
     </div>
   )

@@ -70,8 +70,6 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
   const prefsButtonRef = useRef<HTMLButtonElement>(null)
   const defaultThemeButtonRef = useRef<HTMLButtonElement>(null)
 
-  const mainRef = useRef<HTMLDivElement>(null)
-
   useEffect(() => {
     toggleFocusMode(focusModeEnabled)
   }, [focusModeEnabled])
@@ -176,8 +174,29 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
   }, [application, isDarkModeOn, deactivateAnyNonLayerableTheme])
 
   return (
-    <div ref={mainRef}>
-      <div className="my-1 px-3 text-sm font-semibold uppercase text-text">Themes</div>
+    <div>
+      {toggleableComponents.length > 0 && (
+        <>
+          <div className="my-1 px-3 text-sm font-semibold uppercase text-text">Tools</div>
+          {toggleableComponents.map((component) => (
+            <button
+              className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-mobile-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none md:text-sm"
+              onClick={() => {
+                toggleComponent(component)
+              }}
+              key={component.uuid}
+            >
+              <div className="flex items-center">
+                <Icon type="window" className="mr-2 text-neutral" />
+                {component.displayName}
+              </div>
+              <Switch checked={component.active} className="px-0" />
+            </button>
+          ))}
+          <HorizontalSeparator classes="my-2" />
+        </>
+      )}
+      <div className="my-1 px-3 text-sm font-semibold uppercase text-text">Appearance</div>
       <button
         className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-mobile-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none md:text-sm"
         onClick={toggleDefaultTheme}
@@ -195,23 +214,6 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
       </button>
       {themes.map((theme) => (
         <ThemesMenuButton item={theme} application={application} key={theme.component?.uuid ?? theme.identifier} />
-      ))}
-      <HorizontalSeparator classes="my-2" />
-      <div className="my-1 px-3 text-sm font-semibold uppercase text-text">Tools</div>
-      {toggleableComponents.map((component) => (
-        <button
-          className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-mobile-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none md:text-sm"
-          onClick={() => {
-            toggleComponent(component)
-          }}
-          key={component.uuid}
-        >
-          <div className="flex items-center">
-            <Icon type="window" className="mr-2 text-neutral" />
-            {component.displayName}
-          </div>
-          <Switch checked={component.active} className="px-0" />
-        </button>
       ))}
       <FocusModeSwitch
         application={application}
