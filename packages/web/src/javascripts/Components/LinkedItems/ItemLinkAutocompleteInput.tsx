@@ -109,6 +109,7 @@ const ItemLinkAutocompleteInput = ({ linkingController, focusPreviousItem, focus
             onKeyDown={onKeyDown}
             tabIndex={tags.length === 0 ? 0 : -1}
             id={ElementIds.ItemLinkAutocompleteInput}
+            autoComplete="off"
           />
           {dropdownVisible && (unlinkedResults.length > 0 || shouldShowCreateTag) && (
             <DisclosurePanel
