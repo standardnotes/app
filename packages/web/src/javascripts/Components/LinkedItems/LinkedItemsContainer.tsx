@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import ItemLinkAutocompleteInput from './ItemLinkAutocompleteInput'
 import { LinkableItem, LinkingController } from '@/Controllers/LinkingController'
 import LinkedItemBubble from './LinkedItemBubble'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { ElementIds } from '@/Constants/ElementIDs'
 
@@ -21,33 +21,25 @@ const LinkedItemsContainer = ({ linkingController }: Props) => {
   } = linkingController
 
   const [focusedId, setFocusedId] = useState<string>()
-  const focusableRefs = useRef<Map<string, HTMLButtonElement | HTMLInputElement>>(new Map())
+  const focusableIds = allLinkedItems.map((item) => item.uuid).concat([ElementIds.ItemLinkAutocompleteInput])
 
   const focusPreviousItem = useCallback(() => {
-    const focusableItems = Array.from(focusableRefs.current.entries())
-    const currentFocusedIndex = focusableItems.findIndex(([id]) => id === focusedId)
+    const currentFocusedIndex = focusableIds.findIndex((id) => id === focusedId)
     const previousIndex = currentFocusedIndex - 1
 
     if (previousIndex > -1) {
-      focusableItems[previousIndex][1].focus()
-      return true
+      setFocusedId(focusableIds[previousIndex])
     }
-
-    return false
-  }, [focusedId])
+  }, [focusableIds, focusedId])
 
   const focusNextItem = useCallback(() => {
-    const focusableItems = Array.from(focusableRefs.current.entries())
-    const currentFocusedIndex = focusableItems.findIndex(([id]) => id === focusedId)
+    const currentFocusedIndex = focusableIds.findIndex((id) => id === focusedId)
     const nextIndex = currentFocusedIndex + 1
 
-    if (nextIndex < focusableItems.length) {
-      focusableItems[nextIndex][1].focus()
-      return true
+    if (nextIndex < focusableIds.length) {
+      setFocusedId(focusableIds[nextIndex])
     }
-
-    return false
-  }, [focusedId])
+  }, [focusableIds, focusedId])
 
   const activateItemAndTogglePane = useCallback(
     async (item: LinkableItem) => {
@@ -71,27 +63,13 @@ const LinkedItemsContainer = ({ linkingController }: Props) => {
           unlinkItem={unlinkItem}
           focusPreviousItem={focusPreviousItem}
           focusNextItem={focusNextItem}
-          onFocus={() => {
-            setFocusedId(item.uuid)
-          }}
-          ref={(node) => {
-            if (node) {
-              focusableRefs.current = focusableRefs.current.set(item.uuid, node)
-            }
-          }}
+          focusedId={focusedId}
         />
       ))}
       <ItemLinkAutocompleteInput
-        ref={(node) => {
-          if (node) {
-            focusableRefs.current = focusableRefs.current.set(ElementIds.ItemLinkAutocompleteInput, node)
-          }
-        }}
+        focusedId={focusedId}
         linkingController={linkingController}
         focusPreviousItem={focusPreviousItem}
-        onFocus={() => {
-          setFocusedId(ElementIds.ItemLinkAutocompleteInput)
-        }}
       />
     </div>
   )
