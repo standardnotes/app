@@ -2,13 +2,13 @@ import { WebApplication } from '@/Application/Application'
 import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { NotesController } from '@/Controllers/NotesController'
-import { NoteTagsController } from '@/Controllers/NoteTagsController'
+import { LinkingController } from '@/Controllers/LinkingController'
 
 export type NotesOptionsProps = {
   application: WebApplication
   navigationController: NavigationController
   notesController: NotesController
-  noteTagsController: NoteTagsController
+  linkingController: LinkingController
   historyModalController: HistoryModalController
   closeMenu: () => void
 }

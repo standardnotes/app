@@ -15,11 +15,11 @@ import {
   SNNote,
   SNTag,
 } from '@standardnotes/snjs'
-import { action, computed, makeObservable, observable, reaction } from 'mobx'
+import { action, computed, makeObservable, observable } from 'mobx'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { FilesController } from './FilesController'
+import { ItemListController } from './ItemList/ItemListController'
 import { NavigationController } from './Navigation/NavigationController'
-import { NoteTagsController } from './NoteTagsController'
 import { SelectedItemsController } from './SelectedItemsController'
 import { SubscriptionController } from './Subscription/SubscriptionController'
 
@@ -32,14 +32,14 @@ export class LinkingController extends AbstractViewController {
   notesLinkingToItem: SNNote[] = []
   shouldLinkToParentFolders: boolean
   isLinkingPanelOpen = false
+  private itemListController!: ItemListController
+  private filesController!: FilesController
+  private subscriptionController!: SubscriptionController
 
   constructor(
     application: WebApplication,
-    private noteTagsController: NoteTagsController,
     private navigationController: NavigationController,
     private selectionController: SelectedItemsController,
-    private filesController: FilesController,
-    private subscriptionController: SubscriptionController,
     eventBus: InternalEventBus,
   ) {
     super(application, eventBus)
@@ -75,30 +75,28 @@ export class LinkingController extends AbstractViewController {
       }),
     )
 
-    this.disposers.push(
-      application.streamItems(ContentType.File, () => {
-        this.reloadLinkedFiles()
-      }),
-      application.streamItems(ContentType.Tag, () => {
-        this.reloadLinkedTags()
-      }),
-      application.streamItems(ContentType.Note, () => {
-        this.reloadLinkedNotes()
-        this.reloadNotesLinkingToItem()
-      }),
-    )
+    //this.disposers.push(
+    //  application.streamItems(ContentType.File, () => {
+    //    this.reloadLinkedFiles()
+    //  }),
+    //  application.streamItems(ContentType.Tag, () => {
+    //    this.reloadLinkedTags()
+    //  }),
+    //  application.streamItems(ContentType.Note, () => {
+    //    this.reloadLinkedNotes()
+    //    this.reloadNotesLinkingToItem()
+    //  }),
+    //)
+  }
 
-    this.disposers.push(
-      reaction(
-        () => selectionController.firstSelectedItem,
-        () => {
-          this.reloadLinkedFiles()
-          this.reloadLinkedTags()
-          this.reloadLinkedNotes()
-          this.reloadNotesLinkingToItem()
-        },
-      ),
-    )
+  public setServicesPostConstruction(
+    itemListController: ItemListController,
+    filesController: FilesController,
+    subscriptionController: SubscriptionController,
+  ) {
+    this.itemListController = itemListController
+    this.filesController = filesController
+    this.subscriptionController = subscriptionController
   }
 
   get isEntitledToNoteLinking() {
@@ -113,37 +111,41 @@ export class LinkingController extends AbstractViewController {
     return [...this.tags, ...this.files, ...this.notesLinkedToItem]
   }
 
+  get activeItem() {
+    return this.itemListController.activeControllerItem
+  }
+
+  reloadAllLinks() {
+    this.reloadLinkedFiles()
+    this.reloadLinkedTags()
+    this.reloadLinkedNotes()
+    this.reloadNotesLinkingToItem()
+  }
+
   reloadLinkedFiles() {
-    const activeItem = this.selectionController.firstSelectedItem
-    if (activeItem) {
-      const files = this.application.items.getSortedFilesForItem(activeItem)
+    if (this.activeItem) {
+      const files = this.application.items.getSortedFilesForItem(this.activeItem)
       this.files = files
     }
   }
 
   reloadLinkedTags() {
-    const activeItem = this.selectionController.firstSelectedItem
-
-    if (activeItem) {
-      const tags = this.application.items.getSortedTagsForItem(activeItem)
+    if (this.activeItem) {
+      const tags = this.application.items.getSortedTagsForItem(this.activeItem)
       this.tags = tags
     }
   }
 
   reloadLinkedNotes() {
-    const activeItem = this.selectionController.firstSelectedItem
-
-    if (activeItem) {
-      const notes = this.application.items.getSortedLinkedNotesForItem(activeItem)
+    if (this.activeItem) {
+      const notes = this.application.items.getSortedLinkedNotesForItem(this.activeItem)
       this.notesLinkedToItem = notes
     }
   }
 
   reloadNotesLinkingToItem() {
-    const activeItem = this.selectionController.firstSelectedItem
-
-    if (activeItem) {
-      const notes = this.application.items.getSortedNotesLinkingToItem(activeItem)
+    if (this.activeItem) {
+      const notes = this.application.items.getSortedNotesLinkingToItem(this.activeItem)
       this.notesLinkingToItem = notes
     }
   }
@@ -223,14 +225,12 @@ export class LinkingController extends AbstractViewController {
   linkItemToSelectedItem = async (itemToLink: LinkableItem) => {
     const selectedItem = this.selectionController.firstSelectedItem
 
-    if (!selectedItem) {
-      return
+    if (itemToLink instanceof SNTag) {
+      await this.addTagToActiveItem(itemToLink)
     }
 
     if (selectedItem instanceof SNNote) {
-      if (itemToLink instanceof SNTag) {
-        await this.application.items.addTagToNote(selectedItem, itemToLink, this.shouldLinkToParentFolders)
-      } else if (itemToLink instanceof FileItem) {
+      if (itemToLink instanceof FileItem) {
         await this.application.items.associateFileWithNote(itemToLink, selectedItem)
       } else if (itemToLink instanceof SNNote && this.isEntitledToNoteLinking) {
         await this.application.items.linkNoteToNote(selectedItem, itemToLink)
@@ -238,9 +238,7 @@ export class LinkingController extends AbstractViewController {
     }
 
     if (selectedItem instanceof FileItem) {
-      if (itemToLink instanceof SNTag) {
-        await this.application.items.addTagToFile(selectedItem, itemToLink, this.shouldLinkToParentFolders)
-      } else if (itemToLink instanceof SNNote) {
+      if (itemToLink instanceof SNNote) {
         await this.application.items.associateFileWithNote(selectedItem, itemToLink)
       } else if (itemToLink instanceof FileItem) {
         await this.application.items.linkFileToFile(itemToLink, selectedItem)
@@ -250,7 +248,27 @@ export class LinkingController extends AbstractViewController {
     void this.application.sync.sync()
   }
 
-  createAndAddNewTag = (title: string) => this.noteTagsController.createAndAddNewTag(title)
+  createAndAddNewTag = async (title: string) => {
+    const newTag = await this.application.mutator.findOrCreateTag(title)
+    await this.addTagToActiveItem(newTag)
+  }
+
+  addTagToActiveItem = async (tag: SNTag) => {
+    const activeItem = this.itemListController.activeControllerItem
+
+    if (!activeItem) {
+      return
+    }
+
+    if (activeItem instanceof SNNote) {
+      await this.application.items.addTagToNote(activeItem, tag, this.shouldLinkToParentFolders)
+    } else if (activeItem instanceof FileItem) {
+      await this.application.items.addTagToFile(activeItem, tag, this.shouldLinkToParentFolders)
+    }
+
+    this.reloadLinkedTags()
+    this.application.sync.sync().catch(console.error)
+  }
 
   getSearchResults = (searchQuery: string) => {
     if (!searchQuery.length) {
@@ -261,26 +279,24 @@ export class LinkingController extends AbstractViewController {
       }
     }
 
-    const activeItem = this.selectionController.firstSelectedItem
-
     const searchResults = this.application.items
       .getItems([ContentType.Note, ContentType.File, ContentType.Tag])
       .filter((item) => {
         const title = item instanceof SNTag ? this.application.items.getTagLongTitle(item) : item.title
         const matchesQuery = title?.toLowerCase().includes(searchQuery.toLowerCase())
-        const isNotActiveItem = activeItem?.uuid !== item.uuid
+        const isNotActiveItem = this.activeItem?.uuid !== item.uuid
         return matchesQuery && isNotActiveItem
       })
 
     const isAlreadyLinked = (item: LinkableItem) => {
-      if (!activeItem) {
+      if (!this.activeItem) {
         return false
       }
       const isItemReferencedByActiveItem = this.application.items
         .itemsReferencingItem(item)
-        .some((linkedItem) => linkedItem.uuid === activeItem.uuid)
+        .some((linkedItem) => linkedItem.uuid === this.activeItem?.uuid)
       const isActiveItemReferencedByItem = this.application.items
-        .itemsReferencingItem(activeItem)
+        .itemsReferencingItem(this.activeItem)
         .some((linkedItem) => linkedItem.uuid === item.uuid)
       const isAlreadyLinkedToItem =
         isItemReferencedByActiveItem || (item.content_type !== ContentType.Note && isActiveItemReferencedByItem)

@@ -1199,6 +1199,10 @@ export class ItemManager
   }
 
   public getSortedFilesForItem(item: DecryptedItemInterface<ItemContent>): Models.FileItem[] {
+    if (this.isTemplateItem(item)) {
+      return []
+    }
+
     const filesReferencingItem = this.itemsReferencingItem(item).filter(
       (ref) => ref.content_type === ContentType.File,
     ) as Models.FileItem[]
@@ -1210,6 +1214,10 @@ export class ItemManager
   }
 
   public getSortedLinkedNotesForItem(item: DecryptedItemInterface<ItemContent>): Models.SNNote[] {
+    if (this.isTemplateItem(item)) {
+      return []
+    }
+
     const notesReferencedByItem = this.referencesForItem(item).filter(
       (ref) => ref.content_type === ContentType.Note,
     ) as Models.SNNote[]
@@ -1218,6 +1226,10 @@ export class ItemManager
   }
 
   public getSortedNotesLinkingToItem(item: Models.DecryptedItemInterface<Models.ItemContent>): Models.SNNote[] {
+    if (this.isTemplateItem(item)) {
+      return []
+    }
+
     const notesReferencingItem = this.itemsReferencingItem(item).filter(
       (ref) => ref.content_type === ContentType.Note,
     ) as Models.SNNote[]

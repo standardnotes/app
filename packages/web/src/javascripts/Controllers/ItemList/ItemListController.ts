@@ -29,10 +29,10 @@ import { CrossControllerEvent } from '../CrossControllerEvent'
 import { SearchOptionsController } from '../SearchOptionsController'
 import { SelectedItemsController } from '../SelectedItemsController'
 import { NotesController } from '../NotesController'
-import { NoteTagsController } from '../NoteTagsController'
 import { formatDateAndTimeForNote } from '@/Utils/DateUtils'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import dayjs from 'dayjs'
+import { LinkingController } from '../LinkingController'
 
 const MinNoteCellHeight = 51.0
 const DefaultListNumNotes = 20
@@ -85,7 +85,6 @@ export class ItemListController extends AbstractViewController implements Intern
     ;(this.searchOptionsController as unknown) = undefined
     ;(this.selectionController as unknown) = undefined
     ;(this.notesController as unknown) = undefined
-    ;(this.noteTagsController as unknown) = undefined
     ;(window.onresize as unknown) = undefined
 
     destroyAllObjectProperties(this)
@@ -97,7 +96,7 @@ export class ItemListController extends AbstractViewController implements Intern
     private searchOptionsController: SearchOptionsController,
     private selectionController: SelectedItemsController,
     private notesController: NotesController,
-    private noteTagsController: NoteTagsController,
+    private linkingController: LinkingController,
     eventBus: InternalEventBus,
   ) {
     super(application, eventBus)
@@ -228,13 +227,13 @@ export class ItemListController extends AbstractViewController implements Intern
     return this.application.itemControllerGroup.activeItemViewController
   }
 
-  public get activeControllerNote(): SNNote | undefined {
-    const activeController = this.getActiveItemController()
-    return activeController instanceof NoteViewController ? activeController.item : undefined
+  public get activeControllerItem() {
+    console.log(this.application.itemControllerGroup.itemControllers)
+    return this.getActiveItemController()?.item
   }
 
   async openNote(uuid: string): Promise<void> {
-    if (this.activeControllerNote?.uuid === uuid) {
+    if (this.activeControllerItem?.uuid === uuid) {
       return
     }
 
@@ -246,7 +245,7 @@ export class ItemListController extends AbstractViewController implements Intern
 
     await this.application.itemControllerGroup.createItemController(note)
 
-    this.noteTagsController.reloadTagsForCurrentNote()
+    this.linkingController.reloadAllLinks()
 
     await this.publishEventSync(CrossControllerEvent.ActiveEditorChanged)
   }
@@ -263,6 +262,8 @@ export class ItemListController extends AbstractViewController implements Intern
     }
 
     await this.application.itemControllerGroup.createItemController(file)
+
+    this.linkingController.reloadAllLinks()
   }
 
   setCompletedFullSync = (completed: boolean) => {
@@ -545,7 +546,7 @@ export class ItemListController extends AbstractViewController implements Intern
 
     await this.createNewNoteController(title)
 
-    this.noteTagsController.reloadTagsForCurrentNote()
+    this.linkingController.reloadAllLinks()
   }
 
   createPlaceholderNote = () => {
