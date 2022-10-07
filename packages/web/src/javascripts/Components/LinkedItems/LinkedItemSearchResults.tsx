@@ -34,16 +34,17 @@ const LinkedItemSearchResults = ({
   return (
     <div className="my-1">
       {results.map((result) => {
+        const cannotLinkItem = !isEntitledToNoteLinking && result instanceof SNNote
         return (
           <button
             key={result.uuid}
             className="flex w-full items-center justify-between gap-4 overflow-hidden py-2 px-3 hover:bg-contrast hover:text-foreground focus:bg-info-backdrop"
             onClick={() => {
-              if (isEntitledToNoteLinking) {
+              if (cannotLinkItem) {
+                premiumModal.activate('Note linking')
+              } else {
                 linkItemToSelectedItem(result)
                 onClickCallback?.()
-              } else {
-                premiumModal.activate('Note linking')
               }
             }}
           >
@@ -53,9 +54,7 @@ const LinkedItemSearchResults = ({
               getTitleForLinkedTag={getTitleForLinkedTag}
               searchQuery={searchQuery}
             />
-            {!isEntitledToNoteLinking && result instanceof SNNote && (
-              <Icon type={PremiumFeatureIconName} className="ml-auto flex-shrink-0 text-info" />
-            )}
+            {cannotLinkItem && <Icon type={PremiumFeatureIconName} className="ml-auto flex-shrink-0 text-info" />}
           </button>
         )
       })}
