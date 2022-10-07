@@ -1,14 +1,7 @@
-import {
-  CSSProperties,
-  FunctionComponent,
-  KeyboardEventHandler,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useRef,
-} from 'react'
+import { CSSProperties, forwardRef, KeyboardEventHandler, ReactNode, Ref, useCallback, useEffect, useRef } from 'react'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
+import { mergeRefs } from '@/Hooks/mergeRefs'
 
 type MenuProps = {
   className?: string
@@ -18,50 +11,50 @@ type MenuProps = {
   closeMenu?: () => void
   isOpen: boolean
   initialFocus?: number
+  onKeyDown?: KeyboardEventHandler<HTMLMenuElement>
 }
 
-const Menu: FunctionComponent<MenuProps> = ({
-  children,
-  className = '',
-  style,
-  a11yLabel,
-  closeMenu,
-  isOpen,
-  initialFocus,
-}: MenuProps) => {
-  const menuElementRef = useRef<HTMLMenuElement>(null)
+const Menu = forwardRef(
+  (
+    { children, className = '', style, a11yLabel, closeMenu, isOpen, initialFocus, onKeyDown }: MenuProps,
+    forwardedRef: Ref<HTMLMenuElement>,
+  ) => {
+    const menuElementRef = useRef<HTMLMenuElement>(null)
 
-  const handleKeyDown: KeyboardEventHandler<HTMLMenuElement> = useCallback(
-    (event) => {
-      if (event.key === KeyboardKey.Escape) {
-        closeMenu?.()
-        return
+    const handleKeyDown: KeyboardEventHandler<HTMLMenuElement> = useCallback(
+      (event) => {
+        onKeyDown?.(event)
+
+        if (event.key === KeyboardKey.Escape) {
+          closeMenu?.()
+          return
+        }
+      },
+      [closeMenu, onKeyDown],
+    )
+
+    useListKeyboardNavigation(menuElementRef, initialFocus)
+
+    useEffect(() => {
+      if (isOpen) {
+        setTimeout(() => {
+          menuElementRef.current?.focus()
+        })
       }
-    },
-    [closeMenu],
-  )
+    }, [isOpen])
 
-  useListKeyboardNavigation(menuElementRef, initialFocus)
-
-  useEffect(() => {
-    if (isOpen) {
-      setTimeout(() => {
-        menuElementRef.current?.focus()
-      })
-    }
-  }, [isOpen])
-
-  return (
-    <menu
-      className={`m-0 list-none pl-0 focus:shadow-none ${className}`}
-      onKeyDown={handleKeyDown}
-      ref={menuElementRef}
-      style={style}
-      aria-label={a11yLabel}
-    >
-      {children}
-    </menu>
-  )
-}
+    return (
+      <menu
+        className={`m-0 list-none pl-0 focus:shadow-none ${className}`}
+        onKeyDown={handleKeyDown}
+        ref={mergeRefs([menuElementRef, forwardedRef])}
+        style={style}
+        aria-label={a11yLabel}
+      >
+        {children}
+      </menu>
+    )
+  },
+)
 
 export default Menu

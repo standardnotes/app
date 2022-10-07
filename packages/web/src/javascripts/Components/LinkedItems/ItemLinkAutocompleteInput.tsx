@@ -3,6 +3,7 @@ import {
   FocusEventHandler,
   FormEventHandler,
   KeyboardEventHandler,
+  useCallback,
   useEffect,
   useRef,
   useState,
@@ -16,6 +17,7 @@ import LinkedItemSearchResults from './LinkedItemSearchResults'
 import { LinkingController } from '@/Controllers/LinkingController'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { ElementIds } from '@/Constants/ElementIDs'
+import Menu from '../Menu/Menu'
 
 type Props = {
   linkingController: LinkingController
@@ -42,6 +44,7 @@ const ItemLinkAutocompleteInput = ({ linkingController, focusPreviousItem, focus
 
   const containerRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const searchResultsMenuRef = useRef<HTMLMenuElement>(null)
 
   const [closeOnBlur] = useCloseOnBlur(containerRef, (visible: boolean) => {
     setDropdownVisible(visible)
@@ -83,6 +86,11 @@ const ItemLinkAutocompleteInput = ({ linkingController, focusPreviousItem, focus
           focusPreviousItem()
         }
         break
+      case KeyboardKey.Down:
+        if (searchQuery.length > 0) {
+          searchResultsMenuRef.current?.focus()
+        }
+        break
     }
   }
 
@@ -91,6 +99,14 @@ const ItemLinkAutocompleteInput = ({ linkingController, focusPreviousItem, focus
       inputRef.current?.focus()
     }
   }, [focusedId])
+
+  const areSearchResultsVisible = dropdownVisible && (unlinkedResults.length > 0 || shouldShowCreateTag)
+
+  const handleMenuKeyDown: KeyboardEventHandler<HTMLMenuElement> = useCallback((event) => {
+    if (event.key === KeyboardKey.Escape) {
+      inputRef.current?.focus()
+    }
+  }, [])
 
   return (
     <div ref={containerRef}>
@@ -107,11 +123,10 @@ const ItemLinkAutocompleteInput = ({ linkingController, focusPreviousItem, focus
             onBlur={onBlur}
             onFocus={handleFocus}
             onKeyDown={onKeyDown}
-            tabIndex={tags.length === 0 ? 0 : -1}
             id={ElementIds.ItemLinkAutocompleteInput}
             autoComplete="off"
           />
-          {dropdownVisible && (unlinkedResults.length > 0 || shouldShowCreateTag) && (
+          {areSearchResultsVisible && (
             <DisclosurePanel
               className={classNames(
                 tags.length > 0 ? 'w-80' : 'mr-10 w-70',
@@ -123,17 +138,24 @@ const ItemLinkAutocompleteInput = ({ linkingController, focusPreviousItem, focus
               onBlur={closeOnBlur}
               tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
             >
-              <LinkedItemSearchResults
-                createAndAddNewTag={createAndAddNewTag}
-                getLinkedItemIcon={getLinkedItemIcon}
-                getTitleForLinkedTag={getTitleForLinkedTag}
-                linkItemToSelectedItem={linkItemToSelectedItem}
-                results={unlinkedResults}
-                searchQuery={searchQuery}
-                shouldShowCreateTag={shouldShowCreateTag}
-                onClickCallback={() => setSearchQuery('')}
-                isEntitledToNoteLinking={isEntitledToNoteLinking}
-              />
+              <Menu
+                isOpen={areSearchResultsVisible}
+                a11yLabel="Unlinked items search results"
+                onKeyDown={handleMenuKeyDown}
+                ref={searchResultsMenuRef}
+              >
+                <LinkedItemSearchResults
+                  createAndAddNewTag={createAndAddNewTag}
+                  getLinkedItemIcon={getLinkedItemIcon}
+                  getTitleForLinkedTag={getTitleForLinkedTag}
+                  linkItemToSelectedItem={linkItemToSelectedItem}
+                  results={unlinkedResults}
+                  searchQuery={searchQuery}
+                  shouldShowCreateTag={shouldShowCreateTag}
+                  onClickCallback={() => setSearchQuery('')}
+                  isEntitledToNoteLinking={isEntitledToNoteLinking}
+                />
+              </Menu>
             </DisclosurePanel>
           )}
         </Disclosure>
