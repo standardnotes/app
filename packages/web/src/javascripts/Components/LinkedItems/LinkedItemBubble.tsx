@@ -60,6 +60,10 @@ const LinkedItemBubble = forwardRef(
 
     const onKeyDown: KeyboardEventHandler = (event) => {
       switch (event.key) {
+        case KeyboardKey.Backspace:
+          focusPreviousItem()
+          unlinkItem(item)
+          break
         case KeyboardKey.Left:
           focusPreviousItem()
           break
