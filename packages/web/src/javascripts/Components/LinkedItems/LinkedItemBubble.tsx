@@ -1,7 +1,8 @@
 import { LinkableItem, LinkingController } from '@/Controllers/LinkingController'
 import { classNames } from '@/Utils/ConcatenateClassNames'
+import { KeyboardKey } from '@standardnotes/ui-services'
 import { observer } from 'mobx-react-lite'
-import { forwardRef, MouseEventHandler, Ref, useRef, useState } from 'react'
+import { forwardRef, KeyboardEventHandler, MouseEventHandler, Ref, useRef, useState } from 'react'
 import Icon from '../Icon/Icon'
 
 type Props = {
@@ -10,16 +11,32 @@ type Props = {
   getTitleForLinkedTag: LinkingController['getTitleForLinkedTag']
   activateItem: (item: LinkableItem) => Promise<void>
   unlinkItem: (item: LinkableItem) => void
+  focusPreviousItem: () => void
+  focusNextItem: () => void
+  onFocus: () => void
 }
 
 const LinkedItemBubble = forwardRef(
-  ({ item, getItemIcon, getTitleForLinkedTag, activateItem, unlinkItem }: Props, ref: Ref<HTMLButtonElement>) => {
+  (
+    {
+      item,
+      getItemIcon,
+      getTitleForLinkedTag,
+      activateItem,
+      unlinkItem,
+      focusPreviousItem,
+      focusNextItem,
+      onFocus,
+    }: Props,
+    ref: Ref<HTMLButtonElement>,
+  ) => {
     const [showUnlinkButton, setShowUnlinkButton] = useState(false)
     const unlinkButtonRef = useRef<HTMLAnchorElement | null>(null)
 
     const [wasClicked, setWasClicked] = useState(false)
 
-    const onFocus = () => {
+    const handleFocus = () => {
+      onFocus()
       setShowUnlinkButton(true)
     }
 
@@ -41,6 +58,17 @@ const LinkedItemBubble = forwardRef(
       unlinkItem(item)
     }
 
+    const onKeyDown: KeyboardEventHandler = (event) => {
+      switch (event.key) {
+        case KeyboardKey.Left:
+          focusPreviousItem()
+          break
+        case KeyboardKey.Right:
+          focusNextItem()
+          break
+      }
+    }
+
     const [icon, iconClassName] = getItemIcon(item)
     const tagTitle = getTitleForLinkedTag(item)
 
@@ -48,10 +76,11 @@ const LinkedItemBubble = forwardRef(
       <button
         ref={ref}
         className="flex h-6 cursor-pointer items-center rounded border-0 bg-passive-4-opacity-variant py-2 pl-1 pr-2 text-xs text-text hover:bg-contrast focus:bg-contrast"
-        onFocus={onFocus}
+        onFocus={handleFocus}
         onBlur={onBlur}
         onClick={onClick}
         title={tagTitle ? tagTitle.longTitle : item.title}
+        onKeyDown={onKeyDown}
       >
         <Icon type={icon} className={classNames('mr-1 flex-shrink-0', iconClassName)} size="small" />
         <span className="max-w-290px overflow-hidden overflow-ellipsis whitespace-nowrap">
