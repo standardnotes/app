@@ -14,6 +14,10 @@ import {
   WebSocketApiServiceInterface,
   WebSocketServer,
   WebSocketServerInterface,
+  WorkspaceApiService,
+  WorkspaceApiServiceInterface,
+  WorkspaceServer,
+  WorkspaceServerInterface,
 } from '@standardnotes/api'
 import * as Common from '@standardnotes/common'
 import * as ExternalServices from '@standardnotes/services'
@@ -45,6 +49,8 @@ import {
   FileService,
   SubscriptionClientInterface,
   SubscriptionManager,
+  WorkspaceClientInterface,
+  WorkspaceManager,
 } from '@standardnotes/services'
 import { FilesClientInterface } from '@standardnotes/files'
 import { ComputePrivateWorkspaceIdentifier } from '@standardnotes/encryption'
@@ -110,6 +116,9 @@ export class SNApplication
   private declare subscriptionApiService: SubscriptionApiServiceInterface
   private declare subscriptionServer: SubscriptionServerInterface
   private declare subscriptionManager: SubscriptionClientInterface
+  private declare workspaceApiService: WorkspaceApiServiceInterface
+  private declare workspaceServer: WorkspaceServerInterface
+  private declare workspaceManager: WorkspaceClientInterface
   private declare webSocketApiService: WebSocketApiServiceInterface
   private declare webSocketServer: WebSocketServerInterface
   private sessionManager!: InternalServices.SNSessionManager
@@ -209,6 +218,10 @@ export class SNApplication
 
   get subscriptions(): ExternalServices.SubscriptionClientInterface {
     return this.subscriptionManager
+  }
+
+  get workspaces(): ExternalServices.WorkspaceClientInterface {
+    return this.workspaceManager
   }
 
   public get files(): FilesClientInterface {
@@ -1047,6 +1060,9 @@ export class SNApplication
     this.createWebSocketServer()
     this.createWebSocketApiService()
     this.createSubscriptionManager()
+    this.createWorkspaceServer()
+    this.createWorkspaceApiService()
+    this.createWorkspaceManager()
     this.createWebSocketsService()
     this.createSessionManager()
     this.createHistoryManager()
@@ -1087,9 +1103,12 @@ export class SNApplication
     ;(this.userServer as unknown) = undefined
     ;(this.subscriptionApiService as unknown) = undefined
     ;(this.subscriptionServer as unknown) = undefined
+    ;(this.subscriptionManager as unknown) = undefined
+    ;(this.workspaceApiService as unknown) = undefined
+    ;(this.workspaceServer as unknown) = undefined
+    ;(this.workspaceManager as unknown) = undefined
     ;(this.webSocketApiService as unknown) = undefined
     ;(this.webSocketServer as unknown) = undefined
-    ;(this.subscriptionManager as unknown) = undefined
     ;(this.sessionManager as unknown) = undefined
     ;(this.syncService as unknown) = undefined
     ;(this.challengeService as unknown) = undefined
@@ -1302,6 +1321,18 @@ export class SNApplication
 
   private createSubscriptionManager() {
     this.subscriptionManager = new SubscriptionManager(this.subscriptionApiService, this.internalEventBus)
+  }
+
+  private createWorkspaceServer() {
+    this.workspaceServer = new WorkspaceServer(this.httpService)
+  }
+
+  private createWorkspaceApiService() {
+    this.workspaceApiService = new WorkspaceApiService(this.workspaceServer)
+  }
+
+  private createWorkspaceManager() {
+    this.workspaceManager = new WorkspaceManager(this.workspaceApiService, this.internalEventBus)
   }
 
   private createItemManager() {

@@ -1,13 +1,15 @@
 import { ApplicationIdentifier, ContentType } from '@standardnotes/common'
 import { BackupFile, DecryptedItemInterface, ItemStream, Platform, PrefKey, PrefValue } from '@standardnotes/models'
 import { FilesClientInterface } from '@standardnotes/files'
-import { AlertService } from '../Alert/AlertService'
 
+import { AlertService } from '../Alert/AlertService'
 import { ComponentManagerInterface } from '../Component/ComponentManagerInterface'
 import { ApplicationEvent } from '../Event/ApplicationEvent'
 import { ApplicationEventCallback } from '../Event/ApplicationEventCallback'
 import { FeaturesClientInterface } from '../Feature/FeaturesClientInterface'
 import { SubscriptionClientInterface } from '../Subscription/SubscriptionClientInterface'
+import { DeviceInterface } from '../Device/DeviceInterface'
+import { WorkspaceClientInterface } from '../Workspace/WorkspaceClientInterface'
 import { ItemsClientInterface } from '../Item/ItemsClientInterface'
 import { MutatorClientInterface } from '../Mutator/MutatorClientInterface'
 import { StorageValueModes } from '../Storage/StorageTypes'
@@ -15,7 +17,6 @@ import { StorageValueModes } from '../Storage/StorageTypes'
 import { DeinitMode } from './DeinitMode'
 import { DeinitSource } from './DeinitSource'
 import { UserClientInterface } from './UserClientInterface'
-import { DeviceInterface } from '../Device/DeviceInterface'
 
 export interface ApplicationInterface {
   deinit(mode: DeinitMode, source: DeinitSource): void
@@ -49,6 +50,7 @@ export interface ApplicationInterface {
   get user(): UserClientInterface
   get files(): FilesClientInterface
   get subscriptions(): SubscriptionClientInterface
+  get workspaces(): WorkspaceClientInterface
   readonly identifier: ApplicationIdentifier
   readonly platform: Platform
   deviceInterface: DeviceInterface

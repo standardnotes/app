@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.11.0](https://github.com/standardnotes/app/compare/@standardnotes/api@1.10.0...@standardnotes/api@1.11.0) (2022-10-07)
+
+### Features
+
+* **api:** add workspaces api ([#1765](https://github.com/standardnotes/app/issues/1765)) ([01ba715](https://github.com/standardnotes/app/commit/01ba715eba987a7da1ee062fec0b3593a7a453ed))
+
 # [1.10.0](https://github.com/standardnotes/app/compare/@standardnotes/api@1.9.2...@standardnotes/api@1.10.0) (2022-10-06)
 
 ### Features
