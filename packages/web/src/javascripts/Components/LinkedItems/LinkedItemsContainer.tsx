@@ -4,6 +4,7 @@ import { LinkableItem, LinkingController } from '@/Controllers/LinkingController
 import LinkedItemBubble from './LinkedItemBubble'
 import { useCallback, useRef, useState } from 'react'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
+import { ElementIds } from '@/Constants/ElementIDs'
 
 type Props = {
   linkingController: LinkingController
@@ -77,13 +78,13 @@ const LinkedItemsContainer = ({ linkingController }: Props) => {
       <ItemLinkAutocompleteInput
         ref={(node) => {
           if (node) {
-            focusableRefs.current = focusableRefs.current.set('input', node)
+            focusableRefs.current = focusableRefs.current.set(ElementIds.ItemLinkAutocompleteInput, node)
           }
         }}
         linkingController={linkingController}
         focusPreviousItem={focusPreviousItem}
         onFocus={() => {
-          setFocusedId('input')
+          setFocusedId(ElementIds.ItemLinkAutocompleteInput)
         }}
       />
     </div>

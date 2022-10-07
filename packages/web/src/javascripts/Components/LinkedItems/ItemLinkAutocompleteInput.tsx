@@ -17,6 +17,7 @@ import LinkedItemSearchResults from './LinkedItemSearchResults'
 import { LinkingController } from '@/Controllers/LinkingController'
 import { mergeRefs } from '@/Hooks/mergeRefs'
 import { KeyboardKey } from '@standardnotes/ui-services'
+import { ElementIds } from '@/Constants/ElementIDs'
 
 type Props = {
   linkingController: LinkingController
@@ -105,6 +106,7 @@ const ItemLinkAutocompleteInput = forwardRef(
               onFocus={handleFocus}
               onKeyDown={onKeyDown}
               tabIndex={tags.length === 0 ? 0 : -1}
+              id={ElementIds.ItemLinkAutocompleteInput}
             />
             {dropdownVisible && (unlinkedResults.length > 0 || shouldShowCreateTag) && (
               <DisclosurePanel
