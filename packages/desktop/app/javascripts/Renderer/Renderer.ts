@@ -1,6 +1,6 @@
 import { DesktopClientRequiresWebMethods } from '@web/Application/Device/DesktopSnjsExports'
 import { StartApplication } from '@web/Application/Device/StartApplication'
-import { MessageToWebApp } from '../Shared/IpcMessages'
+import { IpcRendererEvent } from 'electron/renderer'
 import { CrossProcessBridge } from './CrossProcessBridge'
 import { DesktopDevice } from './DesktopDevice'
 
@@ -23,6 +23,7 @@ declare global {
     purchaseUrl: string
     startApplication: StartApplication
     zip: any
+    electronMainEvents: any
   }
 }
 
@@ -41,8 +42,6 @@ const loadAndStartApplication = async () => {
   window.device = await createDesktopDevice(remoteBridge)
 
   window.startApplication(DEFAULT_SYNC_SERVER, window.device, window.enableUnfinishedFeatures, WEBSOCKET_URL)
-
-  listenForMessagesSentFromMainToPreloadToUs(window.device)
 }
 
 window.onload = () => {
@@ -134,35 +133,26 @@ async function configureWindow(remoteBridge: CrossProcessBridge) {
   }
 }
 
-function listenForMessagesSentFromMainToPreloadToUs(device: DesktopDevice) {
-  window.addEventListener('message', async (event) => {
-    // We don't have access to the full file path.
-    if (event.origin !== 'file://') {
-      return
-    }
-    let payload
-    try {
-      payload = JSON.parse(event.data)
-    } catch (e) {
-      // message doesn't belong to us
-      return
-    }
-    const receiver = window.webClient
-    const message = payload.message
-    const data = payload.data
+window.electronMainEvents.handleUpdateAvailable(() => {
+  window.webClient.updateAvailable()
+})
 
-    if (message === MessageToWebApp.WindowBlurred) {
-      receiver.windowLostFocus()
-    } else if (message === MessageToWebApp.WindowFocused) {
-      receiver.windowGainedFocus()
-    } else if (message === MessageToWebApp.InstallComponentComplete) {
-      receiver.onComponentInstallationComplete(data.component, undefined)
-    } else if (message === MessageToWebApp.UpdateAvailable) {
-      receiver.updateAvailable()
-    } else if (message === MessageToWebApp.PerformAutomatedBackup) {
-      void device.downloadBackup()
-    } else if (message === MessageToWebApp.FinishedSavingBackup) {
-      receiver.didFinishBackup(data.success)
-    }
-  })
-}
+window.electronMainEvents.handlePerformAutomatedBackup(() => {
+  void window.device.downloadBackup()
+})
+
+window.electronMainEvents.handleFinishedSavingBackup((_: IpcRendererEvent, data: any) => {
+  window.webClient.didFinishBackup(data.success)
+})
+
+window.electronMainEvents.handleWindowBlurred(() => {
+  window.webClient.windowLostFocus()
+})
+
+window.electronMainEvents.handleWindowFocused(() => {
+  window.webClient.windowGainedFocus()
+})
+
+window.electronMainEvents.handleInstallComponentComplete((_: IpcRendererEvent, data: any) => {
+  window.webClient.onComponentInstallationComplete(data.component, undefined)
+})
