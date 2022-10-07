@@ -12,11 +12,22 @@ type MenuProps = {
   isOpen: boolean
   initialFocus?: number
   onKeyDown?: KeyboardEventHandler<HTMLMenuElement>
+  shouldAutoFocus?: boolean
 }
 
 const Menu = forwardRef(
   (
-    { children, className = '', style, a11yLabel, closeMenu, isOpen, initialFocus, onKeyDown }: MenuProps,
+    {
+      children,
+      className = '',
+      style,
+      a11yLabel,
+      closeMenu,
+      isOpen,
+      initialFocus,
+      onKeyDown,
+      shouldAutoFocus = true,
+    }: MenuProps,
     forwardedRef: Ref<HTMLMenuElement>,
   ) => {
     const menuElementRef = useRef<HTMLMenuElement>(null)
@@ -36,12 +47,12 @@ const Menu = forwardRef(
     useListKeyboardNavigation(menuElementRef, initialFocus)
 
     useEffect(() => {
-      if (isOpen) {
+      if (isOpen && shouldAutoFocus) {
         setTimeout(() => {
           menuElementRef.current?.focus()
         })
       }
-    }, [isOpen])
+    }, [isOpen, shouldAutoFocus])
 
     return (
       <menu

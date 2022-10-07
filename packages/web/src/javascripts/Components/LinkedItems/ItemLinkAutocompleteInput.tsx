@@ -143,6 +143,7 @@ const ItemLinkAutocompleteInput = ({ linkingController, focusPreviousItem, focus
                 a11yLabel="Unlinked items search results"
                 onKeyDown={handleMenuKeyDown}
                 ref={searchResultsMenuRef}
+                shouldAutoFocus={false}
               >
                 <LinkedItemSearchResults
                   createAndAddNewTag={createAndAddNewTag}
