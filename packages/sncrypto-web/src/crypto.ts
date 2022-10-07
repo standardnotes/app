@@ -93,7 +93,7 @@ export class SNWebCrypto implements PureCryptoInterface {
     return this.webCryptoDeriveBits(key, salt, iterations, length)
   }
 
-  public generateRandomKey(bits: number): string {
+  public generateRandomKey(bits: number): HexString {
     const bytes = bits / 8
     const arrayBuffer = Utils.getGlobalScope().crypto.getRandomValues(new Uint8Array(bytes))
     return Utils.arrayBufferToHexString(arrayBuffer)
@@ -249,14 +249,14 @@ export class SNWebCrypto implements PureCryptoInterface {
     plaintext: Utf8String,
     nonce: HexString,
     key: HexString,
-    assocData: Utf8String,
+    assocData?: Utf8String,
   ): Base64String {
     if (nonce.length !== 48) {
       throw Error('Nonce must be 24 bytes')
     }
     const arrayBuffer = sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(
       plaintext,
-      assocData,
+      assocData || null,
       null,
       Utils.hexStringToArrayBuffer(nonce),
       Utils.hexStringToArrayBuffer(key),
@@ -268,7 +268,7 @@ export class SNWebCrypto implements PureCryptoInterface {
     ciphertext: Base64String,
     nonce: HexString,
     key: HexString,
-    assocData: Utf8String | Uint8Array,
+    assocData?: Utf8String | Uint8Array,
   ): Utf8String | null {
     if (nonce.length !== 48) {
       throw Error('Nonce must be 24 bytes')
@@ -277,7 +277,7 @@ export class SNWebCrypto implements PureCryptoInterface {
       return sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(
         null,
         Utils.base64ToArrayBuffer(ciphertext),
-        assocData,
+        assocData || null,
         Utils.hexStringToArrayBuffer(nonce),
         Utils.hexStringToArrayBuffer(key),
         'text',
@@ -368,7 +368,7 @@ export class SNWebCrypto implements PureCryptoInterface {
     nonce: HexString,
     senderPublicKey: HexString,
     recipientSecretKey: HexString,
-  ): Base64String {
+  ): Utf8String {
     const result = sodium.crypto_box_open_easy(
       Utils.base64ToArrayBuffer(ciphertext),
       Utils.hexStringToArrayBuffer(nonce),

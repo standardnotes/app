@@ -5,6 +5,7 @@ import { autoUpdater } from 'electron-updater'
 import { action, autorun, computed, makeObservable, observable } from 'mobx'
 import { MessageType } from '../../../test/TestIpcMessage'
 import { AppState } from '../../AppState'
+import { MessageToWebApp } from '../Shared/IpcMessages'
 import { BackupsManagerInterface } from './Backups/BackupsManagerInterface'
 import { StoreKeys } from './Store/StoreKeys'
 import { updates as str } from './Strings'
@@ -113,12 +114,12 @@ export function setupUpdates(window: BrowserWindow, appState: AppState, backupsM
   setInterval(checkUpdateSafety, oneHour)
 
   autoUpdater.on('update-downloaded', (info: { version?: string }) => {
-    window.webContents.send('update-available', null)
+    window.webContents.send(MessageToWebApp.UpdateAvailable, null)
     updateState.autoUpdateHasBeenDownloaded(info.version || null)
   })
 
   autoUpdater.on('error', logError)
-  autoUpdater.on('update-available', (info: { version?: string }) => {
+  autoUpdater.on(MessageToWebApp.UpdateAvailable, (info: { version?: string }) => {
     updateState.checkedForUpdate(info.version || null)
     if (updateState.enableAutoUpdate) {
       const canUpdate = checkUpdateSafety()

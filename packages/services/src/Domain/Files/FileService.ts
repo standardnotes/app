@@ -12,7 +12,7 @@ import {
 } from '@standardnotes/models'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { UuidGenerator } from '@standardnotes/utils'
-import { EncryptionProvider, SNItemsKey } from '@standardnotes/encryption'
+import { EncryptionProviderInterface, SNItemsKey } from '@standardnotes/encryption'
 import {
   DownloadAndDecryptFileOperation,
   EncryptAndUploadFileOperation,
@@ -49,7 +49,7 @@ export class FileService extends AbstractService implements FilesClientInterface
     private api: FilesApiInterface,
     private itemManager: ItemManagerInterface,
     private syncService: SyncServiceInterface,
-    private encryptor: EncryptionProvider,
+    private encryptor: EncryptionProviderInterface,
     private challengor: ChallengeServiceInterface,
     private alertService: AlertService,
     private crypto: PureCryptoInterface,

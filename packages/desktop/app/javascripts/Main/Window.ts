@@ -166,6 +166,7 @@ async function createWindow(store: Store): Promise<Electron.BrowserWindow> {
       spellcheck: true,
       nodeIntegration: isTesting(),
       contextIsolation: true,
+      sandbox: true,
       preload: Paths.preloadJs,
     },
   })

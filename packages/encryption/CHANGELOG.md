@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.16.0](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.15.11...@standardnotes/encryption@1.16.0) (2022-10-06)
+
+### Features
+
+* experimental 005 operator ([#1753](https://github.com/standardnotes/app/issues/1753)) ([cbbe913](https://github.com/standardnotes/app/commit/cbbe913cd6eb694dd27997927bd5c45e8a64cc09))
+
 ## [1.15.11](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.15.10...@standardnotes/encryption@1.15.11) (2022-10-05)
 
 **Note:** Version bump only for package @standardnotes/encryption

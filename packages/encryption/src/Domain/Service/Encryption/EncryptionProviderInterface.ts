@@ -11,7 +11,7 @@ import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
 import { KeyedDecryptionSplit } from '../../Split/KeyedDecryptionSplit'
 import { KeyedEncryptionSplit } from '../../Split/KeyedEncryptionSplit'
 
-export interface EncryptionProvider {
+export interface EncryptionProviderInterface {
   encryptSplitSingle(split: KeyedEncryptionSplit): Promise<EncryptedPayloadInterface>
 
   encryptSplit(split: KeyedEncryptionSplit): Promise<EncryptedPayloadInterface[]>

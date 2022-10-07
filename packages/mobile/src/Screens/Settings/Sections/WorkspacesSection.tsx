@@ -153,7 +153,7 @@ export const WorkspacesSection = () => {
     }
 
     await appGroup.unloadCurrentAndCreateNewDescriptor()
-  }, [WorkspaceAction.AddAnother, appGroup, applicationDescriptors, getWorkspaceActionConfirmation])
+  }, [WorkspaceAction.AddAnother, appGroup, getWorkspaceActionConfirmation])
 
   const signOutAllWorkspaces = useCallback(async () => {
     try {

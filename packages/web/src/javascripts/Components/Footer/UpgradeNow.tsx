@@ -12,18 +12,6 @@ const UpgradeNow = ({ application, featuresController }: Props) => {
   const shouldShowCTA = !featuresController.hasFolders
   const hasAccount = application.hasAccount()
 
-  const openPlansPage = () => {
-    if (!window.plansUrl) {
-      return
-    }
-
-    if (application.isNativeMobileWeb()) {
-      application.mobileDevice().openUrl(window.plansUrl)
-    } else {
-      window.location.assign(window.plansUrl)
-    }
-  }
-
   return shouldShowCTA ? (
     <div className="flex h-full items-center px-2">
       <button
@@ -34,7 +22,7 @@ const UpgradeNow = ({ application, featuresController }: Props) => {
             return
           }
 
-          openPlansPage()
+          application.getViewControllerManager().purchaseFlowController.openPurchaseFlow()
         }}
       >
         Upgrade now

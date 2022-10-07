@@ -4,7 +4,7 @@ import {
   DecryptedParameters,
   EncryptedParameters,
   encryptedParametersFromPayload,
-  EncryptionProvider,
+  EncryptionProviderInterface,
   ErrorDecryptingParameters,
   findDefaultItemsKey,
   FindPayloadInDecryptionSplit,
@@ -100,7 +100,7 @@ import { EncryptionServiceEvent } from './EncryptionServiceEvent'
  * It also exposes public methods that allows consumers to retrieve an items key
  * for a particular payload, and also retrieve all available items keys.
 */
-export class EncryptionService extends AbstractService<EncryptionServiceEvent> implements EncryptionProvider {
+export class EncryptionService extends AbstractService<EncryptionServiceEvent> implements EncryptionProviderInterface {
   private operatorManager: OperatorManager
   private readonly itemsEncryption: ItemsEncryptionService
   private readonly rootKeyEncryption: RootKeyEncryptionService
@@ -714,7 +714,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       await this.rootKeyEncryption.createNewDefaultItemsKey()
     }
 
-    this.syncUnsycnedItemsKeys()
+    this.syncUnsyncedItemsKeys()
   }
 
   private async handleFullSyncCompletion() {
@@ -734,7 +734,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
    * items key never syncing to the account even though it is being used to encrypt synced items.
    * Until we can determine its cause, this corrective function will find any such keys and sync them.
    */
-  private syncUnsycnedItemsKeys(): void {
+  private syncUnsyncedItemsKeys(): void {
     if (!this.hasAccount()) {
       return
     }

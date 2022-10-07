@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.24.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.23.0...@standardnotes/models@1.24.0) (2022-10-06)
+
+### Features
+
+* experimental 005 operator ([#1753](https://github.com/standardnotes/app/issues/1753)) ([cbbe913](https://github.com/standardnotes/app/commit/cbbe913cd6eb694dd27997927bd5c45e8a64cc09))
+
 # [1.23.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.22.1...@standardnotes/models@1.23.0) (2022-10-05)
 
 ### Features

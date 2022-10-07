@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.70.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.70.4...@standardnotes/web@3.70.5) (2022-10-07)
+
+### Bug Fixes
+
+* add fallback for viewport height on mobile ([#1766](https://github.com/standardnotes/app/issues/1766)) ([1e3acd5](https://github.com/standardnotes/app/commit/1e3acd50e941051636ae2c92d143c649913b3c1a))
+
+## [3.70.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.70.3...@standardnotes/web@3.70.4) (2022-10-07)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.70.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.70.2...@standardnotes/web@3.70.3) (2022-10-06)
+
+### Bug Fixes
+
+* dark mode toggling ([1377846](https://github.com/standardnotes/app/commit/1377846f3f3a23a405c96b8a733d439947abfefe))
+* **mobile:** reenable bouncing in lists ([c13dd88](https://github.com/standardnotes/app/commit/c13dd883a41d21d46350676f350ac95b5ae5d5a6))
+
 ## [3.70.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.70.1...@standardnotes/web@3.70.2) (2022-10-06)
 
 ### Bug Fixes

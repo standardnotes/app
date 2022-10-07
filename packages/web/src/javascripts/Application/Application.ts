@@ -28,6 +28,7 @@ import { ArchiveManager, AutolockService, IOService, WebAlertService, ThemeManag
 import { MobileWebReceiver } from './MobileWebReceiver'
 import { AndroidBackHandler } from '@/NativeMobileWeb/AndroidBackHandler'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
+import { setViewportHeightWithFallback } from '@/App'
 
 type WebServices = {
   viewControllerManager: ViewControllerManager
@@ -233,8 +234,9 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     await this.lockApplicationAfterMobileEventIfApplicable()
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  async handleMobileGainingFocusEvent(): Promise<void> {}
+  async handleMobileGainingFocusEvent(): Promise<void> {
+    setViewportHeightWithFallback()
+  }
 
   async handleMobileLosingFocusEvent(): Promise<void> {
     if (this.protections.getMobileScreenshotPrivacyEnabled()) {
@@ -248,6 +250,8 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     if (this.protections.getMobileScreenshotPrivacyEnabled()) {
       this.mobileDevice().hideMobileInterfaceFromScreenshots()
     }
+
+    setViewportHeightWithFallback()
   }
 
   private async lockApplicationAfterMobileEventIfApplicable(): Promise<void> {

@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.41.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.40.2...@standardnotes/mobile@3.41.0) (2022-10-07)
+
+### Bug Fixes
+
+* **mobile:** disable landscape for iPhone ([a365c17](https://github.com/standardnotes/app/commit/a365c17c46f38e6d8cacade47542fd4ec625bc0d))
+
+### Features
+
+* **mobile:** delete account option in settings ([#1768](https://github.com/standardnotes/app/issues/1768)) ([7d21046](https://github.com/standardnotes/app/commit/7d21046b5189eb14a5957bda6fa788d743d8ebb6))
+
+## [3.40.2](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.40.1...@standardnotes/mobile@3.40.2) (2022-10-07)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.40.1](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.40.0...@standardnotes/mobile@3.40.1) (2022-10-07)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+# [3.40.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.39.12...@standardnotes/mobile@3.40.0) (2022-10-06)
+
+### Features
+
+* experimental 005 operator ([#1753](https://github.com/standardnotes/app/issues/1753)) ([cbbe913](https://github.com/standardnotes/app/commit/cbbe913cd6eb694dd27997927bd5c45e8a64cc09))
+
 ## [3.39.12](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.39.11...@standardnotes/mobile@3.39.12) (2022-10-06)
 
 **Note:** Version bump only for package @standardnotes/mobile

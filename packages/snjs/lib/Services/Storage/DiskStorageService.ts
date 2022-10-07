@@ -33,7 +33,7 @@ import {
  * key can decrypt wrapped storage.
  */
 export class DiskStorageService extends Services.AbstractService implements Services.StorageServiceInterface {
-  private encryptionProvider!: Encryption.EncryptionProvider
+  private encryptionProvider!: Encryption.EncryptionProviderInterface
   private storagePersistable = false
   private persistencePolicy!: Services.StoragePersistencePolicies
   private encryptionPolicy!: Services.StorageEncryptionPolicy
@@ -53,7 +53,7 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     void this.setEncryptionPolicy(Services.StorageEncryptionPolicy.Default, false)
   }
 
-  public provideEncryptionProvider(provider: Encryption.EncryptionProvider): void {
+  public provideEncryptionProvider(provider: Encryption.EncryptionProviderInterface): void {
     this.encryptionProvider = provider
   }
 

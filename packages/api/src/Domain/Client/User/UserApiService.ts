@@ -1,5 +1,4 @@
 import { RootKeyParamsInterface } from '@standardnotes/models'
-
 import { ErrorMessage } from '../../Error/ErrorMessage'
 import { ApiCallError } from '../../Error/ApiCallError'
 import { UserRegistrationResponse } from '../../Response/User/UserRegistrationResponse'

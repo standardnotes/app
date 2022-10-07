@@ -1,10 +1,6 @@
 import { WebApplication } from '@/Application/Application'
-import { FeatureStatus, FeatureIdentifier } from '@standardnotes/snjs'
 import { FunctionComponent, MouseEventHandler, useCallback } from 'react'
-import Icon from '@/Components/Icon/Icon'
-import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import Switch from '@/Components/Switch/Switch'
-import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 import { isMobileScreen } from '@/Utils'
 
 type Props = {
@@ -15,21 +11,14 @@ type Props = {
 }
 
 const FocusModeSwitch: FunctionComponent<Props> = ({ application, onToggle, onClose, isEnabled }) => {
-  const premiumModal = usePremiumModal()
-  const isEntitled = application.features.getFeatureStatus(FeatureIdentifier.FocusMode) === FeatureStatus.Entitled
-
   const toggle: MouseEventHandler = useCallback(
     (e) => {
       e.preventDefault()
 
-      if (isEntitled) {
-        onToggle(!isEnabled)
-        onClose()
-      } else {
-        premiumModal.activate('Focused Writing')
-      }
+      onToggle(!isEnabled)
+      onClose()
     },
-    [isEntitled, onToggle, isEnabled, onClose, premiumModal],
+    [onToggle, isEnabled, onClose],
   )
 
   return (
@@ -39,17 +28,8 @@ const FocusModeSwitch: FunctionComponent<Props> = ({ application, onToggle, onCl
         onClick={toggle}
         disabled={application.isNativeMobileWeb() || isMobileScreen()}
       >
-        <div className="flex items-center">
-          <Icon type="menu-close" className="mr-2 text-neutral group-disabled:text-passive-2" />
-          Focused Writing
-        </div>
-        {isEntitled ? (
-          <Switch className="px-0" checked={isEnabled} />
-        ) : (
-          <div title="Premium feature">
-            <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />
-          </div>
-        )}
+        <div className="flex items-center">Focused Writing</div>
+        <Switch className="px-0" checked={isEnabled} />
       </button>
     </>
   )

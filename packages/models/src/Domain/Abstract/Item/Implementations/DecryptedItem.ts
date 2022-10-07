@@ -24,11 +24,11 @@ export class DecryptedItem<C extends ItemContent = ItemContent>
 
   constructor(payload: DecryptedPayloadInterface<C>) {
     super(payload)
-    this.conflictOf = payload.content.conflict_of
 
     const userModVal = this.getAppDomainValueWithDefault(AppDataField.UserModifiedDate, this.serverUpdatedAt || 0)
-
     this.userModifiedDate = new Date(userModVal as number | Date)
+
+    this.conflictOf = payload.content.conflict_of
     this.updatedAtString = dateToLocalizedString(this.userModifiedDate)
     this.protected = useBoolean(this.payload.content.protected, false)
     this.trashed = useBoolean(this.payload.content.trashed, false)
