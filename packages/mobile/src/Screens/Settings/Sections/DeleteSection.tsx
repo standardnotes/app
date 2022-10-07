@@ -28,7 +28,7 @@ export const DeleteSection = () => {
 
     const result = await application!.user.deleteAccount()
     if (result.error) {
-      application!.alertService.alert('An error occurred while deleting your account. Please try again.')
+      void application!.alertService.alert('An error occurred while deleting your account. Please try again.')
     }
   }
 
