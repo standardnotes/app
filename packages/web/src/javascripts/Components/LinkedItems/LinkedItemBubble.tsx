@@ -14,6 +14,7 @@ type Props = {
   focusPreviousItem: () => void
   focusNextItem: () => void
   focusedId: string | undefined
+  setFocusedId: (id: string) => void
 }
 
 const LinkedItemBubble = ({
@@ -25,6 +26,7 @@ const LinkedItemBubble = ({
   focusPreviousItem,
   focusNextItem,
   focusedId,
+  setFocusedId,
 }: Props) => {
   const ref = useRef<HTMLButtonElement>(null)
 
@@ -34,6 +36,9 @@ const LinkedItemBubble = ({
   const [wasClicked, setWasClicked] = useState(false)
 
   const handleFocus = () => {
+    if (focusedId !== item.uuid) {
+      setFocusedId(item.uuid)
+    }
     setShowUnlinkButton(true)
   }
 

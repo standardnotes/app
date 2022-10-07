@@ -23,9 +23,10 @@ type Props = {
   linkingController: LinkingController
   focusPreviousItem: () => void
   focusedId: string | undefined
+  setFocusedId: (id: string) => void
 }
 
-const ItemLinkAutocompleteInput = ({ linkingController, focusPreviousItem, focusedId }: Props) => {
+const ItemLinkAutocompleteInput = ({ linkingController, focusPreviousItem, focusedId, setFocusedId }: Props) => {
   const {
     tags,
     getTitleForLinkedTag,
@@ -72,6 +73,9 @@ const ItemLinkAutocompleteInput = ({ linkingController, focusPreviousItem, focus
   }
 
   const handleFocus = () => {
+    if (focusedId !== ElementIds.ItemLinkAutocompleteInput) {
+      setFocusedId(ElementIds.ItemLinkAutocompleteInput)
+    }
     showDropdown()
   }
 

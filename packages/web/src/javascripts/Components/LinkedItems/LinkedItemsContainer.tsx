@@ -64,12 +64,14 @@ const LinkedItemsContainer = ({ linkingController }: Props) => {
           focusPreviousItem={focusPreviousItem}
           focusNextItem={focusNextItem}
           focusedId={focusedId}
+          setFocusedId={setFocusedId}
         />
       ))}
       <ItemLinkAutocompleteInput
         focusedId={focusedId}
         linkingController={linkingController}
         focusPreviousItem={focusPreviousItem}
+        setFocusedId={setFocusedId}
       />
     </div>
   )
