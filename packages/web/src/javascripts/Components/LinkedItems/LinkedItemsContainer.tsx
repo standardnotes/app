@@ -30,7 +30,10 @@ const LinkedItemsContainer = ({ linkingController }: Props) => {
 
     if (previousIndex > -1) {
       focusableItems[previousIndex][1].focus()
+      return true
     }
+
+    return false
   }, [focusedId])
 
   const focusNextItem = useCallback(() => {
@@ -40,7 +43,10 @@ const LinkedItemsContainer = ({ linkingController }: Props) => {
 
     if (nextIndex < focusableItems.length) {
       focusableItems[nextIndex][1].focus()
+      return true
     }
+
+    return false
   }, [focusedId])
 
   const activateItemAndTogglePane = useCallback(

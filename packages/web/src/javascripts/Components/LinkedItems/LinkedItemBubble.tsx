@@ -11,8 +11,8 @@ type Props = {
   getTitleForLinkedTag: LinkingController['getTitleForLinkedTag']
   activateItem: (item: LinkableItem) => Promise<void>
   unlinkItem: (item: LinkableItem) => void
-  focusPreviousItem: () => void
-  focusNextItem: () => void
+  focusPreviousItem: () => boolean
+  focusNextItem: () => boolean
   onFocus: () => void
 }
 
@@ -60,10 +60,14 @@ const LinkedItemBubble = forwardRef(
 
     const onKeyDown: KeyboardEventHandler = (event) => {
       switch (event.key) {
-        case KeyboardKey.Backspace:
-          focusPreviousItem()
+        case KeyboardKey.Backspace: {
+          const couldFocusPreviousItem = !focusPreviousItem()
+          if (couldFocusPreviousItem) {
+            focusNextItem()
+          }
           unlinkItem(item)
           break
+        }
         case KeyboardKey.Left:
           focusPreviousItem()
           break
