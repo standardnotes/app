@@ -68,7 +68,7 @@ const PanelSettingsSection = ({ application }: Props) => {
         checked={currentItemsPanelWidth > WidthForCollapsedPanel}
         onChange={toggleItemsListPanel}
       >
-        Show items list panel
+        Show list panel
       </MenuItem>
     </div>
   )
