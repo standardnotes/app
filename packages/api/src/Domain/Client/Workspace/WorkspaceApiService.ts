@@ -13,7 +13,12 @@ export class WorkspaceApiService implements WorkspaceApiServiceInterface {
     this.operationsInProgress = new Map()
   }
 
-  async createWorkspace(dto: { encryptedWorkspaceKey: string, encryptedPrivateKey: string, publicKey: string, workspaceName?: string }): Promise<WorkspaceCreationResponse> {
+  async createWorkspace(dto: {
+    encryptedWorkspaceKey: string
+    encryptedPrivateKey: string
+    publicKey: string
+    workspaceName?: string
+  }): Promise<WorkspaceCreationResponse> {
     if (this.operationsInProgress.get(WorkspaceApiOperations.Creating)) {
       throw new ApiCallError(ErrorMessage.GenericInProgress)
     }

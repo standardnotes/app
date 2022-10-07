@@ -20,7 +20,7 @@ describe('WorkspaceApiService', () => {
     const response = await createService().createWorkspace({
       encryptedPrivateKey: 'foo',
       encryptedWorkspaceKey: 'bar',
-      publicKey: 'buzz'
+      publicKey: 'buzz',
     })
 
     expect(response).toEqual({
@@ -31,7 +31,7 @@ describe('WorkspaceApiService', () => {
     expect(workspaceServer.createWorkspace).toHaveBeenCalledWith({
       encryptedPrivateKey: 'foo',
       encryptedWorkspaceKey: 'bar',
-      publicKey: 'buzz'
+      publicKey: 'buzz',
     })
   })
 
@@ -46,7 +46,7 @@ describe('WorkspaceApiService', () => {
       await service.createWorkspace({
         encryptedPrivateKey: 'foo',
         encryptedWorkspaceKey: 'bar',
-        publicKey: 'buzz'
+        publicKey: 'buzz',
       })
     } catch (caughtError) {
       error = caughtError
@@ -65,7 +65,7 @@ describe('WorkspaceApiService', () => {
       await createService().createWorkspace({
         encryptedPrivateKey: 'foo',
         encryptedWorkspaceKey: 'bar',
-        publicKey: 'buzz'
+        publicKey: 'buzz',
       })
     } catch (caughtError) {
       error = caughtError
