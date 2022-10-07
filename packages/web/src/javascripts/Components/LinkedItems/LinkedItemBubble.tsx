@@ -42,6 +42,7 @@ const LinkedItemBubble = forwardRef(
 
     const onBlur = () => {
       setShowUnlinkButton(false)
+      setWasClicked(false)
     }
 
     const onClick: MouseEventHandler = (event) => {
