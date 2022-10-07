@@ -263,20 +263,19 @@ export class LinkingController extends AbstractViewController {
 
     const activeItem = this.selectionController.firstSelectedItem
 
-    if (!activeItem) {
-      throw new Error('Cannot search if no item is selected.')
-    }
-
     const searchResults = this.application.items
       .getItems([ContentType.Note, ContentType.File, ContentType.Tag])
       .filter((item) => {
         const title = item instanceof SNTag ? this.application.items.getTagLongTitle(item) : item.title
         const matchesQuery = title?.toLowerCase().includes(searchQuery.toLowerCase())
-        const isNotActiveItem = activeItem.uuid !== item.uuid
+        const isNotActiveItem = activeItem?.uuid !== item.uuid
         return matchesQuery && isNotActiveItem
       })
 
     const isAlreadyLinked = (item: LinkableItem) => {
+      if (!activeItem) {
+        return false
+      }
       const isItemReferencedByActiveItem = this.application.items
         .itemsReferencingItem(item)
         .some((linkedItem) => linkedItem.uuid === activeItem.uuid)
