@@ -8,6 +8,7 @@ import { ApplicationEvent, FeatureIdentifier, FeatureStatus } from '@standardnot
 import React, { useCallback, useEffect, useState } from 'react'
 import { AuthSection } from './Sections/AuthSection'
 import { CompanySection } from './Sections/CompanySection'
+import { DeleteSection } from './Sections/DeleteSection'
 import { EncryptionSection } from './Sections/EncryptionSection'
 import { NewMobileSection } from './Sections/NewMobilePreview'
 import { OptionsSection } from './Sections/OptionsSection'
@@ -68,6 +69,7 @@ export const Settings = (props: Props) => {
       <ProtectionsSection title="Protections" protectionsAvailable={protectionsAvailable} />
       <EncryptionSection encryptionAvailable={!!encryptionAvailable} title={'Encryption Status'} />
       <CompanySection title="Standard Notes" />
+      {application.hasAccount() && <DeleteSection />}
     </Container>
   )
 }
