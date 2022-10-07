@@ -133,26 +133,26 @@ async function configureWindow(remoteBridge: CrossProcessBridge) {
   }
 }
 
-window.electronMainEvents.handleUpdateAvailable((event: IpcRendererEvent, data: any) => {
+window.electronMainEvents.handleUpdateAvailable(() => {
   window.webClient.updateAvailable()
 })
 
-window.electronMainEvents.handlePerformAutomatedBackup((event: IpcRendererEvent, data: any) => {
+window.electronMainEvents.handlePerformAutomatedBackup(() => {
   void window.device.downloadBackup()
 })
 
-window.electronMainEvents.handleFinishedSavingBackup((event: IpcRendererEvent, data: any) => {
+window.electronMainEvents.handleFinishedSavingBackup((_: IpcRendererEvent, data: any) => {
   window.webClient.didFinishBackup(data.success)
 })
 
-window.electronMainEvents.handleWindowBlurred((event: IpcRendererEvent, data: any) => {
+window.electronMainEvents.handleWindowBlurred(() => {
   window.webClient.windowLostFocus()
 })
 
-window.electronMainEvents.handleWindowFocused((event: IpcRendererEvent, data: any) => {
+window.electronMainEvents.handleWindowFocused(() => {
   window.webClient.windowGainedFocus()
 })
 
-window.electronMainEvents.handleInstallComponentComplete((event: IpcRendererEvent, data: any) => {
+window.electronMainEvents.handleInstallComponentComplete((_: IpcRendererEvent, data: any) => {
   window.webClient.onComponentInstallationComplete(data.component, undefined)
 })
