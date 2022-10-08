@@ -166,13 +166,6 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
     application.setPreference(PrefKey.DarkMode, false)
   }, [application, deactivateAnyNonLayerableTheme])
 
-  const toggleDarkMode = useCallback(() => {
-    if (!isDarkModeOn) {
-      deactivateAnyNonLayerableTheme()
-      application.setPreference(PrefKey.DarkMode, true)
-    }
-  }, [application, isDarkModeOn, deactivateAnyNonLayerableTheme])
-
   return (
     <div>
       {toggleableComponents.length > 0 && (
@@ -204,13 +197,6 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
       >
         <RadioIndicator checked={defaultThemeOn} className="mr-2" />
         Default
-      </button>
-      <button
-        className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-mobile-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none md:text-sm"
-        onClick={toggleDarkMode}
-      >
-        <RadioIndicator checked={isDarkModeOn} className="mr-2" />
-        Dark
       </button>
       {themes.map((theme) => (
         <ThemesMenuButton item={theme} application={application} key={theme.component?.uuid ?? theme.identifier} />
