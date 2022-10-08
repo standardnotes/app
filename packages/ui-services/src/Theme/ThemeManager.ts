@@ -16,6 +16,7 @@ import {
   StorageValueModes,
   FeatureStatus,
 } from '@standardnotes/services'
+import { FeatureIdentifier } from '@standardnotes/snjs'
 
 const CachedThemesKey = 'cachedThemes'
 const TimeBeforeApplyingColorScheme = 5
@@ -55,6 +56,7 @@ export class ThemeManager extends AbstractService {
         break
       }
       case ApplicationEvent.FeaturesUpdated: {
+        this.switchToFocusThemeIfDarkModePrefOn()
         this.handleFeaturesUpdated()
         break
       }
@@ -66,6 +68,18 @@ export class ThemeManager extends AbstractService {
         this.handlePreferencesChangeEvent()
         break
       }
+    }
+  }
+
+  private switchToFocusThemeIfDarkModePrefOn() {
+    const isDarkModeOn = this.application.getPreference(PrefKey.DarkMode, false)
+    const focusTheme = this.application.items
+      .getDisplayableComponents()
+      .find((theme) => theme.identifier === FeatureIdentifier.FocusedTheme)
+
+    if (isDarkModeOn && focusTheme) {
+      void this.application.mutator.toggleTheme(focusTheme)
+      void this.application.setPreference(PrefKey.DarkMode, false)
     }
   }
 
