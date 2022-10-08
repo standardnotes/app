@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.71.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.71.0...@standardnotes/web@3.71.1) (2022-10-08)
+
+### Bug Fixes
+
+* open upgrade page in new tab if user has account ([e7ca12b](https://github.com/standardnotes/app/commit/e7ca12babefc4b8867c9dc2c535a9da0d4f62a76))
+
 # [3.71.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.70.5...@standardnotes/web@3.71.0) (2022-10-07)
 
 ### Features
