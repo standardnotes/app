@@ -81,6 +81,19 @@ export class ThemeManager extends AbstractService {
       void this.application.mutator.toggleTheme(focusTheme)
       void this.application.setPreference(PrefKey.DarkMode, false)
     }
+
+    const autoLightThemeIdentifier = this.application.getPreference(
+      PrefKey.AutoDarkThemeIdentifier,
+      DefaultThemeIdentifier,
+    )
+    const autoDarkThemeIdentifier = this.application.getPreference(PrefKey.AutoDarkThemeIdentifier, DarkThemeIdentifier)
+
+    if (autoLightThemeIdentifier === DarkThemeIdentifier) {
+      void this.application.setPreference(PrefKey.AutoLightThemeIdentifier, FeatureIdentifier.FocusedTheme)
+    }
+    if (autoDarkThemeIdentifier === DarkThemeIdentifier) {
+      void this.application.setPreference(PrefKey.AutoDarkThemeIdentifier, FeatureIdentifier.FocusedTheme)
+    }
   }
 
   addAppEventObserverAfterSubclassesFinishConstructing() {
@@ -214,18 +227,14 @@ export class ThemeManager extends AbstractService {
   private setThemeAsPerColorScheme(prefersDarkColorScheme: boolean) {
     const preference = prefersDarkColorScheme ? PrefKey.AutoDarkThemeIdentifier : PrefKey.AutoLightThemeIdentifier
     const preferenceDefault =
-      preference === PrefKey.AutoDarkThemeIdentifier ? DarkThemeIdentifier : DefaultThemeIdentifier
+      preference === PrefKey.AutoDarkThemeIdentifier ? FeatureIdentifier.FocusedTheme : DefaultThemeIdentifier
 
     const themes = this.application.items
       .getDisplayableComponents()
       .filter((component) => component.isTheme()) as SNTheme[]
 
     const activeTheme = themes.find((theme) => theme.active && !theme.isLayerable())
-    const activeThemeIdentifier = activeTheme
-      ? activeTheme.identifier
-      : this.application.getPreference(PrefKey.DarkMode, false)
-      ? DarkThemeIdentifier
-      : DefaultThemeIdentifier
+    const activeThemeIdentifier = activeTheme ? activeTheme.identifier : DefaultThemeIdentifier
 
     const themeIdentifier = this.application.getPreference(preference, preferenceDefault) as string
 
@@ -239,9 +248,6 @@ export class ThemeManager extends AbstractService {
       if (themeIdentifier === DefaultThemeIdentifier) {
         toggleActiveTheme()
         void this.application.setPreference(PrefKey.DarkMode, false)
-      } else if (themeIdentifier === DarkThemeIdentifier) {
-        toggleActiveTheme()
-        void this.application.setPreference(PrefKey.DarkMode, true)
       } else {
         const theme = themes.find((theme) => theme.package_info.identifier === themeIdentifier)
         if (theme && !theme.active) {
