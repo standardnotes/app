@@ -44,6 +44,7 @@ import {
   SetOfflineFeaturesFunctionResponse,
   StorageKey,
 } from '@standardnotes/services'
+import { FeatureIdentifier, GetFeatures } from '@standardnotes/features'
 
 type GetOfflineSubscriptionDetailsResponse = OfflineSubscriptionEntitlements | ClientDisplayableError
 
@@ -371,6 +372,7 @@ export class SNFeaturesService
 
   public async didDownloadFeatures(features: FeaturesImports.FeatureDescription[]): Promise<void> {
     features = features
+      .concat(GetFeatures().filter((feature) => feature.identifier === FeatureIdentifier.FocusedTheme))
       .filter((feature) => !!FeaturesImports.FindNativeFeature(feature.identifier))
       .map((feature) => this.mapRemoteNativeFeatureToStaticFeature(feature))
 
@@ -449,6 +451,10 @@ export class SNFeaturesService
   }
 
   public getFeatureStatus(featureId: FeaturesImports.FeatureIdentifier): FeatureStatus {
+    if (featureId === FeatureIdentifier.FocusedTheme) {
+      return FeatureStatus.Entitled
+    }
+
     const isDeprecated = this.isFeatureDeprecated(featureId)
     if (isDeprecated) {
       if (this.hasPaidOnlineOrOfflineSubscription()) {
@@ -548,7 +554,10 @@ export class SNFeaturesService
 
     let hasChanges = false
     const now = new Date()
-    const expired = new Date(feature.expires_at || 0).getTime() < now.getTime()
+    const expired =
+      feature.identifier === FeatureIdentifier.FocusedTheme
+        ? false
+        : new Date(feature.expires_at || 0).getTime() < now.getTime()
 
     const existingItem = currentItems.find((item) => {
       if (item.content.package_info) {

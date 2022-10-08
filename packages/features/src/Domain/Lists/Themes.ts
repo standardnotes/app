@@ -70,7 +70,7 @@ export function themes(): ThemeFeatureDescription[] {
 
   const focus: ThemeFeatureDescription = FillThemeComponentDefaults({
     availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
-    name: 'Focus',
+    name: 'Dark',
     identifier: FeatureIdentifier.FocusedTheme,
     permission_name: PermissionName.FocusedTheme,
     description: 'For when you need to go in.',
