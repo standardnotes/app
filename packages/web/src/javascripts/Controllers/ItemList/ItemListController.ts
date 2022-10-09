@@ -228,7 +228,6 @@ export class ItemListController extends AbstractViewController implements Intern
   }
 
   public get activeControllerItem() {
-    console.log(this.application.itemControllerGroup.itemControllers)
     return this.getActiveItemController()?.item
   }
 
