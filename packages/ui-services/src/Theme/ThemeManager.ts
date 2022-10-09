@@ -21,7 +21,6 @@ import { FeatureIdentifier } from '@standardnotes/snjs'
 const CachedThemesKey = 'cachedThemes'
 const TimeBeforeApplyingColorScheme = 5
 const DefaultThemeIdentifier = 'Default'
-const DarkThemeIdentifier = 'Dark'
 
 export class ThemeManager extends AbstractService {
   private activeThemes: Uuid[] = []
@@ -56,7 +55,6 @@ export class ThemeManager extends AbstractService {
         break
       }
       case ApplicationEvent.FeaturesUpdated: {
-        this.switchToFocusThemeIfDarkModePrefOn()
         this.handleFeaturesUpdated()
         break
       }
@@ -68,31 +66,6 @@ export class ThemeManager extends AbstractService {
         this.handlePreferencesChangeEvent()
         break
       }
-    }
-  }
-
-  private switchToFocusThemeIfDarkModePrefOn() {
-    const isDarkModeOn = this.application.getPreference(PrefKey.DarkMode, false)
-    const focusTheme = this.application.items
-      .getDisplayableComponents()
-      .find((theme) => theme.identifier === FeatureIdentifier.FocusedTheme)
-
-    if (isDarkModeOn && focusTheme) {
-      void this.application.mutator.toggleTheme(focusTheme)
-      void this.application.setPreference(PrefKey.DarkMode, false)
-    }
-
-    const autoLightThemeIdentifier = this.application.getPreference(
-      PrefKey.AutoDarkThemeIdentifier,
-      DefaultThemeIdentifier,
-    )
-    const autoDarkThemeIdentifier = this.application.getPreference(PrefKey.AutoDarkThemeIdentifier, DarkThemeIdentifier)
-
-    if (autoLightThemeIdentifier === DarkThemeIdentifier) {
-      void this.application.setPreference(PrefKey.AutoLightThemeIdentifier, FeatureIdentifier.FocusedTheme)
-    }
-    if (autoDarkThemeIdentifier === DarkThemeIdentifier) {
-      void this.application.setPreference(PrefKey.AutoDarkThemeIdentifier, FeatureIdentifier.FocusedTheme)
     }
   }
 
