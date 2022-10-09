@@ -74,19 +74,6 @@ export class LinkingController extends AbstractViewController {
         )
       }),
     )
-
-    //this.disposers.push(
-    //  application.streamItems(ContentType.File, () => {
-    //    this.reloadLinkedFiles()
-    //  }),
-    //  application.streamItems(ContentType.Tag, () => {
-    //    this.reloadLinkedTags()
-    //  }),
-    //  application.streamItems(ContentType.Note, () => {
-    //    this.reloadLinkedNotes()
-    //    this.reloadNotesLinkingToItem()
-    //  }),
-    //)
   }
 
   public setServicesPostConstruction(
@@ -97,6 +84,19 @@ export class LinkingController extends AbstractViewController {
     this.itemListController = itemListController
     this.filesController = filesController
     this.subscriptionController = subscriptionController
+
+    this.disposers.push(
+      this.application.streamItems(ContentType.File, () => {
+        this.reloadLinkedFiles()
+      }),
+      this.application.streamItems(ContentType.Tag, () => {
+        this.reloadLinkedTags()
+      }),
+      this.application.streamItems(ContentType.Note, () => {
+        this.reloadLinkedNotes()
+        this.reloadNotesLinkingToItem()
+      }),
+    )
   }
 
   get isEntitledToNoteLinking() {
