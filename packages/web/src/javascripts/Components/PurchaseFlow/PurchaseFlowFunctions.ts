@@ -25,7 +25,8 @@ export const loadPurchaseFlowUrl = async (application: WebApplication): Promise<
     if (application.isNativeMobileWeb()) {
       application.mobileDevice().openUrl(finalUrl)
     } else {
-      window.location.assign(finalUrl)
+      const windowProxy = window.open('', '_blank')
+      ;(windowProxy as WindowProxy).location = finalUrl
     }
 
     return true

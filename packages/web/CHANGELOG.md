@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.71.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.71.0...@standardnotes/web@3.71.1) (2022-10-08)
+
+### Bug Fixes
+
+* open upgrade page in new tab if user has account ([e7ca12b](https://github.com/standardnotes/app/commit/e7ca12babefc4b8867c9dc2c535a9da0d4f62a76))
+
+# [3.71.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.70.5...@standardnotes/web@3.71.0) (2022-10-07)
+
+### Features
+
+* change quick settings menu layout ([#1770](https://github.com/standardnotes/app/issues/1770)) ([59db63f](https://github.com/standardnotes/app/commit/59db63f05230168b20d6b2db2eaf1a4b99c02f50))
+* open purchase flow when clicking upgrade cta with no account ([#1771](https://github.com/standardnotes/app/issues/1771)) ([734b986](https://github.com/standardnotes/app/commit/734b986294380954c7eb3ceac42d76ef17b27ca1))
+
 ## [3.70.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.70.4...@standardnotes/web@3.70.5) (2022-10-07)
 
 ### Bug Fixes

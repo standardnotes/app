@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.23.199](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.198...@standardnotes/desktop@3.23.199) (2022-10-08)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.23.198](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.197...@standardnotes/desktop@3.23.198) (2022-10-07)
+
+### Bug Fixes
+
+* **desktop:** use different method to send messages across main and render without node integration in preload ([#1769](https://github.com/standardnotes/app/issues/1769)) ([20226c3](https://github.com/standardnotes/app/commit/20226c326945ad9dc524f6dcbfc1c1274befb652))
+
 ## [3.23.197](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.196...@standardnotes/desktop@3.23.197) (2022-10-07)
 
 **Note:** Version bump only for package @standardnotes/desktop
