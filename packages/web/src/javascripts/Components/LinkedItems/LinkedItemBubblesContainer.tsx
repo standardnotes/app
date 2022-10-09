@@ -14,6 +14,7 @@ const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
   const { toggleAppPane } = useResponsiveAppPane()
   const {
     allLinkedItems,
+    notesLinkingToItem,
     unlinkItemFromSelectedItem: unlinkItem,
     getTitleForLinkedTag,
     getLinkedItemIcon: getItemIcon,
@@ -53,7 +54,7 @@ const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
 
   return (
     <div className="mt-2 hidden min-w-80 max-w-full flex-wrap items-center gap-2 bg-transparent md:-mr-2 md:flex">
-      {allLinkedItems.map((item) => (
+      {allLinkedItems.concat(notesLinkingToItem).map((item) => (
         <LinkedItemBubble
           item={item}
           key={item.uuid}
