@@ -5,6 +5,7 @@ import LinkedItemBubble from './LinkedItemBubble'
 import { useCallback, useState } from 'react'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { ElementIds } from '@/Constants/ElementIDs'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 
 type Props = {
   linkingController: LinkingController
@@ -53,7 +54,12 @@ const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
   )
 
   return (
-    <div className="mt-2 hidden min-w-80 max-w-full flex-wrap items-center gap-2 bg-transparent md:-mr-2 md:flex">
+    <div
+      className={classNames(
+        'hidden min-w-80 max-w-full flex-wrap items-center gap-2 bg-transparent md:-mr-2 md:flex',
+        allLinkedItems.length || notesLinkingToItem.length ? 'mt-1' : 'mt-0.5',
+      )}
+    >
       {allLinkedItems.concat(notesLinkingToItem).map((item) => (
         <LinkedItemBubble
           item={item}
