@@ -41,7 +41,7 @@ import IndicatorCircle from '../IndicatorCircle/IndicatorCircle'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import AutoresizingNoteViewTextarea from './AutoresizingTextarea'
 import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
-import LinkedItemsContainer from '../LinkedItems/LinkedItemsContainer'
+import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
 import NoteStatusIndicator, { NoteStatus } from './NoteStatusIndicator'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import LinkedItemsButton from '../LinkedItems/LinkedItemsButton'
@@ -1035,7 +1035,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
               )}
             </div>
             {!this.state.shouldStickyHeader && (
-              <LinkedItemsContainer linkingController={this.viewControllerManager.linkingController} />
+              <LinkedItemBubblesContainer linkingController={this.viewControllerManager.linkingController} />
             )}
           </div>
         )}

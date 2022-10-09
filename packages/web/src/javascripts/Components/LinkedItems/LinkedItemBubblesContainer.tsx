@@ -10,7 +10,7 @@ type Props = {
   linkingController: LinkingController
 }
 
-const LinkedItemsContainer = ({ linkingController }: Props) => {
+const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
   const { toggleAppPane } = useResponsiveAppPane()
   const {
     allLinkedItems,
@@ -77,4 +77,4 @@ const LinkedItemsContainer = ({ linkingController }: Props) => {
   )
 }
 
-export default observer(LinkedItemsContainer)
+export default observer(LinkedItemBubblesContainer)

@@ -6,7 +6,7 @@ import FilePreview from '@/Components/FilePreview/FilePreview'
 import { FileViewProps } from './FileViewProps'
 import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
 import LinkedItemsButton from '../LinkedItems/LinkedItemsButton'
-import LinkedItemsContainer from '../LinkedItems/LinkedItemsContainer'
+import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
 import Icon from '../Icon/Icon'
 import Popover from '../Popover/Popover'
 import FilePreviewInfoPanel from '../FilePreview/FilePreviewInfoPanel'
@@ -93,7 +93,7 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
               />
             </div>
           </div>
-          <LinkedItemsContainer linkingController={viewControllerManager.linkingController} />
+          <LinkedItemBubblesContainer linkingController={viewControllerManager.linkingController} />
         </div>
       </div>
       <div className="flex min-h-0 flex-grow flex-col">
