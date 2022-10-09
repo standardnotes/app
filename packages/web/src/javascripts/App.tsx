@@ -47,12 +47,12 @@ let initialCorrectViewportHeight: number | null = null
 export const setViewportHeightWithFallback = (isOrientationChange = false) => {
   const newValue = visualViewport && visualViewport.height > 0 ? visualViewport.height : window.innerHeight
 
-  if (!newValue) {
-    document.documentElement.style.setProperty('--viewport-height', '100vh')
+  if (initialCorrectViewportHeight && newValue < initialCorrectViewportHeight && !isOrientationChange) {
     return
   }
 
-  if (initialCorrectViewportHeight && newValue < initialCorrectViewportHeight && !isOrientationChange) {
+  if (!newValue) {
+    document.documentElement.style.setProperty('--viewport-height', '100vh')
     return
   }
 
