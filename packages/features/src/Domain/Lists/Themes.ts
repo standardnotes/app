@@ -68,10 +68,10 @@ export function themes(): ThemeFeatureDescription[] {
     },
   })
 
-  const focus: ThemeFeatureDescription = FillThemeComponentDefaults({
-    availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
+  const dark: ThemeFeatureDescription = FillThemeComponentDefaults({
+    availableInSubscriptions: [],
     name: 'Dark',
-    identifier: FeatureIdentifier.FocusedTheme,
+    identifier: FeatureIdentifier.DarkTheme,
     permission_name: PermissionName.FocusedTheme,
     description: 'For when you need to go in.',
     thumbnail_url: 'https://s3.amazonaws.com/standard-notes/screenshots/models/themes/focus-with-mobile.jpg',
@@ -109,5 +109,5 @@ export function themes(): ThemeFeatureDescription[] {
     description: 'A smart theme that minimizes the tags and notes panels when they are not in use.',
   })
 
-  return [midnight, futura, solarizedDark, autobiography, focus, titanium, dynamic]
+  return [midnight, futura, solarizedDark, autobiography, dark, titanium, dynamic]
 }

@@ -200,7 +200,7 @@ export class ThemeManager extends AbstractService {
   private setThemeAsPerColorScheme(prefersDarkColorScheme: boolean) {
     const preference = prefersDarkColorScheme ? PrefKey.AutoDarkThemeIdentifier : PrefKey.AutoLightThemeIdentifier
     const preferenceDefault =
-      preference === PrefKey.AutoDarkThemeIdentifier ? FeatureIdentifier.FocusedTheme : DefaultThemeIdentifier
+      preference === PrefKey.AutoDarkThemeIdentifier ? FeatureIdentifier.DarkTheme : DefaultThemeIdentifier
 
     const themes = this.application.items
       .getDisplayableComponents()

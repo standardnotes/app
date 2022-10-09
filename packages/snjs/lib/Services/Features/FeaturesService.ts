@@ -372,7 +372,7 @@ export class SNFeaturesService
 
   public async didDownloadFeatures(features: FeaturesImports.FeatureDescription[]): Promise<void> {
     features = features
-      .concat(GetFeatures().filter((feature) => feature.identifier === FeatureIdentifier.FocusedTheme))
+      .concat(GetFeatures().filter((feature) => feature.identifier === FeatureIdentifier.DarkTheme))
       .filter((feature) => !!FeaturesImports.FindNativeFeature(feature.identifier))
       .map((feature) => this.mapRemoteNativeFeatureToStaticFeature(feature))
 
@@ -451,7 +451,7 @@ export class SNFeaturesService
   }
 
   public isFreeFeature(featureId: FeaturesImports.FeatureIdentifier) {
-    return [FeatureIdentifier.FocusedTheme].includes(featureId)
+    return [FeatureIdentifier.DarkTheme].includes(featureId)
   }
 
   public getFeatureStatus(featureId: FeaturesImports.FeatureIdentifier): FeatureStatus {

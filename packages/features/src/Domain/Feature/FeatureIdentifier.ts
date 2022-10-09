@@ -21,7 +21,7 @@ export enum FeatureIdentifier {
 
   AutobiographyTheme = 'org.standardnotes.theme-autobiography',
   DynamicTheme = 'org.standardnotes.theme-dynamic',
-  FocusedTheme = 'org.standardnotes.theme-focus',
+  DarkTheme = 'org.standardnotes.theme-focus',
   FocusMode = 'org.standardnotes.focus-mode',
   FuturaTheme = 'org.standardnotes.theme-futura',
   MidnightTheme = 'org.standardnotes.theme-midnight',
