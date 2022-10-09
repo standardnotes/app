@@ -271,14 +271,15 @@ export class LinkingController extends AbstractViewController {
       }
     }
 
-    const searchResults = this.application.items
-      .getItems([ContentType.Note, ContentType.File, ContentType.Tag])
-      .filter((item) => {
+    const searchResults = naturalSort(
+      this.application.items.getItems([ContentType.Note, ContentType.File, ContentType.Tag]).filter((item) => {
         const title = item instanceof SNTag ? this.application.items.getTagLongTitle(item) : item.title
         const matchesQuery = title?.toLowerCase().includes(searchQuery.toLowerCase())
         const isNotActiveItem = this.activeItem?.uuid !== item.uuid
         return matchesQuery && isNotActiveItem
-      })
+      }),
+      'title',
+    )
 
     const isAlreadyLinked = (item: LinkableItem) => {
       if (!this.activeItem) {
@@ -308,11 +309,8 @@ export class LinkingController extends AbstractViewController {
       return 0
     }
 
-    const unlinkedResults = naturalSort(
-      searchResults.filter((item) => !isAlreadyLinked(item)),
-      'title',
-    ).sort(prioritizeTagResult)
-    const linkedResults = naturalSort(searchResults.filter(isAlreadyLinked), 'title')
+    const unlinkedResults = searchResults.filter((item) => !isAlreadyLinked(item)).sort(prioritizeTagResult)
+    const linkedResults = searchResults.filter(isAlreadyLinked)
     const isResultExistingTag = (result: LinkableItem) =>
       result.content_type === ContentType.Tag && result.title === searchQuery
     const shouldShowCreateTag = !linkedResults.find(isResultExistingTag) && !unlinkedResults.find(isResultExistingTag)
