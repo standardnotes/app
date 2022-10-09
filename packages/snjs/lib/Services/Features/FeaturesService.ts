@@ -450,8 +450,12 @@ export class SNFeaturesService
     return FeaturesImports.FindNativeFeature(featureId)?.deprecated === true
   }
 
+  public isFreeFeature(featureId: FeaturesImports.FeatureIdentifier) {
+    return [FeatureIdentifier.FocusedTheme].includes(featureId)
+  }
+
   public getFeatureStatus(featureId: FeaturesImports.FeatureIdentifier): FeatureStatus {
-    if (featureId === FeatureIdentifier.FocusedTheme) {
+    if (this.isFreeFeature(featureId)) {
       return FeatureStatus.Entitled
     }
 
@@ -554,10 +558,9 @@ export class SNFeaturesService
 
     let hasChanges = false
     const now = new Date()
-    const expired =
-      feature.identifier === FeatureIdentifier.FocusedTheme
-        ? false
-        : new Date(feature.expires_at || 0).getTime() < now.getTime()
+    const expired = this.isFreeFeature(feature.identifier)
+      ? false
+      : new Date(feature.expires_at || 0).getTime() < now.getTime()
 
     const existingItem = currentItems.find((item) => {
       if (item.content.package_info) {
