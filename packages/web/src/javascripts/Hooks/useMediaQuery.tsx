@@ -7,6 +7,7 @@ export const MediaQueryBreakpoints = {
   lg: '(min-width: 1024px)',
   xl: '(min-width: 1280px)',
   '2xl': '(min-width:  1536px)',
+  pointerFine: '(pointer: fine)',
 } as const
 
 export const useMediaQuery = (mediaQuery: string) => {

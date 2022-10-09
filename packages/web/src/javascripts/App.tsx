@@ -35,26 +35,28 @@ import { WebOrDesktopDevice } from './Application/Device/WebOrDesktopDevice'
 import { WebApplication } from './Application/Application'
 import { createRoot, Root } from 'react-dom/client'
 import { ElementIds } from './Constants/ElementIDs'
+import { MediaQueryBreakpoints } from './Hooks/useMediaQuery'
 
 let keyCount = 0
 const getKey = () => {
   return keyCount++
 }
 
-export const setViewportHeightWithFallback = () => {
-  const currentValue = parseInt(document.documentElement.style.getPropertyValue('--viewport-height'))
+let initialCorrectViewportHeight: number | null = null
+
+export const setViewportHeightWithFallback = (isOrientationChange = false) => {
   const newValue = visualViewport && visualViewport.height > 0 ? visualViewport.height : window.innerHeight
-  const supportsSVHUnit = CSS.supports('height', '1svh')
 
-  if (currentValue && !newValue) {
+  if (initialCorrectViewportHeight && newValue < initialCorrectViewportHeight && !isOrientationChange) {
     return
   }
 
-  if (!currentValue && !newValue) {
-    document.documentElement.style.setProperty('--viewport-height', supportsSVHUnit ? '100svh' : '100vh')
+  if (!newValue) {
+    document.documentElement.style.setProperty('--viewport-height', '100vh')
     return
   }
 
+  initialCorrectViewportHeight = newValue
   document.documentElement.style.setProperty('--viewport-height', `${newValue}px`)
 }
 
@@ -78,11 +80,35 @@ const startApplication: StartApplication = async function startApplication(
   SNLog.onError = console.error
   let root: Root
 
-  const onDestroy = () => {
-    if (device.environment === Environment.Desktop) {
-      window.removeEventListener('resize', setViewportHeightWithFallback)
+  const isDesktop =
+    device.environment === Environment.Desktop ||
+    (matchMedia(MediaQueryBreakpoints.md).matches && matchMedia(MediaQueryBreakpoints.pointerFine))
+
+  const orientationChangeHandler = () => {
+    setViewportHeightWithFallback(true)
+  }
+
+  const resizeHandler = () => {
+    setViewportHeightWithFallback(false)
+  }
+
+  const setupViewportHeightListeners = () => {
+    if (!isDesktop) {
+      setViewportHeightWithFallback()
+      window.addEventListener('orientationchange', orientationChangeHandler)
+      window.addEventListener('resize', resizeHandler)
     }
-    window.removeEventListener('orientationchange', setViewportHeightWithFallback)
+  }
+
+  const removeViewportHeightListeners = () => {
+    if (!isDesktop) {
+      window.removeEventListener('orientationchange', orientationChangeHandler)
+      window.removeEventListener('resize', resizeHandler)
+    }
+  }
+
+  const onDestroy = () => {
+    removeViewportHeightListeners()
     const rootElement = document.getElementById(ElementIds.RootId) as HTMLElement
     root.unmount()
     rootElement.remove()
@@ -97,11 +123,7 @@ const startApplication: StartApplication = async function startApplication(
 
     disableIosTextFieldZoom()
 
-    setViewportHeightWithFallback()
-    window.addEventListener('orientationchange', setViewportHeightWithFallback)
-    if (device.environment === Environment.Desktop) {
-      window.addEventListener('resize', setViewportHeightWithFallback)
-    }
+    setupViewportHeightListeners()
 
     setDefaultMonospaceFont(device.platform)
 
