@@ -173,9 +173,7 @@ export class LinkingController extends AbstractViewController {
       )
       const className = `text-accessory-tint-${tint}`
       return [icon, className]
-    }
-
-    if (item instanceof FileItem) {
+    } else if (item instanceof FileItem) {
       const icon = this.application.iconsController.getIconForFileType(item.mimeType)
       return [icon, 'text-info']
     }
@@ -189,17 +187,13 @@ export class LinkingController extends AbstractViewController {
     if (item instanceof SNTag) {
       await this.navigationController.setSelectedTag(item)
       return AppPaneId.Items
-    }
-
-    if (item instanceof SNNote) {
+    } else if (item instanceof SNNote) {
       await this.navigationController.selectHomeNavigationView()
       const { didSelect } = await this.selectionController.selectItem(item.uuid, true)
       if (didSelect) {
         return AppPaneId.Editor
       }
-    }
-
-    if (item instanceof FileItem) {
+    } else if (item instanceof FileItem) {
       await this.filesController.handleFileAction({
         type: PopoverFileItemActionType.PreviewFile,
         payload: {
@@ -235,9 +229,7 @@ export class LinkingController extends AbstractViewController {
       } else if (itemToLink instanceof SNNote && this.isEntitledToNoteLinking) {
         await this.application.items.linkNoteToNote(selectedItem, itemToLink)
       }
-    }
-
-    if (selectedItem instanceof FileItem) {
+    } else if (selectedItem instanceof FileItem) {
       if (itemToLink instanceof SNNote) {
         await this.application.items.associateFileWithNote(selectedItem, itemToLink)
       } else if (itemToLink instanceof FileItem) {
