@@ -44,7 +44,7 @@ import {
   SetOfflineFeaturesFunctionResponse,
   StorageKey,
 } from '@standardnotes/services'
-import { FeatureIdentifier, GetFeatures } from '@standardnotes/features'
+import { FeatureIdentifier } from '@standardnotes/features'
 
 type GetOfflineSubscriptionDetailsResponse = OfflineSubscriptionEntitlements | ClientDisplayableError
 
@@ -146,22 +146,24 @@ export class SNFeaturesService
 
   override async handleApplicationStage(stage: ApplicationStage): Promise<void> {
     await super.handleApplicationStage(stage)
+
     if (stage === ApplicationStage.FullSyncCompleted_13) {
+      void this.addDarkTheme()
+
       if (!this.hasOnlineSubscription()) {
         const offlineRepo = this.getOfflineRepo()
         if (offlineRepo) {
           void this.downloadOfflineFeatures(offlineRepo)
         }
       }
-      void this.addDarkTheme()
     }
   }
 
   private async addDarkTheme() {
-    const darkThemeFeature = GetFeatures().find((feature) => feature.identifier === FeatureIdentifier.DarkTheme)
+    const darkThemeFeature = FeaturesImports.FindNativeFeature(FeatureIdentifier.DarkTheme)
 
     if (darkThemeFeature) {
-      void this.didDownloadFeatures([darkThemeFeature])
+      await this.mapRemoteNativeFeaturesToItems([darkThemeFeature])
     }
   }
 
@@ -376,7 +378,7 @@ export class SNFeaturesService
     if (!arraysEqual(this.roles, roles)) {
       void this.notifyEvent(FeaturesEvent.UserRolesChanged)
     }
-    await this.storageService.setValue(StorageKey.UserRoles, this.roles)
+    this.storageService.setValue(StorageKey.UserRoles, this.roles)
   }
 
   public async didDownloadFeatures(features: FeaturesImports.FeatureDescription[]): Promise<void> {
