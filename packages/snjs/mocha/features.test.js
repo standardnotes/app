@@ -83,11 +83,11 @@ describe('features', () => {
     it('should fetch user features and create items for features with content type', async () => {
       expect(application.apiService.getUserFeatures.callCount).to.equal(1)
       expect(application.itemManager.createItem.callCount).to.equal(2)
+
       const themeItems = application.items.getItems(ContentType.Theme)
-      const editorItems = application.items.getItems(ContentType.Component)
-      expect(themeItems).to.have.lengthOf(1)
-      expect(editorItems).to.have.lengthOf(1)
-      expect(themeItems[0].content).to.containSubset(
+      const systemThemeCount = 1
+      expect(themeItems).to.have.lengthOf(1 + systemThemeCount)
+      expect(themeItems[1].content).to.containSubset(
         JSON.parse(
           JSON.stringify({
             name: midnightThemeFeature.name,
@@ -96,6 +96,9 @@ describe('features', () => {
           }),
         ),
       )
+
+      const editorItems = application.items.getItems(ContentType.Component)
+      expect(editorItems).to.have.lengthOf(1)
       expect(editorItems[0].content).to.containSubset(
         JSON.parse(
           JSON.stringify({
