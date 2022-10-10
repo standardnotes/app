@@ -69,7 +69,7 @@ export function themes(): ThemeFeatureDescription[] {
   })
 
   const dark: ThemeFeatureDescription = FillThemeComponentDefaults({
-    availableInSubscriptions: [],
+    availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
     name: 'Dark',
     identifier: FeatureIdentifier.DarkTheme,
     permission_name: PermissionName.FocusedTheme,
