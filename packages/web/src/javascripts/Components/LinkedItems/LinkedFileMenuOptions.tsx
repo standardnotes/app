@@ -11,9 +11,10 @@ type Props = {
   file: FileItem
   closeMenu: () => void
   handleFileAction: FilesController['handleFileAction']
+  setIsRenamingFile: (set: boolean) => void
 }
 
-const LinkedFileMenuOptions = ({ file, closeMenu, handleFileAction }: Props) => {
+const LinkedFileMenuOptions = ({ file, closeMenu, handleFileAction, setIsRenamingFile }: Props) => {
   const [isFileProtected, setIsFileProtected] = useState(file.protected)
 
   return (
@@ -67,15 +68,16 @@ const LinkedFileMenuOptions = ({ file, closeMenu, handleFileAction }: Props) => 
         <Icon type="download" className="mr-2 text-neutral" />
         Download
       </button>
-      {/* <button
+      <button
         className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
         onClick={() => {
           setIsRenamingFile(true)
+          closeMenu()
         }}
       >
         <Icon type="pencil" className="mr-2 text-neutral" />
         Rename
-      </button> */}
+      </button>
       <button
         className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
         onClick={() => {

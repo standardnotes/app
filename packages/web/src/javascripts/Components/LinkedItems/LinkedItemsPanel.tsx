@@ -4,8 +4,10 @@ import { classNames } from '@/Utils/ConcatenateClassNames'
 import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { FileItem } from '@standardnotes/snjs'
+import { KeyboardKey } from '@standardnotes/ui-services'
 import { observer } from 'mobx-react-lite'
 import { useEffect, useRef, useState } from 'react'
+import { PopoverFileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
 import ClearInputButton from '../ClearInputButton/ClearInputButton'
 import Icon from '../Icon/Icon'
 import DecoratedInput from '../Input/DecoratedInput'
@@ -39,23 +41,65 @@ const LinkedItemsSectionItem = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const toggleMenu = () => setIsMenuOpen((open) => !open)
 
+  const [isRenamingFile, setIsRenamingFile] = useState(false)
+
+  const [icon, className] = getItemIcon(item)
+  const title = item.title ?? ''
+
+  const renameFile = async (name: string) => {
+    if (!(item instanceof FileItem)) {
+      return
+    }
+    await handleFileAction({
+      type: PopoverFileItemActionType.RenameFile,
+      payload: {
+        file: item,
+        name: name,
+      },
+    })
+    setIsRenamingFile(false)
+  }
+
   return (
     <div className="relative flex items-center justify-between">
-      <button
-        className="flex flex-grow items-center justify-between gap-4 py-2 pl-3 pr-12 text-sm hover:bg-info-backdrop focus:bg-info-backdrop"
-        onClick={() => activateItem(item)}
-        onContextMenu={(event) => {
-          event.preventDefault()
-          toggleMenu()
-        }}
-      >
-        <LinkedItemMeta
-          item={item}
-          getItemIcon={getItemIcon}
-          getTitleForLinkedTag={getTitleForLinkedTag}
-          searchQuery={searchQuery}
-        />
-      </button>
+      {isRenamingFile && item instanceof FileItem ? (
+        <div className="flex flex-grow items-center gap-4 py-2 pl-3 pr-12">
+          <Icon type={icon} className={classNames('flex-shrink-0', className)} />
+          <input
+            className="min-w-0 flex-grow text-sm"
+            defaultValue={title}
+            onKeyDown={(event) => {
+              if (event.key === KeyboardKey.Escape) {
+                setIsRenamingFile(false)
+              } else if (event.key === KeyboardKey.Enter) {
+                const newTitle = event.currentTarget.value
+                void renameFile(newTitle)
+              }
+            }}
+            ref={(node) => {
+              if (node) {
+                node.focus()
+              }
+            }}
+          />
+        </div>
+      ) : (
+        <button
+          className="flex flex-grow items-center justify-between gap-4 py-2 pl-3 pr-12 text-sm hover:bg-info-backdrop focus:bg-info-backdrop"
+          onClick={() => activateItem(item)}
+          onContextMenu={(event) => {
+            event.preventDefault()
+            toggleMenu()
+          }}
+        >
+          <LinkedItemMeta
+            item={item}
+            getItemIcon={getItemIcon}
+            getTitleForLinkedTag={getTitleForLinkedTag}
+            searchQuery={searchQuery}
+          />
+        </button>
+      )}
       <button
         className="absolute right-3 top-1/2 h-7 w-7 -translate-y-1/2 cursor-pointer rounded-full border-0 bg-transparent p-1 hover:bg-contrast"
         onClick={toggleMenu}
@@ -82,7 +126,12 @@ const LinkedItemsSectionItem = ({
           Unlink
         </MenuItem>
         {item instanceof FileItem && (
-          <LinkedFileMenuOptions file={item} closeMenu={toggleMenu} handleFileAction={handleFileAction} />
+          <LinkedFileMenuOptions
+            file={item}
+            closeMenu={toggleMenu}
+            handleFileAction={handleFileAction}
+            setIsRenamingFile={setIsRenamingFile}
+          />
         )}
         <HorizontalSeparator classes="my-2" />
         <div className="mt-1 px-3 py-1 text-xs font-medium text-neutral">
