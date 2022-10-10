@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
+import { BaseItemCounts } from './lib/Applications.js'
 import * as Factory from './lib/factory.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -11,7 +12,6 @@ describe('storage manager', function () {
    * Base keys are `storage`, `snjs_version`, and `keychain`
    */
   const BASE_KEY_COUNT = 3
-  const BASE_ITEM_COUNT = 2 /** Default items key, user preferences */
 
   beforeEach(async function () {
     localStorage.clear()
@@ -37,7 +37,7 @@ describe('storage manager', function () {
     const payload = Factory.createNotePayload()
     await this.application.diskStorageService.savePayload(payload)
     const payloads = await this.application.diskStorageService.getAllRawPayloads()
-    expect(payloads.length).to.equal(BASE_ITEM_COUNT + 1)
+    expect(payloads.length).to.equal(BaseItemCounts.DefaultItems + 1)
   })
 
   it('should clear values', async function () {
@@ -71,7 +71,7 @@ describe('storage manager', function () {
     const value = 'bar'
     await this.application.diskStorageService.setValue(key, value)
     /** Items are stored in local storage */
-    expect(Object.keys(localStorage).length).to.equal(this.expectedKeyCount + BASE_ITEM_COUNT)
+    expect(Object.keys(localStorage).length).to.equal(this.expectedKeyCount + BaseItemCounts.DefaultItems)
     const retrievedValue = await this.application.diskStorageService.getValue(key)
     expect(retrievedValue).to.equal(value)
   })
@@ -297,8 +297,8 @@ describe('storage manager', function () {
     })
 
     await Factory.createSyncedNote(this.application)
-    expect(await Factory.storagePayloadCount(this.application)).to.equal(BASE_ITEM_COUNT + 1)
+    expect(await Factory.storagePayloadCount(this.application)).to.equal(BaseItemCounts.DefaultItems + 1)
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
-    expect(await Factory.storagePayloadCount(this.application)).to.equal(BASE_ITEM_COUNT)
+    expect(await Factory.storagePayloadCount(this.application)).to.equal(BaseItemCounts.DefaultItems)
   })
 })

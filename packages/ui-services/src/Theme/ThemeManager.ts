@@ -16,11 +16,11 @@ import {
   StorageValueModes,
   FeatureStatus,
 } from '@standardnotes/services'
+import { FeatureIdentifier } from '@standardnotes/snjs'
 
 const CachedThemesKey = 'cachedThemes'
 const TimeBeforeApplyingColorScheme = 5
 const DefaultThemeIdentifier = 'Default'
-const DarkThemeIdentifier = 'Dark'
 
 export class ThemeManager extends AbstractService {
   private activeThemes: Uuid[] = []
@@ -200,18 +200,14 @@ export class ThemeManager extends AbstractService {
   private setThemeAsPerColorScheme(prefersDarkColorScheme: boolean) {
     const preference = prefersDarkColorScheme ? PrefKey.AutoDarkThemeIdentifier : PrefKey.AutoLightThemeIdentifier
     const preferenceDefault =
-      preference === PrefKey.AutoDarkThemeIdentifier ? DarkThemeIdentifier : DefaultThemeIdentifier
+      preference === PrefKey.AutoDarkThemeIdentifier ? FeatureIdentifier.DarkTheme : DefaultThemeIdentifier
 
     const themes = this.application.items
       .getDisplayableComponents()
       .filter((component) => component.isTheme()) as SNTheme[]
 
     const activeTheme = themes.find((theme) => theme.active && !theme.isLayerable())
-    const activeThemeIdentifier = activeTheme
-      ? activeTheme.identifier
-      : this.application.getPreference(PrefKey.DarkMode, false)
-      ? DarkThemeIdentifier
-      : DefaultThemeIdentifier
+    const activeThemeIdentifier = activeTheme ? activeTheme.identifier : DefaultThemeIdentifier
 
     const themeIdentifier = this.application.getPreference(preference, preferenceDefault) as string
 
@@ -225,9 +221,6 @@ export class ThemeManager extends AbstractService {
       if (themeIdentifier === DefaultThemeIdentifier) {
         toggleActiveTheme()
         void this.application.setPreference(PrefKey.DarkMode, false)
-      } else if (themeIdentifier === DarkThemeIdentifier) {
-        toggleActiveTheme()
-        void this.application.setPreference(PrefKey.DarkMode, true)
       } else {
         const theme = themes.find((theme) => theme.package_info.identifier === themeIdentifier)
         if (theme && !theme.active) {

@@ -2,19 +2,18 @@
 import * as Factory from '../lib/factory.js'
 import * as Utils from '../lib/Utils.js'
 import { createRelatedNoteTagPairPayload } from '../lib/Items.js'
+import { BaseItemCounts } from '../lib/Applications.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('notes and tags', () => {
-  const BASE_ITEM_COUNT = 2 /** Default items key, user preferences */
-
   const syncOptions = {
     checkIntegrity: true,
     awaitAll: true,
   }
 
   beforeEach(async function () {
-    this.expectedItemCount = BASE_ITEM_COUNT
+    this.expectedItemCount = BaseItemCounts.DefaultItems
     this.application = await Factory.createInitAppWithFakeCrypto()
   })
 

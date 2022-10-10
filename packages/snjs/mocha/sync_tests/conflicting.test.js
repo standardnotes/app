@@ -1,13 +1,13 @@
 /* eslint-disable no-undef */
+import { BaseItemCounts } from '../lib/Applications.js'
 import * as Factory from '../lib/factory.js'
-import { createItemParams, createSyncedNoteWithTag } from '../lib/Items.js'
+import { createSyncedNoteWithTag } from '../lib/Items.js'
 import * as Utils from '../lib/Utils.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('online conflict handling', function () {
   this.timeout(Factory.TenSecondTimeout)
-  const BASE_ITEM_COUNT = 2 /** Default items key, user preferences */
 
   const syncOptions = {
     checkIntegrity: true,
@@ -16,7 +16,7 @@ describe('online conflict handling', function () {
 
   beforeEach(async function () {
     localStorage.clear()
-    this.expectedItemCount = BASE_ITEM_COUNT
+    this.expectedItemCount = BaseItemCounts.DefaultItems
 
     this.context = await Factory.createAppContextWithFakeCrypto('AppA')
     await this.context.launch()

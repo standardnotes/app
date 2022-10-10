@@ -161,14 +161,15 @@ describe('migrations', () => {
     await application.mutator.insertItem(noDistractionItem)
     await application.sync.sync()
 
-    expect(application.items.getItems(ContentType.Theme).length).to.equal(1)
+    const systemThemeCount = 1
+    expect(application.items.getItems(ContentType.Theme).length).to.equal(1 + systemThemeCount)
 
     /** Run migration */
     const migration = new Migration2_42_0(application.migrationService.services)
     await migration.handleStage(ApplicationStage.FullSyncCompleted_13)
     await application.sync.sync()
 
-    expect(application.items.getItems(ContentType.Theme).length).to.equal(0)
+    expect(application.items.getItems(ContentType.Theme).length).to.equal(systemThemeCount)
 
     await Factory.safeDeinit(application)
   })

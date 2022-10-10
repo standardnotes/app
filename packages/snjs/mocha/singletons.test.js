@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
+import { BaseItemCounts } from './lib/Applications.js'
 import * as Factory from './lib/factory.js'
 import WebDeviceInterface from './lib/web_device_interface.js'
 chai.use(chaiAsPromised)
@@ -11,7 +12,6 @@ describe('singletons', function () {
   const syncOptions = {
     checkIntegrity: true,
   }
-  const BASE_ITEM_COUNT = 2 /** Default items key, user preferences */
 
   function createPrefsPayload() {
     const params = {
@@ -30,7 +30,7 @@ describe('singletons', function () {
 
   beforeEach(async function () {
     localStorage.clear()
-    this.expectedItemCount = BASE_ITEM_COUNT
+    this.expectedItemCount = BaseItemCounts.DefaultItems
     this.application = await Factory.createInitAppWithFakeCrypto()
     this.email = UuidGenerator.GenerateUuid()
     this.password = UuidGenerator.GenerateUuid()
@@ -83,7 +83,7 @@ describe('singletons', function () {
     localStorage.clear()
   })
 
-  it(`only resolves to ${BASE_ITEM_COUNT} items`, async function () {
+  it(`only resolves to ${BaseItemCounts.DefaultItems} items`, async function () {
     /** Preferences are an item we know to always return true for isSingleton */
     const prefs1 = createPrefsPayload()
     const prefs2 = createPrefsPayload()

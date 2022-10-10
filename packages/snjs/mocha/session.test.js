@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
+import { BaseItemCounts } from './lib/Applications.js'
 import * as Factory from './lib/factory.js'
 import WebDeviceInterface from './lib/web_device_interface.js'
 chai.use(chaiAsPromised)
@@ -8,8 +9,6 @@ const expect = chai.expect
 describe('server session', function () {
   this.timeout(Factory.TenSecondTimeout)
 
-  const BASE_ITEM_COUNT = 2 /** Default items key, user preferences */
-
   const syncOptions = {
     checkIntegrity: true,
     awaitAll: true,
@@ -17,7 +16,7 @@ describe('server session', function () {
 
   beforeEach(async function () {
     localStorage.clear()
-    this.expectedItemCount = BASE_ITEM_COUNT
+    this.expectedItemCount = BaseItemCounts.DefaultItems
     this.application = await Factory.createInitAppWithFakeCrypto()
     this.email = UuidGenerator.GenerateUuid()
     this.password = UuidGenerator.GenerateUuid()
