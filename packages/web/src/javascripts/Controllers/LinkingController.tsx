@@ -276,7 +276,8 @@ export class LinkingController extends AbstractViewController {
         const title = item instanceof SNTag ? this.application.items.getTagLongTitle(item) : item.title
         const matchesQuery = title?.toLowerCase().includes(searchQuery.toLowerCase())
         const isNotActiveItem = this.activeItem?.uuid !== item.uuid
-        return matchesQuery && isNotActiveItem
+        const isArchivedOrTrashed = item.archived || item.trashed
+        return matchesQuery && isNotActiveItem && !isArchivedOrTrashed
       }),
       'title',
     )
