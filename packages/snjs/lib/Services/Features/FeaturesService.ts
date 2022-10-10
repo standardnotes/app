@@ -153,6 +153,15 @@ export class SNFeaturesService
           void this.downloadOfflineFeatures(offlineRepo)
         }
       }
+      void this.addDarkTheme()
+    }
+  }
+
+  private async addDarkTheme() {
+    const darkThemeFeature = GetFeatures().find((feature) => feature.identifier === FeatureIdentifier.DarkTheme)
+
+    if (darkThemeFeature) {
+      void this.didDownloadFeatures([darkThemeFeature])
     }
   }
 
@@ -372,7 +381,6 @@ export class SNFeaturesService
 
   public async didDownloadFeatures(features: FeaturesImports.FeatureDescription[]): Promise<void> {
     features = features
-      .concat(GetFeatures().filter((feature) => feature.identifier === FeatureIdentifier.DarkTheme))
       .filter((feature) => !!FeaturesImports.FindNativeFeature(feature.identifier))
       .map((feature) => this.mapRemoteNativeFeatureToStaticFeature(feature))
 
