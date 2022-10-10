@@ -214,6 +214,7 @@ export class LinkingController extends AbstractViewController {
     }
 
     await this.application.items.unlinkItem(itemToUnlink, selectedItem)
+    this.reloadAllLinks()
   }
 
   linkItemToSelectedItem = async (itemToLink: LinkableItem) => {
@@ -238,6 +239,7 @@ export class LinkingController extends AbstractViewController {
     }
 
     void this.application.sync.sync()
+    this.reloadAllLinks()
   }
 
   createAndAddNewTag = async (title: string) => {
