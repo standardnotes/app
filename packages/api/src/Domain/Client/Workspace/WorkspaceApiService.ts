@@ -39,7 +39,7 @@ export class WorkspaceApiService implements WorkspaceApiServiceInterface {
   }
 
   async createWorkspace(dto: {
-    workspaceType: WorkspaceType,
+    workspaceType: WorkspaceType
     encryptedWorkspaceKey?: string
     encryptedPrivateKey?: string
     publicKey?: string

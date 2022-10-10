@@ -28,7 +28,7 @@ export class WorkspaceManager extends AbstractService implements WorkspaceClient
   }
 
   async createWorkspace(dto: {
-    workspaceType: WorkspaceType,
+    workspaceType: WorkspaceType
     encryptedWorkspaceKey?: string
     encryptedPrivateKey?: string
     publicKey?: string

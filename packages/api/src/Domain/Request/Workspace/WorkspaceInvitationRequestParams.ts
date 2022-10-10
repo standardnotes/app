@@ -1,4 +1,4 @@
-import { Uuid } from "@standardnotes/common"
+import { Uuid } from '@standardnotes/common'
 
 export type WorkspaceInvitationRequestParams = {
   workspaceUuid: Uuid
