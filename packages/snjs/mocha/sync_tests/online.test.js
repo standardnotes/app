@@ -1,4 +1,5 @@
 /* eslint-disable no-undef */
+import { BaseItemCounts } from '../lib/Applications.js'
 import * as Factory from '../lib/factory.js'
 import * as Utils from '../lib/Utils.js'
 chai.use(chaiAsPromised)
@@ -6,7 +7,6 @@ const expect = chai.expect
 
 describe('online syncing', function () {
   this.timeout(Factory.TenSecondTimeout)
-  const BASE_ITEM_COUNT = 2 /** Default items key, user preferences */
 
   const syncOptions = {
     checkIntegrity: true,
@@ -15,7 +15,7 @@ describe('online syncing', function () {
 
   beforeEach(async function () {
     localStorage.clear()
-    this.expectedItemCount = BASE_ITEM_COUNT
+    this.expectedItemCount = BaseItemCounts.DefaultItems
 
     this.context = await Factory.createAppContext()
     await this.context.launch()
@@ -97,7 +97,7 @@ describe('online syncing', function () {
 
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
 
-    expect(this.application.itemManager.items.length).to.equal(BASE_ITEM_COUNT)
+    expect(this.application.itemManager.items.length).to.equal(BaseItemCounts.DefaultItems)
 
     const promise = Factory.loginToApplication({
       application: this.application,
@@ -244,7 +244,7 @@ describe('online syncing', function () {
     // set item to be merged for when sign in occurs
     await this.application.syncService.markAllItemsAsNeedingSyncAndPersist()
     expect(this.application.syncService.isOutOfSync()).to.equal(false)
-    expect(this.application.itemManager.getDirtyItems().length).to.equal(BASE_ITEM_COUNT + 1)
+    expect(this.application.itemManager.getDirtyItems().length).to.equal(BaseItemCounts.DefaultItems + 1)
 
     // Sign back in for next tests
     await Factory.loginToApplication({
@@ -686,7 +686,7 @@ describe('online syncing', function () {
 
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
     const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
-    expect(rawPayloads.length).to.equal(BASE_ITEM_COUNT)
+    expect(rawPayloads.length).to.equal(BaseItemCounts.DefaultItems)
 
     await this.application.signIn(this.email, this.password, undefined, undefined, undefined, true)
 
