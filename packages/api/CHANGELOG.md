@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.12.0](https://github.com/standardnotes/app/compare/@standardnotes/api@1.11.0...@standardnotes/api@1.12.0) (2022-10-10)
+
+### Bug Fixes
+
+* **api:** specs ([85d2415](https://github.com/standardnotes/app/commit/85d24156254015914c684f900c77c080caa52eb7))
+* **api:** workspace creation arguments ([a275a45](https://github.com/standardnotes/app/commit/a275a45753abc4a29a89de5fe784260165297bbe))
+* linter issues ([e2e7605](https://github.com/standardnotes/app/commit/e2e76054142e8d67cac69280e2a3efcb15cf67f1))
+
+### Features
+
+* **api:** add inviting to workspace ([158ca6a](https://github.com/standardnotes/app/commit/158ca6ac6a428e082c8f984791f80fcaadcb3e34))
+
 # [1.11.0](https://github.com/standardnotes/app/compare/@standardnotes/api@1.10.0...@standardnotes/api@1.11.0) (2022-10-07)
 
 ### Features
