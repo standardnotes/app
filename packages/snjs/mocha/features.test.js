@@ -160,7 +160,9 @@ describe('features', () => {
         })
       })
 
-      const themeItem = application.items.getItems(ContentType.Theme)[0]
+      const themeItem = application.items
+        .getItems(ContentType.Theme)
+        .find((theme) => theme.identifier === midnightThemeFeature.identifier)
 
       // Wipe roles from initial sync
       await application.featuresService.setRoles([])
