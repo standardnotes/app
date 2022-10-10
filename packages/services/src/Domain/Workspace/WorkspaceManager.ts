@@ -1,5 +1,5 @@
 import { WorkspaceApiServiceInterface } from '@standardnotes/api'
-import { WorkspaceType } from '@standardnotes/common'
+import { Uuid, WorkspaceType } from '@standardnotes/common'
 
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { AbstractService } from '../Service/AbstractService'
@@ -11,6 +11,20 @@ export class WorkspaceManager extends AbstractService implements WorkspaceClient
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
+  }
+
+  async inviteToWorkspace(dto: { inviteeEmail: string; workspaceUuid: Uuid }): Promise<{ uuid: string } | null> {
+    try {
+      const result = await this.workspaceApiService.inviteToWorkspace(dto)
+
+      if (result.data.error !== undefined) {
+        return null
+      }
+
+      return result.data
+    } catch (error) {
+      return null
+    }
   }
 
   async createWorkspace(dto: {

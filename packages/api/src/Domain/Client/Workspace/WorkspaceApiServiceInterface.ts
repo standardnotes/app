@@ -1,6 +1,6 @@
-import { WorkspaceType } from '@standardnotes/common'
+import { Uuid, WorkspaceType } from '@standardnotes/common'
 
-import { WorkspaceCreationResponse } from '../../Response'
+import { WorkspaceCreationResponse, WorkspaceInvitationResponse } from '../../Response'
 
 export interface WorkspaceApiServiceInterface {
   createWorkspace(dto: {
@@ -10,4 +10,8 @@ export interface WorkspaceApiServiceInterface {
     publicKey?: string
     workspaceName?: string
   }): Promise<WorkspaceCreationResponse>
+  inviteToWorkspace(dto: {
+    inviteeEmail: string
+    workspaceUuid: Uuid
+  }): Promise<WorkspaceInvitationResponse>
 }

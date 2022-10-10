@@ -1,4 +1,4 @@
-import { WorkspaceType } from '@standardnotes/common'
+import { Uuid, WorkspaceType } from '@standardnotes/common'
 
 export interface WorkspaceClientInterface {
   createWorkspace(dto: {
@@ -7,5 +7,9 @@ export interface WorkspaceClientInterface {
     encryptedPrivateKey?: string
     publicKey?: string
     workspaceName?: string
+  }): Promise<{ uuid: string } | null>
+  inviteToWorkspace(dto: {
+    inviteeEmail: string
+    workspaceUuid: Uuid
   }): Promise<{ uuid: string } | null>
 }
