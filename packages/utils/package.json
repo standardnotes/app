@@ -25,7 +25,7 @@
     "test": "jest spec"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.32.0",
+    "@standardnotes/common": "^1.36.1",
     "dompurify": "^2.3.8",
     "lodash": "^4.17.21",
     "reflect-metadata": "^0.1.13"

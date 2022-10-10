@@ -6,6 +6,8 @@ import { WorkspaceServerInterface } from '../../Server/Workspace/WorkspaceServer
 import { WorkspaceApiServiceInterface } from './WorkspaceApiServiceInterface'
 import { WorkspaceApiOperations } from './WorkspaceApiOperations'
 
+import { WorkspaceType } from '@standardnotes/common'
+
 export class WorkspaceApiService implements WorkspaceApiServiceInterface {
   private operationsInProgress: Map<WorkspaceApiOperations, boolean>
 
@@ -14,9 +16,10 @@ export class WorkspaceApiService implements WorkspaceApiServiceInterface {
   }
 
   async createWorkspace(dto: {
-    encryptedWorkspaceKey: string
-    encryptedPrivateKey: string
-    publicKey: string
+    workspaceType: WorkspaceType,
+    encryptedWorkspaceKey?: string
+    encryptedPrivateKey?: string
+    publicKey?: string
     workspaceName?: string
   }): Promise<WorkspaceCreationResponse> {
     if (this.operationsInProgress.get(WorkspaceApiOperations.Creating)) {
@@ -27,6 +30,7 @@ export class WorkspaceApiService implements WorkspaceApiServiceInterface {
 
     try {
       const response = await this.workspaceServer.createWorkspace({
+        workspaceType: dto.workspaceType,
         encryptedPrivateKey: dto.encryptedPrivateKey,
         encryptedWorkspaceKey: dto.encryptedWorkspaceKey,
         publicKey: dto.publicKey,

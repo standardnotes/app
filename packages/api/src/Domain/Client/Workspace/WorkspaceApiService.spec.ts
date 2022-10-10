@@ -1,3 +1,4 @@
+import { WorkspaceType } from '@standardnotes/common'
 import { WorkspaceCreationResponse } from '../../Response/Workspace/WorkspaceCreationResponse'
 import { WorkspaceServerInterface } from '../../Server/Workspace/WorkspaceServerInterface'
 
@@ -18,6 +19,7 @@ describe('WorkspaceApiService', () => {
 
   it('should create a workspace', async () => {
     const response = await createService().createWorkspace({
+      workspaceType: WorkspaceType.Private,
       encryptedPrivateKey: 'foo',
       encryptedWorkspaceKey: 'bar',
       publicKey: 'buzz',
@@ -44,6 +46,7 @@ describe('WorkspaceApiService', () => {
     let error = null
     try {
       await service.createWorkspace({
+        workspaceType: WorkspaceType.Private,
         encryptedPrivateKey: 'foo',
         encryptedWorkspaceKey: 'bar',
         publicKey: 'buzz',
@@ -63,6 +66,7 @@ describe('WorkspaceApiService', () => {
     let error = null
     try {
       await createService().createWorkspace({
+        workspaceType: WorkspaceType.Private,
         encryptedPrivateKey: 'foo',
         encryptedWorkspaceKey: 'bar',
         publicKey: 'buzz',

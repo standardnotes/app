@@ -1,4 +1,6 @@
 import { WorkspaceApiServiceInterface } from '@standardnotes/api'
+import { WorkspaceType } from '@standardnotes/common'
+
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { AbstractService } from '../Service/AbstractService'
 import { WorkspaceClientInterface } from './WorkspaceClientInterface'
@@ -12,9 +14,10 @@ export class WorkspaceManager extends AbstractService implements WorkspaceClient
   }
 
   async createWorkspace(dto: {
-    encryptedWorkspaceKey: string
-    encryptedPrivateKey: string
-    publicKey: string
+    workspaceType: WorkspaceType,
+    encryptedWorkspaceKey?: string
+    encryptedPrivateKey?: string
+    publicKey?: string
     workspaceName?: string
   }): Promise<{ uuid: string } | null> {
     try {
