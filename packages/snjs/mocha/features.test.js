@@ -176,7 +176,9 @@ describe('features', () => {
         true,
       )
 
-      const noTheme = application.items.getItems(ContentType.Theme)[0]
+      const noTheme = application.items
+        .getItems(ContentType.Theme)
+        .find((theme) => theme.identifier === midnightThemeFeature.identifier)
       expect(noTheme).to.not.be.ok
     })
   })
