@@ -38,6 +38,7 @@ describe('WorkspaceApiService', () => {
       encryptedPrivateKey: 'foo',
       encryptedWorkspaceKey: 'bar',
       publicKey: 'buzz',
+      workspaceType: 'private',
     })
   })
 
