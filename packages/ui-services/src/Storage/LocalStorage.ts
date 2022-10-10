@@ -3,6 +3,7 @@ export enum StorageKey {
   ShowBetaWarning = 'ShowBetaWarning',
   ShowNoAccountWarning = 'ShowNoAccountWarning',
   FilesNavigationEnabled = 'FilesNavigationEnabled',
+  ViewportHeight = 'ViewportHeight',
 }
 
 export type StorageValue = {
@@ -10,6 +11,7 @@ export type StorageValue = {
   [StorageKey.ShowBetaWarning]: boolean
   [StorageKey.ShowNoAccountWarning]: boolean
   [StorageKey.FilesNavigationEnabled]: boolean
+  [StorageKey.ViewportHeight]: number
 }
 
 export const storage = {
