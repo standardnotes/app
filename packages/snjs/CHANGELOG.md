@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.136.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.136.0...@standardnotes/snjs@2.136.1) (2022-10-10)
+
+### Bug Fixes
+
+* **api:** workspace creation arguments ([a275a45](https://github.com/standardnotes/app/commit/a275a45753abc4a29a89de5fe784260165297bbe))
+
 # [2.136.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.135.0...@standardnotes/snjs@2.136.0) (2022-10-07)
 
 ### Features

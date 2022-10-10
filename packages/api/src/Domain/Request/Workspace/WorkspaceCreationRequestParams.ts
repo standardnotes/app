@@ -1,7 +1,10 @@
+import { WorkspaceType } from '@standardnotes/common'
+
 export type WorkspaceCreationRequestParams = {
-  encryptedWorkspaceKey: string
-  encryptedPrivateKey: string
-  publicKey: string
+  workspaceType: WorkspaceType
+  encryptedWorkspaceKey?: string
+  encryptedPrivateKey?: string
+  publicKey?: string
   workspaceName?: string
   [additionalParam: string]: unknown
 }

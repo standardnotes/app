@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.10.5](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.10.4...@standardnotes/responses@1.10.5) (2022-10-10)
+
+### Bug Fixes
+
+* **api:** workspace creation arguments ([a275a45](https://github.com/standardnotes/app/commit/a275a45753abc4a29a89de5fe784260165297bbe))
+
 ## [1.10.4](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.10.3...@standardnotes/responses@1.10.4) (2022-10-05)
 
 **Note:** Version bump only for package @standardnotes/responses

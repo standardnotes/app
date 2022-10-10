@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.23.13](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.23.12...@standardnotes/filepicker@1.23.13) (2022-10-10)
+
+### Bug Fixes
+
+* **api:** workspace creation arguments ([a275a45](https://github.com/standardnotes/app/commit/a275a45753abc4a29a89de5fe784260165297bbe))
+
 ## [1.23.12](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.23.11...@standardnotes/filepicker@1.23.12) (2022-10-06)
 
 **Note:** Version bump only for package @standardnotes/filepicker

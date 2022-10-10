@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.3](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.6.2...@standardnotes/ui-services@1.6.3) (2022-10-10)
+
+### Bug Fixes
+
+* **api:** workspace creation arguments ([a275a45](https://github.com/standardnotes/app/commit/a275a45753abc4a29a89de5fe784260165297bbe))
+
 ## [1.6.2](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.6.1...@standardnotes/ui-services@1.6.2) (2022-10-07)
 
 **Note:** Version bump only for package @standardnotes/ui-services
