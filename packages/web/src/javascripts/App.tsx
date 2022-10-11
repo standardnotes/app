@@ -1,6 +1,6 @@
 'use strict'
 
-import { disableIosTextFieldZoom } from '@/Utils'
+import { disableIosTextFieldZoom, isDev } from '@/Utils'
 
 declare global {
   interface Window {
@@ -42,22 +42,27 @@ const getKey = () => {
   return keyCount++
 }
 
-let initialCorrectViewportHeight: number | null = null
+const ViewportHeightKey = '--viewport-height'
 
-export const setViewportHeightWithFallback = (isOrientationChange = false) => {
+export const setViewportHeightWithFallback = () => {
+  const currentHeight = parseInt(document.documentElement.style.getPropertyValue(ViewportHeightKey))
   const newValue = visualViewport && visualViewport.height > 0 ? visualViewport.height : window.innerHeight
 
-  if (initialCorrectViewportHeight && newValue < initialCorrectViewportHeight && !isOrientationChange) {
+  if (isDev) {
+    // eslint-disable-next-line no-console
+    console.log(`currentHeight: ${currentHeight}, newValue: ${newValue}`)
+  }
+
+  if (currentHeight && newValue < currentHeight) {
     return
   }
 
   if (!newValue) {
-    document.documentElement.style.setProperty('--viewport-height', '100vh')
+    document.documentElement.style.setProperty(ViewportHeightKey, '100vh')
     return
   }
 
-  initialCorrectViewportHeight = newValue
-  document.documentElement.style.setProperty('--viewport-height', `${newValue}px`)
+  document.documentElement.style.setProperty(ViewportHeightKey, `${newValue}px`)
 }
 
 const setDefaultMonospaceFont = (platform?: Platform) => {
@@ -84,26 +89,18 @@ const startApplication: StartApplication = async function startApplication(
     device.environment === Environment.Desktop ||
     (matchMedia(MediaQueryBreakpoints.md).matches && matchMedia(MediaQueryBreakpoints.pointerFine))
 
-  const orientationChangeHandler = () => {
-    setViewportHeightWithFallback(true)
-  }
-
-  const resizeHandler = () => {
-    setViewportHeightWithFallback(false)
-  }
-
   const setupViewportHeightListeners = () => {
     if (!isDesktop) {
       setViewportHeightWithFallback()
-      window.addEventListener('orientationchange', orientationChangeHandler)
-      window.addEventListener('resize', resizeHandler)
+      window.addEventListener('orientationchange', setViewportHeightWithFallback)
+      window.addEventListener('resize', setViewportHeightWithFallback)
     }
   }
 
   const removeViewportHeightListeners = () => {
     if (!isDesktop) {
-      window.removeEventListener('orientationchange', orientationChangeHandler)
-      window.removeEventListener('resize', resizeHandler)
+      window.removeEventListener('orientationchange', setViewportHeightWithFallback)
+      window.removeEventListener('resize', setViewportHeightWithFallback)
     }
   }
 
