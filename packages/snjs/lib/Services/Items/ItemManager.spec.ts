@@ -405,41 +405,6 @@ describe('itemManager', () => {
       const notes = itemManager.getDisplayableNotes()
       expect(notes).toHaveLength(1)
     })
-
-    it('adding a note to a tag hierarchy should add the note to its parent too', async () => {
-      itemManager = createService()
-      const parentTag = createTag('parent')
-      const childTag = createTag('child')
-      const note = createNote('note')
-
-      await itemManager.insertItems([parentTag, childTag, note])
-      await itemManager.setTagParent(parentTag, childTag)
-
-      await itemManager.addTagToNote(note, childTag, true)
-
-      const tags = itemManager.getSortedTagsForItem(note)
-
-      expect(tags).toHaveLength(2)
-      expect(tags[0].uuid).toEqual(childTag.uuid)
-      expect(tags[1].uuid).toEqual(parentTag.uuid)
-    })
-
-    it('adding a note to a tag hierarchy should not add the note to its parent if hierarchy option is disabled', async () => {
-      itemManager = createService()
-      const parentTag = createTag('parent')
-      const childTag = createTag('child')
-      const note = createNote('note')
-
-      await itemManager.insertItems([parentTag, childTag, note])
-      await itemManager.setTagParent(parentTag, childTag)
-
-      await itemManager.addTagToNote(note, childTag, false)
-
-      const tags = itemManager.getSortedTagsForItem(note)
-
-      expect(tags).toHaveLength(1)
-      expect(tags[0].uuid).toEqual(childTag.uuid)
-    })
   })
 
   describe('template items', () => {
@@ -703,47 +668,6 @@ describe('itemManager', () => {
   })
 
   describe('files', () => {
-    it('associates with note', async () => {
-      itemManager = createService()
-      const note = createNote('invoices')
-      const file = createFile('invoice_1.pdf')
-      await itemManager.insertItems([note, file])
-
-      const resultingFile = await itemManager.associateFileWithNote(file, note)
-      const references = resultingFile.references
-
-      expect(references).toHaveLength(1)
-      expect(references[0].uuid).toEqual(note.uuid)
-    })
-
-    it('disassociates with note', async () => {
-      itemManager = createService()
-      const note = createNote('invoices')
-      const file = createFile('invoice_1.pdf')
-      await itemManager.insertItems([note, file])
-
-      const associatedFile = await itemManager.associateFileWithNote(file, note)
-      const disassociatedFile = await itemManager.disassociateFileWithNote(associatedFile, note)
-      const references = disassociatedFile.references
-
-      expect(references).toHaveLength(0)
-    })
-
-    it('should get files associated with note', async () => {
-      itemManager = createService()
-      const note = createNote('invoices')
-      const file = createFile('invoice_1.pdf')
-      const secondFile = createFile('unrelated-file.xlsx')
-      await itemManager.insertItems([note, file, secondFile])
-
-      await itemManager.associateFileWithNote(file, note)
-
-      const filesAssociatedWithNote = itemManager.getSortedFilesForItem(note)
-
-      expect(filesAssociatedWithNote).toHaveLength(1)
-      expect(filesAssociatedWithNote[0].uuid).toBe(file.uuid)
-    })
-
     it('should correctly rename file to filename that has extension', async () => {
       itemManager = createService()
       const file = createFile('initialName.ext')
@@ -772,6 +696,145 @@ describe('itemManager', () => {
       const renamedFile = await itemManager.renameFile(file, 'anotherName')
 
       expect(renamedFile.name).toBe('anotherName')
+    })
+  })
+
+  describe('linking', () => {
+    it('adding a note to a tag hierarchy should add the note to its parent too', async () => {
+      itemManager = createService()
+      const parentTag = createTag('parent')
+      const childTag = createTag('child')
+      const note = createNote('note')
+
+      await itemManager.insertItems([parentTag, childTag, note])
+      await itemManager.setTagParent(parentTag, childTag)
+
+      await itemManager.addTagToNote(note, childTag, true)
+
+      const tags = itemManager.getSortedTagsForItem(note)
+
+      expect(tags).toHaveLength(2)
+      expect(tags[0].uuid).toEqual(childTag.uuid)
+      expect(tags[1].uuid).toEqual(parentTag.uuid)
+    })
+
+    it('adding a note to a tag hierarchy should not add the note to its parent if hierarchy option is disabled', async () => {
+      itemManager = createService()
+      const parentTag = createTag('parent')
+      const childTag = createTag('child')
+      const note = createNote('note')
+
+      await itemManager.insertItems([parentTag, childTag, note])
+      await itemManager.setTagParent(parentTag, childTag)
+
+      await itemManager.addTagToNote(note, childTag, false)
+
+      const tags = itemManager.getSortedTagsForItem(note)
+
+      expect(tags).toHaveLength(1)
+      expect(tags[0].uuid).toEqual(childTag.uuid)
+    })
+
+    it('adding a file to a tag hierarchy should add the file to its parent too', async () => {
+      itemManager = createService()
+      const parentTag = createTag('parent')
+      const childTag = createTag('child')
+      const file = createFile('file')
+
+      await itemManager.insertItems([parentTag, childTag, file])
+      await itemManager.setTagParent(parentTag, childTag)
+
+      await itemManager.addTagToFile(file, childTag, true)
+
+      const tags = itemManager.getSortedTagsForItem(file)
+
+      expect(tags).toHaveLength(2)
+      expect(tags[0].uuid).toEqual(childTag.uuid)
+      expect(tags[1].uuid).toEqual(parentTag.uuid)
+    })
+
+    it('adding a file to a tag hierarchy should not add the file to its parent if hierarchy option is disabled', async () => {
+      itemManager = createService()
+      const parentTag = createTag('parent')
+      const childTag = createTag('child')
+      const file = createFile('file')
+
+      await itemManager.insertItems([parentTag, childTag, file])
+      await itemManager.setTagParent(parentTag, childTag)
+
+      await itemManager.addTagToFile(file, childTag, false)
+
+      const tags = itemManager.getSortedTagsForItem(file)
+
+      expect(tags).toHaveLength(1)
+      expect(tags[0].uuid).toEqual(childTag.uuid)
+    })
+
+    it('should link file with note', async () => {
+      itemManager = createService()
+      const note = createNote('invoices')
+      const file = createFile('invoice_1.pdf')
+      await itemManager.insertItems([note, file])
+
+      const resultingFile = await itemManager.associateFileWithNote(file, note)
+      const references = resultingFile.references
+
+      expect(references).toHaveLength(1)
+      expect(references[0].uuid).toEqual(note.uuid)
+    })
+
+    it('should unlink file from note', async () => {
+      itemManager = createService()
+      const note = createNote('invoices')
+      const file = createFile('invoice_1.pdf')
+      await itemManager.insertItems([note, file])
+
+      const associatedFile = await itemManager.associateFileWithNote(file, note)
+      const disassociatedFile = await itemManager.disassociateFileWithNote(associatedFile, note)
+      const references = disassociatedFile.references
+
+      expect(references).toHaveLength(0)
+    })
+
+    it('should get files linked with note', async () => {
+      itemManager = createService()
+      const note = createNote('invoices')
+      const file = createFile('invoice_1.pdf')
+      const secondFile = createFile('unrelated-file.xlsx')
+      await itemManager.insertItems([note, file, secondFile])
+
+      await itemManager.associateFileWithNote(file, note)
+
+      const filesAssociatedWithNote = itemManager.getSortedFilesForItem(note)
+
+      expect(filesAssociatedWithNote).toHaveLength(1)
+      expect(filesAssociatedWithNote[0].uuid).toBe(file.uuid)
+    })
+
+    it('should link note to note', async () => {
+      itemManager = createService()
+      const note = createNote('research')
+      const note2 = createNote('citation')
+      await itemManager.insertItems([note, note2])
+
+      const resultingNote = await itemManager.linkNoteToNote(note, note2)
+      const references = resultingNote.references
+
+      expect(references).toHaveLength(1)
+      expect(references[0].uuid).toEqual(note2.uuid)
+    })
+
+    it('should link file to file', async () => {
+      itemManager = createService()
+      const file = createFile('research')
+      const file2 = createFile('citation')
+      await itemManager.insertItems([file, file2])
+
+      const resultingfile = await itemManager.linkFileToFile(file, file2)
+      const references = resultingfile.references
+
+      expect(references).toHaveLength(1)
+      expect(references[0].uuid).toEqual(file2.uuid)
     })
   })
 })
