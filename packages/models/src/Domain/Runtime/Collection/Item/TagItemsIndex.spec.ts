@@ -24,10 +24,10 @@ describe('tag notes index', () => {
     return new EncryptedItem(payload)
   }
 
-  const createDecryptedItem = (uuid?: string) => {
+  const createDecryptedItem = (uuid?: string, content_type = ContentType.Note) => {
     const payload = new DecryptedPayload({
       uuid: uuid || String(Math.random()),
-      content_type: ContentType.Note,
+      content_type,
       content: FillItemContent<NoteContent>({
         title: 'foo',
       }),
@@ -45,6 +45,19 @@ describe('tag notes index', () => {
       unerrored: [],
     }
   }
+
+  it('should count both notes and files', () => {
+    const collection = new ItemCollection()
+    const index = new TagItemsIndex(collection)
+
+    const decryptedNote = createDecryptedItem('note')
+    const decryptedFile = createDecryptedItem('file')
+    collection.set([decryptedNote, decryptedFile])
+    index.onChange(createChangeDelta(decryptedNote))
+    index.onChange(createChangeDelta(decryptedFile))
+
+    expect(index.allCountableItemsCount()).toEqual(2)
+  })
 
   it('should decrement count after decrypted note becomes errored', () => {
     const collection = new ItemCollection()
