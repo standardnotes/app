@@ -11,6 +11,8 @@ import { PopoverFileItemActionType } from './PopoverFileItemAction'
 import { PopoverTabs } from './PopoverTabs'
 import { FilesController } from '@/Controllers/FilesController'
 import { StreamingFileReader } from '@standardnotes/filepicker'
+import ClearInputButton from '../ClearInputButton/ClearInputButton'
+import DecoratedInput from '../Input/DecoratedInput'
 
 type Props = {
   application: WebApplication
@@ -116,29 +118,24 @@ const AttachedFilesPopover: FunctionComponent<Props> = ({
       <div className="max-h-110 min-h-0 overflow-y-auto">
         {filteredList.length > 0 || searchQuery.length > 0 ? (
           <div className="sticky top-0 left-0 border-b border-solid border-border bg-default p-3">
-            <div className="relative">
-              <input
-                type="text"
-                className="w-full rounded border border-solid border-border bg-default py-1.5 px-3 text-sm text-text"
-                placeholder="Search files..."
-                value={searchQuery}
-                onInput={(e) => {
-                  setSearchQuery((e.target as HTMLInputElement).value)
-                }}
-                ref={searchInputRef}
-              />
-              {searchQuery.length > 0 && (
-                <button
-                  className="absolute right-2 top-1/2 flex -translate-y-1/2 cursor-pointer border-0 bg-transparent p-0"
-                  onClick={() => {
-                    setSearchQuery('')
-                    searchInputRef.current?.focus()
-                  }}
-                >
-                  <Icon type="clear-circle-filled" className="text-neutral" />
-                </button>
-              )}
-            </div>
+            <DecoratedInput
+              type="text"
+              className={{ container: searchQuery.length < 1 ? 'py-1.5 px-0.5' : 'py-0' }}
+              placeholder="Search items..."
+              value={searchQuery}
+              onChange={setSearchQuery}
+              ref={searchInputRef}
+              right={[
+                searchQuery.length > 0 && (
+                  <ClearInputButton
+                    onClick={() => {
+                      setSearchQuery('')
+                      searchInputRef.current?.focus()
+                    }}
+                  />
+                ),
+              ]}
+            />
           </div>
         ) : null}
         {filteredList.length > 0 ? (

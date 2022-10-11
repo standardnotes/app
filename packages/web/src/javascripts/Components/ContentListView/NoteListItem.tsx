@@ -32,7 +32,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
   const editorForNote = application.componentManager.editorForNote(item as SNNote)
   const editorName = editorForNote?.name ?? PLAIN_EDITOR_NAME
   const [icon, tint] = application.iconsController.getIconAndTintForNoteType(editorForNote?.package_info.note_type)
-  const hasFiles = application.items.getFilesForNote(item as SNNote).length > 0
+  const hasFiles = application.items.getSortedFilesForItem(item).length > 0
 
   const openNoteContextMenu = (posX: number, posY: number) => {
     notesController.setContextMenuOpen(false)

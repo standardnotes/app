@@ -8,7 +8,6 @@ import { WebApplication } from '../Application/Application'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { SelectedItemsController } from './SelectedItemsController'
 import { ItemListController } from './ItemList/ItemListController'
-import { NoteTagsController } from './NoteTagsController'
 import { NavigationController } from './Navigation/NavigationController'
 
 export class NotesController extends AbstractViewController {
@@ -27,7 +26,6 @@ export class NotesController extends AbstractViewController {
     super.deinit()
     ;(this.lastSelectedNote as unknown) = undefined
     ;(this.selectionController as unknown) = undefined
-    ;(this.noteTagsController as unknown) = undefined
     ;(this.navigationController as unknown) = undefined
     ;(this.itemListController as unknown) = undefined
 
@@ -37,7 +35,6 @@ export class NotesController extends AbstractViewController {
   constructor(
     application: WebApplication,
     private selectionController: SelectedItemsController,
-    private noteTagsController: NoteTagsController,
     private navigationController: NavigationController,
     eventBus: InternalEventBus,
   ) {

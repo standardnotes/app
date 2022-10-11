@@ -49,15 +49,10 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
   const panelResizeFinishCallback: ResizeFinishCallback = useCallback(
     (width, _lastLeft, _isMaxWidth, isCollapsed) => {
       application.setPreference(PrefKey.TagsPanelWidth, width).catch(console.error)
-      viewControllerManager.noteTagsController.reloadTagsContainerMaxWidth()
       application.publishPanelDidResizeEvent(PANEL_NAME_NAVIGATION, isCollapsed)
     },
-    [application, viewControllerManager],
+    [application],
   )
-
-  const panelWidthEventCallback = useCallback(() => {
-    viewControllerManager.noteTagsController.reloadTagsContainerMaxWidth()
-  }, [viewControllerManager])
 
   return (
     <div
@@ -157,7 +152,6 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
           side={PanelSide.Right}
           type={PanelResizeType.WidthOnly}
           resizeFinishCallback={panelResizeFinishCallback}
-          widthEventCallback={panelWidthEventCallback}
           width={panelWidth}
           left={0}
         />

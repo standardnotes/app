@@ -178,7 +178,7 @@ const NotesOptions = ({
   application,
   navigationController,
   notesController,
-  noteTagsController,
+  linkingController,
   historyModalController,
   closeMenu,
 }: NotesOptionsProps) => {
@@ -327,7 +327,7 @@ const NotesOptions = ({
         <AddTagOption
           navigationController={navigationController}
           notesController={notesController}
-          noteTagsController={noteTagsController}
+          linkingController={linkingController}
         />
       )}
       {unpinned && (

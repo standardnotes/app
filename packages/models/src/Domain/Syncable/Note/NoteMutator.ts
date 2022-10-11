@@ -1,6 +1,10 @@
 import { AppDataField } from '../../Abstract/Item/Types/AppDataField'
 import { NoteContent } from './NoteContent'
 import { DecryptedItemMutator } from '../../Abstract/Item/Mutator/DecryptedItemMutator'
+import { SNNote } from './Note'
+import { NoteToNoteReference } from '../../Abstract/Reference/NoteToNoteReference'
+import { ContentType } from '@standardnotes/common'
+import { ContentReferenceType } from '../../Abstract/Item'
 
 export class NoteMutator extends DecryptedItemMutator<NoteContent> {
   set title(title: string) {
@@ -37,5 +41,23 @@ export class NoteMutator extends DecryptedItemMutator<NoteContent> {
     } else {
       this.mutableContent.spellcheck = !this.mutableContent.spellcheck
     }
+  }
+
+  public addNote(note: SNNote): void {
+    if (this.immutableItem.isReferencingItem(note)) {
+      return
+    }
+
+    const reference: NoteToNoteReference = {
+      uuid: note.uuid,
+      content_type: ContentType.Note,
+      reference_type: ContentReferenceType.NoteToNote,
+    }
+
+    this.mutableContent.references.push(reference)
+  }
+
+  public removeNote(note: SNNote): void {
+    this.mutableContent.references = this.mutableContent.references.filter((r) => r.uuid !== note.uuid)
   }
 }

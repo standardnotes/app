@@ -144,7 +144,7 @@ const AttachedFilesButton: FunctionComponent<Props> = ({
           }
         }}
       >
-        <Icon type="attachment-file" />
+        <Icon type="folder" />
         {attachedFilesCount > 0 && <span className="ml-2 text-sm">{attachedFilesCount}</span>}
       </button>
       <Popover

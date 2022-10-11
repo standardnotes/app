@@ -3,17 +3,17 @@ import { FunctionComponent, useCallback, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { NotesController } from '@/Controllers/NotesController'
-import { NoteTagsController } from '@/Controllers/NoteTagsController'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import Popover from '../Popover/Popover'
+import { LinkingController } from '@/Controllers/LinkingController'
 
 type Props = {
   navigationController: NavigationController
   notesController: NotesController
-  noteTagsController: NoteTagsController
+  linkingController: LinkingController
 }
 
-const AddTagOption: FunctionComponent<Props> = ({ navigationController, notesController, noteTagsController }) => {
+const AddTagOption: FunctionComponent<Props> = ({ navigationController, notesController, linkingController }) => {
   const menuContainerRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
@@ -63,7 +63,7 @@ const AddTagOption: FunctionComponent<Props> = ({ navigationController, notesCon
               className={`overflow-hidden overflow-ellipsis whitespace-nowrap
                       ${notesController.isTagInSelectedNotes(tag) ? 'font-bold' : ''}`}
             >
-              {noteTagsController.getLongTitle(tag)}
+              {linkingController.getTitleForLinkedTag(tag)?.longTitle}
             </span>
           </button>
         ))}
