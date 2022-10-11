@@ -570,7 +570,7 @@ describe('item manager', function () {
         })
       })
 
-      const results = this.itemManager.getSortedTagsForNote(note)
+      const results = this.itemManager.getSortedTagsForItem(note)
 
       expect(results).lengthOf(tags.length)
       expect(results[0].title).to.equal(tags[1].title)
