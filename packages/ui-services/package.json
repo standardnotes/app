@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@standardnotes/common": "^1.39.0",
+    "@standardnotes/features": "workspace:^",
     "@standardnotes/filepicker": "workspace:^",
     "@standardnotes/services": "workspace:^",
     "@standardnotes/styles": "workspace:^",

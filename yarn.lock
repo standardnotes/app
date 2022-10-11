@@ -6480,7 +6480,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/features@^1.47.0, @standardnotes/features@workspace:*, @standardnotes/features@workspace:packages/features":
+"@standardnotes/features@^1.47.0, @standardnotes/features@workspace:*, @standardnotes/features@workspace:^, @standardnotes/features@workspace:packages/features":
   version: 0.0.0-use.local
   resolution: "@standardnotes/features@workspace:packages/features"
   dependencies:
@@ -7310,6 +7310,7 @@ __metadata:
   resolution: "@standardnotes/ui-services@workspace:packages/ui-services"
   dependencies:
     "@standardnotes/common": ^1.39.0
+    "@standardnotes/features": "workspace:^"
     "@standardnotes/filepicker": "workspace:^"
     "@standardnotes/services": "workspace:^"
     "@standardnotes/styles": "workspace:^"
