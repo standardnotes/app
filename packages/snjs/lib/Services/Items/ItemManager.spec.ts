@@ -849,5 +849,59 @@ describe('itemManager', () => {
 
       expect(references).toHaveLength(0)
     })
+
+    it('should get all linked files for item', async () => {
+      itemManager = createService()
+      const note = createNote('note')
+      const file = createFile('A1')
+      const file2 = createFile('B2')
+
+      await itemManager.insertItems([note, file, file2])
+
+      await itemManager.associateFileWithNote(file2, note)
+      await itemManager.associateFileWithNote(file, note)
+
+      const sortedFilesForItem = itemManager.getSortedFilesForItem(note)
+
+      expect(sortedFilesForItem).toHaveLength(2)
+      expect(sortedFilesForItem[0].uuid).toEqual(file.uuid)
+      expect(sortedFilesForItem[1].uuid).toEqual(file2.uuid)
+    })
+
+    it('should get all linked notes for item', async () => {
+      itemManager = createService()
+      const baseNote = createNote('note')
+      const noteToLink1 = createNote('A1')
+      const noteToLink2 = createNote('B2')
+
+      await itemManager.insertItems([baseNote, noteToLink1, noteToLink2])
+
+      await itemManager.linkNoteToNote(baseNote, noteToLink2)
+      await itemManager.linkNoteToNote(baseNote, noteToLink1)
+
+      const sortedFilesForItem = itemManager.getSortedLinkedNotesForItem(baseNote)
+
+      expect(sortedFilesForItem).toHaveLength(2)
+      expect(sortedFilesForItem[0].uuid).toEqual(noteToLink1.uuid)
+      expect(sortedFilesForItem[1].uuid).toEqual(noteToLink2.uuid)
+    })
+
+    it('should get all notes linking to item', async () => {
+      itemManager = createService()
+      const baseNote = createNote('note')
+      const noteToLink1 = createNote('A1')
+      const noteToLink2 = createNote('B2')
+
+      await itemManager.insertItems([baseNote, noteToLink1, noteToLink2])
+
+      await itemManager.linkNoteToNote(noteToLink2, baseNote)
+      await itemManager.linkNoteToNote(noteToLink1, baseNote)
+
+      const sortedFilesForItem = itemManager.getSortedNotesLinkingToItem(baseNote)
+
+      expect(sortedFilesForItem).toHaveLength(2)
+      expect(sortedFilesForItem[0].uuid).toEqual(noteToLink1.uuid)
+      expect(sortedFilesForItem[1].uuid).toEqual(noteToLink2.uuid)
+    })
   })
 })
