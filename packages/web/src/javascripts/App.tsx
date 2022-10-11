@@ -26,7 +26,7 @@ declare global {
 }
 
 import { IsWebPlatform, WebAppVersion } from '@/Constants/Version'
-import { DesktopManagerInterface, Environment, MobileDeviceInterface, Platform, SNLog } from '@standardnotes/snjs'
+import { DesktopManagerInterface, Environment, Platform, SNLog } from '@standardnotes/snjs'
 import ApplicationGroupView from './Components/ApplicationGroupView/ApplicationGroupView'
 import { WebDevice } from './Application/Device/WebDevice'
 import { StartApplication } from './Application/Device/StartApplication'
@@ -36,7 +36,6 @@ import { WebApplication } from './Application/Application'
 import { createRoot, Root } from 'react-dom/client'
 import { ElementIds } from './Constants/ElementIDs'
 import { MediaQueryBreakpoints } from './Hooks/useMediaQuery'
-import { storage, StorageKey } from '@standardnotes/ui-services'
 
 let keyCount = 0
 const getKey = () => {
@@ -45,26 +44,16 @@ const getKey = () => {
 
 const ViewportHeightKey = '--viewport-height'
 
-export const setViewportHeightWithFallback = (mobileDeviceHeight?: number | null) => {
-  const persistedHeight = storage.get(StorageKey.ViewportHeight)
+export const setViewportHeightWithFallback = () => {
   const currentHeight = parseInt(document.documentElement.style.getPropertyValue(ViewportHeightKey))
-  const newValue = mobileDeviceHeight
-    ? mobileDeviceHeight
-    : visualViewport && visualViewport.height > 0
-    ? visualViewport.height
-    : window.innerHeight
+  const newValue = visualViewport && visualViewport.height > 0 ? visualViewport.height : window.innerHeight
 
   if (isDev) {
     // eslint-disable-next-line no-console
-    console.log(`persistedHeight: ${persistedHeight}, currentHeight: ${currentHeight}, newValue: ${newValue}`)
+    console.log(`currentHeight: ${currentHeight}, newValue: ${newValue}`)
   }
 
   if (currentHeight && newValue < currentHeight) {
-    return
-  }
-
-  if (persistedHeight && newValue < persistedHeight) {
-    document.documentElement.style.setProperty(ViewportHeightKey, `${persistedHeight}px`)
     return
   }
 
@@ -74,7 +63,6 @@ export const setViewportHeightWithFallback = (mobileDeviceHeight?: number | null
   }
 
   document.documentElement.style.setProperty(ViewportHeightKey, `${newValue}px`)
-  storage.set(StorageKey.ViewportHeight, newValue)
 }
 
 const setDefaultMonospaceFont = (platform?: Platform) => {
@@ -101,34 +89,18 @@ const startApplication: StartApplication = async function startApplication(
     device.environment === Environment.Desktop ||
     (matchMedia(MediaQueryBreakpoints.md).matches && matchMedia(MediaQueryBreakpoints.pointerFine))
 
-  const getLatestMobileDeviceHeight = () => {
-    const mobileDeviceHeight =
-      device.environment === Environment.NativeMobileWeb
-        ? (device as unknown as MobileDeviceInterface).getWindowDimensions().height
-        : null
-    return mobileDeviceHeight
-  }
-
-  const orientationChangeHandler = () => {
-    setViewportHeightWithFallback(getLatestMobileDeviceHeight())
-  }
-
-  const resizeHandler = () => {
-    setViewportHeightWithFallback(getLatestMobileDeviceHeight())
-  }
-
   const setupViewportHeightListeners = () => {
     if (!isDesktop) {
-      setViewportHeightWithFallback(getLatestMobileDeviceHeight())
-      window.addEventListener('orientationchange', orientationChangeHandler)
-      window.addEventListener('resize', resizeHandler)
+      setViewportHeightWithFallback()
+      window.addEventListener('orientationchange', setViewportHeightWithFallback)
+      window.addEventListener('resize', setViewportHeightWithFallback)
     }
   }
 
   const removeViewportHeightListeners = () => {
     if (!isDesktop) {
-      window.removeEventListener('orientationchange', orientationChangeHandler)
-      window.removeEventListener('resize', resizeHandler)
+      window.removeEventListener('orientationchange', setViewportHeightWithFallback)
+      window.removeEventListener('resize', setViewportHeightWithFallback)
     }
   }
 
