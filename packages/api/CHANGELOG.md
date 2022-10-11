@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.15.0](https://github.com/standardnotes/app/compare/@standardnotes/api@1.14.0...@standardnotes/api@1.15.0) (2022-10-11)
+
+### Features
+
+* **api:** add listing workspace users ([fb41f65](https://github.com/standardnotes/app/commit/fb41f651eca45dd62314609c2f389d5dc683c36e))
+
 # [1.14.0](https://github.com/standardnotes/app/compare/@standardnotes/api@1.13.0...@standardnotes/api@1.14.0) (2022-10-11)
 
 ### Features

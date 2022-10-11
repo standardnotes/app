@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.7.1](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.7.0...@standardnotes/ui-services@1.7.1) (2022-10-11)
+
+### Bug Fixes
+
+* package import location ([b82eac0](https://github.com/standardnotes/app/commit/b82eac09a822ce1a97167b8b63ab258e2abc9034))
+
+# [1.7.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.6.6...@standardnotes/ui-services@1.7.0) (2022-10-11)
+
+### Features
+
+* **api:** add listing workspace users ([fb41f65](https://github.com/standardnotes/app/commit/fb41f651eca45dd62314609c2f389d5dc683c36e))
+
 ## [1.6.6](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.6.5...@standardnotes/ui-services@1.6.6) (2022-10-11)
 
 **Note:** Version bump only for package @standardnotes/ui-services
