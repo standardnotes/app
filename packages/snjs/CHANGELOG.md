@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.138.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.137.0...@standardnotes/snjs@2.138.0) (2022-10-11)
+
+### Features
+
+* item linking ([#1779](https://github.com/standardnotes/app/issues/1779)) ([e3f2842](https://github.com/standardnotes/app/commit/e3f28421ff042c635ad2ae645c102c27e3e3f9c7))
+
 # [2.137.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.136.4...@standardnotes/snjs@2.137.0) (2022-10-11)
 
 ### Features
