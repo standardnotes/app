@@ -150,4 +150,12 @@ export interface ItemsClientInterface {
    * @returns Whether the item is a template (unmanaged)
    */
   isTemplateItem(item: DecryptedItemInterface): boolean
+
+  /**
+   * @returns `'direct'` if `itemOne` has the reference to `itemTwo`, `'indirect'` if `itemTwo` has the reference to `itemOne`, `'unlinked'` if neither reference each other
+   */
+  relationshipTypeForItems(
+    itemOne: DecryptedItemInterface,
+    itemTwo: DecryptedItemInterface,
+  ): 'direct' | 'indirect' | 'unlinked'
 }

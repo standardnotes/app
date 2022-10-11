@@ -1424,6 +1424,23 @@ export class ItemManager
     return this.findAnyItems(uuids) as (Models.DecryptedItemInterface | Models.DeletedItemInterface)[]
   }
 
+  /**
+   * @returns `'direct'` if `itemOne` has the reference to `itemTwo`, `'indirect'` if `itemTwo` has the reference to `itemOne`, `'unlinked'` if neither reference each other
+   */
+  public relationshipTypeForItems(
+    itemOne: Models.DecryptedItemInterface<Models.ItemContent>,
+    itemTwo: Models.DecryptedItemInterface<Models.ItemContent>,
+  ): 'direct' | 'indirect' | 'unlinked' {
+    const itemOneReferencesItemTwo = !!this.referencesForItem(itemOne).find(
+      (reference) => reference.uuid === itemTwo.uuid,
+    )
+    const itemTwoReferencesItemOne = !!this.referencesForItem(itemTwo).find(
+      (reference) => reference.uuid === itemOne.uuid,
+    )
+
+    return itemOneReferencesItemTwo ? 'direct' : itemTwoReferencesItemOne ? 'indirect' : 'unlinked'
+  }
+
   override getDiagnostics(): Promise<DiagnosticInfo | undefined> {
     return Promise.resolve({
       items: {

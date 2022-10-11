@@ -837,6 +837,27 @@ describe('itemManager', () => {
       expect(references[0].uuid).toEqual(file2.uuid)
     })
 
+    it('should get the relationship type for two items', async () => {
+      itemManager = createService()
+      const firstNote = createNote('First note')
+      const secondNote = createNote('Second note')
+      const unlinkedNote = createNote('Unlinked note')
+      await itemManager.insertItems([firstNote, secondNote, unlinkedNote])
+
+      const firstNoteLinkedToSecond = await itemManager.linkNoteToNote(firstNote, secondNote)
+
+      const relationshipOfFirstNoteToSecond = itemManager.relationshipTypeForItems(firstNoteLinkedToSecond, secondNote)
+      const relationshipOfSecondNoteToFirst = itemManager.relationshipTypeForItems(secondNote, firstNoteLinkedToSecond)
+      const relationshipOfFirstNoteToUnlinked = itemManager.relationshipTypeForItems(
+        firstNoteLinkedToSecond,
+        unlinkedNote,
+      )
+
+      expect(relationshipOfFirstNoteToSecond).toBe('direct')
+      expect(relationshipOfSecondNoteToFirst).toBe('indirect')
+      expect(relationshipOfFirstNoteToUnlinked).toBe('unlinked')
+    })
+
     it('should unlink itemToUnlink from item', async () => {
       itemManager = createService()
       const note = createNote('Note 1')
