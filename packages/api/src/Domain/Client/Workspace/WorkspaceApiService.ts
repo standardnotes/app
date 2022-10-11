@@ -56,13 +56,18 @@ export class WorkspaceApiService implements WorkspaceApiServiceInterface {
     }
   }
 
-  async inviteToWorkspace(dto: { inviteeEmail: string; workspaceUuid: Uuid }): Promise<WorkspaceInvitationResponse> {
+  async inviteToWorkspace(dto: {
+    inviteeEmail: string
+    workspaceUuid: Uuid
+    accessLevel: string
+  }): Promise<WorkspaceInvitationResponse> {
     this.lockOperation(WorkspaceApiOperations.Inviting)
 
     try {
       const response = await this.workspaceServer.inviteToWorkspace({
         inviteeEmail: dto.inviteeEmail,
         workspaceUuid: dto.workspaceUuid,
+        accessLevel: dto.accessLevel,
       })
 
       this.unlockOperation(WorkspaceApiOperations.Inviting)

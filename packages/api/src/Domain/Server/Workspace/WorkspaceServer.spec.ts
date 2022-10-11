@@ -42,6 +42,7 @@ describe('WorkspaceServer', () => {
     const response = await createServer().inviteToWorkspace({
       inviteeEmail: 'test@test.te',
       workspaceUuid: 'w-1-2-3',
+      accessLevel: 'write-and-read',
     })
 
     expect(response).toEqual({

@@ -13,7 +13,11 @@ export interface WorkspaceApiServiceInterface {
     publicKey?: string
     workspaceName?: string
   }): Promise<WorkspaceCreationResponse>
-  inviteToWorkspace(dto: { inviteeEmail: string; workspaceUuid: Uuid }): Promise<WorkspaceInvitationResponse>
+  inviteToWorkspace(dto: {
+    inviteeEmail: string
+    workspaceUuid: Uuid
+    accessLevel: string
+  }): Promise<WorkspaceInvitationResponse>
   acceptInvite(dto: {
     inviteUuid: Uuid
     userUuid: Uuid

@@ -47,7 +47,11 @@ export class WorkspaceManager extends AbstractService implements WorkspaceClient
     }
   }
 
-  async inviteToWorkspace(dto: { inviteeEmail: string; workspaceUuid: Uuid }): Promise<{ uuid: string } | null> {
+  async inviteToWorkspace(dto: {
+    inviteeEmail: string
+    workspaceUuid: Uuid
+    accessLevel: string
+  }): Promise<{ uuid: string } | null> {
     try {
       const result = await this.workspaceApiService.inviteToWorkspace(dto)
 

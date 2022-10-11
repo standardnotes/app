@@ -9,7 +9,11 @@ export interface WorkspaceClientInterface {
     publicKey?: string
     workspaceName?: string
   }): Promise<{ uuid: string } | null>
-  inviteToWorkspace(dto: { inviteeEmail: string; workspaceUuid: Uuid }): Promise<{ uuid: string } | null>
+  inviteToWorkspace(dto: {
+    inviteeEmail: string
+    workspaceUuid: Uuid
+    accessLevel: string
+  }): Promise<{ uuid: string } | null>
   acceptInvite(dto: {
     inviteUuid: Uuid
     userUuid: Uuid

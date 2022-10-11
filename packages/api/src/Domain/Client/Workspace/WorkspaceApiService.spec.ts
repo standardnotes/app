@@ -97,6 +97,7 @@ describe('WorkspaceApiService', () => {
     const response = await createService().inviteToWorkspace({
       workspaceUuid: 'w-1-2-3',
       inviteeEmail: 'test@test.te',
+      accessLevel: 'write-and-read',
     })
 
     expect(response).toEqual({
@@ -107,6 +108,7 @@ describe('WorkspaceApiService', () => {
     expect(workspaceServer.inviteToWorkspace).toHaveBeenCalledWith({
       workspaceUuid: 'w-1-2-3',
       inviteeEmail: 'test@test.te',
+      accessLevel: 'write-and-read',
     })
   })
 
@@ -121,6 +123,7 @@ describe('WorkspaceApiService', () => {
       await service.inviteToWorkspace({
         workspaceUuid: 'w-1-2-3',
         inviteeEmail: 'test@test.te',
+        accessLevel: 'write-and-read',
       })
     } catch (caughtError) {
       error = caughtError
@@ -139,6 +142,7 @@ describe('WorkspaceApiService', () => {
       await createService().inviteToWorkspace({
         workspaceUuid: 'w-1-2-3',
         inviteeEmail: 'test@test.te',
+        accessLevel: 'write-and-read',
       })
     } catch (caughtError) {
       error = caughtError
