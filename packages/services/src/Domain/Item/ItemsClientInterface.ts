@@ -4,7 +4,7 @@ import {
   FileItem,
   SNTag,
   SmartView,
-  TagNoteCountChangeObserver,
+  TagItemCountChangeObserver,
   DecryptedPayloadInterface,
   EncryptedItemInterface,
   DecryptedTransferPayload,
@@ -55,7 +55,7 @@ export interface ItemsClientInterface {
 
   notesMatchingSmartView(view: SmartView): SNNote[]
 
-  addNoteCountChangeObserver(observer: TagNoteCountChangeObserver): () => void
+  addNoteCountChangeObserver(observer: TagItemCountChangeObserver): () => void
 
   allCountableNotesCount(): number
 
