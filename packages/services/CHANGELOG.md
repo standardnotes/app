@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.29.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.28.0...@standardnotes/services@1.29.0) (2022-10-11)
+
+### Features
+
+* **api:** add access level to invitation requests ([49b3d27](https://github.com/standardnotes/app/commit/49b3d2714fbe4ac9f9242097b8df6b4e3d604513))
+
 # [1.28.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.27.1...@standardnotes/services@1.28.0) (2022-10-11)
 
 ### Features
