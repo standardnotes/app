@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.28.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.27.1...@standardnotes/services@1.28.0) (2022-10-11)
+
+### Features
+
+* **api:** add accepting invites to workspace ([15e2c82](https://github.com/standardnotes/app/commit/15e2c82e654ce3f983cd42b01f14d18435b3e939))
+* **api:** add listing workspaces ([8376381](https://github.com/standardnotes/app/commit/837638198112df24c30e53803a7ddf5f841975b0))
+
 ## [1.27.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.27.0...@standardnotes/services@1.27.1) (2022-10-10)
 
 ### Bug Fixes
