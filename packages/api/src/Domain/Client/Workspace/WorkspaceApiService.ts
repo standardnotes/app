@@ -6,6 +6,7 @@ import { WorkspaceCreationResponse } from '../../Response/Workspace/WorkspaceCre
 import { WorkspaceInvitationAcceptingResponse } from '../../Response/Workspace/WorkspaceInvitationAcceptingResponse'
 import { WorkspaceInvitationResponse } from '../../Response/Workspace/WorkspaceInvitationResponse'
 import { WorkspaceServerInterface } from '../../Server/Workspace/WorkspaceServerInterface'
+import { WorkspaceListResponse } from '../../Response/Workspace/WorkspaceListResponse'
 
 import { WorkspaceApiServiceInterface } from './WorkspaceApiServiceInterface'
 import { WorkspaceApiOperations } from './WorkspaceApiOperations'
@@ -15,6 +16,20 @@ export class WorkspaceApiService implements WorkspaceApiServiceInterface {
 
   constructor(private workspaceServer: WorkspaceServerInterface) {
     this.operationsInProgress = new Map()
+  }
+
+  async listWorkspaces(): Promise<WorkspaceListResponse> {
+    this.lockOperation(WorkspaceApiOperations.ListingWorkspaces)
+
+    try {
+      const response = await this.workspaceServer.listWorkspaces({})
+
+      this.unlockOperation(WorkspaceApiOperations.ListingWorkspaces)
+
+      return response
+    } catch (error) {
+      throw new ApiCallError(ErrorMessage.GenericFail)
+    }
   }
 
   async acceptInvite(dto: {

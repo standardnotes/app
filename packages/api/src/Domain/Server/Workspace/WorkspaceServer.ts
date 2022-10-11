@@ -5,12 +5,20 @@ import { WorkspaceInvitationResponse } from '../../Response/Workspace/WorkspaceI
 import { WorkspaceCreationResponse } from '../../Response/Workspace/WorkspaceCreationResponse'
 import { WorkspaceInvitationAcceptingRequestParams } from '../../Request/Workspace/WorkspaceInvitationAcceptingRequestParams'
 import { WorkspaceInvitationAcceptingResponse } from '../../Response/Workspace/WorkspaceInvitationAcceptingResponse'
+import { WorkspaceListRequestParams } from '../../Request/Workspace/WorkspaceListRequestParams'
+import { WorkspaceListResponse } from '../../Response/Workspace/WorkspaceListResponse'
 
 import { Paths } from './Paths'
 import { WorkspaceServerInterface } from './WorkspaceServerInterface'
 
 export class WorkspaceServer implements WorkspaceServerInterface {
   constructor(private httpService: HttpServiceInterface) {}
+
+  async listWorkspaces(params: WorkspaceListRequestParams): Promise<WorkspaceListResponse> {
+    const response = await this.httpService.get(Paths.v1.listWorkspaces, params)
+
+    return response as WorkspaceListResponse
+  }
 
   async acceptInvite(params: WorkspaceInvitationAcceptingRequestParams): Promise<WorkspaceInvitationAcceptingResponse> {
     const response = await this.httpService.post(Paths.v1.acceptInvite(params.inviteUuid), params)

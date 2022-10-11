@@ -1,4 +1,5 @@
 import { Uuid, WorkspaceType } from '@standardnotes/common'
+import { Workspace } from '@standardnotes/models'
 
 export interface WorkspaceClientInterface {
   createWorkspace(dto: {
@@ -15,4 +16,5 @@ export interface WorkspaceClientInterface {
     publicKey: string
     encryptedPrivateKey: string
   }): Promise<{ success: boolean }>
+  listWorkspaces(): Promise<{ ownedWorkspaces: Array<Workspace>; joinedWorkspaces: Array<Workspace> }>
 }

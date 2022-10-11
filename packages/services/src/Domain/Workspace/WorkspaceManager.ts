@@ -1,5 +1,6 @@
 import { WorkspaceApiServiceInterface } from '@standardnotes/api'
 import { Uuid, WorkspaceType } from '@standardnotes/common'
+import { Workspace } from '@standardnotes/models'
 
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { AbstractService } from '../Service/AbstractService'
@@ -11,6 +12,20 @@ export class WorkspaceManager extends AbstractService implements WorkspaceClient
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
+  }
+
+  async listWorkspaces(): Promise<{ ownedWorkspaces: Workspace[]; joinedWorkspaces: Workspace[] }> {
+    try {
+      const result = await this.workspaceApiService.listWorkspaces()
+
+      if (result.data.error !== undefined) {
+        return { ownedWorkspaces: [], joinedWorkspaces: [] }
+      }
+
+      return result.data
+    } catch (error) {
+      return { ownedWorkspaces: [], joinedWorkspaces: [] }
+    }
   }
 
   async acceptInvite(dto: {

@@ -3,6 +3,7 @@ import { Uuid, WorkspaceType } from '@standardnotes/common'
 import { WorkspaceCreationResponse } from '../../Response/Workspace/WorkspaceCreationResponse'
 import { WorkspaceInvitationAcceptingResponse } from '../../Response/Workspace/WorkspaceInvitationAcceptingResponse'
 import { WorkspaceInvitationResponse } from '../../Response/Workspace/WorkspaceInvitationResponse'
+import { WorkspaceListResponse } from '../../Response/Workspace/WorkspaceListResponse'
 
 export interface WorkspaceApiServiceInterface {
   createWorkspace(dto: {
@@ -19,4 +20,5 @@ export interface WorkspaceApiServiceInterface {
     publicKey: string
     encryptedPrivateKey: string
   }): Promise<WorkspaceInvitationAcceptingResponse>
+  listWorkspaces(): Promise<WorkspaceListResponse>
 }

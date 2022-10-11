@@ -1,8 +1,9 @@
 import { WorkspaceType } from '@standardnotes/common'
-import { HttpServiceInterface } from '../../Http'
+import { HttpServiceInterface, HttpStatusCode } from '../../Http'
 import { WorkspaceCreationResponse } from '../../Response/Workspace/WorkspaceCreationResponse'
 import { WorkspaceInvitationAcceptingResponse } from '../../Response/Workspace/WorkspaceInvitationAcceptingResponse'
 import { WorkspaceInvitationResponse } from '../../Response/Workspace/WorkspaceInvitationResponse'
+import { WorkspaceListResponse } from '../../Response/Workspace/WorkspaceListResponse'
 
 import { WorkspaceServer } from './WorkspaceServer'
 
@@ -66,6 +67,20 @@ describe('WorkspaceServer', () => {
       data: {
         success: true,
       },
+    })
+  })
+
+  it('should list workspaces', async () => {
+    httpService.get = jest.fn().mockReturnValue({
+      status: HttpStatusCode.Success,
+      data: { ownedWorkspaces: [], joinedWorkspaces: [] },
+    } as jest.Mocked<WorkspaceListResponse>)
+
+    const response = await createServer().listWorkspaces({})
+
+    expect(response).toEqual({
+      status: 200,
+      data: { ownedWorkspaces: [], joinedWorkspaces: [] },
     })
   })
 })

@@ -1,7 +1,9 @@
 import { WorkspaceType } from '@standardnotes/common'
+import { HttpStatusCode } from '../../Http'
 import { WorkspaceCreationResponse } from '../../Response/Workspace/WorkspaceCreationResponse'
 import { WorkspaceInvitationAcceptingResponse } from '../../Response/Workspace/WorkspaceInvitationAcceptingResponse'
 import { WorkspaceInvitationResponse } from '../../Response/Workspace/WorkspaceInvitationResponse'
+import { WorkspaceListResponse } from '../../Response/Workspace/WorkspaceListResponse'
 import { WorkspaceServerInterface } from '../../Server/Workspace/WorkspaceServerInterface'
 
 import { WorkspaceApiOperations } from './WorkspaceApiOperations'
@@ -23,6 +25,10 @@ describe('WorkspaceApiService', () => {
     workspaceServer.acceptInvite = jest.fn().mockReturnValue({
       data: { success: true },
     } as jest.Mocked<WorkspaceInvitationAcceptingResponse>)
+    workspaceServer.listWorkspaces = jest.fn().mockReturnValue({
+      status: HttpStatusCode.Success,
+      data: { ownedWorkspaces: [], joinedWorkspaces: [] },
+    } as jest.Mocked<WorkspaceListResponse>)
   })
 
   it('should create a workspace', async () => {
@@ -196,6 +202,50 @@ describe('WorkspaceApiService', () => {
         publicKey: 'foo',
         encryptedPrivateKey: 'bar',
       })
+    } catch (caughtError) {
+      error = caughtError
+    }
+
+    expect(error).not.toBeNull()
+  })
+
+  it('should list workspaces', async () => {
+    const response = await createService().listWorkspaces()
+
+    expect(response).toEqual({
+      status: 200,
+      data: {
+        ownedWorkspaces: [],
+        joinedWorkspaces: [],
+      },
+    })
+    expect(workspaceServer.listWorkspaces).toHaveBeenCalled()
+  })
+
+  it('should not list workspaces if it is already listing them', async () => {
+    const service = createService()
+    Object.defineProperty(service, 'operationsInProgress', {
+      get: () => new Map([[WorkspaceApiOperations.ListingWorkspaces, true]]),
+    })
+
+    let error = null
+    try {
+      await service.listWorkspaces()
+    } catch (caughtError) {
+      error = caughtError
+    }
+
+    expect(error).not.toBeNull()
+  })
+
+  it('should not list workspaces if the server fails', async () => {
+    workspaceServer.listWorkspaces = jest.fn().mockImplementation(() => {
+      throw new Error('Oops')
+    })
+
+    let error = null
+    try {
+      await createService().listWorkspaces()
     } catch (caughtError) {
       error = caughtError
     }
