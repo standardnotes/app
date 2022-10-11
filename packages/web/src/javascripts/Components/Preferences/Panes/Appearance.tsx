@@ -59,11 +59,6 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
       })
 
     themesAsItems.unshift({
-      label: 'Dark',
-      value: 'Dark',
-    })
-
-    themesAsItems.unshift({
       label: 'Default',
       value: 'Default',
     })

@@ -1497,7 +1497,10 @@ export class SNApplication
     const syncEventCallback = async (eventName: ExternalServices.SyncEvent) => {
       const appEvent = applicationEventForSyncEvent(eventName)
       if (appEvent) {
+        await this.protocolService.onSyncEvent(eventName)
+
         await this.notifyEvent(appEvent)
+
         if (appEvent === ApplicationEvent.CompletedFullSync) {
           if (!this.handledFullSyncStage) {
             this.handledFullSyncStage = true
@@ -1505,7 +1508,6 @@ export class SNApplication
           }
         }
       }
-      await this.protocolService.onSyncEvent(eventName)
     }
     const uninstall = this.syncService.addEventObserver(syncEventCallback)
     this.serviceObservers.push(uninstall)

@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
+import { BaseItemCounts } from './lib/Applications.js'
 import * as Factory from './lib/factory.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -24,8 +25,8 @@ describe('backups', function () {
     this.application = null
   })
 
-  const BASE_ITEM_COUNT_ENCRYPTED = ['ItemsKey', 'UserPreferences'].length
-  const BASE_ITEM_COUNT_DECRYPTED = ['UserPreferences'].length
+  const BASE_ITEM_COUNT_ENCRYPTED = BaseItemCounts.DefaultItems
+  const BASE_ITEM_COUNT_DECRYPTED = ['UserPreferences', 'DarkTheme'].length
 
   it('backup file should have a version number', async function () {
     let data = await this.application.createDecryptedBackupFile()

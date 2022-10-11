@@ -44,6 +44,7 @@ import {
   SetOfflineFeaturesFunctionResponse,
   StorageKey,
 } from '@standardnotes/services'
+import { FeatureIdentifier } from '@standardnotes/features'
 
 type GetOfflineSubscriptionDetailsResponse = OfflineSubscriptionEntitlements | ClientDisplayableError
 
@@ -145,13 +146,24 @@ export class SNFeaturesService
 
   override async handleApplicationStage(stage: ApplicationStage): Promise<void> {
     await super.handleApplicationStage(stage)
+
     if (stage === ApplicationStage.FullSyncCompleted_13) {
+      void this.addDarkTheme()
+
       if (!this.hasOnlineSubscription()) {
         const offlineRepo = this.getOfflineRepo()
         if (offlineRepo) {
           void this.downloadOfflineFeatures(offlineRepo)
         }
       }
+    }
+  }
+
+  private async addDarkTheme() {
+    const darkThemeFeature = FeaturesImports.FindNativeFeature(FeatureIdentifier.DarkTheme)
+
+    if (darkThemeFeature) {
+      await this.mapRemoteNativeFeaturesToItems([darkThemeFeature])
     }
   }
 
@@ -366,7 +378,7 @@ export class SNFeaturesService
     if (!arraysEqual(this.roles, roles)) {
       void this.notifyEvent(FeaturesEvent.UserRolesChanged)
     }
-    await this.storageService.setValue(StorageKey.UserRoles, this.roles)
+    this.storageService.setValue(StorageKey.UserRoles, this.roles)
   }
 
   public async didDownloadFeatures(features: FeaturesImports.FeatureDescription[]): Promise<void> {
@@ -448,7 +460,15 @@ export class SNFeaturesService
     return FeaturesImports.FindNativeFeature(featureId)?.deprecated === true
   }
 
+  public isFreeFeature(featureId: FeaturesImports.FeatureIdentifier) {
+    return [FeatureIdentifier.DarkTheme].includes(featureId)
+  }
+
   public getFeatureStatus(featureId: FeaturesImports.FeatureIdentifier): FeatureStatus {
+    if (this.isFreeFeature(featureId)) {
+      return FeatureStatus.Entitled
+    }
+
     const isDeprecated = this.isFeatureDeprecated(featureId)
     if (isDeprecated) {
       if (this.hasPaidOnlineOrOfflineSubscription()) {
@@ -548,7 +568,9 @@ export class SNFeaturesService
 
     let hasChanges = false
     const now = new Date()
-    const expired = new Date(feature.expires_at || 0).getTime() < now.getTime()
+    const expired = this.isFreeFeature(feature.identifier)
+      ? false
+      : new Date(feature.expires_at || 0).getTime() < now.getTime()
 
     const existingItem = currentItems.find((item) => {
       if (item.content.package_info) {

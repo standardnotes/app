@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.136.4](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.136.3...@standardnotes/snjs@2.136.4) (2022-10-11)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.136.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.136.2...@standardnotes/snjs@2.136.3) (2022-10-11)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.136.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.136.1...@standardnotes/snjs@2.136.2) (2022-10-10)
+
+### Bug Fixes
+
+* dark mode not working in editors ([#1773](https://github.com/standardnotes/app/issues/1773)) ([27d2c95](https://github.com/standardnotes/app/commit/27d2c95b5b82645bf6c0372979f05236c83a10f6))
+
 ## [2.136.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.136.0...@standardnotes/snjs@2.136.1) (2022-10-10)
 
 ### Bug Fixes

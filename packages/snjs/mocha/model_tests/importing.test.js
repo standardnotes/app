@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
+import { BaseItemCounts } from '../lib/Applications.js'
 import * as Factory from '../lib/factory.js'
 import { createRelatedNoteTagPairPayload } from '../lib/Items.js'
 chai.use(chaiAsPromised)
@@ -7,7 +8,6 @@ const expect = chai.expect
 
 describe('importing', function () {
   this.timeout(Factory.TenSecondTimeout)
-  const BASE_ITEM_COUNT = 2 /** Default items key, user preferences */
 
   let expectedItemCount
   let application
@@ -19,7 +19,7 @@ describe('importing', function () {
   })
 
   const setup = async ({ fakeCrypto }) => {
-    expectedItemCount = BASE_ITEM_COUNT
+    expectedItemCount = BaseItemCounts.DefaultItems
     if (fakeCrypto) {
       application = await Factory.createInitAppWithFakeCrypto()
     } else {
@@ -599,12 +599,11 @@ describe('importing', function () {
     application = await Factory.createInitAppWithFakeCrypto()
     application.setLaunchCallback({
       receiveChallenge: (challenge) => {
-        const values = challenge.prompts.map(
-          (prompt) =>
-            CreateChallengeValue(
-              prompt,
-              prompt.validation === ChallengeValidation.None ? 'incorrect password' : password,
-            ),
+        const values = challenge.prompts.map((prompt) =>
+          CreateChallengeValue(
+            prompt,
+            prompt.validation === ChallengeValidation.None ? 'incorrect password' : password,
+          ),
         )
         application.submitValuesForChallenge(challenge, values)
       },
@@ -782,14 +781,13 @@ describe('importing', function () {
         if (challenge.prompts.length === 2) {
           application.submitValuesForChallenge(
             challenge,
-            challenge.prompts.map(
-              (prompt) =>
-                CreateChallengeValue(
-                  prompt,
-                  prompt.validation !== ChallengeValidation.ProtectionSessionDuration
-                    ? password
-                    : UnprotectedAccessSecondsDuration.OneMinute,
-                ),
+            challenge.prompts.map((prompt) =>
+              CreateChallengeValue(
+                prompt,
+                prompt.validation !== ChallengeValidation.ProtectionSessionDuration
+                  ? password
+                  : UnprotectedAccessSecondsDuration.OneMinute,
+              ),
             ),
           )
         } else {

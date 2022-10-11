@@ -1,13 +1,12 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
+import { BaseItemCounts } from './lib/Applications.js'
 import * as Factory from './lib/factory.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('basic auth', function () {
   this.timeout(Factory.TenSecondTimeout)
-
-  const BASE_ITEM_COUNT = 2 /** Default items key, user preferences */
 
   const syncOptions = {
     checkIntegrity: true,
@@ -16,7 +15,7 @@ describe('basic auth', function () {
 
   beforeEach(async function () {
     localStorage.clear()
-    this.expectedItemCount = BASE_ITEM_COUNT
+    this.expectedItemCount = BaseItemCounts.DefaultItems
     this.application = await Factory.createInitAppWithFakeCrypto()
     this.email = UuidGenerator.GenerateUuid()
     this.password = UuidGenerator.GenerateUuid()
@@ -62,7 +61,7 @@ describe('basic auth', function () {
     expect(this.application.protocolService.rootKeyEncryption.keyMode).to.equal(KeyMode.RootKeyNone)
 
     const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
-    expect(rawPayloads.length).to.equal(BASE_ITEM_COUNT)
+    expect(rawPayloads.length).to.equal(BaseItemCounts.DefaultItems)
   })
 
   it('successfully signs in to registered account', async function () {
@@ -408,7 +407,7 @@ describe('basic auth', function () {
 
       this.application = await Factory.signOutApplicationAndReturnNew(this.application)
 
-      expect(this.application.itemManager.items.length).to.equal(BASE_ITEM_COUNT)
+      expect(this.application.itemManager.items.length).to.equal(BaseItemCounts.DefaultItems)
       expect(this.application.payloadManager.invalidPayloads.length).to.equal(0)
 
       /** Should login with new password */

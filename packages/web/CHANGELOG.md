@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.71.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.71.5...@standardnotes/web@3.71.6) (2022-10-11)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.71.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.71.4...@standardnotes/web@3.71.5) (2022-10-11)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.71.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.71.3...@standardnotes/web@3.71.4) (2022-10-10)
+
+### Bug Fixes
+
+* dark mode not working in editors ([#1773](https://github.com/standardnotes/app/issues/1773)) ([27d2c95](https://github.com/standardnotes/app/commit/27d2c95b5b82645bf6c0372979f05236c83a10f6))
+
 ## [3.71.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.71.2...@standardnotes/web@3.71.3) (2022-10-10)
 
 **Note:** Version bump only for package @standardnotes/web

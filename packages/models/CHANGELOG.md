@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.25.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.24.2...@standardnotes/models@1.25.0) (2022-10-11)
+
+### Features
+
+* **api:** add listing workspaces ([8376381](https://github.com/standardnotes/app/commit/837638198112df24c30e53803a7ddf5f841975b0))
+
+## [1.24.2](https://github.com/standardnotes/app/compare/@standardnotes/models@1.24.1...@standardnotes/models@1.24.2) (2022-10-10)
+
+**Note:** Version bump only for package @standardnotes/models
+
 ## [1.24.1](https://github.com/standardnotes/app/compare/@standardnotes/models@1.24.0...@standardnotes/models@1.24.1) (2022-10-10)
 
 ### Bug Fixes

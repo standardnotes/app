@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/responses",
-  "version": "1.10.5",
+  "version": "1.10.6",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -31,7 +31,7 @@
     "ts-jest": "^28.0.5"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.36.1",
+    "@standardnotes/common": "^1.39.0",
     "@standardnotes/features": "workspace:*",
     "@standardnotes/security": "^1.1.0",
     "reflect-metadata": "^0.1.13"
