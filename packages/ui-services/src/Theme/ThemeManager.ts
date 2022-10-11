@@ -16,7 +16,7 @@ import {
   StorageValueModes,
   FeatureStatus,
 } from '@standardnotes/services'
-import { FeatureIdentifier } from '@standardnotes/snjs'
+import { FeatureIdentifier } from '@standardnotes/features'
 
 const CachedThemesKey = 'cachedThemes'
 const TimeBeforeApplyingColorScheme = 5

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.24.0](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.23.15...@standardnotes/filepicker@1.24.0) (2022-10-11)
+
+### Features
+
+* **api:** add listing workspace users ([fb41f65](https://github.com/standardnotes/app/commit/fb41f651eca45dd62314609c2f389d5dc683c36e))
+
 ## [1.23.15](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.23.14...@standardnotes/filepicker@1.23.15) (2022-10-11)
 
 **Note:** Version bump only for package @standardnotes/filepicker

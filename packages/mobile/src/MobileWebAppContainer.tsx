@@ -204,6 +204,12 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       onError={(err) => console.error('An error has occurred', err)}
       onHttpError={() => console.error('An HTTP error occurred')}
       onMessage={onMessage}
+      onContentProcessDidTerminate={() => {
+        webViewRef.current?.reload()
+      }}
+      onRenderProcessGone={() => {
+        webViewRef.current?.reload()
+      }}
       allowFileAccess={true}
       allowUniversalAccessFromFileURLs={true}
       injectedJavaScriptBeforeContentLoaded={injectedJS}
