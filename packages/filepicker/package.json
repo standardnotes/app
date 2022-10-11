@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/filepicker",
-  "version": "1.23.12",
+  "version": "1.23.15",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -31,7 +31,7 @@
     "ts-node": "^10.5.0"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.32.0",
+    "@standardnotes/common": "^1.39.0",
     "@standardnotes/files": "workspace:*",
     "@standardnotes/utils": "workspace:*",
     "@types/wicg-file-system-access": "^2020.9.5",

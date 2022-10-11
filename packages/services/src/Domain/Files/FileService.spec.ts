@@ -77,7 +77,7 @@ describe('fileService', () => {
     crypto.xchacha20StreamEncryptorPush = jest.fn().mockReturnValue(new Uint8Array())
   })
 
-  it.only('should cache file after download', async () => {
+  it('should cache file after download', async () => {
     const file = {
       uuid: '1',
       decryptedSize: 100_000,

@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/snjs",
-  "version": "2.136.0",
+  "version": "2.136.4",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -68,7 +68,7 @@
   },
   "dependencies": {
     "@standardnotes/api": "workspace:*",
-    "@standardnotes/common": "^1.32.0",
+    "@standardnotes/common": "^1.39.0",
     "@standardnotes/domain-events": "^2.39.0",
     "@standardnotes/encryption": "workspace:*",
     "@standardnotes/features": "workspace:*",

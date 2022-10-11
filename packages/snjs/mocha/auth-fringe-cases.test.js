@@ -1,16 +1,15 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
+import { BaseItemCounts } from './lib/Applications.js'
 import * as Factory from './lib/factory.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('auth fringe cases', () => {
-  const BASE_ITEM_COUNT = ['default items key', 'user prefs'].length
-
   const createContext = async () => {
     const application = await Factory.createInitAppWithFakeCrypto()
     return {
-      expectedItemCount: BASE_ITEM_COUNT,
+      expectedItemCount: BaseItemCounts.DefaultItems,
       application: application,
       email: UuidGenerator.GenerateUuid(),
       password: UuidGenerator.GenerateUuid(),
@@ -100,9 +99,13 @@ describe('auth fringe cases', () => {
 
       expect(newApplication.itemManager.getDisplayableNotes().length).to.equal(2)
 
-      expect(newApplication.itemManager.getDisplayableNotes().find((n) => n.uuid === firstVersionOfNote.uuid).text).to.equal(staleText)
+      expect(
+        newApplication.itemManager.getDisplayableNotes().find((n) => n.uuid === firstVersionOfNote.uuid).text,
+      ).to.equal(staleText)
 
-      const conflictedCopy = newApplication.itemManager.getDisplayableNotes().find((n) => n.uuid !== firstVersionOfNote.uuid)
+      const conflictedCopy = newApplication.itemManager
+        .getDisplayableNotes()
+        .find((n) => n.uuid !== firstVersionOfNote.uuid)
       expect(conflictedCopy.text).to.equal(serverText)
       expect(conflictedCopy.duplicate_of).to.equal(firstVersionOfNote.uuid)
       await Factory.safeDeinit(newApplication)

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.9.1](https://github.com/standardnotes/app/compare/@standardnotes/utils@1.9.0...@standardnotes/utils@1.9.1) (2022-10-10)
+
+### Bug Fixes
+
+* **api:** workspace creation arguments ([a275a45](https://github.com/standardnotes/app/commit/a275a45753abc4a29a89de5fe784260165297bbe))
+
 # [1.9.0](https://github.com/standardnotes/app/compare/@standardnotes/utils@1.8.3...@standardnotes/utils@1.9.0) (2022-09-13)
 
 ### Features

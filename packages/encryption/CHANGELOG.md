@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.16.3](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.16.2...@standardnotes/encryption@1.16.3) (2022-10-11)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.16.2](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.16.1...@standardnotes/encryption@1.16.2) (2022-10-10)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.16.1](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.16.0...@standardnotes/encryption@1.16.1) (2022-10-10)
+
+### Bug Fixes
+
+* **api:** workspace creation arguments ([a275a45](https://github.com/standardnotes/app/commit/a275a45753abc4a29a89de5fe784260165297bbe))
+
 # [1.16.0](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.15.11...@standardnotes/encryption@1.16.0) (2022-10-06)
 
 ### Features

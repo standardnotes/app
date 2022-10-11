@@ -1,12 +1,11 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
+import { BaseItemCounts } from './lib/Applications.js'
 import * as Factory from './lib/factory.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('application instances', () => {
-  const BASE_ITEM_COUNT = 2 /** Default items key, user preferences */
-
   const syncOptions = {
     checkIntegrity: true,
     awaitAll: true,
@@ -27,8 +26,8 @@ describe('application instances', () => {
     expect(app1.payloadManager).to.not.equal(app2.payloadManager)
 
     await Factory.createMappedNote(app1)
-    expect(app1.itemManager.items.length).length.to.equal(BASE_ITEM_COUNT + 1)
-    expect(app2.itemManager.items.length).to.equal(BASE_ITEM_COUNT)
+    expect(app1.itemManager.items.length).length.to.equal(BaseItemCounts.DefaultItems + 1)
+    expect(app2.itemManager.items.length).to.equal(BaseItemCounts.DefaultItems)
     await Factory.safeDeinit(app1)
     await Factory.safeDeinit(app2)
   })
@@ -40,14 +39,14 @@ describe('application instances', () => {
     await Factory.createMappedNote(app1)
     await app1.syncService.sync(syncOptions)
 
-    expect((await app1.diskStorageService.getAllRawPayloads()).length).length.to.equal(BASE_ITEM_COUNT + 1)
-    expect((await app2.diskStorageService.getAllRawPayloads()).length).length.to.equal(BASE_ITEM_COUNT)
+    expect((await app1.diskStorageService.getAllRawPayloads()).length).length.to.equal(BaseItemCounts.DefaultItems + 1)
+    expect((await app2.diskStorageService.getAllRawPayloads()).length).length.to.equal(BaseItemCounts.DefaultItems)
 
     await Factory.createMappedNote(app2)
     await app2.syncService.sync(syncOptions)
 
-    expect((await app1.diskStorageService.getAllRawPayloads()).length).length.to.equal(BASE_ITEM_COUNT + 1)
-    expect((await app2.diskStorageService.getAllRawPayloads()).length).length.to.equal(BASE_ITEM_COUNT + 1)
+    expect((await app1.diskStorageService.getAllRawPayloads()).length).length.to.equal(BaseItemCounts.DefaultItems + 1)
+    expect((await app2.diskStorageService.getAllRawPayloads()).length).length.to.equal(BaseItemCounts.DefaultItems + 1)
     await Factory.safeDeinit(app1)
     await Factory.safeDeinit(app2)
   })

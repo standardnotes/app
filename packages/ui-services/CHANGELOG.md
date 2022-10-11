@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.6](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.6.5...@standardnotes/ui-services@1.6.6) (2022-10-11)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.6.5](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.6.4...@standardnotes/ui-services@1.6.5) (2022-10-11)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.6.4](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.6.3...@standardnotes/ui-services@1.6.4) (2022-10-10)
+
+### Bug Fixes
+
+* dark mode not working in editors ([#1773](https://github.com/standardnotes/app/issues/1773)) ([27d2c95](https://github.com/standardnotes/app/commit/27d2c95b5b82645bf6c0372979f05236c83a10f6))
+
+## [1.6.3](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.6.2...@standardnotes/ui-services@1.6.3) (2022-10-10)
+
+### Bug Fixes
+
+* **api:** workspace creation arguments ([a275a45](https://github.com/standardnotes/app/commit/a275a45753abc4a29a89de5fe784260165297bbe))
+
 ## [1.6.2](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.6.1...@standardnotes/ui-services@1.6.2) (2022-10-07)
 
 **Note:** Version bump only for package @standardnotes/ui-services

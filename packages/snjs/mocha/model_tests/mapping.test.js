@@ -1,15 +1,14 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
+import { BaseItemCounts } from '../lib/Applications.js'
 import * as Factory from '../lib/factory.js'
 import { createNoteParams } from '../lib/Items.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('model manager mapping', () => {
-  const BASE_ITEM_COUNT = 2 /** Default items key, user preferences */
-
   beforeEach(async function () {
-    this.expectedItemCount = BASE_ITEM_COUNT
+    this.expectedItemCount = BaseItemCounts.DefaultItems
     this.application = await Factory.createInitAppWithFakeCrypto()
   })
 

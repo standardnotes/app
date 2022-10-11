@@ -1,12 +1,12 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
+import { BaseItemCounts } from '../lib/Applications.js'
 import * as Factory from '../lib/factory.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('app models', () => {
-  const BASE_ITEM_COUNT = 2 /** Default items key, user preferences */
   const sharedApplication = Factory.createApplicationWithFakeCrypto()
 
   before(async function () {
@@ -20,7 +20,7 @@ describe('app models', () => {
   })
 
   beforeEach(async function () {
-    this.expectedItemCount = BASE_ITEM_COUNT
+    this.expectedItemCount = BaseItemCounts.DefaultItems
     this.application = await Factory.createInitAppWithFakeCrypto()
   })
 
