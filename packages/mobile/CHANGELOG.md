@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.41.10](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.41.9...@standardnotes/mobile@3.41.10) (2022-10-11)
+
+### Bug Fixes
+
+* **mobile:** issue with black screen on iOS ([#1777](https://github.com/standardnotes/app/issues/1777)) ([9fc77d8](https://github.com/standardnotes/app/commit/9fc77d861e501d63ee97875bba2ddda51d14fd0b))
+
 ## [3.41.9](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.41.8...@standardnotes/mobile@3.41.9) (2022-10-11)
 
 **Note:** Version bump only for package @standardnotes/mobile
