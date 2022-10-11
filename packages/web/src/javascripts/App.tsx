@@ -60,7 +60,6 @@ export const setViewportHeightWithFallback = (mobileDeviceHeight?: number | null
   }
 
   if (currentHeight && newValue < currentHeight) {
-    document.documentElement.style.setProperty(ViewportHeightKey, `${currentHeight}px`)
     return
   }
 
