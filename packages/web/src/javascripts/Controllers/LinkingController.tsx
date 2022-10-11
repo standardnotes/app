@@ -213,7 +213,16 @@ export class LinkingController extends AbstractViewController {
       return
     }
 
-    await this.application.items.unlinkItem(itemToUnlink, selectedItem)
+    const selectedItemReferencesItemToUnlink = !!this.application.items
+      .referencesForItem(selectedItem)
+      .find((reference) => reference.uuid === itemToUnlink.uuid)
+
+    if (selectedItemReferencesItemToUnlink) {
+      await this.application.items.unlinkItem(selectedItem, itemToUnlink)
+    } else {
+      await this.application.items.unlinkItem(itemToUnlink, selectedItem)
+    }
+
     void this.application.sync.sync()
     this.reloadAllLinks()
   }

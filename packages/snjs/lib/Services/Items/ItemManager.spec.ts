@@ -836,5 +836,18 @@ describe('itemManager', () => {
       expect(references).toHaveLength(1)
       expect(references[0].uuid).toEqual(file2.uuid)
     })
+
+    it('should unlink itemToUnlink from item', async () => {
+      itemManager = createService()
+      const note = createNote('Note 1')
+      const note2 = createNote('Note 2')
+      await itemManager.insertItems([note, note2])
+
+      const linkedItem = await itemManager.linkNoteToNote(note, note2)
+      const unlinkedItem = await itemManager.unlinkItem(linkedItem, note2)
+      const references = unlinkedItem.references
+
+      expect(references).toHaveLength(0)
+    })
   })
 })

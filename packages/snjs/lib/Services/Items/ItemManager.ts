@@ -1173,12 +1173,6 @@ export class ItemManager
     item: DecryptedItemInterface<ItemContent>,
     itemToUnlink: DecryptedItemInterface<ItemContent>,
   ) {
-    if (itemToUnlink.isReferencingItem(item)) {
-      return this.changeItem(itemToUnlink, (mutator) => {
-        mutator.removeItemAsRelationship(item)
-      })
-    }
-
     return this.changeItem(item, (mutator) => {
       mutator.removeItemAsRelationship(itemToUnlink)
     })
