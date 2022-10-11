@@ -1,10 +1,10 @@
-import { NoteContent } from './../../../Syncable/Note/NoteContent'
+import { NoteContent } from '../../../Syncable/Note/NoteContent'
 import { ContentType } from '@standardnotes/common'
 import { DecryptedItem, EncryptedItem } from '../../../Abstract/Item'
 import { DecryptedPayload, EncryptedPayload, PayloadTimestampDefaults } from '../../../Abstract/Payload'
 import { ItemCollection } from './ItemCollection'
 import { FillItemContent } from '../../../Abstract/Content/ItemContent'
-import { TagNotesIndex } from './TagNotesIndex'
+import { TagItemsIndex } from './TagItemsIndex'
 import { ItemDelta } from '../../Index/ItemDelta'
 import { AnyItemInterface } from '../../../Abstract/Item/Interfaces/UnionTypes'
 
@@ -48,18 +48,18 @@ describe('tag notes index', () => {
 
   it('should decrement count after decrypted note becomes errored', () => {
     const collection = new ItemCollection()
-    const index = new TagNotesIndex(collection)
+    const index = new TagItemsIndex(collection)
 
     const decryptedItem = createDecryptedItem()
     collection.set(decryptedItem)
     index.onChange(createChangeDelta(decryptedItem))
 
-    expect(index.allCountableNotesCount()).toEqual(1)
+    expect(index.allCountableItemsCount()).toEqual(1)
 
     const encryptedItem = createEncryptedItem(decryptedItem.uuid)
     collection.set(encryptedItem)
     index.onChange(createChangeDelta(encryptedItem))
 
-    expect(index.allCountableNotesCount()).toEqual(0)
+    expect(index.allCountableItemsCount()).toEqual(0)
   })
 })
