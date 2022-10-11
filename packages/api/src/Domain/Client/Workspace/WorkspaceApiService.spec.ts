@@ -1,6 +1,7 @@
 import { WorkspaceType } from '@standardnotes/common'
-import { WorkspaceInvitationResponse } from '../../Response'
 import { WorkspaceCreationResponse } from '../../Response/Workspace/WorkspaceCreationResponse'
+import { WorkspaceInvitationAcceptingResponse } from '../../Response/Workspace/WorkspaceInvitationAcceptingResponse'
+import { WorkspaceInvitationResponse } from '../../Response/Workspace/WorkspaceInvitationResponse'
 import { WorkspaceServerInterface } from '../../Server/Workspace/WorkspaceServerInterface'
 
 import { WorkspaceApiOperations } from './WorkspaceApiOperations'
@@ -19,6 +20,9 @@ describe('WorkspaceApiService', () => {
     workspaceServer.inviteToWorkspace = jest.fn().mockReturnValue({
       data: { uuid: 'i-1-2-3' },
     } as jest.Mocked<WorkspaceInvitationResponse>)
+    workspaceServer.acceptInvite = jest.fn().mockReturnValue({
+      data: { success: true },
+    } as jest.Mocked<WorkspaceInvitationAcceptingResponse>)
   })
 
   it('should create a workspace', async () => {
@@ -129,6 +133,68 @@ describe('WorkspaceApiService', () => {
       await createService().inviteToWorkspace({
         workspaceUuid: 'w-1-2-3',
         inviteeEmail: 'test@test.te',
+      })
+    } catch (caughtError) {
+      error = caughtError
+    }
+
+    expect(error).not.toBeNull()
+  })
+
+  it('should accept invite to a workspace', async () => {
+    const response = await createService().acceptInvite({
+      userUuid: 'u-1-2-3',
+      inviteUuid: 'i-1-2-3',
+      publicKey: 'foo',
+      encryptedPrivateKey: 'bar',
+    })
+
+    expect(response).toEqual({
+      data: {
+        success: true,
+      },
+    })
+    expect(workspaceServer.acceptInvite).toHaveBeenCalledWith({
+      userUuid: 'u-1-2-3',
+      inviteUuid: 'i-1-2-3',
+      publicKey: 'foo',
+      encryptedPrivateKey: 'bar',
+    })
+  })
+
+  it('should not accept invite to a workspace if it is already accepting', async () => {
+    const service = createService()
+    Object.defineProperty(service, 'operationsInProgress', {
+      get: () => new Map([[WorkspaceApiOperations.Accepting, true]]),
+    })
+
+    let error = null
+    try {
+      await service.acceptInvite({
+        userUuid: 'u-1-2-3',
+        inviteUuid: 'i-1-2-3',
+        publicKey: 'foo',
+        encryptedPrivateKey: 'bar',
+      })
+    } catch (caughtError) {
+      error = caughtError
+    }
+
+    expect(error).not.toBeNull()
+  })
+
+  it('should not accept invite to a workspace if the server fails', async () => {
+    workspaceServer.acceptInvite = jest.fn().mockImplementation(() => {
+      throw new Error('Oops')
+    })
+
+    let error = null
+    try {
+      await createService().acceptInvite({
+        userUuid: 'u-1-2-3',
+        inviteUuid: 'i-1-2-3',
+        publicKey: 'foo',
+        encryptedPrivateKey: 'bar',
       })
     } catch (caughtError) {
       error = caughtError

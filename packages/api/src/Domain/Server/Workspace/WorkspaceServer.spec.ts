@@ -1,6 +1,7 @@
 import { WorkspaceType } from '@standardnotes/common'
 import { HttpServiceInterface } from '../../Http'
 import { WorkspaceCreationResponse } from '../../Response/Workspace/WorkspaceCreationResponse'
+import { WorkspaceInvitationAcceptingResponse } from '../../Response/Workspace/WorkspaceInvitationAcceptingResponse'
 import { WorkspaceInvitationResponse } from '../../Response/Workspace/WorkspaceInvitationResponse'
 
 import { WorkspaceServer } from './WorkspaceServer'
@@ -45,6 +46,25 @@ describe('WorkspaceServer', () => {
     expect(response).toEqual({
       data: {
         uuid: 'i-1-2-3',
+      },
+    })
+  })
+
+  it('should accept invitation to a workspace', async () => {
+    httpService.post = jest.fn().mockReturnValue({
+      data: { success: true },
+    } as jest.Mocked<WorkspaceInvitationAcceptingResponse>)
+
+    const response = await createServer().acceptInvite({
+      encryptedPrivateKey: 'foo',
+      inviteUuid: 'i-1-2-3',
+      publicKey: 'bar',
+      userUuid: 'u-1-2-3',
+    })
+
+    expect(response).toEqual({
+      data: {
+        success: true,
       },
     })
   })

@@ -3,12 +3,12 @@ import { Uuid, WorkspaceType } from '@standardnotes/common'
 import { ErrorMessage } from '../../Error/ErrorMessage'
 import { ApiCallError } from '../../Error/ApiCallError'
 import { WorkspaceCreationResponse } from '../../Response/Workspace/WorkspaceCreationResponse'
+import { WorkspaceInvitationAcceptingResponse } from '../../Response/Workspace/WorkspaceInvitationAcceptingResponse'
+import { WorkspaceInvitationResponse } from '../../Response/Workspace/WorkspaceInvitationResponse'
 import { WorkspaceServerInterface } from '../../Server/Workspace/WorkspaceServerInterface'
 
 import { WorkspaceApiServiceInterface } from './WorkspaceApiServiceInterface'
 import { WorkspaceApiOperations } from './WorkspaceApiOperations'
-
-import { WorkspaceInvitationResponse } from '../../Response'
 
 export class WorkspaceApiService implements WorkspaceApiServiceInterface {
   private operationsInProgress: Map<WorkspaceApiOperations, boolean>
@@ -17,12 +17,32 @@ export class WorkspaceApiService implements WorkspaceApiServiceInterface {
     this.operationsInProgress = new Map()
   }
 
-  async inviteToWorkspace(dto: { inviteeEmail: string; workspaceUuid: Uuid }): Promise<WorkspaceInvitationResponse> {
-    if (this.operationsInProgress.get(WorkspaceApiOperations.Inviting)) {
-      throw new ApiCallError(ErrorMessage.GenericInProgress)
-    }
+  async acceptInvite(dto: {
+    inviteUuid: string
+    userUuid: string
+    publicKey: string
+    encryptedPrivateKey: string
+  }): Promise<WorkspaceInvitationAcceptingResponse> {
+    this.lockOperation(WorkspaceApiOperations.Accepting)
 
-    this.operationsInProgress.set(WorkspaceApiOperations.Inviting, true)
+    try {
+      const response = await this.workspaceServer.acceptInvite({
+        encryptedPrivateKey: dto.encryptedPrivateKey,
+        publicKey: dto.publicKey,
+        inviteUuid: dto.inviteUuid,
+        userUuid: dto.userUuid,
+      })
+
+      this.unlockOperation(WorkspaceApiOperations.Accepting)
+
+      return response
+    } catch (error) {
+      throw new ApiCallError(ErrorMessage.GenericFail)
+    }
+  }
+
+  async inviteToWorkspace(dto: { inviteeEmail: string; workspaceUuid: Uuid }): Promise<WorkspaceInvitationResponse> {
+    this.lockOperation(WorkspaceApiOperations.Inviting)
 
     try {
       const response = await this.workspaceServer.inviteToWorkspace({
@@ -30,7 +50,7 @@ export class WorkspaceApiService implements WorkspaceApiServiceInterface {
         workspaceUuid: dto.workspaceUuid,
       })
 
-      this.operationsInProgress.set(WorkspaceApiOperations.Inviting, false)
+      this.unlockOperation(WorkspaceApiOperations.Inviting)
 
       return response
     } catch (error) {
@@ -45,11 +65,7 @@ export class WorkspaceApiService implements WorkspaceApiServiceInterface {
     publicKey?: string
     workspaceName?: string
   }): Promise<WorkspaceCreationResponse> {
-    if (this.operationsInProgress.get(WorkspaceApiOperations.Creating)) {
-      throw new ApiCallError(ErrorMessage.GenericInProgress)
-    }
-
-    this.operationsInProgress.set(WorkspaceApiOperations.Creating, true)
+    this.lockOperation(WorkspaceApiOperations.Creating)
 
     try {
       const response = await this.workspaceServer.createWorkspace({
@@ -60,11 +76,23 @@ export class WorkspaceApiService implements WorkspaceApiServiceInterface {
         workspaceName: dto.workspaceName,
       })
 
-      this.operationsInProgress.set(WorkspaceApiOperations.Creating, false)
+      this.unlockOperation(WorkspaceApiOperations.Creating)
 
       return response
     } catch (error) {
       throw new ApiCallError(ErrorMessage.GenericFail)
     }
+  }
+
+  private lockOperation(operation: WorkspaceApiOperations): void {
+    if (this.operationsInProgress.get(operation)) {
+      throw new ApiCallError(ErrorMessage.GenericInProgress)
+    }
+
+    this.operationsInProgress.set(operation, true)
+  }
+
+  private unlockOperation(operation: WorkspaceApiOperations): void {
+    this.operationsInProgress.set(operation, false)
   }
 }
