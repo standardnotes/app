@@ -1,9 +1,10 @@
-import { WorkspaceType } from '@standardnotes/common'
+import { WorkspaceAccessLevel, WorkspaceType } from '@standardnotes/common'
 import { HttpStatusCode } from '../../Http'
 import { WorkspaceCreationResponse } from '../../Response/Workspace/WorkspaceCreationResponse'
 import { WorkspaceInvitationAcceptingResponse } from '../../Response/Workspace/WorkspaceInvitationAcceptingResponse'
 import { WorkspaceInvitationResponse } from '../../Response/Workspace/WorkspaceInvitationResponse'
 import { WorkspaceListResponse } from '../../Response/Workspace/WorkspaceListResponse'
+import { WorkspaceUserListResponse } from '../../Response/Workspace/WorkspaceUserListResponse'
 import { WorkspaceServerInterface } from '../../Server/Workspace/WorkspaceServerInterface'
 
 import { WorkspaceApiOperations } from './WorkspaceApiOperations'
@@ -29,6 +30,10 @@ describe('WorkspaceApiService', () => {
       status: HttpStatusCode.Success,
       data: { ownedWorkspaces: [], joinedWorkspaces: [] },
     } as jest.Mocked<WorkspaceListResponse>)
+    workspaceServer.listWorkspaceUsers = jest.fn().mockReturnValue({
+      status: HttpStatusCode.Success,
+      data: { users: [] },
+    } as jest.Mocked<WorkspaceUserListResponse>)
   })
 
   it('should create a workspace', async () => {
@@ -97,7 +102,7 @@ describe('WorkspaceApiService', () => {
     const response = await createService().inviteToWorkspace({
       workspaceUuid: 'w-1-2-3',
       inviteeEmail: 'test@test.te',
-      accessLevel: 'write-and-read',
+      accessLevel: WorkspaceAccessLevel.WriteAndRead,
     })
 
     expect(response).toEqual({
@@ -123,7 +128,7 @@ describe('WorkspaceApiService', () => {
       await service.inviteToWorkspace({
         workspaceUuid: 'w-1-2-3',
         inviteeEmail: 'test@test.te',
-        accessLevel: 'write-and-read',
+        accessLevel: WorkspaceAccessLevel.WriteAndRead,
       })
     } catch (caughtError) {
       error = caughtError
@@ -142,7 +147,7 @@ describe('WorkspaceApiService', () => {
       await createService().inviteToWorkspace({
         workspaceUuid: 'w-1-2-3',
         inviteeEmail: 'test@test.te',
-        accessLevel: 'write-and-read',
+        accessLevel: WorkspaceAccessLevel.WriteAndRead,
       })
     } catch (caughtError) {
       error = caughtError
@@ -250,6 +255,49 @@ describe('WorkspaceApiService', () => {
     let error = null
     try {
       await createService().listWorkspaces()
+    } catch (caughtError) {
+      error = caughtError
+    }
+
+    expect(error).not.toBeNull()
+  })
+
+  it('should list workspace users', async () => {
+    const response = await createService().listWorkspaceUsers({ workspaceUuid: 'w-1-2-3' })
+
+    expect(response).toEqual({
+      status: 200,
+      data: {
+        users: [],
+      },
+    })
+    expect(workspaceServer.listWorkspaceUsers).toHaveBeenCalledWith({ workspaceUuid: 'w-1-2-3' })
+  })
+
+  it('should not list workspace users if it is already listing them', async () => {
+    const service = createService()
+    Object.defineProperty(service, 'operationsInProgress', {
+      get: () => new Map([[WorkspaceApiOperations.ListingWorkspaceUsers, true]]),
+    })
+
+    let error = null
+    try {
+      await service.listWorkspaceUsers({ workspaceUuid: 'w-1-2-3' })
+    } catch (caughtError) {
+      error = caughtError
+    }
+
+    expect(error).not.toBeNull()
+  })
+
+  it('should not list workspace users if the server fails', async () => {
+    workspaceServer.listWorkspaceUsers = jest.fn().mockImplementation(() => {
+      throw new Error('Oops')
+    })
+
+    let error = null
+    try {
+      await createService().listWorkspaceUsers({ workspaceUuid: 'w-1-2-3' })
     } catch (caughtError) {
       error = caughtError
     }

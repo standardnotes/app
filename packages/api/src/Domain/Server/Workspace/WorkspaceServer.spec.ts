@@ -1,9 +1,10 @@
-import { WorkspaceType } from '@standardnotes/common'
+import { WorkspaceAccessLevel, WorkspaceType } from '@standardnotes/common'
 import { HttpServiceInterface, HttpStatusCode } from '../../Http'
 import { WorkspaceCreationResponse } from '../../Response/Workspace/WorkspaceCreationResponse'
 import { WorkspaceInvitationAcceptingResponse } from '../../Response/Workspace/WorkspaceInvitationAcceptingResponse'
 import { WorkspaceInvitationResponse } from '../../Response/Workspace/WorkspaceInvitationResponse'
 import { WorkspaceListResponse } from '../../Response/Workspace/WorkspaceListResponse'
+import { WorkspaceUserListResponse } from '../../Response/Workspace/WorkspaceUserListResponse'
 
 import { WorkspaceServer } from './WorkspaceServer'
 
@@ -42,7 +43,7 @@ describe('WorkspaceServer', () => {
     const response = await createServer().inviteToWorkspace({
       inviteeEmail: 'test@test.te',
       workspaceUuid: 'w-1-2-3',
-      accessLevel: 'write-and-read',
+      accessLevel: WorkspaceAccessLevel.WriteAndRead,
     })
 
     expect(response).toEqual({
@@ -82,6 +83,20 @@ describe('WorkspaceServer', () => {
     expect(response).toEqual({
       status: 200,
       data: { ownedWorkspaces: [], joinedWorkspaces: [] },
+    })
+  })
+
+  it('should list workspace users', async () => {
+    httpService.get = jest.fn().mockReturnValue({
+      status: HttpStatusCode.Success,
+      data: { users: [] },
+    } as jest.Mocked<WorkspaceUserListResponse>)
+
+    const response = await createServer().listWorkspaceUsers({ workspaceUuid: 'w-1-2-3' })
+
+    expect(response).toEqual({
+      status: 200,
+      data: { users: [] },
     })
   })
 })

@@ -1,6 +1,6 @@
 import { WorkspaceApiServiceInterface } from '@standardnotes/api'
-import { Uuid, WorkspaceType } from '@standardnotes/common'
-import { Workspace } from '@standardnotes/models'
+import { Uuid, WorkspaceAccessLevel, WorkspaceType } from '@standardnotes/common'
+import { Workspace, WorkspaceUser } from '@standardnotes/models'
 
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { AbstractService } from '../Service/AbstractService'
@@ -12,6 +12,20 @@ export class WorkspaceManager extends AbstractService implements WorkspaceClient
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
+  }
+
+  async listWorkspaceUsers(dto: { workspaceUuid: string }): Promise<{ users: WorkspaceUser[] }> {
+    try {
+      const result = await this.workspaceApiService.listWorkspaceUsers(dto)
+
+      if (result.data.error !== undefined) {
+        return { users: [] }
+      }
+
+      return result.data
+    } catch (error) {
+      return { users: [] }
+    }
   }
 
   async listWorkspaces(): Promise<{ ownedWorkspaces: Workspace[]; joinedWorkspaces: Workspace[] }> {
@@ -50,7 +64,7 @@ export class WorkspaceManager extends AbstractService implements WorkspaceClient
   async inviteToWorkspace(dto: {
     inviteeEmail: string
     workspaceUuid: Uuid
-    accessLevel: string
+    accessLevel: WorkspaceAccessLevel
   }): Promise<{ uuid: string } | null> {
     try {
       const result = await this.workspaceApiService.inviteToWorkspace(dto)

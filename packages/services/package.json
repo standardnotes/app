@@ -26,7 +26,7 @@
   "dependencies": {
     "@standardnotes/api": "workspace:^",
     "@standardnotes/auth": "^3.19.4",
-    "@standardnotes/common": "^1.36.1",
+    "@standardnotes/common": "^1.39.0",
     "@standardnotes/encryption": "workspace:^",
     "@standardnotes/files": "workspace:^",
     "@standardnotes/models": "workspace:^",

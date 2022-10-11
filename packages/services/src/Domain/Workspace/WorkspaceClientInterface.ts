@@ -1,5 +1,5 @@
-import { Uuid, WorkspaceType } from '@standardnotes/common'
-import { Workspace } from '@standardnotes/models'
+import { Uuid, WorkspaceAccessLevel, WorkspaceType } from '@standardnotes/common'
+import { Workspace, WorkspaceUser } from '@standardnotes/models'
 
 export interface WorkspaceClientInterface {
   createWorkspace(dto: {
@@ -12,7 +12,7 @@ export interface WorkspaceClientInterface {
   inviteToWorkspace(dto: {
     inviteeEmail: string
     workspaceUuid: Uuid
-    accessLevel: string
+    accessLevel: WorkspaceAccessLevel
   }): Promise<{ uuid: string } | null>
   acceptInvite(dto: {
     inviteUuid: Uuid
@@ -21,4 +21,5 @@ export interface WorkspaceClientInterface {
     encryptedPrivateKey: string
   }): Promise<{ success: boolean }>
   listWorkspaces(): Promise<{ ownedWorkspaces: Array<Workspace>; joinedWorkspaces: Array<Workspace> }>
+  listWorkspaceUsers(dto: { workspaceUuid: Uuid }): Promise<{ users: Array<WorkspaceUser> }>
 }

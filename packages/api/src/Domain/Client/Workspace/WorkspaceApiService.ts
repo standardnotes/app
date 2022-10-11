@@ -1,4 +1,4 @@
-import { Uuid, WorkspaceType } from '@standardnotes/common'
+import { Uuid, WorkspaceAccessLevel, WorkspaceType } from '@standardnotes/common'
 
 import { ErrorMessage } from '../../Error/ErrorMessage'
 import { ApiCallError } from '../../Error/ApiCallError'
@@ -7,6 +7,7 @@ import { WorkspaceInvitationAcceptingResponse } from '../../Response/Workspace/W
 import { WorkspaceInvitationResponse } from '../../Response/Workspace/WorkspaceInvitationResponse'
 import { WorkspaceServerInterface } from '../../Server/Workspace/WorkspaceServerInterface'
 import { WorkspaceListResponse } from '../../Response/Workspace/WorkspaceListResponse'
+import { WorkspaceUserListResponse } from '../../Response/Workspace/WorkspaceUserListResponse'
 
 import { WorkspaceApiServiceInterface } from './WorkspaceApiServiceInterface'
 import { WorkspaceApiOperations } from './WorkspaceApiOperations'
@@ -16,6 +17,20 @@ export class WorkspaceApiService implements WorkspaceApiServiceInterface {
 
   constructor(private workspaceServer: WorkspaceServerInterface) {
     this.operationsInProgress = new Map()
+  }
+
+  async listWorkspaceUsers(dto: { workspaceUuid: string }): Promise<WorkspaceUserListResponse> {
+    this.lockOperation(WorkspaceApiOperations.ListingWorkspaceUsers)
+
+    try {
+      const response = await this.workspaceServer.listWorkspaceUsers({ workspaceUuid: dto.workspaceUuid })
+
+      this.unlockOperation(WorkspaceApiOperations.ListingWorkspaceUsers)
+
+      return response
+    } catch (error) {
+      throw new ApiCallError(ErrorMessage.GenericFail)
+    }
   }
 
   async listWorkspaces(): Promise<WorkspaceListResponse> {
@@ -59,7 +74,7 @@ export class WorkspaceApiService implements WorkspaceApiServiceInterface {
   async inviteToWorkspace(dto: {
     inviteeEmail: string
     workspaceUuid: Uuid
-    accessLevel: string
+    accessLevel: WorkspaceAccessLevel
   }): Promise<WorkspaceInvitationResponse> {
     this.lockOperation(WorkspaceApiOperations.Inviting)
 

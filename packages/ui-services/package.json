@@ -23,7 +23,7 @@
     "test": "jest spec --coverage --passWithNoTests"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.36.1",
+    "@standardnotes/common": "^1.39.0",
     "@standardnotes/filepicker": "workspace:^",
     "@standardnotes/services": "workspace:^",
     "@standardnotes/styles": "workspace:^",

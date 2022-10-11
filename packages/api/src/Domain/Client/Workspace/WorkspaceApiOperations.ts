@@ -3,4 +3,5 @@ export enum WorkspaceApiOperations {
   Inviting,
   Accepting,
   ListingWorkspaces,
+  ListingWorkspaceUsers,
 }

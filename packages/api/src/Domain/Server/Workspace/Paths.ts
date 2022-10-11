@@ -3,6 +3,7 @@ import { Uuid } from '@standardnotes/common'
 const WorkspacePaths = {
   createWorkspace: '/v1/workspaces',
   listWorkspaces: '/v1/workspaces',
+  listWorkspaceUsers: (uuid: Uuid) => `/v1/workspaces/${uuid}/users`,
   inviteToWorkspace: (uuid: Uuid) => `/v1/workspaces/${uuid}/invites`,
   acceptInvite: (uuid: Uuid) => `/v1/invites/${uuid}/accept`,
 }
