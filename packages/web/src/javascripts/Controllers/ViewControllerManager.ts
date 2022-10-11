@@ -17,7 +17,6 @@ import { FeaturesController } from './FeaturesController'
 import { FilesController } from './FilesController'
 import { NotesController } from './NotesController'
 import { ItemListController } from './ItemList/ItemListController'
-import { NoteTagsController } from './NoteTagsController'
 import { NoAccountWarningController } from './NoAccountWarningController'
 import { PreferencesController } from './PreferencesController'
 import { PurchaseFlowController } from './PurchaseFlow/PurchaseFlowController'
@@ -31,6 +30,7 @@ import { SelectedItemsController } from './SelectedItemsController'
 import { HistoryModalController } from './NoteHistory/HistoryModalController'
 import { PreferenceId } from '@/Components/Preferences/PreferencesMenu'
 import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
+import { LinkingController } from './LinkingController'
 
 export class ViewControllerManager {
   readonly enableUnfinishedFeatures: boolean = window?.enabledUnfinishedFeatures
@@ -47,7 +47,6 @@ export class ViewControllerManager {
   readonly noAccountWarningController: NoAccountWarningController
   readonly notesController: NotesController
   readonly itemListController: ItemListController
-  readonly noteTagsController: NoteTagsController
   readonly preferencesController = new PreferencesController()
   readonly purchaseFlowController: PurchaseFlowController
   readonly quickSettingsMenuController = new QuickSettingsController()
@@ -57,6 +56,7 @@ export class ViewControllerManager {
   readonly navigationController: NavigationController
   readonly selectionController: SelectedItemsController
   readonly historyModalController: HistoryModalController
+  readonly linkingController: LinkingController
 
   public isSessionsModalVisible = false
 
@@ -74,8 +74,6 @@ export class ViewControllerManager {
 
     this.selectionController = new SelectedItemsController(application, this.eventBus)
 
-    this.noteTagsController = new NoteTagsController(application, this.eventBus)
-
     this.featuresController = new FeaturesController(application, this.eventBus)
 
     this.navigationController = new NavigationController(application, this.featuresController, this.eventBus)
@@ -83,12 +81,18 @@ export class ViewControllerManager {
     this.notesController = new NotesController(
       application,
       this.selectionController,
-      this.noteTagsController,
       this.navigationController,
       this.eventBus,
     )
 
     this.searchOptionsController = new SearchOptionsController(application, this.eventBus)
+
+    this.linkingController = new LinkingController(
+      application,
+      this.navigationController,
+      this.selectionController,
+      this.eventBus,
+    )
 
     this.itemListController = new ItemListController(
       application,
@@ -96,12 +100,11 @@ export class ViewControllerManager {
       this.searchOptionsController,
       this.selectionController,
       this.notesController,
-      this.noteTagsController,
+      this.linkingController,
       this.eventBus,
     )
 
     this.notesController.setServicesPostConstruction(this.itemListController)
-    this.noteTagsController.setServicesPostConstruction(this.itemListController)
     this.selectionController.setServicesPostConstruction(this.itemListController)
 
     this.noAccountWarningController = new NoAccountWarningController(application, this.eventBus)
@@ -117,6 +120,12 @@ export class ViewControllerManager {
       this.notesController,
       this.filePreviewModalController,
       this.eventBus,
+    )
+
+    this.linkingController.setServicesPostConstruction(
+      this.itemListController,
+      this.filesController,
+      this.subscriptionController,
     )
 
     this.historyModalController = new HistoryModalController(this.application, this.eventBus)
@@ -180,8 +189,8 @@ export class ViewControllerManager {
     this.itemListController.deinit()
     ;(this.itemListController as unknown) = undefined
 
-    this.noteTagsController.deinit()
-    ;(this.noteTagsController as unknown) = undefined
+    this.linkingController.deinit()
+    ;(this.linkingController as unknown) = undefined
 
     this.purchaseFlowController.deinit()
     ;(this.purchaseFlowController as unknown) = undefined

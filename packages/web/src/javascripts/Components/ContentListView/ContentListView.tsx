@@ -11,7 +11,6 @@ import { ItemListController } from '@/Controllers/ItemList/ItemListController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { FilesController } from '@/Controllers/FilesController'
-import { NoteTagsController } from '@/Controllers/NoteTagsController'
 import { NoAccountWarningController } from '@/Controllers/NoAccountWarningController'
 import { NotesController } from '@/Controllers/NotesController'
 import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
@@ -33,7 +32,6 @@ type Props = {
   itemListController: ItemListController
   navigationController: NavigationController
   noAccountWarningController: NoAccountWarningController
-  noteTagsController: NoteTagsController
   notesController: NotesController
   selectionController: SelectedItemsController
   searchOptionsController: SearchOptionsController
@@ -46,7 +44,6 @@ const ContentListView: FunctionComponent<Props> = ({
   itemListController,
   navigationController,
   noAccountWarningController,
-  noteTagsController,
   notesController,
   selectionController,
   searchOptionsController,
@@ -167,15 +164,10 @@ const ContentListView: FunctionComponent<Props> = ({
   const panelResizeFinishCallback: ResizeFinishCallback = useCallback(
     (width, _lastLeft, _isMaxWidth, isCollapsed) => {
       application.setPreference(PrefKey.NotesPanelWidth, width).catch(console.error)
-      noteTagsController.reloadTagsContainerMaxWidth()
       application.publishPanelDidResizeEvent(PANEL_NAME_NOTES, isCollapsed)
     },
-    [application, noteTagsController],
+    [application],
   )
-
-  const panelWidthEventCallback = useCallback(() => {
-    noteTagsController.reloadTagsContainerMaxWidth()
-  }, [noteTagsController])
 
   const addButtonLabel = useMemo(
     () => (isFilesSmartView ? 'Upload file' : 'Create a new note in the selected tag'),
@@ -259,7 +251,6 @@ const ContentListView: FunctionComponent<Props> = ({
           side={PanelSide.Right}
           type={PanelResizeType.WidthOnly}
           resizeFinishCallback={panelResizeFinishCallback}
-          widthEventCallback={panelWidthEventCallback}
           width={panelWidth}
           left={0}
         />

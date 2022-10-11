@@ -35,10 +35,10 @@ export const usePopoverCloseOnClickOutside = ({
     }
 
     document.addEventListener('click', closeIfClickedOutside, { capture: true })
+    document.addEventListener('contextmenu', closeIfClickedOutside, { capture: true })
     return () => {
-      document.removeEventListener('click', closeIfClickedOutside, {
-        capture: true,
-      })
+      document.removeEventListener('click', closeIfClickedOutside, { capture: true })
+      document.removeEventListener('contextmenu', closeIfClickedOutside, { capture: true })
     }
   }, [anchorElement, childPopovers, popoverElement, togglePopover])
 }

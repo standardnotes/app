@@ -12,8 +12,8 @@ import { FilesController } from '@/Controllers/FilesController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { NotesController } from '@/Controllers/NotesController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
-import { NoteTagsController } from '@/Controllers/NoteTagsController'
 import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalController'
+import { LinkingController } from '@/Controllers/LinkingController'
 
 type Props = {
   application: WebApplication
@@ -22,9 +22,9 @@ type Props = {
   filesController: FilesController
   navigationController: NavigationController
   notesController: NotesController
-  noteTagsController: NoteTagsController
   selectionController: SelectedItemsController
   historyModalController: HistoryModalController
+  linkingController: LinkingController
 }
 
 const MultipleSelectedNotes = ({
@@ -34,7 +34,7 @@ const MultipleSelectedNotes = ({
   filesController,
   navigationController,
   notesController,
-  noteTagsController,
+  linkingController,
   selectionController,
   historyModalController,
 }: Props) => {
@@ -67,7 +67,7 @@ const MultipleSelectedNotes = ({
             application={application}
             navigationController={navigationController}
             notesController={notesController}
-            noteTagsController={noteTagsController}
+            linkingController={linkingController}
             historyModalController={historyModalController}
           />
         </div>

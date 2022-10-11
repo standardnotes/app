@@ -77,8 +77,8 @@ describe('tags as folders', () => {
     await this.application.items.addTagToNote(note2, tags.another, true)
 
     // ## The note has been added to other tags
-    const note1Tags = await this.application.items.getSortedTagsForNote(note1)
-    const note2Tags = await this.application.items.getSortedTagsForNote(note2)
+    const note1Tags = await this.application.items.getSortedTagsForItem(note1)
+    const note2Tags = await this.application.items.getSortedTagsForItem(note2)
 
     expect(note1Tags.length).to.equal(3)
     expect(note2Tags.length).to.equal(1)

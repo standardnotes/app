@@ -139,7 +139,7 @@ export const NoteSideMenu = React.memo((props: Props) => {
       setAttachedFilesLength(0)
       return
     }
-    setAttachedFilesLength(application.items.getFilesForNote(note).length)
+    setAttachedFilesLength(application.items.getSortedFilesForItem(note).length)
   }, [application, note])
 
   useEffect(() => {
@@ -147,7 +147,7 @@ export const NoteSideMenu = React.memo((props: Props) => {
       return
     }
     const removeFilesObserver = application.streamItems(ContentType.File, () => {
-      setAttachedFilesLength(application.items.getFilesForNote(note).length)
+      setAttachedFilesLength(application.items.getSortedFilesForItem(note).length)
     })
     return () => {
       removeFilesObserver()

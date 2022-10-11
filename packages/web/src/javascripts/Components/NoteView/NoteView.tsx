@@ -41,10 +41,10 @@ import IndicatorCircle from '../IndicatorCircle/IndicatorCircle'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import AutoresizingNoteViewTextarea from './AutoresizingTextarea'
 import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
-import NoteTagsPanel from '../NoteTags/NoteTagsPanel'
-import NoteTagsContainer from '../NoteTags/NoteTagsContainer'
+import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
 import NoteStatusIndicator, { NoteStatus } from './NoteStatusIndicator'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
+import LinkedItemsButton from '../LinkedItems/LinkedItemsButton'
 
 const MinimumStatusDuration = 400
 const TextareaDebounce = 100
@@ -999,9 +999,10 @@ class NoteView extends PureComponent<NoteViewProps, State> {
               </div>
               {!this.state.shouldStickyHeader && (
                 <div className="flex items-center gap-3">
-                  <NoteTagsPanel
+                  <LinkedItemsButton
+                    filesController={this.viewControllerManager.filesController}
+                    linkingController={this.viewControllerManager.linkingController}
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                    noteTagsController={this.viewControllerManager.noteTagsController}
                   />
                   <AttachedFilesButton
                     application={this.application}
@@ -1026,7 +1027,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                     application={this.application}
                     navigationController={this.viewControllerManager.navigationController}
                     notesController={this.viewControllerManager.notesController}
-                    noteTagsController={this.viewControllerManager.noteTagsController}
+                    linkingController={this.viewControllerManager.linkingController}
                     historyModalController={this.viewControllerManager.historyModalController}
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                   />
@@ -1034,10 +1035,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
               )}
             </div>
             {!this.state.shouldStickyHeader && (
-              <NoteTagsContainer
-                noteTagsController={this.viewControllerManager.noteTagsController}
-                navigationController={this.viewControllerManager.navigationController}
-              />
+              <LinkedItemBubblesContainer linkingController={this.viewControllerManager.linkingController} />
             )}
           </div>
         )}

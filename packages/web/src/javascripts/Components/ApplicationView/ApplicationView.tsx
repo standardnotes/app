@@ -209,7 +209,6 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                   itemListController={viewControllerManager.itemListController}
                   navigationController={viewControllerManager.navigationController}
                   noAccountWarningController={viewControllerManager.noAccountWarningController}
-                  noteTagsController={viewControllerManager.noteTagsController}
                   notesController={viewControllerManager.notesController}
                   selectionController={viewControllerManager.selectionController}
                   searchOptionsController={viewControllerManager.searchOptionsController}
@@ -238,7 +237,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                 application={application}
                 navigationController={viewControllerManager.navigationController}
                 notesController={viewControllerManager.notesController}
-                noteTagsController={viewControllerManager.noteTagsController}
+                linkingController={viewControllerManager.linkingController}
                 historyModalController={viewControllerManager.historyModalController}
               />
               <TagContextMenuWrapper

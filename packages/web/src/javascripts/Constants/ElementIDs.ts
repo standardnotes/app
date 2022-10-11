@@ -10,4 +10,5 @@ export const ElementIds = {
   NoteTitleEditor: 'note-title-editor',
   RootId: 'app-group-root',
   NoteStatusTooltip: 'note-status-tooltip',
+  ItemLinkAutocompleteInput: 'item-link-autocomplete-input',
 } as const

@@ -394,8 +394,16 @@ export class NavigationController extends AbstractViewController {
     await this.setSelectedTag(this.homeNavigationView)
   }
 
+  public async selectFilesView() {
+    await this.setSelectedTag(this.filesNavigationView)
+  }
+
   get homeNavigationView(): SmartView {
     return this.smartViews[0]
+  }
+
+  get filesNavigationView(): SmartView {
+    return this.smartViews.find((view) => view.uuid === SystemViewId.Files) as SmartView
   }
 
   private setSelectedTagInstance(tag: AnyTag | undefined): void {

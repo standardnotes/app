@@ -5,6 +5,8 @@ import FileOptionsPanel from '@/Components/FileContextMenu/FileOptionsPanel'
 import FilePreview from '@/Components/FilePreview/FilePreview'
 import { FileViewProps } from './FileViewProps'
 import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
+import LinkedItemsButton from '../LinkedItems/LinkedItemsButton'
+import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
 import Icon from '../Icon/Icon'
 import Popover from '../Popover/Popover'
 import FilePreviewInfoPanel from '../FilePreview/FilePreviewInfoPanel'
@@ -63,6 +65,10 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
               </div>
             </div>
             <div className="flex items-center gap-3">
+              <LinkedItemsButton
+                filesController={viewControllerManager.filesController}
+                linkingController={viewControllerManager.linkingController}
+              />
               <button
                 className="bg-text-padding flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border text-neutral hover:bg-contrast focus:bg-contrast"
                 title="File information panel"
@@ -87,6 +93,7 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
               />
             </div>
           </div>
+          <LinkedItemBubblesContainer linkingController={viewControllerManager.linkingController} />
         </div>
       </div>
       <div className="flex min-h-0 flex-grow flex-col">
