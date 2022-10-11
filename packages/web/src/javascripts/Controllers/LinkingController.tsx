@@ -214,6 +214,7 @@ export class LinkingController extends AbstractViewController {
     }
 
     await this.application.items.unlinkItem(itemToUnlink, selectedItem)
+    void this.application.sync.sync()
     this.reloadAllLinks()
   }
 
