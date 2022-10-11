@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.31.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.30.0...@standardnotes/services@1.31.0) (2022-10-11)
+
+### Features
+
+* item linking ([#1779](https://github.com/standardnotes/app/issues/1779)) ([e3f2842](https://github.com/standardnotes/app/commit/e3f28421ff042c635ad2ae645c102c27e3e3f9c7))
+
 # [1.30.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.29.0...@standardnotes/services@1.30.0) (2022-10-11)
 
 ### Features
