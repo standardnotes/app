@@ -1192,7 +1192,19 @@ export class ItemManager
     )
   }
 
-  public getSortedFilesForItem(item: DecryptedItemInterface<ItemContent>): Models.FileItem[] {
+  public getSortedLinkedFilesForItem(item: DecryptedItemInterface<ItemContent>): Models.FileItem[] {
+    if (this.isTemplateItem(item)) {
+      return []
+    }
+
+    const filesReferencedByItem = this.referencesForItem(item).filter(
+      (ref) => ref.content_type === ContentType.File,
+    ) as Models.FileItem[]
+
+    return naturalSort(filesReferencedByItem, 'title')
+  }
+
+  public getSortedFilesLinkingToItem(item: DecryptedItemInterface<ItemContent>): Models.FileItem[] {
     if (this.isTemplateItem(item)) {
       return []
     }
@@ -1200,11 +1212,8 @@ export class ItemManager
     const filesReferencingItem = this.itemsReferencingItem(item).filter(
       (ref) => ref.content_type === ContentType.File,
     ) as Models.FileItem[]
-    const filesReferencedByItem = this.referencesForItem(item).filter(
-      (ref) => ref.content_type === ContentType.File,
-    ) as Models.FileItem[]
 
-    return naturalSort(filesReferencingItem.concat(filesReferencedByItem), 'title')
+    return naturalSort(filesReferencingItem, 'title')
   }
 
   public getSortedLinkedNotesForItem(item: DecryptedItemInterface<ItemContent>): Models.SNNote[] {

@@ -1,24 +1,26 @@
-import { LinkableItem, LinkingController } from '@/Controllers/LinkingController'
+import { ItemLink, LinkableItem, LinkingController } from '@/Controllers/LinkingController'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { observer } from 'mobx-react-lite'
 import { KeyboardEventHandler, MouseEventHandler, useEffect, useRef, useState } from 'react'
+import { ContentType } from '@standardnotes/snjs'
 import Icon from '../Icon/Icon'
 
 type Props = {
-  item: LinkableItem
+  link: ItemLink
   getItemIcon: LinkingController['getLinkedItemIcon']
   getTitleForLinkedTag: LinkingController['getTitleForLinkedTag']
   activateItem: (item: LinkableItem) => Promise<void>
-  unlinkItem: (item: LinkableItem) => void
+  unlinkItem: LinkingController['unlinkItemFromSelectedItem']
   focusPreviousItem: () => void
   focusNextItem: () => void
   focusedId: string | undefined
   setFocusedId: (id: string) => void
+  isBidirectional: boolean
 }
 
 const LinkedItemBubble = ({
-  item,
+  link,
   getItemIcon,
   getTitleForLinkedTag,
   activateItem,
@@ -27,6 +29,7 @@ const LinkedItemBubble = ({
   focusNextItem,
   focusedId,
   setFocusedId,
+  isBidirectional,
 }: Props) => {
   const ref = useRef<HTMLButtonElement>(null)
 
@@ -36,8 +39,8 @@ const LinkedItemBubble = ({
   const [wasClicked, setWasClicked] = useState(false)
 
   const handleFocus = () => {
-    if (focusedId !== item.uuid) {
-      setFocusedId(item.uuid)
+    if (focusedId !== link.id) {
+      setFocusedId(link.id)
     }
     setShowUnlinkButton(true)
   }
@@ -50,7 +53,7 @@ const LinkedItemBubble = ({
   const onClick: MouseEventHandler = (event) => {
     if (wasClicked && event.target !== unlinkButtonRef.current) {
       setWasClicked(false)
-      void activateItem(item)
+      void activateItem(link.item)
     } else {
       setWasClicked(true)
     }
@@ -58,14 +61,14 @@ const LinkedItemBubble = ({
 
   const onUnlinkClick: MouseEventHandler = (event) => {
     event.stopPropagation()
-    unlinkItem(item)
+    unlinkItem(link)
   }
 
   const onKeyDown: KeyboardEventHandler = (event) => {
     switch (event.key) {
       case KeyboardKey.Backspace: {
         focusPreviousItem()
-        unlinkItem(item)
+        unlinkItem(link)
         break
       }
       case KeyboardKey.Left:
@@ -77,29 +80,34 @@ const LinkedItemBubble = ({
     }
   }
 
-  const [icon, iconClassName] = getItemIcon(item)
-  const tagTitle = getTitleForLinkedTag(item)
+  const [icon, iconClassName] = getItemIcon(link.item)
+  const tagTitle = getTitleForLinkedTag(link.item)
 
   useEffect(() => {
-    if (item.uuid === focusedId) {
+    if (link.id === focusedId) {
       ref.current?.focus()
     }
-  }, [focusedId, item.uuid])
+  }, [focusedId, link.id])
 
   return (
     <button
       ref={ref}
-      className="flex h-6 cursor-pointer items-center rounded border-0 bg-passive-4-opacity-variant py-2 pl-1 pr-2 text-xs text-text hover:bg-contrast focus:bg-contrast"
+      className="group flex h-6 cursor-pointer items-center rounded border-0 bg-passive-4-opacity-variant py-2 pl-1 pr-2 text-xs text-text hover:bg-contrast focus:bg-contrast"
       onFocus={handleFocus}
       onBlur={onBlur}
       onClick={onClick}
-      title={tagTitle ? tagTitle.longTitle : item.title}
+      title={tagTitle ? tagTitle.longTitle : link.item.title}
       onKeyDown={onKeyDown}
     >
       <Icon type={icon} className={classNames('mr-1 flex-shrink-0', iconClassName)} size="small" />
-      <span className="max-w-290px overflow-hidden overflow-ellipsis whitespace-nowrap">
+      <span className="max-w-290px flex items-center overflow-hidden overflow-ellipsis whitespace-nowrap">
         {tagTitle && <span className="text-passive-1">{tagTitle.titlePrefix}</span>}
-        {item.title}
+        <span className="flex items-center gap-1">
+          {link.relationWithSelectedItem === 'indirect' && link.item.content_type !== ContentType.Tag && (
+            <span className={!isBidirectional ? 'hidden group-focus:block' : ''}>Linked By:</span>
+          )}
+          {link.item.title}
+        </span>
       </span>
       {showUnlinkButton && (
         <a

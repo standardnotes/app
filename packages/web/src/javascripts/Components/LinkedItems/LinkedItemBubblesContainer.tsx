@@ -1,11 +1,12 @@
 import { observer } from 'mobx-react-lite'
 import ItemLinkAutocompleteInput from './ItemLinkAutocompleteInput'
-import { LinkableItem, LinkingController } from '@/Controllers/LinkingController'
+import { ItemLink, LinkableItem, LinkingController } from '@/Controllers/LinkingController'
 import LinkedItemBubble from './LinkedItemBubble'
 import { useCallback, useState } from 'react'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@/Utils/ConcatenateClassNames'
+import { ContentType } from '@standardnotes/snjs'
 
 type Props = {
   linkingController: LinkingController
@@ -14,8 +15,9 @@ type Props = {
 const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
   const { toggleAppPane } = useResponsiveAppPane()
   const {
-    allLinkedItems,
-    notesLinkingToItem,
+    allItemLinks,
+    notesLinkingToActiveItem,
+    filesLinkingToActiveItem,
     unlinkItemFromSelectedItem: unlinkItem,
     getTitleForLinkedTag,
     getLinkedItemIcon: getItemIcon,
@@ -23,7 +25,13 @@ const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
   } = linkingController
 
   const [focusedId, setFocusedId] = useState<string>()
-  const focusableIds = allLinkedItems.map((item) => item.uuid).concat([ElementIds.ItemLinkAutocompleteInput])
+  const focusableIds = allItemLinks
+    .map((link) => link.id)
+    .concat(
+      notesLinkingToActiveItem.map((link) => link.id),
+      filesLinkingToActiveItem.map((link) => link.id),
+      [ElementIds.ItemLinkAutocompleteInput],
+    )
 
   const focusPreviousItem = useCallback(() => {
     const currentFocusedIndex = focusableIds.findIndex((id) => id === focusedId)
@@ -53,27 +61,42 @@ const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
     [activateItem, toggleAppPane],
   )
 
+  const isItemBidirectionallyLinked = (link: ItemLink) => {
+    const existsInAllItemLinks = !!allItemLinks.find((item) => link.item.uuid === item.item.uuid)
+    const existsInNotesLinkingToItem = !!notesLinkingToActiveItem.find((item) => link.item.uuid === item.item.uuid)
+    const existsInFilesLinkingToItem = !!filesLinkingToActiveItem.find((item) => link.item.uuid === item.item.uuid)
+
+    return (
+      existsInAllItemLinks &&
+      (link.item.content_type === ContentType.Note ? existsInNotesLinkingToItem : existsInFilesLinkingToItem)
+    )
+  }
+
   return (
     <div
       className={classNames(
         'hidden min-w-80 max-w-full flex-wrap items-center gap-2 bg-transparent md:-mr-2 md:flex',
-        allLinkedItems.length || notesLinkingToItem.length ? 'mt-1' : 'mt-0.5',
+        allItemLinks.length || notesLinkingToActiveItem.length ? 'mt-1' : 'mt-0.5',
       )}
     >
-      {allLinkedItems.concat(notesLinkingToItem).map((item) => (
-        <LinkedItemBubble
-          item={item}
-          key={item.uuid}
-          getItemIcon={getItemIcon}
-          getTitleForLinkedTag={getTitleForLinkedTag}
-          activateItem={activateItemAndTogglePane}
-          unlinkItem={unlinkItem}
-          focusPreviousItem={focusPreviousItem}
-          focusNextItem={focusNextItem}
-          focusedId={focusedId}
-          setFocusedId={setFocusedId}
-        />
-      ))}
+      {allItemLinks
+        .concat(notesLinkingToActiveItem)
+        .concat(filesLinkingToActiveItem)
+        .map((link) => (
+          <LinkedItemBubble
+            link={link}
+            key={link.id}
+            getItemIcon={getItemIcon}
+            getTitleForLinkedTag={getTitleForLinkedTag}
+            activateItem={activateItemAndTogglePane}
+            unlinkItem={unlinkItem}
+            focusPreviousItem={focusPreviousItem}
+            focusNextItem={focusNextItem}
+            focusedId={focusedId}
+            setFocusedId={setFocusedId}
+            isBidirectional={isItemBidirectionallyLinked(link)}
+          />
+        ))}
       <ItemLinkAutocompleteInput
         focusedId={focusedId}
         linkingController={linkingController}

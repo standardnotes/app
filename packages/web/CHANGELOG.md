@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.72.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.72.3...@standardnotes/web@3.72.4) (2022-10-12)
+
+### Bug Fixes
+
+* bidirectional linking indicator for files ([37abac2](https://github.com/standardnotes/app/commit/37abac2ec2c839b3af9324a83e36cbbc409d86a9))
+
 ## [3.72.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.72.2...@standardnotes/web@3.72.3) (2022-10-12)
 
 ### Bug Fixes
