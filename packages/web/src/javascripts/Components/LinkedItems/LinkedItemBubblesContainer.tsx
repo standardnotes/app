@@ -28,6 +28,7 @@ const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
     .map((link) => link.id)
     .concat(
       notesLinkingToActiveItem.map((link) => link.id),
+      filesLinkingToActiveItem.map((link) => link.id),
       [ElementIds.ItemLinkAutocompleteInput],
     )
 
