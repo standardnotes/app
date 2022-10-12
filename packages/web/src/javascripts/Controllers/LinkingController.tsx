@@ -275,16 +275,16 @@ export class LinkingController extends AbstractViewController {
     this.reloadAllLinks()
   }
 
-  getActiveInsertedItem = async () => {
+  ensureActiveItemIsInserted = async () => {
     const activeItemController = this.itemListController.getActiveItemController()
     if (activeItemController instanceof NoteViewController && activeItemController.isTemplateNote) {
-      return (await activeItemController.insertTemplatedNote()) as SNNote
+      await activeItemController.insertTemplatedNote()
     }
-    return activeItemController?.item
   }
 
   linkItemToSelectedItem = async (itemToLink: LinkableItem) => {
-    const activeItem = await this.getActiveInsertedItem()
+    await this.ensureActiveItemIsInserted()
+    const activeItem = this.activeItem
 
     if (activeItem && itemToLink instanceof SNTag) {
       await this.addTagToItem(itemToLink, activeItem)
@@ -309,7 +309,8 @@ export class LinkingController extends AbstractViewController {
   }
 
   createAndAddNewTag = async (title: string) => {
-    const activeItem = await this.getActiveInsertedItem()
+    await this.ensureActiveItemIsInserted()
+    const activeItem = this.activeItem
     const newTag = await this.application.mutator.findOrCreateTag(title)
     if (activeItem) {
       await this.addTagToItem(newTag, activeItem)
