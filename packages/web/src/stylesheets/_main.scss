@@ -163,7 +163,7 @@ $footer-height: 2rem;
   width: 100%;
 
   @media screen and (min-width: 768px) {
-    height: calc(var(--viewport-height) - #{$footer-height});
+    height: calc(var(--viewport-height, 100vh) - #{$footer-height});
   }
 
   .section {
