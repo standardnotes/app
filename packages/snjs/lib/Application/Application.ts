@@ -53,7 +53,7 @@ import {
   WorkspaceManager,
 } from '@standardnotes/services'
 import { FilesClientInterface } from '@standardnotes/files'
-import { ComputePrivateWorkspaceIdentifier } from '@standardnotes/encryption'
+import { ComputePrivateUsername } from '@standardnotes/encryption'
 import { useBoolean } from '@standardnotes/utils'
 import {
   BackupFile,
@@ -272,8 +272,8 @@ export class SNApplication
     return this.componentManagerService
   }
 
-  public computePrivateWorkspaceIdentifier(userphrase: string, name: string): Promise<string | undefined> {
-    return ComputePrivateWorkspaceIdentifier(this.options.crypto, userphrase, name)
+  public computePrivateUsername(username: string): Promise<string | undefined> {
+    return ComputePrivateUsername(this.options.crypto, username)
   }
 
   /**
