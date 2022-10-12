@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.72.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.72.2...@standardnotes/web@3.72.3) (2022-10-12)
+
+### Bug Fixes
+
+* css variable fallback ([075d7f4](https://github.com/standardnotes/app/commit/075d7f444da13b380ed675ecfd89823f840e2d56))
+
 ## [3.72.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.72.1...@standardnotes/web@3.72.2) (2022-10-12)
 
 **Note:** Version bump only for package @standardnotes/web
