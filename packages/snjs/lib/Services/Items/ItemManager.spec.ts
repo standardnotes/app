@@ -889,6 +889,24 @@ describe('itemManager', () => {
       expect(sortedFilesForItem[1].uuid).toEqual(file3.uuid)
     })
 
+    it('should get all files linking to item', async () => {
+      itemManager = createService()
+      const baseFile = createFile('file')
+      const fileToLink1 = createFile('A1')
+      const fileToLink2 = createFile('B2')
+
+      await itemManager.insertItems([baseFile, fileToLink1, fileToLink2])
+
+      await itemManager.linkFileToFile(fileToLink2, baseFile)
+      await itemManager.linkFileToFile(fileToLink1, baseFile)
+
+      const sortedFilesForItem = itemManager.getSortedFilesLinkingToItem(baseFile)
+
+      expect(sortedFilesForItem).toHaveLength(2)
+      expect(sortedFilesForItem[0].uuid).toEqual(fileToLink1.uuid)
+      expect(sortedFilesForItem[1].uuid).toEqual(fileToLink2.uuid)
+    })
+
     it('should get all linked notes for item', async () => {
       itemManager = createService()
       const baseNote = createNote('note')
