@@ -114,7 +114,9 @@ export interface ItemsClientInterface {
    * @returns Array containing tags associated with an item
    */
   getSortedTagsForItem(item: DecryptedItemInterface<ItemContent>): SNTag[]
-  getSortedFilesForItem(item: DecryptedItemInterface<ItemContent>): FileItem[]
+
+  getSortedLinkedFilesForItem(item: DecryptedItemInterface<ItemContent>): FileItem[]
+  getSortedFilesLinkingToItem(item: DecryptedItemInterface<ItemContent>): FileItem[]
 
   getSortedLinkedNotesForItem(item: DecryptedItemInterface<ItemContent>): SNNote[]
   getSortedNotesLinkingToItem(item: DecryptedItemInterface<ItemContent>): SNNote[]

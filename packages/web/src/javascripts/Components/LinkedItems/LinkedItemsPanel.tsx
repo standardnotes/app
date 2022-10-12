@@ -166,9 +166,9 @@ const LinkedItemsPanel = ({
 }) => {
   const {
     tags,
-    files,
+    linkedFiles: files,
     notesLinkedToItem,
-    notesLinkingToItem,
+    notesLinkingToActiveItem: notesLinkingToItem,
     allItemLinks: allLinkedItems,
     getTitleForLinkedTag,
     getLinkedItemIcon,

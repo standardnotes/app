@@ -15,7 +15,8 @@ const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
   const { toggleAppPane } = useResponsiveAppPane()
   const {
     allItemLinks,
-    notesLinkingToItem,
+    notesLinkingToActiveItem,
+    filesLinkingToActiveItem,
     unlinkItemFromSelectedItem: unlinkItem,
     getTitleForLinkedTag,
     getLinkedItemIcon: getItemIcon,
@@ -26,7 +27,7 @@ const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
   const focusableIds = allItemLinks
     .map((link) => link.id)
     .concat(
-      notesLinkingToItem.map((link) => link.id),
+      notesLinkingToActiveItem.map((link) => link.id),
       [ElementIds.ItemLinkAutocompleteInput],
     )
 
@@ -60,7 +61,7 @@ const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
 
   const isItemBidirectionallyLinked = (link: ItemLink) => {
     const existsInAllItemLinks = !!allItemLinks.find((item) => link.item.uuid === item.item.uuid)
-    const existsInNotesLinkingToItem = !!notesLinkingToItem.find((item) => link.item.uuid === item.item.uuid)
+    const existsInNotesLinkingToItem = !!notesLinkingToActiveItem.find((item) => link.item.uuid === item.item.uuid)
 
     return existsInAllItemLinks && existsInNotesLinkingToItem
   }
@@ -69,24 +70,27 @@ const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
     <div
       className={classNames(
         'hidden min-w-80 max-w-full flex-wrap items-center gap-2 bg-transparent md:-mr-2 md:flex',
-        allItemLinks.length || notesLinkingToItem.length ? 'mt-1' : 'mt-0.5',
+        allItemLinks.length || notesLinkingToActiveItem.length ? 'mt-1' : 'mt-0.5',
       )}
     >
-      {allItemLinks.concat(notesLinkingToItem).map((link) => (
-        <LinkedItemBubble
-          link={link}
-          key={link.id}
-          getItemIcon={getItemIcon}
-          getTitleForLinkedTag={getTitleForLinkedTag}
-          activateItem={activateItemAndTogglePane}
-          unlinkItem={unlinkItem}
-          focusPreviousItem={focusPreviousItem}
-          focusNextItem={focusNextItem}
-          focusedId={focusedId}
-          setFocusedId={setFocusedId}
-          isBidirectional={isItemBidirectionallyLinked(link)}
-        />
-      ))}
+      {allItemLinks
+        .concat(notesLinkingToActiveItem)
+        .concat(filesLinkingToActiveItem)
+        .map((link) => (
+          <LinkedItemBubble
+            link={link}
+            key={link.id}
+            getItemIcon={getItemIcon}
+            getTitleForLinkedTag={getTitleForLinkedTag}
+            activateItem={activateItemAndTogglePane}
+            unlinkItem={unlinkItem}
+            focusPreviousItem={focusPreviousItem}
+            focusNextItem={focusNextItem}
+            focusedId={focusedId}
+            setFocusedId={setFocusedId}
+            isBidirectional={isItemBidirectionallyLinked(link)}
+          />
+        ))}
       <ItemLinkAutocompleteInput
         focusedId={focusedId}
         linkingController={linkingController}

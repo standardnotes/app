@@ -37,9 +37,10 @@ export type ItemLink<ItemType extends LinkableItem = LinkableItem> = {
 
 export class LinkingController extends AbstractViewController {
   tags: ItemLink<SNTag>[] = []
-  files: ItemLink<FileItem>[] = []
+  linkedFiles: ItemLink<FileItem>[] = []
+  filesLinkingToActiveItem: ItemLink<FileItem>[] = []
   notesLinkedToItem: ItemLink<SNNote>[] = []
-  notesLinkingToItem: ItemLink<SNNote>[] = []
+  notesLinkingToActiveItem: ItemLink<SNNote>[] = []
   shouldLinkToParentFolders: boolean
   isLinkingPanelOpen = false
   private itemListController!: ItemListController
@@ -56,9 +57,10 @@ export class LinkingController extends AbstractViewController {
 
     makeObservable(this, {
       tags: observable,
-      files: observable,
+      linkedFiles: observable,
+      filesLinkingToActiveItem: observable,
       notesLinkedToItem: observable,
-      notesLinkingToItem: observable,
+      notesLinkingToActiveItem: observable,
       isLinkingPanelOpen: observable,
 
       allItemLinks: computed,
@@ -119,7 +121,7 @@ export class LinkingController extends AbstractViewController {
   }
 
   get allItemLinks() {
-    return [...this.tags, ...this.files, ...this.notesLinkedToItem]
+    return [...this.tags, ...this.linkedFiles, ...this.notesLinkedToItem]
   }
 
   get activeItem() {
@@ -155,12 +157,19 @@ export class LinkingController extends AbstractViewController {
   }
 
   reloadLinkedFiles() {
-    if (this.activeItem) {
-      const files = this.application.items
-        .getSortedFilesForItem(this.activeItem)
-        .map((item) => this.createLinkFromItem(item))
-      this.files = files
+    if (!this.activeItem) {
+      return
     }
+
+    const linkedFiles = this.application.items
+      .getSortedLinkedFilesForItem(this.activeItem)
+      .map((item) => this.createLinkFromItem(item, 'direct'))
+    this.linkedFiles = linkedFiles
+
+    const filesLinkingToActiveItem = this.application.items
+      .getSortedFilesLinkingToItem(this.activeItem)
+      .map((item) => this.createLinkFromItem(item, 'indirect'))
+    this.filesLinkingToActiveItem = filesLinkingToActiveItem
   }
 
   reloadLinkedTags() {
@@ -186,7 +195,7 @@ export class LinkingController extends AbstractViewController {
       const notes = this.application.items
         .getSortedNotesLinkingToItem(this.activeItem)
         .map((item) => this.createLinkFromItem(item, 'indirect'))
-      this.notesLinkingToItem = notes
+      this.notesLinkingToActiveItem = notes
     }
   }
 
