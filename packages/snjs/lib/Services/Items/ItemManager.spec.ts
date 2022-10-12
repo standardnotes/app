@@ -805,7 +805,7 @@ describe('itemManager', () => {
 
       await itemManager.associateFileWithNote(file, note)
 
-      const filesAssociatedWithNote = itemManager.getSortedFilesForItem(note)
+      const filesAssociatedWithNote = itemManager.getSortedFilesLinkingToItem(note)
 
       expect(filesAssociatedWithNote).toHaveLength(1)
       expect(filesAssociatedWithNote[0].uuid).toBe(file.uuid)
@@ -873,20 +873,38 @@ describe('itemManager', () => {
 
     it('should get all linked files for item', async () => {
       itemManager = createService()
-      const note = createNote('note')
       const file = createFile('A1')
       const file2 = createFile('B2')
+      const file3 = createFile('C3')
 
-      await itemManager.insertItems([note, file, file2])
+      await itemManager.insertItems([file, file2, file3])
 
-      await itemManager.associateFileWithNote(file2, note)
-      await itemManager.associateFileWithNote(file, note)
+      await itemManager.linkFileToFile(file, file3)
+      await itemManager.linkFileToFile(file, file2)
 
-      const sortedFilesForItem = itemManager.getSortedFilesForItem(note)
+      const sortedFilesForItem = itemManager.getSortedLinkedFilesForItem(file)
 
       expect(sortedFilesForItem).toHaveLength(2)
-      expect(sortedFilesForItem[0].uuid).toEqual(file.uuid)
-      expect(sortedFilesForItem[1].uuid).toEqual(file2.uuid)
+      expect(sortedFilesForItem[0].uuid).toEqual(file2.uuid)
+      expect(sortedFilesForItem[1].uuid).toEqual(file3.uuid)
+    })
+
+    it('should get all files linking to item', async () => {
+      itemManager = createService()
+      const baseFile = createFile('file')
+      const fileToLink1 = createFile('A1')
+      const fileToLink2 = createFile('B2')
+
+      await itemManager.insertItems([baseFile, fileToLink1, fileToLink2])
+
+      await itemManager.linkFileToFile(fileToLink2, baseFile)
+      await itemManager.linkFileToFile(fileToLink1, baseFile)
+
+      const sortedFilesForItem = itemManager.getSortedFilesLinkingToItem(baseFile)
+
+      expect(sortedFilesForItem).toHaveLength(2)
+      expect(sortedFilesForItem[0].uuid).toEqual(fileToLink1.uuid)
+      expect(sortedFilesForItem[1].uuid).toEqual(fileToLink2.uuid)
     })
 
     it('should get all linked notes for item', async () => {

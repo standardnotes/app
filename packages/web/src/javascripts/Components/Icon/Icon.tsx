@@ -5,6 +5,7 @@ import * as icons from '@standardnotes/icons'
 export const ICONS = {
   'account-circle': icons.AccountCircleIcon,
   'arrow-left': icons.ArrowLeftIcon,
+  'arrow-right': icons.ArrowRightIcon,
   'arrows-sort-down': icons.ArrowsSortDownIcon,
   'arrows-sort-up': icons.ArrowsSortUpIcon,
   'attachment-file': icons.AttachmentFileIcon,

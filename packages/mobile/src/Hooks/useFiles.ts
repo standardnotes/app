@@ -68,7 +68,7 @@ export const useFiles = ({ note }: Props) => {
   const filesService = application.getFilesService()
 
   const reloadAttachedFiles = useCallback(() => {
-    setAttachedFiles(application.items.getSortedFilesForItem(note).sort(filesService.sortByName))
+    setAttachedFiles(application.items.getSortedFilesLinkingToItem(note).sort(filesService.sortByName))
   }, [application.items, filesService.sortByName, note])
 
   const reloadAllFiles = useCallback(() => {
