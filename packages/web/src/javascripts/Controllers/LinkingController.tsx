@@ -126,7 +126,11 @@ export class LinkingController extends AbstractViewController {
   }
 
   get selectedItemTitle() {
-    return this.selectionController.firstSelectedItem.title
+    return this.selectionController.firstSelectedItem
+      ? this.selectionController.firstSelectedItem.title
+      : this.activeItem
+      ? this.activeItem.title
+      : ''
   }
 
   reloadAllLinks() {
