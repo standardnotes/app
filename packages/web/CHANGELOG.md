@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.73.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.72.4...@standardnotes/web@3.73.0) (2022-10-12)
+
+### Features
+
+* replace private workspaces with private usernames ([#1783](https://github.com/standardnotes/app/issues/1783)) ([18c821d](https://github.com/standardnotes/app/commit/18c821d8eb51beb6f54211eb1d6eb454303044f5))
+
 ## [3.72.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.72.3...@standardnotes/web@3.72.4) (2022-10-12)
 
 ### Bug Fixes

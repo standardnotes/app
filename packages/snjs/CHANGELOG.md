@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.139.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.138.2...@standardnotes/snjs@2.139.0) (2022-10-12)
+
+### Features
+
+* replace private workspaces with private usernames ([#1783](https://github.com/standardnotes/app/issues/1783)) ([18c821d](https://github.com/standardnotes/app/commit/18c821d8eb51beb6f54211eb1d6eb454303044f5))
+
 ## [2.138.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.138.1...@standardnotes/snjs@2.138.2) (2022-10-12)
 
 **Note:** Version bump only for package @standardnotes/snjs

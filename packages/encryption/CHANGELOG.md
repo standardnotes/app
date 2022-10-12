@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.18.0](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.17.1...@standardnotes/encryption@1.18.0) (2022-10-12)
+
+### Features
+
+* replace private workspaces with private usernames ([#1783](https://github.com/standardnotes/app/issues/1783)) ([18c821d](https://github.com/standardnotes/app/commit/18c821d8eb51beb6f54211eb1d6eb454303044f5))
+
 ## [1.17.1](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.17.0...@standardnotes/encryption@1.17.1) (2022-10-11)
 
 **Note:** Version bump only for package @standardnotes/encryption
