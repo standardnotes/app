@@ -102,9 +102,9 @@ const LinkedItemBubble = ({
       <span className="max-w-290px flex items-center overflow-hidden overflow-ellipsis whitespace-nowrap">
         {tagTitle && <span className="text-passive-1">{tagTitle.titlePrefix}</span>}
         <span className="flex items-center gap-1">
-          <span className={!isBidirectional ? 'hidden group-focus:block' : ''}>
-            {link.relationWithSelectedItem === 'direct' ? 'Linked: ' : 'Linked By: '}
-          </span>
+          {link.relationWithSelectedItem === 'indirect' && (
+            <span className={!isBidirectional ? 'hidden group-focus:block' : ''}>Linked By:</span>
+          )}
           {link.item.title}
         </span>
       </span>
