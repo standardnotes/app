@@ -4,4 +4,5 @@ export enum WorkspaceApiOperations {
   Accepting,
   ListingWorkspaces,
   ListingWorkspaceUsers,
+  InitiatingKeyshare,
 }

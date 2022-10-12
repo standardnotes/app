@@ -1,4 +1,5 @@
 import { WorkspaceAccessLevel, WorkspaceType } from '@standardnotes/common'
+
 import { HttpStatusCode } from '../../Http'
 import { WorkspaceCreationResponse } from '../../Response/Workspace/WorkspaceCreationResponse'
 import { WorkspaceInvitationAcceptingResponse } from '../../Response/Workspace/WorkspaceInvitationAcceptingResponse'
@@ -6,6 +7,7 @@ import { WorkspaceInvitationResponse } from '../../Response/Workspace/WorkspaceI
 import { WorkspaceListResponse } from '../../Response/Workspace/WorkspaceListResponse'
 import { WorkspaceUserListResponse } from '../../Response/Workspace/WorkspaceUserListResponse'
 import { WorkspaceServerInterface } from '../../Server/Workspace/WorkspaceServerInterface'
+import { WorkspaceKeyshareInitiatingResponse } from '../../Response/Workspace/WorkspaceKeyshareInitiatingResponse'
 
 import { WorkspaceApiOperations } from './WorkspaceApiOperations'
 import { WorkspaceApiService } from './WorkspaceApiService'
@@ -34,6 +36,10 @@ describe('WorkspaceApiService', () => {
       status: HttpStatusCode.Success,
       data: { users: [] },
     } as jest.Mocked<WorkspaceUserListResponse>)
+    workspaceServer.initiateKeyshare = jest.fn().mockReturnValue({
+      status: HttpStatusCode.Success,
+      data: { success: true },
+    } as jest.Mocked<WorkspaceKeyshareInitiatingResponse>)
   })
 
   it('should create a workspace', async () => {
@@ -298,6 +304,61 @@ describe('WorkspaceApiService', () => {
     let error = null
     try {
       await createService().listWorkspaceUsers({ workspaceUuid: 'w-1-2-3' })
+    } catch (caughtError) {
+      error = caughtError
+    }
+
+    expect(error).not.toBeNull()
+  })
+
+  it('should initiate keyshare in workspace for user', async () => {
+    const response = await createService().initiateKeyshare({
+      workspaceUuid: 'w-1-2-3',
+      userUuid: 'u-1-2-3',
+      encryptedWorkspaceKey: 'foobar',
+    })
+
+    expect(response).toEqual({
+      status: 200,
+      data: {
+        success: true,
+      },
+    })
+    expect(workspaceServer.initiateKeyshare).toHaveBeenCalledWith({
+      workspaceUuid: 'w-1-2-3',
+      userUuid: 'u-1-2-3',
+      encryptedWorkspaceKey: 'foobar',
+    })
+  })
+
+  it('should not initiate keyshare in workspace if it is already initiating', async () => {
+    const service = createService()
+    Object.defineProperty(service, 'operationsInProgress', {
+      get: () => new Map([[WorkspaceApiOperations.InitiatingKeyshare, true]]),
+    })
+
+    let error = null
+    try {
+      await service.initiateKeyshare({ workspaceUuid: 'w-1-2-3', userUuid: 'u-1-2-3', encryptedWorkspaceKey: 'foobar' })
+    } catch (caughtError) {
+      error = caughtError
+    }
+
+    expect(error).not.toBeNull()
+  })
+
+  it('should not initiate keyshare in workspace if the server fails', async () => {
+    workspaceServer.initiateKeyshare = jest.fn().mockImplementation(() => {
+      throw new Error('Oops')
+    })
+
+    let error = null
+    try {
+      await createService().initiateKeyshare({
+        workspaceUuid: 'w-1-2-3',
+        userUuid: 'u-1-2-3',
+        encryptedWorkspaceKey: 'foobar',
+      })
     } catch (caughtError) {
       error = caughtError
     }

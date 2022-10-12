@@ -22,4 +22,9 @@ export interface WorkspaceClientInterface {
   }): Promise<{ success: boolean }>
   listWorkspaces(): Promise<{ ownedWorkspaces: Array<Workspace>; joinedWorkspaces: Array<Workspace> }>
   listWorkspaceUsers(dto: { workspaceUuid: Uuid }): Promise<{ users: Array<WorkspaceUser> }>
+  initiateKeyshare(dto: {
+    workspaceUuid: Uuid
+    userUuid: Uuid
+    encryptedWorkspaceKey: string
+  }): Promise<{ success: boolean }>
 }
