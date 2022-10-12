@@ -8,6 +8,7 @@ import { WorkspaceInvitationResponse } from '../../Response/Workspace/WorkspaceI
 import { WorkspaceServerInterface } from '../../Server/Workspace/WorkspaceServerInterface'
 import { WorkspaceListResponse } from '../../Response/Workspace/WorkspaceListResponse'
 import { WorkspaceUserListResponse } from '../../Response/Workspace/WorkspaceUserListResponse'
+import { WorkspaceKeyshareInitiatingResponse } from '../../Response/Workspace/WorkspaceKeyshareInitiatingResponse'
 
 import { WorkspaceApiServiceInterface } from './WorkspaceApiServiceInterface'
 import { WorkspaceApiOperations } from './WorkspaceApiOperations'
@@ -17,6 +18,28 @@ export class WorkspaceApiService implements WorkspaceApiServiceInterface {
 
   constructor(private workspaceServer: WorkspaceServerInterface) {
     this.operationsInProgress = new Map()
+  }
+
+  async initiateKeyshare(dto: {
+    workspaceUuid: string
+    userUuid: string
+    encryptedWorkspaceKey: string
+  }): Promise<WorkspaceKeyshareInitiatingResponse> {
+    this.lockOperation(WorkspaceApiOperations.InitiatingKeyshare)
+
+    try {
+      const response = await this.workspaceServer.initiateKeyshare({
+        workspaceUuid: dto.workspaceUuid,
+        userUuid: dto.userUuid,
+        encryptedWorkspaceKey: dto.encryptedWorkspaceKey,
+      })
+
+      this.unlockOperation(WorkspaceApiOperations.InitiatingKeyshare)
+
+      return response
+    } catch (error) {
+      throw new ApiCallError(ErrorMessage.GenericFail)
+    }
   }
 
   async listWorkspaceUsers(dto: { workspaceUuid: string }): Promise<WorkspaceUserListResponse> {

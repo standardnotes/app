@@ -1,8 +1,10 @@
 import { WorkspaceAccessLevel, WorkspaceType } from '@standardnotes/common'
+
 import { HttpServiceInterface, HttpStatusCode } from '../../Http'
 import { WorkspaceCreationResponse } from '../../Response/Workspace/WorkspaceCreationResponse'
 import { WorkspaceInvitationAcceptingResponse } from '../../Response/Workspace/WorkspaceInvitationAcceptingResponse'
 import { WorkspaceInvitationResponse } from '../../Response/Workspace/WorkspaceInvitationResponse'
+import { WorkspaceKeyshareInitiatingResponse } from '../../Response/Workspace/WorkspaceKeyshareInitiatingResponse'
 import { WorkspaceListResponse } from '../../Response/Workspace/WorkspaceListResponse'
 import { WorkspaceUserListResponse } from '../../Response/Workspace/WorkspaceUserListResponse'
 
@@ -97,6 +99,26 @@ describe('WorkspaceServer', () => {
     expect(response).toEqual({
       status: 200,
       data: { users: [] },
+    })
+  })
+
+  it('should initiate keyshare for user in a workspace', async () => {
+    httpService.post = jest.fn().mockReturnValue({
+      status: HttpStatusCode.Success,
+      data: { success: true },
+    } as jest.Mocked<WorkspaceKeyshareInitiatingResponse>)
+
+    const response = await createServer().initiateKeyshare({
+      workspaceUuid: 'w-1-2-3',
+      userUuid: 'u-1-2-3',
+      encryptedWorkspaceKey: 'foobar',
+    })
+
+    expect(response).toEqual({
+      status: 200,
+      data: {
+        success: true,
+      },
     })
   })
 })

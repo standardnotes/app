@@ -8,6 +8,8 @@ import { WorkspaceListRequestParams } from '../../Request/Workspace/WorkspaceLis
 import { WorkspaceListResponse } from '../../Response/Workspace/WorkspaceListResponse'
 import { WorkspaceUserListRequestParams } from '../../Request/Workspace/WorkspaceUserListRequestParams'
 import { WorkspaceUserListResponse } from '../../Response/Workspace/WorkspaceUserListResponse'
+import { WorkspaceKeyshareInitiatingRequestParams } from '../../Request/Workspace/WorkspaceKeyshareInitiatingRequestParams'
+import { WorkspaceKeyshareInitiatingResponse } from '../../Response/Workspace/WorkspaceKeyshareInitiatingResponse'
 
 export interface WorkspaceServerInterface {
   createWorkspace(params: WorkspaceCreationRequestParams): Promise<WorkspaceCreationResponse>
@@ -15,4 +17,5 @@ export interface WorkspaceServerInterface {
   listWorkspaceUsers(params: WorkspaceUserListRequestParams): Promise<WorkspaceUserListResponse>
   inviteToWorkspace(params: WorkspaceInvitationRequestParams): Promise<WorkspaceInvitationResponse>
   acceptInvite(params: WorkspaceInvitationAcceptingRequestParams): Promise<WorkspaceInvitationAcceptingResponse>
+  initiateKeyshare(params: WorkspaceKeyshareInitiatingRequestParams): Promise<WorkspaceKeyshareInitiatingResponse>
 }

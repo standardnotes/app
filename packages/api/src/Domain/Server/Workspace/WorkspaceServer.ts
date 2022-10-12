@@ -9,12 +9,25 @@ import { WorkspaceListRequestParams } from '../../Request/Workspace/WorkspaceLis
 import { WorkspaceListResponse } from '../../Response/Workspace/WorkspaceListResponse'
 import { WorkspaceUserListRequestParams } from '../../Request/Workspace/WorkspaceUserListRequestParams'
 import { WorkspaceUserListResponse } from '../../Response/Workspace/WorkspaceUserListResponse'
+import { WorkspaceKeyshareInitiatingRequestParams } from '../../Request/Workspace/WorkspaceKeyshareInitiatingRequestParams'
+import { WorkspaceKeyshareInitiatingResponse } from '../../Response/Workspace/WorkspaceKeyshareInitiatingResponse'
 
 import { Paths } from './Paths'
 import { WorkspaceServerInterface } from './WorkspaceServerInterface'
 
 export class WorkspaceServer implements WorkspaceServerInterface {
   constructor(private httpService: HttpServiceInterface) {}
+
+  async initiateKeyshare(
+    params: WorkspaceKeyshareInitiatingRequestParams,
+  ): Promise<WorkspaceKeyshareInitiatingResponse> {
+    const response = await this.httpService.post(
+      Paths.v1.initiateKeyshare(params.workspaceUuid, params.userUuid),
+      params,
+    )
+
+    return response as WorkspaceKeyshareInitiatingResponse
+  }
 
   async listWorkspaceUsers(params: WorkspaceUserListRequestParams): Promise<WorkspaceUserListResponse> {
     const response = await this.httpService.get(Paths.v1.listWorkspaceUsers(params.workspaceUuid), params)

@@ -14,6 +14,24 @@ export class WorkspaceManager extends AbstractService implements WorkspaceClient
     super(internalEventBus)
   }
 
+  async initiateKeyshare(dto: {
+    workspaceUuid: string
+    userUuid: string
+    encryptedWorkspaceKey: string
+  }): Promise<{ success: boolean }> {
+    try {
+      const result = await this.workspaceApiService.initiateKeyshare(dto)
+
+      if (result.data.error !== undefined) {
+        return { success: false }
+      }
+
+      return result.data
+    } catch (error) {
+      return { success: false }
+    }
+  }
+
   async listWorkspaceUsers(dto: { workspaceUuid: string }): Promise<{ users: WorkspaceUser[] }> {
     try {
       const result = await this.workspaceApiService.listWorkspaceUsers(dto)
