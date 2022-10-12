@@ -6,6 +6,7 @@ import { useCallback, useState } from 'react'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@/Utils/ConcatenateClassNames'
+import { ContentType } from '@standardnotes/snjs'
 
 type Props = {
   linkingController: LinkingController
@@ -63,8 +64,12 @@ const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
   const isItemBidirectionallyLinked = (link: ItemLink) => {
     const existsInAllItemLinks = !!allItemLinks.find((item) => link.item.uuid === item.item.uuid)
     const existsInNotesLinkingToItem = !!notesLinkingToActiveItem.find((item) => link.item.uuid === item.item.uuid)
+    const existsInFilesLinkingToItem = !!filesLinkingToActiveItem.find((item) => link.item.uuid === item.item.uuid)
 
-    return existsInAllItemLinks && existsInNotesLinkingToItem
+    return (
+      existsInAllItemLinks &&
+      (link.item.content_type === ContentType.Note ? existsInNotesLinkingToItem : existsInFilesLinkingToItem)
+    )
   }
 
   return (
