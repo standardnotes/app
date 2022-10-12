@@ -99,7 +99,7 @@ export class FilesController extends AbstractViewController {
   reloadAttachedFiles = () => {
     const note = this.notesController.firstSelectedNote
     if (note) {
-      this.attachedFiles = this.application.items.getSortedFilesForItem(note)
+      this.attachedFiles = this.application.items.getSortedFilesLinkingToItem(note)
     }
   }
 
