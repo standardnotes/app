@@ -1,5 +1,5 @@
 import { FilesController } from '@/Controllers/FilesController'
-import { LinkableItem, LinkingController } from '@/Controllers/LinkingController'
+import { ItemLink, LinkableItem, LinkingController } from '@/Controllers/LinkingController'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
@@ -23,7 +23,7 @@ const LinkedItemsSectionItem = ({
   activateItem,
   getItemIcon,
   getTitleForLinkedTag,
-  item,
+  link,
   searchQuery,
   unlinkItem,
   handleFileAction,
@@ -31,7 +31,7 @@ const LinkedItemsSectionItem = ({
   activateItem: LinkingController['activateItem']
   getItemIcon: LinkingController['getLinkedItemIcon']
   getTitleForLinkedTag: LinkingController['getTitleForLinkedTag']
-  item: LinkableItem
+  link: ItemLink
   searchQuery?: string
   unlinkItem: LinkingController['unlinkItemFromSelectedItem']
   handleFileAction: FilesController['handleFileAction']
@@ -43,17 +43,17 @@ const LinkedItemsSectionItem = ({
 
   const [isRenamingFile, setIsRenamingFile] = useState(false)
 
-  const [icon, className] = getItemIcon(item)
-  const title = item.title ?? ''
+  const [icon, className] = getItemIcon(link.item)
+  const title = link.item.title ?? ''
 
   const renameFile = async (name: string) => {
-    if (!(item instanceof FileItem)) {
+    if (!(link.item instanceof FileItem)) {
       return
     }
     await handleFileAction({
       type: PopoverFileItemActionType.RenameFile,
       payload: {
-        file: item,
+        file: link.item,
         name: name,
       },
     })
@@ -62,7 +62,7 @@ const LinkedItemsSectionItem = ({
 
   return (
     <div className="relative flex items-center justify-between">
-      {isRenamingFile && item instanceof FileItem ? (
+      {isRenamingFile && link.item instanceof FileItem ? (
         <div className="flex flex-grow items-center gap-4 py-2 pl-3 pr-12">
           <Icon type={icon} className={classNames('flex-shrink-0', className)} />
           <input
@@ -86,14 +86,14 @@ const LinkedItemsSectionItem = ({
       ) : (
         <button
           className="flex flex-grow items-center justify-between gap-4 py-2 pl-3 pr-12 text-sm hover:bg-info-backdrop focus:bg-info-backdrop"
-          onClick={() => activateItem(item)}
+          onClick={() => activateItem(link.item)}
           onContextMenu={(event) => {
             event.preventDefault()
             toggleMenu()
           }}
         >
           <LinkedItemMeta
-            item={item}
+            item={link.item}
             getItemIcon={getItemIcon}
             getTitleForLinkedTag={getTitleForLinkedTag}
             searchQuery={searchQuery}
@@ -118,16 +118,16 @@ const LinkedItemsSectionItem = ({
         <MenuItem
           type={MenuItemType.IconButton}
           onClick={() => {
-            unlinkItem(item)
+            unlinkItem(link)
             toggleMenu()
           }}
         >
           <Icon type="link-off" className="mr-2 text-danger" />
           Unlink
         </MenuItem>
-        {item instanceof FileItem && (
+        {link.item instanceof FileItem && (
           <LinkedFileMenuOptions
-            file={item}
+            file={link.item}
             closeMenu={toggleMenu}
             handleFileAction={handleFileAction}
             setIsRenamingFile={setIsRenamingFile}
@@ -136,17 +136,17 @@ const LinkedItemsSectionItem = ({
         <HorizontalSeparator classes="my-2" />
         <div className="mt-1 px-3 py-1 text-xs font-medium text-neutral">
           <div className="mb-1">
-            <span className="font-semibold">Created at:</span> {formatDateForContextMenu(item.created_at)}
+            <span className="font-semibold">Created at:</span> {formatDateForContextMenu(link.item.created_at)}
           </div>
           <div className="mb-1">
-            <span className="font-semibold">Modified at:</span> {formatDateForContextMenu(item.userModifiedDate)}
+            <span className="font-semibold">Modified at:</span> {formatDateForContextMenu(link.item.userModifiedDate)}
           </div>
           <div className="mb-1">
-            <span className="font-semibold">ID:</span> {item.uuid}
+            <span className="font-semibold">ID:</span> {link.item.uuid}
           </div>
-          {item instanceof FileItem && (
+          {link.item instanceof FileItem && (
             <div>
-              <span className="font-semibold">Size:</span> {formatSizeToReadableString(item.decryptedSize)}
+              <span className="font-semibold">Size:</span> {formatSizeToReadableString(link.item.decryptedSize)}
             </div>
           )}
         </div>
@@ -169,7 +169,7 @@ const LinkedItemsPanel = ({
     files,
     notesLinkedToItem,
     notesLinkingToItem,
-    allLinkedItems,
+    allItemLinks: allLinkedItems,
     getTitleForLinkedTag,
     getLinkedItemIcon,
     getSearchResults,
@@ -268,10 +268,10 @@ const LinkedItemsPanel = ({
               <div>
                 <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked Tags</div>
                 <div className="my-1">
-                  {tags.map((item) => (
+                  {tags.map((link) => (
                     <LinkedItemsSectionItem
-                      key={item.uuid}
-                      item={item}
+                      key={link.id}
+                      item={link.item}
                       getItemIcon={getLinkedItemIcon}
                       getTitleForLinkedTag={getTitleForLinkedTag}
                       searchQuery={searchQuery}
@@ -287,10 +287,10 @@ const LinkedItemsPanel = ({
               <div>
                 <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked Files</div>
                 <div className="my-1">
-                  {files.map((item) => (
+                  {files.map((link) => (
                     <LinkedItemsSectionItem
-                      key={item.uuid}
-                      item={item}
+                      key={link.id}
+                      item={link.item}
                       getItemIcon={getLinkedItemIcon}
                       getTitleForLinkedTag={getTitleForLinkedTag}
                       searchQuery={searchQuery}
@@ -306,10 +306,10 @@ const LinkedItemsPanel = ({
               <div>
                 <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked Notes</div>
                 <div className="my-1">
-                  {notesLinkedToItem.map((item) => (
+                  {notesLinkedToItem.map((link) => (
                     <LinkedItemsSectionItem
-                      key={item.uuid}
-                      item={item}
+                      key={link.id}
+                      item={link.item}
                       getItemIcon={getLinkedItemIcon}
                       getTitleForLinkedTag={getTitleForLinkedTag}
                       searchQuery={searchQuery}
@@ -327,10 +327,10 @@ const LinkedItemsPanel = ({
                   Notes Linking To This Note
                 </div>
                 <div className="my-1">
-                  {notesLinkingToItem.map((item) => (
+                  {notesLinkingToItem.map((link) => (
                     <LinkedItemsSectionItem
-                      key={item.uuid}
-                      item={item}
+                      key={link.id}
+                      item={link.item}
                       getItemIcon={getLinkedItemIcon}
                       getTitleForLinkedTag={getTitleForLinkedTag}
                       searchQuery={searchQuery}

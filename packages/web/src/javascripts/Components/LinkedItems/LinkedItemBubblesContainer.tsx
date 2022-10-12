@@ -14,16 +14,22 @@ type Props = {
 const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
   const { toggleAppPane } = useResponsiveAppPane()
   const {
-    allLinkedItems,
+    allItemLinks,
     notesLinkingToItem,
     unlinkItemFromSelectedItem: unlinkItem,
     getTitleForLinkedTag,
     getLinkedItemIcon: getItemIcon,
     activateItem,
+    selectedItemTitle,
   } = linkingController
 
   const [focusedId, setFocusedId] = useState<string>()
-  const focusableIds = allLinkedItems.map((item) => item.uuid).concat([ElementIds.ItemLinkAutocompleteInput])
+  const focusableIds = allItemLinks
+    .map((link) => link.id)
+    .concat(
+      notesLinkingToItem.map((link) => link.id),
+      [ElementIds.ItemLinkAutocompleteInput],
+    )
 
   const focusPreviousItem = useCallback(() => {
     const currentFocusedIndex = focusableIds.findIndex((id) => id === focusedId)
@@ -57,13 +63,13 @@ const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
     <div
       className={classNames(
         'hidden min-w-80 max-w-full flex-wrap items-center gap-2 bg-transparent md:-mr-2 md:flex',
-        allLinkedItems.length || notesLinkingToItem.length ? 'mt-1' : 'mt-0.5',
+        allItemLinks.length || notesLinkingToItem.length ? 'mt-1' : 'mt-0.5',
       )}
     >
-      {allLinkedItems.concat(notesLinkingToItem).map((item) => (
+      {allItemLinks.concat(notesLinkingToItem).map((link) => (
         <LinkedItemBubble
-          item={item}
-          key={item.uuid}
+          link={link}
+          key={link.id}
           getItemIcon={getItemIcon}
           getTitleForLinkedTag={getTitleForLinkedTag}
           activateItem={activateItemAndTogglePane}
@@ -72,6 +78,7 @@ const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
           focusNextItem={focusNextItem}
           focusedId={focusedId}
           setFocusedId={setFocusedId}
+          selectedItemTitle={selectedItemTitle}
         />
       ))}
       <ItemLinkAutocompleteInput
