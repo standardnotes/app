@@ -29,7 +29,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
   const [isStrictSignin, setIsStrictSignin] = useState(false)
   const [isSigningIn, setIsSigningIn] = useState(false)
   const [shouldMergeLocal, setShouldMergeLocal] = useState(true)
-  const [isPrivateWorkspace, setIsPrivateWorkspace] = useState(false)
+  const [isPrivateUsername, setIsPrivateUsername] = useState(false)
 
   const emailInputRef = useRef<HTMLInputElement>(null)
   const passwordInputRef = useRef<HTMLInputElement>(null)
@@ -100,11 +100,11 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
       })
   }, [viewControllerManager, application, email, isEphemeral, isStrictSignin, password, shouldMergeLocal])
 
-  const onPrivateWorkspaceChange = useCallback(
-    (newIsPrivateWorkspace: boolean, privateWorkspaceIdentifier?: string) => {
-      setIsPrivateWorkspace(newIsPrivateWorkspace)
-      if (newIsPrivateWorkspace && privateWorkspaceIdentifier) {
-        setEmail(privateWorkspaceIdentifier)
+  const onPrivateUsernameChange = useCallback(
+    (newisPrivateUsername: boolean, privateUsernameIdentifier?: string) => {
+      setIsPrivateUsername(newisPrivateUsername)
+      if (newisPrivateUsername && privateUsernameIdentifier) {
+        setEmail(privateUsernameIdentifier)
       }
     },
     [setEmail],
@@ -161,7 +161,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
           onChange={handleEmailChange}
           onFocus={resetInvalid}
           onKeyDown={handleKeyDown}
-          disabled={isSigningIn || isPrivateWorkspace}
+          disabled={isSigningIn || isPrivateUsername}
           ref={emailInputRef}
         />
         <DecoratedPasswordInput
@@ -206,7 +206,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
         viewControllerManager={viewControllerManager}
         application={application}
         disabled={isSigningIn}
-        onPrivateWorkspaceChange={onPrivateWorkspaceChange}
+        onPrivateUsernameModeChange={onPrivateUsernameChange}
         onStrictSignInChange={handleStrictSigninChange}
       />
     </>
