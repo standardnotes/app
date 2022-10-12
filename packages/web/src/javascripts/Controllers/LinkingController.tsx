@@ -352,15 +352,19 @@ export class LinkingController extends AbstractViewController {
       if (!this.activeItem) {
         return false
       }
+
       const isItemReferencedByActiveItem = this.application.items
         .itemsReferencingItem(item)
         .some((linkedItem) => linkedItem.uuid === this.activeItem?.uuid)
       const isActiveItemReferencedByItem = this.application.items
         .itemsReferencingItem(this.activeItem)
         .some((linkedItem) => linkedItem.uuid === item.uuid)
-      const isAlreadyLinkedToItem =
-        isItemReferencedByActiveItem || (item.content_type !== ContentType.Note && isActiveItemReferencedByItem)
-      return isAlreadyLinkedToItem
+
+      if (this.activeItem.content_type === item.content_type) {
+        return isItemReferencedByActiveItem
+      }
+
+      return isActiveItemReferencedByItem || isItemReferencedByActiveItem
     }
 
     const prioritizeTagResult = (
