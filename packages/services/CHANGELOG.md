@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.32.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.31.0...@standardnotes/services@1.32.0) (2022-10-12)
+
+### Features
+
+* **api:** add keyshare initiation for workspaces ([fabce1f](https://github.com/standardnotes/app/commit/fabce1f7aca5c9caaa5bb3908b2dc68063c690d0))
+
 # [1.31.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.30.0...@standardnotes/services@1.31.0) (2022-10-11)
 
 ### Features
