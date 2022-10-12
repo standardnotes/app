@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.16.0](https://github.com/standardnotes/app/compare/@standardnotes/api@1.15.1...@standardnotes/api@1.16.0) (2022-10-12)
+
+### Features
+
+* **api:** add keyshare initiation for workspaces ([fabce1f](https://github.com/standardnotes/app/commit/fabce1f7aca5c9caaa5bb3908b2dc68063c690d0))
+
 ## [1.15.1](https://github.com/standardnotes/app/compare/@standardnotes/api@1.15.0...@standardnotes/api@1.15.1) (2022-10-11)
 
 **Note:** Version bump only for package @standardnotes/api
