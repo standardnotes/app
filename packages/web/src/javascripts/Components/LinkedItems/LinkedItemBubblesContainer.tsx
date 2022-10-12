@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import ItemLinkAutocompleteInput from './ItemLinkAutocompleteInput'
-import { LinkableItem, LinkingController } from '@/Controllers/LinkingController'
+import { ItemLink, LinkableItem, LinkingController } from '@/Controllers/LinkingController'
 import LinkedItemBubble from './LinkedItemBubble'
 import { useCallback, useState } from 'react'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
@@ -20,7 +20,6 @@ const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
     getTitleForLinkedTag,
     getLinkedItemIcon: getItemIcon,
     activateItem,
-    selectedItemTitle,
   } = linkingController
 
   const [focusedId, setFocusedId] = useState<string>()
@@ -59,6 +58,13 @@ const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
     [activateItem, toggleAppPane],
   )
 
+  const isItemBidirectionallyLinked = (link: ItemLink) => {
+    const existsInAllItemLinks = !!allItemLinks.find((item) => link.item.uuid === item.item.uuid)
+    const existsInNotesLinkingToItem = !!notesLinkingToItem.find((item) => link.item.uuid === item.item.uuid)
+
+    return existsInAllItemLinks && existsInNotesLinkingToItem
+  }
+
   return (
     <div
       className={classNames(
@@ -78,7 +84,7 @@ const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
           focusNextItem={focusNextItem}
           focusedId={focusedId}
           setFocusedId={setFocusedId}
-          selectedItemTitle={selectedItemTitle}
+          isBidirectional={isItemBidirectionallyLinked(link)}
         />
       ))}
       <ItemLinkAutocompleteInput

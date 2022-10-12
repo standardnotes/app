@@ -1,6 +1,5 @@
 import { ItemLink, LinkableItem, LinkingController } from '@/Controllers/LinkingController'
 import { classNames } from '@/Utils/ConcatenateClassNames'
-import { ContentType } from '@standardnotes/snjs'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { observer } from 'mobx-react-lite'
 import { KeyboardEventHandler, MouseEventHandler, useEffect, useRef, useState } from 'react'
@@ -16,7 +15,7 @@ type Props = {
   focusNextItem: () => void
   focusedId: string | undefined
   setFocusedId: (id: string) => void
-  selectedItemTitle: string
+  isBidirectional: boolean
 }
 
 const LinkedItemBubble = ({
@@ -29,7 +28,7 @@ const LinkedItemBubble = ({
   focusNextItem,
   focusedId,
   setFocusedId,
-  selectedItemTitle,
+  isBidirectional,
 }: Props) => {
   const ref = useRef<HTMLButtonElement>(null)
 
@@ -92,7 +91,7 @@ const LinkedItemBubble = ({
   return (
     <button
       ref={ref}
-      className="flex h-6 cursor-pointer items-center rounded border-0 bg-passive-4-opacity-variant py-2 pl-1 pr-2 text-xs text-text hover:bg-contrast focus:bg-contrast"
+      className="group flex h-6 cursor-pointer items-center rounded border-0 bg-passive-4-opacity-variant py-2 pl-1 pr-2 text-xs text-text hover:bg-contrast focus:bg-contrast"
       onFocus={handleFocus}
       onBlur={onBlur}
       onClick={onClick}
@@ -103,19 +102,8 @@ const LinkedItemBubble = ({
       <span className="max-w-290px flex items-center overflow-hidden overflow-ellipsis whitespace-nowrap">
         {tagTitle && <span className="text-passive-1">{tagTitle.titlePrefix}</span>}
         <span className="flex items-center gap-1">
-          {link.item.content_type === ContentType.Note && link.relationWithSelectedItem === 'direct' ? (
-            <>
-              {selectedItemTitle}
-              <Icon type="arrow-right" size="custom" className="h-3 w-3" />
-            </>
-          ) : null}
+          {isBidirectional ? (link.relationWithSelectedItem === 'direct' ? 'Linked: ' : 'Linked By: ') : null}
           {link.item.title}
-          {link.item.content_type === ContentType.Note && link.relationWithSelectedItem === 'indirect' ? (
-            <>
-              <Icon type="arrow-right" size="custom" className="h-3 w-3" />
-              {selectedItemTitle}
-            </>
-          ) : null}
         </span>
       </span>
       {showUnlinkButton && (
