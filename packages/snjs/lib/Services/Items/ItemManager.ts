@@ -352,9 +352,7 @@ export class ItemManager
     itemToLookupUuidFor: Models.DecryptedItemInterface,
     contentType?: ContentType,
   ): Models.DecryptedItemInterface[] {
-    const item = this.isTemplateItem(itemToLookupUuidFor)
-      ? itemToLookupUuidFor
-      : this.findSureItem(itemToLookupUuidFor.uuid)
+    const item = this.findSureItem(itemToLookupUuidFor.uuid)
     const uuids = item.references.map((ref) => ref.uuid)
     let references = this.findItems(uuids)
     if (contentType) {

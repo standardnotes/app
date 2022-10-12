@@ -12,6 +12,7 @@ import {
   ItemContent,
   ItemsClientInterface,
   naturalSort,
+  NoteViewController,
   PrefKey,
   SNNote,
   SNTag,
@@ -274,24 +275,32 @@ export class LinkingController extends AbstractViewController {
     this.reloadAllLinks()
   }
 
-  linkItemToSelectedItem = async (itemToLink: LinkableItem) => {
-    const selectedItem = this.selectionController.firstSelectedItem
+  getActiveInsertedItem = async () => {
+    const activeItemController = this.itemListController.getActiveItemController()
+    if (activeItemController instanceof NoteViewController && activeItemController.isTemplateNote) {
+      return (await activeItemController.insertTemplatedNote()) as SNNote
+    }
+    return activeItemController?.item
+  }
 
-    if (itemToLink instanceof SNTag) {
-      await this.addTagToActiveItem(itemToLink)
+  linkItemToSelectedItem = async (itemToLink: LinkableItem) => {
+    const activeItem = await this.getActiveInsertedItem()
+
+    if (activeItem && itemToLink instanceof SNTag) {
+      await this.addTagToItem(itemToLink, activeItem)
     }
 
-    if (selectedItem instanceof SNNote) {
+    if (activeItem instanceof SNNote) {
       if (itemToLink instanceof FileItem) {
-        await this.application.items.associateFileWithNote(itemToLink, selectedItem)
+        await this.application.items.associateFileWithNote(itemToLink, activeItem)
       } else if (itemToLink instanceof SNNote && this.isEntitledToNoteLinking) {
-        await this.application.items.linkNoteToNote(selectedItem, itemToLink)
+        await this.application.items.linkNoteToNote(activeItem, itemToLink)
       }
-    } else if (selectedItem instanceof FileItem) {
+    } else if (activeItem instanceof FileItem) {
       if (itemToLink instanceof SNNote) {
-        await this.application.items.associateFileWithNote(selectedItem, itemToLink)
+        await this.application.items.associateFileWithNote(activeItem, itemToLink)
       } else if (itemToLink instanceof FileItem) {
-        await this.application.items.linkFileToFile(itemToLink, selectedItem)
+        await this.application.items.linkFileToFile(itemToLink, activeItem)
       }
     }
 
@@ -300,21 +309,18 @@ export class LinkingController extends AbstractViewController {
   }
 
   createAndAddNewTag = async (title: string) => {
+    const activeItem = await this.getActiveInsertedItem()
     const newTag = await this.application.mutator.findOrCreateTag(title)
-    await this.addTagToActiveItem(newTag)
+    if (activeItem) {
+      await this.addTagToItem(newTag, activeItem)
+    }
   }
 
-  addTagToActiveItem = async (tag: SNTag) => {
-    const activeItem = this.itemListController.activeControllerItem
-
-    if (!activeItem) {
-      return
-    }
-
-    if (activeItem instanceof SNNote) {
-      await this.application.items.addTagToNote(activeItem, tag, this.shouldLinkToParentFolders)
-    } else if (activeItem instanceof FileItem) {
-      await this.application.items.addTagToFile(activeItem, tag, this.shouldLinkToParentFolders)
+  addTagToItem = async (tag: SNTag, item: FileItem | SNNote) => {
+    if (item instanceof SNNote) {
+      await this.application.items.addTagToNote(item, tag, this.shouldLinkToParentFolders)
+    } else if (item instanceof FileItem) {
+      await this.application.items.addTagToFile(item, tag, this.shouldLinkToParentFolders)
     }
 
     this.reloadLinkedTags()
