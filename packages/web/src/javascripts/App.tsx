@@ -1,7 +1,5 @@
 'use strict'
 
-import { disableIosTextFieldZoom, isDev } from '@/Utils'
-
 declare global {
   interface Window {
     dashboardUrl?: string
@@ -25,8 +23,9 @@ declare global {
   }
 }
 
+import { disableIosTextFieldZoom } from '@/Utils'
 import { IsWebPlatform, WebAppVersion } from '@/Constants/Version'
-import { DesktopManagerInterface, Environment, Platform, SNLog } from '@standardnotes/snjs'
+import { DesktopManagerInterface, Environment, SNLog } from '@standardnotes/snjs'
 import ApplicationGroupView from './Components/ApplicationGroupView/ApplicationGroupView'
 import { WebDevice } from './Application/Device/WebDevice'
 import { StartApplication } from './Application/Device/StartApplication'
@@ -36,42 +35,12 @@ import { WebApplication } from './Application/Application'
 import { createRoot, Root } from 'react-dom/client'
 import { ElementIds } from './Constants/ElementIDs'
 import { MediaQueryBreakpoints } from './Hooks/useMediaQuery'
+import { setViewportHeightWithFallback } from './setViewportHeightWithFallback'
+import { setDefaultMonospaceFont } from './setDefaultMonospaceFont'
 
 let keyCount = 0
 const getKey = () => {
   return keyCount++
-}
-
-const ViewportHeightKey = '--viewport-height'
-
-export const setViewportHeightWithFallback = () => {
-  const currentHeight = parseInt(document.documentElement.style.getPropertyValue(ViewportHeightKey))
-  const newValue = visualViewport && visualViewport.height > 0 ? visualViewport.height : window.innerHeight
-
-  if (isDev) {
-    // eslint-disable-next-line no-console
-    console.log(`currentHeight: ${currentHeight}, newValue: ${newValue}`)
-  }
-
-  if (currentHeight && newValue < currentHeight) {
-    return
-  }
-
-  if (!newValue) {
-    document.documentElement.style.setProperty(ViewportHeightKey, '100vh')
-    return
-  }
-
-  document.documentElement.style.setProperty(ViewportHeightKey, `${newValue}px`)
-}
-
-const setDefaultMonospaceFont = (platform?: Platform) => {
-  if (platform === Platform.Android) {
-    document.documentElement.style.setProperty(
-      '--sn-stylekit-monospace-font',
-      '"Roboto Mono", "Droid Sans Mono", monospace',
-    )
-  }
 }
 
 const startApplication: StartApplication = async function startApplication(
