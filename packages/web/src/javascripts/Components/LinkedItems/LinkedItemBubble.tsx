@@ -3,6 +3,7 @@ import { classNames } from '@/Utils/ConcatenateClassNames'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { observer } from 'mobx-react-lite'
 import { KeyboardEventHandler, MouseEventHandler, useEffect, useRef, useState } from 'react'
+import { ContentType } from '@standardnotes/snjs'
 import Icon from '../Icon/Icon'
 
 type Props = {
@@ -102,7 +103,7 @@ const LinkedItemBubble = ({
       <span className="max-w-290px flex items-center overflow-hidden overflow-ellipsis whitespace-nowrap">
         {tagTitle && <span className="text-passive-1">{tagTitle.titlePrefix}</span>}
         <span className="flex items-center gap-1">
-          {link.relationWithSelectedItem === 'indirect' && (
+          {link.relationWithSelectedItem === 'indirect' && link.item.content_type !== ContentType.Tag && (
             <span className={!isBidirectional ? 'hidden group-focus:block' : ''}>Linked By:</span>
           )}
           {link.item.title}

@@ -161,15 +161,23 @@ export class LinkingController extends AbstractViewController {
       return
     }
 
+    const isActiveItemAFile = this.activeItem instanceof FileItem
+
     const linkedFiles = this.application.items
       .getSortedLinkedFilesForItem(this.activeItem)
-      .map((item) => this.createLinkFromItem(item, 'direct'))
-    this.linkedFiles = linkedFiles
+      .map((item) => this.createLinkFromItem(item, isActiveItemAFile ? 'direct' : 'indirect'))
 
     const filesLinkingToActiveItem = this.application.items
       .getSortedFilesLinkingToItem(this.activeItem)
-      .map((item) => this.createLinkFromItem(item, 'indirect'))
-    this.filesLinkingToActiveItem = filesLinkingToActiveItem
+      .map((item) => this.createLinkFromItem(item, isActiveItemAFile ? 'indirect' : 'direct'))
+
+    if (isActiveItemAFile) {
+      this.linkedFiles = linkedFiles
+      this.filesLinkingToActiveItem = filesLinkingToActiveItem
+    } else {
+      this.linkedFiles = filesLinkingToActiveItem
+      this.filesLinkingToActiveItem = linkedFiles
+    }
   }
 
   reloadLinkedTags() {

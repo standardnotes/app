@@ -85,7 +85,7 @@ const LinkedItemsSectionItem = ({
         </div>
       ) : (
         <button
-          className="flex flex-grow items-center justify-between gap-4 py-2 pl-3 pr-12 text-sm hover:bg-info-backdrop focus:bg-info-backdrop"
+          className="flex max-w-full flex-grow items-center justify-between gap-4 py-2 pl-3 pr-12 text-sm hover:bg-info-backdrop focus:bg-info-backdrop"
           onClick={() => activateItem(item)}
           onContextMenu={(event) => {
             event.preventDefault()
@@ -166,9 +166,10 @@ const LinkedItemsPanel = ({
 }) => {
   const {
     tags,
-    linkedFiles: files,
+    linkedFiles,
+    filesLinkingToActiveItem,
     notesLinkedToItem,
-    notesLinkingToActiveItem: notesLinkingToItem,
+    notesLinkingToActiveItem,
     allItemLinks: allLinkedItems,
     getTitleForLinkedTag,
     getLinkedItemIcon,
@@ -196,7 +197,7 @@ const LinkedItemsPanel = ({
       <form
         className={classNames(
           'sticky top-0 z-10 bg-default px-2.5 pt-2.5',
-          allLinkedItems.length || linkedResults.length || unlinkedResults.length || notesLinkingToItem.length
+          allLinkedItems.length || linkedResults.length || unlinkedResults.length || notesLinkingToActiveItem.length
             ? 'border-b border-border pb-2.5'
             : 'pb-1',
         )}
@@ -283,11 +284,32 @@ const LinkedItemsPanel = ({
                 </div>
               </div>
             )}
-            {!!files.length && (
+            {!!linkedFiles.length && (
               <div>
                 <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked Files</div>
                 <div className="my-1">
-                  {files.map((link) => (
+                  {linkedFiles.map((link) => (
+                    <LinkedItemsSectionItem
+                      key={link.id}
+                      item={link.item}
+                      getItemIcon={getLinkedItemIcon}
+                      getTitleForLinkedTag={getTitleForLinkedTag}
+                      searchQuery={searchQuery}
+                      unlinkItem={() => unlinkItemFromSelectedItem(link)}
+                      activateItem={activateItem}
+                      handleFileAction={filesController.handleFileAction}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+            {!!filesLinkingToActiveItem.length && (
+              <div>
+                <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">
+                  Files Linking To Current File
+                </div>
+                <div className="my-1">
+                  {filesLinkingToActiveItem.map((link) => (
                     <LinkedItemsSectionItem
                       key={link.id}
                       item={link.item}
@@ -321,13 +343,13 @@ const LinkedItemsPanel = ({
                 </div>
               </div>
             )}
-            {!!notesLinkingToItem.length && (
+            {!!notesLinkingToActiveItem.length && (
               <div>
                 <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">
                   Notes Linking To This Note
                 </div>
                 <div className="my-1">
-                  {notesLinkingToItem.map((link) => (
+                  {notesLinkingToActiveItem.map((link) => (
                     <LinkedItemsSectionItem
                       key={link.id}
                       item={link.item}
