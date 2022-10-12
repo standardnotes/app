@@ -369,10 +369,14 @@ export class LinkingController extends AbstractViewController {
       .slice(0, 20)
       .filter((item) => !isAlreadyLinked(item))
       .sort(prioritizeTagResult)
-    const linkedResults = searchResults.filter(isAlreadyLinked).slice(0, 20)
+    const linkedResults = searchResults
+      .filter(isAlreadyLinked)
+      .slice(0, 20)
+      .map((item) => this.createLinkFromItem(item))
     const isResultExistingTag = (result: DecryptedItemInterface<ItemContent>) =>
       result.content_type === ContentType.Tag && result.title === searchQuery
-    const shouldShowCreateTag = !linkedResults.find(isResultExistingTag) && !unlinkedResults.find(isResultExistingTag)
+    const shouldShowCreateTag =
+      !linkedResults.find((link) => isResultExistingTag(link.item)) && !unlinkedResults.find(isResultExistingTag)
 
     return {
       unlinkedResults,

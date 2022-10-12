@@ -1,5 +1,5 @@
 import { FilesController } from '@/Controllers/FilesController'
-import { ItemLink, LinkableItem, LinkingController } from '@/Controllers/LinkingController'
+import { LinkableItem, LinkingController } from '@/Controllers/LinkingController'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
@@ -23,7 +23,7 @@ const LinkedItemsSectionItem = ({
   activateItem,
   getItemIcon,
   getTitleForLinkedTag,
-  link,
+  item,
   searchQuery,
   unlinkItem,
   handleFileAction,
@@ -31,9 +31,9 @@ const LinkedItemsSectionItem = ({
   activateItem: LinkingController['activateItem']
   getItemIcon: LinkingController['getLinkedItemIcon']
   getTitleForLinkedTag: LinkingController['getTitleForLinkedTag']
-  link: ItemLink
+  item: LinkableItem
   searchQuery?: string
-  unlinkItem: LinkingController['unlinkItemFromSelectedItem']
+  unlinkItem: () => void
   handleFileAction: FilesController['handleFileAction']
 }) => {
   const menuButtonRef = useRef<HTMLButtonElement>(null)
@@ -43,17 +43,17 @@ const LinkedItemsSectionItem = ({
 
   const [isRenamingFile, setIsRenamingFile] = useState(false)
 
-  const [icon, className] = getItemIcon(link.item)
-  const title = link.item.title ?? ''
+  const [icon, className] = getItemIcon(item)
+  const title = item.title ?? ''
 
   const renameFile = async (name: string) => {
-    if (!(link.item instanceof FileItem)) {
+    if (!(item instanceof FileItem)) {
       return
     }
     await handleFileAction({
       type: PopoverFileItemActionType.RenameFile,
       payload: {
-        file: link.item,
+        file: item,
         name: name,
       },
     })
@@ -62,7 +62,7 @@ const LinkedItemsSectionItem = ({
 
   return (
     <div className="relative flex items-center justify-between">
-      {isRenamingFile && link.item instanceof FileItem ? (
+      {isRenamingFile && item instanceof FileItem ? (
         <div className="flex flex-grow items-center gap-4 py-2 pl-3 pr-12">
           <Icon type={icon} className={classNames('flex-shrink-0', className)} />
           <input
@@ -86,14 +86,14 @@ const LinkedItemsSectionItem = ({
       ) : (
         <button
           className="flex flex-grow items-center justify-between gap-4 py-2 pl-3 pr-12 text-sm hover:bg-info-backdrop focus:bg-info-backdrop"
-          onClick={() => activateItem(link.item)}
+          onClick={() => activateItem(item)}
           onContextMenu={(event) => {
             event.preventDefault()
             toggleMenu()
           }}
         >
           <LinkedItemMeta
-            item={link.item}
+            item={item}
             getItemIcon={getItemIcon}
             getTitleForLinkedTag={getTitleForLinkedTag}
             searchQuery={searchQuery}
@@ -118,16 +118,16 @@ const LinkedItemsSectionItem = ({
         <MenuItem
           type={MenuItemType.IconButton}
           onClick={() => {
-            unlinkItem(link)
+            unlinkItem()
             toggleMenu()
           }}
         >
           <Icon type="link-off" className="mr-2 text-danger" />
           Unlink
         </MenuItem>
-        {link.item instanceof FileItem && (
+        {item instanceof FileItem && (
           <LinkedFileMenuOptions
-            file={link.item}
+            file={item}
             closeMenu={toggleMenu}
             handleFileAction={handleFileAction}
             setIsRenamingFile={setIsRenamingFile}
@@ -136,17 +136,17 @@ const LinkedItemsSectionItem = ({
         <HorizontalSeparator classes="my-2" />
         <div className="mt-1 px-3 py-1 text-xs font-medium text-neutral">
           <div className="mb-1">
-            <span className="font-semibold">Created at:</span> {formatDateForContextMenu(link.item.created_at)}
+            <span className="font-semibold">Created at:</span> {formatDateForContextMenu(item.created_at)}
           </div>
           <div className="mb-1">
-            <span className="font-semibold">Modified at:</span> {formatDateForContextMenu(link.item.userModifiedDate)}
+            <span className="font-semibold">Modified at:</span> {formatDateForContextMenu(item.userModifiedDate)}
           </div>
           <div className="mb-1">
-            <span className="font-semibold">ID:</span> {link.item.uuid}
+            <span className="font-semibold">ID:</span> {item.uuid}
           </div>
-          {link.item instanceof FileItem && (
+          {item instanceof FileItem && (
             <div>
-              <span className="font-semibold">Size:</span> {formatSizeToReadableString(link.item.decryptedSize)}
+              <span className="font-semibold">Size:</span> {formatSizeToReadableString(item.decryptedSize)}
             </div>
           )}
         </div>
@@ -246,14 +246,14 @@ const LinkedItemsPanel = ({
               <div>
                 <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked</div>
                 <div className="my-1">
-                  {linkedResults.map((item) => (
+                  {linkedResults.map((link) => (
                     <LinkedItemsSectionItem
-                      key={item.uuid}
-                      item={item}
+                      key={link.id}
+                      item={link.item}
                       getItemIcon={getLinkedItemIcon}
                       getTitleForLinkedTag={getTitleForLinkedTag}
                       searchQuery={searchQuery}
-                      unlinkItem={unlinkItemFromSelectedItem}
+                      unlinkItem={() => unlinkItemFromSelectedItem(link)}
                       activateItem={activateItem}
                       handleFileAction={filesController.handleFileAction}
                     />
@@ -275,7 +275,7 @@ const LinkedItemsPanel = ({
                       getItemIcon={getLinkedItemIcon}
                       getTitleForLinkedTag={getTitleForLinkedTag}
                       searchQuery={searchQuery}
-                      unlinkItem={unlinkItemFromSelectedItem}
+                      unlinkItem={() => unlinkItemFromSelectedItem(link)}
                       activateItem={activateItem}
                       handleFileAction={filesController.handleFileAction}
                     />
@@ -294,7 +294,7 @@ const LinkedItemsPanel = ({
                       getItemIcon={getLinkedItemIcon}
                       getTitleForLinkedTag={getTitleForLinkedTag}
                       searchQuery={searchQuery}
-                      unlinkItem={unlinkItemFromSelectedItem}
+                      unlinkItem={() => unlinkItemFromSelectedItem(link)}
                       activateItem={activateItem}
                       handleFileAction={filesController.handleFileAction}
                     />
@@ -313,7 +313,7 @@ const LinkedItemsPanel = ({
                       getItemIcon={getLinkedItemIcon}
                       getTitleForLinkedTag={getTitleForLinkedTag}
                       searchQuery={searchQuery}
-                      unlinkItem={unlinkItemFromSelectedItem}
+                      unlinkItem={() => unlinkItemFromSelectedItem(link)}
                       activateItem={activateItem}
                       handleFileAction={filesController.handleFileAction}
                     />
@@ -334,7 +334,7 @@ const LinkedItemsPanel = ({
                       getItemIcon={getLinkedItemIcon}
                       getTitleForLinkedTag={getTitleForLinkedTag}
                       searchQuery={searchQuery}
-                      unlinkItem={unlinkItemFromSelectedItem}
+                      unlinkItem={() => unlinkItemFromSelectedItem(link)}
                       activateItem={activateItem}
                       handleFileAction={filesController.handleFileAction}
                     />
