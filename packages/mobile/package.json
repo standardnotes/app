@@ -66,7 +66,7 @@
     "react-native-privacy-snapshot": "standardnotes/react-native-privacy-snapshot#653e904c90fc6f2b578da59138f2bfe5d7f942fe",
     "react-native-reanimated": "^2.8.0",
     "react-native-safe-area-context": "^4.2.2",
-    "react-native-screens": "3.13.1",
+    "react-native-screens": "3.18.1",
     "react-native-search-bar": "standardnotes/react-native-search-bar#7d2139daf9b7663b570403f21f520deceba9bb09",
     "react-native-search-box": "standardnotes/react-native-search-box#8c46369912cba78dca718588aca9c16926953ff7",
     "react-native-share": "^7.9.0",
