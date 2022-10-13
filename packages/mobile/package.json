@@ -28,62 +28,28 @@
     "hoistingLimits": "workspaces"
   },
   "dependencies": {
-    "@expo/react-native-action-sheet": "^3.13.0",
     "@react-native-community/async-storage": "1.12.1",
-    "@react-native-community/masked-view": "^0.1.11",
-    "@react-native-community/segmented-control": "^2.2.2",
-    "@react-navigation/elements": "^1.3.3",
-    "@react-navigation/native": "^6.0.10",
-    "@react-navigation/stack": "^6.2.1",
-    "@standardnotes/components-meta": "workspace:*",
-    "@standardnotes/filepicker": "workspace:*",
-    "@standardnotes/icons": "workspace:*",
-    "@standardnotes/react-native-aes": "^1.4.3",
-    "@standardnotes/react-native-textview": "1.1.0",
     "@standardnotes/react-native-utils": "1.0.1",
-    "@standardnotes/sncrypto-common": "workspace:*",
     "@standardnotes/snjs": "workspace:*",
     "@standardnotes/stylekit": "5.29.3",
     "@standardnotes/web": "workspace:*",
-    "@types/styled-components-react-native": "5.1.3",
-    "dompurify": "^2.3.8",
-    "js-base64": "^3.7.2",
-    "moment": "^2.29.2",
     "react": "17.0.2",
     "react-native": "0.67.4",
-    "react-native-alternate-icons": "standardnotes/react-native-alternate-icons#1d335d13bb518ed4d26cb00bcd1f6b1c4d60a052",
-    "react-native-default-preference": "^1.4.3",
-    "react-native-document-picker": "^8.1.0",
-    "react-native-fab": "standardnotes/react-native-fab#cb60e0067bbd938df5e85838760d8ff87f0cddda",
     "react-native-file-viewer": "^2.1.5",
     "react-native-fingerprint-scanner": "standardnotes/react-native-fingerprint-scanner#0f9c1f6712ee0c1a2908fe7e589c72151d143c48",
     "react-native-flag-secure-android": "standardnotes/react-native-flag-secure-android#cb08e74583c22a5d912842459b35ebbbb4bcd852",
-    "react-native-fs": "^2.19.0",
-    "react-native-gesture-handler": "2.3.2",
-    "react-native-image-picker": "^4.7.3",
     "react-native-keychain": "standardnotes/react-native-keychain#d277d360494cbd02be4accb4a360772a8e0e97b6",
-    "react-native-mail": "standardnotes/react-native-mail#fd26119e67a2ffc5eaa95a9c17049743e39ce2d3",
     "react-native-privacy-snapshot": "standardnotes/react-native-privacy-snapshot#653e904c90fc6f2b578da59138f2bfe5d7f942fe",
     "react-native-reanimated": "^2.8.0",
     "react-native-safe-area-context": "^4.2.2",
-    "react-native-screens": "3.13.1",
-    "react-native-search-bar": "standardnotes/react-native-search-bar#7d2139daf9b7663b570403f21f520deceba9bb09",
-    "react-native-search-box": "standardnotes/react-native-search-box#8c46369912cba78dca718588aca9c16926953ff7",
     "react-native-share": "^7.9.0",
     "react-native-sodium-jsi": "1.2.0",
     "react-native-static-server": "standardnotes/react-native-static-server#28ef0175dbee3db9aadfab57498497067556a836",
-    "react-native-store-review": "^0.2.0",
     "react-native-svg": "^12.3.0",
-    "react-native-svg-transformer": "^1.0.0",
     "react-native-tab-view": "^3.1.1",
     "react-native-toast-message": "^2.1.5",
-    "react-native-url-polyfill": "^1.3.0",
-    "react-native-vector-icons": "^9.1.0",
     "react-native-version-info": "^1.1.1",
-    "react-native-webview": "11.23.1",
-    "react-native-zip-archive": "^6.0.6",
-    "react-navigation-header-buttons": "^9.0.1",
-    "styled-components": "5.3.5"
+    "react-native-webview": "11.23.1"
   },
   "devDependencies": {
     "@babel/core": "*",
@@ -91,25 +57,15 @@
     "@babel/runtime": "^7.18.3",
     "@react-native-community/eslint-config": "^3.0.1",
     "@standardnotes/config": "^2.4.3",
-    "@types/detox": "^18.1.0",
-    "@types/faker": "^6.6.9",
-    "@types/jest": "^28.1.5",
-    "@types/js-base64": "^3.3.1",
     "@types/react": "17.0.2",
     "@types/react-native": "^0.67.3",
-    "@types/react-native-vector-icons": "^6.4.10",
-    "@types/react-test-renderer": "^17.0.1",
     "@typescript-eslint/eslint-plugin": "^5.20.0",
     "@typescript-eslint/parser": "^5.20.0",
     "babel-jest": "^27.5.1",
     "detox": "^19.5.7",
     "eslint": "^8.13.0",
-    "eslint-plugin-flowtype": "^8.0.3",
     "eslint-plugin-prettier": "^4.0.0",
-    "faker": "^6.6.6",
     "get-yarn-workspaces": "^1.0.2",
-    "jest": "^28.1.2",
-    "jest-circus": "^27.5.1",
     "metro-react-native-babel-preset": "^0.70.1",
     "npm-check-updates": "*",
     "pod-install": "^0.1.33",
@@ -129,42 +85,5 @@
   "componentsCdn": {
     "dev": "https://cdn.jsdelivr.net/gh/standardnotes/app@",
     "prod": "https://cdn.jsdelivr.net/gh/standardnotes/app@"
-  },
-  "detox": {
-    "configurations": {
-      "ios.sim.debug": {
-        "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/StandardNotes.app",
-        "build": "xcodebuild -workspace ios/StandardNotes.xcworkspace -scheme StandardNotes -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
-        "type": "ios.simulator",
-        "device": {
-          "type": "iPhone SE (2nd generation)"
-        }
-      },
-      "ios.sim.release": {
-        "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/StandardNotes.app",
-        "build": "xcodebuild -workspace ios/StandardNotes.xcworkspace -scheme StandardNotes -configuration Release -sdk iphonesimulator -derivedDataPath ios/build",
-        "type": "ios.simulator",
-        "device": {
-          "type": "iPhone 11 Pro"
-        }
-      },
-      "android.emu.debug": {
-        "binaryPath": "android/app/build/outputs/apk/debug/app-debug.apk",
-        "build": "cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && cd ..",
-        "type": "android.emulator",
-        "device": {
-          "avdName": "pixel"
-        }
-      },
-      "android.emu.release": {
-        "binaryPath": "android/app/build/outputs/apk/release/app-release.apk",
-        "build": "cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && cd ..",
-        "type": "android.emulator",
-        "device": {
-          "avdName": "pixel"
-        }
-      }
-    },
-    "test-runner": "jest"
   }
 }
