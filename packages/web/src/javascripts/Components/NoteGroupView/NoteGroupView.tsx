@@ -2,13 +2,12 @@ import { FileItem, FileViewController, NoteViewController } from '@standardnotes
 import { PureComponent } from '@/Components/Abstract/PureComponent'
 import { WebApplication } from '@/Application/Application'
 import MultipleSelectedNotes from '@/Components/MultipleSelectedNotes/MultipleSelectedNotes'
-import NoteView from '@/Components/NoteView/NoteView'
 import MultipleSelectedFiles from '../MultipleSelectedFiles/MultipleSelectedFiles'
 import { ElementIds } from '@/Constants/ElementIDs'
-import FileView from '@/Components/FileView/FileView'
 import { FileDnDContext } from '@/Components/FileDragNDropProvider/FileDragNDropProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import ResponsivePaneContent from '../ResponsivePane/ResponsivePaneContent'
+import ItemControllersView from './ItemControllersView'
 
 type State = {
   showMultipleSelectedNotes: boolean
@@ -119,20 +118,11 @@ class NoteGroupView extends PureComponent<Props, State> {
             </div>
           )}
           {shouldNotShowMultipleSelectedItems && this.state.controllers.length > 0 && (
-            <>
-              {this.state.controllers.map((controller) => {
-                return controller instanceof NoteViewController ? (
-                  <NoteView key={controller.runtimeId} application={this.application} controller={controller} />
-                ) : (
-                  <FileView
-                    key={controller.runtimeId}
-                    application={this.application}
-                    viewControllerManager={this.viewControllerManager}
-                    file={controller.item}
-                  />
-                )
-              })}
-            </>
+            <ItemControllersView
+              controllers={this.state.controllers}
+              application={this.application}
+              viewControllerManager={this.viewControllerManager}
+            />
           )}
         </ResponsivePaneContent>
       </div>
