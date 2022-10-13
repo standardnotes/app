@@ -57,14 +57,14 @@ function useStateRef<State>(state: State): MutableRefObject<State> {
 const MemoizedChildren = memo(({ children }: ChildrenProps) => <div>{children}</div>)
 
 const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => {
-  const [currentSelectedPane] = useState<AppPaneId>(paneController.currentPane)
-  const [previousSelectedPane] = useState<AppPaneId>(paneController.previousPane)
+  const currentSelectedPane = paneController.currentPane
+  const previousSelectedPane = paneController.previousPane
   const currentSelectedPaneRef = useStateRef<AppPaneId>(currentSelectedPane)
 
   const toggleAppPane = useCallback(
     (paneId: AppPaneId) => {
-      paneController.previousPane = currentSelectedPane
-      paneController.currentPane = paneId
+      paneController.setPreviousPane(currentSelectedPane)
+      paneController.setCurrentPane(paneId)
     },
     [paneController, currentSelectedPane],
   )
