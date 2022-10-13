@@ -45,6 +45,6 @@ export class RouteService extends AbstractService<RouteServiceEvent, RouteParser
   }
 
   private notifyRouteChange() {
-    this.notifyEvent(RouteServiceEvent.RouteChanged, this.getRoute())
+    void this.notifyEvent(RouteServiceEvent.RouteChanged, this.getRoute())
   }
 }
