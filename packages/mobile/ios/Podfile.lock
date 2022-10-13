@@ -71,9 +71,6 @@ PODS:
     - FlipperKit/Core
     - FlipperKit/FlipperKitNetworkPlugin
   - fmt (6.2.1)
-  - GCDWebServer (3.5.4):
-    - GCDWebServer/Core (= 3.5.4)
-  - GCDWebServer/Core (3.5.4)
   - glog (0.3.5)
   - libevent (2.1.12)
   - OpenSSL-Universal (1.1.180)
@@ -279,17 +276,6 @@ PODS:
     - React-Core
   - react-native-pager-view (5.4.25):
     - React-Core
-  - react-native-safe-area-context (4.4.1):
-    - RCT-Folly
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - ReactCommon/turbomodule/core
-  - react-native-sodium-jsi (1.2.0):
-    - React-Core
-  - react-native-static-server (0.5.2):
-    - GCDWebServer (~> 3.0)
-    - React
   - react-native-version-info (1.1.1):
     - React-Core
   - react-native-webview (11.23.1):
@@ -363,40 +349,13 @@ PODS:
     - React-Core
   - RNFileViewer (2.1.5):
     - React-Core
+  - RNFS (2.20.0):
+    - React-Core
   - RNKeychain (8.0.0):
     - React-Core
   - RNPrivacySnapshot (1.0.0):
     - React-Core
-  - RNReanimated (2.10.0):
-    - DoubleConversion
-    - FBLazyVector
-    - FBReactNativeSpec
-    - glog
-    - RCT-Folly
-    - RCTRequired
-    - RCTTypeSafety
-    - React-callinvoker
-    - React-Core
-    - React-Core/DevSupport
-    - React-Core/RCTWebSocket
-    - React-CoreModules
-    - React-cxxreact
-    - React-jsi
-    - React-jsiexecutor
-    - React-jsinspector
-    - React-RCTActionSheet
-    - React-RCTAnimation
-    - React-RCTBlob
-    - React-RCTImage
-    - React-RCTLinking
-    - React-RCTNetwork
-    - React-RCTSettings
-    - React-RCTText
-    - ReactCommon/turbomodule/core
-    - Yoga
   - RNShare (7.9.1):
-    - React-Core
-  - RNSVG (12.4.4):
     - React-Core
   - SNReactNative (1.0.1):
     - React-Core
@@ -449,9 +408,6 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - react-native-fingerprint-scanner (from `../node_modules/react-native-fingerprint-scanner`)
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
-  - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
-  - react-native-sodium-jsi (from `../node_modules/react-native-sodium-jsi`)
-  - react-native-static-server (from `../node_modules/react-native-static-server`)
   - react-native-version-info (from `../node_modules/react-native-version-info`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -468,11 +424,10 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - RNFileViewer (from `../node_modules/react-native-file-viewer`)
+  - RNFS (from `../node_modules/react-native-fs`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNPrivacySnapshot (from `../node_modules/react-native-privacy-snapshot`)
-  - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNShare (from `../node_modules/react-native-share`)
-  - RNSVG (from `../node_modules/react-native-svg`)
   - "SNReactNative (from `../node_modules/@standardnotes/react-native-utils`)"
   - TrustKit (= 1.6.5)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -490,7 +445,6 @@ SPEC REPOS:
     - Flipper-RSocket
     - FlipperKit
     - fmt
-    - GCDWebServer
     - libevent
     - OpenSSL-Universal
     - TrustKit
@@ -535,12 +489,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-fingerprint-scanner"
   react-native-pager-view:
     :path: "../node_modules/react-native-pager-view"
-  react-native-safe-area-context:
-    :path: "../node_modules/react-native-safe-area-context"
-  react-native-sodium-jsi:
-    :path: "../node_modules/react-native-sodium-jsi"
-  react-native-static-server:
-    :path: "../node_modules/react-native-static-server"
   react-native-version-info:
     :path: "../node_modules/react-native-version-info"
   react-native-webview:
@@ -573,16 +521,14 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/async-storage"
   RNFileViewer:
     :path: "../node_modules/react-native-file-viewer"
+  RNFS:
+    :path: "../node_modules/react-native-fs"
   RNKeychain:
     :path: "../node_modules/react-native-keychain"
   RNPrivacySnapshot:
     :path: "../node_modules/react-native-privacy-snapshot"
-  RNReanimated:
-    :path: "../node_modules/react-native-reanimated"
   RNShare:
     :path: "../node_modules/react-native-share"
-  RNSVG:
-    :path: "../node_modules/react-native-svg"
   SNReactNative:
     :path: "../node_modules/@standardnotes/react-native-utils"
   Yoga:
@@ -604,7 +550,6 @@ SPEC CHECKSUMS:
   Flipper-RSocket: d9d9ade67cbecf6ac10730304bf5607266dd2541
   FlipperKit: d8d346844eca5d9120c17d441a2f38596e8ed2b9
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
-  GCDWebServer: 2c156a56c8226e2d5c0c3f208a3621ccffbe3ce4
   glog: 85ecdd10ee8d8ec362ef519a6a45ff9aa27b2e85
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   OpenSSL-Universal: 1aa4f6a6ee7256b83db99ec1ccdaa80d10f9af9b
@@ -622,9 +567,6 @@ SPEC CHECKSUMS:
   React-logger: a1f028f6d8639a3f364ef80419e5e862e1115250
   react-native-fingerprint-scanner: be63e626b31fb951780a5fac5328b065a61a3d6e
   react-native-pager-view: da490aa1f902c9a5aeecf0909cc975ad0e92e53e
-  react-native-safe-area-context: 99b24a0c5acd0d5dcac2b1a7f18c49ea317be99a
-  react-native-sodium-jsi: c8901320767d00385f9111bc95ba25aaa9a29890
-  react-native-static-server: 880d9b697ef68722e6fa06ae06e6b843e906ed0b
   react-native-version-info: a106f23009ac0db4ee00de39574eb546682579b9
   react-native-webview: d33e2db8925d090871ffeb232dfa50cb3a727581
   React-perflogger: 0afaf2f01a47fd0fc368a93bfbb5bd3b26db6e7f
@@ -641,11 +583,10 @@ SPEC CHECKSUMS:
   ReactCommon: 07d0c460b9ba9af3eaf1b8f5abe7daaad28c9c4e
   RNCAsyncStorage: b03032fdbdb725bea0bd9e5ec5a7272865ae7398
   RNFileViewer: ce7ca3ac370e18554d35d6355cffd7c30437c592
+  RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   RNKeychain: 4f63aada75ebafd26f4bc2c670199461eab85d94
   RNPrivacySnapshot: 8eaf571478a353f2e5184f5c803164f22428b023
-  RNReanimated: c38d82b0e910e2478439686c58c02bac6e4232e9
   RNShare: a5dc3b9c53ddc73e155b8cd9a94c70c91913c43c
-  RNSVG: ecd661f380a07ba690c9c5929c475a44f432d674
   SNReactNative: b5e9e529c175c13f3a618e27c76cf3071213d5e1
   TrustKit: 073855e3adecd317417bda4ac9e9ac54a2e3b9f2
   Yoga: d6b6a80659aa3e91aaba01d0012e7edcbedcbecd

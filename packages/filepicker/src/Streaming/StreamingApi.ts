@@ -90,7 +90,7 @@ export class StreamingFileApi implements FileSystemApi {
 
     let previousChunk: Uint8Array
 
-    const processChunk = async (result: ReadableStreamDefaultReadResult<Uint8Array>): Promise<void> => {
+    const processChunk = async (result: ReadableStreamReadResult<Uint8Array>): Promise<void> => {
       if (result.done) {
         await onBytes(previousChunk, true)
         return

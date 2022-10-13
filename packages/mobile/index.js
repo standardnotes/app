@@ -1,12 +1,8 @@
 import { SNLog } from '@standardnotes/snjs'
 import { AppRegistry } from 'react-native'
-import 'react-native-gesture-handler'
-import { enableScreens } from 'react-native-screens'
-import 'react-native-url-polyfill/auto'
 import { name as appName } from './app.json'
 import { MobileWebApp } from './src/MobileWebApp'
 
-enableScreens()
 /* eslint-disable no-console, @typescript-eslint/no-empty-function */
 if (__DEV__ === false) {
   console.log = () => {}

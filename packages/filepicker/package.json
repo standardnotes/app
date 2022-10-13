@@ -28,7 +28,8 @@
     "eslint-plugin-prettier": "*",
     "jest": "^28.1.2",
     "ts-jest": "^28.0.5",
-    "ts-node": "^10.5.0"
+    "ts-node": "^10.5.0",
+    "typescript": "*"
   },
   "dependencies": {
     "@standardnotes/common": "^1.39.0",

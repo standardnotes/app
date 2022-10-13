@@ -1,7 +1,6 @@
 import VersionInfo from 'react-native-version-info'
 
 export const IsDev = VersionInfo.bundleIdentifier?.includes('dev')
-export const IsMobileWeb = IsDev
 
 export function isNullOrUndefined(value: unknown) {
   return value === null || value === undefined

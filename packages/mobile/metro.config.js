@@ -19,22 +19,7 @@ module.exports = (async () => {
   } = await getDefaultConfig()
 
   return {
-    watchFolders: [
-      __dirname,
-      '../icons',
-      '../styles',
-      '../components',
-      '../features',
-      '../encryption',
-      '../filepicker',
-      '../services',
-      '../files',
-      '../utils',
-      '../sncrypto-common',
-      '../snjs',
-      '../responses',
-      '../models',
-    ],
+    watchFolders: [__dirname, '../snjs'],
     transformer: {
       getTransformOptions: async () => ({
         transform: {
@@ -42,7 +27,6 @@ module.exports = (async () => {
           inlineRequires: true,
         },
       }),
-      babelTransformerPath: require.resolve('react-native-svg-transformer'),
     },
     resolver: {
       assetExts: assetExts.filter((ext) => ext !== 'svg'),

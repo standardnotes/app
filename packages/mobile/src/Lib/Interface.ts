@@ -29,7 +29,6 @@ import Share from 'react-native-share'
 import { AndroidBackHandlerService } from '../AndroidBackHandlerService'
 import { AppStateObserverService } from './../AppStateObserverService'
 import Keychain from './Keychain'
-import { IsMobileWeb } from './Utils'
 
 export type BiometricsType = 'Fingerprint' | 'Face ID' | 'Biometrics' | 'Touch ID'
 
@@ -435,11 +434,7 @@ export class MobileDevice implements MobileDeviceInterface {
   }
 
   performSoftReset() {
-    if (IsMobileWeb) {
-      this.notifyEvent(MobileDeviceEvent.RequestsWebViewReload)
-    } else {
-      SNReactNative.exitApp()
-    }
+    this.notifyEvent(MobileDeviceEvent.RequestsWebViewReload)
   }
 
   addMobileWebEventReceiver(handler: MobileDeviceEventHandler): () => void {
