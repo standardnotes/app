@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.139.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.139.0...@standardnotes/snjs@2.139.1) (2022-10-13)
+
+### Bug Fixes
+
+* error when trying to create new note inside a tag/folder ([4a59216](https://github.com/standardnotes/app/commit/4a592167833d856d90a10d6c252cb14b1b6e91f4))
+
 # [2.139.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.138.2...@standardnotes/snjs@2.139.0) (2022-10-12)
 
 ### Features
