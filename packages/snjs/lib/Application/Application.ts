@@ -939,11 +939,11 @@ export class SNApplication
 
     void this.promptForCustomChallenge(challenge)
 
-    this.notifyEvent(ApplicationEvent.BiometricsSoftLockEngaged)
+    void this.notifyEvent(ApplicationEvent.BiometricsSoftLockEngaged)
 
     this.addChallengeObserver(challenge, {
       onComplete: () => {
-        this.notifyEvent(ApplicationEvent.BiometricsSoftLockDisengaged)
+        void this.notifyEvent(ApplicationEvent.BiometricsSoftLockDisengaged)
       },
     })
   }
