@@ -1,7 +1,15 @@
 import { AppPaneId } from './../Components/ResponsivePane/AppPaneMetadata'
 import { isMobileScreen } from '@/Utils'
+import { makeObservable, observable } from 'mobx'
 
 export class PaneController {
-  public currentPane: AppPaneId = isMobileScreen() ? AppPaneId.Items : AppPaneId.Editor
-  public previousPane: AppPaneId = isMobileScreen() ? AppPaneId.Items : AppPaneId.Editor
+  currentPane: AppPaneId = isMobileScreen() ? AppPaneId.Items : AppPaneId.Editor
+  previousPane: AppPaneId = isMobileScreen() ? AppPaneId.Items : AppPaneId.Editor
+
+  constructor() {
+    makeObservable(this, {
+      currentPane: observable,
+      previousPane: observable,
+    })
+  }
 }

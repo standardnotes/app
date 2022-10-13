@@ -15,6 +15,7 @@ import {
 } from 'react'
 import { AppPaneId } from './AppPaneMetadata'
 import { PaneController } from '../../Controllers/PaneController'
+import { observer } from 'mobx-react-lite'
 
 type ResponsivePaneData = {
   selectedPane: AppPaneId
@@ -56,17 +57,14 @@ function useStateRef<State>(state: State): MutableRefObject<State> {
 const MemoizedChildren = memo(({ children }: ChildrenProps) => <div>{children}</div>)
 
 const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => {
-  const [currentSelectedPane, setCurrentSelectedPane] = useState<AppPaneId>(paneController.currentPane)
+  const [currentSelectedPane] = useState<AppPaneId>(paneController.currentPane)
+  const [previousSelectedPane] = useState<AppPaneId>(paneController.previousPane)
   const currentSelectedPaneRef = useStateRef<AppPaneId>(currentSelectedPane)
-  const [previousSelectedPane, setPreviousSelectedPane] = useState<AppPaneId>(paneController.previousPane)
 
   const toggleAppPane = useCallback(
     (paneId: AppPaneId) => {
       paneController.previousPane = currentSelectedPane
       paneController.currentPane = paneId
-
-      setPreviousSelectedPane(currentSelectedPane)
-      setCurrentSelectedPane(paneId)
     },
     [currentSelectedPane],
   )
@@ -125,4 +123,4 @@ const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => 
   )
 }
 
-export default ResponsivePaneProvider
+export default observer(ResponsivePaneProvider)
