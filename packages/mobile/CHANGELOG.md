@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.43.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.42.5...@standardnotes/mobile@3.43.0) (2022-10-13)
+
+### Features
+
+* focus secure text entry after successful biometrics input ([#1785](https://github.com/standardnotes/app/issues/1785)) ([8068fef](https://github.com/standardnotes/app/commit/8068fef4d3b3a31c2cc30f9e5521010e9ba9ca3b))
+
 ## [3.42.5](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.42.4...@standardnotes/mobile@3.42.5) (2022-10-12)
 
 **Note:** Version bump only for package @standardnotes/mobile

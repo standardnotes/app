@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.74.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.73.0...@standardnotes/web@3.74.0) (2022-10-13)
+
+### Features
+
+* focus secure text entry after successful biometrics input ([#1785](https://github.com/standardnotes/app/issues/1785)) ([8068fef](https://github.com/standardnotes/app/commit/8068fef4d3b3a31c2cc30f9e5521010e9ba9ca3b))
+
 # [3.73.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.72.4...@standardnotes/web@3.73.0) (2022-10-12)
 
 ### Features
