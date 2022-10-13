@@ -10,7 +10,7 @@ import {
   removeFromArray,
 } from '@standardnotes/snjs'
 import { ProtectedIllustration } from '@standardnotes/icons'
-import { FunctionComponent, useCallback, useEffect, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import Button from '@/Components/Button/Button'
 import Icon from '@/Components/Icon/Icon'
 import ChallengeModalPrompt from './ChallengePrompt'
@@ -51,6 +51,8 @@ const ChallengeModal: FunctionComponent<Props> = ({
   challenge,
   onDismiss,
 }) => {
+  const promptsContainerRef = useRef<HTMLFormElement>(null)
+
   const [values, setValues] = useState<ChallengeModalValues>(() => {
     const values = {} as ChallengeModalValues
     for (const prompt of challenge.prompts) {
@@ -175,14 +177,21 @@ const ChallengeModal: FunctionComponent<Props> = ({
 
   const biometricPrompt = challenge.prompts.find((prompt) => prompt.validation === ChallengeValidation.Biometric)
   const hasOnlyBiometricPrompt = challenge.prompts.length === 1 && !!biometricPrompt
-  const hasBiometricPromptValue = biometricPrompt && values[biometricPrompt.id].value
+  const wasBiometricInputSuccessful = biometricPrompt && !!values[biometricPrompt.id].value
+  const hasSecureTextPrompt = challenge.prompts.some((prompt) => prompt.secureTextEntry)
 
   useEffect(() => {
-    const shouldAutoSubmit = hasOnlyBiometricPrompt && hasBiometricPromptValue
+    const shouldAutoSubmit = hasOnlyBiometricPrompt && wasBiometricInputSuccessful
+    const shouldFocusSecureTextPrompt = hasSecureTextPrompt && wasBiometricInputSuccessful
     if (shouldAutoSubmit) {
       submit()
+    } else if (shouldFocusSecureTextPrompt) {
+      const secureTextEntry = promptsContainerRef.current?.querySelector(
+        'input[type="password"]',
+      ) as HTMLInputElement | null
+      secureTextEntry?.focus()
     }
-  }, [hasBiometricPromptValue, hasOnlyBiometricPrompt, submit])
+  }, [wasBiometricInputSuccessful, hasOnlyBiometricPrompt, submit, hasSecureTextPrompt])
 
   useEffect(() => {
     const removeListener = application.addAndroidBackHandlerEventListener(() => {
@@ -239,6 +248,7 @@ const ChallengeModal: FunctionComponent<Props> = ({
             e.preventDefault()
             submit()
           }}
+          ref={promptsContainerRef}
         >
           {challenge.prompts.map((prompt, index) => (
             <ChallengeModalPrompt

@@ -214,6 +214,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       allowUniversalAccessFromFileURLs={true}
       injectedJavaScriptBeforeContentLoaded={injectedJS}
       bounces={false}
+      keyboardDisplayRequiresUserAction={false}
     />
   )
 }
