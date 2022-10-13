@@ -66,7 +66,7 @@ const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => 
       paneController.previousPane = currentSelectedPane
       paneController.currentPane = paneId
     },
-    [currentSelectedPane],
+    [paneController, currentSelectedPane],
   )
 
   useEffect(() => {
