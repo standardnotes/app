@@ -120,7 +120,7 @@ export abstract class Collection<
   /** Returns all elements that are errorDecrypting or waitingForKey */
   public invalidElements(): Encrypted[] {
     const uuids = Array.from(this.invalidsIndex)
-    return this.findAll(uuids) as Encrypted[]
+    return this.findAll(uuids) as unknown as Encrypted[]
   }
 
   /** Returns all elements that are marked as dirty */

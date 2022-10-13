@@ -1,15 +1,8 @@
-import { IsMobileWeb } from '@Lib/Utils'
-import { MobileWebApp } from '@Root/MobileWebApp'
 import { SNLog } from '@standardnotes/snjs'
 import { AppRegistry } from 'react-native'
-import 'react-native-gesture-handler'
-import { enableScreens } from 'react-native-screens'
-import 'react-native-url-polyfill/auto'
 import { name as appName } from './app.json'
-import { NativeApp } from './src/NativeApp'
-import { enableAndroidFontFix } from './src/Style/android_text_fix'
+import { MobileWebApp } from './src/MobileWebApp'
 
-enableScreens()
 /* eslint-disable no-console, @typescript-eslint/no-empty-function */
 if (__DEV__ === false) {
   console.log = () => {}
@@ -35,6 +28,4 @@ console.warn = function filterWarnings(msg) {
   }
 }
 
-enableAndroidFontFix()
-
-AppRegistry.registerComponent(appName, () => (IsMobileWeb ? MobileWebApp : NativeApp))
+AppRegistry.registerComponent(appName, () => MobileWebApp)

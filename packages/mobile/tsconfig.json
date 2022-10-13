@@ -15,14 +15,7 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "esnext",
-    "typeRoots": ["node_modules/@types", "./src/Types/*"],
-    "paths": {
-      "@Components/*": ["./Components/*"],
-      "@Lib/*": ["./Lib/*"],
-      "@Screens/*": ["./Screens/*"],
-      "@Style/*": ["./Style/*"],
-      "@Root/*": ["./*"]
-    }
+    "typeRoots": ["node_modules/@types", "./src/Types/*"]
   },
   "exclude": [
     "node_modules",
