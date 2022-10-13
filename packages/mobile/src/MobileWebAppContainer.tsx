@@ -1,5 +1,3 @@
-import { MobileDevice, MobileDeviceEvent } from '@Lib/Interface'
-import { IsDev } from '@Lib/Utils'
 import { ReactNativeToWebEvent } from '@standardnotes/snjs'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Keyboard, Platform } from 'react-native'
@@ -8,6 +6,8 @@ import { WebView, WebViewMessageEvent } from 'react-native-webview'
 import pjson from '../package.json'
 import { AndroidBackHandlerService } from './AndroidBackHandlerService'
 import { AppStateObserverService } from './AppStateObserverService'
+import { MobileDevice, MobileDeviceEvent } from './Lib/Interface'
+import { IsDev } from './Lib/Utils'
 
 const LoggingEnabled = IsDev
 
