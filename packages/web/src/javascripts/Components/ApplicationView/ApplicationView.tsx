@@ -121,6 +121,10 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
         alertDialog({
           text: 'Unable to write to local database. Please restart the app and try again.',
         }).catch(console.error)
+      } else if (eventName === ApplicationEvent.BiometricsSoftLockEngaged) {
+        setNeedsUnlock(true)
+      } else if (eventName === ApplicationEvent.BiometricsSoftLockDisengaged) {
+        setNeedsUnlock(false)
       }
     })
 

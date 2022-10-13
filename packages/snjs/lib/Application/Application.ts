@@ -51,6 +51,7 @@ import {
   SubscriptionManager,
   WorkspaceClientInterface,
   WorkspaceManager,
+  ChallengePrompt,
 } from '@standardnotes/services'
 import { FilesClientInterface } from '@standardnotes/files'
 import { ComputePrivateUsername } from '@standardnotes/encryption'
@@ -927,6 +928,24 @@ export class SNApplication
     const MaximumWaitTime = 500
     await this.prepareForDeinit(MaximumWaitTime)
     return this.deinit(this.getDeinitMode(), DeinitSource.Lock)
+  }
+
+  public softLockBiometrics(): void {
+    const challenge = new Challenge(
+      [new ChallengePrompt(ChallengeValidation.Biometric)],
+      ChallengeReason.ApplicationUnlock,
+      false,
+    )
+
+    void this.promptForCustomChallenge(challenge)
+
+    this.notifyEvent(ApplicationEvent.BiometricsSoftLockEngaged)
+
+    this.addChallengeObserver(challenge, {
+      onComplete: () => {
+        this.notifyEvent(ApplicationEvent.BiometricsSoftLockDisengaged)
+      },
+    })
   }
 
   isNativeMobileWeb() {
