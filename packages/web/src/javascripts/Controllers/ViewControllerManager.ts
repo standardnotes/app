@@ -1,3 +1,4 @@
+import { PaneController } from './PaneController'
 import { RouteType, storage, StorageKey } from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
 import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
@@ -56,6 +57,7 @@ export class ViewControllerManager {
   readonly selectionController: SelectedItemsController
   readonly historyModalController: HistoryModalController
   readonly linkingController: LinkingController
+  readonly paneController: PaneController
 
   public isSessionsModalVisible = false
 
@@ -70,6 +72,8 @@ export class ViewControllerManager {
     this.itemCounter = new ItemCounter()
 
     this.subscriptionManager = application.subscriptions
+
+    this.paneController = new PaneController()
 
     this.preferencesController = new PreferencesController(application, this.eventBus)
 
@@ -207,6 +211,7 @@ export class ViewControllerManager {
 
     this.historyModalController.deinit()
     ;(this.historyModalController as unknown) = undefined
+    ;(this.paneController as unknown) = undefined
 
     destroyAllObjectProperties(this)
   }

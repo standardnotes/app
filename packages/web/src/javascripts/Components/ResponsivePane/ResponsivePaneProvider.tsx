@@ -1,6 +1,5 @@
 import { ElementIds } from '@/Constants/ElementIDs'
 import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
-import { isMobileScreen } from '@/Utils'
 import {
   useEffect,
   ReactNode,
@@ -15,6 +14,8 @@ import {
   MutableRefObject,
 } from 'react'
 import { AppPaneId } from './AppPaneMetadata'
+import { PaneController } from '../../Controllers/PaneController'
+import { observer } from 'mobx-react-lite'
 
 type ResponsivePaneData = {
   selectedPane: AppPaneId
@@ -39,6 +40,10 @@ type ChildrenProps = {
   children: ReactNode
 }
 
+type ProviderProps = {
+  paneController: PaneController
+} & ChildrenProps
+
 function useStateRef<State>(state: State): MutableRefObject<State> {
   const ref = useRef<State>(state)
 
@@ -51,21 +56,17 @@ function useStateRef<State>(state: State): MutableRefObject<State> {
 
 const MemoizedChildren = memo(({ children }: ChildrenProps) => <div>{children}</div>)
 
-const ResponsivePaneProvider = ({ children }: ChildrenProps) => {
-  const [currentSelectedPane, setCurrentSelectedPane] = useState<AppPaneId>(
-    isMobileScreen() ? AppPaneId.Items : AppPaneId.Editor,
-  )
+const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => {
+  const currentSelectedPane = paneController.currentPane
+  const previousSelectedPane = paneController.previousPane
   const currentSelectedPaneRef = useStateRef<AppPaneId>(currentSelectedPane)
-  const [previousSelectedPane, setPreviousSelectedPane] = useState<AppPaneId>(
-    isMobileScreen() ? AppPaneId.Items : AppPaneId.Editor,
-  )
 
   const toggleAppPane = useCallback(
     (paneId: AppPaneId) => {
-      setPreviousSelectedPane(currentSelectedPane)
-      setCurrentSelectedPane(paneId)
+      paneController.setPreviousPane(currentSelectedPane)
+      paneController.setCurrentPane(paneId)
     },
-    [currentSelectedPane],
+    [paneController, currentSelectedPane],
   )
 
   useEffect(() => {
@@ -122,4 +123,4 @@ const ResponsivePaneProvider = ({ children }: ChildrenProps) => {
   )
 }
 
-export default ResponsivePaneProvider
+export default observer(ResponsivePaneProvider)
