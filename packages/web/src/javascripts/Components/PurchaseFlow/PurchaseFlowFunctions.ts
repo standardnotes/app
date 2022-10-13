@@ -1,5 +1,6 @@
 import { WebApplication } from '@/Application/Application'
 import { isDesktopApplication } from '@/Utils'
+import { RouteType } from '@standardnotes/ui-services'
 
 export const getPurchaseFlowUrl = async (application: WebApplication): Promise<string | undefined> => {
   const currentUrl = window.location.origin
@@ -20,7 +21,7 @@ export const getPurchaseFlowUrl = async (application: WebApplication): Promise<s
 export const loadPurchaseFlowUrl = async (application: WebApplication): Promise<boolean> => {
   const url = await getPurchaseFlowUrl(application)
   const route = application.routeService.getRoute()
-  const params = route.purchaseParams
+  const params = route.type === RouteType.Purchase ? route.purchaseParams : { period: null, plan: null }
   const period = params.period ? `&period=${params.period}` : ''
   const plan = params.plan ? `&plan=${params.plan}` : ''
 
