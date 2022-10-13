@@ -201,7 +201,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
   return (
     <AndroidBackHandlerProvider application={application}>
       <DarkModeHandler application={application} />
-      <ResponsivePaneProvider>
+      <ResponsivePaneProvider paneController={application.getViewControllerManager().paneController}>
         <PremiumModalProvider application={application} viewControllerManager={viewControllerManager}>
           <div className={platformString + ' main-ui-view sn-component'}>
             <div id="app" className="app app-column-container" ref={appColumnContainerRef}>
