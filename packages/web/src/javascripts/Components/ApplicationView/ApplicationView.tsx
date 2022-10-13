@@ -1,8 +1,8 @@
 import { ApplicationGroup } from '@/Application/ApplicationGroup'
-import { getPlatformString, getWindowUrlParams } from '@/Utils'
+import { getPlatformString } from '@/Utils'
 import { ApplicationEvent, Challenge, removeFromArray, WebAppEvent } from '@standardnotes/snjs'
 import { PANEL_NAME_NOTES, PANEL_NAME_NAVIGATION } from '@/Constants/Constants'
-import { alertDialog } from '@standardnotes/ui-services'
+import { alertDialog, RouteType } from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
 import Navigation from '@/Components/Navigation/Navigation'
 import NoteGroupView from '@/Components/NoteGroupView/NoteGroupView'
@@ -79,8 +79,13 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
     setNeedsUnlock(application.hasPasscode())
   }, [application])
 
-  const handleDemoSignInFromParams = useCallback(() => {
-    const token = getWindowUrlParams().get('demo-token')
+  const handleDemoSignInFromParamsIfApplicable = useCallback(() => {
+    const route = application.routeService.getRoute()
+    if (route.type !== RouteType.Demo) {
+      return
+    }
+
+    const token = route.demoParams.token
     if (!token || application.hasAccount()) {
       return
     }
@@ -91,8 +96,8 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
   const onAppLaunch = useCallback(() => {
     setLaunched(true)
     setNeedsUnlock(false)
-    handleDemoSignInFromParams()
-  }, [handleDemoSignInFromParams])
+    handleDemoSignInFromParamsIfApplicable()
+  }, [handleDemoSignInFromParamsIfApplicable])
 
   useEffect(() => {
     if (application.isStarted()) {

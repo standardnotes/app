@@ -19,25 +19,25 @@ import {
   WebApplicationInterface,
   MobileDeviceInterface,
   MobileUnlockTiming,
+  InternalEventBus,
 } from '@standardnotes/snjs'
 import { makeObservable, observable } from 'mobx'
 import { PanelResizedData } from '@/Types/PanelResizedData'
 import { isDesktopApplication } from '@/Utils'
 import { DesktopManager } from './Device/DesktopManager'
-import { ArchiveManager, AutolockService, IOService, WebAlertService, ThemeManager } from '@standardnotes/ui-services'
+import {
+  ArchiveManager,
+  AutolockService,
+  IOService,
+  RouteService,
+  ThemeManager,
+  WebAlertService,
+} from '@standardnotes/ui-services'
 import { MobileWebReceiver } from './MobileWebReceiver'
 import { AndroidBackHandler } from '@/NativeMobileWeb/AndroidBackHandler'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
-import { setViewportHeightWithFallback } from '@/App'
-
-type WebServices = {
-  viewControllerManager: ViewControllerManager
-  desktopService?: DesktopManager
-  autolockService?: AutolockService
-  archiveService: ArchiveManager
-  themeService: ThemeManager
-  io: IOService
-}
+import { setViewportHeightWithFallback } from '@/setViewportHeightWithFallback'
+import { WebServices } from './WebServices'
 
 export type WebEventObserver = (event: WebAppEvent, data?: unknown) => void
 
@@ -49,6 +49,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   private onVisibilityChange: () => void
   private mobileWebReceiver?: MobileWebReceiver
   private androidBackHandler?: AndroidBackHandler
+  public readonly routeService: RouteService
 
   constructor(
     deviceInterface: WebOrDesktopDevice,
@@ -75,8 +76,25 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     })
 
     deviceInterface.setApplication(this)
+    const internalEventBus = new InternalEventBus()
+
     this.itemControllerGroup = new ItemGroupController(this)
     this.iconsController = new IconsController()
+    this.routeService = new RouteService(this, internalEventBus)
+
+    const viewControllerManager = new ViewControllerManager(this, deviceInterface)
+    const archiveService = new ArchiveManager(this)
+    const io = new IOService(platform === Platform.MacWeb || platform === Platform.MacDesktop)
+    const themeService = new ThemeManager(this, internalEventBus)
+
+    this.setWebServices({
+      viewControllerManager,
+      archiveService,
+      desktopService: isDesktopDevice(deviceInterface) ? new DesktopManager(this, deviceInterface) : undefined,
+      io,
+      autolockService: this.isNativeMobileWeb() ? undefined : new AutolockService(this, internalEventBus),
+      themeService,
+    })
 
     if (this.isNativeMobileWeb()) {
       this.mobileWebReceiver = new MobileWebReceiver(this)
@@ -120,6 +138,9 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       this.itemControllerGroup.deinit()
       ;(this.itemControllerGroup as unknown) = undefined
       ;(this.mobileWebReceiver as unknown) = undefined
+
+      this.routeService.deinit()
+      ;(this.routeService as unknown) = undefined
 
       this.webEventObservers.length = 0
 

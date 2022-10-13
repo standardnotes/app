@@ -1,4 +1,4 @@
-import { storage, StorageKey } from '@standardnotes/ui-services'
+import { RouteType, storage, StorageKey } from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
 import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
 import { destroyAllObjectProperties } from '@/Utils'
@@ -28,7 +28,6 @@ import { NavigationController } from './Navigation/NavigationController'
 import { FilePreviewModalController } from './FilePreviewModalController'
 import { SelectedItemsController } from './SelectedItemsController'
 import { HistoryModalController } from './NoteHistory/HistoryModalController'
-import { PreferenceId } from '@/Components/Preferences/PreferencesMenu'
 import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
 import { LinkingController } from './LinkingController'
 
@@ -47,7 +46,7 @@ export class ViewControllerManager {
   readonly noAccountWarningController: NoAccountWarningController
   readonly notesController: NotesController
   readonly itemListController: ItemListController
-  readonly preferencesController = new PreferencesController()
+  readonly preferencesController: PreferencesController
   readonly purchaseFlowController: PurchaseFlowController
   readonly quickSettingsMenuController = new QuickSettingsController()
   readonly searchOptionsController: SearchOptionsController
@@ -71,6 +70,8 @@ export class ViewControllerManager {
     this.itemCounter = new ItemCounter()
 
     this.subscriptionManager = application.subscriptions
+
+    this.preferencesController = new PreferencesController(application, this.eventBus)
 
     this.selectionController = new SelectedItemsController(application, this.eventBus)
 
@@ -220,30 +221,34 @@ export class ViewControllerManager {
 
   addAppEventObserver() {
     this.unsubAppEventObserver = this.application.addEventObserver(async (eventName) => {
-      const urlSearchParams = new URLSearchParams(window.location.search)
-
       switch (eventName) {
         case ApplicationEvent.Launched:
-          if (urlSearchParams.get('purchase')) {
-            this.purchaseFlowController.openPurchaseFlow()
-          }
-          if (urlSearchParams.get('settings')) {
-            const user = this.application.getUser()
-            if (user === undefined) {
-              this.accountMenuController.setShow(true)
-              this.accountMenuController.setCurrentPane(AccountMenuPane.SignIn)
-
-              break
+          {
+            const route = this.application.routeService.getRoute()
+            if (route.type === RouteType.Purchase) {
+              this.purchaseFlowController.openPurchaseFlow()
             }
+            if (route.type === RouteType.Settings) {
+              const user = this.application.getUser()
+              if (user === undefined) {
+                this.accountMenuController.setShow(true)
+                this.accountMenuController.setCurrentPane(AccountMenuPane.SignIn)
 
-            this.preferencesController.openPreferences()
-            this.preferencesController.setCurrentPane(urlSearchParams.get('settings') as PreferenceId)
+                break
+              }
+
+              this.preferencesController.openPreferences()
+              this.preferencesController.setCurrentPane(route.settingsParams.panel)
+            }
           }
           break
         case ApplicationEvent.SignedIn:
-          if (urlSearchParams.get('settings')) {
-            this.preferencesController.openPreferences()
-            this.preferencesController.setCurrentPane(urlSearchParams.get('settings') as PreferenceId)
+          {
+            const route = this.application.routeService.getRoute()
+            if (route.type === RouteType.Settings) {
+              this.preferencesController.openPreferences()
+              this.preferencesController.setCurrentPane(route.settingsParams.panel)
+            }
           }
           break
         case ApplicationEvent.SyncStatusChanged:

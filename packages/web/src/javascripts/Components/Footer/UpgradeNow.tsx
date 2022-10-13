@@ -25,7 +25,7 @@ const UpgradeNow = ({ application, featuresController }: Props) => {
           application.getViewControllerManager().purchaseFlowController.openPurchaseFlow()
         }}
       >
-        Upgrade now
+        {hasAccount ? 'Unlock features' : 'Sign up to sync'}
       </button>
     </div>
   ) : null
