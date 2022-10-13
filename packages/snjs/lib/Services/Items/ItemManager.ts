@@ -1440,12 +1440,12 @@ export class ItemManager
     itemOne: Models.DecryptedItemInterface<Models.ItemContent>,
     itemTwo: Models.DecryptedItemInterface<Models.ItemContent>,
   ): 'direct' | 'indirect' | 'unlinked' {
-    const itemOneReferencesItemTwo = !!this.referencesForItem(itemOne).find(
-      (reference) => reference.uuid === itemTwo.uuid,
-    )
-    const itemTwoReferencesItemOne = !!this.referencesForItem(itemTwo).find(
-      (reference) => reference.uuid === itemOne.uuid,
-    )
+    const itemOneReferencesItemTwo = this.isTemplateItem(itemOne)
+      ? false
+      : !!this.referencesForItem(itemOne).find((reference) => reference.uuid === itemTwo.uuid)
+    const itemTwoReferencesItemOne = this.isTemplateItem(itemTwo)
+      ? false
+      : !!this.referencesForItem(itemTwo).find((reference) => reference.uuid === itemOne.uuid)
 
     return itemOneReferencesItemTwo ? 'direct' : itemTwoReferencesItemOne ? 'indirect' : 'unlinked'
   }
