@@ -24,8 +24,16 @@ export class RouteService extends AbstractService<RouteServiceEvent, RouteParser
     this.unsubApp()
   }
 
-  getRoute(): RouteParser {
+  public getRoute(): RouteParser {
     return new RouteParser(window.location.href)
+  }
+
+  public removeSettingsFromURLQueryParameters() {
+    const urlSearchParams = new URLSearchParams(window.location.search)
+    urlSearchParams.delete('settings')
+
+    const newUrl = `${window.location.origin}${window.location.pathname}${urlSearchParams.toString()}`
+    window.history.replaceState(null, document.title, newUrl)
   }
 
   private addAppEventObserver() {

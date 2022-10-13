@@ -1,11 +1,22 @@
-import { ItemLinkParams } from './ItemLinkParams'
-import { OnboardingParams } from './OnboardingParams'
-import { RoutePath } from './RoutePath'
+import { PreferenceId } from './../Preferences/PreferenceId'
+import { DemoParams, OnboardingParams, PurchaseParams, SettingsParams } from './RouteParams'
+import { RouteType } from './RouteType'
+
+enum RootRoutes {
+  Onboarding = '/onboard',
+  None = '/',
+}
+
+enum RootQueryParam {
+  Purchase = 'purchase',
+  Settings = 'settings',
+  DemoToken = 'demo-token',
+}
 
 export class RouteParser {
   private url: URL
   private readonly path: string
-  public readonly route: RoutePath
+  public readonly type: RouteType
   private readonly searchParams: URLSearchParams
 
   constructor(url: string) {
@@ -13,23 +24,60 @@ export class RouteParser {
     this.path = this.url.pathname
     this.searchParams = this.url.searchParams
 
-    if (this.path === RoutePath.Onboarding) {
-      this.route = RoutePath.Onboarding
-    } else if (this.path === RoutePath.ItemLink) {
-      this.route = RoutePath.ItemLink
+    const pathUsesRootQueryParams = this.path === RootRoutes.None
+
+    if (pathUsesRootQueryParams) {
+      if (this.searchParams.has(RootQueryParam.Purchase)) {
+        this.type = RouteType.Purchase
+      } else if (this.searchParams.has(RootQueryParam.Settings)) {
+        this.type = RouteType.Settings
+      } else if (this.searchParams.has(RootQueryParam.DemoToken)) {
+        this.type = RouteType.Demo
+      } else {
+        this.type = RouteType.None
+      }
     } else {
-      this.route = RoutePath.None
+      if (this.path === RootRoutes.Onboarding) {
+        this.type = RouteType.Onboarding
+      } else {
+        this.type = RouteType.None
+      }
     }
   }
 
-  get itemLinkParams(): ItemLinkParams {
+  get demoParams(): DemoParams {
+    if (this.type !== RouteType.Demo) {
+      throw new Error('Accessing invalid params')
+    }
+
     return {
-      uuid: this.searchParams.get('uuid') as string,
+      token: this.searchParams.get(RootQueryParam.DemoToken) as string,
+    }
+  }
+
+  get settingsParams(): SettingsParams {
+    if (this.type !== RouteType.Settings) {
+      throw new Error('Accessing invalid params')
+    }
+
+    return {
+      panel: this.searchParams.get(RootQueryParam.Settings) as PreferenceId,
+    }
+  }
+
+  get purchaseParams(): PurchaseParams {
+    if (this.type !== RouteType.Purchase) {
+      throw new Error('Accessing invalid params')
+    }
+
+    return {
+      plan: this.searchParams.get('plan') as string,
+      period: this.searchParams.get('period') as string,
     }
   }
 
   get onboardingParams(): OnboardingParams {
-    if (this.route !== RoutePath.Onboarding) {
+    if (this.type !== RouteType.Onboarding) {
       throw new Error('Accessing invalid params')
     }
 

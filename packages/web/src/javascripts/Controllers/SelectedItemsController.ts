@@ -8,7 +8,6 @@ import {
   UuidString,
   InternalEventBus,
 } from '@standardnotes/snjs'
-import { RouteParser, RoutePath, RouteServiceEvent } from '@standardnotes/ui-services'
 import { action, computed, makeObservable, observable, runInAction } from 'mobx'
 import { WebApplication } from '../Application/Application'
 import { AbstractViewController } from './Abstract/AbstractViewController'
@@ -63,21 +62,6 @@ export class SelectedItemsController extends AbstractViewController {
         },
       ),
     )
-
-    this.disposers.push(
-      this.application.routeService.addEventObserver((event, route) => {
-        if (event === RouteServiceEvent.RouteChanged && route) {
-          this.handleRouteChange(route)
-        }
-      }),
-    )
-  }
-
-  private handleRouteChange(route: RouteParser): void {
-    if (route.route === RoutePath.ItemLink) {
-      const uuid = route.itemLinkParams.uuid
-      this.selectItem(uuid)
-    }
   }
 
   private get io() {

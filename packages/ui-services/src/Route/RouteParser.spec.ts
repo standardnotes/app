@@ -1,35 +1,45 @@
-import { RoutePath } from './RoutePath'
 import { RouteParser } from './RouteParser'
+import { RouteType } from './RouteType'
 
 describe('route parser', () => {
-  it('parses path with leading slash', () => {
-    const url = 'https://app.standardnotes.com/item?uuid=123'
-    const parser = new RouteParser(url)
-
-    expect(parser.route).toEqual('/item')
-  })
-
-  it('routes to item', () => {
-    const url = 'https://app.standardnotes.com/item?uuid=123'
-    const parser = new RouteParser(url)
-
-    expect(parser.route).toEqual(RoutePath.ItemLink)
-    expect(parser.itemLinkParams.uuid).toEqual('123')
-  })
-
   it('routes to onboarding', () => {
-    const url = 'https://app.standardnotes.com/onboarding?from_homepage=true'
+    const url = 'https://app.standardnotes.com/onboard?from_homepage=true'
     const parser = new RouteParser(url)
 
-    expect(parser.route).toEqual(RoutePath.Onboarding)
+    expect(parser.type).toEqual(RouteType.Onboarding)
     expect(parser.onboardingParams.fromHomepage).toEqual(true)
+  })
+
+  it('routes to demo', () => {
+    const url = 'https://app-demo.standardnotes.com/?demo-token=eyJhY2Nlc3NUb2tl'
+    const parser = new RouteParser(url)
+
+    expect(parser.type).toEqual(RouteType.Demo)
+    expect(parser.demoParams.token).toEqual('eyJhY2Nlc3NUb2tl')
+  })
+
+  it('routes to settings', () => {
+    const url = 'https://app.standardnotes.com/?settings=account'
+    const parser = new RouteParser(url)
+
+    expect(parser.type).toEqual(RouteType.Settings)
+    expect(parser.settingsParams.panel).toEqual('account')
+  })
+
+  it('routes to purchase', () => {
+    const url = 'https://app.standardnotes.com/?purchase=true&plan=PLUS_PLAN&period=year'
+    const parser = new RouteParser(url)
+
+    expect(parser.type).toEqual(RouteType.Purchase)
+    expect(parser.purchaseParams.period).toEqual('year')
+    expect(parser.purchaseParams.plan).toEqual('PLUS_PLAN')
   })
 
   it('routes to none', () => {
     const url = 'https://app.standardnotes.com/unknown?foo=bar'
     const parser = new RouteParser(url)
 
-    expect(parser.route).toEqual(RoutePath.None)
+    expect(parser.type).toEqual(RouteType.None)
   })
 
   it('accessing wrong params should throw', () => {
