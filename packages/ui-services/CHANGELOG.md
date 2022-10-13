@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.7.5...@standardnotes/ui-services@1.8.0) (2022-10-13)
+
+### Features
+
+* handle basic routes ([#1784](https://github.com/standardnotes/app/issues/1784)) ([3cb016a](https://github.com/standardnotes/app/commit/3cb016ab1f3295ff60f269754d48c7f3b3ef2b91))
+
 ## [1.7.5](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.7.4...@standardnotes/ui-services@1.7.5) (2022-10-12)
 
 **Note:** Version bump only for package @standardnotes/ui-services

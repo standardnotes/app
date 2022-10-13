@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.75.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.74.0...@standardnotes/web@3.75.0) (2022-10-13)
+
+### Features
+
+* handle basic routes ([#1784](https://github.com/standardnotes/app/issues/1784)) ([3cb016a](https://github.com/standardnotes/app/commit/3cb016ab1f3295ff60f269754d48c7f3b3ef2b91))
+
 # [3.74.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.73.0...@standardnotes/web@3.74.0) (2022-10-13)
 
 ### Features
