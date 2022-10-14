@@ -59,42 +59,4 @@ describe('StatePersistenceHandler', () => {
 
     expect(hydrateFromStorage).toHaveBeenCalled()
   })
-
-  it('it should not persist new values if not hydrated once', async () => {
-    application.getValue = jest.fn()
-
-    statePersistenceHandler = new StatePersistenceHandler<PersistableState>(
-      application,
-      'test' as PersistedStateKey,
-      getPersistableState,
-      hydrateFromStorage,
-    )
-
-    await statePersistenceHandler.onAppEvent(ApplicationEvent.LocalDataLoaded)
-
-    expect(hydrateFromStorage).not.toHaveBeenCalled()
-
-    statePersistenceHandler.persistValuesToStorage()
-
-    expect(application.setValue).not.toHaveBeenCalled()
-  })
-
-  it('it should persist new values if hydrated at least once', async () => {
-    application.getValue = jest.fn().mockReturnValue(getPersistableState())
-
-    statePersistenceHandler = new StatePersistenceHandler<PersistableState>(
-      application,
-      'test' as PersistedStateKey,
-      getPersistableState,
-      hydrateFromStorage,
-    )
-
-    await statePersistenceHandler.onAppEvent(ApplicationEvent.LocalDataLoaded)
-
-    expect(hydrateFromStorage).toHaveBeenCalled()
-
-    statePersistenceHandler.persistValuesToStorage()
-
-    expect(application.setValue).toHaveBeenCalled()
-  })
 })
