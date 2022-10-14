@@ -372,7 +372,7 @@ export class ItemListController extends AbstractViewController implements Intern
     const activeItem = activeController?.item
 
     if (this.shouldSelectFirstItem(itemsReloadSource, activeItem)) {
-      // await this.selectFirstItem()
+      await this.selectFirstItem()
     } else if (this.shouldCloseActiveItem(activeItem) && activeController) {
       this.closeItemController(activeController)
       this.selectionController.selectNextItem()
@@ -498,7 +498,7 @@ export class ItemListController extends AbstractViewController implements Intern
     await this.reloadItems(ItemsReloadSource.DisplayOptionsChange)
 
     if (newDisplayOptions.sortBy !== currentSortBy) {
-      // await this.selectFirstItem()
+      await this.selectFirstItem()
     }
   }
 
