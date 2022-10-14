@@ -8,4 +8,5 @@ export type NavigationControllerPersistableValue = {
   selectedUuid: UuidString
 }
 
-export type PersistedState = SelectionControllerPersistableValue & NavigationControllerPersistableValue
+export type PersistedState = Partial<SelectionControllerPersistableValue> &
+  Partial<NavigationControllerPersistableValue>
