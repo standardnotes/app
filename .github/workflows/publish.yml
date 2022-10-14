@@ -349,5 +349,6 @@ jobs:
       - name: Publish SNJS Docker image as stable
         if: "${{ contains(github.event.head_commit.message, 'skip e2e') == false }}"
         run: |
+          docker pull standardnotes/snjs:${{ github.sha }}
           docker tag standardnotes/snjs:${{ github.sha }} standardnotes/snjs:latest
           docker push standardnotes/snjs:latest
