@@ -26,8 +26,9 @@ jobs:
           path: packages/**/dist
           key: ${{ runner.os }}-workspace-build
 
-      - uses: actions/cache@v3
+      - name: Cache Yarn
         id: yarn-cache
+        uses: actions/cache@v3
         with:
           path: [ ${{ steps.yarn-cache-dir-path.outputs.dir }}, packages/**/node_modules ]
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -72,8 +73,9 @@ jobs:
           path: packages/**/dist
           key: ${{ runner.os }}-workspace-build
 
-      - uses: actions/cache@v3
+      - name: Cache Yarn
         id: yarn-cache
+        uses: actions/cache@v3
         with:
           path: [ ${{ steps.yarn-cache-dir-path.outputs.dir }}, packages/**/node_modules ]
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -121,8 +123,9 @@ jobs:
           path: packages/**/dist
           key: ${{ runner.os }}-workspace-build
 
-      - uses: actions/cache@v3
+      - name: Cache Yarn
         id: yarn-cache
+        uses: actions/cache@v3
         with:
           path: [ ${{ steps.yarn-cache-dir-path.outputs.dir }}, packages/**/node_modules ]
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -170,8 +173,9 @@ jobs:
           path: packages/**/dist
           key: ${{ runner.os }}-workspace-build
 
-      - uses: actions/cache@v3
+      - name: Cache Yarn
         id: yarn-cache
+        uses: actions/cache@v3
         with:
           path: [ ${{ steps.yarn-cache-dir-path.outputs.dir }}, packages/**/node_modules ]
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -219,8 +223,9 @@ jobs:
           path: packages/**/dist
           key: ${{ runner.os }}-workspace-build
 
-      - uses: actions/cache@v3
+      - name: Cache Yarn
         id: yarn-cache
+        uses: actions/cache@v3
         with:
           path: [ ${{ steps.yarn-cache-dir-path.outputs.dir }}, packages/**/node_modules ]
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -292,8 +297,9 @@ jobs:
           path: packages/**/dist
           key: ${{ runner.os }}-workspace-build
 
-      - uses: actions/cache@v3
+      - name: Cache Yarn
         id: yarn-cache
+        uses: actions/cache@v3
         with:
           path: [ ${{ steps.yarn-cache-dir-path.outputs.dir }}, packages/**/node_modules ]
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
