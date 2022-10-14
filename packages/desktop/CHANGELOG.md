@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.23.218](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.217...@standardnotes/desktop@3.23.218) (2022-10-14)
+
+### Bug Fixes
+
+* **desktop:** plugin installation ([dd55c63](https://github.com/standardnotes/app/commit/dd55c63955fd71a4d4ea0c83144873a53412c341))
+
 ## [3.23.217](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.216...@standardnotes/desktop@3.23.217) (2022-10-14)
 
 **Note:** Version bump only for package @standardnotes/desktop
