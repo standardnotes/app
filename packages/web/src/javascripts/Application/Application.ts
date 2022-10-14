@@ -33,7 +33,7 @@ import {
   ThemeManager,
   WebAlertService,
 } from '@standardnotes/ui-services'
-import { MobileWebReceiver } from './MobileWebReceiver'
+import { MobileWebReceiver } from '../NativeMobileWeb/MobileWebReceiver'
 import { AndroidBackHandler } from '@/NativeMobileWeb/AndroidBackHandler'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { setViewportHeightWithFallback } from '@/setViewportHeightWithFallback'
@@ -289,8 +289,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     const passcodeLockImmediately = hasPasscode && passcodeTiming === MobileUnlockTiming.Immediately
     const biometricsLockImmediately = hasBiometrics && biometricsTiming === MobileUnlockTiming.Immediately
 
-    if (passcodeLockImmediately || biometricsLockImmediately) {
+    if (passcodeLockImmediately) {
       await this.lock()
+    } else if (biometricsLockImmediately) {
+      this.softLockBiometrics()
     }
   }
 

@@ -36,8 +36,8 @@
   },
   "org.standardnotes.code-editor": {
     "version": "1.4.0",
-    "base64": "927b9165925ef7b1012d110f39238862d0dac5fd25b9468e81989e19c1daebf3",
-    "binary": "dcc2fb1f923ea891e3d7856ff72c70277747ef2051794a0835cc79f9638b6d42"
+    "base64": "4aa247a2bd25c7c7b852711fe1325b7628f4376e519c5575c3a66538c75c7623",
+    "binary": "c2461ac1974bc00f7a22e3448e5ed03065dc6d9c65586923d5799457e552aa12"
   },
   "org.standardnotes.bold-editor": {
     "version": "1.4.0",
@@ -46,8 +46,8 @@
   },
   "org.standardnotes.plus-editor": {
     "version": "1.7.1",
-    "base64": "15e839a3ef30bc666ef9c7f3c682345e426be94a3ee8483146abf029db2336f2",
-    "binary": "08995a1a0518920a81364e4064b7de6d859f2f13dd9b5f6beb518594b6e35be5"
+    "base64": "4218977eed88589648710429f176ef94430b597931b08c612a2a53e93fc29393",
+    "binary": "e78bba3877c452f56aef33520ae289432f43c97d5787d5c5533c0e1da2c325e3"
   },
   "org.standardnotes.simple-markdown-editor": {
     "version": "1.4.7",
@@ -56,8 +56,8 @@
   },
   "org.standardnotes.advanced-markdown-editor": {
     "version": "1.6.2",
-    "base64": "72f168a6236a7be819a1e945dd1b0fa069082d7c3b1c70724390489934184c26",
-    "binary": "0a5e62fba43ac02c475fa4a9b3dc9c4cbb555fc70ca3fe6a3f29ee3c75954d66"
+    "base64": "5348be56001acebc698da72f8af5866a7684f89d98b46d8a9a4a1b9b2222cbbc",
+    "binary": "bf2c0986c5b6cc5a745ca7b50c13bdb8148fbdd6efe0ed992c40502ea630cd66"
   },
   "org.standardnotes.minimal-markdown-editor": {
     "version": "1.3.13",
@@ -71,8 +71,8 @@
   },
   "org.standardnotes.markdown-visual-editor": {
     "version": "1.1.3",
-    "base64": "8bb35d66b0ef2bee2243dbdf514c0bf50ef706c034395cb9d50119f017fef9aa",
-    "binary": "1738193ab2a57cf280c29c9ca1e4caf49179009c7382048577d2b34eaf96d5e9"
+    "base64": "32f86de2c5419ff0da9df8047bc3aa6e5dd9bf14ef3b59551a16b24696ea7456",
+    "binary": "4e18ee37a534e2d6810a8b486f3f945507d1cf2590c2480e01f55fec9b85b718"
   },
   "org.standardnotes.simple-task-editor": {
     "version": "1.4.4",
@@ -81,8 +81,8 @@
   },
   "org.standardnotes.token-vault": {
     "version": "2.2.5",
-    "base64": "ca103f730737d3a3046001666b626139692c08ab4dd5748b0290fdcb1b1eb04a",
-    "binary": "52f419cd60da00a2cad13fd357b50993c7694160fcca1c1bdf1859e3bdca3a2b"
+    "base64": "f85e355fb8152702a29e44c02a912e1ff5ce94a95c00935a1657e17ec489fb14",
+    "binary": "a9bcc6ac6c028e2a9b29fb5359414026402b8a6ba02df754d8946984b01722de"
   },
   "org.standardnotes.standard-sheets": {
     "version": "1.5.1",

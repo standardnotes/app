@@ -1,14 +1,8 @@
-import { navigationRef } from '@Lib/NavigationService'
-import { NavigationContainer } from '@react-navigation/native'
 import React from 'react'
-import { MobileWebMainStackComponent } from './ModalStack'
+import { MobileWebAppContainer } from './MobileWebAppContainer'
 
 const AppComponent: React.FC = () => {
-  return (
-    <NavigationContainer ref={navigationRef}>
-      <MobileWebMainStackComponent />
-    </NavigationContainer>
-  )
+  return <MobileWebAppContainer />
 }
 
 export const MobileWebApp = () => {

@@ -121,6 +121,10 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
         alertDialog({
           text: 'Unable to write to local database. Please restart the app and try again.',
         }).catch(console.error)
+      } else if (eventName === ApplicationEvent.BiometricsSoftLockEngaged) {
+        setNeedsUnlock(true)
+      } else if (eventName === ApplicationEvent.BiometricsSoftLockDisengaged) {
+        setNeedsUnlock(false)
       }
     })
 
@@ -197,7 +201,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
   return (
     <AndroidBackHandlerProvider application={application}>
       <DarkModeHandler application={application} />
-      <ResponsivePaneProvider>
+      <ResponsivePaneProvider paneController={application.getViewControllerManager().paneController}>
         <PremiumModalProvider application={application} viewControllerManager={viewControllerManager}>
           <div className={platformString + ' main-ui-view sn-component'}>
             <div id="app" className="app app-column-container" ref={appColumnContainerRef}>

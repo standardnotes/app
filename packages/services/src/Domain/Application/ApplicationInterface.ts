@@ -30,6 +30,7 @@ export interface ApplicationInterface {
   createDecryptedBackupFile(): Promise<BackupFile | undefined>
   hasPasscode(): boolean
   lock(): Promise<void>
+  softLockBiometrics(): void
   setValue(key: string, value: unknown, mode?: StorageValueModes): void
   getValue(key: string, mode?: StorageValueModes): unknown
   removeValue(key: string, mode?: StorageValueModes): Promise<void>

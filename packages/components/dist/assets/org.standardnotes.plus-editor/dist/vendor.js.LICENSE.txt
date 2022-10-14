@@ -4,4 +4,4 @@
  * Licensed under the MIT license
  */
 
-/*! jQuery v3.6.0 | (c) OpenJS Foundation and other contributors | jquery.org/license */
+/*! jQuery v3.6.1 | (c) OpenJS Foundation and other contributors | jquery.org/license */
