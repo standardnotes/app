@@ -8,7 +8,12 @@ export type NavigationControllerPersistableValue = {
   selectedUuid: UuidString
 }
 
+export enum PersistedStateKey {
+  SelectionController = 'selectionController',
+  NavigationController = 'navigationController',
+}
+
 export type PersistedState = {
-  selectionController: SelectionControllerPersistableValue
-  navigationController: NavigationControllerPersistableValue
+  [PersistedStateKey.SelectionController]: SelectionControllerPersistableValue
+  [PersistedStateKey.NavigationController]: NavigationControllerPersistableValue
 }

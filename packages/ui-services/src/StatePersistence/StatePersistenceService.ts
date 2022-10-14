@@ -1,4 +1,5 @@
 import { AbstractService, ApplicationInterface, InternalEventBusInterface } from '@standardnotes/services'
+import { PersistedState, PersistedStateKey } from './types'
 
 const StatePersistenceKey = 'PersistedState'
 
@@ -24,8 +25,17 @@ export class StatePersistenceService extends AbstractService {
     })
   }
 
-  getPersistedValues() {
-    const values = this.application.getValue(StatePersistenceKey)
-    return values
+  getPersistedValues(key?: PersistedStateKey) {
+    const values = this.application.getValue(StatePersistenceKey) as PersistedState
+
+    if (!key) {
+      return values
+    }
+
+    if (!values[key]) {
+      return undefined
+    }
+
+    return values[key]
   }
 }
