@@ -10,25 +10,35 @@ import {
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../Application/Application'
-import { PersistableViewController, PersistedStateKey } from './Abstract/PersistableViewController'
+import { AbstractViewController } from './Abstract/AbstractViewController'
+import { StatePersistenceHandler, PersistedStateKey } from './Abstract/StatePersistenceHandler'
 import { ItemListController } from './ItemList/ItemListController'
 
 type SelectionControllerPersistableValue = {
   selectedUuids: UuidString[]
 }
 
-export class SelectedItemsController extends PersistableViewController<SelectionControllerPersistableValue> {
+export class SelectedItemsController extends AbstractViewController {
   lastSelectedItem: ListableContentItem | undefined
   selectedUuids: Set<UuidString> = observable(new Set<UuidString>())
+  private persistenceHandler: StatePersistenceHandler<SelectionControllerPersistableValue>
   private itemListController!: ItemListController
 
   override deinit(): void {
     super.deinit()
+    this.persistenceHandler.deinit()
     ;(this.itemListController as unknown) = undefined
   }
 
   constructor(application: WebApplication, eventBus: InternalEventBus) {
-    super(application, eventBus, PersistedStateKey.SelectionController)
+    super(application, eventBus)
+
+    this.persistenceHandler = new StatePersistenceHandler<SelectionControllerPersistableValue>(
+      application,
+      PersistedStateKey.SelectionController,
+      this.getPersistableState,
+      this.hydrateFromStorage,
+    )
 
     makeObservable(this, {
       selectedUuids: observable,
@@ -46,7 +56,7 @@ export class SelectedItemsController extends PersistableViewController<Selection
       reaction(
         () => this.selectedUuids,
         () => {
-          this.persistValuesToStorage()
+          this.persistenceHandler.persistValuesToStorage()
         },
       ),
       reaction(
@@ -69,13 +79,13 @@ export class SelectedItemsController extends PersistableViewController<Selection
     )
   }
 
-  getPersistableState(): SelectionControllerPersistableValue {
+  getPersistableState = (): SelectionControllerPersistableValue => {
     return {
       selectedUuids: Array.from(this.selectedUuids),
     }
   }
 
-  hydrateFromStorage(state: SelectionControllerPersistableValue): void {
+  hydrateFromStorage = (state: SelectionControllerPersistableValue): void => {
     if (state.selectedUuids.length > 0) {
       this.setSelectedUuids(new Set(state.selectedUuids))
     }
