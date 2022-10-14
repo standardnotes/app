@@ -15,13 +15,6 @@ jobs:
           token: ${{ secrets.CI_PAT_TOKEN }}
           fetch-depth: 0
 
-      - name: Set up Node
-        uses: actions/setup-node@v3
-        with:
-          registry-url: 'https://registry.npmjs.org'
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
@@ -30,13 +23,27 @@ jobs:
         id: cache-build
         uses: actions/cache@v3
         with:
-          path: [ packages/**/dist, ${{ steps.yarn-cache-dir-path.outputs.dir }}, packages/**/node_modules ]
+          path: packages/**/dist
+          key: ${{ runner.os }}-workspace-build
+
+      - name: Cache Yarn
+        id: yarn-cache
+        uses: actions/cache@v3
+        with:
+          path: [ ${{ steps.yarn-cache-dir-path.outputs.dir }}, packages/**/node_modules ]
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
 
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
       - name: Install dependencies
-        if: steps.cache-build.outputs.cache-hit != 'true'
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
         run: yarn install --immutable
 
       - name: Build
@@ -55,13 +62,6 @@ jobs:
           token: ${{ secrets.CI_PAT_TOKEN }}
           fetch-depth: 0
 
-      - name: Set up Node
-        uses: actions/setup-node@v3
-        with:
-          registry-url: 'https://registry.npmjs.org'
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
@@ -70,13 +70,27 @@ jobs:
         id: cache-build
         uses: actions/cache@v3
         with:
-          path: [ packages/**/dist, ${{ steps.yarn-cache-dir-path.outputs.dir }}, packages/**/node_modules ]
+          path: packages/**/dist
+          key: ${{ runner.os }}-workspace-build
+
+      - name: Cache Yarn
+        id: yarn-cache
+        uses: actions/cache@v3
+        with:
+          path: [ ${{ steps.yarn-cache-dir-path.outputs.dir }}, packages/**/node_modules ]
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
 
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
       - name: Install dependencies
-        if: steps.cache-build.outputs.cache-hit != 'true'
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
         run: yarn install --immutable
 
       - name: Build
@@ -98,13 +112,6 @@ jobs:
           token: ${{ secrets.CI_PAT_TOKEN }}
           fetch-depth: 0
 
-      - name: Set up Node
-        uses: actions/setup-node@v3
-        with:
-          registry-url: 'https://registry.npmjs.org'
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
@@ -113,13 +120,27 @@ jobs:
         id: cache-build
         uses: actions/cache@v3
         with:
-          path: [ packages/**/dist, ${{ steps.yarn-cache-dir-path.outputs.dir }}, packages/**/node_modules ]
+          path: packages/**/dist
+          key: ${{ runner.os }}-workspace-build
+
+      - name: Cache Yarn
+        id: yarn-cache
+        uses: actions/cache@v3
+        with:
+          path: [ ${{ steps.yarn-cache-dir-path.outputs.dir }}, packages/**/node_modules ]
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
 
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
       - name: Install dependencies
-        if: steps.cache-build.outputs.cache-hit != 'true'
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
         run: yarn install --immutable
 
       - name: Build
@@ -141,13 +162,6 @@ jobs:
           token: ${{ secrets.CI_PAT_TOKEN }}
           fetch-depth: 0
 
-      - name: Set up Node
-        uses: actions/setup-node@v3
-        with:
-          registry-url: 'https://registry.npmjs.org'
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
@@ -156,13 +170,27 @@ jobs:
         id: cache-build
         uses: actions/cache@v3
         with:
-          path: [ packages/**/dist, ${{ steps.yarn-cache-dir-path.outputs.dir }}, packages/**/node_modules ]
+          path: packages/**/dist
+          key: ${{ runner.os }}-workspace-build
+
+      - name: Cache Yarn
+        id: yarn-cache
+        uses: actions/cache@v3
+        with:
+          path: [ ${{ steps.yarn-cache-dir-path.outputs.dir }}, packages/**/node_modules ]
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
 
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
       - name: Install dependencies
-        if: steps.cache-build.outputs.cache-hit != 'true'
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
         run: yarn install --immutable
 
       - name: Build
@@ -184,13 +212,6 @@ jobs:
           token: ${{ secrets.CI_PAT_TOKEN }}
           fetch-depth: 0
 
-      - name: Set up Node
-        uses: actions/setup-node@v3
-        with:
-          registry-url: 'https://registry.npmjs.org'
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
@@ -199,13 +220,27 @@ jobs:
         id: cache-build
         uses: actions/cache@v3
         with:
-          path: [ packages/**/dist, ${{ steps.yarn-cache-dir-path.outputs.dir }}, packages/**/node_modules ]
+          path: packages/**/dist
+          key: ${{ runner.os }}-workspace-build
+
+      - name: Cache Yarn
+        id: yarn-cache
+        uses: actions/cache@v3
+        with:
+          path: [ ${{ steps.yarn-cache-dir-path.outputs.dir }}, packages/**/node_modules ]
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
 
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
       - name: Install dependencies
-        if: steps.cache-build.outputs.cache-hit != 'true'
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
         run: yarn install --immutable
 
       - name: Build
@@ -251,13 +286,6 @@ jobs:
           token: ${{ secrets.CI_PAT_TOKEN }}
           fetch-depth: 0
 
-      - name: Set up Node
-        uses: actions/setup-node@v3
-        with:
-          registry-url: 'https://registry.npmjs.org'
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
@@ -266,13 +294,27 @@ jobs:
         id: cache-build
         uses: actions/cache@v3
         with:
-          path: [ packages/**/dist, ${{ steps.yarn-cache-dir-path.outputs.dir }}, packages/**/node_modules ]
+          path: packages/**/dist
+          key: ${{ runner.os }}-workspace-build
+
+      - name: Cache Yarn
+        id: yarn-cache
+        uses: actions/cache@v3
+        with:
+          path: [ ${{ steps.yarn-cache-dir-path.outputs.dir }}, packages/**/node_modules ]
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
 
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
       - name: Install dependencies
-        if: steps.cache-build.outputs.cache-hit != 'true'
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
         run: yarn install --immutable
 
       - name: Build
