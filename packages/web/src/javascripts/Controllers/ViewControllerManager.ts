@@ -153,7 +153,7 @@ export class ViewControllerManager {
     })
 
     application.addEventObserver(async (event) => {
-      if (event === ApplicationEvent.LocalDataLoaded) {
+      if (event === ApplicationEvent.Launched) {
         this.hydrateValuesFromStorage()
       }
     })
@@ -174,6 +174,9 @@ export class ViewControllerManager {
     for (const [key, property] of Object.entries(this)) {
       if (typeof property === 'object' && 'hydrateFromStorage' in property) {
         const persistedValues = this.application.getStatePersistenceService().getPersistedValues()
+        if (!persistedValues) {
+          return
+        }
         const valueForProperty = (persistedValues as any)[key]
         if (typeof persistedValues === 'object' && valueForProperty) {
           property.hydrateFromStorage(valueForProperty)
