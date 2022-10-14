@@ -19,14 +19,18 @@ describe('StatePersistenceHandler', () => {
 
   beforeEach(() => {
     application = {} as jest.Mocked<WebApplication>
+    application.addEventObserver = jest.fn()
 
     getPersistableState = () => ({
       testString: 'test',
       testBoolean: true,
     })
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    hydrateFromStorage = (_state) => {}
+    hydrateFromStorage = jest.fn()
+  })
+
+  it('it should not call hydrate fn if no persisted value available', async () => {
+    application.getValue = jest.fn()
 
     statePersistenceHandler = new StatePersistenceHandler<PersistableState>(
       application,
@@ -34,11 +38,24 @@ describe('StatePersistenceHandler', () => {
       getPersistableState,
       hydrateFromStorage,
     )
-  })
 
-  it('it should not call hydrate fn if no persisted value available', async () => {
     await statePersistenceHandler.onAppEvent(ApplicationEvent.LocalDataLoaded)
 
     expect(hydrateFromStorage).not.toHaveBeenCalled()
+  })
+
+  it('it should call hydrate fn if no persisted value available', async () => {
+    application.getValue = jest.fn().mockReturnValue(getPersistableState())
+
+    statePersistenceHandler = new StatePersistenceHandler<PersistableState>(
+      application,
+      'test' as PersistedStateKey,
+      getPersistableState,
+      hydrateFromStorage,
+    )
+
+    await statePersistenceHandler.onAppEvent(ApplicationEvent.LocalDataLoaded)
+
+    expect(hydrateFromStorage).toHaveBeenCalled()
   })
 })
