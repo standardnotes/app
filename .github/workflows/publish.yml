@@ -15,6 +15,13 @@ jobs:
           token: ${{ secrets.CI_PAT_TOKEN }}
           fetch-depth: 0
 
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
@@ -34,13 +41,6 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-
-      - name: Set up Node
-        uses: actions/setup-node@v3
-        with:
-          registry-url: 'https://registry.npmjs.org'
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
 
       - name: Install dependencies
         if: steps.yarn-cache.outputs.cache-hit != 'true'
@@ -62,6 +62,13 @@ jobs:
           token: ${{ secrets.CI_PAT_TOKEN }}
           fetch-depth: 0
 
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
@@ -81,13 +88,6 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-
-      - name: Set up Node
-        uses: actions/setup-node@v3
-        with:
-          registry-url: 'https://registry.npmjs.org'
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
 
       - name: Install dependencies
         if: steps.yarn-cache.outputs.cache-hit != 'true'
@@ -112,6 +112,13 @@ jobs:
           token: ${{ secrets.CI_PAT_TOKEN }}
           fetch-depth: 0
 
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
@@ -131,13 +138,6 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-
-      - name: Set up Node
-        uses: actions/setup-node@v3
-        with:
-          registry-url: 'https://registry.npmjs.org'
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
 
       - name: Install dependencies
         if: steps.yarn-cache.outputs.cache-hit != 'true'
@@ -162,6 +162,13 @@ jobs:
           token: ${{ secrets.CI_PAT_TOKEN }}
           fetch-depth: 0
 
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
@@ -181,13 +188,6 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-
-      - name: Set up Node
-        uses: actions/setup-node@v3
-        with:
-          registry-url: 'https://registry.npmjs.org'
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
 
       - name: Install dependencies
         if: steps.yarn-cache.outputs.cache-hit != 'true'
@@ -212,6 +212,13 @@ jobs:
           token: ${{ secrets.CI_PAT_TOKEN }}
           fetch-depth: 0
 
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
@@ -231,13 +238,6 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-
-      - name: Set up Node
-        uses: actions/setup-node@v3
-        with:
-          registry-url: 'https://registry.npmjs.org'
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
 
       - name: Install dependencies
         if: steps.yarn-cache.outputs.cache-hit != 'true'
@@ -286,6 +286,13 @@ jobs:
           token: ${{ secrets.CI_PAT_TOKEN }}
           fetch-depth: 0
 
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
@@ -305,13 +312,6 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-
-      - name: Set up Node
-        uses: actions/setup-node@v3
-        with:
-          registry-url: 'https://registry.npmjs.org'
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
 
       - name: Install dependencies
         if: steps.yarn-cache.outputs.cache-hit != 'true'
