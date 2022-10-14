@@ -7,13 +7,16 @@ import { ElementIds } from '@/Constants/ElementIDs'
 import { FileDnDContext } from '@/Components/FileDragNDropProvider/FileDragNDropProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import ResponsivePaneContent from '../ResponsivePane/ResponsivePaneContent'
-import ItemControllersView from './ItemControllersView'
+import FileView from '../FileView/FileView'
+import NoteView from '../NoteView/NoteView'
 
 type State = {
   showMultipleSelectedNotes: boolean
   showMultipleSelectedFiles: boolean
   controllers: (NoteViewController | FileViewController)[]
   selectedFile: FileItem | undefined
+  selectedPane?: AppPaneId
+  isInMobileView?: boolean
 }
 
 type Props = {
@@ -72,6 +75,15 @@ class NoteGroupView extends PureComponent<Props, State> {
         })
       }
     })
+
+    this.autorun(() => {
+      if (this.viewControllerManager && this.viewControllerManager.paneController) {
+        this.setState({
+          selectedPane: this.viewControllerManager.paneController.currentPane,
+          isInMobileView: this.viewControllerManager.paneController.isInMobileView,
+        })
+      }
+    })
   }
 
   override deinit() {
@@ -86,6 +98,10 @@ class NoteGroupView extends PureComponent<Props, State> {
 
     const shouldNotShowMultipleSelectedItems =
       !this.state.showMultipleSelectedNotes && !this.state.showMultipleSelectedFiles
+
+    const hasControllers = this.state.controllers.length > 0
+
+    const canRenderEditorView = this.state.selectedPane === AppPaneId.Editor || !this.state.isInMobileView
 
     return (
       <div
@@ -117,12 +133,21 @@ class NoteGroupView extends PureComponent<Props, State> {
               Drop your files to upload them
             </div>
           )}
-          {shouldNotShowMultipleSelectedItems && this.state.controllers.length > 0 && (
-            <ItemControllersView
-              controllers={this.state.controllers}
-              application={this.application}
-              viewControllerManager={this.viewControllerManager}
-            />
+          {shouldNotShowMultipleSelectedItems && hasControllers && canRenderEditorView && (
+            <>
+              {this.state.controllers.map((controller) => {
+                return controller instanceof NoteViewController ? (
+                  <NoteView key={controller.runtimeId} application={this.application} controller={controller} />
+                ) : (
+                  <FileView
+                    key={controller.runtimeId}
+                    application={this.application}
+                    viewControllerManager={this.viewControllerManager}
+                    file={controller.item}
+                  />
+                )
+              })}
+            </>
           )}
         </ResponsivePaneContent>
       </div>
