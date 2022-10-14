@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 jobs:
-  Build:
+  build:
     if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
     runs-on: ubuntu-latest
     steps:
@@ -15,6 +15,25 @@ jobs:
           token: ${{ secrets.CI_PAT_TOKEN }}
           fetch-depth: 0
 
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+
+      - name: Cache build
+        id: cache-build
+        uses: actions/cache@v3
+        with:
+          path: packages/**/dist
+          key: ${{ runner.os }}-workspace-build
+
+      - uses: actions/cache@v3
+        id: yarn-cache
+        with:
+          path: [ ${{ steps.yarn-cache-dir-path.outputs.dir }}, packages/**/node_modules ]
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
@@ -22,32 +41,206 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'yarn'
 
-      - name: Setup git config
-        run: |
-          git config --global user.name "standardci"
-          git config --global user.email "ci@standardnotes.com"
-      - name: Import GPG key
-        uses: crazy-max/ghaction-import-gpg@v4
-        with:
-          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.PASSPHRASE }}
-          git_user_signingkey: true
-          git_commit_gpgsign: true
-
       - name: Install dependencies
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
         run: yarn install --immutable
 
       - name: Build
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: yarn build:all
+
+  lint:
+    runs-on: ubuntu-latest
+
+    needs: build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.CI_PAT_TOKEN }}
+          fetch-depth: 0
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+
+      - name: Cache build
+        id: cache-build
+        uses: actions/cache@v3
+        with:
+          path: packages/**/dist
+          key: ${{ runner.os }}-workspace-build
+
+      - uses: actions/cache@v3
+        id: yarn-cache
+        with:
+          path: [ ${{ steps.yarn-cache-dir-path.outputs.dir }}, packages/**/node_modules ]
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
+        run: yarn install --immutable
+
+      - name: Build
+        if: steps.cache-build.outputs.cache-hit != 'true'
         run: yarn build:all
 
       - name: ESLint
         run: yarn lint
 
+  android:
+    runs-on: ubuntu-latest
+
+    needs: build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.CI_PAT_TOKEN }}
+          fetch-depth: 0
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+
+      - name: Cache build
+        id: cache-build
+        uses: actions/cache@v3
+        with:
+          path: packages/**/dist
+          key: ${{ runner.os }}-workspace-build
+
+      - uses: actions/cache@v3
+        id: yarn-cache
+        with:
+          path: [ ${{ steps.yarn-cache-dir-path.outputs.dir }}, packages/**/node_modules ]
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
+        run: yarn install --immutable
+
+      - name: Build
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: yarn build:all
+
       - name: Build Android
         run: yarn android:bundle
 
+  test:
+    runs-on: ubuntu-latest
+
+    needs: build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.CI_PAT_TOKEN }}
+          fetch-depth: 0
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+
+      - name: Cache build
+        id: cache-build
+        uses: actions/cache@v3
+        with:
+          path: packages/**/dist
+          key: ${{ runner.os }}-workspace-build
+
+      - uses: actions/cache@v3
+        id: yarn-cache
+        with:
+          path: [ ${{ steps.yarn-cache-dir-path.outputs.dir }}, packages/**/node_modules ]
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
+        run: yarn install --immutable
+
+      - name: Build
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: yarn build:all
+
       - name: Test
         run: yarn test
+
+  e2e:
+    runs-on: ubuntu-latest
+
+    needs: build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.CI_PAT_TOKEN }}
+          fetch-depth: 0
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+
+      - name: Cache build
+        id: cache-build
+        uses: actions/cache@v3
+        with:
+          path: packages/**/dist
+          key: ${{ runner.os }}-workspace-build
+
+      - uses: actions/cache@v3
+        id: yarn-cache
+        with:
+          path: [ ${{ steps.yarn-cache-dir-path.outputs.dir }}, packages/**/node_modules ]
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
+        run: yarn install --immutable
+
+      - name: Build
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: yarn build:all
 
       - name: Login to Docker Hub
         if: "${{ contains(github.event.head_commit.message, 'skip e2e') == false }}"
@@ -75,6 +268,64 @@ jobs:
           propagate_failure: true
           trigger_workflow: true
           wait_workflow: true
+
+  publish:
+    runs-on: ubuntu-latest
+
+    needs: [ lint, android, test, e2e ]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.CI_PAT_TOKEN }}
+          fetch-depth: 0
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+
+      - name: Cache build
+        id: cache-build
+        uses: actions/cache@v3
+        with:
+          path: packages/**/dist
+          key: ${{ runner.os }}-workspace-build
+
+      - uses: actions/cache@v3
+        id: yarn-cache
+        with:
+          path: [ ${{ steps.yarn-cache-dir-path.outputs.dir }}, packages/**/node_modules ]
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
+        run: yarn install --immutable
+
+      - name: Build
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: yarn build:all
+
+      - name: Setup git config
+        run: |
+          git config --global user.name "standardci"
+          git config --global user.email "ci@standardnotes.com"
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v4
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
 
       - name: Bump version
         run: yarn release:prod
