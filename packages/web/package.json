@@ -48,7 +48,7 @@
     "html-webpack-plugin": "^5.5.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^28.1.2",
-    "jest-environment-jsdom": "^28.1.2",
+    "jest-environment-jsdom": "^29.2.0",
     "lint-staged": ">=12",
     "mini-css-extract-plugin": "^2.6.1",
     "node-sass": "*",
