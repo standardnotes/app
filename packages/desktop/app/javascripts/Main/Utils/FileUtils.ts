@@ -169,31 +169,37 @@ export async function moveDirContents(srcDir: string, destDir: string): Promise<
   )
 }
 
-export async function extractNestedZip(source: string, dest: string): Promise<void> {
+export async function extractZip(source: string, dest: string): Promise<void> {
   return new Promise((resolve, reject) => {
     yauzl.open(source, { lazyEntries: true, autoClose: true }, (err, zipFile) => {
       let cancelled = false
+
       const tryReject = (err: Error) => {
         if (!cancelled) {
           cancelled = true
           reject(err)
         }
       }
+
       if (err) {
         return tryReject(err)
       }
+
       if (!zipFile) {
         return tryReject(new Error('zipFile === undefined'))
       }
 
       zipFile.readEntry()
+
       zipFile.on('close', resolve)
+
       zipFile.on('entry', (entry) => {
         if (cancelled) {
           return
         }
-        if (entry.fileName.endsWith('/')) {
-          /** entry is a directory, skip and read next entry */
+
+        const isEntryDirectory = entry.fileName.endsWith('/')
+        if (isEntryDirectory) {
           zipFile.readEntry()
           return
         }
@@ -202,21 +208,19 @@ export async function extractNestedZip(source: string, dest: string): Promise<vo
           if (cancelled) {
             return
           }
+
           if (err) {
             return tryReject(err)
           }
+
           if (!stream) {
             return tryReject(new Error('stream === undefined'))
           }
+
           stream.on('error', tryReject)
-          const filepath = path.join(
-            dest,
-            /**
-             * Remove the first element of the entry's path, which is the base
-             * directory we want to ignore
-             */
-            entry.fileName.substring(entry.fileName.indexOf('/') + 1),
-          )
+
+          const filepath = path.join(dest, entry.fileName)
+
           try {
             await ensureDirectoryExists(path.dirname(filepath))
           } catch (error: any) {
