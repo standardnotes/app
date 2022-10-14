@@ -7,9 +7,8 @@ import {
   SNNote,
   UuidString,
   InternalEventBus,
-  ApplicationEvent,
 } from '@standardnotes/snjs'
-import { action, autorun, computed, makeObservable, observable, runInAction } from 'mobx'
+import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../Application/Application'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { Persistable } from './Abstract/Persistable'
@@ -46,16 +45,29 @@ export class SelectedItemsController extends AbstractViewController implements P
     })
 
     this.disposers.push(
-      application.addEventObserver(async (event) => {
-        if (event === ApplicationEvent.CompletedFullSync) {
-          this.disposers.push(
-            autorun(() => {
-              const _ = Array.from(this.selectedUuids)
-              viewControllerManager.persistValuesToStorage()
-            }),
-          )
-        }
-      }),
+      reaction(
+        () => this.selectedUuids,
+        () => {
+          viewControllerManager.persistValuesToStorage()
+        },
+      ),
+      reaction(
+        () => this.selectedItemsCount,
+        async () => {
+          if (this.selectedItemsCount === 1) {
+            const item = this.firstSelectedItem
+
+            if (item.content_type === ContentType.Note) {
+              await this.itemListController.openNote(item.uuid)
+            } else if (item.content_type === ContentType.File) {
+              await this.itemListController.openFile(item.uuid)
+            }
+          }
+        },
+        {
+          fireImmediately: true,
+        },
+      ),
     )
   }
 
@@ -66,7 +78,9 @@ export class SelectedItemsController extends AbstractViewController implements P
   }
 
   hydrateFromStorage(state: PersistableState): void {
-    this.selectedUuids = observable(new Set(state.selectedUuids))
+    if (state.selectedUuids.length > 0) {
+      this.setSelectedUuids(new Set(state.selectedUuids))
+    }
   }
 
   public setServicesPostConstruction(itemListController: ItemListController) {
@@ -234,16 +248,6 @@ export class SelectedItemsController extends AbstractViewController implements P
       const shouldSelectNote = hasMoreThanOneSelected || !this.selectedUuids.has(uuid)
       if (shouldSelectNote && isAuthorizedForAccess) {
         this.replaceSelection(item)
-      }
-    }
-
-    if (this.selectedItemsCount === 1) {
-      const item = this.firstSelectedItem
-
-      if (item.content_type === ContentType.Note) {
-        await this.itemListController.openNote(item.uuid)
-      } else if (item.content_type === ContentType.File) {
-        await this.itemListController.openFile(item.uuid)
       }
     }
 
