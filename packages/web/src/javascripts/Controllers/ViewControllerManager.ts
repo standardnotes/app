@@ -77,7 +77,7 @@ export class ViewControllerManager {
 
     this.preferencesController = new PreferencesController(application, this.eventBus)
 
-    this.selectionController = new SelectedItemsController(application, this.eventBus, this)
+    this.selectionController = new SelectedItemsController(application, this.eventBus)
 
     this.featuresController = new FeaturesController(application, this.eventBus)
 
@@ -151,38 +151,6 @@ export class ViewControllerManager {
       openSessionsModal: action,
       closeSessionsModal: action,
     })
-
-    application.addEventObserver(async (event) => {
-      if (event === ApplicationEvent.Launched) {
-        this.hydrateValuesFromStorage()
-      }
-    })
-  }
-
-  persistValuesToStorage() {
-    for (const [key, property] of Object.entries(this)) {
-      if (typeof property === 'object' && 'getPersistableState' in property) {
-        const values = property.getPersistableState()
-        this.application.getStatePersistenceService().persistValues({
-          [key]: values,
-        })
-      }
-    }
-  }
-
-  hydrateValuesFromStorage() {
-    for (const [key, property] of Object.entries(this)) {
-      if (typeof property === 'object' && 'hydrateFromStorage' in property) {
-        const persistedValues = this.application.getStatePersistenceService().getPersistedValues()
-        if (!persistedValues) {
-          return
-        }
-        const valueForProperty = (persistedValues as any)[key]
-        if (typeof persistedValues === 'object' && valueForProperty) {
-          property.hydrateFromStorage(valueForProperty)
-        }
-      }
-    }
   }
 
   deinit(source: DeinitSource): void {

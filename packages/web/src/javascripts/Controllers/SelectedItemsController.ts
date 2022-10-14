@@ -8,18 +8,16 @@ import {
   UuidString,
   InternalEventBus,
 } from '@standardnotes/snjs'
-import { SelectionControllerPersistableValue } from '@standardnotes/ui-services'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../Application/Application'
-import { AbstractViewController } from './Abstract/AbstractViewController'
-import { Persistable } from './Abstract/Persistable'
+import { PersistableViewController, PersistedStateKey } from './Abstract/PersistableViewController'
 import { ItemListController } from './ItemList/ItemListController'
-import { ViewControllerManager } from './ViewControllerManager'
 
-export class SelectedItemsController
-  extends AbstractViewController
-  implements Persistable<SelectionControllerPersistableValue>
-{
+type SelectionControllerPersistableValue = {
+  selectedUuids: UuidString[]
+}
+
+export class SelectedItemsController extends PersistableViewController<SelectionControllerPersistableValue> {
   lastSelectedItem: ListableContentItem | undefined
   selectedUuids: Set<UuidString> = observable(new Set<UuidString>())
   private itemListController!: ItemListController
@@ -29,8 +27,8 @@ export class SelectedItemsController
     ;(this.itemListController as unknown) = undefined
   }
 
-  constructor(application: WebApplication, eventBus: InternalEventBus, viewControllerManager: ViewControllerManager) {
-    super(application, eventBus)
+  constructor(application: WebApplication, eventBus: InternalEventBus) {
+    super(application, eventBus, PersistedStateKey.SelectionController)
 
     makeObservable(this, {
       selectedUuids: observable,
@@ -48,7 +46,7 @@ export class SelectedItemsController
       reaction(
         () => this.selectedUuids,
         () => {
-          viewControllerManager.persistValuesToStorage()
+          this.persistValuesToStorage()
         },
       ),
       reaction(
