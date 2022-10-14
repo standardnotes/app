@@ -8,6 +8,7 @@ import {
   UuidString,
   InternalEventBus,
 } from '@standardnotes/snjs'
+import { SelectionControllerPersistableValue } from '@standardnotes/ui-services'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../Application/Application'
 import { AbstractViewController } from './Abstract/AbstractViewController'
@@ -15,11 +16,10 @@ import { Persistable } from './Abstract/Persistable'
 import { ItemListController } from './ItemList/ItemListController'
 import { ViewControllerManager } from './ViewControllerManager'
 
-type PersistableState = {
-  selectedUuids: UuidString[]
-}
-
-export class SelectedItemsController extends AbstractViewController implements Persistable<PersistableState> {
+export class SelectedItemsController
+  extends AbstractViewController
+  implements Persistable<SelectionControllerPersistableValue>
+{
   lastSelectedItem: ListableContentItem | undefined
   selectedUuids: Set<UuidString> = observable(new Set<UuidString>())
   private itemListController!: ItemListController
@@ -71,13 +71,13 @@ export class SelectedItemsController extends AbstractViewController implements P
     )
   }
 
-  getPersistableState(): PersistableState {
+  getPersistableState(): SelectionControllerPersistableValue {
     return {
       selectedUuids: Array.from(this.selectedUuids),
     }
   }
 
-  hydrateFromStorage(state: PersistableState): void {
+  hydrateFromStorage(state: SelectionControllerPersistableValue): void {
     if (state.selectedUuids.length > 0) {
       this.setSelectedUuids(new Set(state.selectedUuids))
     }
