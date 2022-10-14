@@ -7,3 +7,5 @@ export type SelectionControllerPersistableValue = {
 export type NavigationControllerPersistableValue = {
   selectedUuid: UuidString
 }
+
+export type PersistedState = SelectionControllerPersistableValue & NavigationControllerPersistableValue
