@@ -21,6 +21,7 @@ type SelectionControllerPersistableValue = {
 export class SelectedItemsController extends AbstractViewController {
   lastSelectedItem: ListableContentItem | undefined
   selectedUuids: Set<UuidString> = observable(new Set<UuidString>())
+  didHydrateOnce = false
   private persistenceHandler: StatePersistenceHandler<SelectionControllerPersistableValue>
   private itemListController!: ItemListController
 
@@ -50,6 +51,9 @@ export class SelectedItemsController extends AbstractViewController {
 
       selectItem: action,
       setSelectedUuids: action,
+
+      didHydrateOnce: observable,
+      hydrateFromStorage: action,
     })
 
     this.disposers.push(
@@ -86,6 +90,7 @@ export class SelectedItemsController extends AbstractViewController {
   }
 
   hydrateFromStorage = (state: SelectionControllerPersistableValue | undefined): void => {
+    this.didHydrateOnce = true
     if (!state) {
       return
     }
@@ -96,6 +101,10 @@ export class SelectedItemsController extends AbstractViewController {
 
   public setServicesPostConstruction(itemListController: ItemListController) {
     this.itemListController = itemListController
+
+    if (Array.from(this.selectedUuids).length === 0 && this.itemListController) {
+      void this.itemListController.selectFirstItem()
+    }
 
     this.disposers.push(
       this.application.streamItems<SNNote | FileItem>([ContentType.Note, ContentType.File], ({ removed }) => {

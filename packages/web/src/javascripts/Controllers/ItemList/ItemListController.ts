@@ -335,8 +335,8 @@ export class ItemListController extends AbstractViewController implements Intern
     )
   }
 
-  private shouldSelectFirstItem = (itemsReloadSource: ItemsReloadSource, activeItem: SNNote | FileItem | undefined) => {
-    return itemsReloadSource === ItemsReloadSource.TagChange || !activeItem
+  private shouldSelectFirstItem = (itemsReloadSource: ItemsReloadSource, noSelectedUuidAfterHydrating: boolean) => {
+    return itemsReloadSource === ItemsReloadSource.TagChange || noSelectedUuidAfterHydrating
   }
 
   private shouldCloseActiveItem = (activeItem: SNNote | FileItem | undefined) => {
@@ -371,7 +371,11 @@ export class ItemListController extends AbstractViewController implements Intern
 
     const activeItem = activeController?.item
 
-    if (this.shouldSelectFirstItem(itemsReloadSource, activeItem)) {
+    const selectedUuids = this.selectionController.selectedUuids
+    const didSelectionControllerHydrate = this.selectionController.didHydrateOnce
+    const noSelectedUuidAfterHydrating = didSelectionControllerHydrate && selectedUuids.size === 0
+
+    if (this.shouldSelectFirstItem(itemsReloadSource, noSelectedUuidAfterHydrating)) {
       await this.selectFirstItem()
     } else if (this.shouldCloseActiveItem(activeItem) && activeController) {
       this.closeItemController(activeController)
