@@ -30,6 +30,7 @@ import {
   AutolockService,
   IOService,
   RouteService,
+  StatePersistenceService,
   ThemeManager,
   WebAlertService,
 } from '@standardnotes/ui-services'
@@ -82,12 +83,14 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     this.iconsController = new IconsController()
     this.routeService = new RouteService(this, internalEventBus)
 
+    const statePersistenceService = new StatePersistenceService(this, internalEventBus)
     const viewControllerManager = new ViewControllerManager(this, deviceInterface)
     const archiveService = new ArchiveManager(this)
     const io = new IOService(platform === Platform.MacWeb || platform === Platform.MacDesktop)
     const themeService = new ThemeManager(this, internalEventBus)
 
     this.setWebServices({
+      statePersistenceService,
       viewControllerManager,
       archiveService,
       desktopService: isDesktopDevice(deviceInterface) ? new DesktopManager(this, deviceInterface) : undefined,
@@ -175,6 +178,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       collapsed: collapsed,
     }
     this.notifyWebEvent(WebAppEvent.PanelResized, data)
+  }
+
+  public getStatePersistenceService(): StatePersistenceService {
+    return this.webServices.statePersistenceService
   }
 
   public getViewControllerManager(): ViewControllerManager {
