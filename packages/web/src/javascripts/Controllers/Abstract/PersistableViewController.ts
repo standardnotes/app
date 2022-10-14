@@ -1,6 +1,5 @@
 import { WebApplication } from '@/Application/Application'
-import { ApplicationEvent } from '@/__mocks__/@standardnotes/snjs'
-import { InternalEventBus } from '../../../../../snjs/dist/@types'
+import { ApplicationEvent, InternalEventBus } from '@standardnotes/snjs'
 import { AbstractViewController } from './AbstractViewController'
 
 export enum PersistedStateKey {
