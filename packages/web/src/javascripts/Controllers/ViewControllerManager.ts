@@ -77,7 +77,7 @@ export class ViewControllerManager {
 
     this.preferencesController = new PreferencesController(application, this.eventBus)
 
-    this.selectionController = new SelectedItemsController(application, this.eventBus)
+    this.selectionController = new SelectedItemsController(application, this.eventBus, this)
 
     this.featuresController = new FeaturesController(application, this.eventBus)
 
@@ -151,6 +151,16 @@ export class ViewControllerManager {
       openSessionsModal: action,
       closeSessionsModal: action,
     })
+
+    this.persistValuesToStorage()
+  }
+
+  persistValuesToStorage() {
+    for (const property of Object.values(this)) {
+      if (typeof property === 'object' && 'getPersistableState' in property) {
+        console.log(property.getPersistableState())
+      }
+    }
   }
 
   deinit(source: DeinitSource): void {

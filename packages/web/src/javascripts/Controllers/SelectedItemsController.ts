@@ -8,14 +8,20 @@ import {
   UuidString,
   InternalEventBus,
 } from '@standardnotes/snjs'
-import { action, computed, makeObservable, observable, runInAction } from 'mobx'
+import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../Application/Application'
 import { AbstractViewController } from './Abstract/AbstractViewController'
+import { Persistable } from './Abstract/Persistable'
 import { ItemListController } from './ItemList/ItemListController'
+import { ViewControllerManager } from './ViewControllerManager'
 
 type SelectedItems = Record<UuidString, ListableContentItem>
 
-export class SelectedItemsController extends AbstractViewController {
+type PersistableState = {
+  selectedItems: SelectedItems
+}
+
+export class SelectedItemsController extends AbstractViewController implements Persistable<PersistableState> {
   lastSelectedItem: ListableContentItem | undefined
   selectedItems: SelectedItems = {}
   private itemListController!: ItemListController
@@ -25,7 +31,7 @@ export class SelectedItemsController extends AbstractViewController {
     ;(this.itemListController as unknown) = undefined
   }
 
-  constructor(application: WebApplication, eventBus: InternalEventBus) {
+  constructor(application: WebApplication, eventBus: InternalEventBus, viewControllerManager: ViewControllerManager) {
     super(application, eventBus)
 
     makeObservable(this, {
@@ -39,6 +45,23 @@ export class SelectedItemsController extends AbstractViewController {
       selectItem: action,
       setSelectedItems: action,
     })
+
+    this.disposers.push(
+      reaction(
+        () => this.selectedItems,
+        () => viewControllerManager.persistValuesToStorage(),
+      ),
+    )
+  }
+
+  getPersistableState(): PersistableState {
+    return {
+      selectedItems: { ...this.selectedItems },
+    }
+  }
+
+  hydrateFromStorage(state: PersistableState): void {
+    this.selectedItems = state.selectedItems
   }
 
   public setServicesPostConstruction(itemListController: ItemListController) {
