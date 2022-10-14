@@ -8,7 +8,7 @@ import {
   UuidString,
   InternalEventBus,
 } from '@standardnotes/snjs'
-import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
+import { action, autorun, computed, makeObservable, observable, runInAction } from 'mobx'
 import { WebApplication } from '../Application/Application'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { Persistable } from './Abstract/Persistable'
@@ -18,12 +18,13 @@ import { ViewControllerManager } from './ViewControllerManager'
 type SelectedItems = Record<UuidString, ListableContentItem>
 
 type PersistableState = {
-  selectedItems: SelectedItems
+  selectedUuids: Set<UuidString>
 }
 
 export class SelectedItemsController extends AbstractViewController implements Persistable<PersistableState> {
   lastSelectedItem: ListableContentItem | undefined
   selectedItems: SelectedItems = {}
+  selectedUuids: Set<UuidString> = observable(new Set<UuidString>())
   private itemListController!: ItemListController
 
   override deinit(): void {
@@ -36,6 +37,7 @@ export class SelectedItemsController extends AbstractViewController implements P
 
     makeObservable(this, {
       selectedItems: observable,
+      selectedUuids: observable,
 
       selectedItemsCount: computed,
       selectedFiles: computed,
@@ -47,21 +49,21 @@ export class SelectedItemsController extends AbstractViewController implements P
     })
 
     this.disposers.push(
-      reaction(
-        () => this.selectedItems,
-        () => viewControllerManager.persistValuesToStorage(),
-      ),
+      autorun(() => {
+        const _ = Array.from(this.selectedUuids)
+        viewControllerManager.persistValuesToStorage()
+      }),
     )
   }
 
   getPersistableState(): PersistableState {
     return {
-      selectedItems: { ...this.selectedItems },
+      selectedUuids: new Set(this.selectedUuids),
     }
   }
 
   hydrateFromStorage(state: PersistableState): void {
-    this.selectedItems = state.selectedItems
+    this.selectedUuids = observable(new Set(state.selectedUuids))
   }
 
   public setServicesPostConstruction(itemListController: ItemListController) {
@@ -162,6 +164,7 @@ export class SelectedItemsController extends AbstractViewController implements P
     for (const item of authorizedItems) {
       runInAction(() => {
         this.selectedItems[item.uuid] = item
+        this.selectedUuids = observable(new Set(this.selectedUuids.add(item.uuid)))
         this.lastSelectedItem = item
       })
     }
@@ -183,6 +186,8 @@ export class SelectedItemsController extends AbstractViewController implements P
     this.setSelectedItems({
       [item.uuid]: item,
     })
+
+    this.selectedUuids = observable(new Set(this.selectedUuids.add(item.uuid)))
 
     this.lastSelectedItem = item
   }
@@ -222,7 +227,10 @@ export class SelectedItemsController extends AbstractViewController implements P
     if (userTriggered && (hasMeta || hasCtrl)) {
       if (this.selectedItems[uuid] && hasMoreThanOneSelected) {
         delete this.selectedItems[uuid]
+        this.selectedUuids.delete(uuid)
+        this.selectedUuids = observable(new Set(this.selectedUuids))
       } else if (isAuthorizedForAccess) {
+        this.selectedUuids = observable(this.selectedUuids.add(uuid))
         this.selectedItems[uuid] = item
         this.lastSelectedItem = item
       }
@@ -246,7 +254,7 @@ export class SelectedItemsController extends AbstractViewController implements P
     }
 
     return {
-      didSelect: this.selectedItems[uuid] != undefined,
+      didSelect: this.selectedUuids.has(uuid),
     }
   }
 
