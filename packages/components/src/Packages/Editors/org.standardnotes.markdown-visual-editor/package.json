@@ -36,7 +36,7 @@
     "@milkdown/plugin-tooltip": "5.5.0",
     "@milkdown/preset-commonmark": "5.5.0",
     "@milkdown/preset-gfm": "5.5.0",
-    "@milkdown/prose": "5.5.0",
+    "@milkdown/prose": "6.4.1",
     "@milkdown/react": "5.5.0",
     "@milkdown/theme-nord": "5.5.0",
     "@standardnotes/editor-kit": "2.2.4",
