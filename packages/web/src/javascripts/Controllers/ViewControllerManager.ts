@@ -160,19 +160,24 @@ export class ViewControllerManager {
   }
 
   persistValuesToStorage() {
-    for (const property of Object.values(this)) {
+    for (const [key, property] of Object.entries(this)) {
       if (typeof property === 'object' && 'getPersistableState' in property) {
         const values = property.getPersistableState()
-        this.application.getStatePersistenceService().persistValues(values)
+        this.application.getStatePersistenceService().persistValues({
+          [key]: values,
+        })
       }
     }
   }
 
   hydrateValuesFromStorage() {
-    for (const property of Object.values(this)) {
+    for (const [key, property] of Object.entries(this)) {
       if (typeof property === 'object' && 'hydrateFromStorage' in property) {
         const persistedValues = this.application.getStatePersistenceService().getPersistedValues()
-        property.hydrateFromStorage(persistedValues)
+        const valueForProperty = (persistedValues as any)[key]
+        if (typeof persistedValues === 'object' && valueForProperty) {
+          property.hydrateFromStorage(valueForProperty)
+        }
       }
     }
   }
