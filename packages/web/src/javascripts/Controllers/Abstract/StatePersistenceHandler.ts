@@ -8,12 +8,13 @@ export enum PersistedStateKey {
 
 export class StatePersistenceHandler<PersistableState> {
   private unsubAppEventObserver!: () => void
+  didHydrateOnce = false
 
   constructor(
     protected application: WebApplication,
     protected persistenceKey: PersistedStateKey,
     protected getPersistableState: () => PersistableState,
-    protected hydrateFromStorage: (state: PersistableState) => void,
+    protected hydrateFromStorage: (state: PersistableState | undefined) => void,
   ) {
     this.addAppEventObserver()
   }
@@ -31,13 +32,16 @@ export class StatePersistenceHandler<PersistableState> {
   async onAppEvent(eventName: ApplicationEvent) {
     if (eventName === ApplicationEvent.LocalDataLoaded) {
       const persistedState = this.getPersistedStateFromStorage()
-      if (persistedState) {
-        this.hydrateFromStorage(persistedState)
-      }
+      this.hydrateFromStorage(persistedState)
+      this.didHydrateOnce = true
     }
   }
 
   persistValuesToStorage = () => {
+    if (!this.didHydrateOnce) {
+      return
+    }
+
     const valuesToPersist = this.getPersistableState()
     this.application.setValue(this.persistenceKey, valuesToPersist)
   }

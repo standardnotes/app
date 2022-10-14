@@ -85,7 +85,10 @@ export class SelectedItemsController extends AbstractViewController {
     }
   }
 
-  hydrateFromStorage = (state: SelectionControllerPersistableValue): void => {
+  hydrateFromStorage = (state: SelectionControllerPersistableValue | undefined): void => {
+    if (!state) {
+      return
+    }
     if (state.selectedUuids.length > 0) {
       this.setSelectedUuids(new Set(state.selectedUuids))
     }
