@@ -152,13 +152,27 @@ export class ViewControllerManager {
       closeSessionsModal: action,
     })
 
-    this.persistValuesToStorage()
+    application.addEventObserver(async (event) => {
+      if (event === ApplicationEvent.LocalDataLoaded) {
+        this.hydrateValuesFromStorage()
+      }
+    })
   }
 
   persistValuesToStorage() {
     for (const property of Object.values(this)) {
       if (typeof property === 'object' && 'getPersistableState' in property) {
-        console.log(property.getPersistableState())
+        const values = property.getPersistableState()
+        this.application.getStatePersistenceService().persistValues(values)
+      }
+    }
+  }
+
+  hydrateValuesFromStorage() {
+    for (const property of Object.values(this)) {
+      if (typeof property === 'object' && 'hydrateFromStorage' in property) {
+        const persistedValues = this.application.getStatePersistenceService().getPersistedValues()
+        property.hydrateFromStorage(persistedValues)
       }
     }
   }

@@ -7,6 +7,7 @@ import {
   SNNote,
   UuidString,
   InternalEventBus,
+  ApplicationEvent,
 } from '@standardnotes/snjs'
 import { action, autorun, computed, makeObservable, observable, runInAction } from 'mobx'
 import { WebApplication } from '../Application/Application'
@@ -15,10 +16,8 @@ import { Persistable } from './Abstract/Persistable'
 import { ItemListController } from './ItemList/ItemListController'
 import { ViewControllerManager } from './ViewControllerManager'
 
-// type SelectedItems = Record<UuidString, ListableContentItem>
-
 type PersistableState = {
-  selectedUuids: Set<UuidString>
+  selectedUuids: UuidString[]
 }
 
 export class SelectedItemsController extends AbstractViewController implements Persistable<PersistableState> {
@@ -43,20 +42,26 @@ export class SelectedItemsController extends AbstractViewController implements P
       firstSelectedItem: computed,
 
       selectItem: action,
-      // setSelectedItems: action,
+      setSelectedUuids: action,
     })
 
     this.disposers.push(
-      autorun(() => {
-        const _ = Array.from(this.selectedUuids)
-        viewControllerManager.persistValuesToStorage()
+      application.addEventObserver(async (event) => {
+        if (event === ApplicationEvent.CompletedFullSync) {
+          this.disposers.push(
+            autorun(() => {
+              const _ = Array.from(this.selectedUuids)
+              viewControllerManager.persistValuesToStorage()
+            }),
+          )
+        }
       }),
     )
   }
 
   getPersistableState(): PersistableState {
     return {
-      selectedUuids: new Set(this.selectedUuids),
+      selectedUuids: Array.from(this.selectedUuids),
     }
   }
 
@@ -99,11 +104,14 @@ export class SelectedItemsController extends AbstractViewController implements P
   }
 
   getSelectedItems = <T extends ListableContentItem = ListableContentItem>(contentType?: ContentType): T[] => {
-    return Array.from(this.selectedUuids)
-      .map((uuid) => this.application.items.findSureItem(uuid))
-      .filter((item) => {
-        return !contentType ? true : item.content_type === contentType
-      }) as T[]
+    const uuids = Array.from(this.selectedUuids)
+    return uuids.length > 0
+      ? (uuids
+          .map((uuid) => this.application.items.findSureItem(uuid))
+          .filter((item) => {
+            return !contentType ? true : item.content_type === contentType
+          }) as T[])
+      : []
   }
 
   setSelectedUuids = (selectedUuids: Set<UuidString>) => {
