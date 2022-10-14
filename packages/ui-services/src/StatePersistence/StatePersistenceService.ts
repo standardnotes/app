@@ -11,7 +11,17 @@ export class StatePersistenceService extends AbstractService {
   }
 
   persistValues(values: unknown) {
-    this.application.setValue(StatePersistenceKey, values)
+    const existingValues = this.getPersistedValues() ?? {}
+    if (typeof existingValues !== 'object') {
+      throw new Error('Persisted state malformed')
+    }
+    if (typeof values !== 'object') {
+      throw new Error('Provided value should be an object')
+    }
+    this.application.setValue(StatePersistenceKey, {
+      ...existingValues,
+      ...values,
+    })
   }
 
   getPersistedValues() {
