@@ -64,7 +64,7 @@ const ContentListView: FunctionComponent<Props> = ({
     searchBarElement,
   } = itemListController
 
-  const { selectedItems, selectNextItem, selectPreviousItem } = selectionController
+  const { selectedUuids, selectNextItem, selectPreviousItem } = selectionController
 
   const isFilesSmartView = useMemo(
     () => navigationController.selected?.uuid === SystemViewId.Files,
@@ -231,7 +231,7 @@ const ContentListView: FunctionComponent<Props> = ({
         {renderedItems.length ? (
           <ContentList
             items={renderedItems}
-            selectedItems={selectedItems}
+            selectedUuids={selectedUuids}
             application={application}
             paginate={paginate}
             filesController={filesController}

@@ -359,7 +359,7 @@ export class ItemListController extends AbstractViewController implements Intern
   }
 
   private shouldSelectActiveItem = (activeItem: SNNote | FileItem | undefined) => {
-    return activeItem && !this.selectionController.selectedItems[activeItem.uuid]
+    return activeItem && !this.selectionController.isItemSelected(activeItem)
   }
 
   private async recomputeSelectionAfterItemsReload(itemsReloadSource: ItemsReloadSource) {

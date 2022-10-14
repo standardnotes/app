@@ -15,7 +15,7 @@ import { Persistable } from './Abstract/Persistable'
 import { ItemListController } from './ItemList/ItemListController'
 import { ViewControllerManager } from './ViewControllerManager'
 
-type SelectedItems = Record<UuidString, ListableContentItem>
+// type SelectedItems = Record<UuidString, ListableContentItem>
 
 type PersistableState = {
   selectedUuids: Set<UuidString>
@@ -23,7 +23,6 @@ type PersistableState = {
 
 export class SelectedItemsController extends AbstractViewController implements Persistable<PersistableState> {
   lastSelectedItem: ListableContentItem | undefined
-  selectedItems: SelectedItems = {}
   selectedUuids: Set<UuidString> = observable(new Set<UuidString>())
   private itemListController!: ItemListController
 
@@ -36,7 +35,6 @@ export class SelectedItemsController extends AbstractViewController implements P
     super(application, eventBus)
 
     makeObservable(this, {
-      selectedItems: observable,
       selectedUuids: observable,
 
       selectedItemsCount: computed,
@@ -45,7 +43,7 @@ export class SelectedItemsController extends AbstractViewController implements P
       firstSelectedItem: computed,
 
       selectItem: action,
-      setSelectedItems: action,
+      // setSelectedItems: action,
     })
 
     this.disposers.push(
@@ -72,17 +70,18 @@ export class SelectedItemsController extends AbstractViewController implements P
     this.disposers.push(
       this.application.streamItems<SNNote | FileItem>(
         [ContentType.Note, ContentType.File],
-        ({ changed, inserted, removed }) => {
+        ({ /* changed, inserted, */ removed }) => {
           runInAction(() => {
             for (const removedNote of removed) {
-              delete this.selectedItems[removedNote.uuid]
+              this.selectedUuids.delete(removedNote.uuid)
+              this.selectedUuids = observable(new Set(this.selectedUuids))
             }
 
-            for (const item of [...changed, ...inserted]) {
+            /* for (const item of [...changed, ...inserted]) {
               if (this.selectedItems[item.uuid]) {
                 this.selectedItems[item.uuid] = item
               }
-            }
+            } */
           })
         },
       ),
@@ -94,7 +93,7 @@ export class SelectedItemsController extends AbstractViewController implements P
   }
 
   get selectedItemsCount(): number {
-    return Object.keys(this.selectedItems).length
+    return this.selectedUuids.size
   }
 
   get selectedFiles(): FileItem[] {
@@ -110,17 +109,20 @@ export class SelectedItemsController extends AbstractViewController implements P
   }
 
   getSelectedItems = <T extends ListableContentItem = ListableContentItem>(contentType?: ContentType): T[] => {
-    return Object.values(this.selectedItems).filter((item) => {
-      return !contentType ? true : item.content_type === contentType
-    }) as T[]
+    return Array.from(this.selectedUuids)
+      .map((uuid) => this.application.items.findSureItem(uuid))
+      .filter((item) => {
+        return !contentType ? true : item.content_type === contentType
+      }) as T[]
   }
 
-  setSelectedItems = (selectedItems: SelectedItems) => {
+  /* setSelectedItems = (selectedItems: SelectedItems) => {
     this.selectedItems = selectedItems
-  }
+  } */
 
   public deselectItem = (item: { uuid: ListableContentItem['uuid'] }): void => {
-    delete this.selectedItems[item.uuid]
+    this.selectedUuids.delete(item.uuid)
+    this.selectedUuids = observable(new Set(this.selectedUuids))
 
     if (item.uuid === this.lastSelectedItem?.uuid) {
       this.lastSelectedItem = undefined
@@ -128,12 +130,12 @@ export class SelectedItemsController extends AbstractViewController implements P
   }
 
   public isItemSelected = (item: ListableContentItem): boolean => {
-    return this.selectedItems[item.uuid] != undefined
+    return this.selectedUuids.has(item.uuid)
   }
 
-  public updateReferenceOfSelectedItem = (item: ListableContentItem): void => {
+  /* public updateReferenceOfSelectedItem = (item: ListableContentItem): void => {
     this.selectedItems[item.uuid] = item
-  }
+  } */
 
   private selectItemsRange = async ({
     selectedItem,
@@ -163,7 +165,7 @@ export class SelectedItemsController extends AbstractViewController implements P
 
     for (const item of authorizedItems) {
       runInAction(() => {
-        this.selectedItems[item.uuid] = item
+        // this.selectedItems[item.uuid] = item
         this.selectedUuids = observable(new Set(this.selectedUuids.add(item.uuid)))
         this.lastSelectedItem = item
       })
@@ -183,10 +185,11 @@ export class SelectedItemsController extends AbstractViewController implements P
   }
 
   private replaceSelection = (item: ListableContentItem): void => {
-    this.setSelectedItems({
+    /*     this.setSelectedItems({
       [item.uuid]: item,
     })
-
+ */
+    this.deselectAll()
     this.selectedUuids = observable(new Set(this.selectedUuids.add(item.uuid)))
 
     this.lastSelectedItem = item
@@ -200,7 +203,9 @@ export class SelectedItemsController extends AbstractViewController implements P
   }
 
   private deselectAll = (): void => {
-    this.setSelectedItems({})
+    // this.setSelectedItems({})
+    this.selectedUuids.clear()
+    this.selectedUuids = observable(new Set(this.selectedUuids))
 
     this.lastSelectedItem = undefined
   }
@@ -225,26 +230,26 @@ export class SelectedItemsController extends AbstractViewController implements P
     const isAuthorizedForAccess = await this.application.protections.authorizeItemAccess(item)
 
     if (userTriggered && (hasMeta || hasCtrl)) {
-      if (this.selectedItems[uuid] && hasMoreThanOneSelected) {
-        delete this.selectedItems[uuid]
+      if (this.selectedUuids.has(uuid) && hasMoreThanOneSelected) {
+        // delete this.selectedItems[uuid]
         this.selectedUuids.delete(uuid)
         this.selectedUuids = observable(new Set(this.selectedUuids))
       } else if (isAuthorizedForAccess) {
         this.selectedUuids = observable(this.selectedUuids.add(uuid))
-        this.selectedItems[uuid] = item
+        // this.selectedItems[uuid] = item
         this.lastSelectedItem = item
       }
     } else if (userTriggered && hasShift) {
       await this.selectItemsRange({ selectedItem: item })
     } else {
-      const shouldSelectNote = hasMoreThanOneSelected || !this.selectedItems[uuid]
+      const shouldSelectNote = hasMoreThanOneSelected || !this.selectedUuids.has(uuid)
       if (shouldSelectNote && isAuthorizedForAccess) {
         this.replaceSelection(item)
       }
     }
 
     if (this.selectedItemsCount === 1) {
-      const item = Object.values(this.selectedItems)[0]
+      const item = this.getSelectedItems()[0]
 
       if (item.content_type === ContentType.Note) {
         await this.itemListController.openNote(item.uuid)
