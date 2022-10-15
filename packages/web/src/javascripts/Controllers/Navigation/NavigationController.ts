@@ -15,7 +15,7 @@ import {
   InternalEventBus,
   InternalEventPublishStrategy,
 } from '@standardnotes/snjs'
-import { action, computed, makeAutoObservable, makeObservable, observable, runInAction } from 'mobx'
+import { action, autorun, computed, makeAutoObservable, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
 import { FeaturesController } from '../FeaturesController'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
@@ -23,15 +23,22 @@ import { destroyAllObjectProperties } from '@/Utils'
 import { isValidFutureSiblings, rootTags, tagSiblings } from './Utils'
 import { AnyTag } from './AnyTagType'
 import { CrossControllerEvent } from '../CrossControllerEvent'
+import { PersistedStateKey, StatePersistenceHandler } from '../Abstract/StatePersistenceHandler'
+
+type NavigationControllerPersistableValue = {
+  selectedTagUuid: AnyTag['uuid']
+}
 
 export class NavigationController extends AbstractViewController {
   tags: SNTag[] = []
   smartViews: SmartView[] = []
   allNotesCount_ = 0
+  selectedUuid: AnyTag['uuid'] | undefined = undefined
   selected_: AnyTag | undefined
   previouslySelected_: AnyTag | undefined
   editing_: SNTag | SmartView | undefined
   addingSubtagTo: SNTag | undefined
+  didHydrateOnce = false
 
   contextMenuOpen = false
   contextMenuPosition: { top?: number; left: number; bottom?: number } = {
@@ -41,10 +48,19 @@ export class NavigationController extends AbstractViewController {
   contextMenuClickLocation: { x: number; y: number } = { x: 0, y: 0 }
   contextMenuMaxHeight: number | 'auto' = 'auto'
 
+  private persistenceHandler: StatePersistenceHandler<NavigationControllerPersistableValue>
+
   private readonly tagsCountsState: TagsCountsState
 
   constructor(application: WebApplication, private featuresController: FeaturesController, eventBus: InternalEventBus) {
     super(application, eventBus)
+
+    this.persistenceHandler = new StatePersistenceHandler(
+      application,
+      PersistedStateKey.NavigationController,
+      this.getPersistableState,
+      this.hydrateFromStorage,
+    )
 
     this.tagsCountsState = new TagsCountsState(this.application)
 
@@ -56,6 +72,8 @@ export class NavigationController extends AbstractViewController {
     this.smartViews = this.application.items.getSmartViews()
 
     makeObservable(this, {
+      didHydrateOnce: observable,
+
       tags: observable,
       smartViews: observable.ref,
       hasAtLeastOneFolder: computed,
@@ -63,12 +81,12 @@ export class NavigationController extends AbstractViewController {
       allNotesCount: computed,
       setAllNotesCount: action,
 
-      selected_: observable.ref,
+      selected_: observable,
       previouslySelected_: observable.ref,
       previouslySelected: computed,
       editing_: observable.ref,
       selected: computed,
-      selectedUuid: computed,
+      selectedUuid: observable,
       editingTag: computed,
 
       addingSubtagTo: observable,
@@ -94,7 +112,20 @@ export class NavigationController extends AbstractViewController {
       setContextMenuMaxHeight: action,
 
       isInFilesView: computed,
+
+      hydrateFromStorage: action,
     })
+
+    this.disposers.push(
+      reaction(
+        () => this.selected,
+        () => {
+          this.persistenceHandler.persistValuesToStorage()
+        },
+      ),
+    )
+
+    this.disposers.push(autorun(this.selectHydratedTagOrDefault))
 
     this.disposers.push(
       this.application.streamItems([ContentType.Tag, ContentType.SmartView], ({ changed, removed }) => {
@@ -106,8 +137,7 @@ export class NavigationController extends AbstractViewController {
           const currrentSelectedTag = this.selected_
 
           if (!currrentSelectedTag) {
-            this.setSelectedTagInstance(this.smartViews[0])
-
+            this.selectHydratedTagOrDefault()
             return
           }
 
@@ -140,6 +170,40 @@ export class NavigationController extends AbstractViewController {
         }
       }),
     )
+  }
+
+  selectHydratedTagOrDefault = () => {
+    if (!this.didHydrateOnce) {
+      return
+    }
+
+    if (this.selectedUuid && !this.selected_) {
+      const tagToSelect = [...this.tags, ...this.smartViews].find((tag) => tag.uuid === this.selectedUuid)
+      if (tagToSelect) {
+        this.setSelectedTagInstance(tagToSelect)
+      }
+    }
+
+    if (!this.selectedUuid) {
+      this.setSelectedTagInstance(this.smartViews[0])
+    }
+  }
+
+  getPersistableState = (): NavigationControllerPersistableValue => {
+    return {
+      selectedTagUuid: this.selected ? this.selected.uuid : SystemViewId.AllNotes,
+    }
+  }
+
+  hydrateFromStorage = (state: NavigationControllerPersistableValue | undefined) => {
+    if (!state) {
+      this.didHydrateOnce = true
+      return
+    }
+    if (state.selectedTagUuid) {
+      this.selectedUuid = state.selectedTagUuid
+    }
+    this.didHydrateOnce = true
   }
 
   override deinit() {
@@ -407,7 +471,14 @@ export class NavigationController extends AbstractViewController {
   }
 
   private setSelectedTagInstance(tag: AnyTag | undefined): void {
-    runInAction(() => (this.selected_ = tag))
+    if (!this.didHydrateOnce) {
+      return
+    }
+
+    runInAction(() => {
+      this.selected_ = tag
+      this.selectedUuid = tag ? tag.uuid : undefined
+    })
   }
 
   public setExpanded(tag: SNTag, expanded: boolean) {
@@ -416,10 +487,6 @@ export class NavigationController extends AbstractViewController {
         mutator.expanded = expanded
       })
       .catch(console.error)
-  }
-
-  public get selectedUuid(): UuidString | undefined {
-    return this.selected_?.uuid
   }
 
   public get editingTag(): SNTag | SmartView | undefined {
