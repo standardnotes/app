@@ -8,10 +8,9 @@ import {
   UuidString,
   InternalEventBus,
 } from '@standardnotes/snjs'
-import { action, autorun, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
+import { action, computed, makeObservable, observable, runInAction } from 'mobx'
 import { WebApplication } from '../Application/Application'
 import { AbstractViewController } from './Abstract/AbstractViewController'
-import { StatePersistenceHandler, PersistedStateKey } from './Abstract/StatePersistenceHandler'
 import { ItemListController } from './ItemList/ItemListController'
 
 type SelectionControllerPersistableValue = {
@@ -21,25 +20,15 @@ type SelectionControllerPersistableValue = {
 export class SelectedItemsController extends AbstractViewController {
   lastSelectedItem: ListableContentItem | undefined
   selectedUuids: Set<UuidString> = observable(new Set<UuidString>())
-  didHydrateOnce = false
-  private persistenceHandler: StatePersistenceHandler<SelectionControllerPersistableValue>
   private itemListController!: ItemListController
 
   override deinit(): void {
     super.deinit()
-    this.persistenceHandler.deinit()
     ;(this.itemListController as unknown) = undefined
   }
 
   constructor(application: WebApplication, eventBus: InternalEventBus) {
     super(application, eventBus)
-
-    this.persistenceHandler = new StatePersistenceHandler<SelectionControllerPersistableValue>(
-      application,
-      PersistedStateKey.SelectionController,
-      this.getPersistableState,
-      this.hydrateFromStorage,
-    )
 
     makeObservable(this, {
       selectedUuids: observable,
@@ -52,18 +41,8 @@ export class SelectedItemsController extends AbstractViewController {
       selectItem: action,
       setSelectedUuids: action,
 
-      didHydrateOnce: observable,
       hydrateFromStorage: action,
     })
-
-    this.disposers.push(
-      reaction(
-        () => this.selectedUuids,
-        () => {
-          this.persistenceHandler.persistValuesToStorage()
-        },
-      ),
-    )
   }
 
   getPersistableState = (): SelectionControllerPersistableValue => {
@@ -74,26 +53,16 @@ export class SelectedItemsController extends AbstractViewController {
 
   hydrateFromStorage = (state: SelectionControllerPersistableValue | undefined): void => {
     if (!state) {
-      this.didHydrateOnce = true
       return
     }
     if (state.selectedUuids.length > 0) {
       this.setSelectedUuids(new Set(state.selectedUuids))
       void this.openSingleSelectedItem()
     }
-    this.didHydrateOnce = true
   }
 
   public setServicesPostConstruction(itemListController: ItemListController) {
     this.itemListController = itemListController
-
-    this.disposers.push(
-      autorun(() => {
-        if (this.didHydrateOnce && !this.selectedUuids.size && !itemListController.activeControllerItem) {
-          void this.itemListController.selectFirstItem()
-        }
-      }),
-    )
 
     this.disposers.push(
       this.application.streamItems<SNNote | FileItem>([ContentType.Note, ContentType.File], ({ removed }) => {
@@ -285,10 +254,6 @@ export class SelectedItemsController extends AbstractViewController {
     },
     { userTriggered = false, scrollIntoView = true },
   ): Promise<void> => {
-    if (!userTriggered && !this.didHydrateOnce) {
-      return
-    }
-
     const { didSelect } = await this.selectItem(item.uuid, userTriggered)
 
     if (didSelect && scrollIntoView) {
