@@ -8,7 +8,7 @@ import {
   UuidString,
   InternalEventBus,
 } from '@standardnotes/snjs'
-import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
+import { action, autorun, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../Application/Application'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { StatePersistenceHandler, PersistedStateKey } from './Abstract/StatePersistenceHandler'
@@ -63,23 +63,6 @@ export class SelectedItemsController extends AbstractViewController {
           this.persistenceHandler.persistValuesToStorage()
         },
       ),
-      reaction(
-        () => this.selectedItemsCount,
-        async () => {
-          if (this.selectedItemsCount === 1) {
-            const item = this.firstSelectedItem
-
-            if (item.content_type === ContentType.Note) {
-              await this.itemListController.openNote(item.uuid)
-            } else if (item.content_type === ContentType.File) {
-              await this.itemListController.openFile(item.uuid)
-            }
-          }
-        },
-        {
-          fireImmediately: true,
-        },
-      ),
     )
   }
 
@@ -90,21 +73,30 @@ export class SelectedItemsController extends AbstractViewController {
   }
 
   hydrateFromStorage = (state: SelectionControllerPersistableValue | undefined): void => {
-    this.didHydrateOnce = true
     if (!state) {
+      this.didHydrateOnce = true
       return
     }
     if (state.selectedUuids.length > 0) {
       this.setSelectedUuids(new Set(state.selectedUuids))
+      void this.openSingleSelectedItem()
     }
+    this.didHydrateOnce = true
   }
 
   public setServicesPostConstruction(itemListController: ItemListController) {
     this.itemListController = itemListController
 
-    if (Array.from(this.selectedUuids).length === 0 && this.itemListController) {
-      void this.itemListController.selectFirstItem()
-    }
+    this.disposers.push(
+      autorun(() => {
+        if (!itemListController) {
+          return
+        }
+        if (this.didHydrateOnce && !this.selectedUuids.size && !itemListController.activeControllerItem) {
+          void this.itemListController.selectFirstItem()
+        }
+      }),
+    )
 
     this.disposers.push(
       this.application.streamItems<SNNote | FileItem>([ContentType.Note, ContentType.File], ({ removed }) => {
@@ -236,6 +228,18 @@ export class SelectedItemsController extends AbstractViewController {
     this.lastSelectedItem = undefined
   }
 
+  openSingleSelectedItem = async () => {
+    if (this.selectedItemsCount === 1) {
+      const item = this.firstSelectedItem
+
+      if (item.content_type === ContentType.Note) {
+        await this.itemListController.openNote(item.uuid)
+      } else if (item.content_type === ContentType.File) {
+        await this.itemListController.openFile(item.uuid)
+      }
+    }
+  }
+
   selectItem = async (
     uuid: UuidString,
     userTriggered?: boolean,
@@ -271,6 +275,8 @@ export class SelectedItemsController extends AbstractViewController {
       }
     }
 
+    await this.openSingleSelectedItem()
+
     return {
       didSelect: this.selectedUuids.has(uuid),
     }
@@ -282,6 +288,10 @@ export class SelectedItemsController extends AbstractViewController {
     },
     { userTriggered = false, scrollIntoView = true },
   ): Promise<void> => {
+    if (!userTriggered && !this.didHydrateOnce) {
+      return
+    }
+
     const { didSelect } = await this.selectItem(item.uuid, userTriggered)
 
     if (didSelect && scrollIntoView) {
