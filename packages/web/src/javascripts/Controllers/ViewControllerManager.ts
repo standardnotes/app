@@ -31,6 +31,7 @@ import { SelectedItemsController } from './SelectedItemsController'
 import { HistoryModalController } from './NoteHistory/HistoryModalController'
 import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
 import { LinkingController } from './LinkingController'
+import { PersistenceService } from './Abstract/PersistenceService'
 
 export class ViewControllerManager {
   readonly enableUnfinishedFeatures: boolean = window?.enabledUnfinishedFeatures
@@ -65,6 +66,7 @@ export class ViewControllerManager {
   private eventBus: InternalEventBus
   private itemCounter: ItemCounterInterface
   private subscriptionManager: SubscriptionClientInterface
+  private persistenceService: PersistenceService
 
   constructor(public application: WebApplication, private device: WebOrDesktopDeviceInterface) {
     this.eventBus = new InternalEventBus()
@@ -82,6 +84,8 @@ export class ViewControllerManager {
     this.featuresController = new FeaturesController(application, this.eventBus)
 
     this.navigationController = new NavigationController(application, this.featuresController, this.eventBus)
+
+    this.persistenceService = new PersistenceService(this)
 
     this.notesController = new NotesController(
       application,
@@ -261,5 +265,21 @@ export class ViewControllerManager {
           break
       }
     })
+  }
+
+  persistValues(): void {
+    const values = {
+      'no-account-warning-controller': this.noAccountWarningController.getPersistableValue(),
+    }
+
+    this.persistenceService.persistValues(values)
+  }
+
+  hydrateFromPersistedValues(): void {
+    const values = this.persistenceService.getPersistedValues()
+
+    const noAccountState = values['no-account-warning-controller']
+
+    this.noAccountWarningController.hydrateFromPersistedValue(noAccountState)
   }
 }

@@ -4,7 +4,11 @@ import { runInAction, makeObservable, observable, action } from 'mobx'
 import { WebApplication } from '../Application/Application'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 
-export class NoAccountWarningController extends AbstractViewController {
+export type PersistedValue = {
+  warningVisible: boolean
+}
+
+export class NoAccountWarningController extends AbstractViewController<PersistedValue> {
   show: boolean
 
   constructor(application: WebApplication, eventBus: InternalEventBus) {
@@ -34,6 +38,16 @@ export class NoAccountWarningController extends AbstractViewController {
       show: observable,
       hide: action,
     })
+  }
+
+  override getPersistableValue(): PersistedValue {
+    return {
+      warningVisible: this.show,
+    }
+  }
+
+  override hydrateFromPersistedValue(value: PersistedValue): void {
+    this.show = value.warningVisible
   }
 
   hide = (): void => {
