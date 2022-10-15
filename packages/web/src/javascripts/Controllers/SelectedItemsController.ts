@@ -89,9 +89,6 @@ export class SelectedItemsController extends AbstractViewController {
 
     this.disposers.push(
       autorun(() => {
-        if (!itemListController) {
-          return
-        }
         if (this.didHydrateOnce && !this.selectedUuids.size && !itemListController.activeControllerItem) {
           void this.itemListController.selectFirstItem()
         }
