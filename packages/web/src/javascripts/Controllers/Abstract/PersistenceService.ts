@@ -7,6 +7,7 @@ const MasterPersistenceKey = 'master-persistence-key'
 export enum PersistenceKey {
   SelectedItemsController = 'selected-items-controller',
   NavigationController = 'navigation-controller',
+  ItemListController = 'item-list-controller',
 }
 
 export type MasterPersistedValue = Record<PersistenceKey, unknown>

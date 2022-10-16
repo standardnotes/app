@@ -14,6 +14,7 @@ import {
   SystemViewId,
   InternalEventBus,
   InternalEventPublishStrategy,
+  ApplicationEvent,
 } from '@standardnotes/snjs'
 import { action, computed, makeAutoObservable, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
@@ -109,33 +110,37 @@ export class NavigationController extends PersistableViewController<NavigationCo
     })
 
     this.disposers.push(
-      this.application.streamItems([ContentType.Tag, ContentType.SmartView], ({ changed, removed }) => {
-        runInAction(() => {
-          this.tags = this.application.items.getDisplayableTags()
+      application.addSingleEventObserver(ApplicationEvent.LocalDataLoaded, async () => {
+        this.disposers.push(
+          this.application.streamItems([ContentType.Tag, ContentType.SmartView], ({ changed, removed }) => {
+            runInAction(() => {
+              this.tags = this.application.items.getDisplayableTags()
 
-          this.smartViews = this.application.items.getSmartViews()
+              this.smartViews = this.application.items.getSmartViews()
 
-          const currrentSelectedTag = this.selected_
+              const currentSelectedTag = this.selected_
 
-          if (!currrentSelectedTag) {
-            this.selectHydratedTagOrDefault()
-            return
-          }
+              if (!currentSelectedTag) {
+                this.selectHydratedTagOrDefault()
+                return
+              }
 
-          const updatedReference =
-            FindItem(changed, currrentSelectedTag.uuid) || FindItem(this.smartViews, currrentSelectedTag.uuid)
-          if (updatedReference) {
-            this.setSelectedTagInstance(updatedReference as AnyTag)
-          }
+              const updatedReference =
+                FindItem(changed, currentSelectedTag.uuid) || FindItem(this.smartViews, currentSelectedTag.uuid)
+              if (updatedReference) {
+                this.setSelectedTagInstance(updatedReference as AnyTag)
+              }
 
-          if (isSystemView(currrentSelectedTag as SmartView)) {
-            return
-          }
+              if (isSystemView(currentSelectedTag as SmartView)) {
+                return
+              }
 
-          if (FindItem(removed, currrentSelectedTag.uuid)) {
-            this.setSelectedTagInstance(this.smartViews[0])
-          }
-        })
+              if (FindItem(removed, currentSelectedTag.uuid)) {
+                this.setSelectedTagInstance(this.smartViews[0])
+              }
+            })
+          }),
+        )
       }),
     )
 

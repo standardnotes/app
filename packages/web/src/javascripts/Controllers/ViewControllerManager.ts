@@ -17,7 +17,7 @@ import { ActionsMenuController } from './ActionsMenuController'
 import { FeaturesController } from './FeaturesController'
 import { FilesController } from './FilesController'
 import { NotesController } from './NotesController'
-import { ItemListController } from './ItemList/ItemListController'
+import { ItemListController, ItemListControllerPersistableValue } from './ItemList/ItemListController'
 import { NoAccountWarningController } from './NoAccountWarningController'
 import { PreferencesController } from './PreferencesController'
 import { PurchaseFlowController } from './PurchaseFlow/PurchaseFlowController'
@@ -116,6 +116,7 @@ export class ViewControllerManager {
       this.notesController,
       this.linkingController,
       this.eventBus,
+      this.persistValues,
     )
 
     this.notesController.setServicesPostConstruction(this.itemListController)
@@ -279,9 +280,8 @@ export class ViewControllerManager {
     const values: MasterPersistedValue = {
       [PersistenceKey.SelectedItemsController]: this.selectionController.getPersistableValue(),
       [PersistenceKey.NavigationController]: this.navigationController.getPersistableValue(),
+      [PersistenceKey.ItemListController]: this.itemListController.getPersistableValue(),
     }
-
-    console.log(values)
 
     this.persistenceService.persistValues(values)
   }
@@ -293,12 +293,13 @@ export class ViewControllerManager {
       return
     }
 
-    console.log(values)
-
     const selectedItemsState = values[PersistenceKey.SelectedItemsController] as SelectionControllerPersistableValue
     this.selectionController.hydrateFromPersistedValue(selectedItemsState)
 
     const navigationState = values[PersistenceKey.NavigationController] as NavigationControllerPersistableValue
     this.navigationController.hydrateFromPersistedValue(navigationState)
+
+    const itemListState = values[PersistenceKey.ItemListController] as ItemListControllerPersistableValue
+    this.itemListController.hydrateFromPersistedValue(itemListState)
   }
 }
