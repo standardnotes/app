@@ -47,7 +47,10 @@ export class SelectedItemsController extends PersistableViewController<Selection
     this.disposers.push(
       reaction(
         () => this.selectedUuids,
-        () => this.persistValues(),
+        () => {
+          this.persistValues()
+          void this.openSingleSelectedItem()
+        },
       ),
     )
   }
@@ -64,7 +67,6 @@ export class SelectedItemsController extends PersistableViewController<Selection
     }
     if (state.selectedUuids.length > 0) {
       this.setSelectedUuids(new Set(state.selectedUuids))
-      void this.openSingleSelectedItem()
     }
   }
 
@@ -247,8 +249,6 @@ export class SelectedItemsController extends PersistableViewController<Selection
         this.replaceSelection(item)
       }
     }
-
-    await this.openSingleSelectedItem()
 
     return {
       didSelect: this.selectedUuids.has(uuid),
