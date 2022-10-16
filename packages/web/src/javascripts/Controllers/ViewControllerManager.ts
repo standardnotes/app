@@ -25,12 +25,13 @@ import { QuickSettingsController } from './QuickSettingsController'
 import { SearchOptionsController } from './SearchOptionsController'
 import { SubscriptionController } from './Subscription/SubscriptionController'
 import { SyncStatusController } from './SyncStatusController'
-import { NavigationController } from './Navigation/NavigationController'
+import { NavigationController, NavigationControllerPersistableValue } from './Navigation/NavigationController'
 import { FilePreviewModalController } from './FilePreviewModalController'
-import { SelectedItemsController } from './SelectedItemsController'
+import { SelectedItemsController, SelectionControllerPersistableValue } from './SelectedItemsController'
 import { HistoryModalController } from './NoteHistory/HistoryModalController'
 import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
 import { LinkingController } from './LinkingController'
+import { MasterPersistedValue, PersistenceKey, PersistenceService } from './Abstract/PersistenceService'
 
 export class ViewControllerManager {
   readonly enableUnfinishedFeatures: boolean = window?.enabledUnfinishedFeatures
@@ -65,8 +66,11 @@ export class ViewControllerManager {
   private eventBus: InternalEventBus
   private itemCounter: ItemCounterInterface
   private subscriptionManager: SubscriptionClientInterface
+  private persistenceService: PersistenceService
 
   constructor(public application: WebApplication, private device: WebOrDesktopDeviceInterface) {
+    this.persistenceService = new PersistenceService(application, this)
+
     this.eventBus = new InternalEventBus()
 
     this.itemCounter = new ItemCounter()
@@ -77,11 +81,16 @@ export class ViewControllerManager {
 
     this.preferencesController = new PreferencesController(application, this.eventBus)
 
-    this.selectionController = new SelectedItemsController(application, this.eventBus)
+    this.selectionController = new SelectedItemsController(application, this.eventBus, this.persistValues)
 
     this.featuresController = new FeaturesController(application, this.eventBus)
 
-    this.navigationController = new NavigationController(application, this.featuresController, this.eventBus)
+    this.navigationController = new NavigationController(
+      application,
+      this.featuresController,
+      this.eventBus,
+      this.persistValues,
+    )
 
     this.notesController = new NotesController(
       application,
@@ -173,6 +182,9 @@ export class ViewControllerManager {
     ;(this.quickSettingsMenuController as unknown) = undefined
     ;(this.syncStatusController as unknown) = undefined
 
+    this.persistenceService.deinit()
+    ;(this.persistenceService as unknown) = undefined
+
     this.actionsMenuController.reset()
     ;(this.actionsMenuController as unknown) = undefined
 
@@ -261,5 +273,32 @@ export class ViewControllerManager {
           break
       }
     })
+  }
+
+  persistValues = (): void => {
+    const values: MasterPersistedValue = {
+      [PersistenceKey.SelectedItemsController]: this.selectionController.getPersistableValue(),
+      [PersistenceKey.NavigationController]: this.navigationController.getPersistableValue(),
+    }
+
+    console.log(values)
+
+    this.persistenceService.persistValues(values)
+  }
+
+  hydrateFromPersistedValues = (): void => {
+    const values = this.persistenceService.getPersistedValues()
+
+    if (!values) {
+      return
+    }
+
+    console.log(values)
+
+    const selectedItemsState = values[PersistenceKey.SelectedItemsController] as SelectionControllerPersistableValue
+    this.selectionController.hydrateFromPersistedValue(selectedItemsState)
+
+    const navigationState = values[PersistenceKey.NavigationController] as NavigationControllerPersistableValue
+    this.navigationController.hydrateFromPersistedValue(navigationState)
   }
 }

@@ -15,20 +15,20 @@ import {
   InternalEventBus,
   InternalEventPublishStrategy,
 } from '@standardnotes/snjs'
-import { action, computed, makeAutoObservable, makeObservable, observable, runInAction } from 'mobx'
+import { action, computed, makeAutoObservable, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
 import { FeaturesController } from '../FeaturesController'
-import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { destroyAllObjectProperties } from '@/Utils'
 import { isValidFutureSiblings, rootTags, tagSiblings } from './Utils'
 import { AnyTag } from './AnyTagType'
 import { CrossControllerEvent } from '../CrossControllerEvent'
+import { PersistableViewController } from '../Abstract/PersistableViewController'
 
-type NavigationControllerPersistableValue = {
+export type NavigationControllerPersistableValue = {
   selectedTagUuid: AnyTag['uuid']
 }
 
-export class NavigationController extends AbstractViewController {
+export class NavigationController extends PersistableViewController<NavigationControllerPersistableValue> {
   tags: SNTag[] = []
   smartViews: SmartView[] = []
   allNotesCount_ = 0
@@ -48,7 +48,12 @@ export class NavigationController extends AbstractViewController {
 
   private readonly tagsCountsState: TagsCountsState
 
-  constructor(application: WebApplication, private featuresController: FeaturesController, eventBus: InternalEventBus) {
+  constructor(
+    application: WebApplication,
+    private featuresController: FeaturesController,
+    eventBus: InternalEventBus,
+    private persistValues: () => void,
+  ) {
     super(application, eventBus)
 
     this.tagsCountsState = new TagsCountsState(this.application)
@@ -100,7 +105,7 @@ export class NavigationController extends AbstractViewController {
 
       isInFilesView: computed,
 
-      hydrateFromStorage: action,
+      hydrateFromPersistedValue: action,
     })
 
     this.disposers.push(
@@ -146,6 +151,13 @@ export class NavigationController extends AbstractViewController {
         }
       }),
     )
+
+    this.disposers.push(
+      reaction(
+        () => this.selectedUuid,
+        () => persistValues(),
+      ),
+    )
   }
 
   selectHydratedTagOrDefault = () => {
@@ -161,13 +173,13 @@ export class NavigationController extends AbstractViewController {
     }
   }
 
-  getPersistableState = (): NavigationControllerPersistableValue => {
+  override getPersistableValue = (): NavigationControllerPersistableValue => {
     return {
       selectedTagUuid: this.selected ? this.selected.uuid : SystemViewId.AllNotes,
     }
   }
 
-  hydrateFromStorage = (state: NavigationControllerPersistableValue | undefined) => {
+  override hydrateFromPersistedValue = (state: NavigationControllerPersistableValue | undefined) => {
     if (!state) {
       return
     }

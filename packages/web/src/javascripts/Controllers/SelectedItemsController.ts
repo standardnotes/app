@@ -8,16 +8,16 @@ import {
   UuidString,
   InternalEventBus,
 } from '@standardnotes/snjs'
-import { action, computed, makeObservable, observable, runInAction } from 'mobx'
+import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../Application/Application'
-import { AbstractViewController } from './Abstract/AbstractViewController'
+import { PersistableViewController } from './Abstract/PersistableViewController'
 import { ItemListController } from './ItemList/ItemListController'
 
-type SelectionControllerPersistableValue = {
+export type SelectionControllerPersistableValue = {
   selectedUuids: UuidString[]
 }
 
-export class SelectedItemsController extends AbstractViewController {
+export class SelectedItemsController extends PersistableViewController<SelectionControllerPersistableValue> {
   lastSelectedItem: ListableContentItem | undefined
   selectedUuids: Set<UuidString> = observable(new Set<UuidString>())
   private itemListController!: ItemListController
@@ -27,7 +27,7 @@ export class SelectedItemsController extends AbstractViewController {
     ;(this.itemListController as unknown) = undefined
   }
 
-  constructor(application: WebApplication, eventBus: InternalEventBus) {
+  constructor(application: WebApplication, eventBus: InternalEventBus, private persistValues: () => void) {
     super(application, eventBus)
 
     makeObservable(this, {
@@ -41,17 +41,24 @@ export class SelectedItemsController extends AbstractViewController {
       selectItem: action,
       setSelectedUuids: action,
 
-      hydrateFromStorage: action,
+      hydrateFromPersistedValue: action,
     })
+
+    this.disposers.push(
+      reaction(
+        () => this.selectedUuids,
+        () => this.persistValues(),
+      ),
+    )
   }
 
-  getPersistableState = (): SelectionControllerPersistableValue => {
+  override getPersistableValue = (): SelectionControllerPersistableValue => {
     return {
       selectedUuids: Array.from(this.selectedUuids),
     }
   }
 
-  hydrateFromStorage = (state: SelectionControllerPersistableValue | undefined): void => {
+  override hydrateFromPersistedValue = (state: SelectionControllerPersistableValue | undefined): void => {
     if (!state) {
       return
     }
