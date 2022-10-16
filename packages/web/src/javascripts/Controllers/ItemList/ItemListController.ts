@@ -32,7 +32,8 @@ import { formatDateAndTimeForNote } from '@/Utils/DateUtils'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import dayjs from 'dayjs'
 import { LinkingController } from '../LinkingController'
-import { PersistableViewController } from '../Abstract/PersistableViewController'
+import { AbstractViewController } from '../Abstract/AbstractViewController'
+import { Persistable } from '../Abstract/Persistable'
 
 const MinNoteCellHeight = 51.0
 const DefaultListNumNotes = 20
@@ -53,8 +54,8 @@ export type ItemListControllerPersistableValue = {
 }
 
 export class ItemListController
-  extends PersistableViewController<ItemListControllerPersistableValue>
-  implements InternalEventHandlerInterface
+  extends AbstractViewController
+  implements Persistable<ItemListControllerPersistableValue>, InternalEventHandlerInterface
 {
   completedFullSync = false
   noteFilterText = ''
@@ -220,13 +221,13 @@ export class ItemListController
     }
   }
 
-  override getPersistableValue = (): ItemListControllerPersistableValue => {
+  getPersistableValue = (): ItemListControllerPersistableValue => {
     return {
       displayOptions: this.displayOptions,
     }
   }
 
-  override hydrateFromPersistedValue = (state: ItemListControllerPersistableValue | undefined) => {
+  hydrateFromPersistedValue = (state: ItemListControllerPersistableValue | undefined) => {
     if (!state) {
       return
     }

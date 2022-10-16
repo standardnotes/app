@@ -23,13 +23,17 @@ import { destroyAllObjectProperties } from '@/Utils'
 import { isValidFutureSiblings, rootTags, tagSiblings } from './Utils'
 import { AnyTag } from './AnyTagType'
 import { CrossControllerEvent } from '../CrossControllerEvent'
-import { PersistableViewController } from '../Abstract/PersistableViewController'
+import { AbstractViewController } from '../Abstract/AbstractViewController'
+import { Persistable } from '../Abstract/Persistable'
 
 export type NavigationControllerPersistableValue = {
   selectedTagUuid: AnyTag['uuid']
 }
 
-export class NavigationController extends PersistableViewController<NavigationControllerPersistableValue> {
+export class NavigationController
+  extends AbstractViewController
+  implements Persistable<NavigationControllerPersistableValue>
+{
   tags: SNTag[] = []
   smartViews: SmartView[] = []
   allNotesCount_ = 0
@@ -169,7 +173,7 @@ export class NavigationController extends PersistableViewController<NavigationCo
     if (this.selectedUuid && !this.selected_) {
       const tagToSelect = [...this.tags, ...this.smartViews].find((tag) => tag.uuid === this.selectedUuid)
       if (tagToSelect) {
-        this.setSelectedTagInstance(tagToSelect)
+        void this.setSelectedTag(tagToSelect)
       }
     }
 
@@ -178,13 +182,13 @@ export class NavigationController extends PersistableViewController<NavigationCo
     }
   }
 
-  override getPersistableValue = (): NavigationControllerPersistableValue => {
+  getPersistableValue = (): NavigationControllerPersistableValue => {
     return {
       selectedTagUuid: this.selected ? this.selected.uuid : SystemViewId.AllNotes,
     }
   }
 
-  override hydrateFromPersistedValue = (state: NavigationControllerPersistableValue | undefined) => {
+  hydrateFromPersistedValue = (state: NavigationControllerPersistableValue | undefined) => {
     if (!state) {
       return
     }

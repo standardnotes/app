@@ -10,14 +10,18 @@ import {
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../Application/Application'
-import { PersistableViewController } from './Abstract/PersistableViewController'
+import { AbstractViewController } from './Abstract/AbstractViewController'
+import { Persistable } from './Abstract/Persistable'
 import { ItemListController } from './ItemList/ItemListController'
 
 export type SelectionControllerPersistableValue = {
   selectedUuids: UuidString[]
 }
 
-export class SelectedItemsController extends PersistableViewController<SelectionControllerPersistableValue> {
+export class SelectedItemsController
+  extends AbstractViewController
+  implements Persistable<SelectionControllerPersistableValue>
+{
   lastSelectedItem: ListableContentItem | undefined
   selectedUuids: Set<UuidString> = observable(new Set<UuidString>())
   private itemListController!: ItemListController
@@ -55,13 +59,13 @@ export class SelectedItemsController extends PersistableViewController<Selection
     )
   }
 
-  override getPersistableValue = (): SelectionControllerPersistableValue => {
+  getPersistableValue = (): SelectionControllerPersistableValue => {
     return {
       selectedUuids: Array.from(this.selectedUuids),
     }
   }
 
-  override hydrateFromPersistedValue = (state: SelectionControllerPersistableValue | undefined): void => {
+  hydrateFromPersistedValue = (state: SelectionControllerPersistableValue | undefined): void => {
     if (!state) {
       return
     }

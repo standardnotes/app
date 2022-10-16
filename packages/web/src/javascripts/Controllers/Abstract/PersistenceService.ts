@@ -1,6 +1,6 @@
 import { WebApplication } from '@/Application/Application'
-import { ApplicationEvent } from '@standardnotes/snjs'
-import { ViewControllerManager } from '../ViewControllerManager'
+import { ApplicationEvent, InternalEventBus } from '@standardnotes/snjs'
+import { CrossControllerEvent } from '../CrossControllerEvent'
 
 const MasterPersistenceKey = 'master-persistence-key'
 
@@ -15,7 +15,7 @@ export type MasterPersistedValue = Record<PersistenceKey, unknown>
 export class PersistenceService {
   private unsubAppEventObserver: () => void
 
-  constructor(private application: WebApplication, private viewControllerManager: ViewControllerManager) {
+  constructor(private application: WebApplication, private eventBus: InternalEventBus) {
     this.unsubAppEventObserver = this.application.addEventObserver(async (eventName) => {
       if (!this.application) {
         return
@@ -27,7 +27,10 @@ export class PersistenceService {
 
   async onAppEvent(eventName: ApplicationEvent) {
     if (eventName === ApplicationEvent.LocalDataLoaded) {
-      this.viewControllerManager.hydrateFromPersistedValues()
+      this.eventBus.publish({
+        type: CrossControllerEvent.HydrateFromPersistedValues,
+        payload: undefined,
+      })
     }
   }
 

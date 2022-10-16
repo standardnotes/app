@@ -11,6 +11,8 @@ import {
   ItemCounterInterface,
   ItemCounter,
   SubscriptionClientInterface,
+  InternalEventHandlerInterface,
+  InternalEventInterface,
 } from '@standardnotes/snjs'
 import { action, makeObservable, observable } from 'mobx'
 import { ActionsMenuController } from './ActionsMenuController'
@@ -32,8 +34,9 @@ import { HistoryModalController } from './NoteHistory/HistoryModalController'
 import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
 import { LinkingController } from './LinkingController'
 import { MasterPersistedValue, PersistenceKey, PersistenceService } from './Abstract/PersistenceService'
+import { CrossControllerEvent } from './CrossControllerEvent'
 
-export class ViewControllerManager {
+export class ViewControllerManager implements InternalEventHandlerInterface {
   readonly enableUnfinishedFeatures: boolean = window?.enabledUnfinishedFeatures
 
   private unsubAppEventObserver!: () => void
@@ -69,9 +72,11 @@ export class ViewControllerManager {
   private persistenceService: PersistenceService
 
   constructor(public application: WebApplication, private device: WebOrDesktopDeviceInterface) {
-    this.persistenceService = new PersistenceService(application, this)
-
     this.eventBus = new InternalEventBus()
+
+    this.persistenceService = new PersistenceService(application, this.eventBus)
+
+    this.eventBus.addEventHandler(this, CrossControllerEvent.HydrateFromPersistedValues)
 
     this.itemCounter = new ItemCounter()
 
@@ -301,5 +306,11 @@ export class ViewControllerManager {
 
     const itemListState = values[PersistenceKey.ItemListController] as ItemListControllerPersistableValue
     this.itemListController.hydrateFromPersistedValue(itemListState)
+  }
+
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === CrossControllerEvent.HydrateFromPersistedValues) {
+      this.hydrateFromPersistedValues()
+    }
   }
 }
