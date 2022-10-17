@@ -184,7 +184,7 @@ export class NavigationController
 
   getPersistableValue = (): NavigationControllerPersistableValue => {
     return {
-      selectedTagUuid: this.selected ? this.selected.uuid : SystemViewId.AllNotes,
+      selectedTagUuid: this.selectedUuid ? this.selectedUuid : SystemViewId.AllNotes,
     }
   }
 
