@@ -31,19 +31,19 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         {
-          from: path.resolve(__dirname, 'node_modules/codemirror/lib'),
+          from: path.resolve(__dirname, '../../../../../../node_modules/codemirror/lib'),
           to: path.resolve(__dirname, 'dist/codemirror/lib'),
         },
         {
-          from: path.resolve(__dirname, 'node_modules/codemirror/mode'),
+          from: path.resolve(__dirname, '../../../../../../node_modules/codemirror/mode'),
           to: path.resolve(__dirname, 'dist/codemirror/mode'),
         },
         {
-          from: path.resolve(__dirname, 'node_modules/codemirror/addon'),
+          from: path.resolve(__dirname, '../../../../../../node_modules/codemirror/addon'),
           to: path.resolve(__dirname, 'dist/codemirror/addon'),
         },
         {
-          from: path.resolve(__dirname, 'node_modules/codemirror/keymap/vim.js'),
+          from: path.resolve(__dirname, '../../../../../../node_modules/codemirror/keymap/vim.js'),
           to: path.resolve(__dirname, 'dist/codemirror/keymap'),
         },
         {
