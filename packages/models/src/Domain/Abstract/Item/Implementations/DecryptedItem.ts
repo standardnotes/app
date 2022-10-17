@@ -21,6 +21,7 @@ export class DecryptedItem<C extends ItemContent = ItemContent>
   public readonly pinned: boolean = false
   public readonly archived: boolean = false
   public readonly locked: boolean = false
+  public readonly starred: boolean = false
 
   constructor(payload: DecryptedPayloadInterface<C>) {
     super(payload)
@@ -32,6 +33,7 @@ export class DecryptedItem<C extends ItemContent = ItemContent>
     this.updatedAtString = dateToLocalizedString(this.userModifiedDate)
     this.protected = useBoolean(this.payload.content.protected, false)
     this.trashed = useBoolean(this.payload.content.trashed, false)
+    this.starred = useBoolean(this.payload.content.starred, false)
     this.pinned = this.getAppDomainValueWithDefault(AppDataField.Pinned, false)
     this.archived = this.getAppDomainValueWithDefault(AppDataField.Archived, false)
     this.locked = this.getAppDomainValueWithDefault(AppDataField.Locked, false)

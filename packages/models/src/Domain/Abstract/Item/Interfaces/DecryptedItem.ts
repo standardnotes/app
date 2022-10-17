@@ -22,6 +22,7 @@ export interface DecryptedItemInterface<C extends ItemContent = ItemContent>
   readonly pinned: boolean
   readonly archived: boolean
   readonly locked: boolean
+  readonly starred: boolean
   readonly userModifiedDate: Date
   readonly references: ContentReference[]
 

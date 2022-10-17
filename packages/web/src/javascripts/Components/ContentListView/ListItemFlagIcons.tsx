@@ -8,6 +8,7 @@ type Props = {
     trashed: ListableContentItem['trashed']
     archived: ListableContentItem['archived']
     pinned: ListableContentItem['pinned']
+    starred: ListableContentItem['starred']
   }
   hasFiles?: boolean
 }
@@ -38,6 +39,11 @@ const ListItemFlagIcons: FunctionComponent<Props> = ({ item, hasFiles = false })
       {hasFiles && (
         <span className="ml-1.5 flex items-center" title="Files">
           <Icon ariaLabel="Files" type="attachment-file" className="text-info" size="small" />
+        </span>
+      )}
+      {item.starred && (
+        <span className="ml-1.5 flex items-center" title="Starred">
+          <Icon ariaLabel="Starred" type="star-filled" className="text-warning" size="small" />
         </span>
       )}
     </div>
