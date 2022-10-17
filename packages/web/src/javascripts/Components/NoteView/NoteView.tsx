@@ -88,6 +88,8 @@ type State = {
   lineHeight?: EditorLineHeight
   fontSize?: EditorFontSize
   updateSavingIndicator?: boolean
+
+  editorFeatureIdentifier?: string
 }
 
 const PlaintextFontSizeMapping: Record<EditorFontSize, string> = {
@@ -151,6 +153,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
       rightResizerWidth: 0,
       rightResizerOffset: 0,
       shouldStickyHeader: false,
+      editorFeatureIdentifier: this.controller.item.editorIdentifier,
     }
 
     this.editorContentRef = createRef<HTMLDivElement>()
@@ -286,6 +289,10 @@ class NoteView extends PureComponent<NoteViewProps, State> {
       this.setState({
         noteLocked: note.locked,
       })
+    }
+
+    if (note.editorIdentifier !== this.state.editorFeatureIdentifier) {
+      this.reloadEditorComponent()
     }
 
     this.reloadSpellcheck().catch(console.error)
@@ -483,11 +490,12 @@ class NoteView extends PureComponent<NoteViewProps, State> {
     }
 
     const newEditor = this.application.componentManager.editorForNote(this.note)
+
     /** Editors cannot interact with template notes so the note must be inserted */
     if (newEditor && this.controller.isTemplateNote) {
       await this.controller.insertTemplatedNote()
-      this.associateComponentWithCurrentNote(newEditor).catch(console.error)
     }
+
     const currentComponentViewer = this.state.editorComponentViewer
 
     if (currentComponentViewer?.componentUuid !== newEditor?.uuid) {
@@ -800,23 +808,15 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
   toggleStackComponent = async (component: SNComponent) => {
     if (!component.isExplicitlyEnabledForItem(this.note.uuid)) {
-      await this.associateComponentWithCurrentNote(component)
+      await this.application.mutator.runTransactionalMutation(
+        transactionForAssociateComponentWithCurrentNote(component, this.note),
+      )
     } else {
-      await this.disassociateComponentWithCurrentNote(component)
+      await this.application.mutator.runTransactionalMutation(
+        transactionForDisassociateComponentWithCurrentNote(component, this.note),
+      )
     }
     this.application.sync.sync().catch(console.error)
-  }
-
-  async disassociateComponentWithCurrentNote(component: SNComponent) {
-    return this.application.mutator.runTransactionalMutation(
-      transactionForDisassociateComponentWithCurrentNote(component, this.note),
-    )
-  }
-
-  async associateComponentWithCurrentNote(component: SNComponent) {
-    return this.application.mutator.runTransactionalMutation(
-      transactionForAssociateComponentWithCurrentNote(component, this.note),
-    )
   }
 
   registerKeyboardShortcuts() {

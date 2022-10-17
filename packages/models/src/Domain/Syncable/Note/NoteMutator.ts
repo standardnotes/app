@@ -1,10 +1,10 @@
-import { AppDataField } from '../../Abstract/Item/Types/AppDataField'
 import { NoteContent } from './NoteContent'
 import { DecryptedItemMutator } from '../../Abstract/Item/Mutator/DecryptedItemMutator'
 import { SNNote } from './Note'
 import { NoteToNoteReference } from '../../Abstract/Reference/NoteToNoteReference'
 import { ContentType } from '@standardnotes/common'
 import { ContentReferenceType } from '../../Abstract/Item'
+import { FeatureIdentifier, NoteType } from '@standardnotes/features'
 
 export class NoteMutator extends DecryptedItemMutator<NoteContent> {
   set title(title: string) {
@@ -27,12 +27,16 @@ export class NoteMutator extends DecryptedItemMutator<NoteContent> {
     this.mutableContent.preview_html = preview_html
   }
 
-  set prefersPlainEditor(prefersPlainEditor: boolean) {
-    this.setAppDataItem(AppDataField.PrefersPlainEditor, prefersPlainEditor)
-  }
-
   set spellcheck(spellcheck: boolean) {
     this.mutableContent.spellcheck = spellcheck
+  }
+
+  set noteType(noteType: NoteType) {
+    this.mutableContent.noteType = noteType
+  }
+
+  set editorIdentifier(identifier: FeatureIdentifier | string | undefined) {
+    this.mutableContent.editorIdentifier = identifier
   }
 
   toggleSpellcheck(): void {

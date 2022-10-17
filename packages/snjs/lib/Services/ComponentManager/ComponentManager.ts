@@ -1,3 +1,4 @@
+import { FeatureIdentifier } from './../../../../features/src/Domain/Feature/FeatureIdentifier'
 import { AllowedBatchStreaming } from './Types'
 import { SNPreferencesService } from '../Preferences/PreferencesService'
 import { SNFeaturesService } from '@Lib/Services/Features/FeaturesService'
@@ -17,7 +18,13 @@ import {
 import { SNSyncService } from '@Lib/Services/Sync/SyncService'
 import find from 'lodash/find'
 import uniq from 'lodash/uniq'
-import { ComponentArea, ComponentAction, ComponentPermission, FindNativeFeature } from '@standardnotes/features'
+import {
+  ComponentArea,
+  ComponentAction,
+  ComponentPermission,
+  FindNativeFeature,
+  NoteType,
+} from '@standardnotes/features'
 import { Copy, filterFromArray, removeFromArray, sleep, assert } from '@standardnotes/utils'
 import { UuidString } from '@Lib/Types/UuidString'
 import { AllowedBatchContentTypes } from '@Lib/Services/ComponentManager/Types'
@@ -110,6 +117,10 @@ export class SNComponentManager
     return this.components.filter((component) => {
       return component.area === area
     })
+  }
+
+  componentWithIdentifier(identifier: FeatureIdentifier | string): SNComponent | undefined {
+    return this.components.find((component) => component.identifier === identifier)
   }
 
   override deinit(): void {
@@ -569,13 +580,6 @@ export class SNComponentManager
   }
 
   allComponentIframes(): HTMLIFrameElement[] {
-    if (this.isMobile) {
-      /**
-       * Retrieving all iframes is typically related to lifecycle management of
-       * non-editor components. So this function is not useful to mobile.
-       */
-      return []
-    }
     return Array.from(document.getElementsByTagName('iframe'))
   }
 
@@ -584,23 +588,29 @@ export class SNComponentManager
   }
 
   editorForNote(note: SNNote): SNComponent | undefined {
+    if (note.editorIdentifier) {
+      return this.componentWithIdentifier(note.editorIdentifier)
+    }
+
+    if (note.noteType === NoteType.Plain) {
+      return undefined
+    }
+
+    return this.legacyGetEditorForNote(note)
+  }
+
+  /**
+   * Uses legacy approach of note/editor association. New method uses note.editorIdentifier and note.noteType directly.
+   */
+  private legacyGetEditorForNote(note: SNNote): SNComponent | undefined {
     const editors = this.componentsForArea(ComponentArea.Editor)
     for (const editor of editors) {
       if (editor.isExplicitlyEnabledForItem(note.uuid)) {
         return editor
       }
     }
-    let defaultEditor
-    /* No editor found for note. Use default editor, if note does not prefer system editor */
-    if (this.isMobile) {
-      if (!note.mobilePrefersPlainEditor) {
-        defaultEditor = this.getDefaultEditor()
-      }
-    } else {
-      if (!note.prefersPlainEditor) {
-        defaultEditor = this.getDefaultEditor()
-      }
-    }
+    const defaultEditor = this.getDefaultEditor()
+
     if (defaultEditor && !defaultEditor.isExplicitlyDisabledForItem(note.uuid)) {
       return defaultEditor
     } else {
@@ -608,15 +618,9 @@ export class SNComponentManager
     }
   }
 
-  getDefaultEditor(): SNComponent {
+  getDefaultEditor(): SNComponent | undefined {
     const editors = this.componentsForArea(ComponentArea.Editor)
-    if (this.isMobile) {
-      return editors.filter((e) => {
-        return e.isMobileDefault
-      })[0]
-    } else {
-      return editors.filter((e) => e.isDefaultEditor())[0]
-    }
+    return editors.filter((e) => e.isDefaultEditor())[0]
   }
 
   permissionsStringForPermissions(permissions: ComponentPermission[], component: SNComponent): string {

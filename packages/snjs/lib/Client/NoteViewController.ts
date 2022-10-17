@@ -66,9 +66,12 @@ export class NoteViewController implements ItemViewControllerInterface {
 
   async initialize(addTagHierarchy: boolean): Promise<void> {
     if (!this.item) {
+      const editor = this.application.componentManager.getDefaultEditor()
       const note = this.application.mutator.createTemplateItem<NoteContent, SNNote>(ContentType.Note, {
         text: '',
         title: this.defaultTitle || '',
+        noteType: editor?.noteType,
+        editorIdentifier: editor?.identifier,
         references: [],
       })
 
