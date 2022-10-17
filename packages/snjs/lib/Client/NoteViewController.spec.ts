@@ -1,8 +1,8 @@
+import { SNApplication } from './../Application/Application'
 import { ContentType } from '@standardnotes/common'
 import { MutatorService } from './../Services/Mutator/MutatorService'
 import { SNComponentManager } from './../Services/ComponentManager/ComponentManager'
 import { NoteType } from '@standardnotes/features'
-import { SNApplication } from '..'
 import { NoteViewController } from './NoteViewController'
 
 describe('note view controller', () => {

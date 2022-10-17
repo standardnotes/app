@@ -1,4 +1,3 @@
-import { FeatureIdentifier } from './../../../../features/src/Domain/Feature/FeatureIdentifier'
 import { AllowedBatchStreaming } from './Types'
 import { SNPreferencesService } from '../Preferences/PreferencesService'
 import { SNFeaturesService } from '@Lib/Services/Features/FeaturesService'
@@ -24,6 +23,7 @@ import {
   ComponentPermission,
   FindNativeFeature,
   NoteType,
+  FeatureIdentifier,
 } from '@standardnotes/features'
 import { Copy, filterFromArray, removeFromArray, sleep, assert } from '@standardnotes/utils'
 import { UuidString } from '@Lib/Types/UuidString'

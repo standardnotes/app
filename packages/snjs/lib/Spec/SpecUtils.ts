@@ -1,6 +1,5 @@
 import { ContentType } from '@standardnotes/common'
 import * as Models from '@standardnotes/models'
-import { PayloadTimestampDefaults } from '@standardnotes/models'
 
 export const createNote = (payload?: Partial<Models.NoteContent>): Models.SNNote => {
   return new Models.SNNote(
@@ -9,7 +8,7 @@ export const createNote = (payload?: Partial<Models.NoteContent>): Models.SNNote
         uuid: String(Math.random()),
         content_type: ContentType.Note,
         content: Models.FillItemContent({ ...payload }),
-        ...PayloadTimestampDefaults(),
+        ...Models.PayloadTimestampDefaults(),
       },
       Models.PayloadSource.Constructor,
     ),
@@ -24,7 +23,7 @@ export const createNoteWithTitle = (title: string) => {
       content: Models.FillItemContent<Models.NoteContent>({
         title: title,
       }),
-      ...PayloadTimestampDefaults(),
+      ...Models.PayloadTimestampDefaults(),
     }),
   )
 }
