@@ -57,7 +57,6 @@ export class SelectedItemsController
             type: CrossControllerEvent.RequestValuePersistence,
             payload: undefined,
           })
-          void this.openSingleSelectedItem()
         },
       ),
     )
@@ -74,7 +73,7 @@ export class SelectedItemsController
       return
     }
     if (state.selectedUuids.length > 0) {
-      this.setSelectedUuids(new Set(state.selectedUuids))
+      void this.selectUuids(state.selectedUuids)
     }
   }
 
@@ -258,6 +257,8 @@ export class SelectedItemsController
       }
     }
 
+    await this.openSingleSelectedItem()
+
     return {
       didSelect: this.selectedUuids.has(uuid),
     }
@@ -276,6 +277,20 @@ export class SelectedItemsController
       itemElement?.scrollIntoView({
         behavior: 'smooth',
       })
+    }
+  }
+
+  selectUuids = async (uuids: UuidString[], userTriggered = false) => {
+    const itemsForUuids = this.application.items.findItems(uuids)
+    if (itemsForUuids.length < 1) {
+      return
+    }
+    if (!userTriggered && itemsForUuids.some((item) => item.protected)) {
+      return
+    }
+    this.setSelectedUuids(new Set(uuids))
+    if (itemsForUuids.length === 1) {
+      void this.openSingleSelectedItem()
     }
   }
 
