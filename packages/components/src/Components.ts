@@ -39,34 +39,6 @@ const Editors = [
   },
 ]
 
-const DeprecatedEditors = [
-  {
-    identifier: 'org.standardnotes.bold-editor',
-    path: 'Deprecated/org.standardnotes.bold-editor',
-    static_files: [...BaseEditorStaticFiles],
-  },
-  {
-    identifier: 'org.standardnotes.simple-markdown-editor',
-    path: 'Deprecated/org.standardnotes.simple-markdown-editor',
-    static_files: [...BaseEditorStaticFiles],
-  },
-  {
-    identifier: 'org.standardnotes.fancy-markdown-editor',
-    path: 'Deprecated/org.standardnotes.fancy-markdown-editor',
-    static_files: [...BaseEditorStaticFiles],
-  },
-  {
-    identifier: 'org.standardnotes.minimal-markdown-editor',
-    path: 'Deprecated/org.standardnotes.minimal-markdown-editor',
-    static_files: [...BaseEditorStaticFiles],
-  },
-  {
-    identifier: 'org.standardnotes.file-safe',
-    path: 'Deprecated/org.standardnotes.file-safe',
-    static_files: [...BaseEditorStaticFiles],
-  },
-]
-
 const Themes = [
   {
     identifier: 'org.standardnotes.theme-autobiography',
@@ -105,6 +77,6 @@ const Themes = [
   },
 ]
 
-const Components = [...Editors, ...DeprecatedEditors, ...Themes]
+const Components = [...Editors, ...Themes]
 
 export { Components }
