@@ -27,23 +27,24 @@ const PADDING_BASE_PX = 14
 const PADDING_PER_LEVEL_PX = 21
 
 const smartViewIconType = (view: SmartView, isSelected: boolean): IconType => {
-  if (view.uuid === SystemViewId.AllNotes) {
-    return isSelected ? 'notes-filled' : 'notes'
-  }
-  if (view.uuid === SystemViewId.Files) {
-    return 'folder'
-  }
-  if (view.uuid === SystemViewId.ArchivedNotes) {
-    return 'archive'
-  }
-  if (view.uuid === SystemViewId.TrashedNotes) {
-    return 'trash'
-  }
-  if (view.uuid === SystemViewId.UntaggedNotes) {
-    return 'hashtag-off'
+  const mapping: Record<SystemViewId, IconType> = {
+    [SystemViewId.AllNotes]: isSelected ? 'notes-filled' : 'notes',
+    [SystemViewId.Files]: 'folder',
+    [SystemViewId.ArchivedNotes]: 'archive',
+    [SystemViewId.TrashedNotes]: 'trash',
+    [SystemViewId.UntaggedNotes]: 'hashtag-off',
+    [SystemViewId.StarredNotes]: 'star-filled',
   }
 
-  return 'hashtag'
+  return mapping[view.uuid as SystemViewId] || 'hashtag'
+}
+
+const getIconClass = (view: SmartView, isSelected: boolean): string => {
+  const mapping: Partial<Record<SystemViewId, string>> = {
+    [SystemViewId.StarredNotes]: 'text-warning',
+  }
+
+  return mapping[view.uuid as SystemViewId] || (isSelected ? 'text-info' : 'text-neutral')
 }
 
 const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
@@ -110,6 +111,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
 
   const isFaded = false
   const iconType = smartViewIconType(view, isSelected)
+  const iconClass = getIconClass(view, isSelected)
 
   return (
     <>
@@ -124,7 +126,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
       >
         <div className="tag-info">
           <div className={'tag-icon mr-2'}>
-            <Icon type={iconType} className={isSelected ? 'text-info' : 'text-neutral'} />
+            <Icon type={iconType} className={iconClass} />
           </div>
           {isEditing ? (
             <input

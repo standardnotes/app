@@ -2,19 +2,21 @@ import { FileItem, FileViewController, NoteViewController } from '@standardnotes
 import { PureComponent } from '@/Components/Abstract/PureComponent'
 import { WebApplication } from '@/Application/Application'
 import MultipleSelectedNotes from '@/Components/MultipleSelectedNotes/MultipleSelectedNotes'
-import NoteView from '@/Components/NoteView/NoteView'
 import MultipleSelectedFiles from '../MultipleSelectedFiles/MultipleSelectedFiles'
 import { ElementIds } from '@/Constants/ElementIDs'
-import FileView from '@/Components/FileView/FileView'
 import { FileDnDContext } from '@/Components/FileDragNDropProvider/FileDragNDropProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import ResponsivePaneContent from '../ResponsivePane/ResponsivePaneContent'
+import FileView from '../FileView/FileView'
+import NoteView from '../NoteView/NoteView'
 
 type State = {
   showMultipleSelectedNotes: boolean
   showMultipleSelectedFiles: boolean
   controllers: (NoteViewController | FileViewController)[]
   selectedFile: FileItem | undefined
+  selectedPane?: AppPaneId
+  isInMobileView?: boolean
 }
 
 type Props = {
@@ -73,6 +75,15 @@ class NoteGroupView extends PureComponent<Props, State> {
         })
       }
     })
+
+    this.autorun(() => {
+      if (this.viewControllerManager && this.viewControllerManager.paneController) {
+        this.setState({
+          selectedPane: this.viewControllerManager.paneController.currentPane,
+          isInMobileView: this.viewControllerManager.paneController.isInMobileView,
+        })
+      }
+    })
   }
 
   override deinit() {
@@ -87,6 +98,10 @@ class NoteGroupView extends PureComponent<Props, State> {
 
     const shouldNotShowMultipleSelectedItems =
       !this.state.showMultipleSelectedNotes && !this.state.showMultipleSelectedFiles
+
+    const hasControllers = this.state.controllers.length > 0
+
+    const canRenderEditorView = this.state.selectedPane === AppPaneId.Editor || !this.state.isInMobileView
 
     return (
       <div
@@ -118,7 +133,7 @@ class NoteGroupView extends PureComponent<Props, State> {
               Drop your files to upload them
             </div>
           )}
-          {shouldNotShowMultipleSelectedItems && this.state.controllers.length > 0 && (
+          {shouldNotShowMultipleSelectedItems && hasControllers && canRenderEditorView && (
             <>
               {this.state.controllers.map((controller) => {
                 return controller instanceof NoteViewController ? (

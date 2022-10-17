@@ -4,7 +4,7 @@ import path from 'path'
 import {
   deleteDir,
   ensureDirectoryExists,
-  extractNestedZip,
+  extractZip,
   FileDoesNotExist,
   moveDirContents,
   readJSONFile,
@@ -25,7 +25,7 @@ test.afterEach(async () => {
 })
 
 test('extracts a zip and unnests the folders by one level', async (t) => {
-  await extractNestedZip(path.join(dataPath, 'zip-file.zip'), zipFileDestination)
+  await extractZip(path.join(dataPath, 'zip-file.zip'), zipFileDestination)
   t.deepEqual(await fs.readdir(zipFileDestination), ['package.json', 'test-file.txt'])
 })
 

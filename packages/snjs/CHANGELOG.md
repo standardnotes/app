@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.141.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.140.0...@standardnotes/snjs@2.141.0) (2022-10-17)
+
+### Features
+
+* add workspaces workflow e2e tests ([#1810](https://github.com/standardnotes/app/issues/1810)) ([3f7d4a4](https://github.com/standardnotes/app/commit/3f7d4a4cd9a06f33bb51cbe678ab06dbe456dda6))
+
 # [2.140.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.139.1...@standardnotes/snjs@2.140.0) (2022-10-13)
 
 ### Features

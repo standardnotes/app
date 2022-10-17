@@ -78,6 +78,10 @@ export class DecryptedItemMutator<C extends ItemContent = ItemContent> extends I
     this.mutableContent.trashed = trashed
   }
 
+  set starred(starred: boolean) {
+    this.mutableContent.starred = starred
+  }
+
   public set pinned(pinned: boolean) {
     this.setAppDataItem(AppDataField.Pinned, pinned)
   }

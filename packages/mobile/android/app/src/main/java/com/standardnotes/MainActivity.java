@@ -8,18 +8,34 @@ import android.content.res.Configuration;
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
-import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
 
 public class MainActivity extends ReactActivity {
 
-     @Override
+    @Override
+    protected String getMainComponentName() {
+        return "StandardNotes";
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstance) {
          super.onCreate(null);
     }
 
+    @Override
+    protected ReactActivityDelegate createReactActivityDelegate() {
+        return new SNReactActivityDelegate(this, getMainComponentName());
+    }
+
+
     public static class SNReactActivityDelegate extends ReactActivityDelegate {
         public SNReactActivityDelegate(ReactActivity activity, String mainComponentName) {
             super(activity, mainComponentName);
+        }
+
+        @Override
+        protected ReactRootView createRootView() {
+            ReactRootView reactRootView = new ReactRootView(getContext());
+            return reactRootView;
         }
 
         @Override
@@ -31,26 +47,13 @@ public class MainActivity extends ReactActivity {
         }
     }
 
-    @Override
-    protected String getMainComponentName() {
-      return "StandardNotes";
-    }
+
 
     // Fix for Dark theme subscriptions https://github.com/facebook/react-native/issues/28823#issuecomment-642032481
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         getReactInstanceManager().onConfigurationChanged(this, newConfig);
-    }
-
-    @Override
-    protected ReactActivityDelegate createReactActivityDelegate() {
-        return new SNReactActivityDelegate(this, getMainComponentName()) {
-        @Override
-        protected ReactRootView createRootView() {
-          return new RNGestureHandlerEnabledRootView(MainActivity.this);
-        }
-      };
     }
 
     /*

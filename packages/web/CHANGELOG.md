@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.76.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.76.1...@standardnotes/web@3.76.2) (2022-10-17)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.76.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.76.0...@standardnotes/web@3.76.1) (2022-10-14)
+
+### Bug Fixes
+
+* don't render editor view on mobile if editor pane not selected ([#1790](https://github.com/standardnotes/app/issues/1790)) ([d0c413c](https://github.com/standardnotes/app/commit/d0c413cd150ea835a4cb22aefadd6d9e477b1039))
+
 # [3.76.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.75.1...@standardnotes/web@3.76.0) (2022-10-13)
 
 ### Features

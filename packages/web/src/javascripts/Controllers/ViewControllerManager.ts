@@ -224,6 +224,8 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
 
     this.historyModalController.deinit()
     ;(this.historyModalController as unknown) = undefined
+
+    this.paneController.deinit()
     ;(this.paneController as unknown) = undefined
 
     destroyAllObjectProperties(this)

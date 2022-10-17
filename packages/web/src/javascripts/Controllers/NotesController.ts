@@ -253,6 +253,12 @@ export class NotesController extends AbstractViewController {
     }).catch(console.error)
   }
 
+  setStarSelectedNotes(starred: boolean): void {
+    this.changeSelectedNotes((mutator) => {
+      mutator.starred = starred
+    }).catch(console.error)
+  }
+
   async setArchiveSelectedNotes(archived: boolean): Promise<void> {
     if (this.getSelectedNotesList().some((note) => note.locked)) {
       this.application.alertService
