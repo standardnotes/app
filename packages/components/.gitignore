@@ -3,3 +3,7 @@ tmp
 src/Packages/Editors/**/build
 src/Packages/Editors/**/dist
 src/Packages/Themes/**/dist
+
+# Deprecated dist assets should be commited to source control as these compnonents will no longer be compiled.
+!src/Packages/Deprecated/**/dist
+!src/Packages/Deprecated/**/build
