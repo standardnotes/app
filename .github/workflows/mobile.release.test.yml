@@ -31,7 +31,7 @@ jobs:
         run: yarn install --immutable
       - run: yarn build:mobile
       - name: fastlane
-        uses: maierj/fastlane-action@v1.4.0
+        uses: maierj/fastlane-action@v2.3.0
         env:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
           BUILD_NUMBER: ${{ github.run_number }}
@@ -72,7 +72,7 @@ jobs:
       - name: Export Apple AppStore Connect API key
         run: echo "${{ secrets.APPSTORE_CONNECT_KEY }}" > ios/Authkey.p8
       - name: Setup fastlane
-        uses: maierj/fastlane-action@v1.4.0
+        uses: maierj/fastlane-action@v2.3.0
         env:
           FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
@@ -81,7 +81,7 @@ jobs:
           lane: 'ios setup'
           subdirectory: 'packages/mobile'
       - name: fastlane
-        uses: maierj/fastlane-action@v1.4.0
+        uses: maierj/fastlane-action@v2.3.0
         env:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
           APPLE_APP_ID: ${{ secrets.DEV_APP_APPLE_ID }}
