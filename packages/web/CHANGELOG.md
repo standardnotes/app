@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.77.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.76.2...@standardnotes/web@3.77.0) (2022-10-17)
+
+### Features
+
+* starred notes ([#1813](https://github.com/standardnotes/app/issues/1813)) ([d52fdae](https://github.com/standardnotes/app/commit/d52fdae0b359b4768855ae030ac13d1c16f2312a))
+
 ## [3.76.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.76.1...@standardnotes/web@3.76.2) (2022-10-17)
 
 **Note:** Version bump only for package @standardnotes/web

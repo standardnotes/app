@@ -6,6 +6,7 @@
   "main": "dist",
   "workspaces": {
     "packages": [
+      "src/Packages/Deprecated/*",
       "src/Packages/Editors/*",
       "src/Packages/Themes/*"
     ]
