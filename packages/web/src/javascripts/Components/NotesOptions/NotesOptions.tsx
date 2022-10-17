@@ -201,6 +201,7 @@ const NotesOptions = ({
   const notTrashed = notes.some((note) => !note.trashed)
   const pinned = notes.some((note) => note.pinned)
   const unpinned = notes.some((note) => !note.pinned)
+  const starred = notes.some((note) => note.starred)
 
   const editorForNote = useMemo(
     () => (notes[0] ? application.componentManager.editorForNote(notes[0]) : undefined),
@@ -330,6 +331,17 @@ const NotesOptions = ({
           linkingController={linkingController}
         />
       )}
+
+      <button
+        className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-mobile-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none md:text-menu-item"
+        onClick={() => {
+          notesController.setStarSelectedNotes(!starred)
+        }}
+      >
+        <Icon type="star" className={iconClass} />
+        {starred ? 'Unstar' : 'Star'}
+      </button>
+
       {unpinned && (
         <button
           className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-mobile-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none md:text-menu-item"
