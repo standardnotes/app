@@ -3748,6 +3748,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jest/environment@npm:^29.2.0":
+  version: 29.2.0
+  resolution: "@jest/environment@npm:29.2.0"
+  dependencies:
+    "@jest/fake-timers": ^29.2.0
+    "@jest/types": ^29.2.0
+    "@types/node": "*"
+    jest-mock: ^29.2.0
+  checksum: 1ddac48da360d59efec1e671e9351fbe24c6ec7976b5704e9d4dfe3e31e1af0851b20b05a94cc0a03709a85e3dc9bf6ae66fde6ecc4a6d36d97623a8b0265af0
+  languageName: node
+  linkType: hard
+
 "@jest/expect-utils@npm:^28.1.3":
   version: 28.1.3
   resolution: "@jest/expect-utils@npm:28.1.3"
@@ -3801,6 +3813,20 @@ __metadata:
     jest-mock: ^28.1.3
     jest-util: ^28.1.3
   checksum: cec14d5b14913a54dce64a62912c5456235f5d90b509ceae19c727565073114dae1aaf960ac6be96b3eb94789a3a758b96b72c8fca7e49a6ccac415fbc0321e1
+  languageName: node
+  linkType: hard
+
+"@jest/fake-timers@npm:^29.2.0":
+  version: 29.2.0
+  resolution: "@jest/fake-timers@npm:29.2.0"
+  dependencies:
+    "@jest/types": ^29.2.0
+    "@sinonjs/fake-timers": ^9.1.2
+    "@types/node": "*"
+    jest-message-util: ^29.2.0
+    jest-mock: ^29.2.0
+    jest-util: ^29.2.0
+  checksum: f1ff640365695d64440d12f92c55d40e372fa46d9974089bf2a4cbc43464d2f9e04615caecda7c074b0f0abc072e334e11611df8915b323d0010ed9c2d151bf6
   languageName: node
   linkType: hard
 
@@ -6728,7 +6754,7 @@ __metadata:
     eslint-plugin-prettier: "*"
     exports-loader: ^3.1.0
     jest: ^28.1.2
-    jest-environment-jsdom: ^28.1.2
+    jest-environment-jsdom: ^29.2.0
     jsdom: ^20.0.0
     libsodium-wrappers: ^0.7.9
     lodash: ^4.17.21
@@ -6916,7 +6942,7 @@ __metadata:
     html-webpack-plugin: ^5.5.0
     identity-obj-proxy: ^3.0.0
     jest: ^28.1.2
-    jest-environment-jsdom: ^28.1.2
+    jest-environment-jsdom: ^29.2.0
     lint-staged: ">=12"
     mini-css-extract-plugin: ^2.6.1
     mobx: ^6.6.2
@@ -7683,7 +7709,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jsdom@npm:^16.2.14, @types/jsdom@npm:^16.2.4":
+"@types/jsdom@npm:^16.2.14":
   version: 16.2.15
   resolution: "@types/jsdom@npm:16.2.15"
   dependencies:
@@ -7691,6 +7717,17 @@ __metadata:
     "@types/parse5": ^6.0.3
     "@types/tough-cookie": "*"
   checksum: e038335321bef42ebf220aaf597e186e2eec8de6107ce7a70de1c046a84c1fbb42d454e195a20383a6870b18c7ef6fa6b73812a626f88a4a2ef1f711d2e2e13c
+  languageName: node
+  linkType: hard
+
+"@types/jsdom@npm:^20.0.0":
+  version: 20.0.0
+  resolution: "@types/jsdom@npm:20.0.0"
+  dependencies:
+    "@types/node": "*"
+    "@types/tough-cookie": "*"
+    parse5: ^7.0.0
+  checksum: 13e67d31347e02d46ec6a23919b3ce39d86136665922a2a6cb977e216a2f46c22d2f025d0586a64ab492ebaa5f43da669b6f173a5a8cfd3e3bb7c9d19b6cfa9e
   languageName: node
   linkType: hard
 
@@ -14367,7 +14404,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"data-urls@npm:^3.0.1, data-urls@npm:^3.0.2":
+"data-urls@npm:^3.0.2":
   version: 3.0.2
   resolution: "data-urls@npm:3.0.2"
   dependencies:
@@ -14455,7 +14492,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"decimal.js@npm:^10.2.1, decimal.js@npm:^10.3.1, decimal.js@npm:^10.4.1":
+"decimal.js@npm:^10.2.1, decimal.js@npm:^10.4.1":
   version: 10.4.2
   resolution: "decimal.js@npm:10.4.2"
   checksum: 536cd6816a3197f2e1aa3da4860856cb5a2db73f6fafe8cb3b924ccc63f9b7d78296acc13dccbd419bd958ccc6357921fb15467f883b37cab04bfba7044cada2
@@ -20817,19 +20854,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-environment-jsdom@npm:^28.1.2":
-  version: 28.1.3
-  resolution: "jest-environment-jsdom@npm:28.1.3"
+"jest-environment-jsdom@npm:^29.2.0":
+  version: 29.2.0
+  resolution: "jest-environment-jsdom@npm:29.2.0"
   dependencies:
-    "@jest/environment": ^28.1.3
-    "@jest/fake-timers": ^28.1.3
-    "@jest/types": ^28.1.3
-    "@types/jsdom": ^16.2.4
+    "@jest/environment": ^29.2.0
+    "@jest/fake-timers": ^29.2.0
+    "@jest/types": ^29.2.0
+    "@types/jsdom": ^20.0.0
     "@types/node": "*"
-    jest-mock: ^28.1.3
-    jest-util: ^28.1.3
-    jsdom: ^19.0.0
-  checksum: 32758f9b9a1fd04ec3ebaaa608d740a36b960d37d00bd3d4d83fdc4b527afc474c14f04fa860817e1fa22923e2dc3cd2b497db41af6a5d73e91327951612025e
+    jest-mock: ^29.2.0
+    jest-util: ^29.2.0
+    jsdom: ^20.0.0
+  peerDependencies:
+    canvas: ^2.5.0
+  peerDependenciesMeta:
+    canvas:
+      optional: true
+  checksum: 401f37f74c14a5c49775441b415fad6015a695b152d44a6587b9af85a5e0448768bf2595a59a46b410d068e70354911acea72bfbe0b44473dce3f59b68e8467d
   languageName: node
   linkType: hard
 
@@ -21110,6 +21152,17 @@ __metadata:
     "@jest/types": ^28.1.3
     "@types/node": "*"
   checksum: a573bf8e5f12f4c29c661266c31b5c6b69a28d3195b83049983bce025b2b1a0152351567e89e63b102ef817034c2a3aa97eda4e776f3bae2aee54c5765573aa7
+  languageName: node
+  linkType: hard
+
+"jest-mock@npm:^29.2.0":
+  version: 29.2.0
+  resolution: "jest-mock@npm:29.2.0"
+  dependencies:
+    "@jest/types": ^29.2.0
+    "@types/node": "*"
+    jest-util: ^29.2.0
+  checksum: 6c65e89860e5d1a74291c6276b1a12902189f4fa63adb226a811621725bf27487696fb366f3855b84afddbfa6cd36c7d4d0b61f5a05bbddb63ff00c8f95046a7
   languageName: node
   linkType: hard
 
@@ -21800,46 +21853,6 @@ __metadata:
     canvas:
       optional: true
   checksum: 454b83371857000763ed31130a049acd1b113e3b927e6dcd75c67ddc30cdd242d7ebcac5c2294b7a1a6428155cb1398709c573b3c6d809218692ea68edd93370
-  languageName: node
-  linkType: hard
-
-"jsdom@npm:^19.0.0":
-  version: 19.0.0
-  resolution: "jsdom@npm:19.0.0"
-  dependencies:
-    abab: ^2.0.5
-    acorn: ^8.5.0
-    acorn-globals: ^6.0.0
-    cssom: ^0.5.0
-    cssstyle: ^2.3.0
-    data-urls: ^3.0.1
-    decimal.js: ^10.3.1
-    domexception: ^4.0.0
-    escodegen: ^2.0.0
-    form-data: ^4.0.0
-    html-encoding-sniffer: ^3.0.0
-    http-proxy-agent: ^5.0.0
-    https-proxy-agent: ^5.0.0
-    is-potential-custom-element-name: ^1.0.1
-    nwsapi: ^2.2.0
-    parse5: 6.0.1
-    saxes: ^5.0.1
-    symbol-tree: ^3.2.4
-    tough-cookie: ^4.0.0
-    w3c-hr-time: ^1.0.2
-    w3c-xmlserializer: ^3.0.0
-    webidl-conversions: ^7.0.0
-    whatwg-encoding: ^2.0.0
-    whatwg-mimetype: ^3.0.0
-    whatwg-url: ^10.0.0
-    ws: ^8.2.3
-    xml-name-validator: ^4.0.0
-  peerDependencies:
-    canvas: ^2.5.0
-  peerDependenciesMeta:
-    canvas:
-      optional: true
-  checksum: 94b693bf4a394097dd96705550bb7b6cd3c8db3c5414e6e9c92a0995ed8b61067597da2f37fca6bed4b5a2f1ef33960ee759522156dccd0b306311988ea87cfb
   languageName: node
   linkType: hard
 
@@ -26472,7 +26485,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"parse5@npm:^7.1.1":
+"parse5@npm:^7.0.0, parse5@npm:^7.1.1":
   version: 7.1.1
   resolution: "parse5@npm:7.1.1"
   dependencies:
@@ -35758,16 +35771,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"whatwg-url@npm:^10.0.0":
-  version: 10.0.0
-  resolution: "whatwg-url@npm:10.0.0"
-  dependencies:
-    tr46: ^3.0.0
-    webidl-conversions: ^7.0.0
-  checksum: a21ec309c5cc743fe9414509408bedf65eaf0fb5c17ac66baa08ef12fce16da4dd30ce90abefbd5a716408301c58a73666dabfd5042cf4242992eb98b954f861
-  languageName: node
-  linkType: hard
-
 "whatwg-url@npm:^11.0.0":
   version: 11.0.0
   resolution: "whatwg-url@npm:11.0.0"
@@ -36289,7 +36292,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:^8.2.3, ws@npm:^8.4.2, ws@npm:^8.9.0":
+"ws@npm:^8.4.2, ws@npm:^8.9.0":
   version: 8.9.0
   resolution: "ws@npm:8.9.0"
   peerDependencies:
