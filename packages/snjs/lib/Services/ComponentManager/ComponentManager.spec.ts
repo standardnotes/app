@@ -3,12 +3,14 @@
  */
 
 import { SNPreferencesService } from '../Preferences/PreferencesService'
+import { createNote, createNoteWithTitle } from './../../Spec/SpecUtils'
 import {
   ComponentAction,
   ComponentPermission,
   FeatureDescription,
   FindNativeFeature,
   FeatureIdentifier,
+  NoteType,
 } from '@standardnotes/features'
 import { ContentType } from '@standardnotes/common'
 import { GenericItem, SNComponent, Environment, Platform } from '@standardnotes/models'
@@ -303,6 +305,26 @@ describe('featuresService', () => {
         const url = manager.urlForComponent(component)
         expect(url).toEqual(component.hosted_url)
       })
+    })
+  })
+
+  describe('editors', () => {
+    it('getEditorForNote should return undefined is note type is plain', () => {
+      const note = createNote({
+        noteType: NoteType.Plain,
+      })
+      const manager = createManager(Environment.Web, Platform.MacWeb)
+
+      expect(manager.editorForNote(note)).toBe(undefined)
+    })
+
+    it('getEditorForNote should call legacy function if no note editorIdentifier or noteType', () => {
+      const note = createNote({})
+      const manager = createManager(Environment.Web, Platform.MacWeb)
+      manager['legacyGetEditorForNote'] = jest.fn()
+      manager.editorForNote(note)
+
+      expect(manager['legacyGetEditorForNote']).toHaveBeenCalled()
     })
   })
 

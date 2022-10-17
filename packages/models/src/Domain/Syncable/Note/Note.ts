@@ -16,6 +16,7 @@ export class SNNote extends DecryptedItem<NoteContent> implements NoteContentSpe
   public readonly preview_html: string
   public readonly spellcheck?: boolean
   public readonly noteType?: NoteType
+
   /** The package_info.identifier of the editor (not its uuid), such as org.standardnotes.advanced-markdown */
   public readonly editorIdentifier?: FeatureIdentifier | string
 
