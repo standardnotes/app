@@ -25,7 +25,7 @@
     "@milkdown/core": "5.5.0",
     "@milkdown/plugin-clipboard": "5.5.0",
     "@milkdown/plugin-cursor": "5.5.0",
-    "@milkdown/plugin-diagram": "5.5.0",
+    "@milkdown/plugin-diagram": "6.5.0",
     "@milkdown/plugin-history": "5.5.0",
     "@milkdown/plugin-indent": "5.5.0",
     "@milkdown/plugin-listener": "5.5.0",
