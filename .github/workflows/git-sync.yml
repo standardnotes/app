@@ -37,6 +37,7 @@ jobs:
         id: extract_branch
 
       - uses: peter-evans/create-pull-request@v4
+        if: "${{ github.actor != 'dependabot' }}"
         with:
           token: ${{ secrets.CI_PAT_TOKEN }}
           branch: ${{ github.ref }}
