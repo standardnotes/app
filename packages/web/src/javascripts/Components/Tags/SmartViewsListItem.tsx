@@ -61,7 +61,9 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
   }, [setTitle, view])
 
   const selectCurrentTag = useCallback(async () => {
-    await tagsState.setSelectedTag(view)
+    await tagsState.setSelectedTag(view, {
+      userTriggered: true,
+    })
     toggleAppPane(AppPaneId.Items)
   }, [tagsState, toggleAppPane, view])
 

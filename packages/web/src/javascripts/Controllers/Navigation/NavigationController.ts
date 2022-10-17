@@ -413,7 +413,7 @@ export class NavigationController
     return this.selected_
   }
 
-  public async setSelectedTag(tag: AnyTag | undefined) {
+  public async setSelectedTag(tag: AnyTag | undefined, { userTriggered } = { userTriggered: false }) {
     if (tag && tag.conflictOf) {
       this.application.mutator
         .changeAndSaveItem(tag, (mutator) => {
@@ -439,7 +439,7 @@ export class NavigationController
     await this.eventBus.publishSync(
       {
         type: CrossControllerEvent.TagChanged,
-        payload: { tag, previousTag: this.previouslySelected_ },
+        payload: { tag, previousTag: this.previouslySelected_, userTriggered: userTriggered },
       },
       InternalEventPublishStrategy.SEQUENCE,
     )

@@ -83,7 +83,9 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
   )
 
   const selectCurrentTag = useCallback(async () => {
-    await tagsState.setSelectedTag(tag)
+    await tagsState.setSelectedTag(tag, {
+      userTriggered: true,
+    })
     toggleAppPane(AppPaneId.Items)
   }, [tagsState, tag, toggleAppPane])
 

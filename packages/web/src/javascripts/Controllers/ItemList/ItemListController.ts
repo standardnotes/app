@@ -46,6 +46,7 @@ enum ItemsReloadSource {
   DisplayOptionsChange,
   Pagination,
   TagChange,
+  UserTriggeredTagChange,
   FilterTextChange,
 }
 
@@ -237,7 +238,8 @@ export class ItemListController
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
     if (event.type === CrossControllerEvent.TagChanged) {
-      this.handleTagChange()
+      const payload = event.payload as { userTriggered: boolean }
+      this.handleTagChange(payload.userTriggered)
     } else if (event.type === CrossControllerEvent.ActiveEditorChanged) {
       this.handleEditorChange().catch(console.error)
     }
@@ -360,7 +362,9 @@ export class ItemListController
   }
 
   private shouldSelectFirstItem = (itemsReloadSource: ItemsReloadSource) => {
-    return itemsReloadSource === ItemsReloadSource.TagChange || !this.selectionController.selectedUuids.size
+    return (
+      itemsReloadSource === ItemsReloadSource.UserTriggeredTagChange || !this.selectionController.selectedUuids.size
+    )
   }
 
   private shouldCloseActiveItem = (activeItem: SNNote | FileItem | undefined) => {
@@ -693,7 +697,7 @@ export class ItemListController
     this.application.itemControllerGroup.closeItemController(controller)
   }
 
-  handleTagChange = () => {
+  handleTagChange = (userTriggered: boolean) => {
     const activeNoteController = this.getActiveItemController()
     if (activeNoteController instanceof NoteViewController && activeNoteController.isTemplateNote) {
       this.closeItemController(activeNoteController)
@@ -711,7 +715,7 @@ export class ItemListController
 
     this.reloadNotesDisplayOptions()
 
-    void this.reloadItems(ItemsReloadSource.TagChange)
+    void this.reloadItems(userTriggered ? ItemsReloadSource.UserTriggeredTagChange : ItemsReloadSource.TagChange)
   }
 
   onFilterEnter = () => {
