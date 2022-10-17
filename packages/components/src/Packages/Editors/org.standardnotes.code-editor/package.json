@@ -23,7 +23,7 @@
     "copy-webpack-plugin": "*",
     "css-loader": "^5.0.1",
     "eslint": "*",
-    "http-server": "^0.12.3",
+    "http-server": "^14.1.1",
     "mini-css-extract-plugin": "^1.3.5",
     "sass": "*",
     "sass-loader": "^10.1.1",
