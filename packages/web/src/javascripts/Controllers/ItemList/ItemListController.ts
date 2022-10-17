@@ -106,7 +106,6 @@ export class ItemListController
     private notesController: NotesController,
     private linkingController: LinkingController,
     eventBus: InternalEventBus,
-    private persistValues: () => void,
   ) {
     super(application, eventBus)
 
@@ -526,7 +525,10 @@ export class ItemListController
       await this.selectFirstItem()
     }
 
-    this.persistValues()
+    this.eventBus.publish({
+      type: CrossControllerEvent.RequestValuePersistence,
+      payload: undefined,
+    })
   }
 
   async createNewNoteController(title?: string) {

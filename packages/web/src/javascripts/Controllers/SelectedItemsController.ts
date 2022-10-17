@@ -12,6 +12,7 @@ import { action, computed, makeObservable, observable, reaction, runInAction } f
 import { WebApplication } from '../Application/Application'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { Persistable } from './Abstract/Persistable'
+import { CrossControllerEvent } from './CrossControllerEvent'
 import { ItemListController } from './ItemList/ItemListController'
 
 export type SelectionControllerPersistableValue = {
@@ -31,7 +32,7 @@ export class SelectedItemsController
     ;(this.itemListController as unknown) = undefined
   }
 
-  constructor(application: WebApplication, eventBus: InternalEventBus, private persistValues: () => void) {
+  constructor(application: WebApplication, eventBus: InternalEventBus) {
     super(application, eventBus)
 
     makeObservable(this, {
@@ -52,7 +53,10 @@ export class SelectedItemsController
       reaction(
         () => this.selectedUuids,
         () => {
-          this.persistValues()
+          eventBus.publish({
+            type: CrossControllerEvent.RequestValuePersistence,
+            payload: undefined,
+          })
           void this.openSingleSelectedItem()
         },
       ),

@@ -53,12 +53,7 @@ export class NavigationController
 
   private readonly tagsCountsState: TagsCountsState
 
-  constructor(
-    application: WebApplication,
-    private featuresController: FeaturesController,
-    eventBus: InternalEventBus,
-    private persistValues: () => void,
-  ) {
+  constructor(application: WebApplication, private featuresController: FeaturesController, eventBus: InternalEventBus) {
     super(application, eventBus)
 
     this.tagsCountsState = new TagsCountsState(this.application)
@@ -164,7 +159,12 @@ export class NavigationController
     this.disposers.push(
       reaction(
         () => this.selectedUuid,
-        () => persistValues(),
+        () => {
+          eventBus.publish({
+            type: CrossControllerEvent.RequestValuePersistence,
+            payload: undefined,
+          })
+        },
       ),
     )
   }

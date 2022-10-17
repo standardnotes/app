@@ -77,6 +77,7 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
     this.persistenceService = new PersistenceService(application, this.eventBus)
 
     this.eventBus.addEventHandler(this, CrossControllerEvent.HydrateFromPersistedValues)
+    this.eventBus.addEventHandler(this, CrossControllerEvent.RequestValuePersistence)
 
     this.itemCounter = new ItemCounter()
 
@@ -86,16 +87,11 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
 
     this.preferencesController = new PreferencesController(application, this.eventBus)
 
-    this.selectionController = new SelectedItemsController(application, this.eventBus, this.persistValues)
+    this.selectionController = new SelectedItemsController(application, this.eventBus)
 
     this.featuresController = new FeaturesController(application, this.eventBus)
 
-    this.navigationController = new NavigationController(
-      application,
-      this.featuresController,
-      this.eventBus,
-      this.persistValues,
-    )
+    this.navigationController = new NavigationController(application, this.featuresController, this.eventBus)
 
     this.notesController = new NotesController(
       application,
@@ -121,7 +117,6 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
       this.notesController,
       this.linkingController,
       this.eventBus,
-      this.persistValues,
     )
 
     this.notesController.setServicesPostConstruction(this.itemListController)
@@ -311,6 +306,8 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
   async handleEvent(event: InternalEventInterface): Promise<void> {
     if (event.type === CrossControllerEvent.HydrateFromPersistedValues) {
       this.hydrateFromPersistedValues()
+    } else if (event.type === CrossControllerEvent.RequestValuePersistence) {
+      this.persistValues()
     }
   }
 }
