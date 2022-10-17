@@ -35,10 +35,6 @@ export class NoteMutator extends DecryptedItemMutator<NoteContent> {
     this.mutableContent.spellcheck = spellcheck
   }
 
-  set starred(starred: boolean) {
-    this.mutableContent.starred = starred
-  }
-
   toggleSpellcheck(): void {
     if (this.mutableContent.spellcheck == undefined) {
       this.mutableContent.spellcheck = false

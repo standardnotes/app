@@ -8,7 +8,6 @@ export interface NoteContentSpecialized {
   preview_plain?: string
   preview_html?: string
   spellcheck?: boolean
-  starred?: boolean
 }
 
 export type NoteContent = NoteContentSpecialized & ItemContent
