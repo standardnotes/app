@@ -76,23 +76,23 @@ describe('workspaces', function () {
     })
 
     let listUsersResult = await inviteeContext.application.workspaceManager.listWorkspaceUsers({ workspaceUuid: uuid })
+    let inviteeAssociation = listUsersResult.users.find(user => user.userDisplayName === 'test@standardnotes.com')
 
-    expect(listUsersResult.users[0].userUuid).to.equal(invitee.uuid)
-    expect(listUsersResult.users[0].displayName).to.equal('test@standardnotes.com')
-    expect(listUsersResult.users[0].status).to.equal('pending-keyshare')
+    expect(inviteeAssociation.userUuid).to.equal(invitee.uuid)
+    expect(inviteeAssociation.status).to.equal('pending-keyshare')
 
     await ownerContext.application.workspaceManager.initiateKeyshare({
-      workspaceUuid: listUsersResult.users[0].workspaceUuid,
-      userUuid: listUsersResult.users[0].userUuid,
+      workspaceUuid: inviteeAssociation.workspaceUuid,
+      userUuid: inviteeAssociation.userUuid,
       encryptedWorkspaceKey: 'foobarbuzz',
     })
 
     listUsersResult = await inviteeContext.application.workspaceManager.listWorkspaceUsers({ workspaceUuid: uuid })
+    inviteeAssociation = listUsersResult.users.find(user => user.userDisplayName === 'test@standardnotes.com')
 
-    expect(listUsersResult.users[0].userUuid).to.equal(invitee.uuid)
-    expect(listUsersResult.users[0].displayName).to.equal('test@standardnotes.com')
-    expect(listUsersResult.users[0].status).to.equal('active')
-    expect(listUsersResult.users[0].encryptedWorkspaceKey).to.equal('foobarbuzz')
+    expect(inviteeAssociation.userUuid).to.equal(invitee.uuid)
+    expect(inviteeAssociation.status).to.equal('active')
+    expect(inviteeAssociation.encryptedWorkspaceKey).to.equal('foobarbuzz')
 
     const { ownedWorkspaces, joinedWorkspaces } = await inviteeContext.application.workspaceManager.listWorkspaces()
 
