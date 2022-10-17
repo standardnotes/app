@@ -3,7 +3,7 @@
  */
 
 import { SNPreferencesService } from '../Preferences/PreferencesService'
-import { createNote, createNoteWithTitle } from './../../Spec/SpecUtils'
+import { createNote } from './../../Spec/SpecUtils'
 import {
   ComponentAction,
   ComponentPermission,
