@@ -16,6 +16,7 @@ import {
   Platform,
   EditorLineHeight,
   EditorFontSize,
+  NoteType,
 } from '@standardnotes/snjs'
 import { debounce, isDesktopApplication, isIOS } from '@/Utils'
 import { EditorEventSource } from '../../Types/EditorEventSource'
@@ -90,6 +91,7 @@ type State = {
   updateSavingIndicator?: boolean
 
   editorFeatureIdentifier?: string
+  noteType?: NoteType
 }
 
 const PlaintextFontSizeMapping: Record<EditorFontSize, string> = {
@@ -154,6 +156,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
       rightResizerOffset: 0,
       shouldStickyHeader: false,
       editorFeatureIdentifier: this.controller.item.editorIdentifier,
+      noteType: this.controller.item.noteType,
     }
 
     this.editorContentRef = createRef<HTMLDivElement>()
@@ -252,7 +255,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
     }
   }
 
-  private onNoteInnerChange(note: SNNote, source: PayloadEmitSource): void {
+  onNoteInnerChange(note: SNNote, source: PayloadEmitSource): void {
     if (note.uuid !== this.note.uuid) {
       throw Error('Editor received changes for non-current note')
     }
@@ -291,8 +294,13 @@ class NoteView extends PureComponent<NoteViewProps, State> {
       })
     }
 
-    if (note.editorIdentifier !== this.state.editorFeatureIdentifier) {
-      this.reloadEditorComponent()
+    if (note.editorIdentifier !== this.state.editorFeatureIdentifier || note.noteType !== this.state.noteType) {
+      this.setState({
+        editorFeatureIdentifier: note.editorIdentifier,
+        noteType: note.noteType,
+      })
+
+      void this.reloadEditorComponent()
     }
 
     this.reloadSpellcheck().catch(console.error)
@@ -483,7 +491,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
     }
   }
 
-  private async reloadEditorComponent() {
+  async reloadEditorComponent() {
     if (this.state.showProtectedWarning) {
       this.destroyCurrentEditorComponent()
       return

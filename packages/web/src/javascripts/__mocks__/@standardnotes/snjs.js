@@ -1,11 +1,3 @@
-const {
-  ApplicationEvent,
-  ProtectionSessionDurations,
-  ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
-} = require('@standardnotes/snjs')
+const snjs = require('@standardnotes/snjs')
 
-module.exports = {
-  ApplicationEvent: ApplicationEvent,
-  ProtectionSessionDurations: ProtectionSessionDurations,
-  ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
-}
+module.exports = snjs
