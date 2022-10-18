@@ -10,7 +10,7 @@ export interface NoteContentSpecialized {
   spellcheck?: boolean
   noteType?: NoteType
   editorIdentifier?: FeatureIdentifier | string
-  authorizedForListed: boolean
+  authorizedForListed?: boolean
 }
 
 export type NoteContent = NoteContentSpecialized & ItemContent
