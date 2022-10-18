@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.77.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.77.0...@standardnotes/web@3.77.1) (2022-10-18)
+
+### Bug Fixes
+
+* remove switch to classic mx option ([e40cd15](https://github.com/standardnotes/app/commit/e40cd157b6d1683cf9eb9548714c604649134971))
+
 # [3.77.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.76.2...@standardnotes/web@3.77.0) (2022-10-17)
 
 ### Features
