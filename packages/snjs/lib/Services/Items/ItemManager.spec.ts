@@ -784,6 +784,21 @@ describe('itemManager', () => {
       expect(references).toHaveLength(0)
     })
 
+    it('should get files linked with note', async () => {
+      itemManager = createService()
+      const note = createNoteWithTitle('invoices')
+      const file = createFile('invoice_1.pdf')
+      const secondFile = createFile('unrelated-file.xlsx')
+      await itemManager.insertItems([note, file, secondFile])
+
+      await itemManager.associateFileWithNote(file, note)
+
+      const filesAssociatedWithNote = itemManager.getSortedFilesLinkingToItem(note)
+
+      expect(filesAssociatedWithNote).toHaveLength(1)
+      expect(filesAssociatedWithNote[0].uuid).toBe(file.uuid)
+    })
+
     it('should link note to note', async () => {
       itemManager = createService()
       const note = createNoteWithTitle('research')
