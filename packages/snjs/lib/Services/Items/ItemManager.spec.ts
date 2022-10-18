@@ -784,21 +784,6 @@ describe('itemManager', () => {
       expect(references).toHaveLength(0)
     })
 
-    it('should get files linked with note', async () => {
-      itemManager = createService()
-      const note = createNoteWithTitle('invoices')
-      const file = createFile('invoice_1.pdf')
-      const secondFile = createFile('unrelated-file.xlsx')
-      await itemManager.insertItems([note, file, secondFile])
-
-      await itemManager.associateFileWithNote(file, note)
-
-      const filesAssociatedWithNote = itemManager.getSortedFilesLinkingToItem(note)
-
-      expect(filesAssociatedWithNote).toHaveLength(1)
-      expect(filesAssociatedWithNote[0].uuid).toBe(file.uuid)
-    })
-
     it('should link note to note', async () => {
       itemManager = createService()
       const note = createNoteWithTitle('research')
@@ -923,6 +908,45 @@ describe('itemManager', () => {
       expect(sortedFilesForItem).toHaveLength(2)
       expect(sortedFilesForItem[0].uuid).toEqual(fileToLink1.uuid)
       expect(sortedFilesForItem[1].uuid).toEqual(fileToLink2.uuid)
+    })
+
+    it('should get all files correctly related to item', async () => {
+      itemManager = createService()
+      const baseNote = createNoteWithTitle('note')
+      const file1 = createFile('file')
+      const file2 = createFile('A1')
+      const file3 = createFile('B2')
+
+      await itemManager.insertItems([baseNote, file1, file2, file3])
+
+      await itemManager.linkFileToFile(file1, file3)
+      await itemManager.linkFileToFile(file1, file2)
+
+      await itemManager.linkFileToFile(file3, file1)
+      await itemManager.linkFileToFile(file2, file1)
+
+      await itemManager.associateFileWithNote(file3, baseNote)
+      await itemManager.associateFileWithNote(file2, baseNote)
+
+      const { filesLinkedByItem: filesLinkedByFile, filesLinkingToItem: filesLinkingToFile } =
+        itemManager.getSortedRelatedFilesForItem(file1)
+
+      expect(filesLinkedByFile).toHaveLength(2)
+      expect(filesLinkedByFile[0].uuid).toBe(file2.uuid)
+      expect(filesLinkedByFile[1].uuid).toBe(file3.uuid)
+
+      expect(filesLinkingToFile).toHaveLength(2)
+      expect(filesLinkedByFile[0].uuid).toBe(file2.uuid)
+      expect(filesLinkedByFile[1].uuid).toBe(file3.uuid)
+
+      const { filesLinkedByItem: filesLinkedByNote, filesLinkingToItem: filesLinkingToNote } =
+        itemManager.getSortedRelatedFilesForItem(baseNote)
+
+      expect(filesLinkedByNote).toHaveLength(2)
+      expect(filesLinkedByNote[0].uuid).toBe(file2.uuid)
+      expect(filesLinkedByNote[1].uuid).toBe(file3.uuid)
+
+      expect(filesLinkingToNote).toHaveLength(0)
     })
 
     it('should get all linked notes for item', async () => {
