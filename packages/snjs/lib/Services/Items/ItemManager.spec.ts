@@ -846,16 +846,46 @@ describe('itemManager', () => {
       expect(relationshipOfFirstNoteToUnlinked).toBe('unlinked')
     })
 
-    it('should unlink itemToUnlink from item', async () => {
+    it('should unlink itemOne from itemTwo if relation is direct', async () => {
       itemManager = createService()
       const note = createNoteWithTitle('Note 1')
       const note2 = createNoteWithTitle('Note 2')
       await itemManager.insertItems([note, note2])
 
       const linkedItem = await itemManager.linkNoteToNote(note, note2)
-      const unlinkedItem = await itemManager.unlinkItem(linkedItem, note2)
+      const unlinkedItem = await itemManager.unlinkItem(linkedItem, note2, 'direct')
       const references = unlinkedItem.references
 
+      expect(unlinkedItem.uuid).toBe(note.uuid)
+      expect(references).toHaveLength(0)
+    })
+
+    it('should unlink itemTwo from itemOne if relation is indirect', async () => {
+      itemManager = createService()
+      const note = createNoteWithTitle('Note 1')
+      const note2 = createNoteWithTitle('Note 2')
+      await itemManager.insertItems([note, note2])
+
+      const linkedItem = await itemManager.linkNoteToNote(note, note2)
+      const unlinkedItem = await itemManager.unlinkItem(linkedItem, note2, 'indirect')
+      const references = unlinkedItem.references
+
+      expect(unlinkedItem.uuid).toBe(note2.uuid)
+      expect(references).toHaveLength(0)
+    })
+
+    it('should unlink itemTwo from itemOne if relation is direct but itemTwo is file and itemOne is note', async () => {
+      itemManager = createService()
+      const note = createNoteWithTitle('Note 1')
+      const file = createFile('Note 2')
+      await itemManager.insertItems([note, file])
+
+      const linkedFile = await itemManager.associateFileWithNote(file, note)
+      const linkedNote = itemManager.findSureItem(note.uuid)
+      const unlinkedItem = await itemManager.unlinkItem(linkedNote, linkedFile, 'direct')
+      const references = unlinkedItem.references
+
+      expect(unlinkedItem.uuid).toBe(file.uuid)
       expect(references).toHaveLength(0)
     })
 

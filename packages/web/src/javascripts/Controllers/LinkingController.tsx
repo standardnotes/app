@@ -280,13 +280,7 @@ export class LinkingController extends AbstractViewController {
       return
     }
 
-    const selectedItemReferencesItemToUnlink = itemToUnlink.relationWithSelectedItem === 'direct'
-
-    if (selectedItemReferencesItemToUnlink) {
-      await this.application.items.unlinkItem(selectedItem, itemToUnlink.item)
-    } else {
-      await this.application.items.unlinkItem(itemToUnlink.item, selectedItem)
-    }
+    await this.application.items.unlinkItem(selectedItem, itemToUnlink.item, itemToUnlink.relationWithSelectedItem)
 
     void this.application.sync.sync()
     this.reloadAllLinks()

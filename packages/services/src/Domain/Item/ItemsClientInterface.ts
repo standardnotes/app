@@ -17,6 +17,8 @@ import {
   ItemContent,
 } from '@standardnotes/models'
 
+type ItemRelation = 'direct' | 'indirect' | 'unlinked'
+
 export interface ItemsClientInterface {
   get invalidItems(): EncryptedItemInterface[]
 
@@ -79,6 +81,7 @@ export interface ItemsClientInterface {
   unlinkItem(
     item: DecryptedItemInterface<ItemContent>,
     itemToUnlink: DecryptedItemInterface<ItemContent>,
+    relation: ItemRelation,
   ): Promise<DecryptedItemInterface<ItemContent>>
 
   /**
@@ -156,8 +159,5 @@ export interface ItemsClientInterface {
   /**
    * @returns `'direct'` if `itemOne` has the reference to `itemTwo`, `'indirect'` if `itemTwo` has the reference to `itemOne`, `'unlinked'` if neither reference each other
    */
-  relationshipTypeForItems(
-    itemOne: DecryptedItemInterface,
-    itemTwo: DecryptedItemInterface,
-  ): 'direct' | 'indirect' | 'unlinked'
+  relationshipTypeForItems(itemOne: DecryptedItemInterface, itemTwo: DecryptedItemInterface): ItemRelation
 }

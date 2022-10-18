@@ -1170,11 +1170,27 @@ export class ItemManager
   }
 
   public async unlinkItem(
-    item: DecryptedItemInterface<ItemContent>,
-    itemToUnlink: DecryptedItemInterface<ItemContent>,
+    itemOne: DecryptedItemInterface<ItemContent>,
+    itemTwo: DecryptedItemInterface<ItemContent>,
+    relation: ReturnType<typeof this.relationshipTypeForItems>,
   ) {
-    return this.changeItem(item, (mutator) => {
-      mutator.removeItemAsRelationship(itemToUnlink)
+    if (relation === 'unlinked') {
+      throw new Error('Trying to unlink already unlinked items')
+    }
+
+    let itemToUnlinkFrom = itemOne
+    let itemToRemove = itemTwo
+
+    const isUnlinkingFileFromNote =
+      relation === 'direct' && itemOne.content_type === ContentType.Note && itemTwo.content_type === ContentType.File
+
+    if (isUnlinkingFileFromNote || relation === 'indirect') {
+      itemToUnlinkFrom = itemTwo
+      itemToRemove = itemOne
+    }
+
+    return this.changeItem(itemToUnlinkFrom, (mutator) => {
+      mutator.removeItemAsRelationship(itemToRemove)
     })
   }
 
