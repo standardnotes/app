@@ -16,8 +16,7 @@ import {
   ItemsKeyInterface,
   ItemContent,
 } from '@standardnotes/models'
-
-type ItemRelation = 'direct' | 'indirect' | 'unlinked'
+import { ItemRelationshipDirection } from './ItemRelationshipDirection'
 
 export interface ItemsClientInterface {
   get invalidItems(): EncryptedItemInterface[]
@@ -78,10 +77,9 @@ export interface ItemsClientInterface {
   linkNoteToNote(note: SNNote, otherNote: SNNote): Promise<SNNote>
   linkFileToFile(file: FileItem, otherFile: FileItem): Promise<FileItem>
 
-  unlinkItem(
-    item: DecryptedItemInterface<ItemContent>,
-    itemToUnlink: DecryptedItemInterface<ItemContent>,
-    relation: ItemRelation,
+  unlinkItems(
+    itemOne: DecryptedItemInterface<ItemContent>,
+    itemTwo: DecryptedItemInterface<ItemContent>,
   ): Promise<DecryptedItemInterface<ItemContent>>
 
   /**
@@ -118,12 +116,6 @@ export interface ItemsClientInterface {
    */
   getSortedTagsForItem(item: DecryptedItemInterface<ItemContent>): SNTag[]
 
-  getSortedLinkedFilesForItem(item: DecryptedItemInterface<ItemContent>): FileItem[]
-  getSortedFilesLinkingToItem(item: DecryptedItemInterface<ItemContent>): FileItem[]
-
-  getSortedLinkedNotesForItem(item: DecryptedItemInterface<ItemContent>): SNNote[]
-  getSortedNotesLinkingToItem(item: DecryptedItemInterface<ItemContent>): SNNote[]
-
   isSmartViewTitle(title: string): boolean
 
   getSmartViews(): SmartView[]
@@ -156,8 +148,8 @@ export interface ItemsClientInterface {
    */
   isTemplateItem(item: DecryptedItemInterface): boolean
 
-  /**
-   * @returns `'direct'` if `itemOne` has the reference to `itemTwo`, `'indirect'` if `itemTwo` has the reference to `itemOne`, `'unlinked'` if neither reference each other
-   */
-  relationshipTypeForItems(itemOne: DecryptedItemInterface, itemTwo: DecryptedItemInterface): ItemRelation
+  relationshipDirectionBetweenItems(
+    itemA: DecryptedItemInterface,
+    itemB: DecryptedItemInterface,
+  ): ItemRelationshipDirection
 }

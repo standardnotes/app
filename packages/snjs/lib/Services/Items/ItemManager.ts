@@ -7,7 +7,7 @@ import { UuidString } from '../../Types/UuidString'
 import * as Models from '@standardnotes/models'
 import * as Services from '@standardnotes/services'
 import { PayloadManagerChangeData } from '../Payloads'
-import { DiagnosticInfo, ItemsClientInterface } from '@standardnotes/services'
+import { DiagnosticInfo, ItemsClientInterface, ItemRelationshipDirection } from '@standardnotes/services'
 import { ApplicationDisplayOptions } from '@Lib/Application/Options/OptionalOptions'
 import { CollectionSort, DecryptedItemInterface, ItemContent } from '@standardnotes/models'
 
@@ -1169,24 +1169,17 @@ export class ItemManager
     })
   }
 
-  public async unlinkItem(
-    itemOne: DecryptedItemInterface<ItemContent>,
-    itemTwo: DecryptedItemInterface<ItemContent>,
-    relation: ReturnType<typeof this.relationshipTypeForItems>,
-  ) {
-    if (relation === 'unlinked') {
+  public async unlinkItems(itemA: DecryptedItemInterface<ItemContent>, itemB: DecryptedItemInterface<ItemContent>) {
+    const relationshipDirection = this.relationshipDirectionBetweenItems(itemA, itemB)
+
+    if (relationshipDirection === ItemRelationshipDirection.NoRelationship) {
       throw new Error('Trying to unlink already unlinked items')
     }
 
-    let itemToUnlinkFrom = itemOne
-    let itemToRemove = itemTwo
+    const itemToChange = relationshipDirection === ItemRelationshipDirection.AReferencesB ? itemA : itemB
+    const itemToRemove = itemToChange === itemA ? itemB : itemA
 
-    if (relation === 'indirect') {
-      itemToUnlinkFrom = itemTwo
-      itemToRemove = itemOne
-    }
-
-    return this.changeItem(itemToUnlinkFrom, (mutator) => {
+    return this.changeItem(itemToChange, (mutator) => {
       mutator.removeItemAsRelationship(itemToRemove)
     })
   }
@@ -1203,54 +1196,6 @@ export class ItemManager
       }) as Models.SNTag[],
       'title',
     )
-  }
-
-  public getSortedLinkedFilesForItem(item: DecryptedItemInterface<ItemContent>): Models.FileItem[] {
-    if (this.isTemplateItem(item)) {
-      return []
-    }
-
-    const filesReferencedByItem = this.referencesForItem(item).filter(
-      (ref) => ref.content_type === ContentType.File,
-    ) as Models.FileItem[]
-
-    return naturalSort(filesReferencedByItem, 'title')
-  }
-
-  public getSortedFilesLinkingToItem(item: DecryptedItemInterface<ItemContent>): Models.FileItem[] {
-    if (this.isTemplateItem(item)) {
-      return []
-    }
-
-    const filesReferencingItem = this.itemsReferencingItem(item).filter(
-      (ref) => ref.content_type === ContentType.File,
-    ) as Models.FileItem[]
-
-    return naturalSort(filesReferencingItem, 'title')
-  }
-
-  public getSortedLinkedNotesForItem(item: DecryptedItemInterface<ItemContent>): Models.SNNote[] {
-    if (this.isTemplateItem(item)) {
-      return []
-    }
-
-    const notesReferencedByItem = this.referencesForItem(item).filter(
-      (ref) => ref.content_type === ContentType.Note,
-    ) as Models.SNNote[]
-
-    return naturalSort(notesReferencedByItem, 'title')
-  }
-
-  public getSortedNotesLinkingToItem(item: Models.DecryptedItemInterface<Models.ItemContent>): Models.SNNote[] {
-    if (this.isTemplateItem(item)) {
-      return []
-    }
-
-    const notesReferencingItem = this.itemsReferencingItem(item).filter(
-      (ref) => ref.content_type === ContentType.Note,
-    ) as Models.SNNote[]
-
-    return naturalSort(notesReferencingItem, 'title')
   }
 
   public async createTag(title: string, parentItemToLookupUuidFor?: Models.SNTag): Promise<Models.SNTag> {
@@ -1446,21 +1391,18 @@ export class ItemManager
     return this.findAnyItems(uuids) as (Models.DecryptedItemInterface | Models.DeletedItemInterface)[]
   }
 
-  /**
-   * @returns `'direct'` if `itemOne` has the reference to `itemTwo`, `'indirect'` if `itemTwo` has the reference to `itemOne`, `'unlinked'` if neither reference each other
-   */
-  public relationshipTypeForItems(
-    itemOne: Models.DecryptedItemInterface<Models.ItemContent>,
-    itemTwo: Models.DecryptedItemInterface<Models.ItemContent>,
-  ): 'direct' | 'indirect' | 'unlinked' {
-    const itemOneReferencesItemTwo = this.isTemplateItem(itemOne)
-      ? false
-      : !!this.referencesForItem(itemOne).find((reference) => reference.uuid === itemTwo.uuid)
-    const itemTwoReferencesItemOne = this.isTemplateItem(itemTwo)
-      ? false
-      : !!this.referencesForItem(itemTwo).find((reference) => reference.uuid === itemOne.uuid)
+  public relationshipDirectionBetweenItems(
+    itemA: Models.DecryptedItemInterface<Models.ItemContent>,
+    itemB: Models.DecryptedItemInterface<Models.ItemContent>,
+  ): ItemRelationshipDirection {
+    const itemAReferencesItemB = !!itemA.references.find((reference) => reference.uuid === itemB.uuid)
+    const itemBReferencesItemA = !!itemB.references.find((reference) => reference.uuid === itemA.uuid)
 
-    return itemOneReferencesItemTwo ? 'direct' : itemTwoReferencesItemOne ? 'indirect' : 'unlinked'
+    return itemAReferencesItemB
+      ? ItemRelationshipDirection.AReferencesB
+      : itemBReferencesItemA
+      ? ItemRelationshipDirection.BReferencesA
+      : ItemRelationshipDirection.NoRelationship
   }
 
   override getDiagnostics(): Promise<DiagnosticInfo | undefined> {

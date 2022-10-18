@@ -14,7 +14,14 @@ import {
   ClassicFileSaver,
   parseFileName,
 } from '@standardnotes/filepicker'
-import { ChallengeReason, ClientDisplayableError, ContentType, FileItem, InternalEventBus } from '@standardnotes/snjs'
+import {
+  ChallengeReason,
+  ClientDisplayableError,
+  ContentType,
+  FileItem,
+  InternalEventBus,
+  isFile,
+} from '@standardnotes/snjs'
 import { addToast, dismissToast, ToastType, updateToast } from '@standardnotes/toast'
 import { action, makeObservable, observable, reaction } from 'mobx'
 import { WebApplication } from '../Application/Application'
@@ -99,7 +106,7 @@ export class FilesController extends AbstractViewController {
   reloadAttachedFiles = () => {
     const note = this.notesController.firstSelectedNote
     if (note) {
-      this.attachedFiles = this.application.items.getSortedFilesLinkingToItem(note)
+      this.attachedFiles = this.application.items.itemsReferencingItem(note).filter(isFile)
     }
   }
 
