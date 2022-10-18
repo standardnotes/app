@@ -6,7 +6,6 @@ import {
   ComponentArea,
   ComponentMutator,
   SNComponent,
-  StorageValueModes,
   NewNoteTitleFormat,
 } from '@standardnotes/snjs'
 import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
@@ -17,7 +16,6 @@ import Switch from '@/Components/Switch/Switch'
 import { PLAIN_EDITOR_NAME } from '@/Constants/Constants'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
-import Button from '@/Components/Button/Button'
 import CustomNoteTitleFormat from './Defaults/CustomNoteTitleFormat'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 
@@ -53,8 +51,6 @@ const removeEditorDefault = (application: WebApplication, component: SNComponent
 const getDefaultEditor = (application: WebApplication) => {
   return application.componentManager.componentsForArea(ComponentArea.Editor).filter((e) => e.isDefaultEditor())[0]
 }
-
-const AlwaysOpenWebAppOnLaunchKey = 'AlwaysOpenWebAppOnLaunch'
 
 const Defaults: FunctionComponent<Props> = ({ application }) => {
   const [editorItems, setEditorItems] = useState<DropdownItem[]>([])
@@ -125,13 +121,6 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
     }
   }
 
-  const switchToNativeView = async () => {
-    application.setValue(AlwaysOpenWebAppOnLaunchKey, false, StorageValueModes.Nonwrapped)
-    setTimeout(() => {
-      application.deviceInterface.performSoftReset()
-    }, 1000)
-  }
-
   const noteTitleFormatOptions = useMemo(
     () => [
       {
@@ -158,19 +147,6 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Defaults</Title>
-        {application.isNativeMobileWeb() && (
-          <>
-            <div className="flex flex-col">
-              <Subtitle>Switch to Classic Mobile Experience</Subtitle>
-              <Text>
-                This will close the app and switch back to the soon-to-be removed classic mobile experience. You can opt
-                back in to new experience from the app settings.
-              </Text>
-              <Button className="mt-3 min-w-20" label="Switch" onClick={switchToNativeView} />
-            </div>
-            <HorizontalSeparator classes="my-4" />
-          </>
-        )}
         <div>
           <Subtitle>Default Note Type</Subtitle>
           <Text>New notes will be created using this type</Text>
