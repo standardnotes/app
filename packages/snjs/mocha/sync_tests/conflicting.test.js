@@ -114,59 +114,6 @@ describe('online conflict handling', function () {
     await this.sharedFinalAssertions()
   })
 
-  it('duplicating note should maintain editor ref', async function () {
-    const note = await Factory.createSyncedNote(this.application)
-    this.expectedItemCount++
-    const basePayload = createDirtyPayload(ContentType.Component)
-    const payload = basePayload.copy({
-      content: {
-        ...basePayload.content,
-        area: ComponentArea.Editor,
-      },
-    })
-    const editor = await this.application.itemManager.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
-    this.expectedItemCount++
-    await this.application.syncService.sync(syncOptions)
-
-    await this.application.mutator.changeAndSaveItem(
-      editor,
-      (mutator) => {
-        mutator.associateWithItem(note.uuid)
-      },
-      undefined,
-      undefined,
-      syncOptions,
-    )
-
-    expect(this.application.componentManager.editorForNote(note)).to.be.ok
-
-    /** Conflict the note */
-    /** First modify the item without saving so that
-     * our local contents digress from the server's */
-    await this.application.mutator.changeItem(note, (mutator) => {
-      mutator.title = `${Math.random()}`
-    })
-
-    await Factory.changePayloadTimeStampAndSync(
-      this.application,
-      note.payload,
-      Factory.dateToMicroseconds(Factory.yesterday()),
-      {
-        title: 'zar',
-      },
-      syncOptions,
-    )
-
-    this.expectedItemCount++
-
-    const duplicate = this.application.itemManager.getDisplayableNotes().find((n) => {
-      return n.uuid !== note.uuid
-    })
-    expect(duplicate).to.be.ok
-    expect(this.application.componentManager.editorForNote(duplicate)).to.be.ok
-    await this.sharedFinalAssertions()
-  })
-
   it('should create conflicted copy if incoming server item attempts to overwrite local dirty item', async function () {
     // create an item and sync it
     const note = await Factory.createMappedNote(this.application)
