@@ -1181,10 +1181,7 @@ export class ItemManager
     let itemToUnlinkFrom = itemOne
     let itemToRemove = itemTwo
 
-    const isUnlinkingFileFromNote =
-      relation === 'direct' && itemOne.content_type === ContentType.Note && itemTwo.content_type === ContentType.File
-
-    if (isUnlinkingFileFromNote || relation === 'indirect') {
+    if (relation === 'indirect') {
       itemToUnlinkFrom = itemTwo
       itemToRemove = itemOne
     }
@@ -1230,30 +1227,6 @@ export class ItemManager
     ) as Models.FileItem[]
 
     return naturalSort(filesReferencingItem, 'title')
-  }
-
-  public getSortedRelatedFilesForItem(item: Models.DecryptedItemInterface<Models.ItemContent>): {
-    filesLinkedByItem: Models.FileItem[]
-    filesLinkingToItem: Models.FileItem[]
-  } {
-    if (this.isTemplateItem(item)) {
-      return {
-        filesLinkedByItem: [],
-        filesLinkingToItem: [],
-      }
-    }
-
-    if (item.content_type === ContentType.Note) {
-      return {
-        filesLinkedByItem: this.getSortedFilesLinkingToItem(item),
-        filesLinkingToItem: [],
-      }
-    }
-
-    return {
-      filesLinkedByItem: this.getSortedLinkedFilesForItem(item),
-      filesLinkingToItem: this.getSortedFilesLinkingToItem(item),
-    }
   }
 
   public getSortedLinkedNotesForItem(item: DecryptedItemInterface<ItemContent>): Models.SNNote[] {

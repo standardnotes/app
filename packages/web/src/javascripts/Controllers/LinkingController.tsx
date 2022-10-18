@@ -161,12 +161,16 @@ export class LinkingController extends AbstractViewController {
       return
     }
 
-    const { filesLinkedByItem, filesLinkingToItem } = this.application.items.getSortedRelatedFilesForItem(
-      this.activeItem,
-    )
+    const filesLinkedByItem = this.application.items.getSortedLinkedFilesForItem(this.activeItem)
+    const filesLinkingToItem = this.application.items.getSortedFilesLinkingToItem(this.activeItem)
 
-    this.linkedFiles = filesLinkedByItem.map((item) => this.createLinkFromItem(item, 'direct'))
-    this.filesLinkingToActiveItem = filesLinkingToItem.map((item) => this.createLinkFromItem(item, 'indirect'))
+    if (this.shouldSwitchItemRelation(this.activeItem.content_type, ContentType.File)) {
+      this.linkedFiles = filesLinkingToItem.map((item) => this.createLinkFromItem(item, 'direct'))
+      this.filesLinkingToActiveItem = filesLinkedByItem.map((item) => this.createLinkFromItem(item, 'indirect'))
+    } else {
+      this.linkedFiles = filesLinkedByItem.map((item) => this.createLinkFromItem(item, 'direct'))
+      this.filesLinkingToActiveItem = filesLinkingToItem.map((item) => this.createLinkFromItem(item, 'indirect'))
+    }
   }
 
   reloadLinkedTags() {
@@ -194,6 +198,10 @@ export class LinkingController extends AbstractViewController {
         .map((item) => this.createLinkFromItem(item, 'indirect'))
       this.notesLinkingToActiveItem = notes
     }
+  }
+
+  shouldSwitchItemRelation = (itemOneContentType: ContentType, itemTwoContentType: ContentType) => {
+    return itemOneContentType === ContentType.Note && itemTwoContentType === ContentType.File
   }
 
   getTitleForLinkedTag = (item: LinkableItem) => {
@@ -269,7 +277,13 @@ export class LinkingController extends AbstractViewController {
       return
     }
 
-    await this.application.items.unlinkItem(selectedItem, itemToUnlink.item, itemToUnlink.relationWithSelectedItem)
+    const shouldSwitchItemRelation = this.shouldSwitchItemRelation(
+      selectedItem.content_type,
+      itemToUnlink.item.content_type,
+    )
+    const relation = shouldSwitchItemRelation ? 'direct' : itemToUnlink.relationWithSelectedItem
+
+    await this.application.items.unlinkItem(selectedItem, itemToUnlink.item, relation)
 
     void this.application.sync.sync()
     this.reloadAllLinks()
