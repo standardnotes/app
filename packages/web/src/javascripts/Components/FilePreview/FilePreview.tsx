@@ -57,6 +57,10 @@ const FilePreview = ({ file, application }: Props) => {
     void downloadFileForPreview()
   }, [application.files, downloadedBytes, file, isFilePreviewable])
 
+  if (!application.isAuthorizedToRenderItem(file)) {
+    return null
+  }
+
   return isDownloading ? (
     <div className="flex flex-grow flex-col items-center justify-center">
       <div className="flex items-center">
