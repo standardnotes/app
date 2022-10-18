@@ -167,6 +167,7 @@ export const ChallengeStrings = {
   SelectProtectedNote: 'Authentication is required to select a protected note',
   DisableMfa: 'Authentication is required to disable two-factor authentication',
   DeleteAccount: 'Authentication is required to delete your account',
+  ListedAuthorization: 'Authentication is required to approve this note for Listed',
 }
 
 export const ErrorAlertStrings = {

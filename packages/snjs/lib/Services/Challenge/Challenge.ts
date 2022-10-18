@@ -79,6 +79,8 @@ export class Challenge implements ChallengeInterface {
           return ChallengeStrings.DisableMfa
         case ChallengeReason.DeleteAccount:
           return ChallengeStrings.DeleteAccount
+        case ChallengeReason.AuthorizeNoteForListed:
+          return ChallengeStrings.ListedAuthorization
         case ChallengeReason.Custom:
           return ''
         default:
