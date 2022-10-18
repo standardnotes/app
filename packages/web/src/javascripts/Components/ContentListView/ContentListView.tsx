@@ -241,6 +241,7 @@ const ContentListView: FunctionComponent<Props> = ({
             selectionController={selectionController}
           />
         ) : null}
+        <div className="absolute bottom-0 h-safe-bottom w-full" />
       </ResponsivePaneContent>
       {itemsViewPanelRef.current && (
         <PanelResizer
