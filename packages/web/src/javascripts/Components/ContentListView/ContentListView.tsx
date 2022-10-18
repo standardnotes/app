@@ -24,6 +24,7 @@ import SearchBar from '../SearchBar/SearchBar'
 import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { MediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
+import { useFileDragNDrop } from '../FileDragNDropProvider/FileDragNDropProvider'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -52,6 +53,22 @@ const ContentListView: FunctionComponent<Props> = ({
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const itemsViewPanelRef = useRef<HTMLDivElement>(null)
+
+  const { addDragTarget, removeDragTarget } = useFileDragNDrop()
+
+  useEffect(() => {
+    const target = itemsViewPanelRef.current
+
+    if (target) {
+      addDragTarget(target)
+    }
+
+    return () => {
+      if (target) {
+        removeDragTarget(target)
+      }
+    }
+  }, [addDragTarget, removeDragTarget])
 
   const {
     completedFullSync,

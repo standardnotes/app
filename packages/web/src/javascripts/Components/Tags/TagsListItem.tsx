@@ -23,6 +23,8 @@ import { DropItem, DropProps, ItemTypes } from './DragNDrop'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import { classNames } from '@/Utils/ConcatenateClassNames'
+import { mergeRefs } from '@/Hooks/mergeRefs'
+import { useFileDragNDrop } from '../FileDragNDropProvider/FileDragNDropProvider'
 
 type Props = {
   tag: SNTag
@@ -200,6 +202,24 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
     [onContextMenu, tagsState, tag],
   )
 
+  const tagRef = useRef<HTMLDivElement>(null)
+
+  const { addDragTarget, removeDragTarget } = useFileDragNDrop()
+
+  useEffect(() => {
+    const target = tagRef.current
+
+    if (target) {
+      addDragTarget(target)
+    }
+
+    return () => {
+      if (target) {
+        removeDragTarget(target)
+      }
+    }
+  }, [addDragTarget, removeDragTarget])
+
   return (
     <>
       <div
@@ -211,7 +231,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
           readyToDrop && 'is-drag-over',
         )}
         onClick={selectCurrentTag}
-        ref={dragRef}
+        ref={mergeRefs([dragRef, tagRef])}
         style={{
           paddingLeft: `${level * PADDING_PER_LEVEL_PX + PADDING_BASE_PX}px`,
         }}

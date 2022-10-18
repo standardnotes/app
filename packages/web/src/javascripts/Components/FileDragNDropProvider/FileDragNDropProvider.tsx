@@ -4,10 +4,13 @@ import { FilesController } from '@/Controllers/FilesController'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { isHandlingFileDrag } from '@/Utils/DragTypeCheck'
 import { StreamingFileReader } from '@standardnotes/filepicker'
-import { useMemo, useState, createContext, ReactNode, useRef, useCallback, useEffect, useContext } from 'react'
+import { useMemo, useState, createContext, ReactNode, useRef, useCallback, useEffect, useContext, memo } from 'react'
+import Portal from '../Portal/Portal'
 
 type FileDnDContextData = {
   isDraggingFiles: boolean
+  addDragTarget: (target: HTMLElement) => void
+  removeDragTarget: (target: HTMLElement) => void
 }
 
 export const FileDnDContext = createContext<FileDnDContextData | null>(null)
@@ -29,11 +32,58 @@ type Props = {
   children: ReactNode
 }
 
+const FileDragOverlayClassName =
+  'overlay pointer-events-none absolute top-0 left-0 z-panel-resizer h-full w-full border-2 border-info before:block before:h-full before:w-full before:bg-info before:opacity-20'
+
+const MemoizedChildren = memo(({ children }: { children: ReactNode }) => {
+  return <>{children}</>
+})
+
 const FileDragNDropProvider = ({ application, children, featuresController, filesController }: Props) => {
   const premiumModal = usePremiumModal()
   const [isDraggingFiles, setIsDraggingFiles] = useState(false)
+  const [isDraggingOverDragTarget, setIsDraggingOverDragTarget] = useState(false)
+
+  const fileDragOverlayRef = useRef<HTMLDivElement>(null)
+
+  const addOverlayToElement = useCallback((target: Element) => {
+    if (fileDragOverlayRef.current) {
+      const targetBoundingRect = target.getBoundingClientRect()
+      fileDragOverlayRef.current.style.width = `${targetBoundingRect.width}px`
+      fileDragOverlayRef.current.style.height = `${targetBoundingRect.height}px`
+      fileDragOverlayRef.current.style.top = `${targetBoundingRect.y}px`
+      fileDragOverlayRef.current.style.left = `${targetBoundingRect.x}px`
+    }
+  }, [])
+
+  const removeOverlayFromElement = useCallback(() => {
+    if (fileDragOverlayRef.current) {
+      fileDragOverlayRef.current.style.width = ''
+      fileDragOverlayRef.current.style.height = ''
+      fileDragOverlayRef.current.style.top = ''
+      fileDragOverlayRef.current.style.left = ''
+    }
+  }, [])
+
+  const dragTargets = useRef<Set<HTMLElement>>(new Set())
+
+  const addDragTarget = useCallback((target: HTMLElement) => {
+    target.setAttribute('data-file-drag-target', '')
+    dragTargets.current.add(target)
+  }, [])
+
+  const removeDragTarget = useCallback((target: HTMLElement) => {
+    target.removeAttribute('data-file-drag-target')
+    dragTargets.current.delete(target)
+  }, [])
 
   const dragCounter = useRef(0)
+
+  const resetState = useCallback(() => {
+    setIsDraggingFiles(false)
+    setIsDraggingOverDragTarget(false)
+    removeOverlayFromElement()
+  }, [removeOverlayFromElement])
 
   const handleDrag = useCallback(
     (event: DragEvent) => {
@@ -54,13 +104,28 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
       event.preventDefault()
       event.stopPropagation()
 
+      removeOverlayFromElement()
+
+      let closestDragTarget: Element | null = null
+
+      if (event.target instanceof HTMLElement) {
+        closestDragTarget = event.target.closest('[data-file-drag-target]')
+      }
+
       dragCounter.current = dragCounter.current + 1
 
       if (event.dataTransfer?.items.length) {
         setIsDraggingFiles(true)
+        if (closestDragTarget) {
+          setIsDraggingOverDragTarget(true)
+          addOverlayToElement(closestDragTarget)
+        } else {
+          setIsDraggingOverDragTarget(false)
+          removeOverlayFromElement()
+        }
       }
     },
-    [application],
+    [addOverlayToElement, application, removeOverlayFromElement],
   )
 
   const handleDragOut = useCallback(
@@ -78,22 +143,22 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
         return
       }
 
-      setIsDraggingFiles(false)
+      resetState()
     },
-    [application],
+    [application, resetState],
   )
 
   const handleDrop = useCallback(
     (event: DragEvent) => {
       if (!isHandlingFileDrag(event, application)) {
-        setIsDraggingFiles(false)
+        resetState()
         return
       }
 
       event.preventDefault()
       event.stopPropagation()
 
-      setIsDraggingFiles(false)
+      resetState()
 
       if (!featuresController.hasFiles) {
         premiumModal.activate('Files')
@@ -101,7 +166,7 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
       }
 
       if (event.dataTransfer?.items.length) {
-        Array.from(event.dataTransfer.items).forEach(async (item) => {
+        /* Array.from(event.dataTransfer.items).forEach(async (item) => {
           const fileOrHandle = StreamingFileReader.available()
             ? ((await item.getAsFileSystemHandle()) as FileSystemFileHandle)
             : item.getAsFile()
@@ -115,13 +180,13 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
           if (!uploadedFiles) {
             return
           }
-        })
+        }) */
 
         event.dataTransfer.clearData()
         dragCounter.current = 0
       }
     },
-    [application, featuresController.hasFiles, filesController, premiumModal],
+    [application, featuresController.hasFiles, premiumModal, resetState],
   )
 
   useEffect(() => {
@@ -141,10 +206,25 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
   const contextValue = useMemo(() => {
     return {
       isDraggingFiles,
+      addDragTarget,
+      removeDragTarget,
     }
-  }, [isDraggingFiles])
+  }, [addDragTarget, isDraggingFiles, removeDragTarget])
 
-  return <FileDnDContext.Provider value={contextValue}>{children}</FileDnDContext.Provider>
+  return (
+    <FileDnDContext.Provider value={contextValue}>
+      <MemoizedChildren children={children} />
+      {isDraggingFiles ? (
+        isDraggingOverDragTarget ? (
+          <Portal>
+            <div className={FileDragOverlayClassName} ref={fileDragOverlayRef} />
+          </Portal>
+        ) : (
+          <div className={FileDragOverlayClassName} ref={fileDragOverlayRef} />
+        )
+      ) : null}
+    </FileDnDContext.Provider>
+  )
 }
 
 export default FileDragNDropProvider
