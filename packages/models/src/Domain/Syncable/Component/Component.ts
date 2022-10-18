@@ -7,6 +7,7 @@ import {
   ComponentFlag,
   ComponentPermission,
   FindNativeFeature,
+  NoteType,
 } from '@standardnotes/features'
 import { AppDataField } from '../../Abstract/Item/Types/AppDataField'
 import { ComponentContent, ComponentInterface } from './ComponentContent'
@@ -175,6 +176,10 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
 
   public get thirdPartyPackageInfo(): ThirdPartyFeatureDescription {
     return this.package_info as ThirdPartyFeatureDescription
+  }
+
+  public get noteType(): NoteType {
+    return this.package_info.note_type || NoteType.Plain
   }
 
   public get isDeprecated(): boolean {

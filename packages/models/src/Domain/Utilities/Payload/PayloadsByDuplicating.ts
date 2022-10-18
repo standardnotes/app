@@ -2,7 +2,6 @@ import { PayloadSource } from './../../Abstract/Payload/Types/PayloadSource'
 import { extendArray, UuidGenerator } from '@standardnotes/utils'
 import { ImmutablePayloadCollection } from '../../Runtime/Collection/Payload/ImmutablePayloadCollection'
 import { ItemContent } from '../../Abstract/Content/ItemContent'
-import { AffectorMapping } from './AffectorFunction'
 import { PayloadsByUpdatingReferencingPayloadReferences } from './PayloadsByUpdatingReferencingPayloadReferences'
 import { isDecryptedPayload } from '../../Abstract/Payload/Interfaces/TypeCheck'
 import { FullyFormedPayloadInterface } from '../../Abstract/Payload/Interfaces/UnionTypes'
@@ -67,14 +66,6 @@ export function PayloadsByDuplicating<C extends ItemContent = ItemContent>(dto: 
      */
     const updatedReferencing = PayloadsByUpdatingReferencingPayloadReferences(payload, baseCollection, [copy])
     extendArray(results, updatedReferencing)
-  }
-
-  const affector = AffectorMapping[payload.content_type]
-  if (affector) {
-    const affected = affector(payload, copy, baseCollection)
-    if (affected) {
-      extendArray(results, affected)
-    }
   }
 
   return results
