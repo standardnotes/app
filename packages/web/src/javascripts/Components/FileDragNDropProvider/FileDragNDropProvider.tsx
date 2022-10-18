@@ -4,17 +4,10 @@ import { FilesController } from '@/Controllers/FilesController'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { isHandlingFileDrag } from '@/Utils/DragTypeCheck'
 import { StreamingFileReader } from '@standardnotes/filepicker'
-import { FileItem } from '@standardnotes/snjs'
 import { useMemo, useState, createContext, ReactNode, useRef, useCallback, useEffect, useContext } from 'react'
-import { PopoverTabs } from '../AttachedFilesPopover/PopoverTabs'
-
-type FilesDragInCallback = (tab: PopoverTabs) => void
-type FilesDropCallback = (uploadedFiles: FileItem[]) => void
 
 type FileDnDContextData = {
   isDraggingFiles: boolean
-  addFilesDragInCallback: (callback: FilesDragInCallback) => void
-  addFilesDropCallback: (callback: FilesDropCallback) => void
 }
 
 export const FileDnDContext = createContext<FileDnDContextData | null>(null)
@@ -40,17 +33,6 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
   const premiumModal = usePremiumModal()
   const [isDraggingFiles, setIsDraggingFiles] = useState(false)
 
-  const filesDragInCallbackRef = useRef<FilesDragInCallback>()
-  const filesDropCallbackRef = useRef<FilesDropCallback>()
-
-  const addFilesDragInCallback = useCallback((callback: FilesDragInCallback) => {
-    filesDragInCallbackRef.current = callback
-  }, [])
-
-  const addFilesDropCallback = useCallback((callback: FilesDropCallback) => {
-    filesDropCallbackRef.current = callback
-  }, [])
-
   const dragCounter = useRef(0)
 
   const handleDrag = useCallback(
@@ -71,15 +53,6 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
 
       event.preventDefault()
       event.stopPropagation()
-
-      switch ((event.target as HTMLElement).id) {
-        case PopoverTabs.AllFiles:
-          filesDragInCallbackRef.current?.(PopoverTabs.AllFiles)
-          break
-        case PopoverTabs.AttachedFiles:
-          filesDragInCallbackRef.current?.(PopoverTabs.AttachedFiles)
-          break
-      }
 
       dragCounter.current = dragCounter.current + 1
 
@@ -142,8 +115,6 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
           if (!uploadedFiles) {
             return
           }
-
-          filesDropCallbackRef.current?.(uploadedFiles)
         })
 
         event.dataTransfer.clearData()
@@ -170,10 +141,8 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
   const contextValue = useMemo(() => {
     return {
       isDraggingFiles,
-      addFilesDragInCallback,
-      addFilesDropCallback,
     }
-  }, [addFilesDragInCallback, addFilesDropCallback, isDraggingFiles])
+  }, [isDraggingFiles])
 
   return <FileDnDContext.Provider value={contextValue}>{children}</FileDnDContext.Provider>
 }

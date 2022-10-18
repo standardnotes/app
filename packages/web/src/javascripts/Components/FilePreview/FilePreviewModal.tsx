@@ -1,7 +1,7 @@
 import { WebApplication } from '@/Application/Application'
 import { DialogContent, DialogOverlay } from '@reach/dialog'
 import { FunctionComponent, KeyboardEventHandler, useCallback, useMemo, useRef, useState } from 'react'
-import { getFileIconComponent } from '@/Components/AttachedFilesPopover/getFileIconComponent'
+import { getFileIconComponent } from './getFileIconComponent'
 import Icon from '@/Components/Icon/Icon'
 import FilePreviewInfoPanel from './FilePreviewInfoPanel'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'

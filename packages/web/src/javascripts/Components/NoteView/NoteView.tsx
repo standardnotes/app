@@ -29,7 +29,6 @@ import ComponentView from '@/Components/ComponentView/ComponentView'
 import PanelResizer, { PanelSide, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
 import { ElementIds } from '@/Constants/ElementIDs'
 import ChangeEditorButton from '@/Components/ChangeEditor/ChangeEditorButton'
-import AttachedFilesButton from '@/Components/AttachedFilesPopover/AttachedFilesButton'
 import EditingDisabledBanner from './EditingDisabledBanner'
 import {
   transactionForAssociateComponentWithCurrentNote,
@@ -1003,16 +1002,6 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                     filesController={this.viewControllerManager.filesController}
                     linkingController={this.viewControllerManager.linkingController}
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                  />
-                  <AttachedFilesButton
-                    application={this.application}
-                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                    featuresController={this.viewControllerManager.featuresController}
-                    filePreviewModalController={this.viewControllerManager.filePreviewModalController}
-                    filesController={this.viewControllerManager.filesController}
-                    navigationController={this.viewControllerManager.navigationController}
-                    notesController={this.viewControllerManager.notesController}
-                    selectionController={this.viewControllerManager.selectionController}
                   />
                   <ChangeEditorButton
                     application={this.application}
