@@ -120,6 +120,10 @@ export interface ItemsClientInterface {
 
   getSortedLinkedFilesForItem(item: DecryptedItemInterface<ItemContent>): FileItem[]
   getSortedFilesLinkingToItem(item: DecryptedItemInterface<ItemContent>): FileItem[]
+  getSortedRelatedFilesForItem(item: DecryptedItemInterface<ItemContent>): {
+    filesLinkedByItem: FileItem[]
+    filesLinkingToItem: FileItem[]
+  }
 
   getSortedLinkedNotesForItem(item: DecryptedItemInterface<ItemContent>): SNNote[]
   getSortedNotesLinkingToItem(item: DecryptedItemInterface<ItemContent>): SNNote[]

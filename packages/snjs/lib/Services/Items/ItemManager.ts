@@ -1232,6 +1232,30 @@ export class ItemManager
     return naturalSort(filesReferencingItem, 'title')
   }
 
+  public getSortedRelatedFilesForItem(item: Models.DecryptedItemInterface<Models.ItemContent>): {
+    filesLinkedByItem: Models.FileItem[]
+    filesLinkingToItem: Models.FileItem[]
+  } {
+    if (this.isTemplateItem(item)) {
+      return {
+        filesLinkedByItem: [],
+        filesLinkingToItem: [],
+      }
+    }
+
+    if (item.content_type === ContentType.Note) {
+      return {
+        filesLinkedByItem: this.getSortedFilesLinkingToItem(item),
+        filesLinkingToItem: [],
+      }
+    }
+
+    return {
+      filesLinkedByItem: this.getSortedLinkedFilesForItem(item),
+      filesLinkingToItem: this.getSortedFilesLinkingToItem(item),
+    }
+  }
+
   public getSortedLinkedNotesForItem(item: DecryptedItemInterface<ItemContent>): Models.SNNote[] {
     if (this.isTemplateItem(item)) {
       return []
