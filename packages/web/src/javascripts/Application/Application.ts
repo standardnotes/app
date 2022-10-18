@@ -20,6 +20,7 @@ import {
   MobileDeviceInterface,
   MobileUnlockTiming,
   InternalEventBus,
+  DecryptedItem,
 } from '@standardnotes/snjs'
 import { makeObservable, observable } from 'mobx'
 import { PanelResizedData } from '@/Types/PanelResizedData'
@@ -307,5 +308,13 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       return this.androidBackHandler.addEventListener(listener)
     }
     return
+  }
+
+  isAuthorizedToRenderItem(item: DecryptedItem): boolean {
+    if (item.protected && this.hasProtectionSources()) {
+      return this.hasUnprotectedAccessSession()
+    }
+
+    return true
   }
 }

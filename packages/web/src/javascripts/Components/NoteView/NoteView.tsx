@@ -228,7 +228,9 @@ class NoteView extends PureComponent<NoteViewProps, State> {
     this.reloadEditorComponent().catch(console.error)
     this.reloadStackComponents().catch(console.error)
 
-    const showProtectedWarning = this.note.protected && !this.application.hasProtectionSources()
+    const showProtectedWarning =
+      this.note.protected &&
+      (!this.application.hasProtectionSources() || !this.application.hasUnprotectedAccessSession())
     this.setShowProtectedOverlay(showProtectedWarning)
 
     this.reloadPreferences().catch(console.error)
@@ -927,7 +929,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
   }
 
   override render() {
-    if (this.state.showProtectedWarning) {
+    if (this.state.showProtectedWarning || !this.application.isAuthorizedToRenderItem(this.note)) {
       return (
         <ProtectedItemOverlay
           viewControllerManager={this.viewControllerManager}
