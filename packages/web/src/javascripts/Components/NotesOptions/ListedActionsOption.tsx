@@ -17,9 +17,15 @@ const ListedActionsOption: FunctionComponent<Props> = ({ application, note }) =>
 
   const [isOpen, setIsOpen] = useState(false)
 
-  const toggleMenu = useCallback(() => {
-    setIsOpen((isOpen) => !isOpen)
-  }, [])
+  const toggleMenu = useCallback(async () => {
+    if (!application.listed.isNoteAuthorizedForListed(note)) {
+      await application.listed.authorizeNoteForListed(note)
+    }
+
+    if (application.listed.isNoteAuthorizedForListed(note)) {
+      setIsOpen((isOpen) => !isOpen)
+    }
+  }, [application, note])
 
   return (
     <div ref={menuContainerRef}>

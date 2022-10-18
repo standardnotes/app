@@ -16,6 +16,7 @@ export class SNNote extends DecryptedItem<NoteContent> implements NoteContentSpe
   public readonly preview_html: string
   public readonly spellcheck?: boolean
   public readonly noteType?: NoteType
+  public readonly authorizedForListed: boolean
 
   /** The package_info.identifier of the editor (not its uuid), such as org.standardnotes.advanced-markdown */
   public readonly editorIdentifier?: FeatureIdentifier | string
@@ -31,6 +32,7 @@ export class SNNote extends DecryptedItem<NoteContent> implements NoteContentSpe
     this.spellcheck = this.payload.content.spellcheck
     this.noteType = this.payload.content.noteType
     this.editorIdentifier = this.payload.content.editorIdentifier
+    this.authorizedForListed = this.payload.content.authorizedForListed || false
 
     if (!this.noteType) {
       const prefersPlain = this.getAppDomainValueWithDefault(AppDataField.LegacyPrefersPlainEditor, false)

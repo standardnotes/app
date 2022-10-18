@@ -24,4 +24,5 @@ export enum ChallengeReason {
   UnprotectFile,
   UnprotectNote,
   DeleteAccount,
+  AuthorizeNoteForListed,
 }

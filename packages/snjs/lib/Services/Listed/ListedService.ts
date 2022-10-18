@@ -8,8 +8,9 @@ import { SNSettingsService } from '../Settings/SNSettingsService'
 import { ListedClientInterface } from './ListedClientInterface'
 import { SNApiService } from '../Api/ApiService'
 import { ListedAccount, ListedAccountInfo, ListedAccountInfoResponse } from '@standardnotes/responses'
-import { SNActionsExtension } from '@standardnotes/models'
-import { AbstractService, InternalEventBusInterface } from '@standardnotes/services'
+import { NoteMutator, SNActionsExtension, SNNote } from '@standardnotes/models'
+import { AbstractService, InternalEventBusInterface, MutatorClientInterface } from '@standardnotes/services'
+import { SNProtectionService } from '../Protection'
 
 export class ListedService extends AbstractService implements ListedClientInterface {
   constructor(
@@ -17,6 +18,8 @@ export class ListedService extends AbstractService implements ListedClientInterf
     private itemManager: ItemManager,
     private settingsService: SNSettingsService,
     private httpSerivce: SNHttpService,
+    private protectionService: SNProtectionService,
+    private mutatorService: MutatorClientInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -27,11 +30,30 @@ export class ListedService extends AbstractService implements ListedClientInterf
     ;(this.settingsService as unknown) = undefined
     ;(this.apiService as unknown) = undefined
     ;(this.httpSerivce as unknown) = undefined
+    ;(this.protectionService as unknown) = undefined
+    ;(this.mutatorService as unknown) = undefined
     super.deinit()
   }
 
   public canRegisterNewListedAccount(): boolean {
     return this.apiService.user != undefined
+  }
+
+  public isNoteAuthorizedForListed(note: SNNote): boolean {
+    return note.authorizedForListed
+  }
+
+  public async authorizeNoteForListed(note: SNNote): Promise<boolean> {
+    const result = await this.protectionService.authorizeListedPublishing()
+    if (result === false) {
+      return false
+    }
+
+    await this.mutatorService.changeAndSaveItem<NoteMutator>(note, (mutator) => {
+      mutator.authorizedForListed = true
+    })
+
+    return true
   }
 
   /**
@@ -73,8 +95,11 @@ export class ListedService extends AbstractService implements ListedClientInterf
     if (inContextOfItem) {
       url += `&item_uuid=${inContextOfItem}`
     }
-    const response = (await this.httpSerivce.getAbsolute(url)) as ListedAccountInfoResponse
-    if (response.error || !response.data || isString(response.data)) {
+
+    const response = (await this.httpSerivce.getAbsolute(url).catch((error) => {
+      console.error(error)
+    })) as ListedAccountInfoResponse
+    if (!response || response.error || !response.data || isString(response.data)) {
       return undefined
     }
 
