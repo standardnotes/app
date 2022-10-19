@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.29.1](https://github.com/standardnotes/app/compare/@standardnotes/models@1.29.0...@standardnotes/models@1.29.1) (2022-10-19)
+
+### Bug Fixes
+
+* issue with not being able to unlink a file from a note ([#1836](https://github.com/standardnotes/app/issues/1836)) ([4030953](https://github.com/standardnotes/app/commit/4030953b00ad609dc2b0f5b66cfd971d449f6121))
+
 # [1.29.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.28.0...@standardnotes/models@1.29.0) (2022-10-18)
 
 ### Features
