@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import { ContentType, Uuid } from '@standardnotes/common'
 import {
   SNNote,
@@ -16,7 +18,6 @@ import {
   ItemsKeyInterface,
   ItemContent,
 } from '@standardnotes/models'
-import { ItemRelationshipDirection } from './ItemRelationshipDirection'
 
 export interface ItemsClientInterface {
   get invalidItems(): EncryptedItemInterface[]
@@ -147,9 +148,4 @@ export interface ItemsClientInterface {
    * @returns Whether the item is a template (unmanaged)
    */
   isTemplateItem(item: DecryptedItemInterface): boolean
-
-  relationshipDirectionBetweenItems(
-    itemA: DecryptedItemInterface,
-    itemB: DecryptedItemInterface,
-  ): ItemRelationshipDirection
 }
