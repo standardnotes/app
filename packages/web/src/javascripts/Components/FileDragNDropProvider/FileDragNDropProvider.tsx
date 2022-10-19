@@ -2,6 +2,7 @@ import { WebApplication } from '@/Application/Application'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { FilesController } from '@/Controllers/FilesController'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 import { isHandlingFileDrag } from '@/Utils/DragTypeCheck'
 import { StreamingFileReader } from '@standardnotes/filepicker'
 import { useMemo, useState, createContext, ReactNode, useRef, useCallback, useEffect, useContext, memo } from 'react'
@@ -243,11 +244,14 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
           <div className="pointer-events-none absolute bottom-8 left-1/2 z-dropdown-menu -translate-x-1/2 rounded bg-info px-5 py-3 text-info-contrast shadow-main">
             {tooltipText.length ? tooltipText : 'Drop your files to upload them'}
           </div>
-          <Portal>
-            <div className={FileDragOverlayClassName} ref={fileDragOverlayRef} />
-          </Portal>
         </>
       ) : null}
+      <Portal>
+        <div
+          className={classNames(FileDragOverlayClassName, isDraggingFiles ? 'visible' : 'invisible')}
+          ref={fileDragOverlayRef}
+        />
+      </Portal>
     </FileDnDContext.Provider>
   )
 }
