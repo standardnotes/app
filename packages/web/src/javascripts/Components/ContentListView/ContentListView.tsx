@@ -81,11 +81,12 @@ const ContentListView: FunctionComponent<Props> = ({
 
   useEffect(() => {
     const target = itemsViewPanelRef.current
+    const currentTag = navigationController.selected
     const shouldAddDropTarget = !navigationController.isInAnySystemView() && !navigationController.isInSmartView()
 
-    if (target && shouldAddDropTarget) {
+    if (target && shouldAddDropTarget && currentTag) {
       addDragTarget(target, {
-        tooltipText: 'Drop your files to upload & link them to the current tag',
+        tooltipText: `Drop your files to upload and link them to tag "${currentTag.title}"`,
         callback: fileDropCallback,
       })
     }
