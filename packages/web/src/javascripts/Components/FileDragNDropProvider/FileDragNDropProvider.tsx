@@ -58,8 +58,7 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
       const targetBoundingRect = target.getBoundingClientRect()
       fileDragOverlayRef.current.style.width = `${targetBoundingRect.width}px`
       fileDragOverlayRef.current.style.height = `${targetBoundingRect.height}px`
-      fileDragOverlayRef.current.style.top = `${targetBoundingRect.y}px`
-      fileDragOverlayRef.current.style.left = `${targetBoundingRect.x}px`
+      fileDragOverlayRef.current.style.transform = `translate(${targetBoundingRect.x}px, ${targetBoundingRect.y}px)`
     }
   }, [])
 
@@ -67,8 +66,7 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
     if (fileDragOverlayRef.current) {
       fileDragOverlayRef.current.style.width = ''
       fileDragOverlayRef.current.style.height = ''
-      fileDragOverlayRef.current.style.top = ''
-      fileDragOverlayRef.current.style.left = ''
+      fileDragOverlayRef.current.style.transform = ''
     }
   }, [])
 
