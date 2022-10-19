@@ -242,7 +242,7 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
       <MemoizedChildren children={children} />
       {isDraggingFiles ? (
         <>
-          <div className="absolute bottom-8 left-1/2 z-dropdown-menu -translate-x-1/2 rounded bg-info px-5 py-3 text-info-contrast shadow-main">
+          <div className="pointer-events-none absolute bottom-8 left-1/2 z-dropdown-menu -translate-x-1/2 rounded bg-info px-5 py-3 text-info-contrast shadow-main">
             {tooltipText.length ? tooltipText : 'Drop your files to upload them'}
           </div>
           {isDraggingOverDragTarget ? (
