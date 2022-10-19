@@ -5925,7 +5925,7 @@ __metadata:
     css-loader: ^6.7.1
     eslint: ^8.17.0
     eslint-plugin-prettier: ^4.2.1
-    husky: ^8.0.0
+    husky: ^8.0.1
     lint-staged: ^13.0.1
     npm-check-updates: ^14.1.1
     prettier: ^2.6.2
@@ -20622,7 +20622,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"husky@npm:^8.0.0":
+"husky@npm:^8.0.1":
   version: 8.0.1
   resolution: "husky@npm:8.0.1"
   bin:

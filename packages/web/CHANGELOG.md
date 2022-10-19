@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.78.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.77.1...@standardnotes/web@3.78.0) (2022-10-18)
+
+### Bug Fixes
+
+* context menu opening when swiping up from bottom on iOS ([5ffd37d](https://github.com/standardnotes/app/commit/5ffd37d4478aec638392962f45d3a4428a8da86a))
+* editor width on mobile ([361f773](https://github.com/standardnotes/app/commit/361f773f2c3c65255e0d5cc8d991fac0f4521fff))
+* hide dynamic panels & focused mode options on mobile ([e4de9c1](https://github.com/standardnotes/app/commit/e4de9c1be76c758f36e5068a8395bb3abd19069a))
+* use mobx action for setting state ([eec7ae1](https://github.com/standardnotes/app/commit/eec7ae1589f7eae36ba810942911ccb3b8d863ee))
+
+### Features
+
+* authorize notes for listed ([#1823](https://github.com/standardnotes/app/issues/1823)) ([9954bdc](https://github.com/standardnotes/app/commit/9954bdc29f9de2a42c4539d55749991d86a72943))
+
+## [3.77.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.77.0...@standardnotes/web@3.77.1) (2022-10-18)
+
+### Bug Fixes
+
+* remove switch to classic mx option ([e40cd15](https://github.com/standardnotes/app/commit/e40cd157b6d1683cf9eb9548714c604649134971))
+
 # [3.77.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.76.2...@standardnotes/web@3.77.0) (2022-10-17)
 
 ### Features

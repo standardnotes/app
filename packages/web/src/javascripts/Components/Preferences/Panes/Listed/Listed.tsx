@@ -19,7 +19,7 @@ const Listed = ({ application }: Props) => {
   const [requestingAccount, setRequestingAccount] = useState<boolean>()
 
   const reloadAccounts = useCallback(async () => {
-    setAccounts(await application.getListedAccounts())
+    setAccounts(await application.listed.getListedAccounts())
   }, [application])
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const Listed = ({ application }: Props) => {
     setRequestingAccount(true)
 
     const requestAccount = async () => {
-      const account = await application.requestNewListedAccount()
+      const account = await application.listed.requestNewListedAccount()
       if (account) {
         const openSettings = await application.alertService.confirm(
           'Your new Listed blog has been successfully created!' +
@@ -43,7 +43,7 @@ const Listed = ({ application }: Props) => {
         )
         reloadAccounts().catch(console.error)
         if (openSettings) {
-          const info = await application.getListedAccountInfo(account)
+          const info = await application.listed.getListedAccountInfo(account)
           if (info) {
             application.deviceInterface.openUrl(info?.settings_url)
           }

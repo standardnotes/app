@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.29.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.28.0...@standardnotes/models@1.29.0) (2022-10-18)
+
+### Features
+
+* authorize notes for listed ([#1823](https://github.com/standardnotes/app/issues/1823)) ([9954bdc](https://github.com/standardnotes/app/commit/9954bdc29f9de2a42c4539d55749991d86a72943))
+
 # [1.28.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.27.1...@standardnotes/models@1.28.0) (2022-10-17)
 
 ### Features

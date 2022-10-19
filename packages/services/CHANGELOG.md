@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.34.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.33.1...@standardnotes/services@1.34.0) (2022-10-18)
+
+### Features
+
+* authorize notes for listed ([#1823](https://github.com/standardnotes/app/issues/1823)) ([9954bdc](https://github.com/standardnotes/app/commit/9954bdc29f9de2a42c4539d55749991d86a72943))
+
 ## [1.33.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.33.0...@standardnotes/services@1.33.1) (2022-10-17)
 
 **Note:** Version bump only for package @standardnotes/services

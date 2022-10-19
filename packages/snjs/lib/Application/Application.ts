@@ -68,7 +68,7 @@ import { ClientDisplayableError } from '@standardnotes/responses'
 
 import { SnjsVersion } from './../Version'
 import { SNLog } from '../Log'
-import { Challenge, ChallengeResponse } from '../Services'
+import { Challenge, ChallengeResponse, ListedClientInterface } from '../Services'
 import { ApplicationConstructorOptions, FullyResolvedApplicationOptions } from './Options/ApplicationOptions'
 import { ApplicationOptionsDefaults } from './Options/Defaults'
 
@@ -86,9 +86,7 @@ type ApplicationObserver = {
 
 type ObserverRemover = () => void
 
-export class SNApplication
-  implements ApplicationInterface, AppGroupManagedApplication, InternalServices.ListedClientInterface
-{
+export class SNApplication implements ApplicationInterface, AppGroupManagedApplication {
   onDeinit!: ExternalServices.DeinitCallback
 
   /**
@@ -271,6 +269,10 @@ export class SNApplication
 
   public get componentManager(): ComponentManagerInterface {
     return this.componentManagerService
+  }
+
+  public get listed(): ListedClientInterface {
+    return this.listedService
   }
 
   public computePrivateUsername(username: string): Promise<string | undefined> {
@@ -682,25 +684,6 @@ export class SNApplication
     return this.protectionService.authorizeSearchingProtectedNotesText()
   }
 
-  public canRegisterNewListedAccount(): boolean {
-    return this.listedService.canRegisterNewListedAccount()
-  }
-
-  public async requestNewListedAccount(): Promise<Responses.ListedAccount | undefined> {
-    return this.listedService.requestNewListedAccount()
-  }
-
-  public async getListedAccounts(): Promise<Responses.ListedAccount[]> {
-    return this.listedService.getListedAccounts()
-  }
-
-  public getListedAccountInfo(
-    account: Responses.ListedAccount,
-    inContextOfItem?: UuidString,
-  ): Promise<Responses.ListedAccountInfo | undefined> {
-    return this.listedService.getListedAccountInfo(account, inContextOfItem)
-  }
-
   public async createEncryptedBackupFileForAutomatedDesktopBackups(): Promise<BackupFile | undefined> {
     return this.protocolService.createEncryptedBackupFile()
   }
@@ -1096,11 +1079,11 @@ export class SNApplication
     this.createComponentManager()
     this.createMigrationService()
     this.createMfaService()
-    this.createListedService()
-    this.createActionsManager()
     this.createFileService()
     this.createIntegrityService()
     this.createMutatorService()
+    this.createListedService()
+    this.createActionsManager()
     this.createStatusService()
 
     if (isDesktopDevice(this.deviceInterface)) {
@@ -1175,6 +1158,8 @@ export class SNApplication
       this.itemManager,
       this.settingsService,
       this.deprecatedHttpService,
+      this.protectionService,
+      this.mutator,
       this.internalEventBus,
     )
     this.services.push(this.listedService)

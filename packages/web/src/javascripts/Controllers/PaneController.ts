@@ -30,9 +30,9 @@ export class PaneController {
 
   mediumScreenMQHandler = (event: MediaQueryListEvent) => {
     if (event.matches) {
-      this.isInMobileView = false
+      this.setIsInMobileView(false)
     } else {
-      this.isInMobileView = true
+      this.setIsInMobileView(true)
     }
   }
 
